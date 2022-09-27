@@ -1,4 +1,4 @@
-module Examples.Highlighter exposing (Msg, State, example)
+port module Examples.Highlighter exposing (Msg, State, example)
 
 {-|
 
@@ -42,7 +42,7 @@ example =
     , version = version
     , state = init
     , update = update
-    , subscriptions = \_ -> Sub.none
+    , subscriptions = \_ -> Sub.map HighlighterMsg subscriptions
     , preview =
         []
     , view =
@@ -227,10 +227,7 @@ initHighlighter settings previousHighlightables =
             if settings.splitOnSentences then
                 let
                     segments =
-                        String.split "." CommonControls.romeoAndJulietQuotation
-
-                    segmentCount =
-                        List.length segments
+                        List.filter (\x -> x /= "") (String.split "." (String.trim CommonControls.romeoAndJulietQuotation))
                 in
                 List.indexedMap
                     (\index sentence ->
@@ -238,17 +235,13 @@ initHighlighter settings previousHighlightables =
                             Nothing
                             index
                             ( []
-                            , if (index + 1) == segmentCount then
-                                sentence
-
-                              else
-                                sentence ++ "."
+                            , sentence ++ "."
                             )
                     )
                     segments
 
             else
-                Highlightable.initFragments Nothing CommonControls.romeoAndJulietQuotation
+                Highlightable.initFragments Nothing (String.trim CommonControls.romeoAndJulietQuotation)
     in
     Highlighter.init
         { id = "example-romeo-and-juliet"
@@ -341,14 +334,71 @@ update msg state =
 
         HighlighterMsg highlighterMsg ->
             let
-                ( newHighlighter, effect, _ ) =
+                ( newHighlighter, effect, Highlighter.Intent intent ) =
                     Highlighter.update highlighterMsg state.highlighter
             in
             ( { state | highlighter = newHighlighter }
-            , Cmd.map HighlighterMsg effect
+            , Cmd.batch
+                [ Cmd.map HighlighterMsg effect
+                , case intent.listenTo of
+                    Just listenTo ->
+                        highlighterListen listenTo
+
+                    Nothing ->
+                        Cmd.none
+                ]
             )
 
         ClearHighlights ->
             ( { state | highlighter = Highlighter.removeHighlights state.highlighter }
             , Cmd.none
             )
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Sub (Highlighter.Msg marker)
+subscriptions =
+    Sub.batch [ onDocumentUp, onTouch ]
+
+
+{-| Subscribe to mouseup/touchend events on the document.
+-}
+onDocumentUp : Sub (Highlighter.Msg marker)
+onDocumentUp =
+    highlighterOnDocumentUp (Highlighter.Pointer << Highlighter.Up << Just)
+
+
+{-| Subscribe to touch events
+-}
+onTouch : Sub (Highlighter.Msg marker)
+onTouch =
+    highlighterOnTouch <|
+        \( type_, targetId, index ) ->
+            Highlighter.Pointer <|
+                case type_ of
+                    "move" ->
+                        Highlighter.Move (Just targetId) index
+
+                    "end" ->
+                        Highlighter.Up (Just targetId)
+
+                    _ ->
+                        Highlighter.Ignored
+
+
+{-| Start listening to events on a highlighter
+-}
+port highlighterListen : String -> Cmd msg
+
+
+{-| Listen to documentup events, to stop highlighting.
+-}
+port highlighterOnDocumentUp : (String -> msg) -> Sub msg
+
+
+{-| Listen to touch events, and get the element under the finger.
+-}
+port highlighterOnTouch : (( String, String, Int ) -> msg) -> Sub msg

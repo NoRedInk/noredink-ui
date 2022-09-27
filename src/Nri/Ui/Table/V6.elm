@@ -1,5 +1,5 @@
 module Nri.Ui.Table.V6 exposing
-    ( Column, SortDirection(..), custom, string
+    ( Column, SortDirection(..), custom, string, rowHeader
     , view, viewWithoutHeader
     , viewLoading, viewLoadingWithoutHeader
     )
@@ -9,7 +9,7 @@ module Nri.Ui.Table.V6 exposing
   - The columns take an additional `sort` property that allows
     you to specify ARIA sorting
 
-@docs Column, SortDirection, custom, string
+@docs Column, SortDirection, custom, string, rowHeader
 
 @docs view, viewWithoutHeader
 
@@ -30,7 +30,7 @@ import Nri.Ui.Fonts.V1 exposing (baseFont)
 in the table
 -}
 type Column data msg
-    = Column (Html msg) (data -> Html msg) Style (data -> List Style) (Maybe SortDirection)
+    = Column (Html msg) (data -> Html msg) Style (data -> List Style) (Maybe SortDirection) CellType
 
 
 {-| Which direction is a table column sorted? Only set these on columns that
@@ -39,6 +39,23 @@ actually have an explicit sort!
 type SortDirection
     = Ascending
     | Descending
+
+
+{-| Is this cell a data cell or header cell?
+-}
+type CellType
+    = RowHeaderCell
+    | DataCell
+
+
+cell : CellType -> List (Attribute msg) -> List (Html msg) -> Html msg
+cell cellType attrs =
+    case cellType of
+        RowHeaderCell ->
+            th (Attributes.scope "row" :: attrs)
+
+        DataCell ->
+            td attrs
 
 
 {-| A column that renders some aspect of a value as text
@@ -52,7 +69,7 @@ string :
     }
     -> Column data msg
 string { header, value, width, cellStyles, sort } =
-    Column (Html.text header) (value >> Html.text) (Css.width width) cellStyles sort
+    Column (Html.text header) (value >> Html.text) (Css.width width) cellStyles sort DataCell
 
 
 {-| A column that renders however you want it to
@@ -66,7 +83,21 @@ custom :
     }
     -> Column data msg
 custom options =
-    Column options.header options.view (Css.width options.width) options.cellStyles options.sort
+    Column options.header options.view (Css.width options.width) options.cellStyles options.sort DataCell
+
+
+{-| A column whose cells are row headers
+-}
+rowHeader :
+    { header : Html msg
+    , view : data -> Html msg
+    , width : LengthOrAuto compatible
+    , cellStyles : data -> List Style
+    , sort : Maybe SortDirection
+    }
+    -> Column data msg
+rowHeader options =
+    Column options.header options.view (Css.width options.width) options.cellStyles options.sort RowHeaderCell
 
 
 
@@ -95,8 +126,8 @@ viewRow columns data =
 
 
 viewColumn : data -> Column data msg -> Html msg
-viewColumn data (Column _ renderer width cellStyles _) =
-    td
+viewColumn data (Column _ renderer width cellStyles _ cellType) =
+    cell cellType
         [ css ([ width, verticalAlign middle ] ++ cellStyles data)
         ]
         [ renderer data ]
@@ -130,8 +161,8 @@ viewLoadingRow columns index =
 
 
 viewLoadingColumn : Int -> Int -> Column data msg -> Html msg
-viewLoadingColumn rowIndex colIndex (Column _ _ width _ _) =
-    td
+viewLoadingColumn rowIndex colIndex (Column _ _ width _ _ cellType) =
+    cell cellType
         [ css (stylesLoadingColumn rowIndex colIndex width ++ [ verticalAlign middle ] ++ loadingCellStyles)
         ]
         [ span [ css loadingContentStyles ] [] ]
@@ -151,7 +182,7 @@ stylesLoadingColumn rowIndex colIndex width =
 tableWithoutHeader : List Style -> List (Column data msg) -> (a -> Html msg) -> List a -> Html msg
 tableWithoutHeader styles columns toRow data =
     table styles
-        [ thead [] [ tr Style.invisible (List.map tableRowHeader columns) ]
+        [ thead [] [ tr Style.invisible (List.map tableColHeader columns) ]
         , tableBody toRow data
         ]
 
@@ -173,12 +204,12 @@ tableHeader : List (Column data msg) -> Html msg
 tableHeader columns =
     thead []
         [ tr [ css headersStyles ]
-            (List.map tableRowHeader columns)
+            (List.map tableColHeader columns)
         ]
 
 
-tableRowHeader : Column data msg -> Html msg
-tableRowHeader (Column header _ width _ sort) =
+tableColHeader : Column data msg -> Html msg
+tableColHeader (Column header _ width _ sort _) =
     th
         [ Attributes.scope "col"
         , css (width :: headerStyles)

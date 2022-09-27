@@ -93,8 +93,9 @@ viewRadioGroup config =
                 inner extraAttrs =
                     Html.Styled.label
                         (css
-                            (styles config.positioning numOptions index isSelected)
+                            (styles "focus-within" config.positioning numOptions index isSelected)
                             :: Attributes.class FocusRing.customClass
+                            :: Attributes.class "segmented-control-radio-element"
                             :: extraAttrs
                         )
                         [ radio name option.idString isSelected <|
@@ -222,7 +223,7 @@ view config =
                         Center ->
                             justifyContent center
                     ]
-                , tabStyles = styles config.positioning (List.length config.options)
+                , tabStyles = styles "focus-visible" config.positioning (List.length config.options)
                 }
     in
     div []
@@ -250,8 +251,8 @@ viewIcon icon =
                 |> Svg.toHtml
 
 
-styles : Positioning -> Int -> Int -> Bool -> List Style
-styles positioning numEntries index isSelected =
+styles : String -> Positioning -> Int -> Int -> Bool -> List Style
+styles focusSelector positioning numEntries index isSelected =
     [ sharedSegmentStyles numEntries index
     , if isSelected then
         focusedSegmentStyles
@@ -269,9 +270,10 @@ styles positioning numEntries index isSelected =
             _ ->
                 []
     , -- ensure that the focus state is visible & looks nice
-      Css.pseudoClass "focus-within"
+      Css.pseudoClass focusSelector
         [ FocusRing.boxShadows [ focusedSegmentBoxShadowValue ]
         , outline none
+        , zIndex (int 1)
         ]
     ]
 

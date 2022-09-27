@@ -1,15 +1,22 @@
 module Nri.Ui.MediaQuery.V1 exposing
     ( anyMotion, prefersReducedMotion
     , highContrastMode
+    , withViewport
     , mobile, notMobile
     , mobileBreakpoint
-    , quizEngineMobile
+    , quizEngineMobile, notQuizEngineMobile
     , quizEngineBreakpoint
-    , narrowMobile
-    , narrowMobileBreakPoint
+    , narrowMobile, notNarrowMobile
+    , narrowMobileBreakpoint, narrowMobileBreakPoint
     )
 
-{-| Standard media queries for responsive pages.
+{-| Patch changes:
+
+  - remove min-width:1 from media queries in order to support better composibility
+  - adds narrowMobileBreakpoint and deprecates narrowMobileBreakPoint
+  - adds withViewport for convenience when matching specific viewport size ranges
+
+Standard media queries for responsive pages.
 
     import Css
     import Css.Media as Media
@@ -25,19 +32,49 @@ module Nri.Ui.MediaQuery.V1 exposing
 @docs anyMotion, prefersReducedMotion
 @docs highContrastMode
 
+@docs withViewport
+
+
+### 1000px breakpoint
+
 @docs mobile, notMobile
 @docs mobileBreakpoint
 
-@docs quizEngineMobile
+
+### 750px breakpoint
+
+@docs quizEngineMobile, notQuizEngineMobile
 @docs quizEngineBreakpoint
 
-@docs narrowMobile
-@docs narrowMobileBreakPoint
+
+### 500px breakpoint
+
+@docs narrowMobile, notNarrowMobile
+@docs narrowMobileBreakpoint, narrowMobileBreakPoint
 
 -}
 
 import Css exposing (Style, px)
-import Css.Media exposing (MediaQuery, maxWidth, minWidth, only, screen, withMediaQuery)
+import Css.Media exposing (MediaQuery, maxWidth, minWidth, only, screen, withMedia, withMediaQuery)
+
+
+{-|
+
+    MediaQuery.withViewport
+        MediaQuery.narrowMobileBreakpoint
+        MediaQuery.quizEngineBreakpoint
+        [ Css.flexDirection Css.column
+        ]
+
+-}
+withViewport : Maybe Css.Px -> Maybe Css.Px -> List Style -> Style
+withViewport maybeMin maybeMax =
+    withMedia
+        [ only screen
+            (List.filterMap identity
+                [ Maybe.map minWidth maybeMin, Maybe.map maxWidth maybeMax ]
+            )
+        ]
 
 
 {-| -}
@@ -62,12 +99,7 @@ highContrastMode =
 -}
 mobile : MediaQuery
 mobile =
-    only screen
-        [ --`minWidth (px 1)` is for a bug in IE which causes the media query to initially trigger regardless of window size
-          --See: <http://stackoverflow.com/questions/25673707/ie11-triggers-css-transition-on-page-load-when-non-applied-media-query-exists/25850649#25850649>
-          minWidth (px 1)
-        , maxWidth mobileBreakpoint
-        ]
+    only screen [ maxWidth mobileBreakpoint ]
 
 
 {-| Styles using the `mobileBreakpoint` value as the minWidth.
@@ -88,12 +120,14 @@ mobileBreakpoint =
 -}
 quizEngineMobile : MediaQuery
 quizEngineMobile =
-    only screen
-        [ --`minWidth (px 1)` is for a bug in IE which causes the media query to initially trigger regardless of window size
-          --See: <http://stackoverflow.com/questions/25673707/ie11-triggers-css-transition-on-page-load-when-non-applied-media-query-exists/25850649#25850649>
-          minWidth (px 1)
-        , maxWidth quizEngineBreakpoint
-        ]
+    only screen [ maxWidth quizEngineBreakpoint ]
+
+
+{-| Styles using the `quizEngineBreakpoint` value as the minWidth.
+-}
+notQuizEngineMobile : MediaQuery
+notQuizEngineMobile =
+    only screen [ minWidth quizEngineBreakpoint ]
 
 
 {-| 750px
@@ -103,19 +137,28 @@ quizEngineBreakpoint =
     px 750
 
 
-{-| Styles using the `narrowMobileBreakPoint` value as the maxWidth
+{-| Styles using the `narrowMobileBreakpoint` value as the maxWidth
 -}
 narrowMobile : MediaQuery
 narrowMobile =
-    only screen
-        [ --`minWidth (px 1)` is for a bug in IE which causes the media query to initially trigger regardless of window size
-          --See: <http://stackoverflow.com/questions/25673707/ie11-triggers-css-transition-on-page-load-when-non-applied-media-query-exists/25850649#25850649>
-          minWidth (px 1)
-        , maxWidth narrowMobileBreakPoint
-        ]
+    only screen [ maxWidth narrowMobileBreakpoint ]
+
+
+{-| Styles using the `quizEngineBreakpoint` value as the minWidth.
+-}
+notNarrowMobile : MediaQuery
+notNarrowMobile =
+    only screen [ minWidth narrowMobileBreakpoint ]
 
 
 {-| 500px
+-}
+narrowMobileBreakpoint : Css.Px
+narrowMobileBreakpoint =
+    px 500
+
+
+{-| DEPRECATED: prefer narrowMobileBreakpoint, which follows other casing conventions.
 -}
 narrowMobileBreakPoint : Css.Px
 narrowMobileBreakPoint =

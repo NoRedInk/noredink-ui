@@ -257,10 +257,13 @@ viewDisabledLabel model labelView icon =
             , textStyle
             , outline none
             , cursor auto
+            , color Colors.gray45
             , Css.batch model.disabledLabelCss
             ]
         ]
-        [ viewIcon [ opacity (num 0.4) ] icon
+        [ viewIcon
+            [ property "filter" "grayscale(1)" ]
+            icon
         , labelView model.label
         ]
 

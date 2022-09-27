@@ -433,15 +433,7 @@ danger : Attribute msg
 danger =
     set
         (\attributes ->
-            { attributes
-                | style =
-                    { background = Colors.red
-                    , hover = Colors.redDark
-                    , text = Colors.white
-                    , border = Nothing
-                    , shadow = Colors.redDark
-                    }
-            }
+            { attributes | style = dangerColors }
         )
 
 
@@ -450,15 +442,7 @@ premium : Attribute msg
 premium =
     set
         (\attributes ->
-            { attributes
-                | style =
-                    { background = Colors.yellow
-                    , hover = Colors.ochre
-                    , text = Colors.navy
-                    , border = Nothing
-                    , shadow = Colors.ochre
-                    }
-            }
+            { attributes | style = premiumColors }
         )
 
 
@@ -848,8 +832,9 @@ buttonStyle =
 
 type alias ColorPalette =
     { background : Css.Color
-    , hover : Css.Color
+    , hoverBackground : Css.Color
     , text : Css.Color
+    , hoverText : Css.Color
     , border : Maybe Css.Color
     , shadow : Css.Color
     }
@@ -858,8 +843,9 @@ type alias ColorPalette =
 primaryColors : ColorPalette
 primaryColors =
     { background = Colors.azure
-    , hover = Colors.azureDark
+    , hoverBackground = Colors.azureDark
     , text = Colors.white
+    , hoverText = Colors.white
     , border = Nothing
     , shadow = Colors.azureDark
     }
@@ -868,8 +854,9 @@ primaryColors =
 secondaryColors : ColorPalette
 secondaryColors =
     { background = Colors.white
-    , hover = Colors.glacier
+    , hoverBackground = Colors.glacier
     , text = Colors.azure
+    , hoverText = Colors.azureDark
     , border = Just <| Colors.azure
     , shadow = Colors.azure
     }
@@ -878,10 +865,33 @@ secondaryColors =
 tertiaryColors : ColorPalette
 tertiaryColors =
     { background = Colors.white
-    , hover = Colors.frost
+    , hoverBackground = Colors.frost
     , text = Colors.navy
+    , hoverText = Colors.navy
     , border = Just <| Colors.gray75
     , shadow = Colors.gray75
+    }
+
+
+dangerColors : ColorPalette
+dangerColors =
+    { background = Colors.red
+    , hoverBackground = Colors.redDark
+    , text = Colors.white
+    , hoverText = Colors.white
+    , border = Nothing
+    , shadow = Colors.redDark
+    }
+
+
+premiumColors : ColorPalette
+premiumColors =
+    { background = Colors.yellow
+    , hoverBackground = Colors.ochre
+    , text = Colors.navy
+    , hoverText = Colors.navy
+    , border = Nothing
+    , shadow = Colors.ochre
     }
 
 
@@ -893,40 +903,45 @@ getColorPalette (ButtonOrLink config) =
 
         Disabled ->
             { background = Colors.gray92
-            , hover = Colors.gray92
+            , hoverBackground = Colors.gray92
             , text = Colors.gray45
-            , border = Nothing
-            , shadow = Colors.gray92
+            , hoverText = Colors.gray45
+            , border = Just <| Colors.gray75
+            , shadow = Colors.gray75
             }
 
         Error ->
             { background = Colors.purple
-            , hover = Colors.purple
+            , hoverBackground = Colors.purple
             , text = Colors.white
+            , hoverText = Colors.white
             , border = Nothing
             , shadow = Colors.purple
             }
 
         Unfulfilled ->
-            { background = Colors.gray92
-            , hover = Colors.gray92
-            , text = Colors.gray45
-            , border = Nothing
-            , shadow = Colors.gray92
+            { background = Colors.white
+            , hoverBackground = Colors.glacier
+            , text = Colors.azure
+            , hoverText = Colors.azureDark
+            , border = Just <| Colors.gray75
+            , shadow = Colors.gray75
             }
 
         Loading ->
             { background = Colors.glacier
-            , hover = Colors.glacier
+            , hoverBackground = Colors.glacier
             , text = Colors.navy
+            , hoverText = Colors.navy
             , border = Nothing
             , shadow = Colors.glacier
             }
 
         Success ->
             { background = Colors.greenDarkest
-            , hover = Colors.greenDarkest
+            , hoverBackground = Colors.greenDarkest
             , text = Colors.white
+            , hoverText = Colors.white
             , border = Nothing
             , shadow = Colors.greenDarkest
             }
@@ -952,8 +967,8 @@ colorStyle colorPalette =
         , Css.borderBottomColor colorPalette.shadow
         , Css.fontStyle Css.normal
         , Css.hover
-            [ Css.color colorPalette.text
-            , Css.backgroundColor colorPalette.hover
+            [ Css.color colorPalette.hoverText
+            , Css.backgroundColor colorPalette.hoverBackground
             , Css.disabled [ Css.backgroundColor colorPalette.background ]
             ]
         , Css.visited [ Css.color colorPalette.text ]

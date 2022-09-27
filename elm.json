@@ -3,7 +3,7 @@
     "name": "NoRedInk/noredink-ui",
     "summary": "UI Widgets we use at NRI",
     "license": "BSD-3-Clause",
-    "version": "18.4.0",
+    "version": "19.0.0",
     "exposed-modules": [
         "Nri.Ui",
         "Nri.Ui.Accordion.V3",
@@ -12,6 +12,7 @@
         "Nri.Ui.AssignmentIcon.V2",
         "Nri.Ui.Balloon.V1",
         "Nri.Ui.BreadCrumbs.V1",
+        "Nri.Ui.BreadCrumbs.V2",
         "Nri.Ui.Button.V10",
         "Nri.Ui.Carousel.V1",
         "Nri.Ui.Checkbox.V5",
