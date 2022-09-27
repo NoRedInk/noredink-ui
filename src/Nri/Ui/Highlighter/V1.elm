@@ -670,7 +670,7 @@ viewHighlightable highlighterId marker focusIndex highlightable =
 
 viewStaticHighlightable : String -> Highlightable marker -> Html msg
 viewStaticHighlightable highlighterId =
-    viewHighlightableSegment False (Just -1) highlighterId [] Nothing
+    viewHighlightableSegment False Nothing highlighterId [] Nothing
 
 
 viewHighlightableSegment : Bool -> Maybe Int -> String -> List (Attribute msg) -> Maybe (Tool.Tool marker) -> Highlightable marker -> Html msg

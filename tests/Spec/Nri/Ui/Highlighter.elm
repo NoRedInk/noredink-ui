@@ -30,6 +30,12 @@ keyboardTests =
                 |> program marker
                 |> ensureFocusOn "Pothos"
                 |> done
+    , test "has only one element included in the tab sequence" <|
+        \() ->
+            Highlightable.initFragments Nothing "Pothos indirect light"
+                |> program marker
+                |> ensureOnlyOneInTabSequence (String.words "Pothos indirect light")
+                |> done
     , test "moves focus right on right arrow key" <|
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
@@ -37,6 +43,7 @@ keyboardTests =
                 |> ensureFocusOn "Pothos"
                 |> rightArrow
                 |> ensureFocusOn "indirect"
+                |> ensureOnlyOneInTabSequence (String.words "Pothos indirect light")
                 |> rightArrow
                 |> ensureFocusOn "light"
                 -- once we're on the final element, pressing right arrow again should
@@ -53,6 +60,7 @@ keyboardTests =
                 |> ensureFocusOn "indirect"
                 |> leftArrow
                 |> ensureFocusOn "Pothos"
+                |> ensureOnlyOneInTabSequence (String.words "Pothos indirect light")
                 -- once we're on the first element, pressing left arrow again should
                 -- _not_ wrap the focus. We should stay right where we are!
                 |> leftArrow
@@ -88,13 +96,13 @@ keyboardTests =
                 |> program marker
                 |> shiftRight
                 |> releaseShiftRight
-                |> ensureMarked [ "Pothos", "", "indirect" ]
+                |> ensureMarked [ "Pothos", " ", "indirect" ]
                 |> shiftRight
                 |> releaseShiftRight
-                |> ensureMarked [ "Pothos", "", "indirect", "", "light" ]
+                |> ensureMarked [ "Pothos", " ", "indirect", " ", "light" ]
                 |> shiftRight
                 |> releaseShiftRight
-                |> ensureMarked [ "Pothos", "", "indirect", "", "light" ]
+                |> ensureMarked [ "Pothos", " ", "indirect", " ", "light" ]
                 |> done
     , test "expands selection one element to the left on shift + left arrow and highlight selected elements" <|
         \() ->
@@ -104,13 +112,13 @@ keyboardTests =
                 |> rightArrow
                 |> shiftLeft
                 |> releaseShiftLeft
-                |> ensureMarked [ "indirect", "", "light" ]
+                |> ensureMarked [ "indirect", " ", "light" ]
                 |> shiftLeft
                 |> releaseShiftLeft
-                |> ensureMarked [ "Pothos", "", "indirect", "", "light" ]
+                |> ensureMarked [ "Pothos", " ", "indirect", " ", "light" ]
                 |> shiftLeft
                 |> releaseShiftLeft
-                |> ensureMarked [ "Pothos", "", "indirect", "", "light" ]
+                |> ensureMarked [ "Pothos", " ", "indirect", " ", "light" ]
                 |> done
     , test "merges highlights" <|
         \() ->
@@ -119,13 +127,13 @@ keyboardTests =
                 |> ensureFocusOn "Pothos"
                 |> shiftRight
                 |> releaseShiftRight
-                |> ensureMarked [ "Pothos", "", "indirect" ]
+                |> ensureMarked [ "Pothos", " ", "indirect" ]
                 |> ensureFocusOn "indirect"
                 |> rightArrow
                 |> ensureFocusOn "light"
                 |> shiftLeft
                 |> releaseShiftLeft
-                |> ensureMarked [ "Pothos", "", "indirect", "", "light" ]
+                |> ensureMarked [ "Pothos", " ", "indirect", " ", "light" ]
                 |> done
     , test "selects element on MouseDown and highlights selected element on MouseUp" <|
         \() ->
@@ -144,7 +152,7 @@ keyboardTests =
                 |> mouseDown "Pothos"
                 |> mouseOver "indirect"
                 |> mouseUp "Pothos"
-                |> ensureMarked [ "Pothos", "", "indirect" ]
+                |> ensureMarked [ "Pothos", " ", "indirect" ]
                 |> done
     , test "Highlights element on Space" <|
         \() ->
@@ -173,7 +181,7 @@ keyboardTests =
                 |> ensureFocusOn "Pothos"
                 |> shiftRight
                 |> releaseShiftRight
-                |> ensureMarked [ "Pothos", "", "indirect" ]
+                |> ensureMarked [ "Pothos", " ", "indirect" ]
                 |> mouseDown "indirect"
                 |> mouseUp "indirect"
                 |> expectViewHasNot
@@ -199,16 +207,18 @@ ensureFocusOn word textContext =
             (Query.find [ Selector.attribute (Key.tabbable True) ]
                 >> Query.has [ Selector.text word ]
             )
+
+
+ensureOnlyOneInTabSequence : List String -> TestContext marker -> TestContext marker
+ensureOnlyOneInTabSequence words textContext =
+    textContext
         |> ensureView
             (Query.findAll [ Selector.attribute (Key.tabbable True) ]
                 >> Query.count (Expect.equal 1)
             )
-        -- We only manage focus for interactive elements.
-        -- Static elements should not have explicit tabindex -1 as it is redundant,
-        -- they are never included in the tab sequence
         |> ensureView
             (Query.findAll [ Selector.attribute (Key.tabbable False) ]
-                >> Query.count (Expect.equal 2)
+                >> Query.count (Expect.equal (List.length words - 1))
             )
 
 
