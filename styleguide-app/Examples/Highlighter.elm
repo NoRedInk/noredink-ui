@@ -227,10 +227,7 @@ initHighlighter settings previousHighlightables =
             if settings.splitOnSentences then
                 let
                     segments =
-                        String.split "." CommonControls.romeoAndJulietQuotation
-
-                    segmentCount =
-                        List.length segments
+                        List.filter (\x -> x /= "") (String.split "." (String.trim CommonControls.romeoAndJulietQuotation))
                 in
                 List.indexedMap
                     (\index sentence ->
@@ -238,17 +235,13 @@ initHighlighter settings previousHighlightables =
                             Nothing
                             index
                             ( []
-                            , if (index + 1) == segmentCount then
-                                sentence
-
-                              else
-                                sentence ++ "."
+                            , sentence ++ "."
                             )
                     )
                     segments
 
             else
-                Highlightable.initFragments Nothing CommonControls.romeoAndJulietQuotation
+                Highlightable.initFragments Nothing (String.trim CommonControls.romeoAndJulietQuotation)
     in
     Highlighter.init
         { id = "example-romeo-and-juliet"
