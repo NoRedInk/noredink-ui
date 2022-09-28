@@ -212,6 +212,7 @@ type KeyboardMsg
     | SelectionExpandLeft Int
     | SelectionExpandRight Int
     | SelectionApplyTool Int
+    | SelectionReset Int
     | ToggleHighlight Int
 
 
@@ -404,6 +405,9 @@ keyboardEventToActions msg model =
 
                 Tool.Eraser _ ->
                     [ Remove, ResetSelection, Focus index ]
+
+        SelectionReset index ->
+            [ ResetSelection, Remove, Focus index ]
 
         ToggleHighlight index ->
             case model.marker of
@@ -632,6 +636,19 @@ groupContainer viewSegment highlightables =
                     List.map viewSegment highlightables
 
 
+shift : msg -> Json.Decode.Decoder msg
+shift msg =
+    Json.Decode.andThen
+        (\keyCode ->
+            if keyCode == 16 then
+                Json.Decode.succeed msg
+
+            else
+                Json.Decode.fail (String.fromInt keyCode)
+        )
+        Html.Styled.Events.keyCode
+
+
 viewHighlightable : String -> Tool.Tool marker -> Maybe Int -> Highlightable marker -> Html (Msg marker)
 viewHighlightable highlighterId marker focusIndex highlightable =
     case highlightable.type_ of
@@ -655,6 +672,7 @@ viewHighlightable highlighterId marker focusIndex highlightable =
                 , Key.onKeyUpPreventDefault
                     [ Key.shiftRight (Keyboard <| SelectionApplyTool highlightable.groupIndex)
                     , Key.shiftLeft (Keyboard <| SelectionApplyTool highlightable.groupIndex)
+                    , shift (Keyboard <| SelectionReset highlightable.groupIndex)
                     ]
                 ]
                 (Just marker)
