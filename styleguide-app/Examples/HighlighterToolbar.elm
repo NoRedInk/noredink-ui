@@ -44,16 +44,6 @@ example =
         []
     , view =
         \ellieLinkConfig state ->
-            let
-                getColor name =
-                    { solid = Colors.magenta
-                    , light = Colors.highlightYellow
-                    , name = name
-                    }
-
-                tags =
-                    [ "Claim", "Evidence", "Reasoning" ]
-            in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
                 , name = moduleName
@@ -70,23 +60,66 @@ example =
                 { onSetEraser = SetTool Nothing
                 , onChangeTag = SetTool << Just
                 , getColor = getColor
-                , getName = identity
+                , getName = getName
                 }
                 { currentTool = state.currentTool
                 , tags = tags
                 }
             , Heading.h2 [ Heading.plaintext "Non-interactive examples" ]
-            , HighlighterToolbar.static identity getColor tags
+            , HighlighterToolbar.static getName getColor tags
             ]
     , categories = [ Buttons, Interactions ]
     , keyboardSupport = []
     }
 
 
+type Tag
+    = Claim
+    | Evidence
+    | Reasoning
+
+
+tags : List Tag
+tags =
+    [ Claim, Evidence, Reasoning ]
+
+
+getName : Tag -> String
+getName tag =
+    case tag of
+        Claim ->
+            "Claim"
+
+        Evidence ->
+            "Evidence"
+
+        Reasoning ->
+            "Reasoning"
+
+
+getColor : Tag -> { colorSolid : Color, colorLight : Color }
+getColor tag =
+    case tag of
+        Claim ->
+            { colorSolid = Colors.mustard
+            , colorLight = Colors.highlightYellow
+            }
+
+        Evidence ->
+            { colorSolid = Colors.magenta
+            , colorLight = Colors.highlightMagenta
+            }
+
+        Reasoning ->
+            { colorSolid = Colors.cyan
+            , colorLight = Colors.highlightCyan
+            }
+
+
 {-| -}
 type alias State =
     { settings : Control Settings
-    , currentTool : Maybe String
+    , currentTool : Maybe Tag
     }
 
 
@@ -114,7 +147,7 @@ controlSettings =
 {-| -}
 type Msg
     = UpdateControls (Control Settings)
-    | SetTool (Maybe String)
+    | SetTool (Maybe Tag)
 
 
 {-| -}

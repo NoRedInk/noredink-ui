@@ -1,8 +1,8 @@
-module Nri.Ui.HighlighterToolbar.V1 exposing (view, static, RowTheme)
+module Nri.Ui.HighlighterToolbar.V1 exposing (view, static)
 
 {-| Bar with markers for choosing how text will be highlighted in a highlighter.
 
-@docs view, static, RowTheme
+@docs view, static
 
 -}
 
@@ -17,15 +17,7 @@ import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
 import Nri.Ui.Html.V3 exposing (viewIf)
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
-
-
-{-| A colour combination to use for highlights.
--}
-type alias RowTheme =
-    { solid : Color
-    , light : Color
-    , name : String
-    }
+import Nri.Ui.Util exposing (dashify)
 
 
 toolbar : List (Html msg) -> Html msg
@@ -53,7 +45,7 @@ toolContainer toolName tool =
 view :
     { onSetEraser : msg
     , onChangeTag : tag -> msg
-    , getColor : tag -> RowTheme
+    , getColor : tag -> { extras | colorSolid : Color, colorLight : Color }
     , getName : tag -> String
     }
     -> { extras | currentTool : Maybe tag, tags : List tag }
@@ -76,21 +68,29 @@ view config model =
 
 {-| Render only tags and not eraser without triggering an action
 -}
-static : (a -> String) -> (a -> RowTheme) -> List a -> Html msg
+static :
+    (a -> String)
+    -> (a -> { extras | colorSolid : Color, colorLight : Color })
+    -> List a
+    -> Html msg
 static getName getColor tags =
     toolbar (List.map (staticTag getName getColor) tags)
 
 
-staticTag : (a -> String) -> (a -> RowTheme) -> a -> Html msg
+staticTag :
+    (a -> String)
+    -> (a -> { extras | colorSolid : Color, colorLight : Color })
+    -> a
+    -> Html msg
 staticTag getName getColor tag =
-    toolContainer ("static-tag-" ++ getName tag)
+    toolContainer ("static-tag-" ++ dashify (getName tag))
         (toolContent (getName tag) (getColor tag) (Just tag))
 
 
 viewTag :
     { onSetEraser : msg
     , onChangeTag : tag -> msg
-    , getColor : tag -> RowTheme
+    , getColor : tag -> { extras | colorSolid : Color, colorLight : Color }
     , getName : tag -> String
     }
     -> Bool
@@ -106,16 +106,19 @@ viewEraser onSetEraser selected =
     toolContainer "eraser"
         (viewTool "Remove highlight"
             onSetEraser
-            { light = Colors.gray75
-            , solid = Colors.white
-            , name = "eraser"
-            }
+            { colorLight = Colors.gray75, colorSolid = Colors.white }
             selected
             Nothing
         )
 
 
-viewTool : String -> msg -> RowTheme -> Bool -> Maybe tag -> Html msg
+viewTool :
+    String
+    -> msg
+    -> { extras | colorSolid : Color, colorLight : Color }
+    -> Bool
+    -> Maybe tag
+    -> Html msg
 viewTool name onClick theme selected tool =
     button
         [ css
@@ -134,20 +137,26 @@ viewTool name onClick theme selected tool =
         ]
 
 
-active : RowTheme -> Html msg
+active :
+    { extras | colorLight : Color }
+    -> Html msg
 active palette_ =
     div
         [ nriDescription "active-tool"
         , css
             [ Css.width (Css.px 38)
             , Css.height (Css.px 4)
-            , Css.backgroundColor palette_.light
+            , Css.backgroundColor palette_.colorLight
             ]
         ]
         []
 
 
-toolContent : String -> RowTheme -> Maybe tag -> Html msg
+toolContent :
+    String
+    -> { extras | colorSolid : Color, colorLight : Color }
+    -> Maybe tag
+    -> Html msg
 toolContent name palette_ tool =
     span
         [ nriDescription "tool-content"
@@ -163,14 +172,14 @@ toolContent name palette_ tool =
         [ case tool of
             Just _ ->
                 toolIcon
-                    { background = palette_.solid
-                    , border = palette_.solid
+                    { background = palette_.colorSolid
+                    , border = palette_.colorSolid
                     , icon = Svg.withColor Colors.white UiIcon.highlighter
                     }
 
             Nothing ->
                 toolIcon
-                    { background = palette_.solid
+                    { background = palette_.colorSolid
                     , border = Colors.gray75
                     , icon = Svg.withColor Colors.gray20 UiIcon.eraser
                     }
