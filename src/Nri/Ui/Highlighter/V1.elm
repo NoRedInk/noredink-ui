@@ -59,6 +59,7 @@ TODO: Add documentation about how to wire in event listeners and subscriptions s
 
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
+import Accessibility.Styled.Style exposing (invisibleStyle)
 import Browser.Dom as Dom
 import Css
 import Css.Global
@@ -613,19 +614,29 @@ groupContainer viewSegment highlightables =
                             [ Css.backgroundColor Css.transparent
                             , Css.Global.children
                                 [ Css.Global.selector ":first-child"
-                                    (MediaQuery.highContrastMode
-                                        [ Maybe.map
-                                            (\name ->
-                                                Css.before
-                                                    [ Css.property "content" ("\"[" ++ name ++ "] \"")
-                                                    ]
-                                            )
-                                            markedWith.name
-                                            |> Maybe.withDefault (Css.batch [])
+                                    (Css.before
+                                        [ Css.property "content" ("\" [start " ++ (Maybe.map (\name -> name) markedWith.name |> Maybe.withDefault "highlight") ++ "] \"")
+                                        , invisibleStyle
                                         ]
+                                        :: MediaQuery.highContrastMode
+                                            [ Maybe.map
+                                                (\name ->
+                                                    Css.before
+                                                        [ Css.property "content" ("\"[" ++ name ++ "] \"")
+                                                        ]
+                                                )
+                                                markedWith.name
+                                                |> Maybe.withDefault (Css.batch [])
+                                            ]
                                         :: markedWith.startGroupClass
                                     )
-                                , Css.Global.selector ":last-child" markedWith.endGroupClass
+                                , Css.Global.selector ":last-child"
+                                    (Css.after
+                                        [ Css.property "content" ("\" [end " ++ (Maybe.map (\name -> name) markedWith.name |> Maybe.withDefault "highlight") ++ "] \"")
+                                        , invisibleStyle
+                                        ]
+                                        :: markedWith.endGroupClass
+                                    )
                                 ]
                             ]
                         ]
