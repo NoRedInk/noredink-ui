@@ -10,18 +10,24 @@ import Accessibility.Styled.Aria as Aria
 import Html.Styled exposing (..)
 import Html.Styled.Events.Extra exposing (onClickPreventDefaultAndStopPropagation)
 import Nri.MultiHighlighter.Styles as Styles exposing (RowTheme, class, classList)
-import Nri.MultiHighlighter.Types exposing (Config, Model, Tool(..))
 import Nri.Ui.Html.V3 exposing (viewIf)
 
 
-{-| View renders each marker and an eraser. This is usualy used with a Highlighter.
+{-| View renders each marker and an eraser. This is usually used with a Highlighter.
 -}
-view : Config tag msg -> Model tag extras -> Html msg
+view :
+    { onSetEraser : msg
+    , onChangeTag : tag -> msg
+    , getColor : tag -> RowTheme
+    , getName : tag -> String
+    }
+    -> { extras | currentTool : Maybe tag, tags : List tag }
+    -> Html msg
 view config model =
     let
         viewTagWithConfig : tag -> Html msg
         viewTagWithConfig tag =
-            viewTag config (model.currentTool == Marker tag) tag
+            viewTag config (model.currentTool == Just tag) tag
 
         eraserSelected : Bool
         eraserSelected =
@@ -35,14 +41,22 @@ view config model =
 staticTag : (a -> String) -> (a -> RowTheme) -> a -> Html msg
 staticTag getName getColor tag =
     li [ class [ Styles.Tag <| getColor tag ] ]
-        [ staticTool (getName tag) (Marker tag)
+        [ staticTool (getName tag) (Just tag)
         ]
 
 
-viewTag : Config tag msg -> Bool -> tag -> Html msg
+viewTag :
+    { onSetEraser : msg
+    , onChangeTag : tag -> msg
+    , getColor : tag -> RowTheme
+    , getName : tag -> String
+    }
+    -> Bool
+    -> tag
+    -> Html msg
 viewTag { getColor, onChangeTag, getName } selected tag =
     li [ class [ Styles.Tag <| getColor tag ] ]
-        [ viewTool (getName tag) (onChangeTag tag) selected <| Marker tag
+        [ viewTool (getName tag) (onChangeTag tag) selected <| Just tag
         ]
 
 
@@ -92,7 +106,7 @@ active =
         []
 
 
-staticTool : String -> Tool tag -> Html msg
+staticTool : String -> Maybe tag -> Html msg
 staticTool name tool =
     span [ class [ Styles.ToolButtonContent ] ]
         [ span [ classList [ iconClassFromTool tool ] ] []
@@ -100,11 +114,11 @@ staticTool name tool =
         ]
 
 
-iconClassFromTool : Tool tag -> ( Styles.Classes, Bool )
+iconClassFromTool : Maybe tag -> ( Styles.Classes, Bool )
 iconClassFromTool tool =
     case tool of
-        Marker _ ->
+        Just _ ->
             ( Styles.IconMarker, True )
 
-        Eraser ->
+        Nothing ->
             ( Styles.IconEraser, True )
