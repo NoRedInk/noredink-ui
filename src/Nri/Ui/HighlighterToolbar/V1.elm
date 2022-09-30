@@ -12,6 +12,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events.Extra exposing (onClickPreventDefaultAndStopPropagation)
 import Nri.MultiHighlighter.Styles as Styles exposing (RowTheme, class, classList)
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
 import Nri.Ui.Html.V3 exposing (viewIf)
 
@@ -72,7 +73,7 @@ static getName getColor =
 staticTag : (a -> String) -> (a -> RowTheme) -> a -> Html msg
 staticTag getName getColor tag =
     toolContainer ("static-tag-" ++ getName tag)
-        (staticTool (getName tag) (Just tag))
+        (toolContent (getName tag) (Just tag))
 
 
 viewTag :
@@ -97,24 +98,19 @@ viewEraser onSetEraser selected =
 
 viewTool : String -> msg -> Bool -> Tool a -> Html msg
 viewTool name onClick selected tool =
-    -- Looks like according to this, https://bugzilla.mozilla.org/show_bug.cgi?id=984869#c2,
-    -- buttons don't react to CSS in a specified way.
-    -- So, we wrap the content in a div and style it instead of the button.
     button
-        [ class [ Styles.ToolButton ]
+        [ css
+            [ Css.backgroundColor Css.transparent
+            , Css.borderRadius (Css.px 0)
+            , Css.border (Css.px 0)
+            , Css.active [ Css.outlineStyle Css.none ]
+            , Css.focus [ Css.outlineStyle Css.none ]
+            , Css.cursor Css.pointer
+            ]
         , onClickPreventDefaultAndStopPropagation onClick
         , Aria.pressed (Just selected)
         ]
-        [ div
-            [ class [ Styles.ToolButtonContent ] ]
-            [ span
-                [ classList
-                    [ iconClassFromTool tool
-                    ]
-                ]
-                []
-            , span [ class [ Styles.Label ] ] [ text name ]
-            ]
+        [ toolContent name tool
         , viewIf (\() -> active) selected
         ]
 
@@ -126,11 +122,31 @@ active =
         []
 
 
-staticTool : String -> Maybe tag -> Html msg
-staticTool name tool =
-    span [ class [ Styles.ToolButtonContent ] ]
+toolContent : String -> Maybe tag -> Html msg
+toolContent name tool =
+    span
+        [ nriDescription "tool-content"
+        , css
+            [ Css.position Css.relative
+            , Css.height (Css.pct 100)
+            , Css.padding (Css.px 0)
+            , Css.paddingRight (Css.px 15)
+            , Css.display Css.inlineFlex
+            , Css.alignItems Css.center
+            ]
+        ]
         [ span [ classList [ iconClassFromTool tool ] ] []
-        , span [ class [ Styles.Label ] ] [ text name ]
+        , span
+            [ nriDescription "tool-label"
+            , css
+                [ Css.color Colors.navy
+                , Css.fontSize (Css.px 15)
+                , Css.marginLeft (Css.px 5)
+                , Css.fontWeight (Css.int 600)
+                , Fonts.baseFont
+                ]
+            ]
+            [ text name ]
         ]
 
 
