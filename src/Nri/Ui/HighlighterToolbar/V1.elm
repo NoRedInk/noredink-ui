@@ -15,6 +15,8 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
 import Nri.Ui.Html.V3 exposing (viewIf)
+import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| A colour combination to use for highlights.
@@ -82,7 +84,7 @@ static getName getColor tags =
 staticTag : (a -> String) -> (a -> RowTheme) -> a -> Html msg
 staticTag getName getColor tag =
     toolContainer ("static-tag-" ++ getName tag)
-        (toolContent (getName tag) (Just tag))
+        (toolContent (getName tag) (getColor tag) (Just tag))
 
 
 viewTag :
@@ -127,7 +129,7 @@ viewTool name onClick theme selected tool =
         , onClickPreventDefaultAndStopPropagation onClick
         , Aria.pressed (Just selected)
         ]
-        [ toolContent name tool
+        [ toolContent name theme tool
         , viewIf (\() -> active theme) selected
         ]
 
@@ -145,8 +147,8 @@ active palette_ =
         []
 
 
-toolContent : String -> Maybe tag -> Html msg
-toolContent name tool =
+toolContent : String -> RowTheme -> Maybe tag -> Html msg
+toolContent name palette_ tool =
     span
         [ nriDescription "tool-content"
         , css
@@ -158,16 +160,26 @@ toolContent name tool =
             , Css.alignItems Css.center
             ]
         ]
-        [ -- TODO: render the appropriate icon
-          --span [
-          --css case tool of
-          --Just _ ->
-          --    ( Styles.IconMarker, True )
-          --Nothing ->
-          --    ( Styles.IconEraser, True )
-          --] []
-          --,
-          span
+        [ case tool of
+            Just _ ->
+                span
+                    [ css
+                        [ Css.backgroundColor palette_.solid
+                        , Css.width (Css.px 38)
+                        , Css.height (Css.px 38)
+                        , Css.borderRadius (Css.pct 50)
+                        , Css.padding (Css.px 7)
+                        ]
+                    ]
+                    [ UiIcon.highlighter
+                        |> Svg.withColor Colors.white
+                        |> Svg.toHtml
+                    ]
+
+            Nothing ->
+                --( Styles.IconEraser, True )
+                text "TODO -- eraser icon"
+        , span
             [ nriDescription "tool-label"
             , css
                 [ Css.color Colors.navy
