@@ -44,6 +44,16 @@ example =
         []
     , view =
         \ellieLinkConfig state ->
+            let
+                getColor name =
+                    { solid = Colors.magenta
+                    , light = Colors.highlightYellow
+                    , name = name
+                    }
+
+                tags =
+                    [ "Claim", "Evidence", "Reasoning" ]
+            in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
                 , name = moduleName
@@ -56,7 +66,17 @@ example =
                 , toExampleCode = \_ -> []
                 }
             , Heading.h2 [ Heading.plaintext "Interactive Example" ]
+            , HighlighterToolbar.view
+                { onSetEraser = SetTool Nothing
+                , onChangeTag = SetTool << Just
+                , getColor = getColor
+                , getName = identity
+                }
+                { currentTool = state.currentTool
+                , tags = tags
+                }
             , Heading.h2 [ Heading.plaintext "Non-interactive examples" ]
+            , HighlighterToolbar.static identity getColor tags
             ]
     , categories = [ Buttons, Interactions ]
     , keyboardSupport = []
@@ -66,6 +86,7 @@ example =
 {-| -}
 type alias State =
     { settings : Control Settings
+    , currentTool : Maybe String
     }
 
 
@@ -77,6 +98,7 @@ init =
             controlSettings
     in
     { settings = settings
+    , currentTool = Nothing
     }
 
 
@@ -92,6 +114,7 @@ controlSettings =
 {-| -}
 type Msg
     = UpdateControls (Control Settings)
+    | SetTool (Maybe String)
 
 
 {-| -}
@@ -100,3 +123,6 @@ update msg state =
     case msg of
         UpdateControls settings ->
             ( { state | settings = settings }, Cmd.none )
+
+        SetTool tag ->
+            ( { state | currentTool = tag }, Cmd.none )

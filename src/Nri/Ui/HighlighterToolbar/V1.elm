@@ -1,8 +1,8 @@
-module Nri.Ui.HighlighterToolbar.V1 exposing (view, static)
+module Nri.Ui.HighlighterToolbar.V1 exposing (view, static, RowTheme)
 
 {-| Bar with markers for choosing how text will be highlighted in a highlighter.
 
-@docs view, static
+@docs view, static, RowTheme
 
 -}
 
