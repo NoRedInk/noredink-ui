@@ -7,10 +7,33 @@ module Nri.Ui.HighlighterToolbar.V1 exposing (view, static)
 -}
 
 import Accessibility.Styled.Aria as Aria
+import Css
 import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events.Extra exposing (onClickPreventDefaultAndStopPropagation)
 import Nri.MultiHighlighter.Styles as Styles exposing (RowTheme, class, classList)
+import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
 import Nri.Ui.Html.V3 exposing (viewIf)
+
+
+toolbar : List (Html msg) -> Html msg
+toolbar =
+    ul
+        [ nriDescription "tools"
+        , css
+            [ Css.displayFlex
+            , Css.listStyle Css.none
+            , Css.padding (Css.px 0)
+            , Css.margin (Css.px 0)
+            , Css.marginTop (Css.px 10)
+            , Css.flexWrap Css.wrap
+            ]
+        ]
+
+
+toolContainer : String -> Html msg -> Html msg
+toolContainer toolName tool =
+    li [ nriDescription toolName ] [ tool ]
 
 
 {-| View renders each marker and an eraser. This is usually used with a Highlighter.
@@ -33,16 +56,23 @@ view config model =
         eraserSelected =
             model.currentTool == Eraser
     in
-    ul [ class [ Styles.Tools ] ] <|
-        List.map viewTagWithConfig model.tags
+    toolbar
+        (List.map viewTagWithConfig model.tags
             ++ [ viewEraser config.onSetEraser eraserSelected ]
+        )
+
+
+{-| Render only tags and not eraser without triggering an action
+-}
+static : (a -> String) -> (a -> RowTheme) -> List a -> Html msg
+static getName getColor =
+    toolbar (List.map (staticTag getName getColor))
 
 
 staticTag : (a -> String) -> (a -> RowTheme) -> a -> Html msg
 staticTag getName getColor tag =
-    li [ class [ Styles.Tag <| getColor tag ] ]
-        [ staticTool (getName tag) (Just tag)
-        ]
+    toolContainer ("static-tag-" ++ getName tag)
+        (staticTool (getName tag) (Just tag))
 
 
 viewTag :
@@ -55,24 +85,14 @@ viewTag :
     -> tag
     -> Html msg
 viewTag { getColor, onChangeTag, getName } selected tag =
-    li [ class [ Styles.Tag <| getColor tag ] ]
-        [ viewTool (getName tag) (onChangeTag tag) selected <| Just tag
-        ]
-
-
-{-| Render only tags and not eraser without triggering an action
--}
-static : (a -> String) -> (a -> RowTheme) -> List a -> Html msg
-static getName getColor =
-    ul [ class [ Styles.Tools ] ]
-        << List.map (staticTag getName getColor)
+    toolContainer ("tag-" ++ getName tag)
+        (viewTool (getName tag) (onChangeTag tag) selected <| Just tag)
 
 
 viewEraser : msg -> Bool -> Html msg
 viewEraser onSetEraser selected =
-    li [ class [ Styles.Eraser ] ]
-        [ viewTool "Remove highlight" onSetEraser selected Eraser
-        ]
+    toolContainer "eraser"
+        (viewTool "Remove highlight" onSetEraser selected Eraser)
 
 
 viewTool : String -> msg -> Bool -> Tool a -> Html msg
