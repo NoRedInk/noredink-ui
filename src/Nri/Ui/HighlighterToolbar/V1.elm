@@ -7,14 +7,23 @@ module Nri.Ui.HighlighterToolbar.V1 exposing (view, static)
 -}
 
 import Accessibility.Styled.Aria as Aria
-import Css
+import Css exposing (Color)
+import EventExtras exposing (onClickPreventDefaultAndStopPropagation)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
-import Html.Styled.Events.Extra exposing (onClickPreventDefaultAndStopPropagation)
-import Nri.MultiHighlighter.Styles as Styles exposing (RowTheme, class, classList)
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
 import Nri.Ui.Html.V3 exposing (viewIf)
+
+
+{-| A colour combination to use for highlights.
+-}
+type alias RowTheme =
+    { solid : Color
+    , light : Color
+    , name : String
+    }
 
 
 toolbar : List (Html msg) -> Html msg
@@ -55,7 +64,7 @@ view config model =
 
         eraserSelected : Bool
         eraserSelected =
-            model.currentTool == Eraser
+            model.currentTool == Nothing
     in
     toolbar
         (List.map viewTagWithConfig model.tags
@@ -66,8 +75,8 @@ view config model =
 {-| Render only tags and not eraser without triggering an action
 -}
 static : (a -> String) -> (a -> RowTheme) -> List a -> Html msg
-static getName getColor =
-    toolbar (List.map (staticTag getName getColor))
+static getName getColor tags =
+    toolbar (List.map (staticTag getName getColor) tags)
 
 
 staticTag : (a -> String) -> (a -> RowTheme) -> a -> Html msg
@@ -87,17 +96,25 @@ viewTag :
     -> Html msg
 viewTag { getColor, onChangeTag, getName } selected tag =
     toolContainer ("tag-" ++ getName tag)
-        (viewTool (getName tag) (onChangeTag tag) selected <| Just tag)
+        (viewTool (getName tag) (onChangeTag tag) (getColor tag) selected <| Just tag)
 
 
 viewEraser : msg -> Bool -> Html msg
 viewEraser onSetEraser selected =
     toolContainer "eraser"
-        (viewTool "Remove highlight" onSetEraser selected Eraser)
+        (viewTool "Remove highlight"
+            onSetEraser
+            { light = Colors.gray75
+            , solid = Colors.white
+            , name = "eraser"
+            }
+            selected
+            Nothing
+        )
 
 
-viewTool : String -> msg -> Bool -> Tool a -> Html msg
-viewTool name onClick selected tool =
+viewTool : String -> msg -> RowTheme -> Bool -> Maybe tag -> Html msg
+viewTool name onClick theme selected tool =
     button
         [ css
             [ Css.backgroundColor Css.transparent
@@ -111,14 +128,20 @@ viewTool name onClick selected tool =
         , Aria.pressed (Just selected)
         ]
         [ toolContent name tool
-        , viewIf (\() -> active) selected
+        , viewIf (\() -> active theme) selected
         ]
 
 
-active : Html msg
-active =
+active : RowTheme -> Html msg
+active palette_ =
     div
-        [ class [ Styles.ActiveTool ] ]
+        [ nriDescription "active-tool"
+        , css
+            [ Css.width (Css.px 38)
+            , Css.height (Css.px 4)
+            , Css.backgroundColor palette_.light
+            ]
+        ]
         []
 
 
@@ -135,8 +158,16 @@ toolContent name tool =
             , Css.alignItems Css.center
             ]
         ]
-        [ span [ classList [ iconClassFromTool tool ] ] []
-        , span
+        [ -- TODO: render the appropriate icon
+          --span [
+          --css case tool of
+          --Just _ ->
+          --    ( Styles.IconMarker, True )
+          --Nothing ->
+          --    ( Styles.IconEraser, True )
+          --] []
+          --,
+          span
             [ nriDescription "tool-label"
             , css
                 [ Css.color Colors.navy
@@ -148,13 +179,3 @@ toolContent name tool =
             ]
             [ text name ]
         ]
-
-
-iconClassFromTool : Maybe tag -> ( Styles.Classes, Bool )
-iconClassFromTool tool =
-    case tool of
-        Just _ ->
-            ( Styles.IconMarker, True )
-
-        Nothing ->
-            ( Styles.IconEraser, True )

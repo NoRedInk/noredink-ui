@@ -19,6 +19,7 @@ import Examples.Divider as Divider
 import Examples.Fonts as Fonts
 import Examples.Heading as Heading
 import Examples.Highlighter as Highlighter
+import Examples.HighlighterToolbar as HighlighterToolbar
 import Examples.Loading as Loading
 import Examples.Logo as Logo
 import Examples.Menu as Menu
@@ -385,6 +386,25 @@ all =
             (\msg ->
                 case msg of
                     HighlighterState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , HighlighterToolbar.example
+        |> Example.wrapMsg HighlighterToolbarMsg
+            (\msg ->
+                case msg of
+                    HighlighterToolbarMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState HighlighterToolbarState
+            (\msg ->
+                case msg of
+                    HighlighterToolbarState childState ->
                         Just childState
 
                     _ ->
@@ -887,6 +907,7 @@ type State
     | FontsState Fonts.State
     | HeadingState Heading.State
     | HighlighterState Highlighter.State
+    | HighlighterToolbarState HighlighterToolbar.State
     | LoadingState Loading.State
     | LogoState Logo.State
     | MenuState Menu.State
@@ -933,6 +954,7 @@ type Msg
     | FontsMsg Fonts.Msg
     | HeadingMsg Heading.Msg
     | HighlighterMsg Highlighter.Msg
+    | HighlighterToolbarMsg HighlighterToolbar.Msg
     | LoadingMsg Loading.Msg
     | LogoMsg Logo.Msg
     | MenuMsg Menu.Msg

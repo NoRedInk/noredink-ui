@@ -1,4 +1,10 @@
-module EventExtras exposing (onClickForLinkWithHref, onClickPreventDefaultForLinkWithHref, onClickStopPropagation, onKeyDownPreventDefault)
+module EventExtras exposing
+    ( onClickForLinkWithHref
+    , onClickPreventDefaultAndStopPropagation
+    , onClickPreventDefaultForLinkWithHref
+    , onClickStopPropagation
+    , onKeyDownPreventDefault
+    )
 
 import Html.Styled as Html
 import Html.Styled.Events as Events
@@ -99,3 +105,20 @@ onKeyDownPreventDefault : List (Decoder msg) -> Html.Attribute msg
 onKeyDownPreventDefault decoders =
     Events.preventDefaultOn "keydown"
         (Json.Decode.map (\d -> ( d, True )) (Json.Decode.oneOf decoders))
+
+
+{-| -}
+onClickPreventDefaultAndStopPropagation : msg -> Html.Attribute msg
+onClickPreventDefaultAndStopPropagation msg =
+    onWithPreventDefaultAndStopPropagation "click" msg
+
+
+{-| -}
+onWithPreventDefaultAndStopPropagation : String -> msg -> Html.Attribute msg
+onWithPreventDefaultAndStopPropagation name msg =
+    Events.custom name <|
+        Json.Decode.succeed
+            { preventDefault = True
+            , stopPropagation = True
+            , message = msg
+            }
