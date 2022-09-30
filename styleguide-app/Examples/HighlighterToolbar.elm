@@ -8,15 +8,10 @@ module Examples.HighlighterToolbar exposing (Msg, State, example)
 
 import Category exposing (Category(..))
 import Code
-import CommonControls
 import Css exposing (Color)
 import Debug.Control as Control exposing (Control)
-import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Examples.Colors
-import Html.Styled exposing (..)
-import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.HighlighterToolbar.V1 as HighlighterToolbar
