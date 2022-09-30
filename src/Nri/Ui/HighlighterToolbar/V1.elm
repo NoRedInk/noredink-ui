@@ -162,23 +162,18 @@ toolContent name palette_ tool =
         ]
         [ case tool of
             Just _ ->
-                span
-                    [ css
-                        [ Css.backgroundColor palette_.solid
-                        , Css.width (Css.px 38)
-                        , Css.height (Css.px 38)
-                        , Css.borderRadius (Css.pct 50)
-                        , Css.padding (Css.px 7)
-                        ]
-                    ]
-                    [ UiIcon.highlighter
-                        |> Svg.withColor Colors.white
-                        |> Svg.toHtml
-                    ]
+                toolIcon
+                    { background = palette_.solid
+                    , border = palette_.solid
+                    , icon = Svg.withColor Colors.white UiIcon.highlighter
+                    }
 
             Nothing ->
-                --( Styles.IconEraser, True )
-                text "TODO -- eraser icon"
+                toolIcon
+                    { background = palette_.solid
+                    , border = Colors.gray75
+                    , icon = Svg.withColor Colors.gray20 UiIcon.eraser
+                    }
         , span
             [ nriDescription "tool-label"
             , css
@@ -190,4 +185,20 @@ toolContent name palette_ tool =
                 ]
             ]
             [ text name ]
+        ]
+
+
+toolIcon : { background : Color, border : Color, icon : Svg.Svg } -> Html msg
+toolIcon config =
+    span
+        [ css
+            [ Css.backgroundColor config.background
+            , Css.width (Css.px 38)
+            , Css.height (Css.px 38)
+            , Css.borderRadius (Css.pct 50)
+            , Css.padding (Css.px 7)
+            , Css.border3 (Css.px 1) Css.solid config.border
+            ]
+        ]
+        [ Svg.toHtml config.icon
         ]
