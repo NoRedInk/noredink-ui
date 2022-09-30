@@ -615,7 +615,7 @@ groupContainer viewSegment highlightables =
                             , Css.Global.children
                                 [ Css.Global.selector ":first-child"
                                     (Css.before
-                                        [ Css.property "content" ("\" [start" ++ (Maybe.map (\name -> " " ++ name) markedWith.name |> Maybe.withDefault "") ++ "] \"")
+                                        [ Css.property "content" ("\" [start " ++ (Maybe.map (\name -> name) markedWith.name |> Maybe.withDefault "highlight") ++ "] \"")
                                         , invisibleStyle
                                         ]
                                         :: MediaQuery.highContrastMode
@@ -632,7 +632,7 @@ groupContainer viewSegment highlightables =
                                     )
                                 , Css.Global.selector ":last-child"
                                     (Css.after
-                                        [ Css.property "content" ("\" [end" ++ (Maybe.map (\name -> " " ++ name) markedWith.name |> Maybe.withDefault "") ++ "] \"")
+                                        [ Css.property "content" ("\" [end " ++ (Maybe.map (\name -> name) markedWith.name |> Maybe.withDefault "highlight") ++ "] \"")
                                         , invisibleStyle
                                         ]
                                         :: markedWith.endGroupClass
