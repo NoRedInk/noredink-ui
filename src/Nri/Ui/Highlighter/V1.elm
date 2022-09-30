@@ -59,6 +59,7 @@ TODO: Add documentation about how to wire in event listeners and subscriptions s
 
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
+import Accessibility.Styled.Style exposing (invisibleStyle)
 import Browser.Dom as Dom
 import Css
 import Css.Global
@@ -613,23 +614,10 @@ groupContainer viewSegment highlightables =
                             [ Css.backgroundColor Css.transparent
                             , Css.Global.children
                                 [ Css.Global.selector ":first-child"
-                                    ((Maybe.map
-                                        (\name ->
-                                            Css.before
-                                                (Css.property "content" ("\" [start " ++ name ++ "] \"")
-                                                    :: srOnlyStyles
-                                                )
-                                        )
-                                        markedWith.name
-                                        |> Maybe.withDefault
-                                            (Css.batch
-                                                [ Css.before
-                                                    (Css.property "content" "\" [start] \""
-                                                        :: srOnlyStyles
-                                                    )
-                                                ]
-                                            )
-                                     )
+                                    (Css.before
+                                        [ Css.property "content" ("\" [start" ++ (Maybe.map (\name -> " " ++ name) markedWith.name |> Maybe.withDefault "") ++ "] \"")
+                                        , invisibleStyle
+                                        ]
                                         :: MediaQuery.highContrastMode
                                             [ Maybe.map
                                                 (\name ->
@@ -643,23 +631,10 @@ groupContainer viewSegment highlightables =
                                         :: markedWith.startGroupClass
                                     )
                                 , Css.Global.selector ":last-child"
-                                    ((Maybe.map
-                                        (\name ->
-                                            Css.after
-                                                (Css.property "content" ("\" [end " ++ name ++ "] \"")
-                                                    :: srOnlyStyles
-                                                )
-                                        )
-                                        markedWith.name
-                                        |> Maybe.withDefault
-                                            (Css.batch
-                                                [ Css.after
-                                                    (Css.property "content" "\" [end] \""
-                                                        :: srOnlyStyles
-                                                    )
-                                                ]
-                                            )
-                                     )
+                                    (Css.after
+                                        [ Css.property "content" ("\" [end" ++ (Maybe.map (\name -> " " ++ name) markedWith.name |> Maybe.withDefault "") ++ "] \"")
+                                        , invisibleStyle
+                                        ]
                                         :: markedWith.endGroupClass
                                     )
                                 ]
@@ -854,18 +829,3 @@ customToHtmlAttributes =
                 Highlightable.Data name value ->
                     attribute ("data-" ++ name) value
         )
-
-
-srOnlyStyles : List Css.Style
-srOnlyStyles =
-    [ Css.important (Css.position Css.absolute)
-    , Css.important (Css.width (Css.px 1))
-    , Css.important (Css.height (Css.px 1))
-    , Css.important (Css.padding Css.zero)
-    , Css.important (Css.margin (Css.px -1))
-    , Css.important (Css.overflow Css.hidden)
-    , Css.important (Css.property "clip" "rect(0, 0, 0, 0)")
-    , Css.important (Css.property "clip-path" "inset(50%)")
-    , Css.important (Css.whiteSpace Css.noWrap)
-    , Css.important (Css.borderWidth Css.zero)
-    ]
