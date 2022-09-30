@@ -143,10 +143,11 @@ all =
         , ( "mail", UiIcon.mail, [] )
         ]
       )
-    , ( "Writing Utensils"
+    , ( "Writing Implements"
       , [ ( "edit", UiIcon.edit, [] )
         , ( "pen", UiIcon.pen, [] )
         , ( "highlighter", UiIcon.highlighter, [] )
+        , ( "eraser", UiIcon.eraser, [] )
         ]
       )
     , ( "Arrows"
