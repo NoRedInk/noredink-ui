@@ -69,15 +69,20 @@ loading_ withCss =
 
 
 {-| -}
-spinning : Css.Color -> Html msg
-spinning color =
-    Html.div []
+spinning : Css.Px -> Css.Color -> Html msg
+spinning size color =
+    Html.div
+        []
         [ spinningDots
             |> Svg.withCss [ MediaQuery.anyMotion [ Css.display Css.none ] ]
+            |> Svg.withWidth size
+            |> Svg.withHeight size
             |> Svg.toHtml
         , spinningPencil
             |> Svg.withColor color
             |> Svg.withCss [ MediaQuery.prefersReducedMotion [ Css.display Css.none ] ]
+            |> Svg.withWidth size
+            |> Svg.withHeight size
             |> Svg.toHtml
         ]
 

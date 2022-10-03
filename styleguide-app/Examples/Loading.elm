@@ -113,7 +113,7 @@ example =
                 Html.text ""
             , button "Loading.fadeInPage" ShowLoadingFadeIn showLoadingFadeIn
             , if showSpinners then
-                Loading.spinning Colors.navy
+                Loading.spinning (Css.px 140) Colors.navy
 
               else
                 button "Loading.spinning Colors.navy" ShowSpinners showLoadingFadeIn
