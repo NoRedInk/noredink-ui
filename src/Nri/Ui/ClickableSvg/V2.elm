@@ -9,7 +9,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
     , primary, secondary, tertiary, danger, dangerSecondary
     , custom, nriDescription, testId, id
     , css, notMobileCss, mobileCss, quizEngineMobileCss
-    , iconForMobile
+    , iconForMobile, iconForQuizEngineMobile, iconForNarrowMobile
     , small, medium, large
     )
 
@@ -19,7 +19,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
 # Patch changes:
 
     - adds `nriDescription`, `testId`, and `id` helpers
-    - adds `iconForMobile`
+    - adds `iconForMobile`, `iconForQuizEngineMobile`, `iconForNarrowMobile`
 
 
 # Create a button or link
@@ -55,7 +55,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
 ### CSS
 
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss
-@docs iconForMobile
+@docs iconForMobile, iconForQuizEngineMobile, iconForNarrowMobile
 
 
 ### DEPRECATED
@@ -461,6 +461,18 @@ iconForMobile icon =
     set (\config -> { config | iconForMobile = Just icon })
 
 
+{-| -}
+iconForQuizEngineMobile : Svg -> Attribute msg
+iconForQuizEngineMobile icon =
+    set (\config -> { config | iconForQuizEngineMobile = Just icon })
+
+
+{-| -}
+iconForNarrowMobile : Svg -> Attribute msg
+iconForNarrowMobile icon =
+    set (\config -> { config | iconForNarrowMobile = Just icon })
+
+
 
 -- INTERNALS
 
@@ -479,6 +491,8 @@ build label icon =
         , label = label
         , icon = icon
         , iconForMobile = Nothing
+        , iconForQuizEngineMobile = Nothing
+        , iconForNarrowMobile = Nothing
         , disabled = False
         , size = Small
         , width = Nothing
@@ -499,6 +513,8 @@ type alias ButtonOrLinkAttributes msg =
     , label : String
     , icon : Svg
     , iconForMobile : Maybe Svg
+    , iconForQuizEngineMobile : Maybe Svg
+    , iconForNarrowMobile : Maybe Svg
     , disabled : Bool
     , size : Size
     , width : Maybe Float
@@ -608,26 +624,63 @@ renderIcons config includeBorder =
             , Css.margin Css.auto
             ]
 
-        hideFor breakpoint =
+        renderUnless breakpoints =
             Svg.withCss
-                [ Css.Media.withMedia [ breakpoint ]
+                [ Css.batch iconStyles
+                , Css.Media.withMedia breakpoints
                     [ Css.display Css.none
                     ]
                 ]
+                >> Svg.toHtml
     in
-    case config.iconForMobile of
-        Just iconForMobile_ ->
-            [ config.icon
-                |> Svg.withCss iconStyles
-                |> hideFor MediaQuery.mobile
-                |> Svg.toHtml
-            , iconForMobile_
-                |> Svg.withCss iconStyles
-                |> hideFor MediaQuery.notMobile
-                |> Svg.toHtml
+    case ( config.iconForNarrowMobile, config.iconForQuizEngineMobile, config.iconForMobile ) of
+        ( Just iconForNarrowMobile_, Just iconForQuizEngineMobile_, Nothing ) ->
+            [ renderUnless [ MediaQuery.quizEngineMobile ] config.icon
+            , renderUnless [ MediaQuery.narrowMobile, MediaQuery.notQuizEngineMobile ]
+                iconForQuizEngineMobile_
+            , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
             ]
 
-        Nothing ->
+        ( Just iconForNarrowMobile_, Just iconForQuizEngineMobile_, Just iconForMobile_ ) ->
+            [ renderUnless [ MediaQuery.mobile ] config.icon
+            , renderUnless [ MediaQuery.quizEngineMobile, MediaQuery.notMobile ]
+                iconForMobile_
+            , renderUnless [ MediaQuery.narrowMobile, MediaQuery.notQuizEngineMobile ]
+                iconForQuizEngineMobile_
+            , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
+            ]
+
+        ( Just iconForNarrowMobile_, Nothing, Just iconForMobile_ ) ->
+            [ renderUnless [ MediaQuery.mobile ] config.icon
+            , renderUnless [ MediaQuery.narrowMobile, MediaQuery.notMobile ] iconForMobile_
+            , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
+            ]
+
+        ( Just iconForNarrowMobile_, Nothing, Nothing ) ->
+            [ renderUnless [ MediaQuery.narrowMobile ] config.icon
+            , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
+            ]
+
+        ( Nothing, Just iconForQuizEngineMobile_, Nothing ) ->
+            [ renderUnless [ MediaQuery.quizEngineMobile ] config.icon
+            , renderUnless [ MediaQuery.notQuizEngineMobile ]
+                iconForQuizEngineMobile_
+            ]
+
+        ( Nothing, Just iconForQuizEngineMobile_, Just iconForMobile_ ) ->
+            [ renderUnless [ MediaQuery.mobile ] config.icon
+            , renderUnless [ MediaQuery.quizEngineMobile, MediaQuery.notMobile ]
+                iconForMobile_
+            , renderUnless [ MediaQuery.notQuizEngineMobile ]
+                iconForQuizEngineMobile_
+            ]
+
+        ( Nothing, Nothing, Just iconForMobile_ ) ->
+            [ renderUnless [ MediaQuery.mobile ] config.icon
+            , renderUnless [ MediaQuery.notMobile ] iconForMobile_
+            ]
+
+        ( Nothing, Nothing, Nothing ) ->
             [ config.icon
                 |> Svg.withCss iconStyles
                 |> Svg.toHtml
