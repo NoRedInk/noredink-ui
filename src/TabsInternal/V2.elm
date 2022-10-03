@@ -82,6 +82,7 @@ viewTabs : Config id msg -> Html msg
 viewTabs config =
     Html.div
         [ Role.tabList
+        , Aria.owns (List.map (tabToId << .idString) config.tabs)
         , Attributes.css config.tabListStyles
         ]
         (List.indexedMap (viewTab_ config) config.tabs)
