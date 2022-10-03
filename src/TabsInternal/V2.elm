@@ -139,6 +139,7 @@ viewTab_ config index tab =
                          Attributes.disabled (not isSelected && tab.disabled)
                        , Aria.selected isSelected
                        , Role.tab
+                       , Aria.controls [ tabToBodyId tab.idString ]
                        , Attributes.id (tabToId tab.idString)
                        , Key.onKeyUpPreventDefault (keyEvents config tab)
                        ]

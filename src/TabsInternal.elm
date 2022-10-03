@@ -102,6 +102,7 @@ viewTab_ config tab =
             ++ [ Attributes.tabindex tabIndex
                , Aria.selected isSelected
                , Role.tab
+               , Aria.controls [ tabToBodyId tab.idString ]
                , Attributes.id (tabToId tab.idString)
                , Events.onFocus (config.onSelect tab.id)
                , Events.on "keyup" <|
