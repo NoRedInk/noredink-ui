@@ -141,8 +141,8 @@ spinningDots =
     ]
         |> List.indexedMap circle
         |> Svg.init "0 0 12.54 12.54"
-        |> Svg.withWidth (Css.px 100)
-        |> Svg.withHeight (Css.px 100)
+        |> Svg.withWidth (Css.px 140)
+        |> Svg.withHeight (Css.px 140)
 
 
 circlingCss : List Css.Style
