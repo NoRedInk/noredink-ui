@@ -519,8 +519,11 @@ radioInputIcon config =
                 ( _, True, _ ) ->
                     lockedSvg
 
-                ( True, _, _ ) ->
-                    unselectedSvg
+                ( True, _, True ) ->
+                    selectedDisabledSvg
+
+                ( True, _, False ) ->
+                    unselectedDisabledSvg
 
                 ( _, False, True ) ->
                     selectedSvg
@@ -601,6 +604,85 @@ unselectedSvg =
 
 selectedSvg : Svg
 selectedSvg =
+    Nri.Ui.Svg.V1.init "0 0 27 27"
+        [ Svg.defs []
+            [ Svg.rect [ SvgAttributes.id "selected-path-1", SvgAttributes.x "0", SvgAttributes.y "0", SvgAttributes.width "27", SvgAttributes.height "27", SvgAttributes.rx "13.5" ] []
+            , Svg.filter
+                [ SvgAttributes.id "selected-filter-2", SvgAttributes.x "-3.7%", SvgAttributes.y "-3.7%", SvgAttributes.width "107.4%", SvgAttributes.height "107.4%", SvgAttributes.filterUnits "objectBoundingBox" ]
+                [ Svg.feOffset [ SvgAttributes.dx "0", SvgAttributes.dy "2", SvgAttributes.in_ "SourceAlpha", SvgAttributes.result "shadowOffsetInner1" ] [], Svg.feComposite [ SvgAttributes.in_ "shadowOffsetInner1", SvgAttributes.in2 "SourceAlpha", SvgAttributes.operator "arithmetic", SvgAttributes.k2 "-1", SvgAttributes.k3 "1", SvgAttributes.result "shadowInnerInner1" ] [], Svg.feColorMatrix [ SvgAttributes.values "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0", SvgAttributes.in_ "shadowInnerInner1" ] [] ]
+            ]
+        , Svg.g
+            [ SvgAttributes.stroke "none"
+            , SvgAttributes.strokeWidth "1"
+            , SvgAttributes.fill "none"
+            , SvgAttributes.fillRule "evenodd"
+            ]
+            [ Svg.g []
+                [ Svg.g []
+                    [ Svg.use
+                        [ SvgAttributes.fill "#D4F0FF"
+                        , SvgAttributes.fillRule "evenodd"
+                        , SvgAttributes.xlinkHref "#selected-path-1"
+                        ]
+                        []
+                    , Svg.use
+                        [ SvgAttributes.fill "black"
+                        , SvgAttributes.fillOpacity "1"
+                        , SvgAttributes.filter "url(#selected-filter-2)"
+                        , SvgAttributes.xlinkHref "#selected-path-1"
+                        ]
+                        []
+                    ]
+                , Svg.circle
+                    [ SvgAttributes.fill "#146AFF"
+                    , SvgAttributes.cx "13.5"
+                    , SvgAttributes.cy "13.5"
+                    , SvgAttributes.r "6.3"
+                    ]
+                    []
+                ]
+            ]
+        ]
+        |> withImageBorder Colors.azure
+
+
+unselectedDisabledSvg : Svg
+unselectedDisabledSvg =
+    Nri.Ui.Svg.V1.init "0 0 27 27"
+        [ Svg.defs []
+            [ Svg.rect [ SvgAttributes.id "unselected-path-1", SvgAttributes.x "0", SvgAttributes.y "0", SvgAttributes.width "27", SvgAttributes.height "27", SvgAttributes.rx "13.5" ] []
+            , Svg.filter [ SvgAttributes.id "unselected-filter-2", SvgAttributes.x "-3.7%", SvgAttributes.y "-3.7%", SvgAttributes.width "107.4%", SvgAttributes.height "107.4%", SvgAttributes.filterUnits "objectBoundingBox" ] [ Svg.feOffset [ SvgAttributes.dx "0", SvgAttributes.dy "2", SvgAttributes.in_ "SourceAlpha", SvgAttributes.result "shadowOffsetInner1" ] [], Svg.feComposite [ SvgAttributes.in_ "shadowOffsetInner1", SvgAttributes.in2 "SourceAlpha", SvgAttributes.operator "arithmetic", SvgAttributes.k2 "-1", SvgAttributes.k3 "1", SvgAttributes.result "shadowInnerInner1" ] [], Svg.feColorMatrix [ SvgAttributes.values "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0", SvgAttributes.in_ "shadowInnerInner1" ] [] ]
+            ]
+        , Svg.g
+            [ SvgAttributes.stroke "none"
+            , SvgAttributes.strokeWidth "1"
+            , SvgAttributes.fill "none"
+            , SvgAttributes.fillRule "evenodd"
+            ]
+            [ Svg.g []
+                [ Svg.g []
+                    [ Svg.use
+                        [ SvgAttributes.fill "#EBEBEB"
+                        , SvgAttributes.fillRule "evenodd"
+                        , SvgAttributes.xlinkHref "#unselected-path-1"
+                        ]
+                        []
+                    , Svg.use
+                        [ SvgAttributes.fill "black"
+                        , SvgAttributes.fillOpacity "1"
+                        , SvgAttributes.filter "url(#unselected-filter-2)"
+                        , SvgAttributes.xlinkHref "#unselected-path-1"
+                        ]
+                        []
+                    ]
+                ]
+            ]
+        ]
+        |> withImageBorder Colors.gray75
+
+
+selectedDisabledSvg : Svg
+selectedDisabledSvg =
     Nri.Ui.Svg.V1.init "0 0 27 27"
         [ Svg.defs []
             [ Svg.rect [ SvgAttributes.id "selected-path-1", SvgAttributes.x "0", SvgAttributes.y "0", SvgAttributes.width "27", SvgAttributes.height "27", SvgAttributes.rx "13.5" ] []
