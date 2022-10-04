@@ -247,6 +247,13 @@ viewSwitch config =
 
         shadowBoxId =
             config.id ++ "-shadow-box"
+
+        disabledPrimaryCircleColor =
+            if config.isSelected then
+                Colors.gray45
+
+            else
+                Colors.gray75
     in
     Nri.Ui.Svg.V1.init "0 0 43 32"
         [ Svg.defs []
@@ -333,14 +340,14 @@ viewSwitch config =
                     , SvgAttributes.r "14.5"
                     , SvgAttributes.fill
                         (if config.isDisabled then
-                            Colors.purple
+                            disabledPrimaryCircleColor
 
                          else
                             Colors.white
                         ).value
                     , SvgAttributes.css
                         [ if config.isDisabled then
-                            stroke Colors.red
+                            stroke disabledPrimaryCircleColor
 
                           else if config.isSelected then
                             stroke Colors.azure
