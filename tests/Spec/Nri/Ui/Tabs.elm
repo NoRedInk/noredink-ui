@@ -196,6 +196,7 @@ update msg model =
             Tuple.first ( model, Cmd.none )
 
 
+view : State -> Html Msg
 view model =
     Tabs.view
         { title = Nothing
