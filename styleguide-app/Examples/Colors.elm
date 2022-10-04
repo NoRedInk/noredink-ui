@@ -20,7 +20,6 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Text.V6 as Text
-import SolidColor exposing (highContrast)
 
 
 type alias ColorExample =
@@ -183,6 +182,10 @@ viewColors colors =
 
 viewColor : ColorExample -> Html.Html msg
 viewColor ( name, color, description ) =
+    let
+        highContrastColor =
+            Nri.Ui.Colors.Extra.highContrastColor color
+    in
     Html.div
         [ css
             [ -- Dimensions
@@ -201,10 +204,7 @@ viewColor ( name, color, description ) =
 
             -- Colors
             , Css.backgroundColor color
-            , Nri.Ui.Colors.Extra.fromCssColor color
-                |> highContrast
-                |> Nri.Ui.Colors.Extra.toCssColor
-                |> Css.color
+            , Css.color highContrastColor
             ]
         ]
         [ Html.div

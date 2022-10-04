@@ -2,6 +2,7 @@ module Nri.Ui.Colors.Extra exposing
     ( toCssColor, fromCssColor
     , withAlpha
     , toCssString
+    , highContrastColor
     )
 
 {-| Helpers for working with colors.
@@ -12,12 +13,19 @@ module Nri.Ui.Colors.Extra exposing
 @docs toCssColor, fromCssColor
 @docs withAlpha
 @docs toCssString
+@docs highContrastColor
 
 -}
 
 import Css
 import SolidColor exposing (SolidColor)
 import TransparentColor
+
+
+{-| -}
+highContrastColor : Css.Color -> Css.Color
+highContrastColor =
+    fromCssColor >> SolidColor.highContrast >> toCssColor
 
 
 {-| -}
