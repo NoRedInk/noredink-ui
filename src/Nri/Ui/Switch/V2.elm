@@ -196,7 +196,13 @@ view { label, id } attrs =
         , Html.span
             [ Attributes.css
                 [ Css.fontWeight (Css.int 600)
-                , Css.color Colors.navy
+                , Css.color
+                    (if not config.isDisabled then
+                        Colors.navy
+
+                     else
+                        Colors.gray45
+                    )
                 , Css.paddingLeft (Css.px 5)
                 , Fonts.baseFont
                 , Css.batch config.labelCss
