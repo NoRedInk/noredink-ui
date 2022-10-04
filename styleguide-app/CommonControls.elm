@@ -4,7 +4,7 @@ module CommonControls exposing
     , icon, iconNotCheckedByDefault
     , uiIcon, rotatedUiIcon
     , customIcon
-    , color
+    , color, rotatedColor
     , content
     , httpError
     , romeoAndJulietQuotation
@@ -18,7 +18,7 @@ module CommonControls exposing
 @docs icon, iconNotCheckedByDefault
 @docs uiIcon, rotatedUiIcon
 @docs customIcon
-@docs color
+@docs color, rotatedColor
 
 
 ### Content
@@ -45,6 +45,16 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 color : Control ( String, Css.Color )
 color =
     choice "Colors" Examples.Colors.all
+
+
+rotatedColor : Int -> Control ( String, Css.Color )
+rotatedColor by =
+    Examples.Colors.all
+        |> List.map
+            (\( name, value ) ->
+                ( name, Control.value ( "Colors." ++ name, value ) )
+            )
+        |> ControlExtra.rotatedChoice by
 
 
 premiumDisplay : Control ( String, PremiumDisplay )
