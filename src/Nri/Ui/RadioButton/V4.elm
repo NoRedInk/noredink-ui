@@ -391,7 +391,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                     [ Html.span
                         [ css <|
                             if config.hideLabel then
-                                [ Css.width (px 1)
+                                [ Css.width zero
                                 , overflow Css.hidden
                                 , margin (px -1)
                                 , padding (px 0)
