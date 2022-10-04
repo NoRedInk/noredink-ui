@@ -286,7 +286,7 @@ view label attributes =
                     ( Css.num 0.5, True )
 
                 ( True, _ ) ->
-                    ( Css.num 0.4, True )
+                    ( Css.num 1, True )
     in
     Html.div
         [ css
