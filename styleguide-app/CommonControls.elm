@@ -4,7 +4,7 @@ module CommonControls exposing
     , icon, iconNotCheckedByDefault
     , uiIcon, rotatedUiIcon
     , customIcon
-    , color, rotatedColor
+    , color, specificColor
     , content
     , httpError
     , romeoAndJulietQuotation
@@ -18,7 +18,7 @@ module CommonControls exposing
 @docs icon, iconNotCheckedByDefault
 @docs uiIcon, rotatedUiIcon
 @docs customIcon
-@docs color, rotatedColor
+@docs color, specificColor
 
 
 ### Content
@@ -47,14 +47,14 @@ color =
     choice "Colors" Examples.Colors.all
 
 
-rotatedColor : Int -> Control ( String, Css.Color )
-rotatedColor by =
+specificColor : String -> Control ( String, Css.Color )
+specificColor match =
     Examples.Colors.all
         |> List.map
             (\( name, value ) ->
                 ( name, Control.value ( "Colors." ++ name, value ) )
             )
-        |> ControlExtra.rotatedChoice by
+        |> ControlExtra.specificChoice match
 
 
 premiumDisplay : Control ( String, PremiumDisplay )

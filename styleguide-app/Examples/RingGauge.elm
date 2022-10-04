@@ -174,7 +174,7 @@ type alias Settings =
 controlSettings : Control Settings
 controlSettings =
     Control.record Settings
-        |> Control.field "backgroundColor" (CommonControls.rotatedColor 7)
-        |> Control.field "emptyColor" (CommonControls.rotatedColor 10)
-        |> Control.field "filledColor" (CommonControls.rotatedColor 13)
+        |> Control.field "backgroundColor" (CommonControls.specificColor "white")
+        |> Control.field "emptyColor" (CommonControls.specificColor "gray92")
+        |> Control.field "filledColor" (CommonControls.specificColor "cornflower")
         |> Control.field "percentage" (ControlExtra.float 15)
