@@ -82,6 +82,7 @@ uncategorizedColors =
     , ( "gray85", Colors.gray85, "Alternate for divider lines and container borders" )
     , ( "gray92", Colors.gray92, "Dvdrs/rules, incomplete assmt, inactive tabs/dsbld buttons" )
     , ( "gray96", Colors.gray96, "backgrounds/alternating rows" )
+    , ( "white", Colors.white, "backgrounds, text on dark backgrounds" )
     , ( "navy", Colors.navy, "Headings, indented compts, labels, tooltip bckgrnds" )
     , ( "azure", Colors.azure, "Buttons, other clickable stuff, links" )
     , ( "azureDark", Colors.azureDark, "Azure button shadow" )
