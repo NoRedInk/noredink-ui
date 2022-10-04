@@ -306,7 +306,11 @@ viewSwitch config =
                     [ SvgAttributes.xlinkHref ("#" ++ shadowBoxId)
                     , SvgAttributes.css
                         [ if config.isDisabled then
-                            Css.fill Colors.mustard
+                            if config.isSelected then
+                                Css.fill Colors.gray75
+
+                            else
+                                Css.fill Colors.gray85
 
                           else if config.isSelected then
                             Css.fill Colors.glacier
