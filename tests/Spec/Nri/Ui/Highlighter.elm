@@ -28,7 +28,7 @@ keyboardTests =
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
                 |> program marker
-                |> ensureFocusOn "Pothos"
+                |> ensureTabbable "Pothos"
                 |> done
     , test "has only one element included in the tab sequence" <|
         \() ->
@@ -40,55 +40,55 @@ keyboardTests =
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
                 |> program marker
-                |> ensureFocusOn "Pothos"
+                |> ensureTabbable "Pothos"
                 |> rightArrow
-                |> ensureFocusOn "indirect"
+                |> ensureTabbable "indirect"
                 |> ensureOnlyOneInTabSequence (String.words "Pothos indirect light")
                 |> rightArrow
-                |> ensureFocusOn "light"
+                |> ensureTabbable "light"
                 -- once we're on the final element, pressing right arrow again should
                 -- _not_ wrap the focus. We should stay right where we are!
                 |> rightArrow
-                |> ensureFocusOn "light"
+                |> ensureTabbable "light"
                 |> done
     , test "moves focus left on left arrow key" <|
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
                 |> program marker
-                |> ensureFocusOn "Pothos"
+                |> ensureTabbable "Pothos"
                 |> rightArrow
-                |> ensureFocusOn "indirect"
+                |> ensureTabbable "indirect"
                 |> leftArrow
-                |> ensureFocusOn "Pothos"
+                |> ensureTabbable "Pothos"
                 |> ensureOnlyOneInTabSequence (String.words "Pothos indirect light")
                 -- once we're on the first element, pressing left arrow again should
                 -- _not_ wrap the focus. We should stay right where we are!
                 |> leftArrow
-                |> ensureFocusOn "Pothos"
+                |> ensureTabbable "Pothos"
                 |> done
     , test "moves focus right on shift + right arrow" <|
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
                 |> program marker
-                |> ensureFocusOn "Pothos"
+                |> ensureTabbable "Pothos"
                 |> shiftRight
-                |> ensureFocusOn "indirect"
+                |> ensureTabbable "indirect"
                 |> shiftRight
-                |> ensureFocusOn "light"
+                |> ensureTabbable "light"
                 |> shiftRight
-                |> ensureFocusOn "light"
+                |> ensureTabbable "light"
                 |> done
     , test "moves focus left on shift + left arrow" <|
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
                 |> program marker
-                |> ensureFocusOn "Pothos"
+                |> ensureTabbable "Pothos"
                 |> rightArrow
-                |> ensureFocusOn "indirect"
+                |> ensureTabbable "indirect"
                 |> shiftLeft
-                |> ensureFocusOn "Pothos"
+                |> ensureTabbable "Pothos"
                 |> shiftLeft
-                |> ensureFocusOn "Pothos"
+                |> ensureTabbable "Pothos"
                 |> done
     , test "expands selection one element to the right on shift + right arrow and highlight selected elements" <|
         \() ->
@@ -124,13 +124,13 @@ keyboardTests =
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
                 |> program marker
-                |> ensureFocusOn "Pothos"
+                |> ensureTabbable "Pothos"
                 |> shiftRight
                 |> releaseShiftRight
                 |> ensureMarked [ "Pothos", " ", "indirect" ]
-                |> ensureFocusOn "indirect"
+                |> ensureTabbable "indirect"
                 |> rightArrow
-                |> ensureFocusOn "light"
+                |> ensureTabbable "light"
                 |> shiftLeft
                 |> releaseShiftLeft
                 |> ensureMarked [ "Pothos", " ", "indirect", " ", "light" ]
@@ -139,7 +139,7 @@ keyboardTests =
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
                 |> program marker
-                |> ensureFocusOn "Pothos"
+                |> ensureTabbable "Pothos"
                 |> mouseDown "Pothos"
                 |> mouseUp "Pothos"
                 |> ensureMarked [ "Pothos" ]
@@ -148,7 +148,7 @@ keyboardTests =
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
                 |> program marker
-                |> ensureFocusOn "Pothos"
+                |> ensureTabbable "Pothos"
                 |> mouseDown "Pothos"
                 |> mouseOver "indirect"
                 |> mouseUp "Pothos"
@@ -158,7 +158,7 @@ keyboardTests =
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
                 |> program marker
-                |> ensureFocusOn "Pothos"
+                |> ensureTabbable "Pothos"
                 |> space
                 |> ensureMarked [ "Pothos" ]
                 |> done
@@ -166,10 +166,10 @@ keyboardTests =
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
                 |> program marker
-                |> ensureFocusOn "Pothos"
+                |> ensureTabbable "Pothos"
                 |> space
                 |> ensureMarked [ "Pothos" ]
-                |> ensureFocusOn "Pothos"
+                |> ensureTabbable "Pothos"
                 |> mouseDown "Pothos"
                 |> mouseUp "Pothos"
                 |> expectViewHasNot
@@ -178,7 +178,7 @@ keyboardTests =
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
                 |> program marker
-                |> ensureFocusOn "Pothos"
+                |> ensureTabbable "Pothos"
                 |> shiftRight
                 |> releaseShiftRight
                 |> ensureMarked [ "Pothos", " ", "indirect" ]
@@ -190,19 +190,19 @@ keyboardTests =
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
                 |> program marker
-                |> ensureFocusOn "Pothos"
+                |> ensureTabbable "Pothos"
                 |> space
                 |> ensureMarked [ "Pothos" ]
-                |> ensureFocusOn "Pothos"
+                |> ensureTabbable "Pothos"
                 |> space
                 |> expectViewHasNot
                     [ Selector.tag "mark" ]
     ]
 
 
-ensureFocusOn : String -> TestContext marker -> TestContext marker
-ensureFocusOn word textContext =
-    textContext
+ensureTabbable : String -> TestContext marker -> TestContext marker
+ensureTabbable word testContext =
+    testContext
         |> ensureView
             (Query.find [ Selector.attribute (Key.tabbable True) ]
                 >> Query.has [ Selector.text word ]
@@ -210,8 +210,8 @@ ensureFocusOn word textContext =
 
 
 ensureOnlyOneInTabSequence : List String -> TestContext marker -> TestContext marker
-ensureOnlyOneInTabSequence words textContext =
-    textContext
+ensureOnlyOneInTabSequence words testContext =
+    testContext
         |> ensureView
             (Query.findAll [ Selector.attribute (Key.tabbable True) ]
                 >> Query.count (Expect.equal 1)
@@ -223,13 +223,17 @@ ensureOnlyOneInTabSequence words textContext =
 
 
 ensureMarked : List String -> TestContext marker -> TestContext marker
-ensureMarked words textContext =
-    textContext
+ensureMarked words testContext =
+    testContext
         |> ensureView
             (Query.find [ Selector.tag "mark" ]
                 >> Query.children [ Selector.tag "span" ]
                 >> Expect.all (List.indexedMap (\i w -> Query.index i >> Query.has [ Selector.text w ]) words)
             )
+
+
+
+-- TODO: ensure other elements are not marked
 
 
 space : TestContext marker -> TestContext marker

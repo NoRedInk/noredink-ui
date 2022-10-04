@@ -118,6 +118,24 @@ pressShiftLeft { targetDetails } =
     pressKey { targetDetails = targetDetails, keyCode = 37, shiftKey = True }
 
 
+releaseRightArrow :
+    { targetDetails : List ( String, Encode.Value ) }
+    -> List Selector
+    -> ProgramTest model msg effect
+    -> ProgramTest model msg effect
+releaseRightArrow { targetDetails } =
+    releaseKey { targetDetails = targetDetails, keyCode = 39, shiftKey = False }
+
+
+releaseLeftArrow :
+    { targetDetails : List ( String, Encode.Value ) }
+    -> List Selector
+    -> ProgramTest model msg effect
+    -> ProgramTest model msg effect
+releaseLeftArrow { targetDetails } =
+    releaseKey { targetDetails = targetDetails, keyCode = 37, shiftKey = False }
+
+
 releaseShiftRight :
     { targetDetails : List ( String, Encode.Value ) }
     -> List Selector

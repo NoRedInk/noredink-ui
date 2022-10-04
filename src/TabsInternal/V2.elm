@@ -246,10 +246,11 @@ viewTabPanel tab selected =
             ++ (if selected then
                     [ -- Used as selector for test queries
                       Attributes.attribute "data-selected" "true"
+                    , Attributes.style "display" "block"
                     ]
 
                 else
-                    [ Attributes.css [ Css.display Css.none ]
+                    [ Attributes.style "display" "none"
                     ]
                )
         )
