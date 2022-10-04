@@ -53,6 +53,7 @@ viewTabs : Config id msg -> Html msg
 viewTabs config =
     Html.div
         [ Role.tabList
+        , Aria.owns (List.map (tabToId << .idString) config.tabs)
         , Attributes.css config.tabListStyles
         ]
         (List.map (viewTab_ config) config.tabs)
@@ -101,6 +102,7 @@ viewTab_ config tab =
             ++ [ Attributes.tabindex tabIndex
                , Aria.selected isSelected
                , Role.tab
+               , Aria.controls [ tabToBodyId tab.idString ]
                , Attributes.id (tabToId tab.idString)
                , Events.onFocus (config.onSelect tab.id)
                , Events.on "keyup" <|
