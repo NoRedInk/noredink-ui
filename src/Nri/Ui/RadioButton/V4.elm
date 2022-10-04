@@ -543,13 +543,7 @@ radioInputIcon config =
             , ( "Nri-RadioButton-RadioButtonDisabled", config.isDisabled )
             ]
         , css
-            [ Css.batch <|
-                if config.isDisabled then
-                    [ opacity (num 0.4) ]
-
-                else
-                    []
-            , position absolute
+            [ position absolute
             , left zero
             , top (calc (pct 50) Css.minus (Css.px ((iconHeight - 2 + iconPadding) / 2)))
             , Css.property "transition" ".3s all"
