@@ -447,7 +447,7 @@ viewSelect config =
             , Css.paddingRight (Css.px 30)
 
             -- Icons
-            , selectArrowsCss
+            , selectArrowsCss config
             ]
             (onSelectHandler
                 :: Attributes.id config.id
@@ -488,11 +488,18 @@ generateId x =
     "nri-select-" ++ Nri.Ui.Util.dashify (Nri.Ui.Util.removePunctuation x)
 
 
-selectArrowsCss : Css.Style
-selectArrowsCss =
+selectArrowsCss : { config | disabled : Bool } -> Css.Style
+selectArrowsCss config =
     let
         color =
-            SolidColor.toRGBString (ColorsExtra.fromCssColor Colors.azure)
+            (if config.disabled then
+                Colors.gray20
+
+             else
+                Colors.azure
+            )
+                |> ColorsExtra.fromCssColor
+                |> SolidColor.toRGBString
     in
     Css.batch
         [ """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="12px" height="16px" viewBox="0 0 12 16"><g fill=" """
