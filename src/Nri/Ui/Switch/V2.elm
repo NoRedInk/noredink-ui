@@ -321,12 +321,16 @@ viewSwitch config =
                         ]
                     ]
                     []
-                , Svg.use
-                    [ SvgAttributes.xlinkHref ("#" ++ shadowBoxId)
-                    , SvgAttributes.fill "#000"
-                    , SvgAttributes.filter ("url(#" ++ shadowFilterId ++ ")")
-                    ]
-                    []
+                , if not config.isDisabled then
+                    Svg.use
+                        [ SvgAttributes.xlinkHref ("#" ++ shadowBoxId)
+                        , SvgAttributes.fill "#000"
+                        , SvgAttributes.filter ("url(#" ++ shadowFilterId ++ ")")
+                        ]
+                        []
+
+                  else
+                    Svg.g [] []
                 ]
             , Svg.g
                 [ SvgAttributes.css
