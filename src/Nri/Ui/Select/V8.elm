@@ -415,7 +415,11 @@ viewSelect config =
                  else
                     Colors.gray75
                 )
-            , Css.borderBottomWidth (Css.px 3)
+            , if config.disabled then
+                Css.borderBottomWidth (Css.px 1)
+
+              else
+                Css.borderBottomWidth (Css.px 3)
             , Css.borderRadius (Css.px 8)
             , Css.focus
                 [ Css.borderColor Colors.azure
@@ -507,7 +511,13 @@ selectArrowsCss config =
             ++ """ "><path d="M2.10847,9.341803 C1.65347,8.886103 0.91427,8.886103 0.45857,9.341803 C0.23107,9.570003 0.11697,9.868203 0.11697,10.167103 C0.11697,10.465303 0.23107,10.763503 0.45857,10.991703 L5.12547,15.657903 C5.57977,16.114303 6.31897,16.114303 6.77537,15.657903 L11.44157,10.991703 C11.89727,10.536003 11.89727,9.797503 11.44157,9.341803 C10.98657,8.886103 10.24667,8.886103 9.79167,9.341803 L5.95007,13.182703 L2.10847,9.341803 Z"/><path d="M1.991556,6.658179 C1.536659,7.11394 0.797279,7.11394 0.3416911,6.658179 C0.1140698,6.43004 0,6.13173 0,5.83325 C0,5.53476 0.1140698,5.23645 0.3416911,5.00831 L5.008185,0.34182 C5.463081,-0.11394 6.202461,-0.11394 6.65805,0.34182 L11.32454,5.00831 C11.78031,5.4639 11.78031,6.202592 11.32454,6.658179 C10.86965,7.11394 10.13027,7.11394 9.674679,6.658179 L5.833118,2.81679 L1.991556,6.658179 Z"/></g></svg> """
             |> urlUtf8
             |> Css.property "background"
-        , Css.backgroundColor Colors.white
+        , Css.backgroundColor
+            (if config.disabled then
+                Colors.gray85
+
+             else
+                Colors.white
+            )
 
         -- "appearance: none" removes the default dropdown arrows
         , VendorPrefixed.property "appearance" "none"
