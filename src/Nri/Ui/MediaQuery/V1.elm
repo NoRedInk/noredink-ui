@@ -1,6 +1,6 @@
 module Nri.Ui.MediaQuery.V1 exposing
     ( anyMotion, prefersReducedMotion
-    , highContrastMode
+    , highContrastMode, notHighContrastMode
     , withViewport
     , mobile, notMobile
     , mobileBreakpoint
@@ -30,7 +30,7 @@ Standard media queries for responsive pages.
             ]
 
 @docs anyMotion, prefersReducedMotion
-@docs highContrastMode
+@docs highContrastMode, notHighContrastMode
 
 @docs withViewport
 
@@ -87,6 +87,12 @@ anyMotion =
 prefersReducedMotion : List Style -> Style
 prefersReducedMotion =
     withMediaQuery [ "(prefers-reduced-motion)" ]
+
+
+{-| -}
+notHighContrastMode : List Style -> Style
+notHighContrastMode =
+    withMediaQuery [ "(forced-colors: none)" ]
 
 
 {-| -}

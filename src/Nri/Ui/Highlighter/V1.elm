@@ -615,19 +615,22 @@ groupContainer viewSegment highlightables =
                             , Css.Global.children
                                 [ Css.Global.selector ":first-child"
                                     (Css.before
-                                        [ Css.property "content" ("\" [start " ++ (Maybe.map (\name -> name) markedWith.name |> Maybe.withDefault "highlight") ++ "] \"")
-                                        , invisibleStyle
-                                        ]
-                                        :: MediaQuery.highContrastMode
-                                            [ Maybe.map
-                                                (\name ->
-                                                    Css.before
-                                                        [ Css.property "content" ("\"[" ++ name ++ "] \"")
-                                                        ]
-                                                )
-                                                markedWith.name
-                                                |> Maybe.withDefault (Css.batch [])
-                                            ]
+                                        (case markedWith.name of
+                                            Just name ->
+                                                [ MediaQuery.notHighContrastMode
+                                                    [ Css.property "content" ("\" [start " ++ name ++ " highlight] \"")
+                                                    , invisibleStyle
+                                                    ]
+                                                , MediaQuery.highContrastMode
+                                                    [ Css.property "content" ("\"[" ++ name ++ "] \"")
+                                                    ]
+                                                ]
+
+                                            Nothing ->
+                                                [ Css.property "content" "\" [start highlight] \""
+                                                , invisibleStyle
+                                                ]
+                                        )
                                         :: markedWith.startGroupClass
                                     )
                                 , Css.Global.selector ":last-child"
