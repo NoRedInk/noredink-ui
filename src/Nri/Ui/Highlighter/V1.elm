@@ -743,7 +743,10 @@ viewHighlightableSegment isInteractive focusIndex highlighterId eventListeners m
 
                  else
                     AttributesExtra.none
-               , css (highlightableStyle maybeTool highlightable isInteractive)
+               , css
+                    (Css.focus [ Css.zIndex (Css.int 1), Css.position Css.relative ]
+                        :: highlightableStyle maybeTool highlightable isInteractive
+                    )
                , class "highlighter-highlightable"
                , if isInteractive then
                     Key.tabbable
