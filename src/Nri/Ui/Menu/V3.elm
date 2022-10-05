@@ -344,17 +344,18 @@ button attributes title =
                         , FocusRing.boxShadows []
                         ]
                     , if menuConfig.isDisabled then
-                        Css.batch
-                            [ opacity (num 0.4)
-                            , cursor notAllowed
-                            ]
+                        cursor notAllowed
 
                       else
                         Css.batch []
                     , Css.batch <|
                         if buttonConfig.hasBorder then
                             [ border3 (px 1) solid Colors.gray75
-                            , borderBottom3 (px 3) solid Colors.gray75
+                            , if menuConfig.isDisabled then
+                                backgroundColor Colors.gray85
+
+                              else
+                                borderBottom3 (px 3) solid Colors.gray75
                             , borderRadius (px 8)
                             , padding2 (px 10) (px 15)
                             ]
