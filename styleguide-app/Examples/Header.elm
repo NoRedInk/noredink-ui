@@ -6,14 +6,22 @@ module Examples.Header exposing (example, State, Msg)
 
 -}
 
+import Accessibility.Styled.Role as Role
 import Category exposing (Category(..))
 import Code
 import CommonControls
+import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (css)
+import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Header.V1 as Header
+import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.UiIcon.V1 as UiIcon
 import ViewHelpers exposing (viewExamples)
 
 
@@ -37,7 +45,7 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview = [ viewPreview ]
     , view =
         \ellieLinkConfig state ->
             let
@@ -77,6 +85,43 @@ example =
                 |> viewExamples
             ]
     }
+
+
+viewPreview : Html msg
+viewPreview =
+    div
+        [ css
+            [ Css.height (Css.px 80)
+            , Css.backgroundColor Colors.white
+            , Css.padding (Css.px 8)
+            ]
+        , Role.presentation
+        ]
+        [ div
+            [ css
+                [ Css.backgroundColor Colors.gray96
+                ]
+            ]
+            [ div
+                [ css
+                    [ Css.color Colors.navy
+                    , Css.fontSize (Css.px 10)
+                    , Css.fontWeight Css.bold
+                    , Fonts.baseFont
+                    , Css.padding (Css.px 3)
+                    ]
+                ]
+                [ text "All"
+                , UiIcon.arrowRight
+                    |> Svg.withWidth (Css.px 8)
+                    |> Svg.withHeight (Css.px 8)
+                    |> Svg.withColor Colors.gray75
+                    |> Svg.withCss [ Css.margin2 Css.zero (Css.px 3) ]
+                    |> Svg.toHtml
+                , text "Category 1"
+                ]
+            ]
+        ]
 
 
 {-| -}
