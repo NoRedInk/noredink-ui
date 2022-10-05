@@ -781,7 +781,7 @@ view label attributes =
                     ( num 0.5, True )
 
                 ( True, _ ) ->
-                    ( num 0.4, True )
+                    ( num 1, True )
 
         maybeStep =
             case config.fieldType of
