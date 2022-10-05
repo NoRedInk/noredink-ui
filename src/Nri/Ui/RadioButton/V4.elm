@@ -39,8 +39,8 @@ module Nri.Ui.RadioButton.V4 exposing
 -}
 
 import Accessibility.Styled exposing (..)
-import Accessibility.Styled.Style
 import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Style
 import Css exposing (..)
 import Css.Global
 import Html.Styled as Html
@@ -393,8 +393,9 @@ view { label, name, value, valueToString, selectedValue } attributes =
                         (if config.hideLabel then
                             Accessibility.Styled.Style.invisible
 
-                        else
-                            [ css config.labelCss ])
+                         else
+                            [ css config.labelCss ]
+                        )
                         [ Html.text label ]
                     , if isPremium then
                         premiumPennant
