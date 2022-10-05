@@ -17,9 +17,11 @@ import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
+import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs exposing (BreadCrumbAttribute, BreadCrumbs)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Header.V1 as Header
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 import ViewHelpers exposing (viewExamples)
@@ -79,6 +81,18 @@ example =
                                 }
                         in
                         List.map toExampleCode examples
+                }
+            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Header.view
+                []
+                { breadcrumbs =
+                    BreadCrumbs.init
+                        { id = "category-breadcrumb-id-1"
+                        , text = "Page"
+                        , route = "/breadcrumb-category-1"
+                        }
+                        []
+                , isCurrentRoute = \_ -> False
                 }
             , examples
                 |> List.map (\( name, view ) -> ( name, view attributes ))
