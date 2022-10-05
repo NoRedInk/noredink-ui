@@ -370,7 +370,7 @@ button attributes title =
                 )
                 [ div styleButtonInner
                     [ viewTitle { icon = buttonConfig.icon, wrapping = buttonConfig.wrapping, title = title }
-                    , viewArrow { isOpen = menuConfig.isOpen }
+                    , viewArrow menuConfig
                     ]
                 ]
         )
@@ -383,22 +383,28 @@ custom builder =
     CustomButton builder
 
 
-viewArrow : { isOpen : Bool } -> Html msg
-viewArrow { isOpen } =
+viewArrow : { config | isOpen : Bool, isDisabled : Bool } -> Html msg
+viewArrow config =
     span
-        [ classList [ ( "Arrow", True ), ( "Open", isOpen ) ]
+        [ classList [ ( "Arrow", True ), ( "Open", config.isOpen ) ]
         , css
             [ width (px 12)
             , height (px 7)
             , marginLeft (px 5)
-            , color Colors.azure
+            , color
+                (if config.isDisabled then
+                    Colors.gray20
+
+                 else
+                    Colors.azure
+                )
             , Css.flexShrink (Css.num 0)
             , descendants
                 [ Css.Global.svg [ display block ]
                 ]
             , property "transform-origin" "center"
             , property "transition" "transform 0.4s"
-            , if isOpen then
+            , if config.isOpen then
                 transform (rotate (deg 180))
 
               else
