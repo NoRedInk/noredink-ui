@@ -846,6 +846,15 @@ view label attributes =
                           else
                             Css.batch []
                         , Css.batch config.inputCss |> Css.important
+                        , Css.batch
+                            (if config.disabled then
+                                [ Css.backgroundColor Colors.gray85
+                                , Css.property "box-shadow" "none" |> Css.important
+                                ]
+
+                             else
+                                []
+                            )
                         ]
                    , Attributes.placeholder placeholder_
                    , Attributes.value stringValue
