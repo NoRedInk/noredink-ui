@@ -24,7 +24,6 @@ import Nri.Ui.Header.V1 as Header
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
-import ViewHelpers exposing (viewExamples)
 
 
 moduleName : String
