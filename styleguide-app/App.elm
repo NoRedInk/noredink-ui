@@ -240,7 +240,10 @@ view model =
                 [ view_
                 , Html.map never Sprite.attach
                 , Css.Global.global (InputMethod.styles model.inputMethod)
-                , Css.Global.global [ Css.Global.everything [ Css.boxSizing Css.borderBox ] ]
+                , Css.Global.global
+                    [ Css.Global.everything [ Css.boxSizing Css.borderBox ]
+                    , Css.Global.body [ Css.margin Css.zero ]
+                    ]
                 ]
     in
     case model.route of
@@ -315,23 +318,26 @@ viewCategory model category =
 
 withSideNav : Model key -> Html Msg -> Html Msg
 withSideNav model content =
-    Html.div
-        [ css
-            [ displayFlex
-            , withMedia [ mobile ] [ flexDirection column, alignItems stretch ]
-            , alignItems flexStart
-            , Spacing.centeredContentWithSidePaddingAndCustomWidth (Css.px 1400)
-            , Spacing.pageBottomWhitespace
+    Html.div []
+        [ Routes.viewHeader model.route
+        , Html.div
+            [ css
+                [ displayFlex
+                , withMedia [ mobile ] [ flexDirection column, alignItems stretch ]
+                , alignItems flexStart
+                , Spacing.centeredContentWithSidePaddingAndCustomWidth (Css.px 1400)
+                , Spacing.pageTopWhitespace
+                , Spacing.pageBottomWhitespace
+                ]
             ]
-        ]
-        [ navigation model
-        , Html.main_
-            [ css [ flexGrow (int 1) ]
-            , id "maincontent"
-            , Key.tabbable False
-            ]
-            [ Routes.viewHeader model.route
-            , content
+            [ navigation model
+            , Html.main_
+                [ css [ flexGrow (int 1) ]
+                , id "maincontent"
+                , Key.tabbable False
+                ]
+                [ content
+                ]
             ]
         ]
 
@@ -354,7 +360,6 @@ viewPreviews containerId navConfig examples =
                 , Css.flexWrap Css.wrap
                 , Css.property "row-gap" (.value Spacing.verticalSpacerPx)
                 , Css.property "column-gap" (.value Spacing.horizontalSpacerPx)
-                , Spacing.pageTopWhitespace
                 ]
             ]
 
