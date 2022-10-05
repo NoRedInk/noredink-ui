@@ -4,10 +4,9 @@ import Accessibility.Key as Key
 import Accessibility.Role as Role
 import Browser.Dom as Dom
 import Expect
-import Html.Styled as Html exposing (..)
+import Html.Styled exposing (..)
 import ProgramTest exposing (..)
 import Spec.KeyboardHelpers as KeyboardHelpers
-import Test exposing (..)
 import Test.Html.Query as Query
 import Test.Html.Selector as Selector
 

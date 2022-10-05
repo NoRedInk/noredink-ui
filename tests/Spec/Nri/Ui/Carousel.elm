@@ -1,7 +1,7 @@
 module Spec.Nri.Ui.Carousel exposing (spec)
 
 import Browser.Dom as Dom
-import Html.Styled as Html exposing (..)
+import Html.Styled exposing (..)
 import Nri.Ui.Carousel.V1 as Carousel
 import ProgramTest exposing (..)
 import Spec.TabsInternalHelpers exposing (..)
