@@ -1,35 +1,41 @@
-module Nri.Header exposing
-    ( Attribute
-    , aTagAttributes
-    , extraContent
-    , view
+module Nri.Ui.Header.V1 exposing
+    ( view
+    , Attribute, aTagAttributes, extraContent
     )
 
-{-| -}
+{-|
+
+@docs view
+@docs Attribute, aTagAttributes, extraContent
+
+-}
 
 import Accessibility.Styled as Html exposing (Html)
 import Css
 import Css.Media as Media
 import Html.Styled.Attributes exposing (css)
-import Nri.Layout as Layout
 import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs exposing (BreadCrumbs)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Text.V6 as Text
 
 
+{-| -}
 type Attribute route msg
     = ATagAttributes (route -> List (Html.Attribute msg))
     | ExtraContent (List (Html msg))
 
 
+{-| -}
 aTagAttributes : (route -> List (Html.Attribute msg)) -> Attribute route msg
 aTagAttributes =
     ATagAttributes
 
 
+{-| -}
 extraContent : List (Html msg) -> Attribute route msg
 extraContent =
     ExtraContent
@@ -89,7 +95,7 @@ view attrs { breadcrumbs, isCurrentRoute } =
         ]
         [ Html.div
             (css
-                [ Layout.content
+                [ Spacing.centeredContentWithSidePadding
                 , Css.alignItems Css.center
                 , Css.displayFlex
                 , Css.paddingTop (Css.px 30)
@@ -128,7 +134,7 @@ viewDescription : String -> Html msg
 viewDescription description_ =
     Text.mediumBody
         [ Text.css
-            [ Layout.content
+            [ Spacing.centeredContentWithSidePadding
             , Css.color Colors.gray45
             , Css.important (Css.margin Css.auto)
             , Css.important (Css.paddingBottom (Css.px 20))
