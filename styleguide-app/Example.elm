@@ -12,7 +12,6 @@ import KeyboardSupport exposing (KeyboardSupport)
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
-import Nri.Ui.Spacing.V1 as Spacing
 
 
 type alias Example state msg =

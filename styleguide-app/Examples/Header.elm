@@ -17,7 +17,7 @@ import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
-import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs exposing (BreadCrumbAttribute, BreadCrumbs)
+import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Header.V1 as Header
@@ -84,15 +84,15 @@ example =
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , Header.view
-                []
+                attributes
                 { breadcrumbs =
                     BreadCrumbs.init
-                        { id = "category-breadcrumb-id-1"
+                        { id = "page-header"
                         , text = "Page"
-                        , route = "/breadcrumb-category-1"
+                        , route = ()
                         }
                         []
-                , isCurrentRoute = \_ -> False
+                , isCurrentRoute = \_ -> True
                 }
             , examples
                 |> List.map (\( name, view ) -> ( name, view attributes ))
@@ -146,7 +146,38 @@ type alias State =
 
 init : State
 init =
-    { control = ControlExtra.list
+    { control =
+        ControlExtra.list
+            |> ControlExtra.optionalListItem "extraContent"
+                (Control.value
+                    ( "Header.extraContent [ Html.text \"…\" ]"
+                    , Header.extraContent CommonControls.exampleHtml
+                    )
+                )
+            |> ControlExtra.optionalListItem "description"
+                (Control.map
+                    (\value ->
+                        ( "Header.description " ++ Code.string value
+                        , Header.description value
+                        )
+                    )
+                    (Control.string "This page has some good content.")
+                )
+            |> ControlExtra.optionalListItem "extraSubheadContent"
+                (Control.value
+                    ( "Header.extraSubheadContent [ Html.text \"…\" ]"
+                    , Header.extraSubheadContent CommonControls.exampleHtml
+                    )
+                )
+            |> ControlExtra.optionalListItem "customPageWidth"
+                (Control.map
+                    (\width ->
+                        ( "Header.customPageWidth (Css.px" ++ String.fromFloat width ++ ")"
+                        , Header.customPageWidth (Css.px width)
+                        )
+                    )
+                    (ControlExtra.float 750)
+                )
     }
 
 
