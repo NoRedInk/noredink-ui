@@ -277,7 +277,10 @@ viewExample : Model key -> Example a Examples.Msg -> Html Msg
 viewExample model example =
     Example.view { packageDependencies = model.elliePackageDependencies } example
         |> Html.map (UpdateModuleStates example.name)
-        |> withSideNav model
+        |> viewLayout model
+            [ Example.extraSubheadContent example
+                |> Html.map (UpdateModuleStates example.name)
+            ]
 
 
 notFound : Html Msg
@@ -290,7 +293,7 @@ notFound =
 
 viewAll : Model key -> Html Msg
 viewAll model =
-    withSideNav model <|
+    viewLayout model [] <|
         viewPreviews "all"
             { navigate = Routes.Doodad >> ChangeRoute
             , exampleHref = Routes.Doodad >> Routes.toString
@@ -300,7 +303,7 @@ viewAll model =
 
 viewCategory : Model key -> Category -> Html Msg
 viewCategory model category =
-    withSideNav model
+    viewLayout model [] <|
         (model.moduleStates
             |> Dict.values
             |> List.filter
@@ -316,10 +319,10 @@ viewCategory model category =
         )
 
 
-withSideNav : Model key -> Html Msg -> Html Msg
-withSideNav model content =
+viewLayout : Model key -> List (Html Msg) -> Html Msg -> Html Msg
+viewLayout model headerExtras content =
     Html.div []
-        [ Routes.viewHeader model.route
+        [ Routes.viewHeader model.route headerExtras
         , Html.div
             [ css
                 [ displayFlex

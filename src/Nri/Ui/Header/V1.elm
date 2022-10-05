@@ -1,12 +1,12 @@
 module Nri.Ui.Header.V1 exposing
     ( view
-    , Attribute, aTagAttributes, extraContent
+    , Attribute, aTagAttributes, extraContent, description, extraSubheadContent
     )
 
 {-|
 
 @docs view
-@docs Attribute, aTagAttributes, extraContent
+@docs Attribute, aTagAttributes, extraContent, description, extraSubheadContent
 
 -}
 
@@ -27,6 +27,8 @@ import Nri.Ui.Text.V6 as Text
 type Attribute route msg
     = ATagAttributes (route -> List (Html.Attribute msg))
     | ExtraContent (List (Html msg))
+    | ExtraSubheadContent (List (Html msg))
+    | Description String
 
 
 {-| -}
@@ -39,6 +41,18 @@ aTagAttributes =
 extraContent : List (Html msg) -> Attribute route msg
 extraContent =
     ExtraContent
+
+
+{-| -}
+extraSubheadContent : List (Html msg) -> Attribute route msg
+extraSubheadContent =
+    ExtraSubheadContent
+
+
+{-| -}
+description : String -> Attribute route msg
+description =
+    Description
 
 
 type alias Config route msg =
@@ -70,6 +84,12 @@ customize =
 
                 ExtraContent extraContent_ ->
                     { soFar | extraContent = extraContent_ }
+
+                ExtraSubheadContent extraSubheadContent_ ->
+                    { soFar | extraSubheadContent = extraSubheadContent_ }
+
+                Description description_ ->
+                    { soFar | description = Just description_ }
         )
 
 
