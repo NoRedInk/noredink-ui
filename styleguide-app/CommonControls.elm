@@ -4,7 +4,7 @@ module CommonControls exposing
     , icon, iconNotCheckedByDefault
     , uiIcon, rotatedUiIcon
     , customIcon
-    , color, specificColor
+    , specificColor
     , content
     , httpError
     , romeoAndJulietQuotation
@@ -18,7 +18,7 @@ module CommonControls exposing
 @docs icon, iconNotCheckedByDefault
 @docs uiIcon, rotatedUiIcon
 @docs customIcon
-@docs color, specificColor
+@docs specificColor
 
 
 ### Content
@@ -40,11 +40,6 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.Svg.V1 exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
-
-
-color : Control ( String, Css.Color )
-color =
-    choice "Colors" Examples.Colors.all
 
 
 specificColor : String -> Control ( String, Css.Color )
