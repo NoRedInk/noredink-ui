@@ -369,7 +369,7 @@ button attributes title =
                     ++ buttonAttributes
                 )
                 [ div styleButtonInner
-                    [ viewTitle { icon = buttonConfig.icon, wrapping = buttonConfig.wrapping, title = title }
+                    [ viewTitle title buttonConfig menuConfig
                     , viewArrow menuConfig
                     ]
                 ]
@@ -415,19 +415,22 @@ viewArrow config =
 
 
 viewTitle :
-    { icon : Maybe Svg.Svg
-    , wrapping : TitleWrapping
-    , title : String
-    }
+    String
+    ->
+        { buttonConfig
+            | icon : Maybe Svg.Svg
+            , wrapping : TitleWrapping
+        }
+    -> { menuConfig | isDisabled : Bool }
     -> Html msg
-viewTitle config =
+viewTitle title_ config menuConfig =
     div styleTitle
-        [ viewJust (\iconSvg -> span styleIconContainer [ Svg.toHtml iconSvg ])
+        [ viewJust (\iconSvg -> span (styleIconContainer menuConfig) [ Svg.toHtml iconSvg ])
             config.icon
         , span
             (case config.wrapping of
                 WrapAndExpandTitle ->
-                    [ Attributes.attribute "data-nri-description" config.title ]
+                    [ Attributes.attribute "data-nri-description" title_ ]
 
                 TruncateTitle ->
                     [ class "Truncated"
@@ -438,7 +441,7 @@ viewTitle config =
                         ]
                     ]
             )
-            [ Html.text config.title ]
+            [ Html.text title_ ]
         ]
 
 
@@ -845,8 +848,8 @@ styleButtonInner =
     ]
 
 
-styleIconContainer : List (Html.Attribute msg)
-styleIconContainer =
+styleIconContainer : { menuConfig | isDisabled : Bool } -> List (Html.Attribute msg)
+styleIconContainer config =
     [ class "IconContainer"
     , css
         [ width (px 21)
@@ -854,7 +857,13 @@ styleIconContainer =
         , marginRight (px 5)
         , display inlineBlock
         , Css.flexShrink (Css.num 0)
-        , color Colors.azure
+        , color
+            (if config.isDisabled then
+                Colors.gray20
+
+             else
+                Colors.azure
+            )
         ]
     ]
 
