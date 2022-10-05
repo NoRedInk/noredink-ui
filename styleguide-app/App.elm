@@ -278,7 +278,7 @@ viewExample model example =
     Example.view { packageDependencies = model.elliePackageDependencies } example
         |> Html.map (UpdateModuleStates example.name)
         |> viewLayout model
-            [ Example.extraSubheadContent example
+            [ Example.extraLinks example
                 |> Html.map (UpdateModuleStates example.name)
             ]
 

@@ -103,13 +103,13 @@ fromLocation examples location =
 
 
 viewHeader : Route state msg -> List (Html msg2) -> Html msg2
-viewHeader currentRoute subheadExtras =
+viewHeader currentRoute extraContent =
     breadCrumbs currentRoute
         |> Maybe.map
             (\crumbs ->
                 Header.view
                     [ Header.aTagAttributes (\r -> [ Attributes.href ("/" ++ toString r) ])
-                    , Header.extraSubheadContent subheadExtras
+                    , Header.extraContent extraContent
                     ]
                     { breadcrumbs = crumbs
                     , isCurrentRoute = (==) currentRoute

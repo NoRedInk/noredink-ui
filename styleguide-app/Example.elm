@@ -1,4 +1,4 @@
-module Example exposing (Example, extraSubheadContent, fullName, preview, view, wrapMsg, wrapState)
+module Example exposing (Example, extraLinks, fullName, preview, view, wrapMsg, wrapState)
 
 import Accessibility.Styled.Aria as Aria
 import Category exposing (Category)
@@ -154,8 +154,8 @@ view_ ellieLinkConfig example =
     ]
 
 
-extraSubheadContent : Example state msg -> Html msg
-extraSubheadContent example =
+extraLinks : Example state msg -> Html msg
+extraLinks example =
     Html.nav [ Aria.label (fullName example) ]
         [ Html.ul
             [ Attributes.css
