@@ -1,11 +1,13 @@
 module Nri.Ui.Loading.V1 exposing
     ( fadeInPage, page
+    , spinning
     , spinningPencil, spinningDots
     )
 
 {-| Loading behaviors
 
 @docs fadeInPage, page
+@docs spinning
 @docs spinningPencil, spinningDots
 
 -}
@@ -14,10 +16,12 @@ import Css
 import Css.Animations
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
+import List.Extra
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Svg.V1
+import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
-import Svg.Styled as Svg
+import Svg.Styled
 import Svg.Styled.Attributes as SvgAttributes
 
 
@@ -60,46 +64,126 @@ loading_ withCss =
                 ++ withCss
             )
         ]
-        [ Nri.Ui.Svg.V1.toHtml spinningPencil
+        [ Svg.toHtml spinningPencil
         ]
 
 
 {-| -}
-spinningPencil : Nri.Ui.Svg.V1.Svg
+spinning : Css.Px -> Css.Color -> Html msg
+spinning size color =
+    Html.div
+        []
+        [ spinningDots
+            |> Svg.withCss [ MediaQuery.anyMotion [ Css.display Css.none ] ]
+            |> Svg.withWidth size
+            |> Svg.withHeight size
+            |> Svg.toHtml
+        , spinningPencil
+            |> Svg.withColor color
+            |> Svg.withCss [ MediaQuery.prefersReducedMotion [ Css.display Css.none ] ]
+            |> Svg.withWidth size
+            |> Svg.withHeight size
+            |> Svg.toHtml
+        ]
+
+
+{-| -}
+spinningPencil : Svg
 spinningPencil =
     UiIcon.edit
-        |> Nri.Ui.Svg.V1.withLabel "Loading..."
-        |> Nri.Ui.Svg.V1.withColor Colors.navy
-        |> Nri.Ui.Svg.V1.withWidth (Css.px 100)
-        |> Nri.Ui.Svg.V1.withHeight (Css.px 100)
-        |> Nri.Ui.Svg.V1.withCss circlingCss
+        |> Svg.withLabel "Loading..."
+        |> Svg.withColor Colors.navy
+        |> Svg.withWidth (Css.px 140)
+        |> Svg.withHeight (Css.px 140)
+        |> Svg.withViewBox "-20 -20 140 140"
+        |> Svg.withCss circlingCss
 
 
 {-| -}
-spinningDots : Nri.Ui.Svg.V1.Svg
+spinningDots : Svg
 spinningDots =
-    Nri.Ui.Svg.V1.init "0 0 12.54 12.54"
-        [ Svg.circle [ SvgAttributes.fill "#004e95", SvgAttributes.cx "6.13", SvgAttributes.cy "0.98", SvgAttributes.r "0.98" ] []
-        , Svg.circle [ SvgAttributes.fill "#004cc9", SvgAttributes.cx "9.95", SvgAttributes.cy "2.47", SvgAttributes.r "0.98", SvgAttributes.transform "translate(1.12 7.67) rotate(-44.43)" ] []
-        , Svg.circle [ SvgAttributes.fill "#146aff", SvgAttributes.cx "11.56", SvgAttributes.cy "6.24", SvgAttributes.r "0.98", SvgAttributes.transform "translate(5.09 17.67) rotate(-88.86)" ] []
-        , Svg.circle [ SvgAttributes.fill "#0af", SvgAttributes.cx "10", SvgAttributes.cy "10.02", SvgAttributes.r "0.98", SvgAttributes.transform "translate(-4.15 9.58) rotate(-43.29)" ] []
-        , Svg.circle [ SvgAttributes.fill "#d4f0ff", SvgAttributes.cx "6.2", SvgAttributes.cy "11.56", SvgAttributes.r "0.98", SvgAttributes.transform "translate(-5.6 17.29) rotate(-87.71)" ] []
-        , Svg.circle [ SvgAttributes.fill "#eef9ff", SvgAttributes.cx "2.44", SvgAttributes.cy "9.92", SvgAttributes.r "0.98", SvgAttributes.transform "translate(-6.03 4.21) rotate(-42.14)" ] []
-        , Svg.circle [ SvgAttributes.fill "#f5f5f5", SvgAttributes.cx "0.98", SvgAttributes.cy "6.1", SvgAttributes.r "0.98", SvgAttributes.transform "translate(-5.16 6.71) rotate(-86.57)" ] []
-        , Svg.circle [ SvgAttributes.fill "#fff", SvgAttributes.cx "2.69", SvgAttributes.cy "2.37", SvgAttributes.r "0.98", SvgAttributes.transform "translate(-0.9 2.35) rotate(-41)" ] []
-        ]
-        |> Nri.Ui.Svg.V1.withWidth (Css.px 100)
-        |> Nri.Ui.Svg.V1.withHeight (Css.px 100)
-        |> Nri.Ui.Svg.V1.withCss circlingCss
+    let
+        dotColors =
+            [ "#fff"
+            , "#f5f5f5"
+            , "#eef9ff"
+            , "#d4f0ff"
+            , "#0af"
+            , "#146aff"
+            , "#004cc9"
+            , "#004e95"
+            ]
+
+        rotatedColors rotateWith =
+            let
+                ( before, after ) =
+                    List.Extra.splitAt rotateWith dotColors
+            in
+            after ++ before
+
+        circle index attributes =
+            let
+                colors =
+                    rotatedColors index
+            in
+            Svg.Styled.circle
+                (List.filterMap identity
+                    [ Maybe.map SvgAttributes.fill (List.head colors)
+                    , Just (SvgAttributes.css (colorChangeCss (List.reverse colors)))
+                    ]
+                    ++ attributes
+                )
+                []
+    in
+    [ [ SvgAttributes.cx "6.13", SvgAttributes.cy "0.98", SvgAttributes.r "0.98" ]
+    , [ SvgAttributes.cx "9.95", SvgAttributes.cy "2.47", SvgAttributes.r "0.98", SvgAttributes.transform "translate(1.12 7.67) rotate(-44.43)" ]
+    , [ SvgAttributes.cx "11.56", SvgAttributes.cy "6.24", SvgAttributes.r "0.98", SvgAttributes.transform "translate(5.09 17.67) rotate(-88.86)" ]
+    , [ SvgAttributes.cx "10", SvgAttributes.cy "10.02", SvgAttributes.r "0.98", SvgAttributes.transform "translate(-4.15 9.58) rotate(-43.29)" ]
+    , [ SvgAttributes.cx "6.2", SvgAttributes.cy "11.56", SvgAttributes.r "0.98", SvgAttributes.transform "translate(-5.6 17.29) rotate(-87.71)" ]
+    , [ SvgAttributes.cx "2.44", SvgAttributes.cy "9.92", SvgAttributes.r "0.98", SvgAttributes.transform "translate(-6.03 4.21) rotate(-42.14)" ]
+    , [ SvgAttributes.cx "0.98", SvgAttributes.cy "6.1", SvgAttributes.r "0.98", SvgAttributes.transform "translate(-5.16 6.71) rotate(-86.57)" ]
+    , [ SvgAttributes.cx "2.69", SvgAttributes.cy "2.37", SvgAttributes.r "0.98", SvgAttributes.transform "translate(-0.9 2.35) rotate(-41)" ]
+    ]
+        |> List.indexedMap circle
+        |> Svg.init "0 0 12.54 12.54"
+        |> Svg.withWidth (Css.px 140)
+        |> Svg.withHeight (Css.px 140)
 
 
 circlingCss : List Css.Style
 circlingCss =
-    [ Css.property "animation-duration" "1s"
+    [ MediaQuery.anyMotion
+        [ Css.property "animation-duration" "1s"
+        , Css.property "animation-iteration-count" "infinite"
+        , Css.animationName rotateKeyframes
+        , Css.property "animation-timing-function" "linear"
+        ]
+    ]
+
+
+colorChangeCss : List String -> List Css.Style
+colorChangeCss colors =
+    [ Css.property "animation-duration" "2s"
     , Css.property "animation-iteration-count" "infinite"
-    , Css.animationName rotateKeyframes
+    , Css.animationName (colorChangeKeyFrames colors)
     , Css.property "animation-timing-function" "linear"
     ]
+
+
+colorChangeKeyFrames : List String -> Css.Animations.Keyframes {}
+colorChangeKeyFrames colors =
+    let
+        colorCount =
+            List.length colors
+    in
+    colors
+        |> List.indexedMap
+            (\index color ->
+                ( round (100 * (toFloat index + 1) / toFloat colorCount)
+                , [ Css.Animations.property "fill" color ]
+                )
+            )
+        |> Css.Animations.keyframes
 
 
 rotateKeyframes : Css.Animations.Keyframes {}

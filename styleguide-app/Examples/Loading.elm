@@ -17,7 +17,6 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Loading.V1 as Loading
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Text.V6 as Text
 
 
 {-| -}
@@ -114,15 +113,10 @@ example =
                 Html.text ""
             , button "Loading.fadeInPage" ShowLoadingFadeIn showLoadingFadeIn
             , if showSpinners then
-                Html.div []
-                    [ Loading.spinningPencil
-                        |> Svg.withColor Colors.azure
-                        |> Svg.toHtml
-                    , Text.caption [ Text.plaintext "By default, the spinningPencil is white. Showing as blue for visibility." ]
-                    ]
+                Loading.spinning (Css.px 140) Colors.navy
 
               else
-                button "Loading.spinningPencil" ShowSpinners showLoadingFadeIn
+                button "Loading.spinning Colors.navy" ShowSpinners showLoadingFadeIn
             ]
     }
 

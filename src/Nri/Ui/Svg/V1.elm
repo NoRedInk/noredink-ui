@@ -1,13 +1,13 @@
 module Nri.Ui.Svg.V1 exposing
     ( Svg
-    , withColor, withLabel, withWidth, withHeight, withCss, withCustom
+    , withColor, withLabel, withWidth, withHeight, withCss, withCustom, withViewBox
     , init, toHtml
     )
 
 {-|
 
 @docs Svg
-@docs withColor, withLabel, withWidth, withHeight, withCss, withCustom
+@docs withColor, withLabel, withWidth, withHeight, withCss, withCustom, withViewBox
 @docs init, toHtml
 
 -}
@@ -93,6 +93,12 @@ withCss css (Svg record) =
 withCustom : List (Svg.Styled.Attribute Never) -> Svg -> Svg
 withCustom attributes (Svg record) =
     Svg { record | attributes = record.attributes ++ attributes }
+
+
+{-| -}
+withViewBox : String -> Svg -> Svg
+withViewBox viewBox (Svg record) =
+    Svg { record | viewBox = viewBox }
 
 
 {-| render an svg.
