@@ -2,6 +2,7 @@ module Routes exposing (Route(..), fromLocation, headerId, toString, updateExamp
 
 import Accessibility.Styled as Html exposing (Html)
 import Category
+import Css
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Html.Styled.Attributes as Attributes
@@ -110,6 +111,7 @@ viewHeader currentRoute extraContent =
                 Header.view
                     [ Header.aTagAttributes (\r -> [ Attributes.href ("/" ++ toString r) ])
                     , Header.extraContent extraContent
+                    , Header.customPageWidth (Css.px 1400)
                     ]
                     { breadcrumbs = crumbs
                     , isCurrentRoute = (==) currentRoute

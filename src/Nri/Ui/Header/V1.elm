@@ -1,12 +1,12 @@
 module Nri.Ui.Header.V1 exposing
     ( view
-    , Attribute, aTagAttributes, extraContent, description, extraSubheadContent
+    , Attribute, aTagAttributes, extraContent, description, extraSubheadContent, customPageWidth
     )
 
 {-|
 
 @docs view
-@docs Attribute, aTagAttributes, extraContent, description, extraSubheadContent
+@docs Attribute, aTagAttributes, extraContent, description, extraSubheadContent, customPageWidth
 
 -}
 
@@ -52,12 +52,23 @@ description description_ =
     Attribute (\soFar -> { soFar | description = Just description_ })
 
 
+{-| By default, the content within the header will expand up to 1000px (the mobile breakpoint value).
+
+For some views, you may want to use MediaQuery.quizEngineBreakpoint instead.
+
+-}
+customPageWidth : Css.Px -> Attribute route msg
+customPageWidth pageWidth =
+    Attribute (\soFar -> { soFar | pageWidth = pageWidth })
+
+
 type alias Config route msg =
     { aTagAttributes : route -> List (Html.Attribute msg)
     , containerAttributes : List (Html.Attribute Never)
     , extraContent : List (Html msg)
     , extraSubheadContent : List (Html msg)
     , description : Maybe String
+    , pageWidth : Css.Px
     }
 
 
@@ -69,6 +80,7 @@ customize =
         , extraContent = []
         , extraSubheadContent = []
         , description = Nothing
+        , pageWidth = MediaQuery.mobileBreakpoint
         }
 
 
@@ -94,7 +106,7 @@ view attrs { breadcrumbs, isCurrentRoute } =
         ]
         [ Html.div
             (css
-                [ Spacing.centeredContentWithSidePadding
+                [ Spacing.centeredContentWithSidePaddingAndCustomWidth config.pageWidth
                 , Css.alignItems Css.center
                 , Css.displayFlex
                 , Css.paddingTop (Css.px 30)
@@ -125,15 +137,15 @@ view attrs { breadcrumbs, isCurrentRoute } =
                 ]
                 :: config.extraContent
             )
-        , viewJust viewDescription config.description
+        , viewJust (viewDescription config.pageWidth) config.description
         ]
 
 
-viewDescription : String -> Html msg
-viewDescription description_ =
+viewDescription : Css.Px -> String -> Html msg
+viewDescription pageWidth description_ =
     Text.mediumBody
         [ Text.css
-            [ Spacing.centeredContentWithSidePadding
+            [ Spacing.centeredContentWithSidePaddingAndCustomWidth pageWidth
             , Css.color Colors.gray45
             , Css.important (Css.margin Css.auto)
             , Css.important (Css.paddingBottom (Css.px 20))
