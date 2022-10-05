@@ -25,34 +25,31 @@ import Nri.Ui.Text.V6 as Text
 
 {-| -}
 type Attribute route msg
-    = ATagAttributes (route -> List (Html.Attribute msg))
-    | ExtraContent (List (Html msg))
-    | ExtraSubheadContent (List (Html msg))
-    | Description String
+    = Attribute (Config route msg -> Config route msg)
 
 
 {-| -}
 aTagAttributes : (route -> List (Html.Attribute msg)) -> Attribute route msg
-aTagAttributes =
-    ATagAttributes
+aTagAttributes aTagAttributes_ =
+    Attribute (\soFar -> { soFar | aTagAttributes = aTagAttributes_ })
 
 
 {-| -}
 extraContent : List (Html msg) -> Attribute route msg
-extraContent =
-    ExtraContent
+extraContent value =
+    Attribute (\soFar -> { soFar | extraContent = value })
 
 
 {-| -}
 extraSubheadContent : List (Html msg) -> Attribute route msg
-extraSubheadContent =
-    ExtraSubheadContent
+extraSubheadContent value =
+    Attribute (\soFar -> { soFar | extraSubheadContent = value })
 
 
 {-| -}
 description : String -> Attribute route msg
-description =
-    Description
+description description_ =
+    Attribute (\soFar -> { soFar | description = Just description_ })
 
 
 type alias Config route msg =
@@ -64,33 +61,15 @@ type alias Config route msg =
     }
 
 
-defaultConfig : Config route msg
-defaultConfig =
-    { aTagAttributes = \_ -> []
-    , containerAttributes = []
-    , extraContent = []
-    , extraSubheadContent = []
-    , description = Nothing
-    }
-
-
-customize : Config route msg -> List (Attribute route msg) -> Config route msg
+customize : List (Attribute route msg) -> Config route msg
 customize =
-    List.foldl
-        (\attr soFar ->
-            case attr of
-                ATagAttributes aTagAttributes_ ->
-                    { soFar | aTagAttributes = aTagAttributes_ }
-
-                ExtraContent extraContent_ ->
-                    { soFar | extraContent = extraContent_ }
-
-                ExtraSubheadContent extraSubheadContent_ ->
-                    { soFar | extraSubheadContent = extraSubheadContent_ }
-
-                Description description_ ->
-                    { soFar | description = Just description_ }
-        )
+    List.foldl (\(Attribute f) -> f)
+        { aTagAttributes = \_ -> []
+        , containerAttributes = []
+        , extraContent = []
+        , extraSubheadContent = []
+        , description = Nothing
+        }
 
 
 {-| -}
@@ -104,7 +83,7 @@ view :
 view attrs { breadcrumbs, isCurrentRoute } =
     let
         config =
-            customize defaultConfig attrs
+            customize attrs
     in
     Html.div
         [ css
