@@ -1,4 +1,4 @@
-module Routes exposing (Route(..), fromLocation, headerId, toString, updateExample, viewBreadCrumbs)
+module Routes exposing (Route(..), fromLocation, headerId, toString, updateExample, viewHeader)
 
 import Accessibility.Styled as Html exposing (Html)
 import Category
@@ -6,6 +6,7 @@ import Dict exposing (Dict)
 import Example exposing (Example)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs exposing (BreadCrumbs)
+import Nri.Ui.Header.V1 as Header
 import Nri.Ui.Util exposing (dashify)
 import Parser exposing ((|.), (|=), Parser)
 import Url exposing (Url)
@@ -101,15 +102,17 @@ fromLocation examples location =
         |> Result.withDefault All
 
 
-viewBreadCrumbs : Route state msg -> Html msg2
-viewBreadCrumbs currentRoute =
+viewHeader : Route state msg -> Html msg2
+viewHeader currentRoute =
     breadCrumbs currentRoute
         |> Maybe.map
-            (BreadCrumbs.view
-                { aTagAttributes = \r -> [ Attributes.href ("/" ++ toString r) ]
-                , isCurrentRoute = (==) currentRoute
-                , label = "breadcrumbs"
-                }
+            (\crumbs ->
+                Header.view
+                    [ Header.aTagAttributes (\r -> [ Attributes.href ("/" ++ toString r) ])
+                    ]
+                    { breadcrumbs = crumbs
+                    , isCurrentRoute = (==) currentRoute
+                    }
             )
         |> Maybe.withDefault (Html.text "")
 

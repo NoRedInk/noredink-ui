@@ -330,7 +330,7 @@ withSideNav model content =
             , id "maincontent"
             , Key.tabbable False
             ]
-            [ Routes.viewBreadCrumbs model.route
+            [ Routes.viewHeader model.route
             , content
             ]
         ]
