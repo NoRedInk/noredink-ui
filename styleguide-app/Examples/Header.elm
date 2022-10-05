@@ -51,9 +51,6 @@ example =
     , view =
         \ellieLinkConfig state ->
             let
-                examples =
-                    []
-
                 attributes =
                     List.map Tuple.second (Control.currentValue state.control)
             in
@@ -68,19 +65,28 @@ example =
                 , renderExample = Code.unstyledView
                 , toExampleCode =
                     \settings ->
-                        let
-                            toExampleCode ( name, _ ) =
-                                { sectionName = name
-                                , code =
-                                    moduleName
-                                        ++ "."
-                                        ++ name
-                                        ++ "\n    [ "
-                                        ++ String.join "\n    , " (List.map Tuple.first settings)
-                                        ++ "\n    ]"
-                                }
-                        in
-                        List.map toExampleCode examples
+                        [ { sectionName = "Example"
+                          , code =
+                                Code.fromModule moduleName "view "
+                                    ++ Code.list (List.map Tuple.first settings)
+                                    ++ Code.newlineWithIndent 1
+                                    ++ Code.commentInline "See the BreadCrumbs example to more fully customize the main data in the Header"
+                                    ++ Code.recordMultiline
+                                        [ ( "breadcrumbs"
+                                          , Code.newlineWithIndent 2
+                                                ++ Code.fromModule "BreadCrumbs" "init "
+                                                ++ Code.record
+                                                    [ ( "id", Code.string "page-header" )
+                                                    , ( "text", Code.string "Page" )
+                                                    , ( "route", "()" )
+                                                    ]
+                                                ++ Code.list []
+                                          )
+                                        , ( "isCurrentRoute", Code.always "True" )
+                                        ]
+                                        1
+                          }
+                        ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , Header.view
@@ -94,9 +100,6 @@ example =
                         []
                 , isCurrentRoute = \_ -> True
                 }
-            , examples
-                |> List.map (\( name, view ) -> ( name, view attributes ))
-                |> viewExamples
             ]
     }
 
