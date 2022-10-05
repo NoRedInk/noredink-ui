@@ -352,7 +352,7 @@ button attributes title =
                         if buttonConfig.hasBorder then
                             [ border3 (px 1) solid Colors.gray75
                             , if menuConfig.isDisabled then
-                                backgroundColor Colors.gray85
+                                backgroundColor Colors.gray92
 
                               else
                                 borderBottom3 (px 3) solid Colors.gray75
