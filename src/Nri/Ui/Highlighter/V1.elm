@@ -592,7 +592,8 @@ view_ viewSegment { id, highlightables } =
     highlightables
         |> Grouping.buildGroups
         |> List.concatMap (groupContainer viewSegment)
-        |> p [ Html.Styled.Attributes.id id, class "highlighter-container" ]
+        |> p [ Html.Styled.Attributes.id id, class "highlighter-container", attribute "role" "application" ]
+
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
