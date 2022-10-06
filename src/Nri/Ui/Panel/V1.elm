@@ -1,35 +1,24 @@
 module Nri.Ui.Panel.V1 exposing
-    ( view
-    , Customization, primaryTheme, secondaryTheme
+    ( view, Attribute
+    , header, headerExtras
+    , contents
+    , primaryTheme, secondaryTheme
     )
 
 {-| Create panels (AKA wells.)
 
-
-## View
-
-`view` works mostly like the functions from `Html`, but you can only customize
-it with things that make sense for panels. To get a really basic panel:
-
-    view []
-        "Header Text"
-        [ text "Body Content" ]
-
-@docs view
+@docs view, Attribute
 
 
-## Customizations
+## Content
 
-    view
-        [ secondaryTheme ]
-        "Header text"
-        [ text "Body Content" ]
+@docs header, headerExtras
+@docs contents
 
-@docs Customization, primaryTheme, secondaryTheme
 
-You can also add extra stuff to the right side of the panel header. This is a
-customization, despite being content. See the examples in the style guide for
-how this works out.
+## Theme
+
+@docs primaryTheme, secondaryTheme
 
 -}
 
@@ -40,7 +29,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 
 
-type alias Panel msg =
+type alias Config msg =
     { header : String
     , headerExtras : List (Html msg)
     , contents : List (Html msg)
@@ -48,18 +37,18 @@ type alias Panel msg =
     }
 
 
-init : String -> List (Html msg) -> Panel msg
-init header contents =
-    { header = header
+defaultConfig : Config msg
+defaultConfig =
+    { header = ""
     , headerExtras = []
-    , contents = contents
+    , contents = []
     , theme = Primary
     }
 
 
 {-| -}
-type Customization
-    = WithTheme Theme
+type Attribute msg
+    = Attribute (Config msg -> Config msg)
 
 
 type Theme
@@ -69,23 +58,35 @@ type Theme
 
 {-| use the primary color theme (this is the default)
 -}
-primaryTheme : Customization
+primaryTheme : Attribute msg
 primaryTheme =
-    WithTheme Primary
+    Attribute (\soFar -> { soFar | theme = Primary })
 
 
 {-| use the secondary color theme
 -}
-secondaryTheme : Customization
+secondaryTheme : Attribute msg
 secondaryTheme =
-    WithTheme Secondary
+    Attribute (\soFar -> { soFar | theme = Secondary })
 
 
-customize : Customization -> Panel msg -> Panel msg
-customize customization panel =
-    case customization of
-        WithTheme theme ->
-            { panel | theme = theme }
+{-| The main text for the panel's header
+-}
+header : String -> Attribute msg
+header header_ =
+    Attribute (\soFar -> { soFar | header = header_ })
+
+
+{-| Use this attribute can also add extra stuff to the right side of the panel header.
+-}
+headerExtras : List (Html msg) -> Attribute msg
+headerExtras headerExtras_ =
+    Attribute (\soFar -> { soFar | headerExtras = headerExtras_ })
+
+
+contents : List (Html msg) -> Attribute msg
+contents contents_ =
+    Attribute (\soFar -> { soFar | contents = contents_ })
 
 
 
@@ -94,11 +95,11 @@ customize customization panel =
 
 {-| create a panel, given the options you specify
 -}
-view : List Customization -> String -> List (Html msg) -> Html msg
-view customizations header contents =
+view : List (Attribute msg) -> Html msg
+view customizations =
     let
         panel =
-            List.foldl customize (init header contents) customizations
+            List.foldl (\(Attribute f) -> f) defaultConfig customizations
     in
     section []
         [ Html.Styled.header
