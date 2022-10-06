@@ -1,4 +1,4 @@
-module Nri.Panel exposing
+module Nri.Ui.Panel.V1 exposing
     ( view
     , Customization, primaryTheme, secondaryTheme, accordionLikeSpacing
     )
