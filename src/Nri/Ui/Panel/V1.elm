@@ -1,7 +1,7 @@
 module Nri.Ui.Panel.V1 exposing
     ( view, Attribute
     , header, headerExtras
-    , contents
+    , plaintext, markdown, html
     , primaryTheme, secondaryTheme
     )
 
@@ -13,7 +13,7 @@ module Nri.Ui.Panel.V1 exposing
 ## Content
 
 @docs header, headerExtras
-@docs contents
+@docs plaintext, markdown, html
 
 
 ## Theme
@@ -25,6 +25,7 @@ module Nri.Ui.Panel.V1 exposing
 import Css
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
+import Markdown
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 
@@ -32,7 +33,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 type alias Config msg =
     { header : String
     , headerExtras : List (Html msg)
-    , contents : List (Html msg)
+    , content : List (Html msg)
     , theme : Theme
     }
 
@@ -41,7 +42,7 @@ defaultConfig : Config msg
 defaultConfig =
     { header = ""
     , headerExtras = []
-    , contents = []
+    , content = []
     , theme = Primary
     }
 
@@ -84,9 +85,31 @@ headerExtras headerExtras_ =
     Attribute (\soFar -> { soFar | headerExtras = headerExtras_ })
 
 
-contents : List (Html msg) -> Attribute msg
-contents contents_ =
-    Attribute (\soFar -> { soFar | contents = contents_ })
+{-| Render panel content.
+-}
+html : List (Html msg) -> Attribute msg
+html contents_ =
+    Attribute (\soFar -> { soFar | content = contents_ })
+
+
+{-| Use a plain-text string for the panel content.
+-}
+plaintext : String -> Attribute msg
+plaintext content =
+    Attribute <| \config -> { config | content = [ text content ] }
+
+
+{-| Use a markdown string for the panel content.
+-}
+markdown : String -> Attribute msg
+markdown content =
+    Attribute <|
+        \config ->
+            { config
+                | content =
+                    Markdown.toHtml Nothing content
+                        |> List.map fromUnstyled
+            }
 
 
 
@@ -135,5 +158,5 @@ view customizations =
                 , Css.property "word-wrap" "break-word"
                 ]
             ]
-            panel.contents
+            panel.content
         ]

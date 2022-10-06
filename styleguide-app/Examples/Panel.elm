@@ -85,6 +85,15 @@ init =
                     )
                     (Control.string "Header")
                 )
+            |> ControlExtra.listItem "content"
+                (CommonControls.content
+                    { moduleName = moduleName
+                    , plaintext = Panel.plaintext
+                    , markdown = Just Panel.markdown
+                    , html = Panel.html
+                    , httpError = Nothing
+                    }
+                )
     }
 
 
