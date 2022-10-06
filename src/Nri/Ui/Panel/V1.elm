@@ -3,7 +3,7 @@ module Nri.Ui.Panel.V1 exposing
     , header
     , plaintext, markdown, html
     , containerCss, headerCss, css
-    , primaryTheme, secondaryTheme
+    , primary, secondary
     )
 
 {-| Create panels (AKA wells.)
@@ -20,7 +20,7 @@ module Nri.Ui.Panel.V1 exposing
 
 ## Theme
 
-@docs primaryTheme, secondaryTheme
+@docs primary, secondary
 
 -}
 
@@ -65,15 +65,15 @@ type Theme
 
 {-| use the primary color theme (this is the default)
 -}
-primaryTheme : Attribute msg
-primaryTheme =
+primary : Attribute msg
+primary =
     Attribute (\soFar -> { soFar | theme = Primary })
 
 
 {-| use the secondary color theme
 -}
-secondaryTheme : Attribute msg
-secondaryTheme =
+secondary : Attribute msg
+secondary =
     Attribute (\soFar -> { soFar | theme = Secondary })
 
 

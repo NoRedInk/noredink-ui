@@ -84,6 +84,12 @@ init =
     in
     { control =
         ControlExtra.list
+            |> ControlExtra.optionalListItem "theme"
+                (CommonControls.choice moduleName
+                    [ ( "secondary", Panel.secondary )
+                    , ( "primary", Panel.primary )
+                    ]
+                )
             |> ControlExtra.listItem "header"
                 (Control.map
                     (\v ->
