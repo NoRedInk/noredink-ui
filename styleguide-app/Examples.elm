@@ -26,6 +26,7 @@ import Examples.Menu as Menu
 import Examples.Message as Message
 import Examples.Modal as Modal
 import Examples.Page as Page
+import Examples.Panel as Panel
 import Examples.Pennant as Pennant
 import Examples.PremiumCheckbox as PremiumCheckbox
 import Examples.RadioButton as RadioButton
@@ -524,6 +525,25 @@ all =
                     _ ->
                         Nothing
             )
+    , Panel.example
+        |> Example.wrapMsg PanelMsg
+            (\msg ->
+                case msg of
+                    PanelMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState PanelState
+            (\msg ->
+                case msg of
+                    PanelState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , Pennant.example
         |> Example.wrapMsg PennantMsg
             (\msg ->
@@ -914,6 +934,7 @@ type State
     | MessageState Message.State
     | ModalState Modal.State
     | PageState Page.State
+    | PanelState Panel.State
     | PennantState Pennant.State
     | PremiumCheckboxState PremiumCheckbox.State
     | RadioButtonState RadioButton.State
@@ -961,6 +982,7 @@ type Msg
     | MessageMsg Message.Msg
     | ModalMsg Modal.Msg
     | PageMsg Page.Msg
+    | PanelMsg Panel.Msg
     | PennantMsg Pennant.Msg
     | PremiumCheckboxMsg PremiumCheckbox.Msg
     | RadioButtonMsg RadioButton.Msg
