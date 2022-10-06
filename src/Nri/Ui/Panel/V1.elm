@@ -1,6 +1,6 @@
 module Nri.Ui.Panel.V1 exposing
     ( view
-    , Customization, primaryTheme, secondaryTheme, accordionLikeSpacing
+    , Customization, primaryTheme, secondaryTheme
     )
 
 {-| Create panels (AKA wells.)
@@ -28,7 +28,7 @@ like this:
         "Header text"
         [ text "Body Content" ]
 
-@docs Customization, primaryTheme, secondaryTheme, accordionLikeSpacing
+@docs Customization, primaryTheme, secondaryTheme
 
 You can also add extra stuff to the right side of the panel header. This is a
 customization, despite being content. See the examples in the style guide for
@@ -48,7 +48,6 @@ type alias Panel msg =
     , headerExtras : List (Html msg)
     , contents : List (Html msg)
     , theme : Theme
-    , spacing : Spacing
     }
 
 
@@ -58,7 +57,6 @@ init header contents =
     , headerExtras = []
     , contents = contents
     , theme = Primary
-    , spacing = StandardHeight
     }
 
 
@@ -67,7 +65,6 @@ specific `Html.Attribute`.
 -}
 type Customization msg
     = WithTheme Theme
-    | WithSpacing Spacing
 
 
 type Theme
@@ -89,30 +86,11 @@ secondaryTheme =
     WithTheme Secondary
 
 
-{-| how much should this panel have above and below it? Should we use a
-reasonable margin or collapse it like an accordion?
--}
-type Spacing
-    = StandardHeight
-    | AccordionLike
-
-
-{-| space panels like accordion components. This also limits their width (see
-the style guide.)
--}
-accordionLikeSpacing : Customization msg
-accordionLikeSpacing =
-    WithSpacing AccordionLike
-
-
 customize : Customization msg -> Panel msg -> Panel msg
 customize customization panel =
     case customization of
         WithTheme theme ->
             { panel | theme = theme }
-
-        WithSpacing spacing ->
-            { panel | spacing = spacing }
 
 
 
@@ -136,17 +114,7 @@ view customizations header contents =
 
                     Secondary ->
                         Css.backgroundColor Colors.gray75
-                , case panel.spacing of
-                    StandardHeight ->
-                        Css.batch
-                            [ Css.padding2 (Css.px 8) (Css.px 15)
-                            ]
-
-                    AccordionLike ->
-                        Css.batch
-                            [ Css.padding2 (Css.px 0) (Css.px 16)
-                            , Css.lineHeight (Css.px 30)
-                            ]
+                , Css.padding2 (Css.px 8) (Css.px 15)
                 , Fonts.baseFont
                 , Css.fontSize (Css.px 16)
                 , Css.color Colors.white
@@ -160,12 +128,7 @@ view customizations header contents =
             (text panel.header :: panel.headerExtras)
         , article
             [ css
-                [ case panel.spacing of
-                    StandardHeight ->
-                        Css.padding2 (Css.px 8) (Css.px 15)
-
-                    AccordionLike ->
-                        Css.marginBottom (Css.px 10)
+                [ Css.padding2 (Css.px 8) (Css.px 15)
                 , Fonts.baseFont
                 , Css.fontSize (Css.px 16)
                 , Css.color Colors.gray20
