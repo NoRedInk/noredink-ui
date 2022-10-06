@@ -97,11 +97,11 @@ customize =
 view :
     List (Attribute route msg)
     ->
-        { breadcrumbs : BreadCrumbs route
+        { breadCrumbs : BreadCrumbs route
         , isCurrentRoute : route -> Bool
         }
     -> Html msg
-view attrs { breadcrumbs, isCurrentRoute } =
+view attrs { breadCrumbs, isCurrentRoute } =
     let
         config =
             customize attrs
@@ -135,7 +135,7 @@ view attrs { breadcrumbs, isCurrentRoute } =
                             , aTagAttributes = config.aTagAttributes
                             , label = config.breadCrumbsLabel
                             }
-                            breadcrumbs
+                            breadCrumbs
                   in
                   case config.extraSubheadContent of
                     [] ->

@@ -113,7 +113,7 @@ viewHeader currentRoute extraContent =
                     , Header.extraContent extraContent
                     , Header.customPageWidth (Css.px 1400)
                     ]
-                    { breadcrumbs = crumbs
+                    { breadCrumbs = crumbs
                     , isCurrentRoute = (==) currentRoute
                     }
             )

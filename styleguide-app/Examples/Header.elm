@@ -71,7 +71,7 @@ example =
                                     ++ Code.newlineWithIndent 1
                                     ++ Code.commentInline "See the BreadCrumbs example to more fully customize the main data in the Header"
                                     ++ Code.recordMultiline
-                                        [ ( "breadcrumbs"
+                                        [ ( "breadCrumbs"
                                           , Code.newlineWithIndent 2
                                                 ++ Code.fromModule "BreadCrumbs" "init "
                                                 ++ Code.record
@@ -90,7 +90,7 @@ example =
             , Heading.h2 [ Heading.plaintext "Example" ]
             , Header.view
                 (Header.breadCrumbsLabel "header example breadcrumbs" :: attributes)
-                { breadcrumbs =
+                { breadCrumbs =
                     BreadCrumbs.init
                         { id = "page-header"
                         , text = "Page"
