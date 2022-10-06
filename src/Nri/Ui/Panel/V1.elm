@@ -20,9 +20,6 @@ it with things that make sense for panels. To get a really basic panel:
 
 ## Customizations
 
-Customizations work more-or-less like very specific `Html.Attribute`s. Use them
-like this:
-
     view
         [ secondaryTheme ]
         "Header text"
@@ -60,10 +57,8 @@ init header contents =
     }
 
 
-{-| A single customization for a panel. You can think of this like a very
-specific `Html.Attribute`.
--}
-type Customization msg
+{-| -}
+type Customization
     = WithTheme Theme
 
 
@@ -74,19 +69,19 @@ type Theme
 
 {-| use the primary color theme (this is the default)
 -}
-primaryTheme : Customization msg
+primaryTheme : Customization
 primaryTheme =
     WithTheme Primary
 
 
 {-| use the secondary color theme
 -}
-secondaryTheme : Customization msg
+secondaryTheme : Customization
 secondaryTheme =
     WithTheme Secondary
 
 
-customize : Customization msg -> Panel msg -> Panel msg
+customize : Customization -> Panel msg -> Panel msg
 customize customization panel =
     case customization of
         WithTheme theme ->
@@ -99,7 +94,7 @@ customize customization panel =
 
 {-| create a panel, given the options you specify
 -}
-view : List (Customization msg) -> String -> List (Html msg) -> Html msg
+view : List Customization -> String -> List (Html msg) -> Html msg
 view customizations header contents =
     let
         panel =
