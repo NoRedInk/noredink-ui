@@ -41,8 +41,11 @@ example =
     , view =
         \ellieLinkConfig state ->
             let
-                settings_ =
+                settings =
                     Control.currentValue state.control
+
+                attributes =
+                    List.map Tuple.second settings
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -54,33 +57,44 @@ example =
                 , extraCode = []
                 , renderExample = Code.unstyledView
                 , toExampleCode =
-                    \settings ->
+                    \_ ->
                         []
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
+            , Panel.view attributes
             ]
     }
 
 
 {-| -}
 type alias State =
-    { control : Control Settings
+    { control : Control (Settings Msg)
     }
 
 
 init : State
 init =
-    { control = Control.record Settings
+    { control =
+        ControlExtra.list
+            |> ControlExtra.listItem "header"
+                (Control.map
+                    (\v ->
+                        ( Code.fromModule moduleName "header " ++ Code.string v
+                        , Panel.header v
+                        )
+                    )
+                    (Control.string "Header")
+                )
     }
 
 
-type alias Settings =
-    {}
+type alias Settings msg =
+    List ( String, Panel.Attribute msg )
 
 
 {-| -}
 type Msg
-    = UpdateControl (Control Settings)
+    = UpdateControl (Control (Settings Msg))
 
 
 update : Msg -> State -> ( State, Cmd Msg )
