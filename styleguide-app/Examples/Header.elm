@@ -89,7 +89,7 @@ example =
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , Header.view
-                attributes
+                (Header.breadCrumbsLabel "header example breadcrumbs" :: attributes)
                 { breadcrumbs =
                     BreadCrumbs.init
                         { id = "page-header"

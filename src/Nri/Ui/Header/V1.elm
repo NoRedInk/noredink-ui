@@ -1,12 +1,12 @@
 module Nri.Ui.Header.V1 exposing
     ( view
-    , Attribute, aTagAttributes, extraContent, description, extraSubheadContent, customPageWidth
+    , Attribute, aTagAttributes, extraContent, description, extraSubheadContent, customPageWidth, breadCrumbsLabel
     )
 
 {-|
 
 @docs view
-@docs Attribute, aTagAttributes, extraContent, description, extraSubheadContent, customPageWidth
+@docs Attribute, aTagAttributes, extraContent, description, extraSubheadContent, customPageWidth, breadCrumbsLabel
 
 -}
 
@@ -62,6 +62,13 @@ customPageWidth pageWidth =
     Attribute (\soFar -> { soFar | pageWidth = pageWidth })
 
 
+{-| Default label is "breadcrumbs". You will seldom need override the default.
+-}
+breadCrumbsLabel : String -> Attribute route msg
+breadCrumbsLabel label =
+    Attribute (\soFar -> { soFar | breadCrumbsLabel = label })
+
+
 type alias Config route msg =
     { aTagAttributes : route -> List (Html.Attribute msg)
     , containerAttributes : List (Html.Attribute Never)
@@ -69,6 +76,7 @@ type alias Config route msg =
     , extraSubheadContent : List (Html msg)
     , description : Maybe String
     , pageWidth : Css.Px
+    , breadCrumbsLabel : String
     }
 
 
@@ -81,6 +89,7 @@ customize =
         , extraSubheadContent = []
         , description = Nothing
         , pageWidth = MediaQuery.mobileBreakpoint
+        , breadCrumbsLabel = "breadcrumbs"
         }
 
 
@@ -124,7 +133,7 @@ view attrs { breadcrumbs, isCurrentRoute } =
                         BreadCrumbs.view
                             { isCurrentRoute = isCurrentRoute
                             , aTagAttributes = config.aTagAttributes
-                            , label = "breadcrumbs"
+                            , label = config.breadCrumbsLabel
                             }
                             breadcrumbs
                   in
