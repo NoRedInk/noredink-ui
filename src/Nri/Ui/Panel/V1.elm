@@ -1,6 +1,6 @@
 module Nri.Ui.Panel.V1 exposing
     ( view, Attribute
-    , header, headerExtras
+    , header
     , plaintext, markdown, html
     , containerCss, headerCss, css
     , primaryTheme, secondaryTheme
@@ -13,7 +13,7 @@ module Nri.Ui.Panel.V1 exposing
 
 ## Content
 
-@docs header, headerExtras
+@docs header
 @docs plaintext, markdown, html
 @docs containerCss, headerCss, css
 
@@ -34,7 +34,6 @@ import Nri.Ui.Fonts.V1 as Fonts
 
 type alias Config msg =
     { header : String
-    , headerExtras : List (Html msg)
     , content : List (Html msg)
     , theme : Theme
     , css : List Style
@@ -46,7 +45,6 @@ type alias Config msg =
 defaultConfig : Config msg
 defaultConfig =
     { header = ""
-    , headerExtras = []
     , content = []
     , theme = Primary
     , css = []
@@ -84,13 +82,6 @@ secondaryTheme =
 header : String -> Attribute msg
 header header_ =
     Attribute (\soFar -> { soFar | header = header_ })
-
-
-{-| Use this attribute can also add extra stuff to the right side of the panel header.
--}
-headerExtras : List (Html msg) -> Attribute msg
-headerExtras headerExtras_ =
-    Attribute (\soFar -> { soFar | headerExtras = headerExtras_ })
 
 
 {-| Render panel content.
@@ -171,7 +162,7 @@ view customizations =
                 , Css.batch panel.headerCss
                 ]
             ]
-            (text panel.header :: panel.headerExtras)
+            [ text panel.header ]
         , article
             [ Attributes.css
                 [ Css.padding2 (Css.px 8) (Css.px 15)
