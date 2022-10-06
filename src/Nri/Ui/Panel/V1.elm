@@ -149,7 +149,7 @@ view customizations =
                         Css.backgroundColor Colors.navy
 
                     Secondary ->
-                        Css.backgroundColor Colors.gray75
+                        Css.backgroundColor Colors.gray45
                 , Css.padding2 (Css.px 8) (Css.px 15)
                 , Fonts.baseFont
                 , Css.fontSize (Css.px 16)
