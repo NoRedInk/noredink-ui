@@ -9,10 +9,12 @@ module Examples.Panel exposing (example, State, Msg)
 import Category exposing (Category(..))
 import Code
 import CommonControls
+import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Panel.V1 as Panel
 
@@ -74,6 +76,12 @@ type alias State =
 
 init : State
 init =
+    let
+        controlStyles name f styles =
+            CommonControls.css_ name
+                styles
+                { moduleName = moduleName, use = f }
+    in
     { control =
         ControlExtra.list
             |> ControlExtra.listItem "header"
@@ -93,6 +101,21 @@ init =
                     , html = Panel.html
                     , httpError = Nothing
                     }
+                )
+            |> controlStyles "containerCss"
+                Panel.containerCss
+                ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
+                , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
+                )
+            |> controlStyles "headerCss"
+                Panel.headerCss
+                ( "[ Css.border3 (Css.px 4) Css.solid Colors.aqua ]"
+                , [ Css.border3 (Css.px 4) Css.solid Colors.aqua ]
+                )
+            |> controlStyles "css"
+                Panel.css
+                ( "[ Css.border3 (Css.px 4) Css.dotted Colors.orange ]"
+                , [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]
                 )
     }
 

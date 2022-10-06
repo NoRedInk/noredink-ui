@@ -2,6 +2,7 @@ module Nri.Ui.Panel.V1 exposing
     ( view, Attribute
     , header, headerExtras
     , plaintext, markdown, html
+    , containerCss, headerCss, css
     , primaryTheme, secondaryTheme
     )
 
@@ -14,6 +15,7 @@ module Nri.Ui.Panel.V1 exposing
 
 @docs header, headerExtras
 @docs plaintext, markdown, html
+@docs containerCss, headerCss, css
 
 
 ## Theme
@@ -22,9 +24,9 @@ module Nri.Ui.Panel.V1 exposing
 
 -}
 
-import Css
+import Css exposing (Style)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes
 import Markdown
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
@@ -35,6 +37,9 @@ type alias Config msg =
     , headerExtras : List (Html msg)
     , content : List (Html msg)
     , theme : Theme
+    , css : List Style
+    , headerCss : List Style
+    , containerCss : List Style
     }
 
 
@@ -44,6 +49,9 @@ defaultConfig =
     , headerExtras = []
     , content = []
     , theme = Primary
+    , css = []
+    , headerCss = []
+    , containerCss = []
     }
 
 
@@ -112,6 +120,24 @@ markdown content =
             }
 
 
+{-| -}
+containerCss : List Style -> Attribute msg
+containerCss styles =
+    Attribute <| \config -> { config | containerCss = styles }
+
+
+{-| -}
+headerCss : List Style -> Attribute msg
+headerCss styles =
+    Attribute <| \config -> { config | headerCss = styles }
+
+
+{-| -}
+css : List Style -> Attribute msg
+css styles =
+    Attribute <| \config -> { config | css = styles }
+
+
 
 -- views
 
@@ -124,9 +150,9 @@ view customizations =
         panel =
             List.foldl (\(Attribute f) -> f) defaultConfig customizations
     in
-    section []
+    section [ Attributes.css panel.containerCss ]
         [ Html.Styled.header
-            [ css
+            [ Attributes.css
                 [ case panel.theme of
                     Primary ->
                         Css.backgroundColor Colors.navy
@@ -142,11 +168,12 @@ view customizations =
                 , Css.displayFlex
                 , Css.alignItems Css.center
                 , Css.flexWrap Css.wrap
+                , Css.batch panel.headerCss
                 ]
             ]
             (text panel.header :: panel.headerExtras)
         , article
-            [ css
+            [ Attributes.css
                 [ Css.padding2 (Css.px 8) (Css.px 15)
                 , Fonts.baseFont
                 , Css.fontSize (Css.px 16)
@@ -156,6 +183,7 @@ view customizations =
                 , Css.borderBottomRightRadius (Css.px 8)
                 , Css.overflowWrap Css.breakWord
                 , Css.property "word-wrap" "break-word"
+                , Css.batch panel.css
                 ]
             ]
             panel.content
