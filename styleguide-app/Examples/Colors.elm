@@ -301,4 +301,16 @@ viewColor ( name, color, description ) =
                 ]
             ]
             [ Html.text color.value ]
+        , Html.p
+            [ css
+                [ Css.fontSize (Css.px 14)
+                , Fonts.baseFont
+                , Css.margin Css.zero
+                ]
+            ]
+            [ color
+                |> Nri.Ui.Colors.Extra.fromCssColor
+                |> SolidColor.toRGBString
+                |> Html.text
+            ]
         ]
