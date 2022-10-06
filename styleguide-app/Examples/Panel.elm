@@ -60,7 +60,12 @@ example =
                 , renderExample = Code.unstyledView
                 , toExampleCode =
                     \_ ->
-                        []
+                        [ { sectionName = "Example"
+                          , code =
+                                Code.fromModule moduleName "view"
+                                    ++ Code.list (List.map Tuple.first settings)
+                          }
+                        ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , Panel.view attributes
