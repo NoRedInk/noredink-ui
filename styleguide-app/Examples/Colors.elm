@@ -54,7 +54,8 @@ example =
             |> List.map viewPreviewSwatch
     , view =
         \ellieLinkConfig _ ->
-            [ viewGroupedColors colorGroupings
+            [ Heading.h2 [ Heading.plaintext "General Colors" ]
+            , viewGroupedColors colorGroupings
             , Heading.h2 [ Heading.plaintext "Background Highlight Colors" ]
             , Text.mediumBody [ Text.plaintext "Background highlights should be used as the default highlight style because they are more noticeable and readable. The dark colors should be used in the case where headings need to harmonize with highlighted containers, such as in Guided Drafts." ]
             , viewColors backgroundHighlightColors
