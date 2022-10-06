@@ -595,7 +595,6 @@ view_ viewSegment { id, highlightables } =
         |> p [ Html.Styled.Attributes.id id, class "highlighter-container", attribute "role" "application" ]
 
 
-
 {-| When elements are marked, wrap them in a single `mark` html node.
 -}
 groupContainer : (Highlightable marker -> Html msg) -> List (Highlightable marker) -> List (Html msg)
