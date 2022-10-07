@@ -3,7 +3,7 @@ module Debug.Control.Extra exposing
     , list, listItem, optionalListItem, optionalListItemDefaultChecked
     , optionalBoolListItem, optionalBoolListItemDefaultTrue
     , bool
-    , rotatedChoice
+    , rotatedChoice, specificChoice
     )
 
 {-|
@@ -12,7 +12,7 @@ module Debug.Control.Extra exposing
 @docs list, listItem, optionalListItem, optionalListItemDefaultChecked
 @docs optionalBoolListItem, optionalBoolListItemDefaultTrue
 @docs bool
-@docs rotatedChoice
+@docs rotatedChoice, specificChoice
 
 -}
 
@@ -124,5 +124,15 @@ rotatedChoice rotateWith options =
     let
         ( before, after ) =
             List.Extra.splitAt rotateWith options
+    in
+    Control.choice (after ++ before)
+
+
+{-| -}
+specificChoice : String -> List ( String, Control a ) -> Control a
+specificChoice match options =
+    let
+        ( before, after ) =
+            List.Extra.break (Tuple.first >> (==) match) options
     in
     Control.choice (after ++ before)
