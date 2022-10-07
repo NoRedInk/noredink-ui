@@ -662,7 +662,7 @@ viewInnerContent ({ visibleTitle } as config) =
                     , Css.maxHeight
                         (Css.calc (Css.vh 100)
                             Css.minus
-                            (Css.px (footerMobileHeight + titleMobileHeight))
+                            (Css.px (footerMobileHeight + titleMobileHeight + 40))
                         )
                     ]
                 , if visibleTitle then
