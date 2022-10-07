@@ -512,8 +512,11 @@ radioInputIcon config =
                 ( _, True, _ ) ->
                     lockedSvg
 
-                ( True, _, _ ) ->
-                    unselectedSvg
+                ( True, _, True ) ->
+                    selectedDisabledSvg
+
+                ( True, _, False ) ->
+                    unselectedDisabledSvg
 
                 ( _, False, True ) ->
                     selectedSvg
@@ -533,13 +536,7 @@ radioInputIcon config =
             , ( "Nri-RadioButton-RadioButtonDisabled", config.isDisabled )
             ]
         , css
-            [ Css.batch <|
-                if config.isDisabled then
-                    [ opacity (num 0.4) ]
-
-                else
-                    []
-            , position absolute
+            [ position absolute
             , left zero
             , top (calc (pct 50) Css.minus (Css.px ((iconHeight - 2 + iconPadding) / 2)))
             , Css.property "transition" ".3s all"
@@ -634,6 +631,39 @@ selectedSvg =
             ]
         ]
         |> withImageBorder Colors.azure
+
+
+unselectedDisabledSvg : Svg
+unselectedDisabledSvg =
+    Nri.Ui.Svg.V1.init "0 0 27 27"
+        [ Svg.circle
+            [ SvgAttributes.fill Colors.gray75.value
+            , SvgAttributes.cx "13.5"
+            , SvgAttributes.cy "13.5"
+            , SvgAttributes.r "13.5"
+            ]
+            []
+        ]
+
+
+selectedDisabledSvg : Svg
+selectedDisabledSvg =
+    Nri.Ui.Svg.V1.init "0 0 27 27"
+        [ Svg.circle
+            [ SvgAttributes.fill Colors.gray45.value
+            , SvgAttributes.cx "13.5"
+            , SvgAttributes.cy "13.5"
+            , SvgAttributes.r "13.5"
+            ]
+            []
+        , Svg.circle
+            [ SvgAttributes.fill Colors.white.value
+            , SvgAttributes.cx "13.5"
+            , SvgAttributes.cy "13.5"
+            , SvgAttributes.r "6.5"
+            ]
+            []
+        ]
 
 
 lockedSvg : Svg
