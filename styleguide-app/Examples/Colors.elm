@@ -62,6 +62,11 @@ example =
             , Heading.h2 [ Heading.plaintext "Text Highlight Colors" ]
             , Text.mediumBody [ Text.plaintext "Colors for highlighting text on a white background.  These colors are readable at 14px bold and bigger." ]
             , viewColors textHighlightColors
+            , Heading.h2 [ Heading.plaintext "Deprecated colors" ]
+            , viewColors
+                [ ( "magenta", Colors.magenta, "Pink highlighter" )
+                , ( "cyan", Colors.cyan, "Blue Highlighter" )
+                ]
             ]
     }
 
@@ -104,7 +109,6 @@ blueColors =
     , ( "turquoise", Colors.turquoise, "Master level 3, writing cycles" )
     , ( "turquoiseDark", Colors.turquoiseDark, "Text to pair with turquoise elements" )
     , ( "turquoiseLight", Colors.turquoiseLight, "Background to pair with turquoise elements" )
-    , ( "cyan", Colors.cyan, "Blue Highlighter" )
     ]
 
 
@@ -133,7 +137,6 @@ redColors =
     [ ( "red", Colors.red, "NoRedInk red, form warnings, practice" )
     , ( "redDark", Colors.redDark, "Red links/text, red button shadow" )
     , ( "redLight", Colors.redLight, "Red backgrounds" )
-    , ( "magenta", Colors.magenta, "Pink highlighter" )
     ]
 
 
