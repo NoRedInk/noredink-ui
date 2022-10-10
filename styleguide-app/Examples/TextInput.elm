@@ -10,6 +10,7 @@ import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
 import Code
+import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -385,24 +386,12 @@ controlAttributes =
             )
         |> ControlExtra.optionalBoolListItem "hiddenLabel"
             ( "TextInput.hiddenLabel", TextInput.hiddenLabel )
-        |> ControlExtra.optionalListItem "errorMessage"
-            (Control.map
-                (\str ->
-                    ( "TextInput.errorMessage " ++ Code.withParens (Code.maybeString (Just str))
-                    , TextInput.errorMessage (Just str)
-                    )
-                )
-                (Control.string "The statement must be true.")
-            )
-        |> ControlExtra.optionalListItem "guidance"
-            (Control.string "The statement must be true."
-                |> Control.map
-                    (\str ->
-                        ( "TextInput.guidance " ++ Code.string str
-                        , TextInput.guidance str
-                        )
-                    )
-            )
+        |> CommonControls.guidanceAndErrorMessage
+            { moduleName = moduleName
+            , guidance = TextInput.guidance
+            , errorMessage = TextInput.errorMessage
+            , message = "The statement must be true."
+            }
         |> ControlExtra.optionalBoolListItem "disabled"
             ( "TextInput.disabled", TextInput.disabled )
         |> ControlExtra.optionalBoolListItem "loading"

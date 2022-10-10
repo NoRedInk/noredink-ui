@@ -294,26 +294,12 @@ controlAttributes =
                 ]
             )
         |> ControlExtra.optionalListItem "disclosure" controlDisclosure
-        |> ControlExtra.optionalListItem "errorMessage"
-            (Control.map
-                (\message ->
-                    ( "RadioButton.errorMessage (Just \"" ++ message ++ "\")"
-                    , RadioButton.errorMessage (Just message)
-                    )
-                )
-             <|
-                Control.string "The statement must be true."
-            )
-        |> ControlExtra.optionalListItem "guidance"
-            (Control.map
-                (\content ->
-                    ( "RadioButton.guidance \"" ++ content ++ "\""
-                    , RadioButton.guidance content
-                    )
-                )
-             <|
-                Control.string "The statement must be true."
-            )
+        |> CommonControls.guidanceAndErrorMessage
+            { moduleName = moduleName
+            , guidance = RadioButton.guidance
+            , errorMessage = RadioButton.errorMessage
+            , message = "The statement must be true."
+            }
 
 
 labelVisibility : Control ( String, RadioButton.Attribute Selection Msg )

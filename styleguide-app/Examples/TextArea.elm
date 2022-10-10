@@ -73,7 +73,7 @@ example =
 
                 toExampleCode name =
                     [ moduleName ++ "." ++ name ++ " " ++ Code.string settings.label
-                    , Code.record [ ( "isInError", Code.bool settings.isInError ) ]
+                    , Code.record []
                     , Code.list <|
                         ("TextArea.value " ++ Code.string state.value)
                             :: "TextArea.onInput identity"
@@ -99,8 +99,7 @@ example =
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , TextArea.view settings.label
-                { isInError = settings.isInError
-                }
+                {}
                 (TextArea.value state.value
                     :: TextArea.onInput UpdateValue
                     :: List.map Tuple.second attributes
@@ -132,7 +131,6 @@ type alias Settings =
 
 type alias Settings_ =
     { label : String
-    , isInError : Bool
     }
 
 
@@ -165,19 +163,24 @@ controlAttributes =
                 , ( "autoResizeSingleLine", TextArea.autoResizeSingleLine )
                 ]
             )
+        |> CommonControls.guidanceAndErrorMessage
+            { moduleName = moduleName
+            , guidance = TextArea.guidance
+            , errorMessage = TextArea.errorMessage
+            , message = "The statement must be true."
+            }
 
 
 initControls : Control Settings
 initControls =
     Control.record
-        (\attributes label isInError ->
-            ( Settings_ label isInError
+        (\attributes label ->
+            ( Settings_ label
             , attributes
             )
         )
         |> Control.field "attributes" controlAttributes
         |> Control.field "label" (Control.string "Introductory paragraph")
-        |> Control.field "isInError" (Control.bool False)
 
 
 {-| -}

@@ -89,8 +89,7 @@ import Nri.Ui.Util exposing (dashify, removePunctuation)
 
 {-| -}
 type alias Model =
-    { isInError : Bool
-    }
+    {}
 
 
 {-| This is private. The public API only exposes `Attribute`.
@@ -318,7 +317,7 @@ view_ label config model =
             , Attributes.class "override-sass-styles custom-focus-ring"
             , Attributes.classList
                 [ ( InputStyles.inputClass, True )
-                , ( InputStyles.errorClass, model.isInError )
+                , ( InputStyles.errorClass, isInError )
                 ]
             , Aria.invalid isInError
             , InputErrorAndGuidanceInternal.describedBy idValue config
@@ -331,7 +330,7 @@ view_ label config model =
                     Style.invisibleStyle
 
                   else
-                    InputStyles.label config.theme model.isInError
+                    InputStyles.label config.theme isInError
                 ]
             ]
             [ Html.text label ]
