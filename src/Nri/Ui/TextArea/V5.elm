@@ -30,6 +30,7 @@ custom element, or else autosizing will break! This means doing the following:
 
 -}
 
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style as Style
 import Css exposing (px)
 import Html.Styled as Html exposing (Html)
@@ -132,12 +133,7 @@ view_ theme model =
                     [ ( InputStyles.inputClass, True )
                     , ( InputStyles.errorClass, model.isInError )
                     ]
-                , Attributes.attribute "aria-invalid" <|
-                    if model.isInError then
-                        "true"
-
-                    else
-                        "false"
+                , Aria.invalid model.isInError
                 ]
                 []
             , Html.label
