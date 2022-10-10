@@ -255,8 +255,7 @@ navContainer label =
     styled nav
         [ alignItems center
         , displayFlex
-        , flexWrap wrap
-        , Media.withMedia [ MediaQuery.mobile ] [ marginBottom (px 10) ]
+        , Media.withMedia [ MediaQuery.mobile ] [ marginBottom (px 10), flexWrap wrap ]
         ]
         [ Aria.label label ]
 
