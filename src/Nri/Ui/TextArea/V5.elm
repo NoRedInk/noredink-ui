@@ -6,6 +6,7 @@ module Nri.Ui.TextArea.V5 exposing
     , hiddenLabel, visibleLabel
     , standard, writing
     , Height(..), HeightBehavior(..)
+    , id
     , autofocus
     )
 
@@ -67,6 +68,7 @@ custom element, or else autosizing will break! This means doing the following:
 
 ### Other
 
+@docs id
 @docs autofocus
 
 -}
@@ -113,6 +115,7 @@ type alias Config msg =
     , autofocus : Bool
     , onInput : Maybe (String -> msg)
     , onBlur : Maybe msg
+    , id : Maybe String
     }
 
 
@@ -124,6 +127,7 @@ defaultConfig =
     , autofocus = False
     , onInput = Nothing
     , onBlur = Nothing
+    , id = Nothing
     }
 
 
@@ -179,6 +183,16 @@ autofocus =
     Attribute (\soFar -> { soFar | autofocus = True })
 
 
+{-| Set a custom ID for this text area. If you don't set the id explicitly,
+we'll automatically generate one from the label you pass in, but this can
+cause problems if you have more than one textarea with the same label on
+the page. Use this to be more specific and avoid issues with duplicate IDs.
+-}
+id : String -> Attribute msg
+id id_ =
+    Attribute (\soFar -> { soFar | id = Just id_ })
+
+
 {-| Use the Standard theme for the TextArea. This is the default.
 -}
 standard : Attribute msg
@@ -221,6 +235,10 @@ view_ label config model =
 
                 Writing ->
                     InputStyles.writingMinHeight
+
+        idValue : String
+        idValue =
+            Maybe.withDefault (generateId label) config.id
     in
     Html.styled (Html.node "nri-textarea-v5")
         [ Css.display Css.block, Css.position Css.relative ]
@@ -240,7 +258,7 @@ view_ label config model =
             , Maybe.map Events.onBlur config.onBlur
                 |> Maybe.withDefault Extra.none
             , Attributes.value config.value
-            , Attributes.id (generateId label)
+            , Attributes.id idValue
             , Attributes.autofocus config.autofocus
             , Attributes.placeholder model.placeholder
             , Attributes.attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859
@@ -253,7 +271,7 @@ view_ label config model =
             ]
             []
         , Html.label
-            [ Attributes.for (generateId label)
+            [ Attributes.for idValue
             , Attributes.css
                 [ if config.hideLabel then
                     Style.invisibleStyle
