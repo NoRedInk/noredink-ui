@@ -8,6 +8,7 @@ module Nri.Ui.TextArea.V5 exposing
     , autoResize, autoResizeSingleLine
     , id
     , placeholder, autofocus
+    , errorIf, errorMessage, guidance
     )
 
 {-|
@@ -70,6 +71,7 @@ custom element, or else autosizing will break! This means doing the following:
 
 @docs id
 @docs placeholder, autofocus
+@docs errorIf, errorMessage, guidance
 
 -}
 
@@ -79,6 +81,7 @@ import Css exposing (px)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
+import InputErrorAndGuidanceInternal exposing (ErrorState, Guidance)
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.InputStyles.V4 as InputStyles exposing (Theme(..))
 import Nri.Ui.Util exposing (dashify, removePunctuation)
@@ -94,6 +97,8 @@ type alias Model =
 -}
 type alias Config msg =
     { theme : Theme
+    , guidance : Guidance
+    , error : ErrorState
     , hideLabel : Bool
     , value : String
     , autofocus : Bool
@@ -108,6 +113,8 @@ type alias Config msg =
 defaultConfig : Config msg
 defaultConfig =
     { theme = Standard
+    , guidance = InputErrorAndGuidanceInternal.noGuidance
+    , error = InputErrorAndGuidanceInternal.noError
     , hideLabel = False
     , value = ""
     , autofocus = False
@@ -167,6 +174,28 @@ value value_ =
 placeholder : String -> Attribute msg
 placeholder text_ =
     Attribute (\soFar -> { soFar | placeholder = Just text_ })
+
+
+{-| Sets whether or not the field will be highlighted as having a validation error.
+-}
+errorIf : Bool -> Attribute msg
+errorIf =
+    Attribute << InputErrorAndGuidanceInternal.setErrorIf
+
+
+{-| If `Just`, the field will be highlighted as having a validation error,
+and the given error message will be shown.
+-}
+errorMessage : Maybe String -> Attribute msg
+errorMessage =
+    Attribute << InputErrorAndGuidanceInternal.setErrorMessage
+
+
+{-| A guidance message shows below the input, unless an error message is showing instead.
+-}
+guidance : String -> Attribute msg
+guidance =
+    Attribute << InputErrorAndGuidanceInternal.setGuidance
 
 
 {-| Hides the visible label. (There will still be an invisible label for screen readers.)
@@ -260,6 +289,9 @@ view_ label config model =
         idValue : String
         idValue =
             Maybe.withDefault (generateId label) config.id
+
+        isInError =
+            InputErrorAndGuidanceInternal.getIsInError config.error
     in
     Html.styled (Html.node "nri-textarea-v5")
         [ Css.display Css.block, Css.position Css.relative ]
@@ -288,7 +320,8 @@ view_ label config model =
                 [ ( InputStyles.inputClass, True )
                 , ( InputStyles.errorClass, model.isInError )
                 ]
-            , Aria.invalid model.isInError
+            , Aria.invalid isInError
+            , InputErrorAndGuidanceInternal.describedBy idValue config
             ]
             []
         , Html.label
@@ -302,6 +335,7 @@ view_ label config model =
                 ]
             ]
             [ Html.text label ]
+        , InputErrorAndGuidanceInternal.view idValue config
         ]
 
 
