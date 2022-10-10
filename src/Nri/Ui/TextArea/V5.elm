@@ -1,4 +1,4 @@
-module Nri.Ui.TextArea.V4 exposing
+module Nri.Ui.TextArea.V5 exposing
     ( view, writing, Height(..), HeightBehavior(..), Model, generateId
     , contentCreation
     )
@@ -128,7 +128,7 @@ view_ theme model =
     Html.styled Html.div
         [ Css.position Css.relative ]
         []
-        [ Html.styled (Html.node "nri-textarea-v4")
+        [ Html.styled (Html.node "nri-textarea-v5")
             [ Css.display Css.block ]
             autoresizeAttrs
             [ Html.styled Html.textarea

@@ -163,6 +163,9 @@ usages = [
 [forbidden."Nri.Ui.Text.V5"]
 hint = 'upgrade to V6'
 
+[forbidden."Nri.Ui.TextArea.V4"]
+hint = 'upgrade to V5'
+
 [forbidden."Nri.Ui.TextInput.V6"]
 hint = 'upgrade to V7'
 

@@ -45,6 +45,7 @@
         "Nri.Ui.Modal.V11",
         "Nri.Ui.Page.V3",
         "Nri.Ui.Palette.V1",
+        "Nri.Ui.Panel.V1",
         "Nri.Ui.Pennant.V2",
         "Nri.Ui.PremiumCheckbox.V8",
         "Nri.Ui.RadioButton.V4",
@@ -64,6 +65,7 @@
         "Nri.Ui.Text.V6",
         "Nri.Ui.Text.Writing.V1",
         "Nri.Ui.TextArea.V4",
+        "Nri.Ui.TextArea.V5",
         "Nri.Ui.TextInput.V7",
         "Nri.Ui.Tooltip.V3",
         "Nri.Ui.UiIcon.V1"

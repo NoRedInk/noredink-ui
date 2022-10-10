@@ -17,7 +17,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.InputStyles.V3 as InputStyles exposing (Theme(..))
-import Nri.Ui.TextArea.V4 as TextArea
+import Nri.Ui.TextArea.V5 as TextArea
 
 
 moduleName : String
@@ -27,7 +27,7 @@ moduleName =
 
 version : Int
 version =
-    4
+    5
 
 
 {-| -}
