@@ -7,7 +7,7 @@ module Nri.Ui.TextArea.V5 exposing
     , standard, writing
     , Height(..), HeightBehavior(..)
     , id
-    , autofocus
+    , placeholder, autofocus
     )
 
 {-|
@@ -69,7 +69,7 @@ custom element, or else autosizing will break! This means doing the following:
 ### Other
 
 @docs id
-@docs autofocus
+@docs placeholder, autofocus
 
 -}
 
@@ -88,7 +88,6 @@ import Nri.Ui.Util exposing (dashify, removePunctuation)
 type alias Model =
     { isInError : Bool
     , height : HeightBehavior
-    , placeholder : String
     }
 
 
@@ -115,6 +114,7 @@ type alias Config msg =
     , autofocus : Bool
     , onInput : Maybe (String -> msg)
     , onBlur : Maybe msg
+    , placeholder : Maybe String
     , id : Maybe String
     }
 
@@ -127,6 +127,7 @@ defaultConfig =
     , autofocus = False
     , onInput = Nothing
     , onBlur = Nothing
+    , placeholder = Nothing
     , id = Nothing
     }
 
@@ -146,6 +147,13 @@ type Attribute msg
 value : String -> Attribute msg
 value value_ =
     Attribute (\soFar -> { soFar | value = value_ })
+
+
+{-| If no explicit placeholder is given, the input label will be used as the placeholder.
+-}
+placeholder : String -> Attribute msg
+placeholder text_ =
+    Attribute (\soFar -> { soFar | placeholder = Just text_ })
 
 
 {-| Hides the visible label. (There will still be an invisible label for screen readers.)
@@ -260,7 +268,7 @@ view_ label config model =
             , Attributes.value config.value
             , Attributes.id idValue
             , Attributes.autofocus config.autofocus
-            , Attributes.placeholder model.placeholder
+            , Attributes.placeholder (Maybe.withDefault label config.placeholder)
             , Attributes.attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859
             , Attributes.class "override-sass-styles custom-focus-ring"
             , Attributes.classList

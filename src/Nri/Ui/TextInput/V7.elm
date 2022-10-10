@@ -465,7 +465,7 @@ value value_ =
     Attribute { emptyEventsAndValues | currentValue = Just value_ } identity
 
 
-{-| If not explicit placeholder is given, the input label will be used as the placeholder.
+{-| If no explicit placeholder is given, the input label will be used as the placeholder.
 -}
 placeholder : String -> Attribute value msg
 placeholder text_ =

@@ -75,7 +75,6 @@ example =
                     , Code.record
                         [ ( "isInError", Code.bool settings.isInError )
                         , ( "height", Tuple.first settings.height )
-                        , ( "placeholder", Code.string settings.placeholder )
                         ]
                     , Code.list <|
                         ("TextArea.value " ++ Code.string state.value)
@@ -104,7 +103,6 @@ example =
             , TextArea.view settings.label
                 { isInError = settings.isInError
                 , height = Tuple.second settings.height
-                , placeholder = settings.placeholder
                 }
                 (TextArea.value state.value
                     :: TextArea.onInput UpdateValue
@@ -137,7 +135,6 @@ type alias Settings =
 
 type alias Settings_ =
     { label : String
-    , placeholder : String
     , isInError : Bool
     , height : ( String, TextArea.HeightBehavior )
     }
@@ -157,19 +154,27 @@ controlAttributes =
             ( "TextArea.onBlur " ++ Code.string "Neener neener Blur happened"
             , TextArea.onBlur (UpdateValue "Neener neener Blur happened")
             )
+        |> ControlExtra.optionalListItem "placeholder"
+            (Control.string "A long time ago, in a galaxy pretty near here actually..."
+                |> Control.map
+                    (\str ->
+                        ( "TextArea.placeholder " ++ Code.string str
+                        , TextArea.placeholder str
+                        )
+                    )
+            )
 
 
 initControls : Control Settings
 initControls =
     Control.record
-        (\attributes label placeholder isInError height ->
-            ( Settings_ label placeholder isInError height
+        (\attributes label isInError height ->
+            ( Settings_ label isInError height
             , attributes
             )
         )
         |> Control.field "attributes" controlAttributes
         |> Control.field "label" (Control.string "Introductory paragraph")
-        |> Control.field "placeholder" (Control.string "A long time ago, in a galaxy pretty near here actually...")
         |> Control.field "isInError" (Control.bool False)
         |> Control.field "height"
             (Control.choice
