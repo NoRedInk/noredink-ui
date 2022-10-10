@@ -5,7 +5,7 @@ module Nri.Ui.TextArea.V5 exposing
     , onInput, onBlur
     , hiddenLabel, visibleLabel
     , standard, writing
-    , Height(..), HeightBehavior(..)
+    , autoResize, autoResizeSingleLine
     , id
     , placeholder, autofocus
     )
@@ -63,7 +63,7 @@ custom element, or else autosizing will break! This means doing the following:
 
 @docs hiddenLabel, visibleLabel
 @docs standard, writing
-@docs Height, HeightBehavior
+@docs autoResize, autoResizeSingleLine
 
 
 ### Other
@@ -87,8 +87,47 @@ import Nri.Ui.Util exposing (dashify, removePunctuation)
 {-| -}
 type alias Model =
     { isInError : Bool
+    }
+
+
+{-| This is private. The public API only exposes `Attribute`.
+-}
+type alias Config msg =
+    { theme : Theme
+    , hideLabel : Bool
+    , value : String
+    , autofocus : Bool
+    , onInput : Maybe (String -> msg)
+    , onBlur : Maybe msg
+    , placeholder : Maybe String
+    , id : Maybe String
     , height : HeightBehavior
     }
+
+
+defaultConfig : Config msg
+defaultConfig =
+    { theme = Standard
+    , hideLabel = False
+    , value = ""
+    , autofocus = False
+    , onInput = Nothing
+    , onBlur = Nothing
+    , placeholder = Nothing
+    , id = Nothing
+    , height = Fixed
+    }
+
+
+applyConfig : List (Attribute msg) -> Config msg
+applyConfig =
+    List.foldl (\(Attribute update) config -> update config) defaultConfig
+
+
+{-| Customizations for the TextArea.
+-}
+type Attribute msg
+    = Attribute (Config msg -> Config msg)
 
 
 {-| Control whether to auto-expand the height.
@@ -105,42 +144,16 @@ type Height
     | SingleLine
 
 
-{-| This is private. The public API only exposes `Attribute`.
--}
-type alias Config msg =
-    { theme : Theme
-    , hideLabel : Bool
-    , value : String
-    , autofocus : Bool
-    , onInput : Maybe (String -> msg)
-    , onBlur : Maybe msg
-    , placeholder : Maybe String
-    , id : Maybe String
-    }
+{-| -}
+autoResize : Attribute msg
+autoResize =
+    Attribute (\soFar -> { soFar | height = AutoResize DefaultHeight })
 
 
-defaultConfig : Config msg
-defaultConfig =
-    { theme = Standard
-    , hideLabel = False
-    , value = ""
-    , autofocus = False
-    , onInput = Nothing
-    , onBlur = Nothing
-    , placeholder = Nothing
-    , id = Nothing
-    }
-
-
-applyConfig : List (Attribute msg) -> Config msg
-applyConfig =
-    List.foldl (\(Attribute update) config -> update config) defaultConfig
-
-
-{-| Customizations for the TextArea.
--}
-type Attribute msg
-    = Attribute (Config msg -> Config msg)
+{-| -}
+autoResizeSingleLine : Attribute msg
+autoResizeSingleLine =
+    Attribute (\soFar -> { soFar | height = AutoResize SingleLine })
 
 
 {-| -}
@@ -226,7 +239,7 @@ view_ : String -> Config msg -> Model -> Html msg
 view_ label config model =
     let
         autoresizeAttrs =
-            case model.height of
+            case config.height of
                 AutoResize _ ->
                     [ Attributes.attribute "data-autoresize" "" ]
 
@@ -254,7 +267,7 @@ view_ label config model =
         [ Html.styled Html.textarea
             [ InputStyles.input config.theme
             , Css.boxSizing Css.borderBox
-            , case model.height of
+            , case config.height of
                 AutoResize minimumHeight ->
                     Css.minHeight (calculateMinHeight config.theme minimumHeight)
 

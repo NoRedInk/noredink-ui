@@ -8,6 +8,7 @@ module Examples.TextArea exposing (Msg, State, example)
 
 import Category exposing (Category(..))
 import Code
+import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -72,10 +73,7 @@ example =
 
                 toExampleCode name =
                     [ moduleName ++ "." ++ name ++ " " ++ Code.string settings.label
-                    , Code.record
-                        [ ( "isInError", Code.bool settings.isInError )
-                        , ( "height", Tuple.first settings.height )
-                        ]
+                    , Code.record [ ( "isInError", Code.bool settings.isInError ) ]
                     , Code.list <|
                         ("TextArea.value " ++ Code.string state.value)
                             :: "TextArea.onInput identity"
@@ -102,7 +100,6 @@ example =
             , Heading.h2 [ Heading.plaintext "Example" ]
             , TextArea.view settings.label
                 { isInError = settings.isInError
-                , height = Tuple.second settings.height
                 }
                 (TextArea.value state.value
                     :: TextArea.onInput UpdateValue
@@ -136,7 +133,6 @@ type alias Settings =
 type alias Settings_ =
     { label : String
     , isInError : Bool
-    , height : ( String, TextArea.HeightBehavior )
     }
 
 
@@ -145,9 +141,9 @@ controlAttributes =
     ControlExtra.list
         |> ControlExtra.optionalListItem
             "theme"
-            (Control.choice
-                [ ( "standard", Control.value ( "TextArea.standard", TextArea.standard ) )
-                , ( "writing", Control.value ( "TextArea.writing", TextArea.writing ) )
+            (CommonControls.choice moduleName
+                [ ( "standard", TextArea.standard )
+                , ( "writing", TextArea.writing )
                 ]
             )
         |> ControlExtra.optionalBoolListItem "onBlur"
@@ -163,38 +159,25 @@ controlAttributes =
                         )
                     )
             )
+        |> ControlExtra.optionalListItem "height"
+            (CommonControls.choice moduleName
+                [ ( "autoResize", TextArea.autoResize )
+                , ( "autoResizeSingleLine", TextArea.autoResizeSingleLine )
+                ]
+            )
 
 
 initControls : Control Settings
 initControls =
     Control.record
-        (\attributes label isInError height ->
-            ( Settings_ label isInError height
+        (\attributes label isInError ->
+            ( Settings_ label isInError
             , attributes
             )
         )
         |> Control.field "attributes" controlAttributes
         |> Control.field "label" (Control.string "Introductory paragraph")
         |> Control.field "isInError" (Control.bool False)
-        |> Control.field "height"
-            (Control.choice
-                [ ( "fixed"
-                  , Control.value ( "TextArea.Fixed", TextArea.Fixed )
-                  )
-                , ( "autoresize default"
-                  , Control.value
-                        ( Code.withParens "TextArea.AutoResize TextArea.DefaultHeight"
-                        , TextArea.AutoResize TextArea.DefaultHeight
-                        )
-                  )
-                , ( "autoresize singleline"
-                  , Control.value
-                        ( Code.withParens "TextArea.AutoResize TextArea.SingleLine"
-                        , TextArea.AutoResize TextArea.SingleLine
-                        )
-                  )
-                ]
-            )
 
 
 {-| -}
