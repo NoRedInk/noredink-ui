@@ -12,7 +12,7 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled as Html exposing (Html)
+import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
@@ -66,7 +66,7 @@ example =
     , view =
         \ellieLinkConfig state ->
             let
-                settings =
+                ( settings, attributes ) =
                     Control.currentValue state.settings
 
                 toExampleCode name =
@@ -89,6 +89,7 @@ example =
                         , ( "placeholder", Code.string settings.placeholder )
                         , ( "showLabel", Code.bool settings.showLabel )
                         ]
+                    , Code.list <| List.map Tuple.first attributes
                     ]
                         |> String.join ""
             in
@@ -106,13 +107,10 @@ example =
                         [ { sectionName = "view"
                           , code = toExampleCode "view"
                           }
-                        , { sectionName = "writing"
-                          , code = toExampleCode "writing"
-                          }
                         ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
-            , settings.theme
+            , TextArea.view
                 { value = state.value
                 , autofocus = False
                 , onInput = UpdateValue
@@ -128,6 +126,7 @@ example =
                 , placeholder = settings.placeholder
                 , showLabel = settings.showLabel
                 }
+                (List.map Tuple.second attributes)
             ]
     }
 
@@ -148,8 +147,13 @@ init =
 
 
 type alias Settings =
-    { theme : TextArea.Model Msg -> Html Msg
-    , label : String
+    ( Settings_
+    , List ( String, TextArea.Attribute )
+    )
+
+
+type alias Settings_ =
+    { label : String
     , showLabel : Bool
     , placeholder : String
     , isInError : Bool
@@ -160,11 +164,17 @@ type alias Settings =
 
 initControls : Control Settings
 initControls =
-    Control.record Settings
-        |> Control.field "theme"
+    Control.record
+        (\theme label showLabel placeholder isInError onBlur height ->
+            ( Settings_ label showLabel placeholder isInError onBlur height
+            , [ theme ]
+            )
+        )
+        |> -- TODO: make this field inclusion optional
+           Control.field "theme"
             (Control.choice
-                [ ( "view", Control.value TextArea.view )
-                , ( "writing", Control.value TextArea.writing )
+                [ ( "standard", Control.value ( "TextArea.standard", TextArea.standard ) )
+                , ( "writing", Control.value ( "TextArea.writing", TextArea.writing ) )
                 ]
             )
         |> Control.field "label" (Control.string "Introductory paragraph")

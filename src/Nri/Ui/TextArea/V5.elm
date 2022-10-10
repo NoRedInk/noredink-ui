@@ -1,6 +1,17 @@
-module Nri.Ui.TextArea.V5 exposing (view, writing, Height(..), HeightBehavior(..), Model, generateId)
+module Nri.Ui.TextArea.V5 exposing
+    ( view, Model, generateId
+    , Attribute
+    , standard, writing
+    , Height(..), HeightBehavior(..)
+    )
 
 {-|
+
+
+### Changes from V4
+
+  - Removed contentCreation view styles
+  - Changed to a list-based API
 
 
 ## The next version of TextArea should:
@@ -8,6 +19,7 @@ module Nri.Ui.TextArea.V5 exposing (view, writing, Height(..), HeightBehavior(..
   - switch to a list-based API
   - add support for `guidance`
   - add support for `errorMessage`
+  - update the disabled styles
 
 
 ## Upgrading to V4
@@ -26,7 +38,14 @@ custom element, or else autosizing will break! This means doing the following:
 1.  Creating a new module in `lib/TextArea`
 2.  Requiring that module in `lib/index.js`
 
-@docs view, writing, Height, HeightBehavior, Model, generateId
+@docs view, Model, generateId
+@docs Attribute
+
+
+## Visual behavior
+
+@docs standard, writing
+@docs Height, HeightBehavior
 
 -}
 
@@ -69,17 +88,53 @@ type Height
     | SingleLine
 
 
-{-| -}
-view : Model msg -> Html msg
-view model =
-    view_ Standard model
-
-
-{-| Used for Writing Cycles
+{-| This is private. The public API only exposes `Attribute`.
 -}
-writing : Model msg -> Html msg
-writing model =
-    view_ Writing model
+type alias Config =
+    { theme : Theme
+    }
+
+
+defaultConfig : Config
+defaultConfig =
+    { theme = Standard
+    }
+
+
+applyConfig : List Attribute -> Config
+applyConfig =
+    List.foldl (\(Attribute update) config -> update config) defaultConfig
+
+
+{-| Customizations for the TextArea.
+-}
+type Attribute
+    = Attribute (Config -> Config)
+
+
+{-| Use the Standard theme for the TextArea. This is the default.
+-}
+standard : Attribute
+standard =
+    Attribute (\soFar -> { soFar | theme = InputStyles.Standard })
+
+
+{-| Use the Writing theme for the TextArea.
+-}
+writing : Attribute
+writing =
+    Attribute (\soFar -> { soFar | theme = InputStyles.Writing })
+
+
+{-| -}
+view : Model msg -> List Attribute -> Html msg
+view model attributes =
+    let
+        config : Config
+        config =
+            applyConfig attributes
+    in
+    view_ config.theme model
 
 
 {-| -}
