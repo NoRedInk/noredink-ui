@@ -30,16 +30,13 @@ custom element, or else autosizing will break! This means doing the following:
 
 -}
 
-import Accessibility.Styled.Style
+import Accessibility.Styled.Style as Style
 import Css exposing (px)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Nri.Ui.Html.Attributes.V2 as Extra
-import Nri.Ui.InputStyles.V4 as InputStyles
-    exposing
-        ( Theme(..)
-        )
+import Nri.Ui.InputStyles.V4 as InputStyles exposing (Theme(..))
 import Nri.Ui.Util exposing (dashify, removePunctuation)
 
 
@@ -143,20 +140,17 @@ view_ theme model =
                         "false"
                 ]
                 []
-            , if not model.showLabel then
-                Html.label
-                    ([ Attributes.for (generateId model.label)
-                     ]
-                        ++ Accessibility.Styled.Style.invisible
-                    )
-                    [ Html.text model.label ]
+            , Html.label
+                [ Attributes.for (generateId model.label)
+                , Attributes.css
+                    [ if not model.showLabel then
+                        Style.invisibleStyle
 
-              else
-                Html.label
-                    [ Attributes.for (generateId model.label)
-                    , Attributes.css [ InputStyles.label theme model.isInError ]
+                      else
+                        InputStyles.label theme model.isInError
                     ]
-                    [ Html.text model.label ]
+                ]
+                [ Html.text model.label ]
             ]
         ]
 
