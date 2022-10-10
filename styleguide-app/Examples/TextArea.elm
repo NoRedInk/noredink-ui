@@ -8,16 +8,18 @@ module Examples.TextArea exposing (Msg, State, example)
 
 import Category exposing (Category(..))
 import Code
+import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled as Html exposing (Html)
+import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.InputStyles.V3 as InputStyles exposing (Theme(..))
-import Nri.Ui.TextArea.V4 as TextArea
+import Nri.Ui.InputStyles.V4 as InputStyles exposing (Theme(..))
+import Nri.Ui.TextArea.V5 as TextArea
 
 
 moduleName : String
@@ -27,7 +29,7 @@ moduleName =
 
 version : Int
 version =
-    4
+    5
 
 
 {-| -}
@@ -66,29 +68,15 @@ example =
     , view =
         \ellieLinkConfig state ->
             let
-                settings =
+                { label, attributes } =
                     Control.currentValue state.settings
 
                 toExampleCode name =
-                    [ moduleName ++ "." ++ name
-                    , Code.record
-                        [ ( "value", Code.string state.value )
-                        , ( "autofocus", Code.bool False )
-                        , ( "onInput", "identity" )
-                        , ( "onBlur"
-                          , Code.maybe <|
-                                if settings.onBlur then
-                                    Just (Code.string "Neener neener Blur happened")
-
-                                else
-                                    Nothing
-                          )
-                        , ( "isInError", Code.bool settings.isInError )
-                        , ( "label", Code.string settings.label )
-                        , ( "height", Tuple.first settings.height )
-                        , ( "placeholder", Code.string settings.placeholder )
-                        , ( "showLabel", Code.bool settings.showLabel )
-                        ]
+                    [ moduleName ++ "." ++ name ++ " " ++ Code.string label
+                    , Code.list <|
+                        ("TextArea.value " ++ Code.string state.value)
+                            :: "TextArea.onInput identity"
+                            :: List.map Tuple.first attributes
                     ]
                         |> String.join ""
             in
@@ -106,28 +94,14 @@ example =
                         [ { sectionName = "view"
                           , code = toExampleCode "view"
                           }
-                        , { sectionName = "writing"
-                          , code = toExampleCode "writing"
-                          }
                         ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
-            , settings.theme
-                { value = state.value
-                , autofocus = False
-                , onInput = UpdateValue
-                , onBlur =
-                    if settings.onBlur then
-                        Just (UpdateValue "Neener neener Blur happened")
-
-                    else
-                        Nothing
-                , isInError = settings.isInError
-                , label = settings.label
-                , height = Tuple.second settings.height
-                , placeholder = settings.placeholder
-                , showLabel = settings.showLabel
-                }
+            , TextArea.view label
+                (TextArea.value state.value
+                    :: TextArea.onInput UpdateValue
+                    :: List.map Tuple.second attributes
+                )
             ]
     }
 
@@ -148,49 +122,61 @@ init =
 
 
 type alias Settings =
-    { theme : TextArea.Model Msg -> Html Msg
-    , label : String
-    , showLabel : Bool
-    , placeholder : String
-    , isInError : Bool
-    , onBlur : Bool
-    , height : ( String, TextArea.HeightBehavior )
+    { label : String
+    , attributes : List ( String, TextArea.Attribute Msg )
     }
+
+
+controlAttributes : Control (List ( String, TextArea.Attribute Msg ))
+controlAttributes =
+    ControlExtra.list
+        |> ControlExtra.optionalListItem
+            "theme"
+            (CommonControls.choice moduleName
+                [ ( "standard", TextArea.standard )
+                , ( "writing", TextArea.writing )
+                ]
+            )
+        |> ControlExtra.optionalBoolListItem "onBlur"
+            ( "TextArea.onBlur " ++ Code.string "Neener neener Blur happened"
+            , TextArea.onBlur (UpdateValue "Neener neener Blur happened")
+            )
+        |> ControlExtra.optionalListItem "placeholder"
+            (Control.string "A long time ago, in a galaxy pretty near here actually..."
+                |> Control.map
+                    (\str ->
+                        ( "TextArea.placeholder " ++ Code.string str
+                        , TextArea.placeholder str
+                        )
+                    )
+            )
+        |> ControlExtra.optionalListItem "height"
+            (CommonControls.choice moduleName
+                [ ( "autoResize", TextArea.autoResize )
+                , ( "autoResizeSingleLine", TextArea.autoResizeSingleLine )
+                ]
+            )
+        |> CommonControls.guidanceAndErrorMessage
+            { moduleName = moduleName
+            , guidance = TextArea.guidance
+            , errorMessage = TextArea.errorMessage
+            , message = "The statement must be true."
+            }
+        |> ControlExtra.optionalBoolListItem "disabled"
+            ( "TextArea.disabled", TextArea.disabled )
+        |> ControlExtra.optionalBoolListItem "noMargin"
+            ( "TextArea.noMargin True", TextArea.noMargin True )
+        |> ControlExtra.optionalBoolListItem "css"
+            ( "TextArea.css [ Css.backgroundColor Colors.azure ]"
+            , TextArea.css [ Css.backgroundColor Colors.azure ]
+            )
 
 
 initControls : Control Settings
 initControls =
     Control.record Settings
-        |> Control.field "theme"
-            (Control.choice
-                [ ( "view", Control.value TextArea.view )
-                , ( "writing", Control.value TextArea.writing )
-                ]
-            )
         |> Control.field "label" (Control.string "Introductory paragraph")
-        |> Control.field "showLabel" (Control.bool True)
-        |> Control.field "placeholder" (Control.string "A long time ago, in a galaxy pretty near here actually...")
-        |> Control.field "isInError" (Control.bool False)
-        |> Control.field "onBlur" (Control.bool False)
-        |> Control.field "height"
-            (Control.choice
-                [ ( "fixed"
-                  , Control.value ( "TextArea.Fixed", TextArea.Fixed )
-                  )
-                , ( "autoresize default"
-                  , Control.value
-                        ( Code.withParens "TextArea.AutoResize TextArea.DefaultHeight"
-                        , TextArea.AutoResize TextArea.DefaultHeight
-                        )
-                  )
-                , ( "autoresize singleline"
-                  , Control.value
-                        ( Code.withParens "TextArea.AutoResize TextArea.SingleLine"
-                        , TextArea.AutoResize TextArea.SingleLine
-                        )
-                  )
-                ]
-            )
+        |> Control.field "attributes" controlAttributes
 
 
 {-| -}

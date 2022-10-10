@@ -9,6 +9,7 @@ module Examples.Select exposing (Msg, State, example)
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
 import Code
+import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -153,25 +154,12 @@ initControls =
                 )
                 (Control.bool True)
             )
-        |> ControlExtra.optionalListItem "errorMessage"
-            (Control.map
-                (\str ->
-                    ( "Select.errorMessage (Just \"" ++ str ++ "\")"
-                    , Select.errorMessage (Just str)
-                    )
-                )
-                (Control.string "The right item must be selected.")
-            )
-        |> ControlExtra.optionalListItem "guidance"
-            (Control.map
-                (\str ->
-                    ( "Select.guidance \"" ++ str ++ "\""
-                    , Select.guidance str
-                    )
-                )
-             <|
-                Control.string "The right item must be selected."
-            )
+        |> CommonControls.guidanceAndErrorMessage
+            { moduleName = moduleName
+            , guidance = Select.guidance
+            , errorMessage = Select.errorMessage
+            , message = "The right item must be selected."
+            }
         |> ControlExtra.optionalListItem "disabled"
             (Control.value ( "Select.disabled", Select.disabled ))
         |> ControlExtra.optionalListItem "loading"

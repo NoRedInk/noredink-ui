@@ -20,7 +20,7 @@ import Css exposing (Color)
 import Css.Global exposing (Snippet)
 import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.InputStyles.V3 as InputStyles exposing (focusedErrorInputBoxShadow, focusedInputBoxShadow)
+import Nri.Ui.InputStyles.V4 as InputStyles exposing (focusedErrorInputBoxShadow, focusedInputBoxShadow)
 
 
 {-| When :focus-visible, add the two-tone focus ring.

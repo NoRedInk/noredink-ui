@@ -8,6 +8,7 @@ module CommonControls exposing
     , content
     , httpError
     , romeoAndJulietQuotation
+    , guidanceAndErrorMessage
     , disabledListItem, premiumDisplay
     )
 
@@ -26,9 +27,11 @@ module CommonControls exposing
 @docs content
 @docs httpError
 @docs romeoAndJulietQuotation
+@docs guidanceAndErrorMessage
 
 -}
 
+import Code
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -394,3 +397,32 @@ css_ helperName ( styles, default ) { moduleName, use } =
             , use default
             )
         )
+
+
+guidanceAndErrorMessage :
+    { moduleName : String
+    , guidance : String -> b
+    , errorMessage : Maybe String -> b
+    , message : String
+    }
+    -> Control (List ( String, b ))
+    -> Control (List ( String, b ))
+guidanceAndErrorMessage { moduleName, guidance, errorMessage, message } =
+    ControlExtra.optionalListItem "guidance"
+        (Control.string message
+            |> Control.map
+                (\str ->
+                    ( Code.fromModule moduleName "guidance " ++ Code.string str
+                    , guidance str
+                    )
+                )
+        )
+        >> ControlExtra.optionalListItem "errorMessage"
+            (Control.map
+                (\str ->
+                    ( Code.fromModule moduleName "errorMessage " ++ Code.withParens (Code.maybeString (Just str))
+                    , errorMessage (Just str)
+                    )
+                )
+                (Control.string message)
+            )
