@@ -20,7 +20,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Text.V6 as Text
-import SolidColor exposing (highContrast, luminance)
+import SolidColor exposing (luminance)
 
 
 type alias ColorExample =
