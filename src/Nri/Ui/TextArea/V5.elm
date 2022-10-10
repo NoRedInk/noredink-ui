@@ -105,49 +105,45 @@ view_ theme model =
                 Writing ->
                     InputStyles.writingMinHeight
     in
-    Html.styled Html.div
-        [ Css.position Css.relative ]
-        []
-        [ Html.styled (Html.node "nri-textarea-v5")
-            [ Css.display Css.block ]
-            autoresizeAttrs
-            [ Html.styled Html.textarea
-                [ InputStyles.input theme
-                , Css.boxSizing Css.borderBox
-                , case model.height of
-                    AutoResize minimumHeight ->
-                        Css.minHeight (calculateMinHeight theme minimumHeight)
+    Html.styled (Html.node "nri-textarea-v5")
+        [ Css.display Css.block, Css.position Css.relative ]
+        autoresizeAttrs
+        [ Html.styled Html.textarea
+            [ InputStyles.input theme
+            , Css.boxSizing Css.borderBox
+            , case model.height of
+                AutoResize minimumHeight ->
+                    Css.minHeight (calculateMinHeight theme minimumHeight)
 
-                    Fixed ->
-                        Css.minHeight heightForStyle
-                ]
-                [ Events.onInput model.onInput
-                , Maybe.withDefault Extra.none (Maybe.map Events.onBlur model.onBlur)
-                , Attributes.value model.value
-                , Attributes.id (generateId model.label)
-                , Attributes.autofocus model.autofocus
-                , Attributes.placeholder model.placeholder
-                , Attributes.attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859
-                , Attributes.class "override-sass-styles custom-focus-ring"
-                , Attributes.classList
-                    [ ( InputStyles.inputClass, True )
-                    , ( InputStyles.errorClass, model.isInError )
-                    ]
-                , Aria.invalid model.isInError
-                ]
-                []
-            , Html.label
-                [ Attributes.for (generateId model.label)
-                , Attributes.css
-                    [ if not model.showLabel then
-                        Style.invisibleStyle
-
-                      else
-                        InputStyles.label theme model.isInError
-                    ]
-                ]
-                [ Html.text model.label ]
+                Fixed ->
+                    Css.minHeight heightForStyle
             ]
+            [ Events.onInput model.onInput
+            , Maybe.withDefault Extra.none (Maybe.map Events.onBlur model.onBlur)
+            , Attributes.value model.value
+            , Attributes.id (generateId model.label)
+            , Attributes.autofocus model.autofocus
+            , Attributes.placeholder model.placeholder
+            , Attributes.attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859
+            , Attributes.class "override-sass-styles custom-focus-ring"
+            , Attributes.classList
+                [ ( InputStyles.inputClass, True )
+                , ( InputStyles.errorClass, model.isInError )
+                ]
+            , Aria.invalid model.isInError
+            ]
+            []
+        , Html.label
+            [ Attributes.for (generateId model.label)
+            , Attributes.css
+                [ if not model.showLabel then
+                    Style.invisibleStyle
+
+                  else
+                    InputStyles.label theme model.isInError
+                ]
+            ]
+            [ Html.text model.label ]
         ]
 
 
