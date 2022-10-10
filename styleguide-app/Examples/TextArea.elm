@@ -16,7 +16,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.InputStyles.V3 as InputStyles exposing (Theme(..))
+import Nri.Ui.InputStyles.V4 as InputStyles exposing (Theme(..))
 import Nri.Ui.TextArea.V5 as TextArea
 
 

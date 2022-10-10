@@ -68,6 +68,10 @@ hint = 'upgrade to V5'
 [forbidden."Nri.Ui.InputStyles.V2"]
 hint = 'upgrade to V3'
 
+[forbidden."Nri.Ui.InputStyles.V3"]
+hint = 'upgrade to V4'
+usages = ['styleguide/../src/Nri/Ui/TextArea/V4.elm']
+
 [forbidden."Nri.Ui.Menu.V1"]
 hint = 'upgrade to V3'
 

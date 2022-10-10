@@ -1,10 +1,27 @@
-module Nri.Ui.InputStyles.V3 exposing
+module Nri.Ui.InputStyles.V4 exposing
     ( label, Theme(..), input
     , inputPaddingVertical, inputLineHeight, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop, writingMinHeight, defaultMarginTop
     , focusedInputBoxShadow, focusedErrorInputBoxShadow, errorClass, inputClass
     )
 
-{-| InputStyles used by the TextInput and TextArea widgets.
+{-|
+
+
+### Changes from V3
+
+    - Remove ContentCreation theme
+
+
+### Patch changes
+
+  - expose defaultMarginTop
+
+
+### Changes from V2
+
+  - adds UserGenerated
+
+InputStyles used by the TextInput and TextArea widgets.
 
 @docs label, Theme, input
 
@@ -13,13 +30,6 @@ module Nri.Ui.InputStyles.V3 exposing
 
 @docs inputPaddingVertical, inputLineHeight, textAreaHeight, writingLineHeight, writingPadding, writingPaddingTop, writingMinHeight, defaultMarginTop
 @docs focusedInputBoxShadow, focusedErrorInputBoxShadow, errorClass, inputClass
-
-
-## Changelog
-
-  - patch: expose defaultMarginTop
-
-  - V3: add UserGenerated
 
 -}
 
@@ -32,8 +42,7 @@ import Nri.Ui.Fonts.V1
 
 {-| -}
 type Theme
-    = ContentCreation
-    | Standard
+    = Standard
     | UserGenerated
     | Writing
 
@@ -80,17 +89,6 @@ label theme inError =
 
                   else
                     batch []
-                ]
-
-        ContentCreation ->
-            batch
-                [ sharedStyles
-                , border3 (px 1) solid gray75
-                , borderRadius (px 4)
-                , padding2 zero (px 5)
-                , fontSize (Css.px 11)
-                , color gray45
-                , padding2 (px 2) (px 5)
                 ]
 
         Writing ->
@@ -222,14 +220,6 @@ input theme =
                                     ]
                                 ]
                             ]
-                        ]
-
-                ContentCreation ->
-                    batch
-                        [ sharedStyles
-                        , padding2 inputPaddingVertical (px 15)
-                        , fontSize (px 15)
-                        , Nri.Ui.Fonts.V1.baseFont
                         ]
             ]
         ]

@@ -57,7 +57,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
-import Nri.Ui.InputStyles.V3 as InputStyles
+import Nri.Ui.InputStyles.V4 as InputStyles
 import Nri.Ui.Util
 import SolidColor
 
