@@ -77,12 +77,12 @@ custom element, or else autosizing will break! This means doing the following:
 -}
 
 import Accessibility.Styled.Aria as Aria
-import Accessibility.Styled.Style as Style
 import Css exposing (px)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import InputErrorAndGuidanceInternal exposing (ErrorState, Guidance)
+import InputLabelInternal
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.InputStyles.V4 as InputStyles exposing (Theme(..))
 import Nri.Ui.Util exposing (dashify, removePunctuation)
@@ -105,6 +105,7 @@ type alias Config msg =
     , custom : List (Html.Attribute Never)
     , id : Maybe String
     , height : HeightBehavior
+    , disabled : Bool
     }
 
 
@@ -124,6 +125,7 @@ defaultConfig =
     , custom = []
     , id = Nothing
     , height = Fixed
+    , disabled = False
     }
 
 
@@ -370,17 +372,12 @@ view_ label config =
                 ++ List.map (Attributes.map never) config.custom
             )
             []
-        , Html.label
-            [ Attributes.for idValue
-            , Attributes.css
-                [ if config.hideLabel then
-                    Style.invisibleStyle
-
-                  else
-                    InputStyles.label config.theme isInError
-                ]
-            ]
-            [ Html.text label ]
+        , InputLabelInternal.view
+            { for = idValue
+            , label = label
+            , theme = config.theme
+            }
+            config
         , InputErrorAndGuidanceInternal.view idValue config
         ]
 
