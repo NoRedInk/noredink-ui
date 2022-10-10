@@ -68,12 +68,11 @@ example =
     , view =
         \ellieLinkConfig state ->
             let
-                ( settings, attributes ) =
+                { label, attributes } =
                     Control.currentValue state.settings
 
                 toExampleCode name =
-                    [ moduleName ++ "." ++ name ++ " " ++ Code.string settings.label
-                    , Code.record []
+                    [ moduleName ++ "." ++ name ++ " " ++ Code.string label
                     , Code.list <|
                         ("TextArea.value " ++ Code.string state.value)
                             :: "TextArea.onInput identity"
@@ -98,8 +97,7 @@ example =
                         ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
-            , TextArea.view settings.label
-                {}
+            , TextArea.view label
                 (TextArea.value state.value
                     :: TextArea.onInput UpdateValue
                     :: List.map Tuple.second attributes
@@ -124,13 +122,8 @@ init =
 
 
 type alias Settings =
-    ( Settings_
-    , List ( String, TextArea.Attribute Msg )
-    )
-
-
-type alias Settings_ =
     { label : String
+    , attributes : List ( String, TextArea.Attribute Msg )
     }
 
 
@@ -173,14 +166,9 @@ controlAttributes =
 
 initControls : Control Settings
 initControls =
-    Control.record
-        (\attributes label ->
-            ( Settings_ label
-            , attributes
-            )
-        )
-        |> Control.field "attributes" controlAttributes
+    Control.record Settings
         |> Control.field "label" (Control.string "Introductory paragraph")
+        |> Control.field "attributes" controlAttributes
 
 
 {-| -}

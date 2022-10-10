@@ -1,5 +1,5 @@
 module Nri.Ui.TextArea.V5 exposing
-    ( view, Model, generateId
+    ( view, generateId
     , Attribute
     , value
     , onInput, onBlur
@@ -50,7 +50,7 @@ custom element, or else autosizing will break! This means doing the following:
 
 ## API
 
-@docs view, Model, generateId
+@docs view, generateId
 @docs Attribute
 @docs value
 
@@ -85,11 +85,6 @@ import InputErrorAndGuidanceInternal exposing (ErrorState, Guidance)
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.InputStyles.V4 as InputStyles exposing (Theme(..))
 import Nri.Ui.Util exposing (dashify, removePunctuation)
-
-
-{-| -}
-type alias Model =
-    {}
 
 
 {-| This is private. The public API only exposes `Attribute`.
@@ -257,14 +252,14 @@ writing =
 
 
 {-| -}
-view : String -> Model -> List (Attribute msg) -> Html msg
-view label model attributes =
-    view_ label (applyConfig attributes) model
+view : String -> List (Attribute msg) -> Html msg
+view label attributes =
+    view_ label (applyConfig attributes)
 
 
 {-| -}
-view_ : String -> Config msg -> Model -> Html msg
-view_ label config model =
+view_ : String -> Config msg -> Html msg
+view_ label config =
     let
         autoresizeAttrs =
             case config.height of
