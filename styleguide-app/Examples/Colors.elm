@@ -242,6 +242,7 @@ viewGroupedColors groups =
 viewColors : List ColorExample -> Html.Html msg
 viewColors colors =
     colors
+        |> List.sortBy (\( _, color, _ ) -> luminance (fromCssColor color))
         |> List.map viewColor
         |> Html.div
             [ css
