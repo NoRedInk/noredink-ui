@@ -196,7 +196,13 @@ view { label, id } attrs =
         , Html.span
             [ Attributes.css
                 [ Css.fontWeight (Css.int 600)
-                , Css.color Colors.navy
+                , Css.color
+                    (if not config.isDisabled then
+                        Colors.navy
+
+                     else
+                        Colors.gray45
+                    )
                 , Css.paddingLeft (Css.px 5)
                 , Fonts.baseFont
                 , Css.batch config.labelCss
@@ -247,6 +253,13 @@ viewSwitch config =
 
         shadowBoxId =
             config.id ++ "-shadow-box"
+
+        disabledPrimaryCircleColor =
+            if config.isSelected then
+                Colors.gray45
+
+            else
+                Colors.gray75
     in
     Nri.Ui.Svg.V1.init "0 0 43 32"
         [ Svg.defs []
@@ -298,7 +311,14 @@ viewSwitch config =
                 [ Svg.use
                     [ SvgAttributes.xlinkHref ("#" ++ shadowBoxId)
                     , SvgAttributes.css
-                        [ if config.isSelected then
+                        [ if config.isDisabled then
+                            if config.isSelected then
+                                Css.fill Colors.gray75
+
+                            else
+                                Css.fill Colors.gray85
+
+                          else if config.isSelected then
                             Css.fill Colors.glacier
 
                           else
@@ -307,12 +327,16 @@ viewSwitch config =
                         ]
                     ]
                     []
-                , Svg.use
-                    [ SvgAttributes.xlinkHref ("#" ++ shadowBoxId)
-                    , SvgAttributes.fill "#000"
-                    , SvgAttributes.filter ("url(#" ++ shadowFilterId ++ ")")
-                    ]
-                    []
+                , if not config.isDisabled then
+                    Svg.use
+                        [ SvgAttributes.xlinkHref ("#" ++ shadowBoxId)
+                        , SvgAttributes.fill "#000"
+                        , SvgAttributes.filter ("url(#" ++ shadowFilterId ++ ")")
+                        ]
+                        []
+
+                  else
+                    Svg.g [] []
                 ]
             , Svg.g
                 [ SvgAttributes.css
@@ -328,9 +352,18 @@ viewSwitch config =
                     [ SvgAttributes.cx "15"
                     , SvgAttributes.cy "15"
                     , SvgAttributes.r "14.5"
-                    , SvgAttributes.fill "#FFF"
+                    , SvgAttributes.fill
+                        (if config.isDisabled then
+                            disabledPrimaryCircleColor
+
+                         else
+                            Colors.white
+                        ).value
                     , SvgAttributes.css
-                        [ if config.isSelected then
+                        [ if config.isDisabled then
+                            stroke disabledPrimaryCircleColor
+
+                          else if config.isSelected then
                             stroke Colors.azure
 
                           else
@@ -346,11 +379,14 @@ viewSwitch config =
                     , SvgAttributes.strokeWidth "3"
                     , SvgAttributes.d "M8 15.865L12.323 20 21.554 10"
                     , SvgAttributes.css
-                        [ if config.isSelected then
+                        [ if config.isDisabled && config.isSelected then
+                            stroke Colors.white
+
+                          else if config.isSelected then
                             stroke Colors.azure
 
                           else
-                            stroke Colors.white
+                            Css.display Css.none
                         , transition "stroke 0.2s"
                         ]
                     ]
@@ -360,14 +396,7 @@ viewSwitch config =
         ]
         |> Nri.Ui.Svg.V1.withWidth (Css.px 43)
         |> Nri.Ui.Svg.V1.withHeight (Css.px 32)
-        |> Nri.Ui.Svg.V1.withCss
-            [ Css.zIndex (Css.int 1)
-            , if config.isDisabled then
-                Css.opacity (Css.num 0.4)
-
-              else
-                Css.opacity (Css.num 1)
-            ]
+        |> Nri.Ui.Svg.V1.withCss [ Css.zIndex (Css.int 1) ]
         |> Nri.Ui.Svg.V1.withCustom [ SvgAttributes.class "switch-track" ]
 
 
