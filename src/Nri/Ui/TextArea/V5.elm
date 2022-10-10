@@ -9,7 +9,7 @@ module Nri.Ui.TextArea.V5 exposing
     , autoResize, autoResizeSingleLine
     , custom, nriDescription, id, testId
     , placeholder, autofocus
-    , errorIf, errorMessage, guidance
+    , disabled, errorIf, errorMessage, guidance
     )
 
 {-|
@@ -24,6 +24,7 @@ module Nri.Ui.TextArea.V5 exposing
   - Changes to a list-based API
   - Adds guidance and errorMessage support
   - Adds id, custom, nriDescription, testId, css, and noMargin
+  - Adds disabled support
 
 
 ## The next version of TextArea should:
@@ -72,7 +73,7 @@ custom element, or else autosizing will break! This means doing the following:
 
 @docs custom, nriDescription, id, testId
 @docs placeholder, autofocus
-@docs errorIf, errorMessage, guidance
+@docs disabled, errorIf, errorMessage, guidance
 
 -}
 
@@ -83,6 +84,7 @@ import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import InputErrorAndGuidanceInternal exposing (ErrorState, Guidance)
 import InputLabelInternal
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.InputStyles.V4 as InputStyles exposing (Theme(..))
 import Nri.Ui.Util exposing (dashify, removePunctuation)
@@ -177,6 +179,13 @@ value value_ =
 placeholder : String -> Attribute msg
 placeholder text_ =
     Attribute (\soFar -> { soFar | placeholder = Just text_ })
+
+
+{-| This disables the textarea.
+-}
+disabled : Attribute msg
+disabled =
+    Attribute (\config -> { config | disabled = True })
 
 
 {-| Sets whether or not the field will be highlighted as having a validation error.
@@ -351,12 +360,22 @@ view_ label config =
 
               else
                 Css.batch []
+            , Css.batch
+                (if config.disabled then
+                    [ Css.boxShadow Css.none |> Css.important
+                    , Css.backgroundColor Colors.gray85
+                    ]
+
+                 else
+                    []
+                )
             ]
             ([ Maybe.map Events.onInput config.onInput
                 |> Maybe.withDefault Extra.none
              , Maybe.map Events.onBlur config.onBlur
                 |> Maybe.withDefault Extra.none
              , Attributes.value config.value
+             , Attributes.disabled config.disabled
              , Attributes.id idValue
              , Attributes.autofocus config.autofocus
              , Attributes.placeholder (Maybe.withDefault label config.placeholder)

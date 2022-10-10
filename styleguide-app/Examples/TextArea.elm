@@ -162,6 +162,8 @@ controlAttributes =
             , errorMessage = TextArea.errorMessage
             , message = "The statement must be true."
             }
+        |> ControlExtra.optionalBoolListItem "disabled"
+            ( "TextArea.disabled", TextArea.disabled )
         |> ControlExtra.optionalBoolListItem "noMargin"
             ( "TextArea.noMargin True", TextArea.noMargin True )
         |> ControlExtra.optionalBoolListItem "css"
