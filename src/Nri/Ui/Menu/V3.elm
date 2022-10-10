@@ -344,17 +344,18 @@ button attributes title =
                         , FocusRing.boxShadows []
                         ]
                     , if menuConfig.isDisabled then
-                        Css.batch
-                            [ opacity (num 0.4)
-                            , cursor notAllowed
-                            ]
+                        cursor notAllowed
 
                       else
                         Css.batch []
                     , Css.batch <|
                         if buttonConfig.hasBorder then
                             [ border3 (px 1) solid Colors.gray75
-                            , borderBottom3 (px 3) solid Colors.gray75
+                            , if menuConfig.isDisabled then
+                                backgroundColor Colors.gray92
+
+                              else
+                                borderBottom3 (px 3) solid Colors.gray75
                             , borderRadius (px 8)
                             , padding2 (px 10) (px 15)
                             ]
@@ -368,8 +369,8 @@ button attributes title =
                     ++ buttonAttributes
                 )
                 [ div styleButtonInner
-                    [ viewTitle { icon = buttonConfig.icon, wrapping = buttonConfig.wrapping, title = title }
-                    , viewArrow { isOpen = menuConfig.isOpen }
+                    [ viewTitle title buttonConfig menuConfig
+                    , viewArrow menuConfig
                     ]
                 ]
         )
@@ -382,22 +383,28 @@ custom builder =
     CustomButton builder
 
 
-viewArrow : { isOpen : Bool } -> Html msg
-viewArrow { isOpen } =
+viewArrow : { config | isOpen : Bool, isDisabled : Bool } -> Html msg
+viewArrow config =
     span
-        [ classList [ ( "Arrow", True ), ( "Open", isOpen ) ]
+        [ classList [ ( "Arrow", True ), ( "Open", config.isOpen ) ]
         , css
             [ width (px 12)
             , height (px 7)
             , marginLeft (px 5)
-            , color Colors.azure
+            , color
+                (if config.isDisabled then
+                    Colors.gray20
+
+                 else
+                    Colors.azure
+                )
             , Css.flexShrink (Css.num 0)
             , descendants
                 [ Css.Global.svg [ display block ]
                 ]
             , property "transform-origin" "center"
             , property "transition" "transform 0.4s"
-            , if isOpen then
+            , if config.isOpen then
                 transform (rotate (deg 180))
 
               else
@@ -408,19 +415,22 @@ viewArrow { isOpen } =
 
 
 viewTitle :
-    { icon : Maybe Svg.Svg
-    , wrapping : TitleWrapping
-    , title : String
-    }
+    String
+    ->
+        { buttonConfig
+            | icon : Maybe Svg.Svg
+            , wrapping : TitleWrapping
+        }
+    -> { menuConfig | isDisabled : Bool }
     -> Html msg
-viewTitle config =
+viewTitle title_ config menuConfig =
     div styleTitle
-        [ viewJust (\iconSvg -> span styleIconContainer [ Svg.toHtml iconSvg ])
+        [ viewJust (\iconSvg -> span (styleIconContainer menuConfig) [ Svg.toHtml iconSvg ])
             config.icon
         , span
             (case config.wrapping of
                 WrapAndExpandTitle ->
-                    [ Attributes.attribute "data-nri-description" config.title ]
+                    [ Attributes.attribute "data-nri-description" title_ ]
 
                 TruncateTitle ->
                     [ class "Truncated"
@@ -431,7 +441,7 @@ viewTitle config =
                         ]
                     ]
             )
-            [ Html.text config.title ]
+            [ Html.text title_ ]
         ]
 
 
@@ -838,8 +848,8 @@ styleButtonInner =
     ]
 
 
-styleIconContainer : List (Html.Attribute msg)
-styleIconContainer =
+styleIconContainer : { menuConfig | isDisabled : Bool } -> List (Html.Attribute msg)
+styleIconContainer config =
     [ class "IconContainer"
     , css
         [ width (px 21)
@@ -847,7 +857,13 @@ styleIconContainer =
         , marginRight (px 5)
         , display inlineBlock
         , Css.flexShrink (Css.num 0)
-        , color Colors.azure
+        , color
+            (if config.isDisabled then
+                Colors.gray20
+
+             else
+                Colors.azure
+            )
         ]
     ]
 
