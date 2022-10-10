@@ -1,6 +1,7 @@
 module Nri.Ui.TextArea.V5 exposing
     ( view, Model, generateId
     , Attribute
+    , hiddenLabel, visibleLabel
     , standard, writing
     , Height(..), HeightBehavior(..)
     )
@@ -44,6 +45,7 @@ custom element, or else autosizing will break! This means doing the following:
 
 ## Visual behavior
 
+@docs hiddenLabel, visibleLabel
 @docs standard, writing
 @docs Height, HeightBehavior
 
@@ -70,7 +72,6 @@ type alias Model msg =
     , height : HeightBehavior
     , placeholder : String
     , label : String
-    , showLabel : Bool
     }
 
 
@@ -92,12 +93,14 @@ type Height
 -}
 type alias Config =
     { theme : Theme
+    , hideLabel : Bool
     }
 
 
 defaultConfig : Config
 defaultConfig =
     { theme = Standard
+    , hideLabel = False
     }
 
 
@@ -110,6 +113,20 @@ applyConfig =
 -}
 type Attribute
     = Attribute (Config -> Config)
+
+
+{-| Hides the visible label. (There will still be an invisible label for screen readers.)
+-}
+hiddenLabel : Attribute
+hiddenLabel =
+    Attribute (\soFar -> { soFar | hideLabel = True })
+
+
+{-| Default behavior.
+-}
+visibleLabel : Attribute
+visibleLabel =
+    Attribute (\soFar -> { soFar | hideLabel = False })
 
 
 {-| Use the Standard theme for the TextArea. This is the default.
@@ -129,17 +146,12 @@ writing =
 {-| -}
 view : Model msg -> List Attribute -> Html msg
 view model attributes =
-    let
-        config : Config
-        config =
-            applyConfig attributes
-    in
-    view_ config.theme model
+    view_ (applyConfig attributes) model
 
 
 {-| -}
-view_ : Theme -> Model msg -> Html msg
-view_ theme model =
+view_ : Config -> Model msg -> Html msg
+view_ config model =
     let
         autoresizeAttrs =
             case model.height of
@@ -150,7 +162,7 @@ view_ theme model =
                     []
 
         heightForStyle =
-            case theme of
+            case config.theme of
                 Standard ->
                     InputStyles.textAreaHeight
 
@@ -164,11 +176,11 @@ view_ theme model =
         [ Css.display Css.block, Css.position Css.relative ]
         autoresizeAttrs
         [ Html.styled Html.textarea
-            [ InputStyles.input theme
+            [ InputStyles.input config.theme
             , Css.boxSizing Css.borderBox
             , case model.height of
                 AutoResize minimumHeight ->
-                    Css.minHeight (calculateMinHeight theme minimumHeight)
+                    Css.minHeight (calculateMinHeight config.theme minimumHeight)
 
                 Fixed ->
                     Css.minHeight heightForStyle
@@ -191,11 +203,11 @@ view_ theme model =
         , Html.label
             [ Attributes.for (generateId model.label)
             , Attributes.css
-                [ if not model.showLabel then
+                [ if config.hideLabel then
                     Style.invisibleStyle
 
                   else
-                    InputStyles.label theme model.isInError
+                    InputStyles.label config.theme model.isInError
                 ]
             ]
             [ Html.text model.label ]

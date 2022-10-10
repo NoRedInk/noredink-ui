@@ -10,6 +10,7 @@ import Category exposing (Category(..))
 import Code
 import Css
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html
@@ -87,7 +88,6 @@ example =
                         , ( "label", Code.string settings.label )
                         , ( "height", Tuple.first settings.height )
                         , ( "placeholder", Code.string settings.placeholder )
-                        , ( "showLabel", Code.bool settings.showLabel )
                         ]
                     , Code.list <| List.map Tuple.first attributes
                     ]
@@ -124,7 +124,6 @@ example =
                 , label = settings.label
                 , height = Tuple.second settings.height
                 , placeholder = settings.placeholder
-                , showLabel = settings.showLabel
                 }
                 (List.map Tuple.second attributes)
             ]
@@ -154,7 +153,6 @@ type alias Settings =
 
 type alias Settings_ =
     { label : String
-    , showLabel : Bool
     , placeholder : String
     , isInError : Bool
     , onBlur : Bool
@@ -162,23 +160,30 @@ type alias Settings_ =
     }
 
 
-initControls : Control Settings
-initControls =
-    Control.record
-        (\theme label showLabel placeholder isInError onBlur height ->
-            ( Settings_ label showLabel placeholder isInError onBlur height
-            , [ theme ]
-            )
-        )
-        |> -- TODO: make this field inclusion optional
-           Control.field "theme"
+controlAttributes : Control (List ( String, TextArea.Attribute ))
+controlAttributes =
+    ControlExtra.list
+        |> ControlExtra.optionalListItem
+            "theme"
             (Control.choice
                 [ ( "standard", Control.value ( "TextArea.standard", TextArea.standard ) )
                 , ( "writing", Control.value ( "TextArea.writing", TextArea.writing ) )
                 ]
             )
+        |> ControlExtra.optionalBoolListItem "hiddenLabel"
+            ( "TextArea.hiddenLabel", TextArea.hiddenLabel )
+
+
+initControls : Control Settings
+initControls =
+    Control.record
+        (\attributes label placeholder isInError onBlur height ->
+            ( Settings_ label placeholder isInError onBlur height
+            , attributes
+            )
+        )
+        |> Control.field "attributes" controlAttributes
         |> Control.field "label" (Control.string "Introductory paragraph")
-        |> Control.field "showLabel" (Control.bool True)
         |> Control.field "placeholder" (Control.string "A long time ago, in a galaxy pretty near here actually...")
         |> Control.field "isInError" (Control.bool False)
         |> Control.field "onBlur" (Control.bool False)
