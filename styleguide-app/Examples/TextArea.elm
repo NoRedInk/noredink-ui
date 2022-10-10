@@ -73,22 +73,14 @@ example =
                 toExampleCode name =
                     [ moduleName ++ "." ++ name
                     , Code.record
-                        [ ( "onInput", "identity" )
-                        , ( "onBlur"
-                          , Code.maybe <|
-                                if settings.onBlur then
-                                    Just (Code.string "Neener neener Blur happened")
-
-                                else
-                                    Nothing
-                          )
-                        , ( "isInError", Code.bool settings.isInError )
+                        [ ( "isInError", Code.bool settings.isInError )
                         , ( "label", Code.string settings.label )
                         , ( "height", Tuple.first settings.height )
                         , ( "placeholder", Code.string settings.placeholder )
                         ]
                     , Code.list <|
                         ("TextArea.value " ++ Code.string state.value)
+                            :: "TextArea.onInput identity"
                             :: List.map Tuple.first attributes
                     ]
                         |> String.join ""
@@ -111,19 +103,13 @@ example =
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , TextArea.view
-                { onInput = UpdateValue
-                , onBlur =
-                    if settings.onBlur then
-                        Just (UpdateValue "Neener neener Blur happened")
-
-                    else
-                        Nothing
-                , isInError = settings.isInError
+                { isInError = settings.isInError
                 , label = settings.label
                 , height = Tuple.second settings.height
                 , placeholder = settings.placeholder
                 }
                 (TextArea.value state.value
+                    :: TextArea.onInput UpdateValue
                     :: List.map Tuple.second attributes
                 )
             ]
@@ -147,7 +133,7 @@ init =
 
 type alias Settings =
     ( Settings_
-    , List ( String, TextArea.Attribute )
+    , List ( String, TextArea.Attribute Msg )
     )
 
 
@@ -155,12 +141,11 @@ type alias Settings_ =
     { label : String
     , placeholder : String
     , isInError : Bool
-    , onBlur : Bool
     , height : ( String, TextArea.HeightBehavior )
     }
 
 
-controlAttributes : Control (List ( String, TextArea.Attribute ))
+controlAttributes : Control (List ( String, TextArea.Attribute Msg ))
 controlAttributes =
     ControlExtra.list
         |> ControlExtra.optionalListItem
@@ -170,15 +155,17 @@ controlAttributes =
                 , ( "writing", Control.value ( "TextArea.writing", TextArea.writing ) )
                 ]
             )
-        |> ControlExtra.optionalBoolListItem "hiddenLabel"
-            ( "TextArea.hiddenLabel", TextArea.hiddenLabel )
+        |> ControlExtra.optionalBoolListItem "onBlur"
+            ( "TextArea.onBlur " ++ Code.string "Neener neener Blur happened"
+            , TextArea.onBlur (UpdateValue "Neener neener Blur happened")
+            )
 
 
 initControls : Control Settings
 initControls =
     Control.record
-        (\attributes label placeholder isInError onBlur height ->
-            ( Settings_ label placeholder isInError onBlur height
+        (\attributes label placeholder isInError height ->
+            ( Settings_ label placeholder isInError height
             , attributes
             )
         )
@@ -186,7 +173,6 @@ initControls =
         |> Control.field "label" (Control.string "Introductory paragraph")
         |> Control.field "placeholder" (Control.string "A long time ago, in a galaxy pretty near here actually...")
         |> Control.field "isInError" (Control.bool False)
-        |> Control.field "onBlur" (Control.bool False)
         |> Control.field "height"
             (Control.choice
                 [ ( "fixed"

@@ -2,6 +2,7 @@ module Nri.Ui.TextArea.V5 exposing
     ( view, Model, generateId
     , Attribute
     , value
+    , onInput, onBlur
     , hiddenLabel, visibleLabel
     , standard, writing
     , Height(..), HeightBehavior(..)
@@ -9,6 +10,9 @@ module Nri.Ui.TextArea.V5 exposing
     )
 
 {-|
+
+
+## Changelog
 
 
 ### Changes from V4
@@ -41,19 +45,27 @@ custom element, or else autosizing will break! This means doing the following:
 1.  Creating a new module in `lib/TextArea`
 2.  Requiring that module in `lib/index.js`
 
+
+## API
+
 @docs view, Model, generateId
 @docs Attribute
 @docs value
 
 
-## Visual behavior
+### Event handlers
+
+@docs onInput, onBlur
+
+
+### Visual behavior
 
 @docs hiddenLabel, visibleLabel
 @docs standard, writing
 @docs Height, HeightBehavior
 
 
-## Other
+### Other
 
 @docs autofocus
 
@@ -71,10 +83,8 @@ import Nri.Ui.Util exposing (dashify, removePunctuation)
 
 
 {-| -}
-type alias Model msg =
-    { onInput : String -> msg
-    , onBlur : Maybe msg
-    , isInError : Bool
+type alias Model =
+    { isInError : Bool
     , height : HeightBehavior
     , placeholder : String
     , label : String
@@ -97,83 +107,101 @@ type Height
 
 {-| This is private. The public API only exposes `Attribute`.
 -}
-type alias Config =
+type alias Config msg =
     { theme : Theme
     , hideLabel : Bool
     , value : String
     , autofocus : Bool
+    , onInput : Maybe (String -> msg)
+    , onBlur : Maybe msg
     }
 
 
-defaultConfig : Config
+defaultConfig : Config msg
 defaultConfig =
     { theme = Standard
     , hideLabel = False
     , value = ""
     , autofocus = False
+    , onInput = Nothing
+    , onBlur = Nothing
     }
 
 
-applyConfig : List Attribute -> Config
+applyConfig : List (Attribute msg) -> Config msg
 applyConfig =
     List.foldl (\(Attribute update) config -> update config) defaultConfig
 
 
 {-| Customizations for the TextArea.
 -}
-type Attribute
-    = Attribute (Config -> Config)
+type Attribute msg
+    = Attribute (Config msg -> Config msg)
 
 
 {-| -}
-value : String -> Attribute
+value : String -> Attribute msg
 value value_ =
     Attribute (\soFar -> { soFar | value = value_ })
 
 
 {-| Hides the visible label. (There will still be an invisible label for screen readers.)
 -}
-hiddenLabel : Attribute
+hiddenLabel : Attribute msg
 hiddenLabel =
     Attribute (\soFar -> { soFar | hideLabel = True })
 
 
 {-| Default behavior.
 -}
-visibleLabel : Attribute
+visibleLabel : Attribute msg
 visibleLabel =
     Attribute (\soFar -> { soFar | hideLabel = False })
 
 
+{-| Produce the given `msg` when the field is focused.
+-}
+onInput : (String -> msg) -> Attribute msg
+onInput msg =
+    Attribute (\soFar -> { soFar | onInput = Just msg })
+
+
+{-| Produce the given `msg` when the field is blurred.
+-}
+onBlur : msg -> Attribute msg
+onBlur msg =
+    Attribute (\soFar -> { soFar | onBlur = Just msg })
+
+
 {-| Sets the `autofocus` attribute of the textarea to true.
 -}
-autofocus : Attribute
+autofocus : Attribute msg
 autofocus =
     Attribute (\soFar -> { soFar | autofocus = True })
 
 
 {-| Use the Standard theme for the TextArea. This is the default.
 -}
-standard : Attribute
+standard : Attribute msg
 standard =
     Attribute (\soFar -> { soFar | theme = InputStyles.Standard })
 
 
 {-| Use the Writing theme for the TextArea.
 -}
-writing : Attribute
+writing : Attribute msg
 writing =
     Attribute (\soFar -> { soFar | theme = InputStyles.Writing })
 
 
 {-| -}
-view : Model msg -> List Attribute -> Html msg
+view : Model -> List (Attribute msg) -> Html msg
 view model attributes =
     view_ (applyConfig attributes) model
 
 
 {-| -}
-view_ : Config -> Model msg -> Html msg
+view_ : Config msg -> Model -> Html msg
 view_ config model =
     let
         autoresizeAttrs =
@@ -208,8 +236,10 @@ view_ config model =
                 Fixed ->
                     Css.minHeight heightForStyle
             ]
-            [ Events.onInput model.onInput
-            , Maybe.withDefault Extra.none (Maybe.map Events.onBlur model.onBlur)
+            [ Maybe.map Events.onInput config.onInput
+                |> Maybe.withDefault Extra.none
+            , Maybe.map Events.onBlur config.onBlur
+                |> Maybe.withDefault Extra.none
             , Attributes.value config.value
             , Attributes.id (generateId model.label)
             , Attributes.autofocus config.autofocus
