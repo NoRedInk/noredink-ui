@@ -5,6 +5,7 @@ module Nri.Ui.TextArea.V5 exposing
     , hiddenLabel, visibleLabel
     , standard, writing
     , Height(..), HeightBehavior(..)
+    , autofocus
     )
 
 {-|
@@ -51,6 +52,11 @@ custom element, or else autosizing will break! This means doing the following:
 @docs standard, writing
 @docs Height, HeightBehavior
 
+
+## Other
+
+@docs autofocus
+
 -}
 
 import Accessibility.Styled.Aria as Aria
@@ -66,8 +72,7 @@ import Nri.Ui.Util exposing (dashify, removePunctuation)
 
 {-| -}
 type alias Model msg =
-    { autofocus : Bool
-    , onInput : String -> msg
+    { onInput : String -> msg
     , onBlur : Maybe msg
     , isInError : Bool
     , height : HeightBehavior
@@ -96,6 +101,7 @@ type alias Config =
     { theme : Theme
     , hideLabel : Bool
     , value : String
+    , autofocus : Bool
     }
 
 
@@ -104,6 +110,7 @@ defaultConfig =
     { theme = Standard
     , hideLabel = False
     , value = ""
+    , autofocus = False
     }
 
 
@@ -136,6 +143,13 @@ hiddenLabel =
 visibleLabel : Attribute
 visibleLabel =
     Attribute (\soFar -> { soFar | hideLabel = False })
+
+
+{-| Sets the `autofocus` attribute of the textarea to true.
+-}
+autofocus : Attribute
+autofocus =
+    Attribute (\soFar -> { soFar | autofocus = True })
 
 
 {-| Use the Standard theme for the TextArea. This is the default.
@@ -198,7 +212,7 @@ view_ config model =
             , Maybe.withDefault Extra.none (Maybe.map Events.onBlur model.onBlur)
             , Attributes.value config.value
             , Attributes.id (generateId model.label)
-            , Attributes.autofocus model.autofocus
+            , Attributes.autofocus config.autofocus
             , Attributes.placeholder model.placeholder
             , Attributes.attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859
             , Attributes.class "override-sass-styles custom-focus-ring"

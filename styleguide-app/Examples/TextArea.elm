@@ -73,8 +73,7 @@ example =
                 toExampleCode name =
                     [ moduleName ++ "." ++ name
                     , Code.record
-                        [ ( "autofocus", Code.bool False )
-                        , ( "onInput", "identity" )
+                        [ ( "onInput", "identity" )
                         , ( "onBlur"
                           , Code.maybe <|
                                 if settings.onBlur then
@@ -112,8 +111,7 @@ example =
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , TextArea.view
-                { autofocus = False
-                , onInput = UpdateValue
+                { onInput = UpdateValue
                 , onBlur =
                     if settings.onBlur then
                         Just (UpdateValue "Neener neener Blur happened")
