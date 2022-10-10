@@ -73,8 +73,7 @@ example =
                 toExampleCode name =
                     [ moduleName ++ "." ++ name
                     , Code.record
-                        [ ( "value", Code.string state.value )
-                        , ( "autofocus", Code.bool False )
+                        [ ( "autofocus", Code.bool False )
                         , ( "onInput", "identity" )
                         , ( "onBlur"
                           , Code.maybe <|
@@ -89,7 +88,9 @@ example =
                         , ( "height", Tuple.first settings.height )
                         , ( "placeholder", Code.string settings.placeholder )
                         ]
-                    , Code.list <| List.map Tuple.first attributes
+                    , Code.list <|
+                        ("TextArea.value " ++ Code.string state.value)
+                            :: List.map Tuple.first attributes
                     ]
                         |> String.join ""
             in
@@ -111,8 +112,7 @@ example =
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , TextArea.view
-                { value = state.value
-                , autofocus = False
+                { autofocus = False
                 , onInput = UpdateValue
                 , onBlur =
                     if settings.onBlur then
@@ -125,7 +125,9 @@ example =
                 , height = Tuple.second settings.height
                 , placeholder = settings.placeholder
                 }
-                (List.map Tuple.second attributes)
+                (TextArea.value state.value
+                    :: List.map Tuple.second attributes
+                )
             ]
     }
 

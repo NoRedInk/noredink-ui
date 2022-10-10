@@ -1,6 +1,7 @@
 module Nri.Ui.TextArea.V5 exposing
     ( view, Model, generateId
     , Attribute
+    , value
     , hiddenLabel, visibleLabel
     , standard, writing
     , Height(..), HeightBehavior(..)
@@ -41,6 +42,7 @@ custom element, or else autosizing will break! This means doing the following:
 
 @docs view, Model, generateId
 @docs Attribute
+@docs value
 
 
 ## Visual behavior
@@ -64,8 +66,7 @@ import Nri.Ui.Util exposing (dashify, removePunctuation)
 
 {-| -}
 type alias Model msg =
-    { value : String
-    , autofocus : Bool
+    { autofocus : Bool
     , onInput : String -> msg
     , onBlur : Maybe msg
     , isInError : Bool
@@ -94,6 +95,7 @@ type Height
 type alias Config =
     { theme : Theme
     , hideLabel : Bool
+    , value : String
     }
 
 
@@ -101,6 +103,7 @@ defaultConfig : Config
 defaultConfig =
     { theme = Standard
     , hideLabel = False
+    , value = ""
     }
 
 
@@ -113,6 +116,12 @@ applyConfig =
 -}
 type Attribute
     = Attribute (Config -> Config)
+
+
+{-| -}
+value : String -> Attribute
+value value_ =
+    Attribute (\soFar -> { soFar | value = value_ })
 
 
 {-| Hides the visible label. (There will still be an invisible label for screen readers.)
@@ -187,7 +196,7 @@ view_ config model =
             ]
             [ Events.onInput model.onInput
             , Maybe.withDefault Extra.none (Maybe.map Events.onBlur model.onBlur)
-            , Attributes.value model.value
+            , Attributes.value config.value
             , Attributes.id (generateId model.label)
             , Attributes.autofocus model.autofocus
             , Attributes.placeholder model.placeholder
