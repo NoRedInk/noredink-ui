@@ -71,10 +71,9 @@ example =
                     Control.currentValue state.settings
 
                 toExampleCode name =
-                    [ moduleName ++ "." ++ name
+                    [ moduleName ++ "." ++ name ++ " " ++ Code.string settings.label
                     , Code.record
                         [ ( "isInError", Code.bool settings.isInError )
-                        , ( "label", Code.string settings.label )
                         , ( "height", Tuple.first settings.height )
                         , ( "placeholder", Code.string settings.placeholder )
                         ]
@@ -102,9 +101,8 @@ example =
                         ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
-            , TextArea.view
+            , TextArea.view settings.label
                 { isInError = settings.isInError
-                , label = settings.label
                 , height = Tuple.second settings.height
                 , placeholder = settings.placeholder
                 }

@@ -87,7 +87,6 @@ type alias Model =
     { isInError : Bool
     , height : HeightBehavior
     , placeholder : String
-    , label : String
     }
 
 
@@ -195,14 +194,14 @@ writing =
 
 
 {-| -}
-view : Model -> List (Attribute msg) -> Html msg
-view model attributes =
-    view_ (applyConfig attributes) model
+view : String -> Model -> List (Attribute msg) -> Html msg
+view label model attributes =
+    view_ label (applyConfig attributes) model
 
 
 {-| -}
-view_ : Config msg -> Model -> Html msg
-view_ config model =
+view_ : String -> Config msg -> Model -> Html msg
+view_ label config model =
     let
         autoresizeAttrs =
             case model.height of
@@ -241,7 +240,7 @@ view_ config model =
             , Maybe.map Events.onBlur config.onBlur
                 |> Maybe.withDefault Extra.none
             , Attributes.value config.value
-            , Attributes.id (generateId model.label)
+            , Attributes.id (generateId label)
             , Attributes.autofocus config.autofocus
             , Attributes.placeholder model.placeholder
             , Attributes.attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859
@@ -254,7 +253,7 @@ view_ config model =
             ]
             []
         , Html.label
-            [ Attributes.for (generateId model.label)
+            [ Attributes.for (generateId label)
             , Attributes.css
                 [ if config.hideLabel then
                     Style.invisibleStyle
@@ -263,7 +262,7 @@ view_ config model =
                     InputStyles.label config.theme model.isInError
                 ]
             ]
-            [ Html.text model.label ]
+            [ Html.text label ]
         ]
 
 
