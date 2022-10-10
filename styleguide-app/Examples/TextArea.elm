@@ -162,6 +162,12 @@ controlAttributes =
             , errorMessage = TextArea.errorMessage
             , message = "The statement must be true."
             }
+        |> ControlExtra.optionalBoolListItem "noMargin"
+            ( "TextArea.noMargin True", TextArea.noMargin True )
+        |> ControlExtra.optionalBoolListItem "css"
+            ( "TextArea.css [ Css.backgroundColor Colors.azure ]"
+            , TextArea.css [ Css.backgroundColor Colors.azure ]
+            )
 
 
 initControls : Control Settings

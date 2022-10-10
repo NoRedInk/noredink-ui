@@ -4,9 +4,10 @@ module Nri.Ui.TextArea.V5 exposing
     , value
     , onInput, onBlur
     , hiddenLabel, visibleLabel
+    , css, noMargin
     , standard, writing
     , autoResize, autoResizeSingleLine
-    , id
+    , custom, nriDescription, id, testId
     , placeholder, autofocus
     , errorIf, errorMessage, guidance
     )
@@ -19,15 +20,14 @@ module Nri.Ui.TextArea.V5 exposing
 
 ### Changes from V4
 
-  - Removed contentCreation view styles
-  - Changed to a list-based API
+  - Removes contentCreation view styles
+  - Changes to a list-based API
+  - Adds guidance and errorMessage support
+  - Adds id, custom, nriDescription, testId, css, and noMargin
 
 
 ## The next version of TextArea should:
 
-  - switch to a list-based API
-  - add support for `guidance`
-  - add support for `errorMessage`
   - update the disabled styles
 
 
@@ -63,13 +63,14 @@ custom element, or else autosizing will break! This means doing the following:
 ### Visual behavior
 
 @docs hiddenLabel, visibleLabel
+@docs css, noMargin
 @docs standard, writing
 @docs autoResize, autoResizeSingleLine
 
 
 ### Other
 
-@docs id
+@docs custom, nriDescription, id, testId
 @docs placeholder, autofocus
 @docs errorIf, errorMessage, guidance
 
@@ -99,6 +100,9 @@ type alias Config msg =
     , onInput : Maybe (String -> msg)
     , onBlur : Maybe msg
     , placeholder : Maybe String
+    , noMarginTop : Bool
+    , containerCss : List Css.Style
+    , custom : List (Html.Attribute Never)
     , id : Maybe String
     , height : HeightBehavior
     }
@@ -115,6 +119,9 @@ defaultConfig =
     , onInput = Nothing
     , onBlur = Nothing
     , placeholder = Nothing
+    , noMarginTop = False
+    , containerCss = []
+    , custom = []
     , id = Nothing
     , height = Fixed
     }
@@ -227,6 +234,32 @@ autofocus =
     Attribute (\soFar -> { soFar | autofocus = True })
 
 
+{-| Adds CSS to the element containing the textarea.
+-}
+css : List Css.Style -> Attribute msg
+css styles =
+    Attribute (\soFar -> { soFar | containerCss = soFar.containerCss ++ styles })
+
+
+{-| Remove default spacing from the Input.
+-}
+noMargin : Bool -> Attribute msg
+noMargin removeMargin =
+    Attribute (\soFar -> { soFar | noMarginTop = removeMargin })
+
+
+{-| Use this helper to add custom attributes.
+
+Do NOT use this helper to add css styles, as they may not be applied the way
+you want/expect if underlying styles change.
+Instead, please use the `css` helper.
+
+-}
+custom : List (Html.Attribute Never) -> Attribute msg
+custom attributes =
+    Attribute (\soFar -> { soFar | custom = soFar.custom ++ attributes })
+
+
 {-| Set a custom ID for this text area. If you don't set the id explicitly,
 we'll automatically generate one from the label you pass in, but this can
 cause problems if you have more than one textarea with the same label on
@@ -235,6 +268,18 @@ the page. Use this to be more specific and avoid issues with duplicate IDs.
 id : String -> Attribute msg
 id id_ =
     Attribute (\soFar -> { soFar | id = Just id_ })
+
+
+{-| -}
+nriDescription : String -> Attribute msg
+nriDescription description =
+    custom [ Extra.nriDescription description ]
+
+
+{-| -}
+testId : String -> Attribute msg
+testId id_ =
+    custom [ Extra.testId id_ ]
 
 
 {-| Use the Standard theme for the TextArea. This is the default.
@@ -288,7 +333,7 @@ view_ label config =
             InputErrorAndGuidanceInternal.getIsInError config.error
     in
     Html.styled (Html.node "nri-textarea-v5")
-        [ Css.display Css.block, Css.position Css.relative ]
+        [ Css.display Css.block, Css.position Css.relative, Css.batch config.containerCss ]
         autoresizeAttrs
         [ Html.styled Html.textarea
             [ InputStyles.input config.theme
@@ -299,24 +344,31 @@ view_ label config =
 
                 Fixed ->
                     Css.minHeight heightForStyle
+            , if config.noMarginTop then
+                Css.important (Css.marginTop Css.zero)
+
+              else
+                Css.batch []
             ]
-            [ Maybe.map Events.onInput config.onInput
+            ([ Maybe.map Events.onInput config.onInput
                 |> Maybe.withDefault Extra.none
-            , Maybe.map Events.onBlur config.onBlur
+             , Maybe.map Events.onBlur config.onBlur
                 |> Maybe.withDefault Extra.none
-            , Attributes.value config.value
-            , Attributes.id idValue
-            , Attributes.autofocus config.autofocus
-            , Attributes.placeholder (Maybe.withDefault label config.placeholder)
-            , Attributes.attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859
-            , Attributes.class "override-sass-styles custom-focus-ring"
-            , Attributes.classList
+             , Attributes.value config.value
+             , Attributes.id idValue
+             , Attributes.autofocus config.autofocus
+             , Attributes.placeholder (Maybe.withDefault label config.placeholder)
+             , Attributes.attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859
+             , Attributes.class "override-sass-styles custom-focus-ring"
+             , Attributes.classList
                 [ ( InputStyles.inputClass, True )
                 , ( InputStyles.errorClass, isInError )
                 ]
-            , Aria.invalid isInError
-            , InputErrorAndGuidanceInternal.describedBy idValue config
-            ]
+             , Aria.invalid isInError
+             , InputErrorAndGuidanceInternal.describedBy idValue config
+             ]
+                ++ List.map (Attributes.map never) config.custom
+            )
             []
         , Html.label
             [ Attributes.for idValue
