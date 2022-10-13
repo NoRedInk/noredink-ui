@@ -15,6 +15,7 @@ module InputErrorAndGuidanceInternal exposing
 -}
 
 import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Live as Live
 import Css
 import Html.Styled as Html exposing (Html)
 import Nri.Ui.Html.Attributes.V2
@@ -126,6 +127,7 @@ view idValue config =
                 , Message.error
                 , Message.plaintext m
                 , Message.alertRole
+                , Message.custom [ Live.livePolite ]
                 , Message.css
                     [ Css.important (Css.paddingTop Css.zero)
                     , Css.important (Css.paddingBottom Css.zero)
