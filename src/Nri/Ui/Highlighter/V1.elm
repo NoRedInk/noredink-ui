@@ -76,7 +76,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
-import Nri.Ui.Html.V3 exposing (viewIf, viewJust)
+import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Sort exposing (Sorter)
 import Sort.Set
