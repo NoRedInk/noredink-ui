@@ -578,7 +578,13 @@ removeHighlights model =
 {-| -}
 view : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Maybe Int, marker : Tool.Tool marker } -> Html (Msg marker)
 view config =
-    view_ False (viewHighlightable config.id config.marker config.focusIndex) config
+    view_
+        { showTagsInline = False
+        , isInteractive = True
+        , maybeTool = Just config.marker
+        }
+        (viewHighlightable config.id config.marker config.focusIndex)
+        config
 
 
 {-| -}
@@ -595,7 +601,13 @@ static config =
                 , maybeTool = Nothing
                 }
     in
-    view_ False viewStaticHighlightable config
+    view_
+        { showTagsInline = False
+        , isInteractive = False
+        , maybeTool = Nothing
+        }
+        viewStaticHighlightable
+        config
 
 
 {-| -}
@@ -612,25 +624,41 @@ staticWithTags config =
                 , maybeTool = Nothing
                 }
     in
-    view_ True viewStaticHighlightableWithTags config
+    view_
+        { showTagsInline = True
+        , isInteractive = False
+        , maybeTool = Nothing
+        }
+        viewStaticHighlightableWithTags
+        config
 
 
 view_ :
-    Bool
+    { showTagsInline : Bool
+    , isInteractive : Bool
+    , maybeTool : Maybe (Tool.Tool marker)
+    }
     -> (Int -> Highlightable marker -> Html msg)
     -> { config | id : String, highlightables : List (Highlightable marker) }
     -> Html msg
-view_ showTagsInline viewSegment { id, highlightables } =
+view_ groupConfig viewSegment { id, highlightables } =
     highlightables
         |> Grouping.buildGroups
-        |> List.concatMap (groupContainer showTagsInline viewSegment)
+        |> List.concatMap (groupContainer groupConfig viewSegment)
         |> p [ Html.Styled.Attributes.id id, class "highlighter-container" ]
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
 -}
-groupContainer : Bool -> (Int -> Highlightable marker -> Html msg) -> List (Highlightable marker) -> List (Html msg)
-groupContainer showTagsInline viewSegment highlightables =
+groupContainer :
+    { showTagsInline : Bool
+    , isInteractive : Bool
+    , maybeTool : Maybe (Tool.Tool marker)
+    }
+    -> (Int -> Highlightable marker -> Html msg)
+    -> List (Highlightable marker)
+    -> List (Html msg)
+groupContainer config viewSegment highlightables =
     case highlightables of
         [] ->
             []
@@ -655,7 +683,7 @@ groupContainer showTagsInline viewSegment highlightables =
                                 ]
                             ]
                         ]
-                        (viewInlineTag showTagsInline markedWith :: List.indexedMap viewSegment highlightables)
+                        (viewInlineTag config first :: List.indexedMap viewSegment highlightables)
                     ]
 
                 Nothing ->
@@ -680,9 +708,22 @@ tagBeforeContent markedWith =
                 ]
 
 
-viewInlineTag : Bool -> Tool.MarkerModel kind -> Html msg
-viewInlineTag showTagsInline markedWith =
-    span [ css (markedWith.startGroupClass ++ markedWith.highlightClass) ]
+viewInlineTag :
+    { showTagsInline : Bool
+    , isInteractive : Bool
+    , maybeTool : Maybe (Tool.Tool marker)
+    }
+    -> Highlightable marker
+    -> Html msg
+viewInlineTag { showTagsInline, isInteractive, maybeTool } highlightable =
+    span
+        [ css
+            ((Maybe.map .startGroupClass highlightable.marked
+                |> Maybe.withDefault []
+             )
+                ++ highlightableStyle maybeTool highlightable isInteractive
+            )
+        ]
         [ viewJust
             (\name ->
                 span
@@ -707,7 +748,7 @@ viewInlineTag showTagsInline markedWith =
                     ]
                     [ Html.text name ]
             )
-            markedWith.name
+            (Maybe.andThen .name highlightable.marked)
         ]
 
 
