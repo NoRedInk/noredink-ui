@@ -585,7 +585,7 @@ view config =
 static : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
 static config =
     let
-        viewStaticHighlightable : Highlightable marker -> Html msg
+        viewStaticHighlightable : Int -> Highlightable marker -> Html msg
         viewStaticHighlightable =
             viewHighlightableSegment
                 { isInteractive = False
@@ -602,7 +602,7 @@ static config =
 staticWithTags : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
 staticWithTags config =
     let
-        viewStaticHighlightableWithTags : Highlightable marker -> Html msg
+        viewStaticHighlightableWithTags : Int -> Highlightable marker -> Html msg
         viewStaticHighlightableWithTags =
             viewHighlightableSegment
                 { isInteractive = False
@@ -617,7 +617,7 @@ staticWithTags config =
 
 view_ :
     Bool
-    -> (Highlightable marker -> Html msg)
+    -> (Int -> Highlightable marker -> Html msg)
     -> { config | id : String, highlightables : List (Highlightable marker) }
     -> Html msg
 view_ showTagsInline viewSegment { id, highlightables } =
@@ -629,7 +629,7 @@ view_ showTagsInline viewSegment { id, highlightables } =
 
 {-| When elements are marked, wrap them in a single `mark` html node.
 -}
-groupContainer : Bool -> (Highlightable marker -> Html msg) -> List (Highlightable marker) -> List (Html msg)
+groupContainer : Bool -> (Int -> Highlightable marker -> Html msg) -> List (Highlightable marker) -> List (Html msg)
 groupContainer showTagsInline viewSegment highlightables =
     case highlightables of
         [] ->
@@ -655,11 +655,11 @@ groupContainer showTagsInline viewSegment highlightables =
                                 ]
                             ]
                         ]
-                        (viewInlineTag showTagsInline markedWith :: List.map viewSegment highlightables)
+                        (viewInlineTag showTagsInline markedWith :: List.indexedMap viewSegment highlightables)
                     ]
 
                 Nothing ->
-                    List.map viewSegment highlightables
+                    List.indexedMap viewSegment highlightables
 
 
 tagBeforeContent : { mark | name : Maybe String } -> Css.Style
@@ -667,9 +667,7 @@ tagBeforeContent markedWith =
     case markedWith.name of
         Just name ->
             Css.before
-                [ -- TODO: make sure this before element is on the first focusable
-                  -- span, or it won't be read nicely.
-                  MediaQuery.notHighContrastMode
+                [ MediaQuery.notHighContrastMode
                     [ Css.property "content" ("\" [start " ++ name ++ " highlight] \"")
                     , invisibleStyle
                     ]
@@ -684,13 +682,7 @@ tagBeforeContent markedWith =
 
 viewInlineTag : Bool -> Tool.MarkerModel kind -> Html msg
 viewInlineTag showTagsInline markedWith =
-    span
-        [ css
-            (tagBeforeContent markedWith
-                :: markedWith.startGroupClass
-                ++ markedWith.highlightClass
-            )
-        ]
+    span [ css (markedWith.startGroupClass ++ markedWith.highlightClass) ]
         [ viewJust
             (\name ->
                 span
@@ -732,8 +724,8 @@ shift msg =
         Html.Styled.Events.keyCode
 
 
-viewHighlightable : String -> Tool.Tool marker -> Maybe Int -> Highlightable marker -> Html (Msg marker)
-viewHighlightable highlighterId marker focusIndex highlightable =
+viewHighlightable : String -> Tool.Tool marker -> Maybe Int -> Int -> Highlightable marker -> Html (Msg marker)
+viewHighlightable highlighterId marker focusIndex index highlightable =
     case highlightable.type_ of
         Highlightable.Interactive ->
             viewHighlightableSegment
@@ -762,6 +754,7 @@ viewHighlightable highlighterId marker focusIndex highlightable =
                     ]
                 , maybeTool = Just marker
                 }
+                index
                 highlightable
 
         Highlightable.Static ->
@@ -779,6 +772,7 @@ viewHighlightable highlighterId marker focusIndex highlightable =
                     ]
                 , maybeTool = Just marker
                 }
+                index
                 highlightable
 
 
@@ -789,9 +783,10 @@ viewHighlightableSegment :
     , eventListeners : List (Attribute msg)
     , maybeTool : Maybe (Tool.Tool marker)
     }
+    -> Int
     -> Highlightable marker
     -> Html msg
-viewHighlightableSegment { isInteractive, focusIndex, highlighterId, eventListeners, maybeTool } highlightable =
+viewHighlightableSegment { isInteractive, focusIndex, highlighterId, eventListeners, maybeTool } index highlightable =
     let
         whitespaceClass txt =
             -- we need to override whitespace styles in order to support
@@ -827,6 +822,15 @@ viewHighlightableSegment { isInteractive, focusIndex, highlighterId, eventListen
                , css
                     (Css.focus [ Css.zIndex (Css.int 1), Css.position Css.relative ]
                         :: highlightableStyle maybeTool highlightable isInteractive
+                        ++ (case ( index == 0, highlightable.marked ) of
+                                ( True, Just markedWith ) ->
+                                    -- if we're on the first highlighted element, we add
+                                    -- a `before` content saying what kind of highlight we're starting
+                                    [ tagBeforeContent markedWith ]
+
+                                _ ->
+                                    []
+                           )
                     )
                , class "highlighter-highlightable"
                , if isInteractive then
