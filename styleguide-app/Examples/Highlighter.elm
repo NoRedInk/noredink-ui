@@ -165,7 +165,7 @@ example =
                   , description = "Multiple kinds of highlights without overlaps"
                   , example =
                         Highlighter.staticWithTags
-                            { id = "example-3"
+                            { id = "example-4"
                             , highlightables =
                                 [ ( "Waltz, bad nymph, for quick jigs vex.", Just claimMarker )
                                 , ( "Glib jocks quiz nymph to vex dwarf.", Just evidenceMarker )
