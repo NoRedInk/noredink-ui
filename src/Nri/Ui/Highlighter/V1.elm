@@ -581,13 +581,35 @@ view config =
 {-| -}
 static : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
 static config =
-    view_ (viewStaticHighlightable config.id) config
+    let
+        viewStaticHighlightable : Highlightable marker -> Html msg
+        viewStaticHighlightable =
+            viewHighlightableSegment
+                { isInteractive = False
+                , focusIndex = Nothing
+                , highlighterId = config.id
+                , eventListeners = []
+                , maybeTool = Nothing
+                }
+    in
+    view_ viewStaticHighlightable config
 
 
 {-| -}
 staticWithTags : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
 staticWithTags config =
-    view_ (viewStaticHighlightableWithTags config.id) config
+    let
+        viewStaticHighlightableWithTags : Highlightable marker -> Html msg
+        viewStaticHighlightableWithTags =
+            viewHighlightableSegment
+                { isInteractive = False
+                , focusIndex = Nothing
+                , highlighterId = config.id
+                , eventListeners = []
+                , maybeTool = Nothing
+                }
+    in
+    view_ viewStaticHighlightableWithTags config
 
 
 view_ :
@@ -673,58 +695,62 @@ viewHighlightable : String -> Tool.Tool marker -> Maybe Int -> Highlightable mar
 viewHighlightable highlighterId marker focusIndex highlightable =
     case highlightable.type_ of
         Highlightable.Interactive ->
-            viewHighlightableSegment True
-                focusIndex
-                highlighterId
-                [ on "mouseover" (Pointer <| Over highlightable.groupIndex)
-                , on "mouseleave" (Pointer <| Out highlightable.groupIndex)
-                , on "mouseup" (Pointer <| Up Nothing)
-                , on "mousedown" (Pointer <| Down highlightable.groupIndex)
-                , on "touchstart" (Pointer <| Down highlightable.groupIndex)
-                , attribute "data-interactive" ""
-                , Key.onKeyDownPreventDefault
-                    [ Key.space (Keyboard <| ToggleHighlight highlightable.groupIndex)
-                    , Key.right (Keyboard <| MoveRight highlightable.groupIndex)
-                    , Key.left (Keyboard <| MoveLeft highlightable.groupIndex)
-                    , Key.shiftRight (Keyboard <| SelectionExpandRight highlightable.groupIndex)
-                    , Key.shiftLeft (Keyboard <| SelectionExpandLeft highlightable.groupIndex)
+            viewHighlightableSegment
+                { isInteractive = True
+                , focusIndex = focusIndex
+                , highlighterId = highlighterId
+                , eventListeners =
+                    [ on "mouseover" (Pointer <| Over highlightable.groupIndex)
+                    , on "mouseleave" (Pointer <| Out highlightable.groupIndex)
+                    , on "mouseup" (Pointer <| Up Nothing)
+                    , on "mousedown" (Pointer <| Down highlightable.groupIndex)
+                    , on "touchstart" (Pointer <| Down highlightable.groupIndex)
+                    , attribute "data-interactive" ""
+                    , Key.onKeyDownPreventDefault
+                        [ Key.space (Keyboard <| ToggleHighlight highlightable.groupIndex)
+                        , Key.right (Keyboard <| MoveRight highlightable.groupIndex)
+                        , Key.left (Keyboard <| MoveLeft highlightable.groupIndex)
+                        , Key.shiftRight (Keyboard <| SelectionExpandRight highlightable.groupIndex)
+                        , Key.shiftLeft (Keyboard <| SelectionExpandLeft highlightable.groupIndex)
+                        ]
+                    , Key.onKeyUpPreventDefault
+                        [ Key.shiftRight (Keyboard <| SelectionApplyTool highlightable.groupIndex)
+                        , Key.shiftLeft (Keyboard <| SelectionApplyTool highlightable.groupIndex)
+                        , shift (Keyboard <| SelectionReset highlightable.groupIndex)
+                        ]
                     ]
-                , Key.onKeyUpPreventDefault
-                    [ Key.shiftRight (Keyboard <| SelectionApplyTool highlightable.groupIndex)
-                    , Key.shiftLeft (Keyboard <| SelectionApplyTool highlightable.groupIndex)
-                    , shift (Keyboard <| SelectionReset highlightable.groupIndex)
-                    ]
-                ]
-                (Just marker)
+                , maybeTool = Just marker
+                }
                 highlightable
 
         Highlightable.Static ->
-            viewHighlightableSegment False
-                focusIndex
-                highlighterId
-                -- Static highlightables need listeners as well.
-                -- because otherwise we miss mouseup events
-                [ on "mouseup" (Pointer <| Up Nothing)
-                , on "mousedown" (Pointer <| Down highlightable.groupIndex)
-                , on "touchstart" (Pointer <| Down highlightable.groupIndex)
-                , attribute "data-static" ""
-                ]
-                (Just marker)
+            viewHighlightableSegment
+                { isInteractive = False
+                , focusIndex = focusIndex
+                , highlighterId = highlighterId
+                , eventListeners =
+                    -- Static highlightables need listeners as well.
+                    -- because otherwise we miss mouseup events
+                    [ on "mouseup" (Pointer <| Up Nothing)
+                    , on "mousedown" (Pointer <| Down highlightable.groupIndex)
+                    , on "touchstart" (Pointer <| Down highlightable.groupIndex)
+                    , attribute "data-static" ""
+                    ]
+                , maybeTool = Just marker
+                }
                 highlightable
 
 
-viewStaticHighlightable : String -> Highlightable marker -> Html msg
-viewStaticHighlightable highlighterId =
-    viewHighlightableSegment False Nothing highlighterId [] Nothing
-
-
-viewStaticHighlightableWithTags : String -> Highlightable marker -> Html msg
-viewStaticHighlightableWithTags highlighterId =
-    viewHighlightableSegment False Nothing highlighterId [] Nothing
-
-
-viewHighlightableSegment : Bool -> Maybe Int -> String -> List (Attribute msg) -> Maybe (Tool.Tool marker) -> Highlightable marker -> Html msg
-viewHighlightableSegment isInteractive focusIndex highlighterId eventListeners maybeTool highlightable =
+viewHighlightableSegment :
+    { isInteractive : Bool
+    , focusIndex : Maybe Int
+    , highlighterId : String
+    , eventListeners : List (Attribute msg)
+    , maybeTool : Maybe (Tool.Tool marker)
+    }
+    -> Highlightable marker
+    -> Html msg
+viewHighlightableSegment { isInteractive, focusIndex, highlighterId, eventListeners, maybeTool } highlightable =
     let
         whitespaceClass txt =
             -- we need to override whitespace styles in order to support
