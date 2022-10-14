@@ -71,9 +71,12 @@ import Html.Styled.Attributes exposing (attribute, class, css)
 import Html.Styled.Events
 import Json.Decode
 import List.Extra
+import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
+import Nri.Ui.Html.V3 exposing (viewIf, viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Sort exposing (Sorter)
 import Sort.Set
@@ -575,7 +578,7 @@ removeHighlights model =
 {-| -}
 view : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Maybe Int, marker : Tool.Tool marker } -> Html (Msg marker)
 view config =
-    view_ (viewHighlightable config.id config.marker config.focusIndex) config
+    view_ False (viewHighlightable config.id config.marker config.focusIndex) config
 
 
 {-| -}
@@ -592,7 +595,7 @@ static config =
                 , maybeTool = Nothing
                 }
     in
-    view_ viewStaticHighlightable config
+    view_ False viewStaticHighlightable config
 
 
 {-| -}
@@ -609,24 +612,25 @@ staticWithTags config =
                 , maybeTool = Nothing
                 }
     in
-    view_ viewStaticHighlightableWithTags config
+    view_ True viewStaticHighlightableWithTags config
 
 
 view_ :
-    (Highlightable marker -> Html msg)
+    Bool
+    -> (Highlightable marker -> Html msg)
     -> { config | id : String, highlightables : List (Highlightable marker) }
     -> Html msg
-view_ viewSegment { id, highlightables } =
+view_ showTagsInline viewSegment { id, highlightables } =
     highlightables
         |> Grouping.buildGroups
-        |> List.concatMap (groupContainer viewSegment)
+        |> List.concatMap (groupContainer showTagsInline viewSegment)
         |> p [ Html.Styled.Attributes.id id, class "highlighter-container" ]
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
 -}
-groupContainer : (Highlightable marker -> Html msg) -> List (Highlightable marker) -> List (Html msg)
-groupContainer viewSegment highlightables =
+groupContainer : Bool -> (Highlightable marker -> Html msg) -> List (Highlightable marker) -> List (Html msg)
+groupContainer showTagsInline viewSegment highlightables =
     case highlightables of
         [] ->
             []
@@ -641,27 +645,7 @@ groupContainer viewSegment highlightables =
                         , css
                             [ Css.backgroundColor Css.transparent
                             , Css.Global.children
-                                [ Css.Global.selector ":first-child"
-                                    (Css.before
-                                        (case markedWith.name of
-                                            Just name ->
-                                                [ MediaQuery.notHighContrastMode
-                                                    [ Css.property "content" ("\" [start " ++ name ++ " highlight] \"")
-                                                    , invisibleStyle
-                                                    ]
-                                                , MediaQuery.highContrastMode
-                                                    [ Css.property "content" ("\"[" ++ name ++ "] \"")
-                                                    ]
-                                                ]
-
-                                            Nothing ->
-                                                [ Css.property "content" "\" [start highlight] \""
-                                                , invisibleStyle
-                                                ]
-                                        )
-                                        :: markedWith.startGroupClass
-                                    )
-                                , Css.Global.selector ":last-child"
+                                [ Css.Global.selector ":last-child"
                                     (Css.after
                                         [ Css.property "content" ("\" [end " ++ (Maybe.map (\name -> name) markedWith.name |> Maybe.withDefault "highlight") ++ "] \"")
                                         , invisibleStyle
@@ -671,11 +655,74 @@ groupContainer viewSegment highlightables =
                                 ]
                             ]
                         ]
-                        (List.map viewSegment highlightables)
+                        (viewInlineTag showTagsInline markedWith :: List.map viewSegment highlightables)
                     ]
 
                 Nothing ->
                     List.map viewSegment highlightables
+
+
+tagBeforeContent : Bool -> { mark | name : Maybe String } -> Css.Style
+tagBeforeContent showTagsInline markedWith =
+    case markedWith.name of
+        Just name ->
+            Css.before
+                [ -- TODO: make sure this before element is on the first focusable
+                  -- span, or it won't be read nicely.
+                  MediaQuery.notHighContrastMode
+                    [ Css.property "content" ("\" [start " ++ name ++ " highlight] \"")
+                    , invisibleStyle
+                    ]
+                , if showTagsInline then
+                    -- if the tags are already shown, don't show them again in high-contrast mode
+                    Css.batch []
+
+                  else
+                    MediaQuery.highContrastMode
+                        [ Css.property "content" ("\"[" ++ name ++ "] \"")
+                        ]
+                ]
+
+        Nothing ->
+            Css.before
+                [ Css.property "content" "\" [start highlight] \""
+                , invisibleStyle
+                ]
+
+
+viewInlineTag : Bool -> Tool.MarkerModel kind -> Html msg
+viewInlineTag showTagsInline markedWith =
+    span
+        [ css
+            (tagBeforeContent showTagsInline markedWith
+                :: markedWith.startGroupClass
+                ++ markedWith.highlightClass
+            )
+        ]
+        [ viewIf
+            (\_ ->
+                viewJust
+                    (\name ->
+                        span
+                            [ css
+                                [ Fonts.baseFont
+                                , Css.backgroundColor Colors.white
+                                , Css.color Colors.navy
+                                , Css.padding2 (Css.px 2) (Css.px 4)
+                                , Css.borderRadius (Css.px 3)
+                                , Css.margin2 Css.zero (Css.px 5)
+                                , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 1) Css.zero Colors.gray75
+                                ]
+                            , -- we use the :before element to convey details about the start of the
+                              -- highlighter to screenreaders, so the visual label is redundant
+                              Aria.hidden True
+                            ]
+                            [ Html.text name ]
+                    )
+                    markedWith.name
+            )
+            showTagsInline
+        ]
 
 
 shift : msg -> Json.Decode.Decoder msg
