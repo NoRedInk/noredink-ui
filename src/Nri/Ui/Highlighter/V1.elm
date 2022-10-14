@@ -1,6 +1,6 @@
 module Nri.Ui.Highlighter.V1 exposing
     ( Model, Msg(..), PointerMsg(..)
-    , init, update, view, static
+    , init, update, view, static, staticWithTags
     , Intent(..), emptyIntent, hasChanged, HasChanged(..)
     , removeHighlights
     , asFragmentTuples, usedMarkers, text
@@ -33,7 +33,7 @@ Currently, highlighter is used in the following places:
 
 # Init/View/Update
 
-@docs init, update, view, static
+@docs init, update, view, static, staticWithTags
 
 
 ## Intents
@@ -584,6 +584,12 @@ static config =
     view_ (viewStaticHighlightable config.id) config
 
 
+{-| -}
+staticWithTags : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
+staticWithTags config =
+    view_ (viewStaticHighlightableWithTags config.id) config
+
+
 view_ :
     (Highlightable marker -> Html msg)
     -> { config | id : String, highlightables : List (Highlightable marker) }
@@ -709,6 +715,11 @@ viewHighlightable highlighterId marker focusIndex highlightable =
 
 viewStaticHighlightable : String -> Highlightable marker -> Html msg
 viewStaticHighlightable highlighterId =
+    viewHighlightableSegment False Nothing highlighterId [] Nothing
+
+
+viewStaticHighlightableWithTags : String -> Highlightable marker -> Html msg
+viewStaticHighlightableWithTags highlighterId =
     viewHighlightableSegment False Nothing highlighterId [] Nothing
 
 
