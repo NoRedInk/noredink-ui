@@ -662,8 +662,8 @@ groupContainer showTagsInline viewSegment highlightables =
                     List.map viewSegment highlightables
 
 
-tagBeforeContent : Bool -> { mark | name : Maybe String } -> Css.Style
-tagBeforeContent showTagsInline markedWith =
+tagBeforeContent : { mark | name : Maybe String } -> Css.Style
+tagBeforeContent markedWith =
     case markedWith.name of
         Just name ->
             Css.before
@@ -673,14 +673,6 @@ tagBeforeContent showTagsInline markedWith =
                     [ Css.property "content" ("\" [start " ++ name ++ " highlight] \"")
                     , invisibleStyle
                     ]
-                , if showTagsInline then
-                    -- if the tags are already shown, don't show them again in high-contrast mode
-                    Css.batch []
-
-                  else
-                    MediaQuery.highContrastMode
-                        [ Css.property "content" ("\"[" ++ name ++ "] \"")
-                        ]
                 ]
 
         Nothing ->
@@ -694,34 +686,36 @@ viewInlineTag : Bool -> Tool.MarkerModel kind -> Html msg
 viewInlineTag showTagsInline markedWith =
     span
         [ css
-            (tagBeforeContent showTagsInline markedWith
+            (tagBeforeContent markedWith
                 :: markedWith.startGroupClass
                 ++ markedWith.highlightClass
             )
         ]
-        [ viewIf
-            (\_ ->
-                viewJust
-                    (\name ->
-                        span
-                            [ css
-                                [ Fonts.baseFont
-                                , Css.backgroundColor Colors.white
-                                , Css.color Colors.navy
-                                , Css.padding2 (Css.px 2) (Css.px 4)
-                                , Css.borderRadius (Css.px 3)
-                                , Css.margin2 Css.zero (Css.px 5)
-                                , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 1) Css.zero Colors.gray75
-                                ]
-                            , -- we use the :before element to convey details about the start of the
-                              -- highlighter to screenreaders, so the visual label is redundant
-                              Aria.hidden True
-                            ]
-                            [ Html.text name ]
-                    )
-                    markedWith.name
+        [ viewJust
+            (\name ->
+                span
+                    [ css
+                        [ Fonts.baseFont
+                        , Css.backgroundColor Colors.white
+                        , Css.color Colors.navy
+                        , Css.padding2 (Css.px 2) (Css.px 4)
+                        , Css.borderRadius (Css.px 3)
+                        , Css.margin2 Css.zero (Css.px 5)
+                        , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 1) Css.zero Colors.gray75
+                        , Css.display Css.none
+                        , if showTagsInline then
+                            Css.display Css.inline |> Css.important
+
+                          else
+                            MediaQuery.highContrastMode [ Css.display Css.inline |> Css.important ]
+                        ]
+                    , -- we use the :before element to convey details about the start of the
+                      -- highlighter to screenreaders, so the visual label is redundant
+                      Aria.hidden True
+                    ]
+                    [ Html.text name ]
             )
-            showTagsInline
+            markedWith.name
         ]
 
 
