@@ -737,10 +737,12 @@ viewInlineTag { showTagsInline, isInteractive, maybeTool } highlightable =
                         , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 1) Css.zero Colors.gray75
                         , Css.display Css.none
                         , if showTagsInline then
-                            Css.display Css.inline |> Css.important
+                            Css.batch [ Css.display Css.inline |> Css.important, MediaQuery.highContrastMode [ Css.property "forced-color-adjust" "none", Css.color Colors.black |> Css.important ] ]
 
                           else
-                            MediaQuery.highContrastMode [ Css.display Css.inline |> Css.important ]
+                            Css.batch
+                                [ MediaQuery.highContrastMode [ Css.property "forced-color-adjust" "none", Css.display Css.inline |> Css.important, Css.color Colors.black |> Css.important ]
+                                ]
                         ]
                     , -- we use the :before element to convey details about the start of the
                       -- highlighter to screenreaders, so the visual label is redundant
