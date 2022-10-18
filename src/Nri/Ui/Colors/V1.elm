@@ -23,7 +23,6 @@ module Nri.Ui.Colors.V1 exposing
     , sunshine
     , turquoise, turquoiseDark, turquoiseLight
     , yellow, mustard
-    , black
     )
 
 {-| Comprehensive list of named colors.
@@ -144,13 +143,6 @@ glacier =
 grassland : Css.Color
 grassland =
     hex "#56bf74"
-
-
-{-| See <https://noredink-ui.netlify.com/#category/Colors>
--}
-black : Css.Color
-black =
-    hex "#000000"
 
 
 {-| See <https://noredink-ui.netlify.com/#category/Colors>

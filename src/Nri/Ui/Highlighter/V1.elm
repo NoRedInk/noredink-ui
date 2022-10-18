@@ -737,11 +737,11 @@ viewInlineTag { showTagsInline, isInteractive, maybeTool } highlightable =
                         , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 1) Css.zero Colors.gray75
                         , Css.display Css.none
                         , if showTagsInline then
-                            Css.batch [ Css.display Css.inline |> Css.important, MediaQuery.highContrastMode [ Css.property "forced-color-adjust" "none", Css.color Colors.black |> Css.important ] ]
+                            Css.batch [ Css.display Css.inline |> Css.important, MediaQuery.highContrastMode [ Css.property "forced-color-adjust" "none", Css.property "color" "initial" |> Css.important ] ]
 
                           else
                             Css.batch
-                                [ MediaQuery.highContrastMode [ Css.property "forced-color-adjust" "none", Css.display Css.inline |> Css.important, Css.color Colors.black |> Css.important ]
+                                [ MediaQuery.highContrastMode [ Css.property "forced-color-adjust" "none", Css.display Css.inline |> Css.important, Css.property "color" "initial" |> Css.important ]
                                 ]
                         ]
                     , -- we use the :before element to convey details about the start of the
