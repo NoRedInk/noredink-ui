@@ -17,6 +17,7 @@ import Examples.Container as Container
 import Examples.DisclosureIndicator as DisclosureIndicator
 import Examples.Divider as Divider
 import Examples.Fonts as Fonts
+import Examples.Header as Header
 import Examples.Heading as Heading
 import Examples.Highlighter as Highlighter
 import Examples.HighlighterToolbar as HighlighterToolbar
@@ -349,6 +350,25 @@ all =
             (\msg ->
                 case msg of
                     FontsState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , Header.example
+        |> Example.wrapMsg HeaderMsg
+            (\msg ->
+                case msg of
+                    HeaderMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState HeaderState
+            (\msg ->
+                case msg of
+                    HeaderState childState ->
                         Just childState
 
                     _ ->
@@ -925,6 +945,7 @@ type State
     | DisclosureIndicatorState DisclosureIndicator.State
     | DividerState Divider.State
     | FontsState Fonts.State
+    | HeaderState Header.State
     | HeadingState Heading.State
     | HighlighterState Highlighter.State
     | HighlighterToolbarState HighlighterToolbar.State
@@ -973,6 +994,7 @@ type Msg
     | DisclosureIndicatorMsg DisclosureIndicator.Msg
     | DividerMsg Divider.Msg
     | FontsMsg Fonts.Msg
+    | HeaderMsg Header.Msg
     | HeadingMsg Heading.Msg
     | HighlighterMsg Highlighter.Msg
     | HighlighterToolbarMsg HighlighterToolbar.Msg

@@ -1,4 +1,4 @@
-module Example exposing (Example, fullName, preview, view, wrapMsg, wrapState)
+module Example exposing (Example, extraLinks, fullName, preview, view, wrapMsg, wrapState)
 
 import Accessibility.Styled.Aria as Aria
 import Category exposing (Category)
@@ -12,7 +12,6 @@ import KeyboardSupport exposing (KeyboardSupport)
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
-import Nri.Ui.Spacing.V1 as Spacing
 
 
 type alias Example state msg =
@@ -149,42 +148,35 @@ view ellieLinkConfig example =
 
 view_ : EllieLink.Config -> Example state msg -> List (Html msg)
 view_ ellieLinkConfig example =
-    let
-        navMenu items =
-            Html.nav [ Aria.label (fullName example) ]
-                [ Html.ul
-                    [ Attributes.css
-                        [ margin zero
-                        , padding zero
-                        , displayFlex
-                        , alignItems center
-                        , justifyContent flexStart
-                        , flexWrap Css.wrap
-                        ]
-                    ]
-                    (List.map
-                        (\i ->
-                            Html.li
-                                [ Attributes.css
-                                    [ Css.listStyle Css.none ]
-                                ]
-                                [ i ]
-                        )
-                        items
-                    )
-                ]
-    in
-    [ Html.div
-        [ Attributes.css
-            [ Css.padding2 Spacing.verticalSpacerPx Css.zero
-            , Css.borderBottom3 (Css.px 1) Css.solid Colors.gray92
-            ]
-        ]
-        [ navMenu [ docsLink example, srcLink example ]
-        ]
-    , KeyboardSupport.view example.keyboardSupport
+    [ KeyboardSupport.view example.keyboardSupport
     , Html.div [] (example.view ellieLinkConfig example.state)
     ]
+
+
+extraLinks : Example state msg -> Html msg
+extraLinks example =
+    Html.nav [ Aria.label (fullName example) ]
+        [ Html.ul
+            [ Attributes.css
+                [ margin zero
+                , padding zero
+                , displayFlex
+                , alignItems center
+                , justifyContent flexStart
+                , flexWrap Css.wrap
+                ]
+            ]
+            (List.map
+                (\i ->
+                    Html.li
+                        [ Attributes.css
+                            [ Css.listStyle Css.none ]
+                        ]
+                        [ i ]
+                )
+                [ docsLink example, srcLink example ]
+            )
+        ]
 
 
 docsLink : Example state msg -> Html msg

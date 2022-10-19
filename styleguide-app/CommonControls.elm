@@ -5,7 +5,7 @@ module CommonControls exposing
     , uiIcon, rotatedUiIcon
     , customIcon
     , specificColor
-    , content
+    , content, exampleHtml
     , httpError
     , romeoAndJulietQuotation
     , guidanceAndErrorMessage
@@ -24,7 +24,7 @@ module CommonControls exposing
 
 ### Content
 
-@docs content
+@docs content, exampleHtml
 @docs httpError
 @docs romeoAndJulietQuotation
 @docs guidanceAndErrorMessage
