@@ -92,7 +92,7 @@ prefersReducedMotion =
 {-| -}
 notHighContrastMode : List Style -> Style
 notHighContrastMode =
-    withMediaQuery [ "(forced-colors: none) and (prefers-contrast: no-preference)" ]
+    withMediaQuery [ "(forced-colors: none) and (not(prefers-contrast: more))" ]
 
 
 {-| -}
