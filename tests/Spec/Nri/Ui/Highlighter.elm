@@ -227,7 +227,7 @@ ensureMarked words testContext =
     testContext
         |> ensureView
             (Query.find [ Selector.tag "mark" ]
-                >> Query.children [ Selector.tag "span" ]
+                >> Query.children [ Selector.class "highlighter-highlightable" ]
                 >> Expect.all (List.indexedMap (\i w -> Query.index i >> Query.has [ Selector.text w ]) words)
             )
 

@@ -1,6 +1,6 @@
 module Nri.Ui.Highlighter.V1 exposing
     ( Model, Msg(..), PointerMsg(..)
-    , init, update, view, static
+    , init, update, view, static, staticWithTags
     , Intent(..), emptyIntent, hasChanged, HasChanged(..)
     , removeHighlights
     , asFragmentTuples, usedMarkers, text
@@ -33,7 +33,7 @@ Currently, highlighter is used in the following places:
 
 # Init/View/Update
 
-@docs init, update, view, static
+@docs init, update, view, static, staticWithTags
 
 
 ## Intents
@@ -71,9 +71,12 @@ import Html.Styled.Attributes exposing (attribute, class, css)
 import Html.Styled.Events
 import Json.Decode
 import List.Extra
+import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
+import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Sort exposing (Sorter)
 import Sort.Set
@@ -575,30 +578,87 @@ removeHighlights model =
 {-| -}
 view : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Maybe Int, marker : Tool.Tool marker } -> Html (Msg marker)
 view config =
-    view_ (viewHighlightable config.id config.marker config.focusIndex) config
+    view_
+        { showTagsInline = False
+        , isInteractive = True
+        , maybeTool = Just config.marker
+        }
+        (viewHighlightable config.id config.marker config.focusIndex)
+        config
 
 
 {-| -}
 static : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
 static config =
-    view_ (viewStaticHighlightable config.id) config
+    let
+        viewStaticHighlightable : Int -> Highlightable marker -> Html msg
+        viewStaticHighlightable =
+            viewHighlightableSegment
+                { isInteractive = False
+                , focusIndex = Nothing
+                , highlighterId = config.id
+                , eventListeners = []
+                , maybeTool = Nothing
+                }
+    in
+    view_
+        { showTagsInline = False
+        , isInteractive = False
+        , maybeTool = Nothing
+        }
+        viewStaticHighlightable
+        config
+
+
+{-| -}
+staticWithTags : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
+staticWithTags config =
+    let
+        viewStaticHighlightableWithTags : Int -> Highlightable marker -> Html msg
+        viewStaticHighlightableWithTags =
+            viewHighlightableSegment
+                { isInteractive = False
+                , focusIndex = Nothing
+                , highlighterId = config.id
+                , eventListeners = []
+                , maybeTool = Nothing
+                }
+    in
+    view_
+        { showTagsInline = True
+        , isInteractive = False
+        , maybeTool = Nothing
+        }
+        viewStaticHighlightableWithTags
+        config
 
 
 view_ :
-    (Highlightable marker -> Html msg)
+    { showTagsInline : Bool
+    , isInteractive : Bool
+    , maybeTool : Maybe (Tool.Tool marker)
+    }
+    -> (Int -> Highlightable marker -> Html msg)
     -> { config | id : String, highlightables : List (Highlightable marker) }
     -> Html msg
-view_ viewSegment { id, highlightables } =
+view_ groupConfig viewSegment { id, highlightables } =
     highlightables
         |> Grouping.buildGroups
-        |> List.concatMap (groupContainer viewSegment)
+        |> List.concatMap (groupContainer groupConfig viewSegment)
         |> p [ Html.Styled.Attributes.id id, class "highlighter-container" ]
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
 -}
-groupContainer : (Highlightable marker -> Html msg) -> List (Highlightable marker) -> List (Html msg)
-groupContainer viewSegment highlightables =
+groupContainer :
+    { showTagsInline : Bool
+    , isInteractive : Bool
+    , maybeTool : Maybe (Tool.Tool marker)
+    }
+    -> (Int -> Highlightable marker -> Html msg)
+    -> List (Highlightable marker)
+    -> List (Html msg)
+groupContainer config viewSegment highlightables =
     case highlightables of
         [] ->
             []
@@ -613,27 +673,7 @@ groupContainer viewSegment highlightables =
                         , css
                             [ Css.backgroundColor Css.transparent
                             , Css.Global.children
-                                [ Css.Global.selector ":first-child"
-                                    (Css.before
-                                        (case markedWith.name of
-                                            Just name ->
-                                                [ MediaQuery.notHighContrastMode
-                                                    [ Css.property "content" ("\" [start " ++ name ++ " highlight] \"")
-                                                    , invisibleStyle
-                                                    ]
-                                                , MediaQuery.highContrastMode
-                                                    [ Css.property "content" ("\"[" ++ name ++ "] \"")
-                                                    ]
-                                                ]
-
-                                            Nothing ->
-                                                [ Css.property "content" "\" [start highlight] \""
-                                                , invisibleStyle
-                                                ]
-                                        )
-                                        :: markedWith.startGroupClass
-                                    )
-                                , Css.Global.selector ":last-child"
+                                [ Css.Global.selector ":last-child"
                                     (Css.after
                                         [ Css.property "content" ("\" [end " ++ (Maybe.map (\name -> name) markedWith.name |> Maybe.withDefault "highlight") ++ "] \"")
                                         , invisibleStyle
@@ -643,11 +683,75 @@ groupContainer viewSegment highlightables =
                                 ]
                             ]
                         ]
-                        (List.map viewSegment highlightables)
+                        (viewInlineTag config first :: List.indexedMap viewSegment highlightables)
                     ]
 
                 Nothing ->
-                    List.map viewSegment highlightables
+                    List.indexedMap viewSegment highlightables
+
+
+tagBeforeContent : { mark | name : Maybe String } -> Css.Style
+tagBeforeContent markedWith =
+    case markedWith.name of
+        Just name ->
+            Css.before
+                [ MediaQuery.notHighContrastMode
+                    [ Css.property "content" ("\" [start " ++ name ++ " highlight] \"")
+                    , invisibleStyle
+                    ]
+                ]
+
+        Nothing ->
+            Css.before
+                [ Css.property "content" "\" [start highlight] \""
+                , invisibleStyle
+                ]
+
+
+viewInlineTag :
+    { showTagsInline : Bool
+    , isInteractive : Bool
+    , maybeTool : Maybe (Tool.Tool marker)
+    }
+    -> Highlightable marker
+    -> Html msg
+viewInlineTag { showTagsInline, isInteractive, maybeTool } highlightable =
+    span
+        [ css
+            ((Maybe.map .startGroupClass highlightable.marked
+                |> Maybe.withDefault []
+             )
+                ++ highlightableStyle maybeTool highlightable isInteractive
+            )
+        ]
+        [ viewJust
+            (\name ->
+                span
+                    [ css
+                        [ Fonts.baseFont
+                        , Css.backgroundColor Colors.white
+                        , Css.color Colors.navy
+                        , Css.padding2 (Css.px 2) (Css.px 4)
+                        , Css.borderRadius (Css.px 3)
+                        , Css.margin2 Css.zero (Css.px 5)
+                        , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 1) Css.zero Colors.gray75
+                        , Css.display Css.none
+                        , if showTagsInline then
+                            Css.batch [ Css.display Css.inline |> Css.important, MediaQuery.highContrastMode [ Css.property "forced-color-adjust" "none", Css.property "color" "initial" |> Css.important ] ]
+
+                          else
+                            Css.batch
+                                [ MediaQuery.highContrastMode [ Css.property "forced-color-adjust" "none", Css.display Css.inline |> Css.important, Css.property "color" "initial" |> Css.important ]
+                                ]
+                        ]
+                    , -- we use the :before element to convey details about the start of the
+                      -- highlighter to screenreaders, so the visual label is redundant
+                      Aria.hidden True
+                    ]
+                    [ Html.text name ]
+            )
+            (Maybe.andThen .name highlightable.marked)
+        ]
 
 
 shift : msg -> Json.Decode.Decoder msg
@@ -663,57 +767,69 @@ shift msg =
         Html.Styled.Events.keyCode
 
 
-viewHighlightable : String -> Tool.Tool marker -> Maybe Int -> Highlightable marker -> Html (Msg marker)
-viewHighlightable highlighterId marker focusIndex highlightable =
+viewHighlightable : String -> Tool.Tool marker -> Maybe Int -> Int -> Highlightable marker -> Html (Msg marker)
+viewHighlightable highlighterId marker focusIndex index highlightable =
     case highlightable.type_ of
         Highlightable.Interactive ->
-            viewHighlightableSegment True
-                focusIndex
-                highlighterId
-                [ on "mouseover" (Pointer <| Over highlightable.groupIndex)
-                , on "mouseleave" (Pointer <| Out highlightable.groupIndex)
-                , on "mouseup" (Pointer <| Up Nothing)
-                , on "mousedown" (Pointer <| Down highlightable.groupIndex)
-                , on "touchstart" (Pointer <| Down highlightable.groupIndex)
-                , attribute "data-interactive" ""
-                , Key.onKeyDownPreventDefault
-                    [ Key.space (Keyboard <| ToggleHighlight highlightable.groupIndex)
-                    , Key.right (Keyboard <| MoveRight highlightable.groupIndex)
-                    , Key.left (Keyboard <| MoveLeft highlightable.groupIndex)
-                    , Key.shiftRight (Keyboard <| SelectionExpandRight highlightable.groupIndex)
-                    , Key.shiftLeft (Keyboard <| SelectionExpandLeft highlightable.groupIndex)
+            viewHighlightableSegment
+                { isInteractive = True
+                , focusIndex = focusIndex
+                , highlighterId = highlighterId
+                , eventListeners =
+                    [ on "mouseover" (Pointer <| Over highlightable.groupIndex)
+                    , on "mouseleave" (Pointer <| Out highlightable.groupIndex)
+                    , on "mouseup" (Pointer <| Up Nothing)
+                    , on "mousedown" (Pointer <| Down highlightable.groupIndex)
+                    , on "touchstart" (Pointer <| Down highlightable.groupIndex)
+                    , attribute "data-interactive" ""
+                    , Key.onKeyDownPreventDefault
+                        [ Key.space (Keyboard <| ToggleHighlight highlightable.groupIndex)
+                        , Key.right (Keyboard <| MoveRight highlightable.groupIndex)
+                        , Key.left (Keyboard <| MoveLeft highlightable.groupIndex)
+                        , Key.shiftRight (Keyboard <| SelectionExpandRight highlightable.groupIndex)
+                        , Key.shiftLeft (Keyboard <| SelectionExpandLeft highlightable.groupIndex)
+                        ]
+                    , Key.onKeyUpPreventDefault
+                        [ Key.shiftRight (Keyboard <| SelectionApplyTool highlightable.groupIndex)
+                        , Key.shiftLeft (Keyboard <| SelectionApplyTool highlightable.groupIndex)
+                        , shift (Keyboard <| SelectionReset highlightable.groupIndex)
+                        ]
                     ]
-                , Key.onKeyUpPreventDefault
-                    [ Key.shiftRight (Keyboard <| SelectionApplyTool highlightable.groupIndex)
-                    , Key.shiftLeft (Keyboard <| SelectionApplyTool highlightable.groupIndex)
-                    , shift (Keyboard <| SelectionReset highlightable.groupIndex)
-                    ]
-                ]
-                (Just marker)
+                , maybeTool = Just marker
+                }
+                index
                 highlightable
 
         Highlightable.Static ->
-            viewHighlightableSegment False
-                focusIndex
-                highlighterId
-                -- Static highlightables need listeners as well.
-                -- because otherwise we miss mouseup events
-                [ on "mouseup" (Pointer <| Up Nothing)
-                , on "mousedown" (Pointer <| Down highlightable.groupIndex)
-                , on "touchstart" (Pointer <| Down highlightable.groupIndex)
-                , attribute "data-static" ""
-                ]
-                (Just marker)
+            viewHighlightableSegment
+                { isInteractive = False
+                , focusIndex = focusIndex
+                , highlighterId = highlighterId
+                , eventListeners =
+                    -- Static highlightables need listeners as well.
+                    -- because otherwise we miss mouseup events
+                    [ on "mouseup" (Pointer <| Up Nothing)
+                    , on "mousedown" (Pointer <| Down highlightable.groupIndex)
+                    , on "touchstart" (Pointer <| Down highlightable.groupIndex)
+                    , attribute "data-static" ""
+                    ]
+                , maybeTool = Just marker
+                }
+                index
                 highlightable
 
 
-viewStaticHighlightable : String -> Highlightable marker -> Html msg
-viewStaticHighlightable highlighterId =
-    viewHighlightableSegment False Nothing highlighterId [] Nothing
-
-
-viewHighlightableSegment : Bool -> Maybe Int -> String -> List (Attribute msg) -> Maybe (Tool.Tool marker) -> Highlightable marker -> Html msg
-viewHighlightableSegment isInteractive focusIndex highlighterId eventListeners maybeTool highlightable =
+viewHighlightableSegment :
+    { isInteractive : Bool
+    , focusIndex : Maybe Int
+    , highlighterId : String
+    , eventListeners : List (Attribute msg)
+    , maybeTool : Maybe (Tool.Tool marker)
+    }
+    -> Int
+    -> Highlightable marker
+    -> Html msg
+viewHighlightableSegment { isInteractive, focusIndex, highlighterId, eventListeners, maybeTool } index highlightable =
     let
         whitespaceClass txt =
             -- we need to override whitespace styles in order to support
@@ -749,6 +865,15 @@ viewHighlightableSegment isInteractive focusIndex highlighterId eventListeners m
                , css
                     (Css.focus [ Css.zIndex (Css.int 1), Css.position Css.relative ]
                         :: highlightableStyle maybeTool highlightable isInteractive
+                        ++ (case ( index == 0, highlightable.marked ) of
+                                ( True, Just markedWith ) ->
+                                    -- if we're on the first highlighted element, we add
+                                    -- a `before` content saying what kind of highlight we're starting
+                                    [ tagBeforeContent markedWith ]
+
+                                _ ->
+                                    []
+                           )
                     )
                , class "highlighter-highlightable"
                , if isInteractive then
