@@ -138,7 +138,7 @@ buildCheckbox model labelView =
                         case model.selected of
                             Selected ->
                                 ( CheckboxIcons.checked model.identifier
-                                , CheckboxIcons.checked model.identifier
+                                , CheckboxIcons.checkedDisabled
                                 )
 
                             NotSelected ->

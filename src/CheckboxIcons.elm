@@ -1,7 +1,6 @@
 module CheckboxIcons exposing
-    (  checked
-       --, checkedDisabled
-
+    ( checked
+    , checkedDisabled
     ,  checkedPartially
        --, checkedPartiallyDisabled
 
@@ -161,20 +160,38 @@ checked idSuffix =
                 , SvgAttributes.fillOpacity "1"
                 , SvgAttributes.filter filterUrl
                 ]
-            , -- Checkmark
-              Svg.g
-                [ SvgAttributes.transform "translate(3.600000, 3.600000)"
-                , SvgAttributes.fill "#146AFF"
-                ]
-                [ Svg.path
-                    [ SvgAttributes.d "M7.04980639,17.8647896 C6.57427586,17.8647896 6.11539815,17.6816086 5.77123987,17.3513276 L0.571859358,12.3786105 C-0.167340825,11.672716 -0.193245212,10.5014676 0.513574487,9.7631926 C1.21761872,9.02491757 2.38979222,8.99808803 3.12899241,9.70490773 L6.96746745,13.3750043 L16.7917062,2.73292703 C17.4855737,1.98077465 18.6558969,1.93451682 19.4061989,2.62745917 C20.1574262,3.32132667 20.2046091,4.49164987 19.5116668,5.24195193 L8.4097867,17.2689887 C8.07210452,17.6344256 7.60397524,17.8481368 7.10716611,17.8638644 C7.08866297,17.8647896 7.06923468,17.8647896 7.04980639,17.8647896"
-                    ]
-                    []
-                ]
+            , checkmark Colors.azure
             ]
         ]
         |> Nri.Ui.Svg.V1.withWidth (Css.px 27)
         |> Nri.Ui.Svg.V1.withHeight (Css.px 27)
+
+
+checkedDisabled : Svg
+checkedDisabled =
+    Nri.Ui.Svg.V1.init viewBox
+        [ -- Dark gray background
+          checkboxBackground
+            [ SvgAttributes.fill (toCssString Colors.gray45)
+            , SvgAttributes.stroke (toCssString Colors.gray45)
+            ]
+        , checkmark Colors.white
+        ]
+        |> Nri.Ui.Svg.V1.withWidth (Css.px 27)
+        |> Nri.Ui.Svg.V1.withHeight (Css.px 27)
+
+
+checkmark : Css.Color -> Svg.Svg msg
+checkmark fillColor =
+    Svg.g
+        [ SvgAttributes.transform "translate(3.600000, 3.600000)"
+        , SvgAttributes.fill (toCssString fillColor)
+        ]
+        [ Svg.path
+            [ SvgAttributes.d "M7.04980639,17.8647896 C6.57427586,17.8647896 6.11539815,17.6816086 5.77123987,17.3513276 L0.571859358,12.3786105 C-0.167340825,11.672716 -0.193245212,10.5014676 0.513574487,9.7631926 C1.21761872,9.02491757 2.38979222,8.99808803 3.12899241,9.70490773 L6.96746745,13.3750043 L16.7917062,2.73292703 C17.4855737,1.98077465 18.6558969,1.93451682 19.4061989,2.62745917 C20.1574262,3.32132667 20.2046091,4.49164987 19.5116668,5.24195193 L8.4097867,17.2689887 C8.07210452,17.6344256 7.60397524,17.8481368 7.10716611,17.8638644 C7.08866297,17.8647896 7.06923468,17.8647896 7.04980639,17.8647896"
+            ]
+            []
+        ]
 
 
 checkedPartially : String -> Svg
