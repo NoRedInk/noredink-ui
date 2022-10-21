@@ -1,8 +1,13 @@
 module CheckboxIcons exposing
-    ( checked
-    , checkedPartially
+    (  checked
+       --, checkedDisabled
+
+    ,  checkedPartially
+       --, checkedPartiallyDisabled
+
     , lockOnInside
     , unchecked
+    , uncheckedDisabled
     )
 
 import Css
@@ -73,6 +78,22 @@ unchecked idSuffix =
                     , SvgAttributes.fillOpacity "1"
                     , SvgAttributes.filter filterUrl
                     ]
+                ]
+            ]
+        ]
+        |> Nri.Ui.Svg.V1.withWidth (Css.px 27)
+        |> Nri.Ui.Svg.V1.withHeight (Css.px 27)
+
+
+uncheckedDisabled : Svg
+uncheckedDisabled =
+    Nri.Ui.Svg.V1.init viewBox
+        [ Svg.g
+            []
+            [ checkboxBackground
+                [ SvgAttributes.fill (toCssString Colors.gray75)
+                , SvgAttributes.fillRule "evenodd"
+                , SvgAttributes.stroke (toCssString Colors.gray75)
                 ]
             ]
         ]
