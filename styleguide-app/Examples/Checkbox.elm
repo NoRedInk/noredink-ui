@@ -21,6 +21,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Table.V6 as Table
 
 
 moduleName : String
@@ -62,8 +63,38 @@ example =
                 , renderExample = Code.unstyledView
                 , toExampleCode = \_ -> [ { sectionName = "viewWithLabel", code = exampleCode } ]
                 }
-            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Heading.h2 [ Heading.plaintext "Customizable example" ]
             , exampleView
+            , Heading.h2 [ Heading.plaintext "Examples" ]
+            , Table.view
+                [ Table.string
+                    { header = "State"
+                    , value = .state
+                    , width = Css.pct 30
+                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "Enabled"
+                    , view = .enabled
+                    , width = Css.px 150
+                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "Disabled"
+                    , view = .disabled
+                    , width = Css.px 150
+                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+                    , sort = Nothing
+                    }
+                ]
+                (List.indexedMap row
+                    [ ( "NotSelected", Checkbox.NotSelected )
+                    , ( "PartiallySelected", Checkbox.PartiallySelected )
+                    , ( "Selected", Checkbox.Selected )
+                    ]
+                )
             ]
     , categories = [ Inputs ]
     , keyboardSupport =
@@ -71,6 +102,39 @@ example =
           , result = "Select or deselect the checkbox (may cause page scroll)"
           }
         ]
+    }
+
+
+row :
+    Int
+    -> ( String, Checkbox.IsSelected )
+    -> { state : String, enabled : Html Msg, disabled : Html Msg }
+row i ( name, selectionStatus ) =
+    { state = name
+    , enabled =
+        Checkbox.viewWithLabel
+            { identifier = "enabled-" ++ String.fromInt i
+            , label = "Setting"
+            , setterMsg = \_ -> Swallow
+            , selected = selectionStatus
+            , disabled = False
+            , theme = Checkbox.Square
+            , containerCss = []
+            , enabledLabelCss = []
+            , disabledLabelCss = []
+            }
+    , disabled =
+        Checkbox.viewWithLabel
+            { identifier = "disabled-" ++ String.fromInt i
+            , label = "Setting"
+            , setterMsg = \_ -> Swallow
+            , selected = selectionStatus
+            , disabled = True
+            , theme = Checkbox.Square
+            , containerCss = []
+            , enabledLabelCss = []
+            , disabledLabelCss = []
+            }
     }
 
 
@@ -209,6 +273,7 @@ viewExampleWithCode state settings =
 type Msg
     = ToggleCheck Id Bool
     | UpdateControls (Control Settings)
+    | Swallow
 
 
 {-| -}
@@ -228,6 +293,9 @@ update msg state =
 
         UpdateControls settings ->
             ( { state | settings = settings }, Cmd.none )
+
+        Swallow ->
+            ( state, Cmd.none )
 
 
 type alias Id =
