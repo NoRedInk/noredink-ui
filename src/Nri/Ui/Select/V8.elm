@@ -44,6 +44,7 @@ module Nri.Ui.Select.V8 exposing
 -}
 
 import Accessibility.Styled as Html exposing (Html)
+import Accessibility.Styled.Aria as Aria
 import Css
 import Dict
 import Html.Styled.Attributes as Attributes exposing (css)
@@ -437,6 +438,7 @@ viewSelect config_ config =
             , selectArrowsCss config
             ]
             (onSelectHandler
+                :: Aria.invalid isInError
                 :: InputErrorAndGuidanceInternal.describedBy config_.id config
                 :: Attributes.id config_.id
                 :: Attributes.disabled config_.disabled
