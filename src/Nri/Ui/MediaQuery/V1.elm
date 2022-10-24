@@ -92,14 +92,13 @@ prefersReducedMotion =
 {-| -}
 notHighContrastMode : List Style -> Style
 notHighContrastMode =
-    withMediaQuery [ "(forced-colors: none) or (prefers-contrast: no-preference) or (prefers-contrast: less)" ]
+    withMediaQuery [ "(forced-colors: none)" ]
 
 
 {-| -}
 highContrastMode : List Style -> Style
 highContrastMode =
-    -- works on Windows and macOS, but not on Chrome OS
-    withMediaQuery [ "(forced-colors: active) or (prefers-contrast: more)" ]
+    withMediaQuery [ "(forced-colors: active)" ]
 
 
 {-| Styles using the `mobileBreakpoint` value as the maxWidth.
