@@ -27,19 +27,19 @@ keyboardTests =
     [ test "has a focusable element when there is one" <|
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program marker
+                |> program Nothing
                 |> ensureTabbable "Pothos"
                 |> done
     , test "has only one element included in the tab sequence" <|
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program marker
+                |> program Nothing
                 |> ensureOnlyOneInTabSequence (String.words "Pothos indirect light")
                 |> done
     , test "moves focus right on right arrow key" <|
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program marker
+                |> program Nothing
                 |> ensureTabbable "Pothos"
                 |> rightArrow
                 |> ensureTabbable "indirect"
@@ -54,7 +54,7 @@ keyboardTests =
     , test "moves focus left on left arrow key" <|
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program marker
+                |> program Nothing
                 |> ensureTabbable "Pothos"
                 |> rightArrow
                 |> ensureTabbable "indirect"
@@ -69,7 +69,7 @@ keyboardTests =
     , test "moves focus right on shift + right arrow" <|
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program marker
+                |> program Nothing
                 |> ensureTabbable "Pothos"
                 |> shiftRight
                 |> ensureTabbable "indirect"
@@ -81,7 +81,7 @@ keyboardTests =
     , test "moves focus left on shift + left arrow" <|
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program marker
+                |> program Nothing
                 |> ensureTabbable "Pothos"
                 |> rightArrow
                 |> ensureTabbable "indirect"
@@ -93,7 +93,7 @@ keyboardTests =
     , test "expands selection one element to the right on shift + right arrow and highlight selected elements" <|
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program marker
+                |> program Nothing
                 |> shiftRight
                 |> releaseShiftRight
                 |> ensureMarked [ "Pothos", " ", "indirect" ]
@@ -107,7 +107,7 @@ keyboardTests =
     , test "expands selection one element to the left on shift + left arrow and highlight selected elements" <|
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program marker
+                |> program Nothing
                 |> rightArrow
                 |> rightArrow
                 |> shiftLeft
@@ -123,7 +123,7 @@ keyboardTests =
     , test "merges highlights" <|
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program marker
+                |> program Nothing
                 |> ensureTabbable "Pothos"
                 |> shiftRight
                 |> releaseShiftRight
@@ -138,7 +138,7 @@ keyboardTests =
     , test "selects element on MouseDown and highlights selected element on MouseUp" <|
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program marker
+                |> program Nothing
                 |> ensureTabbable "Pothos"
                 |> mouseDown "Pothos"
                 |> mouseUp "Pothos"
@@ -147,7 +147,7 @@ keyboardTests =
     , test "selects element on MouseDown, expands selection on MouseOver, and highlights selected elements on MouseUp" <|
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program marker
+                |> program Nothing
                 |> ensureTabbable "Pothos"
                 |> mouseDown "Pothos"
                 |> mouseOver "indirect"
@@ -157,7 +157,7 @@ keyboardTests =
     , test "Highlights element on Space" <|
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program marker
+                |> program Nothing
                 |> ensureTabbable "Pothos"
                 |> space
                 |> ensureMarked [ "Pothos" ]
@@ -165,42 +165,62 @@ keyboardTests =
     , test "Removes highlight from element on MouseUp" <|
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program marker
+                |> program Nothing
                 |> ensureTabbable "Pothos"
                 |> space
                 |> ensureMarked [ "Pothos" ]
                 |> ensureTabbable "Pothos"
                 |> mouseDown "Pothos"
                 |> mouseUp "Pothos"
-                |> expectViewHasNot
-                    [ Selector.tag "mark" ]
+                |> expectViewHasNot [ Selector.tag "mark" ]
     , test "Removes entire highlight from a group of elements on MouseUp" <|
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program marker
+                |> program Nothing
                 |> ensureTabbable "Pothos"
                 |> shiftRight
                 |> releaseShiftRight
                 |> ensureMarked [ "Pothos", " ", "indirect" ]
                 |> mouseDown "indirect"
                 |> mouseUp "indirect"
-                |> expectViewHasNot
-                    [ Selector.tag "mark" ]
+                |> expectViewHasNot [ Selector.tag "mark" ]
     , test "Removes highlight from element on Space" <|
         \() ->
             Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program marker
+                |> program Nothing
                 |> ensureTabbable "Pothos"
                 |> space
                 |> ensureMarked [ "Pothos" ]
                 |> ensureTabbable "Pothos"
                 |> space
-                |> expectViewHasNot
-                    [ Selector.tag "mark" ]
+                |> expectViewHasNot [ Selector.tag "mark" ]
+    , describe "Regression tests for A11-1767"
+        [ test "generic start announcement is made when mark does not include first element" <|
+            \() ->
+                Highlightable.initFragments Nothing "Pothos indirect light"
+                    |> program Nothing
+                    |> rightArrow
+                    |> shiftRight
+                    |> releaseShiftRight
+                    |> ensureMarked [ "indirect" ]
+                    |> ensureViewHas [ Selector.text " [start highlight] " ]
+                    |> done
+        , test "specific start announcement is made when mark does not include first element" <|
+            \() ->
+                Highlightable.initFragments Nothing "Pothos indirect light"
+                    |> program (Just "banana")
+                    |> rightArrow
+                    |> ensureTabbable "indirect"
+                    |> shiftRight
+                    |> releaseShiftRight
+                    |> ensureMarked [ "indirect" ]
+                    |> ensureViewHas [ Selector.text " [start banana highlight] " ]
+                    |> done
+        ]
     ]
 
 
-ensureTabbable : String -> TestContext marker -> TestContext marker
+ensureTabbable : String -> TestContext -> TestContext
 ensureTabbable word testContext =
     testContext
         |> ensureView
@@ -209,7 +229,7 @@ ensureTabbable word testContext =
             )
 
 
-ensureOnlyOneInTabSequence : List String -> TestContext marker -> TestContext marker
+ensureOnlyOneInTabSequence : List String -> TestContext -> TestContext
 ensureOnlyOneInTabSequence words testContext =
     testContext
         |> ensureView
@@ -222,7 +242,7 @@ ensureOnlyOneInTabSequence words testContext =
             )
 
 
-ensureMarked : List String -> TestContext marker -> TestContext marker
+ensureMarked : List String -> TestContext -> TestContext
 ensureMarked words testContext =
     testContext
         |> ensureView
@@ -236,88 +256,88 @@ ensureMarked words testContext =
 -- TODO: ensure other elements are not marked
 
 
-space : TestContext marker -> TestContext marker
+space : TestContext -> TestContext
 space =
     KeyboardHelpers.pressSpaceKey { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
-rightArrow : TestContext marker -> TestContext marker
+rightArrow : TestContext -> TestContext
 rightArrow =
     KeyboardHelpers.pressRightArrow { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
-leftArrow : TestContext marker -> TestContext marker
+leftArrow : TestContext -> TestContext
 leftArrow =
     KeyboardHelpers.pressLeftArrow { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
-shiftRight : TestContext marker -> TestContext marker
+shiftRight : TestContext -> TestContext
 shiftRight =
     KeyboardHelpers.pressShiftRight { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
-shiftLeft : TestContext marker -> TestContext marker
+shiftLeft : TestContext -> TestContext
 shiftLeft =
     KeyboardHelpers.pressShiftLeft { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
-releaseShiftRight : TestContext marker -> TestContext marker
+releaseShiftRight : TestContext -> TestContext
 releaseShiftRight =
     KeyboardHelpers.releaseShiftRight { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
-releaseShiftLeft : TestContext marker -> TestContext marker
+releaseShiftLeft : TestContext -> TestContext
 releaseShiftLeft =
     KeyboardHelpers.releaseShiftLeft { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
-mouseDown : String -> TestContext marker -> TestContext marker
+mouseDown : String -> TestContext -> TestContext
 mouseDown word =
     MouseHelpers.cancelableMouseDown [ Selector.tag "span", Selector.containing [ Selector.text word ] ]
 
 
-mouseUp : String -> TestContext marker -> TestContext marker
+mouseUp : String -> TestContext -> TestContext
 mouseUp word =
     MouseHelpers.cancelableMouseUp [ Selector.tag "span", Selector.containing [ Selector.text word ] ]
 
 
-mouseOver : String -> TestContext marker -> TestContext marker
+mouseOver : String -> TestContext -> TestContext
 mouseOver word =
     MouseHelpers.cancelableMouseOver [ Selector.tag "span", Selector.containing [ Selector.text word ] ]
 
 
-marker : Tool ()
-marker =
+marker : Maybe String -> Tool ()
+marker name =
     Tool.Marker
         (Tool.buildMarker
             { highlightColor = Colors.magenta
             , hoverColor = Colors.magenta
             , hoverHighlightColor = Colors.magenta
             , kind = ()
-            , name = Nothing
+            , name = name
             }
         )
 
 
-type alias TestContext marker =
-    ProgramTest (Highlighter.Model marker) (Highlighter.Msg marker) ()
+type alias TestContext =
+    ProgramTest (Highlighter.Model ()) (Highlighter.Msg ()) ()
 
 
-program : Tool marker -> List (Highlightable marker) -> TestContext marker
-program tool highlightables =
+program : Maybe String -> List (Highlightable ()) -> TestContext
+program name highlightables =
     ProgramTest.createSandbox
         { init =
             Highlighter.init
                 { id = "test-highlighter-container"
                 , highlightables = highlightables
-                , marker = tool
+                , marker = marker name
                 }
         , update =
             \msg model ->
