@@ -1,13 +1,14 @@
 module Spec.Nri.Ui.Highlighter exposing (spec)
 
 import Accessibility.Key as Key
-import Expect
+import Expect exposing (Expectation)
 import Html.Styled exposing (toUnstyled)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
 import Nri.Ui.Highlighter.V1 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool exposing (Tool)
 import ProgramTest exposing (..)
+import Regex exposing (Regex)
 import Spec.KeyboardHelpers as KeyboardHelpers
 import Spec.MouseHelpers as MouseHelpers
 import Test exposing (..)
@@ -203,8 +204,7 @@ keyboardTests =
                     |> shiftRight
                     |> releaseShiftRight
                     |> ensureMarked [ "indirect" ]
-                    |> ensureViewHas [ Selector.text " [start highlight] " ]
-                    |> done
+                    |> expectView (hasStartHighlightBeforeContent "start highlight" "indirect")
         , test "specific start announcement is made when mark does not include first element" <|
             \() ->
                 Highlightable.initFragments Nothing "Pothos indirect light"
@@ -214,10 +214,54 @@ keyboardTests =
                     |> shiftRight
                     |> releaseShiftRight
                     |> ensureMarked [ "indirect" ]
-                    |> ensureViewHas [ Selector.text " [start banana highlight] " ]
-                    |> done
+                    |> expectView (hasStartHighlightBeforeContent "start banana highlight" "indirect")
         ]
     ]
+
+
+hasStartHighlightBeforeContent : String -> String -> Query.Single msg -> Expectation
+hasStartHighlightBeforeContent startHighlightMarker relevantHighlightableText view =
+    let
+        styles =
+            view
+                |> Query.find [ Selector.tag "style" ]
+                |> Query.children []
+                |> Debug.toString
+
+        startHighlightClassRegex : Maybe Regex
+        startHighlightClassRegex =
+            "\\.(\\_[a-zA-Z0-9]+)::before\\{content:\\\\\"\\s*\\[\\s*"
+                ++ startHighlightMarker
+                |> Regex.fromString
+
+        maybeClassName : Maybe String
+        maybeClassName =
+            startHighlightClassRegex
+                |> Maybe.andThen
+                    (\regex ->
+                        Regex.find regex styles
+                            |> List.head
+                            |> Maybe.andThen (.submatches >> List.head)
+                    )
+                |> Maybe.withDefault Nothing
+    in
+    case maybeClassName of
+        Just className ->
+            Query.has
+                [ Selector.tag "mark"
+                , Selector.containing
+                    [ Selector.class className
+                    , Selector.containing [ Selector.text relevantHighlightableText ]
+                    ]
+                ]
+                view
+
+        Nothing ->
+            "Expected to find a class defining a ::before element with content: `"
+                ++ startHighlightMarker
+                ++ "`, but failed to find the class in the styles: \n\n"
+                ++ styles
+                |> Expect.fail
 
 
 ensureTabbable : String -> TestContext -> TestContext
@@ -250,10 +294,6 @@ ensureMarked words testContext =
                 >> Query.children [ Selector.class "highlighter-highlightable" ]
                 >> Expect.all (List.indexedMap (\i w -> Query.index i >> Query.has [ Selector.text w ]) words)
             )
-
-
-
--- TODO: ensure other elements are not marked
 
 
 space : TestContext -> TestContext
