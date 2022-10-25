@@ -134,19 +134,25 @@ buildCheckbox model labelView =
         , case model.theme of
             Square ->
                 let
-                    icon =
+                    ( icon, disabledIcon ) =
                         case model.selected of
                             Selected ->
-                                CheckboxIcons.checked model.identifier
+                                ( CheckboxIcons.checked model.identifier
+                                , CheckboxIcons.checkedDisabled
+                                )
 
                             NotSelected ->
-                                CheckboxIcons.unchecked model.identifier
+                                ( CheckboxIcons.unchecked model.identifier
+                                , CheckboxIcons.uncheckedDisabled
+                                )
 
                             PartiallySelected ->
-                                CheckboxIcons.checkedPartially model.identifier
+                                ( CheckboxIcons.checkedPartially model.identifier
+                                , CheckboxIcons.checkedPartiallyDisabled
+                                )
                 in
                 if model.disabled then
-                    viewDisabledLabel model labelView icon
+                    viewDisabledLabel model labelView disabledIcon
 
                 else
                     viewEnabledLabel model labelView icon
@@ -261,9 +267,7 @@ viewDisabledLabel model labelView icon =
             , Css.batch model.disabledLabelCss
             ]
         ]
-        [ viewIcon
-            [ property "filter" "grayscale(1)" ]
-            icon
+        [ viewIcon [] icon
         , labelView model.label
         ]
 
