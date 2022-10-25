@@ -272,9 +272,6 @@ view label attributes =
         config =
             applyConfig attributes
 
-        isInError_ =
-            InputErrorAndGuidanceInternal.getIsInError config.error
-
         id_ =
             Maybe.withDefault (generateId label) config.id
 
@@ -303,16 +300,10 @@ view label attributes =
             )
         ]
         [ viewSelect
-            { choices = config.choices
-            , optgroups = config.optgroups
-            , current = config.value
-            , id = id_
-            , custom = config.custom
-            , valueToString = config.valueToString
-            , defaultDisplayText = config.defaultDisplayText
-            , isInError = isInError_
+            { id = id_
             , disabled = disabled_
             }
+            config
         , InputLabelInternal.view
             { for = id_
             , label = label
@@ -323,19 +314,8 @@ view label attributes =
         ]
 
 
-viewSelect :
-    { choices : List (Choice a)
-    , optgroups : List (ChoicesGroup a)
-    , current : Maybe a
-    , id : String
-    , valueToString : Maybe (a -> String)
-    , defaultDisplayText : Maybe String
-    , isInError : Bool
-    , disabled : Bool
-    , custom : List (Html.Attribute Never)
-    }
-    -> Html a
-viewSelect config =
+viewSelect : { id : String, disabled : Bool } -> Config a -> Html a
+viewSelect config_ config =
     let
         toChoice valueToString choice =
             { label = choice.label
@@ -377,17 +357,17 @@ viewSelect config =
 
         defaultOption =
             config.defaultDisplayText
-                |> Maybe.map (viewDefaultChoice config.current >> List.singleton)
+                |> Maybe.map (viewDefaultChoice config.value >> List.singleton)
                 |> Maybe.withDefault []
 
         currentVal =
-            if config.current == Nothing && config.defaultDisplayText == Nothing then
+            if config.value == Nothing && config.defaultDisplayText == Nothing then
                 config.choices
                     |> List.head
                     |> Maybe.map .value
 
             else
-                config.current
+                config.value
 
         viewGroupedChoices group =
             Html.optgroup [ Attributes.attribute "label" group.label ]
@@ -400,6 +380,9 @@ viewSelect config =
                     Nothing ->
                         []
                 )
+
+        isInError =
+            InputErrorAndGuidanceInternal.getIsInError config.error
     in
     (defaultOption
         ++ List.map (viewChoice currentVal) optionStringChoices
@@ -410,7 +393,7 @@ viewSelect config =
             [ -- border
               Css.border3 (Css.px 1)
                 Css.solid
-                (if config.isInError then
+                (if isInError then
                     Colors.purple
 
                  else
@@ -455,9 +438,10 @@ viewSelect config =
             , selectArrowsCss config
             ]
             (onSelectHandler
-                :: Aria.invalid config.isInError
-                :: Attributes.id config.id
-                :: Attributes.disabled config.disabled
+                :: Aria.invalid isInError
+                :: InputErrorAndGuidanceInternal.describedBy config_.id config
+                :: Attributes.id config_.id
+                :: Attributes.disabled config_.disabled
                 :: List.map (Attributes.map never) config.custom
             )
 

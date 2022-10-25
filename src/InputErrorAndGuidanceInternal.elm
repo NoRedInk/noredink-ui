@@ -111,8 +111,11 @@ getErrorMessage error =
 describedBy : String -> { config | guidance : Guidance, error : ErrorState } -> Html.Attribute msg
 describedBy idValue config =
     case ( getErrorMessage config.error, config.guidance ) of
-        ( Nothing, Just _ ) ->
-            Aria.describedBy [ idValue ++ "_guidance" ]
+        ( Just _, _ ) ->
+            Aria.describedBy [ errorId idValue ]
+
+        ( _, Just _ ) ->
+            Aria.describedBy [ guidanceId idValue ]
 
         _ ->
             Nri.Ui.Html.Attributes.V2.none
@@ -127,6 +130,7 @@ view idValue config =
                 , Message.error
                 , Message.plaintext m
                 , Message.alertRole
+                , Message.id (errorId idValue)
                 , Message.custom [ Live.livePolite ]
                 , Message.css
                     [ Css.important (Css.paddingTop Css.zero)
@@ -137,7 +141,7 @@ view idValue config =
 
         ( _, Just guidanceMessage ) ->
             Text.caption
-                [ Text.id (idValue ++ "_guidance")
+                [ Text.id (guidanceId idValue)
                 , Text.plaintext guidanceMessage
                 , Text.css
                     [ Css.important (Css.paddingTop Css.zero)
@@ -149,3 +153,13 @@ view idValue config =
 
         _ ->
             Html.text ""
+
+
+errorId : String -> String
+errorId idValue =
+    idValue ++ "_error-message"
+
+
+guidanceId : String -> String
+guidanceId idValue =
+    idValue ++ "_guidance"
