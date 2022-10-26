@@ -60,8 +60,6 @@ all =
         , ( "gear", UiIcon.gear, [] )
         , ( "hamburger", UiIcon.hamburger, [] )
         , ( "kebab", UiIcon.kebab, [] )
-        , ( "speaker", UiIcon.speaker, [] )
-        , ( "mutedSpeaker", UiIcon.mutedSpeaker, [] )
         ]
       )
     , ( "Archive & Unarchive"
@@ -73,6 +71,8 @@ all =
       , [ ( "playInCircle", UiIcon.playInCircle, [] )
         , ( "pauseInCircle", UiIcon.pauseInCircle, [] )
         , ( "stopInCircle", UiIcon.stopInCircle, [] )
+        , ( "speaker", UiIcon.speaker, [] )
+        , ( "mutedSpeaker", UiIcon.mutedSpeaker, [] )
         ]
       )
     , ( "Media"

@@ -1,7 +1,7 @@
 module Nri.Ui.UiIcon.V1 exposing
-    ( seeMore, openClose, download, sort, gear, flipper, hamburger, kebab, speaker, mutedSpeaker
+    ( seeMore, openClose, download, sort, gear, flipper, hamburger, kebab
     , archive, unarchive
-    , playInCircle, pauseInCircle, stopInCircle
+    , playInCircle, pauseInCircle, stopInCircle, speaker, mutedSpeaker
     , play, skip
     , share, preview, copyToClipboard, gift, print
     , activity
@@ -36,9 +36,9 @@ module Nri.Ui.UiIcon.V1 exposing
 
 {-| How to add new icons: <https://paper.dropbox.com/doc/How-to-create-a-new-SVG-icon-for-use-in-Elm--Ay9uhSLfGUAix0ERIiJ0Dm8dAg-8WNqtARdr4EgjmYEHPeYD>
 
-@docs seeMore, openClose, download, sort, gear, flipper, hamburger, kebab, speaker, mutedSpeaker
+@docs seeMore, openClose, download, sort, gear, flipper, hamburger, kebab
 @docs archive, unarchive
-@docs playInCircle, pauseInCircle, stopInCircle
+@docs playInCircle, pauseInCircle, stopInCircle, speaker, mutedSpeaker
 @docs play, skip
 @docs share, preview, copyToClipboard, gift, print
 @docs activity
