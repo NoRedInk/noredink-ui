@@ -60,6 +60,8 @@ all =
         , ( "gear", UiIcon.gear, [] )
         , ( "hamburger", UiIcon.hamburger, [] )
         , ( "kebab", UiIcon.kebab, [] )
+        , ( "speaker", UiIcon.speaker, [] )
+        , ( "mutedSpeaker", UiIcon.mutedSpeaker, [] )
         ]
       )
     , ( "Archive & Unarchive"
