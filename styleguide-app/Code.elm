@@ -1,5 +1,5 @@
 module Code exposing
-    ( string, maybeString
+    ( string, stringMultiline, maybeString
     , maybe
     , maybeFloat
     , bool
@@ -18,7 +18,7 @@ module Code exposing
 
 {-|
 
-@docs string, maybeString
+@docs string, stringMultiline, maybeString
 @docs maybe
 @docs maybeFloat
 @docs bool
@@ -42,6 +42,16 @@ module Code exposing
 string : String -> String
 string s =
     "\"" ++ s ++ "\""
+
+
+{-| -}
+stringMultiline : String -> String
+stringMultiline s =
+    newlineWithIndent 1
+        ++ "\"\"\""
+        ++ String.replace "\n" (newlineWithIndent 1) s
+        ++ newlineWithIndent 1
+        ++ "\"\"\""
 
 
 {-| -}
