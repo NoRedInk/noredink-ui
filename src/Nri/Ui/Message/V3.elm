@@ -9,6 +9,7 @@ module Nri.Ui.Message.V3 exposing
     , tip, error, alert, success, customTheme
     , alertRole, alertDialogRole
     , onDismiss
+    , codeDetails
     )
 
 {-| Patch changes:
