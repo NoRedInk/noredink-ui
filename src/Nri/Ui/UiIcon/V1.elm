@@ -2163,6 +2163,7 @@ stretch =
             ]
         ]
 
+
 {-| -}
 speaker : Nri.Ui.Svg.V1.Svg
 speaker =
