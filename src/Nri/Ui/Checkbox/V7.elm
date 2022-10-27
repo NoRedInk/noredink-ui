@@ -46,7 +46,7 @@ import Css.Global
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
-import InputErrorAndGuidanceInternal exposing (Guidance)
+import InputErrorAndGuidanceInternal exposing (ErrorState, Guidance)
 import Json.Decode
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
@@ -233,6 +233,8 @@ view { label, selected } attributes =
             , onCheck = config.onCheck
             , selected = selected
             , disabled = config.isDisabled
+            , guidance = config.guidance
+            , error = InputErrorAndGuidanceInternal.noError
             }
     in
     checkboxContainer config_
@@ -357,6 +359,8 @@ viewEnabledLabel :
         , label : String
         , hideLabel : Bool
         , labelCss : List Style
+        , guidance : Guidance
+        , error : ErrorState
     }
     -> Svg
     -> Html.Html msg
@@ -373,6 +377,7 @@ viewEnabledLabel config icon =
         ]
         [ viewIcon [] icon
         , labelView config
+        , InputErrorAndGuidanceInternal.view config.identifier config
         ]
 
 
@@ -383,6 +388,8 @@ viewDisabledLabel :
         , label : String
         , hideLabel : Bool
         , labelCss : List Style
+        , guidance : Guidance
+        , error : ErrorState
     }
     -> Svg
     -> Html.Html msg
@@ -401,6 +408,7 @@ viewDisabledLabel config icon =
         ]
         [ viewIcon [] icon
         , labelView config
+        , InputErrorAndGuidanceInternal.view config.identifier config
         ]
 
 
