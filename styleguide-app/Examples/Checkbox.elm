@@ -9,10 +9,8 @@ module Examples.Checkbox exposing (Msg, State, example)
 import Category exposing (Category(..))
 import CheckboxIcons
 import Code
-import CommonControls
 import Css exposing (Style)
 import Debug.Control as Control exposing (Control)
-import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (..)
