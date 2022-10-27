@@ -160,7 +160,7 @@ visibleLabel =
     Attribute <| \config -> { config | hideLabel = False }
 
 
-{-| Set a custom ID for this text input and label. If you don't set this,
+{-| Set a custom ID for this radio input and label. If you don't set this,
 we'll automatically generate one from the label you pass in, but this can
 cause problems if you have more than one radio input with the same label on
 the page. You might also use this helper if you're manually managing focus.
