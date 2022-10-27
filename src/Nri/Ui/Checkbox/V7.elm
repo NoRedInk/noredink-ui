@@ -16,8 +16,8 @@ module Nri.Ui.Checkbox.V7 exposing
   - Reworked api similar to other components based on Attributes
   - Add support for guidance
   - Dropped checkboxLockOnInside functionality
-  - Dropped disabledLabelCss functionality. Use labelCss instead in case when the checbox is disabled.
-  - (breacking-change) By default the label is visible (ie: V6.viewWithLabel), use hiddenLabel to migrate from V6.view.
+  - Dropped disabledLabelCss functionality. Use labelCss instead in case when the checkbox is disabled.
+  - (breaking-change) By default the label is visible (ie: V6.viewWithLabel), use hiddenLabel to migrate from V6.view.
 
 @docs view
 
