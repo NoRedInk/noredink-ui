@@ -48,7 +48,7 @@ view :
     , getColor : tag -> { extras | colorSolid : Color, colorLight : Color }
     , getName : tag -> String
     }
-    -> { extras | currentTool : Maybe tag, tags : List tag }
+    -> { model | currentTool : Maybe tag, tags : List tag }
     -> Html msg
 view config model =
     let
