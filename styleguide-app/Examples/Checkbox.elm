@@ -9,8 +9,10 @@ module Examples.Checkbox exposing (Msg, State, example)
 import Category exposing (Category(..))
 import CheckboxIcons
 import Code
+import CommonControls
 import Css exposing (Style)
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (..)
@@ -181,6 +183,7 @@ type alias Settings =
     , hiddenLabel : Bool
     , containerCss : ( String, List Style )
     , labelCss : ( String, List Style )
+    , guidance : Maybe String
     }
 
 
@@ -212,6 +215,8 @@ controlSettings =
                   )
                 ]
             )
+        |> Control.field "guidance"
+            (Control.maybe False (Control.string "There is something you need to be aware of."))
 
 
 viewExampleWithCode : State -> Settings -> ( String, Html Msg )
@@ -227,41 +232,47 @@ viewExampleWithCode state settings =
             ]
             1
       , Code.list
-            [ "Checkbox.onCheck identity"
-            , if settings.disabled then
-                "Checkbox.disabled"
+            (List.filterMap identity
+                [ Just <| "Checkbox.onCheck identity"
+                , if settings.disabled then
+                    Just <| "Checkbox.disabled"
 
-              else
-                "Checkbox.enabled"
-            , if settings.hiddenLabel then
-                "Checkbox.hiddenLabel"
+                  else
+                    Just <| "Checkbox.enabled"
+                , if settings.hiddenLabel then
+                    Just <| "Checkbox.hiddenLabel"
 
-              else
-                "Checkbox.visibleLabel"
-            , "Checkbox.containerCss " ++ Tuple.first settings.containerCss
-            , "Checkbox.labelCss " ++ Tuple.first settings.labelCss
-            ]
+                  else
+                    Just <| "Checkbox.visibleLabel"
+                , Just <| "Checkbox.containerCss " ++ Tuple.first settings.containerCss
+                , Just <| "Checkbox.labelCss " ++ Tuple.first settings.labelCss
+                , settings.guidance |> Maybe.map (\v -> "Checkbox.guidance " ++ Code.string v)
+                ]
+            )
       ]
         |> String.join ""
     , Checkbox.view
         { label = settings.label
         , selected = state.isChecked
         }
-        [ Checkbox.id id
-        , Checkbox.onCheck (ToggleCheck id)
-        , if settings.hiddenLabel then
-            Checkbox.hiddenLabel
+        (List.filterMap identity
+            [ Just <| Checkbox.id id
+            , Just <| Checkbox.onCheck (ToggleCheck id)
+            , if settings.hiddenLabel then
+                Just <| Checkbox.hiddenLabel
 
-          else
-            Checkbox.visibleLabel
-        , if settings.disabled then
-            Checkbox.disabled
+              else
+                Just <| Checkbox.visibleLabel
+            , if settings.disabled then
+                Just <| Checkbox.disabled
 
-          else
-            Checkbox.enabled
-        , Checkbox.containerCss (Tuple.second settings.containerCss)
-        , Checkbox.labelCss (Tuple.second settings.labelCss)
-        ]
+              else
+                Just <| Checkbox.enabled
+            , Just <| Checkbox.containerCss (Tuple.second settings.containerCss)
+            , Just <| Checkbox.labelCss (Tuple.second settings.labelCss)
+            , settings.guidance |> Maybe.map Checkbox.guidance
+            ]
+        )
     )
 
 
