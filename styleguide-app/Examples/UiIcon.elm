@@ -71,6 +71,8 @@ all =
       , [ ( "playInCircle", UiIcon.playInCircle, [] )
         , ( "pauseInCircle", UiIcon.pauseInCircle, [] )
         , ( "stopInCircle", UiIcon.stopInCircle, [] )
+        , ( "speaker", UiIcon.speaker, [] )
+        , ( "mutedSpeaker", UiIcon.mutedSpeaker, [] )
         ]
       )
     , ( "Media"
