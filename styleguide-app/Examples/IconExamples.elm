@@ -21,7 +21,7 @@ import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
-import Nri.Ui.Checkbox.V6 as Checkbox
+import Nri.Ui.Checkbox.V7 as Checkbox
 import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
@@ -160,17 +160,13 @@ update msg state =
 {-| -}
 viewSettings : Settings -> Html Msg
 viewSettings { showIconName } =
-    Checkbox.viewWithLabel
-        { identifier = "show-icon-name-checkbox"
-        , label = "Show names"
-        , setterMsg = ShowNames
+    Checkbox.view
+        { label = "Show names"
         , selected = Checkbox.selectedFromBool showIconName
-        , disabled = False
-        , theme = Checkbox.Square
-        , containerCss = []
-        , enabledLabelCss = []
-        , disabledLabelCss = []
         }
+        [ Checkbox.id "show-icon-name-checkbox"
+        , Checkbox.onCheck ShowNames
+        ]
 
 
 type alias Group =
@@ -302,17 +298,13 @@ viewSingularExampleSettings groups state =
             , Select.value (Just state.icon)
             ]
             |> Html.map SetIcon
-        , Checkbox.viewWithLabel
-            { identifier = "show-border"
-            , label = "Show border"
-            , setterMsg = SetBorder
+        , Checkbox.view
+            { label = "Show border"
             , selected = Checkbox.selectedFromBool state.showBorder
-            , disabled = False
-            , theme = Checkbox.Square
-            , containerCss = []
-            , enabledLabelCss = []
-            , disabledLabelCss = []
             }
+            [ Checkbox.id "show-border"
+            , Checkbox.onCheck SetBorder
+            ]
         , Html.label []
             [ Html.text "Color: "
             , Html.input
