@@ -397,7 +397,7 @@ view_ label config =
             , theme = config.theme
             }
             config
-        , InputErrorAndGuidanceInternal.view idValue config
+        , InputErrorAndGuidanceInternal.view idValue InputErrorAndGuidanceInternal.smallMargin config
         ]
 
 

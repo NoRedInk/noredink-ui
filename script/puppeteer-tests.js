@@ -140,7 +140,7 @@ describe("UI tests", function () {
 
     // visible icon names snapshot
     await page.click("label");
-    await page.waitForSelector(".checkbox-V5__Checked");
+    await page.waitForSelector(".checkbox-V7__Checked");
     await percySnapshot(page, `${name} - display icon names`);
 
     const results = await new AxePuppeteer(page)

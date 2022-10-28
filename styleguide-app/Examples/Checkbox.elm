@@ -16,7 +16,7 @@ import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
-import Nri.Ui.Checkbox.V6 as Checkbox
+import Nri.Ui.Checkbox.V7 as Checkbox
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
@@ -31,7 +31,7 @@ moduleName =
 
 version : Int
 version =
-    6
+    7
 
 
 {-| -}
@@ -61,7 +61,7 @@ example =
                 , mainType = Just "RootHtml.Html Bool"
                 , extraCode = []
                 , renderExample = Code.unstyledView
-                , toExampleCode = \_ -> [ { sectionName = "viewWithLabel", code = exampleCode } ]
+                , toExampleCode = \_ -> [ { sectionName = "Example", code = exampleCode } ]
                 }
             , Heading.h2 [ Heading.plaintext "Customizable example" ]
             , exampleView
@@ -112,29 +112,25 @@ row :
 row i ( name, selectionStatus ) =
     { state = name
     , enabled =
-        Checkbox.viewWithLabel
-            { identifier = "enabled-" ++ String.fromInt i
-            , label = "Setting"
-            , setterMsg = \_ -> Swallow
+        Checkbox.view
+            { label = "Setting"
             , selected = selectionStatus
-            , disabled = False
-            , theme = Checkbox.Square
-            , containerCss = []
-            , enabledLabelCss = []
-            , disabledLabelCss = []
             }
+            [ Checkbox.id <| "enabled-" ++ String.fromInt i
+            , Checkbox.onCheck <| \_ -> Swallow
+            , Checkbox.enabled
+            , Checkbox.visibleLabel
+            ]
     , disabled =
-        Checkbox.viewWithLabel
-            { identifier = "disabled-" ++ String.fromInt i
-            , label = "Setting"
-            , setterMsg = \_ -> Swallow
+        Checkbox.view
+            { label = "Setting"
             , selected = selectionStatus
-            , disabled = True
-            , theme = Checkbox.Square
-            , containerCss = []
-            , enabledLabelCss = []
-            , disabledLabelCss = []
             }
+            [ Checkbox.id <| "disabled-" ++ String.fromInt i
+            , Checkbox.onCheck <| \_ -> Swallow
+            , Checkbox.disabled
+            , Checkbox.visibleLabel
+            ]
     }
 
 
@@ -182,10 +178,10 @@ init =
 type alias Settings =
     { label : String
     , disabled : Bool
-    , theme : Checkbox.Theme
+    , hiddenLabel : Bool
     , containerCss : ( String, List Style )
-    , enabledLabelCss : ( String, List Style )
-    , disabledLabelCss : ( String, List Style )
+    , labelCss : ( String, List Style )
+    , guidance : Maybe String
     }
 
 
@@ -194,12 +190,7 @@ controlSettings =
     Control.record Settings
         |> Control.field "label" (Control.string "Enable Text-to-Speech")
         |> Control.field "disabled" (Control.bool False)
-        |> Control.field "theme"
-            (Control.choice
-                [ ( "Square", Control.value Checkbox.Square )
-                , ( "Locked", Control.value Checkbox.Locked )
-                ]
-            )
+        |> Control.field "hiddenLabel" (Control.bool False)
         |> Control.field "containerCss"
             (Control.choice
                 [ ( "[]", Control.value ( "[]", [] ) )
@@ -211,7 +202,7 @@ controlSettings =
                   )
                 ]
             )
-        |> Control.field "enabledLabelCss"
+        |> Control.field "labelCss"
             (Control.choice
                 [ ( "[]", Control.value ( "[]", [] ) )
                 , ( "Orange dotted border"
@@ -222,17 +213,8 @@ controlSettings =
                   )
                 ]
             )
-        |> Control.field "disabledLabelCss"
-            (Control.choice
-                [ ( "[]", Control.value ( "[]", [] ) )
-                , ( "strikethrough"
-                  , Control.value
-                        ( "[ Css.textDecoration Css.lineThrough ]"
-                        , [ Css.textDecoration Css.lineThrough ]
-                        )
-                  )
-                ]
-            )
+        |> Control.field "guidance"
+            (Control.maybe False (Control.string "There is something you need to be aware of."))
 
 
 viewExampleWithCode : State -> Settings -> ( String, Html Msg )
@@ -241,31 +223,54 @@ viewExampleWithCode state settings =
         id =
             "unique-example-id"
     in
-    ( [ "Checkbox.viewWithLabel"
-      , Code.record
-            [ ( "identifier", Code.string id )
-            , ( "label", Code.string settings.label )
-            , ( "setterMsg", "identity" )
+    ( [ "Checkbox.view"
+      , Code.recordMultiline
+            [ ( "label", Code.string settings.label )
             , ( "selected", "Checkbox." ++ Debug.toString state.isChecked )
-            , ( "disabled", Code.bool settings.disabled )
-            , ( "theme", "Checkbox." ++ Debug.toString settings.theme )
-            , ( "containerCss", Tuple.first settings.containerCss )
-            , ( "enabledLabelCss", Tuple.first settings.enabledLabelCss )
-            , ( "disabledLabelCss", Tuple.first settings.disabledLabelCss )
             ]
+            1
+      , Code.list
+            (List.filterMap identity
+                [ Just <| "Checkbox.onCheck identity"
+                , if settings.disabled then
+                    Just <| "Checkbox.disabled"
+
+                  else
+                    Just <| "Checkbox.enabled"
+                , if settings.hiddenLabel then
+                    Just <| "Checkbox.hiddenLabel"
+
+                  else
+                    Just <| "Checkbox.visibleLabel"
+                , Just <| "Checkbox.containerCss " ++ Tuple.first settings.containerCss
+                , Just <| "Checkbox.labelCss " ++ Tuple.first settings.labelCss
+                , settings.guidance |> Maybe.map (\v -> "Checkbox.guidance " ++ Code.string v)
+                ]
+            )
       ]
         |> String.join ""
-    , Checkbox.viewWithLabel
-        { identifier = id
-        , label = settings.label
-        , setterMsg = ToggleCheck id
+    , Checkbox.view
+        { label = settings.label
         , selected = state.isChecked
-        , disabled = settings.disabled
-        , theme = settings.theme
-        , containerCss = Tuple.second settings.containerCss
-        , enabledLabelCss = Tuple.second settings.enabledLabelCss
-        , disabledLabelCss = Tuple.second settings.disabledLabelCss
         }
+        (List.filterMap identity
+            [ Just <| Checkbox.id id
+            , Just <| Checkbox.onCheck (ToggleCheck id)
+            , if settings.hiddenLabel then
+                Just <| Checkbox.hiddenLabel
+
+              else
+                Just <| Checkbox.visibleLabel
+            , if settings.disabled then
+                Just <| Checkbox.disabled
+
+              else
+                Just <| Checkbox.enabled
+            , Just <| Checkbox.containerCss (Tuple.second settings.containerCss)
+            , Just <| Checkbox.labelCss (Tuple.second settings.labelCss)
+            , settings.guidance |> Maybe.map Checkbox.guidance
+            ]
+        )
     )
 
 

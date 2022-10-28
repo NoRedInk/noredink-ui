@@ -43,10 +43,11 @@ module Nri.Ui.PremiumCheckbox.V8 exposing
 -}
 
 import Accessibility.Styled as Html exposing (Html)
+import CheckboxIcons
 import Css exposing (..)
 import Html.Styled.Attributes as Attributes exposing (class, css)
 import Html.Styled.Events as Events
-import Nri.Ui.Checkbox.V6 as Checkbox
+import Nri.Ui.Checkbox.V7 as Checkbox
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.Fonts.V1 as Fonts
@@ -229,22 +230,24 @@ view { label, onChange } attributes =
               else
                 -- left-align the checkbox with checkboxes that _do_ have the premium pennant
                 Html.div [ css [ Css.width (Css.px (iconWidth + iconRightMargin)), Css.flexShrink Css.zero ] ] []
-            , Checkbox.viewWithLabel
-                { identifier = idValue
-                , label = label
-                , setterMsg = onChange
+            , Checkbox.view
+                { label = label
                 , selected = config.selected
-                , disabled = config.isDisabled
-                , theme =
-                    if isLocked then
-                        Checkbox.Locked
-
-                    else
-                        Checkbox.Square
-                , containerCss = config.checkboxContainerCss
-                , enabledLabelCss = config.checkboxEnabledLabelCss
-                , disabledLabelCss = config.checkboxDisabledLabelCss
                 }
+                [ Checkbox.id idValue
+                , Checkbox.onCheck onChange
+                , if config.isDisabled then
+                    Checkbox.disabled
+
+                  else
+                    Checkbox.enabled
+                , Checkbox.containerCss config.checkboxContainerCss
+                , if config.isDisabled then
+                    Checkbox.labelCss config.checkboxDisabledLabelCss
+
+                  else
+                    Checkbox.labelCss config.checkboxEnabledLabelCss
+                ]
             ]
 
 
@@ -298,7 +301,7 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
                     , outline none
                     ]
                 ]
-                [ Checkbox.viewIcon [] (Checkbox.checkboxLockOnInside idValue)
+                [ Checkbox.viewIcon [] (CheckboxIcons.lockOnInside idValue)
                 , Html.span [] [ Html.text label ]
                 ]
             ]

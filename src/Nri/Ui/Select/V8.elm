@@ -310,7 +310,7 @@ view label attributes =
             , theme = InputStyles.Standard
             }
             config
-        , InputErrorAndGuidanceInternal.view id_ config
+        , InputErrorAndGuidanceInternal.view id_ InputErrorAndGuidanceInternal.smallMargin config
         ]
 
 

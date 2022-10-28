@@ -900,7 +900,7 @@ view label attributes =
             eventsAndValues.floatingContent
             eventsAndValues.onInput
             |> Maybe.withDefault (Html.text "")
-        , InputErrorAndGuidanceInternal.view idValue config
+        , InputErrorAndGuidanceInternal.view idValue InputErrorAndGuidanceInternal.smallMargin config
         ]
 
 
