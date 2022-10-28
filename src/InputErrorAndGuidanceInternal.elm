@@ -2,7 +2,7 @@ module InputErrorAndGuidanceInternal exposing
     ( ErrorState, noError, setErrorIf, setErrorMessage
     , Guidance, noGuidance, setGuidance
     , getIsInError, getErrorMessage
-    , describedBy, view
+    , describedBy, view, smallMargin
     )
 
 {-|
@@ -10,7 +10,7 @@ module InputErrorAndGuidanceInternal exposing
 @docs ErrorState, noError, setErrorIf, setErrorMessage
 @docs Guidance, noGuidance, setGuidance
 @docs getIsInError, getErrorMessage
-@docs describedBy, view
+@docs describedBy, view, smallMargin
 
 -}
 
@@ -121,8 +121,8 @@ describedBy idValue config =
             Nri.Ui.Html.Attributes.V2.none
 
 
-view : String -> { config | guidance : Guidance, error : ErrorState } -> Html msg
-view idValue config =
+view : String -> Css.Style -> { config | guidance : Guidance, error : ErrorState } -> Html msg
+view idValue marginTop config =
     case ( getErrorMessage config.error, config.guidance ) of
         ( Just m, _ ) ->
             Message.view
@@ -135,7 +135,7 @@ view idValue config =
                 , Message.css
                     [ Css.important (Css.paddingTop Css.zero)
                     , Css.important (Css.paddingBottom Css.zero)
-                    , Css.marginTop (Css.px 5)
+                    , marginTop
                     ]
                 ]
 
@@ -146,13 +146,18 @@ view idValue config =
                 , Text.css
                     [ Css.important (Css.paddingTop Css.zero)
                     , Css.important (Css.paddingBottom Css.zero)
-                    , Css.important (Css.marginTop (Css.px 5))
+                    , Css.important marginTop
                     , Css.lineHeight (Css.int 1)
                     ]
                 ]
 
         _ ->
             Html.text ""
+
+
+smallMargin : Css.Style
+smallMargin =
+    Css.marginTop (Css.px 5)
 
 
 errorId : String -> String

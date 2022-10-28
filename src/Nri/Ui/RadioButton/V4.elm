@@ -404,7 +404,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                         text ""
                     ]
                 ]
-             , InputErrorAndGuidanceInternal.view idValue config
+             , InputErrorAndGuidanceInternal.view idValue (Css.marginTop Css.zero) config
              ]
                 ++ (if isChecked then
                         disclosedElements
@@ -483,7 +483,7 @@ viewLockedButton { idValue, label } config =
                 , premiumPennant
                 ]
             ]
-        , InputErrorAndGuidanceInternal.view idValue config
+        , InputErrorAndGuidanceInternal.view idValue (Css.marginTop Css.zero) config
         ]
 
 

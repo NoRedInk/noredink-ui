@@ -383,7 +383,7 @@ viewEnabledLabel config icon =
         ]
         [ viewIcon [] icon
         , labelView config
-        , InputErrorAndGuidanceInternal.view config.identifier config
+        , InputErrorAndGuidanceInternal.view config.identifier (Css.marginTop Css.zero) config
         ]
 
 
@@ -414,7 +414,7 @@ viewDisabledLabel config icon =
         ]
         [ viewIcon [] icon
         , labelView config
-        , InputErrorAndGuidanceInternal.view config.identifier config
+        , InputErrorAndGuidanceInternal.view config.identifier (Css.marginTop Css.zero) config
         ]
 
 
