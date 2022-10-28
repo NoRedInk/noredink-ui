@@ -6,6 +6,7 @@ module Nri.Ui.Checkbox.V7 exposing
     , selectedFromBool
     , containerCss, labelCss, custom, nriDescription, id, testId
     , disabled, enabled, guidance
+    , viewIcon
     )
 
 {-|
@@ -34,6 +35,11 @@ module Nri.Ui.Checkbox.V7 exposing
 @docs selectedFromBool
 @docs containerCss, labelCss, custom, nriDescription, id, testId
 @docs disabled, enabled, guidance
+
+
+### Internal
+
+@docs viewIcon
 
 -}
 
