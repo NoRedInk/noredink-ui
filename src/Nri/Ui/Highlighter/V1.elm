@@ -723,6 +723,13 @@ viewInlineTag { showTagsInline, isInteractive, maybeTool } highlightable =
              )
                 ++ highlightableStyle maybeTool highlightable isInteractive
             )
+        , class "highlighter-highlightable"
+        , case highlightable.marked of
+            Just markedWith ->
+                class "highlighter-highlighted"
+
+            _ ->
+                AttributesExtra.none
         ]
         [ viewJust
             (\name ->
@@ -876,6 +883,12 @@ viewHighlightableSegment { isInteractive, focusIndex, highlighterId, eventListen
                            )
                     )
                , class "highlighter-highlightable"
+               , case highlightable.marked of
+                    Just markedWith ->
+                        class "highlighter-highlighted"
+
+                    _ ->
+                        AttributesExtra.none
                , if isInteractive then
                     Key.tabbable
                         (case focusIndex of
