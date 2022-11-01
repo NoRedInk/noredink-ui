@@ -723,10 +723,10 @@ viewInlineTag { showTagsInline, isInteractive, maybeTool } highlightable =
              )
                 ++ highlightableStyle maybeTool highlightable isInteractive
             )
-        , class "highlighter-highlightable"
+        , class "highlighter-inline-tag"
         , case highlightable.marked of
             Just markedWith ->
-                class "highlighter-highlighted"
+                class "highlighter-inline-tag-highlighted"
 
             _ ->
                 AttributesExtra.none
