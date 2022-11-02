@@ -1,6 +1,6 @@
 module Nri.Ui.Util exposing (dashify, removePunctuation, safeIdString)
 
-import Regex
+import Regex exposing (Regex)
 
 
 {-| Convenience method for going from a string with spaces to a string with dashes.
@@ -35,7 +35,10 @@ safeIdString : String -> String
 safeIdString =
     let
         unsafeChar =
-            Regex.fromString "(^[^a-zA-Z]+|[^a-zA-Z0-9_-]+)" |> Maybe.withDefault Regex.never
+            regexFromString "(^[^a-zA-Z]+|[^a-zA-Z0-9_-]+)"
+
+        collapse =
+            regexFromString "[_-\\s]+"
     in
     Regex.replace unsafeChar
         (\{ index } ->
@@ -45,4 +48,10 @@ safeIdString =
             else
                 "-"
         )
+        >> Regex.replace collapse (always "-")
         >> String.toLower
+
+
+regexFromString : String -> Regex
+regexFromString =
+    Regex.fromString >> Maybe.withDefault Regex.never
