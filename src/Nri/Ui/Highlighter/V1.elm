@@ -776,89 +776,18 @@ viewHighlightable highlighterId marker focusIndex index highlightable =
                     , onPreventDefault "mousedown" (Pointer <| Down highlightable.groupIndex)
                     , onPreventDefault "touchstart" (Pointer <| Down highlightable.groupIndex)
                     , attribute "data-interactive" ""
-
-                    --, Key.onKeyDownPreventDefault
-                    --    [ Key.space (Keyboard <| ToggleHighlight highlightable.groupIndex)
-                    --    , Key.right (Keyboard <| MoveRight highlightable.groupIndex)
-                    --    , Key.left (Keyboard <| MoveLeft highlightable.groupIndex)
-                    --    , Key.shiftRight (Keyboard <| SelectionExpandRight highlightable.groupIndex)
-                    --    , Key.shiftLeft (Keyboard <| SelectionExpandLeft highlightable.groupIndex)
-                    --    ]
-                    --, Key.onKeyUpPreventDefault
-                    --    [ Key.shiftRight (Keyboard <| SelectionApplyTool highlightable.groupIndex)
-                    --    , Key.shiftLeft (Keyboard <| SelectionApplyTool highlightable.groupIndex)
-                    --    , shift (Keyboard <| SelectionReset highlightable.groupIndex)
-                    --    ]
-                    , Events.preventDefaultOn "keydown" <|
-                        Json.Decode.andThen
-                            (\result ->
-                                case result of
-                                    Ok v ->
-                                        Json.Decode.succeed ( v, True )
-
-                                    Err e ->
-                                        Json.Decode.fail e
-                            )
-                            (Json.Decode.map2
-                                (\keyCode shiftKey ->
-                                    case ( keyCode, shiftKey ) of
-                                        -- space
-                                        ( 32, _ ) ->
-                                            Ok (Keyboard <| ToggleHighlight highlightable.groupIndex)
-
-                                        -- right
-                                        ( 39, False ) ->
-                                            Ok (Keyboard <| MoveRight highlightable.groupIndex)
-
-                                        -- left
-                                        ( 37, False ) ->
-                                            Ok (Keyboard <| MoveLeft highlightable.groupIndex)
-
-                                        -- shift right
-                                        ( 39, True ) ->
-                                            Ok (Keyboard <| SelectionExpandRight highlightable.groupIndex)
-
-                                        -- shift left
-                                        ( 37, True ) ->
-                                            Ok (Keyboard <| SelectionExpandLeft highlightable.groupIndex)
-
-                                        _ ->
-                                            Err "Unmapped key code"
-                                )
-                                Events.keyCode
-                                (Json.Decode.field "shiftKey" Json.Decode.bool)
-                            )
-                    , Events.preventDefaultOn "keyup" <|
-                        Json.Decode.andThen
-                            (\result ->
-                                case result of
-                                    Ok v ->
-                                        Json.Decode.succeed ( v, True )
-
-                                    Err e ->
-                                        Json.Decode.fail e
-                            )
-                            (Json.Decode.map2
-                                (\keyCode shiftKey ->
-                                    case ( keyCode, shiftKey ) of
-                                        -- shift right
-                                        ( 39, True ) ->
-                                            Ok (Keyboard <| SelectionApplyTool highlightable.groupIndex)
-
-                                        -- shift left
-                                        ( 37, True ) ->
-                                            Ok (Keyboard <| SelectionApplyTool highlightable.groupIndex)
-
-                                        -- just shift
-                                        ( 16, _ ) ->
-                                            Ok (Keyboard <| SelectionReset highlightable.groupIndex)
-
-                                        _ ->
-                                            Err "Unmapped key code"
-                                )
-                                Events.keyCode
-                                (Json.Decode.field "shiftKey" Json.Decode.bool)
-                            )
+                    , Key.onKeyDownPreventDefault
+                        [ Key.space (Keyboard <| ToggleHighlight highlightable.groupIndex)
+                        , Key.right (Keyboard <| MoveRight highlightable.groupIndex)
+                        , Key.left (Keyboard <| MoveLeft highlightable.groupIndex)
+                        , Key.shiftRight (Keyboard <| SelectionExpandRight highlightable.groupIndex)
+                        , Key.shiftLeft (Keyboard <| SelectionExpandLeft highlightable.groupIndex)
+                        ]
+                    , Key.onKeyUpPreventDefault
+                        [ Key.shiftRight (Keyboard <| SelectionApplyTool highlightable.groupIndex)
+                        , Key.shiftLeft (Keyboard <| SelectionApplyTool highlightable.groupIndex)
+                        , Key.shift (Keyboard <| SelectionReset highlightable.groupIndex)
+                        ]
                     ]
                 , maybeTool = Just marker
                 }
