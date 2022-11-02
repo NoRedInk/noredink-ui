@@ -19,7 +19,6 @@ import Html.Styled as Html exposing (Attribute, Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Html.Styled.Keyed as Keyed
-import Json.Decode
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.Util exposing (dashify)
@@ -180,7 +179,7 @@ viewTab_ config index tab =
                 )
 
 
-keyEvents : Config id msg -> Tab id msg -> List (Json.Decode.Decoder msg)
+keyEvents : Config id msg -> Tab id msg -> List (Key.Event msg)
 keyEvents { focusAndSelect, tabs } thisTab =
     let
         onFocus : Tab id msg -> msg
