@@ -34,11 +34,37 @@ Ensures that nonletter characters are cut from the front and replaces bad charac
 safeIdString : String -> String
 safeIdString =
     let
-        unsafeChar =
-            regexFromString "(^[^a-zA-Z]+|[^a-zA-Z0-9_-]+)"
+        nonAlphaAtStartOfString =
+            -- From the start of the string, match the contiguous block of
+            -- not ASCII letters at the start of the String.
+            -- Note majiscule letters are before miniscule in the range,
+            -- so [A-z] is the same as [A-Za-z] as above in removePunctuation
+            "^[^A-z]+"
 
-        collapse =
-            regexFromString "[_-\\s]+"
+        nonAlphaNumUnderscoreHyphenAnywhere =
+            -- match any contiguous block of letters that aren't any of
+            -- + ASCII letters
+            -- + numbers
+            -- + underscore
+            -- + the hyphen-minus character commonly called "dash" (seen in between "hyphen" and "minus" on this line)
+            -- This does not need the + at the end; Regex.replace is global by default
+            -- but we pay a penalty for calling the replacement function, so
+            -- calling it once per contiguous group is an easy way to cut down on that.
+            "[^A-z0-9_-]+"
+
+        anyOfThese strs =
+            "(" ++ String.join "|" strs ++ ")"
+
+        unsafeChar =
+            [ nonAlphaAtStartOfString
+            , nonAlphaNumUnderscoreHyphenAnywhere
+            ]
+                |> anyOfThese
+                |> regexFromString
+
+        collapsePunctuationToOne =
+            -- match any contiguous group of either underscore or hyphen-minus characters
+            regexFromString "[_-]+"
     in
     Regex.replace unsafeChar
         (\{ index } ->
@@ -48,7 +74,7 @@ safeIdString =
             else
                 "-"
         )
-        >> Regex.replace collapse (always "-")
+        >> Regex.replace collapsePunctuationToOne (always "-")
         >> String.toLower
 
 
