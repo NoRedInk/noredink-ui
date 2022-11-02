@@ -216,6 +216,25 @@ keyboardTests =
                     |> ensureMarked [ "indirect" ]
                     |> expectView (hasStartHighlightBeforeContent "start banana highlight" "indirect")
         ]
+    , describe "Regression tests for A11-1769"
+        [ -- as far as I can tell, the problem is not in the Elm logic.
+          -- However, it still seemed worth adding an explicit check against the buggy behavior.
+          test "Focus moves past 3rd element" <|
+            \() ->
+                Highlightable.initFragments Nothing "Sir Walter Elliot, of Kellynch Hall, in Somersetshire..."
+                    |> program (Just "Claim")
+                    |> shiftRight
+                    |> releaseShiftRight
+                    |> ensureMarked [ "Sir", " ", "Walter" ]
+                    |> ensureTabbable "Walter"
+                    |> rightArrow
+                    |> ensureTabbable "Elliot,"
+                    |> rightArrow
+                    |> ensureTabbable "of"
+                    |> rightArrow
+                    |> ensureTabbable "Kellynch"
+                    |> done
+        ]
     ]
 
 
