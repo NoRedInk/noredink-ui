@@ -1,6 +1,7 @@
 {
     "root": "../src",
     "tests": [
+        "Browser.Events.Extra",
         "Nri.Ui",
         "Nri.Ui.Accordion.V3",
         "Nri.Ui.AnimatedIcon.V1",
