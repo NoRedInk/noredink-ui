@@ -29,6 +29,7 @@ removePunctuation =
 
 
 {-| Creates a lowercased string that is safe to use for HTML IDs.
+Ensures that nonletter characters are cut from the front and replaces bad characters with a dash
 -}
 safeIdString : String -> String
 safeIdString =
