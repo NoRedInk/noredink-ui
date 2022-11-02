@@ -113,7 +113,7 @@ row i ( name, selectionStatus ) =
     { state = name
     , enabled =
         Checkbox.view
-            { label = "Setting"
+            { label = "Settings"
             , selected = selectionStatus
             }
             [ Checkbox.id <| "enabled-" ++ String.fromInt i

@@ -1,4 +1,4 @@
-module Nri.Ui.Util exposing (dashify, removePunctuation)
+module Nri.Ui.Util exposing (dashify, removePunctuation, safeIdString)
 
 import Regex
 
@@ -26,3 +26,22 @@ removePunctuation =
                 |> Maybe.withDefault Regex.never
     in
     Regex.replace regex (always "")
+
+
+{-| Creates a lowercased string that is safe to use for HTML IDs.
+-}
+safeIdString : String -> String
+safeIdString =
+    let
+        unsafeChar =
+            Regex.fromString "(^[^a-zA-Z]+|[^a-zA-Z0-9_-]+)" |> Maybe.withDefault Regex.never
+    in
+    Regex.replace unsafeChar
+        (\{ index } ->
+            if index == 0 then
+                ""
+
+            else
+                "-"
+        )
+        >> String.toLower
