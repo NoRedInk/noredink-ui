@@ -783,11 +783,11 @@ viewHighlightable highlighterId marker focusIndex index highlightable =
                 , focusIndex = focusIndex
                 , highlighterId = highlighterId
                 , eventListeners =
-                    [ on "mouseover" (Pointer <| Over highlightable.groupIndex)
-                    , on "mouseleave" (Pointer <| Out highlightable.groupIndex)
-                    , on "mouseup" (Pointer <| Up Nothing)
-                    , on "mousedown" (Pointer <| Down highlightable.groupIndex)
-                    , on "touchstart" (Pointer <| Down highlightable.groupIndex)
+                    [ onPreventDefault "mouseover" (Pointer <| Over highlightable.groupIndex)
+                    , onPreventDefault "mouseleave" (Pointer <| Out highlightable.groupIndex)
+                    , onPreventDefault "mouseup" (Pointer <| Up Nothing)
+                    , onPreventDefault "mousedown" (Pointer <| Down highlightable.groupIndex)
+                    , onPreventDefault "touchstart" (Pointer <| Down highlightable.groupIndex)
                     , attribute "data-interactive" ""
                     , Key.onKeyDownPreventDefault
                         [ Key.space (Keyboard <| ToggleHighlight highlightable.groupIndex)
@@ -815,9 +815,9 @@ viewHighlightable highlighterId marker focusIndex index highlightable =
                 , eventListeners =
                     -- Static highlightables need listeners as well.
                     -- because otherwise we miss mouseup events
-                    [ on "mouseup" (Pointer <| Up Nothing)
-                    , on "mousedown" (Pointer <| Down highlightable.groupIndex)
-                    , on "touchstart" (Pointer <| Down highlightable.groupIndex)
+                    [ onPreventDefault "mouseup" (Pointer <| Up Nothing)
+                    , onPreventDefault "mousedown" (Pointer <| Down highlightable.groupIndex)
+                    , onPreventDefault "touchstart" (Pointer <| Down highlightable.groupIndex)
                     , attribute "data-static" ""
                     ]
                 , maybeTool = Just marker
@@ -944,8 +944,8 @@ highlightableStyle tool ({ uiState, marked } as highlightable) interactive =
 
 {-| Helper for `on` to preventDefault.
 -}
-on : String -> msg -> Attribute msg
-on name msg =
+onPreventDefault : String -> msg -> Attribute msg
+onPreventDefault name msg =
     let
         -- If we attempt to preventDefault on an event which is not cancelable
         -- Chrome will blow up and complain that:
