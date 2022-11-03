@@ -6,7 +6,7 @@ module CommonControls exposing
     , customIcon
     , specificColor
     , content, exampleHtml
-    , httpError
+    , httpError, badBodyString
     , romeoAndJulietQuotation
     , guidanceAndErrorMessage
     , disabledListItem, premiumDisplay
@@ -25,7 +25,7 @@ module CommonControls exposing
 ### Content
 
 @docs content, exampleHtml
-@docs httpError
+@docs httpError, badBodyString
 @docs romeoAndJulietQuotation
 @docs guidanceAndErrorMessage
 
@@ -74,30 +74,32 @@ httpError =
         , ( "Bad Status: 404", Control.value (Http.BadStatus 404) )
         , ( "Bad Status: ???", Control.value (Http.BadStatus 500) )
         , ( "Bad Body (often, a JSON decoding problem)"
-          , Control.value
-                (Http.BadBody
-                    """
-                        The Json.Decode.oneOf at json.draft failed in the following 2 ways:
-
-
-
-                        (1) Problem with the given value:
-
-                            null
-
-                            Expecting an OBJECT with a field named `content`
-
-
-
-                        (2) Problem with the given value:
-
-                            null
-
-                            Expecting an OBJECT with a field named `code`
-                        """
-                )
+          , Control.value (Http.BadBody badBodyString)
           )
         ]
+
+
+badBodyString : String
+badBodyString =
+    """
+    The Json.Decode.oneOf at json.draft failed in the following 2 ways:
+
+
+
+    (1) Problem with the given value:
+
+        null
+
+        Expecting an OBJECT with a field named `content`
+
+
+
+    (2) Problem with the given value:
+
+        null
+
+        Expecting an OBJECT with a field named `code`
+    """
 
 
 content :

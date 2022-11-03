@@ -5,7 +5,7 @@ module Nri.Ui.Message.V3 exposing
     , hideIconForMobile, hideIconFor
     , css, notMobileCss, mobileCss, quizEngineMobileCss
     , tiny, large, banner
-    , plaintext, markdown, html, httpError
+    , plaintext, markdown, html, httpError, codeDetails
     , tip, error, alert, success, customTheme
     , alertRole, alertDialogRole
     , onDismiss
@@ -42,7 +42,7 @@ Changes from V2:
 
 ## Content
 
-@docs plaintext, markdown, html, httpError
+@docs plaintext, markdown, html, httpError, codeDetails
 
 
 ## Theme
@@ -453,6 +453,11 @@ httpError error_ =
     Attribute <| \config -> { config | content = content, codeDetails = codeDetails_ }
 
 
+{-| Details for Engineers
+
+Will be rendered in a closed details box
+
+-}
 codeDetails : String -> Attribute msg
 codeDetails code =
     Attribute <| \config -> { config | codeDetails = Just code }
