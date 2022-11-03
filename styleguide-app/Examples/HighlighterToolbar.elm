@@ -50,7 +50,7 @@ example =
                 , renderExample = Code.unstyledView
                 , toExampleCode = \_ -> []
                 }
-            , Heading.h2 [ Heading.plaintext "Interactive Example" ]
+            , Heading.h2 [ Heading.plaintext "Example" ]
             , HighlighterToolbar.view
                 { onSetEraser = SetTool Nothing
                 , onChangeTag = SetTool << Just
@@ -60,8 +60,6 @@ example =
                 { currentTool = state.currentTool
                 , tags = tags
                 }
-            , Heading.h2 [ Heading.plaintext "Non-interactive examples" ]
-            , HighlighterToolbar.static getName getColor tags
             ]
     , categories = [ Buttons, Interactions ]
     , keyboardSupport = []
