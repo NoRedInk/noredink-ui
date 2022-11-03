@@ -1,88 +1,124 @@
-module Nri.Ui.WhenFocusLeaves.V1 exposing (toAttribute, toDecoder)
+module Nri.Ui.WhenFocusLeaves.V1 exposing
+    ( onKeyDown, onKeyDownPreventDefault
+    , toDecoder
+    )
 
-{-| TODO in next major version: remove `toAttribute`.
+{-| Listen for when the focus leaves the area, and then do an action.
 
-Listen for when the focus leaves the area, and then do an action.
-
-@docs toAttribute, toDecoder
+@docs onKeyDown, onKeyDownPreventDefault
+@docs toDecoder
 
 -}
 
 import Accessibility.Styled as Html
-import Html.Styled.Events exposing (preventDefaultOn)
+import Accessibility.Styled.Key as Key
+import Html.Styled.Events as Events
 import Json.Decode as Decode exposing (Decoder)
 
 
-{-| DEPRECATED: Use `toDecoder` instead
-
-Attach this attribute to add a focus watcher to an HTML element and define
-what to do in reponse to tab keypresses in a part of the UI.
-
-The ids referenced here are expected to correspond to elements in the container
-we are adding the attribute to.
-
+{-| Use `WhenFocusLeaves.toDecoder` helper with the "keydown" event.
 -}
-toAttribute :
-    { firstId : String
-    , lastId : String
-    , tabBackAction : msg
-    , tabForwardAction : msg
-    }
+onKeyDown :
+    List (Key.Event msg)
+    ->
+        { firstId : String
+        , lastId : String
+        , tabBackAction : msg
+        , tabForwardAction : msg
+        }
     -> Html.Attribute msg
-toAttribute config =
-    preventDefaultOn "keydown"
-        (Decode.map (\msg -> ( msg, True )) (toDecoder config))
+onKeyDown otherEventListeners config =
+    Events.on "keydown" (toDecoder otherEventListeners config)
 
 
-{-| Use this decoder to add a focus watcher to an HTML element and define
+{-| Use `WhenFocusLeaves.toDecoder` helper with the "keydown" event and prevent default.
+-}
+onKeyDownPreventDefault :
+    List (Key.Event msg)
+    ->
+        { firstId : String
+        , lastId : String
+        , tabBackAction : msg
+        , tabForwardAction : msg
+        }
+    -> Html.Attribute msg
+onKeyDownPreventDefault otherEventListeners config =
+    Events.preventDefaultOn "keydown"
+        (Decode.map (\e -> ( e, True ))
+            (toDecoder otherEventListeners config)
+        )
+
+
+{-| Use this helper to add a focus watcher to an HTML element and define
 what to do in reponse to tab keypresses in a part of the UI.
 
 The ids referenced here are expected to correspond to elements in the container
 we are adding the attribute to.
-
-NOTE: When needing to listen to multiple keys toDecoder should be used instead of toAttribute.
 
     import Accessibility.Styled.Key as Key
+    import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
+    import Html.Styled.Events as Events
 
-    Key.onKeyDown
-        [ Key.escape CloseModal
-        , toDecoder config
-        ]
+
+    Events.on "keydown"
+        (WhenFocusLeaves.toDecoder
+            [ Key.escape CloseModal ]
+            { firstId = "first-id"
+            , lastId = "last-id"
+            , tabBackAction = GoToLastId
+            , tabForwardAction = GoToFirstId
+            }
+        )
 
 -}
 toDecoder :
-    { firstId : String
-    , lastId : String
-    , tabBackAction : msg
-    , tabForwardAction : msg
-    }
+    List (Key.Event msg)
+    ->
+        { firstId : String
+        , lastId : String
+        , tabBackAction : msg
+        , tabForwardAction : msg
+        }
     -> Decoder msg
-toDecoder { firstId, lastId, tabBackAction, tabForwardAction } =
-    Decode.andThen
-        (\( elementId, keyCode, shiftKey ) ->
-            if keyCode == 9 then
-                -- if the user tabs back while on the first id,
-                -- we execute the action
-                if elementId == firstId && shiftKey then
-                    Decode.succeed tabBackAction
+toDecoder otherEventListeners { firstId, lastId, tabBackAction, tabForwardAction } =
+    let
+        keyDecoder : Decoder (Event msg)
+        keyDecoder =
+            Key.customOneOf
+                (Key.tab Tab
+                    :: Key.tabBack TabBack
+                    :: List.map
+                        (\e -> { msg = OtherKey e.msg, keyCode = e.keyCode, shiftKey = e.shiftKey })
+                        otherEventListeners
+                )
 
-                else if elementId == lastId && not shiftKey then
-                    -- if the user tabs forward while on the last id,
-                    -- we want to wrap around to the first id.
-                    Decode.succeed tabForwardAction
+        applyKeyEvent ( elementId, event ) =
+            -- if the user tabs back while on the first id,
+            -- we execute the action
+            if event == TabBack && elementId == firstId then
+                Decode.succeed tabBackAction
 
-                else
-                    Decode.fail "No need to intercept the key press"
+            else if event == Tab && elementId == lastId then
+                -- if the user tabs forward while on the last id,
+                -- we want to wrap around to the first id.
+                Decode.succeed tabForwardAction
 
             else
-                Decode.fail "No need to intercept the key press"
+                case event of
+                    OtherKey e ->
+                        Decode.succeed e
+
+                    _ ->
+                        Decode.fail "No need to intercept the key press"
+    in
+    Decode.andThen applyKeyEvent
+        (Decode.map2 (\a b -> ( a, b ))
+            (Decode.at [ "target", "id" ] Decode.string)
+            keyDecoder
         )
-        decodeKeydown
 
 
-decodeKeydown : Decoder ( String, Int, Bool )
-decodeKeydown =
-    Decode.map3 (\id keyCode shiftKey -> ( id, keyCode, shiftKey ))
-        (Decode.at [ "target", "id" ] Decode.string)
-        (Decode.field "keyCode" Decode.int)
-        (Decode.field "shiftKey" Decode.bool)
+type Event msg
+    = Tab
+    | TabBack
+    | OtherKey msg

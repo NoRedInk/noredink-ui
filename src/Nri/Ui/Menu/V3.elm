@@ -51,7 +51,6 @@ import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
 import Css exposing (..)
 import Css.Global exposing (descendants)
-import EventExtras exposing (onKeyDownPreventDefault)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (class, classList, css)
 import Html.Styled.Events as Events
@@ -456,47 +455,52 @@ viewCustom config =
     in
     div
         (Attributes.id (config.buttonId ++ "__container")
-            :: Key.onKeyDown
-                (Key.escape
-                    (config.focusAndToggle
-                        { isOpen = False
-                        , focus = Just config.buttonId
-                        }
-                    )
-                    :: (case config.purpose of
-                            NavMenu ->
-                                [ Key.tab
-                                    (config.focusAndToggle
-                                        { isOpen = False
-                                        , focus = Nothing
-                                        }
-                                    )
-                                , Key.tabBack
-                                    (config.focusAndToggle
-                                        { isOpen = False
-                                        , focus = Nothing
-                                        }
-                                    )
-                                ]
-
-                            Disclosure { lastId } ->
-                                [ WhenFocusLeaves.toDecoder
-                                    { firstId = config.buttonId
-                                    , lastId = lastId
-                                    , tabBackAction =
-                                        config.focusAndToggle
-                                            { isOpen = False
-                                            , focus = Nothing
-                                            }
-                                    , tabForwardAction =
-                                        config.focusAndToggle
-                                            { isOpen = False
-                                            , focus = Nothing
-                                            }
+            :: (case config.purpose of
+                    NavMenu ->
+                        Key.onKeyDown
+                            [ Key.escape
+                                (config.focusAndToggle
+                                    { isOpen = False
+                                    , focus = Just config.buttonId
                                     }
-                                ]
-                       )
-                )
+                                )
+                            , Key.tab
+                                (config.focusAndToggle
+                                    { isOpen = False
+                                    , focus = Nothing
+                                    }
+                                )
+                            , Key.tabBack
+                                (config.focusAndToggle
+                                    { isOpen = False
+                                    , focus = Nothing
+                                    }
+                                )
+                            ]
+
+                    Disclosure { lastId } ->
+                        WhenFocusLeaves.onKeyDown
+                            [ Key.escape
+                                (config.focusAndToggle
+                                    { isOpen = False
+                                    , focus = Just config.buttonId
+                                    }
+                                )
+                            ]
+                            { firstId = config.buttonId
+                            , lastId = lastId
+                            , tabBackAction =
+                                config.focusAndToggle
+                                    { isOpen = False
+                                    , focus = Nothing
+                                    }
+                            , tabForwardAction =
+                                config.focusAndToggle
+                                    { isOpen = False
+                                    , focus = Nothing
+                                    }
+                            }
+               )
             :: styleContainer
         )
         [ if config.isOpen then
@@ -720,7 +724,7 @@ viewEntry config focusAndToggle { upId, downId, entry_ } =
                     [ Role.menuItem
                     , Attributes.id id
                     , Key.tabbable False
-                    , onKeyDownPreventDefault
+                    , Key.onKeyDownPreventDefault
                         [ Key.up
                             (focusAndToggle
                                 { isOpen = True

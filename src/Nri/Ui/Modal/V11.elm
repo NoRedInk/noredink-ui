@@ -160,10 +160,9 @@ view model =
 
 import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Aria as Aria
-import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
 import Browser.Dom as Dom
-import Browser.Events
+import Browser.Events.Extra
 import Css exposing (..)
 import Css.Media
 import Css.Transitions
@@ -244,7 +243,7 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     case model of
         Opened _ ->
-            Browser.Events.onKeyDown (Key.escape EscOrOverlayClicked)
+            Browser.Events.Extra.escape EscOrOverlayClicked
 
         Closed ->
             Sub.none

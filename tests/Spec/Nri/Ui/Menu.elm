@@ -40,7 +40,7 @@ spec =
                     -- Menu opens on mouse click and closes on tab key
                     |> clickMenuButton
                     |> ensureViewHas (menuContentSelector menuContent)
-                    |> pressTabKey { targetId = Nothing }
+                    |> pressTabKey { targetId = "some-random-id" }
                     |> ensureViewHasNot (menuContentSelector menuContent)
                     |> ProgramTest.done
         , test "Close on esc key" <|
@@ -49,7 +49,7 @@ spec =
                     -- Menu opens on mouse click and closes on tab key
                     |> clickMenuButton
                     |> ensureViewHas (menuContentSelector menuContent)
-                    |> pressEscKey { targetId = Nothing }
+                    |> pressEscKey { targetId = "some-random-id" }
                     |> ensureViewHasNot (menuContentSelector menuContent)
                     |> ProgramTest.done
         , describe "disclosure" <|
@@ -59,7 +59,7 @@ spec =
                         -- Menu opens on mouse click and closes on esc key
                         |> clickMenuButton
                         |> ensureViewHas (menuContentSelector menuContent)
-                        |> pressEscKey { targetId = Nothing }
+                        |> pressEscKey { targetId = "some-random-id" }
                         |> ensureViewHasNot (menuContentSelector menuContent)
                         |> ProgramTest.done
             , test "Closes after tab on lastId" <|
@@ -68,7 +68,7 @@ spec =
                         |> clickMenuButton
                         |> ensureViewHas (menuContentSelector menuContent)
                         -- NOTE: unable to simulate pressTabKey with other targetId since those decoders will fail
-                        |> pressTabKey { targetId = Just "last-button" }
+                        |> pressTabKey { targetId = "last-button" }
                         |> ensureViewHasNot (menuContentSelector menuContent)
                         |> ProgramTest.done
             ]
@@ -160,29 +160,23 @@ mouseLeave selectors =
 clickMenuButton : ProgramTest model msg effect -> ProgramTest model msg effect
 clickMenuButton =
     ProgramTest.simulateDomEvent
-        (Query.find
-            [ Selector.class "ToggleButton"
-            ]
-        )
+        (Query.find [ Selector.class "ToggleButton" ])
         Event.click
 
 
-targetDetails : Maybe String -> List ( String, Encode.Value )
+targetDetails : String -> List ( String, Encode.Value )
 targetDetails targetId =
-    List.filterMap identity <|
-        [ targetId
-            |> Maybe.map (\id -> ( "id", Encode.string id ))
-        ]
+    [ ( "id", Encode.string targetId ) ]
 
 
-pressTabKey : { targetId : Maybe String } -> ProgramTest model msg effect -> ProgramTest model msg effect
+pressTabKey : { targetId : String } -> ProgramTest model msg effect -> ProgramTest model msg effect
 pressTabKey { targetId } =
     KeyboardHelpers.pressTabKey
         { targetDetails = targetDetails targetId }
         [ Selector.class "Container" ]
 
 
-pressEscKey : { targetId : Maybe String } -> ProgramTest model msg effect -> ProgramTest model msg effect
+pressEscKey : { targetId : String } -> ProgramTest model msg effect -> ProgramTest model msg effect
 pressEscKey { targetId } =
     KeyboardHelpers.pressEscKey
         { targetDetails = targetDetails targetId }

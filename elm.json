@@ -5,6 +5,7 @@
     "license": "BSD-3-Clause",
     "version": "20.3.0",
     "exposed-modules": [
+        "Browser.Events.Extra",
         "Nri.Ui",
         "Nri.Ui.Accordion.V3",
         "Nri.Ui.AnimatedIcon.V1",
@@ -94,7 +95,7 @@
         "pablohirafuji/elm-markdown": "2.0.5 <= v < 3.0.0",
         "rtfeldman/elm-css": "17.0.1 <= v < 18.0.0",
         "rtfeldman/elm-sorter-experiment": "2.1.1 <= v < 3.0.0",
-        "tesk9/accessible-html-with-css": "3.4.0 <= v < 4.0.0",
+        "tesk9/accessible-html-with-css": "4.1.0 <= v < 5.0.0",
         "tesk9/palette": "3.0.1 <= v < 4.0.0"
     },
     "test-dependencies": {
