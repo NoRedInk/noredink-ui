@@ -34,15 +34,15 @@ Ensures that nonletter characters are cut from the front and replaces bad charac
 safeIdString : String -> String
 safeIdString =
     let
-        nonAlphaAtStartOfString =
+        nonAlphaAtStart =
             -- From the start of the string, match the contiguous block of
             -- not ASCII letters at the start of the String.
-            -- Note majiscule letters are before miniscule in the range,
-            -- so [A-z] is the same as [A-Za-z] as above in removePunctuation
-            "^[^A-z]+"
+            -- Why [a-zA-Z] and not [A-z]?
+            -- There are punctuation characters in that range: [\]^_` all come after Z and before a
+            "^[^a-zA-Z]+"
 
         nonAlphaNumUnderscoreHyphenAnywhere =
-            -- match any contiguous block of letters that aren't any of
+            -- any contiguous block of characters that aren't any of
             -- + ASCII letters
             -- + numbers
             -- + underscore
@@ -50,30 +50,36 @@ safeIdString =
             -- This does not need the + at the end; Regex.replace is global by default
             -- but we pay a penalty for calling the replacement function, so
             -- calling it once per contiguous group is an easy way to cut down on that.
-            "[^A-z0-9_-]+"
+            "[^a-zA-Z0-9_-]+"
 
         anyOfThese strs =
             "(" ++ String.join "|" strs ++ ")"
 
         unsafeChar =
-            [ nonAlphaAtStartOfString
+            [ nonAlphaAtStart
             , nonAlphaNumUnderscoreHyphenAnywhere
             ]
                 |> anyOfThese
                 |> regexFromString
 
+        nonAlphaNumAtEnd =
+            -- any contiguous block of letters that aren't any of
+            -- + ASCII letters
+            -- + numbers
+            regexFromString "[^a-zA-Z0-9]+$"
+
         collapsePunctuationToOne =
-            -- match any contiguous group of either underscore or hyphen-minus characters
             regexFromString "[_-]+"
     in
-    Regex.replace unsafeChar
-        (\{ index } ->
-            if index == 0 then
-                ""
+    Regex.replace nonAlphaNumAtEnd (always "")
+        >> Regex.replace unsafeChar
+            (\{ index } ->
+                if index == 0 then
+                    ""
 
-            else
-                "-"
-        )
+                else
+                    "-"
+            )
         >> Regex.replace collapsePunctuationToOne (always "-")
         >> String.toLower
 
