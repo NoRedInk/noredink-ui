@@ -34,4 +34,11 @@ spec =
                     Util.safeIdString "--__--hellO----_______---HOw----___---____--ArE------___You___--__--__Today"
                         |> Expect.equal "hello-how-are-you-today"
             ]
+        , describe "removePunctuation"
+            [ test "A string with some punctuation" <|
+                \() ->
+                    Util.removePunctuation
+                        "To sleep? Perchance: to dream? “Alas poor ‘Yorick’” but he's not `in` _this_ \"[play]\"."
+                        |> Expect.equal "To sleep Perchance to dream Alas poor Yorick but hes not in _this_ play"
+            ]
         ]

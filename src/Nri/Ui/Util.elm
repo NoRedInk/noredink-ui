@@ -16,13 +16,13 @@ dashify =
 
 
 {-| Convenience method for removing punctuation
-(removes everything that isn't whitespace or alphanumeric).
+(removes everything that isn't whitespace, alphanumeric, or an underscore).
 -}
 removePunctuation : String -> String
 removePunctuation =
     let
         regex =
-            Regex.fromString "[^A-z0-9\\w\\s]"
+            Regex.fromString "[^A-Za-z0-9\\w\\s]"
                 |> Maybe.withDefault Regex.never
     in
     Regex.replace regex (always "")
