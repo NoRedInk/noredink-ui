@@ -7,19 +7,18 @@ import Regex exposing (Regex)
 -}
 dashify : String -> String
 dashify =
-    let
-        regex =
-            Regex.fromString " "
-                |> Maybe.withDefault Regex.never
-    in
-    Regex.replace regex (always "-")
+    String.trim
+        >> Regex.replace
+            parts.regexes.whiteSpace
+            parts.replacements.hyphenMinus
 
 
 type alias RegexHelpers a =
     { nonAlphaAtStart : a
     , nonAlphaNumAtEnd : a
     , nonAlphaNumUnderscoreHyphenAnywhere : a
-    , collapseAllowedPunctuationToOne : a
+    , contiguousIdSafePunctuation : a
+    , whiteSpace : a
     , anyOfThese : List String -> a
     }
 
@@ -49,7 +48,7 @@ parts =
                 -- except with the 32 place bit set to 1 instead of 0: A is 65, a is 97.
                 "^[^a-zA-Z]+"
             , nonAlphaNumAtEnd =
-                -- any contiguous block of letters that aren't any of
+                -- The contiguous block of letters that aren't any of
                 -- + ASCII letters
                 -- + numbers
                 -- followed immediately by the end of the string
@@ -64,11 +63,14 @@ parts =
                 -- but we pay a penalty for calling the replacement function, so
                 -- calling it once per contiguous group is an easy way to cut down on that.
                 "[^a-zA-Z0-9_-]+"
-            , collapseAllowedPunctuationToOne =
+            , contiguousIdSafePunctuation =
                 -- any contiguous block of
                 -- + underscores or
                 -- + hyphen-minus characters
                 "[_-]+"
+            , whiteSpace =
+                -- any contiguous block of whitespace characters
+                "\\s+"
             , anyOfThese = \strs -> "(" ++ String.join "|" strs ++ ")"
             }
     in
@@ -77,7 +79,8 @@ parts =
         { nonAlphaAtStart = regexFromString strings.nonAlphaAtStart
         , nonAlphaNumAtEnd = regexFromString strings.nonAlphaNumAtEnd
         , nonAlphaNumUnderscoreHyphenAnywhere = regexFromString strings.nonAlphaNumUnderscoreHyphenAnywhere
-        , collapseAllowedPunctuationToOne = regexFromString strings.collapseAllowedPunctuationToOne
+        , contiguousIdSafePunctuation = regexFromString strings.contiguousIdSafePunctuation
+        , whiteSpace = regexFromString strings.whiteSpace
         , anyOfThese = strings.anyOfThese >> regexFromString
         }
     , replacements =
@@ -103,7 +106,7 @@ safeIdWithPrefix prefix string =
             parts.regexes.nonAlphaNumUnderscoreHyphenAnywhere
             parts.replacements.hyphenMinus
         |> Regex.replace
-            parts.regexes.collapseAllowedPunctuationToOne
+            parts.regexes.contiguousIdSafePunctuation
             parts.replacements.hyphenMinus
         |> String.toLower
 
@@ -130,6 +133,6 @@ safeId =
             parts.regexes.nonAlphaNumUnderscoreHyphenAnywhere
             parts.replacements.hyphenMinus
         >> Regex.replace
-            parts.regexes.collapseAllowedPunctuationToOne
+            parts.regexes.contiguousIdSafePunctuation
             parts.replacements.hyphenMinus
         >> String.toLower

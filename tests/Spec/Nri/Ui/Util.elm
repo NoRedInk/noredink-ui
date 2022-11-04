@@ -42,4 +42,11 @@ spec =
                         "0--__--hellO----___!?[]____---HOw----___---____--ArE------___You___--__--__Today?"
                         |> Expect.equal "000321-very-unsafe-0-hello-how-are-you-today"
             ]
+        , describe "dashify"
+            [ test "test everything at once" <|
+                \() ->
+                    Util.dashify
+                        "  Spaces and \t Tabs \t       and Padding\t        "
+                        |> Expect.equal "Spaces-and-Tabs-and-Padding"
+            ]
         ]
