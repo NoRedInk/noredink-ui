@@ -1,7 +1,7 @@
 module Nri.Ui.Menu.V3 exposing
     ( view, button, custom, Config
     , Attribute, Button, ButtonAttribute
-    , alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure
+    , alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, dialog
     , Alignment(..)
     , icon, wrapping, hasBorder, buttonWidth
     , TitleWrapping(..)
@@ -30,7 +30,7 @@ A togglable menu view and related buttons.
 
 ## Menu attributes
 
-@docs alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure
+@docs alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, dialog
 @docs Alignment
 
 
@@ -121,7 +121,7 @@ type alias ButtonConfig =
 
 type Purpose
     = NavMenu
-    | Disclosure { lastId : String }
+    | Dialog { lastId : String }
 
 
 
@@ -209,19 +209,19 @@ opensOnHover value =
     Attribute <| \config -> { config | opensOnHover = value }
 
 
-{-| Makes the menu behave as a disclosure.
+{-| Makes the menu behave as a dialog.
 
-For more information, please read [Disclosure (Show/Hide) pattern](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/).
+For more information, please read [Dialog pattern](https://w3c.github.io/aria-practices/examples/dialog-modal/dialog.html/).
 
-You will need to pass in the last focusable element in the disclosed content in order for:
+You will need to pass in the last focusable element in the dialog content in order for:
 
-  - any focusable elements in the disclosed content to be keyboard accessible
-  - the disclosure to close appropriately when the user tabs past all of the disclosed content
+  - any focusable elements in the dialog content to be keyboard accessible
+  - the dialog to close appropriately when the user tabs past all of the dialog content
 
 -}
-disclosure : { lastId : String } -> Attribute msg
-disclosure exitFocusManager =
-    Attribute (\config -> { config | purpose = Disclosure exitFocusManager })
+dialog : { lastId : String } -> Attribute msg
+dialog exitFocusManager =
+    Attribute (\config -> { config | purpose = Dialog exitFocusManager })
 
 
 {-| Menu/pulldown configuration:
@@ -479,7 +479,7 @@ viewCustom config =
                                     )
                                 ]
 
-                            Disclosure { lastId } ->
+                            Dialog { lastId } ->
                                 [ WhenFocusLeaves.toDecoder
                                     { firstId = config.buttonId
                                     , lastId = lastId
@@ -542,12 +542,12 @@ viewCustom config =
                         NavMenu ->
                             Aria.hasMenuPopUp
 
-                        Disclosure _ ->
+                        Dialog _ ->
                             AttributesExtra.none
                     , Aria.expanded config.isOpen
                     , -- Whether the menu is open or closed, move to the
                       -- first menu item if the "down" arrow is pressed
-                      -- as long as it's not a Disclosed
+                      -- as long as it's not a Dialog
                       case ( config.purpose, maybeFirstFocusableElementId, maybeLastFocusableElementId ) of
                         ( NavMenu, Just firstFocusableElementId, Just lastFocusableElementId ) ->
                             Key.onKeyDownPreventDefault
@@ -617,7 +617,7 @@ viewCustom config =
                         NavMenu ->
                             Role.menu
 
-                        Disclosure _ ->
+                        Dialog _ ->
                             AttributesExtra.none
                     , Aria.labelledBy config.buttonId
                     , Attributes.id config.menuId

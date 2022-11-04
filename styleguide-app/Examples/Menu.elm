@@ -262,12 +262,12 @@ view ellieLinkConfig state =
                             button buttonAttributes [ text "Custom Menu trigger button" ]
                 }
           )
-        , ( "Menu.button (with Menu.disclosure)"
+        , ( "Menu.button (with Menu.dialog)"
           , Menu.view
                 (menuAttributes
                     ++ [ Menu.buttonId "with_controls__button"
                        , Menu.menuId "with_controls__menu"
-                       , Menu.disclosure { lastId = "login__button" }
+                       , Menu.dialog { lastId = "login__button" }
                        ]
                 )
                 { isOpen = isOpen "with_controls"
