@@ -883,7 +883,7 @@ viewToggleTip : { label : String, lastId : Maybe String } -> List (Attribute msg
 viewToggleTip { label, lastId } attributes_ =
     let
         id =
-            Util.safeIdString label
+            Util.safeId label
 
         triggerId =
             "tooltip-trigger__" ++ id

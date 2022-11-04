@@ -59,7 +59,7 @@ import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.InputStyles.V4 as InputStyles
-import Nri.Ui.Util
+import Nri.Ui.Util exposing (safeIdWithPrefix)
 import SolidColor
 
 
@@ -475,8 +475,8 @@ viewChoice current choice =
 {-| Pass in the label to generate the default DOM element id used by a `Select.view` with the given label.
 -}
 generateId : String -> String
-generateId x =
-    "nri-select-" ++ Nri.Ui.Util.dashify (Nri.Ui.Util.removePunctuation x)
+generateId =
+    safeIdWithPrefix "nri-select-"
 
 
 selectArrowsCss : { config | disabled : Bool } -> Css.Style

@@ -277,7 +277,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                     specificId
 
                 Nothing ->
-                    name ++ "-" ++ Util.safeIdString stringValue
+                    Util.safeId (name ++ "-" ++ stringValue)
 
         isChecked =
             selectedValue == Just value

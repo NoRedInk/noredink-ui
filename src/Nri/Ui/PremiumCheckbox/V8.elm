@@ -53,7 +53,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Pennant.V2 exposing (premiumFlag)
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Util exposing (removePunctuation)
+import Nri.Ui.Util as Util
 import String exposing (toLower)
 import String.Extra exposing (dasherize)
 
@@ -205,7 +205,7 @@ view { label, onChange } attributes =
                     specificId
 
                 Nothing ->
-                    "checkbox-" ++ dasherize (removePunctuation (toLower label))
+                    Util.safeIdWithPrefix "checkbox-" label
 
         isPremium =
             config.premiumDisplay /= PremiumDisplay.Free
