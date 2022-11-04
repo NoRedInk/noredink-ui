@@ -538,13 +538,6 @@ viewCustom config =
             [ let
                 buttonAttributes =
                     [ Aria.disabled config.isDisabled
-                    , case config.purpose of
-                        NavMenu ->
-                            Aria.hasMenuPopUp
-
-                        Dialog _ ->
-                            AttributesExtra.none
-                    , Aria.expanded config.isOpen
                     , -- Whether the menu is open or closed, move to the
                       -- first menu item if the "down" arrow is pressed
                       -- as long as it's not a Dialog
@@ -567,7 +560,6 @@ viewCustom config =
 
                         _ ->
                             AttributesExtra.none
-                    , Aria.controls [ config.menuId ]
                     , Attributes.id config.buttonId
                     , if config.isDisabled then
                         AttributesExtra.none
@@ -595,6 +587,16 @@ viewCustom config =
                       else
                         AttributesExtra.none
                     ]
+                        ++ (case config.purpose of
+                                NavMenu ->
+                                    [ Aria.hasMenuPopUp
+                                    , Aria.expanded config.isOpen
+                                    , Aria.controls [ config.menuId ]
+                                    ]
+
+                                Dialog _ ->
+                                    [ AttributesExtra.none ]
+                           )
               in
               case config.button of
                 StandardButton standardButton ->
@@ -618,7 +620,7 @@ viewCustom config =
                             Role.menu
 
                         Dialog _ ->
-                            AttributesExtra.none
+                            Role.dialog
                     , Aria.labelledBy config.buttonId
                     , Attributes.id config.menuId
                     , css
