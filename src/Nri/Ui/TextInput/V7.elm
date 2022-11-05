@@ -983,7 +983,7 @@ This is for use when you need the DOM element id for use in javascript (such as 
 -}
 generateId : String -> String
 generateId =
-    Util.safeIdWithPrefix "Nri-Ui-TextInput-"
+    Util.safeIdWithPrefix "Nri-Ui-TextInput"
 
 
 type alias FloatingContentConfig msg =

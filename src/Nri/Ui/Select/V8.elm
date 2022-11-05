@@ -476,7 +476,7 @@ viewChoice current choice =
 -}
 generateId : String -> String
 generateId =
-    safeIdWithPrefix "nri-select-"
+    safeIdWithPrefix "nri-select"
 
 
 selectArrowsCss : { config | disabled : Bool } -> Css.Style

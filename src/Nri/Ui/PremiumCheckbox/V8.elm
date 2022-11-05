@@ -203,7 +203,7 @@ view { label, onChange } attributes =
                     specificId
 
                 Nothing ->
-                    Util.safeIdWithPrefix "checkbox-" label
+                    Util.safeIdWithPrefix "checkbox" label
 
         isPremium =
             config.premiumDisplay /= PremiumDisplay.Free

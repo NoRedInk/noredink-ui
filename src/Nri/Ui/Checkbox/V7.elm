@@ -233,7 +233,7 @@ view { label, selected } attributes =
                     specificId
 
                 Nothing ->
-                    Util.safeIdWithPrefix "checkbox-v7-" label
+                    Util.safeIdWithPrefix "checkbox-v7" label
 
         config_ =
             { identifier = idValue

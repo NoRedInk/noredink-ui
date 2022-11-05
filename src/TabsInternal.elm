@@ -193,9 +193,9 @@ viewTabPanel tab selected =
 
 tabToBodyId : String -> String
 tabToBodyId =
-    Util.safeIdWithPrefix "tab-body-"
+    Util.safeIdWithPrefix "tab-body"
 
 
 tabToKeyedNode : String -> String
 tabToKeyedNode =
-    Util.safeIdWithPrefix "tabs-internal-keyed-node-"
+    Util.safeIdWithPrefix "tabs-internal-keyed-node"
