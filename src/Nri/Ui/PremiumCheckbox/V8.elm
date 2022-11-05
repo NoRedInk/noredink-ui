@@ -54,8 +54,6 @@ import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Pennant.V2 exposing (premiumFlag)
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Util as Util
-import String exposing (toLower)
-import String.Extra exposing (dasherize)
 
 
 {-| Set a custom ID for this checkbox and label. If you don't set this,
