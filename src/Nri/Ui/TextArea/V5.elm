@@ -459,4 +459,4 @@ writingSingleLineHeight =
 {-| -}
 generateId : String -> String
 generateId =
-    Util.safeIdWithPrefix "nri-ui-text-area-"
+    Util.safeIdWithPrefix "nri-ui-text-area"

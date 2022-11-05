@@ -4,6 +4,7 @@ import Regex exposing (Regex)
 
 
 {-| Convenience method for going from a string with spaces to a string with dashes.
+- possibly worth removing since the safeId methods do this and more.
 -}
 dashify : String -> String
 dashify =

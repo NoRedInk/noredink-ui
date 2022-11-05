@@ -544,7 +544,7 @@ viewChoice current choice =
 -}
 generateId : String -> String
 generateId x =
-    "nri-select-" ++ String.toLower (Nri.Ui.Util.dashify (Nri.Ui.Util.removePunctuation x))
+    Nri.Ui.Util.safeIdWithPrefix "nri-select-" x
 
 
 selectArrowsCss : { config | disabled : Bool } -> Css.Style
