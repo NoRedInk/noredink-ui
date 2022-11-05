@@ -23,8 +23,8 @@ import Html.Styled.Attributes as Attributes
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Carousel.V1 as Carousel
 import Nri.Ui.Colors.V1 as Colors
-import Task
 import Nri.Ui.Util as Util
+import Task
 
 
 type alias State =
