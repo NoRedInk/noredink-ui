@@ -262,6 +262,35 @@ view ellieLinkConfig state =
                             button buttonAttributes [ text "Custom Menu trigger button" ]
                 }
           )
+        , ( "Menu.button (with Menu.disclosure)"
+          , Menu.view
+                (menuAttributes
+                    ++ [ Menu.buttonId "with_controls__button"
+                       , Menu.menuId "with_controls__menu"
+                       , Menu.disclosure { lastId = "login__button" }
+                       ]
+                )
+                { isOpen = isOpen "with_controls"
+                , focusAndToggle = FocusAndToggle "with_controls"
+                , entries =
+                    [ Menu.entry "username-input" <|
+                        \attrs ->
+                            div []
+                                [ TextInput.view "Username"
+                                    [ TextInput.id "username-input"
+                                    ]
+                                , TextInput.view "Password" []
+                                , Button.button "Log in disclosure"
+                                    [ Button.primary
+                                    , Button.id "login__button"
+                                    , Button.fillContainerWidth
+                                    , Button.css [ Css.marginTop (Css.px 15) ]
+                                    ]
+                                ]
+                    ]
+                , button = Menu.button defaultButtonAttributes "Log In"
+                }
+          )
         , ( "Menu.button (with Menu.dialog)"
           , Menu.view
                 (menuAttributes
@@ -280,7 +309,7 @@ view ellieLinkConfig state =
                                     [ TextInput.id "username-input"
                                     ]
                                 , TextInput.view "Password" []
-                                , Button.button "Log in"
+                                , Button.button "Log in dialog"
                                     [ Button.primary
                                     , Button.id "login__button"
                                     , Button.fillContainerWidth

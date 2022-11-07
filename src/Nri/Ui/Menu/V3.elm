@@ -1,7 +1,7 @@
 module Nri.Ui.Menu.V3 exposing
     ( view, button, custom, Config
     , Attribute, Button, ButtonAttribute
-    , alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, dialog
+    , alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure, dialog
     , Alignment(..)
     , icon, wrapping, hasBorder, buttonWidth
     , TitleWrapping(..)
@@ -30,7 +30,7 @@ A togglable menu view and related buttons.
 
 ## Menu attributes
 
-@docs alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, dialog
+@docs alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure, dialog
 @docs Alignment
 
 
@@ -121,6 +121,7 @@ type alias ButtonConfig =
 
 type Purpose
     = NavMenu
+    | Disclosure { lastId : String }
     | Dialog ExitFocusManager
 
 
@@ -213,6 +214,21 @@ menuZIndex value =
 opensOnHover : Bool -> Attribute msg
 opensOnHover value =
     Attribute <| \config -> { config | opensOnHover = value }
+
+
+{-| Makes the menu behave as a disclosure.
+
+For more information, please read [Disclosure (Show/Hide) pattern](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/).
+
+You will need to pass in the last focusable element in the disclosed content in order for:
+
+  - any focusable elements in the disclosed content to be keyboard accessible
+  - the disclosure to close appropriately when the user tabs past all of the disclosed content
+
+-}
+disclosure : { lastId : String } -> Attribute msg
+disclosure exitFocusManager =
+    Attribute (\config -> { config | purpose = Disclosure exitFocusManager })
 
 
 {-| Makes the menu behave as a dialog.
@@ -485,6 +501,30 @@ viewCustom config =
                                 )
                             ]
 
+                    Disclosure { lastId } ->
+                        Key.onKeyDown
+                            [ Key.escape
+                                (config.focusAndToggle
+                                    { isOpen = False
+                                    , focus = Just config.buttonId
+                                    }
+                                )
+                            , WhenFocusLeaves.toDecoder
+                                { firstId = config.buttonId
+                                , lastId = lastId
+                                , tabBackAction =
+                                    config.focusAndToggle
+                                        { isOpen = False
+                                        , focus = Nothing
+                                        }
+                                , tabForwardAction =
+                                    config.focusAndToggle
+                                        { isOpen = False
+                                        , focus = Nothing
+                                        }
+                                }
+                            ]
+
                     Dialog { firstId, lastId } ->
                         Key.onKeyDownPreventDefault
                             [ Key.escape
@@ -552,7 +592,7 @@ viewCustom config =
                     [ Aria.disabled config.isDisabled
                     , -- Whether the menu is open or closed, move to the
                       -- first menu item if the "down" arrow is pressed
-                      -- as long as it's not a Dialog
+                      -- as long as it's not a Disclosed or Dialog
                       case ( config.purpose, maybeFirstFocusableElementId, maybeLastFocusableElementId ) of
                         ( NavMenu, Just firstFocusableElementId, Just lastFocusableElementId ) ->
                             Key.onKeyDownPreventDefault
@@ -606,6 +646,11 @@ viewCustom config =
                                     , Aria.controls [ config.menuId ]
                                     ]
 
+                                Disclosure _ ->
+                                    [ Aria.expanded config.isOpen
+                                    , Aria.controls [ config.menuId ]
+                                    ]
+
                                 Dialog _ ->
                                     [ AttributesExtra.none ]
                            )
@@ -630,6 +675,9 @@ viewCustom config =
                     , case config.purpose of
                         NavMenu ->
                             Role.menu
+
+                        Disclosure _ ->
+                            AttributesExtra.none
 
                         Dialog _ ->
                             Role.dialog

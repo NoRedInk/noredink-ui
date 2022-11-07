@@ -52,6 +52,26 @@ spec =
                     |> pressEscKey { targetId = Nothing }
                     |> ensureViewHasNot (menuContentSelector menuContent)
                     |> ProgramTest.done
+        , describe "disclosure" <|
+            [ test "Close on esc key" <|
+                \() ->
+                    program [ Menu.disclosure { lastId = "last-button" } ]
+                        -- Menu opens on mouse click and closes on esc key
+                        |> clickMenuButton
+                        |> ensureViewHas (menuContentSelector menuContent)
+                        |> pressEscKey { targetId = Nothing }
+                        |> ensureViewHasNot (menuContentSelector menuContent)
+                        |> ProgramTest.done
+            , test "Closes after tab on lastId" <|
+                \() ->
+                    program [ Menu.disclosure { lastId = "last-button" } ]
+                        |> clickMenuButton
+                        |> ensureViewHas (menuContentSelector menuContent)
+                        -- NOTE: unable to simulate pressTabKey with other targetId since those decoders will fail
+                        |> pressTabKey { targetId = Just "last-button" }
+                        |> ensureViewHasNot (menuContentSelector menuContent)
+                        |> ProgramTest.done
+            ]
         , describe "dialog" <|
             [ test "Close on esc key" <|
                 \() ->
@@ -62,14 +82,23 @@ spec =
                         |> pressEscKey { targetId = Nothing }
                         |> ensureViewHasNot (menuContentSelector menuContent)
                         |> ProgramTest.done
-            , test "Closes after tab on lastId" <|
+            , test "Selects firstId after tab on lastId" <|
                 \() ->
                     program [ Menu.dialog { firstId = "hello-button", lastId = "last-button" } ]
                         |> clickMenuButton
                         |> ensureViewHas (menuContentSelector menuContent)
                         -- NOTE: unable to simulate pressTabKey with other targetId since those decoders will fail
                         |> pressTabKey { targetId = Just "last-button" }
-                        |> ensureViewHasNot (menuContentSelector menuContent)
+                        |> ensureViewHas (menuContentSelector menuContent)
+                        |> ProgramTest.done
+            , test "Selects lastId after back tab on firstId" <|
+                \() ->
+                    program [ Menu.dialog { firstId = "hello-button", lastId = "last-button" } ]
+                        |> clickMenuButton
+                        |> ensureViewHas (menuContentSelector menuContent)
+                        -- NOTE: unable to simulate pressTabKey with other targetId since those decoders will fail
+                        |> pressTabBackKey { targetId = Just "hellow-button" }
+                        |> ensureViewHas (menuContentSelector menuContent)
                         |> ProgramTest.done
             ]
         ]
@@ -178,6 +207,13 @@ targetDetails targetId =
 pressTabKey : { targetId : Maybe String } -> ProgramTest model msg effect -> ProgramTest model msg effect
 pressTabKey { targetId } =
     KeyboardHelpers.pressTabKey
+        { targetDetails = targetDetails targetId }
+        [ Selector.class "Container" ]
+
+
+pressTabBackKey : { targetId : Maybe String } -> ProgramTest model msg effect -> ProgramTest model msg effect
+pressTabBackKey { targetId } =
+    KeyboardHelpers.pressTabBackKey
         { targetDetails = targetDetails targetId }
         [ Selector.class "Container" ]
 
