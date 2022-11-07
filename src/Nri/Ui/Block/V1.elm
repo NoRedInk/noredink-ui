@@ -3,6 +3,7 @@ module Nri.Ui.Block.V1 exposing
     , plaintext, content
     , Content, string, blank
     , emphasize, label
+    , yellow, cyan, magenta, green, blue, purple, brown
     )
 
 {-|
@@ -20,9 +21,16 @@ module Nri.Ui.Block.V1 exposing
 
 @docs emphasize, label
 
+
+### Color themes
+
+@docs yellow, cyan, magenta, green, blue, purple, brown
+
 -}
 
 import Accessibility.Styled exposing (..)
+import Css exposing (Color)
+import Nri.Ui.Colors.V1 as Colors
 
 
 {-|
@@ -109,6 +117,88 @@ blank =
 
 
 
+-- Color themes
+
+
+{-| -}
+type Theme
+    = Yellow
+    | Cyan
+    | Magenta
+    | Green
+    | Blue
+    | Purple
+    | Brown
+
+
+themeToPalette : Theme -> { backgroundColor : Color, borderColor : Color }
+themeToPalette theme =
+    case theme of
+        Yellow ->
+            { backgroundColor = Colors.highlightYellow, borderColor = Colors.highlightYellowDark }
+
+        Cyan ->
+            { backgroundColor = Colors.highlightCyan, borderColor = Colors.highlightCyanDark }
+
+        Magenta ->
+            { backgroundColor = Colors.highlightMagenta, borderColor = Colors.highlightMagentaDark }
+
+        Green ->
+            { backgroundColor = Colors.highlightGreen, borderColor = Colors.highlightGreenDark }
+
+        Blue ->
+            { backgroundColor = Colors.highlightBlue, borderColor = Colors.highlightBlueDark }
+
+        Purple ->
+            { backgroundColor = Colors.highlightPurple, borderColor = Colors.highlightPurpleDark }
+
+        Brown ->
+            { backgroundColor = Colors.highlightBrown, borderColor = Colors.highlightBrownDark }
+
+
+{-| -}
+yellow : Attribute
+yellow =
+    Attribute (\config -> { config | theme = Just Yellow })
+
+
+{-| -}
+cyan : Attribute
+cyan =
+    Attribute (\config -> { config | theme = Just Cyan })
+
+
+{-| -}
+magenta : Attribute
+magenta =
+    Attribute (\config -> { config | theme = Just Magenta })
+
+
+{-| -}
+green : Attribute
+green =
+    Attribute (\config -> { config | theme = Just Green })
+
+
+{-| -}
+blue : Attribute
+blue =
+    Attribute (\config -> { config | theme = Just Blue })
+
+
+{-| -}
+purple : Attribute
+purple =
+    Attribute (\config -> { config | theme = Just Purple })
+
+
+{-| -}
+brown : Attribute
+brown =
+    Attribute (\config -> { config | theme = Just Brown })
+
+
+
 -- Internals
 
 
@@ -122,6 +212,7 @@ defaultConfig =
     { content = []
     , emphasized = False
     , label = Nothing
+    , theme = Nothing
     }
 
 
@@ -129,6 +220,7 @@ type alias Config =
     { content : List Content
     , emphasized : Bool
     , label : Maybe String
+    , theme : Maybe Theme
     }
 
 

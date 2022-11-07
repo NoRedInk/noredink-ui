@@ -126,11 +126,11 @@ example =
                   , description = "Help students understand the function different words and phrases are playing in a sentence"
                   , example =
                         [ Block.view [ Block.plaintext "Taylor Swift bought " ]
-                        , Block.view [ Block.plaintext "new", Block.label "age" ]
+                        , Block.view [ Block.plaintext "new", Block.label "age", Block.yellow ]
                         , Block.view [ Block.plaintext " " ]
-                        , Block.view [ Block.plaintext "bowling", Block.label "purpose" ]
+                        , Block.view [ Block.plaintext "bowling", Block.label "purpose", Block.cyan ]
                         , Block.view [ Block.plaintext " " ]
-                        , Block.view [ Block.plaintext "yellow", Block.label "color" ]
+                        , Block.view [ Block.plaintext "yellow", Block.label "color", Block.magenta ]
                         , Block.view [ Block.plaintext " shoes." ]
                         ]
                   }
