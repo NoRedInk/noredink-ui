@@ -265,59 +265,59 @@ view ellieLinkConfig state =
         , ( "Menu.button (with Menu.disclosure)"
           , Menu.view
                 (menuAttributes
-                    ++ [ Menu.buttonId "with_controls__button"
-                       , Menu.menuId "with_controls__menu"
-                       , Menu.disclosure { lastId = "login__button" }
+                    ++ [ Menu.buttonId "disclosure__button"
+                       , Menu.menuId "disclosure__menu"
+                       , Menu.disclosure { lastId = "disclosure__login__button" }
                        ]
                 )
-                { isOpen = isOpen "with_controls"
-                , focusAndToggle = FocusAndToggle "with_controls"
+                { isOpen = isOpen "with_disclosure"
+                , focusAndToggle = FocusAndToggle "with_disclosure"
                 , entries =
-                    [ Menu.entry "username-input" <|
+                    [ Menu.entry "disclosure__username" <|
                         \attrs ->
                             div []
                                 [ TextInput.view "Username"
-                                    [ TextInput.id "username-input"
+                                    [ TextInput.id "disclosure__username__input"
                                     ]
                                 , TextInput.view "Password" []
-                                , Button.button "Log in disclosure"
+                                , Button.button "Log in"
                                     [ Button.primary
-                                    , Button.id "login__button"
+                                    , Button.id "disclosure__login__button"
                                     , Button.fillContainerWidth
                                     , Button.css [ Css.marginTop (Css.px 15) ]
                                     ]
                                 ]
                     ]
-                , button = Menu.button defaultButtonAttributes "Log In"
+                , button = Menu.button defaultButtonAttributes "Log In disclosure"
                 }
           )
         , ( "Menu.button (with Menu.dialog)"
           , Menu.view
                 (menuAttributes
-                    ++ [ Menu.buttonId "with_controls__button"
-                       , Menu.menuId "with_controls__menu"
-                       , Menu.dialog { firstId = "username-input", lastId = "login__button"}
+                    ++ [ Menu.buttonId "dialog__button"
+                       , Menu.menuId "dialog__menu"
+                       , Menu.dialog { firstId = "dialog__username__input", lastId = "dialog__login__button"}
                        ]
                 )
-                { isOpen = isOpen "with_controls"
-                , focusAndToggle = FocusAndToggle "with_controls"
+                { isOpen = isOpen "dialog"
+                , focusAndToggle = FocusAndToggle "dialog"
                 , entries =
-                    [ Menu.entry "username-input" <|
+                    [ Menu.entry "dialog__username" <|
                         \attrs ->
                             div []
                                 [ TextInput.view "Username"
-                                    [ TextInput.id "username-input"
+                                    [ TextInput.id "dialog__username__input"
                                     ]
                                 , TextInput.view "Password" []
-                                , Button.button "Log in dialog"
+                                , Button.button "Log in"
                                     [ Button.primary
-                                    , Button.id "login__button"
+                                    , Button.id "dialog__login__button"
                                     , Button.fillContainerWidth
                                     , Button.css [ Css.marginTop (Css.px 15) ]
                                     ]
                                 ]
                     ]
-                , button = Menu.button defaultButtonAttributes "Log In"
+                , button = Menu.button defaultButtonAttributes "Log In dialog"
                 }
           )
         ]
