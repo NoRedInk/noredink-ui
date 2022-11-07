@@ -1,6 +1,7 @@
 module Nri.Ui.Block.V1 exposing
     ( view, Attribute
-    , plaintext
+    , plaintext, content
+    , Content, string, blank
     , emphasize, label
     )
 
@@ -9,9 +10,14 @@ module Nri.Ui.Block.V1 exposing
 @docs view, Attribute
 
 
+## Content
+
+@docs plaintext, content
+@docs Content, string, blank
+
+
 ## Customization
 
-@docs plaintext
 @docs emphasize, label
 
 -}
@@ -24,7 +30,7 @@ import Accessibility.Styled exposing (..)
     Block.view [ Block.plaintext "Hello, world!" ]
 
 -}
-view : List (Attribute msg) -> Html msg
+view : List Attribute -> Html msg
 view attributes =
     attributes
         |> List.foldl (\(Attribute attribute) b -> attribute b) defaultConfig
@@ -35,24 +41,71 @@ view attributes =
 -- Attributes
 
 
-{-| Provide the main content of the block as a plain-text string.
+{-| Provide the main content of the block as a plain-text string. You can also use `content` for more complex cases, including a blank appearing within an emphasis.
 -}
-plaintext : String -> Attribute msg
-plaintext content =
-    Attribute <| \config -> { config | content = [ text content ] }
+plaintext : String -> Attribute
+plaintext content_ =
+    Attribute <| \config -> { config | content = [ String_ content_ ] }
+
+
+{-| Use `content` for more complex block views, for instance when a blank appears within an emphasis block. Prefer to use `plaintext` when possible for better readability.
+
+    Block.view
+        [ Block.emphasize
+        , Block.content [ Block.string "Hello, ", Block.blank, Block.string "!" ]
+        ]
+
+-}
+content : List Content -> Attribute
+content content_ =
+    Attribute <| \config -> { config | content = content_ }
 
 
 {-| Mark content as emphasized.
 -}
-emphasize : Attribute msg
+emphasize : Attribute
 emphasize =
     Attribute <| \config -> { config | emphasized = True }
 
 
 {-| -}
-label : String -> Attribute msg
+label : String -> Attribute
 label label_ =
     Attribute <| \config -> { config | label = Just label_ }
+
+
+
+-- Content
+
+
+{-| -}
+type Content
+    = String_ String
+    | Blank
+
+
+renderContent : Content -> Html msg
+renderContent content_ =
+    case content_ of
+        String_ str ->
+            text str
+
+        Blank ->
+            text "[Blank -- 1 level down]"
+
+
+{-| You will only need to use this helper if you're also using `content` to construct a more complex Block. Maybe you want `plaintext` instead?
+-}
+string : String -> Content
+string =
+    String_
+
+
+{-| You will only need to use this helper if you're also using `content` to construct a more complex Block. For a less complex blank Block, don't include content or plaintext in the list of attributes.
+-}
+blank : Content
+blank =
+    Blank
 
 
 
@@ -60,11 +113,11 @@ label label_ =
 
 
 {-| -}
-type Attribute msg
-    = Attribute (Config msg -> Config msg)
+type Attribute
+    = Attribute (Config -> Config)
 
 
-defaultConfig : Config msg
+defaultConfig : Config
 defaultConfig =
     { content = []
     , emphasized = False
@@ -72,13 +125,19 @@ defaultConfig =
     }
 
 
-type alias Config msg =
-    { content : List (Html msg)
+type alias Config =
+    { content : List Content
     , emphasized : Bool
     , label : Maybe String
     }
 
 
-render : Config msg -> Html msg
+render : Config -> Html msg
 render config =
-    span [] config.content
+    case config.content of
+        [] ->
+            -- Blank
+            text "[Blank]"
+
+        _ ->
+            span [] (List.map renderContent config.content)

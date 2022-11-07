@@ -15,6 +15,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (css)
 import Markdown
 import Nri.Ui.Block.V1 as Block
 import Nri.Ui.Heading.V3 as Heading
@@ -73,7 +74,11 @@ example =
                 [ Heading.plaintext "Interactive example"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
-            , Block.view (List.map Tuple.second attributes)
+            , p [ css [ Css.textAlign Css.center ] ]
+                [ Block.view [ Block.plaintext "I like " ]
+                , Block.view (List.map Tuple.second attributes)
+                , Block.view [ Block.plaintext " a lot!" ]
+                ]
             , Heading.h2
                 [ Heading.plaintext "Non-interactive examples"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
@@ -141,19 +146,45 @@ init =
 
 
 type alias Settings =
-    List ( String, Block.Attribute Msg )
+    List ( String, Block.Attribute )
 
 
 initControl : Control Settings
 initControl =
     ControlExtra.list
-        |> ControlExtra.listItem "plaintext"
-            (CommonControls.string ( Code.fromModule moduleName "plaintext", Block.plaintext )
-                "Bananas"
-            )
+        |> ControlExtra.optionalListItem "content" controlContent
         |> ControlExtra.optionalBoolListItem "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )
         |> ControlExtra.optionalListItem "label"
             (CommonControls.string ( Code.fromModule moduleName "label", Block.label ) "Fruit")
+
+
+controlContent : Control ( String, Block.Attribute )
+controlContent =
+    Control.choice
+        [ ( "plaintext"
+          , CommonControls.string
+                ( Code.fromModule moduleName "plaintext"
+                , Block.plaintext
+                )
+                "bananas"
+          )
+        , ( "with mixed content"
+          , Control.value
+                ( Code.fromModule moduleName "content "
+                    ++ Code.listMultiline
+                        [ Code.fromModule moduleName "string " ++ Code.string "to think about "
+                        , Code.fromModule moduleName "blank"
+                        , Code.fromModule moduleName "string " ++ Code.string " and so forth"
+                        ]
+                        2
+                , Block.content
+                    [ Block.string "to think about "
+                    , Block.blank
+                    , Block.string " and so forth"
+                    ]
+                )
+          )
+        ]
 
 
 {-| -}
