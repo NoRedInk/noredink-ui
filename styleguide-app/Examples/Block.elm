@@ -106,19 +106,23 @@ example =
                     , sort = Nothing
                     }
                 ]
-                [ { pattern = "Code.view [ Code.emphasize, … ]"
-                  , description =
-                        """
-- Uses the Highlighter component to mark content as emphasized
-- Help students focus in on a specific part of the content
-- Often a phrase or clause
-"""
+                [ { pattern = "Code.view []"
+                  , description = "Represents a blank in the sentence. Expected to be used in Cycling interface scaffolding."
                   , example =
-                        [ Block.view [ Block.plaintext "The Crossover", Block.emphasize ]
-                        , Block.view [ Block.plaintext " is Thor’s favorite book." ]
+                        [ Block.view [ Block.plaintext "I am a seed with " ]
+                        , Block.view []
+                        , Block.view [ Block.plaintext " being used." ]
                         ]
                   }
-                , { pattern = "Code.view [ Code.label \"[label text]\", … ]"
+                , { pattern = "Code.view [ Code.label \"[label text]\" ]"
+                  , description = "A labelled blank in the sentence"
+                  , example =
+                        [ Block.view [ Block.plaintext "If a volcano is extinct, " ]
+                        , Block.view [ Block.label "pronoun" ]
+                        , Block.view [ Block.plaintext " will never erupt again." ]
+                        ]
+                  }
+                , { pattern = "Code.view [ Code.label \"[label text]\", Code.plaintext \"[text]\", … ]"
                   , description = "Help students understand the function different words and phrases are playing in a sentence"
                   , example =
                         [ Block.view [ Block.plaintext "Taylor Swift bought " ]
@@ -128,6 +132,18 @@ example =
                         , Block.view [ Block.plaintext " " ]
                         , Block.view [ Block.plaintext "yellow", Block.label "color" ]
                         , Block.view [ Block.plaintext " shoes." ]
+                        ]
+                  }
+                , { pattern = "Code.view [ Code.emphasize, … ]"
+                  , description =
+                        """
+- Uses the Highlighter component to mark content as emphasized
+- Help students focus in on a specific part of the content
+- Often a phrase or clause
+"""
+                  , example =
+                        [ Block.view [ Block.plaintext "The Crossover", Block.emphasize ]
+                        , Block.view [ Block.plaintext " is Thor’s favorite book." ]
                         ]
                   }
                 , { pattern = "Code.view [ Code.emphasize, Code.content [ … ] ]"
