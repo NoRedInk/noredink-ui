@@ -121,7 +121,13 @@ type alias ButtonConfig =
 
 type Purpose
     = NavMenu
-    | Dialog { lastId : String }
+    | Dialog ExitFocusManager
+
+
+type alias ExitFocusManager =
+    { firstId : String
+    , lastId : String
+    }
 
 
 
@@ -219,7 +225,7 @@ You will need to pass in the last focusable element in the dialog content in ord
   - the dialog to close appropriately when the user tabs past all of the dialog content
 
 -}
-dialog : { lastId : String } -> Attribute msg
+dialog : ExitFocusManager -> Attribute msg
 dialog exitFocusManager =
     Attribute (\config -> { config | purpose = Dialog exitFocusManager })
 
@@ -456,47 +462,53 @@ viewCustom config =
     in
     div
         (Attributes.id (config.buttonId ++ "__container")
-            :: Key.onKeyDown
-                (Key.escape
-                    (config.focusAndToggle
-                        { isOpen = False
-                        , focus = Just config.buttonId
-                        }
-                    )
-                    :: (case config.purpose of
-                            NavMenu ->
-                                [ Key.tab
-                                    (config.focusAndToggle
-                                        { isOpen = False
-                                        , focus = Nothing
-                                        }
-                                    )
-                                , Key.tabBack
-                                    (config.focusAndToggle
-                                        { isOpen = False
-                                        , focus = Nothing
-                                        }
-                                    )
-                                ]
-
-                            Dialog { lastId } ->
-                                [ WhenFocusLeaves.toDecoder
-                                    { firstId = config.buttonId
-                                    , lastId = lastId
-                                    , tabBackAction =
-                                        config.focusAndToggle
-                                            { isOpen = False
-                                            , focus = Nothing
-                                            }
-                                    , tabForwardAction =
-                                        config.focusAndToggle
-                                            { isOpen = False
-                                            , focus = Nothing
-                                            }
+            :: (case config.purpose of
+                    NavMenu ->
+                        Key.onKeyDown
+                            [ Key.escape
+                                (config.focusAndToggle
+                                    { isOpen = False
+                                    , focus = Just config.buttonId
                                     }
-                                ]
-                       )
-                )
+                                )
+                            , Key.tab
+                                (config.focusAndToggle
+                                    { isOpen = False
+                                    , focus = Nothing
+                                    }
+                                )
+                            , Key.tabBack
+                                (config.focusAndToggle
+                                    { isOpen = False
+                                    , focus = Nothing
+                                    }
+                                )
+                            ]
+
+                    Dialog { firstId, lastId } ->
+                        Key.onKeyDownPreventDefault
+                            [ Key.escape
+                                (config.focusAndToggle
+                                    { isOpen = False
+                                    , focus = Just config.buttonId
+                                    }
+                                )
+                            , WhenFocusLeaves.toDecoder
+                                { firstId = firstId
+                                , lastId = lastId
+                                , tabBackAction =
+                                    config.focusAndToggle
+                                        { isOpen = True
+                                        , focus = Just lastId
+                                        }
+                                , tabForwardAction =
+                                    config.focusAndToggle
+                                        { isOpen = True
+                                        , focus = Just firstId
+                                        }
+                                }
+                            ]
+               )
             :: styleContainer
         )
         [ if config.isOpen then
@@ -871,7 +883,7 @@ styleIconContainer config =
 
 
 styleOuterContent : Bool -> MenuConfig msg -> Html.Attribute msg
-styleOuterContent contentVisible config =
+styleOuterContent _ config =
     css
         [ position absolute
         , zIndex (int <| config.zIndex + 1)

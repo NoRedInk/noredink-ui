@@ -52,10 +52,10 @@ spec =
                     |> pressEscKey { targetId = Nothing }
                     |> ensureViewHasNot (menuContentSelector menuContent)
                     |> ProgramTest.done
-        , describe "disclosure" <|
+        , describe "dialog" <|
             [ test "Close on esc key" <|
                 \() ->
-                    program [ Menu.dialog { lastId = "last-button" } ]
+                    program [ Menu.dialog { firstId = "hello-button", lastId = "last-button" } ]
                         -- Menu opens on mouse click and closes on esc key
                         |> clickMenuButton
                         |> ensureViewHas (menuContentSelector menuContent)
@@ -64,7 +64,7 @@ spec =
                         |> ProgramTest.done
             , test "Closes after tab on lastId" <|
                 \() ->
-                    program [ Menu.dialog { lastId = "last-button" } ]
+                    program [ Menu.dialog { firstId = "hello-button", lastId = "last-button" } ]
                         |> clickMenuButton
                         |> ensureViewHas (menuContentSelector menuContent)
                         -- NOTE: unable to simulate pressTabKey with other targetId since those decoders will fail

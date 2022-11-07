@@ -267,7 +267,7 @@ view ellieLinkConfig state =
                 (menuAttributes
                     ++ [ Menu.buttonId "with_controls__button"
                        , Menu.menuId "with_controls__menu"
-                       , Menu.dialog { lastId = "login__button" }
+                       , Menu.dialog { firstId = "username-input", lastId = "login__button"}
                        ]
                 )
                 { isOpen = isOpen "with_controls"
