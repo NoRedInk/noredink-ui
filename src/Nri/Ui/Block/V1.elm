@@ -1,6 +1,7 @@
 module Nri.Ui.Block.V1 exposing
     ( view, Attribute
     , plaintext
+    , emphasize
     )
 
 {-|
@@ -11,6 +12,7 @@ module Nri.Ui.Block.V1 exposing
 ## Customization
 
 @docs plaintext
+@docs emphasize
 
 -}
 
@@ -40,6 +42,13 @@ plaintext content =
     Attribute <| \config -> { config | content = [ text content ] }
 
 
+{-| Mark content as emphasized.
+-}
+emphasize : Attribute msg
+emphasize =
+    Attribute <| \config -> { config | emphasized = True }
+
+
 
 -- Internals
 
@@ -52,11 +61,13 @@ type Attribute msg
 defaultConfig : Config msg
 defaultConfig =
     { content = []
+    , emphasized = False
     }
 
 
 type alias Config msg =
     { content : List (Html msg)
+    , emphasized : Bool
     }
 
 
