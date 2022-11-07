@@ -30,6 +30,7 @@ module Nri.Ui.Block.V1 exposing
 
 import Accessibility.Styled exposing (..)
 import Css exposing (Color)
+import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 
 
@@ -73,7 +74,7 @@ content content_ =
 -}
 emphasize : Attribute
 emphasize =
-    Attribute <| \config -> { config | emphasized = True }
+    Attribute <| \config -> { config | theme = Just Emphasis }
 
 
 {-| -}
@@ -122,7 +123,8 @@ blank =
 
 {-| -}
 type Theme
-    = Yellow
+    = Emphasis
+    | Yellow
     | Cyan
     | Magenta
     | Green
@@ -134,6 +136,9 @@ type Theme
 themeToPalette : Theme -> { backgroundColor : Color, borderColor : Color }
 themeToPalette theme =
     case theme of
+        Emphasis ->
+            { backgroundColor = Colors.highlightYellow, borderColor = Colors.highlightYellowDark }
+
         Yellow ->
             { backgroundColor = Colors.highlightYellow, borderColor = Colors.highlightYellowDark }
 
@@ -210,7 +215,6 @@ type Attribute
 defaultConfig : Config
 defaultConfig =
     { content = []
-    , emphasized = False
     , label = Nothing
     , theme = Nothing
     }
@@ -218,7 +222,6 @@ defaultConfig =
 
 type alias Config =
     { content : List Content
-    , emphasized : Bool
     , label : Maybe String
     , theme : Maybe Theme
     }
@@ -226,10 +229,27 @@ type alias Config =
 
 render : Config -> Html msg
 render config =
+    let
+        maybePalette =
+            Maybe.map themeToPalette config.theme
+    in
     case config.content of
         [] ->
             -- Blank
             text "[blank]"
 
         _ ->
-            span [] (List.map renderContent config.content)
+            span
+                [ -- The real implementation will be based on top of Highlighter.
+                  -- this is just a placeholder for API visualization/development convenenience
+                  Maybe.map
+                    (\palette ->
+                        [ Css.backgroundColor palette.backgroundColor
+                        , Css.border3 (Css.px 1) Css.dashed palette.borderColor
+                        ]
+                    )
+                    maybePalette
+                    |> Maybe.withDefault []
+                    |> css
+                ]
+                (List.map renderContent config.content)
