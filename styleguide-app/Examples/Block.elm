@@ -44,8 +44,33 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
-        -- TODO: add a useful preview!
-        []
+        [ p []
+            [ Block.view
+                [ Block.plaintext "Dave"
+                , Block.label "subject"
+                , Block.yellow
+                ]
+            , Block.view [ Block.plaintext " " ]
+            , Block.view
+                [ Block.plaintext "broke"
+                , Block.label "verb"
+                , Block.cyan
+                ]
+            , Block.view [ Block.plaintext " his french fry so " ]
+            , Block.view
+                [ Block.plaintext "he"
+                , Block.label "subject"
+                , Block.yellow
+                ]
+            , Block.view [ Block.plaintext " " ]
+            , Block.view
+                [ Block.plaintext "glued"
+                , Block.label "verb"
+                , Block.cyan
+                ]
+            , Block.view [ Block.plaintext " it with ketchup." ]
+            ]
+        ]
     , view =
         \ellieLinkConfig state ->
             let
