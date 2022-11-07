@@ -107,16 +107,19 @@ example =
                     }
                 ]
                 [ { name = Code.fromModule moduleName "emphasize"
-                  , usage = ""
-                  , description = "Uses the Highlighter component to mark content as emphasized"
+                  , description =
+                        """
+- Uses the Highlighter component to mark content as emphasized
+- Help students focus in on a specific part of the content
+- Often a phrase or clause
+"""
                   , example =
                         [ Block.view [ Block.plaintext "The Crossover", Block.emphasize ]
                         , Block.view [ Block.plaintext " is Thor’s favorite book." ]
                         ]
                   }
-                , { name = Code.fromModule moduleName "emphasize"
-                  , usage = ""
-                  , description = "Uses the Highlighter component to mark content as emphasized"
+                , { name = Code.fromModule moduleName "label"
+                  , description = "Help students understand the function different words and phrases are playing in a sentence"
                   , example =
                         [ Block.view [ Block.plaintext "Taylor Swift bought " ]
                         , Block.view [ Block.plaintext "new", Block.label "age" ]
