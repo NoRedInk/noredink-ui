@@ -99,7 +99,7 @@ renderContent content_ =
             text str
 
         Blank ->
-            text "[Blank -- 1 level down]"
+            text "[blank -- 1 level down]"
 
 
 {-| You will only need to use this helper if you're also using `content` to construct a more complex Block. Maybe you want `plaintext` instead?
@@ -229,7 +229,7 @@ render config =
     case config.content of
         [] ->
             -- Blank
-            text "[Blank]"
+            text "[blank]"
 
         _ ->
             span [] (List.map renderContent config.content)
