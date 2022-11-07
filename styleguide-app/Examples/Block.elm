@@ -84,11 +84,11 @@ example =
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
             , Table.view
-                [ Table.string
-                    { header = "Type"
-                    , value = .name
-                    , width = Css.pct 15
-                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.top, Css.fontWeight Css.bold ]
+                [ Table.custom
+                    { header = text "Pattern"
+                    , view = \{ pattern } -> code [] [ text pattern ]
+                    , width = Css.px 50
+                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.top, Css.fontSize (Css.px 12) ]
                     , sort = Nothing
                     }
                 , Table.custom
@@ -106,7 +106,7 @@ example =
                     , sort = Nothing
                     }
                 ]
-                [ { name = Code.fromModule moduleName "emphasize"
+                [ { pattern = "Code.view [ Code.emphasize, … ]"
                   , description =
                         """
 - Uses the Highlighter component to mark content as emphasized
@@ -118,7 +118,7 @@ example =
                         , Block.view [ Block.plaintext " is Thor’s favorite book." ]
                         ]
                   }
-                , { name = Code.fromModule moduleName "label"
+                , { pattern = "Code.view [ Code.label \"[label text]\", … ]"
                   , description = "Help students understand the function different words and phrases are playing in a sentence"
                   , example =
                         [ Block.view [ Block.plaintext "Taylor Swift bought " ]
@@ -128,6 +128,21 @@ example =
                         , Block.view [ Block.plaintext " " ]
                         , Block.view [ Block.plaintext "yellow", Block.label "color" ]
                         , Block.view [ Block.plaintext " shoes." ]
+                        ]
+                  }
+                , { pattern = "Code.view [ Code.emphasize, Code.content [ … ] ]"
+                  , description = "Help students focus in on a phrase that includes a blank"
+                  , example =
+                        [ Block.view [ Block.plaintext "This is an " ]
+                        , Block.view
+                            [ Block.emphasize
+                            , Block.content
+                                [ Block.string "emphasized subsegement "
+                                , Block.blank
+                                , Block.string " emphasized"
+                                ]
+                            ]
+                        , Block.view [ Block.plaintext " in a seed." ]
                         ]
                   }
                 ]
