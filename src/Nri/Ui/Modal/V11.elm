@@ -517,11 +517,9 @@ view config attrsList model =
                 ]
                 |> List.singleton
                 |> Root.div
-                    (List.concat
-                        [ [ FocusTrap.toAttribute config.focusTrap ]
-                        , [ Attrs.css [ Css.position Css.relative, Css.zIndex (Css.int 100) ] ]
-                        ]
-                    )
+                    [ FocusTrap.toAttribute config.focusTrap
+                    , Attrs.css [ Css.position Css.relative, Css.zIndex (Css.int 100) ]
+                    ]
 
         Closed ->
             text ""
