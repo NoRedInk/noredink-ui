@@ -217,13 +217,13 @@ initControl =
             (CommonControls.string ( Code.fromModule moduleName "label", Block.label ) "Fruit")
         |> ControlExtra.optionalListItem "theme"
             (CommonControls.choice moduleName
-                [ ( "Block.yellow", Block.yellow )
-                , ( "Block.cyan", Block.cyan )
-                , ( "Block.magenta", Block.magenta )
-                , ( "Block.green", Block.green )
-                , ( "Block.blue", Block.blue )
-                , ( "Block.purple", Block.purple )
-                , ( "Block.brown", Block.brown )
+                [ ( "yellow", Block.yellow )
+                , ( "cyan", Block.cyan )
+                , ( "magenta", Block.magenta )
+                , ( "green", Block.green )
+                , ( "blue", Block.blue )
+                , ( "purple", Block.purple )
+                , ( "brown", Block.brown )
                 ]
             )
 
