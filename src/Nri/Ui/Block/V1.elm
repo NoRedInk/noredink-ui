@@ -1,7 +1,7 @@
 module Nri.Ui.Block.V1 exposing
     ( view, Attribute
     , plaintext
-    , emphasize
+    , emphasize, label
     )
 
 {-|
@@ -12,7 +12,7 @@ module Nri.Ui.Block.V1 exposing
 ## Customization
 
 @docs plaintext
-@docs emphasize
+@docs emphasize, label
 
 -}
 
@@ -49,6 +49,12 @@ emphasize =
     Attribute <| \config -> { config | emphasized = True }
 
 
+{-| -}
+label : String -> Attribute msg
+label label_ =
+    Attribute <| \config -> { config | label = Just label_ }
+
+
 
 -- Internals
 
@@ -62,12 +68,14 @@ defaultConfig : Config msg
 defaultConfig =
     { content = []
     , emphasized = False
+    , label = Nothing
     }
 
 
 type alias Config msg =
     { content : List (Html msg)
     , emphasized : Bool
+    , label : Maybe String
     }
 
 

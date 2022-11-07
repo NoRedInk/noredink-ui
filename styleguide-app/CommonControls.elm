@@ -5,6 +5,7 @@ module CommonControls exposing
     , uiIcon, rotatedUiIcon
     , customIcon
     , specificColor
+    , string
     , content, exampleHtml
     , httpError, badBodyString
     , romeoAndJulietQuotation
@@ -24,6 +25,7 @@ module CommonControls exposing
 
 ### Content
 
+@docs string
 @docs content, exampleHtml
 @docs httpError, badBodyString
 @docs romeoAndJulietQuotation
@@ -102,6 +104,17 @@ badBodyString =
     """
 
 
+string : ( String, String -> v ) -> String -> Control ( String, v )
+string ( fName, f ) startingString =
+    Control.map
+        (\str ->
+            ( fName ++ " " ++ Code.string str
+            , f str
+            )
+        )
+        (Control.string startingString)
+
+
 content :
     { moduleName : String
     , plaintext : String -> attribute
@@ -113,13 +126,7 @@ content :
 content ({ moduleName } as config) =
     Control.choice
         ([ ( "plain text (short)"
-           , Control.string quickBrownFox
-                |> Control.map
-                    (\str ->
-                        ( moduleName ++ ".plaintext \"" ++ str ++ "\""
-                        , config.plaintext str
-                        )
-                    )
+           , string ( Code.fromModule moduleName "plaintext", config.plaintext ) quickBrownFox
            )
          , ( "plain text (long, no newlines)"
            , Control.string longPangrams

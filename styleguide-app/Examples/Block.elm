@@ -8,6 +8,7 @@ module Examples.Block exposing (Msg, State, example)
 
 import Category exposing (Category(..))
 import Code
+import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -63,7 +64,7 @@ example =
                     \_ ->
                         [ { sectionName = "view"
                           , code =
-                                Code.fromModule moduleName "view"
+                                Code.fromModule moduleName "view "
                                     ++ Code.list (List.map Tuple.first attributes)
                           }
                         ]
@@ -108,6 +109,19 @@ example =
                         , Block.view [ Block.plaintext " is Thor’s favorite book." ]
                         ]
                   }
+                , { name = Code.fromModule moduleName "emphasize"
+                  , usage = ""
+                  , description = "Uses the Highlighter component to mark content as emphasized"
+                  , example =
+                        [ Block.view [ Block.plaintext "Taylor Swift bought " ]
+                        , Block.view [ Block.plaintext "new", Block.label "age" ]
+                        , Block.view [ Block.plaintext " " ]
+                        , Block.view [ Block.plaintext "bowling", Block.label "purpose" ]
+                        , Block.view [ Block.plaintext " " ]
+                        , Block.view [ Block.plaintext "yellow", Block.label "color" ]
+                        , Block.view [ Block.plaintext " shoes." ]
+                        ]
+                  }
                 ]
             ]
     }
@@ -134,15 +148,12 @@ initControl : Control Settings
 initControl =
     ControlExtra.list
         |> ControlExtra.listItem "plaintext"
-            (Control.string "Bananas"
-                |> Control.map
-                    (\str ->
-                        ( moduleName ++ ".plaintext \"" ++ str ++ "\""
-                        , Block.plaintext str
-                        )
-                    )
+            (CommonControls.string ( Code.fromModule moduleName "plaintext", Block.plaintext )
+                "Bananas"
             )
         |> ControlExtra.optionalBoolListItem "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )
+        |> ControlExtra.optionalListItem "label"
+            (CommonControls.string ( Code.fromModule moduleName "label", Block.label ) "Fruit")
 
 
 {-| -}
