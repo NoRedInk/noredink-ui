@@ -594,9 +594,8 @@ static config =
         viewStaticHighlightable : Int -> Highlightable marker -> Html msg
         viewStaticHighlightable =
             viewHighlightableSegment
-                { isInteractive = False
+                { interactiveHighlighterId = Nothing
                 , focusIndex = Nothing
-                , highlighterId = config.id
                 , eventListeners = []
                 , maybeTool = Nothing
                 }
@@ -617,9 +616,8 @@ staticWithTags config =
         viewStaticHighlightableWithTags : Int -> Highlightable marker -> Html msg
         viewStaticHighlightableWithTags =
             viewHighlightableSegment
-                { isInteractive = False
+                { interactiveHighlighterId = Nothing
                 , focusIndex = Nothing
-                , highlighterId = config.id
                 , eventListeners = []
                 , maybeTool = Nothing
                 }
@@ -766,9 +764,8 @@ viewHighlightable highlighterId marker focusIndex index highlightable =
     case highlightable.type_ of
         Highlightable.Interactive ->
             viewHighlightableSegment
-                { isInteractive = True
+                { interactiveHighlighterId = Just highlighterId
                 , focusIndex = focusIndex
-                , highlighterId = highlighterId
                 , eventListeners =
                     [ onPreventDefault "mouseover" (Pointer <| Over highlightable.groupIndex)
                     , onPreventDefault "mouseleave" (Pointer <| Out highlightable.groupIndex)
@@ -796,9 +793,8 @@ viewHighlightable highlighterId marker focusIndex index highlightable =
 
         Highlightable.Static ->
             viewHighlightableSegment
-                { isInteractive = False
+                { interactiveHighlighterId = Nothing
                 , focusIndex = focusIndex
-                , highlighterId = highlighterId
                 , eventListeners =
                     -- Static highlightables need listeners as well.
                     -- because otherwise we miss mouseup events
@@ -814,16 +810,15 @@ viewHighlightable highlighterId marker focusIndex index highlightable =
 
 
 viewHighlightableSegment :
-    { isInteractive : Bool
+    { interactiveHighlighterId : Maybe String
     , focusIndex : Maybe Int
-    , highlighterId : String
     , eventListeners : List (Attribute msg)
     , maybeTool : Maybe (Tool.Tool marker)
     }
     -> Int
     -> Highlightable marker
     -> Html msg
-viewHighlightableSegment { isInteractive, focusIndex, highlighterId, eventListeners, maybeTool } index highlightable =
+viewHighlightableSegment { interactiveHighlighterId, focusIndex, eventListeners, maybeTool } index highlightable =
     let
         whitespaceClass txt =
             -- we need to override whitespace styles in order to support
@@ -845,17 +840,21 @@ viewHighlightableSegment { isInteractive, focusIndex, highlighterId, eventListen
 
             else
                 []
+
+        isInteractive =
+            interactiveHighlighterId /= Nothing
     in
     span
         (eventListeners
             ++ customToHtmlAttributes highlightable.customAttributes
             ++ whitespaceClass highlightable.text
             ++ [ attribute "data-highlighter-item-index" <| String.fromInt highlightable.groupIndex
-               , if isInteractive then
-                    Html.Styled.Attributes.id (highlightableId highlighterId highlightable.groupIndex)
+               , case interactiveHighlighterId of
+                    Just highlighterId ->
+                        Html.Styled.Attributes.id (highlightableId highlighterId highlightable.groupIndex)
 
-                 else
-                    AttributesExtra.none
+                    Nothing ->
+                        AttributesExtra.none
                , css
                     (Css.focus [ Css.zIndex (Css.int 1), Css.position Css.relative ]
                         :: highlightableStyle maybeTool highlightable isInteractive
