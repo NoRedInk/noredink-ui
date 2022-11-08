@@ -232,10 +232,10 @@ disclosure exitFocusManager =
 
 For more information, please read [Dialog pattern](https://w3c.github.io/aria-practices/examples/dialog-modal/dialog.html/).
 
-You will need to pass in the last focusable element in the dialog content in order for:
+You will need to pass in the first and last focusable element in the dialog content in order for:
 
   - any focusable elements in the dialog content to be keyboard accessible
-  - the dialog to close appropriately when the user tabs past all of the dialog content
+  - the tab to wrap around appropriately when the user tabs past all of the dialog content
 
 -}
 dialog : { firstId : String, lastId : String } -> Attribute msg
