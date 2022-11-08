@@ -279,7 +279,9 @@ view ellieLinkConfig state =
                                 [ TextInput.view "Username"
                                     [ TextInput.id "disclosure__username__input"
                                     ]
-                                , TextInput.view "Password" []
+                                , TextInput.view "Password"
+                                    [ TextInput.id "disclosure__password__input"
+                                    ]
                                 , Button.button "Log in"
                                     [ Button.primary
                                     , Button.id "disclosure__login__button"
@@ -308,7 +310,9 @@ view ellieLinkConfig state =
                                 [ TextInput.view "Username"
                                     [ TextInput.id "dialog__username__input"
                                     ]
-                                , TextInput.view "Password" []
+                                , TextInput.view "Password"
+                                    [ TextInput.id "dialog__password__input"
+                                    ]
                                 , Button.button "Log in"
                                     [ Button.primary
                                     , Button.id "dialog__login__button"
