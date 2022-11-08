@@ -619,10 +619,18 @@ viewCustom config =
                                 { preventDefault = True
                                 , stopPropagation = True
                                 , message =
-                                    config.focusAndToggle
-                                        { isOpen = not config.isOpen
-                                        , focus = Nothing
-                                        }
+                                    case ( config.isOpen, config.purpose ) of
+                                        ( False, Dialog { firstId } ) ->
+                                            config.focusAndToggle
+                                                { isOpen = True
+                                                , focus = Just firstId
+                                                }
+
+                                        _ ->
+                                            config.focusAndToggle
+                                                { isOpen = not config.isOpen
+                                                , focus = Nothing
+                                                }
                                 }
                             )
                     , if not config.isDisabled && config.opensOnHover then
