@@ -1,6 +1,6 @@
 module Nri.Ui.Highlighter.V1 exposing
     ( Model, Msg(..), PointerMsg(..)
-    , init, update, view, static, staticWithTags
+    , init, update, view, static, staticWithTags, staticSegments
     , Intent(..), emptyIntent, hasChanged, HasChanged(..)
     , removeHighlights
     , asFragmentTuples, usedMarkers, text
@@ -33,7 +33,7 @@ Currently, highlighter is used in the following places:
 
 # Init/View/Update
 
-@docs init, update, view, static, staticWithTags
+@docs init, update, view, static, staticWithTags, staticSegments
 
 
 ## Intents
@@ -590,16 +590,6 @@ view config =
 {-| -}
 static : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
 static config =
-    let
-        viewStaticHighlightable : Int -> Highlightable marker -> Html msg
-        viewStaticHighlightable =
-            viewHighlightableSegment
-                { interactiveHighlighterId = Nothing
-                , focusIndex = Nothing
-                , eventListeners = []
-                , maybeTool = Nothing
-                }
-    in
     view_
         { showTagsInline = False
         , isInteractive = False
@@ -607,6 +597,28 @@ static config =
         }
         viewStaticHighlightable
         config
+
+
+{-| Use for views where the highlightables should be rendered in a paragraph tag with other content, e.g., for Blocks.
+-}
+staticSegments : List (Highlightable marker) -> List (Html msg)
+staticSegments =
+    viewSegments
+        { showTagsInline = False
+        , isInteractive = False
+        , maybeTool = Nothing
+        }
+        viewStaticHighlightable
+
+
+viewStaticHighlightable : Int -> Highlightable marker -> Html msg
+viewStaticHighlightable =
+    viewHighlightableSegment
+        { interactiveHighlighterId = Nothing
+        , focusIndex = Nothing
+        , eventListeners = []
+        , maybeTool = Nothing
+        }
 
 
 {-| -}
@@ -640,10 +652,22 @@ view_ :
     -> { config | id : String, highlightables : List (Highlightable marker) }
     -> Html msg
 view_ groupConfig viewSegment { id, highlightables } =
+    p [ Html.Styled.Attributes.id id, class "highlighter-container" ]
+        (viewSegments groupConfig viewSegment highlightables)
+
+
+viewSegments :
+    { showTagsInline : Bool
+    , isInteractive : Bool
+    , maybeTool : Maybe (Tool.Tool marker)
+    }
+    -> (Int -> Highlightable marker -> Html msg)
+    -> List (Highlightable marker)
+    -> List (Html msg)
+viewSegments groupConfig viewSegment highlightables =
     highlightables
         |> Grouping.buildGroups
         |> List.concatMap (groupContainer groupConfig viewSegment)
-        |> p [ Html.Styled.Attributes.id id, class "highlighter-container" ]
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
