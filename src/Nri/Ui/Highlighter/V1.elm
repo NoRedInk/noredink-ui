@@ -57,12 +57,10 @@ TODO: Add documentation about how to wire in event listeners and subscriptions s
 
 -}
 
-import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Style exposing (invisibleStyle)
 import Browser.Dom as Dom
 import Css
-import Css.Global
 import Highlighter.Grouping as Grouping
 import Highlighter.Internal as Internal
 import Highlighter.Style as Style
@@ -71,12 +69,10 @@ import Html.Styled.Attributes exposing (attribute, class, css)
 import Html.Styled.Events as Events
 import Json.Decode
 import List.Extra
-import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
-import Nri.Ui.Html.V3 exposing (viewJust)
+import Nri.Ui.Mark.V1 as Mark
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Sort exposing (Sorter)
 import Sort.Set
@@ -684,35 +680,19 @@ groupContainer :
     -> List (Highlightable marker)
     -> List (Html msg)
 groupContainer config viewSegment highlightables =
-    case highlightables of
-        [] ->
-            []
-
-        first :: _ ->
-            case first.marked of
-                Just markedWith ->
-                    [ Html.mark
-                        [ markedWith.name
-                            |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
-                            |> Maybe.withDefault AttributesExtra.none
-                        , css
-                            [ Css.backgroundColor Css.transparent
-                            , Css.Global.children
-                                [ Css.Global.selector ":last-child"
-                                    (Css.after
-                                        [ Css.property "content" ("\" [end " ++ (Maybe.map (\name -> name) markedWith.name |> Maybe.withDefault "highlight") ++ "] \"")
-                                        , invisibleStyle
-                                        ]
-                                        :: markedWith.endGroupClass
-                                    )
-                                ]
-                            ]
-                        ]
-                        (viewInlineTag config first :: List.indexedMap viewSegment highlightables)
-                    ]
-
-                Nothing ->
-                    List.indexedMap viewSegment highlightables
+    Mark.view
+        { showTagsInline = config.showTagsInline
+        , inlineTagStyles =
+            \highlightable ->
+                (Maybe.map .startGroupClass highlightable.marked
+                    |> Maybe.withDefault []
+                )
+                    ++ highlightableStyle config.maybeTool highlightable config.isInteractive
+        , isInteractive = config.isInteractive
+        , maybeTool = config.maybeTool
+        }
+        viewSegment
+        highlightables
 
 
 tagBeforeContent : { mark | name : Maybe String } -> Css.Style
@@ -731,59 +711,6 @@ tagBeforeContent markedWith =
                 [ Css.property "content" "\" [start highlight] \""
                 , invisibleStyle
                 ]
-
-
-viewInlineTag :
-    { showTagsInline : Bool
-    , isInteractive : Bool
-    , maybeTool : Maybe (Tool.Tool marker)
-    }
-    -> Highlightable marker
-    -> Html msg
-viewInlineTag { showTagsInline, isInteractive, maybeTool } highlightable =
-    span
-        [ css
-            ((Maybe.map .startGroupClass highlightable.marked
-                |> Maybe.withDefault []
-             )
-                ++ highlightableStyle maybeTool highlightable isInteractive
-            )
-        , class "highlighter-inline-tag"
-        , case highlightable.marked of
-            Just markedWith ->
-                class "highlighter-inline-tag-highlighted"
-
-            _ ->
-                AttributesExtra.none
-        ]
-        [ viewJust
-            (\name ->
-                span
-                    [ css
-                        [ Fonts.baseFont
-                        , Css.backgroundColor Colors.white
-                        , Css.color Colors.navy
-                        , Css.padding2 (Css.px 2) (Css.px 4)
-                        , Css.borderRadius (Css.px 3)
-                        , Css.margin2 Css.zero (Css.px 5)
-                        , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 1) Css.zero Colors.gray75
-                        , Css.display Css.none
-                        , if showTagsInline then
-                            Css.batch [ Css.display Css.inline |> Css.important, MediaQuery.highContrastMode [ Css.property "forced-color-adjust" "none", Css.property "color" "initial" |> Css.important ] ]
-
-                          else
-                            Css.batch
-                                [ MediaQuery.highContrastMode [ Css.property "forced-color-adjust" "none", Css.display Css.inline |> Css.important, Css.property "color" "initial" |> Css.important ]
-                                ]
-                        ]
-                    , -- we use the :before element to convey details about the start of the
-                      -- highlighter to screenreaders, so the visual label is redundant
-                      Aria.hidden True
-                    ]
-                    [ Html.text name ]
-            )
-            (Maybe.andThen .name highlightable.marked)
-        ]
 
 
 viewHighlightable : String -> Tool.Tool marker -> Maybe Int -> Int -> Highlightable marker -> Html (Msg marker)
