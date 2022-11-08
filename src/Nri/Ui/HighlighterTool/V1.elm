@@ -1,12 +1,12 @@
 module Nri.Ui.HighlighterTool.V1 exposing
     ( Tool(..), EraserModel, MarkerModel
-    , buildMarker, buildStaticMarker
+    , buildMarker
     )
 
 {-|
 
 @docs Tool, EraserModel, MarkerModel
-@docs buildMarker, buildStaticMarker
+@docs buildMarker
 
 -}
 
@@ -65,49 +65,6 @@ buildMarker { highlightColor, hoverColor, hoverHighlightColor, kind, name } =
     , highlightClass = highlightStyles highlightColor
     , hoverHighlightClass = highlightStyles hoverHighlightColor
     , kind = kind
-    , name = name
-    }
-
-
-{-| -}
-buildStaticMarker :
-    { borderColor : Css.Color
-    , borderStyle : Css.BorderStyle compatible
-    , borderWidth : Css.Px
-    , highlightColor : Css.Color
-    , name : Maybe String
-    }
-    -> MarkerModel ()
-buildStaticMarker { highlightColor, borderWidth, borderStyle, borderColor, name } =
-    let
-        borderStyles =
-            [ Css.borderStyle borderStyle
-            , Css.borderColor borderColor
-            ]
-
-        styles =
-            [ Css.batch borderStyles
-            , Css.backgroundColor highlightColor
-            , Css.paddingTop (Css.px 4)
-            , Css.paddingBottom (Css.px 3)
-            , MediaQuery.highContrastMode [ Css.property "background-color" "Mark" ]
-            ]
-    in
-    { hoverClass = styles
-    , hintClass = styles
-    , highlightClass = styles
-    , hoverHighlightClass = styles
-    , startGroupClass =
-        [ Css.batch startGroupStyles
-        , Css.batch borderStyles
-        , Css.borderWidth4 borderWidth Css.zero borderWidth borderWidth
-        ]
-    , endGroupClass =
-        [ Css.batch endGroupStyles
-        , Css.batch borderStyles
-        , Css.borderWidth4 borderWidth borderWidth borderWidth Css.zero
-        ]
-    , kind = ()
     , name = name
     }
 

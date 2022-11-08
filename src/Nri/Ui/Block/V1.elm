@@ -31,10 +31,12 @@ module Nri.Ui.Block.V1 exposing
 import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Style exposing (invisibleStyle)
 import Css exposing (Color)
+import Highlighter.Style
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.HighlighterTool.V1 as HighlighterTool
-import Nri.Ui.Mark.V1 as Mark
+import Nri.Ui.Mark.V1 as Mark exposing (Mark)
+import Nri.Ui.MediaQuery.V1 as MediaQuery
 
 
 {-|
@@ -136,7 +138,7 @@ type Theme
     | Brown
 
 
-themeToPalette : Theme -> { backgroundColor : Color, borderColor : Color }
+themeToPalette : Theme -> Palette
 themeToPalette theme =
     case theme of
         Emphasis ->
@@ -162,6 +164,43 @@ themeToPalette theme =
 
         Brown ->
             { backgroundColor = Colors.highlightBrown, borderColor = Colors.highlightBrownDark }
+
+
+type alias Palette =
+    { backgroundColor : Color, borderColor : Color }
+
+
+paletteToMark : Maybe String -> Palette -> Mark
+paletteToMark label_ { backgroundColor, borderColor } =
+    let
+        borderWidth =
+            Css.px 1
+
+        borderStyles =
+            [ Css.borderStyle Css.dashed
+            , Css.borderColor borderColor
+            ]
+    in
+    { name = label_
+    , startStyles =
+        [ Css.paddingLeft (Css.px 4)
+        , Css.borderTopLeftRadius (Css.px 4)
+        , Css.borderBottomLeftRadius (Css.px 4)
+        , Css.batch borderStyles
+        , Css.borderWidth4 borderWidth Css.zero borderWidth borderWidth
+        ]
+    , styles =
+        [ Css.backgroundColor backgroundColor
+        , MediaQuery.highContrastMode [ Css.property "background-color" "Mark" ]
+        ]
+    , endStyles =
+        [ Css.paddingRight (Css.px 4)
+        , Css.borderTopRightRadius (Css.px 4)
+        , Css.borderBottomRightRadius (Css.px 4)
+        , Css.batch borderStyles
+        , Css.borderWidth4 borderWidth borderWidth borderWidth Css.zero
+        ]
+    }
 
 
 {-| -}
@@ -238,41 +277,16 @@ render config =
 
         _ ->
             let
-                maybePalette =
-                    Maybe.map themeToPalette config.theme
-
-                marker =
-                    Maybe.map
-                        (\palette ->
-                            HighlighterTool.buildStaticMarker
-                                { highlightColor = palette.backgroundColor
-                                , borderWidth = Css.px 1
-                                , borderStyle = Css.dashed
-                                , borderColor = palette.borderColor
-                                , name = config.label
-                                }
-                        )
-                        maybePalette
+                maybeMark =
+                    Maybe.map (themeToPalette >> paletteToMark config.label) config.theme
             in
             Mark.view
-                (\_ { content_ } ->
-                    span
-                        [ css
-                            (case marker of
-                                Just markedWith ->
-                                    markedWith.highlightClass
-
-                                Nothing ->
-                                    []
-                            )
-                        ]
+                { showTagsInline = False }
+                (\content_ markStyles ->
+                    span [ css markStyles ]
                         (List.map renderContent content_)
                 )
-                [ { name = config.label
-                  , content_ = config.content
-                  , marked = marker
-                  }
-                ]
+                [ ( config.content, maybeMark ) ]
                 |> span []
 
 

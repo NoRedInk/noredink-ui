@@ -1,8 +1,8 @@
-module Nri.Ui.Mark.V1 exposing (view, viewWithInlineTags)
+module Nri.Ui.Mark.V1 exposing (view, Mark)
 
 {-|
 
-@docs view, viewWithInlineTags
+@docs view, Mark
 
 -}
 
@@ -19,51 +19,38 @@ import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 
 
-type alias Marker marker =
-    { marker
-        | name : Maybe String
-        , endGroupClass : List Css.Style
+{-| -}
+type alias Mark =
+    { name : Maybe String
+    , startStyles : List Css.Style
+    , styles : List Css.Style
+    , endStyles : List Css.Style
     }
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
+
+Show the label for the mark, if present, in-line with the emphasized content when `showTagsInline` is True.
+
 -}
 view :
-    (Int -> { content | marked : Maybe (Marker marker) } -> Html msg)
-    -> List { content | marked : Maybe (Marker marker) }
+    { showTagsInline : Bool }
+    -> (content -> List Style -> Html msg)
+    -> List ( content, Maybe Mark )
     -> List (Html msg)
-view =
-    view_ { showTagsInline = False, inlineTagStyles = \_ -> [] }
-
-
-{-| When elements are marked, wrap them in a single `mark` html node.
-
-Show the label for the mark, if present, in-line with the emphasized content.
-
--}
-viewWithInlineTags :
-    ({ content | marked : Maybe (Marker marker) } -> List Style)
-    -> (Int -> { content | marked : Maybe (Marker marker) } -> Html msg)
-    -> List { content | marked : Maybe (Marker marker) }
-    -> List (Html msg)
-viewWithInlineTags inlineTagStyles =
-    view_ { showTagsInline = True, inlineTagStyles = inlineTagStyles }
-
-
-view_ :
-    { showTagsInline : Bool
-    , inlineTagStyles : { content | marked : Maybe (Marker marker) } -> List Style
-    }
-    -> (Int -> { content | marked : Maybe (Marker marker) } -> Html msg)
-    -> List { content | marked : Maybe (Marker marker) }
-    -> List (Html msg)
-view_ config viewSegment highlightables =
+view config viewSegment highlightables =
     case highlightables of
         [] ->
             []
 
-        first :: _ ->
-            case first.marked of
+        ( _, marked ) :: _ ->
+            let
+                segments =
+                    List.indexedMap
+                        (\index ( content, mark ) -> viewSegment content (markStyles index mark))
+                        highlightables
+            in
+            case marked of
                 Just markedWith ->
                     [ Html.mark
                         [ markedWith.name
@@ -77,34 +64,23 @@ view_ config viewSegment highlightables =
                                         [ Css.property "content" ("\" [end " ++ (Maybe.map (\name -> name) markedWith.name |> Maybe.withDefault "highlight") ++ "] \"")
                                         , invisibleStyle
                                         ]
-                                        :: markedWith.endGroupClass
+                                        :: markedWith.endStyles
                                     )
                                 ]
                             ]
                         ]
-                        (viewInlineTag config first :: List.indexedMap viewSegment highlightables)
+                        (viewStartHighlight config markedWith :: segments)
                     ]
 
                 Nothing ->
-                    List.indexedMap viewSegment highlightables
+                    segments
 
 
-viewInlineTag :
-    { showTagsInline : Bool
-    , inlineTagStyles : { content | marked : Maybe (Marker marker) } -> List Css.Style
-    }
-    -> { content | marked : Maybe (Marker marker) }
-    -> Html msg
-viewInlineTag { showTagsInline, inlineTagStyles } highlightable =
+viewStartHighlight : { showTagsInline : Bool } -> Mark -> Html msg
+viewStartHighlight { showTagsInline } marked =
     span
-        [ css (inlineTagStyles highlightable)
-        , class "highlighter-inline-tag"
-        , case highlightable.marked of
-            Just markedWith ->
-                class "highlighter-inline-tag-highlighted"
-
-            _ ->
-                AttributesExtra.none
+        [ css (marked.startStyles ++ marked.styles)
+        , class "highlighter-inline-tag highlighter-inline-tag-highlighted"
         ]
         [ viewJust
             (\name ->
@@ -132,5 +108,36 @@ viewInlineTag { showTagsInline, inlineTagStyles } highlightable =
                     ]
                     [ Html.text name ]
             )
-            (Maybe.andThen .name highlightable.marked)
+            marked.name
         ]
+
+
+markStyles : Int -> Maybe Mark -> List Css.Style
+markStyles index marked =
+    case ( index == 0, marked ) of
+        ( True, Just markedWith ) ->
+            -- if we're on the first highlighted element, we add
+            -- a `before` content saying what kind of highlight we're starting
+            tagBeforeContent markedWith :: markedWith.styles
+
+        _ ->
+            Maybe.map .styles marked
+                |> Maybe.withDefault []
+
+
+tagBeforeContent : Mark -> Css.Style
+tagBeforeContent markedWith =
+    case markedWith.name of
+        Just name ->
+            Css.before
+                [ MediaQuery.notHighContrastMode
+                    [ Css.property "content" ("\" [start " ++ name ++ " highlight] \"")
+                    , invisibleStyle
+                    ]
+                ]
+
+        Nothing ->
+            Css.before
+                [ Css.property "content" "\" [start highlight] \""
+                , invisibleStyle
+                ]
