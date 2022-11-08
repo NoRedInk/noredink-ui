@@ -17,16 +17,21 @@ import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 
 
+type alias Marker marker =
+    { marker
+        | name : Maybe String
+        , endGroupClass : List Css.Style
+    }
+
+
 {-| When elements are marked, wrap them in a single `mark` html node.
 -}
 view :
     { showTagsInline : Bool
-    , inlineTagStyles : Highlightable marker -> List Style
-    , isInteractive : Bool
-    , maybeTool : Maybe (Tool.Tool marker)
+    , inlineTagStyles : { content | marked : Maybe (Marker marker) } -> List Style
     }
-    -> (Int -> Highlightable marker -> Html msg)
-    -> List (Highlightable marker)
+    -> (Int -> { content | marked : Maybe (Marker marker) } -> Html msg)
+    -> List { content | marked : Maybe (Marker marker) }
     -> List (Html msg)
 view config viewSegment highlightables =
     case highlightables of
@@ -62,13 +67,11 @@ view config viewSegment highlightables =
 
 viewInlineTag :
     { showTagsInline : Bool
-    , isInteractive : Bool
-    , maybeTool : Maybe (Tool.Tool marker)
-    , inlineTagStyles : Highlightable marker -> List Css.Style
+    , inlineTagStyles : { content | marked : Maybe (Marker marker) } -> List Css.Style
     }
-    -> Highlightable marker
+    -> { content | marked : Maybe (Marker marker) }
     -> Html msg
-viewInlineTag { showTagsInline, isInteractive, maybeTool, inlineTagStyles } highlightable =
+viewInlineTag { showTagsInline, inlineTagStyles } highlightable =
     span
         [ css (inlineTagStyles highlightable)
         , class "highlighter-inline-tag"
