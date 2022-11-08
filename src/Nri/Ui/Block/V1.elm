@@ -101,7 +101,7 @@ renderContent content_ =
             text str
 
         Blank ->
-            text "[blank -- 1 level down]"
+            viewBlank
 
 
 {-| You will only need to use this helper if you're also using `content` to construct a more complex Block. Maybe you want `plaintext` instead?
@@ -236,18 +236,7 @@ render config =
     in
     case config.content of
         [] ->
-            -- Blank
-            span
-                [ css
-                    [ Css.border3 (Css.px 2) Css.dashed Colors.navy
-                    , Css.width (Css.px 150)
-                    , Css.display Css.inlineBlock
-                    , Css.padding (Css.px 10)
-                    , Css.borderRadius (Css.px 4)
-                    , Css.verticalAlign Css.middle
-                    ]
-                ]
-                [ span [ css [ invisibleStyle ] ] [ text "blank" ] ]
+            viewBlank
 
         _ ->
             span
@@ -264,3 +253,19 @@ render config =
                     |> css
                 ]
                 (List.map renderContent config.content)
+
+
+viewBlank : Html msg
+viewBlank =
+    span
+        [ css
+            [ Css.border3 (Css.px 2) Css.dashed Colors.navy
+            , Css.backgroundColor Colors.white
+            , Css.width (Css.px 150)
+            , Css.display Css.inlineBlock
+            , Css.padding (Css.px 10)
+            , Css.borderRadius (Css.px 4)
+            , Css.verticalAlign Css.middle
+            ]
+        ]
+        [ span [ css [ invisibleStyle ] ] [ text "blank" ] ]
