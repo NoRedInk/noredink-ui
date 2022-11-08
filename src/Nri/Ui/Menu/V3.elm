@@ -51,7 +51,6 @@ import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
 import Css exposing (..)
 import Css.Global exposing (descendants)
-import EventExtras exposing (onKeyDownPreventDefault)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (class, classList, css)
 import Html.Styled.Events as Events
@@ -499,52 +498,50 @@ viewCustom config =
                             ]
 
                     Disclosure { lastId } ->
-                        Key.onKeyDown
+                        WhenFocusLeaves.onKeyDown
                             [ Key.escape
                                 (config.focusAndToggle
                                     { isOpen = False
                                     , focus = Just config.buttonId
                                     }
                                 )
-                            , WhenFocusLeaves.toDecoder
-                                { firstId = config.buttonId
-                                , lastId = lastId
-                                , tabBackAction =
-                                    config.focusAndToggle
-                                        { isOpen = False
-                                        , focus = Nothing
-                                        }
-                                , tabForwardAction =
-                                    config.focusAndToggle
-                                        { isOpen = False
-                                        , focus = Nothing
-                                        }
-                                }
                             ]
+                            { firstId = config.buttonId
+                            , lastId = lastId
+                            , tabBackAction =
+                                config.focusAndToggle
+                                    { isOpen = False
+                                    , focus = Nothing
+                                    }
+                            , tabForwardAction =
+                                config.focusAndToggle
+                                    { isOpen = False
+                                    , focus = Nothing
+                                    }
+                            }
 
                     Dialog { firstId, lastId } ->
-                        Key.onKeyDownPreventDefault
+                        WhenFocusLeaves.onKeyDownPreventDefault
                             [ Key.escape
                                 (config.focusAndToggle
                                     { isOpen = False
                                     , focus = Just config.buttonId
                                     }
                                 )
-                            , WhenFocusLeaves.toDecoder
-                                { firstId = firstId
-                                , lastId = lastId
-                                , tabBackAction =
-                                    config.focusAndToggle
-                                        { isOpen = True
-                                        , focus = Just lastId
-                                        }
-                                , tabForwardAction =
-                                    config.focusAndToggle
-                                        { isOpen = True
-                                        , focus = Just firstId
-                                        }
-                                }
                             ]
+                            { firstId = firstId
+                            , lastId = lastId
+                            , tabBackAction =
+                                config.focusAndToggle
+                                    { isOpen = True
+                                    , focus = Just lastId
+                                    }
+                            , tabForwardAction =
+                                config.focusAndToggle
+                                    { isOpen = True
+                                    , focus = Just firstId
+                                    }
+                            }
                )
             :: styleContainer
         )
@@ -787,7 +784,7 @@ viewEntry config focusAndToggle { upId, downId, entry_ } =
                     [ Role.menuItem
                     , Attributes.id id
                     , Key.tabbable False
-                    , onKeyDownPreventDefault
+                    , Key.onKeyDownPreventDefault
                         [ Key.up
                             (focusAndToggle
                                 { isOpen = True

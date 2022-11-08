@@ -42,6 +42,10 @@ init =
                     }
                 )
             |> ControlExtra.optionalListItem "role" controlRole
+            |> ControlExtra.optionalListItem "codeDetails"
+                (Control.map (\str -> ( "Message.codeDetails " ++ Code.stringMultiline str, Message.codeDetails str ))
+                    (Control.stringTextarea CommonControls.badBodyString)
+                )
             |> ControlExtra.optionalBoolListItem "dismissable"
                 ( "Message.onDismiss Dismiss", Message.onDismiss Dismiss )
             |> CommonControls.iconNotCheckedByDefault "Message" Message.icon

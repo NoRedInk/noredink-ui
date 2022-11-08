@@ -1,8 +1,8 @@
-module Nri.Ui.HighlighterToolbar.V1 exposing (view, static)
+module Nri.Ui.HighlighterToolbar.V1 exposing (view)
 
 {-| Bar with markers for choosing how text will be highlighted in a highlighter.
 
-@docs view, static
+@docs view
 
 -}
 
@@ -17,7 +17,6 @@ import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
 import Nri.Ui.Html.V3 exposing (viewIf)
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
-import Nri.Ui.Util exposing (dashify)
 
 
 toolbar : List (Html msg) -> Html msg
@@ -48,7 +47,7 @@ view :
     , getColor : tag -> { extras | colorSolid : Color, colorLight : Color }
     , getName : tag -> String
     }
-    -> { extras | currentTool : Maybe tag, tags : List tag }
+    -> { model | currentTool : Maybe tag, tags : List tag }
     -> Html msg
 view config model =
     let
@@ -64,27 +63,6 @@ view config model =
         (List.map viewTagWithConfig model.tags
             ++ [ viewEraser config.onSetEraser eraserSelected ]
         )
-
-
-{-| Render only tags and not eraser without triggering an action
--}
-static :
-    (a -> String)
-    -> (a -> { extras | colorSolid : Color, colorLight : Color })
-    -> List a
-    -> Html msg
-static getName getColor tags =
-    toolbar (List.map (staticTag getName getColor) tags)
-
-
-staticTag :
-    (a -> String)
-    -> (a -> { extras | colorSolid : Color, colorLight : Color })
-    -> a
-    -> Html msg
-staticTag getName getColor tag =
-    toolContainer ("static-tag-" ++ dashify (getName tag))
-        (toolContent (getName tag) (getColor tag) (Just tag))
 
 
 viewTag :

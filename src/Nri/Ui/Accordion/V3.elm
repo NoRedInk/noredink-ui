@@ -65,9 +65,8 @@ import Accessibility.Styled.Key as Key
 import Css exposing (..)
 import Css.Global
 import Html.Styled.Attributes as Attributes
-import Html.Styled.Events as Events exposing (onClick)
+import Html.Styled.Events exposing (onClick)
 import Html.Styled.Keyed
-import Json.Decode as Decode
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
@@ -343,21 +342,13 @@ viewEntry focus arrows ({ headerId, headerLevel, caret, headerContent, entryClas
                 , config.toggle
                     |> Maybe.map (\toggle -> onClick (toggle (not isExpanded)))
                     |> Maybe.withDefault AttributesExtra.none
-                , Events.custom "keydown"
+                , Key.onKeyDownPreventDefault
                     ([ Maybe.map (\id -> Key.up (focus id)) arrows.up
                      , Maybe.map (\id -> Key.down (focus id)) arrows.down
                      , Maybe.map (\id -> Key.right (focus id)) arrows.right
                      , Maybe.map (\id -> Key.left (focus id)) arrows.left
                      ]
                         |> List.filterMap identity
-                        |> Decode.oneOf
-                        |> Decode.map
-                            (\event ->
-                                { message = event
-                                , stopPropagation = False
-                                , preventDefault = True
-                                }
-                            )
                     )
                 ]
                 [ caret isExpanded

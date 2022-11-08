@@ -68,7 +68,7 @@ import Highlighter.Internal as Internal
 import Highlighter.Style as Style
 import Html.Styled as Html exposing (Attribute, Html, p, span)
 import Html.Styled.Attributes exposing (attribute, class, css)
-import Html.Styled.Events
+import Html.Styled.Events as Events
 import Json.Decode
 import List.Extra
 import Nri.Ui.Colors.V1 as Colors
@@ -761,19 +761,6 @@ viewInlineTag { showTagsInline, isInteractive, maybeTool } highlightable =
         ]
 
 
-shift : msg -> Json.Decode.Decoder msg
-shift msg =
-    Json.Decode.andThen
-        (\keyCode ->
-            if keyCode == 16 then
-                Json.Decode.succeed msg
-
-            else
-                Json.Decode.fail (String.fromInt keyCode)
-        )
-        Html.Styled.Events.keyCode
-
-
 viewHighlightable : String -> Tool.Tool marker -> Maybe Int -> Int -> Highlightable marker -> Html (Msg marker)
 viewHighlightable highlighterId marker focusIndex index highlightable =
     case highlightable.type_ of
@@ -783,11 +770,11 @@ viewHighlightable highlighterId marker focusIndex index highlightable =
                 , focusIndex = focusIndex
                 , highlighterId = highlighterId
                 , eventListeners =
-                    [ on "mouseover" (Pointer <| Over highlightable.groupIndex)
-                    , on "mouseleave" (Pointer <| Out highlightable.groupIndex)
-                    , on "mouseup" (Pointer <| Up Nothing)
-                    , on "mousedown" (Pointer <| Down highlightable.groupIndex)
-                    , on "touchstart" (Pointer <| Down highlightable.groupIndex)
+                    [ onPreventDefault "mouseover" (Pointer <| Over highlightable.groupIndex)
+                    , onPreventDefault "mouseleave" (Pointer <| Out highlightable.groupIndex)
+                    , onPreventDefault "mouseup" (Pointer <| Up Nothing)
+                    , onPreventDefault "mousedown" (Pointer <| Down highlightable.groupIndex)
+                    , onPreventDefault "touchstart" (Pointer <| Down highlightable.groupIndex)
                     , attribute "data-interactive" ""
                     , Key.onKeyDownPreventDefault
                         [ Key.space (Keyboard <| ToggleHighlight highlightable.groupIndex)
@@ -799,7 +786,7 @@ viewHighlightable highlighterId marker focusIndex index highlightable =
                     , Key.onKeyUpPreventDefault
                         [ Key.shiftRight (Keyboard <| SelectionApplyTool highlightable.groupIndex)
                         , Key.shiftLeft (Keyboard <| SelectionApplyTool highlightable.groupIndex)
-                        , shift (Keyboard <| SelectionReset highlightable.groupIndex)
+                        , Key.shift (Keyboard <| SelectionReset highlightable.groupIndex)
                         ]
                     ]
                 , maybeTool = Just marker
@@ -815,9 +802,9 @@ viewHighlightable highlighterId marker focusIndex index highlightable =
                 , eventListeners =
                     -- Static highlightables need listeners as well.
                     -- because otherwise we miss mouseup events
-                    [ on "mouseup" (Pointer <| Up Nothing)
-                    , on "mousedown" (Pointer <| Down highlightable.groupIndex)
-                    , on "touchstart" (Pointer <| Down highlightable.groupIndex)
+                    [ onPreventDefault "mouseup" (Pointer <| Up Nothing)
+                    , onPreventDefault "mousedown" (Pointer <| Down highlightable.groupIndex)
+                    , onPreventDefault "touchstart" (Pointer <| Down highlightable.groupIndex)
                     , attribute "data-static" ""
                     ]
                 , maybeTool = Just marker
@@ -944,8 +931,8 @@ highlightableStyle tool ({ uiState, marked } as highlightable) interactive =
 
 {-| Helper for `on` to preventDefault.
 -}
-on : String -> msg -> Attribute msg
-on name msg =
+onPreventDefault : String -> msg -> Attribute msg
+onPreventDefault name msg =
     let
         -- If we attempt to preventDefault on an event which is not cancelable
         -- Chrome will blow up and complain that:
@@ -958,7 +945,7 @@ on name msg =
             Json.Decode.field "cancelable" Json.Decode.bool
                 |> Json.Decode.map (\result -> ( msg, result ))
     in
-    Html.Styled.Events.preventDefaultOn name
+    Events.preventDefaultOn name
         checkIfCancelable
 
 
