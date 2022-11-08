@@ -33,7 +33,7 @@ import Accessibility.Styled.Style exposing (invisibleStyle)
 import Css exposing (Color)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.HighlighterTool.V1 as HighlighterTool exposing (MarkerModel)
+import Nri.Ui.HighlighterTool.V1 as HighlighterTool
 import Nri.Ui.Mark.V1 as Mark
 
 
@@ -164,21 +164,6 @@ themeToPalette theme =
             { backgroundColor = Colors.highlightBrown, borderColor = Colors.highlightBrownDark }
 
 
-themeToMarker : Maybe String -> Theme -> MarkerModel ()
-themeToMarker name theme =
-    let
-        palette =
-            themeToPalette theme
-    in
-    HighlighterTool.buildStaticMarker
-        { highlightColor = palette.backgroundColor
-        , borderWidth = Css.px 1
-        , borderStyle = Css.dashed
-        , borderColor = palette.borderColor
-        , name = name
-        }
-
-
 {-| -}
 yellow : Attribute
 yellow =
@@ -253,26 +238,42 @@ render config =
 
         _ ->
             let
+                maybePalette =
+                    Maybe.map themeToPalette config.theme
+
                 marker =
-                    Maybe.map (themeToMarker config.label) config.theme
-            in
-            span []
-                (Mark.view
-                    { showTagsInline = False
-                    , inlineTagStyles = \_ -> []
-                    }
-                    (\_ { content_ } -> renderContent content_)
-                    (List.map
-                        (\content_ ->
-                            { name = config.label
-                            , endGroupClass = []
-                            , content_ = content_
-                            , marked = marker
-                            }
+                    Maybe.map
+                        (\palette ->
+                            HighlighterTool.buildStaticMarker
+                                { highlightColor = palette.backgroundColor
+                                , borderWidth = Css.px 1
+                                , borderStyle = Css.dashed
+                                , borderColor = palette.borderColor
+                                , name = config.label
+                                }
                         )
-                        config.content
-                    )
+                        maybePalette
+            in
+            Mark.view
+                (\_ { content_ } ->
+                    span
+                        [ css
+                            (case marker of
+                                Just markedWith ->
+                                    markedWith.highlightClass
+
+                                Nothing ->
+                                    []
+                            )
+                        ]
+                        (List.map renderContent content_)
                 )
+                [ { name = config.label
+                  , content_ = config.content
+                  , marked = marker
+                  }
+                ]
+                |> span []
 
 
 viewBlank : Html msg
