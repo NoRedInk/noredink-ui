@@ -78,27 +78,27 @@ spec =
                     program [ Menu.dialog { firstId = "hello-button", lastId = "last-button" } ]
                         -- Menu opens on mouse click and closes on esc key
                         |> clickMenuButton
-                        |> ensureViewHas (menuContentSelector menuContent)
+                        |> ensureViewHas (menuDialogContentSelector menuContent)
                         |> pressEscKey { targetId = "some-random-id" }
-                        |> ensureViewHasNot (menuContentSelector menuContent)
+                        |> ensureViewHasNot (menuDialogContentSelector menuContent)
                         |> ProgramTest.done
             , test "Selects firstId after tab on lastId" <|
                 \() ->
                     program [ Menu.dialog { firstId = "hello-button", lastId = "last-button" } ]
                         |> clickMenuButton
-                        |> ensureViewHas (menuContentSelector menuContent)
+                        |> ensureViewHas (menuDialogContentSelector menuContent)
                         -- NOTE: unable to simulate pressTabKey with other targetId since those decoders will fail
                         |> pressTabKey { targetId = "last-button" }
-                        |> ensureViewHas (menuContentSelector menuContent)
+                        |> ensureViewHas (menuDialogContentSelector menuContent)
                         |> ProgramTest.done
             , test "Selects lastId after back tab on firstId" <|
                 \() ->
                     program [ Menu.dialog { firstId = "hello-button", lastId = "last-button" } ]
                         |> clickMenuButton
-                        |> ensureViewHas (menuContentSelector menuContent)
+                        |> ensureViewHas (menuDialogContentSelector menuContent)
                         -- NOTE: unable to simulate pressTabKey with other targetId since those decoders will fail
                         |> pressTabBackKey { targetId = "hello-button" }
-                        |> ensureViewHas (menuContentSelector menuContent)
+                        |> ensureViewHas (menuDialogContentSelector menuContent)
                         |> ProgramTest.done
             ]
         ]
@@ -167,6 +167,14 @@ menuContentSelector : String -> List Selector.Selector
 menuContentSelector content =
     [ Selector.class "InnerContainer"
     , Selector.attribute (Attributes.attribute "aria-expanded" "true")
+    , Selector.containing [ text content ]
+    ]
+
+
+menuDialogContentSelector : String -> List Selector.Selector
+menuDialogContentSelector content =
+    [ Selector.class "InnerContainer"
+    , Selector.classes [ "Content", "ContentVisible" ]
     , Selector.containing [ text content ]
     ]
 
