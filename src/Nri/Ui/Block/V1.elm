@@ -29,6 +29,7 @@ module Nri.Ui.Block.V1 exposing
 -}
 
 import Accessibility.Styled exposing (..)
+import Accessibility.Styled.Style exposing (invisibleStyle)
 import Css exposing (Color)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
@@ -236,7 +237,17 @@ render config =
     case config.content of
         [] ->
             -- Blank
-            text "[blank]"
+            span
+                [ css
+                    [ Css.border3 (Css.px 2) Css.dashed Colors.navy
+                    , Css.width (Css.px 150)
+                    , Css.display Css.inlineBlock
+                    , Css.padding (Css.px 10)
+                    , Css.borderRadius (Css.px 4)
+                    , Css.verticalAlign Css.middle
+                    ]
+                ]
+                [ span [ css [ invisibleStyle ] ] [ text "blank" ] ]
 
         _ ->
             span
