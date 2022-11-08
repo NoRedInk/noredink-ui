@@ -97,7 +97,7 @@ spec =
                         |> clickMenuButton
                         |> ensureViewHas (menuContentSelector menuContent)
                         -- NOTE: unable to simulate pressTabKey with other targetId since those decoders will fail
-                        |> pressTabBackKey { targetId = Just "hellow-button" }
+                        |> pressTabBackKey { targetId = Just "hello-button" }
                         |> ensureViewHas (menuContentSelector menuContent)
                         |> ProgramTest.done
             ]
