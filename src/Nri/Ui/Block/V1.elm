@@ -33,9 +33,8 @@ import Accessibility.Styled.Style exposing (invisibleStyle)
 import Css exposing (Color)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Highlightable.V1 as Highlightable
-import Nri.Ui.Highlighter.V1 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as HighlighterTool exposing (MarkerModel)
+import Nri.Ui.Mark.V1 as Mark
 
 
 {-|
@@ -97,15 +96,14 @@ type Content
     | Blank
 
 
-contentToString : Content -> String
-contentToString content_ =
+renderContent : Content -> Html msg
+renderContent content_ =
     case content_ of
         String_ str ->
-            str
+            text str
 
         Blank ->
-            -- TODO: reimplement the sub-emphasis blank
-            "blank"
+            viewBlank
 
 
 {-| You will only need to use this helper if you're also using `content` to construct a more complex Block. Maybe you want `plaintext` instead?
@@ -254,17 +252,26 @@ render config =
             viewBlank
 
         _ ->
+            let
+                marker =
+                    Maybe.map (themeToMarker config.label) config.theme
+            in
             span []
-                (List.map
-                    (\c ->
-                        Highlighter.staticSegment
-                            (Highlightable.init Highlightable.Static
-                                (Maybe.map (themeToMarker config.label) config.theme)
-                                0
-                                ( [], contentToString c )
-                            )
+                (Mark.view
+                    { showTagsInline = False
+                    , inlineTagStyles = \_ -> []
+                    }
+                    (\_ { content_ } -> renderContent content_)
+                    (List.map
+                        (\content_ ->
+                            { name = config.label
+                            , endGroupClass = []
+                            , content_ = content_
+                            , marked = marker
+                            }
+                        )
+                        config.content
                     )
-                    config.content
                 )
 
 
