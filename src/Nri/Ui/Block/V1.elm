@@ -261,7 +261,7 @@ viewBlank =
         [ css
             [ Css.border3 (Css.px 2) Css.dashed Colors.navy
             , Css.backgroundColor Colors.white
-            , Css.width (Css.px 150)
+            , Css.width (Css.px 80)
             , Css.display Css.inlineBlock
             , Css.padding (Css.px 10)
             , Css.borderRadius (Css.px 4)
