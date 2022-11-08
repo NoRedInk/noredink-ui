@@ -665,15 +665,19 @@ groupContainer :
     -> List (Highlightable marker)
     -> List (Html msg)
 groupContainer config viewSegment highlightables =
-    Mark.view
-        { showTagsInline = config.showTagsInline
-        , inlineTagStyles =
-            \highlightable ->
-                (Maybe.map .startGroupClass highlightable.marked
-                    |> Maybe.withDefault []
-                )
-                    ++ highlightableStyle config.maybeTool highlightable config.isInteractive
-        }
+    let
+        inlineTagStyles highlightable =
+            (Maybe.map .startGroupClass highlightable.marked
+                |> Maybe.withDefault []
+            )
+                ++ highlightableStyle config.maybeTool highlightable config.isInteractive
+    in
+    (if config.showTagsInline then
+        Mark.viewWithInlineTags inlineTagStyles
+
+     else
+        Mark.view
+    )
         viewSegment
         highlightables
 
@@ -838,7 +842,13 @@ highlightableStyle : Maybe (Tool.Tool kind) -> Highlightable kind -> Bool -> Lis
 highlightableStyle tool ({ uiState, marked } as highlightable) interactive =
     case tool of
         Nothing ->
-            [ Style.staticHighlighted highlightable ]
+            [ case marked of
+                Just markedWith ->
+                    Css.batch markedWith.highlightClass
+
+                Nothing ->
+                    Css.backgroundColor Css.transparent
+            ]
 
         Just (Tool.Marker marker) ->
             [ Css.property "user-select" "none", Style.dynamicHighlighted marker interactive uiState marked ]

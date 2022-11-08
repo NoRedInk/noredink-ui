@@ -1,6 +1,10 @@
-module Nri.Ui.Mark.V1 exposing (view)
+module Nri.Ui.Mark.V1 exposing (view, viewWithInlineTags)
 
-{-| -}
+{-|
+
+@docs view, viewWithInlineTags
+
+-}
 
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style exposing (invisibleStyle)
@@ -10,8 +14,6 @@ import Html.Styled as Html exposing (Html, span)
 import Html.Styled.Attributes exposing (class, css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Highlightable.V1 exposing (Highlightable)
-import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
@@ -27,13 +29,35 @@ type alias Marker marker =
 {-| When elements are marked, wrap them in a single `mark` html node.
 -}
 view :
+    (Int -> { content | marked : Maybe (Marker marker) } -> Html msg)
+    -> List { content | marked : Maybe (Marker marker) }
+    -> List (Html msg)
+view =
+    view_ { showTagsInline = False, inlineTagStyles = \_ -> [] }
+
+
+{-| When elements are marked, wrap them in a single `mark` html node.
+
+Show the label for the mark, if present, in-line with the emphasized content.
+
+-}
+viewWithInlineTags :
+    ({ content | marked : Maybe (Marker marker) } -> List Style)
+    -> (Int -> { content | marked : Maybe (Marker marker) } -> Html msg)
+    -> List { content | marked : Maybe (Marker marker) }
+    -> List (Html msg)
+viewWithInlineTags inlineTagStyles =
+    view_ { showTagsInline = True, inlineTagStyles = inlineTagStyles }
+
+
+view_ :
     { showTagsInline : Bool
     , inlineTagStyles : { content | marked : Maybe (Marker marker) } -> List Style
     }
     -> (Int -> { content | marked : Maybe (Marker marker) } -> Html msg)
     -> List { content | marked : Maybe (Marker marker) }
     -> List (Html msg)
-view config viewSegment highlightables =
+view_ config viewSegment highlightables =
     case highlightables of
         [] ->
             []

@@ -1,13 +1,10 @@
-module Highlighter.Style exposing
-    ( dynamicHighlighted
-    , staticHighlighted
-    )
+module Highlighter.Style exposing (dynamicHighlighted)
 
 {-| This module is responsible for getting the correct CSS classes for a Highlightable.
 -}
 
 import Css
-import Nri.Ui.Highlightable.V1 exposing (Highlightable, UIState(..))
+import Nri.Ui.Highlightable.V1 exposing (UIState(..))
 import Nri.Ui.HighlighterTool.V1 as Tool
 
 
@@ -43,16 +40,4 @@ dynamicHighlighted marker interactive uiState marked =
             Css.batch markedWith.highlightClass
 
         ( None, Nothing ) ->
-            Css.backgroundColor Css.transparent
-
-
-{-| Style for static views.
--}
-staticHighlighted : Highlightable marker -> Css.Style
-staticHighlighted { customAttributes, marked } =
-    case marked of
-        Just markedWith ->
-            Css.batch markedWith.highlightClass
-
-        Nothing ->
             Css.backgroundColor Css.transparent
