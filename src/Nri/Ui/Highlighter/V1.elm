@@ -1,6 +1,6 @@
 module Nri.Ui.Highlighter.V1 exposing
     ( Model, Msg(..), PointerMsg(..)
-    , init, update, view, static, staticWithTags, staticSegments
+    , init, update, view, static, staticWithTags, staticSegment
     , Intent(..), emptyIntent, hasChanged, HasChanged(..)
     , removeHighlights
     , asFragmentTuples, usedMarkers, text
@@ -33,7 +33,7 @@ Currently, highlighter is used in the following places:
 
 # Init/View/Update
 
-@docs init, update, view, static, staticWithTags, staticSegments
+@docs init, update, view, static, staticWithTags, staticSegment
 
 
 ## Intents
@@ -599,16 +599,19 @@ static config =
         config
 
 
-{-| Use for views where the highlightables should be rendered in a paragraph tag with other content, e.g., for Blocks.
+{-| Use for views where the highlightable should be rendered in a paragraph tag with other content, e.g., for Blocks.
 -}
-staticSegments : List (Highlightable marker) -> List (Html msg)
-staticSegments =
-    viewSegments
-        { showTagsInline = False
-        , isInteractive = False
-        , maybeTool = Nothing
-        }
-        viewStaticHighlightable
+staticSegment : Highlightable marker -> Html msg
+staticSegment highlightable =
+    span []
+        (groupContainer
+            { showTagsInline = False
+            , isInteractive = False
+            , maybeTool = Nothing
+            }
+            viewStaticHighlightable
+            [ highlightable ]
+        )
 
 
 viewStaticHighlightable : Int -> Highlightable marker -> Html msg

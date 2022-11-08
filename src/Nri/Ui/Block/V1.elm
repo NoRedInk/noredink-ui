@@ -33,6 +33,9 @@ import Accessibility.Styled.Style exposing (invisibleStyle)
 import Css exposing (Color)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Highlightable.V1 as Highlightable
+import Nri.Ui.Highlighter.V1 as Highlighter
+import Nri.Ui.HighlighterTool.V1 as HighlighterTool exposing (MarkerModel)
 
 
 {-|
@@ -94,14 +97,15 @@ type Content
     | Blank
 
 
-renderContent : Content -> Html msg
-renderContent content_ =
+contentToString : Content -> String
+contentToString content_ =
     case content_ of
         String_ str ->
-            text str
+            str
 
         Blank ->
-            viewBlank
+            -- TODO: reimplement the sub-emphasis blank
+            "blank"
 
 
 {-| You will only need to use this helper if you're also using `content` to construct a more complex Block. Maybe you want `plaintext` instead?
@@ -160,6 +164,21 @@ themeToPalette theme =
 
         Brown ->
             { backgroundColor = Colors.highlightBrown, borderColor = Colors.highlightBrownDark }
+
+
+themeToMarker : Maybe String -> Theme -> MarkerModel ()
+themeToMarker name theme =
+    let
+        palette =
+            themeToPalette theme
+    in
+    HighlighterTool.buildStaticMarker
+        { highlightColor = palette.backgroundColor
+        , borderWidth = Css.px 1
+        , borderStyle = Css.dashed
+        , borderColor = palette.borderColor
+        , name = name
+        }
 
 
 {-| -}
@@ -230,29 +249,23 @@ type alias Config =
 
 render : Config -> Html msg
 render config =
-    let
-        maybePalette =
-            Maybe.map themeToPalette config.theme
-    in
     case config.content of
         [] ->
             viewBlank
 
         _ ->
-            span
-                [ -- The real implementation will be based on top of Highlighter.
-                  -- this is just a placeholder for API visualization/development convenenience
-                  Maybe.map
-                    (\palette ->
-                        [ Css.backgroundColor palette.backgroundColor
-                        , Css.border3 (Css.px 1) Css.dashed palette.borderColor
-                        ]
+            span []
+                (List.map
+                    (\c ->
+                        Highlighter.staticSegment
+                            (Highlightable.init Highlightable.Static
+                                (Maybe.map (themeToMarker config.label) config.theme)
+                                0
+                                ( [], contentToString c )
+                            )
                     )
-                    maybePalette
-                    |> Maybe.withDefault []
-                    |> css
-                ]
-                (List.map renderContent config.content)
+                    config.content
+                )
 
 
 viewBlank : Html msg

@@ -70,7 +70,7 @@ import Sort exposing (Sorter)
 
   - **uiState**: How the user is currently interacting with the Highlightable.
 
-  - **customAttributes**: User-supplied CSS attributes that do not change once a Highlightable is initialized.
+  - **customAttributes**: User-supplied attributes that do not change once a Highlightable is initialized.
 
   - **marked**: Current highlight.
 

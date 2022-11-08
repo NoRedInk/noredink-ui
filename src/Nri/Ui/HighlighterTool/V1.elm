@@ -1,12 +1,12 @@
 module Nri.Ui.HighlighterTool.V1 exposing
     ( Tool(..), EraserModel, MarkerModel
-    , buildMarker
+    , buildMarker, buildStaticMarker
     )
 
 {-|
 
 @docs Tool, EraserModel, MarkerModel
-@docs buildMarker
+@docs buildMarker, buildStaticMarker
 
 -}
 
@@ -69,20 +69,63 @@ buildMarker { highlightColor, hoverColor, hoverHighlightColor, kind, name } =
     }
 
 
+{-| -}
+buildStaticMarker :
+    { borderColor : Css.Color
+    , borderStyle : Css.BorderStyle compatible
+    , borderWidth : Css.Px
+    , highlightColor : Css.Color
+    , name : Maybe String
+    }
+    -> MarkerModel ()
+buildStaticMarker { highlightColor, borderWidth, borderStyle, borderColor, name } =
+    let
+        borderStyles =
+            [ Css.borderStyle borderStyle
+            , Css.borderColor borderColor
+            ]
+
+        styles =
+            [ Css.batch borderStyles
+            , Css.backgroundColor highlightColor
+            , Css.paddingTop (Css.px 4)
+            , Css.paddingBottom (Css.px 3)
+            , MediaQuery.highContrastMode [ Css.property "background-color" "Mark" ]
+            ]
+    in
+    { hoverClass = styles
+    , hintClass = styles
+    , highlightClass = styles
+    , hoverHighlightClass = styles
+    , startGroupClass =
+        [ Css.batch startGroupStyles
+        , Css.batch borderStyles
+        , Css.borderWidth4 borderWidth Css.zero borderWidth borderWidth
+        ]
+    , endGroupClass =
+        [ Css.batch endGroupStyles
+        , Css.batch borderStyles
+        , Css.borderWidth4 borderWidth borderWidth borderWidth Css.zero
+        ]
+    , kind = ()
+    , name = name
+    }
+
+
 startGroupStyles : List Css.Style
 startGroupStyles =
-    Css.paddingLeft (Css.px 4)
-        :: [ Css.borderTopLeftRadius (Css.px 4)
-           , Css.borderBottomLeftRadius (Css.px 4)
-           ]
+    [ Css.paddingLeft (Css.px 4)
+    , Css.borderTopLeftRadius (Css.px 4)
+    , Css.borderBottomLeftRadius (Css.px 4)
+    ]
 
 
 endGroupStyles : List Css.Style
 endGroupStyles =
-    Css.paddingRight (Css.px 4)
-        :: [ Css.borderTopRightRadius (Css.px 4)
-           , Css.borderBottomRightRadius (Css.px 4)
-           ]
+    [ Css.paddingRight (Css.px 4)
+    , Css.borderTopRightRadius (Css.px 4)
+    , Css.borderBottomRightRadius (Css.px 4)
+    ]
 
 
 highlightStyles : Css.Color -> List Css.Style
