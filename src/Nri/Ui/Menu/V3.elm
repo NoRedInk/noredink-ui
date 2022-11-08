@@ -122,13 +122,10 @@ type alias ButtonConfig =
 type Purpose
     = NavMenu
     | Disclosure { lastId : String }
-    | Dialog ExitFocusManager
-
-
-type alias ExitFocusManager =
-    { firstId : String
-    , lastId : String
-    }
+    | Dialog
+        { firstId : String
+        , lastId : String
+        }
 
 
 
@@ -241,7 +238,7 @@ You will need to pass in the last focusable element in the dialog content in ord
   - the dialog to close appropriately when the user tabs past all of the dialog content
 
 -}
-dialog : ExitFocusManager -> Attribute msg
+dialog : { firstId : String, lastId : String } -> Attribute msg
 dialog exitFocusManager =
     Attribute (\config -> { config | purpose = Dialog exitFocusManager })
 
