@@ -18,6 +18,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Markdown
 import Nri.Ui.Block.V1 as Block
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V6 as Table
@@ -99,7 +100,12 @@ example =
                 [ Heading.plaintext "Interactive example"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
-            , p [ css [ Css.textAlign Css.center ] ]
+            , p
+                [ css
+                    [ Css.textAlign Css.center
+                    , Fonts.quizFont
+                    ]
+                ]
                 [ Block.view [ Block.plaintext "I like " ]
                 , Block.view (List.map Tuple.second attributes)
                 , Block.view [ Block.plaintext " a lot!" ]
@@ -134,29 +140,29 @@ example =
                 [ { pattern = "Code.view []"
                   , description = "Represents a blank in the sentence. Expected to be used in Cycling interface scaffolding."
                   , example =
-                        [ Block.view [ Block.plaintext "I am a seed with " ]
-                        , Block.view []
-                        , Block.view [ Block.plaintext " being used." ]
+                        [ Block.view [ Block.fontSize (Css.px 14), Block.plaintext "I am a seed with " ]
+                        , Block.view [ Block.fontSize (Css.px 14) ]
+                        , Block.view [ Block.fontSize (Css.px 14), Block.plaintext " being used." ]
                         ]
                   }
                 , { pattern = "Code.view [ Code.label \"[label text]\" ]"
                   , description = "A labelled blank in the sentence"
                   , example =
-                        [ Block.view [ Block.plaintext "If a volcano is extinct, " ]
-                        , Block.view [ Block.label "pronoun" ]
-                        , Block.view [ Block.plaintext " will never erupt again." ]
+                        [ Block.view [ Block.fontSize (Css.px 14), Block.plaintext "If a volcano is extinct, " ]
+                        , Block.view [ Block.fontSize (Css.px 14), Block.label "pronoun" ]
+                        , Block.view [ Block.fontSize (Css.px 14), Block.plaintext " will never erupt again." ]
                         ]
                   }
                 , { pattern = "Code.view [ Code.label \"[label text]\", Code.plaintext \"[text]\", … ]"
                   , description = "Help students understand the function different words and phrases are playing in a sentence"
                   , example =
-                        [ Block.view [ Block.plaintext "Taylor Swift bought " ]
-                        , Block.view [ Block.plaintext "new", Block.label "age", Block.yellow ]
-                        , Block.view [ Block.plaintext " " ]
-                        , Block.view [ Block.plaintext "bowling", Block.label "purpose", Block.cyan ]
-                        , Block.view [ Block.plaintext " " ]
-                        , Block.view [ Block.plaintext "yellow", Block.label "color", Block.magenta ]
-                        , Block.view [ Block.plaintext " shoes." ]
+                        [ Block.view [ Block.fontSize (Css.px 14), Block.plaintext "Taylor Swift bought " ]
+                        , Block.view [ Block.fontSize (Css.px 14), Block.plaintext "new", Block.label "age", Block.yellow ]
+                        , Block.view [ Block.fontSize (Css.px 14), Block.plaintext " " ]
+                        , Block.view [ Block.fontSize (Css.px 14), Block.plaintext "bowling", Block.label "purpose", Block.cyan ]
+                        , Block.view [ Block.fontSize (Css.px 14), Block.plaintext " " ]
+                        , Block.view [ Block.fontSize (Css.px 14), Block.plaintext "yellow", Block.label "color", Block.magenta ]
+                        , Block.view [ Block.fontSize (Css.px 14), Block.plaintext " shoes." ]
                         ]
                   }
                 , { pattern = "Code.view [ Code.emphasize, … ]"
@@ -167,23 +173,27 @@ example =
 - Often a phrase or clause
 """
                   , example =
-                        [ Block.view [ Block.plaintext "The Crossover", Block.emphasize ]
-                        , Block.view [ Block.plaintext " is Thor’s favorite book." ]
+                        [ Block.view [ Block.fontSize (Css.px 14), Block.plaintext "The Crossover", Block.emphasize ]
+                        , Block.view [ Block.fontSize (Css.px 14), Block.plaintext " is Thor’s favorite book." ]
                         ]
                   }
                 , { pattern = "Code.view [ Code.emphasize, Code.content [ … ] ]"
                   , description = "Help students focus in on a phrase that includes a blank"
                   , example =
-                        [ Block.view [ Block.plaintext "This is an " ]
+                        [ Block.view [ Block.fontSize (Css.px 14), Block.plaintext "This is an " ]
                         , Block.view
-                            [ Block.emphasize
+                            [ Block.fontSize (Css.px 14)
+                            , Block.emphasize
                             , Block.content
                                 [ Block.string "emphasized subsegement "
                                 , Block.blank
                                 , Block.string " emphasized"
                                 ]
                             ]
-                        , Block.view [ Block.plaintext " in a seed." ]
+                        , Block.view
+                            [ Block.fontSize (Css.px 14)
+                            , Block.plaintext " in a seed."
+                            ]
                         ]
                   }
                 ]

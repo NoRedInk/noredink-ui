@@ -4,6 +4,7 @@ module Nri.Ui.Block.V1 exposing
     , Content, string, blank
     , emphasize, label
     , yellow, cyan, magenta, green, blue, purple, brown
+    , fontSize
     )
 
 {-|
@@ -17,14 +18,15 @@ module Nri.Ui.Block.V1 exposing
 @docs Content, string, blank
 
 
-## Customization
+## Content customization
 
 @docs emphasize, label
 
 
-### Color themes
+### Visual customization
 
 @docs yellow, cyan, magenta, green, blue, purple, brown
+@docs fontSize
 
 -}
 
@@ -97,14 +99,14 @@ type Content
     | Blank
 
 
-renderContent : Content -> Html msg
-renderContent content_ =
+renderContent : { config | fontSize : Css.Px } -> Content -> Html msg
+renderContent config content_ =
     case content_ of
         String_ str ->
             text str
 
         Blank ->
-            viewBlank
+            viewBlank (Css.calc config.fontSize Css.plus (Css.px 4))
 
 
 {-| You will only need to use this helper if you're also using `content` to construct a more complex Block. Maybe you want `plaintext` instead?
@@ -241,6 +243,12 @@ brown =
     Attribute (\config -> { config | theme = Just Brown })
 
 
+{-| -}
+fontSize : Css.Px -> Attribute
+fontSize size =
+    Attribute (\config -> { config | fontSize = size })
+
+
 
 -- Internals
 
@@ -255,6 +263,7 @@ defaultConfig =
     { content = []
     , label = Nothing
     , theme = Nothing
+    , fontSize = Css.px 30
     }
 
 
@@ -262,6 +271,7 @@ type alias Config =
     { content : List Content
     , label : Maybe String
     , theme : Maybe Theme
+    , fontSize : Css.Px
     }
 
 
@@ -269,7 +279,7 @@ render : Config -> Html msg
 render config =
     case config.content of
         [] ->
-            viewBlank
+            viewBlank (Css.calc config.fontSize Css.plus (Css.px 5))
 
         _ ->
             let
@@ -279,24 +289,24 @@ render config =
             Mark.view
                 { showTagsInline = False }
                 (\content_ markStyles ->
-                    span [ css markStyles ]
-                        (List.map renderContent content_)
+                    span [ css (Css.fontSize config.fontSize :: markStyles) ]
+                        (List.map (renderContent config) content_)
                 )
                 [ ( config.content, maybeMark ) ]
                 |> span []
 
 
-viewBlank : Html msg
-viewBlank =
+viewBlank : Css.LengthOrMinMaxDimension compatible -> Html msg
+viewBlank minHeight =
     span
         [ css
             [ Css.border3 (Css.px 2) Css.dashed Colors.navy
             , Css.backgroundColor Colors.white
             , Css.width (Css.px 80)
             , Css.display Css.inlineBlock
-            , Css.height (Css.px 18)
+            , Css.minHeight minHeight
             , Css.borderRadius (Css.px 4)
-            , Css.verticalAlign Css.textBottom
+            , Css.verticalAlign Css.top
             ]
         ]
         [ span [ css [ invisibleStyle ] ] [ text "blank" ] ]
