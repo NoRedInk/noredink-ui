@@ -63,7 +63,6 @@ import Browser.Dom as Dom
 import Css
 import Highlighter.Grouping as Grouping
 import Highlighter.Internal as Internal
-import Highlighter.Style as Style
 import Html.Styled as Html exposing (Attribute, Html, p, span)
 import Html.Styled.Attributes exposing (attribute, class, css)
 import Html.Styled.Events as Events
@@ -820,7 +819,38 @@ highlightableStyle tool ({ uiState, marked } as highlightable) interactive =
             ]
 
         Just (Tool.Marker marker) ->
-            [ Css.property "user-select" "none", Style.dynamicHighlighted marker interactive uiState marked ]
+            [ Css.property "user-select" "none"
+            , case ( uiState, marked ) of
+                ( Highlightable.Hovered, Just markedWith ) ->
+                    if interactive then
+                        -- Override marking with cursor's marker if interactive
+                        Css.batch marker.hoverHighlightClass
+
+                    else
+                        -- Use the marked style if non-interactive
+                        Css.batch markedWith.hoverHighlightClass
+
+                ( Highlightable.Hovered, Nothing ) ->
+                    if interactive then
+                        [ marker.hoverClass
+                        , marker.startGroupClass
+                        , marker.endGroupClass
+                        ]
+                            |> List.concat
+                            |> Css.batch
+
+                    else
+                        Css.backgroundColor Css.transparent
+
+                ( Highlightable.Hinted, _ ) ->
+                    Css.batch marker.hintClass
+
+                ( Highlightable.None, Just markedWith ) ->
+                    Css.batch markedWith.highlightClass
+
+                ( Highlightable.None, Nothing ) ->
+                    Css.backgroundColor Css.transparent
+            ]
 
         Just (Tool.Eraser eraser_) ->
             case marked of
