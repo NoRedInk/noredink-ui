@@ -182,20 +182,17 @@ paletteToMark label_ { backgroundColor, borderColor } =
     in
     { name = label_
     , startStyles =
-        [ Css.paddingLeft (Css.px 4)
-        , Css.borderTopLeftRadius (Css.px 4)
-        , Css.borderBottomLeftRadius (Css.px 4)
+        [ Css.paddingLeft (Css.px 2)
         , Css.batch borderStyles
         , Css.borderWidth4 borderWidth Css.zero borderWidth borderWidth
         ]
     , styles =
-        [ Css.backgroundColor backgroundColor
+        [ Css.padding2 (Css.px 4) Css.zero
+        , Css.backgroundColor backgroundColor
         , MediaQuery.highContrastMode [ Css.property "background-color" "Mark" ]
         ]
     , endStyles =
-        [ Css.paddingRight (Css.px 4)
-        , Css.borderTopRightRadius (Css.px 4)
-        , Css.borderBottomRightRadius (Css.px 4)
+        [ Css.paddingRight (Css.px 2)
         , Css.batch borderStyles
         , Css.borderWidth4 borderWidth borderWidth borderWidth Css.zero
         ]
@@ -297,9 +294,9 @@ viewBlank =
             , Css.backgroundColor Colors.white
             , Css.width (Css.px 80)
             , Css.display Css.inlineBlock
-            , Css.padding (Css.px 10)
+            , Css.height (Css.px 18)
             , Css.borderRadius (Css.px 4)
-            , Css.verticalAlign Css.middle
+            , Css.verticalAlign Css.textBottom
             ]
         ]
         [ span [ css [ invisibleStyle ] ] [ text "blank" ] ]
