@@ -620,7 +620,16 @@ view_ :
     -> { config | id : String, highlightables : List (Highlightable marker) }
     -> Html msg
 view_ groupConfig viewSegment { id, highlightables } =
-    p [ Html.Styled.Attributes.id id, class "highlighter-container" ]
+    p
+        [ Html.Styled.Attributes.id id
+        , class "highlighter-container"
+        , css
+            [ Css.display Css.inlineFlex
+            , Css.flexWrap Css.wrap
+            , Css.alignItems Css.center
+            , Css.whiteSpace Css.preWrap
+            ]
+        ]
         (viewSegments groupConfig viewSegment highlightables)
 
 

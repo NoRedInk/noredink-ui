@@ -57,7 +57,8 @@ view config viewSegment highlightables =
                             |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
                             |> Maybe.withDefault AttributesExtra.none
                         , css
-                            [ Css.backgroundColor Css.transparent
+                            [ Css.display Css.inlineFlex
+                            , Css.backgroundColor Css.transparent
                             , Css.Global.children
                                 [ Css.Global.selector ":last-child"
                                     (Css.after

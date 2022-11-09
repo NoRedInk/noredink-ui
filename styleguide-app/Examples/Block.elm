@@ -102,8 +102,12 @@ example =
                 ]
             , p
                 [ css
-                    [ Css.textAlign Css.center
-                    , Fonts.quizFont
+                    [ Fonts.quizFont
+                    , Css.fontSize (Css.px 30)
+                    , Css.displayFlex
+                    , Css.justifyContent Css.center
+                    , Css.flexWrap Css.wrap
+                    , Css.alignItems Css.center
                     ]
                 ]
                 [ Block.view [ Block.plaintext "I like " ]
@@ -131,7 +135,16 @@ example =
                     }
                 , Table.custom
                     { header = text "Example"
-                    , view = .example >> p []
+                    , view =
+                        .example
+                            >> p
+                                [ css
+                                    [ Css.displayFlex
+                                    , Css.justifyContent Css.center
+                                    , Css.flexWrap Css.wrap
+                                    , Css.alignItems Css.center
+                                    ]
+                                ]
                     , width = Css.px 200
                     , cellStyles = always [ Css.textAlign Css.center ]
                     , sort = Nothing
@@ -140,29 +153,29 @@ example =
                 [ { pattern = "Code.view []"
                   , description = "Represents a blank in the sentence. Expected to be used in Cycling interface scaffolding."
                   , example =
-                        [ Block.view [ Block.fontSize (Css.px 14), Block.plaintext "I am a seed with " ]
-                        , Block.view [ Block.fontSize (Css.px 14) ]
-                        , Block.view [ Block.fontSize (Css.px 14), Block.plaintext " being used." ]
+                        [ Block.view [ Block.plaintext "I am a seed with " ]
+                        , Block.view []
+                        , Block.view [ Block.plaintext " being used." ]
                         ]
                   }
                 , { pattern = "Code.view [ Code.label \"[label text]\" ]"
                   , description = "A labelled blank in the sentence"
                   , example =
-                        [ Block.view [ Block.fontSize (Css.px 14), Block.plaintext "If a volcano is extinct, " ]
-                        , Block.view [ Block.fontSize (Css.px 14), Block.label "pronoun" ]
-                        , Block.view [ Block.fontSize (Css.px 14), Block.plaintext " will never erupt again." ]
+                        [ Block.view [ Block.plaintext "If a volcano is extinct, " ]
+                        , Block.view [ Block.label "pronoun" ]
+                        , Block.view [ Block.plaintext " will never erupt again." ]
                         ]
                   }
                 , { pattern = "Code.view [ Code.label \"[label text]\", Code.plaintext \"[text]\", … ]"
                   , description = "Help students understand the function different words and phrases are playing in a sentence"
                   , example =
-                        [ Block.view [ Block.fontSize (Css.px 14), Block.plaintext "Taylor Swift bought " ]
-                        , Block.view [ Block.fontSize (Css.px 14), Block.plaintext "new", Block.label "age", Block.yellow ]
-                        , Block.view [ Block.fontSize (Css.px 14), Block.plaintext " " ]
-                        , Block.view [ Block.fontSize (Css.px 14), Block.plaintext "bowling", Block.label "purpose", Block.cyan ]
-                        , Block.view [ Block.fontSize (Css.px 14), Block.plaintext " " ]
-                        , Block.view [ Block.fontSize (Css.px 14), Block.plaintext "yellow", Block.label "color", Block.magenta ]
-                        , Block.view [ Block.fontSize (Css.px 14), Block.plaintext " shoes." ]
+                        [ Block.view [ Block.plaintext "Taylor Swift bought " ]
+                        , Block.view [ Block.plaintext "new", Block.label "age", Block.yellow ]
+                        , Block.view [ Block.plaintext " " ]
+                        , Block.view [ Block.plaintext "bowling", Block.label "purpose", Block.cyan ]
+                        , Block.view [ Block.plaintext " " ]
+                        , Block.view [ Block.plaintext "yellow", Block.label "color", Block.magenta ]
+                        , Block.view [ Block.plaintext " shoes." ]
                         ]
                   }
                 , { pattern = "Code.view [ Code.emphasize, … ]"
@@ -173,17 +186,16 @@ example =
 - Often a phrase or clause
 """
                   , example =
-                        [ Block.view [ Block.fontSize (Css.px 14), Block.plaintext "The Crossover", Block.emphasize ]
-                        , Block.view [ Block.fontSize (Css.px 14), Block.plaintext " is Thor’s favorite book." ]
+                        [ Block.view [ Block.plaintext "The Crossover", Block.emphasize ]
+                        , Block.view [ Block.plaintext " is Thor’s favorite book." ]
                         ]
                   }
                 , { pattern = "Code.view [ Code.emphasize, Code.content [ … ] ]"
                   , description = "Help students focus in on a phrase that includes a blank"
                   , example =
-                        [ Block.view [ Block.fontSize (Css.px 14), Block.plaintext "This is an " ]
+                        [ Block.view [ Block.plaintext "This is an " ]
                         , Block.view
-                            [ Block.fontSize (Css.px 14)
-                            , Block.emphasize
+                            [ Block.emphasize
                             , Block.content
                                 [ Block.string "emphasized subsegement "
                                 , Block.blank
@@ -191,8 +203,7 @@ example =
                                 ]
                             ]
                         , Block.view
-                            [ Block.fontSize (Css.px 14)
-                            , Block.plaintext " in a seed."
+                            [ Block.plaintext " in a seed."
                             ]
                         ]
                   }
