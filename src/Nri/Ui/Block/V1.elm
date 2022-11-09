@@ -33,7 +33,6 @@ import Accessibility.Styled.Style exposing (invisibleStyle)
 import Css exposing (Color)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.HighlighterTool.V1 as HighlighterTool
 import Nri.Ui.Mark.V1 as Mark exposing (Mark)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 
