@@ -79,7 +79,7 @@ view config viewSegment highlightables =
 viewStartHighlight : { showTagsInline : Bool } -> Mark -> Html msg
 viewStartHighlight { showTagsInline } marked =
     span
-        [ css (marked.startStyles ++ marked.styles)
+        [ css (marked.styles ++ marked.startStyles)
         , class "highlighter-inline-tag highlighter-inline-tag-highlighted"
         ]
         [ viewJust
