@@ -58,7 +58,6 @@ TODO: Add documentation about how to wire in event listeners and subscriptions s
 -}
 
 import Accessibility.Styled.Key as Key
-import Accessibility.Styled.Style exposing (invisibleStyle)
 import Browser.Dom as Dom
 import Css
 import Highlighter.Grouping as Grouping
@@ -72,7 +71,6 @@ import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Mark.V1 as Mark
-import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Sort exposing (Sorter)
 import Sort.Set
 import String.Extra
