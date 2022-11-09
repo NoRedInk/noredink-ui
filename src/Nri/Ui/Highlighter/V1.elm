@@ -573,11 +573,7 @@ removeHighlights model =
 {-| -}
 view : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Maybe Int, marker : Tool.Tool marker } -> Html (Msg marker)
 view config =
-    view_
-        { showTagsInline = False
-        , isInteractive = True
-        , maybeTool = Just config.marker
-        }
+    view_ { showTagsInline = False, maybeTool = Just config.marker }
         (viewHighlightable config.id config.marker config.focusIndex)
         config
 
@@ -585,11 +581,7 @@ view config =
 {-| -}
 static : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
 static config =
-    view_
-        { showTagsInline = False
-        , isInteractive = False
-        , maybeTool = Nothing
-        }
+    view_ { showTagsInline = False, maybeTool = Nothing }
         viewStaticHighlightable
         config
 
@@ -617,20 +609,13 @@ staticWithTags config =
                 , maybeTool = Nothing
                 }
     in
-    view_
-        { showTagsInline = True
-        , isInteractive = False
-        , maybeTool = Nothing
-        }
+    view_ { showTagsInline = True, maybeTool = Nothing }
         viewStaticHighlightableWithTags
         config
 
 
 view_ :
-    { showTagsInline : Bool
-    , isInteractive : Bool
-    , maybeTool : Maybe (Tool.Tool marker)
-    }
+    { showTagsInline : Bool, maybeTool : Maybe (Tool.Tool marker) }
     -> (Highlightable marker -> List Css.Style -> Html msg)
     -> { config | id : String, highlightables : List (Highlightable marker) }
     -> Html msg
@@ -640,10 +625,7 @@ view_ groupConfig viewSegment { id, highlightables } =
 
 
 viewSegments :
-    { showTagsInline : Bool
-    , isInteractive : Bool
-    , maybeTool : Maybe (Tool.Tool marker)
-    }
+    { showTagsInline : Bool, maybeTool : Maybe (Tool.Tool marker) }
     -> (Highlightable marker -> List Css.Style -> Html msg)
     -> List (Highlightable marker)
     -> List (Html msg)
@@ -657,7 +639,6 @@ viewSegments groupConfig viewSegment highlightables =
 -}
 groupContainer :
     { showTagsInline : Bool
-    , isInteractive : Bool
     , maybeTool : Maybe (Tool.Tool marker)
     }
     -> (Highlightable marker -> List Css.Style -> Html msg)
@@ -669,7 +650,7 @@ groupContainer config viewSegment highlightables =
         toMark highlightable marker =
             { name = marker.name
             , startStyles = marker.startGroupClass
-            , styles = highlightableStyle config.maybeTool highlightable config.isInteractive
+            , styles = highlightableStyle config.maybeTool highlightable
             , endStyles = marker.endGroupClass
             }
     in
@@ -806,8 +787,8 @@ highlightableId highlighterId groupIndex =
     "highlighter-" ++ highlighterId ++ "-highlightable-" ++ String.fromInt groupIndex
 
 
-highlightableStyle : Maybe (Tool.Tool kind) -> Highlightable kind -> Bool -> List Css.Style
-highlightableStyle tool ({ uiState, marked } as highlightable) interactive =
+highlightableStyle : Maybe (Tool.Tool kind) -> Highlightable kind -> List Css.Style
+highlightableStyle tool ({ uiState, marked } as highlightable) =
     case tool of
         Nothing ->
             [ case marked of
@@ -822,25 +803,16 @@ highlightableStyle tool ({ uiState, marked } as highlightable) interactive =
             [ Css.property "user-select" "none"
             , case ( uiState, marked ) of
                 ( Highlightable.Hovered, Just markedWith ) ->
-                    if interactive then
-                        -- Override marking with cursor's marker if interactive
-                        Css.batch marker.hoverHighlightClass
-
-                    else
-                        -- Use the marked style if non-interactive
-                        Css.batch markedWith.hoverHighlightClass
+                    -- Override marking with selected tool
+                    Css.batch marker.hoverHighlightClass
 
                 ( Highlightable.Hovered, Nothing ) ->
-                    if interactive then
-                        [ marker.hoverClass
-                        , marker.startGroupClass
-                        , marker.endGroupClass
-                        ]
-                            |> List.concat
-                            |> Css.batch
-
-                    else
-                        Css.backgroundColor Css.transparent
+                    [ marker.hoverClass
+                    , marker.startGroupClass
+                    , marker.endGroupClass
+                    ]
+                        |> List.concat
+                        |> Css.batch
 
                 ( Highlightable.Hinted, _ ) ->
                     Css.batch marker.hintClass
