@@ -64,6 +64,15 @@ pressTabKey { targetDetails } =
     pressKey { targetDetails = targetDetails, keyCode = 9, shiftKey = False }
 
 
+pressTabBackKey :
+    { targetDetails : List ( String, Encode.Value ) }
+    -> List Selector
+    -> ProgramTest model msg effect
+    -> ProgramTest model msg effect
+pressTabBackKey { targetDetails } =
+    pressKey { targetDetails = targetDetails, keyCode = 9, shiftKey = True }
+
+
 pressEscKey :
     { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
