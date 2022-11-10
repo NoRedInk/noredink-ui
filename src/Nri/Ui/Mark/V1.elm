@@ -40,7 +40,7 @@ view :
     -> List ( content, Maybe Mark )
     -> List (Html msg)
 view =
-    view_ { showTagsInline = False }
+    view_ HiddenTags
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
@@ -53,7 +53,7 @@ viewWithInlineTags :
     -> List ( content, Maybe Mark )
     -> List (Html msg)
 viewWithInlineTags =
-    view_ { showTagsInline = True }
+    view_ InlineTags
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
@@ -66,8 +66,13 @@ viewWithBalloonTags :
     -> List ( content, Maybe Mark )
     -> List (Html msg)
 viewWithBalloonTags =
-    -- TODO: implement
-    view_ { showTagsInline = False }
+    view_ BalloonTags
+
+
+type TagStyle
+    = HiddenTags
+    | InlineTags
+    | BalloonTags
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
@@ -76,11 +81,11 @@ Show the label for the mark, if present, in-line with the emphasized content whe
 
 -}
 view_ :
-    { showTagsInline : Bool }
+    TagStyle
     -> (content -> List Style -> Html msg)
     -> List ( content, Maybe Mark )
     -> List (Html msg)
-view_ config viewSegment highlightables =
+view_ tagStyle viewSegment highlightables =
     case highlightables of
         [] ->
             []
@@ -112,47 +117,20 @@ view_ config viewSegment highlightables =
                                 ]
                             ]
                         ]
-                        (viewStartHighlight config markedWith :: segments)
+                        (viewStartHighlight tagStyle markedWith :: segments)
                     ]
 
                 Nothing ->
                     segments
 
 
-viewStartHighlight : { showTagsInline : Bool } -> Mark -> Html msg
-viewStartHighlight { showTagsInline } marked =
+viewStartHighlight : TagStyle -> Mark -> Html msg
+viewStartHighlight tagStyle marked =
     span
         [ css (marked.styles ++ marked.startStyles)
         , class "highlighter-inline-tag highlighter-inline-tag-highlighted"
         ]
-        [ viewJust
-            (\name ->
-                span
-                    [ css
-                        [ Fonts.baseFont
-                        , Css.backgroundColor Colors.white
-                        , Css.color Colors.navy
-                        , Css.padding2 (Css.px 2) (Css.px 4)
-                        , Css.borderRadius (Css.px 3)
-                        , Css.margin2 Css.zero (Css.px 5)
-                        , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 1) Css.zero Colors.gray75
-                        , Css.display Css.none
-                        , if showTagsInline then
-                            Css.batch [ Css.display Css.inline |> Css.important, MediaQuery.highContrastMode [ Css.property "forced-color-adjust" "none", Css.property "color" "initial" |> Css.important ] ]
-
-                          else
-                            Css.batch
-                                [ MediaQuery.highContrastMode [ Css.property "forced-color-adjust" "none", Css.display Css.inline |> Css.important, Css.property "color" "initial" |> Css.important ]
-                                ]
-                        ]
-                    , -- we use the :before element to convey details about the start of the
-                      -- highlighter to screenreaders, so the visual label is redundant
-                      Aria.hidden True
-                    ]
-                    [ Html.text name ]
-            )
-            marked.name
-        ]
+        [ viewJust (viewTag tagStyle) marked.name ]
 
 
 markStyles : Int -> Maybe Mark -> List Css.Style
@@ -184,3 +162,62 @@ tagBeforeContent markedWith =
                 [ Css.property "content" "\" [start highlight] \""
                 , invisibleStyle
                 ]
+
+
+viewTag : TagStyle -> String -> Html msg
+viewTag tagStyle =
+    case tagStyle of
+        InlineTags ->
+            viewInlineTag
+                [ MediaQuery.highContrastMode
+                    [ Css.property "forced-color-adjust" "none"
+                    , Css.property "color" "initial" |> Css.important
+                    ]
+                ]
+
+        HiddenTags ->
+            viewInlineTag
+                [ Css.display Css.none
+                , MediaQuery.highContrastMode
+                    [ Css.property "forced-color-adjust" "none"
+                    , Css.display Css.inline |> Css.important
+                    , Css.property "color" "initial" |> Css.important
+                    ]
+                ]
+
+        BalloonTags ->
+            viewBalloon
+
+
+viewInlineTag : List Css.Style -> String -> Html msg
+viewInlineTag customizations name =
+    span
+        [ css
+            [ Fonts.baseFont
+            , Css.backgroundColor Colors.white
+            , Css.color Colors.navy
+            , Css.padding2 (Css.px 2) (Css.px 4)
+            , Css.borderRadius (Css.px 3)
+            , Css.margin2 Css.zero (Css.px 5)
+            , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 1) Css.zero Colors.gray75
+            , Css.batch customizations
+            ]
+        , -- we use the :before element to convey details about the start of the
+          -- highlighter to screenreaders, so the visual label is redundant
+          Aria.hidden True
+        ]
+        [ Html.text name ]
+
+
+viewBalloon : String -> Html msg
+viewBalloon label =
+    Balloon.balloon
+        [ Balloon.onTop
+        , Balloon.paddingPx 4
+
+        -- TODO: position the balloon against the content it labels
+        -- TODO: customize the balloon color
+        -- TODO: ensure the balloon is legible for users in high-contrast mode
+        -- TODO: hide the balloon from screenreader users
+        ]
+        (Html.text label)
