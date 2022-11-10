@@ -38,6 +38,9 @@ usages = ['styleguide-app/../src/Nri/Ui/Button/V8.elm']
 [forbidden."Nri.Ui.Accordion.V1"]
 hint = 'upgrade to V3'
 
+[forbidden."Nri.Ui.Balloon.V1"]
+hint = 'upgrade to V2'
+
 [forbidden."Nri.Ui.BreadCrumbs.V1"]
 hint = 'upgrade to V2'
 

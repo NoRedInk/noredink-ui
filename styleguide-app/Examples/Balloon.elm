@@ -14,7 +14,7 @@ import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (Html, text)
-import Nri.Ui.Balloon.V1 as Balloon
+import Nri.Ui.Balloon.V2 as Balloon
 
 
 moduleName : String
@@ -24,7 +24,7 @@ moduleName =
 
 version : Int
 version =
-    1
+    2
 
 
 {-| -}
