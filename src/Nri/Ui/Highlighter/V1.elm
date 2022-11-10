@@ -660,10 +660,17 @@ groupContainer config viewSegment highlightables =
             , styles = highlightableStyle config.maybeTool highlightable
             , endStyles = marker.endGroupClass
             }
+
+        viewMark =
+            if config.showTagsInline then
+                Mark.viewWithInlineTags
+
+            else
+                Mark.view
     in
     highlightables
         |> List.map (\highlightable -> ( highlightable, Maybe.map (toMark highlightable) highlightable.marked ))
-        |> Mark.view { showTagsInline = config.showTagsInline } viewSegment
+        |> viewMark viewSegment
 
 
 viewHighlightable : String -> Tool.Tool marker -> Maybe Int -> Highlightable marker -> List Css.Style -> Html (Msg marker)

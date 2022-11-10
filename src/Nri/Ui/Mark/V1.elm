@@ -1,8 +1,12 @@
-module Nri.Ui.Mark.V1 exposing (view, Mark)
+module Nri.Ui.Mark.V1 exposing
+    ( Mark
+    , view, viewWithInlineTags, viewWithBalloonTags
+    )
 
 {-|
 
-@docs view, Mark
+@docs Mark
+@docs view, viewWithInlineTags, viewWithBalloonTags
 
 -}
 
@@ -12,6 +16,7 @@ import Css exposing (Style)
 import Css.Global
 import Html.Styled as Html exposing (Html, span)
 import Html.Styled.Attributes exposing (class, css)
+import Nri.Ui.Balloon.V1 as Balloon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
@@ -29,16 +34,53 @@ type alias Mark =
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
+-}
+view :
+    (content -> List Style -> Html msg)
+    -> List ( content, Maybe Mark )
+    -> List (Html msg)
+view =
+    view_ { showTagsInline = False }
+
+
+{-| When elements are marked, wrap them in a single `mark` html node.
+
+Show the label for the mark, if present, in-line with the emphasized content.
+
+-}
+viewWithInlineTags :
+    (content -> List Style -> Html msg)
+    -> List ( content, Maybe Mark )
+    -> List (Html msg)
+viewWithInlineTags =
+    view_ { showTagsInline = True }
+
+
+{-| When elements are marked, wrap them in a single `mark` html node.
+
+Show the label for the mark, if present, in a balloon centered above the emphasized content.
+
+-}
+viewWithBalloonTags :
+    (content -> List Style -> Html msg)
+    -> List ( content, Maybe Mark )
+    -> List (Html msg)
+viewWithBalloonTags =
+    -- TODO: implement
+    view_ { showTagsInline = False }
+
+
+{-| When elements are marked, wrap them in a single `mark` html node.
 
 Show the label for the mark, if present, in-line with the emphasized content when `showTagsInline` is True.
 
 -}
-view :
+view_ :
     { showTagsInline : Bool }
     -> (content -> List Style -> Html msg)
     -> List ( content, Maybe Mark )
     -> List (Html msg)
-view config viewSegment highlightables =
+view_ config viewSegment highlightables =
     case highlightables of
         [] ->
             []

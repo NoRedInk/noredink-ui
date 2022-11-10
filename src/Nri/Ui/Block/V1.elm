@@ -285,8 +285,7 @@ render config =
 
 viewMark : ( List Content, Maybe Mark ) -> Html msg
 viewMark markContent =
-    Mark.view
-        { showTagsInline = False }
+    Mark.viewWithBalloonTags
         (\content_ markStyles ->
             span
                 [ css
