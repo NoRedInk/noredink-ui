@@ -219,7 +219,6 @@ viewBalloon : String -> Html msg
 viewBalloon label =
     Balloon.view
         [ Balloon.onTop
-        , Balloon.paddingPx 4
         , Balloon.containerCss
             [ Css.position Css.absolute
             , Css.bottom (Css.pct 100)
@@ -230,6 +229,7 @@ viewBalloon label =
               Css.left (Css.pct 50)
             , Css.property "transform" "translateX(-50%)"
             ]
+        , Balloon.css [ Css.padding2 Css.zero (Css.px 6) ]
 
         -- TODO: position the balloon against the content it labels
         -- TODO: customize the balloon color

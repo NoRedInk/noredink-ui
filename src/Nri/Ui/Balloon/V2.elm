@@ -6,7 +6,6 @@ module Nri.Ui.Balloon.V2 exposing
     , custom, id, nriDescription, testId
     , containerCss
     , css, notMobileCss, mobileCss, quizEngineMobileCss
-    , paddingPx
     )
 
 {-| Adding a tooltip? Use `Nri.Ui.Tooltip`, not Balloon.
@@ -53,7 +52,6 @@ Changes from V1:
 
 @docs containerCss
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss
-@docs paddingPx
 
 -}
 
@@ -192,12 +190,6 @@ navy =
 customTheme : { backgroundColor : Css.Color, color : Css.Color } -> Attribute msg
 customTheme =
     setTheme
-
-
-{-| -}
-paddingPx : Float -> Attribute msg
-paddingPx length =
-    Attribute (\config -> { config | css = config.css ++ [ Css.padding (Css.px length) ] })
 
 
 {-| -}
