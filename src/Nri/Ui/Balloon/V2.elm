@@ -1,7 +1,7 @@
 module Nri.Ui.Balloon.V2 exposing
     ( view, Attribute
     , plaintext, markdown, html
-    , green, purple, orange, white, navy
+    , green, purple, orange, white, navy, customTheme
     , onBottom, onLeft, onRight, onTop
     , custom, id, nriDescription, testId
     , css, notMobileCss, mobileCss, quizEngineMobileCss
@@ -43,7 +43,7 @@ Changes from V1:
 
 ### Customizations for Balloon
 
-@docs green, purple, orange, white, navy
+@docs green, purple, orange, white, navy, customTheme
 @docs onBottom, onLeft, onRight, onTop
 @docs custom, id, nriDescription, testId
 
@@ -154,35 +154,42 @@ onLeft =
 -}
 green : Attribute msg
 green =
-    setTheme Green
+    setTheme defaultGreenTheme
 
 
 {-| Orange theme
 -}
 orange : Attribute msg
 orange =
-    setTheme Orange
+    setTheme { backgroundColor = Colors.sunshine, color = Colors.gray20 }
 
 
 {-| Purple theme
 -}
 purple : Attribute msg
 purple =
-    setTheme Purple
+    setTheme { backgroundColor = Colors.purple, color = Colors.white }
 
 
 {-| White theme
 -}
 white : Attribute msg
 white =
-    setTheme White
+    setTheme { backgroundColor = Colors.white, color = Colors.gray20 }
 
 
 {-| Navy theme
 -}
 navy : Attribute msg
 navy =
-    setTheme Navy
+    setTheme { backgroundColor = Colors.navy, color = Colors.white }
+
+
+{-| Custom theme: set the background & text color.
+-}
+customTheme : { backgroundColor : Css.Color, color : Css.Color } -> Attribute msg
+customTheme =
+    setTheme
 
 
 {-| -}
@@ -303,7 +310,7 @@ type alias Config msg =
 defaultConfig : Config msg
 defaultConfig =
     { position = NoArrow
-    , theme = Green
+    , theme = defaultGreenTheme
     , css = [ Css.padding (Css.px 20) ]
     , customAttributes = []
     , content = []
@@ -320,31 +327,30 @@ type Position
     | NoArrow
 
 
-{-| NOTE: Double check with the design team if the spec calls for something else.
--}
-type Theme
-    = Orange
-    | Green
-    | Purple
-    | White
-    | Navy
+type alias Theme =
+    { backgroundColor : Css.Color
+    , color : Css.Color
+    }
+
+
+defaultGreenTheme : Theme
+defaultGreenTheme =
+    { backgroundColor = Colors.greenDarkest
+    , color = Colors.white
+    }
 
 
 view_ : Config msg -> Html msg
 view_ config =
-    let
-        palette =
-            themeToPalette config.theme
-    in
     container config.position
         config.customAttributes
-        [ viewBalloon palette config.css config.content
+        [ viewBalloon config.theme config.css config.content
         , case config.position of
             NoArrow ->
                 Html.text ""
 
             _ ->
-                viewArrow config.position palette 16
+                viewArrow config.position config.theme 16
         ]
 
 
@@ -382,7 +388,7 @@ container position attributes =
         attributes
 
 
-viewBalloon : Palette -> List Css.Style -> List (Html msg) -> Html msg
+viewBalloon : Theme -> List Css.Style -> List (Html msg) -> Html msg
 viewBalloon palette styles contents =
     styled div
         [ display inlineBlock
@@ -402,7 +408,7 @@ viewBalloon palette styles contents =
         contents
 
 
-viewArrow : Position -> Palette -> Float -> Html msg
+viewArrow : Position -> Theme -> Float -> Html msg
 viewArrow position palette diagonal =
     let
         arrowSideWidth =
@@ -465,31 +471,6 @@ arrowPosition position =
         NoArrow ->
             batch
                 []
-
-
-type alias Palette =
-    { backgroundColor : Css.Color
-    , color : Css.Color
-    }
-
-
-themeToPalette : Theme -> Palette
-themeToPalette theme =
-    case theme of
-        Orange ->
-            { backgroundColor = Colors.sunshine, color = Colors.gray20 }
-
-        Purple ->
-            { backgroundColor = Colors.purple, color = Colors.white }
-
-        White ->
-            { backgroundColor = Colors.white, color = Colors.gray20 }
-
-        Green ->
-            { backgroundColor = Colors.greenDarkest, color = Colors.white }
-
-        Navy ->
-            { backgroundColor = Colors.navy, color = Colors.white }
 
 
 customizationsToConfig : List (Attribute msg) -> Config msg
