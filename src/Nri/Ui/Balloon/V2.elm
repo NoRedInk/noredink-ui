@@ -186,7 +186,6 @@ type alias Config =
     { position : Position
     , theme : Theme
     , css : List Css.Style
-    , arrowSize : ArrowSize
     }
 
 
@@ -197,7 +196,6 @@ defaultConfig =
     { position = NoArrow
     , theme = Green
     , css = [ Css.padding (Css.px 20) ]
-    , arrowSize = Medium
     }
 
 
@@ -221,10 +219,6 @@ type Theme
     | Navy
 
 
-type ArrowSize
-    = Medium
-
-
 custom : Config -> Html msg -> Html msg
 custom config content =
     container config.position
@@ -234,10 +228,7 @@ custom config content =
                 Html.text ""
 
             _ ->
-                viewArrow config.position config.theme <|
-                    case config.arrowSize of
-                        Medium ->
-                            8 * 2
+                viewArrow config.position config.theme 16
         ]
 
 
