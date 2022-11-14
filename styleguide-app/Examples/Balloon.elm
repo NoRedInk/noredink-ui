@@ -79,8 +79,11 @@ controlSettings =
             )
         |> ControlExtra.optionalListItem "theme" themeOptions
         |> ControlExtra.optionalListItem "position" positionOptions
-        |> ControlExtra.optionalListItem "width" widthOptions
         |> ControlExtra.optionalListItem "padding" paddingOptions
+        |> CommonControls.css { moduleName = moduleName, use = Balloon.css }
+        |> CommonControls.mobileCss { moduleName = moduleName, use = Balloon.mobileCss }
+        |> CommonControls.quizEngineMobileCss { moduleName = moduleName, use = Balloon.quizEngineMobileCss }
+        |> CommonControls.notMobileCss { moduleName = moduleName, use = Balloon.notMobileCss }
 
 
 themeOptions : Control ( String, Balloon.Attribute msg )
@@ -102,13 +105,6 @@ positionOptions =
         , ( "onRight", Control.value ( "Balloon.onRight", Balloon.onRight ) )
         , ( "onTop", Control.value ( "Balloon.onTop", Balloon.onTop ) )
         ]
-
-
-widthOptions : Control ( String, Balloon.Attribute msg )
-widthOptions =
-    Control.map
-        (\w -> ( "Balloon.width (Css.px  " ++ String.fromFloat w ++ ")", Balloon.width (Css.px w) ))
-        (ControlExtra.float 50)
 
 
 paddingOptions : Control ( String, Balloon.Attribute msg )
