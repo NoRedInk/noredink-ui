@@ -44,7 +44,6 @@ example =
         [ Balloon.view
             [ Balloon.onTop
             , Balloon.navy
-            , Balloon.paddingPx 15
             , Balloon.plaintext "This is a balloon."
             ]
         ]
@@ -80,7 +79,6 @@ controlSettings =
             )
         |> ControlExtra.optionalListItem "theme" themeOptions
         |> ControlExtra.optionalListItem "position" positionOptions
-        |> ControlExtra.optionalListItem "padding" paddingOptions
         |> CommonControls.css_ "containerCss"
             ( "[ Css.backgroundColor Colors.magenta ]", [ Css.backgroundColor Colors.magenta ] )
             { moduleName = moduleName, use = Balloon.containerCss }
@@ -109,13 +107,6 @@ positionOptions =
         , ( "onRight", Control.value ( "Balloon.onRight", Balloon.onRight ) )
         , ( "onTop", Control.value ( "Balloon.onTop", Balloon.onTop ) )
         ]
-
-
-paddingOptions : Control ( String, Balloon.Attribute msg )
-paddingOptions =
-    Control.map
-        (\w -> ( "Balloon.paddingPx " ++ String.fromFloat w, Balloon.paddingPx w ))
-        (ControlExtra.float 10)
 
 
 {-| -}
