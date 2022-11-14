@@ -197,7 +197,7 @@ customTheme =
 {-| -}
 paddingPx : Float -> Attribute msg
 paddingPx length =
-    Attribute (\config -> { config | css = Css.padding (Css.px length) :: config.css })
+    Attribute (\config -> { config | css = config.css ++ [ Css.padding (Css.px length) ] })
 
 
 {-| -}
