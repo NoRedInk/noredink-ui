@@ -223,6 +223,12 @@ viewBalloon label =
         , Balloon.containerCss
             [ Css.position Css.absolute
             , Css.bottom (Css.pct 100)
+            , -- using position, 50% is wrt the parent container
+              -- using transform & translate, 50% is wrt to the element itself
+              -- combining these two properties, we can center the tag against the parent container
+              -- for any arbitrary width element
+              Css.left (Css.pct 50)
+            , Css.property "transform" "translateX(-50%)"
             ]
 
         -- TODO: position the balloon against the content it labels
