@@ -1,5 +1,5 @@
 module Nri.Ui.Balloon.V2 exposing
-    ( balloon
+    ( view
     , Attribute
     , green, purple, orange, white, navy
     , onBottom, onLeft, onRight, onTop
@@ -19,9 +19,17 @@ Changes from V1:
   - allow for far more customization:
       - background color
       - HTML attributes
-  - change the API to be more similar to other NRI components (including adding the standard attributes)
+  - change the API to be more similar to other NRI components
+      - add the standard attributes, like nriDescription
+      - `balloon` -> `view`
+      - `widthPx`, `widthPct` -> `width`
 
-@docs balloon
+@docs view
+
+
+## Content
+
+@docs plaintext, markdown, html
 
 
 ## Customizations for Balloon
@@ -58,9 +66,9 @@ import Nri.Ui.Shadows.V1 as Shadows
     |_________|
 
 -}
-balloon : List Attribute -> Html msg -> Html msg
-balloon customizations content =
-    view (customizationsToConfig customizations) content
+view : List Attribute -> Html msg -> Html msg
+view customizations content =
+    view_ (customizationsToConfig customizations) content
 
 
 {-| Balloon's attributes.
@@ -258,8 +266,8 @@ type Theme
     | Navy
 
 
-view : Config -> Html msg -> Html msg
-view config content =
+view_ : Config -> Html msg -> Html msg
+view_ config content =
     container config.position
         config.customAttributes
         [ viewBalloon config.theme config.css [ content ]

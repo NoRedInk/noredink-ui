@@ -211,7 +211,7 @@ viewInlineTag customizations name =
 
 viewBalloon : String -> Html msg
 viewBalloon label =
-    Balloon.balloon
+    Balloon.view
         [ Balloon.onTop
         , Balloon.paddingPx 4
 
