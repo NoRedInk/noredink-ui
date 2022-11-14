@@ -151,6 +151,7 @@ example =
                                     , Css.justifyContent Css.center
                                     , Css.flexWrap Css.wrap
                                     , Css.alignItems Css.center
+                                    , Css.margin2 (Css.px 30) Css.zero
                                     ]
                                 ]
                     , width = Css.px 200
