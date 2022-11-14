@@ -8,6 +8,7 @@ module Examples.Balloon exposing (example, State, Msg)
 
 import Category exposing (Category(..))
 import Code
+import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
@@ -104,18 +105,9 @@ positionOptions =
 
 widthOptions : Control ( String, Balloon.Attribute )
 widthOptions =
-    Control.choice
-        [ ( "px"
-          , Control.map
-                (\w -> ( "Balloon.widthPx " ++ String.fromFloat w, Balloon.widthPx w ))
-                (ControlExtra.float 50)
-          )
-        , ( "%"
-          , Control.map
-                (\w -> ( "Balloon.widthPct " ++ String.fromFloat w, Balloon.widthPct w ))
-                (ControlExtra.float 50)
-          )
-        ]
+    Control.map
+        (\w -> ( "Balloon.width (Css.px  " ++ String.fromFloat w ++ ")", Balloon.width (Css.px w) ))
+        (ControlExtra.float 50)
 
 
 paddingOptions : Control ( String, Balloon.Attribute )
