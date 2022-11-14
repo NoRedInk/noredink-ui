@@ -332,15 +332,19 @@ type Theme
 
 view_ : Config msg -> Html msg
 view_ config =
+    let
+        palette =
+            themeToPalette config.theme
+    in
     container config.position
         config.customAttributes
-        [ viewBalloon config.theme config.css config.content
+        [ viewBalloon palette config.css config.content
         , case config.position of
             NoArrow ->
                 Html.text ""
 
             _ ->
-                viewArrow config.position config.theme 16
+                viewArrow config.position palette 16
         ]
 
 
@@ -378,8 +382,8 @@ container position attributes =
         attributes
 
 
-viewBalloon : Theme -> List Css.Style -> List (Html msg) -> Html msg
-viewBalloon theme_ styles contents =
+viewBalloon : Palette -> List Css.Style -> List (Html msg) -> Html msg
+viewBalloon palette styles contents =
     styled div
         [ display inlineBlock
         , lineHeight (num 1.4)
@@ -387,71 +391,27 @@ viewBalloon theme_ styles contents =
         , position relative
         , Css.borderRadius (px 8)
         , Shadows.high
-        , balloonTheme theme_
+        , backgroundColor palette.backgroundColor
+        , border3 (px 1) solid palette.backgroundColor
+        , color palette.color
+        , Fonts.baseFont
+        , fontSize (px 15)
         , Css.batch styles
         ]
         []
         contents
 
 
-balloonTheme : Theme -> Css.Style
-balloonTheme theme =
-    case theme of
-        Orange ->
-            batch
-                [ backgroundColor Colors.sunshine
-                , border3 (px 1) solid Colors.sunshine
-                , Fonts.baseFont
-                , fontSize (px 15)
-                , color Colors.gray20
-                ]
-
-        Purple ->
-            batch
-                [ backgroundColor Colors.purple
-                , border3 (px 1) solid Colors.purple
-                , Fonts.baseFont
-                , fontSize (px 15)
-                , color Colors.white
-                ]
-
-        White ->
-            batch
-                [ backgroundColor Colors.white
-                , border3 (px 1) solid Colors.white
-                , Fonts.baseFont
-                , fontSize (px 15)
-                , color Colors.gray20
-                ]
-
-        Green ->
-            batch
-                [ backgroundColor Colors.greenDarkest
-                , border3 (px 1) solid Colors.greenDarkest
-                , Fonts.baseFont
-                , fontSize (px 15)
-                , color Colors.white
-                ]
-
-        Navy ->
-            batch
-                [ backgroundColor Colors.navy
-                , border3 (px 1) solid Colors.navy
-                , Fonts.baseFont
-                , fontSize (px 15)
-                , color Colors.white
-                ]
-
-
-viewArrow : Position -> Theme -> Float -> Html msg
-viewArrow position theme diagonal =
+viewArrow : Position -> Palette -> Float -> Html msg
+viewArrow position palette diagonal =
     let
         arrowSideWidth =
             sqrt ((diagonal ^ 2) / 2)
     in
     styled div
         [ arrowPosition position
-        , arrowTheme theme
+        , backgroundColor palette.backgroundColor
+        , border3 (px 1) solid palette.backgroundColor
         , Css.height (px arrowSideWidth)
         , Css.width (px arrowSideWidth)
         ]
@@ -507,53 +467,29 @@ arrowPosition position =
                 []
 
 
-arrowTheme : Theme -> Css.Style
-arrowTheme theme =
+type alias Palette =
+    { backgroundColor : Css.Color
+    , color : Css.Color
+    }
+
+
+themeToPalette : Theme -> Palette
+themeToPalette theme =
     case theme of
         Orange ->
-            batch
-                [ backgroundColor Colors.sunshine
-                , border3 (px 1) solid Colors.sunshine
-                , Fonts.baseFont
-                , fontSize (px 15)
-                , color Colors.gray20
-                ]
+            { backgroundColor = Colors.sunshine, color = Colors.gray20 }
 
         Purple ->
-            batch
-                [ backgroundColor Colors.purple
-                , border3 (px 1) solid Colors.purple
-                , Fonts.baseFont
-                , fontSize (px 15)
-                , color Colors.white
-                ]
+            { backgroundColor = Colors.purple, color = Colors.white }
 
         White ->
-            batch
-                [ backgroundColor Colors.white
-                , border3 (px 1) solid Colors.white
-                , Fonts.baseFont
-                , fontSize (px 15)
-                , color Colors.gray20
-                ]
+            { backgroundColor = Colors.white, color = Colors.gray20 }
 
         Green ->
-            batch
-                [ backgroundColor Colors.greenDarkest
-                , border3 (px 1) solid Colors.greenDarkest
-                , Fonts.baseFont
-                , fontSize (px 15)
-                , color Colors.white
-                ]
+            { backgroundColor = Colors.greenDarkest, color = Colors.white }
 
         Navy ->
-            batch
-                [ backgroundColor Colors.navy
-                , border3 (px 1) solid Colors.navy
-                , Fonts.baseFont
-                , fontSize (px 15)
-                , color Colors.white
-                ]
+            { backgroundColor = Colors.navy, color = Colors.white }
 
 
 customizationsToConfig : List (Attribute msg) -> Config msg
