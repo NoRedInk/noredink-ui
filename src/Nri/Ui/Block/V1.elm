@@ -302,25 +302,30 @@ type alias Config =
 render : Config -> Html msg
 render config =
     let
+        maybePalette =
+            Maybe.map themeToPalette config.theme
+
         maybeMark =
-            toMark config.label (Maybe.map themeToPalette config.theme)
+            toMark config.label maybePalette
     in
     case config.content of
         [] ->
             case maybeMark of
                 Just mark ->
-                    viewMark ( [ Blank ], Just mark )
+                    viewMark (Maybe.withDefault defaultPalette maybePalette)
+                        ( [ Blank ], Just mark )
 
                 Nothing ->
                     viewBlank
 
         _ ->
-            viewMark ( config.content, maybeMark )
+            viewMark (Maybe.withDefault defaultPalette maybePalette)
+                ( config.content, maybeMark )
 
 
-viewMark : ( List Content, Maybe Mark ) -> Html msg
-viewMark markContent =
-    Mark.viewWithBalloonTags
+viewMark : Palette -> ( List Content, Maybe Mark ) -> Html msg
+viewMark palette markContent =
+    Mark.viewWithBalloonTags palette.backgroundColor
         (\content_ markStyles ->
             span
                 [ css
