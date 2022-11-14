@@ -39,7 +39,7 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
-        [ Balloon.balloon
+        [ Balloon.view
             [ Balloon.onTop
             , Balloon.navy
             , Balloon.paddingPx 15
@@ -150,7 +150,7 @@ view ellieLinkConfig state =
             \{ copy, attributes } ->
                 [ { sectionName = "Balloon"
                   , code =
-                        "Balloon.balloon\n    [ "
+                        "Balloon.view\n    [ "
                             ++ String.join "\n    , " (List.map Tuple.first attributes)
                             ++ "\n    ] "
                             ++ "\n    (text \""
@@ -159,7 +159,7 @@ view ellieLinkConfig state =
                   }
                 ]
         }
-    , Balloon.balloon
+    , Balloon.view
         (List.map Tuple.second currentValue.attributes)
         (text currentValue.copy)
     ]
