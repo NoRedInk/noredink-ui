@@ -3,8 +3,9 @@ module Nri.Ui.Balloon.V2 exposing
     , Attribute
     , green, purple, orange, white, navy
     , onBottom, onLeft, onRight, onTop
-    , paddingPx
     , width
+    , custom, id, nriDescription, testId
+    , paddingPx
     )
 
 {-| Adding a tooltip? Use `Nri.Ui.Tooltip`, not Balloon.
@@ -18,7 +19,7 @@ Changes from V1:
   - allow for far more customization:
       - background color
       - HTML attributes
-  - change the API to be more similar to other NRI components
+  - change the API to be more similar to other NRI components (including adding the standard attributes)
 
 @docs balloon
 
@@ -30,7 +31,8 @@ Use these if you don't want the standard green balloon
 @docs Attribute
 @docs green, purple, orange, white, navy
 @docs onBottom, onLeft, onRight, onTop
-@docs widthPx, paddingPx
+@docs width
+@docs custom, id, nriDescription, testId
 
     balloon [ green, onTop ] (text "hello")
 
@@ -38,8 +40,10 @@ Use these if you don't want the standard green balloon
 
 import Css exposing (..)
 import Html.Styled as Html exposing (Html, div, styled)
+import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Shadows.V1 as Shadows
 
 
@@ -56,7 +60,7 @@ import Nri.Ui.Shadows.V1 as Shadows
 -}
 balloon : List Attribute -> Html msg -> Html msg
 balloon customizations content =
-    custom (customizationsToConfig customizations) content
+    view (customizationsToConfig customizations) content
 
 
 {-| Balloon's attributes.
@@ -177,6 +181,40 @@ paddingPx length =
     Attribute (\config -> { config | css = Css.padding (Css.px length) :: config.css })
 
 
+{-| Use this helper to add custom attributes.
+
+Do NOT use this helper to add css styles, as they may not be applied the way you want/expect if underlying Balloon styles change.
+Instead, please use the `css` helper.
+
+-}
+custom : List (Html.Attribute Never) -> Attribute
+custom attributes =
+    Attribute
+        (\config ->
+            { config
+                | customAttributes = List.append config.customAttributes attributes
+            }
+        )
+
+
+{-| -}
+nriDescription : String -> Attribute
+nriDescription description =
+    custom [ ExtraAttributes.nriDescription description ]
+
+
+{-| -}
+testId : String -> Attribute
+testId id_ =
+    custom [ ExtraAttributes.testId id_ ]
+
+
+{-| -}
+id : String -> Attribute
+id id_ =
+    custom [ Attributes.id id_ ]
+
+
 
 -- INTERNALS
 
@@ -185,6 +223,7 @@ type alias Config =
     { position : Position
     , theme : Theme
     , css : List Css.Style
+    , customAttributes : List (Html.Attribute Never)
     }
 
 
@@ -195,6 +234,7 @@ defaultConfig =
     { position = NoArrow
     , theme = Green
     , css = [ Css.padding (Css.px 20) ]
+    , customAttributes = []
     }
 
 
@@ -218,9 +258,10 @@ type Theme
     | Navy
 
 
-custom : Config -> Html msg -> Html msg
-custom config content =
+view : Config -> Html msg -> Html msg
+view config content =
     container config.position
+        config.customAttributes
         [ viewBalloon config.theme config.css [ content ]
         , case config.position of
             NoArrow ->
@@ -231,8 +272,8 @@ custom config content =
         ]
 
 
-container : Position -> List (Html msg) -> Html msg
-container position =
+container : Position -> List (Html.Attribute Never) -> List (Html msg) -> Html msg
+container position attributes =
     styled div
         (case position of
             OnTop ->
@@ -262,7 +303,7 @@ container position =
             NoArrow ->
                 []
         )
-        []
+        (List.map (Attributes.map never) attributes)
 
 
 viewBalloon : Theme -> List Css.Style -> List (Html msg) -> Html msg
