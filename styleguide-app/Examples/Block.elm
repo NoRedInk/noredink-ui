@@ -18,6 +18,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Markdown
 import Nri.Ui.Block.V1 as Block
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V6 as Table
@@ -99,7 +100,16 @@ example =
                 [ Heading.plaintext "Interactive example"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
-            , p [ css [ Css.textAlign Css.center ] ]
+            , p
+                [ css
+                    [ Fonts.quizFont
+                    , Css.fontSize (Css.px 30)
+                    , Css.displayFlex
+                    , Css.justifyContent Css.center
+                    , Css.flexWrap Css.wrap
+                    , Css.alignItems Css.center
+                    ]
+                ]
                 [ Block.view [ Block.plaintext "I like " ]
                 , Block.view (List.map Tuple.second attributes)
                 , Block.view [ Block.plaintext " a lot!" ]
@@ -125,7 +135,16 @@ example =
                     }
                 , Table.custom
                     { header = text "Example"
-                    , view = .example >> p []
+                    , view =
+                        .example
+                            >> p
+                                [ css
+                                    [ Css.displayFlex
+                                    , Css.justifyContent Css.center
+                                    , Css.flexWrap Css.wrap
+                                    , Css.alignItems Css.center
+                                    ]
+                                ]
                     , width = Css.px 200
                     , cellStyles = always [ Css.textAlign Css.center ]
                     , sort = Nothing
@@ -183,7 +202,9 @@ example =
                                 , Block.string " emphasized"
                                 ]
                             ]
-                        , Block.view [ Block.plaintext " in a seed." ]
+                        , Block.view
+                            [ Block.plaintext " in a seed."
+                            ]
                         ]
                   }
                 ]

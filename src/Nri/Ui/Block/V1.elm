@@ -17,12 +17,12 @@ module Nri.Ui.Block.V1 exposing
 @docs Content, string, blank
 
 
-## Customization
+## Content customization
 
 @docs emphasize, label
 
 
-### Color themes
+### Visual customization
 
 @docs yellow, cyan, magenta, green, blue, purple, brown
 
@@ -33,6 +33,8 @@ import Accessibility.Styled.Style exposing (invisibleStyle)
 import Css exposing (Color)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Mark.V1 as Mark exposing (Mark)
+import Nri.Ui.MediaQuery.V1 as MediaQuery
 
 
 {-|
@@ -134,7 +136,7 @@ type Theme
     | Brown
 
 
-themeToPalette : Theme -> { backgroundColor : Color, borderColor : Color }
+themeToPalette : Theme -> Palette
 themeToPalette theme =
     case theme of
         Emphasis ->
@@ -160,6 +162,40 @@ themeToPalette theme =
 
         Brown ->
             { backgroundColor = Colors.highlightBrown, borderColor = Colors.highlightBrownDark }
+
+
+type alias Palette =
+    { backgroundColor : Color, borderColor : Color }
+
+
+paletteToMark : Maybe String -> Palette -> Mark
+paletteToMark label_ { backgroundColor, borderColor } =
+    let
+        borderWidth =
+            Css.px 1
+
+        borderStyles =
+            [ Css.borderStyle Css.dashed
+            , Css.borderColor borderColor
+            ]
+    in
+    { name = label_
+    , startStyles =
+        [ Css.paddingLeft (Css.px 2)
+        , Css.batch borderStyles
+        , Css.borderWidth4 borderWidth Css.zero borderWidth borderWidth
+        ]
+    , styles =
+        [ Css.padding2 (Css.px 4) Css.zero
+        , Css.backgroundColor backgroundColor
+        , MediaQuery.highContrastMode [ Css.property "background-color" "Mark" ]
+        ]
+    , endStyles =
+        [ Css.paddingRight (Css.px 2)
+        , Css.batch borderStyles
+        , Css.borderWidth4 borderWidth borderWidth borderWidth Css.zero
+        ]
+    }
 
 
 {-| -}
@@ -231,28 +267,50 @@ type alias Config =
 render : Config -> Html msg
 render config =
     let
-        maybePalette =
-            Maybe.map themeToPalette config.theme
+        maybeMark =
+            Maybe.map (themeToPalette >> paletteToMark config.label) config.theme
     in
     case config.content of
         [] ->
-            viewBlank
+            case maybeMark of
+                Just mark ->
+                    viewMark ( [ Blank ], Just mark )
+
+                Nothing ->
+                    viewBlank
 
         _ ->
+            viewMark ( config.content, maybeMark )
+
+
+viewMark : ( List Content, Maybe Mark ) -> Html msg
+viewMark markContent =
+    Mark.view
+        { showTagsInline = False }
+        (\content_ markStyles ->
             span
-                [ -- The real implementation will be based on top of Highlighter.
-                  -- this is just a placeholder for API visualization/development convenenience
-                  Maybe.map
-                    (\palette ->
-                        [ Css.backgroundColor palette.backgroundColor
-                        , Css.border3 (Css.px 1) Css.dashed palette.borderColor
-                        ]
+                [ css
+                    (Css.display Css.inlineFlex
+                        :: Css.whiteSpace Css.preWrap
+                        :: -- empty spaces get collapsed away despite the preWrap setting
+                           -- to ensure there's still visible whitespace between emphasis blocks,
+                           -- set a minimum width for the container.
+                           Css.minWidth (Css.px 4)
+                        :: markStyles
                     )
-                    maybePalette
-                    |> Maybe.withDefault []
-                    |> css
                 ]
-                (List.map renderContent config.content)
+                (List.map renderContent content_)
+        )
+        [ markContent ]
+        |> span
+            [ css
+                (if Tuple.first markContent == [ Blank ] then
+                    [ Css.display Css.inlineFlex, Css.alignSelf Css.stretch ]
+
+                 else
+                    [ Css.display Css.inlineFlex ]
+                )
+            ]
 
 
 viewBlank : Html msg
@@ -261,11 +319,10 @@ viewBlank =
         [ css
             [ Css.border3 (Css.px 2) Css.dashed Colors.navy
             , Css.backgroundColor Colors.white
-            , Css.width (Css.px 80)
             , Css.display Css.inlineBlock
-            , Css.padding (Css.px 10)
+            , Css.minWidth (Css.px 80)
             , Css.borderRadius (Css.px 4)
-            , Css.verticalAlign Css.middle
+            , Css.alignSelf Css.stretch
             ]
         ]
         [ span [ css [ invisibleStyle ] ] [ text "blank" ] ]
