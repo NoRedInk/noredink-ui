@@ -15,7 +15,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
-import Html.Styled exposing (Html, text)
+import Html.Styled exposing (Html)
 import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Colors.V1 as Colors
 
