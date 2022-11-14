@@ -140,32 +140,53 @@ themeToPalette : Theme -> Palette
 themeToPalette theme =
     case theme of
         Emphasis ->
-            { backgroundColor = Colors.highlightYellow, borderColor = Colors.highlightYellowDark }
+            defaultPalette
 
         Yellow ->
-            { backgroundColor = Colors.highlightYellow, borderColor = Colors.highlightYellowDark }
+            { backgroundColor = Colors.highlightYellow
+            , borderColor = Colors.highlightYellowDark
+            }
 
         Cyan ->
-            { backgroundColor = Colors.highlightCyan, borderColor = Colors.highlightCyanDark }
+            { backgroundColor = Colors.highlightCyan
+            , borderColor = Colors.highlightCyanDark
+            }
 
         Magenta ->
-            { backgroundColor = Colors.highlightMagenta, borderColor = Colors.highlightMagentaDark }
+            { backgroundColor = Colors.highlightMagenta
+            , borderColor = Colors.highlightMagentaDark
+            }
 
         Green ->
-            { backgroundColor = Colors.highlightGreen, borderColor = Colors.highlightGreenDark }
+            { backgroundColor = Colors.highlightGreen
+            , borderColor = Colors.highlightGreenDark
+            }
 
         Blue ->
-            { backgroundColor = Colors.highlightBlue, borderColor = Colors.highlightBlueDark }
+            { backgroundColor = Colors.highlightBlue
+            , borderColor = Colors.highlightBlueDark
+            }
 
         Purple ->
-            { backgroundColor = Colors.highlightPurple, borderColor = Colors.highlightPurpleDark }
+            { backgroundColor = Colors.highlightPurple
+            , borderColor = Colors.highlightPurpleDark
+            }
 
         Brown ->
-            { backgroundColor = Colors.highlightBrown, borderColor = Colors.highlightBrownDark }
+            { backgroundColor = Colors.highlightBrown
+            , borderColor = Colors.highlightBrownDark
+            }
 
 
 type alias Palette =
     { backgroundColor : Color, borderColor : Color }
+
+
+defaultPalette : Palette
+defaultPalette =
+    { backgroundColor = Colors.highlightYellow
+    , borderColor = Colors.highlightYellowDark
+    }
 
 
 toMark : Maybe String -> Maybe Palette -> Maybe Mark
