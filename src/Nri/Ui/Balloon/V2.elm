@@ -3,8 +3,8 @@ module Nri.Ui.Balloon.V2 exposing
     , Attribute
     , green, purple, orange, white, navy
     , onBottom, onLeft, onRight, onTop
-    , widthPx, widthPct
     , paddingPx
+    , width
     )
 
 {-| Adding a tooltip? Use `Nri.Ui.Tooltip`, not Balloon.
@@ -30,8 +30,7 @@ Use these if you don't want the standard green balloon
 @docs Attribute
 @docs green, purple, orange, white, navy
 @docs onBottom, onLeft, onRight, onTop
-@docs widthPx, widthPct
-@docs paddingPx
+@docs widthPx, paddingPx
 
     balloon [ green, onTop ] (text "hello")
 
@@ -63,11 +62,17 @@ balloon customizations content =
 {-| Balloon's attributes.
 -}
 type Attribute
-    = Theme Theme
-    | Position Position
-    | WidthPx Float
-    | WidthPct Float
-    | PaddingPx Float
+    = Attribute (Config -> Config)
+
+
+setPosition : Position -> Attribute
+setPosition position =
+    Attribute (\config -> { config | position = position })
+
+
+setTheme : Theme -> Attribute
+setTheme theme =
+    Attribute (\config -> { config | theme = theme })
 
 
 {-| Balloon with the arrow on the bottom.
@@ -80,7 +85,7 @@ type Attribute
 -}
 onTop : Attribute
 onTop =
-    Position OnTop
+    setPosition OnTop
 
 
 {-| Balloon with the arrow on the left.
@@ -93,7 +98,7 @@ onTop =
 -}
 onRight : Attribute
 onRight =
-    Position OnRight
+    setPosition OnRight
 
 
 {-| Balloon with the arrow on the top.
@@ -105,7 +110,7 @@ onRight =
 -}
 onBottom : Attribute
 onBottom =
-    Position OnBottom
+    setPosition OnBottom
 
 
 {-| Balloon with the arrow on the right.
@@ -118,64 +123,58 @@ onBottom =
 -}
 onLeft : Attribute
 onLeft =
-    Position OnLeft
+    setPosition OnLeft
 
 
 {-| Green theme (This is the default theme.)
 -}
 green : Attribute
 green =
-    Theme Green
+    setTheme Green
 
 
 {-| Orange theme
 -}
 orange : Attribute
 orange =
-    Theme Orange
+    setTheme Orange
 
 
 {-| Purple theme
 -}
 purple : Attribute
 purple =
-    Theme Purple
+    setTheme Purple
 
 
 {-| White theme
 -}
 white : Attribute
 white =
-    Theme White
+    setTheme White
 
 
 {-| Navy theme
 -}
 navy : Attribute
 navy =
-    Theme Navy
+    setTheme Navy
 
 
-{-| Width of the balloon in pixels.
--}
-widthPx : Float -> Attribute
-widthPx =
-    WidthPx
+{-| Width of the balloon.
 
-
-{-| Warning: using a percentage-based width may change the positioning of the element
+Warning: using a percentage-based width may change the positioning of the element
 in unexpected ways.
+
 -}
-widthPct : Float -> Attribute
-widthPct =
-    WidthPct
+width : Css.LengthOrAuto compatible -> Attribute
+width width_ =
+    Attribute (\config -> { config | css = Css.width width_ :: config.css })
 
 
-{-| Padding of the balloon in pixels.
--}
 paddingPx : Float -> Attribute
-paddingPx =
-    PaddingPx
+paddingPx length =
+    Attribute (\config -> { config | css = Css.padding (Css.px length) :: config.css })
 
 
 
@@ -446,23 +445,4 @@ arrowTheme theme =
 
 customizationsToConfig : List Attribute -> Config
 customizationsToConfig customizations =
-    List.foldl customize defaultConfig customizations
-
-
-customize : Attribute -> Config -> Config
-customize customization config =
-    case customization of
-        Position position ->
-            { config | position = position }
-
-        Theme theme ->
-            { config | theme = theme }
-
-        WidthPx width_ ->
-            { config | css = Css.width (Css.px width_) :: config.css }
-
-        WidthPct width_ ->
-            { config | css = Css.width (Css.pct width_) :: config.css }
-
-        PaddingPx length ->
-            { config | css = Css.padding (Css.px length) :: config.css }
+    List.foldl (\(Attribute f) a -> f a) defaultConfig customizations
