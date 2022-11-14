@@ -212,7 +212,10 @@ toMark label_ palette =
                 , styles =
                     [ Css.padding2 (Css.px 4) Css.zero
                     , Css.backgroundColor backgroundColor
-                    , MediaQuery.highContrastMode [ Css.property "background-color" "Mark" ]
+                    , MediaQuery.highContrastMode
+                        [ Css.property "background-color" "Mark"
+                        , Css.property "color" "MarkText"
+                        ]
                     ]
                 , endStyles =
                     [ Css.paddingRight (Css.px 2)
@@ -357,6 +360,7 @@ viewBlank =
     span
         [ css
             [ Css.border3 (Css.px 2) Css.dashed Colors.navy
+            , MediaQuery.highContrastMode [ Css.property "border-color" "CanvasText" ]
             , Css.backgroundColor Colors.white
             , Css.display Css.inlineBlock
             , Css.minWidth (Css.px 80)
