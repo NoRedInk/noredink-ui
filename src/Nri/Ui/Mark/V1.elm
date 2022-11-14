@@ -106,6 +106,12 @@ view_ tagStyle viewSegment highlightables =
                         , css
                             [ Css.display Css.inlineFlex
                             , Css.backgroundColor Css.transparent
+                            , case tagStyle of
+                                BalloonTags ->
+                                    Css.position Css.relative
+
+                                _ ->
+                                    Css.batch []
                             , Css.Global.children
                                 [ Css.Global.selector ":last-child"
                                     (Css.after
@@ -214,6 +220,10 @@ viewBalloon label =
     Balloon.view
         [ Balloon.onTop
         , Balloon.paddingPx 4
+        , Balloon.containerCss
+            [ Css.position Css.absolute
+            , Css.bottom (Css.pct 100)
+            ]
 
         -- TODO: position the balloon against the content it labels
         -- TODO: customize the balloon color

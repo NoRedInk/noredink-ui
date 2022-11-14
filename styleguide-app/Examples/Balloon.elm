@@ -17,6 +17,7 @@ import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (Html, text)
 import Nri.Ui.Balloon.V2 as Balloon
+import Nri.Ui.Colors.V1 as Colors
 
 
 moduleName : String
@@ -80,6 +81,9 @@ controlSettings =
         |> ControlExtra.optionalListItem "theme" themeOptions
         |> ControlExtra.optionalListItem "position" positionOptions
         |> ControlExtra.optionalListItem "padding" paddingOptions
+        |> CommonControls.css_ "containerCss"
+            ( "[ Css.backgroundColor Colors.magenta ]", [ Css.backgroundColor Colors.magenta ] )
+            { moduleName = moduleName, use = Balloon.containerCss }
         |> CommonControls.css { moduleName = moduleName, use = Balloon.css }
         |> CommonControls.mobileCss { moduleName = moduleName, use = Balloon.mobileCss }
         |> CommonControls.quizEngineMobileCss { moduleName = moduleName, use = Balloon.quizEngineMobileCss }

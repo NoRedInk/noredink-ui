@@ -4,6 +4,7 @@ module Nri.Ui.Balloon.V2 exposing
     , green, purple, orange, white, navy, customTheme
     , onBottom, onLeft, onRight, onTop
     , custom, id, nriDescription, testId
+    , containerCss
     , css, notMobileCss, mobileCss, quizEngineMobileCss
     , paddingPx
     )
@@ -50,6 +51,7 @@ Changes from V1:
 
 ### CSS
 
+@docs containerCss
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss
 @docs paddingPx
 
@@ -199,6 +201,12 @@ paddingPx length =
 
 
 {-| -}
+containerCss : List Style -> Attribute msg
+containerCss styles =
+    Attribute (\config -> { config | containerCss = List.append config.containerCss styles })
+
+
+{-| -}
 css : List Style -> Attribute msg
 css styles =
     Attribute (\config -> { config | css = List.append config.css styles })
@@ -299,6 +307,7 @@ html =
 type alias Config msg =
     { position : Position
     , theme : Theme
+    , containerCss : List Css.Style
     , css : List Css.Style
     , customAttributes : List (Html.Attribute msg)
     , content : List (Html msg)
@@ -311,6 +320,7 @@ defaultConfig : Config msg
 defaultConfig =
     { position = NoArrow
     , theme = defaultGreenTheme
+    , containerCss = []
     , css = [ Css.padding (Css.px 20) ]
     , customAttributes = []
     , content = []
@@ -343,7 +353,7 @@ defaultGreenTheme =
 view_ : Config msg -> Html msg
 view_ config =
     container config.position
-        config.customAttributes
+        (Attributes.css config.containerCss :: config.customAttributes)
         [ viewBalloon config.theme config.css config.content
         , case config.position of
             NoArrow ->
