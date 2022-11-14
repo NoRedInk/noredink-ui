@@ -219,5 +219,5 @@ viewBalloon label =
         -- TODO: customize the balloon color
         -- TODO: ensure the balloon is legible for users in high-contrast mode
         -- TODO: hide the balloon from screenreader users
+        , Balloon.plaintext label
         ]
-        (Html.text label)

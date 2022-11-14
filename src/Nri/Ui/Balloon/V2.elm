@@ -1,6 +1,6 @@
 module Nri.Ui.Balloon.V2 exposing
-    ( view
-    , Attribute
+    ( view, Attribute
+    , plaintext, markdown, html
     , green, purple, orange, white, navy
     , onBottom, onLeft, onRight, onTop
     , width
@@ -11,8 +11,14 @@ module Nri.Ui.Balloon.V2 exposing
 {-| Adding a tooltip? Use `Nri.Ui.Tooltip`, not Balloon.
 Balloon is really just a container: it is non-interactive and isn't semantically meaningful.
 
+    Balloon.view
+        [ Balloon.plaintext "Hello!"
+        , Balloon.onTop
+        , Balloon.navy
+        ]
 
-# Changelog
+
+## Changelog
 
 Changes from V1:
 
@@ -23,29 +29,31 @@ Changes from V1:
       - add the standard attributes, like nriDescription
       - `balloon` -> `view`
       - `widthPx`, `widthPct` -> `width`
+      - content -> `markdown`, `plaintext`, and `html`
 
-@docs view
+
+## API
+
+@docs view, Attribute
 
 
-## Content
+### Content
 
 @docs plaintext, markdown, html
 
 
-## Customizations for Balloon
+### Customizations for Balloon
 
 Use these if you don't want the standard green balloon
 
-@docs Attribute
 @docs green, purple, orange, white, navy
 @docs onBottom, onLeft, onRight, onTop
 @docs width
 @docs custom, id, nriDescription, testId
 
-    balloon [ green, onTop ] (text "hello")
-
 -}
 
+import Content
 import Css exposing (..)
 import Html.Styled as Html exposing (Html, div, styled)
 import Html.Styled.Attributes as Attributes
@@ -66,23 +74,23 @@ import Nri.Ui.Shadows.V1 as Shadows
     |_________|
 
 -}
-view : List Attribute -> Html msg -> Html msg
-view customizations content =
-    view_ (customizationsToConfig customizations) content
+view : List (Attribute msg) -> Html msg
+view customizations =
+    view_ (customizationsToConfig customizations)
 
 
 {-| Balloon's attributes.
 -}
-type Attribute
-    = Attribute (Config -> Config)
+type Attribute msg
+    = Attribute (Config msg -> Config msg)
 
 
-setPosition : Position -> Attribute
+setPosition : Position -> Attribute msg
 setPosition position =
     Attribute (\config -> { config | position = position })
 
 
-setTheme : Theme -> Attribute
+setTheme : Theme -> Attribute msg
 setTheme theme =
     Attribute (\config -> { config | theme = theme })
 
@@ -95,7 +103,7 @@ setTheme theme =
         \/
 
 -}
-onTop : Attribute
+onTop : Attribute msg
 onTop =
     setPosition OnTop
 
@@ -108,7 +116,7 @@ onTop =
      |_________|
 
 -}
-onRight : Attribute
+onRight : Attribute msg
 onRight =
     setPosition OnRight
 
@@ -120,7 +128,7 @@ onRight =
     |_________|
 
 -}
-onBottom : Attribute
+onBottom : Attribute msg
 onBottom =
     setPosition OnBottom
 
@@ -133,42 +141,42 @@ onBottom =
      |_________|
 
 -}
-onLeft : Attribute
+onLeft : Attribute msg
 onLeft =
     setPosition OnLeft
 
 
 {-| Green theme (This is the default theme.)
 -}
-green : Attribute
+green : Attribute msg
 green =
     setTheme Green
 
 
 {-| Orange theme
 -}
-orange : Attribute
+orange : Attribute msg
 orange =
     setTheme Orange
 
 
 {-| Purple theme
 -}
-purple : Attribute
+purple : Attribute msg
 purple =
     setTheme Purple
 
 
 {-| White theme
 -}
-white : Attribute
+white : Attribute msg
 white =
     setTheme White
 
 
 {-| Navy theme
 -}
-navy : Attribute
+navy : Attribute msg
 navy =
     setTheme Navy
 
@@ -179,12 +187,12 @@ Warning: using a percentage-based width may change the positioning of the elemen
 in unexpected ways.
 
 -}
-width : Css.LengthOrAuto compatible -> Attribute
+width : Css.LengthOrAuto compatible -> Attribute msg
 width width_ =
     Attribute (\config -> { config | css = Css.width width_ :: config.css })
 
 
-paddingPx : Float -> Attribute
+paddingPx : Float -> Attribute msg
 paddingPx length =
     Attribute (\config -> { config | css = Css.padding (Css.px length) :: config.css })
 
@@ -195,7 +203,7 @@ Do NOT use this helper to add css styles, as they may not be applied the way you
 Instead, please use the `css` helper.
 
 -}
-custom : List (Html.Attribute Never) -> Attribute
+custom : List (Html.Attribute msg) -> Attribute msg
 custom attributes =
     Attribute
         (\config ->
@@ -206,43 +214,66 @@ custom attributes =
 
 
 {-| -}
-nriDescription : String -> Attribute
+nriDescription : String -> Attribute msg
 nriDescription description =
     custom [ ExtraAttributes.nriDescription description ]
 
 
 {-| -}
-testId : String -> Attribute
+testId : String -> Attribute msg
 testId id_ =
     custom [ ExtraAttributes.testId id_ ]
 
 
 {-| -}
-id : String -> Attribute
+id : String -> Attribute msg
 id id_ =
     custom [ Attributes.id id_ ]
+
+
+{-| Provide a plain-text string.
+-}
+plaintext : String -> Attribute msg
+plaintext =
+    Attribute << Content.plaintext
+
+
+{-| Provide a string that will be rendered as markdown.
+-}
+markdown : String -> Attribute msg
+markdown =
+    Attribute << Content.markdown
+
+
+{-| Provide a list of custom HTML.
+-}
+html : List (Html msg) -> Attribute msg
+html =
+    Attribute << Content.html
 
 
 
 -- INTERNALS
 
 
-type alias Config =
+type alias Config msg =
     { position : Position
     , theme : Theme
     , css : List Css.Style
-    , customAttributes : List (Html.Attribute Never)
+    , customAttributes : List (Html.Attribute msg)
+    , content : List (Html msg)
     }
 
 
 {-| Default configuration
 -}
-defaultConfig : Config
+defaultConfig : Config msg
 defaultConfig =
     { position = NoArrow
     , theme = Green
     , css = [ Css.padding (Css.px 20) ]
     , customAttributes = []
+    , content = []
     }
 
 
@@ -266,11 +297,11 @@ type Theme
     | Navy
 
 
-view_ : Config -> Html msg -> Html msg
-view_ config content =
+view_ : Config msg -> Html msg
+view_ config =
     container config.position
         config.customAttributes
-        [ viewBalloon config.theme config.css [ content ]
+        [ viewBalloon config.theme config.css config.content
         , case config.position of
             NoArrow ->
                 Html.text ""
@@ -280,7 +311,7 @@ view_ config content =
         ]
 
 
-container : Position -> List (Html.Attribute Never) -> List (Html msg) -> Html msg
+container : Position -> List (Html.Attribute msg) -> List (Html msg) -> Html msg
 container position attributes =
     styled div
         (case position of
@@ -311,7 +342,7 @@ container position attributes =
             NoArrow ->
                 []
         )
-        (List.map (Attributes.map never) attributes)
+        attributes
 
 
 viewBalloon : Theme -> List Css.Style -> List (Html msg) -> Html msg
@@ -492,6 +523,6 @@ arrowTheme theme =
                 ]
 
 
-customizationsToConfig : List Attribute -> Config
+customizationsToConfig : List (Attribute msg) -> Config msg
 customizationsToConfig customizations =
     List.foldl (\(Attribute f) a -> f a) defaultConfig customizations
