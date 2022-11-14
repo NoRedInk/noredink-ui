@@ -126,6 +126,16 @@ all =
         , ( "cleverC", Logo.cleverC, defaults )
         ]
       )
+    , ( "ClassLink"
+      , [ ( "classLinkFull"
+          , Logo.classLinkFull
+          , [ Css.height (Css.px 25)
+            , Css.width (Css.px 100)
+            , Css.margin (Css.px 4)
+            ]
+          )
+        ]
+      )
     , ( "Canvas"
       , [ ( "canvas"
           , Logo.canvas
