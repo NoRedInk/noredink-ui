@@ -7,16 +7,18 @@ module Nri.Ui.Balloon.V2 exposing
     , paddingPx
     )
 
-{-| You propably want to use `Nri.Tooltip` not this.
-This is used to display a ballon-like container.
+{-| Adding a tooltip? Use `Nri.Ui.Tooltip`, not Balloon.
+Balloon is really just a container: it is non-interactive and isn't semantically meaningful.
 
 
 # Changelog
 
+Changes from V1:
 
-## Patch changes
-
-  - use `Shadows`
+  - allow for far more customization:
+      - background color
+      - HTML attributes
+  - change the API to be more similar to other NRI components
 
 @docs balloon
 
