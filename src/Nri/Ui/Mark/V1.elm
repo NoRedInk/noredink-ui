@@ -230,10 +230,13 @@ viewBalloon label =
             , Css.property "transform" "translateX(-50%)"
             ]
         , Balloon.css [ Css.padding2 Css.zero (Css.px 6) ]
+        , Balloon.custom
+            [ -- we use the :before element to convey details about the start of the
+              -- highlighter to screenreaders, so the visual label is redundant
+              Aria.hidden True
+            ]
 
-        -- TODO: position the balloon against the content it labels
         -- TODO: customize the balloon color
         -- TODO: ensure the balloon is legible for users in high-contrast mode
-        -- TODO: hide the balloon from screenreader users
         , Balloon.plaintext label
         ]
