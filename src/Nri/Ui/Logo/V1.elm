@@ -418,6 +418,7 @@ canvas =
         |> Nri.Ui.Svg.V1.withColor (Css.hex "#E72429")
 
 
+{-| -}
 classLink : Nri.Ui.Svg.V1.Svg
 classLink =
     Nri.Ui.Svg.V1.init "0 0 210 150"
