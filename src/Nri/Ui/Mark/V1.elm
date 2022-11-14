@@ -231,7 +231,7 @@ viewBalloon backgroundColor label =
               Css.left (Css.pct 50)
             , Css.property "transform" "translateX(-50%)"
             ]
-        , Balloon.css [ Css.padding2 Css.zero (Css.px 6) ]
+        , Balloon.css [ Css.padding3 Css.zero (Css.px 6) (Css.px 1) ]
         , Balloon.custom
             [ -- we use the :before element to convey details about the start of the
               -- highlighter to screenreaders, so the visual label is redundant
