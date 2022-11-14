@@ -3,8 +3,8 @@ module Nri.Ui.Balloon.V2 exposing
     , plaintext, markdown, html
     , green, purple, orange, white, navy
     , onBottom, onLeft, onRight, onTop
-    , width
     , custom, id, nriDescription, testId
+    , css, notMobileCss, mobileCss, quizEngineMobileCss
     , paddingPx
     )
 
@@ -26,9 +26,8 @@ Changes from V1:
       - background color
       - HTML attributes
   - change the API to be more similar to other NRI components
-      - add the standard attributes, like nriDescription
+      - add the standard attributes, like nriDescription and css
       - `balloon` -> `view`
-      - `widthPx`, `widthPct` -> `width`
       - content -> `markdown`, `plaintext`, and `html`
 
 
@@ -44,22 +43,27 @@ Changes from V1:
 
 ### Customizations for Balloon
 
-Use these if you don't want the standard green balloon
-
 @docs green, purple, orange, white, navy
 @docs onBottom, onLeft, onRight, onTop
-@docs width
 @docs custom, id, nriDescription, testId
+
+
+### CSS
+
+@docs css, notMobileCss, mobileCss, quizEngineMobileCss
+@docs paddingPx
 
 -}
 
 import Content
 import Css exposing (..)
+import Css.Media exposing (MediaQuery)
 import Html.Styled as Html exposing (Html, div, styled)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
+import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Shadows.V1 as Shadows
 
 
@@ -181,20 +185,49 @@ navy =
     setTheme Navy
 
 
-{-| Width of the balloon.
-
-Warning: using a percentage-based width may change the positioning of the element
-in unexpected ways.
-
--}
-width : Css.LengthOrAuto compatible -> Attribute msg
-width width_ =
-    Attribute (\config -> { config | css = Css.width width_ :: config.css })
-
-
+{-| -}
 paddingPx : Float -> Attribute msg
 paddingPx length =
     Attribute (\config -> { config | css = Css.padding (Css.px length) :: config.css })
+
+
+{-| -}
+css : List Style -> Attribute msg
+css styles =
+    Attribute (\config -> { config | css = List.append config.css styles })
+
+
+{-| Equivalent to:
+
+    ClickableText.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.notMobile ] styles ]
+
+-}
+notMobileCss : List Style -> Attribute msg
+notMobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.notMobile ] styles ]
+
+
+{-| Equivalent to:
+
+    ClickableText.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.mobile ] styles ]
+
+-}
+mobileCss : List Style -> Attribute msg
+mobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.mobile ] styles ]
+
+
+{-| Equivalent to:
+
+    ClickableText.css
+        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.quizEngineMobile ] styles ]
+
+-}
+quizEngineMobileCss : List Style -> Attribute msg
+quizEngineMobileCss styles =
+    css [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
 
 
 {-| Use this helper to add custom attributes.
