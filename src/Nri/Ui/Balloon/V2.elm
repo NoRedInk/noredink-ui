@@ -185,8 +185,7 @@ paddingPx =
 type alias Config =
     { position : Position
     , theme : Theme
-    , width : Maybe Css.Style
-    , padding : Css.Style
+    , css : List Css.Style
     , arrowSize : ArrowSize
     }
 
@@ -197,8 +196,7 @@ defaultConfig : Config
 defaultConfig =
     { position = NoArrow
     , theme = Green
-    , width = Nothing
-    , padding = Css.padding (px 20)
+    , css = [ Css.padding (Css.px 20) ]
     , arrowSize = Medium
     }
 
@@ -230,7 +228,7 @@ type ArrowSize
 custom : Config -> Html msg -> Html msg
 custom config content =
     container config.position
-        [ viewBalloon config.theme config.width config.padding [ content ]
+        [ viewBalloon config.theme config.css [ content ]
         , case config.position of
             NoArrow ->
                 Html.text ""
@@ -277,21 +275,18 @@ container position =
         []
 
 
-viewBalloon : Theme -> Maybe Css.Style -> Css.Style -> List (Html msg) -> Html msg
-viewBalloon theme_ width_ padding contents =
+viewBalloon : Theme -> List Css.Style -> List (Html msg) -> Html msg
+viewBalloon theme_ styles contents =
     styled div
-        (List.filterMap identity
-            [ Just (display inlineBlock)
-            , Just (lineHeight (num 1.4))
-            , Just (textAlign left)
-            , Just (position relative)
-            , Just (Css.borderRadius (px 8))
-            , Just Shadows.high
-            , Just padding
-            , Just (balloonTheme theme_)
-            , width_
-            ]
-        )
+        [ display inlineBlock
+        , lineHeight (num 1.4)
+        , textAlign left
+        , position relative
+        , Css.borderRadius (px 8)
+        , Shadows.high
+        , balloonTheme theme_
+        , Css.batch styles
+        ]
         []
         contents
 
@@ -473,10 +468,10 @@ customize customization config =
             { config | theme = theme }
 
         WidthPx width_ ->
-            { config | width = Just (Css.width (Css.px width_)) }
+            { config | css = Css.width (Css.px width_) :: config.css }
 
         WidthPct width_ ->
-            { config | width = Just (Css.width (Css.pct width_)) }
+            { config | css = Css.width (Css.pct width_) :: config.css }
 
         PaddingPx length ->
-            { config | padding = Css.padding (Css.px length) }
+            { config | css = Css.padding (Css.px length) :: config.css }
