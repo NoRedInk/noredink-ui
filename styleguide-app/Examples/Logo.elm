@@ -134,6 +134,13 @@ all =
             , Css.margin (Css.px 4)
             ]
           )
+        , ( "classLink"
+          , Logo.classLink
+          , [ Css.height (Css.px 25)
+            , Css.width (Css.px 25)
+            , Css.margin (Css.px 4)
+            ]
+          )
         ]
       )
     , ( "Canvas"
