@@ -7,7 +7,11 @@ module Nri.Ui.Text.V6 exposing
     , nriDescription, testId
     )
 
-{-| Changes from V5:
+{-| Patch changes:
+
+  - use internal `Content` module
+
+Changes from V5:
 
   - adds helpers: `custom`, `nriDescription`,`testId`,`id`
   - instead of view helpers that take HTML, offer attribute helpers supporting plaintext, markdown, and html content
@@ -55,10 +59,10 @@ You're in the wrong place! Headings live in Nri.Ui.Heading.V3.
 -}
 
 import Accessibility.Styled as Html exposing (..)
+import Content
 import Css exposing (..)
 import Css.Global
 import Html.Styled.Attributes as Attributes
-import Markdown
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
@@ -344,25 +348,19 @@ footnote attributes =
 {-| Provide a plain-text string.
 -}
 plaintext : String -> Attribute msg
-plaintext content =
-    Attribute <| \config -> { config | content = [ text content ] }
+plaintext =
+    Attribute << Content.plaintext
 
 
 {-| Provide a string that will be rendered as markdown.
 -}
 markdown : String -> Attribute msg
-markdown content =
-    Attribute <|
-        \config ->
-            { config
-                | content =
-                    Markdown.toHtml Nothing content
-                        |> List.map fromUnstyled
-            }
+markdown =
+    Attribute << Content.markdown
 
 
 {-| Provide a list of custom HTML.
 -}
 html : List (Html msg) -> Attribute msg
-html content =
-    Attribute <| \config -> { config | content = content }
+html =
+    Attribute << Content.html

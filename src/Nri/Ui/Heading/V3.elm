@@ -9,7 +9,15 @@ module Nri.Ui.Heading.V3 exposing
 {-|
 
 
-# Changes from V2:
+# Changelog
+
+
+## Patch changes
+
+  - use internal `Content` module
+
+
+## Changes from V2:
 
   - changes default h2 style to subhead
   - remove `customAttr`
@@ -35,10 +43,10 @@ Headings with customization options.
 
 -}
 
+import Content
 import Css exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes
-import Markdown
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
@@ -94,28 +102,22 @@ view tag attrs =
 {-| Provide a plain-text string.
 -}
 plaintext : String -> Attribute msg
-plaintext content =
-    Attribute <| \config -> { config | content = [ text content ] }
+plaintext =
+    Attribute << Content.plaintext
 
 
 {-| Provide a string that will be rendered as markdown.
 -}
 markdown : String -> Attribute msg
-markdown content =
-    Attribute <|
-        \config ->
-            { config
-                | content =
-                    Markdown.toHtml Nothing content
-                        |> List.map fromUnstyled
-            }
+markdown =
+    Attribute << Content.markdown
 
 
 {-| Provide a list of custom HTML.
 -}
 html : List (Html msg) -> Attribute msg
-html content =
-    Attribute <| \config -> { config | content = content }
+html =
+    Attribute << Content.html
 
 
 {-| Like an `Html.Attribute msg`, but specifically for headings. Use things

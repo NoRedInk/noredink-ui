@@ -8,6 +8,14 @@ module Nri.Ui.Panel.V1 exposing
 
 {-| Create panels (AKA wells.)
 
+
+## Changelog
+
+
+### Patch changes
+
+  - use internal `Content` module
+
 @docs view, Attribute
 
 
@@ -24,10 +32,10 @@ module Nri.Ui.Panel.V1 exposing
 
 -}
 
+import Content
 import Css exposing (Style)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes
-import Markdown
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 
@@ -87,28 +95,22 @@ header header_ =
 {-| Render panel content.
 -}
 html : List (Html msg) -> Attribute msg
-html contents_ =
-    Attribute (\soFar -> { soFar | content = contents_ })
+html =
+    Attribute << Content.html
 
 
 {-| Use a plain-text string for the panel content.
 -}
 plaintext : String -> Attribute msg
-plaintext content =
-    Attribute <| \config -> { config | content = [ text content ] }
+plaintext =
+    Attribute << Content.plaintext
 
 
 {-| Use a markdown string for the panel content.
 -}
 markdown : String -> Attribute msg
-markdown content =
-    Attribute <|
-        \config ->
-            { config
-                | content =
-                    Markdown.toHtml Nothing content
-                        |> List.map fromUnstyled
-            }
+markdown =
+    Attribute << Content.markdown
 
 
 {-| -}

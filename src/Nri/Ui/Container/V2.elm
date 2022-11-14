@@ -22,6 +22,7 @@ module Nri.Ui.Container.V2 exposing
 
   - use `Shadows`
   - add notMobileCss, mobileCss, quizEngineMobileCss
+  - use internal `Content` module
 
 
 ## Changes from V1
@@ -61,11 +62,11 @@ module Nri.Ui.Container.V2 exposing
 
 -}
 
+import Content
 import Css exposing (..)
 import Css.Media exposing (withMedia)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes
-import Markdown
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
@@ -329,15 +330,15 @@ buttonyStyles =
 {-| Provide a list of custom HTML.
 -}
 html : List (Html msg) -> Attribute msg
-html content =
-    Attribute <| \config -> { config | content = content }
+html =
+    Attribute << Content.html
 
 
 {-| Provide a plain-text string.
 -}
 plaintext : String -> Attribute msg
-plaintext content =
-    Attribute <| \config -> { config | content = [ text content ] }
+plaintext =
+    Attribute << Content.plaintext
 
 
 {-| Provide a string that will be rendered as markdown.
@@ -347,11 +348,5 @@ to `p` tags by user agents.
 
 -}
 markdown : String -> Attribute msg
-markdown content =
-    Attribute <|
-        \config ->
-            { config
-                | content =
-                    Markdown.toHtml Nothing content
-                        |> List.map fromUnstyled
-            }
+markdown =
+    Attribute << Content.markdown
