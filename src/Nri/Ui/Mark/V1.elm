@@ -234,10 +234,6 @@ viewBalloon backgroundColor label =
         , Balloon.css
             [ Css.padding3 Css.zero (Css.px 6) (Css.px 1)
             , Css.property "box-shadow" "none"
-            , MediaQuery.highContrastMode
-                [ Css.property "background-color" "Mark"
-                , Css.property "color" "MarkText"
-                ]
             ]
         , Balloon.custom
             [ -- we use the :before element to convey details about the start of the
@@ -247,6 +243,10 @@ viewBalloon backgroundColor label =
         , Balloon.customTheme
             { backgroundColor = backgroundColor
             , color = Nri.Ui.Colors.Extra.highContrastColor backgroundColor
+            }
+        , Balloon.highContrastModeTheme
+            { backgroundColor = "Mark"
+            , color = "MarkText"
             }
 
         -- TODO: ensure the balloon is legible for users in high-contrast mode

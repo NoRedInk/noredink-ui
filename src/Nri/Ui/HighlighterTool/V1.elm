@@ -91,7 +91,10 @@ highlightStyles color =
         sharedStyles
         [ Css.backgroundColor color
         , Css.boxShadow5 Css.zero (Css.px 1) Css.zero Css.zero Colors.gray75
-        , MediaQuery.highContrastMode [ Css.property "background-color" "Mark" ]
+        , MediaQuery.highContrastMode
+            [ Css.property "background-color" "Mark"
+            , Css.property "forced-color-adjust" "none"
+            ]
         ]
 
 
@@ -110,6 +113,7 @@ hoverStyles color =
         , MediaQuery.highContrastMode
             [ Css.property "background-color" "Highlight" |> Css.important
             , Css.property "color" "HighlightText"
+            , Css.property "forced-color-adjust" "none"
             ]
 
         -- The Highlighter applies both these styles and the startGroup and
