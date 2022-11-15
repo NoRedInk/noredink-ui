@@ -29,7 +29,6 @@ module Nri.Ui.Block.V1 exposing
 -}
 
 import Accessibility.Styled exposing (..)
-import Accessibility.Styled.Style exposing (invisibleStyle)
 import Css exposing (Color)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
