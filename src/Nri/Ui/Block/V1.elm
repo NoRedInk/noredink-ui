@@ -339,16 +339,7 @@ viewMark palette markContent =
                 ]
                 (List.map renderContent content_)
         )
-        [ markContent ]
-        |> span
-            [ css
-                (if Tuple.first markContent == [ Blank ] then
-                    [ Css.display Css.inlineFlex, Css.alignSelf Css.stretch ]
-
-                 else
-                    [ Css.display Css.inlineFlex ]
-                )
-            ]
+        markContent
 
 
 viewBlank : Html msg

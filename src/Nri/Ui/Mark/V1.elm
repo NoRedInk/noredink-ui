@@ -65,10 +65,19 @@ Show the label for the mark, if present, in a balloon centered above the emphasi
 viewWithBalloonTags :
     Color
     -> (content -> List Style -> Html msg)
-    -> List ( content, Maybe Mark )
-    -> List (Html msg)
-viewWithBalloonTags backgroundColor =
-    view_ (BalloonTags backgroundColor)
+    -> ( content, Maybe Mark )
+    -> Html msg
+viewWithBalloonTags backgroundColor viewSegment ( content, marked ) =
+    let
+        segment =
+            viewSegment content (markStyles 0 marked)
+    in
+    case marked of
+        Just markedWith ->
+            viewMarked (BalloonTags backgroundColor) markedWith [ segment ]
+
+        Nothing ->
+            segment
 
 
 type TagStyle
@@ -101,34 +110,38 @@ view_ tagStyle viewSegment highlightables =
             in
             case marked of
                 Just markedWith ->
-                    [ Html.mark
-                        [ markedWith.name
-                            |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
-                            |> Maybe.withDefault AttributesExtra.none
-                        , css
-                            [ Css.backgroundColor Css.transparent
-                            , case tagStyle of
-                                BalloonTags _ ->
-                                    Css.position Css.relative
-
-                                _ ->
-                                    Css.batch []
-                            , Css.Global.children
-                                [ Css.Global.selector ":last-child"
-                                    (Css.after
-                                        [ Css.property "content" ("\" [end " ++ (Maybe.map (\name -> name) markedWith.name |> Maybe.withDefault "highlight") ++ "] \"")
-                                        , invisibleStyle
-                                        ]
-                                        :: markedWith.endStyles
-                                    )
-                                ]
-                            ]
-                        ]
-                        (viewStartHighlight tagStyle markedWith :: segments)
-                    ]
+                    [ viewMarked tagStyle markedWith segments ]
 
                 Nothing ->
                     segments
+
+
+viewMarked : TagStyle -> Mark -> List (Html msg) -> Html msg
+viewMarked tagStyle markedWith segments =
+    Html.mark
+        [ markedWith.name
+            |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
+            |> Maybe.withDefault AttributesExtra.none
+        , css
+            [ Css.backgroundColor Css.transparent
+            , case tagStyle of
+                BalloonTags _ ->
+                    Css.position Css.relative
+
+                _ ->
+                    Css.batch []
+            , Css.Global.children
+                [ Css.Global.selector ":last-child"
+                    (Css.after
+                        [ Css.property "content" ("\" [end " ++ (Maybe.map (\name -> name) markedWith.name |> Maybe.withDefault "highlight") ++ "] \"")
+                        , invisibleStyle
+                        ]
+                        :: markedWith.endStyles
+                    )
+                ]
+            ]
+        ]
+        (viewStartHighlight tagStyle markedWith :: segments)
 
 
 viewStartHighlight : TagStyle -> Mark -> Html msg
