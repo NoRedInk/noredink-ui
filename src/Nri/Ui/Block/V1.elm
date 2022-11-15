@@ -33,6 +33,7 @@ import Accessibility.Styled.Style exposing (invisibleStyle)
 import Css exposing (Color)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
 import Nri.Ui.Mark.V1 as Mark exposing (Mark)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 
@@ -42,7 +43,7 @@ import Nri.Ui.MediaQuery.V1 as MediaQuery
     Block.view [ Block.plaintext "Hello, world!" ]
 
 -}
-view : List Attribute -> Html msg
+view : List Attribute -> List (Html msg)
 view attributes =
     attributes
         |> List.foldl (\(Attribute attribute) b -> attribute b) defaultConfig
@@ -96,14 +97,19 @@ type Content
     | Blank
 
 
-renderContent : Content -> Html msg
-renderContent content_ =
-    case content_ of
-        String_ str ->
-            text str
+renderContent : Content -> List Css.Style -> Html msg
+renderContent content_ markStyles =
+    span
+        [ css (Css.whiteSpace Css.preWrap :: markStyles)
+        , nriDescription "block-segment-container"
+        ]
+    <|
+        case content_ of
+            String_ str ->
+                [ text str ]
 
-        Blank ->
-            viewBlank
+            Blank ->
+                [ viewBlank ]
 
 
 {-| You will only need to use this helper if you're also using `content` to construct a more complex Block. Maybe you want `plaintext` instead?
@@ -212,6 +218,8 @@ toMark label_ palette =
                 , styles =
                     [ Css.padding2 (Css.px 4) Css.zero
                     , Css.backgroundColor backgroundColor
+                    , Css.batch borderStyles
+                    , Css.borderWidth2 borderWidth Css.zero
                     , MediaQuery.highContrastMode
                         [ Css.property "background-color" "Mark"
                         , Css.property "color" "MarkText"
@@ -303,7 +311,7 @@ type alias Config =
     }
 
 
-render : Config -> Html msg
+render : Config -> List (Html msg)
 render config =
     let
         maybePalette =
@@ -320,26 +328,19 @@ render config =
                         ( [ Blank ], Just mark )
 
                 Nothing ->
-                    viewBlank
+                    [ viewBlank ]
 
         _ ->
             viewMark (Maybe.withDefault defaultPalette maybePalette)
                 ( config.content, maybeMark )
 
 
-viewMark : Palette -> ( List Content, Maybe Mark ) -> Html msg
-viewMark palette markContent =
-    Mark.viewWithBalloonTags palette.backgroundColor
-        (\content_ markStyles ->
-            span
-                [ css
-                    (Css.whiteSpace Css.preWrap
-                        :: markStyles
-                    )
-                ]
-                (List.map renderContent content_)
-        )
-        markContent
+viewMark : Palette -> ( List Content, Maybe Mark ) -> List (Html msg)
+viewMark palette ( content_, mark ) =
+    Mark.viewWithBalloonTags renderContent
+        palette.backgroundColor
+        mark
+        content_
 
 
 viewBlank : Html msg
@@ -352,10 +353,18 @@ viewBlank =
                 , Css.property "background-color" "Canvas"
                 ]
             , Css.backgroundColor Colors.white
-            , Css.display Css.inlineBlock
             , Css.minWidth (Css.px 80)
+            , Css.display Css.inlineBlock
             , Css.borderRadius (Css.px 4)
-            , Css.alignSelf Css.stretch
             ]
         ]
-        [ span [ css [ invisibleStyle ] ] [ text "blank" ] ]
+        [ span
+            [ css
+                [ Css.overflowX Css.hidden
+                , Css.width (Css.px 0)
+                , Css.display Css.inlineBlock
+                , Css.verticalAlign Css.bottom
+                ]
+            ]
+            [ text "blank" ]
+        ]

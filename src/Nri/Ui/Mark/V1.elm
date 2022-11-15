@@ -63,21 +63,24 @@ Show the label for the mark, if present, in a balloon centered above the emphasi
 
 -}
 viewWithBalloonTags :
-    Color
-    -> (content -> List Style -> Html msg)
-    -> ( content, Maybe Mark )
-    -> Html msg
-viewWithBalloonTags backgroundColor viewSegment ( content, marked ) =
+    (c -> List Style -> Html msg)
+    -> Color
+    -> Maybe Mark
+    -> List c
+    -> List (Html msg)
+viewWithBalloonTags viewSegment backgroundColor marked contents =
     let
-        segment =
-            viewSegment content (markStyles 0 marked)
+        segments =
+            List.indexedMap
+                (\index content -> viewSegment content (markStyles index marked))
+                contents
     in
     case marked of
         Just markedWith ->
-            viewMarked (BalloonTags backgroundColor) markedWith [ segment ]
+            [ viewMarked (BalloonTags backgroundColor) markedWith segments ]
 
         Nothing ->
-            segment
+            segments
 
 
 type TagStyle
@@ -235,7 +238,7 @@ viewBalloon backgroundColor label =
         [ Balloon.onTop
         , Balloon.containerCss
             [ Css.position Css.absolute
-            , Css.bottom (Css.pct 100)
+            , Css.bottom (Css.calc (Css.pct 100) Css.plus (Css.px 4))
             , -- using position, 50% is wrt the parent container
               -- using transform & translate, 50% is wrt to the element itself
               -- combining these two properties, we can center the tag against the parent container
