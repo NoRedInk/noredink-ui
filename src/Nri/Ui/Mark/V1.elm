@@ -62,21 +62,24 @@ Show the label for the mark, if present, in a balloon centered above the emphasi
 
 -}
 viewWithBalloonTags :
-    Color
-    -> (content -> List Style -> Html msg)
-    -> ( content, Maybe Mark )
-    -> Html msg
-viewWithBalloonTags backgroundColor viewSegment ( content, marked ) =
+    (c -> List Style -> Html msg)
+    -> Color
+    -> Maybe Mark
+    -> List c
+    -> List (Html msg)
+viewWithBalloonTags viewSegment backgroundColor marked contents =
     let
-        segment =
-            viewSegment content (markStyles 0 marked)
+        segments =
+            List.indexedMap
+                (\index content -> viewSegment content (markStyles index marked))
+                contents
     in
     case marked of
         Just markedWith ->
-            viewMarked (BalloonTags backgroundColor) markedWith [ segment ]
+            [ viewMarked (BalloonTags backgroundColor) markedWith segments ]
 
         Nothing ->
-            segment
+            segments
 
 
 type TagStyle
@@ -198,8 +201,8 @@ viewTag tagStyle =
                     ]
                 ]
 
-        BalloonTags _ ->
-            viewBalloon
+        BalloonTags backgroundColor ->
+            viewBalloon backgroundColor
 
 
 viewInlineTag : List Css.Style -> String -> Html msg
@@ -222,6 +225,6 @@ viewInlineTag customizations name =
         [ Html.text name ]
 
 
-viewBalloon : String -> Html msg
-viewBalloon label =
+viewBalloon : Color -> String -> Html msg
+viewBalloon backgroundColor label =
     Html.text label
