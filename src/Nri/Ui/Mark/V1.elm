@@ -106,8 +106,7 @@ view_ tagStyle viewSegment highlightables =
                             |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
                             |> Maybe.withDefault AttributesExtra.none
                         , css
-                            [ Css.display Css.inlineFlex
-                            , Css.backgroundColor Css.transparent
+                            [ Css.backgroundColor Css.transparent
                             , case tagStyle of
                                 BalloonTags _ ->
                                     Css.position Css.relative

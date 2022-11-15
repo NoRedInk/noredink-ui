@@ -333,12 +333,7 @@ viewMark palette markContent =
         (\content_ markStyles ->
             span
                 [ css
-                    (Css.display Css.inlineFlex
-                        :: Css.whiteSpace Css.preWrap
-                        :: -- empty spaces get collapsed away despite the preWrap setting
-                           -- to ensure there's still visible whitespace between emphasis blocks,
-                           -- set a minimum width for the container.
-                           Css.minWidth (Css.px 4)
+                    (Css.whiteSpace Css.preWrap
                         :: markStyles
                     )
                 ]
