@@ -16,8 +16,10 @@ import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Examples.Colors
 import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
 import Nri.Ui.Highlighter.V1 as Highlighter
@@ -66,8 +68,16 @@ example =
                 , Button.small
                 , Button.css [ Css.marginTop (Css.px 10) ]
                 ]
-            , Highlighter.view state.highlighter
-                |> map HighlighterMsg
+            , div
+                [ css
+                    [ Css.fontSize (Css.px 24)
+                    , Css.lineHeight (Css.num 1.75)
+                    , Fonts.quizFont
+                    ]
+                ]
+                [ Highlighter.view state.highlighter
+                    |> map HighlighterMsg
+                ]
             , Heading.h2 [ Heading.plaintext "Non-interactive examples" ]
             , Heading.h3 [ Heading.plaintext "These are examples of some different ways the highlighter can appear to users." ]
             , Table.view
@@ -89,7 +99,12 @@ example =
                     { header = text "Example"
                     , view = .example
                     , width = Css.pct 60
-                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+                    , cellStyles =
+                        always
+                            [ Css.padding2 (Css.px 14) (Css.px 7)
+                            , Css.verticalAlign Css.middle
+                            , Css.lineHeight (Css.num 2)
+                            ]
                     , sort = Nothing
                     }
                 ]
