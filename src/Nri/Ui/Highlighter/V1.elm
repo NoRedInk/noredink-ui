@@ -475,7 +475,7 @@ pointerEventToActions msg model =
                     case ( model.mouseOverIndex, model.mouseDownIndex ) of
                         ( Just overIndex, Just downIndex ) ->
                             if overIndex == downIndex then
-                                [ Toggle downIndex marker ]
+                                [ Toggle downIndex marker, Focus downIndex ]
 
                             else
                                 [ Save marker ]
