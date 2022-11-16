@@ -163,39 +163,36 @@ example =
                   }
                 , { viewName = "Highlighter.static"
                   , description = "Multiple kinds of highlights without overlaps"
-                  , example =
-                        Highlighter.static
-                            { id = "example-3"
-                            , highlightables =
-                                [ ( "Waltz, bad nymph, for quick jigs vex.", Just claimMarker )
-                                , ( "Glib jocks quiz nymph to vex dwarf.", Just evidenceMarker )
-                                , ( "Sphinx of black quartz, judge my vow.", Just reasoningMarker )
-                                , ( "How vexingly quick daft zebras jump!", Nothing )
-                                ]
-                                    |> List.intersperse ( " ", Nothing )
-                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
-                            }
+                  , example = Highlighter.static { id = "example-3a", highlightables = multipleHighlightsHighlightables }
+                  }
+                , { viewName = "Highlighter.staticMarkdown"
+                  , description = "Multiple kinds of highlights without overlaps and with interpreted Markdown"
+                  , example = Highlighter.staticMarkdown { id = "example-3b", highlightables = multipleHighlightsHighlightables }
                   }
                 , { viewName = "Highlighter.staticWithTags"
                   , description = "Multiple kinds of highlights without overlaps"
-                  , example =
-                        Highlighter.staticWithTags
-                            { id = "example-4"
-                            , highlightables =
-                                [ ( "Waltz, bad nymph, for quick jigs vex.", Just claimMarker )
-                                , ( "Glib jocks quiz nymph to vex dwarf.", Just evidenceMarker )
-                                , ( "Sphinx of black quartz, judge my vow.", Just reasoningMarker )
-                                , ( "How vexingly quick daft zebras jump!", Nothing )
-                                ]
-                                    |> List.intersperse ( " ", Nothing )
-                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
-                            }
+                  , example = Highlighter.staticWithTags { id = "example-4a", highlightables = multipleHighlightsHighlightables }
+                  }
+                , { viewName = "Highlighter.staticMarkdownWithTags"
+                  , description = "Multiple kinds of highlights without overlaps and with interpreted Markdown"
+                  , example = Highlighter.staticMarkdownWithTags { id = "example-4b", highlightables = multipleHighlightsHighlightables }
                   }
                 ]
             ]
     , categories = [ Text, Interactions ]
     , keyboardSupport = []
     }
+
+
+multipleHighlightsHighlightables : List (Highlightable ())
+multipleHighlightsHighlightables =
+    [ ( "Waltz, bad nymph, for quick jigs vex.", Just claimMarker )
+    , ( "Glib jocks quiz nymph to vex dwarf.", Just evidenceMarker )
+    , ( "Sphinx of _black_ quartz, judge my vow.", Just reasoningMarker )
+    , ( "How *vexingly* quick daft zebras jump!", Nothing )
+    ]
+        |> List.intersperse ( " ", Nothing )
+        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
 
 
 exampleMarker : Tool.MarkerModel ()
@@ -307,6 +304,7 @@ exampleString =
 
 type alias Settings =
     { splitOnSentences : Bool
+    , asMarkdown : Bool
     , tool : Tool.Tool ()
     }
 
@@ -315,6 +313,7 @@ controlSettings : Control Settings
 controlSettings =
     Control.record Settings
         |> Control.field "splitOnSentences" (Control.bool False)
+        |> Control.field "asMarkdown" (Control.bool True)
         |> Control.field "tool"
             (Control.choice
                 [ ( "Marker", Control.map Tool.Marker controlMarker )

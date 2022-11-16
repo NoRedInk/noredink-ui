@@ -1,6 +1,8 @@
 module Nri.Ui.Highlighter.V1 exposing
     ( Model, Msg(..), PointerMsg(..)
-    , init, update, view, static, staticWithTags
+    , init, update
+    , view, static, staticWithTags
+    , viewMarkdown, staticMarkdown, staticMarkdownWithTags
     , Intent(..), emptyIntent, hasChanged, HasChanged(..)
     , removeHighlights
     , asFragmentTuples, usedMarkers, text
@@ -33,7 +35,10 @@ Currently, highlighter is used in the following places:
 
 # Init/View/Update
 
-@docs init, update, view, static, staticWithTags
+@docs init, update
+
+@docs view, static, staticWithTags
+@docs viewMarkdown, staticMarkdown, staticMarkdownWithTags
 
 
 ## Intents
@@ -569,6 +574,22 @@ removeHighlights model =
 
 
 {-| -}
+viewMarkdown : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Maybe Int, marker : Tool.Tool marker } -> Html (Msg marker)
+viewMarkdown config =
+    view_ { showTagsInline = False, maybeTool = Just config.marker }
+        (viewHighlightable config.id config.marker config.focusIndex)
+        config
+
+
+{-| -}
+staticMarkdown : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
+staticMarkdown config =
+    view_ { showTagsInline = False, maybeTool = Nothing }
+        viewStaticHighlightable
+        config
+
+
+{-| -}
 view : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Maybe Int, marker : Tool.Tool marker } -> Html (Msg marker)
 view config =
     view_ { showTagsInline = False, maybeTool = Just config.marker }
@@ -592,6 +613,24 @@ viewStaticHighlightable =
         , eventListeners = []
         , maybeTool = Nothing
         }
+
+
+{-| -}
+staticMarkdownWithTags : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
+staticMarkdownWithTags config =
+    let
+        viewStaticHighlightableWithTags : Highlightable marker -> List Css.Style -> Html msg
+        viewStaticHighlightableWithTags =
+            viewHighlightableSegment
+                { interactiveHighlighterId = Nothing
+                , focusIndex = Nothing
+                , eventListeners = []
+                , maybeTool = Nothing
+                }
+    in
+    view_ { showTagsInline = True, maybeTool = Nothing }
+        viewStaticHighlightableWithTags
+        config
 
 
 {-| -}
