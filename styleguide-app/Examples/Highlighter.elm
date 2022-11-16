@@ -75,7 +75,12 @@ example =
                     , Fonts.quizFont
                     ]
                 ]
-                [ Highlighter.view state.highlighter
+                [ (if (Control.currentValue state.settings).asMarkdown then
+                    Highlighter.viewMarkdown state.highlighter
+
+                   else
+                    Highlighter.view state.highlighter
+                  )
                     |> map HighlighterMsg
                 ]
             , Heading.h2 [ Heading.plaintext "Non-interactive examples" ]
@@ -261,25 +266,16 @@ init =
 initHighlighter : Settings -> List (Highlightable ()) -> Highlighter.Model ()
 initHighlighter settings previousHighlightables =
     let
+        highlightables : List (Highlightable ())
         highlightables =
             if settings.splitOnSentences then
-                let
-                    segments =
-                        List.filter (\x -> x /= "") (String.split "." (String.trim exampleString))
-                in
-                List.indexedMap
-                    (\index sentence ->
-                        Highlightable.init Highlightable.Interactive
-                            Nothing
-                            index
-                            ( []
-                            , sentence ++ "."
-                            )
-                    )
-                    segments
+                exampleParagraph
+                    |> List.map (\text i -> Highlightable.init Highlightable.Interactive Nothing i ( [], text ))
+                    |> List.intersperse (\i -> Highlightable.init Highlightable.Static Nothing i ( [], " " ))
+                    |> List.indexedMap (\i f -> f i)
 
             else
-                Highlightable.initFragments Nothing (String.trim exampleString)
+                Highlightable.initFragments Nothing (String.join " " exampleParagraph)
     in
     Highlighter.init
         { id = "example-romeo-and-juliet"
@@ -293,13 +289,12 @@ initHighlighter settings previousHighlightables =
         }
 
 
-exampleString : String
-exampleString =
+exampleParagraph : List String
+exampleParagraph =
     [ "Taking notes by hand is better for students' overall academic performance than taking notes on a computer."
     , "A study published in the journal *Psychological Science* found that students who handwrote their notes during class gained a deeper understanding of new material than students who typed their notes."
     , "This study suggests that students are better served by writing out their notes rather than typing them."
     ]
-        |> String.join " "
 
 
 type alias Settings =
@@ -312,7 +307,7 @@ type alias Settings =
 controlSettings : Control Settings
 controlSettings =
     Control.record Settings
-        |> Control.field "splitOnSentences" (Control.bool False)
+        |> Control.field "splitOnSentences" (Control.bool True)
         |> Control.field "asMarkdown" (Control.bool True)
         |> Control.field "tool"
             (Control.choice

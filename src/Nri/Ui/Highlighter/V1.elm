@@ -577,42 +577,25 @@ removeHighlights model =
 -- VIEWS
 
 
+{-| -}
+view : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Maybe Int, marker : Tool.Tool marker } -> Html (Msg marker)
+view config =
+    view_ { showTagsInline = False, maybeTool = Just config.marker }
+        (viewHighlightable False config)
+        config
+
+
 {-| Same as `view`, but will render strings like "_blah_" inside of emphasis tags.
 
 WARNING: the version of markdown used here is extremely limited, as the highlighter content needs to be entirely in-line content. Lists & other block-level elements will _not_ render as they usually would!
+
+WARNING: markdown is rendered highlightable by highlightable, so be sure to provide highlightables like ["_New York Times_"]["*New York Times*"], NOT like ["_New ", "York ", "Times_"]["*New ", "York ", "Times*"]
 
 -}
 viewMarkdown : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Maybe Int, marker : Tool.Tool marker } -> Html (Msg marker)
 viewMarkdown config =
     view_ { showTagsInline = False, maybeTool = Just config.marker }
         (viewHighlightable True config)
-        config
-
-
-{-| Same as `static`, but will render strings like "_blah_" inside of emphasis tags.
-
-WARNING: the version of markdown used here is extremely limited, as the highlighter content needs to be entirely in-line content. Lists & other block-level elements will _not_ render as they usually would!
-
--}
-staticMarkdown : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
-staticMarkdown config =
-    view_ { showTagsInline = False, maybeTool = Nothing }
-        (viewHighlightableSegment
-            { interactiveHighlighterId = Nothing
-            , focusIndex = Nothing
-            , eventListeners = []
-            , maybeTool = Nothing
-            , renderMarkdown = True
-            }
-        )
-        config
-
-
-{-| -}
-view : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Maybe Int, marker : Tool.Tool marker } -> Html (Msg marker)
-view config =
-    view_ { showTagsInline = False, maybeTool = Just config.marker }
-        (viewHighlightable False config)
         config
 
 
@@ -631,26 +614,24 @@ static config =
         config
 
 
-{-| Same as `staticWithTags`, but will render strings like "_blah_" inside of emphasis tags.
+{-| Same as `static`, but will render strings like "_blah_" inside of emphasis tags.
 
 WARNING: the version of markdown used here is extremely limited, as the highlighter content needs to be entirely in-line content. Lists & other block-level elements will _not_ render as they usually would!
 
+WARNING: markdown is rendered highlightable by highlightable, so be sure to provide highlightables like ["_New York Times_"]["*New York Times*"], NOT like ["_New ", "York ", "Times_"]["*New ", "York ", "Times*"]
+
 -}
-staticMarkdownWithTags : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
-staticMarkdownWithTags config =
-    let
-        viewStaticHighlightableWithTags : Highlightable marker -> List Css.Style -> Html msg
-        viewStaticHighlightableWithTags =
-            viewHighlightableSegment
-                { interactiveHighlighterId = Nothing
-                , focusIndex = Nothing
-                , eventListeners = []
-                , maybeTool = Nothing
-                , renderMarkdown = True
-                }
-    in
-    view_ { showTagsInline = True, maybeTool = Nothing }
-        viewStaticHighlightableWithTags
+staticMarkdown : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
+staticMarkdown config =
+    view_ { showTagsInline = False, maybeTool = Nothing }
+        (viewHighlightableSegment
+            { interactiveHighlighterId = Nothing
+            , focusIndex = Nothing
+            , eventListeners = []
+            , maybeTool = Nothing
+            , renderMarkdown = True
+            }
+        )
         config
 
 
@@ -666,6 +647,31 @@ staticWithTags config =
                 , eventListeners = []
                 , maybeTool = Nothing
                 , renderMarkdown = False
+                }
+    in
+    view_ { showTagsInline = True, maybeTool = Nothing }
+        viewStaticHighlightableWithTags
+        config
+
+
+{-| Same as `staticWithTags`, but will render strings like "_blah_" inside of emphasis tags.
+
+WARNING: the version of markdown used here is extremely limited, as the highlighter content needs to be entirely in-line content. Lists & other block-level elements will _not_ render as they usually would!
+
+WARNING: markdown is rendered highlightable by highlightable, so be sure to provide highlightables like ["_New York Times_"]["*New York Times*"], NOT like ["_New ", "York ", "Times_"]["*New ", "York ", "Times*"]
+
+-}
+staticMarkdownWithTags : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
+staticMarkdownWithTags config =
+    let
+        viewStaticHighlightableWithTags : Highlightable marker -> List Css.Style -> Html msg
+        viewStaticHighlightableWithTags =
+            viewHighlightableSegment
+                { interactiveHighlighterId = Nothing
+                , focusIndex = Nothing
+                , eventListeners = []
+                , maybeTool = Nothing
+                , renderMarkdown = True
                 }
     in
     view_ { showTagsInline = True, maybeTool = Nothing }
