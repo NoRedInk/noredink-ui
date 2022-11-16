@@ -253,7 +253,7 @@ initHighlighter settings previousHighlightables =
             if settings.splitOnSentences then
                 let
                     segments =
-                        List.filter (\x -> x /= "") (String.split "." (String.trim CommonControls.romeoAndJulietQuotation))
+                        List.filter (\x -> x /= "") (String.split "." (String.trim exampleString))
                 in
                 List.indexedMap
                     (\index sentence ->
@@ -267,7 +267,7 @@ initHighlighter settings previousHighlightables =
                     segments
 
             else
-                Highlightable.initFragments Nothing (String.trim CommonControls.romeoAndJulietQuotation)
+                Highlightable.initFragments Nothing (String.trim exampleString)
     in
     Highlighter.init
         { id = "example-romeo-and-juliet"
@@ -279,6 +279,15 @@ initHighlighter settings previousHighlightables =
                 highlightables
         , marker = settings.tool
         }
+
+
+exampleString : String
+exampleString =
+    [ "Taking notes by hand is better for students' overall academic performance than taking notes on a computer."
+    , "A study published in the journal *Psychological Science* found that students who handwrote their notes during class gained a deeper understanding of new material than students who typed their notes."
+    , "This study suggests that students are better served by writing out their notes rather than typing them."
+    ]
+        |> String.join " "
 
 
 type alias Settings =
