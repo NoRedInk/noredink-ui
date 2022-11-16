@@ -73,6 +73,9 @@ import Html.Styled.Events as Events
 import Json.Decode
 import List.Extra
 import Markdown
+import Markdown.Block
+import Markdown.Config
+import Markdown.Inline
 import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
@@ -574,7 +577,11 @@ removeHighlights model =
 -- VIEWS
 
 
-{-| -}
+{-| Same as `view`, but will render strings like "_blah_" inside of emphasis tags.
+
+WARNING: the version of markdown used here is extremely limited, as the highlighter content needs to be entirely in-line content. Lists & other block-level elements will _not_ render as they usually would!
+
+-}
 viewMarkdown : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Maybe Int, marker : Tool.Tool marker } -> Html (Msg marker)
 viewMarkdown config =
     view_ { showTagsInline = False, maybeTool = Just config.marker }
@@ -582,7 +589,11 @@ viewMarkdown config =
         config
 
 
-{-| -}
+{-| Same as `static`, but will render strings like "_blah_" inside of emphasis tags.
+
+WARNING: the version of markdown used here is extremely limited, as the highlighter content needs to be entirely in-line content. Lists & other block-level elements will _not_ render as they usually would!
+
+-}
 staticMarkdown : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
 staticMarkdown config =
     view_ { showTagsInline = False, maybeTool = Nothing }
@@ -620,7 +631,11 @@ static config =
         config
 
 
-{-| -}
+{-| Same as `staticWithTags`, but will render strings like "_blah_" inside of emphasis tags.
+
+WARNING: the version of markdown used here is extremely limited, as the highlighter content needs to be entirely in-line content. Lists & other block-level elements will _not_ render as they usually would!
+
+-}
 staticMarkdownWithTags : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
 staticMarkdownWithTags config =
     let
@@ -839,12 +854,55 @@ viewHighlightableSegment { interactiveHighlighterId, focusIndex, eventListeners,
                ]
         )
         (if renderMarkdown then
-            Markdown.toHtml Nothing highlightable.text
-                |> List.map Html.fromUnstyled
+            renderInlineMarkdown highlightable.text
 
          else
             [ Html.text highlightable.text ]
         )
+
+
+renderInlineMarkdown : String -> List (Html msg)
+renderInlineMarkdown text_ =
+    Markdown.Block.parse Nothing text_
+        |> List.map
+            (Markdown.Block.walk
+                (inlinifyMarkdownBlock
+                    >> Markdown.Block.PlainInlines
+                )
+            )
+        |> List.concatMap Markdown.Block.toHtml
+        |> List.map Html.fromUnstyled
+
+
+inlinifyMarkdownBlock : Markdown.Block.Block a b -> List (Markdown.Inline.Inline b)
+inlinifyMarkdownBlock block =
+    case block of
+        Markdown.Block.BlankLine str ->
+            [ Markdown.Inline.Text str ]
+
+        Markdown.Block.ThematicBreak ->
+            []
+
+        Markdown.Block.Heading _ _ inlines ->
+            inlines
+
+        Markdown.Block.CodeBlock _ str ->
+            [ Markdown.Inline.Text str ]
+
+        Markdown.Block.Paragraph _ inlines ->
+            inlines
+
+        Markdown.Block.BlockQuote blocks ->
+            List.concatMap inlinifyMarkdownBlock blocks
+
+        Markdown.Block.List _ blocks ->
+            List.concatMap inlinifyMarkdownBlock (List.concat blocks)
+
+        Markdown.Block.PlainInlines inlines ->
+            inlines
+
+        Markdown.Block.Custom b blocks ->
+            List.concatMap inlinifyMarkdownBlock blocks
 
 
 highlightableId : String -> Int -> String
