@@ -72,6 +72,7 @@ import Html.Styled.Attributes exposing (attribute, class, css)
 import Html.Styled.Events as Events
 import Json.Decode
 import List.Extra
+import Markdown
 import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
@@ -577,7 +578,7 @@ removeHighlights model =
 viewMarkdown : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Maybe Int, marker : Tool.Tool marker } -> Html (Msg marker)
 viewMarkdown config =
     view_ { showTagsInline = False, maybeTool = Just config.marker }
-        (viewHighlightable config.id config.marker config.focusIndex)
+        (viewHighlightable True config)
         config
 
 
@@ -585,7 +586,14 @@ viewMarkdown config =
 staticMarkdown : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
 staticMarkdown config =
     view_ { showTagsInline = False, maybeTool = Nothing }
-        viewStaticHighlightable
+        (viewHighlightableSegment
+            { interactiveHighlighterId = Nothing
+            , focusIndex = Nothing
+            , eventListeners = []
+            , maybeTool = Nothing
+            , renderMarkdown = True
+            }
+        )
         config
 
 
@@ -593,7 +601,7 @@ staticMarkdown config =
 view : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Maybe Int, marker : Tool.Tool marker } -> Html (Msg marker)
 view config =
     view_ { showTagsInline = False, maybeTool = Just config.marker }
-        (viewHighlightable config.id config.marker config.focusIndex)
+        (viewHighlightable False config)
         config
 
 
@@ -601,18 +609,15 @@ view config =
 static : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
 static config =
     view_ { showTagsInline = False, maybeTool = Nothing }
-        viewStaticHighlightable
+        (viewHighlightableSegment
+            { interactiveHighlighterId = Nothing
+            , focusIndex = Nothing
+            , eventListeners = []
+            , maybeTool = Nothing
+            , renderMarkdown = False
+            }
+        )
         config
-
-
-viewStaticHighlightable : Highlightable marker -> List Css.Style -> Html msg
-viewStaticHighlightable =
-    viewHighlightableSegment
-        { interactiveHighlighterId = Nothing
-        , focusIndex = Nothing
-        , eventListeners = []
-        , maybeTool = Nothing
-        }
 
 
 {-| -}
@@ -626,6 +631,7 @@ staticMarkdownWithTags config =
                 , focusIndex = Nothing
                 , eventListeners = []
                 , maybeTool = Nothing
+                , renderMarkdown = True
                 }
     in
     view_ { showTagsInline = True, maybeTool = Nothing }
@@ -644,6 +650,7 @@ staticWithTags config =
                 , focusIndex = Nothing
                 , eventListeners = []
                 , maybeTool = Nothing
+                , renderMarkdown = False
                 }
     in
     view_ { showTagsInline = True, maybeTool = Nothing }
@@ -703,13 +710,18 @@ groupContainer config viewSegment highlightables =
         |> viewMark viewSegment
 
 
-viewHighlightable : String -> Tool.Tool marker -> Maybe Int -> Highlightable marker -> List Css.Style -> Html (Msg marker)
-viewHighlightable highlighterId marker focusIndex highlightable =
+viewHighlightable :
+    Bool
+    -> { config | id : String, focusIndex : Maybe Int, marker : Tool.Tool marker }
+    -> Highlightable marker
+    -> List Css.Style
+    -> Html (Msg marker)
+viewHighlightable renderMarkdown config highlightable =
     case highlightable.type_ of
         Highlightable.Interactive ->
             viewHighlightableSegment
-                { interactiveHighlighterId = Just highlighterId
-                , focusIndex = focusIndex
+                { interactiveHighlighterId = Just config.id
+                , focusIndex = config.focusIndex
                 , eventListeners =
                     [ onPreventDefault "mouseover" (Pointer <| Over highlightable.groupIndex)
                     , onPreventDefault "mouseleave" (Pointer <| Out highlightable.groupIndex)
@@ -730,14 +742,15 @@ viewHighlightable highlighterId marker focusIndex highlightable =
                         , Key.shift (Keyboard <| SelectionReset highlightable.groupIndex)
                         ]
                     ]
-                , maybeTool = Just marker
+                , maybeTool = Just config.marker
+                , renderMarkdown = renderMarkdown
                 }
                 highlightable
 
         Highlightable.Static ->
             viewHighlightableSegment
                 { interactiveHighlighterId = Nothing
-                , focusIndex = focusIndex
+                , focusIndex = config.focusIndex
                 , eventListeners =
                     -- Static highlightables need listeners as well.
                     -- because otherwise we miss mouseup events
@@ -746,7 +759,8 @@ viewHighlightable highlighterId marker focusIndex highlightable =
                     , onPreventDefault "touchstart" (Pointer <| Down highlightable.groupIndex)
                     , attribute "data-static" ""
                     ]
-                , maybeTool = Just marker
+                , maybeTool = Just config.marker
+                , renderMarkdown = renderMarkdown
                 }
                 highlightable
 
@@ -756,11 +770,12 @@ viewHighlightableSegment :
     , focusIndex : Maybe Int
     , eventListeners : List (Attribute msg)
     , maybeTool : Maybe (Tool.Tool marker)
+    , renderMarkdown : Bool
     }
     -> Highlightable marker
     -> List Css.Style
     -> Html msg
-viewHighlightableSegment { interactiveHighlighterId, focusIndex, eventListeners, maybeTool } highlightable markStyles =
+viewHighlightableSegment { interactiveHighlighterId, focusIndex, eventListeners, maybeTool, renderMarkdown } highlightable markStyles =
     let
         whitespaceClass txt =
             -- we need to override whitespace styles in order to support
@@ -823,7 +838,13 @@ viewHighlightableSegment { interactiveHighlighterId, focusIndex, eventListeners,
                     AttributesExtra.none
                ]
         )
-        [ Html.text highlightable.text ]
+        (if renderMarkdown then
+            Markdown.toHtml Nothing highlightable.text
+                |> List.map Html.fromUnstyled
+
+         else
+            [ Html.text highlightable.text ]
+        )
 
 
 highlightableId : String -> Int -> String
