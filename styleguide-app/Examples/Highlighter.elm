@@ -8,7 +8,6 @@ port module Examples.Highlighter exposing (Msg, State, example)
 
 import Category exposing (Category(..))
 import Code
-import CommonControls
 import Css exposing (Color)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra

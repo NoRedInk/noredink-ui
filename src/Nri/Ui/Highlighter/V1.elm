@@ -72,9 +72,7 @@ import Html.Styled.Attributes exposing (attribute, class, css)
 import Html.Styled.Events as Events
 import Json.Decode
 import List.Extra
-import Markdown
 import Markdown.Block
-import Markdown.Config
 import Markdown.Inline
 import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
 import Nri.Ui.HighlighterTool.V1 as Tool
