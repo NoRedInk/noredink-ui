@@ -2,6 +2,7 @@ module Nri.Ui.Balloon.V2 exposing
     ( view, Attribute
     , plaintext, markdown, html
     , green, purple, orange, white, navy, customTheme
+    , highContrastModeTheme
     , onBottom, onLeft, onRight, onTop
     , custom, id, nriDescription, testId
     , containerCss
@@ -44,6 +45,7 @@ Changes from V1:
 ### Customizations for Balloon
 
 @docs green, purple, orange, white, navy, customTheme
+@docs highContrastModeTheme
 @docs onBottom, onLeft, onRight, onTop
 @docs custom, id, nriDescription, testId
 
@@ -192,6 +194,13 @@ customTheme =
     setTheme
 
 
+{-| Typically, you will want to use [system colors](https://developer.mozilla.org/en-US/docs/Web/CSS/system-color) for these colors (which is why the API uses strings):
+-}
+highContrastModeTheme : { backgroundColor : String, color : String } -> Attribute msg
+highContrastModeTheme theme =
+    Attribute (\config -> { config | highContrastModeTheme = Just theme })
+
+
 {-| -}
 containerCss : List Style -> Attribute msg
 containerCss styles =
@@ -299,6 +308,7 @@ html =
 type alias Config msg =
     { position : Position
     , theme : Theme
+    , highContrastModeTheme : Maybe HighContrastModeTheme
     , containerCss : List Css.Style
     , css : List Css.Style
     , customAttributes : List (Html.Attribute msg)
@@ -312,6 +322,7 @@ defaultConfig : Config msg
 defaultConfig =
     { position = NoArrow
     , theme = defaultGreenTheme
+    , highContrastModeTheme = Nothing
     , containerCss = []
     , css = [ Css.padding (Css.px 20) ]
     , customAttributes = []
@@ -342,17 +353,38 @@ defaultGreenTheme =
     }
 
 
+type alias HighContrastModeTheme =
+    { backgroundColor : String
+    , color : String
+    }
+
+
+applyHighContrastModeTheme : Maybe HighContrastModeTheme -> Css.Style
+applyHighContrastModeTheme maybeHighContrastModeTheme =
+    case maybeHighContrastModeTheme of
+        Just highContrastPalette ->
+            MediaQuery.highContrastMode
+                [ Css.property "background-color" highContrastPalette.backgroundColor
+                , Css.property "color" highContrastPalette.color
+                , Css.property "border-color" highContrastPalette.backgroundColor
+                , Css.property "forced-color-adjust" "none"
+                ]
+
+        Nothing ->
+            Css.batch []
+
+
 view_ : Config msg -> Html msg
 view_ config =
     container config.position
         (Attributes.css config.containerCss :: config.customAttributes)
-        [ viewBalloon config.theme config.css config.content
+        [ viewBalloon config.theme config.highContrastModeTheme config.css config.content
         , case config.position of
             NoArrow ->
                 Html.text ""
 
             _ ->
-                viewArrow config.position config.theme 16
+                viewArrow config.position config.theme config.highContrastModeTheme 16
         ]
 
 
@@ -390,8 +422,8 @@ container position attributes =
         attributes
 
 
-viewBalloon : Theme -> List Css.Style -> List (Html msg) -> Html msg
-viewBalloon palette styles contents =
+viewBalloon : Theme -> Maybe HighContrastModeTheme -> List Css.Style -> List (Html msg) -> Html msg
+viewBalloon palette maybeHighContrastModeTheme styles contents =
     styled div
         [ display inlineBlock
         , lineHeight (num 1.4)
@@ -404,14 +436,15 @@ viewBalloon palette styles contents =
         , color palette.color
         , Fonts.baseFont
         , fontSize (px 15)
+        , applyHighContrastModeTheme maybeHighContrastModeTheme
         , Css.batch styles
         ]
         []
         contents
 
 
-viewArrow : Position -> Theme -> Float -> Html msg
-viewArrow position palette diagonal =
+viewArrow : Position -> Theme -> Maybe HighContrastModeTheme -> Float -> Html msg
+viewArrow position palette maybeHighContrastModeTheme diagonal =
     let
         arrowSideWidth =
             sqrt ((diagonal ^ 2) / 2)
@@ -420,6 +453,7 @@ viewArrow position palette diagonal =
         [ arrowPosition position
         , backgroundColor palette.backgroundColor
         , border3 (px 1) solid palette.backgroundColor
+        , applyHighContrastModeTheme maybeHighContrastModeTheme
         , Css.height (px arrowSideWidth)
         , Css.width (px arrowSideWidth)
         ]

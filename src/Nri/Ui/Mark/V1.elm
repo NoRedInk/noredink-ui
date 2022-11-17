@@ -12,11 +12,12 @@ module Nri.Ui.Mark.V1 exposing
 
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style exposing (invisibleStyle)
-import Css exposing (Style)
+import Css exposing (Color, Style)
 import Css.Global
 import Html.Styled as Html exposing (Html, span)
 import Html.Styled.Attributes exposing (class, css)
 import Nri.Ui.Balloon.V2 as Balloon
+import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
@@ -62,17 +63,18 @@ Show the label for the mark, if present, in a balloon centered above the emphasi
 
 -}
 viewWithBalloonTags :
-    (content -> List Style -> Html msg)
+    Color
+    -> (content -> List Style -> Html msg)
     -> List ( content, Maybe Mark )
     -> List (Html msg)
-viewWithBalloonTags =
-    view_ BalloonTags
+viewWithBalloonTags backgroundColor =
+    view_ (BalloonTags backgroundColor)
 
 
 type TagStyle
     = HiddenTags
     | InlineTags
-    | BalloonTags
+    | BalloonTags Color
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
@@ -107,7 +109,7 @@ view_ tagStyle viewSegment highlightables =
                             [ Css.display Css.inlineFlex
                             , Css.backgroundColor Css.transparent
                             , case tagStyle of
-                                BalloonTags ->
+                                BalloonTags _ ->
                                     Css.position Css.relative
 
                                 _ ->
@@ -191,8 +193,8 @@ viewTag tagStyle =
                     ]
                 ]
 
-        BalloonTags ->
-            viewBalloon
+        BalloonTags color ->
+            viewBalloon color
 
 
 viewInlineTag : List Css.Style -> String -> Html msg
@@ -215,8 +217,8 @@ viewInlineTag customizations name =
         [ Html.text name ]
 
 
-viewBalloon : String -> Html msg
-viewBalloon label =
+viewBalloon : Color -> String -> Html msg
+viewBalloon backgroundColor label =
     Balloon.view
         [ Balloon.onTop
         , Balloon.containerCss
@@ -229,14 +231,24 @@ viewBalloon label =
               Css.left (Css.pct 50)
             , Css.property "transform" "translateX(-50%)"
             ]
-        , Balloon.css [ Css.padding2 Css.zero (Css.px 6) ]
+        , Balloon.css
+            [ Css.padding3 Css.zero (Css.px 6) (Css.px 1)
+            , Css.property "box-shadow" "none"
+            ]
         , Balloon.custom
             [ -- we use the :before element to convey details about the start of the
               -- highlighter to screenreaders, so the visual label is redundant
               Aria.hidden True
             ]
+        , Balloon.customTheme
+            { backgroundColor = backgroundColor
+            , color = Nri.Ui.Colors.Extra.highContrastColor backgroundColor
+            }
+        , Balloon.highContrastModeTheme
+            { backgroundColor = "Mark"
+            , color = "MarkText"
+            }
 
-        -- TODO: customize the balloon color
         -- TODO: ensure the balloon is legible for users in high-contrast mode
         , Balloon.plaintext label
         ]

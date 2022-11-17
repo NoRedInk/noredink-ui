@@ -140,32 +140,53 @@ themeToPalette : Theme -> Palette
 themeToPalette theme =
     case theme of
         Emphasis ->
-            { backgroundColor = Colors.highlightYellow, borderColor = Colors.highlightYellowDark }
+            defaultPalette
 
         Yellow ->
-            { backgroundColor = Colors.highlightYellow, borderColor = Colors.highlightYellowDark }
+            { backgroundColor = Colors.highlightYellow
+            , borderColor = Colors.highlightYellowDark
+            }
 
         Cyan ->
-            { backgroundColor = Colors.highlightCyan, borderColor = Colors.highlightCyanDark }
+            { backgroundColor = Colors.highlightCyan
+            , borderColor = Colors.highlightCyanDark
+            }
 
         Magenta ->
-            { backgroundColor = Colors.highlightMagenta, borderColor = Colors.highlightMagentaDark }
+            { backgroundColor = Colors.highlightMagenta
+            , borderColor = Colors.highlightMagentaDark
+            }
 
         Green ->
-            { backgroundColor = Colors.highlightGreen, borderColor = Colors.highlightGreenDark }
+            { backgroundColor = Colors.highlightGreen
+            , borderColor = Colors.highlightGreenDark
+            }
 
         Blue ->
-            { backgroundColor = Colors.highlightBlue, borderColor = Colors.highlightBlueDark }
+            { backgroundColor = Colors.highlightBlue
+            , borderColor = Colors.highlightBlueDark
+            }
 
         Purple ->
-            { backgroundColor = Colors.highlightPurple, borderColor = Colors.highlightPurpleDark }
+            { backgroundColor = Colors.highlightPurple
+            , borderColor = Colors.highlightPurpleDark
+            }
 
         Brown ->
-            { backgroundColor = Colors.highlightBrown, borderColor = Colors.highlightBrownDark }
+            { backgroundColor = Colors.highlightBrown
+            , borderColor = Colors.highlightBrownDark
+            }
 
 
 type alias Palette =
     { backgroundColor : Color, borderColor : Color }
+
+
+defaultPalette : Palette
+defaultPalette =
+    { backgroundColor = Colors.highlightYellow
+    , borderColor = Colors.highlightYellowDark
+    }
 
 
 toMark : Maybe String -> Maybe Palette -> Maybe Mark
@@ -191,7 +212,11 @@ toMark label_ palette =
                 , styles =
                     [ Css.padding2 (Css.px 4) Css.zero
                     , Css.backgroundColor backgroundColor
-                    , MediaQuery.highContrastMode [ Css.property "background-color" "Mark" ]
+                    , MediaQuery.highContrastMode
+                        [ Css.property "background-color" "Mark"
+                        , Css.property "color" "MarkText"
+                        , Css.property "forced-color-adjust" "none"
+                        ]
                     ]
                 , endStyles =
                     [ Css.paddingRight (Css.px 2)
@@ -281,25 +306,30 @@ type alias Config =
 render : Config -> Html msg
 render config =
     let
+        maybePalette =
+            Maybe.map themeToPalette config.theme
+
         maybeMark =
-            toMark config.label (Maybe.map themeToPalette config.theme)
+            toMark config.label maybePalette
     in
     case config.content of
         [] ->
             case maybeMark of
                 Just mark ->
-                    viewMark ( [ Blank ], Just mark )
+                    viewMark (Maybe.withDefault defaultPalette maybePalette)
+                        ( [ Blank ], Just mark )
 
                 Nothing ->
                     viewBlank
 
         _ ->
-            viewMark ( config.content, maybeMark )
+            viewMark (Maybe.withDefault defaultPalette maybePalette)
+                ( config.content, maybeMark )
 
 
-viewMark : ( List Content, Maybe Mark ) -> Html msg
-viewMark markContent =
-    Mark.viewWithBalloonTags
+viewMark : Palette -> ( List Content, Maybe Mark ) -> Html msg
+viewMark palette markContent =
+    Mark.viewWithBalloonTags palette.backgroundColor
         (\content_ markStyles ->
             span
                 [ css
@@ -331,6 +361,10 @@ viewBlank =
     span
         [ css
             [ Css.border3 (Css.px 2) Css.dashed Colors.navy
+            , MediaQuery.highContrastMode
+                [ Css.property "border-color" "CanvasText"
+                , Css.property "background-color" "Canvas"
+                ]
             , Css.backgroundColor Colors.white
             , Css.display Css.inlineBlock
             , Css.minWidth (Css.px 80)

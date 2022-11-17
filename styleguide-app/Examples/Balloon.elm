@@ -15,6 +15,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
+import Examples.Colors
 import Html.Styled exposing (Html)
 import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Colors.V1 as Colors
@@ -96,7 +97,23 @@ themeOptions =
         , ( "orange", Control.value ( "Balloon.orange", Balloon.orange ) )
         , ( "white", Control.value ( "Balloon.white", Balloon.white ) )
         , ( "navy", Control.value ( "Balloon.navy", Balloon.navy ) )
+        , ( "customTheme", controlCustomTheme )
         ]
+
+
+controlCustomTheme : Control ( String, Balloon.Attribute msg )
+controlCustomTheme =
+    Examples.Colors.backgroundHighlightColors
+        |> List.map
+            (\( name, value, _ ) ->
+                ( name
+                , Control.value
+                    ( "Balloon.customTheme { backgroundColor = Colors." ++ name ++ ", color = Colors.gray20 }"
+                    , Balloon.customTheme { backgroundColor = value, color = Colors.gray20 }
+                    )
+                )
+            )
+        |> ControlExtra.rotatedChoice 0
 
 
 positionOptions : Control ( String, Balloon.Attribute msg )
@@ -142,7 +159,7 @@ view ellieLinkConfig state =
             \_ ->
                 [ { sectionName = "Balloon"
                   , code =
-                        Code.fromModule moduleName "view"
+                        Code.fromModule moduleName "view "
                             ++ Code.list (List.map Tuple.first attributes)
                   }
                 ]
