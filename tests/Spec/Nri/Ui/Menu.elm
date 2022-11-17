@@ -72,6 +72,35 @@ spec =
                         |> ensureViewHasNot (menuContentSelector menuContent)
                         |> ProgramTest.done
             ]
+        , describe "dialog" <|
+            [ test "Close on esc key" <|
+                \() ->
+                    program [ Menu.dialog { firstId = "hello-button", lastId = "last-button" } ]
+                        -- Menu opens on mouse click and closes on esc key
+                        |> clickMenuButton
+                        |> ensureViewHas (menuDialogContentSelector menuContent)
+                        |> pressEscKey { targetId = "some-random-id" }
+                        |> ensureViewHasNot (menuDialogContentSelector menuContent)
+                        |> ProgramTest.done
+            , test "Selects firstId after tab on lastId" <|
+                \() ->
+                    program [ Menu.dialog { firstId = "hello-button", lastId = "last-button" } ]
+                        |> clickMenuButton
+                        |> ensureViewHas (menuDialogContentSelector menuContent)
+                        -- NOTE: unable to simulate pressTabKey with other targetId since those decoders will fail
+                        |> pressTabKey { targetId = "last-button" }
+                        |> ensureViewHas (menuDialogContentSelector menuContent)
+                        |> ProgramTest.done
+            , test "Selects lastId after back tab on firstId" <|
+                \() ->
+                    program [ Menu.dialog { firstId = "hello-button", lastId = "last-button" } ]
+                        |> clickMenuButton
+                        |> ensureViewHas (menuDialogContentSelector menuContent)
+                        -- NOTE: unable to simulate pressTabKey with other targetId since those decoders will fail
+                        |> pressTabBackKey { targetId = "hello-button" }
+                        |> ensureViewHas (menuDialogContentSelector menuContent)
+                        |> ProgramTest.done
+            ]
         ]
 
 
@@ -142,6 +171,14 @@ menuContentSelector content =
     ]
 
 
+menuDialogContentSelector : String -> List Selector.Selector
+menuDialogContentSelector content =
+    [ Selector.class "InnerContainer"
+    , Selector.classes [ "Content", "ContentVisible" ]
+    , Selector.containing [ text content ]
+    ]
+
+
 nriDescription : String -> Selector.Selector
 nriDescription desc =
     Selector.attribute (Attributes.attribute "data-nri-description" desc)
@@ -172,6 +209,13 @@ targetDetails targetId =
 pressTabKey : { targetId : String } -> ProgramTest model msg effect -> ProgramTest model msg effect
 pressTabKey { targetId } =
     KeyboardHelpers.pressTabKey
+        { targetDetails = targetDetails targetId }
+        [ Selector.class "Container" ]
+
+
+pressTabBackKey : { targetId : String } -> ProgramTest model msg effect -> ProgramTest model msg effect
+pressTabBackKey { targetId } =
+    KeyboardHelpers.pressTabBackKey
         { targetDetails = targetDetails targetId }
         [ Selector.class "Container" ]
 

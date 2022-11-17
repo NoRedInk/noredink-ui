@@ -1,7 +1,7 @@
 module Nri.Ui.Menu.V3 exposing
     ( view, button, custom, Config
     , Attribute, Button, ButtonAttribute
-    , alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure
+    , alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure, dialog
     , Alignment(..)
     , icon, wrapping, hasBorder, buttonWidth
     , TitleWrapping(..)
@@ -30,7 +30,7 @@ A togglable menu view and related buttons.
 
 ## Menu attributes
 
-@docs alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure
+@docs alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure, dialog
 @docs Alignment
 
 
@@ -121,6 +121,10 @@ type alias ButtonConfig =
 type Purpose
     = NavMenu
     | Disclosure { lastId : String }
+    | Dialog
+        { firstId : String
+        , lastId : String
+        }
 
 
 
@@ -221,6 +225,21 @@ You will need to pass in the last focusable element in the disclosed content in 
 disclosure : { lastId : String } -> Attribute msg
 disclosure exitFocusManager =
     Attribute (\config -> { config | purpose = Disclosure exitFocusManager })
+
+
+{-| Makes the menu behave as a dialog.
+
+For more information, please read [Dialog pattern](https://w3c.github.io/aria-practices/examples/dialog-modal/dialog.html/).
+
+You will need to pass in the first and last focusable element in the dialog content in order for:
+
+  - any focusable elements in the dialog content to be keyboard accessible
+  - the tab to wrap around appropriately when the user tabs past all of the dialog content
+
+-}
+dialog : { firstId : String, lastId : String } -> Attribute msg
+dialog exitFocusManager =
+    Attribute (\config -> { config | purpose = Dialog exitFocusManager })
 
 
 {-| Menu/pulldown configuration:
@@ -500,6 +519,29 @@ viewCustom config =
                                     , focus = Nothing
                                     }
                             }
+
+                    Dialog { firstId, lastId } ->
+                        WhenFocusLeaves.onKeyDownPreventDefault
+                            [ Key.escape
+                                (config.focusAndToggle
+                                    { isOpen = False
+                                    , focus = Just config.buttonId
+                                    }
+                                )
+                            ]
+                            { firstId = firstId
+                            , lastId = lastId
+                            , tabBackAction =
+                                config.focusAndToggle
+                                    { isOpen = True
+                                    , focus = Just lastId
+                                    }
+                            , tabForwardAction =
+                                config.focusAndToggle
+                                    { isOpen = True
+                                    , focus = Just firstId
+                                    }
+                            }
                )
             :: styleContainer
         )
@@ -542,16 +584,9 @@ viewCustom config =
             [ let
                 buttonAttributes =
                     [ Aria.disabled config.isDisabled
-                    , case config.purpose of
-                        NavMenu ->
-                            Aria.hasMenuPopUp
-
-                        Disclosure _ ->
-                            AttributesExtra.none
-                    , Aria.expanded config.isOpen
                     , -- Whether the menu is open or closed, move to the
                       -- first menu item if the "down" arrow is pressed
-                      -- as long as it's not a Disclosed
+                      -- as long as it's not a Disclosed or Dialog
                       case ( config.purpose, maybeFirstFocusableElementId, maybeLastFocusableElementId ) of
                         ( NavMenu, Just firstFocusableElementId, Just lastFocusableElementId ) ->
                             Key.onKeyDownPreventDefault
@@ -571,7 +606,6 @@ viewCustom config =
 
                         _ ->
                             AttributesExtra.none
-                    , Aria.controls [ config.menuId ]
                     , Attributes.id config.buttonId
                     , if config.isDisabled then
                         AttributesExtra.none
@@ -582,10 +616,18 @@ viewCustom config =
                                 { preventDefault = True
                                 , stopPropagation = True
                                 , message =
-                                    config.focusAndToggle
-                                        { isOpen = not config.isOpen
-                                        , focus = Nothing
-                                        }
+                                    case ( config.isOpen, config.purpose ) of
+                                        ( False, Dialog { firstId } ) ->
+                                            config.focusAndToggle
+                                                { isOpen = True
+                                                , focus = Just firstId
+                                                }
+
+                                        _ ->
+                                            config.focusAndToggle
+                                                { isOpen = not config.isOpen
+                                                , focus = Nothing
+                                                }
                                 }
                             )
                     , if not config.isDisabled && config.opensOnHover then
@@ -599,6 +641,21 @@ viewCustom config =
                       else
                         AttributesExtra.none
                     ]
+                        ++ (case config.purpose of
+                                NavMenu ->
+                                    [ Aria.hasMenuPopUp
+                                    , Aria.expanded config.isOpen
+                                    , Aria.controls [ config.menuId ]
+                                    ]
+
+                                Disclosure _ ->
+                                    [ Aria.expanded config.isOpen
+                                    , Aria.controls [ config.menuId ]
+                                    ]
+
+                                Dialog _ ->
+                                    [ AttributesExtra.none ]
+                           )
               in
               case config.button of
                 StandardButton standardButton ->
@@ -623,6 +680,9 @@ viewCustom config =
 
                         Disclosure _ ->
                             AttributesExtra.none
+
+                        Dialog _ ->
+                            Role.dialog
                     , Aria.labelledBy config.buttonId
                     , Attributes.id config.menuId
                     , css
@@ -873,7 +933,7 @@ styleIconContainer config =
 
 
 styleOuterContent : Bool -> MenuConfig msg -> Html.Attribute msg
-styleOuterContent contentVisible config =
+styleOuterContent _ config =
     css
         [ position absolute
         , zIndex (int <| config.zIndex + 1)

@@ -208,8 +208,8 @@ viewTag tagStyle =
                     ]
                 ]
 
-        BalloonTags color ->
-            viewBalloon color
+        BalloonTags backgroundColor ->
+            viewBalloon backgroundColor
 
 
 viewInlineTag : List Css.Style -> String -> Html msg
@@ -263,7 +263,5 @@ viewBalloon backgroundColor label =
             { backgroundColor = "Mark"
             , color = "MarkText"
             }
-
-        -- TODO: ensure the balloon is legible for users in high-contrast mode
         , Balloon.plaintext label
         ]

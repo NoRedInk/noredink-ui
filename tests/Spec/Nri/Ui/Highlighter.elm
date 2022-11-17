@@ -20,6 +20,7 @@ spec : Test
 spec =
     describe "Nri.Ui.Highlighter.V1"
         [ describe "keyboard behavior" keyboardTests
+        , describe "markdown behavior" markdownTests
         ]
 
 
@@ -235,6 +236,50 @@ keyboardTests =
                     |> ensureTabbable "Kellynch"
                     |> done
         ]
+    ]
+
+
+markdownTests : List Test
+markdownTests =
+    let
+        start view =
+            ProgramTest.createSandbox
+                { init =
+                    Highlighter.init
+                        { id = "markdown-tests-highlighter-container"
+                        , highlightables = highlightables
+                        , marker = marker Nothing
+                        }
+                , update = \_ m -> m
+                , view = view >> toUnstyled
+                }
+                |> ProgramTest.start ()
+
+        highlightables =
+            Highlightable.initFragments Nothing
+                "*Pothos* indirect light"
+
+        testRendersRawContent testName view =
+            test (testName ++ " does not interpret content as markdown")
+                (\() -> expectViewHas [ Selector.text "*Pothos*" ] (start view))
+
+        testRendersMarkdownContent testName view =
+            test (testName ++ " does interpret content as markdown")
+                (\() ->
+                    start view
+                        |> ensureViewHasNot [ Selector.text "*Pothos*" ]
+                        |> expectViewHas
+                            [ Selector.tag "em"
+                            , Selector.containing [ Selector.text "Pothos" ]
+                            ]
+                )
+    in
+    [ testRendersRawContent "view" Highlighter.view
+    , testRendersMarkdownContent "viewMarkdown" Highlighter.viewMarkdown
+    , testRendersRawContent "static" Highlighter.static
+    , testRendersMarkdownContent "staticMarkdown" Highlighter.staticMarkdown
+    , testRendersRawContent "staticWithTags" Highlighter.staticWithTags
+    , testRendersMarkdownContent "staticMarkdownWithTags" Highlighter.staticMarkdownWithTags
     ]
 
 

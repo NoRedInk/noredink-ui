@@ -8,7 +8,6 @@ module CommonControls exposing
     , string
     , content, exampleHtml
     , httpError, badBodyString
-    , romeoAndJulietQuotation
     , guidanceAndErrorMessage
     , disabledListItem, premiumDisplay
     )
@@ -28,7 +27,6 @@ module CommonControls exposing
 @docs string
 @docs content, exampleHtml
 @docs httpError, badBodyString
-@docs romeoAndJulietQuotation
 @docs guidanceAndErrorMessage
 
 -}
