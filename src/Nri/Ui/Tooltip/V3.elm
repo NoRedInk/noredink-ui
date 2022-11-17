@@ -29,6 +29,7 @@ module Nri.Ui.Tooltip.V3 exposing
   - adds alignStartForQuizEngineMobile, alignMiddleForQuizEngineMobile, alignEndForQuizEngineMobile
   - adds alignStartForNarrowMobile, alignMiddleForNarrowMobile, alignEndForNarrowMobile
   - adds narrowMobileCss
+  - use internal `Content` module
 
 Changes from V2:
 
@@ -79,6 +80,7 @@ import Accessibility.Styled as Html exposing (Attribute, Html, text)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
+import Content
 import Css exposing (Color, Px, Style)
 import Css.Global as Global
 import Css.Media
@@ -161,14 +163,14 @@ buildAttributes =
 
 {-| -}
 plaintext : String -> Attribute msg
-plaintext content =
-    Attribute (\config -> { config | content = [ text content ] })
+plaintext =
+    Attribute << Content.plaintext
 
 
 {-| -}
 html : List (Html msg) -> Attribute msg
-html content =
-    Attribute (\config -> { config | content = content })
+html =
+    Attribute << Content.html
 
 
 type Tail

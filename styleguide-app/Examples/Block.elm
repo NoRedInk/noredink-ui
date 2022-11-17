@@ -45,7 +45,15 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
-        [ p []
+        [ p
+            [ css
+                [ Fonts.baseFont
+                , Css.fontSize (Css.px 12)
+                , Css.displayFlex
+                , Css.flexWrap Css.wrap
+                , Css.alignItems Css.center
+                ]
+            ]
             [ Block.view
                 [ Block.plaintext "Dave"
                 , Block.label "subject"
@@ -143,6 +151,7 @@ example =
                                     , Css.justifyContent Css.center
                                     , Css.flexWrap Css.wrap
                                     , Css.alignItems Css.center
+                                    , Css.margin2 (Css.px 30) Css.zero
                                     ]
                                 ]
                     , width = Css.px 200

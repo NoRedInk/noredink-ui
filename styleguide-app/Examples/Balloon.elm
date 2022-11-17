@@ -8,13 +8,16 @@ module Examples.Balloon exposing (example, State, Msg)
 
 import Category exposing (Category(..))
 import Code
+import CommonControls
+import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
-import Html.Styled exposing (Html, text)
-import Nri.Ui.Balloon.V1 as Balloon
+import Html.Styled exposing (Html)
+import Nri.Ui.Balloon.V2 as Balloon
+import Nri.Ui.Colors.V1 as Colors
 
 
 moduleName : String
@@ -24,7 +27,7 @@ moduleName =
 
 version : Int
 version =
-    1
+    2
 
 
 {-| -}
@@ -38,12 +41,11 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
-        [ Balloon.balloon
+        [ Balloon.view
             [ Balloon.onTop
             , Balloon.navy
-            , Balloon.paddingPx 15
+            , Balloon.plaintext "This is a balloon."
             ]
-            (text "This is a balloon.")
         ]
     , view = view
     }
@@ -60,28 +62,33 @@ init =
 
 
 type alias Settings =
-    { copy : String
-    , attributes : List ( String, Balloon.Attribute )
-    }
+    List ( String, Balloon.Attribute Msg )
 
 
 controlSettings : Control Settings
 controlSettings =
-    Control.record Settings
-        |> Control.field "copy" (Control.string "Hello, world!")
-        |> Control.field "attributes" controlAttributes
-
-
-controlAttributes : Control (List ( String, Balloon.Attribute ))
-controlAttributes =
     ControlExtra.list
+        |> ControlExtra.listItem "content"
+            (CommonControls.content
+                { moduleName = moduleName
+                , plaintext = Balloon.plaintext
+                , markdown = Just Balloon.markdown
+                , html = Balloon.html
+                , httpError = Nothing
+                }
+            )
         |> ControlExtra.optionalListItem "theme" themeOptions
         |> ControlExtra.optionalListItem "position" positionOptions
-        |> ControlExtra.optionalListItem "width" widthOptions
-        |> ControlExtra.optionalListItem "padding" paddingOptions
+        |> CommonControls.css_ "containerCss"
+            ( "[ Css.backgroundColor Colors.magenta ]", [ Css.backgroundColor Colors.magenta ] )
+            { moduleName = moduleName, use = Balloon.containerCss }
+        |> CommonControls.css { moduleName = moduleName, use = Balloon.css }
+        |> CommonControls.mobileCss { moduleName = moduleName, use = Balloon.mobileCss }
+        |> CommonControls.quizEngineMobileCss { moduleName = moduleName, use = Balloon.quizEngineMobileCss }
+        |> CommonControls.notMobileCss { moduleName = moduleName, use = Balloon.notMobileCss }
 
 
-themeOptions : Control ( String, Balloon.Attribute )
+themeOptions : Control ( String, Balloon.Attribute msg )
 themeOptions =
     Control.choice
         [ ( "green", Control.value ( "Balloon.green", Balloon.green ) )
@@ -92,7 +99,7 @@ themeOptions =
         ]
 
 
-positionOptions : Control ( String, Balloon.Attribute )
+positionOptions : Control ( String, Balloon.Attribute msg )
 positionOptions =
     Control.choice
         [ ( "onBottom", Control.value ( "Balloon.onBottom", Balloon.onBottom ) )
@@ -100,29 +107,6 @@ positionOptions =
         , ( "onRight", Control.value ( "Balloon.onRight", Balloon.onRight ) )
         , ( "onTop", Control.value ( "Balloon.onTop", Balloon.onTop ) )
         ]
-
-
-widthOptions : Control ( String, Balloon.Attribute )
-widthOptions =
-    Control.choice
-        [ ( "px"
-          , Control.map
-                (\w -> ( "Balloon.widthPx " ++ String.fromFloat w, Balloon.widthPx w ))
-                (ControlExtra.float 50)
-          )
-        , ( "%"
-          , Control.map
-                (\w -> ( "Balloon.widthPct " ++ String.fromFloat w, Balloon.widthPct w ))
-                (ControlExtra.float 50)
-          )
-        ]
-
-
-paddingOptions : Control ( String, Balloon.Attribute )
-paddingOptions =
-    Control.map
-        (\w -> ( "Balloon.paddingPx " ++ String.fromFloat w, Balloon.paddingPx w ))
-        (ControlExtra.float 10)
 
 
 {-| -}
@@ -142,7 +126,7 @@ update msg state =
 view : EllieLink.Config -> State -> List (Html Msg)
 view ellieLinkConfig state =
     let
-        currentValue =
+        attributes =
             Control.currentValue state
     in
     [ ControlView.view
@@ -155,19 +139,13 @@ view ellieLinkConfig state =
         , extraCode = []
         , renderExample = Code.unstyledView
         , toExampleCode =
-            \{ copy, attributes } ->
+            \_ ->
                 [ { sectionName = "Balloon"
                   , code =
-                        "Balloon.balloon\n    [ "
-                            ++ String.join "\n    , " (List.map Tuple.first attributes)
-                            ++ "\n    ] "
-                            ++ "\n    (text \""
-                            ++ copy
-                            ++ "\")"
+                        Code.fromModule moduleName "view"
+                            ++ Code.list (List.map Tuple.first attributes)
                   }
                 ]
         }
-    , Balloon.balloon
-        (List.map Tuple.second currentValue.attributes)
-        (text currentValue.copy)
+    , Balloon.view (List.map Tuple.second attributes)
     ]

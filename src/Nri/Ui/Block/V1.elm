@@ -168,34 +168,48 @@ type alias Palette =
     { backgroundColor : Color, borderColor : Color }
 
 
-paletteToMark : Maybe String -> Palette -> Mark
-paletteToMark label_ { backgroundColor, borderColor } =
-    let
-        borderWidth =
-            Css.px 1
+toMark : Maybe String -> Maybe Palette -> Maybe Mark
+toMark label_ palette =
+    case ( label_, palette ) of
+        ( _, Just { backgroundColor, borderColor } ) ->
+            let
+                borderWidth =
+                    Css.px 1
 
-        borderStyles =
-            [ Css.borderStyle Css.dashed
-            , Css.borderColor borderColor
-            ]
-    in
-    { name = label_
-    , startStyles =
-        [ Css.paddingLeft (Css.px 2)
-        , Css.batch borderStyles
-        , Css.borderWidth4 borderWidth Css.zero borderWidth borderWidth
-        ]
-    , styles =
-        [ Css.padding2 (Css.px 4) Css.zero
-        , Css.backgroundColor backgroundColor
-        , MediaQuery.highContrastMode [ Css.property "background-color" "Mark" ]
-        ]
-    , endStyles =
-        [ Css.paddingRight (Css.px 2)
-        , Css.batch borderStyles
-        , Css.borderWidth4 borderWidth borderWidth borderWidth Css.zero
-        ]
-    }
+                borderStyles =
+                    [ Css.borderStyle Css.dashed
+                    , Css.borderColor borderColor
+                    ]
+            in
+            Just
+                { name = label_
+                , startStyles =
+                    [ Css.paddingLeft (Css.px 2)
+                    , Css.batch borderStyles
+                    , Css.borderWidth4 borderWidth Css.zero borderWidth borderWidth
+                    ]
+                , styles =
+                    [ Css.padding2 (Css.px 4) Css.zero
+                    , Css.backgroundColor backgroundColor
+                    , MediaQuery.highContrastMode [ Css.property "background-color" "Mark" ]
+                    ]
+                , endStyles =
+                    [ Css.paddingRight (Css.px 2)
+                    , Css.batch borderStyles
+                    , Css.borderWidth4 borderWidth borderWidth borderWidth Css.zero
+                    ]
+                }
+
+        ( Just l, Nothing ) ->
+            Just
+                { name = Just l
+                , startStyles = []
+                , styles = []
+                , endStyles = []
+                }
+
+        ( Nothing, Nothing ) ->
+            Nothing
 
 
 {-| -}
@@ -268,7 +282,7 @@ render : Config -> Html msg
 render config =
     let
         maybeMark =
-            Maybe.map (themeToPalette >> paletteToMark config.label) config.theme
+            toMark config.label (Maybe.map themeToPalette config.theme)
     in
     case config.content of
         [] ->
@@ -285,8 +299,7 @@ render config =
 
 viewMark : ( List Content, Maybe Mark ) -> Html msg
 viewMark markContent =
-    Mark.view
-        { showTagsInline = False }
+    Mark.viewWithBalloonTags
         (\content_ markStyles ->
             span
                 [ css

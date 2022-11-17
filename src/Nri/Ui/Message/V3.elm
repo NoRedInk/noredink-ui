@@ -16,6 +16,7 @@ module Nri.Ui.Message.V3 exposing
   - adds `notMobileCss`, `mobileCss`, `quizEngineMobileCss`
   - adds `hideIconForMobile` and `hideIconFor`
   - use `Shadows`
+  - use internal `Content` module
 
 Changes from V2:
 
@@ -64,12 +65,12 @@ Changes from V2:
 import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Style exposing (invisibleStyle)
+import Content
 import Css exposing (..)
 import Css.Global
 import Css.Media exposing (MediaQuery)
 import Html.Styled.Attributes as Attributes
 import Http
-import Markdown
 import Nri.Ui
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
@@ -384,28 +385,22 @@ banner =
 {-| Provide a plain-text string.
 -}
 plaintext : String -> Attribute msg
-plaintext content =
-    Attribute <| \config -> { config | content = [ text content ] }
+plaintext =
+    Attribute << Content.plaintext
 
 
 {-| Provide a string that will be rendered as markdown.
 -}
 markdown : String -> Attribute msg
-markdown content =
-    Attribute <|
-        \config ->
-            { config
-                | content =
-                    Markdown.toHtml Nothing content
-                        |> List.map fromUnstyled
-            }
+markdown =
+    Attribute << Content.markdown
 
 
 {-| Provide a list of custom HTML.
 -}
 html : List (Html msg) -> Attribute msg
-html content =
-    Attribute <| \config -> { config | content = content }
+html =
+    Attribute << Content.html
 
 
 {-| Provide an HTTP error, which will be translated to user-friendly text.
