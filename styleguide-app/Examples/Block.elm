@@ -45,40 +45,33 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
-        [ p
-            [ css
-                [ Fonts.baseFont
-                , Css.fontSize (Css.px 12)
-                , Css.displayFlex
-                , Css.flexWrap Css.wrap
-                , Css.alignItems Css.center
-                ]
-            ]
-            [ Block.view
+        [ [ Block.view
                 [ Block.plaintext "Dave"
                 , Block.label "subject"
                 , Block.yellow
                 ]
-            , Block.view [ Block.plaintext " " ]
-            , Block.view
+          , Block.view [ Block.plaintext " " ]
+          , Block.view
                 [ Block.plaintext "broke"
                 , Block.label "verb"
                 , Block.cyan
                 ]
-            , Block.view [ Block.plaintext " his french fry so " ]
-            , Block.view
+          , Block.view [ Block.plaintext " his french fry so " ]
+          , Block.view
                 [ Block.plaintext "he"
                 , Block.label "subject"
                 , Block.yellow
                 ]
-            , Block.view [ Block.plaintext " " ]
-            , Block.view
+          , Block.view [ Block.plaintext " " ]
+          , Block.view
                 [ Block.plaintext "glued"
                 , Block.label "verb"
                 , Block.cyan
                 ]
-            , Block.view [ Block.plaintext " it with ketchup." ]
-            ]
+          , Block.view [ Block.plaintext " it with ketchup." ]
+          ]
+            |> List.concat
+            |> p [ css [ Fonts.baseFont, Css.fontSize (Css.px 12) ] ]
         ]
     , view =
         \ellieLinkConfig state ->
@@ -108,20 +101,18 @@ example =
                 [ Heading.plaintext "Interactive example"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
-            , p
-                [ css
-                    [ Fonts.quizFont
-                    , Css.fontSize (Css.px 30)
-                    , Css.displayFlex
-                    , Css.justifyContent Css.center
-                    , Css.flexWrap Css.wrap
-                    , Css.alignItems Css.center
+            , [ Block.view [ Block.plaintext "I like " ]
+              , Block.view (List.map Tuple.second attributes)
+              , Block.view [ Block.plaintext " a lot!" ]
+              ]
+                |> List.concat
+                |> p
+                    [ css
+                        [ Fonts.quizFont
+                        , Css.fontSize (Css.px 30)
+                        , Css.textAlign Css.center
+                        ]
                     ]
-                ]
-                [ Block.view [ Block.plaintext "I like " ]
-                , Block.view (List.map Tuple.second attributes)
-                , Block.view [ Block.plaintext " a lot!" ]
-                ]
             , Heading.h2
                 [ Heading.plaintext "Non-interactive examples"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
@@ -143,17 +134,7 @@ example =
                     }
                 , Table.custom
                     { header = text "Example"
-                    , view =
-                        .example
-                            >> p
-                                [ css
-                                    [ Css.displayFlex
-                                    , Css.justifyContent Css.center
-                                    , Css.flexWrap Css.wrap
-                                    , Css.alignItems Css.center
-                                    , Css.margin2 (Css.px 30) Css.zero
-                                    ]
-                                ]
+                    , view = .example >> List.concat >> p [ css [ Css.margin2 (Css.px 30) Css.zero ] ]
                     , width = Css.px 200
                     , cellStyles = always [ Css.textAlign Css.center ]
                     , sort = Nothing

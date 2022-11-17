@@ -19,23 +19,28 @@ contentSpec : List Test
 contentSpec =
     [ test "blank" <|
         \() ->
-            Block.view []
-                |> Html.Styled.toUnstyled
-                |> Query.fromHtml
+            []
+                |> toQuery
                 |> Query.has [ Selector.text "blank" ]
     , test "plaintext" <|
         \() ->
-            Block.view [ Block.plaintext "Yo" ]
-                |> Html.Styled.toUnstyled
-                |> Query.fromHtml
+            [ Block.plaintext "Yo" ]
+                |> toQuery
                 |> Expect.all
                     [ Query.hasNot [ Selector.text "blank" ]
                     , Query.has [ Selector.text "Yo" ]
                     ]
     , test "content with string and blank" <|
         \() ->
-            Block.view [ Block.content [ Block.string "Yo", Block.blank ] ]
-                |> Html.Styled.toUnstyled
-                |> Query.fromHtml
+            [ Block.content [ Block.string "Yo", Block.blank ] ]
+                |> toQuery
                 |> Query.has [ Selector.text "Yo", Selector.text "blank" ]
     ]
+
+
+toQuery : List Block.Attribute -> Query.Single a
+toQuery block =
+    Block.view block
+        |> Html.Styled.p []
+        |> Html.Styled.toUnstyled
+        |> Query.fromHtml

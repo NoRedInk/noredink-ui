@@ -63,12 +63,24 @@ Show the label for the mark, if present, in a balloon centered above the emphasi
 
 -}
 viewWithBalloonTags :
-    Color
-    -> (content -> List Style -> Html msg)
-    -> List ( content, Maybe Mark )
+    (c -> List Style -> Html msg)
+    -> Color
+    -> Maybe Mark
+    -> List c
     -> List (Html msg)
-viewWithBalloonTags backgroundColor =
-    view_ (BalloonTags backgroundColor)
+viewWithBalloonTags viewSegment backgroundColor marked contents =
+    let
+        segments =
+            List.indexedMap
+                (\index content -> viewSegment content (markStyles index marked))
+                contents
+    in
+    case marked of
+        Just markedWith ->
+            [ viewMarked (BalloonTags backgroundColor) markedWith segments ]
+
+        Nothing ->
+            segments
 
 
 type TagStyle
@@ -101,35 +113,38 @@ view_ tagStyle viewSegment highlightables =
             in
             case marked of
                 Just markedWith ->
-                    [ Html.mark
-                        [ markedWith.name
-                            |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
-                            |> Maybe.withDefault AttributesExtra.none
-                        , css
-                            [ Css.display Css.inlineFlex
-                            , Css.backgroundColor Css.transparent
-                            , case tagStyle of
-                                BalloonTags _ ->
-                                    Css.position Css.relative
-
-                                _ ->
-                                    Css.batch []
-                            , Css.Global.children
-                                [ Css.Global.selector ":last-child"
-                                    (Css.after
-                                        [ Css.property "content" ("\" [end " ++ (Maybe.map (\name -> name) markedWith.name |> Maybe.withDefault "highlight") ++ "] \"")
-                                        , invisibleStyle
-                                        ]
-                                        :: markedWith.endStyles
-                                    )
-                                ]
-                            ]
-                        ]
-                        (viewStartHighlight tagStyle markedWith :: segments)
-                    ]
+                    [ viewMarked tagStyle markedWith segments ]
 
                 Nothing ->
                     segments
+
+
+viewMarked : TagStyle -> Mark -> List (Html msg) -> Html msg
+viewMarked tagStyle markedWith segments =
+    Html.mark
+        [ markedWith.name
+            |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
+            |> Maybe.withDefault AttributesExtra.none
+        , css
+            [ Css.backgroundColor Css.transparent
+            , case tagStyle of
+                BalloonTags _ ->
+                    Css.position Css.relative
+
+                _ ->
+                    Css.batch []
+            , Css.Global.children
+                [ Css.Global.selector ":last-child"
+                    (Css.after
+                        [ Css.property "content" ("\" [end " ++ (Maybe.map (\name -> name) markedWith.name |> Maybe.withDefault "highlight") ++ "] \"")
+                        , invisibleStyle
+                        ]
+                        :: markedWith.endStyles
+                    )
+                ]
+            ]
+        ]
+        (viewStartHighlight tagStyle markedWith :: segments)
 
 
 viewStartHighlight : TagStyle -> Mark -> Html msg
@@ -223,7 +238,7 @@ viewBalloon backgroundColor label =
         [ Balloon.onTop
         , Balloon.containerCss
             [ Css.position Css.absolute
-            , Css.bottom (Css.pct 100)
+            , Css.bottom (Css.calc (Css.pct 100) Css.plus (Css.px 4))
             , -- using position, 50% is wrt the parent container
               -- using transform & translate, 50% is wrt to the element itself
               -- combining these two properties, we can center the tag against the parent container
