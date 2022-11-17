@@ -1,6 +1,8 @@
 module Nri.Ui.Highlighter.V1 exposing
     ( Model, Msg(..), PointerMsg(..)
-    , init, update, view, static, staticWithTags
+    , init, update
+    , view, static, staticWithTags
+    , viewMarkdown, staticMarkdown, staticMarkdownWithTags
     , Intent(..), emptyIntent, hasChanged, HasChanged(..)
     , removeHighlights
     , asFragmentTuples, usedMarkers, text
@@ -33,7 +35,10 @@ Currently, highlighter is used in the following places:
 
 # Init/View/Update
 
-@docs init, update, view, static, staticWithTags
+@docs init, update
+
+@docs view, static, staticWithTags
+@docs viewMarkdown, staticMarkdown, staticMarkdownWithTags
 
 
 ## Intents
@@ -57,27 +62,22 @@ TODO: Add documentation about how to wire in event listeners and subscriptions s
 
 -}
 
-import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
-import Accessibility.Styled.Style exposing (invisibleStyle)
 import Browser.Dom as Dom
 import Css
-import Css.Global
 import Highlighter.Grouping as Grouping
 import Highlighter.Internal as Internal
-import Highlighter.Style as Style
 import Html.Styled as Html exposing (Attribute, Html, p, span)
 import Html.Styled.Attributes exposing (attribute, class, css)
 import Html.Styled.Events as Events
 import Json.Decode
 import List.Extra
-import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Fonts.V1 as Fonts
+import Markdown.Block
+import Markdown.Inline
 import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
-import Nri.Ui.Html.V3 exposing (viewJust)
-import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.Mark.V1 as Mark
 import Sort exposing (Sorter)
 import Sort.Set
 import String.Extra
@@ -578,35 +578,58 @@ removeHighlights model =
 {-| -}
 view : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Maybe Int, marker : Tool.Tool marker } -> Html (Msg marker)
 view config =
-    view_
-        { showTagsInline = False
-        , isInteractive = True
-        , maybeTool = Just config.marker
-        }
-        (viewHighlightable config.id config.marker config.focusIndex)
+    view_ { showTagsInline = False, maybeTool = Just config.marker }
+        (viewHighlightable False config)
+        config
+
+
+{-| Same as `view`, but will render strings like "_blah_" inside of emphasis tags.
+
+WARNING: the version of markdown used here is extremely limited, as the highlighter content needs to be entirely in-line content. Lists & other block-level elements will _not_ render as they usually would!
+
+WARNING: markdown is rendered highlightable by highlightable, so be sure to provide highlightables like ["_New York Times_"]["*New York Times*"], NOT like ["_New ", "York ", "Times_"]["*New ", "York ", "Times*"]
+
+-}
+viewMarkdown : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Maybe Int, marker : Tool.Tool marker } -> Html (Msg marker)
+viewMarkdown config =
+    view_ { showTagsInline = False, maybeTool = Just config.marker }
+        (viewHighlightable True config)
         config
 
 
 {-| -}
 static : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
 static config =
-    let
-        viewStaticHighlightable : Int -> Highlightable marker -> Html msg
-        viewStaticHighlightable =
-            viewHighlightableSegment
-                { isInteractive = False
-                , focusIndex = Nothing
-                , highlighterId = config.id
-                , eventListeners = []
-                , maybeTool = Nothing
-                }
-    in
-    view_
-        { showTagsInline = False
-        , isInteractive = False
-        , maybeTool = Nothing
-        }
-        viewStaticHighlightable
+    view_ { showTagsInline = False, maybeTool = Nothing }
+        (viewHighlightableSegment
+            { interactiveHighlighterId = Nothing
+            , focusIndex = Nothing
+            , eventListeners = []
+            , maybeTool = Nothing
+            , renderMarkdown = False
+            }
+        )
+        config
+
+
+{-| Same as `static`, but will render strings like "_blah_" inside of emphasis tags.
+
+WARNING: the version of markdown used here is extremely limited, as the highlighter content needs to be entirely in-line content. Lists & other block-level elements will _not_ render as they usually would!
+
+WARNING: markdown is rendered highlightable by highlightable, so be sure to provide highlightables like ["_New York Times_"]["*New York Times*"], NOT like ["_New ", "York ", "Times_"]["*New ", "York ", "Times*"]
+
+-}
+staticMarkdown : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
+staticMarkdown config =
+    view_ { showTagsInline = False, maybeTool = Nothing }
+        (viewHighlightableSegment
+            { interactiveHighlighterId = Nothing
+            , focusIndex = Nothing
+            , eventListeners = []
+            , maybeTool = Nothing
+            , renderMarkdown = True
+            }
+        )
         config
 
 
@@ -614,161 +637,110 @@ static config =
 staticWithTags : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
 staticWithTags config =
     let
-        viewStaticHighlightableWithTags : Int -> Highlightable marker -> Html msg
+        viewStaticHighlightableWithTags : Highlightable marker -> List Css.Style -> Html msg
         viewStaticHighlightableWithTags =
             viewHighlightableSegment
-                { isInteractive = False
+                { interactiveHighlighterId = Nothing
                 , focusIndex = Nothing
-                , highlighterId = config.id
                 , eventListeners = []
                 , maybeTool = Nothing
+                , renderMarkdown = False
                 }
     in
-    view_
-        { showTagsInline = True
-        , isInteractive = False
-        , maybeTool = Nothing
-        }
+    view_ { showTagsInline = True, maybeTool = Nothing }
+        viewStaticHighlightableWithTags
+        config
+
+
+{-| Same as `staticWithTags`, but will render strings like "_blah_" inside of emphasis tags.
+
+WARNING: the version of markdown used here is extremely limited, as the highlighter content needs to be entirely in-line content. Lists & other block-level elements will _not_ render as they usually would!
+
+WARNING: markdown is rendered highlightable by highlightable, so be sure to provide highlightables like ["_New York Times_"]["*New York Times*"], NOT like ["_New ", "York ", "Times_"]["*New ", "York ", "Times*"]
+
+-}
+staticMarkdownWithTags : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
+staticMarkdownWithTags config =
+    let
+        viewStaticHighlightableWithTags : Highlightable marker -> List Css.Style -> Html msg
+        viewStaticHighlightableWithTags =
+            viewHighlightableSegment
+                { interactiveHighlighterId = Nothing
+                , focusIndex = Nothing
+                , eventListeners = []
+                , maybeTool = Nothing
+                , renderMarkdown = True
+                }
+    in
+    view_ { showTagsInline = True, maybeTool = Nothing }
         viewStaticHighlightableWithTags
         config
 
 
 view_ :
-    { showTagsInline : Bool
-    , isInteractive : Bool
-    , maybeTool : Maybe (Tool.Tool marker)
-    }
-    -> (Int -> Highlightable marker -> Html msg)
+    { showTagsInline : Bool, maybeTool : Maybe (Tool.Tool marker) }
+    -> (Highlightable marker -> List Css.Style -> Html msg)
     -> { config | id : String, highlightables : List (Highlightable marker) }
     -> Html msg
 view_ groupConfig viewSegment { id, highlightables } =
+    p [ Html.Styled.Attributes.id id, class "highlighter-container" ]
+        (viewSegments groupConfig viewSegment highlightables)
+
+
+viewSegments :
+    { showTagsInline : Bool, maybeTool : Maybe (Tool.Tool marker) }
+    -> (Highlightable marker -> List Css.Style -> Html msg)
+    -> List (Highlightable marker)
+    -> List (Html msg)
+viewSegments groupConfig viewSegment highlightables =
     highlightables
         |> Grouping.buildGroups
         |> List.concatMap (groupContainer groupConfig viewSegment)
-        |> p [ Html.Styled.Attributes.id id, class "highlighter-container" ]
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
 -}
 groupContainer :
     { showTagsInline : Bool
-    , isInteractive : Bool
     , maybeTool : Maybe (Tool.Tool marker)
     }
-    -> (Int -> Highlightable marker -> Html msg)
+    -> (Highlightable marker -> List Css.Style -> Html msg)
     -> List (Highlightable marker)
     -> List (Html msg)
 groupContainer config viewSegment highlightables =
-    case highlightables of
-        [] ->
-            []
+    let
+        toMark : Highlightable marker -> Tool.MarkerModel marker -> Mark.Mark
+        toMark highlightable marker =
+            { name = marker.name
+            , startStyles = marker.startGroupClass
+            , styles = highlightableStyle config.maybeTool highlightable
+            , endStyles = marker.endGroupClass
+            }
 
-        first :: _ ->
-            case first.marked of
-                Just markedWith ->
-                    [ Html.mark
-                        [ markedWith.name
-                            |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
-                            |> Maybe.withDefault AttributesExtra.none
-                        , css
-                            [ Css.backgroundColor Css.transparent
-                            , Css.Global.children
-                                [ Css.Global.selector ":last-child"
-                                    (Css.after
-                                        [ Css.property "content" ("\" [end " ++ (Maybe.map (\name -> name) markedWith.name |> Maybe.withDefault "highlight") ++ "] \"")
-                                        , invisibleStyle
-                                        ]
-                                        :: markedWith.endGroupClass
-                                    )
-                                ]
-                            ]
-                        ]
-                        (viewInlineTag config first :: List.indexedMap viewSegment highlightables)
-                    ]
+        viewMark =
+            if config.showTagsInline then
+                Mark.viewWithInlineTags
 
-                Nothing ->
-                    List.indexedMap viewSegment highlightables
+            else
+                Mark.view
+    in
+    highlightables
+        |> List.map (\highlightable -> ( highlightable, Maybe.map (toMark highlightable) highlightable.marked ))
+        |> viewMark viewSegment
 
 
-tagBeforeContent : { mark | name : Maybe String } -> Css.Style
-tagBeforeContent markedWith =
-    case markedWith.name of
-        Just name ->
-            Css.before
-                [ MediaQuery.notHighContrastMode
-                    [ Css.property "content" ("\" [start " ++ name ++ " highlight] \"")
-                    , invisibleStyle
-                    ]
-                ]
-
-        Nothing ->
-            Css.before
-                [ Css.property "content" "\" [start highlight] \""
-                , invisibleStyle
-                ]
-
-
-viewInlineTag :
-    { showTagsInline : Bool
-    , isInteractive : Bool
-    , maybeTool : Maybe (Tool.Tool marker)
-    }
+viewHighlightable :
+    Bool
+    -> { config | id : String, focusIndex : Maybe Int, marker : Tool.Tool marker }
     -> Highlightable marker
-    -> Html msg
-viewInlineTag { showTagsInline, isInteractive, maybeTool } highlightable =
-    span
-        [ css
-            ((Maybe.map .startGroupClass highlightable.marked
-                |> Maybe.withDefault []
-             )
-                ++ highlightableStyle maybeTool highlightable isInteractive
-            )
-        , class "highlighter-inline-tag"
-        , case highlightable.marked of
-            Just markedWith ->
-                class "highlighter-inline-tag-highlighted"
-
-            _ ->
-                AttributesExtra.none
-        ]
-        [ viewJust
-            (\name ->
-                span
-                    [ css
-                        [ Fonts.baseFont
-                        , Css.backgroundColor Colors.white
-                        , Css.color Colors.navy
-                        , Css.padding2 (Css.px 2) (Css.px 4)
-                        , Css.borderRadius (Css.px 3)
-                        , Css.margin2 Css.zero (Css.px 5)
-                        , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 1) Css.zero Colors.gray75
-                        , Css.display Css.none
-                        , if showTagsInline then
-                            Css.batch [ Css.display Css.inline |> Css.important, MediaQuery.highContrastMode [ Css.property "forced-color-adjust" "none", Css.property "color" "initial" |> Css.important ] ]
-
-                          else
-                            Css.batch
-                                [ MediaQuery.highContrastMode [ Css.property "forced-color-adjust" "none", Css.display Css.inline |> Css.important, Css.property "color" "initial" |> Css.important ]
-                                ]
-                        ]
-                    , -- we use the :before element to convey details about the start of the
-                      -- highlighter to screenreaders, so the visual label is redundant
-                      Aria.hidden True
-                    ]
-                    [ Html.text name ]
-            )
-            (Maybe.andThen .name highlightable.marked)
-        ]
-
-
-viewHighlightable : String -> Tool.Tool marker -> Maybe Int -> Int -> Highlightable marker -> Html (Msg marker)
-viewHighlightable highlighterId marker focusIndex index highlightable =
+    -> List Css.Style
+    -> Html (Msg marker)
+viewHighlightable renderMarkdown config highlightable =
     case highlightable.type_ of
         Highlightable.Interactive ->
             viewHighlightableSegment
-                { isInteractive = True
-                , focusIndex = focusIndex
-                , highlighterId = highlighterId
+                { interactiveHighlighterId = Just config.id
+                , focusIndex = config.focusIndex
                 , eventListeners =
                     [ onPreventDefault "mouseover" (Pointer <| Over highlightable.groupIndex)
                     , onPreventDefault "mouseleave" (Pointer <| Out highlightable.groupIndex)
@@ -789,16 +761,15 @@ viewHighlightable highlighterId marker focusIndex index highlightable =
                         , Key.shift (Keyboard <| SelectionReset highlightable.groupIndex)
                         ]
                     ]
-                , maybeTool = Just marker
+                , maybeTool = Just config.marker
+                , renderMarkdown = renderMarkdown
                 }
-                index
                 highlightable
 
         Highlightable.Static ->
             viewHighlightableSegment
-                { isInteractive = False
-                , focusIndex = focusIndex
-                , highlighterId = highlighterId
+                { interactiveHighlighterId = Nothing
+                , focusIndex = config.focusIndex
                 , eventListeners =
                     -- Static highlightables need listeners as well.
                     -- because otherwise we miss mouseup events
@@ -807,23 +778,23 @@ viewHighlightable highlighterId marker focusIndex index highlightable =
                     , onPreventDefault "touchstart" (Pointer <| Down highlightable.groupIndex)
                     , attribute "data-static" ""
                     ]
-                , maybeTool = Just marker
+                , maybeTool = Just config.marker
+                , renderMarkdown = renderMarkdown
                 }
-                index
                 highlightable
 
 
 viewHighlightableSegment :
-    { isInteractive : Bool
+    { interactiveHighlighterId : Maybe String
     , focusIndex : Maybe Int
-    , highlighterId : String
     , eventListeners : List (Attribute msg)
     , maybeTool : Maybe (Tool.Tool marker)
+    , renderMarkdown : Bool
     }
-    -> Int
     -> Highlightable marker
+    -> List Css.Style
     -> Html msg
-viewHighlightableSegment { isInteractive, focusIndex, highlighterId, eventListeners, maybeTool } index highlightable =
+viewHighlightableSegment { interactiveHighlighterId, focusIndex, eventListeners, maybeTool, renderMarkdown } highlightable markStyles =
     let
         whitespaceClass txt =
             -- we need to override whitespace styles in order to support
@@ -845,29 +816,25 @@ viewHighlightableSegment { isInteractive, focusIndex, highlighterId, eventListen
 
             else
                 []
+
+        isInteractive =
+            interactiveHighlighterId /= Nothing
     in
     span
         (eventListeners
             ++ customToHtmlAttributes highlightable.customAttributes
             ++ whitespaceClass highlightable.text
             ++ [ attribute "data-highlighter-item-index" <| String.fromInt highlightable.groupIndex
-               , if isInteractive then
-                    Html.Styled.Attributes.id (highlightableId highlighterId highlightable.groupIndex)
+               , case interactiveHighlighterId of
+                    Just highlighterId ->
+                        Html.Styled.Attributes.id (highlightableId highlighterId highlightable.groupIndex)
 
-                 else
-                    AttributesExtra.none
+                    Nothing ->
+                        AttributesExtra.none
                , css
                     (Css.focus [ Css.zIndex (Css.int 1), Css.position Css.relative ]
-                        :: highlightableStyle maybeTool highlightable isInteractive
-                        ++ (case ( index == 0, highlightable.marked ) of
-                                ( True, Just markedWith ) ->
-                                    -- if we're on the first highlighted element, we add
-                                    -- a `before` content saying what kind of highlight we're starting
-                                    [ tagBeforeContent markedWith ]
-
-                                _ ->
-                                    []
-                           )
+                        :: highlightableStyle maybeTool highlightable
+                        ++ markStyles
                     )
                , class "highlighter-highlightable"
                , case highlightable.marked of
@@ -890,7 +857,56 @@ viewHighlightableSegment { isInteractive, focusIndex, highlighterId, eventListen
                     AttributesExtra.none
                ]
         )
-        [ Html.text highlightable.text ]
+        (if renderMarkdown then
+            renderInlineMarkdown highlightable.text
+
+         else
+            [ Html.text highlightable.text ]
+        )
+
+
+renderInlineMarkdown : String -> List (Html msg)
+renderInlineMarkdown text_ =
+    Markdown.Block.parse Nothing text_
+        |> List.map
+            (Markdown.Block.walk
+                (inlinifyMarkdownBlock
+                    >> Markdown.Block.PlainInlines
+                )
+            )
+        |> List.concatMap Markdown.Block.toHtml
+        |> List.map Html.fromUnstyled
+
+
+inlinifyMarkdownBlock : Markdown.Block.Block a b -> List (Markdown.Inline.Inline b)
+inlinifyMarkdownBlock block =
+    case block of
+        Markdown.Block.BlankLine str ->
+            [ Markdown.Inline.Text str ]
+
+        Markdown.Block.ThematicBreak ->
+            []
+
+        Markdown.Block.Heading _ _ inlines ->
+            inlines
+
+        Markdown.Block.CodeBlock _ str ->
+            [ Markdown.Inline.Text str ]
+
+        Markdown.Block.Paragraph _ inlines ->
+            inlines
+
+        Markdown.Block.BlockQuote blocks ->
+            List.concatMap inlinifyMarkdownBlock blocks
+
+        Markdown.Block.List _ blocks ->
+            List.concatMap inlinifyMarkdownBlock (List.concat blocks)
+
+        Markdown.Block.PlainInlines inlines ->
+            inlines
+
+        Markdown.Block.Custom b blocks ->
+            List.concatMap inlinifyMarkdownBlock blocks
 
 
 highlightableId : String -> Int -> String
@@ -898,14 +914,42 @@ highlightableId highlighterId groupIndex =
     "highlighter-" ++ highlighterId ++ "-highlightable-" ++ String.fromInt groupIndex
 
 
-highlightableStyle : Maybe (Tool.Tool kind) -> Highlightable kind -> Bool -> List Css.Style
-highlightableStyle tool ({ uiState, marked } as highlightable) interactive =
+highlightableStyle : Maybe (Tool.Tool kind) -> Highlightable kind -> List Css.Style
+highlightableStyle tool ({ uiState, marked } as highlightable) =
     case tool of
         Nothing ->
-            [ Style.staticHighlighted highlightable ]
+            [ case marked of
+                Just markedWith ->
+                    Css.batch markedWith.highlightClass
+
+                Nothing ->
+                    Css.backgroundColor Css.transparent
+            ]
 
         Just (Tool.Marker marker) ->
-            [ Css.property "user-select" "none", Style.dynamicHighlighted marker interactive uiState marked ]
+            [ Css.property "user-select" "none"
+            , case ( uiState, marked ) of
+                ( Highlightable.Hovered, Just markedWith ) ->
+                    -- Override marking with selected tool
+                    Css.batch marker.hoverHighlightClass
+
+                ( Highlightable.Hovered, Nothing ) ->
+                    [ marker.hoverClass
+                    , marker.startGroupClass
+                    , marker.endGroupClass
+                    ]
+                        |> List.concat
+                        |> Css.batch
+
+                ( Highlightable.Hinted, _ ) ->
+                    Css.batch marker.hintClass
+
+                ( Highlightable.None, Just markedWith ) ->
+                    Css.batch markedWith.highlightClass
+
+                ( Highlightable.None, Nothing ) ->
+                    Css.backgroundColor Css.transparent
+            ]
 
         Just (Tool.Eraser eraser_) ->
             case marked of
