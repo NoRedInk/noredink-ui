@@ -454,6 +454,9 @@ viewIcon styles icon =
             , borderRadius (px 3)
             , height (Css.px 27)
             , boxSizing contentBox
+            , -- this padding creates a hit area "bridge" between the
+              -- absolutely-positioned icon SVG and the label text
+              paddingRight (Css.px 8)
             ]
         , Attributes.class "checkbox-icon-container"
         ]
