@@ -475,7 +475,7 @@ pointerEventToActions msg model =
                     case ( model.mouseOverIndex, model.mouseDownIndex ) of
                         ( Just overIndex, Just downIndex ) ->
                             if overIndex == downIndex then
-                                [ Toggle downIndex marker ]
+                                [ Toggle downIndex marker, Focus downIndex ]
 
                             else
                                 [ Save marker ]
@@ -485,13 +485,28 @@ pointerEventToActions msg model =
 
                         _ ->
                             []
+
+                focus =
+                    case ( model.mouseOverIndex, model.mouseDownIndex ) of
+                        ( Just overIndex, Just downIndex ) ->
+                            if overIndex == downIndex then
+                                [ Focus downIndex ]
+
+                            else
+                                []
+
+                        ( Nothing, Just downIndex ) ->
+                            []
+
+                        _ ->
+                            []
             in
             case model.marker of
                 Tool.Marker marker ->
                     MouseUp :: save marker
 
                 Tool.Eraser _ ->
-                    [ MouseUp, Remove ]
+                    MouseUp :: Remove :: focus
 
         Out eventIndex ->
             [ Blur eventIndex ]
