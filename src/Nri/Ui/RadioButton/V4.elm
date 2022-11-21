@@ -544,6 +544,9 @@ radioInputIcon config =
             , displayFlex
             , justifyContent center
             , alignItems center
+            , -- this padding creates a hit area "bridge" between the
+              -- absolutely-positioned icon SVG and the label text
+              paddingRight (Css.px 8)
             ]
         ]
         [ image

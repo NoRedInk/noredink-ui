@@ -52,7 +52,7 @@ import Css.Global
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
-import InputErrorAndGuidanceInternal exposing (ErrorState, Guidance)
+import InputErrorAndGuidanceInternal exposing (Guidance)
 import Json.Decode
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
@@ -267,6 +267,7 @@ view { label, selected } attributes =
 
           else
             viewEnabledLabel config_ icon
+        , InputErrorAndGuidanceInternal.view config_.identifier (Css.marginTop Css.zero) config_
         ]
 
 
@@ -305,6 +306,7 @@ checkboxContainer model =
             , height inherit
             , position relative
             , marginLeft (px -4)
+            , padding4 (px 13) zero (px 13) (px 40)
             , pseudoClass "focus-within"
                 [ Css.Global.descendants
                     [ Css.Global.class "checkbox-icon-container" FocusRing.tightStyles
@@ -364,8 +366,6 @@ viewEnabledLabel :
         , label : String
         , hideLabel : Bool
         , labelCss : List Style
-        , guidance : Guidance
-        , error : ErrorState
     }
     -> Svg
     -> Html.Html msg
@@ -374,7 +374,7 @@ viewEnabledLabel config icon =
         [ Attributes.for config.identifier
         , labelClass config.selected
         , css
-            [ positioning
+            [ display inlineBlock
             , textStyle
             , cursor pointer
             , Css.batch config.labelCss
@@ -382,7 +382,6 @@ viewEnabledLabel config icon =
         ]
         [ viewIcon [] icon
         , labelView config
-        , InputErrorAndGuidanceInternal.view config.identifier (Css.marginTop Css.zero) config
         ]
 
 
@@ -393,8 +392,6 @@ viewDisabledLabel :
         , label : String
         , hideLabel : Bool
         , labelCss : List Style
-        , guidance : Guidance
-        , error : ErrorState
     }
     -> Svg
     -> Html.Html msg
@@ -403,7 +400,7 @@ viewDisabledLabel config icon =
         [ Attributes.for config.identifier
         , labelClass config.selected
         , css
-            [ positioning
+            [ display inlineBlock
             , textStyle
             , outline none
             , cursor auto
@@ -413,7 +410,6 @@ viewDisabledLabel config icon =
         ]
         [ viewIcon [] icon
         , labelView config
-        , InputErrorAndGuidanceInternal.view config.identifier (Css.marginTop Css.zero) config
         ]
 
 
@@ -433,15 +429,6 @@ labelClass isSelected =
 toClassList : List String -> Html.Attribute msg
 toClassList =
     List.map (\a -> ( "checkbox-V7__" ++ a, True )) >> Attributes.classList
-
-
-positioning : Style
-positioning =
-    batch
-        [ display inlineBlock
-        , padding4 (px 13) zero (px 13) (px 40)
-        , position relative
-        ]
 
 
 textStyle : Style
@@ -467,6 +454,9 @@ viewIcon styles icon =
             , borderRadius (px 3)
             , height (Css.px 27)
             , boxSizing contentBox
+            , -- this padding creates a hit area "bridge" between the
+              -- absolutely-positioned icon SVG and the label text
+              paddingRight (Css.px 8)
             ]
         , Attributes.class "checkbox-icon-container"
         ]
