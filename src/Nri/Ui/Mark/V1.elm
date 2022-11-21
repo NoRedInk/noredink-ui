@@ -16,6 +16,8 @@ import Css exposing (Color, Style)
 import Css.Global
 import Html.Styled as Html exposing (Html, span)
 import Html.Styled.Attributes exposing (class, css)
+import Nri.Ui.Balloon.V2 as Balloon
+import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
@@ -125,6 +127,12 @@ viewMarked tagStyle markedWith segments =
             |> Maybe.withDefault AttributesExtra.none
         , css
             [ Css.backgroundColor Css.transparent
+            , case tagStyle of
+                BalloonTags _ ->
+                    Css.position Css.relative
+
+                _ ->
+                    Css.batch []
             , Css.Global.children
                 [ Css.Global.selector ":last-child"
                     (Css.after
@@ -226,4 +234,34 @@ viewInlineTag customizations name =
 
 viewBalloon : Color -> String -> Html msg
 viewBalloon backgroundColor label =
-    Html.text label
+    Balloon.view
+        [ Balloon.onTop
+        , Balloon.containerCss
+            [ Css.position Css.absolute
+            , Css.bottom (Css.calc (Css.pct 100) Css.plus (Css.px 4))
+            , -- using position, 50% is wrt the parent container
+              -- using transform & translate, 50% is wrt to the element itself
+              -- combining these two properties, we can center the tag against the parent container
+              -- for any arbitrary width element
+              Css.left (Css.pct 50)
+            , Css.property "transform" "translateX(-50%)"
+            ]
+        , Balloon.css
+            [ Css.padding3 Css.zero (Css.px 6) (Css.px 1)
+            , Css.property "box-shadow" "none"
+            ]
+        , Balloon.custom
+            [ -- we use the :before element to convey details about the start of the
+              -- highlighter to screenreaders, so the visual label is redundant
+              Aria.hidden True
+            ]
+        , Balloon.customTheme
+            { backgroundColor = backgroundColor
+            , color = Nri.Ui.Colors.Extra.highContrastColor backgroundColor
+            }
+        , Balloon.highContrastModeTheme
+            { backgroundColor = "Mark"
+            , color = "MarkText"
+            }
+        , Balloon.plaintext label
+        ]

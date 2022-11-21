@@ -71,18 +71,18 @@ buildMarker { highlightColor, hoverColor, hoverHighlightColor, kind, name } =
 
 startGroupStyles : List Css.Style
 startGroupStyles =
-    Css.paddingLeft (Css.px 4)
-        :: [ Css.borderTopLeftRadius (Css.px 4)
-           , Css.borderBottomLeftRadius (Css.px 4)
-           ]
+    [ Css.paddingLeft (Css.px 4)
+    , Css.borderTopLeftRadius (Css.px 4)
+    , Css.borderBottomLeftRadius (Css.px 4)
+    ]
 
 
 endGroupStyles : List Css.Style
 endGroupStyles =
-    Css.paddingRight (Css.px 4)
-        :: [ Css.borderTopRightRadius (Css.px 4)
-           , Css.borderBottomRightRadius (Css.px 4)
-           ]
+    [ Css.paddingRight (Css.px 4)
+    , Css.borderTopRightRadius (Css.px 4)
+    , Css.borderBottomRightRadius (Css.px 4)
+    ]
 
 
 highlightStyles : Css.Color -> List Css.Style

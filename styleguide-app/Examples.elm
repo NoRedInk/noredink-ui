@@ -5,6 +5,7 @@ import Examples.Accordion as Accordion
 import Examples.AnimatedIcon as AnimatedIcon
 import Examples.AssignmentIcon as AssignmentIcon
 import Examples.Balloon as Balloon
+import Examples.Block as Block
 import Examples.BreadCrumbs as BreadCrumbs
 import Examples.Button as Button
 import Examples.Carousel as Carousel
@@ -122,6 +123,25 @@ all =
             (\msg ->
                 case msg of
                     BalloonState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , Block.example
+        |> Example.wrapMsg BlockMsg
+            (\msg ->
+                case msg of
+                    BlockMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState BlockState
+            (\msg ->
+                case msg of
+                    BlockState childState ->
                         Just childState
 
                     _ ->
@@ -933,6 +953,7 @@ type State
     | AnimatedIconState AnimatedIcon.State
     | AssignmentIconState AssignmentIcon.State
     | BalloonState Balloon.State
+    | BlockState Block.State
     | BreadCrumbsState BreadCrumbs.State
     | ButtonState Button.State
     | CarouselState Carousel.State
@@ -982,6 +1003,7 @@ type Msg
     | AnimatedIconMsg AnimatedIcon.Msg
     | AssignmentIconMsg AssignmentIcon.Msg
     | BalloonMsg Balloon.Msg
+    | BlockMsg Block.Msg
     | BreadCrumbsMsg BreadCrumbs.Msg
     | ButtonMsg Button.Msg
     | CarouselMsg Carousel.Msg
