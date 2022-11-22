@@ -2,7 +2,7 @@ module Nri.Ui.Text.V6 exposing
     ( caption, mediumBody, mediumBodyGray, smallBody, smallBodyGray
     , footnote
     , ugMediumBody, ugSmallBody
-    , paragraph, plaintext, markdown, html
+    , plaintext, markdown, html
     , Attribute, noBreak, css, id, custom
     , nriDescription, testId
     )
@@ -10,7 +10,6 @@ module Nri.Ui.Text.V6 exposing
 {-| Patch changes:
 
   - use internal `Content` module
-  - adds paragraph
 
 Changes from V5:
 
@@ -49,7 +48,7 @@ You're in the wrong place! Headings live in Nri.Ui.Heading.V3.
 
 # Content
 
-@docs paragraph, plaintext, markdown, html
+@docs plaintext, markdown, html
 
 
 ## Customizations
@@ -351,13 +350,6 @@ footnote attributes =
 plaintext : String -> Attribute msg
 plaintext =
     Attribute << Content.plaintext
-
-
-{-| Provide a plain-text string that will be put into a paragraph tag, with the default margin removed.
--}
-paragraph : String -> Attribute msg
-paragraph =
-    Attribute << Content.paragraph
 
 
 {-| Provide a string that will be rendered as markdown.
