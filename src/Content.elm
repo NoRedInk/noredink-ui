@@ -20,11 +20,11 @@ plaintext content config =
 
 {-| Provide a plain-text string that will be put into a paragraph tag, with the default margin removed.
 -}
-paragraphPlaintext :
+paragraph :
     String
     -> { config | content : List (Html msg) }
     -> { config | content : List (Html msg) }
-paragraphPlaintext content config =
+paragraph content config =
     { config | content = [ p [ css [ Css.margin Css.zero ] ] [ text content ] ] }
 
 
