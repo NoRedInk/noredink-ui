@@ -14,6 +14,11 @@ module Nri.Ui.TextInput.V7 exposing
 {-|
 
 
+# Patch changes
+
+  - no longer defaults the placeholder value to the label text
+
+
 # Changes from V6
 
   - custom takes a list of attributes and appends them to the end of the previous attributes, instead of prepending a single attr.
@@ -465,8 +470,7 @@ value value_ =
     Attribute { emptyEventsAndValues | currentValue = Just value_ } identity
 
 
-{-| If no explicit placeholder is given, the input label will be used as the placeholder.
--}
+{-| -}
 placeholder : String -> Attribute value msg
 placeholder text_ =
     Attribute emptyEventsAndValues <|
@@ -765,10 +769,6 @@ view label attributes =
                 Nothing ->
                     generateId label
 
-        placeholder_ =
-            config.placeholder
-                |> Maybe.withDefault label
-
         isInError =
             InputErrorAndGuidanceInternal.getIsInError config.error
 
@@ -856,7 +856,7 @@ view label attributes =
                                 []
                             )
                         ]
-                   , Attributes.placeholder placeholder_
+                   , maybeAttr Attributes.placeholder config.placeholder
                    , Attributes.value stringValue
                    , Attributes.disabled disabled_
                    , Attributes.readonly config.readOnly
