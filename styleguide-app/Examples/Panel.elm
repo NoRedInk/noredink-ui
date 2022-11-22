@@ -107,6 +107,7 @@ init =
             |> ControlExtra.listItem "content"
                 (CommonControls.content
                     { moduleName = moduleName
+                    , paragraph = Just Panel.paragraph
                     , plaintext = Panel.plaintext
                     , markdown = Just Panel.markdown
                     , html = Panel.html

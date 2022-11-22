@@ -72,6 +72,7 @@ controlSettings =
         |> ControlExtra.listItem "content"
             (CommonControls.content
                 { moduleName = moduleName
+                , paragraph = Just Balloon.paragraph
                 , plaintext = Balloon.plaintext
                 , markdown = Just Balloon.markdown
                 , html = Balloon.html

@@ -360,6 +360,7 @@ controlContent : Control ( String, Tooltip.Attribute Never )
 controlContent =
     CommonControls.content
         { moduleName = "Tooltip"
+        , paragraph = Nothing
         , plaintext = Tooltip.plaintext
         , markdown = Nothing
         , html = Tooltip.html

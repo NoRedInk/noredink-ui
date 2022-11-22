@@ -170,6 +170,7 @@ controlContent : Control ( String, Container.Attribute msg )
 controlContent =
     CommonControls.content
         { moduleName = "Container"
+        , paragraph = Just Container.paragraph
         , plaintext = Container.plaintext
         , markdown = Just Container.markdown
         , html = Container.html

@@ -35,6 +35,7 @@ init =
             |> ControlExtra.listItem "content"
                 (CommonControls.content
                     { moduleName = moduleName
+                    , paragraph = Just Message.paragraph
                     , plaintext = Message.plaintext
                     , markdown = Just Message.markdown
                     , html = Message.html

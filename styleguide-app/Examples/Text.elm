@@ -142,6 +142,7 @@ controlContent : Control ( String, Text.Attribute msg )
 controlContent =
     CommonControls.content
         { moduleName = "Text"
+        , paragraph = Just Text.paragraph
         , plaintext = Text.plaintext
         , markdown = Just Text.markdown
         , html = Text.html
