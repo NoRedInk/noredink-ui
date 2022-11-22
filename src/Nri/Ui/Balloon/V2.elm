@@ -1,13 +1,12 @@
 module Nri.Ui.Balloon.V2 exposing
     ( view, Attribute
-    , plaintext, markdown, html
+    , paragraph, plaintext, markdown, html
     , green, purple, orange, white, navy, customTheme
     , highContrastModeTheme
     , onBottom, onLeft, onRight, onTop
     , custom, id, nriDescription, testId
     , containerCss
     , css, notMobileCss, mobileCss, quizEngineMobileCss
-    , paragraph
     )
 
 {-| Adding a tooltip? Use `Nri.Ui.Tooltip`, not Balloon.
@@ -44,7 +43,7 @@ Changes from V1:
 
 ### Content
 
-@docs plaintext, markdown, html
+@docs paragraph, plaintext, markdown, html
 
 
 ### Customizations for Balloon
