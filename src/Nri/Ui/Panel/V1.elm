@@ -1,7 +1,7 @@
 module Nri.Ui.Panel.V1 exposing
     ( view, Attribute
     , header
-    , plaintext, markdown, html
+    , paragraph, plaintext, markdown, html
     , containerCss, headerCss, css
     , primary, secondary
     )
@@ -15,6 +15,7 @@ module Nri.Ui.Panel.V1 exposing
 ### Patch changes
 
   - use internal `Content` module
+  - adds paragraph
 
 @docs view, Attribute
 
@@ -22,7 +23,7 @@ module Nri.Ui.Panel.V1 exposing
 ## Content
 
 @docs header
-@docs plaintext, markdown, html
+@docs paragraph, plaintext, markdown, html
 @docs containerCss, headerCss, css
 
 
@@ -104,6 +105,13 @@ html =
 plaintext : String -> Attribute msg
 plaintext =
     Attribute << Content.plaintext
+
+
+{-| Provide a plain-text string that will be put into a paragraph tag, with the default margin removed.
+-}
+paragraph : String -> Attribute msg
+paragraph =
+    Attribute << Content.paragraph
 
 
 {-| Use a markdown string for the panel content.
