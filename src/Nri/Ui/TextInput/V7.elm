@@ -791,11 +791,6 @@ view label attributes =
                 _ ->
                     []
 
-        maybeAttr attr maybeValue =
-            maybeValue
-                |> Maybe.map attr
-                |> Maybe.withDefault Extra.none
-
         stringValue =
             eventsAndValues.currentValue
                 |> Maybe.map2 identity eventsAndValues.toString
@@ -856,18 +851,18 @@ view label attributes =
                                 []
                             )
                         ]
-                   , maybeAttr Attributes.placeholder config.placeholder
+                   , Extra.maybe Attributes.placeholder config.placeholder
                    , Attributes.value stringValue
                    , Attributes.disabled disabled_
                    , Attributes.readonly config.readOnly
-                   , maybeAttr Events.onInput eventsAndValues.onInput
-                   , maybeAttr Events.onFocus eventsAndValues.onFocus
-                   , maybeAttr Events.onBlur eventsAndValues.onBlur
+                   , Extra.maybe Events.onInput eventsAndValues.onInput
+                   , Extra.maybe Events.onFocus eventsAndValues.onFocus
+                   , Extra.maybe Events.onBlur eventsAndValues.onBlur
                    , Attributes.autofocus config.autofocus
-                   , maybeAttr type_ config.fieldType
-                   , maybeAttr (attribute "inputmode") config.inputMode
-                   , maybeAttr (attribute "autocomplete") config.autocomplete
-                   , maybeAttr onEnter_ eventsAndValues.onEnter
+                   , Extra.maybe type_ config.fieldType
+                   , Extra.maybe (attribute "inputmode") config.inputMode
+                   , Extra.maybe (attribute "autocomplete") config.autocomplete
+                   , Extra.maybe onEnter_ eventsAndValues.onEnter
                    , class "nri-ui-textinput override-sass-styles custom-focus-ring"
                    , classList
                         [ ( InputStyles.inputClass, True )

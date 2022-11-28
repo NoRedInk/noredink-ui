@@ -1,4 +1,9 @@
-module Nri.Ui.Html.Attributes.V2 exposing (none, includeIf, targetBlank, nriDescription, nriDescriptionSelector, testId)
+module Nri.Ui.Html.Attributes.V2 exposing
+    ( none, includeIf, maybe
+    , targetBlank
+    , nriDescription, nriDescriptionSelector
+    , testId
+    )
 
 {-|
 
@@ -6,12 +11,16 @@ module Nri.Ui.Html.Attributes.V2 exposing (none, includeIf, targetBlank, nriDesc
 # Patch changes:
 
     - adds `nriDescription` and `testId` helpers
+    - adds `maybe` helper
 
 Extras for working with Html.Attributes.
 
 This is the new version of Nri.Ui.Html.Attributes.Extra.
 
-@docs none, includeIf, targetBlank, nriDescription, nriDescriptionSelector, testId
+@docs none, includeIf, maybe
+@docs targetBlank
+@docs nriDescription, nriDescriptionSelector
+@docs testId
 
 -}
 
@@ -36,6 +45,13 @@ It's totally safe and lets us clean up conditional and maybe attributes
 none : Attribute msg
 none =
     Attributes.property "Html.Attributes.Extra.none" Encode.null
+
+
+{-| Transform a maybe value to an attribute or attach `none`
+-}
+maybe : (v -> Attribute msg) -> Maybe v -> Attribute msg
+maybe toAttr =
+    Maybe.map toAttr >> Maybe.withDefault none
 
 
 {-| conditionally include an attribute. Useful for CSS classes generated with
