@@ -18,6 +18,11 @@ module Nri.Ui.TextArea.V5 exposing
 ## Changelog
 
 
+### Patch changes
+
+  - no longer defaults the placeholder value to the label text
+
+
 ### Changes from V4
 
   - Removes contentCreation view styles
@@ -174,8 +179,7 @@ value value_ =
     Attribute (\soFar -> { soFar | value = value_ })
 
 
-{-| If no explicit placeholder is given, the input label will be used as the placeholder.
--}
+{-| -}
 placeholder : String -> Attribute msg
 placeholder text_ =
     Attribute (\soFar -> { soFar | placeholder = Just text_ })
@@ -378,7 +382,8 @@ view_ label config =
              , Attributes.disabled config.disabled
              , Attributes.id idValue
              , Attributes.autofocus config.autofocus
-             , Attributes.placeholder (Maybe.withDefault label config.placeholder)
+             , Maybe.map Attributes.placeholder config.placeholder
+                |> Maybe.withDefault Extra.none
              , Attributes.attribute "data-gramm" "false" -- disables grammarly to prevent https://github.com/NoRedInk/NoRedInk/issues/14859
              , Attributes.class "override-sass-styles custom-focus-ring"
              , Attributes.classList
