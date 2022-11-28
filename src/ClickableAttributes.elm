@@ -1,6 +1,6 @@
 module ClickableAttributes exposing
     ( ClickableAttributes, init
-    , onClick, submit
+    , onClick, submit, opensModal
     , toButtonAttributes
     , href, linkWithMethod, linkWithTracking
     , linkSpa
@@ -15,7 +15,7 @@ module ClickableAttributes exposing
 
 # For buttons
 
-@docs onClick, submit
+@docs onClick, submit, opensModal
 @docs toButtonAttributes
 
 
@@ -45,6 +45,7 @@ type alias ClickableAttributes route msg =
     , url : Maybe route
     , urlString : Maybe String
     , onClick : Maybe msg
+    , opensModal : Bool
     }
 
 
@@ -65,6 +66,7 @@ init =
     , url = Nothing
     , urlString = Nothing
     , onClick = Nothing
+    , opensModal = False
     }
 
 
@@ -78,6 +80,12 @@ onClick msg clickableAttributes =
 submit : ClickableAttributes route msg -> ClickableAttributes route msg
 submit clickableAttributes =
     { clickableAttributes | buttonType = "submit" }
+
+
+{-| -}
+opensModal : ClickableAttributes route msg -> ClickableAttributes route msg
+opensModal clickableAttributes =
+    { clickableAttributes | opensModal = True }
 
 
 {-| -}
@@ -129,6 +137,12 @@ toButtonAttributes : ClickableAttributes route msg -> List (Attribute msg)
 toButtonAttributes clickableAttributes =
     [ AttributesExtra.maybe Events.onClick clickableAttributes.onClick
     , Attributes.type_ clickableAttributes.buttonType
+    , -- why "aria-haspopup=true" instead of "aria-haspopup=dialog"?
+      -- AT support for aria-haspopup=dialog is currently (Nov 2022) limited.
+      -- See https://html5accessibility.com/stuff/2021/02/02/haspopup-haspoop/
+      -- If time has passed, feel free to revisit and see if dialog support has improved!
+      AttributesExtra.includeIf clickableAttributes.opensModal
+        (Attributes.attribute "aria-haspopup" "true")
     ]
 
 

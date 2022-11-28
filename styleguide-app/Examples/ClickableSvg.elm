@@ -327,4 +327,6 @@ initSettings =
                     )
                 |> ControlExtra.optionalBoolListItem "submit (button only)"
                     ( "ClickableSvg.submit", ClickableSvg.submit )
+                |> ControlExtra.optionalBoolListItem "opensModal (button only)"
+                    ( "ClickableSvg.opensModal", ClickableSvg.opensModal )
             )

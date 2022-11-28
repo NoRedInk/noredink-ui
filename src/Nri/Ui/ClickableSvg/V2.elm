@@ -1,7 +1,7 @@
 module Nri.Ui.ClickableSvg.V2 exposing
     ( button, link
     , Attribute
-    , onClick, submit
+    , onClick, submit, opensModal
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , exactSize, exactWidth, exactHeight
     , disabled
@@ -20,6 +20,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
 
     - adds `nriDescription`, `testId`, and `id` helpers
     - adds `iconForMobile`, `iconForQuizEngineMobile`, `iconForNarrowMobile`
+    - adds `submit` and `opensModal`
 
 
 # Create a button or link
@@ -30,7 +31,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
 
 ## Behavior
 
-@docs onClick, submit
+@docs onClick, submit, opensModal
 @docs href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
 
 
@@ -128,6 +129,13 @@ Note: this attribute is not supported by links.
 submit : Attribute msg
 submit =
     setClickableAttributes ClickableAttributes.submit
+
+
+{-| Use this attribute when interacting with the button will launch a modal.
+-}
+opensModal : Attribute msg
+opensModal =
+    setClickableAttributes ClickableAttributes.opensModal
 
 
 {-| -}

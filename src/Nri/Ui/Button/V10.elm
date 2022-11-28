@@ -1,7 +1,7 @@
 module Nri.Ui.Button.V10 exposing
     ( button, link
     , Attribute
-    , onClick, submit
+    , onClick, submit, opensModal
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , small, medium, large, modal
     , exactWidth, boundedWidth, unboundedWidth, fillContainerWidth
@@ -30,6 +30,7 @@ adding a span around the text could potentially lead to regressions.
   - adds `hideIconForMobile` and `hideIconFor`
   - support 'disabled' links according to [Scott O'Hara's disabled links](https://www.scottohara.me/blog/2021/05/28/disabled-links.html) article
   - adds `tertiary` style
+  - adds `submit` and `opensModal`
 
 
 # Changes from V9:
@@ -46,7 +47,7 @@ adding a span around the text could potentially lead to regressions.
 
 ## Behavior
 
-@docs onClick, submit
+@docs onClick, submit, opensModal
 @docs href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
 
 
@@ -286,6 +287,13 @@ Note: this attribute is not supported by links.
 submit : Attribute msg
 submit =
     setClickableAttributes ClickableAttributes.submit
+
+
+{-| Use this attribute when interacting with the button will launch a modal.
+-}
+opensModal : Attribute msg
+opensModal =
+    setClickableAttributes ClickableAttributes.opensModal
 
 
 {-| -}
