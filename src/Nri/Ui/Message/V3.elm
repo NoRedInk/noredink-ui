@@ -5,7 +5,7 @@ module Nri.Ui.Message.V3 exposing
     , hideIconForMobile, hideIconFor
     , css, notMobileCss, mobileCss, quizEngineMobileCss
     , tiny, large, banner
-    , plaintext, markdown, html, httpError, codeDetails
+    , paragraph, plaintext, markdown, html, httpError, codeDetails
     , tip, error, alert, success, customTheme
     , alertRole, alertDialogRole
     , onDismiss
@@ -43,7 +43,7 @@ Changes from V2:
 
 ## Content
 
-@docs plaintext, markdown, html, httpError, codeDetails
+@docs paragraph, plaintext, markdown, html, httpError, codeDetails
 
 
 ## Theme
@@ -387,6 +387,13 @@ banner =
 plaintext : String -> Attribute msg
 plaintext =
     Attribute << Content.plaintext
+
+
+{-| Provide a plain-text string that will be put into a paragraph tag, with the default margin removed.
+-}
+paragraph : String -> Attribute msg
+paragraph =
+    Attribute << Content.paragraph
 
 
 {-| Provide a string that will be rendered as markdown.

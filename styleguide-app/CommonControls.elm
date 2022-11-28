@@ -115,6 +115,7 @@ string ( fName, f ) startingString =
 
 content :
     { moduleName : String
+    , paragraph : Maybe (String -> attribute)
     , plaintext : String -> attribute
     , markdown : Maybe (String -> attribute)
     , html : List (Html msg) -> attribute
@@ -123,66 +124,78 @@ content :
     -> Control ( String, attribute )
 content ({ moduleName } as config) =
     Control.choice
-        ([ ( "plain text (short)"
-           , string ( Code.fromModule moduleName "plaintext", config.plaintext ) quickBrownFox
-           )
-         , ( "plain text (long, no newlines)"
-           , Control.string longPangrams
+        ([ case config.paragraph of
+            Just f ->
+                Just
+                    ( "paragraph"
+                    , string ( Code.fromModule moduleName "paragraph", f ) quickBrownFox
+                    )
+
+            Nothing ->
+                Nothing
+         , Just
+            ( "plain text (short)"
+            , string ( Code.fromModule moduleName "plaintext", config.plaintext ) quickBrownFox
+            )
+         , Just
+            ( "plain text (long, no newlines)"
+            , Control.string longPangrams
                 |> Control.map
                     (\str ->
                         ( moduleName ++ ".plaintext \"" ++ str ++ "\""
                         , config.plaintext str
                         )
                     )
-           )
-         , ( "plain text (long, with newlines)"
-           , Control.stringTextarea romeoAndJulietQuotation
+            )
+         , Just
+            ( "plain text (long, with newlines)"
+            , Control.stringTextarea romeoAndJulietQuotation
                 |> Control.map
                     (\str ->
                         ( moduleName ++ ".plaintext\n\t\t\"\"\"" ++ str ++ "\t\t\"\"\""
                         , config.plaintext str
                         )
                     )
-           )
-         ]
-            ++ (case config.markdown of
-                    Just markdown_ ->
-                        [ ( "markdown"
-                          , Control.string markdown
-                                |> Control.map
-                                    (\str ->
-                                        ( moduleName ++ ".markdown \"" ++ str ++ "\""
-                                        , markdown_ str
-                                        )
-                                    )
-                          )
-                        ]
-
-                    Nothing ->
-                        []
-               )
-            ++ ( "HTML"
-               , Control.value
-                    ( moduleName ++ ".html [ ... ]"
-                    , config.html exampleHtml
-                    )
-               )
-            :: (case config.httpError of
-                    Just httpError_ ->
-                        [ ( "httpError"
-                          , Control.map
-                                (\error ->
-                                    ( moduleName ++ ".httpError error"
-                                    , httpError_ error
-                                    )
+            )
+         , case config.markdown of
+            Just markdown_ ->
+                Just
+                    ( "markdown"
+                    , Control.string markdown
+                        |> Control.map
+                            (\str ->
+                                ( moduleName ++ ".markdown \"" ++ str ++ "\""
+                                , markdown_ str
                                 )
-                                httpError
-                          )
-                        ]
+                            )
+                    )
 
-                    Nothing ->
-                        []
-               )
+            Nothing ->
+                Nothing
+         , Just
+            ( "HTML"
+            , Control.value
+                ( moduleName ++ ".html [ ... ]"
+                , config.html exampleHtml
+                )
+            )
+         , case config.httpError of
+            Just httpError_ ->
+                Just
+                    ( "httpError"
+                    , Control.map
+                        (\error ->
+                            ( moduleName ++ ".httpError error"
+                            , httpError_ error
+                            )
+                        )
+                        httpError
+                    )
+
+            Nothing ->
+                Nothing
+         ]
+            |> List.filterMap identity
         )
 
 

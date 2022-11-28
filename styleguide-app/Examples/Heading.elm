@@ -109,6 +109,7 @@ controlContent : Control ( String, Heading.Attribute msg )
 controlContent =
     CommonControls.content
         { moduleName = moduleName
+        , paragraph = Nothing
         , plaintext = Heading.plaintext
         , markdown = Just Heading.markdown
         , html = Heading.html

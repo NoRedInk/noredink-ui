@@ -3,7 +3,7 @@ module Nri.Ui.Container.V2 exposing
     , custom, testId, id
     , css, notMobileCss, mobileCss, quizEngineMobileCss
     , paddingPx
-    , plaintext, markdown, html
+    , paragraph, plaintext, markdown, html
     , gray, default, disabled, invalid, pillow, buttony
     )
 
@@ -23,6 +23,7 @@ module Nri.Ui.Container.V2 exposing
   - use `Shadows`
   - add notMobileCss, mobileCss, quizEngineMobileCss
   - use internal `Content` module
+  - adds paragraph
 
 
 ## Changes from V1
@@ -53,7 +54,7 @@ module Nri.Ui.Container.V2 exposing
 
 ## Content
 
-@docs plaintext, markdown, html
+@docs paragraph, plaintext, markdown, html
 
 
 ## Themes
@@ -339,6 +340,13 @@ html =
 plaintext : String -> Attribute msg
 plaintext =
     Attribute << Content.plaintext
+
+
+{-| Provide a plain-text string that will be put into a paragraph tag, with the default margin removed.
+-}
+paragraph : String -> Attribute msg
+paragraph =
+    Attribute << Content.paragraph
 
 
 {-| Provide a string that will be rendered as markdown.

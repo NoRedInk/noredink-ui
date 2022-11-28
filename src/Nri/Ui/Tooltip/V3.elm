@@ -1,7 +1,7 @@
 module Nri.Ui.Tooltip.V3 exposing
     ( view, viewToggleTip
     , Attribute
-    , plaintext, html
+    , paragraph, plaintext, markdown, html
     , withoutTail
     , onTop, onBottom, onLeft, onRight
     , onTopForQuizEngineMobile, onBottomForQuizEngineMobile, onLeftForQuizEngineMobile, onRightForQuizEngineMobile
@@ -30,6 +30,7 @@ module Nri.Ui.Tooltip.V3 exposing
   - adds alignStartForNarrowMobile, alignMiddleForNarrowMobile, alignEndForNarrowMobile
   - adds narrowMobileCss
   - use internal `Content` module
+  - adds `paragraph` and `markdown` support
 
 Changes from V2:
 
@@ -52,7 +53,7 @@ These tooltips aim to follow the accessibility recommendations from:
 
 @docs view, viewToggleTip
 @docs Attribute
-@docs plaintext, html
+@docs paragraph, plaintext, markdown, html
 @docs withoutTail
 
 @docs onTop, onBottom, onLeft, onRight
@@ -161,13 +162,29 @@ buildAttributes =
     List.foldl (\(Attribute applyAttr) acc -> applyAttr acc) defaultTooltip
 
 
-{-| -}
+{-| Provide a plain-text string.
+-}
 plaintext : String -> Attribute msg
 plaintext =
     Attribute << Content.plaintext
 
 
-{-| -}
+{-| Provide a plain-text string that will be put into a paragraph tag, with the default margin removed.
+-}
+paragraph : String -> Attribute msg
+paragraph =
+    Attribute << Content.paragraph
+
+
+{-| Provide a string that will be rendered as markdown.
+-}
+markdown : String -> Attribute msg
+markdown =
+    Attribute << Content.markdown
+
+
+{-| Provide a list of custom HTML.
+-}
 html : List (Html msg) -> Attribute msg
 html =
     Attribute << Content.html

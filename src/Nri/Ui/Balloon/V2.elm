@@ -1,6 +1,6 @@
 module Nri.Ui.Balloon.V2 exposing
     ( view, Attribute
-    , plaintext, markdown, html
+    , paragraph, plaintext, markdown, html
     , green, purple, orange, white, navy, customTheme
     , highContrastModeTheme
     , onBottom, onLeft, onRight, onTop
@@ -13,13 +13,17 @@ module Nri.Ui.Balloon.V2 exposing
 Balloon is really just a container: it is non-interactive and isn't semantically meaningful.
 
     Balloon.view
-        [ Balloon.plaintext "Hello!"
+        [ Balloon.paragraph "Hello, world! I'm a balloon!"
         , Balloon.onTop
         , Balloon.navy
         ]
 
 
 ## Changelog
+
+Patch changes:
+
+  - adds paragraph
 
 Changes from V1:
 
@@ -39,7 +43,7 @@ Changes from V1:
 
 ### Content
 
-@docs plaintext, markdown, html
+@docs paragraph, plaintext, markdown, html
 
 
 ### Customizations for Balloon
@@ -285,6 +289,13 @@ id id_ =
 plaintext : String -> Attribute msg
 plaintext =
     Attribute << Content.plaintext
+
+
+{-| Provide a plain-text string that will be put into a paragraph tag, with the default margin removed.
+-}
+paragraph : String -> Attribute msg
+paragraph =
+    Attribute << Content.paragraph
 
 
 {-| Provide a string that will be rendered as markdown.
