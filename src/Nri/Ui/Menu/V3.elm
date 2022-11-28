@@ -827,7 +827,11 @@ viewEntry config focusAndToggle { upId, downId, entry_ } =
                 _ ->
                     if config.isList then
                         ul
-                            []
+                            [ css
+                                [ Css.listStyleType Css.none
+                                , Css.paddingLeft Css.zero
+                                ]
+                            ]
                             (viewEntries
                                 config
                                 { focusAndToggle = focusAndToggle
