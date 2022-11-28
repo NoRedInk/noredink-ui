@@ -1,6 +1,6 @@
 module ClickableAttributes exposing
     ( ClickableAttributes, init
-    , onClick
+    , onClick, submit
     , toButtonAttributes
     , href, linkWithMethod, linkWithTracking
     , linkSpa
@@ -15,7 +15,7 @@ module ClickableAttributes exposing
 
 # For buttons
 
-@docs onClick
+@docs onClick, submit
 @docs toButtonAttributes
 
 
@@ -72,6 +72,12 @@ init =
 onClick : msg -> ClickableAttributes route msg -> ClickableAttributes route msg
 onClick msg clickableAttributes =
     { clickableAttributes | onClick = Just msg }
+
+
+{-| -}
+submit : ClickableAttributes route msg -> ClickableAttributes route msg
+submit clickableAttributes =
+    { clickableAttributes | buttonType = "submit" }
 
 
 {-| -}

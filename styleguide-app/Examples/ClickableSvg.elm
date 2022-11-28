@@ -325,4 +325,6 @@ initSettings =
                         )
                         (CommonControls.rotatedUiIcon 3)
                     )
+                |> ControlExtra.optionalBoolListItem "submit (button only)"
+                    ( "ClickableSvg.submit", ClickableSvg.submit )
             )

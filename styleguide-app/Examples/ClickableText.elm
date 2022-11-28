@@ -97,6 +97,8 @@ init =
                     { moduleName = moduleName
                     , use = ClickableText.notMobileCss
                     }
+                |> ControlExtra.optionalBoolListItem "submit (button only)"
+                    ( "ClickableText.submit", ClickableText.submit )
             )
         |> State
 

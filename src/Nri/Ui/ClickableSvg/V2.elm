@@ -1,7 +1,7 @@
 module Nri.Ui.ClickableSvg.V2 exposing
     ( button, link
     , Attribute
-    , onClick
+    , onClick, submit
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , exactSize, exactWidth, exactHeight
     , disabled
@@ -30,7 +30,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
 
 ## Behavior
 
-@docs onClick
+@docs onClick, submit
 @docs href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
 
 
@@ -118,6 +118,16 @@ setClickableAttributes apply =
 onClick : msg -> Attribute msg
 onClick msg =
     setClickableAttributes (ClickableAttributes.onClick msg)
+
+
+{-| By default, buttons have type "button". Use this attribute to change the button type to "submit".
+
+Note: this attribute is not supported by links.
+
+-}
+submit : Attribute msg
+submit =
+    setClickableAttributes ClickableAttributes.submit
 
 
 {-| -}

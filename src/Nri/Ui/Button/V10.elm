@@ -1,7 +1,7 @@
 module Nri.Ui.Button.V10 exposing
     ( button, link
     , Attribute
-    , onClick
+    , onClick, submit
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , small, medium, large, modal
     , exactWidth, boundedWidth, unboundedWidth, fillContainerWidth
@@ -46,7 +46,7 @@ adding a span around the text could potentially lead to regressions.
 
 ## Behavior
 
-@docs onClick
+@docs onClick, submit
 @docs href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
 
 
@@ -276,6 +276,16 @@ setClickableAttributes apply =
 onClick : msg -> Attribute msg
 onClick msg =
     setClickableAttributes (ClickableAttributes.onClick msg)
+
+
+{-| By default, buttons have type "button". Use this attribute to change the button type to "submit".
+
+Note: this attribute is not supported by links.
+
+-}
+submit : Attribute msg
+submit =
+    setClickableAttributes ClickableAttributes.submit
 
 
 {-| -}
