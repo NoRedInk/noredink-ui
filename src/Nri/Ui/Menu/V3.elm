@@ -64,7 +64,6 @@ import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
-import Particle.System exposing (Msg)
 
 
 {-| -}
