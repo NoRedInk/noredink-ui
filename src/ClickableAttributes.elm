@@ -35,7 +35,7 @@ import Html.Styled exposing (Attribute)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Json.Decode
-import Nri.Ui.Html.Attributes.V2 exposing (targetBlank)
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (targetBlank)
 
 
 {-| -}
@@ -119,12 +119,8 @@ linkExternalWithTracking { track, url } clickableAttributes =
 {-| -}
 toButtonAttributes : ClickableAttributes route msg -> List (Attribute msg)
 toButtonAttributes clickableAttributes =
-    case clickableAttributes.onClick of
-        Just handler ->
-            [ Events.onClick handler ]
-
-        Nothing ->
-            []
+    [ AttributesExtra.maybe Events.onClick clickableAttributes.onClick
+    ]
 
 
 {-| -}
