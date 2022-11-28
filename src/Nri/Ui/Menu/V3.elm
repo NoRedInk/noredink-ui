@@ -672,7 +672,15 @@ viewCustom config =
 
                 CustomButton customButton ->
                     customButton buttonAttributes
-            , div [ styleOuterContent contentVisible config ]
+            , let
+                entriesContainer =
+                    if config.isList then
+                        ul
+
+                    else
+                        div
+              in
+              div [ styleOuterContent contentVisible config ]
                 [ div
                     [ AttributesExtra.nriDescription "menu-hover-bridge"
                     , css
@@ -680,7 +688,7 @@ viewCustom config =
                         ]
                     ]
                     []
-                , div
+                , entriesContainer
                     [ classList [ ( "Content", True ), ( "ContentVisible", contentVisible ) ]
                     , styleContent contentVisible config
                     , case config.purpose of
@@ -779,45 +787,44 @@ viewEntry config focusAndToggle { upId, downId, entry_ } =
     case entry_ of
         Single id view_ ->
             let
-                attributes =
-                    [ class "MenuEntryContainer"
-                    , css
-                        [ padding2 (px 5) zero
-                        , position relative
-                        , firstChild
-                            [ paddingTop zero ]
-                        , lastChild
-                            [ paddingBottom zero ]
-                        ]
-                    ]
+                entryContainer =
+                    if config.isList then
+                        li
 
-                content =
-                    [ view_
-                        [ Role.menuItem
-                        , Attributes.id id
-                        , Key.tabbable False
-                        , Key.onKeyDownPreventDefault
-                            [ Key.up
-                                (focusAndToggle
-                                    { isOpen = True
-                                    , focus = Just upId
-                                    }
-                                )
-                            , Key.down
-                                (focusAndToggle
-                                    { isOpen = True
-                                    , focus = Just downId
-                                    }
-                                )
-                            ]
-                        ]
-                    ]
+                    else
+                        div
             in
-            if config.isList then
-                li attributes content
-
-            else
-                div attributes content
+            entryContainer
+                [ class "MenuEntryContainer"
+                , css
+                    [ padding2 (px 5) zero
+                    , position relative
+                    , firstChild
+                        [ paddingTop zero ]
+                    , lastChild
+                        [ paddingBottom zero ]
+                    ]
+                ]
+                [ view_
+                    [ Role.menuItem
+                    , Attributes.id id
+                    , Key.tabbable False
+                    , Key.onKeyDownPreventDefault
+                        [ Key.up
+                            (focusAndToggle
+                                { isOpen = True
+                                , focus = Just upId
+                                }
+                            )
+                        , Key.down
+                            (focusAndToggle
+                                { isOpen = True
+                                , focus = Just downId
+                                }
+                            )
+                        ]
+                    ]
+                ]
 
         Batch title childList ->
             case childList of
