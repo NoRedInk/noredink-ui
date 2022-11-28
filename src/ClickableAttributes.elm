@@ -41,6 +41,7 @@ import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (targetBlank)
 {-| -}
 type alias ClickableAttributes route msg =
     { linkType : Link
+    , buttonType : String
     , url : Maybe route
     , urlString : Maybe String
     , onClick : Maybe msg
@@ -60,6 +61,7 @@ type Link
 init : ClickableAttributes route msg
 init =
     { linkType = Default
+    , buttonType = "button"
     , url = Nothing
     , urlString = Nothing
     , onClick = Nothing
@@ -120,6 +122,7 @@ linkExternalWithTracking { track, url } clickableAttributes =
 toButtonAttributes : ClickableAttributes route msg -> List (Attribute msg)
 toButtonAttributes clickableAttributes =
     [ AttributesExtra.maybe Events.onClick clickableAttributes.onClick
+    , Attributes.type_ clickableAttributes.buttonType
     ]
 
 

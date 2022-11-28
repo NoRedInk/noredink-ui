@@ -596,7 +596,6 @@ renderButton ((ButtonOrLink config) as button_) =
         ]
         (ClickableAttributes.toButtonAttributes config.clickableAttributes
             ++ Attributes.disabled (isDisabled config.state)
-            :: Attributes.type_ "button"
             :: Attributes.class FocusRing.customClass
             :: config.customAttributes
         )

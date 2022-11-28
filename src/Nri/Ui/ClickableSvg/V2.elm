@@ -539,7 +539,6 @@ renderButton ((ButtonOrLink config) as button_) =
     Html.button
         ([ Attributes.class "Nri-Ui-Clickable-Svg-V1__button"
          , Attributes.class FocusRing.customClass
-         , Attributes.type_ "button"
          , Attributes.css (buttonOrLinkStyles config theme ++ config.customStyles)
          , Attributes.disabled config.disabled
          , Aria.label config.label
