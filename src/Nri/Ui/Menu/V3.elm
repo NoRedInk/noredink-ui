@@ -1,7 +1,7 @@
 module Nri.Ui.Menu.V3 exposing
     ( view, button, custom, Config
     , Attribute, Button, ButtonAttribute
-    , alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure, dialog
+    , alignment, isDisabled, isList, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure, dialog
     , Alignment(..)
     , icon, wrapping, hasBorder, buttonWidth
     , TitleWrapping(..)
@@ -30,7 +30,7 @@ A togglable menu view and related buttons.
 
 ## Menu attributes
 
-@docs alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure, dialog
+@docs alignment, isDisabled, isList, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure, dialog
 @docs Alignment
 
 
@@ -64,6 +64,7 @@ import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
+import Particle.System exposing (Msg)
 
 
 {-| -}
@@ -101,6 +102,7 @@ type alias MenuConfig msg =
     -- These are set using Attribute
     , alignment : Alignment
     , isDisabled : Bool
+    , isList : Bool
     , menuWidth : Maybe Int
     , buttonId : String
     , menuId : String
@@ -175,6 +177,13 @@ alignment value =
 isDisabled : Bool -> Attribute msg
 isDisabled value =
     Attribute <| \config -> { config | isDisabled = value }
+
+
+{-| Whether the menu elements should be rendered as an html list
+-}
+isList : Bool -> Attribute msg
+isList value =
+    Attribute <| \config -> { config | isList = value }
 
 
 {-| Fix the width of the popover |
@@ -262,6 +271,7 @@ view attributes config =
             , focusAndToggle = config.focusAndToggle
             , alignment = Right
             , isDisabled = False
+            , isList = False
             , menuWidth = Nothing
             , buttonId = ""
             , menuId = ""
@@ -769,37 +779,46 @@ viewEntry :
 viewEntry config focusAndToggle { upId, downId, entry_ } =
     case entry_ of
         Single id view_ ->
-            div
-                [ class "MenuEntryContainer"
-                , css
-                    [ padding2 (px 5) zero
-                    , position relative
-                    , firstChild
-                        [ paddingTop zero ]
-                    , lastChild
-                        [ paddingBottom zero ]
-                    ]
-                ]
-                [ view_
-                    [ Role.menuItem
-                    , Attributes.id id
-                    , Key.tabbable False
-                    , Key.onKeyDownPreventDefault
-                        [ Key.up
-                            (focusAndToggle
-                                { isOpen = True
-                                , focus = Just upId
-                                }
-                            )
-                        , Key.down
-                            (focusAndToggle
-                                { isOpen = True
-                                , focus = Just downId
-                                }
-                            )
+            let
+                attributes =
+                    [ class "MenuEntryContainer"
+                    , css
+                        [ padding2 (px 5) zero
+                        , position relative
+                        , firstChild
+                            [ paddingTop zero ]
+                        , lastChild
+                            [ paddingBottom zero ]
                         ]
                     ]
-                ]
+
+                content =
+                    [ view_
+                        [ Role.menuItem
+                        , Attributes.id id
+                        , Key.tabbable False
+                        , Key.onKeyDownPreventDefault
+                            [ Key.up
+                                (focusAndToggle
+                                    { isOpen = True
+                                    , focus = Just upId
+                                    }
+                                )
+                            , Key.down
+                                (focusAndToggle
+                                    { isOpen = True
+                                    , focus = Just downId
+                                    }
+                                )
+                            ]
+                        ]
+                    ]
+            in
+            if config.isList then
+                li attributes content
+
+            else
+                div attributes content
 
         Batch title childList ->
             case childList of
@@ -807,15 +826,28 @@ viewEntry config focusAndToggle { upId, downId, entry_ } =
                     Html.text ""
 
                 _ ->
-                    fieldset styleGroupContainer <|
-                        legend styleGroupTitle
-                            [ span (styleGroupTitleText config) [ Html.text title ] ]
-                            :: viewEntries config
+                    if config.isList then
+                        ul
+                            []
+                            (viewEntries
+                                config
                                 { focusAndToggle = focusAndToggle
                                 , previousId = upId
                                 , nextId = downId
                                 }
                                 childList
+                            )
+
+                    else
+                        fieldset styleGroupContainer <|
+                            legend styleGroupTitle
+                                [ span (styleGroupTitleText config) [ Html.text title ] ]
+                                :: viewEntries config
+                                    { focusAndToggle = focusAndToggle
+                                    , previousId = upId
+                                    , nextId = downId
+                                    }
+                                    childList
 
 
 

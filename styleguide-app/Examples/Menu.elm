@@ -324,6 +324,43 @@ view ellieLinkConfig state =
                 , button = Menu.button defaultButtonAttributes "Log In dialog"
                 }
           )
+        , ( "Menu.button (with list items)"
+          , Menu.view
+                (menuAttributes
+                    ++ [ Menu.buttonId "dropdown_list__button"
+                       , Menu.menuId "dropdown_list__menu"
+                       , Menu.dialog { firstId = "dropdown_list__first", lastId = "dropdown_list__third" }
+                       , Menu.isList True
+                       ]
+                )
+                { isOpen = isOpen "dropdown_list"
+                , focusAndToggle = FocusAndToggle "dropdown_list"
+                , entries =
+                    [ Menu.entry "dropdown_list__first" <|
+                        \attrs ->
+                            ClickableText.button "First"
+                                [ ClickableText.small
+                                , ClickableText.onClick (ConsoleLog "First")
+                                , ClickableText.custom attrs
+                                ]
+                    , Menu.entry "dropdown_list__second" <|
+                        \attrs ->
+                            ClickableText.button "Second"
+                                [ ClickableText.small
+                                , ClickableText.onClick (ConsoleLog "Second")
+                                , ClickableText.custom attrs
+                                ]
+                    , Menu.entry "dropdown_list__third" <|
+                        \attrs ->
+                            ClickableText.button "Third"
+                                [ ClickableText.small
+                                , ClickableText.onClick (ConsoleLog "Third")
+                                , ClickableText.custom attrs
+                                ]
+                    ]
+                , button = Menu.button defaultButtonAttributes "Dropdown list"
+                }
+          )
         ]
     ]
 
@@ -365,6 +402,7 @@ controlMenuAttributes =
     ControlExtra.list
         |> ControlExtra.optionalListItem "alignment" controlAlignment
         |> ControlExtra.optionalBoolListItem "isDisabled" ( "Menu.isDisabled True", Menu.isDisabled True )
+        |> ControlExtra.optionalBoolListItem "isList" ( "Menu.isList True", Menu.isList True )
         |> ControlExtra.optionalListItem "menuWidth" controlMenuWidth
         |> ControlExtra.optionalBoolListItem "opensOnHover" ( "Menu.opensOnHover True", Menu.opensOnHover True )
 
