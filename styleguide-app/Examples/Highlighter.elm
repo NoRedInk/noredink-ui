@@ -311,9 +311,7 @@ controlSettings =
         |> Control.field "tool"
             (Control.choice
                 [ ( "Marker", Control.map Tool.Marker controlMarker )
-                , ( "Eraser"
-                  , Control.map Tool.Eraser controlEraser
-                  )
+                , ( "Eraser", Control.value (Tool.Eraser Tool.buildEraser) )
                 ]
             )
 
@@ -334,19 +332,6 @@ controlMarker =
         |> Control.field "hoverColor" (backgroundHighlightColors 2)
         |> Control.field "hoverHighlightColor" (backgroundHighlightColors 4)
         |> Control.field "name" (Control.maybe True (Control.string "Claim"))
-
-
-controlEraser : Control Tool.EraserModel
-controlEraser =
-    Control.record Tool.EraserModel
-        |> Control.field "hoverClass"
-            (Control.choice [ ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]", Control.value [ Css.border3 (Css.px 4) Css.dashed Colors.red ] ) ])
-        |> Control.field "hintClass"
-            (Control.choice [ ( "[ Css.border3 (Css.px 4) Css.dotted Colors.orange ]", Control.value [ Css.border3 (Css.px 4) Css.dotted Colors.orange ] ) ])
-        |> Control.field "startGroupClass"
-            (Control.choice [ ( "[ Css.opacity (Css.num 0.4) ]", Control.value [ Css.opacity (Css.num 0.4) ] ) ])
-        |> Control.field "endGroupClass"
-            (Control.choice [ ( "[ Css.opacity (Css.num 0.4) ]", Control.value [ Css.opacity (Css.num 0.4) ] ) ])
 
 
 backgroundHighlightColors : Int -> Control Color

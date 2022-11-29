@@ -1,12 +1,14 @@
 module Nri.Ui.HighlighterTool.V1 exposing
-    ( Tool(..), EraserModel, MarkerModel
-    , buildMarker
+    ( Tool(..)
+    , EraserModel, buildEraser
+    , MarkerModel, buildMarker
     )
 
 {-|
 
-@docs Tool, EraserModel, MarkerModel
-@docs buildMarker
+@docs Tool
+@docs EraserModel, buildEraser
+@docs MarkerModel, buildMarker
 
 -}
 
@@ -29,6 +31,22 @@ type alias EraserModel =
     , hintClass : List Css.Style
     , startGroupClass : List Css.Style
     , endGroupClass : List Css.Style
+    }
+
+
+{-| The default eraser.
+-}
+buildEraser : EraserModel
+buildEraser =
+    let
+        eraserStyles : List Css.Style
+        eraserStyles =
+            [ Css.opacity (Css.num 0.4) ]
+    in
+    { hoverClass = eraserStyles
+    , hintClass = eraserStyles
+    , startGroupClass = eraserStyles
+    , endGroupClass = eraserStyles
     }
 
 
