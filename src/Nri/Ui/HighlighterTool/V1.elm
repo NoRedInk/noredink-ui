@@ -158,6 +158,10 @@ buildMarkerWithBorder { highlightColor, kind, name } =
             Css.batch
                 [ Css.padding2 (Css.px 6) Css.zero
                 , Css.lineHeight (Css.em 2.5)
+                , MediaQuery.highContrastMode
+                    [ Css.property "background-color" "Mark" |> Css.important
+                    , Css.property "forced-color-adjust" "none"
+                    ]
                 ]
     in
     { hoverClass = []
