@@ -87,42 +87,6 @@ buildMarker { highlightColor, hoverColor, hoverHighlightColor, kind, name } =
     }
 
 
-{-| Typically, this marker is only used for static highlighters.
--}
-buildMarkerWithBorder :
-    { highlightColor : Css.Color
-    , kind : kind
-    , name : Maybe String
-    }
-    -> MarkerModel kind
-buildMarkerWithBorder { highlightColor, kind, name } =
-    { hoverClass = []
-    , hintClass = []
-    , startGroupClass =
-        [ Css.borderBottomLeftRadius (Css.px 8)
-        , Css.borderTopLeftRadius (Css.px 8)
-        , Css.borderTop3 (Css.px 1) Css.solid Colors.gray45
-        , Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45
-        , Css.borderLeft3 (Css.px 1) Css.solid Colors.gray45
-        ]
-    , endGroupClass =
-        [ Css.borderBottomRightRadius (Css.px 8)
-        , Css.borderTopRightRadius (Css.px 8)
-        , Css.borderTop3 (Css.px 1) Css.solid Colors.gray45
-        , Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45
-        , Css.borderRight3 (Css.px 1) Css.solid Colors.gray45
-        ]
-    , highlightClass =
-        [ Css.backgroundColor highlightColor
-        , Css.borderTop3 (Css.px 1) Css.solid Colors.gray45
-        , Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45
-        ]
-    , hoverHighlightClass = []
-    , kind = kind
-    , name = name
-    }
-
-
 startGroupStyles : List Css.Style
 startGroupStyles =
     [ Css.paddingLeft (Css.px 4)
@@ -178,3 +142,49 @@ hoverStyles color =
         , Css.important (Css.paddingLeft Css.zero)
         , Css.important (Css.paddingRight Css.zero)
         ]
+
+
+{-| Typically, this marker is only used for static highlighters.
+-}
+buildMarkerWithBorder :
+    { highlightColor : Css.Color
+    , kind : kind
+    , name : Maybe String
+    }
+    -> MarkerModel kind
+buildMarkerWithBorder { highlightColor, kind, name } =
+    let
+        sharedStylesWithBorder =
+            Css.batch
+                [ Css.padding2 (Css.px 6) Css.zero
+                , Css.lineHeight (Css.em 2.5)
+                ]
+    in
+    { hoverClass = []
+    , hintClass = []
+    , startGroupClass =
+        [ sharedStylesWithBorder
+        , Css.borderBottomLeftRadius (Css.px 8)
+        , Css.borderTopLeftRadius (Css.px 8)
+        , Css.borderTop3 (Css.px 1) Css.solid Colors.gray45
+        , Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45
+        , Css.borderLeft3 (Css.px 1) Css.solid Colors.gray45
+        ]
+    , endGroupClass =
+        [ sharedStylesWithBorder
+        , Css.borderBottomRightRadius (Css.px 8)
+        , Css.borderTopRightRadius (Css.px 8)
+        , Css.borderTop3 (Css.px 1) Css.solid Colors.gray45
+        , Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45
+        , Css.borderRight3 (Css.px 1) Css.solid Colors.gray45
+        ]
+    , highlightClass =
+        [ sharedStylesWithBorder
+        , Css.backgroundColor highlightColor
+        , Css.borderTop3 (Css.px 1) Css.solid Colors.gray45
+        , Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45
+        ]
+    , hoverHighlightClass = []
+    , kind = kind
+    , name = name
+    }

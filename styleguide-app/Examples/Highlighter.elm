@@ -192,14 +192,14 @@ example =
                   , example = Highlighter.staticMarkdown { id = "example-3b", highlightables = multipleHighlightsHighlightables }
                   }
                 , { viewName = "staticWithTags"
-                  , tool = "buildMarker"
+                  , tool = "buildMarkerWithBorder"
                   , description = "Multiple kinds of highlights without overlaps"
-                  , example = Highlighter.staticWithTags { id = "example-4a", highlightables = multipleHighlightsHighlightables }
+                  , example = Highlighter.staticWithTags { id = "example-4a", highlightables = multipleHighlightsHighlightablesWithBorder }
                   }
                 , { viewName = "staticMarkdownWithTags"
-                  , tool = "buildMarker"
+                  , tool = "buildMarkerWithBorder"
                   , description = "Multiple kinds of highlights without overlaps and with interpreted Markdown"
-                  , example = Highlighter.staticMarkdownWithTags { id = "example-4b", highlightables = multipleHighlightsHighlightables }
+                  , example = Highlighter.staticMarkdownWithTags { id = "example-4b", highlightables = multipleHighlightsHighlightablesWithBorder }
                   }
                 ]
             ]
@@ -258,6 +258,44 @@ reasoningMarker =
         { highlightColor = Colors.highlightPurple
         , hoverColor = Colors.highlightMagenta
         , hoverHighlightColor = Colors.highlightPurpleDark
+        , kind = ()
+        , name = Just "Reasoning"
+        }
+
+
+multipleHighlightsHighlightablesWithBorder : List (Highlightable ())
+multipleHighlightsHighlightablesWithBorder =
+    [ ( "Waltz, bad nymph, for quick jigs vex.", Just claimMarkerWithBorder )
+    , ( "Glib jocks quiz nymph to vex dwarf.", Just evidenceMarkerWithBorder )
+    , ( "Sphinx of _black_ quartz, judge my vow.", Just reasoningMarkerWithBorder )
+    , ( "How *vexingly* quick daft zebras jump!", Nothing )
+    ]
+        |> List.intersperse ( " ", Nothing )
+        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+
+
+claimMarkerWithBorder : Tool.MarkerModel ()
+claimMarkerWithBorder =
+    Tool.buildMarkerWithBorder
+        { highlightColor = Colors.highlightYellow
+        , kind = ()
+        , name = Just "Claim"
+        }
+
+
+evidenceMarkerWithBorder : Tool.MarkerModel ()
+evidenceMarkerWithBorder =
+    Tool.buildMarkerWithBorder
+        { highlightColor = Colors.highlightCyan
+        , kind = ()
+        , name = Just "Evidence"
+        }
+
+
+reasoningMarkerWithBorder : Tool.MarkerModel ()
+reasoningMarkerWithBorder =
+    Tool.buildMarkerWithBorder
+        { highlightColor = Colors.highlightPurple
         , kind = ()
         , name = Just "Reasoning"
         }
