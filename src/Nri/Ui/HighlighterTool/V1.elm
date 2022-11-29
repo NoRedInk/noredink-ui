@@ -1,14 +1,14 @@
 module Nri.Ui.HighlighterTool.V1 exposing
     ( Tool(..)
     , EraserModel, buildEraser
-    , MarkerModel, buildMarker
+    , MarkerModel, buildMarker, buildMarkerWithBorder
     )
 
 {-|
 
 @docs Tool
 @docs EraserModel, buildEraser
-@docs MarkerModel, buildMarker
+@docs MarkerModel, buildMarker, buildMarkerWithBorder
 
 -}
 
@@ -82,6 +82,42 @@ buildMarker { highlightColor, hoverColor, hoverHighlightColor, kind, name } =
     , endGroupClass = endGroupStyles
     , highlightClass = highlightStyles highlightColor
     , hoverHighlightClass = highlightStyles hoverHighlightColor
+    , kind = kind
+    , name = name
+    }
+
+
+{-| Typically, this marker is only used for static highlighters.
+-}
+buildMarkerWithBorder :
+    { highlightColor : Css.Color
+    , kind : kind
+    , name : Maybe String
+    }
+    -> MarkerModel kind
+buildMarkerWithBorder { highlightColor, kind, name } =
+    { hoverClass = []
+    , hintClass = []
+    , startGroupClass =
+        [ Css.borderBottomLeftRadius (Css.px 8)
+        , Css.borderTopLeftRadius (Css.px 8)
+        , Css.borderTop3 (Css.px 1) Css.solid Colors.gray45
+        , Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45
+        , Css.borderLeft3 (Css.px 1) Css.solid Colors.gray45
+        ]
+    , endGroupClass =
+        [ Css.borderBottomRightRadius (Css.px 8)
+        , Css.borderTopRightRadius (Css.px 8)
+        , Css.borderTop3 (Css.px 1) Css.solid Colors.gray45
+        , Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45
+        , Css.borderRight3 (Css.px 1) Css.solid Colors.gray45
+        ]
+    , highlightClass =
+        [ Css.backgroundColor highlightColor
+        , Css.borderTop3 (Css.px 1) Css.solid Colors.gray45
+        , Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45
+        ]
+    , hoverHighlightClass = []
     , kind = kind
     , name = name
     }
