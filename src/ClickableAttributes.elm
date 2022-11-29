@@ -1,6 +1,6 @@
 module ClickableAttributes exposing
     ( ClickableAttributes, init
-    , onClick
+    , onClick, submit, opensModal
     , toButtonAttributes
     , href, linkWithMethod, linkWithTracking
     , linkSpa
@@ -15,7 +15,7 @@ module ClickableAttributes exposing
 
 # For buttons
 
-@docs onClick
+@docs onClick, submit, opensModal
 @docs toButtonAttributes
 
 
@@ -35,15 +35,17 @@ import Html.Styled exposing (Attribute)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Json.Decode
-import Nri.Ui.Html.Attributes.V2 exposing (targetBlank)
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (targetBlank)
 
 
 {-| -}
 type alias ClickableAttributes route msg =
     { linkType : Link
+    , buttonType : String
     , url : Maybe route
     , urlString : Maybe String
     , onClick : Maybe msg
+    , opensModal : Bool
     }
 
 
@@ -60,9 +62,11 @@ type Link
 init : ClickableAttributes route msg
 init =
     { linkType = Default
+    , buttonType = "button"
     , url = Nothing
     , urlString = Nothing
     , onClick = Nothing
+    , opensModal = False
     }
 
 
@@ -70,6 +74,18 @@ init =
 onClick : msg -> ClickableAttributes route msg -> ClickableAttributes route msg
 onClick msg clickableAttributes =
     { clickableAttributes | onClick = Just msg }
+
+
+{-| -}
+submit : ClickableAttributes route msg -> ClickableAttributes route msg
+submit clickableAttributes =
+    { clickableAttributes | buttonType = "submit" }
+
+
+{-| -}
+opensModal : ClickableAttributes route msg -> ClickableAttributes route msg
+opensModal clickableAttributes =
+    { clickableAttributes | opensModal = True }
 
 
 {-| -}
@@ -119,12 +135,15 @@ linkExternalWithTracking { track, url } clickableAttributes =
 {-| -}
 toButtonAttributes : ClickableAttributes route msg -> List (Attribute msg)
 toButtonAttributes clickableAttributes =
-    case clickableAttributes.onClick of
-        Just handler ->
-            [ Events.onClick handler ]
-
-        Nothing ->
-            []
+    [ AttributesExtra.maybe Events.onClick clickableAttributes.onClick
+    , Attributes.type_ clickableAttributes.buttonType
+    , -- why "aria-haspopup=true" instead of "aria-haspopup=dialog"?
+      -- AT support for aria-haspopup=dialog is currently (Nov 2022) limited.
+      -- See https://html5accessibility.com/stuff/2021/02/02/haspopup-haspoop/
+      -- If time has passed, feel free to revisit and see if dialog support has improved!
+      AttributesExtra.includeIf clickableAttributes.opensModal
+        (Attributes.attribute "aria-haspopup" "true")
+    ]
 
 
 {-| -}

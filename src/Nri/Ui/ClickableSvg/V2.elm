@@ -1,7 +1,7 @@
 module Nri.Ui.ClickableSvg.V2 exposing
     ( button, link
     , Attribute
-    , onClick
+    , onClick, submit, opensModal
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , exactSize, exactWidth, exactHeight
     , disabled
@@ -20,6 +20,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
 
     - adds `nriDescription`, `testId`, and `id` helpers
     - adds `iconForMobile`, `iconForQuizEngineMobile`, `iconForNarrowMobile`
+    - adds `submit` and `opensModal`
 
 
 # Create a button or link
@@ -30,7 +31,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
 
 ## Behavior
 
-@docs onClick
+@docs onClick, submit, opensModal
 @docs href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
 
 
@@ -118,6 +119,23 @@ setClickableAttributes apply =
 onClick : msg -> Attribute msg
 onClick msg =
     setClickableAttributes (ClickableAttributes.onClick msg)
+
+
+{-| By default, buttons have type "button". Use this attribute to change the button type to "submit".
+
+Note: this attribute is not supported by links.
+
+-}
+submit : Attribute msg
+submit =
+    setClickableAttributes ClickableAttributes.submit
+
+
+{-| Use this attribute when interacting with the button will launch a modal.
+-}
+opensModal : Attribute msg
+opensModal =
+    setClickableAttributes ClickableAttributes.opensModal
 
 
 {-| -}
@@ -539,7 +557,6 @@ renderButton ((ButtonOrLink config) as button_) =
     Html.button
         ([ Attributes.class "Nri-Ui-Clickable-Svg-V1__button"
          , Attributes.class FocusRing.customClass
-         , Attributes.type_ "button"
          , Attributes.css (buttonOrLinkStyles config theme ++ config.customStyles)
          , Attributes.disabled config.disabled
          , Aria.label config.label

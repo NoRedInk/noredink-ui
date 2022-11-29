@@ -3,7 +3,7 @@ module Nri.Ui.ClickableText.V3 exposing
     , link
     , Attribute
     , small, medium, large, modal
-    , onClick
+    , onClick, submit, opensModal
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , icon
     , custom, nriDescription, testId, id
@@ -29,6 +29,7 @@ module Nri.Ui.ClickableText.V3 exposing
   - adds `notMobileCss`, `mobileCss`, `quizEngineMobileCss`
   - adds `hideIconForMobile` and `hideIconAt`
   - adds `hideTextForMobile` and `hideTextAt`
+  - adds `submit` and `opensModal`
 
 
 # Changes from V2
@@ -69,7 +70,7 @@ HTML `<a>` elements and are created here with `*Link` functions.
 
 ## Behavior
 
-@docs onClick
+@docs onClick, submit, opensModal
 @docs href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
 
 
@@ -288,6 +289,23 @@ setClickableAttributes apply =
 onClick : msg -> Attribute msg
 onClick msg =
     setClickableAttributes (ClickableAttributes.onClick msg)
+
+
+{-| By default, buttons have type "button". Use this attribute to change the button type to "submit".
+
+Note: this attribute is not supported by links.
+
+-}
+submit : Attribute msg
+submit =
+    setClickableAttributes ClickableAttributes.submit
+
+
+{-| Use this attribute when interacting with the button will launch a modal.
+-}
+opensModal : Attribute msg
+opensModal =
+    setClickableAttributes ClickableAttributes.opensModal
 
 
 {-| -}

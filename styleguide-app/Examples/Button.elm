@@ -176,6 +176,10 @@ initDebugControls =
                         , ( "success", Button.success )
                         ]
                     )
+                |> ControlExtra.optionalBoolListItem "submit (button only)"
+                    ( "Button.submit", Button.submit )
+                |> ControlExtra.optionalBoolListItem "opensModal (button only)"
+                    ( "Button.opensModal", Button.opensModal )
                 |> ControlExtra.optionalBoolListItem "hideIconForMobile"
                     ( "Button.hideIconForMobile", Button.hideIconForMobile )
                 |> CommonControls.css
