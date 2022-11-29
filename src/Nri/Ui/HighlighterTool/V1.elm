@@ -110,7 +110,8 @@ hoverStyles : Css.Color -> List Css.Style
 hoverStyles color =
     List.append
         sharedStyles
-        [ Css.important (Css.backgroundColor color)
+        [ Css.boxShadow5 Css.zero Css.zero (Css.px 10) (Css.px 2) color
+        , Css.important (Css.backgroundColor color)
         , MediaQuery.highContrastMode
             [ Css.property "background-color" "Highlight" |> Css.important
             , Css.property "color" "HighlightText"
