@@ -85,10 +85,23 @@ example =
             , Heading.h2 [ Heading.plaintext "Non-interactive examples" ]
             , Heading.h3 [ Heading.plaintext "These are examples of some different ways the highlighter can appear to users." ]
             , Table.view
-                [ Table.string
-                    { header = "View"
-                    , value = .viewName
+                [ Table.rowHeader
+                    { header = text "Highlighter."
+                    , view = .viewName >> text
                     , width = Css.zero
+                    , cellStyles =
+                        always
+                            [ Css.padding2 (Css.px 14) (Css.px 7)
+                            , Css.verticalAlign Css.middle
+                            , Css.textAlign Css.left
+                            , Css.fontWeight Css.normal
+                            ]
+                    , sort = Nothing
+                    }
+                , Table.string
+                    { header = "HighlighterTool."
+                    , value = .tool
+                    , width = Css.pct 10
                     , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
                     , sort = Nothing
                     }
@@ -112,7 +125,8 @@ example =
                     , sort = Nothing
                     }
                 ]
-                [ { viewName = "Highlighter.static"
+                [ { viewName = "static"
+                  , tool = "buildMarker"
                   , description = "One word highlighted"
                   , example =
                         Highlighter.static
@@ -130,7 +144,8 @@ example =
                                     |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
                             }
                   }
-                , { viewName = "Highlighter.static"
+                , { viewName = "static"
+                  , tool = "buildMarker"
                   , description = "Multiple words highlighted separately"
                   , example =
                         Highlighter.static
@@ -148,7 +163,8 @@ example =
                                     |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
                             }
                   }
-                , { viewName = "Highlighter.static"
+                , { viewName = "static"
+                  , tool = "buildMarker"
                   , description = "Multiple words highlighted & joined"
                   , example =
                         Highlighter.static
@@ -165,19 +181,23 @@ example =
                                     |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
                             }
                   }
-                , { viewName = "Highlighter.static"
+                , { viewName = "static"
+                  , tool = "buildMarker"
                   , description = "Multiple kinds of highlights without overlaps"
                   , example = Highlighter.static { id = "example-3a", highlightables = multipleHighlightsHighlightables }
                   }
-                , { viewName = "Highlighter.staticMarkdown"
+                , { viewName = "staticMarkdown"
+                  , tool = "buildMarker"
                   , description = "Multiple kinds of highlights without overlaps and with interpreted Markdown"
                   , example = Highlighter.staticMarkdown { id = "example-3b", highlightables = multipleHighlightsHighlightables }
                   }
-                , { viewName = "Highlighter.staticWithTags"
+                , { viewName = "staticWithTags"
+                  , tool = "buildMarker"
                   , description = "Multiple kinds of highlights without overlaps"
                   , example = Highlighter.staticWithTags { id = "example-4a", highlightables = multipleHighlightsHighlightables }
                   }
-                , { viewName = "Highlighter.staticMarkdownWithTags"
+                , { viewName = "staticMarkdownWithTags"
+                  , tool = "buildMarker"
                   , description = "Multiple kinds of highlights without overlaps and with interpreted Markdown"
                   , example = Highlighter.staticMarkdownWithTags { id = "example-4b", highlightables = multipleHighlightsHighlightables }
                   }
