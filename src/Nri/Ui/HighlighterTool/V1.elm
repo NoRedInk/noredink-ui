@@ -102,6 +102,7 @@ sharedStyles : List Css.Style
 sharedStyles =
     [ Css.paddingTop (Css.px 4)
     , Css.paddingBottom (Css.px 3)
+    , Css.property "transition" "background-color 0.4s, box-shadow 0.4s"
     ]
 
 
