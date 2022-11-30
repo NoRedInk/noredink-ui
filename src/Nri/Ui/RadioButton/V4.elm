@@ -350,7 +350,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                     , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
                     ]
                 , css
-                    [ outline Css.none
+                    [ Css.outline3 (Css.px 2) Css.solid Css.transparent
                     , Fonts.baseFont
                     , Css.batch
                         (if config.isDisabled then

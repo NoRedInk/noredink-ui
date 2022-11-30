@@ -166,7 +166,7 @@ input theme =
                 , boxSizing borderBox
                 , focus
                     [ borderColor azure
-                    , outline none
+                    , Css.outline3 (Css.px 2) Css.solid Css.transparent
                     , property "box-shadow" focusedInputBoxShadow
                     ]
                 , Css.Global.withClass errorClass

@@ -261,7 +261,7 @@ viewDisabledLabel model labelView icon =
         , css
             [ positioning
             , textStyle
-            , outline none
+            , Css.outline3 (Css.px 2) Css.solid Css.transparent
             , cursor auto
             , color Colors.gray45
             , Css.batch model.disabledLabelCss
