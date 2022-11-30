@@ -699,7 +699,11 @@ viewCustom config =
                             AttributesExtra.none
 
                         Dialog _ ->
-                            Role.dialog
+                            if config.isList then
+                                Role.menu
+
+                            else
+                                Role.dialog
                     , Aria.labelledBy config.buttonId
                     , Attributes.id config.menuId
                     , css
@@ -992,6 +996,7 @@ styleContent : Bool -> MenuConfig msg -> Html.Attribute msg
 styleContent contentVisible config =
     css
         [ padding (px 25)
+        , margin zero
         , border3 (px 1) solid Colors.gray85
         , minWidth (px 202)
         , borderRadius (px 8)
