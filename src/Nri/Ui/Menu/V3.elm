@@ -358,7 +358,7 @@ button attributes title =
                     , fontWeight (int 600)
                     , cursor pointer
                     , pseudoClass "focus-visible"
-                        [ outline none
+                        [ Css.outline3 (Css.px 2) Css.solid Css.transparent
                         , FocusRing.boxShadows []
                         ]
                     , if menuConfig.isDisabled then

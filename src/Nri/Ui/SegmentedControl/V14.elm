@@ -272,7 +272,9 @@ styles focusSelector positioning numEntries index isSelected =
     , -- ensure that the focus state is visible & looks nice
       Css.pseudoClass focusSelector
         [ FocusRing.boxShadows [ focusedSegmentBoxShadowValue ]
-        , outline none
+        , Css.outline3 (Css.px 2) Css.solid Css.transparent
+        , outlineStyle solid
+        , outlineWidth (Css.px 1)
         , zIndex (int 1)
         ]
     ]

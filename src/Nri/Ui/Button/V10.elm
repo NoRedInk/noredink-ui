@@ -610,7 +610,9 @@ renderButton ((ButtonOrLink config) as button_) =
         (styledName "customButton")
         [ buttonStyles config.size config.width buttonStyle_ config.customStyles
         , Css.pseudoClass "focus-visible"
-            [ Css.outline Css.none, FocusRing.boxShadows [] ]
+            [ Css.outline3 (Css.px 2) Css.solid Css.transparent
+            , FocusRing.boxShadows []
+            ]
         ]
         (ClickableAttributes.toButtonAttributes config.clickableAttributes
             ++ Attributes.disabled (isDisabled config.state)
@@ -637,7 +639,7 @@ renderLink ((ButtonOrLink config) as link_) =
         (styledName linkFunctionName)
         [ buttonStyles config.size config.width colorPalette config.customStyles
         , Css.pseudoClass "focus-visible"
-            [ Css.outline Css.none, FocusRing.boxShadows [] ]
+            [ Css.outline3 (Css.px 2) Css.solid Css.transparent, FocusRing.boxShadows [] ]
         ]
         (Attributes.class FocusRing.customClass
             :: attributes
@@ -715,7 +717,7 @@ toggleButton config =
                     , Css.backgroundColor Colors.glacier
                     , Css.boxShadow5 Css.inset Css.zero (Css.px 3) Css.zero pressedShadowColor
                     , Css.pseudoClass "focus-visible"
-                        [ Css.outline Css.none
+                        [ Css.outline3 (Css.px 2) Css.solid Css.transparent
                         , FocusRing.boxShadows [ toggledBoxShadow ]
                         ]
                     , Css.border3 (Css.px 1) Css.solid Colors.azure
@@ -725,7 +727,7 @@ toggleButton config =
             else
                 Css.batch
                     [ Css.pseudoClass "focus-visible"
-                        [ Css.outline Css.none
+                        [ Css.outline3 (Css.px 2) Css.solid Css.transparent
                         , FocusRing.boxShadows []
                         ]
                     ]

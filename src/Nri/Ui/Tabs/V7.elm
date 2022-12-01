@@ -288,7 +288,7 @@ tabStyles customSpacing index isSelected =
                 ]
             , pseudoClass "focus-visible"
                 [ FocusRing.outerBoxShadow
-                , outline none
+                , Css.outline3 (Css.px 2) Css.solid Css.transparent
                 ]
             ]
 

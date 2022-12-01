@@ -30,7 +30,7 @@ Hides default focus ring from elements that are tagged as having a custom focus 
 -}
 forKeyboardUsers : List Css.Global.Snippet
 forKeyboardUsers =
-    [ Css.Global.class customClass [ Css.outline Css.none ]
+    [ Css.Global.class customClass [ Css.outlineColor Css.transparent ]
     , Css.Global.selector (":not(." ++ customClass ++ "):focus-visible") styles
     , Css.Global.selector "p a:focus-visible" [ Css.important (Css.batch tightStyles) ]
     , Css.Global.class InputStyles.inputClass
@@ -90,7 +90,7 @@ NOTE: use `boxShadows` instead if your focusable element:
 styles : List Css.Style
 styles =
     [ boxShadows []
-    , Css.outline Css.none
+    , Css.outline3 (Css.px 2) Css.solid Css.transparent
     , Css.borderRadius (Css.px 4)
     ]
 
@@ -99,7 +99,7 @@ styles =
 
     focus
         [ FocusRing.boxShadows [ "inset 0 3px 0 0 " ++ ColorsExtra.toCssString glacier ]
-        , outline none
+        , Css.outline3 (Css.px 2) Css.solid Css.transparent
         ]
 
 -}
@@ -116,7 +116,7 @@ boxShadows existingBoxShadows =
 
     focus
         [ FocusRing.insetBoxShadows [ "inset 0 3px 0 0 " ++ ColorsExtra.toCssString glacier ]
-        , outline none
+        , Css.outline3 (Css.px 2) Css.solid Css.transparent
         ]
 
 -}
@@ -133,7 +133,7 @@ insetBoxShadows existingBoxShadows =
 -}
 tightStyles : List Css.Style
 tightStyles =
-    [ Css.outline Css.none
+    [ Css.outline3 (Css.px 2) Css.solid Css.transparent
     , applyBoxShadows
         [ "inset 0 0 0 2px " ++ innerColorString
         , "0 0 0 2px " ++ outerColorString

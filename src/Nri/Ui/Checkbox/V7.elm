@@ -402,7 +402,7 @@ viewDisabledLabel config icon =
         , css
             [ display inlineBlock
             , textStyle
-            , outline none
+            , Css.outline3 (Css.px 2) Css.solid Css.transparent
             , cursor auto
             , color Colors.gray45
             , Css.batch config.labelCss

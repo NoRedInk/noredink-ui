@@ -298,7 +298,7 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
                     , fontSize (px 15)
                     , fontWeight (int 600)
                     , color Colors.navy
-                    , outline none
+                    , Css.outline3 (Css.px 2) Css.solid Css.transparent
                     ]
                 ]
                 [ Checkbox.viewIcon [] (CheckboxIcons.lockOnInside idValue)
