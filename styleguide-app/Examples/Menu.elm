@@ -329,7 +329,6 @@ view ellieLinkConfig state =
                 (menuAttributes
                     ++ [ Menu.buttonId "dropdown_list__button"
                        , Menu.menuId "dropdown_list__menu"
-                       , Menu.dialog { firstId = "dropdown_list__first", lastId = "dropdown_list__third" }
                        , Menu.isList True
                        ]
                 )

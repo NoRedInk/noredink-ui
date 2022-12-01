@@ -699,11 +699,7 @@ viewCustom config =
                             AttributesExtra.none
 
                         Dialog _ ->
-                            if config.isList then
-                                Role.menu
-
-                            else
-                                Role.dialog
+                            Role.dialog
                     , Aria.labelledBy config.buttonId
                     , Attributes.id config.menuId
                     , css
