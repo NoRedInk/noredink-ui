@@ -1,12 +1,14 @@
 module Nri.Ui.HighlighterTool.V1 exposing
-    ( Tool(..), EraserModel, MarkerModel
-    , buildMarker
+    ( Tool(..)
+    , EraserModel, buildEraser
+    , MarkerModel, buildMarker, buildMarkerWithBorder
     )
 
 {-|
 
-@docs Tool, EraserModel, MarkerModel
-@docs buildMarker
+@docs Tool
+@docs EraserModel, buildEraser
+@docs MarkerModel, buildMarker, buildMarkerWithBorder
 
 -}
 
@@ -29,6 +31,22 @@ type alias EraserModel =
     , hintClass : List Css.Style
     , startGroupClass : List Css.Style
     , endGroupClass : List Css.Style
+    }
+
+
+{-| The default eraser.
+-}
+buildEraser : EraserModel
+buildEraser =
+    let
+        eraserStyles : List Css.Style
+        eraserStyles =
+            [ Css.opacity (Css.num 0.4) ]
+    in
+    { hoverClass = eraserStyles
+    , hintClass = eraserStyles
+    , startGroupClass = eraserStyles
+    , endGroupClass = eraserStyles
     }
 
 
@@ -102,6 +120,7 @@ sharedStyles : List Css.Style
 sharedStyles =
     [ Css.paddingTop (Css.px 4)
     , Css.paddingBottom (Css.px 3)
+    , Css.property "transition" "background-color 0.4s, box-shadow 0.4s"
     ]
 
 
@@ -109,7 +128,8 @@ hoverStyles : Css.Color -> List Css.Style
 hoverStyles color =
     List.append
         sharedStyles
-        [ Css.important (Css.backgroundColor color)
+        [ Css.boxShadow5 Css.zero Css.zero (Css.px 10) (Css.px 2) color
+        , Css.important (Css.backgroundColor color)
         , MediaQuery.highContrastMode
             [ Css.property "background-color" "Highlight" |> Css.important
             , Css.property "color" "HighlightText"
@@ -122,3 +142,53 @@ hoverStyles color =
         , Css.important (Css.paddingLeft Css.zero)
         , Css.important (Css.paddingRight Css.zero)
         ]
+
+
+{-| Typically, this marker is only used for static highlighters.
+-}
+buildMarkerWithBorder :
+    { highlightColor : Css.Color
+    , kind : kind
+    , name : Maybe String
+    }
+    -> MarkerModel kind
+buildMarkerWithBorder { highlightColor, kind, name } =
+    let
+        sharedStylesWithBorder =
+            Css.batch
+                [ Css.padding2 (Css.px 6) Css.zero
+                , Css.lineHeight (Css.em 2.5)
+                , MediaQuery.highContrastMode
+                    [ Css.property "background-color" "Mark" |> Css.important
+                    , Css.property "forced-color-adjust" "none"
+                    ]
+                ]
+    in
+    { hoverClass = []
+    , hintClass = []
+    , startGroupClass =
+        [ sharedStylesWithBorder
+        , Css.borderBottomLeftRadius (Css.px 8)
+        , Css.borderTopLeftRadius (Css.px 8)
+        , Css.borderTop3 (Css.px 1) Css.solid Colors.gray45
+        , Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45
+        , Css.borderLeft3 (Css.px 1) Css.solid Colors.gray45
+        ]
+    , endGroupClass =
+        [ sharedStylesWithBorder
+        , Css.borderBottomRightRadius (Css.px 8)
+        , Css.borderTopRightRadius (Css.px 8)
+        , Css.borderTop3 (Css.px 1) Css.solid Colors.gray45
+        , Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45
+        , Css.borderRight3 (Css.px 1) Css.solid Colors.gray45
+        ]
+    , highlightClass =
+        [ sharedStylesWithBorder
+        , Css.backgroundColor highlightColor
+        , Css.borderTop3 (Css.px 1) Css.solid Colors.gray45
+        , Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45
+        ]
+    , hoverHighlightClass = []
+    , kind = kind
+    , name = name
+    }

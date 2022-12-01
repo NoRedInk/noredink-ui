@@ -85,10 +85,23 @@ example =
             , Heading.h2 [ Heading.plaintext "Non-interactive examples" ]
             , Heading.h3 [ Heading.plaintext "These are examples of some different ways the highlighter can appear to users." ]
             , Table.view
-                [ Table.string
-                    { header = "View"
-                    , value = .viewName
+                [ Table.rowHeader
+                    { header = text "Highlighter."
+                    , view = .viewName >> text
                     , width = Css.zero
+                    , cellStyles =
+                        always
+                            [ Css.padding2 (Css.px 14) (Css.px 7)
+                            , Css.verticalAlign Css.middle
+                            , Css.textAlign Css.left
+                            , Css.fontWeight Css.normal
+                            ]
+                    , sort = Nothing
+                    }
+                , Table.string
+                    { header = "HighlighterTool."
+                    , value = .tool
+                    , width = Css.pct 10
                     , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
                     , sort = Nothing
                     }
@@ -112,7 +125,8 @@ example =
                     , sort = Nothing
                     }
                 ]
-                [ { viewName = "Highlighter.static"
+                [ { viewName = "static"
+                  , tool = "buildMarker"
                   , description = "One word highlighted"
                   , example =
                         Highlighter.static
@@ -130,7 +144,8 @@ example =
                                     |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
                             }
                   }
-                , { viewName = "Highlighter.static"
+                , { viewName = "static"
+                  , tool = "buildMarker"
                   , description = "Multiple words highlighted separately"
                   , example =
                         Highlighter.static
@@ -148,7 +163,8 @@ example =
                                     |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
                             }
                   }
-                , { viewName = "Highlighter.static"
+                , { viewName = "static"
+                  , tool = "buildMarker"
                   , description = "Multiple words highlighted & joined"
                   , example =
                         Highlighter.static
@@ -165,21 +181,25 @@ example =
                                     |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
                             }
                   }
-                , { viewName = "Highlighter.static"
+                , { viewName = "static"
+                  , tool = "buildMarker"
                   , description = "Multiple kinds of highlights without overlaps"
                   , example = Highlighter.static { id = "example-3a", highlightables = multipleHighlightsHighlightables }
                   }
-                , { viewName = "Highlighter.staticMarkdown"
+                , { viewName = "staticMarkdown"
+                  , tool = "buildMarker"
                   , description = "Multiple kinds of highlights without overlaps and with interpreted Markdown"
                   , example = Highlighter.staticMarkdown { id = "example-3b", highlightables = multipleHighlightsHighlightables }
                   }
-                , { viewName = "Highlighter.staticWithTags"
+                , { viewName = "staticWithTags"
+                  , tool = "buildMarkerWithBorder"
                   , description = "Multiple kinds of highlights without overlaps"
-                  , example = Highlighter.staticWithTags { id = "example-4a", highlightables = multipleHighlightsHighlightables }
+                  , example = Highlighter.staticWithTags { id = "example-4a", highlightables = multipleHighlightsHighlightablesWithBorder }
                   }
-                , { viewName = "Highlighter.staticMarkdownWithTags"
+                , { viewName = "staticMarkdownWithTags"
+                  , tool = "buildMarkerWithBorder"
                   , description = "Multiple kinds of highlights without overlaps and with interpreted Markdown"
-                  , example = Highlighter.staticMarkdownWithTags { id = "example-4b", highlightables = multipleHighlightsHighlightables }
+                  , example = Highlighter.staticMarkdownWithTags { id = "example-4b", highlightables = multipleHighlightsHighlightablesWithBorder }
                   }
                 ]
             ]
@@ -238,6 +258,44 @@ reasoningMarker =
         { highlightColor = Colors.highlightPurple
         , hoverColor = Colors.highlightMagenta
         , hoverHighlightColor = Colors.highlightPurpleDark
+        , kind = ()
+        , name = Just "Reasoning"
+        }
+
+
+multipleHighlightsHighlightablesWithBorder : List (Highlightable ())
+multipleHighlightsHighlightablesWithBorder =
+    [ ( "Waltz, bad nymph, for quick jigs vex.", Just claimMarkerWithBorder )
+    , ( "Glib jocks quiz nymph to vex dwarf.", Just evidenceMarkerWithBorder )
+    , ( "Sphinx of _black_ quartz, judge my vow.", Just reasoningMarkerWithBorder )
+    , ( "How *vexingly* quick daft zebras jump!", Nothing )
+    ]
+        |> List.intersperse ( " ", Nothing )
+        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+
+
+claimMarkerWithBorder : Tool.MarkerModel ()
+claimMarkerWithBorder =
+    Tool.buildMarkerWithBorder
+        { highlightColor = Colors.highlightYellow
+        , kind = ()
+        , name = Just "Claim"
+        }
+
+
+evidenceMarkerWithBorder : Tool.MarkerModel ()
+evidenceMarkerWithBorder =
+    Tool.buildMarkerWithBorder
+        { highlightColor = Colors.highlightCyan
+        , kind = ()
+        , name = Just "Evidence"
+        }
+
+
+reasoningMarkerWithBorder : Tool.MarkerModel ()
+reasoningMarkerWithBorder =
+    Tool.buildMarkerWithBorder
+        { highlightColor = Colors.highlightPurple
         , kind = ()
         , name = Just "Reasoning"
         }
@@ -311,9 +369,7 @@ controlSettings =
         |> Control.field "tool"
             (Control.choice
                 [ ( "Marker", Control.map Tool.Marker controlMarker )
-                , ( "Eraser"
-                  , Control.map Tool.Eraser controlEraser
-                  )
+                , ( "Eraser", Control.value (Tool.Eraser Tool.buildEraser) )
                 ]
             )
 
@@ -334,19 +390,6 @@ controlMarker =
         |> Control.field "hoverColor" (backgroundHighlightColors 2)
         |> Control.field "hoverHighlightColor" (backgroundHighlightColors 4)
         |> Control.field "name" (Control.maybe True (Control.string "Claim"))
-
-
-controlEraser : Control Tool.EraserModel
-controlEraser =
-    Control.record Tool.EraserModel
-        |> Control.field "hoverClass"
-            (Control.choice [ ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]", Control.value [ Css.border3 (Css.px 4) Css.dashed Colors.red ] ) ])
-        |> Control.field "hintClass"
-            (Control.choice [ ( "[ Css.border3 (Css.px 4) Css.dotted Colors.orange ]", Control.value [ Css.border3 (Css.px 4) Css.dotted Colors.orange ] ) ])
-        |> Control.field "startGroupClass"
-            (Control.choice [ ( "[ Css.opacity (Css.num 0.4) ]", Control.value [ Css.opacity (Css.num 0.4) ] ) ])
-        |> Control.field "endGroupClass"
-            (Control.choice [ ( "[ Css.opacity (Css.num 0.4) ]", Control.value [ Css.opacity (Css.num 0.4) ] ) ])
 
 
 backgroundHighlightColors : Int -> Control Color
