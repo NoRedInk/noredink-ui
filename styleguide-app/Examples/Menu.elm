@@ -329,7 +329,7 @@ view ellieLinkConfig state =
                 (menuAttributes
                     ++ [ Menu.buttonId "dropdown_list__button"
                        , Menu.menuId "dropdown_list__menu"
-                       , Menu.isList True
+                       , Menu.navMenuList
                        ]
                 )
                 { isOpen = isOpen "dropdown_list"
@@ -401,7 +401,6 @@ controlMenuAttributes =
     ControlExtra.list
         |> ControlExtra.optionalListItem "alignment" controlAlignment
         |> ControlExtra.optionalBoolListItem "isDisabled" ( "Menu.isDisabled True", Menu.isDisabled True )
-        |> ControlExtra.optionalBoolListItem "isList" ( "Menu.isList True", Menu.isList True )
         |> ControlExtra.optionalListItem "menuWidth" controlMenuWidth
         |> ControlExtra.optionalBoolListItem "opensOnHover" ( "Menu.opensOnHover True", Menu.opensOnHover True )
 
