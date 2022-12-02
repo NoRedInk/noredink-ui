@@ -333,6 +333,36 @@ customizableExamples state =
             , onBlur = "Blurred!!!"
             , onEnter = "Entered!!!"
             }
+        , toExample
+            { name = "date"
+            , toString = identity
+            , inputType = TextInput.date
+            , inputTypeCode = "TextInput.date"
+            , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
+            , onFocus = "onFocus"
+            , onBlur = "onBlur"
+            , onEnter = "onEnter"
+            }
+        , toExample
+            { name = "time"
+            , toString = identity
+            , inputType = TextInput.time
+            , inputTypeCode = "TextInput.time"
+            , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
+            , onFocus = "onFocus"
+            , onBlur = "onBlur"
+            , onEnter = "onEnter"
+            }
+        , toExample
+            { name = "datetime"
+            , toString = identity
+            , inputType = TextInput.datetime
+            , inputTypeCode = "TextInput.datetime"
+            , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
+            , onFocus = "onFocus"
+            , onBlur = "onBlur"
+            , onEnter = "onEnter"
+            }
         ]
 
 

@@ -1,6 +1,6 @@
 module Nri.Ui.TextInput.V7 exposing
     ( view, generateId
-    , number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, organization, organizationTitle, postalCode, sex, tel
+    , number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, organization, organizationTitle, postalCode, sex, tel, date, time, datetime
     , readOnlyText
     , value, map
     , onFocus, onBlur, onEnter
@@ -32,7 +32,7 @@ module Nri.Ui.TextInput.V7 exposing
 
 ### Input types
 
-@docs number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, organization, organizationTitle, postalCode, sex, tel
+@docs number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, organization, organizationTitle, postalCode, sex, tel, date, time, datetime
 @docs readOnlyText
 
 
@@ -460,6 +460,63 @@ sex onInput_ =
                 | fieldType = Just "text"
                 , inputMode = Nothing
                 , autocomplete = Just "sex"
+            }
+        )
+
+
+{-| An input that allows date entry
+-}
+date : (String -> msg) -> Attribute String msg
+date onInput_ =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just identity
+            , fromString = Just identity
+            , onInput = Just (identity >> onInput_)
+        }
+        (\config ->
+            { config
+                | fieldType = Just "date"
+                , inputMode = Nothing
+                , autocomplete = Nothing
+            }
+        )
+
+
+{-| An input that allows time entry
+-}
+time : (String -> msg) -> Attribute String msg
+time onInput_ =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just identity
+            , fromString = Just identity
+            , onInput = Just (identity >> onInput_)
+        }
+        (\config ->
+            { config
+                | fieldType = Just "time"
+                , inputMode = Nothing
+                , autocomplete = Nothing
+            }
+        )
+
+
+{-| An input that allows datetime entry
+-}
+datetime : (String -> msg) -> Attribute String msg
+datetime onInput_ =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just identity
+            , fromString = Just identity
+            , onInput = Just (identity >> onInput_)
+        }
+        (\config ->
+            { config
+                | fieldType = Just "datetime-local"
+                , inputMode = Nothing
+                , autocomplete = Nothing
             }
         )
 
