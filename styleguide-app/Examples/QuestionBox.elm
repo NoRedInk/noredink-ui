@@ -99,7 +99,19 @@ viewExamplesTable =
             , sort = Nothing
             }
         ]
-        [ { pattern = "QuestionBox.viewAnchored"
+        [ { pattern = "QuestionBox.viewStandalone"
+          , description = "???"
+          , example =
+                QuestionBox.viewStandalone
+                    { markdown = "Which words tell you **when** the party is?"
+                    , actions =
+                        [ { label = "is having", onClick = NoOp }
+                        , { label = "after the football game", onClick = NoOp }
+                        ]
+                    }
+                    "fake-id-string"
+          }
+        , { pattern = "QuestionBox.viewAnchored"
           , description = "???"
           , example =
                 QuestionBox.viewAnchored
