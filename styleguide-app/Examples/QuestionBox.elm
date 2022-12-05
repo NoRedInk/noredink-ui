@@ -179,7 +179,7 @@ viewHighlighterExample =
             [ ( "Spongebob", Nothing )
             , ( "has", Nothing )
             , ( "a", Nothing )
-            , ( "beautiful,"
+            , ( "beautiful"
               , Just
                     (Tool.buildMarker
                         { highlightColor = Colors.highlightYellow
