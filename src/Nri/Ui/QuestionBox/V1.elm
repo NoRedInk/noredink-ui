@@ -311,8 +311,8 @@ viewBalloon : QuestionBox msg -> List (Balloon.Attribute msg) -> Html msg
 viewBalloon { markdown, actions } attributes =
     Balloon.view
         ([ Balloon.html
-            [ viewGuidance markdown
-            , viewCharacter
+            [ viewCharacter
+            , viewGuidance markdown
             , viewActions actions
             ]
          , Balloon.navy
