@@ -29,6 +29,7 @@ import Markdown
 import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
 
 
 type QuestionBox msg
@@ -43,11 +44,13 @@ viewStandalone questionBox idString =
     div
         [ id (containerId idString)
         , css [ Css.zIndex (Css.int 10), Css.minWidth (Css.px 300) ]
+        , nriDescription "standalone-balloon-container"
         ]
         [ Balloon.view
             [ Balloon.html [ viewBalloonContent questionBox ]
             , Balloon.navy
             , Balloon.css [ Css.padding (Css.px 0) ]
+            , Balloon.nriDescription "standalone-balloon"
             ]
         ]
 
@@ -235,7 +238,7 @@ anchored questionBox idString state content =
                 -- Hack to remove left padding, ideally this would come from a variable
                 - 20
     in
-    div []
+    div [ nriDescription "anchored-container " ]
         [ div [] content
         , div
             [ css
@@ -256,6 +259,7 @@ anchored questionBox idString state content =
                 [ Balloon.html [ viewBalloonContent questionBox ]
                 , Balloon.navy
                 , Balloon.css [ Css.padding (Css.px 0) ]
+                , Balloon.nriDescription "anchored-balloon"
                 ]
             ]
         ]
@@ -263,7 +267,10 @@ anchored questionBox idString state content =
 
 viewPointingTo : List (Html msg) -> QuestionBox msg -> Html msg
 viewPointingTo content questionBox =
-    span [ css [ Css.position Css.relative ] ]
+    span
+        [ css [ Css.position Css.relative ]
+        , nriDescription "pointing-to-container"
+        ]
         (List.append
             [ div
                 [ css
@@ -281,6 +288,7 @@ viewPointingTo content questionBox =
                     , Balloon.navy
                     , Balloon.css [ Css.padding (Css.px 0) ]
                     , Balloon.onBottom
+                    , Balloon.nriDescription "pointing-to-balloon"
                     ]
                 ]
             ]
@@ -291,7 +299,7 @@ viewPointingTo content questionBox =
 viewBalloonContent : QuestionBox msg -> Html msg
 viewBalloonContent (QuestionBox { markdown, actions }) =
     div
-        []
+        [ nriDescription "balloon-content" ]
         [ div
             [ css
                 [ Css.padding2 (Css.px 10) (Css.px 20)
