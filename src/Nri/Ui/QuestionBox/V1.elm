@@ -308,11 +308,12 @@ viewPointingTo content questionBox =
 
 
 viewBalloon : QuestionBox msg -> List (Balloon.Attribute msg) -> Html msg
-viewBalloon questionBox attributes =
+viewBalloon { markdown, actions } attributes =
     Balloon.view
         ([ Balloon.html
-            [ viewBalloonContent questionBox
+            [ viewGuidance markdown
             , viewCharacter
+            , viewActions actions
             ]
          , Balloon.navy
          , Balloon.css [ Css.padding (Css.px 0), Css.position Css.relative ]
@@ -321,22 +322,18 @@ viewBalloon questionBox attributes =
         )
 
 
-viewBalloonContent : QuestionBox msg -> Html msg
-viewBalloonContent { markdown, actions } =
+viewGuidance : String -> Html msg
+viewGuidance markdown =
     div
-        [ nriDescription "balloon-content" ]
-        [ div
-            [ css
-                [ Css.padding2 (Css.px 10) (Css.px 20)
-                , Css.borderTopRightRadius (Css.px 8)
-                , Css.borderTopLeftRadius (Css.px 8)
-                ]
+        [ css
+            [ Css.padding2 (Css.px 10) (Css.px 20)
+            , Css.borderTopRightRadius (Css.px 8)
+            , Css.borderTopLeftRadius (Css.px 8)
             ]
-            (Markdown.toHtml Nothing markdown
-                |> List.map Html.Styled.fromUnstyled
-            )
-        , viewActions actions
         ]
+        (Markdown.toHtml Nothing markdown
+            |> List.map Html.Styled.fromUnstyled
+        )
 
 
 viewCharacter : Html msg
