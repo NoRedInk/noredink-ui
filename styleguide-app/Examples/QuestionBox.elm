@@ -116,14 +116,16 @@ viewExamplesTable state =
         [ { pattern = "QuestionBox.viewStandalone"
           , description = "???"
           , example =
-                QuestionBox.viewStandalone
-                    { markdown = "Which words tell you **when** the party is?"
-                    , actions =
-                        [ { label = "is having", onClick = NoOp }
-                        , { label = "after the football game", onClick = NoOp }
-                        ]
-                    }
-                    "fake-standalone-id-string"
+                div [ css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ] ]
+                    [ QuestionBox.viewStandalone
+                        { markdown = "Which words tell you **when** the party is?"
+                        , actions =
+                            [ { label = "is having", onClick = NoOp }
+                            , { label = "after the football game", onClick = NoOp }
+                            ]
+                        }
+                        "fake-standalone-id-string"
+                    ]
           }
         , { pattern = "QuestionBox.viewAnchored"
           , description = "???"
