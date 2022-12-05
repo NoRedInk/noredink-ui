@@ -123,7 +123,7 @@ This subject is **only one person.**
                     , actions = [ { label = "Try again", onClick = NoOp } ]
                     }
                     "fake-id-string"
-                    (QuestionBox.hackyHardcodedOffset 123)
+                    (QuestionBox.hackyHardcodedOffset 20)
                     [ Html.text "QuestionBox content"
                     ]
           }
