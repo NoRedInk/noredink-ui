@@ -1,18 +1,26 @@
 module Nri.Ui.QuestionBox.V1 exposing
     ( QuestionBox
-    , viewAnchored, viewPointingTo, viewStandalone
+    , viewAnchored, AnchoredBoxMeasurementState
+    , initAnchoredBoxState, updateAnchoredBoxState
+    , Measurements, decodeMeasurements
+    , Element
+    , viewPointingTo, viewStandalone
     , containerId
-    , AnchoredBoxState, Measurements, Element, initAnchoredBoxState, alignedToAnchors, subscriptionsForAnchoredBox, decodeMeasurements
-    , hackyHardcodedOffset
     )
 
 {-|
 
 @docs QuestionBox
-@docs viewAnchored, viewPointingTo, viewStandalone
-@docs containerId
 
-@docs AnchoredBoxState, Measurements, Element, initAnchoredBoxState, alignedToAnchors, subscriptionsForAnchoredBox, decodeMeasurements
+@docs viewAnchored, AnchoredBoxMeasurementState
+@docs initAnchoredBoxState, updateAnchoredBoxState
+@docs Measurements, decodeMeasurements
+@docs Element
+
+---
+
+@docs viewPointingTo, viewStandalone
+@docs containerId
 
 -}
 
@@ -43,26 +51,23 @@ containerId id =
     "Nri-Scaffolding-QuestionBox-" ++ id
 
 
-type AnchoredBoxState
+{-| -}
+type AnchoredBoxMeasurementState
     = Measuring
     | WithOffset Float
 
 
-initAnchoredBoxState : AnchoredBoxState
+{-| Initially, the anchored box will be rendered in the "Measuring" state.
+
+While in the Measuring state, the anchored box will have visibility hidden. This will cause the box to take up vertical space but not show to the user until measurements have been taken.t
+
+-}
+initAnchoredBoxState : AnchoredBoxMeasurementState
 initAnchoredBoxState =
     Measuring
 
 
-hackyHardcodedOffset : Float -> AnchoredBoxState
-hackyHardcodedOffset offset =
-    WithOffset offset
-
-
-subscriptionsForAnchoredBox : { onWindowResized : msg } -> Sub msg
-subscriptionsForAnchoredBox { onWindowResized } =
-    Browser.Events.onResize (\_ _ -> onWindowResized)
-
-
+{-| -}
 type alias Measurements =
     { anchors : List Element
     , container : Element
@@ -70,6 +75,7 @@ type alias Measurements =
     }
 
 
+{-| -}
 type alias Element =
     { x : Float
     , y : Float
@@ -78,8 +84,22 @@ type alias Element =
     }
 
 
-decodeMeasurements : Decoder Measurements
+{-| Expects JSON in the format:
+
+    {
+        "anchors" = [ { "x" = 1.2, "y" = .3, "width" = 300.0, "height" = 325.5 } ],
+        "container" = { "x" = 1.2, "y" = .3, "width" = 300.0, "height" = 325.5 },
+        "box" = { "x" = 1.2, "y" = .3, "width" = 300.0, "height" = 325.5 }
+    }
+
+-}
+decodeMeasurements : Decode.Value -> Result Decode.Error Measurements
 decodeMeasurements =
+    Decode.decodeValue decodeMeasurements_
+
+
+decodeMeasurements_ : Decoder Measurements
+decodeMeasurements_ =
     Decode.map3 Measurements
         (Decode.field "anchors" (Decode.list decodeElement))
         (Decode.field "container" decodeElement)
@@ -95,27 +115,29 @@ decodeElement =
         (Decode.field "height" Decode.float)
 
 
-alignedToAnchors : Measurements -> AnchoredBoxState
-alignedToAnchors measurements =
-    {-
-       ┌───────────────────────────────────────────────────────────────────────────────────────────────┐
-       │                   ┌────────────────────────────────────────────────────────────────────────┐  │
-       │                   │ <───────────────────────────────────────────────>                      │  │
-       │    container.x    │                     targetMid              ┌──────────┐                │  │
-       │<─────────────────>│                                            │  Target  │                │  │
-       │<──────────────────╬───────────────────────────────────────────>└──────────┘                │  │
-       │                   │     target.x                                                           │  │
-       │                   │                                     ┌──────────────────────────┐       │  │
-       │                   │ <──────────────────────────────────>│       QuestionBox        │       │  │
-       │                   │         centeredBoxOffset           └──────────────────────────┘       │  │
-       │                   │                                                                        │  │
-       │                   │                                                                        │  │
-       │                   │ Scaffolding Container                                                  │  │
-       │                   └────────────────────────────────────────────────────────────────────────┘  │
-       │                   <─────────────────────────────────────────────><─────────────────────────>  │
-       │ Viewport                            maxOffset                       questionBox.width         │
-       └───────────────────────────────────────────────────────────────────────────────────────────────┘
-    -}
+{-| Pass measurements (which you will need to set up a port/subscription to acquire) in order to construct an anchored box state.
+
+    ┌───────────────────────────────────────────────────────────────────────────────────────────────┐
+    │                   ┌────────────────────────────────────────────────────────────────────────┐  │
+    │                   │ <───────────────────────────────────────────────>                      │  │
+    │    container.x    │                     targetMid              ┌──────────┐                │  │
+    │<─────────────────>│                                            │  Target  │                │  │
+    │<──────────────────╬───────────────────────────────────────────>└──────────┘                │  │
+    │                   │     target.x                                                           │  │
+    │                   │                                     ┌──────────────────────────┐       │  │
+    │                   │ <──────────────────────────────────>│       QuestionBox        │       │  │
+    │                   │         centeredBoxOffset           └──────────────────────────┘       │  │
+    │                   │                                                                        │  │
+    │                   │                                                                        │  │
+    │                   │ Scaffolding Container                                                  │  │
+    │                   └────────────────────────────────────────────────────────────────────────┘  │
+    │                   <─────────────────────────────────────────────><─────────────────────────>  │
+    │ Viewport                            maxOffset                       questionBox.width         │
+    └───────────────────────────────────────────────────────────────────────────────────────────────┘
+
+-}
+updateAnchoredBoxState : Measurements -> AnchoredBoxMeasurementState
+updateAnchoredBoxState measurements =
     let
         -- the middle of the anchor. this is what the box should
         -- be aligned to ideally.
@@ -223,7 +245,7 @@ viewStandalone questionBox idString =
         ]
 
 
-viewAnchored : QuestionBox msg -> String -> AnchoredBoxState -> List (Html msg) -> Html msg
+viewAnchored : QuestionBox msg -> String -> AnchoredBoxMeasurementState -> List (Html msg) -> Html msg
 viewAnchored questionBox idString state content =
     let
         offset_ =

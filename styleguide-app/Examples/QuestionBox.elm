@@ -1,4 +1,4 @@
-module Examples.QuestionBox exposing (Msg, State, example)
+port module Examples.QuestionBox exposing (Msg, State, example)
 
 {-|
 
@@ -6,7 +6,6 @@ module Examples.QuestionBox exposing (Msg, State, example)
 
 -}
 
-import Accessibility.Styled exposing (..)
 import Category exposing (Category(..))
 import Code
 import Css
@@ -15,9 +14,19 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
-import Html.Styled as Html
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (id)
+import Json.Decode
+import Json.Encode as Encode
 import Markdown
-import Nri.Ui.QuestionBox.V1 as QuestionBox
+import Nri.Ui.Button.V10 as Button
+import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Highlightable.V1 as Highlightable
+import Nri.Ui.Highlighter.V1 as Highlighter
+import Nri.Ui.HighlighterTool.V1 as Tool
+import Nri.Ui.QuestionBox.V1 as QuestionBox exposing (QuestionBox)
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V6 as Table
 
 
@@ -38,7 +47,7 @@ example =
     , version = version
     , state = init
     , update = update
-    , subscriptions = \_ -> Sub.none
+    , subscriptions = subscriptions
     , categories = [ Interactions ]
     , keyboardSupport = []
     , preview = []
@@ -70,12 +79,16 @@ view ellieLinkConfig state =
                   }
                 ]
         }
-    , viewExamplesTable
+    , Heading.h2
+        [ Heading.plaintext "Non-interactive examples"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
+    , viewExamplesTable state
     ]
 
 
-viewExamplesTable : Html Msg
-viewExamplesTable =
+viewExamplesTable : State -> Html Msg
+viewExamplesTable state =
     Table.view
         [ Table.string
             { header = "Pattern"
@@ -85,14 +98,14 @@ viewExamplesTable =
             , sort = Nothing
             }
         , Table.custom
-            { header = Html.text "About"
-            , view = .description >> Markdown.toHtml Nothing >> List.map Html.fromUnstyled >> Html.span []
+            { header = text "About"
+            , view = .description >> Markdown.toHtml Nothing >> List.map fromUnstyled >> span []
             , width = Css.px 50
             , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
             , sort = Nothing
             }
         , Table.custom
-            { header = Html.text "Example"
+            { header = text "Example"
             , view = .example
             , width = Css.pct 75
             , cellStyles = always [ Css.textAlign Css.center ]
@@ -109,29 +122,29 @@ viewExamplesTable =
                         , { label = "after the football game", onClick = NoOp }
                         ]
                     }
-                    "fake-id-string"
+                    "fake-standalone-id-string"
           }
         , { pattern = "QuestionBox.viewAnchored"
           , description = "???"
           , example =
-                QuestionBox.viewAnchored
-                    { markdown = """
-Not quite. **Plural** means **more than one person.**
-
-This subject is **only one person.**
-    """
-                    , actions = [ { label = "Try again", onClick = NoOp } ]
-                    }
-                    "fake-id-string"
-                    (QuestionBox.hackyHardcodedOffset 20)
-                    [ Html.text "QuestionBox content"
+                div []
+                    [ QuestionBox.viewAnchored
+                        { markdown = "Not quite. Let’s back up a bit."
+                        , actions = [ { label = "Show me", onClick = NoOp } ]
+                        }
+                        anchoredExampleId
+                        state.viewAnchoredExampleMeasurements
+                        [ viewHighlighterExample ]
+                    , Button.button "Measure & render"
+                        [ Button.onClick GetAnchoredExampleMeasurements
+                        ]
                     ]
           }
         , { pattern = "QuestionBox.viewPointingTo"
           , description = "???"
           , example =
                 QuestionBox.viewPointingTo
-                    [ Html.text "QuestionBox content" ]
+                    [ text "QuestionBox content" ]
                     { markdown = "Does this make sense?"
                     , actions =
                         [ { label = "Yes", onClick = NoOp }
@@ -142,16 +155,57 @@ This subject is **only one person.**
         ]
 
 
+viewHighlighterExample : Html msg
+viewHighlighterExample =
+    Highlighter.static
+        { id = highlighterExampleId
+        , highlightables =
+            [ ( "Spongebob", Nothing )
+            , ( "has", Nothing )
+            , ( "a", Nothing )
+            , ( "beautiful,"
+              , Just
+                    (Tool.buildMarker
+                        { highlightColor = Colors.highlightYellow
+                        , hoverColor = Colors.highlightYellow
+                        , hoverHighlightColor = Colors.highlightYellow
+                        , kind = ()
+                        , name = Nothing
+                        }
+                    )
+              )
+            , ( "plant", Nothing )
+            , ( "above", Nothing )
+            , ( "his", Nothing )
+            , ( "TV.", Nothing )
+            ]
+                |> List.intersperse ( " ", Nothing )
+                |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+        }
+
+
+highlighterExampleId : String
+highlighterExampleId =
+    "question-box-anchored-highlighter-example"
+
+
+anchoredExampleId : String
+anchoredExampleId =
+    "question-box-anchored-with-offset-example"
+
+
 {-| -}
 init : State
 init =
     { attributes = initAttributes
+    , viewAnchoredExampleMeasurements = QuestionBox.initAnchoredBoxState
     }
 
 
 {-| -}
 type alias State =
     { attributes : Control (List ( String, () ))
+    , viewAnchoredExampleMeasurements : QuestionBox.AnchoredBoxMeasurementState
     }
 
 
@@ -164,6 +218,8 @@ initAttributes =
 type Msg
     = UpdateControls (Control (List ( String, () )))
     | NoOp
+    | GetAnchoredExampleMeasurements
+    | GotAnchoredExampleMeasurements QuestionBox.Measurements
 
 
 {-| -}
@@ -175,3 +231,37 @@ update msg state =
 
         NoOp ->
             ( state, Cmd.none )
+
+        GetAnchoredExampleMeasurements ->
+            ( state
+            , getAnchoredExampleMeasurements
+                (Encode.object
+                    [ ( "questionBoxId"
+                      , Encode.string (QuestionBox.containerId anchoredExampleId)
+                      )
+                    , ( "containerId"
+                      , Encode.string highlighterExampleId
+                      )
+                    ]
+                )
+            )
+
+        GotAnchoredExampleMeasurements measurements ->
+            ( { state | viewAnchoredExampleMeasurements = QuestionBox.updateAnchoredBoxState measurements }
+            , Cmd.none
+            )
+
+
+port getAnchoredExampleMeasurements : Encode.Value -> Cmd msg
+
+
+port gotAnchoredExampleMeasurements : (Json.Decode.Value -> msg) -> Sub msg
+
+
+subscriptions : State -> Sub Msg
+subscriptions state =
+    gotAnchoredExampleMeasurements
+        (QuestionBox.decodeMeasurements
+            >> Result.map GotAnchoredExampleMeasurements
+            >> Result.withDefault NoOp
+        )
