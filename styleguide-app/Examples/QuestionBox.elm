@@ -132,10 +132,10 @@ This subject is **only one person.**
           , example =
                 QuestionBox.viewPointingTo
                     [ Html.text "QuestionBox content" ]
-                    { markdown = "Which words tell you **when** the party is?"
+                    { markdown = "Does this make sense?"
                     , actions =
-                        [ { label = "is having", onClick = NoOp }
-                        , { label = "after the football game", onClick = NoOp }
+                        [ { label = "Yes", onClick = NoOp }
+                        , { label = "No", onClick = NoOp }
                         ]
                     }
           }
