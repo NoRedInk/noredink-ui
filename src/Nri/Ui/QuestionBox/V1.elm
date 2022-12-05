@@ -26,6 +26,7 @@ module Nri.Ui.QuestionBox.V1 exposing
 
 import Browser.Events
 import Css
+import Css.Global
 import Dict
 import Dict.Extra
 import Html.Styled exposing (..)
@@ -324,16 +325,26 @@ viewBalloon { markdown, actions } attributes =
 
 viewGuidance : String -> Html msg
 viewGuidance markdown =
-    div
-        [ css
-            [ Css.padding2 (Css.px 10) (Css.px 20)
-            , Css.borderTopRightRadius (Css.px 8)
-            , Css.borderTopLeftRadius (Css.px 8)
+    Balloon.view
+        [ Balloon.nriDescription "character-guidance"
+        , Balloon.markdown markdown
+        , Balloon.onLeft
+        , Balloon.white
+        , Balloon.css
+            [ Css.borderRadius (Css.px 16)
+            , Css.padding (Css.px 10)
+            , Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ]
             ]
         ]
-        (Markdown.toHtml Nothing markdown
-            |> List.map Html.Styled.fromUnstyled
-        )
+        |> List.singleton
+        |> div
+            [ css
+                [ Css.displayFlex
+                , Css.justifyContent Css.flexEnd
+                , Css.margin (Css.px 8)
+                , Css.marginRight (Css.px 16)
+                ]
+            ]
 
 
 viewCharacter : Html msg
