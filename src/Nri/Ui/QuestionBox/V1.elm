@@ -1,6 +1,6 @@
 module Nri.Ui.QuestionBox.V1 exposing
     ( QuestionBox
-    , anchored, viewPointingTo, viewStandalone
+    , viewAnchored, viewPointingTo, viewStandalone
     , containerId
     , AnchoredBoxState, Measurements, Element, initAnchoredBoxState, alignedToAnchors, subscriptionsForAnchoredBox, decodeMeasurements
     , hackyHardcodedOffset
@@ -9,7 +9,7 @@ module Nri.Ui.QuestionBox.V1 exposing
 {-|
 
 @docs QuestionBox
-@docs anchored, viewPointingTo, viewStandalone
+@docs viewAnchored, viewPointingTo, viewStandalone
 @docs containerId
 
 @docs AnchoredBoxState, Measurements, Element, initAnchoredBoxState, alignedToAnchors, subscriptionsForAnchoredBox, decodeMeasurements
@@ -224,8 +224,8 @@ alignTarget { anchors, container } =
         |> (\( highlightStart, highlightEnd ) -> (highlightStart + highlightEnd) / 2 - container.x)
 
 
-anchored : QuestionBox msg -> String -> AnchoredBoxState -> List (Html msg) -> Html msg
-anchored questionBox idString state content =
+viewAnchored : QuestionBox msg -> String -> AnchoredBoxState -> List (Html msg) -> Html msg
+viewAnchored questionBox idString state content =
     let
         offset_ =
             (case state of
