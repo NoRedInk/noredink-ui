@@ -24,13 +24,12 @@ module Nri.Ui.QuestionBox.V1 exposing
 
 -}
 
-import Accessibility.Styled exposing (Html)
 import Browser.Events
 import Css
 import Dict
 import Dict.Extra
-import Html.Styled exposing (div, span)
-import Html.Styled.Attributes exposing (css, id)
+import Html.Styled exposing (..)
+import Html.Styled.Attributes as Attributes exposing (alt, css, id, src)
 import Json.Decode as Decode exposing (Decoder)
 import List.Extra
 import Markdown
@@ -236,11 +235,8 @@ viewStandalone questionBox idString =
         , css [ Css.zIndex (Css.int 10), Css.minWidth (Css.px 300) ]
         , nriDescription "standalone-balloon-container"
         ]
-        [ Balloon.view
-            [ Balloon.html [ viewBalloonContent questionBox ]
-            , Balloon.navy
-            , Balloon.css [ Css.padding (Css.px 0) ]
-            , Balloon.nriDescription "standalone-balloon"
+        [ viewBalloon questionBox
+            [ Balloon.nriDescription "standalone-balloon"
             ]
         ]
 
@@ -276,11 +272,8 @@ viewAnchored questionBox idString state content =
                 ]
             , id (containerId idString)
             ]
-            [ Balloon.view
-                [ Balloon.html [ viewBalloonContent questionBox ]
-                , Balloon.navy
-                , Balloon.css [ Css.padding (Css.px 0) ]
-                , Balloon.nriDescription "anchored-balloon"
+            [ viewBalloon questionBox
+                [ Balloon.nriDescription "anchored-balloon"
                 ]
             ]
         ]
@@ -304,16 +297,27 @@ viewPointingTo content questionBox =
                     , Css.textAlign Css.center
                     ]
                 ]
-                [ Balloon.view
-                    [ Balloon.html [ viewBalloonContent questionBox ]
-                    , Balloon.navy
-                    , Balloon.css [ Css.padding (Css.px 0) ]
-                    , Balloon.onBottom
+                [ viewBalloon questionBox
+                    [ Balloon.onBottom
                     , Balloon.nriDescription "pointing-to-balloon"
                     ]
                 ]
             ]
             content
+        )
+
+
+viewBalloon : QuestionBox msg -> List (Balloon.Attribute msg) -> Html msg
+viewBalloon questionBox attributes =
+    Balloon.view
+        ([ Balloon.html
+            [ viewBalloonContent questionBox
+            , viewCharacter
+            ]
+         , Balloon.navy
+         , Balloon.css [ Css.padding (Css.px 0), Css.position Css.relative ]
+         ]
+            ++ attributes
         )
 
 
@@ -333,6 +337,18 @@ viewBalloonContent { markdown, actions } =
             )
         , viewActions actions
         ]
+
+
+viewCharacter : Html msg
+viewCharacter =
+    img
+        [ Attributes.width 70
+        , Attributes.height 70
+        , Attributes.css [ Css.position Css.absolute, Css.top (Css.px 2), Css.right (Css.px -38) ]
+        , src "https://ucf018b22d191439face31e68b6b.previews.dropboxusercontent.com/p/thumb/ABuZlp9el5klCRwjIUPww_gh0lHoH4Xdg4Vew2oLAOjBo3URksR0Az38JhQjXXHi39rlgYYkuOqa8g4g76t-7pbzRblZofw9DCiMOgins89gqXsMvEYLmTkQWl4N3JfjghyRkdbkVUz3ACNaF58lUqC9bprqanC0_xSPtLIEevazUzoXnFgs_c6aWbRM294xs0dpYg6UWPmFg01_OFYNO0urYViMRbjBppq30UOsd-LKsJjeTyBDflDmuv6hOtKCIE0Z_FxT-ntt17SdSUGXyOaiymA15SeaJtFFhq-8xPHG9Y3OPRm4m86VtcI2UxuQhJq-89ruP_-sD4s5E0aAeYt7FTsBlzusQ-9eJMdQ8mY1VCv9XeNeUJ4_oBqAqeOUhppNLoiACKPtJqA0qjAmSGE2IN_sJp8ifl1vs-pkCFVkFg/p.png"
+        , alt "says Panda"
+        ]
+        []
 
 
 viewActions : List { label : String, onClick : msg } -> Html msg
