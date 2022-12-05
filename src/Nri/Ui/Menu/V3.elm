@@ -1,8 +1,9 @@
 module Nri.Ui.Menu.V3 exposing
     ( view, button, custom, Config
     , Attribute, Button, ButtonAttribute
-    , alignment, isDisabled, isList, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure, dialog
-    , Alignment(..)
+    , navMenuList, disclosure, dialog
+    , isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover
+    , Alignment(..), alignment
     , icon, wrapping, hasBorder, buttonWidth
     , TitleWrapping(..)
     , Entry, group, entry
@@ -30,8 +31,9 @@ A togglable menu view and related buttons.
 
 ## Menu attributes
 
-@docs alignment, isDisabled, isList, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure, dialog
-@docs Alignment
+@docs navMenuList, disclosure, dialog
+@docs isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover
+@docs Alignment, alignment
 
 
 ## Button attributes
@@ -101,7 +103,6 @@ type alias MenuConfig msg =
     -- These are set using Attribute
     , alignment : Alignment
     , isDisabled : Bool
-    , isList : Bool
     , menuWidth : Maybe Int
     , buttonId : String
     , menuId : String
@@ -120,7 +121,8 @@ type alias ButtonConfig =
 
 
 type Purpose
-    = NavMenu
+    = NavMenuList
+    | NavMenu
     | Disclosure { lastId : String }
     | Dialog
         { firstId : String
@@ -178,13 +180,6 @@ isDisabled value =
     Attribute <| \config -> { config | isDisabled = value }
 
 
-{-| Whether the menu elements should be rendered as an html list
--}
-isList : Bool -> Attribute msg
-isList value =
-    Attribute <| \config -> { config | isList = value }
-
-
 {-| Fix the width of the popover |
 -}
 menuWidth : Int -> Attribute msg
@@ -218,6 +213,13 @@ menuZIndex value =
 opensOnHover : Bool -> Attribute msg
 opensOnHover value =
     Attribute <| \config -> { config | opensOnHover = value }
+
+
+{-| Makes the menu follow the [Navigation Menu pattern](https://www.w3.org/WAI/ARIA/apg/example-index/menu-button/menu-button-links.html).
+-}
+navMenuList : Attribute msg
+navMenuList =
+    Attribute <| \config -> { config | purpose = NavMenuList }
 
 
 {-| Makes the menu behave as a disclosure.
@@ -270,7 +272,6 @@ view attributes config =
             , focusAndToggle = config.focusAndToggle
             , alignment = Right
             , isDisabled = False
-            , isList = False
             , menuWidth = Nothing
             , buttonId = ""
             , menuId = ""
@@ -480,31 +481,51 @@ viewCustom config =
 
         contentVisible =
             config.isOpen && not config.isDisabled
+
+        navMenuEvents =
+            Key.onKeyDown
+                [ Key.escape
+                    (config.focusAndToggle
+                        { isOpen = False
+                        , focus = Just config.buttonId
+                        }
+                    )
+                , Key.tab
+                    (config.focusAndToggle
+                        { isOpen = False
+                        , focus = Nothing
+                        }
+                    )
+                , Key.tabBack
+                    (config.focusAndToggle
+                        { isOpen = False
+                        , focus = Nothing
+                        }
+                    )
+                ]
+
+        entriesContainer attributes =
+            case config.purpose of
+                NavMenuList ->
+                    ul (Role.menu :: attributes)
+
+                NavMenu ->
+                    div (Role.menu :: attributes)
+
+                Disclosure _ ->
+                    div attributes
+
+                Dialog _ ->
+                    div (Role.dialog :: attributes)
     in
     div
         (Attributes.id (config.buttonId ++ "__container")
             :: (case config.purpose of
+                    NavMenuList ->
+                        navMenuEvents
+
                     NavMenu ->
-                        Key.onKeyDown
-                            [ Key.escape
-                                (config.focusAndToggle
-                                    { isOpen = False
-                                    , focus = Just config.buttonId
-                                    }
-                                )
-                            , Key.tab
-                                (config.focusAndToggle
-                                    { isOpen = False
-                                    , focus = Nothing
-                                    }
-                                )
-                            , Key.tabBack
-                                (config.focusAndToggle
-                                    { isOpen = False
-                                    , focus = Nothing
-                                    }
-                                )
-                            ]
+                        navMenuEvents
 
                     Disclosure { lastId } ->
                         WhenFocusLeaves.onKeyDown
@@ -595,9 +616,9 @@ viewCustom config =
                     [ Aria.disabled config.isDisabled
                     , -- Whether the menu is open or closed, move to the
                       -- first menu item if the "down" arrow is pressed
-                      -- as long as it's not a Disclosed or Dialog
-                      case ( config.purpose, maybeFirstFocusableElementId, maybeLastFocusableElementId ) of
-                        ( NavMenu, Just firstFocusableElementId, Just lastFocusableElementId ) ->
+                      -- as long as it's not a Disclosure or Dialog
+                      case ( config.purpose == NavMenuList || config.purpose == NavMenu, maybeFirstFocusableElementId, maybeLastFocusableElementId ) of
+                        ( True, Just firstFocusableElementId, Just lastFocusableElementId ) ->
                             Key.onKeyDownPreventDefault
                                 [ Key.down
                                     (config.focusAndToggle
@@ -651,6 +672,12 @@ viewCustom config =
                         AttributesExtra.none
                     ]
                         ++ (case config.purpose of
+                                NavMenuList ->
+                                    [ Aria.hasMenuPopUp
+                                    , Aria.expanded config.isOpen
+                                    , Aria.controls [ config.menuId ]
+                                    ]
+
                                 NavMenu ->
                                     [ Aria.hasMenuPopUp
                                     , Aria.expanded config.isOpen
@@ -672,38 +699,15 @@ viewCustom config =
 
                 CustomButton customButton ->
                     customButton buttonAttributes
-            , let
-                entriesContainer =
-                    if config.isList then
-                        ul
-
-                    else
-                        div
-              in
-              div [ styleOuterContent contentVisible config ]
+            , div [ styleOuterContent contentVisible config ]
                 [ div
                     [ AttributesExtra.nriDescription "menu-hover-bridge"
-                    , css
-                        [ Css.height (px 10)
-                        ]
+                    , css [ Css.height (px 10) ]
                     ]
                     []
                 , entriesContainer
                     [ classList [ ( "Content", True ), ( "ContentVisible", contentVisible ) ]
                     , styleContent contentVisible config
-                    , case config.purpose of
-                        NavMenu ->
-                            Role.menu
-
-                        Disclosure _ ->
-                            AttributesExtra.none
-
-                        Dialog _ ->
-                            if config.isList then
-                                Role.menu
-
-                            else
-                                Role.dialog
                     , Aria.labelledBy config.buttonId
                     , Attributes.id config.menuId
                     , css
@@ -791,12 +795,12 @@ viewEntry config focusAndToggle { upId, downId, entry_ } =
     case entry_ of
         Single id view_ ->
             let
-                entryContainer =
-                    if config.isList then
-                        li
+                entryContainer attributes =
+                    if config.purpose == NavMenuList then
+                        li (Attributes.attribute "role" "none" :: attributes)
 
                     else
-                        div
+                        div attributes
             in
             entryContainer
                 [ class "MenuEntryContainer"
@@ -836,32 +840,15 @@ viewEntry config focusAndToggle { upId, downId, entry_ } =
                     Html.text ""
 
                 _ ->
-                    if config.isList then
-                        ul
-                            [ css
-                                [ Css.listStyleType Css.none
-                                , Css.paddingLeft Css.zero
-                                ]
-                            ]
-                            (viewEntries
-                                config
+                    fieldset styleGroupContainer <|
+                        legend styleGroupTitle
+                            [ span (styleGroupTitleText config) [ Html.text title ] ]
+                            :: viewEntries config
                                 { focusAndToggle = focusAndToggle
                                 , previousId = upId
                                 , nextId = downId
                                 }
                                 childList
-                            )
-
-                    else
-                        fieldset styleGroupContainer <|
-                            legend styleGroupTitle
-                                [ span (styleGroupTitleText config) [ Html.text title ] ]
-                                :: viewEntries config
-                                    { focusAndToggle = focusAndToggle
-                                    , previousId = upId
-                                    , nextId = downId
-                                    }
-                                    childList
 
 
 
