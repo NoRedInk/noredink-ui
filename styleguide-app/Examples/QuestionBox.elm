@@ -15,10 +15,11 @@ import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (id)
+import Html.Styled.Attributes exposing (css, id)
 import Json.Decode
 import Json.Encode as Encode
 import Markdown
+import Nri.Ui.Block.V1 as Block
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
@@ -137,20 +138,33 @@ viewExamplesTable state =
                         [ viewHighlighterExample ]
                     , Button.button "Measure & render"
                         [ Button.onClick GetAnchoredExampleMeasurements
+                        , Button.css [ Css.marginBottom Spacing.verticalSpacerPx ]
                         ]
                     ]
           }
         , { pattern = "QuestionBox.viewPointingTo"
           , description = "???"
           , example =
-                QuestionBox.viewPointingTo
-                    [ text "QuestionBox content" ]
-                    { markdown = "Does this make sense?"
-                    , actions =
-                        [ { label = "Yes", onClick = NoOp }
-                        , { label = "No", onClick = NoOp }
-                        ]
-                    }
+                [ Block.view [ Block.plaintext "Spongebob has a beautiful plant " ]
+                , [ QuestionBox.viewPointingTo
+                        (Block.view
+                            [ Block.plaintext "above his TV"
+                            , Block.label "where"
+                            , Block.yellow
+                            ]
+                        )
+                        { markdown = "Which word is the preposition?"
+                        , actions =
+                            [ { label = "above", onClick = NoOp }
+                            , { label = "his", onClick = NoOp }
+                            , { label = "TV", onClick = NoOp }
+                            ]
+                        }
+                  ]
+                , Block.view [ Block.plaintext "." ]
+                ]
+                    |> List.concat
+                    |> p [ css [ Css.marginTop (Css.px 50) ] ]
           }
         ]
 
