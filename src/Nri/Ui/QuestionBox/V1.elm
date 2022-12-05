@@ -32,11 +32,10 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
 
 
-type QuestionBox msg
-    = QuestionBox
-        { markdown : String
-        , actions : List { label : String, onClick : msg }
-        }
+type alias QuestionBox msg =
+    { markdown : String
+    , actions : List { label : String, onClick : msg }
+    }
 
 
 viewStandalone : QuestionBox msg -> String -> Html msg
@@ -297,7 +296,7 @@ viewPointingTo content questionBox =
 
 
 viewBalloonContent : QuestionBox msg -> Html msg
-viewBalloonContent (QuestionBox { markdown, actions }) =
+viewBalloonContent { markdown, actions } =
     div
         [ nriDescription "balloon-content" ]
         [ div
