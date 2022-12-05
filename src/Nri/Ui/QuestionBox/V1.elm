@@ -38,22 +38,6 @@ type alias QuestionBox msg =
     }
 
 
-viewStandalone : QuestionBox msg -> String -> Html msg
-viewStandalone questionBox idString =
-    div
-        [ id (containerId idString)
-        , css [ Css.zIndex (Css.int 10), Css.minWidth (Css.px 300) ]
-        , nriDescription "standalone-balloon-container"
-        ]
-        [ Balloon.view
-            [ Balloon.html [ viewBalloonContent questionBox ]
-            , Balloon.navy
-            , Balloon.css [ Css.padding (Css.px 0) ]
-            , Balloon.nriDescription "standalone-balloon"
-            ]
-        ]
-
-
 containerId : String -> String
 containerId id =
     "Nri-Scaffolding-QuestionBox-" ++ id
@@ -221,6 +205,22 @@ alignTarget { anchors, container } =
         |> Maybe.withDefault ( 0, 0 )
         -- get the midpoint between the start and end of the highlighted region
         |> (\( highlightStart, highlightEnd ) -> (highlightStart + highlightEnd) / 2 - container.x)
+
+
+viewStandalone : QuestionBox msg -> String -> Html msg
+viewStandalone questionBox idString =
+    div
+        [ id (containerId idString)
+        , css [ Css.zIndex (Css.int 10), Css.minWidth (Css.px 300) ]
+        , nriDescription "standalone-balloon-container"
+        ]
+        [ Balloon.view
+            [ Balloon.html [ viewBalloonContent questionBox ]
+            , Balloon.navy
+            , Balloon.css [ Css.padding (Css.px 0) ]
+            , Balloon.nriDescription "standalone-balloon"
+            ]
+        ]
 
 
 viewAnchored : QuestionBox msg -> String -> AnchoredBoxState -> List (Html msg) -> Html msg
