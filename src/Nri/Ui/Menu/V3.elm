@@ -1,8 +1,9 @@
 module Nri.Ui.Menu.V3 exposing
     ( view, button, custom, Config
     , Attribute, Button, ButtonAttribute
-    , alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure, dialog
-    , Alignment(..)
+    , navMenuList, disclosure, dialog
+    , isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover
+    , Alignment(..), alignment
     , icon, wrapping, hasBorder, buttonWidth
     , TitleWrapping(..)
     , Entry, group, entry
@@ -30,8 +31,9 @@ A togglable menu view and related buttons.
 
 ## Menu attributes
 
-@docs alignment, isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover, disclosure, dialog
-@docs Alignment
+@docs navMenuList, disclosure, dialog
+@docs isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover
+@docs Alignment, alignment
 
 
 ## Button attributes
@@ -119,7 +121,8 @@ type alias ButtonConfig =
 
 
 type Purpose
-    = NavMenu
+    = NavMenuList
+    | NavMenu
     | Disclosure { lastId : String }
     | Dialog
         { firstId : String
@@ -210,6 +213,13 @@ menuZIndex value =
 opensOnHover : Bool -> Attribute msg
 opensOnHover value =
     Attribute <| \config -> { config | opensOnHover = value }
+
+
+{-| Makes the menu follow the [Navigation Menu pattern](https://www.w3.org/WAI/ARIA/apg/example-index/menu-button/menu-button-links.html).
+-}
+navMenuList : Attribute msg
+navMenuList =
+    Attribute <| \config -> { config | purpose = NavMenuList }
 
 
 {-| Makes the menu behave as a disclosure.
@@ -471,31 +481,51 @@ viewCustom config =
 
         contentVisible =
             config.isOpen && not config.isDisabled
+
+        navMenuEvents =
+            Key.onKeyDown
+                [ Key.escape
+                    (config.focusAndToggle
+                        { isOpen = False
+                        , focus = Just config.buttonId
+                        }
+                    )
+                , Key.tab
+                    (config.focusAndToggle
+                        { isOpen = False
+                        , focus = Nothing
+                        }
+                    )
+                , Key.tabBack
+                    (config.focusAndToggle
+                        { isOpen = False
+                        , focus = Nothing
+                        }
+                    )
+                ]
+
+        entriesContainer attributes =
+            case config.purpose of
+                NavMenuList ->
+                    ul (Role.menu :: attributes)
+
+                NavMenu ->
+                    div (Role.menu :: attributes)
+
+                Disclosure _ ->
+                    div attributes
+
+                Dialog _ ->
+                    div (Role.dialog :: attributes)
     in
     div
         (Attributes.id (config.buttonId ++ "__container")
             :: (case config.purpose of
+                    NavMenuList ->
+                        navMenuEvents
+
                     NavMenu ->
-                        Key.onKeyDown
-                            [ Key.escape
-                                (config.focusAndToggle
-                                    { isOpen = False
-                                    , focus = Just config.buttonId
-                                    }
-                                )
-                            , Key.tab
-                                (config.focusAndToggle
-                                    { isOpen = False
-                                    , focus = Nothing
-                                    }
-                                )
-                            , Key.tabBack
-                                (config.focusAndToggle
-                                    { isOpen = False
-                                    , focus = Nothing
-                                    }
-                                )
-                            ]
+                        navMenuEvents
 
                     Disclosure { lastId } ->
                         WhenFocusLeaves.onKeyDown
@@ -586,9 +616,9 @@ viewCustom config =
                     [ Aria.disabled config.isDisabled
                     , -- Whether the menu is open or closed, move to the
                       -- first menu item if the "down" arrow is pressed
-                      -- as long as it's not a Disclosed or Dialog
-                      case ( config.purpose, maybeFirstFocusableElementId, maybeLastFocusableElementId ) of
-                        ( NavMenu, Just firstFocusableElementId, Just lastFocusableElementId ) ->
+                      -- as long as it's not a Disclosure or Dialog
+                      case ( config.purpose == NavMenuList || config.purpose == NavMenu, maybeFirstFocusableElementId, maybeLastFocusableElementId ) of
+                        ( True, Just firstFocusableElementId, Just lastFocusableElementId ) ->
                             Key.onKeyDownPreventDefault
                                 [ Key.down
                                     (config.focusAndToggle
@@ -642,6 +672,12 @@ viewCustom config =
                         AttributesExtra.none
                     ]
                         ++ (case config.purpose of
+                                NavMenuList ->
+                                    [ Aria.hasMenuPopUp
+                                    , Aria.expanded config.isOpen
+                                    , Aria.controls [ config.menuId ]
+                                    ]
+
                                 NavMenu ->
                                     [ Aria.hasMenuPopUp
                                     , Aria.expanded config.isOpen
@@ -666,23 +702,12 @@ viewCustom config =
             , div [ styleOuterContent contentVisible config ]
                 [ div
                     [ AttributesExtra.nriDescription "menu-hover-bridge"
-                    , css
-                        [ Css.height (px 10)
-                        ]
+                    , css [ Css.height (px 10) ]
                     ]
                     []
-                , div
+                , entriesContainer
                     [ classList [ ( "Content", True ), ( "ContentVisible", contentVisible ) ]
                     , styleContent contentVisible config
-                    , case config.purpose of
-                        NavMenu ->
-                            Role.menu
-
-                        Disclosure _ ->
-                            AttributesExtra.none
-
-                        Dialog _ ->
-                            Role.dialog
                     , Aria.labelledBy config.buttonId
                     , Attributes.id config.menuId
                     , css
@@ -769,7 +794,15 @@ viewEntry :
 viewEntry config focusAndToggle { upId, downId, entry_ } =
     case entry_ of
         Single id view_ ->
-            div
+            let
+                entryContainer attributes =
+                    if config.purpose == NavMenuList then
+                        li (Attributes.attribute "role" "none" :: attributes)
+
+                    else
+                        div attributes
+            in
+            entryContainer
                 [ class "MenuEntryContainer"
                 , css
                     [ padding2 (px 5) zero
@@ -950,6 +983,7 @@ styleContent : Bool -> MenuConfig msg -> Html.Attribute msg
 styleContent contentVisible config =
     css
         [ padding (px 25)
+        , margin zero
         , border3 (px 1) solid Colors.gray85
         , minWidth (px 202)
         , borderRadius (px 8)
