@@ -361,28 +361,34 @@ viewCharacter =
 
 viewActions : List { label : String, onClick : msg } -> Html msg
 viewActions actions =
-    if List.isEmpty actions then
-        Html.Styled.text ""
+    case actions of
+        [] ->
+            text ""
 
-    else
-        div
-            [ css
-                [ Css.backgroundColor Colors.frost
-                , Css.borderBottomRightRadius (Css.px 8)
-                , Css.borderBottomLeftRadius (Css.px 8)
-                , Css.padding2 (Css.px 10) (Css.px 20)
-                , Css.display Css.inlineFlex
-                , Css.property "gap" "20px"
-                , Css.width (Css.pct 100)
-                , Css.justifyContent Css.center
+        _ ->
+            div
+                [ css
+                    [ Css.backgroundColor Colors.frost
+                    , Css.borderBottomRightRadius (Css.px 8)
+                    , Css.borderBottomLeftRadius (Css.px 8)
+                    , Css.padding2 (Css.px 10) (Css.px 20)
+                    , Css.displayFlex
+                    , Css.property "gap" "10px"
+                    , Css.flexDirection Css.column
+                    , Css.alignItems Css.center
+                    ]
                 ]
-            ]
-            (List.map
-                (\{ label, onClick } ->
-                    Button.button label
-                        [ Button.secondary
-                        , Button.onClick onClick
-                        ]
+                (List.map
+                    (\{ label, onClick } ->
+                        Button.button label
+                            [ Button.secondary
+                            , Button.onClick onClick
+                            , if List.length actions > 1 then
+                                Button.fillContainerWidth
+
+                              else
+                                Button.unboundedWidth
+                            ]
+                    )
+                    actions
                 )
-                actions
-            )
