@@ -103,7 +103,11 @@ viewExamplesTable =
           , description = "???"
           , example =
                 QuestionBox.viewAnchored
-                    { markdown = exampleNotQuiteMarkdown
+                    { markdown = """
+Not quite. **Plural** means **more than one person.**
+
+This subject is **only one person.**
+    """
                     , actions = [ { label = "Try again", onClick = NoOp } ]
                     }
                     "fake-id-string"
@@ -111,16 +115,19 @@ viewExamplesTable =
                     [ Html.text "QuestionBox content"
                     ]
           }
+        , { pattern = "QuestionBox.viewPointingTo"
+          , description = "???"
+          , example =
+                QuestionBox.viewPointingTo
+                    [ Html.text "QuestionBox content" ]
+                    { markdown = "Which words tell you **when** the party is?"
+                    , actions =
+                        [ { label = "is having", onClick = NoOp }
+                        , { label = "after the football game", onClick = NoOp }
+                        ]
+                    }
+          }
         ]
-
-
-exampleNotQuiteMarkdown : String
-exampleNotQuiteMarkdown =
-    """
-Not quite. **Plural** means **more than one person.**
-
-This subject is **only one person.**
-    """
 
 
 {-| -}
