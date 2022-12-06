@@ -283,7 +283,7 @@ type Action marker
     | MouseDown Int
     | MouseOver Int
     | MouseUp
-    | Remove
+    | RemoveHint
     | Save (Tool.MarkerModel marker)
     | Toggle Int (Tool.MarkerModel marker)
     | StartSelection Int
@@ -362,7 +362,7 @@ keyboardEventToActions msg model =
                     []
 
                 Just i ->
-                    [ Focus i ]
+                    [ Focus i, ResetSelection, RemoveHint ]
 
         MoveRight index ->
             case nextInteractiveIndex index model.highlightables of
@@ -370,7 +370,7 @@ keyboardEventToActions msg model =
                     []
 
                 Just i ->
-                    [ Focus i ]
+                    [ Focus i, ResetSelection, RemoveHint ]
 
         SelectionExpandLeft index ->
             case previousInteractiveIndex index model.highlightables of
@@ -408,10 +408,10 @@ keyboardEventToActions msg model =
                     [ Save marker, ResetSelection, Focus index ]
 
                 Tool.Eraser _ ->
-                    [ Remove, ResetSelection, Focus index ]
+                    [ RemoveHint, ResetSelection, Focus index ]
 
         SelectionReset index ->
-            [ ResetSelection, Remove, Focus index ]
+            [ ResetSelection, RemoveHint, Focus index ]
 
         ToggleHighlight index ->
             case model.marker of
@@ -424,7 +424,7 @@ keyboardEventToActions msg model =
                     [ MouseOver index
                     , Hint index index
                     , MouseUp
-                    , Remove
+                    , RemoveHint
                     , Focus index
                     ]
 
@@ -491,7 +491,7 @@ pointerEventToActions msg model =
                     MouseUp :: save marker
 
                 Tool.Eraser _ ->
-                    [ MouseUp, Remove ]
+                    [ MouseUp, RemoveHint ]
 
         Out eventIndex ->
             [ Blur eventIndex ]
@@ -538,7 +538,7 @@ performAction action ( model, cmds ) =
             , cmds
             )
 
-        Remove ->
+        RemoveHint ->
             ( { model
                 | highlightables = Internal.removeHinted model.highlightables
                 , hasChanged = Changed
