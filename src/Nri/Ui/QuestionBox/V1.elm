@@ -24,7 +24,6 @@ module Nri.Ui.QuestionBox.V1 exposing
 
 -}
 
-import Browser.Events
 import Css
 import Css.Global
 import Dict
@@ -33,19 +32,20 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes exposing (alt, css, id, src)
 import Json.Decode as Decode exposing (Decoder)
 import List.Extra
-import Markdown
 import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
 
 
+{-| -}
 type alias QuestionBox msg =
     { markdown : String
     , actions : List { label : String, onClick : msg }
     }
 
 
+{-| -}
 containerId : String -> String
 containerId id =
     "Nri-Scaffolding-QuestionBox-" ++ id
@@ -229,6 +229,7 @@ alignTarget { anchors, container } =
         |> (\( highlightStart, highlightEnd ) -> (highlightStart + highlightEnd) / 2 - container.x)
 
 
+{-| -}
 viewStandalone : QuestionBox msg -> String -> Html msg
 viewStandalone questionBox idString =
     div
@@ -242,6 +243,7 @@ viewStandalone questionBox idString =
         ]
 
 
+{-| -}
 viewAnchored : QuestionBox msg -> String -> AnchoredBoxMeasurementState -> List (Html msg) -> Html msg
 viewAnchored questionBox idString state content =
     let
@@ -280,6 +282,7 @@ viewAnchored questionBox idString state content =
         ]
 
 
+{-| -}
 viewPointingTo : List (Html msg) -> QuestionBox msg -> Html msg
 viewPointingTo content questionBox =
     span

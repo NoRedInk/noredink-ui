@@ -15,7 +15,7 @@ import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css, id)
+import Html.Styled.Attributes exposing (css)
 import Json.Decode
 import Json.Encode as Encode
 import Markdown
@@ -26,7 +26,7 @@ import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Highlightable.V1 as Highlightable
 import Nri.Ui.Highlighter.V1 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
-import Nri.Ui.QuestionBox.V1 as QuestionBox exposing (QuestionBox)
+import Nri.Ui.QuestionBox.V1 as QuestionBox
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V6 as Table
 
