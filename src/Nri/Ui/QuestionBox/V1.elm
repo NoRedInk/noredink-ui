@@ -27,7 +27,7 @@ import Css.Global
 import Dict
 import Dict.Extra
 import Html.Styled exposing (..)
-import Html.Styled.Attributes as Attributes exposing (alt, css, id, src)
+import Html.Styled.Attributes as Attributes exposing (alt, css, src)
 import Json.Decode as Decode exposing (Decoder)
 import List.Extra
 import Nri.Ui.Balloon.V2 as Balloon
@@ -35,6 +35,11 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
 import Nri.Ui.Util exposing (safeIdString)
+
+
+{-| -}
+type Attribute msg
+    = Attribute (Config msg -> Config msg)
 
 
 type alias Config msg =
@@ -54,10 +59,62 @@ defaultConfig =
     }
 
 
+{-| -}
+id : String -> Attribute msg
+id id_ =
+    Attribute (\config -> { config | id = Just id_ })
+
+
+{-| -}
+markdown : String -> Attribute msg
+markdown content =
+    Attribute (\config -> { config | id = Just content })
+
+
+{-| -}
+actions : List { label : String, onClick : msg } -> Attribute msg
+actions actions_ =
+    Attribute (\config -> { config | actions = actions_ })
+
+
+setType : QuestionBoxType msg -> Attribute msg
+setType type_ =
+    Attribute (\config -> { config | type_ = type_ })
+
+
 type QuestionBoxType msg
     = Standalone
     | PointingTo (List (Html msg))
     | AnchoredTo (List (Html msg)) AnchoredBoxMeasurementState
+
+
+{-| This is the default type of question box. It doesn't have a programmatic or visual relationship to any piece of content.
+-}
+standalone : Attribute msg
+standalone =
+    setType Standalone
+
+
+{-| This type of `QuestionBox` has an arrow pointing to the relevant part of the question.
+
+Typically, you would use this type of `QuestionBox` type with a `Block`.
+
+TODO: consider, should this API _only_ support blocks?
+
+-}
+pointingTo : List (Html msg) -> Attribute msg
+pointingTo =
+    setType << PointingTo
+
+
+{-| This type of `QuestionBox` is only rendered after measurements of the DOM are made.
+
+Tessa does not know when it's appropriate to use this type of QuestionBox -- sorry!
+
+-}
+anchoredTo : List (Html msg) -> AnchoredBoxMeasurementState -> Attribute msg
+anchoredTo content measurements =
+    setType (AnchoredTo content measurements)
 
 
 {-| -}
@@ -250,7 +307,7 @@ alignTarget { anchors, container } =
 viewStandalone : QuestionBox msg -> Html msg
 viewStandalone questionBox =
     div
-        [ id questionBox.id
+        [ Attributes.id questionBox.id
         , css [ Css.zIndex (Css.int 10), Css.minWidth (Css.px 300) ]
         , nriDescription "standalone-balloon-container"
         ]
@@ -290,7 +347,7 @@ viewAnchored questionBox state content =
                 , Css.position Css.relative
                 , Css.left (Css.px offset_)
                 ]
-            , id questionBox.id
+            , Attributes.id questionBox.id
             ]
             [ viewBalloon questionBox
                 [ Balloon.nriDescription "anchored-balloon"
@@ -309,7 +366,7 @@ viewPointingTo content questionBox =
         (List.append
             content
             [ div
-                [ id questionBox.id
+                [ Attributes.id questionBox.id
                 , css
                     [ Css.position Css.absolute
                     , Css.top (Css.pct 100)
@@ -330,12 +387,12 @@ viewPointingTo content questionBox =
 
 
 viewBalloon : QuestionBox msg -> List (Balloon.Attribute msg) -> Html msg
-viewBalloon { markdown, actions } attributes =
+viewBalloon questionBox attributes =
     Balloon.view
         ([ Balloon.html
             [ viewCharacter
-            , viewGuidance markdown
-            , viewActions actions
+            , viewGuidance questionBox.markdown
+            , viewActions questionBox.actions
             ]
          , Balloon.navy
          , Balloon.css [ Css.padding (Css.px 0), Css.position Css.relative ]
@@ -345,10 +402,10 @@ viewBalloon { markdown, actions } attributes =
 
 
 viewGuidance : String -> Html msg
-viewGuidance markdown =
+viewGuidance markdown_ =
     Balloon.view
         [ Balloon.nriDescription "character-guidance"
-        , Balloon.markdown markdown
+        , Balloon.markdown markdown_
         , Balloon.onLeft
         , Balloon.white
         , Balloon.css
@@ -381,7 +438,7 @@ viewCharacter =
 
 
 viewActions : List { label : String, onClick : msg } -> Html msg
-viewActions actions =
+viewActions actions_ =
     let
         containerStyles =
             [ Css.backgroundColor Colors.frost
@@ -395,7 +452,7 @@ viewActions actions =
             , Css.flexDirection Css.column
             ]
     in
-    case actions of
+    case actions_ of
         [] ->
             text ""
 
@@ -420,5 +477,5 @@ viewActions actions =
                                 ]
                             ]
                     )
-                    actions
+                    actions_
                 )
