@@ -56,7 +56,12 @@ example =
     , subscriptions = subscriptions
     , categories = [ Interactions ]
     , keyboardSupport = []
-    , preview = []
+    , preview =
+        [ QuestionBox.view
+            [ QuestionBox.markdown "Is good?"
+            , QuestionBox.character { name = "Panda", icon = pandaIcon }
+            ]
+        ]
     , view = view
     }
 
