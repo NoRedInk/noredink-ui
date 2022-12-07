@@ -409,43 +409,44 @@ viewBalloon config attributes =
     Balloon.view
         ([ Balloon.html
             (List.filterMap identity
-                [ Maybe.map viewCharacter config.character
-                , Maybe.map (viewGuidance config.character) config.markdown
+                [ Maybe.map (viewGuidance config.character) config.markdown
                 , viewActions config.actions
                 ]
             )
          , Balloon.navy
-         , Balloon.css [ Css.padding (Css.px 0), Css.position Css.relative ]
+         , Balloon.css [ Css.padding (Css.px 0) ]
          ]
             ++ attributes
         )
 
 
-viewGuidance : Maybe character -> String -> Html msg
+viewGuidance : Maybe { name : String, icon : Svg } -> String -> Html msg
 viewGuidance withCharacter markdown_ =
     case withCharacter of
-        Just _ ->
-            Balloon.view
-                [ Balloon.nriDescription "character-guidance"
-                , Balloon.markdown markdown_
-                , Balloon.onLeft
-                , Balloon.alignArrowEnd
-                , Balloon.white
-                , Balloon.css
-                    [ Css.borderRadius (Css.px 16)
-                    , Css.padding (Css.px 10)
-                    , Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ]
+        Just character_ ->
+            div
+                [ css
+                    [ Css.displayFlex
+                    , Css.justifyContent Css.flexEnd
+                    , Css.margin (Css.px 8)
+                    , Css.marginRight (Css.px 16)
+                    , Css.position Css.relative
                     ]
                 ]
-                |> List.singleton
-                |> div
-                    [ css
-                        [ Css.displayFlex
-                        , Css.justifyContent Css.flexEnd
-                        , Css.margin (Css.px 8)
-                        , Css.marginRight (Css.px 16)
+                [ viewCharacter character_
+                , Balloon.view
+                    [ Balloon.nriDescription "character-guidance"
+                    , Balloon.markdown markdown_
+                    , Balloon.onLeft
+                    , Balloon.alignArrowEnd
+                    , Balloon.white
+                    , Balloon.css
+                        [ Css.borderRadius (Css.px 16)
+                        , Css.padding (Css.px 10)
+                        , Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ]
                         ]
                     ]
+                ]
 
         Nothing ->
             -- TODO: Check styles look okay
@@ -467,8 +468,8 @@ viewCharacter { name, icon } =
         |> Svg.withHeight (Css.px 70)
         |> Svg.withCss
             [ Css.position Css.absolute
-            , Css.top (Css.px 2)
-            , Css.right (Css.px -38)
+            , Css.bottom (Css.px -18)
+            , Css.right (Css.px -53)
             ]
         |> Svg.toHtml
 
