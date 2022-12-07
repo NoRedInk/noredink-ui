@@ -294,7 +294,7 @@ hasStartHighlightBeforeContent startHighlightMarker relevantHighlightableText vi
 
         startHighlightClassRegex : Maybe Regex
         startHighlightClassRegex =
-            "\\.(\\_[a-zA-Z0-9]+)::before\\{content:\\\\\"\\s*\\[\\s*"
+            "\\.(\\_[a-zA-Z0-9]+)::before\\{content:\\\\\"\\s*\\s*"
                 ++ startHighlightMarker
                 |> Regex.fromString
 
