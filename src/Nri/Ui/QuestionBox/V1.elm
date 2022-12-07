@@ -35,6 +35,7 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Util exposing (safeIdString)
 
 
@@ -423,26 +424,38 @@ viewBalloon config attributes =
 
 viewGuidance : Maybe character -> String -> Html msg
 viewGuidance withCharacter markdown_ =
-    Balloon.view
-        [ Balloon.nriDescription "character-guidance"
-        , Balloon.markdown markdown_
-        , Balloon.onLeft
-        , Balloon.white
-        , Balloon.css
-            [ Css.borderRadius (Css.px 16)
-            , Css.padding (Css.px 10)
-            , Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ]
-            ]
-        ]
-        |> List.singleton
-        |> div
-            [ css
-                [ Css.displayFlex
-                , Css.justifyContent Css.flexEnd
-                , Css.margin (Css.px 8)
-                , Css.marginRight (Css.px 16)
+    case withCharacter of
+        Just _ ->
+            Balloon.view
+                [ Balloon.nriDescription "character-guidance"
+                , Balloon.markdown markdown_
+                , Balloon.onLeft
+                , Balloon.white
+                , Balloon.css
+                    [ Css.borderRadius (Css.px 16)
+                    , Css.padding (Css.px 10)
+                    , Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ]
+                    ]
                 ]
-            ]
+                |> List.singleton
+                |> div
+                    [ css
+                        [ Css.displayFlex
+                        , Css.justifyContent Css.flexEnd
+                        , Css.margin (Css.px 8)
+                        , Css.marginRight (Css.px 16)
+                        ]
+                    ]
+
+        Nothing ->
+            -- TODO: Check styles look okay
+            Text.mediumBody
+                [ Text.markdown markdown_
+                , Text.css
+                    [ Css.color Colors.white
+                    , Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ]
+                    ]
+                ]
 
 
 viewCharacter : { name : String, icon : Svg } -> Html msg
