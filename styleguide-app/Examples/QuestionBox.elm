@@ -16,7 +16,7 @@ import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes exposing (css)
 import Json.Decode
 import Json.Encode as Encode
 import Markdown
@@ -65,7 +65,10 @@ view : EllieLink.Config -> State -> List (Html Msg)
 view ellieLinkConfig state =
     let
         attributes =
-            Control.currentValue state.attributes
+            ( Code.fromModule moduleName "id " ++ Code.string interactiveExampleId
+            , QuestionBox.id interactiveExampleId
+            )
+                :: Control.currentValue state.attributes
     in
     [ ControlView.view
         { ellieLinkConfig = ellieLinkConfig
@@ -228,6 +231,16 @@ viewHighlighterExample =
         }
 
 
+interactiveExampleId : String
+interactiveExampleId =
+    "interactive-example-question-box"
+
+
+anchorId : String
+anchorId =
+    "interactive-example-anchor-icon"
+
+
 highlighterExampleId : String
 highlighterExampleId =
     "question-box-anchored-highlighter-example"
@@ -256,15 +269,6 @@ type alias State =
 initAttributes : Control (List ( String, QuestionBox.Attribute Msg ))
 initAttributes =
     ControlExtra.list
-        |> ControlExtra.listItem "id"
-            (Control.map
-                (\str ->
-                    ( Code.fromModule moduleName "id " ++ Code.string str
-                    , QuestionBox.id str
-                    )
-                )
-                (Control.string "interactive-example-question-box")
-            )
         |> ControlExtra.listItem "markdown"
             (Control.map
                 (\str ->
@@ -307,18 +311,24 @@ initAttributes =
             )
         |> ControlExtra.optionalListItem "type"
             (CommonControls.choice moduleName
-                [ ( "pointingTo []"
-                  , QuestionBox.pointingTo
-                        [ UiIcon.sortArrowDown
-                            |> Svg.withLabel "Anchor"
-                            |> Svg.withWidth (Css.px 50)
-                            |> Svg.withHeight (Css.px 50)
-                            |> Svg.toHtml
-                        ]
+                [ ( "pointingTo []", QuestionBox.pointingTo [ anchor ] )
+                , ( "anchoredTo [] QuestionBox.initAnchoredBoxMeasurements"
+                  , QuestionBox.anchoredTo [ anchor ] QuestionBox.initAnchoredBoxMeasurements
                   )
                 , ( "standalone", QuestionBox.standalone )
                 ]
             )
+
+
+anchor : Html msg
+anchor =
+    div [ Attributes.id anchorId ]
+        [ UiIcon.sortArrowDown
+            |> Svg.withLabel "Anchor"
+            |> Svg.withWidth (Css.px 50)
+            |> Svg.withHeight (Css.px 50)
+            |> Svg.toHtml
+        ]
 
 
 initialMarkdown : String
