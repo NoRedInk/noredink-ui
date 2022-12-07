@@ -292,6 +292,7 @@ viewPointingTo content questionBox =
         , nriDescription "pointing-to-container"
         ]
         (List.append
+            content
             [ div
                 [ css
                     [ Css.position Css.absolute
@@ -309,7 +310,6 @@ viewPointingTo content questionBox =
                     ]
                 ]
             ]
-            content
         )
 
 
