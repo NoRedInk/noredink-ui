@@ -95,7 +95,7 @@ type QuestionBoxType msg
     | AnchoredTo (List (Html msg)) AnchoredBoxMeasurements
 
 
-{-| This is the default type of question box. It doesn't have a programmatic or visual relationship to any piece of content.
+{-| This is the default type of question box. It doesn't have a programmatic or direct visual relationship to any piece of content.
 -}
 standalone : Attribute msg
 standalone =
@@ -105,8 +105,6 @@ standalone =
 {-| This type of `QuestionBox` has an arrow pointing to the relevant part of the question.
 
 Typically, you would use this type of `QuestionBox` type with a `Block`.
-
-TODO: consider, should this API _only_ support blocks?
 
 -}
 pointingTo : List (Html msg) -> Attribute msg

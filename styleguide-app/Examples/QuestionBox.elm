@@ -128,7 +128,7 @@ viewExamplesTable state =
             }
         ]
         [ { pattern = "QuestionBox.standalone"
-          , description = "???"
+          , description = "This is the default type of question box. It doesn't have a programmatic or direct visual relationship to any piece of content."
           , example =
                 div [ css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ] ]
                     [ QuestionBox.view
@@ -143,7 +143,10 @@ viewExamplesTable state =
                     ]
           }
         , { pattern = "QuestionBox.anchoredTo"
-          , description = "???"
+          , description = """This type of `QuestionBox` is only rendered after measurements of the DOM are made. Click "Measure & render" to see this QuestionBox.
+
+Tessa does not know when it's appropriate to use this type of QuestionBox -- sorry!
+"""
           , example =
                 div []
                     [ QuestionBox.view
@@ -160,7 +163,10 @@ viewExamplesTable state =
                     ]
           }
         , { pattern = "QuestionBox.pointingTo"
-          , description = "???"
+          , description = """This type of `QuestionBox` has an arrow pointing to the relevant part of the question.
+
+Typically, you would use this type of `QuestionBox` type with a [`Block`](https://noredink-ui.netlify.app/#/doodad/Block).
+"""
           , example =
                 [ Block.view [ Block.plaintext "Spongebob has a beautiful plant " ]
                 , [ QuestionBox.view
