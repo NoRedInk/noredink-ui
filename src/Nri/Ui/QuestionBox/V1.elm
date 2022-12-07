@@ -412,7 +412,7 @@ viewBalloon config attributes =
                 ]
             )
          , Balloon.customTheme { backgroundColor = Colors.glacier, color = Colors.glacier }
-         , Balloon.css [ Css.padding (Css.px 0) ]
+         , Balloon.css [ Css.padding (Css.px 0), Css.boxShadow Css.none ]
          ]
             ++ attributes
         )
@@ -441,6 +441,7 @@ viewGuidance withCharacter markdown_ =
                     , Balloon.css
                         [ Css.borderRadius (Css.px 16)
                         , Css.padding (Css.px 10)
+                        , Css.boxShadow Css.none
                         , Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ]
                         ]
                     ]
