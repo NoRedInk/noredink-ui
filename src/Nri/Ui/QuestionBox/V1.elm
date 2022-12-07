@@ -367,33 +367,42 @@ viewCharacter =
 
 viewActions : List { label : String, onClick : msg } -> Html msg
 viewActions actions =
+    let
+        containerStyles =
+            [ Css.backgroundColor Colors.frost
+            , Css.borderBottomRightRadius (Css.px 8)
+            , Css.borderBottomLeftRadius (Css.px 8)
+            , Css.margin Css.zero
+            , Css.padding2 (Css.px 10) (Css.px 20)
+            , Css.listStyle Css.none
+            , Css.displayFlex
+            , Css.property "gap" "10px"
+            , Css.flexDirection Css.column
+            ]
+    in
     case actions of
         [] ->
             text ""
 
-        _ ->
-            div
-                [ css
-                    [ Css.backgroundColor Colors.frost
-                    , Css.borderBottomRightRadius (Css.px 8)
-                    , Css.borderBottomLeftRadius (Css.px 8)
-                    , Css.padding2 (Css.px 10) (Css.px 20)
-                    , Css.displayFlex
-                    , Css.property "gap" "10px"
-                    , Css.flexDirection Css.column
-                    , Css.alignItems Css.center
+        { label, onClick } :: [] ->
+            div [ css (Css.alignItems Css.center :: containerStyles) ]
+                [ Button.button label
+                    [ Button.secondary
+                    , Button.onClick onClick
+                    , Button.unboundedWidth
                     ]
                 ]
+
+        _ ->
+            ul [ css containerStyles ]
                 (List.map
                     (\{ label, onClick } ->
-                        Button.button label
-                            [ Button.secondary
-                            , Button.onClick onClick
-                            , if List.length actions > 1 then
-                                Button.fillContainerWidth
-
-                              else
-                                Button.unboundedWidth
+                        li []
+                            [ Button.button label
+                                [ Button.secondary
+                                , Button.onClick onClick
+                                , Button.fillContainerWidth
+                                ]
                             ]
                     )
                     actions
