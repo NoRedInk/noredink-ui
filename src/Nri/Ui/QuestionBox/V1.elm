@@ -302,6 +302,13 @@ alignTarget { anchors, container } =
         |> (\( highlightStart, highlightEnd ) -> (highlightStart + highlightEnd) / 2 - container.x)
 
 
+{-|
+
+    QuestionBox.view
+        [ QuestionBox.markdown "**WOW**, great component!"
+        ]
+
+-}
 view : List (Attribute msg) -> Html msg
 view attributes =
     let
