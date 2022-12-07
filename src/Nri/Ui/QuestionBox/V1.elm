@@ -33,7 +33,7 @@ import List.Extra
 import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
 import Nri.Ui.Util exposing (safeIdString)
 
 
@@ -115,14 +115,6 @@ Tessa does not know when it's appropriate to use this type of QuestionBox -- sor
 anchoredTo : List (Html msg) -> AnchoredBoxMeasurementState -> Attribute msg
 anchoredTo content measurements =
     setType (AnchoredTo content measurements)
-
-
-{-| -}
-type alias QuestionBox msg =
-    { id : String
-    , markdown : String
-    , actions : List { label : String, onClick : msg }
-    }
 
 
 {-| -}
@@ -308,41 +300,35 @@ view attributes =
     let
         config =
             List.foldl (\(Attribute f) a -> f a) defaultConfig attributes
-
-        questionBox =
-            { id = Maybe.withDefault "question-box" config.id
-            , markdown = Maybe.withDefault "" config.markdown
-            , actions = config.actions
-            }
     in
     case config.type_ of
         Standalone ->
-            viewStandalone questionBox
+            viewStandalone config
 
         AnchoredTo content measurements ->
-            viewAnchored questionBox measurements content
+            viewAnchored config measurements content
 
         PointingTo content ->
-            viewPointingTo content questionBox
+            viewPointingTo config content
 
 
 {-| -}
-viewStandalone : QuestionBox msg -> Html msg
-viewStandalone questionBox =
+viewStandalone : Config msg -> Html msg
+viewStandalone config =
     div
-        [ Attributes.id questionBox.id
+        [ AttributesExtra.maybe Attributes.id config.id
         , css [ Css.zIndex (Css.int 10), Css.minWidth (Css.px 300) ]
         , nriDescription "standalone-balloon-container"
         ]
-        [ viewBalloon questionBox
+        [ viewBalloon config
             [ Balloon.nriDescription "standalone-balloon"
             ]
         ]
 
 
 {-| -}
-viewAnchored : QuestionBox msg -> AnchoredBoxMeasurementState -> List (Html msg) -> Html msg
-viewAnchored questionBox state content =
+viewAnchored : Config msg -> AnchoredBoxMeasurementState -> List (Html msg) -> Html msg
+viewAnchored config state content =
     let
         offset_ =
             (case state of
@@ -370,9 +356,9 @@ viewAnchored questionBox state content =
                 , Css.position Css.relative
                 , Css.left (Css.px offset_)
                 ]
-            , Attributes.id questionBox.id
+            , AttributesExtra.maybe Attributes.id config.id
             ]
-            [ viewBalloon questionBox
+            [ viewBalloon config
                 [ Balloon.nriDescription "anchored-balloon"
                 ]
             ]
@@ -380,8 +366,8 @@ viewAnchored questionBox state content =
 
 
 {-| -}
-viewPointingTo : List (Html msg) -> QuestionBox msg -> Html msg
-viewPointingTo content questionBox =
+viewPointingTo : Config msg -> List (Html msg) -> Html msg
+viewPointingTo config content =
     span
         [ css [ Css.position Css.relative ]
         , nriDescription "pointing-to-container"
@@ -389,7 +375,7 @@ viewPointingTo content questionBox =
         (List.append
             content
             [ div
-                [ Attributes.id questionBox.id
+                [ AttributesExtra.maybe Attributes.id config.id
                 , css
                     [ Css.position Css.absolute
                     , Css.top (Css.pct 100)
@@ -400,7 +386,7 @@ viewPointingTo content questionBox =
                     , Css.textAlign Css.center
                     ]
                 ]
-                [ viewBalloon questionBox
+                [ viewBalloon config
                     [ Balloon.onBottom
                     , Balloon.nriDescription "pointing-to-balloon"
                     ]
@@ -409,14 +395,16 @@ viewPointingTo content questionBox =
         )
 
 
-viewBalloon : QuestionBox msg -> List (Balloon.Attribute msg) -> Html msg
+viewBalloon : Config msg -> List (Balloon.Attribute msg) -> Html msg
 viewBalloon questionBox attributes =
     Balloon.view
         ([ Balloon.html
-            [ viewCharacter
-            , viewGuidance questionBox.markdown
-            , viewActions questionBox.actions
-            ]
+            (List.filterMap identity
+                [ Just viewCharacter
+                , Maybe.map viewGuidance questionBox.markdown
+                , viewActions questionBox.actions
+                ]
+            )
          , Balloon.navy
          , Balloon.css [ Css.padding (Css.px 0), Css.position Css.relative ]
          ]
@@ -460,7 +448,7 @@ viewCharacter =
         []
 
 
-viewActions : List { label : String, onClick : msg } -> Html msg
+viewActions : List { label : String, onClick : msg } -> Maybe (Html msg)
 viewActions actions_ =
     let
         containerStyles =
@@ -477,7 +465,7 @@ viewActions actions_ =
     in
     case actions_ of
         [] ->
-            text ""
+            Nothing
 
         { label, onClick } :: [] ->
             div [ css (Css.alignItems Css.center :: containerStyles) ]
@@ -487,6 +475,7 @@ viewActions actions_ =
                     , Button.unboundedWidth
                     ]
                 ]
+                |> Just
 
         _ ->
             ul [ css containerStyles ]
@@ -502,3 +491,4 @@ viewActions actions_ =
                     )
                     actions_
                 )
+                |> Just
