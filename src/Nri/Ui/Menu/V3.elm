@@ -690,7 +690,7 @@ viewCustom config =
                                     ]
 
                                 Dialog _ ->
-                                    [ AttributesExtra.none ]
+                                    [ Aria.hasDialogPopUp ]
                            )
               in
               case config.button of
