@@ -4,6 +4,7 @@ module Nri.Ui.Balloon.V2 exposing
     , green, purple, orange, white, navy, customTheme
     , highContrastModeTheme
     , onBottom, onLeft, onRight, onTop
+    , alignArrowStart, alignArrowMiddle, alignArrowEnd
     , custom, id, nriDescription, testId
     , containerCss
     , css, notMobileCss, mobileCss, quizEngineMobileCss
@@ -51,6 +52,7 @@ Changes from V1:
 @docs green, purple, orange, white, navy, customTheme
 @docs highContrastModeTheme
 @docs onBottom, onLeft, onRight, onTop
+@docs alignArrowStart, alignArrowMiddle, alignArrowEnd
 @docs custom, id, nriDescription, testId
 
 
@@ -154,6 +156,59 @@ onBottom =
 onLeft : Attribute msg
 onLeft =
     setPosition OnLeft
+
+
+{-| Where should the arrow be positioned relative to the balloon?
+-}
+type ArrowAlignment
+    = Start
+    | Middle
+    | End
+
+
+withArrowAlignment : ArrowAlignment -> Attribute msg
+withArrowAlignment alignment =
+    Attribute (\config -> { config | arrowAlignment = alignment })
+
+
+{-| Put the arrow at the "start" of the ballon.
+For onTop & onBottom ballons, this means "left".
+For onLeft & onRight ballon, this means "top".
+
+     __________
+    |_  ______|
+      \/
+
+-}
+alignArrowStart : Attribute msg
+alignArrowStart =
+    withArrowAlignment Start
+
+
+{-| Put the arrow at the "middle" of the ballon. This is the default behavior.
+
+     __________
+    |___  ____|
+        \/
+
+-}
+alignArrowMiddle : Attribute msg
+alignArrowMiddle =
+    withArrowAlignment Middle
+
+
+{-| Put the arrow at the "end" of the ballon.
+For onTop & onBottom ballons, this means "right".
+For onLeft & onRight ballon, this means "bottom".
+
+     __________
+    |______  _|
+           \/
+
+-}
+alignArrowEnd : Attribute msg
+alignArrowEnd =
+    withArrowAlignment End
 
 
 {-| Green theme (This is the default theme.)
@@ -318,6 +373,7 @@ html =
 
 type alias Config msg =
     { position : Position
+    , arrowAlignment : ArrowAlignment
     , theme : Theme
     , highContrastModeTheme : Maybe HighContrastModeTheme
     , containerCss : List Css.Style
@@ -332,6 +388,7 @@ type alias Config msg =
 defaultConfig : Config msg
 defaultConfig =
     { position = NoArrow
+    , arrowAlignment = Middle
     , theme = defaultGreenTheme
     , highContrastModeTheme = Nothing
     , containerCss = []
@@ -395,7 +452,7 @@ view_ config =
                 Html.text ""
 
             _ ->
-                viewArrow config.position config.theme config.highContrastModeTheme 16
+                viewArrow config 16
         ]
 
 
@@ -440,7 +497,7 @@ viewBalloon palette maybeHighContrastModeTheme styles contents =
         , lineHeight (num 1.4)
         , textAlign left
         , position relative
-        , Css.borderRadius (px 8)
+        , Css.borderRadius (px borderRounding)
         , Shadows.high
         , backgroundColor palette.backgroundColor
         , border3 (px 1) solid palette.backgroundColor
@@ -454,70 +511,107 @@ viewBalloon palette maybeHighContrastModeTheme styles contents =
         contents
 
 
-viewArrow : Position -> Theme -> Maybe HighContrastModeTheme -> Float -> Html msg
-viewArrow position palette maybeHighContrastModeTheme diagonal =
+borderRounding : Float
+borderRounding =
+    8
+
+
+viewArrow : Config msg -> Float -> Html msg
+viewArrow config diagonal =
     let
         arrowSideWidth =
             sqrt ((diagonal ^ 2) / 2)
     in
     styled div
-        [ arrowPosition position
-        , backgroundColor palette.backgroundColor
-        , border3 (px 1) solid palette.backgroundColor
-        , applyHighContrastModeTheme maybeHighContrastModeTheme
+        [ arrowPosition config.position config.arrowAlignment
+        , backgroundColor config.theme.backgroundColor
+        , border3 (px 1) solid config.theme.backgroundColor
+        , applyHighContrastModeTheme config.highContrastModeTheme
         , Css.height (px arrowSideWidth)
         , Css.width (px arrowSideWidth)
+        , Css.flexShrink (Css.num 0)
         ]
         []
         []
 
 
-arrowPosition : Position -> Css.Style
-arrowPosition position =
+arrowPosition : Position -> ArrowAlignment -> Css.Style
+arrowPosition position arrowAlignment =
+    let
+        offset =
+            String.fromFloat (borderRounding + 8) ++ "px"
+
+        translateYBy y =
+            Css.batch <|
+                case arrowAlignment of
+                    Start ->
+                        [ Css.alignSelf Css.flexStart
+                        , Css.property "transform" ("translate(" ++ offset ++ "," ++ y ++ ") rotate(45deg)")
+                        ]
+
+                    Middle ->
+                        [ Css.property "transform" ("translateY(" ++ y ++ ") rotate(45deg)") ]
+
+                    End ->
+                        [ Css.alignSelf Css.flexEnd
+                        , Css.property "transform" ("translate(-" ++ offset ++ "," ++ y ++ ") rotate(45deg)")
+                        ]
+
+        translateXBy x =
+            Css.batch <|
+                case arrowAlignment of
+                    Start ->
+                        [ Css.alignSelf Css.flexStart
+                        , Css.property "transform" ("translate(" ++ x ++ "," ++ offset ++ ") rotate(45deg)")
+                        ]
+
+                    Middle ->
+                        [ Css.property "transform" ("translateX(" ++ x ++ ") rotate(45deg)") ]
+
+                    End ->
+                        [ Css.alignSelf Css.flexEnd
+                        , Css.property "transform" ("translate(" ++ x ++ ",-" ++ offset ++ ") rotate(45deg)")
+                        ]
+    in
     case position of
         OnTop ->
             batch
-                [ Css.property "transform" "translateY(-50%) rotate(45deg)"
+                [ translateYBy "-50%"
                 , Css.property "transform-origin" "center"
                 , Css.borderTop Css.zero
                 , Css.borderLeft Css.zero
                 , Css.borderTopLeftRadius (pct 100)
-                , Css.flexShrink (Css.num 0)
                 ]
 
         OnBottom ->
             batch
-                [ Css.property "transform" "translateY(50%) rotate(45deg)"
+                [ translateYBy "50%"
                 , Css.property "transform-origin" "center"
                 , Css.borderRight Css.zero
                 , Css.borderBottom Css.zero
                 , Css.borderBottomRightRadius (pct 100)
-                , Css.flexShrink (Css.num 0)
                 ]
 
         OnLeft ->
             batch
-                [ Css.property "transform" "translateX(-50%) rotate(45deg)"
+                [ translateXBy "-50%"
                 , Css.property "transform-origin" "center"
                 , Css.borderBottom Css.zero
                 , Css.borderLeft Css.zero
                 , Css.borderBottomLeftRadius (pct 100)
-                , Css.flexShrink (Css.num 0)
                 ]
 
         OnRight ->
             batch
-                [ Css.property "transform" "translateX(50%) rotate(45deg)"
+                [ translateXBy "50%"
                 , Css.property "transform-origin" "center"
                 , Css.borderRight Css.zero
                 , Css.borderTop Css.zero
                 , Css.borderTopRightRadius (pct 100)
-                , Css.flexShrink (Css.num 0)
                 ]
 
         NoArrow ->
-            batch
-                []
+            display none
 
 
 customizationsToConfig : List (Attribute msg) -> Config msg
