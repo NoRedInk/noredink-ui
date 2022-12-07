@@ -39,6 +39,29 @@ import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
 import Nri.Ui.Util exposing (safeIdString)
 
 
+type alias Config msg =
+    { id : Maybe String
+    , markdown : Maybe String
+    , actions : List { label : String, onClick : msg }
+    , type_ : QuestionBoxType msg
+    }
+
+
+defaultConfig : Config msg
+defaultConfig =
+    { id = Nothing
+    , markdown = Nothing
+    , actions = []
+    , type_ = Standalone
+    }
+
+
+type QuestionBoxType msg
+    = Standalone
+    | PointingTo (List (Html msg))
+    | AnchoredTo (List (Html msg)) AnchoredBoxMeasurementState
+
+
 {-| -}
 type alias QuestionBox msg =
     { id : String
