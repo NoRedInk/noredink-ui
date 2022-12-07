@@ -118,7 +118,7 @@ viewExamplesTable state =
           , example =
                 div [ css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ] ]
                     [ QuestionBox.viewStandalone
-                        { id = "fake-standalone-id-string"
+                        { id = "question-box-example-fake-standalone-id-string"
                         , markdown = "Which words tell you **when** the party is?"
                         , actions =
                             [ { label = "is having", onClick = NoOp }
@@ -208,7 +208,7 @@ highlighterExampleId =
 
 anchoredExampleId : String
 anchoredExampleId =
-    "question-box-anchored-with-offset-example"
+    "question-box-example-anchored-with-offset-example"
 
 
 {-| -}
@@ -253,12 +253,8 @@ update msg state =
             ( state
             , getAnchoredExampleMeasurements
                 (Encode.object
-                    [ ( "questionBoxId"
-                      , Encode.string (QuestionBox.containerId anchoredExampleId)
-                      )
-                    , ( "containerId"
-                      , Encode.string highlighterExampleId
-                      )
+                    [ ( "questionBoxId", Encode.string anchoredExampleId )
+                    , ( "containerId", Encode.string highlighterExampleId )
                     ]
                 )
             )

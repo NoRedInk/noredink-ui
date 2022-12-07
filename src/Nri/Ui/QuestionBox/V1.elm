@@ -5,7 +5,6 @@ module Nri.Ui.QuestionBox.V1 exposing
     , Measurements, decodeMeasurements
     , Element
     , viewPointingTo, viewStandalone
-    , containerId
     )
 
 {-|
@@ -20,7 +19,6 @@ module Nri.Ui.QuestionBox.V1 exposing
 ---
 
 @docs viewPointingTo, viewStandalone
-@docs containerId
 
 -}
 
@@ -68,12 +66,6 @@ type alias QuestionBox msg =
     , markdown : String
     , actions : List { label : String, onClick : msg }
     }
-
-
-{-| -}
-containerId : String -> String
-containerId id =
-    "Nri-Scaffolding-QuestionBox-" ++ safeIdString id
 
 
 {-| -}
@@ -258,7 +250,7 @@ alignTarget { anchors, container } =
 viewStandalone : QuestionBox msg -> Html msg
 viewStandalone questionBox =
     div
-        [ id (containerId questionBox.id)
+        [ id questionBox.id
         , css [ Css.zIndex (Css.int 10), Css.minWidth (Css.px 300) ]
         , nriDescription "standalone-balloon-container"
         ]
@@ -298,7 +290,7 @@ viewAnchored questionBox state content =
                 , Css.position Css.relative
                 , Css.left (Css.px offset_)
                 ]
-            , id (containerId questionBox.id)
+            , id questionBox.id
             ]
             [ viewBalloon questionBox
                 [ Balloon.nriDescription "anchored-balloon"
@@ -317,7 +309,7 @@ viewPointingTo content questionBox =
         (List.append
             content
             [ div
-                [ id (containerId questionBox.id)
+                [ id questionBox.id
                 , css
                     [ Css.position Css.absolute
                     , Css.top (Css.pct 100)
