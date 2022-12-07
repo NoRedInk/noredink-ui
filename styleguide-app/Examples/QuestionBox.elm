@@ -84,6 +84,11 @@ view ellieLinkConfig state =
                 ]
         }
     , Heading.h2
+        [ Heading.plaintext "Interactive example"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
+    , QuestionBox.view (List.map Tuple.second attributes)
+    , Heading.h2
         [ Heading.plaintext "Non-interactive examples"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
@@ -240,19 +245,40 @@ init =
 
 {-| -}
 type alias State =
-    { attributes : Control (List ( String, () ))
+    { attributes : Control (List ( String, QuestionBox.Attribute Msg ))
     , viewAnchoredExampleMeasurements : QuestionBox.AnchoredBoxMeasurements
     }
 
 
-initAttributes : Control (List ( String, () ))
+initAttributes : Control (List ( String, QuestionBox.Attribute Msg ))
 initAttributes =
     ControlExtra.list
+        |> ControlExtra.listItem "markdown"
+            (Control.map
+                (\str ->
+                    ( Code.fromModule moduleName "markdown " ++ Code.string str
+                    , QuestionBox.markdown str
+                    )
+                )
+                (Control.stringTextarea initialMarkdown)
+            )
+
+
+initialMarkdown : String
+initialMarkdown =
+    """
+Let’s remember the rules:
+
+- Always capitalize the first word of a title
+- Capitalize all words except small words like “and,” “of” and “an.”
+
+**How should this be capitalized?**
+"""
 
 
 {-| -}
 type Msg
-    = UpdateControls (Control (List ( String, () )))
+    = UpdateControls (Control (List ( String, QuestionBox.Attribute Msg )))
     | NoOp
     | GetAnchoredExampleMeasurements
     | GotAnchoredExampleMeasurements QuestionBox.AnchoredBoxMeasurements

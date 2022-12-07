@@ -452,6 +452,7 @@ viewGuidance withCharacter markdown_ =
                 [ Text.markdown markdown_
                 , Text.css
                     [ Css.color Colors.white
+                    , Css.padding (Css.px 10)
                     , Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ]
                     ]
                 ]
