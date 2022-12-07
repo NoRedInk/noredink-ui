@@ -80,7 +80,8 @@ controlSettings =
                 }
             )
         |> ControlExtra.optionalListItem "theme" themeOptions
-        |> ControlExtra.optionalListItem "position" positionOptions
+        |> ControlExtra.optionalListItemDefaultChecked "position" positionOptions
+        |> ControlExtra.optionalListItem "arrowAlignment" arrowAlignmentOptions
         |> CommonControls.css_ "containerCss"
             ( "[ Css.backgroundColor Colors.magenta ]", [ Css.backgroundColor Colors.magenta ] )
             { moduleName = moduleName, use = Balloon.containerCss }
@@ -124,6 +125,15 @@ positionOptions =
         , ( "onLeft", Control.value ( "Balloon.onLeft", Balloon.onLeft ) )
         , ( "onRight", Control.value ( "Balloon.onRight", Balloon.onRight ) )
         , ( "onTop", Control.value ( "Balloon.onTop", Balloon.onTop ) )
+        ]
+
+
+arrowAlignmentOptions : Control ( String, Balloon.Attribute msg )
+arrowAlignmentOptions =
+    Control.choice
+        [ ( "alignArrowStart", Control.value ( "Balloon.alignArrowStart", Balloon.alignArrowStart ) )
+        , ( "alignArrowMiddle", Control.value ( "Balloon.alignArrowMiddle", Balloon.alignArrowMiddle ) )
+        , ( "alignArrowEnd", Control.value ( "Balloon.alignArrowEnd", Balloon.alignArrowEnd ) )
         ]
 
 
