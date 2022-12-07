@@ -234,14 +234,14 @@ anchoredExampleId =
 init : State
 init =
     { attributes = initAttributes
-    , viewAnchoredExampleMeasurements = QuestionBox.initAnchoredBoxState
+    , viewAnchoredExampleMeasurements = QuestionBox.initAnchoredBoxMeasurements
     }
 
 
 {-| -}
 type alias State =
     { attributes : Control (List ( String, () ))
-    , viewAnchoredExampleMeasurements : QuestionBox.AnchoredBoxMeasurementState
+    , viewAnchoredExampleMeasurements : QuestionBox.AnchoredBoxMeasurements
     }
 
 
@@ -255,7 +255,7 @@ type Msg
     = UpdateControls (Control (List ( String, () )))
     | NoOp
     | GetAnchoredExampleMeasurements
-    | GotAnchoredExampleMeasurements QuestionBox.Measurements
+    | GotAnchoredExampleMeasurements QuestionBox.AnchoredBoxMeasurements
 
 
 {-| -}
@@ -279,7 +279,7 @@ update msg state =
             )
 
         GotAnchoredExampleMeasurements measurements ->
-            ( { state | viewAnchoredExampleMeasurements = QuestionBox.updateAnchoredBoxState measurements }
+            ( { state | viewAnchoredExampleMeasurements = measurements }
             , Cmd.none
             )
 
@@ -293,7 +293,7 @@ port gotAnchoredExampleMeasurements : (Json.Decode.Value -> msg) -> Sub msg
 subscriptions : State -> Sub Msg
 subscriptions state =
     gotAnchoredExampleMeasurements
-        (QuestionBox.decodeMeasurements
+        (QuestionBox.decodeAnchoredBoxMeasurements
             >> Result.map GotAnchoredExampleMeasurements
             >> Result.withDefault NoOp
         )

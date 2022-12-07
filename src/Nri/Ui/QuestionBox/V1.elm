@@ -2,9 +2,7 @@ module Nri.Ui.QuestionBox.V1 exposing
     ( view, Attribute
     , id, markdown, actions, character
     , standalone, pointingTo, anchoredTo
-    , AnchoredBoxMeasurementState
-    , initAnchoredBoxState, updateAnchoredBoxState
-    , Measurements, decodeMeasurements
+    , AnchoredBoxMeasurements, initAnchoredBoxMeasurements, decodeAnchoredBoxMeasurements
     )
 
 {-|
@@ -14,9 +12,10 @@ module Nri.Ui.QuestionBox.V1 exposing
 @docs id, markdown, actions, character
 @docs standalone, pointingTo, anchoredTo
 
-@docs AnchoredBoxMeasurementState
-@docs initAnchoredBoxState, updateAnchoredBoxState
-@docs Measurements, decodeMeasurements
+
+## Anchored box measurements
+
+@docs AnchoredBoxMeasurements, initAnchoredBoxMeasurements, decodeAnchoredBoxMeasurements
 
 -}
 
@@ -93,7 +92,7 @@ setType type_ =
 type QuestionBoxType msg
     = Standalone
     | PointingTo (List (Html msg))
-    | AnchoredTo (List (Html msg)) AnchoredBoxMeasurementState
+    | AnchoredTo (List (Html msg)) AnchoredBoxMeasurements
 
 
 {-| This is the default type of question box. It doesn't have a programmatic or visual relationship to any piece of content.
@@ -120,13 +119,13 @@ pointingTo =
 Tessa does not know when it's appropriate to use this type of QuestionBox -- sorry!
 
 -}
-anchoredTo : List (Html msg) -> AnchoredBoxMeasurementState -> Attribute msg
+anchoredTo : List (Html msg) -> AnchoredBoxMeasurements -> Attribute msg
 anchoredTo content measurements =
     setType (AnchoredTo content measurements)
 
 
 {-| -}
-type AnchoredBoxMeasurementState
+type AnchoredBoxMeasurements
     = Measuring
     | WithOffset Float
 
@@ -136,8 +135,8 @@ type AnchoredBoxMeasurementState
 While in the Measuring state, the anchored box will have visibility hidden. This will cause the box to take up vertical space but not show to the user until measurements have been taken.t
 
 -}
-initAnchoredBoxState : AnchoredBoxMeasurementState
-initAnchoredBoxState =
+initAnchoredBoxMeasurements : AnchoredBoxMeasurements
+initAnchoredBoxMeasurements =
     Measuring
 
 
@@ -158,7 +157,7 @@ type alias Element =
     }
 
 
-{-| Expects JSON in the format:
+{-| Decodes JSON in the format:
 
     {
         "anchors" = [ { "x" = 1.2, "y" = .3, "width" = 300.0, "height" = 325.5 } ],
@@ -166,10 +165,12 @@ type alias Element =
         "box" = { "x" = 1.2, "y" = .3, "width" = 300.0, "height" = 325.5 }
     }
 
+Produces an `AnchoredBoxMeasurement` for use with `anchoredTo`
+
 -}
-decodeMeasurements : Decode.Value -> Result Decode.Error Measurements
-decodeMeasurements =
-    Decode.decodeValue decodeMeasurements_
+decodeAnchoredBoxMeasurements : Decode.Value -> Result Decode.Error AnchoredBoxMeasurements
+decodeAnchoredBoxMeasurements =
+    Decode.decodeValue (Decode.map updateAnchoredBoxState decodeMeasurements_)
 
 
 decodeMeasurements_ : Decoder Measurements
@@ -210,7 +211,7 @@ decodeElement =
     └───────────────────────────────────────────────────────────────────────────────────────────────┘
 
 -}
-updateAnchoredBoxState : Measurements -> AnchoredBoxMeasurementState
+updateAnchoredBoxState : Measurements -> AnchoredBoxMeasurements
 updateAnchoredBoxState measurements =
     let
         -- the middle of the anchor. this is what the box should
@@ -335,7 +336,7 @@ viewStandalone config =
 
 
 {-| -}
-viewAnchored : Config msg -> AnchoredBoxMeasurementState -> List (Html msg) -> Html msg
+viewAnchored : Config msg -> AnchoredBoxMeasurements -> List (Html msg) -> Html msg
 viewAnchored config state content =
     let
         offset_ =
