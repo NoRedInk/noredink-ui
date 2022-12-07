@@ -30,6 +30,7 @@ import Nri.Ui.QuestionBox.V1 as QuestionBox
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1
 import Nri.Ui.Table.V6 as Table
+import Nri.Ui.UiIcon.V1 as UiIcon
 import Svg.Styled
 import Svg.Styled.Attributes
 
@@ -282,6 +283,25 @@ initAttributes =
                     )
                 )
                 (ControlExtra.int 2)
+            )
+        |> ControlExtra.optionalListItem "character"
+            ([ { name = "Panda", icon = pandaIcon }
+             , { name = "Sapling", icon = UiIcon.sapling }
+             , { name = "Gumby", icon = Nri.Ui.Svg.V1.withColor Colors.mustard UiIcon.stretch }
+             ]
+                |> List.map
+                    (\({ name } as character) ->
+                        ( name
+                        , Control.value
+                            ( Code.record
+                                [ ( "name", Code.string name )
+                                , ( "icon", "Svg.init \"\" []" )
+                                ]
+                            , QuestionBox.character character
+                            )
+                        )
+                    )
+                |> Control.choice
             )
 
 
