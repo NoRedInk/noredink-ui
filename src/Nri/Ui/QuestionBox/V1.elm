@@ -5,7 +5,6 @@ module Nri.Ui.QuestionBox.V1 exposing
     , AnchoredBoxMeasurementState
     , initAnchoredBoxState, updateAnchoredBoxState
     , Measurements, decodeMeasurements
-    , Element
     )
 
 {-|
@@ -18,7 +17,6 @@ module Nri.Ui.QuestionBox.V1 exposing
 @docs AnchoredBoxMeasurementState
 @docs initAnchoredBoxState, updateAnchoredBoxState
 @docs Measurements, decodeMeasurements
-@docs Element
 
 -}
 
