@@ -127,7 +127,7 @@ viewExamplesTable state =
         , Table.custom
             { header = text "Example"
             , view = .example
-            , width = Css.pct 75
+            , width = Css.pct 50
             , cellStyles = always [ Css.textAlign Css.center ]
             , sort = Nothing
             }
@@ -153,9 +153,10 @@ viewExamplesTable state =
 Tessa does not know when it's appropriate to use this type of QuestionBox -- sorry!
 """
           , example =
-                div []
-                    [ QuestionBox.view
-                        [ QuestionBox.anchoredTo [ viewHighlighterExample ] state.viewAnchoredExampleMeasurements
+                div [ css [ Css.position Css.relative ] ]
+                    [ viewHighlighterExample
+                    , QuestionBox.view
+                        [ QuestionBox.anchoredTo state.viewAnchoredExampleMeasurements
                         , QuestionBox.id anchoredExampleId
                         , QuestionBox.markdown "Not quite. Let’s back up a bit."
                         , QuestionBox.actions [ { label = "Show me", onClick = NoOp } ]
@@ -334,12 +335,17 @@ initAttributes =
         |> ControlExtra.optionalListItem "type"
             (CommonControls.choice moduleName
                 [ ( "pointingTo []", QuestionBox.pointingTo [ anchor ] )
-                , ( "anchoredTo [] QuestionBox.initAnchoredBoxMeasurements"
-                  , QuestionBox.anchoredTo [ anchor ] QuestionBox.initAnchoredBoxMeasurements
+                , ( "anchoredTo QuestionBox.initAnchoredBoxMeasurements"
+                  , QuestionBox.anchoredTo QuestionBox.initAnchoredBoxMeasurements
                   )
                 , ( "standalone", QuestionBox.standalone )
                 ]
             )
+        |> CommonControls.css_ "containerCss"
+            ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
+            , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
+            )
+            { moduleName = moduleName, use = QuestionBox.containerCss }
 
 
 anchor : Html msg

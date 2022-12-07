@@ -2,6 +2,7 @@ module Nri.Ui.QuestionBox.V1 exposing
     ( view, Attribute
     , id, markdown, actions, character
     , standalone, pointingTo, anchoredTo
+    , containerCss
     , AnchoredBoxMeasurements, initAnchoredBoxMeasurements, decodeAnchoredBoxMeasurements
     )
 
@@ -11,6 +12,7 @@ module Nri.Ui.QuestionBox.V1 exposing
 
 @docs id, markdown, actions, character
 @docs standalone, pointingTo, anchoredTo
+@docs containerCss
 
 
 ## Anchored box measurements
@@ -47,6 +49,7 @@ type alias Config msg =
     , actions : List { label : String, onClick : msg }
     , type_ : QuestionBoxType msg
     , character : Maybe { name : String, icon : Svg }
+    , containerCss : List Css.Style
     }
 
 
@@ -57,6 +60,7 @@ defaultConfig =
     , actions = []
     , type_ = Standalone
     , character = Nothing
+    , containerCss = []
     }
 
 
@@ -84,6 +88,12 @@ character details =
     Attribute (\config -> { config | character = Just details })
 
 
+{-| -}
+containerCss : List Css.Style -> Attribute msg
+containerCss styles =
+    Attribute (\config -> { config | containerCss = config.containerCss ++ styles })
+
+
 setType : QuestionBoxType msg -> Attribute msg
 setType type_ =
     Attribute (\config -> { config | type_ = type_ })
@@ -92,7 +102,7 @@ setType type_ =
 type QuestionBoxType msg
     = Standalone
     | PointingTo (List (Html msg))
-    | AnchoredTo (List (Html msg)) AnchoredBoxMeasurements
+    | AnchoredTo AnchoredBoxMeasurements
 
 
 {-| This is the default type of question box. It doesn't have a programmatic or direct visual relationship to any piece of content.
@@ -117,9 +127,9 @@ pointingTo =
 Tessa does not know when it's appropriate to use this type of QuestionBox -- sorry!
 
 -}
-anchoredTo : List (Html msg) -> AnchoredBoxMeasurements -> Attribute msg
-anchoredTo content measurements =
-    setType (AnchoredTo content measurements)
+anchoredTo : AnchoredBoxMeasurements -> Attribute msg
+anchoredTo measurements =
+    setType (AnchoredTo measurements)
 
 
 {-| -}
@@ -319,8 +329,8 @@ view attributes =
         Standalone ->
             viewStandalone config
 
-        AnchoredTo content measurements ->
-            viewAnchored config measurements content
+        AnchoredTo measurements ->
+            viewAnchored config measurements
 
         PointingTo content ->
             viewPointingTo config content
@@ -331,7 +341,7 @@ viewStandalone : Config msg -> Html msg
 viewStandalone config =
     div
         [ AttributesExtra.maybe Attributes.id config.id
-        , css [ Css.zIndex (Css.int 10), Css.minWidth (Css.px 300) ]
+        , css config.containerCss
         , nriDescription "standalone-balloon-container"
         ]
         [ viewBalloon config
@@ -341,8 +351,8 @@ viewStandalone config =
 
 
 {-| -}
-viewAnchored : Config msg -> AnchoredBoxMeasurements -> List (Html msg) -> Html msg
-viewAnchored config state content =
+viewAnchored : Config msg -> AnchoredBoxMeasurements -> Html msg
+viewAnchored config state =
     let
         offset_ =
             (case state of
@@ -355,26 +365,24 @@ viewAnchored config state content =
                 -- Hack to remove left padding, ideally this would come from a variable
                 - 20
     in
-    div [ nriDescription "anchored-container " ]
-        [ div [] content
-        , div
-            [ css
-                [ Css.zIndex (Css.int 10)
-                , Css.display Css.inlineBlock
-                , case state of
-                    Measuring ->
-                        Css.visibility Css.hidden
+    div
+        [ nriDescription "anchored-container"
+        , css
+            [ Css.display Css.inlineBlock
+            , case state of
+                Measuring ->
+                    Css.visibility Css.hidden
 
-                    WithOffset _ ->
-                        Css.visibility Css.visible
-                , Css.position Css.relative
-                , Css.left (Css.px offset_)
-                ]
-            , AttributesExtra.maybe Attributes.id config.id
+                WithOffset _ ->
+                    Css.visibility Css.visible
+            , Css.position Css.relative
+            , Css.left (Css.px offset_)
+            , Css.batch config.containerCss
             ]
-            [ viewBalloon config
-                [ Balloon.nriDescription "anchored-balloon"
-                ]
+        , AttributesExtra.maybe Attributes.id config.id
+        ]
+        [ viewBalloon config
+            [ Balloon.nriDescription "anchored-balloon"
             ]
         ]
 
@@ -383,7 +391,7 @@ viewAnchored config state content =
 viewPointingTo : Config msg -> List (Html msg) -> Html msg
 viewPointingTo config content =
     span
-        [ css [ Css.position Css.relative ]
+        [ css (Css.position Css.relative :: config.containerCss)
         , nriDescription "pointing-to-container"
         ]
         (List.append
@@ -395,7 +403,6 @@ viewPointingTo config content =
                     , Css.top (Css.pct 100)
                     , Css.left (Css.pct 50)
                     , Css.transform (Css.translateX (Css.pct -50))
-                    , Css.zIndex (Css.int 10)
                     , Css.minWidth (Css.px 300)
                     , Css.textAlign Css.center
                     ]
