@@ -113,56 +113,55 @@ viewExamplesTable state =
             , sort = Nothing
             }
         ]
-        [ { pattern = "QuestionBox.viewStandalone"
+        [ { pattern = "QuestionBox.standalone"
           , description = "???"
           , example =
                 div [ css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ] ]
-                    [ QuestionBox.viewStandalone
-                        { id = "question-box-example-fake-standalone-id-string"
-                        , markdown = "Which words tell you **when** the party is?"
-                        , actions =
+                    [ QuestionBox.view
+                        [ QuestionBox.standalone
+                        , QuestionBox.markdown "Which words tell you **when** the party is?"
+                        , QuestionBox.actions
                             [ { label = "is having", onClick = NoOp }
                             , { label = "after the football game", onClick = NoOp }
                             ]
-                        }
+                        ]
                     ]
           }
-        , { pattern = "QuestionBox.viewAnchored"
+        , { pattern = "QuestionBox.anchoredTo"
           , description = "???"
           , example =
                 div []
-                    [ QuestionBox.viewAnchored
-                        { id = anchoredExampleId
-                        , markdown = "Not quite. Let’s back up a bit."
-                        , actions = [ { label = "Show me", onClick = NoOp } ]
-                        }
-                        state.viewAnchoredExampleMeasurements
-                        [ viewHighlighterExample ]
+                    [ QuestionBox.view
+                        [ QuestionBox.anchoredTo [ viewHighlighterExample ] state.viewAnchoredExampleMeasurements
+                        , QuestionBox.id anchoredExampleId
+                        , QuestionBox.markdown "Not quite. Let’s back up a bit."
+                        , QuestionBox.actions [ { label = "Show me", onClick = NoOp } ]
+                        ]
                     , Button.button "Measure & render"
                         [ Button.onClick GetAnchoredExampleMeasurements
                         , Button.css [ Css.marginBottom Spacing.verticalSpacerPx ]
                         ]
                     ]
           }
-        , { pattern = "QuestionBox.viewPointingTo"
+        , { pattern = "QuestionBox.pointingTo"
           , description = "???"
           , example =
                 [ Block.view [ Block.plaintext "Spongebob has a beautiful plant " ]
-                , [ QuestionBox.viewPointingTo
-                        (Block.view
-                            [ Block.plaintext "above his TV"
-                            , Block.label "where"
-                            , Block.yellow
-                            ]
-                        )
-                        { id = "view-pointing-to"
-                        , markdown = "Which word is the preposition?"
-                        , actions =
+                , [ QuestionBox.view
+                        [ QuestionBox.pointingTo
+                            (Block.view
+                                [ Block.plaintext "above his TV"
+                                , Block.label "where"
+                                , Block.yellow
+                                ]
+                            )
+                        , QuestionBox.markdown "Which word is the preposition?"
+                        , QuestionBox.actions
                             [ { label = "above", onClick = NoOp }
                             , { label = "his", onClick = NoOp }
                             , { label = "TV", onClick = NoOp }
                             ]
-                        }
+                        ]
                   ]
                 , Block.view [ Block.plaintext "." ]
                 ]

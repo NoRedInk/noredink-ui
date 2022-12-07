@@ -1,24 +1,24 @@
 module Nri.Ui.QuestionBox.V1 exposing
-    ( QuestionBox
-    , viewAnchored, AnchoredBoxMeasurementState
+    ( view, Attribute
+    , id, markdown, actions
+    , standalone, pointingTo, anchoredTo
+    , AnchoredBoxMeasurementState
     , initAnchoredBoxState, updateAnchoredBoxState
     , Measurements, decodeMeasurements
     , Element
-    , viewPointingTo, viewStandalone
     )
 
 {-|
 
-@docs QuestionBox
+@docs view, Attribute
 
-@docs viewAnchored, AnchoredBoxMeasurementState
+@docs id, markdown, actions
+@docs standalone, pointingTo, anchoredTo
+
+@docs AnchoredBoxMeasurementState
 @docs initAnchoredBoxState, updateAnchoredBoxState
 @docs Measurements, decodeMeasurements
 @docs Element
-
----
-
-@docs viewPointingTo, viewStandalone
 
 -}
 
@@ -68,7 +68,7 @@ id id_ =
 {-| -}
 markdown : String -> Attribute msg
 markdown content =
-    Attribute (\config -> { config | id = Just content })
+    Attribute (\config -> { config | markdown = Just content })
 
 
 {-| -}
@@ -301,6 +301,29 @@ alignTarget { anchors, container } =
         |> Maybe.withDefault ( 0, 0 )
         -- get the midpoint between the start and end of the highlighted region
         |> (\( highlightStart, highlightEnd ) -> (highlightStart + highlightEnd) / 2 - container.x)
+
+
+view : List (Attribute msg) -> Html msg
+view attributes =
+    let
+        config =
+            List.foldl (\(Attribute f) a -> f a) defaultConfig attributes
+
+        questionBox =
+            { id = Maybe.withDefault "question-box" config.id
+            , markdown = Maybe.withDefault "" config.markdown
+            , actions = config.actions
+            }
+    in
+    case config.type_ of
+        Standalone ->
+            viewStandalone questionBox
+
+        AnchoredTo content measurements ->
+            viewAnchored questionBox measurements content
+
+        PointingTo content ->
+            viewPointingTo content questionBox
 
 
 {-| -}
