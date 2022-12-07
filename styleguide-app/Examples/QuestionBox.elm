@@ -281,11 +281,22 @@ initAttributes =
         |> ControlExtra.listItem "actions"
             (Control.map
                 (\i ->
-                    ( Code.fromModule moduleName "actions " ++ "[TODO]"
-                    , QuestionBox.actions
-                        (List.map (\i_ -> { label = "Button " ++ String.fromInt i_, onClick = NoOp })
-                            (List.range 1 i)
-                        )
+                    let
+                        ( code, actions ) =
+                            List.range 1 i
+                                |> List.map
+                                    (\i_ ->
+                                        ( Code.record
+                                            [ ( "label", Code.string ("Button " ++ String.fromInt i_) )
+                                            , ( "onClick", "NoOp" )
+                                            ]
+                                        , { label = "Button " ++ String.fromInt i_, onClick = NoOp }
+                                        )
+                                    )
+                                |> List.unzip
+                    in
+                    ( Code.fromModule moduleName "actions " ++ Code.list code
+                    , QuestionBox.actions actions
                     )
                 )
                 (ControlExtra.int 2)
