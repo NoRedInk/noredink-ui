@@ -8,6 +8,7 @@ port module Examples.QuestionBox exposing (Msg, State, example)
 
 import Category exposing (Category(..))
 import Code
+import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -28,7 +29,7 @@ import Nri.Ui.Highlighter.V1 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.QuestionBox.V1 as QuestionBox
 import Nri.Ui.Spacing.V1 as Spacing
-import Nri.Ui.Svg.V1
+import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V6 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Svg.Styled
@@ -88,7 +89,8 @@ view ellieLinkConfig state =
         [ Heading.plaintext "Interactive example"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
-    , QuestionBox.view (List.map Tuple.second attributes)
+    , div [ css [ Css.displayFlex, Css.justifyContent Css.center ] ]
+        [ QuestionBox.view (List.map Tuple.second attributes) ]
     , Heading.h2
         [ Heading.plaintext "Non-interactive examples"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
@@ -183,9 +185,9 @@ viewExamplesTable state =
         ]
 
 
-pandaIcon : Nri.Ui.Svg.V1.Svg
+pandaIcon : Svg.Svg
 pandaIcon =
-    Nri.Ui.Svg.V1.init "0 0 10 10"
+    Svg.init "0 0 10 10"
         [ Svg.Styled.image
             [ Svg.Styled.Attributes.xlinkHref "https://ucf018b22d191439face31e68b6b.previews.dropboxusercontent.com/p/thumb/ABtCu0ijqrgkNHZS6mWw4c6YQwA-qVtF_W5Gxy8wMGJujaEqn2LcA95f0Si7mwoCj30tlZIIHJhbxe4lStQ8tsMDe9gkg96lbSFItuMbfBF_hmOXunQEw8ns1Q9YwaW3FIjpUWY24K7TfqooigX6VZcIE0MMI1tttLB0N0sPssIFJsJ9vm_MZ2QfHQbdMICQWNxCEOBrdbHfrMyd3TW0RrClfSWAjZWLUArn6ZQVPbAfORss-uJINVI2nI5vxNqIpeIPVG9Fh0xR6hTWcgZUzaMd9HfRZeNI4YR3LWFmRGzg9CHQHJwwv9ixK5EHbbEpDot_W_VZHnJdMsSVFdZ0yCK1M8FSVnpKVQNuRQRxBl8xoH43xFqxohpqcPWVc55lE_MNlA5isTV2lKJ1L3nby1J7vrXrGZvHvgjEYlC-EK1UyA/p.png"
             , Svg.Styled.Attributes.x "0"
@@ -287,7 +289,7 @@ initAttributes =
         |> ControlExtra.optionalListItem "character"
             ([ { name = "Panda", icon = pandaIcon }
              , { name = "Sapling", icon = UiIcon.sapling }
-             , { name = "Gumby", icon = Nri.Ui.Svg.V1.withColor Colors.mustard UiIcon.stretch }
+             , { name = "Gumby", icon = Svg.withColor Colors.mustard UiIcon.stretch }
              ]
                 |> List.map
                     (\({ name } as character) ->
@@ -303,12 +305,25 @@ initAttributes =
                     )
                 |> Control.choice
             )
+        |> ControlExtra.optionalListItem "type"
+            (CommonControls.choice moduleName
+                [ ( "pointingTo []"
+                  , QuestionBox.pointingTo
+                        [ UiIcon.sortArrowDown
+                            |> Svg.withLabel "Anchor"
+                            |> Svg.withWidth (Css.px 50)
+                            |> Svg.withHeight (Css.px 50)
+                            |> Svg.toHtml
+                        ]
+                  )
+                , ( "standalone", QuestionBox.standalone )
+                ]
+            )
 
 
 initialMarkdown : String
 initialMarkdown =
-    """
-Let’s remember the rules:
+    """Let’s remember the rules:
 
 - Always capitalize the first word of a title
 - Capitalize all words except small words like “and,” “of” and “an.”
