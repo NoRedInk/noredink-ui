@@ -136,7 +136,7 @@ viewMarked tagStyle markedWith segments =
             , Css.Global.children
                 [ Css.Global.selector ":last-child"
                     (Css.after
-                        [ Css.property "content" ("\" [end " ++ (Maybe.map (\name -> name) markedWith.name |> Maybe.withDefault "highlight") ++ "] \"")
+                        [ Css.property "content" ("\" end " ++ (Maybe.map (\name -> name) markedWith.name |> Maybe.withDefault "highlight") ++ " \"")
                         , invisibleStyle
                         ]
                         :: markedWith.endStyles
@@ -175,14 +175,14 @@ tagBeforeContent markedWith =
         Just name ->
             Css.before
                 [ MediaQuery.notHighContrastMode
-                    [ Css.property "content" ("\" [start " ++ name ++ " highlight] \"")
+                    [ Css.property "content" ("\" start " ++ name ++ " highlight \"")
                     , invisibleStyle
                     ]
                 ]
 
         Nothing ->
             Css.before
-                [ Css.property "content" "\" [start highlight] \""
+                [ Css.property "content" "\" start highlight \""
                 , invisibleStyle
                 ]
 
