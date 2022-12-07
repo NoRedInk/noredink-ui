@@ -1,6 +1,6 @@
 module Nri.Ui.QuestionBox.V1 exposing
     ( view, Attribute
-    , id, markdown, actions
+    , id, markdown, actions, character
     , standalone, pointingTo, anchoredTo
     , AnchoredBoxMeasurementState
     , initAnchoredBoxState, updateAnchoredBoxState
@@ -12,7 +12,7 @@ module Nri.Ui.QuestionBox.V1 exposing
 
 @docs view, Attribute
 
-@docs id, markdown, actions
+@docs id, markdown, actions, character
 @docs standalone, pointingTo, anchoredTo
 
 @docs AnchoredBoxMeasurementState
@@ -34,6 +34,7 @@ import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Util exposing (safeIdString)
 
 
@@ -47,6 +48,7 @@ type alias Config msg =
     , markdown : Maybe String
     , actions : List { label : String, onClick : msg }
     , type_ : QuestionBoxType msg
+    , character : Maybe { name : String, icon : Svg }
     }
 
 
@@ -56,6 +58,7 @@ defaultConfig =
     , markdown = Nothing
     , actions = []
     , type_ = Standalone
+    , character = Nothing
     }
 
 
@@ -75,6 +78,12 @@ markdown content =
 actions : List { label : String, onClick : msg } -> Attribute msg
 actions actions_ =
     Attribute (\config -> { config | actions = actions_ })
+
+
+{-| -}
+character : { name : String, icon : Svg } -> Attribute msg
+character details =
+    Attribute (\config -> { config | character = Just details })
 
 
 setType : QuestionBoxType msg -> Attribute msg
@@ -396,13 +405,13 @@ viewPointingTo config content =
 
 
 viewBalloon : Config msg -> List (Balloon.Attribute msg) -> Html msg
-viewBalloon questionBox attributes =
+viewBalloon config attributes =
     Balloon.view
         ([ Balloon.html
             (List.filterMap identity
-                [ Just viewCharacter
-                , Maybe.map viewGuidance questionBox.markdown
-                , viewActions questionBox.actions
+                [ Maybe.map viewCharacter config.character
+                , Maybe.map (viewGuidance config.character) config.markdown
+                , viewActions config.actions
                 ]
             )
          , Balloon.navy
@@ -412,8 +421,8 @@ viewBalloon questionBox attributes =
         )
 
 
-viewGuidance : String -> Html msg
-viewGuidance markdown_ =
+viewGuidance : Maybe character -> String -> Html msg
+viewGuidance withCharacter markdown_ =
     Balloon.view
         [ Balloon.nriDescription "character-guidance"
         , Balloon.markdown markdown_
@@ -436,16 +445,18 @@ viewGuidance markdown_ =
             ]
 
 
-viewCharacter : Html msg
-viewCharacter =
-    img
-        [ Attributes.width 70
-        , Attributes.height 70
-        , Attributes.css [ Css.position Css.absolute, Css.top (Css.px 2), Css.right (Css.px -38) ]
-        , src "https://ucf018b22d191439face31e68b6b.previews.dropboxusercontent.com/p/thumb/ABtCu0ijqrgkNHZS6mWw4c6YQwA-qVtF_W5Gxy8wMGJujaEqn2LcA95f0Si7mwoCj30tlZIIHJhbxe4lStQ8tsMDe9gkg96lbSFItuMbfBF_hmOXunQEw8ns1Q9YwaW3FIjpUWY24K7TfqooigX6VZcIE0MMI1tttLB0N0sPssIFJsJ9vm_MZ2QfHQbdMICQWNxCEOBrdbHfrMyd3TW0RrClfSWAjZWLUArn6ZQVPbAfORss-uJINVI2nI5vxNqIpeIPVG9Fh0xR6hTWcgZUzaMd9HfRZeNI4YR3LWFmRGzg9CHQHJwwv9ixK5EHbbEpDot_W_VZHnJdMsSVFdZ0yCK1M8FSVnpKVQNuRQRxBl8xoH43xFqxohpqcPWVc55lE_MNlA5isTV2lKJ1L3nby1J7vrXrGZvHvgjEYlC-EK1UyA/p.png"
-        , alt "says Panda"
-        ]
-        []
+viewCharacter : { name : String, icon : Svg } -> Html msg
+viewCharacter { name, icon } =
+    icon
+        |> Svg.withLabel (name ++ " says, ")
+        |> Svg.withWidth (Css.px 70)
+        |> Svg.withHeight (Css.px 70)
+        |> Svg.withCss
+            [ Css.position Css.absolute
+            , Css.top (Css.px 2)
+            , Css.right (Css.px -38)
+            ]
+        |> Svg.toHtml
 
 
 viewActions : List { label : String, onClick : msg } -> Maybe (Html msg)
