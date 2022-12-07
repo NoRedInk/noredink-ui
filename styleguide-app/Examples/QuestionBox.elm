@@ -290,7 +290,7 @@ initAttributes =
                 )
                 (ControlExtra.int 2)
             )
-        |> ControlExtra.optionalListItem "character"
+        |> ControlExtra.optionalListItemDefaultChecked "character"
             ([ { name = "Panda", icon = pandaIcon }
              , { name = "Sapling", icon = UiIcon.sapling }
              , { name = "Gumby", icon = Svg.withColor Colors.mustard UiIcon.stretch }

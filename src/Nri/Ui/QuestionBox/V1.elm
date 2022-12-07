@@ -413,7 +413,7 @@ viewBalloon config attributes =
                 , viewActions config.actions
                 ]
             )
-         , Balloon.navy
+         , Balloon.customTheme { backgroundColor = Colors.glacier, color = Colors.glacier }
          , Balloon.css [ Css.padding (Css.px 0) ]
          ]
             ++ attributes
@@ -453,8 +453,7 @@ viewGuidance withCharacter markdown_ =
             Text.mediumBody
                 [ Text.markdown markdown_
                 , Text.css
-                    [ Css.color Colors.white
-                    , Css.padding (Css.px 10)
+                    [ Css.padding (Css.px 10)
                     , Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ]
                     ]
                 ]
@@ -479,10 +478,11 @@ viewActions actions_ =
     let
         containerStyles =
             [ Css.backgroundColor Colors.frost
+            , Css.border3 (Css.px 1) Css.solid Colors.glacier
             , Css.borderBottomRightRadius (Css.px 8)
             , Css.borderBottomLeftRadius (Css.px 8)
             , Css.margin Css.zero
-            , Css.padding2 (Css.px 10) (Css.px 20)
+            , Css.padding2 (Css.px 10) (Css.px 40)
             , Css.listStyle Css.none
             , Css.displayFlex
             , Css.property "gap" "10px"
@@ -496,10 +496,7 @@ viewActions actions_ =
         { label, onClick } :: [] ->
             div [ css (Css.alignItems Css.center :: containerStyles) ]
                 [ Button.button label
-                    [ Button.secondary
-                    , Button.onClick onClick
-                    , Button.unboundedWidth
-                    ]
+                    [ Button.onClick onClick, Button.unboundedWidth ]
                 ]
                 |> Just
 
@@ -509,8 +506,7 @@ viewActions actions_ =
                     (\{ label, onClick } ->
                         li []
                             [ Button.button label
-                                [ Button.secondary
-                                , Button.onClick onClick
+                                [ Button.onClick onClick
                                 , Button.fillContainerWidth
                                 ]
                             ]
