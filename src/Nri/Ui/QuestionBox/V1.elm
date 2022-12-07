@@ -36,11 +36,13 @@ import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
+import Nri.Ui.Util exposing (safeIdString)
 
 
 {-| -}
 type alias QuestionBox msg =
-    { markdown : String
+    { id : String
+    , markdown : String
     , actions : List { label : String, onClick : msg }
     }
 
@@ -48,7 +50,7 @@ type alias QuestionBox msg =
 {-| -}
 containerId : String -> String
 containerId id =
-    "Nri-Scaffolding-QuestionBox-" ++ id
+    "Nri-Scaffolding-QuestionBox-" ++ safeIdString id
 
 
 {-| -}
@@ -230,10 +232,10 @@ alignTarget { anchors, container } =
 
 
 {-| -}
-viewStandalone : QuestionBox msg -> String -> Html msg
-viewStandalone questionBox idString =
+viewStandalone : QuestionBox msg -> Html msg
+viewStandalone questionBox =
     div
-        [ id (containerId idString)
+        [ id (containerId questionBox.id)
         , css [ Css.zIndex (Css.int 10), Css.minWidth (Css.px 300) ]
         , nriDescription "standalone-balloon-container"
         ]
@@ -244,8 +246,8 @@ viewStandalone questionBox idString =
 
 
 {-| -}
-viewAnchored : QuestionBox msg -> String -> AnchoredBoxMeasurementState -> List (Html msg) -> Html msg
-viewAnchored questionBox idString state content =
+viewAnchored : QuestionBox msg -> AnchoredBoxMeasurementState -> List (Html msg) -> Html msg
+viewAnchored questionBox state content =
     let
         offset_ =
             (case state of
@@ -273,7 +275,7 @@ viewAnchored questionBox idString state content =
                 , Css.position Css.relative
                 , Css.left (Css.px offset_)
                 ]
-            , id (containerId idString)
+            , id (containerId questionBox.id)
             ]
             [ viewBalloon questionBox
                 [ Balloon.nriDescription "anchored-balloon"

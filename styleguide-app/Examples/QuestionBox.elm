@@ -118,13 +118,13 @@ viewExamplesTable state =
           , example =
                 div [ css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ] ]
                     [ QuestionBox.viewStandalone
-                        { markdown = "Which words tell you **when** the party is?"
+                        { id = "fake-standalone-id-string"
+                        , markdown = "Which words tell you **when** the party is?"
                         , actions =
                             [ { label = "is having", onClick = NoOp }
                             , { label = "after the football game", onClick = NoOp }
                             ]
                         }
-                        "fake-standalone-id-string"
                     ]
           }
         , { pattern = "QuestionBox.viewAnchored"
@@ -132,10 +132,10 @@ viewExamplesTable state =
           , example =
                 div []
                     [ QuestionBox.viewAnchored
-                        { markdown = "Not quite. Let’s back up a bit."
+                        { id = anchoredExampleId
+                        , markdown = "Not quite. Let’s back up a bit."
                         , actions = [ { label = "Show me", onClick = NoOp } ]
                         }
-                        anchoredExampleId
                         state.viewAnchoredExampleMeasurements
                         [ viewHighlighterExample ]
                     , Button.button "Measure & render"
@@ -155,7 +155,8 @@ viewExamplesTable state =
                             , Block.yellow
                             ]
                         )
-                        { markdown = "Which word is the preposition?"
+                        { id = "view-pointing-to"
+                        , markdown = "Which word is the preposition?"
                         , actions =
                             [ { label = "above", onClick = NoOp }
                             , { label = "his", onClick = NoOp }
