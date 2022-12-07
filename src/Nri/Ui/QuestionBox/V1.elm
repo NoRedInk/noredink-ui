@@ -429,6 +429,7 @@ viewGuidance withCharacter markdown_ =
                 [ Balloon.nriDescription "character-guidance"
                 , Balloon.markdown markdown_
                 , Balloon.onLeft
+                , Balloon.alignArrowEnd
                 , Balloon.white
                 , Balloon.css
                     [ Css.borderRadius (Css.px 16)
