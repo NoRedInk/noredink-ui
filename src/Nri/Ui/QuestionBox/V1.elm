@@ -356,7 +356,7 @@ viewCharacter =
         [ Attributes.width 70
         , Attributes.height 70
         , Attributes.css [ Css.position Css.absolute, Css.top (Css.px 2), Css.right (Css.px -38) ]
-        , src "https://ucf018b22d191439face31e68b6b.previews.dropboxusercontent.com/p/thumb/ABuZlp9el5klCRwjIUPww_gh0lHoH4Xdg4Vew2oLAOjBo3URksR0Az38JhQjXXHi39rlgYYkuOqa8g4g76t-7pbzRblZofw9DCiMOgins89gqXsMvEYLmTkQWl4N3JfjghyRkdbkVUz3ACNaF58lUqC9bprqanC0_xSPtLIEevazUzoXnFgs_c6aWbRM294xs0dpYg6UWPmFg01_OFYNO0urYViMRbjBppq30UOsd-LKsJjeTyBDflDmuv6hOtKCIE0Z_FxT-ntt17SdSUGXyOaiymA15SeaJtFFhq-8xPHG9Y3OPRm4m86VtcI2UxuQhJq-89ruP_-sD4s5E0aAeYt7FTsBlzusQ-9eJMdQ8mY1VCv9XeNeUJ4_oBqAqeOUhppNLoiACKPtJqA0qjAmSGE2IN_sJp8ifl1vs-pkCFVkFg/p.png"
+        , src "https://ucf018b22d191439face31e68b6b.previews.dropboxusercontent.com/p/thumb/ABtCu0ijqrgkNHZS6mWw4c6YQwA-qVtF_W5Gxy8wMGJujaEqn2LcA95f0Si7mwoCj30tlZIIHJhbxe4lStQ8tsMDe9gkg96lbSFItuMbfBF_hmOXunQEw8ns1Q9YwaW3FIjpUWY24K7TfqooigX6VZcIE0MMI1tttLB0N0sPssIFJsJ9vm_MZ2QfHQbdMICQWNxCEOBrdbHfrMyd3TW0RrClfSWAjZWLUArn6ZQVPbAfORss-uJINVI2nI5vxNqIpeIPVG9Fh0xR6hTWcgZUzaMd9HfRZeNI4YR3LWFmRGzg9CHQHJwwv9ixK5EHbbEpDot_W_VZHnJdMsSVFdZ0yCK1M8FSVnpKVQNuRQRxBl8xoH43xFqxohpqcPWVc55lE_MNlA5isTV2lKJ1L3nby1J7vrXrGZvHvgjEYlC-EK1UyA/p.png"
         , alt "says Panda"
         ]
         []
