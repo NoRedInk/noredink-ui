@@ -294,7 +294,8 @@ viewPointingTo content questionBox =
         (List.append
             content
             [ div
-                [ css
+                [ id (containerId questionBox.id)
+                , css
                     [ Css.position Css.absolute
                     , Css.top (Css.pct 100)
                     , Css.left (Css.pct 50)
