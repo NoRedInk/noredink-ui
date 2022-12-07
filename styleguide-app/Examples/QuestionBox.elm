@@ -253,6 +253,15 @@ type alias State =
 initAttributes : Control (List ( String, QuestionBox.Attribute Msg ))
 initAttributes =
     ControlExtra.list
+        |> ControlExtra.listItem "id"
+            (Control.map
+                (\str ->
+                    ( Code.fromModule moduleName "id " ++ Code.string str
+                    , QuestionBox.id str
+                    )
+                )
+                (Control.string "interactive-example-question-box")
+            )
         |> ControlExtra.listItem "markdown"
             (Control.map
                 (\str ->
@@ -261,6 +270,18 @@ initAttributes =
                     )
                 )
                 (Control.stringTextarea initialMarkdown)
+            )
+        |> ControlExtra.listItem "actions"
+            (Control.map
+                (\i ->
+                    ( Code.fromModule moduleName "actions " ++ "[TODO]"
+                    , QuestionBox.actions
+                        (List.map (\i_ -> { label = "Button " ++ String.fromInt i_, onClick = NoOp })
+                            (List.range 1 i)
+                        )
+                    )
+                )
+                (ControlExtra.int 2)
             )
 
 
