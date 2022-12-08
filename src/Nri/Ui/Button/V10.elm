@@ -800,6 +800,16 @@ viewLabel config =
     let
         { fontAndIconSize } =
             sizeConfig config.size
+
+        viewIcon spacing svg =
+            svg
+                |> NriSvg.withWidth fontAndIconSize
+                |> NriSvg.withHeight fontAndIconSize
+                |> NriSvg.withCss
+                    [ Css.flexShrink Css.zero
+                    , spacing (Css.px 5)
+                    ]
+                |> NriSvg.toHtml
     in
     Nri.Ui.styled Html.span
         "button-label-span"
@@ -810,21 +820,22 @@ viewLabel config =
         , Css.alignItems Css.center
         ]
         []
-        (case config.icon of
-            Nothing ->
+        (case ( config.icon, config.rightIcon ) of
+            ( Nothing, Nothing ) ->
                 renderMarkdown config.label
 
-            Just svg ->
-                (svg
-                    |> NriSvg.withWidth fontAndIconSize
-                    |> NriSvg.withHeight fontAndIconSize
-                    |> NriSvg.withCss
-                        [ Css.flexShrink Css.zero
-                        , Css.marginRight (Css.px 5)
-                        ]
-                    |> NriSvg.toHtml
-                )
+            ( Just svg, Nothing ) ->
+                viewIcon Css.marginRight svg
                     :: renderMarkdown config.label
+
+            ( Nothing, Just rightIcon_ ) ->
+                renderMarkdown config.label
+                    ++ [ viewIcon Css.marginLeft rightIcon_ ]
+
+            ( Just leftIcon, Just rightIcon_ ) ->
+                viewIcon Css.marginRight leftIcon
+                    :: renderMarkdown config.label
+                    ++ [ viewIcon Css.marginLeft rightIcon_ ]
         )
 
 
