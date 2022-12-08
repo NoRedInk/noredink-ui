@@ -1305,7 +1305,7 @@ topHoverArea =
     [ Css.bottom (Css.pct 100)
     , Css.left Css.zero
     , Css.right Css.zero
-    , Css.height (Css.px (tailSize * 2))
+    , Css.height (Css.px (tailSize + 3))
     ]
 
 
@@ -1314,7 +1314,7 @@ bottomHoverArea =
     [ Css.top (Css.pct 100)
     , Css.left Css.zero
     , Css.right Css.zero
-    , Css.height (Css.px (tailSize * 2))
+    , Css.height (Css.px (tailSize + 3))
     ]
 
 
@@ -1323,7 +1323,7 @@ leftHoverArea =
     [ Css.right (Css.pct 100)
     , Css.top Css.zero
     , Css.bottom Css.zero
-    , Css.width (Css.px (tailSize * 2))
+    , Css.width (Css.px (tailSize + 3))
     ]
 
 
@@ -1332,7 +1332,7 @@ rightHoverArea =
     [ Css.left (Css.pct 100)
     , Css.top Css.zero
     , Css.bottom Css.zero
-    , Css.width (Css.px (tailSize * 2))
+    , Css.width (Css.px (tailSize + 3))
     ]
 
 
