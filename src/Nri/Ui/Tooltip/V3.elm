@@ -1120,7 +1120,6 @@ viewTooltip tooltipId config =
                         [ ExtraAttributes.nriDescription "tooltip-hover-bridge"
                         , Attributes.css
                             [ Css.position Css.absolute
-                            , Css.backgroundColor Colors.green
                             , MediaQuery.withViewport (Just mobileBreakpoint) Nothing <|
                                 hoverAreaForDirection config.direction
                             , MediaQuery.withViewport (Just quizEngineBreakpoint) (Just mobileBreakpoint) <|
