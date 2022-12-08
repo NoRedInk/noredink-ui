@@ -188,8 +188,9 @@ viewExampleTable { label, icon, attributes } =
             List.indexedMap viewExampleRow
                 [ ( "primary", ClickableSvg.primary )
                 , ( "secondary", ClickableSvg.secondary )
-                , ( "danger", ClickableSvg.danger )
                 , ( "tertiary", ClickableSvg.tertiary )
+                , ( "quaternary", ClickableSvg.quaternary )
+                , ( "danger", ClickableSvg.danger )
                 , ( "dangerSecondary", ClickableSvg.dangerSecondary )
                 ]
         , Html.tfoot []

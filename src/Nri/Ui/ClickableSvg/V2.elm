@@ -6,7 +6,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
     , exactSize, exactWidth, exactHeight
     , disabled
     , withBorder
-    , primary, secondary, tertiary, danger, dangerSecondary
+    , primary, secondary, tertiary, quaternary, danger, dangerSecondary
     , custom, nriDescription, testId, id
     , css, notMobileCss, mobileCss, quizEngineMobileCss
     , iconForMobile, iconForQuizEngineMobile, iconForNarrowMobile
@@ -48,7 +48,7 @@ module Nri.Ui.ClickableSvg.V2 exposing
 ## Customization
 
 @docs withBorder
-@docs primary, secondary, tertiary, danger, dangerSecondary
+@docs primary, secondary, tertiary, quaternary, danger, dangerSecondary
 
 @docs custom, nriDescription, testId, id
 
@@ -270,6 +270,7 @@ type Theme
     = Primary
     | Secondary
     | Tertiary
+    | Quaternary
     | Danger
     | DangerSecondary
 
@@ -335,6 +336,17 @@ applyTheme theme =
             , borderHover = Colors.azure
             }
 
+        Quaternary ->
+            { main_ = Colors.gray45
+            , mainHovered = Colors.azure
+            , background = Colors.gray96
+            , backgroundHovered = Colors.glacier
+            , includeBorder = True
+            , borderColor = Colors.gray92
+            , borderBottom = Colors.gray92
+            , borderHover = Colors.azure
+            }
+
         Danger ->
             { main_ = Colors.white
             , mainHovered = Colors.white
@@ -378,6 +390,13 @@ secondary =
 tertiary : Attribute msg
 tertiary =
     set (\attributes -> { attributes | theme = Tertiary })
+
+
+{-| Used to de-emphasize elements when not hovered.
+-}
+quaternary : Attribute msg
+quaternary =
+    set (\attributes -> { attributes | theme = Quaternary })
 
 
 {-| White/transparent icon on a red background.
