@@ -1010,6 +1010,7 @@ hoverBridge { isOpen, direction } =
             [ Css.boxSizing Css.borderBox
             , Css.padding (Css.px tailSize)
             , Css.position Css.absolute
+            , Css.backgroundColor Colors.red
             , Css.batch <|
                 case direction of
                     OnTop ->
