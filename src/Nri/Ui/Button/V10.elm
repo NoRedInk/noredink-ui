@@ -7,8 +7,9 @@ module Nri.Ui.Button.V10 exposing
     , exactWidth, boundedWidth, unboundedWidth, fillContainerWidth
     , primary, secondary, tertiary, danger, premium
     , enabled, unfulfilled, disabled, error, loading, success
-    , icon, custom, nriDescription, testId, id
+    , icon, rightIcon
     , hideIconForMobile, hideIconFor
+    , custom, nriDescription, testId, id
     , css, notMobileCss, mobileCss, quizEngineMobileCss
     , delete
     , toggleButton
@@ -67,14 +68,19 @@ adding a span around the text could potentially lead to regressions.
 @docs enabled, unfulfilled, disabled, error, loading, success
 
 
+## Icons
+
+@docs icon, rightIcon
+@docs hideIconForMobile, hideIconFor
+
+
 ## Customization
 
-@docs icon, custom, nriDescription, testId, id
+@docs custom, nriDescription, testId, id
 
 
 ### CSS
 
-@docs hideIconForMobile, hideIconFor
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss
 
 
@@ -160,6 +166,12 @@ icon icon_ =
     set (\attributes -> { attributes | icon = Just icon_ })
 
 
+{-| -}
+rightIcon : Svg -> Attribute msg
+rightIcon icon_ =
+    set (\attributes -> { attributes | rightIcon = Just icon_ })
+
+
 {-| Use this helper to add custom attributes.
 
 Do NOT use this helper to add css styles, as they may not be applied the way
@@ -195,13 +207,15 @@ id id_ =
     custom [ Attributes.id id_ ]
 
 
-{-| -}
+{-| Hide the left-side icon for the mobile breakpoint.
+-}
 hideIconForMobile : Attribute msg
 hideIconForMobile =
     hideIconFor MediaQuery.mobile
 
 
-{-| -}
+{-| Hide the left-side icon for an aritrary media query.
+-}
 hideIconFor : MediaQuery -> Attribute msg
 hideIconFor mediaQuery =
     css
@@ -578,6 +592,7 @@ build =
         , label = ""
         , state = Enabled
         , icon = Nothing
+        , rightIcon = Nothing
         , customAttributes = []
         , customStyles = []
         }
@@ -595,6 +610,7 @@ type alias ButtonOrLinkAttributes msg =
     , label : String
     , state : ButtonState
     , icon : Maybe Svg
+    , rightIcon : Maybe Svg
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
     }
@@ -619,7 +635,7 @@ renderButton ((ButtonOrLink config) as button_) =
             :: Attributes.class FocusRing.customClass
             :: config.customAttributes
         )
-        [ viewLabel config.size config.icon config.label ]
+        [ viewLabel config ]
 
 
 renderLink : ButtonOrLink msg -> Html msg
@@ -645,7 +661,7 @@ renderLink ((ButtonOrLink config) as link_) =
             :: attributes
             ++ config.customAttributes
         )
-        [ viewLabel config.size config.icon config.label ]
+        [ viewLabel config ]
 
 
 
@@ -760,7 +776,13 @@ toggleButton config =
         , Attributes.type_ "button"
         , Attributes.class FocusRing.customClass
         ]
-        [ viewLabel Medium Nothing config.label ]
+        [ viewLabel
+            { size = Medium
+            , icon = Nothing
+            , label = config.label
+            , rightIcon = Nothing
+            }
+        ]
 
 
 buttonStyles : ButtonSize -> ButtonWidth -> ColorPalette -> List Style -> Style
@@ -773,11 +795,11 @@ buttonStyles size width colors customStyles =
         ]
 
 
-viewLabel : ButtonSize -> Maybe Svg -> String -> Html msg
-viewLabel size maybeSvg label_ =
+viewLabel : { config | size : ButtonSize, icon : Maybe Svg, label : String, rightIcon : Maybe Svg } -> Html msg
+viewLabel config =
     let
         { fontAndIconSize } =
-            sizeConfig size
+            sizeConfig config.size
     in
     Nri.Ui.styled Html.span
         "button-label-span"
@@ -788,9 +810,9 @@ viewLabel size maybeSvg label_ =
         , Css.alignItems Css.center
         ]
         []
-        (case maybeSvg of
+        (case config.icon of
             Nothing ->
-                renderMarkdown label_
+                renderMarkdown config.label
 
             Just svg ->
                 (svg
@@ -802,7 +824,7 @@ viewLabel size maybeSvg label_ =
                         ]
                     |> NriSvg.toHtml
                 )
-                    :: renderMarkdown label_
+                    :: renderMarkdown config.label
         )
 
 
