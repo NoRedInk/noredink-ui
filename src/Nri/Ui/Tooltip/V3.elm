@@ -77,7 +77,7 @@ These tooltips aim to follow the accessibility recommendations from:
 
 -}
 
-import Accessibility.Styled as Html exposing (Attribute, Html, text)
+import Accessibility.Styled as Html exposing (Attribute, Html)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
@@ -990,62 +990,9 @@ viewTooltip_ { trigger, id } tooltip =
                     ++ buttonEvents
                     ++ tooltip.triggerAttributes
                 )
-            , hoverBridge tooltip
             ]
         , viewTooltip id tooltip
         ]
-
-
-{-| This is a "bridge" for the cursor to move from trigger content to tooltip, so the user can click on links, etc.
--}
-hoverBridge : Tooltip msg -> Html msg
-hoverBridge { isOpen, direction } =
-    let
-        bridgeLength =
-            tailSize + 5
-    in
-    if isOpen then
-        Nri.Ui.styled Html.div
-            "tooltip-hover-bridge"
-            [ Css.boxSizing Css.borderBox
-            , Css.padding (Css.px tailSize)
-            , Css.position Css.absolute
-            , Css.backgroundColor Colors.red
-            , Css.batch <|
-                case direction of
-                    OnTop ->
-                        [ Css.top (Css.px -bridgeLength)
-                        , Css.left Css.zero
-                        , Css.width (Css.pct 100)
-                        , Css.height (Css.px tailSize)
-                        ]
-
-                    OnRight ->
-                        [ Css.right (Css.px -bridgeLength)
-                        , Css.top Css.zero
-                        , Css.width (Css.px tailSize)
-                        , Css.height (Css.pct 100)
-                        ]
-
-                    OnBottom ->
-                        [ Css.bottom (Css.px -bridgeLength)
-                        , Css.left Css.zero
-                        , Css.width (Css.pct 100)
-                        , Css.height (Css.px tailSize)
-                        ]
-
-                    OnLeft ->
-                        [ Css.left (Css.px -bridgeLength)
-                        , Css.top Css.zero
-                        , Css.width (Css.px tailSize)
-                        , Css.height (Css.pct 100)
-                        ]
-            ]
-            []
-            []
-
-    else
-        text ""
 
 
 viewTooltip : String -> Tooltip msg -> Html msg
@@ -1170,8 +1117,10 @@ viewTooltip tooltipId config =
             )
             (config.content
                 ++ [ Html.div
-                        [ Attributes.css
+                        [ ExtraAttributes.nriDescription "tooltip-hover-bridge"
+                        , Attributes.css
                             [ Css.position Css.absolute
+                            , Css.backgroundColor Colors.green
                             , MediaQuery.withViewport (Just mobileBreakpoint) Nothing <|
                                 hoverAreaForDirection config.direction
                             , MediaQuery.withViewport (Just quizEngineBreakpoint) (Just mobileBreakpoint) <|
