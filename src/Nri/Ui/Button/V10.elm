@@ -214,7 +214,7 @@ hideIconForMobile =
     hideIconFor MediaQuery.mobile
 
 
-{-| Hide the left-side icon for an aritrary media query.
+{-| Hide the left-side icon for an arbitrary media query.
 -}
 hideIconFor : MediaQuery -> Attribute msg
 hideIconFor mediaQuery =
