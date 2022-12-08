@@ -218,15 +218,17 @@ hideIconForMobile =
 -}
 hideIconFor : MediaQuery -> Attribute msg
 hideIconFor mediaQuery =
-    css
-        [ Css.Media.withMedia [ mediaQuery ]
-            [ Css.Global.descendants
-                [ Css.Global.selector "[role=img]"
-                    [ Css.display Css.none
-                    ]
-                ]
-            ]
-        ]
+    set
+        (\config ->
+            { config
+                | iconStyles =
+                    List.append config.iconStyles
+                        [ Css.Media.withMedia [ mediaQuery ]
+                            [ Css.display Css.none
+                            ]
+                        ]
+            }
+        )
 
 
 {-| -}
@@ -592,6 +594,7 @@ build =
         , label = ""
         , state = Enabled
         , icon = Nothing
+        , iconStyles = []
         , rightIcon = Nothing
         , customAttributes = []
         , customStyles = []
@@ -610,6 +613,7 @@ type alias ButtonOrLinkAttributes msg =
     , label : String
     , state : ButtonState
     , icon : Maybe Svg
+    , iconStyles : List Style
     , rightIcon : Maybe Svg
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
@@ -779,6 +783,7 @@ toggleButton config =
         [ viewLabel
             { size = Medium
             , icon = Nothing
+            , iconStyles = []
             , label = config.label
             , rightIcon = Nothing
             }
@@ -795,21 +800,36 @@ buttonStyles size width colors customStyles =
         ]
 
 
-viewLabel : { config | size : ButtonSize, icon : Maybe Svg, label : String, rightIcon : Maybe Svg } -> Html msg
+viewLabel :
+    { config
+        | size : ButtonSize
+        , icon : Maybe Svg
+        , iconStyles : List Style
+        , label : String
+        , rightIcon : Maybe Svg
+    }
+    -> Html msg
 viewLabel config =
     let
         { fontAndIconSize } =
             sizeConfig config.size
 
-        viewIcon spacing svg =
+        viewIcon iconStyles svg =
             svg
                 |> NriSvg.withWidth fontAndIconSize
                 |> NriSvg.withHeight fontAndIconSize
-                |> NriSvg.withCss
-                    [ Css.flexShrink Css.zero
-                    , spacing (Css.px 5)
-                    ]
+                |> NriSvg.withCss iconStyles
                 |> NriSvg.toHtml
+
+        viewLeftIcon =
+            viewIcon
+                [ Css.flexShrink Css.zero
+                , Css.marginRight (Css.px 5)
+                , Css.batch config.iconStyles
+                ]
+
+        viewRightIcon =
+            viewIcon [ Css.marginLeft (Css.px 5) ]
     in
     Nri.Ui.styled Html.span
         "button-label-span"
@@ -825,17 +845,16 @@ viewLabel config =
                 renderMarkdown config.label
 
             ( Just svg, Nothing ) ->
-                viewIcon Css.marginRight svg
+                viewLeftIcon svg
                     :: renderMarkdown config.label
 
             ( Nothing, Just rightIcon_ ) ->
-                renderMarkdown config.label
-                    ++ [ viewIcon Css.marginLeft rightIcon_ ]
+                renderMarkdown config.label ++ [ viewRightIcon rightIcon_ ]
 
             ( Just leftIcon, Just rightIcon_ ) ->
-                viewIcon Css.marginRight leftIcon
+                viewLeftIcon leftIcon
                     :: renderMarkdown config.label
-                    ++ [ viewIcon Css.marginLeft rightIcon_ ]
+                    ++ [ viewRightIcon rightIcon_ ]
         )
 
 
