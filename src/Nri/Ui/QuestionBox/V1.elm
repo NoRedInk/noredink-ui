@@ -26,7 +26,7 @@ import Css.Global
 import Dict
 import Dict.Extra
 import Html.Styled exposing (..)
-import Html.Styled.Attributes as Attributes exposing (alt, css, src)
+import Html.Styled.Attributes as Attributes exposing (css)
 import Json.Decode as Decode exposing (Decoder)
 import List.Extra
 import Nri.Ui.Balloon.V2 as Balloon
@@ -35,7 +35,6 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Text.V6 as Text
-import Nri.Ui.Util exposing (safeIdString)
 
 
 {-| -}
