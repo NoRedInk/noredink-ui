@@ -645,12 +645,14 @@ renderIcons config includeBorder =
             else
                 Maybe.withDefault smallSize config.width
 
-        iconWidth =
+        ( iconWidth, rightIconWidth ) =
             if config.rightIcon == Nothing then
-                availableWidth
+                ( availableWidth, 0 )
 
             else
-                (availableWidth - rightIconMargin) / 2
+                ( availableWidth / 2 + rightIconMargin
+                , availableWidth / 2 - (2 * rightIconMargin)
+                )
 
         iconHeight =
             if config.hasBorder then
@@ -673,7 +675,7 @@ renderIcons config includeBorder =
                 >> Svg.toHtml
 
         renderRightIcon =
-            Svg.withWidth (Css.px iconWidth)
+            Svg.withWidth (Css.px rightIconWidth)
                 >> Svg.withCss [ Css.marginLeft (Css.px rightIconMargin) ]
                 >> Svg.toHtml
 
