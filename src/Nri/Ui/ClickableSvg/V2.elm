@@ -651,7 +651,7 @@ renderIcons config includeBorder =
 
             else
                 ( availableWidth / 2 + rightIconMargin
-                , availableWidth / 2 - (2 * rightIconMargin)
+                , max (availableWidth / 2 - (2 * rightIconMargin)) 10
                 )
 
         iconHeight =
