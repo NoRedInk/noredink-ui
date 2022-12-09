@@ -226,8 +226,8 @@ exactSize inPx =
     set
         (\attributes ->
             { attributes
-                | width = Just (toFloat inPx)
-                , height = Just (toFloat inPx)
+                | width = toFloat inPx
+                , height = toFloat inPx
             }
         )
 
@@ -236,14 +236,14 @@ exactSize inPx =
 -}
 exactWidth : Int -> Attribute msg
 exactWidth inPx =
-    set (\attributes -> { attributes | width = Just (toFloat inPx) })
+    set (\attributes -> { attributes | width = toFloat inPx })
 
 
 {-| Define a size in `px` for the element's total height.
 -}
 exactHeight : Int -> Attribute msg
 exactHeight inPx =
-    set (\attributes -> { attributes | height = Just (toFloat inPx) })
+    set (\attributes -> { attributes | height = toFloat inPx })
 
 
 
@@ -539,8 +539,8 @@ build label icon =
         , iconForNarrowMobile = Nothing
         , rightIcon = Nothing
         , disabled = False
-        , width = Nothing
-        , height = Nothing
+        , width = smallSize
+        , height = smallSize
         , customAttributes = []
         , customStyles = []
         , hasBorder = False
@@ -561,8 +561,8 @@ type alias ButtonOrLinkAttributes msg =
     , iconForNarrowMobile : Maybe Svg
     , rightIcon : Maybe Svg
     , disabled : Bool
-    , width : Maybe Float
-    , height : Maybe Float
+    , width : Float
+    , height : Float
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
     , hasBorder : Bool
@@ -636,14 +636,14 @@ renderIcons config includeBorder =
 
         availableWidth =
             if config.hasBorder then
-                Maybe.withDefault smallSize config.width
+                config.width
                     - bordersAndPadding.leftPadding
                     - bordersAndPadding.rightPadding
                     - bordersAndPadding.leftBorder
                     - bordersAndPadding.rightBorder
 
             else
-                Maybe.withDefault smallSize config.width
+                config.width
 
         ( iconWidth, rightIconWidth ) =
             if config.rightIcon == Nothing then
@@ -656,14 +656,14 @@ renderIcons config includeBorder =
 
         iconHeight =
             if config.hasBorder then
-                Maybe.withDefault smallSize config.height
+                config.height
                     - bordersAndPadding.topPadding
                     - bordersAndPadding.bottomPadding
                     - bordersAndPadding.topBorder
                     - bordersAndPadding.bottomBorder
 
             else
-                Maybe.withDefault smallSize config.height
+                config.height
 
         renderUnless breakpoints =
             Svg.withWidth (Css.px iconWidth)
@@ -806,8 +806,8 @@ buttonOrLinkStyles config { main_, mainHovered, background, backgroundHovered, b
             ]
 
     -- Sizing
-    , Css.width (Css.px (Maybe.withDefault smallSize config.width))
-    , Css.height (Css.px (Maybe.withDefault smallSize config.height))
+    , Css.width (Css.px config.width)
+    , Css.height (Css.px config.height)
     , Css.boxSizing Css.borderBox
     , Css.displayFlex
     , Css.alignItems Css.stretch
@@ -840,8 +840,8 @@ largeSize =
 
 
 getBorder :
-    Maybe Float
-    -> Maybe Float
+    Float
+    -> Float
     -> Bool
     ->
         { topBorder : Float
@@ -855,14 +855,8 @@ getBorder :
         }
 getBorder width height includeBorder =
     let
-        w =
-            Maybe.withDefault smallSize width
-
-        h =
-            Maybe.withDefault smallSize height
-
         verticalSettings =
-            if h < smallSize then
+            if height < smallSize then
                 -- Teeny size vertical settings
                 { topBorder = 1
                 , topPadding = 1
@@ -870,7 +864,7 @@ getBorder width height includeBorder =
                 , bottomPadding = 1
                 }
 
-            else if h < mediumSize then
+            else if height < mediumSize then
                 -- Small size vertical settings
                 { topBorder = 1
                 , topPadding = 7
@@ -878,7 +872,7 @@ getBorder width height includeBorder =
                 , bottomPadding = 7
                 }
 
-            else if h < largeSize then
+            else if height < largeSize then
                 -- Medium size vertical settings
                 { topBorder = 1
                 , topPadding = 10
@@ -895,7 +889,7 @@ getBorder width height includeBorder =
                 }
 
         horizontalSettings =
-            if w < smallSize then
+            if width < smallSize then
                 -- Teeny size horizontal settings
                 { rightBorder = 1
                 , rightPadding = 2
@@ -903,7 +897,7 @@ getBorder width height includeBorder =
                 , leftPadding = 2
                 }
 
-            else if w < mediumSize then
+            else if width < mediumSize then
                 -- Small size horizontal settings
                 { rightBorder = 1
                 , rightPadding = 7
@@ -911,7 +905,7 @@ getBorder width height includeBorder =
                 , leftPadding = 7
                 }
 
-            else if w < largeSize then
+            else if width < largeSize then
                 -- Medium size horizontal settings
                 { rightBorder = 1
                 , rightPadding = 9
