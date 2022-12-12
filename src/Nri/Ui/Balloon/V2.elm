@@ -5,6 +5,7 @@ module Nri.Ui.Balloon.V2 exposing
     , highContrastModeTheme
     , onBottom, onLeft, onRight, onTop
     , alignArrowStart, alignArrowMiddle, alignArrowEnd
+    , arrowHeight
     , custom, id, nriDescription, testId
     , containerCss
     , css, notMobileCss, mobileCss, quizEngineMobileCss
@@ -53,6 +54,7 @@ Changes from V1:
 @docs highContrastModeTheme
 @docs onBottom, onLeft, onRight, onTop
 @docs alignArrowStart, alignArrowMiddle, alignArrowEnd
+@docs arrowHeight
 @docs custom, id, nriDescription, testId
 
 
@@ -209,6 +211,13 @@ For onLeft & onRight ballon, this means "bottom".
 alignArrowEnd : Attribute msg
 alignArrowEnd =
     withArrowAlignment End
+
+
+{-| Set how tall you want the arrow to be. The default is 8px.
+-}
+arrowHeight : Float -> Attribute msg
+arrowHeight height =
+    Attribute (\config -> { config | arrowHeight = height })
 
 
 {-| Green theme (This is the default theme.)
@@ -374,6 +383,7 @@ html =
 type alias Config msg =
     { position : Position
     , arrowAlignment : ArrowAlignment
+    , arrowHeight : Float
     , theme : Theme
     , highContrastModeTheme : Maybe HighContrastModeTheme
     , containerCss : List Css.Style
@@ -389,6 +399,7 @@ defaultConfig : Config msg
 defaultConfig =
     { position = NoArrow
     , arrowAlignment = Middle
+    , arrowHeight = 8
     , theme = defaultGreenTheme
     , highContrastModeTheme = Nothing
     , containerCss = []
@@ -452,7 +463,7 @@ view_ config =
                 Html.text ""
 
             _ ->
-                viewArrow config 16
+                viewArrow config
         ]
 
 
@@ -516,11 +527,16 @@ borderRounding =
     8
 
 
-viewArrow : Config msg -> Float -> Html msg
-viewArrow config diagonal =
+arrowWidth : Float
+arrowWidth =
+    8
+
+
+viewArrow : Config msg -> Html msg
+viewArrow config =
     let
         arrowSideWidth =
-            sqrt ((diagonal ^ 2) / 2)
+            sqrt ((config.arrowHeight ^ 2 + arrowWidth ^ 2) / 2)
     in
     styled div
         [ arrowPosition config.position config.arrowAlignment

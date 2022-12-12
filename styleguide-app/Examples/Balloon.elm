@@ -82,6 +82,15 @@ controlSettings =
         |> ControlExtra.optionalListItem "theme" themeOptions
         |> ControlExtra.optionalListItemDefaultChecked "position" positionOptions
         |> ControlExtra.optionalListItem "arrowAlignment" arrowAlignmentOptions
+        |> ControlExtra.optionalListItem "arrowHeight"
+            (Control.map
+                (\v ->
+                    ( "Balloon.arrowHeight " ++ String.fromFloat v ++ ""
+                    , Balloon.arrowHeight v
+                    )
+                )
+                (ControlExtra.float 20)
+            )
         |> CommonControls.css_ "containerCss"
             ( "[ Css.backgroundColor Colors.magenta ]", [ Css.backgroundColor Colors.magenta ] )
             { moduleName = moduleName, use = Balloon.containerCss }
