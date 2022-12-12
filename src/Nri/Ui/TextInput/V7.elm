@@ -9,6 +9,7 @@ module Nri.Ui.TextInput.V7 exposing
     , css, custom, nriDescription, id, testId, noMargin
     , disabled, loading, errorIf, errorMessage, guidance
     , writing
+    , username
     )
 
 {-|
