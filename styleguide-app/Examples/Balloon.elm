@@ -80,7 +80,7 @@ controlSettings =
                 }
             )
         |> ControlExtra.optionalListItem "theme" themeOptions
-        |> ControlExtra.optionalListItem "position" positionOptions
+        |> ControlExtra.optionalListItemDefaultChecked "position" positionOptions
         |> CommonControls.css_ "containerCss"
             ( "[ Css.backgroundColor Colors.magenta ]", [ Css.backgroundColor Colors.magenta ] )
             { moduleName = moduleName, use = Balloon.containerCss }
@@ -120,10 +120,10 @@ controlCustomTheme =
 positionOptions : Control ( String, Balloon.Attribute msg )
 positionOptions =
     Control.choice
-        [ ( "onBottom", Control.value ( "Balloon.onBottom", Balloon.onBottom ) )
-        , ( "onLeft", Control.value ( "Balloon.onLeft", Balloon.onLeft ) )
+        [ ( "onTop", Control.value ( "Balloon.onTop", Balloon.onTop ) )
         , ( "onRight", Control.value ( "Balloon.onRight", Balloon.onRight ) )
-        , ( "onTop", Control.value ( "Balloon.onTop", Balloon.onTop ) )
+        , ( "onBottom", Control.value ( "Balloon.onBottom", Balloon.onBottom ) )
+        , ( "onLeft", Control.value ( "Balloon.onLeft", Balloon.onLeft ) )
         ]
 
 
