@@ -34,7 +34,6 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Text.V6 as Text
 
 
 {-| -}
@@ -445,30 +444,34 @@ viewGuidance withCharacter markdown_ =
                     ]
                 ]
                 [ viewCharacter character_
-                , Balloon.view
-                    [ Balloon.nriDescription "character-guidance"
-                    , Balloon.markdown markdown_
+                , viewSpeechBubble
+                    [ Balloon.markdown markdown_
                     , Balloon.onLeft
                     , Balloon.alignArrowEnd
-                    , Balloon.white
-                    , Balloon.css
-                        [ Css.borderRadius (Css.px 16)
-                        , Css.padding (Css.px 10)
-                        , Css.boxShadow Css.none
-                        , Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ]
-                        ]
                     ]
                 ]
 
         Nothing ->
-            -- TODO: Check styles look okay
-            Text.mediumBody
-                [ Text.markdown markdown_
-                , Text.css
-                    [ Css.padding (Css.px 10)
-                    , Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ]
-                    ]
+            viewSpeechBubble
+                [ Balloon.markdown markdown_
+                , Balloon.css [ Css.margin2 (Css.px 10) (Css.px 20) ]
                 ]
+
+
+viewSpeechBubble : List (Balloon.Attribute msg) -> Html msg
+viewSpeechBubble extraAttributes =
+    Balloon.view
+        ([ Balloon.nriDescription "guidance-speech-bubble"
+         , Balloon.white
+         , Balloon.css
+            [ Css.borderRadius (Css.px 16)
+            , Css.padding (Css.px 10)
+            , Css.boxShadow Css.none
+            , Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ]
+            ]
+         ]
+            ++ extraAttributes
+        )
 
 
 viewCharacter : { name : String, icon : Svg } -> Html msg
