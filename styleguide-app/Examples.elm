@@ -9,6 +9,7 @@ import Examples.Block as Block
 import Examples.BreadCrumbs as BreadCrumbs
 import Examples.Button as Button
 import Examples.Carousel as Carousel
+import Examples.CharacterIcon as CharacterIcon
 import Examples.Checkbox as Checkbox
 import Examples.ClickableSvg as ClickableSvg
 import Examples.ClickableText as ClickableText
@@ -200,6 +201,25 @@ all =
             (\msg ->
                 case msg of
                     CarouselState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , CharacterIcon.example
+        |> Example.wrapMsg CharacterIconMsg
+            (\msg ->
+                case msg of
+                    CharacterIconMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState CharacterIconState
+            (\msg ->
+                case msg of
+                    CharacterIconState childState ->
                         Just childState
 
                     _ ->
@@ -977,6 +997,7 @@ type State
     | BreadCrumbsState BreadCrumbs.State
     | ButtonState Button.State
     | CarouselState Carousel.State
+    | CharacterIconState CharacterIcon.State
     | CheckboxState Checkbox.State
     | ClickableSvgState ClickableSvg.State
     | ClickableTextState ClickableText.State
@@ -1028,6 +1049,7 @@ type Msg
     | BreadCrumbsMsg BreadCrumbs.Msg
     | ButtonMsg Button.Msg
     | CarouselMsg Carousel.Msg
+    | CharacterIconMsg CharacterIcon.Msg
     | CheckboxMsg Checkbox.Msg
     | ClickableSvgMsg ClickableSvg.Msg
     | ClickableTextMsg ClickableText.Msg
