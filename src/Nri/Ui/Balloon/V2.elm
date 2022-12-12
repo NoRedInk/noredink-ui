@@ -534,96 +534,101 @@ arrowWidth =
 
 viewArrow : Config msg -> Html msg
 viewArrow config =
-    let
-        arrowSideWidth =
-            sqrt ((config.arrowHeight ^ 2 + arrowWidth ^ 2) / 2)
-    in
     styled div
-        [ arrowPosition config.position config.arrowAlignment
-        , backgroundColor config.theme.backgroundColor
-        , border3 (px 1) solid config.theme.backgroundColor
+        [ arrowPosition config
+        , borderStyle solid
         , applyHighContrastModeTheme config.highContrastModeTheme
-        , Css.height (px arrowSideWidth)
-        , Css.width (px arrowSideWidth)
+        , Css.height zero
+        , Css.width zero
         , Css.flexShrink (Css.num 0)
         ]
         []
         []
 
 
-arrowPosition : Position -> ArrowAlignment -> Css.Style
-arrowPosition position arrowAlignment =
+arrowPosition : Config msg -> Css.Style
+arrowPosition ({ position, arrowAlignment, theme } as config) =
     let
+        arrowHeight_ =
+            config.arrowHeight
+
+        color =
+            theme.backgroundColor
+
         offset =
             String.fromFloat (borderRounding + 8) ++ "px"
 
-        translateYBy y =
+        translate direction =
             Css.batch <|
                 case arrowAlignment of
                     Start ->
                         [ Css.alignSelf Css.flexStart
-                        , Css.property "transform" ("translate(" ++ offset ++ "," ++ y ++ ") rotate(45deg)")
+                        , Css.property "transform" ("translate" ++ direction ++ "(" ++ offset ++ ")")
                         ]
 
                     Middle ->
-                        [ Css.property "transform" ("translateY(" ++ y ++ ") rotate(45deg)") ]
+                        [ Css.property "transform" "scale(1)" ]
 
                     End ->
                         [ Css.alignSelf Css.flexEnd
-                        , Css.property "transform" ("translate(-" ++ offset ++ "," ++ y ++ ") rotate(45deg)")
-                        ]
-
-        translateXBy x =
-            Css.batch <|
-                case arrowAlignment of
-                    Start ->
-                        [ Css.alignSelf Css.flexStart
-                        , Css.property "transform" ("translate(" ++ x ++ "," ++ offset ++ ") rotate(45deg)")
-                        ]
-
-                    Middle ->
-                        [ Css.property "transform" ("translateX(" ++ x ++ ") rotate(45deg)") ]
-
-                    End ->
-                        [ Css.alignSelf Css.flexEnd
-                        , Css.property "transform" ("translate(" ++ x ++ ",-" ++ offset ++ ") rotate(45deg)")
+                        , Css.property "transform" ("translate" ++ direction ++ "(-" ++ offset ++ ")")
                         ]
     in
     case position of
         OnTop ->
             batch
-                [ translateYBy "-50%"
+                [ translate "X"
                 , Css.property "transform-origin" "center"
-                , Css.borderTop Css.zero
-                , Css.borderLeft Css.zero
-                , Css.borderTopLeftRadius (pct 100)
+                , Css.borderTop (Css.px arrowHeight_)
+                , Css.borderTopColor color
+                , Css.borderRight (Css.px arrowWidth)
+                , Css.borderRightColor transparent
+                , Css.borderBottom Css.zero
+                , Css.borderBottomColor transparent
+                , Css.borderLeft (Css.px arrowWidth)
+                , Css.borderLeftColor transparent
                 ]
 
         OnBottom ->
             batch
-                [ translateYBy "50%"
+                [ translate "X"
                 , Css.property "transform-origin" "center"
-                , Css.borderRight Css.zero
-                , Css.borderBottom Css.zero
-                , Css.borderBottomRightRadius (pct 100)
+                , Css.borderTop Css.zero
+                , Css.borderTopColor transparent
+                , Css.borderRight (Css.px arrowWidth)
+                , Css.borderRightColor transparent
+                , Css.borderBottom (Css.px arrowHeight_)
+                , Css.borderBottomColor color
+                , Css.borderLeft (Css.px arrowWidth)
+                , Css.borderLeftColor transparent
                 ]
 
         OnLeft ->
             batch
-                [ translateXBy "-50%"
+                [ translate "Y"
                 , Css.property "transform-origin" "center"
-                , Css.borderBottom Css.zero
-                , Css.borderLeft Css.zero
-                , Css.borderBottomLeftRadius (pct 100)
+                , Css.borderTop (Css.px arrowWidth)
+                , Css.borderTopColor transparent
+                , Css.borderRight Css.zero
+                , Css.borderRightColor transparent
+                , Css.borderBottom (Css.px arrowWidth)
+                , Css.borderBottomColor transparent
+                , Css.borderLeft (Css.px arrowHeight_)
+                , Css.borderLeftColor color
                 ]
 
         OnRight ->
             batch
-                [ translateXBy "50%"
+                [ translate "Y"
                 , Css.property "transform-origin" "center"
-                , Css.borderRight Css.zero
-                , Css.borderTop Css.zero
-                , Css.borderTopRightRadius (pct 100)
+                , Css.borderTop (Css.px arrowWidth)
+                , Css.borderTopColor transparent
+                , Css.borderRight (Css.px arrowHeight_)
+                , Css.borderRightColor color
+                , Css.borderBottom (Css.px arrowWidth)
+                , Css.borderBottomColor transparent
+                , Css.borderLeft Css.zero
+                , Css.borderLeftColor transparent
                 ]
 
         NoArrow ->
