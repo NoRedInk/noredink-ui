@@ -22,7 +22,6 @@ import Json.Encode as Encode
 import Markdown
 import Nri.Ui.Block.V1 as Block
 import Nri.Ui.Button.V10 as Button
-import Nri.Ui.CharacterIcon.V1 as CharacterIcon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Highlightable.V1 as Highlightable
@@ -58,7 +57,6 @@ example =
     , preview =
         [ QuestionBox.view
             [ QuestionBox.markdown "Is good?"
-            , QuestionBox.character { name = "Panda", icon = CharacterIcon.panda }
             ]
         ]
     , view = view
@@ -142,7 +140,6 @@ viewExamplesTable state =
                             [ { label = "is having", onClick = NoOp }
                             , { label = "after the football game", onClick = NoOp }
                             ]
-                        , QuestionBox.character { name = "Panda", icon = CharacterIcon.panda }
                         ]
                     ]
           }
@@ -159,7 +156,6 @@ Tessa does not know when it's appropriate to use this type of QuestionBox -- sor
                         , QuestionBox.id anchoredExampleId
                         , QuestionBox.markdown "Not quite. Let’s back up a bit."
                         , QuestionBox.actions [ { label = "Show me", onClick = NoOp } ]
-                        , QuestionBox.character { name = "Panda", icon = CharacterIcon.panda }
                         ]
                     , Button.button "Measure & render"
                         [ Button.onClick GetAnchoredExampleMeasurements
@@ -188,7 +184,6 @@ Typically, you would use this type of `QuestionBox` type with a [`Block`](https:
                             , { label = "his", onClick = NoOp }
                             , { label = "TV", onClick = NoOp }
                             ]
-                        , QuestionBox.character { name = "Panda", icon = CharacterIcon.panda }
                         ]
                   ]
                 , Block.view [ Block.plaintext "." ]
@@ -298,20 +293,24 @@ initAttributes =
                 )
                 (ControlExtra.int 2)
             )
-        |> ControlExtra.optionalListItemDefaultChecked "character"
-            ([ { name = "Panda", icon = CharacterIcon.panda }
-             , { name = "Sapling", icon = UiIcon.sapling }
-             , { name = "Gumby", icon = Svg.withColor Colors.mustard UiIcon.stretch }
+        |> ControlExtra.optionalListItem "character"
+            ([ { name = "(none)", icon = ( "Nothing", Nothing ) }
+             , { name = "Gumby"
+               , icon =
+                    ( "<| Just (Svg.withColor Colors.mustard UiIcon.stretch)"
+                    , Just (Svg.withColor Colors.mustard UiIcon.stretch)
+                    )
+               }
              ]
                 |> List.map
-                    (\({ name } as character) ->
+                    (\{ name, icon } ->
                         ( name
                         , Control.value
-                            ( Code.record
-                                [ ( "name", Code.string name )
-                                , ( "icon", "Svg.init \"\" []" )
-                                ]
-                            , QuestionBox.character character
+                            ( "QuestionBox.character " ++ Tuple.first icon
+                            , QuestionBox.character
+                                (Maybe.map (\i -> { name = name, icon = i })
+                                    (Tuple.second icon)
+                                )
                             )
                         )
                     )

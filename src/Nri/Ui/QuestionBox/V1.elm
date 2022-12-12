@@ -31,6 +31,7 @@ import Json.Decode as Decode exposing (Decoder)
 import List.Extra
 import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Button.V10 as Button
+import Nri.Ui.CharacterIcon.V1 as CharacterIcon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
@@ -57,7 +58,7 @@ defaultConfig =
     , markdown = Nothing
     , actions = []
     , type_ = Standalone
-    , character = Nothing
+    , character = Just { name = "Panda", icon = CharacterIcon.panda }
     , containerCss = [ Css.maxWidth (Css.px 440) ]
     }
 
@@ -81,9 +82,9 @@ actions actions_ =
 
 
 {-| -}
-character : { name : String, icon : Svg } -> Attribute msg
+character : Maybe { name : String, icon : Svg } -> Attribute msg
 character details =
-    Attribute (\config -> { config | character = Just details })
+    Attribute (\config -> { config | character = details })
 
 
 {-| -}
