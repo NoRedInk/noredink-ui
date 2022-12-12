@@ -14,7 +14,7 @@ import Svg.Styled.Attributes as Attributes
 {-| -}
 panda : Nri.Ui.Svg.V1.Svg
 panda =
-    Nri.Ui.Svg.V1.init "0 0 4000 4000"
+    Nri.Ui.Svg.V1.init "900 500 2200 3000"
         [ Svg.g
             [ Attributes.stroke "none"
             , Attributes.strokeWidth "1"
