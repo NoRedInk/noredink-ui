@@ -555,6 +555,10 @@ arrowPosition ({ position, arrowAlignment, theme } as config) =
         color =
             theme.backgroundColor
 
+        highContrastColor =
+            Maybe.withDefault "CanvasText"
+                (Maybe.map .backgroundColor config.highContrastModeTheme)
+
         offset =
             String.fromFloat (borderRounding + 8) ++ "px"
 
@@ -580,13 +584,22 @@ arrowPosition ({ position, arrowAlignment, theme } as config) =
                 [ translate "X"
                 , Css.property "transform-origin" "center"
                 , Css.borderTop (Css.px arrowHeight_)
-                , Css.borderTopColor color
                 , Css.borderRight (Css.px arrowWidth)
-                , Css.borderRightColor transparent
                 , Css.borderBottom Css.zero
-                , Css.borderBottomColor transparent
                 , Css.borderLeft (Css.px arrowWidth)
+
+                -- Colors:
+                , Css.borderTopColor color
+                , Css.borderRightColor transparent
+                , Css.borderBottomColor transparent
                 , Css.borderLeftColor transparent
+                , MediaQuery.highContrastMode
+                    [ Css.property "forced-color-adjust" "none"
+                    , Css.property "border-top-color" highContrastColor
+                    , Css.property "border-right-color" "Canvas"
+                    , Css.property "border-bottom-color" "Canvas"
+                    , Css.property "border-left-color" "Canvas"
+                    ]
                 ]
 
         OnBottom ->
@@ -594,13 +607,22 @@ arrowPosition ({ position, arrowAlignment, theme } as config) =
                 [ translate "X"
                 , Css.property "transform-origin" "center"
                 , Css.borderTop Css.zero
-                , Css.borderTopColor transparent
                 , Css.borderRight (Css.px arrowWidth)
-                , Css.borderRightColor transparent
                 , Css.borderBottom (Css.px arrowHeight_)
-                , Css.borderBottomColor color
                 , Css.borderLeft (Css.px arrowWidth)
+
+                -- Colors:
+                , Css.borderTopColor transparent
+                , Css.borderRightColor transparent
+                , Css.borderBottomColor color
                 , Css.borderLeftColor transparent
+                , MediaQuery.highContrastMode
+                    [ Css.property "forced-color-adjust" "none"
+                    , Css.property "border-top-color" "Canvas"
+                    , Css.property "border-right-color" "Canvas"
+                    , Css.property "border-bottom-color" highContrastColor
+                    , Css.property "border-left-color" "Canvas"
+                    ]
                 ]
 
         OnLeft ->
@@ -608,13 +630,22 @@ arrowPosition ({ position, arrowAlignment, theme } as config) =
                 [ translate "Y"
                 , Css.property "transform-origin" "center"
                 , Css.borderTop (Css.px arrowWidth)
-                , Css.borderTopColor transparent
                 , Css.borderRight Css.zero
-                , Css.borderRightColor transparent
                 , Css.borderBottom (Css.px arrowWidth)
-                , Css.borderBottomColor transparent
                 , Css.borderLeft (Css.px arrowHeight_)
+
+                -- Colors:
+                , Css.borderTopColor transparent
+                , Css.borderRightColor transparent
+                , Css.borderBottomColor transparent
                 , Css.borderLeftColor color
+                , MediaQuery.highContrastMode
+                    [ Css.property "forced-color-adjust" "none"
+                    , Css.property "border-top-color" "Canvas"
+                    , Css.property "border-right-color" "Canvas"
+                    , Css.property "border-bottom-color" "Canvas"
+                    , Css.property "border-left-color" highContrastColor
+                    ]
                 ]
 
         OnRight ->
@@ -622,13 +653,22 @@ arrowPosition ({ position, arrowAlignment, theme } as config) =
                 [ translate "Y"
                 , Css.property "transform-origin" "center"
                 , Css.borderTop (Css.px arrowWidth)
-                , Css.borderTopColor transparent
                 , Css.borderRight (Css.px arrowHeight_)
-                , Css.borderRightColor color
                 , Css.borderBottom (Css.px arrowWidth)
-                , Css.borderBottomColor transparent
                 , Css.borderLeft Css.zero
+
+                -- Colors:
+                , Css.borderTopColor transparent
+                , Css.borderRightColor color
+                , Css.borderBottomColor transparent
                 , Css.borderLeftColor transparent
+                , MediaQuery.highContrastMode
+                    [ Css.property "forced-color-adjust" "none"
+                    , Css.property "border-top-color" "Canvas"
+                    , Css.property "border-right-color" highContrastColor
+                    , Css.property "border-bottom-color" "Canvas"
+                    , Css.property "border-left-color" "Canvas"
+                    ]
                 ]
 
         NoArrow ->
