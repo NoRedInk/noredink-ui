@@ -494,7 +494,7 @@ viewActions actions_ =
             , Css.borderBottomRightRadius (Css.px 8)
             , Css.borderBottomLeftRadius (Css.px 8)
             , Css.margin Css.zero
-            , Css.padding2 (Css.px 10) (Css.px 40)
+            , Css.padding4 (Css.px 10) (Css.px 26) (Css.px 10) (Css.px 10)
             , Css.listStyle Css.none
             , Css.displayFlex
             , Css.property "gap" "10px"
@@ -508,7 +508,10 @@ viewActions actions_ =
         { label, onClick } :: [] ->
             div [ css (Css.alignItems Css.center :: containerStyles) ]
                 [ Button.button label
-                    [ Button.onClick onClick, Button.unboundedWidth ]
+                    [ Button.onClick onClick
+                    , Button.unboundedWidth
+                    , Button.small
+                    ]
                 ]
                 |> Just
 
@@ -520,6 +523,7 @@ viewActions actions_ =
                             [ Button.button label
                                 [ Button.onClick onClick
                                 , Button.fillContainerWidth
+                                , Button.small
                                 ]
                             ]
                     )
