@@ -421,7 +421,7 @@ viewBalloon config attributes =
         ([ Balloon.html
             (List.filterMap identity
                 [ Maybe.map (viewGuidance config.character) config.markdown
-                , viewActions config.actions
+                , viewActions config.character config.actions
                 ]
             )
          , Balloon.customTheme { backgroundColor = Colors.glacier, color = Colors.glacier }
@@ -485,8 +485,8 @@ viewCharacter { name, icon } =
         |> Svg.toHtml
 
 
-viewActions : List { label : String, onClick : msg } -> Maybe (Html msg)
-viewActions actions_ =
+viewActions : Maybe character -> List { label : String, onClick : msg } -> Maybe (Html msg)
+viewActions maybeCharacter actions_ =
     let
         containerStyles =
             [ Css.backgroundColor Colors.frost
@@ -494,7 +494,12 @@ viewActions actions_ =
             , Css.borderBottomRightRadius (Css.px 8)
             , Css.borderBottomLeftRadius (Css.px 8)
             , Css.margin Css.zero
-            , Css.padding4 (Css.px 10) (Css.px 30) (Css.px 10) (Css.px 10)
+            , case maybeCharacter of
+                Just _ ->
+                    Css.padding4 (Css.px 10) (Css.px 30) (Css.px 10) (Css.px 10)
+
+                Nothing ->
+                    Css.padding2 (Css.px 10) (Css.px 20)
             , Css.listStyle Css.none
             , Css.displayFlex
             , Css.property "gap" "10px"
