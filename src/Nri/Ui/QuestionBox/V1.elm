@@ -440,7 +440,7 @@ viewGuidance withCharacter markdown_ =
                     [ Css.displayFlex
                     , Css.justifyContent Css.flexEnd
                     , Css.margin (Css.px 8)
-                    , Css.marginRight (Css.px 16)
+                    , Css.marginRight (Css.px 20)
                     , Css.position Css.relative
                     ]
                 ]
@@ -475,12 +475,12 @@ viewCharacter : { name : String, icon : Svg } -> Html msg
 viewCharacter { name, icon } =
     icon
         |> Svg.withLabel (name ++ " says, ")
-        |> Svg.withWidth (Css.px 70)
+        |> Svg.withWidth (Css.px 50)
         |> Svg.withHeight (Css.px 70)
         |> Svg.withCss
             [ Css.position Css.absolute
             , Css.bottom (Css.px -18)
-            , Css.right (Css.px -53)
+            , Css.right (Css.px -48)
             ]
         |> Svg.toHtml
 
@@ -494,7 +494,7 @@ viewActions actions_ =
             , Css.borderBottomRightRadius (Css.px 8)
             , Css.borderBottomLeftRadius (Css.px 8)
             , Css.margin Css.zero
-            , Css.padding4 (Css.px 10) (Css.px 26) (Css.px 10) (Css.px 10)
+            , Css.padding4 (Css.px 10) (Css.px 30) (Css.px 10) (Css.px 10)
             , Css.listStyle Css.none
             , Css.displayFlex
             , Css.property "gap" "10px"
