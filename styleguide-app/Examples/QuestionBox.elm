@@ -22,6 +22,7 @@ import Json.Encode as Encode
 import Markdown
 import Nri.Ui.Block.V1 as Block
 import Nri.Ui.Button.V10 as Button
+import Nri.Ui.CharacterIcon.V1 as CharacterIcon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Highlightable.V1 as Highlightable
@@ -32,8 +33,6 @@ import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V6 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
-import Svg.Styled
-import Svg.Styled.Attributes
 
 
 moduleName : String
@@ -59,7 +58,7 @@ example =
     , preview =
         [ QuestionBox.view
             [ QuestionBox.markdown "Is good?"
-            , QuestionBox.character { name = "Panda", icon = pandaIcon }
+            , QuestionBox.character { name = "Panda", icon = CharacterIcon.panda }
             ]
         ]
     , view = view
@@ -143,7 +142,7 @@ viewExamplesTable state =
                             [ { label = "is having", onClick = NoOp }
                             , { label = "after the football game", onClick = NoOp }
                             ]
-                        , QuestionBox.character { name = "Panda", icon = pandaIcon }
+                        , QuestionBox.character { name = "Panda", icon = CharacterIcon.panda }
                         ]
                     ]
           }
@@ -160,7 +159,7 @@ Tessa does not know when it's appropriate to use this type of QuestionBox -- sor
                         , QuestionBox.id anchoredExampleId
                         , QuestionBox.markdown "Not quite. Let’s back up a bit."
                         , QuestionBox.actions [ { label = "Show me", onClick = NoOp } ]
-                        , QuestionBox.character { name = "Panda", icon = pandaIcon }
+                        , QuestionBox.character { name = "Panda", icon = CharacterIcon.panda }
                         ]
                     , Button.button "Measure & render"
                         [ Button.onClick GetAnchoredExampleMeasurements
@@ -189,7 +188,7 @@ Typically, you would use this type of `QuestionBox` type with a [`Block`](https:
                             , { label = "his", onClick = NoOp }
                             , { label = "TV", onClick = NoOp }
                             ]
-                        , QuestionBox.character { name = "Panda", icon = pandaIcon }
+                        , QuestionBox.character { name = "Panda", icon = CharacterIcon.panda }
                         ]
                   ]
                 , Block.view [ Block.plaintext "." ]
@@ -197,20 +196,6 @@ Typically, you would use this type of `QuestionBox` type with a [`Block`](https:
                     |> List.concat
                     |> p [ css [ Css.marginTop (Css.px 50) ] ]
           }
-        ]
-
-
-pandaIcon : Svg.Svg
-pandaIcon =
-    Svg.init "0 0 10 10"
-        [ Svg.Styled.image
-            [ Svg.Styled.Attributes.xlinkHref "https://ucf018b22d191439face31e68b6b.previews.dropboxusercontent.com/p/thumb/ABtCu0ijqrgkNHZS6mWw4c6YQwA-qVtF_W5Gxy8wMGJujaEqn2LcA95f0Si7mwoCj30tlZIIHJhbxe4lStQ8tsMDe9gkg96lbSFItuMbfBF_hmOXunQEw8ns1Q9YwaW3FIjpUWY24K7TfqooigX6VZcIE0MMI1tttLB0N0sPssIFJsJ9vm_MZ2QfHQbdMICQWNxCEOBrdbHfrMyd3TW0RrClfSWAjZWLUArn6ZQVPbAfORss-uJINVI2nI5vxNqIpeIPVG9Fh0xR6hTWcgZUzaMd9HfRZeNI4YR3LWFmRGzg9CHQHJwwv9ixK5EHbbEpDot_W_VZHnJdMsSVFdZ0yCK1M8FSVnpKVQNuRQRxBl8xoH43xFqxohpqcPWVc55lE_MNlA5isTV2lKJ1L3nby1J7vrXrGZvHvgjEYlC-EK1UyA/p.png"
-            , Svg.Styled.Attributes.x "0"
-            , Svg.Styled.Attributes.y "0"
-            , Svg.Styled.Attributes.width "10"
-            , Svg.Styled.Attributes.height "10"
-            ]
-            []
         ]
 
 
@@ -314,7 +299,7 @@ initAttributes =
                 (ControlExtra.int 2)
             )
         |> ControlExtra.optionalListItemDefaultChecked "character"
-            ([ { name = "Panda", icon = pandaIcon }
+            ([ { name = "Panda", icon = CharacterIcon.panda }
              , { name = "Sapling", icon = UiIcon.sapling }
              , { name = "Gumby", icon = Svg.withColor Colors.mustard UiIcon.stretch }
              ]
