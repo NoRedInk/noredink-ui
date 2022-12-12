@@ -312,6 +312,25 @@ familyName onInput_ =
         )
 
 
+{-| An input that allows username entry
+-}
+username : (String -> msg) -> Attribute String msg
+username onInput_ =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just identity
+            , fromString = Just identity
+            , onInput = Just (identity >> onInput_)
+        }
+        (\config ->
+            { config
+                | fieldType = Just "text"
+                , inputMode = Nothing
+                , autocomplete = Just "username"
+            }
+        )
+
+
 {-| An input that allows organization entry
 -}
 organization : (String -> msg) -> Attribute String msg
