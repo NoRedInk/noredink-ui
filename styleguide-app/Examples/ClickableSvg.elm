@@ -299,6 +299,7 @@ initSettings =
                     { moduleName = "ClickableSvg"
                     , use = ClickableSvg.notMobileCss
                     }
+                |> CommonControls.rightIcon moduleName ClickableSvg.rightIcon
                 |> ControlExtra.optionalListItem "iconForMobile"
                     (Control.map
                         (\( name, icon ) ->

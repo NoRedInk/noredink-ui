@@ -7,8 +7,9 @@ module Nri.Ui.Button.V10 exposing
     , exactWidth, boundedWidth, unboundedWidth, fillContainerWidth
     , primary, secondary, tertiary, danger, premium
     , enabled, unfulfilled, disabled, error, loading, success
-    , icon, custom, nriDescription, testId, id
+    , icon, rightIcon
     , hideIconForMobile, hideIconFor
+    , custom, nriDescription, testId, id
     , css, notMobileCss, mobileCss, quizEngineMobileCss
     , delete
     , toggleButton
@@ -67,14 +68,19 @@ adding a span around the text could potentially lead to regressions.
 @docs enabled, unfulfilled, disabled, error, loading, success
 
 
+## Icons
+
+@docs icon, rightIcon
+@docs hideIconForMobile, hideIconFor
+
+
 ## Customization
 
-@docs icon, custom, nriDescription, testId, id
+@docs custom, nriDescription, testId, id
 
 
 ### CSS
 
-@docs hideIconForMobile, hideIconFor
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss
 
 
@@ -160,6 +166,12 @@ icon icon_ =
     set (\attributes -> { attributes | icon = Just icon_ })
 
 
+{-| -}
+rightIcon : Svg -> Attribute msg
+rightIcon icon_ =
+    set (\attributes -> { attributes | rightIcon = Just icon_ })
+
+
 {-| Use this helper to add custom attributes.
 
 Do NOT use this helper to add css styles, as they may not be applied the way
@@ -195,24 +207,28 @@ id id_ =
     custom [ Attributes.id id_ ]
 
 
-{-| -}
+{-| Hide the left-side icon for the mobile breakpoint.
+-}
 hideIconForMobile : Attribute msg
 hideIconForMobile =
     hideIconFor MediaQuery.mobile
 
 
-{-| -}
+{-| Hide the left-side icon for an arbitrary media query.
+-}
 hideIconFor : MediaQuery -> Attribute msg
 hideIconFor mediaQuery =
-    css
-        [ Css.Media.withMedia [ mediaQuery ]
-            [ Css.Global.descendants
-                [ Css.Global.selector "[role=img]"
-                    [ Css.display Css.none
-                    ]
-                ]
-            ]
-        ]
+    set
+        (\config ->
+            { config
+                | iconStyles =
+                    List.append config.iconStyles
+                        [ Css.Media.withMedia [ mediaQuery ]
+                            [ Css.display Css.none
+                            ]
+                        ]
+            }
+        )
 
 
 {-| -}
@@ -578,6 +594,8 @@ build =
         , label = ""
         , state = Enabled
         , icon = Nothing
+        , iconStyles = []
+        , rightIcon = Nothing
         , customAttributes = []
         , customStyles = []
         }
@@ -595,6 +613,8 @@ type alias ButtonOrLinkAttributes msg =
     , label : String
     , state : ButtonState
     , icon : Maybe Svg
+    , iconStyles : List Style
+    , rightIcon : Maybe Svg
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
     }
@@ -619,7 +639,7 @@ renderButton ((ButtonOrLink config) as button_) =
             :: Attributes.class FocusRing.customClass
             :: config.customAttributes
         )
-        [ viewLabel config.size config.icon config.label ]
+        [ viewLabel config ]
 
 
 renderLink : ButtonOrLink msg -> Html msg
@@ -645,7 +665,7 @@ renderLink ((ButtonOrLink config) as link_) =
             :: attributes
             ++ config.customAttributes
         )
-        [ viewLabel config.size config.icon config.label ]
+        [ viewLabel config ]
 
 
 
@@ -760,7 +780,14 @@ toggleButton config =
         , Attributes.type_ "button"
         , Attributes.class FocusRing.customClass
         ]
-        [ viewLabel Medium Nothing config.label ]
+        [ viewLabel
+            { size = Medium
+            , icon = Nothing
+            , iconStyles = []
+            , label = config.label
+            , rightIcon = Nothing
+            }
+        ]
 
 
 buttonStyles : ButtonSize -> ButtonWidth -> ColorPalette -> List Style -> Style
@@ -773,11 +800,36 @@ buttonStyles size width colors customStyles =
         ]
 
 
-viewLabel : ButtonSize -> Maybe Svg -> String -> Html msg
-viewLabel size maybeSvg label_ =
+viewLabel :
+    { config
+        | size : ButtonSize
+        , icon : Maybe Svg
+        , iconStyles : List Style
+        , label : String
+        , rightIcon : Maybe Svg
+    }
+    -> Html msg
+viewLabel config =
     let
         { fontAndIconSize } =
-            sizeConfig size
+            sizeConfig config.size
+
+        viewIcon iconStyles svg =
+            svg
+                |> NriSvg.withWidth fontAndIconSize
+                |> NriSvg.withHeight fontAndIconSize
+                |> NriSvg.withCss iconStyles
+                |> NriSvg.toHtml
+
+        viewLeftIcon =
+            viewIcon
+                [ Css.flexShrink Css.zero
+                , Css.marginRight (Css.px 5)
+                , Css.batch config.iconStyles
+                ]
+
+        viewRightIcon =
+            viewIcon [ Css.marginLeft (Css.px 5) ]
     in
     Nri.Ui.styled Html.span
         "button-label-span"
@@ -788,21 +840,21 @@ viewLabel size maybeSvg label_ =
         , Css.alignItems Css.center
         ]
         []
-        (case maybeSvg of
-            Nothing ->
-                renderMarkdown label_
+        (case ( config.icon, config.rightIcon ) of
+            ( Nothing, Nothing ) ->
+                renderMarkdown config.label
 
-            Just svg ->
-                (svg
-                    |> NriSvg.withWidth fontAndIconSize
-                    |> NriSvg.withHeight fontAndIconSize
-                    |> NriSvg.withCss
-                        [ Css.flexShrink Css.zero
-                        , Css.marginRight (Css.px 5)
-                        ]
-                    |> NriSvg.toHtml
-                )
-                    :: renderMarkdown label_
+            ( Just svg, Nothing ) ->
+                viewLeftIcon svg
+                    :: renderMarkdown config.label
+
+            ( Nothing, Just rightIcon_ ) ->
+                renderMarkdown config.label ++ [ viewRightIcon rightIcon_ ]
+
+            ( Just leftIcon, Just rightIcon_ ) ->
+                viewLeftIcon leftIcon
+                    :: renderMarkdown config.label
+                    ++ [ viewRightIcon rightIcon_ ]
         )
 
 
