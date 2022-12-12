@@ -546,6 +546,7 @@ viewCustomizableExample ellieLinkConfig controlSettings =
                         ClickableSvg.button "Up"
                             UiIcon.arrowTop
                             [ ClickableSvg.custom eventHandlers
+                            , ClickableSvg.withBorder
                             ]
                 , id = "an-id-for-the-tooltip"
                 }
