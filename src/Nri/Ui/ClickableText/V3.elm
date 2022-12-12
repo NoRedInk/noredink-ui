@@ -5,11 +5,11 @@ module Nri.Ui.ClickableText.V3 exposing
     , small, medium, large, modal
     , onClick, submit, opensModal
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
+    , icon, rightIcon
     , hideIconForMobile, hideIconFor
     , custom, nriDescription, testId, id
     , hideTextForMobile, hideTextFor
     , css, notMobileCss, mobileCss, quizEngineMobileCss
-    , icon, rightIcon
     )
 
 {-| Notes for V4:
@@ -76,9 +76,7 @@ HTML `<a>` elements and are created here with `*Link` functions.
 
 ## Icons
 
-@docs {-| Hide the left-side icon for the mobile breakpoint.
-@docs -}
-
+@docs icon, rightIcon
 @docs hideIconForMobile, hideIconFor
 
 

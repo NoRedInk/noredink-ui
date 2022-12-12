@@ -654,17 +654,6 @@ renderIcons config includeBorder =
                 , max (availableWidth / 2 - (2 * rightIconMargin)) 10
                 )
 
-        iconHeight =
-            if config.hasBorder then
-                config.height
-                    - bordersAndPadding.topPadding
-                    - bordersAndPadding.bottomPadding
-                    - bordersAndPadding.topBorder
-                    - bordersAndPadding.bottomBorder
-
-            else
-                config.height
-
         renderUnless breakpoints =
             Svg.withWidth (Css.px iconWidth)
                 >> Svg.withCss
