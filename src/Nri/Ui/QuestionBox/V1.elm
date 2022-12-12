@@ -59,7 +59,7 @@ defaultConfig =
     , actions = []
     , type_ = Standalone
     , character = Nothing
-    , containerCss = []
+    , containerCss = [ Css.maxWidth (Css.px 440) ]
     }
 
 
