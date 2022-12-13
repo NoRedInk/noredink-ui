@@ -236,6 +236,8 @@ initControl =
                 , ( "brown", Block.brown )
                 ]
             )
+        |> ControlExtra.optionalListItem "class"
+            (CommonControls.string ( "class", Block.class ) "kiwis-are-good")
 
 
 controlContent : Control ( String, Block.Attribute )

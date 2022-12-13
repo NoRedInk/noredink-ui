@@ -4,6 +4,7 @@ module Nri.Ui.Block.V1 exposing
     , Content, string, blank
     , emphasize, label
     , yellow, cyan, magenta, green, blue, purple, brown
+    , class
     )
 
 {-|
@@ -26,13 +27,18 @@ module Nri.Ui.Block.V1 exposing
 
 @docs yellow, cyan, magenta, green, blue, purple, brown
 
+
+### General attributes
+
+@docs class
+
 -}
 
 import Accessibility.Styled exposing (..)
 import Css exposing (Color)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
 import Nri.Ui.Mark.V1 as Mark exposing (Mark)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 
@@ -108,7 +114,7 @@ renderContent content_ markStyles =
                 [ text str ]
 
             Blank ->
-                [ viewBlank ]
+                [ viewBlank Nothing ]
 
 
 {-| You will only need to use this helper if you're also using `content` to construct a more complex Block. Maybe you want `plaintext` instead?
@@ -286,6 +292,12 @@ brown =
     Attribute (\config -> { config | theme = Just Brown })
 
 
+{-| -}
+class : String -> Attribute
+class class_ =
+    Attribute (\config -> { config | class = Just class_ })
+
+
 
 -- Internals
 
@@ -300,6 +312,7 @@ defaultConfig =
     { content = []
     , label = Nothing
     , theme = Nothing
+    , class = Nothing
     }
 
 
@@ -307,6 +320,7 @@ type alias Config =
     { content : List Content
     , label : Maybe String
     , theme : Maybe Theme
+    , class : Maybe String
     }
 
 
@@ -324,26 +338,28 @@ render config =
             case maybeMark of
                 Just mark ->
                     viewMark (Maybe.withDefault defaultPalette maybePalette)
+                        config.class
                         ( [ Blank ], Just mark )
 
                 Nothing ->
-                    [ viewBlank ]
+                    [ viewBlank config.class ]
 
         _ ->
             viewMark (Maybe.withDefault defaultPalette maybePalette)
+                config.class
                 ( config.content, maybeMark )
 
 
-viewMark : Palette -> ( List Content, Maybe Mark ) -> List (Html msg)
-viewMark palette ( content_, mark ) =
+viewMark : Palette -> Maybe String -> ( List Content, Maybe Mark ) -> List (Html msg)
+viewMark palette class_ ( content_, mark ) =
     Mark.viewWithBalloonTags renderContent
         palette.backgroundColor
         mark
         content_
 
 
-viewBlank : Html msg
-viewBlank =
+viewBlank : Maybe String -> Html msg
+viewBlank class_ =
     span
         [ css
             [ Css.border3 (Css.px 2) Css.dashed Colors.navy
@@ -356,6 +372,7 @@ viewBlank =
             , Css.display Css.inlineBlock
             , Css.borderRadius (Css.px 4)
             ]
+        , AttributesExtra.maybe Attributes.class class_
         ]
         [ span
             [ css
