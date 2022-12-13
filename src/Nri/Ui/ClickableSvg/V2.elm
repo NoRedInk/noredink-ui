@@ -327,14 +327,14 @@ applyTheme theme =
             }
 
         Tertiary ->
-            { main_ = Colors.gray45
-            , mainHovered = Colors.azure
-            , background = Colors.gray96
-            , backgroundHovered = Colors.glacier
+            { main_ = Colors.navy
+            , mainHovered = Colors.navy
+            , background = Colors.white
+            , backgroundHovered = Colors.frost
             , includeBorder = True
-            , borderColor = Colors.gray92
-            , borderBottom = Colors.gray92
-            , borderHover = Colors.azure
+            , borderColor = Colors.gray75
+            , borderBottom = Colors.gray75
+            , borderHover = Colors.gray75
             }
 
         Quaternary ->
