@@ -19,6 +19,7 @@ import Html.Styled as Html exposing (Attribute, Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Html.Styled.Keyed as Keyed
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.Util exposing (dashify)
@@ -243,6 +244,10 @@ viewTabPanel tab selected =
          , Aria.labelledBy (tabToId tab.idString)
          , Attributes.id (tabToBodyId tab.idString)
          , Attributes.tabindex 0
+         , Attributes.class FocusRing.customClass
+         , Attributes.css
+            [ Css.pseudoClass "focus-visible" [ FocusRing.insetBoxShadow ]
+            ]
          ]
             ++ (if selected then
                     [ -- Used as selector for test queries
