@@ -102,19 +102,20 @@ type Content
     | Blank
 
 
-renderContent : Content -> List Css.Style -> Html msg
-renderContent content_ markStyles =
+renderContent : Maybe String -> Content -> List Css.Style -> Html msg
+renderContent class_ content_ markStyles =
     span
         [ css (Css.whiteSpace Css.preWrap :: markStyles)
         , nriDescription "block-segment-container"
+        , AttributesExtra.maybe Attributes.class class_
         ]
-    <|
-        case content_ of
+        (case content_ of
             String_ str ->
                 [ text str ]
 
             Blank ->
-                [ viewBlank Nothing ]
+                [ viewBlank class_ ]
+        )
 
 
 {-| You will only need to use this helper if you're also using `content` to construct a more complex Block. Maybe you want `plaintext` instead?
@@ -352,7 +353,7 @@ render config =
 
 viewMark : Palette -> Maybe String -> ( List Content, Maybe Mark ) -> List (Html msg)
 viewMark palette class_ ( content_, mark ) =
-    Mark.viewWithBalloonTags renderContent
+    Mark.viewWithBalloonTags (renderContent class_)
         palette.backgroundColor
         mark
         content_
