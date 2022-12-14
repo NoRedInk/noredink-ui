@@ -205,7 +205,7 @@ example =
                                     |> Dict.fromList
                         in
                         div []
-                            [ inParagraph
+                            [ (List.concat >> p [ css [ Css.marginTop (Css.px 60) ] ])
                                 [ Block.view [ Block.plaintext "Taylor Swift bought " ]
                                 , Block.view
                                     [ Block.plaintext "new"
