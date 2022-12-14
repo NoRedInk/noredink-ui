@@ -6,6 +6,7 @@ module Examples.Block exposing (Msg, State, example)
 
 -}
 
+import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Code
 import CommonControls
@@ -225,6 +226,15 @@ initControl =
         |> ControlExtra.optionalBoolListItem "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )
         |> ControlExtra.optionalListItem "label"
             (CommonControls.string ( Code.fromModule moduleName "label", Block.label ) "Fruit")
+        |> ControlExtra.optionalListItem "labelOffset"
+            (Control.map
+                (\i ->
+                    ( Code.fromModule moduleName "labelOffset (Just" ++ String.fromFloat i ++ ")"
+                    , Block.labelOffset (Just i)
+                    )
+                )
+                (ControlExtra.float 40)
+            )
         |> ControlExtra.optionalListItem "theme"
             (CommonControls.choice moduleName
                 [ ( "yellow", Block.yellow )

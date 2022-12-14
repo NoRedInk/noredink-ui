@@ -2,7 +2,7 @@ module Nri.Ui.Block.V1 exposing
     ( view, Attribute
     , plaintext, content
     , Content, string, blank
-    , emphasize, label
+    , emphasize, label, labelOffset
     , yellow, cyan, magenta, green, blue, purple, brown
     , class
     )
@@ -20,7 +20,7 @@ module Nri.Ui.Block.V1 exposing
 
 ## Content customization
 
-@docs emphasize, label
+@docs emphasize, label, labelOffset
 
 
 ### Visual customization
@@ -90,6 +90,12 @@ emphasize =
 label : String -> Attribute
 label label_ =
     Attribute <| \config -> { config | label = Just label_ }
+
+
+{-| -}
+labelOffset : Maybe Float -> Attribute
+labelOffset offset =
+    Attribute <| \config -> { config | labelOffset = offset }
 
 
 
@@ -312,6 +318,7 @@ defaultConfig : Config
 defaultConfig =
     { content = []
     , label = Nothing
+    , labelOffset = Nothing
     , theme = Nothing
     , class = Nothing
     }
@@ -320,6 +327,7 @@ defaultConfig =
 type alias Config =
     { content : List Content
     , label : Maybe String
+    , labelOffset : Maybe Float
     , theme : Maybe Theme
     , class : Maybe String
     }
@@ -343,7 +351,7 @@ render config =
                         config.class
                         ( [ Blank ]
                         , Just mark
-                        , Nothing
+                        , config.labelOffset
                         )
 
                 Nothing ->
@@ -352,7 +360,7 @@ render config =
         _ ->
             viewMark (Maybe.withDefault defaultPalette maybePalette)
                 config.class
-                ( config.content, maybeMark, Nothing )
+                ( config.content, maybeMark, config.labelOffset )
 
 
 viewMark : Palette -> Maybe String -> ( List Content, Maybe Mark, Maybe Float ) -> List (Html msg)
