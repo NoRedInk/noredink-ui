@@ -15,7 +15,7 @@ import Accessibility.Styled.Style exposing (invisibleStyle)
 import Css exposing (Color, Style)
 import Css.Global
 import Html.Styled as Html exposing (Html, span)
-import Html.Styled.Attributes exposing (class, css)
+import Html.Styled.Attributes as Attributes exposing (class, css)
 import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
@@ -77,7 +77,7 @@ viewWithBalloonTags viewSegment backgroundColor marked contents =
     in
     case marked of
         Just markedWith ->
-            [ viewMarked (BalloonTags backgroundColor Nothing) markedWith segments ]
+            [ viewMarked (BalloonTags backgroundColor Nothing Nothing) markedWith segments ]
 
         Nothing ->
             segments
@@ -95,10 +95,11 @@ viewWithOffsetBalloonTags :
     , backgroundColor : Color
     , maybeMarker : Maybe Mark
     , offset : Maybe Float
+    , labelId : Maybe String
     }
     -> List c
     -> List (Html msg)
-viewWithOffsetBalloonTags { renderSegment, backgroundColor, maybeMarker, offset } contents =
+viewWithOffsetBalloonTags { renderSegment, backgroundColor, maybeMarker, labelId, offset } contents =
     let
         segments =
             List.indexedMap
@@ -107,7 +108,7 @@ viewWithOffsetBalloonTags { renderSegment, backgroundColor, maybeMarker, offset 
     in
     case maybeMarker of
         Just markedWith ->
-            [ viewMarked (BalloonTags backgroundColor offset) markedWith segments ]
+            [ viewMarked (BalloonTags backgroundColor labelId offset) markedWith segments ]
 
         Nothing ->
             segments
@@ -116,7 +117,7 @@ viewWithOffsetBalloonTags { renderSegment, backgroundColor, maybeMarker, offset 
 type TagStyle
     = HiddenTags
     | InlineTags
-    | BalloonTags Color (Maybe Float)
+    | BalloonTags Color (Maybe String) (Maybe Float)
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
@@ -158,7 +159,7 @@ viewMarked tagStyle markedWith segments =
         , css
             [ Css.backgroundColor Css.transparent
             , case tagStyle of
-                BalloonTags _ _ ->
+                BalloonTags _ _ _ ->
                     Css.position Css.relative
 
                 _ ->
@@ -238,8 +239,8 @@ viewTag tagStyle =
                     ]
                 ]
 
-        BalloonTags backgroundColor offset ->
-            viewBalloon backgroundColor offset
+        BalloonTags backgroundColor id offset ->
+            viewBalloon backgroundColor id offset
 
 
 viewInlineTag : List Css.Style -> String -> Html msg
@@ -262,8 +263,8 @@ viewInlineTag customizations name =
         [ Html.text name ]
 
 
-viewBalloon : Color -> Maybe Float -> String -> Html msg
-viewBalloon backgroundColor maybeOffset label =
+viewBalloon : Color -> Maybe String -> Maybe Float -> String -> Html msg
+viewBalloon backgroundColor maybeId maybeOffset label =
     Balloon.view
         [ Balloon.onTop
         , Balloon.containerCss
@@ -293,7 +294,13 @@ viewBalloon backgroundColor maybeOffset label =
             { backgroundColor = "Mark"
             , color = "MarkText"
             }
-        , Balloon.plaintext label
+        , Balloon.html
+            [ Html.p
+                [ css [ Css.margin Css.zero ]
+                , AttributesExtra.maybe Attributes.id maybeId
+                ]
+                [ Html.text label ]
+            ]
         , case maybeOffset of
             Just offset ->
                 Balloon.arrowHeight offset

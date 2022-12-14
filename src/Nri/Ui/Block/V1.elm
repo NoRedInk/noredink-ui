@@ -2,7 +2,7 @@ module Nri.Ui.Block.V1 exposing
     ( view, Attribute
     , plaintext, content
     , Content, string, blank
-    , emphasize, label, labelOffset
+    , emphasize, label, labelId, labelOffset
     , yellow, cyan, magenta, green, blue, purple, brown
     , class
     )
@@ -20,7 +20,7 @@ module Nri.Ui.Block.V1 exposing
 
 ## Content customization
 
-@docs emphasize, label, labelOffset
+@docs emphasize, label, labelId, labelOffset
 
 
 ### Visual customization
@@ -90,6 +90,12 @@ emphasize =
 label : String -> Attribute
 label label_ =
     Attribute <| \config -> { config | label = Just label_ }
+
+
+{-| -}
+labelId : String -> Attribute
+labelId labelId_ =
+    Attribute <| \config -> { config | labelId = Just labelId_ }
 
 
 {-| -}
@@ -318,6 +324,7 @@ defaultConfig : Config
 defaultConfig =
     { content = []
     , label = Nothing
+    , labelId = Nothing
     , labelOffset = Nothing
     , theme = Nothing
     , class = Nothing
@@ -327,6 +334,7 @@ defaultConfig =
 type alias Config =
     { content : List Content
     , label : Maybe String
+    , labelId : Maybe String
     , labelOffset : Maybe Float
     , theme : Maybe Theme
     , class : Maybe String
@@ -339,6 +347,9 @@ render config =
         maybePalette =
             Maybe.map themeToPalette config.theme
 
+        palette =
+            Maybe.withDefault defaultPalette maybePalette
+
         maybeMark =
             toMark config.label maybePalette
     in
@@ -346,32 +357,27 @@ render config =
         [] ->
             case maybeMark of
                 Just mark ->
-                    viewMark
-                        (Maybe.withDefault defaultPalette maybePalette)
-                        config.class
-                        ( [ Blank ]
-                        , Just mark
-                        , config.labelOffset
-                        )
+                    Mark.viewWithOffsetBalloonTags
+                        { renderSegment = renderContent config.class
+                        , backgroundColor = palette.backgroundColor
+                        , maybeMarker = Just mark
+                        , offset = config.labelOffset
+                        , labelId = config.labelId
+                        }
+                        [ Blank ]
 
                 Nothing ->
                     [ viewBlank config.class ]
 
         _ ->
-            viewMark (Maybe.withDefault defaultPalette maybePalette)
-                config.class
-                ( config.content, maybeMark, config.labelOffset )
-
-
-viewMark : Palette -> Maybe String -> ( List Content, Maybe Mark, Maybe Float ) -> List (Html msg)
-viewMark palette class_ ( content_, mark, offset ) =
-    Mark.viewWithOffsetBalloonTags
-        { renderSegment = renderContent class_
-        , backgroundColor = palette.backgroundColor
-        , maybeMarker = mark
-        , offset = offset
-        }
-        content_
+            Mark.viewWithOffsetBalloonTags
+                { renderSegment = renderContent config.class
+                , backgroundColor = palette.backgroundColor
+                , maybeMarker = maybeMark
+                , offset = config.labelOffset
+                , labelId = config.labelId
+                }
+                config.content
 
 
 viewBlank : Maybe String -> Html msg

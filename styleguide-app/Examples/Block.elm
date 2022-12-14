@@ -226,6 +226,8 @@ initControl =
         |> ControlExtra.optionalBoolListItem "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )
         |> ControlExtra.optionalListItem "label"
             (CommonControls.string ( Code.fromModule moduleName "label", Block.label ) "Fruit")
+        |> ControlExtra.optionalListItem "labelId"
+            (CommonControls.string ( Code.fromModule moduleName "labelId", Block.labelId ) "fruit-label")
         |> ControlExtra.optionalListItem "labelOffset"
             (Control.map
                 (\i ->
