@@ -9,6 +9,7 @@ import Examples.Block as Block
 import Examples.BreadCrumbs as BreadCrumbs
 import Examples.Button as Button
 import Examples.Carousel as Carousel
+import Examples.CharacterIcon as CharacterIcon
 import Examples.Checkbox as Checkbox
 import Examples.ClickableSvg as ClickableSvg
 import Examples.ClickableText as ClickableText
@@ -31,6 +32,7 @@ import Examples.Page as Page
 import Examples.Panel as Panel
 import Examples.Pennant as Pennant
 import Examples.PremiumCheckbox as PremiumCheckbox
+import Examples.QuestionBox as QuestionBox
 import Examples.RadioButton as RadioButton
 import Examples.RingGauge as RingGauge
 import Examples.SegmentedControl as SegmentedControl
@@ -199,6 +201,25 @@ all =
             (\msg ->
                 case msg of
                     CarouselState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , CharacterIcon.example
+        |> Example.wrapMsg CharacterIconMsg
+            (\msg ->
+                case msg of
+                    CharacterIconMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState CharacterIconState
+            (\msg ->
+                case msg of
+                    CharacterIconState childState ->
                         Just childState
 
                     _ ->
@@ -622,6 +643,25 @@ all =
                     _ ->
                         Nothing
             )
+    , QuestionBox.example
+        |> Example.wrapMsg QuestionBoxMsg
+            (\msg ->
+                case msg of
+                    QuestionBoxMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState QuestionBoxState
+            (\msg ->
+                case msg of
+                    QuestionBoxState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , RadioButton.example
         |> Example.wrapMsg RadioButtonMsg
             (\msg ->
@@ -957,6 +997,7 @@ type State
     | BreadCrumbsState BreadCrumbs.State
     | ButtonState Button.State
     | CarouselState Carousel.State
+    | CharacterIconState CharacterIcon.State
     | CheckboxState Checkbox.State
     | ClickableSvgState ClickableSvg.State
     | ClickableTextState ClickableText.State
@@ -979,6 +1020,7 @@ type State
     | PanelState Panel.State
     | PennantState Pennant.State
     | PremiumCheckboxState PremiumCheckbox.State
+    | QuestionBoxState QuestionBox.State
     | RadioButtonState RadioButton.State
     | RingGaugeState RingGauge.State
     | SegmentedControlState SegmentedControl.State
@@ -1007,6 +1049,7 @@ type Msg
     | BreadCrumbsMsg BreadCrumbs.Msg
     | ButtonMsg Button.Msg
     | CarouselMsg Carousel.Msg
+    | CharacterIconMsg CharacterIcon.Msg
     | CheckboxMsg Checkbox.Msg
     | ClickableSvgMsg ClickableSvg.Msg
     | ClickableTextMsg ClickableText.Msg
@@ -1029,6 +1072,7 @@ type Msg
     | PanelMsg Panel.Msg
     | PennantMsg Pennant.Msg
     | PremiumCheckboxMsg PremiumCheckbox.Msg
+    | QuestionBoxMsg QuestionBox.Msg
     | RadioButtonMsg RadioButton.Msg
     | RingGaugeMsg RingGauge.Msg
     | SegmentedControlMsg SegmentedControl.Msg

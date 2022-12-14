@@ -149,7 +149,8 @@ view ellieLinkConfig example =
 view_ : EllieLink.Config -> Example state msg -> List (Html msg)
 view_ ellieLinkConfig example =
     [ KeyboardSupport.view example.keyboardSupport
-    , Html.div [] (example.view ellieLinkConfig example.state)
+    , Html.div [ Attributes.css [ Css.marginBottom (Css.px 200) ] ]
+        (example.view ellieLinkConfig example.state)
     ]
 
 
