@@ -238,7 +238,7 @@ viewBalloon backgroundColor label =
         [ Balloon.onTop
         , Balloon.containerCss
             [ Css.position Css.absolute
-            , Css.bottom (Css.calc (Css.pct 100) Css.plus (Css.px 4))
+            , Css.bottom (Css.calc (Css.pct 100) Css.plus (Css.px 6))
             , -- using position, 50% is wrt the parent container
               -- using transform & translate, 50% is wrt to the element itself
               -- combining these two properties, we can center the tag against the parent container
