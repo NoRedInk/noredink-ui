@@ -183,9 +183,8 @@ example =
                                     |> List.Extra.groupWhile (\( _, a ) ( _, b ) -> a.element.y == b.element.y)
                                     |> List.concatMap
                                         (\( first, rem ) ->
-                                            first
-                                                :: rem
-                                                |> List.reverse
+                                            (first :: rem)
+                                                |> List.sortBy (Tuple.second >> .element >> .width)
                                                 |> List.foldl
                                                     (\( id, { element } ) ( previousHeight, acc ) ->
                                                         case previousHeight of
