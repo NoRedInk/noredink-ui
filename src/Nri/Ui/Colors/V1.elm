@@ -198,7 +198,7 @@ green =
 -}
 greenDark : Css.Color
 greenDark =
-    hex "#26a300"
+    hex "#28ab00"
 
 
 {-| See <https://noredink-ui.netlify.com/#category/Colors>

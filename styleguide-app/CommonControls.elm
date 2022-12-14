@@ -1,7 +1,7 @@
 module CommonControls exposing
     ( css, mobileCss, quizEngineMobileCss, narrowMobileCss, notMobileCss, css_
     , choice
-    , icon, iconNotCheckedByDefault
+    , icon, iconNotCheckedByDefault, rightIcon
     , uiIcon, rotatedUiIcon
     , customIcon
     , specificColor
@@ -16,7 +16,7 @@ module CommonControls exposing
 
 @docs css, mobileCss, quizEngineMobileCss, narrowMobileCss, notMobileCss, css_
 @docs choice
-@docs icon, iconNotCheckedByDefault
+@docs icon, iconNotCheckedByDefault, rightIcon
 @docs uiIcon, rotatedUiIcon
 @docs customIcon
 @docs specificColor
@@ -295,6 +295,32 @@ customIconNotCheckedByDefault iconList moduleName f =
                 ( moduleName ++ ".icon " ++ iconName, f iconValue )
             )
             iconList
+        )
+
+
+rightIcon :
+    String
+    -> (Svg -> value)
+    -> Control (List ( String, value ))
+    -> Control (List ( String, value ))
+rightIcon moduleName f =
+    ControlExtra.optionalListItem "rightIcon"
+        (List.map
+            (\( displayName, code, iconValue ) ->
+                ( displayName
+                , Control.value
+                    ( moduleName ++ ".rightIcon " ++ code
+                    , f iconValue
+                    )
+                )
+            )
+            [ ( "arrowDown", "UiIcon.arrowDown", UiIcon.arrowDown )
+            , ( "openInNewTab"
+              , "(Svg.withLabel \"Opens in new tab\" UiIcon.openInNewTab)"
+              , UiIcon.openInNewTab
+              )
+            ]
+            |> Control.choice
         )
 
 

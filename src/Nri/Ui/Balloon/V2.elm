@@ -5,6 +5,7 @@ module Nri.Ui.Balloon.V2 exposing
     , highContrastModeTheme
     , onBottom, onLeft, onRight, onTop
     , alignArrowStart, alignArrowMiddle, alignArrowEnd
+    , arrowHeight
     , custom, id, nriDescription, testId
     , containerCss
     , css, notMobileCss, mobileCss, quizEngineMobileCss
@@ -53,6 +54,7 @@ Changes from V1:
 @docs highContrastModeTheme
 @docs onBottom, onLeft, onRight, onTop
 @docs alignArrowStart, alignArrowMiddle, alignArrowEnd
+@docs arrowHeight
 @docs custom, id, nriDescription, testId
 
 
@@ -209,6 +211,13 @@ For onLeft & onRight ballon, this means "bottom".
 alignArrowEnd : Attribute msg
 alignArrowEnd =
     withArrowAlignment End
+
+
+{-| Set how tall you want the arrow to be. The default is 8px.
+-}
+arrowHeight : Float -> Attribute msg
+arrowHeight height =
+    Attribute (\config -> { config | arrowHeight = height })
 
 
 {-| Green theme (This is the default theme.)
@@ -374,6 +383,7 @@ html =
 type alias Config msg =
     { position : Position
     , arrowAlignment : ArrowAlignment
+    , arrowHeight : Float
     , theme : Theme
     , highContrastModeTheme : Maybe HighContrastModeTheme
     , containerCss : List Css.Style
@@ -389,6 +399,7 @@ defaultConfig : Config msg
 defaultConfig =
     { position = NoArrow
     , arrowAlignment = Middle
+    , arrowHeight = 8
     , theme = defaultGreenTheme
     , highContrastModeTheme = Nothing
     , containerCss = []
@@ -452,7 +463,7 @@ view_ config =
                 Html.text ""
 
             _ ->
-                viewArrow config 16
+                viewArrow config
         ]
 
 
@@ -516,98 +527,148 @@ borderRounding =
     8
 
 
-viewArrow : Config msg -> Float -> Html msg
-viewArrow config diagonal =
-    let
-        arrowSideWidth =
-            sqrt ((diagonal ^ 2) / 2)
-    in
+arrowWidth : Float
+arrowWidth =
+    8
+
+
+viewArrow : Config msg -> Html msg
+viewArrow config =
     styled div
-        [ arrowPosition config.position config.arrowAlignment
-        , backgroundColor config.theme.backgroundColor
-        , border3 (px 1) solid config.theme.backgroundColor
+        [ arrowPosition config
+        , borderStyle solid
         , applyHighContrastModeTheme config.highContrastModeTheme
-        , Css.height (px arrowSideWidth)
-        , Css.width (px arrowSideWidth)
+        , Css.height zero
+        , Css.width zero
         , Css.flexShrink (Css.num 0)
         ]
         []
         []
 
 
-arrowPosition : Position -> ArrowAlignment -> Css.Style
-arrowPosition position arrowAlignment =
+arrowPosition : Config msg -> Css.Style
+arrowPosition ({ position, arrowAlignment, theme } as config) =
     let
+        arrowHeight_ =
+            config.arrowHeight
+
+        color =
+            theme.backgroundColor
+
+        highContrastColor =
+            Maybe.withDefault "CanvasText"
+                (Maybe.map .backgroundColor config.highContrastModeTheme)
+
         offset =
             String.fromFloat (borderRounding + 8) ++ "px"
 
-        translateYBy y =
+        translate direction =
             Css.batch <|
                 case arrowAlignment of
                     Start ->
                         [ Css.alignSelf Css.flexStart
-                        , Css.property "transform" ("translate(" ++ offset ++ "," ++ y ++ ") rotate(45deg)")
+                        , Css.property "transform" ("translate" ++ direction ++ "(" ++ offset ++ ")")
                         ]
 
                     Middle ->
-                        [ Css.property "transform" ("translateY(" ++ y ++ ") rotate(45deg)") ]
+                        [ Css.property "transform" "scale(1)" ]
 
                     End ->
                         [ Css.alignSelf Css.flexEnd
-                        , Css.property "transform" ("translate(-" ++ offset ++ "," ++ y ++ ") rotate(45deg)")
-                        ]
-
-        translateXBy x =
-            Css.batch <|
-                case arrowAlignment of
-                    Start ->
-                        [ Css.alignSelf Css.flexStart
-                        , Css.property "transform" ("translate(" ++ x ++ "," ++ offset ++ ") rotate(45deg)")
-                        ]
-
-                    Middle ->
-                        [ Css.property "transform" ("translateX(" ++ x ++ ") rotate(45deg)") ]
-
-                    End ->
-                        [ Css.alignSelf Css.flexEnd
-                        , Css.property "transform" ("translate(" ++ x ++ ",-" ++ offset ++ ") rotate(45deg)")
+                        , Css.property "transform" ("translate" ++ direction ++ "(-" ++ offset ++ ")")
                         ]
     in
     case position of
         OnTop ->
             batch
-                [ translateYBy "-50%"
+                [ translate "X"
                 , Css.property "transform-origin" "center"
-                , Css.borderTop Css.zero
-                , Css.borderLeft Css.zero
-                , Css.borderTopLeftRadius (pct 100)
+                , Css.borderTop (Css.px arrowHeight_)
+                , Css.borderRight (Css.px arrowWidth)
+                , Css.borderBottom Css.zero
+                , Css.borderLeft (Css.px arrowWidth)
+
+                -- Colors:
+                , Css.borderTopColor color
+                , Css.borderRightColor transparent
+                , Css.borderBottomColor transparent
+                , Css.borderLeftColor transparent
+                , MediaQuery.highContrastMode
+                    [ Css.property "forced-color-adjust" "none"
+                    , Css.property "border-top-color" highContrastColor
+                    , Css.property "border-right-color" "Canvas"
+                    , Css.property "border-bottom-color" "Canvas"
+                    , Css.property "border-left-color" "Canvas"
+                    ]
                 ]
 
         OnBottom ->
             batch
-                [ translateYBy "50%"
+                [ translate "X"
                 , Css.property "transform-origin" "center"
-                , Css.borderRight Css.zero
-                , Css.borderBottom Css.zero
-                , Css.borderBottomRightRadius (pct 100)
+                , Css.borderTop Css.zero
+                , Css.borderRight (Css.px arrowWidth)
+                , Css.borderBottom (Css.px arrowHeight_)
+                , Css.borderLeft (Css.px arrowWidth)
+
+                -- Colors:
+                , Css.borderTopColor transparent
+                , Css.borderRightColor transparent
+                , Css.borderBottomColor color
+                , Css.borderLeftColor transparent
+                , MediaQuery.highContrastMode
+                    [ Css.property "forced-color-adjust" "none"
+                    , Css.property "border-top-color" "Canvas"
+                    , Css.property "border-right-color" "Canvas"
+                    , Css.property "border-bottom-color" highContrastColor
+                    , Css.property "border-left-color" "Canvas"
+                    ]
                 ]
 
         OnLeft ->
             batch
-                [ translateXBy "-50%"
+                [ translate "Y"
                 , Css.property "transform-origin" "center"
-                , Css.borderBottom Css.zero
-                , Css.borderLeft Css.zero
-                , Css.borderBottomLeftRadius (pct 100)
+                , Css.borderTop (Css.px arrowWidth)
+                , Css.borderRight Css.zero
+                , Css.borderBottom (Css.px arrowWidth)
+                , Css.borderLeft (Css.px arrowHeight_)
+
+                -- Colors:
+                , Css.borderTopColor transparent
+                , Css.borderRightColor transparent
+                , Css.borderBottomColor transparent
+                , Css.borderLeftColor color
+                , MediaQuery.highContrastMode
+                    [ Css.property "forced-color-adjust" "none"
+                    , Css.property "border-top-color" "Canvas"
+                    , Css.property "border-right-color" "Canvas"
+                    , Css.property "border-bottom-color" "Canvas"
+                    , Css.property "border-left-color" highContrastColor
+                    ]
                 ]
 
         OnRight ->
             batch
-                [ translateXBy "50%"
+                [ translate "Y"
                 , Css.property "transform-origin" "center"
-                , Css.borderRight Css.zero
-                , Css.borderTop Css.zero
-                , Css.borderTopRightRadius (pct 100)
+                , Css.borderTop (Css.px arrowWidth)
+                , Css.borderRight (Css.px arrowHeight_)
+                , Css.borderBottom (Css.px arrowWidth)
+                , Css.borderLeft Css.zero
+
+                -- Colors:
+                , Css.borderTopColor transparent
+                , Css.borderRightColor color
+                , Css.borderBottomColor transparent
+                , Css.borderLeftColor transparent
+                , MediaQuery.highContrastMode
+                    [ Css.property "forced-color-adjust" "none"
+                    , Css.property "border-top-color" "Canvas"
+                    , Css.property "border-right-color" highContrastColor
+                    , Css.property "border-bottom-color" "Canvas"
+                    , Css.property "border-left-color" "Canvas"
+                    ]
                 ]
 
         NoArrow ->

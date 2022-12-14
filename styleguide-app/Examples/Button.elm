@@ -158,6 +158,7 @@ initDebugControls =
         |> Control.field "attributes"
             (ControlExtra.list
                 |> CommonControls.icon moduleName Button.icon
+                |> CommonControls.rightIcon moduleName Button.rightIcon
                 |> ControlExtra.optionalListItem "width"
                     (CommonControls.choice moduleName
                         [ ( "exactWidth 120", Button.exactWidth 120 )

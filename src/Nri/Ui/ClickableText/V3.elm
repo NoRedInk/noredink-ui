@@ -5,9 +5,9 @@ module Nri.Ui.ClickableText.V3 exposing
     , small, medium, large, modal
     , onClick, submit, opensModal
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
-    , icon
-    , custom, nriDescription, testId, id
+    , icon, rightIcon
     , hideIconForMobile, hideIconFor
+    , custom, nriDescription, testId, id
     , hideTextForMobile, hideTextFor
     , css, notMobileCss, mobileCss, quizEngineMobileCss
     )
@@ -74,15 +74,19 @@ HTML `<a>` elements and are created here with `*Link` functions.
 @docs href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
 
 
+## Icons
+
+@docs icon, rightIcon
+@docs hideIconForMobile, hideIconFor
+
+
 ## Customization
 
-@docs icon
 @docs custom, nriDescription, testId, id
 
 
 ### CSS
 
-@docs hideIconForMobile, hideIconFor
 @docs hideTextForMobile, hideTextFor
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss
 
@@ -152,6 +156,12 @@ icon icon_ =
     set (\attributes -> { attributes | icon = Just icon_ })
 
 
+{-| -}
+rightIcon : Svg -> Attribute msg
+rightIcon icon_ =
+    set (\attributes -> { attributes | rightIcon = Just icon_ })
+
+
 {-| Use this helper to add custom attributes.
 
 Do NOT use this helper to add css styles, as they may not be applied the way
@@ -187,24 +197,28 @@ id id_ =
     custom [ Attributes.id id_ ]
 
 
-{-| -}
+{-| Hide the left-side icon for the mobile breakpoint.
+-}
 hideIconForMobile : Attribute msg
 hideIconForMobile =
     hideIconFor MediaQuery.mobile
 
 
-{-| -}
+{-| Hide the left-side icon for an arbitrary media query.
+-}
 hideIconFor : MediaQuery -> Attribute msg
 hideIconFor mediaQuery =
-    css
-        [ Css.Media.withMedia [ mediaQuery ]
-            [ Css.Global.descendants
-                [ Css.Global.selector "[role=img]"
-                    [ Css.display Css.none
-                    ]
-                ]
-            ]
-        ]
+    set
+        (\config ->
+            { config
+                | iconStyles =
+                    List.append config.iconStyles
+                        [ Css.Media.withMedia [ mediaQuery ]
+                            [ Css.display Css.none
+                            ]
+                        ]
+            }
+        )
 
 
 {-| -}
@@ -397,43 +411,52 @@ link label_ attributes =
         [ viewContent config ]
 
 
-viewContent : { a | label : String, size : Size, icon : Maybe Svg } -> Html msg
+viewContent :
+    { a
+        | label : String
+        , size : Size
+        , icon : Maybe Svg
+        , rightIcon : Maybe Svg
+        , iconStyles : List Style
+    }
+    -> Html msg
 viewContent config =
     let
         fontSize =
             sizeToPx config.size
+
+        viewIcon styles icon_ =
+            icon_
+                |> Svg.withWidth fontSize
+                |> Svg.withHeight fontSize
+                |> Svg.withCss styles
+                |> Svg.toHtml
+
+        iconSize =
+            case config.size of
+                Small ->
+                    Css.px 3
+
+                Medium ->
+                    Css.px 3
+
+                Large ->
+                    Css.px 4
     in
-    span [ Attributes.css [ Css.fontSize fontSize ] ]
-        (case config.icon of
-            Just icon_ ->
-                [ div
-                    [ Attributes.css
-                        [ Css.displayFlex
-                        , Css.alignItems Css.center
-                        , Css.property "line-height" "normal"
-                        ]
-                    ]
-                    [ icon_
-                        |> Svg.withWidth fontSize
-                        |> Svg.withHeight fontSize
-                        |> Svg.withCss
-                            [ case config.size of
-                                Small ->
-                                    Css.marginRight (Css.px 3)
-
-                                Medium ->
-                                    Css.marginRight (Css.px 3)
-
-                                Large ->
-                                    Css.marginRight (Css.px 4)
-                            ]
-                        |> Svg.toHtml
-                    , span [ ExtraAttributes.nriDescription "clickable-text-label" ] [ text config.label ]
-                    ]
-                ]
-
-            Nothing ->
-                [ text config.label ]
+    span
+        [ Attributes.css
+            [ Css.displayFlex
+            , Css.alignItems Css.center
+            , Css.property "line-height" "normal"
+            , Css.fontSize fontSize
+            ]
+        ]
+        (List.filterMap identity
+            [ Maybe.map (viewIcon (Css.marginRight iconSize :: config.iconStyles))
+                config.icon
+            , Just (span [ ExtraAttributes.nriDescription "clickable-text-label" ] [ text config.label ])
+            , Maybe.map (viewIcon [ Css.marginLeft iconSize ]) config.rightIcon
+            ]
         )
 
 
@@ -487,6 +510,8 @@ type alias ClickableTextAttributes msg =
     , label : String
     , size : Size
     , icon : Maybe Svg
+    , iconStyles : List Style
+    , rightIcon : Maybe Svg
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
     }
@@ -498,6 +523,8 @@ defaults =
     , size = Medium
     , label = ""
     , icon = Nothing
+    , iconStyles = []
+    , rightIcon = Nothing
     , customAttributes = [ Attributes.class FocusRing.customClass ]
     , customStyles = [ Css.pseudoClass "focus-visible" (Css.borderRadius (Css.px 4) :: FocusRing.tightStyles) ]
     }

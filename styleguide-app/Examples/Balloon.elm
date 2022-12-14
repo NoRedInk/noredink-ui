@@ -82,6 +82,15 @@ controlSettings =
         |> ControlExtra.optionalListItem "theme" themeOptions
         |> ControlExtra.optionalListItemDefaultChecked "position" positionOptions
         |> ControlExtra.optionalListItem "arrowAlignment" arrowAlignmentOptions
+        |> ControlExtra.optionalListItem "arrowHeight"
+            (Control.map
+                (\v ->
+                    ( "Balloon.arrowHeight " ++ String.fromFloat v ++ ""
+                    , Balloon.arrowHeight v
+                    )
+                )
+                (ControlExtra.float 20)
+            )
         |> CommonControls.css_ "containerCss"
             ( "[ Css.backgroundColor Colors.magenta ]", [ Css.backgroundColor Colors.magenta ] )
             { moduleName = moduleName, use = Balloon.containerCss }
@@ -121,10 +130,10 @@ controlCustomTheme =
 positionOptions : Control ( String, Balloon.Attribute msg )
 positionOptions =
     Control.choice
-        [ ( "onBottom", Control.value ( "Balloon.onBottom", Balloon.onBottom ) )
-        , ( "onLeft", Control.value ( "Balloon.onLeft", Balloon.onLeft ) )
+        [ ( "onTop", Control.value ( "Balloon.onTop", Balloon.onTop ) )
         , ( "onRight", Control.value ( "Balloon.onRight", Balloon.onRight ) )
-        , ( "onTop", Control.value ( "Balloon.onTop", Balloon.onTop ) )
+        , ( "onBottom", Control.value ( "Balloon.onBottom", Balloon.onBottom ) )
+        , ( "onLeft", Control.value ( "Balloon.onLeft", Balloon.onLeft ) )
         ]
 
 

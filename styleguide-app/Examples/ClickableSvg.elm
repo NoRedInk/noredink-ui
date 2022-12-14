@@ -188,8 +188,9 @@ viewExampleTable { label, icon, attributes } =
             List.indexedMap viewExampleRow
                 [ ( "primary", ClickableSvg.primary )
                 , ( "secondary", ClickableSvg.secondary )
-                , ( "danger", ClickableSvg.danger )
                 , ( "tertiary", ClickableSvg.tertiary )
+                , ( "quaternary", ClickableSvg.quaternary )
+                , ( "danger", ClickableSvg.danger )
                 , ( "dangerSecondary", ClickableSvg.dangerSecondary )
                 ]
         , Html.tfoot []
@@ -298,6 +299,7 @@ initSettings =
                     { moduleName = "ClickableSvg"
                     , use = ClickableSvg.notMobileCss
                     }
+                |> CommonControls.rightIcon moduleName ClickableSvg.rightIcon
                 |> ControlExtra.optionalListItem "iconForMobile"
                     (Control.map
                         (\( name, icon ) ->

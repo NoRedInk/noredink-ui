@@ -5,11 +5,12 @@ module Nri.Ui.ClickableSvg.V2 exposing
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , exactSize, exactWidth, exactHeight
     , disabled
+    , rightIcon
+    , iconForMobile, iconForQuizEngineMobile, iconForNarrowMobile
     , withBorder
-    , primary, secondary, tertiary, danger, dangerSecondary
+    , primary, secondary, tertiary, quaternary, danger, dangerSecondary
     , custom, nriDescription, testId, id
     , css, notMobileCss, mobileCss, quizEngineMobileCss
-    , iconForMobile, iconForQuizEngineMobile, iconForNarrowMobile
     , small, medium, large
     )
 
@@ -45,10 +46,16 @@ module Nri.Ui.ClickableSvg.V2 exposing
 @docs disabled
 
 
+## Icons
+
+@docs rightIcon
+@docs iconForMobile, iconForQuizEngineMobile, iconForNarrowMobile
+
+
 ## Customization
 
 @docs withBorder
-@docs primary, secondary, tertiary, danger, dangerSecondary
+@docs primary, secondary, tertiary, quaternary, danger, dangerSecondary
 
 @docs custom, nriDescription, testId, id
 
@@ -56,7 +63,6 @@ module Nri.Ui.ClickableSvg.V2 exposing
 ### CSS
 
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss
-@docs iconForMobile, iconForQuizEngineMobile, iconForNarrowMobile
 
 
 ### DEPRECATED
@@ -76,6 +82,7 @@ import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
+import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 
@@ -184,31 +191,25 @@ linkExternalWithTracking config =
 -- SIZING
 
 
-type Size
-    = Small
-    | Medium
-    | Large
-
-
 {-| This is the default. This attribute will be removed in the next version of ClickableSvg!
 -}
 small : Attribute msg
 small =
-    set (\attributes -> { attributes | size = Small })
+    exactSize (round smallSize)
 
 
 {-| This attribute will be removed in the next version of ClickableSvg!
 -}
 medium : Attribute msg
 medium =
-    set (\attributes -> { attributes | size = Medium })
+    exactSize (round mediumSize)
 
 
 {-| This attribute will be removed in the next version of ClickableSvg!
 -}
 large : Attribute msg
 large =
-    set (\attributes -> { attributes | size = Large })
+    exactSize (round largeSize)
 
 
 {-| Set the size in `px` for the element's width and height.
@@ -225,8 +226,8 @@ exactSize inPx =
     set
         (\attributes ->
             { attributes
-                | width = Just (toFloat inPx)
-                , height = Just (toFloat inPx)
+                | width = toFloat inPx
+                , height = toFloat inPx
             }
         )
 
@@ -235,14 +236,14 @@ exactSize inPx =
 -}
 exactWidth : Int -> Attribute msg
 exactWidth inPx =
-    set (\attributes -> { attributes | width = Just (toFloat inPx) })
+    set (\attributes -> { attributes | width = toFloat inPx })
 
 
 {-| Define a size in `px` for the element's total height.
 -}
 exactHeight : Int -> Attribute msg
 exactHeight inPx =
-    set (\attributes -> { attributes | height = Just (toFloat inPx) })
+    set (\attributes -> { attributes | height = toFloat inPx })
 
 
 
@@ -270,6 +271,7 @@ type Theme
     = Primary
     | Secondary
     | Tertiary
+    | Quaternary
     | Danger
     | DangerSecondary
 
@@ -335,6 +337,17 @@ applyTheme theme =
             , borderHover = Colors.azure
             }
 
+        Quaternary ->
+            { main_ = Colors.gray45
+            , mainHovered = Colors.azure
+            , background = Colors.gray96
+            , backgroundHovered = Colors.glacier
+            , includeBorder = True
+            , borderColor = Colors.gray92
+            , borderBottom = Colors.gray92
+            , borderHover = Colors.azure
+            }
+
         Danger ->
             { main_ = Colors.white
             , mainHovered = Colors.white
@@ -378,6 +391,13 @@ secondary =
 tertiary : Attribute msg
 tertiary =
     set (\attributes -> { attributes | theme = Tertiary })
+
+
+{-| Used to de-emphasize elements when not hovered.
+-}
+quaternary : Attribute msg
+quaternary =
+    set (\attributes -> { attributes | theme = Quaternary })
 
 
 {-| White/transparent icon on a red background.
@@ -474,6 +494,12 @@ quizEngineMobileCss styles =
 
 
 {-| -}
+rightIcon : Svg -> Attribute msg
+rightIcon icon =
+    set (\config -> { config | rightIcon = Just icon })
+
+
+{-| -}
 iconForMobile : Svg -> Attribute msg
 iconForMobile icon =
     set (\config -> { config | iconForMobile = Just icon })
@@ -511,10 +537,10 @@ build label icon =
         , iconForMobile = Nothing
         , iconForQuizEngineMobile = Nothing
         , iconForNarrowMobile = Nothing
+        , rightIcon = Nothing
         , disabled = False
-        , size = Small
-        , width = Nothing
-        , height = Nothing
+        , width = smallSize
+        , height = smallSize
         , customAttributes = []
         , customStyles = []
         , hasBorder = False
@@ -533,10 +559,10 @@ type alias ButtonOrLinkAttributes msg =
     , iconForMobile : Maybe Svg
     , iconForQuizEngineMobile : Maybe Svg
     , iconForNarrowMobile : Maybe Svg
+    , rightIcon : Maybe Svg
     , disabled : Bool
-    , size : Size
-    , width : Maybe Float
-    , height : Maybe Float
+    , width : Float
+    , height : Float
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
     , hasBorder : Bool
@@ -605,50 +631,45 @@ renderLink ((ButtonOrLink config) as link_) =
 renderIcons : ButtonOrLinkAttributes msg -> Bool -> List (Html msg)
 renderIcons config includeBorder =
     let
-        size =
-            getSize config.size
-
         bordersAndPadding =
-            getBorder config.size config.width config.height includeBorder
+            getBorder config.width config.height includeBorder
 
-        iconWidth =
+        availableWidth =
             if config.hasBorder then
-                size
+                config.width
                     - bordersAndPadding.leftPadding
                     - bordersAndPadding.rightPadding
                     - bordersAndPadding.leftBorder
                     - bordersAndPadding.rightBorder
 
             else
-                Maybe.withDefault size config.width
+                config.width
 
-        iconHeight =
-            if config.hasBorder then
-                size
-                    - bordersAndPadding.topPadding
-                    - bordersAndPadding.bottomPadding
-                    - bordersAndPadding.topBorder
-                    - bordersAndPadding.bottomBorder
+        ( iconWidth, rightIconWidth ) =
+            if config.rightIcon == Nothing then
+                ( availableWidth, 0 )
 
             else
-                Maybe.withDefault size config.height
-
-        iconStyles =
-            [ Css.displayFlex
-            , Css.maxWidth (Css.px iconWidth)
-            , Css.maxHeight (Css.px iconHeight)
-            , Css.height (Css.pct 100)
-            , Css.margin Css.auto
-            ]
+                ( availableWidth / 2 + rightIconMargin
+                , max (availableWidth / 2 - (2 * rightIconMargin)) 10
+                )
 
         renderUnless breakpoints =
-            Svg.withCss
-                [ Css.batch iconStyles
-                , Css.Media.withMedia breakpoints
-                    [ Css.display Css.none
+            Svg.withWidth (Css.px iconWidth)
+                >> Svg.withCss
+                    [ Css.Media.withMedia breakpoints
+                        [ Css.display Css.none
+                        ]
                     ]
-                ]
                 >> Svg.toHtml
+
+        renderRightIcon =
+            Svg.withWidth (Css.px rightIconWidth)
+                >> Svg.withCss [ Css.marginLeft (Css.px rightIconMargin) ]
+                >> Svg.toHtml
+
+        rightIconMargin =
+            3
     in
     case ( config.iconForNarrowMobile, config.iconForQuizEngineMobile, config.iconForMobile ) of
         ( Just iconForNarrowMobile_, Just iconForQuizEngineMobile_, Nothing ) ->
@@ -656,6 +677,7 @@ renderIcons config includeBorder =
             , renderUnless [ MediaQuery.narrowMobile, MediaQuery.notQuizEngineMobile ]
                 iconForQuizEngineMobile_
             , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
+            , viewJust renderRightIcon config.rightIcon
             ]
 
         ( Just iconForNarrowMobile_, Just iconForQuizEngineMobile_, Just iconForMobile_ ) ->
@@ -665,23 +687,27 @@ renderIcons config includeBorder =
             , renderUnless [ MediaQuery.narrowMobile, MediaQuery.notQuizEngineMobile ]
                 iconForQuizEngineMobile_
             , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
+            , viewJust renderRightIcon config.rightIcon
             ]
 
         ( Just iconForNarrowMobile_, Nothing, Just iconForMobile_ ) ->
             [ renderUnless [ MediaQuery.mobile ] config.icon
             , renderUnless [ MediaQuery.narrowMobile, MediaQuery.notMobile ] iconForMobile_
             , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
+            , viewJust renderRightIcon config.rightIcon
             ]
 
         ( Just iconForNarrowMobile_, Nothing, Nothing ) ->
             [ renderUnless [ MediaQuery.narrowMobile ] config.icon
             , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
+            , viewJust renderRightIcon config.rightIcon
             ]
 
         ( Nothing, Just iconForQuizEngineMobile_, Nothing ) ->
             [ renderUnless [ MediaQuery.quizEngineMobile ] config.icon
             , renderUnless [ MediaQuery.notQuizEngineMobile ]
                 iconForQuizEngineMobile_
+            , viewJust renderRightIcon config.rightIcon
             ]
 
         ( Nothing, Just iconForQuizEngineMobile_, Just iconForMobile_ ) ->
@@ -690,17 +716,18 @@ renderIcons config includeBorder =
                 iconForMobile_
             , renderUnless [ MediaQuery.notQuizEngineMobile ]
                 iconForQuizEngineMobile_
+            , viewJust renderRightIcon config.rightIcon
             ]
 
         ( Nothing, Nothing, Just iconForMobile_ ) ->
             [ renderUnless [ MediaQuery.mobile ] config.icon
             , renderUnless [ MediaQuery.notMobile ] iconForMobile_
+            , viewJust renderRightIcon config.rightIcon
             ]
 
         ( Nothing, Nothing, Nothing ) ->
-            [ config.icon
-                |> Svg.withCss iconStyles
-                |> Svg.toHtml
+            [ Svg.toHtml (Svg.withWidth (Css.px iconWidth) config.icon)
+            , viewJust renderRightIcon config.rightIcon
             ]
 
 
@@ -715,7 +742,7 @@ buttonOrLinkStyles config { main_, mainHovered, background, backgroundHovered, b
                 Css.pointer
 
         bordersAndPadding =
-            getBorder config.size config.width config.height includeBorder
+            getBorder config.width config.height includeBorder
     in
     [ Css.property "transition"
         "background-color 0.2s, color 0.2s, border-width 0s, border-color 0.2s"
@@ -759,7 +786,6 @@ buttonOrLinkStyles config { main_, mainHovered, background, backgroundHovered, b
                 (Css.px bordersAndPadding.rightPadding)
                 (Css.px bordersAndPadding.bottomPadding)
                 (Css.px bordersAndPadding.leftPadding)
-            , Css.height (Css.px (getSize config.size))
             ]
 
         else
@@ -769,10 +795,12 @@ buttonOrLinkStyles config { main_, mainHovered, background, backgroundHovered, b
             ]
 
     -- Sizing
-    , Css.display Css.inlineBlock
+    , Css.width (Css.px config.width)
+    , Css.height (Css.px config.height)
     , Css.boxSizing Css.borderBox
-    , Css.width (Css.px (Maybe.withDefault (getSize config.size) config.width))
-    , Css.height (Css.px (Maybe.withDefault (getSize config.size) config.height))
+    , Css.displayFlex
+    , Css.alignItems Css.stretch
+    , Css.justifyContent Css.center
 
     -- Focus
     , Css.pseudoClass "focus-visible"
@@ -783,19 +811,6 @@ buttonOrLinkStyles config { main_, mainHovered, background, backgroundHovered, b
             FocusRing.styles
         )
     ]
-
-
-getSize : Size -> Float
-getSize size =
-    case size of
-        Small ->
-            smallSize
-
-        Medium ->
-            mediumSize
-
-        Large ->
-            largeSize
 
 
 smallSize : Float
@@ -814,9 +829,8 @@ largeSize =
 
 
 getBorder :
-    Size
-    -> Maybe Float
-    -> Maybe Float
+    Float
+    -> Float
     -> Bool
     ->
         { topBorder : Float
@@ -828,16 +842,10 @@ getBorder :
         , leftBorder : Float
         , leftPadding : Float
         }
-getBorder size width height includeBorder =
+getBorder width height includeBorder =
     let
-        w =
-            Maybe.withDefault (getSize size) width
-
-        h =
-            Maybe.withDefault (getSize size) height
-
         verticalSettings =
-            if h < smallSize then
+            if height < smallSize then
                 -- Teeny size vertical settings
                 { topBorder = 1
                 , topPadding = 1
@@ -845,7 +853,7 @@ getBorder size width height includeBorder =
                 , bottomPadding = 1
                 }
 
-            else if h < mediumSize then
+            else if height < mediumSize then
                 -- Small size vertical settings
                 { topBorder = 1
                 , topPadding = 7
@@ -853,7 +861,7 @@ getBorder size width height includeBorder =
                 , bottomPadding = 7
                 }
 
-            else if h < largeSize then
+            else if height < largeSize then
                 -- Medium size vertical settings
                 { topBorder = 1
                 , topPadding = 10
@@ -870,7 +878,7 @@ getBorder size width height includeBorder =
                 }
 
         horizontalSettings =
-            if w < smallSize then
+            if width < smallSize then
                 -- Teeny size horizontal settings
                 { rightBorder = 1
                 , rightPadding = 2
@@ -878,7 +886,7 @@ getBorder size width height includeBorder =
                 , leftPadding = 2
                 }
 
-            else if w < mediumSize then
+            else if width < mediumSize then
                 -- Small size horizontal settings
                 { rightBorder = 1
                 , rightPadding = 7
@@ -886,7 +894,7 @@ getBorder size width height includeBorder =
                 , leftPadding = 7
                 }
 
-            else if w < largeSize then
+            else if width < largeSize then
                 -- Medium size horizontal settings
                 { rightBorder = 1
                 , rightPadding = 9

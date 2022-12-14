@@ -1,6 +1,6 @@
 module Nri.Ui.TextInput.V7 exposing
     ( view, generateId
-    , number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, organization, organizationTitle, postalCode, sex, tel
+    , number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, username, organization, organizationTitle, postalCode, sex, tel
     , readOnlyText
     , value, map
     , onFocus, onBlur, onEnter
@@ -32,7 +32,7 @@ module Nri.Ui.TextInput.V7 exposing
 
 ### Input types
 
-@docs number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, organization, organizationTitle, postalCode, sex, tel
+@docs number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, username, organization, organizationTitle, postalCode, sex, tel
 @docs readOnlyText
 
 
@@ -308,6 +308,25 @@ familyName onInput_ =
                 | fieldType = Just "text"
                 , inputMode = Nothing
                 , autocomplete = Just "family-name"
+            }
+        )
+
+
+{-| An input that allows username entry
+-}
+username : (String -> msg) -> Attribute String msg
+username onInput_ =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just identity
+            , fromString = Just identity
+            , onInput = Just (identity >> onInput_)
+        }
+        (\config ->
+            { config
+                | fieldType = Just "text"
+                , inputMode = Nothing
+                , autocomplete = Just "username"
             }
         )
 
