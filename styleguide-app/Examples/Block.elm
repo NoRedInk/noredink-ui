@@ -190,7 +190,12 @@ example =
                                                     (\( id, { element } ) ( previousHeight, acc ) ->
                                                         case previousHeight of
                                                             Nothing ->
-                                                                ( Just element.height, acc )
+                                                                ( Just
+                                                                    -- Include a starting offset of 8, which is the height
+                                                                    -- of the balloon arrow by default
+                                                                    (element.height + 8)
+                                                                , acc
+                                                                )
 
                                                             Just height ->
                                                                 ( Just (height + element.height), ( id, height ) :: acc )
