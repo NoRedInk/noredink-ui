@@ -338,9 +338,13 @@ render config =
         [] ->
             case maybeMark of
                 Just mark ->
-                    viewMark (Maybe.withDefault defaultPalette maybePalette)
+                    viewMark
+                        (Maybe.withDefault defaultPalette maybePalette)
                         config.class
-                        ( [ Blank ], Just mark )
+                        ( [ Blank ]
+                        , Just mark
+                        , Nothing
+                        )
 
                 Nothing ->
                     [ viewBlank config.class ]
@@ -348,14 +352,17 @@ render config =
         _ ->
             viewMark (Maybe.withDefault defaultPalette maybePalette)
                 config.class
-                ( config.content, maybeMark )
+                ( config.content, maybeMark, Nothing )
 
 
-viewMark : Palette -> Maybe String -> ( List Content, Maybe Mark ) -> List (Html msg)
-viewMark palette class_ ( content_, mark ) =
-    Mark.viewWithBalloonTags (renderContent class_)
-        palette.backgroundColor
-        mark
+viewMark : Palette -> Maybe String -> ( List Content, Maybe Mark, Maybe Float ) -> List (Html msg)
+viewMark palette class_ ( content_, mark, offset ) =
+    Mark.viewWithOffsetBalloonTags
+        { renderSegment = renderContent class_
+        , backgroundColor = palette.backgroundColor
+        , maybeMarker = mark
+        , offset = offset
+        }
         content_
 
 

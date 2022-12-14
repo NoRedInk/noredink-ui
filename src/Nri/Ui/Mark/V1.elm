@@ -1,12 +1,12 @@
 module Nri.Ui.Mark.V1 exposing
     ( Mark
-    , view, viewWithInlineTags, viewWithBalloonTags
+    , view, viewWithInlineTags, viewWithBalloonTags, viewWithOffsetBalloonTags
     )
 
 {-|
 
 @docs Mark
-@docs view, viewWithInlineTags, viewWithBalloonTags
+@docs view, viewWithInlineTags, viewWithBalloonTags, viewWithOffsetBalloonTags
 
 -}
 
@@ -77,7 +77,37 @@ viewWithBalloonTags viewSegment backgroundColor marked contents =
     in
     case marked of
         Just markedWith ->
-            [ viewMarked (BalloonTags backgroundColor) markedWith segments ]
+            [ viewMarked (BalloonTags backgroundColor Nothing) markedWith segments ]
+
+        Nothing ->
+            segments
+
+
+{-| When elements are marked, wrap them in a single `mark` html node.
+
+Show the label for the mark, if present, in a balloon centered above the emphasized content.
+
+This helper differs from `viewWithBalloonTags` in that the balloons can be offset from each other to prevent content overlaps.
+
+-}
+viewWithOffsetBalloonTags :
+    { renderSegment : c -> List Style -> Html msg
+    , backgroundColor : Color
+    , maybeMarker : Maybe Mark
+    , offset : Maybe Float
+    }
+    -> List c
+    -> List (Html msg)
+viewWithOffsetBalloonTags { renderSegment, backgroundColor, maybeMarker, offset } contents =
+    let
+        segments =
+            List.indexedMap
+                (\index content -> renderSegment content (markStyles index maybeMarker))
+                contents
+    in
+    case maybeMarker of
+        Just markedWith ->
+            [ viewMarked (BalloonTags backgroundColor offset) markedWith segments ]
 
         Nothing ->
             segments
@@ -86,7 +116,7 @@ viewWithBalloonTags viewSegment backgroundColor marked contents =
 type TagStyle
     = HiddenTags
     | InlineTags
-    | BalloonTags Color
+    | BalloonTags Color (Maybe Float)
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
@@ -128,7 +158,7 @@ viewMarked tagStyle markedWith segments =
         , css
             [ Css.backgroundColor Css.transparent
             , case tagStyle of
-                BalloonTags _ ->
+                BalloonTags _ _ ->
                     Css.position Css.relative
 
                 _ ->
@@ -208,8 +238,8 @@ viewTag tagStyle =
                     ]
                 ]
 
-        BalloonTags backgroundColor ->
-            viewBalloon backgroundColor
+        BalloonTags backgroundColor offset ->
+            viewBalloon backgroundColor offset
 
 
 viewInlineTag : List Css.Style -> String -> Html msg
@@ -232,8 +262,8 @@ viewInlineTag customizations name =
         [ Html.text name ]
 
 
-viewBalloon : Color -> String -> Html msg
-viewBalloon backgroundColor label =
+viewBalloon : Color -> Maybe Float -> String -> Html msg
+viewBalloon backgroundColor maybeOffset label =
     Balloon.view
         [ Balloon.onTop
         , Balloon.containerCss
@@ -264,4 +294,10 @@ viewBalloon backgroundColor label =
             , color = "MarkText"
             }
         , Balloon.plaintext label
+        , case maybeOffset of
+            Just offset ->
+                Balloon.arrowHeight offset
+
+            Nothing ->
+                Balloon.css []
         ]
