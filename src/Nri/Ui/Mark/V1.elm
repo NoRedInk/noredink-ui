@@ -164,12 +164,9 @@ viewMarkedByBalloon backgroundColor id offset markedWith segments =
         , css
             [ Css.backgroundColor Css.transparent
             , Css.position Css.relative
-            , Css.display Css.inlineFlex
             , Css.batch markedWith.startStyles
             , Css.batch markedWith.styles
             , Css.batch markedWith.endStyles
-            , Maybe.map (Css.px >> Css.marginTop) offset
-                |> Maybe.withDefault (Css.batch [])
             , Css.Global.children
                 [ Css.Global.selector ":last-child"
                     [ Css.after
@@ -181,6 +178,16 @@ viewMarkedByBalloon backgroundColor id offset markedWith segments =
             ]
         ]
         (viewJust (viewBalloon backgroundColor id offset) markedWith.name :: segments)
+        |> List.singleton
+        |> span
+            [ css
+                [ Css.display Css.inlineBlock
+                , offset
+                    |> Maybe.map (\offset_ -> Css.property "padding-top" ("calc(20px + " ++ String.fromFloat offset_ ++ "px)"))
+                    |> Maybe.withDefault (Css.batch [])
+                , Css.border3 (Css.px 2) Css.solid Colors.red
+                ]
+            ]
 
 
 viewMarked : TagStyle -> Mark -> List (Html msg) -> Html msg
