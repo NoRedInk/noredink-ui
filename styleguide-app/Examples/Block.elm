@@ -169,6 +169,9 @@ example =
                   , description = "Help students understand the function different words and phrases are playing in a sentence"
                   , example =
                         let
+                            startingArrowHeight =
+                                8
+
                             offsets =
                                 [ ageId, purposeId, colorId ]
                                     |> List.filterMap
@@ -189,21 +192,18 @@ example =
                                     |> List.concatMap
                                         (\( first, rem ) ->
                                             (first :: rem)
+                                                -- Put the widest elements higher visually to avoid overlaps
                                                 |> List.sortBy (Tuple.second >> .labelContent >> .element >> .width)
                                                 |> List.foldl
-                                                    (\( id, { label, labelContent } ) ( previousHeight, acc ) ->
-                                                        case previousHeight of
-                                                            Nothing ->
-                                                                ( Just
-                                                                    -- Start off considering the entire label height, including the arrow
-                                                                    (label.element.height + 8)
-                                                                , acc
-                                                                )
-
-                                                            Just height ->
-                                                                ( Just (height + labelContent.element.height), ( id, height ) :: acc )
+                                                    (\( id, { label, labelContent } ) ( height, acc ) ->
+                                                        ( height + labelContent.element.height
+                                                        , ( id
+                                                          , { totalHeight = height + labelContent.element.height + 8, arrowHeight = height }
+                                                          )
+                                                            :: acc
+                                                        )
                                                     )
-                                                    ( Nothing, [] )
+                                                    ( startingArrowHeight, [] )
                                                 |> Tuple.second
                                         )
                                     |> Dict.fromList
@@ -215,7 +215,7 @@ example =
                                     [ Block.plaintext "new"
                                     , Block.label "age"
                                     , Block.id ageId
-                                    , Block.labelHeight (Maybe.map (\v -> { totalHeight = v + 20, arrowHeight = v }) (Dict.get ageId offsets))
+                                    , Block.labelHeight (Dict.get ageId offsets)
                                     , Block.yellow
                                     ]
                                 , Block.view [ Block.plaintext " " ]
@@ -223,7 +223,7 @@ example =
                                     [ Block.plaintext "bowling"
                                     , Block.label "purpose"
                                     , Block.id purposeId
-                                    , Block.labelHeight (Maybe.map (\v -> { totalHeight = v + 20, arrowHeight = v }) (Dict.get purposeId offsets))
+                                    , Block.labelHeight (Dict.get purposeId offsets)
                                     , Block.cyan
                                     ]
                                 , Block.view [ Block.plaintext " " ]
@@ -231,7 +231,7 @@ example =
                                     [ Block.plaintext "yellow"
                                     , Block.label "color"
                                     , Block.id colorId
-                                    , Block.labelHeight (Maybe.map (\v -> { totalHeight = v + 20, arrowHeight = v }) (Dict.get colorId offsets))
+                                    , Block.labelHeight (Dict.get colorId offsets)
                                     , Block.magenta
                                     ]
                                 , Block.view [ Block.plaintext " shoes." ]

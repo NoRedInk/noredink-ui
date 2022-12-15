@@ -6,7 +6,7 @@ module Nri.Ui.Balloon.V2 exposing
     , onBottom, onLeft, onRight, onTop
     , alignArrowStart, alignArrowMiddle, alignArrowEnd
     , arrowHeight
-    , custom, id, nriDescription, testId
+    , custom, id, contentId, nriDescription, testId
     , containerCss
     , css, notMobileCss, mobileCss, quizEngineMobileCss
     )
@@ -55,7 +55,7 @@ Changes from V1:
 @docs onBottom, onLeft, onRight, onTop
 @docs alignArrowStart, alignArrowMiddle, alignArrowEnd
 @docs arrowHeight
-@docs custom, id, nriDescription, testId
+@docs custom, id, contentId, nriDescription, testId
 
 
 ### CSS
@@ -348,6 +348,12 @@ id id_ =
     custom [ Attributes.id id_ ]
 
 
+{-| -}
+contentId : String -> Attribute msg
+contentId id_ =
+    Attribute (\config -> { config | contentId = Just id_ })
+
+
 {-| Provide a plain-text string.
 -}
 plaintext : String -> Attribute msg
@@ -387,6 +393,7 @@ type alias Config msg =
     , theme : Theme
     , highContrastModeTheme : Maybe HighContrastModeTheme
     , containerCss : List Css.Style
+    , contentId : Maybe String
     , css : List Css.Style
     , customAttributes : List (Html.Attribute msg)
     , content : List (Html msg)
@@ -403,6 +410,7 @@ defaultConfig =
     , theme = defaultGreenTheme
     , highContrastModeTheme = Nothing
     , containerCss = []
+    , contentId = Nothing
     , css = [ Css.padding (Css.px 20) ]
     , customAttributes = []
     , content = []
@@ -457,7 +465,7 @@ view_ : Config msg -> Html msg
 view_ config =
     container config.position
         (Attributes.css config.containerCss :: config.customAttributes)
-        [ viewBalloon config.theme config.highContrastModeTheme config.css config.content
+        [ viewBalloon config
         , case config.position of
             NoArrow ->
                 Html.text ""
@@ -501,8 +509,16 @@ container position attributes =
         attributes
 
 
-viewBalloon : Theme -> Maybe HighContrastModeTheme -> List Css.Style -> List (Html msg) -> Html msg
-viewBalloon palette maybeHighContrastModeTheme styles contents =
+viewBalloon :
+    { config
+        | theme : Theme
+        , highContrastModeTheme : Maybe HighContrastModeTheme
+        , contentId : Maybe String
+        , css : List Css.Style
+        , content : List (Html msg)
+    }
+    -> Html msg
+viewBalloon config =
     styled div
         [ display inlineBlock
         , lineHeight (num 1.4)
@@ -510,16 +526,22 @@ viewBalloon palette maybeHighContrastModeTheme styles contents =
         , position relative
         , Css.borderRadius (px borderRounding)
         , Shadows.high
-        , backgroundColor palette.backgroundColor
-        , border3 (px 1) solid palette.backgroundColor
-        , color palette.color
+        , backgroundColor config.theme.backgroundColor
+        , border3 (px 1) solid config.theme.backgroundColor
+        , color config.theme.color
         , Fonts.baseFont
         , fontSize (px 15)
-        , applyHighContrastModeTheme maybeHighContrastModeTheme
-        , Css.batch styles
+        , applyHighContrastModeTheme config.highContrastModeTheme
+        , Css.batch config.css
         ]
-        []
-        contents
+        (case config.contentId of
+            Nothing ->
+                []
+
+            Just id_ ->
+                [ Attributes.id id_ ]
+        )
+        config.content
 
 
 borderRounding : Float

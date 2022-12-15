@@ -201,7 +201,10 @@ viewMarkedByBalloon config markedWith segments =
             [ css
                 [ Css.display Css.inlineBlock
                 , config.labelHeight
-                    |> Maybe.map (\{ totalHeight } -> Css.paddingTop (Css.px totalHeight))
+                    |> Maybe.map
+                        (\{ totalHeight } ->
+                            Css.paddingTop (Css.px totalHeight)
+                        )
                     |> Maybe.withDefault (Css.batch [])
                 , Css.border3 (Css.px 2) Css.solid Colors.red
                 ]
@@ -326,13 +329,14 @@ viewBalloon config label =
         [ Balloon.onTop
         , Balloon.containerCss
             [ Css.position Css.absolute
-            , Css.bottom (Css.calc (Css.pct 100) Css.plus (Css.px 6))
+            , Css.top (Css.px -4)
+            , Css.border3 (Css.px 1) Css.dashed Colors.green
             , -- using position, 50% is wrt the parent container
               -- using transform & translate, 50% is wrt to the element itself
               -- combining these two properties, we can center the tag against the parent container
               -- for any arbitrary width element
               Css.left (Css.pct 50)
-            , Css.property "transform" "translateX(-50%)"
+            , Css.property "transform" "translateX(-50%) translateY(-100%)"
             ]
         , Balloon.css
             [ Css.padding3 Css.zero (Css.px 6) (Css.px 1)
@@ -351,13 +355,13 @@ viewBalloon config label =
             { backgroundColor = "Mark"
             , color = "MarkText"
             }
-        , Balloon.html
-            [ Html.p
-                [ css [ Css.margin Css.zero ]
-                , AttributesExtra.maybe Attributes.id config.labelContentId
-                ]
-                [ Html.text label ]
-            ]
+        , case config.labelContentId of
+            Just id_ ->
+                Balloon.contentId id_
+
+            Nothing ->
+                Balloon.css []
+        , Balloon.plaintext label
         , case config.labelId of
             Just id_ ->
                 Balloon.id id_
