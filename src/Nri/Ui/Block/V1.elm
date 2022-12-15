@@ -2,7 +2,7 @@ module Nri.Ui.Block.V1 exposing
     ( view, Attribute
     , plaintext, content
     , Content, string, blank
-    , emphasize, label, labelId, labelOffset
+    , emphasize, label, labelId, labelHeight
     , yellow, cyan, magenta, green, blue, purple, brown
     , class
     )
@@ -20,7 +20,7 @@ module Nri.Ui.Block.V1 exposing
 
 ## Content customization
 
-@docs emphasize, label, labelId, labelOffset
+@docs emphasize, label, labelId, labelHeight
 
 
 ### Visual customization
@@ -99,9 +99,9 @@ labelId labelId_ =
 
 
 {-| -}
-labelOffset : Maybe Float -> Attribute
-labelOffset offset =
-    Attribute <| \config -> { config | labelOffset = offset }
+labelHeight : Maybe { totalHeight : Float, arrowHeight : Float } -> Attribute
+labelHeight offset =
+    Attribute <| \config -> { config | labelHeight = offset }
 
 
 
@@ -307,7 +307,7 @@ defaultConfig =
     { content = []
     , label = Nothing
     , labelId = Nothing
-    , labelOffset = Nothing
+    , labelHeight = Nothing
     , theme = Nothing
     , class = Nothing
     }
@@ -317,7 +317,7 @@ type alias Config =
     { content : List Content
     , label : Maybe String
     , labelId : Maybe String
-    , labelOffset : Maybe Float
+    , labelHeight : Maybe { totalHeight : Float, arrowHeight : Float }
     , theme : Maybe Theme
     , class : Maybe String
     }
@@ -343,7 +343,7 @@ render config =
                         { renderSegment = renderContent config.class
                         , backgroundColor = palette.backgroundColor
                         , maybeMarker = Just mark
-                        , offset = config.labelOffset
+                        , labelHeight = config.labelHeight
                         , labelId = config.labelId
                         }
                         [ Blank ]
@@ -356,7 +356,7 @@ render config =
                 { renderSegment = renderContent config.class
                 , backgroundColor = palette.backgroundColor
                 , maybeMarker = maybeMark
-                , offset = config.labelOffset
+                , labelHeight = config.labelHeight
                 , labelId = config.labelId
                 }
                 config.content

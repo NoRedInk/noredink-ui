@@ -211,7 +211,7 @@ example =
                                     [ Block.plaintext "new"
                                     , Block.label "age"
                                     , Block.labelId ageId
-                                    , Block.labelOffset (Dict.get ageId offsets)
+                                    , Block.labelHeight (Maybe.map (\v -> { totalHeight = v + 20, arrowHeight = v }) (Dict.get ageId offsets))
                                     , Block.yellow
                                     ]
                                 , Block.view [ Block.plaintext " " ]
@@ -219,7 +219,7 @@ example =
                                     [ Block.plaintext "bowling"
                                     , Block.label "purpose"
                                     , Block.labelId purposeId
-                                    , Block.labelOffset (Dict.get purposeId offsets)
+                                    , Block.labelHeight (Maybe.map (\v -> { totalHeight = v + 20, arrowHeight = v }) (Dict.get purposeId offsets))
                                     , Block.cyan
                                     ]
                                 , Block.view [ Block.plaintext " " ]
@@ -227,7 +227,7 @@ example =
                                     [ Block.plaintext "yellow"
                                     , Block.label "color"
                                     , Block.labelId colorId
-                                    , Block.labelOffset (Dict.get colorId offsets)
+                                    , Block.labelHeight (Maybe.map (\v -> { totalHeight = v + 20, arrowHeight = v }) (Dict.get colorId offsets))
                                     , Block.magenta
                                     ]
                                 , Block.view [ Block.plaintext " shoes." ]
@@ -304,14 +304,22 @@ initControl =
             (CommonControls.string ( Code.fromModule moduleName "label", Block.label ) "Fruit")
         |> ControlExtra.optionalListItem "labelId"
             (CommonControls.string ( Code.fromModule moduleName "labelId", Block.labelId ) "fruit-label")
-        |> ControlExtra.optionalListItem "labelOffset"
+        |> ControlExtra.optionalListItem "labelHeight"
             (Control.map
-                (\i ->
-                    ( Code.fromModule moduleName "labelOffset (Just" ++ String.fromFloat i ++ ")"
-                    , Block.labelOffset (Just i)
+                (\( code, v ) ->
+                    ( Code.fromModule moduleName "labelHeight (Just" ++ code ++ ")"
+                    , Block.labelHeight (Just v)
                     )
                 )
-                (ControlExtra.float 40)
+                (Control.record
+                    (\a b ->
+                        ( Code.record [ ( "arrowHeight", String.fromFloat a ), ( "totalHeight", String.fromFloat b ) ]
+                        , { arrowHeight = a, totalHeight = b }
+                        )
+                    )
+                    |> Control.field "arrowHeight" (ControlExtra.float 40)
+                    |> Control.field "totalHeight" (ControlExtra.float 80)
+                )
             )
         |> ControlExtra.optionalListItem "theme"
             (CommonControls.choice moduleName

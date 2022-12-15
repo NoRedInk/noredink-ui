@@ -97,12 +97,12 @@ viewWithOffsetBalloonTags :
     { renderSegment : c -> List Style -> Html msg
     , backgroundColor : Color
     , maybeMarker : Maybe Mark
-    , offset : Maybe Float
+    , labelHeight : Maybe { totalHeight : Float, arrowHeight : Float }
     , labelId : Maybe String
     }
     -> List c
     -> List (Html msg)
-viewWithOffsetBalloonTags { renderSegment, backgroundColor, maybeMarker, labelId, offset } contents =
+viewWithOffsetBalloonTags { renderSegment, backgroundColor, maybeMarker, labelId, labelHeight } contents =
     let
         segments =
             List.indexedMap
@@ -114,7 +114,7 @@ viewWithOffsetBalloonTags { renderSegment, backgroundColor, maybeMarker, labelId
     in
     case maybeMarker of
         Just markedWith ->
-            [ viewMarkedByBalloon backgroundColor labelId offset markedWith segments ]
+            [ viewMarkedByBalloon backgroundColor labelId labelHeight markedWith segments ]
 
         Nothing ->
             segments
@@ -155,7 +155,7 @@ view_ tagStyle viewSegment highlightables =
                     segments
 
 
-viewMarkedByBalloon : Color -> Maybe String -> Maybe Float -> Mark -> List (Html msg) -> Html msg
+viewMarkedByBalloon : Color -> Maybe String -> Maybe { totalHeight : Float, arrowHeight : Float } -> Mark -> List (Html msg) -> Html msg
 viewMarkedByBalloon backgroundColor id offset markedWith segments =
     Html.mark
         [ markedWith.name
@@ -183,7 +183,7 @@ viewMarkedByBalloon backgroundColor id offset markedWith segments =
             [ css
                 [ Css.display Css.inlineBlock
                 , offset
-                    |> Maybe.map (\offset_ -> Css.property "padding-top" ("calc(20px + " ++ String.fromFloat offset_ ++ "px)"))
+                    |> Maybe.map (\{ totalHeight } -> Css.paddingTop (Css.px totalHeight))
                     |> Maybe.withDefault (Css.batch [])
                 , Css.border3 (Css.px 2) Css.solid Colors.red
                 ]
@@ -294,7 +294,7 @@ viewInlineTag customizations name =
         [ Html.text name ]
 
 
-viewBalloon : Color -> Maybe String -> Maybe Float -> String -> Html msg
+viewBalloon : Color -> Maybe String -> Maybe { totalHeight : Float, arrowHeight : Float } -> String -> Html msg
 viewBalloon backgroundColor maybeId maybeOffset label =
     Balloon.view
         [ Balloon.onTop
@@ -333,8 +333,8 @@ viewBalloon backgroundColor maybeId maybeOffset label =
                 [ Html.text label ]
             ]
         , case maybeOffset of
-            Just offset ->
-                Balloon.arrowHeight offset
+            Just { arrowHeight } ->
+                Balloon.arrowHeight arrowHeight
 
             Nothing ->
                 Balloon.css []
