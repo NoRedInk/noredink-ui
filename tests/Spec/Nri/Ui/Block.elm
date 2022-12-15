@@ -139,6 +139,92 @@ getLabelHeightsSpec =
                      ]
                         |> Dict.fromList
                     )
+    , test "with labels on different lines, specifies the default heights" <|
+        \() ->
+            let
+                startingHeight =
+                    20
+            in
+            Block.getLabelHeights [ "a", "b" ]
+                ([ ( "a"
+                   , { label = dummyElement { x = 0, y = 0, width = 100, height = 100 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 100, height = 20 }
+                     }
+                   )
+                 , ( "b"
+                   , { label = dummyElement { x = 0, y = 20, width = 100, height = 100 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 100, height = 20 }
+                     }
+                   )
+                 ]
+                    |> Dict.fromList
+                )
+                |> Expect.equal
+                    ([ ( "a"
+                       , { totalHeight = startingHeight + defaultArrowHeight + balloonOffset
+                         , arrowHeight = defaultArrowHeight
+                         }
+                       )
+                     , ( "b"
+                       , { totalHeight = startingHeight + defaultArrowHeight + balloonOffset
+                         , arrowHeight = defaultArrowHeight
+                         }
+                       )
+                     ]
+                        |> Dict.fromList
+                    )
+    , test "with multiple ids and measurements on different lines, positions elements correctly" <|
+        \() ->
+            let
+                startingHeight =
+                    20
+            in
+            Block.getLabelHeights [ "a", "b", "c" ]
+                ([ --  A is the second-widest element
+                   ( "a"
+                   , { label = dummyElement { x = 0, y = 0, width = 200, height = 100 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 200, height = 20 }
+                     }
+                   )
+                 , -- B is the narrowest element
+                   ( "b"
+                   , { label = dummyElement { x = 0, y = 0, width = 100, height = 100 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 100, height = 20 }
+                     }
+                   )
+                 , -- C is the widest element and it is also on a new line by itself
+                   ( "c"
+                   , { label = dummyElement { x = 0, y = 20, width = 300, height = 100 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 300, height = 20 }
+                     }
+                   )
+                 ]
+                    |> Dict.fromList
+                )
+                |> Expect.equal
+                    ([ ( "a"
+                       , { totalHeight = 2 * startingHeight + defaultArrowHeight + balloonOffset
+                         , arrowHeight =
+                            -- A is positioned on top of B.
+                            -- So its arrow height is the total height of b minus the positioning offset
+                            startingHeight + defaultArrowHeight
+                         }
+                       )
+                     , ( "b"
+                       , { totalHeight = 1 * startingHeight + defaultArrowHeight + balloonOffset
+                         , arrowHeight = defaultArrowHeight
+                         }
+                       )
+                     , ( "c"
+                       , { totalHeight = 1 * startingHeight + defaultArrowHeight + balloonOffset
+                         , arrowHeight =
+                            -- C is on a new line, so it goes back to default positioning.
+                            defaultArrowHeight
+                         }
+                       )
+                     ]
+                        |> Dict.fromList
+                    )
     ]
 
 
