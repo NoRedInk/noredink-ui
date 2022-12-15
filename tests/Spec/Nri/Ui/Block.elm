@@ -86,6 +86,59 @@ getLabelHeightsSpec =
                         , arrowHeight = defaultArrowHeight
                         }
                     )
+    , test "with multiple ids and measurements, positions wider elements above narrower elements" <|
+        \() ->
+            let
+                startingHeight =
+                    20
+            in
+            Block.getLabelHeights [ "a", "b", "c" ]
+                ([ --  A is the second-widest element
+                   ( "a"
+                   , { label = dummyElement { x = 0, y = 0, width = 200, height = 100 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 200, height = 20 }
+                     }
+                   )
+                 , -- B is the narrowest element
+                   ( "b"
+                   , { label = dummyElement { x = 0, y = 0, width = 100, height = 100 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 100, height = 20 }
+                     }
+                   )
+                 , -- C is the widest element
+                   ( "c"
+                   , { label = dummyElement { x = 0, y = 0, width = 300, height = 100 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 300, height = 20 }
+                     }
+                   )
+                 ]
+                    |> Dict.fromList
+                )
+                |> Expect.equal
+                    ([ ( "a"
+                       , { totalHeight = 2 * startingHeight + defaultArrowHeight + balloonOffset
+                         , arrowHeight =
+                            -- A is positioned on top of B.
+                            -- So its arrow height is the total height of b minus the positioning offset
+                            startingHeight + defaultArrowHeight
+                         }
+                       )
+                     , ( "b"
+                       , { totalHeight = 1 * startingHeight + defaultArrowHeight + balloonOffset
+                         , arrowHeight = defaultArrowHeight
+                         }
+                       )
+                     , ( "c"
+                       , { totalHeight = 3 * startingHeight + defaultArrowHeight + balloonOffset
+                         , arrowHeight =
+                            -- C is positioned on top of A.
+                            -- So its arrow height is the total height of A minus the positioning offset
+                            2 * startingHeight + defaultArrowHeight
+                         }
+                       )
+                     ]
+                        |> Dict.fromList
+                    )
     ]
 
 
