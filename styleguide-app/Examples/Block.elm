@@ -25,6 +25,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V6 as Table
+import Nri.Ui.Text.V6 as Text
 import Task
 
 
@@ -210,7 +211,14 @@ example =
                                 [ Button.onClick GetBlockLabelMeasurements
                                 , Button.small
                                 , Button.secondary
-                                , Button.css [ Css.marginBottom Spacing.verticalSpacerPx ]
+                                ]
+                            , Text.caption
+                                [ Text.plaintext "Click \"Measure & render\" to reposition this example's labels to avoid overlaps given the current viewport."
+                                , Text.css
+                                    [ Css.textAlign Css.center
+                                    , Css.maxWidth (Css.px 200)
+                                    , Css.margin3 Css.zero Css.auto Spacing.verticalSpacerPx |> Css.important
+                                    ]
                                 ]
                             ]
                   }
