@@ -168,6 +168,8 @@ viewMarkedByBalloon backgroundColor id offset markedWith segments =
             , Css.batch markedWith.startStyles
             , Css.batch markedWith.styles
             , Css.batch markedWith.endStyles
+            , Maybe.map (Css.px >> Css.marginTop) offset
+                |> Maybe.withDefault (Css.batch [])
             , Css.Global.children
                 [ Css.Global.selector ":last-child"
                     [ Css.after
