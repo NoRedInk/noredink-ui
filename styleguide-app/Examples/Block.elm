@@ -54,17 +54,29 @@ example =
                 [ Block.plaintext "Dave"
                 , Block.label "subject"
                 , Block.yellow
+                , Block.labelHeight (Just { totalHeight = 58, arrowHeight = 34 })
                 ]
           , Block.view [ Block.plaintext " " ]
           , Block.view
                 [ Block.plaintext "broke"
                 , Block.label "verb"
                 , Block.cyan
+                , Block.labelHeight (Just { totalHeight = 34, arrowHeight = 8 })
                 ]
           , Block.view [ Block.plaintext " his french fry so " ]
-          , Block.view [ Block.plaintext "he", Block.yellow ]
+          , Block.view
+                [ Block.plaintext "he"
+                , Block.label "subject"
+                , Block.yellow
+                , Block.labelHeight (Just { totalHeight = 58, arrowHeight = 34 })
+                ]
           , Block.view [ Block.plaintext " " ]
-          , Block.view [ Block.plaintext "glued", Block.cyan ]
+          , Block.view
+                [ Block.plaintext "glued"
+                , Block.label "verb"
+                , Block.cyan
+                , Block.labelHeight (Just { totalHeight = 34, arrowHeight = 8 })
+                ]
           , Block.view [ Block.plaintext " it with ketchup." ]
           ]
             |> List.concat
@@ -72,7 +84,6 @@ example =
                 [ css
                     [ Fonts.baseFont
                     , Css.fontSize (Css.px 12)
-                    , Css.marginTop (Css.px 40)
                     , Css.lineHeight (Css.num 2.5)
                     ]
                 ]
