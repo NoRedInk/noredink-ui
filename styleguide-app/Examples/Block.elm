@@ -52,16 +52,12 @@ example =
     , preview =
         [ [ Block.view
                 [ Block.plaintext "Dave"
-                , Block.label "subject"
                 , Block.yellow
-                , Block.labelHeight (Just { totalHeight = 58, arrowHeight = 34 })
                 ]
           , Block.view [ Block.plaintext " " ]
           , Block.view
                 [ Block.plaintext "broke"
-                , Block.label "verb"
                 , Block.cyan
-                , Block.labelHeight (Just { totalHeight = 34, arrowHeight = 8 })
                 ]
           , Block.view [ Block.plaintext " his french fry so " ]
           , Block.view
