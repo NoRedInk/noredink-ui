@@ -206,7 +206,6 @@ viewMarkedByBalloon config markedWith segments =
                             Css.paddingTop (Css.px totalHeight)
                         )
                     |> Maybe.withDefault (Css.batch [])
-                , Css.border3 (Css.px 2) Css.solid Colors.red
                 ]
             ]
 
@@ -330,7 +329,6 @@ viewBalloon config label =
         , Balloon.containerCss
             [ Css.position Css.absolute
             , Css.top (Css.px -4)
-            , Css.border3 (Css.px 1) Css.dashed Colors.green
             , -- using position, 50% is wrt the parent container
               -- using transform & translate, 50% is wrt to the element itself
               -- combining these two properties, we can center the tag against the parent container
