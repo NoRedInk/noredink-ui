@@ -72,12 +72,15 @@ viewWithBalloonTags viewSegment backgroundColor marked contents =
     let
         segments =
             List.indexedMap
-                (\index content -> viewSegment content (markStyles index marked))
+                (\index content -> viewSegment content (markStyles index markerWithoutStyles))
                 contents
+
+        markerWithoutStyles =
+            Maybe.map (\marker -> { marker | styles = [] }) marked
     in
     case marked of
         Just markedWith ->
-            [ viewMarked (BalloonTags backgroundColor Nothing Nothing) markedWith segments ]
+            [ viewMarkedByBalloon backgroundColor Nothing Nothing markedWith segments ]
 
         Nothing ->
             segments
@@ -103,12 +106,15 @@ viewWithOffsetBalloonTags { renderSegment, backgroundColor, maybeMarker, labelId
     let
         segments =
             List.indexedMap
-                (\index content -> renderSegment content (markStyles index maybeMarker))
+                (\index content -> renderSegment content (markStyles index markerWithoutStyles))
                 contents
+
+        markerWithoutStyles =
+            Maybe.map (\marker -> { marker | styles = [] }) maybeMarker
     in
     case maybeMarker of
         Just markedWith ->
-            [ viewMarked (BalloonTags backgroundColor labelId offset) markedWith segments ]
+            [ viewMarkedByBalloon backgroundColor labelId offset markedWith segments ]
 
         Nothing ->
             segments
@@ -117,7 +123,6 @@ viewWithOffsetBalloonTags { renderSegment, backgroundColor, maybeMarker, labelId
 type TagStyle
     = HiddenTags
     | InlineTags
-    | BalloonTags Color (Maybe String) (Maybe Float)
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
@@ -150,6 +155,32 @@ view_ tagStyle viewSegment highlightables =
                     segments
 
 
+viewMarkedByBalloon : Color -> Maybe String -> Maybe Float -> Mark -> List (Html msg) -> Html msg
+viewMarkedByBalloon backgroundColor id offset markedWith segments =
+    Html.mark
+        [ markedWith.name
+            |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
+            |> Maybe.withDefault AttributesExtra.none
+        , css
+            [ Css.backgroundColor Css.transparent
+            , Css.position Css.relative
+            , Css.display Css.inlineFlex
+            , Css.batch markedWith.startStyles
+            , Css.batch markedWith.styles
+            , Css.batch markedWith.endStyles
+            , Css.Global.children
+                [ Css.Global.selector ":last-child"
+                    [ Css.after
+                        [ Css.property "content" ("\" end " ++ (Maybe.map (\name -> name) markedWith.name |> Maybe.withDefault "highlight") ++ " \"")
+                        , invisibleStyle
+                        ]
+                    ]
+                ]
+            ]
+        ]
+        (viewJust (viewBalloon backgroundColor id offset) markedWith.name :: segments)
+
+
 viewMarked : TagStyle -> Mark -> List (Html msg) -> Html msg
 viewMarked tagStyle markedWith segments =
     Html.mark
@@ -158,12 +189,6 @@ viewMarked tagStyle markedWith segments =
             |> Maybe.withDefault AttributesExtra.none
         , css
             [ Css.backgroundColor Css.transparent
-            , case tagStyle of
-                BalloonTags _ _ _ ->
-                    Css.position Css.relative
-
-                _ ->
-                    Css.batch []
             , Css.Global.children
                 [ Css.Global.selector ":last-child"
                     (Css.after
@@ -238,9 +263,6 @@ viewTag tagStyle =
                     , Css.property "color" "initial" |> Css.important
                     ]
                 ]
-
-        BalloonTags backgroundColor id offset ->
-            viewBalloon backgroundColor id offset
 
 
 viewInlineTag : List Css.Style -> String -> Html msg
