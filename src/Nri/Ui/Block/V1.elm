@@ -2,9 +2,10 @@ module Nri.Ui.Block.V1 exposing
     ( view, Attribute
     , plaintext, content
     , Content, string, blank
-    , emphasize, label, labelId, labelHeight
+    , emphasize, label, labelHeight
     , yellow, cyan, magenta, green, blue, purple, brown
-    , class
+    , class, id
+    , labelId, labelContentId
     )
 
 {-|
@@ -20,7 +21,7 @@ module Nri.Ui.Block.V1 exposing
 
 ## Content customization
 
-@docs emphasize, label, labelId, labelHeight
+@docs emphasize, label, labelHeight
 
 
 ### Visual customization
@@ -30,7 +31,12 @@ module Nri.Ui.Block.V1 exposing
 
 ### General attributes
 
-@docs class
+@docs class, id
+
+
+## Accessors
+
+@docs labelId, labelContentId
 
 -}
 
@@ -93,15 +99,21 @@ label label_ =
 
 
 {-| -}
-labelId : String -> Attribute
-labelId labelId_ =
-    Attribute <| \config -> { config | labelId = Just labelId_ }
-
-
-{-| -}
 labelHeight : Maybe { totalHeight : Float, arrowHeight : Float } -> Attribute
 labelHeight offset =
     Attribute <| \config -> { config | labelHeight = offset }
+
+
+{-| -}
+labelId : String -> String
+labelId labelId_ =
+    labelId_ ++ "-label"
+
+
+{-| -}
+labelContentId : String -> String
+labelContentId labelId_ =
+    labelId_ ++ "-label-content"
 
 
 
@@ -114,19 +126,20 @@ type Content
     | Blank
 
 
-renderContent : Maybe String -> Content -> List Css.Style -> Html msg
-renderContent class_ content_ markStyles =
+renderContent : { config | class : Maybe String, id : Maybe String } -> Content -> List Css.Style -> Html msg
+renderContent config content_ markStyles =
     span
         [ css (Css.whiteSpace Css.preWrap :: markStyles)
         , nriDescription "block-segment-container"
-        , AttributesExtra.maybe Attributes.class class_
+        , AttributesExtra.maybe Attributes.class config.class
+        , AttributesExtra.maybe Attributes.id config.id
         ]
         (case content_ of
             String_ str ->
                 [ text str ]
 
             Blank ->
-                [ viewBlank class_ ]
+                [ viewBlank { class = Nothing, id = Nothing } ]
         )
 
 
@@ -293,6 +306,12 @@ class class_ =
     Attribute (\config -> { config | class = Just class_ })
 
 
+{-| -}
+id : String -> Attribute
+id id_ =
+    Attribute (\config -> { config | id = Just id_ })
+
+
 
 -- Internals
 
@@ -310,6 +329,7 @@ defaultConfig =
     , labelHeight = Nothing
     , theme = Nothing
     , class = Nothing
+    , id = Nothing
     }
 
 
@@ -320,6 +340,7 @@ type alias Config =
     , labelHeight : Maybe { totalHeight : Float, arrowHeight : Float }
     , theme : Maybe Theme
     , class : Maybe String
+    , id : Maybe String
     }
 
 
@@ -340,30 +361,32 @@ render config =
             case maybeMark of
                 Just mark ->
                     Mark.viewWithOffsetBalloonTags
-                        { renderSegment = renderContent config.class
+                        { renderSegment = renderContent config
                         , backgroundColor = palette.backgroundColor
                         , maybeMarker = Just mark
                         , labelHeight = config.labelHeight
-                        , labelId = config.labelId
+                        , labelId = Maybe.map labelId config.id
+                        , labelContentId = Maybe.map labelContentId config.id
                         }
                         [ Blank ]
 
                 Nothing ->
-                    [ viewBlank config.class ]
+                    [ viewBlank config ]
 
         _ ->
             Mark.viewWithOffsetBalloonTags
-                { renderSegment = renderContent config.class
+                { renderSegment = renderContent config
                 , backgroundColor = palette.backgroundColor
                 , maybeMarker = maybeMark
                 , labelHeight = config.labelHeight
-                , labelId = config.labelId
+                , labelId = Maybe.map labelId config.id
+                , labelContentId = Maybe.map labelContentId config.id
                 }
                 config.content
 
 
-viewBlank : Maybe String -> Html msg
-viewBlank class_ =
+viewBlank : { config | class : Maybe String, id : Maybe String } -> Html msg
+viewBlank config =
     span
         [ css
             [ Css.border3 (Css.px 2) Css.dashed Colors.navy
@@ -376,7 +399,8 @@ viewBlank class_ =
             , Css.display Css.inlineBlock
             , Css.borderRadius (Css.px 4)
             ]
-        , AttributesExtra.maybe Attributes.class class_
+        , AttributesExtra.maybe Attributes.class config.class
+        , AttributesExtra.maybe Attributes.id config.id
         ]
         [ span
             [ css

@@ -180,24 +180,28 @@ example =
                                                 Nothing ->
                                                     Nothing
                                         )
-                                    |> List.Extra.groupWhile (\( _, a ) ( _, b ) -> a.element.y == b.element.y)
+                                    -- Group the elements whose bottom edges are at the same height
+                                    -- this ensures that we only offset labels against other labels in the same line of content
+                                    |> List.Extra.groupWhile
+                                        (\( _, a ) ( _, b ) ->
+                                            (a.label.element.y + a.label.element.height) == (b.label.element.y + b.label.element.height)
+                                        )
                                     |> List.concatMap
                                         (\( first, rem ) ->
                                             (first :: rem)
-                                                |> List.sortBy (Tuple.second >> .element >> .width)
+                                                |> List.sortBy (Tuple.second >> .labelContent >> .element >> .width)
                                                 |> List.foldl
-                                                    (\( id, { element } ) ( previousHeight, acc ) ->
+                                                    (\( id, { label, labelContent } ) ( previousHeight, acc ) ->
                                                         case previousHeight of
                                                             Nothing ->
                                                                 ( Just
-                                                                    -- Include a starting offset of 8, which is the height
-                                                                    -- of the balloon arrow by default
-                                                                    (element.height + 8)
+                                                                    -- Start off considering the entire label height, including the arrow
+                                                                    (label.element.height + 8)
                                                                 , acc
                                                                 )
 
                                                             Just height ->
-                                                                ( Just (height + element.height), ( id, height ) :: acc )
+                                                                ( Just (height + labelContent.element.height), ( id, height ) :: acc )
                                                     )
                                                     ( Nothing, [] )
                                                 |> Tuple.second
@@ -210,7 +214,7 @@ example =
                                 , Block.view
                                     [ Block.plaintext "new"
                                     , Block.label "age"
-                                    , Block.labelId ageId
+                                    , Block.id ageId
                                     , Block.labelHeight (Maybe.map (\v -> { totalHeight = v + 20, arrowHeight = v }) (Dict.get ageId offsets))
                                     , Block.yellow
                                     ]
@@ -218,7 +222,7 @@ example =
                                 , Block.view
                                     [ Block.plaintext "bowling"
                                     , Block.label "purpose"
-                                    , Block.labelId purposeId
+                                    , Block.id purposeId
                                     , Block.labelHeight (Maybe.map (\v -> { totalHeight = v + 20, arrowHeight = v }) (Dict.get purposeId offsets))
                                     , Block.cyan
                                     ]
@@ -226,7 +230,7 @@ example =
                                 , Block.view
                                     [ Block.plaintext "yellow"
                                     , Block.label "color"
-                                    , Block.labelId colorId
+                                    , Block.id colorId
                                     , Block.labelHeight (Maybe.map (\v -> { totalHeight = v + 20, arrowHeight = v }) (Dict.get colorId offsets))
                                     , Block.magenta
                                     ]
@@ -279,7 +283,12 @@ example =
 {-| -}
 type alias State =
     { settings : Control Settings
-    , labelMeasurementsById : Dict String Element
+    , labelMeasurementsById :
+        Dict
+            String
+            { label : Element
+            , labelContent : Element
+            }
     }
 
 
@@ -302,8 +311,6 @@ initControl =
         |> ControlExtra.optionalBoolListItem "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )
         |> ControlExtra.optionalListItem "label"
             (CommonControls.string ( Code.fromModule moduleName "label", Block.label ) "Fruit")
-        |> ControlExtra.optionalListItem "labelId"
-            (CommonControls.string ( Code.fromModule moduleName "labelId", Block.labelId ) "fruit-label")
         |> ControlExtra.optionalListItem "labelHeight"
             (Control.map
                 (\( code, v ) ->
@@ -332,6 +339,8 @@ initControl =
                 , ( "brown", Block.brown )
                 ]
             )
+        |> ControlExtra.optionalListItem "id"
+            (CommonControls.string ( Code.fromModule moduleName "id", Block.id ) "fruit-block")
         |> ControlExtra.optionalListItem "class"
             (CommonControls.string ( "class", Block.class ) "kiwis-are-good")
 
@@ -384,7 +393,14 @@ purposeId =
 type Msg
     = UpdateSettings (Control Settings)
     | GetBlockLabelMeasurements
-    | GotBlockLabelMeasurements String (Result Dom.Error Element)
+    | GotBlockLabelMeasurements
+        String
+        (Result
+            Dom.Error
+            { label : Element
+            , labelContent : Element
+            }
+        )
 
 
 {-| -}
@@ -419,5 +435,7 @@ update msg state =
 
 measure : String -> Cmd Msg
 measure id =
-    Dom.getElement id
+    Task.map2 (\label labelContent -> { label = label, labelContent = labelContent })
+        (Dom.getElement (Block.labelId id))
+        (Dom.getElement (Block.labelContentId id))
         |> Task.attempt (GotBlockLabelMeasurements id)

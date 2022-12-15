@@ -80,7 +80,15 @@ viewWithBalloonTags viewSegment backgroundColor marked contents =
     in
     case marked of
         Just markedWith ->
-            [ viewMarkedByBalloon backgroundColor Nothing Nothing markedWith segments ]
+            [ viewMarkedByBalloon
+                { backgroundColor = backgroundColor
+                , labelHeight = Nothing
+                , labelId = Nothing
+                , labelContentId = Nothing
+                }
+                markedWith
+                segments
+            ]
 
         Nothing ->
             segments
@@ -99,10 +107,11 @@ viewWithOffsetBalloonTags :
     , maybeMarker : Maybe Mark
     , labelHeight : Maybe { totalHeight : Float, arrowHeight : Float }
     , labelId : Maybe String
+    , labelContentId : Maybe String
     }
     -> List c
     -> List (Html msg)
-viewWithOffsetBalloonTags { renderSegment, backgroundColor, maybeMarker, labelId, labelHeight } contents =
+viewWithOffsetBalloonTags ({ renderSegment, maybeMarker } as config) contents =
     let
         segments =
             List.indexedMap
@@ -114,7 +123,7 @@ viewWithOffsetBalloonTags { renderSegment, backgroundColor, maybeMarker, labelId
     in
     case maybeMarker of
         Just markedWith ->
-            [ viewMarkedByBalloon backgroundColor labelId labelHeight markedWith segments ]
+            [ viewMarkedByBalloon config markedWith segments ]
 
         Nothing ->
             segments
@@ -155,8 +164,17 @@ view_ tagStyle viewSegment highlightables =
                     segments
 
 
-viewMarkedByBalloon : Color -> Maybe String -> Maybe { totalHeight : Float, arrowHeight : Float } -> Mark -> List (Html msg) -> Html msg
-viewMarkedByBalloon backgroundColor id offset markedWith segments =
+viewMarkedByBalloon :
+    { config
+        | backgroundColor : Color
+        , labelHeight : Maybe { totalHeight : Float, arrowHeight : Float }
+        , labelId : Maybe String
+        , labelContentId : Maybe String
+    }
+    -> Mark
+    -> List (Html msg)
+    -> Html msg
+viewMarkedByBalloon config markedWith segments =
     Html.mark
         [ markedWith.name
             |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
@@ -177,12 +195,12 @@ viewMarkedByBalloon backgroundColor id offset markedWith segments =
                 ]
             ]
         ]
-        (viewJust (viewBalloon backgroundColor id offset) markedWith.name :: segments)
+        (viewJust (viewBalloon config) markedWith.name :: segments)
         |> List.singleton
         |> span
             [ css
                 [ Css.display Css.inlineBlock
-                , offset
+                , config.labelHeight
                     |> Maybe.map (\{ totalHeight } -> Css.paddingTop (Css.px totalHeight))
                     |> Maybe.withDefault (Css.batch [])
                 , Css.border3 (Css.px 2) Css.solid Colors.red
@@ -294,8 +312,16 @@ viewInlineTag customizations name =
         [ Html.text name ]
 
 
-viewBalloon : Color -> Maybe String -> Maybe { totalHeight : Float, arrowHeight : Float } -> String -> Html msg
-viewBalloon backgroundColor maybeId maybeOffset label =
+viewBalloon :
+    { config
+        | backgroundColor : Color
+        , labelHeight : Maybe { totalHeight : Float, arrowHeight : Float }
+        , labelId : Maybe String
+        , labelContentId : Maybe String
+    }
+    -> String
+    -> Html msg
+viewBalloon config label =
     Balloon.view
         [ Balloon.onTop
         , Balloon.containerCss
@@ -318,8 +344,8 @@ viewBalloon backgroundColor maybeId maybeOffset label =
               Aria.hidden True
             ]
         , Balloon.customTheme
-            { backgroundColor = backgroundColor
-            , color = Nri.Ui.Colors.Extra.highContrastColor backgroundColor
+            { backgroundColor = config.backgroundColor
+            , color = Nri.Ui.Colors.Extra.highContrastColor config.backgroundColor
             }
         , Balloon.highContrastModeTheme
             { backgroundColor = "Mark"
@@ -328,11 +354,17 @@ viewBalloon backgroundColor maybeId maybeOffset label =
         , Balloon.html
             [ Html.p
                 [ css [ Css.margin Css.zero ]
-                , AttributesExtra.maybe Attributes.id maybeId
+                , AttributesExtra.maybe Attributes.id config.labelContentId
                 ]
                 [ Html.text label ]
             ]
-        , case maybeOffset of
+        , case config.labelId of
+            Just id_ ->
+                Balloon.id id_
+
+            Nothing ->
+                Balloon.css []
+        , case config.labelHeight of
             Just { arrowHeight } ->
                 Balloon.arrowHeight arrowHeight
 
