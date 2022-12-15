@@ -6,6 +6,7 @@ module Nri.Ui.Block.V1 exposing
     , yellow, cyan, magenta, green, blue, purple, brown
     , class, id
     , labelId, labelContentId
+    , getLabelHeights
     )
 
 {-|
@@ -36,13 +37,19 @@ module Nri.Ui.Block.V1 exposing
 
 ## Accessors
 
+You will need these helpers if you want to prevent label overlaps. (Which is to say -- anytime you have labels!)
+
 @docs labelId, labelContentId
+@docs getLabelHeights
 
 -}
 
 import Accessibility.Styled exposing (..)
+import Browser.Dom as Dom
 import Css exposing (Color)
+import Dict exposing (Dict)
 import Html.Styled.Attributes as Attributes exposing (css)
+import List.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
 import Nri.Ui.Mark.V1 as Mark exposing (Mark)
@@ -98,7 +105,8 @@ label label_ =
     Attribute <| \config -> { config | label = Just label_ }
 
 
-{-| -}
+{-| Use `getLabelHeights` to calculate what these values should be.
+-}
 labelHeight : Maybe { totalHeight : Float, arrowHeight : Float } -> Attribute
 labelHeight offset =
     Attribute <| \config -> { config | labelHeight = offset }
@@ -114,6 +122,60 @@ labelId labelId_ =
 labelContentId : String -> String
 labelContentId labelId_ =
     labelId_ ++ "-label-content"
+
+
+{-|
+
+    Pass in a list of the Block ids that you care about (use `Block.id` to attach these ids).
+
+    - First, we add ids to block with labels with `Block.id`.
+    - Say we added `Block.id "example-id"`, then we will use `Browser.Dom.getElement (Block.labelId "example-id")` and `Browser.Dom.getElement (Block.labelContentId "example-id")` to construct a record in the shape { label : Dom.Element, labelContent : Dom.Element }. We store this record in a dictionary keyed by ids (e.g., "example-id") with measurements for all other labels.
+    - Pass a list of all the block ids and the dictionary of measurements to `getLabelHeights`. `getLabelHeights` will return a dictionary of values (keyed by ids) that we will then pass directly to `labelHeight` for positioning.
+
+-}
+getLabelHeights :
+    List String
+    -> Dict String { label : Dom.Element, labelContent : Dom.Element }
+    -> Dict String { totalHeight : Float, arrowHeight : Float }
+getLabelHeights ids labelMeasurementsById =
+    let
+        startingArrowHeight =
+            8
+    in
+    ids
+        |> List.filterMap
+            (\idString ->
+                case Dict.get idString labelMeasurementsById of
+                    Just measurement ->
+                        Just ( idString, measurement )
+
+                    Nothing ->
+                        Nothing
+            )
+        -- Group the elements whose bottom edges are at the same height
+        -- this ensures that we only offset labels against other labels in the same line of content
+        |> List.Extra.groupWhile
+            (\( _, a ) ( _, b ) ->
+                (a.label.element.y + a.label.element.height) == (b.label.element.y + b.label.element.height)
+            )
+        |> List.concatMap
+            (\( first, rem ) ->
+                (first :: rem)
+                    -- Put the widest elements higher visually to avoid overlaps
+                    |> List.sortBy (Tuple.second >> .labelContent >> .element >> .width)
+                    |> List.foldl
+                        (\( idString, e ) ( height, acc ) ->
+                            ( height + e.labelContent.element.height
+                            , ( idString
+                              , { totalHeight = height + e.labelContent.element.height + 8, arrowHeight = height }
+                              )
+                                :: acc
+                            )
+                        )
+                        ( startingArrowHeight, [] )
+                    |> Tuple.second
+            )
+        |> Dict.fromList
 
 
 

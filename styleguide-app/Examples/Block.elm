@@ -18,7 +18,6 @@ import Dict exposing (Dict)
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
-import List.Extra
 import Markdown
 import Nri.Ui.Block.V1 as Block
 import Nri.Ui.Button.V10 as Button
@@ -176,44 +175,8 @@ example =
                   , description = "Help students understand the function different words and phrases are playing in a sentence"
                   , example =
                         let
-                            startingArrowHeight =
-                                8
-
                             offsets =
-                                [ ageId, purposeId, colorId ]
-                                    |> List.filterMap
-                                        (\id ->
-                                            case Dict.get id state.labelMeasurementsById of
-                                                Just measurement ->
-                                                    Just ( id, measurement )
-
-                                                Nothing ->
-                                                    Nothing
-                                        )
-                                    -- Group the elements whose bottom edges are at the same height
-                                    -- this ensures that we only offset labels against other labels in the same line of content
-                                    |> List.Extra.groupWhile
-                                        (\( _, a ) ( _, b ) ->
-                                            (a.label.element.y + a.label.element.height) == (b.label.element.y + b.label.element.height)
-                                        )
-                                    |> List.concatMap
-                                        (\( first, rem ) ->
-                                            (first :: rem)
-                                                -- Put the widest elements higher visually to avoid overlaps
-                                                |> List.sortBy (Tuple.second >> .labelContent >> .element >> .width)
-                                                |> List.foldl
-                                                    (\( id, { label, labelContent } ) ( height, acc ) ->
-                                                        ( height + labelContent.element.height
-                                                        , ( id
-                                                          , { totalHeight = height + labelContent.element.height + 8, arrowHeight = height }
-                                                          )
-                                                            :: acc
-                                                        )
-                                                    )
-                                                    ( startingArrowHeight, [] )
-                                                |> Tuple.second
-                                        )
-                                    |> Dict.fromList
+                                Block.getLabelHeights [ ageId, purposeId, colorId ] state.labelMeasurementsById
                         in
                         div []
                             [ inParagraph
