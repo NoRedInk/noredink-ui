@@ -77,7 +77,7 @@ getLabelHeightsSpec =
             Block.getLabelHeights [ "a" ]
                 (Dict.singleton "a"
                     { label = dummyElement { x = 0, y = 0, width = 100, height = 100 }
-                    , labelContent = dummyElement { x = 0, y = 0, width = 100, height = 20 }
+                    , labelContent = dummyElement { x = 0, y = 0, width = 100, height = startingHeight }
                     }
                 )
                 |> Expect.equal
@@ -85,6 +85,45 @@ getLabelHeightsSpec =
                         { totalHeight = startingHeight + defaultArrowHeight + balloonOffset
                         , arrowHeight = defaultArrowHeight
                         }
+                    )
+    , test "with different height measurements, prevents overlaps" <|
+        \() ->
+            let
+                aStartingHeight =
+                    40
+
+                bStartingHeight =
+                    30
+            in
+            Block.getLabelHeights [ "a", "b", "c" ]
+                ([ --  A has taller content
+                   ( "a"
+                   , { label = dummyElement { x = 0, y = 0, width = 100, height = 100 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 100, height = aStartingHeight }
+                     }
+                   )
+                 , -- B has shorter content
+                   ( "b"
+                   , { label = dummyElement { x = 0, y = 0, width = 200, height = 100 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 100, height = bStartingHeight }
+                     }
+                   )
+                 ]
+                    |> Dict.fromList
+                )
+                |> Expect.equal
+                    ([ ( "a"
+                       , { totalHeight = aStartingHeight + defaultArrowHeight + balloonOffset
+                         , arrowHeight = defaultArrowHeight
+                         }
+                       )
+                     , ( "b"
+                       , { totalHeight = aStartingHeight + bStartingHeight + defaultArrowHeight + balloonOffset
+                         , arrowHeight = aStartingHeight + defaultArrowHeight
+                         }
+                       )
+                     ]
+                        |> Dict.fromList
                     )
     , test "with multiple ids and measurements, positions wider elements above narrower elements" <|
         \() ->
@@ -96,19 +135,19 @@ getLabelHeightsSpec =
                 ([ --  A is the second-widest element
                    ( "a"
                    , { label = dummyElement { x = 0, y = 0, width = 200, height = 100 }
-                     , labelContent = dummyElement { x = 0, y = 0, width = 200, height = 20 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 200, height = startingHeight }
                      }
                    )
                  , -- B is the narrowest element
                    ( "b"
                    , { label = dummyElement { x = 0, y = 0, width = 100, height = 100 }
-                     , labelContent = dummyElement { x = 0, y = 0, width = 100, height = 20 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 100, height = startingHeight }
                      }
                    )
                  , -- C is the widest element
                    ( "c"
                    , { label = dummyElement { x = 0, y = 0, width = 300, height = 100 }
-                     , labelContent = dummyElement { x = 0, y = 0, width = 300, height = 20 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 300, height = startingHeight }
                      }
                    )
                  ]
@@ -148,12 +187,12 @@ getLabelHeightsSpec =
             Block.getLabelHeights [ "a", "b" ]
                 ([ ( "a"
                    , { label = dummyElement { x = 0, y = 0, width = 100, height = 100 }
-                     , labelContent = dummyElement { x = 0, y = 0, width = 100, height = 20 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 100, height = startingHeight }
                      }
                    )
                  , ( "b"
                    , { label = dummyElement { x = 0, y = 20, width = 100, height = 100 }
-                     , labelContent = dummyElement { x = 0, y = 0, width = 100, height = 20 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 100, height = startingHeight }
                      }
                    )
                  ]
@@ -183,19 +222,19 @@ getLabelHeightsSpec =
                 ([ --  A is the second-widest element
                    ( "a"
                    , { label = dummyElement { x = 0, y = 0, width = 200, height = 100 }
-                     , labelContent = dummyElement { x = 0, y = 0, width = 200, height = 20 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 200, height = startingHeight }
                      }
                    )
                  , -- B is the narrowest element
                    ( "b"
                    , { label = dummyElement { x = 0, y = 0, width = 100, height = 100 }
-                     , labelContent = dummyElement { x = 0, y = 0, width = 100, height = 20 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 100, height = startingHeight }
                      }
                    )
                  , -- C is the widest element and it is also on a new line by itself
                    ( "c"
                    , { label = dummyElement { x = 0, y = 20, width = 300, height = 100 }
-                     , labelContent = dummyElement { x = 0, y = 0, width = 300, height = 20 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 300, height = startingHeight }
                      }
                    )
                  ]
