@@ -141,14 +141,7 @@ example =
                 ]
             , Table.view
                 [ Table.custom
-                    { header = text "Pattern"
-                    , view = \{ pattern } -> code [] [ text pattern ]
-                    , width = Css.px 50
-                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.top, Css.fontSize (Css.px 12) ]
-                    , sort = Nothing
-                    }
-                , Table.custom
-                    { header = text "About"
+                    { header = text "Pattern name & description"
                     , view = .description >> Markdown.toHtml Nothing >> List.map fromUnstyled >> span []
                     , width = Css.px 125
                     , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
@@ -161,9 +154,16 @@ example =
                     , cellStyles = always [ Css.textAlign Css.center ]
                     , sort = Nothing
                     }
+                , Table.custom
+                    { header = text "Code"
+                    , view = \{ pattern } -> code [] [ text pattern ]
+                    , width = Css.px 50
+                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.top, Css.fontSize (Css.px 12) ]
+                    , sort = Nothing
+                    }
                 ]
                 [ { pattern = "Code.view []"
-                  , description = "Represents a blank in the sentence. Expected to be used in Cycling interface scaffolding."
+                  , description = "**Blank block**\n\nRepresents a blank in the sentence. Used in Cycling interface scaffolding."
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "I am a seed with " ]
@@ -172,7 +172,7 @@ example =
                             ]
                   }
                 , { pattern = "Code.view [ Code.label \"[label text]\" ]"
-                  , description = "A labelled blank in the sentence"
+                  , description = "**Labeled blank block**\n\nA labelled blank in the sentence"
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "If a volcano is extinct, " ]
@@ -181,7 +181,7 @@ example =
                             ]
                   }
                 , { pattern = "Code.view [ Code.label \"[label text]\", Code.plaintext \"[text]\", … ]"
-                  , description = "Help students understand the function different words and phrases are playing in a sentence"
+                  , description = "**Label block**\n\nHelp students understand the function different words and phrases are playing in a sentence"
                   , example =
                         let
                             offsets =
@@ -232,7 +232,8 @@ example =
                   }
                 , { pattern = "Code.view [ Code.emphasize, … ]"
                   , description =
-                        """
+                        """**Emphasis block**
+
 - Uses the Highlighter component to mark content as emphasized
 - Help students focus in on a specific part of the content
 - Often a phrase or clause
@@ -244,7 +245,7 @@ example =
                             ]
                   }
                 , { pattern = "Code.view [ Code.emphasize, Code.content [ … ] ]"
-                  , description = "Help students focus in on a phrase that includes a blank"
+                  , description = "**Blanks with emphasis block**\n\nHelp students focus in on a phrase that includes a blank"
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "This is an " ]
