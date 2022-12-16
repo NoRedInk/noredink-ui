@@ -168,22 +168,18 @@ example =
                     , sort = Nothing
                     }
                 ]
-                [ { pattern = Code.fromModule moduleName "view"
-                  , description = "**Blank block**\n\nRepresents a blank in the sentence. Used in Cycling interface scaffolding."
+                [ { pattern = Code.fromModule moduleName "view " ++ Code.list [ Code.fromModule moduleName "emphasize", "…" ]
+                  , description =
+                        """**Emphasis block**
+
+- Uses the Highlighter component to mark content as emphasized
+- Help students focus in on a specific part of the content
+- Often a phrase or clause
+"""
                   , example =
                         inParagraph
-                            [ Block.view [ Block.plaintext "I am a seed with " ]
-                            , Block.view []
-                            , Block.view [ Block.plaintext " being used." ]
-                            ]
-                  }
-                , { pattern = Code.fromModule moduleName "view " ++ Code.list [ Code.fromModule moduleName "label " ++ Code.string "[label text]" ]
-                  , description = "**Labeled blank block**\n\nA labelled blank in the sentence"
-                  , example =
-                        inParagraph
-                            [ Block.view [ Block.plaintext "If a volcano is extinct, " ]
-                            , Block.view [ Block.label "pronoun" ]
-                            , Block.view [ Block.plaintext " will never erupt again." ]
+                            [ Block.view [ Block.plaintext "The Crossover", Block.emphasize ]
+                            , Block.view [ Block.plaintext " is Thor’s favorite book." ]
                             ]
                   }
                 , { pattern =
@@ -243,18 +239,22 @@ example =
                                 ]
                             ]
                   }
-                , { pattern = Code.fromModule moduleName "view " ++ Code.list [ Code.fromModule moduleName "emphasize", "…" ]
-                  , description =
-                        """**Emphasis block**
-
-- Uses the Highlighter component to mark content as emphasized
-- Help students focus in on a specific part of the content
-- Often a phrase or clause
-"""
+                , { pattern = Code.fromModule moduleName "view"
+                  , description = "**Blank block**\n\nRepresents a blank in the sentence. Used in Cycling interface scaffolding."
                   , example =
                         inParagraph
-                            [ Block.view [ Block.plaintext "The Crossover", Block.emphasize ]
-                            , Block.view [ Block.plaintext " is Thor’s favorite book." ]
+                            [ Block.view [ Block.plaintext "I am a seed with " ]
+                            , Block.view []
+                            , Block.view [ Block.plaintext " being used." ]
+                            ]
+                  }
+                , { pattern = Code.fromModule moduleName "view " ++ Code.list [ Code.fromModule moduleName "label " ++ Code.string "[label text]" ]
+                  , description = "**Labeled blank block**\n\nA labelled blank in the sentence"
+                  , example =
+                        inParagraph
+                            [ Block.view [ Block.plaintext "If a volcano is extinct, " ]
+                            , Block.view [ Block.label "pronoun" ]
+                            , Block.view [ Block.plaintext " will never erupt again." ]
                             ]
                   }
                 , { pattern =
