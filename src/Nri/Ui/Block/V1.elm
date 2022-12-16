@@ -76,7 +76,14 @@ view attributes =
 -}
 plaintext : String -> Attribute
 plaintext content_ =
-    Attribute <| \config -> { config | content = [ String_ content_ ] }
+    Attribute <|
+        \config ->
+            { config
+                | content =
+                    String.split " " content_
+                        |> List.intersperse " "
+                        |> List.map String_
+            }
 
 
 {-| Use `content` for more complex block views, for instance when a blank appears within an emphasis block. Prefer to use `plaintext` when possible for better readability.

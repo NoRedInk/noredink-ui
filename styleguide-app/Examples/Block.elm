@@ -163,7 +163,6 @@ example =
                     ]
                  , Block.view [ Block.plaintext " " ]
                  , Block.view [ Block.label "preposition", Block.cyan ]
-                 , Block.view [ Block.plaintext " " ]
                  , Block.view [ Block.plaintext " comic book pages. " ]
                  , Block.view
                     [ Block.content
