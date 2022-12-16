@@ -91,7 +91,15 @@ example =
                     Control.currentValue state.settings
 
                 inParagraph =
-                    List.concat >> p [ css [ Css.margin2 (Css.px 30) Css.zero ] ]
+                    List.concat
+                        >> p
+                            [ css
+                                [ Css.margin2 (Css.px 30) Css.zero
+                                , Fonts.quizFont
+                                , Css.fontSize (Css.px 30)
+                                , Css.lineHeight (Css.px 43)
+                                ]
+                            ]
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
