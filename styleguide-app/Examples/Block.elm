@@ -139,6 +139,39 @@ example =
                 [ Heading.plaintext "Non-interactive examples"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
+            , p
+                [ css
+                    [ Fonts.quizFont
+                    , Css.fontSize (Css.px 30)
+                    , Css.textAlign Css.center
+                    ]
+                ]
+                ([ Block.view [ Block.plaintext "Plain " ]
+                 , Block.view [ Block.plaintext "text with emphasis", Block.brown ]
+                 , Block.view [ Block.plaintext " " ]
+                 , Block.view []
+                 , Block.view [ Block.plaintext " " ]
+                 , Block.view
+                    [ Block.plaintext "labelled"
+                    , Block.label "label"
+                    , Block.yellow
+                    ]
+                 , Block.view [ Block.plaintext " " ]
+                 , Block.view [ Block.label "labelled blank", Block.cyan ]
+                 , Block.view [ Block.plaintext " " ]
+                 , Block.view [ Block.plaintext " normal text " ]
+                 , Block.view
+                    [ Block.content
+                        [ Block.string "emphasis "
+                        , Block.blank
+                        , Block.string " still emphasized "
+                        ]
+                    , Block.label "Emphasized"
+                    , Block.magenta
+                    ]
+                 ]
+                    |> List.concat
+                )
             , Table.view
                 [ Table.custom
                     { header = text "Pattern name & description"
