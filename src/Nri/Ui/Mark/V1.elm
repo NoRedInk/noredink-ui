@@ -208,7 +208,15 @@ viewMarkedByBalloon config markedWith segments =
                 ]
             ]
         ]
-        (viewJust (viewBalloon config) markedWith.name :: segments)
+        -- the balloon should never end up on a line by itself, so we put it in the DOM
+        -- after the first segment.
+        (case segments of
+            first :: remainder ->
+                first :: viewJust (viewBalloon config) markedWith.name :: remainder
+
+            [] ->
+                []
+        )
         |> List.singleton
         |> span
             [ css
