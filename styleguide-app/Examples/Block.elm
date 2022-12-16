@@ -144,7 +144,6 @@ example =
                     [ Fonts.quizFont
                     , Css.lineHeight (Css.num 1.5)
                     , Css.fontSize (Css.px 30)
-                    , Css.textAlign Css.center
                     , Css.marginTop (Css.px 60)
                     ]
                 ]
