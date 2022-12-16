@@ -146,27 +146,30 @@ example =
                     , Css.textAlign Css.center
                     ]
                 ]
-                ([ Block.view [ Block.plaintext "Plain " ]
-                 , Block.view [ Block.plaintext "text with emphasis", Block.brown ]
+                ([ Block.view
+                    [ Block.plaintext "Superman"
+                    , Block.magenta
+                    , Block.label "subject"
+                    ]
                  , Block.view [ Block.plaintext " " ]
                  , Block.view []
                  , Block.view [ Block.plaintext " " ]
                  , Block.view
-                    [ Block.plaintext "labelled"
-                    , Block.label "label"
+                    [ Block.plaintext "gifts"
+                    , Block.label "direct object"
                     , Block.yellow
                     ]
                  , Block.view [ Block.plaintext " " ]
-                 , Block.view [ Block.label "labelled blank", Block.cyan ]
+                 , Block.view [ Block.label "preposition", Block.cyan ]
                  , Block.view [ Block.plaintext " " ]
-                 , Block.view [ Block.plaintext " normal text " ]
+                 , Block.view [ Block.plaintext " comic book pages." ]
                  , Block.view
                     [ Block.content
-                        [ Block.string "emphasis "
+                        [ Block.string "This is heroically generous "
                         , Block.blank
-                        , Block.string " still emphasized "
+                        , Block.string " each comic book costs about $5."
                         ]
-                    , Block.label "Emphasized"
+                    , Block.label "Editor's note"
                     , Block.magenta
                     ]
                  ]
