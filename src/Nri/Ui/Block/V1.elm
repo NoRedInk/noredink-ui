@@ -201,7 +201,7 @@ renderContent config content_ markStyles =
                 [ text str ]
 
             Blank ->
-                [ viewBlank { class = Nothing, id = Nothing } ]
+                [ viewBlank [] { class = Nothing, id = Nothing } ]
         )
 
 
@@ -296,7 +296,7 @@ toMark label_ palette =
                 { name = label_
                 , startStyles = []
                 , styles =
-                    [ Css.padding2 (Css.px 4) (Css.px 2)
+                    [ Css.padding2 topBottomSpace (Css.px 2)
                     , Css.backgroundColor backgroundColor
                     , Css.border3 (Css.px 1) Css.dashed borderColor
                     , MediaQuery.highContrastMode
@@ -318,6 +318,11 @@ toMark label_ palette =
 
         ( Nothing, Nothing ) ->
             Nothing
+
+
+topBottomSpace : Css.Px
+topBottomSpace =
+    Css.px 4
 
 
 {-| -}
@@ -433,7 +438,12 @@ render config =
                         [ Blank ]
 
                 Nothing ->
-                    [ viewBlank config ]
+                    [ viewBlank
+                        [ Css.paddingTop topBottomSpace
+                        , Css.paddingBottom topBottomSpace
+                        ]
+                        config
+                    ]
 
         _ ->
             Mark.viewWithOffsetBalloonTags
@@ -447,8 +457,8 @@ render config =
                 config.content
 
 
-viewBlank : { config | class : Maybe String, id : Maybe String } -> Html msg
-viewBlank config =
+viewBlank : List Css.Style -> { config | class : Maybe String, id : Maybe String } -> Html msg
+viewBlank styles config =
     span
         [ css
             [ Css.border3 (Css.px 2) Css.dashed Colors.navy
@@ -460,6 +470,8 @@ viewBlank config =
             , Css.minWidth (Css.px 80)
             , Css.display Css.inlineBlock
             , Css.borderRadius (Css.px 4)
+            , Css.lineHeight (Css.int 1)
+            , Css.batch styles
             ]
         , AttributesExtra.maybe Attributes.class config.class
         , AttributesExtra.maybe Attributes.id config.id

@@ -142,6 +142,7 @@ example =
             , p
                 [ css
                     [ Fonts.quizFont
+                    , Css.lineHeight (Css.num 1.5)
                     , Css.fontSize (Css.px 30)
                     , Css.textAlign Css.center
                     ]
@@ -162,7 +163,7 @@ example =
                  , Block.view [ Block.plaintext " " ]
                  , Block.view [ Block.label "preposition", Block.cyan ]
                  , Block.view [ Block.plaintext " " ]
-                 , Block.view [ Block.plaintext " comic book pages." ]
+                 , Block.view [ Block.plaintext " comic book pages. " ]
                  , Block.view
                     [ Block.content
                         [ Block.string "This is heroically generous "
