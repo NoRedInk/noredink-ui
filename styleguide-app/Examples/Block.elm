@@ -158,11 +158,17 @@ example =
                     { header = text "Code"
                     , view = \{ pattern } -> code [] [ text pattern ]
                     , width = Css.px 50
-                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.top, Css.fontSize (Css.px 12) ]
+                    , cellStyles =
+                        always
+                            [ Css.padding2 (Css.px 14) (Css.px 7)
+                            , Css.verticalAlign Css.top
+                            , Css.fontSize (Css.px 12)
+                            , Css.whiteSpace Css.preWrap
+                            ]
                     , sort = Nothing
                     }
                 ]
-                [ { pattern = "Code.view []"
+                [ { pattern = Code.fromModule moduleName "view"
                   , description = "**Blank block**\n\nRepresents a blank in the sentence. Used in Cycling interface scaffolding."
                   , example =
                         inParagraph
@@ -171,7 +177,7 @@ example =
                             , Block.view [ Block.plaintext " being used." ]
                             ]
                   }
-                , { pattern = "Code.view [ Code.label \"[label text]\" ]"
+                , { pattern = Code.fromModule moduleName "view " ++ Code.list [ Code.fromModule moduleName "label " ++ Code.string "[label text]" ]
                   , description = "**Labeled blank block**\n\nA labelled blank in the sentence"
                   , example =
                         inParagraph
@@ -180,7 +186,14 @@ example =
                             , Block.view [ Block.plaintext " will never erupt again." ]
                             ]
                   }
-                , { pattern = "Code.view [ Code.label \"[label text]\", Code.plaintext \"[text]\", … ]"
+                , { pattern =
+                        Code.fromModule moduleName "view"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "label " ++ Code.string "[label text]"
+                                , Code.fromModule moduleName "plaintext " ++ Code.string "[text]"
+                                , "…"
+                                ]
+                                1
                   , description = "**Label block**\n\nHelp students understand the function different words and phrases are playing in a sentence"
                   , example =
                         let
@@ -230,7 +243,7 @@ example =
                                 ]
                             ]
                   }
-                , { pattern = "Code.view [ Code.emphasize, … ]"
+                , { pattern = Code.fromModule moduleName "view " ++ Code.list [ Code.fromModule moduleName "emphasize", "…" ]
                   , description =
                         """**Emphasis block**
 
@@ -244,7 +257,14 @@ example =
                             , Block.view [ Block.plaintext " is Thor’s favorite book." ]
                             ]
                   }
-                , { pattern = "Code.view [ Code.emphasize, Code.content [ … ] ]"
+                , { pattern =
+                        Code.fromModule moduleName "view "
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "emphasize"
+                                , Code.fromModule moduleName "content "
+                                    ++ Code.list [ "…" ]
+                                ]
+                                1
                   , description = "**Blanks with emphasis block**\n\nHelp students focus in on a phrase that includes a blank"
                   , example =
                         inParagraph
