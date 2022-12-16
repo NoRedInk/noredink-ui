@@ -165,10 +165,10 @@ example =
                  , Block.view [ Block.label "preposition", Block.cyan ]
                  , Block.view [ Block.plaintext " comic book pages. " ]
                  , Block.view
-                    [ Block.content
-                        [ Block.string "This is heroically generous "
-                        , Block.blank
-                        , Block.string " each comic book costs about $5."
+                    [ (List.concat >> Block.content)
+                        [ Block.phrase "This is heroically generous "
+                        , [ Block.blank ]
+                        , Block.phrase " each comic book costs about $5."
                         ]
                     , Block.label "Editor's note"
                     , Block.magenta
@@ -308,10 +308,10 @@ example =
                             [ Block.view [ Block.plaintext "This is an " ]
                             , Block.view
                                 [ Block.emphasize
-                                , Block.content
-                                    [ Block.string "emphasized subsegement "
-                                    , Block.blank
-                                    , Block.string " emphasized"
+                                , (List.concat >> Block.content)
+                                    [ Block.phrase "emphasized subsegement "
+                                    , [ Block.blank ]
+                                    , Block.phrase " emphasized"
                                     ]
                                 ]
                             , Block.view
@@ -402,17 +402,16 @@ controlContent =
         , ( "with mixed content"
           , Control.value
                 ( Code.fromModule moduleName "content "
-                    ++ Code.listMultiline
-                        [ Code.fromModule moduleName "string " ++ Code.string "to think about "
-                        , Code.fromModule moduleName "blank"
-                        , Code.fromModule moduleName "string " ++ Code.string " and so forth"
-                        ]
-                        2
+                    ++ Code.withParens
+                        ((Code.fromModule moduleName "string " ++ Code.string "to think about ")
+                            ++ (" ++ " ++ Code.fromModule moduleName "blank")
+                            ++ (" :: " ++ Code.fromModule moduleName "string " ++ Code.string " and so forth")
+                        )
                 , Block.content
-                    [ Block.string "to think about "
-                    , Block.blank
-                    , Block.string " and so forth"
-                    ]
+                    (Block.phrase "to think about "
+                        ++ Block.blank
+                        :: Block.phrase " and so forth"
+                    )
                 )
           )
         ]

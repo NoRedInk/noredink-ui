@@ -1,7 +1,8 @@
 module Nri.Ui.Block.V1 exposing
     ( view, Attribute
     , plaintext, content
-    , Content, string, blank
+    , Content, phrase, blank
+    , string
     , emphasize, label, labelHeight
     , yellow, cyan, magenta, green, blue, purple, brown
     , class, id
@@ -17,7 +18,12 @@ module Nri.Ui.Block.V1 exposing
 ## Content
 
 @docs plaintext, content
-@docs Content, string, blank
+@docs Content, phrase, blank
+
+
+### Deprecated
+
+@docs string
 
 
 ## Content customization
@@ -76,14 +82,7 @@ view attributes =
 -}
 plaintext : String -> Attribute
 plaintext content_ =
-    Attribute <|
-        \config ->
-            { config
-                | content =
-                    String.split " " content_
-                        |> List.intersperse " "
-                        |> List.map String_
-            }
+    Attribute <| \config -> { config | content = parseString content_ }
 
 
 {-| Use `content` for more complex block views, for instance when a blank appears within an emphasis block. Prefer to use `plaintext` when possible for better readability.
@@ -195,6 +194,13 @@ type Content
     | Blank
 
 
+parseString : String -> List Content
+parseString =
+    String.split " "
+        >> List.intersperse " "
+        >> List.map String_
+
+
 renderContent : { config | class : Maybe String, id : Maybe String } -> Content -> List Css.Style -> Html msg
 renderContent config content_ markStyles =
     span
@@ -212,11 +218,17 @@ renderContent config content_ markStyles =
         )
 
 
-{-| You will only need to use this helper if you're also using `content` to construct a more complex Block. Maybe you want `plaintext` instead?
+{-| DEPRECATED -- prefer `phrase`.
 -}
 string : String -> Content
 string =
     String_
+
+
+{-| -}
+phrase : String -> List Content
+phrase =
+    parseString
 
 
 {-| You will only need to use this helper if you're also using `content` to construct a more complex Block. For a less complex blank Block, don't include content or plaintext in the list of attributes.
@@ -308,9 +320,13 @@ toMark label_ palette =
             in
             Just
                 { name = label_
-                , startStyles = [ Css.borderLeft3 borderWidth borderStyle borderColor ]
+                , startStyles =
+                    [ Css.borderLeft3 borderWidth borderStyle borderColor
+                    , Css.paddingLeft (Css.px 2)
+                    ]
                 , styles =
-                    [ Css.padding2 topBottomSpace (Css.px 2)
+                    [ Css.paddingTop topBottomSpace
+                    , Css.paddingBottom topBottomSpace
                     , Css.backgroundColor backgroundColor
                     , Css.borderTop3 borderWidth borderStyle borderColor
                     , Css.borderBottom3 borderWidth borderStyle borderColor
@@ -320,7 +336,10 @@ toMark label_ palette =
                         , Css.property "forced-color-adjust" "none"
                         ]
                     ]
-                , endStyles = [ Css.borderRight3 borderWidth borderStyle borderColor ]
+                , endStyles =
+                    [ Css.borderRight3 borderWidth borderStyle borderColor
+                    , Css.paddingRight (Css.px 2)
+                    ]
                 }
 
         ( Just l, Nothing ) ->
