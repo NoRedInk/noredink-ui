@@ -1,5 +1,7 @@
 module Spec.Nri.Ui.Block exposing (spec)
 
+import Browser.Dom exposing (Element)
+import Dict
 import Expect
 import Html.Styled
 import Nri.Ui.Block.V1 as Block
@@ -12,6 +14,7 @@ spec : Test
 spec =
     describe "Nri.Ui.Block.V1"
         [ describe "content" contentSpec
+        , describe "getLabelHeights" getLabelHeightsSpec
         ]
 
 
@@ -44,3 +47,239 @@ toQuery block =
         |> Html.Styled.p []
         |> Html.Styled.toUnstyled
         |> Query.fromHtml
+
+
+getLabelHeightsSpec : List Test
+getLabelHeightsSpec =
+    [ test "without any ids or measurements, does not specify heights" <|
+        \() ->
+            Block.getLabelHeights [] Dict.empty
+                |> Expect.equal Dict.empty
+    , test "without any measurements, does not specify heights" <|
+        \() ->
+            Block.getLabelHeights [ "a" ] Dict.empty
+                |> Expect.equal Dict.empty
+    , test "without any ids, does not specify heights" <|
+        \() ->
+            Block.getLabelHeights []
+                (Dict.singleton "a"
+                    { label = dummyElement { x = 0, y = 0, width = 100, height = 100 }
+                    , labelContent = dummyElement { x = 0, y = 0, width = 100, height = 20 }
+                    }
+                )
+                |> Expect.equal Dict.empty
+    , test "with 1 id and 1 measurement, specifies the default heights" <|
+        \() ->
+            let
+                startingHeight =
+                    20
+            in
+            Block.getLabelHeights [ "a" ]
+                (Dict.singleton "a"
+                    { label = dummyElement { x = 0, y = 0, width = 100, height = 100 }
+                    , labelContent = dummyElement { x = 0, y = 0, width = 100, height = startingHeight }
+                    }
+                )
+                |> Expect.equal
+                    (Dict.singleton "a"
+                        { totalHeight = startingHeight + defaultArrowHeight + balloonOffset
+                        , arrowHeight = defaultArrowHeight
+                        }
+                    )
+    , test "with different height measurements, prevents overlaps" <|
+        \() ->
+            let
+                aStartingHeight =
+                    40
+
+                bStartingHeight =
+                    30
+            in
+            Block.getLabelHeights [ "a", "b", "c" ]
+                ([ --  A has taller content
+                   ( "a"
+                   , { label = dummyElement { x = 0, y = 0, width = 100, height = 100 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 100, height = aStartingHeight }
+                     }
+                   )
+                 , -- B has shorter content
+                   ( "b"
+                   , { label = dummyElement { x = 0, y = 0, width = 200, height = 100 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 100, height = bStartingHeight }
+                     }
+                   )
+                 ]
+                    |> Dict.fromList
+                )
+                |> Expect.equal
+                    ([ ( "a"
+                       , { totalHeight = aStartingHeight + defaultArrowHeight + balloonOffset
+                         , arrowHeight = defaultArrowHeight
+                         }
+                       )
+                     , ( "b"
+                       , { totalHeight = aStartingHeight + bStartingHeight + defaultArrowHeight + balloonOffset
+                         , arrowHeight = aStartingHeight + defaultArrowHeight
+                         }
+                       )
+                     ]
+                        |> Dict.fromList
+                    )
+    , test "with multiple ids and measurements, positions wider elements above narrower elements" <|
+        \() ->
+            let
+                startingHeight =
+                    20
+            in
+            Block.getLabelHeights [ "a", "b", "c" ]
+                ([ --  A is the second-widest element
+                   ( "a"
+                   , { label = dummyElement { x = 0, y = 0, width = 200, height = 100 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 200, height = startingHeight }
+                     }
+                   )
+                 , -- B is the narrowest element
+                   ( "b"
+                   , { label = dummyElement { x = 0, y = 0, width = 100, height = 100 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 100, height = startingHeight }
+                     }
+                   )
+                 , -- C is the widest element
+                   ( "c"
+                   , { label = dummyElement { x = 0, y = 0, width = 300, height = 100 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 300, height = startingHeight }
+                     }
+                   )
+                 ]
+                    |> Dict.fromList
+                )
+                |> Expect.equal
+                    ([ ( "a"
+                       , { totalHeight = 2 * startingHeight + defaultArrowHeight + balloonOffset
+                         , arrowHeight =
+                            -- A is positioned on top of B.
+                            -- So its arrow height is the total height of b minus the positioning offset
+                            startingHeight + defaultArrowHeight
+                         }
+                       )
+                     , ( "b"
+                       , { totalHeight = 1 * startingHeight + defaultArrowHeight + balloonOffset
+                         , arrowHeight = defaultArrowHeight
+                         }
+                       )
+                     , ( "c"
+                       , { totalHeight = 3 * startingHeight + defaultArrowHeight + balloonOffset
+                         , arrowHeight =
+                            -- C is positioned on top of A.
+                            -- So its arrow height is the total height of A minus the positioning offset
+                            2 * startingHeight + defaultArrowHeight
+                         }
+                       )
+                     ]
+                        |> Dict.fromList
+                    )
+    , test "with labels on different lines, specifies the default heights" <|
+        \() ->
+            let
+                startingHeight =
+                    20
+            in
+            Block.getLabelHeights [ "a", "b" ]
+                ([ ( "a"
+                   , { label = dummyElement { x = 0, y = 0, width = 100, height = 100 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 100, height = startingHeight }
+                     }
+                   )
+                 , ( "b"
+                   , { label = dummyElement { x = 0, y = 20, width = 100, height = 100 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 100, height = startingHeight }
+                     }
+                   )
+                 ]
+                    |> Dict.fromList
+                )
+                |> Expect.equal
+                    ([ ( "a"
+                       , { totalHeight = startingHeight + defaultArrowHeight + balloonOffset
+                         , arrowHeight = defaultArrowHeight
+                         }
+                       )
+                     , ( "b"
+                       , { totalHeight = startingHeight + defaultArrowHeight + balloonOffset
+                         , arrowHeight = defaultArrowHeight
+                         }
+                       )
+                     ]
+                        |> Dict.fromList
+                    )
+    , test "with multiple ids and measurements on different lines, positions elements correctly" <|
+        \() ->
+            let
+                startingHeight =
+                    20
+            in
+            Block.getLabelHeights [ "a", "b", "c" ]
+                ([ --  A is the second-widest element
+                   ( "a"
+                   , { label = dummyElement { x = 0, y = 0, width = 200, height = 100 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 200, height = startingHeight }
+                     }
+                   )
+                 , -- B is the narrowest element
+                   ( "b"
+                   , { label = dummyElement { x = 0, y = 0, width = 100, height = 100 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 100, height = startingHeight }
+                     }
+                   )
+                 , -- C is the widest element and it is also on a new line by itself
+                   ( "c"
+                   , { label = dummyElement { x = 0, y = 20, width = 300, height = 100 }
+                     , labelContent = dummyElement { x = 0, y = 0, width = 300, height = startingHeight }
+                     }
+                   )
+                 ]
+                    |> Dict.fromList
+                )
+                |> Expect.equal
+                    ([ ( "a"
+                       , { totalHeight = 2 * startingHeight + defaultArrowHeight + balloonOffset
+                         , arrowHeight =
+                            -- A is positioned on top of B.
+                            -- So its arrow height is the total height of b minus the positioning offset
+                            startingHeight + defaultArrowHeight
+                         }
+                       )
+                     , ( "b"
+                       , { totalHeight = 1 * startingHeight + defaultArrowHeight + balloonOffset
+                         , arrowHeight = defaultArrowHeight
+                         }
+                       )
+                     , ( "c"
+                       , { totalHeight = 1 * startingHeight + defaultArrowHeight + balloonOffset
+                         , arrowHeight =
+                            -- C is on a new line, so it goes back to default positioning.
+                            defaultArrowHeight
+                         }
+                       )
+                     ]
+                        |> Dict.fromList
+                    )
+    ]
+
+
+balloonOffset : Float
+balloonOffset =
+    8
+
+
+defaultArrowHeight : Float
+defaultArrowHeight =
+    8
+
+
+dummyElement : { x : Float, y : Float, width : Float, height : Float } -> Element
+dummyElement element =
+    { scene = { width = 1000, height = 1000 }
+    , viewport = { x = 0, y = 0, width = 1000, height = 500 }
+    , element = element
+    }
