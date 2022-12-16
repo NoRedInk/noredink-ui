@@ -299,20 +299,28 @@ toMark : Maybe String -> Maybe Palette -> Maybe Mark
 toMark label_ palette =
     case ( label_, palette ) of
         ( _, Just { backgroundColor, borderColor } ) ->
+            let
+                borderWidth =
+                    Css.px 1
+
+                borderStyle =
+                    Css.dashed
+            in
             Just
                 { name = label_
-                , startStyles = []
+                , startStyles = [ Css.borderLeft3 borderWidth borderStyle borderColor ]
                 , styles =
                     [ Css.padding2 topBottomSpace (Css.px 2)
                     , Css.backgroundColor backgroundColor
-                    , Css.border3 (Css.px 1) Css.dashed borderColor
+                    , Css.borderTop3 borderWidth borderStyle borderColor
+                    , Css.borderBottom3 borderWidth borderStyle borderColor
                     , MediaQuery.highContrastMode
                         [ Css.property "background-color" "Mark"
                         , Css.property "color" "MarkText"
                         , Css.property "forced-color-adjust" "none"
                         ]
                     ]
-                , endStyles = []
+                , endStyles = [ Css.borderRight3 borderWidth borderStyle borderColor ]
                 }
 
         ( Just l, Nothing ) ->

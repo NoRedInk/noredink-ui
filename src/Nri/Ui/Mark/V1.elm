@@ -69,17 +69,12 @@ viewWithBalloonTags :
     -> List c
     -> List (Html msg)
 viewWithBalloonTags viewSegment backgroundColor marked contents =
-    let
-        segments =
-            List.indexedMap
-                (\index content -> viewSegment content (markStyles index markerWithoutStyles))
-                contents
-
-        markerWithoutStyles =
-            Maybe.map (\marker -> { marker | styles = [] }) marked
-    in
     case marked of
         Just markedWith ->
+            let
+                lastIndex =
+                    List.length contents - 1
+            in
             [ viewMarkedByBalloon
                 { backgroundColor = backgroundColor
                 , labelHeight = Nothing
@@ -87,11 +82,14 @@ viewWithBalloonTags viewSegment backgroundColor marked contents =
                 , labelContentId = Nothing
                 }
                 markedWith
-                segments
+                (List.indexedMap
+                    (\index content -> viewSegment content (markedWithBalloonStyles markedWith lastIndex index))
+                    contents
+                )
             ]
 
         Nothing ->
-            segments
+            List.map (\content -> viewSegment content []) contents
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
@@ -112,21 +110,39 @@ viewWithOffsetBalloonTags :
     -> List c
     -> List (Html msg)
 viewWithOffsetBalloonTags ({ renderSegment, maybeMarker } as config) contents =
-    let
-        segments =
-            List.indexedMap
-                (\index content -> renderSegment content (markStyles index markerWithoutStyles))
-                contents
-
-        markerWithoutStyles =
-            Maybe.map (\marker -> { marker | styles = [] }) maybeMarker
-    in
     case maybeMarker of
         Just markedWith ->
-            [ viewMarkedByBalloon config markedWith segments ]
+            let
+                lastIndex =
+                    List.length contents - 1
+            in
+            [ viewMarkedByBalloon config
+                markedWith
+                (List.indexedMap
+                    (\index content -> renderSegment content (markedWithBalloonStyles markedWith lastIndex index))
+                    contents
+                )
+            ]
 
         Nothing ->
-            segments
+            List.map (\content -> renderSegment content []) contents
+
+
+markedWithBalloonStyles : Mark -> Int -> Int -> List Css.Style
+markedWithBalloonStyles marked lastIndex index =
+    List.concat
+        [ if index == 0 then
+            marked.startStyles
+
+          else
+            []
+        , marked.styles
+        , if index == lastIndex then
+            marked.endStyles
+
+          else
+            []
+        ]
 
 
 type TagStyle
@@ -182,9 +198,6 @@ viewMarkedByBalloon config markedWith segments =
         , css
             [ Css.backgroundColor Css.transparent
             , Css.position Css.relative
-            , Css.batch markedWith.startStyles
-            , Css.batch markedWith.styles
-            , Css.batch markedWith.endStyles
             , Css.Global.children
                 [ Css.Global.selector ":last-child"
                     [ Css.after
