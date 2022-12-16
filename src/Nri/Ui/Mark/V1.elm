@@ -212,8 +212,7 @@ viewMarkedByBalloon config markedWith segments =
         |> List.singleton
         |> span
             [ css
-                [ Css.display Css.inline
-                , config.labelHeight
+                [ config.labelHeight
                     |> Maybe.map
                         (\{ totalHeight } ->
                             Css.paddingTop (Css.px totalHeight)
