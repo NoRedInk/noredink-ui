@@ -221,7 +221,21 @@ example =
                     , Block.labelId goalId
                     , Block.labelPosition (Dict.get goalId offsets)
                     ]
-                 , Block.view [ Block.plaintext "." ]
+                 , Block.view [ Block.plaintext ". Be sure to be " ]
+                 , Block.view
+                    [ Block.plaintext "careful"
+                    , Block.label "Shortish content..."
+                    , Block.green
+                    , Block.labelId shortId
+                    , Block.labelPosition (Dict.get shortId offsets)
+                    ]
+                 , Block.view
+                    [ Block.plaintext "!"
+                    , Block.label "It's important that the 'lowest' content is rendered on top of all other content."
+                    , Block.blue
+                    , Block.labelId longId
+                    , Block.labelPosition (Dict.get longId offsets)
+                    ]
                  ]
                     |> List.concat
                 )
@@ -508,6 +522,16 @@ goalId =
     "goal-label-id"
 
 
+shortId : String
+shortId =
+    "short-label-id"
+
+
+longId : String
+longId =
+    "long-label-id"
+
+
 blocksWithLabelsIds : List String
 blocksWithLabelsIds =
     [ ageId
@@ -521,6 +545,8 @@ blocksWithLabelsIds =
     , articleId
     , trickyId
     , goalId
+    , shortId
+    , longId
     ]
 
 
