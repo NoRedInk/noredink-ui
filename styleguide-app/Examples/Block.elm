@@ -95,7 +95,7 @@ example =
                             ]
 
                 offsets =
-                    Block.getLabelHeights [ ageId, purposeId, colorId ] state.labelMeasurementsById
+                    Block.getLabelHeights blocksWithLabelsIds state.labelMeasurementsById
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -157,8 +157,7 @@ example =
                     , Block.magenta
                     , Block.label "subject"
                     , Block.id subjectId
-                                    , Block.labelHeight (Dict.get subjectId offsets)
-
+                    , Block.labelHeight (Dict.get subjectId offsets)
                     ]
                  , Block.view [ Block.plaintext " " ]
                  , Block.view []
@@ -168,16 +167,14 @@ example =
                     , Block.label "direct object"
                     , Block.yellow
                     , Block.id directObjectId
-                                    , Block.labelHeight (Dict.get directObjectId offsets)
-
+                    , Block.labelHeight (Dict.get directObjectId offsets)
                     ]
                  , Block.view [ Block.plaintext " " ]
                  , Block.view
                     [ Block.label "preposition"
                     , Block.cyan
                     , Block.id prepositionId
-                                    , Block.labelHeight (Dict.get prepositionId offsets)
-
+                    , Block.labelHeight (Dict.get prepositionId offsets)
                     ]
                  , Block.view [ Block.plaintext " comic book pages. " ]
                  , Block.view
@@ -189,8 +186,7 @@ example =
                     , Block.label "Editor's note"
                     , Block.brown
                     , Block.id editorsNoteId
-                                    , Block.labelHeight (Dict.get editorsNoteId offsets)
-
+                    , Block.labelHeight (Dict.get editorsNoteId offsets)
                     ]
                  ]
                     |> List.concat
@@ -256,7 +252,6 @@ example =
                                     , Block.label "age"
                                     , Block.id ageId
                                     , Block.labelHeight (Dict.get ageId offsets)
-
                                     , Block.yellow
                                     ]
                                 , Block.view [ Block.plaintext " " ]
@@ -265,7 +260,6 @@ example =
                                     , Block.label "purpose"
                                     , Block.id purposeId
                                     , Block.labelHeight (Dict.get purposeId offsets)
-
                                     , Block.cyan
                                     ]
                                 , Block.view [ Block.plaintext " " ]
@@ -274,7 +268,6 @@ example =
                                     , Block.label "color"
                                     , Block.id colorId
                                     , Block.labelHeight (Dict.get colorId offsets)
-
                                     , Block.magenta
                                     ]
                                 , Block.view [ Block.plaintext " shoes." ]
@@ -298,8 +291,7 @@ example =
                             , Block.view
                                 [ Block.label "pronoun"
                                 , Block.id pronounId
-                                    , Block.labelHeight (Dict.get pronounId offsets)
-
+                                , Block.labelHeight (Dict.get pronounId offsets)
                                 ]
                             , Block.view [ Block.plaintext " will never erupt again." ]
                             ]
