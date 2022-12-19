@@ -5,7 +5,7 @@ import Dict
 import Expect
 import Html.Attributes as Attributes
 import Html.Styled
-import Nri.Ui.Block.V1 as Block
+import Nri.Ui.Block.V2 as Block
 import Test exposing (..)
 import Test.Html.Query as Query
 import Test.Html.Selector as Selector
@@ -13,7 +13,7 @@ import Test.Html.Selector as Selector
 
 spec : Test
 spec =
-    describe "Nri.Ui.Block.V1"
+    describe "Nri.Ui.Block.V2"
         [ describe "content" contentSpec
         , describe "id" idSpec
         , describe "getLabelHeights" getLabelHeightsSpec
