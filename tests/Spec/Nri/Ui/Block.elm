@@ -3,6 +3,7 @@ module Spec.Nri.Ui.Block exposing (spec)
 import Browser.Dom exposing (Element)
 import Dict
 import Expect
+import Html.Attributes as Attributes
 import Html.Styled
 import Nri.Ui.Block.V1 as Block
 import Test exposing (..)
@@ -14,6 +15,7 @@ spec : Test
 spec =
     describe "Nri.Ui.Block.V1"
         [ describe "content" contentSpec
+        , describe "id" idSpec
         , describe "getLabelHeights" getLabelHeightsSpec
         ]
 
@@ -38,6 +40,23 @@ contentSpec =
             [ Block.content [ Block.string "Yo", Block.blank ] ]
                 |> toQuery
                 |> Query.has [ Selector.text "Yo", Selector.text "blank" ]
+    ]
+
+
+idSpec : List Test
+idSpec =
+    [ test "a single word with an id" <|
+        \() ->
+            [ Block.plaintext "Yo", Block.id "yo-id" ]
+                |> toQuery
+                |> Query.findAll [ Selector.attribute (Attributes.id "yo-id") ]
+                |> Query.count (Expect.equal 1)
+    , test "multiple words with an id" <|
+        \() ->
+            [ Block.plaintext "Yo yo yo", Block.id "yo-id" ]
+                |> toQuery
+                |> Query.findAll [ Selector.attribute (Attributes.id "yo-id") ]
+                |> Query.count (Expect.equal 1)
     ]
 
 
