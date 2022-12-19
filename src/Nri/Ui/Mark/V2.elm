@@ -103,7 +103,17 @@ markedWithBalloonStyles marked lastIndex index =
             []
         , marked.styles
         , if index == lastIndex then
-            marked.endStyles
+            Css.after
+                [ Css.property "content"
+                    ("\" end "
+                        ++ (Maybe.map (\name -> name) marked.name
+                                |> Maybe.withDefault "highlight"
+                           )
+                        ++ " \""
+                    )
+                , invisibleStyle
+                ]
+                :: marked.endStyles
 
           else
             []
@@ -166,18 +176,7 @@ viewMarkedByBalloon config markedWith segments =
         [ markedWith.name
             |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
             |> Maybe.withDefault AttributesExtra.none
-        , css
-            [ Css.backgroundColor Css.transparent
-            , Css.position Css.relative
-            , Css.Global.children
-                [ Css.Global.selector ":last-child"
-                    [ Css.after
-                        [ Css.property "content" ("\" end " ++ (Maybe.map (\name -> name) markedWith.name |> Maybe.withDefault "highlight") ++ " \"")
-                        , invisibleStyle
-                        ]
-                    ]
-                ]
-            ]
+        , css [ Css.backgroundColor Css.transparent, Css.position Css.relative ]
         ]
         -- the balloon should never end up on a line by itself, so we put it in the DOM
         -- after the first segment.
