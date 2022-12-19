@@ -157,9 +157,11 @@ getLabelPositions ids labelMeasurementsById =
                     |> List.sortBy (Tuple.second >> .labelContent >> .element >> .width)
                     |> List.foldl
                         (\( idString, e ) ( height, acc ) ->
-                            ( height + e.labelContent.element.height
+                            ( height + e.labelContent.element.height + 4
                             , ( idString
-                              , { totalHeight = height + e.labelContent.element.height + 8, arrowHeight = height }
+                              , { totalHeight = height + e.labelContent.element.height
+                                , arrowHeight = height
+                                }
                               )
                                 :: acc
                             )

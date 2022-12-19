@@ -115,7 +115,7 @@ getLabelPositionsSpec =
                 )
                 |> Expect.equal
                     (Dict.singleton "a"
-                        { totalHeight = startingHeight + defaultArrowHeight + balloonOffset
+                        { totalHeight = startingHeight + defaultArrowHeight
                         , arrowHeight = defaultArrowHeight
                         }
                     )
@@ -146,13 +146,13 @@ getLabelPositionsSpec =
                 )
                 |> Expect.equal
                     ([ ( "a"
-                       , { totalHeight = aStartingHeight + defaultArrowHeight + balloonOffset
+                       , { totalHeight = aStartingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          }
                        )
                      , ( "b"
                        , { totalHeight = aStartingHeight + bStartingHeight + defaultArrowHeight + balloonOffset
-                         , arrowHeight = aStartingHeight + defaultArrowHeight
+                         , arrowHeight = aStartingHeight + defaultArrowHeight + balloonOffset
                          }
                        )
                      ]
@@ -191,12 +191,12 @@ getLabelPositionsSpec =
                 )
                 |> Expect.equal
                     ([ ( "a"
-                       , { totalHeight = aStartingHeight + defaultArrowHeight + balloonOffset
+                       , { totalHeight = aStartingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          }
                        )
                      , ( "b"
-                       , { totalHeight = bStartingHeight + defaultArrowHeight + balloonOffset
+                       , { totalHeight = bStartingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          }
                        )
@@ -236,21 +236,19 @@ getLabelPositionsSpec =
                        , { totalHeight = 2 * startingHeight + defaultArrowHeight + balloonOffset
                          , arrowHeight =
                             -- A is positioned on top of B.
-                            -- So its arrow height is the total height of b minus the positioning offset
-                            startingHeight + defaultArrowHeight
+                            startingHeight + defaultArrowHeight + balloonOffset
                          }
                        )
                      , ( "b"
-                       , { totalHeight = 1 * startingHeight + defaultArrowHeight + balloonOffset
+                       , { totalHeight = 1 * startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          }
                        )
                      , ( "c"
-                       , { totalHeight = 3 * startingHeight + defaultArrowHeight + balloonOffset
+                       , { totalHeight = 3 * startingHeight + defaultArrowHeight + 2 * balloonOffset
                          , arrowHeight =
                             -- C is positioned on top of A.
-                            -- So its arrow height is the total height of A minus the positioning offset
-                            2 * startingHeight + defaultArrowHeight
+                            2 * startingHeight + defaultArrowHeight + 2 * balloonOffset
                          }
                        )
                      ]
@@ -287,20 +285,20 @@ getLabelPositionsSpec =
                 |> Expect.equal
                     ([ ( "a"
                        , -- A is positioned in its default position.
-                         { totalHeight = 1 * startingHeight + defaultArrowHeight + balloonOffset
+                         { totalHeight = 1 * startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          }
                        )
                      , -- B is positioned under C
                        ( "b"
-                       , { totalHeight = 1 * startingHeight + defaultArrowHeight + balloonOffset
+                       , { totalHeight = 1 * startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          }
                        )
                      , -- C is positioned over B
                        ( "c"
                        , { totalHeight = 2 * startingHeight + defaultArrowHeight + balloonOffset
-                         , arrowHeight = 1 * startingHeight + defaultArrowHeight
+                         , arrowHeight = 1 * startingHeight + defaultArrowHeight + balloonOffset
                          }
                        )
                      ]
@@ -340,10 +338,10 @@ getLabelPositionsSpec =
                     |> Dict.fromList
                 )
                 |> Expect.equal
-                    ([ ( "prepositionId", { arrowHeight = 8, totalHeight = 40 } )
-                     , ( "directObjectId", { arrowHeight = 32, totalHeight = 64 } )
-                     , ( "subjectId", { arrowHeight = 8, totalHeight = 40 } )
-                     , ( "editorsNoteId", { arrowHeight = 8, totalHeight = 40 } )
+                    ([ ( "prepositionId", { arrowHeight = 8, totalHeight = 32 } )
+                     , ( "directObjectId", { arrowHeight = 36, totalHeight = 60 } )
+                     , ( "subjectId", { arrowHeight = 8, totalHeight = 32 } )
+                     , ( "editorsNoteId", { arrowHeight = 8, totalHeight = 32 } )
                      ]
                         |> Dict.fromList
                     )
@@ -369,12 +367,12 @@ getLabelPositionsSpec =
                 )
                 |> Expect.equal
                     ([ ( "a"
-                       , { totalHeight = startingHeight + defaultArrowHeight + balloonOffset
+                       , { totalHeight = startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          }
                        )
                      , ( "b"
-                       , { totalHeight = startingHeight + defaultArrowHeight + balloonOffset
+                       , { totalHeight = startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          }
                        )
@@ -415,16 +413,16 @@ getLabelPositionsSpec =
                          , arrowHeight =
                             -- A is positioned on top of B.
                             -- So its arrow height is the total height of b minus the positioning offset
-                            startingHeight + defaultArrowHeight
+                            startingHeight + defaultArrowHeight + balloonOffset
                          }
                        )
                      , ( "b"
-                       , { totalHeight = 1 * startingHeight + defaultArrowHeight + balloonOffset
+                       , { totalHeight = 1 * startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          }
                        )
                      , ( "c"
-                       , { totalHeight = 1 * startingHeight + defaultArrowHeight + balloonOffset
+                       , { totalHeight = 1 * startingHeight + defaultArrowHeight
                          , arrowHeight =
                             -- C is on a new line, so it goes back to default positioning.
                             defaultArrowHeight
@@ -463,17 +461,17 @@ getLabelPositionsSpec =
                 )
                 |> Expect.equal
                     ([ ( "a"
-                       , { totalHeight = 1 * startingHeight + defaultArrowHeight + balloonOffset
+                       , { totalHeight = 1 * startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          }
                        )
                      , ( "b"
-                       , { totalHeight = 1 * startingHeight + defaultArrowHeight + balloonOffset
+                       , { totalHeight = 1 * startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          }
                        )
                      , ( "c"
-                       , { totalHeight = 1 * startingHeight + defaultArrowHeight + balloonOffset
+                       , { totalHeight = 1 * startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          }
                        )
@@ -485,7 +483,7 @@ getLabelPositionsSpec =
 
 balloonOffset : Float
 balloonOffset =
-    8
+    4
 
 
 defaultArrowHeight : Float
