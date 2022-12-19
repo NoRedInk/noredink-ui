@@ -132,7 +132,9 @@ markedWithBalloonStyles : Mark -> Int -> Int -> List Css.Style
 markedWithBalloonStyles marked lastIndex index =
     List.concat
         [ if index == 0 then
-            marked.startStyles
+            -- if we're on the first highlighted element, we add
+            -- a `before` content saying what kind of highlight we're starting
+            tagBeforeContent marked :: marked.startStyles
 
           else
             []
