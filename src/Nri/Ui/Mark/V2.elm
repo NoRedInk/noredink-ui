@@ -66,7 +66,7 @@ viewWithBalloonTags :
     { renderSegment : c -> List Style -> Html msg
     , backgroundColor : Color
     , maybeMarker : Maybe Mark
-    , labelHeight : Maybe { totalHeight : Float, arrowHeight : Float }
+    , labelPosition : Maybe { totalHeight : Float, arrowHeight : Float }
     , labelId : Maybe String
     , labelContentId : Maybe String
     }
@@ -164,7 +164,7 @@ view_ tagStyle viewSegment highlightables =
 viewMarkedByBalloon :
     { config
         | backgroundColor : Color
-        , labelHeight : Maybe { totalHeight : Float, arrowHeight : Float }
+        , labelPosition : Maybe { totalHeight : Float, arrowHeight : Float }
         , labelId : Maybe String
         , labelContentId : Maybe String
     }
@@ -299,7 +299,7 @@ viewInlineTag customizations name =
 viewBalloon :
     { config
         | backgroundColor : Color
-        , labelHeight : Maybe { totalHeight : Float, arrowHeight : Float }
+        , labelPosition : Maybe { totalHeight : Float, arrowHeight : Float }
         , labelId : Maybe String
         , labelContentId : Maybe String
     }
@@ -351,7 +351,7 @@ viewBalloon config label =
 
             Nothing ->
                 Balloon.css []
-        , case config.labelHeight of
+        , case config.labelPosition of
             Just { arrowHeight } ->
                 Balloon.arrowHeight arrowHeight
 
@@ -360,12 +360,12 @@ viewBalloon config label =
         ]
 
 
-viewBalloonSpacer : { config | labelHeight : Maybe { b | totalHeight : Float } } -> Html msg
+viewBalloonSpacer : { config | labelPosition : Maybe { b | totalHeight : Float } } -> Html msg
 viewBalloonSpacer config =
     span
         [ css
             [ Css.display Css.inlineBlock
-            , config.labelHeight
+            , config.labelPosition
                 |> Maybe.map
                     (\{ totalHeight } ->
                         Css.paddingTop (Css.px totalHeight)

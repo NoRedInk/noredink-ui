@@ -64,14 +64,14 @@ example =
                 [ Block.plaintext "he"
                 , Block.label "subject"
                 , Block.yellow
-                , Block.labelHeight (Just { totalHeight = 66, arrowHeight = 34 })
+                , Block.labelPosition (Just { totalHeight = 66, arrowHeight = 34 })
                 ]
           , Block.view [ Block.plaintext " " ]
           , Block.view
                 [ Block.plaintext "glued"
                 , Block.label "verb"
                 , Block.cyan
-                , Block.labelHeight (Just { totalHeight = 34, arrowHeight = 8 })
+                , Block.labelPosition (Just { totalHeight = 34, arrowHeight = 8 })
                 ]
           , Block.view [ Block.plaintext " it with ketchup." ]
           ]
@@ -95,7 +95,7 @@ example =
                             ]
 
                 offsets =
-                    Block.getLabelHeights blocksWithLabelsIds state.labelMeasurementsById
+                    Block.getLabelPositions blocksWithLabelsIds state.labelMeasurementsById
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -157,7 +157,7 @@ example =
                     , Block.magenta
                     , Block.label "subject"
                     , Block.labelId subjectId
-                    , Block.labelHeight (Dict.get subjectId offsets)
+                    , Block.labelPosition (Dict.get subjectId offsets)
                     ]
                  , Block.view [ Block.plaintext " " ]
                  , Block.view []
@@ -167,14 +167,14 @@ example =
                     , Block.label "direct object"
                     , Block.yellow
                     , Block.labelId directObjectId
-                    , Block.labelHeight (Dict.get directObjectId offsets)
+                    , Block.labelPosition (Dict.get directObjectId offsets)
                     ]
                  , Block.view [ Block.plaintext " " ]
                  , Block.view
                     [ Block.label "preposition"
                     , Block.cyan
                     , Block.labelId prepositionId
-                    , Block.labelHeight (Dict.get prepositionId offsets)
+                    , Block.labelPosition (Dict.get prepositionId offsets)
                     ]
                  , Block.view [ Block.plaintext " comic book pages. " ]
                  , Block.view
@@ -186,7 +186,7 @@ example =
                     , Block.label "Editor's note"
                     , Block.brown
                     , Block.labelId editorsNoteId
-                    , Block.labelHeight (Dict.get editorsNoteId offsets)
+                    , Block.labelPosition (Dict.get editorsNoteId offsets)
                     ]
                  ]
                     |> List.concat
@@ -251,7 +251,7 @@ example =
                                     [ Block.plaintext "new"
                                     , Block.label "age"
                                     , Block.labelId ageId
-                                    , Block.labelHeight (Dict.get ageId offsets)
+                                    , Block.labelPosition (Dict.get ageId offsets)
                                     , Block.yellow
                                     ]
                                 , Block.view [ Block.plaintext " " ]
@@ -259,7 +259,7 @@ example =
                                     [ Block.plaintext "bowling"
                                     , Block.label "purpose"
                                     , Block.labelId purposeId
-                                    , Block.labelHeight (Dict.get purposeId offsets)
+                                    , Block.labelPosition (Dict.get purposeId offsets)
                                     , Block.cyan
                                     ]
                                 , Block.view [ Block.plaintext " " ]
@@ -267,7 +267,7 @@ example =
                                     [ Block.plaintext "yellow"
                                     , Block.label "color"
                                     , Block.labelId colorId
-                                    , Block.labelHeight (Dict.get colorId offsets)
+                                    , Block.labelPosition (Dict.get colorId offsets)
                                     , Block.magenta
                                     ]
                                 , Block.view [ Block.plaintext " shoes." ]
@@ -291,7 +291,7 @@ example =
                             , Block.view
                                 [ Block.label "pronoun"
                                 , Block.labelId pronounId
-                                , Block.labelHeight (Dict.get pronounId offsets)
+                                , Block.labelPosition (Dict.get pronounId offsets)
                                 ]
                             , Block.view [ Block.plaintext " will never erupt again." ]
                             ]
@@ -357,11 +357,11 @@ initControl =
         |> ControlExtra.optionalBoolListItem "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )
         |> ControlExtra.optionalListItem "label"
             (CommonControls.string ( Code.fromModule moduleName "label", Block.label ) "Fruit")
-        |> ControlExtra.optionalListItem "labelHeight"
+        |> ControlExtra.optionalListItem "labelPosition"
             (Control.map
                 (\( code, v ) ->
-                    ( Code.fromModule moduleName "labelHeight (Just" ++ code ++ ")"
-                    , Block.labelHeight (Just v)
+                    ( Code.fromModule moduleName "labelPosition (Just" ++ code ++ ")"
+                    , Block.labelPosition (Just v)
                     )
                 )
                 (Control.record

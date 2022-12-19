@@ -5,7 +5,7 @@ module Nri.Ui.Block.V2 exposing
     , emphasize
     , label
     , labelId, labelContentId
-    , getLabelHeights, labelHeight
+    , getLabelPositions, labelPosition
     , yellow, cyan, magenta, green, blue, purple, brown
     , class
     )
@@ -33,7 +33,7 @@ module Nri.Ui.Block.V2 exposing
 You will need these helpers if you want to prevent label overlaps. (Which is to say -- anytime you have labels!)
 
 @docs labelId, labelContentId
-@docs getLabelHeights, labelHeight
+@docs getLabelPositions, labelPosition
 
 
 ### Visual customization
@@ -108,11 +108,11 @@ label label_ =
     Attribute <| \config -> { config | label = Just label_ }
 
 
-{-| Use `getLabelHeights` to calculate what these values should be.
+{-| Use `getLabelPositions` to calculate what these values should be.
 -}
-labelHeight : Maybe { totalHeight : Float, arrowHeight : Float } -> Attribute
-labelHeight offset =
-    Attribute <| \config -> { config | labelHeight = offset }
+labelPosition : Maybe { totalHeight : Float, arrowHeight : Float } -> Attribute
+labelPosition offset =
+    Attribute <| \config -> { config | labelPosition = offset }
 
 
 {-| -}
@@ -127,14 +127,14 @@ labelContentId labelId_ =
 
     - First, we add ids to block with labels with `Block.id`.
     - Say we added `Block.id "example-id"`, then we will use `Browser.Dom.getElement (Block.labelId "example-id")` and `Browser.Dom.getElement (Block.labelContentId "example-id")` to construct a record in the shape { label : Dom.Element, labelContent : Dom.Element }. We store this record in a dictionary keyed by ids (e.g., "example-id") with measurements for all other labels.
-    - Pass a list of all the block ids and the dictionary of measurements to `getLabelHeights`. `getLabelHeights` will return a dictionary of values (keyed by ids) that we will then pass directly to `labelHeight` for positioning.
+    - Pass a list of all the block ids and the dictionary of measurements to `getLabelPositions`. `getLabelPositions` will return a dictionary of values (keyed by ids) that we will then pass directly to `labelPosition` for positioning.
 
 -}
-getLabelHeights :
+getLabelPositions :
     List String
     -> Dict String { label : Dom.Element, labelContent : Dom.Element }
     -> Dict String { totalHeight : Float, arrowHeight : Float }
-getLabelHeights ids labelMeasurementsById =
+getLabelPositions ids labelMeasurementsById =
     let
         startingArrowHeight =
             8
@@ -433,7 +433,7 @@ defaultConfig =
     { content = []
     , label = Nothing
     , labelId = Nothing
-    , labelHeight = Nothing
+    , labelPosition = Nothing
     , theme = Nothing
     , class = Nothing
     }
@@ -443,7 +443,7 @@ type alias Config =
     { content : List Content
     , label : Maybe String
     , labelId : Maybe String
-    , labelHeight : Maybe { totalHeight : Float, arrowHeight : Float }
+    , labelPosition : Maybe { totalHeight : Float, arrowHeight : Float }
     , theme : Maybe Theme
     , class : Maybe String
     }
@@ -469,7 +469,7 @@ render config =
                         { renderSegment = renderContent config
                         , backgroundColor = palette.backgroundColor
                         , maybeMarker = Just mark
-                        , labelHeight = config.labelHeight
+                        , labelPosition = config.labelPosition
                         , labelId = config.labelId
                         , labelContentId = Maybe.map labelContentId config.labelId
                         }
@@ -488,7 +488,7 @@ render config =
                 { renderSegment = renderContent config
                 , backgroundColor = palette.backgroundColor
                 , maybeMarker = maybeMark
-                , labelHeight = config.labelHeight
+                , labelPosition = config.labelPosition
                 , labelId = config.labelId
                 , labelContentId = Maybe.map labelContentId config.labelId
                 }
