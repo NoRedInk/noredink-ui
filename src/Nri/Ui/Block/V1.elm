@@ -158,11 +158,15 @@ getLabelHeights ids labelMeasurementsById =
                     Nothing ->
                         Nothing
             )
+        -- consider the elements from left to right
+        |> List.sortBy (Tuple.second >> .label >> .element >> .x)
         -- Group the elements whose bottom edges are at the same height
-        -- this ensures that we only offset labels against other labels in the same line of content
+        -- (this ensures that we only offset labels against other labels in the same line of content)
+        -- and whose edges overlap
         |> List.Extra.groupWhile
             (\( _, a ) ( _, b ) ->
-                (a.label.element.y + a.label.element.height) == (b.label.element.y + b.label.element.height)
+                ((a.label.element.y + a.label.element.height) == (b.label.element.y + b.label.element.height))
+                    && ((a.label.element.x + a.label.element.width) >= b.label.element.x)
             )
         |> List.concatMap
             (\( first, rem ) ->
