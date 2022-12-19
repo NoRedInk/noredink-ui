@@ -144,6 +144,12 @@ markedWithBalloonStyles marked lastIndex index =
 
           else
             []
+        , -- display:inline-block is necessary for the balloon-spacer to actually
+          -- take up vertical space.
+          [ Css.display Css.inlineBlock
+          , Css.lineHeight (Css.num 1.2)
+          , Css.margin2 (Css.px 2) Css.zero
+          ]
         ]
 
 
@@ -214,22 +220,14 @@ viewMarkedByBalloon config markedWith segments =
         -- after the first segment.
         (case segments of
             first :: remainder ->
-                first :: viewJust (viewBalloon config) markedWith.name :: remainder
+                first
+                    :: viewJust (viewBalloon config) markedWith.name
+                    :: viewJust (\_ -> viewBalloonSpacer config) markedWith.name
+                    :: remainder
 
             [] ->
                 []
         )
-        |> List.singleton
-        |> span
-            [ css
-                [ config.labelHeight
-                    |> Maybe.map
-                        (\{ totalHeight } ->
-                            Css.paddingTop (Css.px totalHeight)
-                        )
-                    |> Maybe.withDefault (Css.batch [])
-                ]
-            ]
 
 
 viewMarked : TagStyle -> Mark -> List (Html msg) -> Html msg
@@ -350,7 +348,7 @@ viewBalloon config label =
         [ Balloon.onTop
         , Balloon.containerCss
             [ Css.position Css.absolute
-            , Css.top (Css.px -4)
+            , Css.top (Css.px -6)
             , -- using position, 50% is wrt the parent container
               -- using transform & translate, 50% is wrt to the element itself
               -- combining these two properties, we can center the tag against the parent container
@@ -394,4 +392,32 @@ viewBalloon config label =
 
             Nothing ->
                 Balloon.css []
+        ]
+
+
+viewBalloonSpacer : { config | labelHeight : Maybe { b | totalHeight : Float } } -> Html msg
+viewBalloonSpacer config =
+    span
+        [ css
+            [ Css.display Css.inlineBlock
+            , config.labelHeight
+                |> Maybe.map
+                    (\{ totalHeight } ->
+                        Css.paddingTop (Css.px totalHeight)
+                    )
+                |> Maybe.withDefault (Css.batch [])
+            ]
+        , AttributesExtra.nriDescription "balloon-spacer"
+        ]
+        [ -- this element should never be displayed to anyone.
+          -- It's only present to take up vertical space in order to align the label.
+          span
+            [ css
+                [ Css.visibility Css.hidden
+                , Css.overflowX Css.hidden
+                , Css.width (Css.px 0)
+                , Css.display Css.inlineBlock
+                ]
+            ]
+            [ Html.text "()" ]
         ]

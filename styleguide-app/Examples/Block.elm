@@ -76,13 +76,7 @@ example =
           , Block.view [ Block.plaintext " it with ketchup." ]
           ]
             |> List.concat
-            |> p
-                [ css
-                    [ Fonts.baseFont
-                    , Css.fontSize (Css.px 12)
-                    , Css.lineHeight (Css.num 2.5)
-                    ]
-                ]
+            |> p [ css [ Fonts.baseFont, Css.fontSize (Css.px 12) ] ]
         ]
     , view =
         \ellieLinkConfig state ->
@@ -97,7 +91,6 @@ example =
                                 [ Css.margin2 (Css.px 30) Css.zero
                                 , Fonts.quizFont
                                 , Css.fontSize (Css.px 30)
-                                , Css.lineHeight (Css.px 43)
                                 ]
                             ]
             in
@@ -142,7 +135,6 @@ example =
             , p
                 [ css
                     [ Fonts.quizFont
-                    , Css.lineHeight (Css.num 1.5)
                     , Css.fontSize (Css.px 30)
                     , Css.marginTop (Css.px 60)
                     ]
