@@ -78,6 +78,9 @@ hint = 'upgrade to V3'
 hint = 'upgrade to V4'
 usages = ['styleguide/../src/Nri/Ui/TextArea/V4.elm']
 
+[forbidden."Nri.Ui.Mark.V1"]
+hint = 'upgrade to V2'
+
 [forbidden."Nri.Ui.Menu.V1"]
 hint = 'upgrade to V3'
 
