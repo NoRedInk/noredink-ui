@@ -64,14 +64,14 @@ example =
                 [ Block.plaintext "he"
                 , Block.label "subject"
                 , Block.yellow
-                , Block.labelPosition (Just { totalHeight = 66, arrowHeight = 34 })
+                , Block.labelPosition (Just { totalHeight = 66, arrowHeight = 34, zIndex = 0 })
                 ]
           , Block.view [ Block.plaintext " " ]
           , Block.view
                 [ Block.plaintext "glued"
                 , Block.label "verb"
                 , Block.cyan
-                , Block.labelPosition (Just { totalHeight = 34, arrowHeight = 8 })
+                , Block.labelPosition (Just { totalHeight = 34, arrowHeight = 8, zIndex = 0 })
                 ]
           , Block.view [ Block.plaintext " it with ketchup." ]
           ]
@@ -414,8 +414,12 @@ initControl =
                 )
                 (Control.record
                     (\a b ->
-                        ( Code.record [ ( "arrowHeight", String.fromFloat a ), ( "totalHeight", String.fromFloat b ) ]
-                        , { arrowHeight = a, totalHeight = b }
+                        ( Code.record
+                            [ ( "arrowHeight", String.fromFloat a )
+                            , ( "totalHeight", String.fromFloat b )
+                            , ( "zIndex", "0" )
+                            ]
+                        , { arrowHeight = a, totalHeight = b, zIndex = 0 }
                         )
                     )
                     |> Control.field "arrowHeight" (ControlExtra.float 40)

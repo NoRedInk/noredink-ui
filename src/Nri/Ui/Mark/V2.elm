@@ -57,6 +57,13 @@ viewWithInlineTags =
     view_ InlineTags
 
 
+type alias LabelPosition =
+    { totalHeight : Float
+    , arrowHeight : Float
+    , zIndex : Int
+    }
+
+
 {-| When elements are marked, wrap them in a single `mark` html node.
 
 Show the label for the mark, if present, in a balloon centered above the emphasized content.
@@ -66,7 +73,7 @@ viewWithBalloonTags :
     { renderSegment : c -> List Style -> Html msg
     , backgroundColor : Color
     , maybeMarker : Maybe Mark
-    , labelPosition : Maybe { totalHeight : Float, arrowHeight : Float }
+    , labelPosition : Maybe LabelPosition
     , labelId : Maybe String
     , labelContentId : Maybe String
     }
@@ -164,7 +171,7 @@ view_ tagStyle viewSegment highlightables =
 viewMarkedByBalloon :
     { config
         | backgroundColor : Color
-        , labelPosition : Maybe { totalHeight : Float, arrowHeight : Float }
+        , labelPosition : Maybe LabelPosition
         , labelId : Maybe String
         , labelContentId : Maybe String
     }
@@ -299,7 +306,7 @@ viewInlineTag customizations name =
 viewBalloon :
     { config
         | backgroundColor : Color
-        , labelPosition : Maybe { totalHeight : Float, arrowHeight : Float }
+        , labelPosition : Maybe LabelPosition
         , labelId : Maybe String
         , labelContentId : Maybe String
     }
@@ -317,6 +324,12 @@ viewBalloon config label =
               -- for any arbitrary width element
               Css.left (Css.pct 50)
             , Css.property "transform" "translateX(-50%) translateY(-100%)"
+            , case Maybe.map .zIndex config.labelPosition of
+                Just zIndex ->
+                    Css.zIndex (Css.int zIndex)
+
+                Nothing ->
+                    Css.batch []
             ]
         , Balloon.css
             [ Css.padding3 Css.zero (Css.px 6) (Css.px 1)

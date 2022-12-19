@@ -5,7 +5,7 @@ module Nri.Ui.Block.V2 exposing
     , emphasize
     , label
     , labelId, labelContentId
-    , getLabelPositions, labelPosition
+    , LabelPosition, getLabelPositions, labelPosition
     , yellow, cyan, magenta, green, blue, purple, brown
     , class
     )
@@ -33,7 +33,7 @@ module Nri.Ui.Block.V2 exposing
 You will need these helpers if you want to prevent label overlaps. (Which is to say -- anytime you have labels!)
 
 @docs labelId, labelContentId
-@docs getLabelPositions, labelPosition
+@docs LabelPosition, getLabelPositions, labelPosition
 
 
 ### Visual customization
@@ -108,9 +108,18 @@ label label_ =
     Attribute <| \config -> { config | label = Just label_ }
 
 
+{-| Use `getLabelPositions` to construct this value.
+-}
+type alias LabelPosition =
+    { totalHeight : Float
+    , arrowHeight : Float
+    , zIndex : Int
+    }
+
+
 {-| Use `getLabelPositions` to calculate what these values should be.
 -}
-labelPosition : Maybe { totalHeight : Float, arrowHeight : Float } -> Attribute
+labelPosition : Maybe LabelPosition -> Attribute
 labelPosition offset =
     Attribute <| \config -> { config | labelPosition = offset }
 
@@ -131,7 +140,7 @@ labelContentId labelId_ =
 -}
 getLabelPositions :
     Dict String { label : Dom.Element, labelContent : Dom.Element }
-    -> Dict String { totalHeight : Float, arrowHeight : Float }
+    -> Dict String LabelPosition
 getLabelPositions labelMeasurementsById =
     let
         startingArrowHeight =
@@ -141,22 +150,28 @@ getLabelPositions labelMeasurementsById =
         |> splitByOverlaps
         |> List.concatMap
             (\row ->
+                let
+                    maxRowIndex =
+                        List.length row - 1
+                in
                 row
                     -- Put the widest elements higher visually to avoid overlaps
                     |> List.sortBy (Tuple.second >> .labelContent >> .element >> .width)
                     |> List.foldl
-                        (\( idString, e ) ( height, acc ) ->
-                            ( height + e.labelContent.element.height + 4
+                        (\( idString, e ) ( index, height, acc ) ->
+                            ( index + 1
+                            , height + e.labelContent.element.height + 4
                             , ( idString
                               , { totalHeight = height + e.labelContent.element.height
                                 , arrowHeight = height
+                                , zIndex = maxRowIndex - index
                                 }
                               )
                                 :: acc
                             )
                         )
-                        ( startingArrowHeight, [] )
-                    |> Tuple.second
+                        ( 0, startingArrowHeight, [] )
+                    |> (\( _, _, v ) -> v)
             )
         |> Dict.fromList
 
@@ -434,7 +449,7 @@ type alias Config =
     { content : List Content
     , label : Maybe String
     , labelId : Maybe String
-    , labelPosition : Maybe { totalHeight : Float, arrowHeight : Float }
+    , labelPosition : Maybe LabelPosition
     , theme : Maybe Theme
     , class : Maybe String
     }

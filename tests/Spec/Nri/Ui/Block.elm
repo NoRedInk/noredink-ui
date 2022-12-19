@@ -104,6 +104,7 @@ getLabelPositionsSpec =
                     (Dict.singleton "a"
                         { totalHeight = startingHeight + defaultArrowHeight
                         , arrowHeight = defaultArrowHeight
+                        , zIndex = 0
                         }
                     )
     , test "with different height measurements, prevents overlaps" <|
@@ -135,11 +136,13 @@ getLabelPositionsSpec =
                     ([ ( "a"
                        , { totalHeight = aStartingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
+                         , zIndex = 1
                          }
                        )
                      , ( "b"
                        , { totalHeight = aStartingHeight + bStartingHeight + defaultArrowHeight + balloonOffset
                          , arrowHeight = aStartingHeight + defaultArrowHeight + balloonOffset
+                         , zIndex = 0
                          }
                        )
                      ]
@@ -180,11 +183,13 @@ getLabelPositionsSpec =
                     ([ ( "a"
                        , { totalHeight = aStartingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
+                         , zIndex = 0
                          }
                        )
                      , ( "b"
                        , { totalHeight = bStartingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
+                         , zIndex = 0
                          }
                        )
                      ]
@@ -224,11 +229,13 @@ getLabelPositionsSpec =
                          , arrowHeight =
                             -- A is positioned on top of B.
                             startingHeight + defaultArrowHeight + balloonOffset
+                         , zIndex = 1
                          }
                        )
                      , ( "b"
                        , { totalHeight = 1 * startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
+                         , zIndex = 2
                          }
                        )
                      , ( "c"
@@ -236,6 +243,7 @@ getLabelPositionsSpec =
                          , arrowHeight =
                             -- C is positioned on top of A.
                             2 * startingHeight + defaultArrowHeight + 2 * balloonOffset
+                         , zIndex = 0
                          }
                        )
                      ]
@@ -274,18 +282,21 @@ getLabelPositionsSpec =
                        , -- A is positioned in its default position.
                          { totalHeight = 1 * startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
+                         , zIndex = 0
                          }
                        )
                      , -- B is positioned under C
                        ( "b"
                        , { totalHeight = 1 * startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
+                         , zIndex = 1
                          }
                        )
                      , -- C is positioned over B
                        ( "c"
                        , { totalHeight = 2 * startingHeight + defaultArrowHeight + balloonOffset
                          , arrowHeight = 1 * startingHeight + defaultArrowHeight + balloonOffset
+                         , zIndex = 0
                          }
                        )
                      ]
@@ -325,10 +336,10 @@ getLabelPositionsSpec =
                     |> Dict.fromList
                 )
                 |> Expect.equal
-                    ([ ( "prepositionId", { arrowHeight = 8, totalHeight = 32 } )
-                     , ( "directObjectId", { arrowHeight = 36, totalHeight = 60 } )
-                     , ( "subjectId", { arrowHeight = 8, totalHeight = 32 } )
-                     , ( "editorsNoteId", { arrowHeight = 8, totalHeight = 32 } )
+                    ([ ( "prepositionId", { arrowHeight = 8, totalHeight = 32, zIndex = 1 } )
+                     , ( "directObjectId", { arrowHeight = 36, totalHeight = 60, zIndex = 0 } )
+                     , ( "subjectId", { arrowHeight = 8, totalHeight = 32, zIndex = 0 } )
+                     , ( "editorsNoteId", { arrowHeight = 8, totalHeight = 32, zIndex = 0 } )
                      ]
                         |> Dict.fromList
                     )
@@ -356,11 +367,13 @@ getLabelPositionsSpec =
                     ([ ( "a"
                        , { totalHeight = startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
+                         , zIndex = 0
                          }
                        )
                      , ( "b"
                        , { totalHeight = startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
+                         , zIndex = 0
                          }
                        )
                      ]
@@ -401,11 +414,13 @@ getLabelPositionsSpec =
                             -- A is positioned on top of B.
                             -- So its arrow height is the total height of b minus the positioning offset
                             startingHeight + defaultArrowHeight + balloonOffset
+                         , zIndex = 0
                          }
                        )
                      , ( "b"
                        , { totalHeight = 1 * startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
+                         , zIndex = 1
                          }
                        )
                      , ( "c"
@@ -413,6 +428,7 @@ getLabelPositionsSpec =
                          , arrowHeight =
                             -- C is on a new line, so it goes back to default positioning.
                             defaultArrowHeight
+                         , zIndex = 0
                          }
                        )
                      ]
@@ -450,16 +466,19 @@ getLabelPositionsSpec =
                     ([ ( "a"
                        , { totalHeight = 1 * startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
+                         , zIndex = 0
                          }
                        )
                      , ( "b"
                        , { totalHeight = 1 * startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
+                         , zIndex = 0
                          }
                        )
                      , ( "c"
                        , { totalHeight = 1 * startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
+                         , zIndex = 0
                          }
                        )
                      ]
