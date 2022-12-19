@@ -15,7 +15,7 @@ spec : Test
 spec =
     describe "Nri.Ui.Block.V2"
         [ describe "content" contentSpec
-        , describe "id" idSpec
+        , describe "labelId" labelIdSpec
         , describe "getLabelHeights" getLabelHeightsSpec
         ]
 
@@ -43,17 +43,31 @@ contentSpec =
     ]
 
 
-idSpec : List Test
-idSpec =
-    [ test "a single word with an id" <|
+labelIdSpec : List Test
+labelIdSpec =
+    [ test "an unemphasized word with a labelId" <|
         \() ->
-            [ Block.plaintext "Yo", Block.id "yo-id" ]
+            [ Block.plaintext "Yo"
+            , Block.labelId "yo-id"
+            ]
+                |> toQuery
+                |> Query.findAll [ Selector.attribute (Attributes.id "yo-id") ]
+                |> Query.count (Expect.equal 0)
+    , test "a single emphasized word with a labelId" <|
+        \() ->
+            [ Block.plaintext "Yo"
+            , Block.labelId "yo-id"
+            , Block.label "label content"
+            ]
                 |> toQuery
                 |> Query.findAll [ Selector.attribute (Attributes.id "yo-id") ]
                 |> Query.count (Expect.equal 1)
-    , test "multiple words with an id" <|
+    , test "emphasized phrase with an id" <|
         \() ->
-            [ Block.plaintext "Yo yo yo", Block.id "yo-id" ]
+            [ Block.plaintext "Yo yo yo"
+            , Block.labelId "yo-id"
+            , Block.label "label content"
+            ]
                 |> toQuery
                 |> Query.findAll [ Selector.attribute (Attributes.id "yo-id") ]
                 |> Query.count (Expect.equal 1)

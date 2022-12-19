@@ -156,7 +156,7 @@ example =
                     [ Block.plaintext "Superman"
                     , Block.magenta
                     , Block.label "subject"
-                    , Block.id subjectId
+                    , Block.labelId subjectId
                     , Block.labelHeight (Dict.get subjectId offsets)
                     ]
                  , Block.view [ Block.plaintext " " ]
@@ -166,14 +166,14 @@ example =
                     [ Block.plaintext "gifts"
                     , Block.label "direct object"
                     , Block.yellow
-                    , Block.id directObjectId
+                    , Block.labelId directObjectId
                     , Block.labelHeight (Dict.get directObjectId offsets)
                     ]
                  , Block.view [ Block.plaintext " " ]
                  , Block.view
                     [ Block.label "preposition"
                     , Block.cyan
-                    , Block.id prepositionId
+                    , Block.labelId prepositionId
                     , Block.labelHeight (Dict.get prepositionId offsets)
                     ]
                  , Block.view [ Block.plaintext " comic book pages. " ]
@@ -185,7 +185,7 @@ example =
                         ]
                     , Block.label "Editor's note"
                     , Block.brown
-                    , Block.id editorsNoteId
+                    , Block.labelId editorsNoteId
                     , Block.labelHeight (Dict.get editorsNoteId offsets)
                     ]
                  ]
@@ -250,7 +250,7 @@ example =
                                 , Block.view
                                     [ Block.plaintext "new"
                                     , Block.label "age"
-                                    , Block.id ageId
+                                    , Block.labelId ageId
                                     , Block.labelHeight (Dict.get ageId offsets)
                                     , Block.yellow
                                     ]
@@ -258,7 +258,7 @@ example =
                                 , Block.view
                                     [ Block.plaintext "bowling"
                                     , Block.label "purpose"
-                                    , Block.id purposeId
+                                    , Block.labelId purposeId
                                     , Block.labelHeight (Dict.get purposeId offsets)
                                     , Block.cyan
                                     ]
@@ -266,7 +266,7 @@ example =
                                 , Block.view
                                     [ Block.plaintext "yellow"
                                     , Block.label "color"
-                                    , Block.id colorId
+                                    , Block.labelId colorId
                                     , Block.labelHeight (Dict.get colorId offsets)
                                     , Block.magenta
                                     ]
@@ -290,7 +290,7 @@ example =
                             [ Block.view [ Block.plaintext "If a volcano is extinct, " ]
                             , Block.view
                                 [ Block.label "pronoun"
-                                , Block.id pronounId
+                                , Block.labelId pronounId
                                 , Block.labelHeight (Dict.get pronounId offsets)
                                 ]
                             , Block.view [ Block.plaintext " will never erupt again." ]
@@ -385,8 +385,8 @@ initControl =
                 , ( "brown", Block.brown )
                 ]
             )
-        |> ControlExtra.optionalListItem "id"
-            (CommonControls.string ( Code.fromModule moduleName "id", Block.id ) "fruit-block")
+        |> ControlExtra.optionalListItem "labelId"
+            (CommonControls.string ( Code.fromModule moduleName "labelId", Block.labelId ) "fruit-block")
         |> ControlExtra.optionalListItem "class"
             (CommonControls.string ( "class", Block.class ) "kiwis-are-good")
 
@@ -513,8 +513,8 @@ update msg state =
 
 
 measure : String -> Cmd Msg
-measure id =
+measure labelId =
     Task.map2 (\label labelContent -> { label = label, labelContent = labelContent })
-        (Dom.getElement (Block.labelId id))
-        (Dom.getElement (Block.labelContentId id))
-        |> Task.attempt (GotBlockLabelMeasurements id)
+        (Dom.getElement labelId)
+        (Dom.getElement (Block.labelContentId labelId))
+        |> Task.attempt (GotBlockLabelMeasurements labelId)

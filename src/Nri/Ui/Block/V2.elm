@@ -2,11 +2,12 @@ module Nri.Ui.Block.V2 exposing
     ( view, Attribute
     , plaintext, content
     , Content, phrase, blank
-    , emphasize, label, labelHeight
-    , yellow, cyan, magenta, green, blue, purple, brown
-    , class, id
+    , emphasize
+    , label
     , labelId, labelContentId
-    , getLabelHeights
+    , getLabelHeights, labelHeight
+    , yellow, cyan, magenta, green, blue, purple, brown
+    , class
     )
 
 {-|
@@ -22,7 +23,17 @@ module Nri.Ui.Block.V2 exposing
 
 ## Content customization
 
-@docs emphasize, label, labelHeight
+@docs emphasize
+
+
+## Labels
+
+@docs label
+
+You will need these helpers if you want to prevent label overlaps. (Which is to say -- anytime you have labels!)
+
+@docs labelId, labelContentId
+@docs getLabelHeights, labelHeight
 
 
 ### Visual customization
@@ -32,15 +43,7 @@ module Nri.Ui.Block.V2 exposing
 
 ### General attributes
 
-@docs class, id
-
-
-## Accessors
-
-You will need these helpers if you want to prevent label overlaps. (Which is to say -- anytime you have labels!)
-
-@docs labelId, labelContentId
-@docs getLabelHeights
+@docs class
 
 -}
 
@@ -110,12 +113,6 @@ label label_ =
 labelHeight : Maybe { totalHeight : Float, arrowHeight : Float } -> Attribute
 labelHeight offset =
     Attribute <| \config -> { config | labelHeight = offset }
-
-
-{-| -}
-labelId : String -> String
-labelId labelId_ =
-    labelId_ ++ "-label"
 
 
 {-| -}
@@ -218,20 +215,19 @@ parseString =
         >> List.map String_
 
 
-renderContent : { config | class : Maybe String, id : Maybe String } -> Content -> List Css.Style -> Html msg
+renderContent : { config | class : Maybe String } -> Content -> List Css.Style -> Html msg
 renderContent config content_ markStyles =
     span
         [ css (Css.whiteSpace Css.preWrap :: markStyles)
         , nriDescription "block-segment-container"
         , AttributesExtra.maybe Attributes.class config.class
-        , AttributesExtra.maybe Attributes.id config.id
         ]
         (case content_ of
             String_ str ->
                 [ text str ]
 
             Blank ->
-                [ viewBlank [] { class = Nothing, id = Nothing } ]
+                [ viewBlank [] { class = Nothing } ]
         )
 
 
@@ -418,9 +414,9 @@ class class_ =
 
 
 {-| -}
-id : String -> Attribute
-id id_ =
-    Attribute (\config -> { config | id = Just id_ })
+labelId : String -> Attribute
+labelId id_ =
+    Attribute (\config -> { config | labelId = Just id_ })
 
 
 
@@ -440,7 +436,6 @@ defaultConfig =
     , labelHeight = Nothing
     , theme = Nothing
     , class = Nothing
-    , id = Nothing
     }
 
 
@@ -451,7 +446,6 @@ type alias Config =
     , labelHeight : Maybe { totalHeight : Float, arrowHeight : Float }
     , theme : Maybe Theme
     , class : Maybe String
-    , id : Maybe String
     }
 
 
@@ -476,8 +470,8 @@ render config =
                         , backgroundColor = palette.backgroundColor
                         , maybeMarker = Just mark
                         , labelHeight = config.labelHeight
-                        , labelId = Maybe.map labelId config.id
-                        , labelContentId = Maybe.map labelContentId config.id
+                        , labelId = config.labelId
+                        , labelContentId = Maybe.map labelContentId config.labelId
                         }
                         [ Blank ]
 
@@ -495,13 +489,13 @@ render config =
                 , backgroundColor = palette.backgroundColor
                 , maybeMarker = maybeMark
                 , labelHeight = config.labelHeight
-                , labelId = Maybe.map labelId config.id
-                , labelContentId = Maybe.map labelContentId config.id
+                , labelId = config.labelId
+                , labelContentId = Maybe.map labelContentId config.labelId
                 }
                 config.content
 
 
-viewBlank : List Css.Style -> { config | class : Maybe String, id : Maybe String } -> Html msg
+viewBlank : List Css.Style -> { config | class : Maybe String } -> Html msg
 viewBlank styles config =
     span
         [ css
@@ -518,7 +512,6 @@ viewBlank styles config =
             , Css.batch styles
             ]
         , AttributesExtra.maybe Attributes.class config.class
-        , AttributesExtra.maybe Attributes.id config.id
         ]
         [ span
             [ css
