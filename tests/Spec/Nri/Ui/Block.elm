@@ -273,6 +273,47 @@ getLabelHeightsSpec =
                      ]
                         |> Dict.fromList
                     )
+    , test "styleguide example regression test: 3 labels on 1 line, with 1 overlap to resolve" <|
+        \() ->
+            let
+                withElement element =
+                    { scene = { width = 497, height = 1974 }
+                    , viewport = { x = 0, y = 733, width = 497, height = 373 }
+                    , element = element
+                    }
+            in
+            Block.getLabelHeights [ "subjectId", "directObjectId", "prepositionId", "editorsNoteId" ]
+                ([ ( "subjectId"
+                   , { label = withElement { x = 56.8828125, y = 883, width = 63.515625, height = 32 }
+                     , labelContent = withElement { x = 56.8828125, y = 883, width = 63.515625, height = 24 }
+                     }
+                   )
+                 , ( "directObjectId"
+                   , { label = withElement { x = 241.03515625, y = 883, width = 98.6171875, height = 32 }
+                     , labelContent = withElement { x = 241.03515625, y = 883, width = 98.6171875, height = 24 }
+                     }
+                   )
+                 , ( "prepositionId"
+                   , { label = withElement { x = 330.55859375, y = 883, width = 91.2109375, height = 32 }
+                     , labelContent = withElement { x = 330.55859375, y = 883, width = 91.2109375, height = 24 }
+                     }
+                   )
+                 , ( "editorsNoteId"
+                   , { label = withElement { x = 269.20703125, y = 973.5, width = 100.0859375, height = 32 }
+                     , labelContent = withElement { x = 269.20703125, y = 973.5, width = 100.0859375, height = 24 }
+                     }
+                   )
+                 ]
+                    |> Dict.fromList
+                )
+                |> Expect.equal
+                    ([ ( "prepositionId", { arrowHeight = 8, totalHeight = 40 } )
+                     , ( "directObjectId", { arrowHeight = 32, totalHeight = 64 } )
+                     , ( "subjectId", { arrowHeight = 8, totalHeight = 40 } )
+                     , ( "editorsNoteId", { arrowHeight = 8, totalHeight = 40 } )
+                     ]
+                        |> Dict.fromList
+                    )
     , test "with overlapping labels on different lines, specifies the default heights" <|
         \() ->
             let
