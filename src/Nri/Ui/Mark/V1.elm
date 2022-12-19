@@ -359,6 +359,9 @@ viewBalloon config label =
         , Balloon.css
             [ Css.padding3 Css.zero (Css.px 6) (Css.px 1)
             , Css.property "box-shadow" "none"
+            , Css.property "width" "max-content"
+            , Css.maxWidth (Css.px 150)
+            , Css.property "word-break" "break-word"
             ]
         , Balloon.custom
             [ -- we use the :before element to convey details about the start of the
