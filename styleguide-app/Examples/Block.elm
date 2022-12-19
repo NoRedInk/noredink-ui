@@ -64,7 +64,7 @@ example =
                 [ Block.plaintext "he"
                 , Block.label "subject"
                 , Block.yellow
-                , Block.labelHeight (Just { totalHeight = 58, arrowHeight = 34 })
+                , Block.labelHeight (Just { totalHeight = 66, arrowHeight = 34 })
                 ]
           , Block.view [ Block.plaintext " " ]
           , Block.view
@@ -76,7 +76,7 @@ example =
           , Block.view [ Block.plaintext " it with ketchup." ]
           ]
             |> List.concat
-            |> p [ css [ Fonts.baseFont, Css.fontSize (Css.px 12) ] ]
+            |> p [ css [ Fonts.baseFont, Css.fontSize (Css.px 12), Css.margin Css.zero ] ]
         ]
     , view =
         \ellieLinkConfig state ->
