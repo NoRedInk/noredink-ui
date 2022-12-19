@@ -191,6 +191,40 @@ example =
                  ]
                     |> List.concat
                 )
+            , p
+                [ css
+                    [ Fonts.quizFont
+                    , Css.fontSize (Css.px 30)
+                    , Css.marginTop (Css.px 60)
+                    ]
+                ]
+                ([ Block.view
+                    [ Block.plaintext "A"
+                    , Block.magenta
+                    , Block.label "this is an article. \"An\" is also an article."
+                    , Block.labelId articleId
+                    , Block.labelPosition (Dict.get articleId offsets)
+                    ]
+                 , Block.view [ Block.plaintext " " ]
+                 , Block.view
+                    [ Block.plaintext "tricky"
+                    , Block.label "this is an adjective"
+                    , Block.yellow
+                    , Block.labelId trickyId
+                    , Block.labelPosition (Dict.get trickyId offsets)
+                    ]
+                 , Block.view [ Block.plaintext " " ]
+                 , Block.view
+                    [ Block.plaintext "example"
+                    , Block.label "the goal of which is to demonstrate horizontal repositioning"
+                    , Block.cyan
+                    , Block.labelId goalId
+                    , Block.labelPosition (Dict.get goalId offsets)
+                    ]
+                 , Block.view [ Block.plaintext "." ]
+                 ]
+                    |> List.concat
+                )
             , Table.view
                 [ Table.custom
                     { header = text "Pattern name & description"
@@ -459,6 +493,21 @@ pronounId =
     "pronoun-label-id"
 
 
+articleId : String
+articleId =
+    "article-label-id"
+
+
+trickyId : String
+trickyId =
+    "tricky-label-id"
+
+
+goalId : String
+goalId =
+    "goal-label-id"
+
+
 blocksWithLabelsIds : List String
 blocksWithLabelsIds =
     [ ageId
@@ -469,6 +518,9 @@ blocksWithLabelsIds =
     , prepositionId
     , editorsNoteId
     , pronounId
+    , articleId
+    , trickyId
+    , goalId
     ]
 
 
