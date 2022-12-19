@@ -158,19 +158,10 @@ getLabelHeights ids labelMeasurementsById =
                     Nothing ->
                         Nothing
             )
-        -- consider the elements from left to right
-        |> List.sortBy (Tuple.second >> .label >> .element >> .x)
-        -- Group the elements whose bottom edges are at the same height
-        -- (this ensures that we only offset labels against other labels in the same line of content)
-        -- and whose edges overlap
-        |> List.Extra.groupWhile
-            (\( _, a ) ( _, b ) ->
-                ((a.label.element.y + a.label.element.height) == (b.label.element.y + b.label.element.height))
-                    && ((a.label.element.x + a.label.element.width) >= b.label.element.x)
-            )
+        |> splitByOverlaps
         |> List.concatMap
-            (\( first, rem ) ->
-                (first :: rem)
+            (\row ->
+                row
                     -- Put the widest elements higher visually to avoid overlaps
                     |> List.sortBy (Tuple.second >> .labelContent >> .element >> .width)
                     |> List.foldl
@@ -186,6 +177,32 @@ getLabelHeights ids labelMeasurementsById =
                     |> Tuple.second
             )
         |> Dict.fromList
+
+
+{-| Group the elements whose bottom edges are at the same height. This ensures that we only offset labels against other labels in the same visual line of content.
+
+Then, for elements in the same row, group elements with horizontal overlaps .
+
+-}
+splitByOverlaps : List ( id, { a | label : Dom.Element } ) -> List (List ( id, { a | label : Dom.Element } ))
+splitByOverlaps =
+    -- consider the elements from top to bottom
+    List.sortBy (\( _, a ) -> a.label.element.y + a.label.element.height)
+        >> List.Extra.groupWhile
+            (\( _, a ) ( _, b ) ->
+                (a.label.element.y + a.label.element.height) == (b.label.element.y + b.label.element.height)
+            )
+        >> List.concatMap
+            (\( first, rem ) ->
+                (first :: rem)
+                    |> -- consider the elements from left to right
+                       List.sortBy (\( _, a ) -> a.label.element.x)
+                    |> List.Extra.groupWhile
+                        (\( _, a ) ( _, b ) ->
+                            (a.label.element.x + a.label.element.width) >= b.label.element.x
+                        )
+            )
+        >> List.map (\( first, rem ) -> first :: rem)
 
 
 
