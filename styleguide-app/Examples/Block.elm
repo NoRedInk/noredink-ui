@@ -93,6 +93,9 @@ example =
                                 , Css.fontSize (Css.px 30)
                                 ]
                             ]
+
+                offsets =
+                    Block.getLabelHeights [ ageId, purposeId, colorId ] state.labelMeasurementsById
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -132,6 +135,16 @@ example =
                 [ Heading.plaintext "Non-interactive examples"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
+            , Button.button "Measure & render"
+                [ Button.onClick GetBlockLabelMeasurements
+                , Button.small
+                , Button.secondary
+                , Button.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
+            , Text.caption
+                [ Text.plaintext "Click \"Measure & render\" to reposition the noninteractive examples' labels to avoid overlaps given the current viewport."
+                , Text.css [ Css.marginBottom Spacing.verticalSpacerPx |> Css.important ]
+                ]
             , p
                 [ css
                     [ Fonts.quizFont
@@ -143,6 +156,9 @@ example =
                     [ Block.plaintext "Superman"
                     , Block.magenta
                     , Block.label "subject"
+                    , Block.id subjectId
+                                    , Block.labelHeight (Dict.get subjectId offsets)
+
                     ]
                  , Block.view [ Block.plaintext " " ]
                  , Block.view []
@@ -151,9 +167,18 @@ example =
                     [ Block.plaintext "gifts"
                     , Block.label "direct object"
                     , Block.yellow
+                    , Block.id directObjectId
+                                    , Block.labelHeight (Dict.get directObjectId offsets)
+
                     ]
                  , Block.view [ Block.plaintext " " ]
-                 , Block.view [ Block.label "preposition", Block.cyan ]
+                 , Block.view
+                    [ Block.label "preposition"
+                    , Block.cyan
+                    , Block.id prepositionId
+                                    , Block.labelHeight (Dict.get prepositionId offsets)
+
+                    ]
                  , Block.view [ Block.plaintext " comic book pages. " ]
                  , Block.view
                     [ (List.concat >> Block.content)
@@ -163,6 +188,9 @@ example =
                         ]
                     , Block.label "Editor's note"
                     , Block.brown
+                    , Block.id editorsNoteId
+                                    , Block.labelHeight (Dict.get editorsNoteId offsets)
+
                     ]
                  ]
                     |> List.concat
@@ -220,10 +248,6 @@ example =
                                 1
                   , description = "**Label block**\n\nHelp students understand the function different words and phrases are playing in a sentence"
                   , example =
-                        let
-                            offsets =
-                                Block.getLabelHeights [ ageId, purposeId, colorId ] state.labelMeasurementsById
-                        in
                         div []
                             [ inParagraph
                                 [ Block.view [ Block.plaintext "Taylor Swift bought " ]
@@ -232,6 +256,7 @@ example =
                                     , Block.label "age"
                                     , Block.id ageId
                                     , Block.labelHeight (Dict.get ageId offsets)
+
                                     , Block.yellow
                                     ]
                                 , Block.view [ Block.plaintext " " ]
@@ -240,6 +265,7 @@ example =
                                     , Block.label "purpose"
                                     , Block.id purposeId
                                     , Block.labelHeight (Dict.get purposeId offsets)
+
                                     , Block.cyan
                                     ]
                                 , Block.view [ Block.plaintext " " ]
@@ -248,22 +274,10 @@ example =
                                     , Block.label "color"
                                     , Block.id colorId
                                     , Block.labelHeight (Dict.get colorId offsets)
+
                                     , Block.magenta
                                     ]
                                 , Block.view [ Block.plaintext " shoes." ]
-                                ]
-                            , Button.button "Measure & render"
-                                [ Button.onClick GetBlockLabelMeasurements
-                                , Button.small
-                                , Button.secondary
-                                ]
-                            , Text.caption
-                                [ Text.plaintext "Click \"Measure & render\" to reposition this example's labels to avoid overlaps given the current viewport."
-                                , Text.css
-                                    [ Css.textAlign Css.center
-                                    , Css.maxWidth (Css.px 200)
-                                    , Css.margin3 Css.zero Css.auto Spacing.verticalSpacerPx |> Css.important
-                                    ]
                                 ]
                             ]
                   }
@@ -281,7 +295,12 @@ example =
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "If a volcano is extinct, " ]
-                            , Block.view [ Block.label "pronoun" ]
+                            , Block.view
+                                [ Block.label "pronoun"
+                                , Block.id pronounId
+                                    , Block.labelHeight (Dict.get pronounId offsets)
+
+                                ]
                             , Block.view [ Block.plaintext " will never erupt again." ]
                             ]
                   }
@@ -423,6 +442,44 @@ purposeId =
     "purpose-label-id"
 
 
+subjectId : String
+subjectId =
+    "subject-label-id"
+
+
+directObjectId : String
+directObjectId =
+    "direct-object-label-id"
+
+
+prepositionId : String
+prepositionId =
+    "preposition-label-id"
+
+
+editorsNoteId : String
+editorsNoteId =
+    "editors-note-label-id"
+
+
+pronounId : String
+pronounId =
+    "pronoun-label-id"
+
+
+blocksWithLabelsIds : List String
+blocksWithLabelsIds =
+    [ ageId
+    , colorId
+    , purposeId
+    , subjectId
+    , directObjectId
+    , prepositionId
+    , editorsNoteId
+    , pronounId
+    ]
+
+
 {-| -}
 type Msg
     = UpdateSettings (Control Settings)
@@ -448,11 +505,7 @@ update msg state =
 
         GetBlockLabelMeasurements ->
             ( state
-            , Cmd.batch
-                [ measure ageId
-                , measure purposeId
-                , measure colorId
-                ]
+            , Cmd.batch (List.map measure blocksWithLabelsIds)
             )
 
         GotBlockLabelMeasurements id (Ok measurement) ->
