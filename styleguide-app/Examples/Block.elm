@@ -95,7 +95,7 @@ example =
                             ]
 
                 offsets =
-                    Block.getLabelPositions blocksWithLabelsIds state.labelMeasurementsById
+                    Block.getLabelPositions state.labelMeasurementsById
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig

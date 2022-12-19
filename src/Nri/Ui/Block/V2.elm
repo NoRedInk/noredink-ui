@@ -121,34 +121,23 @@ labelContentId labelId_ =
     labelId_ ++ "-label-content"
 
 
-{-|
+{-| Determine where to position labels in order to dynamically avoid overlapping content.
 
-    Pass in a list of the Block ids that you care about (use `Block.id` to attach these ids).
+    - First, we add ids to block with labels with `Block.labelId`.
+    - Say we added `Block.labelId "example-id"`, then we will use `Browser.Dom.getElement "example-id"` and `Browser.Dom.getElement (Block.labelContentId "example-id")` to construct a record in the shape { label : Dom.Element, labelContent : Dom.Element }. We store this record in a dictionary keyed by ids (e.g., "example-id") with measurements for all other labels.
 
-    - First, we add ids to block with labels with `Block.id`.
-    - Say we added `Block.id "example-id"`, then we will use `Browser.Dom.getElement (Block.labelId "example-id")` and `Browser.Dom.getElement (Block.labelContentId "example-id")` to construct a record in the shape { label : Dom.Element, labelContent : Dom.Element }. We store this record in a dictionary keyed by ids (e.g., "example-id") with measurements for all other labels.
-    - Pass a list of all the block ids and the dictionary of measurements to `getLabelPositions`. `getLabelPositions` will return a dictionary of values (keyed by ids) that we will then pass directly to `labelPosition` for positioning.
+`getLabelPositions` will return a dictionary of values (keyed by label ids) whose values can be passed directly to `labelPosition` for positioning.
 
 -}
 getLabelPositions :
-    List String
-    -> Dict String { label : Dom.Element, labelContent : Dom.Element }
+    Dict String { label : Dom.Element, labelContent : Dom.Element }
     -> Dict String { totalHeight : Float, arrowHeight : Float }
-getLabelPositions ids labelMeasurementsById =
+getLabelPositions labelMeasurementsById =
     let
         startingArrowHeight =
             8
     in
-    ids
-        |> List.filterMap
-            (\idString ->
-                case Dict.get idString labelMeasurementsById of
-                    Just measurement ->
-                        Just ( idString, measurement )
-
-                    Nothing ->
-                        Nothing
-            )
+    Dict.toList labelMeasurementsById
         |> splitByOverlaps
         |> List.concatMap
             (\row ->

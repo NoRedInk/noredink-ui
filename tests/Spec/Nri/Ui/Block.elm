@@ -84,30 +84,17 @@ toQuery block =
 
 getLabelPositionsSpec : List Test
 getLabelPositionsSpec =
-    [ test "without any ids or measurements, does not specify heights" <|
+    [ test "without any measurements, does not specify heights" <|
         \() ->
-            Block.getLabelPositions [] Dict.empty
+            Block.getLabelPositions Dict.empty
                 |> Expect.equal Dict.empty
-    , test "without any measurements, does not specify heights" <|
-        \() ->
-            Block.getLabelPositions [ "a" ] Dict.empty
-                |> Expect.equal Dict.empty
-    , test "without any ids, does not specify heights" <|
-        \() ->
-            Block.getLabelPositions []
-                (Dict.singleton "a"
-                    { label = dummyElement { x = 0, y = 0, width = 100, height = 100 }
-                    , labelContent = dummyElement { x = 0, y = 0, width = 100, height = 20 }
-                    }
-                )
-                |> Expect.equal Dict.empty
-    , test "with 1 id and 1 measurement, specifies the default heights" <|
+    , test "with a measured label, specifies the default heights" <|
         \() ->
             let
                 startingHeight =
                     20
             in
-            Block.getLabelPositions [ "a" ]
+            Block.getLabelPositions
                 (Dict.singleton "a"
                     { label = dummyElement { x = 0, y = 0, width = 100, height = 100 }
                     , labelContent = dummyElement { x = 0, y = 0, width = 100, height = startingHeight }
@@ -128,7 +115,7 @@ getLabelPositionsSpec =
                 bStartingHeight =
                     30
             in
-            Block.getLabelPositions [ "a", "b", "c" ]
+            Block.getLabelPositions
                 ([ --  A has taller content
                    ( "a"
                    , { label = dummyElement { x = 0, y = 0, width = 100, height = 100 }
@@ -173,7 +160,7 @@ getLabelPositionsSpec =
                 bX =
                     aWidth + 1
             in
-            Block.getLabelPositions [ "a", "b", "c" ]
+            Block.getLabelPositions
                 ([ --  A has taller content
                    ( "a"
                    , { label = dummyElement { x = 0, y = 0, width = aWidth, height = 100 }
@@ -209,7 +196,7 @@ getLabelPositionsSpec =
                 startingHeight =
                     20
             in
-            Block.getLabelPositions [ "a", "b", "c" ]
+            Block.getLabelPositions
                 ([ --  A is the second-widest element
                    ( "a"
                    , { label = dummyElement { x = 0, y = 0, width = 200, height = 100 }
@@ -260,7 +247,7 @@ getLabelPositionsSpec =
                 startingHeight =
                     20
             in
-            Block.getLabelPositions [ "a", "b", "c" ]
+            Block.getLabelPositions
                 ([ --  A is the second-widest element, but doesn't overlap any other labels
                    ( "a"
                    , { label = dummyElement { x = 500, y = 0, width = 200, height = 100 }
@@ -313,7 +300,7 @@ getLabelPositionsSpec =
                     , element = element
                     }
             in
-            Block.getLabelPositions [ "subjectId", "directObjectId", "prepositionId", "editorsNoteId" ]
+            Block.getLabelPositions
                 ([ ( "subjectId"
                    , { label = withElement { x = 56.8828125, y = 883, width = 63.515625, height = 32 }
                      , labelContent = withElement { x = 56.8828125, y = 883, width = 63.515625, height = 24 }
@@ -351,7 +338,7 @@ getLabelPositionsSpec =
                 startingHeight =
                     20
             in
-            Block.getLabelPositions [ "a", "b" ]
+            Block.getLabelPositions
                 ([ ( "a"
                    , { label = dummyElement { x = 0, y = 0, width = 100, height = 100 }
                      , labelContent = dummyElement { x = 0, y = 0, width = 100, height = startingHeight }
@@ -385,7 +372,7 @@ getLabelPositionsSpec =
                 startingHeight =
                     20
             in
-            Block.getLabelPositions [ "a", "b", "c" ]
+            Block.getLabelPositions
                 ([ --  A is the second-widest element
                    ( "a"
                    , { label = dummyElement { x = 0, y = 0, width = 200, height = 100 }
@@ -437,7 +424,7 @@ getLabelPositionsSpec =
                 startingHeight =
                     20
             in
-            Block.getLabelPositions [ "a", "b", "c" ]
+            Block.getLabelPositions
                 ([ --  A is the second-widest element
                    ( "a"
                    , { label = dummyElement { x = 0, y = 0, width = 200, height = 100 }
