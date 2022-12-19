@@ -170,7 +170,7 @@ example =
                         , Block.phrase " each comic book costs about $5."
                         ]
                     , Block.label "Editor's note"
-                    , Block.magenta
+                    , Block.brown
                     ]
                  ]
                     |> List.concat
@@ -187,7 +187,7 @@ example =
                     { header = text "Example"
                     , view = .example
                     , width = Css.px 200
-                    , cellStyles = always [ Css.textAlign Css.center ]
+                    , cellStyles = always [ Css.textAlign Css.left ]
                     , sort = Nothing
                     }
                 , Table.custom
