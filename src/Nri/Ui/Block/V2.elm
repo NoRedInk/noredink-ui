@@ -2,7 +2,6 @@ module Nri.Ui.Block.V2 exposing
     ( view, Attribute
     , plaintext, content
     , Content, phrase, blank
-    , string
     , emphasize, label, labelHeight
     , yellow, cyan, magenta, green, blue, purple, brown
     , class, id
@@ -19,11 +18,6 @@ module Nri.Ui.Block.V2 exposing
 
 @docs plaintext, content
 @docs Content, phrase, blank
-
-
-### Deprecated
-
-@docs string
 
 
 ## Content customization
@@ -89,7 +83,7 @@ plaintext content_ =
 
     Block.view
         [ Block.emphasize
-        , Block.content [ Block.string "Hello, ", Block.blank, Block.string "!" ]
+        , Block.content (Block.phrase "Hello, " ++  Block.blank :: Block.phrase "!" ) ]
         ]
 
 -}
@@ -239,13 +233,6 @@ renderContent config content_ markStyles =
             Blank ->
                 [ viewBlank [] { class = Nothing, id = Nothing } ]
         )
-
-
-{-| DEPRECATED -- prefer `phrase`.
--}
-string : String -> Content
-string =
-    String_
 
 
 {-| -}

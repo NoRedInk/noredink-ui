@@ -35,9 +35,9 @@ contentSpec =
                     [ Query.hasNot [ Selector.text "blank" ]
                     , Query.has [ Selector.text "Yo" ]
                     ]
-    , test "content with string and blank" <|
+    , test "content with phrase and blank" <|
         \() ->
-            [ Block.content [ Block.string "Yo", Block.blank ] ]
+            [ Block.content (Block.phrase "Yo hello" ++ [ Block.blank ]) ]
                 |> toQuery
                 |> Query.has [ Selector.text "Yo", Selector.text "blank" ]
     ]
