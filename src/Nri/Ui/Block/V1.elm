@@ -187,21 +187,23 @@ Then, for elements in the same row, group elements with horizontal overlaps .
 splitByOverlaps : List ( id, { a | label : Dom.Element } ) -> List (List ( id, { a | label : Dom.Element } ))
 splitByOverlaps =
     -- consider the elements from top to bottom
-    List.sortBy (\( _, a ) -> a.label.element.y + a.label.element.height)
-        >> List.Extra.groupWhile
-            (\( _, a ) ( _, b ) ->
-                (a.label.element.y + a.label.element.height) == (b.label.element.y + b.label.element.height)
-            )
+    groupWithSort (\( _, a ) -> a.label.element.y + a.label.element.height)
+        (\( _, a ) ( _, b ) ->
+            (a.label.element.y + a.label.element.height) == (b.label.element.y + b.label.element.height)
+        )
         >> List.concatMap
-            (\( first, rem ) ->
-                (first :: rem)
-                    |> -- consider the elements from left to right
-                       List.sortBy (\( _, a ) -> a.label.element.x)
-                    |> List.Extra.groupWhile
-                        (\( _, a ) ( _, b ) ->
-                            (a.label.element.x + a.label.element.width) >= b.label.element.x
-                        )
+            -- consider the elements from left to right
+            (groupWithSort (\( _, a ) -> a.label.element.x)
+                (\( _, a ) ( _, b ) ->
+                    (a.label.element.x + a.label.element.width) >= b.label.element.x
+                )
             )
+
+
+groupWithSort : (a -> comparable) -> (a -> a -> Bool) -> List a -> List (List a)
+groupWithSort sortBy groupBy =
+    List.sortBy sortBy
+        >> List.Extra.groupWhile groupBy
         >> List.map (\( first, rem ) -> first :: rem)
 
 
