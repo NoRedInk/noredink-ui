@@ -20,6 +20,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import Markdown
 import Nri.Ui.Block.V2 as Block
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.QuestionBox.V2 as QuestionBox
 import Nri.Ui.Spacing.V1 as Spacing
@@ -147,115 +148,122 @@ viewExamplesTable state =
         , { pattern = "pointingTo"
           , shownWith = "Emphasis block"
           , example =
-                [ Block.view [ Block.plaintext "Spongebob has a beautiful plant " ]
-                , [ QuestionBox.view
-                        [ QuestionBox.pointingTo
-                            (Block.view [ Block.plaintext "above", Block.emphasize ])
-                        , QuestionBox.markdown "“Above” is a preposition."
-                        , QuestionBox.actions [ { label = "Try again", onClick = NoOp } ]
-                        ]
-                  ]
-                , Block.view [ Block.plaintext " his TV." ]
-                ]
-                    |> List.concat
-                    |> p [ css [ Css.marginTop (Css.px 50) ] ]
+                inParagraph
+                    [ Block.view [ Block.plaintext "Spongebob has a beautiful plant " ]
+                    , [ QuestionBox.view
+                            [ QuestionBox.pointingTo
+                                (Block.view [ Block.plaintext "above", Block.emphasize ])
+                            , QuestionBox.markdown "“Above” is a preposition."
+                            , QuestionBox.actions [ { label = "Try again", onClick = NoOp } ]
+                            ]
+                      ]
+                    , Block.view [ Block.plaintext " his TV." ]
+                    ]
           }
         , { pattern = "pointingTo"
           , shownWith = "Label block"
           , example =
-                [ Block.view [ Block.plaintext "Spongebob has a beautiful plant " ]
-                , [ QuestionBox.view
-                        [ QuestionBox.pointingTo
-                            (Block.view
-                                [ Block.plaintext "above his TV"
-                                , Block.label "where"
-                                , Block.yellow
+                inParagraph
+                    [ Block.view [ Block.plaintext "Spongebob has a beautiful plant " ]
+                    , [ QuestionBox.view
+                            [ QuestionBox.pointingTo
+                                (Block.view
+                                    [ Block.plaintext "above his TV"
+                                    , Block.label "where"
+                                    , Block.yellow
+                                    ]
+                                )
+                            , QuestionBox.markdown "Which word is the preposition?"
+                            , QuestionBox.actions
+                                [ { label = "above", onClick = NoOp }
+                                , { label = "his", onClick = NoOp }
+                                , { label = "TV", onClick = NoOp }
                                 ]
-                            )
-                        , QuestionBox.markdown "Which word is the preposition?"
-                        , QuestionBox.actions
-                            [ { label = "above", onClick = NoOp }
-                            , { label = "his", onClick = NoOp }
-                            , { label = "TV", onClick = NoOp }
                             ]
-                        ]
-                  ]
-                , Block.view [ Block.plaintext "." ]
-                ]
-                    |> List.concat
-                    |> p [ css [ Css.marginTop (Css.px 50) ] ]
+                      ]
+                    , Block.view [ Block.plaintext "." ]
+                    ]
           }
         , { pattern = "pointingTo"
           , shownWith = "Blank block"
           , example =
-                [ Block.view
-                    [ Block.plaintext "Superman"
-                    , Block.label "subject"
-                    ]
-                , Block.view [ Block.plaintext " " ]
-                , [ QuestionBox.view
-                        [ QuestionBox.pointingTo (Block.view [])
-                        , QuestionBox.markdown "Which verb matches the subject?"
-                        , QuestionBox.actions
-                            [ { label = "wrap", onClick = NoOp }
-                            , { label = "wraps", onClick = NoOp }
-                            ]
+                inParagraph
+                    [ Block.view
+                        [ Block.plaintext "Superman"
+                        , Block.label "subject"
                         ]
-                  ]
-                , Block.view [ Block.plaintext "gifts with comic book pages." ]
-                ]
-                    |> List.concat
-                    |> p [ css [ Css.marginTop (Css.px 50) ] ]
+                    , Block.view [ Block.plaintext " " ]
+                    , [ QuestionBox.view
+                            [ QuestionBox.pointingTo (Block.view [])
+                            , QuestionBox.markdown "Which verb matches the subject?"
+                            , QuestionBox.actions
+                                [ { label = "wrap", onClick = NoOp }
+                                , { label = "wraps", onClick = NoOp }
+                                ]
+                            ]
+                      ]
+                    , Block.view [ Block.plaintext "gifts with comic book pages." ]
+                    ]
           }
         , { pattern = "pointingTo"
           , shownWith = "Labelled blank block"
           , example =
-                [ Block.view
-                    [ Block.plaintext "Dave"
-                    , Block.label "subject"
-                    , Block.yellow
-                    ]
-                , Block.view [ Block.plaintext " " ]
-                , [ QuestionBox.view
-                        [ QuestionBox.pointingTo (Block.view [ Block.label "verb", Block.cyan ])
-                        , QuestionBox.markdown "What did he do?"
-                        , QuestionBox.actions
-                            [ { label = "scared", onClick = NoOp }
-                            , { label = "scarred", onClick = NoOp }
-                            , { label = "scarified", onClick = NoOp }
-                            ]
+                inParagraph
+                    [ Block.view
+                        [ Block.plaintext "Dave"
+                        , Block.label "subject"
+                        , Block.yellow
                         ]
-                  ]
-                , Block.view [ Block.plaintext " his replacement cousin coming out of his room wearing a gorilla mask." ]
-                ]
-                    |> List.concat
-                    |> p [ css [ Css.marginTop (Css.px 50) ] ]
+                    , Block.view [ Block.plaintext " " ]
+                    , [ QuestionBox.view
+                            [ QuestionBox.pointingTo (Block.view [ Block.label "verb", Block.cyan ])
+                            , QuestionBox.markdown "What did he do?"
+                            , QuestionBox.actions
+                                [ { label = "scared", onClick = NoOp }
+                                , { label = "scarred", onClick = NoOp }
+                                , { label = "scarified", onClick = NoOp }
+                                ]
+                            ]
+                      ]
+                    , Block.view [ Block.plaintext " his replacement cousin coming out of his room wearing a gorilla mask." ]
+                    ]
           }
         , { pattern = "pointingTo"
           , shownWith = "Blank with emphasis block"
           , example =
-                [ [ QuestionBox.view
-                        [ QuestionBox.pointingTo
-                            (Block.view
-                                [ Block.label "verb"
-                                , Block.cyan
-                                , Block.content (Block.phrase "Dave " ++ [ Block.blank ])
+                inParagraph
+                    [ [ QuestionBox.view
+                            [ QuestionBox.pointingTo
+                                (Block.view
+                                    [ Block.label "verb"
+                                    , Block.cyan
+                                    , Block.content (Block.phrase "Dave " ++ [ Block.blank ])
+                                    ]
+                                )
+                            , QuestionBox.markdown "What did he do?"
+                            , QuestionBox.actions
+                                [ { label = "scared", onClick = NoOp }
+                                , { label = "scarred", onClick = NoOp }
+                                , { label = "scarified", onClick = NoOp }
                                 ]
-                            )
-                        , QuestionBox.markdown "What did he do?"
-                        , QuestionBox.actions
-                            [ { label = "scared", onClick = NoOp }
-                            , { label = "scarred", onClick = NoOp }
-                            , { label = "scarified", onClick = NoOp }
                             ]
-                        ]
-                  ]
-                , Block.view [ Block.plaintext " his replacement cousin coming out of his room wearing a gorilla mask." ]
-                ]
-                    |> List.concat
-                    |> p [ css [ Css.marginTop (Css.px 50) ] ]
+                      ]
+                    , Block.view [ Block.plaintext " his replacement cousin coming out of his room wearing a gorilla mask." ]
+                    ]
           }
         ]
+
+
+inParagraph : List (List (Html msg)) -> Html msg
+inParagraph =
+    List.concat
+        >> p
+            [ css
+                [ Css.margin2 Spacing.verticalSpacerPx Css.zero
+                , Fonts.quizFont
+                , Css.fontSize (Css.px 30)
+                ]
+            ]
 
 
 interactiveExampleId : String
