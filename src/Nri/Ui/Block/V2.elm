@@ -99,13 +99,13 @@ content content_ =
 -}
 emphasize : Attribute
 emphasize =
-    Attribute <| \config -> { config | theme = Just Emphasis }
+    Attribute <| \config -> { config | emphasize = True }
 
 
 {-| -}
 label : String -> Attribute
 label label_ =
-    Attribute <| \config -> { config | label = Just label_ }
+    Attribute <| \config -> { config | label = Just label_, emphasize = True }
 
 
 {-| Use `getLabelPositions` to construct this value.
@@ -281,8 +281,7 @@ blank =
 
 {-| -}
 type Theme
-    = Emphasis
-    | Yellow
+    = Yellow
     | Cyan
     | Magenta
     | Green
@@ -294,9 +293,6 @@ type Theme
 themeToPalette : Theme -> Palette
 themeToPalette theme =
     case theme of
-        Emphasis ->
-            defaultPalette
-
         Yellow ->
             { backgroundColor = Colors.highlightYellow
             , borderColor = Colors.highlightYellowDark
@@ -337,17 +333,10 @@ type alias Palette =
     { backgroundColor : Color, borderColor : Color }
 
 
-defaultPalette : Palette
-defaultPalette =
-    { backgroundColor = Colors.highlightYellow
-    , borderColor = Colors.highlightYellowDark
-    }
-
-
-toMark : Maybe String -> Maybe Palette -> Maybe Mark
-toMark label_ palette =
-    case ( label_, palette ) of
-        ( _, Just { backgroundColor, borderColor } ) ->
+toMark : { config | emphasize : Bool, label : Maybe String } -> Palette -> Maybe Mark
+toMark config { backgroundColor, borderColor } =
+    case ( config.label, config.emphasize ) of
+        ( _, True ) ->
             let
                 borderWidth =
                     Css.px 1
@@ -356,7 +345,7 @@ toMark label_ palette =
                     Css.dashed
             in
             Just
-                { name = label_
+                { name = config.label
                 , startStyles =
                     [ Css.borderLeft3 borderWidth borderStyle borderColor
                     , Css.paddingLeft (Css.px 2)
@@ -379,7 +368,7 @@ toMark label_ palette =
                     ]
                 }
 
-        ( Just l, Nothing ) ->
+        ( Just l, False ) ->
             Just
                 { name = Just l
                 , startStyles = []
@@ -387,7 +376,7 @@ toMark label_ palette =
                 , endStyles = []
                 }
 
-        ( Nothing, Nothing ) ->
+        ( Nothing, False ) ->
             Nothing
 
 
@@ -399,43 +388,43 @@ topBottomSpace =
 {-| -}
 yellow : Attribute
 yellow =
-    Attribute (\config -> { config | theme = Just Yellow })
+    Attribute (\config -> { config | theme = Yellow })
 
 
 {-| -}
 cyan : Attribute
 cyan =
-    Attribute (\config -> { config | theme = Just Cyan })
+    Attribute (\config -> { config | theme = Cyan })
 
 
 {-| -}
 magenta : Attribute
 magenta =
-    Attribute (\config -> { config | theme = Just Magenta })
+    Attribute (\config -> { config | theme = Magenta })
 
 
 {-| -}
 green : Attribute
 green =
-    Attribute (\config -> { config | theme = Just Green })
+    Attribute (\config -> { config | theme = Green })
 
 
 {-| -}
 blue : Attribute
 blue =
-    Attribute (\config -> { config | theme = Just Blue })
+    Attribute (\config -> { config | theme = Blue })
 
 
 {-| -}
 purple : Attribute
 purple =
-    Attribute (\config -> { config | theme = Just Purple })
+    Attribute (\config -> { config | theme = Purple })
 
 
 {-| -}
 brown : Attribute
 brown =
-    Attribute (\config -> { config | theme = Just Brown })
+    Attribute (\config -> { config | theme = Brown })
 
 
 {-| -}
@@ -465,7 +454,8 @@ defaultConfig =
     , label = Nothing
     , labelId = Nothing
     , labelPosition = Nothing
-    , theme = Nothing
+    , theme = Yellow
+    , emphasize = False
     , class = Nothing
     }
 
@@ -475,7 +465,8 @@ type alias Config =
     , label : Maybe String
     , labelId : Maybe String
     , labelPosition : Maybe LabelPosition
-    , theme : Maybe Theme
+    , theme : Theme
+    , emphasize : Bool
     , class : Maybe String
     }
 
@@ -483,14 +474,11 @@ type alias Config =
 render : Config -> List (Html msg)
 render config =
     let
-        maybePalette =
-            Maybe.map themeToPalette config.theme
-
         palette =
-            Maybe.withDefault defaultPalette maybePalette
+            themeToPalette config.theme
 
         maybeMark =
-            toMark config.label maybePalette
+            toMark config palette
     in
     case config.content of
         [] ->
@@ -499,7 +487,13 @@ render config =
                     Mark.viewWithBalloonTags
                         { renderSegment = renderContent config
                         , backgroundColor = palette.backgroundColor
-                        , maybeMarker = Just mark
+                        , maybeMarker =
+                            Just
+                                { name = config.label
+                                , startStyles = []
+                                , styles = []
+                                , endStyles = []
+                                }
                         , labelPosition = config.labelPosition
                         , labelId = config.labelId
                         , labelContentId = Maybe.map labelContentId config.labelId
