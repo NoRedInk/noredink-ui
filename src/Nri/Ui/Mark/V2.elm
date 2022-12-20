@@ -1,12 +1,12 @@
-module Nri.Ui.Mark.V1 exposing
+module Nri.Ui.Mark.V2 exposing
     ( Mark
-    , view, viewWithInlineTags, viewWithBalloonTags, viewWithOffsetBalloonTags
+    , view, viewWithInlineTags, viewWithBalloonTags
     )
 
 {-|
 
 @docs Mark
-@docs view, viewWithInlineTags, viewWithBalloonTags, viewWithOffsetBalloonTags
+@docs view, viewWithInlineTags, viewWithBalloonTags
 
 -}
 
@@ -57,59 +57,30 @@ viewWithInlineTags =
     view_ InlineTags
 
 
+type alias LabelPosition =
+    { totalHeight : Float
+    , arrowHeight : Float
+    , zIndex : Int
+    , xOffset : Float
+    }
+
+
 {-| When elements are marked, wrap them in a single `mark` html node.
 
 Show the label for the mark, if present, in a balloon centered above the emphasized content.
 
 -}
 viewWithBalloonTags :
-    (c -> List Style -> Html msg)
-    -> Color
-    -> Maybe Mark
-    -> List c
-    -> List (Html msg)
-viewWithBalloonTags viewSegment backgroundColor marked contents =
-    case marked of
-        Just markedWith ->
-            let
-                lastIndex =
-                    List.length contents - 1
-            in
-            [ viewMarkedByBalloon
-                { backgroundColor = backgroundColor
-                , labelHeight = Nothing
-                , labelId = Nothing
-                , labelContentId = Nothing
-                }
-                markedWith
-                (List.indexedMap
-                    (\index content -> viewSegment content (markedWithBalloonStyles markedWith lastIndex index))
-                    contents
-                )
-            ]
-
-        Nothing ->
-            List.map (\content -> viewSegment content []) contents
-
-
-{-| When elements are marked, wrap them in a single `mark` html node.
-
-Show the label for the mark, if present, in a balloon centered above the emphasized content.
-
-This helper differs from `viewWithBalloonTags` in that the balloons can be offset from each other to prevent content overlaps.
-
--}
-viewWithOffsetBalloonTags :
     { renderSegment : c -> List Style -> Html msg
     , backgroundColor : Color
     , maybeMarker : Maybe Mark
-    , labelHeight : Maybe { totalHeight : Float, arrowHeight : Float }
+    , labelPosition : Maybe LabelPosition
     , labelId : Maybe String
     , labelContentId : Maybe String
     }
     -> List c
     -> List (Html msg)
-viewWithOffsetBalloonTags ({ renderSegment, maybeMarker } as config) contents =
+viewWithBalloonTags ({ renderSegment, maybeMarker } as config) contents =
     case maybeMarker of
         Just markedWith ->
             let
@@ -140,7 +111,17 @@ markedWithBalloonStyles marked lastIndex index =
             []
         , marked.styles
         , if index == lastIndex then
-            marked.endStyles
+            Css.after
+                [ Css.property "content"
+                    ("\" end "
+                        ++ (Maybe.map (\name -> name) marked.name
+                                |> Maybe.withDefault "highlight"
+                           )
+                        ++ " \""
+                    )
+                , invisibleStyle
+                ]
+                :: marked.endStyles
 
           else
             []
@@ -191,7 +172,7 @@ view_ tagStyle viewSegment highlightables =
 viewMarkedByBalloon :
     { config
         | backgroundColor : Color
-        , labelHeight : Maybe { totalHeight : Float, arrowHeight : Float }
+        , labelPosition : Maybe LabelPosition
         , labelId : Maybe String
         , labelContentId : Maybe String
     }
@@ -203,18 +184,7 @@ viewMarkedByBalloon config markedWith segments =
         [ markedWith.name
             |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
             |> Maybe.withDefault AttributesExtra.none
-        , css
-            [ Css.backgroundColor Css.transparent
-            , Css.position Css.relative
-            , Css.Global.children
-                [ Css.Global.selector ":last-child"
-                    [ Css.after
-                        [ Css.property "content" ("\" end " ++ (Maybe.map (\name -> name) markedWith.name |> Maybe.withDefault "highlight") ++ " \"")
-                        , invisibleStyle
-                        ]
-                    ]
-                ]
-            ]
+        , css [ Css.backgroundColor Css.transparent, Css.position Css.relative ]
         ]
         -- the balloon should never end up on a line by itself, so we put it in the DOM
         -- after the first segment.
@@ -337,7 +307,7 @@ viewInlineTag customizations name =
 viewBalloon :
     { config
         | backgroundColor : Color
-        , labelHeight : Maybe { totalHeight : Float, arrowHeight : Float }
+        , labelPosition : Maybe LabelPosition
         , labelId : Maybe String
         , labelContentId : Maybe String
     }
@@ -355,6 +325,12 @@ viewBalloon config label =
               -- for any arbitrary width element
               Css.left (Css.pct 50)
             , Css.property "transform" "translateX(-50%) translateY(-100%)"
+            , case Maybe.map .zIndex config.labelPosition of
+                Just zIndex ->
+                    Css.zIndex (Css.int zIndex)
+
+                Nothing ->
+                    Css.batch []
             ]
         , Balloon.css
             [ Css.padding3 Css.zero (Css.px 6) (Css.px 1)
@@ -362,6 +338,17 @@ viewBalloon config label =
             , Css.property "width" "max-content"
             , Css.maxWidth (Css.px 150)
             , Css.property "word-break" "break-word"
+            , Css.batch <|
+                case config.labelPosition of
+                    Just { xOffset } ->
+                        if xOffset /= 0 then
+                            [ Css.property "transform" ("translateX(" ++ String.fromFloat xOffset ++ "px)") ]
+
+                        else
+                            []
+
+                    Nothing ->
+                        []
             ]
         , Balloon.custom
             [ -- we use the :before element to convey details about the start of the
@@ -389,7 +376,7 @@ viewBalloon config label =
 
             Nothing ->
                 Balloon.css []
-        , case config.labelHeight of
+        , case config.labelPosition of
             Just { arrowHeight } ->
                 Balloon.arrowHeight arrowHeight
 
@@ -398,12 +385,12 @@ viewBalloon config label =
         ]
 
 
-viewBalloonSpacer : { config | labelHeight : Maybe { b | totalHeight : Float } } -> Html msg
+viewBalloonSpacer : { config | labelPosition : Maybe { b | totalHeight : Float } } -> Html msg
 viewBalloonSpacer config =
     span
         [ css
             [ Css.display Css.inlineBlock
-            , config.labelHeight
+            , config.labelPosition
                 |> Maybe.map
                     (\{ totalHeight } ->
                         Css.paddingTop (Css.px totalHeight)

@@ -1,13 +1,13 @@
-module Nri.Ui.Block.V1 exposing
+module Nri.Ui.Block.V2 exposing
     ( view, Attribute
     , plaintext, content
     , Content, phrase, blank
-    , string
-    , emphasize, label, labelHeight
-    , yellow, cyan, magenta, green, blue, purple, brown
-    , class, id
+    , emphasize
+    , label
     , labelId, labelContentId
-    , getLabelHeights
+    , LabelPosition, getLabelPositions, labelPosition
+    , yellow, cyan, magenta, green, blue, purple, brown
+    , class
     )
 
 {-|
@@ -21,14 +21,19 @@ module Nri.Ui.Block.V1 exposing
 @docs Content, phrase, blank
 
 
-### Deprecated
-
-@docs string
-
-
 ## Content customization
 
-@docs emphasize, label, labelHeight
+@docs emphasize
+
+
+## Labels
+
+@docs label
+
+You will need these helpers if you want to prevent label overlaps. (Which is to say -- anytime you have labels!)
+
+@docs labelId, labelContentId
+@docs LabelPosition, getLabelPositions, labelPosition
 
 
 ### Visual customization
@@ -38,15 +43,7 @@ module Nri.Ui.Block.V1 exposing
 
 ### General attributes
 
-@docs class, id
-
-
-## Accessors
-
-You will need these helpers if you want to prevent label overlaps. (Which is to say -- anytime you have labels!)
-
-@docs labelId, labelContentId
-@docs getLabelHeights
+@docs class
 
 -}
 
@@ -58,7 +55,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import List.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
-import Nri.Ui.Mark.V1 as Mark exposing (Mark)
+import Nri.Ui.Mark.V2 as Mark exposing (Mark)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 
 
@@ -89,7 +86,7 @@ plaintext content_ =
 
     Block.view
         [ Block.emphasize
-        , Block.content [ Block.string "Hello, ", Block.blank, Block.string "!" ]
+        , Block.content (Block.phrase "Hello, " ++  Block.blank :: Block.phrase "!" ) ]
         ]
 
 -}
@@ -111,17 +108,21 @@ label label_ =
     Attribute <| \config -> { config | label = Just label_ }
 
 
-{-| Use `getLabelHeights` to calculate what these values should be.
+{-| Use `getLabelPositions` to construct this value.
 -}
-labelHeight : Maybe { totalHeight : Float, arrowHeight : Float } -> Attribute
-labelHeight offset =
-    Attribute <| \config -> { config | labelHeight = offset }
+type alias LabelPosition =
+    { totalHeight : Float
+    , arrowHeight : Float
+    , zIndex : Int
+    , xOffset : Float
+    }
 
 
-{-| -}
-labelId : String -> String
-labelId labelId_ =
-    labelId_ ++ "-label"
+{-| Use `getLabelPositions` to calculate what these values should be.
+-}
+labelPosition : Maybe LabelPosition -> Attribute
+labelPosition offset =
+    Attribute <| \config -> { config | labelPosition = offset }
 
 
 {-| -}
@@ -130,51 +131,49 @@ labelContentId labelId_ =
     labelId_ ++ "-label-content"
 
 
-{-|
+{-| Determine where to position labels in order to dynamically avoid overlapping content.
 
-    Pass in a list of the Block ids that you care about (use `Block.id` to attach these ids).
+    - First, we add ids to block with labels with `Block.labelId`.
+    - Say we added `Block.labelId "example-id"`, then we will use `Browser.Dom.getElement "example-id"` and `Browser.Dom.getElement (Block.labelContentId "example-id")` to construct a record in the shape { label : Dom.Element, labelContent : Dom.Element }. We store this record in a dictionary keyed by ids (e.g., "example-id") with measurements for all other labels.
 
-    - First, we add ids to block with labels with `Block.id`.
-    - Say we added `Block.id "example-id"`, then we will use `Browser.Dom.getElement (Block.labelId "example-id")` and `Browser.Dom.getElement (Block.labelContentId "example-id")` to construct a record in the shape { label : Dom.Element, labelContent : Dom.Element }. We store this record in a dictionary keyed by ids (e.g., "example-id") with measurements for all other labels.
-    - Pass a list of all the block ids and the dictionary of measurements to `getLabelHeights`. `getLabelHeights` will return a dictionary of values (keyed by ids) that we will then pass directly to `labelHeight` for positioning.
+`getLabelPositions` will return a dictionary of values (keyed by label ids) whose values can be passed directly to `labelPosition` for positioning.
 
 -}
-getLabelHeights :
-    List String
-    -> Dict String { label : Dom.Element, labelContent : Dom.Element }
-    -> Dict String { totalHeight : Float, arrowHeight : Float }
-getLabelHeights ids labelMeasurementsById =
+getLabelPositions :
+    Dict String { label : Dom.Element, labelContent : Dom.Element }
+    -> Dict String LabelPosition
+getLabelPositions labelMeasurementsById =
     let
         startingArrowHeight =
             8
     in
-    ids
-        |> List.filterMap
-            (\idString ->
-                case Dict.get idString labelMeasurementsById of
-                    Just measurement ->
-                        Just ( idString, measurement )
-
-                    Nothing ->
-                        Nothing
-            )
+    Dict.toList labelMeasurementsById
         |> splitByOverlaps
         |> List.concatMap
             (\row ->
+                let
+                    maxRowIndex =
+                        List.length row - 1
+                in
                 row
                     -- Put the widest elements higher visually to avoid overlaps
                     |> List.sortBy (Tuple.second >> .labelContent >> .element >> .width)
                     |> List.foldl
-                        (\( idString, e ) ( height, acc ) ->
-                            ( height + e.labelContent.element.height
+                        (\( idString, e ) ( index, height, acc ) ->
+                            ( index + 1
+                            , height + e.labelContent.element.height + 4
                             , ( idString
-                              , { totalHeight = height + e.labelContent.element.height + 8, arrowHeight = height }
+                              , { totalHeight = height + e.labelContent.element.height
+                                , arrowHeight = height
+                                , zIndex = maxRowIndex - index
+                                , xOffset = xOffset e.label
+                                }
                               )
                                 :: acc
                             )
                         )
-                        ( startingArrowHeight, [] )
-                    |> Tuple.second
+                        ( 0, startingArrowHeight, [] )
+                    |> (\( _, _, v ) -> v)
             )
         |> Dict.fromList
 
@@ -195,7 +194,7 @@ splitByOverlaps =
             -- consider the elements from left to right
             (groupWithSort (\( _, a ) -> a.label.element.x)
                 (\( _, a ) ( _, b ) ->
-                    (a.label.element.x + a.label.element.width) >= b.label.element.x
+                    (a.label.element.x + xOffset a.label + a.label.element.width) >= (b.label.element.x + xOffset b.label)
                 )
             )
 
@@ -205,6 +204,29 @@ groupWithSort sortBy groupBy =
     List.sortBy sortBy
         >> List.Extra.groupWhile groupBy
         >> List.map (\( first, rem ) -> first :: rem)
+
+
+xOffset : Dom.Element -> Float
+xOffset { element, viewport } =
+    let
+        xMax =
+            viewport.x + viewport.width
+    in
+    -- if the element is cut off by the viewport on the left side,
+    -- we need to adjust rightward by the cut-off amount
+    if element.x < viewport.x then
+        viewport.x - element.x
+
+    else
+    -- if the element is cut off by the viewport on the right side,
+    -- we need to adjust leftward by the cut-off amount
+    if
+        xMax < (element.x + element.width)
+    then
+        xMax - (element.x + element.width)
+
+    else
+        0
 
 
 
@@ -224,28 +246,20 @@ parseString =
         >> List.map String_
 
 
-renderContent : { config | class : Maybe String, id : Maybe String } -> Content -> List Css.Style -> Html msg
+renderContent : { config | class : Maybe String } -> Content -> List Css.Style -> Html msg
 renderContent config content_ markStyles =
     span
         [ css (Css.whiteSpace Css.preWrap :: markStyles)
         , nriDescription "block-segment-container"
         , AttributesExtra.maybe Attributes.class config.class
-        , AttributesExtra.maybe Attributes.id config.id
         ]
         (case content_ of
             String_ str ->
                 [ text str ]
 
             Blank ->
-                [ viewBlank [] { class = Nothing, id = Nothing } ]
+                [ viewBlank [] { class = Nothing } ]
         )
-
-
-{-| DEPRECATED -- prefer `phrase`.
--}
-string : String -> Content
-string =
-    String_
 
 
 {-| -}
@@ -431,9 +445,9 @@ class class_ =
 
 
 {-| -}
-id : String -> Attribute
-id id_ =
-    Attribute (\config -> { config | id = Just id_ })
+labelId : String -> Attribute
+labelId id_ =
+    Attribute (\config -> { config | labelId = Just id_ })
 
 
 
@@ -450,10 +464,9 @@ defaultConfig =
     { content = []
     , label = Nothing
     , labelId = Nothing
-    , labelHeight = Nothing
+    , labelPosition = Nothing
     , theme = Nothing
     , class = Nothing
-    , id = Nothing
     }
 
 
@@ -461,10 +474,9 @@ type alias Config =
     { content : List Content
     , label : Maybe String
     , labelId : Maybe String
-    , labelHeight : Maybe { totalHeight : Float, arrowHeight : Float }
+    , labelPosition : Maybe LabelPosition
     , theme : Maybe Theme
     , class : Maybe String
-    , id : Maybe String
     }
 
 
@@ -484,13 +496,13 @@ render config =
         [] ->
             case maybeMark of
                 Just mark ->
-                    Mark.viewWithOffsetBalloonTags
+                    Mark.viewWithBalloonTags
                         { renderSegment = renderContent config
                         , backgroundColor = palette.backgroundColor
                         , maybeMarker = Just mark
-                        , labelHeight = config.labelHeight
-                        , labelId = Maybe.map labelId config.id
-                        , labelContentId = Maybe.map labelContentId config.id
+                        , labelPosition = config.labelPosition
+                        , labelId = config.labelId
+                        , labelContentId = Maybe.map labelContentId config.labelId
                         }
                         [ Blank ]
 
@@ -503,18 +515,18 @@ render config =
                     ]
 
         _ ->
-            Mark.viewWithOffsetBalloonTags
+            Mark.viewWithBalloonTags
                 { renderSegment = renderContent config
                 , backgroundColor = palette.backgroundColor
                 , maybeMarker = maybeMark
-                , labelHeight = config.labelHeight
-                , labelId = Maybe.map labelId config.id
-                , labelContentId = Maybe.map labelContentId config.id
+                , labelPosition = config.labelPosition
+                , labelId = config.labelId
+                , labelContentId = Maybe.map labelContentId config.labelId
                 }
                 config.content
 
 
-viewBlank : List Css.Style -> { config | class : Maybe String, id : Maybe String } -> Html msg
+viewBlank : List Css.Style -> { config | class : Maybe String } -> Html msg
 viewBlank styles config =
     span
         [ css
@@ -531,7 +543,6 @@ viewBlank styles config =
             , Css.batch styles
             ]
         , AttributesExtra.maybe Attributes.class config.class
-        , AttributesExtra.maybe Attributes.id config.id
         ]
         [ span
             [ css

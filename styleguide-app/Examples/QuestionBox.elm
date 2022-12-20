@@ -20,7 +20,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import Json.Decode
 import Json.Encode as Encode
 import Markdown
-import Nri.Ui.Block.V1 as Block
+import Nri.Ui.Block.V2 as Block
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
