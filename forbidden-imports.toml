@@ -83,6 +83,7 @@ usages = ['styleguide/../src/Nri/Ui/TextArea/V4.elm']
 
 [forbidden."Nri.Ui.Mark.V1"]
 hint = 'upgrade to V2'
+usages = ['styleguide/../src/Nri/Ui/Block/V1.elm']
 
 [forbidden."Nri.Ui.Menu.V1"]
 hint = 'upgrade to V3'
