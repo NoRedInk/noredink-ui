@@ -88,7 +88,14 @@ view ellieLinkConfig state =
         [ Heading.plaintext "Interactive example"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
-    , div [ css [ Css.displayFlex, Css.justifyContent Css.center ] ]
+    , div
+        [ css
+            [ Css.displayFlex
+            , Css.justifyContent Css.center
+            , Css.alignItems Css.flexStart
+            , Css.minHeight (Css.px 350)
+            ]
+        ]
         [ QuestionBox.view (List.map Tuple.second attributes) ]
     , Heading.h2
         [ Heading.plaintext "Non-interactive examples"
@@ -267,8 +274,8 @@ anchor =
     div [ Attributes.id anchorId ]
         [ UiIcon.sortArrowDown
             |> Svg.withLabel "Anchor"
-            |> Svg.withWidth (Css.px 50)
-            |> Svg.withHeight (Css.px 50)
+            |> Svg.withWidth (Css.px 30)
+            |> Svg.withHeight (Css.px 30)
             |> Svg.toHtml
         ]
 
