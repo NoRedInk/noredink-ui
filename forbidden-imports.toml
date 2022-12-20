@@ -41,6 +41,9 @@ hint = 'upgrade to V3'
 [forbidden."Nri.Ui.Balloon.V1"]
 hint = 'upgrade to V2'
 
+[forbidden."Nri.Ui.Block.V1"]
+hint = 'upgrade to V2'
+
 [forbidden."Nri.Ui.BreadCrumbs.V1"]
 hint = 'upgrade to V2'
 
@@ -77,6 +80,10 @@ hint = 'upgrade to V3'
 [forbidden."Nri.Ui.InputStyles.V3"]
 hint = 'upgrade to V4'
 usages = ['styleguide/../src/Nri/Ui/TextArea/V4.elm']
+
+[forbidden."Nri.Ui.Mark.V1"]
+hint = 'upgrade to V2'
+usages = ['styleguide/../src/Nri/Ui/Block/V1.elm']
 
 [forbidden."Nri.Ui.Menu.V1"]
 hint = 'upgrade to V3'
