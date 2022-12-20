@@ -510,7 +510,7 @@ getLabelPositionsSpec =
                     300
 
                 x =
-                    10
+                    -150
             in
             Block.getLabelPositions
                 (Dict.singleton "a"
@@ -523,7 +523,7 @@ getLabelPositionsSpec =
                        , { arrowHeight = 8
                          , totalHeight = 108
                          , zIndex = 0
-                         , xOffset = width / 2 - x
+                         , xOffset = 150
                          }
                        )
                      ]
@@ -536,7 +536,7 @@ getLabelPositionsSpec =
                     300
 
                 x =
-                    viewportWidth
+                    viewportWidth - 10
             in
             Block.getLabelPositions
                 (Dict.singleton "a"
@@ -549,7 +549,7 @@ getLabelPositionsSpec =
                        , { arrowHeight = 8
                          , totalHeight = 108
                          , zIndex = 0
-                         , xOffset = -width / 2
+                         , xOffset = -290
                          }
                        )
                      ]
