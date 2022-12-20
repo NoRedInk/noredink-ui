@@ -109,17 +109,17 @@ viewExamplesTable : State -> Html Msg
 viewExamplesTable state =
     Table.view
         [ Table.string
-            { header = "Pattern"
+            { header = "QuestionBox type"
             , value = .pattern
             , width = Css.pct 15
             , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.top, Css.fontWeight Css.bold ]
             , sort = Nothing
             }
-        , Table.custom
-            { header = text "About"
-            , view = .description >> Markdown.toHtml Nothing >> List.map fromUnstyled >> span []
-            , width = Css.px 50
-            , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
+        , Table.string
+            { header = "Block pattern"
+            , value = .shownWith
+            , width = Css.pct 15
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.top ]
             , sort = Nothing
             }
         , Table.custom
@@ -130,8 +130,8 @@ viewExamplesTable state =
             , sort = Nothing
             }
         ]
-        [ { pattern = "QuestionBox.standalone"
-          , description = "This is the default type of question box. It doesn't have a programmatic or direct visual relationship to any piece of content."
+        [ { pattern = "standalone"
+          , shownWith = ""
           , example =
                 div [ css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ] ]
                     [ QuestionBox.view
@@ -144,11 +144,24 @@ viewExamplesTable state =
                         ]
                     ]
           }
-        , { pattern = "QuestionBox.pointingTo"
-          , description = """This type of `QuestionBox` has an arrow pointing to the relevant part of the question.
-
-Typically, you would use this type of `QuestionBox` type with a [`Block`](https://noredink-ui.netlify.app/#/doodad/Block).
-"""
+        , { pattern = "pointingTo"
+          , shownWith = "Emphasis block"
+          , example =
+                [ Block.view [ Block.plaintext "Spongebob has a beautiful plant " ]
+                , [ QuestionBox.view
+                        [ QuestionBox.pointingTo
+                            (Block.view [ Block.plaintext "above", Block.emphasize ])
+                        , QuestionBox.markdown "“Above” is a preposition."
+                        , QuestionBox.actions [ { label = "Try again", onClick = NoOp } ]
+                        ]
+                  ]
+                , Block.view [ Block.plaintext " his TV." ]
+                ]
+                    |> List.concat
+                    |> p [ css [ Css.marginTop (Css.px 50) ] ]
+          }
+        , { pattern = "pointingTo"
+          , shownWith = "Label block"
           , example =
                 [ Block.view [ Block.plaintext "Spongebob has a beautiful plant " ]
                 , [ QuestionBox.view
@@ -168,6 +181,76 @@ Typically, you would use this type of `QuestionBox` type with a [`Block`](https:
                         ]
                   ]
                 , Block.view [ Block.plaintext "." ]
+                ]
+                    |> List.concat
+                    |> p [ css [ Css.marginTop (Css.px 50) ] ]
+          }
+        , { pattern = "pointingTo"
+          , shownWith = "Blank block"
+          , example =
+                [ Block.view
+                    [ Block.plaintext "Superman"
+                    , Block.label "subject"
+                    ]
+                , Block.view [ Block.plaintext " " ]
+                , [ QuestionBox.view
+                        [ QuestionBox.pointingTo (Block.view [])
+                        , QuestionBox.markdown "Which verb matches the subject?"
+                        , QuestionBox.actions
+                            [ { label = "wrap", onClick = NoOp }
+                            , { label = "wraps", onClick = NoOp }
+                            ]
+                        ]
+                  ]
+                , Block.view [ Block.plaintext "gifts with comic book pages." ]
+                ]
+                    |> List.concat
+                    |> p [ css [ Css.marginTop (Css.px 50) ] ]
+          }
+        , { pattern = "pointingTo"
+          , shownWith = "Labelled blank block"
+          , example =
+                [ Block.view
+                    [ Block.plaintext "Dave"
+                    , Block.label "subject"
+                    , Block.yellow
+                    ]
+                , Block.view [ Block.plaintext " " ]
+                , [ QuestionBox.view
+                        [ QuestionBox.pointingTo (Block.view [ Block.label "verb", Block.cyan ])
+                        , QuestionBox.markdown "What did he do?"
+                        , QuestionBox.actions
+                            [ { label = "scared", onClick = NoOp }
+                            , { label = "scarred", onClick = NoOp }
+                            , { label = "scarified", onClick = NoOp }
+                            ]
+                        ]
+                  ]
+                , Block.view [ Block.plaintext " his replacement cousin coming out of his room wearing a gorilla mask." ]
+                ]
+                    |> List.concat
+                    |> p [ css [ Css.marginTop (Css.px 50) ] ]
+          }
+        , { pattern = "pointingTo"
+          , shownWith = "Blank with emphasis block"
+          , example =
+                [ [ QuestionBox.view
+                        [ QuestionBox.pointingTo
+                            (Block.view
+                                [ Block.label "verb"
+                                , Block.cyan
+                                , Block.content (Block.phrase "Dave " ++ [ Block.blank ])
+                                ]
+                            )
+                        , QuestionBox.markdown "What did he do?"
+                        , QuestionBox.actions
+                            [ { label = "scared", onClick = NoOp }
+                            , { label = "scarred", onClick = NoOp }
+                            , { label = "scarified", onClick = NoOp }
+                            ]
+                        ]
+                  ]
+                , Block.view [ Block.plaintext " his replacement cousin coming out of his room wearing a gorilla mask." ]
                 ]
                     |> List.concat
                     |> p [ css [ Css.marginTop (Css.px 50) ] ]
