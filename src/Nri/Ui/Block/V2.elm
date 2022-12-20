@@ -114,6 +114,7 @@ type alias LabelPosition =
     { totalHeight : Float
     , arrowHeight : Float
     , zIndex : Int
+    , xOffset : Float
     }
 
 
@@ -165,6 +166,7 @@ getLabelPositions labelMeasurementsById =
                               , { totalHeight = height + e.labelContent.element.height
                                 , arrowHeight = height
                                 , zIndex = maxRowIndex - index
+                                , xOffset = 0
                                 }
                               )
                                 :: acc

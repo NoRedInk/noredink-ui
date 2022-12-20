@@ -61,6 +61,7 @@ type alias LabelPosition =
     { totalHeight : Float
     , arrowHeight : Float
     , zIndex : Int
+    , xOffset : Float
     }
 
 
@@ -322,7 +323,14 @@ viewBalloon config label =
               -- using transform & translate, 50% is wrt to the element itself
               -- combining these two properties, we can center the tag against the parent container
               -- for any arbitrary width element
-              Css.left (Css.pct 50)
+              Css.left
+                (Css.calc (Css.pct 50)
+                    Css.plus
+                    (Maybe.map .xOffset config.labelPosition
+                        |> Maybe.withDefault 0
+                        |> Css.px
+                    )
+                )
             , Css.property "transform" "translateX(-50%) translateY(-100%)"
             , case Maybe.map .zIndex config.labelPosition of
                 Just zIndex ->
@@ -331,6 +339,19 @@ viewBalloon config label =
                 Nothing ->
                     Css.batch []
             ]
+        , case config.labelPosition of
+            Just { xOffset } ->
+                if xOffset > 0 then
+                    Balloon.alignArrowStart
+
+                else if xOffset < 0 then
+                    Balloon.alignArrowEnd
+
+                else
+                    Balloon.alignArrowMiddle
+
+            Nothing ->
+                Balloon.css []
         , Balloon.css
             [ Css.padding3 Css.zero (Css.px 6) (Css.px 1)
             , Css.property "box-shadow" "none"

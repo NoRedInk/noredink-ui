@@ -105,6 +105,7 @@ getLabelPositionsSpec =
                         { totalHeight = startingHeight + defaultArrowHeight
                         , arrowHeight = defaultArrowHeight
                         , zIndex = 0
+                        , xOffset = 0
                         }
                     )
     , test "with different height measurements, prevents overlaps" <|
@@ -137,12 +138,14 @@ getLabelPositionsSpec =
                        , { totalHeight = aStartingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          , zIndex = 1
+                         , xOffset = 0
                          }
                        )
                      , ( "b"
                        , { totalHeight = aStartingHeight + bStartingHeight + defaultArrowHeight + balloonOffset
                          , arrowHeight = aStartingHeight + defaultArrowHeight + balloonOffset
                          , zIndex = 0
+                         , xOffset = 0
                          }
                        )
                      ]
@@ -184,12 +187,14 @@ getLabelPositionsSpec =
                        , { totalHeight = aStartingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          , zIndex = 0
+                         , xOffset = 0
                          }
                        )
                      , ( "b"
                        , { totalHeight = bStartingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          , zIndex = 0
+                         , xOffset = 0
                          }
                        )
                      ]
@@ -230,12 +235,14 @@ getLabelPositionsSpec =
                             -- A is positioned on top of B.
                             startingHeight + defaultArrowHeight + balloonOffset
                          , zIndex = 1
+                         , xOffset = 0
                          }
                        )
                      , ( "b"
                        , { totalHeight = 1 * startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          , zIndex = 2
+                         , xOffset = 0
                          }
                        )
                      , ( "c"
@@ -244,6 +251,7 @@ getLabelPositionsSpec =
                             -- C is positioned on top of A.
                             2 * startingHeight + defaultArrowHeight + 2 * balloonOffset
                          , zIndex = 0
+                         , xOffset = 0
                          }
                        )
                      ]
@@ -283,6 +291,7 @@ getLabelPositionsSpec =
                          { totalHeight = 1 * startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          , zIndex = 0
+                         , xOffset = 0
                          }
                        )
                      , -- B is positioned under C
@@ -290,6 +299,7 @@ getLabelPositionsSpec =
                        , { totalHeight = 1 * startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          , zIndex = 1
+                         , xOffset = 0
                          }
                        )
                      , -- C is positioned over B
@@ -297,6 +307,7 @@ getLabelPositionsSpec =
                        , { totalHeight = 2 * startingHeight + defaultArrowHeight + balloonOffset
                          , arrowHeight = 1 * startingHeight + defaultArrowHeight + balloonOffset
                          , zIndex = 0
+                         , xOffset = 0
                          }
                        )
                      ]
@@ -336,10 +347,10 @@ getLabelPositionsSpec =
                     |> Dict.fromList
                 )
                 |> Expect.equal
-                    ([ ( "prepositionId", { arrowHeight = 8, totalHeight = 32, zIndex = 1 } )
-                     , ( "directObjectId", { arrowHeight = 36, totalHeight = 60, zIndex = 0 } )
-                     , ( "subjectId", { arrowHeight = 8, totalHeight = 32, zIndex = 0 } )
-                     , ( "editorsNoteId", { arrowHeight = 8, totalHeight = 32, zIndex = 0 } )
+                    ([ ( "prepositionId", { arrowHeight = 8, totalHeight = 32, zIndex = 1, xOffset = 0 } )
+                     , ( "directObjectId", { arrowHeight = 36, totalHeight = 60, zIndex = 0, xOffset = 0 } )
+                     , ( "subjectId", { arrowHeight = 8, totalHeight = 32, zIndex = 0, xOffset = 0 } )
+                     , ( "editorsNoteId", { arrowHeight = 8, totalHeight = 32, zIndex = 0, xOffset = 0 } )
                      ]
                         |> Dict.fromList
                     )
@@ -368,12 +379,14 @@ getLabelPositionsSpec =
                        , { totalHeight = startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          , zIndex = 0
+                         , xOffset = 0
                          }
                        )
                      , ( "b"
                        , { totalHeight = startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          , zIndex = 0
+                         , xOffset = 0
                          }
                        )
                      ]
@@ -415,12 +428,14 @@ getLabelPositionsSpec =
                             -- So its arrow height is the total height of b minus the positioning offset
                             startingHeight + defaultArrowHeight + balloonOffset
                          , zIndex = 0
+                         , xOffset = 0
                          }
                        )
                      , ( "b"
                        , { totalHeight = 1 * startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          , zIndex = 1
+                         , xOffset = 0
                          }
                        )
                      , ( "c"
@@ -429,6 +444,7 @@ getLabelPositionsSpec =
                             -- C is on a new line, so it goes back to default positioning.
                             defaultArrowHeight
                          , zIndex = 0
+                         , xOffset = 0
                          }
                        )
                      ]
@@ -467,18 +483,73 @@ getLabelPositionsSpec =
                        , { totalHeight = 1 * startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          , zIndex = 0
+                         , xOffset = 0
                          }
                        )
                      , ( "b"
                        , { totalHeight = 1 * startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          , zIndex = 0
+                         , xOffset = 0
                          }
                        )
                      , ( "c"
                        , { totalHeight = 1 * startingHeight + defaultArrowHeight
                          , arrowHeight = defaultArrowHeight
                          , zIndex = 0
+                         , xOffset = 0
+                         }
+                       )
+                     ]
+                        |> Dict.fromList
+                    )
+    , test "when a label extends horizontally outside the viewport to the left" <|
+        \() ->
+            let
+                width =
+                    300
+
+                x =
+                    10
+            in
+            Block.getLabelPositions
+                (Dict.singleton "a"
+                    { label = dummyElement { x = x, y = 0, width = width, height = 100 }
+                    , labelContent = dummyElement { x = x, y = 0, width = width, height = 100 }
+                    }
+                )
+                |> Expect.equal
+                    ([ ( "a"
+                       , { arrowHeight = 8
+                         , totalHeight = 108
+                         , zIndex = 0
+                         , xOffset = width / 2 - x
+                         }
+                       )
+                     ]
+                        |> Dict.fromList
+                    )
+    , test "when a label extends horizontally outside the viewport to the right" <|
+        \() ->
+            let
+                width =
+                    300
+
+                x =
+                    viewportWidth
+            in
+            Block.getLabelPositions
+                (Dict.singleton "a"
+                    { label = dummyElement { x = x, y = 0, width = width, height = 100 }
+                    , labelContent = dummyElement { x = x, y = 0, width = width, height = 100 }
+                    }
+                )
+                |> Expect.equal
+                    ([ ( "a"
+                       , { arrowHeight = 8
+                         , totalHeight = 108
+                         , zIndex = 0
+                         , xOffset = -width / 2
                          }
                        )
                      ]
@@ -500,6 +571,11 @@ defaultArrowHeight =
 dummyElement : { x : Float, y : Float, width : Float, height : Float } -> Element
 dummyElement element =
     { scene = { width = 1000, height = 1000 }
-    , viewport = { x = 0, y = 0, width = 1000, height = 500 }
+    , viewport = { x = 0, y = 0, width = viewportWidth, height = 500 }
     , element = element
     }
+
+
+viewportWidth : Float
+viewportWidth =
+    1000

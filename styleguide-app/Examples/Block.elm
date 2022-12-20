@@ -64,14 +64,14 @@ example =
                 [ Block.plaintext "he"
                 , Block.label "subject"
                 , Block.yellow
-                , Block.labelPosition (Just { totalHeight = 66, arrowHeight = 34, zIndex = 0 })
+                , Block.labelPosition (Just { totalHeight = 66, arrowHeight = 34, zIndex = 0, xOffset = 0 })
                 ]
           , Block.view [ Block.plaintext " " ]
           , Block.view
                 [ Block.plaintext "glued"
                 , Block.label "verb"
                 , Block.cyan
-                , Block.labelPosition (Just { totalHeight = 34, arrowHeight = 8, zIndex = 0 })
+                , Block.labelPosition (Just { totalHeight = 34, arrowHeight = 8, zIndex = 0, xOffset = 0 })
                 ]
           , Block.view [ Block.plaintext " it with ketchup." ]
           ]
@@ -413,17 +413,19 @@ initControl =
                     )
                 )
                 (Control.record
-                    (\a b ->
+                    (\a b c ->
                         ( Code.record
                             [ ( "arrowHeight", String.fromFloat a )
                             , ( "totalHeight", String.fromFloat b )
                             , ( "zIndex", "0" )
+                            , ( "xOffset", String.fromFloat c )
                             ]
-                        , { arrowHeight = a, totalHeight = b, zIndex = 0 }
+                        , { arrowHeight = a, totalHeight = b, zIndex = 0, xOffset = c }
                         )
                     )
                     |> Control.field "arrowHeight" (ControlExtra.float 40)
                     |> Control.field "totalHeight" (ControlExtra.float 80)
+                    |> Control.field "xOffset" (ControlExtra.float 0)
                 )
             )
         |> ControlExtra.optionalListItem "theme"
