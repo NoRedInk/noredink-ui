@@ -1,4 +1,4 @@
-port module Examples.QuestionBox exposing (Msg, State, example)
+module Examples.QuestionBox exposing (Msg, State, example)
 
 {-|
 
@@ -17,16 +17,10 @@ import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
-import Json.Decode
-import Json.Encode as Encode
 import Markdown
 import Nri.Ui.Block.V2 as Block
-import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Highlightable.V1 as Highlightable
-import Nri.Ui.Highlighter.V1 as Highlighter
-import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.QuestionBox.V2 as QuestionBox
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
@@ -51,7 +45,7 @@ example =
     , version = version
     , state = init
     , update = update
-    , subscriptions = subscriptions
+    , subscriptions = \_ -> Sub.none
     , categories = [ Interactions ]
     , keyboardSupport = []
     , preview =
@@ -143,26 +137,6 @@ viewExamplesTable state =
                         ]
                     ]
           }
-        , { pattern = "QuestionBox.anchoredTo"
-          , description = """This type of `QuestionBox` is only rendered after measurements of the DOM are made. Click "Measure & render" to see this QuestionBox.
-
-Tessa does not know when it's appropriate to use this type of QuestionBox -- sorry!
-"""
-          , example =
-                div [ css [ Css.position Css.relative ] ]
-                    [ viewHighlighterExample
-                    , QuestionBox.view
-                        [ QuestionBox.anchoredTo state.viewAnchoredExampleMeasurements
-                        , QuestionBox.id anchoredExampleId
-                        , QuestionBox.markdown "Not quite. Let’s back up a bit."
-                        , QuestionBox.actions [ { label = "Show me", onClick = NoOp } ]
-                        ]
-                    , Button.button "Measure & render"
-                        [ Button.onClick GetAnchoredExampleMeasurements
-                        , Button.css [ Css.marginBottom Spacing.verticalSpacerPx ]
-                        ]
-                    ]
-          }
         , { pattern = "QuestionBox.pointingTo"
           , description = """This type of `QuestionBox` has an arrow pointing to the relevant part of the question.
 
@@ -194,35 +168,6 @@ Typically, you would use this type of `QuestionBox` type with a [`Block`](https:
         ]
 
 
-viewHighlighterExample : Html msg
-viewHighlighterExample =
-    Highlighter.static
-        { id = highlighterExampleId
-        , highlightables =
-            [ ( "Spongebob", Nothing )
-            , ( "has", Nothing )
-            , ( "a", Nothing )
-            , ( "beautiful"
-              , Just
-                    (Tool.buildMarker
-                        { highlightColor = Colors.highlightYellow
-                        , hoverColor = Colors.highlightYellow
-                        , hoverHighlightColor = Colors.highlightYellow
-                        , kind = ()
-                        , name = Nothing
-                        }
-                    )
-              )
-            , ( "plant", Nothing )
-            , ( "above", Nothing )
-            , ( "his", Nothing )
-            , ( "TV.", Nothing )
-            ]
-                |> List.intersperse ( " ", Nothing )
-                |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
-        }
-
-
 interactiveExampleId : String
 interactiveExampleId =
     "interactive-example-question-box"
@@ -233,28 +178,16 @@ anchorId =
     "interactive-example-anchor-icon"
 
 
-highlighterExampleId : String
-highlighterExampleId =
-    "question-box-anchored-highlighter-example"
-
-
-anchoredExampleId : String
-anchoredExampleId =
-    "question-box-example-anchored-with-offset-example"
-
-
 {-| -}
 init : State
 init =
     { attributes = initAttributes
-    , viewAnchoredExampleMeasurements = QuestionBox.initAnchoredBoxMeasurements
     }
 
 
 {-| -}
 type alias State =
     { attributes : Control (List ( String, QuestionBox.Attribute Msg ))
-    , viewAnchoredExampleMeasurements : QuestionBox.AnchoredBoxMeasurements
     }
 
 
@@ -319,9 +252,6 @@ initAttributes =
         |> ControlExtra.optionalListItem "type"
             (CommonControls.choice moduleName
                 [ ( "pointingTo []", QuestionBox.pointingTo [ anchor ] )
-                , ( "anchoredTo QuestionBox.initAnchoredBoxMeasurements"
-                  , QuestionBox.anchoredTo QuestionBox.initAnchoredBoxMeasurements
-                  )
                 , ( "standalone", QuestionBox.standalone )
                 ]
             )
@@ -358,8 +288,6 @@ initialMarkdown =
 type Msg
     = UpdateControls (Control (List ( String, QuestionBox.Attribute Msg )))
     | NoOp
-    | GetAnchoredExampleMeasurements
-    | GotAnchoredExampleMeasurements QuestionBox.AnchoredBoxMeasurements
 
 
 {-| -}
@@ -371,33 +299,3 @@ update msg state =
 
         NoOp ->
             ( state, Cmd.none )
-
-        GetAnchoredExampleMeasurements ->
-            ( state
-            , getAnchoredExampleMeasurements
-                (Encode.object
-                    [ ( "questionBoxId", Encode.string anchoredExampleId )
-                    , ( "containerId", Encode.string highlighterExampleId )
-                    ]
-                )
-            )
-
-        GotAnchoredExampleMeasurements measurements ->
-            ( { state | viewAnchoredExampleMeasurements = measurements }
-            , Cmd.none
-            )
-
-
-port getAnchoredExampleMeasurements : Encode.Value -> Cmd msg
-
-
-port gotAnchoredExampleMeasurements : (Json.Decode.Value -> msg) -> Sub msg
-
-
-subscriptions : State -> Sub Msg
-subscriptions state =
-    gotAnchoredExampleMeasurements
-        (QuestionBox.decodeAnchoredBoxMeasurements
-            >> Result.map GotAnchoredExampleMeasurements
-            >> Result.withDefault NoOp
-        )
