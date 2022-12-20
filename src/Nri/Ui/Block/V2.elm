@@ -237,6 +237,7 @@ xOffset { element, viewport } =
 type Content
     = String_ String
     | Blank
+    | FullHeightBlank
 
 
 parseString : String -> List Content
@@ -258,7 +259,16 @@ renderContent config content_ markStyles =
                 [ text str ]
 
             Blank ->
-                [ viewBlank [] { class = Nothing } ]
+                [ viewBlank [ Css.lineHeight (Css.int 1) ] { class = Nothing } ]
+
+            FullHeightBlank ->
+                [ viewBlank
+                    [ Css.paddingTop topBottomSpace
+                    , Css.paddingBottom topBottomSpace
+                    , Css.lineHeight Css.initial
+                    ]
+                    { class = Nothing }
+                ]
         )
 
 
@@ -498,7 +508,7 @@ render config =
                         , labelId = config.labelId
                         , labelContentId = Maybe.map labelContentId config.labelId
                         }
-                        [ Blank ]
+                        [ FullHeightBlank ]
 
                 Nothing ->
                     [ viewBlank
@@ -533,7 +543,6 @@ viewBlank styles config =
             , Css.minWidth (Css.px 80)
             , Css.display Css.inlineBlock
             , Css.borderRadius (Css.px 4)
-            , Css.lineHeight (Css.int 1)
             , Css.batch styles
             ]
         , AttributesExtra.maybe Attributes.class config.class
