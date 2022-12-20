@@ -27,7 +27,7 @@ import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Highlightable.V1 as Highlightable
 import Nri.Ui.Highlighter.V1 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
-import Nri.Ui.QuestionBox.V1 as QuestionBox
+import Nri.Ui.QuestionBox.V2 as QuestionBox
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V6 as Table
@@ -41,7 +41,7 @@ moduleName =
 
 version : Int
 version =
-    1
+    2
 
 
 {-| -}
