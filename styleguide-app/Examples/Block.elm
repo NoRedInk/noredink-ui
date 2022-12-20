@@ -331,13 +331,20 @@ example =
                             , Block.view [ Block.plaintext " being used." ]
                             ]
                   }
-                , { pattern = Code.fromModule moduleName "view " ++ Code.list [ Code.fromModule moduleName "label " ++ Code.string "[label text]" ]
+                , { pattern =
+                        Code.fromModule moduleName "view "
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "label " ++ Code.string "[label text]"
+                                , Code.fromModule moduleName "purple"
+                                ]
+                                1
                   , description = "**Labeled blank block**\n\nA labelled blank in the sentence"
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "If a volcano is extinct, " ]
                             , Block.view
                                 [ Block.label "pronoun"
+                                , Block.purple
                                 , Block.labelId pronounId
                                 , Block.labelPosition (Dict.get pronounId offsets)
                                 ]
