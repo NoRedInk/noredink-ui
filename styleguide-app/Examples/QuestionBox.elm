@@ -6,6 +6,7 @@ module Examples.QuestionBox exposing (Msg, State, example)
 
 -}
 
+import Browser.Dom as Dom exposing (Element)
 import Category exposing (Category(..))
 import Code
 import CommonControls
@@ -13,12 +14,14 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
+import Dict exposing (Dict)
 import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Markdown
 import Nri.Ui.Block.V2 as Block
+import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
@@ -26,7 +29,9 @@ import Nri.Ui.QuestionBox.V2 as QuestionBox
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V6 as Table
+import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Task
 
 
 moduleName : String
@@ -49,11 +54,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , categories = [ Interactions ]
     , keyboardSupport = []
-    , preview =
-        [ QuestionBox.view
-            [ QuestionBox.markdown "Is good?"
-            ]
-        ]
+    , preview = [ QuestionBox.view [ QuestionBox.markdown "Is good?" ] ]
     , view = view
     }
 
@@ -102,12 +103,26 @@ view ellieLinkConfig state =
         [ Heading.plaintext "Non-interactive examples"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
+    , Button.button "Measure & render"
+        [ Button.onClick GetMeasurements
+        , Button.small
+        , Button.secondary
+        , Button.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
+    , Text.caption
+        [ Text.plaintext "Click \"Measure & render\" to reposition the noninteractive examples' labels and question boxes to avoid overlaps given the current viewport."
+        , Text.css [ Css.marginBottom Spacing.verticalSpacerPx |> Css.important ]
+        ]
     , viewExamplesTable state
     ]
 
 
 viewExamplesTable : State -> Html Msg
 viewExamplesTable state =
+    let
+        offsets =
+            Block.getLabelPositions state.labelMeasurementsById
+    in
     Table.view
         [ Table.string
             { header = "QuestionBox type"
@@ -170,6 +185,8 @@ viewExamplesTable state =
                                 (Block.view
                                     [ Block.plaintext "above his TV"
                                     , Block.label "where"
+                                    , Block.labelId "label-1"
+                                    , Block.labelPosition (Dict.get "label-1" offsets)
                                     , Block.yellow
                                     ]
                                 )
@@ -191,6 +208,8 @@ viewExamplesTable state =
                     [ Block.view
                         [ Block.plaintext "Superman"
                         , Block.label "subject"
+                        , Block.labelId "label-2"
+                        , Block.labelPosition (Dict.get "label-2" offsets)
                         ]
                     , Block.view [ Block.plaintext " " ]
                     , [ QuestionBox.view
@@ -212,11 +231,20 @@ viewExamplesTable state =
                     [ Block.view
                         [ Block.plaintext "Dave"
                         , Block.label "subject"
+                        , Block.labelId "label-3"
+                        , Block.labelPosition (Dict.get "label-3" offsets)
                         , Block.yellow
                         ]
                     , Block.view [ Block.plaintext " " ]
                     , [ QuestionBox.view
-                            [ QuestionBox.pointingTo (Block.view [ Block.label "verb", Block.cyan ])
+                            [ QuestionBox.pointingTo
+                                (Block.view
+                                    [ Block.label "verb"
+                                    , Block.labelId "label-4"
+                                    , Block.labelPosition (Dict.get "label-4" offsets)
+                                    , Block.cyan
+                                    ]
+                                )
                             , QuestionBox.markdown "What did he do?"
                             , QuestionBox.actions
                                 [ { label = "scared", onClick = NoOp }
@@ -236,6 +264,8 @@ viewExamplesTable state =
                             [ QuestionBox.pointingTo
                                 (Block.view
                                     [ Block.label "verb"
+                                    , Block.labelId "label-5"
+                                    , Block.labelPosition (Dict.get "label-5" offsets)
                                     , Block.cyan
                                     , Block.content (Block.phrase "Dave " ++ [ Block.blank ])
                                     ]
@@ -280,12 +310,19 @@ anchorId =
 init : State
 init =
     { attributes = initAttributes
+    , labelMeasurementsById = Dict.empty
     }
 
 
 {-| -}
 type alias State =
     { attributes : Control (List ( String, QuestionBox.Attribute Msg ))
+    , labelMeasurementsById :
+        Dict
+            String
+            { label : Element
+            , labelContent : Element
+            }
     }
 
 
@@ -386,6 +423,15 @@ initialMarkdown =
 type Msg
     = UpdateControls (Control (List ( String, QuestionBox.Attribute Msg )))
     | NoOp
+    | GetMeasurements
+    | GotBlockLabelMeasurements
+        String
+        (Result
+            Dom.Error
+            { label : Element
+            , labelContent : Element
+            }
+        )
 
 
 {-| -}
@@ -397,3 +443,35 @@ update msg state =
 
         NoOp ->
             ( state, Cmd.none )
+
+        GetMeasurements ->
+            ( state
+            , Cmd.batch
+                (List.map measureBlockLabels
+                    [ "label-1"
+                    , "label-2"
+                    , "label-3"
+                    , "label-4"
+                    , "label-5"
+                    ]
+                )
+            )
+
+        GotBlockLabelMeasurements id (Ok measurement) ->
+            ( { state | labelMeasurementsById = Dict.insert id measurement state.labelMeasurementsById }
+            , Cmd.none
+            )
+
+        GotBlockLabelMeasurements _ (Err _) ->
+            ( state
+            , -- in a real application, log an error
+              Cmd.none
+            )
+
+
+measureBlockLabels : String -> Cmd Msg
+measureBlockLabels labelId =
+    Task.map2 (\label labelContent -> { label = label, labelContent = labelContent })
+        (Dom.getElement labelId)
+        (Dom.getElement (Block.labelContentId labelId))
+        |> Task.attempt (GotBlockLabelMeasurements labelId)
