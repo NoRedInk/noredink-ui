@@ -254,6 +254,7 @@ parseString : String -> List Content
 parseString =
     String.split " "
         >> List.intersperse " "
+        >> List.filter (\str -> str /= "")
         >> List.map String_
 
 
