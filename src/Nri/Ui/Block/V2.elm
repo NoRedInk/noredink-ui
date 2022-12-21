@@ -1,7 +1,8 @@
 module Nri.Ui.Block.V2 exposing
     ( view, Attribute
     , plaintext, content
-    , Content, phrase, blank
+    , Content, phrase
+    , blank, blankWithQuestionBox
     , emphasize
     , label
     , labelId, labelContentId
@@ -20,7 +21,8 @@ module Nri.Ui.Block.V2 exposing
 ## Content
 
 @docs plaintext, content
-@docs Content, phrase, blank
+@docs Content, phrase
+@docs blank, blankWithQuestionBox
 
 
 ## Content customization
@@ -231,7 +233,7 @@ groupWithSort sortBy groupBy =
 {-| -}
 type Content msg
     = String_ String
-    | Blank
+    | Blank (List (QuestionBox.Attribute msg))
     | FullHeightBlank
 
 
@@ -267,12 +269,12 @@ renderContent config content_ markStyles =
             String_ str ->
                 [ text str ]
 
-            Blank ->
+            Blank questionBoxAttributes ->
                 [ viewBlank
                     [ Css.lineHeight (Css.int 1)
                     ]
                     { class = Nothing }
-                    []
+                    questionBoxAttributes
                 ]
 
             FullHeightBlank ->
@@ -297,6 +299,13 @@ phrase =
 -}
 blank : Content msg
 blank =
+    Blank []
+
+
+{-| You will only need to use this helper if you're also using `content` to construct a more complex Block. For a less complex blank Block, don't include content or plaintext in the list of attributes.
+-}
+blankWithQuestionBox : List (QuestionBox.Attribute msg) -> Content msg
+blankWithQuestionBox =
     Blank
 
 

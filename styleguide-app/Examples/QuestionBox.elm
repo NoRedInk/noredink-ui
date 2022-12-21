@@ -366,13 +366,16 @@ view ellieLinkConfig state =
                         [ Block.view
                             [ Block.emphasize
                             , Block.cyan
-                            , Block.content (Block.phrase "Moana " ++ [ Block.blank ])
+                            , Block.content
+                                (Block.phrase "Moana "
+                                    ++ [ Block.blankWithQuestionBox
+                                            [ QuestionBox.id "question-box-7"
+                                            , QuestionBox.pointingTo (Dict.get "question-box-7" state.questionBoxMeasurementsById)
+                                            , QuestionBox.markdown "Pointing at the blank"
+                                            ]
+                                       ]
+                                )
                             , Block.bottomSpacingPx (getBottomSpacingFor "question-box-7")
-                            , Block.withQuestionBox
-                                [ QuestionBox.id "question-box-7"
-                                , QuestionBox.pointingTo (Dict.get "question-box-7" state.questionBoxMeasurementsById)
-                                , QuestionBox.markdown "Pointing at the blank"
-                                ]
                             ]
                         ]
                     ]
