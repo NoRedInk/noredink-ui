@@ -6,6 +6,7 @@ module Nri.Ui.Block.V2 exposing
     , label
     , labelId, labelContentId
     , LabelPosition, getLabelPositions, labelPosition
+    , bottomSpacingPx
     , yellow, cyan, magenta, green, blue, purple, brown
     , class
     )
@@ -26,7 +27,7 @@ module Nri.Ui.Block.V2 exposing
 @docs emphasize
 
 
-## Labels
+## Labels & positioning
 
 @docs label
 
@@ -34,6 +35,8 @@ You will need these helpers if you want to prevent label overlaps. (Which is to 
 
 @docs labelId, labelContentId
 @docs LabelPosition, getLabelPositions, labelPosition
+
+@docs bottomSpacingPx
 
 
 ### Visual customization
@@ -123,6 +126,13 @@ type alias LabelPosition =
 labelPosition : Maybe LabelPosition -> Attribute
 labelPosition offset =
     Attribute <| \config -> { config | labelPosition = offset }
+
+
+{-| When using a `QuestionBox` that is `pointingTo` a block, you may want to add bottom spacing to the block in order to avoid having the QuestionBox cover meaningful content.
+-}
+bottomSpacingPx : Maybe Float -> Attribute
+bottomSpacingPx offset =
+    Attribute <| \config -> { config | bottomSpacingPx = offset }
 
 
 {-| -}
@@ -467,6 +477,7 @@ defaultConfig =
     , theme = Yellow
     , emphasize = False
     , class = Nothing
+    , bottomSpacingPx = Nothing
     }
 
 
@@ -478,6 +489,7 @@ type alias Config =
     , theme : Theme
     , emphasize : Bool
     , class : Maybe String
+    , bottomSpacingPx : Maybe Float
     }
 
 
