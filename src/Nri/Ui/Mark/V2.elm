@@ -331,6 +331,7 @@ viewBalloon config label =
 
                 Nothing ->
                     Css.batch []
+            , Css.border3 (Css.px 2) Css.solid Colors.greenDark
             ]
         , Balloon.css
             [ Css.padding3 Css.zero (Css.px 6) (Css.px 1)
