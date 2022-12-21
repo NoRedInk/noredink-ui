@@ -133,7 +133,7 @@ view ellieLinkConfig state =
                         ]
                     )
                     (Dict.get "left-viewport-question-box-example" state.questionBoxMeasurementsById)
-                , QuestionBox.markdown "Is ”the“ an article?"
+                , QuestionBox.markdown "Articles are important to get right! Is “the” an article?"
                 , QuestionBox.actions
                     [ { label = "Yes", onClick = NoOp }
                     , { label = "No", onClick = NoOp }
@@ -161,6 +161,29 @@ view ellieLinkConfig state =
             , Block.labelId "warning-label-id"
             , Block.labelPosition (Dict.get "warning-label-id" offsets)
             ]
+        ]
+    , inParagraph
+        [ Block.view [ Block.plaintext "You also need to be careful with content that can get cut off on the right side of the viewport" ]
+        , [ QuestionBox.view
+                [ QuestionBox.id "right-viewport-question-box-example"
+                , QuestionBox.pointingTo
+                    (Block.view
+                        [ Block.plaintext "!"
+                        , Block.label "warning"
+                        , Block.brown
+                        , Block.labelId "warning-2-label-id"
+                        , Block.labelPosition (Dict.get "warning-2-label-id" offsets)
+                        , Block.bottomSpacingPx (getBottomSpacingFor "right-viewport-question-box-example")
+                        ]
+                    )
+                    (Dict.get "right-viewport-question-box-example" state.questionBoxMeasurementsById)
+                , QuestionBox.markdown "Were you careful? It's important to be careful!"
+                , QuestionBox.actions
+                    [ { label = "Yes", onClick = NoOp }
+                    , { label = "No", onClick = NoOp }
+                    ]
+                ]
+          ]
         ]
     , Table.view
         [ Table.string
@@ -521,6 +544,7 @@ update msg state =
                     , "article-label-id"
                     , "tricky-label-id"
                     , "warning-label-id"
+                    , "warning-2-label-id"
                     ]
                     ++ List.map measureQuestionBox
                         [ "question-box-1"
@@ -529,6 +553,7 @@ update msg state =
                         , "question-box-4"
                         , "question-box-5"
                         , "left-viewport-question-box-example"
+                        , "right-viewport-question-box-example"
                         ]
                 )
             )
