@@ -361,16 +361,15 @@ view ellieLinkConfig state =
     ]
 
 
-inParagraph : List (List (Html msg)) -> Html msg
+inParagraph : List (Html msg) -> Html msg
 inParagraph =
-    List.concat
-        >> p
-            [ css
-                [ Css.margin2 Spacing.verticalSpacerPx Css.zero
-                , Fonts.quizFont
-                , Css.fontSize (Css.px 30)
-                ]
+    p
+        [ css
+            [ Css.margin2 Spacing.verticalSpacerPx Css.zero
+            , Fonts.quizFont
+            , Css.fontSize (Css.px 30)
             ]
+        ]
 
 
 interactiveExampleId : String

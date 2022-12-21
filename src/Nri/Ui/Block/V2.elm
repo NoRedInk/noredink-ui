@@ -75,7 +75,7 @@ import Position exposing (xOffsetPx)
     Block.view [ Block.plaintext "Hello, world!" ]
 
 -}
-view : List (Attribute msg) -> List (Html msg)
+view : List (Attribute msg) -> Html msg
 view attributes =
     attributes
         |> List.foldl (\(Attribute attribute) b -> attribute b) defaultConfig
@@ -101,7 +101,7 @@ plaintext content_ =
         ]
 
 -}
-content : List Content -> Attribute msg
+content : List (Content msg) -> Attribute msg
 content content_ =
     Attribute <| \config -> { config | content = content_ }
 
@@ -229,13 +229,13 @@ groupWithSort sortBy groupBy =
 
 
 {-| -}
-type Content
+type Content msg
     = String_ String
     | Blank
     | FullHeightBlank
 
 
-parseString : String -> List Content
+parseString : String -> List (Content msg)
 parseString =
     String.split " "
         >> List.intersperse " "
@@ -245,7 +245,7 @@ parseString =
 
 renderContent :
     { config | class : Maybe String, bottomSpacingPx : Maybe Float }
-    -> Content
+    -> Content msg
     -> List Css.Style
     -> Html msg
 renderContent config content_ markStyles =
@@ -259,7 +259,7 @@ renderContent config content_ markStyles =
                     Css.batch []
     in
     span
-        [ css (Css.whiteSpace Css.preWrap :: marginBottom :: markStyles)
+        [ css (Css.whiteSpace Css.preWrap :: Css.display Css.inlineBlock :: marginBottom :: markStyles)
         , nriDescription "block-segment-container"
         , AttributesExtra.maybe Attributes.class config.class
         ]
@@ -268,7 +268,12 @@ renderContent config content_ markStyles =
                 [ text str ]
 
             Blank ->
-                [ viewBlank [ Css.lineHeight (Css.int 1) ] { class = Nothing } Nothing ]
+                [ viewBlank
+                    [ Css.lineHeight (Css.int 1)
+                    ]
+                    { class = Nothing }
+                    []
+                ]
 
             FullHeightBlank ->
                 [ viewBlank
@@ -277,20 +282,20 @@ renderContent config content_ markStyles =
                     , Css.lineHeight Css.initial
                     ]
                     { class = Nothing }
-                    Nothing
+                    []
                 ]
         )
 
 
 {-| -}
-phrase : String -> List Content
+phrase : String -> List (Content msg)
 phrase =
     parseString
 
 
 {-| You will only need to use this helper if you're also using `content` to construct a more complex Block. For a less complex blank Block, don't include content or plaintext in the list of attributes.
 -}
-blank : Content
+blank : Content msg
 blank =
     Blank
 
@@ -489,7 +494,7 @@ defaultConfig =
 
 
 type alias Config msg =
-    { content : List Content
+    { content : List (Content msg)
     , label : Maybe String
     , labelId : Maybe String
     , labelPosition : Maybe LabelPosition
@@ -501,7 +506,7 @@ type alias Config msg =
     }
 
 
-render : Config msg -> List (Html msg)
+render : Config msg -> Html msg
 render config =
     let
         palette =
@@ -509,53 +514,59 @@ render config =
 
         maybeMark =
             toMark config palette
-
-        maybeQuestionBox : Maybe (Html msg)
-        maybeQuestionBox =
-            case config.questionBox of
-                [] ->
-                    Nothing
-
-                _ ->
-                    Just (QuestionBox.view config.questionBox)
     in
-    case config.content of
-        [] ->
-            Mark.viewWithBalloonTags
-                { renderSegment = renderContent config
-                , backgroundColor = palette.backgroundColor
-                , maybeMarker =
-                    case maybeMark of
-                        Just _ ->
-                            Just
-                                { name = config.label
-                                , startStyles = []
-                                , styles = []
-                                , endStyles = []
-                                }
+    span
+        [ css [ Css.position Css.relative ] ]
+        ((case config.content of
+            [] ->
+                Mark.viewWithBalloonTags
+                    { renderSegment = renderContent config
+                    , backgroundColor = palette.backgroundColor
+                    , maybeMarker =
+                        case maybeMark of
+                            Just _ ->
+                                Just
+                                    { name = config.label
+                                    , startStyles = []
+                                    , styles = []
+                                    , endStyles = []
+                                    }
 
-                        Nothing ->
-                            Nothing
-                , labelPosition = config.labelPosition
-                , labelId = config.labelId
-                , labelContentId = Maybe.map labelContentId config.labelId
-                }
-                [ FullHeightBlank ]
+                            Nothing ->
+                                Nothing
+                    , labelPosition = config.labelPosition
+                    , labelId = config.labelId
+                    , labelContentId = Maybe.map labelContentId config.labelId
+                    }
+                    [ FullHeightBlank ]
 
-        _ ->
-            Mark.viewWithBalloonTags
-                { renderSegment = renderContent config
-                , backgroundColor = palette.backgroundColor
-                , maybeMarker = maybeMark
-                , labelPosition = config.labelPosition
-                , labelId = config.labelId
-                , labelContentId = Maybe.map labelContentId config.labelId
-                }
-                config.content
+            _ ->
+                Mark.viewWithBalloonTags
+                    { renderSegment = renderContent config
+                    , backgroundColor = palette.backgroundColor
+                    , maybeMarker = maybeMark
+                    , labelPosition = config.labelPosition
+                    , labelId = config.labelId
+                    , labelContentId = Maybe.map labelContentId config.labelId
+                    }
+                    config.content
+         )
+            ++ (case config.questionBox of
+                    [] ->
+                        []
+
+                    _ ->
+                        [ QuestionBox.view config.questionBox ]
+               )
+        )
 
 
-viewBlank : List Css.Style -> { config | class : Maybe String } -> Maybe (Html msg) -> Html msg
-viewBlank styles config maybeQuestionBox =
+viewBlank :
+    List Css.Style
+    -> { config | class : Maybe String }
+    -> List (QuestionBox.Attribute msg)
+    -> Html msg
+viewBlank styles config questionBoxAttributes =
     span
         [ css
             [ Css.border3 (Css.px 2) Css.dashed Colors.navy
@@ -567,19 +578,22 @@ viewBlank styles config maybeQuestionBox =
             , Css.minWidth (Css.px 80)
             , Css.display Css.inlineBlock
             , Css.borderRadius (Css.px 4)
-            , Maybe.map (\_ -> Css.position Css.relative) maybeQuestionBox
-                |> Maybe.withDefault (Css.batch [])
+            , if questionBoxAttributes == [] then
+                Css.batch []
+
+              else
+                Css.position Css.relative
             , Css.batch styles
             ]
         , AttributesExtra.maybe Attributes.class config.class
         ]
-        (case maybeQuestionBox of
-            Just questionBox ->
+        (case questionBoxAttributes of
+            x :: _ ->
                 [ blankString
-                , questionBox
+                , QuestionBox.view questionBoxAttributes
                 ]
 
-            Nothing ->
+            [] ->
                 [ blankString ]
         )
 
