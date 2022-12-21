@@ -521,38 +521,26 @@ render config =
     in
     case config.content of
         [] ->
-            case maybeMark of
-                Just mark ->
-                    Mark.viewWithBalloonTags
-                        { renderSegment = renderContent config
-                        , backgroundColor = palette.backgroundColor
-                        , maybeMarker =
+            Mark.viewWithBalloonTags
+                { renderSegment = renderContent config
+                , backgroundColor = palette.backgroundColor
+                , maybeMarker =
+                    case maybeMark of
+                        Just _ ->
                             Just
                                 { name = config.label
                                 , startStyles = []
                                 , styles = []
                                 , endStyles = []
                                 }
-                        , labelPosition = config.labelPosition
-                        , labelId = config.labelId
-                        , labelContentId = Maybe.map labelContentId config.labelId
-                        }
-                        [ FullHeightBlank ]
 
-                Nothing ->
-                    [ viewBlank
-                        [ Css.paddingTop topBottomSpace
-                        , Css.paddingBottom topBottomSpace
-                        , case config.bottomSpacingPx of
-                            Just by ->
-                                Css.marginBottom (Css.px by)
-
-                            Nothing ->
-                                Css.batch []
-                        ]
-                        config
-                        maybeQuestionBox
-                    ]
+                        Nothing ->
+                            Nothing
+                , labelPosition = config.labelPosition
+                , labelId = config.labelId
+                , labelContentId = Maybe.map labelContentId config.labelId
+                }
+                [ FullHeightBlank ]
 
         _ ->
             Mark.viewWithBalloonTags
