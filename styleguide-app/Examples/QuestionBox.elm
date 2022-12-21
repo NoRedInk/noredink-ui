@@ -335,26 +335,46 @@ view ellieLinkConfig state =
         , { pattern = "pointingTo"
           , shownWith = "Blank with emphasis block"
           , example =
-                inParagraph
-                    [ Block.view
-                        [ Block.label "subject & verb"
-                        , Block.labelId "label-5"
-                        , Block.labelPosition (Dict.get "label-5" offsets)
-                        , Block.cyan
-                        , Block.content (Block.phrase "Dave " ++ [ Block.blank ])
-                        , Block.bottomSpacingPx (getBottomSpacingFor "question-box-5")
-                        , Block.withQuestionBox
-                            [ QuestionBox.id "question-box-5"
-                            , QuestionBox.pointingTo (Dict.get "question-box-5" state.questionBoxMeasurementsById)
-                            , QuestionBox.markdown "What did he do?"
-                            , QuestionBox.actions
-                                [ { label = "scared", onClick = NoOp }
-                                , { label = "scarred", onClick = NoOp }
-                                , { label = "scarified", onClick = NoOp }
+                div []
+                    [ inParagraph
+                        [ Block.view
+                            [ Block.emphasize
+                            , Block.cyan
+                            , Block.content (Block.phrase "Moana " ++ [ Block.blank ])
+                            , Block.bottomSpacingPx (getBottomSpacingFor "question-box-5")
+                            , Block.withQuestionBox
+                                [ QuestionBox.id "question-box-5"
+                                , QuestionBox.pointingTo (Dict.get "question-box-5" state.questionBoxMeasurementsById)
+                                , QuestionBox.markdown "Pointing at the entire emphasis"
                                 ]
                             ]
                         ]
-                    , Block.view [ Block.plaintext " his replacement cousin coming out of his room wearing a gorilla mask." ]
+                    , inParagraph
+                        [ Block.view
+                            [ Block.emphasize
+                            , Block.cyan
+                            , Block.content (Block.phrase "Moana " ++ [ Block.blank ])
+                            , Block.bottomSpacingPx (getBottomSpacingFor "question-box-6")
+                            , Block.withQuestionBox
+                                [ QuestionBox.id "question-box-6"
+                                , QuestionBox.pointingTo (Dict.get "question-box-6" state.questionBoxMeasurementsById)
+                                , QuestionBox.markdown "Pointing at first word"
+                                ]
+                            ]
+                        ]
+                    , inParagraph
+                        [ Block.view
+                            [ Block.emphasize
+                            , Block.cyan
+                            , Block.content (Block.phrase "Moana " ++ [ Block.blank ])
+                            , Block.bottomSpacingPx (getBottomSpacingFor "question-box-7")
+                            , Block.withQuestionBox
+                                [ QuestionBox.id "question-box-7"
+                                , QuestionBox.pointingTo (Dict.get "question-box-7" state.questionBoxMeasurementsById)
+                                , QuestionBox.markdown "Pointing at the blank"
+                                ]
+                            ]
+                        ]
                     ]
           }
         ]
@@ -515,7 +535,6 @@ update msg state =
                     , "label-2"
                     , "label-3"
                     , "label-4"
-                    , "label-5"
                     , "article-label-id"
                     , "tricky-label-id"
                     , "warning-label-id"
@@ -527,6 +546,8 @@ update msg state =
                         , "question-box-3"
                         , "question-box-4"
                         , "question-box-5"
+                        , "question-box-6"
+                        , "question-box-7"
                         , "left-viewport-question-box-example"
                         , "right-viewport-question-box-example"
                         ]
