@@ -353,13 +353,15 @@ view ellieLinkConfig state =
                         [ Block.view
                             [ Block.emphasize
                             , Block.cyan
-                            , Block.content (Block.phrase "Moana " ++ [ Block.blank ])
+                            , Block.content
+                                (Block.wordWithQuestionBox "Moana"
+                                    [ QuestionBox.id "question-box-6"
+                                    , QuestionBox.pointingTo (Dict.get "question-box-6" state.questionBoxMeasurementsById)
+                                    , QuestionBox.markdown "Pointing at first word"
+                                    ]
+                                    :: [ Block.space, Block.blank ]
+                                )
                             , Block.bottomSpacingPx (getBottomSpacingFor "question-box-6")
-                            , Block.withQuestionBox
-                                [ QuestionBox.id "question-box-6"
-                                , QuestionBox.pointingTo (Dict.get "question-box-6" state.questionBoxMeasurementsById)
-                                , QuestionBox.markdown "Pointing at first word"
-                                ]
                             ]
                         ]
                     , inParagraph

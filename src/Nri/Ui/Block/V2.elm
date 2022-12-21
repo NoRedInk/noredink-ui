@@ -1,7 +1,9 @@
 module Nri.Ui.Block.V2 exposing
     ( view, Attribute
-    , plaintext, content
-    , Content, phrase
+    , plaintext
+    , Content, content
+    , phrase, wordWithQuestionBox
+    , space
     , blank, blankWithQuestionBox
     , emphasize
     , label
@@ -20,8 +22,10 @@ module Nri.Ui.Block.V2 exposing
 
 ## Content
 
-@docs plaintext, content
-@docs Content, phrase
+@docs plaintext
+@docs Content, content
+@docs phrase, wordWithQuestionBox
+@docs space
 @docs blank, blankWithQuestionBox
 
 
@@ -232,7 +236,7 @@ groupWithSort sortBy groupBy =
 
 {-| -}
 type Content msg
-    = String_ String
+    = Word (List (QuestionBox.Attribute msg)) String
     | Blank (List (QuestionBox.Attribute msg))
     | FullHeightBlank
 
@@ -242,7 +246,7 @@ parseString =
     String.split " "
         >> List.intersperse " "
         >> List.filter (\str -> str /= "")
-        >> List.map String_
+        >> List.map (Word [])
 
 
 renderContent :
@@ -261,13 +265,24 @@ renderContent config content_ markStyles =
                     Css.batch []
     in
     span
-        [ css (Css.whiteSpace Css.preWrap :: Css.display Css.inlineBlock :: marginBottom :: markStyles)
+        [ css
+            (Css.whiteSpace Css.preWrap
+                :: Css.display Css.inlineBlock
+                :: Css.position Css.relative
+                :: marginBottom
+                :: markStyles
+            )
         , nriDescription "block-segment-container"
         , AttributesExtra.maybe Attributes.class config.class
         ]
         (case content_ of
-            String_ str ->
+            Word [] str ->
                 [ text str ]
+
+            Word questionBoxAttributes str ->
+                [ text str
+                , QuestionBox.view questionBoxAttributes
+                ]
 
             Blank questionBoxAttributes ->
                 [ viewBlank
@@ -293,6 +308,18 @@ renderContent config content_ markStyles =
 phrase : String -> List (Content msg)
 phrase =
     parseString
+
+
+{-| -}
+space : Content msg
+space =
+    Word [] " "
+
+
+{-| -}
+wordWithQuestionBox : String -> List (QuestionBox.Attribute msg) -> Content msg
+wordWithQuestionBox str attrs =
+    Word attrs str
 
 
 {-| You will only need to use this helper if you're also using `content` to construct a more complex Block. For a less complex blank Block, don't include content or plaintext in the list of attributes.
