@@ -358,10 +358,33 @@ type alias Palette =
     { backgroundColor : Color, borderColor : Color }
 
 
-toMark : { config | emphasize : Bool, label : Maybe String } -> Palette -> Maybe Mark
+toMark :
+    { config
+        | emphasize : Bool
+        , label : Maybe String
+        , content : List (Content msg)
+    }
+    -> Palette
+    -> Maybe Mark
 toMark config { backgroundColor, borderColor } =
-    case ( config.label, config.emphasize ) of
-        ( _, True ) ->
+    case ( config.label, config.content, config.emphasize ) of
+        ( Just l, FullHeightBlank :: [], _ ) ->
+            Just
+                { name = Just l
+                , startStyles = []
+                , styles = []
+                , endStyles = []
+                }
+
+        ( Just l, _, False ) ->
+            Just
+                { name = Just l
+                , startStyles = []
+                , styles = []
+                , endStyles = []
+                }
+
+        ( _, _, True ) ->
             let
                 borderWidth =
                     Css.px 1
@@ -393,15 +416,7 @@ toMark config { backgroundColor, borderColor } =
                     ]
                 }
 
-        ( Just l, False ) ->
-            Just
-                { name = Just l
-                , startStyles = []
-                , styles = []
-                , endStyles = []
-                }
-
-        ( Nothing, False ) ->
+        ( Nothing, _, False ) ->
             Nothing
 
 
@@ -481,7 +496,7 @@ type Attribute msg
 
 defaultConfig : Config msg
 defaultConfig =
-    { content = []
+    { content = [ FullHeightBlank ]
     , label = Nothing
     , labelId = Nothing
     , labelPosition = Nothing
@@ -517,40 +532,15 @@ render config =
     in
     span
         [ css [ Css.position Css.relative ] ]
-        ((case config.content of
-            [] ->
-                Mark.viewWithBalloonTags
-                    { renderSegment = renderContent config
-                    , backgroundColor = palette.backgroundColor
-                    , maybeMarker =
-                        case maybeMark of
-                            Just _ ->
-                                Just
-                                    { name = config.label
-                                    , startStyles = []
-                                    , styles = []
-                                    , endStyles = []
-                                    }
-
-                            Nothing ->
-                                Nothing
-                    , labelPosition = config.labelPosition
-                    , labelId = config.labelId
-                    , labelContentId = Maybe.map labelContentId config.labelId
-                    }
-                    [ FullHeightBlank ]
-
-            _ ->
-                Mark.viewWithBalloonTags
-                    { renderSegment = renderContent config
-                    , backgroundColor = palette.backgroundColor
-                    , maybeMarker = maybeMark
-                    , labelPosition = config.labelPosition
-                    , labelId = config.labelId
-                    , labelContentId = Maybe.map labelContentId config.labelId
-                    }
-                    config.content
-         )
+        (Mark.viewWithBalloonTags
+            { renderSegment = renderContent config
+            , backgroundColor = palette.backgroundColor
+            , maybeMarker = maybeMark
+            , labelPosition = config.labelPosition
+            , labelId = config.labelId
+            , labelContentId = Maybe.map labelContentId config.labelId
+            }
+            config.content
             ++ (case config.questionBox of
                     [] ->
                         []
