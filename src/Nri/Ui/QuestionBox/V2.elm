@@ -15,6 +15,7 @@ module Nri.Ui.QuestionBox.V2 exposing
 
 -}
 
+import Browser.Dom exposing (Element)
 import Css
 import Css.Global
 import Html.Styled exposing (..)
@@ -25,6 +26,7 @@ import Nri.Ui.CharacterIcon.V1 as CharacterIcon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Position exposing (xOffsetPx)
 
 
 {-| -}
@@ -90,7 +92,7 @@ setType type_ =
 
 type QuestionBoxType msg
     = Standalone
-    | PointingTo (List (Html msg))
+    | PointingTo (List (Html msg)) (Maybe Element)
 
 
 {-| This is the default type of question box. It doesn't have a programmatic or direct visual relationship to any piece of content.
@@ -104,10 +106,12 @@ standalone =
 
 Typically, you would use this type of `QuestionBox` type with a `Block`.
 
+You will need to pass a measurement, taken using Dom.Browser, in order for the question box to be positioned correctly horizontally so that it doesn't get cut off by the viewport.
+
 -}
-pointingTo : List (Html msg) -> Attribute msg
-pointingTo =
-    setType << PointingTo
+pointingTo : List (Html msg) -> Maybe Element -> Attribute msg
+pointingTo content element =
+    setType (PointingTo content element)
 
 
 {-|
@@ -127,8 +131,8 @@ view attributes =
         Standalone ->
             viewStandalone config
 
-        PointingTo content ->
-            viewPointingTo config content
+        PointingTo content element ->
+            viewPointingTo config content element
 
 
 {-| -}
@@ -146,29 +150,47 @@ viewStandalone config =
 
 
 {-| -}
-viewPointingTo : Config msg -> List (Html msg) -> Html msg
-viewPointingTo config content =
+viewPointingTo : Config msg -> List (Html msg) -> Maybe Element -> Html msg
+viewPointingTo config content element =
+    let
+        xOffset =
+            Maybe.map xOffsetPx element
+                |> Maybe.withDefault 0
+    in
     span
-        [ css (Css.position Css.relative :: config.containerCss)
+        [ css [ Css.position Css.relative ]
         , nriDescription "pointing-to-container"
         ]
         (List.append
             content
-            [ div
-                [ AttributesExtra.maybe Attributes.id config.id
-                , css
+            [ viewBalloon config
+                [ Balloon.onBottom
+                , Balloon.nriDescription "pointing-to-balloon"
+                , case config.id of
+                    Just id_ ->
+                        Balloon.id id_
+
+                    Nothing ->
+                        Balloon.css []
+                , Balloon.containerCss
                     [ Css.position Css.absolute
                     , Css.top (Css.pct 100)
                     , Css.left (Css.pct 50)
-                    , Css.transform (Css.translateX (Css.pct -50))
+                    , Css.transforms
+                        [ Css.translateX (Css.pct -50)
+                        , Css.translateY (Css.px 8)
+                        ]
                     , Css.minWidth (Css.px 300)
                     , Css.textAlign Css.center
+                    , Css.batch config.containerCss
                     ]
-                ]
-                [ viewBalloon config
-                    [ Balloon.onBottom
-                    , Balloon.nriDescription "pointing-to-balloon"
-                    ]
+                , Balloon.css <|
+                    if xOffset /= 0 then
+                        [ Css.property "transform" ("translateX(" ++ String.fromFloat xOffset ++ "px)")
+                        ]
+
+                    else
+                        []
                 ]
             ]
         )

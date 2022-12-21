@@ -60,6 +60,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
 import Nri.Ui.Mark.V2 as Mark exposing (Mark)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Position exposing (xOffsetPx)
 
 
 {-|
@@ -176,7 +177,7 @@ getLabelPositions labelMeasurementsById =
                               , { totalHeight = height + e.labelContent.element.height
                                 , arrowHeight = height
                                 , zIndex = maxRowIndex - index
-                                , xOffset = xOffset e.label
+                                , xOffset = xOffsetPx e.label
                                 }
                               )
                                 :: acc
@@ -204,7 +205,7 @@ splitByOverlaps =
             -- consider the elements from left to right
             (groupWithSort (\( _, a ) -> a.label.element.x)
                 (\( _, a ) ( _, b ) ->
-                    (a.label.element.x + xOffset a.label + a.label.element.width) >= (b.label.element.x + xOffset b.label)
+                    (a.label.element.x + xOffsetPx a.label + a.label.element.width) >= (b.label.element.x + xOffsetPx b.label)
                 )
             )
 
@@ -214,29 +215,6 @@ groupWithSort sortBy groupBy =
     List.sortBy sortBy
         >> List.Extra.groupWhile groupBy
         >> List.map (\( first, rem ) -> first :: rem)
-
-
-xOffset : Dom.Element -> Float
-xOffset { element, viewport } =
-    let
-        xMax =
-            viewport.x + viewport.width
-    in
-    -- if the element is cut off by the viewport on the left side,
-    -- we need to adjust rightward by the cut-off amount
-    if element.x < viewport.x then
-        viewport.x - element.x
-
-    else
-    -- if the element is cut off by the viewport on the right side,
-    -- we need to adjust leftward by the cut-off amount
-    if
-        xMax < (element.x + element.width)
-    then
-        xMax - (element.x + element.width)
-
-    else
-        0
 
 
 

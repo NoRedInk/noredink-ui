@@ -11,6 +11,7 @@ import Category exposing (Category(..))
 import Code
 import CommonControls
 import Css
+import Css.Global
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
@@ -66,8 +67,18 @@ view ellieLinkConfig state =
             , QuestionBox.id interactiveExampleId
             )
                 :: Control.currentValue state.attributes
+
+        offsets =
+            Block.getLabelPositions state.labelMeasurementsById
+
+        getBottomSpacingFor id =
+            Dict.get id state.questionBoxMeasurementsById
+                |> Maybe.map (.element >> .height)
     in
-    [ ControlView.view
+    [ -- absolutely positioned elements that overflow in the x direction
+      -- cause a horizontal scrollbar unless you explicitly hide overflowing x content
+      Css.Global.global [ Css.Global.selector "body" [ Css.overflowX Css.hidden ] ]
+    , ControlView.view
         { ellieLinkConfig = ellieLinkConfig
         , name = moduleName
         , version = version
@@ -110,23 +121,75 @@ view ellieLinkConfig state =
         ]
     , Text.caption
         [ Text.plaintext "Click \"Measure & render\" to reposition the noninteractive examples' labels and question boxes to avoid overlaps given the current viewport."
-        , Text.css [ Css.marginBottom Spacing.verticalSpacerPx |> Css.important ]
+        , Text.css [ Css.marginBottom (Css.px 80) |> Css.important ]
         ]
-    , viewExamplesTable state
-    ]
-
-
-viewExamplesTable : State -> Html Msg
-viewExamplesTable state =
-    let
-        offsets =
-            Block.getLabelPositions state.labelMeasurementsById
-
-        getBottomSpacingFor id =
-            Dict.get id state.questionBoxMeasurementsById
-                |> Maybe.map (.element >> .height)
-    in
-    Table.view
+    , inParagraph
+        [ [ QuestionBox.view
+                [ QuestionBox.id "left-viewport-question-box-example"
+                , QuestionBox.pointingTo
+                    (Block.view
+                        [ Block.plaintext "A"
+                        , Block.magenta
+                        , Block.label "this is an article. \"An\" is also an article."
+                        , Block.labelId "article-label-id"
+                        , Block.labelPosition (Dict.get "article-label-id" offsets)
+                        , Block.bottomSpacingPx (getBottomSpacingFor "left-viewport-question-box-example")
+                        ]
+                    )
+                    (Dict.get "left-viewport-question-box-example" state.questionBoxMeasurementsById)
+                , QuestionBox.markdown "Articles are important to get right! Is “the” an article?"
+                , QuestionBox.actions
+                    [ { label = "Yes", onClick = NoOp }
+                    , { label = "No", onClick = NoOp }
+                    ]
+                ]
+          ]
+        , Block.view [ Block.plaintext " " ]
+        , Block.view
+            [ Block.plaintext "tricky"
+            , Block.label "this is an adjective"
+            , Block.yellow
+            , Block.labelId "tricky-label-id"
+            , Block.labelPosition (Dict.get "tricky-label-id" offsets)
+            ]
+        , Block.view [ Block.plaintext " " ]
+        , Block.view
+            [ Block.plaintext "example"
+            , Block.cyan
+            ]
+        , Block.view [ Block.plaintext ". Be sure to be " ]
+        , Block.view
+            [ Block.plaintext "careful with content that can get cut off on the left side of the viewport!"
+            , Block.label "warning"
+            , Block.green
+            , Block.labelId "warning-label-id"
+            , Block.labelPosition (Dict.get "warning-label-id" offsets)
+            ]
+        ]
+    , inParagraph
+        [ Block.view [ Block.plaintext "You also need to be careful with content that can get cut off on the right side of the viewport" ]
+        , [ QuestionBox.view
+                [ QuestionBox.id "right-viewport-question-box-example"
+                , QuestionBox.pointingTo
+                    (Block.view
+                        [ Block.plaintext "!"
+                        , Block.label "warning"
+                        , Block.brown
+                        , Block.labelId "warning-2-label-id"
+                        , Block.labelPosition (Dict.get "warning-2-label-id" offsets)
+                        , Block.bottomSpacingPx (getBottomSpacingFor "right-viewport-question-box-example")
+                        ]
+                    )
+                    (Dict.get "right-viewport-question-box-example" state.questionBoxMeasurementsById)
+                , QuestionBox.markdown "Were you careful? It's important to be careful!"
+                , QuestionBox.actions
+                    [ { label = "Yes", onClick = NoOp }
+                    , { label = "No", onClick = NoOp }
+                    ]
+                ]
+          ]
+        ]
+    , Table.view
         [ Table.string
             { header = "QuestionBox type"
             , value = .pattern
@@ -177,6 +240,7 @@ viewExamplesTable state =
                                     , Block.bottomSpacingPx (getBottomSpacingFor "question-box-1")
                                     ]
                                 )
+                                (Dict.get "question-box-1" state.questionBoxMeasurementsById)
                             , QuestionBox.markdown "“Above” is a preposition."
                             , QuestionBox.actions [ { label = "Try again", onClick = NoOp } ]
                             ]
@@ -201,6 +265,7 @@ viewExamplesTable state =
                                     , Block.yellow
                                     ]
                                 )
+                                (Dict.get "question-box-2" state.questionBoxMeasurementsById)
                             , QuestionBox.markdown "Which word is the preposition?"
                             , QuestionBox.actions
                                 [ { label = "above", onClick = NoOp }
@@ -230,6 +295,7 @@ viewExamplesTable state =
                                     [ Block.bottomSpacingPx (getBottomSpacingFor "question-box-3")
                                     ]
                                 )
+                                (Dict.get "question-box-3" state.questionBoxMeasurementsById)
                             , QuestionBox.markdown "Which verb matches the subject?"
                             , QuestionBox.actions
                                 [ { label = "wrap", onClick = NoOp }
@@ -263,6 +329,7 @@ viewExamplesTable state =
                                     , Block.cyan
                                     ]
                                 )
+                                (Dict.get "question-box-4" state.questionBoxMeasurementsById)
                             , QuestionBox.markdown "What did he do?"
                             , QuestionBox.actions
                                 [ { label = "scared", onClick = NoOp }
@@ -290,6 +357,7 @@ viewExamplesTable state =
                                     , Block.bottomSpacingPx (getBottomSpacingFor "question-box-5")
                                     ]
                                 )
+                                (Dict.get "question-box-5" state.questionBoxMeasurementsById)
                             , QuestionBox.markdown "What did he do?"
                             , QuestionBox.actions
                                 [ { label = "scared", onClick = NoOp }
@@ -302,6 +370,7 @@ viewExamplesTable state =
                     ]
           }
         ]
+    ]
 
 
 inParagraph : List (List (Html msg)) -> Html msg
@@ -408,7 +477,7 @@ initAttributes =
             )
         |> ControlExtra.optionalListItem "type"
             (CommonControls.choice moduleName
-                [ ( "pointingTo []", QuestionBox.pointingTo [ anchor ] )
+                [ ( "pointingTo [] Nothing", QuestionBox.pointingTo [ anchor ] Nothing )
                 , ( "standalone", QuestionBox.standalone )
                 ]
             )
@@ -476,6 +545,10 @@ update msg state =
                     , "label-3"
                     , "label-4"
                     , "label-5"
+                    , "article-label-id"
+                    , "tricky-label-id"
+                    , "warning-label-id"
+                    , "warning-2-label-id"
                     ]
                     ++ List.map measureQuestionBox
                         [ "question-box-1"
@@ -483,6 +556,8 @@ update msg state =
                         , "question-box-3"
                         , "question-box-4"
                         , "question-box-5"
+                        , "left-viewport-question-box-example"
+                        , "right-viewport-question-box-example"
                         ]
                 )
             )

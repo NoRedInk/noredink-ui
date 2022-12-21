@@ -11,6 +11,7 @@ import Category exposing (Category(..))
 import Code
 import CommonControls
 import Css
+import Css.Global
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
@@ -97,7 +98,10 @@ example =
                 offsets =
                     Block.getLabelPositions state.labelMeasurementsById
             in
-            [ ControlView.view
+            [ -- absolutely positioned elements that overflow in the x direction
+              -- cause a horizontal scrollbar unless you explicitly hide overflowing x content
+              Css.Global.global [ Css.Global.selector "body" [ Css.overflowX Css.hidden ] ]
+            , ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
                 , name = moduleName
                 , version = version
