@@ -222,6 +222,7 @@ viewGuidance withCharacter markdown_ =
                     [ Balloon.markdown markdown_
                     , Balloon.onLeft
                     , Balloon.alignArrowEnd
+                    , Balloon.css [ Css.minHeight (Css.px 46) ]
                     ]
                 ]
 
