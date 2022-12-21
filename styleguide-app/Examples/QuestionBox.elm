@@ -122,6 +122,10 @@ viewExamplesTable state =
     let
         offsets =
             Block.getLabelPositions state.labelMeasurementsById
+
+        getBottomSpacingFor id =
+            Dict.get id state.questionBoxMeasurementsById
+                |> Maybe.map (.element >> .height)
     in
     Table.view
         [ Table.string
@@ -142,7 +146,7 @@ viewExamplesTable state =
             { header = text "Example"
             , view = .example
             , width = Css.pct 50
-            , cellStyles = always [ Css.textAlign Css.center ]
+            , cellStyles = always []
             , sort = Nothing
             }
         ]
@@ -168,7 +172,12 @@ viewExamplesTable state =
                     , [ QuestionBox.view
                             [ QuestionBox.id "question-box-1"
                             , QuestionBox.pointingTo
-                                (Block.view [ Block.plaintext "above", Block.emphasize ])
+                                (Block.view
+                                    [ Block.plaintext "above"
+                                    , Block.emphasize
+                                    , Block.bottomSpacingPx (getBottomSpacingFor "question-box-1")
+                                    ]
+                                )
                             , QuestionBox.markdown "“Above” is a preposition."
                             , QuestionBox.actions [ { label = "Try again", onClick = NoOp } ]
                             ]
@@ -189,6 +198,7 @@ viewExamplesTable state =
                                     , Block.label "where"
                                     , Block.labelId "label-1"
                                     , Block.labelPosition (Dict.get "label-1" offsets)
+                                    , Block.bottomSpacingPx (getBottomSpacingFor "question-box-2")
                                     , Block.yellow
                                     ]
                                 )
@@ -216,7 +226,11 @@ viewExamplesTable state =
                     , Block.view [ Block.plaintext " " ]
                     , [ QuestionBox.view
                             [ QuestionBox.id "question-box-3"
-                            , QuestionBox.pointingTo (Block.view [])
+                            , QuestionBox.pointingTo
+                                (Block.view
+                                    [ Block.bottomSpacingPx (getBottomSpacingFor "question-box-3")
+                                    ]
+                                )
                             , QuestionBox.markdown "Which verb matches the subject?"
                             , QuestionBox.actions
                                 [ { label = "wrap", onClick = NoOp }
@@ -224,7 +238,7 @@ viewExamplesTable state =
                                 ]
                             ]
                       ]
-                    , Block.view [ Block.plaintext "gifts with comic book pages." ]
+                    , Block.view [ Block.plaintext " gifts with comic book pages." ]
                     ]
           }
         , { pattern = "pointingTo"
@@ -246,6 +260,7 @@ viewExamplesTable state =
                                     [ Block.label "verb"
                                     , Block.labelId "label-4"
                                     , Block.labelPosition (Dict.get "label-4" offsets)
+                                    , Block.bottomSpacingPx (getBottomSpacingFor "question-box-4")
                                     , Block.cyan
                                     ]
                                 )
@@ -273,6 +288,7 @@ viewExamplesTable state =
                                     , Block.labelPosition (Dict.get "label-5" offsets)
                                     , Block.cyan
                                     , Block.content (Block.phrase "Dave " ++ [ Block.blank ])
+                                    , Block.bottomSpacingPx (getBottomSpacingFor "question-box-5")
                                     ]
                                 )
                             , QuestionBox.markdown "What did he do?"

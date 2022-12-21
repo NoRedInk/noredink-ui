@@ -267,13 +267,13 @@ renderContent config content_ markStyles =
         marginBottom =
             case config.bottomSpacingPx of
                 Just by ->
-                    Css.marginBottom (Css.px by)
+                    Css.important (Css.marginBottom (Css.px by))
 
                 Nothing ->
                     Css.batch []
     in
     span
-        [ css (Css.whiteSpace Css.preWrap :: marginBottom :: Css.display Css.inlineBlock :: markStyles)
+        [ css (Css.whiteSpace Css.preWrap :: marginBottom :: markStyles)
         , nriDescription "block-segment-container"
         , AttributesExtra.maybe Attributes.class config.class
         ]
