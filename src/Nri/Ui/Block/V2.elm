@@ -277,9 +277,12 @@ renderContent config content_ markStyles =
                 , QuestionBox.view questionBoxAttributes
                 ]
 
+            Blank [] ->
+                [ viewBlank [ Css.lineHeight (Css.int 1) ] ]
+
             Blank questionBoxAttributes ->
                 [ viewBlank [ Css.lineHeight (Css.int 1) ]
-                    questionBoxAttributes
+                , QuestionBox.view questionBoxAttributes
                 ]
 
             FullHeightBlank ->
@@ -288,7 +291,6 @@ renderContent config content_ markStyles =
                     , Css.paddingBottom topBottomSpace
                     , Css.lineHeight Css.initial
                     ]
-                    []
                 ]
         )
 
@@ -568,11 +570,8 @@ render config =
         )
 
 
-viewBlank :
-    List Css.Style
-    -> List (QuestionBox.Attribute msg)
-    -> Html msg
-viewBlank styles questionBoxAttributes =
+viewBlank : List Css.Style -> Html msg
+viewBlank styles =
     span
         [ css
             [ Css.border3 (Css.px 2) Css.dashed Colors.navy
@@ -584,23 +583,10 @@ viewBlank styles questionBoxAttributes =
             , Css.minWidth (Css.px 80)
             , Css.display Css.inlineBlock
             , Css.borderRadius (Css.px 4)
-            , if questionBoxAttributes == [] then
-                Css.batch []
-
-              else
-                Css.position Css.relative
             , Css.batch styles
             ]
         ]
-        (case questionBoxAttributes of
-            x :: _ ->
-                [ blankString
-                , QuestionBox.view questionBoxAttributes
-                ]
-
-            [] ->
-                [ blankString ]
-        )
+        [ blankString ]
 
 
 blankString : Html msg
