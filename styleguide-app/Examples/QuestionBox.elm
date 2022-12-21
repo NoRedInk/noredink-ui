@@ -73,7 +73,7 @@ view ellieLinkConfig state =
 
         getBottomSpacingFor id =
             Dict.get id state.questionBoxMeasurementsById
-                |> Maybe.map (.element >> .height)
+                |> Maybe.map (.element >> .height >> (+) 8)
     in
     [ -- absolutely positioned elements that overflow in the x direction
       -- cause a horizontal scrollbar unless you explicitly hide overflowing x content
