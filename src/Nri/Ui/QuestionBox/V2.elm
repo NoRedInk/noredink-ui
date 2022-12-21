@@ -183,7 +183,6 @@ viewPointingTo config content element =
                     , Css.minWidth (Css.px 300)
                     , Css.textAlign Css.center
                     , Css.batch config.containerCss
-                    , Css.border3 (Css.px 2) Css.solid Colors.red
                     ]
                 , Balloon.css <|
                     if xOffset /= 0 then
