@@ -166,7 +166,8 @@ viewExamplesTable state =
                 inParagraph
                     [ Block.view [ Block.plaintext "Spongebob has a beautiful plant " ]
                     , [ QuestionBox.view
-                            [ QuestionBox.pointingTo
+                            [ QuestionBox.id "question-box-1"
+                            , QuestionBox.pointingTo
                                 (Block.view [ Block.plaintext "above", Block.emphasize ])
                             , QuestionBox.markdown "“Above” is a preposition."
                             , QuestionBox.actions [ { label = "Try again", onClick = NoOp } ]
@@ -181,7 +182,8 @@ viewExamplesTable state =
                 inParagraph
                     [ Block.view [ Block.plaintext "Spongebob has a beautiful plant " ]
                     , [ QuestionBox.view
-                            [ QuestionBox.pointingTo
+                            [ QuestionBox.id "question-box-2"
+                            , QuestionBox.pointingTo
                                 (Block.view
                                     [ Block.plaintext "above his TV"
                                     , Block.label "where"
@@ -213,7 +215,8 @@ viewExamplesTable state =
                         ]
                     , Block.view [ Block.plaintext " " ]
                     , [ QuestionBox.view
-                            [ QuestionBox.pointingTo (Block.view [])
+                            [ QuestionBox.id "question-box-3"
+                            , QuestionBox.pointingTo (Block.view [])
                             , QuestionBox.markdown "Which verb matches the subject?"
                             , QuestionBox.actions
                                 [ { label = "wrap", onClick = NoOp }
@@ -237,7 +240,8 @@ viewExamplesTable state =
                         ]
                     , Block.view [ Block.plaintext " " ]
                     , [ QuestionBox.view
-                            [ QuestionBox.pointingTo
+                            [ QuestionBox.id "question-box-4"
+                            , QuestionBox.pointingTo
                                 (Block.view
                                     [ Block.label "verb"
                                     , Block.labelId "label-4"
@@ -261,7 +265,8 @@ viewExamplesTable state =
           , example =
                 inParagraph
                     [ [ QuestionBox.view
-                            [ QuestionBox.pointingTo
+                            [ QuestionBox.id "question-box-5"
+                            , QuestionBox.pointingTo
                                 (Block.view
                                     [ Block.label "verb"
                                     , Block.labelId "label-5"
@@ -311,6 +316,7 @@ init : State
 init =
     { attributes = initAttributes
     , labelMeasurementsById = Dict.empty
+    , questionBoxMeasurementsById = Dict.empty
     }
 
 
@@ -323,6 +329,7 @@ type alias State =
             { label : Element
             , labelContent : Element
             }
+    , questionBoxMeasurementsById : Dict String Element
     }
 
 
@@ -432,6 +439,7 @@ type Msg
             , labelContent : Element
             }
         )
+    | GotQuestionBoxMeasurements String (Result Dom.Error Element)
 
 
 {-| -}
@@ -447,13 +455,20 @@ update msg state =
         GetMeasurements ->
             ( state
             , Cmd.batch
-                (List.map measureBlockLabels
+                (List.map measureBlockLabel
                     [ "label-1"
                     , "label-2"
                     , "label-3"
                     , "label-4"
                     , "label-5"
                     ]
+                    ++ List.map measureQuestionBox
+                        [ "question-box-1"
+                        , "question-box-2"
+                        , "question-box-3"
+                        , "question-box-4"
+                        , "question-box-5"
+                        ]
                 )
             )
 
@@ -468,10 +483,26 @@ update msg state =
               Cmd.none
             )
 
+        GotQuestionBoxMeasurements id (Ok measurement) ->
+            ( { state | questionBoxMeasurementsById = Dict.insert id measurement state.questionBoxMeasurementsById }
+            , Cmd.none
+            )
 
-measureBlockLabels : String -> Cmd Msg
-measureBlockLabels labelId =
+        GotQuestionBoxMeasurements _ (Err _) ->
+            ( state
+            , -- in a real application, log an error
+              Cmd.none
+            )
+
+
+measureBlockLabel : String -> Cmd Msg
+measureBlockLabel labelId =
     Task.map2 (\label labelContent -> { label = label, labelContent = labelContent })
         (Dom.getElement labelId)
         (Dom.getElement (Block.labelContentId labelId))
         |> Task.attempt (GotBlockLabelMeasurements labelId)
+
+
+measureQuestionBox : String -> Cmd Msg
+measureQuestionBox id =
+    Task.attempt (GotQuestionBoxMeasurements id) (Dom.getElement id)
