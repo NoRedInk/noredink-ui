@@ -158,7 +158,7 @@ viewPointingTo config content element =
                 |> Maybe.withDefault 0
     in
     span
-        [ css (Css.position Css.relative :: config.containerCss)
+        [ css [ Css.position Css.relative ]
         , nriDescription "pointing-to-container"
         ]
         (List.append
@@ -182,6 +182,7 @@ viewPointingTo config content element =
                         ]
                     , Css.minWidth (Css.px 300)
                     , Css.textAlign Css.center
+                    , Css.batch config.containerCss
                     , Css.border3 (Css.px 2) Css.solid Colors.red
                     ]
                 , Balloon.css <|
