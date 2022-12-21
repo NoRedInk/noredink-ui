@@ -12,7 +12,6 @@ module Nri.Ui.Block.V2 exposing
     , bottomSpacingPx
     , yellow, cyan, magenta, green, blue, purple, brown
     , withQuestionBox
-    , class
     )
 
 {-|
@@ -54,11 +53,6 @@ You will need these helpers if you want to prevent label overlaps. (Which is to 
 ### Add a question box
 
 @docs withQuestionBox
-
-
-### Possibly deprecated???
-
-@docs class
 
 -}
 
@@ -250,7 +244,7 @@ parseString =
 
 
 renderContent :
-    { config | class : Maybe String, bottomSpacingPx : Maybe Float }
+    { config | bottomSpacingPx : Maybe Float }
     -> Content msg
     -> List Css.Style
     -> Html msg
@@ -273,7 +267,6 @@ renderContent config content_ markStyles =
                 :: markStyles
             )
         , nriDescription "block-segment-container"
-        , AttributesExtra.maybe Attributes.class config.class
         ]
         (case content_ of
             Word [] str ->
@@ -285,10 +278,7 @@ renderContent config content_ markStyles =
                 ]
 
             Blank questionBoxAttributes ->
-                [ viewBlank
-                    [ Css.lineHeight (Css.int 1)
-                    ]
-                    { class = Nothing }
+                [ viewBlank [ Css.lineHeight (Css.int 1) ]
                     questionBoxAttributes
                 ]
 
@@ -298,7 +288,6 @@ renderContent config content_ markStyles =
                     , Css.paddingBottom topBottomSpace
                     , Css.lineHeight Css.initial
                     ]
-                    { class = Nothing }
                     []
                 ]
         )
@@ -504,12 +493,6 @@ brown =
 
 
 {-| -}
-class : String -> Attribute msg
-class class_ =
-    Attribute (\config -> { config | class = Just class_ })
-
-
-{-| -}
 labelId : String -> Attribute msg
 labelId id_ =
     Attribute (\config -> { config | labelId = Just id_ })
@@ -538,7 +521,6 @@ defaultConfig =
     , labelPosition = Nothing
     , theme = Yellow
     , emphasize = False
-    , class = Nothing
     , bottomSpacingPx = Nothing
     , questionBox = []
     }
@@ -551,7 +533,6 @@ type alias Config msg =
     , labelPosition : Maybe LabelPosition
     , theme : Theme
     , emphasize : Bool
-    , class : Maybe String
     , bottomSpacingPx : Maybe Float
     , questionBox : List (QuestionBox.Attribute msg)
     }
@@ -589,10 +570,9 @@ render config =
 
 viewBlank :
     List Css.Style
-    -> { config | class : Maybe String }
     -> List (QuestionBox.Attribute msg)
     -> Html msg
-viewBlank styles config questionBoxAttributes =
+viewBlank styles questionBoxAttributes =
     span
         [ css
             [ Css.border3 (Css.px 2) Css.dashed Colors.navy
@@ -611,7 +591,6 @@ viewBlank styles config questionBoxAttributes =
                 Css.position Css.relative
             , Css.batch styles
             ]
-        , AttributesExtra.maybe Attributes.class config.class
         ]
         (case questionBoxAttributes of
             x :: _ ->

@@ -455,8 +455,6 @@ initControl =
             )
         |> ControlExtra.optionalListItem "labelId"
             (CommonControls.string ( Code.fromModule moduleName "labelId", Block.labelId ) "fruit-block")
-        |> ControlExtra.optionalListItem "class"
-            (CommonControls.string ( "class", Block.class ) "kiwis-are-good")
 
 
 controlContent : Control ( String, Block.Attribute msg )
