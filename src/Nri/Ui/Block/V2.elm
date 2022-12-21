@@ -257,10 +257,23 @@ parseString =
         >> List.map String_
 
 
-renderContent : { config | class : Maybe String } -> Content -> List Css.Style -> Html msg
+renderContent :
+    { config | class : Maybe String, bottomSpacingPx : Maybe Float }
+    -> Content
+    -> List Css.Style
+    -> Html msg
 renderContent config content_ markStyles =
+    let
+        marginBottom =
+            case config.bottomSpacingPx of
+                Just by ->
+                    Css.marginBottom (Css.px by)
+
+                Nothing ->
+                    Css.batch []
+    in
     span
-        [ css (Css.whiteSpace Css.preWrap :: markStyles)
+        [ css (Css.whiteSpace Css.preWrap :: marginBottom :: Css.display Css.inlineBlock :: markStyles)
         , nriDescription "block-segment-container"
         , AttributesExtra.maybe Attributes.class config.class
         ]
@@ -526,6 +539,12 @@ render config =
                     [ viewBlank
                         [ Css.paddingTop topBottomSpace
                         , Css.paddingBottom topBottomSpace
+                        , case config.bottomSpacingPx of
+                            Just by ->
+                                Css.marginBottom (Css.px by)
+
+                            Nothing ->
+                                Css.batch []
                         ]
                         config
                     ]
