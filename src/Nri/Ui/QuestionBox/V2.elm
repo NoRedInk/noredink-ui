@@ -15,6 +15,7 @@ module Nri.Ui.QuestionBox.V2 exposing
 
 -}
 
+import Browser.Dom exposing (Element)
 import Css
 import Css.Global
 import Html.Styled exposing (..)
@@ -90,7 +91,7 @@ setType type_ =
 
 type QuestionBoxType msg
     = Standalone
-    | PointingTo (List (Html msg))
+    | PointingTo (List (Html msg)) (Maybe Element)
 
 
 {-| This is the default type of question box. It doesn't have a programmatic or direct visual relationship to any piece of content.
@@ -105,9 +106,9 @@ standalone =
 Typically, you would use this type of `QuestionBox` type with a `Block`.
 
 -}
-pointingTo : List (Html msg) -> Attribute msg
-pointingTo =
-    setType << PointingTo
+pointingTo : List (Html msg) -> Maybe Element -> Attribute msg
+pointingTo content element =
+    setType (PointingTo content element)
 
 
 {-|
@@ -127,8 +128,8 @@ view attributes =
         Standalone ->
             viewStandalone config
 
-        PointingTo content ->
-            viewPointingTo config content
+        PointingTo content element ->
+            viewPointingTo config content element
 
 
 {-| -}
@@ -146,8 +147,8 @@ viewStandalone config =
 
 
 {-| -}
-viewPointingTo : Config msg -> List (Html msg) -> Html msg
-viewPointingTo config content =
+viewPointingTo : Config msg -> List (Html msg) -> Maybe Element -> Html msg
+viewPointingTo config content element =
     span
         [ css (Css.position Css.relative :: config.containerCss)
         , nriDescription "pointing-to-container"

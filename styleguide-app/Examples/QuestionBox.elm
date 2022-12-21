@@ -132,6 +132,7 @@ view ellieLinkConfig state =
                         , Block.bottomSpacingPx (getBottomSpacingFor "left-viewport-question-box-example")
                         ]
                     )
+                    (Dict.get "left-viewport-question-box-example" state.questionBoxMeasurementsById)
                 , QuestionBox.markdown "Is ”the“ an article?"
                 , QuestionBox.actions
                     [ { label = "Yes", onClick = NoOp }
@@ -212,6 +213,7 @@ view ellieLinkConfig state =
                                     , Block.bottomSpacingPx (getBottomSpacingFor "question-box-1")
                                     ]
                                 )
+                                (Dict.get "question-box-1" state.questionBoxMeasurementsById)
                             , QuestionBox.markdown "“Above” is a preposition."
                             , QuestionBox.actions [ { label = "Try again", onClick = NoOp } ]
                             ]
@@ -236,6 +238,7 @@ view ellieLinkConfig state =
                                     , Block.yellow
                                     ]
                                 )
+                                (Dict.get "question-box-2" state.questionBoxMeasurementsById)
                             , QuestionBox.markdown "Which word is the preposition?"
                             , QuestionBox.actions
                                 [ { label = "above", onClick = NoOp }
@@ -265,6 +268,7 @@ view ellieLinkConfig state =
                                     [ Block.bottomSpacingPx (getBottomSpacingFor "question-box-3")
                                     ]
                                 )
+                                (Dict.get "question-box-3" state.questionBoxMeasurementsById)
                             , QuestionBox.markdown "Which verb matches the subject?"
                             , QuestionBox.actions
                                 [ { label = "wrap", onClick = NoOp }
@@ -298,6 +302,7 @@ view ellieLinkConfig state =
                                     , Block.cyan
                                     ]
                                 )
+                                (Dict.get "question-box-4" state.questionBoxMeasurementsById)
                             , QuestionBox.markdown "What did he do?"
                             , QuestionBox.actions
                                 [ { label = "scared", onClick = NoOp }
@@ -325,6 +330,7 @@ view ellieLinkConfig state =
                                     , Block.bottomSpacingPx (getBottomSpacingFor "question-box-5")
                                     ]
                                 )
+                                (Dict.get "question-box-5" state.questionBoxMeasurementsById)
                             , QuestionBox.markdown "What did he do?"
                             , QuestionBox.actions
                                 [ { label = "scared", onClick = NoOp }
@@ -444,7 +450,7 @@ initAttributes =
             )
         |> ControlExtra.optionalListItem "type"
             (CommonControls.choice moduleName
-                [ ( "pointingTo []", QuestionBox.pointingTo [ anchor ] )
+                [ ( "pointingTo [] Nothing", QuestionBox.pointingTo [ anchor ] Nothing )
                 , ( "standalone", QuestionBox.standalone )
                 ]
             )
