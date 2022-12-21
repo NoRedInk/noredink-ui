@@ -26,6 +26,7 @@ import Nri.Ui.CharacterIcon.V1 as CharacterIcon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Position exposing (xOffsetPx)
 
 
 {-| -}
@@ -149,6 +150,11 @@ viewStandalone config =
 {-| -}
 viewPointingTo : Config msg -> List (Html msg) -> Maybe Element -> Html msg
 viewPointingTo config content element =
+    let
+        xOffset =
+            Maybe.map xOffsetPx element
+                |> Maybe.withDefault 0
+    in
     span
         [ css (Css.position Css.relative :: config.containerCss)
         , nriDescription "pointing-to-container"
@@ -169,6 +175,13 @@ viewPointingTo config content element =
                 [ viewBalloon config
                     [ Balloon.onBottom
                     , Balloon.nriDescription "pointing-to-balloon"
+                    , Balloon.css <|
+                        if xOffset /= 0 then
+                            [ Css.property "transform" ("translateX(" ++ String.fromFloat xOffset ++ "px)")
+                            ]
+
+                        else
+                            []
                     ]
                 ]
             ]
