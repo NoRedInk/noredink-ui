@@ -74,10 +74,9 @@ labelIdSpec =
     ]
 
 
-toQuery : List Block.Attribute -> Query.Single a
+toQuery : List (Block.Attribute a) -> Query.Single a
 toQuery block =
     Block.view block
-        |> Html.Styled.p []
         |> Html.Styled.toUnstyled
         |> Query.fromHtml
 
