@@ -106,6 +106,8 @@ standalone =
 
 Typically, you would use this type of `QuestionBox` type with a `Block`.
 
+You will need to pass a measurement, taken using Dom.Browser, in order for the question box to be positioned correctly horizontally so that it doesn't get cut off by the viewport.
+
 -}
 pointingTo : List (Html msg) -> Maybe Element -> Attribute msg
 pointingTo content element =
