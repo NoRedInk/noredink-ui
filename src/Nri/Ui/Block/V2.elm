@@ -268,7 +268,7 @@ renderContent config content_ markStyles =
                 [ text str ]
 
             Blank ->
-                [ viewBlank [ Css.lineHeight (Css.int 1) ] { class = Nothing } ]
+                [ viewBlank [ Css.lineHeight (Css.int 1) ] { class = Nothing } Nothing ]
 
             FullHeightBlank ->
                 [ viewBlank
@@ -277,6 +277,7 @@ renderContent config content_ markStyles =
                     , Css.lineHeight Css.initial
                     ]
                     { class = Nothing }
+                    Nothing
                 ]
         )
 
@@ -508,6 +509,15 @@ render config =
 
         maybeMark =
             toMark config palette
+
+        maybeQuestionBox : Maybe (Html msg)
+        maybeQuestionBox =
+            case config.questionBox of
+                [] ->
+                    Nothing
+
+                _ ->
+                    Just (QuestionBox.view config.questionBox)
     in
     case config.content of
         [] ->
@@ -541,6 +551,7 @@ render config =
                                 Css.batch []
                         ]
                         config
+                        maybeQuestionBox
                     ]
 
         _ ->
@@ -555,8 +566,8 @@ render config =
                 config.content
 
 
-viewBlank : List Css.Style -> { config | class : Maybe String } -> Html msg
-viewBlank styles config =
+viewBlank : List Css.Style -> { config | class : Maybe String } -> Maybe (Html msg) -> Html msg
+viewBlank styles config maybeQuestionBox =
     span
         [ css
             [ Css.border3 (Css.px 2) Css.dashed Colors.navy
@@ -568,17 +579,31 @@ viewBlank styles config =
             , Css.minWidth (Css.px 80)
             , Css.display Css.inlineBlock
             , Css.borderRadius (Css.px 4)
+            , Maybe.map (\_ -> Css.position Css.relative) maybeQuestionBox
+                |> Maybe.withDefault (Css.batch [])
             , Css.batch styles
             ]
         , AttributesExtra.maybe Attributes.class config.class
         ]
-        [ span
-            [ css
-                [ Css.overflowX Css.hidden
-                , Css.width (Css.px 0)
-                , Css.display Css.inlineBlock
-                , Css.verticalAlign Css.bottom
+        (case maybeQuestionBox of
+            Just questionBox ->
+                [ blankString
+                , questionBox
                 ]
+
+            Nothing ->
+                [ blankString ]
+        )
+
+
+blankString : Html msg
+blankString =
+    span
+        [ css
+            [ Css.overflowX Css.hidden
+            , Css.width (Css.px 0)
+            , Css.display Css.inlineBlock
+            , Css.verticalAlign Css.bottom
             ]
-            [ text "blank" ]
         ]
+        [ text "blank" ]
