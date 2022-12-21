@@ -163,28 +163,34 @@ viewPointingTo config content element =
         ]
         (List.append
             content
-            [ div
-                [ AttributesExtra.maybe Attributes.id config.id
-                , css
+            [ viewBalloon config
+                [ Balloon.onBottom
+                , Balloon.nriDescription "pointing-to-balloon"
+                , case config.id of
+                    Just id_ ->
+                        Balloon.id id_
+
+                    Nothing ->
+                        Balloon.css []
+                , Balloon.containerCss
                     [ Css.position Css.absolute
                     , Css.top (Css.pct 100)
                     , Css.left (Css.pct 50)
-                    , Css.transform (Css.translateX (Css.pct -50))
+                    , Css.transforms
+                        [ Css.translateX (Css.pct -50)
+                        , Css.translateY (Css.px 8)
+                        ]
                     , Css.minWidth (Css.px 300)
                     , Css.textAlign Css.center
+                    , Css.border3 (Css.px 2) Css.solid Colors.red
                     ]
-                ]
-                [ viewBalloon config
-                    [ Balloon.onBottom
-                    , Balloon.nriDescription "pointing-to-balloon"
-                    , Balloon.css <|
-                        if xOffset /= 0 then
-                            [ Css.property "transform" ("translateX(" ++ String.fromFloat xOffset ++ "px)")
-                            ]
+                , Balloon.css <|
+                    if xOffset /= 0 then
+                        [ Css.property "transform" ("translateX(" ++ String.fromFloat xOffset ++ "px)")
+                        ]
 
-                        else
-                            []
-                    ]
+                    else
+                        []
                 ]
             ]
         )
