@@ -100,15 +100,24 @@ view ellieLinkConfig state =
         [ Heading.plaintext "Interactive example"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
-    , div
-        [ css
-            [ Css.displayFlex
-            , Css.justifyContent Css.center
-            , Css.alignItems Css.flexStart
-            , Css.minHeight (Css.px 350)
+    , div [ css [ Css.minHeight (Css.px 350) ] ]
+        [ div
+            [ css
+                [ Css.position Css.relative
+                , Css.displayFlex
+                , Css.flexDirection Css.column
+                , Css.justifyContent Css.center
+                , Css.alignItems Css.center
+                ]
+            ]
+            [ UiIcon.sortArrowDown
+                |> Svg.withLabel "Anchor"
+                |> Svg.withWidth (Css.px 30)
+                |> Svg.withHeight (Css.px 30)
+                |> Svg.toHtml
+            , QuestionBox.view (List.map Tuple.second attributes)
             ]
         ]
-        [ QuestionBox.view (List.map Tuple.second attributes) ]
     , Heading.h2
         [ Heading.plaintext "Non-interactive examples"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
@@ -124,26 +133,23 @@ view ellieLinkConfig state =
         , Text.css [ Css.marginBottom (Css.px 80) |> Css.important ]
         ]
     , inParagraph
-        [ [ QuestionBox.view
+        [ Block.view
+            [ Block.plaintext "A"
+            , Block.magenta
+            , Block.label "this is an article. \"An\" is also an article."
+            , Block.labelId "article-label-id"
+            , Block.labelPosition (Dict.get "article-label-id" offsets)
+            , Block.bottomSpacingPx (getBottomSpacingFor "left-viewport-question-box-example")
+            , Block.withQuestionBox
                 [ QuestionBox.id "left-viewport-question-box-example"
-                , QuestionBox.pointingTo
-                    (Block.view
-                        [ Block.plaintext "A"
-                        , Block.magenta
-                        , Block.label "this is an article. \"An\" is also an article."
-                        , Block.labelId "article-label-id"
-                        , Block.labelPosition (Dict.get "article-label-id" offsets)
-                        , Block.bottomSpacingPx (getBottomSpacingFor "left-viewport-question-box-example")
-                        ]
-                    )
-                    (Dict.get "left-viewport-question-box-example" state.questionBoxMeasurementsById)
+                , QuestionBox.pointingTo (Dict.get "left-viewport-question-box-example" state.questionBoxMeasurementsById)
                 , QuestionBox.markdown "Articles are important to get right! Is “the” an article?"
                 , QuestionBox.actions
                     [ { label = "Yes", onClick = NoOp }
                     , { label = "No", onClick = NoOp }
                     ]
                 ]
-          ]
+            ]
         , Block.view [ Block.plaintext " " ]
         , Block.view
             [ Block.plaintext "tricky"
@@ -168,26 +174,23 @@ view ellieLinkConfig state =
         ]
     , inParagraph
         [ Block.view [ Block.plaintext "You also need to be careful with content that can get cut off on the right side of the viewport" ]
-        , [ QuestionBox.view
+        , Block.view
+            [ Block.plaintext "!"
+            , Block.label "warning"
+            , Block.brown
+            , Block.labelId "warning-2-label-id"
+            , Block.labelPosition (Dict.get "warning-2-label-id" offsets)
+            , Block.bottomSpacingPx (getBottomSpacingFor "right-viewport-question-box-example")
+            , Block.withQuestionBox
                 [ QuestionBox.id "right-viewport-question-box-example"
-                , QuestionBox.pointingTo
-                    (Block.view
-                        [ Block.plaintext "!"
-                        , Block.label "warning"
-                        , Block.brown
-                        , Block.labelId "warning-2-label-id"
-                        , Block.labelPosition (Dict.get "warning-2-label-id" offsets)
-                        , Block.bottomSpacingPx (getBottomSpacingFor "right-viewport-question-box-example")
-                        ]
-                    )
-                    (Dict.get "right-viewport-question-box-example" state.questionBoxMeasurementsById)
+                , QuestionBox.pointingTo (Dict.get "right-viewport-question-box-example" state.questionBoxMeasurementsById)
                 , QuestionBox.markdown "Were you careful? It's important to be careful!"
                 , QuestionBox.actions
                     [ { label = "Yes", onClick = NoOp }
                     , { label = "No", onClick = NoOp }
                     ]
                 ]
-          ]
+            ]
         ]
     , Table.view
         [ Table.string
@@ -231,20 +234,17 @@ view ellieLinkConfig state =
           , example =
                 inParagraph
                     [ Block.view [ Block.plaintext "Spongebob has a beautiful plant " ]
-                    , [ QuestionBox.view
+                    , Block.view
+                        [ Block.plaintext "above"
+                        , Block.emphasize
+                        , Block.bottomSpacingPx (getBottomSpacingFor "question-box-1")
+                        , Block.withQuestionBox
                             [ QuestionBox.id "question-box-1"
-                            , QuestionBox.pointingTo
-                                (Block.view
-                                    [ Block.plaintext "above"
-                                    , Block.emphasize
-                                    , Block.bottomSpacingPx (getBottomSpacingFor "question-box-1")
-                                    ]
-                                )
-                                (Dict.get "question-box-1" state.questionBoxMeasurementsById)
+                            , QuestionBox.pointingTo (Dict.get "question-box-1" state.questionBoxMeasurementsById)
                             , QuestionBox.markdown "“Above” is a preposition."
                             , QuestionBox.actions [ { label = "Try again", onClick = NoOp } ]
                             ]
-                      ]
+                        ]
                     , Block.view [ Block.plaintext " his TV." ]
                     ]
           }
@@ -253,19 +253,16 @@ view ellieLinkConfig state =
           , example =
                 inParagraph
                     [ Block.view [ Block.plaintext "Spongebob has a beautiful plant " ]
-                    , [ QuestionBox.view
+                    , Block.view
+                        [ Block.plaintext "above his TV"
+                        , Block.label "where"
+                        , Block.labelId "label-1"
+                        , Block.labelPosition (Dict.get "label-1" offsets)
+                        , Block.bottomSpacingPx (getBottomSpacingFor "question-box-2")
+                        , Block.yellow
+                        , Block.withQuestionBox
                             [ QuestionBox.id "question-box-2"
-                            , QuestionBox.pointingTo
-                                (Block.view
-                                    [ Block.plaintext "above his TV"
-                                    , Block.label "where"
-                                    , Block.labelId "label-1"
-                                    , Block.labelPosition (Dict.get "label-1" offsets)
-                                    , Block.bottomSpacingPx (getBottomSpacingFor "question-box-2")
-                                    , Block.yellow
-                                    ]
-                                )
-                                (Dict.get "question-box-2" state.questionBoxMeasurementsById)
+                            , QuestionBox.pointingTo (Dict.get "question-box-2" state.questionBoxMeasurementsById)
                             , QuestionBox.markdown "Which word is the preposition?"
                             , QuestionBox.actions
                                 [ { label = "above", onClick = NoOp }
@@ -273,7 +270,7 @@ view ellieLinkConfig state =
                                 , { label = "TV", onClick = NoOp }
                                 ]
                             ]
-                      ]
+                        ]
                     , Block.view [ Block.plaintext "." ]
                     ]
           }
@@ -288,21 +285,18 @@ view ellieLinkConfig state =
                         , Block.labelPosition (Dict.get "label-2" offsets)
                         ]
                     , Block.view [ Block.plaintext " " ]
-                    , [ QuestionBox.view
+                    , Block.view
+                        [ Block.bottomSpacingPx (getBottomSpacingFor "question-box-3")
+                        , Block.withQuestionBox
                             [ QuestionBox.id "question-box-3"
-                            , QuestionBox.pointingTo
-                                (Block.view
-                                    [ Block.bottomSpacingPx (getBottomSpacingFor "question-box-3")
-                                    ]
-                                )
-                                (Dict.get "question-box-3" state.questionBoxMeasurementsById)
+                            , QuestionBox.pointingTo (Dict.get "question-box-3" state.questionBoxMeasurementsById)
                             , QuestionBox.markdown "Which verb matches the subject?"
                             , QuestionBox.actions
                                 [ { label = "wrap", onClick = NoOp }
                                 , { label = "wraps", onClick = NoOp }
                                 ]
                             ]
-                      ]
+                        ]
                     , Block.view [ Block.plaintext " gifts with comic book pages." ]
                     ]
           }
@@ -318,18 +312,15 @@ view ellieLinkConfig state =
                         , Block.yellow
                         ]
                     , Block.view [ Block.plaintext " " ]
-                    , [ QuestionBox.view
+                    , Block.view
+                        [ Block.label "verb"
+                        , Block.labelId "label-4"
+                        , Block.labelPosition (Dict.get "label-4" offsets)
+                        , Block.bottomSpacingPx (getBottomSpacingFor "question-box-4")
+                        , Block.cyan
+                        , Block.withQuestionBox
                             [ QuestionBox.id "question-box-4"
-                            , QuestionBox.pointingTo
-                                (Block.view
-                                    [ Block.label "verb"
-                                    , Block.labelId "label-4"
-                                    , Block.labelPosition (Dict.get "label-4" offsets)
-                                    , Block.bottomSpacingPx (getBottomSpacingFor "question-box-4")
-                                    , Block.cyan
-                                    ]
-                                )
-                                (Dict.get "question-box-4" state.questionBoxMeasurementsById)
+                            , QuestionBox.pointingTo (Dict.get "question-box-4" state.questionBoxMeasurementsById)
                             , QuestionBox.markdown "What did he do?"
                             , QuestionBox.actions
                                 [ { label = "scared", onClick = NoOp }
@@ -337,7 +328,7 @@ view ellieLinkConfig state =
                                 , { label = "scarified", onClick = NoOp }
                                 ]
                             ]
-                      ]
+                        ]
                     , Block.view [ Block.plaintext " his replacement cousin coming out of his room wearing a gorilla mask." ]
                     ]
           }
@@ -345,19 +336,16 @@ view ellieLinkConfig state =
           , shownWith = "Blank with emphasis block"
           , example =
                 inParagraph
-                    [ [ QuestionBox.view
+                    [ Block.view
+                        [ Block.label "subject & verb"
+                        , Block.labelId "label-5"
+                        , Block.labelPosition (Dict.get "label-5" offsets)
+                        , Block.cyan
+                        , Block.content (Block.phrase "Dave " ++ [ Block.blank ])
+                        , Block.bottomSpacingPx (getBottomSpacingFor "question-box-5")
+                        , Block.withQuestionBox
                             [ QuestionBox.id "question-box-5"
-                            , QuestionBox.pointingTo
-                                (Block.view
-                                    [ Block.label "subject & verb"
-                                    , Block.labelId "label-5"
-                                    , Block.labelPosition (Dict.get "label-5" offsets)
-                                    , Block.cyan
-                                    , Block.content (Block.phrase "Dave " ++ [ Block.blank ])
-                                    , Block.bottomSpacingPx (getBottomSpacingFor "question-box-5")
-                                    ]
-                                )
-                                (Dict.get "question-box-5" state.questionBoxMeasurementsById)
+                            , QuestionBox.pointingTo (Dict.get "question-box-5" state.questionBoxMeasurementsById)
                             , QuestionBox.markdown "What did he do?"
                             , QuestionBox.actions
                                 [ { label = "scared", onClick = NoOp }
@@ -365,7 +353,7 @@ view ellieLinkConfig state =
                                 , { label = "scarified", onClick = NoOp }
                                 ]
                             ]
-                      ]
+                        ]
                     , Block.view [ Block.plaintext " his replacement cousin coming out of his room wearing a gorilla mask." ]
                     ]
           }
@@ -388,11 +376,6 @@ inParagraph =
 interactiveExampleId : String
 interactiveExampleId =
     "interactive-example-question-box"
-
-
-anchorId : String
-anchorId =
-    "interactive-example-anchor-icon"
 
 
 {-| -}
@@ -477,7 +460,7 @@ initAttributes =
             )
         |> ControlExtra.optionalListItem "type"
             (CommonControls.choice moduleName
-                [ ( "pointingTo [] Nothing", QuestionBox.pointingTo [ anchor ] Nothing )
+                [ ( "pointingTo Nothing", QuestionBox.pointingTo Nothing )
                 , ( "standalone", QuestionBox.standalone )
                 ]
             )
@@ -486,17 +469,6 @@ initAttributes =
             , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
             )
             { moduleName = moduleName, use = QuestionBox.containerCss }
-
-
-anchor : Html msg
-anchor =
-    div [ Attributes.id anchorId ]
-        [ UiIcon.sortArrowDown
-            |> Svg.withLabel "Anchor"
-            |> Svg.withWidth (Css.px 30)
-            |> Svg.withHeight (Css.px 30)
-            |> Svg.toHtml
-        ]
 
 
 initialMarkdown : String

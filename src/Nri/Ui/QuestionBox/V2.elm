@@ -92,7 +92,7 @@ setType type_ =
 
 type QuestionBoxType msg
     = Standalone
-    | PointingTo (List (Html msg)) (Maybe Element)
+    | PointingTo (Maybe Element)
 
 
 {-| This is the default type of question box. It doesn't have a programmatic or direct visual relationship to any piece of content.
@@ -102,16 +102,16 @@ standalone =
     setType Standalone
 
 
-{-| This type of `QuestionBox` has an arrow pointing to the relevant part of the question.
+{-| This type of `QuestionBox` is absolutely positioned & has an arrow pointing to its relatively positioned ancestor.
 
-Typically, you would use this type of `QuestionBox` type with a `Block`.
+Typically, you would use this type of `QuestionBox` type with a `Block` by way of `Block.withHtml`.
 
 You will need to pass a measurement, taken using Dom.Browser, in order for the question box to be positioned correctly horizontally so that it doesn't get cut off by the viewport.
 
 -}
-pointingTo : List (Html msg) -> Maybe Element -> Attribute msg
-pointingTo content element =
-    setType (PointingTo content element)
+pointingTo : Maybe Element -> Attribute msg
+pointingTo element =
+    setType (PointingTo element)
 
 
 {-|
@@ -131,8 +131,8 @@ view attributes =
         Standalone ->
             viewStandalone config
 
-        PointingTo content element ->
-            viewPointingTo config content element
+        PointingTo element ->
+            viewPointingTo config element
 
 
 {-| -}
@@ -150,50 +150,42 @@ viewStandalone config =
 
 
 {-| -}
-viewPointingTo : Config msg -> List (Html msg) -> Maybe Element -> Html msg
-viewPointingTo config content element =
+viewPointingTo : Config msg -> Maybe Element -> Html msg
+viewPointingTo config element =
     let
         xOffset =
             Maybe.map xOffsetPx element
                 |> Maybe.withDefault 0
     in
-    span
-        [ css [ Css.position Css.relative ]
-        , nriDescription "pointing-to-container"
-        ]
-        (List.append
-            content
-            [ viewBalloon config
-                [ Balloon.onBottom
-                , Balloon.nriDescription "pointing-to-balloon"
-                , case config.id of
-                    Just id_ ->
-                        Balloon.id id_
+    viewBalloon config
+        [ Balloon.onBottom
+        , Balloon.nriDescription "pointing-to-balloon"
+        , case config.id of
+            Just id_ ->
+                Balloon.id id_
 
-                    Nothing ->
-                        Balloon.css []
-                , Balloon.containerCss
-                    [ Css.position Css.absolute
-                    , Css.top (Css.pct 100)
-                    , Css.left (Css.pct 50)
-                    , Css.transforms
-                        [ Css.translateX (Css.pct -50)
-                        , Css.translateY (Css.px 8)
-                        ]
-                    , Css.minWidth (Css.px 300)
-                    , Css.textAlign Css.center
-                    , Css.batch config.containerCss
-                    ]
-                , Balloon.css <|
-                    if xOffset /= 0 then
-                        [ Css.property "transform" ("translateX(" ++ String.fromFloat xOffset ++ "px)")
-                        ]
-
-                    else
-                        []
+            Nothing ->
+                Balloon.css []
+        , Balloon.containerCss
+            [ Css.position Css.absolute
+            , Css.top (Css.pct 100)
+            , Css.left (Css.pct 50)
+            , Css.transforms
+                [ Css.translateX (Css.pct -50)
+                , Css.translateY (Css.px 8)
                 ]
+            , Css.minWidth (Css.px 300)
+            , Css.textAlign Css.center
+            , Css.batch config.containerCss
             ]
-        )
+        , Balloon.css <|
+            if xOffset /= 0 then
+                [ Css.property "transform" ("translateX(" ++ String.fromFloat xOffset ++ "px)")
+                ]
+
+            else
+                []
+        ]
 
 
 viewBalloon : Config msg -> List (Balloon.Attribute msg) -> Html msg

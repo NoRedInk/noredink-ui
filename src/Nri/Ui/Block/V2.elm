@@ -8,6 +8,7 @@ module Nri.Ui.Block.V2 exposing
     , LabelPosition, getLabelPositions, labelPosition
     , bottomSpacingPx
     , yellow, cyan, magenta, green, blue, purple, brown
+    , withQuestionBox
     , class
     )
 
@@ -44,7 +45,12 @@ You will need these helpers if you want to prevent label overlaps. (Which is to 
 @docs yellow, cyan, magenta, green, blue, purple, brown
 
 
-### General attributes
+### Add a question box
+
+@docs withQuestionBox
+
+
+### Possibly deprecated???
 
 @docs class
 
@@ -60,6 +66,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
 import Nri.Ui.Mark.V2 as Mark exposing (Mark)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.QuestionBox.V2 as QuestionBox
 import Position exposing (xOffsetPx)
 
 
@@ -68,7 +75,7 @@ import Position exposing (xOffsetPx)
     Block.view [ Block.plaintext "Hello, world!" ]
 
 -}
-view : List Attribute -> List (Html msg)
+view : List (Attribute msg) -> List (Html msg)
 view attributes =
     attributes
         |> List.foldl (\(Attribute attribute) b -> attribute b) defaultConfig
@@ -81,7 +88,7 @@ view attributes =
 
 {-| Provide the main content of the block as a plain-text string. You can also use `content` for more complex cases, including a blank appearing within an emphasis.
 -}
-plaintext : String -> Attribute
+plaintext : String -> Attribute msg
 plaintext content_ =
     Attribute <| \config -> { config | content = parseString content_ }
 
@@ -94,20 +101,20 @@ plaintext content_ =
         ]
 
 -}
-content : List Content -> Attribute
+content : List Content -> Attribute msg
 content content_ =
     Attribute <| \config -> { config | content = content_ }
 
 
 {-| Mark content as emphasized.
 -}
-emphasize : Attribute
+emphasize : Attribute msg
 emphasize =
     Attribute <| \config -> { config | emphasize = True }
 
 
 {-| -}
-label : String -> Attribute
+label : String -> Attribute msg
 label label_ =
     Attribute <| \config -> { config | label = Just label_, emphasize = True }
 
@@ -124,14 +131,14 @@ type alias LabelPosition =
 
 {-| Use `getLabelPositions` to calculate what these values should be.
 -}
-labelPosition : Maybe LabelPosition -> Attribute
+labelPosition : Maybe LabelPosition -> Attribute msg
 labelPosition offset =
     Attribute <| \config -> { config | labelPosition = offset }
 
 
 {-| When using a `QuestionBox` that is `pointingTo` a block, you may want to add bottom spacing to the block in order to avoid having the QuestionBox cover meaningful content.
 -}
-bottomSpacingPx : Maybe Float -> Attribute
+bottomSpacingPx : Maybe Float -> Attribute msg
 bottomSpacingPx offset =
     Attribute <| \config -> { config | bottomSpacingPx = offset }
 
@@ -398,57 +405,63 @@ topBottomSpace =
 
 
 {-| -}
-yellow : Attribute
+yellow : Attribute msg
 yellow =
     Attribute (\config -> { config | theme = Yellow })
 
 
 {-| -}
-cyan : Attribute
+cyan : Attribute msg
 cyan =
     Attribute (\config -> { config | theme = Cyan })
 
 
 {-| -}
-magenta : Attribute
+magenta : Attribute msg
 magenta =
     Attribute (\config -> { config | theme = Magenta })
 
 
 {-| -}
-green : Attribute
+green : Attribute msg
 green =
     Attribute (\config -> { config | theme = Green })
 
 
 {-| -}
-blue : Attribute
+blue : Attribute msg
 blue =
     Attribute (\config -> { config | theme = Blue })
 
 
 {-| -}
-purple : Attribute
+purple : Attribute msg
 purple =
     Attribute (\config -> { config | theme = Purple })
 
 
 {-| -}
-brown : Attribute
+brown : Attribute msg
 brown =
     Attribute (\config -> { config | theme = Brown })
 
 
 {-| -}
-class : String -> Attribute
+class : String -> Attribute msg
 class class_ =
     Attribute (\config -> { config | class = Just class_ })
 
 
 {-| -}
-labelId : String -> Attribute
+labelId : String -> Attribute msg
 labelId id_ =
     Attribute (\config -> { config | labelId = Just id_ })
+
+
+{-| -}
+withQuestionBox : List (QuestionBox.Attribute msg) -> Attribute msg
+withQuestionBox attributes =
+    Attribute (\config -> { config | questionBox = attributes })
 
 
 
@@ -456,11 +469,11 @@ labelId id_ =
 
 
 {-| -}
-type Attribute
-    = Attribute (Config -> Config)
+type Attribute msg
+    = Attribute (Config msg -> Config msg)
 
 
-defaultConfig : Config
+defaultConfig : Config msg
 defaultConfig =
     { content = []
     , label = Nothing
@@ -470,10 +483,11 @@ defaultConfig =
     , emphasize = False
     , class = Nothing
     , bottomSpacingPx = Nothing
+    , questionBox = []
     }
 
 
-type alias Config =
+type alias Config msg =
     { content : List Content
     , label : Maybe String
     , labelId : Maybe String
@@ -482,10 +496,11 @@ type alias Config =
     , emphasize : Bool
     , class : Maybe String
     , bottomSpacingPx : Maybe Float
+    , questionBox : List (QuestionBox.Attribute msg)
     }
 
 
-render : Config -> List (Html msg)
+render : Config msg -> List (Html msg)
 render config =
     let
         palette =

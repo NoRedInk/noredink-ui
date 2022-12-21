@@ -406,7 +406,7 @@ init =
 
 
 type alias Settings =
-    List ( String, Block.Attribute )
+    List ( String, Block.Attribute Msg )
 
 
 initControl : Control Settings
@@ -466,7 +466,7 @@ initControl =
             (CommonControls.string ( "class", Block.class ) "kiwis-are-good")
 
 
-controlContent : Control ( String, Block.Attribute )
+controlContent : Control ( String, Block.Attribute msg )
 controlContent =
     Control.choice
         [ ( "plaintext"
