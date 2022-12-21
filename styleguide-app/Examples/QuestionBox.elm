@@ -349,7 +349,7 @@ view ellieLinkConfig state =
                             [ QuestionBox.id "question-box-5"
                             , QuestionBox.pointingTo
                                 (Block.view
-                                    [ Block.label "verb"
+                                    [ Block.label "subject & verb"
                                     , Block.labelId "label-5"
                                     , Block.labelPosition (Dict.get "label-5" offsets)
                                     , Block.cyan
