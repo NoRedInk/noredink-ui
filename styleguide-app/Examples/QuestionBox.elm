@@ -382,18 +382,11 @@ view ellieLinkConfig state =
         , { description = "**Labelled blank block**"
           , example =
                 inParagraph
-                    [ Block.view
-                        [ Block.plaintext "Dave"
-                        , Block.label "subject"
-                        , Block.labelId "label-3"
-                        , Block.labelPosition (Dict.get "label-3" offsets)
-                        , Block.yellow
-                        ]
-                    , Block.view [ Block.plaintext " " ]
+                    [ Block.view [ Block.plaintext "Dave " ]
                     , Block.view
                         [ Block.label "verb"
-                        , Block.labelId "label-4"
-                        , Block.labelPosition (Dict.get "label-4" offsets)
+                        , Block.labelId "label-3"
+                        , Block.labelPosition (Dict.get "label-3" offsets)
                         , Block.bottomSpacingPx (getBottomSpacingFor "question-box-4")
                         , Block.cyan
                         , Block.withQuestionBox
@@ -694,7 +687,6 @@ update msg state =
                     [ "label-1"
                     , "label-2"
                     , "label-3"
-                    , "label-4"
                     , "article-label-id"
                     , "tricky-label-id"
                     , "warning-label-id"
