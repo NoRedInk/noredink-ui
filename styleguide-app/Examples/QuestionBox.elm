@@ -130,7 +130,22 @@ view ellieLinkConfig state =
         ]
     , Text.caption
         [ Text.plaintext "Click \"Measure & render\" to reposition the noninteractive examples' labels and question boxes to avoid overlaps given the current viewport."
-        , Text.css [ Css.marginBottom (Css.px 80) |> Css.important ]
+        ]
+    , Heading.h3
+        [ Heading.plaintext "QuestionBox.standalone"
+        , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
+        ]
+    , QuestionBox.view
+        [ QuestionBox.standalone
+        , QuestionBox.markdown "Which words tell you **when** the party is?"
+        , QuestionBox.actions
+            [ { label = "is having", onClick = NoOp }
+            , { label = "after the football game", onClick = NoOp }
+            ]
+        ]
+    , Heading.h3
+        [ Heading.plaintext "QuestionBox.pointingTo"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
     , inParagraph
         [ Block.view
@@ -194,14 +209,7 @@ view ellieLinkConfig state =
         ]
     , Table.view
         [ Table.string
-            { header = "QuestionBox type"
-            , value = .pattern
-            , width = Css.pct 15
-            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.top, Css.fontWeight Css.bold ]
-            , sort = Nothing
-            }
-        , Table.string
-            { header = "Block pattern"
+            { header = "Pattern"
             , value = .shownWith
             , width = Css.pct 15
             , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.top ]
@@ -215,22 +223,7 @@ view ellieLinkConfig state =
             , sort = Nothing
             }
         ]
-        [ { pattern = "standalone"
-          , shownWith = ""
-          , example =
-                div [ css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ] ]
-                    [ QuestionBox.view
-                        [ QuestionBox.standalone
-                        , QuestionBox.markdown "Which words tell you **when** the party is?"
-                        , QuestionBox.actions
-                            [ { label = "is having", onClick = NoOp }
-                            , { label = "after the football game", onClick = NoOp }
-                            ]
-                        ]
-                    ]
-          }
-        , { pattern = "pointingTo"
-          , shownWith = "Emphasis block"
+        [ { shownWith = "Emphasis block"
           , example =
                 inParagraph
                     [ Block.view [ Block.plaintext "Spongebob has a beautiful plant " ]
@@ -248,8 +241,7 @@ view ellieLinkConfig state =
                     , Block.view [ Block.plaintext " his TV." ]
                     ]
           }
-        , { pattern = "pointingTo"
-          , shownWith = "Label block"
+        , { shownWith = "Label block"
           , example =
                 inParagraph
                     [ Block.view [ Block.plaintext "Spongebob has a beautiful plant " ]
@@ -274,8 +266,7 @@ view ellieLinkConfig state =
                     , Block.view [ Block.plaintext "." ]
                     ]
           }
-        , { pattern = "pointingTo"
-          , shownWith = "Blank block"
+        , { shownWith = "Blank block"
           , example =
                 inParagraph
                     [ Block.view
@@ -300,8 +291,7 @@ view ellieLinkConfig state =
                     , Block.view [ Block.plaintext " gifts with comic book pages." ]
                     ]
           }
-        , { pattern = "pointingTo"
-          , shownWith = "Labelled blank block"
+        , { shownWith = "Labelled blank block"
           , example =
                 inParagraph
                     [ Block.view
@@ -332,8 +322,7 @@ view ellieLinkConfig state =
                     , Block.view [ Block.plaintext " his replacement cousin coming out of his room wearing a gorilla mask." ]
                     ]
           }
-        , { pattern = "pointingTo"
-          , shownWith = "Blank with emphasis block"
+        , { shownWith = "Blank with emphasis block"
           , example =
                 div []
                     [ inParagraph
