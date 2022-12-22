@@ -396,52 +396,72 @@ view ellieLinkConfig state =
                         ]
                         1
           }
-        , { description = "**Blank with emphasis block**"
+        , { description = "**Blank with emphasis block** with the question box pointing to the entire emphasis"
           , example =
-                div []
-                    [ inParagraph
-                        [ Block.view
-                            [ Block.emphasize
-                            , Block.cyan
-                            , Block.content (Block.phrase "Moana " ++ [ Block.blank ])
-                            , Block.bottomSpacingPx (getBottomSpacingFor "question-box-5")
-                            , Block.withQuestionBox
-                                [ QuestionBox.id "question-box-5"
-                                , QuestionBox.pointingTo (Dict.get "question-box-5" state.questionBoxMeasurementsById)
-                                , QuestionBox.markdown "Pointing at the entire emphasis"
+                inParagraph
+                    [ Block.view
+                        [ Block.emphasize
+                        , Block.cyan
+                        , Block.content (Block.phrase "Moana " ++ [ Block.blank ])
+                        , Block.bottomSpacingPx (getBottomSpacingFor "question-box-5")
+                        , Block.withQuestionBox
+                            [ QuestionBox.id "question-box-5"
+                            , QuestionBox.pointingTo (Dict.get "question-box-5" state.questionBoxMeasurementsById)
+                            , QuestionBox.markdown "Pointing at the entire emphasis"
+                            ]
+                        ]
+                    ]
+          , pattern =
+                Code.fromModule "Block" "view"
+                    ++ Code.listMultiline
+                        [ Code.fromModule "Block" "bottomSpacingPx " ++ "(Just 80) -- typically the questionBoxMeasurement's height + 8"
+                        , Code.fromModule "Block" "withQuestionBox"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
+                                , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
+                                , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the entire emphasis"
+                                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
                                 ]
-                            ]
+                                2
+                        , "…"
                         ]
-                    , inParagraph
-                        [ Block.view
-                            [ Block.emphasize
-                            , Block.cyan
-                            , Block.content
-                                (Block.wordWithQuestionBox "Moana"
-                                    [ QuestionBox.id "question-box-6"
-                                    , QuestionBox.pointingTo (Dict.get "question-box-6" state.questionBoxMeasurementsById)
-                                    , QuestionBox.markdown "Pointing at first word"
-                                    ]
-                                    :: [ Block.space, Block.blank ]
-                                )
-                            , Block.bottomSpacingPx (getBottomSpacingFor "question-box-6")
-                            ]
+                        1
+          }
+        , { description = "**Blank with emphasis block** with the question box pointing to a particular word"
+          , example =
+                inParagraph
+                    [ Block.view
+                        [ Block.emphasize
+                        , Block.cyan
+                        , Block.content
+                            (Block.wordWithQuestionBox "Moana"
+                                [ QuestionBox.id "question-box-6"
+                                , QuestionBox.pointingTo (Dict.get "question-box-6" state.questionBoxMeasurementsById)
+                                , QuestionBox.markdown "Pointing at first word"
+                                ]
+                                :: [ Block.space, Block.blank ]
+                            )
+                        , Block.bottomSpacingPx (getBottomSpacingFor "question-box-6")
                         ]
-                    , inParagraph
-                        [ Block.view
-                            [ Block.emphasize
-                            , Block.cyan
-                            , Block.content
-                                (Block.phrase "Moana "
-                                    ++ [ Block.blankWithQuestionBox
-                                            [ QuestionBox.id "question-box-7"
-                                            , QuestionBox.pointingTo (Dict.get "question-box-7" state.questionBoxMeasurementsById)
-                                            , QuestionBox.markdown "Pointing at the blank"
-                                            ]
-                                       ]
-                                )
-                            , Block.bottomSpacingPx (getBottomSpacingFor "question-box-7")
-                            ]
+                    ]
+          , pattern = "TODO"
+          }
+        , { description = "**Blank with emphasis block** with the question box pointing to a blank"
+          , example =
+                inParagraph
+                    [ Block.view
+                        [ Block.emphasize
+                        , Block.cyan
+                        , Block.content
+                            (Block.phrase "Moana "
+                                ++ [ Block.blankWithQuestionBox
+                                        [ QuestionBox.id "question-box-7"
+                                        , QuestionBox.pointingTo (Dict.get "question-box-7" state.questionBoxMeasurementsById)
+                                        , QuestionBox.markdown "Pointing at the blank"
+                                        ]
+                                   ]
+                            )
+                        , Block.bottomSpacingPx (getBottomSpacingFor "question-box-7")
                         ]
                     ]
           , pattern = "TODO"
