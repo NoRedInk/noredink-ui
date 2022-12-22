@@ -8,7 +8,7 @@ module Code exposing
     , tuple
     , record, recordMultiline
     , newlineWithIndent, newlines
-    , withParens
+    , withParens, withParensMultiline
     , anonymousFunction, always
     , caseExpression
     , browserElement, unstyledView
@@ -27,7 +27,7 @@ module Code exposing
 @docs tuple
 @docs record, recordMultiline
 @docs newlineWithIndent, newlines
-@docs withParens
+@docs withParens, withParensMultiline
 @docs anonymousFunction, always
 @docs caseExpression
 @docs browserElement, unstyledView
@@ -172,6 +172,16 @@ newlineWithIndent indent =
 withParens : String -> String
 withParens val =
     "(" ++ val ++ ")"
+
+
+{-| -}
+withParensMultiline : List String -> Int -> String
+withParensMultiline items indent =
+    let
+        indents =
+            newlineWithIndent indent
+    in
+    indents ++ "(" ++ String.join indents items ++ indents ++ ")"
 
 
 {-| -}
