@@ -237,7 +237,36 @@ view ellieLinkConfig state =
             , sort = Nothing
             }
         ]
-        [ { description = "**Emphasis block**"
+        [ { description = "**Plain block**"
+          , example =
+                inParagraph
+                    [ Block.view
+                        [ Block.plaintext "Dave"
+                        , Block.bottomSpacingPx (getBottomSpacingFor "question-box-0")
+                        , Block.withQuestionBox
+                            [ QuestionBox.id "question-box-0"
+                            , QuestionBox.pointingTo (Dict.get "question-box-0" state.questionBoxMeasurementsById)
+                            , QuestionBox.markdown "Who?"
+                            ]
+                        ]
+                    , Block.view [ Block.plaintext " scared his replacement cousin coming out of his room wearing a gorilla mask." ]
+                    ]
+          , pattern =
+                Code.fromModule "Block" "view"
+                    ++ Code.listMultiline
+                        [ Code.fromModule "Block" "bottomSpacingPx " ++ "(Just 230) -- typically the questionBoxMeasurement's height + 8"
+                        , Code.fromModule "Block" "withQuestionBox"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
+                                , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
+                                , Code.fromModule moduleName "markdown " ++ Code.string "Who?"
+                                ]
+                                2
+                        , "…"
+                        ]
+                        1
+          }
+        , { description = "**Emphasis block**"
           , example =
                 inParagraph
                     [ Block.view [ Block.plaintext "Spongebob has a beautiful plant " ]
@@ -672,7 +701,8 @@ update msg state =
                     , "warning-2-label-id"
                     ]
                     ++ List.map measureQuestionBox
-                        [ "question-box-1"
+                        [ "question-box-0"
+                        , "question-box-1"
                         , "question-box-2"
                         , "question-box-3"
                         , "question-box-4"
