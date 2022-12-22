@@ -20,6 +20,7 @@ import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
+import Markdown
 import Nri.Ui.Block.V2 as Block
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
@@ -208,9 +209,9 @@ view ellieLinkConfig state =
             ]
         ]
     , Table.view
-        [ Table.string
-            { header = "Pattern"
-            , value = .shownWith
+        [ Table.custom
+            { header = text "Pattern name & description"
+            , view = .description >> Markdown.toHtml Nothing >> List.map fromUnstyled >> div []
             , width = Css.pct 15
             , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.top ]
             , sort = Nothing
@@ -222,8 +223,21 @@ view ellieLinkConfig state =
             , cellStyles = always []
             , sort = Nothing
             }
+        , Table.custom
+            { header = text "Code"
+            , view = \{ pattern } -> code [] [ text pattern ]
+            , width = Css.px 50
+            , cellStyles =
+                always
+                    [ Css.padding2 (Css.px 14) (Css.px 7)
+                    , Css.verticalAlign Css.top
+                    , Css.fontSize (Css.px 12)
+                    , Css.whiteSpace Css.preWrap
+                    ]
+            , sort = Nothing
+            }
         ]
-        [ { shownWith = "Emphasis block"
+        [ { description = "**Emphasis block**"
           , example =
                 inParagraph
                     [ Block.view [ Block.plaintext "Spongebob has a beautiful plant " ]
@@ -240,8 +254,23 @@ view ellieLinkConfig state =
                         ]
                     , Block.view [ Block.plaintext " his TV." ]
                     ]
+          , pattern =
+                Code.fromModule "Block" "view"
+                    ++ Code.listMultiline
+                        [ Code.fromModule "Block" "bottomSpacingPx " ++ "(Just 138) -- typically the questionBoxMeasurement's height + 8"
+                        , Code.fromModule "Block" "withQuestionBox"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
+                                , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
+                                , Code.fromModule moduleName "markdown " ++ Code.string "“Above” is a preposition."
+                                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
+                                ]
+                                2
+                        , "…"
+                        ]
+                        1
           }
-        , { shownWith = "Label block"
+        , { description = "**Label block**"
           , example =
                 inParagraph
                     [ Block.view [ Block.plaintext "Spongebob has a beautiful plant " ]
@@ -265,8 +294,23 @@ view ellieLinkConfig state =
                         ]
                     , Block.view [ Block.plaintext "." ]
                     ]
+          , pattern =
+                Code.fromModule "Block" "view"
+                    ++ Code.listMultiline
+                        [ Code.fromModule "Block" "bottomSpacingPx " ++ "(Just 230) -- typically the questionBoxMeasurement's height + 8"
+                        , Code.fromModule "Block" "withQuestionBox"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
+                                , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
+                                , Code.fromModule moduleName "markdown " ++ Code.string "Which word is the preposition?"
+                                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
+                                ]
+                                2
+                        , "…"
+                        ]
+                        1
           }
-        , { shownWith = "Blank block"
+        , { description = "**Blank block**"
           , example =
                 inParagraph
                     [ Block.view
@@ -290,8 +334,23 @@ view ellieLinkConfig state =
                         ]
                     , Block.view [ Block.plaintext " gifts with comic book pages." ]
                     ]
+          , pattern =
+                Code.fromModule "Block" "view"
+                    ++ Code.listMultiline
+                        [ Code.fromModule "Block" "bottomSpacingPx " ++ "(Just 185) -- typically the questionBoxMeasurement's height + 8"
+                        , Code.fromModule "Block" "withQuestionBox"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
+                                , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
+                                , Code.fromModule moduleName "markdown " ++ Code.string "Which verb matches the subject?"
+                                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
+                                ]
+                                2
+                        , "…"
+                        ]
+                        1
           }
-        , { shownWith = "Labelled blank block"
+        , { description = "**Labelled blank block**"
           , example =
                 inParagraph
                     [ Block.view
@@ -321,8 +380,23 @@ view ellieLinkConfig state =
                         ]
                     , Block.view [ Block.plaintext " his replacement cousin coming out of his room wearing a gorilla mask." ]
                     ]
+          , pattern =
+                Code.fromModule "Block" "view"
+                    ++ Code.listMultiline
+                        [ Code.fromModule "Block" "bottomSpacingPx " ++ "(Just 230) -- typically the questionBoxMeasurement's height + 8"
+                        , Code.fromModule "Block" "withQuestionBox"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
+                                , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
+                                , Code.fromModule moduleName "markdown " ++ Code.string "What did he do?"
+                                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
+                                ]
+                                2
+                        , "…"
+                        ]
+                        1
           }
-        , { shownWith = "Blank with emphasis block"
+        , { description = "**Blank with emphasis block**"
           , example =
                 div []
                     [ inParagraph
@@ -370,6 +444,7 @@ view ellieLinkConfig state =
                             ]
                         ]
                     ]
+          , pattern = "TODO"
           }
         ]
     ]
