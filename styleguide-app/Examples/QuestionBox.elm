@@ -437,14 +437,34 @@ view ellieLinkConfig state =
                             (Block.wordWithQuestionBox "Moana"
                                 [ QuestionBox.id "question-box-6"
                                 , QuestionBox.pointingTo (Dict.get "question-box-6" state.questionBoxMeasurementsById)
-                                , QuestionBox.markdown "Pointing at first word"
+                                , QuestionBox.markdown "Pointing at the first word"
                                 ]
                                 :: [ Block.space, Block.blank ]
                             )
                         , Block.bottomSpacingPx (getBottomSpacingFor "question-box-6")
                         ]
                     ]
-          , pattern = "TODO"
+          , pattern =
+                Code.fromModule "Block" "view"
+                    ++ Code.listMultiline
+                        [ Code.fromModule "Block" "bottomSpacingPx " ++ "(Just 80) -- typically the questionBoxMeasurement's height + 8"
+                        , Code.fromModule "Block" "content"
+                            ++ Code.withParensMultiline
+                                [ Code.fromModule "Block" "wordWithQuestionBox "
+                                    ++ Code.string "Moana"
+                                    ++ Code.listMultiline
+                                        [ Code.fromModule moduleName "id " ++ Code.string "question-box"
+                                        , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
+                                        , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the first word"
+                                        , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
+                                        ]
+                                        3
+                                , ":: " ++ Code.list [ "Block.space", "Block.blank" ]
+                                ]
+                                2
+                        , "…"
+                        ]
+                        1
           }
         , { description = "**Blank with emphasis block** with the question box pointing to a blank"
           , example =
