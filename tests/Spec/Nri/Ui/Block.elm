@@ -30,7 +30,7 @@ contentSpec =
                 |> Query.has [ Selector.text "blank" ]
     , test "blank with question box" <|
         \() ->
-            [ Block.withQuestionBox [ QuestionBox.markdown "Question Box content" ] ]
+            [ Block.withQuestionBox [ QuestionBox.markdown "Question Box content" ] Nothing ]
                 |> toQuery
                 |> Query.has
                     [ Selector.text "blank"
@@ -47,7 +47,7 @@ contentSpec =
     , test "plaintext with question box" <|
         \() ->
             [ Block.plaintext "Yo"
-            , Block.withQuestionBox [ QuestionBox.markdown "Question Box content" ]
+            , Block.withQuestionBox [ QuestionBox.markdown "Question Box content" ] Nothing
             ]
                 |> toQuery
                 |> Expect.all
@@ -65,7 +65,7 @@ contentSpec =
     , test "content with blankWithQuestionBox" <|
         \() ->
             [ Block.content
-                [ Block.blankWithQuestionBox [ QuestionBox.markdown "Question Box content" ] ]
+                [ Block.blankWithQuestionBox [ QuestionBox.markdown "Question Box content" ] Nothing ]
             ]
                 |> toQuery
                 |> Query.has
@@ -75,7 +75,7 @@ contentSpec =
     , test "content with wordWithQuestionBox" <|
         \() ->
             [ Block.content
-                [ Block.wordWithQuestionBox "word" [ QuestionBox.markdown "Question Box content" ] ]
+                [ Block.wordWithQuestionBox "word" [ QuestionBox.markdown "Question Box content" ] Nothing ]
             ]
                 |> toQuery
                 |> Query.has

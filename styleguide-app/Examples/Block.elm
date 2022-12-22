@@ -239,7 +239,7 @@ example =
             , Table.view
                 [ Table.custom
                     { header = text "Pattern name & description"
-                    , view = .description >> Markdown.toHtml Nothing >> List.map fromUnstyled >> span []
+                    , view = .description >> Markdown.toHtml Nothing >> List.map fromUnstyled >> div []
                     , width = Css.px 125
                     , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
                     , sort = Nothing
@@ -431,16 +431,6 @@ initControl =
                     |> Control.field "totalHeight" (ControlExtra.float 80)
                     |> Control.field "xOffset" (ControlExtra.float 0)
                 )
-            )
-        |> ControlExtra.optionalListItem "bottomSpacingPx"
-            (Control.map
-                (\v ->
-                    ( Code.fromModule moduleName "bottomSpacingPx "
-                        ++ Code.withParens (Code.maybeFloat (Just v))
-                    , Block.bottomSpacingPx (Just v)
-                    )
-                )
-                (ControlExtra.float 40)
             )
         |> ControlExtra.optionalListItem "theme"
             (CommonControls.choice moduleName
