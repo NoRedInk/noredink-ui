@@ -76,7 +76,6 @@ example =
                 ]
           , Block.view [ Block.plaintext " it with ketchup." ]
           ]
-            |> List.concat
             |> p [ css [ Fonts.baseFont, Css.fontSize (Css.px 12), Css.margin Css.zero ] ]
         ]
     , view =
@@ -86,14 +85,13 @@ example =
                     Control.currentValue state.settings
 
                 inParagraph =
-                    List.concat
-                        >> p
-                            [ css
-                                [ Css.margin2 (Css.px 30) Css.zero
-                                , Fonts.quizFont
-                                , Css.fontSize (Css.px 30)
-                                ]
+                    p
+                        [ css
+                            [ Css.margin2 (Css.px 30) Css.zero
+                            , Fonts.quizFont
+                            , Css.fontSize (Css.px 30)
                             ]
+                        ]
 
                 offsets =
                     Block.getLabelPositions state.labelMeasurementsById
@@ -127,7 +125,6 @@ example =
               , Block.view (List.map Tuple.second attributes)
               , Block.view [ Block.plaintext " a lot!" ]
               ]
-                |> List.concat
                 |> p
                     [ css
                         [ Fonts.quizFont
@@ -156,32 +153,32 @@ example =
                     , Css.marginTop (Css.px 60)
                     ]
                 ]
-                ([ Block.view
+                [ Block.view
                     [ Block.plaintext "Superman"
                     , Block.magenta
                     , Block.label "subject"
                     , Block.labelId subjectId
                     , Block.labelPosition (Dict.get subjectId offsets)
                     ]
-                 , Block.view [ Block.plaintext " " ]
-                 , Block.view []
-                 , Block.view [ Block.plaintext " " ]
-                 , Block.view
+                , Block.view [ Block.plaintext " " ]
+                , Block.view []
+                , Block.view [ Block.plaintext " " ]
+                , Block.view
                     [ Block.plaintext "gifts"
                     , Block.label "direct object"
                     , Block.yellow
                     , Block.labelId directObjectId
                     , Block.labelPosition (Dict.get directObjectId offsets)
                     ]
-                 , Block.view [ Block.plaintext " " ]
-                 , Block.view
+                , Block.view [ Block.plaintext " " ]
+                , Block.view
                     [ Block.label "preposition"
                     , Block.cyan
                     , Block.labelId prepositionId
                     , Block.labelPosition (Dict.get prepositionId offsets)
                     ]
-                 , Block.view [ Block.plaintext " comic book pages. " ]
-                 , Block.view
+                , Block.view [ Block.plaintext " comic book pages. " ]
+                , Block.view
                     [ (List.concat >> Block.content)
                         [ Block.phrase "This is heroically generous "
                         , [ Block.blank ]
@@ -192,9 +189,7 @@ example =
                     , Block.labelId editorsNoteId
                     , Block.labelPosition (Dict.get editorsNoteId offsets)
                     ]
-                 ]
-                    |> List.concat
-                )
+                ]
             , p
                 [ css
                     [ Fonts.quizFont
@@ -202,47 +197,45 @@ example =
                     , Css.marginTop (Css.px 60)
                     ]
                 ]
-                ([ Block.view
+                [ Block.view
                     [ Block.plaintext "A"
                     , Block.magenta
                     , Block.label "this is an article. \"An\" is also an article."
                     , Block.labelId articleId
                     , Block.labelPosition (Dict.get articleId offsets)
                     ]
-                 , Block.view [ Block.plaintext " " ]
-                 , Block.view
+                , Block.view [ Block.plaintext " " ]
+                , Block.view
                     [ Block.plaintext "tricky"
                     , Block.label "this is an adjective"
                     , Block.yellow
                     , Block.labelId trickyId
                     , Block.labelPosition (Dict.get trickyId offsets)
                     ]
-                 , Block.view [ Block.plaintext " " ]
-                 , Block.view
+                , Block.view [ Block.plaintext " " ]
+                , Block.view
                     [ Block.plaintext "example"
                     , Block.label "the goal of which is to demonstrate horizontal repositioning"
                     , Block.cyan
                     , Block.labelId goalId
                     , Block.labelPosition (Dict.get goalId offsets)
                     ]
-                 , Block.view [ Block.plaintext ". Be sure to be " ]
-                 , Block.view
+                , Block.view [ Block.plaintext ". Be sure to be " ]
+                , Block.view
                     [ Block.plaintext "careful"
                     , Block.label "Shortish content..."
                     , Block.green
                     , Block.labelId shortId
                     , Block.labelPosition (Dict.get shortId offsets)
                     ]
-                 , Block.view
+                , Block.view
                     [ Block.plaintext "!"
                     , Block.label "It's important that the 'lowest' content is rendered on top of all other content."
                     , Block.blue
                     , Block.labelId longId
                     , Block.labelPosition (Dict.get longId offsets)
                     ]
-                 ]
-                    |> List.concat
-                )
+                ]
             , Table.view
                 [ Table.custom
                     { header = text "Pattern name & description"
@@ -406,7 +399,7 @@ init =
 
 
 type alias Settings =
-    List ( String, Block.Attribute )
+    List ( String, Block.Attribute Msg )
 
 
 initControl : Control Settings
@@ -462,11 +455,9 @@ initControl =
             )
         |> ControlExtra.optionalListItem "labelId"
             (CommonControls.string ( Code.fromModule moduleName "labelId", Block.labelId ) "fruit-block")
-        |> ControlExtra.optionalListItem "class"
-            (CommonControls.string ( "class", Block.class ) "kiwis-are-good")
 
 
-controlContent : Control ( String, Block.Attribute )
+controlContent : Control ( String, Block.Attribute msg )
 controlContent =
     Control.choice
         [ ( "plaintext"
