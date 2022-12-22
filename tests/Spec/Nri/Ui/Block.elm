@@ -5,7 +5,7 @@ import Dict
 import Expect
 import Html.Attributes as Attributes
 import Html.Styled
-import Nri.Ui.Block.V2 as Block
+import Nri.Ui.Block.V3 as Block
 import Nri.Ui.QuestionBox.V2 as QuestionBox
 import Test exposing (..)
 import Test.Html.Query as Query

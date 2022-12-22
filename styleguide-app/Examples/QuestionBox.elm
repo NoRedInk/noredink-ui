@@ -21,7 +21,7 @@ import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Markdown
-import Nri.Ui.Block.V2 as Block
+import Nri.Ui.Block.V3 as Block
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
