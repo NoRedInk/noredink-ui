@@ -3,6 +3,7 @@ module Nri.Ui.QuestionBox.V2 exposing
     , id, markdown, actions, character
     , standalone, pointingTo
     , containerCss
+    , guidanceId
     )
 
 {-|
@@ -13,8 +14,11 @@ module Nri.Ui.QuestionBox.V2 exposing
 @docs standalone, pointingTo
 @docs containerCss
 
+@docs guidanceId
+
 -}
 
+import Accessibility.Styled.Key as Key
 import Browser.Dom exposing (Element)
 import Css
 import Css.Global
@@ -114,6 +118,19 @@ pointingTo element =
     setType (PointingTo element)
 
 
+{-| This helper is how we create an id for the guidance speech bubble element based on the `QuestionBox.id` value. Use this helper to manage focus.
+
+When showing multiple questions in a sequence based on the user's answer, we want to move the user's focus to the guidance so that:
+
+  - Screenreader users are alerted to a new context -- the new question!
+  - Keyboard users's focus is somewhere convenient to answer the question (but not _on_ an answer, since we don't want accidental submissions or for the user to hit enter straight and miss the guidance!)
+
+-}
+guidanceId : String -> String
+guidanceId id_ =
+    id_ ++ "__guidance-speech-bubble"
+
+
 {-|
 
     QuestionBox.view
@@ -193,7 +210,7 @@ viewBalloon config attributes =
     Balloon.view
         ([ Balloon.html
             (List.filterMap identity
-                [ Maybe.map (viewGuidance config.character) config.markdown
+                [ Maybe.map (viewGuidance config) config.markdown
                 , viewActions config.character config.actions
                 ]
             )
@@ -204,9 +221,9 @@ viewBalloon config attributes =
         )
 
 
-viewGuidance : Maybe { name : String, icon : Svg } -> String -> Html msg
-viewGuidance withCharacter markdown_ =
-    case withCharacter of
+viewGuidance : { config | id : Maybe String, character : Maybe { name : String, icon : Svg } } -> String -> Html msg
+viewGuidance config markdown_ =
+    case config.character of
         Just character_ ->
             div
                 [ css
@@ -218,7 +235,7 @@ viewGuidance withCharacter markdown_ =
                     ]
                 ]
                 [ viewCharacter character_
-                , viewSpeechBubble
+                , viewSpeechBubble config
                     [ Balloon.markdown markdown_
                     , Balloon.onLeft
                     , Balloon.alignArrowEnd
@@ -227,14 +244,14 @@ viewGuidance withCharacter markdown_ =
                 ]
 
         Nothing ->
-            viewSpeechBubble
+            viewSpeechBubble config
                 [ Balloon.markdown markdown_
                 , Balloon.css [ Css.margin2 (Css.px 10) (Css.px 20) ]
                 ]
 
 
-viewSpeechBubble : List (Balloon.Attribute msg) -> Html msg
-viewSpeechBubble extraAttributes =
+viewSpeechBubble : { config | id : Maybe String } -> List (Balloon.Attribute msg) -> Html msg
+viewSpeechBubble config extraAttributes =
     Balloon.view
         ([ Balloon.nriDescription "guidance-speech-bubble"
          , Balloon.white
@@ -243,6 +260,10 @@ viewSpeechBubble extraAttributes =
             , Css.padding (Css.px 10)
             , Css.boxShadow Css.none
             , Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ]
+            ]
+         , Balloon.custom
+            [ AttributesExtra.maybe (guidanceId >> Attributes.id) config.id
+            , Key.tabbable False
             ]
          ]
             ++ extraAttributes
