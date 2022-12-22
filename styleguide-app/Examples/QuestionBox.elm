@@ -450,8 +450,7 @@ view ellieLinkConfig state =
                         [ Code.fromModule "Block" "bottomSpacingPx " ++ "(Just 80) -- typically the questionBoxMeasurement's height + 8"
                         , Code.fromModule "Block" "content"
                             ++ Code.withParensMultiline
-                                [ Code.fromModule "Block" "wordWithQuestionBox "
-                                    ++ Code.string "Moana"
+                                [ (Code.fromModule "Block" "wordWithQuestionBox " ++ Code.string "Moana")
                                     ++ Code.listMultiline
                                         [ Code.fromModule moduleName "id " ++ Code.string "question-box"
                                         , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
@@ -484,7 +483,30 @@ view ellieLinkConfig state =
                         , Block.bottomSpacingPx (getBottomSpacingFor "question-box-7")
                         ]
                     ]
-          , pattern = "TODO"
+          , pattern =
+                Code.fromModule "Block" "view"
+                    ++ Code.listMultiline
+                        [ Code.fromModule "Block" "bottomSpacingPx " ++ "(Just 80) -- typically the questionBoxMeasurement's height + 8"
+                        , Code.fromModule "Block" "content"
+                            ++ Code.withParensMultiline
+                                [ Code.fromModule "Block" "phrase " ++ Code.string "Moana"
+                                , " ++ "
+                                    ++ Code.listMultiline
+                                        [ Code.fromModule "Block" "blankWithQuestionBox"
+                                            ++ Code.listMultiline
+                                                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
+                                                , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
+                                                , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the blank"
+                                                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
+                                                ]
+                                                4
+                                        ]
+                                        3
+                                ]
+                                2
+                        , "…"
+                        ]
+                        1
           }
         ]
     ]
