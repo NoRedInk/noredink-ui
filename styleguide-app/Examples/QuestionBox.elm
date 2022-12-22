@@ -155,16 +155,15 @@ view ellieLinkConfig state =
             , Block.label "this is an article. \"An\" is also an article."
             , Block.labelId "article-label-id"
             , Block.labelPosition (Dict.get "article-label-id" offsets)
-            , Block.bottomSpacingPx (getBottomSpacingFor "left-viewport-question-box-example")
             , Block.withQuestionBox
                 [ QuestionBox.id "left-viewport-question-box-example"
-                , QuestionBox.pointingTo (Dict.get "left-viewport-question-box-example" state.questionBoxMeasurementsById)
                 , QuestionBox.markdown "Articles are important to get right! Is “the” an article?"
                 , QuestionBox.actions
                     [ { label = "Yes", onClick = NoOp }
                     , { label = "No", onClick = NoOp }
                     ]
                 ]
+                (Dict.get "left-viewport-question-box-example" state.questionBoxMeasurementsById)
             ]
         , Block.view [ Block.plaintext " " ]
         , Block.view
@@ -196,16 +195,15 @@ view ellieLinkConfig state =
             , Block.brown
             , Block.labelId "warning-2-label-id"
             , Block.labelPosition (Dict.get "warning-2-label-id" offsets)
-            , Block.bottomSpacingPx (getBottomSpacingFor "right-viewport-question-box-example")
             , Block.withQuestionBox
                 [ QuestionBox.id "right-viewport-question-box-example"
-                , QuestionBox.pointingTo (Dict.get "right-viewport-question-box-example" state.questionBoxMeasurementsById)
                 , QuestionBox.markdown "Were you careful? It's important to be careful!"
                 , QuestionBox.actions
                     [ { label = "Yes", onClick = NoOp }
                     , { label = "No", onClick = NoOp }
                     ]
                 ]
+                (Dict.get "right-viewport-question-box-example" state.questionBoxMeasurementsById)
             ]
         ]
     , Table.view
@@ -242,26 +240,22 @@ view ellieLinkConfig state =
                 inParagraph
                     [ Block.view
                         [ Block.plaintext "Dave"
-                        , Block.bottomSpacingPx (getBottomSpacingFor "question-box-0")
-                        , Block.withQuestionBox
-                            [ QuestionBox.id "question-box-0"
-                            , QuestionBox.pointingTo (Dict.get "question-box-0" state.questionBoxMeasurementsById)
-                            , QuestionBox.markdown "Who?"
-                            ]
+                        , Block.withQuestionBox [ QuestionBox.id "question-box-0", QuestionBox.markdown "Who?" ]
+                            (Dict.get "question-box-0" state.questionBoxMeasurementsById)
                         ]
                     , Block.view [ Block.plaintext " scared his replacement cousin coming out of his room wearing a gorilla mask." ]
                     ]
           , pattern =
                 Code.fromModule "Block" "view"
                     ++ Code.listMultiline
-                        [ Code.fromModule "Block" "bottomSpacingPx " ++ "(Just 230) -- typically the questionBoxMeasurement's height + 8"
-                        , Code.fromModule "Block" "withQuestionBox"
+                        [ Code.fromModule "Block" "withQuestionBox"
                             ++ Code.listMultiline
                                 [ Code.fromModule moduleName "id " ++ Code.string "question-box"
                                 , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
                                 , Code.fromModule moduleName "markdown " ++ Code.string "Who?"
                                 ]
                                 2
+                            ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
                         , "…"
                         ]
                         1
@@ -273,28 +267,26 @@ view ellieLinkConfig state =
                     , Block.view
                         [ Block.plaintext "above"
                         , Block.emphasize
-                        , Block.bottomSpacingPx (getBottomSpacingFor "question-box-1")
                         , Block.withQuestionBox
                             [ QuestionBox.id "question-box-1"
-                            , QuestionBox.pointingTo (Dict.get "question-box-1" state.questionBoxMeasurementsById)
                             , QuestionBox.markdown "“Above” is a preposition."
                             , QuestionBox.actions [ { label = "Try again", onClick = NoOp } ]
                             ]
+                            (Dict.get "question-box-1" state.questionBoxMeasurementsById)
                         ]
                     , Block.view [ Block.plaintext " his TV." ]
                     ]
           , pattern =
                 Code.fromModule "Block" "view"
                     ++ Code.listMultiline
-                        [ Code.fromModule "Block" "bottomSpacingPx " ++ "(Just 138) -- typically the questionBoxMeasurement's height + 8"
-                        , Code.fromModule "Block" "withQuestionBox"
+                        [ Code.fromModule "Block" "withQuestionBox"
                             ++ Code.listMultiline
                                 [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
                                 , Code.fromModule moduleName "markdown " ++ Code.string "“Above” is a preposition."
                                 , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
                                 ]
                                 2
+                            ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
                         , "…"
                         ]
                         1
@@ -308,11 +300,9 @@ view ellieLinkConfig state =
                         , Block.label "where"
                         , Block.labelId "label-1"
                         , Block.labelPosition (Dict.get "label-1" offsets)
-                        , Block.bottomSpacingPx (getBottomSpacingFor "question-box-2")
                         , Block.yellow
                         , Block.withQuestionBox
                             [ QuestionBox.id "question-box-2"
-                            , QuestionBox.pointingTo (Dict.get "question-box-2" state.questionBoxMeasurementsById)
                             , QuestionBox.markdown "Which word is the preposition?"
                             , QuestionBox.actions
                                 [ { label = "above", onClick = NoOp }
@@ -320,21 +310,21 @@ view ellieLinkConfig state =
                                 , { label = "TV", onClick = NoOp }
                                 ]
                             ]
+                            (Dict.get "question-box-2" state.questionBoxMeasurementsById)
                         ]
                     , Block.view [ Block.plaintext "." ]
                     ]
           , pattern =
                 Code.fromModule "Block" "view"
                     ++ Code.listMultiline
-                        [ Code.fromModule "Block" "bottomSpacingPx " ++ "(Just 230) -- typically the questionBoxMeasurement's height + 8"
-                        , Code.fromModule "Block" "withQuestionBox"
+                        [ Code.fromModule "Block" "withQuestionBox"
                             ++ Code.listMultiline
                                 [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
                                 , Code.fromModule moduleName "markdown " ++ Code.string "Which word is the preposition?"
                                 , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
                                 ]
                                 2
+                            ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
                         , "…"
                         ]
                         1
@@ -350,31 +340,29 @@ view ellieLinkConfig state =
                         ]
                     , Block.view [ Block.plaintext " " ]
                     , Block.view
-                        [ Block.bottomSpacingPx (getBottomSpacingFor "question-box-3")
-                        , Block.withQuestionBox
+                        [ Block.withQuestionBox
                             [ QuestionBox.id "question-box-3"
-                            , QuestionBox.pointingTo (Dict.get "question-box-3" state.questionBoxMeasurementsById)
                             , QuestionBox.markdown "Which verb matches the subject?"
                             , QuestionBox.actions
                                 [ { label = "wrap", onClick = NoOp }
                                 , { label = "wraps", onClick = NoOp }
                                 ]
                             ]
+                            (Dict.get "question-box-3" state.questionBoxMeasurementsById)
                         ]
                     , Block.view [ Block.plaintext " gifts with comic book pages." ]
                     ]
           , pattern =
                 Code.fromModule "Block" "view"
                     ++ Code.listMultiline
-                        [ Code.fromModule "Block" "bottomSpacingPx " ++ "(Just 185) -- typically the questionBoxMeasurement's height + 8"
-                        , Code.fromModule "Block" "withQuestionBox"
+                        [ Code.fromModule "Block" "withQuestionBox"
                             ++ Code.listMultiline
                                 [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
                                 , Code.fromModule moduleName "markdown " ++ Code.string "Which verb matches the subject?"
                                 , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
                                 ]
                                 2
+                            ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
                         , "…"
                         ]
                         1
@@ -387,11 +375,9 @@ view ellieLinkConfig state =
                         [ Block.label "verb"
                         , Block.labelId "label-3"
                         , Block.labelPosition (Dict.get "label-3" offsets)
-                        , Block.bottomSpacingPx (getBottomSpacingFor "question-box-4")
                         , Block.cyan
                         , Block.withQuestionBox
                             [ QuestionBox.id "question-box-4"
-                            , QuestionBox.pointingTo (Dict.get "question-box-4" state.questionBoxMeasurementsById)
                             , QuestionBox.markdown "What did he do?"
                             , QuestionBox.actions
                                 [ { label = "scared", onClick = NoOp }
@@ -399,21 +385,21 @@ view ellieLinkConfig state =
                                 , { label = "scarified", onClick = NoOp }
                                 ]
                             ]
+                            (Dict.get "question-box-4" state.questionBoxMeasurementsById)
                         ]
                     , Block.view [ Block.plaintext " his replacement cousin coming out of his room wearing a gorilla mask." ]
                     ]
           , pattern =
                 Code.fromModule "Block" "view"
                     ++ Code.listMultiline
-                        [ Code.fromModule "Block" "bottomSpacingPx " ++ "(Just 230) -- typically the questionBoxMeasurement's height + 8"
-                        , Code.fromModule "Block" "withQuestionBox"
+                        [ Code.fromModule "Block" "withQuestionBox"
                             ++ Code.listMultiline
                                 [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
                                 , Code.fromModule moduleName "markdown " ++ Code.string "What did he do?"
                                 , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
                                 ]
                                 2
+                            ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
                         , "…"
                         ]
                         1
@@ -425,26 +411,24 @@ view ellieLinkConfig state =
                         [ Block.emphasize
                         , Block.cyan
                         , Block.content (Block.phrase "Moana " ++ [ Block.blank ])
-                        , Block.bottomSpacingPx (getBottomSpacingFor "question-box-5")
                         , Block.withQuestionBox
                             [ QuestionBox.id "question-box-5"
-                            , QuestionBox.pointingTo (Dict.get "question-box-5" state.questionBoxMeasurementsById)
                             , QuestionBox.markdown "Pointing at the entire emphasis"
                             ]
+                            (Dict.get "question-box-5" state.questionBoxMeasurementsById)
                         ]
                     ]
           , pattern =
                 Code.fromModule "Block" "view"
                     ++ Code.listMultiline
-                        [ Code.fromModule "Block" "bottomSpacingPx " ++ "(Just 80) -- typically the questionBoxMeasurement's height + 8"
-                        , Code.fromModule "Block" "withQuestionBox"
+                        [ Code.fromModule "Block" "withQuestionBox"
                             ++ Code.listMultiline
                                 [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
                                 , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the entire emphasis"
                                 , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
                                 ]
                                 2
+                            ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
                         , "…"
                         ]
                         1
@@ -458,19 +442,17 @@ view ellieLinkConfig state =
                         , Block.content
                             (Block.wordWithQuestionBox "Moana"
                                 [ QuestionBox.id "question-box-6"
-                                , QuestionBox.pointingTo (Dict.get "question-box-6" state.questionBoxMeasurementsById)
                                 , QuestionBox.markdown "Pointing at the first word"
                                 ]
+                                (Dict.get "question-box-6" state.questionBoxMeasurementsById)
                                 :: [ Block.space, Block.blank ]
                             )
-                        , Block.bottomSpacingPx (getBottomSpacingFor "question-box-6")
                         ]
                     ]
           , pattern =
                 Code.fromModule "Block" "view"
                     ++ Code.listMultiline
-                        [ Code.fromModule "Block" "bottomSpacingPx " ++ "(Just 80) -- typically the questionBoxMeasurement's height + 8"
-                        , Code.fromModule "Block" "content"
+                        [ Code.fromModule "Block" "content"
                             ++ Code.withParensMultiline
                                 [ (Code.fromModule "Block" "wordWithQuestionBox " ++ Code.string "Moana")
                                     ++ Code.listMultiline
@@ -480,6 +462,7 @@ view ellieLinkConfig state =
                                         , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
                                         ]
                                         3
+                                    ++ (Code.newlineWithIndent 3 ++ "model.questionBoxMeasurement")
                                 , ":: " ++ Code.list [ "Block.space", "Block.blank" ]
                                 ]
                                 2
@@ -497,19 +480,17 @@ view ellieLinkConfig state =
                             (Block.phrase "Moana "
                                 ++ [ Block.blankWithQuestionBox
                                         [ QuestionBox.id "question-box-7"
-                                        , QuestionBox.pointingTo (Dict.get "question-box-7" state.questionBoxMeasurementsById)
                                         , QuestionBox.markdown "Pointing at the blank"
                                         ]
+                                        (Dict.get "question-box-7" state.questionBoxMeasurementsById)
                                    ]
                             )
-                        , Block.bottomSpacingPx (getBottomSpacingFor "question-box-7")
                         ]
                     ]
           , pattern =
                 Code.fromModule "Block" "view"
                     ++ Code.listMultiline
-                        [ Code.fromModule "Block" "bottomSpacingPx " ++ "(Just 80) -- typically the questionBoxMeasurement's height + 8"
-                        , Code.fromModule "Block" "content"
+                        [ Code.fromModule "Block" "content"
                             ++ Code.withParensMultiline
                                 [ Code.fromModule "Block" "phrase " ++ Code.string "Moana"
                                 , " ++ "
@@ -517,11 +498,11 @@ view ellieLinkConfig state =
                                         [ Code.fromModule "Block" "blankWithQuestionBox"
                                             ++ Code.listMultiline
                                                 [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                                , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
                                                 , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the blank"
                                                 , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
                                                 ]
                                                 4
+                                            ++ (Code.newlineWithIndent 4 ++ "model.questionBoxMeasurement")
                                         ]
                                         3
                                 ]

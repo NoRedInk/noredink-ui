@@ -432,16 +432,6 @@ initControl =
                     |> Control.field "xOffset" (ControlExtra.float 0)
                 )
             )
-        |> ControlExtra.optionalListItem "bottomSpacingPx"
-            (Control.map
-                (\v ->
-                    ( Code.fromModule moduleName "bottomSpacingPx "
-                        ++ Code.withParens (Code.maybeFloat (Just v))
-                    , Block.bottomSpacingPx (Just v)
-                    )
-                )
-                (ControlExtra.float 40)
-            )
         |> ControlExtra.optionalListItem "theme"
             (CommonControls.choice moduleName
                 [ ( "yellow", Block.yellow )

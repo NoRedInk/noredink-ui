@@ -9,7 +9,6 @@ module Nri.Ui.Block.V2 exposing
     , label
     , labelId, labelContentId
     , LabelPosition, getLabelPositions, labelPosition
-    , bottomSpacingPx
     , yellow, cyan, magenta, green, blue, purple, brown
     , withQuestionBox
     )
@@ -41,8 +40,6 @@ You will need these helpers if you want to prevent label overlaps. (Which is to 
 
 @docs labelId, labelContentId
 @docs LabelPosition, getLabelPositions, labelPosition
-
-@docs bottomSpacingPx
 
 
 ### Visual customization
@@ -136,13 +133,6 @@ labelPosition offset =
     Attribute <| \config -> { config | labelPosition = offset }
 
 
-{-| When using a `QuestionBox` that is `pointingTo` a block, you may want to add bottom spacing to the block in order to avoid having the QuestionBox cover meaningful content.
--}
-bottomSpacingPx : Maybe Float -> Attribute msg
-bottomSpacingPx offset =
-    Attribute <| \config -> { config | bottomSpacingPx = offset }
-
-
 {-| -}
 labelContentId : String -> String
 labelContentId labelId_ =
@@ -230,8 +220,8 @@ groupWithSort sortBy groupBy =
 
 {-| -}
 type Content msg
-    = Word (List (QuestionBox.Attribute msg)) String
-    | Blank (List (QuestionBox.Attribute msg))
+    = Word (List (QuestionBox.Attribute msg)) (Maybe Dom.Element) String
+    | Blank (List (QuestionBox.Attribute msg)) (Maybe Dom.Element)
     | FullHeightBlank
 
 
@@ -240,59 +230,77 @@ parseString =
     String.split " "
         >> List.intersperse " "
         >> List.filter (\str -> str /= "")
-        >> List.map (Word [])
+        >> List.map (Word [] Nothing)
 
 
 renderContent :
-    { config | bottomSpacingPx : Maybe Float }
+    { config | questionBoxElement : Maybe Dom.Element }
     -> Content msg
     -> List Css.Style
     -> Html msg
 renderContent config content_ markStyles =
     let
-        marginBottom =
-            case config.bottomSpacingPx of
-                Just by ->
-                    Css.important (Css.marginBottom (Css.px by))
+        marginBottom override =
+            case ( config.questionBoxElement, override ) of
+                ( Nothing, Just by ) ->
+                    Css.important (Css.marginBottom (Css.px (by.element.height + 8)))
 
-                Nothing ->
+                ( Just by, _ ) ->
+                    Css.important (Css.marginBottom (Css.px (by.element.height + 8)))
+
+                _ ->
                     Css.batch []
-    in
-    span
-        [ css
-            (Css.whiteSpace Css.preWrap
-                :: Css.display Css.inlineBlock
-                :: Css.position Css.relative
-                :: marginBottom
-                :: markStyles
-            )
-        , nriDescription "block-segment-container"
-        ]
-        (case content_ of
-            Word [] str ->
-                [ text str ]
 
-            Word questionBoxAttributes str ->
+        viewContainer marginOverride =
+            blockSegmentContainer (marginBottom marginOverride :: markStyles)
+    in
+    case content_ of
+        Word [] _ str ->
+            viewContainer Nothing [ text str ]
+
+        Word questionBoxAttributes element str ->
+            viewContainer element
                 [ text str
-                , QuestionBox.view questionBoxAttributes
+                , QuestionBox.view
+                    (QuestionBox.pointingTo element
+                        :: questionBoxAttributes
+                    )
                 ]
 
-            Blank [] ->
+        Blank [] _ ->
+            viewContainer Nothing
                 [ viewBlank [ Css.lineHeight (Css.int 1) ] ]
 
-            Blank questionBoxAttributes ->
+        Blank questionBoxAttributes element ->
+            viewContainer element
                 [ viewBlank [ Css.lineHeight (Css.int 1) ]
-                , QuestionBox.view questionBoxAttributes
+                , QuestionBox.view
+                    (QuestionBox.pointingTo element
+                        :: questionBoxAttributes
+                    )
                 ]
 
-            FullHeightBlank ->
+        FullHeightBlank ->
+            viewContainer Nothing
                 [ viewBlank
                     [ Css.paddingTop topBottomSpace
                     , Css.paddingBottom topBottomSpace
                     , Css.lineHeight Css.initial
                     ]
                 ]
-        )
+
+
+blockSegmentContainer : List Css.Style -> List (Html msg) -> Html msg
+blockSegmentContainer styles =
+    span
+        [ css
+            (Css.whiteSpace Css.preWrap
+                :: Css.display Css.inlineBlock
+                :: Css.position Css.relative
+                :: styles
+            )
+        , nriDescription "block-segment-container"
+        ]
 
 
 {-| -}
@@ -304,27 +312,27 @@ phrase =
 {-| -}
 space : Content msg
 space =
-    Word [] " "
+    Word [] Nothing " "
 
 
 {-| -}
-wordWithQuestionBox : String -> List (QuestionBox.Attribute msg) -> Content msg
-wordWithQuestionBox str attrs =
-    Word attrs str
+wordWithQuestionBox : String -> List (QuestionBox.Attribute msg) -> Maybe Dom.Element -> Content msg
+wordWithQuestionBox str attributes element =
+    Word attributes element str
 
 
 {-| You will only need to use this helper if you're also using `content` to construct a more complex Block. For a less complex blank Block, don't include content or plaintext in the list of attributes.
 -}
 blank : Content msg
 blank =
-    Blank []
+    Blank [] Nothing
 
 
 {-| You will only need to use this helper if you're also using `content` to construct a more complex Block. For a less complex blank Block, don't include content or plaintext in the list of attributes.
 -}
-blankWithQuestionBox : List (QuestionBox.Attribute msg) -> Content msg
-blankWithQuestionBox =
-    Blank
+blankWithQuestionBox : List (QuestionBox.Attribute msg) -> Maybe Dom.Element -> Content msg
+blankWithQuestionBox attributes element =
+    Blank attributes element
 
 
 
@@ -500,10 +508,11 @@ labelId id_ =
     Attribute (\config -> { config | labelId = Just id_ })
 
 
-{-| -}
-withQuestionBox : List (QuestionBox.Attribute msg) -> Attribute msg
-withQuestionBox attributes =
-    Attribute (\config -> { config | questionBox = attributes })
+{-| Pass in a list of question box attributes and the sizing (taken using Dom.Browser.getElement) of the question box
+-}
+withQuestionBox : List (QuestionBox.Attribute msg) -> Maybe Dom.Element -> Attribute msg
+withQuestionBox attributes element =
+    Attribute (\config -> { config | questionBox = attributes, questionBoxElement = element })
 
 
 
@@ -523,7 +532,7 @@ defaultConfig =
     , labelPosition = Nothing
     , theme = Yellow
     , emphasize = False
-    , bottomSpacingPx = Nothing
+    , questionBoxElement = Nothing
     , questionBox = []
     }
 
@@ -535,7 +544,7 @@ type alias Config msg =
     , labelPosition : Maybe LabelPosition
     , theme : Theme
     , emphasize : Bool
-    , bottomSpacingPx : Maybe Float
+    , questionBoxElement : Maybe Dom.Element
     , questionBox : List (QuestionBox.Attribute msg)
     }
 
@@ -565,7 +574,11 @@ render config =
                         []
 
                     _ ->
-                        [ QuestionBox.view config.questionBox ]
+                        [ QuestionBox.view
+                            (QuestionBox.pointingTo config.questionBoxElement
+                                :: config.questionBox
+                            )
+                        ]
                )
         )
 
