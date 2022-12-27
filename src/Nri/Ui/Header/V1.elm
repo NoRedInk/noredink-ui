@@ -156,19 +156,29 @@ view attrs { breadCrumbs, isCurrentRoute } =
             -- put the extra nav  there. If there is content there, put the links directly above the description.
             case config.extraContent of
                 [] ->
-                    ( [ viewJust viewExtraNav config.extraNav ]
+                    ( [ viewJust (viewExtraNav []) config.extraNav ]
                     , Html.text ""
                     )
 
                 _ ->
                     ( config.extraContent
-                    , viewJust viewExtraNav config.extraNav
+                    , viewJust
+                        (viewExtraNav
+                            [ Spacing.centeredContentWithSidePaddingAndCustomWidth config.pageWidth
+                            ]
+                        )
+                        config.extraNav
                     )
     in
     Html.div
         [ css
             [ Css.backgroundColor Colors.gray96
             , Css.borderBottom3 (Css.px 1) Css.solid Colors.gray92
+            , Css.paddingTop (Css.px 30)
+            , Css.paddingBottom (Css.px 20)
+            , Media.withMedia [ MediaQuery.mobile ]
+                [ Css.important (Css.padding2 (Css.px 20) (Css.px 15))
+                ]
             ]
         , AttributesExtra.nriDescription "Nri-Header"
         ]
@@ -177,12 +187,7 @@ view attrs { breadCrumbs, isCurrentRoute } =
                 [ Spacing.centeredContentWithSidePaddingAndCustomWidth config.pageWidth
                 , Css.alignItems Css.center
                 , Css.displayFlex
-                , Css.paddingTop (Css.px 30)
-                , Css.paddingBottom (Css.px 20)
-                , Media.withMedia [ MediaQuery.mobile ]
-                    [ Css.important (Css.padding2 (Css.px 20) (Css.px 15))
-                    , Css.flexDirection Css.column
-                    ]
+                , Media.withMedia [ MediaQuery.mobile ] [ Css.flexDirection Css.column ]
                 ]
                 :: config.containerAttributes
             )
@@ -217,15 +222,15 @@ viewDescription pageWidth description_ =
             [ Spacing.centeredContentWithSidePaddingAndCustomWidth pageWidth
             , Css.color Colors.gray45
             , Css.important (Css.margin Css.auto)
-            , Css.important (Css.paddingBottom (Css.px 20))
+            , Css.important (Css.paddingTop (Css.px 20))
             ]
         , Text.plaintext description_
         ]
 
 
-viewExtraNav : ( String, List (Html msg) ) -> Html msg
-viewExtraNav ( label, values ) =
-    Html.nav [ Aria.label label ]
+viewExtraNav : List Css.Style -> ( String, List (Html msg) ) -> Html msg
+viewExtraNav styles ( label, values ) =
+    Html.nav [ Aria.label label, css styles ]
         [ Html.ul
             [ css
                 [ Css.margin Css.zero
