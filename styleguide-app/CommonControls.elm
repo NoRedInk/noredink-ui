@@ -6,7 +6,7 @@ module CommonControls exposing
     , customIcon
     , specificColor
     , string
-    , content, exampleHtml
+    , content
     , httpError, badBodyString
     , guidanceAndErrorMessage
     , disabledListItem, premiumDisplay
@@ -25,7 +25,7 @@ module CommonControls exposing
 ### Content
 
 @docs string
-@docs content, exampleHtml
+@docs content
 @docs httpError, badBodyString
 @docs guidanceAndErrorMessage
 

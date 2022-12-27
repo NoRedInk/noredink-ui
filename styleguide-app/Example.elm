@@ -2,7 +2,7 @@ module Example exposing (Example, extraLinks, fullName, preview, view, wrapMsg, 
 
 import Accessibility.Styled.Aria as Aria
 import Category exposing (Category)
-import Css exposing (..)
+import Css
 import EllieLink
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes

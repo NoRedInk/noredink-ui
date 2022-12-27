@@ -9,7 +9,6 @@ module Examples.Header exposing (example, State, Msg)
 import Accessibility.Styled.Role as Role
 import Category exposing (Category(..))
 import Code
-import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
