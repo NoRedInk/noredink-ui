@@ -170,9 +170,7 @@ docsLink example =
             "https://package.elm-lang.org/packages/NoRedInk/noredink-ui/latest/"
                 ++ String.replace "." "-" (fullName example)
     in
-    ClickableText.link "Docs"
-        [ ClickableText.linkExternal link
-        ]
+    ClickableText.link "Docs" [ ClickableText.linkExternal link ]
 
 
 srcLink : Example state msg -> Html msg2
@@ -183,7 +181,4 @@ srcLink example =
                 ++ ".elm"
                 |> (++) "https://github.com/NoRedInk/noredink-ui/blob/master/src/"
     in
-    ClickableText.link "Source"
-        [ ClickableText.linkExternal link
-        , ClickableText.css [ Css.marginLeft (Css.px 20) ]
-        ]
+    ClickableText.link "Source" [ ClickableText.linkExternal link ]

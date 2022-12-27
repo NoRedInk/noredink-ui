@@ -234,6 +234,7 @@ viewExtraNav ( label, values ) =
                 , Css.alignItems Css.center
                 , Css.justifyContent Css.flexStart
                 , Css.flexWrap Css.wrap
+                , Css.property "column-gap" (.value Spacing.horizontalSpacerPx)
                 ]
             ]
             (List.map
