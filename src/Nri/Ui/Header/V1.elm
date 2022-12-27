@@ -40,7 +40,8 @@ extraContent value =
     Attribute (\soFar -> { soFar | extraContent = value })
 
 
-{-| -}
+{-| This attribute is unused and will be removed in the next version of Header.
+-}
 extraSubheadContent : List (Html msg) -> Attribute route msg
 extraSubheadContent value =
     Attribute (\soFar -> { soFar | extraSubheadContent = value })

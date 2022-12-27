@@ -177,12 +177,6 @@ init selection =
                     )
                     (Control.string "This page has some good content.")
                 )
-            |> ControlExtra.optionalListItem "extraSubheadContent"
-                (Control.value
-                    ( "Header.extraSubheadContent [ Html.text \"…\" ]"
-                    , Header.extraSubheadContent CommonControls.exampleHtml
-                    )
-                )
             |> ControlExtra.optionalListItem "customPageWidth"
                 (Control.map
                     (\width ->
