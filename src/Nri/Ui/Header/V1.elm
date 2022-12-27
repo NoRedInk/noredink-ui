@@ -150,6 +150,20 @@ view attrs { breadCrumbs, isCurrentRoute } =
     let
         config =
             customize attrs
+
+        ( extraContent_, extraNav_ ) =
+            -- when there's no content in the "extra content" hole to the right of the breadcrumbs,
+            -- put the extra nav  there. If there is content there, put the links directly above the description.
+            case config.extraContent of
+                [] ->
+                    ( [ viewJust viewExtraNav config.extraNav ]
+                    , Html.text ""
+                    )
+
+                _ ->
+                    ( config.extraContent
+                    , viewJust viewExtraNav config.extraNav
+                    )
     in
     Html.div
         [ css
@@ -189,10 +203,10 @@ view attrs { breadCrumbs, isCurrentRoute } =
                     _ ->
                         Html.div [] (breadcrumbsView :: config.extraSubheadContent)
                 ]
-                :: config.extraContent
+                :: extraContent_
             )
+        , extraNav_
         , viewJust (viewDescription config.pageWidth) config.description
-        , viewJust viewExtraNav config.extraNav
         ]
 
 
