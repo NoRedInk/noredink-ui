@@ -18,6 +18,7 @@ import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs
+import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Header.V1 as Header
@@ -165,6 +166,23 @@ init selection =
                             , Select.value selection
                             ]
                             |> map Select
+                        ]
+                    )
+                )
+            |> ControlExtra.optionalListItem "extraNav"
+                (Control.value
+                    ( Code.fromModule "Header" "extraNav "
+                        ++ Code.string "Resources"
+                        ++ Code.listMultiline
+                            [ Code.fromModule "ClickableText" "link " ++ Code.string "Zendesk" ++ " []"
+                            , Code.fromModule "ClickableText" "link " ++ Code.string "FAQ" ++ " []"
+                            , Code.fromModule "ClickableText" "link " ++ Code.string "About" ++ " []"
+                            ]
+                            2
+                    , Header.extraNav "Resources"
+                        [ ClickableText.link "Zendesk" []
+                        , ClickableText.link "FAQ" []
+                        , ClickableText.link "About" []
                         ]
                     )
                 )
