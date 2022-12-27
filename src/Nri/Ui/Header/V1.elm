@@ -1,16 +1,42 @@
 module Nri.Ui.Header.V1 exposing
-    ( view
-    , Attribute, aTagAttributes, extraContent, description, extraSubheadContent, customPageWidth, breadCrumbsLabel
+    ( view, Attribute
+    , aTagAttributes, customPageWidth, breadCrumbsLabel
+    , extraContent, description, extraNav
+    , extraSubheadContent
     )
 
 {-|
 
-@docs view
-@docs Attribute, aTagAttributes, extraContent, description, extraSubheadContent, customPageWidth, breadCrumbsLabel
+
+## Changelog
+
+
+### Patch changes
+
+  - marked extraSubheadContent as deprecated
+  - added extraNav
+
+@docs view, Attribute
+
+
+## Customize the header
+
+@docs aTagAttributes, customPageWidth, breadCrumbsLabel
+
+
+## Add additional content to the header
+
+@docs extraContent, description, extraNav
+
+
+### Deprecated, to be removed:
+
+@docs extraSubheadContent
 
 -}
 
 import Accessibility.Styled as Html exposing (Html)
+import Accessibility.Styled.Aria as Aria
 import Css
 import Css.Media as Media
 import Html.Styled.Attributes exposing (css)
@@ -38,6 +64,22 @@ aTagAttributes aTagAttributes_ =
 extraContent : List (Html msg) -> Attribute route msg
 extraContent value =
     Attribute (\soFar -> { soFar | extraContent = value })
+
+
+{-| -}
+extraNav : String -> List (Html msg) -> Attribute route msg
+extraNav label value =
+    Attribute
+        (\soFar ->
+            { soFar
+                | extraNav =
+                    if List.isEmpty value then
+                        Nothing
+
+                    else
+                        Just ( label, value )
+            }
+        )
 
 
 {-| This attribute is unused and will be removed in the next version of Header.
@@ -78,6 +120,7 @@ type alias Config route msg =
     , description : Maybe String
     , pageWidth : Css.Px
     , breadCrumbsLabel : String
+    , extraNav : Maybe ( String, List (Html msg) )
     }
 
 
@@ -91,6 +134,7 @@ customize =
         , description = Nothing
         , pageWidth = MediaQuery.mobileBreakpoint
         , breadCrumbsLabel = "breadcrumbs"
+        , extraNav = Nothing
         }
 
 
@@ -148,6 +192,7 @@ view attrs { breadCrumbs, isCurrentRoute } =
                 :: config.extraContent
             )
         , viewJust (viewDescription config.pageWidth) config.description
+        , viewJust viewExtraNav config.extraNav
         ]
 
 
@@ -161,4 +206,24 @@ viewDescription pageWidth description_ =
             , Css.important (Css.paddingBottom (Css.px 20))
             ]
         , Text.plaintext description_
+        ]
+
+
+viewExtraNav : ( String, List (Html msg) ) -> Html msg
+viewExtraNav ( label, values ) =
+    Html.nav [ Aria.label label ]
+        [ Html.ul
+            [ css
+                [ Css.margin Css.zero
+                , Css.padding Css.zero
+                , Css.displayFlex
+                , Css.alignItems Css.center
+                , Css.justifyContent Css.flexStart
+                , Css.flexWrap Css.wrap
+                ]
+            ]
+            (List.map
+                (\i -> Html.li [ css [ Css.listStyle Css.none ] ] [ i ])
+                values
+            )
         ]

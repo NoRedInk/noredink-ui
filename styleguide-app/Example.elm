@@ -12,6 +12,7 @@ import KeyboardSupport exposing (KeyboardSupport)
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
+import Nri.Ui.Header.V1 as Header
 
 
 type alias Example state msg =
@@ -154,33 +155,15 @@ view_ ellieLinkConfig example =
     ]
 
 
-extraLinks : Example state msg -> Html msg
-extraLinks example =
-    Html.nav [ Aria.label (fullName example) ]
-        [ Html.ul
-            [ Attributes.css
-                [ margin zero
-                , padding zero
-                , displayFlex
-                , alignItems center
-                , justifyContent flexStart
-                , flexWrap Css.wrap
-                ]
-            ]
-            (List.map
-                (\i ->
-                    Html.li
-                        [ Attributes.css
-                            [ Css.listStyle Css.none ]
-                        ]
-                        [ i ]
-                )
-                [ docsLink example, srcLink example ]
-            )
+extraLinks : (msg -> msg2) -> Example state msg -> Header.Attribute route msg2
+extraLinks f example =
+    Header.extraNav (fullName example)
+        [ Html.map f (docsLink example)
+        , Html.map f (srcLink example)
         ]
 
 
-docsLink : Example state msg -> Html msg
+docsLink : Example state msg -> Html msg2
 docsLink example =
     let
         link =
@@ -192,7 +175,7 @@ docsLink example =
         ]
 
 
-srcLink : Example state msg -> Html msg
+srcLink : Example state msg -> Html msg2
 srcLink example =
     let
         link =
