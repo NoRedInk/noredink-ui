@@ -1,5 +1,6 @@
 module Spec.Nri.Ui.Pagination exposing (spec)
 
+import Accessibility.Aria as Aria
 import Expect
 import Html.Styled
 import Nri.Ui.Pagination.V1 as Pagination
@@ -23,10 +24,20 @@ spec =
                     |> Html.Styled.toUnstyled
                     |> Query.fromHtml
                     |> Query.hasNot [ Selector.tag "nav" ]
-        , test "With more than 1 page, renders a nav" <|
+        , test "With more than 1 page, renders a nav with the current page indicated" <|
             \() ->
                 Pagination.view (always ()) 0 [ (), () ]
                     |> Html.Styled.toUnstyled
                     |> Query.fromHtml
-                    |> Query.has [ Selector.tag "nav" ]
+                    |> Query.has
+                        [ Selector.tag "nav"
+                        , Selector.containing
+                            [ Selector.all
+                                [ Selector.attribute (Aria.label "Page 1")
+                                , Selector.attribute Aria.currentPage
+                                ]
+                            ]
+                        , Selector.containing
+                            [ Selector.attribute (Aria.label "Page 2") ]
+                        ]
         ]
