@@ -5,17 +5,16 @@ import Accessibility.Styled.Aria as Aria
 import Css
 import Css.Transitions as Transitions
 import Html.Styled.Attributes as Attrs exposing (css)
-import List.Zipper as Zipper exposing (Zipper)
-import List.Zipper.Extra
+import List.Extra
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 
 
-view : (Int -> msg) -> Zipper a -> Html msg
-view goToPage pages =
+view : (Int -> msg) -> Int -> List a -> Html msg
+view goToPage currentPageIndex pages =
     let
-        currentPage =
-            List.Zipper.Extra.currentIndex pages
+        lastPageIndex =
+            List.length pages - 1
     in
     Html.nav
         [ css
@@ -28,14 +27,14 @@ view goToPage pages =
         ]
         [ ClickableText.button "Previous\u{00A0}Page"
             [ ClickableText.small
-            , if Zipper.isFirst pages then
+            , if currentPageIndex == 0 then
                 ClickableText.custom [ Attrs.disabled True ]
 
               else
-                ClickableText.onClick (goToPage (currentPage - 1))
+                ClickableText.onClick (goToPage (currentPageIndex - 1))
             , ClickableText.css [ Css.marginRight (Css.px 10) ]
             ]
-        , List.range 0 (List.Zipper.Extra.size pages - 1)
+        , List.range 0 lastPageIndex
             |> List.map
                 (\page ->
                     let
@@ -48,7 +47,7 @@ view goToPage pages =
                             , ClickableText.onClick (goToPage page)
                             , List.filterMap identity
                                 [ Just (Aria.label ("Page " ++ humanPage))
-                                , if page == currentPage then
+                                , if page == currentPageIndex then
                                     Just Aria.currentPage
 
                                   else
@@ -65,7 +64,7 @@ view goToPage pages =
                                     [ Transitions.backgroundColor 300
                                     , Transitions.color 300
                                     ]
-                                , if page == currentPage then
+                                , if page == currentPageIndex then
                                     Css.batch
                                         [ Css.backgroundColor Colors.glacier
                                         , Css.color Colors.navy
@@ -89,11 +88,11 @@ view goToPage pages =
                 ]
         , ClickableText.button "Next\u{00A0}Page"
             [ ClickableText.small
-            , if Zipper.isLast pages then
+            , if currentPageIndex == lastPageIndex then
                 ClickableText.custom [ Attrs.disabled True ]
 
               else
-                ClickableText.onClick (goToPage (currentPage + 1))
+                ClickableText.onClick (goToPage (currentPageIndex + 1))
             , ClickableText.css [ Css.marginLeft (Css.px 10) ]
             ]
         ]
