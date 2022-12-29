@@ -16,11 +16,18 @@ import Html.Styled.Attributes as Attrs exposing (css)
 import List.Extra
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Html.V3 exposing (viewIf)
 
 
 {-| -}
 view : (Int -> msg) -> Int -> List a -> Html msg
 view goToPage currentPageIndex pages =
+    viewIf (\_ -> view_ goToPage currentPageIndex pages)
+        (List.length pages > 1)
+
+
+view_ : (Int -> msg) -> Int -> List a -> Html msg
+view_ goToPage currentPageIndex pages =
     let
         lastPageIndex =
             List.length pages - 1
