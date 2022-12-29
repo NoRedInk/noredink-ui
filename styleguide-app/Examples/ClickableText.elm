@@ -102,6 +102,8 @@ init =
                     ( "ClickableText.submit", ClickableText.submit )
                 |> ControlExtra.optionalBoolListItem "opensModal (button only)"
                     ( "ClickableText.opensModal", ClickableText.opensModal )
+                |> ControlExtra.optionalBoolListItem "disabled"
+                    ( "ClickableText.disabled", ClickableText.disabled )
             )
         |> State
 

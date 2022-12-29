@@ -635,8 +635,8 @@ renderButton ((ButtonOrLink config) as button_) =
             ]
         ]
         (ClickableAttributes.toButtonAttributes config.clickableAttributes
-            ++ Attributes.disabled (isDisabled config.state)
-            :: Attributes.class FocusRing.customClass
+            { disabled = isDisabled config.state }
+            ++ Attributes.class FocusRing.customClass
             :: config.customAttributes
         )
         [ viewLabel config ]

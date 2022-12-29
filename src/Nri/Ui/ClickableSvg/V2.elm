@@ -584,10 +584,10 @@ renderButton ((ButtonOrLink config) as button_) =
         ([ Attributes.class "Nri-Ui-Clickable-Svg-V1__button"
          , Attributes.class FocusRing.customClass
          , Attributes.css (buttonOrLinkStyles config theme ++ config.customStyles)
-         , Attributes.disabled config.disabled
          , Aria.label config.label
          ]
             ++ ClickableAttributes.toButtonAttributes config.clickableAttributes
+                { disabled = config.disabled }
             ++ config.customAttributes
         )
         (renderIcons config theme.includeBorder)
