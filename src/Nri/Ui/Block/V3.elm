@@ -269,11 +269,11 @@ renderContent config content_ markStyles =
 
         Blank [] _ ->
             viewContainer Nothing
-                [ viewBlank [ Css.lineHeight (Css.int 1) ] ]
+                [ viewBlank [ Css.lineHeight (Css.num 1) ] ]
 
         Blank questionBoxAttributes element ->
             viewContainer element
-                [ viewBlank [ Css.lineHeight (Css.int 1) ]
+                [ viewBlank [ Css.lineHeight (Css.num 1) ]
                 , QuestionBox.view
                     (QuestionBox.pointingTo element
                         :: questionBoxAttributes
