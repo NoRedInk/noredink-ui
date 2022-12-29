@@ -1,5 +1,13 @@
 module Nri.Ui.Pagination.V1 exposing (view)
 
+{-| Display a nav element aiding in navigating between pages of content.
+
+    [ Previous ] [ 1 ] [ 2 ] [ 3 ] [ 4 ] [ Next ]
+
+@docs view
+
+-}
+
 import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Aria as Aria
 import Css
@@ -10,6 +18,7 @@ import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 
 
+{-| -}
 view : (Int -> msg) -> Int -> List a -> Html msg
 view goToPage currentPageIndex pages =
     let
