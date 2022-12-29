@@ -381,9 +381,9 @@ The styleguide example will NOT work correctly because of <https://github.com/el
 In most cases, if you're not using Browser.application, disabled links should work just fine.
 
 -}
-disabled : Attribute msg
-disabled =
-    set (\attributes -> { attributes | disabled = True })
+disabled : Bool -> Attribute msg
+disabled value =
+    set (\attributes -> { attributes | disabled = value })
 
 
 {-| Creates a `<button>` element

@@ -43,11 +43,8 @@ view_ goToPage currentPageIndex pages =
         ]
         [ ClickableText.button "Previous\u{00A0}Page"
             [ ClickableText.small
-            , if currentPageIndex == 0 then
-                ClickableText.custom [ Attrs.disabled True ]
-
-              else
-                ClickableText.onClick (goToPage (currentPageIndex - 1))
+            , ClickableText.disabled (currentPageIndex == 0)
+            , ClickableText.onClick (goToPage (currentPageIndex - 1))
             , ClickableText.css [ Css.marginRight (Css.px 10) ]
             ]
         , List.range 0 lastPageIndex
@@ -105,11 +102,8 @@ view_ goToPage currentPageIndex pages =
                 ]
         , ClickableText.button "Next\u{00A0}Page"
             [ ClickableText.small
-            , if currentPageIndex == lastPageIndex then
-                ClickableText.custom [ Attrs.disabled True ]
-
-              else
-                ClickableText.onClick (goToPage (currentPageIndex + 1))
+            , ClickableText.disabled (currentPageIndex == lastPageIndex)
+            , ClickableText.onClick (goToPage (currentPageIndex + 1))
             , ClickableText.css [ Css.marginLeft (Css.px 10) ]
             ]
         ]
