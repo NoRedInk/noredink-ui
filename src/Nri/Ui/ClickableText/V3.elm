@@ -505,8 +505,8 @@ clickableTextStyles isDisabled =
     in
     if isDisabled then
         Css.cursor Css.notAllowed
-            :: Css.color Colors.gray75
-            :: Css.visited [ Css.important (Css.color Colors.gray75) ]
+            :: Css.color Colors.gray45
+            :: Css.visited [ Css.important (Css.color Colors.gray45) ]
             :: baseStyles
 
     else
