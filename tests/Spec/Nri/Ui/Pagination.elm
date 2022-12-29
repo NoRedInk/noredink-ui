@@ -17,4 +17,16 @@ spec =
                     |> Html.Styled.toUnstyled
                     |> Query.fromHtml
                     |> Query.hasNot [ Selector.tag "nav" ]
+        , test "With 1 page, does not render a nav without active links" <|
+            \() ->
+                Pagination.view (always ()) 0 [ () ]
+                    |> Html.Styled.toUnstyled
+                    |> Query.fromHtml
+                    |> Query.hasNot [ Selector.tag "nav" ]
+        , test "With more than 1 page, renders a nav" <|
+            \() ->
+                Pagination.view (always ()) 0 [ (), () ]
+                    |> Html.Styled.toUnstyled
+                    |> Query.fromHtml
+                    |> Query.has [ Selector.tag "nav" ]
         ]
