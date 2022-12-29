@@ -26,9 +26,9 @@
             "elm-community/string-extra": "4.0.1",
             "myrho/elm-round": "1.0.4",
             "pablohirafuji/elm-markdown": "2.0.5",
-            "rtfeldman/elm-css": "17.0.5",
+            "rtfeldman/elm-css": "18.0.0",
             "rtfeldman/elm-sorter-experiment": "2.1.1",
-            "tesk9/accessible-html-with-css": "4.1.0",
+            "tesk9/accessible-html-with-css": "5.0.0",
             "tesk9/palette": "3.0.1",
             "wernerdegroot/listzipper": "4.0.0"
         },
