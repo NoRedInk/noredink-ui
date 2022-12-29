@@ -71,8 +71,9 @@ view_ goToPage currentPageIndex pages =
                                 ]
                                 |> ClickableText.custom
                             , ClickableText.css
-                                [ Css.width (Css.px 36)
-                                , Css.height (Css.px 33)
+                                [ Css.padding2 (Css.px 7) (Css.px 13.5)
+                                , Css.minWidth (Css.px 36)
+                                , Css.minHeight (Css.px 33)
                                 , Css.textAlign Css.center
                                 , Css.margin (Css.px 7)
                                 , Css.borderRadius (Css.px 8)
