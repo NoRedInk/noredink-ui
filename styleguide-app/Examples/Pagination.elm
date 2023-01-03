@@ -44,6 +44,21 @@ example =
             let
                 settings =
                     Control.currentValue model.settings
+
+                pages =
+                    List.range 1 settings.pages
+                        |> List.map
+                            (\i ->
+                                ( Code.record
+                                    [ ( "onClick", "SelectPage " ++ String.fromInt i )
+                                    , ( "href", Code.string ("#page" ++ String.fromInt i) )
+                                    ]
+                                , { onClick = SelectPage i
+                                  , href = "#page" ++ String.fromInt i
+                                  }
+                                )
+                            )
+                        |> List.unzip
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -54,19 +69,20 @@ example =
                 , mainType = Nothing
                 , extraCode = []
                 , renderExample = Code.unstyledView
-                , toExampleCode = \_ -> []
+                , toExampleCode =
+                    \_ ->
+                        [ { sectionName = "Example"
+                          , code =
+                                Code.fromModule moduleName "view"
+                                    ++ Code.listMultiline (Tuple.first pages)
+                                        1
+                                    ++ Code.newlineWithIndent 1
+                                    ++ String.fromInt model.currentPage
+                          }
+                        ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
-            , Pagination.view
-                (List.range 1 settings.pages
-                    |> List.map
-                        (\i ->
-                            { onClick = SelectPage i
-                            , href = "#page" ++ String.fromInt i
-                            }
-                        )
-                )
-                model.currentPage
+            , Pagination.view (Tuple.second pages) model.currentPage
             ]
     }
 
