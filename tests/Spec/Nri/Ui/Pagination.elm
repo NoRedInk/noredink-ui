@@ -49,4 +49,28 @@ spec =
                         [ Query.has [ Selector.tag "a" ]
                         , Query.hasNot [ Selector.tag "button" ]
                         ]
+        , test "Marks 'previous' link as disabled when on the first page" <|
+            \() ->
+                Pagination.view (always ()) 0 [ (), () ]
+                    |> Html.Styled.toUnstyled
+                    |> Query.fromHtml
+                    |> Query.has
+                        [ Selector.all
+                            [ Selector.tag "a"
+                            , Selector.containing [ Selector.text "Previous" ]
+                            , Selector.attribute (Aria.disabled True)
+                            ]
+                        ]
+        , test "Marks 'next' link as disabled when on the last page" <|
+            \() ->
+                Pagination.view (always ()) 1 [ (), () ]
+                    |> Html.Styled.toUnstyled
+                    |> Query.fromHtml
+                    |> Query.has
+                        [ Selector.all
+                            [ Selector.tag "a"
+                            , Selector.containing [ Selector.text "Next" ]
+                            , Selector.attribute (Aria.disabled True)
+                            ]
+                        ]
         ]
