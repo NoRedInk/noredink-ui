@@ -47,45 +47,7 @@ view_ goToPage currentPageIndex pages =
         , pages
             |> List.indexedMap
                 (\page url ->
-                    let
-                        humanPage =
-                            String.fromInt (page + 1)
-                    in
-                    Html.li []
-                        [ ClickableText.link humanPage <|
-                            [ ClickableText.small
-                            , List.filterMap identity
-                                [ Just (Aria.label ("Page " ++ humanPage))
-                                , if page == currentPageIndex then
-                                    Just Aria.currentPage
-
-                                  else
-                                    Nothing
-                                ]
-                                |> ClickableText.custom
-                            , ClickableText.css
-                                [ Css.padding2 (Css.px 7) (Css.px 13.5)
-                                , Css.minWidth (Css.px 36)
-                                , Css.minHeight (Css.px 33)
-                                , Css.textAlign Css.center
-                                , Css.margin (Css.px 7)
-                                , Css.borderRadius (Css.px 8)
-                                , Transitions.transition
-                                    [ Transitions.backgroundColor 300
-                                    , Transitions.color 300
-                                    ]
-                                , if page == currentPageIndex then
-                                    Css.batch
-                                        [ Css.backgroundColor Colors.glacier
-                                        , Css.color Colors.navy
-                                        ]
-
-                                  else
-                                    Css.batch []
-                                ]
-                            ]
-                                ++ linkAttributes (goToPage page) (Just url)
-                        ]
+                    Html.li [] [ directPageLink goToPage currentPageIndex page url ]
                 )
             |> Html.ol
                 [ css
@@ -119,6 +81,47 @@ nextPageLink goToPage currentPageIndex maybeUrl =
         , ClickableText.css [ Css.marginLeft (Css.px 10) ]
         ]
             ++ linkAttributes (goToPage (currentPageIndex + 1)) maybeUrl
+
+
+directPageLink : (Int -> msg) -> Int -> Int -> String -> Html msg
+directPageLink goToPage currentPageIndex page url =
+    let
+        humanPage =
+            String.fromInt (page + 1)
+    in
+    ClickableText.link humanPage <|
+        [ ClickableText.small
+        , List.filterMap identity
+            [ Just (Aria.label ("Page " ++ humanPage))
+            , if page == currentPageIndex then
+                Just Aria.currentPage
+
+              else
+                Nothing
+            ]
+            |> ClickableText.custom
+        , ClickableText.css
+            [ Css.padding2 (Css.px 7) (Css.px 13.5)
+            , Css.minWidth (Css.px 36)
+            , Css.minHeight (Css.px 33)
+            , Css.textAlign Css.center
+            , Css.margin (Css.px 7)
+            , Css.borderRadius (Css.px 8)
+            , Transitions.transition
+                [ Transitions.backgroundColor 300
+                , Transitions.color 300
+                ]
+            , if page == currentPageIndex then
+                Css.batch
+                    [ Css.backgroundColor Colors.glacier
+                    , Css.color Colors.navy
+                    ]
+
+              else
+                Css.batch []
+            ]
+        ]
+            ++ linkAttributes (goToPage page) (Just url)
 
 
 linkAttributes : msg -> Maybe String -> List (ClickableText.Attribute msg)
