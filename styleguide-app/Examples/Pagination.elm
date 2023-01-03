@@ -57,11 +57,16 @@ example =
                 , toExampleCode = \_ -> []
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
-            , Pagination.view SelectPage
-                model.currentPage
+            , Pagination.view
                 (List.range 1 settings.pages
-                    |> List.map (\i -> "#page" ++ String.fromInt i)
+                    |> List.map
+                        (\i ->
+                            { onClick = SelectPage i
+                            , href = "#page" ++ String.fromInt i
+                            }
+                        )
                 )
+                model.currentPage
             ]
     }
 

@@ -19,27 +19,26 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.V3 exposing (viewIf)
 
 
-{-|
+{-| Pass in a list of page URLs/on-click handlers and the currently-selected page's index.
 
-  - goToPage : a msg to handle going to a page based on the index
-  - currentPageIndex : the currently-selected page's index
-  - a list of page URLs
-
-```
-view GoToPage 2 [ "#page-1", "#page-2", "#page-3" ]
-```
+    view
+        [ { onClick = GoToPage 0, href = "#page-1" }
+        , { onClick = GoToPage 1, href = "#page-2" }
+        , { onClick = GoToPage 2, href = "#page-3" }
+        ]
+        2
 
 Note: the navigation will only show if there's 2 or more pages of content.
 
 -}
-view : (Int -> msg) -> Int -> List String -> Html msg
-view goToPage currentPageIndex pages =
-    viewIf (\_ -> view_ goToPage currentPageIndex pages)
+view : List { onClick : msg, href : String } -> Int -> Html msg
+view pages currentPageIndex =
+    viewIf (\_ -> view_ pages currentPageIndex)
         (List.length pages > 1)
 
 
-view_ : (Int -> msg) -> Int -> List String -> Html msg
-view_ goToPage currentPageIndex pages =
+view_ : List { onClick : msg, href : String } -> Int -> Html msg
+view_ pages currentPageIndex =
     Html.nav
         [ css
             [ Css.width (Css.pct 100)
@@ -49,13 +48,11 @@ view_ goToPage currentPageIndex pages =
             ]
         , Aria.label "pagination"
         ]
-        [ previousPageLink goToPage
-            currentPageIndex
-            (List.Extra.getAt (currentPageIndex - 1) pages)
+        [ previousPageLink (List.Extra.getAt (currentPageIndex - 1) pages)
         , pages
             |> List.indexedMap
-                (\page url ->
-                    Html.li [] [ directPageLink goToPage currentPageIndex page url ]
+                (\index page ->
+                    Html.li [] [ directPageLink currentPageIndex index page ]
                 )
             |> Html.ol
                 [ css
@@ -67,41 +64,39 @@ view_ goToPage currentPageIndex pages =
                     , Css.padding Css.zero
                     ]
                 ]
-        , nextPageLink goToPage
-            currentPageIndex
-            (List.Extra.getAt (currentPageIndex + 1) pages)
+        , nextPageLink (List.Extra.getAt (currentPageIndex + 1) pages)
         ]
 
 
-previousPageLink : (Int -> msg) -> Int -> Maybe String -> Html msg
-previousPageLink goToPage currentPageIndex maybeUrl =
+previousPageLink : Maybe { onClick : msg, href : String } -> Html msg
+previousPageLink maybePreviousPage =
     ClickableText.link "Previous\u{00A0}Page" <|
         [ ClickableText.small
         , ClickableText.css [ Css.marginRight (Css.px 10) ]
         ]
-            ++ linkAttributes (goToPage (currentPageIndex - 1)) maybeUrl
+            ++ linkAttributes maybePreviousPage
 
 
-nextPageLink : (Int -> msg) -> Int -> Maybe String -> Html msg
-nextPageLink goToPage currentPageIndex maybeUrl =
+nextPageLink : Maybe { onClick : msg, href : String } -> Html msg
+nextPageLink maybeNextPage =
     ClickableText.link "Next\u{00A0}Page" <|
         [ ClickableText.small
         , ClickableText.css [ Css.marginLeft (Css.px 10) ]
         ]
-            ++ linkAttributes (goToPage (currentPageIndex + 1)) maybeUrl
+            ++ linkAttributes maybeNextPage
 
 
-directPageLink : (Int -> msg) -> Int -> Int -> String -> Html msg
-directPageLink goToPage currentPageIndex page url =
+directPageLink : Int -> Int -> { onClick : msg, href : String } -> Html msg
+directPageLink currentPageIndex pageIndex page =
     let
         humanPage =
-            String.fromInt (page + 1)
+            String.fromInt (pageIndex + 1)
     in
     ClickableText.link humanPage <|
         [ ClickableText.small
         , List.filterMap identity
             [ Just (Aria.label ("Page " ++ humanPage))
-            , if page == currentPageIndex then
+            , if pageIndex == currentPageIndex then
                 Just Aria.currentPage
 
               else
@@ -119,7 +114,7 @@ directPageLink goToPage currentPageIndex page url =
                 [ Transitions.backgroundColor 300
                 , Transitions.color 300
                 ]
-            , if page == currentPageIndex then
+            , if pageIndex == currentPageIndex then
                 Css.batch
                     [ Css.backgroundColor Colors.glacier
                     , Css.color Colors.navy
@@ -129,15 +124,15 @@ directPageLink goToPage currentPageIndex page url =
                 Css.batch []
             ]
         ]
-            ++ linkAttributes (goToPage page) (Just url)
+            ++ linkAttributes (Just page)
 
 
-linkAttributes : msg -> Maybe String -> List (ClickableText.Attribute msg)
-linkAttributes msg maybeUrl =
-    case maybeUrl of
-        Just url ->
-            [ ClickableText.onClick msg
-            , ClickableText.linkSpa url
+linkAttributes : Maybe { onClick : msg, href : String } -> List (ClickableText.Attribute msg)
+linkAttributes maybePage =
+    case maybePage of
+        Just { onClick, href } ->
+            [ ClickableText.onClick onClick
+            , ClickableText.linkSpa href
             ]
 
         Nothing ->

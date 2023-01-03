@@ -15,19 +15,23 @@ spec =
     describe "Nri.Ui.Pagination.V1"
         [ test "Without any pages, does not render an empty nav" <|
             \() ->
-                Pagination.view (always ()) 0 []
+                Pagination.view [] 0
                     |> Html.Styled.toUnstyled
                     |> Query.fromHtml
                     |> Query.hasNot [ Selector.tag "nav" ]
         , test "With 1 page, does not render a nav without active links" <|
             \() ->
-                Pagination.view (always ()) 0 [ "#" ]
+                Pagination.view [ { onClick = (), href = "#" } ] 0
                     |> Html.Styled.toUnstyled
                     |> Query.fromHtml
                     |> Query.hasNot [ Selector.tag "nav" ]
         , test "With more than 1 page, renders a nav with the current page indicated" <|
             \() ->
-                Pagination.view (always ()) 0 [ "#", "#" ]
+                Pagination.view
+                    [ { onClick = (), href = "#" }
+                    , { onClick = (), href = "#" }
+                    ]
+                    0
                     |> Html.Styled.toUnstyled
                     |> Query.fromHtml
                     |> Query.has
@@ -43,7 +47,11 @@ spec =
                         ]
         , test "Uses anchor tags rather than buttons" <|
             \() ->
-                Pagination.view (always ()) 0 [ "#", "#" ]
+                Pagination.view
+                    [ { onClick = (), href = "#" }
+                    , { onClick = (), href = "#" }
+                    ]
+                    0
                     |> Html.Styled.toUnstyled
                     |> Query.fromHtml
                     |> Expect.all
@@ -52,7 +60,11 @@ spec =
                         ]
         , test "Marks 'previous' link as disabled when on the first page" <|
             \() ->
-                Pagination.view (always ()) 0 [ "#first", "#second" ]
+                Pagination.view
+                    [ { onClick = (), href = "#first" }
+                    , { onClick = (), href = "#second" }
+                    ]
+                    0
                     |> Html.Styled.toUnstyled
                     |> Query.fromHtml
                     |> Expect.all
@@ -73,7 +85,11 @@ spec =
                         ]
         , test "Marks 'next' link as disabled when on the last page" <|
             \() ->
-                Pagination.view (always ()) 1 [ "#first", "#second" ]
+                Pagination.view
+                    [ { onClick = (), href = "#first" }
+                    , { onClick = (), href = "#second" }
+                    ]
+                    1
                     |> Html.Styled.toUnstyled
                     |> Query.fromHtml
                     |> Expect.all
