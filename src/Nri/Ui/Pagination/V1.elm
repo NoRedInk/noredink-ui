@@ -117,6 +117,7 @@ directPageLink currentPageIndex pageIndex page =
             , if pageIndex == currentPageIndex then
                 Css.batch
                     [ Css.backgroundColor Colors.glacier
+                    , Css.border3 (Css.px 1) Css.solid Colors.glacier |> Css.important
                     , Css.color Colors.navy
                     ]
 
