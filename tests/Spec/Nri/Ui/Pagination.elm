@@ -1,6 +1,7 @@
 module Spec.Nri.Ui.Pagination exposing (spec)
 
 import Accessibility.Aria as Aria
+import Expect
 import Html.Styled
 import Nri.Ui.Pagination.V1 as Pagination
 import Test exposing (..)
@@ -38,5 +39,14 @@ spec =
                             ]
                         , Selector.containing
                             [ Selector.attribute (Aria.label "Page 2") ]
+                        ]
+        , test "Uses anchor tags rather than buttons" <|
+            \() ->
+                Pagination.view (always ()) 0 [ (), () ]
+                    |> Html.Styled.toUnstyled
+                    |> Query.fromHtml
+                    |> Expect.all
+                        [ Query.has [ Selector.tag "a" ]
+                        , Query.hasNot [ Selector.tag "button" ]
                         ]
         ]
