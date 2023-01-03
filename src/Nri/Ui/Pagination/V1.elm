@@ -19,7 +19,19 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.V3 exposing (viewIf)
 
 
-{-| -}
+{-|
+
+  - goToPage : a msg to handle going to a page based on the index
+  - currentPageIndex : the currently-selected page's index
+  - a list of page URLs
+
+```
+view GoToPage 2 [ "#page-1", "#page-2", "#page-3" ]
+```
+
+Note: the navigation will only show if there's 2 or more pages of content.
+
+-}
 view : (Int -> msg) -> Int -> List String -> Html msg
 view goToPage currentPageIndex pages =
     viewIf (\_ -> view_ goToPage currentPageIndex pages)
