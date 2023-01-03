@@ -40,12 +40,7 @@ view_ goToPage currentPageIndex pages =
             ]
         , Aria.label "pagination"
         ]
-        [ ClickableText.button "Previous\u{00A0}Page"
-            [ ClickableText.small
-            , ClickableText.disabled (currentPageIndex == 0)
-            , ClickableText.onClick (goToPage (currentPageIndex - 1))
-            , ClickableText.css [ Css.marginRight (Css.px 10) ]
-            ]
+        [ previousPageLink goToPage currentPageIndex
         , List.range 0 lastPageIndex
             |> List.map
                 (\page ->
@@ -99,10 +94,25 @@ view_ goToPage currentPageIndex pages =
                     , Css.padding Css.zero
                     ]
                 ]
-        , ClickableText.button "Next\u{00A0}Page"
-            [ ClickableText.small
-            , ClickableText.disabled (currentPageIndex == lastPageIndex)
-            , ClickableText.onClick (goToPage (currentPageIndex + 1))
-            , ClickableText.css [ Css.marginLeft (Css.px 10) ]
-            ]
+        , nextPageLink goToPage lastPageIndex currentPageIndex
+        ]
+
+
+previousPageLink : (Int -> msg) -> Int -> Html msg
+previousPageLink goToPage currentPageIndex =
+    ClickableText.button "Previous\u{00A0}Page"
+        [ ClickableText.small
+        , ClickableText.disabled (currentPageIndex == 0)
+        , ClickableText.onClick (goToPage (currentPageIndex - 1))
+        , ClickableText.css [ Css.marginRight (Css.px 10) ]
+        ]
+
+
+nextPageLink : (Int -> msg) -> Int -> Int -> Html msg
+nextPageLink goToPage lastPageIndex currentPageIndex =
+    ClickableText.button "Next\u{00A0}Page"
+        [ ClickableText.small
+        , ClickableText.disabled (currentPageIndex == lastPageIndex)
+        , ClickableText.onClick (goToPage (currentPageIndex + 1))
+        , ClickableText.css [ Css.marginLeft (Css.px 10) ]
         ]
