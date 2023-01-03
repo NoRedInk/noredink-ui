@@ -44,17 +44,16 @@ view_ goToPage currentPageIndex pages =
         [ previousPageLink goToPage
             currentPageIndex
             (List.Extra.getAt (currentPageIndex - 1) pages)
-        , List.range 0 lastPageIndex
-            |> List.map
-                (\page ->
+        , pages
+            |> List.indexedMap
+                (\page url ->
                     let
                         humanPage =
                             String.fromInt (page + 1)
                     in
                     Html.li []
-                        [ ClickableText.button humanPage
+                        [ ClickableText.link humanPage <|
                             [ ClickableText.small
-                            , ClickableText.onClick (goToPage page)
                             , List.filterMap identity
                                 [ Just (Aria.label ("Page " ++ humanPage))
                                 , if page == currentPageIndex then
@@ -85,6 +84,7 @@ view_ goToPage currentPageIndex pages =
                                     Css.batch []
                                 ]
                             ]
+                                ++ linkAttributes (goToPage page) (Just url)
                         ]
                 )
             |> Html.ol
