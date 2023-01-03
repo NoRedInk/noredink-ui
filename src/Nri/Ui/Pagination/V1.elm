@@ -13,19 +13,20 @@ import Accessibility.Styled.Aria as Aria
 import Css
 import Css.Transitions as Transitions
 import Html.Styled.Attributes exposing (css)
+import List.Extra
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.V3 exposing (viewIf)
 
 
 {-| -}
-view : (Int -> msg) -> Int -> List a -> Html msg
+view : (Int -> msg) -> Int -> List String -> Html msg
 view goToPage currentPageIndex pages =
     viewIf (\_ -> view_ goToPage currentPageIndex pages)
         (List.length pages > 1)
 
 
-view_ : (Int -> msg) -> Int -> List a -> Html msg
+view_ : (Int -> msg) -> Int -> List String -> Html msg
 view_ goToPage currentPageIndex pages =
     let
         lastPageIndex =
@@ -40,7 +41,9 @@ view_ goToPage currentPageIndex pages =
             ]
         , Aria.label "pagination"
         ]
-        [ previousPageLink goToPage currentPageIndex
+        [ previousPageLink goToPage
+            currentPageIndex
+            (List.Extra.getAt (currentPageIndex - 1) pages)
         , List.range 0 lastPageIndex
             |> List.map
                 (\page ->
@@ -94,25 +97,37 @@ view_ goToPage currentPageIndex pages =
                     , Css.padding Css.zero
                     ]
                 ]
-        , nextPageLink goToPage lastPageIndex currentPageIndex
+        , nextPageLink goToPage
+            currentPageIndex
+            (List.Extra.getAt (currentPageIndex + 1) pages)
         ]
 
 
-previousPageLink : (Int -> msg) -> Int -> Html msg
-previousPageLink goToPage currentPageIndex =
-    ClickableText.button "Previous\u{00A0}Page"
+previousPageLink : (Int -> msg) -> Int -> Maybe String -> Html msg
+previousPageLink goToPage currentPageIndex maybeUrl =
+    ClickableText.link "Previous\u{00A0}Page" <|
         [ ClickableText.small
-        , ClickableText.disabled (currentPageIndex == 0)
-        , ClickableText.onClick (goToPage (currentPageIndex - 1))
         , ClickableText.css [ Css.marginRight (Css.px 10) ]
         ]
+            ++ linkAttributes (goToPage (currentPageIndex - 1)) maybeUrl
 
 
-nextPageLink : (Int -> msg) -> Int -> Int -> Html msg
-nextPageLink goToPage lastPageIndex currentPageIndex =
-    ClickableText.button "Next\u{00A0}Page"
+nextPageLink : (Int -> msg) -> Int -> Maybe String -> Html msg
+nextPageLink goToPage currentPageIndex maybeUrl =
+    ClickableText.link "Next\u{00A0}Page" <|
         [ ClickableText.small
-        , ClickableText.disabled (currentPageIndex == lastPageIndex)
-        , ClickableText.onClick (goToPage (currentPageIndex + 1))
         , ClickableText.css [ Css.marginLeft (Css.px 10) ]
         ]
+            ++ linkAttributes (goToPage (currentPageIndex + 1)) maybeUrl
+
+
+linkAttributes : msg -> Maybe String -> List (ClickableText.Attribute msg)
+linkAttributes msg maybeUrl =
+    case maybeUrl of
+        Just url ->
+            [ ClickableText.onClick msg
+            , ClickableText.linkSpa url
+            ]
+
+        Nothing ->
+            [ ClickableText.disabled True ]
