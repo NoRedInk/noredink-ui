@@ -1,7 +1,6 @@
 module Spec.Nri.Ui.Pagination exposing (spec)
 
 import Accessibility.Aria as Aria
-import Expect
 import Html.Styled
 import Nri.Ui.Pagination.V1 as Pagination
 import Test exposing (..)

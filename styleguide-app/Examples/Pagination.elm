@@ -8,16 +8,10 @@ module Examples.Pagination exposing (example, State, Msg)
 
 import Category exposing (Category(..))
 import Code
-import CommonControls
-import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes exposing (css)
-import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Pagination.V1 as Pagination
 

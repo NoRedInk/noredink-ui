@@ -12,8 +12,7 @@ import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Aria as Aria
 import Css
 import Css.Transitions as Transitions
-import Html.Styled.Attributes as Attrs exposing (css)
-import List.Extra
+import Html.Styled.Attributes exposing (css)
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.V3 exposing (viewIf)
