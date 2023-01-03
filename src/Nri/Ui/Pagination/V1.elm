@@ -40,10 +40,6 @@ view goToPage currentPageIndex pages =
 
 view_ : (Int -> msg) -> Int -> List String -> Html msg
 view_ goToPage currentPageIndex pages =
-    let
-        lastPageIndex =
-            List.length pages - 1
-    in
     Html.nav
         [ css
             [ Css.width (Css.pct 100)
