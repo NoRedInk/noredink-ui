@@ -147,40 +147,18 @@ view ellieLinkConfig state =
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
     , inParagraph "paragraph-8"
-        [ Block.view
-            [ Block.plaintext "A"
-            , Block.magenta
-            , Block.label "this is an article. \"An\" is also an article."
-            , Block.id "block-8"
-            , Block.labelId "article-label-id"
-            , Block.labelPosition (Dict.get "article-label-id" offsets)
-            ]
+        [ Block.view [ Block.plaintext "A", Block.emphasize, Block.magenta, Block.id "block-8" ]
         , Block.view [ Block.plaintext " " ]
-        , Block.view
-            [ Block.plaintext "tricky"
-            , Block.label "this is an adjective"
-            , Block.yellow
-            , Block.labelId "tricky-label-id"
-            , Block.labelPosition (Dict.get "tricky-label-id" offsets)
-            ]
+        , Block.view [ Block.plaintext "tricky" ]
         , Block.view [ Block.plaintext " " ]
-        , Block.view
-            [ Block.plaintext "example"
-            , Block.cyan
-            ]
+        , Block.view [ Block.plaintext "example" ]
         , Block.view [ Block.plaintext ". Be sure to be " ]
-        , Block.view
-            [ Block.plaintext "careful with content that can get cut off on the left side of the viewport!"
-            , Block.label "warning"
-            , Block.green
-            , Block.labelId "warning-label-id"
-            , Block.labelPosition (Dict.get "warning-label-id" offsets)
-            ]
+        , Block.view [ Block.plaintext "careful with content that can get cut off on the left side of the viewport!" ]
         ]
     , QuestionBox.view
         [ QuestionBox.pointingTo "block-8" (Dict.get "left-viewport-question-box-example" state.questionBoxMeasurementsById)
         , QuestionBox.id "left-viewport-question-box-example"
-        , QuestionBox.markdown "Articles are important to get right! Is “the” an article?"
+        , QuestionBox.markdown "Articles are important to get right! Is “A” an article?"
         , QuestionBox.actions
             [ { label = "Yes", onClick = NoOp }
             , { label = "No", onClick = NoOp }
@@ -720,9 +698,6 @@ update msg state =
                     [ "label-1"
                     , "label-2"
                     , "label-3"
-                    , "article-label-id"
-                    , "tricky-label-id"
-                    , "warning-label-id"
                     , "warning-2-label-id"
                     ]
                     ++ List.map measureQuestionBox
