@@ -222,10 +222,7 @@ viewPointingTo config blockId measurements =
             Nothing ->
                 Balloon.css []
         , Balloon.containerCss
-            [ Css.transforms
-                [ Css.translateX (Css.pct -50)
-                , Css.translateY (Css.px 8)
-                ]
+            [ Css.transforms [ Css.translateX (Css.pct -50) ]
             , Css.minWidth (Css.px 300)
             , Css.textAlign Css.center
             , Css.batch config.containerCss

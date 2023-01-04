@@ -168,22 +168,16 @@ view ellieLinkConfig state =
         [ Block.view [ Block.plaintext "You also need to be careful with content that can get cut off on the right side of the viewport" ]
         , Block.view
             [ Block.plaintext "!"
-            , Block.label "warning"
-            , Block.brown
             , Block.id "block-9"
-            , Block.labelId "warning-2-label-id"
-            , Block.labelPosition (Dict.get "warning-2-label-id" offsets)
-
-            -- TODO: re-add question-box
-            --, Block.withQuestionBox
-            --    [ QuestionBox.id "right-viewport-question-box-example"
-            --    , QuestionBox.markdown "Were you careful? It's important to be careful!"
-            --    , QuestionBox.actions
-            --        [ { label = "Yes", onClick = NoOp }
-            --        , { label = "No", onClick = NoOp }
-            --        ]
-            --    ]
-            --    (Dict.get "right-viewport-question-box-example" state.questionBoxMeasurementsById)
+            ]
+        ]
+    , QuestionBox.view
+        [ QuestionBox.pointingTo "block-9" (Dict.get "right-viewport-question-box-example" state.questionBoxMeasurementsById)
+        , QuestionBox.id "right-viewport-question-box-example"
+        , QuestionBox.markdown "Were you careful? It's important to be careful!"
+        , QuestionBox.actions
+            [ { label = "Yes", onClick = NoOp }
+            , { label = "No", onClick = NoOp }
             ]
         ]
     , Table.view
@@ -530,7 +524,7 @@ inParagraph id =
     p
         [ Attributes.id id
         , css
-            [ Css.margin2 Spacing.verticalSpacerPx Css.zero
+            [ Css.margin Css.zero
             , Fonts.quizFont
             , Css.fontSize (Css.px 30)
             ]
@@ -698,7 +692,6 @@ update msg state =
                     [ "label-1"
                     , "label-2"
                     , "label-3"
-                    , "warning-2-label-id"
                     ]
                     ++ List.map measureQuestionBox
                         [ ( "paragraph-0", "block-0", "question-box-0" )
