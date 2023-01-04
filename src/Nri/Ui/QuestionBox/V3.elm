@@ -96,7 +96,7 @@ setType type_ =
 
 type QuestionBoxType msg
     = Standalone
-    | PointingTo (Maybe { block : Element, paragraph : Element })
+    | PointingTo String (Maybe { block : Element, paragraph : Element })
 
 
 {-| This is the default type of question box. It doesn't have a programmatic or direct visual relationship to any piece of content.
@@ -106,16 +106,17 @@ standalone =
     setType Standalone
 
 
-{-| This type of `QuestionBox` is absolutely positioned & has an arrow pointing to its relatively positioned ancestor.
+{-| This type of `QuestionBox` has an arrow pointing to the block whose id you pass in, if that block is on the final line of its paragraph.
+The QuestionBox should be vertically aligned beneath the block, viewport permitting.
 
-Typically, you would use this type of `QuestionBox` type with a `Block` by way of `Block.withHtml`.
+Pass in the id for the block the QuestionBox should point to.
 
 You will need to pass 2 measurements, taken using Dom.Browser, in order for the question box to be positioned correctly.
 
 -}
-pointingTo : Maybe { block : Element, paragraph : Element } -> Attribute msg
-pointingTo measurements =
-    setType (PointingTo measurements)
+pointingTo : String -> Maybe { block : Element, paragraph : Element } -> Attribute msg
+pointingTo blockId measurements =
+    setType (PointingTo blockId measurements)
 
 
 {-| This helper is how we create an id for the guidance speech bubble element based on the `QuestionBox.id` value. Use this helper to manage focus.
@@ -148,8 +149,8 @@ view attributes =
         Standalone ->
             viewStandalone config
 
-        PointingTo measurements ->
-            viewPointingTo config measurements
+        PointingTo blockId measurements ->
+            viewPointingTo config blockId measurements
 
 
 {-| -}
@@ -167,8 +168,8 @@ viewStandalone config =
 
 
 {-| -}
-viewPointingTo : Config msg -> Maybe { block : Element, paragraph : Element } -> Html msg
-viewPointingTo config measurements =
+viewPointingTo : Config msg -> String -> Maybe { block : Element, paragraph : Element } -> Html msg
+viewPointingTo config blockId measurements =
     let
         xOffset =
             Maybe.map (.block >> xOffsetPx) measurements

@@ -19,7 +19,7 @@ import Dict exposing (Dict)
 import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes exposing (css)
 import Markdown
 import Nri.Ui.Block.V4 as Block
 import Nri.Ui.Button.V10 as Button
@@ -107,11 +107,13 @@ view ellieLinkConfig state =
                 , Css.alignItems Css.center
                 ]
             ]
-            [ UiIcon.sortArrowDown
-                |> Svg.withLabel "Anchor"
-                |> Svg.withWidth (Css.px 30)
-                |> Svg.withHeight (Css.px 30)
-                |> Svg.toHtml
+            [ div [ Attributes.id anchorId ]
+                [ UiIcon.sortArrowDown
+                    |> Svg.withLabel "Anchor"
+                    |> Svg.withWidth (Css.px 30)
+                    |> Svg.withHeight (Css.px 30)
+                    |> Svg.toHtml
+                ]
             , QuestionBox.view (List.map Tuple.second attributes)
             ]
         ]
@@ -550,6 +552,11 @@ inParagraph =
         ]
 
 
+anchorId : String
+anchorId =
+    "anchor-id"
+
+
 interactiveExampleId : String
 interactiveExampleId =
     "interactive-example-question-box"
@@ -637,7 +644,7 @@ initAttributes =
             )
         |> ControlExtra.optionalListItem "type"
             (CommonControls.choice moduleName
-                [ ( "pointingTo Nothing", QuestionBox.pointingTo Nothing )
+                [ ( "pointingTo \"anchor-id\" Nothing", QuestionBox.pointingTo anchorId Nothing )
                 , ( "standalone", QuestionBox.standalone )
                 ]
             )
