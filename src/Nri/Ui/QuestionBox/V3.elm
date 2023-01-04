@@ -55,7 +55,7 @@ defaultConfig =
     , actions = []
     , type_ = Standalone
     , character = Just { name = "Panda", icon = CharacterIcon.panda }
-    , containerCss = [ Css.maxWidth (Css.px 440) ]
+    , containerCss = []
     }
 
 
@@ -230,11 +230,10 @@ viewPointingTo config blockId measurements =
                 case measurements of
                     Just { block, questionBox } ->
                         [ Css.position Css.absolute
-                        , Css.left Css.zero
+                        , -- Line the QuestionBox up with the Block it corresponds to
+                          Css.left (Css.px (midpointX block))
                         , Css.transforms
-                            [ -- Line the QuestionBox up with the Block it corresponds to
-                              Css.translateX (Css.px (midpointX block))
-                            , -- Center the QuestionBox
+                            [ -- Center the QuestionBox
                               Css.translateX (Css.pct -50)
                             ]
                         ]
@@ -242,11 +241,13 @@ viewPointingTo config blockId measurements =
                     Nothing ->
                         []
             , Css.textAlign Css.left
+            , Css.maxWidth (Css.px 440)
+            , Css.property "width" "max-content"
             , Css.batch config.containerCss
             ]
         , Balloon.css <|
             if xOffset /= 0 then
-                [--Css.property "transform" ("translateX(" ++ String.fromFloat xOffset ++ "px)")
+                [ Css.transforms [ Css.translateX (Css.px xOffset) ]
                 ]
 
             else
