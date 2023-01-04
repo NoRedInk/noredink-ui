@@ -151,15 +151,17 @@ view ellieLinkConfig state =
             , Block.label "this is an article. \"An\" is also an article."
             , Block.labelId "article-label-id"
             , Block.labelPosition (Dict.get "article-label-id" offsets)
-            , Block.withQuestionBox
-                [ QuestionBox.id "left-viewport-question-box-example"
-                , QuestionBox.markdown "Articles are important to get right! Is “the” an article?"
-                , QuestionBox.actions
-                    [ { label = "Yes", onClick = NoOp }
-                    , { label = "No", onClick = NoOp }
-                    ]
-                ]
-                (Dict.get "left-viewport-question-box-example" state.questionBoxMeasurementsById)
+
+            -- TODO: re-add question-box
+            --, Block.withQuestionBox
+            --    [ QuestionBox.id "left-viewport-question-box-example"
+            --    , QuestionBox.markdown "Articles are important to get right! Is “the” an article?"
+            --    , QuestionBox.actions
+            --        [ { label = "Yes", onClick = NoOp }
+            --        , { label = "No", onClick = NoOp }
+            --        ]
+            --    ]
+            --    (Dict.get "left-viewport-question-box-example" state.questionBoxMeasurementsById)
             ]
         , Block.view [ Block.plaintext " " ]
         , Block.view
@@ -191,15 +193,17 @@ view ellieLinkConfig state =
             , Block.brown
             , Block.labelId "warning-2-label-id"
             , Block.labelPosition (Dict.get "warning-2-label-id" offsets)
-            , Block.withQuestionBox
-                [ QuestionBox.id "right-viewport-question-box-example"
-                , QuestionBox.markdown "Were you careful? It's important to be careful!"
-                , QuestionBox.actions
-                    [ { label = "Yes", onClick = NoOp }
-                    , { label = "No", onClick = NoOp }
-                    ]
-                ]
-                (Dict.get "right-viewport-question-box-example" state.questionBoxMeasurementsById)
+
+            -- TODO: re-add question-box
+            --, Block.withQuestionBox
+            --    [ QuestionBox.id "right-viewport-question-box-example"
+            --    , QuestionBox.markdown "Were you careful? It's important to be careful!"
+            --    , QuestionBox.actions
+            --        [ { label = "Yes", onClick = NoOp }
+            --        , { label = "No", onClick = NoOp }
+            --        ]
+            --    ]
+            --    (Dict.get "right-viewport-question-box-example" state.questionBoxMeasurementsById)
             ]
         ]
     , Table.view
@@ -236,23 +240,26 @@ view ellieLinkConfig state =
                 inParagraph
                     [ Block.view
                         [ Block.plaintext "Dave"
-                        , Block.withQuestionBox [ QuestionBox.id "question-box-0", QuestionBox.markdown "Who?" ]
-                            (Dict.get "question-box-0" state.questionBoxMeasurementsById)
+
+                        -- TODO: re-add question-box
+                        --, Block.withQuestionBox [ QuestionBox.id "question-box-0", QuestionBox.markdown "Who?" ]
+                        --    (Dict.get "question-box-0" state.questionBoxMeasurementsById)
                         ]
                     , Block.view [ Block.plaintext " scared his replacement cousin coming out of his room wearing a gorilla mask." ]
                     ]
           , pattern =
                 Code.fromModule "Block" "view"
                     ++ Code.listMultiline
-                        [ Code.fromModule "Block" "withQuestionBox"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
-                                , Code.fromModule moduleName "markdown " ++ Code.string "Who?"
-                                ]
-                                2
-                            ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
-                        , "…"
+                        [-- TODO: re-add question-box
+                         -- Code.fromModule "Block" "withQuestionBox"
+                         --    ++ Code.listMultiline
+                         --        [ Code.fromModule moduleName "id " ++ Code.string "question-box"
+                         --        , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
+                         --        , Code.fromModule moduleName "markdown " ++ Code.string "Who?"
+                         --        ]
+                         --        2
+                         --    ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
+                         --, "…"
                         ]
                         1
           }
@@ -263,27 +270,30 @@ view ellieLinkConfig state =
                     , Block.view
                         [ Block.plaintext "above"
                         , Block.emphasize
-                        , Block.withQuestionBox
-                            [ QuestionBox.id "question-box-1"
-                            , QuestionBox.markdown "“Above” is a preposition."
-                            , QuestionBox.actions [ { label = "Try again", onClick = NoOp } ]
-                            ]
-                            (Dict.get "question-box-1" state.questionBoxMeasurementsById)
+
+                        -- TODO: re-add question-box
+                        --, Block.withQuestionBox
+                        --    [ QuestionBox.id "question-box-1"
+                        --    , QuestionBox.markdown "“Above” is a preposition."
+                        --    , QuestionBox.actions [ { label = "Try again", onClick = NoOp } ]
+                        --    ]
+                        --    (Dict.get "question-box-1" state.questionBoxMeasurementsById)
                         ]
                     , Block.view [ Block.plaintext " his TV." ]
                     ]
           , pattern =
                 Code.fromModule "Block" "view"
                     ++ Code.listMultiline
-                        [ Code.fromModule "Block" "withQuestionBox"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                , Code.fromModule moduleName "markdown " ++ Code.string "“Above” is a preposition."
-                                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
-                                ]
-                                2
-                            ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
-                        , "…"
+                        [-- TODO: re-add question-box
+                         --Code.fromModule "Block" "withQuestionBox"
+                         --    ++ Code.listMultiline
+                         --        [ Code.fromModule moduleName "id " ++ Code.string "question-box"
+                         --        , Code.fromModule moduleName "markdown " ++ Code.string "“Above” is a preposition."
+                         --        , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
+                         --        ]
+                         --        2
+                         --    ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
+                         --, "…"
                         ]
                         1
           }
@@ -297,31 +307,34 @@ view ellieLinkConfig state =
                         , Block.labelId "label-1"
                         , Block.labelPosition (Dict.get "label-1" offsets)
                         , Block.yellow
-                        , Block.withQuestionBox
-                            [ QuestionBox.id "question-box-2"
-                            , QuestionBox.markdown "Which word is the preposition?"
-                            , QuestionBox.actions
-                                [ { label = "above", onClick = NoOp }
-                                , { label = "his", onClick = NoOp }
-                                , { label = "TV", onClick = NoOp }
-                                ]
-                            ]
-                            (Dict.get "question-box-2" state.questionBoxMeasurementsById)
+
+                        -- TODO: re-add question-box
+                        --, Block.withQuestionBox
+                        --    [ QuestionBox.id "question-box-2"
+                        --    , QuestionBox.markdown "Which word is the preposition?"
+                        --    , QuestionBox.actions
+                        --        [ { label = "above", onClick = NoOp }
+                        --        , { label = "his", onClick = NoOp }
+                        --        , { label = "TV", onClick = NoOp }
+                        --        ]
+                        --    ]
+                        --    (Dict.get "question-box-2" state.questionBoxMeasurementsById)
                         ]
                     , Block.view [ Block.plaintext "." ]
                     ]
           , pattern =
                 Code.fromModule "Block" "view"
                     ++ Code.listMultiline
-                        [ Code.fromModule "Block" "withQuestionBox"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                , Code.fromModule moduleName "markdown " ++ Code.string "Which word is the preposition?"
-                                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
-                                ]
-                                2
-                            ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
-                        , "…"
+                        [-- TODO: re-add question-box
+                         --Code.fromModule "Block" "withQuestionBox"
+                         --    ++ Code.listMultiline
+                         --        [ Code.fromModule moduleName "id " ++ Code.string "question-box"
+                         --        , Code.fromModule moduleName "markdown " ++ Code.string "Which word is the preposition?"
+                         --        , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
+                         --        ]
+                         --        2
+                         --    ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
+                         --, "…"
                         ]
                         1
           }
@@ -336,30 +349,32 @@ view ellieLinkConfig state =
                         ]
                     , Block.view [ Block.plaintext " " ]
                     , Block.view
-                        [ Block.withQuestionBox
-                            [ QuestionBox.id "question-box-3"
-                            , QuestionBox.markdown "Which verb matches the subject?"
-                            , QuestionBox.actions
-                                [ { label = "wrap", onClick = NoOp }
-                                , { label = "wraps", onClick = NoOp }
-                                ]
-                            ]
-                            (Dict.get "question-box-3" state.questionBoxMeasurementsById)
+                        [-- TODO: re-add question-box
+                         --Block.withQuestionBox
+                         --    [ QuestionBox.id "question-box-3"
+                         --    , QuestionBox.markdown "Which verb matches the subject?"
+                         --    , QuestionBox.actions
+                         --        [ { label = "wrap", onClick = NoOp }
+                         --        , { label = "wraps", onClick = NoOp }
+                         --        ]
+                         --    ]
+                         --    (Dict.get "question-box-3" state.questionBoxMeasurementsById)
                         ]
                     , Block.view [ Block.plaintext " gifts with comic book pages." ]
                     ]
           , pattern =
                 Code.fromModule "Block" "view"
                     ++ Code.listMultiline
-                        [ Code.fromModule "Block" "withQuestionBox"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                , Code.fromModule moduleName "markdown " ++ Code.string "Which verb matches the subject?"
-                                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
-                                ]
-                                2
-                            ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
-                        , "…"
+                        [-- TODO: re-add question-box
+                         --Code.fromModule "Block" "withQuestionBox"
+                         --    ++ Code.listMultiline
+                         --        [ Code.fromModule moduleName "id " ++ Code.string "question-box"
+                         --        , Code.fromModule moduleName "markdown " ++ Code.string "Which verb matches the subject?"
+                         --        , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
+                         --        ]
+                         --        2
+                         --    ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
+                         --, "…"
                         ]
                         1
           }
@@ -372,31 +387,34 @@ view ellieLinkConfig state =
                         , Block.labelId "label-3"
                         , Block.labelPosition (Dict.get "label-3" offsets)
                         , Block.cyan
-                        , Block.withQuestionBox
-                            [ QuestionBox.id "question-box-4"
-                            , QuestionBox.markdown "What did he do?"
-                            , QuestionBox.actions
-                                [ { label = "scared", onClick = NoOp }
-                                , { label = "scarred", onClick = NoOp }
-                                , { label = "scarified", onClick = NoOp }
-                                ]
-                            ]
-                            (Dict.get "question-box-4" state.questionBoxMeasurementsById)
+
+                        -- TODO: re-add question-box
+                        --, Block.withQuestionBox
+                        --    [ QuestionBox.id "question-box-4"
+                        --    , QuestionBox.markdown "What did he do?"
+                        --    , QuestionBox.actions
+                        --        [ { label = "scared", onClick = NoOp }
+                        --        , { label = "scarred", onClick = NoOp }
+                        --        , { label = "scarified", onClick = NoOp }
+                        --        ]
+                        --    ]
+                        --    (Dict.get "question-box-4" state.questionBoxMeasurementsById)
                         ]
                     , Block.view [ Block.plaintext " his replacement cousin coming out of his room wearing a gorilla mask." ]
                     ]
           , pattern =
                 Code.fromModule "Block" "view"
                     ++ Code.listMultiline
-                        [ Code.fromModule "Block" "withQuestionBox"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                , Code.fromModule moduleName "markdown " ++ Code.string "What did he do?"
-                                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
-                                ]
-                                2
-                            ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
-                        , "…"
+                        [-- TODO: re-add question-box
+                         --Code.fromModule "Block" "withQuestionBox"
+                         --    ++ Code.listMultiline
+                         --        [ Code.fromModule moduleName "id " ++ Code.string "question-box"
+                         --        , Code.fromModule moduleName "markdown " ++ Code.string "What did he do?"
+                         --        , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
+                         --        ]
+                         --        2
+                         --    ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
+                         --, "…"
                         ]
                         1
           }
@@ -407,25 +425,28 @@ view ellieLinkConfig state =
                         [ Block.emphasize
                         , Block.cyan
                         , Block.content (Block.phrase "Moana " ++ [ Block.blank ])
-                        , Block.withQuestionBox
-                            [ QuestionBox.id "question-box-5"
-                            , QuestionBox.markdown "Pointing at the entire emphasis"
-                            ]
-                            (Dict.get "question-box-5" state.questionBoxMeasurementsById)
+
+                        -- TODO: re-add question-box
+                        --, Block.withQuestionBox
+                        --    [ QuestionBox.id "question-box-5"
+                        --    , QuestionBox.markdown "Pointing at the entire emphasis"
+                        --    ]
+                        --    (Dict.get "question-box-5" state.questionBoxMeasurementsById)
                         ]
                     ]
           , pattern =
                 Code.fromModule "Block" "view"
                     ++ Code.listMultiline
-                        [ Code.fromModule "Block" "withQuestionBox"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the entire emphasis"
-                                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
-                                ]
-                                2
-                            ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
-                        , "…"
+                        [-- TODO: re-add question-box
+                         --Code.fromModule "Block" "withQuestionBox"
+                         --    ++ Code.listMultiline
+                         --        [ Code.fromModule moduleName "id " ++ Code.string "question-box"
+                         --        , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the entire emphasis"
+                         --        , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
+                         --        ]
+                         --        2
+                         --    ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
+                         --, "…"
                         ]
                         1
           }
@@ -435,34 +456,38 @@ view ellieLinkConfig state =
                     [ Block.view
                         [ Block.emphasize
                         , Block.cyan
-                        , Block.content
-                            (Block.wordWithQuestionBox "Moana"
-                                [ QuestionBox.id "question-box-6"
-                                , QuestionBox.markdown "Pointing at the first word"
-                                ]
-                                (Dict.get "question-box-6" state.questionBoxMeasurementsById)
-                                :: [ Block.space, Block.blank ]
-                            )
+
+                        --, -- TODO re-add question box
+                        --    Block.content
+                        --    (
+                        --        Block.wordWithQuestionBox "Moana"
+                        --        [ QuestionBox.id "question-box-6"
+                        --        , QuestionBox.markdown "Pointing at the first word"
+                        --        ]
+                        --        (Dict.get "question-box-6" state.questionBoxMeasurementsById)
+                        --        :: [ Block.space, Block.blank ]
+                        --    )
                         ]
                     ]
           , pattern =
                 Code.fromModule "Block" "view"
                     ++ Code.listMultiline
-                        [ Code.fromModule "Block" "content"
-                            ++ Code.withParensMultiline
-                                [ (Code.fromModule "Block" "wordWithQuestionBox " ++ Code.string "Moana")
-                                    ++ Code.listMultiline
-                                        [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                        , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
-                                        , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the first word"
-                                        , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
-                                        ]
-                                        3
-                                    ++ (Code.newlineWithIndent 3 ++ "model.questionBoxMeasurement")
-                                , ":: " ++ Code.list [ "Block.space", "Block.blank" ]
-                                ]
-                                2
-                        , "…"
+                        [ --Code.fromModule "Block" "content"
+                          --   ++ Code.withParensMultiline
+                          --       [ (Code.fromModule "Block" "wordWithQuestionBox " ++ Code.string "Moana")
+                          --           ++ Code.listMultiline
+                          --               [ Code.fromModule moduleName "id " ++ Code.string "question-box"
+                          --               , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
+                          --               , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the first word"
+                          --               , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
+                          --               ]
+                          --               3
+                          --           ++ (Code.newlineWithIndent 3 ++ "model.questionBoxMeasurement")
+                          --       , ":: " ++ Code.list [ "Block.space", "Block.blank" ]
+                          --       ]
+                          --       2
+                          --,
+                          "…"
                         ]
                         1
           }
@@ -474,12 +499,13 @@ view ellieLinkConfig state =
                         , Block.cyan
                         , Block.content
                             (Block.phrase "Moana "
-                                ++ [ Block.blankWithQuestionBox
-                                        [ QuestionBox.id "question-box-7"
-                                        , QuestionBox.markdown "Pointing at the blank"
-                                        ]
-                                        (Dict.get "question-box-7" state.questionBoxMeasurementsById)
-                                   ]
+                             -- TODO: re-add question-box
+                             --++ [ Block.blankWithQuestionBox
+                             --        [ QuestionBox.id "question-box-7"
+                             --        , QuestionBox.markdown "Pointing at the blank"
+                             --        ]
+                             --        (Dict.get "question-box-7" state.questionBoxMeasurementsById)
+                             --   ]
                             )
                         ]
                     ]
@@ -489,18 +515,20 @@ view ellieLinkConfig state =
                         [ Code.fromModule "Block" "content"
                             ++ Code.withParensMultiline
                                 [ Code.fromModule "Block" "phrase " ++ Code.string "Moana"
-                                , " ++ "
-                                    ++ Code.listMultiline
-                                        [ Code.fromModule "Block" "blankWithQuestionBox"
-                                            ++ Code.listMultiline
-                                                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                                , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the blank"
-                                                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
-                                                ]
-                                                4
-                                            ++ (Code.newlineWithIndent 4 ++ "model.questionBoxMeasurement")
-                                        ]
-                                        3
+
+                                -- TODO: re-add question-box
+                                --, " ++ "
+                                --    ++ Code.listMultiline
+                                --        [ Code.fromModule "Block" "blankWithQuestionBox"
+                                --            ++ Code.listMultiline
+                                --                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
+                                --                , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the blank"
+                                --                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
+                                --                ]
+                                --                4
+                                --            ++ (Code.newlineWithIndent 4 ++ "model.questionBoxMeasurement")
+                                --        ]
+                                --        3
                                 ]
                                 2
                         , "…"

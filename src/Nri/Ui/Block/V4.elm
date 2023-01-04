@@ -2,15 +2,12 @@ module Nri.Ui.Block.V4 exposing
     ( view, Attribute
     , plaintext
     , Content, content
-    , phrase, wordWithQuestionBox
-    , space
-    , blank, blankWithQuestionBox
+    , phrase, space, blank
     , emphasize
     , label
     , labelId, labelContentId
     , LabelPosition, getLabelPositions, labelPosition
     , yellow, cyan, magenta, green, blue, purple, brown
-    , withQuestionBox
     )
 
 {-|
@@ -22,9 +19,7 @@ module Nri.Ui.Block.V4 exposing
 
 @docs plaintext
 @docs Content, content
-@docs phrase, wordWithQuestionBox
-@docs space
-@docs blank, blankWithQuestionBox
+@docs phrase, space, blank
 
 
 ## Content customization
@@ -46,11 +41,6 @@ You will need these helpers if you want to prevent label overlaps. (Which is to 
 
 @docs yellow, cyan, magenta, green, blue, purple, brown
 
-
-### Add a question box
-
-@docs withQuestionBox
-
 -}
 
 import Accessibility.Styled exposing (..)
@@ -63,7 +53,6 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
 import Nri.Ui.Mark.V2 as Mark exposing (Mark)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
-import Nri.Ui.QuestionBox.V3 as QuestionBox
 import Position exposing (xOffsetPx)
 
 
@@ -220,8 +209,8 @@ groupWithSort sortBy groupBy =
 
 {-| -}
 type Content msg
-    = Word (List (QuestionBox.Attribute msg)) (Maybe Dom.Element) String
-    | Blank (List (QuestionBox.Attribute msg)) (Maybe Dom.Element)
+    = Word String
+    | Blank
     | FullHeightBlank
 
 
@@ -230,58 +219,23 @@ parseString =
     String.split " "
         >> List.intersperse " "
         >> List.filter (\str -> str /= "")
-        >> List.map (Word [] Nothing)
+        >> List.map Word
 
 
 renderContent :
-    { config | questionBoxElement : Maybe Dom.Element }
-    -> Content msg
+    Content msg
     -> List Css.Style
     -> Html msg
-renderContent config content_ markStyles =
-    let
-        marginBottom override =
-            case ( config.questionBoxElement, override ) of
-                ( Nothing, Just by ) ->
-                    Css.important (Css.marginBottom (Css.px (by.element.height + 8)))
+renderContent content_ markStyles =
+    blockSegmentContainer markStyles <|
+        case content_ of
+            Word str ->
+                [ text str ]
 
-                ( Just by, _ ) ->
-                    Css.important (Css.marginBottom (Css.px (by.element.height + 8)))
-
-                _ ->
-                    Css.batch []
-
-        viewContainer marginOverride =
-            blockSegmentContainer (marginBottom marginOverride :: markStyles)
-    in
-    case content_ of
-        Word [] _ str ->
-            viewContainer Nothing [ text str ]
-
-        Word questionBoxAttributes element str ->
-            viewContainer element
-                [ text str
-                , QuestionBox.view
-                    (QuestionBox.pointingTo element
-                        :: questionBoxAttributes
-                    )
-                ]
-
-        Blank [] _ ->
-            viewContainer Nothing
+            Blank ->
                 [ viewBlank [ Css.lineHeight (Css.int 1) ] ]
 
-        Blank questionBoxAttributes element ->
-            viewContainer element
-                [ viewBlank [ Css.lineHeight (Css.int 1) ]
-                , QuestionBox.view
-                    (QuestionBox.pointingTo element
-                        :: questionBoxAttributes
-                    )
-                ]
-
-        FullHeightBlank ->
-            viewContainer Nothing
+            FullHeightBlank ->
                 [ viewBlank
                     [ Css.paddingTop topBottomSpace
                     , Css.paddingBottom topBottomSpace
@@ -312,27 +266,14 @@ phrase =
 {-| -}
 space : Content msg
 space =
-    Word [] Nothing " "
-
-
-{-| -}
-wordWithQuestionBox : String -> List (QuestionBox.Attribute msg) -> Maybe Dom.Element -> Content msg
-wordWithQuestionBox str attributes element =
-    Word attributes element str
+    Word " "
 
 
 {-| You will only need to use this helper if you're also using `content` to construct a more complex Block. For a less complex blank Block, don't include content or plaintext in the list of attributes.
 -}
 blank : Content msg
 blank =
-    Blank [] Nothing
-
-
-{-| You will only need to use this helper if you're also using `content` to construct a more complex Block. For a less complex blank Block, don't include content or plaintext in the list of attributes.
--}
-blankWithQuestionBox : List (QuestionBox.Attribute msg) -> Maybe Dom.Element -> Content msg
-blankWithQuestionBox attributes element =
-    Blank attributes element
+    Blank
 
 
 
@@ -508,13 +449,6 @@ labelId id_ =
     Attribute (\config -> { config | labelId = Just id_ })
 
 
-{-| Pass in a list of question box attributes and the sizing (taken using Dom.Browser.getElement) of the question box
--}
-withQuestionBox : List (QuestionBox.Attribute msg) -> Maybe Dom.Element -> Attribute msg
-withQuestionBox attributes element =
-    Attribute (\config -> { config | questionBox = attributes, questionBoxElement = element })
-
-
 
 -- Internals
 
@@ -532,8 +466,6 @@ defaultConfig =
     , labelPosition = Nothing
     , theme = Yellow
     , emphasize = False
-    , questionBoxElement = Nothing
-    , questionBox = []
     }
 
 
@@ -544,8 +476,6 @@ type alias Config msg =
     , labelPosition : Maybe LabelPosition
     , theme : Theme
     , emphasize : Bool
-    , questionBoxElement : Maybe Dom.Element
-    , questionBox : List (QuestionBox.Attribute msg)
     }
 
 
@@ -561,7 +491,7 @@ render config =
     span
         [ css [ Css.position Css.relative ] ]
         (Mark.viewWithBalloonTags
-            { renderSegment = renderContent config
+            { renderSegment = renderContent
             , backgroundColor = palette.backgroundColor
             , maybeMarker = maybeMark
             , labelPosition = config.labelPosition
@@ -569,17 +499,6 @@ render config =
             , labelContentId = Maybe.map labelContentId config.labelId
             }
             config.content
-            ++ (case config.questionBox of
-                    [] ->
-                        []
-
-                    _ ->
-                        [ QuestionBox.view
-                            (QuestionBox.pointingTo config.questionBoxElement
-                                :: config.questionBox
-                            )
-                        ]
-               )
         )
 
 
