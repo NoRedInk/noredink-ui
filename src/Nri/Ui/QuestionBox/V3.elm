@@ -207,13 +207,17 @@ viewPointingTo config blockId measurements =
                             == (paragraph.element.y + paragraph.element.height)
                     )
                 |> Maybe.withDefault True
+
+        midpointX : Element -> Float
+        midpointX { element } =
+            element.x + (element.width / 2)
     in
     viewBalloon config
         [ if isOnFinalLine then
             Balloon.onBottom
 
           else
-            Balloon.css []
+            Balloon.containerCss [ Css.marginTop (Css.px 8) ]
         , Balloon.nriDescription "pointing-to-balloon"
         , case config.id of
             Just id_ ->
@@ -222,19 +226,44 @@ viewPointingTo config blockId measurements =
             Nothing ->
                 Balloon.css []
         , Balloon.containerCss
-            [ Css.transforms [ Css.translateX (Css.pct -50) ]
-            , Css.minWidth (Css.px 300)
-            , Css.textAlign Css.center
+            [ Css.batch <|
+                case measurements of
+                    Just { block, questionBox } ->
+                        [ Css.position Css.absolute
+                        , Css.left Css.zero
+                        , Css.transforms
+                            [ -- Line the QuestionBox up with the Block it corresponds to
+                              Css.translateX (Css.px (midpointX block))
+                            , -- Center the QuestionBox
+                              Css.translateX (Css.pct -50)
+                            ]
+                        ]
+
+                    Nothing ->
+                        []
+            , Css.textAlign Css.left
             , Css.batch config.containerCss
             ]
         , Balloon.css <|
             if xOffset /= 0 then
-                [ Css.property "transform" ("translateX(" ++ String.fromFloat xOffset ++ "px)")
+                [--Css.property "transform" ("translateX(" ++ String.fromFloat xOffset ++ "px)")
                 ]
 
             else
                 []
         ]
+        |> List.singleton
+        |> div
+            [ nriDescription "question-box-absolute-positioning-spacer"
+            , css
+                (case measurements of
+                    Just { questionBox } ->
+                        [ Css.height (Css.px questionBox.element.height) ]
+
+                    Nothing ->
+                        []
+                )
+            ]
 
 
 viewBalloon : Config msg -> List (Balloon.Attribute msg) -> Html msg
