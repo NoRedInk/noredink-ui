@@ -217,7 +217,7 @@ viewPointingTo config blockId measurements =
                 |> Maybe.map
                     (\{ block, paragraph } ->
                         (block.element.y + block.element.height + 8)
-                            == (paragraph.element.y + paragraph.element.height)
+                            >= (paragraph.element.y + paragraph.element.height)
                     )
                 |> Maybe.withDefault True
 
