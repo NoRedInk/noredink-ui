@@ -4,7 +4,7 @@ module Nri.Ui.Block.V4 exposing
     , Content, content
     , phrase, space, blank
     , emphasize
-    , label
+    , label, id
     , labelId, labelContentId
     , LabelPosition, getLabelPositions, labelPosition
     , yellow, cyan, magenta, green, blue, purple, brown
@@ -29,7 +29,7 @@ module Nri.Ui.Block.V4 exposing
 
 ## Labels & positioning
 
-@docs label
+@docs label, id
 
 You will need these helpers if you want to prevent label overlaps. (Which is to say -- anytime you have labels!)
 
@@ -47,10 +47,10 @@ import Accessibility.Styled exposing (..)
 import Browser.Dom as Dom
 import Css exposing (Color)
 import Dict exposing (Dict)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes exposing (css)
 import List.Extra
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
 import Nri.Ui.Mark.V2 as Mark exposing (Mark)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Position exposing (xOffsetPx)
@@ -444,6 +444,12 @@ brown =
 
 
 {-| -}
+id : String -> Attribute msg
+id id_ =
+    Attribute (\config -> { config | id = Just id_ })
+
+
+{-| -}
 labelId : String -> Attribute msg
 labelId id_ =
     Attribute (\config -> { config | labelId = Just id_ })
@@ -461,6 +467,7 @@ type Attribute msg
 defaultConfig : Config msg
 defaultConfig =
     { content = [ FullHeightBlank ]
+    , id = Nothing
     , label = Nothing
     , labelId = Nothing
     , labelPosition = Nothing
@@ -471,6 +478,7 @@ defaultConfig =
 
 type alias Config msg =
     { content : List (Content msg)
+    , id : Maybe String
     , label : Maybe String
     , labelId : Maybe String
     , labelPosition : Maybe LabelPosition
@@ -489,7 +497,7 @@ render config =
             toMark config palette
     in
     span
-        [ css [ Css.position Css.relative ] ]
+        [ css [ Css.position Css.relative ], AttributesExtra.maybe Attributes.id config.id ]
         (Mark.viewWithBalloonTags
             { renderSegment = renderContent
             , backgroundColor = palette.backgroundColor

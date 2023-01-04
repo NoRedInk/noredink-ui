@@ -96,7 +96,14 @@ setType type_ =
 
 type QuestionBoxType msg
     = Standalone
-    | PointingTo String (Maybe { block : Element, paragraph : Element })
+    | PointingTo
+        String
+        (Maybe
+            { block : Element
+            , paragraph : Element
+            , questionBox : Element
+            }
+        )
 
 
 {-| This is the default type of question box. It doesn't have a programmatic or direct visual relationship to any piece of content.
@@ -114,7 +121,15 @@ Pass in the id for the block the QuestionBox should point to.
 You will need to pass 2 measurements, taken using Dom.Browser, in order for the question box to be positioned correctly.
 
 -}
-pointingTo : String -> Maybe { block : Element, paragraph : Element } -> Attribute msg
+pointingTo :
+    String
+    ->
+        Maybe
+            { block : Element
+            , paragraph : Element
+            , questionBox : Element
+            }
+    -> Attribute msg
 pointingTo blockId measurements =
     setType (PointingTo blockId measurements)
 
@@ -168,11 +183,20 @@ viewStandalone config =
 
 
 {-| -}
-viewPointingTo : Config msg -> String -> Maybe { block : Element, paragraph : Element } -> Html msg
+viewPointingTo :
+    Config msg
+    -> String
+    ->
+        Maybe
+            { block : Element
+            , paragraph : Element
+            , questionBox : Element
+            }
+    -> Html msg
 viewPointingTo config blockId measurements =
     let
         xOffset =
-            Maybe.map (.block >> xOffsetPx) measurements
+            Maybe.map (.questionBox >> xOffsetPx) measurements
                 |> Maybe.withDefault 0
 
         isOnFinalLine =
@@ -198,10 +222,7 @@ viewPointingTo config blockId measurements =
             Nothing ->
                 Balloon.css []
         , Balloon.containerCss
-            [ Css.position Css.absolute
-            , Css.top (Css.pct 100)
-            , Css.left (Css.pct 50)
-            , Css.transforms
+            [ Css.transforms
                 [ Css.translateX (Css.pct -50)
                 , Css.translateY (Css.px 8)
                 ]

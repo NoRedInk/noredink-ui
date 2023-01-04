@@ -146,24 +146,14 @@ view ellieLinkConfig state =
         [ Heading.plaintext "QuestionBox.pointingTo"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
-    , inParagraph
+    , inParagraph "paragraph-8"
         [ Block.view
             [ Block.plaintext "A"
             , Block.magenta
             , Block.label "this is an article. \"An\" is also an article."
+            , Block.id "block-8"
             , Block.labelId "article-label-id"
             , Block.labelPosition (Dict.get "article-label-id" offsets)
-
-            -- TODO: re-add question-box
-            --, Block.withQuestionBox
-            --    [ QuestionBox.id "left-viewport-question-box-example"
-            --    , QuestionBox.markdown "Articles are important to get right! Is “the” an article?"
-            --    , QuestionBox.actions
-            --        [ { label = "Yes", onClick = NoOp }
-            --        , { label = "No", onClick = NoOp }
-            --        ]
-            --    ]
-            --    (Dict.get "left-viewport-question-box-example" state.questionBoxMeasurementsById)
             ]
         , Block.view [ Block.plaintext " " ]
         , Block.view
@@ -187,12 +177,22 @@ view ellieLinkConfig state =
             , Block.labelPosition (Dict.get "warning-label-id" offsets)
             ]
         ]
-    , inParagraph
+    , QuestionBox.view
+        [ QuestionBox.pointingTo "block-8" (Dict.get "left-viewport-question-box-example" state.questionBoxMeasurementsById)
+        , QuestionBox.id "left-viewport-question-box-example"
+        , QuestionBox.markdown "Articles are important to get right! Is “the” an article?"
+        , QuestionBox.actions
+            [ { label = "Yes", onClick = NoOp }
+            , { label = "No", onClick = NoOp }
+            ]
+        ]
+    , inParagraph "paragraph-9"
         [ Block.view [ Block.plaintext "You also need to be careful with content that can get cut off on the right side of the viewport" ]
         , Block.view
             [ Block.plaintext "!"
             , Block.label "warning"
             , Block.brown
+            , Block.id "block-9"
             , Block.labelId "warning-2-label-id"
             , Block.labelPosition (Dict.get "warning-2-label-id" offsets)
 
@@ -239,9 +239,10 @@ view ellieLinkConfig state =
         ]
         [ { description = "**Plain block**"
           , example =
-                inParagraph
+                inParagraph "paragraph-0"
                     [ Block.view
                         [ Block.plaintext "Dave"
+                        , Block.id "block-0"
 
                         -- TODO: re-add question-box
                         --, Block.withQuestionBox [ QuestionBox.id "question-box-0", QuestionBox.markdown "Who?" ]
@@ -267,11 +268,12 @@ view ellieLinkConfig state =
           }
         , { description = "**Emphasis block**"
           , example =
-                inParagraph
+                inParagraph "paragraph-1"
                     [ Block.view [ Block.plaintext "Spongebob has a beautiful plant " ]
                     , Block.view
                         [ Block.plaintext "above"
                         , Block.emphasize
+                        , Block.id "block-1"
 
                         -- TODO: re-add question-box
                         --, Block.withQuestionBox
@@ -301,11 +303,12 @@ view ellieLinkConfig state =
           }
         , { description = "**Label block**"
           , example =
-                inParagraph
+                inParagraph "paragraph-2"
                     [ Block.view [ Block.plaintext "Spongebob has a beautiful plant " ]
                     , Block.view
                         [ Block.plaintext "above his TV"
                         , Block.label "where"
+                        , Block.id "block-2"
                         , Block.labelId "label-1"
                         , Block.labelPosition (Dict.get "label-1" offsets)
                         , Block.yellow
@@ -342,10 +345,11 @@ view ellieLinkConfig state =
           }
         , { description = "**Blank block**"
           , example =
-                inParagraph
+                inParagraph "paragraph-3"
                     [ Block.view
                         [ Block.plaintext "Superman"
                         , Block.label "subject"
+                        , Block.id "block-3"
                         , Block.labelId "label-2"
                         , Block.labelPosition (Dict.get "label-2" offsets)
                         ]
@@ -382,10 +386,11 @@ view ellieLinkConfig state =
           }
         , { description = "**Labelled blank block**"
           , example =
-                inParagraph
+                inParagraph "paragraph-4"
                     [ Block.view [ Block.plaintext "Dave " ]
                     , Block.view
                         [ Block.label "verb"
+                        , Block.id "block-4"
                         , Block.labelId "label-3"
                         , Block.labelPosition (Dict.get "label-3" offsets)
                         , Block.cyan
@@ -422,11 +427,12 @@ view ellieLinkConfig state =
           }
         , { description = "**Blank with emphasis block** with the question box pointing to the entire emphasis"
           , example =
-                inParagraph
+                inParagraph "paragraph-5"
                     [ Block.view
                         [ Block.emphasize
                         , Block.cyan
                         , Block.content (Block.phrase "Moana " ++ [ Block.blank ])
+                        , Block.id "block-5"
 
                         -- TODO: re-add question-box
                         --, Block.withQuestionBox
@@ -454,7 +460,7 @@ view ellieLinkConfig state =
           }
         , { description = "**Blank with emphasis block** with the question box pointing to a particular word"
           , example =
-                inParagraph
+                inParagraph "paragraph-6"
                     [ Block.view
                         [ Block.emphasize
                         , Block.cyan
@@ -495,7 +501,7 @@ view ellieLinkConfig state =
           }
         , { description = "**Blank with emphasis block** with the question box pointing to a blank"
           , example =
-                inParagraph
+                inParagraph "paragraph-7"
                     [ Block.view
                         [ Block.emphasize
                         , Block.cyan
@@ -541,10 +547,11 @@ view ellieLinkConfig state =
     ]
 
 
-inParagraph : List (Html msg) -> Html msg
-inParagraph =
+inParagraph : String -> List (Html msg) -> Html msg
+inParagraph id =
     p
-        [ css
+        [ Attributes.id id
+        , css
             [ Css.margin2 Spacing.verticalSpacerPx Css.zero
             , Fonts.quizFont
             , Css.fontSize (Css.px 30)
@@ -580,7 +587,13 @@ type alias State =
             { label : Element
             , labelContent : Element
             }
-    , questionBoxMeasurementsById : Dict String Element
+    , questionBoxMeasurementsById :
+        Dict
+            String
+            { block : Element
+            , paragraph : Element
+            , questionBox : Element
+            }
     }
 
 
@@ -679,7 +692,15 @@ type Msg
             , labelContent : Element
             }
         )
-    | GotQuestionBoxMeasurements String (Result Dom.Error Element)
+    | GotQuestionBoxMeasurements
+        String
+        (Result
+            Dom.Error
+            { block : Element
+            , paragraph : Element
+            , questionBox : Element
+            }
+        )
 
 
 {-| -}
@@ -705,16 +726,16 @@ update msg state =
                     , "warning-2-label-id"
                     ]
                     ++ List.map measureQuestionBox
-                        [ "question-box-0"
-                        , "question-box-1"
-                        , "question-box-2"
-                        , "question-box-3"
-                        , "question-box-4"
-                        , "question-box-5"
-                        , "question-box-6"
-                        , "question-box-7"
-                        , "left-viewport-question-box-example"
-                        , "right-viewport-question-box-example"
+                        [ ( "paragraph-0", "block-0", "question-box-0" )
+                        , ( "paragraph-1", "block-1", "question-box-1" )
+                        , ( "paragraph-2", "block-2", "question-box-2" )
+                        , ( "paragraph-3", "block-3", "question-box-3" )
+                        , ( "paragraph-4", "block-4", "question-box-4" )
+                        , ( "paragraph-5", "block-5", "question-box-5" )
+                        , ( "paragraph-6", "block-6", "question-box-6" )
+                        , ( "paragraph-7", "block-7", "question-box-7" )
+                        , ( "paragraph-8", "block-8", "left-viewport-question-box-example" )
+                        , ( "paragraph-9", "block-9", "right-viewport-question-box-example" )
                         ]
                 )
             )
@@ -750,6 +771,16 @@ measureBlockLabel labelId =
         |> Task.attempt (GotBlockLabelMeasurements labelId)
 
 
-measureQuestionBox : String -> Cmd Msg
-measureQuestionBox id =
-    Task.attempt (GotQuestionBoxMeasurements id) (Dom.getElement id)
+measureQuestionBox : ( String, String, String ) -> Cmd Msg
+measureQuestionBox ( paragraphId, blockId, questionBoxId ) =
+    Task.map3
+        (\paragraph block questionBox ->
+            { block = block
+            , paragraph = paragraph
+            , questionBox = questionBox
+            }
+        )
+        (Dom.getElement paragraphId)
+        (Dom.getElement blockId)
+        (Dom.getElement questionBoxId)
+        |> Task.attempt (GotQuestionBoxMeasurements questionBoxId)
