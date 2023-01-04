@@ -96,7 +96,7 @@ setType type_ =
 
 type QuestionBoxType msg
     = Standalone
-    | PointingTo (Maybe Element)
+    | PointingTo (Maybe { block : Element, paragraph : Element })
 
 
 {-| This is the default type of question box. It doesn't have a programmatic or direct visual relationship to any piece of content.
@@ -110,12 +110,12 @@ standalone =
 
 Typically, you would use this type of `QuestionBox` type with a `Block` by way of `Block.withHtml`.
 
-You will need to pass a measurement, taken using Dom.Browser, in order for the question box to be positioned correctly horizontally so that it doesn't get cut off by the viewport.
+You will need to pass 2 measurements, taken using Dom.Browser, in order for the question box to be positioned correctly.
 
 -}
-pointingTo : Maybe Element -> Attribute msg
-pointingTo element =
-    setType (PointingTo element)
+pointingTo : Maybe { block : Element, paragraph : Element } -> Attribute msg
+pointingTo measurements =
+    setType (PointingTo measurements)
 
 
 {-| This helper is how we create an id for the guidance speech bubble element based on the `QuestionBox.id` value. Use this helper to manage focus.
@@ -148,8 +148,8 @@ view attributes =
         Standalone ->
             viewStandalone config
 
-        PointingTo element ->
-            viewPointingTo config element
+        PointingTo measurements ->
+            viewPointingTo config measurements
 
 
 {-| -}
@@ -167,15 +167,28 @@ viewStandalone config =
 
 
 {-| -}
-viewPointingTo : Config msg -> Maybe Element -> Html msg
-viewPointingTo config element =
+viewPointingTo : Config msg -> Maybe { block : Element, paragraph : Element } -> Html msg
+viewPointingTo config measurements =
     let
         xOffset =
-            Maybe.map xOffsetPx element
+            Maybe.map (.block >> xOffsetPx) measurements
                 |> Maybe.withDefault 0
+
+        isOnFinalLine =
+            measurements
+                |> Maybe.map
+                    (\{ block, paragraph } ->
+                        (block.element.y + block.element.height)
+                            == (paragraph.element.y + paragraph.element.height)
+                    )
+                |> Maybe.withDefault True
     in
     viewBalloon config
-        [ Balloon.onBottom
+        [ if isOnFinalLine then
+            Balloon.onBottom
+
+          else
+            Balloon.css []
         , Balloon.nriDescription "pointing-to-balloon"
         , case config.id of
             Just id_ ->
