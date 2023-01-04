@@ -18,6 +18,7 @@ module Nri.Ui.QuestionBox.V3 exposing
 
 -}
 
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Browser.Dom exposing (Element)
 import Css
@@ -260,6 +261,7 @@ viewPointingTo config blockId measurements =
 
             else
                 []
+        , Balloon.custom [ Aria.details blockId ]
         ]
         |> List.singleton
         |> div
