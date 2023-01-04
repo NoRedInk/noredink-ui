@@ -259,7 +259,7 @@ renderContent config content_ markStyles =
                 [ text str ]
 
             Blank ->
-                [ viewBlank [ Css.lineHeight (Css.int 1) ] { class = Nothing } ]
+                [ viewBlank [ Css.lineHeight (Css.num 1) ] { class = Nothing } ]
 
             FullHeightBlank ->
                 [ viewBlank

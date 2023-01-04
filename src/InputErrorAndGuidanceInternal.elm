@@ -131,7 +131,7 @@ view idValue marginTop config =
                 , Message.plaintext m
                 , Message.alertRole
                 , Message.id (errorId idValue)
-                , Message.custom [ Live.livePolite ]
+                , Message.custom [ Live.polite ]
                 , Message.css
                     [ Css.important (Css.paddingTop Css.zero)
                     , Css.important (Css.paddingBottom Css.zero)
@@ -147,7 +147,7 @@ view idValue marginTop config =
                     [ Css.important (Css.paddingTop Css.zero)
                     , Css.important (Css.paddingBottom Css.zero)
                     , Css.important marginTop
-                    , Css.lineHeight (Css.int 1)
+                    , Css.lineHeight (Css.num 1)
                     ]
                 ]
 

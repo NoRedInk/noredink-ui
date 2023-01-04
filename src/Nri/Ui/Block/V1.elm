@@ -527,7 +527,7 @@ viewBlank styles config =
             , Css.minWidth (Css.px 80)
             , Css.display Css.inlineBlock
             , Css.borderRadius (Css.px 4)
-            , Css.lineHeight (Css.int 1)
+            , Css.lineHeight (Css.num 1)
             , Css.batch styles
             ]
         , AttributesExtra.maybe Attributes.class config.class
