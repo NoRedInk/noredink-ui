@@ -178,6 +178,7 @@ viewStandalone config =
         , nriDescription "standalone-balloon-container"
         ]
         [ viewBalloon config
+            Nothing
             [ Balloon.nriDescription "standalone-balloon"
             ]
         ]
@@ -227,6 +228,7 @@ viewPointingTo config blockId measurements =
                   (questionBox.element.width / 2)
     in
     viewBalloon config
+        (Just blockId)
         [ if isOnFinalLine then
             Balloon.onBottom
 
@@ -261,7 +263,6 @@ viewPointingTo config blockId measurements =
 
             else
                 []
-        , Balloon.custom [ Aria.details blockId ]
         ]
         |> List.singleton
         |> div
@@ -277,12 +278,12 @@ viewPointingTo config blockId measurements =
             ]
 
 
-viewBalloon : Config msg -> List (Balloon.Attribute msg) -> Html msg
-viewBalloon config attributes =
+viewBalloon : Config msg -> Maybe String -> List (Balloon.Attribute msg) -> Html msg
+viewBalloon config referencingId attributes =
     Balloon.view
         ([ Balloon.html
             (List.filterMap identity
-                [ Maybe.map (viewGuidance config) config.markdown
+                [ Maybe.map (viewGuidance config referencingId) config.markdown
                 , viewActions config.character config.actions
                 ]
             )
@@ -293,8 +294,12 @@ viewBalloon config attributes =
         )
 
 
-viewGuidance : { config | id : Maybe String, character : Maybe { name : String, icon : Svg } } -> String -> Html msg
-viewGuidance config markdown_ =
+viewGuidance :
+    { config | id : Maybe String, character : Maybe { name : String, icon : Svg } }
+    -> Maybe String
+    -> String
+    -> Html msg
+viewGuidance config referencingId markdown_ =
     case config.character of
         Just character_ ->
             div
@@ -308,6 +313,7 @@ viewGuidance config markdown_ =
                 ]
                 [ viewCharacter character_
                 , viewSpeechBubble config
+                    referencingId
                     [ Balloon.markdown markdown_
                     , Balloon.onLeft
                     , Balloon.alignArrowEnd
@@ -317,13 +323,14 @@ viewGuidance config markdown_ =
 
         Nothing ->
             viewSpeechBubble config
+                referencingId
                 [ Balloon.markdown markdown_
                 , Balloon.css [ Css.margin2 (Css.px 10) (Css.px 20) ]
                 ]
 
 
-viewSpeechBubble : { config | id : Maybe String } -> List (Balloon.Attribute msg) -> Html msg
-viewSpeechBubble config extraAttributes =
+viewSpeechBubble : { config | id : Maybe String } -> Maybe String -> List (Balloon.Attribute msg) -> Html msg
+viewSpeechBubble config referencingId extraAttributes =
     Balloon.view
         ([ Balloon.nriDescription "guidance-speech-bubble"
          , Balloon.white
@@ -337,6 +344,15 @@ viewSpeechBubble config extraAttributes =
             [ AttributesExtra.maybe (guidanceId >> Attributes.id) config.id
             , Key.tabbable False
             ]
+         , Balloon.custom <|
+            case referencingId of
+                Just id_ ->
+                    [ Aria.describedBy [ id_ ]
+                    , Aria.details id_
+                    ]
+
+                Nothing ->
+                    []
          ]
             ++ extraAttributes
         )
