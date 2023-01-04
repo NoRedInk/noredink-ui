@@ -147,7 +147,7 @@ view ellieLinkConfig state =
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
     , inParagraph "paragraph-8"
-        [ Block.view [ Block.plaintext "A", Block.emphasize, Block.magenta, Block.id "block-8" ]
+        [ Block.view [ Block.plaintext "A", Block.emphasize, Block.id "block-8" ]
         , Block.view [ Block.plaintext " " ]
         , Block.view [ Block.plaintext "tricky" ]
         , Block.view [ Block.plaintext " " ]
@@ -168,6 +168,7 @@ view ellieLinkConfig state =
         [ Block.view [ Block.plaintext "You also need to be careful with content that can get cut off on the right side of the viewport" ]
         , Block.view
             [ Block.plaintext "!"
+            , Block.emphasize
             , Block.id "block-9"
             ]
         ]
@@ -377,7 +378,6 @@ view ellieLinkConfig state =
                         , Block.id "block-4"
                         , Block.labelId "label-3"
                         , Block.labelPosition (Dict.get "label-3" offsets)
-                        , Block.cyan
                         ]
                     , Block.view [ Block.plaintext " his replacement cousin coming out of his room wearing a gorilla mask." ]
                     ]
@@ -420,7 +420,6 @@ view ellieLinkConfig state =
                 inParagraph "paragraph-5"
                     [ Block.view
                         [ Block.emphasize
-                        , Block.cyan
                         , Block.content (Block.phrase "Moana " ++ [ Block.blank ])
                         , Block.id "block-5"
 
@@ -453,7 +452,6 @@ view ellieLinkConfig state =
                 inParagraph "paragraph-6"
                     [ Block.view
                         [ Block.emphasize
-                        , Block.cyan
 
                         --, -- TODO re-add question box
                         --    Block.content
@@ -494,7 +492,6 @@ view ellieLinkConfig state =
                 inParagraph "paragraph-7"
                     [ Block.view
                         [ Block.emphasize
-                        , Block.cyan
                         , Block.content
                             (Block.phrase "Moana "
                              -- TODO: re-add question-box
