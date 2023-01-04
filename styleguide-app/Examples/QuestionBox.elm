@@ -21,12 +21,12 @@ import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Markdown
-import Nri.Ui.Block.V3 as Block
+import Nri.Ui.Block.V4 as Block
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.QuestionBox.V2 as QuestionBox
+import Nri.Ui.QuestionBox.V3 as QuestionBox
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V6 as Table
@@ -42,7 +42,7 @@ moduleName =
 
 version : Int
 version =
-    2
+    3
 
 
 {-| -}
