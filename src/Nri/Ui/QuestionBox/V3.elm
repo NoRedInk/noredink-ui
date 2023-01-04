@@ -196,8 +196,24 @@ viewPointingTo :
 viewPointingTo config blockId measurements =
     let
         xOffset =
-            Maybe.map (.questionBox >> xOffsetPx) measurements
+            Maybe.map xOffsetPx adjustedQuestionBoxPosition
                 |> Maybe.withDefault 0
+
+        adjustedQuestionBoxPosition =
+            Maybe.map
+                (\{ questionBox, block } ->
+                    let
+                        element =
+                            questionBox.element
+                    in
+                    { questionBox
+                        | element =
+                            { element
+                                | x = midpointX block - element.width / 2
+                            }
+                    }
+                )
+                measurements
 
         isOnFinalLine =
             measurements
@@ -259,7 +275,7 @@ viewPointingTo config blockId measurements =
             , css
                 (case measurements of
                     Just { questionBox } ->
-                        [ Css.height (Css.px questionBox.element.height) ]
+                        [ Css.height (Css.px (questionBox.element.height + 8)) ]
 
                     Nothing ->
                         []
