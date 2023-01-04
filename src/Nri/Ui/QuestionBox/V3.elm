@@ -201,17 +201,12 @@ viewPointingTo config blockId measurements =
 
         adjustedQuestionBoxPosition =
             Maybe.map
-                (\{ questionBox, block } ->
+                (\({ questionBox } as m) ->
                     let
                         element =
                             questionBox.element
                     in
-                    { questionBox
-                        | element =
-                            { element
-                                | x = midpointX block - element.width / 2
-                            }
-                    }
+                    { questionBox | element = { element | x = newQuestionBoxPosition m } }
                 )
                 measurements
 
@@ -224,9 +219,11 @@ viewPointingTo config blockId measurements =
                     )
                 |> Maybe.withDefault True
 
-        midpointX : Element -> Float
-        midpointX { element } =
-            element.x + (element.width / 2)
+        newQuestionBoxPosition { block, questionBox } =
+            -- position in the middle of the block
+            (block.element.x + (block.element.width / 2))
+                - -- against the middle of the question box
+                  (questionBox.element.width / 2)
     in
     viewBalloon config
         [ if isOnFinalLine then
@@ -244,14 +241,9 @@ viewPointingTo config blockId measurements =
         , Balloon.containerCss
             [ Css.batch <|
                 case measurements of
-                    Just { block, questionBox } ->
+                    Just measurements_ ->
                         [ Css.position Css.absolute
-                        , -- Line the QuestionBox up with the Block it corresponds to
-                          Css.left (Css.px (midpointX block))
-                        , Css.transforms
-                            [ -- Center the QuestionBox
-                              Css.translateX (Css.pct -50)
-                            ]
+                        , Css.left (Css.px (newQuestionBoxPosition measurements_))
                         ]
 
                     Nothing ->
