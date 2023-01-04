@@ -70,7 +70,7 @@ view_ pages currentPageIndex =
 
 previousPageLink : Maybe { onClick : msg, href : String } -> Html msg
 previousPageLink maybePreviousPage =
-    ClickableText.link "Previous\u{00A0}Page" <|
+    ClickableText.link "Previous\u{00A0}page" <|
         [ ClickableText.small
         , ClickableText.css [ Css.marginRight (Css.px 10) ]
         ]
@@ -79,7 +79,7 @@ previousPageLink maybePreviousPage =
 
 nextPageLink : Maybe { onClick : msg, href : String } -> Html msg
 nextPageLink maybeNextPage =
-    ClickableText.link "Next\u{00A0}Page" <|
+    ClickableText.link "Next\u{00A0}page" <|
         [ ClickableText.small
         , ClickableText.css [ Css.marginLeft (Css.px 10) ]
         ]
