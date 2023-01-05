@@ -133,8 +133,8 @@ linkExternalWithTracking { track, url } clickableAttributes =
 
 
 {-| -}
-toButtonAttributes : ClickableAttributes route msg -> List (Attribute msg)
-toButtonAttributes clickableAttributes =
+toButtonAttributes : ClickableAttributes route msg -> { disabled : Bool } -> List (Attribute msg)
+toButtonAttributes clickableAttributes { disabled } =
     [ AttributesExtra.maybe Events.onClick clickableAttributes.onClick
     , Attributes.type_ clickableAttributes.buttonType
     , -- why "aria-haspopup=true" instead of "aria-haspopup=dialog"?
@@ -143,6 +143,7 @@ toButtonAttributes clickableAttributes =
       -- If time has passed, feel free to revisit and see if dialog support has improved!
       AttributesExtra.includeIf clickableAttributes.opensModal
         (Attributes.attribute "aria-haspopup" "true")
+    , Attributes.disabled disabled
     ]
 
 

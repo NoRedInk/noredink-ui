@@ -29,6 +29,7 @@ import Examples.Menu as Menu
 import Examples.Message as Message
 import Examples.Modal as Modal
 import Examples.Page as Page
+import Examples.Pagination as Pagination
 import Examples.Panel as Panel
 import Examples.Pennant as Pennant
 import Examples.PremiumCheckbox as PremiumCheckbox
@@ -586,6 +587,25 @@ all =
                     _ ->
                         Nothing
             )
+    , Pagination.example
+        |> Example.wrapMsg PaginationMsg
+            (\msg ->
+                case msg of
+                    PaginationMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState PaginationState
+            (\msg ->
+                case msg of
+                    PaginationState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , Panel.example
         |> Example.wrapMsg PanelMsg
             (\msg ->
@@ -1017,6 +1037,7 @@ type State
     | MessageState Message.State
     | ModalState Modal.State
     | PageState Page.State
+    | PaginationState Pagination.State
     | PanelState Panel.State
     | PennantState Pennant.State
     | PremiumCheckboxState PremiumCheckbox.State
@@ -1069,6 +1090,7 @@ type Msg
     | MessageMsg Message.Msg
     | ModalMsg Modal.Msg
     | PageMsg Page.Msg
+    | PaginationMsg Pagination.Msg
     | PanelMsg Panel.Msg
     | PennantMsg Pennant.Msg
     | PremiumCheckboxMsg PremiumCheckbox.Msg

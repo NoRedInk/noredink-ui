@@ -5,6 +5,7 @@ module Nri.Ui.ClickableText.V3 exposing
     , small, medium, large, modal
     , onClick, submit, opensModal
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
+    , disabled
     , icon, rightIcon
     , hideIconForMobile, hideIconFor
     , custom, nriDescription, testId, id
@@ -30,6 +31,7 @@ module Nri.Ui.ClickableText.V3 exposing
   - adds `hideIconForMobile` and `hideIconAt`
   - adds `hideTextForMobile` and `hideTextAt`
   - adds `submit` and `opensModal`
+  - adds `disabled`
 
 
 # Changes from V2
@@ -72,6 +74,7 @@ HTML `<a>` elements and are created here with `*Link` functions.
 
 @docs onClick, submit, opensModal
 @docs href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
+@docs disabled
 
 
 ## Icons
@@ -364,6 +367,25 @@ linkExternalWithTracking config =
     setClickableAttributes (ClickableAttributes.linkExternalWithTracking config)
 
 
+{-| Shows inactive styling.
+
+If a button, this attribute will disable it as you'd expect.
+
+If a link, this attribute will follow the pattern laid out in [Scott O'Hara's disabled links](https://www.scottohara.me/blog/2021/05/28/disabled-links.html) article,
+and essentially make the anchor a disabled placeholder.
+
+_Caveat!_
+
+The styleguide example will NOT work correctly because of <https://github.com/elm/browser/issues/34>, which describes a problem where "a tags without href generate a navigation event".
+
+In most cases, if you're not using Browser.application, disabled links should work just fine.
+
+-}
+disabled : Bool -> Attribute msg
+disabled value =
+    set (\attributes -> { attributes | disabled = value })
+
+
 {-| Creates a `<button>` element
 -}
 button :
@@ -378,8 +400,9 @@ button label_ attributes =
     in
     Nri.Ui.styled Html.button
         (dataDescriptor "button")
-        (clickableTextStyles ++ config.customStyles)
+        (clickableTextStyles config.disabled ++ config.customStyles)
         (ClickableAttributes.toButtonAttributes config.clickableAttributes
+            { disabled = config.disabled }
             ++ config.customAttributes
         )
         [ viewContent config ]
@@ -400,13 +423,13 @@ link label_ attributes =
         ( name, clickableAttributes ) =
             ClickableAttributes.toLinkAttributes
                 { routeToString = identity
-                , isDisabled = False
+                , isDisabled = config.disabled
                 }
                 config.clickableAttributes
     in
     Nri.Ui.styled Html.a
         (dataDescriptor name)
-        (clickableTextStyles ++ config.customStyles)
+        (clickableTextStyles config.disabled ++ config.customStyles)
         (clickableAttributes ++ config.customAttributes)
         [ viewContent config ]
 
@@ -460,27 +483,37 @@ viewContent config =
         )
 
 
-clickableTextStyles : List Css.Style
-clickableTextStyles =
-    [ Css.cursor Css.pointer
-    , Nri.Ui.Fonts.V1.baseFont
-    , Css.backgroundImage Css.none
-    , Css.textShadow Css.none
-    , Css.boxShadow Css.none
-    , Css.border Css.zero
-    , Css.disabled [ Css.cursor Css.notAllowed ]
-    , Css.color Colors.azure
-    , Css.hover [ Css.color Colors.azureDark ]
-    , Css.backgroundColor Css.transparent
-    , Css.fontWeight (Css.int 600)
-    , Css.textAlign Css.left
-    , Css.borderStyle Css.none
-    , Css.textDecoration Css.none
-    , Css.padding Css.zero
-    , Css.display Css.inlineBlock
-    , Css.verticalAlign Css.textBottom
-    , Css.margin Css.zero -- Get rid of default margin Webkit adds to buttons
-    ]
+clickableTextStyles : Bool -> List Css.Style
+clickableTextStyles isDisabled =
+    let
+        baseStyles =
+            [ Nri.Ui.Fonts.V1.baseFont
+            , Css.backgroundImage Css.none
+            , Css.textShadow Css.none
+            , Css.boxShadow Css.none
+            , Css.border Css.zero
+            , Css.backgroundColor Css.transparent
+            , Css.fontWeight (Css.int 600)
+            , Css.textAlign Css.left
+            , Css.borderStyle Css.none |> Css.important
+            , Css.textDecoration Css.none
+            , Css.padding Css.zero
+            , Css.display Css.inlineBlock
+            , Css.verticalAlign Css.textBottom
+            , Css.margin Css.zero -- Get rid of default margin Webkit adds to buttons
+            ]
+    in
+    if isDisabled then
+        Css.cursor Css.notAllowed
+            :: Css.color Colors.gray45
+            :: Css.visited [ Css.important (Css.color Colors.gray45) ]
+            :: baseStyles
+
+    else
+        Css.cursor Css.pointer
+            :: Css.color Colors.azure
+            :: Css.hover [ Css.color Colors.azureDark ]
+            :: baseStyles
 
 
 sizeToPx : Size -> Css.Px
@@ -514,6 +547,7 @@ type alias ClickableTextAttributes msg =
     , rightIcon : Maybe Svg
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
+    , disabled : Bool
     }
 
 
@@ -527,6 +561,7 @@ defaults =
     , rightIcon = Nothing
     , customAttributes = [ Attributes.class FocusRing.customClass ]
     , customStyles = [ Css.pseudoClass "focus-visible" (Css.borderRadius (Css.px 4) :: FocusRing.tightStyles) ]
+    , disabled = False
     }
 
 
