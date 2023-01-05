@@ -465,21 +465,41 @@ viewContent config =
 
                 Large ->
                     Css.px 4
+
+        iconAndTextContainer =
+            span
+                [ Attributes.css
+                    [ Css.display Css.inlineFlex
+                    , Css.alignItems Css.center
+                    , Css.property "line-height" "normal"
+                    , Css.fontSize fontSize
+                    ]
+                ]
+                >> List.singleton
     in
-    span
-        [ Attributes.css
-            [ Css.displayFlex
-            , Css.alignItems Css.center
-            , Css.property "line-height" "normal"
-            , Css.fontSize fontSize
-            ]
-        ]
-        (List.filterMap identity
-            [ Maybe.map (viewIcon (Css.marginRight iconSize :: config.iconStyles))
-                config.icon
-            , Just (span [ ExtraAttributes.nriDescription "clickable-text-label" ] [ text config.label ])
-            , Maybe.map (viewIcon [ Css.marginLeft iconSize ]) config.rightIcon
-            ]
+    span [ Attributes.css [ Css.fontSize fontSize ] ]
+        (case ( config.icon, config.rightIcon ) of
+            ( Just leftIcon, Just rightIcon_ ) ->
+                iconAndTextContainer
+                    [ viewIcon (Css.marginRight iconSize :: config.iconStyles) leftIcon
+                    , span [ ExtraAttributes.nriDescription "clickable-text-label" ] [ text config.label ]
+                    , viewIcon [ Css.marginLeft iconSize ] rightIcon_
+                    ]
+
+            ( Just leftIcon, Nothing ) ->
+                iconAndTextContainer
+                    [ viewIcon (Css.marginRight iconSize :: config.iconStyles) leftIcon
+                    , span [ ExtraAttributes.nriDescription "clickable-text-label" ] [ text config.label ]
+                    ]
+
+            ( Nothing, Just rightIcon_ ) ->
+                iconAndTextContainer
+                    [ span [ ExtraAttributes.nriDescription "clickable-text-label" ] [ text config.label ]
+                    , viewIcon [ Css.marginLeft iconSize ] rightIcon_
+                    ]
+
+            ( Nothing, Nothing ) ->
+                [ text config.label ]
         )
 
 
