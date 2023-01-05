@@ -417,33 +417,37 @@ view ellieLinkConfig state =
           }
         , { description = "**Blank with emphasis block** with the question box pointing to the entire emphasis"
           , example =
-                inParagraph "paragraph-5"
+                tableExample "paragraph-5"
                     [ Block.view
                         [ Block.emphasize
                         , Block.content (Block.phrase "Moana " ++ [ Block.blank ])
                         , Block.id "block-5"
-
-                        -- TODO: re-add question-box
-                        --, Block.withQuestionBox
-                        --    [ QuestionBox.id "question-box-5"
-                        --    , QuestionBox.markdown "Pointing at the entire emphasis"
-                        --    ]
-                        --    (Dict.get "question-box-5" state.questionBoxMeasurementsById)
                         ]
                     ]
+                    [ QuestionBox.pointingTo "block-5" (Dict.get "question-box-5" state.questionBoxMeasurementsById)
+                    , QuestionBox.id "question-box-5"
+                    , QuestionBox.markdown "Pointing at the entire emphasis"
+                    ]
           , pattern =
-                Code.fromModule "Block" "view"
+                "p [ id \"paragraph-id\" ]"
                     ++ Code.listMultiline
-                        [-- TODO: re-add question-box
-                         --Code.fromModule "Block" "withQuestionBox"
-                         --    ++ Code.listMultiline
-                         --        [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                         --        , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the entire emphasis"
-                         --        , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
-                         --        ]
-                         --        2
-                         --    ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
-                         --, "…"
+                        [ Code.fromModule "Block" "view "
+                            ++ Code.listMultiline
+                                [ Code.fromModule "Block" "id " ++ Code.string "block-id"
+                                , Code.fromModule "Block" "emphasize"
+                                , Code.fromModule "Block" "content "
+                                    ++ Code.withParens (Code.fromModule "Block" "phrase " ++ Code.string "Moana ++ " ++ Code.list [ Code.fromModule "Block" "blank" ])
+                                ]
+                                2
+                        , Code.fromModule moduleName "view "
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                                , Code.fromModule moduleName "pointingTo "
+                                    ++ Code.string "block-id"
+                                    ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
+                                , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the entire emphasis"
+                                ]
+                                2
                         ]
                         1
           }
@@ -710,7 +714,6 @@ update msg state =
             , Cmd.batch
                 (List.map measureBlockLabel
                     [ "label-1"
-                    , "label-2"
                     , "label-3"
                     ]
                     ++ List.map measureQuestionBox
