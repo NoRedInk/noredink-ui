@@ -228,28 +228,26 @@ renderContent :
     Content msg
     -> List Css.Style
     -> Html msg
-renderContent content_ markStyles =
+renderContent content_ =
     case content_ of
         Word str ->
-            blockSegmentContainer markStyles <|
+            blockSegmentContainer Nothing
                 [ text str ]
 
         WordWithId wordAndId ->
-            blockSegmentContainer markStyles <|
-                -- TODO: actually add the id
+            blockSegmentContainer (Just wordAndId.id)
                 [ text wordAndId.word ]
 
         Blank ->
-            blockSegmentContainer markStyles <|
+            blockSegmentContainer Nothing
                 [ viewBlank [ Css.lineHeight (Css.int 1) ] ]
 
         BlankWithId id_ ->
-            blockSegmentContainer markStyles <|
-                -- TODO: actually add the id
+            blockSegmentContainer (Just id_)
                 [ viewBlank [ Css.lineHeight (Css.int 1) ] ]
 
         FullHeightBlank ->
-            blockSegmentContainer markStyles <|
+            blockSegmentContainer Nothing
                 [ viewBlank
                     [ Css.paddingTop topBottomSpace
                     , Css.paddingBottom topBottomSpace
@@ -258,8 +256,8 @@ renderContent content_ markStyles =
                 ]
 
 
-blockSegmentContainer : List Css.Style -> List (Html msg) -> Html msg
-blockSegmentContainer styles =
+blockSegmentContainer : Maybe String -> List (Html msg) -> List Css.Style -> Html msg
+blockSegmentContainer id_ children styles =
     span
         [ css
             (Css.whiteSpace Css.preWrap
@@ -267,8 +265,10 @@ blockSegmentContainer styles =
                 :: Css.position Css.relative
                 :: styles
             )
+        , AttributesExtra.maybe Attributes.id id_
         , nriDescription "block-segment-container"
         ]
+        children
 
 
 {-| -}
