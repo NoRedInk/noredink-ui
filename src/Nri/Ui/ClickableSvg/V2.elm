@@ -498,7 +498,8 @@ quizEngineMobileCss styles =
     css [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
 
 
-{-| -}
+{-| WARNING: Not implemented! This attribute is temporarily reverted due to <https://github.com/NoRedInk/NoRedInk/pull/41952#issuecomment-1372393691>.
+-}
 rightIcon : Svg -> Attribute msg
 rightIcon icon =
     set (\config -> { config | rightIcon = Just icon })
