@@ -224,26 +224,21 @@ view ellieLinkConfig state =
                     , QuestionBox.markdown "Who?"
                     ]
           , pattern =
-                "p [ id \"paragraph-id\" ]"
-                    ++ Code.listMultiline
-                        [ Code.fromModule "Block" "view"
-                            ++ Code.listMultiline
-                                [ Code.fromModule "Block" "id " ++ Code.string "block-id"
-                                , Code.fromModule "Block" "plaintext " ++ Code.string "Dave"
-                                ]
-                                2
-                        , "…"
-                        , Code.fromModule moduleName "view"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
-                                , Code.fromModule moduleName "pointingTo "
-                                    ++ Code.string "block-id"
-                                    ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
-                                , Code.fromModule moduleName "markdown " ++ Code.string "Who?"
-                                ]
-                                2
-                        ]
-                        1
+                tableExampleCode
+                    [ Code.fromModule "Block" "view"
+                        ++ Code.listMultiline
+                            [ Code.fromModule "Block" "id " ++ Code.string "block-id"
+                            , Code.fromModule "Block" "plaintext " ++ Code.string "Dave"
+                            ]
+                            3
+                    , "…"
+                    ]
+                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                    , Code.fromModule moduleName "pointingTo "
+                        ++ Code.string "block-id"
+                        ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
+                    , Code.fromModule moduleName "markdown " ++ Code.string "Who?"
+                    ]
           }
         , { description = "**Emphasis block**"
           , example =
@@ -262,29 +257,24 @@ view ellieLinkConfig state =
                     , QuestionBox.actions [ { label = "Try again", onClick = NoOp } ]
                     ]
           , pattern =
-                "p [ id \"paragraph-id\" ]"
-                    ++ Code.listMultiline
-                        [ "…"
-                        , Code.fromModule "Block" "view"
-                            ++ Code.listMultiline
-                                [ Code.fromModule "Block" "id " ++ Code.string "block-id"
-                                , Code.fromModule "Block" "emphasize"
-                                , Code.fromModule "Block" "plaintext " ++ Code.string "above"
-                                ]
-                                2
-                        , "…"
-                        , Code.fromModule moduleName "view"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
-                                , Code.fromModule moduleName "pointingTo "
-                                    ++ Code.string "block-id"
-                                    ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
-                                , Code.fromModule moduleName "markdown " ++ Code.string "“Above” is a preposition."
-                                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
-                                ]
-                                2
-                        ]
-                        1
+                tableExampleCode
+                    [ "…"
+                    , Code.fromModule "Block" "view"
+                        ++ Code.listMultiline
+                            [ Code.fromModule "Block" "id " ++ Code.string "block-id"
+                            , Code.fromModule "Block" "emphasize"
+                            , Code.fromModule "Block" "plaintext " ++ Code.string "above"
+                            ]
+                            3
+                    , "…"
+                    ]
+                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                    , Code.fromModule moduleName "pointingTo "
+                        ++ Code.string "block-id"
+                        ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
+                    , Code.fromModule moduleName "markdown " ++ Code.string "“Above” is a preposition."
+                    , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
+                    ]
           }
         , { description = "**Label block**"
           , example =
@@ -310,29 +300,24 @@ view ellieLinkConfig state =
                         ]
                     ]
           , pattern =
-                "p [ id \"paragraph-id\" ]"
-                    ++ Code.listMultiline
-                        [ "…"
-                        , Code.fromModule "Block" "view"
-                            ++ Code.listMultiline
-                                [ Code.fromModule "Block" "id " ++ Code.string "block-id"
-                                , Code.fromModule "Block" "label " ++ Code.string "where"
-                                , Code.fromModule "Block" "plaintext " ++ Code.string "above his TV"
-                                ]
-                                2
-                        , "…"
-                        , Code.fromModule moduleName "view"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
-                                , Code.fromModule moduleName "pointingTo "
-                                    ++ Code.string "block-id"
-                                    ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
-                                , Code.fromModule moduleName "markdown " ++ Code.string "Which word is the preposition?"
-                                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
-                                ]
-                                2
-                        ]
-                        1
+                tableExampleCode
+                    [ "…"
+                    , Code.fromModule "Block" "view"
+                        ++ Code.listMultiline
+                            [ Code.fromModule "Block" "id " ++ Code.string "block-id"
+                            , Code.fromModule "Block" "label " ++ Code.string "where"
+                            , Code.fromModule "Block" "plaintext " ++ Code.string "above his TV"
+                            ]
+                            3
+                    , "…"
+                    ]
+                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                    , Code.fromModule moduleName "pointingTo "
+                        ++ Code.string "block-id"
+                        ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
+                    , Code.fromModule moduleName "markdown " ++ Code.string "Which word is the preposition?"
+                    , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
+                    ]
           }
         , { description = "**Blank block**"
           , example =
@@ -350,24 +335,19 @@ view ellieLinkConfig state =
                         ]
                     ]
           , pattern =
-                "p [ id \"paragraph-id\" ]"
-                    ++ Code.listMultiline
-                        [ "…"
-                        , Code.fromModule "Block" "view "
-                            ++ Code.list [ Code.fromModule "Block" "id " ++ Code.string "block-id" ]
-                        , "…"
-                        , Code.fromModule moduleName "view "
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
-                                , Code.fromModule moduleName "pointingTo "
-                                    ++ Code.string "block-id"
-                                    ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
-                                , Code.fromModule moduleName "markdown " ++ Code.string "Which verb matches the subject?"
-                                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
-                                ]
-                                2
-                        ]
-                        1
+                tableExampleCode
+                    [ "…"
+                    , Code.fromModule "Block" "view "
+                        ++ Code.list [ Code.fromModule "Block" "id " ++ Code.string "block-id" ]
+                    , "…"
+                    ]
+                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                    , Code.fromModule moduleName "pointingTo "
+                        ++ Code.string "block-id"
+                        ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
+                    , Code.fromModule moduleName "markdown " ++ Code.string "Which verb matches the subject?"
+                    , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
+                    ]
           }
         , { description = "**Labelled blank block**"
           , example =
@@ -391,29 +371,24 @@ view ellieLinkConfig state =
                         ]
                     ]
           , pattern =
-                "p [ id \"paragraph-id\" ]"
-                    ++ Code.listMultiline
-                        [ "…"
-                        , Code.fromModule "Block" "view "
-                            ++ Code.listMultiline
-                                [ Code.fromModule "Block" "id " ++ Code.string "block-id"
-                                , Code.fromModule "Block" "label " ++ Code.string "verb"
-                                , "…"
-                                ]
-                                2
-                        , "…"
-                        , Code.fromModule moduleName "view "
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
-                                , Code.fromModule moduleName "pointingTo "
-                                    ++ Code.string "block-id"
-                                    ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
-                                , Code.fromModule moduleName "markdown " ++ Code.string "What did he do?"
-                                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
-                                ]
-                                2
-                        ]
-                        1
+                tableExampleCode
+                    [ "…"
+                    , Code.fromModule "Block" "view "
+                        ++ Code.listMultiline
+                            [ Code.fromModule "Block" "id " ++ Code.string "block-id"
+                            , Code.fromModule "Block" "label " ++ Code.string "verb"
+                            , "…"
+                            ]
+                            3
+                    , "…"
+                    ]
+                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                    , Code.fromModule moduleName "pointingTo "
+                        ++ Code.string "block-id"
+                        ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
+                    , Code.fromModule moduleName "markdown " ++ Code.string "What did he do?"
+                    , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
+                    ]
           }
         , { description = "**Blank with emphasis block** with the question box pointing to the entire emphasis"
           , example =
@@ -429,27 +404,23 @@ view ellieLinkConfig state =
                     , QuestionBox.markdown "Pointing at the entire emphasis"
                     ]
           , pattern =
-                "p [ id \"paragraph-id\" ]"
-                    ++ Code.listMultiline
-                        [ Code.fromModule "Block" "view "
-                            ++ Code.listMultiline
-                                [ Code.fromModule "Block" "id " ++ Code.string "block-id"
-                                , Code.fromModule "Block" "emphasize"
-                                , Code.fromModule "Block" "content "
-                                    ++ Code.withParens (Code.fromModule "Block" "phrase " ++ Code.string "Moana ++ " ++ Code.list [ Code.fromModule "Block" "blank" ])
-                                ]
-                                2
-                        , Code.fromModule moduleName "view "
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
-                                , Code.fromModule moduleName "pointingTo "
-                                    ++ Code.string "block-id"
-                                    ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
-                                , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the entire emphasis"
-                                ]
-                                2
-                        ]
-                        1
+                tableExampleCode
+                    [ Code.fromModule "Block" "view "
+                        ++ Code.listMultiline
+                            [ Code.fromModule "Block" "id " ++ Code.string "block-id"
+                            , Code.fromModule "Block" "emphasize"
+                            , Code.fromModule "Block" "content "
+                                ++ Code.newlineWithIndent 4
+                                ++ Code.withParens (Code.fromModule "Block" "phrase " ++ Code.string "Moana ++ " ++ Code.list [ Code.fromModule "Block" "blank" ])
+                            ]
+                            3
+                    ]
+                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                    , Code.fromModule moduleName "pointingTo "
+                        ++ Code.string "block-id"
+                        ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
+                    , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the entire emphasis"
+                    ]
           }
         , { description = "**Blank with emphasis block** with the question box pointing to a particular word"
           , example =
@@ -541,6 +512,16 @@ view ellieLinkConfig state =
 tableExample : String -> List (Html msg) -> List (QuestionBox.Attribute msg) -> Html msg
 tableExample paragraphId paragraphContents questionBoxAttributes =
     div [] [ inParagraph paragraphId paragraphContents, QuestionBox.view questionBoxAttributes ]
+
+
+tableExampleCode : List String -> List String -> String
+tableExampleCode blockAttributes questionBoxAttributes =
+    "div []"
+        ++ Code.listMultiline
+            [ "p [ id \"paragraph-id\" ]" ++ Code.listMultiline blockAttributes 2
+            , Code.fromModule moduleName "view" ++ Code.listMultiline questionBoxAttributes 2
+            ]
+            1
 
 
 inParagraph : String -> List (Html msg) -> Html msg
