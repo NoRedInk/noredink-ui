@@ -103,16 +103,17 @@ fromLocation examples location =
         |> Result.withDefault All
 
 
-viewHeader : Route state msg -> List (Html msg2) -> Html msg2
+viewHeader : Route state msg -> List (Header.Attribute (Route state msg) msg2) -> Html msg2
 viewHeader currentRoute extraContent =
     breadCrumbs currentRoute
         |> Maybe.map
             (\crumbs ->
                 Header.view
-                    [ Header.aTagAttributes (\r -> [ Attributes.href ("/" ++ toString r) ])
-                    , Header.extraContent extraContent
-                    , Header.customPageWidth (Css.px 1400)
-                    ]
+                    ([ Header.aTagAttributes (\r -> [ Attributes.href ("/" ++ toString r) ])
+                     , Header.customPageWidth (Css.px 1400)
+                     ]
+                        ++ extraContent
+                    )
                     { breadCrumbs = crumbs
                     , isCurrentRoute = (==) currentRoute
                     }

@@ -2,7 +2,7 @@ module Example exposing (Example, extraLinks, fullName, preview, view, wrapMsg, 
 
 import Accessibility.Styled.Aria as Aria
 import Category exposing (Category)
-import Css exposing (..)
+import Css
 import EllieLink
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
@@ -12,6 +12,9 @@ import KeyboardSupport exposing (KeyboardSupport)
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
+import Nri.Ui.Header.V1 as Header
+import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 type alias Example state msg =
@@ -154,33 +157,15 @@ view_ ellieLinkConfig example =
     ]
 
 
-extraLinks : Example state msg -> Html msg
-extraLinks example =
-    Html.nav [ Aria.label (fullName example) ]
-        [ Html.ul
-            [ Attributes.css
-                [ margin zero
-                , padding zero
-                , displayFlex
-                , alignItems center
-                , justifyContent flexStart
-                , flexWrap Css.wrap
-                ]
-            ]
-            (List.map
-                (\i ->
-                    Html.li
-                        [ Attributes.css
-                            [ Css.listStyle Css.none ]
-                        ]
-                        [ i ]
-                )
-                [ docsLink example, srcLink example ]
-            )
+extraLinks : (msg -> msg2) -> Example state msg -> Header.Attribute route msg2
+extraLinks f example =
+    Header.extraNav (fullName example)
+        [ Html.map f (docsLink example)
+        , Html.map f (srcLink example)
         ]
 
 
-docsLink : Example state msg -> Html msg
+docsLink : Example state msg -> Html msg2
 docsLink example =
     let
         link =
@@ -189,10 +174,11 @@ docsLink example =
     in
     ClickableText.link "Docs"
         [ ClickableText.linkExternal link
+        , ClickableText.rightIcon (Svg.withLabel "Opens in a new tab" UiIcon.openInNewTab)
         ]
 
 
-srcLink : Example state msg -> Html msg
+srcLink : Example state msg -> Html msg2
 srcLink example =
     let
         link =
@@ -202,5 +188,5 @@ srcLink example =
     in
     ClickableText.link "Source"
         [ ClickableText.linkExternal link
-        , ClickableText.css [ Css.marginLeft (Css.px 20) ]
+        , ClickableText.rightIcon (Svg.withLabel "Opens in a new tab" UiIcon.openInNewTab)
         ]
