@@ -2,7 +2,7 @@ module Nri.Ui.Block.V4 exposing
     ( view, Attribute
     , plaintext
     , Content, content
-    , phrase, space, blank
+    , phrase, wordWithId, space, blank, blankWithId
     , emphasize
     , label, id
     , labelId, labelContentId
@@ -19,7 +19,7 @@ module Nri.Ui.Block.V4 exposing
 
 @docs plaintext
 @docs Content, content
-@docs phrase, space, blank
+@docs phrase, wordWithId, space, blank, blankWithId
 
 
 ## Content customization
@@ -210,7 +210,9 @@ groupWithSort sortBy groupBy =
 {-| -}
 type Content msg
     = Word String
+    | WordWithId { id : String, word : String }
     | Blank
+    | BlankWithId String
     | FullHeightBlank
 
 
@@ -232,7 +234,15 @@ renderContent content_ markStyles =
             Word str ->
                 [ text str ]
 
+            WordWithId wordAndId ->
+                -- TODO: actually add the id
+                [ text wordAndId.word ]
+
             Blank ->
+                [ viewBlank [ Css.lineHeight (Css.int 1) ] ]
+
+            BlankWithId id_ ->
+                -- TODO: actually add the id
                 [ viewBlank [ Css.lineHeight (Css.int 1) ] ]
 
             FullHeightBlank ->
@@ -269,11 +279,23 @@ space =
     Word " "
 
 
+wordWithId : { id : String, word : String } -> Content msg
+wordWithId =
+    WordWithId
+
+
 {-| You will only need to use this helper if you're also using `content` to construct a more complex Block. For a less complex blank Block, don't include content or plaintext in the list of attributes.
 -}
 blank : Content msg
 blank =
     Blank
+
+
+{-| You will only need to use this helper if you're also using `content` to construct a more complex Block. For a less complex blank Block, don't include content or plaintext in the list of attributes.
+-}
+blankWithId : String -> Content msg
+blankWithId =
+    BlankWithId
 
 
 
