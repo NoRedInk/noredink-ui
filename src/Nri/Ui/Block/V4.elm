@@ -240,11 +240,11 @@ renderContent content_ =
 
         Blank ->
             blockSegmentContainer Nothing
-                [ viewBlank [ Css.lineHeight (Css.int 1) ] ]
+                [ viewBlank [ Css.lineHeight (Css.num 1) ] ]
 
         BlankWithId id_ ->
             blockSegmentContainer (Just id_)
-                [ viewBlank [ Css.lineHeight (Css.int 1) ] ]
+                [ viewBlank [ Css.lineHeight (Css.num 1) ] ]
 
         FullHeightBlank ->
             blockSegmentContainer Nothing
