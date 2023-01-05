@@ -468,46 +468,40 @@ view ellieLinkConfig state =
           }
         , { description = "**Blank with emphasis block** with the question box pointing to a blank"
           , example =
-                inParagraph "paragraph-7"
+                tableExample "paragraph-7"
                     [ Block.view
                         [ Block.emphasize
                         , Block.content
                             (Block.phrase "Moana "
-                             -- TODO: re-add question-box
-                             --++ [ Block.blankWithQuestionBox
-                             --        [ QuestionBox.id "question-box-7"
-                             --        , QuestionBox.markdown "Pointing at the blank"
-                             --        ]
-                             --        (Dict.get "question-box-7" state.questionBoxMeasurementsById)
-                             --   ]
+                                ++ [ Block.blankWithId "block-7" ]
                             )
                         ]
                     ]
+                    [ QuestionBox.pointingTo "block-7" (Dict.get "question-box-7" state.questionBoxMeasurementsById)
+                    , QuestionBox.id "question-box-7"
+                    , QuestionBox.markdown "Pointing at the blank"
+                    ]
           , pattern =
-                Code.fromModule "Block" "view"
-                    ++ Code.listMultiline
-                        [ Code.fromModule "Block" "content"
-                            ++ Code.withParensMultiline
-                                [ Code.fromModule "Block" "phrase " ++ Code.string "Moana"
-
-                                -- TODO: re-add question-box
-                                --, " ++ "
-                                --    ++ Code.listMultiline
-                                --        [ Code.fromModule "Block" "blankWithQuestionBox"
-                                --            ++ Code.listMultiline
-                                --                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                --                , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the blank"
-                                --                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
-                                --                ]
-                                --                4
-                                --            ++ (Code.newlineWithIndent 4 ++ "model.questionBoxMeasurement")
-                                --        ]
-                                --        3
-                                ]
-                                2
-                        , "…"
-                        ]
-                        1
+                tableExampleCode
+                    [ Code.fromModule "Block" "id " ++ Code.string "block-id"
+                    , Code.fromModule "Block" "emphasize"
+                    , Code.fromModule "Block" "content "
+                        ++ Code.newlineWithIndent 3
+                        ++ Code.withParens
+                            (Code.fromModule "Block" "phrase "
+                                ++ Code.string "Moana "
+                                ++ Code.newlineWithIndent 4
+                                ++ " ++ "
+                                ++ Code.list [ Code.fromModule "Block" "blankWithId " ++ Code.string "block-id" ]
+                                ++ Code.newlineWithIndent 3
+                            )
+                    ]
+                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                    , Code.fromModule moduleName "pointingTo "
+                        ++ Code.string "block-id"
+                        ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
+                    , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the blank"
+                    ]
           }
         ]
     ]
