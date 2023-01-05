@@ -229,23 +229,27 @@ renderContent :
     -> List Css.Style
     -> Html msg
 renderContent content_ markStyles =
-    blockSegmentContainer markStyles <|
-        case content_ of
-            Word str ->
+    case content_ of
+        Word str ->
+            blockSegmentContainer markStyles <|
                 [ text str ]
 
-            WordWithId wordAndId ->
+        WordWithId wordAndId ->
+            blockSegmentContainer markStyles <|
                 -- TODO: actually add the id
                 [ text wordAndId.word ]
 
-            Blank ->
+        Blank ->
+            blockSegmentContainer markStyles <|
                 [ viewBlank [ Css.lineHeight (Css.int 1) ] ]
 
-            BlankWithId id_ ->
+        BlankWithId id_ ->
+            blockSegmentContainer markStyles <|
                 -- TODO: actually add the id
                 [ viewBlank [ Css.lineHeight (Css.int 1) ] ]
 
-            FullHeightBlank ->
+        FullHeightBlank ->
+            blockSegmentContainer markStyles <|
                 [ viewBlank
                     [ Css.paddingTop topBottomSpace
                     , Css.paddingBottom topBottomSpace
