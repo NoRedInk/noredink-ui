@@ -283,6 +283,8 @@ space =
     Word " "
 
 
+{-| Use this helper with `content` when you need to attach an id to a particular word inside of an emphasis.
+-}
 wordWithId : { id : String, word : String } -> Content msg
 wordWithId =
     WordWithId

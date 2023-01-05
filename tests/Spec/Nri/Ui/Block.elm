@@ -6,7 +6,6 @@ import Expect
 import Html.Attributes as Attributes
 import Html.Styled
 import Nri.Ui.Block.V4 as Block
-import Nri.Ui.QuestionBox.V3 as QuestionBox
 import Test exposing (..)
 import Test.Html.Query as Query
 import Test.Html.Selector as Selector
