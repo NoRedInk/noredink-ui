@@ -621,15 +621,9 @@ renderLink ((ButtonOrLink config) as link_) =
         ([ Attributes.class ("Nri-Ui-Clickable-Svg-" ++ linkFunctionName)
          , Attributes.class FocusRing.customClass
          , Attributes.css (buttonOrLinkStyles config theme ++ config.customStyles)
-         , Aria.disabled config.disabled
          , Aria.label config.label
          ]
-            ++ (if not config.disabled then
-                    extraAttrs
-
-                else
-                    []
-               )
+            ++ extraAttrs
             ++ config.customAttributes
         )
         (renderIcons config theme.includeBorder)
