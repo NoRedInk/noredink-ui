@@ -424,43 +424,47 @@ view ellieLinkConfig state =
           }
         , { description = "**Blank with emphasis block** with the question box pointing to a particular word"
           , example =
-                inParagraph "paragraph-6"
+                tableExample "paragraph-6"
                     [ Block.view
                         [ Block.emphasize
-
-                        --, -- TODO re-add question box
-                        --    Block.content
-                        --    (
-                        --        Block.wordWithQuestionBox "Moana"
-                        --        [ QuestionBox.id "question-box-6"
-                        --        , QuestionBox.markdown "Pointing at the first word"
-                        --        ]
-                        --        (Dict.get "question-box-6" state.questionBoxMeasurementsById)
-                        --        :: [ Block.space, Block.blank ]
-                        --    )
+                        , Block.content
+                            (Block.wordWithId
+                                { word = "Moana"
+                                , id = "block-6"
+                                }
+                                :: [ Block.space, Block.blank ]
+                            )
                         ]
                     ]
+                    [ QuestionBox.pointingTo "block-6" (Dict.get "question-box-6" state.questionBoxMeasurementsById)
+                    , QuestionBox.id "question-box-6"
+                    , QuestionBox.markdown "Pointing at the first word"
+                    ]
           , pattern =
-                Code.fromModule "Block" "view"
-                    ++ Code.listMultiline
-                        [ --Code.fromModule "Block" "content"
-                          --   ++ Code.withParensMultiline
-                          --       [ (Code.fromModule "Block" "wordWithQuestionBox " ++ Code.string "Moana")
-                          --           ++ Code.listMultiline
-                          --               [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                          --               , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
-                          --               , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the first word"
-                          --               , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
-                          --               ]
-                          --               3
-                          --           ++ (Code.newlineWithIndent 3 ++ "model.questionBoxMeasurement")
-                          --       , ":: " ++ Code.list [ "Block.space", "Block.blank" ]
-                          --       ]
-                          --       2
-                          --,
-                          "…"
-                        ]
-                        1
+                tableExampleCode
+                    [ Code.fromModule "Block" "id " ++ Code.string "block-id"
+                    , Code.fromModule "Block" "emphasize"
+                    , Code.fromModule "Block" "content "
+                        ++ Code.newlineWithIndent 3
+                        ++ Code.withParens
+                            (Code.fromModule "Block" "wordWithId "
+                                ++ Code.recordMultiline
+                                    [ ( "word", Code.string "Moana" )
+                                    , ( "id", Code.string "block-id" )
+                                    ]
+                                    4
+                                ++ Code.newlineWithIndent 4
+                                ++ ":: "
+                                ++ Code.list [ Code.fromModule "Block" "space", Code.fromModule "Block" "blank" ]
+                                ++ Code.newlineWithIndent 3
+                            )
+                    ]
+                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                    , Code.fromModule moduleName "pointingTo "
+                        ++ Code.string "block-id"
+                        ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
+                    , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the first word"
+                    ]
           }
         , { description = "**Blank with emphasis block** with the question box pointing to a blank"
           , example =
