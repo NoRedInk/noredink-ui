@@ -28,14 +28,6 @@ contentSpec =
             []
                 |> toQuery
                 |> Query.has [ Selector.text "blank" ]
-    , test "blank with question box" <|
-        \() ->
-            [ Block.withQuestionBox [ QuestionBox.markdown "Question Box content" ] Nothing ]
-                |> toQuery
-                |> Query.has
-                    [ Selector.text "blank"
-                    , Selector.text "Question Box content"
-                    ]
     , test "plaintext" <|
         \() ->
             [ Block.plaintext "Yo" ]
@@ -44,19 +36,6 @@ contentSpec =
                     [ Query.hasNot [ Selector.text "blank" ]
                     , Query.has [ Selector.text "Yo" ]
                     ]
-    , test "plaintext with question box" <|
-        \() ->
-            [ Block.plaintext "Yo"
-            , Block.withQuestionBox [ QuestionBox.markdown "Question Box content" ] Nothing
-            ]
-                |> toQuery
-                |> Expect.all
-                    [ Query.hasNot [ Selector.text "blank" ]
-                    , Query.has
-                        [ Selector.text "Yo"
-                        , Selector.text "Question Box content"
-                        ]
-                    ]
     , test "content with phrase and blank" <|
         \() ->
             [ Block.content (Block.phrase "Yo hello" ++ [ Block.blank ]) ]
@@ -64,23 +43,23 @@ contentSpec =
                 |> Query.has [ Selector.text "Yo", Selector.text "blank" ]
     , test "content with blankWithQuestionBox" <|
         \() ->
-            [ Block.content
-                [ Block.blankWithQuestionBox [ QuestionBox.markdown "Question Box content" ] Nothing ]
-            ]
+            [ Block.content [ Block.blankWithId "block-id" ] ]
                 |> toQuery
                 |> Query.has
-                    [ Selector.text "blank"
-                    , Selector.text "Question Box content"
+                    [ Selector.all
+                        [ Selector.attribute (Attributes.id "block-id")
+                        , Selector.containing [ Selector.text "blank" ]
+                        ]
                     ]
-    , test "content with wordWithQuestionBox" <|
+    , test "content with wordWithId" <|
         \() ->
-            [ Block.content
-                [ Block.wordWithQuestionBox "word" [ QuestionBox.markdown "Question Box content" ] Nothing ]
-            ]
+            [ Block.content [ Block.wordWithId { word = "word", id = "block-id" } ] ]
                 |> toQuery
                 |> Query.has
-                    [ Selector.text "word"
-                    , Selector.text "Question Box content"
+                    [ Selector.all
+                        [ Selector.attribute (Attributes.id "block-id")
+                        , Selector.containing [ Selector.text "word" ]
+                        ]
                     ]
     ]
 
