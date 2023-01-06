@@ -317,7 +317,6 @@ viewDisclosureToolip openTooltip =
         , Tooltip.onToggle (ToggleTooltip Disclosure)
         , Tooltip.open (openTooltip == Just Disclosure)
         , Tooltip.smallPadding
-        , Tooltip.alignEndForMobile (Css.px 148)
         ]
 
 
@@ -329,7 +328,6 @@ viewToggleTip openTooltip =
             [ Tooltip.plaintext "Students master topics by correctly answering a series of questions of varying difficulty and scope."
             , Tooltip.onToggle (ToggleTooltip LearnMore)
             , Tooltip.open (openTooltip == Just LearnMore)
-            , Tooltip.alignEndForMobile (Css.px 144)
             ]
         ]
 
@@ -342,10 +340,6 @@ initStaticExampleSettings =
         |> ControlExtra.optionalListItem "direction -- viewport up to 1000px" controlDirectionForMobile
         |> ControlExtra.optionalListItem "direction -- viewport up to 750px" controlDirectionForQuizEngineMobile
         |> ControlExtra.optionalListItem "direction -- viewport up to 500px" controlDirectionForNarrowMobile
-        |> ControlExtra.optionalListItem "alignment" controlAlignment
-        |> ControlExtra.optionalListItem "alignment -- viewport up to 1000px" controlAlignmentForMobile
-        |> ControlExtra.optionalListItem "alignment -- viewport up to 750px" controlAlignmentForQuizEngineMobile
-        |> ControlExtra.optionalListItem "alignment -- viewport up to 500px" controlAlignmentForNarrowMobile
         |> ControlExtra.optionalBoolListItem "withoutTail" ( "Tooltip.withoutTail", Tooltip.withoutTail )
         |> ControlExtra.optionalListItem "width" controlWidth
         |> ControlExtra.optionalListItem "padding" controlPadding
@@ -429,42 +423,6 @@ controlAlignment_ ( middleName, middleValue ) others =
                 )
                 others
         )
-
-
-controlAlignment : Control ( String, Tooltip.Attribute Never )
-controlAlignment =
-    controlAlignment_
-        ( "alignMiddle", Tooltip.alignMiddle )
-        [ ( "alignStart", Tooltip.alignStart )
-        , ( "alignEnd", Tooltip.alignEnd )
-        ]
-
-
-controlAlignmentForMobile : Control ( String, Tooltip.Attribute Never )
-controlAlignmentForMobile =
-    controlAlignment_
-        ( "alignMiddleForMobile", Tooltip.alignMiddleForMobile )
-        [ ( "alignStartForMobile", Tooltip.alignStartForMobile )
-        , ( "alignEndForMobile", Tooltip.alignEndForMobile )
-        ]
-
-
-controlAlignmentForQuizEngineMobile : Control ( String, Tooltip.Attribute Never )
-controlAlignmentForQuizEngineMobile =
-    controlAlignment_
-        ( "alignMiddleForQuizEngineMobile", Tooltip.alignMiddleForQuizEngineMobile )
-        [ ( "alignStartForQuizEngineMobile", Tooltip.alignStartForQuizEngineMobile )
-        , ( "alignEndForQuizEngineMobile", Tooltip.alignEndForQuizEngineMobile )
-        ]
-
-
-controlAlignmentForNarrowMobile : Control ( String, Tooltip.Attribute Never )
-controlAlignmentForNarrowMobile =
-    controlAlignment_
-        ( "alignMiddleForNarrowMobile", Tooltip.alignMiddleForNarrowMobile )
-        [ ( "alignStartForNarrowMobile", Tooltip.alignStartForNarrowMobile )
-        , ( "alignEndForNarrowMobile", Tooltip.alignEndForNarrowMobile )
-        ]
 
 
 controlWidth : Control ( String, Tooltip.Attribute Never )

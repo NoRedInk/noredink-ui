@@ -7,10 +7,6 @@ module Nri.Ui.Tooltip.V4 exposing
     , onTopForQuizEngineMobile, onBottomForQuizEngineMobile, onLeftForQuizEngineMobile, onRightForQuizEngineMobile
     , onTopForNarrowMobile, onBottomForNarrowMobile, onLeftForNarrowMobile, onRightForNarrowMobile
     , onTopForMobile, onBottomForMobile, onLeftForMobile, onRightForMobile
-    , alignStart, alignMiddle, alignEnd
-    , alignStartForQuizEngineMobile, alignMiddleForQuizEngineMobile, alignEndForQuizEngineMobile
-    , alignStartForNarrowMobile, alignMiddleForNarrowMobile, alignEndForNarrowMobile
-    , alignStartForMobile, alignMiddleForMobile, alignEndForMobile
     , exactWidth, fitToContent
     , smallPadding, normalPadding, customPadding
     , onToggle
@@ -24,6 +20,7 @@ module Nri.Ui.Tooltip.V4 exposing
 {-| Changes from V3:
 
   - remove version number from description
+  - :skull: remove all alignment options
 
 These tooltips aim to follow the accessibility recommendations from:
 
@@ -39,11 +36,6 @@ These tooltips aim to follow the accessibility recommendations from:
 @docs onTopForQuizEngineMobile, onBottomForQuizEngineMobile, onLeftForQuizEngineMobile, onRightForQuizEngineMobile
 @docs onTopForNarrowMobile, onBottomForNarrowMobile, onLeftForNarrowMobile, onRightForNarrowMobile
 @docs onTopForMobile, onBottomForMobile, onLeftForMobile, onRightForMobile
-
-@docs alignStart, alignMiddle, alignEnd
-@docs alignStartForQuizEngineMobile, alignMiddleForQuizEngineMobile, alignEndForQuizEngineMobile
-@docs alignStartForNarrowMobile, alignMiddleForNarrowMobile, alignEndForNarrowMobile
-@docs alignStartForMobile, alignMiddleForMobile, alignEndForMobile
 
 @docs exactWidth, fitToContent
 @docs smallPadding, normalPadding, customPadding
@@ -86,13 +78,9 @@ type Attribute msg
 
 type alias Tooltip msg =
     { direction : Direction
-    , alignment : Alignment
     , mobileDirection : Maybe Direction
-    , mobileAlignment : Maybe Alignment
     , quizEngineMobileDirection : Maybe Direction
-    , quizEngineMobileAlignment : Maybe Alignment
     , narrowMobileDirection : Maybe Direction
-    , narrowMobileAlignment : Maybe Alignment
     , tail : Tail
     , content : List (Html msg)
     , attributes : List (Html.Attribute Never)
@@ -113,13 +101,9 @@ buildAttributes =
         defaultTooltip : Tooltip msg
         defaultTooltip =
             { direction = OnTop
-            , alignment = Middle
             , mobileDirection = Nothing
-            , mobileAlignment = Nothing
             , quizEngineMobileDirection = Nothing
-            , quizEngineMobileAlignment = Nothing
             , narrowMobileDirection = Nothing
-            , narrowMobileAlignment = Nothing
             , tail = WithTail
             , content = []
             , attributes = []
@@ -174,199 +158,11 @@ type Tail
     | WithoutTail
 
 
-{-| Where should the tail be positioned relative to the tooltip?
--}
-type Alignment
-    = Start Px
-    | Middle
-    | End Px
-
-
 {-| Makes it so that the tooltip does not have a tail!
 -}
 withoutTail : Attribute msg
 withoutTail =
     Attribute (\config -> { config | tail = WithoutTail })
-
-
-withAligment : Alignment -> Attribute msg
-withAligment alignment =
-    Attribute (\config -> { config | alignment = alignment })
-
-
-{-| Put the tail at the "start" of the tooltip.
-For onTop & onBottom tooltips, this means "left".
-For onLeft & onRight tooltip, this means "top".
-
-     __________
-    |_  ______|
-      \/
-
--}
-alignStart : Px -> Attribute msg
-alignStart position =
-    withAligment (Start position)
-
-
-{-| Put the tail at the "middle" of the tooltip. This is the default behavior.
-
-     __________
-    |___  ____|
-        \/
-
--}
-alignMiddle : Attribute msg
-alignMiddle =
-    withAligment Middle
-
-
-{-| Put the tail at the "end" of the tooltip.
-For onTop & onBottom tooltips, this means "right".
-For onLeft & onRight tooltip, this means "bottom".
-
-     __________
-    |______  _|
-           \/
-
--}
-alignEnd : Px -> Attribute msg
-alignEnd position =
-    withAligment (End position)
-
-
-withMobileAligment : Alignment -> Attribute msg
-withMobileAligment alignment =
-    Attribute (\config -> { config | mobileAlignment = Just alignment })
-
-
-{-| Put the tail at the "start" of the tooltip when the viewport has a mobile width.
-For onTop & onBottom tooltips, this means "left".
-For onLeft & onRight tooltip, this means "top".
-
-     __________
-    |_  ______|
-      \/
-
--}
-alignStartForMobile : Px -> Attribute msg
-alignStartForMobile position =
-    withMobileAligment (Start position)
-
-
-{-| Put the tail at the "middle" of the tooltip when the viewport has a mobile width.
-
-     __________
-    |___  ____|
-        \/
-
--}
-alignMiddleForMobile : Attribute msg
-alignMiddleForMobile =
-    withMobileAligment Middle
-
-
-{-| Put the tail at the "end" of the tooltip when the viewport has a mobile width.
-For onTop & onBottom tooltips, this means "right".
-For onLeft & onRight tooltip, this means "bottom".
-
-     __________
-    |______  _|
-           \/
-
--}
-alignEndForMobile : Px -> Attribute msg
-alignEndForMobile position =
-    withMobileAligment (End position)
-
-
-withQuizEngineMobileAligment : Alignment -> Attribute msg
-withQuizEngineMobileAligment alignment =
-    Attribute (\config -> { config | quizEngineMobileAlignment = Just alignment })
-
-
-{-| Put the tail at the "start" of the tooltip when the viewport has a quiz engine mobile (750px) width or narrower.
-For onTop & onBottom tooltips, this means "left".
-For onLeft & onRight tooltip, this means "top".
-
-     __________
-    |_  ______|
-      \/
-
--}
-alignStartForQuizEngineMobile : Px -> Attribute msg
-alignStartForQuizEngineMobile position =
-    withQuizEngineMobileAligment (Start position)
-
-
-{-| Put the tail at the "middle" of the tooltip when the viewport has a quiz engine mobile (750px) width or narrower.
-
-     __________
-    |___  ____|
-        \/
-
--}
-alignMiddleForQuizEngineMobile : Attribute msg
-alignMiddleForQuizEngineMobile =
-    withQuizEngineMobileAligment Middle
-
-
-{-| Put the tail at the "end" of the tooltip when the viewport has a quiz engine mobile (750px) width or narrower.
-For onTop & onBottom tooltips, this means "right".
-For onLeft & onRight tooltip, this means "bottom".
-
-     __________
-    |______  _|
-           \/
-
--}
-alignEndForQuizEngineMobile : Px -> Attribute msg
-alignEndForQuizEngineMobile position =
-    withQuizEngineMobileAligment (End position)
-
-
-withNarrowMobileAligment : Alignment -> Attribute msg
-withNarrowMobileAligment alignment =
-    Attribute (\config -> { config | narrowMobileAlignment = Just alignment })
-
-
-{-| Put the tail at the "start" of the tooltip when the viewport has a narrow mobile (500px) width or narrower.
-For onTop & onBottom tooltips, this means "left".
-For onLeft & onRight tooltip, this means "top".
-
-     __________
-    |_  ______|
-      \/
-
--}
-alignStartForNarrowMobile : Px -> Attribute msg
-alignStartForNarrowMobile position =
-    withNarrowMobileAligment (Start position)
-
-
-{-| Put the tail at the "middle" of the tooltip when the viewport has a narrow mobile (500px) width or narrower.
-
-     __________
-    |___  ____|
-        \/
-
--}
-alignMiddleForNarrowMobile : Attribute msg
-alignMiddleForNarrowMobile =
-    withNarrowMobileAligment Middle
-
-
-{-| Put the tail at the "end" of the tooltip when the viewport has a narrow mobile (500px) width or narrower.
-For onTop & onBottom tooltips, this means "right".
-For onLeft & onRight tooltip, this means "bottom".
-
-     __________
-    |______  _|
-           \/
-
--}
-alignEndForNarrowMobile : Px -> Attribute msg
-alignEndForNarrowMobile position =
-    withQuizEngineMobileAligment (End position)
 
 
 {-| Where should this tooltip be positioned relative to the trigger?
@@ -986,15 +782,6 @@ viewTooltip tooltipId config =
         narrowMobileDirection =
             Maybe.withDefault quizEngineMobileDirection config.narrowMobileDirection
 
-        mobileAlignment =
-            Maybe.withDefault config.alignment config.mobileAlignment
-
-        quizEngineMobileAlignment =
-            Maybe.withDefault mobileAlignment config.quizEngineMobileAlignment
-
-        narrowMobileAlignment =
-            Maybe.withDefault quizEngineMobileAlignment config.narrowMobileAlignment
-
         applyTail direction =
             case config.tail of
                 WithTail ->
@@ -1007,13 +794,13 @@ viewTooltip tooltipId config =
         [ Attributes.css
             [ Css.position Css.absolute
             , MediaQuery.withViewport (Just mobileBreakpoint) Nothing <|
-                positionTooltip config.direction config.alignment
+                positionTooltip config.direction
             , MediaQuery.withViewport (Just quizEngineBreakpoint) (Just mobileBreakpoint) <|
-                positionTooltip mobileDirection mobileAlignment
+                positionTooltip mobileDirection
             , MediaQuery.withViewport (Just narrowMobileBreakpoint) (Just quizEngineBreakpoint) <|
-                positionTooltip quizEngineMobileDirection quizEngineMobileAlignment
+                positionTooltip quizEngineMobileDirection
             , MediaQuery.withViewport Nothing (Just narrowMobileBreakpoint) <|
-                positionTooltip narrowMobileDirection narrowMobileAlignment
+                positionTooltip narrowMobileDirection
             , Css.boxSizing Css.borderBox
             , if config.isOpen then
                 Css.batch []
@@ -1049,19 +836,19 @@ viewTooltip tooltipId config =
                  , Css.backgroundColor Colors.navy
                  , Css.border3 (Css.px 1) Css.solid Colors.navy
                  , MediaQuery.withViewport (Just mobileBreakpoint) Nothing <|
-                    [ positioning config.direction config.alignment
+                    [ positioning config.direction
                     , applyTail config.direction
                     ]
                  , MediaQuery.withViewport (Just quizEngineBreakpoint) (Just mobileBreakpoint) <|
-                    [ positioning mobileDirection mobileAlignment
+                    [ positioning mobileDirection
                     , applyTail mobileDirection
                     ]
                  , MediaQuery.withViewport (Just narrowMobileBreakpoint) (Just quizEngineBreakpoint) <|
-                    [ positioning quizEngineMobileDirection quizEngineMobileAlignment
+                    [ positioning quizEngineMobileDirection
                     , applyTail quizEngineMobileDirection
                     ]
                  , MediaQuery.withViewport Nothing (Just narrowMobileBreakpoint) <|
-                    [ positioning narrowMobileDirection narrowMobileAlignment
+                    [ positioning narrowMobileDirection
                     , applyTail narrowMobileDirection
                     ]
                  , Fonts.baseFont
@@ -1132,30 +919,14 @@ offCenterOffset =
 
 {-| This returns absolute positioning styles for the popout container for a given tail position.
 -}
-positionTooltip : Direction -> Alignment -> List Style
-positionTooltip direction alignment =
+positionTooltip : Direction -> List Style
+positionTooltip direction =
     let
         ltrPosition =
-            case alignment of
-                Start customOffset ->
-                    Css.left customOffset
-
-                Middle ->
-                    Css.left (Css.pct 50)
-
-                End customOffset ->
-                    Css.right customOffset
+            Css.left (Css.pct 50)
 
         topToBottomPosition =
-            case alignment of
-                Start customOffset ->
-                    Css.top customOffset
-
-                Middle ->
-                    Css.top (Css.pct 50)
-
-                End customOffset ->
-                    Css.bottom customOffset
+            Css.top (Css.pct 50)
     in
     case direction of
         OnTop ->
@@ -1183,30 +954,14 @@ positionTooltip direction alignment =
 -- TAILS
 
 
-positioning : Direction -> Alignment -> Style
-positioning direction alignment =
+positioning : Direction -> Style
+positioning direction =
     let
         topBottomAlignment =
-            case alignment of
-                Start _ ->
-                    Css.left (Css.px offCenterOffset)
-
-                Middle ->
-                    Css.left (Css.pct 50)
-
-                End _ ->
-                    Css.right (Css.px offCenterOffset)
+            Css.left (Css.pct 50)
 
         rightLeftAlignment =
-            case alignment of
-                Start _ ->
-                    Css.property "top" ("calc(-" ++ String.fromFloat tailSize ++ "px + " ++ String.fromFloat offCenterOffset ++ "px)")
-
-                Middle ->
-                    Css.property "top" ("calc(-" ++ String.fromFloat tailSize ++ "px + 50%)")
-
-                End _ ->
-                    Css.property "bottom" ("calc(-" ++ String.fromFloat tailSize ++ "px + " ++ String.fromFloat offCenterOffset ++ "px)")
+            Css.property "top" ("calc(-" ++ String.fromFloat tailSize ++ "px + 50%)")
     in
     case direction of
         OnTop ->
