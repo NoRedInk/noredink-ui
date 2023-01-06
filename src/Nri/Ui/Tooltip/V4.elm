@@ -1,6 +1,7 @@
 module Nri.Ui.Tooltip.V4 exposing
     ( view, viewToggleTip
     , primaryLabel, auxiliaryDescription, disclosure
+    , measurement
     , Attribute
     , paragraph, plaintext, markdown, html
     , onTop, onBottom, onLeft, onRight
@@ -21,6 +22,7 @@ module Nri.Ui.Tooltip.V4 exposing
 
   - remove version number from description
   - :skull: remove all alignment options
+  - adds attribute `measurement` for passing in the measured tooltip Dom.Element
 
 These tooltips aim to follow the accessibility recommendations from:
 
@@ -29,6 +31,7 @@ These tooltips aim to follow the accessibility recommendations from:
 
 @docs view, viewToggleTip
 @docs primaryLabel, auxiliaryDescription, disclosure
+@docs measurement
 @docs Attribute
 @docs paragraph, plaintext, markdown, html
 
@@ -53,6 +56,7 @@ import Accessibility.Styled as Html exposing (Attribute, Html)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
+import Browser.Dom as Dom exposing (Element)
 import Content
 import Css exposing (Color, Px, Style)
 import Css.Global as Global
@@ -82,6 +86,7 @@ type alias Tooltip msg =
     , mobileDirection : Maybe Direction
     , quizEngineMobileDirection : Maybe Direction
     , narrowMobileDirection : Maybe Direction
+    , measurement : Maybe Element
     , tail : Tail
     , content : List (Html msg)
     , attributes : List (Html.Attribute Never)
@@ -105,6 +110,7 @@ buildAttributes =
             , mobileDirection = Nothing
             , quizEngineMobileDirection = Nothing
             , narrowMobileDirection = Nothing
+            , measurement = Nothing
             , tail = WithTail
             , content = []
             , attributes = []
@@ -164,6 +170,12 @@ type Tail
 withoutTail : Attribute msg
 withoutTail =
     Attribute (\config -> { config | tail = WithoutTail })
+
+
+{-| -}
+measurement : Maybe Dom.Element -> Attribute msg
+measurement m =
+    Attribute (\config -> { config | measurement = m })
 
 
 {-| Where should this tooltip be positioned relative to the trigger?
