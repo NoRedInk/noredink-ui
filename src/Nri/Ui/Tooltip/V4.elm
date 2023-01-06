@@ -21,30 +21,9 @@ module Nri.Ui.Tooltip.V4 exposing
     , primaryLabel, auxiliaryDescription, disclosure
     )
 
-{-| Patch changes:
+{-| Changes from V3:
 
-  - defaults mobile-specific alignment and direction to the non-mobile version, rather than top and middle
-  - adds onTopForQuizEngineMobile, onBottomForQuizEngineMobile, onLeftForQuizEngineMobile, onRightForQuizEngineMobile
-  - adds onTopForNarrowMobile, onBottomForNarrowMobile, onLeftForNarrowMobile, onRightForNarrowMobile
-  - adds alignStartForQuizEngineMobile, alignMiddleForQuizEngineMobile, alignEndForQuizEngineMobile
-  - adds alignStartForNarrowMobile, alignMiddleForNarrowMobile, alignEndForNarrowMobile
-  - adds narrowMobileCss
-  - use internal `Content` module
-  - adds `paragraph` and `markdown` support
-
-Changes from V2:
-
-  - Support `disclosure` pattern for rich-content tooltips
-  - render tooltip content in the DOM when closed (now, they're hidden with display:none)
-  - tooltips MUST be closable via keyboard without moving focus. [Understanding Success Criterion 1.4.13: Content on Hover or Focus](https://www.w3.org/WAI/WCAG21/Understanding/content-on-hover-or-focus.html)
-  - remove onClick helper
-  - prefer the accessible name to using aria-labelledby and aria-label together
-  - :skull: remove customTooltipAttributes
-  - change `css` to extend the current list of styles, NOT override them entirely.
-  - fix spelling of "auxillary" to "auxiliary"
-  - toggleTip -> viewToggleTip
-  - Adds notMobileCss, mobileCss, quizEngineMobileCss
-  - onHover -> onToggle
+  - remove version number from description
 
 These tooltips aim to follow the accessibility recommendations from:
 
@@ -905,7 +884,7 @@ viewToggleTip { label, lastId } attributes_ =
         , id = id
         }
         (custom
-            [ Attributes.class "Nri-Ui-Tooltip-V2-ToggleTip"
+            [ Attributes.class "Nri-Ui-Tooltip-ToggleTip"
             , Attributes.id id
             ]
             :: disclosure { triggerId = triggerId, lastId = lastId }
@@ -958,7 +937,7 @@ viewTooltip_ { trigger, id } tooltip =
                     ( [], [] )
     in
     Nri.Ui.styled Root.div
-        "Nri-Ui-Tooltip-V2"
+        "Nri-Ui-Tooltip"
         tooltip.containerStyles
         containerEvents
         [ Html.div

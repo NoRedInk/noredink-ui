@@ -28,7 +28,7 @@ spec =
                     , Tooltip.onToggle identity
                     ]
                     -- Tooltip opens on mouse enter
-                    |> mouseEnter [ nriDescription "Nri-Ui-Tooltip-V2" ]
+                    |> mouseEnter [ nriDescription "Nri-Ui-Tooltip" ]
                     |> ensureViewHas (tooltipContentSelector tooltipContent)
                     -- Tooltip closes on trigger-html click
                     |> clickButtonByLabel label
@@ -37,7 +37,7 @@ spec =
                     |> clickButtonByLabel label
                     |> ensureViewHas (tooltipContentSelector tooltipContent)
                     -- Tooltip closes on mouse leave
-                    |> mouseLeave [ nriDescription "Nri-Ui-Tooltip-V2" ]
+                    |> mouseLeave [ nriDescription "Nri-Ui-Tooltip" ]
                     |> ensureViewHasNot (tooltipContentSelector tooltipContent)
                     |> ProgramTest.done
         , test "Tooltip.view" <|
@@ -63,10 +63,10 @@ spec =
                     , Tooltip.onToggle identity
                     ]
                     -- Tooltip opens on mouse enter
-                    |> mouseEnter [ nriDescription "Nri-Ui-Tooltip-V2" ]
+                    |> mouseEnter [ nriDescription "Nri-Ui-Tooltip" ]
                     |> ensureViewHas (tooltipContentSelector tooltipContent)
                     -- Tooltip closes on mouse leave
-                    |> mouseLeave [ nriDescription "Nri-Ui-Tooltip-V2" ]
+                    |> mouseLeave [ nriDescription "Nri-Ui-Tooltip" ]
                     |> ensureViewHasNot (tooltipContentSelector tooltipContent)
                     -- Tooltip opens on focus
                     |> focus
