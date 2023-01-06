@@ -622,7 +622,7 @@ viewTooltip tooltipId config =
              , Css.zIndex (Css.int 100)
              , Css.backgroundColor Colors.navy
              , Css.border3 (Css.px 1) Css.solid Colors.navy
-             , positioning config
+             , Css.batch <| positioning config
              , Fonts.baseFont
              , Css.fontSize (Css.px 16)
              , Css.fontWeight (Css.int 600)
@@ -707,7 +707,7 @@ addTail showTail_ tail_ config =
 -- TAILS
 
 
-positioning : Tooltip msg -> Style
+positioning : Tooltip msg -> List Style
 positioning config =
     let
         maybeXOffset =
@@ -716,66 +716,79 @@ positioning config =
 
         tailXAlignment =
             Css.left (Css.calc (Css.pct 50) Css.minus (Css.px maybeXOffset))
+
+        rightPositioning =
+            [ Css.top (Css.pct 50)
+            , Css.right (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
+            , Css.transforms
+                [ Css.translateX (Css.pct 100)
+                , Css.translateY (Css.pct -50)
+                ]
+            , addTail config.showTail
+                leftTail
+                { xAlignment = Css.right (Css.pct 100)
+                , yAlignment = Css.property "top" ("calc(-" ++ String.fromFloat tailSize ++ "px + 50%)")
+                }
+            ]
+
+        leftPositioning =
+            [ Css.top (Css.pct 50)
+            , Css.left (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
+            , Css.transforms
+                [ Css.translateX (Css.pct -100)
+                , Css.translateY (Css.pct -50)
+                ]
+            , addTail config.showTail
+                rightTail
+                { xAlignment = Css.left (Css.pct 100)
+                , yAlignment = Css.property "top" ("calc(-" ++ String.fromFloat tailSize ++ "px + 50%)")
+                }
+            ]
     in
-    Css.batch <|
-        case config.direction of
-            OnTop ->
-                [ Css.left (Css.pct 50)
-                , Css.top (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-                , Css.transforms
-                    [ Css.translateX (Css.pct -50)
-                    , Css.translateY (Css.pct -100)
-                    , Css.translateX (Css.px maybeXOffset)
-                    ]
-                , addTail config.showTail
-                    bottomTail
-                    { xAlignment = tailXAlignment
-                    , yAlignment = Css.top (Css.pct 100)
-                    }
+    case config.direction of
+        OnTop ->
+            [ Css.left (Css.pct 50)
+            , Css.top (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
+            , Css.transforms
+                [ Css.translateX (Css.pct -50)
+                , Css.translateY (Css.pct -100)
+                , Css.translateX (Css.px maybeXOffset)
                 ]
+            , addTail config.showTail
+                bottomTail
+                { xAlignment = tailXAlignment
+                , yAlignment = Css.top (Css.pct 100)
+                }
+            ]
 
-            OnBottom ->
-                [ Css.left (Css.pct 50)
-                , Css.bottom (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-                , Css.transforms
-                    [ Css.translateX (Css.pct -50)
-                    , Css.translateY (Css.pct 100)
-                    , Css.translateX (Css.px maybeXOffset)
-                    ]
-                , addTail config.showTail
-                    topTail
-                    { xAlignment = tailXAlignment
-                    , yAlignment = Css.bottom (Css.pct 100)
-                    }
+        OnBottom ->
+            [ Css.left (Css.pct 50)
+            , Css.bottom (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
+            , Css.transforms
+                [ Css.translateX (Css.pct -50)
+                , Css.translateY (Css.pct 100)
+                , Css.translateX (Css.px maybeXOffset)
                 ]
+            , addTail config.showTail
+                topTail
+                { xAlignment = tailXAlignment
+                , yAlignment = Css.bottom (Css.pct 100)
+                }
+            ]
 
-            OnRight ->
-                [ Css.top (Css.pct 50)
-                , Css.right (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-                , Css.transforms
-                    [ Css.translateX (Css.pct 100)
-                    , Css.translateY (Css.pct -50)
-                    ]
-                , addTail config.showTail
-                    leftTail
-                    { xAlignment = Css.right (Css.pct 100)
-                    , yAlignment = Css.property "top" ("calc(-" ++ String.fromFloat tailSize ++ "px + 50%)")
-                    }
-                ]
+        OnRight ->
+            if maybeXOffset < 0 then
+                leftPositioning
 
-            OnLeft ->
-                [ Css.top (Css.pct 50)
-                , Css.left (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-                , Css.transforms
-                    [ Css.translateX (Css.pct -100)
-                    , Css.translateY (Css.pct -50)
-                    ]
-                , addTail config.showTail
-                    rightTail
-                    { xAlignment = Css.left (Css.pct 100)
-                    , yAlignment = Css.property "top" ("calc(-" ++ String.fromFloat tailSize ++ "px + 50%)")
-                    }
-                ]
+            else
+                rightPositioning
+
+        OnLeft ->
+            if maybeXOffset > 0 then
+                rightPositioning
+
+            else
+                leftPositioning
 
 
 tailForDirection : Direction -> Style
