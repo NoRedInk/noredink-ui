@@ -198,3 +198,6 @@ usages = ['styleguide/../src/Nri/Ui/Menu/V1.elm']
 
 [forbidden."Nri.Ui.Tooltip.V2"]
 hint = 'upgrade to V3'
+
+[forbidden."Nri.Ui.Tooltip.V3"]
+hint = 'upgrade to V4'

@@ -3,7 +3,7 @@ module Spec.Nri.Ui.Tooltip exposing (spec)
 import Accessibility.Aria as Aria
 import Html.Attributes as Attributes
 import Html.Styled as HtmlStyled
-import Nri.Ui.Tooltip.V3 as Tooltip
+import Nri.Ui.Tooltip.V4 as Tooltip
 import ProgramTest exposing (ProgramTest, ensureViewHas, ensureViewHasNot)
 import Test exposing (..)
 import Test.Html.Event as Event
@@ -13,7 +13,7 @@ import Test.Html.Selector as Selector exposing (id, text)
 
 spec : Test
 spec =
-    describe "Nri.Ui.Tooltip.V3"
+    describe "Tooltip"
         [ test "Tooltip.viewToggleTip" <|
             \() ->
                 let

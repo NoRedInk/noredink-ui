@@ -23,7 +23,7 @@ import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Tabs.V7 as Tabs exposing (Alignment(..), Tab)
 import Nri.Ui.Text.V6 as Text
-import Nri.Ui.Tooltip.V3 as Tooltip
+import Nri.Ui.Tooltip.V4 as Tooltip
 import Task
 
 
@@ -115,7 +115,7 @@ example =
                 , update = SetSettings
                 , settings = model.settings
                 , mainType = Just "RootHtml.Html { select : Int, focus : Maybe String }"
-                , extraCode = [ "import Nri.Ui.Tooltip.V3 as Tooltip" ]
+                , extraCode = [ "import Nri.Ui.Tooltip.V4 as Tooltip" ]
                 , renderExample = Code.unstyledView
                 , toExampleCode =
                     \_ ->

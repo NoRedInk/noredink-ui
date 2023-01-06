@@ -82,6 +82,7 @@
         "Nri.Ui.TextArea.V5",
         "Nri.Ui.TextInput.V7",
         "Nri.Ui.Tooltip.V3",
+        "Nri.Ui.Tooltip.V4",
         "Nri.Ui.UiIcon.V1"
     ],
     "elm-version": "0.19.0 <= v < 0.20.0",
