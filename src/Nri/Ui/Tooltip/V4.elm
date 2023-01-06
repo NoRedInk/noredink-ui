@@ -79,7 +79,7 @@ type Attribute msg
 type alias Tooltip msg =
     { direction : Direction
     , measurement : Maybe Element
-    , tail : Tail
+    , showTail : Bool
     , content : List (Html msg)
     , attributes : List (Html.Attribute Never)
     , containerStyles : List Style
@@ -100,7 +100,7 @@ buildAttributes =
         defaultTooltip =
             { direction = OnTop
             , measurement = Nothing
-            , tail = WithTail
+            , showTail = True
             , content = []
             , attributes = []
             , containerStyles =
@@ -149,16 +149,11 @@ html =
     Attribute << Content.html
 
 
-type Tail
-    = WithTail
-    | WithoutTail
-
-
 {-| Makes it so that the tooltip does not have a tail!
 -}
 withoutTail : Attribute msg
 withoutTail =
-    Attribute (\config -> { config | tail = WithoutTail })
+    Attribute (\config -> { config | showTail = False })
 
 
 {-| -}
@@ -606,15 +601,6 @@ viewTooltip_ { trigger, id } tooltip =
 
 viewTooltip : String -> Tooltip msg -> Html msg
 viewTooltip tooltipId config =
-    let
-        applyTail direction =
-            case config.tail of
-                WithTail ->
-                    tailForDirection direction
-
-                WithoutTail ->
-                    Css.batch []
-    in
     Html.div
         [ Attributes.css
             [ Css.position Css.absolute
@@ -653,8 +639,7 @@ viewTooltip tooltipId config =
                  , Css.zIndex (Css.int 100)
                  , Css.backgroundColor Colors.navy
                  , Css.border3 (Css.px 1) Css.solid Colors.navy
-                 , positioning config.direction
-                 , applyTail config.direction
+                 , positioning config
                  , Fonts.baseFont
                  , Css.fontSize (Css.px 16)
                  , Css.fontWeight (Css.int 600)
@@ -709,6 +694,21 @@ tooltipColor =
     Colors.navy
 
 
+addTail : Bool -> Css.Style -> { xAlignment : Style, yAlignment : Style } -> Style
+addTail showTail_ tail_ config =
+    Css.batch <|
+        if showTail_ then
+            [ Css.batch
+                [ Css.before (positionTail config)
+                , Css.after (positionTail config)
+                ]
+            , tail_
+            ]
+
+        else
+            []
+
+
 {-| This returns absolute positioning styles for the popout container for a given tail position.
 -}
 positionTooltip : Direction -> List Style
@@ -746,8 +746,8 @@ positionTooltip direction =
 -- TAILS
 
 
-positioning : Direction -> Style
-positioning direction =
+positioning : Tooltip msg -> Style
+positioning config =
     let
         topBottomAlignment =
             Css.left (Css.pct 50)
@@ -755,11 +755,12 @@ positioning direction =
         rightLeftAlignment =
             Css.property "top" ("calc(-" ++ String.fromFloat tailSize ++ "px + 50%)")
     in
-    case direction of
+    case config.direction of
         OnTop ->
             Css.batch
                 [ Css.property "transform" "translate(-50%, -100%)"
-                , getTailPositioning
+                , addTail config.showTail
+                    bottomTail
                     { xAlignment = topBottomAlignment
                     , yAlignment = Css.top (Css.pct 100)
                     }
@@ -768,7 +769,8 @@ positioning direction =
         OnBottom ->
             Css.batch
                 [ Css.property "transform" "translate(-50%, 0)"
-                , getTailPositioning
+                , addTail config.showTail
+                    topTail
                     { xAlignment = topBottomAlignment
                     , yAlignment = Css.bottom (Css.pct 100)
                     }
@@ -777,7 +779,8 @@ positioning direction =
         OnRight ->
             Css.batch
                 [ Css.property "transform" "translate(0, -50%)"
-                , getTailPositioning
+                , addTail config.showTail
+                    leftTail
                     { xAlignment = Css.right (Css.pct 100)
                     , yAlignment = rightLeftAlignment
                     }
@@ -786,7 +789,8 @@ positioning direction =
         OnLeft ->
             Css.batch
                 [ Css.property "transform" "translate(-100%, -50%)"
-                , getTailPositioning
+                , addTail config.showTail
+                    rightTail
                     { xAlignment = Css.left (Css.pct 100)
                     , yAlignment = rightLeftAlignment
                     }
