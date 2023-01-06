@@ -53,7 +53,7 @@ import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
 import Browser.Dom as Dom exposing (Element)
 import Content
-import Css exposing (Color, Px, Style)
+import Css exposing (Color, Style)
 import Css.Global as Global
 import Css.Media
 import Html.Styled as Root
@@ -64,7 +64,7 @@ import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
-import Nri.Ui.MediaQuery.V1 as MediaQuery exposing (mobileBreakpoint, narrowMobileBreakpoint, quizEngineBreakpoint)
+import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.Util as Util
@@ -618,7 +618,7 @@ viewTooltip tooltipId config =
     Html.div
         [ Attributes.css
             [ Css.position Css.absolute
-            , positionTooltip config.direction
+            , Css.batch (positionTooltip config.direction)
             , Css.boxSizing Css.borderBox
             , if config.isOpen then
                 Css.batch []
@@ -689,9 +689,9 @@ viewTooltip tooltipId config =
                 ++ [ Html.div
                         [ ExtraAttributes.nriDescription "tooltip-hover-bridge"
                         , Attributes.css
-                            [ Css.position Css.absolute
-                            , hoverAreaForDirection config.direction
-                            ]
+                            (Css.position Css.absolute
+                                :: hoverAreaForDirection config.direction
+                            )
                         ]
                         []
                    ]
@@ -707,11 +707,6 @@ tailSize =
 tooltipColor : Color
 tooltipColor =
     Colors.navy
-
-
-offCenterOffset : Float
-offCenterOffset =
-    20
 
 
 {-| This returns absolute positioning styles for the popout container for a given tail position.

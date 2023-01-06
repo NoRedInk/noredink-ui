@@ -282,7 +282,6 @@ viewAuxillaryDescriptionToolip openTooltip =
         , Tooltip.open (openTooltip == Just AuxillaryDescription)
         , Tooltip.smallPadding
         , Tooltip.fitToContent
-        , Tooltip.onLeftForMobile
         ]
 
 
@@ -337,9 +336,6 @@ initStaticExampleSettings =
     ControlExtra.list
         |> ControlExtra.listItem "content" controlContent
         |> ControlExtra.optionalListItem "direction" controlDirection
-        |> ControlExtra.optionalListItem "direction -- viewport up to 1000px" controlDirectionForMobile
-        |> ControlExtra.optionalListItem "direction -- viewport up to 750px" controlDirectionForQuizEngineMobile
-        |> ControlExtra.optionalListItem "direction -- viewport up to 500px" controlDirectionForNarrowMobile
         |> ControlExtra.optionalBoolListItem "withoutTail" ( "Tooltip.withoutTail", Tooltip.withoutTail )
         |> ControlExtra.optionalListItem "width" controlWidth
         |> ControlExtra.optionalListItem "padding" controlPadding
@@ -370,59 +366,6 @@ controlDirection =
         , ( "onLeft", Tooltip.onLeft )
         , ( "onRight", Tooltip.onRight )
         ]
-
-
-controlDirectionForMobile : Control ( String, Tooltip.Attribute Never )
-controlDirectionForMobile =
-    CommonControls.choice "Tooltip"
-        [ ( "onTopForMobile", Tooltip.onTopForMobile )
-        , ( "onBottomForMobile", Tooltip.onBottomForMobile )
-        , ( "onLeftForMobile", Tooltip.onLeftForMobile )
-        , ( "onRightForMobile", Tooltip.onRightForMobile )
-        ]
-
-
-controlDirectionForQuizEngineMobile : Control ( String, Tooltip.Attribute Never )
-controlDirectionForQuizEngineMobile =
-    CommonControls.choice "Tooltip"
-        [ ( "onTopForQuizEngineMobile", Tooltip.onTopForQuizEngineMobile )
-        , ( "onBottomForQuizEngineMobile", Tooltip.onBottomForQuizEngineMobile )
-        , ( "onLeftForQuizEngineMobile", Tooltip.onLeftForQuizEngineMobile )
-        , ( "onRightForQuizEngineMobile", Tooltip.onRightForQuizEngineMobile )
-        ]
-
-
-controlDirectionForNarrowMobile : Control ( String, Tooltip.Attribute Never )
-controlDirectionForNarrowMobile =
-    CommonControls.choice "Tooltip"
-        [ ( "onTopForNarrowMobile", Tooltip.onTopForNarrowMobile )
-        , ( "onBottomForNarrowMobile", Tooltip.onBottomForNarrowMobile )
-        , ( "onLeftForNarrowMobile", Tooltip.onLeftForNarrowMobile )
-        , ( "onRightForNarrowMobile", Tooltip.onRightForNarrowMobile )
-        ]
-
-
-controlAlignment_ :
-    ( String, Tooltip.Attribute Never )
-    -> List ( String, Css.Px -> Tooltip.Attribute Never )
-    -> Control ( String, Tooltip.Attribute Never )
-controlAlignment_ ( middleName, middleValue ) others =
-    Control.choice
-        (( middleName, Control.value ( "Tooltip." ++ middleName, middleValue ) )
-            :: List.map
-                (\( name, val ) ->
-                    ( name
-                    , Control.map
-                        (\float ->
-                            ( "Tooltip." ++ name ++ " (Css.px " ++ String.fromFloat float ++ ")"
-                            , val (Css.px float)
-                            )
-                        )
-                        (ControlExtra.float 0)
-                    )
-                )
-                others
-        )
 
 
 controlWidth : Control ( String, Tooltip.Attribute Never )

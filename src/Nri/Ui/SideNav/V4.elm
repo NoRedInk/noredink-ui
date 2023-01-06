@@ -299,7 +299,8 @@ viewOpenCloseButton sidenavId navLabel_ { isOpen, toggle, isTooltipOpen, toggleT
 
           else
             Tooltip.onRight
-        , Tooltip.onRightForMobile
+
+        -- TODO: ensure this is wired up to support auto-positioning!
         , Tooltip.containerCss
             (if isOpen then
                 [ Css.Media.withMedia [ MediaQuery.notMobile ]
