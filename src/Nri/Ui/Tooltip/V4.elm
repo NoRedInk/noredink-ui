@@ -1,8 +1,8 @@
 module Nri.Ui.Tooltip.V4 exposing
     ( view, viewToggleTip
+    , primaryLabel, auxiliaryDescription, disclosure
     , Attribute
     , paragraph, plaintext, markdown, html
-    , withoutTail
     , onTop, onBottom, onLeft, onRight
     , onTopForQuizEngineMobile, onBottomForQuizEngineMobile, onLeftForQuizEngineMobile, onRightForQuizEngineMobile
     , onTopForNarrowMobile, onBottomForNarrowMobile, onLeftForNarrowMobile, onRightForNarrowMobile
@@ -14,7 +14,7 @@ module Nri.Ui.Tooltip.V4 exposing
     , css, notMobileCss, mobileCss, quizEngineMobileCss, narrowMobileCss, containerCss
     , custom
     , nriDescription, testId
-    , primaryLabel, auxiliaryDescription, disclosure
+    , withoutTail
     )
 
 {-| Changes from V3:
@@ -28,9 +28,9 @@ These tooltips aim to follow the accessibility recommendations from:
   - <https://sarahmhigley.com/writing/tooltips-in-wcag-21/>
 
 @docs view, viewToggleTip
+@docs primaryLabel, auxiliaryDescription, disclosure
 @docs Attribute
 @docs paragraph, plaintext, markdown, html
-@docs withoutTail
 
 @docs onTop, onBottom, onLeft, onRight
 @docs onTopForQuizEngineMobile, onBottomForQuizEngineMobile, onLeftForQuizEngineMobile, onRightForQuizEngineMobile
@@ -44,7 +44,8 @@ These tooltips aim to follow the accessibility recommendations from:
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss, narrowMobileCss, containerCss
 @docs custom
 @docs nriDescription, testId
-@docs primaryLabel, auxiliaryDescription, disclosure
+
+@docs withoutTail
 
 -}
 
