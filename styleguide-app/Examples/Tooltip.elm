@@ -8,6 +8,7 @@ module Examples.Tooltip exposing (example, State, Msg)
 
 import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Key as Key
+import Browser.Dom as Dom exposing (Element)
 import Category exposing (Category(..))
 import Code
 import CommonControls
@@ -15,11 +16,13 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
+import Dict exposing (Dict)
 import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css, href, id)
 import KeyboardSupport exposing (Key(..))
 import Markdown
+import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
@@ -28,6 +31,7 @@ import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V6 as Table
 import Nri.Ui.Tooltip.V4 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Task
 
 
 version : Int
@@ -92,6 +96,7 @@ example =
 type alias State =
     { openTooltip : Maybe TooltipId
     , staticExampleSettings : Control (List ( String, Tooltip.Attribute Never ))
+    , measurements : Dict String Element
     }
 
 
@@ -99,6 +104,7 @@ init : State
 init =
     { openTooltip = Nothing
     , staticExampleSettings = initStaticExampleSettings
+    , measurements = Dict.empty
     }
 
 
@@ -113,6 +119,8 @@ type Msg
     = ToggleTooltip TooltipId Bool
     | SetControl (Control (List ( String, Tooltip.Attribute Never )))
     | Log String
+    | GetMeasurements
+    | GotMeasurements String (Result Dom.Error Element)
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -130,6 +138,28 @@ update msg model =
 
         Log message ->
             ( Debug.log "Tooltip Log:" |> always model, Cmd.none )
+
+        GetMeasurements ->
+            ( model
+            , Cmd.batch (List.map measure repositioningTooltipIds)
+            )
+
+        GotMeasurements id (Ok measurement) ->
+            ( { model | measurements = Dict.insert id measurement model.measurements }
+            , Cmd.none
+            )
+
+        GotMeasurements _ (Err _) ->
+            ( model
+            , -- in a real application, log an error
+              Cmd.none
+            )
+
+
+measure : String -> Cmd Msg
+measure id =
+    Dom.getElement id
+        |> Task.attempt (GotMeasurements id)
 
 
 view : EllieLink.Config -> State -> List (Html Msg)
@@ -239,6 +269,81 @@ This is a helper for using Tooltip.disclosure with a "?" icon because it is a co
           , tooltipId = LearnMore
           }
         ]
+    , Heading.h2 [ Heading.plaintext "Dynamic respositioning examples" ]
+    , Button.button "Measure & Reposition"
+        [ Button.onClick GetMeasurements
+        , Button.small
+        , Button.secondary
+        ]
+    , Html.div [ css [ Css.displayFlex, Css.justifyContent Css.spaceBetween ] ]
+        [ Tooltip.view
+            { id = "left-alignment-example"
+            , trigger = \e -> ClickableSvg.button "Star" UiIcon.star [ ClickableSvg.disabled True ]
+            }
+            [ Tooltip.plaintext "Sometimes, this tooltip will be outside the left side of the viewport."
+            , Tooltip.open True
+            , Tooltip.onLeft
+            , Tooltip.measurement (Dict.get "left-alignment-example" model.measurements)
+            ]
+        , Tooltip.view
+            { id = "right-alignment-example"
+            , trigger = \e -> ClickableSvg.button "Star" UiIcon.star [ ClickableSvg.disabled True ]
+            }
+            [ Tooltip.plaintext "Sometimes, this tooltip will be outside the right side of the viewport."
+            , Tooltip.open True
+            , Tooltip.onRight
+            , Tooltip.measurement (Dict.get "right-alignment-example" model.measurements)
+            ]
+        ]
+    , Html.div [ css [ Css.marginTop (Css.px 200), Css.displayFlex, Css.justifyContent Css.spaceBetween ] ]
+        [ Tooltip.view
+            { id = "left-alignment-example-2"
+            , trigger = \e -> ClickableSvg.button "Star" UiIcon.star [ ClickableSvg.disabled True ]
+            }
+            [ Tooltip.plaintext "Sometimes, this tooltip will also be outside the left side of the viewport."
+            , Tooltip.open True
+            , Tooltip.measurement (Dict.get "left-alignment-example-2" model.measurements)
+            ]
+        , Tooltip.view
+            { id = "right-alignment-example-2"
+            , trigger = \e -> ClickableSvg.button "Star" UiIcon.star [ ClickableSvg.disabled True ]
+            }
+            [ Tooltip.plaintext "Sometimes, this tooltip will also be outside the right side of the viewport."
+            , Tooltip.open True
+            , Tooltip.measurement (Dict.get "right-alignment-example-2" model.measurements)
+            ]
+        ]
+    , Html.div [ css [ Css.marginTop (Css.px 60), Css.displayFlex, Css.justifyContent Css.spaceBetween ] ]
+        [ Tooltip.view
+            { id = "left-alignment-example-3"
+            , trigger = \e -> ClickableSvg.button "Star" UiIcon.star [ ClickableSvg.disabled True ]
+            }
+            [ Tooltip.plaintext "Bottom tooltips can overlap the sides too."
+            , Tooltip.onBottom
+            , Tooltip.open True
+            , Tooltip.measurement (Dict.get "left-alignment-example-3" model.measurements)
+            ]
+        , Tooltip.view
+            { id = "right-alignment-example-3"
+            , trigger = \e -> ClickableSvg.button "Star" UiIcon.star [ ClickableSvg.disabled True ]
+            }
+            [ Tooltip.plaintext "Bottom tooltips can overlap the sides too."
+            , Tooltip.onBottom
+            , Tooltip.open True
+            , Tooltip.measurement (Dict.get "right-alignment-example-3" model.measurements)
+            ]
+        ]
+    ]
+
+
+repositioningTooltipIds : List String
+repositioningTooltipIds =
+    [ "left-alignment-example"
+    , "left-alignment-example-2"
+    , "left-alignment-example-3"
+    , "right-alignment-example"
+    , "right-alignment-example-2"
+    , "right-alignment-example-3"
     ]
 
 

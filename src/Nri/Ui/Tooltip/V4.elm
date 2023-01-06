@@ -69,6 +69,7 @@ import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.Util as Util
 import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
+import Position
 
 
 {-| -}
@@ -708,6 +709,14 @@ addTail showTail_ tail_ config =
 
 positioning : Tooltip msg -> Style
 positioning config =
+    let
+        maybeXOffset =
+            Maybe.map Position.xOffsetPx config.measurement
+                |> Maybe.withDefault 0
+
+        tailXAlignment =
+            Css.left (Css.calc (Css.pct 50) Css.minus (Css.px maybeXOffset))
+    in
     Css.batch <|
         case config.direction of
             OnTop ->
@@ -716,10 +725,11 @@ positioning config =
                 , Css.transforms
                     [ Css.translateX (Css.pct -50)
                     , Css.translateY (Css.pct -100)
+                    , Css.translateX (Css.px maybeXOffset)
                     ]
                 , addTail config.showTail
                     bottomTail
-                    { xAlignment = Css.left (Css.pct 50)
+                    { xAlignment = tailXAlignment
                     , yAlignment = Css.top (Css.pct 100)
                     }
                 ]
@@ -730,10 +740,11 @@ positioning config =
                 , Css.transforms
                     [ Css.translateX (Css.pct -50)
                     , Css.translateY (Css.pct 100)
+                    , Css.translateX (Css.px maybeXOffset)
                     ]
                 , addTail config.showTail
                     topTail
-                    { xAlignment = Css.left (Css.pct 50)
+                    { xAlignment = tailXAlignment
                     , yAlignment = Css.bottom (Css.pct 100)
                     }
                 ]
