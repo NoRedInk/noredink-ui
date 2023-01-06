@@ -603,88 +603,79 @@ viewTooltip_ { trigger, id } tooltip =
 viewTooltip : String -> Tooltip msg -> Html msg
 viewTooltip tooltipId config =
     Html.div
-        [ Attributes.css
-            [ Css.position Css.absolute
-            , Css.batch (positionTooltip config.direction)
-            , Css.boxSizing Css.borderBox
-            , Css.border3 (Css.px 3) Css.solid Colors.red
-            , if config.isOpen then
+        ([ Attributes.css
+            ([ if config.isOpen then
                 Css.batch []
 
-              else
+               else
                 Css.display Css.none
-            ]
-        , -- Used for tests, since the visibility is controlled via CSS, which elm-program-test cannot account for
-          Attributes.attribute "data-tooltip-visible" <|
+             , Css.boxSizing Css.borderBox
+             , Css.borderRadius (Css.px 8)
+             , case config.width of
+                Exactly width ->
+                    Css.width (Css.px (toFloat width))
+
+                FitToContent ->
+                    Css.whiteSpace Css.noWrap
+             , paddingToStyle config.padding
+             , Css.position Css.absolute
+             , Css.zIndex (Css.int 100)
+             , Css.backgroundColor Colors.navy
+             , Css.border3 (Css.px 1) Css.solid Colors.navy
+             , positioning config
+             , Fonts.baseFont
+             , Css.fontSize (Css.px 16)
+             , Css.fontWeight (Css.int 600)
+             , Css.color Colors.white
+             , Shadows.high
+             , Global.descendants
+                [ Global.a
+                    [ Css.textDecoration Css.underline
+                    , Css.color Colors.white
+                    , Css.visited [ Css.color Colors.white ]
+                    , Css.hover [ Css.color Colors.white ]
+                    , Css.pseudoClass "focus-visible"
+                        [ Css.outline3 (Css.px 2) Css.solid Css.transparent
+                        , Css.property "box-shadow" "0 0 0 2px #FFF"
+                        ]
+                    ]
+                ]
+             ]
+                ++ config.tooltipStyleOverrides
+            )
+         , -- Used for tests, since the visibility is controlled via CSS, which elm-program-test cannot account for
+           Attributes.attribute "data-tooltip-visible" <|
             if config.isOpen then
                 "true"
 
             else
                 "false"
-        , -- If the tooltip is the "primary label" for the content, then we can trust that the content
-          -- in the tooltip is redundant. For example, if we have a ClickableSvg "Print" button, the button will
-          -- *already have* an accessible name. It is not helpful to have the "Print" read out twice.
-          Aria.hidden (config.purpose == PrimaryLabel)
-        ]
-        [ Html.div
-            ([ Attributes.css
-                ([ Css.boxSizing Css.borderBox
-                 , Css.borderRadius (Css.px 8)
-                 , case config.width of
-                    Exactly width ->
-                        Css.width (Css.px (toFloat width))
+         , -- If the tooltip is the "primary label" for the content, then we can trust that the content
+           -- in the tooltip is redundant. For example, if we have a ClickableSvg "Print" button, the button will
+           -- *already have* an accessible name. It is not helpful to have the "Print" read out twice.
+           Aria.hidden (config.purpose == PrimaryLabel)
 
-                    FitToContent ->
-                        Css.whiteSpace Css.noWrap
-                 , paddingToStyle config.padding
-                 , Css.position Css.absolute
-                 , Css.zIndex (Css.int 100)
-                 , Css.backgroundColor Colors.navy
-                 , Css.border3 (Css.px 1) Css.solid Colors.purple
-                 , positioning config
-                 , Fonts.baseFont
-                 , Css.fontSize (Css.px 16)
-                 , Css.fontWeight (Css.int 600)
-                 , Css.color Colors.white
-                 , Shadows.high
-                 , Global.descendants
-                    [ Global.a
-                        [ Css.textDecoration Css.underline
-                        , Css.color Colors.white
-                        , Css.visited [ Css.color Colors.white ]
-                        , Css.hover [ Css.color Colors.white ]
-                        , Css.pseudoClass "focus-visible"
-                            [ Css.outline3 (Css.px 2) Css.solid Css.transparent
-                            , Css.property "box-shadow" "0 0 0 2px #FFF"
-                            ]
-                        ]
+         -- We need to keep this animation in tests to make it pass: check out
+         -- the NoAnimations middleware. So if you change the name here, please
+         -- change that as well
+         , Attributes.class "dont-disable-animation"
+         , Role.toolTip
+         ]
+            ++ config.attributes
+            ++ [ Attributes.id tooltipId ]
+        )
+        (config.content
+            ++ [ Html.div
+                    [ ExtraAttributes.nriDescription "tooltip-hover-bridge"
+                    , Attributes.css
+                        (Css.position Css.absolute
+                            :: Css.border3 (Css.px 1) Css.solid Colors.green
+                            :: hoverAreaForDirection config.direction
+                        )
                     ]
-                 ]
-                    ++ config.tooltipStyleOverrides
-                )
-
-             -- We need to keep this animation in tests to make it pass: check out
-             -- the NoAnimations middleware. So if you change the name here, please
-             -- change that as well
-             , Attributes.class "dont-disable-animation"
-             , Role.toolTip
-             ]
-                ++ config.attributes
-                ++ [ Attributes.id tooltipId ]
-            )
-            (config.content
-                ++ [ Html.div
-                        [ ExtraAttributes.nriDescription "tooltip-hover-bridge"
-                        , Attributes.css
-                            (Css.position Css.absolute
-                                :: Css.border3 (Css.px 1) Css.solid Colors.green
-                                :: hoverAreaForDirection config.direction
-                            )
-                        ]
-                        []
-                   ]
-            )
-        ]
+                    []
+               ]
+        )
 
 
 tailSize : Float
@@ -712,90 +703,55 @@ addTail showTail_ tail_ config =
             []
 
 
-{-| This returns absolute positioning styles for the popout container for a given tail position.
--}
-positionTooltip : Direction -> List Style
-positionTooltip direction =
-    let
-        ltrPosition =
-            Css.left (Css.pct 50)
-
-        topToBottomPosition =
-            Css.top (Css.pct 50)
-    in
-    case direction of
-        OnTop ->
-            [ ltrPosition
-            , Css.top (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-            ]
-
-        OnBottom ->
-            [ ltrPosition
-            , Css.bottom (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-            ]
-
-        OnLeft ->
-            [ topToBottomPosition
-            , Css.left (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-            ]
-
-        OnRight ->
-            [ topToBottomPosition
-            , Css.right (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-            ]
-
-
 
 -- TAILS
 
 
 positioning : Tooltip msg -> Style
 positioning config =
-    let
-        topBottomAlignment =
-            Css.left (Css.pct 50)
-
-        rightLeftAlignment =
-            Css.property "top" ("calc(-" ++ String.fromFloat tailSize ++ "px + 50%)")
-    in
-    case config.direction of
-        OnTop ->
-            Css.batch
-                [ Css.property "transform" "translate(-50%, -100%)"
+    Css.batch <|
+        case config.direction of
+            OnTop ->
+                [ Css.left (Css.pct 50)
+                , Css.top (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
+                , Css.property "transform" "translate(-50%, -100%)"
                 , addTail config.showTail
                     bottomTail
-                    { xAlignment = topBottomAlignment
+                    { xAlignment = Css.left (Css.pct 50)
                     , yAlignment = Css.top (Css.pct 100)
                     }
                 ]
 
-        OnBottom ->
-            Css.batch
-                [ Css.property "transform" "translate(-50%, 0)"
+            OnBottom ->
+                [ Css.left (Css.pct 50)
+                , Css.bottom (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
+                , Css.property "transform" "translate(-50%, 100%)"
                 , addTail config.showTail
                     topTail
-                    { xAlignment = topBottomAlignment
+                    { xAlignment = Css.left (Css.pct 50)
                     , yAlignment = Css.bottom (Css.pct 100)
                     }
                 ]
 
-        OnRight ->
-            Css.batch
-                [ Css.property "transform" "translate(0, -50%)"
+            OnRight ->
+                [ Css.top (Css.pct 50)
+                , Css.right (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
+                , Css.property "transform" "translate(100%, -50%)"
                 , addTail config.showTail
                     leftTail
                     { xAlignment = Css.right (Css.pct 100)
-                    , yAlignment = rightLeftAlignment
+                    , yAlignment = Css.property "top" ("calc(-" ++ String.fromFloat tailSize ++ "px + 50%)")
                     }
                 ]
 
-        OnLeft ->
-            Css.batch
-                [ Css.property "transform" "translate(-100%, -50%)"
+            OnLeft ->
+                [ Css.top (Css.pct 50)
+                , Css.left (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
+                , Css.property "transform" "translate(-100%, -50%)"
                 , addTail config.showTail
                     rightTail
                     { xAlignment = Css.left (Css.pct 100)
-                    , yAlignment = rightLeftAlignment
+                    , yAlignment = Css.property "top" ("calc(-" ++ String.fromFloat tailSize ++ "px + 50%)")
                     }
                 ]
 
