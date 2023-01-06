@@ -713,7 +713,10 @@ positioning config =
             OnTop ->
                 [ Css.left (Css.pct 50)
                 , Css.top (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-                , Css.property "transform" "translate(-50%, -100%)"
+                , Css.transforms
+                    [ Css.translateX (Css.pct -50)
+                    , Css.translateY (Css.pct -100)
+                    ]
                 , addTail config.showTail
                     bottomTail
                     { xAlignment = Css.left (Css.pct 50)
@@ -724,7 +727,10 @@ positioning config =
             OnBottom ->
                 [ Css.left (Css.pct 50)
                 , Css.bottom (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-                , Css.property "transform" "translate(-50%, 100%)"
+                , Css.transforms
+                    [ Css.translateX (Css.pct -50)
+                    , Css.translateY (Css.pct 100)
+                    ]
                 , addTail config.showTail
                     topTail
                     { xAlignment = Css.left (Css.pct 50)
@@ -735,7 +741,10 @@ positioning config =
             OnRight ->
                 [ Css.top (Css.pct 50)
                 , Css.right (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-                , Css.property "transform" "translate(100%, -50%)"
+                , Css.transforms
+                    [ Css.translateX (Css.pct 100)
+                    , Css.translateY (Css.pct -50)
+                    ]
                 , addTail config.showTail
                     leftTail
                     { xAlignment = Css.right (Css.pct 100)
@@ -746,7 +755,10 @@ positioning config =
             OnLeft ->
                 [ Css.top (Css.pct 50)
                 , Css.left (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-                , Css.property "transform" "translate(-100%, -50%)"
+                , Css.transforms
+                    [ Css.translateX (Css.pct -100)
+                    , Css.translateY (Css.pct -50)
+                    ]
                 , addTail config.showTail
                     rightTail
                     { xAlignment = Css.left (Css.pct 100)
