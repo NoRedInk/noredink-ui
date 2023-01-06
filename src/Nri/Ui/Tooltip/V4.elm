@@ -61,6 +61,7 @@ import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Nri.Ui
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
+import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
@@ -606,6 +607,7 @@ viewTooltip tooltipId config =
             [ Css.position Css.absolute
             , Css.batch (positionTooltip config.direction)
             , Css.boxSizing Css.borderBox
+            , Css.border3 (Css.px 3) Css.solid Colors.red
             , if config.isOpen then
                 Css.batch []
 
@@ -638,7 +640,7 @@ viewTooltip tooltipId config =
                  , Css.position Css.absolute
                  , Css.zIndex (Css.int 100)
                  , Css.backgroundColor Colors.navy
-                 , Css.border3 (Css.px 1) Css.solid Colors.navy
+                 , Css.border3 (Css.px 1) Css.solid Colors.purple
                  , positioning config
                  , Fonts.baseFont
                  , Css.fontSize (Css.px 16)
@@ -675,6 +677,7 @@ viewTooltip tooltipId config =
                         [ ExtraAttributes.nriDescription "tooltip-hover-bridge"
                         , Attributes.css
                             (Css.position Css.absolute
+                                :: Css.border3 (Css.px 1) Css.solid Colors.green
                                 :: hoverAreaForDirection config.direction
                             )
                         ]
@@ -691,7 +694,7 @@ tailSize =
 
 tooltipColor : Color
 tooltipColor =
-    Colors.navy
+    Nri.Ui.Colors.Extra.withAlpha 0.1 Colors.navy
 
 
 addTail : Bool -> Css.Style -> { xAlignment : Style, yAlignment : Style } -> Style
@@ -869,12 +872,12 @@ bottomTail : Style
 bottomTail =
     Css.batch
         [ Css.before
-            [ Css.borderTopColor tooltipColor
+            [ Css.property "border-top-color" tooltipColor.value
             , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
             , Css.marginLeft (Css.px (-tailSize - 1))
             ]
         , Css.after
-            [ Css.borderTopColor tooltipColor
+            [ Css.property "border-top-color" tooltipColor.value
             , Css.property "border-width" (String.fromFloat tailSize ++ "px")
             , Css.marginLeft (Css.px -tailSize)
             ]
@@ -885,12 +888,12 @@ topTail : Style
 topTail =
     Css.batch
         [ Css.before
-            [ Css.borderBottomColor tooltipColor
+            [ Css.property "border-bottom-color" tooltipColor.value
             , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
             , Css.marginLeft (Css.px (-tailSize - 1))
             ]
         , Css.after
-            [ Css.borderBottomColor tooltipColor
+            [ Css.property "border-bottom-color" tooltipColor.value
             , Css.property "border-width" (String.fromFloat tailSize ++ "px")
             , Css.marginLeft (Css.px -tailSize)
             ]
@@ -901,11 +904,11 @@ rightTail : Style
 rightTail =
     Css.batch
         [ Css.before
-            [ Css.borderLeftColor tooltipColor
+            [ Css.property "border-left-color" tooltipColor.value
             , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
             ]
         , Css.after
-            [ Css.borderLeftColor tooltipColor
+            [ Css.property "border-left-color" tooltipColor.value
             , Css.property "border-width" (String.fromFloat tailSize ++ "px")
             , Css.marginTop (Css.px 1)
             , Css.marginRight (Css.px 2)
