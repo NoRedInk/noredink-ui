@@ -327,6 +327,7 @@ rightIcon moduleName f =
 uiIcons : List ( String, Svg )
 uiIcons =
     [ ( "arrowLeft", UiIcon.arrowLeft )
+    , ( "gear", UiIcon.gear )
     , ( "unarchive", UiIcon.unarchive )
     , ( "share", UiIcon.share )
     , ( "preview", UiIcon.preview )
