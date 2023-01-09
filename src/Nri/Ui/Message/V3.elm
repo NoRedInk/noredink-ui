@@ -1,7 +1,7 @@
 module Nri.Ui.Message.V3 exposing
     ( somethingWentWrong
     , view, Attribute
-    , icon, custom, testId, id
+    , icon, noIcon, custom, testId, id
     , hideIconForMobile, hideIconFor
     , css, notMobileCss, mobileCss, quizEngineMobileCss
     , tiny, large, banner
@@ -9,7 +9,6 @@ module Nri.Ui.Message.V3 exposing
     , tip, error, alert, success, customTheme
     , alertRole, alertDialogRole
     , onDismiss
-    , noIcon
     )
 
 {-| Patch changes:
@@ -28,7 +27,7 @@ Changes from V2:
 
 @docs somethingWentWrong
 @docs view, Attribute
-@docs icon, custom, testId, id
+@docs icon, noIcon, custom, testId, id
 
 
 # CSS
@@ -497,13 +496,15 @@ customTheme custom_ =
     Attribute <| \config -> { config | theme = Custom custom_ }
 
 
-{-| -}
+{-| Use a custom SVG icon.
+-}
 icon : Svg -> Attribute msg
 icon icon_ =
     Attribute <| \config -> { config | icon = CustomIcon icon_ }
 
 
-{-| -}
+{-| Omit the icon from the message.
+-}
 noIcon : Attribute msg
 noIcon =
     Attribute <| \config -> { config | icon = NoIcon }
