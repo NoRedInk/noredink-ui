@@ -498,8 +498,7 @@ quizEngineMobileCss styles =
     css [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
 
 
-{-| WARNING: Not implemented! This attribute is temporarily reverted due to <https://github.com/NoRedInk/NoRedInk/pull/41952#issuecomment-1372393691>.
--}
+{-| -}
 rightIcon : Svg -> Attribute msg
 rightIcon icon =
     set (\config -> { config | rightIcon = Just icon })
@@ -667,6 +666,12 @@ renderIcons config includeBorder =
             , Css.maxHeight (Css.px iconHeight)
             , Css.height (Css.pct 100)
             , Css.margin Css.auto
+            , case config.rightIcon of
+                Just _ ->
+                    Css.flexShrink (Css.num 1)
+
+                Nothing ->
+                    Css.batch []
             ]
 
         renderUnless breakpoints =
@@ -677,6 +682,11 @@ renderIcons config includeBorder =
                     ]
                 ]
                 >> Svg.toHtml
+                >> Just
+
+        renderRightIcon =
+            Svg.withCss [ Css.flexShrink (Css.num 3) ]
+                >> Svg.toHtml
     in
     case ( config.iconForNarrowMobile, config.iconForQuizEngineMobile, config.iconForMobile ) of
         ( Just iconForNarrowMobile_, Just iconForQuizEngineMobile_, Nothing ) ->
@@ -684,7 +694,9 @@ renderIcons config includeBorder =
             , renderUnless [ MediaQuery.narrowMobile, MediaQuery.notQuizEngineMobile ]
                 iconForQuizEngineMobile_
             , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
+            , Maybe.map renderRightIcon config.rightIcon
             ]
+                |> List.filterMap identity
 
         ( Just iconForNarrowMobile_, Just iconForQuizEngineMobile_, Just iconForMobile_ ) ->
             [ renderUnless [ MediaQuery.mobile ] config.icon
@@ -693,24 +705,32 @@ renderIcons config includeBorder =
             , renderUnless [ MediaQuery.narrowMobile, MediaQuery.notQuizEngineMobile ]
                 iconForQuizEngineMobile_
             , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
+            , Maybe.map renderRightIcon config.rightIcon
             ]
+                |> List.filterMap identity
 
         ( Just iconForNarrowMobile_, Nothing, Just iconForMobile_ ) ->
             [ renderUnless [ MediaQuery.mobile ] config.icon
             , renderUnless [ MediaQuery.narrowMobile, MediaQuery.notMobile ] iconForMobile_
             , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
+            , Maybe.map renderRightIcon config.rightIcon
             ]
+                |> List.filterMap identity
 
         ( Just iconForNarrowMobile_, Nothing, Nothing ) ->
             [ renderUnless [ MediaQuery.narrowMobile ] config.icon
             , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
+            , Maybe.map renderRightIcon config.rightIcon
             ]
+                |> List.filterMap identity
 
         ( Nothing, Just iconForQuizEngineMobile_, Nothing ) ->
             [ renderUnless [ MediaQuery.quizEngineMobile ] config.icon
             , renderUnless [ MediaQuery.notQuizEngineMobile ]
                 iconForQuizEngineMobile_
+            , Maybe.map renderRightIcon config.rightIcon
             ]
+                |> List.filterMap identity
 
         ( Nothing, Just iconForQuizEngineMobile_, Just iconForMobile_ ) ->
             [ renderUnless [ MediaQuery.mobile ] config.icon
@@ -718,18 +738,25 @@ renderIcons config includeBorder =
                 iconForMobile_
             , renderUnless [ MediaQuery.notQuizEngineMobile ]
                 iconForQuizEngineMobile_
+            , Maybe.map renderRightIcon config.rightIcon
             ]
+                |> List.filterMap identity
 
         ( Nothing, Nothing, Just iconForMobile_ ) ->
             [ renderUnless [ MediaQuery.mobile ] config.icon
             , renderUnless [ MediaQuery.notMobile ] iconForMobile_
+            , Maybe.map renderRightIcon config.rightIcon
             ]
+                |> List.filterMap identity
 
         ( Nothing, Nothing, Nothing ) ->
             [ config.icon
                 |> Svg.withCss iconStyles
                 |> Svg.toHtml
+                |> Just
+            , Maybe.map renderRightIcon config.rightIcon
             ]
+                |> List.filterMap identity
 
 
 buttonOrLinkStyles : ButtonOrLinkAttributes msg -> AppliedTheme -> List Style
@@ -797,10 +824,18 @@ buttonOrLinkStyles config { main_, mainHovered, background, backgroundHovered, b
             ]
 
     -- Sizing
-    , Css.display Css.inlineBlock
     , Css.boxSizing Css.borderBox
     , Css.width (Css.px (Maybe.withDefault (getSize config.size) config.width))
     , Css.height (Css.px (Maybe.withDefault (getSize config.size) config.height))
+    , Css.batch <|
+        case config.rightIcon of
+            Just _ ->
+                [ Css.display Css.inlineFlex
+                ]
+
+            Nothing ->
+                [ Css.display Css.inlineBlock
+                ]
 
     -- Focus
     , Css.pseudoClass "focus-visible"
