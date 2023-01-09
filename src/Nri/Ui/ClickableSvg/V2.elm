@@ -661,18 +661,20 @@ renderIcons config includeBorder =
                 Maybe.withDefault size config.height
 
         iconStyles =
-            [ Css.displayFlex
-            , Css.maxWidth (Css.px iconWidth)
-            , Css.maxHeight (Css.px iconHeight)
-            , Css.height (Css.pct 100)
-            , Css.margin Css.auto
-            , case config.rightIcon of
+            case config.rightIcon of
                 Just _ ->
-                    Css.flexShrink (Css.num 1)
+                    [ Css.width (Css.px (iconWidth * 3 / 5 - 1))
+                    , Css.height (Css.px (iconWidth * 3 / 5 - 1))
+                    , Css.marginRight (Css.px 1)
+                    ]
 
                 Nothing ->
-                    Css.batch []
-            ]
+                    [ Css.displayFlex
+                    , Css.maxWidth (Css.px iconWidth)
+                    , Css.maxHeight (Css.px iconHeight)
+                    , Css.height (Css.pct 100)
+                    , Css.margin Css.auto
+                    ]
 
         renderUnless breakpoints =
             Svg.withCss
@@ -685,7 +687,11 @@ renderIcons config includeBorder =
                 >> Just
 
         renderRightIcon =
-            Svg.withCss [ Css.flexShrink (Css.num 3) ]
+            Svg.withCss
+                [ Css.width (Css.px (iconWidth * 2 / 5 - 1))
+                , Css.height (Css.px (iconWidth * 2 / 5 - 1))
+                , Css.marginLeft (Css.px 1)
+                ]
                 >> Svg.toHtml
     in
     case ( config.iconForNarrowMobile, config.iconForQuizEngineMobile, config.iconForMobile ) of
@@ -825,16 +831,20 @@ buttonOrLinkStyles config { main_, mainHovered, background, backgroundHovered, b
 
     -- Sizing
     , Css.boxSizing Css.borderBox
-    , Css.width (Css.px (Maybe.withDefault (getSize config.size) config.width))
-    , Css.height (Css.px (Maybe.withDefault (getSize config.size) config.height))
     , Css.batch <|
         case config.rightIcon of
             Just _ ->
                 [ Css.display Css.inlineFlex
+                , Css.justifyContent Css.center
+                , Css.alignItems Css.center
+                , Css.minWidth (Css.px (Maybe.withDefault (getSize config.size) config.width))
+                , Css.minHeight (Css.px (Maybe.withDefault (getSize config.size) config.height))
                 ]
 
             Nothing ->
                 [ Css.display Css.inlineBlock
+                , Css.width (Css.px (Maybe.withDefault (getSize config.size) config.width))
+                , Css.height (Css.px (Maybe.withDefault (getSize config.size) config.height))
                 ]
 
     -- Focus
