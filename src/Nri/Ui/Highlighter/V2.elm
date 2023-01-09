@@ -11,6 +11,7 @@ module Nri.Ui.Highlighter.V2 exposing
 {-| Changes from V1:
 
   - Remove emptyIntent, which is not used
+  - adds setting for joining adjacent interactive highlights of the same type
 
 Highlighter provides a view/model/update to display a view to highlight text and show marks.
 
@@ -79,6 +80,7 @@ type alias Model marker =
       id : String
     , highlightables : List (Highlightable marker) -- The actual highlightable elements
     , marker : Tool.Tool marker -- Currently used marker
+    , joinAdjacentInteractiveHighlights : Bool
 
     -- Internal state to track user's interactions
     , mouseDownIndex : Maybe Int
@@ -103,17 +105,22 @@ type Initialized
 
 
 {-| Setup initial model
+
+joinAdjacentInteractiveHighlights - When true, and static highlightables are sandwiched by highlighted interactive highlightables of the same type, apply the highlight to the static highlightable as well.
+
 -}
 init :
     { id : String
     , highlightables : List (Highlightable marker)
     , marker : Tool.Tool marker
+    , joinAdjacentInteractiveHighlights : Bool
     }
     -> Model marker
 init config =
     { id = config.id
     , highlightables = config.highlightables
     , marker = config.marker
+    , joinAdjacentInteractiveHighlights = config.joinAdjacentInteractiveHighlights
     , mouseDownIndex = Nothing
     , mouseOverIndex = Nothing
     , isInitialized = NotInitialized

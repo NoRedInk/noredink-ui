@@ -5,7 +5,7 @@ import Expect exposing (Expectation)
 import Html.Styled exposing (toUnstyled)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
-import Nri.Ui.Highlighter.V1 as Highlighter
+import Nri.Ui.Highlighter.V2 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool exposing (Tool)
 import ProgramTest exposing (..)
 import Regex exposing (Regex)
@@ -18,7 +18,7 @@ import Test.Html.Selector as Selector
 
 spec : Test
 spec =
-    describe "Nri.Ui.Highlighter.V1"
+    describe "Nri.Ui.Highlighter.V2"
         [ describe "keyboard behavior" keyboardTests
         , describe "markdown behavior" markdownTests
         ]
@@ -249,6 +249,7 @@ markdownTests =
                         { id = "markdown-tests-highlighter-container"
                         , highlightables = highlightables
                         , marker = marker Nothing
+                        , joinAdjacentInteractiveHighlights = False
                         }
                 , update = \_ m -> m
                 , view = view >> toUnstyled
@@ -442,6 +443,7 @@ program name highlightables =
                 { id = "test-highlighter-container"
                 , highlightables = highlightables
                 , marker = marker name
+                , joinAdjacentInteractiveHighlights = False
                 }
         , update =
             \msg model ->
