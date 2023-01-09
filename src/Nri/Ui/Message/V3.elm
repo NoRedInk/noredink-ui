@@ -9,6 +9,7 @@ module Nri.Ui.Message.V3 exposing
     , tip, error, alert, success, customTheme
     , alertRole, alertDialogRole
     , onDismiss
+    , noIcon
     )
 
 {-| Patch changes:
@@ -499,7 +500,13 @@ customTheme custom_ =
 {-| -}
 icon : Svg -> Attribute msg
 icon icon_ =
-    Attribute <| \config -> { config | icon = Just icon_ }
+    Attribute <| \config -> { config | icon = CustomIcon icon_ }
+
+
+{-| -}
+noIcon : Attribute msg
+noIcon =
+    Attribute <| \config -> { config | icon = NoIcon }
 
 
 {-| Use this helper to add custom attributes.
@@ -651,7 +658,7 @@ type alias BannerConfig msg =
     , codeDetails : Maybe String
     , theme : Theme
     , size : Size
-    , icon : Maybe Svg
+    , icon : Icon
     , customAttributes : List (Html.Attribute Never)
     , customStyles : List Style
     }
@@ -668,7 +675,7 @@ configFromAttributes attr =
         , codeDetails = Nothing
         , theme = Tip
         , size = Tiny
-        , icon = Nothing
+        , icon = ThemeIcon
         , customAttributes = []
         , customStyles = []
         }
@@ -697,6 +704,16 @@ type Theme
     | Tip
     | Success
     | Custom { color : Color, backgroundColor : Color }
+
+
+
+-- Icons
+
+
+type Icon
+    = ThemeIcon
+    | CustomIcon Svg
+    | NoIcon
 
 
 getColor : Size -> Theme -> Color
@@ -753,8 +770,8 @@ getBackgroundColor size theme =
             Css.backgroundColor backgroundColor
 
 
-getIcon : Maybe Svg -> Size -> Theme -> Html msg
-getIcon customIcon size theme =
+getIcon : Icon -> Size -> Theme -> Html msg
+getIcon icon_ size theme =
     let
         ( iconSize, marginRight ) =
             case size of
@@ -767,8 +784,8 @@ getIcon customIcon size theme =
                 Banner ->
                     ( px 35, Css.marginRight (Css.px 10) )
     in
-    case ( customIcon, theme ) of
-        ( Nothing, Error ) ->
+    case ( icon_, theme ) of
+        ( ThemeIcon, Error ) ->
             UiIcon.exclamation
                 |> NriSvg.withColor Colors.purple
                 |> NriSvg.withWidth iconSize
@@ -777,7 +794,7 @@ getIcon customIcon size theme =
                 |> NriSvg.withLabel "Error"
                 |> NriSvg.toHtml
 
-        ( Nothing, Alert ) ->
+        ( ThemeIcon, Alert ) ->
             let
                 color =
                     case size of
@@ -795,7 +812,7 @@ getIcon customIcon size theme =
                 |> NriSvg.withLabel "Alert"
                 |> NriSvg.toHtml
 
-        ( Nothing, Tip ) ->
+        ( ThemeIcon, Tip ) ->
             case size of
                 Tiny ->
                     div
@@ -868,7 +885,7 @@ getIcon customIcon size theme =
                             |> NriSvg.toHtml
                         ]
 
-        ( Nothing, Success ) ->
+        ( ThemeIcon, Success ) ->
             UiIcon.checkmarkInCircle
                 |> NriSvg.withColor Colors.greenDark
                 |> NriSvg.withWidth iconSize
@@ -877,14 +894,17 @@ getIcon customIcon size theme =
                 |> NriSvg.withLabel "Success"
                 |> NriSvg.toHtml
 
-        ( Just icon_, _ ) ->
-            icon_
+        ( CustomIcon svg, _ ) ->
+            svg
                 |> NriSvg.withWidth iconSize
                 |> NriSvg.withHeight iconSize
                 |> NriSvg.withCss [ marginRight, Css.flexShrink Css.zero ]
                 |> NriSvg.toHtml
 
-        ( Nothing, Custom _ ) ->
+        ( NoIcon, _ ) ->
+            Html.text ""
+
+        ( ThemeIcon, Custom _ ) ->
             Html.text ""
 
 
