@@ -280,13 +280,53 @@ update msg model =
             Pointer pointerMsg ->
                 pointerEventToActions pointerMsg model
                     |> performActions model
+                    |> Tuple.mapFirst maybeJoinAdjacentInteractiveHighlights
 
             Keyboard keyboardMsg ->
                 keyboardEventToActions keyboardMsg model
                     |> performActions model
+                    |> Tuple.mapFirst maybeJoinAdjacentInteractiveHighlights
 
             Focused _ ->
                 ( model, Cmd.none )
+
+
+maybeJoinAdjacentInteractiveHighlights : Model m -> Model m
+maybeJoinAdjacentInteractiveHighlights model =
+    if model.joinAdjacentInteractiveHighlights then
+        { model | highlightables = joinInteractiveHighlights model.highlightables }
+
+    else
+        model
+
+
+joinInteractiveHighlights : List (Highlightable m) -> List (Highlightable m)
+joinInteractiveHighlights highlightables =
+    highlightables
+        |> List.foldr
+            (\segment ( lastInteractiveHighlight, staticAcc, acc ) ->
+                case segment.type_ of
+                    Highlightable.Interactive ->
+                        let
+                            static_ =
+                                case ( segment.marked, lastInteractiveHighlight ) of
+                                    ( Just marker, Just lastMarker ) ->
+                                        if marker == lastMarker then
+                                            List.map (\s -> { s | marked = Just marker }) staticAcc
+
+                                        else
+                                            staticAcc
+
+                                    _ ->
+                                        staticAcc
+                        in
+                        ( segment.marked, [], segment :: static_ ++ acc )
+
+                    Highlightable.Static ->
+                        ( lastInteractiveHighlight, segment :: staticAcc, acc )
+            )
+            ( Nothing, [], [] )
+        |> (\( _, static_, acc ) -> static_ ++ acc)
 
 
 nextInteractiveIndex : Int -> List (Highlightable marker) -> Maybe Int
