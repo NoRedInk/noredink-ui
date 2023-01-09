@@ -21,7 +21,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
-import Nri.Ui.Highlighter.V1 as Highlighter
+import Nri.Ui.Highlighter.V2 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Table.V6 as Table
 
@@ -33,7 +33,7 @@ moduleName =
 
 version : Int
 version =
-    1
+    2
 
 
 {-| -}
