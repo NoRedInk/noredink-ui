@@ -118,7 +118,12 @@ init :
     -> Model marker
 init config =
     { id = config.id
-    , highlightables = config.highlightables
+    , highlightables =
+        if config.joinAdjacentInteractiveHighlights then
+            joinAdjacentInteractiveHighlights config.highlightables
+
+        else
+            config.highlightables
     , marker = config.marker
     , joinAdjacentInteractiveHighlights = config.joinAdjacentInteractiveHighlights
     , mouseDownIndex = Nothing
@@ -294,14 +299,14 @@ update msg model =
 maybeJoinAdjacentInteractiveHighlights : Model m -> Model m
 maybeJoinAdjacentInteractiveHighlights model =
     if model.joinAdjacentInteractiveHighlights then
-        { model | highlightables = joinInteractiveHighlights model.highlightables }
+        { model | highlightables = joinAdjacentInteractiveHighlights model.highlightables }
 
     else
         model
 
 
-joinInteractiveHighlights : List (Highlightable m) -> List (Highlightable m)
-joinInteractiveHighlights highlightables =
+joinAdjacentInteractiveHighlights : List (Highlightable m) -> List (Highlightable m)
+joinAdjacentInteractiveHighlights highlightables =
     highlightables
         |> List.foldr
             (\segment ( lastInteractiveHighlight, staticAcc, acc ) ->
