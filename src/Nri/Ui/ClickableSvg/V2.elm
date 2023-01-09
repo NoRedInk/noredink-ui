@@ -640,7 +640,7 @@ renderIcons config includeBorder =
 
         iconWidth =
             if config.hasBorder then
-                size
+                Maybe.withDefault size config.width
                     - bordersAndPadding.leftPadding
                     - bordersAndPadding.rightPadding
                     - bordersAndPadding.leftBorder
@@ -651,7 +651,7 @@ renderIcons config includeBorder =
 
         iconHeight =
             if config.hasBorder then
-                size
+                Maybe.withDefault size config.height
                     - bordersAndPadding.topPadding
                     - bordersAndPadding.bottomPadding
                     - bordersAndPadding.topBorder
