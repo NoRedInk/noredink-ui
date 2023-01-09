@@ -50,6 +50,8 @@ init =
             |> ControlExtra.optionalBoolListItem "dismissable"
                 ( "Message.onDismiss Dismiss", Message.onDismiss Dismiss )
             |> CommonControls.iconNotCheckedByDefault "Message" Message.icon
+            |> ControlExtra.optionalBoolListItem "noIcon"
+                ( "Message.noIcon", Message.noIcon )
             |> ControlExtra.optionalBoolListItem "hideIconForMobile"
                 ( "Message.hideIconForMobile", Message.hideIconForMobile )
             |> CommonControls.css
