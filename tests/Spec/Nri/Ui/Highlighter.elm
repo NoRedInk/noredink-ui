@@ -250,7 +250,7 @@ markdownTests =
                     Highlighter.init
                         { id = "markdown-tests-highlighter-container"
                         , highlightables = highlightables
-                        , marker = marker Nothing
+                        , marker = markerModel Nothing
                         , joinAdjacentInteractiveHighlights = False
                         }
                 , update = \_ m -> m
@@ -441,17 +441,20 @@ mouseOver word =
     MouseHelpers.cancelableMouseOver [ Selector.tag "span", Selector.containing [ Selector.text word ] ]
 
 
-marker : Maybe String -> Tool String
+markerModel : Maybe String -> Tool String
+markerModel name =
+    Tool.Marker (marker name)
+
+
+marker : Maybe String -> Tool.MarkerModel String
 marker name =
-    Tool.Marker
-        (Tool.buildMarker
-            { highlightColor = Colors.magenta
-            , hoverColor = Colors.magenta
-            , hoverHighlightColor = Colors.magenta
-            , kind = Maybe.withDefault "" name
-            , name = name
-            }
-        )
+    Tool.buildMarker
+        { highlightColor = Colors.magenta
+        , hoverColor = Colors.magenta
+        , hoverHighlightColor = Colors.magenta
+        , kind = Maybe.withDefault "" name
+        , name = name
+        }
 
 
 type alias TestContext =
@@ -470,7 +473,7 @@ program config highlightables =
             Highlighter.init
                 { id = "test-highlighter-container"
                 , highlightables = highlightables
-                , marker = marker config.name
+                , marker = markerModel config.name
                 , joinAdjacentInteractiveHighlights = config.joinAdjacentInteractiveHighlights
                 }
         , update =
@@ -504,7 +507,7 @@ joinAdjacentInteractiveHighlightsTests =
         [ runTest "not joining adjacent interactive highlights" { joinAdjacentInteractiveHighlights = False }
         , runTest "joining adjacent interactive highlights" { joinAdjacentInteractiveHighlights = True }
         ]
-    , describe "interactive segments surrounding a single staticsegment" <|
+    , describe "interactive segments surrounding a single static segment" <|
         let
             highlightables =
                 [ Highlightable.init Highlightable.Interactive Nothing 0 ( [], "hello" )
@@ -535,6 +538,44 @@ joinAdjacentInteractiveHighlightsTests =
                     |> ensureMarks [ [ "hello", " ", "world" ] ]
                     |> click "hello"
                     |> noneMarked
+                    |> done
+        ]
+    , describe "initialization"
+        [ test "with matching mark types, not joining adjacent interactive highlights, does not join marks" <|
+            \() ->
+                [ Highlightable.init Highlightable.Interactive (Just (marker (Just "type-1"))) 0 ( [], "hello" )
+                , Highlightable.init Highlightable.Static Nothing 1 ( [], " " )
+                , Highlightable.init Highlightable.Interactive (Just (marker (Just "type-1"))) 2 ( [], "world" )
+                ]
+                    |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                    |> ensureMarks [ [ "hello" ], [ "world" ] ]
+                    |> done
+        , test "with matching mark types, joining adjacent interactive highlights, joins marks" <|
+            \() ->
+                [ Highlightable.init Highlightable.Interactive (Just (marker (Just "type-1"))) 0 ( [], "hello" )
+                , Highlightable.init Highlightable.Static Nothing 1 ( [], " " )
+                , Highlightable.init Highlightable.Interactive (Just (marker (Just "type-1"))) 2 ( [], "world" )
+                ]
+                    |> program { name = Nothing, joinAdjacentInteractiveHighlights = True }
+                    |> ensureMarks [ [ "hello", " ", "world" ] ]
+                    |> done
+        , test "with differing mark types, not joining adjacent interactive highlights, does not join marks" <|
+            \() ->
+                [ Highlightable.init Highlightable.Interactive (Just (marker (Just "type-1"))) 0 ( [], "hello" )
+                , Highlightable.init Highlightable.Static Nothing 1 ( [], " " )
+                , Highlightable.init Highlightable.Interactive (Just (marker (Just "type-2"))) 2 ( [], "world" )
+                ]
+                    |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                    |> ensureMarks [ [ "hello" ], [ "world" ] ]
+                    |> done
+        , test "with differing mark types, joining adjacent interactive highlights, does not join marks" <|
+            \() ->
+                [ Highlightable.init Highlightable.Interactive (Just (marker (Just "type-1"))) 0 ( [], "hello" )
+                , Highlightable.init Highlightable.Static Nothing 1 ( [], " " )
+                , Highlightable.init Highlightable.Interactive (Just (marker (Just "type-2"))) 2 ( [], "world" )
+                ]
+                    |> program { name = Nothing, joinAdjacentInteractiveHighlights = True }
+                    |> ensureMarks [ [ "hello" ], [ "world" ] ]
                     |> done
         ]
     ]
