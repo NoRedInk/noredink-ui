@@ -19,14 +19,14 @@ import Dict exposing (Dict)
 import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes exposing (css)
 import Markdown
-import Nri.Ui.Block.V3 as Block
+import Nri.Ui.Block.V4 as Block
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.QuestionBox.V2 as QuestionBox
+import Nri.Ui.QuestionBox.V3 as QuestionBox
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V6 as Table
@@ -42,7 +42,7 @@ moduleName =
 
 version : Int
 version =
-    2
+    3
 
 
 {-| -}
@@ -107,11 +107,13 @@ view ellieLinkConfig state =
                 , Css.alignItems Css.center
                 ]
             ]
-            [ UiIcon.sortArrowDown
-                |> Svg.withLabel "Anchor"
-                |> Svg.withWidth (Css.px 30)
-                |> Svg.withHeight (Css.px 30)
-                |> Svg.toHtml
+            [ div [ Attributes.id anchorId ]
+                [ UiIcon.sortArrowDown
+                    |> Svg.withLabel "Anchor"
+                    |> Svg.withWidth (Css.px 30)
+                    |> Svg.withHeight (Css.px 30)
+                    |> Svg.toHtml
+                ]
             , QuestionBox.view (List.map Tuple.second attributes)
             ]
         ]
@@ -144,62 +146,39 @@ view ellieLinkConfig state =
         [ Heading.plaintext "QuestionBox.pointingTo"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
-    , inParagraph
-        [ Block.view
-            [ Block.plaintext "A"
-            , Block.magenta
-            , Block.label "this is an article. \"An\" is also an article."
-            , Block.labelId "article-label-id"
-            , Block.labelPosition (Dict.get "article-label-id" offsets)
-            , Block.withQuestionBox
-                [ QuestionBox.id "left-viewport-question-box-example"
-                , QuestionBox.markdown "Articles are important to get right! Is “the” an article?"
-                , QuestionBox.actions
-                    [ { label = "Yes", onClick = NoOp }
-                    , { label = "No", onClick = NoOp }
-                    ]
-                ]
-                (Dict.get "left-viewport-question-box-example" state.questionBoxMeasurementsById)
-            ]
+    , inParagraph "paragraph-8"
+        [ Block.view [ Block.plaintext "A", Block.emphasize, Block.id "block-8" ]
         , Block.view [ Block.plaintext " " ]
-        , Block.view
-            [ Block.plaintext "tricky"
-            , Block.label "this is an adjective"
-            , Block.yellow
-            , Block.labelId "tricky-label-id"
-            , Block.labelPosition (Dict.get "tricky-label-id" offsets)
-            ]
+        , Block.view [ Block.plaintext "tricky" ]
         , Block.view [ Block.plaintext " " ]
-        , Block.view
-            [ Block.plaintext "example"
-            , Block.cyan
-            ]
+        , Block.view [ Block.plaintext "example" ]
         , Block.view [ Block.plaintext ". Be sure to be " ]
-        , Block.view
-            [ Block.plaintext "careful with content that can get cut off on the left side of the viewport!"
-            , Block.label "warning"
-            , Block.green
-            , Block.labelId "warning-label-id"
-            , Block.labelPosition (Dict.get "warning-label-id" offsets)
+        , Block.view [ Block.plaintext "careful with content that can get cut off on the left side of the viewport!" ]
+        ]
+    , QuestionBox.view
+        [ QuestionBox.pointingTo "block-8" (Dict.get "left-viewport-question-box-example" state.questionBoxMeasurementsById)
+        , QuestionBox.id "left-viewport-question-box-example"
+        , QuestionBox.markdown "Articles are important to get right! Is “A” an article?"
+        , QuestionBox.actions
+            [ { label = "Yes", onClick = NoOp }
+            , { label = "No", onClick = NoOp }
             ]
         ]
-    , inParagraph
+    , inParagraph "paragraph-9"
         [ Block.view [ Block.plaintext "You also need to be careful with content that can get cut off on the right side of the viewport" ]
         , Block.view
             [ Block.plaintext "!"
-            , Block.label "warning"
-            , Block.brown
-            , Block.labelId "warning-2-label-id"
-            , Block.labelPosition (Dict.get "warning-2-label-id" offsets)
-            , Block.withQuestionBox
-                [ QuestionBox.id "right-viewport-question-box-example"
-                , QuestionBox.markdown "Were you careful? It's important to be careful!"
-                , QuestionBox.actions
-                    [ { label = "Yes", onClick = NoOp }
-                    , { label = "No", onClick = NoOp }
-                    ]
-                ]
-                (Dict.get "right-viewport-question-box-example" state.questionBoxMeasurementsById)
+            , Block.emphasize
+            , Block.id "block-9"
+            ]
+        ]
+    , QuestionBox.view
+        [ QuestionBox.pointingTo "block-9" (Dict.get "right-viewport-question-box-example" state.questionBoxMeasurementsById)
+        , QuestionBox.id "right-viewport-question-box-example"
+        , QuestionBox.markdown "Were you careful? It's important to be careful!"
+        , QuestionBox.actions
+            [ { label = "Yes", onClick = NoOp }
+            , { label = "No", onClick = NoOp }
             ]
         ]
     , Table.view
@@ -233,293 +212,331 @@ view ellieLinkConfig state =
         ]
         [ { description = "**Plain block**"
           , example =
-                inParagraph
+                tableExample "paragraph-0"
                     [ Block.view
                         [ Block.plaintext "Dave"
-                        , Block.withQuestionBox [ QuestionBox.id "question-box-0", QuestionBox.markdown "Who?" ]
-                            (Dict.get "question-box-0" state.questionBoxMeasurementsById)
+                        , Block.id "block-0"
                         ]
                     , Block.view [ Block.plaintext " scared his replacement cousin coming out of his room wearing a gorilla mask." ]
                     ]
+                    [ QuestionBox.pointingTo "block-0" (Dict.get "question-box-0" state.questionBoxMeasurementsById)
+                    , QuestionBox.id "question-box-0"
+                    , QuestionBox.markdown "Who?"
+                    ]
           , pattern =
-                Code.fromModule "Block" "view"
-                    ++ Code.listMultiline
-                        [ Code.fromModule "Block" "withQuestionBox"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
-                                , Code.fromModule moduleName "markdown " ++ Code.string "Who?"
-                                ]
-                                2
-                            ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
-                        , "…"
-                        ]
-                        1
+                tableExampleCode
+                    [ Code.fromModule "Block" "view"
+                        ++ Code.listMultiline
+                            [ Code.fromModule "Block" "id " ++ Code.string "block-id"
+                            , Code.fromModule "Block" "plaintext " ++ Code.string "Dave"
+                            ]
+                            3
+                    , "…"
+                    ]
+                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                    , Code.fromModule moduleName "pointingTo "
+                        ++ Code.string "block-id"
+                        ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
+                    , Code.fromModule moduleName "markdown " ++ Code.string "Who?"
+                    ]
           }
         , { description = "**Emphasis block**"
           , example =
-                inParagraph
+                tableExample "paragraph-1"
                     [ Block.view [ Block.plaintext "Spongebob has a beautiful plant " ]
                     , Block.view
                         [ Block.plaintext "above"
                         , Block.emphasize
-                        , Block.withQuestionBox
-                            [ QuestionBox.id "question-box-1"
-                            , QuestionBox.markdown "“Above” is a preposition."
-                            , QuestionBox.actions [ { label = "Try again", onClick = NoOp } ]
-                            ]
-                            (Dict.get "question-box-1" state.questionBoxMeasurementsById)
+                        , Block.id "block-1"
                         ]
                     , Block.view [ Block.plaintext " his TV." ]
                     ]
+                    [ QuestionBox.pointingTo "block-1" (Dict.get "question-box-1" state.questionBoxMeasurementsById)
+                    , QuestionBox.id "question-box-1"
+                    , QuestionBox.markdown "“Above” is a preposition."
+                    , QuestionBox.actions [ { label = "Try again", onClick = NoOp } ]
+                    ]
           , pattern =
-                Code.fromModule "Block" "view"
-                    ++ Code.listMultiline
-                        [ Code.fromModule "Block" "withQuestionBox"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                , Code.fromModule moduleName "markdown " ++ Code.string "“Above” is a preposition."
-                                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
-                                ]
-                                2
-                            ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
-                        , "…"
-                        ]
-                        1
+                tableExampleCode
+                    [ "…"
+                    , Code.fromModule "Block" "view"
+                        ++ Code.listMultiline
+                            [ Code.fromModule "Block" "id " ++ Code.string "block-id"
+                            , Code.fromModule "Block" "emphasize"
+                            , Code.fromModule "Block" "plaintext " ++ Code.string "above"
+                            ]
+                            3
+                    , "…"
+                    ]
+                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                    , Code.fromModule moduleName "pointingTo "
+                        ++ Code.string "block-id"
+                        ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
+                    , Code.fromModule moduleName "markdown " ++ Code.string "“Above” is a preposition."
+                    , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
+                    ]
           }
         , { description = "**Label block**"
           , example =
-                inParagraph
+                tableExample "paragraph-2"
                     [ Block.view [ Block.plaintext "Spongebob has a beautiful plant " ]
                     , Block.view
                         [ Block.plaintext "above his TV"
                         , Block.label "where"
+                        , Block.id "block-2"
                         , Block.labelId "label-1"
                         , Block.labelPosition (Dict.get "label-1" offsets)
                         , Block.yellow
-                        , Block.withQuestionBox
-                            [ QuestionBox.id "question-box-2"
-                            , QuestionBox.markdown "Which word is the preposition?"
-                            , QuestionBox.actions
-                                [ { label = "above", onClick = NoOp }
-                                , { label = "his", onClick = NoOp }
-                                , { label = "TV", onClick = NoOp }
-                                ]
-                            ]
-                            (Dict.get "question-box-2" state.questionBoxMeasurementsById)
                         ]
                     , Block.view [ Block.plaintext "." ]
                     ]
-          , pattern =
-                Code.fromModule "Block" "view"
-                    ++ Code.listMultiline
-                        [ Code.fromModule "Block" "withQuestionBox"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                , Code.fromModule moduleName "markdown " ++ Code.string "Which word is the preposition?"
-                                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
-                                ]
-                                2
-                            ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
-                        , "…"
+                    [ QuestionBox.pointingTo "block-2" (Dict.get "question-box-2" state.questionBoxMeasurementsById)
+                    , QuestionBox.id "question-box-2"
+                    , QuestionBox.markdown "Which word is the preposition?"
+                    , QuestionBox.actions
+                        [ { label = "above", onClick = NoOp }
+                        , { label = "his", onClick = NoOp }
+                        , { label = "TV", onClick = NoOp }
                         ]
-                        1
+                    ]
+          , pattern =
+                tableExampleCode
+                    [ "…"
+                    , Code.fromModule "Block" "view"
+                        ++ Code.listMultiline
+                            [ Code.fromModule "Block" "id " ++ Code.string "block-id"
+                            , Code.fromModule "Block" "label " ++ Code.string "where"
+                            , Code.fromModule "Block" "plaintext " ++ Code.string "above his TV"
+                            ]
+                            3
+                    , "…"
+                    ]
+                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                    , Code.fromModule moduleName "pointingTo "
+                        ++ Code.string "block-id"
+                        ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
+                    , Code.fromModule moduleName "markdown " ++ Code.string "Which word is the preposition?"
+                    , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
+                    ]
           }
         , { description = "**Blank block**"
           , example =
-                inParagraph
-                    [ Block.view
-                        [ Block.plaintext "Superman"
-                        , Block.label "subject"
-                        , Block.labelId "label-2"
-                        , Block.labelPosition (Dict.get "label-2" offsets)
-                        ]
-                    , Block.view [ Block.plaintext " " ]
-                    , Block.view
-                        [ Block.withQuestionBox
-                            [ QuestionBox.id "question-box-3"
-                            , QuestionBox.markdown "Which verb matches the subject?"
-                            , QuestionBox.actions
-                                [ { label = "wrap", onClick = NoOp }
-                                , { label = "wraps", onClick = NoOp }
-                                ]
-                            ]
-                            (Dict.get "question-box-3" state.questionBoxMeasurementsById)
-                        ]
+                tableExample "paragraph-3"
+                    [ Block.view [ Block.plaintext "Superman " ]
+                    , Block.view [ Block.id "block-3" ]
                     , Block.view [ Block.plaintext " gifts with comic book pages." ]
                     ]
-          , pattern =
-                Code.fromModule "Block" "view"
-                    ++ Code.listMultiline
-                        [ Code.fromModule "Block" "withQuestionBox"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                , Code.fromModule moduleName "markdown " ++ Code.string "Which verb matches the subject?"
-                                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
-                                ]
-                                2
-                            ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
-                        , "…"
+                    [ QuestionBox.pointingTo "block-3" (Dict.get "question-box-3" state.questionBoxMeasurementsById)
+                    , QuestionBox.id "question-box-3"
+                    , QuestionBox.markdown "Which verb matches the subject?"
+                    , QuestionBox.actions
+                        [ { label = "wrap", onClick = NoOp }
+                        , { label = "wraps", onClick = NoOp }
                         ]
-                        1
+                    ]
+          , pattern =
+                tableExampleCode
+                    [ "…"
+                    , Code.fromModule "Block" "view "
+                        ++ Code.list [ Code.fromModule "Block" "id " ++ Code.string "block-id" ]
+                    , "…"
+                    ]
+                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                    , Code.fromModule moduleName "pointingTo "
+                        ++ Code.string "block-id"
+                        ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
+                    , Code.fromModule moduleName "markdown " ++ Code.string "Which verb matches the subject?"
+                    , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
+                    ]
           }
         , { description = "**Labelled blank block**"
           , example =
-                inParagraph
+                tableExample "paragraph-4"
                     [ Block.view [ Block.plaintext "Dave " ]
                     , Block.view
                         [ Block.label "verb"
+                        , Block.id "block-4"
                         , Block.labelId "label-3"
                         , Block.labelPosition (Dict.get "label-3" offsets)
-                        , Block.cyan
-                        , Block.withQuestionBox
-                            [ QuestionBox.id "question-box-4"
-                            , QuestionBox.markdown "What did he do?"
-                            , QuestionBox.actions
-                                [ { label = "scared", onClick = NoOp }
-                                , { label = "scarred", onClick = NoOp }
-                                , { label = "scarified", onClick = NoOp }
-                                ]
-                            ]
-                            (Dict.get "question-box-4" state.questionBoxMeasurementsById)
                         ]
                     , Block.view [ Block.plaintext " his replacement cousin coming out of his room wearing a gorilla mask." ]
                     ]
-          , pattern =
-                Code.fromModule "Block" "view"
-                    ++ Code.listMultiline
-                        [ Code.fromModule "Block" "withQuestionBox"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                , Code.fromModule moduleName "markdown " ++ Code.string "What did he do?"
-                                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
-                                ]
-                                2
-                            ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
-                        , "…"
-                        ]
-                        1
-          }
-        , { description = "**Blank with emphasis block** with the question box pointing to the entire emphasis"
-          , example =
-                inParagraph
-                    [ Block.view
-                        [ Block.emphasize
-                        , Block.cyan
-                        , Block.content (Block.phrase "Moana " ++ [ Block.blank ])
-                        , Block.withQuestionBox
-                            [ QuestionBox.id "question-box-5"
-                            , QuestionBox.markdown "Pointing at the entire emphasis"
-                            ]
-                            (Dict.get "question-box-5" state.questionBoxMeasurementsById)
+                    [ QuestionBox.pointingTo "block-4" (Dict.get "question-box-4" state.questionBoxMeasurementsById)
+                    , QuestionBox.id "question-box-4"
+                    , QuestionBox.markdown "What did he do?"
+                    , QuestionBox.actions
+                        [ { label = "scared", onClick = NoOp }
+                        , { label = "scarred", onClick = NoOp }
+                        , { label = "scarified", onClick = NoOp }
                         ]
                     ]
           , pattern =
-                Code.fromModule "Block" "view"
-                    ++ Code.listMultiline
-                        [ Code.fromModule "Block" "withQuestionBox"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the entire emphasis"
-                                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
-                                ]
-                                2
-                            ++ (Code.newlineWithIndent 2 ++ "model.questionBoxMeasurement")
-                        , "…"
+                tableExampleCode
+                    [ "…"
+                    , Code.fromModule "Block" "view "
+                        ++ Code.listMultiline
+                            [ Code.fromModule "Block" "id " ++ Code.string "block-id"
+                            , Code.fromModule "Block" "label " ++ Code.string "verb"
+                            , "…"
+                            ]
+                            3
+                    , "…"
+                    ]
+                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                    , Code.fromModule moduleName "pointingTo "
+                        ++ Code.string "block-id"
+                        ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
+                    , Code.fromModule moduleName "markdown " ++ Code.string "What did he do?"
+                    , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
+                    ]
+          }
+        , { description = "**Blank with emphasis block** with the question box pointing to the entire emphasis"
+          , example =
+                tableExample "paragraph-5"
+                    [ Block.view
+                        [ Block.emphasize
+                        , Block.content (Block.phrase "Moana " ++ [ Block.blank ])
+                        , Block.id "block-5"
                         ]
-                        1
+                    ]
+                    [ QuestionBox.pointingTo "block-5" (Dict.get "question-box-5" state.questionBoxMeasurementsById)
+                    , QuestionBox.id "question-box-5"
+                    , QuestionBox.markdown "Pointing at the entire emphasis"
+                    ]
+          , pattern =
+                tableExampleCode
+                    [ Code.fromModule "Block" "view "
+                        ++ Code.listMultiline
+                            [ Code.fromModule "Block" "id " ++ Code.string "block-id"
+                            , Code.fromModule "Block" "emphasize"
+                            , Code.fromModule "Block" "content "
+                                ++ Code.newlineWithIndent 4
+                                ++ Code.withParens (Code.fromModule "Block" "phrase " ++ Code.string "Moana ++ " ++ Code.list [ Code.fromModule "Block" "blank" ])
+                            ]
+                            3
+                    ]
+                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                    , Code.fromModule moduleName "pointingTo "
+                        ++ Code.string "block-id"
+                        ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
+                    , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the entire emphasis"
+                    ]
           }
         , { description = "**Blank with emphasis block** with the question box pointing to a particular word"
           , example =
-                inParagraph
+                tableExample "paragraph-6"
                     [ Block.view
                         [ Block.emphasize
-                        , Block.cyan
                         , Block.content
-                            (Block.wordWithQuestionBox "Moana"
-                                [ QuestionBox.id "question-box-6"
-                                , QuestionBox.markdown "Pointing at the first word"
-                                ]
-                                (Dict.get "question-box-6" state.questionBoxMeasurementsById)
+                            (Block.wordWithId
+                                { word = "Moana"
+                                , id = "block-6"
+                                }
                                 :: [ Block.space, Block.blank ]
                             )
                         ]
                     ]
+                    [ QuestionBox.pointingTo "block-6" (Dict.get "question-box-6" state.questionBoxMeasurementsById)
+                    , QuestionBox.id "question-box-6"
+                    , QuestionBox.markdown "Pointing at the first word"
+                    ]
           , pattern =
-                Code.fromModule "Block" "view"
-                    ++ Code.listMultiline
-                        [ Code.fromModule "Block" "content"
-                            ++ Code.withParensMultiline
-                                [ (Code.fromModule "Block" "wordWithQuestionBox " ++ Code.string "Moana")
-                                    ++ Code.listMultiline
-                                        [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                        , Code.fromModule moduleName "pointingTo " ++ "model.questionBoxMeasurement"
-                                        , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the first word"
-                                        , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
-                                        ]
-                                        3
-                                    ++ (Code.newlineWithIndent 3 ++ "model.questionBoxMeasurement")
-                                , ":: " ++ Code.list [ "Block.space", "Block.blank" ]
-                                ]
-                                2
-                        , "…"
-                        ]
-                        1
+                tableExampleCode
+                    [ Code.fromModule "Block" "id " ++ Code.string "block-id"
+                    , Code.fromModule "Block" "emphasize"
+                    , Code.fromModule "Block" "content "
+                        ++ Code.newlineWithIndent 3
+                        ++ Code.withParens
+                            (Code.fromModule "Block" "wordWithId "
+                                ++ Code.recordMultiline
+                                    [ ( "word", Code.string "Moana" )
+                                    , ( "id", Code.string "block-id" )
+                                    ]
+                                    4
+                                ++ Code.newlineWithIndent 4
+                                ++ ":: "
+                                ++ Code.list [ Code.fromModule "Block" "space", Code.fromModule "Block" "blank" ]
+                                ++ Code.newlineWithIndent 3
+                            )
+                    ]
+                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                    , Code.fromModule moduleName "pointingTo "
+                        ++ Code.string "block-id"
+                        ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
+                    , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the first word"
+                    ]
           }
         , { description = "**Blank with emphasis block** with the question box pointing to a blank"
           , example =
-                inParagraph
+                tableExample "paragraph-7"
                     [ Block.view
                         [ Block.emphasize
-                        , Block.cyan
                         , Block.content
                             (Block.phrase "Moana "
-                                ++ [ Block.blankWithQuestionBox
-                                        [ QuestionBox.id "question-box-7"
-                                        , QuestionBox.markdown "Pointing at the blank"
-                                        ]
-                                        (Dict.get "question-box-7" state.questionBoxMeasurementsById)
-                                   ]
+                                ++ [ Block.blankWithId "block-7" ]
                             )
                         ]
                     ]
+                    [ QuestionBox.pointingTo "block-7" (Dict.get "question-box-7" state.questionBoxMeasurementsById)
+                    , QuestionBox.id "question-box-7"
+                    , QuestionBox.markdown "Pointing at the blank"
+                    ]
           , pattern =
-                Code.fromModule "Block" "view"
-                    ++ Code.listMultiline
-                        [ Code.fromModule "Block" "content"
-                            ++ Code.withParensMultiline
-                                [ Code.fromModule "Block" "phrase " ++ Code.string "Moana"
-                                , " ++ "
-                                    ++ Code.listMultiline
-                                        [ Code.fromModule "Block" "blankWithQuestionBox"
-                                            ++ Code.listMultiline
-                                                [ Code.fromModule moduleName "id " ++ Code.string "question-box"
-                                                , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the blank"
-                                                , Code.fromModule moduleName "actions " ++ Code.list [ "…" ]
-                                                ]
-                                                4
-                                            ++ (Code.newlineWithIndent 4 ++ "model.questionBoxMeasurement")
-                                        ]
-                                        3
-                                ]
-                                2
-                        , "…"
-                        ]
-                        1
+                tableExampleCode
+                    [ Code.fromModule "Block" "id " ++ Code.string "block-id"
+                    , Code.fromModule "Block" "emphasize"
+                    , Code.fromModule "Block" "content "
+                        ++ Code.newlineWithIndent 3
+                        ++ Code.withParens
+                            (Code.fromModule "Block" "phrase "
+                                ++ Code.string "Moana "
+                                ++ Code.newlineWithIndent 4
+                                ++ " ++ "
+                                ++ Code.list [ Code.fromModule "Block" "blankWithId " ++ Code.string "block-id" ]
+                                ++ Code.newlineWithIndent 3
+                            )
+                    ]
+                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                    , Code.fromModule moduleName "pointingTo "
+                        ++ Code.string "block-id"
+                        ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
+                    , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the blank"
+                    ]
           }
         ]
     ]
 
 
-inParagraph : List (Html msg) -> Html msg
-inParagraph =
+tableExample : String -> List (Html msg) -> List (QuestionBox.Attribute msg) -> Html msg
+tableExample paragraphId paragraphContents questionBoxAttributes =
+    div [] [ inParagraph paragraphId paragraphContents, QuestionBox.view questionBoxAttributes ]
+
+
+tableExampleCode : List String -> List String -> String
+tableExampleCode blockAttributes questionBoxAttributes =
+    "div []"
+        ++ Code.listMultiline
+            [ "p [ id \"paragraph-id\" ]" ++ Code.listMultiline blockAttributes 2
+            , Code.fromModule moduleName "view" ++ Code.listMultiline questionBoxAttributes 2
+            ]
+            1
+
+
+inParagraph : String -> List (Html msg) -> Html msg
+inParagraph id =
     p
-        [ css
-            [ Css.margin2 Spacing.verticalSpacerPx Css.zero
+        [ Attributes.id id
+        , css
+            [ Css.margin Css.zero
             , Fonts.quizFont
             , Css.fontSize (Css.px 30)
             ]
         ]
+
+
+anchorId : String
+anchorId =
+    "anchor-id"
 
 
 interactiveExampleId : String
@@ -545,7 +562,13 @@ type alias State =
             { label : Element
             , labelContent : Element
             }
-    , questionBoxMeasurementsById : Dict String Element
+    , questionBoxMeasurementsById :
+        Dict
+            String
+            { block : Element
+            , paragraph : Element
+            , questionBox : Element
+            }
     }
 
 
@@ -609,7 +632,7 @@ initAttributes =
             )
         |> ControlExtra.optionalListItem "type"
             (CommonControls.choice moduleName
-                [ ( "pointingTo Nothing", QuestionBox.pointingTo Nothing )
+                [ ( "pointingTo \"anchor-id\" Nothing", QuestionBox.pointingTo anchorId Nothing )
                 , ( "standalone", QuestionBox.standalone )
                 ]
             )
@@ -644,7 +667,15 @@ type Msg
             , labelContent : Element
             }
         )
-    | GotQuestionBoxMeasurements String (Result Dom.Error Element)
+    | GotQuestionBoxMeasurements
+        String
+        (Result
+            Dom.Error
+            { block : Element
+            , paragraph : Element
+            , questionBox : Element
+            }
+        )
 
 
 {-| -}
@@ -662,24 +693,19 @@ update msg state =
             , Cmd.batch
                 (List.map measureBlockLabel
                     [ "label-1"
-                    , "label-2"
                     , "label-3"
-                    , "article-label-id"
-                    , "tricky-label-id"
-                    , "warning-label-id"
-                    , "warning-2-label-id"
                     ]
                     ++ List.map measureQuestionBox
-                        [ "question-box-0"
-                        , "question-box-1"
-                        , "question-box-2"
-                        , "question-box-3"
-                        , "question-box-4"
-                        , "question-box-5"
-                        , "question-box-6"
-                        , "question-box-7"
-                        , "left-viewport-question-box-example"
-                        , "right-viewport-question-box-example"
+                        [ ( "paragraph-0", "block-0", "question-box-0" )
+                        , ( "paragraph-1", "block-1", "question-box-1" )
+                        , ( "paragraph-2", "block-2", "question-box-2" )
+                        , ( "paragraph-3", "block-3", "question-box-3" )
+                        , ( "paragraph-4", "block-4", "question-box-4" )
+                        , ( "paragraph-5", "block-5", "question-box-5" )
+                        , ( "paragraph-6", "block-6", "question-box-6" )
+                        , ( "paragraph-7", "block-7", "question-box-7" )
+                        , ( "paragraph-8", "block-8", "left-viewport-question-box-example" )
+                        , ( "paragraph-9", "block-9", "right-viewport-question-box-example" )
                         ]
                 )
             )
@@ -715,6 +741,16 @@ measureBlockLabel labelId =
         |> Task.attempt (GotBlockLabelMeasurements labelId)
 
 
-measureQuestionBox : String -> Cmd Msg
-measureQuestionBox id =
-    Task.attempt (GotQuestionBoxMeasurements id) (Dom.getElement id)
+measureQuestionBox : ( String, String, String ) -> Cmd Msg
+measureQuestionBox ( paragraphId, blockId, questionBoxId ) =
+    Task.map3
+        (\paragraph block questionBox ->
+            { block = block
+            , paragraph = paragraph
+            , questionBox = questionBox
+            }
+        )
+        (Dom.getElement paragraphId)
+        (Dom.getElement blockId)
+        (Dom.getElement questionBoxId)
+        |> Task.attempt (GotQuestionBoxMeasurements questionBoxId)
