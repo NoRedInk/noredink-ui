@@ -3,14 +3,14 @@ module Nri.Ui.Highlighter.V2 exposing
     , init, update
     , view, static, staticWithTags
     , viewMarkdown, staticMarkdown, staticMarkdownWithTags
-    , Intent(..), emptyIntent, hasChanged, HasChanged(..)
+    , Intent(..), hasChanged, HasChanged(..)
     , removeHighlights
     , asFragmentTuples, usedMarkers, text
     )
 
 {-| Changes from V1:
 
-  - TODO
+  - Remove emptyIntent, which is not used
 
 Highlighter provides a view/model/update to display a view to highlight text and show marks.
 
@@ -30,7 +30,7 @@ Highlighter provides a view/model/update to display a view to highlight text and
 
 ## Intents
 
-@docs Intent, emptyIntent, hasChanged, HasChanged
+@docs Intent, hasChanged, HasChanged
 
 
 # Setters
@@ -41,11 +41,6 @@ Highlighter provides a view/model/update to display a view to highlight text and
 # Getters
 
 @docs asFragmentTuples, usedMarkers, text
-
-
-# Events
-
-TODO: Add documentation about how to wire in event listeners and subscriptions so the highlighter is functional!
 
 -}
 
@@ -218,15 +213,6 @@ type Intent
 
 type alias ListenTo =
     Maybe String
-
-
-{-| -}
-emptyIntent : Intent
-emptyIntent =
-    Intent
-        { listenTo = Nothing
-        , changed = NotChanged
-        }
 
 
 {-| Get intent based on the resulting model from `update`.
