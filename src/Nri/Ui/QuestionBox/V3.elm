@@ -212,15 +212,6 @@ viewPointingTo config blockId measurements =
                 )
                 measurements
 
-        isOnFinalLine =
-            measurements
-                |> Maybe.map
-                    (\{ block, paragraph } ->
-                        (block.element.y + block.element.height + 8)
-                            >= (paragraph.element.y + paragraph.element.height)
-                    )
-                |> Maybe.withDefault True
-
         newQuestionBoxPosition { block, questionBox } =
             -- position in the middle of the block
             (block.element.x + (block.element.width / 2))
@@ -229,11 +220,7 @@ viewPointingTo config blockId measurements =
     in
     viewBalloon config
         (Just blockId)
-        [ if isOnFinalLine then
-            Balloon.onBottom
-
-          else
-            Balloon.containerCss [ Css.marginTop (Css.px 8) ]
+        [ Balloon.containerCss [ Css.marginTop (Css.px 8) ]
         , Balloon.nriDescription "pointing-to-balloon"
         , case config.id of
             Just id_ ->
