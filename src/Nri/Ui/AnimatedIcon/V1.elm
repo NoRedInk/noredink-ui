@@ -1,8 +1,8 @@
-module Nri.Ui.AnimatedIcon.V1 exposing (mobileOpenClose, arrowOpenClose)
+module Nri.Ui.AnimatedIcon.V1 exposing (mobileOpenClose, arrowRightDown)
 
 {-|
 
-@docs mobileOpenClose, arrowOpenClose
+@docs mobileOpenClose, arrowRightDown
 
 -}
 
@@ -59,10 +59,10 @@ mobileOpenClose isOpen =
         ]
 
 
-{-| An arrow that animates between pointing down and pointing up.
+{-| An arrow that animates between pointing right and pointing down. Typically used for disclosures and accordions.
 -}
-arrowOpenClose : Bool -> Nri.Ui.Svg.V1.Svg
-arrowOpenClose isOpen =
+arrowRightDown : Bool -> Nri.Ui.Svg.V1.Svg
+arrowRightDown isOpen =
     Nri.Ui.Svg.V1.withCss
         [ Css.property "transition" "transform 0.1s"
         , if isOpen then

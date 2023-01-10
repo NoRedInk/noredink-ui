@@ -46,8 +46,8 @@ example =
         IconExamples.preview
             [ AnimatedIcon.mobileOpenClose False
             , AnimatedIcon.mobileOpenClose True
-            , AnimatedIcon.arrowOpenClose False
-            , AnimatedIcon.arrowOpenClose True
+            , AnimatedIcon.arrowRightDown False
+            , AnimatedIcon.arrowRightDown True
             ]
     , view =
         \ellieLinkConfig state ->
@@ -79,8 +79,8 @@ example =
                         [ { sectionName = "mobileOpenClose"
                           , code = toCode "mobileOpenClose"
                           }
-                        , { sectionName = "arrowOpenClose"
-                          , code = toCode "arrowOpenClose"
+                        , { sectionName = "arrowRightDown"
+                          , code = toCode "arrowRightDown"
                           }
                         ]
                 }
@@ -110,7 +110,7 @@ example =
                     }
                 ]
                 [ { name = "mobileOpenClose", render = AnimatedIcon.mobileOpenClose }
-                , { name = "arrowOpenClose", render = AnimatedIcon.arrowOpenClose }
+                , { name = "arrowRightDown", render = AnimatedIcon.arrowRightDown }
                 ]
             ]
     }
