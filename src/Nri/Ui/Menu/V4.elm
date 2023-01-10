@@ -52,6 +52,9 @@ import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (class, classList, css)
 import Html.Styled.Events as Events
 import Json.Decode
+import Nri.Ui.AnimatedIcon.V1 as AnimatedIcon
+import Nri.Ui.Button.V10 as Button
+import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1
@@ -333,58 +336,40 @@ button attributes title =
     in
     StandardButton
         (\menuConfig buttonAttributes ->
-            Html.button
-                ([ classList
-                    [ ( "ToggleButton", True )
-                    , ( "WithBorder", buttonConfig.hasBorder )
-                    , ( FocusRing.customClass, True )
-                    ]
-                 , css
-                    [ Nri.Ui.Fonts.V1.baseFont
-                    , fontSize (px 15)
-                    , backgroundColor Colors.white
-                    , border zero
-                    , padding (px 4)
-                    , textAlign left
-                    , height (pct 100)
-                    , fontWeight (int 600)
-                    , cursor pointer
-                    , pseudoClass "focus-visible"
-                        [ Css.outline3 (Css.px 2) Css.solid Css.transparent
-                        , FocusRing.boxShadows []
+            if buttonConfig.hasBorder then
+                Button.button title
+                    [ Button.tertiary
+                    , Button.css
+                        [ Css.color Colors.gray20 |> Css.important
+                        , Css.hover [ Css.backgroundColor Colors.white ]
                         ]
+                    , Button.custom buttonAttributes
+                    , Maybe.map (Svg.withColor Colors.azure >> Button.icon) buttonConfig.icon
+                        |> Maybe.withDefault (Button.css [])
                     , if menuConfig.isDisabled then
-                        cursor notAllowed
+                        Button.disabled
 
                       else
-                        Css.batch []
-                    , Css.batch <|
-                        if buttonConfig.hasBorder then
-                            [ border3 (px 1) solid Colors.gray75
-                            , if menuConfig.isDisabled then
-                                backgroundColor Colors.gray92
-
-                              else
-                                borderBottom3 (px 3) solid Colors.gray75
-                            , borderRadius (px 8)
-                            , padding2 (px 10) (px 15)
-                            ]
-
-                        else
-                            []
-                    , Maybe.map (\w -> Css.width (Css.px (toFloat w))) buttonConfig.buttonWidth
-                        |> Maybe.withDefault (Css.batch [])
+                        Button.css []
+                    , Maybe.map Button.exactWidth buttonConfig.buttonWidth
+                        |> Maybe.withDefault (Button.css [])
                     ]
-                 ]
-                    ++ buttonAttributes
-                )
-                [ div styleButtonInner
-                    [ viewTitle title buttonConfig menuConfig
 
-                    --, -- TODO: re-add arrow
-                    --viewArrow menuConfig
+            else
+                ClickableText.button title
+                    [ ClickableText.css [ Css.color Colors.gray20 |> Css.important ]
+                    , ClickableText.custom buttonAttributes
+                    , Maybe.map (Svg.withColor Colors.azure >> ClickableText.icon) buttonConfig.icon
+                        |> Maybe.withDefault (ClickableText.css [])
+                    , ClickableText.disabled menuConfig.isDisabled
+                    , ClickableText.css <|
+                        case buttonConfig.buttonWidth of
+                            Just w ->
+                                [ Css.width (Css.px (toFloat w)) ]
+
+                            Nothing ->
+                                []
                     ]
-                ]
         )
 
 
