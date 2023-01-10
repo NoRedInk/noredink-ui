@@ -688,9 +688,9 @@ renderIcons config includeBorder =
 
         renderRightIcon =
             Svg.withCss
-                [ Css.width (Css.px (iconWidth * 2 / 5 - 1))
-                , Css.height (Css.px (iconWidth * 2 / 5 - 1))
-                , Css.marginLeft (Css.px 1)
+                [ Css.width (Css.px (iconWidth * 2 / 5 - 4))
+                , Css.height (Css.px (iconWidth * 2 / 5 - 4))
+                , Css.marginLeft (Css.px 4)
                 ]
                 >> Svg.toHtml
     in
