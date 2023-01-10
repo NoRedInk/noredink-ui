@@ -372,14 +372,8 @@ initSettings =
 
 controlAlignment : Control ( String, Menu.Attribute msg )
 controlAlignment =
-    Control.choice
-        [ ( "Left"
-          , Control.value ( "Menu.alignment Menu.Left", Menu.alignment Menu.Left )
-          )
-        , ( "Right"
-          , Control.value ( "Menu.alignment Menu.Right", Menu.alignment Menu.Right )
-          )
-        ]
+    CommonControls.choice moduleName
+        [ ( "alignLeft", Menu.alignLeft ), ( "alignRight", Menu.alignRight ) ]
 
 
 controlTrigger : Control ( String, Menu.Attribute msg )

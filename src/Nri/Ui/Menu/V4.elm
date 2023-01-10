@@ -1,11 +1,12 @@
 module Nri.Ui.Menu.V4 exposing
     ( view, Attribute
     , isOpen, isDisabled
+    , opensOnHover
     , defaultTrigger, button, clickableText, clickableSvg
     , buttonId
     , navMenuList, disclosure, dialog
-    , menuWidth, menuId, menuZIndex, opensOnHover
-    , Alignment(..), alignment
+    , menuWidth, menuId, menuZIndex
+    , alignLeft, alignRight
     , Entry, group, entry
     )
 
@@ -26,6 +27,7 @@ A togglable menu view and related buttons.
 ## Menu state
 
 @docs isOpen, isDisabled
+@docs opensOnHover
 
 
 ## Triggering button options
@@ -37,8 +39,8 @@ A togglable menu view and related buttons.
 ## Menu attributes
 
 @docs navMenuList, disclosure, dialog
-@docs menuWidth, menuId, menuZIndex, opensOnHover
-@docs Alignment, alignment
+@docs menuWidth, menuId, menuZIndex
+@docs alignLeft, alignRight
 
 
 ## Menu content
@@ -115,11 +117,28 @@ type Purpose
 -- Generators for Attribute
 
 
-{-| Where the menu popover should appear relative to the button
+{-| Whether the menu content sticks to the left or right side of the button
 -}
-alignment : Alignment -> Attribute msg
-alignment value =
-    Attribute <| \config -> { config | alignment = value }
+type Alignment
+    = Left
+    | Right
+
+
+{-| Align the menu popover on the left side of the triggering button.
+-}
+alignLeft : Attribute msg
+alignLeft =
+    Attribute <| \config -> { config | alignment = Left }
+
+
+{-| Align the menu popover on the right side of the triggering button.
+
+Right (this property) is the default behavior.
+
+-}
+alignRight : Attribute msg
+alignRight =
+    Attribute <| \config -> { config | alignment = Right }
 
 
 {-| Whether the menu is open
@@ -258,13 +277,6 @@ Pass in the id you'd like for your menu item, which will be used to manage the f
 entry : String -> (List (Html.Attribute msg) -> Html msg) -> Entry msg
 entry id =
     Single id
-
-
-{-| Whether the menu content sticks to the left or right side of the button
--}
-type Alignment
-    = Left
-    | Right
 
 
 
