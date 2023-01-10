@@ -201,7 +201,7 @@ view ellieLinkConfig state =
                     (List.filterMap identity
                         [ Just <| Menu.buttonId "1stPeriodEnglish__button"
                         , Just <| Menu.menuId "1stPeriodEnglish__menu"
-                        , Just <| Menu.button "1st Period English with Mx. Trainer" []
+                        , Just <| Menu.defaultTrigger "1st Period English with Mx. Trainer" []
                         , Just <| Menu.isOpen (isOpen "1stPeriodEnglish")
                         ]
                     )
@@ -255,7 +255,7 @@ view ellieLinkConfig state =
                     [ Menu.buttonId "dropdown_list__button"
                     , Menu.menuId "dropdown_list__menu"
                     , Menu.navMenuList
-                    , Menu.button "Dropdown list" []
+                    , Menu.defaultTrigger "Dropdown list" []
                     , Menu.isOpen (isOpen "dropdown_list")
                     ]
                     { focusAndToggle = FocusAndToggle "dropdown_list"
@@ -290,7 +290,7 @@ view ellieLinkConfig state =
                     [ Menu.buttonId "disclosure__button"
                     , Menu.menuId "disclosure__menu"
                     , Menu.disclosure { lastId = "disclosure__login__button" }
-                    , Menu.button "Log In disclosure" []
+                    , Menu.defaultTrigger "Log In disclosure" []
                     , Menu.isOpen (isOpen "with_disclosure")
                     ]
                     { focusAndToggle = FocusAndToggle "with_disclosure"
@@ -320,7 +320,7 @@ view ellieLinkConfig state =
                     [ Menu.buttonId "dialog__button"
                     , Menu.menuId "dialog__menu"
                     , Menu.dialog { firstId = "dialog__username__input", lastId = "dialog__login__button" }
-                    , Menu.button "Log In dialog" []
+                    , Menu.defaultTrigger "Log In dialog" []
                     , Menu.isOpen (isOpen "dialog")
                     ]
                     { focusAndToggle = FocusAndToggle "dialog"
@@ -396,7 +396,16 @@ controlAlignment =
 controlTrigger : Control ( String, Menu.Attribute msg )
 controlTrigger =
     Control.choice
-        [ ( "button"
+        [ ( "defaultTrigger"
+          , Control.map
+                (\( c, a ) ->
+                    ( "Menu.defaultTrigger " ++ Code.string "Menu" ++ " " ++ Code.list c
+                    , Menu.defaultTrigger "Menu" a
+                    )
+                )
+                controlButtonAttributes
+          )
+        , ( "button"
           , Control.map
                 (\( c, a ) ->
                     ( "Menu.button " ++ Code.string "Menu" ++ " " ++ Code.list c

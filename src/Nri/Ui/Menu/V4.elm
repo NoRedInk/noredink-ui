@@ -3,7 +3,7 @@ module Nri.Ui.Menu.V4 exposing
     , Attribute
     , isOpen, isDisabled
     , Button
-    , button, clickableText, clickableSvg
+    , defaultTrigger, button, clickableText, clickableSvg
     , buttonId
     , navMenuList, disclosure, dialog
     , menuWidth, menuId, menuZIndex, opensOnHover
@@ -34,7 +34,7 @@ A togglable menu view and related buttons.
 ## Triggering button options
 
 @docs Button
-@docs button, clickableText, clickableSvg
+@docs defaultTrigger, button, clickableText, clickableSvg
 @docs buttonId
 
 
@@ -326,11 +326,32 @@ defaultButton title attributes =
         )
 
 
-{-| Defines a standard `Button` for the Menu.
+{-| Use Button with default styles as the triggering element for the Menu.
+-}
+defaultTrigger : String -> List (Button.Attribute msg) -> Attribute msg
+defaultTrigger title attributes =
+    setButton (defaultButton title attributes)
+
+
+{-| Use Button as the triggering element for the Menu.
 -}
 button : String -> List (Button.Attribute msg) -> Attribute msg
 button title attributes =
-    setButton (defaultButton title attributes)
+    Button
+        (\menuConfig buttonAttributes ->
+            Button.button title
+                ([ Button.custom buttonAttributes
+                 , if menuConfig.isDisabled then
+                    Button.disabled
+
+                   else
+                    Button.css []
+                 , Button.rightIcon (AnimatedIcon.arrowDownUp menuConfig.isOpen)
+                 ]
+                    ++ attributes
+                )
+        )
+        |> setButton
 
 
 {-| Use ClickableText as the triggering element for the Menu.
