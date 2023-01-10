@@ -21,6 +21,7 @@ import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Button.V10 as Button
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
@@ -144,51 +145,23 @@ view ellieLinkConfig state =
         , toExampleCode =
             \settings ->
                 let
-                    toCode : String -> String
-                    toCode buttonCode =
+                    code : String
+                    code =
                         moduleName
                             ++ ".view "
-                            ++ Code.list (buttonCode :: List.map Tuple.first settings)
+                            ++ Code.listMultiline
+                                (("Menu.isOpen " ++ Code.bool (isOpen "interactiveExample"))
+                                    :: List.map Tuple.first settings
+                                )
+                                1
                             ++ Code.recordMultiline
                                 [ ( "entries", "[]" )
-                                , ( "isOpen", "True" )
                                 , ( "focusAndToggle", "identity -- TODO: you will need a real msg type here" )
                                 ]
                                 1
                 in
-                [ { sectionName = "Menu.button"
-                  , code =
-                        "Menu.button "
-                            ++ Code.string "1st Period English with Mx. Trainer"
-                            ++ Code.list []
-                            |> toCode
-                  }
-                , { sectionName = "Menu.clickableText"
-                  , code =
-                        "Menu.clickableText "
-                            ++ Code.string "1st Period English with Mx. Trainer"
-                            ++ Code.list []
-                            |> toCode
-                  }
-                , { sectionName = "Menu.clickableSvg"
-                  , code =
-                        "Menu.clickableSvg"
-                            ++ Code.newlineWithIndent 2
-                            ++ Code.string "1st Period English with Mx. Trainer"
-                            ++ Code.newlineWithIndent 2
-                            ++ "UiIcon.gear"
-                            ++ Code.newlineWithIndent 2
-                            ++ Code.list []
-                            |> toCode
-                  }
-                , { sectionName = "Menu.custom"
-                  , code =
-                        "Menu.custom <|"
-                            ++ Code.newlineWithIndent 2
-                            ++ "\\buttonAttributes ->"
-                            ++ Code.newlineWithIndent 3
-                            ++ "button buttonAttributes [ text \"Custom Menu trigger button\" ]"
-                            |> toCode
+                [ { sectionName = "Example"
+                  , code = code
                   }
                 ]
         }
@@ -405,6 +378,7 @@ initSettings =
         |> ControlExtra.optionalBoolListItem "isDisabled" ( "Menu.isDisabled True", Menu.isDisabled True )
         |> ControlExtra.optionalListItem "menuWidth" controlMenuWidth
         |> ControlExtra.optionalBoolListItem "opensOnHover" ( "Menu.opensOnHover True", Menu.opensOnHover True )
+        |> ControlExtra.listItem "triggering element" controlTrigger
 
 
 controlAlignment : Control ( String, Menu.Attribute msg )
@@ -417,6 +391,83 @@ controlAlignment =
           , Control.value ( "Menu.alignment Menu.Right", Menu.alignment Menu.Right )
           )
         ]
+
+
+controlTrigger : Control ( String, Menu.Attribute msg )
+controlTrigger =
+    Control.choice
+        [ ( "button"
+          , Control.map
+                (\( c, a ) ->
+                    ( "Menu.button " ++ Code.string "Menu" ++ " " ++ Code.list c
+                    , Menu.button "Menu" a
+                    )
+                )
+                controlButtonAttributes
+          )
+        , ( "clickableText"
+          , Control.map
+                (\( c, a ) ->
+                    ( "Menu.clickableText " ++ Code.string "Menu" ++ " " ++ Code.list c
+                    , Menu.clickableText "Menu" a
+                    )
+                )
+                controlClickableTextAttributes
+          )
+        , ( "clickableSvg"
+          , Control.map
+                (\( ( iconStr, icon ), ( withBorderStr, withBorder ) ) ->
+                    ( "Menu.clickableSvg "
+                        ++ Code.string "Menu"
+                        ++ " "
+                        ++ iconStr
+                        ++ " "
+                        ++ Code.list
+                            (if withBorder then
+                                [ "ClickableSvg.withBorder", "ClickableSvg.exactWidth 55" ]
+
+                             else
+                                []
+                            )
+                    , Menu.clickableSvg "Menu"
+                        icon
+                        (if withBorder then
+                            [ ClickableSvg.withBorder, ClickableSvg.exactWidth 55 ]
+
+                         else
+                            []
+                        )
+                    )
+                )
+                (Control.record (\a b -> ( a, b ))
+                    |> Control.field "icon" (CommonControls.rotatedUiIcon 1)
+                    |> Control.field "withBorder" (ControlExtra.bool True)
+                )
+          )
+        ]
+
+
+controlButtonAttributes : Control ( List String, List (Button.Attribute msg) )
+controlButtonAttributes =
+    ControlExtra.list
+        |> CommonControls.iconNotCheckedByDefault "Button" Button.icon
+        |> ControlExtra.optionalListItem "exactWidth"
+            (Control.map
+                (\i ->
+                    ( Code.fromModule "Button" "exactWidth " ++ String.fromInt i
+                    , Button.exactWidth i
+                    )
+                )
+                (ControlExtra.int 220)
+            )
+        |> Control.map List.unzip
+
+
+controlClickableTextAttributes : Control ( List String, List (ClickableText.Attribute msg) )
+controlClickableTextAttributes =
+    ControlExtra.list
+        |> CommonControls.iconNotCheckedByDefault "ClickableText" ClickableText.icon
+        |> Control.map List.unzip
 
 
 controlMenuWidth : Control ( String, Menu.Attribute msg )
