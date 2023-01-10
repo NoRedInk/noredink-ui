@@ -1,10 +1,12 @@
 module Nri.Ui.Menu.V4 exposing
-    ( view, button, custom, Config
-    , Attribute, Button, ButtonAttribute
+    ( view, Config
+    , Attribute
+    , Button, ButtonAttribute
+    , button, clickableText, custom
     , navMenuList, disclosure, dialog
     , isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover
     , Alignment(..), alignment
-    , icon, wrapping, hasBorder, buttonWidth
+    , icon, wrapping, buttonWidth
     , TitleWrapping(..)
     , Entry, group, entry
     )
@@ -20,8 +22,14 @@ A togglable menu view and related buttons.
 
 ## Menu rendering
 
-@docs view, button, custom, Config
-@docs Attribute, Button, ButtonAttribute
+@docs view, Config
+@docs Attribute
+
+
+## Triggering button options
+
+@docs Button, ButtonAttribute
+@docs button, clickableText, custom
 
 
 ## Menu attributes
@@ -33,7 +41,7 @@ A togglable menu view and related buttons.
 
 ## Button attributes
 
-@docs icon, wrapping, hasBorder, buttonWidth
+@docs icon, wrapping, buttonWidth
 @docs TitleWrapping
 
 
@@ -67,19 +75,8 @@ import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
 
 
 {-| -}
-type ButtonAttribute
-    = ButtonAttribute (ButtonConfig -> ButtonConfig)
-
-
-{-| -}
 type Attribute msg
     = Attribute (MenuConfig -> MenuConfig)
-
-
-{-| -}
-type Button msg
-    = StandardButton (MenuConfig -> Bool -> List (Html.Attribute msg) -> Html msg)
-    | CustomButton (List (Html.Attribute msg) -> Html msg)
 
 
 {-| -}
@@ -100,14 +97,6 @@ type alias MenuConfig =
     , zIndex : Int
     , opensOnHover : Bool
     , purpose : Purpose
-    }
-
-
-type alias ButtonConfig =
-    { icon : Maybe Svg.Svg
-    , wrapping : TitleWrapping
-    , hasBorder : Bool
-    , buttonWidth : Maybe Int
     }
 
 
@@ -137,13 +126,6 @@ icon svg =
 wrapping : TitleWrapping -> ButtonAttribute
 wrapping value =
     ButtonAttribute <| \config -> { config | wrapping = value }
-
-
-{-| Whether the menu button has a border. If not specified it defaults to `True`.
--}
-hasBorder : Bool -> ButtonAttribute
-hasBorder value =
-    ButtonAttribute <| \config -> { config | hasBorder = value }
 
 
 {-| Fix the width of the button to a number of pixels
@@ -318,7 +300,30 @@ type Alignment
     | Right
 
 
-{-| Defines a standard `Button` for the menu
+
+-- Triggering Button
+
+
+{-| -}
+type ButtonAttribute
+    = ButtonAttribute (ButtonConfig -> ButtonConfig)
+
+
+type alias ButtonConfig =
+    { icon : Maybe Svg.Svg
+    , wrapping : TitleWrapping
+    , buttonWidth : Maybe Int
+    }
+
+
+{-| -}
+type Button msg
+    = StandardButton (MenuConfig -> Bool -> List (Html.Attribute msg) -> Html msg)
+    | ClickableText (MenuConfig -> Bool -> List (Html.Attribute msg) -> Html msg)
+    | CustomButton (List (Html.Attribute msg) -> Html msg)
+
+
+{-| Defines a standard `Button` for the Menu.
 -}
 button : List ButtonAttribute -> String -> Button msg
 button attributes title =
@@ -327,59 +332,75 @@ button attributes title =
             { icon = Nothing
             , wrapping = WrapAndExpandTitle
             , buttonWidth = Nothing
-            , hasBorder = True
             }
 
         buttonConfig =
-            attributes
-                |> List.foldl (\(ButtonAttribute attr) config -> attr config) defaultButtonConfig
+            List.foldl (\(ButtonAttribute attr) config -> attr config) defaultButtonConfig attributes
 
+        disclosureIndicator : Bool -> Svg.Svg
         disclosureIndicator isOpen =
             Svg.withColor Colors.azure (AnimatedIcon.arrowDownUp isOpen)
     in
     StandardButton
         (\menuConfig isOpen buttonAttributes ->
-            if buttonConfig.hasBorder then
-                Button.button title
-                    [ Button.tertiary
-                    , Button.css
-                        [ Css.justifyContent Css.spaceBetween
-                        , Css.paddingLeft (Css.px 15)
-                        , Css.paddingRight (Css.px 15)
-                        , Css.color Colors.gray20 |> Css.important
-                        , Css.fontWeight (Css.int 600)
-                        , Css.hover [ Css.backgroundColor Colors.white ]
-                        ]
-                    , Button.custom buttonAttributes
-                    , Maybe.map (Svg.withColor Colors.azure >> Button.icon) buttonConfig.icon
-                        |> Maybe.withDefault (Button.css [])
-                    , if menuConfig.isDisabled then
-                        Button.disabled
-
-                      else
-                        Button.css []
-                    , Maybe.map Button.exactWidth buttonConfig.buttonWidth
-                        |> Maybe.withDefault (Button.css [])
-                    , Button.rightIcon (disclosureIndicator isOpen)
+            Button.button title
+                [ Button.tertiary
+                , Button.css
+                    [ Css.justifyContent Css.spaceBetween
+                    , Css.paddingLeft (Css.px 15)
+                    , Css.paddingRight (Css.px 15)
+                    , Css.color Colors.gray20 |> Css.important
+                    , Css.fontWeight (Css.int 600)
+                    , Css.hover [ Css.backgroundColor Colors.white ]
                     ]
+                , Button.custom buttonAttributes
+                , Maybe.map (Svg.withColor Colors.azure >> Button.icon) buttonConfig.icon
+                    |> Maybe.withDefault (Button.css [])
+                , if menuConfig.isDisabled then
+                    Button.disabled
 
-            else
-                ClickableText.button title
-                    [ ClickableText.small
-                    , ClickableText.css [ Css.color Colors.gray20 |> Css.important ]
-                    , ClickableText.custom buttonAttributes
-                    , Maybe.map (Svg.withColor Colors.azure >> ClickableText.icon) buttonConfig.icon
-                        |> Maybe.withDefault (ClickableText.css [])
-                    , ClickableText.disabled menuConfig.isDisabled
-                    , ClickableText.css <|
-                        case buttonConfig.buttonWidth of
-                            Just w ->
-                                [ Css.width (Css.px (toFloat w)) ]
+                  else
+                    Button.css []
+                , Maybe.map Button.exactWidth buttonConfig.buttonWidth
+                    |> Maybe.withDefault (Button.css [])
+                , Button.rightIcon (disclosureIndicator isOpen)
+                ]
+        )
 
-                            Nothing ->
-                                []
-                    , ClickableText.rightIcon (disclosureIndicator isOpen)
-                    ]
+
+{-| Use ClickableText as the triggering element for the Menu.
+-}
+clickableText : List ButtonAttribute -> String -> List (ClickableText.Attribute msg) -> Button msg
+clickableText attributes title additionalAttributes =
+    let
+        defaultButtonConfig =
+            { icon = Nothing
+            , wrapping = WrapAndExpandTitle
+            , buttonWidth = Nothing
+            }
+
+        buttonConfig =
+            List.foldl (\(ButtonAttribute attr) config -> attr config) defaultButtonConfig attributes
+    in
+    ClickableText
+        (\menuConfig isOpen buttonAttributes ->
+            ClickableText.button title
+                ([ ClickableText.small
+                 , ClickableText.custom buttonAttributes
+                 , Maybe.map (Svg.withColor Colors.azure >> ClickableText.icon) buttonConfig.icon
+                    |> Maybe.withDefault (ClickableText.css [])
+                 , ClickableText.disabled menuConfig.isDisabled
+                 , ClickableText.css <|
+                    case buttonConfig.buttonWidth of
+                        Just w ->
+                            [ Css.width (Css.px (toFloat w)) ]
+
+                        Nothing ->
+                            []
+                 , ClickableText.rightIcon (AnimatedIcon.arrowDownUp isOpen)
+                 ]
+                    ++ additionalAttributes
+                )
         )
 
 
@@ -675,6 +696,9 @@ viewCustom config1 config =
               case config1.button of
                 StandardButton standardButton ->
                     standardButton config config1.isOpen buttonAttributes
+
+                ClickableText rendreButton ->
+                    rendreButton config config1.isOpen buttonAttributes
 
                 CustomButton customButton ->
                     customButton buttonAttributes

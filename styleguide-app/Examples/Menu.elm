@@ -169,6 +169,17 @@ view ellieLinkConfig state =
                             ++ Code.string "1st Period English with Mx. Trainer"
                             |> toCode
                   }
+                , { sectionName = "Menu.clickableText"
+                  , code =
+                        Code.newlineWithIndent 2
+                            ++ "Menu.clickableText "
+                            ++ Code.listMultiline
+                                (List.map Tuple.first settings.buttonAttributes)
+                                3
+                            ++ Code.newlineWithIndent 3
+                            ++ Code.string "1st Period English with Mx. Trainer"
+                            |> toCode
+                  }
                 , { sectionName = "Menu.custom"
                   , code =
                         Code.newlineWithIndent 2
@@ -258,6 +269,20 @@ view ellieLinkConfig state =
                                     ]
                         ]
                     , button = Menu.button defaultButtonAttributes "1st Period English with Mx. Trainer"
+                    }
+          }
+        , { button = "Menu.clickableText"
+          , menu = "default (Menu.navMenu)"
+          , example =
+                Menu.view menuAttributes
+                    { isOpen = isOpen "clickableTextExample"
+                    , focusAndToggle = FocusAndToggle "clickableTextExample"
+                    , entries = []
+                    , button =
+                        Menu.clickableText
+                            defaultButtonAttributes
+                            "1st Period English with Mx. Trainer"
+                            []
                     }
           }
         , { button = "Menu.custom"
@@ -460,7 +485,6 @@ controlButtonAttributes : Control (List ( String, Menu.ButtonAttribute ))
 controlButtonAttributes =
     ControlExtra.list
         |> CommonControls.icon moduleName Menu.icon
-        |> ControlExtra.optionalBoolListItemDefaultTrue "hasBorder" ( "Menu.hasBorder False", Menu.hasBorder False )
         |> ControlExtra.optionalListItem "buttonWidth" controlButtonWidth
         |> ControlExtra.optionalListItem "wrapping" controlWrapping
 
