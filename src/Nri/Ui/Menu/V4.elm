@@ -270,11 +270,6 @@ type Button msg
 -}
 button : String -> List (Button.Attribute msg) -> Button msg
 button title attributes =
-    let
-        disclosureIndicator : Bool -> Svg.Svg
-        disclosureIndicator isOpen =
-            Svg.withColor Colors.azure (AnimatedIcon.arrowDownUp isOpen)
-    in
     StandardButton
         (\menuConfig isOpen buttonAttributes ->
             Button.button title
@@ -293,7 +288,15 @@ button title attributes =
 
                    else
                     Button.css []
-                 , Button.rightIcon (disclosureIndicator isOpen)
+                 , Button.rightIcon
+                    (AnimatedIcon.arrowDownUp isOpen
+                        |> (if menuConfig.isDisabled then
+                                identity
+
+                            else
+                                Svg.withColor Colors.azure
+                           )
+                    )
                  ]
                     ++ attributes
                 )
