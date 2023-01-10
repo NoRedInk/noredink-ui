@@ -3,7 +3,7 @@ module Nri.Ui.Menu.V4 exposing
     , Attribute
     , isOpen, isDisabled
     , Button
-    , button, clickableText, clickableSvg, custom
+    , button, clickableText, clickableSvg
     , buttonId
     , navMenuList, disclosure, dialog
     , menuWidth, menuId, menuZIndex, opensOnHover
@@ -34,7 +34,7 @@ A togglable menu view and related buttons.
 ## Triggering button options
 
 @docs Button
-@docs button, clickableText, clickableSvg, custom
+@docs button, clickableText, clickableSvg
 @docs buttonId
 
 
@@ -291,7 +291,6 @@ type Button msg
     = StandardButton (MenuConfig msg -> List (Html.Attribute msg) -> Html msg)
     | ClickableText (MenuConfig msg -> List (Html.Attribute msg) -> Html msg)
     | ClickableSvg (MenuConfig msg -> List (Html.Attribute msg) -> Html msg)
-    | CustomButton (List (Html.Attribute msg) -> Html msg)
 
 
 defaultButton : String -> List (Button.Attribute msg) -> Button msg
@@ -368,14 +367,6 @@ clickableSvg title icon additionalAttributes =
                     ++ additionalAttributes
                 )
         )
-        |> setButton
-
-
-{-| Defines a custom `Button` for the menu
--}
-custom : (List (Html.Attribute msg) -> Html msg) -> Attribute msg
-custom builder =
-    CustomButton builder
         |> setButton
 
 
@@ -608,9 +599,6 @@ viewCustom config1 config =
 
                 ClickableSvg renderButton ->
                     renderButton config buttonAttributes
-
-                CustomButton customButton ->
-                    customButton buttonAttributes
             , div [ styleOuterContent contentVisible config ]
                 [ div
                     [ AttributesExtra.nriDescription "menu-hover-bridge"
