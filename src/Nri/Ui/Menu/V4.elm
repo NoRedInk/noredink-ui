@@ -70,12 +70,12 @@ type ButtonAttribute
 
 {-| -}
 type Attribute msg
-    = Attribute (MenuConfig msg -> MenuConfig msg)
+    = Attribute (MenuConfig -> MenuConfig)
 
 
 {-| -}
 type Button msg
-    = StandardButton (MenuConfig msg -> List (Html.Attribute msg) -> Html msg)
+    = StandardButton (MenuConfig -> List (Html.Attribute msg) -> Html msg)
     | CustomButton (List (Html.Attribute msg) -> Html msg)
 
 
@@ -88,15 +88,8 @@ type alias Config msg =
     }
 
 
-type alias MenuConfig msg =
-    { -- These come from Config
-      button : Button msg
-    , entries : List (Entry msg)
-    , isOpen : Bool
-    , focusAndToggle : { isOpen : Bool, focus : Maybe String } -> msg
-
-    -- These are set using Attribute
-    , alignment : Alignment
+type alias MenuConfig =
+    { alignment : Alignment
     , isDisabled : Bool
     , menuWidth : Maybe Int
     , buttonId : String
@@ -260,26 +253,20 @@ dialog exitFocusManager =
 view : List (Attribute msg) -> Config msg -> Html msg
 view attributes config =
     let
-        default =
-            { button = config.button
-            , entries = config.entries
-            , isOpen = config.isOpen
-            , focusAndToggle = config.focusAndToggle
-            , alignment = Right
-            , isDisabled = False
-            , menuWidth = Nothing
-            , buttonId = ""
-            , menuId = ""
-            , zIndex = 1
-            , opensOnHover = False
-            , purpose = NavMenu
-            }
-
         menuConfig =
-            attributes
-                |> List.foldl (\(Attribute attr) c -> attr c) default
+            List.foldl (\(Attribute attr) c -> attr c)
+                { alignment = Right
+                , isDisabled = False
+                , menuWidth = Nothing
+                , buttonId = ""
+                , menuId = ""
+                , zIndex = 1
+                , opensOnHover = False
+                , purpose = NavMenu
+                }
+                attributes
     in
-    viewCustom menuConfig
+    viewCustom config menuConfig
 
 
 
@@ -393,7 +380,9 @@ button attributes title =
                 )
                 [ div styleButtonInner
                     [ viewTitle title buttonConfig menuConfig
-                    , viewArrow menuConfig
+
+                    --, -- TODO: re-add arrow
+                    --viewArrow menuConfig
                     ]
                 ]
         )
@@ -468,31 +457,31 @@ viewTitle title_ config menuConfig =
         ]
 
 
-viewCustom : MenuConfig msg -> Html msg
-viewCustom config =
+viewCustom : Config msg -> MenuConfig -> Html msg
+viewCustom config1 config =
     let
         ( maybeFirstFocusableElementId, maybeLastFocusableElementId ) =
-            ( List.head (getFirstIds config.entries), List.head (getLastIds config.entries) )
+            ( List.head (getFirstIds config1.entries), List.head (getLastIds config1.entries) )
 
         contentVisible =
-            config.isOpen && not config.isDisabled
+            config1.isOpen && not config.isDisabled
 
         navMenuEvents =
             Key.onKeyDown
                 [ Key.escape
-                    (config.focusAndToggle
+                    (config1.focusAndToggle
                         { isOpen = False
                         , focus = Just config.buttonId
                         }
                     )
                 , Key.tab
-                    (config.focusAndToggle
+                    (config1.focusAndToggle
                         { isOpen = False
                         , focus = Nothing
                         }
                     )
                 , Key.tabBack
-                    (config.focusAndToggle
+                    (config1.focusAndToggle
                         { isOpen = False
                         , focus = Nothing
                         }
@@ -525,7 +514,7 @@ viewCustom config =
                     Disclosure { lastId } ->
                         WhenFocusLeaves.onKeyDown
                             [ Key.escape
-                                (config.focusAndToggle
+                                (config1.focusAndToggle
                                     { isOpen = False
                                     , focus = Just config.buttonId
                                     }
@@ -534,12 +523,12 @@ viewCustom config =
                             { firstId = config.buttonId
                             , lastId = lastId
                             , tabBackAction =
-                                config.focusAndToggle
+                                config1.focusAndToggle
                                     { isOpen = False
                                     , focus = Nothing
                                     }
                             , tabForwardAction =
-                                config.focusAndToggle
+                                config1.focusAndToggle
                                     { isOpen = False
                                     , focus = Nothing
                                     }
@@ -548,7 +537,7 @@ viewCustom config =
                     Dialog { firstId, lastId } ->
                         WhenFocusLeaves.onKeyDownPreventDefault
                             [ Key.escape
-                                (config.focusAndToggle
+                                (config1.focusAndToggle
                                     { isOpen = False
                                     , focus = Just config.buttonId
                                     }
@@ -557,12 +546,12 @@ viewCustom config =
                             { firstId = firstId
                             , lastId = lastId
                             , tabBackAction =
-                                config.focusAndToggle
+                                config1.focusAndToggle
                                     { isOpen = True
                                     , focus = Just lastId
                                     }
                             , tabForwardAction =
-                                config.focusAndToggle
+                                config1.focusAndToggle
                                     { isOpen = True
                                     , focus = Just firstId
                                     }
@@ -570,10 +559,10 @@ viewCustom config =
                )
             :: styleContainer
         )
-        [ if config.isOpen then
+        [ if config1.isOpen then
             div
                 (Events.onClick
-                    (config.focusAndToggle
+                    (config1.focusAndToggle
                         { isOpen = False
                         , focus = Nothing
                         }
@@ -589,15 +578,15 @@ viewCustom config =
             [ class "InnerContainer"
             , css
                 [ position relative
-                , if config.isOpen then
+                , if config1.isOpen then
                     zIndex (int <| config.zIndex + 1)
 
                   else
                     Css.batch []
                 ]
-            , if not config.isDisabled && config.opensOnHover && config.isOpen then
+            , if not config.isDisabled && config.opensOnHover && config1.isOpen then
                 Events.onMouseLeave
-                    (config.focusAndToggle
+                    (config1.focusAndToggle
                         { isOpen = False
                         , focus = Nothing
                         }
@@ -616,13 +605,13 @@ viewCustom config =
                         ( True, Just firstFocusableElementId, Just lastFocusableElementId ) ->
                             Key.onKeyDownPreventDefault
                                 [ Key.down
-                                    (config.focusAndToggle
+                                    (config1.focusAndToggle
                                         { isOpen = True
                                         , focus = Just firstFocusableElementId
                                         }
                                     )
                                 , Key.up
-                                    (config.focusAndToggle
+                                    (config1.focusAndToggle
                                         { isOpen = True
                                         , focus = Just lastFocusableElementId
                                         }
@@ -641,23 +630,23 @@ viewCustom config =
                                 { preventDefault = True
                                 , stopPropagation = True
                                 , message =
-                                    case ( config.isOpen, config.purpose ) of
+                                    case ( config1.isOpen, config.purpose ) of
                                         ( False, Dialog { firstId } ) ->
-                                            config.focusAndToggle
+                                            config1.focusAndToggle
                                                 { isOpen = True
                                                 , focus = Just firstId
                                                 }
 
                                         _ ->
-                                            config.focusAndToggle
-                                                { isOpen = not config.isOpen
+                                            config1.focusAndToggle
+                                                { isOpen = not config1.isOpen
                                                 , focus = Nothing
                                                 }
                                 }
                             )
                     , if not config.isDisabled && config.opensOnHover then
                         Events.onMouseEnter
-                            (config.focusAndToggle
+                            (config1.focusAndToggle
                                 { isOpen = True
                                 , focus = Nothing
                                 }
@@ -669,18 +658,18 @@ viewCustom config =
                         ++ (case config.purpose of
                                 NavMenuList ->
                                     [ Aria.hasMenuPopUp
-                                    , Aria.expanded config.isOpen
+                                    , Aria.expanded config1.isOpen
                                     , Aria.controls [ config.menuId ]
                                     ]
 
                                 NavMenu ->
                                     [ Aria.hasMenuPopUp
-                                    , Aria.expanded config.isOpen
+                                    , Aria.expanded config1.isOpen
                                     , Aria.controls [ config.menuId ]
                                     ]
 
                                 Disclosure _ ->
-                                    [ Aria.expanded config.isOpen
+                                    [ Aria.expanded config1.isOpen
                                     , Aria.controls [ config.menuId ]
                                     ]
 
@@ -688,7 +677,7 @@ viewCustom config =
                                     [ Aria.hasDialogPopUp ]
                            )
               in
-              case config.button of
+              case config1.button of
                 StandardButton standardButton ->
                     standardButton config buttonAttributes
 
@@ -711,11 +700,11 @@ viewCustom config =
                         ]
                     ]
                     (viewEntries config
-                        { focusAndToggle = config.focusAndToggle
+                        { focusAndToggle = config1.focusAndToggle
                         , previousId = Maybe.withDefault "" maybeLastFocusableElementId
                         , nextId = Maybe.withDefault "" maybeFirstFocusableElementId
                         }
-                        config.entries
+                        config1.entries
                     )
                 ]
             ]
@@ -751,7 +740,7 @@ getLastIds entries =
 
 
 viewEntries :
-    MenuConfig msg
+    MenuConfig
     ->
         { focusAndToggle : { isOpen : Bool, focus : Maybe String } -> msg
         , previousId : String
@@ -782,7 +771,7 @@ viewEntries config { previousId, nextId, focusAndToggle } entries =
 
 
 viewEntry :
-    MenuConfig msg
+    MenuConfig
     -> ({ isOpen : Bool, focus : Maybe String } -> msg)
     -> { upId : String, downId : String, entry_ : Entry msg }
     -> Html msg
@@ -850,7 +839,7 @@ viewEntry config focusAndToggle { upId, downId, entry_ } =
 -- STYLES
 
 
-styleOverlay : MenuConfig msg -> List (Html.Attribute msg)
+styleOverlay : MenuConfig -> List (Html.Attribute msg)
 styleOverlay config =
     [ class "Overlay"
     , css
@@ -903,7 +892,7 @@ styleGroupTitle =
     ]
 
 
-styleGroupTitleText : MenuConfig msg -> List (Html.Attribute msg)
+styleGroupTitleText : MenuConfig -> List (Html.Attribute msg)
 styleGroupTitleText config =
     [ class "GroupTitleText"
     , css
@@ -960,7 +949,7 @@ styleIconContainer config =
     ]
 
 
-styleOuterContent : Bool -> MenuConfig msg -> Html.Attribute msg
+styleOuterContent : Bool -> MenuConfig -> Html.Attribute msg
 styleOuterContent _ config =
     css
         [ position absolute
@@ -974,7 +963,7 @@ styleOuterContent _ config =
         ]
 
 
-styleContent : Bool -> MenuConfig msg -> Html.Attribute msg
+styleContent : Bool -> MenuConfig -> Html.Attribute msg
 styleContent contentVisible config =
     css
         [ padding (px 25)
