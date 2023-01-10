@@ -25,6 +25,7 @@ import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Menu.V3 as Menu
+import Nri.Ui.Table.V6 as Table
 import Nri.Ui.TextInput.V7 as TextInput
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
@@ -181,185 +182,217 @@ view ellieLinkConfig state =
                   }
                 ]
         }
-    , viewExamples
-        [ ( "Menu.button"
-          , Menu.view
-                (menuAttributes
-                    ++ List.filterMap identity
-                        [ Just <| Menu.buttonId "1stPeriodEnglish__button"
-                        , Just <| Menu.menuId "1stPeriodEnglish__menu"
-                        ]
-                )
-                { isOpen = isOpen "1stPeriodEnglish"
-                , focusAndToggle = FocusAndToggle "1stPeriodEnglish"
-                , entries =
-                    [ Menu.entry "hello-button" <|
-                        \attrs ->
-                            ClickableText.button "Hello"
-                                [ ClickableText.onClick (ConsoleLog "Hello")
-                                , ClickableText.small
-                                , ClickableText.custom attrs
-                                ]
-                    , Menu.group "Menu group"
-                        [ Menu.entry "gift-button" <|
+    , Table.view
+        [ Table.string
+            { header = "Button type"
+            , value = .button
+            , width = Css.pct 30
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
+            , sort = Nothing
+            }
+        , Table.string
+            { header = "Menu type"
+            , value = .menu
+            , width = Css.pct 30
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Example"
+            , view = .example
+            , width = Css.px 300
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        ]
+        [ { button = "Menu.button"
+          , menu = "default (Menu.navMenu)"
+          , example =
+                Menu.view
+                    (menuAttributes
+                        ++ List.filterMap identity
+                            [ Just <| Menu.buttonId "1stPeriodEnglish__button"
+                            , Just <| Menu.menuId "1stPeriodEnglish__menu"
+                            ]
+                    )
+                    { isOpen = isOpen "1stPeriodEnglish"
+                    , focusAndToggle = FocusAndToggle "1stPeriodEnglish"
+                    , entries =
+                        [ Menu.entry "hello-button" <|
                             \attrs ->
-                                ClickableText.button "Gift"
-                                    [ ClickableText.onClick (ConsoleLog "Gift")
+                                ClickableText.button "Hello"
+                                    [ ClickableText.onClick (ConsoleLog "Hello")
                                     , ClickableText.small
                                     , ClickableText.custom attrs
-                                    , ClickableText.icon UiIcon.gift
                                     ]
-                        , Menu.entry "null-button" <|
+                        , Menu.group "Menu group"
+                            [ Menu.entry "gift-button" <|
+                                \attrs ->
+                                    ClickableText.button "Gift"
+                                        [ ClickableText.onClick (ConsoleLog "Gift")
+                                        , ClickableText.small
+                                        , ClickableText.custom attrs
+                                        , ClickableText.icon UiIcon.gift
+                                        ]
+                            , Menu.entry "null-button" <|
+                                \attrs ->
+                                    ClickableText.button "Nope!"
+                                        [ ClickableText.onClick (ConsoleLog "Nope!")
+                                        , ClickableText.small
+                                        , ClickableText.custom attrs
+                                        , ClickableText.icon UiIcon.null
+                                        ]
+                            , Menu.entry "no-icon-button" <|
+                                \attrs ->
+                                    ClickableText.button "Skip"
+                                        [ ClickableText.onClick (ConsoleLog "Skip")
+                                        , ClickableText.small
+                                        , ClickableText.custom attrs
+                                        ]
+                            ]
+                        , Menu.entry "performance-button" <|
                             \attrs ->
-                                ClickableText.button "Nope!"
-                                    [ ClickableText.onClick (ConsoleLog "Nope!")
-                                    , ClickableText.small
-                                    , ClickableText.custom attrs
-                                    , ClickableText.icon UiIcon.null
-                                    ]
-                        , Menu.entry "no-icon-button" <|
-                            \attrs ->
-                                ClickableText.button "Skip"
-                                    [ ClickableText.onClick (ConsoleLog "Skip")
+                                ClickableText.button "Performance"
+                                    [ ClickableText.onClick (ConsoleLog "Performance")
                                     , ClickableText.small
                                     , ClickableText.custom attrs
                                     ]
                         ]
-                    , Menu.entry "performance-button" <|
-                        \attrs ->
-                            ClickableText.button "Performance"
-                                [ ClickableText.onClick (ConsoleLog "Performance")
-                                , ClickableText.small
-                                , ClickableText.custom attrs
-                                ]
-                    ]
-                , button = Menu.button defaultButtonAttributes "1st Period English with Mx. Trainer"
-                }
-          )
-        , ( "Menu.custom"
-          , Menu.view
-                (menuAttributes
-                    ++ List.filterMap identity
-                        [ Just <| Menu.buttonId "icon-button-with-menu__button"
-                        , Just <| Menu.menuId "icon-button-with-menu__menu"
+                    , button = Menu.button defaultButtonAttributes "1st Period English with Mx. Trainer"
+                    }
+          }
+        , { button = "Menu.custom"
+          , menu = "default (Menu.navMenu)"
+          , example =
+                Menu.view
+                    (menuAttributes
+                        ++ List.filterMap identity
+                            [ Just <| Menu.buttonId "icon-button-with-menu__button"
+                            , Just <| Menu.menuId "icon-button-with-menu__menu"
+                            ]
+                    )
+                    { entries =
+                        [ Menu.entry "see-more-button" <|
+                            \attrs ->
+                                ClickableText.button "See more"
+                                    [ ClickableText.onClick (ConsoleLog "See more")
+                                    , ClickableText.small
+                                    , ClickableText.custom attrs
+                                    , ClickableText.icon UiIcon.seeMore
+                                    ]
                         ]
-                )
-                { entries =
-                    [ Menu.entry "see-more-button" <|
-                        \attrs ->
-                            ClickableText.button "See more"
-                                [ ClickableText.onClick (ConsoleLog "See more")
-                                , ClickableText.small
-                                , ClickableText.custom attrs
-                                , ClickableText.icon UiIcon.seeMore
-                                ]
-                    ]
-                , isOpen = isOpen "icon-button-with-menu"
-                , focusAndToggle = FocusAndToggle "icon-button-with-menu"
-                , button =
-                    Menu.custom <|
-                        \buttonAttributes ->
-                            button buttonAttributes [ text "Custom Menu trigger button" ]
-                }
-          )
-        , ( "Menu.button (with Menu.disclosure)"
-          , Menu.view
-                (menuAttributes
-                    ++ [ Menu.buttonId "disclosure__button"
-                       , Menu.menuId "disclosure__menu"
-                       , Menu.disclosure { lastId = "disclosure__login__button" }
-                       ]
-                )
-                { isOpen = isOpen "with_disclosure"
-                , focusAndToggle = FocusAndToggle "with_disclosure"
-                , entries =
-                    [ Menu.entry "disclosure__username" <|
-                        \attrs ->
-                            div []
-                                [ TextInput.view "Username"
-                                    [ TextInput.id "disclosure__username__input"
+                    , isOpen = isOpen "icon-button-with-menu"
+                    , focusAndToggle = FocusAndToggle "icon-button-with-menu"
+                    , button =
+                        Menu.custom <|
+                            \buttonAttributes ->
+                                button buttonAttributes [ text "Custom Menu trigger button" ]
+                    }
+          }
+        , { button = "Menu.button"
+          , menu = "Menu.disclosure"
+          , example =
+                Menu.view
+                    (menuAttributes
+                        ++ [ Menu.buttonId "disclosure__button"
+                           , Menu.menuId "disclosure__menu"
+                           , Menu.disclosure { lastId = "disclosure__login__button" }
+                           ]
+                    )
+                    { isOpen = isOpen "with_disclosure"
+                    , focusAndToggle = FocusAndToggle "with_disclosure"
+                    , entries =
+                        [ Menu.entry "disclosure__username" <|
+                            \attrs ->
+                                div []
+                                    [ TextInput.view "Username"
+                                        [ TextInput.id "disclosure__username__input"
+                                        ]
+                                    , TextInput.view "Password"
+                                        [ TextInput.id "disclosure__password__input"
+                                        ]
+                                    , Button.button "Log in"
+                                        [ Button.primary
+                                        , Button.id "disclosure__login__button"
+                                        , Button.fillContainerWidth
+                                        , Button.css [ Css.marginTop (Css.px 15) ]
+                                        ]
                                     ]
-                                , TextInput.view "Password"
-                                    [ TextInput.id "disclosure__password__input"
+                        ]
+                    , button = Menu.button defaultButtonAttributes "Log In disclosure"
+                    }
+          }
+        , { button = "Menu.button"
+          , menu = "Menu.dialog"
+          , example =
+                Menu.view
+                    (menuAttributes
+                        ++ [ Menu.buttonId "dialog__button"
+                           , Menu.menuId "dialog__menu"
+                           , Menu.dialog { firstId = "dialog__username__input", lastId = "dialog__login__button" }
+                           ]
+                    )
+                    { isOpen = isOpen "dialog"
+                    , focusAndToggle = FocusAndToggle "dialog"
+                    , entries =
+                        [ Menu.entry "dialog__username" <|
+                            \attrs ->
+                                div []
+                                    [ TextInput.view "Username"
+                                        [ TextInput.id "dialog__username__input"
+                                        ]
+                                    , TextInput.view "Password"
+                                        [ TextInput.id "dialog__password__input"
+                                        ]
+                                    , Button.button "Log in"
+                                        [ Button.primary
+                                        , Button.id "dialog__login__button"
+                                        , Button.fillContainerWidth
+                                        , Button.css [ Css.marginTop (Css.px 15) ]
+                                        ]
                                     ]
-                                , Button.button "Log in"
-                                    [ Button.primary
-                                    , Button.id "disclosure__login__button"
-                                    , Button.fillContainerWidth
-                                    , Button.css [ Css.marginTop (Css.px 15) ]
+                        ]
+                    , button = Menu.button defaultButtonAttributes "Log In dialog"
+                    }
+          }
+        , { button = "Menu.button"
+          , menu = "Menu.navMenuList"
+          , example =
+                Menu.view
+                    (menuAttributes
+                        ++ [ Menu.buttonId "dropdown_list__button"
+                           , Menu.menuId "dropdown_list__menu"
+                           , Menu.navMenuList
+                           ]
+                    )
+                    { isOpen = isOpen "dropdown_list"
+                    , focusAndToggle = FocusAndToggle "dropdown_list"
+                    , entries =
+                        [ Menu.entry "dropdown_list__first" <|
+                            \attrs ->
+                                ClickableText.button "First"
+                                    [ ClickableText.small
+                                    , ClickableText.onClick (ConsoleLog "First")
+                                    , ClickableText.custom attrs
                                     ]
-                                ]
-                    ]
-                , button = Menu.button defaultButtonAttributes "Log In disclosure"
-                }
-          )
-        , ( "Menu.button (with Menu.dialog)"
-          , Menu.view
-                (menuAttributes
-                    ++ [ Menu.buttonId "dialog__button"
-                       , Menu.menuId "dialog__menu"
-                       , Menu.dialog { firstId = "dialog__username__input", lastId = "dialog__login__button" }
-                       ]
-                )
-                { isOpen = isOpen "dialog"
-                , focusAndToggle = FocusAndToggle "dialog"
-                , entries =
-                    [ Menu.entry "dialog__username" <|
-                        \attrs ->
-                            div []
-                                [ TextInput.view "Username"
-                                    [ TextInput.id "dialog__username__input"
+                        , Menu.entry "dropdown_list__second" <|
+                            \attrs ->
+                                ClickableText.button "Second"
+                                    [ ClickableText.small
+                                    , ClickableText.onClick (ConsoleLog "Second")
+                                    , ClickableText.custom attrs
                                     ]
-                                , TextInput.view "Password"
-                                    [ TextInput.id "dialog__password__input"
+                        , Menu.entry "dropdown_list__third" <|
+                            \attrs ->
+                                ClickableText.button "Third"
+                                    [ ClickableText.small
+                                    , ClickableText.onClick (ConsoleLog "Third")
+                                    , ClickableText.custom attrs
                                     ]
-                                , Button.button "Log in"
-                                    [ Button.primary
-                                    , Button.id "dialog__login__button"
-                                    , Button.fillContainerWidth
-                                    , Button.css [ Css.marginTop (Css.px 15) ]
-                                    ]
-                                ]
-                    ]
-                , button = Menu.button defaultButtonAttributes "Log In dialog"
-                }
-          )
-        , ( "Menu.button (with list items)"
-          , Menu.view
-                (menuAttributes
-                    ++ [ Menu.buttonId "dropdown_list__button"
-                       , Menu.menuId "dropdown_list__menu"
-                       , Menu.navMenuList
-                       ]
-                )
-                { isOpen = isOpen "dropdown_list"
-                , focusAndToggle = FocusAndToggle "dropdown_list"
-                , entries =
-                    [ Menu.entry "dropdown_list__first" <|
-                        \attrs ->
-                            ClickableText.button "First"
-                                [ ClickableText.small
-                                , ClickableText.onClick (ConsoleLog "First")
-                                , ClickableText.custom attrs
-                                ]
-                    , Menu.entry "dropdown_list__second" <|
-                        \attrs ->
-                            ClickableText.button "Second"
-                                [ ClickableText.small
-                                , ClickableText.onClick (ConsoleLog "Second")
-                                , ClickableText.custom attrs
-                                ]
-                    , Menu.entry "dropdown_list__third" <|
-                        \attrs ->
-                            ClickableText.button "Third"
-                                [ ClickableText.small
-                                , ClickableText.onClick (ConsoleLog "Third")
-                                , ClickableText.custom attrs
-                                ]
-                    ]
-                , button = Menu.button defaultButtonAttributes "Dropdown list"
-                }
-          )
+                        ]
+                    , button = Menu.button defaultButtonAttributes "Dropdown list"
+                    }
+          }
         ]
     ]
 
