@@ -221,10 +221,10 @@ view ellieLinkConfig state =
                             [ Just <| Menu.buttonId "1stPeriodEnglish__button"
                             , Just <| Menu.menuId "1stPeriodEnglish__menu"
                             , Just <| Menu.button "1st Period English with Mx. Trainer" []
+                            , Just <| Menu.isOpen (isOpen "1stPeriodEnglish")
                             ]
                     )
-                    { isOpen = isOpen "1stPeriodEnglish"
-                    , focusAndToggle = FocusAndToggle "1stPeriodEnglish"
+                    { focusAndToggle = FocusAndToggle "1stPeriodEnglish"
                     , entries =
                         [ Menu.entry "hello-button" <|
                             \attrs ->
@@ -272,11 +272,12 @@ view ellieLinkConfig state =
           , menu = "default (Menu.navMenu)"
           , example =
                 Menu.view
-                    (Menu.clickableText "1st Period English with Mx. Trainer" []
-                        :: menuAttributes
+                    (menuAttributes
+                        ++ [ Menu.clickableText "1st Period English with Mx. Trainer" []
+                           , Menu.isOpen (isOpen "clickableTextExample")
+                           ]
                     )
-                    { isOpen = isOpen "clickableTextExample"
-                    , focusAndToggle = FocusAndToggle "clickableTextExample"
+                    { focusAndToggle = FocusAndToggle "clickableTextExample"
                     , entries = []
                     }
           }
@@ -284,11 +285,12 @@ view ellieLinkConfig state =
           , menu = "default (Menu.navMenu)"
           , example =
                 Menu.view
-                    (Menu.clickableSvg "1st Period English with Mx. Trainer" UiIcon.gear []
-                        :: menuAttributes
+                    (menuAttributes
+                        ++ [ Menu.clickableSvg "1st Period English with Mx. Trainer" UiIcon.gear []
+                           , Menu.isOpen (isOpen "clickableSvgExample")
+                           ]
                     )
-                    { isOpen = isOpen "clickableSvgExample"
-                    , focusAndToggle = FocusAndToggle "clickableSvgExample"
+                    { focusAndToggle = FocusAndToggle "clickableSvgExample"
                     , entries = []
                     }
           }
@@ -298,7 +300,8 @@ view ellieLinkConfig state =
                 Menu.view
                     (menuAttributes
                         ++ List.filterMap identity
-                            [ Just <| Menu.buttonId "icon-button-with-menu__button"
+                            [ Just <| Menu.isOpen (isOpen "icon-button-with-menu")
+                            , Just <| Menu.buttonId "icon-button-with-menu__button"
                             , Just <| Menu.menuId "icon-button-with-menu__menu"
                             , Just <|
                                 Menu.custom <|
@@ -316,7 +319,6 @@ view ellieLinkConfig state =
                                     , ClickableText.icon UiIcon.seeMore
                                     ]
                         ]
-                    , isOpen = isOpen "icon-button-with-menu"
                     , focusAndToggle = FocusAndToggle "icon-button-with-menu"
                     }
           }
@@ -329,10 +331,10 @@ view ellieLinkConfig state =
                            , Menu.menuId "disclosure__menu"
                            , Menu.disclosure { lastId = "disclosure__login__button" }
                            , Menu.button "Log In disclosure" []
+                           , Menu.isOpen (isOpen "with_disclosure")
                            ]
                     )
-                    { isOpen = isOpen "with_disclosure"
-                    , focusAndToggle = FocusAndToggle "with_disclosure"
+                    { focusAndToggle = FocusAndToggle "with_disclosure"
                     , entries =
                         [ Menu.entry "disclosure__username" <|
                             \attrs ->
@@ -362,10 +364,10 @@ view ellieLinkConfig state =
                            , Menu.menuId "dialog__menu"
                            , Menu.dialog { firstId = "dialog__username__input", lastId = "dialog__login__button" }
                            , Menu.button "Log In dialog" []
+                           , Menu.isOpen (isOpen "dialog")
                            ]
                     )
-                    { isOpen = isOpen "dialog"
-                    , focusAndToggle = FocusAndToggle "dialog"
+                    { focusAndToggle = FocusAndToggle "dialog"
                     , entries =
                         [ Menu.entry "dialog__username" <|
                             \attrs ->
@@ -395,10 +397,10 @@ view ellieLinkConfig state =
                            , Menu.menuId "dropdown_list__menu"
                            , Menu.navMenuList
                            , Menu.button "Dropdown list" []
+                           , Menu.isOpen (isOpen "dropdown_list")
                            ]
                     )
-                    { isOpen = isOpen "dropdown_list"
-                    , focusAndToggle = FocusAndToggle "dropdown_list"
+                    { focusAndToggle = FocusAndToggle "dropdown_list"
                     , entries =
                         [ Menu.entry "dropdown_list__first" <|
                             \attrs ->

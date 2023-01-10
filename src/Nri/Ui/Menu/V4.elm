@@ -1,11 +1,12 @@
 module Nri.Ui.Menu.V4 exposing
     ( view, Config
     , Attribute
+    , isOpen, isDisabled
     , Button
     , button, clickableText, clickableSvg, custom
     , buttonId
     , navMenuList, disclosure, dialog
-    , isDisabled, menuWidth, menuId, menuZIndex, opensOnHover
+    , menuWidth, menuId, menuZIndex, opensOnHover
     , Alignment(..), alignment
     , Entry, group, entry
     )
@@ -25,6 +26,11 @@ A togglable menu view and related buttons.
 @docs Attribute
 
 
+## Menu state
+
+@docs isOpen, isDisabled
+
+
 ## Triggering button options
 
 @docs Button
@@ -35,7 +41,7 @@ A togglable menu view and related buttons.
 ## Menu attributes
 
 @docs navMenuList, disclosure, dialog
-@docs isDisabled, menuWidth, menuId, menuZIndex, opensOnHover
+@docs menuWidth, menuId, menuZIndex, opensOnHover
 @docs Alignment, alignment
 
 
@@ -73,7 +79,6 @@ type Attribute msg
 {-| -}
 type alias Config msg =
     { entries : List (Entry msg)
-    , isOpen : Bool
     , focusAndToggle : { isOpen : Bool, focus : Maybe String } -> msg
     }
 
@@ -82,12 +87,28 @@ type alias MenuConfig msg =
     { button : Button msg
     , alignment : Alignment
     , isDisabled : Bool
+    , isOpen : Bool
     , menuWidth : Maybe Int
     , buttonId : String
     , menuId : String
     , zIndex : Int
     , opensOnHover : Bool
     , purpose : Purpose
+    }
+
+
+defaultConfig : MenuConfig msg
+defaultConfig =
+    { button = defaultButton "Menu" []
+    , alignment = Right
+    , isDisabled = False
+    , isOpen = False
+    , menuWidth = Nothing
+    , buttonId = ""
+    , menuId = ""
+    , zIndex = 1
+    , opensOnHover = False
+    , purpose = NavMenu
     }
 
 
@@ -112,7 +133,14 @@ alignment value =
     Attribute <| \config -> { config | alignment = value }
 
 
-{-| Whether the menu can be openned
+{-| Whether the menu is open
+-}
+isOpen : Bool -> Attribute msg
+isOpen value =
+    Attribute <| \config -> { config | isOpen = value }
+
+
+{-| Whether the menu can be opened
 -}
 isDisabled : Bool -> Attribute msg
 isDisabled value =
@@ -206,18 +234,7 @@ view attributes config =
     let
         menuConfig : MenuConfig msg
         menuConfig =
-            List.foldl (\(Attribute attr) c -> attr c)
-                { button = defaultButton "Menu" []
-                , alignment = Right
-                , isDisabled = False
-                , menuWidth = Nothing
-                , buttonId = ""
-                , menuId = ""
-                , zIndex = 1
-                , opensOnHover = False
-                , purpose = NavMenu
-                }
-                attributes
+            List.foldl (\(Attribute attr) c -> attr c) defaultConfig attributes
     in
     viewCustom config menuConfig
 
@@ -271,16 +288,16 @@ setButton button_ =
 
 {-| -}
 type Button msg
-    = StandardButton (MenuConfig msg -> Bool -> List (Html.Attribute msg) -> Html msg)
-    | ClickableText (MenuConfig msg -> Bool -> List (Html.Attribute msg) -> Html msg)
-    | ClickableSvg (MenuConfig msg -> Bool -> List (Html.Attribute msg) -> Html msg)
+    = StandardButton (MenuConfig msg -> List (Html.Attribute msg) -> Html msg)
+    | ClickableText (MenuConfig msg -> List (Html.Attribute msg) -> Html msg)
+    | ClickableSvg (MenuConfig msg -> List (Html.Attribute msg) -> Html msg)
     | CustomButton (List (Html.Attribute msg) -> Html msg)
 
 
 defaultButton : String -> List (Button.Attribute msg) -> Button msg
 defaultButton title attributes =
     StandardButton
-        (\menuConfig isOpen buttonAttributes ->
+        (\menuConfig buttonAttributes ->
             Button.button title
                 ([ Button.tertiary
                  , Button.css
@@ -298,7 +315,7 @@ defaultButton title attributes =
                    else
                     Button.css []
                  , Button.rightIcon
-                    (AnimatedIcon.arrowDownUp isOpen
+                    (AnimatedIcon.arrowDownUp menuConfig.isOpen
                         |> (if menuConfig.isDisabled then
                                 identity
 
@@ -324,11 +341,11 @@ button title attributes =
 clickableText : String -> List (ClickableText.Attribute msg) -> Attribute msg
 clickableText title additionalAttributes =
     ClickableText
-        (\menuConfig isOpen buttonAttributes ->
+        (\menuConfig buttonAttributes ->
             ClickableText.button title
                 ([ ClickableText.custom buttonAttributes
                  , ClickableText.disabled menuConfig.isDisabled
-                 , ClickableText.rightIcon (AnimatedIcon.arrowDownUp isOpen)
+                 , ClickableText.rightIcon (AnimatedIcon.arrowDownUp menuConfig.isOpen)
                  ]
                     ++ additionalAttributes
                 )
@@ -341,12 +358,12 @@ clickableText title additionalAttributes =
 clickableSvg : String -> Svg.Svg -> List (ClickableSvg.Attribute msg) -> Attribute msg
 clickableSvg title icon additionalAttributes =
     ClickableSvg
-        (\menuConfig isOpen buttonAttributes ->
+        (\menuConfig buttonAttributes ->
             ClickableSvg.button title
                 icon
                 ([ ClickableSvg.custom buttonAttributes
                  , ClickableSvg.disabled menuConfig.isDisabled
-                 , ClickableSvg.rightIcon (AnimatedIcon.arrowDownUp isOpen)
+                 , ClickableSvg.rightIcon (AnimatedIcon.arrowDownUp menuConfig.isOpen)
                  ]
                     ++ additionalAttributes
                 )
@@ -369,7 +386,7 @@ viewCustom config1 config =
             ( List.head (getFirstIds config1.entries), List.head (getLastIds config1.entries) )
 
         contentVisible =
-            config1.isOpen && not config.isDisabled
+            config.isOpen && not config.isDisabled
 
         navMenuEvents =
             Key.onKeyDown
@@ -464,7 +481,7 @@ viewCustom config1 config =
                )
             :: styleContainer
         )
-        [ if config1.isOpen then
+        [ if config.isOpen then
             div
                 (Events.onClick
                     (config1.focusAndToggle
@@ -483,13 +500,13 @@ viewCustom config1 config =
             [ class "InnerContainer"
             , css
                 [ position relative
-                , if config1.isOpen then
+                , if config.isOpen then
                     zIndex (int <| config.zIndex + 1)
 
                   else
                     Css.batch []
                 ]
-            , if not config.isDisabled && config.opensOnHover && config1.isOpen then
+            , if not config.isDisabled && config.opensOnHover && config.isOpen then
                 Events.onMouseLeave
                     (config1.focusAndToggle
                         { isOpen = False
@@ -535,7 +552,7 @@ viewCustom config1 config =
                                 { preventDefault = True
                                 , stopPropagation = True
                                 , message =
-                                    case ( config1.isOpen, config.purpose ) of
+                                    case ( config.isOpen, config.purpose ) of
                                         ( False, Dialog { firstId } ) ->
                                             config1.focusAndToggle
                                                 { isOpen = True
@@ -544,7 +561,7 @@ viewCustom config1 config =
 
                                         _ ->
                                             config1.focusAndToggle
-                                                { isOpen = not config1.isOpen
+                                                { isOpen = not config.isOpen
                                                 , focus = Nothing
                                                 }
                                 }
@@ -563,18 +580,18 @@ viewCustom config1 config =
                         ++ (case config.purpose of
                                 NavMenuList ->
                                     [ Aria.hasMenuPopUp
-                                    , Aria.expanded config1.isOpen
+                                    , Aria.expanded config.isOpen
                                     , Aria.controls [ config.menuId ]
                                     ]
 
                                 NavMenu ->
                                     [ Aria.hasMenuPopUp
-                                    , Aria.expanded config1.isOpen
+                                    , Aria.expanded config.isOpen
                                     , Aria.controls [ config.menuId ]
                                     ]
 
                                 Disclosure _ ->
-                                    [ Aria.expanded config1.isOpen
+                                    [ Aria.expanded config.isOpen
                                     , Aria.controls [ config.menuId ]
                                     ]
 
@@ -584,13 +601,13 @@ viewCustom config1 config =
               in
               case config.button of
                 StandardButton standardButton ->
-                    standardButton config config1.isOpen buttonAttributes
+                    standardButton config buttonAttributes
 
                 ClickableText renderButton ->
-                    renderButton config config1.isOpen buttonAttributes
+                    renderButton config buttonAttributes
 
                 ClickableSvg renderButton ->
-                    renderButton config config1.isOpen buttonAttributes
+                    renderButton config buttonAttributes
 
                 CustomButton customButton ->
                     customButton buttonAttributes
