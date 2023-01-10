@@ -310,8 +310,7 @@ clickableText title additionalAttributes =
     ClickableText
         (\menuConfig isOpen buttonAttributes ->
             ClickableText.button title
-                ([ ClickableText.small
-                 , ClickableText.custom buttonAttributes
+                ([ ClickableText.custom buttonAttributes
                  , ClickableText.disabled menuConfig.isDisabled
                  , ClickableText.rightIcon (AnimatedIcon.arrowDownUp isOpen)
                  ]
