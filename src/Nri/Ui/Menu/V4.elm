@@ -78,7 +78,7 @@ type Attribute msg
 
 {-| -}
 type Button msg
-    = StandardButton (MenuConfig -> List (Html.Attribute msg) -> Html msg)
+    = StandardButton (MenuConfig -> Bool -> List (Html.Attribute msg) -> Html msg)
     | CustomButton (List (Html.Attribute msg) -> Html msg)
 
 
@@ -333,9 +333,12 @@ button attributes title =
         buttonConfig =
             attributes
                 |> List.foldl (\(ButtonAttribute attr) config -> attr config) defaultButtonConfig
+
+        disclosureIndicator isOpen =
+            Svg.withColor Colors.azure (AnimatedIcon.arrowDownUp isOpen)
     in
     StandardButton
-        (\menuConfig buttonAttributes ->
+        (\menuConfig isOpen buttonAttributes ->
             if buttonConfig.hasBorder then
                 Button.button title
                     [ Button.tertiary
@@ -354,6 +357,7 @@ button attributes title =
                         Button.css []
                     , Maybe.map Button.exactWidth buttonConfig.buttonWidth
                         |> Maybe.withDefault (Button.css [])
+                    , Button.rightIcon (disclosureIndicator isOpen)
                     ]
 
             else
@@ -371,6 +375,7 @@ button attributes title =
 
                             Nothing ->
                                 []
+                    , ClickableText.rightIcon (disclosureIndicator isOpen)
                     ]
         )
 
@@ -666,7 +671,7 @@ viewCustom config1 config =
               in
               case config1.button of
                 StandardButton standardButton ->
-                    standardButton config buttonAttributes
+                    standardButton config config1.isOpen buttonAttributes
 
                 CustomButton customButton ->
                     customButton buttonAttributes
