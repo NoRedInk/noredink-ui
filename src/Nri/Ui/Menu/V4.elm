@@ -1,8 +1,6 @@
 module Nri.Ui.Menu.V4 exposing
-    ( view, Config
-    , Attribute
+    ( view, Attribute
     , isOpen, isDisabled
-    , Button
     , defaultTrigger, button, clickableText, clickableSvg
     , buttonId
     , navMenuList, disclosure, dialog
@@ -22,8 +20,7 @@ A togglable menu view and related buttons.
 
 ## Menu rendering
 
-@docs view, Config
-@docs Attribute
+@docs view, Attribute
 
 
 ## Menu state
@@ -33,7 +30,6 @@ A togglable menu view and related buttons.
 
 ## Triggering button options
 
-@docs Button
 @docs defaultTrigger, button, clickableText, clickableSvg
 @docs buttonId
 
@@ -74,12 +70,6 @@ import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
 {-| -}
 type Attribute msg
     = Attribute (MenuConfig msg -> MenuConfig msg)
-
-
-{-| -}
-type alias Config msg =
-    { entries : List (Entry msg)
-    }
 
 
 type alias MenuConfig msg =
@@ -222,24 +212,21 @@ dialog exitFocusManager =
 
   - `focusAndToggle`: the message produced to control the open/closed state and DOM focus
   - `attributes`: List of (attributes)[#menu-attributes] to apply to the menu.
-  - `config`: Configuration parameters:
-      - `button`: the `Button` to open the menu
-      - `entries`: the entries of the menu
-      - `isOpen`: whether the menu is currently open or not
+  - `entries`: the entries of the menu
 
 -}
 view :
     ({ isOpen : Bool, focus : Maybe String } -> msg)
     -> List (Attribute msg)
-    -> Config msg
+    -> List (Entry msg)
     -> Html msg
-view focusAndToggle attributes config =
+view focusAndToggle attributes entries =
     let
         menuConfig : MenuConfig msg
         menuConfig =
             List.foldl (\(Attribute attr) c -> attr c) defaultConfig attributes
     in
-    viewCustom focusAndToggle config menuConfig
+    viewCustom focusAndToggle menuConfig entries
 
 
 
@@ -392,11 +379,15 @@ clickableSvg title icon additionalAttributes =
         |> setButton
 
 
-viewCustom : ({ isOpen : Bool, focus : Maybe String } -> msg) -> Config msg -> MenuConfig msg -> Html msg
-viewCustom focusAndToggle config1 config =
+viewCustom :
+    ({ isOpen : Bool, focus : Maybe String } -> msg)
+    -> MenuConfig msg
+    -> List (Entry msg)
+    -> Html msg
+viewCustom focusAndToggle config entries =
     let
         ( maybeFirstFocusableElementId, maybeLastFocusableElementId ) =
-            ( List.head (getFirstIds config1.entries), List.head (getLastIds config1.entries) )
+            ( List.head (getFirstIds entries), List.head (getLastIds entries) )
 
         contentVisible =
             config.isOpen && not config.isDisabled
@@ -636,7 +627,7 @@ viewCustom focusAndToggle config1 config =
                         , previousId = Maybe.withDefault "" maybeLastFocusableElementId
                         , nextId = Maybe.withDefault "" maybeFirstFocusableElementId
                         }
-                        config1.entries
+                        entries
                     )
                 ]
             ]

@@ -153,17 +153,14 @@ view ellieLinkConfig state =
                     code =
                         moduleName
                             ++ ".view "
-                            ++ Code.newlineWithIndent 2
                             ++ "identity -- TODO: you will need a real msg type here"
                             ++ Code.listMultiline
                                 (("Menu.isOpen " ++ Code.bool (isOpen "interactiveExample"))
                                     :: List.map Tuple.first settings
                                 )
                                 1
-                            ++ Code.recordMultiline
-                                [ ( "entries", "[]" )
-                                ]
-                                1
+                            ++ Code.newlineWithIndent 1
+                            ++ "[]"
                 in
                 [ { sectionName = "Example"
                   , code = code
@@ -177,8 +174,7 @@ view ellieLinkConfig state =
     , div [ css [ Css.displayFlex, Css.justifyContent Css.center ] ]
         [ Menu.view (FocusAndToggle "interactiveExample")
             (Menu.isOpen (isOpen "interactiveExample") :: menuAttributes)
-            { entries = []
-            }
+            []
         ]
     , Heading.h2
         [ Heading.plaintext "Menu types"
@@ -210,48 +206,46 @@ view ellieLinkConfig state =
                         , Just <| Menu.isOpen (isOpen "1stPeriodEnglish")
                         ]
                     )
-                    { entries =
-                        [ Menu.entry "hello-button" <|
+                    [ Menu.entry "hello-button" <|
+                        \attrs ->
+                            ClickableText.button "Hello"
+                                [ ClickableText.onClick (ConsoleLog "Hello")
+                                , ClickableText.small
+                                , ClickableText.custom attrs
+                                ]
+                    , Menu.group "Menu group"
+                        [ Menu.entry "gift-button" <|
                             \attrs ->
-                                ClickableText.button "Hello"
-                                    [ ClickableText.onClick (ConsoleLog "Hello")
+                                ClickableText.button "Gift"
+                                    [ ClickableText.onClick (ConsoleLog "Gift")
                                     , ClickableText.small
                                     , ClickableText.custom attrs
+                                    , ClickableText.icon UiIcon.gift
                                     ]
-                        , Menu.group "Menu group"
-                            [ Menu.entry "gift-button" <|
-                                \attrs ->
-                                    ClickableText.button "Gift"
-                                        [ ClickableText.onClick (ConsoleLog "Gift")
-                                        , ClickableText.small
-                                        , ClickableText.custom attrs
-                                        , ClickableText.icon UiIcon.gift
-                                        ]
-                            , Menu.entry "null-button" <|
-                                \attrs ->
-                                    ClickableText.button "Nope!"
-                                        [ ClickableText.onClick (ConsoleLog "Nope!")
-                                        , ClickableText.small
-                                        , ClickableText.custom attrs
-                                        , ClickableText.icon UiIcon.null
-                                        ]
-                            , Menu.entry "no-icon-button" <|
-                                \attrs ->
-                                    ClickableText.button "Skip"
-                                        [ ClickableText.onClick (ConsoleLog "Skip")
-                                        , ClickableText.small
-                                        , ClickableText.custom attrs
-                                        ]
-                            ]
-                        , Menu.entry "performance-button" <|
+                        , Menu.entry "null-button" <|
                             \attrs ->
-                                ClickableText.button "Performance"
-                                    [ ClickableText.onClick (ConsoleLog "Performance")
+                                ClickableText.button "Nope!"
+                                    [ ClickableText.onClick (ConsoleLog "Nope!")
+                                    , ClickableText.small
+                                    , ClickableText.custom attrs
+                                    , ClickableText.icon UiIcon.null
+                                    ]
+                        , Menu.entry "no-icon-button" <|
+                            \attrs ->
+                                ClickableText.button "Skip"
+                                    [ ClickableText.onClick (ConsoleLog "Skip")
                                     , ClickableText.small
                                     , ClickableText.custom attrs
                                     ]
                         ]
-                    }
+                    , Menu.entry "performance-button" <|
+                        \attrs ->
+                            ClickableText.button "Performance"
+                                [ ClickableText.onClick (ConsoleLog "Performance")
+                                , ClickableText.small
+                                , ClickableText.custom attrs
+                                ]
+                    ]
           }
         , { menu = "Menu.navMenuList"
           , example =
@@ -262,30 +256,28 @@ view ellieLinkConfig state =
                     , Menu.defaultTrigger "Dropdown list" []
                     , Menu.isOpen (isOpen "dropdown_list")
                     ]
-                    { entries =
-                        [ Menu.entry "dropdown_list__first" <|
-                            \attrs ->
-                                ClickableText.button "First"
-                                    [ ClickableText.small
-                                    , ClickableText.onClick (ConsoleLog "First")
-                                    , ClickableText.custom attrs
-                                    ]
-                        , Menu.entry "dropdown_list__second" <|
-                            \attrs ->
-                                ClickableText.button "Second"
-                                    [ ClickableText.small
-                                    , ClickableText.onClick (ConsoleLog "Second")
-                                    , ClickableText.custom attrs
-                                    ]
-                        , Menu.entry "dropdown_list__third" <|
-                            \attrs ->
-                                ClickableText.button "Third"
-                                    [ ClickableText.small
-                                    , ClickableText.onClick (ConsoleLog "Third")
-                                    , ClickableText.custom attrs
-                                    ]
-                        ]
-                    }
+                    [ Menu.entry "dropdown_list__first" <|
+                        \attrs ->
+                            ClickableText.button "First"
+                                [ ClickableText.small
+                                , ClickableText.onClick (ConsoleLog "First")
+                                , ClickableText.custom attrs
+                                ]
+                    , Menu.entry "dropdown_list__second" <|
+                        \attrs ->
+                            ClickableText.button "Second"
+                                [ ClickableText.small
+                                , ClickableText.onClick (ConsoleLog "Second")
+                                , ClickableText.custom attrs
+                                ]
+                    , Menu.entry "dropdown_list__third" <|
+                        \attrs ->
+                            ClickableText.button "Third"
+                                [ ClickableText.small
+                                , ClickableText.onClick (ConsoleLog "Third")
+                                , ClickableText.custom attrs
+                                ]
+                    ]
           }
         , { menu = "Menu.disclosure"
           , example =
@@ -296,25 +288,23 @@ view ellieLinkConfig state =
                     , Menu.defaultTrigger "Log In disclosure" []
                     , Menu.isOpen (isOpen "with_disclosure")
                     ]
-                    { entries =
-                        [ Menu.entry "disclosure__username" <|
-                            \attrs ->
-                                div []
-                                    [ TextInput.view "Username"
-                                        [ TextInput.id "disclosure__username__input"
-                                        ]
-                                    , TextInput.view "Password"
-                                        [ TextInput.id "disclosure__password__input"
-                                        ]
-                                    , Button.button "Log in"
-                                        [ Button.primary
-                                        , Button.id "disclosure__login__button"
-                                        , Button.fillContainerWidth
-                                        , Button.css [ Css.marginTop (Css.px 15) ]
-                                        ]
+                    [ Menu.entry "disclosure__username" <|
+                        \attrs ->
+                            div []
+                                [ TextInput.view "Username"
+                                    [ TextInput.id "disclosure__username__input"
                                     ]
-                        ]
-                    }
+                                , TextInput.view "Password"
+                                    [ TextInput.id "disclosure__password__input"
+                                    ]
+                                , Button.button "Log in"
+                                    [ Button.primary
+                                    , Button.id "disclosure__login__button"
+                                    , Button.fillContainerWidth
+                                    , Button.css [ Css.marginTop (Css.px 15) ]
+                                    ]
+                                ]
+                    ]
           }
         , { menu = "Menu.dialog"
           , example =
@@ -325,25 +315,23 @@ view ellieLinkConfig state =
                     , Menu.defaultTrigger "Log In dialog" []
                     , Menu.isOpen (isOpen "dialog")
                     ]
-                    { entries =
-                        [ Menu.entry "dialog__username" <|
-                            \attrs ->
-                                div []
-                                    [ TextInput.view "Username"
-                                        [ TextInput.id "dialog__username__input"
-                                        ]
-                                    , TextInput.view "Password"
-                                        [ TextInput.id "dialog__password__input"
-                                        ]
-                                    , Button.button "Log in"
-                                        [ Button.primary
-                                        , Button.id "dialog__login__button"
-                                        , Button.fillContainerWidth
-                                        , Button.css [ Css.marginTop (Css.px 15) ]
-                                        ]
+                    [ Menu.entry "dialog__username" <|
+                        \attrs ->
+                            div []
+                                [ TextInput.view "Username"
+                                    [ TextInput.id "dialog__username__input"
                                     ]
-                        ]
-                    }
+                                , TextInput.view "Password"
+                                    [ TextInput.id "dialog__password__input"
+                                    ]
+                                , Button.button "Log in"
+                                    [ Button.primary
+                                    , Button.id "dialog__login__button"
+                                    , Button.fillContainerWidth
+                                    , Button.css [ Css.marginTop (Css.px 15) ]
+                                    ]
+                                ]
+                    ]
           }
         ]
     ]
