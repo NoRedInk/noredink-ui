@@ -71,4 +71,4 @@ arrowOpenClose isOpen =
           else
             Css.transform (Css.rotate (Css.deg -180))
         ]
-        UiIcon.arrowLeft
+        (Nri.Ui.Svg.V1.withViewBox "0 0 25 25" UiIcon.arrowLeft)

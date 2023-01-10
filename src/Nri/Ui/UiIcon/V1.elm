@@ -523,6 +523,7 @@ arrowDown =
 {-| -}
 arrowLeft : Nri.Ui.Svg.V1.Svg
 arrowLeft =
+    -- If changing the path or viewport, please verify that AnimatedIcon.arrowOpenClose does not regress.
     Nri.Ui.Svg.V1.init "0 5 25 15"
         [ Svg.path
             [ Attributes.fillRule "evenodd"
