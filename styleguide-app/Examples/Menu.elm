@@ -18,13 +18,16 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
+import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Menu.V4 as Menu
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V6 as Table
 import Nri.Ui.TextInput.V7 as TextInput
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -189,15 +192,22 @@ view ellieLinkConfig state =
                   }
                 ]
         }
+    , Heading.h2
+        [ Heading.plaintext "Interactive Example"
+        , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
+        ]
+    , div [ css [ Css.displayFlex, Css.justifyContent Css.center ] ]
+        [ Menu.view (Menu.isOpen (isOpen "interactiveExample") :: menuAttributes)
+            { focusAndToggle = FocusAndToggle "interactiveExample"
+            , entries = []
+            }
+        ]
+    , Heading.h2
+        [ Heading.plaintext "Menu types"
+        , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
+        ]
     , Table.view
         [ Table.string
-            { header = "Button type"
-            , value = .button
-            , width = Css.pct 30
-            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
-            , sort = Nothing
-            }
-        , Table.string
             { header = "Menu type"
             , value = .menu
             , width = Css.pct 30
@@ -212,17 +222,15 @@ view ellieLinkConfig state =
             , sort = Nothing
             }
         ]
-        [ { button = "Menu.button"
-          , menu = "default (Menu.navMenu)"
+        [ { menu = "Menu.navMenu (default)"
           , example =
                 Menu.view
-                    (menuAttributes
-                        ++ List.filterMap identity
-                            [ Just <| Menu.buttonId "1stPeriodEnglish__button"
-                            , Just <| Menu.menuId "1stPeriodEnglish__menu"
-                            , Just <| Menu.button "1st Period English with Mx. Trainer" []
-                            , Just <| Menu.isOpen (isOpen "1stPeriodEnglish")
-                            ]
+                    (List.filterMap identity
+                        [ Just <| Menu.buttonId "1stPeriodEnglish__button"
+                        , Just <| Menu.menuId "1stPeriodEnglish__menu"
+                        , Just <| Menu.button "1st Period English with Mx. Trainer" []
+                        , Just <| Menu.isOpen (isOpen "1stPeriodEnglish")
+                        ]
                     )
                     { focusAndToggle = FocusAndToggle "1stPeriodEnglish"
                     , entries =
@@ -268,138 +276,15 @@ view ellieLinkConfig state =
                         ]
                     }
           }
-        , { button = "Menu.clickableText"
-          , menu = "default (Menu.navMenu)"
+        , { menu = "Menu.navMenuList"
           , example =
                 Menu.view
-                    (menuAttributes
-                        ++ [ Menu.clickableText "1st Period English with Mx. Trainer" []
-                           , Menu.isOpen (isOpen "clickableTextExample")
-                           ]
-                    )
-                    { focusAndToggle = FocusAndToggle "clickableTextExample"
-                    , entries = []
-                    }
-          }
-        , { button = "Menu.clickableSvg"
-          , menu = "default (Menu.navMenu)"
-          , example =
-                Menu.view
-                    (menuAttributes
-                        ++ [ Menu.clickableSvg "1st Period English with Mx. Trainer" UiIcon.gear []
-                           , Menu.isOpen (isOpen "clickableSvgExample")
-                           ]
-                    )
-                    { focusAndToggle = FocusAndToggle "clickableSvgExample"
-                    , entries = []
-                    }
-          }
-        , { button = "Menu.custom"
-          , menu = "default (Menu.navMenu)"
-          , example =
-                Menu.view
-                    (menuAttributes
-                        ++ List.filterMap identity
-                            [ Just <| Menu.isOpen (isOpen "icon-button-with-menu")
-                            , Just <| Menu.buttonId "icon-button-with-menu__button"
-                            , Just <| Menu.menuId "icon-button-with-menu__menu"
-                            , Just <|
-                                Menu.custom <|
-                                    \buttonAttributes ->
-                                        button buttonAttributes [ text "Custom Menu trigger button" ]
-                            ]
-                    )
-                    { entries =
-                        [ Menu.entry "see-more-button" <|
-                            \attrs ->
-                                ClickableText.button "See more"
-                                    [ ClickableText.onClick (ConsoleLog "See more")
-                                    , ClickableText.small
-                                    , ClickableText.custom attrs
-                                    , ClickableText.icon UiIcon.seeMore
-                                    ]
-                        ]
-                    , focusAndToggle = FocusAndToggle "icon-button-with-menu"
-                    }
-          }
-        , { button = "Menu.button"
-          , menu = "Menu.disclosure"
-          , example =
-                Menu.view
-                    (menuAttributes
-                        ++ [ Menu.buttonId "disclosure__button"
-                           , Menu.menuId "disclosure__menu"
-                           , Menu.disclosure { lastId = "disclosure__login__button" }
-                           , Menu.button "Log In disclosure" []
-                           , Menu.isOpen (isOpen "with_disclosure")
-                           ]
-                    )
-                    { focusAndToggle = FocusAndToggle "with_disclosure"
-                    , entries =
-                        [ Menu.entry "disclosure__username" <|
-                            \attrs ->
-                                div []
-                                    [ TextInput.view "Username"
-                                        [ TextInput.id "disclosure__username__input"
-                                        ]
-                                    , TextInput.view "Password"
-                                        [ TextInput.id "disclosure__password__input"
-                                        ]
-                                    , Button.button "Log in"
-                                        [ Button.primary
-                                        , Button.id "disclosure__login__button"
-                                        , Button.fillContainerWidth
-                                        , Button.css [ Css.marginTop (Css.px 15) ]
-                                        ]
-                                    ]
-                        ]
-                    }
-          }
-        , { button = "Menu.button"
-          , menu = "Menu.dialog"
-          , example =
-                Menu.view
-                    (menuAttributes
-                        ++ [ Menu.buttonId "dialog__button"
-                           , Menu.menuId "dialog__menu"
-                           , Menu.dialog { firstId = "dialog__username__input", lastId = "dialog__login__button" }
-                           , Menu.button "Log In dialog" []
-                           , Menu.isOpen (isOpen "dialog")
-                           ]
-                    )
-                    { focusAndToggle = FocusAndToggle "dialog"
-                    , entries =
-                        [ Menu.entry "dialog__username" <|
-                            \attrs ->
-                                div []
-                                    [ TextInput.view "Username"
-                                        [ TextInput.id "dialog__username__input"
-                                        ]
-                                    , TextInput.view "Password"
-                                        [ TextInput.id "dialog__password__input"
-                                        ]
-                                    , Button.button "Log in"
-                                        [ Button.primary
-                                        , Button.id "dialog__login__button"
-                                        , Button.fillContainerWidth
-                                        , Button.css [ Css.marginTop (Css.px 15) ]
-                                        ]
-                                    ]
-                        ]
-                    }
-          }
-        , { button = "Menu.button"
-          , menu = "Menu.navMenuList"
-          , example =
-                Menu.view
-                    (menuAttributes
-                        ++ [ Menu.buttonId "dropdown_list__button"
-                           , Menu.menuId "dropdown_list__menu"
-                           , Menu.navMenuList
-                           , Menu.button "Dropdown list" []
-                           , Menu.isOpen (isOpen "dropdown_list")
-                           ]
-                    )
+                    [ Menu.buttonId "dropdown_list__button"
+                    , Menu.menuId "dropdown_list__menu"
+                    , Menu.navMenuList
+                    , Menu.button "Dropdown list" []
+                    , Menu.isOpen (isOpen "dropdown_list")
+                    ]
                     { focusAndToggle = FocusAndToggle "dropdown_list"
                     , entries =
                         [ Menu.entry "dropdown_list__first" <|
@@ -422,6 +307,66 @@ view ellieLinkConfig state =
                                     [ ClickableText.small
                                     , ClickableText.onClick (ConsoleLog "Third")
                                     , ClickableText.custom attrs
+                                    ]
+                        ]
+                    }
+          }
+        , { menu = "Menu.disclosure"
+          , example =
+                Menu.view
+                    [ Menu.buttonId "disclosure__button"
+                    , Menu.menuId "disclosure__menu"
+                    , Menu.disclosure { lastId = "disclosure__login__button" }
+                    , Menu.button "Log In disclosure" []
+                    , Menu.isOpen (isOpen "with_disclosure")
+                    ]
+                    { focusAndToggle = FocusAndToggle "with_disclosure"
+                    , entries =
+                        [ Menu.entry "disclosure__username" <|
+                            \attrs ->
+                                div []
+                                    [ TextInput.view "Username"
+                                        [ TextInput.id "disclosure__username__input"
+                                        ]
+                                    , TextInput.view "Password"
+                                        [ TextInput.id "disclosure__password__input"
+                                        ]
+                                    , Button.button "Log in"
+                                        [ Button.primary
+                                        , Button.id "disclosure__login__button"
+                                        , Button.fillContainerWidth
+                                        , Button.css [ Css.marginTop (Css.px 15) ]
+                                        ]
+                                    ]
+                        ]
+                    }
+          }
+        , { menu = "Menu.dialog"
+          , example =
+                Menu.view
+                    [ Menu.buttonId "dialog__button"
+                    , Menu.menuId "dialog__menu"
+                    , Menu.dialog { firstId = "dialog__username__input", lastId = "dialog__login__button" }
+                    , Menu.button "Log In dialog" []
+                    , Menu.isOpen (isOpen "dialog")
+                    ]
+                    { focusAndToggle = FocusAndToggle "dialog"
+                    , entries =
+                        [ Menu.entry "dialog__username" <|
+                            \attrs ->
+                                div []
+                                    [ TextInput.view "Username"
+                                        [ TextInput.id "dialog__username__input"
+                                        ]
+                                    , TextInput.view "Password"
+                                        [ TextInput.id "dialog__password__input"
+                                        ]
+                                    , Button.button "Log in"
+                                        [ Button.primary
+                                        , Button.id "dialog__login__button"
+                                        , Button.fillContainerWidth
+                                        , Button.css [ Css.marginTop (Css.px 15) ]
+                                        ]
                                     ]
                         ]
                     }
