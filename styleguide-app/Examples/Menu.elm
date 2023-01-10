@@ -121,7 +121,7 @@ view : EllieLink.Config -> State -> List (Html Msg)
 view ellieLinkConfig state =
     let
         menuAttributes =
-            (Control.currentValue state.settings).menuAttributes
+            Control.currentValue state.settings
                 |> List.map Tuple.second
 
         isOpen name =
@@ -148,7 +148,7 @@ view ellieLinkConfig state =
                     toCode buttonCode =
                         moduleName
                             ++ ".view "
-                            ++ Code.list (buttonCode :: List.map Tuple.first settings.menuAttributes)
+                            ++ Code.list (buttonCode :: List.map Tuple.first settings)
                             ++ Code.recordMultiline
                                 [ ( "entries", "[]" )
                                 , ( "isOpen", "True" )
@@ -395,18 +395,11 @@ type alias State =
 
 
 type alias Settings =
-    { menuAttributes : List ( String, Menu.Attribute Msg )
-    }
+    List ( String, Menu.Attribute Msg )
 
 
 initSettings : Control Settings
 initSettings =
-    Control.record Settings
-        |> Control.field "Menu attributes" controlMenuAttributes
-
-
-controlMenuAttributes : Control (List ( String, Menu.Attribute msg ))
-controlMenuAttributes =
     ControlExtra.list
         |> ControlExtra.optionalListItem "alignment" controlAlignment
         |> ControlExtra.optionalBoolListItem "isDisabled" ( "Menu.isDisabled True", Menu.isDisabled True )
