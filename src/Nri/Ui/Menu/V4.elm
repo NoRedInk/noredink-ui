@@ -47,7 +47,6 @@ import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
 import Css exposing (..)
-import Css.Global exposing (descendants)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (class, classList, css)
 import Html.Styled.Events as Events
@@ -56,13 +55,10 @@ import Nri.Ui.AnimatedIcon.V1 as AnimatedIcon
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
-import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
 
 
@@ -252,14 +248,6 @@ entry id =
     Single id
 
 
-{-| Determines how we deal with long titles. Should we make the menu expand in
-height to show the full title or truncate it instead?
--}
-type TitleWrapping
-    = WrapAndExpandTitle
-    | TruncateTitle
-
-
 {-| Whether the menu content sticks to the left or right side of the button
 -}
 type Alignment
@@ -334,68 +322,6 @@ clickableText title additionalAttributes =
 custom : (List (Html.Attribute msg) -> Html msg) -> Button msg
 custom builder =
     CustomButton builder
-
-
-viewArrow : { config | isOpen : Bool, isDisabled : Bool } -> Html msg
-viewArrow config =
-    span
-        [ classList [ ( "Arrow", True ), ( "Open", config.isOpen ) ]
-        , css
-            [ width (px 12)
-            , height (px 7)
-            , marginLeft (px 5)
-            , color
-                (if config.isDisabled then
-                    Colors.gray20
-
-                 else
-                    Colors.azure
-                )
-            , Css.flexShrink (Css.num 0)
-            , descendants
-                [ Css.Global.svg [ display block ]
-                ]
-            , property "transform-origin" "center"
-            , property "transition" "transform 0.4s"
-            , if config.isOpen then
-                transform (rotate (deg 180))
-
-              else
-                Css.batch []
-            ]
-        ]
-        [ Svg.toHtml UiIcon.arrowDown ]
-
-
-viewTitle :
-    String
-    ->
-        { buttonConfig
-            | icon : Maybe Svg.Svg
-            , wrapping : TitleWrapping
-        }
-    -> { menuConfig | isDisabled : Bool }
-    -> Html msg
-viewTitle title_ config menuConfig =
-    div styleTitle
-        [ viewJust (\iconSvg -> span (styleIconContainer menuConfig) [ Svg.toHtml iconSvg ])
-            config.icon
-        , span
-            (case config.wrapping of
-                WrapAndExpandTitle ->
-                    [ Attributes.attribute "data-nri-description" title_ ]
-
-                TruncateTitle ->
-                    [ class "Truncated"
-                    , css
-                        [ whiteSpace noWrap
-                        , overflow hidden
-                        , textOverflow ellipsis
-                        ]
-                    ]
-            )
-            [ Html.text title_ ]
-        ]
 
 
 viewCustom : Config msg -> MenuConfig -> Html msg
@@ -797,19 +723,6 @@ styleOverlay config =
     ]
 
 
-styleTitle : List (Html.Attribute msg)
-styleTitle =
-    [ class "Title"
-    , css
-        [ width (pct 100)
-        , overflow hidden
-        , Css.displayFlex
-        , Css.alignItems Css.center
-        , color Colors.gray20
-        ]
-    ]
-
-
 styleGroupTitle : List (Html.Attribute msg)
 styleGroupTitle =
     [ class "GroupTitle"
@@ -858,37 +771,6 @@ styleGroupContainer =
         , paddingBottom (px 15)
         , lastChild
             [ paddingBottom zero ]
-        ]
-    ]
-
-
-styleButtonInner : List (Html.Attribute msg)
-styleButtonInner =
-    [ class "ButtonInner"
-    , css
-        [ Css.displayFlex
-        , Css.justifyContent Css.spaceBetween
-        , Css.alignItems Css.center
-        ]
-    ]
-
-
-styleIconContainer : { menuConfig | isDisabled : Bool } -> List (Html.Attribute msg)
-styleIconContainer config =
-    [ class "IconContainer"
-    , css
-        [ width (px 21)
-        , height (px 21)
-        , marginRight (px 5)
-        , display inlineBlock
-        , Css.flexShrink (Css.num 0)
-        , color
-            (if config.isDisabled then
-                Colors.gray20
-
-             else
-                Colors.azure
-            )
         ]
     ]
 
