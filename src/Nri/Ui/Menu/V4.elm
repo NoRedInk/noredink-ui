@@ -341,6 +341,7 @@ button attributes title =
                     [ Button.tertiary
                     , Button.css
                         [ Css.color Colors.gray20 |> Css.important
+                        , Css.fontWeight (Css.int 600)
                         , Css.hover [ Css.backgroundColor Colors.white ]
                         ]
                     , Button.custom buttonAttributes
@@ -357,7 +358,8 @@ button attributes title =
 
             else
                 ClickableText.button title
-                    [ ClickableText.css [ Css.color Colors.gray20 |> Css.important ]
+                    [ ClickableText.small
+                    , ClickableText.css [ Css.color Colors.gray20 |> Css.important ]
                     , ClickableText.custom buttonAttributes
                     , Maybe.map (Svg.withColor Colors.azure >> ClickableText.icon) buttonConfig.icon
                         |> Maybe.withDefault (ClickableText.css [])
