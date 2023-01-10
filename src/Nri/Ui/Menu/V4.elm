@@ -3,8 +3,9 @@ module Nri.Ui.Menu.V4 exposing
     , Attribute
     , Button
     , button, clickableText, clickableSvg, custom
+    , buttonId
     , navMenuList, disclosure, dialog
-    , isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover
+    , isDisabled, menuWidth, menuId, menuZIndex, opensOnHover
     , Alignment(..), alignment
     , Entry, group, entry
     )
@@ -28,12 +29,13 @@ A togglable menu view and related buttons.
 
 @docs Button
 @docs button, clickableText, clickableSvg, custom
+@docs buttonId
 
 
 ## Menu attributes
 
 @docs navMenuList, disclosure, dialog
-@docs isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover
+@docs isDisabled, menuWidth, menuId, menuZIndex, opensOnHover
 @docs Alignment, alignment
 
 
@@ -65,20 +67,20 @@ import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
 
 {-| -}
 type Attribute msg
-    = Attribute (MenuConfig -> MenuConfig)
+    = Attribute (MenuConfig msg -> MenuConfig msg)
 
 
 {-| -}
 type alias Config msg =
-    { button : Button msg
-    , entries : List (Entry msg)
+    { entries : List (Entry msg)
     , isOpen : Bool
     , focusAndToggle : { isOpen : Bool, focus : Maybe String } -> msg
     }
 
 
-type alias MenuConfig =
-    { alignment : Alignment
+type alias MenuConfig msg =
+    { button : Button msg
+    , alignment : Alignment
     , isDisabled : Bool
     , menuWidth : Maybe Int
     , buttonId : String
@@ -202,9 +204,11 @@ dialog exitFocusManager =
 view : List (Attribute msg) -> Config msg -> Html msg
 view attributes config =
     let
+        menuConfig : MenuConfig msg
         menuConfig =
             List.foldl (\(Attribute attr) c -> attr c)
-                { alignment = Right
+                { button = defaultButton "Menu" []
+                , alignment = Right
                 , isDisabled = False
                 , menuWidth = Nothing
                 , buttonId = ""
@@ -260,18 +264,21 @@ type Alignment
 -- Triggering Button
 
 
+setButton : Button msg -> Attribute msg
+setButton button_ =
+    Attribute <| \config -> { config | button = button_ }
+
+
 {-| -}
 type Button msg
-    = StandardButton (MenuConfig -> Bool -> List (Html.Attribute msg) -> Html msg)
-    | ClickableText (MenuConfig -> Bool -> List (Html.Attribute msg) -> Html msg)
-    | ClickableSvg (MenuConfig -> Bool -> List (Html.Attribute msg) -> Html msg)
+    = StandardButton (MenuConfig msg -> Bool -> List (Html.Attribute msg) -> Html msg)
+    | ClickableText (MenuConfig msg -> Bool -> List (Html.Attribute msg) -> Html msg)
+    | ClickableSvg (MenuConfig msg -> Bool -> List (Html.Attribute msg) -> Html msg)
     | CustomButton (List (Html.Attribute msg) -> Html msg)
 
 
-{-| Defines a standard `Button` for the Menu.
--}
-button : String -> List (Button.Attribute msg) -> Button msg
-button title attributes =
+defaultButton : String -> List (Button.Attribute msg) -> Button msg
+defaultButton title attributes =
     StandardButton
         (\menuConfig isOpen buttonAttributes ->
             Button.button title
@@ -305,9 +312,16 @@ button title attributes =
         )
 
 
+{-| Defines a standard `Button` for the Menu.
+-}
+button : String -> List (Button.Attribute msg) -> Attribute msg
+button title attributes =
+    setButton (defaultButton title attributes)
+
+
 {-| Use ClickableText as the triggering element for the Menu.
 -}
-clickableText : String -> List (ClickableText.Attribute msg) -> Button msg
+clickableText : String -> List (ClickableText.Attribute msg) -> Attribute msg
 clickableText title additionalAttributes =
     ClickableText
         (\menuConfig isOpen buttonAttributes ->
@@ -319,11 +333,12 @@ clickableText title additionalAttributes =
                     ++ additionalAttributes
                 )
         )
+        |> setButton
 
 
 {-| Use ClickableSvg as the triggering element for the Menu.
 -}
-clickableSvg : String -> Svg.Svg -> List (ClickableSvg.Attribute msg) -> Button msg
+clickableSvg : String -> Svg.Svg -> List (ClickableSvg.Attribute msg) -> Attribute msg
 clickableSvg title icon additionalAttributes =
     ClickableSvg
         (\menuConfig isOpen buttonAttributes ->
@@ -336,16 +351,18 @@ clickableSvg title icon additionalAttributes =
                     ++ additionalAttributes
                 )
         )
+        |> setButton
 
 
 {-| Defines a custom `Button` for the menu
 -}
-custom : (List (Html.Attribute msg) -> Html msg) -> Button msg
+custom : (List (Html.Attribute msg) -> Html msg) -> Attribute msg
 custom builder =
     CustomButton builder
+        |> setButton
 
 
-viewCustom : Config msg -> MenuConfig -> Html msg
+viewCustom : Config msg -> MenuConfig msg -> Html msg
 viewCustom config1 config =
     let
         ( maybeFirstFocusableElementId, maybeLastFocusableElementId ) =
@@ -565,7 +582,7 @@ viewCustom config1 config =
                                     [ Aria.hasDialogPopUp ]
                            )
               in
-              case config1.button of
+              case config.button of
                 StandardButton standardButton ->
                     standardButton config config1.isOpen buttonAttributes
 
@@ -634,7 +651,7 @@ getLastIds entries =
 
 
 viewEntries :
-    MenuConfig
+    MenuConfig msg
     ->
         { focusAndToggle : { isOpen : Bool, focus : Maybe String } -> msg
         , previousId : String
@@ -665,7 +682,7 @@ viewEntries config { previousId, nextId, focusAndToggle } entries =
 
 
 viewEntry :
-    MenuConfig
+    MenuConfig msg
     -> ({ isOpen : Bool, focus : Maybe String } -> msg)
     -> { upId : String, downId : String, entry_ : Entry msg }
     -> Html msg
@@ -733,7 +750,7 @@ viewEntry config focusAndToggle { upId, downId, entry_ } =
 -- STYLES
 
 
-styleOverlay : MenuConfig -> List (Html.Attribute msg)
+styleOverlay : MenuConfig msg -> List (Html.Attribute msg)
 styleOverlay config =
     [ class "Overlay"
     , css
@@ -773,7 +790,7 @@ styleGroupTitle =
     ]
 
 
-styleGroupTitleText : MenuConfig -> List (Html.Attribute msg)
+styleGroupTitleText : MenuConfig msg -> List (Html.Attribute msg)
 styleGroupTitleText config =
     [ class "GroupTitleText"
     , css
@@ -799,7 +816,7 @@ styleGroupContainer =
     ]
 
 
-styleOuterContent : Bool -> MenuConfig -> Html.Attribute msg
+styleOuterContent : Bool -> MenuConfig msg -> Html.Attribute msg
 styleOuterContent _ config =
     css
         [ position absolute
@@ -813,7 +830,7 @@ styleOuterContent _ config =
         ]
 
 
-styleContent : Bool -> MenuConfig -> Html.Attribute msg
+styleContent : Bool -> MenuConfig msg -> Html.Attribute msg
 styleContent contentVisible config =
     css
         [ padding (px 25)

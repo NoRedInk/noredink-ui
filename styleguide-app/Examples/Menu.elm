@@ -145,10 +145,9 @@ view ellieLinkConfig state =
                     toCode buttonCode =
                         moduleName
                             ++ ".view "
-                            ++ Code.list (List.map Tuple.first settings.menuAttributes)
+                            ++ Code.list (buttonCode :: List.map Tuple.first settings.menuAttributes)
                             ++ Code.recordMultiline
-                                [ ( "button", buttonCode )
-                                , ( "entries", "[]" )
+                                [ ( "entries", "[]" )
                                 , ( "isOpen", "True" )
                                 , ( "focusAndToggle", "identity -- TODO: you will need a real msg type here" )
                                 ]
@@ -156,43 +155,35 @@ view ellieLinkConfig state =
                 in
                 [ { sectionName = "Menu.button"
                   , code =
-                        Code.newlineWithIndent 2
-                            ++ "Menu.button "
-                            ++ Code.newlineWithIndent 3
+                        "Menu.button "
                             ++ Code.string "1st Period English with Mx. Trainer"
-                            ++ Code.newlineWithIndent 3
                             ++ Code.list []
                             |> toCode
                   }
                 , { sectionName = "Menu.clickableText"
                   , code =
-                        Code.newlineWithIndent 2
-                            ++ "Menu.clickableText "
-                            ++ Code.newlineWithIndent 3
+                        "Menu.clickableText "
                             ++ Code.string "1st Period English with Mx. Trainer"
-                            ++ Code.newlineWithIndent 3
                             ++ Code.list []
                             |> toCode
                   }
                 , { sectionName = "Menu.clickableSvg"
                   , code =
-                        Code.newlineWithIndent 2
-                            ++ "Menu.clickableSvg"
-                            ++ Code.newlineWithIndent 3
+                        "Menu.clickableSvg"
+                            ++ Code.newlineWithIndent 2
                             ++ Code.string "1st Period English with Mx. Trainer"
-                            ++ Code.newlineWithIndent 3
+                            ++ Code.newlineWithIndent 2
                             ++ "UiIcon.gear"
-                            ++ Code.newlineWithIndent 3
+                            ++ Code.newlineWithIndent 2
                             ++ Code.list []
                             |> toCode
                   }
                 , { sectionName = "Menu.custom"
                   , code =
-                        Code.newlineWithIndent 2
-                            ++ "Menu.custom <|"
-                            ++ Code.newlineWithIndent 3
+                        "Menu.custom <|"
+                            ++ Code.newlineWithIndent 2
                             ++ "\\buttonAttributes ->"
-                            ++ Code.newlineWithIndent 4
+                            ++ Code.newlineWithIndent 3
                             ++ "button buttonAttributes [ text \"Custom Menu trigger button\" ]"
                             |> toCode
                   }
@@ -229,6 +220,7 @@ view ellieLinkConfig state =
                         ++ List.filterMap identity
                             [ Just <| Menu.buttonId "1stPeriodEnglish__button"
                             , Just <| Menu.menuId "1stPeriodEnglish__menu"
+                            , Just <| Menu.button "1st Period English with Mx. Trainer" []
                             ]
                     )
                     { isOpen = isOpen "1stPeriodEnglish"
@@ -274,27 +266,30 @@ view ellieLinkConfig state =
                                     , ClickableText.custom attrs
                                     ]
                         ]
-                    , button = Menu.button "1st Period English with Mx. Trainer" []
                     }
           }
         , { button = "Menu.clickableText"
           , menu = "default (Menu.navMenu)"
           , example =
-                Menu.view menuAttributes
+                Menu.view
+                    (Menu.clickableText "1st Period English with Mx. Trainer" []
+                        :: menuAttributes
+                    )
                     { isOpen = isOpen "clickableTextExample"
                     , focusAndToggle = FocusAndToggle "clickableTextExample"
                     , entries = []
-                    , button = Menu.clickableText "1st Period English with Mx. Trainer" []
                     }
           }
         , { button = "Menu.clickableSvg"
           , menu = "default (Menu.navMenu)"
           , example =
-                Menu.view menuAttributes
+                Menu.view
+                    (Menu.clickableSvg "1st Period English with Mx. Trainer" UiIcon.gear []
+                        :: menuAttributes
+                    )
                     { isOpen = isOpen "clickableSvgExample"
                     , focusAndToggle = FocusAndToggle "clickableSvgExample"
                     , entries = []
-                    , button = Menu.clickableSvg "1st Period English with Mx. Trainer" UiIcon.gear []
                     }
           }
         , { button = "Menu.custom"
@@ -305,6 +300,10 @@ view ellieLinkConfig state =
                         ++ List.filterMap identity
                             [ Just <| Menu.buttonId "icon-button-with-menu__button"
                             , Just <| Menu.menuId "icon-button-with-menu__menu"
+                            , Just <|
+                                Menu.custom <|
+                                    \buttonAttributes ->
+                                        button buttonAttributes [ text "Custom Menu trigger button" ]
                             ]
                     )
                     { entries =
@@ -319,10 +318,6 @@ view ellieLinkConfig state =
                         ]
                     , isOpen = isOpen "icon-button-with-menu"
                     , focusAndToggle = FocusAndToggle "icon-button-with-menu"
-                    , button =
-                        Menu.custom <|
-                            \buttonAttributes ->
-                                button buttonAttributes [ text "Custom Menu trigger button" ]
                     }
           }
         , { button = "Menu.button"
@@ -333,6 +328,7 @@ view ellieLinkConfig state =
                         ++ [ Menu.buttonId "disclosure__button"
                            , Menu.menuId "disclosure__menu"
                            , Menu.disclosure { lastId = "disclosure__login__button" }
+                           , Menu.button "Log In disclosure" []
                            ]
                     )
                     { isOpen = isOpen "with_disclosure"
@@ -355,7 +351,6 @@ view ellieLinkConfig state =
                                         ]
                                     ]
                         ]
-                    , button = Menu.button "Log In disclosure" []
                     }
           }
         , { button = "Menu.button"
@@ -366,6 +361,7 @@ view ellieLinkConfig state =
                         ++ [ Menu.buttonId "dialog__button"
                            , Menu.menuId "dialog__menu"
                            , Menu.dialog { firstId = "dialog__username__input", lastId = "dialog__login__button" }
+                           , Menu.button "Log In dialog" []
                            ]
                     )
                     { isOpen = isOpen "dialog"
@@ -388,7 +384,6 @@ view ellieLinkConfig state =
                                         ]
                                     ]
                         ]
-                    , button = Menu.button "Log In dialog" []
                     }
           }
         , { button = "Menu.button"
@@ -399,6 +394,7 @@ view ellieLinkConfig state =
                         ++ [ Menu.buttonId "dropdown_list__button"
                            , Menu.menuId "dropdown_list__menu"
                            , Menu.navMenuList
+                           , Menu.button "Dropdown list" []
                            ]
                     )
                     { isOpen = isOpen "dropdown_list"
@@ -426,7 +422,6 @@ view ellieLinkConfig state =
                                     , ClickableText.custom attrs
                                     ]
                         ]
-                    , button = Menu.button "Dropdown list" []
                     }
           }
         ]
