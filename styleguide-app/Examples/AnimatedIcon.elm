@@ -14,10 +14,12 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples
+import Html.Styled exposing (..)
 import Nri.Ui.AnimatedIcon.V1 as AnimatedIcon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Table.V6 as Table
 
 
 moduleName : String
@@ -44,6 +46,8 @@ example =
         IconExamples.preview
             [ AnimatedIcon.mobileOpenClose False
             , AnimatedIcon.mobileOpenClose True
+            , AnimatedIcon.arrowOpenClose False
+            , AnimatedIcon.arrowOpenClose True
             ]
     , view =
         \ellieLinkConfig state ->
@@ -69,22 +73,45 @@ example =
                                     ++ viewName
                                     ++ " "
                                     ++ Tuple.first settings.isOpen
-                                    ++ "\n  |> Svg.withCss [ Css.maxWidth (Css.px 45) ]"
+                                    ++ "\n  |> Svg.withCss [ Css.maxWidth (Css.px 30) ]"
                                     ++ "\n  |> Svg.toHtml"
                         in
-                        [ { sectionName = "Code"
+                        [ { sectionName = "mobileOpenClose"
                           , code = toCode "mobileOpenClose"
+                          }
+                        , { sectionName = "arrowOpenClose"
+                          , code = toCode "arrowOpenClose"
                           }
                         ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
-            , AnimatedIcon.mobileOpenClose (Tuple.second attributes.isOpen)
-                |> Svg.withCss
-                    [ Css.maxWidth (Css.px 30)
-                    , Css.border3 (Css.px 2) Css.solid Colors.red
-                    , Css.boxSizing Css.borderBox
-                    ]
-                |> Svg.toHtml
+            , Table.view
+                [ Table.custom
+                    { header = text "Rendered"
+                    , view =
+                        \{ render } ->
+                            render (Tuple.second attributes.isOpen)
+                                |> Svg.withCss
+                                    [ Css.maxWidth (Css.px 30)
+                                    , Css.border3 (Css.px 2) Css.solid Colors.red
+                                    , Css.boxSizing Css.borderBox
+                                    ]
+                                |> Svg.toHtml
+                    , width = Css.px 10
+                    , cellStyles = always []
+                    , sort = Nothing
+                    }
+                , Table.string
+                    { header = "Name"
+                    , value = .name
+                    , width = Css.px 10
+                    , cellStyles = always []
+                    , sort = Nothing
+                    }
+                ]
+                [ { name = "mobileOpenClose", render = AnimatedIcon.mobileOpenClose }
+                , { name = "arrowOpenClose", render = AnimatedIcon.arrowOpenClose }
+                ]
             ]
     }
 

@@ -1,13 +1,14 @@
-module Nri.Ui.AnimatedIcon.V1 exposing (mobileOpenClose)
+module Nri.Ui.AnimatedIcon.V1 exposing (mobileOpenClose, arrowOpenClose)
 
 {-|
 
-@docs mobileOpenClose
+@docs mobileOpenClose, arrowOpenClose
 
 -}
 
 import Css
 import Nri.Ui.Svg.V1
+import Nri.Ui.UiIcon.V1 as UiIcon
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as Attributes
 
@@ -56,3 +57,18 @@ mobileOpenClose isOpen =
             , Css.scaleX 1.3
             ]
         ]
+
+
+{-| An arrow that animates between pointing down and pointing up.
+-}
+arrowOpenClose : Bool -> Nri.Ui.Svg.V1.Svg
+arrowOpenClose isOpen =
+    Nri.Ui.Svg.V1.withCss
+        [ Css.property "transition" "transform 0.1s"
+        , if isOpen then
+            Css.transform (Css.rotate (Css.deg -90))
+
+          else
+            Css.transform (Css.rotate (Css.deg -180))
+        ]
+        UiIcon.arrowLeft
