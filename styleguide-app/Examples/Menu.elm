@@ -121,10 +121,6 @@ view ellieLinkConfig state =
             (Control.currentValue state.settings).menuAttributes
                 |> List.map Tuple.second
 
-        defaultButtonAttributes =
-            (Control.currentValue state.settings).buttonAttributes
-                |> List.map Tuple.second
-
         isOpen name =
             case state.openMenu of
                 Just open ->
@@ -162,22 +158,20 @@ view ellieLinkConfig state =
                   , code =
                         Code.newlineWithIndent 2
                             ++ "Menu.button "
-                            ++ Code.listMultiline
-                                (List.map Tuple.first settings.buttonAttributes)
-                                3
                             ++ Code.newlineWithIndent 3
                             ++ Code.string "1st Period English with Mx. Trainer"
+                            ++ Code.newlineWithIndent 3
+                            ++ Code.list []
                             |> toCode
                   }
                 , { sectionName = "Menu.clickableText"
                   , code =
                         Code.newlineWithIndent 2
                             ++ "Menu.clickableText "
-                            ++ Code.listMultiline
-                                (List.map Tuple.first settings.buttonAttributes)
-                                3
                             ++ Code.newlineWithIndent 3
                             ++ Code.string "1st Period English with Mx. Trainer"
+                            ++ Code.newlineWithIndent 3
+                            ++ Code.list []
                             |> toCode
                   }
                 , { sectionName = "Menu.custom"
@@ -268,7 +262,7 @@ view ellieLinkConfig state =
                                     , ClickableText.custom attrs
                                     ]
                         ]
-                    , button = Menu.button defaultButtonAttributes "1st Period English with Mx. Trainer"
+                    , button = Menu.button "1st Period English with Mx. Trainer" []
                     }
           }
         , { button = "Menu.clickableText"
@@ -278,11 +272,7 @@ view ellieLinkConfig state =
                     { isOpen = isOpen "clickableTextExample"
                     , focusAndToggle = FocusAndToggle "clickableTextExample"
                     , entries = []
-                    , button =
-                        Menu.clickableText
-                            defaultButtonAttributes
-                            "1st Period English with Mx. Trainer"
-                            []
+                    , button = Menu.clickableText "1st Period English with Mx. Trainer" []
                     }
           }
         , { button = "Menu.custom"
@@ -343,7 +333,7 @@ view ellieLinkConfig state =
                                         ]
                                     ]
                         ]
-                    , button = Menu.button defaultButtonAttributes "Log In disclosure"
+                    , button = Menu.button "Log In disclosure" []
                     }
           }
         , { button = "Menu.button"
@@ -376,7 +366,7 @@ view ellieLinkConfig state =
                                         ]
                                     ]
                         ]
-                    , button = Menu.button defaultButtonAttributes "Log In dialog"
+                    , button = Menu.button "Log In dialog" []
                     }
           }
         , { button = "Menu.button"
@@ -414,7 +404,7 @@ view ellieLinkConfig state =
                                     , ClickableText.custom attrs
                                     ]
                         ]
-                    , button = Menu.button defaultButtonAttributes "Dropdown list"
+                    , button = Menu.button "Dropdown list" []
                     }
           }
         ]
@@ -442,7 +432,6 @@ type alias State =
 
 type alias Settings =
     { menuAttributes : List ( String, Menu.Attribute Msg )
-    , buttonAttributes : List ( String, Menu.ButtonAttribute )
     }
 
 
@@ -450,7 +439,6 @@ initSettings : Control Settings
 initSettings =
     Control.record Settings
         |> Control.field "Menu attributes" controlMenuAttributes
-        |> Control.field "Button attributes" controlButtonAttributes
 
 
 controlMenuAttributes : Control (List ( String, Menu.Attribute msg ))
@@ -479,33 +467,6 @@ controlMenuWidth =
     Control.map
         (\val -> ( "Menu.menuWidth " ++ String.fromInt val, Menu.menuWidth val ))
         (ControlExtra.int 220)
-
-
-controlButtonAttributes : Control (List ( String, Menu.ButtonAttribute ))
-controlButtonAttributes =
-    ControlExtra.list
-        |> CommonControls.icon moduleName Menu.icon
-        |> ControlExtra.optionalListItem "buttonWidth" controlButtonWidth
-        |> ControlExtra.optionalListItem "wrapping" controlWrapping
-
-
-controlButtonWidth : Control ( String, Menu.ButtonAttribute )
-controlButtonWidth =
-    Control.map
-        (\val -> ( "Menu.buttonWidth " ++ String.fromInt val, Menu.buttonWidth val ))
-        (ControlExtra.int 220)
-
-
-controlWrapping : Control ( String, Menu.ButtonAttribute )
-controlWrapping =
-    Control.choice
-        [ ( "WrapAndExpandTitle"
-          , Control.value ( "Menu.wrapping Menu.WrapAndExpandTitle", Menu.wrapping Menu.WrapAndExpandTitle )
-          )
-        , ( "TruncateTitle"
-          , Control.value ( "Menu.wrapping Menu.TruncateTitle", Menu.wrapping Menu.TruncateTitle )
-          )
-        ]
 
 
 {-| -}
