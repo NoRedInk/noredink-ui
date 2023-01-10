@@ -639,7 +639,7 @@ renderButton ((ButtonOrLink config) as button_) =
             ++ Attributes.class FocusRing.customClass
             :: config.customAttributes
         )
-        [ viewLabel config ]
+        (viewContent button_)
 
 
 renderLink : ButtonOrLink msg -> Html msg
@@ -665,7 +665,15 @@ renderLink ((ButtonOrLink config) as link_) =
             :: attributes
             ++ config.customAttributes
         )
-        [ viewLabel config ]
+        (viewContent link_)
+
+
+viewContent : ButtonOrLink msg -> List (Html msg)
+viewContent (ButtonOrLink config) =
+    List.filterMap identity
+        [ Just (viewLabel config)
+        , Maybe.map (viewIcon config.size [ Css.marginLeft (Css.px 5) ]) config.rightIcon
+        ]
 
 
 
@@ -806,56 +814,46 @@ viewLabel :
         , icon : Maybe Svg
         , iconStyles : List Style
         , label : String
-        , rightIcon : Maybe Svg
     }
     -> Html msg
 viewLabel config =
     let
-        { fontAndIconSize } =
-            sizeConfig config.size
-
-        viewIcon iconStyles svg =
-            svg
-                |> NriSvg.withWidth fontAndIconSize
-                |> NriSvg.withHeight fontAndIconSize
-                |> NriSvg.withCss iconStyles
-                |> NriSvg.toHtml
-
         viewLeftIcon =
-            viewIcon
+            viewIcon config.size
                 [ Css.flexShrink Css.zero
                 , Css.marginRight (Css.px 5)
                 , Css.batch config.iconStyles
                 ]
-
-        viewRightIcon =
-            viewIcon [ Css.marginLeft (Css.px 5) ]
     in
     Nri.Ui.styled Html.span
         "button-label-span"
         [ Css.overflow Css.hidden -- Keep scrollbars out of our button
         , Css.overflowWrap Css.breakWord -- Ensure that words that exceed the button width break instead of disappearing
         , Css.padding2 (Css.px 2) Css.zero -- Without a bit of bottom padding, text that extends below the baseline, like "g" gets cut off
-        , Css.displayFlex
+        , Css.display Css.inlineFlex
         , Css.alignItems Css.center
         ]
         []
-        (case ( config.icon, config.rightIcon ) of
-            ( Nothing, Nothing ) ->
+        (case config.icon of
+            Nothing ->
                 renderMarkdown config.label
 
-            ( Just svg, Nothing ) ->
-                viewLeftIcon svg
-                    :: renderMarkdown config.label
-
-            ( Nothing, Just rightIcon_ ) ->
-                renderMarkdown config.label ++ [ viewRightIcon rightIcon_ ]
-
-            ( Just leftIcon, Just rightIcon_ ) ->
-                viewLeftIcon leftIcon
-                    :: renderMarkdown config.label
-                    ++ [ viewRightIcon rightIcon_ ]
+            Just svg ->
+                viewLeftIcon svg :: renderMarkdown config.label
         )
+
+
+viewIcon : ButtonSize -> List Css.Style -> NriSvg.Svg -> Html msg
+viewIcon size iconStyles svg =
+    let
+        { fontAndIconSize } =
+            sizeConfig size
+    in
+    svg
+        |> NriSvg.withWidth fontAndIconSize
+        |> NriSvg.withHeight fontAndIconSize
+        |> NriSvg.withCss iconStyles
+        |> NriSvg.toHtml
 
 
 renderMarkdown : String -> List (Html msg)

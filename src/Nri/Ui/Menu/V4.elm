@@ -343,7 +343,10 @@ button attributes title =
                 Button.button title
                     [ Button.tertiary
                     , Button.css
-                        [ Css.color Colors.gray20 |> Css.important
+                        [ Css.justifyContent Css.spaceBetween
+                        , Css.paddingLeft (Css.px 15)
+                        , Css.paddingRight (Css.px 15)
+                        , Css.color Colors.gray20 |> Css.important
                         , Css.fontWeight (Css.int 600)
                         , Css.hover [ Css.backgroundColor Colors.white ]
                         ]
