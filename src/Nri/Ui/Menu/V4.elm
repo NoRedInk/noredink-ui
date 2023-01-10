@@ -79,7 +79,6 @@ type Attribute msg
 {-| -}
 type alias Config msg =
     { entries : List (Entry msg)
-    , focusAndToggle : { isOpen : Bool, focus : Maybe String } -> msg
     }
 
 
@@ -221,22 +220,26 @@ dialog exitFocusManager =
 
 {-| Menu/pulldown configuration:
 
+  - `focusAndToggle`: the message produced to control the open/closed state and DOM focus
   - `attributes`: List of (attributes)[#menu-attributes] to apply to the menu.
   - `config`: Configuration parameters:
       - `button`: the `Button` to open the menu
       - `entries`: the entries of the menu
       - `isOpen`: whether the menu is currently open or not
-      - `focusAndToggle`: the message produced to control the open/closed state and DOM focus
 
 -}
-view : List (Attribute msg) -> Config msg -> Html msg
-view attributes config =
+view :
+    ({ isOpen : Bool, focus : Maybe String } -> msg)
+    -> List (Attribute msg)
+    -> Config msg
+    -> Html msg
+view focusAndToggle attributes config =
     let
         menuConfig : MenuConfig msg
         menuConfig =
             List.foldl (\(Attribute attr) c -> attr c) defaultConfig attributes
     in
-    viewCustom config menuConfig
+    viewCustom focusAndToggle config menuConfig
 
 
 
@@ -389,8 +392,8 @@ clickableSvg title icon additionalAttributes =
         |> setButton
 
 
-viewCustom : Config msg -> MenuConfig msg -> Html msg
-viewCustom config1 config =
+viewCustom : ({ isOpen : Bool, focus : Maybe String } -> msg) -> Config msg -> MenuConfig msg -> Html msg
+viewCustom focusAndToggle config1 config =
     let
         ( maybeFirstFocusableElementId, maybeLastFocusableElementId ) =
             ( List.head (getFirstIds config1.entries), List.head (getLastIds config1.entries) )
@@ -401,19 +404,19 @@ viewCustom config1 config =
         navMenuEvents =
             Key.onKeyDown
                 [ Key.escape
-                    (config1.focusAndToggle
+                    (focusAndToggle
                         { isOpen = False
                         , focus = Just config.buttonId
                         }
                     )
                 , Key.tab
-                    (config1.focusAndToggle
+                    (focusAndToggle
                         { isOpen = False
                         , focus = Nothing
                         }
                     )
                 , Key.tabBack
-                    (config1.focusAndToggle
+                    (focusAndToggle
                         { isOpen = False
                         , focus = Nothing
                         }
@@ -446,7 +449,7 @@ viewCustom config1 config =
                     Disclosure { lastId } ->
                         WhenFocusLeaves.onKeyDown
                             [ Key.escape
-                                (config1.focusAndToggle
+                                (focusAndToggle
                                     { isOpen = False
                                     , focus = Just config.buttonId
                                     }
@@ -455,12 +458,12 @@ viewCustom config1 config =
                             { firstId = config.buttonId
                             , lastId = lastId
                             , tabBackAction =
-                                config1.focusAndToggle
+                                focusAndToggle
                                     { isOpen = False
                                     , focus = Nothing
                                     }
                             , tabForwardAction =
-                                config1.focusAndToggle
+                                focusAndToggle
                                     { isOpen = False
                                     , focus = Nothing
                                     }
@@ -469,7 +472,7 @@ viewCustom config1 config =
                     Dialog { firstId, lastId } ->
                         WhenFocusLeaves.onKeyDownPreventDefault
                             [ Key.escape
-                                (config1.focusAndToggle
+                                (focusAndToggle
                                     { isOpen = False
                                     , focus = Just config.buttonId
                                     }
@@ -478,12 +481,12 @@ viewCustom config1 config =
                             { firstId = firstId
                             , lastId = lastId
                             , tabBackAction =
-                                config1.focusAndToggle
+                                focusAndToggle
                                     { isOpen = True
                                     , focus = Just lastId
                                     }
                             , tabForwardAction =
-                                config1.focusAndToggle
+                                focusAndToggle
                                     { isOpen = True
                                     , focus = Just firstId
                                     }
@@ -494,7 +497,7 @@ viewCustom config1 config =
         [ if config.isOpen then
             div
                 (Events.onClick
-                    (config1.focusAndToggle
+                    (focusAndToggle
                         { isOpen = False
                         , focus = Nothing
                         }
@@ -518,7 +521,7 @@ viewCustom config1 config =
                 ]
             , if not config.isDisabled && config.opensOnHover && config.isOpen then
                 Events.onMouseLeave
-                    (config1.focusAndToggle
+                    (focusAndToggle
                         { isOpen = False
                         , focus = Nothing
                         }
@@ -537,13 +540,13 @@ viewCustom config1 config =
                         ( True, Just firstFocusableElementId, Just lastFocusableElementId ) ->
                             Key.onKeyDownPreventDefault
                                 [ Key.down
-                                    (config1.focusAndToggle
+                                    (focusAndToggle
                                         { isOpen = True
                                         , focus = Just firstFocusableElementId
                                         }
                                     )
                                 , Key.up
-                                    (config1.focusAndToggle
+                                    (focusAndToggle
                                         { isOpen = True
                                         , focus = Just lastFocusableElementId
                                         }
@@ -564,13 +567,13 @@ viewCustom config1 config =
                                 , message =
                                     case ( config.isOpen, config.purpose ) of
                                         ( False, Dialog { firstId } ) ->
-                                            config1.focusAndToggle
+                                            focusAndToggle
                                                 { isOpen = True
                                                 , focus = Just firstId
                                                 }
 
                                         _ ->
-                                            config1.focusAndToggle
+                                            focusAndToggle
                                                 { isOpen = not config.isOpen
                                                 , focus = Nothing
                                                 }
@@ -578,7 +581,7 @@ viewCustom config1 config =
                             )
                     , if not config.isDisabled && config.opensOnHover then
                         Events.onMouseEnter
-                            (config1.focusAndToggle
+                            (focusAndToggle
                                 { isOpen = True
                                 , focus = Nothing
                                 }
@@ -629,7 +632,7 @@ viewCustom config1 config =
                         ]
                     ]
                     (viewEntries config
-                        { focusAndToggle = config1.focusAndToggle
+                        { focusAndToggle = focusAndToggle
                         , previousId = Maybe.withDefault "" maybeLastFocusableElementId
                         , nextId = Maybe.withDefault "" maybeFirstFocusableElementId
                         }

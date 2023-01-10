@@ -153,6 +153,8 @@ view ellieLinkConfig state =
                     code =
                         moduleName
                             ++ ".view "
+                            ++ Code.newlineWithIndent 2
+                            ++ "identity -- TODO: you will need a real msg type here"
                             ++ Code.listMultiline
                                 (("Menu.isOpen " ++ Code.bool (isOpen "interactiveExample"))
                                     :: List.map Tuple.first settings
@@ -160,7 +162,6 @@ view ellieLinkConfig state =
                                 1
                             ++ Code.recordMultiline
                                 [ ( "entries", "[]" )
-                                , ( "focusAndToggle", "identity -- TODO: you will need a real msg type here" )
                                 ]
                                 1
                 in
@@ -174,9 +175,9 @@ view ellieLinkConfig state =
         , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
         ]
     , div [ css [ Css.displayFlex, Css.justifyContent Css.center ] ]
-        [ Menu.view (Menu.isOpen (isOpen "interactiveExample") :: menuAttributes)
-            { focusAndToggle = FocusAndToggle "interactiveExample"
-            , entries = []
+        [ Menu.view (FocusAndToggle "interactiveExample")
+            (Menu.isOpen (isOpen "interactiveExample") :: menuAttributes)
+            { entries = []
             }
         ]
     , Heading.h2
@@ -201,7 +202,7 @@ view ellieLinkConfig state =
         ]
         [ { menu = "Menu.navMenu (default)"
           , example =
-                Menu.view
+                Menu.view (FocusAndToggle "1stPeriodEnglish")
                     (List.filterMap identity
                         [ Just <| Menu.buttonId "1stPeriodEnglish__button"
                         , Just <| Menu.menuId "1stPeriodEnglish__menu"
@@ -209,8 +210,7 @@ view ellieLinkConfig state =
                         , Just <| Menu.isOpen (isOpen "1stPeriodEnglish")
                         ]
                     )
-                    { focusAndToggle = FocusAndToggle "1stPeriodEnglish"
-                    , entries =
+                    { entries =
                         [ Menu.entry "hello-button" <|
                             \attrs ->
                                 ClickableText.button "Hello"
@@ -255,15 +255,14 @@ view ellieLinkConfig state =
           }
         , { menu = "Menu.navMenuList"
           , example =
-                Menu.view
+                Menu.view (FocusAndToggle "dropdown_list")
                     [ Menu.buttonId "dropdown_list__button"
                     , Menu.menuId "dropdown_list__menu"
                     , Menu.navMenuList
                     , Menu.defaultTrigger "Dropdown list" []
                     , Menu.isOpen (isOpen "dropdown_list")
                     ]
-                    { focusAndToggle = FocusAndToggle "dropdown_list"
-                    , entries =
+                    { entries =
                         [ Menu.entry "dropdown_list__first" <|
                             \attrs ->
                                 ClickableText.button "First"
@@ -290,15 +289,14 @@ view ellieLinkConfig state =
           }
         , { menu = "Menu.disclosure"
           , example =
-                Menu.view
+                Menu.view (FocusAndToggle "with_disclosure")
                     [ Menu.buttonId "disclosure__button"
                     , Menu.menuId "disclosure__menu"
                     , Menu.disclosure { lastId = "disclosure__login__button" }
                     , Menu.defaultTrigger "Log In disclosure" []
                     , Menu.isOpen (isOpen "with_disclosure")
                     ]
-                    { focusAndToggle = FocusAndToggle "with_disclosure"
-                    , entries =
+                    { entries =
                         [ Menu.entry "disclosure__username" <|
                             \attrs ->
                                 div []
@@ -320,15 +318,14 @@ view ellieLinkConfig state =
           }
         , { menu = "Menu.dialog"
           , example =
-                Menu.view
+                Menu.view (FocusAndToggle "dialog")
                     [ Menu.buttonId "dialog__button"
                     , Menu.menuId "dialog__menu"
                     , Menu.dialog { firstId = "dialog__username__input", lastId = "dialog__login__button" }
                     , Menu.defaultTrigger "Log In dialog" []
                     , Menu.isOpen (isOpen "dialog")
                     ]
-                    { focusAndToggle = FocusAndToggle "dialog"
-                    , entries =
+                    { entries =
                         [ Menu.entry "dialog__username" <|
                             \attrs ->
                                 div []
