@@ -288,14 +288,12 @@ setButton button_ =
 
 {-| -}
 type Button msg
-    = StandardButton (MenuConfig msg -> List (Html.Attribute msg) -> Html msg)
-    | ClickableText (MenuConfig msg -> List (Html.Attribute msg) -> Html msg)
-    | ClickableSvg (MenuConfig msg -> List (Html.Attribute msg) -> Html msg)
+    = Button (MenuConfig msg -> List (Html.Attribute msg) -> Html msg)
 
 
 defaultButton : String -> List (Button.Attribute msg) -> Button msg
 defaultButton title attributes =
-    StandardButton
+    Button
         (\menuConfig buttonAttributes ->
             Button.button title
                 ([ Button.tertiary
@@ -339,7 +337,7 @@ button title attributes =
 -}
 clickableText : String -> List (ClickableText.Attribute msg) -> Attribute msg
 clickableText title additionalAttributes =
-    ClickableText
+    Button
         (\menuConfig buttonAttributes ->
             ClickableText.button title
                 ([ ClickableText.custom buttonAttributes
@@ -356,7 +354,7 @@ clickableText title additionalAttributes =
 -}
 clickableSvg : String -> Svg.Svg -> List (ClickableSvg.Attribute msg) -> Attribute msg
 clickableSvg title icon additionalAttributes =
-    ClickableSvg
+    Button
         (\menuConfig buttonAttributes ->
             ClickableSvg.button title
                 icon
@@ -591,14 +589,8 @@ viewCustom config1 config =
                            )
               in
               case config.button of
-                StandardButton standardButton ->
+                Button standardButton ->
                     standardButton config buttonAttributes
-
-                ClickableText renderButton ->
-                    renderButton config buttonAttributes
-
-                ClickableSvg renderButton ->
-                    renderButton config buttonAttributes
             , div [ styleOuterContent contentVisible config ]
                 [ div
                     [ AttributesExtra.nriDescription "menu-hover-bridge"
