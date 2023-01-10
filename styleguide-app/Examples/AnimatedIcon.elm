@@ -82,6 +82,9 @@ example =
                         , { sectionName = "arrowRightDown"
                           , code = toCode "arrowRightDown"
                           }
+                        , { sectionName = "arrowDownUp"
+                          , code = toCode "arrowDownUp"
+                          }
                         ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
@@ -111,6 +114,7 @@ example =
                 ]
                 [ { name = "mobileOpenClose", render = AnimatedIcon.mobileOpenClose }
                 , { name = "arrowRightDown", render = AnimatedIcon.arrowRightDown }
+                , { name = "arrowDownUp", render = AnimatedIcon.arrowDownUp }
                 ]
             ]
     }

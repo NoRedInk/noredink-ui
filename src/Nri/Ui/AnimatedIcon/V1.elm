@@ -1,8 +1,8 @@
-module Nri.Ui.AnimatedIcon.V1 exposing (mobileOpenClose, arrowRightDown)
+module Nri.Ui.AnimatedIcon.V1 exposing (mobileOpenClose, arrowRightDown, arrowDownUp)
 
 {-|
 
-@docs mobileOpenClose, arrowRightDown
+@docs mobileOpenClose, arrowRightDown, arrowDownUp
 
 -}
 
@@ -71,4 +71,25 @@ arrowRightDown isOpen =
           else
             Css.transform (Css.rotate (Css.deg -180))
         ]
-        (Nri.Ui.Svg.V1.withViewBox "0 0 25 25" UiIcon.arrowLeft)
+        squareArrowLeft
+
+
+{-| An arrow that animates between pointing down and pointing up. Typically used as a fly-out menu indicator.
+-}
+arrowDownUp : Bool -> Nri.Ui.Svg.V1.Svg
+arrowDownUp isOpen =
+    Nri.Ui.Svg.V1.withCss
+        [ Css.property "transition" "transform 0.4s"
+        , Css.property "transform-origin" "center"
+        , if isOpen then
+            Css.transform (Css.rotate (Css.deg 90))
+
+          else
+            Css.transform (Css.rotate (Css.deg -90))
+        ]
+        squareArrowLeft
+
+
+squareArrowLeft : Nri.Ui.Svg.V1.Svg
+squareArrowLeft =
+    Nri.Ui.Svg.V1.withViewBox "0 0 25 25" UiIcon.arrowLeft
