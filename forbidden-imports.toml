@@ -100,6 +100,9 @@ hint = 'upgrade to V3'
 [forbidden."Nri.Ui.Menu.V2"]
 hint = 'upgrade to V3'
 
+[forbidden."Nri.Ui.Menu.V3"]
+hint = 'upgrade to V4'
+
 [forbidden."Nri.Ui.Message.V1"]
 hint = 'upgrade to V3'
 

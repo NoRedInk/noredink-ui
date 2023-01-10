@@ -24,7 +24,7 @@ import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Menu.V3 as Menu
+import Nri.Ui.Menu.V4 as Menu
 import Nri.Ui.Table.V6 as Table
 import Nri.Ui.TextInput.V7 as TextInput
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -32,7 +32,6 @@ import Set exposing (Set)
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttrs
 import Task
-import ViewHelpers exposing (viewExamples)
 
 
 moduleName : String
@@ -42,7 +41,7 @@ moduleName =
 
 version : Int
 version =
-    3
+    4
 
 
 {-| -}
