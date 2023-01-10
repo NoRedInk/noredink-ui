@@ -140,7 +140,11 @@ view ellieLinkConfig state =
         , update = UpdateControls
         , settings = state.settings
         , mainType = Just "RootHtml.Html { focus : Maybe String, isOpen : Bool }"
-        , extraCode = []
+        , extraCode =
+            [ "import Nri.Ui.Button.V10 as Button"
+            , "import Nri.Ui.ClickableSvg.V2 as ClickableSvg"
+            , "import Nri.Ui.ClickableText.V3 as ClickableText"
+            ]
         , renderExample = Code.unstyledView
         , toExampleCode =
             \settings ->
