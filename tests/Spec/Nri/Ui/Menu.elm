@@ -120,19 +120,19 @@ program attributes =
         , view =
             \model ->
                 HtmlStyled.div []
-                    [ Menu.view attributes
-                        { button = Menu.button [] menuButton
-                        , isOpen = model.isOpen
-                        , entries =
-                            [ Menu.entry "hello-button" <|
-                                \attrs ->
-                                    ClickableText.button menuContent [ ClickableText.custom attrs ]
-                            , Menu.entry "last-button" <|
-                                \attrs ->
-                                    ClickableText.button menuContent [ ClickableText.custom attrs ]
-                            ]
-                        , focusAndToggle = \{ isOpen } -> isOpen
-                        }
+                    [ Menu.view (\{ isOpen } -> isOpen)
+                        ([ Menu.defaultTrigger menuButton []
+                         , Menu.isOpen model.isOpen
+                         ]
+                            ++ attributes
+                        )
+                        [ Menu.entry "hello-button" <|
+                            \attrs ->
+                                ClickableText.button menuContent [ ClickableText.custom attrs ]
+                        , Menu.entry "last-button" <|
+                            \attrs ->
+                                ClickableText.button menuContent [ ClickableText.custom attrs ]
+                        ]
                     ]
                     |> HtmlStyled.toUnstyled
         }
@@ -141,7 +141,7 @@ program attributes =
 
 menuButton : String
 menuButton =
-    "Menu"
+    "Menu toggler"
 
 
 menuContent : String
@@ -151,8 +151,8 @@ menuContent =
 
 menuButtonSelector : List Selector.Selector
 menuButtonSelector =
-    [ nriDescription "Nri-Ui-Menu-V3"
-    , Selector.class "ToggleButton"
+    [ Selector.tag "button"
+    , Selector.containing [ Selector.text menuButton ]
     ]
 
 
@@ -196,9 +196,7 @@ mouseLeave selectors =
 
 clickMenuButton : ProgramTest model msg effect -> ProgramTest model msg effect
 clickMenuButton =
-    ProgramTest.simulateDomEvent
-        (Query.find [ Selector.class "ToggleButton" ])
-        Event.click
+    ProgramTest.clickButton menuButton
 
 
 targetDetails : String -> List ( String, Encode.Value )
