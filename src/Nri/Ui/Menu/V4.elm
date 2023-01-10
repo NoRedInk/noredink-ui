@@ -2,7 +2,7 @@ module Nri.Ui.Menu.V4 exposing
     ( view, Config
     , Attribute
     , Button
-    , button, clickableText, custom
+    , button, clickableText, clickableSvg, custom
     , navMenuList, disclosure, dialog
     , isDisabled, menuWidth, buttonId, menuId, menuZIndex, opensOnHover
     , Alignment(..), alignment
@@ -27,7 +27,7 @@ A togglable menu view and related buttons.
 ## Triggering button options
 
 @docs Button
-@docs button, clickableText, custom
+@docs button, clickableText, clickableSvg, custom
 
 
 ## Menu attributes
@@ -53,6 +53,7 @@ import Html.Styled.Events as Events
 import Json.Decode
 import Nri.Ui.AnimatedIcon.V1 as AnimatedIcon
 import Nri.Ui.Button.V10 as Button
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
@@ -263,6 +264,7 @@ type Alignment
 type Button msg
     = StandardButton (MenuConfig -> Bool -> List (Html.Attribute msg) -> Html msg)
     | ClickableText (MenuConfig -> Bool -> List (Html.Attribute msg) -> Html msg)
+    | ClickableSvg (MenuConfig -> Bool -> List (Html.Attribute msg) -> Html msg)
     | CustomButton (List (Html.Attribute msg) -> Html msg)
 
 
@@ -313,6 +315,23 @@ clickableText title additionalAttributes =
                 ([ ClickableText.custom buttonAttributes
                  , ClickableText.disabled menuConfig.isDisabled
                  , ClickableText.rightIcon (AnimatedIcon.arrowDownUp isOpen)
+                 ]
+                    ++ additionalAttributes
+                )
+        )
+
+
+{-| Use ClickableSvg as the triggering element for the Menu.
+-}
+clickableSvg : String -> Svg.Svg -> List (ClickableSvg.Attribute msg) -> Button msg
+clickableSvg title icon additionalAttributes =
+    ClickableSvg
+        (\menuConfig isOpen buttonAttributes ->
+            ClickableSvg.button title
+                icon
+                ([ ClickableSvg.custom buttonAttributes
+                 , ClickableSvg.disabled menuConfig.isDisabled
+                 , ClickableSvg.rightIcon (AnimatedIcon.arrowDownUp isOpen)
                  ]
                     ++ additionalAttributes
                 )
@@ -550,8 +569,11 @@ viewCustom config1 config =
                 StandardButton standardButton ->
                     standardButton config config1.isOpen buttonAttributes
 
-                ClickableText rendreButton ->
-                    rendreButton config config1.isOpen buttonAttributes
+                ClickableText renderButton ->
+                    renderButton config config1.isOpen buttonAttributes
+
+                ClickableSvg renderButton ->
+                    renderButton config config1.isOpen buttonAttributes
 
                 CustomButton customButton ->
                     customButton buttonAttributes

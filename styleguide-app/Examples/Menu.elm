@@ -174,6 +174,18 @@ view ellieLinkConfig state =
                             ++ Code.list []
                             |> toCode
                   }
+                , { sectionName = "Menu.clickableSvg"
+                  , code =
+                        Code.newlineWithIndent 2
+                            ++ "Menu.clickableSvg"
+                            ++ Code.newlineWithIndent 3
+                            ++ Code.string "1st Period English with Mx. Trainer"
+                            ++ Code.newlineWithIndent 3
+                            ++ "UiIcon.gear"
+                            ++ Code.newlineWithIndent 3
+                            ++ Code.list []
+                            |> toCode
+                  }
                 , { sectionName = "Menu.custom"
                   , code =
                         Code.newlineWithIndent 2
@@ -273,6 +285,16 @@ view ellieLinkConfig state =
                     , focusAndToggle = FocusAndToggle "clickableTextExample"
                     , entries = []
                     , button = Menu.clickableText "1st Period English with Mx. Trainer" []
+                    }
+          }
+        , { button = "Menu.clickableSvg"
+          , menu = "default (Menu.navMenu)"
+          , example =
+                Menu.view menuAttributes
+                    { isOpen = isOpen "clickableSvgExample"
+                    , focusAndToggle = FocusAndToggle "clickableSvgExample"
+                    , entries = []
+                    , button = Menu.clickableSvg "1st Period English with Mx. Trainer" UiIcon.gear []
                     }
           }
         , { button = "Menu.custom"
