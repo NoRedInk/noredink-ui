@@ -22,6 +22,7 @@ import Html.Styled.Attributes exposing (css)
 import Markdown
 import Nri.Ui.Block.V4 as Block
 import Nri.Ui.Button.V10 as Button
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
@@ -406,7 +407,17 @@ initControl : Control Settings
 initControl =
     ControlExtra.list
         |> ControlExtra.optionalListItem "content" controlContent
-        |> ControlExtra.optionalBoolListItem "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )
+        |> ControlExtra.optionalListItem "emphasize"
+            (Control.choice
+                [ ( "emphasize", Control.value ( Code.fromModule moduleName "emphasize", Block.emphasize ) )
+                , ( "highlight"
+                  , Control.value
+                        ( Code.fromModule moduleName "highlight Colors.highlightYellow"
+                        , Block.highlight Colors.highlightYellow
+                        )
+                  )
+                ]
+            )
         |> ControlExtra.optionalListItem "label"
             (CommonControls.string ( Code.fromModule moduleName "label", Block.label ) "Fruit")
         |> ControlExtra.optionalListItem "labelPosition"

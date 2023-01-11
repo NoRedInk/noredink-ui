@@ -3,7 +3,7 @@ module Nri.Ui.Block.V4 exposing
     , plaintext
     , Content, content
     , phrase, wordWithId, space, blank, blankWithId
-    , emphasize
+    , emphasize, highlight
     , label, id
     , labelId, labelContentId
     , LabelPosition, getLabelPositions, labelPosition
@@ -24,7 +24,7 @@ module Nri.Ui.Block.V4 exposing
 
 ## Content customization
 
-@docs emphasize
+@docs emphasize, highlight
 
 
 ## Labels & positioning
@@ -92,17 +92,40 @@ content content_ =
     Attribute <| \config -> { config | content = content_ }
 
 
+type Emphasis
+    = Emphasize
+    | Highlight Color
+    | NotEmphasized
+
+
 {-| Mark content as emphasized.
 -}
 emphasize : Attribute msg
 emphasize =
-    Attribute <| \config -> { config | emphasize = True }
+    Attribute <| \config -> { config | emphasize = Emphasize }
+
+
+{-| Mark content as emphasized, but using the typical highlight styles.
+-}
+highlight : Color -> Attribute msg
+highlight color =
+    Attribute <| \config -> { config | emphasize = Highlight color }
 
 
 {-| -}
 label : String -> Attribute msg
 label label_ =
-    Attribute <| \config -> { config | label = Just label_, emphasize = True }
+    Attribute <|
+        \config ->
+            { config
+                | label = Just label_
+                , emphasize =
+                    if config.emphasize == NotEmphasized then
+                        Emphasize
+
+                    else
+                        config.emphasize
+            }
 
 
 {-| Use `getLabelPositions` to construct this value.
@@ -364,7 +387,7 @@ type alias Palette =
 
 toMark :
     { config
-        | emphasize : Bool
+        | emphasize : Emphasis
         , label : Maybe String
         , content : List (Content msg)
     }
@@ -380,7 +403,7 @@ toMark config { backgroundColor, borderColor } =
                 , endStyles = []
                 }
 
-        ( Just l, _, False ) ->
+        ( Just l, _, NotEmphasized ) ->
             Just
                 { name = Just l
                 , startStyles = []
@@ -388,7 +411,7 @@ toMark config { backgroundColor, borderColor } =
                 , endStyles = []
                 }
 
-        ( _, _, True ) ->
+        ( _, _, Emphasize ) ->
             let
                 borderWidth =
                     Css.px 1
@@ -420,7 +443,33 @@ toMark config { backgroundColor, borderColor } =
                     ]
                 }
 
-        ( Nothing, _, False ) ->
+        ( _, _, Highlight color ) ->
+            Just
+                { name = config.label
+                , startStyles =
+                    [ Css.paddingLeft (Css.px 2)
+                    , Css.borderTopLeftRadius (Css.px 4)
+                    , Css.borderBottomLeftRadius (Css.px 4)
+                    ]
+                , styles =
+                    [ Css.paddingTop topBottomSpace
+                    , Css.paddingBottom topBottomSpace
+                    , Css.backgroundColor color
+                    , Css.boxShadow5 Css.zero (Css.px 1) Css.zero Css.zero Colors.gray75
+                    , MediaQuery.highContrastMode
+                        [ Css.property "background-color" "Mark"
+                        , Css.property "color" "MarkText"
+                        , Css.property "forced-color-adjust" "none"
+                        ]
+                    ]
+                , endStyles =
+                    [ Css.paddingRight (Css.px 2)
+                    , Css.borderTopRightRadius (Css.px 4)
+                    , Css.borderBottomRightRadius (Css.px 4)
+                    ]
+                }
+
+        ( Nothing, _, NotEmphasized ) ->
             Nothing
 
 
@@ -500,7 +549,7 @@ defaultConfig =
     , labelId = Nothing
     , labelPosition = Nothing
     , theme = Yellow
-    , emphasize = False
+    , emphasize = NotEmphasized
     }
 
 
@@ -511,7 +560,7 @@ type alias Config msg =
     , labelId : Maybe String
     , labelPosition : Maybe LabelPosition
     , theme : Theme
-    , emphasize : Bool
+    , emphasize : Emphasis
     }
 
 
