@@ -98,7 +98,20 @@ example =
                 offsets =
                     Block.getLabelPositions state.labelMeasurementsById
             in
-            [ -- absolutely positioned elements that overflow in the x direction
+            [ Heading.h2 [ Heading.plaintext "About" ]
+            , Text.mediumBody
+                [ Text.html
+                    [ p []
+                        [ text "You might also know the Block element as a “Display Element”. Learn more in "
+                        , ClickableText.link "Display Elements and Scaffolding Container: additional things to know"
+                            [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Display-Elements-and-Scaffolding-Container-additional-things-to-know--BwRhBMKyXFFSWz~1mljN29bcAg-6vszpNDLoYIiMyg7Wv66s"
+                            , ClickableText.rightIcon UiIcon.openInNewTab
+                            , ClickableText.css [ Css.verticalAlign Css.baseline ]
+                            ]
+                        ]
+                    ]
+                ]
+            , -- absolutely positioned elements that overflow in the x direction
               -- cause a horizontal scrollbar unless you explicitly hide overflowing x content
               Css.Global.global [ Css.Global.selector "body" [ Css.overflowX Css.hidden ] ]
             , ControlView.view
@@ -119,22 +132,6 @@ example =
                           }
                         ]
                 }
-            , Heading.h2
-                [ Heading.plaintext "About"
-                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
-                ]
-            , Text.mediumBody
-                [ Text.html
-                    [ p []
-                        [ text "You might also know the Block element as a “Display Element”. Learn more in "
-                        , ClickableText.link "Display Elements and Scaffolding Container: additional things to know"
-                            [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Display-Elements-and-Scaffolding-Container-additional-things-to-know--BwRhBMKyXFFSWz~1mljN29bcAg-6vszpNDLoYIiMyg7Wv66s"
-                            , ClickableText.rightIcon UiIcon.openInNewTab
-                            , ClickableText.css [ Css.verticalAlign Css.baseline ]
-                            ]
-                        ]
-                    ]
-                ]
             , Heading.h2
                 [ Heading.plaintext "Interactive example"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
