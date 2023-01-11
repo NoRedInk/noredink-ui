@@ -340,6 +340,7 @@ viewBalloon config label =
               -- if the border radius of the balloon changes, this value might need to change as well
               Css.minWidth (Css.px 30)
             , Css.maxWidth (Css.px 150)
+            , Css.textAlign Css.center
             , Css.property "word-break" "break-word"
             , Css.batch <|
                 case config.labelPosition of
