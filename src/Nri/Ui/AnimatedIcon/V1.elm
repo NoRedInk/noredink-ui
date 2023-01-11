@@ -1,13 +1,14 @@
-module Nri.Ui.AnimatedIcon.V1 exposing (mobileOpenClose)
+module Nri.Ui.AnimatedIcon.V1 exposing (mobileOpenClose, arrowRightDown, arrowDownUp)
 
 {-|
 
-@docs mobileOpenClose
+@docs mobileOpenClose, arrowRightDown, arrowDownUp
 
 -}
 
 import Css
 import Nri.Ui.Svg.V1
+import Nri.Ui.UiIcon.V1 as UiIcon
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as Attributes
 
@@ -56,3 +57,39 @@ mobileOpenClose isOpen =
             , Css.scaleX 1.3
             ]
         ]
+
+
+{-| An arrow that animates between pointing right and pointing down. Typically used for disclosures and accordions.
+-}
+arrowRightDown : Bool -> Nri.Ui.Svg.V1.Svg
+arrowRightDown isOpen =
+    Nri.Ui.Svg.V1.withCss
+        [ Css.property "transition" "transform 0.1s"
+        , if isOpen then
+            Css.transform (Css.rotate (Css.deg -90))
+
+          else
+            Css.transform (Css.rotate (Css.deg -180))
+        ]
+        squareArrowLeft
+
+
+{-| An arrow that animates between pointing down and pointing up. Typically used as a fly-out menu indicator.
+-}
+arrowDownUp : Bool -> Nri.Ui.Svg.V1.Svg
+arrowDownUp isOpen =
+    Nri.Ui.Svg.V1.withCss
+        [ Css.property "transition" "transform 0.4s"
+        , Css.property "transform-origin" "center"
+        , if isOpen then
+            Css.transform (Css.rotate (Css.deg 90))
+
+          else
+            Css.transform (Css.rotate (Css.deg -90))
+        ]
+        squareArrowLeft
+
+
+squareArrowLeft : Nri.Ui.Svg.V1.Svg
+squareArrowLeft =
+    Nri.Ui.Svg.V1.withViewBox "0 0 25 25" UiIcon.arrowLeft

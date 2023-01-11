@@ -1,6 +1,6 @@
 module Nri.Ui.DisclosureIndicator.V2 exposing (medium, large)
 
-{-|
+{-| TODO: Remove this module, in favor of Nri.Ui.AnimatedIcon.
 
 
 # Changes from V1
