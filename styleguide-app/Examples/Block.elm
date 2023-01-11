@@ -17,6 +17,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Dict exposing (Dict)
 import Example exposing (Example)
+import Examples.Colors
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Markdown
@@ -411,9 +412,15 @@ initControl =
             (Control.choice
                 [ ( "emphasize", Control.value ( Code.fromModule moduleName "emphasize", Block.emphasize ) )
                 , ( "highlight"
-                  , Control.value
-                        ( Code.fromModule moduleName "highlight Colors.highlightYellow"
-                        , Block.highlight Colors.highlightYellow
+                  , Control.map
+                        (\( colorName, color ) ->
+                            ( Code.fromModule moduleName "highlight " ++ Code.fromModule "Colors" colorName
+                            , Block.highlight color
+                            )
+                        )
+                        (Examples.Colors.backgroundHighlightColors
+                            |> List.map (\( name, value, _ ) -> ( name, Control.value ( name, value ) ))
+                            |> Control.choice
                         )
                   )
                 ]
