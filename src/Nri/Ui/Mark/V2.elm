@@ -336,6 +336,9 @@ viewBalloon config label =
             [ Css.padding3 Css.zero (Css.px 6) (Css.px 1)
             , Css.property "box-shadow" "none"
             , Css.property "width" "max-content"
+            , -- this min-width prevents the arrow from gapping at the corners where the balloon is rounded
+              -- if the border radius of the balloon changes, this value might need to change as well
+              Css.minWidth (Css.px 30)
             , Css.maxWidth (Css.px 150)
             , Css.property "word-break" "break-word"
             , Css.batch <|
