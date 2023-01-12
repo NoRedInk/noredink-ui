@@ -403,6 +403,7 @@ viewActions maybeCharacter actions_ =
                                 [ Button.onClick onClick
                                 , Button.fillContainerWidth
                                 , Button.small
+                                , Button.css [ Css.justifyContent Css.flexStart ]
                                 ]
                             ]
                     )
