@@ -27,6 +27,7 @@ stdenv.mkDerivation {
     elmPackages.elm
     elmPackages.elm-format
     elmPackages.elm-test
+    elmPackages.elm-language-server
     elmPackages.elm-verify-examples
     elmPackages.elm-review
     elmPackages.elm-json
