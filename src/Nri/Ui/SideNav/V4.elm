@@ -4,7 +4,8 @@ module Nri.Ui.SideNav.V4 exposing
     , navLabel, navId
     , navCss, navNotMobileCss, navMobileCss, navQuizEngineMobileCss
     , entry, entryWithChildren, html, Entry, Attribute
-    , icon, custom, css, nriDescription, testId, id
+    , icon, rightIcon
+    , custom, css, nriDescription, testId, id
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , primary, secondary
@@ -27,7 +28,8 @@ module Nri.Ui.SideNav.V4 exposing
 ## Entries
 
 @docs entry, entryWithChildren, html, Entry, Attribute
-@docs icon, custom, css, nriDescription, testId, id
+@docs icon, rightIcon
+@docs custom, css, nriDescription, testId, id
 
 
 ## Behavior
@@ -446,6 +448,15 @@ viewSidebarLeaf config extraStyles entryConfig =
             )
             entryConfig.icon
         , text entryConfig.title
+        , viewJust
+            (\icon_ ->
+                icon_
+                    |> Svg.withWidth (px 20)
+                    |> Svg.withHeight (px 20)
+                    |> Svg.withCss [ marginLeft (px 5) ]
+                    |> Svg.toHtml
+            )
+            entryConfig.rightIcon
         ]
 
 
@@ -539,6 +550,12 @@ type Attribute route msg
 icon : Svg -> Attribute route msg
 icon icon_ =
     Attribute (\attributes -> { attributes | icon = Just icon_ })
+
+
+{-| -}
+rightIcon : Svg -> Attribute route msg
+rightIcon icon_ =
+    Attribute (\attributes -> { attributes | rightIcon = Just icon_ })
 
 
 {-| -}
