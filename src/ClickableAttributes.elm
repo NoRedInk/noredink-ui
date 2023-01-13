@@ -1,5 +1,5 @@
 module ClickableAttributes exposing
-    ( ClickableAttributes, init
+    ( Config, ClickableAttributes, init
     , onClick, submit, opensModal
     , toButtonAttributes
     , href, linkWithMethod, linkWithTracking
@@ -10,7 +10,7 @@ module ClickableAttributes exposing
 
 {-|
 
-@docs ClickableAttributes, init
+@docs Config, ClickableAttributes, init
 
 
 # For buttons

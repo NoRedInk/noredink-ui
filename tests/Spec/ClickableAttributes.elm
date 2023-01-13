@@ -155,19 +155,20 @@ disabledLinkAttributes =
         ]
 
 
-setupLinkTest : (ClickableAttributes String msg -> ClickableAttributes String msg) -> Query.Single msg
+setupLinkTest : (ClickableAttributes.Config {} String msg -> ClickableAttributes.Config {} String msg) -> Query.Single msg
 setupLinkTest withLink =
-    ClickableAttributes.init
+    { clickableAttributes = ClickableAttributes.init, rightIcon = Nothing }
         |> withLink
-        |> ClickableAttributes.toLinkAttributes
-            { routeToString = identity, isDisabled = False }
+        |> .clickableAttributes
+        |> ClickableAttributes.toLinkAttributes { routeToString = identity, isDisabled = False }
         |> renderTestAnchorTag
 
 
-setupDisabledLinkTest : (ClickableAttributes String msg -> ClickableAttributes String msg) -> Query.Single msg
+setupDisabledLinkTest : (ClickableAttributes.Config {} String msg -> ClickableAttributes.Config {} String msg) -> Query.Single msg
 setupDisabledLinkTest withLink =
-    ClickableAttributes.init
+    { clickableAttributes = ClickableAttributes.init, rightIcon = Nothing }
         |> withLink
+        |> .clickableAttributes
         |> ClickableAttributes.toLinkAttributes
             { routeToString = identity, isDisabled = True }
         |> renderTestAnchorTag
