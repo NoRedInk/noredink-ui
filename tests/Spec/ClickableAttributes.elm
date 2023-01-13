@@ -2,7 +2,7 @@ module Spec.ClickableAttributes exposing (suite)
 
 import Accessibility.Aria as Aria
 import Accessibility.Role as Role
-import ClickableAttributes exposing (ClickableAttributes)
+import ClickableAttributes
 import Expect
 import Html.Attributes exposing (href)
 import Html.Styled exposing (a, text, toUnstyled)
