@@ -411,7 +411,6 @@ navigation { moduleStates, route, isSideNavOpen, openTooltip } =
         ]
         (SideNav.entry "Usage Guidelines"
             [ SideNav.linkExternal "https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats--BhJHYronm1RGM1hRfnkvhrZMAg-PvOLxeX3oyujYEzdJx5pu"
-            , SideNav.icon UiIcon.openInNewTab
             ]
             :: SideNav.entry "All" [ SideNav.href Routes.All ]
             :: categoryNavLinks
