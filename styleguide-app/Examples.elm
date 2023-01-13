@@ -14,6 +14,7 @@ import Examples.Checkbox as Checkbox
 import Examples.ClickableSvg as ClickableSvg
 import Examples.ClickableText as ClickableText
 import Examples.Colors as Colors
+import Examples.Combobox as Combobox
 import Examples.Confetti as Confetti
 import Examples.Container as Container
 import Examples.DisclosureIndicator as DisclosureIndicator
@@ -296,6 +297,25 @@ all =
             (\msg ->
                 case msg of
                     ColorsState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , Combobox.example
+        |> Example.wrapMsg ComboboxMsg
+            (\msg ->
+                case msg of
+                    ComboboxMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState ComboboxState
+            (\msg ->
+                case msg of
+                    ComboboxState childState ->
                         Just childState
 
                     _ ->
@@ -1002,6 +1022,7 @@ type State
     | ClickableSvgState ClickableSvg.State
     | ClickableTextState ClickableText.State
     | ColorsState Colors.State
+    | ComboboxState Combobox.State
     | ConfettiState Confetti.State
     | ContainerState Container.State
     | DisclosureIndicatorState DisclosureIndicator.State
@@ -1054,6 +1075,7 @@ type Msg
     | ClickableSvgMsg ClickableSvg.Msg
     | ClickableTextMsg ClickableText.Msg
     | ColorsMsg Colors.Msg
+    | ComboboxMsg Combobox.Msg
     | ConfettiMsg Confetti.Msg
     | ContainerMsg Container.Msg
     | DisclosureIndicatorMsg DisclosureIndicator.Msg
