@@ -36,6 +36,7 @@ import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Json.Decode
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (targetBlank)
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 
 
 {-| -}
@@ -72,7 +73,10 @@ init =
 
 {-| -}
 type alias Config attributes route msg =
-    { attributes | clickableAttributes : ClickableAttributes route msg }
+    { attributes
+        | clickableAttributes : ClickableAttributes route msg
+        , rightIcon : Maybe Svg
+    }
 
 
 {-| -}

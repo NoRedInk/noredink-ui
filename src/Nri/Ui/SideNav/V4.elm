@@ -505,6 +505,7 @@ sharedEntryStyles =
 {-| -}
 type alias EntryConfig route msg =
     { icon : Maybe Svg
+    , rightIcon : Maybe Svg
     , title : String
     , route : Maybe route
     , clickableAttributes : ClickableAttributes route msg
@@ -518,6 +519,7 @@ type alias EntryConfig route msg =
 build : String -> EntryConfig route msg
 build title =
     { icon = Nothing
+    , rightIcon = Nothing
     , title = title
     , route = Nothing
     , clickableAttributes = ClickableAttributes.init
