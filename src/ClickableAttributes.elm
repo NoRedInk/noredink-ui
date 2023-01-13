@@ -71,64 +71,77 @@ init =
 
 
 {-| -}
-onClick : msg -> ClickableAttributes route msg -> ClickableAttributes route msg
-onClick msg clickableAttributes =
-    { clickableAttributes | onClick = Just msg }
+type alias Config attributes route msg =
+    { attributes | clickableAttributes : ClickableAttributes route msg }
 
 
 {-| -}
-submit : ClickableAttributes route msg -> ClickableAttributes route msg
-submit clickableAttributes =
-    { clickableAttributes | buttonType = "submit" }
+onClick : msg -> Config a route msg -> Config a route msg
+onClick msg ({ clickableAttributes } as config) =
+    { config | clickableAttributes = { clickableAttributes | onClick = Just msg } }
 
 
 {-| -}
-opensModal : ClickableAttributes route msg -> ClickableAttributes route msg
-opensModal clickableAttributes =
-    { clickableAttributes | opensModal = True }
+submit : Config a route msg -> Config a route msg
+submit ({ clickableAttributes } as config) =
+    { config | clickableAttributes = { clickableAttributes | buttonType = "submit" } }
 
 
 {-| -}
-href : route -> ClickableAttributes route msg -> ClickableAttributes route msg
-href url clickableAttributes =
-    { clickableAttributes | url = Just url }
+opensModal : Config a route msg -> Config a route msg
+opensModal ({ clickableAttributes } as config) =
+    { config | clickableAttributes = { clickableAttributes | opensModal = True } }
 
 
 {-| -}
-linkSpa : route -> ClickableAttributes route msg -> ClickableAttributes route msg
-linkSpa url clickableAttributes =
-    { clickableAttributes | linkType = SinglePageApp, url = Just url }
+href : route -> Config a route msg -> Config a route msg
+href url ({ clickableAttributes } as config) =
+    { config | clickableAttributes = { clickableAttributes | url = Just url } }
 
 
 {-| -}
-linkWithMethod : { method : String, url : route } -> ClickableAttributes route msg -> ClickableAttributes route msg
-linkWithMethod { method, url } clickableAttributes =
-    { clickableAttributes | linkType = WithMethod method, url = Just url }
+linkSpa : route -> Config a route msg -> Config a route msg
+linkSpa url ({ clickableAttributes } as config) =
+    { config | clickableAttributes = { clickableAttributes | linkType = SinglePageApp, url = Just url } }
 
 
 {-| -}
-linkWithTracking : { track : msg, url : route } -> ClickableAttributes route msg -> ClickableAttributes route msg
-linkWithTracking { track, url } clickableAttributes =
-    { clickableAttributes
-        | linkType = WithTracking
-        , url = Just url
-        , onClick = Just track
+linkWithMethod : { method : String, url : route } -> Config a route msg -> Config a route msg
+linkWithMethod { method, url } ({ clickableAttributes } as config) =
+    { config | clickableAttributes = { clickableAttributes | linkType = WithMethod method, url = Just url } }
+
+
+{-| -}
+linkWithTracking : { track : msg, url : route } -> Config a route msg -> Config a route msg
+linkWithTracking { track, url } ({ clickableAttributes } as config) =
+    { config
+        | clickableAttributes =
+            { clickableAttributes
+                | linkType = WithTracking
+                , url = Just url
+                , onClick = Just track
+            }
     }
 
 
 {-| -}
-linkExternal : String -> ClickableAttributes route msg -> ClickableAttributes route msg
-linkExternal url clickableAttributes =
-    { clickableAttributes | linkType = External, urlString = Just url }
+linkExternal : String -> Config a route msg -> Config a route msg
+linkExternal url ({ clickableAttributes } as config) =
+    { config
+        | clickableAttributes = { clickableAttributes | linkType = External, urlString = Just url }
+    }
 
 
 {-| -}
-linkExternalWithTracking : { track : msg, url : String } -> ClickableAttributes route msg -> ClickableAttributes route msg
-linkExternalWithTracking { track, url } clickableAttributes =
-    { clickableAttributes
-        | linkType = ExternalWithTracking
-        , urlString = Just url
-        , onClick = Just track
+linkExternalWithTracking : { track : msg, url : String } -> Config a route msg -> Config a route msg
+linkExternalWithTracking { track, url } ({ clickableAttributes } as config) =
+    { config
+        | clickableAttributes =
+            { clickableAttributes
+                | linkType = ExternalWithTracking
+                , urlString = Just url
+                , onClick = Just track
+            }
     }
 
 

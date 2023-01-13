@@ -622,36 +622,21 @@ secondary =
 -- LINKING, CLICKING, and TRACKING BEHAVIOR
 
 
-setClickableAttributes :
-    Maybe route
-    -> (ClickableAttributes route msg -> ClickableAttributes route msg)
-    -> Attribute route msg
-setClickableAttributes route apply =
-    Attribute
-        (\attributes ->
-            { attributes
-                | route =
-                    case route of
-                        Just r ->
-                            Just r
-
-                        Nothing ->
-                            attributes.route
-                , clickableAttributes = apply attributes.clickableAttributes
-            }
-        )
+setClickableAttributesWithRoute : route -> (EntryConfig route msg -> EntryConfig route msg) -> Attribute route msg
+setClickableAttributesWithRoute route apply =
+    Attribute (\attributes -> apply { attributes | route = Just route })
 
 
 {-| -}
 onClick : msg -> Attribute route msg
 onClick msg =
-    setClickableAttributes Nothing (ClickableAttributes.onClick msg)
+    Attribute (ClickableAttributes.onClick msg)
 
 
 {-| -}
 href : route -> Attribute route msg
 href route =
-    setClickableAttributes (Just route) (ClickableAttributes.href route)
+    setClickableAttributesWithRoute route (ClickableAttributes.href route)
 
 
 {-| Use this link for routing within a single page app.
@@ -663,31 +648,31 @@ See <https://github.com/elm-lang/html/issues/110> for details on this implementa
 -}
 linkSpa : route -> Attribute route msg
 linkSpa route =
-    setClickableAttributes (Just route)
+    setClickableAttributesWithRoute route
         (ClickableAttributes.linkSpa route)
 
 
 {-| -}
 linkWithMethod : { method : String, url : route } -> Attribute route msg
 linkWithMethod config =
-    setClickableAttributes (Just config.url)
+    setClickableAttributesWithRoute config.url
         (ClickableAttributes.linkWithMethod config)
 
 
 {-| -}
 linkWithTracking : { track : msg, url : route } -> Attribute route msg
 linkWithTracking config =
-    setClickableAttributes (Just config.url)
+    setClickableAttributesWithRoute config.url
         (ClickableAttributes.linkWithTracking config)
 
 
 {-| -}
 linkExternal : String -> Attribute route msg
 linkExternal url =
-    setClickableAttributes Nothing (ClickableAttributes.linkExternal url)
+    Attribute (ClickableAttributes.linkExternal url)
 
 
 {-| -}
 linkExternalWithTracking : { track : msg, url : String } -> Attribute route msg
 linkExternalWithTracking config =
-    setClickableAttributes Nothing (ClickableAttributes.linkExternalWithTracking config)
+    Attribute (ClickableAttributes.linkExternalWithTracking config)
