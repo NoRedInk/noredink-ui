@@ -37,6 +37,7 @@ import Html.Styled.Events as Events
 import Json.Decode
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (targetBlank)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| -}
@@ -133,6 +134,7 @@ linkExternal : String -> Config a route msg -> Config a route msg
 linkExternal url ({ clickableAttributes } as config) =
     { config
         | clickableAttributes = { clickableAttributes | linkType = External, urlString = Just url }
+        , rightIcon = Just opensInNewTab
     }
 
 
@@ -146,6 +148,7 @@ linkExternalWithTracking { track, url } ({ clickableAttributes } as config) =
                 , urlString = Just url
                 , onClick = Just track
             }
+        , rightIcon = Just opensInNewTab
     }
 
 
@@ -256,3 +259,8 @@ toEnabledLinkAttributes routeToString clickableAttributes =
                     Attributes.href stringUrl
                         :: targetBlank
             )
+
+
+opensInNewTab : Svg
+opensInNewTab =
+    Svg.withLabel "Opens in a new tab" UiIcon.openInNewTab
