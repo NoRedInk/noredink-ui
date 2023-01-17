@@ -835,7 +835,7 @@ view label attributes =
                 :: config.containerCss
             )
         ]
-        [ input
+        ([ input
             (maybeStep
                 ++ List.map (Attributes.map never) (List.reverse config.custom)
                 ++ [ Attributes.id idValue
@@ -896,13 +896,13 @@ view label attributes =
                    ]
             )
             []
-        , InputLabelInternal.view
+         , InputLabelInternal.view
             { for = idValue
             , label = label
             , theme = config.inputStyle
             }
             config
-        , Maybe.map2
+         , Maybe.map2
             (\view_ onStringInput_ ->
                 view_
                     { label = label
@@ -914,8 +914,9 @@ view label attributes =
             eventsAndValues.floatingContent
             eventsAndValues.onInput
             |> Maybe.withDefault (Html.text "")
-        , InputErrorAndGuidanceInternal.view idValue InputErrorAndGuidanceInternal.smallMargin config
-        ]
+         ]
+            ++ InputErrorAndGuidanceInternal.view idValue InputErrorAndGuidanceInternal.smallMargin config
+        )
 
 
 {-| Gives you the default DOM element id that will be used by a `TextInput.view` with the given label.

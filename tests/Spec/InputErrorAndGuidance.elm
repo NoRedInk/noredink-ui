@@ -76,13 +76,13 @@ emptyErrorAndGuidance =
 viewQuery : { guidance : Guidance, error : ErrorState } -> Query.Single msg
 viewQuery config =
     Html.Styled.div []
-        [ Html.Styled.input
+        (Html.Styled.input
             [ Html.Styled.Attributes.id inputId
             , InputErrorAndGuidanceInternal.describedBy inputId config
             ]
             []
-        , InputErrorAndGuidanceInternal.view inputId (Css.batch []) config
-        ]
+            :: InputErrorAndGuidanceInternal.view inputId (Css.batch []) config
+        )
         |> Html.Styled.toUnstyled
         |> Query.fromHtml
 

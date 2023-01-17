@@ -111,41 +111,49 @@ getErrorMessage error =
 
 
 describedBy : String -> { config | guidance : Guidance, error : ErrorState } -> Html.Attribute msg
-describedBy idValue =
-    apply
-        { ifError = \_ -> Aria.describedBy [ errorId idValue ]
-        , ifGuidance = \_ -> Aria.describedBy [ guidanceId idValue ]
-        , ifNeither = Nri.Ui.Html.Attributes.V2.none
-        }
+describedBy idValue config =
+    let
+        relevantIds =
+            apply
+                { ifError = \_ -> errorId idValue
+                , ifGuidance = \_ -> guidanceId idValue
+                }
+                config
+    in
+    case relevantIds of
+        [] ->
+            Nri.Ui.Html.Attributes.V2.none
+
+        _ ->
+            Aria.describedBy relevantIds
 
 
-view : String -> Css.Style -> { config | guidance : Guidance, error : ErrorState } -> Html msg
+view : String -> Css.Style -> { config | guidance : Guidance, error : ErrorState } -> List (Html msg)
 view idValue marginTop =
     apply
         { ifError = renderErrorMessage idValue marginTop
         , ifGuidance = renderGuidance idValue marginTop
-        , ifNeither = Html.text ""
         }
 
 
 apply :
-    { ifError : String -> a, ifGuidance : String -> a, ifNeither : a }
+    { ifError : String -> a, ifGuidance : String -> a }
     -> { config | guidance : Guidance, error : ErrorState }
-    -> a
-apply { ifError, ifGuidance, ifNeither } config =
+    -> List a
+apply { ifError, ifGuidance } config =
     let
         maybeError =
             getErrorMessage config.error
     in
     case ( maybeError, config.guidance ) of
         ( Just errorMessage, _ ) ->
-            ifError errorMessage
+            [ ifError errorMessage ]
 
         ( _, Just guidanceMessage ) ->
-            ifGuidance guidanceMessage
+            [ ifGuidance guidanceMessage ]
 
         _ ->
-            ifNeither
+            []
 
 
 renderErrorMessage : String -> Css.Style -> String -> Html msg
