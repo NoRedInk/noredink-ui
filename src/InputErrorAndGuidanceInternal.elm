@@ -125,36 +125,50 @@ describedBy idValue config =
 
 view : String -> Css.Style -> { config | guidance : Guidance, error : ErrorState } -> Html msg
 view idValue marginTop config =
-    case ( getErrorMessage config.error, config.guidance ) of
+    let
+        maybeError =
+            getErrorMessage config.error
+    in
+    case ( maybeError, config.guidance ) of
         ( Just m, _ ) ->
-            Message.view
-                [ Message.tiny
-                , Message.error
-                , Message.plaintext m
-                , Message.alertRole
-                , Message.id (errorId idValue)
-                , Message.custom [ Live.polite ]
-                , Message.css
-                    [ Css.important (Css.paddingTop Css.zero)
-                    , Css.important (Css.paddingBottom Css.zero)
-                    , marginTop
-                    ]
-                ]
+            renderErrorMessage idValue marginTop m
 
         ( _, Just guidanceMessage ) ->
-            Text.caption
-                [ Text.id (guidanceId idValue)
-                , Text.plaintext guidanceMessage
-                , Text.css
-                    [ Css.important (Css.paddingTop Css.zero)
-                    , Css.important (Css.paddingBottom Css.zero)
-                    , Css.important marginTop
-                    , Css.lineHeight (Css.num 1)
-                    ]
-                ]
+            renderGuidance idValue marginTop guidanceMessage
 
         _ ->
             Html.text ""
+
+
+renderErrorMessage : String -> Css.Style -> String -> Html msg
+renderErrorMessage idValue marginTop m =
+    Message.view
+        [ Message.tiny
+        , Message.error
+        , Message.plaintext m
+        , Message.alertRole
+        , Message.id (errorId idValue)
+        , Message.custom [ Live.polite ]
+        , Message.css
+            [ Css.important (Css.paddingTop Css.zero)
+            , Css.important (Css.paddingBottom Css.zero)
+            , marginTop
+            ]
+        ]
+
+
+renderGuidance : String -> Css.Style -> String -> Html msg
+renderGuidance idValue marginTop guidanceMessage =
+    Text.caption
+        [ Text.id (guidanceId idValue)
+        , Text.plaintext guidanceMessage
+        , Text.css
+            [ Css.important (Css.paddingTop Css.zero)
+            , Css.important (Css.paddingBottom Css.zero)
+            , Css.important marginTop
+            , Css.lineHeight (Css.num 1)
+            ]
+        ]
 
 
 smallMargin : Css.Style
