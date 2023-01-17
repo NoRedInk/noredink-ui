@@ -8,17 +8,13 @@ module Nri.Ui.Highlightable.V1 exposing
     , attributeSorter
     )
 
-{-| A Highlightable represents a span of text, typically a word, and its state.
+{-| The next version of Highlightable should remove `groupIndex.`
+
+A Highlightable represents a span of text, typically a word, and its state.
 
 Highlightable is the unit by which text-wrapping happens. Depending on how the
 Highlighter is initialized, it's very possible for a Highlightable to consist of
 just a single whitespace.
-
-A consecutive array of Highlightables sharing the same groupIndex form a fragment,
-which gets highlighted together as a group in response to user action such as
-clicking and dragging. Fragment as a concept only exists in how functions and
-variables are named, and is not expressed as a concrete type. We probably should
-refactor to make it an actual type.
 
 
 # Types
