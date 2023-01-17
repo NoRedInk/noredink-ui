@@ -3,6 +3,7 @@ module InputErrorAndGuidanceInternal exposing
     , Guidance, noGuidance, setGuidance
     , getIsInError, getErrorMessage
     , describedBy, view, smallMargin
+    , guidanceId, errorId
     )
 
 {-|
@@ -11,6 +12,7 @@ module InputErrorAndGuidanceInternal exposing
 @docs Guidance, noGuidance, setGuidance
 @docs getIsInError, getErrorMessage
 @docs describedBy, view, smallMargin
+@docs guidanceId, errorId
 
 -}
 

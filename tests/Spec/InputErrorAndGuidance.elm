@@ -1,8 +1,10 @@
 module Spec.InputErrorAndGuidance exposing (spec)
 
+import Accessibility.Aria as Aria
 import Css
-import Expect
+import Expect exposing (Expectation)
 import Html.Styled
+import Html.Styled.Attributes
 import InputErrorAndGuidanceInternal exposing (ErrorState, Guidance)
 import Test exposing (..)
 import Test.Html.Query as Query
@@ -15,8 +17,20 @@ spec =
         [ test "Renders an empty node when no guidance or error is present" <|
             \() ->
                 viewQuery emptyErrorAndGuidance
-                    |> Query.children []
-                    |> Query.count (Expect.equal 0)
+                    |> Expect.all
+                        [ Query.hasNot [ Selector.id guidanceId ]
+                        , Query.hasNot [ Selector.id errorId ]
+                        ]
+        , test "Renders a guidance node when guidance is present and error is not" <|
+            \() ->
+                emptyErrorAndGuidance
+                    |> InputErrorAndGuidanceInternal.setGuidance "Password must be at least 8 characters long."
+                    |> viewQuery
+                    |> Expect.all
+                        [ hasInputDescribedBy [ guidanceId ]
+                        , hasGuidance "Password must be at least 8 characters long."
+                        , Query.hasNot [ Selector.id errorId ]
+                        ]
         ]
 
 
@@ -28,7 +42,47 @@ emptyErrorAndGuidance =
 
 
 viewQuery : { guidance : Guidance, error : ErrorState } -> Query.Single msg
-viewQuery =
-    InputErrorAndGuidanceInternal.view "test-id" (Css.batch [])
-        >> Html.Styled.toUnstyled
-        >> Query.fromHtml
+viewQuery config =
+    Html.Styled.div []
+        [ Html.Styled.input
+            [ Html.Styled.Attributes.id inputId
+            , InputErrorAndGuidanceInternal.describedBy inputId config
+            ]
+            []
+        , InputErrorAndGuidanceInternal.view inputId (Css.batch []) config
+        ]
+        |> Html.Styled.toUnstyled
+        |> Query.fromHtml
+
+
+inputId : String
+inputId =
+    "input-id"
+
+
+guidanceId : String
+guidanceId =
+    InputErrorAndGuidanceInternal.guidanceId inputId
+
+
+errorId : String
+errorId =
+    InputErrorAndGuidanceInternal.errorId inputId
+
+
+hasInputDescribedBy : List String -> Query.Single msg -> Expectation
+hasInputDescribedBy ids =
+    Query.has
+        [ Selector.all
+            [ Selector.id inputId
+            , Selector.attribute (Aria.describedBy ids)
+            ]
+        ]
+
+
+hasGuidance : String -> Query.Single msg -> Expectation
+hasGuidance content =
+    Query.has
+        [ Selector.id guidanceId
+        , Selector.containing [ Selector.text content ]
+        ]
