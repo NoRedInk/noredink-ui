@@ -41,6 +41,17 @@ spec =
                         , hasError "Password must be at least 8 characters long."
                         , Query.hasNot [ Selector.id guidanceId ]
                         ]
+        , test "Renders an error node and a guidance node when error and guidance are present and non-identical" <|
+            \() ->
+                emptyErrorAndGuidance
+                    |> InputErrorAndGuidanceInternal.setGuidance "Password is required."
+                    |> InputErrorAndGuidanceInternal.setErrorMessage (Just "Password must be at least 8 characters long.")
+                    |> viewQuery
+                    |> Expect.all
+                        [ hasInputDescribedBy [ guidanceId, errorId ]
+                        , hasGuidance "Password is required."
+                        , hasError "Password must be at least 8 characters long."
+                        ]
         ]
 
 
