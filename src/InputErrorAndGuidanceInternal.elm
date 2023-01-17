@@ -146,13 +146,22 @@ apply { ifError, ifGuidance } config =
             getErrorMessage config.error
     in
     case ( maybeError, config.guidance ) of
-        ( Just errorMessage, _ ) ->
+        ( Just errorMessage, Just guidanceMessage ) ->
+            if errorMessage /= guidanceMessage then
+                [ ifGuidance guidanceMessage
+                , ifError errorMessage
+                ]
+
+            else
+                [ ifError errorMessage ]
+
+        ( Just errorMessage, Nothing ) ->
             [ ifError errorMessage ]
 
-        ( _, Just guidanceMessage ) ->
+        ( Nothing, Just guidanceMessage ) ->
             [ ifGuidance guidanceMessage ]
 
-        _ ->
+        ( Nothing, Nothing ) ->
             []
 
 
