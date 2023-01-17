@@ -1,6 +1,7 @@
 module Nri.Ui.Highlightable.V1 exposing
     ( Highlightable, Type(..), UIState(..), Attribute(..)
     , init, initFragment, initFragments
+    , fromMarkdown
     , splitHighlightableOnWords, splitWords
     , blur, clearHint, hint, hover
     , set, toggle
@@ -28,6 +29,7 @@ refactor to make it an actual type.
 # Initializers
 
 @docs init, initFragment, initFragments
+@docs fromMarkdown
 
 
 # Transformations
@@ -198,6 +200,20 @@ initFragments marked text_ =
         |> List.map Just
         |> List.intersperse Nothing
         |> List.indexedMap spaceOrInit
+
+
+{-| How do we know which elements should be marked, if all we have is a markdown string?
+
+We do some funky parsing to interpret empty anchor tags and tagged spans as highlighted!
+
+    fromMarkdown "for example, [this phrase]() will show as highlighted"
+
+will result in a list of highlightables where "this phrase" is marked with the default marker.
+
+-}
+fromMarkdown : String -> List (Highlightable marker)
+fromMarkdown markdownString =
+    []
 
 
 {-| -}
