@@ -240,28 +240,31 @@ fromMarkdown markdownString =
 
                 Markdown.Inline.Link "" maybeTitle inlines ->
                     -- empty links should be interpreted as content that's supposed to be highlighted!
-                    List.concatMap (highlightableFromInline (Just defaultMark) identity) inlines
+                    List.concatMap (highlightableFromInline (Just defaultMark) mapStrings) inlines
 
                 Markdown.Inline.Link url maybeTitle inlines ->
-                    List.concatMap (highlightableFromInline maybeMark identity) inlines
+                    List.concatMap (highlightableFromInline maybeMark mapStrings) inlines
 
                 Markdown.Inline.Image _ _ inlines ->
-                    List.concatMap (highlightableFromInline maybeMark identity) inlines
+                    List.concatMap (highlightableFromInline maybeMark mapStrings) inlines
 
                 Markdown.Inline.HtmlInline _ _ inlines ->
-                    List.concatMap (highlightableFromInline maybeMark identity) inlines
+                    List.concatMap (highlightableFromInline maybeMark mapStrings) inlines
 
                 Markdown.Inline.Emphasis level inlines ->
                     let
                         marker =
                             String.repeat level "*"
+
+                        addMarkers str =
+                            marker ++ str ++ marker
                     in
                     List.concatMap
-                        (highlightableFromInline maybeMark (\str -> marker ++ str ++ marker))
+                        (highlightableFromInline maybeMark (mapStrings >> addMarkers))
                         inlines
 
                 Markdown.Inline.Custom _ inlines ->
-                    List.concatMap (highlightableFromInline maybeMark identity) inlines
+                    List.concatMap (highlightableFromInline maybeMark mapStrings) inlines
 
         highlightableFromBlock : Markdown.Block.Block b i -> List (Highlightable ())
         highlightableFromBlock block =
