@@ -49,6 +49,10 @@ just a single whitespace.
 
 -}
 
+import Markdown
+import Markdown.Block
+import Markdown.Inline
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Regex exposing (Regex)
 import Sort exposing (Sorter)
@@ -207,9 +211,88 @@ We do some funky parsing to interpret empty anchor tags and tagged spans as high
 will result in a list of highlightables where "this phrase" is marked with the default marker.
 
 -}
-fromMarkdown : String -> List (Highlightable marker)
+fromMarkdown : String -> List (Highlightable ())
 fromMarkdown markdownString =
-    []
+    let
+        static maybeMark c =
+            init Static maybeMark -1 ( [], c )
+
+        defaultMark =
+            Tool.buildMarker
+                { highlightColor = Colors.highlightYellow
+                , hoverColor = Colors.highlightYellow
+                , hoverHighlightColor = Colors.highlightYellow
+                , kind = ()
+                , name = Nothing
+                }
+
+        highlightableFromInline : Maybe (Tool.MarkerModel ()) -> Markdown.Inline.Inline i -> List (Highlightable ())
+        highlightableFromInline maybeMark inline =
+            case inline of
+                Markdown.Inline.Text text ->
+                    [ static maybeMark text ]
+
+                Markdown.Inline.HardLineBreak ->
+                    [ static maybeMark "\n" ]
+
+                Markdown.Inline.CodeInline text ->
+                    [ static maybeMark text ]
+
+                Markdown.Inline.Link "" maybeTitle inlines ->
+                    -- empty links should be interpreted as content that's supposed to be highlighted!
+                    List.concatMap (highlightableFromInline (Just defaultMark)) inlines
+
+                Markdown.Inline.Link url maybeTitle inlines ->
+                    List.concatMap (highlightableFromInline maybeMark) inlines
+
+                Markdown.Inline.Image _ _ inlines ->
+                    List.concatMap (highlightableFromInline maybeMark) inlines
+
+                Markdown.Inline.HtmlInline _ _ inlines ->
+                    List.concatMap (highlightableFromInline maybeMark) inlines
+
+                Markdown.Inline.Emphasis level inlines ->
+                    List.concatMap (highlightableFromInline maybeMark) inlines
+
+                Markdown.Inline.Custom _ inlines ->
+                    List.concatMap (highlightableFromInline maybeMark) inlines
+
+        highlightableFromBlock : Markdown.Block.Block b i -> List (Highlightable ())
+        highlightableFromBlock block =
+            case block of
+                Markdown.Block.BlankLine text ->
+                    [ static Nothing text ]
+
+                Markdown.Block.ThematicBreak ->
+                    []
+
+                Markdown.Block.Heading _ _ inlines ->
+                    List.concatMap (highlightableFromInline Nothing) inlines
+
+                Markdown.Block.CodeBlock _ text ->
+                    [ static Nothing text ]
+
+                Markdown.Block.Paragraph _ inlines ->
+                    List.concatMap (highlightableFromInline Nothing) inlines
+
+                Markdown.Block.BlockQuote blocks ->
+                    List.concatMap highlightableFromBlock blocks
+
+                Markdown.Block.List _ listOfBlocks ->
+                    List.concatMap (List.concatMap highlightableFromBlock) listOfBlocks
+
+                Markdown.Block.PlainInlines inlines ->
+                    List.concatMap (highlightableFromInline Nothing) inlines
+
+                Markdown.Block.Custom _ blocks ->
+                    List.concatMap highlightableFromBlock blocks
+    in
+    if String.isEmpty markdownString then
+        []
+
+    else
+        Markdown.Block.parse Nothing markdownString
+            |> List.concatMap highlightableFromBlock
 
 
 {-| -}
