@@ -79,6 +79,14 @@ fromMarkdownSpec =
         \() ->
             testFromMarkdown "A sentence without highlighted content"
                 [ ( "A sentence without highlighted content", Nothing ) ]
+    , test "does not strip emphasized content" <|
+        \() ->
+            testFromMarkdown "A *sentence without* **highlighted content**"
+                [ ( "A ", Nothing )
+                , ( "*sentence without*", Nothing )
+                , ( " ", Nothing )
+                , ( "**highlighted content**", Nothing )
+                ]
     , test "marks a single segment as highlighted" <|
         \() ->
             testFromMarkdown "[fake link]()"

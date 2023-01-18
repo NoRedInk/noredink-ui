@@ -214,8 +214,8 @@ will result in a list of highlightables where "this phrase" is marked with the d
 fromMarkdown : String -> List (Highlightable ())
 fromMarkdown markdownString =
     let
-        static maybeMark c =
-            init Static maybeMark -1 ( [], c )
+        static maybeMark mapStrings c =
+            init Static maybeMark -1 ( [], mapStrings c )
 
         defaultMark =
             Tool.buildMarker
@@ -226,54 +226,60 @@ fromMarkdown markdownString =
                 , name = Nothing
                 }
 
-        highlightableFromInline : Maybe (Tool.MarkerModel ()) -> Markdown.Inline.Inline i -> List (Highlightable ())
-        highlightableFromInline maybeMark inline =
+        highlightableFromInline : Maybe (Tool.MarkerModel ()) -> (String -> String) -> Markdown.Inline.Inline i -> List (Highlightable ())
+        highlightableFromInline maybeMark mapStrings inline =
             case inline of
                 Markdown.Inline.Text text ->
-                    [ static maybeMark text ]
+                    [ static maybeMark mapStrings text ]
 
                 Markdown.Inline.HardLineBreak ->
-                    [ static maybeMark "\n" ]
+                    [ static maybeMark mapStrings "\n" ]
 
                 Markdown.Inline.CodeInline text ->
-                    [ static maybeMark text ]
+                    [ static maybeMark mapStrings text ]
 
                 Markdown.Inline.Link "" maybeTitle inlines ->
                     -- empty links should be interpreted as content that's supposed to be highlighted!
-                    List.concatMap (highlightableFromInline (Just defaultMark)) inlines
+                    List.concatMap (highlightableFromInline (Just defaultMark) identity) inlines
 
                 Markdown.Inline.Link url maybeTitle inlines ->
-                    List.concatMap (highlightableFromInline maybeMark) inlines
+                    List.concatMap (highlightableFromInline maybeMark identity) inlines
 
                 Markdown.Inline.Image _ _ inlines ->
-                    List.concatMap (highlightableFromInline maybeMark) inlines
+                    List.concatMap (highlightableFromInline maybeMark identity) inlines
 
                 Markdown.Inline.HtmlInline _ _ inlines ->
-                    List.concatMap (highlightableFromInline maybeMark) inlines
+                    List.concatMap (highlightableFromInline maybeMark identity) inlines
 
                 Markdown.Inline.Emphasis level inlines ->
-                    List.concatMap (highlightableFromInline maybeMark) inlines
+                    let
+                        marker =
+                            String.repeat level "*"
+                    in
+                    List.concatMap
+                        (highlightableFromInline maybeMark (\str -> marker ++ str ++ marker))
+                        inlines
 
                 Markdown.Inline.Custom _ inlines ->
-                    List.concatMap (highlightableFromInline maybeMark) inlines
+                    List.concatMap (highlightableFromInline maybeMark identity) inlines
 
         highlightableFromBlock : Markdown.Block.Block b i -> List (Highlightable ())
         highlightableFromBlock block =
             case block of
                 Markdown.Block.BlankLine text ->
-                    [ static Nothing text ]
+                    [ static Nothing identity text ]
 
                 Markdown.Block.ThematicBreak ->
                     []
 
                 Markdown.Block.Heading _ _ inlines ->
-                    List.concatMap (highlightableFromInline Nothing) inlines
+                    List.concatMap (highlightableFromInline Nothing identity) inlines
 
                 Markdown.Block.CodeBlock _ text ->
-                    [ static Nothing text ]
+                    [ static Nothing identity text ]
 
                 Markdown.Block.Paragraph _ inlines ->
-                    List.concatMap (highlightableFromInline Nothing) inlines
+                    List.concatMap (highlightableFromInline Nothing identity) inlines
 
                 Markdown.Block.BlockQuote blocks ->
                     List.concatMap highlightableFromBlock blocks
@@ -282,7 +288,7 @@ fromMarkdown markdownString =
                     List.concatMap (List.concatMap highlightableFromBlock) listOfBlocks
 
                 Markdown.Block.PlainInlines inlines ->
-                    List.concatMap (highlightableFromInline Nothing) inlines
+                    List.concatMap (highlightableFromInline Nothing identity) inlines
 
                 Markdown.Block.Custom _ blocks ->
                     List.concatMap highlightableFromBlock blocks
