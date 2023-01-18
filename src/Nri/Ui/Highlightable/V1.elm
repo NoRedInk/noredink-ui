@@ -49,7 +49,6 @@ just a single whitespace.
 
 -}
 
-import Markdown
 import Markdown.Block
 import Markdown.Inline
 import Nri.Ui.Colors.V1 as Colors
