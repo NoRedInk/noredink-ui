@@ -82,11 +82,7 @@ fromMarkdownSpec =
     , test "does not strip emphasized content" <|
         \() ->
             testFromMarkdown "A *sentence without* **highlighted content**"
-                [ ( "A ", Nothing )
-                , ( "*sentence without*", Nothing )
-                , ( " ", Nothing )
-                , ( "**highlighted content**", Nothing )
-                ]
+                [ ( "A *sentence without* **highlighted content**", Nothing ) ]
     , test "marks a single segment as highlighted" <|
         \() ->
             testFromMarkdown "[fake link]()"
@@ -100,8 +96,7 @@ fromMarkdownSpec =
     , test "marks content that's intended to be highlighted within an emphasis" <|
         \() ->
             testFromMarkdown "A sentence with *emphasized [highlighted content]()!*"
-                [ ( "A sentence with ", Nothing )
-                , ( "*emphasized *", Nothing )
+                [ ( "A sentence with *emphasized *", Nothing )
                 , ( "*highlighted content*", Just defaultMark )
                 , ( "*!*", Nothing )
                 ]
@@ -114,8 +109,7 @@ fromMarkdownSpec =
     , test "does not highlight actual links" <|
         \() ->
             testFromMarkdown "I am a [real link](google.com)"
-                [ ( "I am a ", Nothing )
-                , ( "[real link](google.com)", Nothing )
+                [ ( "I am a [real link](google.com)", Nothing )
                 ]
     , test "does not get confused by parentheses" <|
         \() ->

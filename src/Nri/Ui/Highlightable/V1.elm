@@ -330,9 +330,9 @@ fromMarkdown markdownString =
                 -- ensure that adjacent highlights are in a single mark element
                 (\segment ( lastInteractiveHighlight, acc ) ->
                     ( segment.marked
-                    , case ( segment.marked, acc ) of
-                        ( Just marker, last :: remainder ) ->
-                            if Just marker == last.marked then
+                    , case acc of
+                        last :: remainder ->
+                            if segment.marked == last.marked then
                                 { segment | text = segment.text ++ last.text }
                                     :: remainder
 
