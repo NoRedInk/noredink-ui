@@ -48,7 +48,7 @@ spec =
                     |> InputErrorAndGuidanceInternal.setErrorMessage (Just "Password must be at least 8 characters long.")
                     |> viewQuery
                     |> Expect.all
-                        [ hasInputDescribedBy [ guidanceId, errorId ]
+                        [ hasInputDescribedBy [ errorId, guidanceId ]
                         , hasGuidance "Password is required."
                         , hasError "Password must be at least 8 characters long."
                         ]

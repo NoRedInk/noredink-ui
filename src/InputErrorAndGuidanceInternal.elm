@@ -148,8 +148,8 @@ apply { ifError, ifGuidance } config =
     case ( maybeError, config.guidance ) of
         ( Just errorMessage, Just guidanceMessage ) ->
             if errorMessage /= guidanceMessage then
-                [ ifGuidance guidanceMessage
-                , ifError errorMessage
+                [ ifError errorMessage
+                , ifGuidance guidanceMessage
                 ]
 
             else
