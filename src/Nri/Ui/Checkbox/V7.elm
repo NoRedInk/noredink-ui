@@ -243,8 +243,8 @@ view { label, selected } attributes =
             }
     in
     checkboxContainer config_
-        [ viewCheckbox config_
-        , let
+        ([ viewCheckbox config_
+         , let
             ( icon, disabledIcon ) =
                 case selected of
                     Selected ->
@@ -261,14 +261,15 @@ view { label, selected } attributes =
                         ( CheckboxIcons.checkedPartially idValue
                         , CheckboxIcons.checkedPartiallyDisabled
                         )
-          in
-          if config.isDisabled then
+           in
+           if config.isDisabled then
             viewDisabledLabel config_ disabledIcon
 
-          else
+           else
             viewEnabledLabel config_ icon
-        , InputErrorAndGuidanceInternal.view config_.identifier (Css.marginTop Css.zero) config_
-        ]
+         ]
+            ++ InputErrorAndGuidanceInternal.view config_.identifier (Css.marginTop Css.zero) config_
+        )
 
 
 {-| If your selectedness is always selected or not selected,

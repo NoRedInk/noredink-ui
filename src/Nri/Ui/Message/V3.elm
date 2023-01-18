@@ -17,6 +17,7 @@ module Nri.Ui.Message.V3 exposing
   - adds `hideIconForMobile` and `hideIconFor`
   - use `Shadows`
   - use internal `Content` module
+  - make the tiny Message's icon size smaller
 
 Changes from V2:
 
@@ -759,7 +760,7 @@ getIcon customIcon size theme =
         ( iconSize, marginRight ) =
             case size of
                 Tiny ->
-                    ( px 20, Css.marginRight (Css.px 5) )
+                    ( px 18, Css.marginRight (Css.px 5) )
 
                 Large ->
                     ( px 35, Css.marginRight (Css.px 10) )
