@@ -254,6 +254,7 @@ controlEntryAttributes href =
             )
         |> CommonControls.css { moduleName = "SideNav", use = SideNav.css }
         |> CommonControls.iconNotCheckedByDefault "SideNav" SideNav.icon
+        |> CommonControls.rightIcon "SideNav" SideNav.rightIcon
         |> ControlExtra.optionalBoolListItem "secondary" ( "SideNav.secondary", SideNav.secondary )
         |> ControlExtra.optionalListItem "premiumDisplay"
             (Control.map

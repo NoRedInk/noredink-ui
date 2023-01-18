@@ -111,20 +111,10 @@ link name icon attributes =
 -- LINKING, CLICKING, and TRACKING BEHAVIOR
 
 
-setClickableAttributes :
-    (ClickableAttributes String msg -> ClickableAttributes String msg)
-    -> Attribute msg
-setClickableAttributes apply =
-    set
-        (\attributes ->
-            { attributes | clickableAttributes = apply attributes.clickableAttributes }
-        )
-
-
 {-| -}
 onClick : msg -> Attribute msg
 onClick msg =
-    setClickableAttributes (ClickableAttributes.onClick msg)
+    set (ClickableAttributes.onClick msg)
 
 
 {-| By default, buttons have type "button". Use this attribute to change the button type to "submit".
@@ -134,20 +124,20 @@ Note: this attribute is not supported by links.
 -}
 submit : Attribute msg
 submit =
-    setClickableAttributes ClickableAttributes.submit
+    set ClickableAttributes.submit
 
 
 {-| Use this attribute when interacting with the button will launch a modal.
 -}
 opensModal : Attribute msg
 opensModal =
-    setClickableAttributes ClickableAttributes.opensModal
+    set ClickableAttributes.opensModal
 
 
 {-| -}
 href : String -> Attribute msg
 href url =
-    setClickableAttributes (ClickableAttributes.href url)
+    set (ClickableAttributes.href url)
 
 
 {-| Use this link for routing within a single page app.
@@ -159,31 +149,31 @@ See <https://github.com/elm-lang/html/issues/110> for details on this implementa
 -}
 linkSpa : String -> Attribute msg
 linkSpa url =
-    setClickableAttributes (ClickableAttributes.linkSpa url)
+    set (ClickableAttributes.linkSpa url)
 
 
 {-| -}
 linkWithMethod : { method : String, url : String } -> Attribute msg
 linkWithMethod config =
-    setClickableAttributes (ClickableAttributes.linkWithMethod config)
+    set (ClickableAttributes.linkWithMethod config)
 
 
 {-| -}
 linkWithTracking : { track : msg, url : String } -> Attribute msg
 linkWithTracking config =
-    setClickableAttributes (ClickableAttributes.linkWithTracking config)
+    set (ClickableAttributes.linkWithTracking config)
 
 
 {-| -}
 linkExternal : String -> Attribute msg
 linkExternal url =
-    setClickableAttributes (ClickableAttributes.linkExternal url)
+    set (ClickableAttributes.linkExternal url)
 
 
 {-| -}
 linkExternalWithTracking : { track : msg, url : String } -> Attribute msg
 linkExternalWithTracking config =
-    setClickableAttributes (ClickableAttributes.linkExternalWithTracking config)
+    set (ClickableAttributes.linkExternalWithTracking config)
 
 
 

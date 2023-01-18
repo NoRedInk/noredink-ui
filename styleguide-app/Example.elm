@@ -13,8 +13,6 @@ import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Header.V1 as Header
-import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 type alias Example state msg =
@@ -172,10 +170,7 @@ docsLink example =
             "https://package.elm-lang.org/packages/NoRedInk/noredink-ui/latest/"
                 ++ String.replace "." "-" (fullName example)
     in
-    ClickableText.link "Docs"
-        [ ClickableText.linkExternal link
-        , ClickableText.rightIcon (Svg.withLabel "Opens in a new tab" UiIcon.openInNewTab)
-        ]
+    ClickableText.link "Docs" [ ClickableText.linkExternal link ]
 
 
 srcLink : Example state msg -> Html msg2
@@ -186,7 +181,4 @@ srcLink example =
                 ++ ".elm"
                 |> (++) "https://github.com/NoRedInk/noredink-ui/blob/master/src/"
     in
-    ClickableText.link "Source"
-        [ ClickableText.linkExternal link
-        , ClickableText.rightIcon (Svg.withLabel "Opens in a new tab" UiIcon.openInNewTab)
-        ]
+    ClickableText.link "Source" [ ClickableText.linkExternal link ]

@@ -4,7 +4,8 @@ module Nri.Ui.SideNav.V4 exposing
     , navLabel, navId
     , navCss, navNotMobileCss, navMobileCss, navQuizEngineMobileCss
     , entry, entryWithChildren, html, Entry, Attribute
-    , icon, custom, css, nriDescription, testId, id
+    , icon, rightIcon
+    , custom, css, nriDescription, testId, id
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , primary, secondary
@@ -27,7 +28,8 @@ module Nri.Ui.SideNav.V4 exposing
 ## Entries
 
 @docs entry, entryWithChildren, html, Entry, Attribute
-@docs icon, custom, css, nriDescription, testId, id
+@docs icon, rightIcon
+@docs custom, css, nriDescription, testId, id
 
 
 ## Behavior
@@ -446,6 +448,15 @@ viewSidebarLeaf config extraStyles entryConfig =
             )
             entryConfig.icon
         , text entryConfig.title
+        , viewJust
+            (\icon_ ->
+                icon_
+                    |> Svg.withWidth (px 20)
+                    |> Svg.withHeight (px 20)
+                    |> Svg.withCss [ marginLeft (px 5) ]
+                    |> Svg.toHtml
+            )
+            entryConfig.rightIcon
         ]
 
 
@@ -505,6 +516,7 @@ sharedEntryStyles =
 {-| -}
 type alias EntryConfig route msg =
     { icon : Maybe Svg
+    , rightIcon : Maybe Svg
     , title : String
     , route : Maybe route
     , clickableAttributes : ClickableAttributes route msg
@@ -518,6 +530,7 @@ type alias EntryConfig route msg =
 build : String -> EntryConfig route msg
 build title =
     { icon = Nothing
+    , rightIcon = Nothing
     , title = title
     , route = Nothing
     , clickableAttributes = ClickableAttributes.init
@@ -537,6 +550,12 @@ type Attribute route msg
 icon : Svg -> Attribute route msg
 icon icon_ =
     Attribute (\attributes -> { attributes | icon = Just icon_ })
+
+
+{-| -}
+rightIcon : Svg -> Attribute route msg
+rightIcon icon_ =
+    Attribute (\attributes -> { attributes | rightIcon = Just icon_ })
 
 
 {-| -}
@@ -622,36 +641,21 @@ secondary =
 -- LINKING, CLICKING, and TRACKING BEHAVIOR
 
 
-setClickableAttributes :
-    Maybe route
-    -> (ClickableAttributes route msg -> ClickableAttributes route msg)
-    -> Attribute route msg
-setClickableAttributes route apply =
-    Attribute
-        (\attributes ->
-            { attributes
-                | route =
-                    case route of
-                        Just r ->
-                            Just r
-
-                        Nothing ->
-                            attributes.route
-                , clickableAttributes = apply attributes.clickableAttributes
-            }
-        )
+setClickableAttributesWithRoute : route -> (EntryConfig route msg -> EntryConfig route msg) -> Attribute route msg
+setClickableAttributesWithRoute route apply =
+    Attribute (\attributes -> apply { attributes | route = Just route })
 
 
 {-| -}
 onClick : msg -> Attribute route msg
 onClick msg =
-    setClickableAttributes Nothing (ClickableAttributes.onClick msg)
+    Attribute (ClickableAttributes.onClick msg)
 
 
 {-| -}
 href : route -> Attribute route msg
 href route =
-    setClickableAttributes (Just route) (ClickableAttributes.href route)
+    setClickableAttributesWithRoute route (ClickableAttributes.href route)
 
 
 {-| Use this link for routing within a single page app.
@@ -663,31 +667,31 @@ See <https://github.com/elm-lang/html/issues/110> for details on this implementa
 -}
 linkSpa : route -> Attribute route msg
 linkSpa route =
-    setClickableAttributes (Just route)
+    setClickableAttributesWithRoute route
         (ClickableAttributes.linkSpa route)
 
 
 {-| -}
 linkWithMethod : { method : String, url : route } -> Attribute route msg
 linkWithMethod config =
-    setClickableAttributes (Just config.url)
+    setClickableAttributesWithRoute config.url
         (ClickableAttributes.linkWithMethod config)
 
 
 {-| -}
 linkWithTracking : { track : msg, url : route } -> Attribute route msg
 linkWithTracking config =
-    setClickableAttributes (Just config.url)
+    setClickableAttributesWithRoute config.url
         (ClickableAttributes.linkWithTracking config)
 
 
 {-| -}
 linkExternal : String -> Attribute route msg
 linkExternal url =
-    setClickableAttributes Nothing (ClickableAttributes.linkExternal url)
+    Attribute (ClickableAttributes.linkExternal url)
 
 
 {-| -}
 linkExternalWithTracking : { track : msg, url : String } -> Attribute route msg
 linkExternalWithTracking config =
-    setClickableAttributes Nothing (ClickableAttributes.linkExternalWithTracking config)
+    Attribute (ClickableAttributes.linkExternalWithTracking config)
