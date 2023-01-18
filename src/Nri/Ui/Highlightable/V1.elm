@@ -243,7 +243,31 @@ fromMarkdown markdownString =
                     List.concatMap (highlightableFromInline (Just defaultMark) mapStrings) inlines
 
                 Markdown.Inline.Link url maybeTitle inlines ->
-                    List.concatMap (highlightableFromInline maybeMark mapStrings) inlines
+                    let
+                        lastIndex =
+                            List.length inlines - 1
+
+                        addLinkOpening i str =
+                            if i == 0 then
+                                "[" ++ str
+
+                            else
+                                str
+
+                        addLinkClosing i str =
+                            if i == lastIndex then
+                                str ++ "](" ++ url ++ ")"
+
+                            else
+                                str
+                    in
+                    List.indexedMap
+                        (\i ->
+                            highlightableFromInline maybeMark
+                                (mapStrings >> addLinkOpening i >> addLinkClosing i)
+                        )
+                        inlines
+                        |> List.concat
 
                 Markdown.Inline.Image _ _ inlines ->
                     List.concatMap (highlightableFromInline maybeMark mapStrings) inlines
