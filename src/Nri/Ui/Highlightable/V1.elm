@@ -326,6 +326,25 @@ fromMarkdown markdownString =
     else
         Markdown.Block.parse Nothing markdownString
             |> List.concatMap highlightableFromBlock
+            |> List.foldr
+                -- ensure that adjacent highlights are in a single mark element
+                (\segment ( lastInteractiveHighlight, acc ) ->
+                    ( segment.marked
+                    , case ( segment.marked, acc ) of
+                        ( Just marker, last :: remainder ) ->
+                            if Just marker == last.marked then
+                                { segment | text = segment.text ++ last.text }
+                                    :: remainder
+
+                            else
+                                segment :: acc
+
+                        _ ->
+                            segment :: acc
+                    )
+                )
+                ( Nothing, [] )
+            |> Tuple.second
 
 
 {-| -}
