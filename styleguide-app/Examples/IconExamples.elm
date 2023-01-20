@@ -50,6 +50,7 @@ example config =
     , version = config.version
     , categories = [ Icons ]
     , keyboardSupport = []
+    , extraResources = []
     , state = init config
     , update = update
     , subscriptions = \_ -> Sub.none

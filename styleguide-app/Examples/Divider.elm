@@ -28,6 +28,7 @@ example =
     , version = 2
     , categories = [ Layout ]
     , keyboardSupport = []
+    , extraResources = []
     , state = {}
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none

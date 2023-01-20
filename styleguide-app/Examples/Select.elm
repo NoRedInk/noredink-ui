@@ -41,6 +41,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , categories = [ Inputs ]
     , keyboardSupport = []
+    , extraResources = []
     , preview =
         [ Select.view "Label" [ Select.custom [ Key.tabbable False ] ]
         , Select.view "Hidden label"

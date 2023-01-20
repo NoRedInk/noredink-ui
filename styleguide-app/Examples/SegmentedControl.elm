@@ -125,6 +125,7 @@ example =
                 }
             ]
     , categories = [ Layout, Inputs ]
+    , extraResources = []
     , keyboardSupport =
         [ { keys = [ KeyboardSupport.Tab ]
           , result = "Move focus to the currently-selected Control's content"

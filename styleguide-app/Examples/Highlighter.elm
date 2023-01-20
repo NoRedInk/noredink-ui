@@ -205,6 +205,7 @@ example =
             ]
     , categories = [ Text, Interactions ]
     , keyboardSupport = []
+    , extraResources = []
     }
 
 

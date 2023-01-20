@@ -43,6 +43,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , categories = [ Layout ]
     , keyboardSupport = []
+    , extraResources = []
     , preview =
         [ Table.view
             [ Table.string

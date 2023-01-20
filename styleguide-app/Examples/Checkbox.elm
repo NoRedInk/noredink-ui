@@ -97,6 +97,7 @@ example =
                 )
             ]
     , categories = [ Inputs ]
+    , extraResources = []
     , keyboardSupport =
         [ { keys = [ Space ]
           , result = "Select or deselect the checkbox (may cause page scroll)"

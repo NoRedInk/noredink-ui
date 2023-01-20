@@ -119,6 +119,7 @@ example =
     { name = moduleName
     , version = version
     , categories = [ Layout, Messaging ]
+    , extraResources = []
     , keyboardSupport =
         [ { keys = [ KeyboardSupport.Tab ]
           , result = "Moves focus to the next button within the modal or wraps back to the first element within the modal."

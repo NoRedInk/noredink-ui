@@ -36,6 +36,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , categories = [ Layout ]
     , keyboardSupport = []
+    , extraResources = []
     , preview = [ viewPreview ]
     , view = view
     }

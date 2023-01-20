@@ -63,6 +63,7 @@ example =
             ]
     , categories = [ Buttons, Interactions ]
     , keyboardSupport = []
+    , extraResources = []
     }
 
 

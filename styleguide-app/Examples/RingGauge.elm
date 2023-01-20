@@ -45,6 +45,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , categories = [ Progress, Icons ]
     , keyboardSupport = []
+    , extraResources = []
     , preview =
         [ 25, 50, 75, 99 ]
             |> List.map

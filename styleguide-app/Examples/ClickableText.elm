@@ -56,6 +56,7 @@ example =
     , view = \ellieLinkConfig state -> [ viewExamples ellieLinkConfig state ]
     , categories = [ Buttons ]
     , keyboardSupport = []
+    , extraResources = []
     }
 
 

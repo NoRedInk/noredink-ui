@@ -45,6 +45,7 @@ example =
     { name = moduleName
     , version = version
     , categories = [ Messaging ]
+    , extraResources = []
     , keyboardSupport =
         [ { keys = [ Esc ]
           , result = "Hitting escape while focusing a tooltip trigger closes all tooltips. Note that hovered-but-not-focused tooltips can't be closed this way."

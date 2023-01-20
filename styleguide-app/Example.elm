@@ -25,6 +25,7 @@ type alias Example state msg =
     , view : EllieLink.Config -> state -> List (Html msg)
     , categories : List Category
     , keyboardSupport : List KeyboardSupport
+    , extraResources : List ( String, String )
     }
 
 
@@ -59,6 +60,7 @@ wrapMsg wrapMsg_ unwrapMsg example =
                 (example.view ellieLinkConfig state)
     , categories = example.categories
     , keyboardSupport = example.keyboardSupport
+    , extraResources = example.extraResources
     }
 
 
@@ -91,6 +93,7 @@ wrapState wrapState_ unwrapState example =
                 |> Maybe.withDefault []
     , categories = example.categories
     , keyboardSupport = example.keyboardSupport
+    , extraResources = example.extraResources
     }
 
 
@@ -158,29 +161,28 @@ view_ ellieLinkConfig example =
 extraLinks : (msg -> msg2) -> Example state msg -> Header.Attribute route msg2
 extraLinks f example =
     Header.extraNav (fullName example)
-        [ Html.map f (docsLink example)
-        , Html.map f (srcLink example)
-        ]
+        (List.map (\( a, b ) -> extraNavLink a b) example.extraResources
+            ++ [ Html.map f (docsLink example)
+               , Html.map f (srcLink example)
+               ]
+        )
 
 
 docsLink : Example state msg -> Html msg2
 docsLink example =
-    let
-        link =
-            "https://package.elm-lang.org/packages/NoRedInk/noredink-ui/latest/"
-                ++ String.replace "." "-" (fullName example)
-    in
-    ClickableText.link ("Elm " ++ example.name ++ " docs")
-        [ ClickableText.linkExternal link ]
+    "https://package.elm-lang.org/packages/NoRedInk/noredink-ui/latest/"
+        ++ String.replace "." "-" (fullName example)
+        |> extraNavLink ("Elm " ++ example.name ++ " docs")
 
 
 srcLink : Example state msg -> Html msg2
 srcLink example =
-    let
-        link =
-            String.replace "." "/" (fullName example)
-                ++ ".elm"
-                |> (++) "https://github.com/NoRedInk/noredink-ui/blob/master/src/"
-    in
-    ClickableText.link (example.name ++ " internals")
-        [ ClickableText.linkExternal link ]
+    String.replace "." "/" (fullName example)
+        ++ ".elm"
+        |> (++) "https://github.com/NoRedInk/noredink-ui/blob/master/src/"
+        |> extraNavLink (example.name ++ " internals")
+
+
+extraNavLink : String -> String -> Html msg
+extraNavLink name destination =
+    ClickableText.link name [ ClickableText.linkExternal destination ]

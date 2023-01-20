@@ -55,6 +55,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , categories = [ Interactions ]
     , keyboardSupport = []
+    , extraResources = []
     , preview = [ QuestionBox.view [ QuestionBox.markdown "Is good?" ] ]
     , view = view
     }

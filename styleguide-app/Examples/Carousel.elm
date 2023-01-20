@@ -134,6 +134,7 @@ example =
     { name = moduleName
     , version = version
     , categories = [ Layout ]
+    , extraResources = []
     , keyboardSupport =
         [ { keys = [ KeyboardSupport.Tab ]
           , result = "Move focus to the currently-selected Tab's tab panel"

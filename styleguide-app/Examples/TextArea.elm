@@ -42,6 +42,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , categories = [ Inputs ]
     , keyboardSupport = []
+    , extraResources = []
     , preview =
         [ Html.div [ css [ Css.position Css.relative ] ]
             [ Html.textarea

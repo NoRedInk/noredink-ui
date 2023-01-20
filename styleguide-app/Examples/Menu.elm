@@ -57,6 +57,7 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , categories = [ Layout ]
+    , extraResources = []
     , keyboardSupport =
         [ { keys = [ Space ], result = "Opens the menu" }
         , { keys = [ Enter ], result = "Opens the menu" }

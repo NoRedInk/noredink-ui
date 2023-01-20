@@ -35,6 +35,7 @@ example =
     , version = version
     , categories = [ Animations ]
     , keyboardSupport = []
+    , extraResources = []
     , state = init
     , update = update
     , subscriptions =

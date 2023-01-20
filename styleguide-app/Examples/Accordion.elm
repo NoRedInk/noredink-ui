@@ -70,6 +70,7 @@ example =
         ]
     , view = view
     , categories = [ Layout ]
+    , extraResources = []
     , keyboardSupport =
         [ { keys = [ Arrow KeyboardSupport.Up ]
           , result = "Moves the focus to the previous accordion header button (wraps focus to the last header button)"

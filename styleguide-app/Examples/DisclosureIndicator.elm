@@ -37,6 +37,7 @@ example =
     , version = version
     , categories = [ Animations, Icons ]
     , keyboardSupport = []
+    , extraResources = []
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

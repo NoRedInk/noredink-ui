@@ -49,6 +49,7 @@ example =
     , version = version
     , categories = [ Interactions ]
     , keyboardSupport = []
+    , extraResources = []
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none

@@ -87,6 +87,7 @@ example =
     , version = 1
     , categories = [ Animations ]
     , keyboardSupport = []
+    , extraResources = []
     , state = init
     , update = update
     , subscriptions = subscriptions

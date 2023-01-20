@@ -59,6 +59,7 @@ example =
     , version = version
     , categories = [ Messaging ]
     , keyboardSupport = []
+    , extraResources = []
     , state = controlSettings
     , update = update
     , subscriptions = \_ -> Sub.none

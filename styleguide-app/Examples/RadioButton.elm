@@ -55,6 +55,7 @@ example =
     , preview = preview
     , view = view
     , categories = [ Inputs ]
+    , extraResources = []
     , keyboardSupport =
         [ { keys = [ Arrow Left ]
           , result = "Move the focus & select the radio button to the left"

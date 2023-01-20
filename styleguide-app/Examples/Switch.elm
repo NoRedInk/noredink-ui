@@ -86,6 +86,7 @@ example =
                 )
             ]
     , categories = [ Category.Inputs ]
+    , extraResources = []
     , keyboardSupport =
         [ { keys = [ Space ]
           , result = "Toggle the Switch state"

@@ -43,6 +43,7 @@ example =
     , version = 1
     , categories = [ Atoms ]
     , keyboardSupport = []
+    , extraResources = []
     , state = ()
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
