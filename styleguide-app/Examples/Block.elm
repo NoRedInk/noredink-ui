@@ -22,13 +22,11 @@ import Html.Styled.Attributes exposing (css)
 import Markdown
 import Nri.Ui.Block.V4 as Block
 import Nri.Ui.Button.V10 as Button
-import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V6 as Table
 import Nri.Ui.Text.V6 as Text
-import Nri.Ui.UiIcon.V1 as UiIcon
 import Task
 
 
@@ -49,7 +47,11 @@ example =
     , version = version
     , categories = [ Interactions ]
     , keyboardSupport = []
-    , extraResources = []
+    , extraResources =
+        [ ( "Display Elements and Scaffolding Container: additional things to know"
+          , "https://paper.dropbox.com/doc/Display-Elements-and-Scaffolding-Container-additional-things-to-know--BwRhBMKyXFFSWz~1mljN29bcAg-6vszpNDLoYIiMyg7Wv66s"
+          )
+        ]
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
@@ -100,18 +102,6 @@ example =
                     Block.getLabelPositions state.labelMeasurementsById
             in
             [ Heading.h2 [ Heading.plaintext "About" ]
-            , Text.mediumBody
-                [ Text.html
-                    [ p []
-                        [ text "You might also know the Block element as a “Display Element”. Learn more in "
-                        , ClickableText.link "Display Elements and Scaffolding Container: additional things to know"
-                            [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Display-Elements-and-Scaffolding-Container-additional-things-to-know--BwRhBMKyXFFSWz~1mljN29bcAg-6vszpNDLoYIiMyg7Wv66s"
-                            , ClickableText.rightIcon UiIcon.openInNewTab
-                            , ClickableText.css [ Css.verticalAlign Css.baseline ]
-                            ]
-                        ]
-                    ]
-                ]
             , -- absolutely positioned elements that overflow in the x direction
               -- cause a horizontal scrollbar unless you explicitly hide overflowing x content
               Css.Global.global [ Css.Global.selector "body" [ Css.overflowX Css.hidden ] ]
