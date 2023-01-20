@@ -26,7 +26,6 @@ import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Accordion.V3 as Accordion exposing (AccordionEntry(..))
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
@@ -58,11 +57,11 @@ example =
           -- component might look like
           Html.div []
             [ Html.div [ css [ Css.displayFlex, Css.alignItems Css.center ] ]
-                [ defaultCaret False
+                [ Accordion.defaultCaret False
                 , Text.smallBody [ Text.plaintext "Closed" ]
                 ]
             , Html.div [ css [ Css.displayFlex, Css.alignItems Css.center ] ]
-                [ defaultCaret True
+                [ Accordion.defaultCaret True
                 , Text.smallBody [ Text.plaintext "Open" ]
                 ]
             , Text.caption [ Text.plaintext "Accordion content." ]
@@ -87,11 +86,6 @@ example =
     }
 
 
-defaultCaret : Bool -> Html msg
-defaultCaret =
-    DisclosureIndicator.large [ Css.marginRight (Css.px 8) ] >> Svg.toHtml
-
-
 {-| -}
 view : EllieLink.Config -> State -> List (Html Msg)
 view ellieLinkConfig model =
@@ -106,10 +100,7 @@ view ellieLinkConfig model =
         , update = UpdateControls
         , settings = model.settings
         , mainType = Just "RootHtml.Html String"
-        , extraCode =
-            [ "import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator"
-            , "import Nri.Ui.Svg.V1 as Svg"
-            ]
+        , extraCode = [ "import Nri.Ui.Svg.V1 as Svg" ]
         , renderExample = Code.unstyledView
         , toExampleCode =
             \settings ->
@@ -162,7 +153,7 @@ view ellieLinkConfig model =
                 }
                 []
             , AccordionEntry
-                { caret = defaultCaret
+                { caret = Accordion.defaultCaret
                 , content = \_ -> Html.text "🍎 There are many kinds of apples! Apples are more genetically diverse than humans. The genetic diversity of apples means that to preserve delicious apple varieties, growers must use grafting rather than seeds. In the apple market, clones have already taken over! 🍏"
                 , entryClass = "accordion-example"
                 , headerContent = Html.text "Apples (has children)"
@@ -172,7 +163,7 @@ view ellieLinkConfig model =
                 , toggle = Just (Toggle 1)
                 }
                 [ AccordionEntry
-                    { caret = defaultCaret
+                    { caret = Accordion.defaultCaret
                     , content =
                         \_ ->
                             Html.div []
@@ -192,7 +183,7 @@ view ellieLinkConfig model =
                     }
                     []
                 , AccordionEntry
-                    { caret = defaultCaret
+                    { caret = Accordion.defaultCaret
                     , content =
                         \_ ->
                             Html.div []
@@ -212,7 +203,7 @@ view ellieLinkConfig model =
                     }
                     []
                 , AccordionEntry
-                    { caret = defaultCaret
+                    { caret = Accordion.defaultCaret
                     , content =
                         \_ ->
                             Html.div []
@@ -233,7 +224,7 @@ view ellieLinkConfig model =
                     []
                 ]
             , AccordionEntry
-                { caret = defaultCaret
+                { caret = Accordion.defaultCaret
                 , content = \_ -> Html.text "🍊 I don't know anything about oranges! Except: YUM! 🍊"
                 , entryClass = "accordion-example"
                 , headerContent = Html.text "Oranges"
@@ -355,11 +346,8 @@ initSettings =
 controlIcon : Control ( String, Bool -> Html Msg )
 controlIcon =
     Control.choice
-        [ ( "DisclosureIndicator"
-          , Control.value
-                ( "DisclosureIndicator.large [ Css.marginRight (Css.px 8) ] >> Svg.toHtml"
-                , DisclosureIndicator.large [ Css.marginRight (Css.px 8) ] >> Svg.toHtml
-                )
+        [ ( "defaultCaret"
+          , Control.value ( "Accordion.defaultCaret", Accordion.defaultCaret )
           )
         , ( "none", Control.value ( "\\_ -> text \"\"", \_ -> Html.text "" ) )
         , ( "UiIcon"
