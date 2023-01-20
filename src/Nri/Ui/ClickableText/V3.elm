@@ -524,8 +524,7 @@ clickableTextButtonStyles : Bool -> List Css.Style
 clickableTextButtonStyles isDisabled =
     let
         baseStyles =
-            [ Css.property "appearance" "none"
-            , Css.margin Css.zero -- Get rid of default margin Webkit adds to buttons
+            [ Css.margin Css.zero -- Get rid of default margin Webkit adds to buttons
             , Css.borderBottom2 (Css.px 1) Css.solid
             ]
     in
