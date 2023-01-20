@@ -498,14 +498,23 @@ clickableTextSharedStyles : List Css.Style
 clickableTextSharedStyles =
     [ Nri.Ui.Fonts.V1.baseFont
     , Css.fontWeight (Css.int 600)
+    , Css.backgroundImage Css.none
+    , Css.textShadow Css.none
+    , Css.boxShadow Css.none
+    , Css.border Css.zero
+    , Css.backgroundColor Css.transparent
+    , Css.textAlign Css.left
+    , Css.borderStyle Css.none
+    , Css.textDecoration Css.none
+    , Css.padding Css.zero
+    , Css.display Css.inlineBlock
+    , Css.verticalAlign Css.textBottom
     ]
 
 
 clickableTextLinkStyles : List Css.Style
 clickableTextLinkStyles =
-    [ Css.textDecoration Css.none
-    , Css.color Colors.azure
-    , Css.border Css.zero
+    [ Css.color Colors.azure
     , Css.borderBottom3 (Css.px 1) Css.solid Colors.azure
     , Css.hover [ Css.color Colors.azureDark |> Css.important, Css.borderColor Colors.azureDark ]
     ]
@@ -516,10 +525,7 @@ clickableTextButtonStyles isDisabled =
     let
         baseStyles =
             [ Css.property "appearance" "none"
-            , Css.backgroundColor Css.transparent
             , Css.margin Css.zero -- Get rid of default margin Webkit adds to buttons
-            , Css.padding Css.zero
-            , Css.border Css.zero
             , Css.borderBottom2 (Css.px 1) Css.solid
             ]
     in
