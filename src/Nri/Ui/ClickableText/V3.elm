@@ -507,7 +507,6 @@ clickableTextLinkStyles =
     , Css.color Colors.azure
     , Css.border Css.zero
     , Css.borderBottom3 (Css.px 1) Css.solid Colors.azure
-    , Css.visited [ Css.color Colors.gray45 |> Css.important, Css.borderColor Colors.gray45 ]
     , Css.hover [ Css.color Colors.azureDark |> Css.important, Css.borderColor Colors.azureDark ]
     ]
 
