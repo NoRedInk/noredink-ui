@@ -235,7 +235,8 @@ hideTextFor : MediaQuery -> Attribute msg
 hideTextFor mediaQuery =
     css
         [ Css.Media.withMedia [ mediaQuery ]
-            [ Css.Global.descendants
+            [ Css.borderStyle Css.none |> Css.important
+            , Css.Global.descendants
                 [ ExtraAttributes.nriDescriptionSelector "clickable-text-label"
                     [ invisibleStyle
                     ]
@@ -390,7 +391,7 @@ button label_ attributes =
     in
     Nri.Ui.styled Html.button
         (dataDescriptor "button")
-        (clickableTextStyles config.disabled ++ config.customStyles)
+        (clickableTextSharedStyles ++ clickableTextButtonStyles config.disabled ++ config.customStyles)
         (ClickableAttributes.toButtonAttributes config.clickableAttributes
             { disabled = config.disabled }
             ++ config.customAttributes
@@ -419,7 +420,7 @@ link label_ attributes =
     in
     Nri.Ui.styled Html.a
         (dataDescriptor name)
-        (clickableTextStyles config.disabled ++ config.customStyles)
+        (clickableTextSharedStyles ++ clickableTextLinkStyles ++ config.customStyles)
         (clickableAttributes ++ config.customAttributes)
         [ viewContent config ]
 
@@ -493,36 +494,50 @@ viewContent config =
         )
 
 
-clickableTextStyles : Bool -> List Css.Style
-clickableTextStyles isDisabled =
+clickableTextSharedStyles : List Css.Style
+clickableTextSharedStyles =
+    [ Nri.Ui.Fonts.V1.baseFont
+    , Css.fontWeight (Css.int 600)
+    ]
+
+
+clickableTextLinkStyles : List Css.Style
+clickableTextLinkStyles =
+    [ Css.textDecoration Css.none
+    , Css.color Colors.azure
+    , Css.border Css.zero
+    , Css.borderBottom3 (Css.px 1) Css.solid Colors.azure
+    , Css.visited [ Css.color Colors.gray45 |> Css.important, Css.borderColor Colors.gray45 ]
+    , Css.hover [ Css.color Colors.azureDark |> Css.important, Css.borderColor Colors.azureDark ]
+    ]
+
+
+clickableTextButtonStyles : Bool -> List Css.Style
+clickableTextButtonStyles isDisabled =
     let
         baseStyles =
-            [ Nri.Ui.Fonts.V1.baseFont
-            , Css.backgroundImage Css.none
-            , Css.textShadow Css.none
-            , Css.boxShadow Css.none
-            , Css.border Css.zero
+            [ Css.property "appearance" "none"
             , Css.backgroundColor Css.transparent
-            , Css.fontWeight (Css.int 600)
-            , Css.textAlign Css.left
-            , Css.borderStyle Css.none |> Css.important
-            , Css.textDecoration Css.none
-            , Css.padding Css.zero
-            , Css.display Css.inlineBlock
-            , Css.verticalAlign Css.textBottom
             , Css.margin Css.zero -- Get rid of default margin Webkit adds to buttons
+            , Css.padding Css.zero
+            , Css.border Css.zero
+            , Css.borderBottom2 (Css.px 1) Css.solid
             ]
     in
     if isDisabled then
         Css.cursor Css.notAllowed
-            :: Css.color Colors.gray45
-            :: Css.visited [ Css.important (Css.color Colors.gray45) ]
+            :: Css.color Colors.gray75
+            :: Css.borderColor Colors.gray75
             :: baseStyles
 
     else
         Css.cursor Css.pointer
             :: Css.color Colors.azure
-            :: Css.hover [ Css.color Colors.azureDark ]
+            :: Css.borderColor Colors.azure
+            :: Css.hover
+                [ Css.color Colors.azureDark
+                , Css.borderColor Colors.azureDark
+                ]
             :: baseStyles
 
 
