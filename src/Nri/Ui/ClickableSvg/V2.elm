@@ -167,13 +167,13 @@ linkWithTracking config =
 {-| -}
 linkExternal : String -> Attribute msg
 linkExternal url =
-    set (ClickableAttributes.linkExternal url)
+    set (ClickableAttributes.linkExternalInternal url)
 
 
 {-| -}
 linkExternalWithTracking : { track : msg, url : String } -> Attribute msg
 linkExternalWithTracking config =
-    set (ClickableAttributes.linkExternalWithTracking config)
+    set (ClickableAttributes.linkExternalWithTrackingInternal config)
 
 
 
