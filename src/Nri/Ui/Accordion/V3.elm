@@ -2,6 +2,7 @@ module Nri.Ui.Accordion.V3 exposing
     ( view, HeaderLevel(..)
     , AccordionEntry(..), Entry
     , StyleOptions, styleAccordion
+    , defaultCaret
     )
 
 {-|
@@ -21,15 +22,13 @@ module Nri.Ui.Accordion.V3 exposing
 
 ## Example
 
-    import Nri.Ui.DisclosureIndicator.V2 as DisclosureIndicator
-
     view : Model -> Html Msg
     view model =
         div []
             [ Accordion.view
                 { entries =
                     [ AccordionEntry
-                        { caret = \isOpen -> DisclosureIndicator.large [ marginRight (px 8) ] isOpen
+                        { caret = Accordion.defaultCaret
                         , content = \() -> text "Accordion Content"
                         , entryClass = "a-class-distinguishing-this-accordion-from-others-on-the-page"
                         , headerContent = text "Accordion Header"
@@ -56,6 +55,7 @@ module Nri.Ui.Accordion.V3 exposing
 @docs view, HeaderLevel
 @docs AccordionEntry, Entry
 @docs StyleOptions, styleAccordion
+@docs defaultCaret
 
 -}
 
@@ -67,9 +67,23 @@ import Css.Global
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events exposing (onClick)
 import Html.Styled.Keyed
+import Nri.Ui.AnimatedIcon.V1 as AnimatedIcon
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
+import Nri.Ui.Svg.V1 as Svg
+
+
+{-| -}
+defaultCaret : Bool -> Html msg
+defaultCaret isOpen =
+    AnimatedIcon.arrowRightDown isOpen
+        |> Svg.withColor Colors.azure
+        |> Svg.withWidth (Css.px 17)
+        |> Svg.withHeight (Css.px 17)
+        |> Svg.withCss [ Css.marginRight (Css.px 8) ]
+        |> Svg.toHtml
 
 
 {-| -}

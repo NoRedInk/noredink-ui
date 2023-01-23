@@ -16,7 +16,6 @@ import Examples.ClickableText as ClickableText
 import Examples.Colors as Colors
 import Examples.Confetti as Confetti
 import Examples.Container as Container
-import Examples.DisclosureIndicator as DisclosureIndicator
 import Examples.Divider as Divider
 import Examples.Fonts as Fonts
 import Examples.Header as Header
@@ -335,25 +334,6 @@ all =
             (\msg ->
                 case msg of
                     ContainerState childState ->
-                        Just childState
-
-                    _ ->
-                        Nothing
-            )
-    , DisclosureIndicator.example
-        |> Example.wrapMsg DisclosureIndicatorMsg
-            (\msg ->
-                case msg of
-                    DisclosureIndicatorMsg childMsg ->
-                        Just childMsg
-
-                    _ ->
-                        Nothing
-            )
-        |> Example.wrapState DisclosureIndicatorState
-            (\msg ->
-                case msg of
-                    DisclosureIndicatorState childState ->
                         Just childState
 
                     _ ->
@@ -1024,7 +1004,6 @@ type State
     | ColorsState Colors.State
     | ConfettiState Confetti.State
     | ContainerState Container.State
-    | DisclosureIndicatorState DisclosureIndicator.State
     | DividerState Divider.State
     | FontsState Fonts.State
     | HeaderState Header.State
@@ -1077,7 +1056,6 @@ type Msg
     | ColorsMsg Colors.Msg
     | ConfettiMsg Confetti.Msg
     | ContainerMsg Container.Msg
-    | DisclosureIndicatorMsg DisclosureIndicator.Msg
     | DividerMsg Divider.Msg
     | FontsMsg Fonts.Msg
     | HeaderMsg Header.Msg
