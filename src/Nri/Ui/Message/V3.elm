@@ -428,13 +428,8 @@ markdown content =
 {-| Provide a list of custom HTML.
 -}
 html : List (Html msg) -> Attribute msg
-html content =
-    Attribute <|
-        \config ->
-            { config
-                | content = Content.htmlContent content
-                , customStyles = config.customStyles ++ markdownAndHtmlStyles
-            }
+html =
+    Attribute << Content.html
 
 
 {-| Provide an HTTP error, which will be translated to user-friendly text.

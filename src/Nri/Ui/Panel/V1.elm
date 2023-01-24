@@ -113,13 +113,8 @@ markdownAndHtmlStyles =
 {-| Render panel content.
 -}
 html : List (Html msg) -> Attribute msg
-html content =
-    Attribute <|
-        \config ->
-            { config
-                | content = Content.htmlContent content
-                , css = config.css ++ markdownAndHtmlStyles
-            }
+html =
+    Attribute << Content.html
 
 
 {-| Use a plain-text string for the panel content.

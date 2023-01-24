@@ -59,11 +59,3 @@ html :
     -> { config | content : List (Html msg) }
 html content config =
     { config | content = content }
-
-
-{-| -}
-htmlContent :
-    List (Html msg)
-    -> List (Html msg)
-htmlContent content =
-    content
