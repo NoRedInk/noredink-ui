@@ -65,6 +65,7 @@ module Nri.Ui.Container.V2 exposing
 
 import Content
 import Css exposing (..)
+import Css.Global
 import Css.Media exposing (withMedia)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes
@@ -328,11 +329,32 @@ buttonyStyles =
     ]
 
 
+{-| -}
+markdownAndHtmlStyles : List Css.Style
+markdownAndHtmlStyles =
+    [ Css.Global.descendants
+        [ Css.Global.a
+            [ borderBottom3 (px 1) solid Colors.azure
+            , Css.Global.withAttribute "aria-disabled=true" [ borderBottom3 (px 1) solid Colors.gray45 ]
+            ]
+        , Css.Global.button
+            [ borderBottom3 (px 1) solid Colors.azure
+            , Css.disabled [ borderBottom3 (px 1) solid Colors.gray45 ]
+            ]
+        ]
+    ]
+
+
 {-| Provide a list of custom HTML.
 -}
 html : List (Html msg) -> Attribute msg
-html =
-    Attribute << Content.html
+html content =
+    Attribute <|
+        \config ->
+            { config
+                | content = Content.htmlContent content
+                , css = config.css ++ markdownAndHtmlStyles
+            }
 
 
 {-| Provide a plain-text string.
@@ -356,5 +378,10 @@ to `p` tags by user agents.
 
 -}
 markdown : String -> Attribute msg
-markdown =
-    Attribute << Content.markdown
+markdown content =
+    Attribute <|
+        \config ->
+            { config
+                | content = Content.markdownContent content
+                , css = config.css ++ markdownAndHtmlStyles
+            }

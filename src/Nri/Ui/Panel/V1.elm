@@ -34,7 +34,8 @@ module Nri.Ui.Panel.V1 exposing
 -}
 
 import Content
-import Css exposing (Style)
+import Css exposing (..)
+import Css.Global
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 as Colors
@@ -93,11 +94,32 @@ header header_ =
     Attribute (\soFar -> { soFar | header = header_ })
 
 
+{-| -}
+markdownAndHtmlStyles : List Css.Style
+markdownAndHtmlStyles =
+    [ Css.Global.descendants
+        [ Css.Global.a
+            [ borderBottom3 (px 1) solid Colors.azure
+            , Css.Global.withAttribute "aria-disabled=true" [ borderBottom3 (px 1) solid Colors.gray45 ]
+            ]
+        , Css.Global.button
+            [ borderBottom3 (px 1) solid Colors.azure
+            , Css.disabled [ borderBottom3 (px 1) solid Colors.gray45 ]
+            ]
+        ]
+    ]
+
+
 {-| Render panel content.
 -}
 html : List (Html msg) -> Attribute msg
-html =
-    Attribute << Content.html
+html content =
+    Attribute <|
+        \config ->
+            { config
+                | content = Content.htmlContent content
+                , css = config.css ++ markdownAndHtmlStyles
+            }
 
 
 {-| Use a plain-text string for the panel content.
@@ -117,8 +139,13 @@ paragraph =
 {-| Use a markdown string for the panel content.
 -}
 markdown : String -> Attribute msg
-markdown =
-    Attribute << Content.markdown
+markdown content =
+    Attribute <|
+        \config ->
+            { config
+                | content = Content.markdownContent content
+                , css = config.css ++ markdownAndHtmlStyles
+            }
 
 
 {-| -}

@@ -45,6 +45,7 @@ Headings with customization options.
 
 import Content
 import Css exposing (..)
+import Css.Global
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 as Colors
@@ -106,18 +107,44 @@ plaintext =
     Attribute << Content.plaintext
 
 
+{-| -}
+markdownAndHtmlStyles : List Css.Style
+markdownAndHtmlStyles =
+    [ Css.Global.descendants
+        [ Css.Global.a
+            [ borderBottom3 (px 1) solid Colors.azure
+            , Css.Global.withAttribute "aria-disabled=true" [ borderBottom3 (px 1) solid Colors.gray45 ]
+            ]
+        , Css.Global.button
+            [ borderBottom3 (px 1) solid Colors.azure
+            , Css.disabled [ borderBottom3 (px 1) solid Colors.gray45 ]
+            ]
+        ]
+    ]
+
+
 {-| Provide a string that will be rendered as markdown.
 -}
 markdown : String -> Attribute msg
-markdown =
-    Attribute << Content.markdown
+markdown content =
+    Attribute <|
+        \config ->
+            { config
+                | content = Content.markdownContent content
+                , css = config.css ++ markdownAndHtmlStyles
+            }
 
 
 {-| Provide a list of custom HTML.
 -}
 html : List (Html msg) -> Attribute msg
-html =
-    Attribute << Content.html
+html content =
+    Attribute <|
+        \config ->
+            { config
+                | content = Content.htmlContent content
+                , css = config.css ++ markdownAndHtmlStyles
+            }
 
 
 {-| Like an `Html.Attribute msg`, but specifically for headings. Use things

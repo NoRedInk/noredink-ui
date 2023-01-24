@@ -63,7 +63,7 @@ import Content
 import Css exposing (..)
 import Css.Global
 import Html.Styled.Attributes as Attributes
-import Nri.Ui.Colors.V1 exposing (..)
+import Nri.Ui.Colors.V1 as Colors exposing (..)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 
@@ -251,15 +251,6 @@ paragraphStyles config =
     , padding zero
     , textAlign left
     , margin4 (px 0) (px 0) (px config.margin) (px 0)
-    , Css.Global.descendants
-        [ Css.Global.a
-            [ textDecoration none
-            , color azure
-            , borderBottom3 (px 1) solid azure
-            , visited
-                [ color azure ]
-            ]
-        ]
     , lastChild
         [ margin zero
         ]
@@ -355,12 +346,38 @@ plaintext =
 {-| Provide a string that will be rendered as markdown.
 -}
 markdown : String -> Attribute msg
-markdown =
-    Attribute << Content.markdown
+markdown content =
+    Attribute <|
+        \config ->
+            { config
+                | content = Content.markdownContent content
+                , styles = config.styles ++ markdownAndHtmlStyles
+            }
 
 
 {-| Provide a list of custom HTML.
 -}
 html : List (Html msg) -> Attribute msg
-html =
-    Attribute << Content.html
+html content =
+    Attribute <|
+        \config ->
+            { config
+                | content = Content.htmlContent content
+                , styles = config.styles ++ markdownAndHtmlStyles
+            }
+
+
+{-| -}
+markdownAndHtmlStyles : List Css.Style
+markdownAndHtmlStyles =
+    [ Css.Global.descendants
+        [ Css.Global.a
+            [ borderBottom3 (px 1) solid Colors.azure
+            , Css.Global.withAttribute "aria-disabled=true" [ borderBottom3 (px 1) solid Colors.gray45 ]
+            ]
+        , Css.Global.button
+            [ borderBottom3 (px 1) solid Colors.azure
+            , Css.disabled [ borderBottom3 (px 1) solid Colors.gray45 ]
+            ]
+        ]
+    ]

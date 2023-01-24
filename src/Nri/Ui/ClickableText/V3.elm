@@ -391,7 +391,7 @@ button label_ attributes =
     in
     Nri.Ui.styled Html.button
         (dataDescriptor "button")
-        (clickableTextSharedStyles ++ clickableTextButtonStyles config.disabled ++ config.customStyles)
+        (clickableTextSharedStyles config.disabled ++ clickableTextButtonStyles ++ config.customStyles)
         (ClickableAttributes.toButtonAttributes config.clickableAttributes
             { disabled = config.disabled }
             ++ config.customAttributes
@@ -420,7 +420,7 @@ link label_ attributes =
     in
     Nri.Ui.styled Html.a
         (dataDescriptor name)
-        (clickableTextSharedStyles ++ clickableTextLinkStyles ++ config.customStyles)
+        (clickableTextSharedStyles config.disabled ++ clickableTextLinkStyles ++ config.customStyles)
         (clickableAttributes ++ config.customAttributes)
         [ viewContent config ]
 
@@ -494,55 +494,38 @@ viewContent config =
         )
 
 
-clickableTextSharedStyles : List Css.Style
-clickableTextSharedStyles =
-    [ Nri.Ui.Fonts.V1.baseFont
-    , Css.fontWeight (Css.int 600)
-    , Css.backgroundImage Css.none
-    , Css.textShadow Css.none
-    , Css.boxShadow Css.none
-    , Css.border Css.zero
-    , Css.backgroundColor Css.transparent
-    , Css.textAlign Css.left
-    , Css.borderStyle Css.none
-    , Css.textDecoration Css.none
-    , Css.padding Css.zero
-    , Css.display Css.inlineBlock
-    , Css.verticalAlign Css.textBottom
-    ]
-
-
-clickableTextLinkStyles : List Css.Style
-clickableTextLinkStyles =
-    [ Css.color Colors.azure
-    , Css.borderBottom3 (Css.px 1) Css.solid Colors.azure
-    , Css.hover [ Css.color Colors.azureDark |> Css.important, Css.borderColor Colors.azureDark ]
-    ]
-
-
-clickableTextButtonStyles : Bool -> List Css.Style
-clickableTextButtonStyles isDisabled =
+clickableTextSharedStyles : Bool -> List Css.Style
+clickableTextSharedStyles isDisabled =
     let
         baseStyles =
-            [ Css.margin Css.zero -- Get rid of default margin Webkit adds to buttons
-            , Css.borderBottom2 (Css.px 1) Css.solid
+            [ Nri.Ui.Fonts.V1.baseFont
+            , Css.fontWeight (Css.int 600)
             ]
     in
     if isDisabled then
         Css.cursor Css.notAllowed
             :: Css.color Colors.gray45
-            :: Css.borderColor Colors.gray45
             :: baseStyles
 
     else
         Css.cursor Css.pointer
             :: Css.color Colors.azure
-            :: Css.borderColor Colors.azure
-            :: Css.hover
-                [ Css.color Colors.azureDark
-                , Css.borderColor Colors.azureDark
-                ]
+            :: Css.hover [ Css.color Colors.azureDark ]
             :: baseStyles
+
+
+clickableTextLinkStyles : List Css.Style
+clickableTextLinkStyles =
+    [ Css.textDecoration Css.none ]
+
+
+clickableTextButtonStyles : List Css.Style
+clickableTextButtonStyles =
+    [ Css.margin Css.zero
+    , Css.padding Css.zero
+    , Css.borderStyle Css.none
+    , Css.backgroundColor Css.transparent
+    ]
 
 
 sizeToPx : Size -> Css.Px
