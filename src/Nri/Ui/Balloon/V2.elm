@@ -400,13 +400,8 @@ markdown content =
 {-| Provide a list of custom HTML.
 -}
 html : List (Html msg) -> Attribute msg
-html content =
-    Attribute <|
-        \config ->
-            { config
-                | content = Content.htmlContent content
-                , css = config.css ++ markdownAndHtmlStyles
-            }
+html =
+    Attribute << Content.html
 
 
 
