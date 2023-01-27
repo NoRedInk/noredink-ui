@@ -3,8 +3,8 @@ module Nri.Ui.QuestionBox.V3 exposing
     , id, markdown, actions, character
     , standalone, pointingTo
     , containerCss
-    , guidanceId
     , setTextToSpeechView
+    , guidanceId
     )
 
 {-|
@@ -14,6 +14,7 @@ module Nri.Ui.QuestionBox.V3 exposing
 @docs id, markdown, actions, character
 @docs standalone, pointingTo
 @docs containerCss
+@docs setTextToSpeechView
 
 @docs guidanceId
 
@@ -95,6 +96,8 @@ containerCss styles =
     Attribute (\config -> { config | containerCss = config.containerCss ++ styles })
 
 
+{-| Adds an arbitrary HTML on the left of the question box for the text to speech button
+-}
 setTextToSpeechView : Html msg -> Attribute msg
 setTextToSpeechView textToSpeechView =
     Attribute (\config -> { config | textToSpeechView = Just textToSpeechView })
