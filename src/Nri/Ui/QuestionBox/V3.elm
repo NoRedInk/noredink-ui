@@ -4,6 +4,7 @@ module Nri.Ui.QuestionBox.V3 exposing
     , standalone, pointingTo
     , containerCss
     , guidanceId
+    , setTextToSpeechView
     )
 
 {-|
@@ -23,6 +24,7 @@ import Accessibility.Styled.Key as Key
 import Browser.Dom exposing (Element)
 import Css
 import Css.Global
+import Css.Media exposing (withMedia)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Balloon.V2 as Balloon
@@ -30,6 +32,7 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.CharacterIcon.V1 as CharacterIcon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
+import Nri.Ui.MediaQuery.V1 exposing (..)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Position exposing (xOffsetPx)
 
@@ -46,6 +49,7 @@ type alias Config msg =
     , type_ : QuestionBoxType msg
     , character : Maybe { name : String, icon : Svg }
     , containerCss : List Css.Style
+    , textToSpeechView : Maybe (Html msg)
     }
 
 
@@ -57,6 +61,7 @@ defaultConfig =
     , type_ = Standalone
     , character = Just { name = "Panda", icon = CharacterIcon.panda }
     , containerCss = []
+    , textToSpeechView = Nothing
     }
 
 
@@ -88,6 +93,11 @@ character details =
 containerCss : List Css.Style -> Attribute msg
 containerCss styles =
     Attribute (\config -> { config | containerCss = config.containerCss ++ styles })
+
+
+setTextToSpeechView : Html msg -> Attribute msg
+setTextToSpeechView textToSpeechView =
+    Attribute (\config -> { config | textToSpeechView = Just textToSpeechView })
 
 
 setType : QuestionBoxType msg -> Attribute msg
@@ -282,7 +292,7 @@ viewBalloon config referencingId attributes =
 
 
 viewGuidance :
-    { config | id : Maybe String, character : Maybe { name : String, icon : Svg } }
+    { config | id : Maybe String, character : Maybe { name : String, icon : Svg }, textToSpeechView : Maybe (Html msg) }
     -> Maybe String
     -> String
     -> Html msg
@@ -298,15 +308,37 @@ viewGuidance config referencingId markdown_ =
                     , Css.position Css.relative
                     ]
                 ]
-                [ viewCharacter character_
-                , viewSpeechBubble config
-                    referencingId
-                    [ Balloon.markdown markdown_
-                    , Balloon.onLeft
-                    , Balloon.alignArrowEnd
-                    , Balloon.css [ Css.minHeight (Css.px 46) ]
-                    ]
-                ]
+                ([ config.textToSpeechView
+                    |> Maybe.map
+                        (div
+                            [ css
+                                [ Css.position Css.relative
+                                , Css.zIndex (Css.int 1)
+                                , Css.left (Css.px -24)
+                                , Css.top (Css.px 8)
+                                , withMedia [ quizEngineMobile ]
+                                    [ Css.left Css.auto
+                                    , Css.top Css.auto
+                                    , Css.float Css.left
+                                    , Css.padding4 Css.zero (Css.px 5) Css.zero Css.zero
+                                    , Css.position Css.static
+                                    ]
+                                ]
+                            ]
+                            << List.singleton
+                        )
+                 , Just <| viewCharacter character_
+                 , Just <|
+                    viewSpeechBubble config
+                        referencingId
+                        [ Balloon.markdown markdown_
+                        , Balloon.onLeft
+                        , Balloon.alignArrowEnd
+                        , Balloon.css [ Css.minHeight (Css.px 46) ]
+                        ]
+                 ]
+                    |> List.filterMap identity
+                )
 
         Nothing ->
             viewSpeechBubble config

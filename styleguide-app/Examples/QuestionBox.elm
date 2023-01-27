@@ -23,6 +23,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import Markdown
 import Nri.Ui.Block.V4 as Block
 import Nri.Ui.Button.V10 as Button
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
@@ -557,14 +558,12 @@ init =
 type alias State =
     { attributes : Control (List ( String, QuestionBox.Attribute Msg ))
     , labelMeasurementsById :
-        Dict
-            String
+        Dict String
             { label : Element
             , labelContent : Element
             }
     , questionBoxMeasurementsById :
-        Dict
-            String
+        Dict String
             { block : Element
             , paragraph : Element
             , questionBox : Element
@@ -583,6 +582,35 @@ initAttributes =
                     )
                 )
                 (Control.stringTextarea initialMarkdown)
+            )
+        |> ControlExtra.optionalListItem "textToSpeechView"
+            ([ ( "Play button"
+               , Control.value
+                    ( Code.fromModule moduleName "setTextToSpeechView" ++ Code.string """
+                        ( ClickableSvg.button "Play"
+                                UiIcon.playInCircle
+                                [ ClickableSvg.exactSize 32
+                                , ClickableSvg.css
+                                    [ Css.borderRadius (Css.px 32)
+                                    , Css.backgroundColor Colors.white
+                                    ]
+                                ]
+                        )
+                      """
+                    , QuestionBox.setTextToSpeechView
+                        (ClickableSvg.button "Play"
+                            UiIcon.playInCircle
+                            [ ClickableSvg.exactSize 32
+                            , ClickableSvg.css
+                                [ Css.borderRadius (Css.px 32)
+                                , Css.backgroundColor Colors.white
+                                ]
+                            ]
+                        )
+                    )
+               )
+             ]
+                |> Control.choice
             )
         |> ControlExtra.listItem "actions"
             (Control.map
@@ -661,16 +689,14 @@ type Msg
     | GetMeasurements
     | GotBlockLabelMeasurements
         String
-        (Result
-            Dom.Error
+        (Result Dom.Error
             { label : Element
             , labelContent : Element
             }
         )
     | GotQuestionBoxMeasurements
         String
-        (Result
-            Dom.Error
+        (Result Dom.Error
             { block : Element
             , paragraph : Element
             , questionBox : Element
