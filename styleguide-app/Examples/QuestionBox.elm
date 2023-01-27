@@ -558,12 +558,14 @@ init =
 type alias State =
     { attributes : Control (List ( String, QuestionBox.Attribute Msg ))
     , labelMeasurementsById :
-        Dict String
+        Dict
+            String
             { label : Element
             , labelContent : Element
             }
     , questionBoxMeasurementsById :
-        Dict String
+        Dict
+            String
             { block : Element
             , paragraph : Element
             , questionBox : Element
@@ -689,14 +691,16 @@ type Msg
     | GetMeasurements
     | GotBlockLabelMeasurements
         String
-        (Result Dom.Error
+        (Result
+            Dom.Error
             { label : Element
             , labelContent : Element
             }
         )
     | GotQuestionBoxMeasurements
         String
-        (Result Dom.Error
+        (Result
+            Dom.Error
             { block : Element
             , paragraph : Element
             , questionBox : Element
