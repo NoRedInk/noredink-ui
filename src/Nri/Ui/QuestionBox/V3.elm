@@ -3,7 +3,7 @@ module Nri.Ui.QuestionBox.V3 exposing
     , id, markdown, actions, character
     , standalone, pointingTo
     , containerCss
-    , setTextToSpeechView
+    , setLeftButton
     , guidanceId
     )
 
@@ -14,7 +14,7 @@ module Nri.Ui.QuestionBox.V3 exposing
 @docs id, markdown, actions, character
 @docs standalone, pointingTo
 @docs containerCss
-@docs setTextToSpeechView
+@docs setLeftButton
 
 @docs guidanceId
 
@@ -25,7 +25,6 @@ import Accessibility.Styled.Key as Key
 import Browser.Dom exposing (Element)
 import Css
 import Css.Global
-import Css.Media exposing (withMedia)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Balloon.V2 as Balloon
@@ -33,7 +32,6 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.CharacterIcon.V1 as CharacterIcon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
-import Nri.Ui.MediaQuery.V1 exposing (..)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Position exposing (xOffsetPx)
 
@@ -50,7 +48,7 @@ type alias Config msg =
     , type_ : QuestionBoxType msg
     , character : Maybe { name : String, icon : Svg }
     , containerCss : List Css.Style
-    , textToSpeechView : Maybe (Html msg)
+    , leftButton : Html msg
     }
 
 
@@ -62,7 +60,7 @@ defaultConfig =
     , type_ = Standalone
     , character = Just { name = "Panda", icon = CharacterIcon.panda }
     , containerCss = []
-    , textToSpeechView = Nothing
+    , leftButton = text ""
     }
 
 
@@ -98,9 +96,9 @@ containerCss styles =
 
 {-| Adds an arbitrary HTML on the left of the question box for the text to speech button
 -}
-setTextToSpeechView : Html msg -> Attribute msg
-setTextToSpeechView textToSpeechView =
-    Attribute (\config -> { config | textToSpeechView = Just textToSpeechView })
+setLeftButton : Html msg -> Attribute msg
+setLeftButton leftButton =
+    Attribute (\config -> { config | leftButton = leftButton })
 
 
 setType : QuestionBoxType msg -> Attribute msg
@@ -295,7 +293,7 @@ viewBalloon config referencingId attributes =
 
 
 viewGuidance :
-    { config | id : Maybe String, character : Maybe { name : String, icon : Svg }, textToSpeechView : Maybe (Html msg) }
+    { config | id : Maybe String, character : Maybe { name : String, icon : Svg }, leftButton : Html msg }
     -> Maybe String
     -> String
     -> Html msg
@@ -311,37 +309,16 @@ viewGuidance config referencingId markdown_ =
                     , Css.position Css.relative
                     ]
                 ]
-                ([ config.textToSpeechView
-                    |> Maybe.map
-                        (div
-                            [ css
-                                [ Css.position Css.relative
-                                , Css.zIndex (Css.int 1)
-                                , Css.left (Css.px -24)
-                                , Css.top (Css.px 8)
-                                , withMedia [ quizEngineMobile ]
-                                    [ Css.left Css.auto
-                                    , Css.top Css.auto
-                                    , Css.float Css.left
-                                    , Css.padding4 Css.zero (Css.px 5) Css.zero Css.zero
-                                    , Css.position Css.static
-                                    ]
-                                ]
-                            ]
-                            << List.singleton
-                        )
-                 , Just <| viewCharacter character_
-                 , Just <|
-                    viewSpeechBubble config
-                        referencingId
-                        [ Balloon.markdown markdown_
-                        , Balloon.onLeft
-                        , Balloon.alignArrowEnd
-                        , Balloon.css [ Css.minHeight (Css.px 46) ]
-                        ]
-                 ]
-                    |> List.filterMap identity
-                )
+                [ config.leftButton
+                , viewCharacter character_
+                , viewSpeechBubble config
+                    referencingId
+                    [ Balloon.markdown markdown_
+                    , Balloon.onLeft
+                    , Balloon.alignArrowEnd
+                    , Balloon.css [ Css.minHeight (Css.px 46) ]
+                    ]
+                ]
 
         Nothing ->
             viewSpeechBubble config
