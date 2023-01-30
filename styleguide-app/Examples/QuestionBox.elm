@@ -587,20 +587,35 @@ initAttributes =
                 )
                 (Control.stringTextarea initialMarkdown)
             )
-        |> ControlExtra.optionalListItem "textToSpeechView"
+        |> ControlExtra.optionalListItem "leftButton"
             ([ ( "Play button"
                , Control.value
-                    ( Code.fromModule moduleName "setTextToSpeechView" ++ Code.string """
-                        ( ClickableSvg.button "Play"
-                                UiIcon.playInCircle
-                                [ ClickableSvg.exactSize 32
-                                , ClickableSvg.css
-                                    [ Css.borderRadius (Css.px 32)
-                                    , Css.backgroundColor Colors.white
+                    ( Code.fromModule moduleName "setLeftButton" ++ Code.string """
+                        ([ ClickableSvg.button "Play"
+                            UiIcon.playInCircle
+                            [ ClickableSvg.exactSize 32
+                            , ClickableSvg.css
+                                [ Css.borderRadius (Css.px 32)
+                                , Css.backgroundColor Colors.white
+                                ]
+                            ]
+                         ]
+                            |> div
+                                [ css
+                                    [ Css.position Css.absolute
+                                    , Css.zIndex (Css.int 1)
+                                    , Css.left (Css.px -24)
+                                    , Css.top (Css.px 8)
+                                    , withMedia [ quizEngineMobile ]
+                                        [ Css.left Css.auto
+                                        , Css.top Css.auto
+                                        , Css.float Css.left
+                                        , Css.padding4 Css.zero (Css.px 5) Css.zero Css.zero
+                                        , Css.position Css.static
+                                        ]
                                     ]
                                 ]
-                        )
-                      """
+                        )                      """
                     , QuestionBox.setLeftButton
                         ([ ClickableSvg.button "Play"
                             UiIcon.playInCircle
