@@ -602,7 +602,7 @@ initAttributes =
                          ]
                             |> div
                                 [ css
-                                    [ Css.position Css.absolute
+                                    [ Css.position Css.relative
                                     , Css.zIndex (Css.int 1)
                                     , Css.left (Css.px -24)
                                     , Css.top (Css.px 8)
@@ -628,7 +628,7 @@ initAttributes =
                          ]
                             |> div
                                 [ css
-                                    [ Css.position Css.absolute
+                                    [ Css.position Css.relative
                                     , Css.zIndex (Css.int 1)
                                     , Css.left (Css.px -24)
                                     , Css.top (Css.px 8)
