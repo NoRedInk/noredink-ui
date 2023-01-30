@@ -321,10 +321,19 @@ viewGuidance config referencingId markdown_ =
                 ]
 
         Nothing ->
-            viewSpeechBubble config
-                referencingId
-                [ Balloon.markdown markdown_
-                , Balloon.css [ Css.margin2 (Css.px 10) (Css.px 20) ]
+            div
+                [ css
+                    [ Css.displayFlex
+                    , Css.justifyContent Css.flexEnd
+                    , Css.position Css.relative
+                    ]
+                ]
+                [ config.leftButton
+                , viewSpeechBubble config
+                    referencingId
+                    [ Balloon.markdown markdown_
+                    , Balloon.css [ Css.margin2 (Css.px 10) (Css.px 20) ]
+                    ]
                 ]
 
 
