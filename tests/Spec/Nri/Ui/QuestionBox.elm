@@ -14,42 +14,85 @@ spec =
     describe "Nri.Ui.QuestionBox.V4"
         [ test "renders markdown as character guidance" <|
             \() ->
-                [ QuestionBox.markdown "This is **important**!" ]
+                [ QuestionBox.markdown exampleGuidanceContent ]
                     |> testContext
                     |> Expect.all
-                        [ Query.has
-                            [ text "This is "
-                            , all [ tag "strong", containing [ text "important" ] ]
-                            ]
+                        [ Query.has exampleGuidance
                         , Query.has [ character "Panda" ]
                         ]
         , test "renders markdown as guidance with custom character" <|
             \() ->
-                [ QuestionBox.markdown "This is **important**!"
+                [ QuestionBox.markdown exampleGuidanceContent
                 , QuestionBox.character (Just { name = "Apply", icon = UiIcon.apple })
                 ]
                     |> testContext
                     |> Expect.all
-                        [ Query.has
-                            [ text "This is "
-                            , all [ tag "strong", containing [ text "important" ] ]
-                            ]
+                        [ Query.has exampleGuidance
                         , Query.has [ character "Apply" ]
                         ]
         , test "renders markdown as guidance without character" <|
             \() ->
-                [ QuestionBox.markdown "This is **important**!"
+                [ QuestionBox.markdown exampleGuidanceContent
                 , QuestionBox.character Nothing
                 ]
                     |> testContext
                     |> Expect.all
-                        [ Query.has
-                            [ text "This is "
-                            , all [ tag "strong", containing [ text "important" ] ]
-                            ]
+                        [ Query.has exampleGuidance
+                        , Query.hasNot [ character "Panda" ]
+                        ]
+        , test "renders extra HTML content with default character" <|
+            \() ->
+                [ QuestionBox.markdown exampleGuidanceContent
+                , QuestionBox.setLeftButton (Html.Styled.text readAloudContent)
+                ]
+                    |> testContext
+                    |> Expect.all
+                        [ Query.has [ text readAloudContent ]
+                        , Query.has exampleGuidance
+                        , Query.has [ character "Panda" ]
+                        ]
+        , test "renders extra HTML content with custom character" <|
+            \() ->
+                [ QuestionBox.markdown exampleGuidanceContent
+                , QuestionBox.setLeftButton (Html.Styled.text readAloudContent)
+                , QuestionBox.character (Just { name = "Apply", icon = UiIcon.apple })
+                ]
+                    |> testContext
+                    |> Expect.all
+                        [ Query.has [ text readAloudContent ]
+                        , Query.has exampleGuidance
+                        , Query.has [ character "Apply" ]
+                        ]
+        , test "renders extra HTML content without character" <|
+            \() ->
+                [ QuestionBox.markdown exampleGuidanceContent
+                , QuestionBox.setLeftButton (Html.Styled.text readAloudContent)
+                , QuestionBox.character Nothing
+                ]
+                    |> testContext
+                    |> Expect.all
+                        [ Query.has [ text readAloudContent ]
+                        , Query.has exampleGuidance
                         , Query.hasNot [ character "Panda" ]
                         ]
         ]
+
+
+exampleGuidanceContent : String
+exampleGuidanceContent =
+    "This is **important**!"
+
+
+exampleGuidance : List Selector
+exampleGuidance =
+    [ text "This is "
+    , all [ tag "strong", containing [ text "important" ] ]
+    ]
+
+
+readAloudContent : String
+readAloudContent =
+    "Read aloud play/pause/continue interface"
 
 
 character : String -> Selector
