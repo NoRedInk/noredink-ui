@@ -281,7 +281,13 @@ viewBalloon config referencingId attributes =
     Balloon.view
         ([ Balloon.html
             (List.filterMap identity
-                [ Maybe.map (viewGuidance config referencingId) config.markdown
+                [ Just <|
+                    div [ css [ Css.displayFlex ] ]
+                        (List.filterMap identity
+                            [ Just config.leftButton
+                            , Maybe.map (viewGuidance config referencingId) config.markdown
+                            ]
+                        )
                 , viewActions config.character config.actions
                 ]
             )
@@ -293,7 +299,7 @@ viewBalloon config referencingId attributes =
 
 
 viewGuidance :
-    { config | id : Maybe String, character : Maybe { name : String, icon : Svg }, leftButton : Html msg }
+    { config | id : Maybe String, character : Maybe { name : String, icon : Svg } }
     -> Maybe String
     -> String
     -> Html msg
@@ -309,8 +315,7 @@ viewGuidance config referencingId markdown_ =
                     , Css.position Css.relative
                     ]
                 ]
-                [ config.leftButton
-                , viewCharacter character_
+                [ viewCharacter character_
                 , viewSpeechBubble config
                     referencingId
                     [ Balloon.markdown markdown_
@@ -321,19 +326,10 @@ viewGuidance config referencingId markdown_ =
                 ]
 
         Nothing ->
-            div
-                [ css
-                    [ Css.displayFlex
-                    , Css.justifyContent Css.flexEnd
-                    , Css.position Css.relative
-                    ]
-                ]
-                [ config.leftButton
-                , viewSpeechBubble config
-                    referencingId
-                    [ Balloon.markdown markdown_
-                    , Balloon.css [ Css.margin2 (Css.px 10) (Css.px 20) ]
-                    ]
+            viewSpeechBubble config
+                referencingId
+                [ Balloon.markdown markdown_
+                , Balloon.css [ Css.margin2 (Css.px 10) (Css.px 20) ]
                 ]
 
 
