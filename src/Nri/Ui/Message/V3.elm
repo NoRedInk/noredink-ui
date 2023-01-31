@@ -72,6 +72,7 @@ import Css.Global
 import Css.Media exposing (MediaQuery)
 import Html.Styled.Attributes as Attributes
 import Http
+import MarkdownStyles
 import Nri.Ui
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
@@ -397,22 +398,6 @@ paragraph =
     Attribute << Content.paragraph
 
 
-{-| -}
-markdownAndHtmlStyles : List Css.Style
-markdownAndHtmlStyles =
-    [ Css.Global.descendants
-        [ Css.Global.a
-            [ borderBottom3 (px 1) solid Colors.azure
-            , Css.Global.withAttribute "aria-disabled=true" [ borderBottom3 (px 1) solid Colors.gray45 ]
-            ]
-        , Css.Global.button
-            [ borderBottom3 (px 1) solid Colors.azure
-            , Css.disabled [ borderBottom3 (px 1) solid Colors.gray45 ]
-            ]
-        ]
-    ]
-
-
 {-| Provide a string that will be rendered as markdown.
 -}
 markdown : String -> Attribute msg
@@ -421,7 +406,7 @@ markdown content =
         \config ->
             { config
                 | content = Content.markdownContent content
-                , customStyles = config.customStyles ++ markdownAndHtmlStyles
+                , customStyles = config.customStyles ++ MarkdownStyles.anchorAndButton
             }
 
 

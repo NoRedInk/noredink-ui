@@ -61,9 +61,8 @@ You're in the wrong place! Headings live in Nri.Ui.Heading.V3.
 import Accessibility.Styled as Html exposing (..)
 import Content
 import Css exposing (..)
-import Css.Global
 import Html.Styled.Attributes as Attributes
-import Nri.Ui.Colors.V1 as Colors exposing (..)
+import MarkdownStyles
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 
@@ -351,7 +350,7 @@ markdown content =
         \config ->
             { config
                 | content = Content.markdownContent content
-                , styles = config.styles ++ markdownAndHtmlStyles
+                , styles = config.styles ++ MarkdownStyles.anchorAndButton
             }
 
 
@@ -360,19 +359,3 @@ markdown content =
 html : List (Html msg) -> Attribute msg
 html =
     Attribute << Content.html
-
-
-{-| -}
-markdownAndHtmlStyles : List Css.Style
-markdownAndHtmlStyles =
-    [ Css.Global.descendants
-        [ Css.Global.a
-            [ borderBottom3 (px 1) solid Colors.azure
-            , Css.Global.withAttribute "aria-disabled=true" [ borderBottom3 (px 1) solid Colors.gray45 ]
-            ]
-        , Css.Global.button
-            [ borderBottom3 (px 1) solid Colors.azure
-            , Css.disabled [ borderBottom3 (px 1) solid Colors.gray45 ]
-            ]
-        ]
-    ]

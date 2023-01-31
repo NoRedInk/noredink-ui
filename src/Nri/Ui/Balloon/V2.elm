@@ -67,10 +67,10 @@ Changes from V1:
 
 import Content
 import Css exposing (..)
-import Css.Global
 import Css.Media
 import Html.Styled as Html exposing (Html, div, styled)
 import Html.Styled.Attributes as Attributes
+import MarkdownStyles
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
@@ -355,22 +355,6 @@ contentId id_ =
     Attribute (\config -> { config | contentId = Just id_ })
 
 
-{-| -}
-markdownAndHtmlStyles : List Css.Style
-markdownAndHtmlStyles =
-    [ Css.Global.descendants
-        [ Css.Global.a
-            [ borderBottom3 (px 1) solid Colors.azure
-            , Css.Global.withAttribute "aria-disabled=true" [ borderBottom3 (px 1) solid Colors.gray45 ]
-            ]
-        , Css.Global.button
-            [ borderBottom3 (px 1) solid Colors.azure
-            , Css.disabled [ borderBottom3 (px 1) solid Colors.gray45 ]
-            ]
-        ]
-    ]
-
-
 {-| Provide a plain-text string.
 -}
 plaintext : String -> Attribute msg
@@ -393,7 +377,7 @@ markdown content =
         \config ->
             { config
                 | content = Content.markdownContent content
-                , css = config.css ++ markdownAndHtmlStyles
+                , css = config.css ++ MarkdownStyles.anchorAndButton
             }
 
 

@@ -107,22 +107,6 @@ plaintext =
     Attribute << Content.plaintext
 
 
-{-| -}
-markdownAndHtmlStyles : List Css.Style
-markdownAndHtmlStyles =
-    [ Css.Global.descendants
-        [ Css.Global.a
-            [ borderBottom3 (px 1) solid Colors.azure
-            , Css.Global.withAttribute "aria-disabled=true" [ borderBottom3 (px 1) solid Colors.gray45 ]
-            ]
-        , Css.Global.button
-            [ borderBottom3 (px 1) solid Colors.azure
-            , Css.disabled [ borderBottom3 (px 1) solid Colors.gray45 ]
-            ]
-        ]
-    ]
-
-
 {-| Provide a string that will be rendered as markdown.
 -}
 markdown : String -> Attribute msg

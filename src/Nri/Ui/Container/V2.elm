@@ -65,10 +65,10 @@ module Nri.Ui.Container.V2 exposing
 
 import Content
 import Css exposing (..)
-import Css.Global
 import Css.Media exposing (withMedia)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes
+import MarkdownStyles
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
@@ -329,22 +329,6 @@ buttonyStyles =
     ]
 
 
-{-| -}
-markdownAndHtmlStyles : List Css.Style
-markdownAndHtmlStyles =
-    [ Css.Global.descendants
-        [ Css.Global.a
-            [ borderBottom3 (px 1) solid Colors.azure
-            , Css.Global.withAttribute "aria-disabled=true" [ borderBottom3 (px 1) solid Colors.gray45 ]
-            ]
-        , Css.Global.button
-            [ borderBottom3 (px 1) solid Colors.azure
-            , Css.disabled [ borderBottom3 (px 1) solid Colors.gray45 ]
-            ]
-        ]
-    ]
-
-
 {-| Provide a list of custom HTML.
 -}
 html : List (Html msg) -> Attribute msg
@@ -378,5 +362,5 @@ markdown content =
         \config ->
             { config
                 | content = Content.markdownContent content
-                , css = config.css ++ markdownAndHtmlStyles
+                , css = config.css ++ MarkdownStyles.anchorAndButton
             }
