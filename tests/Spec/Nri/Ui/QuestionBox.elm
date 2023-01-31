@@ -43,7 +43,7 @@ spec =
         , test "renders extra HTML content with default character" <|
             \() ->
                 [ QuestionBox.markdown exampleGuidanceContent
-                , QuestionBox.setLeftButton (Html.Styled.text readAloudContent)
+                , QuestionBox.setLeftActions (Html.Styled.text readAloudContent)
                 ]
                     |> testContext
                     |> Expect.all
@@ -54,7 +54,7 @@ spec =
         , test "renders extra HTML content with custom character" <|
             \() ->
                 [ QuestionBox.markdown exampleGuidanceContent
-                , QuestionBox.setLeftButton (Html.Styled.text readAloudContent)
+                , QuestionBox.setLeftActions (Html.Styled.text readAloudContent)
                 , QuestionBox.character (Just { name = "Apply", icon = UiIcon.apple })
                 ]
                     |> testContext
@@ -66,7 +66,7 @@ spec =
         , test "renders extra HTML content without character" <|
             \() ->
                 [ QuestionBox.markdown exampleGuidanceContent
-                , QuestionBox.setLeftButton (Html.Styled.text readAloudContent)
+                , QuestionBox.setLeftActions (Html.Styled.text readAloudContent)
                 , QuestionBox.character Nothing
                 ]
                     |> testContext
