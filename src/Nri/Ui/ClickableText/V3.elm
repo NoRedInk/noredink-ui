@@ -516,7 +516,9 @@ clickableTextSharedStyles isDisabled =
 
 clickableTextLinkStyles : List Css.Style
 clickableTextLinkStyles =
-    [ Css.textDecoration Css.none ]
+    [ Css.textDecoration Css.none
+    , Css.display Css.inlineBlock
+    ]
 
 
 clickableTextButtonStyles : List Css.Style

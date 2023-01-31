@@ -45,9 +45,9 @@ Headings with customization options.
 
 import Content
 import Css exposing (..)
-import Css.Global
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes
+import MarkdownStyles
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
@@ -115,7 +115,7 @@ markdown content =
         \config ->
             { config
                 | content = Content.markdownContent content
-                , css = config.css ++ markdownAndHtmlStyles
+                , css = config.css ++ MarkdownStyles.anchorAndButton
             }
 
 
