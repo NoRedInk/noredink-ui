@@ -373,7 +373,7 @@ viewBalloon config label =
 
             Nothing ->
                 Balloon.css []
-        , Balloon.plaintext label
+        , Balloon.markdown label
         , case config.labelId of
             Just id_ ->
                 Balloon.id id_
