@@ -590,7 +590,7 @@ initAttributes =
         |> ControlExtra.optionalListItem "leftButton"
             ([ ( "Play button"
                , Control.value
-                    ( Code.fromModule moduleName "setLeftButton" ++ Code.string """
+                    ( Code.fromModule moduleName "setLeftActions" ++ Code.string """
                         ([ ClickableSvg.button "Play"
                             UiIcon.playInCircle
                             [ ClickableSvg.exactSize 32
@@ -616,7 +616,7 @@ initAttributes =
                                     ]
                                 ]
                         )                      """
-                    , QuestionBox.setLeftButton
+                    , QuestionBox.setLeftActions
                         ([ ClickableSvg.button "Play"
                             UiIcon.playInCircle
                             [ ClickableSvg.exactSize 32
