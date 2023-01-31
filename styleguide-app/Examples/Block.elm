@@ -199,7 +199,7 @@ example =
                         , [ Block.blank ]
                         , Block.phrase " each comic book costs about $5."
                         ]
-                    , Block.label "Editor's note"
+                    , Block.label "Editor's note (can *also* include **markdown**!)"
                     , Block.brown
                     , Block.labelId editorsNoteId
                     , Block.labelPosition (Dict.get editorsNoteId offsets)
