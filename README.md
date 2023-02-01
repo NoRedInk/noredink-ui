@@ -1,6 +1,29 @@
-# noredink-ui
+# Ownership, policies, & key concepts
 
-UI widgets we use.
+NoRedInk’s accessibility team, the Accessibilibats, own `noredink-ui`/the shared component library.
+While others may contribute to the component library and are encouraged to do so, the Accessibilibats (a.k.a A11ybats) are responsible for oversight of the foundational aspects of the component library, a.k.a. “**[Component Library Foundations](#component-library-foundations)**.”
+
+Given this ownership and responsibility, A11ybats will provide guidance and support to developers and designers who are building new components or working with existing components.
+
+[The shared component library app can be found here](https://noredink-ui.netlify.app/).
+
+## Component Library Foundations
+- Adherence to the component library [accessibility policy](#accessibility-policy)
+- Adherence to [UI Style Guide (and Caveats)](https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats-PvOLxeX3oyujYEzdJx5pu) and [Guidelines for Sharing User-Facing Changes with Design](https://paper.dropbox.com/doc/Guidelines-for-Sharing-User-Facing-Changes-with-Design-bdKGQtYH9qO9I00hUkA6k) 
+- Interoperability and consistency of components with each other and with the NoRedInk app
+- Quality and consistency of API design
+- Quality of internal code
+- Existence and quality of code documentation for each component
+- Existence, quality, and organization of component example pages in [the shared component library app](https://noredink-ui.netlify.app/)
+- Test coverage and testability of each component and of [the shared component library app](https://noredink-ui.netlify.app/)
+
+## Accessibility policy
+- No new components will be added to the component library if they do not conform to [WCAG 2.1 AA accessibility guidelines](https://www.w3.org/WAI/standards-guidelines/wcag/). Similarly, no existing components will be modified such that the component falls out of conformance with these guidelines.
+- For new components, UX designers & stakeholders are responsible for making their best faith effort to follow the [Accessibility Guidelines for Product Development](https://paper.dropbox.com/doc/PlcoE22OpOhB6eWCF4rFj?noDesktopRedirect=1) to include accessibility details in their spec and code. A11ybats will help fill in any gaps, but your team is responsible for the first pass.
+- Existing components that do not conform to [WCAG 2.1 AA accessibility guidelines](https://www.w3.org/WAI/standards-guidelines/wcag/) are being updated by A11ybats to be conformant. (We believe we have a comprehensive backlog of updates to make, but feel free to ask us if you think you spot an accessibility issue. 🙏 )
+- Components in the NoRedInk app which are NOT in the component library but which are shared or could be shared across multiple interfaces may be added to the component library over time by A11ybats or by any team, ideally with any necessary accessibility improvements, in accordance with the versioning policy elsewhere in this readme.
+
+# Development guide
 
 ## Getting Started
 1. Setup your [development environment](#developing-with-nix)
