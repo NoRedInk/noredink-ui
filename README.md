@@ -61,7 +61,7 @@ Contributing to the component library is characterized by close consultation wit
 7. Once your component is in a state that’s ready for production, please request an accessibility review from A11ybats by dropping a note in [#ask-accessibilibats](https://noredink.slack.com/archives/C02NVG4M45U). Our turnaround time should be relatively quick, but in the meantime…
 8. Start creating a [QA Flightplan](https://paper.dropbox.com/doc/QA-landing-page-FAQ--BNKlATfTHdgnJa48lcR5NrVSAg-wLYVa0lEmkaiJB09CXHRn) as if this were a new feature. We recommend requesting that the QA team *at least* tests your new component within [the shared component library app](https://noredink-ui.netlify.app/) as soon as it’s available. (You can always request additional QA of your component as implemented in the NoRedInk app later.) Simple components may have a simple flightplan, and that’s okay!
 9. Once A11ybats have completed their accessibility review, make updates to your QA Flightplan if needed and submit your QA Flightplan to QA according to [QA’s processes](https://paper.dropbox.com/doc/QA-landing-page-FAQ--BNKlATfTHdgnJa48lcR5NrVSAg-wLYVa0lEmkaiJB09CXHRn).
-10. Not sure when they should/shouldn’t publish a new noredink-ui version
+10. Refer to the [`noredink-ui` versioning policy](#versioning-policy) to understand when and how to publish your component.
 11. A11ybats keep an eye on all noredink-ui updates and may request modifications to your work if it does not adhere to the Component Library Foundations.
 
 # Developing, deploying, & versioning
