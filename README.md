@@ -64,7 +64,7 @@ Contributing to the component library is characterized by close consultation wit
 10. Not sure when they should/shouldn’t publish a new noredink-ui version
 11. A11ybats keep an eye on all noredink-ui updates and may request modifications to your work if it does not adhere to the Component Library Foundations.
 
-# Development guide
+# Developing, deploying, & versioning
 
 ## Getting Started
 1. Setup your [development environment](#developing-with-nix)
