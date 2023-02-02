@@ -12,6 +12,7 @@ import Code
 import CommonControls
 import Css
 import Css.Global
+import Css.Media exposing (withMedia)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
@@ -23,9 +24,11 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import Markdown
 import Nri.Ui.Block.V4 as Block
 import Nri.Ui.Button.V10 as Button
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.MediaQuery.V1 exposing (..)
 import Nri.Ui.QuestionBox.V3 as QuestionBox
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
@@ -583,6 +586,66 @@ initAttributes =
                     )
                 )
                 (Control.stringTextarea initialMarkdown)
+            )
+        |> ControlExtra.optionalListItem "leftButton"
+            ([ ( "Play button"
+               , Control.value
+                    ( Code.fromModule moduleName "setLeftActions" ++ Code.string """
+                        ([ ClickableSvg.button "Play"
+                            UiIcon.playInCircle
+                            [ ClickableSvg.exactSize 32
+                            , ClickableSvg.css
+                                [ Css.borderRadius (Css.px 32)
+                                , Css.backgroundColor Colors.white
+                                ]
+                            ]
+                         ]
+                            |> div
+                                [ css
+                                    [ Css.position Css.relative
+                                    , Css.zIndex (Css.int 1)
+                                    , Css.left (Css.px -24)
+                                    , Css.top (Css.px 8)
+                                    , withMedia [ quizEngineMobile ]
+                                        [ Css.left Css.auto
+                                        , Css.top Css.auto
+                                        , Css.float Css.left
+                                        , Css.padding4 Css.zero (Css.px 5) Css.zero Css.zero
+                                        , Css.position Css.static
+                                        ]
+                                    ]
+                                ]
+                        )                      """
+                    , QuestionBox.setLeftActions
+                        ([ ClickableSvg.button "Play"
+                            UiIcon.playInCircle
+                            [ ClickableSvg.exactSize 32
+                            , ClickableSvg.css
+                                [ Css.borderRadius (Css.px 32)
+                                , Css.backgroundColor Colors.white
+                                ]
+                            ]
+                         ]
+                            |> div
+                                [ css
+                                    [ Css.position Css.relative
+                                    , Css.zIndex (Css.int 1)
+                                    , Css.left (Css.px -24)
+                                    , Css.top (Css.px 8)
+                                    , withMedia [ quizEngineMobile ]
+                                        [ Css.left Css.auto
+                                        , Css.top Css.auto
+                                        , Css.float Css.left
+                                        , Css.padding4 Css.zero (Css.px 5) Css.zero Css.zero
+                                        , Css.position Css.static
+                                        ]
+                                    ]
+                                ]
+                        )
+                    )
+               )
+             ]
+                |> Control.choice
             )
         |> ControlExtra.listItem "actions"
             (Control.map
