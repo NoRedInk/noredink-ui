@@ -73,7 +73,6 @@ import Nri.Ui.InputStyles.V4 as InputStyles exposing (defaultMarginTop)
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.Util exposing (dashify)
-import Parser
 import Time
 
 
