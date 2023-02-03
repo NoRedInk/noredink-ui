@@ -1,6 +1,6 @@
 module Nri.Ui.TextInput.V7 exposing
     ( view, generateId
-    , number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, username, organization, organizationTitle, postalCode, sex, tel
+    , number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, username, organization, organizationTitle, postalCode, sex, tel, date, time, datetime
     , readOnlyText
     , value, map
     , onFocus, onBlur, onEnter
@@ -32,7 +32,7 @@ module Nri.Ui.TextInput.V7 exposing
 
 ### Input types
 
-@docs number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, username, organization, organizationTitle, postalCode, sex, tel
+@docs number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, username, organization, organizationTitle, postalCode, sex, tel, date, time, datetime
 @docs readOnlyText
 
 
