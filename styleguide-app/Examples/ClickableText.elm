@@ -177,10 +177,11 @@ viewExamples ellieLinkConfig (State control) =
         [ Text.html
             [ text "Sometimes, we'll want our clickable links: "
             , ClickableText.link settings.label
-                (ClickableText.small :: clickableAttributes)
+                (ClickableText.appearsInline :: ClickableText.small :: clickableAttributes)
             , text " and clickable buttons: "
             , ClickableText.button settings.label
-                (ClickableText.small
+                (ClickableText.appearsInline
+                    :: ClickableText.small
                     :: ClickableText.onClick (ShowItWorked moduleName "in-line button")
                     :: clickableAttributes
                 )

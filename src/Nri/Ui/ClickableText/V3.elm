@@ -3,6 +3,7 @@ module Nri.Ui.ClickableText.V3 exposing
     , link
     , Attribute
     , small, medium, large, modal
+    , appearsInline
     , onClick, submit, opensModal
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , disabled
@@ -68,6 +69,11 @@ HTML `<a>` elements and are created here with `*Link` functions.
 ## Sizing
 
 @docs small, medium, large, modal
+
+
+## Appearance
+
+@docs appearsInline
 
 
 ## Behavior
@@ -375,6 +381,17 @@ In most cases, if you're not using Browser.application, disabled links should wo
 disabled : Bool -> Attribute msg
 disabled value =
     set (\attributes -> { attributes | disabled = value })
+
+
+{-| Specifies whether it should have inline appearance.
+-}
+appearsInline : Attribute msg
+appearsInline =
+    css
+        [ Css.borderBottom3 (Css.px 1) Css.solid Colors.azure
+        , Css.Global.withAttribute "aria-disabled=true" [ Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45 ]
+        , Css.disabled [ Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45 ]
+        ]
 
 
 {-| Creates a `<button>` element
