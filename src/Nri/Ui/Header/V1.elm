@@ -1,16 +1,42 @@
 module Nri.Ui.Header.V1 exposing
-    ( view
-    , Attribute, aTagAttributes, extraContent, description, extraSubheadContent, customPageWidth, breadCrumbsLabel
+    ( view, Attribute
+    , aTagAttributes, customPageWidth, breadCrumbsLabel
+    , extraContent, description, extraNav
+    , extraSubheadContent
     )
 
 {-|
 
-@docs view
-@docs Attribute, aTagAttributes, extraContent, description, extraSubheadContent, customPageWidth, breadCrumbsLabel
+
+## Changelog
+
+
+### Patch changes
+
+  - marked extraSubheadContent as deprecated
+  - added extraNav
+
+@docs view, Attribute
+
+
+## Customize the header
+
+@docs aTagAttributes, customPageWidth, breadCrumbsLabel
+
+
+## Add additional content to the header
+
+@docs extraContent, description, extraNav
+
+
+### Deprecated, to be removed:
+
+@docs extraSubheadContent
 
 -}
 
 import Accessibility.Styled as Html exposing (Html)
+import Accessibility.Styled.Aria as Aria
 import Css
 import Css.Media as Media
 import Html.Styled.Attributes exposing (css)
@@ -41,6 +67,23 @@ extraContent value =
 
 
 {-| -}
+extraNav : String -> List (Html msg) -> Attribute route msg
+extraNav label value =
+    Attribute
+        (\soFar ->
+            { soFar
+                | extraNav =
+                    if List.isEmpty value then
+                        Nothing
+
+                    else
+                        Just ( label, value )
+            }
+        )
+
+
+{-| This attribute is unused and will be removed in the next version of Header.
+-}
 extraSubheadContent : List (Html msg) -> Attribute route msg
 extraSubheadContent value =
     Attribute (\soFar -> { soFar | extraSubheadContent = value })
@@ -77,6 +120,7 @@ type alias Config route msg =
     , description : Maybe String
     , pageWidth : Css.Px
     , breadCrumbsLabel : String
+    , extraNav : Maybe ( String, List (Html msg) )
     }
 
 
@@ -90,6 +134,7 @@ customize =
         , description = Nothing
         , pageWidth = MediaQuery.mobileBreakpoint
         , breadCrumbsLabel = "breadcrumbs"
+        , extraNav = Nothing
         }
 
 
@@ -105,11 +150,35 @@ view attrs { breadCrumbs, isCurrentRoute } =
     let
         config =
             customize attrs
+
+        ( extraContent_, extraNav_ ) =
+            -- when there's no content in the "extra content" hole to the right of the breadcrumbs,
+            -- put the extra nav  there. If there is content there, put the links directly above the description.
+            case config.extraContent of
+                [] ->
+                    ( [ viewJust (viewExtraNav []) config.extraNav ]
+                    , Html.text ""
+                    )
+
+                _ ->
+                    ( config.extraContent
+                    , viewJust
+                        (viewExtraNav
+                            [ Spacing.centeredContentWithSidePaddingAndCustomWidth config.pageWidth
+                            ]
+                        )
+                        config.extraNav
+                    )
     in
     Html.div
         [ css
             [ Css.backgroundColor Colors.gray96
             , Css.borderBottom3 (Css.px 1) Css.solid Colors.gray92
+            , Css.paddingTop (Css.px 30)
+            , Css.paddingBottom (Css.px 20)
+            , Media.withMedia [ MediaQuery.mobile ]
+                [ Css.important (Css.padding2 (Css.px 20) (Css.px 15))
+                ]
             ]
         , AttributesExtra.nriDescription "Nri-Header"
         ]
@@ -118,12 +187,7 @@ view attrs { breadCrumbs, isCurrentRoute } =
                 [ Spacing.centeredContentWithSidePaddingAndCustomWidth config.pageWidth
                 , Css.alignItems Css.center
                 , Css.displayFlex
-                , Css.paddingTop (Css.px 30)
-                , Css.paddingBottom (Css.px 20)
-                , Media.withMedia [ MediaQuery.mobile ]
-                    [ Css.important (Css.padding2 (Css.px 20) (Css.px 15))
-                    , Css.flexDirection Css.column
-                    ]
+                , Media.withMedia [ MediaQuery.mobile ] [ Css.flexDirection Css.column ]
                 ]
                 :: config.containerAttributes
             )
@@ -144,8 +208,9 @@ view attrs { breadCrumbs, isCurrentRoute } =
                     _ ->
                         Html.div [] (breadcrumbsView :: config.extraSubheadContent)
                 ]
-                :: config.extraContent
+                :: extraContent_
             )
+        , extraNav_
         , viewJust (viewDescription config.pageWidth) config.description
         ]
 
@@ -157,7 +222,28 @@ viewDescription pageWidth description_ =
             [ Spacing.centeredContentWithSidePaddingAndCustomWidth pageWidth
             , Css.color Colors.gray45
             , Css.important (Css.margin Css.auto)
-            , Css.important (Css.paddingBottom (Css.px 20))
+            , Css.important (Css.paddingTop (Css.px 20))
             ]
         , Text.plaintext description_
+        ]
+
+
+viewExtraNav : List Css.Style -> ( String, List (Html msg) ) -> Html msg
+viewExtraNav styles ( label, values ) =
+    Html.nav [ Aria.label label, css styles ]
+        [ Html.ul
+            [ css
+                [ Css.margin Css.zero
+                , Css.padding Css.zero
+                , Css.displayFlex
+                , Css.alignItems Css.center
+                , Css.justifyContent Css.flexStart
+                , Css.flexWrap Css.wrap
+                , Css.property "column-gap" (.value Spacing.horizontalSpacerPx)
+                ]
+            ]
+            (List.map
+                (\i -> Html.li [ css [ Css.listStyle Css.none ] ] [ i ])
+                values
+            )
         ]

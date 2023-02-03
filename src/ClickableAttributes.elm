@@ -1,16 +1,17 @@
 module ClickableAttributes exposing
-    ( ClickableAttributes, init
+    ( Config, ClickableAttributes, init
     , onClick, submit, opensModal
     , toButtonAttributes
     , href, linkWithMethod, linkWithTracking
     , linkSpa
     , linkExternal, linkExternalWithTracking
     , toLinkAttributes
+    , linkExternalInternal, linkExternalWithTrackingInternal
     )
 
 {-|
 
-@docs ClickableAttributes, init
+@docs Config, ClickableAttributes, init
 
 
 # For buttons
@@ -26,6 +27,11 @@ module ClickableAttributes exposing
 @docs linkExternal, linkExternalWithTracking
 @docs toLinkAttributes
 
+
+## external link helpers without any affordances
+
+@docs linkExternalInternal, linkExternalWithTrackingInternal
+
 -}
 
 import Accessibility.Styled.Aria as Aria
@@ -36,6 +42,8 @@ import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Json.Decode
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (targetBlank)
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 {-| -}
@@ -71,70 +79,105 @@ init =
 
 
 {-| -}
-onClick : msg -> ClickableAttributes route msg -> ClickableAttributes route msg
-onClick msg clickableAttributes =
-    { clickableAttributes | onClick = Just msg }
-
-
-{-| -}
-submit : ClickableAttributes route msg -> ClickableAttributes route msg
-submit clickableAttributes =
-    { clickableAttributes | buttonType = "submit" }
-
-
-{-| -}
-opensModal : ClickableAttributes route msg -> ClickableAttributes route msg
-opensModal clickableAttributes =
-    { clickableAttributes | opensModal = True }
-
-
-{-| -}
-href : route -> ClickableAttributes route msg -> ClickableAttributes route msg
-href url clickableAttributes =
-    { clickableAttributes | url = Just url }
-
-
-{-| -}
-linkSpa : route -> ClickableAttributes route msg -> ClickableAttributes route msg
-linkSpa url clickableAttributes =
-    { clickableAttributes | linkType = SinglePageApp, url = Just url }
-
-
-{-| -}
-linkWithMethod : { method : String, url : route } -> ClickableAttributes route msg -> ClickableAttributes route msg
-linkWithMethod { method, url } clickableAttributes =
-    { clickableAttributes | linkType = WithMethod method, url = Just url }
-
-
-{-| -}
-linkWithTracking : { track : msg, url : route } -> ClickableAttributes route msg -> ClickableAttributes route msg
-linkWithTracking { track, url } clickableAttributes =
-    { clickableAttributes
-        | linkType = WithTracking
-        , url = Just url
-        , onClick = Just track
+type alias Config attributes route msg =
+    { attributes
+        | clickableAttributes : ClickableAttributes route msg
+        , rightIcon : Maybe Svg
     }
 
 
 {-| -}
-linkExternal : String -> ClickableAttributes route msg -> ClickableAttributes route msg
-linkExternal url clickableAttributes =
-    { clickableAttributes | linkType = External, urlString = Just url }
+onClick : msg -> Config a route msg -> Config a route msg
+onClick msg ({ clickableAttributes } as config) =
+    { config | clickableAttributes = { clickableAttributes | onClick = Just msg } }
 
 
 {-| -}
-linkExternalWithTracking : { track : msg, url : String } -> ClickableAttributes route msg -> ClickableAttributes route msg
-linkExternalWithTracking { track, url } clickableAttributes =
-    { clickableAttributes
-        | linkType = ExternalWithTracking
-        , urlString = Just url
-        , onClick = Just track
+submit : Config a route msg -> Config a route msg
+submit ({ clickableAttributes } as config) =
+    { config | clickableAttributes = { clickableAttributes | buttonType = "submit" } }
+
+
+{-| -}
+opensModal : Config a route msg -> Config a route msg
+opensModal ({ clickableAttributes } as config) =
+    { config | clickableAttributes = { clickableAttributes | opensModal = True } }
+
+
+{-| -}
+href : route -> Config a route msg -> Config a route msg
+href url ({ clickableAttributes } as config) =
+    { config | clickableAttributes = { clickableAttributes | url = Just url } }
+
+
+{-| -}
+linkSpa : route -> Config a route msg -> Config a route msg
+linkSpa url ({ clickableAttributes } as config) =
+    { config | clickableAttributes = { clickableAttributes | linkType = SinglePageApp, url = Just url } }
+
+
+{-| -}
+linkWithMethod : { method : String, url : route } -> Config a route msg -> Config a route msg
+linkWithMethod { method, url } ({ clickableAttributes } as config) =
+    { config | clickableAttributes = { clickableAttributes | linkType = WithMethod method, url = Just url } }
+
+
+{-| -}
+linkWithTracking : { track : msg, url : route } -> Config a route msg -> Config a route msg
+linkWithTracking { track, url } ({ clickableAttributes } as config) =
+    { config
+        | clickableAttributes =
+            { clickableAttributes
+                | linkType = WithTracking
+                , url = Just url
+                , onClick = Just track
+            }
     }
 
 
 {-| -}
-toButtonAttributes : ClickableAttributes route msg -> List (Attribute msg)
-toButtonAttributes clickableAttributes =
+linkExternal : String -> Config a route msg -> Config a route msg
+linkExternal url =
+    withExternalAffordance >> linkExternalInternal url
+
+
+{-| -}
+linkExternalWithTracking : { track : msg, url : String } -> Config a route msg -> Config a route msg
+linkExternalWithTracking attrs =
+    withExternalAffordance >> linkExternalWithTrackingInternal attrs
+
+
+{-| -}
+linkExternalInternal : String -> { attributes | clickableAttributes : ClickableAttributes route msg } -> { attributes | clickableAttributes : ClickableAttributes route msg }
+linkExternalInternal url ({ clickableAttributes } as config) =
+    { config
+        | clickableAttributes =
+            { clickableAttributes
+                | linkType = External
+                , urlString = Just url
+            }
+    }
+
+
+{-| -}
+linkExternalWithTrackingInternal :
+    { track : msg, url : String }
+    -> { attributes | clickableAttributes : ClickableAttributes route msg }
+    -> { attributes | clickableAttributes : ClickableAttributes route msg }
+linkExternalWithTrackingInternal { track, url } ({ clickableAttributes } as config) =
+    { config
+        | clickableAttributes =
+            { clickableAttributes
+                | linkType = ExternalWithTracking
+                , urlString = Just url
+                , onClick = Just track
+            }
+    }
+
+
+{-| -}
+toButtonAttributes : ClickableAttributes route msg -> { disabled : Bool } -> List (Attribute msg)
+toButtonAttributes clickableAttributes { disabled } =
     [ AttributesExtra.maybe Events.onClick clickableAttributes.onClick
     , Attributes.type_ clickableAttributes.buttonType
     , -- why "aria-haspopup=true" instead of "aria-haspopup=dialog"?
@@ -143,6 +186,7 @@ toButtonAttributes clickableAttributes =
       -- If time has passed, feel free to revisit and see if dialog support has improved!
       AttributesExtra.includeIf clickableAttributes.opensModal
         (Attributes.attribute "aria-haspopup" "true")
+    , Attributes.disabled disabled
     ]
 
 
@@ -238,3 +282,14 @@ toEnabledLinkAttributes routeToString clickableAttributes =
                     Attributes.href stringUrl
                         :: targetBlank
             )
+
+
+{-| -}
+withExternalAffordance : { attributes | rightIcon : Maybe Svg.Svg } -> { attributes | rightIcon : Maybe Svg.Svg }
+withExternalAffordance config =
+    { config | rightIcon = Just opensInNewTab }
+
+
+opensInNewTab : Svg
+opensInNewTab =
+    Svg.withLabel "Opens in a new tab" UiIcon.openInNewTab

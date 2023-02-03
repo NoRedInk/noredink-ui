@@ -433,16 +433,29 @@ modalStyles =
     ]
 
 
-titleStyles : Color -> Bool -> List Style
-titleStyles color visibleTitle =
-    if visibleTitle then
+titleStyles : { a | titleColor : Color, visibleTitle : Bool, closeButton : Maybe msg } -> List Style
+titleStyles config =
+    if config.visibleTitle then
+        let
+            titleSidePadding =
+                Css.px <|
+                    case config.closeButton of
+                        Just _ ->
+                            60
+
+                        Nothing ->
+                            40
+        in
         [ Fonts.baseFont
         , Css.fontWeight (Css.int 700)
-        , Css.padding3 (Css.px 40) (Css.px 40) (Css.px 20)
+        , Css.padding3
+            (Css.px 40)
+            titleSidePadding
+            (Css.px 20)
         , Css.margin Css.zero
         , Css.fontSize (Css.px 20)
         , Css.textAlign Css.center
-        , Css.color color
+        , Css.color config.titleColor
         , Css.Media.withMedia [ mobile ]
             [ Css.padding3 (Css.px 20) (Css.px 20) Css.zero
             ]
@@ -568,7 +581,7 @@ viewModal config =
         )
         [ h1
             [ id modalTitleId
-            , Attrs.css (titleStyles config.titleColor config.visibleTitle)
+            , Attrs.css (titleStyles config)
             , ExtraAttributes.nriDescription "modal-title"
             ]
             [ text config.title ]

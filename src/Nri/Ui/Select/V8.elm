@@ -299,19 +299,20 @@ view label attributes =
                 ++ config.containerCss
             )
         ]
-        [ viewSelect
+        ([ viewSelect
             { id = id_
             , disabled = disabled_
             }
             config
-        , InputLabelInternal.view
+         , InputLabelInternal.view
             { for = id_
             , label = label
             , theme = InputStyles.Standard
             }
             config
-        , InputErrorAndGuidanceInternal.view id_ InputErrorAndGuidanceInternal.smallMargin config
-        ]
+         ]
+            ++ InputErrorAndGuidanceInternal.view id_ InputErrorAndGuidanceInternal.smallMargin config
+        )
 
 
 viewSelect : { id : String, disabled : Bool } -> Config a -> Html a

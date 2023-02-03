@@ -154,10 +154,11 @@ initDebugControls =
                 , ( "link", Control.value Link )
                 ]
             )
-        |> Control.field "label" (Control.string "Label")
+        |> Control.field "label" (Control.string "Label **bold**   *emphasis*")
         |> Control.field "attributes"
             (ControlExtra.list
                 |> CommonControls.icon moduleName Button.icon
+                |> CommonControls.rightIcon moduleName Button.rightIcon
                 |> ControlExtra.optionalListItem "width"
                     (CommonControls.choice moduleName
                         [ ( "exactWidth 120", Button.exactWidth 120 )

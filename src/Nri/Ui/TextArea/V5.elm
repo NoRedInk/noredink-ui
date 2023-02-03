@@ -350,7 +350,7 @@ view_ label config =
     Html.styled (Html.node "nri-textarea-v5")
         [ Css.display Css.block, Css.position Css.relative, Css.batch config.containerCss ]
         autoresizeAttrs
-        [ Html.styled Html.textarea
+        ([ Html.styled Html.textarea
             [ InputStyles.input config.theme
             , Css.boxSizing Css.borderBox
             , case config.height of
@@ -396,14 +396,15 @@ view_ label config =
                 ++ List.map (Attributes.map never) config.custom
             )
             []
-        , InputLabelInternal.view
+         , InputLabelInternal.view
             { for = idValue
             , label = label
             , theme = config.theme
             }
             config
-        , InputErrorAndGuidanceInternal.view idValue InputErrorAndGuidanceInternal.smallMargin config
-        ]
+         ]
+            ++ InputErrorAndGuidanceInternal.view idValue InputErrorAndGuidanceInternal.smallMargin config
+        )
 
 
 calculateMinHeight : Theme -> Height -> Css.Px

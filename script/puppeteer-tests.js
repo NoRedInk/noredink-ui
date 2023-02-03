@@ -85,6 +85,20 @@ describe("UI tests", function () {
     await callback(option);
   };
 
+  const questionBoxProcessing = async (name, location) => {
+    await goTo(name, location);
+
+    const [button] = await page.$x("//button[contains(., 'Measure & render')]");
+    await button.click();
+
+    await percySnapshot(page, name);
+
+    const results = await new AxePuppeteer(page)
+      .disableRules(skippedRules[name] || [])
+      .analyze();
+    handleAxeResults(name, results);
+  };
+
   const messageProcessing = async (name, location) => {
     await goTo(name, location);
     await percySnapshot(page, name);
@@ -150,15 +164,17 @@ describe("UI tests", function () {
   };
 
   const skippedRules = {
-    // See https://github.com/dequelabs/axe-core/issues/3649 -- we may be able to remove the Highlighter & Mark skipped rule
+    // See https://github.com/dequelabs/axe-core/issues/3649 -- we may be able to remove the Highlighter, Mark, and Block skipped rule
     Highlighter: ["aria-roledescription"],
     Block: ["aria-roledescription"],
+    QuestionBox: ["aria-roledescription"],
     // Loading's color contrast check seems to change behavior depending on whether Percy snapshots are taken or not
     Loading: ["color-contrast"],
     RadioButton: ["duplicate-id"],
   };
 
   const specialProcessing = {
+    QuestionBox: questionBoxProcessing,
     Message: messageProcessing,
     Modal: modalProcessing,
     Page: pageProcessing,

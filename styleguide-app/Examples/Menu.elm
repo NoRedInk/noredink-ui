@@ -18,20 +18,24 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
+import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Button.V10 as Button
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Menu.V3 as Menu
+import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Menu.V4 as Menu
+import Nri.Ui.Spacing.V1 as Spacing
+import Nri.Ui.Table.V6 as Table
 import Nri.Ui.TextInput.V7 as TextInput
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttrs
 import Task
-import ViewHelpers exposing (viewExamples)
 
 
 moduleName : String
@@ -41,7 +45,7 @@ moduleName =
 
 version : Int
 version =
-    3
+    4
 
 
 {-| -}
@@ -118,11 +122,7 @@ view : EllieLink.Config -> State -> List (Html Msg)
 view ellieLinkConfig state =
     let
         menuAttributes =
-            (Control.currentValue state.settings).menuAttributes
-                |> List.map Tuple.second
-
-        defaultButtonAttributes =
-            (Control.currentValue state.settings).buttonAttributes
+            Control.currentValue state.settings
                 |> List.map Tuple.second
 
         isOpen name =
@@ -140,59 +140,72 @@ view ellieLinkConfig state =
         , update = UpdateControls
         , settings = state.settings
         , mainType = Just "RootHtml.Html { focus : Maybe String, isOpen : Bool }"
-        , extraCode = []
+        , extraCode =
+            [ "import Nri.Ui.Button.V10 as Button"
+            , "import Nri.Ui.ClickableSvg.V2 as ClickableSvg"
+            , "import Nri.Ui.ClickableText.V3 as ClickableText"
+            ]
         , renderExample = Code.unstyledView
         , toExampleCode =
             \settings ->
                 let
-                    toCode : String -> String
-                    toCode buttonCode =
+                    code : String
+                    code =
                         moduleName
                             ++ ".view "
-                            ++ Code.list (List.map Tuple.first settings.menuAttributes)
-                            ++ Code.recordMultiline
-                                [ ( "button", buttonCode )
-                                , ( "entries", "[]" )
-                                , ( "isOpen", "True" )
-                                , ( "focusAndToggle", "identity -- TODO: you will need a real msg type here" )
-                                ]
-                                1
-                in
-                [ { sectionName = "Menu.button"
-                  , code =
-                        Code.newlineWithIndent 2
-                            ++ "Menu.button "
+                            ++ "identity -- TODO: you will need a real msg type here"
                             ++ Code.listMultiline
-                                (List.map Tuple.first settings.buttonAttributes)
-                                3
-                            ++ Code.newlineWithIndent 3
-                            ++ Code.string "1st Period English with Mx. Trainer"
-                            |> toCode
-                  }
-                , { sectionName = "Menu.custom"
-                  , code =
-                        Code.newlineWithIndent 2
-                            ++ "Menu.custom <|"
-                            ++ Code.newlineWithIndent 3
-                            ++ "\\buttonAttributes ->"
-                            ++ Code.newlineWithIndent 4
-                            ++ "button buttonAttributes [ text \"Custom Menu trigger button\" ]"
-                            |> toCode
+                                (("Menu.isOpen " ++ Code.bool (isOpen "interactiveExample"))
+                                    :: List.map Tuple.first settings
+                                )
+                                1
+                            ++ Code.newlineWithIndent 1
+                            ++ "[]"
+                in
+                [ { sectionName = "Example"
+                  , code = code
                   }
                 ]
         }
-    , viewExamples
-        [ ( "Menu.button"
-          , Menu.view
-                (menuAttributes
-                    ++ List.filterMap identity
+    , Heading.h2
+        [ Heading.plaintext "Interactive Example"
+        , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
+        ]
+    , div [ css [ Css.displayFlex, Css.justifyContent Css.center ] ]
+        [ Menu.view (FocusAndToggle "interactiveExample")
+            (Menu.isOpen (isOpen "interactiveExample") :: menuAttributes)
+            []
+        ]
+    , Heading.h2
+        [ Heading.plaintext "Menu types"
+        , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
+        ]
+    , Table.view
+        [ Table.string
+            { header = "Menu type"
+            , value = .menu
+            , width = Css.pct 30
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Example"
+            , view = .example
+            , width = Css.px 300
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        ]
+        [ { menu = "Menu.navMenu (default)"
+          , example =
+                Menu.view (FocusAndToggle "1stPeriodEnglish")
+                    (List.filterMap identity
                         [ Just <| Menu.buttonId "1stPeriodEnglish__button"
                         , Just <| Menu.menuId "1stPeriodEnglish__menu"
+                        , Just <| Menu.defaultTrigger "1st Period English with Mx. Trainer" []
+                        , Just <| Menu.isOpen (isOpen "1stPeriodEnglish")
                         ]
-                )
-                { isOpen = isOpen "1stPeriodEnglish"
-                , focusAndToggle = FocusAndToggle "1stPeriodEnglish"
-                , entries =
+                    )
                     [ Menu.entry "hello-button" <|
                         \attrs ->
                             ClickableText.button "Hello"
@@ -233,46 +246,48 @@ view ellieLinkConfig state =
                                 , ClickableText.custom attrs
                                 ]
                     ]
-                , button = Menu.button defaultButtonAttributes "1st Period English with Mx. Trainer"
-                }
-          )
-        , ( "Menu.custom"
-          , Menu.view
-                (menuAttributes
-                    ++ List.filterMap identity
-                        [ Just <| Menu.buttonId "icon-button-with-menu__button"
-                        , Just <| Menu.menuId "icon-button-with-menu__menu"
-                        ]
-                )
-                { entries =
-                    [ Menu.entry "see-more-button" <|
+          }
+        , { menu = "Menu.navMenuList"
+          , example =
+                Menu.view (FocusAndToggle "dropdown_list")
+                    [ Menu.buttonId "dropdown_list__button"
+                    , Menu.menuId "dropdown_list__menu"
+                    , Menu.navMenuList
+                    , Menu.defaultTrigger "Dropdown list" []
+                    , Menu.isOpen (isOpen "dropdown_list")
+                    ]
+                    [ Menu.entry "dropdown_list__first" <|
                         \attrs ->
-                            ClickableText.button "See more"
-                                [ ClickableText.onClick (ConsoleLog "See more")
-                                , ClickableText.small
+                            ClickableText.button "First"
+                                [ ClickableText.small
+                                , ClickableText.onClick (ConsoleLog "First")
                                 , ClickableText.custom attrs
-                                , ClickableText.icon UiIcon.seeMore
+                                ]
+                    , Menu.entry "dropdown_list__second" <|
+                        \attrs ->
+                            ClickableText.button "Second"
+                                [ ClickableText.small
+                                , ClickableText.onClick (ConsoleLog "Second")
+                                , ClickableText.custom attrs
+                                ]
+                    , Menu.entry "dropdown_list__third" <|
+                        \attrs ->
+                            ClickableText.button "Third"
+                                [ ClickableText.small
+                                , ClickableText.onClick (ConsoleLog "Third")
+                                , ClickableText.custom attrs
                                 ]
                     ]
-                , isOpen = isOpen "icon-button-with-menu"
-                , focusAndToggle = FocusAndToggle "icon-button-with-menu"
-                , button =
-                    Menu.custom <|
-                        \buttonAttributes ->
-                            button buttonAttributes [ text "Custom Menu trigger button" ]
-                }
-          )
-        , ( "Menu.button (with Menu.disclosure)"
-          , Menu.view
-                (menuAttributes
-                    ++ [ Menu.buttonId "disclosure__button"
-                       , Menu.menuId "disclosure__menu"
-                       , Menu.disclosure { lastId = "disclosure__login__button" }
-                       ]
-                )
-                { isOpen = isOpen "with_disclosure"
-                , focusAndToggle = FocusAndToggle "with_disclosure"
-                , entries =
+          }
+        , { menu = "Menu.disclosure"
+          , example =
+                Menu.view (FocusAndToggle "with_disclosure")
+                    [ Menu.buttonId "disclosure__button"
+                    , Menu.menuId "disclosure__menu"
+                    , Menu.disclosure { lastId = "disclosure__login__button" }
+                    , Menu.defaultTrigger "Log In disclosure" []
+                    , Menu.isOpen (isOpen "with_disclosure")
+                    ]
                     [ Menu.entry "disclosure__username" <|
                         \attrs ->
                             div []
@@ -290,20 +305,16 @@ view ellieLinkConfig state =
                                     ]
                                 ]
                     ]
-                , button = Menu.button defaultButtonAttributes "Log In disclosure"
-                }
-          )
-        , ( "Menu.button (with Menu.dialog)"
-          , Menu.view
-                (menuAttributes
-                    ++ [ Menu.buttonId "dialog__button"
-                       , Menu.menuId "dialog__menu"
-                       , Menu.dialog { firstId = "dialog__username__input", lastId = "dialog__login__button" }
-                       ]
-                )
-                { isOpen = isOpen "dialog"
-                , focusAndToggle = FocusAndToggle "dialog"
-                , entries =
+          }
+        , { menu = "Menu.dialog"
+          , example =
+                Menu.view (FocusAndToggle "dialog")
+                    [ Menu.buttonId "dialog__button"
+                    , Menu.menuId "dialog__menu"
+                    , Menu.dialog { firstId = "dialog__username__input", lastId = "dialog__login__button" }
+                    , Menu.defaultTrigger "Log In dialog" []
+                    , Menu.isOpen (isOpen "dialog")
+                    ]
                     [ Menu.entry "dialog__username" <|
                         \attrs ->
                             div []
@@ -321,9 +332,7 @@ view ellieLinkConfig state =
                                     ]
                                 ]
                     ]
-                , button = Menu.button defaultButtonAttributes "Log In dialog"
-                }
-          )
+          }
         ]
     ]
 
@@ -348,37 +357,109 @@ type alias State =
 
 
 type alias Settings =
-    { menuAttributes : List ( String, Menu.Attribute Msg )
-    , buttonAttributes : List ( String, Menu.ButtonAttribute )
-    }
+    List ( String, Menu.Attribute Msg )
 
 
 initSettings : Control Settings
 initSettings =
-    Control.record Settings
-        |> Control.field "Menu attributes" controlMenuAttributes
-        |> Control.field "Button attributes" controlButtonAttributes
-
-
-controlMenuAttributes : Control (List ( String, Menu.Attribute msg ))
-controlMenuAttributes =
     ControlExtra.list
         |> ControlExtra.optionalListItem "alignment" controlAlignment
         |> ControlExtra.optionalBoolListItem "isDisabled" ( "Menu.isDisabled True", Menu.isDisabled True )
         |> ControlExtra.optionalListItem "menuWidth" controlMenuWidth
         |> ControlExtra.optionalBoolListItem "opensOnHover" ( "Menu.opensOnHover True", Menu.opensOnHover True )
+        |> ControlExtra.listItem "triggering element" controlTrigger
 
 
 controlAlignment : Control ( String, Menu.Attribute msg )
 controlAlignment =
+    CommonControls.choice moduleName
+        [ ( "alignLeft", Menu.alignLeft ), ( "alignRight", Menu.alignRight ) ]
+
+
+controlTrigger : Control ( String, Menu.Attribute msg )
+controlTrigger =
     Control.choice
-        [ ( "Left"
-          , Control.value ( "Menu.alignment Menu.Left", Menu.alignment Menu.Left )
+        [ ( "defaultTrigger"
+          , Control.map
+                (\( c, a ) ->
+                    ( "Menu.defaultTrigger " ++ Code.string "Menu" ++ " " ++ Code.list c
+                    , Menu.defaultTrigger "Menu" a
+                    )
+                )
+                controlButtonAttributes
           )
-        , ( "Right"
-          , Control.value ( "Menu.alignment Menu.Right", Menu.alignment Menu.Right )
+        , ( "button"
+          , Control.map
+                (\( c, a ) ->
+                    ( "Menu.button " ++ Code.string "Menu" ++ " " ++ Code.list c
+                    , Menu.button "Menu" a
+                    )
+                )
+                controlButtonAttributes
+          )
+        , ( "clickableText"
+          , Control.map
+                (\( c, a ) ->
+                    ( "Menu.clickableText " ++ Code.string "Menu" ++ " " ++ Code.list c
+                    , Menu.clickableText "Menu" a
+                    )
+                )
+                controlClickableTextAttributes
+          )
+        , ( "clickableSvg"
+          , Control.map
+                (\( ( iconStr, icon ), ( withBorderStr, withBorder ) ) ->
+                    ( "Menu.clickableSvg "
+                        ++ Code.string "Menu"
+                        ++ " "
+                        ++ iconStr
+                        ++ " "
+                        ++ Code.list
+                            (if withBorder then
+                                [ "ClickableSvg.withBorder", "ClickableSvg.exactWidth 55" ]
+
+                             else
+                                []
+                            )
+                    , Menu.clickableSvg "Menu"
+                        icon
+                        (if withBorder then
+                            [ ClickableSvg.withBorder, ClickableSvg.exactWidth 55 ]
+
+                         else
+                            []
+                        )
+                    )
+                )
+                (Control.record (\a b -> ( a, b ))
+                    |> Control.field "icon" (CommonControls.rotatedUiIcon 1)
+                    |> Control.field "withBorder" (ControlExtra.bool True)
+                )
           )
         ]
+
+
+controlButtonAttributes : Control ( List String, List (Button.Attribute msg) )
+controlButtonAttributes =
+    ControlExtra.list
+        |> CommonControls.iconNotCheckedByDefault "Button" Button.icon
+        |> ControlExtra.optionalListItem "exactWidth"
+            (Control.map
+                (\i ->
+                    ( Code.fromModule "Button" "exactWidth " ++ String.fromInt i
+                    , Button.exactWidth i
+                    )
+                )
+                (ControlExtra.int 220)
+            )
+        |> Control.map List.unzip
+
+
+controlClickableTextAttributes : Control ( List String, List (ClickableText.Attribute msg) )
+controlClickableTextAttributes =
+    ControlExtra.list
+        |> CommonControls.iconNotCheckedByDefault "ClickableText" ClickableText.icon
+        |> Control.map List.unzip
 
 
 controlMenuWidth : Control ( String, Menu.Attribute msg )
@@ -386,34 +467,6 @@ controlMenuWidth =
     Control.map
         (\val -> ( "Menu.menuWidth " ++ String.fromInt val, Menu.menuWidth val ))
         (ControlExtra.int 220)
-
-
-controlButtonAttributes : Control (List ( String, Menu.ButtonAttribute ))
-controlButtonAttributes =
-    ControlExtra.list
-        |> CommonControls.icon moduleName Menu.icon
-        |> ControlExtra.optionalBoolListItemDefaultTrue "hasBorder" ( "Menu.hasBorder False", Menu.hasBorder False )
-        |> ControlExtra.optionalListItem "buttonWidth" controlButtonWidth
-        |> ControlExtra.optionalListItem "wrapping" controlWrapping
-
-
-controlButtonWidth : Control ( String, Menu.ButtonAttribute )
-controlButtonWidth =
-    Control.map
-        (\val -> ( "Menu.buttonWidth " ++ String.fromInt val, Menu.buttonWidth val ))
-        (ControlExtra.int 220)
-
-
-controlWrapping : Control ( String, Menu.ButtonAttribute )
-controlWrapping =
-    Control.choice
-        [ ( "WrapAndExpandTitle"
-          , Control.value ( "Menu.wrapping Menu.WrapAndExpandTitle", Menu.wrapping Menu.WrapAndExpandTitle )
-          )
-        , ( "TruncateTitle"
-          , Control.value ( "Menu.wrapping Menu.TruncateTitle", Menu.wrapping Menu.TruncateTitle )
-          )
-        ]
 
 
 {-| -}

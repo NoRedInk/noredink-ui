@@ -5,11 +5,12 @@ module Nri.Ui.ClickableSvg.V2 exposing
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , exactSize, exactWidth, exactHeight
     , disabled
+    , rightIcon
+    , iconForMobile, iconForQuizEngineMobile, iconForNarrowMobile
     , withBorder
-    , primary, secondary, tertiary, danger, dangerSecondary
+    , primary, secondary, tertiary, quaternary, danger, dangerSecondary
     , custom, nriDescription, testId, id
     , css, notMobileCss, mobileCss, quizEngineMobileCss
-    , iconForMobile, iconForQuizEngineMobile, iconForNarrowMobile
     , small, medium, large
     )
 
@@ -45,10 +46,16 @@ module Nri.Ui.ClickableSvg.V2 exposing
 @docs disabled
 
 
+## Icons
+
+@docs rightIcon
+@docs iconForMobile, iconForQuizEngineMobile, iconForNarrowMobile
+
+
 ## Customization
 
 @docs withBorder
-@docs primary, secondary, tertiary, danger, dangerSecondary
+@docs primary, secondary, tertiary, quaternary, danger, dangerSecondary
 
 @docs custom, nriDescription, testId, id
 
@@ -56,7 +63,6 @@ module Nri.Ui.ClickableSvg.V2 exposing
 ### CSS
 
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss
-@docs iconForMobile, iconForQuizEngineMobile, iconForNarrowMobile
 
 
 ### DEPRECATED
@@ -105,20 +111,10 @@ link name icon attributes =
 -- LINKING, CLICKING, and TRACKING BEHAVIOR
 
 
-setClickableAttributes :
-    (ClickableAttributes String msg -> ClickableAttributes String msg)
-    -> Attribute msg
-setClickableAttributes apply =
-    set
-        (\attributes ->
-            { attributes | clickableAttributes = apply attributes.clickableAttributes }
-        )
-
-
 {-| -}
 onClick : msg -> Attribute msg
 onClick msg =
-    setClickableAttributes (ClickableAttributes.onClick msg)
+    set (ClickableAttributes.onClick msg)
 
 
 {-| By default, buttons have type "button". Use this attribute to change the button type to "submit".
@@ -128,20 +124,20 @@ Note: this attribute is not supported by links.
 -}
 submit : Attribute msg
 submit =
-    setClickableAttributes ClickableAttributes.submit
+    set ClickableAttributes.submit
 
 
 {-| Use this attribute when interacting with the button will launch a modal.
 -}
 opensModal : Attribute msg
 opensModal =
-    setClickableAttributes ClickableAttributes.opensModal
+    set ClickableAttributes.opensModal
 
 
 {-| -}
 href : String -> Attribute msg
 href url =
-    setClickableAttributes (ClickableAttributes.href url)
+    set (ClickableAttributes.href url)
 
 
 {-| Use this link for routing within a single page app.
@@ -153,31 +149,31 @@ See <https://github.com/elm-lang/html/issues/110> for details on this implementa
 -}
 linkSpa : String -> Attribute msg
 linkSpa url =
-    setClickableAttributes (ClickableAttributes.linkSpa url)
+    set (ClickableAttributes.linkSpa url)
 
 
 {-| -}
 linkWithMethod : { method : String, url : String } -> Attribute msg
 linkWithMethod config =
-    setClickableAttributes (ClickableAttributes.linkWithMethod config)
+    set (ClickableAttributes.linkWithMethod config)
 
 
 {-| -}
 linkWithTracking : { track : msg, url : String } -> Attribute msg
 linkWithTracking config =
-    setClickableAttributes (ClickableAttributes.linkWithTracking config)
+    set (ClickableAttributes.linkWithTracking config)
 
 
 {-| -}
 linkExternal : String -> Attribute msg
 linkExternal url =
-    setClickableAttributes (ClickableAttributes.linkExternal url)
+    set (ClickableAttributes.linkExternalInternal url)
 
 
 {-| -}
 linkExternalWithTracking : { track : msg, url : String } -> Attribute msg
 linkExternalWithTracking config =
-    setClickableAttributes (ClickableAttributes.linkExternalWithTracking config)
+    set (ClickableAttributes.linkExternalWithTrackingInternal config)
 
 
 
@@ -270,6 +266,7 @@ type Theme
     = Primary
     | Secondary
     | Tertiary
+    | Quaternary
     | Danger
     | DangerSecondary
 
@@ -325,6 +322,17 @@ applyTheme theme =
             }
 
         Tertiary ->
+            { main_ = Colors.navy
+            , mainHovered = Colors.navy
+            , background = Colors.white
+            , backgroundHovered = Colors.frost
+            , includeBorder = True
+            , borderColor = Colors.gray75
+            , borderBottom = Colors.gray75
+            , borderHover = Colors.gray75
+            }
+
+        Quaternary ->
             { main_ = Colors.gray45
             , mainHovered = Colors.azure
             , background = Colors.gray96
@@ -378,6 +386,13 @@ secondary =
 tertiary : Attribute msg
 tertiary =
     set (\attributes -> { attributes | theme = Tertiary })
+
+
+{-| Used to de-emphasize elements when not hovered.
+-}
+quaternary : Attribute msg
+quaternary =
+    set (\attributes -> { attributes | theme = Quaternary })
 
 
 {-| White/transparent icon on a red background.
@@ -474,6 +489,12 @@ quizEngineMobileCss styles =
 
 
 {-| -}
+rightIcon : Svg -> Attribute msg
+rightIcon icon =
+    set (\config -> { config | rightIcon = Just icon })
+
+
+{-| -}
 iconForMobile : Svg -> Attribute msg
 iconForMobile icon =
     set (\config -> { config | iconForMobile = Just icon })
@@ -511,6 +532,7 @@ build label icon =
         , iconForMobile = Nothing
         , iconForQuizEngineMobile = Nothing
         , iconForNarrowMobile = Nothing
+        , rightIcon = Nothing
         , disabled = False
         , size = Small
         , width = Nothing
@@ -533,6 +555,7 @@ type alias ButtonOrLinkAttributes msg =
     , iconForMobile : Maybe Svg
     , iconForQuizEngineMobile : Maybe Svg
     , iconForNarrowMobile : Maybe Svg
+    , rightIcon : Maybe Svg
     , disabled : Bool
     , size : Size
     , width : Maybe Float
@@ -558,10 +581,10 @@ renderButton ((ButtonOrLink config) as button_) =
         ([ Attributes.class "Nri-Ui-Clickable-Svg-V1__button"
          , Attributes.class FocusRing.customClass
          , Attributes.css (buttonOrLinkStyles config theme ++ config.customStyles)
-         , Attributes.disabled config.disabled
          , Aria.label config.label
          ]
             ++ ClickableAttributes.toButtonAttributes config.clickableAttributes
+                { disabled = config.disabled }
             ++ config.customAttributes
         )
         (renderIcons config theme.includeBorder)
@@ -588,15 +611,9 @@ renderLink ((ButtonOrLink config) as link_) =
         ([ Attributes.class ("Nri-Ui-Clickable-Svg-" ++ linkFunctionName)
          , Attributes.class FocusRing.customClass
          , Attributes.css (buttonOrLinkStyles config theme ++ config.customStyles)
-         , Aria.disabled config.disabled
          , Aria.label config.label
          ]
-            ++ (if not config.disabled then
-                    extraAttrs
-
-                else
-                    []
-               )
+            ++ extraAttrs
             ++ config.customAttributes
         )
         (renderIcons config theme.includeBorder)
@@ -613,7 +630,7 @@ renderIcons config includeBorder =
 
         iconWidth =
             if config.hasBorder then
-                size
+                Maybe.withDefault size config.width
                     - bordersAndPadding.leftPadding
                     - bordersAndPadding.rightPadding
                     - bordersAndPadding.leftBorder
@@ -624,7 +641,7 @@ renderIcons config includeBorder =
 
         iconHeight =
             if config.hasBorder then
-                size
+                Maybe.withDefault size config.height
                     - bordersAndPadding.topPadding
                     - bordersAndPadding.bottomPadding
                     - bordersAndPadding.topBorder
@@ -634,12 +651,20 @@ renderIcons config includeBorder =
                 Maybe.withDefault size config.height
 
         iconStyles =
-            [ Css.displayFlex
-            , Css.maxWidth (Css.px iconWidth)
-            , Css.maxHeight (Css.px iconHeight)
-            , Css.height (Css.pct 100)
-            , Css.margin Css.auto
-            ]
+            case config.rightIcon of
+                Just _ ->
+                    [ Css.width (Css.px (iconWidth * 3 / 5 - 1))
+                    , Css.height (Css.px (iconWidth * 3 / 5 - 1))
+                    , Css.marginRight (Css.px 1)
+                    ]
+
+                Nothing ->
+                    [ Css.displayFlex
+                    , Css.maxWidth (Css.px iconWidth)
+                    , Css.maxHeight (Css.px iconHeight)
+                    , Css.height (Css.pct 100)
+                    , Css.margin Css.auto
+                    ]
 
         renderUnless breakpoints =
             Svg.withCss
@@ -649,6 +674,15 @@ renderIcons config includeBorder =
                     ]
                 ]
                 >> Svg.toHtml
+                >> Just
+
+        renderRightIcon =
+            Svg.withCss
+                [ Css.width (Css.px (iconWidth * 2 / 5 - 4))
+                , Css.height (Css.px (iconWidth * 2 / 5 - 4))
+                , Css.marginLeft (Css.px 4)
+                ]
+                >> Svg.toHtml
     in
     case ( config.iconForNarrowMobile, config.iconForQuizEngineMobile, config.iconForMobile ) of
         ( Just iconForNarrowMobile_, Just iconForQuizEngineMobile_, Nothing ) ->
@@ -656,7 +690,9 @@ renderIcons config includeBorder =
             , renderUnless [ MediaQuery.narrowMobile, MediaQuery.notQuizEngineMobile ]
                 iconForQuizEngineMobile_
             , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
+            , Maybe.map renderRightIcon config.rightIcon
             ]
+                |> List.filterMap identity
 
         ( Just iconForNarrowMobile_, Just iconForQuizEngineMobile_, Just iconForMobile_ ) ->
             [ renderUnless [ MediaQuery.mobile ] config.icon
@@ -665,24 +701,32 @@ renderIcons config includeBorder =
             , renderUnless [ MediaQuery.narrowMobile, MediaQuery.notQuizEngineMobile ]
                 iconForQuizEngineMobile_
             , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
+            , Maybe.map renderRightIcon config.rightIcon
             ]
+                |> List.filterMap identity
 
         ( Just iconForNarrowMobile_, Nothing, Just iconForMobile_ ) ->
             [ renderUnless [ MediaQuery.mobile ] config.icon
             , renderUnless [ MediaQuery.narrowMobile, MediaQuery.notMobile ] iconForMobile_
             , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
+            , Maybe.map renderRightIcon config.rightIcon
             ]
+                |> List.filterMap identity
 
         ( Just iconForNarrowMobile_, Nothing, Nothing ) ->
             [ renderUnless [ MediaQuery.narrowMobile ] config.icon
             , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
+            , Maybe.map renderRightIcon config.rightIcon
             ]
+                |> List.filterMap identity
 
         ( Nothing, Just iconForQuizEngineMobile_, Nothing ) ->
             [ renderUnless [ MediaQuery.quizEngineMobile ] config.icon
             , renderUnless [ MediaQuery.notQuizEngineMobile ]
                 iconForQuizEngineMobile_
+            , Maybe.map renderRightIcon config.rightIcon
             ]
+                |> List.filterMap identity
 
         ( Nothing, Just iconForQuizEngineMobile_, Just iconForMobile_ ) ->
             [ renderUnless [ MediaQuery.mobile ] config.icon
@@ -690,18 +734,25 @@ renderIcons config includeBorder =
                 iconForMobile_
             , renderUnless [ MediaQuery.notQuizEngineMobile ]
                 iconForQuizEngineMobile_
+            , Maybe.map renderRightIcon config.rightIcon
             ]
+                |> List.filterMap identity
 
         ( Nothing, Nothing, Just iconForMobile_ ) ->
             [ renderUnless [ MediaQuery.mobile ] config.icon
             , renderUnless [ MediaQuery.notMobile ] iconForMobile_
+            , Maybe.map renderRightIcon config.rightIcon
             ]
+                |> List.filterMap identity
 
         ( Nothing, Nothing, Nothing ) ->
             [ config.icon
                 |> Svg.withCss iconStyles
                 |> Svg.toHtml
+                |> Just
+            , Maybe.map renderRightIcon config.rightIcon
             ]
+                |> List.filterMap identity
 
 
 buttonOrLinkStyles : ButtonOrLinkAttributes msg -> AppliedTheme -> List Style
@@ -769,10 +820,22 @@ buttonOrLinkStyles config { main_, mainHovered, background, backgroundHovered, b
             ]
 
     -- Sizing
-    , Css.display Css.inlineBlock
     , Css.boxSizing Css.borderBox
-    , Css.width (Css.px (Maybe.withDefault (getSize config.size) config.width))
-    , Css.height (Css.px (Maybe.withDefault (getSize config.size) config.height))
+    , Css.batch <|
+        case config.rightIcon of
+            Just _ ->
+                [ Css.display Css.inlineFlex
+                , Css.justifyContent Css.center
+                , Css.alignItems Css.center
+                , Css.minWidth (Css.px (Maybe.withDefault (getSize config.size) config.width))
+                , Css.minHeight (Css.px (Maybe.withDefault (getSize config.size) config.height))
+                ]
+
+            Nothing ->
+                [ Css.display Css.inlineBlock
+                , Css.width (Css.px (Maybe.withDefault (getSize config.size) config.width))
+                , Css.height (Css.px (Maybe.withDefault (getSize config.size) config.height))
+                ]
 
     -- Focus
     , Css.pseudoClass "focus-visible"

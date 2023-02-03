@@ -12,6 +12,8 @@
   <script>
     const app = Elm.Main.init();
 
+    // HIGHLIGHTER
+
     // start listening to events when the user starts dragging/clickingdown
     app.ports.highlighterListen.subscribe(function (id) {
       window.requestAnimationFrame(() => {
@@ -61,6 +63,31 @@
         app.ports.highlighterOnDocumentUp.send(id);
       };
     }
+
+    //  QUESTIONBOX
+
+    app.ports.getAnchoredExampleMeasurements.subscribe(function ({ questionBoxId, containerId, anchorIds }) {
+      const questionBox = document.getElementById(questionBoxId);
+      const container = document.getElementById(containerId);
+      const highlightables = document.getElementsByClassName(
+        "highlighter-highlightable highlighter-highlighted"
+      );
+
+      if (!questionBox || !container || highlightables.length == 0) {
+        console.warn(
+          "Could not find DOM element required for correct scaffolding UI positioning"
+        );
+        return;
+      }
+
+      app.ports.gotAnchoredExampleMeasurements.send({
+        anchors: Array.from(highlightables).map((h) =>
+          h.getBoundingClientRect()
+        ),
+        container: container.getBoundingClientRect(),
+        box: questionBox.getBoundingClientRect(),
+      });
+    });
   </script>
   <script src="bundle.js"></script>
 </body>

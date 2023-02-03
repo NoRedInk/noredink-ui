@@ -4,7 +4,7 @@ import Html.Attributes as Attributes
 import Html.Styled as HtmlStyled
 import Json.Encode as Encode
 import Nri.Ui.ClickableText.V3 as ClickableText
-import Nri.Ui.Menu.V3 as Menu
+import Nri.Ui.Menu.V4 as Menu
 import ProgramTest exposing (ProgramTest, ensureViewHas, ensureViewHasNot)
 import Spec.KeyboardHelpers as KeyboardHelpers
 import Test exposing (..)
@@ -15,7 +15,7 @@ import Test.Html.Selector as Selector exposing (text)
 
 spec : Test
 spec =
-    describe "Nri.Ui.Menu.V3"
+    describe "Nri.Ui.Menu.V4"
         [ test "Opens when mouse enters" <|
             \() ->
                 program [ Menu.opensOnHover True ]
@@ -120,19 +120,19 @@ program attributes =
         , view =
             \model ->
                 HtmlStyled.div []
-                    [ Menu.view attributes
-                        { button = Menu.button [] menuButton
-                        , isOpen = model.isOpen
-                        , entries =
-                            [ Menu.entry "hello-button" <|
-                                \attrs ->
-                                    ClickableText.button menuContent [ ClickableText.custom attrs ]
-                            , Menu.entry "last-button" <|
-                                \attrs ->
-                                    ClickableText.button menuContent [ ClickableText.custom attrs ]
-                            ]
-                        , focusAndToggle = \{ isOpen } -> isOpen
-                        }
+                    [ Menu.view (\{ isOpen } -> isOpen)
+                        ([ Menu.defaultTrigger menuButton []
+                         , Menu.isOpen model.isOpen
+                         ]
+                            ++ attributes
+                        )
+                        [ Menu.entry "hello-button" <|
+                            \attrs ->
+                                ClickableText.button menuContent [ ClickableText.custom attrs ]
+                        , Menu.entry "last-button" <|
+                            \attrs ->
+                                ClickableText.button menuContent [ ClickableText.custom attrs ]
+                        ]
                     ]
                     |> HtmlStyled.toUnstyled
         }
@@ -141,7 +141,7 @@ program attributes =
 
 menuButton : String
 menuButton =
-    "Menu"
+    "Menu toggler"
 
 
 menuContent : String
@@ -151,14 +151,14 @@ menuContent =
 
 menuButtonSelector : List Selector.Selector
 menuButtonSelector =
-    [ nriDescription "Nri-Ui-Menu-V3"
-    , Selector.class "ToggleButton"
+    [ Selector.tag "button"
+    , Selector.containing [ Selector.text menuButton ]
     ]
 
 
 menuInteractiveAreaSelector : List Selector.Selector
 menuInteractiveAreaSelector =
-    [ nriDescription "Nri-Ui-Menu-V3"
+    [ nriDescription "Nri-Ui-Menu-V4"
     , Selector.class "InnerContainer"
     ]
 
@@ -196,9 +196,7 @@ mouseLeave selectors =
 
 clickMenuButton : ProgramTest model msg effect -> ProgramTest model msg effect
 clickMenuButton =
-    ProgramTest.simulateDomEvent
-        (Query.find [ Selector.class "ToggleButton" ])
-        Event.click
+    ProgramTest.clickButton menuButton
 
 
 targetDetails : String -> List ( String, Encode.Value )

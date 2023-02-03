@@ -18,6 +18,7 @@ import InputMethod exposing (InputMethod)
 import Json.Decode as Decode
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.FocusRing.V1 as FocusRing
+import Nri.Ui.Header.V1 as Header
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Page.V3 as Page
 import Nri.Ui.SideNav.V4 as SideNav
@@ -277,10 +278,7 @@ viewExample : Model key -> Example a Examples.Msg -> Html Msg
 viewExample model example =
     Example.view { packageDependencies = model.elliePackageDependencies } example
         |> Html.map (UpdateModuleStates example.name)
-        |> viewLayout model
-            [ Example.extraLinks example
-                |> Html.map (UpdateModuleStates example.name)
-            ]
+        |> viewLayout model [ Example.extraLinks (UpdateModuleStates example.name) example ]
 
 
 notFound : Html Msg
@@ -319,7 +317,7 @@ viewCategory model category =
         )
 
 
-viewLayout : Model key -> List (Html Msg) -> Html Msg -> Html Msg
+viewLayout : Model key -> List (Header.Attribute (Routes.Route Examples.State Examples.Msg) Msg) -> Html Msg -> Html Msg
 viewLayout model headerExtras content =
     Html.div []
         [ Routes.viewHeader model.route headerExtras
@@ -413,7 +411,6 @@ navigation { moduleStates, route, isSideNavOpen, openTooltip } =
         ]
         (SideNav.entry "Usage Guidelines"
             [ SideNav.linkExternal "https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats--BhJHYronm1RGM1hRfnkvhrZMAg-PvOLxeX3oyujYEzdJx5pu"
-            , SideNav.icon UiIcon.openInNewTab
             ]
             :: SideNav.entry "All" [ SideNav.href Routes.All ]
             :: categoryNavLinks

@@ -41,6 +41,15 @@ hint = 'upgrade to V3'
 [forbidden."Nri.Ui.Balloon.V1"]
 hint = 'upgrade to V2'
 
+[forbidden."Nri.Ui.Block.V1"]
+hint = 'upgrade to V4'
+
+[forbidden."Nri.Ui.Block.V2"]
+hint = 'upgrade to V4'
+
+[forbidden."Nri.Ui.Block.V3"]
+hint = 'upgrade to V4'
+
 [forbidden."Nri.Ui.BreadCrumbs.V1"]
 hint = 'upgrade to V2'
 
@@ -64,6 +73,9 @@ hint = 'upgrade to V2'
 [forbidden."Nri.Ui.Heading.V2"]
 hint = 'upgrade to V3'
 
+[forbidden."Nri.Ui.Highlighter.V1"]
+hint = 'upgrade to V2'
+
 [forbidden."Nri.Ui.Icon.V3"]
 hint = 'upgrade to V5'
 usages = ['styleguide-app/../src/Nri/Ui/Modal/V3.elm']
@@ -78,11 +90,18 @@ hint = 'upgrade to V3'
 hint = 'upgrade to V4'
 usages = ['styleguide/../src/Nri/Ui/TextArea/V4.elm']
 
+[forbidden."Nri.Ui.Mark.V1"]
+hint = 'upgrade to V2'
+usages = ['styleguide/../src/Nri/Ui/Block/V1.elm']
+
 [forbidden."Nri.Ui.Menu.V1"]
 hint = 'upgrade to V3'
 
 [forbidden."Nri.Ui.Menu.V2"]
 hint = 'upgrade to V3'
+
+[forbidden."Nri.Ui.Menu.V3"]
+hint = 'upgrade to V4'
 
 [forbidden."Nri.Ui.Message.V1"]
 hint = 'upgrade to V3'
@@ -102,6 +121,13 @@ hint = 'upgrade to V8'
 
 [forbidden."Nri.Ui.PremiumCheckbox.V7"]
 hint = 'upgrade to V8'
+
+[forbidden."Nri.Ui.QuestionBox.V1"]
+hint = 'upgrade to V3'
+
+[forbidden."Nri.Ui.QuestionBox.V2"]
+hint = 'upgrade to V3'
+usages = ['styleguide/../src/Nri/Ui/Block/V3.elm']
 
 [forbidden."Nri.Ui.RadioButton.V1"]
 hint = 'upgrade to V2'

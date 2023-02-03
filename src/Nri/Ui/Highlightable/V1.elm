@@ -1,23 +1,20 @@
 module Nri.Ui.Highlightable.V1 exposing
     ( Highlightable, Type(..), UIState(..), Attribute(..)
     , init, initFragment, initFragments
+    , fromMarkdown
     , splitHighlightableOnWords, splitWords
     , blur, clearHint, hint, hover
     , set, toggle
     , attributeSorter
     )
 
-{-| A Highlightable represents a span of text, typically a word, and its state.
+{-| The next version of Highlightable should remove `groupIndex.`
+
+A Highlightable represents a span of text, typically a word, and its state.
 
 Highlightable is the unit by which text-wrapping happens. Depending on how the
 Highlighter is initialized, it's very possible for a Highlightable to consist of
 just a single whitespace.
-
-A consecutive array of Highlightables sharing the same groupIndex form a fragment,
-which gets highlighted together as a group in response to user action such as
-clicking and dragging. Fragment as a concept only exists in how functions and
-variables are named, and is not expressed as a concrete type. We probably should
-refactor to make it an actual type.
 
 
 # Types
@@ -28,6 +25,7 @@ refactor to make it an actual type.
 # Initializers
 
 @docs init, initFragment, initFragments
+@docs fromMarkdown
 
 
 # Transformations
@@ -51,6 +49,9 @@ refactor to make it an actual type.
 
 -}
 
+import Markdown.Block
+import Markdown.Inline
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Regex exposing (Regex)
 import Sort exposing (Sorter)
@@ -198,6 +199,151 @@ initFragments marked text_ =
         |> List.map Just
         |> List.intersperse Nothing
         |> List.indexedMap spaceOrInit
+
+
+{-| How do we know which elements should be marked, if all we have is a markdown string?
+
+We do some funky parsing to interpret empty anchor tags and tagged spans as highlighted!
+
+    fromMarkdown "for example, [this phrase]() will show as highlighted"
+
+will result in a list of highlightables where "this phrase" is marked with the default marker.
+
+-}
+fromMarkdown : String -> List (Highlightable ())
+fromMarkdown markdownString =
+    let
+        static maybeMark mapStrings c =
+            init Static maybeMark -1 ( [], mapStrings c )
+
+        defaultMark =
+            Tool.buildMarker
+                { highlightColor = Colors.highlightYellow
+                , hoverColor = Colors.highlightYellow
+                , hoverHighlightColor = Colors.highlightYellow
+                , kind = ()
+                , name = Nothing
+                }
+
+        highlightableFromInline : Maybe (Tool.MarkerModel ()) -> (String -> String) -> Markdown.Inline.Inline i -> List (Highlightable ())
+        highlightableFromInline maybeMark mapStrings inline =
+            case inline of
+                Markdown.Inline.Text text ->
+                    [ static maybeMark mapStrings text ]
+
+                Markdown.Inline.HardLineBreak ->
+                    [ static maybeMark mapStrings "\n" ]
+
+                Markdown.Inline.CodeInline text ->
+                    [ static maybeMark mapStrings text ]
+
+                Markdown.Inline.Link "" maybeTitle inlines ->
+                    -- empty links should be interpreted as content that's supposed to be highlighted!
+                    List.concatMap (highlightableFromInline (Just defaultMark) mapStrings) inlines
+
+                Markdown.Inline.Link url maybeTitle inlines ->
+                    let
+                        lastIndex =
+                            List.length inlines - 1
+
+                        addLinkOpening i str =
+                            if i == 0 then
+                                "[" ++ str
+
+                            else
+                                str
+
+                        addLinkClosing i str =
+                            if i == lastIndex then
+                                str ++ "](" ++ url ++ ")"
+
+                            else
+                                str
+                    in
+                    List.indexedMap
+                        (\i ->
+                            highlightableFromInline maybeMark
+                                (mapStrings >> addLinkOpening i >> addLinkClosing i)
+                        )
+                        inlines
+                        |> List.concat
+
+                Markdown.Inline.Image _ _ inlines ->
+                    List.concatMap (highlightableFromInline maybeMark mapStrings) inlines
+
+                Markdown.Inline.HtmlInline _ _ inlines ->
+                    List.concatMap (highlightableFromInline maybeMark mapStrings) inlines
+
+                Markdown.Inline.Emphasis level inlines ->
+                    let
+                        marker =
+                            String.repeat level "*"
+
+                        addMarkers str =
+                            marker ++ str ++ marker
+                    in
+                    List.concatMap
+                        (highlightableFromInline maybeMark (mapStrings >> addMarkers))
+                        inlines
+
+                Markdown.Inline.Custom _ inlines ->
+                    List.concatMap (highlightableFromInline maybeMark mapStrings) inlines
+
+        highlightableFromBlock : Markdown.Block.Block b i -> List (Highlightable ())
+        highlightableFromBlock block =
+            case block of
+                Markdown.Block.BlankLine text ->
+                    [ static Nothing identity text ]
+
+                Markdown.Block.ThematicBreak ->
+                    []
+
+                Markdown.Block.Heading _ _ inlines ->
+                    List.concatMap (highlightableFromInline Nothing identity) inlines
+
+                Markdown.Block.CodeBlock _ text ->
+                    [ static Nothing identity text ]
+
+                Markdown.Block.Paragraph _ inlines ->
+                    List.concatMap (highlightableFromInline Nothing identity) inlines
+
+                Markdown.Block.BlockQuote blocks ->
+                    List.concatMap highlightableFromBlock blocks
+
+                Markdown.Block.List _ listOfBlocks ->
+                    List.concatMap (List.concatMap highlightableFromBlock) listOfBlocks
+
+                Markdown.Block.PlainInlines inlines ->
+                    List.concatMap (highlightableFromInline Nothing identity) inlines
+
+                Markdown.Block.Custom _ blocks ->
+                    List.concatMap highlightableFromBlock blocks
+    in
+    if String.isEmpty markdownString then
+        []
+
+    else
+        Markdown.Block.parse Nothing markdownString
+            |> List.concatMap highlightableFromBlock
+            |> List.foldr
+                -- ensure that adjacent highlights are in a single mark element
+                (\segment ( lastInteractiveHighlight, acc ) ->
+                    ( segment.marked
+                    , case acc of
+                        last :: remainder ->
+                            if segment.marked == last.marked then
+                                { segment | text = segment.text ++ last.text }
+                                    :: remainder
+
+                            else
+                                segment :: acc
+
+                        _ ->
+                            segment :: acc
+                    )
+                )
+                ( Nothing, [] )
+            |> Tuple.second
 
 
 {-| -}

@@ -77,6 +77,7 @@ init =
         |> Control.field "attributes"
             (ControlExtra.list
                 |> CommonControls.icon moduleName ClickableText.icon
+                |> CommonControls.rightIcon moduleName ClickableText.rightIcon
                 |> ControlExtra.optionalBoolListItem "hideIconForMobile"
                     ( "ClickableText.hideIconForMobile", ClickableText.hideIconForMobile )
                 |> ControlExtra.optionalBoolListItem "hideTextForMobile"
@@ -101,6 +102,8 @@ init =
                     ( "ClickableText.submit", ClickableText.submit )
                 |> ControlExtra.optionalBoolListItem "opensModal (button only)"
                     ( "ClickableText.opensModal", ClickableText.opensModal )
+                |> ControlExtra.optionalBoolListItem "disabled"
+                    ( "ClickableText.disabled True", ClickableText.disabled True )
             )
         |> State
 

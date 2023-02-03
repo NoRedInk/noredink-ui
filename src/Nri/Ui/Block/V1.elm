@@ -1,9 +1,13 @@
 module Nri.Ui.Block.V1 exposing
     ( view, Attribute
     , plaintext, content
-    , Content, string, blank
-    , emphasize, label
+    , Content, phrase, blank
+    , string
+    , emphasize, label, labelHeight
     , yellow, cyan, magenta, green, blue, purple, brown
+    , class, id
+    , labelId, labelContentId
+    , getLabelHeights
     )
 
 {-|
@@ -14,25 +18,46 @@ module Nri.Ui.Block.V1 exposing
 ## Content
 
 @docs plaintext, content
-@docs Content, string, blank
+@docs Content, phrase, blank
+
+
+### Deprecated
+
+@docs string
 
 
 ## Content customization
 
-@docs emphasize, label
+@docs emphasize, label, labelHeight
 
 
 ### Visual customization
 
 @docs yellow, cyan, magenta, green, blue, purple, brown
 
+
+### General attributes
+
+@docs class, id
+
+
+## Accessors
+
+You will need these helpers if you want to prevent label overlaps. (Which is to say -- anytime you have labels!)
+
+@docs labelId, labelContentId
+@docs getLabelHeights
+
 -}
 
 import Accessibility.Styled exposing (..)
+import Browser.Dom as Dom
 import Css exposing (Color)
-import Html.Styled.Attributes exposing (css)
+import Dict exposing (Dict)
+import Html.Styled.Attributes as Attributes exposing (css)
+import List.Extra
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
 import Nri.Ui.Mark.V1 as Mark exposing (Mark)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 
@@ -57,7 +82,7 @@ view attributes =
 -}
 plaintext : String -> Attribute
 plaintext content_ =
-    Attribute <| \config -> { config | content = [ String_ content_ ] }
+    Attribute <| \config -> { config | content = parseString content_ }
 
 
 {-| Use `content` for more complex block views, for instance when a blank appears within an emphasis block. Prefer to use `plaintext` when possible for better readability.
@@ -86,6 +111,102 @@ label label_ =
     Attribute <| \config -> { config | label = Just label_ }
 
 
+{-| Use `getLabelHeights` to calculate what these values should be.
+-}
+labelHeight : Maybe { totalHeight : Float, arrowHeight : Float } -> Attribute
+labelHeight offset =
+    Attribute <| \config -> { config | labelHeight = offset }
+
+
+{-| -}
+labelId : String -> String
+labelId labelId_ =
+    labelId_ ++ "-label"
+
+
+{-| -}
+labelContentId : String -> String
+labelContentId labelId_ =
+    labelId_ ++ "-label-content"
+
+
+{-|
+
+    Pass in a list of the Block ids that you care about (use `Block.id` to attach these ids).
+
+    - First, we add ids to block with labels with `Block.id`.
+    - Say we added `Block.id "example-id"`, then we will use `Browser.Dom.getElement (Block.labelId "example-id")` and `Browser.Dom.getElement (Block.labelContentId "example-id")` to construct a record in the shape { label : Dom.Element, labelContent : Dom.Element }. We store this record in a dictionary keyed by ids (e.g., "example-id") with measurements for all other labels.
+    - Pass a list of all the block ids and the dictionary of measurements to `getLabelHeights`. `getLabelHeights` will return a dictionary of values (keyed by ids) that we will then pass directly to `labelHeight` for positioning.
+
+-}
+getLabelHeights :
+    List String
+    -> Dict String { label : Dom.Element, labelContent : Dom.Element }
+    -> Dict String { totalHeight : Float, arrowHeight : Float }
+getLabelHeights ids labelMeasurementsById =
+    let
+        startingArrowHeight =
+            8
+    in
+    ids
+        |> List.filterMap
+            (\idString ->
+                case Dict.get idString labelMeasurementsById of
+                    Just measurement ->
+                        Just ( idString, measurement )
+
+                    Nothing ->
+                        Nothing
+            )
+        |> splitByOverlaps
+        |> List.concatMap
+            (\row ->
+                row
+                    -- Put the widest elements higher visually to avoid overlaps
+                    |> List.sortBy (Tuple.second >> .labelContent >> .element >> .width)
+                    |> List.foldl
+                        (\( idString, e ) ( height, acc ) ->
+                            ( height + e.labelContent.element.height
+                            , ( idString
+                              , { totalHeight = height + e.labelContent.element.height + 8, arrowHeight = height }
+                              )
+                                :: acc
+                            )
+                        )
+                        ( startingArrowHeight, [] )
+                    |> Tuple.second
+            )
+        |> Dict.fromList
+
+
+{-| Group the elements whose bottom edges are at the same height. This ensures that we only offset labels against other labels in the same visual line of content.
+
+Then, for elements in the same row, group elements with horizontal overlaps .
+
+-}
+splitByOverlaps : List ( id, { a | label : Dom.Element } ) -> List (List ( id, { a | label : Dom.Element } ))
+splitByOverlaps =
+    -- consider the elements from top to bottom
+    groupWithSort (\( _, a ) -> a.label.element.y + a.label.element.height)
+        (\( _, a ) ( _, b ) ->
+            (a.label.element.y + a.label.element.height) == (b.label.element.y + b.label.element.height)
+        )
+        >> List.concatMap
+            -- consider the elements from left to right
+            (groupWithSort (\( _, a ) -> a.label.element.x)
+                (\( _, a ) ( _, b ) ->
+                    (a.label.element.x + a.label.element.width) >= b.label.element.x
+                )
+            )
+
+
+groupWithSort : (a -> comparable) -> (a -> a -> Bool) -> List a -> List (List a)
+groupWithSort sortBy groupBy =
+    List.sortBy sortBy
+        >> List.Extra.groupWhile groupBy
+        >> List.map (\( first, rem ) -> first :: rem)
+
+
 
 -- Content
 
@@ -96,26 +217,41 @@ type Content
     | Blank
 
 
-renderContent : Content -> List Css.Style -> Html msg
-renderContent content_ markStyles =
+parseString : String -> List Content
+parseString =
+    String.split " "
+        >> List.intersperse " "
+        >> List.map String_
+
+
+renderContent : { config | class : Maybe String, id : Maybe String } -> Content -> List Css.Style -> Html msg
+renderContent config content_ markStyles =
     span
         [ css (Css.whiteSpace Css.preWrap :: markStyles)
         , nriDescription "block-segment-container"
+        , AttributesExtra.maybe Attributes.class config.class
+        , AttributesExtra.maybe Attributes.id config.id
         ]
-    <|
-        case content_ of
+        (case content_ of
             String_ str ->
                 [ text str ]
 
             Blank ->
-                [ viewBlank ]
+                [ viewBlank [] { class = Nothing, id = Nothing } ]
+        )
 
 
-{-| You will only need to use this helper if you're also using `content` to construct a more complex Block. Maybe you want `plaintext` instead?
+{-| DEPRECATED -- prefer `phrase`.
 -}
 string : String -> Content
 string =
     String_
+
+
+{-| -}
+phrase : String -> List Content
+phrase =
+    parseString
 
 
 {-| You will only need to use this helper if you're also using `content` to construct a more complex Block. For a less complex blank Block, don't include content or plaintext in the list of attributes.
@@ -202,23 +338,21 @@ toMark label_ palette =
                 borderWidth =
                     Css.px 1
 
-                borderStyles =
-                    [ Css.borderStyle Css.dashed
-                    , Css.borderColor borderColor
-                    ]
+                borderStyle =
+                    Css.dashed
             in
             Just
                 { name = label_
                 , startStyles =
-                    [ Css.paddingLeft (Css.px 2)
-                    , Css.batch borderStyles
-                    , Css.borderWidth4 borderWidth Css.zero borderWidth borderWidth
+                    [ Css.borderLeft3 borderWidth borderStyle borderColor
+                    , Css.paddingLeft (Css.px 2)
                     ]
                 , styles =
-                    [ Css.padding2 (Css.px 4) Css.zero
+                    [ Css.paddingTop topBottomSpace
+                    , Css.paddingBottom topBottomSpace
                     , Css.backgroundColor backgroundColor
-                    , Css.batch borderStyles
-                    , Css.borderWidth2 borderWidth Css.zero
+                    , Css.borderTop3 borderWidth borderStyle borderColor
+                    , Css.borderBottom3 borderWidth borderStyle borderColor
                     , MediaQuery.highContrastMode
                         [ Css.property "background-color" "Mark"
                         , Css.property "color" "MarkText"
@@ -226,9 +360,8 @@ toMark label_ palette =
                         ]
                     ]
                 , endStyles =
-                    [ Css.paddingRight (Css.px 2)
-                    , Css.batch borderStyles
-                    , Css.borderWidth4 borderWidth borderWidth borderWidth Css.zero
+                    [ Css.borderRight3 borderWidth borderStyle borderColor
+                    , Css.paddingRight (Css.px 2)
                     ]
                 }
 
@@ -242,6 +375,11 @@ toMark label_ palette =
 
         ( Nothing, Nothing ) ->
             Nothing
+
+
+topBottomSpace : Css.Px
+topBottomSpace =
+    Css.px 4
 
 
 {-| -}
@@ -286,6 +424,18 @@ brown =
     Attribute (\config -> { config | theme = Just Brown })
 
 
+{-| -}
+class : String -> Attribute
+class class_ =
+    Attribute (\config -> { config | class = Just class_ })
+
+
+{-| -}
+id : String -> Attribute
+id id_ =
+    Attribute (\config -> { config | id = Just id_ })
+
+
 
 -- Internals
 
@@ -299,14 +449,22 @@ defaultConfig : Config
 defaultConfig =
     { content = []
     , label = Nothing
+    , labelId = Nothing
+    , labelHeight = Nothing
     , theme = Nothing
+    , class = Nothing
+    , id = Nothing
     }
 
 
 type alias Config =
     { content : List Content
     , label : Maybe String
+    , labelId : Maybe String
+    , labelHeight : Maybe { totalHeight : Float, arrowHeight : Float }
     , theme : Maybe Theme
+    , class : Maybe String
+    , id : Maybe String
     }
 
 
@@ -316,6 +474,9 @@ render config =
         maybePalette =
             Maybe.map themeToPalette config.theme
 
+        palette =
+            Maybe.withDefault defaultPalette maybePalette
+
         maybeMark =
             toMark config.label maybePalette
     in
@@ -323,27 +484,38 @@ render config =
         [] ->
             case maybeMark of
                 Just mark ->
-                    viewMark (Maybe.withDefault defaultPalette maybePalette)
-                        ( [ Blank ], Just mark )
+                    Mark.viewWithOffsetBalloonTags
+                        { renderSegment = renderContent config
+                        , backgroundColor = palette.backgroundColor
+                        , maybeMarker = Just mark
+                        , labelHeight = config.labelHeight
+                        , labelId = Maybe.map labelId config.id
+                        , labelContentId = Maybe.map labelContentId config.id
+                        }
+                        [ Blank ]
 
                 Nothing ->
-                    [ viewBlank ]
+                    [ viewBlank
+                        [ Css.paddingTop topBottomSpace
+                        , Css.paddingBottom topBottomSpace
+                        ]
+                        config
+                    ]
 
         _ ->
-            viewMark (Maybe.withDefault defaultPalette maybePalette)
-                ( config.content, maybeMark )
+            Mark.viewWithOffsetBalloonTags
+                { renderSegment = renderContent config
+                , backgroundColor = palette.backgroundColor
+                , maybeMarker = maybeMark
+                , labelHeight = config.labelHeight
+                , labelId = Maybe.map labelId config.id
+                , labelContentId = Maybe.map labelContentId config.id
+                }
+                config.content
 
 
-viewMark : Palette -> ( List Content, Maybe Mark ) -> List (Html msg)
-viewMark palette ( content_, mark ) =
-    Mark.viewWithBalloonTags renderContent
-        palette.backgroundColor
-        mark
-        content_
-
-
-viewBlank : Html msg
-viewBlank =
+viewBlank : List Css.Style -> { config | class : Maybe String, id : Maybe String } -> Html msg
+viewBlank styles config =
     span
         [ css
             [ Css.border3 (Css.px 2) Css.dashed Colors.navy
@@ -355,7 +527,11 @@ viewBlank =
             , Css.minWidth (Css.px 80)
             , Css.display Css.inlineBlock
             , Css.borderRadius (Css.px 4)
+            , Css.lineHeight (Css.num 1)
+            , Css.batch styles
             ]
+        , AttributesExtra.maybe Attributes.class config.class
+        , AttributesExtra.maybe Attributes.id config.id
         ]
         [ span
             [ css

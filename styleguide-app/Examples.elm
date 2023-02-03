@@ -9,13 +9,13 @@ import Examples.Block as Block
 import Examples.BreadCrumbs as BreadCrumbs
 import Examples.Button as Button
 import Examples.Carousel as Carousel
+import Examples.CharacterIcon as CharacterIcon
 import Examples.Checkbox as Checkbox
 import Examples.ClickableSvg as ClickableSvg
 import Examples.ClickableText as ClickableText
 import Examples.Colors as Colors
 import Examples.Confetti as Confetti
 import Examples.Container as Container
-import Examples.DisclosureIndicator as DisclosureIndicator
 import Examples.Divider as Divider
 import Examples.Fonts as Fonts
 import Examples.Header as Header
@@ -28,9 +28,11 @@ import Examples.Menu as Menu
 import Examples.Message as Message
 import Examples.Modal as Modal
 import Examples.Page as Page
+import Examples.Pagination as Pagination
 import Examples.Panel as Panel
 import Examples.Pennant as Pennant
 import Examples.PremiumCheckbox as PremiumCheckbox
+import Examples.QuestionBox as QuestionBox
 import Examples.RadioButton as RadioButton
 import Examples.RingGauge as RingGauge
 import Examples.SegmentedControl as SegmentedControl
@@ -204,6 +206,25 @@ all =
                     _ ->
                         Nothing
             )
+    , CharacterIcon.example
+        |> Example.wrapMsg CharacterIconMsg
+            (\msg ->
+                case msg of
+                    CharacterIconMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState CharacterIconState
+            (\msg ->
+                case msg of
+                    CharacterIconState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , Checkbox.example
         |> Example.wrapMsg CheckboxMsg
             (\msg ->
@@ -313,25 +334,6 @@ all =
             (\msg ->
                 case msg of
                     ContainerState childState ->
-                        Just childState
-
-                    _ ->
-                        Nothing
-            )
-    , DisclosureIndicator.example
-        |> Example.wrapMsg DisclosureIndicatorMsg
-            (\msg ->
-                case msg of
-                    DisclosureIndicatorMsg childMsg ->
-                        Just childMsg
-
-                    _ ->
-                        Nothing
-            )
-        |> Example.wrapState DisclosureIndicatorState
-            (\msg ->
-                case msg of
-                    DisclosureIndicatorState childState ->
                         Just childState
 
                     _ ->
@@ -565,6 +567,25 @@ all =
                     _ ->
                         Nothing
             )
+    , Pagination.example
+        |> Example.wrapMsg PaginationMsg
+            (\msg ->
+                case msg of
+                    PaginationMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState PaginationState
+            (\msg ->
+                case msg of
+                    PaginationState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , Panel.example
         |> Example.wrapMsg PanelMsg
             (\msg ->
@@ -617,6 +638,25 @@ all =
             (\msg ->
                 case msg of
                     PremiumCheckboxState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , QuestionBox.example
+        |> Example.wrapMsg QuestionBoxMsg
+            (\msg ->
+                case msg of
+                    QuestionBoxMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState QuestionBoxState
+            (\msg ->
+                case msg of
+                    QuestionBoxState childState ->
                         Just childState
 
                     _ ->
@@ -957,13 +997,13 @@ type State
     | BreadCrumbsState BreadCrumbs.State
     | ButtonState Button.State
     | CarouselState Carousel.State
+    | CharacterIconState CharacterIcon.State
     | CheckboxState Checkbox.State
     | ClickableSvgState ClickableSvg.State
     | ClickableTextState ClickableText.State
     | ColorsState Colors.State
     | ConfettiState Confetti.State
     | ContainerState Container.State
-    | DisclosureIndicatorState DisclosureIndicator.State
     | DividerState Divider.State
     | FontsState Fonts.State
     | HeaderState Header.State
@@ -976,9 +1016,11 @@ type State
     | MessageState Message.State
     | ModalState Modal.State
     | PageState Page.State
+    | PaginationState Pagination.State
     | PanelState Panel.State
     | PennantState Pennant.State
     | PremiumCheckboxState PremiumCheckbox.State
+    | QuestionBoxState QuestionBox.State
     | RadioButtonState RadioButton.State
     | RingGaugeState RingGauge.State
     | SegmentedControlState SegmentedControl.State
@@ -1007,13 +1049,13 @@ type Msg
     | BreadCrumbsMsg BreadCrumbs.Msg
     | ButtonMsg Button.Msg
     | CarouselMsg Carousel.Msg
+    | CharacterIconMsg CharacterIcon.Msg
     | CheckboxMsg Checkbox.Msg
     | ClickableSvgMsg ClickableSvg.Msg
     | ClickableTextMsg ClickableText.Msg
     | ColorsMsg Colors.Msg
     | ConfettiMsg Confetti.Msg
     | ContainerMsg Container.Msg
-    | DisclosureIndicatorMsg DisclosureIndicator.Msg
     | DividerMsg Divider.Msg
     | FontsMsg Fonts.Msg
     | HeaderMsg Header.Msg
@@ -1026,9 +1068,11 @@ type Msg
     | MessageMsg Message.Msg
     | ModalMsg Modal.Msg
     | PageMsg Page.Msg
+    | PaginationMsg Pagination.Msg
     | PanelMsg Panel.Msg
     | PennantMsg Pennant.Msg
     | PremiumCheckboxMsg PremiumCheckbox.Msg
+    | QuestionBoxMsg QuestionBox.Msg
     | RadioButtonMsg RadioButton.Msg
     | RingGaugeMsg RingGauge.Msg
     | SegmentedControlMsg SegmentedControl.Msg

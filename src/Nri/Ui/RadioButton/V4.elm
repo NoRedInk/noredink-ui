@@ -403,8 +403,8 @@ view { label, name, value, valueToString, selectedValue } attributes =
                         text ""
                     ]
                 ]
-             , InputErrorAndGuidanceInternal.view idValue (Css.marginTop Css.zero) config
              ]
+                ++ InputErrorAndGuidanceInternal.view idValue (Css.marginTop Css.zero) config
                 ++ (if isChecked then
                         disclosedElements
 
@@ -437,7 +437,7 @@ viewLockedButton { idValue, label } config =
             Nothing ->
                 Extra.none
         ]
-        [ Html.div
+        ([ Html.div
             [ class "Nri-RadioButton-LockedPremiumButton"
             , css
                 [ outline Css.none
@@ -482,8 +482,9 @@ viewLockedButton { idValue, label } config =
                 , premiumPennant
                 ]
             ]
-        , InputErrorAndGuidanceInternal.view idValue (Css.marginTop Css.zero) config
-        ]
+         ]
+            ++ InputErrorAndGuidanceInternal.view idValue (Css.marginTop Css.zero) config
+        )
 
 
 premiumPennant : Html msg

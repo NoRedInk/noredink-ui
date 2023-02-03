@@ -5,9 +5,10 @@ module Nri.Ui.ClickableText.V3 exposing
     , small, medium, large, modal
     , onClick, submit, opensModal
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
-    , icon
-    , custom, nriDescription, testId, id
+    , disabled
+    , icon, rightIcon
     , hideIconForMobile, hideIconFor
+    , custom, nriDescription, testId, id
     , hideTextForMobile, hideTextFor
     , css, notMobileCss, mobileCss, quizEngineMobileCss
     )
@@ -30,6 +31,7 @@ module Nri.Ui.ClickableText.V3 exposing
   - adds `hideIconForMobile` and `hideIconAt`
   - adds `hideTextForMobile` and `hideTextAt`
   - adds `submit` and `opensModal`
+  - adds `disabled`
 
 
 # Changes from V2
@@ -72,17 +74,22 @@ HTML `<a>` elements and are created here with `*Link` functions.
 
 @docs onClick, submit, opensModal
 @docs href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
+@docs disabled
+
+
+## Icons
+
+@docs icon, rightIcon
+@docs hideIconForMobile, hideIconFor
 
 
 ## Customization
 
-@docs icon
 @docs custom, nriDescription, testId, id
 
 
 ### CSS
 
-@docs hideIconForMobile, hideIconFor
 @docs hideTextForMobile, hideTextFor
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss
 
@@ -152,6 +159,12 @@ icon icon_ =
     set (\attributes -> { attributes | icon = Just icon_ })
 
 
+{-| -}
+rightIcon : Svg -> Attribute msg
+rightIcon icon_ =
+    set (\attributes -> { attributes | rightIcon = Just icon_ })
+
+
 {-| Use this helper to add custom attributes.
 
 Do NOT use this helper to add css styles, as they may not be applied the way
@@ -187,24 +200,28 @@ id id_ =
     custom [ Attributes.id id_ ]
 
 
-{-| -}
+{-| Hide the left-side icon for the mobile breakpoint.
+-}
 hideIconForMobile : Attribute msg
 hideIconForMobile =
     hideIconFor MediaQuery.mobile
 
 
-{-| -}
+{-| Hide the left-side icon for an arbitrary media query.
+-}
 hideIconFor : MediaQuery -> Attribute msg
 hideIconFor mediaQuery =
-    css
-        [ Css.Media.withMedia [ mediaQuery ]
-            [ Css.Global.descendants
-                [ Css.Global.selector "[role=img]"
-                    [ Css.display Css.none
-                    ]
-                ]
-            ]
-        ]
+    set
+        (\config ->
+            { config
+                | iconStyles =
+                    List.append config.iconStyles
+                        [ Css.Media.withMedia [ mediaQuery ]
+                            [ Css.display Css.none
+                            ]
+                        ]
+            }
+        )
 
 
 {-| -}
@@ -275,20 +292,10 @@ quizEngineMobileCss styles =
 -- LINKING, CLICKING, and TRACKING BEHAVIOR
 
 
-setClickableAttributes :
-    (ClickableAttributes String msg -> ClickableAttributes String msg)
-    -> Attribute msg
-setClickableAttributes apply =
-    set
-        (\attributes ->
-            { attributes | clickableAttributes = apply attributes.clickableAttributes }
-        )
-
-
 {-| -}
 onClick : msg -> Attribute msg
 onClick msg =
-    setClickableAttributes (ClickableAttributes.onClick msg)
+    set (ClickableAttributes.onClick msg)
 
 
 {-| By default, buttons have type "button". Use this attribute to change the button type to "submit".
@@ -298,20 +305,20 @@ Note: this attribute is not supported by links.
 -}
 submit : Attribute msg
 submit =
-    setClickableAttributes ClickableAttributes.submit
+    set ClickableAttributes.submit
 
 
 {-| Use this attribute when interacting with the button will launch a modal.
 -}
 opensModal : Attribute msg
 opensModal =
-    setClickableAttributes ClickableAttributes.opensModal
+    set ClickableAttributes.opensModal
 
 
 {-| -}
 href : String -> Attribute msg
 href url =
-    setClickableAttributes (ClickableAttributes.href url)
+    set (ClickableAttributes.href url)
 
 
 {-| Use this link for routing within a single page app.
@@ -323,31 +330,50 @@ See <https://github.com/elm-lang/html/issues/110> for details on this implementa
 -}
 linkSpa : String -> Attribute msg
 linkSpa url =
-    setClickableAttributes (ClickableAttributes.linkSpa url)
+    set (ClickableAttributes.linkSpa url)
 
 
 {-| -}
 linkWithMethod : { method : String, url : String } -> Attribute msg
 linkWithMethod config =
-    setClickableAttributes (ClickableAttributes.linkWithMethod config)
+    set (ClickableAttributes.linkWithMethod config)
 
 
 {-| -}
 linkWithTracking : { track : msg, url : String } -> Attribute msg
 linkWithTracking config =
-    setClickableAttributes (ClickableAttributes.linkWithTracking config)
+    set (ClickableAttributes.linkWithTracking config)
 
 
 {-| -}
 linkExternal : String -> Attribute msg
 linkExternal url =
-    setClickableAttributes (ClickableAttributes.linkExternal url)
+    set (ClickableAttributes.linkExternal url)
 
 
 {-| -}
 linkExternalWithTracking : { track : msg, url : String } -> Attribute msg
 linkExternalWithTracking config =
-    setClickableAttributes (ClickableAttributes.linkExternalWithTracking config)
+    set (ClickableAttributes.linkExternalWithTracking config)
+
+
+{-| Shows inactive styling.
+
+If a button, this attribute will disable it as you'd expect.
+
+If a link, this attribute will follow the pattern laid out in [Scott O'Hara's disabled links](https://www.scottohara.me/blog/2021/05/28/disabled-links.html) article,
+and essentially make the anchor a disabled placeholder.
+
+_Caveat!_
+
+The styleguide example will NOT work correctly because of <https://github.com/elm/browser/issues/34>, which describes a problem where "a tags without href generate a navigation event".
+
+In most cases, if you're not using Browser.application, disabled links should work just fine.
+
+-}
+disabled : Bool -> Attribute msg
+disabled value =
+    set (\attributes -> { attributes | disabled = value })
 
 
 {-| Creates a `<button>` element
@@ -364,8 +390,9 @@ button label_ attributes =
     in
     Nri.Ui.styled Html.button
         (dataDescriptor "button")
-        (clickableTextStyles ++ config.customStyles)
+        (clickableTextStyles config.disabled ++ config.customStyles)
         (ClickableAttributes.toButtonAttributes config.clickableAttributes
+            { disabled = config.disabled }
             ++ config.customAttributes
         )
         [ viewContent config ]
@@ -386,78 +413,117 @@ link label_ attributes =
         ( name, clickableAttributes ) =
             ClickableAttributes.toLinkAttributes
                 { routeToString = identity
-                , isDisabled = False
+                , isDisabled = config.disabled
                 }
                 config.clickableAttributes
     in
     Nri.Ui.styled Html.a
         (dataDescriptor name)
-        (clickableTextStyles ++ config.customStyles)
+        (clickableTextStyles config.disabled ++ config.customStyles)
         (clickableAttributes ++ config.customAttributes)
         [ viewContent config ]
 
 
-viewContent : { a | label : String, size : Size, icon : Maybe Svg } -> Html msg
+viewContent :
+    { a
+        | label : String
+        , size : Size
+        , icon : Maybe Svg
+        , rightIcon : Maybe Svg
+        , iconStyles : List Style
+    }
+    -> Html msg
 viewContent config =
     let
         fontSize =
             sizeToPx config.size
-    in
-    span [ Attributes.css [ Css.fontSize fontSize ] ]
-        (case config.icon of
-            Just icon_ ->
-                [ div
-                    [ Attributes.css
-                        [ Css.displayFlex
-                        , Css.alignItems Css.center
-                        , Css.property "line-height" "normal"
-                        ]
-                    ]
-                    [ icon_
-                        |> Svg.withWidth fontSize
-                        |> Svg.withHeight fontSize
-                        |> Svg.withCss
-                            [ case config.size of
-                                Small ->
-                                    Css.marginRight (Css.px 3)
 
-                                Medium ->
-                                    Css.marginRight (Css.px 3)
+        viewIcon styles icon_ =
+            icon_
+                |> Svg.withWidth fontSize
+                |> Svg.withHeight fontSize
+                |> Svg.withCss styles
+                |> Svg.toHtml
 
-                                Large ->
-                                    Css.marginRight (Css.px 4)
-                            ]
-                        |> Svg.toHtml
-                    , span [ ExtraAttributes.nriDescription "clickable-text-label" ] [ text config.label ]
+        iconSize =
+            case config.size of
+                Small ->
+                    Css.px 3
+
+                Medium ->
+                    Css.px 3
+
+                Large ->
+                    Css.px 4
+
+        iconAndTextContainer =
+            span
+                [ Attributes.css
+                    [ Css.display Css.inlineFlex
+                    , Css.alignItems Css.center
+                    , Css.property "line-height" "normal"
+                    , Css.fontSize fontSize
                     ]
                 ]
+                >> List.singleton
+    in
+    span [ Attributes.css [ Css.fontSize fontSize ] ]
+        (case ( config.icon, config.rightIcon ) of
+            ( Just leftIcon, Just rightIcon_ ) ->
+                iconAndTextContainer
+                    [ viewIcon (Css.marginRight iconSize :: config.iconStyles) leftIcon
+                    , span [ ExtraAttributes.nriDescription "clickable-text-label" ] [ text config.label ]
+                    , viewIcon [ Css.marginLeft iconSize ] rightIcon_
+                    ]
 
-            Nothing ->
+            ( Just leftIcon, Nothing ) ->
+                iconAndTextContainer
+                    [ viewIcon (Css.marginRight iconSize :: config.iconStyles) leftIcon
+                    , span [ ExtraAttributes.nriDescription "clickable-text-label" ] [ text config.label ]
+                    ]
+
+            ( Nothing, Just rightIcon_ ) ->
+                iconAndTextContainer
+                    [ span [ ExtraAttributes.nriDescription "clickable-text-label" ] [ text config.label ]
+                    , viewIcon [ Css.marginLeft iconSize ] rightIcon_
+                    ]
+
+            ( Nothing, Nothing ) ->
                 [ text config.label ]
         )
 
 
-clickableTextStyles : List Css.Style
-clickableTextStyles =
-    [ Css.cursor Css.pointer
-    , Nri.Ui.Fonts.V1.baseFont
-    , Css.backgroundImage Css.none
-    , Css.textShadow Css.none
-    , Css.boxShadow Css.none
-    , Css.border Css.zero
-    , Css.disabled [ Css.cursor Css.notAllowed ]
-    , Css.color Colors.azure
-    , Css.hover [ Css.color Colors.azureDark ]
-    , Css.backgroundColor Css.transparent
-    , Css.fontWeight (Css.int 600)
-    , Css.textAlign Css.left
-    , Css.borderStyle Css.none
-    , Css.textDecoration Css.none
-    , Css.padding Css.zero
-    , Css.display Css.inlineBlock
-    , Css.verticalAlign Css.textBottom
-    , Css.margin Css.zero -- Get rid of default margin Webkit adds to buttons
-    ]
+clickableTextStyles : Bool -> List Css.Style
+clickableTextStyles isDisabled =
+    let
+        baseStyles =
+            [ Nri.Ui.Fonts.V1.baseFont
+            , Css.backgroundImage Css.none
+            , Css.textShadow Css.none
+            , Css.boxShadow Css.none
+            , Css.border Css.zero
+            , Css.backgroundColor Css.transparent
+            , Css.fontWeight (Css.int 600)
+            , Css.textAlign Css.left
+            , Css.borderStyle Css.none |> Css.important
+            , Css.textDecoration Css.none
+            , Css.padding Css.zero
+            , Css.display Css.inlineBlock
+            , Css.verticalAlign Css.textBottom
+            , Css.margin Css.zero -- Get rid of default margin Webkit adds to buttons
+            ]
+    in
+    if isDisabled then
+        Css.cursor Css.notAllowed
+            :: Css.color Colors.gray45
+            :: Css.visited [ Css.important (Css.color Colors.gray45) ]
+            :: baseStyles
+
+    else
+        Css.cursor Css.pointer
+            :: Css.color Colors.azure
+            :: Css.hover [ Css.color Colors.azureDark ]
+            :: baseStyles
 
 
 sizeToPx : Size -> Css.Px
@@ -487,8 +553,11 @@ type alias ClickableTextAttributes msg =
     , label : String
     , size : Size
     , icon : Maybe Svg
+    , iconStyles : List Style
+    , rightIcon : Maybe Svg
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
+    , disabled : Bool
     }
 
 
@@ -498,8 +567,11 @@ defaults =
     , size = Medium
     , label = ""
     , icon = Nothing
+    , iconStyles = []
+    , rightIcon = Nothing
     , customAttributes = [ Attributes.class FocusRing.customClass ]
     , customStyles = [ Css.pseudoClass "focus-visible" (Css.borderRadius (Css.px 4) :: FocusRing.tightStyles) ]
+    , disabled = False
     }
 
 

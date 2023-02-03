@@ -3,6 +3,7 @@ module InputErrorAndGuidanceInternal exposing
     , Guidance, noGuidance, setGuidance
     , getIsInError, getErrorMessage
     , describedBy, view, smallMargin
+    , guidanceId, errorId
     )
 
 {-|
@@ -11,6 +12,7 @@ module InputErrorAndGuidanceInternal exposing
 @docs Guidance, noGuidance, setGuidance
 @docs getIsInError, getErrorMessage
 @docs describedBy, view, smallMargin
+@docs guidanceId, errorId
 
 -}
 
@@ -110,49 +112,88 @@ getErrorMessage error =
 
 describedBy : String -> { config | guidance : Guidance, error : ErrorState } -> Html.Attribute msg
 describedBy idValue config =
-    case ( getErrorMessage config.error, config.guidance ) of
-        ( Just _, _ ) ->
-            Aria.describedBy [ errorId idValue ]
-
-        ( _, Just _ ) ->
-            Aria.describedBy [ guidanceId idValue ]
-
-        _ ->
+    let
+        relevantIds =
+            apply
+                { ifError = \_ -> errorId idValue
+                , ifGuidance = \_ -> guidanceId idValue
+                }
+                config
+    in
+    case relevantIds of
+        [] ->
             Nri.Ui.Html.Attributes.V2.none
 
-
-view : String -> Css.Style -> { config | guidance : Guidance, error : ErrorState } -> Html msg
-view idValue marginTop config =
-    case ( getErrorMessage config.error, config.guidance ) of
-        ( Just m, _ ) ->
-            Message.view
-                [ Message.tiny
-                , Message.error
-                , Message.plaintext m
-                , Message.alertRole
-                , Message.id (errorId idValue)
-                , Message.custom [ Live.livePolite ]
-                , Message.css
-                    [ Css.important (Css.paddingTop Css.zero)
-                    , Css.important (Css.paddingBottom Css.zero)
-                    , marginTop
-                    ]
-                ]
-
-        ( _, Just guidanceMessage ) ->
-            Text.caption
-                [ Text.id (guidanceId idValue)
-                , Text.plaintext guidanceMessage
-                , Text.css
-                    [ Css.important (Css.paddingTop Css.zero)
-                    , Css.important (Css.paddingBottom Css.zero)
-                    , Css.important marginTop
-                    , Css.lineHeight (Css.int 1)
-                    ]
-                ]
-
         _ ->
-            Html.text ""
+            Aria.describedBy relevantIds
+
+
+view : String -> Css.Style -> { config | guidance : Guidance, error : ErrorState } -> List (Html msg)
+view idValue marginTop =
+    apply
+        { ifError = renderErrorMessage idValue marginTop
+        , ifGuidance = renderGuidance idValue marginTop
+        }
+
+
+apply :
+    { ifError : String -> a, ifGuidance : String -> a }
+    -> { config | guidance : Guidance, error : ErrorState }
+    -> List a
+apply { ifError, ifGuidance } config =
+    let
+        maybeError =
+            getErrorMessage config.error
+    in
+    case ( maybeError, config.guidance ) of
+        ( Just errorMessage, Just guidanceMessage ) ->
+            if errorMessage /= guidanceMessage then
+                [ ifError errorMessage
+                , ifGuidance guidanceMessage
+                ]
+
+            else
+                [ ifError errorMessage ]
+
+        ( Just errorMessage, Nothing ) ->
+            [ ifError errorMessage ]
+
+        ( Nothing, Just guidanceMessage ) ->
+            [ ifGuidance guidanceMessage ]
+
+        ( Nothing, Nothing ) ->
+            []
+
+
+renderErrorMessage : String -> Css.Style -> String -> Html msg
+renderErrorMessage idValue marginTop m =
+    Message.view
+        [ Message.tiny
+        , Message.error
+        , Message.plaintext m
+        , Message.alertRole
+        , Message.id (errorId idValue)
+        , Message.custom [ Live.polite ]
+        , Message.css
+            [ Css.important (Css.paddingTop Css.zero)
+            , Css.important (Css.paddingBottom Css.zero)
+            , marginTop
+            ]
+        ]
+
+
+renderGuidance : String -> Css.Style -> String -> Html msg
+renderGuidance idValue marginTop guidanceMessage =
+    Text.caption
+        [ Text.id (guidanceId idValue)
+        , Text.plaintext guidanceMessage
+        , Text.css
+            [ Css.important (Css.paddingTop Css.zero)
+            , Css.important (Css.paddingBottom Css.zero)
+            , Css.important marginTop
+            , Css.lineHeight (Css.num 1)
+            ]
+        ]
 
 
 smallMargin : Css.Style

@@ -396,7 +396,6 @@ viewSwitch config =
         ]
         |> Nri.Ui.Svg.V1.withWidth (Css.px 43)
         |> Nri.Ui.Svg.V1.withHeight (Css.px 32)
-        |> Nri.Ui.Svg.V1.withCss [ Css.zIndex (Css.int 1) ]
         |> Nri.Ui.Svg.V1.withCustom [ SvgAttributes.class "switch-track" ]
 
 

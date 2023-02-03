@@ -9,7 +9,6 @@ module Examples.Header exposing (example, State, Msg)
 import Accessibility.Styled.Role as Role
 import Category exposing (Category(..))
 import Code
-import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -18,10 +17,12 @@ import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs
+import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Header.V1 as Header
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Select.V8 as Select
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -43,7 +44,7 @@ example =
     , version = version
     , categories = [ Layout ]
     , keyboardSupport = []
-    , state = init
+    , state = init Nothing
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview = [ viewPreview ]
@@ -143,17 +144,45 @@ viewPreview =
 {-| -}
 type alias State =
     { control : Control Settings
+    , selection : Maybe String
     }
 
 
-init : State
-init =
+init : Maybe String -> State
+init selection =
     { control =
         ControlExtra.list
             |> ControlExtra.optionalListItem "extraContent"
                 (Control.value
                     ( "Header.extraContent [ Html.text \"…\" ]"
-                    , Header.extraContent CommonControls.exampleHtml
+                    , Header.extraContent
+                        [ Select.view "Tortilla Selector"
+                            [ Select.choices identity
+                                [ { label = "Tacos", value = "tacos" }
+                                , { label = "Burritos", value = "burritos" }
+                                , { label = "Enchiladas", value = "enchiladas" }
+                                ]
+                            , Select.value selection
+                            ]
+                            |> map Select
+                        ]
+                    )
+                )
+            |> ControlExtra.optionalListItem "extraNav"
+                (Control.value
+                    ( Code.fromModule "Header" "extraNav "
+                        ++ Code.string "Resources"
+                        ++ Code.listMultiline
+                            [ Code.fromModule "ClickableText" "link " ++ Code.string "Zendesk" ++ " []"
+                            , Code.fromModule "ClickableText" "link " ++ Code.string "FAQ" ++ " []"
+                            , Code.fromModule "ClickableText" "link " ++ Code.string "About" ++ " []"
+                            ]
+                            2
+                    , Header.extraNav "Resources"
+                        [ ClickableText.link "Zendesk" []
+                        , ClickableText.link "FAQ" []
+                        , ClickableText.link "About" []
+                        ]
                     )
                 )
             |> ControlExtra.optionalListItem "description"
@@ -165,12 +194,6 @@ init =
                     )
                     (Control.string "This page has some good content.")
                 )
-            |> ControlExtra.optionalListItem "extraSubheadContent"
-                (Control.value
-                    ( "Header.extraSubheadContent [ Html.text \"…\" ]"
-                    , Header.extraSubheadContent CommonControls.exampleHtml
-                    )
-                )
             |> ControlExtra.optionalListItem "customPageWidth"
                 (Control.map
                     (\width ->
@@ -180,6 +203,7 @@ init =
                     )
                     (ControlExtra.float 750)
                 )
+    , selection = Nothing
     }
 
 
@@ -190,6 +214,7 @@ type alias Settings =
 {-| -}
 type Msg
     = UpdateControl (Control Settings)
+    | Select String
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -197,3 +222,6 @@ update msg state =
     case msg of
         UpdateControl settings ->
             ( { state | control = settings }, Cmd.none )
+
+        Select value ->
+            ( { state | selection = Just value }, Cmd.none )
