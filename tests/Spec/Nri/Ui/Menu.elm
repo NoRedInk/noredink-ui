@@ -158,7 +158,7 @@ menuButtonSelector =
 
 menuInteractiveAreaSelector : List Selector.Selector
 menuInteractiveAreaSelector =
-    [ nriDescription "Nri-Ui-Menu-V3"
+    [ nriDescription "Nri-Ui-Menu-V4"
     , Selector.class "InnerContainer"
     ]
 

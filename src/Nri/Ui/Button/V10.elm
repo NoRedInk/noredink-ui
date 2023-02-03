@@ -826,10 +826,10 @@ viewLabel config =
         []
         (case config.icon of
             Nothing ->
-                renderMarkdown config.label
+                [ renderMarkdown config.label ]
 
             Just svg ->
-                viewLeftIcon svg :: renderMarkdown config.label
+                viewLeftIcon svg :: [ renderMarkdown config.label ]
         )
 
 
@@ -846,15 +846,21 @@ viewIcon size iconStyles svg =
         |> NriSvg.toHtml
 
 
-renderMarkdown : String -> List (Html msg)
+renderMarkdown : String -> Html msg
 renderMarkdown markdown =
-    case Markdown.Block.parse Nothing markdown of
-        -- It seems to be always first wrapped in a `Paragraph` and never directly a `PlainInline`
-        [ Markdown.Block.Paragraph _ inlines ] ->
-            List.map (Markdown.Inline.toHtml >> Styled.fromUnstyled) inlines
+    let
+        removeParagraphTags block =
+            case block of
+                Markdown.Block.Paragraph _ inlines ->
+                    List.map (Markdown.Inline.defaultHtml Nothing) inlines
 
-        _ ->
-            [ Html.text markdown ]
+                _ ->
+                    Markdown.Block.defaultHtml (Just removeParagraphTags) Nothing block
+    in
+    Markdown.Block.parse Nothing markdown
+        |> List.concatMap removeParagraphTags
+        |> List.map Styled.fromUnstyled
+        |> Styled.span []
 
 
 

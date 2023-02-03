@@ -154,7 +154,7 @@ initDebugControls =
                 , ( "link", Control.value Link )
                 ]
             )
-        |> Control.field "label" (Control.string "Label")
+        |> Control.field "label" (Control.string "Label **bold**   *emphasis*")
         |> Control.field "attributes"
             (ControlExtra.list
                 |> CommonControls.icon moduleName Button.icon

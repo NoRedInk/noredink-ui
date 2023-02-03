@@ -6,6 +6,7 @@ module ClickableAttributes exposing
     , linkSpa
     , linkExternal, linkExternalWithTracking
     , toLinkAttributes
+    , linkExternalInternal, linkExternalWithTrackingInternal
     )
 
 {-|
@@ -25,6 +26,11 @@ module ClickableAttributes exposing
 @docs linkSpa
 @docs linkExternal, linkExternalWithTracking
 @docs toLinkAttributes
+
+
+## external link helpers without any affordances
+
+@docs linkExternalInternal, linkExternalWithTrackingInternal
 
 -}
 
@@ -131,16 +137,34 @@ linkWithTracking { track, url } ({ clickableAttributes } as config) =
 
 {-| -}
 linkExternal : String -> Config a route msg -> Config a route msg
-linkExternal url ({ clickableAttributes } as config) =
-    { config
-        | clickableAttributes = { clickableAttributes | linkType = External, urlString = Just url }
-        , rightIcon = Just opensInNewTab
-    }
+linkExternal url =
+    withExternalAffordance >> linkExternalInternal url
 
 
 {-| -}
 linkExternalWithTracking : { track : msg, url : String } -> Config a route msg -> Config a route msg
-linkExternalWithTracking { track, url } ({ clickableAttributes } as config) =
+linkExternalWithTracking attrs =
+    withExternalAffordance >> linkExternalWithTrackingInternal attrs
+
+
+{-| -}
+linkExternalInternal : String -> { attributes | clickableAttributes : ClickableAttributes route msg } -> { attributes | clickableAttributes : ClickableAttributes route msg }
+linkExternalInternal url ({ clickableAttributes } as config) =
+    { config
+        | clickableAttributes =
+            { clickableAttributes
+                | linkType = External
+                , urlString = Just url
+            }
+    }
+
+
+{-| -}
+linkExternalWithTrackingInternal :
+    { track : msg, url : String }
+    -> { attributes | clickableAttributes : ClickableAttributes route msg }
+    -> { attributes | clickableAttributes : ClickableAttributes route msg }
+linkExternalWithTrackingInternal { track, url } ({ clickableAttributes } as config) =
     { config
         | clickableAttributes =
             { clickableAttributes
@@ -148,7 +172,6 @@ linkExternalWithTracking { track, url } ({ clickableAttributes } as config) =
                 , urlString = Just url
                 , onClick = Just track
             }
-        , rightIcon = Just opensInNewTab
     }
 
 
@@ -259,6 +282,12 @@ toEnabledLinkAttributes routeToString clickableAttributes =
                     Attributes.href stringUrl
                         :: targetBlank
             )
+
+
+{-| -}
+withExternalAffordance : { attributes | rightIcon : Maybe Svg.Svg } -> { attributes | rightIcon : Maybe Svg.Svg }
+withExternalAffordance config =
+    { config | rightIcon = Just opensInNewTab }
 
 
 opensInNewTab : Svg
