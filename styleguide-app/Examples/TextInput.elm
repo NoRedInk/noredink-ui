@@ -21,6 +21,9 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.TextInput.V7 as TextInput
 import ViewHelpers exposing (viewExamples)
+import Time
+import Iso8601
+import Parser
 
 
 moduleName : String
@@ -68,6 +71,7 @@ example =
                         ]
                     )
                         :: customizableExamples state
+                        
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -335,7 +339,14 @@ customizableExamples state =
             }
         , toExample
             { name = "date"
-            , toString = identity
+            , toString = (\result ->
+                case result of
+                    Just date ->
+                        date |> Iso8601.fromTime >> String.slice 0 10
+
+                    Nothing ->
+                        ""
+            )
             , inputType = TextInput.date
             , inputTypeCode = "TextInput.date"
             , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
@@ -344,18 +355,15 @@ customizableExamples state =
             , onEnter = "onEnter"
             }
         , toExample
-            { name = "time"
-            , toString = identity
-            , inputType = TextInput.time
-            , inputTypeCode = "TextInput.time"
-            , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
-            , onFocus = "onFocus"
-            , onBlur = "onBlur"
-            , onEnter = "onEnter"
-            }
-        , toExample
             { name = "datetime"
-            , toString = identity
+            , toString = (\result ->
+                case result of
+                    Just date ->
+                        date |> Iso8601.fromTime >> String.dropRight 1
+
+                    Nothing ->
+                        ""
+            )
             , inputType = TextInput.datetime
             , inputTypeCode = "TextInput.datetime"
             , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
@@ -369,6 +377,7 @@ customizableExamples state =
 {-| -}
 type alias State =
     { inputValues : Dict Int String
+    , date : Maybe Time.Posix
     , showPassword : Bool
     , control : Control ExampleConfig
     }
@@ -378,6 +387,7 @@ type alias State =
 init : State
 init =
     { inputValues = Dict.empty
+    , date = Nothing
     , showPassword = False
     , control = initControl
     }
@@ -439,6 +449,7 @@ controlAttributes =
 {-| -}
 type Msg
     = SetInput Int String
+    | SetDate (Result (List Parser.DeadEnd) Time.Posix)
     | SetShowPassword Bool
     | UpdateControl (Control ExampleConfig)
 
@@ -461,3 +472,16 @@ update msg state =
             ( { state | control = newControl }
             , Cmd.none
             )
+
+        SetDate result ->
+            let 
+                _ = Debug.log "SetDate" result
+            in
+            case result of
+                Ok date ->
+                    ( { state | date = Just date }
+                    , Cmd.none
+                    )
+
+                Err _ ->
+                    ( state, Cmd.none )

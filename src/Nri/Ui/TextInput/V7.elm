@@ -1,6 +1,6 @@
 module Nri.Ui.TextInput.V7 exposing
     ( view, generateId
-    , number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, username, organization, organizationTitle, postalCode, sex, tel, date, time, datetime
+    , number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, username, organization, organizationTitle, postalCode, sex, tel, date, datetime
     , readOnlyText
     , value, map
     , onFocus, onBlur, onEnter
@@ -32,7 +32,7 @@ module Nri.Ui.TextInput.V7 exposing
 
 ### Input types
 
-@docs number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, username, organization, organizationTitle, postalCode, sex, tel, date, time, datetime
+@docs number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, username, organization, organizationTitle, postalCode, sex, tel, date, datetime
 @docs readOnlyText
 
 
@@ -63,6 +63,7 @@ import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events
 import InputErrorAndGuidanceInternal exposing (ErrorState, Guidance)
 import InputLabelInternal
+import Iso8601
 import Keyboard.Event
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
@@ -72,6 +73,8 @@ import Nri.Ui.InputStyles.V4 as InputStyles exposing (defaultMarginTop)
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.Util exposing (dashify)
+import Parser
+import Time
 
 
 {-| An input that allows text entry
@@ -485,13 +488,13 @@ sex onInput_ =
 
 {-| An input that allows date entry
 -}
-date : (String -> msg) -> Attribute String msg
+date : (Maybe Time.Posix -> msg) -> Attribute (Maybe Time.Posix) msg
 date onInput_ =
     Attribute
         { emptyEventsAndValues
-            | toString = Just identity
-            , fromString = Just identity
-            , onInput = Just (identity >> onInput_)
+            | toString = Just (Maybe.map (Iso8601.fromTime >> String.slice 0 10) >> Maybe.withDefault "")
+            , fromString = Just (Iso8601.toTime >> Result.toMaybe)
+            , onInput = Just (Iso8601.toTime >> Result.toMaybe >> onInput_)
         }
         (\config ->
             { config
@@ -502,34 +505,15 @@ date onInput_ =
         )
 
 
-{-| An input that allows time entry
--}
-time : (String -> msg) -> Attribute String msg
-time onInput_ =
-    Attribute
-        { emptyEventsAndValues
-            | toString = Just identity
-            , fromString = Just identity
-            , onInput = Just (identity >> onInput_)
-        }
-        (\config ->
-            { config
-                | fieldType = Just "time"
-                , inputMode = Nothing
-                , autocomplete = Nothing
-            }
-        )
-
-
 {-| An input that allows datetime entry
 -}
-datetime : (String -> msg) -> Attribute String msg
+datetime : (Maybe Time.Posix -> msg) -> Attribute (Maybe Time.Posix) msg
 datetime onInput_ =
     Attribute
         { emptyEventsAndValues
-            | toString = Just identity
-            , fromString = Just identity
-            , onInput = Just (identity >> onInput_)
+            | toString = Just (Maybe.map (Iso8601.fromTime >> String.dropRight 1) >> Maybe.withDefault "")
+            , fromString = Just (Iso8601.toTime >> Result.toMaybe)
+            , onInput = Just (Iso8601.toTime >> Result.toMaybe >> onInput_)
         }
         (\config ->
             { config
