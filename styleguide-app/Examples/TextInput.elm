@@ -24,7 +24,6 @@ import Nri.Ui.TextInput.V7 as TextInput
 import ViewHelpers exposing (viewExamples)
 
 
-
 moduleName : String
 moduleName =
     "TextInput"
@@ -70,7 +69,6 @@ example =
                         ]
                     )
                         :: customizableExamples state
-                        
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -338,14 +336,14 @@ customizableExamples state =
             }
         , toExample
             { name = "date"
-            , toString = (\result ->
-                case result of
-                    Just date ->
-                        date |> Iso8601.fromTime >> String.slice 0 10
+            , toString =
+                \result ->
+                    case result of
+                        Just date ->
+                            date |> Iso8601.fromTime >> String.slice 0 10
 
-                    Nothing ->
-                        ""
-            )
+                        Nothing ->
+                            ""
             , inputType = TextInput.date
             , inputTypeCode = "TextInput.date"
             , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
@@ -355,14 +353,14 @@ customizableExamples state =
             }
         , toExample
             { name = "datetime"
-            , toString = (\result ->
-                case result of
-                    Just date ->
-                        date |> Iso8601.fromTime >> String.dropRight 1
+            , toString =
+                \result ->
+                    case result of
+                        Just date ->
+                            date |> Iso8601.fromTime >> String.dropRight 1
 
-                    Nothing ->
-                        ""
-            )
+                        Nothing ->
+                            ""
             , inputType = TextInput.datetime
             , inputTypeCode = "TextInput.datetime"
             , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
