@@ -377,7 +377,6 @@ customizableExamples state =
 {-| -}
 type alias State =
     { inputValues : Dict Int String
-    , date : Maybe Time.Posix
     , showPassword : Bool
     , control : Control ExampleConfig
     }
@@ -387,7 +386,6 @@ type alias State =
 init : State
 init =
     { inputValues = Dict.empty
-    , date = Nothing
     , showPassword = False
     , control = initControl
     }
@@ -449,7 +447,6 @@ controlAttributes =
 {-| -}
 type Msg
     = SetInput Int String
-    | SetDate (Result (List Parser.DeadEnd) Time.Posix)
     | SetShowPassword Bool
     | UpdateControl (Control ExampleConfig)
 
@@ -472,16 +469,3 @@ update msg state =
             ( { state | control = newControl }
             , Cmd.none
             )
-
-        SetDate result ->
-            let 
-                _ = Debug.log "SetDate" result
-            in
-            case result of
-                Ok date ->
-                    ( { state | date = Just date }
-                    , Cmd.none
-                    )
-
-                Err _ ->
-                    ( state, Cmd.none )
