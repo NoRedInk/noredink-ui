@@ -351,7 +351,7 @@ markdown content =
         \config ->
             { config
                 | content = Content.markdownContent content
-                , styles = config.styles ++ MarkdownStyles.anchorAndButton
+                , styles = MarkdownStyles.anchorAndButton ++ config.styles
             }
 
 

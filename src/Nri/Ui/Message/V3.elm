@@ -406,7 +406,7 @@ markdown content =
         \config ->
             { config
                 | content = Content.markdownContent content
-                , customStyles = config.customStyles ++ MarkdownStyles.anchorAndButton
+                , customStyles = MarkdownStyles.anchorAndButton ++ config.customStyles
             }
 
 
