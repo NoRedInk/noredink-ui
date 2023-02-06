@@ -12,9 +12,5 @@ anchorAndButton =
             [ borderBottom3 (px 1) solid Colors.azure
             , Css.Global.withAttribute "aria-disabled=true" [ borderBottom3 (px 1) solid Colors.gray45 ]
             ]
-        , Css.Global.button
-            [ borderBottom3 (px 1) solid Colors.azure
-            , Css.disabled [ borderBottom3 (px 1) solid Colors.gray45 ]
-            ]
         ]
     ]
