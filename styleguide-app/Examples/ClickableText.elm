@@ -78,6 +78,8 @@ init =
             (ControlExtra.list
                 |> CommonControls.icon moduleName ClickableText.icon
                 |> CommonControls.rightIcon moduleName ClickableText.rightIcon
+                |> ControlExtra.optionalBoolListItem "appearsInline"
+                    ( "ClickableText.appearsInline", ClickableText.appearsInline )
                 |> ControlExtra.optionalBoolListItem "hideIconForMobile"
                     ( "ClickableText.hideIconForMobile", ClickableText.hideIconForMobile )
                 |> ControlExtra.optionalBoolListItem "hideTextForMobile"
