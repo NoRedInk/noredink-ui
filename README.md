@@ -34,7 +34,7 @@ Contributing to the component library is characterized by close consultation wit
 
 **Modifying an existing component**
 
-1. As soon as you have a rough idea of the modification you need, please ping A11ybats in the [#ask-accessibilibats](https://noredink.slack.com/archives/C02NVG4M45U) Slack channel with details about the modification you’re planning to make.
+1. As soon as you have a rough idea of the modification you need (from the product/design perspective), please ping A11ybats in the [#ask-accessibilibats](https://noredink.slack.com/archives/C02NVG4M45U) Slack channel with details about the modification you’re planning to make.
     - We may either give you the okay in the Slack thread, or we may request a brief **kickoff sync** to discuss implementation details. You may also request a sync rather than providing details in Slack.
     - Once A11ybats give you the go-ahead to begin work…
 2. Review the [PR template](/.github/pull_request_template.md) in advance so that you understand contribution requirements in advance, or go ahead and open a draft PR so you can use the [PR template](/.github/pull_request_template.md) as you work.
@@ -44,7 +44,7 @@ Contributing to the component library is characterized by close consultation wit
 
 **Creating a new component**
 
-1. As soon as you have a rough idea of the new or modified component you need, please ping A11ybats in the [#ask-accessibilibats](https://noredink.slack.com/archives/C02NVG4M45U) Slack channel to request a brief **kickoff sync**.
+1. As soon as you have a rough idea of the new component you need (from the product/design perspective), please ping A11ybats in the [#ask-accessibilibats](https://noredink.slack.com/archives/C02NVG4M45U) Slack channel to request a brief **kickoff sync**.
     - A11ybats should be able to sync with you anywhere from immediately following your request to ~48 hours from your request. We want to unblock you asap!
     - In the kickoff sync, you can expect to start by sharing your concept with A11ybats. Next, A11ybats will ensure you are aware of our contribution guidelines and will provide high-level guidance about anything important to know before you build your component. For example, in some cases, we may already have existing code that meets your needs or that we prefer you base your new component on. (Hooray! Less work for you!) We may also give you some accessibility pointers.
     - If necessary for more complex work, we’ll schedule followup syncs/pairing with you.
