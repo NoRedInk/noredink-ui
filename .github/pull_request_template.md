@@ -57,3 +57,32 @@ Please link to any relevant context and stories.
     - e.g., as a dev, I can conveniently add an `nriDescription`
     - and adding a new feature to the component will _not_ require major API changes to the comopnent
 - [ ] Please assign [team-accessibilibats-a11ybats](https://github.com/orgs/NoRedInk/teams/team-accessibilibats-a11ybats) as a reviewer in addition to assigning a reviewer from your team
+
+# :wrench: Adjusting a component
+
+## Context
+
+Please link to any relevant context and stories.
+
+## :framed_picture: What does this change look like?
+
+- Fill in with screenshots and ping design.
+- [Guidelines for an optimal design ping](https://paper.dropbox.com/doc/Guidelines-for-Sharing-User-Facing-Changes-with-Design--BpL8hpJLMugy6033aT5m0JdaAg-bdKGQtYH9qO9I00hUkA6k)
+
+## Component completion checklist
+
+- [ ] Changes are clearly documented
+    - [ ] Component docs include a changelog
+    - [ ] Any new exposed functions or properties have docs
+- [ ] Changes extend to the component library example app
+    - [ ] The component library version number is updated, if appropriate
+    - [ ] Any new customizations are available from the component library example
+    - [ ] The component example still has:
+        - an accurate preview
+        - valid sample code
+        - correct keyboard behavior
+        - correct and comprehensive guidance around how to use the component
+- [ ] Changes to the component are tested/the new version of the component is tested
+- [ ] Component API follows standard patterns in noredink-ui
+    - e.g., as a dev, I can conveniently add an `nriDescription`
+    - and adding a new feature to the component will _not_ require major API changes to the comopnent
