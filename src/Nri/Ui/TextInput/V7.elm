@@ -485,7 +485,13 @@ sex onInput_ =
         )
 
 
-{-| An input that allows date entry
+{-| An input that allows date entry. The date is represented as a `Maybe Time.Posix`
+value, where `Nothing` represents an empty date field. The date is formatted as
+an ISO8601 date string, with the time portion removed.
+
+Format for a date input field is `YYYY-MM-DD`. Iso8601.fromTime generates a string in
+the format `YYYY-MM-DDThh:mmZ` so we slice to only use the first 10 characters.
+
 -}
 date : (Maybe Time.Posix -> msg) -> Attribute (Maybe Time.Posix) msg
 date onInput_ =
@@ -504,7 +510,20 @@ date onInput_ =
         )
 
 
-{-| An input that allows datetime entry
+{-| An input that allows datetime entry. The datetime is represented as a `Maybe Time.Posix`
+value, where `Nothing` represents an empty datetime field. The datetime is formatted as
+an ISO8601 datetime string, with the time zone removed.
+
+Format for a datetime input field value should be `YYYY-MM-DDThh:mm`.
+From [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/datetime-local#value):
+
+> There are several methods provided by JavaScript's Date that can be used to convert numeric
+> date information into a properly-formatted string. For example, the Date.toISOString() method
+> returns the date/time in UTC with the suffix "Z" denoting that timezone; removing the "Z" would
+> provide a value in the format expected by a datetime-local input.
+
+Iso8601.fromTime generates the same string as Date.toISOString, so we need to drop the "Z" suffix.
+
 -}
 datetime : (Maybe Time.Posix -> msg) -> Attribute (Maybe Time.Posix) msg
 datetime onInput_ =
