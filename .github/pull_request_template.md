@@ -23,6 +23,8 @@ Please paste the output of `elm diff` run on latest master in the code block:
 After this PR merges, and you've pulled down latest master, finish following the [publishing process](https://github.com/NoRedInk/noredink-ui/blob/master/README.md#publishing-a-new-version).
 
 
+---
+
 # :star2: Adding a new component
 
 ## About the component
@@ -58,6 +60,10 @@ Please link to any relevant context and stories.
     - and adding a new feature to the component will _not_ require major API changes to the comopnent
 - [ ] I've gone through the relevant sections of the [Development Accessibility guide](https://paper.dropbox.com/doc/Accessibility-guide-4-Development--BiIVdijSaoijjOuhz3iTCJJ1Ag-rGoHpC91pFg3zTrYpvOCQ) with this component in mind
 - [ ] Please assign [team-accessibilibats-a11ybats](https://github.com/orgs/NoRedInk/teams/team-accessibilibats-a11ybats) as a reviewer in addition to assigning a reviewer from your team
+
+
+---
+
 
 # :wrench: Adjusting a component
 
