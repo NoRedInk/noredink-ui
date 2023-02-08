@@ -47,7 +47,7 @@ Please link to any relevant context and stories.
 - [ ] Component is in the component library example app
     - [ ] Component is categorized reasonably (see [Category](https://github.com/NoRedInk/noredink-ui/blob/master/styleguide-app/Category.elm) for all the currently available categories). The component can be in multiple categories, if appropriate.
     - [ ] Component has a representative preview for the component library example cards (bonus points for making it delightful!)
-    - [ ] Component has a customizable example. Aim for having _every_ possible supported version of the component displayable through the configuration on this page.
+    - [ ] Component has a customizable example. Aim for having _every_ possible supported version of the component displayable through the configuration on this page. (Protip: This is handy for testing expected behavior!)
     - [ ] The customizable example produces sample code
     - [ ] The component's example page includes keyboard behavior, if any
     - [ ] The component's example page includes guidance around how to use the component, if necessary
