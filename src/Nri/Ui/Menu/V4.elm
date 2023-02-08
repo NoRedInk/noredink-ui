@@ -2,7 +2,7 @@ module Nri.Ui.Menu.V4 exposing
     ( view, Attribute
     , isOpen, isDisabled
     , opensOnHover
-    , defaultTrigger, button, clickableText, clickableSvg
+    , defaultTrigger, button, clickableText, clickableSvg, clickableSvgWithoutIndicator
     , buttonId
     , navMenuList, disclosure, dialog
     , menuWidth, menuId, menuZIndex
@@ -32,7 +32,7 @@ A togglable menu view and related buttons.
 
 ## Triggering button options
 
-@docs defaultTrigger, button, clickableText, clickableSvg
+@docs defaultTrigger, button, clickableText, clickableSvg, clickableSvgWithoutIndicator
 @docs buttonId
 
 
@@ -384,6 +384,23 @@ clickableSvg title icon additionalAttributes =
                 ([ ClickableSvg.custom buttonAttributes
                  , ClickableSvg.disabled menuConfig.isDisabled
                  , ClickableSvg.rightIcon (AnimatedIcon.arrowDownUp menuConfig.isOpen)
+                 ]
+                    ++ additionalAttributes
+                )
+        )
+        |> setButton
+
+
+{-| Use ClickableSvg as the triggering element for the Menu without a dropdown indicator
+-}
+clickableSvgWithoutIndicator : String -> Svg.Svg -> List (ClickableSvg.Attribute msg) -> Attribute msg
+clickableSvgWithoutIndicator title icon additionalAttributes =
+    Button
+        (\menuConfig buttonAttributes ->
+            ClickableSvg.button title
+                icon
+                ([ ClickableSvg.custom buttonAttributes
+                 , ClickableSvg.disabled menuConfig.isDisabled
                  ]
                     ++ additionalAttributes
                 )
