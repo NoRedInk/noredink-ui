@@ -1,4 +1,4 @@
-Please select the template that's relevant for your situation and delete the other templates.
+Please use the template that's relevant for your situation and delete the other templates.
 
 # :label: Bump for version `VERSION_NUMBER`
 
