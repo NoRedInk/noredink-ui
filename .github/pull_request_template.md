@@ -36,8 +36,8 @@ Please link to any relevant context and stories.
 
 ## :framed_picture: What does this change look like?
 
-- Fill in with screenshots and ping design.
-- [Guidelines for an optimal design ping](https://paper.dropbox.com/doc/Guidelines-for-Sharing-User-Facing-Changes-with-Design--BpL8hpJLMugy6033aT5m0JdaAg-bdKGQtYH9qO9I00hUkA6k)
+- Follow the the [Guidelines for an optimal design ping](https://paper.dropbox.com/doc/Guidelines-for-Sharing-User-Facing-Changes-with-Design--BpL8hpJLMugy6033aT5m0JdaAg-bdKGQtYH9qO9I00hUkA6k) to add helpful screenshots/videos for design.
+- Ping design on this PR to get approval on your changes.
 
 
 ## Component completion checklist
@@ -73,8 +73,8 @@ Please link to any relevant context and stories.
 
 ## :framed_picture: What does this change look like?
 
-- Fill in with screenshots and ping design.
-- [Guidelines for an optimal design ping](https://paper.dropbox.com/doc/Guidelines-for-Sharing-User-Facing-Changes-with-Design--BpL8hpJLMugy6033aT5m0JdaAg-bdKGQtYH9qO9I00hUkA6k)
+- Follow the the [Guidelines for an optimal design ping](https://paper.dropbox.com/doc/Guidelines-for-Sharing-User-Facing-Changes-with-Design--BpL8hpJLMugy6033aT5m0JdaAg-bdKGQtYH9qO9I00hUkA6k) to add helpful screenshots/videos for design.
+- Ping design on this PR to get approval on your changes.
 
 ## Component completion checklist
 
