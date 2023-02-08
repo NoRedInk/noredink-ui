@@ -42,6 +42,7 @@ Please link to any relevant context and stories.
 
 ## Component completion checklist
 
+- [ ] I've gone through the relevant sections of the [Development Accessibility guide](https://paper.dropbox.com/doc/Accessibility-guide-4-Development--BiIVdijSaoijjOuhz3iTCJJ1Ag-rGoHpC91pFg3zTrYpvOCQ) with this component in mind
 - [ ] Component has clear documentation
 - [ ] Component is in the component library example app
     - [ ] Component is categorized reasonably (see [Category](https://github.com/NoRedInk/noredink-ui/blob/master/styleguide-app/Category.elm) for all the currently available categories). The component can be in multiple categories, if appropriate.
@@ -58,7 +59,6 @@ Please link to any relevant context and stories.
 - [ ] Component API follows standard patterns in noredink-ui
     - e.g., as a dev, I can conveniently add an `nriDescription`
     - and adding a new feature to the component will _not_ require major API changes to the comopnent
-- [ ] I've gone through the relevant sections of the [Development Accessibility guide](https://paper.dropbox.com/doc/Accessibility-guide-4-Development--BiIVdijSaoijjOuhz3iTCJJ1Ag-rGoHpC91pFg3zTrYpvOCQ) with this component in mind
 - [ ] Please assign [team-accessibilibats-a11ybats](https://github.com/orgs/NoRedInk/teams/team-accessibilibats-a11ybats) as a reviewer in addition to assigning a reviewer from your team
 
 
@@ -78,6 +78,7 @@ Please link to any relevant context and stories.
 
 ## Component completion checklist
 
+- [ ] I've gone through the relevant sections of the [Development Accessibility guide](https://paper.dropbox.com/doc/Accessibility-guide-4-Development--BiIVdijSaoijjOuhz3iTCJJ1Ag-rGoHpC91pFg3zTrYpvOCQ) with the changes I made to this component in mind
 - [ ] Changes are clearly documented
     - [ ] Component docs include a changelog
     - [ ] Any new exposed functions or properties have docs
@@ -93,4 +94,3 @@ Please link to any relevant context and stories.
 - [ ] Component API follows standard patterns in noredink-ui
     - e.g., as a dev, I can conveniently add an `nriDescription`
     - and adding a new feature to the component will _not_ require major API changes to the comopnent
-- [ ] I've gone through the relevant sections of the [Development Accessibility guide](https://paper.dropbox.com/doc/Accessibility-guide-4-Development--BiIVdijSaoijjOuhz3iTCJJ1Ag-rGoHpC91pFg3zTrYpvOCQ) with the changes I made to this component in mind
