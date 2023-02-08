@@ -436,6 +436,36 @@ controlTrigger =
                     |> Control.field "withBorder" (ControlExtra.bool True)
                 )
           )
+          , ( "clickableSvgWithoutIndicator"
+          , Control.map
+                (\( ( iconStr, icon ), ( withBorderStr, withBorder ) ) ->
+                    ( "Menu.clickableSvgWithoutIndicator "
+                        ++ Code.string "Menu"
+                        ++ " "
+                        ++ iconStr
+                        ++ " "
+                        ++ Code.list
+                            (if withBorder then
+                                [ "ClickableSvg.withBorder", "ClickableSvg.exactWidth 55" ]
+
+                             else
+                                []
+                            )
+                    , Menu.clickableSvgWithoutIndicator "Menu"
+                        icon
+                        (if withBorder then
+                            [ ClickableSvg.withBorder, ClickableSvg.exactWidth 55 ]
+
+                         else
+                            []
+                        )
+                    )
+                )
+                (Control.record (\a b -> ( a, b ))
+                    |> Control.field "icon" (CommonControls.rotatedUiIcon 1)
+                    |> Control.field "withBorder" (ControlExtra.bool True)
+                )
+          )
         ]
 
 
