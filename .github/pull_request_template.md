@@ -1,4 +1,4 @@
-Please use the template that's relevant for your situation and delete the other templates.
+Please use the template that's relevant for your situation and delete the other templates. If this is just a noredink-ui repo doc change, you don't need to follow a template.
 
 # :label: Bump for version `VERSION_NUMBER`
 
