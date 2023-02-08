@@ -65,7 +65,7 @@ Please link to any relevant context and stories.
 ---
 
 
-# :wrench: Adjusting a component
+# :wrench: Modifying a component
 
 ## Context
 
