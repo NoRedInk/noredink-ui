@@ -83,6 +83,7 @@ Please link to any relevant context and stories.
     - [ ] Component docs include a changelog
     - [ ] Any new exposed functions or properties have docs
 - [ ] Changes extend to the component library example app
+    - [ ] The component library example is updated to use the newest version, if appropriate
     - [ ] The component library version number is updated, if appropriate
     - [ ] Any new customizations are available from the component library example
     - [ ] The component example still has:
