@@ -436,7 +436,7 @@ controlTrigger =
                     |> Control.field "withBorder" (ControlExtra.bool True)
                 )
           )
-          , ( "clickableSvgWithoutIndicator"
+        , ( "clickableSvgWithoutIndicator"
           , Control.map
                 (\( ( iconStr, icon ), ( withBorderStr, withBorder ) ) ->
                     ( "Menu.clickableSvgWithoutIndicator "
