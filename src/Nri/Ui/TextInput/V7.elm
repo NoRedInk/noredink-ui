@@ -1,6 +1,6 @@
 module Nri.Ui.TextInput.V7 exposing
     ( view, generateId
-    , number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, username, organization, organizationTitle, postalCode, sex, tel
+    , number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, username, organization, organizationTitle, postalCode, sex, tel, date, datetime
     , readOnlyText
     , value, map
     , onFocus, onBlur, onEnter
@@ -32,7 +32,7 @@ module Nri.Ui.TextInput.V7 exposing
 
 ### Input types
 
-@docs number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, username, organization, organizationTitle, postalCode, sex, tel
+@docs number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, username, organization, organizationTitle, postalCode, sex, tel, date, datetime
 @docs readOnlyText
 
 
@@ -63,6 +63,7 @@ import Html.Styled.Attributes as Attributes exposing (..)
 import Html.Styled.Events as Events
 import InputErrorAndGuidanceInternal exposing (ErrorState, Guidance)
 import InputLabelInternal
+import Iso8601
 import Keyboard.Event
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
@@ -72,6 +73,7 @@ import Nri.Ui.InputStyles.V4 as InputStyles exposing (defaultMarginTop)
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.Util exposing (dashify)
+import Time
 
 
 {-| An input that allows text entry
@@ -479,6 +481,63 @@ sex onInput_ =
                 | fieldType = Just "text"
                 , inputMode = Nothing
                 , autocomplete = Just "sex"
+            }
+        )
+
+
+{-| An input that allows date entry. The date is represented as a `Maybe Time.Posix`
+value, where `Nothing` represents an empty date field. The date is formatted as
+an ISO8601 date string, with the time portion removed.
+
+Format for a date input field is `YYYY-MM-DD`. Iso8601.fromTime generates a string in
+the format `YYYY-MM-DDThh:mmZ` so we slice to only use the first 10 characters.
+
+-}
+date : (Maybe Time.Posix -> msg) -> Attribute (Maybe Time.Posix) msg
+date onInput_ =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just (Maybe.map (Iso8601.fromTime >> String.slice 0 10) >> Maybe.withDefault "")
+            , fromString = Just (Iso8601.toTime >> Result.toMaybe)
+            , onInput = Just (Iso8601.toTime >> Result.toMaybe >> onInput_)
+        }
+        (\config ->
+            { config
+                | fieldType = Just "date"
+                , inputMode = Nothing
+                , autocomplete = Nothing
+            }
+        )
+
+
+{-| An input that allows datetime entry. The datetime is represented as a `Maybe Time.Posix`
+value, where `Nothing` represents an empty datetime field. The datetime is formatted as
+an ISO8601 datetime string, with the time zone removed.
+
+Format for a datetime input field value should be `YYYY-MM-DDThh:mm`.
+From [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/datetime-local#value):
+
+> There are several methods provided by JavaScript's Date that can be used to convert numeric
+> date information into a properly-formatted string. For example, the Date.toISOString() method
+> returns the date/time in UTC with the suffix "Z" denoting that timezone; removing the "Z" would
+> provide a value in the format expected by a datetime-local input.
+
+Iso8601.fromTime generates the same string as Date.toISOString, so we need to drop the "Z" suffix.
+
+-}
+datetime : (Maybe Time.Posix -> msg) -> Attribute (Maybe Time.Posix) msg
+datetime onInput_ =
+    Attribute
+        { emptyEventsAndValues
+            | toString = Just (Maybe.map (Iso8601.fromTime >> String.dropRight 1) >> Maybe.withDefault "")
+            , fromString = Just (Iso8601.toTime >> Result.toMaybe)
+            , onInput = Just (Iso8601.toTime >> Result.toMaybe >> onInput_)
+        }
+        (\config ->
+            { config
+                | fieldType = Just "datetime-local"
+                , inputMode = Nothing
+                , autocomplete = Nothing
             }
         )
 

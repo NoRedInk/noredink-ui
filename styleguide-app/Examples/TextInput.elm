@@ -17,6 +17,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Dict exposing (Dict)
 import Example exposing (Example)
+import Iso8601
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.TextInput.V7 as TextInput
@@ -332,6 +333,40 @@ customizableExamples state =
             , onFocus = "Focused!!!"
             , onBlur = "Blurred!!!"
             , onEnter = "Entered!!!"
+            }
+        , toExample
+            { name = "date"
+            , toString =
+                \result ->
+                    case result of
+                        Just date ->
+                            date |> Iso8601.fromTime >> String.slice 0 10
+
+                        Nothing ->
+                            ""
+            , inputType = TextInput.date
+            , inputTypeCode = "TextInput.date"
+            , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
+            , onFocus = "onFocus"
+            , onBlur = "onBlur"
+            , onEnter = "onEnter"
+            }
+        , toExample
+            { name = "datetime"
+            , toString =
+                \result ->
+                    case result of
+                        Just date ->
+                            date |> Iso8601.fromTime >> String.dropRight 1
+
+                        Nothing ->
+                            ""
+            , inputType = TextInput.datetime
+            , inputTypeCode = "TextInput.datetime"
+            , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
+            , onFocus = "onFocus"
+            , onBlur = "onBlur"
+            , onEnter = "onEnter"
             }
         ]
 
