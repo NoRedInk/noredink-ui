@@ -243,6 +243,7 @@ exampleHtml =
         [ ClickableText.small
         , ClickableText.icon UiIcon.starFilled
         , ClickableText.href "http://www.noredink.com"
+        , ClickableText.appearsInline
         ]
     , Html.text " When I stepped out, into the bright sunlight from the darkness of the movie house, I had only two things on my mind: Paul Newman, and a ride home."
     ]

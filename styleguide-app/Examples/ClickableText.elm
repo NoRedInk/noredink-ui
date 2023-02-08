@@ -78,6 +78,8 @@ init =
             (ControlExtra.list
                 |> CommonControls.icon moduleName ClickableText.icon
                 |> CommonControls.rightIcon moduleName ClickableText.rightIcon
+                |> ControlExtra.optionalBoolListItem "appearsInline"
+                    ( "ClickableText.appearsInline", ClickableText.appearsInline )
                 |> ControlExtra.optionalBoolListItem "hideIconForMobile"
                     ( "ClickableText.hideIconForMobile", ClickableText.hideIconForMobile )
                 |> ControlExtra.optionalBoolListItem "hideTextForMobile"
@@ -177,10 +179,11 @@ viewExamples ellieLinkConfig (State control) =
         [ Text.html
             [ text "Sometimes, we'll want our clickable links: "
             , ClickableText.link settings.label
-                (ClickableText.small :: clickableAttributes)
+                (ClickableText.appearsInline :: ClickableText.small :: clickableAttributes)
             , text " and clickable buttons: "
             , ClickableText.button settings.label
-                (ClickableText.small
+                (ClickableText.appearsInline
+                    :: ClickableText.small
                     :: ClickableText.onClick (ShowItWorked moduleName "in-line button")
                     :: clickableAttributes
                 )

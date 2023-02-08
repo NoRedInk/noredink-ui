@@ -42,6 +42,15 @@ markdown content config =
     }
 
 
+{-| -}
+markdownContent :
+    String
+    -> List (Html msg)
+markdownContent content =
+    Markdown.toHtml Nothing content
+        |> List.map fromUnstyled
+
+
 {-| Provide a list of custom HTML.
 -}
 html :
