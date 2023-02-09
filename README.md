@@ -9,7 +9,7 @@ Given this ownership and responsibility, A11ybats will provide guidance and supp
 
 ## Component Library Foundations
 - Adherence to the component library [accessibility policy](#accessibility-policy)
-- Adherence to [UI Style Guide (and Caveats)](https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats-PvOLxeX3oyujYEzdJx5pu) and [Guidelines for Sharing User-Facing Changes with Design](https://paper.dropbox.com/doc/Guidelines-for-Sharing-User-Facing-Changes-with-Design-bdKGQtYH9qO9I00hUkA6k) 
+- Adherence to [UI Style Guide (and Caveats)](https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats-PvOLxeX3oyujYEzdJx5pu) and [Guidelines for Sharing User-Facing Changes with Design](https://paper.dropbox.com/doc/Guidelines-for-Sharing-User-Facing-Changes-with-Design-bdKGQtYH9qO9I00hUkA6k)
 - Interoperability and consistency of components with each other and with the NoRedInk app
 - Quality and consistency of API design
 - Quality of internal code
@@ -125,15 +125,28 @@ And go to http://localhost:8000/
 
 If you'd like to test your widget in the monolith before publishing, run `script/test-elm-package.py ../path_to_this_repo` from the monolith's directory.
 
-## Deploying
+## Publishing a new version
 
-Once your PR is merged, you can publish `master` as a new version:
+Any NoRedInk engineer can deploy a new version of `noredink-ui`. Generally, we prefer to do a release after every change, rather than trying to batch changes together. This is mostly to make QA more straightforward -- especially for the cases where we make a mistake!
 
-Run the following to bump && publish the version in `elm.json`:
+- Make a bump PR
+  - Make a new branch off of latest master
+  - Run `elm diff` and verify that the changes are not major ([versioning policy](https://github.com/NoRedInk/noredink-ui/blob/master/README.md#versioning-policy)) and are what you expect. Copy the diff (you'll paste it into a PR description later.)
+  - Run `elm bump`
+    - Getting a "PROBLEM LOADING DOCS" error? See [troubleshooting a release](https://github.com/NoRedInk/noredink-ui/blob/master/README.md#troubleshooting-a-release)
+  - Commit the changes to the `elm.json` file
+  - Make a PR and fill out the PR template (this is when you'll paste in the diff you copied earlier!)
+- Get your PR merged
+- Go to latest master
+  - `git checkout master`
+  - `git pull`
+- Run `elm publish` and follow its prompts
+  - Note: when you're asked to create a version tag, **please be sure to include a meaningful message**! Include details in the message that describe why this noredink-ui version exists at ll.
 
-```
-elm bump
-```
+Once you've published, you should see the latest version at <https://package.elm-lang.org/packages/NoRedInk/noredink-ui/>. It can take a few minutes to show up.
+
+
+### Troubleshooting a release
 
 If you get something like this:
 
@@ -160,19 +173,6 @@ Then run it with 0.19.0 explicitly (0.19.1 has some problems with big docs):
 ```
 npx -p elm@0.19.0-no-deps elm bump
 ```
-
-Commit and push your changes in a PR. Once it's approved and merged,
-then:
-
-```
-git tag -a 5.10.0 -m "release version 5.10.0"
-git push origin 5.10.0
-elm publish
-```
-
-You can also add a tag in https://github.com/NoRedInk/noredink-ui/releases/new if you want to add more detail.
-
-Once you've published, you should see the latest version at <https://package.elm-lang.org/packages/NoRedInk/noredink-ui/>.
 
 ## Versioning policy
 
