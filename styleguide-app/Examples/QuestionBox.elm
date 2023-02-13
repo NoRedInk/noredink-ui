@@ -197,6 +197,7 @@ view ellieLinkConfig state =
                 [ Block.view
                     [ Block.plaintext "Dave"
                     , Block.id "block-10"
+                    , Block.emphasize
                     ]
                 , Block.view [ Block.plaintext " scared his replacement cousin coming out of his room wearing a gorilla mask." ]
                 ]
@@ -219,7 +220,7 @@ While these visions did appear.
         , Container.html
             [ inParagraph "paragraph-11"
                 [ Block.view [ Block.plaintext "Bottom scared a bunch of people when it turned out he wasn't wearing a donkey " ]
-                , Block.view [ Block.plaintext "mask", Block.id "block-11" ]
+                , Block.view [ Block.plaintext "mask", Block.id "block-11", Block.emphasize ]
                 , Block.view [ Block.plaintext "." ]
                 ]
             , QuestionBox.view
