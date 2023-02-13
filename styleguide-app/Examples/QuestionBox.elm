@@ -191,7 +191,11 @@ view ellieLinkConfig state =
         ]
     , Container.view
         [ Container.id "container-10"
-        , Container.css [ Css.marginTop Spacing.verticalSpacerPx, Css.position Css.relative ]
+        , Container.css
+            [ Css.marginTop Spacing.verticalSpacerPx
+            , Css.position Css.relative
+            , Css.maxWidth Css.fitContent
+            ]
         , Container.html
             [ inParagraph "paragraph-10"
                 [ Block.view
@@ -216,7 +220,11 @@ While these visions did appear.
         ]
     , Container.view
         [ Container.id "container-11"
-        , Container.css [ Css.marginTop Spacing.verticalSpacerPx, Css.position Css.relative ]
+        , Container.css
+            [ Css.marginTop Spacing.verticalSpacerPx
+            , Css.position Css.relative
+            , Css.maxWidth Css.fitContent
+            ]
         , Container.html
             [ inParagraph "paragraph-11"
                 [ Block.view [ Block.plaintext "Bottom scared a bunch of people when it turned out he wasn't wearing a donkey " ]
