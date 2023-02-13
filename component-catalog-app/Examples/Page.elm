@@ -63,7 +63,7 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
-        [ -- faking a mini version of the Page component to give styleguide users a sense of what the
+        [ -- faking a mini version of the Page component to give component-catalog users a sense of what the
           -- component might look like
           Html.div
             [ css

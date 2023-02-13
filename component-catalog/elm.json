@@ -1,7 +1,7 @@
 {
     "type": "application",
     "source-directories": [
-        "../styleguide-app",
+        "../component-catalog-app",
         "../src"
     ],
     "elm-version": "0.19.1",

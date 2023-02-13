@@ -42,7 +42,7 @@ module Nri.Ui.TextArea.V5 exposing
   - Adds field for onBlur
 
 
-## The Nri styleguide-specified textarea with overlapping label
+## The Nri component-catalog-specified textarea with overlapping label
 
 
 ## Creating New Versions

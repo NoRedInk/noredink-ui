@@ -1,7 +1,7 @@
 # WARNING: this file is managed with `elm-forbid-imports`. Manual edits will
 # be overwritten!
 
-roots = ['styleguide']
+roots = ['component-catalog']
 [forbidden.Accessibility]
 hint = 'Use Accessibility.Styled'
 
@@ -20,9 +20,9 @@ hint = 'Use Accessibility.Styled.Live'
 [forbidden."Accessibility.Role"]
 hint = 'Use Accessibility.Styled.Role'
 usages = [
-    'styleguide-app/../src/Nri/Ui/Icon/V3.elm',
-    'styleguide-app/../src/Nri/Ui/Icon/V4.elm',
-    'styleguide-app/../src/Nri/Ui/Icon/V5.elm',
+    'component-catalog-app/../src/Nri/Ui/Icon/V3.elm',
+    'component-catalog-app/../src/Nri/Ui/Icon/V4.elm',
+    'component-catalog-app/../src/Nri/Ui/Icon/V5.elm',
 ]
 
 [forbidden."Accessibility.Style"]
@@ -33,7 +33,7 @@ hint = 'Use Accessibility.Widgetd.Widget'
 
 [forbidden.Html]
 hint = 'Use Html.Styled'
-usages = ['styleguide-app/../src/Nri/Ui/Button/V8.elm']
+usages = ['component-catalog-app/../src/Nri/Ui/Button/V8.elm']
 
 [forbidden."Nri.Ui.Accordion.V1"]
 hint = 'upgrade to V3'
@@ -55,7 +55,7 @@ hint = 'upgrade to V2'
 
 [forbidden."Nri.Ui.Button.V8"]
 hint = 'upgrade to V10'
-usages = ['styleguide-app/../src/Nri/Ui/SlideModal/V2.elm']
+usages = ['component-catalog-app/../src/Nri/Ui/SlideModal/V2.elm']
 
 [forbidden."Nri.Ui.Checkbox.V5"]
 hint = 'upgrade to V7'
@@ -65,7 +65,7 @@ hint = 'upgrade to V7'
 
 [forbidden."Nri.Ui.ClickableSvg.V1"]
 hint = 'upgrade to V2'
-usages = ['styleguide-app/Examples/Tooltip.elm']
+usages = ['component-catalog-app/Examples/Tooltip.elm']
 
 [forbidden."Nri.Ui.Container.V1"]
 hint = 'upgrade to V2'
@@ -78,7 +78,7 @@ hint = 'upgrade to V2'
 
 [forbidden."Nri.Ui.Icon.V3"]
 hint = 'upgrade to V5'
-usages = ['styleguide-app/../src/Nri/Ui/Modal/V3.elm']
+usages = ['component-catalog-app/../src/Nri/Ui/Modal/V3.elm']
 
 [forbidden."Nri.Ui.Icon.V4"]
 hint = 'upgrade to V5'
@@ -88,11 +88,11 @@ hint = 'upgrade to V3'
 
 [forbidden."Nri.Ui.InputStyles.V3"]
 hint = 'upgrade to V4'
-usages = ['styleguide/../src/Nri/Ui/TextArea/V4.elm']
+usages = ['component-catalog/../src/Nri/Ui/TextArea/V4.elm']
 
 [forbidden."Nri.Ui.Mark.V1"]
 hint = 'upgrade to V2'
-usages = ['styleguide/../src/Nri/Ui/Block/V1.elm']
+usages = ['component-catalog/../src/Nri/Ui/Block/V1.elm']
 
 [forbidden."Nri.Ui.Menu.V1"]
 hint = 'upgrade to V3'
@@ -111,7 +111,7 @@ hint = 'upgrade to V3'
 
 [forbidden."Nri.Ui.Modal.V10"]
 hint = 'upgrade to V11'
-usages = ['styleguide-app/Examples/RadioButton.elm']
+usages = ['component-catalog-app/Examples/RadioButton.elm']
 
 [forbidden."Nri.Ui.Modal.V3"]
 hint = 'upgrade to V11'
@@ -127,7 +127,7 @@ hint = 'upgrade to V3'
 
 [forbidden."Nri.Ui.QuestionBox.V2"]
 hint = 'upgrade to V3'
-usages = ['styleguide/../src/Nri/Ui/Block/V3.elm']
+usages = ['component-catalog/../src/Nri/Ui/Block/V3.elm']
 
 [forbidden."Nri.Ui.RadioButton.V1"]
 hint = 'upgrade to V2'
@@ -180,20 +180,20 @@ hint = 'upgrade to V7'
 [forbidden."Nri.Ui.Text.V2"]
 hint = 'upgrade to V5'
 usages = [
-    'styleguide-app/../src/Nri/Ui/Page/V3.elm',
-    'styleguide-app/../src/Nri/Ui/SlideModal/V2.elm',
-    'styleguide-app/Examples/DisclosureIndicator.elm',
+    'component-catalog-app/../src/Nri/Ui/Page/V3.elm',
+    'component-catalog-app/../src/Nri/Ui/SlideModal/V2.elm',
+    'component-catalog-app/Examples/DisclosureIndicator.elm',
 ]
 
 [forbidden."Nri.Ui.Text.V4"]
 hint = 'upgrade to V5'
 usages = [
-    'styleguide-app/Examples/Accordion.elm',
-    'styleguide-app/Examples/Icon.elm',
-    'styleguide-app/Examples/IconExamples.elm',
-    'styleguide-app/Examples/Loading.elm',
-    'styleguide-app/Examples/Modal.elm',
-    'styleguide-app/Examples/Tooltip.elm',
+    'component-catalog-app/Examples/Accordion.elm',
+    'component-catalog-app/Examples/Icon.elm',
+    'component-catalog-app/Examples/IconExamples.elm',
+    'component-catalog-app/Examples/Loading.elm',
+    'component-catalog-app/Examples/Modal.elm',
+    'component-catalog-app/Examples/Tooltip.elm',
 ]
 
 [forbidden."Nri.Ui.Text.V5"]
@@ -207,7 +207,7 @@ hint = 'upgrade to V7'
 
 [forbidden."Nri.Ui.Tooltip.V1"]
 hint = 'upgrade to V3'
-usages = ['styleguide/../src/Nri/Ui/Menu/V1.elm']
+usages = ['component-catalog/../src/Nri/Ui/Menu/V1.elm']
 
 [forbidden."Nri.Ui.Tooltip.V2"]
 hint = 'upgrade to V3'

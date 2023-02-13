@@ -26,7 +26,7 @@ main = do
         shakeLintIgnore =
           [ "node_modules/**/*",
             "elm-stuff/**/*",
-            "styleguide/elm-stuff/**/*"
+            "component-catalog/elm-stuff/**/*"
           ]
       }
     $ do
@@ -38,7 +38,7 @@ main = do
         removeFilesAfter "log" ["//*"]
         removeFilesAfter "node_modules" ["//*"]
         removeFilesAfter "public" ["//*"]
-        removeFilesAfter "styleguide" ["elm.js", "bundle.js", "elm-stuff"]
+        removeFilesAfter "component-catalog" ["elm.js", "bundle.js", "elm-stuff"]
 
       phony "public" $ need ["log/public.txt"]
 
@@ -48,9 +48,9 @@ main = do
             "tests/elm-verify-examples.json",
             "log/elm-verify-examples.txt",
             "log/elm-test.txt",
-            "log/elm-test-styleguide.txt",
+            "log/elm-test-component-catalog.txt",
             "log/elm-review.txt",
-            "log/elm-review-styleguide.txt",
+            "log/elm-review-component-catalog.txt",
             "log/puppeteer-tests.txt",
             "log/forbidden-imports-report.txt",
             "log/check-exposed.txt",
@@ -71,7 +71,7 @@ main = do
 
       "forbidden-imports.toml" %> \out -> do
         -- we always want to consume our own published deprecated modules list
-        -- so that we're not presenting outdated stuff in the styleguide! This
+        -- so that we're not presenting outdated stuff in the component-catalog! This
         -- file can change separately from the CSV, but should always have at
         -- least the deprecated modules in it.
         need ["deprecated-modules.csv"]
@@ -85,20 +85,20 @@ main = do
         need (["package.json", "elm.json"] ++ elmFiles)
         cmd (WithStdout True) (FileStdout out) "elm-test"
 
-      "log/elm-test-styleguide.txt" %> \out -> do
-        elmFiles <- getDirectoryFiles "." ["styleguide/tests/**/*.elm"]
-        need (["package.json", "styleguide/elm.json"] ++ elmFiles)
-        cmd (Cwd "styleguide") (WithStdout True) (FileStdout out) "elm-test"
+      "log/elm-test-component-catalog.txt" %> \out -> do
+        elmFiles <- getDirectoryFiles "." ["component-catalog/tests/**/*.elm"]
+        need (["package.json", "component-catalog/elm.json"] ++ elmFiles)
+        cmd (Cwd "component-catalog") (WithStdout True) (FileStdout out) "elm-test"
 
       "log/elm-review.txt" %> \out -> do
         elmFiles <- getDirectoryFiles "." ["src/**/*.elm", "tests/**/*.elm"]
         need (["package.json", "elm.json"] ++ elmFiles)
         cmd (WithStdout True) (FileStdout out) "elm-review"
 
-      "log/elm-review-styleguide.txt" %> \out -> do
-        elmFiles <- getDirectoryFiles "." ["styleguide/**/*.elm", "styleguide-app/**/*.elm"]
-        need (["package.json", "styleguide/elm.json"] ++ elmFiles)
-        cmd (Cwd "styleguide") (WithStdout True) (FileStdout out) "elm-review"
+      "log/elm-review-component-catalog.txt" %> \out -> do
+        elmFiles <- getDirectoryFiles "." ["component-catalog/**/*.elm", "component-catalog-app/**/*.elm"]
+        need (["package.json", "component-catalog/elm.json"] ++ elmFiles)
+        cmd (Cwd "component-catalog") (WithStdout True) (FileStdout out) "elm-review"
 
       "log/elm-verify-examples.txt" %> \out -> do
         elmFiles <- getDirectoryFiles "." ["src/**/*.elm"]
@@ -110,7 +110,7 @@ main = do
         writeFileChanged out "formatting checks passed"
 
       "log/elm-format.txt" %> \out -> do
-        let placesToLook = ["src", "tests", "styleguide", "styleguide-app"]
+        let placesToLook = ["src", "tests", "component-catalog", "component-catalog-app"]
         elmFiles <- getDirectoryFiles "." (map (\place -> place </> "**" </> "*.elm") placesToLook)
         need elmFiles
         cmd (WithStdout True) (FileStdout out) "elm-format" "--validate" placesToLook
@@ -152,26 +152,26 @@ main = do
 
       "public/bundle.js" %> \out -> do
         libJsFiles <- getDirectoryFiles "." ["lib/**/*.js"]
-        need (["package.json", "lib/index.js", "styleguide/manifest.js", "log/npm-install.txt"] ++ libJsFiles)
-        cmd_ "./node_modules/.bin/browserify" "--entry" "styleguide/manifest.js" "--outfile" out
+        need (["package.json", "lib/index.js", "component-catalog/manifest.js", "log/npm-install.txt"] ++ libJsFiles)
+        cmd_ "./node_modules/.bin/browserify" "--entry" "component-catalog/manifest.js" "--outfile" out
 
       "public/elm.js" %> \out -> do
-        elmSources <- getDirectoryFiles "." ["styleguide-app/**/*.elm", "src/**/*.elm"]
+        elmSources <- getDirectoryFiles "." ["component-catalog-app/**/*.elm", "src/**/*.elm"]
         need elmSources
-        cmd_ (Cwd "styleguide") "elm" "make" "Main.elm" "--output" (".." </> out)
+        cmd_ (Cwd "component-catalog") "elm" "make" "Main.elm" "--output" (".." </> out)
 
       "public/package.json" %> \out -> do
         copyFileChanged "elm.json" out
 
       "public/application.json" %> \out -> do
-        copyFileChanged "styleguide/elm.json" out
+        copyFileChanged "component-catalog/elm.json" out
 
       "public/**/*" %> \out ->
-        copyFileChanged (replaceDirectory1 out "styleguide") out
+        copyFileChanged (replaceDirectory1 out "component-catalog") out
 
       "log/public.txt" %> \out -> do
         need (["public/index.html", "public/elm.js", "public/bundle.js", "public/package.json", "public/application.json"])
-        writeFileChanged out "built styleguide app successfully"
+        writeFileChanged out "built component-catalog app successfully"
 
       -- dev deps we get dynamically instead of from Nix (frowny face)
       "log/npm-install.txt" %> \out -> do

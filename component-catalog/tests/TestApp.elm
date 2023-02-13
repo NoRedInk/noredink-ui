@@ -16,7 +16,7 @@ app route =
         , onUrlRequest = OnUrlRequest
         , onUrlChange = OnUrlChange
         }
-        |> ProgramTest.withBaseUrl ("https://styleguide.test/" ++ Routes.toString route)
+        |> ProgramTest.withBaseUrl ("https://component-catalog.test/" ++ Routes.toString route)
         |> ProgramTest.withSimulatedEffects simulateEffect
         |> ProgramTest.start ()
 
