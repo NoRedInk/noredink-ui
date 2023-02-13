@@ -2,7 +2,7 @@ module Spec.Nri.Ui.QuestionBox exposing (spec)
 
 import Expect
 import Html.Styled
-import Nri.Ui.QuestionBox.V3 as QuestionBox
+import Nri.Ui.QuestionBox.V4 as QuestionBox
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Test exposing (..)
 import Test.Html.Query as Query
