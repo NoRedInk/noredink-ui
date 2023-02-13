@@ -149,7 +149,7 @@ allBreadCrumb : BreadCrumbs (Route state msg)
 allBreadCrumb =
     BreadCrumbs.init
         { id = "breadcrumbs__all"
-        , text = "All"
+        , text = "Component Catalog"
         , route = All
         }
         []
