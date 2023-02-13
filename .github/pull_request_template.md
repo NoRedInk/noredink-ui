@@ -46,7 +46,7 @@ Please link to any relevant context and stories.
 - [ ] Component has clear documentation
 - [ ] Component is in the Component Catalog
     - [ ] Component is categorized reasonably (see [Category](https://github.com/NoRedInk/noredink-ui/blob/master/component-catalog-app/Category.elm) for all the currently available categories). The component can be in multiple categories, if appropriate.
-    - [ ] Component has a representative preview for the component library example cards (bonus points for making it delightful!)
+    - [ ] Component has a representative preview for the Component Catalog cards (bonus points for making it delightful!)
     - [ ] Component has a customizable example. Aim for having _every_ possible supported version of the component displayable through the configuration on this page. (Protip: This is handy for testing expected behavior!)
     - [ ] The customizable example produces sample code
     - [ ] The component's example page includes keyboard behavior, if any
@@ -83,9 +83,9 @@ Please link to any relevant context and stories.
     - [ ] Component docs include a changelog
     - [ ] Any new exposed functions or properties have docs
 - [ ] Changes extend to the Component Catalog
-    - [ ] The component library example is updated to use the newest version, if appropriate
-    - [ ] The component library version number is updated, if appropriate
-    - [ ] Any new customizations are available from the component library example
+    - [ ] The Component Catalog is updated to use the newest version, if appropriate
+    - [ ] The Component Catalog example version number is updated, if appropriate
+    - [ ] Any new customizations are available from the Component Catalog
     - [ ] The component example still has:
         - an accurate preview
         - valid sample code
