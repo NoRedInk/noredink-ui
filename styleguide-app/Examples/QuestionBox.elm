@@ -29,7 +29,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (..)
-import Nri.Ui.QuestionBox.V3 as QuestionBox
+import Nri.Ui.QuestionBox.V4 as QuestionBox
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V6 as Table
@@ -506,6 +506,37 @@ view ellieLinkConfig state =
                     , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the blank"
                     ]
           }
+        , { description = "**Plain block, with parent div with position relative**"
+          , example =
+                tableExampleInPositionRelative "paragraph-10"
+                    "container-10"
+                    [ Block.view
+                        [ Block.plaintext "Dave"
+                        , Block.id "block-10"
+                        ]
+                    , Block.view [ Block.plaintext " scared his replacement cousin coming out of his room wearing a gorilla mask." ]
+                    ]
+                    [ QuestionBox.pointingTo "block-10" (Dict.get "question-box-10" state.questionBoxMeasurementsById)
+                    , QuestionBox.id "question-box-10"
+                    , QuestionBox.markdown "Who?"
+                    ]
+          , pattern =
+                tableExampleCodeRelative
+                    [ Code.fromModule "Block" "view"
+                        ++ Code.listMultiline
+                            [ Code.fromModule "Block" "id " ++ Code.string "block-id"
+                            , Code.fromModule "Block" "plaintext " ++ Code.string "Dave"
+                            ]
+                            3
+                    , "…"
+                    ]
+                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                    , Code.fromModule moduleName "pointingTo "
+                        ++ Code.string "block-id"
+                        ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
+                    , Code.fromModule moduleName "markdown " ++ Code.string "Who?"
+                    ]
+          }
         ]
     ]
 
@@ -518,6 +549,22 @@ tableExample paragraphId paragraphContents questionBoxAttributes =
 tableExampleCode : List String -> List String -> String
 tableExampleCode blockAttributes questionBoxAttributes =
     "div []"
+        ++ Code.listMultiline
+            [ "p [ id \"paragraph-id\" ]" ++ Code.listMultiline blockAttributes 2
+            , Code.fromModule moduleName "view" ++ Code.listMultiline questionBoxAttributes 2
+            ]
+            1
+
+
+tableExampleInPositionRelative : String -> String -> List (Html msg) -> List (QuestionBox.Attribute msg) -> Html msg
+tableExampleInPositionRelative paragraphId containerId paragraphContents questionBoxAttributes =
+    div [ Attributes.id containerId, Attributes.css [ Css.position Css.relative ] ]
+        [ inParagraph paragraphId paragraphContents, QuestionBox.view questionBoxAttributes ]
+
+
+tableExampleCodeRelative : List String -> List String -> String
+tableExampleCodeRelative blockAttributes questionBoxAttributes =
+    "div [Attributes.id containerId, Attributes.css [ Css.position.relative ]]"
         ++ Code.listMultiline
             [ "p [ id \"paragraph-id\" ]" ++ Code.listMultiline blockAttributes 2
             , Code.fromModule moduleName "view" ++ Code.listMultiline questionBoxAttributes 2
@@ -571,6 +618,7 @@ type alias State =
             { block : Element
             , paragraph : Element
             , questionBox : Element
+            , container : Maybe Element
             }
     }
 
@@ -737,6 +785,7 @@ type Msg
             { block : Element
             , paragraph : Element
             , questionBox : Element
+            , container : Maybe Element
             }
         )
 
@@ -758,7 +807,7 @@ update msg state =
                     [ "label-1"
                     , "label-3"
                     ]
-                    ++ List.map measureQuestionBox
+                    ++ List.map (\ids -> measureQuestionBox ids Nothing)
                         [ ( "paragraph-0", "block-0", "question-box-0" )
                         , ( "paragraph-1", "block-1", "question-box-1" )
                         , ( "paragraph-2", "block-2", "question-box-2" )
@@ -770,6 +819,7 @@ update msg state =
                         , ( "paragraph-8", "block-8", "left-viewport-question-box-example" )
                         , ( "paragraph-9", "block-9", "right-viewport-question-box-example" )
                         ]
+                    ++ [ measureQuestionBox ( "paragraph-10", "block-10", "question-box-10" ) (Just "container-10") ]
                 )
             )
 
@@ -804,16 +854,24 @@ measureBlockLabel labelId =
         |> Task.attempt (GotBlockLabelMeasurements labelId)
 
 
-measureQuestionBox : ( String, String, String ) -> Cmd Msg
-measureQuestionBox ( paragraphId, blockId, questionBoxId ) =
-    Task.map3
-        (\paragraph block questionBox ->
+measureQuestionBox : ( String, String, String ) -> Maybe String -> Cmd Msg
+measureQuestionBox ( paragraphId, blockId, questionBoxId ) maybeContainerId =
+    Task.map4
+        (\paragraph block questionBox container ->
             { block = block
             , paragraph = paragraph
             , questionBox = questionBox
+            , container = container
             }
         )
         (Dom.getElement paragraphId)
         (Dom.getElement blockId)
         (Dom.getElement questionBoxId)
+        (case maybeContainerId of
+            Just containerId ->
+                Dom.getElement containerId |> Task.map Just
+
+            Nothing ->
+                Task.succeed Nothing
+        )
         |> Task.attempt (GotQuestionBoxMeasurements questionBoxId)
