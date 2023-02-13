@@ -9,6 +9,7 @@ port module Examples.Highlighter exposing (Msg, State, example)
 import Category exposing (Category(..))
 import Code
 import Css exposing (Color)
+import Css.Global
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
@@ -45,7 +46,23 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.map HighlighterMsg subscriptions
     , preview =
-        []
+        [ div [ css [ Fonts.baseFont, Css.lineHeight (Css.int 2), Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ] ] ]
+            [ Highlighter.static
+                { id = "highlight-preview"
+                , highlightables =
+                    [ ( "Sphinx", Nothing )
+                    , ( "of", Nothing )
+                    , ( "black", Just exampleMarker )
+                    , ( "quartz,", Nothing )
+                    , ( "judge", Nothing )
+                    , ( "my", Nothing )
+                    , ( "vow.", Nothing )
+                    ]
+                        |> List.intersperse ( " ", Nothing )
+                        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+                }
+            ]
+        ]
     , view =
         \ellieLinkConfig state ->
             [ ControlView.view
