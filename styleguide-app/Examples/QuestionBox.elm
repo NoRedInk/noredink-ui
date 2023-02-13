@@ -26,6 +26,7 @@ import Nri.Ui.Block.V4 as Block
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (..)
@@ -146,7 +147,7 @@ view ellieLinkConfig state =
             ]
         ]
     , Heading.h3
-        [ Heading.plaintext "QuestionBox.pointingTo"
+        [ Heading.plaintext "QuestionBox.pointingTo (positioned against the viewport)"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
     , inParagraph "paragraph-8"
@@ -182,6 +183,28 @@ view ellieLinkConfig state =
         , QuestionBox.actions
             [ { label = "Yes", onClick = NoOp }
             , { label = "No", onClick = NoOp }
+            ]
+        ]
+    , Heading.h3
+        [ Heading.plaintext "QuestionBox.pointingTo (positioned against an ancestor)"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
+    , Container.view
+        [ Container.id "container-10"
+        , Container.css [ Css.position Css.relative ]
+        , Container.html
+            [ inParagraph "paragraph-10"
+                [ Block.view
+                    [ Block.plaintext "Dave"
+                    , Block.id "block-10"
+                    ]
+                , Block.view [ Block.plaintext " scared his replacement cousin coming out of his room wearing a gorilla mask." ]
+                ]
+            , QuestionBox.view
+                [ QuestionBox.pointingTo "block-10" (Dict.get "question-box-10" state.questionBoxMeasurementsById)
+                , QuestionBox.id "question-box-10"
+                , QuestionBox.markdown "Who?"
+                ]
             ]
         ]
     , Table.view
@@ -506,37 +529,6 @@ view ellieLinkConfig state =
                     , Code.fromModule moduleName "markdown " ++ Code.string "Pointing at the blank"
                     ]
           }
-        , { description = "**Plain block, with parent div with position relative**"
-          , example =
-                tableExampleInPositionRelative "paragraph-10"
-                    "container-10"
-                    [ Block.view
-                        [ Block.plaintext "Dave"
-                        , Block.id "block-10"
-                        ]
-                    , Block.view [ Block.plaintext " scared his replacement cousin coming out of his room wearing a gorilla mask." ]
-                    ]
-                    [ QuestionBox.pointingTo "block-10" (Dict.get "question-box-10" state.questionBoxMeasurementsById)
-                    , QuestionBox.id "question-box-10"
-                    , QuestionBox.markdown "Who?"
-                    ]
-          , pattern =
-                tableExampleCodeRelative
-                    [ Code.fromModule "Block" "view"
-                        ++ Code.listMultiline
-                            [ Code.fromModule "Block" "id " ++ Code.string "block-10"
-                            , Code.fromModule "Block" "plaintext " ++ Code.string "Dave"
-                            ]
-                            3
-                    , "…"
-                    ]
-                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-10"
-                    , Code.fromModule moduleName "pointingTo "
-                        ++ Code.string "block-id"
-                        ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-10\" model.questionBoxMeasurement")
-                    , Code.fromModule moduleName "markdown " ++ Code.string "Who?"
-                    ]
-          }
         ]
     ]
 
@@ -549,22 +541,6 @@ tableExample paragraphId paragraphContents questionBoxAttributes =
 tableExampleCode : List String -> List String -> String
 tableExampleCode blockAttributes questionBoxAttributes =
     "div []"
-        ++ Code.listMultiline
-            [ "p [ id \"paragraph-id\" ]" ++ Code.listMultiline blockAttributes 2
-            , Code.fromModule moduleName "view" ++ Code.listMultiline questionBoxAttributes 2
-            ]
-            1
-
-
-tableExampleInPositionRelative : String -> String -> List (Html msg) -> List (QuestionBox.Attribute msg) -> Html msg
-tableExampleInPositionRelative paragraphId containerId paragraphContents questionBoxAttributes =
-    div [ Attributes.id containerId, Attributes.css [ Css.position Css.relative ] ]
-        [ inParagraph paragraphId paragraphContents, QuestionBox.view questionBoxAttributes ]
-
-
-tableExampleCodeRelative : List String -> List String -> String
-tableExampleCodeRelative blockAttributes questionBoxAttributes =
-    "div [Attributes.id containerId, Attributes.css [ Css.position.relative ]]"
         ++ Code.listMultiline
             [ "p [ id \"paragraph-id\" ]" ++ Code.listMultiline blockAttributes 2
             , Code.fromModule moduleName "view" ++ Code.listMultiline questionBoxAttributes 2
