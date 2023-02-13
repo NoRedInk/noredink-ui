@@ -524,16 +524,16 @@ view ellieLinkConfig state =
                 tableExampleCodeRelative
                     [ Code.fromModule "Block" "view"
                         ++ Code.listMultiline
-                            [ Code.fromModule "Block" "id " ++ Code.string "block-id"
+                            [ Code.fromModule "Block" "id " ++ Code.string "block-10"
                             , Code.fromModule "Block" "plaintext " ++ Code.string "Dave"
                             ]
                             3
                     , "…"
                     ]
-                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-10"
                     , Code.fromModule moduleName "pointingTo "
                         ++ Code.string "block-id"
-                        ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-id\" model.questionBoxMeasurement")
+                        ++ (Code.newlineWithIndent 3 ++ Code.withParens "Dict.get \"question-box-10\" model.questionBoxMeasurement")
                     , Code.fromModule moduleName "markdown " ++ Code.string "Who?"
                     ]
           }
