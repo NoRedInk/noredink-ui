@@ -544,6 +544,7 @@ clickableTextButtonStyles =
     , Css.padding Css.zero
     , Css.borderStyle Css.none
     , Css.backgroundColor Css.transparent
+    , Css.textAlign Css.left
     ]
 
 
