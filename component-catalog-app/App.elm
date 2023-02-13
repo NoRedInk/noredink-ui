@@ -249,27 +249,27 @@ view model =
     in
     case model.route of
         Routes.Doodad example ->
-            { title = example.name ++ " in the NoRedInk Style Guide"
+            { title = example.name ++ " in the NoRedInk Component Catalog"
             , body = viewExample model example |> toBody
             }
 
         Routes.CategoryDoodad _ example ->
-            { title = example.name ++ " in the NoRedInk Style Guide"
+            { title = example.name ++ " in the NoRedInk Component Catalog"
             , body = viewExample model example |> toBody
             }
 
         Routes.NotFound name ->
-            { title = name ++ " was not found in the NoRedInk Style Guide"
+            { title = name ++ " was not found in the NoRedInk Component Catalog"
             , body = toBody notFound
             }
 
         Routes.Category category ->
-            { title = Category.forDisplay category ++ " Category in the NoRedInk Style Guide"
+            { title = Category.forDisplay category ++ " Category in the NoRedInk Component Catalog"
             , body = toBody (viewCategory model category)
             }
 
         Routes.All ->
-            { title = "NoRedInk Style Guide"
+            { title = "NoRedInk Component Catalog"
             , body = toBody (viewAll model)
             }
 
@@ -285,7 +285,7 @@ notFound : Html Msg
 notFound =
     Page.notFound
         { link = ChangeRoute Routes.All
-        , recoveryText = Page.ReturnTo "Component Library"
+        , recoveryText = Page.ReturnTo "Component Catalog"
         }
 
 
