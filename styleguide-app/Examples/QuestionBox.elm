@@ -807,19 +807,19 @@ update msg state =
                     [ "label-1"
                     , "label-3"
                     ]
-                    ++ List.map (\ids -> measureQuestionBox ids Nothing)
-                        [ ( "paragraph-0", "block-0", "question-box-0" )
-                        , ( "paragraph-1", "block-1", "question-box-1" )
-                        , ( "paragraph-2", "block-2", "question-box-2" )
-                        , ( "paragraph-3", "block-3", "question-box-3" )
-                        , ( "paragraph-4", "block-4", "question-box-4" )
-                        , ( "paragraph-5", "block-5", "question-box-5" )
-                        , ( "paragraph-6", "block-6", "question-box-6" )
-                        , ( "paragraph-7", "block-7", "question-box-7" )
-                        , ( "paragraph-8", "block-8", "left-viewport-question-box-example" )
-                        , ( "paragraph-9", "block-9", "right-viewport-question-box-example" )
+                    ++ List.map measureQuestionBox
+                        [ { paragraphId = "paragraph-0", blockId = "block-0", questionBoxId = "question-box-0", containerId = Nothing }
+                        , { paragraphId = "paragraph-1", blockId = "block-1", questionBoxId = "question-box-1", containerId = Nothing }
+                        , { paragraphId = "paragraph-2", blockId = "block-2", questionBoxId = "question-box-2", containerId = Nothing }
+                        , { paragraphId = "paragraph-3", blockId = "block-3", questionBoxId = "question-box-3", containerId = Nothing }
+                        , { paragraphId = "paragraph-4", blockId = "block-4", questionBoxId = "question-box-4", containerId = Nothing }
+                        , { paragraphId = "paragraph-5", blockId = "block-5", questionBoxId = "question-box-5", containerId = Nothing }
+                        , { paragraphId = "paragraph-6", blockId = "block-6", questionBoxId = "question-box-6", containerId = Nothing }
+                        , { paragraphId = "paragraph-7", blockId = "block-7", questionBoxId = "question-box-7", containerId = Nothing }
+                        , { paragraphId = "paragraph-8", blockId = "block-8", questionBoxId = "left-viewport-question-box-example", containerId = Nothing }
+                        , { paragraphId = "paragraph-9", blockId = "block-9", questionBoxId = "right-viewport-question-box-example", containerId = Nothing }
+                        , { paragraphId = "paragraph-10", blockId = "block-10", questionBoxId = "question-box-10", containerId = Just "container-10" }
                         ]
-                    ++ [ measureQuestionBox ( "paragraph-10", "block-10", "question-box-10" ) (Just "container-10") ]
                 )
             )
 
@@ -854,8 +854,8 @@ measureBlockLabel labelId =
         |> Task.attempt (GotBlockLabelMeasurements labelId)
 
 
-measureQuestionBox : ( String, String, String ) -> Maybe String -> Cmd Msg
-measureQuestionBox ( paragraphId, blockId, questionBoxId ) maybeContainerId =
+measureQuestionBox : { paragraphId : String, blockId : String, questionBoxId : String, containerId : Maybe String } -> Cmd Msg
+measureQuestionBox { paragraphId, blockId, questionBoxId, containerId } =
     Task.map4
         (\paragraph block questionBox container ->
             { block = block
@@ -867,11 +867,7 @@ measureQuestionBox ( paragraphId, blockId, questionBoxId ) maybeContainerId =
         (Dom.getElement paragraphId)
         (Dom.getElement blockId)
         (Dom.getElement questionBoxId)
-        (case maybeContainerId of
-            Just containerId ->
-                Dom.getElement containerId |> Task.map Just
-
-            Nothing ->
-                Task.succeed Nothing
+        (Maybe.map (Dom.getElement >> Task.map Just) containerId
+            |> Maybe.withDefault (Task.succeed Nothing)
         )
         |> Task.attempt (GotQuestionBoxMeasurements questionBoxId)
