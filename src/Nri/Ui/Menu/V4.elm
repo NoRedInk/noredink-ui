@@ -571,16 +571,16 @@ viewCustom focusAndToggle config entries =
                                     [ Aria.hasDialogPopUp ]
                            )
 
-                trigger =
+                trigger tooltipAttributes =
                     case config.button of
                         DefaultTrigger title buttonAttributes ->
-                            viewDefaultTrigger title config buttonAttributes triggerAttributes
+                            viewDefaultTrigger title config buttonAttributes (tooltipAttributes ++ triggerAttributes)
 
                         Button title buttonAttributes ->
-                            viewButton title config buttonAttributes triggerAttributes
+                            viewButton title config buttonAttributes (tooltipAttributes ++ triggerAttributes)
 
                         ClickableText title clickableTextAttributes ->
-                            viewClickableText title config clickableTextAttributes triggerAttributes
+                            viewClickableText title config clickableTextAttributes (tooltipAttributes ++ triggerAttributes)
 
                         ClickableSvg includeIndicator title icon clickableSvgAttributes ->
                             viewClickableSvg includeIndicator
@@ -588,19 +588,16 @@ viewCustom focusAndToggle config entries =
                                 icon
                                 config
                                 clickableSvgAttributes
-                                triggerAttributes
+                                (tooltipAttributes ++ triggerAttributes)
               in
               case config.tooltipAttributes of
                 [] ->
-                    trigger
+                    trigger []
 
                 _ ->
                     Tooltip.view
                         { id = config.menuId ++ "-tooltip"
-                        , trigger =
-                            \tooltipHtmlAttributes ->
-                                -- TODO refactor so that we can pass through the tooltip attributes
-                                trigger
+                        , trigger = trigger
                         }
                         config.tooltipAttributes
             , div [ styleOuterContent contentVisible config ]
