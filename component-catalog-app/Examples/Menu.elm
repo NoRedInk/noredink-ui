@@ -139,11 +139,12 @@ view ellieLinkConfig state =
         , version = version
         , update = UpdateControls
         , settings = state.settings
-        , mainType = Just "RootHtml.Html { focus : Maybe String, isOpen : Bool }"
+        , mainType = Just "RootHtml.Html Msg"
         , extraCode =
             [ "import Nri.Ui.Button.V10 as Button"
             , "import Nri.Ui.ClickableSvg.V2 as ClickableSvg"
             , "import Nri.Ui.ClickableText.V3 as ClickableText"
+            , "\ntype Msg = ToggleMenu { focus : Maybe String, isOpen : Bool } | ToggleTooltip Bool"
             ]
         , renderExample = Code.unstyledView
         , toExampleCode =
@@ -152,8 +153,7 @@ view ellieLinkConfig state =
                     code : String
                     code =
                         moduleName
-                            ++ ".view "
-                            ++ "identity -- TODO: you will need a real msg type here"
+                            ++ ".view ToggleMenu"
                             ++ Code.listMultiline
                                 (("Menu.isOpen " ++ Code.bool (isOpen "interactiveExample"))
                                     :: List.map Tuple.first settings
