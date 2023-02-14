@@ -54,19 +54,57 @@ xOffsetPxSpec =
     ]
 
 
-xOffsetPxSpecAgainstContainer : List Test
-xOffsetPxSpecAgainstContainer =
-    [ todo "When the element is in line with the left edge of its container, does not shift"
-    , todo "when the element is in line with the right edge of its container, does not shift"
-    , todo "when the element overflows its container on the left side, shift to the right"
-    , todo "when the element overflows its container on the right side, shift to the left"
-    , todo "when the element overflows its container on both sides, align to the left side of the container"
-    ]
-
-
 element : { viewportX : Float, viewportWidth : Float, elementX : Float, elementWidth : Float } -> Element
 element { viewportX, viewportWidth, elementWidth, elementX } =
     { scene = { width = 1000, height = 1000 }
     , viewport = { x = viewportX, y = 0, width = viewportWidth, height = 500 }
     , element = { x = elementX, width = elementWidth, y = 0, height = 10 }
+    }
+
+
+xOffsetPxSpecAgainstContainer : List Test
+xOffsetPxSpecAgainstContainer =
+    [ test "When the element is in line with the left edge of its container, does not shift" <|
+        \() ->
+            { element = measurement { x = 0, width = 200 }
+            , container = measurement { x = 0, width = 500 }
+            }
+                |> Position.xOffsetPxAgainstContainer
+                |> Expect.equal 0
+    , test "when the element is in line with the right edge of its container, does not shift" <|
+        \() ->
+            { element = measurement { x = 300, width = 200 }
+            , container = measurement { x = 0, width = 500 }
+            }
+                |> Position.xOffsetPxAgainstContainer
+                |> Expect.equal 0
+    , test "when the element overflows its container on the left side, shift to the right" <|
+        \() ->
+            { element = measurement { x = -100, width = 200 }
+            , container = measurement { x = 0, width = 500 }
+            }
+                |> Position.xOffsetPxAgainstContainer
+                |> Expect.equal 100
+    , test "when the element overflows its container on the right side, shift to the left" <|
+        \() ->
+            { element = measurement { x = 400, width = 200 }
+            , container = measurement { x = 0, width = 500 }
+            }
+                |> Position.xOffsetPxAgainstContainer
+                |> Expect.equal -100
+    , test "when the element overflows its container on both sides, align to the left side of the container" <|
+        \() ->
+            { element = measurement { x = -100, width = 300 }
+            , container = measurement { x = 0, width = 100 }
+            }
+                |> Position.xOffsetPxAgainstContainer
+                |> Expect.equal 100
+    ]
+
+
+measurement : { x : Float, width : Float } -> Element
+measurement { width, x } =
+    { scene = { width = 1000, height = 1000 }
+    , viewport = { x = 0, y = 0, width = 1000, height = 2000 }
+    , element = { x = x, width = width, y = 0, height = 10 }
     }

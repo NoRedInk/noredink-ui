@@ -1,4 +1,4 @@
-module Position exposing (xOffsetPx)
+module Position exposing (xOffsetPx, xOffsetPxAgainstContainer)
 
 {-| -}
 
@@ -31,3 +31,13 @@ xOffsetPx { element, viewport } =
 
     else
         0
+
+
+{-| Figure out how much an element needs to shift along the horizontal axis in order to not overflow its ancestor.
+
+Uses Brower.Dom's Element measurement.
+
+-}
+xOffsetPxAgainstContainer : { container : Dom.Element, element : Dom.Element } -> Float
+xOffsetPxAgainstContainer config =
+    0
