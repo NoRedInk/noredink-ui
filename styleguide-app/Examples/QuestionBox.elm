@@ -46,7 +46,7 @@ moduleName =
 
 version : Int
 version =
-    3
+    4
 
 
 {-| -}
