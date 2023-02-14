@@ -31,6 +31,7 @@ import Nri.Ui.Menu.V4 as Menu
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V6 as Table
 import Nri.Ui.TextInput.V7 as TextInput
+import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
 import Svg.Styled as Svg
@@ -186,7 +187,21 @@ view ellieLinkConfig state =
         ]
     , div [ css [ Css.displayFlex, Css.justifyContent Css.center ] ]
         [ Menu.view (FocusAndToggle "interactiveExample")
-            (Menu.isOpen (isOpen "interactiveExample") :: menuAttributes)
+            ((if (Control.currentValue state.settings).withTooltip then
+                [ Menu.withTooltip
+                    [ Tooltip.open (Set.member "tooltip-0" state.openTooltips)
+                    , Tooltip.onToggle (ToggleTooltip "tooltip-0")
+                    , Tooltip.plaintext "Tooltip content"
+                    , Tooltip.fitToContent
+                    ]
+                ]
+
+              else
+                []
+             )
+                ++ Menu.isOpen (isOpen "interactiveExample")
+                :: menuAttributes
+            )
             [ Menu.entry "customizable-example" <|
                 \attrs ->
                     ClickableText.button "Button"
@@ -532,6 +547,7 @@ controlMenuWidth =
 type Msg
     = ConsoleLog String
     | UpdateControls (Control Settings)
+    | ToggleTooltip String Bool
     | FocusAndToggle String { isOpen : Bool, focus : Maybe String }
     | Focused (Result Dom.Error ())
 
@@ -545,6 +561,12 @@ update msg state =
 
         UpdateControls configuration ->
             ( { state | settings = configuration }, Cmd.none )
+
+        ToggleTooltip id True ->
+            ( { state | openTooltips = Set.insert id state.openTooltips }, Cmd.none )
+
+        ToggleTooltip id False ->
+            ( { state | openTooltips = Set.remove id state.openTooltips }, Cmd.none )
 
         FocusAndToggle id { isOpen, focus } ->
             ( { state

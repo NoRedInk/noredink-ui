@@ -3,6 +3,7 @@ module Nri.Ui.Menu.V4 exposing
     , isOpen, isDisabled
     , opensOnHover
     , defaultTrigger, button, clickableText, clickableSvg, clickableSvgWithoutIndicator
+    , withTooltip
     , buttonId
     , navMenuList, disclosure, dialog
     , menuWidth, menuId, menuZIndex
@@ -644,7 +645,19 @@ viewCustom focusAndToggle config entries =
               in
               case config.button of
                 Button standardButton ->
-                    standardButton config buttonAttributes
+                    case config.tooltipAttributes of
+                        [] ->
+                            standardButton config buttonAttributes
+
+                        _ ->
+                            Tooltip.view
+                                { id = config.menuId ++ "-tooltip"
+                                , trigger =
+                                    \tooltipHtmlAttributes ->
+                                        -- TODO refactor so that we can pass through the tooltip attributes
+                                        standardButton config buttonAttributes
+                                }
+                                config.tooltipAttributes
             , div [ styleOuterContent contentVisible config ]
                 [ div
                     [ AttributesExtra.nriDescription "menu-hover-bridge"
