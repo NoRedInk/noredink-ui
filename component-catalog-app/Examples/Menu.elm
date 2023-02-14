@@ -146,6 +146,7 @@ view ellieLinkConfig state =
             [ "import Nri.Ui.Button.V10 as Button"
             , "import Nri.Ui.ClickableSvg.V2 as ClickableSvg"
             , "import Nri.Ui.ClickableText.V3 as ClickableText"
+            , "import Nri.Ui.Tooltip.V3 as Tooltip"
             , "\ntype Msg = ToggleMenu { focus : Maybe String, isOpen : Bool } | ToggleTooltip Bool"
             ]
         , renderExample = Code.unstyledView
@@ -157,7 +158,21 @@ view ellieLinkConfig state =
                         moduleName
                             ++ ".view ToggleMenu"
                             ++ Code.listMultiline
-                                (("Menu.isOpen " ++ Code.bool (isOpen "interactiveExample"))
+                                ((if (Control.currentValue state.settings).withTooltip then
+                                    [ Code.fromModule "Menu" "withTooltip"
+                                        ++ Code.listMultiline
+                                            [ Code.fromModule "Tooltip" "open " ++ (Code.bool <| Set.member "tooltip-0" state.openTooltips)
+                                            , Code.fromModule "Tooltip" "onToggle " ++ "ToggleTooltip"
+                                            , Code.fromModule "Tooltip" "plaintext " ++ Code.string "Tooltip content"
+                                            , Code.fromModule "Tooltip" "fitToContent"
+                                            ]
+                                            2
+                                    ]
+
+                                  else
+                                    []
+                                 )
+                                    ++ ("Menu.isOpen " ++ Code.bool (isOpen "interactiveExample"))
                                     :: List.map Tuple.first attributes
                                 )
                                 1
