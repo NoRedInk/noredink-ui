@@ -240,7 +240,7 @@ viewPointingTo config blockId measurements =
 
                 -- calculate the max position of the question box, so it will not render outside the viewport
                 maybeMaxPosition =
-                    container |> Maybe.map (\containerElement -> containerElement.element.x + containerElement.element.width - questionBox.element.width - offset) |> Debug.log "maxPosition"
+                    container |> Maybe.map (\containerElement -> containerElement.element.x + containerElement.element.width - questionBox.element.width - offset)
 
                 position =
                     -- position in the middle of the block
