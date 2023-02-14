@@ -33,7 +33,7 @@ import Nri.Ui.CharacterIcon.V1 as CharacterIcon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Position exposing (xOffsetPx)
+import Position exposing (xOffsetPx, xOffsetPxAgainstContainer)
 
 
 {-| -}
@@ -212,51 +212,47 @@ viewPointingTo :
     -> Html msg
 viewPointingTo config blockId measurements =
     let
+        -- the xoffset is used to translate the questionbox so that it remains in the viewport
+        -- or in its non-static positioned ancestor (depending on whether container measurements are passed in or not)
         xOffset =
-            Maybe.map xOffsetPx adjustedQuestionBoxPosition
-                |> Maybe.withDefault 0
+            case ( centeredQuestionBoxPosition, Maybe.andThen .container measurements ) of
+                ( Just qbPosition, Just container ) ->
+                    xOffsetPxAgainstContainer { container = container, element = qbPosition }
 
-        adjustedQuestionBoxPosition =
+                ( Just qbPosition, Nothing ) ->
+                    xOffsetPx qbPosition
+
+                _ ->
+                    0
+
+        centeredQuestionBoxPosition =
             Maybe.map
                 (\({ questionBox } as m) ->
                     let
                         element =
                             questionBox.element
                     in
-                    { questionBox | element = { element | x = newQuestionBoxPosition m } }
+                    { questionBox | element = { element | x = centeredQuestionBoxLeftPx m } }
                 )
                 measurements
 
-        newQuestionBoxPosition { block, questionBox, container } =
-            let
-                -- calculate the offset between the viewport and the container
-                offset =
-                    case container of
-                        Just containerElement ->
-                            containerElement.element.x
+        centeredQuestionBoxLeftPx { block, questionBox, container } =
+            -- position in the middle of the block
+            (block.element.x + (block.element.width / 2))
+                - -- against the middle of the question box
+                  (questionBox.element.width / 2)
 
-                        Nothing ->
-                            0
-
-                -- calculate the max position of the question box, so it will not render outside the viewport
-                maybeMaxPosition =
-                    container |> Maybe.map (\containerElement -> containerElement.element.x + containerElement.element.width - questionBox.element.width - offset) |> Debug.log "maxPosition"
-
-                position =
-                    -- position in the middle of the block
-                    (block.element.x + (block.element.width / 2))
-                        - -- against the middle of the question box
-                          (questionBox.element.width / 2)
-                        -- subtract offset from the container, when container is provided
-                        - offset
-            in
-            case maybeMaxPosition of
-                Just maxPosition ->
-                    max (min maxPosition position) 0
+        -- calculate the offset between the viewport and the container
+        -- since we know container element will have non-static positioning, the question box will positioned against it
+        -- instead of against the entire viewport. So we need to offset the left value for the absolutely positioned QB, or
+        -- else the QB will be aligned too far to the right.
+        containerOffset =
+            case Maybe.andThen .container measurements of
+                Just containerElement ->
+                    containerElement.element.x
 
                 Nothing ->
-                    -- make sure that the position is positive and is rendered inside the viewport
-                    max position 0
+                    0
     in
     viewBalloon config
         (Just blockId)
@@ -273,7 +269,7 @@ viewPointingTo config blockId measurements =
                 case measurements of
                     Just measurements_ ->
                         [ Css.position Css.absolute
-                        , Css.left (Css.px (newQuestionBoxPosition measurements_))
+                        , Css.left (Css.px (centeredQuestionBoxLeftPx measurements_ - containerOffset))
                         ]
 
                     Nothing ->
