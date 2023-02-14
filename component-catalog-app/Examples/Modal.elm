@@ -134,7 +134,7 @@ example =
     , update = update
     , subscriptions = subscriptions
     , preview =
-        [ -- faking a mini version of the Modal component to give component-catalog users a sense of what the
+        [ -- faking a mini version of the Modal component to give Component Catalog users a sense of what the
           -- component might look like
           div
             [ css
