@@ -232,7 +232,7 @@ viewPointingTo config blockId measurements =
             (block.element.x + (block.element.width / 2))
                 - -- against the middle of the question box
                   (questionBox.element.width / 2)
-                  -- subtract offset from the container, when provided
+                -- subtract offset from the container, when provided
                 - (case container of
                     Just containerElement ->
                         containerElement.element.x
