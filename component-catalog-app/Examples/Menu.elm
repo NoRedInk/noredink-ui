@@ -123,6 +123,7 @@ view ellieLinkConfig state =
     let
         menuAttributes =
             Control.currentValue state.settings
+                |> .attributes
                 |> List.map Tuple.second
 
         isOpen name =
@@ -148,7 +149,7 @@ view ellieLinkConfig state =
             ]
         , renderExample = Code.unstyledView
         , toExampleCode =
-            \settings ->
+            \{ attributes } ->
                 let
                     code : String
                     code =
@@ -156,7 +157,7 @@ view ellieLinkConfig state =
                             ++ ".view ToggleMenu"
                             ++ Code.listMultiline
                                 (("Menu.isOpen " ++ Code.bool (isOpen "interactiveExample"))
-                                    :: List.map Tuple.first settings
+                                    :: List.map Tuple.first attributes
                                 )
                                 1
                             ++ Code.newlineWithIndent 1
@@ -357,11 +358,20 @@ type alias State =
 
 
 type alias Settings =
-    List ( String, Menu.Attribute Msg )
+    { attributes : List ( String, Menu.Attribute Msg )
+    , withTooltip : Bool
+    }
 
 
 initSettings : Control Settings
 initSettings =
+    Control.record Settings
+        |> Control.field "attributes" initSettingAttributes
+        |> Control.field "withTooltip" (Control.bool False)
+
+
+initSettingAttributes : Control (List ( String, Menu.Attribute Msg ))
+initSettingAttributes =
     ControlExtra.list
         |> ControlExtra.optionalListItem "alignment" controlAlignment
         |> ControlExtra.optionalBoolListItem "isDisabled" ( "Menu.isDisabled True", Menu.isDisabled True )
