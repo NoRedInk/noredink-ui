@@ -170,7 +170,7 @@ main = do
         copyFileChanged (replaceDirectory1 out "component-catalog") out
 
       "log/public.txt" %> \out -> do
-        need (["public/index.html", "public/elm.js", "public/bundle.js", "public/package.json", "public/application.json"])
+        need (["public/index.html", "public/favicon.svg", "public/elm.js", "public/bundle.js", "public/package.json", "public/application.json"])
         writeFileChanged out "built component-catalog app successfully"
 
       -- dev deps we get dynamically instead of from Nix (frowny face)
