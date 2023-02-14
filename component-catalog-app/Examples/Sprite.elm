@@ -30,7 +30,7 @@ example =
     , label = "Bold"
     , name = "bold"
     , icon = viewSprite Sprite.bold
-    , renderSvgCode = \name -> "Svg.init \"\" [ Sprite.use  Sprite." ++ name ++ " ] "
+    , renderSvgCode = \name -> "Svg.init \"0 0 100 100\" [ Sprite.use  Sprite." ++ name ++ " ] "
     , preview = IconExamples.preview (List.map (\( a, b, c ) -> b) sprites)
     , all = all
     }
@@ -57,4 +57,4 @@ sprites =
 
 viewSprite : SpriteId -> Svg
 viewSprite id =
-    Svg.init "" [ Sprite.use id ]
+    Svg.init "0 0 100 100" [ Sprite.use id ]

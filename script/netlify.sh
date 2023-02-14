@@ -20,5 +20,6 @@ npx browserify --entry component-catalog/manifest.js --outfile public/bundle.js
 
 # copy static files
 cp component-catalog/index.html public/index.html
+cp component-catalog/favicon.svg public/favicon.svg
 cp component-catalog/elm.json public/application.json
 cp elm.json public/package.json
