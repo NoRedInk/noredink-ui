@@ -127,11 +127,12 @@ standalone =
 
 
 {-| This type of `QuestionBox` has an arrow pointing to the block whose id you pass in, if that block is on the final line of its paragraph.
-The QuestionBox should be vertically aligned beneath the block, viewport permitting.
+The QuestionBox should be vertically aligned beneath the block, viewport permitting. When there is a container the container will be used to
+calculate the offset from the viewport.
 
 Pass in the id for the block the QuestionBox should point to.
 
-You will need to pass 2 measurements, taken using Dom.Browser, in order for the question box to be positioned correctly.
+You will need to pass 4 measurements, taken using Dom.Browser, in order for the question box to be positioned correctly.
 
 -}
 pointingTo :
@@ -231,6 +232,7 @@ viewPointingTo config blockId measurements =
             (block.element.x + (block.element.width / 2))
                 - -- against the middle of the question box
                   (questionBox.element.width / 2)
+                  -- subtract offset from the container, when provided
                 - (case container of
                     Just containerElement ->
                         containerElement.element.x
