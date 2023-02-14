@@ -33,6 +33,7 @@ A togglable menu view and related buttons.
 ## Triggering button options
 
 @docs defaultTrigger, button, clickableText, clickableSvg, clickableSvgWithoutIndicator
+@docs withTooltip
 @docs buttonId
 
 
@@ -66,6 +67,7 @@ import Nri.Ui.Fonts.V1
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
 
 
@@ -85,6 +87,7 @@ type alias MenuConfig msg =
     , zIndex : Int
     , opensOnHover : Bool
     , purpose : Purpose
+    , tooltipAttributes : List (Tooltip.Attribute msg)
     }
 
 
@@ -100,6 +103,7 @@ defaultConfig =
     , zIndex = 1
     , opensOnHover = False
     , purpose = NavMenu
+    , tooltipAttributes = []
     }
 
 
@@ -326,6 +330,12 @@ defaultButton title attributes =
                     ++ attributes
                 )
         )
+
+
+{-| -}
+withTooltip : List (Tooltip.Attribute msg) -> Attribute msg
+withTooltip tooltipAttributes =
+    Attribute <| \config -> { config | tooltipAttributes = tooltipAttributes }
 
 
 {-| Use Button with default styles as the triggering element for the Menu.
