@@ -5,6 +5,7 @@ import Html.Styled as HtmlStyled
 import Json.Encode as Encode
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Menu.V4 as Menu
+import Nri.Ui.Tooltip.V3 as Tooltip
 import ProgramTest exposing (ProgramTest, ensureViewHas, ensureViewHasNot)
 import Spec.KeyboardHelpers as KeyboardHelpers
 import Test exposing (..)
@@ -51,6 +52,20 @@ spec =
                     |> ensureViewHas (menuContentSelector menuContent)
                     |> pressEscKey { targetId = "some-random-id" }
                     |> ensureViewHasNot (menuContentSelector menuContent)
+                    |> ProgramTest.done
+        , test "Opens on down arrow" <|
+            \() ->
+                program []
+                    |> KeyboardHelpers.pressDownArrow { targetDetails = targetDetails "hello-button" }
+                        [ Selector.tag "button", Selector.id "hello-button" ]
+                    |> ensureViewHas (menuContentSelector menuContent)
+                    |> ProgramTest.done
+        , test "Opens on down arrow when there's a tooltip attached" <|
+            \() ->
+                program [ Menu.withTooltip [ Tooltip.onToggle ToggleTooltip ] ]
+                    |> KeyboardHelpers.pressDownArrow { targetDetails = targetDetails "hello-button" }
+                        [ Selector.tag "button", Selector.id "hello-button" ]
+                    |> ensureViewHas (menuContentSelector menuContent)
                     |> ProgramTest.done
         , describe "disclosure" <|
             [ test "Close on esc key" <|
@@ -108,19 +123,27 @@ type alias Model =
     { isOpen : Bool }
 
 
-type alias Msg =
-    Bool
+type Msg
+    = ToggleMenu Bool
+    | ToggleTooltip Bool
 
 
 program : List (Menu.Attribute Msg) -> ProgramTest Model Msg ()
 program attributes =
     ProgramTest.createSandbox
         { init = { isOpen = False }
-        , update = \msg _ -> { isOpen = msg }
+        , update =
+            \msg model ->
+                case msg of
+                    ToggleMenu m ->
+                        { isOpen = m }
+
+                    ToggleTooltip _ ->
+                        model
         , view =
             \model ->
                 HtmlStyled.div []
-                    [ Menu.view (\{ isOpen } -> isOpen)
+                    [ Menu.view (\{ isOpen } -> ToggleMenu isOpen)
                         ([ Menu.defaultTrigger menuButton []
                          , Menu.isOpen model.isOpen
                          ]
