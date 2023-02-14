@@ -12,9 +12,14 @@ import Css exposing (Color)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.HighlighterToolbar.V1 as HighlighterToolbar
+import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Text.V6 as Text
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 moduleName : String
@@ -36,7 +41,11 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
-        []
+        [ highlighterPreview Colors.mustard "Claim"
+        , highlighterPreview Colors.magenta "Evidence"
+        , highlighterPreview Colors.cyan "Reasoning"
+        , toolPreview Colors.white Colors.gray75 UiIcon.eraser "Remove highlight"
+        ]
     , view =
         \ellieLinkConfig state ->
             [ ControlView.view
@@ -64,6 +73,31 @@ example =
     , categories = [ Buttons, Interactions ]
     , keyboardSupport = []
     }
+
+
+highlighterPreview : Color -> String -> Html msg
+highlighterPreview color =
+    toolPreview color color (Svg.withColor Colors.white UiIcon.highlighter)
+
+
+toolPreview : Color -> Color -> Svg.Svg -> String -> Html msg
+toolPreview color border icon name =
+    div [ css [ Css.displayFlex, Css.alignItems Css.center, Css.marginBottom (Css.px 4) ] ]
+        [ span
+            [ css
+                [ Css.backgroundColor color
+                , Css.width (Css.px 35)
+                , Css.height (Css.px 35)
+                , Css.borderRadius (Css.pct 50)
+                , Css.padding (Css.px 6)
+                , Css.border3 (Css.px 1) Css.solid border
+                , Css.marginRight (Css.px 4)
+                ]
+            ]
+            [ Svg.toHtml icon
+            ]
+        , Text.smallBody [ Text.plaintext name, Text.css [ Css.color Colors.navy ] ]
+        ]
 
 
 type Tag

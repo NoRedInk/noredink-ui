@@ -26,10 +26,11 @@ import Nri.Ui.Block.V4 as Block
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (..)
-import Nri.Ui.QuestionBox.V3 as QuestionBox
+import Nri.Ui.QuestionBox.V4 as QuestionBox
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V6 as Table
@@ -45,7 +46,7 @@ moduleName =
 
 version : Int
 version =
-    3
+    4
 
 
 {-| -}
@@ -146,7 +147,7 @@ view ellieLinkConfig state =
             ]
         ]
     , Heading.h3
-        [ Heading.plaintext "QuestionBox.pointingTo"
+        [ Heading.plaintext "QuestionBox.pointingTo (positioned against the viewport)"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
     , inParagraph "paragraph-8"
@@ -182,6 +183,59 @@ view ellieLinkConfig state =
         , QuestionBox.actions
             [ { label = "Yes", onClick = NoOp }
             , { label = "No", onClick = NoOp }
+            ]
+        ]
+    , Heading.h3
+        [ Heading.plaintext "QuestionBox.pointingTo (positioned against an ancestor)"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
+    , Container.view
+        [ Container.id "container-10"
+        , Container.css
+            [ Css.marginTop Spacing.verticalSpacerPx
+            , Css.position Css.relative
+            , Css.maxWidth Css.fitContent
+            ]
+        , Container.html
+            [ inParagraph "paragraph-10"
+                [ Block.view
+                    [ Block.plaintext "Dave"
+                    , Block.id "block-10"
+                    , Block.emphasize
+                    ]
+                , Block.view [ Block.plaintext " scared his replacement cousin coming out of his room wearing a gorilla mask." ]
+                ]
+            , QuestionBox.view
+                [ QuestionBox.pointingTo "block-10" (Dict.get "question-box-10" state.questionBoxMeasurementsById)
+                , QuestionBox.id "question-box-10"
+                , QuestionBox.markdown
+                    """
+If we shadows have offended,
+Think but this, and all is mended,
+That you have but slumbered here
+While these visions did appear.
+"""
+                ]
+            ]
+        ]
+    , Container.view
+        [ Container.id "container-11"
+        , Container.css
+            [ Css.marginTop Spacing.verticalSpacerPx
+            , Css.position Css.relative
+            , Css.maxWidth Css.fitContent
+            ]
+        , Container.html
+            [ inParagraph "paragraph-11"
+                [ Block.view [ Block.plaintext "Bottom scared a bunch of people when it turned out he wasn't wearing a donkey " ]
+                , Block.view [ Block.plaintext "mask", Block.id "block-11", Block.emphasize ]
+                , Block.view [ Block.plaintext "." ]
+                ]
+            , QuestionBox.view
+                [ QuestionBox.pointingTo "block-11" (Dict.get "question-box-11" state.questionBoxMeasurementsById)
+                , QuestionBox.id "question-box-11"
+                , QuestionBox.markdown "Give me your hands, if we be friends,\nAnd Robin shall restore amends."
+                ]
             ]
         ]
     , Table.view
@@ -571,6 +625,7 @@ type alias State =
             { block : Element
             , paragraph : Element
             , questionBox : Element
+            , container : Maybe Element
             }
     }
 
@@ -737,6 +792,7 @@ type Msg
             { block : Element
             , paragraph : Element
             , questionBox : Element
+            , container : Maybe Element
             }
         )
 
@@ -759,16 +815,18 @@ update msg state =
                     , "label-3"
                     ]
                     ++ List.map measureQuestionBox
-                        [ ( "paragraph-0", "block-0", "question-box-0" )
-                        , ( "paragraph-1", "block-1", "question-box-1" )
-                        , ( "paragraph-2", "block-2", "question-box-2" )
-                        , ( "paragraph-3", "block-3", "question-box-3" )
-                        , ( "paragraph-4", "block-4", "question-box-4" )
-                        , ( "paragraph-5", "block-5", "question-box-5" )
-                        , ( "paragraph-6", "block-6", "question-box-6" )
-                        , ( "paragraph-7", "block-7", "question-box-7" )
-                        , ( "paragraph-8", "block-8", "left-viewport-question-box-example" )
-                        , ( "paragraph-9", "block-9", "right-viewport-question-box-example" )
+                        [ { paragraphId = "paragraph-0", blockId = "block-0", questionBoxId = "question-box-0", containerId = Nothing }
+                        , { paragraphId = "paragraph-1", blockId = "block-1", questionBoxId = "question-box-1", containerId = Nothing }
+                        , { paragraphId = "paragraph-2", blockId = "block-2", questionBoxId = "question-box-2", containerId = Nothing }
+                        , { paragraphId = "paragraph-3", blockId = "block-3", questionBoxId = "question-box-3", containerId = Nothing }
+                        , { paragraphId = "paragraph-4", blockId = "block-4", questionBoxId = "question-box-4", containerId = Nothing }
+                        , { paragraphId = "paragraph-5", blockId = "block-5", questionBoxId = "question-box-5", containerId = Nothing }
+                        , { paragraphId = "paragraph-6", blockId = "block-6", questionBoxId = "question-box-6", containerId = Nothing }
+                        , { paragraphId = "paragraph-7", blockId = "block-7", questionBoxId = "question-box-7", containerId = Nothing }
+                        , { paragraphId = "paragraph-8", blockId = "block-8", questionBoxId = "left-viewport-question-box-example", containerId = Nothing }
+                        , { paragraphId = "paragraph-9", blockId = "block-9", questionBoxId = "right-viewport-question-box-example", containerId = Nothing }
+                        , { paragraphId = "paragraph-10", blockId = "block-10", questionBoxId = "question-box-10", containerId = Just "container-10" }
+                        , { paragraphId = "paragraph-11", blockId = "block-11", questionBoxId = "question-box-11", containerId = Just "container-11" }
                         ]
                 )
             )
@@ -804,16 +862,20 @@ measureBlockLabel labelId =
         |> Task.attempt (GotBlockLabelMeasurements labelId)
 
 
-measureQuestionBox : ( String, String, String ) -> Cmd Msg
-measureQuestionBox ( paragraphId, blockId, questionBoxId ) =
-    Task.map3
-        (\paragraph block questionBox ->
+measureQuestionBox : { paragraphId : String, blockId : String, questionBoxId : String, containerId : Maybe String } -> Cmd Msg
+measureQuestionBox { paragraphId, blockId, questionBoxId, containerId } =
+    Task.map4
+        (\paragraph block questionBox container ->
             { block = block
             , paragraph = paragraph
             , questionBox = questionBox
+            , container = container
             }
         )
         (Dom.getElement paragraphId)
         (Dom.getElement blockId)
         (Dom.getElement questionBoxId)
+        (Maybe.map (Dom.getElement >> Task.map Just) containerId
+            |> Maybe.withDefault (Task.succeed Nothing)
+        )
         |> Task.attempt (GotQuestionBoxMeasurements questionBoxId)
