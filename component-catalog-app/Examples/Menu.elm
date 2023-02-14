@@ -160,8 +160,20 @@ view ellieLinkConfig state =
                                     :: List.map Tuple.first attributes
                                 )
                                 1
-                            ++ Code.newlineWithIndent 1
-                            ++ "[]"
+                            ++ Code.listMultiline
+                                [ (Code.fromModule moduleName "entry " ++ Code.string "unique-button-id" ++ " <|")
+                                    ++ Code.newlineWithIndent 2
+                                    ++ Code.anonymousFunction "attributes"
+                                        (Code.newlineWithIndent 2
+                                            ++ (Code.fromModule "ClickableText" "button " ++ Code.string "Button")
+                                            ++ Code.listMultiline
+                                                [ Code.fromModule "ClickableText" "small"
+                                                , Code.fromModule "ClickableText" "custom" ++ " attributes"
+                                                ]
+                                                3
+                                        )
+                                ]
+                                1
                 in
                 [ { sectionName = "Example"
                   , code = code
@@ -175,7 +187,14 @@ view ellieLinkConfig state =
     , div [ css [ Css.displayFlex, Css.justifyContent Css.center ] ]
         [ Menu.view (FocusAndToggle "interactiveExample")
             (Menu.isOpen (isOpen "interactiveExample") :: menuAttributes)
-            []
+            [ Menu.entry "customizable-example" <|
+                \attrs ->
+                    ClickableText.button "Button"
+                        [ ClickableText.small
+                        , ClickableText.onClick (ConsoleLog "Interactive example")
+                        , ClickableText.custom attrs
+                        ]
+            ]
         ]
     , Heading.h2
         [ Heading.plaintext "Menu types"
