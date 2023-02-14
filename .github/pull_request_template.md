@@ -54,7 +54,7 @@ Please link to any relevant context and stories.
 - [ ] Component is tested
     - axe checks and percy snapshots will be automatically added for every component. However, if you want to customize _when_ the checks and snapshots are made, you will need to make changes to [script/puppeteer-tests.js](https://github.com/NoRedInk/noredink-ui/blob/master/script/puppeteer-tests.js).
     - there are 2 ways to add Elm tests:
-        - if you want to test the component-catalog example directly, add ProgramTest-style tests under `component-catalog/tests`
+        - if you want to test the Component Catalog example directly, add ProgramTest-style tests under `component-catalog/tests`
         - if you want to test the component directly, add tests under `tests/Spec`. Historically, this has been the more popular Elm testing strategy for noredink-ui.
 - [ ] Component API follows standard patterns in noredink-ui
     - e.g., as a dev, I can conveniently add an `nriDescription`
