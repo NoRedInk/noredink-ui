@@ -11,7 +11,11 @@ module Nri.Ui.Menu.V4 exposing
     , Entry, group, entry
     )
 
-{-| Changes from V3:
+{-| Patch changes:
+
+  - improve interoperability with Tooltip (Note that tooltip keyboard events are not fully supported!)
+
+Changes from V3:
 
   - improve composability with Button, ClickableText, and ClickableSvg
 
@@ -306,7 +310,8 @@ defaultButton title attributes =
     DefaultTrigger title attributes
 
 
-{-| -}
+{-| Warning: Tooltip keyboard events are not fully supported!
+-}
 withTooltip : List (Tooltip.Attribute msg) -> Attribute msg
 withTooltip tooltipAttributes =
     Attribute <| \config -> { config | tooltipAttributes = tooltipAttributes }
