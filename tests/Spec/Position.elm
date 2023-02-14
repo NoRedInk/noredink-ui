@@ -10,41 +10,58 @@ import Test exposing (..)
 
 spec : Test
 spec =
-    describe "xOffsetPx"
-        [ test "when the element is in line with the left edge of the viewport, does not shift" <|
-            \() ->
-                element { viewportX = 0, viewportWidth = 100, elementX = 0, elementWidth = 50 }
-                    |> Position.xOffsetPx
-                    |> Expect.equal 0
-        , test "when the element is in line with the right edge of the viewport, does not shift" <|
-            \() ->
-                element { viewportX = 0, viewportWidth = 100, elementX = 50, elementWidth = 50 }
-                    |> Position.xOffsetPx
-                    |> Expect.equal 0
-        , test "when the viewport cuts off the element on the left side, shift to the right" <|
-            \() ->
-                let
-                    cutOffAmount =
-                        100
-                in
-                element { viewportX = 0, viewportWidth = 500, elementX = -cutOffAmount, elementWidth = 200 }
-                    |> Position.xOffsetPx
-                    |> Expect.equal cutOffAmount
-        , test "when the viewport cuts off the element on the right side, shift to the left" <|
-            \() ->
-                let
-                    cutOffAmount =
-                        100
-                in
-                element { viewportX = 0, viewportWidth = 0, elementX = 0, elementWidth = cutOffAmount }
-                    |> Position.xOffsetPx
-                    |> Expect.equal -cutOffAmount
-        , test "when the viewport cuts off the element on both sides, align to the left side of the viewport" <|
-            \() ->
-                element { viewportX = 0, viewportWidth = 100, elementX = -100, elementWidth = 300 }
-                    |> Position.xOffsetPx
-                    |> Expect.equal 100
+    describe "Position"
+        [ describe "xOffsetPx" xOffsetPxSpec
+        , describe "xOffsetPxAgainstAncestor" xOffsetPxSpecAgainstContainer
         ]
+
+
+xOffsetPxSpec : List Test
+xOffsetPxSpec =
+    [ test "when the element is in line with the left edge of the viewport, does not shift" <|
+        \() ->
+            element { viewportX = 0, viewportWidth = 100, elementX = 0, elementWidth = 50 }
+                |> Position.xOffsetPx
+                |> Expect.equal 0
+    , test "when the element is in line with the right edge of the viewport, does not shift" <|
+        \() ->
+            element { viewportX = 0, viewportWidth = 100, elementX = 50, elementWidth = 50 }
+                |> Position.xOffsetPx
+                |> Expect.equal 0
+    , test "when the viewport cuts off the element on the left side, shift to the right" <|
+        \() ->
+            let
+                cutOffAmount =
+                    100
+            in
+            element { viewportX = 0, viewportWidth = 500, elementX = -cutOffAmount, elementWidth = 200 }
+                |> Position.xOffsetPx
+                |> Expect.equal cutOffAmount
+    , test "when the viewport cuts off the element on the right side, shift to the left" <|
+        \() ->
+            let
+                cutOffAmount =
+                    100
+            in
+            element { viewportX = 0, viewportWidth = 0, elementX = 0, elementWidth = cutOffAmount }
+                |> Position.xOffsetPx
+                |> Expect.equal -cutOffAmount
+    , test "when the viewport cuts off the element on both sides, align to the left side of the viewport" <|
+        \() ->
+            element { viewportX = 0, viewportWidth = 100, elementX = -100, elementWidth = 300 }
+                |> Position.xOffsetPx
+                |> Expect.equal 100
+    ]
+
+
+xOffsetPxSpecAgainstContainer : List Test
+xOffsetPxSpecAgainstContainer =
+    [ todo "When the element is in line with the left edge of its container, does not shift"
+    , todo "when the element is in line with the right edge of its container, does not shift"
+    , todo "when the element overflows its container on the left side, shift to the right"
+    , todo "when the element overflows its container on the right side, shift to the left"
+    , todo "when the element overflows its container on both sides, align to the left side of the container"
+    ]
 
 
 element : { viewportX : Float, viewportWidth : Float, elementX : Float, elementWidth : Float } -> Element
