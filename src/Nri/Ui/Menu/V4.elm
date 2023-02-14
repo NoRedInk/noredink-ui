@@ -295,42 +295,15 @@ setButton button_ =
 
 {-| -}
 type Button msg
-    = Button (MenuConfig msg -> List (Html.Attribute msg) -> Html msg)
+    = DefaultTrigger String (List (Button.Attribute msg))
+    | Button String (List (Button.Attribute msg))
+    | ClickableText String (List (ClickableText.Attribute msg))
+    | ClickableSvg { includeIndicator : Bool } String Svg.Svg (List (ClickableSvg.Attribute msg))
 
 
 defaultButton : String -> List (Button.Attribute msg) -> Button msg
 defaultButton title attributes =
-    Button
-        (\menuConfig buttonAttributes ->
-            Button.button title
-                ([ Button.tertiary
-                 , Button.css
-                    [ Css.justifyContent Css.spaceBetween
-                    , Css.paddingLeft (Css.px 15)
-                    , Css.paddingRight (Css.px 15)
-                    , Css.color Colors.gray20 |> Css.important
-                    , Css.fontWeight (Css.int 600)
-                    , Css.hover [ Css.backgroundColor Colors.white ]
-                    ]
-                 , Button.custom buttonAttributes
-                 , if menuConfig.isDisabled then
-                    Button.disabled
-
-                   else
-                    Button.css []
-                 , Button.rightIcon
-                    (AnimatedIcon.arrowDownUp menuConfig.isOpen
-                        |> (if menuConfig.isDisabled then
-                                identity
-
-                            else
-                                Svg.withColor Colors.azure
-                           )
-                    )
-                 ]
-                    ++ attributes
-                )
-        )
+    DefaultTrigger title attributes
 
 
 {-| -}
@@ -350,73 +323,28 @@ defaultTrigger title attributes =
 -}
 button : String -> List (Button.Attribute msg) -> Attribute msg
 button title attributes =
-    Button
-        (\menuConfig buttonAttributes ->
-            Button.button title
-                ([ Button.custom buttonAttributes
-                 , if menuConfig.isDisabled then
-                    Button.disabled
-
-                   else
-                    Button.css []
-                 , Button.rightIcon (AnimatedIcon.arrowDownUp menuConfig.isOpen)
-                 ]
-                    ++ attributes
-                )
-        )
-        |> setButton
+    setButton (Button title attributes)
 
 
 {-| Use ClickableText as the triggering element for the Menu.
 -}
 clickableText : String -> List (ClickableText.Attribute msg) -> Attribute msg
 clickableText title additionalAttributes =
-    Button
-        (\menuConfig buttonAttributes ->
-            ClickableText.button title
-                ([ ClickableText.custom buttonAttributes
-                 , ClickableText.disabled menuConfig.isDisabled
-                 , ClickableText.rightIcon (AnimatedIcon.arrowDownUp menuConfig.isOpen)
-                 ]
-                    ++ additionalAttributes
-                )
-        )
-        |> setButton
+    setButton (ClickableText title additionalAttributes)
 
 
 {-| Use ClickableSvg as the triggering element for the Menu.
 -}
 clickableSvg : String -> Svg.Svg -> List (ClickableSvg.Attribute msg) -> Attribute msg
 clickableSvg title icon additionalAttributes =
-    Button
-        (\menuConfig buttonAttributes ->
-            ClickableSvg.button title
-                icon
-                ([ ClickableSvg.custom buttonAttributes
-                 , ClickableSvg.disabled menuConfig.isDisabled
-                 , ClickableSvg.rightIcon (AnimatedIcon.arrowDownUp menuConfig.isOpen)
-                 ]
-                    ++ additionalAttributes
-                )
-        )
-        |> setButton
+    setButton (ClickableSvg { includeIndicator = True } title icon additionalAttributes)
 
 
 {-| Use ClickableSvg as the triggering element for the Menu without a dropdown indicator
 -}
 clickableSvgWithoutIndicator : String -> Svg.Svg -> List (ClickableSvg.Attribute msg) -> Attribute msg
 clickableSvgWithoutIndicator title icon additionalAttributes =
-    Button
-        (\menuConfig buttonAttributes ->
-            ClickableSvg.button title
-                icon
-                ([ ClickableSvg.custom buttonAttributes
-                 , ClickableSvg.disabled menuConfig.isDisabled
-                 ]
-                    ++ additionalAttributes
-                )
-        )
-        |> setButton
+    setButton (ClickableSvg { includeIndicator = False } title icon additionalAttributes)
 
 
 viewCustom :
@@ -562,7 +490,7 @@ viewCustom focusAndToggle config entries =
                 AttributesExtra.none
             ]
             [ let
-                buttonAttributes =
+                triggerAttributes =
                     [ Aria.disabled config.isDisabled
                     , -- Whether the menu is open or closed, move to the
                       -- first menu item if the "down" arrow is pressed
@@ -642,22 +570,39 @@ viewCustom focusAndToggle config entries =
                                 Dialog _ ->
                                     [ Aria.hasDialogPopUp ]
                            )
-              in
-              case config.button of
-                Button standardButton ->
-                    case config.tooltipAttributes of
-                        [] ->
-                            standardButton config buttonAttributes
 
-                        _ ->
-                            Tooltip.view
-                                { id = config.menuId ++ "-tooltip"
-                                , trigger =
-                                    \tooltipHtmlAttributes ->
-                                        -- TODO refactor so that we can pass through the tooltip attributes
-                                        standardButton config buttonAttributes
-                                }
-                                config.tooltipAttributes
+                trigger =
+                    case config.button of
+                        DefaultTrigger title buttonAttributes ->
+                            viewDefaultTrigger title config buttonAttributes triggerAttributes
+
+                        Button title buttonAttributes ->
+                            viewButton title config buttonAttributes triggerAttributes
+
+                        ClickableText title clickableTextAttributes ->
+                            viewClickableText title config clickableTextAttributes triggerAttributes
+
+                        ClickableSvg includeIndicator title icon clickableSvgAttributes ->
+                            viewClickableSvg includeIndicator
+                                title
+                                icon
+                                config
+                                clickableSvgAttributes
+                                triggerAttributes
+              in
+              case config.tooltipAttributes of
+                [] ->
+                    trigger
+
+                _ ->
+                    Tooltip.view
+                        { id = config.menuId ++ "-tooltip"
+                        , trigger =
+                            \tooltipHtmlAttributes ->
+                                -- TODO refactor so that we can pass through the tooltip attributes
+                                trigger
+                        }
+                        config.tooltipAttributes
             , div [ styleOuterContent contentVisible config ]
                 [ div
                     [ AttributesExtra.nriDescription "menu-hover-bridge"
@@ -949,3 +894,82 @@ styleContainer =
         , display inlineBlock
         ]
     ]
+
+
+
+-- Trigger views
+
+
+viewDefaultTrigger : String -> MenuConfig msg -> List (Button.Attribute msg) -> List (Html.Attribute msg) -> Html msg
+viewDefaultTrigger title menuConfig buttonAttributes attributes =
+    Button.button title
+        ([ Button.tertiary
+         , Button.css
+            [ Css.justifyContent Css.spaceBetween
+            , Css.paddingLeft (Css.px 15)
+            , Css.paddingRight (Css.px 15)
+            , Css.color Colors.gray20 |> Css.important
+            , Css.fontWeight (Css.int 600)
+            , Css.hover [ Css.backgroundColor Colors.white ]
+            ]
+         , Button.custom attributes
+         , if menuConfig.isDisabled then
+            Button.disabled
+
+           else
+            Button.css []
+         , Button.rightIcon
+            (AnimatedIcon.arrowDownUp menuConfig.isOpen
+                |> (if menuConfig.isDisabled then
+                        identity
+
+                    else
+                        Svg.withColor Colors.azure
+                   )
+            )
+         ]
+            ++ buttonAttributes
+        )
+
+
+viewButton : String -> MenuConfig msg -> List (Button.Attribute msg) -> List (Html.Attribute msg) -> Html msg
+viewButton title menuConfig buttonAttributes attributes =
+    Button.button title
+        ([ Button.custom attributes
+         , if menuConfig.isDisabled then
+            Button.disabled
+
+           else
+            Button.css []
+         , Button.rightIcon (AnimatedIcon.arrowDownUp menuConfig.isOpen)
+         ]
+            ++ buttonAttributes
+        )
+
+
+viewClickableText : String -> MenuConfig msg -> List (ClickableText.Attribute msg) -> List (Html.Attribute msg) -> Html msg
+viewClickableText title menuConfig clickableTextAttributes attributes =
+    ClickableText.button title
+        ([ ClickableText.custom attributes
+         , ClickableText.disabled menuConfig.isDisabled
+         , ClickableText.rightIcon (AnimatedIcon.arrowDownUp menuConfig.isOpen)
+         ]
+            ++ clickableTextAttributes
+        )
+
+
+viewClickableSvg : { includeIndicator : Bool } -> String -> Svg.Svg -> MenuConfig msg -> List (ClickableSvg.Attribute msg) -> List (Html.Attribute msg) -> Html msg
+viewClickableSvg { includeIndicator } title icon menuConfig clickableSvgAttributes attributes =
+    ClickableSvg.button title
+        icon
+        ([ ClickableSvg.custom attributes
+         , ClickableSvg.disabled menuConfig.isDisabled
+         ]
+            ++ (if includeIndicator then
+                    [ ClickableSvg.rightIcon (AnimatedIcon.arrowDownUp menuConfig.isOpen) ]
+
+                else
+                    []
+               )
+            ++ clickableSvgAttributes
+        )
