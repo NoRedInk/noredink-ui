@@ -71,7 +71,7 @@ main = do
 
       "forbidden-imports.toml" %> \out -> do
         -- we always want to consume our own published deprecated modules list
-        -- so that we're not presenting outdated stuff in the component-catalog! This
+        -- so that we're not presenting outdated stuff in the Component Catalog! This
         -- file can change separately from the CSV, but should always have at
         -- least the deprecated modules in it.
         need ["deprecated-modules.csv"]
