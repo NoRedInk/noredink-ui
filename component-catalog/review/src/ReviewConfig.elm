@@ -22,7 +22,7 @@ config : List Rule
 config =
     List.map
         (Review.Rule.ignoreErrorsForDirectories [ "../src" ]
-            >> Review.Rule.ignoreErrorsForFiles [ "../styleguide-app/App.elm" ]
+            >> Review.Rule.ignoreErrorsForFiles [ "../component-catalog-app/App.elm" ]
         )
         [ NoUnused.CustomTypeConstructors.rule []
 

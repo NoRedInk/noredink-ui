@@ -1,11 +1,11 @@
 # Ownership, policies, & key concepts
 
-NoRedInk’s accessibility team, the Accessibilibats, own `noredink-ui`/the shared component library.
-While others may contribute to the component library and are encouraged to do so, the Accessibilibats (a.k.a A11ybats) are responsible for oversight of the foundational aspects of the component library, a.k.a. “**[Component Library Foundations](#component-library-foundations)**.”
+NoRedInk’s accessibility team, the Accessibilibats, own the `noredink-ui` package and the Component Catalog app showcasing its components.
+While others may contribute to `noredink-ui` and are encouraged to do so, the Accessibilibats (a.k.a A11ybats) are responsible for oversight of the foundational aspects of the component library, a.k.a. “**[Component Library Foundations](#component-library-foundations)**.”
 
 Given this ownership and responsibility, A11ybats will provide guidance and support to developers and designers who are building new components or working with existing components.
 
-[The shared component library app can be found here](https://noredink-ui.netlify.app/).
+[The Component Catalog application can be found here](https://noredink-ui.netlify.app/).
 
 ## Component Library Foundations
 - Adherence to the component library [accessibility policy](#accessibility-policy)
@@ -14,8 +14,8 @@ Given this ownership and responsibility, A11ybats will provide guidance and supp
 - Quality and consistency of API design
 - Quality of internal code
 - Existence and quality of code documentation for each component
-- Existence, quality, and organization of component example pages in [the shared component library app](https://noredink-ui.netlify.app/)
-- Test coverage and testability of each component and of [the shared component library app](https://noredink-ui.netlify.app/)
+- Existence, quality, and organization of component example pages in [the Component Catalog](https://noredink-ui.netlify.app/)
+- Test coverage and testability of each component and of [the Component Catalog](https://noredink-ui.netlify.app/)
 
 ## Accessibility policy
 - No new components will be added to the component library if they do not conform to [WCAG 2.1 AA accessibility guidelines](https://www.w3.org/WAI/standards-guidelines/wcag/). Similarly, no existing components will be modified such that the component falls out of conformance with these guidelines.
@@ -40,7 +40,7 @@ Contributing to the component library is characterized by close consultation wit
 2. Review the [PR template](/.github/pull_request_template.md) in advance so that you understand contribution requirements in advance, or go ahead and open a draft PR so you can use the [PR template](/.github/pull_request_template.md) as you work.
 3. Feel free to [reach out to A11ybats](https://noredink.slack.com/archives/C02NVG4M45U) with any questions as you work - it might save you headaches or code rewrites later!
 4. Request a PR review from your team as usual. There is no need to add A11ybats as a reviewer unless this was mentioned as a requirement in your kickoff sync.
-5. A11ybats keep an eye on all noredink-ui updates and may request modifications to your work if it does not adhere to the the [Component Library Foundations](#component-library-foundations).
+5. A11ybats keep an eye on all noredink-ui updates and may request modifications to your work if it does not adhere to the [Component Library Foundations](#component-library-foundations).
 
 **Creating a new component**
 
@@ -59,7 +59,7 @@ Contributing to the component library is characterized by close consultation wit
     - A11ybats will review your PR solely for the purposes of ensuring that your new component adheres to the [Component Library Foundations](#component-library-foundations). We may point out bugs if we happen to find them, but that’s not what we’ll be looking for — **your team is ultimately responsible for testing/coordinating testing of your new component**.
     - For minor iterations on your new component, there’s no need to request A11ybat PR review again. We’ll keep an eye on smaller changes as you make them. If you aren’t sure if your changes are big enough for another A11ybat PR review, just ask!
 7. Once your component is in a state that’s ready for production, please request an accessibility review from A11ybats by dropping a note in [#ask-accessibilibats](https://noredink.slack.com/archives/C02NVG4M45U). Our turnaround time should be relatively quick, but in the meantime…
-8. Start creating a [QA Flightplan](https://paper.dropbox.com/doc/QA-landing-page-FAQ--BNKlATfTHdgnJa48lcR5NrVSAg-wLYVa0lEmkaiJB09CXHRn) as if this were a new feature. We recommend requesting that the QA team *at least* tests your new component within [the shared component library app](https://noredink-ui.netlify.app/) as soon as it’s available. (You can always request additional QA of your component as implemented in the NoRedInk app later.) Simple components may have a simple flightplan, and that’s okay!
+8. Start creating a [QA Flightplan](https://paper.dropbox.com/doc/QA-landing-page-FAQ--BNKlATfTHdgnJa48lcR5NrVSAg-wLYVa0lEmkaiJB09CXHRn) as if this were a new feature. We recommend requesting that the QA team *at least* tests your new component within the Component Catalog netlify branch preview. (You can always request additional QA of your component as implemented in the NoRedInk app later.) Simple components may have a simple flightplan, and that’s okay!
 9. Once A11ybats have completed their accessibility review, make updates to your QA Flightplan if needed and submit your QA Flightplan to QA according to [QA’s processes](https://paper.dropbox.com/doc/QA-landing-page-FAQ--BNKlATfTHdgnJa48lcR5NrVSAg-wLYVa0lEmkaiJB09CXHRn).
 10. When you're ready to publish your component, please refer to [the noredink-ui versioning policy](#versioning-policy), which includes guidance on permitted API changes per release.
 11. A11ybats keep an eye on all noredink-ui updates and may request modifications to your work if it does not adhere to the [Component Library Foundations](#component-library-foundations).
@@ -215,5 +215,4 @@ This means:
   - If you introduce a new version of a widget, please consider taking the time to upgrade all previous usages
     - If for some reason this isn't feasible, create a story in your team's backlog so that you can prioritize it separately without disrupting your current work
   - You can delete an old version of a widget when there are no usages left
-    - Currently, `noredink-ui` is used by the monolith, CCS and tutorials
     - Note: this will be a major version bump, so you may want to batch deletions together

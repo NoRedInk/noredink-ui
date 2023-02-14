@@ -12,7 +12,7 @@ shake --compact "$SHAKE_TARGET"
 cat <<EOF
 == 👋 Hello! ==================================================================
 
-I'm watching files in styleguide, styleguide-app, and src for changes. If you make any
+I'm watching files in component-catalog, component-catalog-app, and src for changes. If you make any
 changes, I'll try to be smart about what should change (things end up in the
 "public" directory if you want to check my work.) If you remove a file and it's
 still showing up, delete the "public" directory and restart me.

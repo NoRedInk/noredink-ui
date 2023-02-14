@@ -527,7 +527,7 @@ and essentially make the anchor a disabled placeholder.
 
 _Caveat!_
 
-The styleguide example will NOT work correctly because of <https://github.com/elm/browser/issues/34>, which describes a problem where "a tags without href generate a navigation event".
+The Component Catalog example will NOT work correctly because of <https://github.com/elm/browser/issues/34>, which describes a problem where "a tags without href generate a navigation event".
 
 In most cases, if you're not using Browser.application, disabled links should work just fine.
 

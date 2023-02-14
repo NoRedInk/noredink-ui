@@ -7,7 +7,7 @@ elm-stuff
 repl-temp-*
 
 ### Styleguide App
-styleguide-app/bundle.js
+component-catalog-app/bundle.js
 
 ### Emacs ###
 # -*- mode: gitignore; -*-
