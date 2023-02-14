@@ -228,18 +228,35 @@ viewPointingTo config blockId measurements =
                 measurements
 
         newQuestionBoxPosition { block, questionBox, container } =
-            -- position in the middle of the block
-            (block.element.x + (block.element.width / 2))
-                - -- against the middle of the question box
-                  (questionBox.element.width / 2)
-                -- subtract offset from the container, when provided
-                - (case container of
-                    Just containerElement ->
-                        containerElement.element.x
+            let
+                -- calculate the offset between the viewport and the container
+                offset =
+                    case container of
+                        Just containerElement ->
+                            containerElement.element.x
 
-                    Nothing ->
-                        0
-                  )
+                        Nothing ->
+                            0
+
+                -- calculate the max position of the question box, so it will not render outside the viewport
+                maybeMaxPosition =
+                    container |> Maybe.map (\containerElement -> containerElement.element.x + containerElement.element.width - questionBox.element.width - offset) |> Debug.log "maxPosition"
+
+                position =
+                    -- position in the middle of the block
+                    (block.element.x + (block.element.width / 2))
+                        - -- against the middle of the question box
+                          (questionBox.element.width / 2)
+                        -- subtract offset from the container, when container is provided
+                        - offset
+            in
+            case maybeMaxPosition of
+                Just maxPosition ->
+                    max (min maxPosition position) 0
+
+                Nothing ->
+                    -- make sure that the position is positive and is rendered inside the viewport
+                    max position 0
     in
     viewBalloon config
         (Just blockId)
