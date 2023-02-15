@@ -243,18 +243,6 @@ keyboardTests =
 
 markdownTests : List Test
 markdownTests =
-    let
-        start view =
-            startWithoutMarker view highlightables
-
-        highlightables =
-            Highlightable.initFragments Nothing
-                "*Pothos* indirect light"
-
-        testRendersRawContent testName view =
-            test (testName ++ " does not interpret content as markdown")
-                (\() -> expectViewHas [ Selector.text "*Pothos*" ] (start view))
-    in
     [ testRendersRawContent "view" Highlighter.view
     , testRendersMarkdownContent "viewMarkdown" Highlighter.viewMarkdown
     , testRendersRawContent "static" Highlighter.static
@@ -262,6 +250,16 @@ markdownTests =
     , testRendersRawContent "staticWithTags" Highlighter.staticWithTags
     , testRendersMarkdownContent "staticMarkdownWithTags" Highlighter.staticMarkdownWithTags
     ]
+
+
+testRendersRawContent : String -> (Highlighter.Model String -> Html msg) -> Test
+testRendersRawContent testName view =
+    test (testName ++ " does not interpret content as markdown")
+        (\() ->
+            Highlightable.initFragments Nothing "*Pothos* indirect light"
+                |> startWithoutMarker view
+                |> expectViewHas [ Selector.text "*Pothos*" ]
+        )
 
 
 testRendersMarkdownContent : String -> (Highlighter.Model String -> Html msg) -> Test
