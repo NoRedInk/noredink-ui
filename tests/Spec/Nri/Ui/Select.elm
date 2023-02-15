@@ -1,19 +1,29 @@
 module Spec.Nri.Ui.Select exposing (spec)
 
+import Html.Attributes as Attributes
 import Html.Styled
-import Nri.Ui.Select.V8 as Select
+import Nri.Ui.Select.V9 as Select
 import ProgramTest exposing (..)
 import Test exposing (..)
+import Test.Html.Selector exposing (..)
 
 
 spec : Test
 spec =
     describe "Nri.Ui.Select.V9"
-        []
+        [ test "allows selection" <|
+            \() ->
+                start
+                    -- first option is selected automatically
+                    |> ensureViewHas [ selected True, attribute (Attributes.value "Cat") ]
+                    |> selectAnimal Dog
+                    |> ensureViewHas [ selected True, attribute (Attributes.value "Dog") ]
+                    |> done
+        ]
 
 
-program : ProgramTest Model Msg ()
-program =
+start : ProgramTest Model Msg ()
+start =
     ProgramTest.createSandbox
         { init = { favoriteAnimal = Nothing }
         , update = update
@@ -30,11 +40,22 @@ program =
                             allAnimals
                         )
                     , Select.value model.favoriteAnimal
+                    , Select.id selectId
                     ]
                     |> Html.Styled.map SelectFavorite
                     |> Html.Styled.toUnstyled
         }
         |> ProgramTest.start ()
+
+
+selectAnimal : Animal -> ProgramTest a b c -> ProgramTest a b c
+selectAnimal animal =
+    selectOption selectId "Favorite type of animal" (toString animal) (toString animal)
+
+
+selectId : String
+selectId =
+    "favorite-animal-selector"
 
 
 allAnimals : List Animal
