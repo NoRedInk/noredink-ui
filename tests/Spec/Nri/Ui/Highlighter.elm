@@ -262,7 +262,7 @@ testRendersRawContent testName view =
                     |> expectView
                         (Expect.all
                             [ [ "*Pothos*", " ", "prefer", " ", "indirect", " ", "[light]()", " ", "to", " ", "direct", " ", "light." ]
-                                |> List.indexedMap (\i word -> highlightable i word)
+                                |> List.indexedMap (\i word -> highlightable i [ Selector.text word ])
                                 |> Expect.all
                             , Query.hasNot [ mark ]
                             ]
@@ -273,9 +273,9 @@ testRendersRawContent testName view =
                     |> startWithoutMarker view
                     |> expectView
                         (Expect.all
-                            [ [ "*Pothos* prefer indirect ", "light", " to direct light." ]
-                                |> List.indexedMap (\i word -> highlightable i word)
-                                |> Expect.all
+                            [ highlightable 0 [ Selector.text "*Pothos* prefer indirect " ]
+                            , highlightable 1 [ Selector.text "light" ]
+                            , highlightable 2 [ Selector.text " to direct light." ]
                             , Query.has [ mark, Selector.containing [ Selector.text "light" ] ]
                             ]
                         )
@@ -293,7 +293,7 @@ testRendersMarkdownContent testName view =
                     |> expectView
                         (Expect.all
                             [ [ "Pothos", " ", "prefer", " ", "indirect", " ", "light", " ", "to", " ", "direct", " ", "light." ]
-                                |> List.indexedMap (\i word -> highlightable i word)
+                                |> List.indexedMap (\i word -> highlightable i [ Selector.text word ])
                                 |> Expect.all
                             , Query.has
                                 [ Selector.tag "em"
@@ -311,9 +311,9 @@ testRendersMarkdownContent testName view =
                     |> ensureViewHasNot [ Selector.tag "a" ]
                     |> expectView
                         (Expect.all
-                            [ [ " prefer indirect ", "light", " to direct light." ]
-                                |> List.indexedMap (\i word -> highlightable i word)
-                                |> Expect.all
+                            [ highlightable 0 [ Selector.text " prefer indirect " ]
+                            , highlightable 1 [ Selector.text "light" ]
+                            , highlightable 2 [ Selector.text " to direct light." ]
                             , Query.has
                                 [ Selector.tag "em"
                                 , Selector.containing [ Selector.text "Pothos" ]
@@ -438,11 +438,11 @@ mark =
     Selector.tag "mark"
 
 
-highlightable : Int -> String -> Query.Single msg -> Expectation
-highlightable index string =
+highlightable : Int -> List Selector -> Query.Single msg -> Expectation
+highlightable index selector =
     Query.findAll [ Selector.class "highlighter-highlightable" ]
         >> Query.index index
-        >> Query.has [ Selector.text string ]
+        >> Query.has selector
 
 
 space : TestContext -> TestContext
