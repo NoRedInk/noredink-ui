@@ -153,6 +153,9 @@ hint = 'upgrade to V8'
 [forbidden."Nri.Ui.Select.V7"]
 hint = 'upgrade to V8'
 
+[forbidden."Nri.Ui.Select.V8"]
+hint = 'upgrade to V9'
+
 [forbidden."Nri.Ui.SideNav.V1"]
 hint = 'upgrade to V3'
 
