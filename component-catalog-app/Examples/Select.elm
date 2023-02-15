@@ -18,7 +18,7 @@ import Example exposing (Example)
 import Html.Styled
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Select.V8 as Select exposing (Choice)
+import Nri.Ui.Select.V9 as Select exposing (Choice)
 
 
 moduleName : String
