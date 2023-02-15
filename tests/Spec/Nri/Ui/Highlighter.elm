@@ -2,7 +2,7 @@ module Spec.Nri.Ui.Highlighter exposing (spec)
 
 import Accessibility.Key as Key
 import Expect exposing (Expectation)
-import Html.Styled exposing (toUnstyled)
+import Html.Styled exposing (Html, toUnstyled)
 import List.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
@@ -245,18 +245,7 @@ markdownTests : List Test
 markdownTests =
     let
         start view =
-            ProgramTest.createSandbox
-                { init =
-                    Highlighter.init
-                        { id = "markdown-tests-highlighter-container"
-                        , highlightables = highlightables
-                        , marker = markerModel Nothing
-                        , joinAdjacentInteractiveHighlights = False
-                        }
-                , update = \_ m -> m
-                , view = view >> toUnstyled
-                }
-                |> ProgramTest.start ()
+            startWithoutMarker view highlightables
 
         highlightables =
             Highlightable.initFragments Nothing
@@ -265,17 +254,6 @@ markdownTests =
         testRendersRawContent testName view =
             test (testName ++ " does not interpret content as markdown")
                 (\() -> expectViewHas [ Selector.text "*Pothos*" ] (start view))
-
-        testRendersMarkdownContent testName view =
-            test (testName ++ " does interpret content as markdown")
-                (\() ->
-                    start view
-                        |> ensureViewHasNot [ Selector.text "*Pothos*" ]
-                        |> expectViewHas
-                            [ Selector.tag "em"
-                            , Selector.containing [ Selector.text "Pothos" ]
-                            ]
-                )
     in
     [ testRendersRawContent "view" Highlighter.view
     , testRendersMarkdownContent "viewMarkdown" Highlighter.viewMarkdown
@@ -284,6 +262,36 @@ markdownTests =
     , testRendersRawContent "staticWithTags" Highlighter.staticWithTags
     , testRendersMarkdownContent "staticMarkdownWithTags" Highlighter.staticMarkdownWithTags
     ]
+
+
+testRendersMarkdownContent : String -> (Highlighter.Model String -> Html msg) -> Test
+testRendersMarkdownContent testName view =
+    test (testName ++ " does interpret content as markdown")
+        (\() ->
+            Highlightable.initFragments Nothing "*Pothos* indirect light"
+                |> startWithoutMarker view
+                |> ensureViewHasNot [ Selector.text "*Pothos*" ]
+                |> expectViewHas
+                    [ Selector.tag "em"
+                    , Selector.containing [ Selector.text "Pothos" ]
+                    ]
+        )
+
+
+startWithoutMarker : (Highlighter.Model String -> Html msg) -> List (Highlightable String) -> ProgramTest (Highlighter.Model String) msg ()
+startWithoutMarker view highlightables =
+    ProgramTest.createSandbox
+        { init =
+            Highlighter.init
+                { id = "highlighter-container"
+                , highlightables = highlightables
+                , marker = markerModel Nothing
+                , joinAdjacentInteractiveHighlights = False
+                }
+        , update = \_ m -> m
+        , view = view >> toUnstyled
+        }
+        |> ProgramTest.start ()
 
 
 hasStartHighlightBeforeContent : String -> String -> Query.Single msg -> Expectation
