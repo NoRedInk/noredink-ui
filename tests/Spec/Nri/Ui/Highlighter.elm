@@ -273,7 +273,7 @@ testRendersRawContent testName view =
                     |> startWithoutMarker view
                     |> expectView
                         (Expect.all
-                            [ [ "*Pothos* prefer indirect ", "light", " to direct light" ]
+                            [ [ "*Pothos* prefer indirect ", "light", " to direct light." ]
                                 |> List.indexedMap (\i word -> highlightable i word)
                                 |> Expect.all
                             , Query.has [ mark, Selector.containing [ Selector.text "light" ] ]
@@ -284,15 +284,44 @@ testRendersRawContent testName view =
 
 testRendersMarkdownContent : String -> (Highlighter.Model () -> Html msg) -> Test
 testRendersMarkdownContent testName view =
-    test (testName ++ " does interpret content as markdown") <|
-        \() ->
-            Highlightable.initFragments Nothing "*Pothos* indirect light"
-                |> startWithoutMarker view
-                |> ensureViewHasNot [ Selector.text "*Pothos*" ]
-                |> expectViewHas
-                    [ Selector.tag "em"
-                    , Selector.containing [ Selector.text "Pothos" ]
-                    ]
+    describe (testName ++ " does interpret content as markdown") <|
+        [ test "using Highlightable.initFragments for initialization" <|
+            \() ->
+                Highlightable.initFragments Nothing "*Pothos* prefer indirect [light]() to direct light."
+                    |> startWithoutMarker view
+                    |> ensureViewHasNot [ Selector.text "*Pothos*" ]
+                    |> expectView
+                        (Expect.all
+                            [ [ "Pothos", " ", "prefer", " ", "indirect", " ", "light", " ", "to", " ", "direct", " ", "light." ]
+                                |> List.indexedMap (\i word -> highlightable i word)
+                                |> Expect.all
+                            , Query.has
+                                [ Selector.tag "em"
+                                , Selector.containing [ Selector.text "Pothos" ]
+                                ]
+                            , Query.has [ Selector.tag "a", Selector.containing [ Selector.text "light" ] ]
+                            ]
+                        )
+        , test "using Highlightable.fromMarkdown for initialization" <|
+            \() ->
+                Highlightable.fromMarkdown "*Pothos* prefer indirect [light]() to direct light."
+                    |> startWithoutMarker view
+                    |> ensureViewHasNot [ Selector.text "*Pothos*" ]
+                    |> ensureViewHasNot [ Selector.text "[light]()" ]
+                    |> ensureViewHasNot [ Selector.tag "a" ]
+                    |> expectView
+                        (Expect.all
+                            [ [ " prefer indirect ", "light", " to direct light." ]
+                                |> List.indexedMap (\i word -> highlightable i word)
+                                |> Expect.all
+                            , Query.has
+                                [ Selector.tag "em"
+                                , Selector.containing [ Selector.text "Pothos" ]
+                                ]
+                            , Query.has [ mark, Selector.containing [ Selector.text "light" ] ]
+                            ]
+                        )
+        ]
 
 
 startWithoutMarker : (Highlighter.Model any -> Html msg) -> List (Highlightable any) -> ProgramTest (Highlighter.Model any) msg ()
