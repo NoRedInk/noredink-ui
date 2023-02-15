@@ -13,11 +13,11 @@ module Nri.Ui.Select.V9 exposing
 {-| Build a select input with a label, optional guidance, and error messaging.
 
 
-# Changes from V7
+# Changes from V8
 
-    - view adds a label
-    - adds standard custom, nriDescription, etc. attributes
-    - switches to a list-based attribute API from a record-based API
+    - The option `value` attribute is no longer prefixed with `nri-select-`;
+      This is not a breaking change to the API, but affects automated tests
+      that are looking for this prefix.
 
 @docs view, generateId
 
@@ -319,9 +319,14 @@ viewSelect : { id : String, disabled : Bool } -> Config a -> Html a
 viewSelect config_ config =
     let
         toChoice valueToString choice =
+            let
+                strValue =
+                    valueToString choice.value
+            in
             { label = choice.label
-            , idAndValue = generateId (valueToString choice.value)
+            , id = generateId strValue
             , value = choice.value
+            , strValue = strValue
             }
 
         ( optionStringChoices, groupStringChoices ) =
@@ -337,7 +342,7 @@ viewSelect config_ config =
         valueLookup =
             optionStringChoices
                 ++ groupStringChoices
-                |> List.map (\x -> ( x.idAndValue, x.value ))
+                |> List.map (\x -> ( x.id, x.value ))
                 |> Dict.fromList
 
         decodeValue string =
@@ -456,7 +461,7 @@ viewDefaultChoice current displayText =
         [ Html.text displayText ]
 
 
-viewChoice : Maybe a -> { value : a, idAndValue : String, label : String } -> Html a
+viewChoice : Maybe a -> { value : a, strValue : String, id : String, label : String } -> Html a
 viewChoice current choice =
     let
         isSelected =
@@ -465,8 +470,8 @@ viewChoice current choice =
                 |> Maybe.withDefault False
     in
     Html.option
-        [ Attributes.id choice.idAndValue
-        , Attributes.value choice.idAndValue
+        [ Attributes.id choice.id
+        , Attributes.value choice.strValue
         , Attributes.selected isSelected
         ]
         [ Html.text choice.label ]
