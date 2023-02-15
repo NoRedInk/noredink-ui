@@ -31,6 +31,7 @@ import Nri.Ui.Menu.V4 as Menu
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V6 as Table
 import Nri.Ui.TextInput.V7 as TextInput
+import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
 import Svg.Styled as Svg
@@ -123,6 +124,7 @@ view ellieLinkConfig state =
     let
         menuAttributes =
             Control.currentValue state.settings
+                |> .attributes
                 |> List.map Tuple.second
 
         isOpen name =
@@ -139,28 +141,55 @@ view ellieLinkConfig state =
         , version = version
         , update = UpdateControls
         , settings = state.settings
-        , mainType = Just "RootHtml.Html { focus : Maybe String, isOpen : Bool }"
+        , mainType = Just "RootHtml.Html Msg"
         , extraCode =
             [ "import Nri.Ui.Button.V10 as Button"
             , "import Nri.Ui.ClickableSvg.V2 as ClickableSvg"
             , "import Nri.Ui.ClickableText.V3 as ClickableText"
+            , "import Nri.Ui.Tooltip.V3 as Tooltip"
+            , "\ntype Msg = ToggleMenu { focus : Maybe String, isOpen : Bool } | ToggleTooltip Bool"
             ]
         , renderExample = Code.unstyledView
         , toExampleCode =
-            \settings ->
+            \{ attributes } ->
                 let
                     code : String
                     code =
                         moduleName
-                            ++ ".view "
-                            ++ "identity -- TODO: you will need a real msg type here"
+                            ++ ".view ToggleMenu"
                             ++ Code.listMultiline
-                                (("Menu.isOpen " ++ Code.bool (isOpen "interactiveExample"))
-                                    :: List.map Tuple.first settings
+                                ((if (Control.currentValue state.settings).withTooltip then
+                                    [ Code.fromModule "Menu" "withTooltip"
+                                        ++ Code.listMultiline
+                                            [ Code.fromModule "Tooltip" "open " ++ (Code.bool <| Set.member "tooltip-0" state.openTooltips)
+                                            , Code.fromModule "Tooltip" "onToggle " ++ "ToggleTooltip"
+                                            , Code.fromModule "Tooltip" "plaintext " ++ Code.string "Tooltip content"
+                                            , Code.fromModule "Tooltip" "fitToContent"
+                                            ]
+                                            2
+                                    ]
+
+                                  else
+                                    []
+                                 )
+                                    ++ ("Menu.isOpen " ++ Code.bool (isOpen "interactiveExample"))
+                                    :: List.map Tuple.first attributes
                                 )
                                 1
-                            ++ Code.newlineWithIndent 1
-                            ++ "[]"
+                            ++ Code.listMultiline
+                                [ (Code.fromModule moduleName "entry " ++ Code.string "unique-button-id" ++ " <|")
+                                    ++ Code.newlineWithIndent 2
+                                    ++ Code.anonymousFunction "attributes"
+                                        (Code.newlineWithIndent 2
+                                            ++ (Code.fromModule "ClickableText" "button " ++ Code.string "Button")
+                                            ++ Code.listMultiline
+                                                [ Code.fromModule "ClickableText" "small"
+                                                , Code.fromModule "ClickableText" "custom" ++ " attributes"
+                                                ]
+                                                3
+                                        )
+                                ]
+                                1
                 in
                 [ { sectionName = "Example"
                   , code = code
@@ -173,8 +202,29 @@ view ellieLinkConfig state =
         ]
     , div [ css [ Css.displayFlex, Css.justifyContent Css.center ] ]
         [ Menu.view (FocusAndToggle "interactiveExample")
-            (Menu.isOpen (isOpen "interactiveExample") :: menuAttributes)
-            []
+            ((if (Control.currentValue state.settings).withTooltip then
+                [ Menu.withTooltip
+                    [ Tooltip.open (Set.member "tooltip-0" state.openTooltips)
+                    , Tooltip.onToggle (ToggleTooltip "tooltip-0")
+                    , Tooltip.plaintext "Tooltip content"
+                    , Tooltip.fitToContent
+                    ]
+                ]
+
+              else
+                []
+             )
+                ++ Menu.isOpen (isOpen "interactiveExample")
+                :: menuAttributes
+            )
+            [ Menu.entry "customizable-example" <|
+                \attrs ->
+                    ClickableText.button "Button"
+                        [ ClickableText.small
+                        , ClickableText.onClick (ConsoleLog "Interactive example")
+                        , ClickableText.custom attrs
+                        ]
+            ]
         ]
     , Heading.h2
         [ Heading.plaintext "Menu types"
@@ -357,11 +407,20 @@ type alias State =
 
 
 type alias Settings =
-    List ( String, Menu.Attribute Msg )
+    { attributes : List ( String, Menu.Attribute Msg )
+    , withTooltip : Bool
+    }
 
 
 initSettings : Control Settings
 initSettings =
+    Control.record Settings
+        |> Control.field "attributes" initSettingAttributes
+        |> Control.field "withTooltip" (Control.bool False)
+
+
+initSettingAttributes : Control (List ( String, Menu.Attribute Msg ))
+initSettingAttributes =
     ControlExtra.list
         |> ControlExtra.optionalListItem "alignment" controlAlignment
         |> ControlExtra.optionalBoolListItem "isDisabled" ( "Menu.isDisabled True", Menu.isDisabled True )
@@ -503,6 +562,7 @@ controlMenuWidth =
 type Msg
     = ConsoleLog String
     | UpdateControls (Control Settings)
+    | ToggleTooltip String Bool
     | FocusAndToggle String { isOpen : Bool, focus : Maybe String }
     | Focused (Result Dom.Error ())
 
@@ -516,6 +576,12 @@ update msg state =
 
         UpdateControls configuration ->
             ( { state | settings = configuration }, Cmd.none )
+
+        ToggleTooltip id True ->
+            ( { state | openTooltips = Set.insert id state.openTooltips }, Cmd.none )
+
+        ToggleTooltip id False ->
+            ( { state | openTooltips = Set.remove id state.openTooltips }, Cmd.none )
 
         FocusAndToggle id { isOpen, focus } ->
             ( { state
