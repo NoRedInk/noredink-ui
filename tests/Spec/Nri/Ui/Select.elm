@@ -15,9 +15,23 @@ spec =
             \() ->
                 start
                     -- first option is selected automatically
-                    |> ensureViewHas [ selected True, attribute (Attributes.value "Cat") ]
+                    |> ensureViewHas
+                        [ id "nri-select-cat"
+                        , selected True
+                        , attribute (Attributes.value "Cat")
+                        ]
                     |> selectAnimal Dog
-                    |> ensureViewHas [ selected True, attribute (Attributes.value "Dog") ]
+                    |> ensureViewHas
+                        [ id "nri-select-dog"
+                        , selected True
+                        , attribute (Attributes.value "Dog")
+                        ]
+                    |> selectAnimal Other
+                    |> ensureViewHas
+                        [ id "nri-select-my-favorite-animal-is-something-else"
+                        , selected True
+                        , attribute (Attributes.value "My favorite animal is something else")
+                        ]
                     |> done
         ]
 
@@ -30,7 +44,7 @@ start =
         , view =
             \model ->
                 Select.view "Favorite type of animal"
-                    [ Select.choices (toString >> String.toLower)
+                    [ Select.choices toString
                         (List.map
                             (\animal ->
                                 { label = toString animal
@@ -83,7 +97,7 @@ toString animal =
             "Pig"
 
         Other ->
-            "Other"
+            "My favorite animal is something else"
 
 
 type alias Model =
