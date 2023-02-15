@@ -311,9 +311,17 @@ testRendersMarkdownContent testName view =
                     |> ensureViewHasNot [ Selector.tag "a" ]
                     |> expectView
                         (Expect.all
-                            [ highlightable 0 [ Selector.text " prefer indirect " ]
+                            [ highlightable 0
+                                [ Selector.all
+                                    [ Selector.tag "em"
+                                    , Selector.containing [ Selector.text "Pothos" ]
+                                    ]
+                                , Selector.text " "
+                                , Selector.text "prefer indirect"
+                                , Selector.text " "
+                                ]
                             , highlightable 1 [ Selector.text "light" ]
-                            , highlightable 2 [ Selector.text " to direct light." ]
+                            , highlightable 2 [ Selector.text " ", Selector.text "to direct light." ]
                             , Query.has
                                 [ Selector.tag "em"
                                 , Selector.containing [ Selector.text "Pothos" ]
