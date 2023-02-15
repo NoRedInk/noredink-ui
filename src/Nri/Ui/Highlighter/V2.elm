@@ -10,6 +10,7 @@ module Nri.Ui.Highlighter.V2 exposing
 
 {-| Changes from V1:
 
+  - When rendering with a markdown helper, spaces will now be preserved instead of being "eaten"
   - Remove emptyIntent, which is not used
   - adds setting for joining adjacent interactive highlights of the same type
 
