@@ -9,7 +9,7 @@ Given this ownership and responsibility, A11ybats will provide guidance and supp
 
 ## Component Library Foundations
 - Adherence to the component library [accessibility policy](#accessibility-policy)
-- Adherence to [UI Style Guide (and Caveats)](https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats-PvOLxeX3oyujYEzdJx5pu) and [Guidelines for Sharing User-Facing Changes with Design](https://paper.dropbox.com/doc/Guidelines-for-Sharing-User-Facing-Changes-with-Design-bdKGQtYH9qO9I00hUkA6k)
+- Adherence to the [NoRedInk UI Style Guide](https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats-PvOLxeX3oyujYEzdJx5pu) and [Guidelines for Sharing User-Facing Changes with Design](https://paper.dropbox.com/doc/Guidelines-for-Sharing-User-Facing-Changes-with-Design-bdKGQtYH9qO9I00hUkA6k)
 - Interoperability and consistency of components with each other and with the NoRedInk app
 - Quality and consistency of API design
 - Quality of internal code
