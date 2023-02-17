@@ -409,7 +409,7 @@ navigation { moduleStates, route, isSideNavOpen, openTooltip } =
         , SideNav.navLabel "categories"
         , SideNav.navId "sidenav__categories"
         ]
-        (SideNav.entry "Usage Guidelines"
+        (SideNav.entry "Style Guide"
             [ SideNav.linkExternal "https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats--BhJHYronm1RGM1hRfnkvhrZMAg-PvOLxeX3oyujYEzdJx5pu"
             ]
             :: SideNav.entry "All" [ SideNav.href Routes.All ]
