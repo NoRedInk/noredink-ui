@@ -414,7 +414,7 @@ navigation { moduleStates, route, isSideNavOpen, openTooltip } =
             ]
             :: SideNav.entry "All" [ SideNav.href Routes.All ]
             :: categoryNavLinks
-            ++ [ SideNav.entry "Assorted components" [ SideNav.linkExternal "https://www.noredink.com/assorted_components/" ]
+            ++ [ SideNav.entry "Assorted Components" [ SideNav.linkExternal "https://www.noredink.com/assorted_components/" ]
                ]
         )
 
