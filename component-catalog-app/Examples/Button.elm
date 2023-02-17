@@ -17,9 +17,11 @@ import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Button.V10 as Button
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
 
@@ -237,6 +239,14 @@ viewButtonExamples ellieLinkConfig state =
                   }
                 ]
         }
+    , Heading.h2
+        [ Heading.plaintext "Interactive examples"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
+    , Heading.h2
+        [ Heading.plaintext "Non-interactive examples"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
     , buttons model
     , toggleButtons state.pressedToggleButtons
     , Button.link "linkExternalWithTracking"
@@ -255,57 +265,59 @@ buttons : Model -> Html Msg
 buttons model =
     let
         sizes =
-            [ ( Button.small, "small" )
-            , ( Button.medium, "medium" )
-            , ( Button.large, "large" )
+            [ ( Button.small, "Button.small" )
+            , ( Button.medium, "Button.medium" )
+            , ( Button.large, "Button.large" )
             ]
 
         styles =
-            [ ( Button.primary, "primary" )
-            , ( Button.secondary, "secondary" )
-            , ( Button.tertiary, "tertiary" )
-            , ( Button.danger, "danger" )
-            , ( Button.premium, "premium" )
+            [ ( Button.primary, "Button.primary" )
+            , ( Button.secondary, "Button.secondary" )
+            , ( Button.tertiary, "Button.tertiary" )
+            , ( Button.danger, "Button.danger" )
+            , ( Button.premium, "Button.premium" )
             ]
 
         exampleRow ( style, styleName ) =
-            List.concat
-                [ [ td
-                        [ css
-                            [ verticalAlign middle
-                            ]
-                        ]
-                        [ text styleName ]
-                  ]
-                , List.map (Tuple.first >> exampleCell style) sizes
-                ]
-                |> tr []
-
-        buttonOrLink =
-            case model.buttonType of
-                Link ->
-                    Button.link
-
-                Button ->
-                    Button.button
-
-        exampleCell setStyle setSize =
-            buttonOrLink model.label
-                (setSize :: setStyle :: List.map Tuple.second model.attributes)
-                |> List.singleton
-                |> td
-                    [ css
-                        [ verticalAlign middle
-                        , Css.width (Css.px 200)
-                        ]
+            [ tr []
+                (td
+                    [ css [ verticalAlign middle ]
+                    , Attributes.rowspan 2
                     ]
+                    [ code [] [ text styleName ] ]
+                    :: List.map (Tuple.first >> exampleCell Button.button style) sizes
+                    ++ [ td [ css [ verticalAlign middle ] ]
+                            [ code [] [ text "Button.button" ] ]
+                       ]
+                )
+            , tr []
+                (List.map (Tuple.first >> exampleCell Button.link style) sizes
+                    ++ [ td [ css [ verticalAlign middle ] ]
+                            [ code [] [ text "Button.link" ] ]
+                       ]
+                )
+            ]
+
+        exampleCell view setStyle setSize =
+            inCell <|
+                view model.label
+                    (setSize :: setStyle :: List.map Tuple.second model.attributes)
+
+        inCell content =
+            td
+                [ css
+                    [ verticalAlign middle
+                    , Css.width (Css.px 200)
+                    ]
+                ]
+                [ content ]
     in
     List.concat
         [ [ sizes
-                |> List.map (\( _, sizeName ) -> th [] [ text sizeName ])
+                |> List.map (\( _, sizeName ) -> th [] [ code [] [ text sizeName ] ])
                 |> (\cells -> tr [] (th [] [] :: cells))
           ]
-        , List.map exampleRow styles
+        , List.concatMap exampleRow styles
         ]
         |> table []
 
@@ -313,7 +325,10 @@ buttons model =
 toggleButtons : Set Int -> Html Msg
 toggleButtons pressedToggleButtons =
     div []
-        [ Heading.h3 [ Heading.plaintext "Button toggle" ]
+        [ Heading.h2
+            [ Heading.plaintext "Button toggle"
+            , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+            ]
         , div [ css [ Css.displayFlex, Css.marginBottom (Css.px 20) ] ]
             [ Button.toggleButton
                 { onDeselect = ToggleToggleButton 0
