@@ -5,6 +5,7 @@ module Nri.Ui.Button.V10 exposing
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , small, medium, large, modal
     , exactWidth, boundedWidth, unboundedWidth, fillContainerWidth
+    , exactWidthForMobile, boundedWidthForMobile, unboundedWidthForMobile, fillContainerWidthForMobile
     , primary, secondary, tertiary, danger, premium
     , enabled, unfulfilled, disabled, error, loading, success
     , icon, rightIcon
@@ -56,6 +57,7 @@ adding a span around the text could potentially lead to regressions.
 
 @docs small, medium, large, modal
 @docs exactWidth, boundedWidth, unboundedWidth, fillContainerWidth
+@docs exactWidthForMobile, boundedWidthForMobile, unboundedWidthForMobile, fillContainerWidthForMobile
 
 
 ## Change the color scheme
@@ -392,18 +394,23 @@ type ButtonSize
     | Large
 
 
+setWidth : ButtonWidth -> Attribute msg
+setWidth w =
+    set (\attributes -> { attributes | width = w })
+
+
 {-| Define a size in `px` for the button's total width.
 -}
 exactWidth : Int -> Attribute msg
 exactWidth inPx =
-    set (\attributes -> { attributes | width = WidthExact inPx })
+    setWidth (WidthExact inPx)
 
 
 {-| Leave the maxiumum width unbounded (there is a minimum width).
 -}
 unboundedWidth : Attribute msg
 unboundedWidth =
-    set (\attributes -> { attributes | width = WidthUnbounded })
+    setWidth WidthUnbounded
 
 
 {-| Make a button that is at least `min` large, and which will grow with
@@ -412,13 +419,47 @@ max`.)
 -}
 boundedWidth : { min : Int, max : Int } -> Attribute msg
 boundedWidth bounds =
-    set (\attributes -> { attributes | width = WidthBounded bounds })
+    setWidth (WidthBounded bounds)
 
 
 {-| -}
 fillContainerWidth : Attribute msg
 fillContainerWidth =
-    set (\attributes -> { attributes | width = WidthFillContainer })
+    setWidth WidthFillContainer
+
+
+setMobileWidth : ButtonWidth -> Attribute msg
+setMobileWidth w =
+    set (\attributes -> { attributes | mobileWidth = Just w })
+
+
+{-| For the mobile breakpoint, define a size in `px` for the button's total width.
+-}
+exactWidthForMobile : Int -> Attribute msg
+exactWidthForMobile inPx =
+    setMobileWidth (WidthExact inPx)
+
+
+{-| For the mobile breakpoint, Leave the maxiumum width unbounded (there is a minimum width).
+-}
+unboundedWidthForMobile : Attribute msg
+unboundedWidthForMobile =
+    setMobileWidth WidthUnbounded
+
+
+{-| For the mobile breakpoint, make a button that is at least `min` large, and which will grow with
+its content up to `max`. Both bounds are inclusive (`min <= actual value <=
+max`.)
+-}
+boundedWidthForMobile : { min : Int, max : Int } -> Attribute msg
+boundedWidthForMobile bounds =
+    setMobileWidth (WidthBounded bounds)
+
+
+{-| -}
+fillContainerWidthForMobile : Attribute msg
+fillContainerWidthForMobile =
+    setMobileWidth WidthFillContainer
 
 
 
@@ -581,6 +622,7 @@ build =
         , size = Medium
         , style = primaryColors
         , width = WidthUnbounded
+        , mobileWidth = Nothing
         , label = ""
         , state = Enabled
         , icon = Nothing
@@ -600,6 +642,7 @@ type alias ButtonOrLinkAttributes msg =
     , size : ButtonSize
     , style : ColorPalette
     , width : ButtonWidth
+    , mobileWidth : Maybe ButtonWidth
     , label : String
     , state : ButtonState
     , icon : Maybe Svg
