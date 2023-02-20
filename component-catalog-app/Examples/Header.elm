@@ -22,7 +22,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Header.V1 as Header
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Select.V8 as Select
+import Nri.Ui.Select.V9 as Select
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 
