@@ -247,7 +247,7 @@ viewButtonExamples ellieLinkConfig state =
         [ Heading.plaintext "Non-interactive examples"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
-    , buttons model
+    , buttonsTable
     , toggleButtons state.pressedToggleButtons
     , Button.link "linkExternalWithTracking"
         [ Button.unboundedWidth
@@ -261,65 +261,77 @@ viewButtonExamples ellieLinkConfig state =
         |> div []
 
 
-buttons : Model -> Html Msg
-buttons model =
+buttonsTable : Html msg
+buttonsTable =
     let
         sizes =
-            [ ( Button.small, "Button.small" )
-            , ( Button.medium, "Button.medium" )
-            , ( Button.large, "Button.large" )
+            [ ( Button.small, "small" )
+            , ( Button.medium, "medium" )
+            , ( Button.large, "large" )
             ]
 
         styles =
-            [ ( Button.primary, "Button.primary" )
-            , ( Button.secondary, "Button.secondary" )
-            , ( Button.tertiary, "Button.tertiary" )
-            , ( Button.danger, "Button.danger" )
-            , ( Button.premium, "Button.premium" )
+            [ ( Button.primary, "primary" )
+            , ( Button.secondary, "secondary" )
+            , ( Button.tertiary, "tertiary" )
+            , ( Button.danger, "danger" )
+            , ( Button.premium, "premium" )
             ]
 
-        exampleRow ( style, styleName ) =
+        exampleRow styleTuple =
             [ tr []
                 (td
-                    [ css [ verticalAlign middle ]
+                    [ css [ verticalAlign middle, Css.borderTop3 (Css.px 1) Css.solid Colors.gray85 ]
                     , Attributes.rowspan 2
                     ]
-                    [ code [] [ text styleName ] ]
-                    :: List.map (Tuple.first >> exampleCell Button.button style) sizes
-                    ++ [ td [ css [ verticalAlign middle ] ]
+                    [ code [] [ text (Code.fromModule moduleName (Tuple.second styleTuple)) ] ]
+                    :: List.map
+                        (exampleCell
+                            [ Css.borderTop3 (Css.px 1) Css.solid Colors.gray85
+                            , Css.paddingBottom Css.zero |> Css.important
+                            ]
+                            ( Button.button, "button" )
+                            styleTuple
+                        )
+                        sizes
+                    ++ [ td [ css [ verticalAlign middle, Css.borderTop3 (Css.px 1) Css.solid Colors.gray85 ] ]
                             [ code [] [ text "Button.button" ] ]
                        ]
                 )
             , tr []
-                (List.map (Tuple.first >> exampleCell Button.link style) sizes
+                (List.map (exampleCell [] ( Button.link, "link" ) styleTuple) sizes
                     ++ [ td [ css [ verticalAlign middle ] ]
                             [ code [] [ text "Button.link" ] ]
                        ]
                 )
             ]
 
-        exampleCell view setStyle setSize =
-            inCell <|
-                view model.label
-                    (setSize :: setStyle :: List.map Tuple.second model.attributes)
+        exampleCell cellStyle ( view, viewName ) ( style, styleName ) ( setSize, sizeName ) =
+            inCell cellStyle <| view (sizeName ++ " " ++ styleName ++ " " ++ viewName) [ setSize, style ]
 
-        inCell content =
+        inCell style content =
             td
                 [ css
                     [ verticalAlign middle
-                    , Css.width (Css.px 200)
+                    , Css.batch style
+                    , Css.padding (Css.px 10)
                     ]
                 ]
                 [ content ]
     in
     List.concat
         [ [ sizes
-                |> List.map (\( _, sizeName ) -> th [] [ code [] [ text sizeName ] ])
+                |> List.map
+                    (\( _, sizeName ) ->
+                        th [ css [ Css.padding2 (Css.px 25) Css.zero ] ]
+                            [ code [] [ text (Code.fromModule moduleName sizeName) ]
+                            ]
+                    )
                 |> (\cells -> tr [] (th [] [] :: cells))
           ]
         , List.concatMap exampleRow styles
         ]
-        |> table []
+        |> table [ css [ Css.borderCollapse Css.collapse ] ]
 
 
 toggleButtons : Set Int -> Html Msg
