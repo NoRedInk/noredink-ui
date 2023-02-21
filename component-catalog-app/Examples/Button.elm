@@ -272,8 +272,7 @@ viewButtonExamples ellieLinkConfig state =
                             ++ fName
                             ++ " "
                             ++ Code.string label
-                            ++ " "
-                            ++ Code.list (List.map Tuple.first attributes)
+                            ++ Code.listMultiline (List.map Tuple.first attributes) 1
                 in
                 [ { sectionName = "Button"
                   , code = toCode "button"
