@@ -161,6 +161,14 @@ initDebugControls =
             (ControlExtra.list
                 |> CommonControls.icon moduleName Button.icon
                 |> CommonControls.rightIcon moduleName Button.rightIcon
+                |> ControlExtra.optionalListItem "size"
+                    (CommonControls.choice moduleName
+                        [ ( "small", Button.small )
+                        , ( "medium", Button.medium )
+                        , ( "large", Button.large )
+                        , ( "modal", Button.modal )
+                        ]
+                    )
                 |> ControlExtra.optionalListItem "width"
                     (CommonControls.choice moduleName
                         [ ( "exactWidth 120", Button.exactWidth 120 )
@@ -195,6 +203,15 @@ initDebugControls =
                         , ( "boundedWidthForNarrowMobile 100 180", Button.boundedWidthForNarrowMobile { min = 100, max = 180 } )
                         , ( "unboundedWidthForNarrowMobile", Button.unboundedWidthForNarrowMobile )
                         , ( "fillContainerWidthForNarrowMobile", Button.fillContainerWidthForNarrowMobile )
+                        ]
+                    )
+                |> ControlExtra.optionalListItem "theme"
+                    (CommonControls.choice moduleName
+                        [ ( "primary", Button.primary )
+                        , ( "secondary", Button.secondary )
+                        , ( "tertiary", Button.tertiary )
+                        , ( "danger", Button.danger )
+                        , ( "premium", Button.premium )
                         ]
                     )
                 |> ControlExtra.optionalBoolListItem "disabled" ( "disabled", Button.disabled )
