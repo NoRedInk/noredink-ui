@@ -731,13 +731,9 @@ type alias ButtonOrLinkAttributes msg =
 
 renderButton : ButtonOrLink msg -> Html msg
 renderButton ((ButtonOrLink config) as button_) =
-    let
-        buttonStyle_ =
-            getColorPalette button_
-    in
     Nri.Ui.styled Html.button
         (styledName "customButton")
-        [ buttonStyles config.size config.width buttonStyle_ config.customStyles
+        [ buttonStyles config
         , Css.pseudoClass "focus-visible"
             [ Css.outline3 (Css.px 2) Css.solid Css.transparent
             , FocusRing.boxShadows []
@@ -754,9 +750,6 @@ renderButton ((ButtonOrLink config) as button_) =
 renderLink : ButtonOrLink msg -> Html msg
 renderLink ((ButtonOrLink config) as link_) =
     let
-        colorPalette =
-            getColorPalette link_
-
         ( linkFunctionName, attributes ) =
             ClickableAttributes.toLinkAttributes
                 { routeToString = identity
@@ -766,7 +759,7 @@ renderLink ((ButtonOrLink config) as link_) =
     in
     Nri.Ui.styled Styled.a
         (styledName linkFunctionName)
-        [ buttonStyles config.size config.width colorPalette config.customStyles
+        [ buttonStyles config
         , Css.pseudoClass "focus-visible"
             [ Css.outline3 (Css.px 2) Css.solid Css.transparent, FocusRing.boxShadows [] ]
         ]
@@ -871,11 +864,13 @@ toggleButton config =
     in
     Nri.Ui.styled Html.button
         (styledName "toggleButton")
-        [ buttonStyles Medium
-            WidthUnbounded
-            secondaryColors
-            [ Css.hover [ Css.color Colors.navy ]
-            ]
+        [ buttonStyles
+            { size = Medium
+            , width = WidthUnbounded
+            , style = secondaryColors
+            , state = Enabled
+            , customStyles = [ Css.hover [ Css.color Colors.navy ] ]
+            }
         , toggledStyles
         , Css.verticalAlign Css.middle
         ]
@@ -907,12 +902,20 @@ toggleButton config =
         ]
 
 
-buttonStyles : ButtonSize -> ButtonWidth -> ColorPalette -> List Style -> Style
-buttonStyles size width colors customStyles =
+buttonStyles :
+    { config
+        | size : ButtonSize
+        , style : ColorPalette
+        , width : ButtonWidth
+        , state : ButtonState
+        , customStyles : List Style
+    }
+    -> Style
+buttonStyles { size, width, style, state, customStyles } =
     Css.batch
         [ buttonStyle
         , sizeStyle size width
-        , colorStyle colors
+        , colorStyle style state
         , Css.batch customStyles
         ]
 
@@ -1079,11 +1082,11 @@ premiumColors =
     }
 
 
-getColorPalette : ButtonOrLink msg -> ColorPalette
-getColorPalette (ButtonOrLink config) =
-    case config.state of
+colorStyle : ColorPalette -> ButtonState -> Style
+colorStyle defaultStyle state =
+    (case state of
         Enabled ->
-            config.style
+            defaultStyle
 
         Disabled ->
             { background = Colors.gray92
@@ -1129,10 +1132,12 @@ getColorPalette (ButtonOrLink config) =
             , border = Nothing
             , shadow = Colors.greenDarkest
             }
+    )
+        |> applyColorStyle
 
 
-colorStyle : ColorPalette -> Style
-colorStyle colorPalette =
+applyColorStyle : ColorPalette -> Style
+applyColorStyle colorPalette =
     Css.batch
         [ Css.color colorPalette.text
         , Css.backgroundColor colorPalette.background
