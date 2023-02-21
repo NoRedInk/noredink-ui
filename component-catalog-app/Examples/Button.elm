@@ -303,7 +303,7 @@ buttons model =
     List.concat
         [ [ sizes
                 |> List.map (\( _, sizeName ) -> th [] [ text sizeName ])
-                |> (\cells -> tr [] (th [] [] :: cells))
+                |> (\cells -> tr [] (td [] [] :: cells))
           ]
         , List.map exampleRow styles
         ]
