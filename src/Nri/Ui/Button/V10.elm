@@ -6,6 +6,7 @@ module Nri.Ui.Button.V10 exposing
     , small, medium, large, modal
     , exactWidth, boundedWidth, unboundedWidth, fillContainerWidth
     , exactWidthForMobile, boundedWidthForMobile, unboundedWidthForMobile, fillContainerWidthForMobile
+    , exactWidthForQuizEngineMobile, boundedWidthForQuizEngineMobile, unboundedWidthForQuizEngineMobile, fillContainerWidthForQuizEngineMobile
     , primary, secondary, tertiary, danger, premium
     , enabled, unfulfilled, disabled, error, loading, success
     , icon, rightIcon
@@ -58,6 +59,7 @@ adding a span around the text could potentially lead to regressions.
 @docs small, medium, large, modal
 @docs exactWidth, boundedWidth, unboundedWidth, fillContainerWidth
 @docs exactWidthForMobile, boundedWidthForMobile, unboundedWidthForMobile, fillContainerWidthForMobile
+@docs exactWidthForQuizEngineMobile, boundedWidthForQuizEngineMobile, unboundedWidthForQuizEngineMobile, fillContainerWidthForQuizEngineMobile
 
 
 ## Change the color scheme
@@ -462,6 +464,40 @@ fillContainerWidthForMobile =
     setMobileWidth WidthFillContainer
 
 
+setQuizEngineMobileWidth : ButtonWidth -> Attribute msg
+setQuizEngineMobileWidth w =
+    set (\attributes -> { attributes | quizEngineMobileWidth = Just w })
+
+
+{-| For the quiz engine mobile breakpoint, define a size in `px` for the button's total width.
+-}
+exactWidthForQuizEngineMobile : Int -> Attribute msg
+exactWidthForQuizEngineMobile inPx =
+    setQuizEngineMobileWidth (WidthExact inPx)
+
+
+{-| For the quiz engine mobile breakpoint, Leave the maxiumum width unbounded (there is a minimum width).
+-}
+unboundedWidthForQuizEngineMobile : Attribute msg
+unboundedWidthForQuizEngineMobile =
+    setQuizEngineMobileWidth WidthUnbounded
+
+
+{-| For the quiz engine mobile breakpoint, make a button that is at least `min` large, and which will grow with
+its content up to `max`. Both bounds are inclusive (`min <= actual value <=
+max`.)
+-}
+boundedWidthForQuizEngineMobile : { min : Int, max : Int } -> Attribute msg
+boundedWidthForQuizEngineMobile bounds =
+    setQuizEngineMobileWidth (WidthBounded bounds)
+
+
+{-| -}
+fillContainerWidthForQuizEngineMobile : Attribute msg
+fillContainerWidthForQuizEngineMobile =
+    setQuizEngineMobileWidth WidthFillContainer
+
+
 
 -- COLOR SCHEMES
 
@@ -623,6 +659,7 @@ build =
         , style = primaryColors
         , width = WidthUnbounded
         , mobileWidth = Nothing
+        , quizEngineMobileWidth = Nothing
         , label = ""
         , state = Enabled
         , icon = Nothing
@@ -643,6 +680,7 @@ type alias ButtonOrLinkAttributes msg =
     , style : ColorPalette
     , width : ButtonWidth
     , mobileWidth : Maybe ButtonWidth
+    , quizEngineMobileWidth : Maybe ButtonWidth
     , label : String
     , state : ButtonState
     , icon : Maybe Svg

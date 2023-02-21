@@ -179,6 +179,15 @@ initDebugControls =
                         , ( "fillContainerWidthForMobile", Button.fillContainerWidthForMobile )
                         ]
                     )
+                |> ControlExtra.optionalListItem "quiz engine mobile width"
+                    (CommonControls.choice moduleName
+                        [ ( "exactWidthForQuizEngineMobile 120", Button.exactWidthForQuizEngineMobile 120 )
+                        , ( "exactWidthForQuizEngineMobile 70", Button.exactWidthForQuizEngineMobile 70 )
+                        , ( "boundedWidthForQuizEngineMobile 100 180", Button.boundedWidthForQuizEngineMobile { min = 100, max = 180 } )
+                        , ( "unboundedWidthForQuizEngineMobile", Button.unboundedWidthForQuizEngineMobile )
+                        , ( "fillContainerWidthForQuizEngineMobile", Button.fillContainerWidthForQuizEngineMobile )
+                        ]
+                    )
                 |> ControlExtra.optionalBoolListItem "disabled" ( "disabled", Button.disabled )
                 |> ControlExtra.optionalListItem "state (button only)"
                     (CommonControls.choice moduleName
