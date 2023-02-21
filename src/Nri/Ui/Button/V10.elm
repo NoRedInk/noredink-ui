@@ -27,6 +27,7 @@ adding a span around the text could potentially lead to regressions.
 
 # Patch changes:
 
+  - adds width helpers for Mobile breakpoint, Quiz Engine breakpoint, and Narrow Mobile breakpoint
   - uses ClickableAttributes
   - adds `nriDescription`, `testId`, and `id` helpers
   - adds `modal` helper, an alias for `large` size
