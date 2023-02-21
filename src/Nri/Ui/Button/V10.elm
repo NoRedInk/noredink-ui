@@ -7,6 +7,7 @@ module Nri.Ui.Button.V10 exposing
     , exactWidth, boundedWidth, unboundedWidth, fillContainerWidth
     , exactWidthForMobile, boundedWidthForMobile, unboundedWidthForMobile, fillContainerWidthForMobile
     , exactWidthForQuizEngineMobile, boundedWidthForQuizEngineMobile, unboundedWidthForQuizEngineMobile, fillContainerWidthForQuizEngineMobile
+    , exactWidthForNarrowMobile, boundedWidthForNarrowMobile, unboundedWidthForNarrowMobile, fillContainerWidthForNarrowMobile
     , primary, secondary, tertiary, danger, premium
     , enabled, unfulfilled, disabled, error, loading, success
     , icon, rightIcon
@@ -60,6 +61,7 @@ adding a span around the text could potentially lead to regressions.
 @docs exactWidth, boundedWidth, unboundedWidth, fillContainerWidth
 @docs exactWidthForMobile, boundedWidthForMobile, unboundedWidthForMobile, fillContainerWidthForMobile
 @docs exactWidthForQuizEngineMobile, boundedWidthForQuizEngineMobile, unboundedWidthForQuizEngineMobile, fillContainerWidthForQuizEngineMobile
+@docs exactWidthForNarrowMobile, boundedWidthForNarrowMobile, unboundedWidthForNarrowMobile, fillContainerWidthForNarrowMobile
 
 
 ## Change the color scheme
@@ -498,6 +500,40 @@ fillContainerWidthForQuizEngineMobile =
     setQuizEngineMobileWidth WidthFillContainer
 
 
+setNarrowMobileWidth : ButtonWidth -> Attribute msg
+setNarrowMobileWidth w =
+    set (\attributes -> { attributes | narrowMobileWidth = Just w })
+
+
+{-| For the quiz engine mobile breakpoint, define a size in `px` for the button's total width.
+-}
+exactWidthForNarrowMobile : Int -> Attribute msg
+exactWidthForNarrowMobile inPx =
+    setNarrowMobileWidth (WidthExact inPx)
+
+
+{-| For the quiz engine mobile breakpoint, Leave the maxiumum width unbounded (there is a minimum width).
+-}
+unboundedWidthForNarrowMobile : Attribute msg
+unboundedWidthForNarrowMobile =
+    setNarrowMobileWidth WidthUnbounded
+
+
+{-| For the quiz engine mobile breakpoint, make a button that is at least `min` large, and which will grow with
+its content up to `max`. Both bounds are inclusive (`min <= actual value <=
+max`.)
+-}
+boundedWidthForNarrowMobile : { min : Int, max : Int } -> Attribute msg
+boundedWidthForNarrowMobile bounds =
+    setNarrowMobileWidth (WidthBounded bounds)
+
+
+{-| -}
+fillContainerWidthForNarrowMobile : Attribute msg
+fillContainerWidthForNarrowMobile =
+    setNarrowMobileWidth WidthFillContainer
+
+
 
 -- COLOR SCHEMES
 
@@ -660,6 +696,7 @@ build =
         , width = WidthUnbounded
         , mobileWidth = Nothing
         , quizEngineMobileWidth = Nothing
+        , narrowMobileWidth = Nothing
         , label = ""
         , state = Enabled
         , icon = Nothing
@@ -681,6 +718,7 @@ type alias ButtonOrLinkAttributes msg =
     , width : ButtonWidth
     , mobileWidth : Maybe ButtonWidth
     , quizEngineMobileWidth : Maybe ButtonWidth
+    , narrowMobileWidth : Maybe ButtonWidth
     , label : String
     , state : ButtonState
     , icon : Maybe Svg
