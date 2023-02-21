@@ -19,6 +19,7 @@ import Html.Styled
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Select.V9 as Select exposing (Choice)
+import Nri.Ui.Text.V6 as Text
 
 
 moduleName : String
@@ -53,17 +54,17 @@ example =
         \ellieLinkConfig state ->
             let
                 label =
-                    (Control.currentValue state).label
+                    (Control.currentValue state.control).label
 
                 ( attributesCode, attributes ) =
-                    List.unzip (Control.currentValue state).attributes
+                    List.unzip (Control.currentValue state.control).attributes
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
                 , name = moduleName
                 , version = version
                 , update = UpdateSettings
-                , settings = state
+                , settings = state.control
                 , mainType = Just "RootHtml.Html String"
                 , extraCode = []
                 , renderExample = Code.unstyledView
@@ -82,38 +83,58 @@ example =
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , Select.view label attributes
-                |> Html.Styled.map ConsoleLog
+                |> Html.Styled.map ChangedTheSelectorValue
+            , Text.mediumBody
+                [ Text.plaintext <|
+                    """
+                    Note that if the value is bound (and why would you ever make a Select where it isn't?)
+                    then changing the list of options will not change its value.
+                    Furthermore, Select will only fire an event when a new, non-default value is selected.
+                    The current value is
+                """
+                        ++ getABetterNameToString state.selectedValue
+                        ++ "."
+                        ++ """
+                   if you change the "choices" above to "Overflowing text choices" there is no way to change the current value
+                   to Zaphod (the value of the single option with a very long name).
+                """
+                ]
             ]
     }
 
 
 {-| -}
 type alias State =
-    Control Settings
+    { control : Control Settings
+    , selectedValue : GetABetterName
+    }
 
 
 {-| -}
 init : State
 init =
-    Control.record Settings
-        |> Control.field "label" (Control.string "Tortilla Selector")
-        |> Control.field "attributes" initControls
+    { control =
+        Control.record Settings
+            |> Control.field "label" (Control.string "Tortilla Selector")
+            |> Control.field "attributes" initControls
+    , selectedValue = TexMex Tacos
+    }
 
 
 type alias Settings =
     { label : String
-    , attributes : List ( String, Select.Attribute String )
+    , attributes : List ( String, Select.Attribute GetABetterName )
     }
 
 
-initControls : Control (List ( String, Select.Attribute String ))
+initControls : Control (List ( String, Select.Attribute GetABetterName ))
 initControls =
     ControlExtra.list
         |> ControlExtra.listItem "choices"
             (Control.map
                 (\( code, choices ) ->
-                    ( "Select.choices identity" ++ code
-                    , Select.choices identity choices
+                    ( "Select.choices getABetterNameToString" ++ code
+                    , Select.choices getABetterNameToString choices
                     )
                 )
                 initChoices
@@ -167,27 +188,58 @@ initControls =
         |> CommonControls.icon moduleName Select.icon
 
 
-initChoices : Control ( String, List (Choice String) )
+type TexMex
+    = Tacos
+    | Burritos
+    | Enchiladas
+
+
+type Hitchhiker
+    = Zaphod
+
+
+type GetABetterName
+    = TexMex TexMex
+    | Hitchhiker Hitchhiker
+
+
+getABetterNameToString : GetABetterName -> String
+getABetterNameToString gabn =
+    case gabn of
+        TexMex Tacos ->
+            "Tacos"
+
+        TexMex Burritos ->
+            "Burritos"
+
+        TexMex Enchiladas ->
+            "Enchiladas"
+
+        Hitchhiker Zaphod ->
+            "Zaphod"
+
+
+initChoices : Control ( String, List (Choice GetABetterName) )
 initChoices =
     Control.choice
         [ ( "Short choices"
           , ( """
-        [ { label = "Tacos", value = "tacos" }
-        , { label = "Burritos", value = "burritos" }
-        , { label = "Enchiladas", value = "enchiladas" }
+        [ { label = "Tacos", value = TexMex Tacos }
+        , { label = "Burritos", value = TexMex Burritos }
+        , { label = "Enchiladas", value = TexMex Enchiladas }
         ]"""
-            , [ { label = "Tacos", value = "tacos" }
-              , { label = "Burritos", value = "burritos" }
-              , { label = "Enchiladas", value = "enchiladas" }
+            , [ { label = "Tacos", value = TexMex Tacos }
+              , { label = "Burritos", value = TexMex Burritos }
+              , { label = "Enchiladas", value = TexMex Enchiladas }
               ]
             )
                 |> Control.value
           )
         , ( "Overflowing text choices"
           , ( """
-        [ { label = "Look at me, I design coastlines, I got an award for Norway. Where's the sense in that? My mistress' eyes are nothing like the sun. Coral be far more red than her lips red.", value = "design-coastlines" }
+        [ { label = "Look at me, I design coastlines, I got an award for Norway. Where's the sense in that? My mistress' eyes are nothing like the sun. Coral be far more red than her lips red.", value = Hitchhiker Zaphod }
         ]"""
-            , [ { label = "Look at me, I design coastlines, I got an award for Norway. Where's the sense in that? My mistress' eyes are nothing like the sun. Coral be far more red than her lips red.", value = "design-coastlines" }
+            , [ { label = "Look at me, I design coastlines, I got an award for Norway. Where's the sense in that? My mistress' eyes are nothing like the sun. Coral be far more red than her lips red.", value = Hitchhiker Zaphod }
               ]
             )
                 |> Control.value
@@ -197,16 +249,16 @@ initChoices =
 
 {-| -}
 type Msg
-    = ConsoleLog String
-    | UpdateSettings (Control Settings)
+    = UpdateSettings (Control Settings)
+    | ChangedTheSelectorValue GetABetterName
 
 
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        ConsoleLog message ->
-            ( Debug.log "SelectExample" message |> always state, Cmd.none )
+        ChangedTheSelectorValue newValue ->
+            ( { state | selectedValue = newValue }, Cmd.none )
 
         UpdateSettings settings ->
-            ( settings, Cmd.none )
+            ( { state | control = settings }, Cmd.none )

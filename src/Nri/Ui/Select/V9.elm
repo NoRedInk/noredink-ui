@@ -392,7 +392,7 @@ viewSelect config_ config =
         valueLookup =
             optionStringChoices
                 ++ groupStringChoices
-                |> List.map (\x -> ( x.id, x.value ))
+                |> List.map (\x -> ( x.strValue, x.value ))
                 |> Dict.fromList
 
         decodeValue string =
@@ -535,7 +535,7 @@ viewChoice current choice =
 -}
 generateId : String -> String
 generateId x =
-    "nri-select-" ++ Nri.Ui.Util.dashify (Nri.Ui.Util.removePunctuation x)
+    "nri-select-" ++ String.toLower (Nri.Ui.Util.dashify (Nri.Ui.Util.removePunctuation x))
 
 
 selectArrowsCss : { config | disabled : Bool } -> Css.Style
