@@ -1219,35 +1219,6 @@ sizeStyle { size, width } =
             , Css.paddingBottom (Css.px verticalPaddingPx)
             ]
 
-        widthAttributes =
-            case width of
-                WidthExact pxWidth ->
-                    [ Css.maxWidth (Css.pct 100)
-                    , Css.width (Css.px <| toFloat pxWidth)
-                    , Css.paddingRight (Css.px 4)
-                    , Css.paddingLeft (Css.px 4)
-                    ]
-
-                WidthUnbounded ->
-                    [ Css.paddingLeft (Css.px 16)
-                    , Css.paddingRight (Css.px 16)
-                    , Css.minWidth (Css.px config.minWidth)
-                    ]
-
-                WidthFillContainer ->
-                    [ Css.paddingLeft (Css.px 16)
-                    , Css.paddingRight (Css.px 16)
-                    , Css.minWidth (Css.px config.minWidth)
-                    , Css.width (Css.pct 100)
-                    ]
-
-                WidthBounded { min, max } ->
-                    [ Css.maxWidth (Css.px (toFloat max))
-                    , Css.minWidth (Css.px (toFloat min))
-                    , Css.paddingRight (Css.px 16)
-                    , Css.paddingLeft (Css.px 16)
-                    ]
-
         lineHeightPx =
             case size of
                 Small ->
@@ -1267,5 +1238,36 @@ sizeStyle { size, width } =
         , Css.borderWidth (Css.px 1)
         , Css.borderBottomWidth (Css.px config.shadowHeight)
         , Css.batch sizingAttributes
-        , Css.batch widthAttributes
+        , Css.batch (buttonWidthToStyle width config)
         ]
+
+
+buttonWidthToStyle : ButtonWidth -> { a | minWidth : Float } -> List Style
+buttonWidthToStyle width config =
+    case width of
+        WidthExact pxWidth ->
+            [ Css.maxWidth (Css.pct 100)
+            , Css.width (Css.px <| toFloat pxWidth)
+            , Css.paddingRight (Css.px 4)
+            , Css.paddingLeft (Css.px 4)
+            ]
+
+        WidthUnbounded ->
+            [ Css.paddingLeft (Css.px 16)
+            , Css.paddingRight (Css.px 16)
+            , Css.minWidth (Css.px config.minWidth)
+            ]
+
+        WidthFillContainer ->
+            [ Css.paddingLeft (Css.px 16)
+            , Css.paddingRight (Css.px 16)
+            , Css.minWidth (Css.px config.minWidth)
+            , Css.width (Css.pct 100)
+            ]
+
+        WidthBounded { min, max } ->
+            [ Css.maxWidth (Css.px (toFloat max))
+            , Css.minWidth (Css.px (toFloat min))
+            , Css.paddingRight (Css.px 16)
+            , Css.paddingLeft (Css.px 16)
+            ]
