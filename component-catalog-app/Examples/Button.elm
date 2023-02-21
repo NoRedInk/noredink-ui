@@ -240,9 +240,10 @@ viewButtonExamples ellieLinkConfig state =
                 ]
         }
     , Heading.h2
-        [ Heading.plaintext "Interactive examples"
-        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        [ Heading.plaintext "Interactive example"
+        , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
         ]
+    , viewCustomizableExample model
     , Heading.h2
         [ Heading.plaintext "Non-interactive examples"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
@@ -259,6 +260,21 @@ viewButtonExamples ellieLinkConfig state =
         ]
     ]
         |> div []
+
+
+viewCustomizableExample : Model -> Html Msg
+viewCustomizableExample model =
+    let
+        buttonOrLink =
+            case model.buttonType of
+                Link ->
+                    Button.link
+
+                Button ->
+                    Button.button
+    in
+    buttonOrLink model.label
+        (List.map Tuple.second model.attributes)
 
 
 buttonsTable : Html msg
