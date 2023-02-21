@@ -867,6 +867,9 @@ toggleButton config =
         [ buttonStyles
             { size = Medium
             , width = WidthUnbounded
+            , mobileWidth = Nothing
+            , quizEngineMobileWidth = Nothing
+            , narrowMobileWidth = Nothing
             , style = secondaryColors
             , state = Enabled
             , customStyles = [ Css.hover [ Css.color Colors.navy ] ]
@@ -907,14 +910,17 @@ buttonStyles :
         | size : ButtonSize
         , style : ColorPalette
         , width : ButtonWidth
+        , mobileWidth : Maybe ButtonWidth
+        , quizEngineMobileWidth : Maybe ButtonWidth
+        , narrowMobileWidth : Maybe ButtonWidth
         , state : ButtonState
         , customStyles : List Style
     }
     -> Style
-buttonStyles { size, width, style, state, customStyles } =
+buttonStyles ({ style, state, customStyles } as config) =
     Css.batch
         [ buttonStyle
-        , sizeStyle size width
+        , sizeStyle config
         , colorStyle style state
         , Css.batch customStyles
         ]
@@ -1189,8 +1195,16 @@ sizeConfig size =
             }
 
 
-sizeStyle : ButtonSize -> ButtonWidth -> Style
-sizeStyle size width =
+sizeStyle :
+    { config
+        | size : ButtonSize
+        , width : ButtonWidth
+        , mobileWidth : Maybe ButtonWidth
+        , quizEngineMobileWidth : Maybe ButtonWidth
+        , narrowMobileWidth : Maybe ButtonWidth
+    }
+    -> Style
+sizeStyle { size, width } =
     let
         config =
             sizeConfig size
