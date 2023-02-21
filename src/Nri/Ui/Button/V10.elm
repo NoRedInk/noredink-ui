@@ -1204,7 +1204,7 @@ sizeStyle :
         , narrowMobileWidth : Maybe ButtonWidth
     }
     -> Style
-sizeStyle { size, width } =
+sizeStyle ({ size, width } as settings) =
     let
         config =
             sizeConfig size
@@ -1218,6 +1218,9 @@ sizeStyle { size, width } =
             , Css.paddingTop (Css.px verticalPaddingPx)
             , Css.paddingBottom (Css.px verticalPaddingPx)
             ]
+
+        buttonAttributes =
+            buttonWidthToStyle config
 
         lineHeightPx =
             case size of
@@ -1238,36 +1241,50 @@ sizeStyle { size, width } =
         , Css.borderWidth (Css.px 1)
         , Css.borderBottomWidth (Css.px config.shadowHeight)
         , Css.batch sizingAttributes
-        , Css.batch (buttonWidthToStyle width config)
+        , Css.batch (buttonAttributes width)
+        , maybeViewportSpecificStyles MediaQuery.narrowMobile (Maybe.map buttonAttributes settings.narrowMobileWidth)
+        , maybeViewportSpecificStyles MediaQuery.quizEngineMobile (Maybe.map buttonAttributes settings.quizEngineMobileWidth)
+        , maybeViewportSpecificStyles MediaQuery.mobile (Maybe.map buttonAttributes settings.mobileWidth)
         ]
 
 
-buttonWidthToStyle : ButtonWidth -> { a | minWidth : Float } -> List Style
-buttonWidthToStyle width config =
+maybeViewportSpecificStyles : MediaQuery -> Maybe (List Style) -> Style
+maybeViewportSpecificStyles mediaQuery =
+    Maybe.map (Css.Media.withMedia [ mediaQuery ])
+        >> Maybe.withDefault (Css.batch [])
+
+
+buttonWidthToStyle : { a | minWidth : Float } -> ButtonWidth -> List Style
+buttonWidthToStyle config width =
     case width of
         WidthExact pxWidth ->
             [ Css.maxWidth (Css.pct 100)
             , Css.width (Css.px <| toFloat pxWidth)
-            , Css.paddingRight (Css.px 4)
+            , Css.minWidth Css.unset
             , Css.paddingLeft (Css.px 4)
+            , Css.paddingRight (Css.px 4)
             ]
 
         WidthUnbounded ->
-            [ Css.paddingLeft (Css.px 16)
-            , Css.paddingRight (Css.px 16)
+            [ Css.maxWidth Css.unset
+            , Css.width Css.unset
             , Css.minWidth (Css.px config.minWidth)
+            , Css.paddingLeft (Css.px 16)
+            , Css.paddingRight (Css.px 16)
             ]
 
         WidthFillContainer ->
-            [ Css.paddingLeft (Css.px 16)
-            , Css.paddingRight (Css.px 16)
-            , Css.minWidth (Css.px config.minWidth)
+            [ Css.maxWidth Css.unset
             , Css.width (Css.pct 100)
+            , Css.minWidth (Css.px config.minWidth)
+            , Css.paddingLeft (Css.px 16)
+            , Css.paddingRight (Css.px 16)
             ]
 
         WidthBounded { min, max } ->
             [ Css.maxWidth (Css.px (toFloat max))
+            , Css.width Css.unset
             , Css.minWidth (Css.px (toFloat min))
-            , Css.paddingRight (Css.px 16)
             , Css.paddingLeft (Css.px 16)
+            , Css.paddingRight (Css.px 16)
             ]
