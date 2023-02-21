@@ -123,6 +123,13 @@ example =
                     , sort = Nothing
                     }
                 , Table.string
+                    { header = "Highlightable."
+                    , value = .highlightable
+                    , width = Css.pct 10
+                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+                    , sort = Nothing
+                    }
+                , Table.string
                     { header = "Description"
                     , value = .description
                     , width = Css.pct 30
@@ -144,6 +151,7 @@ example =
                 ]
                 [ { viewName = "static"
                   , tool = "buildMarker"
+                  , highlightable = "init"
                   , description = "One word highlighted"
                   , example =
                         Highlighter.static
@@ -163,6 +171,7 @@ example =
                   }
                 , { viewName = "static"
                   , tool = "buildMarker"
+                  , highlightable = "init"
                   , description = "Multiple words highlighted separately"
                   , example =
                         Highlighter.static
@@ -182,6 +191,7 @@ example =
                   }
                 , { viewName = "static"
                   , tool = "buildMarker"
+                  , highlightable = "init"
                   , description = "Multiple words highlighted & joined"
                   , example =
                         Highlighter.static
@@ -200,23 +210,37 @@ example =
                   }
                 , { viewName = "static"
                   , tool = "buildMarker"
+                  , highlightable = "init"
                   , description = "Multiple kinds of highlights without overlaps"
                   , example = Highlighter.static { id = "example-3a", highlightables = multipleHighlightsHighlightables }
                   }
                 , { viewName = "staticMarkdown"
                   , tool = "buildMarker"
+                  , highlightable = "init"
                   , description = "Multiple kinds of highlights without overlaps and with interpreted Markdown"
                   , example = Highlighter.staticMarkdown { id = "example-3b", highlightables = multipleHighlightsHighlightables }
                   }
                 , { viewName = "staticWithTags"
                   , tool = "buildMarkerWithBorder"
+                  , highlightable = "init"
                   , description = "Multiple kinds of highlights without overlaps"
                   , example = Highlighter.staticWithTags { id = "example-4a", highlightables = multipleHighlightsHighlightablesWithBorder }
                   }
                 , { viewName = "staticMarkdownWithTags"
                   , tool = "buildMarkerWithBorder"
+                  , highlightable = "init"
                   , description = "Multiple kinds of highlights without overlaps and with interpreted Markdown"
                   , example = Highlighter.staticMarkdownWithTags { id = "example-4b", highlightables = multipleHighlightsHighlightablesWithBorder }
+                  }
+                , { viewName = "staticMarkdown"
+                  , tool = "buildMarker"
+                  , highlightable = "fromMarkdown"
+                  , description = "Interpreting empty markdown anchor tags as highlights."
+                  , example =
+                        Highlighter.staticMarkdown
+                            { id = "example-5"
+                            , highlightables = Highlightable.fromMarkdown "Select your [favorite phrase]() in **your** writing."
+                            }
                   }
                 ]
             ]

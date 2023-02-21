@@ -10,6 +10,7 @@ module Nri.Ui.Highlighter.V2 exposing
 
 {-| Changes from V1:
 
+  - When rendering with a markdown helper, spaces will now be preserved instead of being "eaten"
   - Remove emptyIntent, which is not used
   - adds setting for joining adjacent interactive highlights of the same type
 
@@ -892,15 +893,35 @@ viewHighlightableSegment { interactiveHighlighterId, focusIndex, eventListeners,
 
 renderInlineMarkdown : String -> List (Html msg)
 renderInlineMarkdown text_ =
-    Markdown.Block.parse Nothing text_
-        |> List.map
-            (Markdown.Block.walk
-                (inlinifyMarkdownBlock
-                    >> Markdown.Block.PlainInlines
+    let
+        ( leftWhitespace, inner, rightWhitespace ) =
+            String.foldr
+                (\char ( l, i, r ) ->
+                    if char == ' ' then
+                        if i == "" then
+                            ( l, i, String.cons char r )
+
+                        else
+                            ( String.cons char l, i, r )
+
+                    else
+                        ( "", String.cons char l ++ i, r )
                 )
-            )
-        |> List.concatMap Markdown.Block.toHtml
-        |> List.map Html.fromUnstyled
+                ( "", "", "" )
+                text_
+
+        innerMarkdown =
+            Markdown.Block.parse Nothing inner
+                |> List.map
+                    (Markdown.Block.walk
+                        (inlinifyMarkdownBlock
+                            >> Markdown.Block.PlainInlines
+                        )
+                    )
+                |> List.concatMap Markdown.Block.toHtml
+                |> List.map Html.fromUnstyled
+    in
+    Html.text leftWhitespace :: innerMarkdown ++ [ Html.text rightWhitespace ]
 
 
 inlinifyMarkdownBlock : Markdown.Block.Block a b -> List (Markdown.Inline.Inline b)
