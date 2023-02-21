@@ -170,6 +170,15 @@ initDebugControls =
                         , ( "fillContainerWidth", Button.fillContainerWidth )
                         ]
                     )
+                |> ControlExtra.optionalListItem "mobile width"
+                    (CommonControls.choice moduleName
+                        [ ( "exactWidthForMobile 120", Button.exactWidthForMobile 120 )
+                        , ( "exactWidthForMobile 70", Button.exactWidthForMobile 70 )
+                        , ( "boundedWidthForMobile 100 180", Button.boundedWidthForMobile { min = 100, max = 180 } )
+                        , ( "unboundedWidthForMobile", Button.unboundedWidthForMobile )
+                        , ( "fillContainerWidthForMobile", Button.fillContainerWidthForMobile )
+                        ]
+                    )
                 |> ControlExtra.optionalBoolListItem "disabled" ( "disabled", Button.disabled )
                 |> ControlExtra.optionalListItem "state (button only)"
                     (CommonControls.choice moduleName
