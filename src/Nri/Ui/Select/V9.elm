@@ -61,6 +61,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
+import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.InputStyles.V4 as InputStyles
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Util
@@ -316,6 +317,7 @@ view label attributes =
             , disabled = disabled_
             }
             config
+         , viewJust viewIcon config.icon
          , InputLabelInternal.view
             { for = id_
             , label = label
@@ -325,6 +327,19 @@ view label attributes =
          ]
             ++ InputErrorAndGuidanceInternal.view id_ InputErrorAndGuidanceInternal.smallMargin config
         )
+
+
+viewIcon : Svg.Svg -> Html a
+viewIcon =
+    Svg.withWidth (Css.px 15)
+        >> Svg.withHeight (Css.px 15)
+        >> Svg.withCss
+            [ Css.position Css.absolute
+            , Css.top (Css.px 23)
+            , Css.left (Css.px 15)
+            , Css.pointerEvents Css.none
+            ]
+        >> Svg.toHtml
 
 
 viewSelect : { id : String, disabled : Bool } -> Config a -> Html a
@@ -449,7 +464,12 @@ viewSelect config_ config =
             -- Size and spacing
             , Css.height (Css.px 45)
             , Css.width (Css.pct 100)
-            , Css.paddingLeft (Css.px 15)
+            , case config.icon of
+                Just _ ->
+                    Css.paddingLeft (Css.px 36)
+
+                Nothing ->
+                    Css.paddingLeft (Css.px 15)
             , Css.paddingRight (Css.px 30)
 
             -- Icons
