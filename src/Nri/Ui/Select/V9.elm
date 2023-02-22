@@ -308,6 +308,7 @@ view label attributes =
 
                else
                 Css.paddingTop (Css.px InputStyles.defaultMarginTop)
+             , Css.color Colors.gray20
              ]
                 ++ config.containerCss
             )
@@ -464,8 +465,7 @@ viewSelect config_ config =
                 , Css.borderRadius (Css.px 8) |> Css.important
                 ]
 
-            -- Font and color
-            , Css.color Colors.gray20
+            -- Font and text
             , Fonts.baseFont
             , Css.fontSize (Css.px 15)
             , Css.fontWeight (Css.int 600)
