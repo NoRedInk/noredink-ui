@@ -167,7 +167,8 @@ testId id_ =
     custom [ Extra.testId id_ ]
 
 
-{-| -}
+{-| Add an SVG icon that will render on top of the select by way of absolute positioning.
+-}
 icon : Svg -> Attribute msg
 icon icon_ =
     Attribute <| \attributes -> { attributes | icon = Just icon_ }
