@@ -317,7 +317,7 @@ view label attributes =
             , disabled = disabled_
             }
             config
-         , viewJust viewIcon config.icon
+         , viewJust (viewIcon config) config.icon
          , InputLabelInternal.view
             { for = id_
             , label = label
@@ -329,13 +329,23 @@ view label attributes =
         )
 
 
-viewIcon : Svg.Svg -> Html a
-viewIcon =
+viewIcon : { config | noMarginTop : Bool } -> Svg.Svg -> Html a
+viewIcon config =
     Svg.withWidth (Css.px 15)
         >> Svg.withHeight (Css.px 15)
         >> Svg.withCss
             [ Css.position Css.absolute
-            , Css.top (Css.px 23)
+            , Css.top
+                (Css.px
+                    (15
+                        + (if config.noMarginTop then
+                            0
+
+                           else
+                            InputStyles.defaultMarginTop
+                          )
+                    )
+                )
             , Css.left (Css.px 15)
             , Css.pointerEvents Css.none
             ]
