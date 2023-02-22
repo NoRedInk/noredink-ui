@@ -360,7 +360,7 @@ viewIcon config =
                 Css.color Colors.gray45
 
               else
-                Css.batch []
+                Css.color Colors.azure
             ]
         >> Svg.toHtml
 
