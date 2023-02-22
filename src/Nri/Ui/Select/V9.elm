@@ -329,25 +329,36 @@ view label attributes =
         )
 
 
-viewIcon : { config | noMarginTop : Bool } -> Svg.Svg -> Html a
+viewIcon : { config | noMarginTop : Bool, disabled : Bool } -> Svg.Svg -> Html a
 viewIcon config =
+    let
+        topPx =
+            15
+                + (if config.noMarginTop then
+                    0
+
+                   else
+                    InputStyles.defaultMarginTop
+                  )
+                + (if config.disabled then
+                    1
+
+                   else
+                    0
+                  )
+    in
     Svg.withWidth (Css.px 15)
         >> Svg.withHeight (Css.px 15)
         >> Svg.withCss
             [ Css.position Css.absolute
-            , Css.top
-                (Css.px
-                    (15
-                        + (if config.noMarginTop then
-                            0
-
-                           else
-                            InputStyles.defaultMarginTop
-                          )
-                    )
-                )
+            , Css.top (Css.px topPx)
             , Css.left (Css.px 15)
             , Css.pointerEvents Css.none
+            , if config.disabled then
+                Css.color Colors.gray45
+
+              else
+                Css.batch []
             ]
         >> Svg.toHtml
 
