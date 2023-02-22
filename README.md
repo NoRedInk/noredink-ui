@@ -1,7 +1,7 @@
 # Ownership, policies, & key concepts
 
 NoRedInk’s accessibility team, the Accessibilibats, own the `noredink-ui` package and the Component Catalog app showcasing its components.
-While others may contribute to `noredink-ui` and are encouraged to do so, the Accessibilibats (a.k.a A11ybats) are responsible for oversight of the foundational aspects of the component library, a.k.a. “**[Component Library Foundations](#component-library-foundations)**.”
+While others may contribute to `noredink-ui` and are encouraged to do so, the Accessibilibats (a.k.a. A11ybats) are responsible for oversight of the foundational aspects of the component library, a.k.a. “**[Component Library Foundations](#component-library-foundations)**.”
 
 Given this ownership and responsibility, A11ybats will provide guidance and support to developers and designers who are building new components or working with existing components.
 
