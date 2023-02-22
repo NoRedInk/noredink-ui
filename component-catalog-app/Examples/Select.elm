@@ -164,6 +164,7 @@ initControls =
             (Control.value ( "Select.disabled", Select.disabled ))
         |> ControlExtra.optionalListItem "loading"
             (Control.value ( "Select.loading", Select.loading ))
+        |> CommonControls.icon moduleName Select.icon
 
 
 initChoices : Control ( String, List (Choice String) )

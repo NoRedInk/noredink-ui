@@ -7,6 +7,7 @@ module Nri.Ui.Select.V9 exposing
     , hiddenLabel, visibleLabel
     , disabled, loading, errorIf, errorMessage, guidance
     , custom, nriDescription, id, testId
+    , icon
     , containerCss, noMargin
     )
 
@@ -18,6 +19,7 @@ module Nri.Ui.Select.V9 exposing
     - The option `value` attribute is no longer prefixed with `nri-select-`;
       This is not a breaking change to the API, but affects automated tests
       that are looking for this prefix.
+    - adds `icon` support
 
 @docs view, generateId
 
@@ -39,6 +41,7 @@ module Nri.Ui.Select.V9 exposing
 @docs hiddenLabel, visibleLabel
 @docs disabled, loading, errorIf, errorMessage, guidance
 @docs custom, nriDescription, id, testId
+@docs icon
 @docs containerCss, noMargin
 
 -}
@@ -59,6 +62,7 @@ import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.InputStyles.V4 as InputStyles
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Util
 import SolidColor
 
@@ -162,6 +166,12 @@ testId id_ =
     custom [ Extra.testId id_ ]
 
 
+{-| -}
+icon : Svg -> Attribute msg
+icon icon_ =
+    Attribute <| \attributes -> { attributes | icon = Just icon_ }
+
+
 {-| Adds CSS to the element containing the input.
 -}
 containerCss : List Css.Style -> Attribute value
@@ -240,6 +250,7 @@ type alias Config value =
     , loading : Bool
     , guidance : Guidance
     , hideLabel : Bool
+    , icon : Maybe Svg
     , noMarginTop : Bool
     , containerCss : List Css.Style
     , custom : List (Html.Attribute Never)
@@ -259,6 +270,7 @@ defaultConfig =
     , loading = False
     , guidance = InputErrorAndGuidanceInternal.noGuidance
     , hideLabel = False
+    , icon = Nothing
     , noMarginTop = False
     , containerCss = []
     , custom = []
