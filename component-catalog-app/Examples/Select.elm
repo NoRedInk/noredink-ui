@@ -82,22 +82,33 @@ example =
                         ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
-            , Select.view label attributes
+            , Select.view label (Select.value state.selectedValue :: attributes)
                 |> Html.Styled.map ChangedTheSelectorValue
-            , Text.mediumBody
-                [ Text.plaintext <|
-                    """
-                    Note that if the value is bound (and why would you ever make a Select where it isn't?)
+            , Text.smallBody
+                [ """
+                    Note that if the value is bound (and why would you ever make a `Select` where it isn't?)
                     then changing the list of options will not change its value.
-                    Furthermore, Select will only fire an event when a new, non-default value is selected.
-                    The current value is
-                """
-                        ++ getABetterNameToString state.selectedValue
-                        ++ "."
-                        ++ """
-                   if you change the "choices" above to "Overflowing text choices" there is no way to change the current value
-                   to Zaphod (the value of the single option with a very long name).
-                """
+                    Furthermore, `Select` will only fire an event when a new value is selected.
+                    This means that if the starting value is `Nothing` and there is no `defaultDisplayText` 
+                    then you cannot select the first item in the list without first selecting another one.
+                    Use the "choices" selector above to get a feel for what that means.
+                """ |> String.lines
+                    |> List.map String.trim
+                    |> String.join " "
+                    |> Text.markdown
+                ]
+            , Text.smallBody
+                [ ("The current value is \""
+                    ++ (case state.selectedValue of
+                            Just tm ->
+                                "Just '" ++ choosableToString tm ++ "'"
+
+                            Nothing ->
+                                "`Nothing`"
+                       )
+                    ++ "\"."
+                  )
+                    |> Text.markdown
                 ]
             ]
     }
@@ -106,7 +117,7 @@ example =
 {-| -}
 type alias State =
     { control : Control Settings
-    , selectedValue : GetABetterName
+    , selectedValue : Maybe Choosable
     }
 
 
@@ -117,24 +128,24 @@ init =
         Control.record Settings
             |> Control.field "label" (Control.string "Tortilla Selector")
             |> Control.field "attributes" initControls
-    , selectedValue = TexMex Tacos
+    , selectedValue = Nothing
     }
 
 
 type alias Settings =
     { label : String
-    , attributes : List ( String, Select.Attribute GetABetterName )
+    , attributes : List ( String, Select.Attribute Choosable )
     }
 
 
-initControls : Control (List ( String, Select.Attribute GetABetterName ))
+initControls : Control (List ( String, Select.Attribute Choosable ))
 initControls =
     ControlExtra.list
         |> ControlExtra.listItem "choices"
             (Control.map
                 (\( code, choices ) ->
-                    ( "Select.choices getABetterNameToString" ++ code
-                    , Select.choices getABetterNameToString choices
+                    ( "Select.choices choosableToString" ++ code
+                    , Select.choices choosableToString choices
                     )
                 )
                 initChoices
@@ -188,69 +199,176 @@ initControls =
         |> CommonControls.icon moduleName Select.icon
 
 
-type TexMex
+type Choosable
     = Tacos
     | Burritos
     | Enchiladas
+    | NixtamalizedCorn
+    | LüXiaojun
+    | ZacaríasBonnat
+    | AntoninoPizzolato
+    | HarrisonMaurus
+    | TragicSingleton
 
 
-type Hitchhiker
-    = Zaphod
+allTexMex : List Choosable
+allTexMex =
+    let
+        help : List Choosable -> List Choosable
+        help list =
+            case list of
+                [] ->
+                    help [ Tacos ]
+
+                Tacos :: _ ->
+                    help <| Burritos :: list
+
+                Burritos :: _ ->
+                    help <| Enchiladas :: list
+
+                Enchiladas :: _ ->
+                    help <| NixtamalizedCorn :: list
+
+                NixtamalizedCorn :: _ ->
+                    List.reverse list
+
+                LüXiaojun :: _ ->
+                    list
+
+                ZacaríasBonnat :: _ ->
+                    list
+
+                AntoninoPizzolato :: _ ->
+                    list
+
+                HarrisonMaurus :: _ ->
+                    list
+
+                TragicSingleton :: _ ->
+                    list
+    in
+    help []
 
 
-type GetABetterName
-    = TexMex TexMex
-    | Hitchhiker Hitchhiker
+all81kg2020OlympicWeightlifters : List Choosable
+all81kg2020OlympicWeightlifters =
+    let
+        help : List Choosable -> List Choosable
+        help list =
+            case list of
+                [] ->
+                    help [ LüXiaojun ]
+
+                LüXiaojun :: _ ->
+                    help <| ZacaríasBonnat :: list
+
+                ZacaríasBonnat :: _ ->
+                    help <| AntoninoPizzolato :: list
+
+                AntoninoPizzolato :: _ ->
+                    help <| HarrisonMaurus :: list
+
+                HarrisonMaurus :: _ ->
+                    List.reverse list
+
+                Tacos :: _ ->
+                    list
+
+                Burritos :: _ ->
+                    list
+
+                Enchiladas :: _ ->
+                    list
+
+                NixtamalizedCorn :: _ ->
+                    list
+
+                TragicSingleton :: _ ->
+                    list
+    in
+    help []
 
 
-getABetterNameToString : GetABetterName -> String
-getABetterNameToString gabn =
-    case gabn of
-        TexMex Tacos ->
+choosableToString : Choosable -> String
+choosableToString tm =
+    case tm of
+        Tacos ->
             "Tacos"
 
-        TexMex Burritos ->
+        Burritos ->
             "Burritos"
 
-        TexMex Enchiladas ->
+        Enchiladas ->
             "Enchiladas"
 
-        Hitchhiker Zaphod ->
-            "Zaphod"
+        NixtamalizedCorn ->
+            """
+                The nixtamalization process was very important in the early Mesoamerican diet,
+                as most of the niacin content in unprocessed maize is bound to hemicellulose,
+                drastically reducing its bioavailability.
+                A population that depends on untreated maize as a staple food risks malnourishment
+                and is more likely to develop deficiency diseases such as pellagra, niacin deficiency,
+                or kwashiorkor, the absence of certain amino acids that maize is deficient in.
+                Maize cooked with lime or other alkali provided bioavailable niacin to Mesoamericans.
+                Beans provided the otherwise missing amino acids required to balance maize for complete protein.
+            """ |> String.trim |> String.lines |> List.map String.trim |> String.join " "
+
+        LüXiaojun ->
+            "Lü Xiaojun"
+
+        ZacaríasBonnat ->
+            "Zacarías Bonnat"
+
+        AntoninoPizzolato ->
+            "Antonino Pizzolato"
+
+        HarrisonMaurus ->
+            "Harrison Maurus"
+
+        TragicSingleton ->
+            "Tragic Singleton that cannot be selected"
 
 
-initChoices : Control ( String, List (Choice GetABetterName) )
+toOption : (a -> String) -> a -> { label : String, value : a }
+toOption toString a =
+    { label = toString a, value = a }
+
+
+toOptionString : (a -> String) -> a -> String
+toOptionString toString a =
+    let
+        str =
+            toString a
+    in
+    "{ label = \"" ++ str ++ "\", value = \"" ++ str ++ "\" } "
+
+
+initChoices : Control ( String, List (Choice Choosable) )
 initChoices =
-    Control.choice
-        [ ( "Short choices"
-          , ( """
-        [ { label = "Tacos", value = TexMex Tacos }
-        , { label = "Burritos", value = TexMex Burritos }
-        , { label = "Enchiladas", value = TexMex Enchiladas }
-        ]"""
-            , [ { label = "Tacos", value = TexMex Tacos }
-              , { label = "Burritos", value = TexMex Burritos }
-              , { label = "Enchiladas", value = TexMex Enchiladas }
-              ]
+    let
+        toChoice : List Choosable -> Control ( String, List { label : String, value : Choosable } )
+        toChoice choosables =
+            ( "[" ++ String.join ", " (List.map (toOptionString choosableToString) choosables) ++ "]"
+            , List.map (toOption choosableToString) choosables
             )
                 |> Control.value
-          )
-        , ( "Overflowing text choices"
-          , ( """
-        [ { label = "Look at me, I design coastlines, I got an award for Norway. Where's the sense in that? My mistress' eyes are nothing like the sun. Coral be far more red than her lips red.", value = Hitchhiker Zaphod }
-        ]"""
-            , [ { label = "Look at me, I design coastlines, I got an award for Norway. Where's the sense in that? My mistress' eyes are nothing like the sun. Coral be far more red than her lips red.", value = Hitchhiker Zaphod }
-              ]
-            )
-                |> Control.value
-          )
+
+        toValue : ( String, List Choosable ) -> ( String, Control ( String, List { label : String, value : Choosable } ) )
+        toValue =
+            Tuple.mapSecond toChoice
+    in
+    List.map toValue
+        [ ( "Tex-Mex", allTexMex )
+        , ( "81 Kg 2020 Olympic Weightlifters", all81kg2020OlympicWeightlifters )
+        , ( "Unselectable list with only one item", [ TragicSingleton ] )
         ]
+        |> Control.choice
 
 
 {-| -}
 type Msg
     = UpdateSettings (Control Settings)
-    | ChangedTheSelectorValue GetABetterName
+    | ChangedTheSelectorValue Choosable
 
 
 {-| -}
@@ -258,7 +376,7 @@ update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
         ChangedTheSelectorValue newValue ->
-            ( { state | selectedValue = newValue }, Cmd.none )
+            ( { state | selectedValue = Just newValue }, Cmd.none )
 
         UpdateSettings settings ->
             ( { state | control = settings }, Cmd.none )
