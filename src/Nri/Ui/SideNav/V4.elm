@@ -246,7 +246,12 @@ view config navAttributes entries =
     div [ Attributes.css (defaultCss ++ appliedNavAttributes.css) ]
         [ viewSkipLink config.onSkipNav
         , viewJust (viewOpenCloseButton sidenavId appliedNavAttributes.navLabel) appliedNavAttributes.collapsible
-        , viewNav sidenavId config appliedNavAttributes entries showNav
+        , case entries of
+            [] ->
+                text ""
+
+            _ ->
+                viewNav sidenavId config appliedNavAttributes entries showNav
         ]
 
 
