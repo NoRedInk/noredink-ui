@@ -1,6 +1,8 @@
 module Spec.Nri.Ui.SideNav exposing (spec)
 
+import Accessibility.Aria as Aria
 import Expect
+import Html.Attributes as Attributes
 import Html.Styled exposing (toUnstyled)
 import Nri.Ui.SideNav.V4 as SideNav exposing (Entry, NavAttribute)
 import Test exposing (..)
@@ -11,20 +13,74 @@ import Test.Html.Selector exposing (..)
 spec : Test
 spec =
     describe "SideNav"
-        [ test "without entries" <|
-            \() ->
-                { currentRoute = "some-route" }
-                    |> viewQuery [] []
-                    |> Query.hasNot [ tag "nav" ]
+        [ describe "tags the current page correctly" currentPageTests
+        ]
+
+
+currentPageTests : List Test
+currentPageTests =
+    [ test "without entries" <|
+        \() ->
+            []
+                |> viewQuery { currentRoute = "cactus" } []
+                |> Query.hasNot [ tag "nav" ]
+    , test "with 1 partial entry" <|
+        \() ->
+            [ SideNav.entry "Cactus" [] ]
+                |> viewQuery { currentRoute = "a-different-route" } []
+                |> Query.hasNot [ attribute Aria.currentPage ]
+    , test "with 1 complete but not current entry" <|
+        \() ->
+            [ SideNav.entry "Cactus" [ SideNav.href "cactus" ] ]
+                |> viewQuery { currentRoute = "a-different-route" } []
+                |> Query.hasNot [ attribute Aria.currentPage ]
+    , test "with 1 current entry" <|
+        \() ->
+            [ SideNav.entry "Cactus" [ SideNav.href "cactus" ] ]
+                |> viewQuery { currentRoute = "cactus" } []
+                |> Query.has [ currentPage "Cactus" "cactus" ]
+    , test "with multiple entries, one of which is current" <|
+        \() ->
+            [ SideNav.entry "Cactus" [ SideNav.href "cactus" ]
+            , SideNav.entry "Epiphyllum" [ SideNav.href "epiphyllum" ]
+            ]
+                |> viewQuery { currentRoute = "cactus" } []
+                |> Query.has [ currentPage "Cactus" "cactus" ]
+    , test "with a currently-selected entry with children" <|
+        \() ->
+            [ SideNav.entryWithChildren "Cactus"
+                [ SideNav.href "cactus" ]
+                [ SideNav.entry "Epiphyllum" [ SideNav.href "epiphyllum" ] ]
+            ]
+                |> viewQuery { currentRoute = "cactus" } []
+                |> Query.has [ currentPage "Cactus" "cactus" ]
+    , test "with a currently-selected child entry" <|
+        \() ->
+            [ SideNav.entryWithChildren "Cactus"
+                [ SideNav.href "cactus" ]
+                [ SideNav.entry "Epiphyllum" [ SideNav.href "epiphyllum" ] ]
+            ]
+                |> viewQuery { currentRoute = "epiphyllum" } []
+                |> Query.has [ currentPage "Epiphyllum" "epiphyllum" ]
+    ]
+
+
+currentPage : String -> String -> Selector
+currentPage name href_ =
+    all
+        [ tag "a"
+        , attribute (Attributes.href href_)
+        , attribute Aria.currentPage
+        , text name
         ]
 
 
 viewQuery :
-    List (NavAttribute ())
+    { currentRoute : String }
+    -> List (NavAttribute ())
     -> List (Entry String ())
-    -> { currentRoute : String }
     -> Query.Single ()
-viewQuery navAttributes entries { currentRoute } =
+viewQuery { currentRoute } navAttributes entries =
     SideNav.view
         { isCurrentRoute = (==) currentRoute
         , routeToString = identity
