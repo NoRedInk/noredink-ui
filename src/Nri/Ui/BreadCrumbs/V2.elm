@@ -195,6 +195,20 @@ pageTitle (BreadCrumb { text }) =
     text
 
 
+type Level
+    = H1
+    | H2
+
+
+viewLevel heading =
+    case heading of
+        H1 ->
+            h1
+
+        H2 ->
+            h2
+
+
 {-| Usually, the label value will be the string "breadcrumbs".
 
 It's configurable so that if more than one set of BreadCrumbs ever appear on the page, the aria-label for the nav can still be unique.
@@ -218,8 +232,7 @@ view config (BreadCrumbs { primary }) =
         linkCss =
             []
     in
-    viewBreadCrumbs fontCss linkCss Html.Styled.h1 config (List.reverse primary)
-        |> navContainer config.label
+    viewNavOrH1 fontCss linkCss H1 config (List.reverse primary)
 
 
 {-| Usually, the label value will be the string "secondary breadcrumbs".
@@ -246,24 +259,42 @@ viewSecondary config (BreadCrumbs { secondary }) =
             , hover [ color Colors.azureDark ]
             ]
     in
-    viewBreadCrumbs fontCss linkCss Html.Styled.h2 config (List.reverse secondary)
-        |> navContainer config.label
+    viewNavOrH1 fontCss linkCss H2 config (List.reverse secondary)
+
+
+viewNavOrH1 :
+    List Style
+    -> List Style
+    -> Level
+    ->
+        { aTagAttributes : route -> List (Attribute msg)
+        , isCurrentRoute : route -> Bool
+        , label : String
+        }
+    -> List (BreadCrumb route)
+    -> Html msg
+viewNavOrH1 fontCss linkCss heading config breadcrumbs =
+    navContainer config.label
+        (viewBreadCrumbs fontCss linkCss heading config breadcrumbs)
 
 
 navContainer : String -> List (Html msg) -> Html msg
 navContainer label =
-    styled nav
-        [ alignItems center
-        , displayFlex
-        , Media.withMedia [ MediaQuery.mobile ] [ marginBottom (px 10), flexWrap wrap ]
-        ]
-        [ Aria.label label ]
+    styled nav navContainerStyles [ Aria.label label ]
+
+
+navContainerStyles : List Css.Style
+navContainerStyles =
+    [ alignItems center
+    , displayFlex
+    , Media.withMedia [ MediaQuery.mobile ] [ marginBottom (px 10), flexWrap wrap ]
+    ]
 
 
 viewBreadCrumbs :
     List Style
     -> List Style
-    -> (List (Attribute msg) -> List (Html msg) -> Html msg)
+    -> Level
     ->
         { config
             | aTagAttributes : route -> List (Attribute msg)
@@ -300,7 +331,7 @@ viewBreadCrumbs fontCss linkCss headingLevel config breadCrumbs =
 viewBreadCrumb :
     List Style
     -> List Style
-    -> (List (Attribute msg) -> List (Html msg) -> Html msg)
+    -> Level
     ->
         { config
             | aTagAttributes : route -> List (Attribute msg)
@@ -324,7 +355,7 @@ viewBreadCrumb fontCss linkCss headingLevel config iconConfig (BreadCrumb crumb)
             viewBreadCrumbContent iconConfig crumb
     in
     if iconConfig.isLast then
-        headingLevel
+        viewLevel headingLevel
             [ Aria.currentPage
             , Attributes.id crumb.id
             , Attributes.tabindex -1
