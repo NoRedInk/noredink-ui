@@ -15,9 +15,7 @@ spec =
         [ describe "toPageTitle" pageTitle
         , describe "headerId" headerId
         , describe "view" view
-
-        -- TODO: add viewSecondary tests
-        --, describe "viewSecondary" viewSecondary
+        , describe "viewSecondary" viewSecondary
         ]
 
 
@@ -156,38 +154,86 @@ view =
         \() ->
             home
                 |> viewQuery "home"
-                |> rendersWithoutSemantics "Home"
+                |> rendersWithoutSemantics { headingTag = "h1", pageName = "Home" }
     , test "1 primary crumb and a secondary crumb, does not wrap with breadcrumb semantics" <|
         \() ->
             BreadCrumbs.initSecondary home
                 { id = "my-account", text = "My account", route = "my-account" }
                 []
                 |> viewQuery "home"
-                |> rendersWithoutSemantics "Home"
+                |> rendersWithoutSemantics { headingTag = "h1", pageName = "Home" }
     , test "more than 1 primary crumb, does wrap with breadcrumb semantics" <|
         \() ->
             library
                 |> viewQuery "library"
-                |> rendersWithSemantics [ "Home" ] "Library"
+                |> rendersWithSemantics
+                    { label = "breadcrumbs"
+                    , headingTag = "h1"
+                    , links = [ "Home" ]
+                    , pageName = "Library"
+                    }
     ]
 
 
-rendersWithoutSemantics : String -> Query.Single msg -> Expectation
-rendersWithoutSemantics pageName =
+viewSecondary : List Test
+viewSecondary =
+    let
+        viewQuery currentRoute crumbs =
+            BreadCrumbs.viewSecondary
+                { aTagAttributes = \_ -> []
+                , isCurrentRoute = (==) currentRoute
+                , label = "secondary breadcrumbs"
+                }
+                crumbs
+                |> toUnstyled
+                |> Query.fromHtml
+    in
+    [ test "1 secondary crumb, does not wrap with breadcrumb semantics" <|
+        \() ->
+            writing
+                |> viewQuery "writing"
+                |> rendersWithoutSemantics { headingTag = "h2", pageName = "Writing" }
+    , test "more than 1 secondary crumb, does wrap with breadcrumb semantics" <|
+        \() ->
+            quickWrites
+                |> viewQuery "quickWrites"
+                |> rendersWithSemantics
+                    { label = "secondary breadcrumbs"
+                    , headingTag = "h2"
+                    , links = [ "Writing" ]
+                    , pageName = "Quick Writes"
+                    }
+    ]
+
+
+rendersWithoutSemantics :
+    { headingTag : String
+    , pageName : String
+    }
+    -> Query.Single msg
+    -> Expectation
+rendersWithoutSemantics { headingTag, pageName } =
     Expect.all
         [ Query.hasNot [ tag "nav" ]
         , Query.hasNot [ attribute Aria.currentPage ]
-        , Query.has [ tag "h1", containing [ text pageName ] ]
+        , Query.has [ tag headingTag, containing [ text pageName ] ]
         ]
 
 
-rendersWithSemantics : List String -> String -> Query.Single msg -> Expectation
-rendersWithSemantics links pageName =
+rendersWithSemantics :
+    { label : String
+    , headingTag : String
+    , links : List String
+    , pageName : String
+    }
+    -> Query.Single msg
+    -> Expectation
+rendersWithSemantics { label, headingTag, links, pageName } =
     Expect.all
-        [ Query.has [ tag "nav", attribute (Aria.label "breadcrumbs") ]
+        [ Query.has [ tag "nav", attribute (Aria.label label) ]
         , Query.has
             [ all
-                [ tag "h1"
+                [ tag headingTag
                 , attribute Aria.currentPage
                 , containing [ text pageName ]
                 ]
@@ -208,6 +254,16 @@ home =
 library : BreadCrumbs String
 library =
     BreadCrumbs.after home { id = libraryId, text = "Library", route = "library" } []
+
+
+writing : BreadCrumbs String
+writing =
+    BreadCrumbs.initSecondary library { id = "writing", text = "Writing", route = "writing" } []
+
+
+quickWrites : BreadCrumbs String
+quickWrites =
+    BreadCrumbs.after writing { id = "quickWrites", text = "Quick Writes", route = "quickWrites" } []
 
 
 homeId : String
