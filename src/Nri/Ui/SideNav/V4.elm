@@ -15,7 +15,13 @@ module Nri.Ui.SideNav.V4 exposing
 {-|
 
 
-# Changes from V3
+### Patch changes
+
+  - add missing aria-current=page attribute
+  - don't render an empty nav when there are no entries
+
+
+### Changes from V3
 
   - make the nav configurably collapsible
 
