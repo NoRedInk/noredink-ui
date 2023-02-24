@@ -278,14 +278,38 @@ viewNavOrH1 :
         }
     -> List (BreadCrumb route)
     -> Html msg
-viewNavOrH1 heading config breadcrumbs =
-    navContainer config.label
-        (viewBreadCrumbs heading config breadcrumbs)
+viewNavOrH1 headingLevel config breadCrumbs =
+    let
+        breadCrumbCount : Int
+        breadCrumbCount =
+            List.length breadCrumbs
 
+        renderedBreadCrumbs =
+            List.indexedMap
+                (\i ->
+                    viewBreadCrumb
+                        headingLevel
+                        config
+                        { isLast = (i + 1) == breadCrumbCount
+                        , isIconOnly =
+                            -- the first breadcrumb should collapse when there
+                            -- are 3 breadcrumbs or more in the group
+                            --
+                            -- Hypothetically, if there were 4 breadcrumbs, then the
+                            -- first 2 breadcrumbs should collapse
+                            (breadCrumbCount - i) > 2
+                        }
+                )
+                breadCrumbs
+                |> List.intersperse (Svg.toHtml arrowRight)
+    in
+    if breadCrumbCount == 1 then
+        div [ css navContainerStyles ]
+            renderedBreadCrumbs
 
-navContainer : String -> List (Html msg) -> Html msg
-navContainer label =
-    styled nav navContainerStyles [ Aria.label label ]
+    else
+        nav [ Aria.label config.label, css navContainerStyles ]
+            renderedBreadCrumbs
 
 
 navContainerStyles : List Css.Style
@@ -294,40 +318,6 @@ navContainerStyles =
     , displayFlex
     , Media.withMedia [ MediaQuery.mobile ] [ marginBottom (px 10), flexWrap wrap ]
     ]
-
-
-viewBreadCrumbs :
-    Level
-    ->
-        { config
-            | aTagAttributes : route -> List (Attribute msg)
-            , isCurrentRoute : route -> Bool
-        }
-    -> List (BreadCrumb route)
-    -> List (Html msg)
-viewBreadCrumbs headingLevel config breadCrumbs =
-    let
-        breadCrumbCount : Int
-        breadCrumbCount =
-            List.length breadCrumbs
-    in
-    List.indexedMap
-        (\i ->
-            viewBreadCrumb
-                headingLevel
-                config
-                { isLast = (i + 1) == breadCrumbCount
-                , isIconOnly =
-                    -- the first breadcrumb should collapse when there
-                    -- are 3 breadcrumbs or more in the group
-                    --
-                    -- Hypothetically, if there were 4 breadcrumbs, then the
-                    -- first 2 breadcrumbs should collapse
-                    (breadCrumbCount - i) > 2
-                }
-        )
-        breadCrumbs
-        |> List.intersperse (Svg.toHtml arrowRight)
 
 
 viewBreadCrumb :
