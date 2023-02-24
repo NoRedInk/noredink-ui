@@ -188,7 +188,12 @@ viewSecondary =
                 |> toUnstyled
                 |> Query.fromHtml
     in
-    [ test "1 secondary crumb, does not wrap with breadcrumb semantics" <|
+    [ test "0 secondary crumbs, does not wrap with breadcrumb semantics" <|
+        \() ->
+            home
+                |> viewQuery "home"
+                |> Query.hasNot [ tag "nav" ]
+    , test "1 secondary crumb, does not wrap with breadcrumb semantics" <|
         \() ->
             writing
                 |> viewQuery "writing"
