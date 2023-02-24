@@ -1,7 +1,7 @@
 module Spec.Nri.Ui.SideNav exposing (spec)
 
 import Accessibility.Aria as Aria
-import Expect
+import Expect exposing (Expectation)
 import Html.Attributes as Attributes
 import Html.Styled exposing (toUnstyled)
 import Nri.Ui.SideNav.V4 as SideNav exposing (Entry, NavAttribute)
@@ -38,14 +38,14 @@ currentPageTests =
         \() ->
             [ SideNav.entry "Cactus" [ SideNav.href "cactus" ] ]
                 |> viewQuery { currentRoute = "cactus" } []
-                |> Query.has [ currentPage "Cactus" "cactus" ]
+                |> expectCurrentPage "Cactus" "cactus"
     , test "with multiple entries, one of which is current" <|
         \() ->
             [ SideNav.entry "Cactus" [ SideNav.href "cactus" ]
             , SideNav.entry "Epiphyllum" [ SideNav.href "epiphyllum" ]
             ]
                 |> viewQuery { currentRoute = "cactus" } []
-                |> Query.has [ currentPage "Cactus" "cactus" ]
+                |> expectCurrentPage "Cactus" "cactus"
     , test "with a currently-selected entry with children" <|
         \() ->
             [ SideNav.entryWithChildren "Cactus"
@@ -53,7 +53,7 @@ currentPageTests =
                 [ SideNav.entry "Epiphyllum" [ SideNav.href "epiphyllum" ] ]
             ]
                 |> viewQuery { currentRoute = "cactus" } []
-                |> Query.has [ currentPage "Cactus" "cactus" ]
+                |> expectCurrentPage "Cactus" "cactus"
     , test "with a currently-selected child entry" <|
         \() ->
             [ SideNav.entryWithChildren "Cactus"
@@ -61,8 +61,17 @@ currentPageTests =
                 [ SideNav.entry "Epiphyllum" [ SideNav.href "epiphyllum" ] ]
             ]
                 |> viewQuery { currentRoute = "epiphyllum" } []
-                |> Query.has [ currentPage "Epiphyllum" "epiphyllum" ]
+                |> expectCurrentPage "Epiphyllum" "epiphyllum"
     ]
+
+
+expectCurrentPage : String -> String -> Query.Single msg -> Expectation
+expectCurrentPage name href_ =
+    Expect.all
+        [ Query.findAll [ attribute Aria.currentPage ]
+            >> Query.count (Expect.equal 1)
+        , Query.has [ currentPage name href_ ]
+        ]
 
 
 currentPage : String -> String -> Selector
