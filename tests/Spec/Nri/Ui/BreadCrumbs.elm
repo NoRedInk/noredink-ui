@@ -1,7 +1,7 @@
 module Spec.Nri.Ui.BreadCrumbs exposing (spec)
 
 import Accessibility.Aria as Aria
-import Expect
+import Expect exposing (Expectation)
 import Html.Styled exposing (toUnstyled)
 import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs exposing (BreadCrumbs)
 import Test exposing (..)
@@ -156,29 +156,48 @@ view =
         \() ->
             home
                 |> viewQuery "home"
-                |> Expect.all
-                    [ Query.hasNot [ tag "nav" ]
-                    , Query.hasNot [ attribute Aria.currentPage ]
-                    , Query.has [ tag "h1", containing [ text "Home" ] ]
-                    ]
+                |> rendersWithoutSemantics "Home"
+    , test "1 primary crumb and a secondary crumb, does not wrap with breadcrumb semantics" <|
+        \() ->
+            BreadCrumbs.initSecondary home
+                { id = "my-account", text = "My account", route = "my-account" }
+                []
+                |> viewQuery "home"
+                |> rendersWithoutSemantics "Home"
     , test "more than 1 primary crumb, does wrap with breadcrumb semantics" <|
         \() ->
             library
                 |> viewQuery "library"
-                |> Expect.all
-                    [ Query.has [ tag "nav", attribute (Aria.label "breadcrumbs") ]
-                    , Query.has
-                        [ all
-                            [ tag "h1"
-                            , attribute Aria.currentPage
-                            , containing [ text "Library" ]
-                            ]
-                        ]
-                    , Query.has
-                        [ all [ tag "a", containing [ text "Home" ] ]
-                        ]
-                    ]
+                |> rendersWithSemantics [ "Home" ] "Library"
     ]
+
+
+rendersWithoutSemantics : String -> Query.Single msg -> Expectation
+rendersWithoutSemantics pageName =
+    Expect.all
+        [ Query.hasNot [ tag "nav" ]
+        , Query.hasNot [ attribute Aria.currentPage ]
+        , Query.has [ tag "h1", containing [ text pageName ] ]
+        ]
+
+
+rendersWithSemantics : List String -> String -> Query.Single msg -> Expectation
+rendersWithSemantics links pageName =
+    Expect.all
+        [ Query.has [ tag "nav", attribute (Aria.label "breadcrumbs") ]
+        , Query.has
+            [ all
+                [ tag "h1"
+                , attribute Aria.currentPage
+                , containing [ text pageName ]
+                ]
+            ]
+        , Query.has
+            (List.map
+                (\link -> all [ tag "a", containing [ text link ] ])
+                links
+            )
+        ]
 
 
 home : BreadCrumbs String
