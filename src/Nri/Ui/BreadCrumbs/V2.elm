@@ -305,13 +305,17 @@ viewNavOrH1 headingLevel config breadCrumbs =
                 breadCrumbs
                 |> List.intersperse (Svg.toHtml arrowRight)
     in
-    if breadCrumbCount == 1 then
-        div [ css navContainerStyles ]
-            renderedBreadCrumbs
+    case breadCrumbCount of
+        0 ->
+            text ""
 
-    else
-        nav [ Aria.label config.label, css navContainerStyles ]
-            renderedBreadCrumbs
+        1 ->
+            div [ css navContainerStyles ]
+                renderedBreadCrumbs
+
+        _ ->
+            nav [ Aria.label config.label, css navContainerStyles ]
+                renderedBreadCrumbs
 
 
 navContainerStyles : List Css.Style
