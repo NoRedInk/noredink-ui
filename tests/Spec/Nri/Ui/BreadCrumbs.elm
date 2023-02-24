@@ -6,7 +6,7 @@ import Html.Styled exposing (toUnstyled)
 import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs exposing (BreadCrumbs)
 import Test exposing (..)
 import Test.Html.Query as Query
-import Test.Html.Selector as Selector exposing (..)
+import Test.Html.Selector exposing (..)
 
 
 spec : Test
