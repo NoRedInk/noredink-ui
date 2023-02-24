@@ -57,6 +57,7 @@ import Html.Styled
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -290,7 +291,8 @@ viewNavOrH1 headingLevel config breadCrumbs =
                     viewBreadCrumb
                         headingLevel
                         config
-                        { isLast = (i + 1) == breadCrumbCount
+                        { index = i
+                        , finalIndex = breadCrumbCount - 1
                         , isIconOnly =
                             -- the first breadcrumb should collapse when there
                             -- are 3 breadcrumbs or more in the group
@@ -327,10 +329,10 @@ viewBreadCrumb :
             | aTagAttributes : route -> List (Attribute msg)
             , isCurrentRoute : route -> Bool
         }
-    -> { isLast : Bool, isIconOnly : Bool }
+    -> { index : Int, finalIndex : Int, isIconOnly : Bool }
     -> BreadCrumb route
     -> Html msg
-viewBreadCrumb headingLevel config iconConfig (BreadCrumb crumb) =
+viewBreadCrumb headingLevel config { index, finalIndex, isIconOnly } (BreadCrumb crumb) =
     let
         commonCss =
             [ alignItems center
@@ -341,12 +343,15 @@ viewBreadCrumb headingLevel config iconConfig (BreadCrumb crumb) =
             , textDecoration none
             ]
 
+        isLast =
+            index == finalIndex
+
         content =
-            viewBreadCrumbContent iconConfig crumb
+            viewBreadCrumbContent { isLast = isLast, isIconOnly = isIconOnly } crumb
     in
-    if iconConfig.isLast then
+    if isLast then
         viewLevel headingLevel
-            [ Aria.currentPage
+            [ AttributesExtra.includeIf (index /= 0) Aria.currentPage
             , Attributes.id crumb.id
             , Attributes.tabindex -1
             , css (fontWeight bold :: commonCss)
