@@ -10,15 +10,14 @@ module Nri.Ui.Header.V1 exposing
 ## Changelog
 
 
+### Patch
+
+  - reduced the top-padding on the description from 20 to 5px
+
+
 ### Major release adjustments
 
   - removed extraSubheadContent
-
-
-### Patch changes
-
-  - marked extraSubheadContent as deprecated
-  - added extraNav
 
 @docs view, Attribute
 
@@ -203,7 +202,7 @@ viewDescription pageWidth description_ =
             [ Spacing.centeredContentWithSidePaddingAndCustomWidth pageWidth
             , Css.color Colors.gray45
             , Css.important (Css.margin Css.auto)
-            , Css.important (Css.paddingTop (Css.px 20))
+            , Css.important (Css.paddingTop (Css.px 5))
             ]
         , Text.plaintext description_
         ]
