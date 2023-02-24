@@ -203,7 +203,7 @@ viewDescription pageWidth description_ =
             [ Spacing.centeredContentWithSidePaddingAndCustomWidth pageWidth
             , Css.color Colors.gray45
             , Css.important (Css.margin Css.auto)
-            , Css.important (Css.paddingTop (Css.px 20))
+            , Css.important (Css.paddingTop (Css.px 5))
             ]
         , Text.plaintext description_
         ]
