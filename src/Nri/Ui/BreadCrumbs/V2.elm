@@ -8,9 +8,14 @@ module Nri.Ui.BreadCrumbs.V2 exposing
 {-|
 
 
-# Changes from V1:
+### Patch changes:
 
-  - switch to list-based attributes pattern
+    - when only 1 breadcrumb is present, just render as a styled h1 or h2 directly, without nav semantics
+
+
+### Changes from V1:
+
+    - switch to list-based attributes pattern
 
 Learn more about 'breadcrumbs' to help a user orient themselves within a site here: <https://www.w3.org/WAI/WCAG21/Techniques/general/G65>.
 
