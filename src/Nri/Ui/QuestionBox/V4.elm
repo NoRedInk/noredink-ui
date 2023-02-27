@@ -188,7 +188,7 @@ viewStandalone : Config msg -> Html msg
 viewStandalone config =
     div
         [ AttributesExtra.maybe Attributes.id config.id
-        , css config.containerCss
+        , css (config.containerCss ++ [ Css.fontSize (Css.px 18) ])
         , nriDescription "standalone-balloon-container"
         ]
         [ viewBalloon config
@@ -293,10 +293,10 @@ viewPointingTo config blockId measurements =
             , css
                 (case measurements of
                     Just { questionBox } ->
-                        [ Css.height (Css.px (questionBox.element.height + 8)) ]
+                        [ Css.height (Css.px (questionBox.element.height + 8)), Css.fontSize (Css.px 18) ]
 
                     Nothing ->
-                        []
+                        [ Css.fontSize (Css.px 18) ]
                 )
             ]
 
@@ -364,8 +364,8 @@ viewSpeechBubble config referencingId extraAttributes =
         ([ Balloon.nriDescription "guidance-speech-bubble"
          , Balloon.white
          , Balloon.css
-            [ Css.borderRadius (Css.px 16)
-            , Css.padding (Css.px 10)
+            [ Css.borderRadius (Css.px 20)
+            , Css.padding (Css.px 20)
             , Css.boxShadow Css.none
             , Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ]
             ]
