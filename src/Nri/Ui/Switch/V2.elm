@@ -149,9 +149,6 @@ view { label, id } attrs =
     let
         config =
             List.foldl (\(Attribute update) -> update) defaultConfig attrs
-
-        notOperable =
-            config.onSwitch == Nothing || config.isDisabled
     in
     Html.label
         ([ Attributes.id (id ++ "-container")
@@ -167,30 +164,19 @@ view { label, id } attrs =
                         ]
                     ]
                 ]
-            , Css.cursor
-                (if notOperable then
-                    Css.notAllowed
-
-                 else
-                    Css.pointer
-                )
+            , cursorStyle config
             , Css.batch config.containerCss
             ]
          , Attributes.for id
          ]
             ++ List.map (Attributes.map never) config.custom
         )
-        [ viewCheckbox
-            { id = id
-            , onCheck = config.onSwitch
-            , isDisabled = config.isDisabled
-            , selected = config.isSelected
-            }
+        [ viewCheckbox id config
         , Nri.Ui.Svg.V1.toHtml
             (viewSwitch
                 { id = id
                 , isSelected = config.isSelected
-                , isDisabled = notOperable
+                , isDisabled = notOperable config
                 }
             )
         , Html.span
@@ -212,32 +198,42 @@ view { label, id } attrs =
         ]
 
 
-viewCheckbox :
-    { id : String
-    , onCheck : Maybe (Bool -> msg)
-    , selected : Bool
-    , isDisabled : Bool
-    }
-    -> Html msg
-viewCheckbox config =
-    Html.checkbox config.id
-        (Just config.selected)
-        [ Attributes.id config.id
+viewCheckbox : String -> Config msg -> Html msg
+viewCheckbox id config =
+    Html.checkbox id
+        (Just config.isSelected)
+        [ Attributes.id id
         , Role.switch
         , Attributes.css
             [ Css.position Css.absolute
             , Css.top (Css.px 10)
             , Css.left (Css.px 10)
-            , Css.zIndex (Css.int 0)
             , Css.opacity (Css.num 0)
+            , cursorStyle config
             ]
-        , case ( config.onCheck, config.isDisabled ) of
-            ( Just onCheck, False ) ->
-                Events.onCheck onCheck
+        , case ( config.onSwitch, config.isDisabled ) of
+            ( Just onSwitch_, False ) ->
+                Events.onCheck onSwitch_
 
             _ ->
                 Aria.disabled True
         ]
+
+
+notOperable : Config msg -> Bool
+notOperable config =
+    config.onSwitch == Nothing || config.isDisabled
+
+
+cursorStyle : Config msg -> Style
+cursorStyle config =
+    Css.cursor
+        (if notOperable config then
+            Css.notAllowed
+
+         else
+            Css.pointer
+        )
 
 
 viewSwitch :
