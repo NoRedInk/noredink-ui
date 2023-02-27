@@ -123,8 +123,8 @@ view ellieLinkConfig state =
             , "toString : Animals -> String"
             , "toString animals ="
                 ++ Code.caseExpression "animals"
-                    [ ( "Dogs", Code.string "Dogs" )
-                    , ( "Cats", Code.string "Cats" )
+                    [ ( "Dogs", Code.string selectionSettings.dogsLabel )
+                    , ( "Cats", Code.string selectionSettings.catsLabel )
                     ]
                     1
             ]
@@ -166,11 +166,11 @@ viewExamplesCode selectionSettings selectedValue =
         toExampleCode ( kind, settings ) =
             Code.fromModule "RadioButton" "view"
                 ++ Code.recordMultiline
-                    [ ( "label", (selectionToString >> Code.string) kind )
+                    [ ( "label", (selectionToString selectionSettings >> Code.string) kind )
                     , ( "name", Code.string "pets" )
-                    , ( "value", selectionToString kind )
+                    , ( "value", selectionToString selectionSettings kind )
                     , ( "selectedValue"
-                      , Code.maybe (Maybe.map selectionToString selectedValue)
+                      , Code.maybe (Maybe.map (selectionToString selectionSettings) selectedValue)
                       )
                     , ( "valueToString", "toString" )
                     ]
@@ -185,11 +185,11 @@ viewExamples selectionSettings selectedValue =
     let
         viewExample_ ( kind, settings ) =
             RadioButton.view
-                { label = selectionToString kind
+                { label = selectionToString selectionSettings kind
                 , name = "pets"
                 , value = kind
                 , selectedValue = selectedValue
-                , valueToString = selectionToString
+                , valueToString = selectionToString selectionSettings
                 }
                 (RadioButton.onSelect Select :: List.map Tuple.second settings)
     in
@@ -211,14 +211,14 @@ type Selection
     | Cats
 
 
-selectionToString : Selection -> String
-selectionToString selection =
+selectionToString : SelectionSettings -> Selection -> String
+selectionToString { dogsLabel, catsLabel } selection =
     case selection of
         Dogs ->
-            "Dogs"
+            dogsLabel
 
         Cats ->
-            "Cats"
+            catsLabel
 
 
 {-| -}
@@ -239,7 +239,9 @@ init =
 
 
 type alias SelectionSettings =
-    { dogs : List ( String, RadioButton.Attribute Selection Msg )
+    { dogsLabel : String
+    , dogs : List ( String, RadioButton.Attribute Selection Msg )
+    , catsLabel : String
     , cats : List ( String, RadioButton.Attribute Selection Msg )
     }
 
@@ -247,7 +249,9 @@ type alias SelectionSettings =
 initSelectionSettings : Control SelectionSettings
 initSelectionSettings =
     Control.record SelectionSettings
+        |> Control.field "Dogs label" (Control.string "Dogs")
         |> Control.field "Dogs" controlAttributes
+        |> Control.field "Cats label" (Control.string "Cats")
         |> Control.field "Cats" controlAttributes
 
 
