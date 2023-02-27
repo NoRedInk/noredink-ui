@@ -18,7 +18,7 @@ import Example exposing (Example)
 import Html.Styled
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Select.V9 as Select exposing (Choice)
+import Nri.Ui.Select.V9 as Select
 import Nri.Ui.Text.V6 as Text
 
 
@@ -363,16 +363,9 @@ weightLifterLabel =
     "81 kg 2020 Olympic Weightlifters"
 
 
-toOption : Choosable -> { label : String, value : Choosable }
+toOption : Choosable -> Select.Choice Choosable
 toOption c =
     { label = choosableToLabel c, value = c }
-
-
-grouped : List (Select.ChoicesGroup Choosable)
-grouped =
-    [ { label = texMexLabel, choices = List.map toOption allTexMex }
-    , { label = weightLifterLabel, choices = List.map toOption all81kg2020OlympicWeightlifters }
-    ]
 
 
 initChoices : Control ( String, Select.Attribute Choosable )
@@ -382,7 +375,7 @@ initChoices =
         toOptionString c =
             "{ value = " ++ choosableToCodeString c ++ ", label = \"" ++ choosableToLabel c ++ "\" } "
 
-        toChoice : List Choosable -> ( String, List { label : String, value : Choosable } )
+        toChoice : List Choosable -> ( String, List (Select.Choice Choosable) )
         toChoice choosables =
             ( """Select.choices
         choosableToLabel
