@@ -46,7 +46,7 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , categories = [ Layout ]
+    , categories = [ Navigation ]
     , keyboardSupport = []
     , state = init
     , update = update
