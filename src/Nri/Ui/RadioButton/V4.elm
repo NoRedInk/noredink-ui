@@ -385,7 +385,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                     [ css
                         [ display inlineFlex
                         , alignItems center
-                        , Css.height (px 20)
+                        , Css.minHeight (px 20)
                         ]
                     ]
                     [ Html.span
