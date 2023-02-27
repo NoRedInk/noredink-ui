@@ -386,6 +386,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                         [ display inlineFlex
                         , alignItems center
                         , Css.minHeight (px 20)
+                        , Css.property "word-break" "break-word"
                         ]
                     ]
                     [ Html.span
