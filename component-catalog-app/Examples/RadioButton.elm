@@ -271,7 +271,13 @@ controlAttributes =
             )
         |> ControlExtra.optionalListItem "containerCss"
             (Control.choice
-                [ ( "100% width"
+                [ ( "max-width with border"
+                  , Control.value
+                        ( "RadioButton.containerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]"
+                        , RadioButton.containerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]
+                        )
+                  )
+                , ( "100% width"
                   , Control.value
                         ( "RadioButton.containerCss [ Css.width (Css.pct 100) ]"
                         , RadioButton.containerCss [ Css.width (Css.pct 100) ]
