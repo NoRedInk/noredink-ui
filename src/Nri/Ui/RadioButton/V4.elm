@@ -9,7 +9,16 @@ module Nri.Ui.RadioButton.V4 exposing
     , disabled, enabled, errorIf, errorMessage, guidance
     )
 
-{-| Changes from V3:
+{-|
+
+
+### Patch changes:
+
+  - replace `height` use with `minHeight` to prevent vertical text overflow issues
+  - use `break-word` to prevent horiztonal text overflow issues
+
+
+### Changes from V3:
 
   - use PremiumDisplay instead of PremiumLevel
   - rename showPennant to onLockedClick since its display depends on premium now
