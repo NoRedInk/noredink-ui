@@ -21,7 +21,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Html.V3 exposing (viewJust)
-import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Table.V6 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -52,9 +52,20 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
-        [ previewContainer [ previewText "🏠 Home" ]
-        , previewContainer [ previewText "🏠 Home", previewArrowRight, previewText "🟠 Category " ]
-        , previewContainer [ previewText "🏠", previewArrowRight, previewText "🟠", previewArrowRight, previewText "🟣 Sub-Category " ]
+        [ previewContainer [ previewIcon UiIcon.home, previewText "Home" ]
+        , previewContainer
+            [ previewIcon UiIcon.home
+            , previewText "Home"
+            , previewArrowRight
+            , previewText "🟠 Category "
+            ]
+        , previewContainer
+            [ previewIcon UiIcon.home
+            , previewArrowRight
+            , previewText "🟠"
+            , previewArrowRight
+            , previewText "🟣 Sub-Category "
+            ]
         ]
     , view =
         \ellieLinkConfig state ->
@@ -209,6 +220,14 @@ previewContainer =
         ]
 
 
+previewIcon : Svg -> Html msg
+previewIcon svg =
+    svg
+        |> Svg.withWidth (Css.px 10)
+        |> Svg.withHeight (Css.px 10)
+        |> Svg.toHtml
+
+
 previewText : String -> Html msg
 previewText name =
     span [ css [ Css.margin (Css.px 2) ] ] [ text name ]
@@ -220,7 +239,7 @@ previewArrowRight =
         |> Svg.withColor Colors.gray75
         |> Svg.withHeight (Css.px 10)
         |> Svg.withWidth (Css.px 8)
-        |> Svg.withCss [ Css.flexShrink Css.zero ]
+        |> Svg.withCss [ Css.flexShrink Css.zero, Css.margin (Css.px 1) ]
         |> Svg.toHtml
 
 
