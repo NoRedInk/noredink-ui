@@ -18,7 +18,8 @@ import Example exposing (Example)
 import Html.Styled
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Select.V9 as Select exposing (Choice)
+import Nri.Ui.Select.V9 as Select
+import Nri.Ui.Text.V6 as Text
 
 
 moduleName : String
@@ -53,17 +54,17 @@ example =
         \ellieLinkConfig state ->
             let
                 label =
-                    (Control.currentValue state).label
+                    (Control.currentValue state.control).label
 
                 ( attributesCode, attributes ) =
-                    List.unzip (Control.currentValue state).attributes
+                    List.unzip (Control.currentValue state.control).attributes
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
                 , name = moduleName
                 , version = version
                 , update = UpdateSettings
-                , settings = state
+                , settings = state.control
                 , mainType = Just "RootHtml.Html String"
                 , extraCode = []
                 , renderExample = Code.unstyledView
@@ -81,43 +82,67 @@ example =
                         ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
-            , Select.view label attributes
-                |> Html.Styled.map ConsoleLog
+            , Select.view label (Select.value state.selectedValue :: attributes)
+                |> Html.Styled.map ChangedTheSelectorValue
+            , Text.smallBody
+                [ """
+                    Note that if the value is bound (and why would you ever make a `Select` where it isn't?)
+                    then changing the list of options will not change its value.
+                    Furthermore, `Select` will only fire an event when a new value is selected.
+                    This means that if the starting value is `Nothing` and there is no `defaultDisplayText` 
+                    then you cannot select the first item in the list without first selecting another one.
+                    Use the "choices" selector above to get a feel for what that means.
+                """
+                    |> String.lines
+                    |> List.map String.trim
+                    |> String.join " "
+                    |> Text.markdown
+                ]
+            , Text.smallBody
+                [ ("The current value is "
+                    ++ (case state.selectedValue of
+                            Just tm ->
+                                "`Just " ++ choosableToCodeString tm ++ "`"
+
+                            Nothing ->
+                                "`Nothing`"
+                       )
+                    ++ "."
+                  )
+                    |> Text.markdown
+                ]
             ]
     }
 
 
 {-| -}
 type alias State =
-    Control Settings
+    { control : Control Settings
+    , selectedValue : Maybe Choosable
+    }
 
 
 {-| -}
 init : State
 init =
-    Control.record Settings
-        |> Control.field "label" (Control.string "Tortilla Selector")
-        |> Control.field "attributes" initControls
+    { control =
+        Control.record Settings
+            |> Control.field "label" (Control.string "Thematically Incoherent Selector")
+            |> Control.field "attributes" initControls
+    , selectedValue = Nothing
+    }
 
 
 type alias Settings =
     { label : String
-    , attributes : List ( String, Select.Attribute String )
+    , attributes : List ( String, Select.Attribute Choosable )
     }
 
 
-initControls : Control (List ( String, Select.Attribute String ))
+initControls : Control (List ( String, Select.Attribute Choosable ))
 initControls =
     ControlExtra.list
-        |> ControlExtra.listItem "choices"
-            (Control.map
-                (\( code, choices ) ->
-                    ( "Select.choices identity" ++ code
-                    , Select.choices identity choices
-                    )
-                )
-                initChoices
-            )
+        |> ControlExtra.listItem "choices" initChoices
         |> ControlExtra.optionalListItem "hiddenLabel"
             (Control.value ( "Select.hiddenLabel", Select.hiddenLabel ))
         |> ControlExtra.optionalListItem "defaultDisplayText"
@@ -127,7 +152,7 @@ initControls =
                     , Select.defaultDisplayText str
                     )
                 )
-                (Control.string "Select a tasty tortilla based treat!")
+                (Control.string "Select a tortilla-based treat, a 2020 81kg Olympic Weightlifter, or nothing at all")
             )
         |> ControlExtra.optionalListItem "containerCss"
             (Control.choice
@@ -167,46 +192,260 @@ initControls =
         |> CommonControls.icon moduleName Select.icon
 
 
-initChoices : Control ( String, List (Choice String) )
+type Choosable
+    = Tacos
+    | Burritos
+    | Enchiladas
+    | NixtamalizedCorn
+    | LüXiaojun
+    | ZacaríasBonnat
+    | AntoninoPizzolato
+    | HarrisonMaurus
+    | TragicSingleton
+
+
+allTexMex : List Choosable
+allTexMex =
+    let
+        help : List Choosable -> List Choosable
+        help list =
+            case list of
+                [] ->
+                    help [ Tacos ]
+
+                Tacos :: _ ->
+                    help <| Burritos :: list
+
+                Burritos :: _ ->
+                    help <| Enchiladas :: list
+
+                Enchiladas :: _ ->
+                    help <| NixtamalizedCorn :: list
+
+                NixtamalizedCorn :: _ ->
+                    List.reverse list
+
+                LüXiaojun :: _ ->
+                    list
+
+                ZacaríasBonnat :: _ ->
+                    list
+
+                AntoninoPizzolato :: _ ->
+                    list
+
+                HarrisonMaurus :: _ ->
+                    list
+
+                TragicSingleton :: _ ->
+                    list
+    in
+    help []
+
+
+all81kg2020OlympicWeightlifters : List Choosable
+all81kg2020OlympicWeightlifters =
+    let
+        help : List Choosable -> List Choosable
+        help list =
+            case list of
+                [] ->
+                    help [ LüXiaojun ]
+
+                LüXiaojun :: _ ->
+                    help <| ZacaríasBonnat :: list
+
+                ZacaríasBonnat :: _ ->
+                    help <| AntoninoPizzolato :: list
+
+                AntoninoPizzolato :: _ ->
+                    help <| HarrisonMaurus :: list
+
+                HarrisonMaurus :: _ ->
+                    List.reverse list
+
+                Tacos :: _ ->
+                    list
+
+                Burritos :: _ ->
+                    list
+
+                Enchiladas :: _ ->
+                    list
+
+                NixtamalizedCorn :: _ ->
+                    list
+
+                TragicSingleton :: _ ->
+                    list
+    in
+    help []
+
+
+choosableToLabel : Choosable -> String
+choosableToLabel tm =
+    case tm of
+        Tacos ->
+            "Tacos"
+
+        Burritos ->
+            "Burritos"
+
+        Enchiladas ->
+            "Enchiladas"
+
+        NixtamalizedCorn ->
+            """
+                The nixtamalization process was very important in the early Mesoamerican diet,
+                as most of the niacin content in unprocessed maize is bound to hemicellulose,
+                drastically reducing its bioavailability.
+                A population that depends on untreated maize as a staple food risks malnourishment
+                and is more likely to develop deficiency diseases such as pellagra, niacin deficiency,
+                or kwashiorkor, the absence of certain amino acids that maize is deficient in.
+                Maize cooked with lime or other alkali provided bioavailable niacin to Mesoamericans.
+                Beans provided the otherwise missing amino acids required to balance maize for complete protein.
+            """ |> String.trim |> String.lines |> List.map String.trim |> String.join " "
+
+        LüXiaojun ->
+            "Lü Xiaojun"
+
+        ZacaríasBonnat ->
+            "Zacarías Bonnat"
+
+        AntoninoPizzolato ->
+            "Antonino Pizzolato"
+
+        HarrisonMaurus ->
+            "Harrison Maurus"
+
+        TragicSingleton ->
+            "Tragic Singleton"
+
+
+choosableToCodeString : Choosable -> String
+choosableToCodeString choosable =
+    case choosable of
+        Tacos ->
+            "Tacos"
+
+        Burritos ->
+            "Burritos"
+
+        Enchiladas ->
+            "Enchiladas"
+
+        NixtamalizedCorn ->
+            "NixtamalizedCorn"
+
+        LüXiaojun ->
+            "LüXiaojun"
+
+        ZacaríasBonnat ->
+            "ZacaríasBonnat"
+
+        AntoninoPizzolato ->
+            "AntoninoPizzolato"
+
+        HarrisonMaurus ->
+            "HarrisonMaurus"
+
+        TragicSingleton ->
+            "TragicSingleton"
+
+
+texMexLabel : String
+texMexLabel =
+    "Tex-Mex"
+
+
+weightLifterLabel : String
+weightLifterLabel =
+    "81 kg 2020 Olympic Weightlifters"
+
+
+toOption : Choosable -> Select.Choice Choosable
+toOption c =
+    { label = choosableToLabel c, value = c }
+
+
+initChoices : Control ( String, Select.Attribute Choosable )
 initChoices =
-    Control.choice
-        [ ( "Short choices"
-          , ( """
-        [ { label = "Tacos", value = "tacos" }
-        , { label = "Burritos", value = "burritos" }
-        , { label = "Enchiladas", value = "enchiladas" }
-        ]"""
-            , [ { label = "Tacos", value = "tacos" }
-              , { label = "Burritos", value = "burritos" }
-              , { label = "Enchiladas", value = "enchiladas" }
-              ]
+    let
+        toOptionString : Choosable -> String
+        toOptionString c =
+            "{ value = " ++ choosableToCodeString c ++ ", label = \"" ++ choosableToLabel c ++ "\" } "
+
+        toChoice : List Choosable -> ( String, List (Select.Choice Choosable) )
+        toChoice choosables =
+            ( """Select.choices
+        choosableToLabel
+        [ """
+                ++ String.join "\n        , " (List.map toOptionString choosables)
+                ++ "\n        ]"
+            , List.map toOption choosables
             )
-                |> Control.value
-          )
-        , ( "Overflowing text choices"
-          , ( """
-        [ { label = "Look at me, I design coastlines, I got an award for Norway. Where's the sense in that? My mistress' eyes are nothing like the sun. Coral be far more red than her lips red.", value = "design-coastlines" }
-        ]"""
-            , [ { label = "Look at me, I design coastlines, I got an award for Norway. Where's the sense in that? My mistress' eyes are nothing like the sun. Coral be far more red than her lips red.", value = "design-coastlines" }
-              ]
-            )
-                |> Control.value
-          )
+
+        toValue : List Choosable -> Control ( String, Select.Attribute Choosable )
+        toValue =
+            toChoice >> Tuple.mapSecond (Select.choices choosableToLabel) >> Control.value
+
+        toOptionsString : List Choosable -> String
+        toOptionsString choosables =
+            "[ "
+                ++ (List.map toOptionString choosables |> String.join "\n              , ")
+                ++ "\n              ]"
+    in
+    List.map identity
+        [ ( texMexLabel, toValue allTexMex )
+        , ( "81 Kg 2020 Olympic Weightlifters", toValue all81kg2020OlympicWeightlifters )
+        , ( "Grouped Things"
+          , Control.value <|
+                ( """Select.groupedChoices
+        choosableToLabel
+        [ { label = \""""
+                    ++ texMexLabel
+                    ++ "\"\n          , choices = \n              "
+                    ++ toOptionsString allTexMex
+                    ++ """
+          }
+        , { label = \""""
+                    ++ weightLifterLabel
+                    ++ "\"\n          , choices = \n              "
+                    ++ toOptionsString all81kg2020OlympicWeightlifters
+                    ++ """
+          }
         ]
+        , Select.choices
+            choosableToLabel
+            [ """
+                    ++ toOptionString TragicSingleton
+                    ++ """ ]"""
+                , Select.batch
+                    [ Select.groupedChoices choosableToLabel
+                        [ { label = texMexLabel, choices = List.map toOption allTexMex }
+                        , { label = weightLifterLabel, choices = List.map toOption all81kg2020OlympicWeightlifters }
+                        ]
+                    , Select.choices choosableToLabel [ toOption TragicSingleton ]
+                    ]
+                )
+          )
+        , ( "Unselectable list with only one item", toValue [ TragicSingleton ] )
+        ]
+        |> Control.choice
 
 
 {-| -}
 type Msg
-    = ConsoleLog String
-    | UpdateSettings (Control Settings)
+    = UpdateSettings (Control Settings)
+    | ChangedTheSelectorValue Choosable
 
 
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        ConsoleLog message ->
-            ( Debug.log "SelectExample" message |> always state, Cmd.none )
+        ChangedTheSelectorValue newValue ->
+            ( { state | selectedValue = Just newValue }, Cmd.none )
 
         UpdateSettings settings ->
-            ( settings, Cmd.none )
+            ( { state | control = settings }, Cmd.none )
