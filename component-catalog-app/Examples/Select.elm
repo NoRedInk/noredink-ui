@@ -92,21 +92,22 @@ example =
                     This means that if the starting value is `Nothing` and there is no `defaultDisplayText` 
                     then you cannot select the first item in the list without first selecting another one.
                     Use the "choices" selector above to get a feel for what that means.
-                """ |> String.lines
+                """
+                    |> String.lines
                     |> List.map String.trim
                     |> String.join " "
                     |> Text.markdown
                 ]
             , Text.smallBody
-                [ ("The current value is \""
+                [ ("The current value is "
                     ++ (case state.selectedValue of
                             Just tm ->
-                                "Just '" ++ choosableToString tm ++ "'"
+                                "`Just " ++ choosableToCodeString tm ++ "`"
 
                             Nothing ->
                                 "`Nothing`"
                        )
-                    ++ "\"."
+                    ++ "."
                   )
                     |> Text.markdown
                 ]
@@ -126,7 +127,7 @@ init : State
 init =
     { control =
         Control.record Settings
-            |> Control.field "label" (Control.string "Tortilla Selector")
+            |> Control.field "label" (Control.string "Thematically Incoherent Selector")
             |> Control.field "attributes" initControls
     , selectedValue = Nothing
     }
@@ -141,15 +142,7 @@ type alias Settings =
 initControls : Control (List ( String, Select.Attribute Choosable ))
 initControls =
     ControlExtra.list
-        |> ControlExtra.listItem "choices"
-            (Control.map
-                (\( code, choices ) ->
-                    ( "Select.choices choosableToString" ++ code
-                    , Select.choices choosableToString choices
-                    )
-                )
-                initChoices
-            )
+        |> ControlExtra.listItem "choices" initChoices
         |> ControlExtra.optionalListItem "hiddenLabel"
             (Control.value ( "Select.hiddenLabel", Select.hiddenLabel ))
         |> ControlExtra.optionalListItem "defaultDisplayText"
@@ -159,7 +152,7 @@ initControls =
                     , Select.defaultDisplayText str
                     )
                 )
-                (Control.string "Select a tasty tortilla based treat!")
+                (Control.string "Select a tortilla-based treat, a 2020 81kg Olympic Weightlifter, or nothing at all")
             )
         |> ControlExtra.optionalListItem "containerCss"
             (Control.choice
@@ -289,8 +282,8 @@ all81kg2020OlympicWeightlifters =
     help []
 
 
-choosableToString : Choosable -> String
-choosableToString tm =
+choosableToLabel : Choosable -> String
+choosableToLabel tm =
     case tm of
         Tacos ->
             "Tacos"
@@ -326,41 +319,124 @@ choosableToString tm =
             "Harrison Maurus"
 
         TragicSingleton ->
-            "Tragic Singleton that cannot be selected"
+            "Tragic Singleton"
 
 
-toOption : (a -> String) -> a -> { label : String, value : a }
-toOption toString a =
-    { label = toString a, value = a }
+choosableToCodeString : Choosable -> String
+choosableToCodeString choosable =
+    case choosable of
+        Tacos ->
+            "Tacos"
+
+        Burritos ->
+            "Burritos"
+
+        Enchiladas ->
+            "Enchiladas"
+
+        NixtamalizedCorn ->
+            "NixtamalizedCorn"
+
+        LüXiaojun ->
+            "LüXiaojun"
+
+        ZacaríasBonnat ->
+            "ZacaríasBonnat"
+
+        AntoninoPizzolato ->
+            "AntoninoPizzolato"
+
+        HarrisonMaurus ->
+            "HarrisonMaurus"
+
+        TragicSingleton ->
+            "TragicSingleton"
 
 
-toOptionString : (a -> String) -> a -> String
-toOptionString toString a =
-    let
-        str =
-            toString a
-    in
-    "{ label = \"" ++ str ++ "\", value = \"" ++ str ++ "\" } "
+texMexLabel : String
+texMexLabel =
+    "Tex-Mex"
 
 
-initChoices : Control ( String, List (Choice Choosable) )
+weightLifterLabel : String
+weightLifterLabel =
+    "81 kg 2020 Olympic Weightlifters"
+
+
+toOption : Choosable -> { label : String, value : Choosable }
+toOption c =
+    { label = choosableToLabel c, value = c }
+
+
+grouped : List (Select.ChoicesGroup Choosable)
+grouped =
+    [ { label = texMexLabel, choices = List.map toOption allTexMex }
+    , { label = weightLifterLabel, choices = List.map toOption all81kg2020OlympicWeightlifters }
+    ]
+
+
+initChoices : Control ( String, Select.Attribute Choosable )
 initChoices =
     let
-        toChoice : List Choosable -> Control ( String, List { label : String, value : Choosable } )
-        toChoice choosables =
-            ( "[" ++ String.join ", " (List.map (toOptionString choosableToString) choosables) ++ "]"
-            , List.map (toOption choosableToString) choosables
-            )
-                |> Control.value
+        toOptionString : Choosable -> String
+        toOptionString c =
+            "{ value = " ++ choosableToCodeString c ++ ", label = \"" ++ choosableToLabel c ++ "\" } "
 
-        toValue : ( String, List Choosable ) -> ( String, Control ( String, List { label : String, value : Choosable } ) )
+        toChoice : List Choosable -> ( String, List { label : String, value : Choosable } )
+        toChoice choosables =
+            ( """Select.choices
+        choosableToLabel
+        [ """
+                ++ String.join "\n        , " (List.map toOptionString choosables)
+                ++ "\n        ]"
+            , List.map toOption choosables
+            )
+
+        toValue : List Choosable -> Control ( String, Select.Attribute Choosable )
         toValue =
-            Tuple.mapSecond toChoice
+            toChoice >> Tuple.mapSecond (Select.choices choosableToLabel) >> Control.value
+
+        toOptionsString : List Choosable -> String
+        toOptionsString choosables =
+            "[ "
+                ++ (List.map toOptionString choosables |> String.join "\n              , ")
+                ++ "\n              ]"
     in
-    List.map toValue
-        [ ( "Tex-Mex", allTexMex )
-        , ( "81 Kg 2020 Olympic Weightlifters", all81kg2020OlympicWeightlifters )
-        , ( "Unselectable list with only one item", [ TragicSingleton ] )
+    List.map identity
+        [ ( texMexLabel, toValue allTexMex )
+        , ( "81 Kg 2020 Olympic Weightlifters", toValue all81kg2020OlympicWeightlifters )
+        , ( "Grouped Things"
+          , Control.value <|
+                ( """Select.groupedChoices
+        choosableToLabel
+        [ { label = \""""
+                    ++ texMexLabel
+                    ++ "\"\n          , choices = \n              "
+                    ++ toOptionsString allTexMex
+                    ++ """
+          }
+        , { label = \""""
+                    ++ weightLifterLabel
+                    ++ "\"\n          , choices = \n              "
+                    ++ toOptionsString all81kg2020OlympicWeightlifters
+                    ++ """
+          }
+        ]
+        , Select.choices
+            choosableToLabel
+            [ """
+                    ++ toOptionString TragicSingleton
+                    ++ """ ]"""
+                , Select.batch
+                    [ Select.groupedChoices choosableToLabel
+                        [ { label = texMexLabel, choices = List.map toOption allTexMex }
+                        , { label = weightLifterLabel, choices = List.map toOption all81kg2020OlympicWeightlifters }
+                        ]
+                    , Select.choices choosableToLabel [ toOption TragicSingleton ]
+                    ]
+                )
+          )
+        , ( "Unselectable list with only one item", toValue [ TragicSingleton ] )
         ]
         |> Control.choice
 

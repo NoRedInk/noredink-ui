@@ -9,6 +9,7 @@ module Nri.Ui.Select.V9 exposing
     , custom, nriDescription, id, testId
     , icon
     , containerCss, noMargin
+    , batch
     )
 
 {-| Build a select input with a label, optional guidance, and error messaging.
@@ -43,6 +44,7 @@ module Nri.Ui.Select.V9 exposing
 @docs custom, nriDescription, id, testId
 @docs icon
 @docs containerCss, noMargin
+@docs batch
 
 -}
 
@@ -110,6 +112,13 @@ and the given error message will be shown.
 errorMessage : Maybe String -> Attribute value
 errorMessage =
     Attribute << InputErrorAndGuidanceInternal.setErrorMessage
+
+
+{-| Combine several attributes into one. A nice way to do nothing via batch []
+-}
+batch : List (Attribute value) -> Attribute value
+batch attrs =
+    List.foldl (\(Attribute update) composition -> composition >> update) identity attrs |> Attribute
 
 
 {-| A guidance message shows below the input, unless an error message is showing instead.
