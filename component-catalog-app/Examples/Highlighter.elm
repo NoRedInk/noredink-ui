@@ -244,7 +244,7 @@ example =
                   }
                 ]
             ]
-    , categories = [ Text, QuizEngine ]
+    , categories = [ Assignments ]
     , keyboardSupport = []
     }
 

@@ -28,7 +28,7 @@ type Category
     | Messaging
     | Atoms
     | Text
-    | QuizEngine
+    | Assignments
     | Animations
     | Progress
     | Navigation
@@ -42,7 +42,7 @@ all =
     , Buttons
     , Icons
     , Inputs
-    , QuizEngine
+    , Assignments
     , Layout
     , Text
     , Messaging
@@ -68,8 +68,8 @@ fromString string =
         "Icons" ->
             Ok Icons
 
-        "QuizEngine" ->
-            Ok QuizEngine
+        "Assignments" ->
+            Ok Assignments
 
         "Messaging" ->
             Ok Messaging
@@ -109,8 +109,8 @@ forDisplay category =
         Icons ->
             "Icons"
 
-        QuizEngine ->
-            "Quiz Engine"
+        Assignments ->
+            "Assignments"
 
         Messaging ->
             "Alerts and Messages"
@@ -159,8 +159,8 @@ forId category =
         Icons ->
             "icons"
 
-        QuizEngine ->
-            "interactions"
+        Assignments ->
+            "assignments"
 
         Messaging ->
             "alerts-and-messages"

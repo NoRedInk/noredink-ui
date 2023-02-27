@@ -47,7 +47,7 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , categories = [ QuizEngine ]
+    , categories = [ Assignments ]
     , keyboardSupport = []
     , state = init
     , update = update

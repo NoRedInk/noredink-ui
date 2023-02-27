@@ -70,7 +70,7 @@ example =
                 , tags = tags
                 }
             ]
-    , categories = [ QuizEngine ]
+    , categories = [ Assignments ]
     , keyboardSupport = []
     }
 
