@@ -16,6 +16,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css, href)
+import Nri.Ui.AssignmentIcon.V2 as AssignmentIcon
 import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs exposing (BreadCrumbAttribute, BreadCrumbs)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
@@ -57,14 +58,16 @@ example =
             [ previewIcon UiIcon.home
             , previewText "Home"
             , previewArrowRight
-            , previewText "🟠 Category "
+            , previewIcon (Svg.withColor Colors.greenDark AssignmentIcon.writing)
+            , previewText "Category "
             ]
         , previewContainer
             [ previewIcon UiIcon.home
             , previewArrowRight
-            , previewText "🟠"
+            , previewIcon (Svg.withColor Colors.greenDark AssignmentIcon.writing)
             , previewArrowRight
-            , previewText "🟣 Sub-Category "
+            , previewIcon (Svg.withColor Colors.ochre AssignmentIcon.quickWriteCircled)
+            , previewText "Sub-Category "
             ]
         ]
     , view =
@@ -213,18 +216,23 @@ previewContainer =
             [ Css.displayFlex
             , Css.alignItems Css.center
             , Fonts.baseFont
-            , Css.fontSize (Css.px 10)
+            , Css.fontSize previewFontSize
             , Css.fontWeight (Css.int 600)
             , Css.color Colors.navy
             ]
         ]
 
 
+previewFontSize : Css.Px
+previewFontSize =
+    Css.px 14
+
+
 previewIcon : Svg -> Html msg
 previewIcon svg =
     svg
-        |> Svg.withWidth (Css.px 10)
-        |> Svg.withHeight (Css.px 10)
+        |> Svg.withWidth previewFontSize
+        |> Svg.withHeight previewFontSize
         |> Svg.toHtml
 
 
