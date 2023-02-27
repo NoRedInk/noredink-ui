@@ -9,7 +9,12 @@ module Nri.Ui.Switch.V2 exposing
 {-|
 
 
-# Changes from V1:
+### Patch Changes:
+
+    - Fix cursor styles when hovering over the transparent checkbox
+
+
+### Changes from V1:
 
     - Fixes invalid ARIA use, [conformance requirements](https://www.w3.org/TR/html-aria/#docconformance)
     - labels should only support strings (this is the only way they're actually used in practice)
