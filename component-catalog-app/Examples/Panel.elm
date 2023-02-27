@@ -43,28 +43,8 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
-        [ div
-            [ css
-                [ Css.backgroundColor Colors.navy
-                , Css.borderTopLeftRadius (Css.px 8)
-                , Css.borderTopRightRadius (Css.px 8)
-                , Css.width (Css.pct 100)
-                , Css.minHeight (Css.px 20)
-                , Css.fontSize (Css.px 12)
-                , Css.color Colors.white
-                , Fonts.baseFont
-                , Css.padding2 (Css.px 2) (Css.px 8)
-                ]
-            ]
-            [ text "Panel name" ]
-        , div
-            [ css
-                [ Css.backgroundColor Colors.white
-                , Css.width (Css.pct 100)
-                , Css.minHeight (Css.px 50)
-                ]
-            ]
-            []
+        [ panelPreview Colors.navy
+        , panelPreview Colors.gray45
         ]
     , view =
         \ellieLinkConfig state ->
@@ -97,6 +77,34 @@ example =
             , Panel.view attributes
             ]
     }
+
+
+panelPreview : Css.Color -> Html msg
+panelPreview headingColor =
+    div [ css [ Css.marginTop (Css.px 16), Css.firstChild [ Css.marginTop Css.zero ] ] ]
+        [ div
+            [ css
+                [ Css.backgroundColor headingColor
+                , Css.borderTopLeftRadius (Css.px 8)
+                , Css.borderTopRightRadius (Css.px 8)
+                , Css.width (Css.pct 100)
+                , Css.minHeight (Css.px 20)
+                , Css.fontSize (Css.px 12)
+                , Css.color Colors.white
+                , Fonts.baseFont
+                , Css.padding2 (Css.px 2) (Css.px 8)
+                ]
+            ]
+            [ text "Panel name" ]
+        , div
+            [ css
+                [ Css.backgroundColor Colors.white
+                , Css.width (Css.pct 100)
+                , Css.minHeight (Css.px 30)
+                ]
+            ]
+            []
+        ]
 
 
 {-| -}
