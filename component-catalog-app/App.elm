@@ -320,7 +320,7 @@ viewCategory model category =
 viewLayout : Model key -> List (Header.Attribute (Routes.Route Examples.State Examples.Msg) Msg) -> Html Msg -> Html Msg
 viewLayout model headerExtras content =
     Html.div []
-        [ Routes.viewHeader model.route headerExtras
+        [ Html.header [] [ Routes.viewHeader model.route headerExtras ]
         , Html.div
             [ css
                 [ displayFlex
