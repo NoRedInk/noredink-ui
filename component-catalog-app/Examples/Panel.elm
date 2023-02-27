@@ -14,7 +14,10 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Panel.V1 as Panel
 
@@ -39,7 +42,30 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview =
+        [ div
+            [ css
+                [ Css.backgroundColor Colors.navy
+                , Css.borderTopLeftRadius (Css.px 8)
+                , Css.borderTopRightRadius (Css.px 8)
+                , Css.width (Css.pct 100)
+                , Css.minHeight (Css.px 20)
+                , Css.fontSize (Css.px 12)
+                , Css.color Colors.white
+                , Fonts.baseFont
+                , Css.padding2 (Css.px 2) (Css.px 8)
+                ]
+            ]
+            [ text "Panel name" ]
+        , div
+            [ css
+                [ Css.backgroundColor Colors.white
+                , Css.width (Css.pct 100)
+                , Css.minHeight (Css.px 50)
+                ]
+            ]
+            []
+        ]
     , view =
         \ellieLinkConfig state ->
             let
