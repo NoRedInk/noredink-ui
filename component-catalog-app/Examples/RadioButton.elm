@@ -117,8 +117,17 @@ view ellieLinkConfig state =
         , version = version
         , update = SetSelectionSettings
         , settings = state.selectionSettings
-        , mainType = Just "Html msg"
-        , extraCode = []
+        , mainType = Nothing
+        , extraCode =
+            [ "type Animals = Dogs | Cats\n"
+            , "toString : Animals -> String"
+            , "toString animals ="
+                ++ Code.caseExpression "animals"
+                    [ ( "Dogs", Code.string "Dogs" )
+                    , ( "Cats", Code.string "Cats" )
+                    ]
+                    1
+            ]
         , renderExample = Code.unstyledView
         , toExampleCode =
             \_ ->
@@ -154,26 +163,21 @@ view ellieLinkConfig state =
 viewExamplesCode : SelectionSettings -> Maybe Selection -> String
 viewExamplesCode selectionSettings selectedValue =
     let
-        selectedValueString =
-            case selectedValue of
-                Just value ->
-                    "Just " ++ selectionToString value
-
-                Nothing ->
-                    "Nothing"
-
         toExampleCode ( kind, settings ) =
-            "RadioButton.view"
-                ++ ("\n\t{ label = " ++ selectionToString kind)
-                ++ "\n\t, name = \"pets\""
-                ++ ("\n\t, value = " ++ selectionToString kind)
-                ++ ("\n\t, selectedValue = " ++ selectedValueString)
-                ++ "\n\t, valueToString = toString"
-                ++ "\n\t}\n\t[ "
-                ++ String.join "\n\t, " (List.map Tuple.first settings)
-                ++ "\n\t] "
+            Code.fromModule "RadioButton" "view"
+                ++ Code.recordMultiline
+                    [ ( "label", (selectionToString >> Code.string) kind )
+                    , ( "name", Code.string "pets" )
+                    , ( "value", selectionToString kind )
+                    , ( "selectedValue"
+                      , Code.maybe (Maybe.map selectionToString selectedValue)
+                      )
+                    , ( "valueToString", "toString" )
+                    ]
+                    2
+                ++ Code.listMultiline (List.map Tuple.first settings) 2
     in
-    "  " ++ String.join "\n, " (List.map toExampleCode (examples selectionSettings))
+    "div []" ++ Code.listMultiline (List.map toExampleCode (examples selectionSettings)) 1
 
 
 viewExamples : SelectionSettings -> Maybe Selection -> Html Msg
