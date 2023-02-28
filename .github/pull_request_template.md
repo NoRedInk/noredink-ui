@@ -36,8 +36,8 @@ Please link to any relevant context and stories.
 
 ## :framed_picture: What does this change look like?
 
-- Follow the the [Guidelines for an optimal design ping](https://paper.dropbox.com/doc/Guidelines-for-Sharing-User-Facing-Changes-with-Design--BpL8hpJLMugy6033aT5m0JdaAg-bdKGQtYH9qO9I00hUkA6k) to add helpful screenshots/videos for design.
-- Ping design on this PR to get approval on your changes.
+- [ ] Follow the the [Guidelines for an optimal design ping](https://paper.dropbox.com/doc/Guidelines-for-Sharing-User-Facing-Changes-with-Design--BpL8hpJLMugy6033aT5m0JdaAg-bdKGQtYH9qO9I00hUkA6k) to add helpful screenshots/videos for design.
+- [ ] @ mention the design team on this PR to request approval on your changes. A designer may leave comments or may "thumbs up" react to your PR to approve it.
 
 
 ## Component completion checklist
@@ -73,8 +73,8 @@ Please link to any relevant context and stories.
 
 ## :framed_picture: What does this change look like?
 
-- Follow the the [Guidelines for an optimal design ping](https://paper.dropbox.com/doc/Guidelines-for-Sharing-User-Facing-Changes-with-Design--BpL8hpJLMugy6033aT5m0JdaAg-bdKGQtYH9qO9I00hUkA6k) to add helpful screenshots/videos for design.
-- Ping design on this PR to get approval on your changes.
+- [ ] Follow the the [Guidelines for an optimal design ping](https://paper.dropbox.com/doc/Guidelines-for-Sharing-User-Facing-Changes-with-Design--BpL8hpJLMugy6033aT5m0JdaAg-bdKGQtYH9qO9I00hUkA6k) to add helpful screenshots/videos for design.
+- [ ] @ mention the design team on this PR to request approval on your changes. A designer may leave comments or may "thumbs up" react to your PR to approve it.
 
 ## Component completion checklist
 
