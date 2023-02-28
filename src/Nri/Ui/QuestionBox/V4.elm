@@ -317,7 +317,7 @@ viewBalloon config referencingId attributes =
                 ]
             )
          , Balloon.customTheme { backgroundColor = Colors.glacier, color = Colors.glacier }
-         , Balloon.css [ Css.padding (Css.px 0), Css.boxShadow Css.none, Css.fontSize (Css.px 18) ]
+         , Balloon.css [ Css.padding (Css.px 0), Css.boxShadow Css.none ]
          ]
             ++ attributes
         )
