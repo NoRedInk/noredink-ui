@@ -59,6 +59,7 @@ import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
 import Css exposing (..)
+import Css.Global
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (class, classList, css)
 import Html.Styled.Events as Events
@@ -955,6 +956,15 @@ viewClickableText title menuConfig clickableTextAttributes attributes =
         ([ ClickableText.custom attributes
          , ClickableText.disabled menuConfig.isDisabled
          , ClickableText.rightIcon (AnimatedIcon.arrowDownUp menuConfig.isOpen)
+         , ClickableText.css
+            [ Css.Global.descendants
+                [ Css.Global.selector "svg"
+                    [ Css.width (Css.px 15) |> Css.important
+                    , Css.height (Css.px 15) |> Css.important
+                    , Css.marginLeft (Css.px 8) |> Css.important
+                    ]
+                ]
+            ]
          ]
             ++ clickableTextAttributes
         )
