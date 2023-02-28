@@ -32,7 +32,7 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , categories = [ Text, Layout ]
+    , categories = [ Text ]
     , keyboardSupport = []
     , state = init
     , update = update

@@ -28,9 +28,10 @@ type Category
     | Messaging
     | Atoms
     | Text
-    | Interactions
+    | Assignments
     | Animations
     | Progress
+    | Navigation
 
 
 {-| -}
@@ -41,11 +42,12 @@ all =
     , Buttons
     , Icons
     , Inputs
-    , Interactions
+    , Assignments
     , Layout
     , Text
     , Messaging
     , Progress
+    , Navigation
     ]
 
 
@@ -66,8 +68,8 @@ fromString string =
         "Icons" ->
             Ok Icons
 
-        "Interactions" ->
-            Ok Interactions
+        "Assignments" ->
+            Ok Assignments
 
         "Messaging" ->
             Ok Messaging
@@ -83,6 +85,9 @@ fromString string =
 
         "Progress" ->
             Ok Progress
+
+        "Navigation" ->
+            Ok Navigation
 
         _ ->
             Err "Invalid String"
@@ -104,8 +109,8 @@ forDisplay category =
         Icons ->
             "Icons"
 
-        Interactions ->
-            "Interactions"
+        Assignments ->
+            "Assignments"
 
         Messaging ->
             "Alerts and Messages"
@@ -121,6 +126,9 @@ forDisplay category =
 
         Progress ->
             "Progress indicators"
+
+        Navigation ->
+            "Navigation"
 
 
 {-| -}
@@ -151,8 +159,8 @@ forId category =
         Icons ->
             "icons"
 
-        Interactions ->
-            "interactions"
+        Assignments ->
+            "assignments"
 
         Messaging ->
             "alerts-and-messages"
@@ -168,3 +176,6 @@ forId category =
 
         Progress ->
             "progress"
+
+        Navigation ->
+            "navigation"

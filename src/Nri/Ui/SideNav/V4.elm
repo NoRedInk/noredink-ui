@@ -15,7 +15,13 @@ module Nri.Ui.SideNav.V4 exposing
 {-|
 
 
-# Changes from V3
+### Patch changes
+
+  - add missing aria-current=page attribute
+  - don't render an empty nav when there are no entries
+
+
+### Changes from V3
 
   - make the nav configurably collapsible
 
@@ -66,7 +72,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
@@ -246,7 +252,12 @@ view config navAttributes entries =
     div [ Attributes.css (defaultCss ++ appliedNavAttributes.css) ]
         [ viewSkipLink config.onSkipNav
         , viewJust (viewOpenCloseButton sidenavId appliedNavAttributes.navLabel) appliedNavAttributes.collapsible
-        , viewNav sidenavId config appliedNavAttributes entries showNav
+        , case entries of
+            [] ->
+                text ""
+
+            _ ->
+                viewNav sidenavId config appliedNavAttributes entries showNav
         ]
 
 
@@ -417,12 +428,15 @@ viewSidebarLeaf config extraStyles entryConfig =
                 , isDisabled = False
                 }
                 entryConfig.clickableAttributes
+
+        isCurrent =
+            isCurrentRoute config entryConfig
     in
     Nri.Ui.styled Html.Styled.a
         ("Nri-Ui-SideNav-" ++ linkFunctionName)
         (sharedEntryStyles
             ++ extraStyles
-            ++ (if isCurrentRoute config entryConfig then
+            ++ (if isCurrent then
                     [ backgroundColor Colors.glacier
                     , color Colors.navy
                     , fontWeight bold
@@ -435,6 +449,7 @@ viewSidebarLeaf config extraStyles entryConfig =
             ++ entryConfig.customStyles
         )
         (Attributes.class FocusRing.customClass
+            :: AttributesExtra.includeIf isCurrent Aria.currentPage
             :: attributes
             ++ entryConfig.customAttributes
         )
@@ -590,13 +605,13 @@ custom attributes =
 {-| -}
 nriDescription : String -> Attribute route msg
 nriDescription description =
-    custom [ ExtraAttributes.nriDescription description ]
+    custom [ AttributesExtra.nriDescription description ]
 
 
 {-| -}
 testId : String -> Attribute route msg
 testId id_ =
-    custom [ ExtraAttributes.testId id_ ]
+    custom [ AttributesExtra.testId id_ ]
 
 
 {-| -}

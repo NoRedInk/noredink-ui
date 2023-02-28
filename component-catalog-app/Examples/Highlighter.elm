@@ -244,7 +244,7 @@ example =
                   }
                 ]
             ]
-    , categories = [ Text, Interactions ]
+    , categories = [ Assignments ]
     , keyboardSupport = []
     }
 

@@ -5,6 +5,9 @@ module Nri.Ui.Button.V10 exposing
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , small, medium, large, modal
     , exactWidth, boundedWidth, unboundedWidth, fillContainerWidth
+    , exactWidthForMobile, boundedWidthForMobile, unboundedWidthForMobile, fillContainerWidthForMobile
+    , exactWidthForQuizEngineMobile, boundedWidthForQuizEngineMobile, unboundedWidthForQuizEngineMobile, fillContainerWidthForQuizEngineMobile
+    , exactWidthForNarrowMobile, boundedWidthForNarrowMobile, unboundedWidthForNarrowMobile, fillContainerWidthForNarrowMobile
     , primary, secondary, tertiary, danger, premium
     , enabled, unfulfilled, disabled, error, loading, success
     , icon, rightIcon
@@ -24,6 +27,7 @@ adding a span around the text could potentially lead to regressions.
 
 # Patch changes:
 
+  - adds width helpers for Mobile breakpoint, Quiz Engine breakpoint, and Narrow Mobile breakpoint
   - uses ClickableAttributes
   - adds `nriDescription`, `testId`, and `id` helpers
   - adds `modal` helper, an alias for `large` size
@@ -56,6 +60,9 @@ adding a span around the text could potentially lead to regressions.
 
 @docs small, medium, large, modal
 @docs exactWidth, boundedWidth, unboundedWidth, fillContainerWidth
+@docs exactWidthForMobile, boundedWidthForMobile, unboundedWidthForMobile, fillContainerWidthForMobile
+@docs exactWidthForQuizEngineMobile, boundedWidthForQuizEngineMobile, unboundedWidthForQuizEngineMobile, fillContainerWidthForQuizEngineMobile
+@docs exactWidthForNarrowMobile, boundedWidthForNarrowMobile, unboundedWidthForNarrowMobile, fillContainerWidthForNarrowMobile
 
 
 ## Change the color scheme
@@ -392,18 +399,23 @@ type ButtonSize
     | Large
 
 
+setWidth : ButtonWidth -> Attribute msg
+setWidth w =
+    set (\attributes -> { attributes | width = w })
+
+
 {-| Define a size in `px` for the button's total width.
 -}
 exactWidth : Int -> Attribute msg
 exactWidth inPx =
-    set (\attributes -> { attributes | width = WidthExact inPx })
+    setWidth (WidthExact inPx)
 
 
 {-| Leave the maxiumum width unbounded (there is a minimum width).
 -}
 unboundedWidth : Attribute msg
 unboundedWidth =
-    set (\attributes -> { attributes | width = WidthUnbounded })
+    setWidth WidthUnbounded
 
 
 {-| Make a button that is at least `min` large, and which will grow with
@@ -412,13 +424,115 @@ max`.)
 -}
 boundedWidth : { min : Int, max : Int } -> Attribute msg
 boundedWidth bounds =
-    set (\attributes -> { attributes | width = WidthBounded bounds })
+    setWidth (WidthBounded bounds)
 
 
 {-| -}
 fillContainerWidth : Attribute msg
 fillContainerWidth =
-    set (\attributes -> { attributes | width = WidthFillContainer })
+    setWidth WidthFillContainer
+
+
+setMobileWidth : ButtonWidth -> Attribute msg
+setMobileWidth w =
+    set (\attributes -> { attributes | mobileWidth = Just w })
+
+
+{-| For the mobile breakpoint, define a size in `px` for the button's total width.
+-}
+exactWidthForMobile : Int -> Attribute msg
+exactWidthForMobile inPx =
+    setMobileWidth (WidthExact inPx)
+
+
+{-| For the mobile breakpoint, Leave the maxiumum width unbounded (there is a minimum width).
+-}
+unboundedWidthForMobile : Attribute msg
+unboundedWidthForMobile =
+    setMobileWidth WidthUnbounded
+
+
+{-| For the mobile breakpoint, make a button that is at least `min` large, and which will grow with
+its content up to `max`. Both bounds are inclusive (`min <= actual value <=
+max`.)
+-}
+boundedWidthForMobile : { min : Int, max : Int } -> Attribute msg
+boundedWidthForMobile bounds =
+    setMobileWidth (WidthBounded bounds)
+
+
+{-| -}
+fillContainerWidthForMobile : Attribute msg
+fillContainerWidthForMobile =
+    setMobileWidth WidthFillContainer
+
+
+setQuizEngineMobileWidth : ButtonWidth -> Attribute msg
+setQuizEngineMobileWidth w =
+    set (\attributes -> { attributes | quizEngineMobileWidth = Just w })
+
+
+{-| For the quiz engine mobile breakpoint, define a size in `px` for the button's total width.
+-}
+exactWidthForQuizEngineMobile : Int -> Attribute msg
+exactWidthForQuizEngineMobile inPx =
+    setQuizEngineMobileWidth (WidthExact inPx)
+
+
+{-| For the quiz engine mobile breakpoint, Leave the maxiumum width unbounded (there is a minimum width).
+-}
+unboundedWidthForQuizEngineMobile : Attribute msg
+unboundedWidthForQuizEngineMobile =
+    setQuizEngineMobileWidth WidthUnbounded
+
+
+{-| For the quiz engine mobile breakpoint, make a button that is at least `min` large, and which will grow with
+its content up to `max`. Both bounds are inclusive (`min <= actual value <=
+max`.)
+-}
+boundedWidthForQuizEngineMobile : { min : Int, max : Int } -> Attribute msg
+boundedWidthForQuizEngineMobile bounds =
+    setQuizEngineMobileWidth (WidthBounded bounds)
+
+
+{-| -}
+fillContainerWidthForQuizEngineMobile : Attribute msg
+fillContainerWidthForQuizEngineMobile =
+    setQuizEngineMobileWidth WidthFillContainer
+
+
+setNarrowMobileWidth : ButtonWidth -> Attribute msg
+setNarrowMobileWidth w =
+    set (\attributes -> { attributes | narrowMobileWidth = Just w })
+
+
+{-| For the quiz engine mobile breakpoint, define a size in `px` for the button's total width.
+-}
+exactWidthForNarrowMobile : Int -> Attribute msg
+exactWidthForNarrowMobile inPx =
+    setNarrowMobileWidth (WidthExact inPx)
+
+
+{-| For the quiz engine mobile breakpoint, Leave the maxiumum width unbounded (there is a minimum width).
+-}
+unboundedWidthForNarrowMobile : Attribute msg
+unboundedWidthForNarrowMobile =
+    setNarrowMobileWidth WidthUnbounded
+
+
+{-| For the quiz engine mobile breakpoint, make a button that is at least `min` large, and which will grow with
+its content up to `max`. Both bounds are inclusive (`min <= actual value <=
+max`.)
+-}
+boundedWidthForNarrowMobile : { min : Int, max : Int } -> Attribute msg
+boundedWidthForNarrowMobile bounds =
+    setNarrowMobileWidth (WidthBounded bounds)
+
+
+{-| -}
+fillContainerWidthForNarrowMobile : Attribute msg
+fillContainerWidthForNarrowMobile =
+    setNarrowMobileWidth WidthFillContainer
 
 
 
@@ -581,6 +695,9 @@ build =
         , size = Medium
         , style = primaryColors
         , width = WidthUnbounded
+        , mobileWidth = Nothing
+        , quizEngineMobileWidth = Nothing
+        , narrowMobileWidth = Nothing
         , label = ""
         , state = Enabled
         , icon = Nothing
@@ -600,6 +717,9 @@ type alias ButtonOrLinkAttributes msg =
     , size : ButtonSize
     , style : ColorPalette
     , width : ButtonWidth
+    , mobileWidth : Maybe ButtonWidth
+    , quizEngineMobileWidth : Maybe ButtonWidth
+    , narrowMobileWidth : Maybe ButtonWidth
     , label : String
     , state : ButtonState
     , icon : Maybe Svg
@@ -612,13 +732,9 @@ type alias ButtonOrLinkAttributes msg =
 
 renderButton : ButtonOrLink msg -> Html msg
 renderButton ((ButtonOrLink config) as button_) =
-    let
-        buttonStyle_ =
-            getColorPalette button_
-    in
     Nri.Ui.styled Html.button
         (styledName "customButton")
-        [ buttonStyles config.size config.width buttonStyle_ config.customStyles
+        [ buttonStyles config
         , Css.pseudoClass "focus-visible"
             [ Css.outline3 (Css.px 2) Css.solid Css.transparent
             , FocusRing.boxShadows []
@@ -635,9 +751,6 @@ renderButton ((ButtonOrLink config) as button_) =
 renderLink : ButtonOrLink msg -> Html msg
 renderLink ((ButtonOrLink config) as link_) =
     let
-        colorPalette =
-            getColorPalette link_
-
         ( linkFunctionName, attributes ) =
             ClickableAttributes.toLinkAttributes
                 { routeToString = identity
@@ -647,7 +760,7 @@ renderLink ((ButtonOrLink config) as link_) =
     in
     Nri.Ui.styled Styled.a
         (styledName linkFunctionName)
-        [ buttonStyles config.size config.width colorPalette config.customStyles
+        [ buttonStyles config
         , Css.pseudoClass "focus-visible"
             [ Css.outline3 (Css.px 2) Css.solid Css.transparent, FocusRing.boxShadows [] ]
         ]
@@ -752,11 +865,16 @@ toggleButton config =
     in
     Nri.Ui.styled Html.button
         (styledName "toggleButton")
-        [ buttonStyles Medium
-            WidthUnbounded
-            secondaryColors
-            [ Css.hover [ Css.color Colors.navy ]
-            ]
+        [ buttonStyles
+            { size = Medium
+            , width = WidthUnbounded
+            , mobileWidth = Nothing
+            , quizEngineMobileWidth = Nothing
+            , narrowMobileWidth = Nothing
+            , style = secondaryColors
+            , state = Enabled
+            , customStyles = [ Css.hover [ Css.color Colors.navy ] ]
+            }
         , toggledStyles
         , Css.verticalAlign Css.middle
         ]
@@ -788,12 +906,23 @@ toggleButton config =
         ]
 
 
-buttonStyles : ButtonSize -> ButtonWidth -> ColorPalette -> List Style -> Style
-buttonStyles size width colors customStyles =
+buttonStyles :
+    { config
+        | size : ButtonSize
+        , style : ColorPalette
+        , width : ButtonWidth
+        , mobileWidth : Maybe ButtonWidth
+        , quizEngineMobileWidth : Maybe ButtonWidth
+        , narrowMobileWidth : Maybe ButtonWidth
+        , state : ButtonState
+        , customStyles : List Style
+    }
+    -> Style
+buttonStyles ({ style, state, customStyles } as config) =
     Css.batch
         [ buttonStyle
-        , sizeStyle size width
-        , colorStyle colors
+        , sizeStyle config
+        , colorStyle style state
         , Css.batch customStyles
         ]
 
@@ -960,11 +1089,11 @@ premiumColors =
     }
 
 
-getColorPalette : ButtonOrLink msg -> ColorPalette
-getColorPalette (ButtonOrLink config) =
-    case config.state of
+colorStyle : ColorPalette -> ButtonState -> Style
+colorStyle defaultStyle state =
+    (case state of
         Enabled ->
-            config.style
+            defaultStyle
 
         Disabled ->
             { background = Colors.gray92
@@ -1010,10 +1139,12 @@ getColorPalette (ButtonOrLink config) =
             , border = Nothing
             , shadow = Colors.greenDarkest
             }
+    )
+        |> applyColorStyle
 
 
-colorStyle : ColorPalette -> Style
-colorStyle colorPalette =
+applyColorStyle : ColorPalette -> Style
+applyColorStyle colorPalette =
     Css.batch
         [ Css.color colorPalette.text
         , Css.backgroundColor colorPalette.background
@@ -1065,8 +1196,16 @@ sizeConfig size =
             }
 
 
-sizeStyle : ButtonSize -> ButtonWidth -> Style
-sizeStyle size width =
+sizeStyle :
+    { config
+        | size : ButtonSize
+        , width : ButtonWidth
+        , mobileWidth : Maybe ButtonWidth
+        , quizEngineMobileWidth : Maybe ButtonWidth
+        , narrowMobileWidth : Maybe ButtonWidth
+    }
+    -> Style
+sizeStyle ({ size, width } as settings) =
     let
         config =
             sizeConfig size
@@ -1081,34 +1220,8 @@ sizeStyle size width =
             , Css.paddingBottom (Css.px verticalPaddingPx)
             ]
 
-        widthAttributes =
-            case width of
-                WidthExact pxWidth ->
-                    [ Css.maxWidth (Css.pct 100)
-                    , Css.width (Css.px <| toFloat pxWidth)
-                    , Css.paddingRight (Css.px 4)
-                    , Css.paddingLeft (Css.px 4)
-                    ]
-
-                WidthUnbounded ->
-                    [ Css.paddingLeft (Css.px 16)
-                    , Css.paddingRight (Css.px 16)
-                    , Css.minWidth (Css.px config.minWidth)
-                    ]
-
-                WidthFillContainer ->
-                    [ Css.paddingLeft (Css.px 16)
-                    , Css.paddingRight (Css.px 16)
-                    , Css.minWidth (Css.px config.minWidth)
-                    , Css.width (Css.pct 100)
-                    ]
-
-                WidthBounded { min, max } ->
-                    [ Css.maxWidth (Css.px (toFloat max))
-                    , Css.minWidth (Css.px (toFloat min))
-                    , Css.paddingRight (Css.px 16)
-                    , Css.paddingLeft (Css.px 16)
-                    ]
+        buttonAttributes =
+            buttonWidthToStyle config
 
         lineHeightPx =
             case size of
@@ -1129,5 +1242,50 @@ sizeStyle size width =
         , Css.borderWidth (Css.px 1)
         , Css.borderBottomWidth (Css.px config.shadowHeight)
         , Css.batch sizingAttributes
-        , Css.batch widthAttributes
+        , Css.batch (buttonAttributes width)
+        , maybeViewportSpecificStyles MediaQuery.narrowMobile (Maybe.map buttonAttributes settings.narrowMobileWidth)
+        , maybeViewportSpecificStyles MediaQuery.quizEngineMobile (Maybe.map buttonAttributes settings.quizEngineMobileWidth)
+        , maybeViewportSpecificStyles MediaQuery.mobile (Maybe.map buttonAttributes settings.mobileWidth)
         ]
+
+
+maybeViewportSpecificStyles : MediaQuery -> Maybe (List Style) -> Style
+maybeViewportSpecificStyles mediaQuery =
+    Maybe.map (Css.Media.withMedia [ mediaQuery ])
+        >> Maybe.withDefault (Css.batch [])
+
+
+buttonWidthToStyle : { a | minWidth : Float } -> ButtonWidth -> List Style
+buttonWidthToStyle config width =
+    case width of
+        WidthExact pxWidth ->
+            [ Css.maxWidth (Css.pct 100)
+            , Css.width (Css.px <| toFloat pxWidth)
+            , Css.minWidth Css.unset
+            , Css.paddingLeft (Css.px 4)
+            , Css.paddingRight (Css.px 4)
+            ]
+
+        WidthUnbounded ->
+            [ Css.maxWidth Css.unset
+            , Css.width Css.unset
+            , Css.minWidth (Css.px config.minWidth)
+            , Css.paddingLeft (Css.px 16)
+            , Css.paddingRight (Css.px 16)
+            ]
+
+        WidthFillContainer ->
+            [ Css.maxWidth Css.unset
+            , Css.width (Css.pct 100)
+            , Css.minWidth (Css.px config.minWidth)
+            , Css.paddingLeft (Css.px 16)
+            , Css.paddingRight (Css.px 16)
+            ]
+
+        WidthBounded { min, max } ->
+            [ Css.maxWidth (Css.px (toFloat max))
+            , Css.width Css.unset
+            , Css.minWidth (Css.px (toFloat min))
+            , Css.paddingLeft (Css.px 16)
+            , Css.paddingRight (Css.px 16)
+            ]
