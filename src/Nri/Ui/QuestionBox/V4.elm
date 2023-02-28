@@ -188,7 +188,7 @@ viewStandalone : Config msg -> Html msg
 viewStandalone config =
     div
         [ AttributesExtra.maybe Attributes.id config.id
-        , css (config.containerCss ++ [ Css.fontSize (Css.px 18) ])
+        , css config.containerCss
         , nriDescription "standalone-balloon-container"
         ]
         [ viewBalloon config
@@ -293,10 +293,10 @@ viewPointingTo config blockId measurements =
             , css
                 (case measurements of
                     Just { questionBox } ->
-                        [ Css.height (Css.px (questionBox.element.height + 8)), Css.fontSize (Css.px 18) ]
+                        [ Css.height (Css.px (questionBox.element.height + 8)) ]
 
                     Nothing ->
-                        [ Css.fontSize (Css.px 18) ]
+                        []
                 )
             ]
 
@@ -317,7 +317,7 @@ viewBalloon config referencingId attributes =
                 ]
             )
          , Balloon.customTheme { backgroundColor = Colors.glacier, color = Colors.glacier }
-         , Balloon.css [ Css.padding (Css.px 0), Css.boxShadow Css.none ]
+         , Balloon.css [ Css.padding (Css.px 0), Css.boxShadow Css.none, Css.fontSize (Css.px 18) ]
          ]
             ++ attributes
         )
@@ -368,6 +368,7 @@ viewSpeechBubble config referencingId extraAttributes =
             , Css.padding (Css.px 20)
             , Css.boxShadow Css.none
             , Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ]
+            , Css.fontSize (Css.px 18)
             ]
          , Balloon.custom
             [ AttributesExtra.maybe (guidanceId >> Attributes.id) config.id
