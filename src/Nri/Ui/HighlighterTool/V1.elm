@@ -89,7 +89,8 @@ buildMarker { highlightColor, hoverColor, hoverHighlightColor, kind, name } =
 
 startGroupStyles : List Css.Style
 startGroupStyles =
-    [ Css.paddingLeft (Css.px 4)
+    [ Css.borderLeftWidth (Css.px 2)
+    , Css.paddingLeft (Css.px 2)
     , Css.borderTopLeftRadius (Css.px 4)
     , Css.borderBottomLeftRadius (Css.px 4)
     ]
@@ -97,7 +98,8 @@ startGroupStyles =
 
 endGroupStyles : List Css.Style
 endGroupStyles =
-    [ Css.paddingRight (Css.px 4)
+    [ Css.borderRightWidth (Css.px 2)
+    , Css.paddingRight (Css.px 2)
     , Css.borderTopRightRadius (Css.px 4)
     , Css.borderBottomRightRadius (Css.px 4)
     ]
@@ -110,16 +112,19 @@ highlightStyles color =
         [ Css.backgroundColor color
         , Css.boxShadow5 Css.zero (Css.px 1) Css.zero Css.zero Colors.gray75
         , MediaQuery.highContrastMode
-            [ Css.property "background-color" "Mark"
-            , Css.property "forced-color-adjust" "none"
+            [ Css.property "border-color" "Mark"
+            , Css.property "color" "CanvasText"
             ]
         ]
 
 
 sharedStyles : List Css.Style
 sharedStyles =
-    [ Css.paddingTop (Css.px 4)
-    , Css.paddingBottom (Css.px 3)
+    [ Css.borderStyle Css.solid
+    , Css.borderTopWidth (Css.px 2)
+    , Css.paddingTop (Css.px 2)
+    , Css.borderBottomWidth (Css.px 2)
+    , Css.paddingBottom (Css.px 1)
     , Css.property "transition" "background-color 0.4s, box-shadow 0.4s"
     ]
 
@@ -131,9 +136,8 @@ hoverStyles color =
         [ Css.boxShadow5 Css.zero Css.zero (Css.px 10) (Css.px 2) color
         , Css.important (Css.backgroundColor color)
         , MediaQuery.highContrastMode
-            [ Css.property "background-color" "Highlight" |> Css.important
-            , Css.property "color" "HighlightText"
-            , Css.property "forced-color-adjust" "none"
+            [ Css.property "border-color" "Highlight"
+                |> Css.important
             ]
 
         -- The Highlighter applies both these styles and the startGroup and
@@ -159,8 +163,9 @@ buildMarkerWithBorder { highlightColor, kind, name } =
                 [ Css.padding2 (Css.px 6) Css.zero
                 , Css.lineHeight (Css.em 2.5)
                 , MediaQuery.highContrastMode
-                    [ Css.property "background-color" "Mark" |> Css.important
-                    , Css.property "forced-color-adjust" "none"
+                    [ Css.property "border-color" "Mark"
+                    , Css.property "color" "CanvasText"
+                    , Css.borderWidth (Css.px 2)
                     ]
                 ]
     in
