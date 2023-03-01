@@ -70,7 +70,7 @@ example =
                 , tags = tags
                 }
             ]
-    , categories = [ Assignments ]
+    , categories = [ Instructional ]
     , keyboardSupport = []
     }
 
