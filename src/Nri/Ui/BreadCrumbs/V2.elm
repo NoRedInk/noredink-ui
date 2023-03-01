@@ -8,9 +8,14 @@ module Nri.Ui.BreadCrumbs.V2 exposing
 {-|
 
 
-# Changes from V1:
+### Patch changes:
 
-  - switch to list-based attributes pattern
+    - when only 1 breadcrumb is present, just render as a styled h1 or h2 directly, without nav semantics
+
+
+### Changes from V1:
+
+    - switch to list-based attributes pattern
 
 Learn more about 'breadcrumbs' to help a user orient themselves within a site here: <https://www.w3.org/WAI/WCAG21/Techniques/general/G65>.
 
@@ -57,6 +62,7 @@ import Html.Styled
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -195,6 +201,48 @@ pageTitle (BreadCrumb { text }) =
     text
 
 
+type Level
+    = H1
+    | H2
+
+
+viewLevel : Level -> (List (Attribute msg) -> List (Html msg) -> Html msg)
+viewLevel heading =
+    case heading of
+        H1 ->
+            Html.Styled.h1
+
+        H2 ->
+            Html.Styled.h2
+
+
+fontCss : Level -> List Style
+fontCss heading =
+    case heading of
+        H1 ->
+            [ fontSize (px 30)
+            , Media.withMedia [ MediaQuery.mobile ] [ fontSize (px 25) ]
+            , color Colors.navy
+            ]
+
+        H2 ->
+            [ fontSize (px 20)
+            , color Colors.navy
+            ]
+
+
+linkCss : Level -> List Style
+linkCss heading =
+    case heading of
+        H1 ->
+            []
+
+        H2 ->
+            [ color Colors.azure
+            , hover [ color Colors.azureDark ]
+            ]
+
+
 {-| Usually, the label value will be the string "breadcrumbs".
 
 It's configurable so that if more than one set of BreadCrumbs ever appear on the page, the aria-label for the nav can still be unique.
@@ -208,18 +256,7 @@ view :
     -> BreadCrumbs route
     -> Html msg
 view config (BreadCrumbs { primary }) =
-    let
-        fontCss =
-            [ fontSize (px 30)
-            , Media.withMedia [ MediaQuery.mobile ] [ fontSize (px 25) ]
-            , color Colors.navy
-            ]
-
-        linkCss =
-            []
-    in
-    viewBreadCrumbs fontCss linkCss Html.Styled.h1 config (List.reverse primary)
-        |> navContainer config.label
+    viewNavOrH1 H1 config (List.reverse primary)
 
 
 {-| Usually, the label value will be the string "secondary breadcrumbs".
@@ -235,97 +272,95 @@ viewSecondary :
     -> BreadCrumbs route
     -> Html msg
 viewSecondary config (BreadCrumbs { secondary }) =
-    let
-        fontCss =
-            [ fontSize (px 20)
-            , color Colors.navy
-            ]
-
-        linkCss =
-            [ color Colors.azure
-            , hover [ color Colors.azureDark ]
-            ]
-    in
-    viewBreadCrumbs fontCss linkCss Html.Styled.h2 config (List.reverse secondary)
-        |> navContainer config.label
+    viewNavOrH1 H2 config (List.reverse secondary)
 
 
-navContainer : String -> List (Html msg) -> Html msg
-navContainer label =
-    styled nav
-        [ alignItems center
-        , displayFlex
-        , Media.withMedia [ MediaQuery.mobile ] [ marginBottom (px 10), flexWrap wrap ]
-        ]
-        [ Aria.label label ]
-
-
-viewBreadCrumbs :
-    List Style
-    -> List Style
-    -> (List (Attribute msg) -> List (Html msg) -> Html msg)
+viewNavOrH1 :
+    Level
     ->
-        { config
-            | aTagAttributes : route -> List (Attribute msg)
-            , isCurrentRoute : route -> Bool
+        { aTagAttributes : route -> List (Attribute msg)
+        , isCurrentRoute : route -> Bool
+        , label : String
         }
     -> List (BreadCrumb route)
-    -> List (Html msg)
-viewBreadCrumbs fontCss linkCss headingLevel config breadCrumbs =
+    -> Html msg
+viewNavOrH1 headingLevel config breadCrumbs =
     let
         breadCrumbCount : Int
         breadCrumbCount =
             List.length breadCrumbs
+
+        renderedBreadCrumbs =
+            List.indexedMap
+                (\i ->
+                    viewBreadCrumb
+                        headingLevel
+                        config
+                        { index = i
+                        , finalIndex = breadCrumbCount - 1
+                        , isIconOnly =
+                            -- the first breadcrumb should collapse when there
+                            -- are 3 breadcrumbs or more in the group
+                            --
+                            -- Hypothetically, if there were 4 breadcrumbs, then the
+                            -- first 2 breadcrumbs should collapse
+                            (breadCrumbCount - i) > 2
+                        }
+                )
+                breadCrumbs
+                |> List.intersperse (Svg.toHtml arrowRight)
     in
-    List.indexedMap
-        (\i ->
-            viewBreadCrumb fontCss
-                linkCss
-                headingLevel
-                config
-                { isLast = (i + 1) == breadCrumbCount
-                , isIconOnly =
-                    -- the first breadcrumb should collapse when there
-                    -- are 3 breadcrumbs or more in the group
-                    --
-                    -- Hypothetically, if there were 4 breadcrumbs, then the
-                    -- first 2 breadcrumbs should collapse
-                    (breadCrumbCount - i) > 2
-                }
-        )
-        breadCrumbs
-        |> List.intersperse (Svg.toHtml arrowRight)
+    case breadCrumbCount of
+        0 ->
+            text ""
+
+        1 ->
+            div [ css navContainerStyles ]
+                renderedBreadCrumbs
+
+        _ ->
+            nav [ Aria.label config.label, css navContainerStyles ]
+                renderedBreadCrumbs
+
+
+navContainerStyles : List Css.Style
+navContainerStyles =
+    [ alignItems center
+    , displayFlex
+    , Media.withMedia [ MediaQuery.mobile ] [ marginBottom (px 10), flexWrap wrap ]
+    ]
 
 
 viewBreadCrumb :
-    List Style
-    -> List Style
-    -> (List (Attribute msg) -> List (Html msg) -> Html msg)
+    Level
     ->
         { config
             | aTagAttributes : route -> List (Attribute msg)
             , isCurrentRoute : route -> Bool
         }
-    -> { isLast : Bool, isIconOnly : Bool }
+    -> { index : Int, finalIndex : Int, isIconOnly : Bool }
     -> BreadCrumb route
     -> Html msg
-viewBreadCrumb fontCss linkCss headingLevel config iconConfig (BreadCrumb crumb) =
+viewBreadCrumb headingLevel config { index, finalIndex, isIconOnly } (BreadCrumb crumb) =
     let
         commonCss =
             [ alignItems center
             , displayFlex
             , margin zero
-            , Css.batch fontCss
+            , Css.batch (fontCss headingLevel)
             , Fonts.baseFont
             , textDecoration none
             ]
 
+        isLast =
+            index == finalIndex
+
         content =
-            viewBreadCrumbContent iconConfig crumb
+            viewBreadCrumbContent { isLast = isLast, isIconOnly = isIconOnly } crumb
     in
-    if iconConfig.isLast then
-        headingLevel
-            [ Aria.currentPage
+    if isLast then
+        viewLevel headingLevel
+            [ AttributesExtra.includeIf (index /= 0) Aria.currentPage
             , Attributes.id crumb.id
             , Attributes.tabindex -1
             , css (fontWeight bold :: commonCss)
@@ -335,7 +370,7 @@ viewBreadCrumb fontCss linkCss headingLevel config iconConfig (BreadCrumb crumb)
 
              else
                 [ Html.Styled.a
-                    (css (commonCss ++ linkCss)
+                    (css (commonCss ++ linkCss headingLevel)
                         :: config.aTagAttributes crumb.route
                     )
                     content
@@ -344,7 +379,7 @@ viewBreadCrumb fontCss linkCss headingLevel config iconConfig (BreadCrumb crumb)
 
     else
         Html.Styled.a
-            (css (commonCss ++ linkCss)
+            (css (commonCss ++ linkCss headingLevel)
                 :: Attributes.id crumb.id
                 :: config.aTagAttributes crumb.route
             )
