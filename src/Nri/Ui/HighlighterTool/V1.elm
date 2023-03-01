@@ -89,8 +89,10 @@ buildMarker { highlightColor, hoverColor, hoverHighlightColor, kind, name } =
 
 startGroupStyles : List Css.Style
 startGroupStyles =
-    [ Css.borderLeftWidth (Css.px 2)
-    , Css.paddingLeft (Css.px 2)
+    [ MediaQuery.highContrastMode
+        [ Css.property "border-left" "2px solid Mark"
+        ]
+    , Css.paddingLeft (Css.px 4)
     , Css.borderTopLeftRadius (Css.px 4)
     , Css.borderBottomLeftRadius (Css.px 4)
     ]
@@ -98,8 +100,10 @@ startGroupStyles =
 
 endGroupStyles : List Css.Style
 endGroupStyles =
-    [ Css.borderRightWidth (Css.px 2)
-    , Css.paddingRight (Css.px 2)
+    [ MediaQuery.highContrastMode
+        [ Css.property "border-right" "2px solid Mark"
+        ]
+    , Css.paddingRight (Css.px 4)
     , Css.borderTopRightRadius (Css.px 4)
     , Css.borderBottomRightRadius (Css.px 4)
     ]
@@ -111,21 +115,19 @@ highlightStyles color =
         sharedStyles
         [ Css.backgroundColor color
         , Css.boxShadow5 Css.zero (Css.px 1) Css.zero Css.zero Colors.gray75
-        , MediaQuery.highContrastMode
-            [ Css.property "border-color" "Mark"
-            , Css.property "color" "CanvasText"
-            ]
         ]
 
 
 sharedStyles : List Css.Style
 sharedStyles =
-    [ Css.borderStyle Css.solid
-    , Css.borderTopWidth (Css.px 2)
-    , Css.paddingTop (Css.px 2)
-    , Css.borderBottomWidth (Css.px 2)
-    , Css.paddingBottom (Css.px 1)
+    [ Css.paddingTop (Css.px 4)
+    , Css.paddingBottom (Css.px 3)
     , Css.property "transition" "background-color 0.4s, box-shadow 0.4s"
+    , MediaQuery.highContrastMode
+        [ Css.property "color" "CanvasText"
+        , Css.property "border-top" "2px solid Mark"
+        , Css.property "border-bottom" "2px solid Mark"
+        ]
     ]
 
 
@@ -136,8 +138,7 @@ hoverStyles color =
         [ Css.boxShadow5 Css.zero Css.zero (Css.px 10) (Css.px 2) color
         , Css.important (Css.backgroundColor color)
         , MediaQuery.highContrastMode
-            [ Css.property "border-color" "Highlight"
-                |> Css.important
+            [ Css.property "border-color" "Highlight" |> Css.important
             ]
 
         -- The Highlighter applies both these styles and the startGroup and
