@@ -3,7 +3,7 @@ module Nri.Ui.ClickableText.V3 exposing
     , link
     , Attribute
     , small, medium, large, modal
-    , appearsInline, inMenu
+    , appearsInline
     , onClick, submit, opensModal
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , disabled
@@ -11,7 +11,7 @@ module Nri.Ui.ClickableText.V3 exposing
     , hideIconForMobile, hideIconFor
     , custom, nriDescription, testId, id
     , hideTextForMobile, hideTextFor
-    , css, notMobileCss, mobileCss, quizEngineMobileCss
+    , css, notMobileCss, mobileCss, quizEngineMobileCss, rightIconCss
     )
 
 {-| Notes for V4:
@@ -73,7 +73,7 @@ HTML `<a>` elements and are created here with `*Link` functions.
 
 ## Appearance
 
-@docs appearsInline, inMenu
+@docs appearsInline
 
 
 ## Behavior
@@ -97,7 +97,7 @@ HTML `<a>` elements and are created here with `*Link` functions.
 ### CSS
 
 @docs hideTextForMobile, hideTextFor
-@docs css, notMobileCss, mobileCss, quizEngineMobileCss
+@docs css, notMobileCss, mobileCss, quizEngineMobileCss, rightIconCss
 
 -}
 
@@ -394,18 +394,15 @@ appearsInline =
         ]
 
 
-{-| -}
-inMenu : Attribute msg
-inMenu =
+{-| Specifies custom styles for the rightIcon
+-}
+rightIconCss : List Css.Style -> Attribute msg
+rightIconCss styles =
     set
         (\config ->
             { config
                 | rightIconStyles =
-                    List.append config.rightIconStyles
-                        [ Css.width (Css.px 15)
-                        , Css.height (Css.px 15)
-                        , Css.marginLeft (Css.px 8)
-                        ]
+                    List.append config.rightIconStyles styles
             }
         )
 
