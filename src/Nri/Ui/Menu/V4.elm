@@ -956,15 +956,7 @@ viewClickableText title menuConfig clickableTextAttributes attributes =
         ([ ClickableText.custom attributes
          , ClickableText.disabled menuConfig.isDisabled
          , ClickableText.rightIcon (AnimatedIcon.arrowDownUp menuConfig.isOpen)
-         , ClickableText.css
-            [ Css.Global.descendants
-                [ Css.Global.selector "svg"
-                    [ Css.width (Css.px 15) |> Css.important
-                    , Css.height (Css.px 15) |> Css.important
-                    , Css.marginLeft (Css.px 8) |> Css.important
-                    ]
-                ]
-            ]
+         , ClickableText.inMenu
          ]
             ++ clickableTextAttributes
         )
