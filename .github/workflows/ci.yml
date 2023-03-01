@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: cachix/install-nix-action@v17
+      - uses: cachix/install-nix-action@v20
         # pinning the nix version to avoid a CI failure
         # Fix taken from this thread https://github.com/cachix/cachix/issues/418
         # about a previous bad nix version
