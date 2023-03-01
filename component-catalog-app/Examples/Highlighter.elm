@@ -244,7 +244,7 @@ example =
                   }
                 ]
             ]
-    , categories = [ Assignments ]
+    , categories = [ Instructional ]
     , keyboardSupport = []
     }
 
