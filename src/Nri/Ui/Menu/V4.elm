@@ -59,7 +59,6 @@ import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
 import Css exposing (..)
-import Css.Global
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (class, classList, css)
 import Html.Styled.Events as Events
