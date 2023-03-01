@@ -364,10 +364,11 @@ viewSpeechBubble config referencingId extraAttributes =
         ([ Balloon.nriDescription "guidance-speech-bubble"
          , Balloon.white
          , Balloon.css
-            [ Css.borderRadius (Css.px 16)
-            , Css.padding (Css.px 10)
+            [ Css.borderRadius (Css.px 20)
+            , Css.padding (Css.px 20)
             , Css.boxShadow Css.none
             , Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ]
+            , Css.fontSize (Css.px 18)
             ]
          , Balloon.custom
             [ AttributesExtra.maybe (guidanceId >> Attributes.id) config.id

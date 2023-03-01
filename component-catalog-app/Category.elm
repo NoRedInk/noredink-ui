@@ -28,7 +28,7 @@ type Category
     | Messaging
     | Atoms
     | Text
-    | Assignments
+    | Instructional
     | Animations
     | Progress
     | Navigation
@@ -37,17 +37,17 @@ type Category
 {-| -}
 all : List Category
 all =
-    [ Animations
+    [ Messaging
+    , Animations
     , Atoms
     , Buttons
     , Icons
     , Inputs
-    , Assignments
+    , Instructional
     , Layout
-    , Text
-    , Messaging
-    , Progress
     , Navigation
+    , Progress
+    , Text
     ]
 
 
@@ -68,8 +68,8 @@ fromString string =
         "Icons" ->
             Ok Icons
 
-        "Assignments" ->
-            Ok Assignments
+        "Instructional" ->
+            Ok Instructional
 
         "Messaging" ->
             Ok Messaging
@@ -109,8 +109,8 @@ forDisplay category =
         Icons ->
             "Icons"
 
-        Assignments ->
-            "Assignments"
+        Instructional ->
+            "Instructional"
 
         Messaging ->
             "Alerts and Messages"
@@ -159,8 +159,8 @@ forId category =
         Icons ->
             "icons"
 
-        Assignments ->
-            "assignments"
+        Instructional ->
+            "instructional"
 
         Messaging ->
             "alerts-and-messages"
