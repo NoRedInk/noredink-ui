@@ -5,6 +5,11 @@ module Nri.Ui.Mark.V2 exposing
 
 {-|
 
+
+### Patch changes
+
+  - change how the start styles are attached when there is not an explicit tag to show in order to reduce how often the starting highlight ends up isolated on its own line
+
 @docs Mark
 @docs view, viewWithInlineTags, viewWithBalloonTags
 

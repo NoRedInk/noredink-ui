@@ -6,6 +6,11 @@ module Nri.Ui.HighlighterTool.V1 exposing
 
 {-|
 
+
+### Patch changes
+
+  - change the high-contrast styles to be border-based instead of background-color based
+
 @docs Tool
 @docs EraserModel, buildEraser
 @docs MarkerModel, buildMarker, buildMarkerWithBorder
