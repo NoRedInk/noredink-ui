@@ -65,6 +65,7 @@ example =
                 , onChangeTag = SetTool << Just
                 , getColor = getColor
                 , getName = getName
+                , highlighterId = "highlighter"
                 }
                 { currentTool = state.currentTool
                 , tags = tags
