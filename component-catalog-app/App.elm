@@ -320,7 +320,7 @@ viewCategory model category =
 viewLayout : Model key -> List (Header.Attribute (Routes.Route Examples.State Examples.Msg) Msg) -> Html Msg -> Html Msg
 viewLayout model headerExtras content =
     Html.div []
-        [ Routes.viewHeader model.route headerExtras
+        [ Html.header [] [ Routes.viewHeader model.route headerExtras ]
         , Html.div
             [ css
                 [ displayFlex
@@ -414,7 +414,7 @@ navigation { moduleStates, route, isSideNavOpen, openTooltip } =
             ]
             :: SideNav.entry "All" [ SideNav.href Routes.All ]
             :: categoryNavLinks
-            ++ [ SideNav.entry "Assorted Components" [ SideNav.linkExternal "https://www.noredink.com/assorted_components/" ]
+            ++ [ SideNav.entry "Additional Components" [ SideNav.linkExternal "https://www.noredink.com/assorted_components/" ]
                ]
         )
 

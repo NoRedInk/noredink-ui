@@ -7,7 +7,9 @@ module Nri.Ui.Select.V9 exposing
     , hiddenLabel, visibleLabel
     , disabled, loading, errorIf, errorMessage, guidance
     , custom, nriDescription, id, testId
+    , icon
     , containerCss, noMargin
+    , batch
     )
 
 {-| Build a select input with a label, optional guidance, and error messaging.
@@ -18,6 +20,7 @@ module Nri.Ui.Select.V9 exposing
     - The option `value` attribute is no longer prefixed with `nri-select-`;
       This is not a breaking change to the API, but affects automated tests
       that are looking for this prefix.
+    - adds `icon` support
 
 @docs view, generateId
 
@@ -39,7 +42,9 @@ module Nri.Ui.Select.V9 exposing
 @docs hiddenLabel, visibleLabel
 @docs disabled, loading, errorIf, errorMessage, guidance
 @docs custom, nriDescription, id, testId
+@docs icon
 @docs containerCss, noMargin
+@docs batch
 
 -}
 
@@ -58,7 +63,9 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
+import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.InputStyles.V4 as InputStyles
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Util
 import SolidColor
 
@@ -105,6 +112,13 @@ and the given error message will be shown.
 errorMessage : Maybe String -> Attribute value
 errorMessage =
     Attribute << InputErrorAndGuidanceInternal.setErrorMessage
+
+
+{-| Combine several attributes into one. A nice way to do nothing via batch []
+-}
+batch : List (Attribute value) -> Attribute value
+batch attrs =
+    List.foldl (\(Attribute update) composition -> composition >> update) identity attrs |> Attribute
 
 
 {-| A guidance message shows below the input, unless an error message is showing instead.
@@ -160,6 +174,13 @@ nriDescription description =
 testId : String -> Attribute value
 testId id_ =
     custom [ Extra.testId id_ ]
+
+
+{-| Add an SVG icon that will render on top of the select by way of absolute positioning.
+-}
+icon : Svg -> Attribute msg
+icon icon_ =
+    Attribute <| \attributes -> { attributes | icon = Just icon_ }
 
 
 {-| Adds CSS to the element containing the input.
@@ -240,6 +261,7 @@ type alias Config value =
     , loading : Bool
     , guidance : Guidance
     , hideLabel : Bool
+    , icon : Maybe Svg
     , noMarginTop : Bool
     , containerCss : List Css.Style
     , custom : List (Html.Attribute Never)
@@ -259,6 +281,7 @@ defaultConfig =
     , loading = False
     , guidance = InputErrorAndGuidanceInternal.noGuidance
     , hideLabel = False
+    , icon = Nothing
     , noMarginTop = False
     , containerCss = []
     , custom = []
@@ -295,6 +318,7 @@ view label attributes =
 
                else
                 Css.paddingTop (Css.px InputStyles.defaultMarginTop)
+             , Css.color Colors.gray20
              ]
                 ++ config.containerCss
             )
@@ -304,6 +328,7 @@ view label attributes =
             , disabled = disabled_
             }
             config
+         , viewJust (viewIcon config) config.icon
          , InputLabelInternal.view
             { for = id_
             , label = label
@@ -313,6 +338,40 @@ view label attributes =
          ]
             ++ InputErrorAndGuidanceInternal.view id_ InputErrorAndGuidanceInternal.smallMargin config
         )
+
+
+viewIcon : { config | noMarginTop : Bool, disabled : Bool } -> Svg.Svg -> Html a
+viewIcon config =
+    let
+        topPx =
+            15
+                + (if config.noMarginTop then
+                    0
+
+                   else
+                    InputStyles.defaultMarginTop
+                  )
+                + (if config.disabled then
+                    1
+
+                   else
+                    0
+                  )
+    in
+    Svg.withWidth (Css.px 15)
+        >> Svg.withHeight (Css.px 15)
+        >> Svg.withCss
+            [ Css.position Css.absolute
+            , Css.top (Css.px topPx)
+            , Css.left (Css.px 15)
+            , Css.pointerEvents Css.none
+            , if config.disabled then
+                Css.color Colors.gray45
+
+              else
+                Css.color Colors.azure
+            ]
+        >> Svg.toHtml
 
 
 viewSelect : { id : String, disabled : Bool } -> Config a -> Html a
@@ -342,7 +401,7 @@ viewSelect config_ config =
         valueLookup =
             optionStringChoices
                 ++ groupStringChoices
-                |> List.map (\x -> ( x.id, x.value ))
+                |> List.map (\x -> ( x.strValue, x.value ))
                 |> Dict.fromList
 
         decodeValue string =
@@ -416,8 +475,7 @@ viewSelect config_ config =
                 , Css.borderRadius (Css.px 8) |> Css.important
                 ]
 
-            -- Font and color
-            , Css.color Colors.gray20
+            -- Font and text
             , Fonts.baseFont
             , Css.fontSize (Css.px 15)
             , Css.fontWeight (Css.int 600)
@@ -437,7 +495,12 @@ viewSelect config_ config =
             -- Size and spacing
             , Css.height (Css.px 45)
             , Css.width (Css.pct 100)
-            , Css.paddingLeft (Css.px 15)
+            , case config.icon of
+                Just _ ->
+                    Css.paddingLeft (Css.px 36)
+
+                Nothing ->
+                    Css.paddingLeft (Css.px 15)
             , Css.paddingRight (Css.px 30)
 
             -- Icons
@@ -481,7 +544,7 @@ viewChoice current choice =
 -}
 generateId : String -> String
 generateId x =
-    "nri-select-" ++ Nri.Ui.Util.dashify (Nri.Ui.Util.removePunctuation x)
+    "nri-select-" ++ String.toLower (Nri.Ui.Util.dashify (Nri.Ui.Util.removePunctuation x))
 
 
 selectArrowsCss : { config | disabled : Bool } -> Css.Style

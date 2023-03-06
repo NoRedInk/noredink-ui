@@ -71,7 +71,7 @@ example =
                 , tags = tags
                 }
             ]
-    , categories = [ Buttons, Interactions ]
+    , categories = [ Instructional ]
     , keyboardSupport = []
     }
 

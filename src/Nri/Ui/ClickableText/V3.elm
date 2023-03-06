@@ -11,7 +11,7 @@ module Nri.Ui.ClickableText.V3 exposing
     , hideIconForMobile, hideIconFor
     , custom, nriDescription, testId, id
     , hideTextForMobile, hideTextFor
-    , css, notMobileCss, mobileCss, quizEngineMobileCss
+    , css, notMobileCss, mobileCss, quizEngineMobileCss, rightIconCss
     )
 
 {-| Notes for V4:
@@ -97,7 +97,7 @@ HTML `<a>` elements and are created here with `*Link` functions.
 ### CSS
 
 @docs hideTextForMobile, hideTextFor
-@docs css, notMobileCss, mobileCss, quizEngineMobileCss
+@docs css, notMobileCss, mobileCss, quizEngineMobileCss, rightIconCss
 
 -}
 
@@ -394,6 +394,19 @@ appearsInline =
         ]
 
 
+{-| Specifies custom styles for the rightIcon
+-}
+rightIconCss : List Css.Style -> Attribute msg
+rightIconCss styles =
+    set
+        (\config ->
+            { config
+                | rightIconStyles =
+                    List.append config.rightIconStyles styles
+            }
+        )
+
+
 {-| Creates a `<button>` element
 -}
 button :
@@ -449,6 +462,7 @@ viewContent :
         , icon : Maybe Svg
         , rightIcon : Maybe Svg
         , iconStyles : List Style
+        , rightIconStyles : List Style
     }
     -> Html msg
 viewContent config =
@@ -491,7 +505,7 @@ viewContent config =
                 iconAndTextContainer
                     [ viewIcon (Css.marginRight iconSize :: config.iconStyles) leftIcon
                     , span [ ExtraAttributes.nriDescription "clickable-text-label" ] [ text config.label ]
-                    , viewIcon [ Css.marginLeft iconSize ] rightIcon_
+                    , viewIcon (Css.marginLeft iconSize :: config.rightIconStyles) rightIcon_
                     ]
 
             ( Just leftIcon, Nothing ) ->
@@ -503,7 +517,7 @@ viewContent config =
             ( Nothing, Just rightIcon_ ) ->
                 iconAndTextContainer
                     [ span [ ExtraAttributes.nriDescription "clickable-text-label" ] [ text config.label ]
-                    , viewIcon [ Css.marginLeft iconSize ] rightIcon_
+                    , viewIcon (Css.marginLeft iconSize :: config.rightIconStyles) rightIcon_
                     ]
 
             ( Nothing, Nothing ) ->
@@ -577,6 +591,7 @@ type alias ClickableTextAttributes msg =
     , icon : Maybe Svg
     , iconStyles : List Style
     , rightIcon : Maybe Svg
+    , rightIconStyles : List Style
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
     , disabled : Bool
@@ -591,6 +606,7 @@ defaults =
     , icon = Nothing
     , iconStyles = []
     , rightIcon = Nothing
+    , rightIconStyles = []
     , customAttributes = [ Attributes.class FocusRing.customClass ]
     , customStyles = [ Css.pseudoClass "focus-visible" (Css.borderRadius (Css.px 4) :: FocusRing.tightStyles) ]
     , disabled = False
