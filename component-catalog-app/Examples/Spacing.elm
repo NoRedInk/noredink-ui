@@ -119,6 +119,27 @@ view ellieLinkConfig state =
         , { name = "centeredContentWithSidePaddingAndCustomWidth", alignment = "Centered", maxWidth = "(customizable)", sidePadding = "when viewport <= (custom breakpoint value - 30)" }
         , { name = "centeredContentWithCustomWidth", alignment = "Centered", maxWidth = "(customizable)", sidePadding = "0px" }
         ]
+    , Heading.h2 [ Heading.plaintext "Constants", Heading.css [ Css.marginTop Spacing.verticalSpacerPx ] ]
+    , Table.view
+        [ Table.string
+            { header = "Name"
+            , value = .name
+            , width = Css.pct 10
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        , Table.string
+            { header = "Value"
+            , value = .value
+            , width = Css.pct 10
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        ]
+        [ { name = "pageTopWhitespacePx", value = "30px" }
+        , { name = "pageBottomWhitespacePx", value = "50px" }
+        , { name = "pageSideWhitespacePx", value = "15px" }
+        ]
     ]
 
 
