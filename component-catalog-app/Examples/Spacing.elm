@@ -18,9 +18,12 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V6 as Table
+import Svg.Styled
+import Svg.Styled.Attributes
 
 
 moduleName : String
@@ -43,9 +46,161 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
-    , preview = []
+    , preview = preview
     , view = view
     }
+
+
+preview : List (Html msg)
+preview =
+    [ Svg.Styled.svg
+        [ Svg.Styled.Attributes.viewBox "0 0 100 100"
+        ]
+        [ Svg.Styled.rect
+            [ Svg.Styled.Attributes.width "100"
+            , Svg.Styled.Attributes.height "100"
+            , Svg.Styled.Attributes.fill Colors.white.value
+            ]
+            []
+        , Svg.Styled.rect
+            [ Svg.Styled.Attributes.x "15"
+            , Svg.Styled.Attributes.y "30"
+            , Svg.Styled.Attributes.width "70"
+            , Svg.Styled.Attributes.height "20"
+            , Svg.Styled.Attributes.fill Colors.gray96.value
+            ]
+            []
+        , Svg.Styled.text_
+            [ Svg.Styled.Attributes.fill Colors.gray20.value
+            , Svg.Styled.Attributes.css [ Fonts.baseFont, Css.fontSize (Css.px 8) ]
+            , Svg.Styled.Attributes.x "20"
+            , Svg.Styled.Attributes.y "43"
+            ]
+            [ Svg.Styled.text "Content" ]
+        , -- Top red line indicator
+          Svg.Styled.g []
+            [ Svg.Styled.line
+                [ Svg.Styled.Attributes.x1 "50"
+                , Svg.Styled.Attributes.x2 "50"
+                , Svg.Styled.Attributes.y1 "1"
+                , Svg.Styled.Attributes.y2 "29"
+                , Svg.Styled.Attributes.stroke Colors.red.value
+                ]
+                []
+            , Svg.Styled.line
+                [ Svg.Styled.Attributes.x1 "45"
+                , Svg.Styled.Attributes.x2 "55"
+                , Svg.Styled.Attributes.y1 "1"
+                , Svg.Styled.Attributes.y2 "1"
+                , Svg.Styled.Attributes.stroke Colors.red.value
+                ]
+                []
+            , Svg.Styled.line
+                [ Svg.Styled.Attributes.x1 "45"
+                , Svg.Styled.Attributes.x2 "55"
+                , Svg.Styled.Attributes.y1 "29"
+                , Svg.Styled.Attributes.y2 "29"
+                , Svg.Styled.Attributes.stroke Colors.red.value
+                ]
+                []
+            , Svg.Styled.text_
+                [ Svg.Styled.Attributes.fill Colors.red.value
+                , Svg.Styled.Attributes.css [ Fonts.baseFont, Css.fontSize (Css.px 8) ]
+                , Svg.Styled.Attributes.x "53"
+                , Svg.Styled.Attributes.y "20"
+                ]
+                [ Svg.Styled.text "30px" ]
+            ]
+        , -- Bottom red line indicator
+          Svg.Styled.g []
+            [ Svg.Styled.line
+                [ Svg.Styled.Attributes.x1 "50"
+                , Svg.Styled.Attributes.x2 "50"
+                , Svg.Styled.Attributes.y1 "51"
+                , Svg.Styled.Attributes.y2 "99"
+                , Svg.Styled.Attributes.stroke Colors.red.value
+                ]
+                []
+            , Svg.Styled.line
+                [ Svg.Styled.Attributes.x1 "45"
+                , Svg.Styled.Attributes.x2 "55"
+                , Svg.Styled.Attributes.y1 "51"
+                , Svg.Styled.Attributes.y2 "51"
+                , Svg.Styled.Attributes.stroke Colors.red.value
+                ]
+                []
+            , Svg.Styled.line
+                [ Svg.Styled.Attributes.x1 "45"
+                , Svg.Styled.Attributes.x2 "55"
+                , Svg.Styled.Attributes.y1 "99"
+                , Svg.Styled.Attributes.y2 "99"
+                , Svg.Styled.Attributes.stroke Colors.red.value
+                ]
+                []
+            , Svg.Styled.text_
+                [ Svg.Styled.Attributes.fill Colors.red.value
+                , Svg.Styled.Attributes.css [ Fonts.baseFont, Css.fontSize (Css.px 8) ]
+                , Svg.Styled.Attributes.x "53"
+                , Svg.Styled.Attributes.y "75"
+                ]
+                [ Svg.Styled.text "50px" ]
+            ]
+        , -- Right red line indicator
+          Svg.Styled.g []
+            [ Svg.Styled.line
+                [ Svg.Styled.Attributes.x1 "86"
+                , Svg.Styled.Attributes.x2 "99"
+                , Svg.Styled.Attributes.y1 "40"
+                , Svg.Styled.Attributes.y2 "40"
+                , Svg.Styled.Attributes.stroke Colors.red.value
+                ]
+                []
+            , Svg.Styled.line
+                [ Svg.Styled.Attributes.x1 "86"
+                , Svg.Styled.Attributes.x2 "86"
+                , Svg.Styled.Attributes.y1 "38"
+                , Svg.Styled.Attributes.y2 "42"
+                , Svg.Styled.Attributes.stroke Colors.red.value
+                ]
+                []
+            , Svg.Styled.line
+                [ Svg.Styled.Attributes.x1 "99"
+                , Svg.Styled.Attributes.x2 "99"
+                , Svg.Styled.Attributes.y1 "38"
+                , Svg.Styled.Attributes.y2 "42"
+                , Svg.Styled.Attributes.stroke Colors.red.value
+                ]
+                []
+            ]
+        , -- Left red line indicator
+          Svg.Styled.g []
+            [ Svg.Styled.line
+                [ Svg.Styled.Attributes.x1 "1"
+                , Svg.Styled.Attributes.x2 "14"
+                , Svg.Styled.Attributes.y1 "40"
+                , Svg.Styled.Attributes.y2 "40"
+                , Svg.Styled.Attributes.stroke Colors.red.value
+                ]
+                []
+            , Svg.Styled.line
+                [ Svg.Styled.Attributes.x1 "1"
+                , Svg.Styled.Attributes.x2 "1"
+                , Svg.Styled.Attributes.y1 "38"
+                , Svg.Styled.Attributes.y2 "42"
+                , Svg.Styled.Attributes.stroke Colors.red.value
+                ]
+                []
+            , Svg.Styled.line
+                [ Svg.Styled.Attributes.x1 "14"
+                , Svg.Styled.Attributes.x2 "14"
+                , Svg.Styled.Attributes.y1 "38"
+                , Svg.Styled.Attributes.y2 "42"
+                , Svg.Styled.Attributes.stroke Colors.red.value
+                ]
+                []
+            ]
+        ]
+    ]
 
 
 view : EllieLink.Config -> State -> List (Html Msg)
