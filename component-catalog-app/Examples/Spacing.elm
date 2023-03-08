@@ -58,22 +58,6 @@ view ellieLinkConfig state =
                     [ settings.topContainerStyle
                     , settings.horizontalContainerStyle
                     , settings.bottomContainerStyle
-                    , if settings.childVerticalSpace then
-                        Just
-                            ( "Css.property \"row-gap\" (.value Spacing.verticalSpacerPx)"
-                            , Css.property "row-gap" (.value Spacing.verticalSpacerPx)
-                            )
-
-                      else
-                        Nothing
-                    , if settings.childHorizontalSpace then
-                        Just
-                            ( "Css.property \"column-gap\" (.value Spacing.horizontalSpacerPx"
-                            , Css.property "column-gap" (.value Spacing.horizontalSpacerPx)
-                            )
-
-                      else
-                        Nothing
                     ]
                 )
                 (List.repeat settings.childCount child)
@@ -174,8 +158,6 @@ type alias Settings =
     , horizontalContainerStyle : Maybe ( String, Style )
     , bottomContainerStyle : Maybe ( String, Style )
     , childCount : Int
-    , childVerticalSpace : Bool
-    , childHorizontalSpace : Bool
     }
 
 
@@ -237,8 +219,6 @@ controlSettings =
                 )
             )
         |> Control.field "Child count" (ControlExtra.int 10)
-        |> Control.field "Separate children vertically" (Control.bool True)
-        |> Control.field "Separate children horizontally" (Control.bool True)
 
 
 asChoice : ( String, Style ) -> ( String, Control ( String, Style ) )
