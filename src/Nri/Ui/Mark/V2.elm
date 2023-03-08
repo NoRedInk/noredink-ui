@@ -5,6 +5,11 @@ module Nri.Ui.Mark.V2 exposing
 
 {-|
 
+
+### Patch changes
+
+  - change how the start styles are attached when there is not an explicit tag to show in order to reduce how often the starting highlight ends up isolated on its own line
+
 @docs Mark
 @docs view, viewWithInlineTags, viewWithBalloonTags
 
@@ -219,16 +224,22 @@ viewMarked tagStyle markedWith segments =
                 ]
             ]
         ]
-        (viewStartHighlight tagStyle markedWith :: segments)
+        (case markedWith.name of
+            Just name ->
+                viewStartHighlightTag tagStyle markedWith name :: segments
+
+            Nothing ->
+                segments
+        )
 
 
-viewStartHighlight : TagStyle -> Mark -> Html msg
-viewStartHighlight tagStyle marked =
+viewStartHighlightTag : TagStyle -> Mark -> String -> Html msg
+viewStartHighlightTag tagStyle marked name =
     span
         [ css (marked.styles ++ marked.startStyles)
         , class "highlighter-inline-tag highlighter-inline-tag-highlighted"
         ]
-        [ viewJust (viewTag tagStyle) marked.name ]
+        [ viewTag tagStyle name ]
 
 
 markStyles : Int -> Maybe Mark -> List Css.Style
@@ -237,7 +248,17 @@ markStyles index marked =
         ( True, Just markedWith ) ->
             -- if we're on the first highlighted element, we add
             -- a `before` content saying what kind of highlight we're starting
-            tagBeforeContent markedWith :: markedWith.styles
+            tagBeforeContent markedWith
+                :: markedWith.styles
+                ++ -- if we're on the first element, and the mark has a name,
+                   -- there's an inline tag to show.
+                   -- but if not, we can attach the start styles to the first segment
+                   (if markedWith.name == Nothing then
+                        markedWith.startStyles
+
+                    else
+                        []
+                   )
 
         _ ->
             Maybe.map .styles marked
