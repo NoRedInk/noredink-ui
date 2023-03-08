@@ -20,6 +20,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
+import Nri.Ui.Table.V6 as Table
 
 
 moduleName : String
@@ -78,8 +79,46 @@ view ellieLinkConfig state =
                   }
                 ]
         }
-    , Heading.h2 [ Heading.plaintext "Example" ]
+    , Heading.h2 [ Heading.plaintext "Example", Heading.css [ Css.marginTop Spacing.verticalSpacerPx ] ]
     , fakePage [ exampleView ]
+    , Heading.h2 [ Heading.plaintext "Content alignment", Heading.css [ Css.marginTop Spacing.verticalSpacerPx ] ]
+    , Table.view
+        [ Table.string
+            { header = "Name"
+            , value = .name
+            , width = Css.pct 10
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        , Table.string
+            { header = "Content alignment"
+            , value = .alignment
+            , width = Css.pct 10
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        , Table.string
+            { header = "Content max-width"
+            , value = .maxWidth
+            , width = Css.pct 10
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        , Table.string
+            { header = "Side padding"
+            , value = .sidePadding
+            , width = Css.pct 10
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        ]
+        [ { name = "centeredContentWithSidePadding", alignment = "Centered", maxWidth = "1000px", sidePadding = "when viewport <= 970px" }
+        , { name = "centeredContent", alignment = "Centered", maxWidth = "1000px", sidePadding = "0px" }
+        , { name = "centeredQuizEngineContentWithSidePadding", alignment = "Centered", maxWidth = "750px", sidePadding = "when viewport <= 720px" }
+        , { name = "centeredQuizEngineContent", alignment = "Centered", maxWidth = "750px", sidePadding = "0px" }
+        , { name = "centeredContentWithSidePaddingAndCustomWidth", alignment = "Centered", maxWidth = "(customizable)", sidePadding = "when viewport <= (custom breakpoint value - 30)" }
+        , { name = "centeredContentWithCustomWidth", alignment = "Centered", maxWidth = "(customizable)", sidePadding = "0px" }
+        ]
     ]
 
 
