@@ -17,6 +17,7 @@ import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
 
@@ -60,7 +61,6 @@ view ellieLinkConfig state =
                     , settings.bottomContainerStyle
                     ]
                 )
-                (List.repeat settings.childCount child)
     in
     [ ControlView.view
         { ellieLinkConfig = ellieLinkConfig
@@ -93,53 +93,16 @@ fakePage =
         ]
 
 
-container : List ( String, Css.Style ) -> List ( String, Html msg ) -> ( String, Html msg )
-container styles children =
-    ( [ "div"
-      , "[ css"
-      , "    [ Css.border3 (Css.px 2) Css.dashed Colors.greenDarkest"
-      , "    , Css.backgroundColor Colors.greenLightest"
-      , "    , Css.property " ++ Code.string "display" ++ " " ++ Code.string "grid"
-      , "    , Css.property " ++ Code.string "grid-template-columns" ++ " " ++ Code.string "1fr 1fr 1fr 1fr 1fr"
-      , "    , Css.batch " ++ Code.listMultiline (List.map Tuple.first styles) 3
-      , "    ]"
+container : List ( String, Css.Style ) -> ( String, Html msg )
+container styles =
+    ( [ "div [ css " ++ Code.listMultiline (List.map Tuple.first styles) 2
       , "]"
-      , Code.list (List.map Tuple.first children)
+      , "[ Container.view [ Container.paragraph \"Content...\" ]"
       ]
         |> String.join (Code.newlineWithIndent 1)
-    , div
-        [ css
-            [ Css.border3 (Css.px 2) Css.dashed Colors.greenDarkest
-            , Css.backgroundColor Colors.greenLightest
-            , Css.property "display" "grid"
-            , Css.property "grid-template-columns" "1fr 1fr 1fr 1fr 1fr"
-            , Css.batch (List.map Tuple.second styles)
-            ]
+    , div [ css (List.map Tuple.second styles) ]
+        [ Container.view [ Container.paragraph "Content..." ]
         ]
-        (List.map Tuple.second children)
-    )
-
-
-child : ( String, Html msg )
-child =
-    ( [ "div"
-      , "[ css"
-      , "    [ Css.border3 (Css.px 1) Css.solid Colors.ochreDark"
-      , "    , Css.backgroundColor Colors.sunshine"
-      , "    , Css.height (Css.px 150)"
-      , "    ]"
-      , "]"
-      , "[]"
-      ]
-        |> String.join (Code.newlineWithIndent 2)
-    , div
-        [ css
-            [ Css.border3 (Css.px 1) Css.solid Colors.ochreDark
-            , Css.backgroundColor Colors.sunshine
-            , Css.height (Css.px 150)
-            ]
-        ]
-        []
     )
 
 
@@ -157,7 +120,6 @@ type alias Settings =
     { topContainerStyle : Maybe ( String, Style )
     , horizontalContainerStyle : Maybe ( String, Style )
     , bottomContainerStyle : Maybe ( String, Style )
-    , childCount : Int
     }
 
 
@@ -218,7 +180,6 @@ controlSettings =
                     )
                 )
             )
-        |> Control.field "Child count" (ControlExtra.int 10)
 
 
 asChoice : ( String, Style ) -> ( String, Control ( String, Style ) )
