@@ -1,8 +1,8 @@
 module Nri.Ui.Highlightable.V2 exposing
     ( Highlightable, Type(..), UIState(..), Attribute(..)
-    , init, initFragment, initFragments
+    , init, initFragments
     , fromMarkdown
-    , splitHighlightableOnWords, splitWords
+    , splitWords
     , blur, clearHint, hint, hover
     , set, toggle
     , attributeSorter
@@ -19,6 +19,7 @@ just a single whitespace.
 ## Patch changes
 
   - move asFragmentTuples, usedMarkers, and text to the Highlightable module
+  - remove initFragment, splitHighlightableOnWords
 
 
 ## Types
@@ -28,13 +29,13 @@ just a single whitespace.
 
 ## Initializers
 
-@docs init, initFragment, initFragments
+@docs init, initFragments
 @docs fromMarkdown
 
 
 ## Transformations
 
-@docs splitHighlightableOnWords, splitWords
+@docs splitWords
 
 
 ## UIState related
@@ -165,35 +166,16 @@ init type_ marked index ( attributes, text_ ) =
     }
 
 
-{-| Split a multi-word string into multiple single-word highlights.
-This is to deal with the highlighter not doing line breaks within a highlight group,
-which can look funny if a highlight contains longer text.
--}
-initFragment : Maybe (Tool.MarkerModel marker) -> Int -> List ( List Attribute, String ) -> List (Highlightable marker)
-initFragment marked index spans =
-    let
-        splitSpan ( classes, text_ ) =
-            text_
-                |> splitWords
-                |> List.filter (not << String.isEmpty)
-                |> List.map (Tuple.pair classes)
-    in
-    spans
-        |> List.concatMap splitSpan
-        |> List.map (init Interactive marked index)
-
-
 whitespace : Regex
 whitespace =
     Regex.fromString "\\s+"
         |> Maybe.withDefault Regex.never
 
 
-{-| Similar to initFragment but each word is treated as a fragment,
-instead of treating the whole string as a fragment.
+{-| Initialize highlightables from a string.
 
 Note that we're transforming all whitespace to spaces, so newlines are not preserved
-as me move to and from fragments
+as me move to and from fragments. Spaces will be treated as static elements. Words will be interactive.
 
 -}
 initFragments : Maybe (Tool.MarkerModel marker) -> String -> List (Highlightable marker)
@@ -414,15 +396,6 @@ toggle marker_ highlightable =
                 Nothing ->
                     Just marker_
     }
-
-
-{-| Split a highlightable into one highlightable per word.
--}
-splitHighlightableOnWords : Highlightable marker -> List (Highlightable marker)
-splitHighlightableOnWords highlightable =
-    highlightable.text
-        |> splitWords
-        |> List.map (\chunk -> { highlightable | text = chunk })
 
 
 {-| Create list of words intersperse with spaces.
