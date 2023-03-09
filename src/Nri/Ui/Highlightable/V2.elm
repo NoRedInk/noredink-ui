@@ -3,7 +3,7 @@ module Nri.Ui.Highlightable.V2 exposing
     , init, initFragments
     , fromMarkdown
     , blur, clearHint, hint, hover
-    , set, toggle
+    , set
     , attributeSorter
     , asFragmentTuples, usedMarkers, text
     )
@@ -19,6 +19,7 @@ just a single whitespace.
 
   - move asFragmentTuples, usedMarkers, and text to the Highlightable module
   - remove initFragment, splitHighlightableOnWords, splitWords
+  - remove toggle, which is not used
 
 
 ## Types
@@ -32,14 +33,10 @@ just a single whitespace.
 @docs fromMarkdown
 
 
-## UIState related
+## UIState and marker
 
 @docs blur, clearHint, hint, hover
-
-
-## Marker related
-
-@docs set, toggle
+@docs set
 
 
 ## Attribute related
@@ -372,24 +369,6 @@ clearHint highlightable =
 set : Maybe (Tool.MarkerModel marker) -> Highlightable marker -> Highlightable marker
 set marked highlightable =
     { highlightable | marked = marked }
-
-
-{-| -}
-toggle : Tool.MarkerModel marker -> Highlightable marker -> Highlightable marker
-toggle marker_ highlightable =
-    { highlightable
-        | marked =
-            case highlightable.marked of
-                Just oldMarker ->
-                    if oldMarker /= marker_ then
-                        Just marker_
-
-                    else
-                        Nothing
-
-                Nothing ->
-                    Just marker_
-    }
 
 
 {-| Get unique markers that have been used.
