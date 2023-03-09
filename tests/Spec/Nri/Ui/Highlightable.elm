@@ -208,132 +208,138 @@ joinAdjacentInteractiveHighlightsSpec =
 
         init type_ marks index =
             Highlightable.init type_ marks index ( [], "Content" )
+
+        {- the test output on a failure is way too full of data to be useful without
+           doing some pre-processing to get a nice, clean failure diff.
+        -}
+        forTestComparison { marked, type_ } =
+            ( type_, List.map .kind marked )
+
+        expectJoinsTo expected starting =
+            let
+                processedExpected =
+                    List.indexedMap (\i f -> f i) expected
+                        |> List.map forTestComparison
+            in
+            List.indexedMap (\i f -> f i) starting
+                |> Highlightable.joinAdjacentInteractiveHighlights
+                |> List.map forTestComparison
+                |> Expect.equal processedExpected
     in
     [ test "without any segments, does nothing" <|
         \() ->
             []
-                |> Highlightable.joinAdjacentInteractiveHighlights
-                |> Expect.equal []
+                |> expectJoinsTo []
     , test "with 1 interactive highlighted segment, does nothing" <|
         \() ->
             let
                 segment =
-                    init Interactive [ mark () ] 0
+                    init Interactive [ mark () ]
             in
             [ segment ]
-                |> Highlightable.joinAdjacentInteractiveHighlights
-                |> Expect.equal [ segment ]
+                |> expectJoinsTo [ segment ]
     , test "with 1 interactive unmarked segment, does nothing" <|
         \() ->
             let
                 segment =
-                    init Interactive [] 0
+                    init Interactive []
             in
             [ segment ]
-                |> Highlightable.joinAdjacentInteractiveHighlights
-                |> Expect.equal [ segment ]
+                |> expectJoinsTo [ segment ]
     , test "with 1 static highlighted segment, does nothing" <|
         \() ->
             let
                 segment =
-                    init Static [ mark () ] 0
+                    init Static [ mark () ]
             in
             [ segment ]
-                |> Highlightable.joinAdjacentInteractiveHighlights
-                |> Expect.equal [ segment ]
+                |> expectJoinsTo [ segment ]
     , test "with 1 static unmarked segment, does nothing" <|
         \() ->
             let
                 segment =
-                    init Static [] 0
+                    init Static []
             in
             [ segment ]
-                |> Highlightable.joinAdjacentInteractiveHighlights
-                |> Expect.equal [ segment ]
+                |> expectJoinsTo [ segment ]
     , test "with only 2 segments [highlighted interactive, plain static], does nothing" <|
         \() ->
             let
                 segments =
-                    [ init Interactive [ mark () ] 0
-                    , init Static [] 1
+                    [ init Interactive [ mark () ]
+                    , init Static []
                     ]
             in
             segments
-                |> Highlightable.joinAdjacentInteractiveHighlights
-                |> Expect.equal segments
+                |> expectJoinsTo segments
     , test "with only 2 segments [plain static, highlighted interactive], does nothing" <|
         \() ->
             let
                 segments =
-                    [ init Static [] 0
-                    , init Interactive [ mark () ] 1
+                    [ init Static []
+                    , init Interactive [ mark () ]
                     ]
             in
             segments
-                |> Highlightable.joinAdjacentInteractiveHighlights
-                |> Expect.equal segments
+                |> expectJoinsTo segments
     , test "with 3 segments, highlighted interactive sandwiching a plain unmarked, marks the plain segmnet" <|
         \() ->
-            [ init Interactive [ mark () ] 0
-            , init Static [] 1
-            , init Interactive [ mark () ] 2
+            [ init Interactive [ mark () ]
+            , init Static []
+            , init Interactive [ mark () ]
             ]
-                |> Highlightable.joinAdjacentInteractiveHighlights
-                |> Expect.equal
-                    [ init Interactive [ mark () ] 0
-                    , init Static [ mark () ] 1
-                    , init Interactive [ mark () ] 2
+                |> expectJoinsTo
+                    [ init Interactive [ mark () ]
+                    , init Static [ mark () ]
+                    , init Interactive [ mark () ]
                     ]
     , test "with 3 segments with highlights of various types, marks the plain segment correctly" <|
         \() ->
-            [ init Interactive [ mark "A", mark "B", mark "C" ] 0
-            , init Static [] 1
-            , init Interactive [ mark "A", mark "C" ] 2
+            [ init Interactive [ mark "A", mark "B", mark "C" ]
+            , init Static []
+            , init Interactive [ mark "A", mark "C" ]
             ]
-                |> Highlightable.joinAdjacentInteractiveHighlights
-                |> Expect.equal
-                    [ init Interactive [ mark "A", mark "B", mark "C" ] 0
-                    , init Static [ mark "A", mark "C" ] 1
-                    , init Interactive [ mark "A", mark "C" ] 2
+                |> expectJoinsTo
+                    [ init Interactive [ mark "A", mark "B", mark "C" ]
+                    , init Static [ mark "A", mark "C" ]
+                    , init Interactive [ mark "A", mark "C" ]
                     ]
     , test "with many segments, marks plain sandwiched segments" <|
         \() ->
-            [ init Static [] 0
-            , init Interactive [ mark () ] 1
-            , init Static [] 2
-            , init Static [] 3
-            , init Static [] 4
-            , init Interactive [ mark () ] 5
-            , init Static [] 6
+            [ init Static []
+            , init Interactive [ mark () ]
+            , init Static []
+            , init Static []
+            , init Static []
+            , init Interactive [ mark () ]
+            , init Static []
             ]
-                |> Highlightable.joinAdjacentInteractiveHighlights
-                |> Expect.equal
-                    [ init Static [] 0
-                    , init Interactive [ mark () ] 1
-                    , init Static [ mark () ] 2
-                    , init Static [ mark () ] 3
-                    , init Static [ mark () ] 4
-                    , init Interactive [ mark () ] 5
-                    , init Static [] 6
+                |> expectJoinsTo
+                    [ init Static []
+                    , init Interactive [ mark () ]
+                    , init Static [ mark () ]
+                    , init Static [ mark () ]
+                    , init Static [ mark () ]
+                    , init Interactive [ mark () ]
+                    , init Static []
                     ]
     , test "with multiple highlighted interactive segments not all of the same type, only joins the types that match" <|
         \() ->
-            [ init Interactive [ mark "A", mark "B" ] 0
-            , init Static [] 1
-            , init Interactive [ mark "A" ] 2
-            , init Static [] 3
-            , init Interactive [ mark "B" ] 4
-            , init Static [] 5
-            , init Interactive [ mark "B" ] 6
+            [ init Interactive [ mark "A", mark "B" ]
+            , init Static []
+            , init Interactive [ mark "A" ]
+            , init Static []
+            , init Interactive [ mark "B" ]
+            , init Static []
+            , init Interactive [ mark "B" ]
             ]
-                |> Highlightable.joinAdjacentInteractiveHighlights
-                |> Expect.equal
-                    [ init Interactive [ mark "A", mark "B" ] 0
-                    , init Static [ mark "A" ] 1
-                    , init Interactive [ mark "A" ] 2
-                    , init Static [] 3
-                    , init Interactive [ mark "B" ] 4
-                    , init Static [ mark "B" ] 5
-                    , init Interactive [ mark "B" ] 6
+                |> expectJoinsTo
+                    [ init Interactive [ mark "A", mark "B" ]
+                    , init Static [ mark "A" ]
+                    , init Interactive [ mark "A" ]
+                    , init Static []
+                    , init Interactive [ mark "B" ]
+                    , init Static [ mark "B" ]
+                    , init Interactive [ mark "B" ]
                     ]
     ]
