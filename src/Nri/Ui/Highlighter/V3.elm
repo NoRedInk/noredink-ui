@@ -42,7 +42,6 @@ Highlighter provides a view/model/update to display a view to highlight text and
 import Accessibility.Styled.Key as Key
 import Browser.Dom as Dom
 import Css
-import Highlighter.Grouping as Grouping
 import Html.Styled as Html exposing (Attribute, Html, p, span)
 import Html.Styled.Attributes exposing (attribute, class, css)
 import Html.Styled.Events as Events
@@ -54,7 +53,7 @@ import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Mark.V2 as Mark
-import Set
+import Set exposing (Set)
 import Task
 
 
@@ -604,7 +603,7 @@ toggleHinted : Int -> Tool.MarkerModel marker -> List (Highlightable marker) -> 
 toggleHinted index marker highlightables =
     let
         hintedRange =
-            Grouping.inSameRange index highlightables
+            inSameRange index highlightables
 
         inClickedRange highlightable =
             Set.member highlightable.groupIndex hintedRange
@@ -620,6 +619,18 @@ toggleHinted index marker highlightables =
                 highlightable
     in
     List.map (toggle >> Highlightable.clearHint) highlightables
+
+
+{-| Finds the group indexes of the groups which are in the same highlighting as the group index
+passed in the first argument.
+-}
+inSameRange : Int -> List (Highlightable marker) -> Set Int
+inSameRange groupIndex highlightables =
+    List.Extra.groupWhile (\a b -> a.marked == b.marked) highlightables
+        |> List.map (\( first, rest ) -> first.groupIndex :: List.map .groupIndex rest)
+        |> List.Extra.find (List.member groupIndex)
+        |> Maybe.withDefault []
+        |> Set.fromList
 
 
 removeHinted : List (Highlightable marker) -> List (Highlightable marker)
@@ -766,8 +777,27 @@ viewSegments :
     -> List (Html msg)
 viewSegments groupConfig viewSegment highlightables =
     highlightables
-        |> Grouping.buildGroups
+        |> buildGroups
         |> List.concatMap (groupContainer groupConfig viewSegment)
+
+
+{-| Groups highlightables with the same state together.
+-}
+buildGroups : List (Highlightable marker) -> List (List (Highlightable marker))
+buildGroups =
+    List.Extra.groupWhile groupHighlightables
+        >> List.map (\( elem, list ) -> elem :: list)
+
+
+groupHighlightables : Highlightable marker -> Highlightable marker -> Bool
+groupHighlightables x y =
+    ((x.uiState == y.uiState)
+        && (x.marked == Nothing)
+        && (y.marked == Nothing)
+    )
+        || (x.marked == y.marked && x.marked /= Nothing)
+        || (x.marked /= Nothing && y.uiState == Highlightable.Hinted)
+        || (y.marked /= Nothing && x.uiState == Highlightable.Hinted)
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
