@@ -284,6 +284,18 @@ joinAdjacentInteractiveHighlightsSpec =
                     , init Static [ mark () ] 1
                     , init Interactive [ mark () ] 2
                     ]
+    , test "with 3 segments with highlights of various types, marks the plain segment correctly" <|
+        \() ->
+            [ init Interactive [ mark "A", mark "B", mark "C" ] 0
+            , init Static [] 1
+            , init Interactive [ mark "A", mark "C" ] 2
+            ]
+                |> Highlightable.joinAdjacentInteractiveHighlights
+                |> Expect.equal
+                    [ init Interactive [ mark "A", mark "B", mark "C" ] 0
+                    , init Static [ mark "A", mark "C" ] 1
+                    , init Interactive [ mark "A", mark "C" ] 2
+                    ]
     , test "with many segments, marks plain sandwiched segments" <|
         \() ->
             [ init Static [] 0
