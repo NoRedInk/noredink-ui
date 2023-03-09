@@ -2,7 +2,6 @@ module Nri.Ui.Highlightable.V2 exposing
     ( Highlightable, Type(..), UIState(..), Attribute(..)
     , init, initFragments
     , fromMarkdown
-    , splitWords
     , blur, clearHint, hint, hover
     , set, toggle
     , attributeSorter
@@ -19,7 +18,7 @@ just a single whitespace.
 ## Patch changes
 
   - move asFragmentTuples, usedMarkers, and text to the Highlightable module
-  - remove initFragment, splitHighlightableOnWords
+  - remove initFragment, splitHighlightableOnWords, splitWords
 
 
 ## Types
@@ -31,11 +30,6 @@ just a single whitespace.
 
 @docs init, initFragments
 @docs fromMarkdown
-
-
-## Transformations
-
-@docs splitWords
 
 
 ## UIState related
@@ -396,15 +390,6 @@ toggle marker_ highlightable =
                 Nothing ->
                     Just marker_
     }
-
-
-{-| Create list of words intersperse with spaces.
--}
-splitWords : String -> List String
-splitWords string =
-    string
-        |> String.split " "
-        |> List.intersperse " "
 
 
 {-| Get unique markers that have been used.
