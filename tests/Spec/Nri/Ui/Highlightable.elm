@@ -126,8 +126,16 @@ fromMarkdownSpec =
     let
         testFromMarkdown startingString expected =
             Highlightable.fromMarkdown startingString
-                |> List.map (\{ text, marked } -> ( text, marked ))
-                |> Expect.equal expected
+                |> Expect.all
+                    [ -- the right words are marked
+                      List.map (\{ text, marked } -> ( text, marked ))
+                        >> Expect.equal expected
+                    , -- the indexing is correct
+                      \highlightables ->
+                        Expect.equal
+                            (List.indexedMap (\index _ -> index) highlightables)
+                            (List.map (\{ index } -> index) highlightables)
+                    ]
 
         defaultMark =
             Tool.buildMarker

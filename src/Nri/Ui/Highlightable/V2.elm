@@ -21,6 +21,7 @@ just a single whitespace.
   - remove initFragment, splitHighlightableOnWords, splitWords
   - remove toggle, which is not used
   - rename groupIndex -> index
+  - ensure that fromMarkdown indexes the fragments correctly
 
 
 ## Types
@@ -330,6 +331,7 @@ fromMarkdown markdownString =
                 )
                 ( Nothing, [] )
             |> Tuple.second
+            |> List.indexedMap (\i highlightable -> { highlightable | index = i })
 
 
 {-| -}
