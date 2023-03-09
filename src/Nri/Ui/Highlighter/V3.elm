@@ -43,7 +43,6 @@ import Accessibility.Styled.Key as Key
 import Browser.Dom as Dom
 import Css
 import Highlighter.Grouping as Grouping
-import Highlighter.Internal as Internal
 import Html.Styled as Html exposing (Attribute, Html, p, span)
 import Html.Styled.Attributes exposing (attribute, class, css)
 import Html.Styled.Events as Events
@@ -55,6 +54,7 @@ import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Mark.V2 as Mark
+import Set
 import Task
 
 
@@ -489,17 +489,17 @@ performAction action ( model, cmds ) =
             ( { model | focusIndex = Just index }, Task.attempt Focused (Dom.focus (highlightableId model.id index)) :: cmds )
 
         Blur index ->
-            ( { model | highlightables = Internal.blurAt index model.highlightables }, cmds )
+            ( { model | highlightables = blurAt index model.highlightables }, cmds )
 
         Hover index ->
-            ( { model | highlightables = Internal.hoverAt index model.highlightables }, cmds )
+            ( { model | highlightables = hoverAt index model.highlightables }, cmds )
 
         Hint start end ->
-            ( { model | highlightables = Internal.hintBetween start end model.highlightables }, cmds )
+            ( { model | highlightables = hintBetween start end model.highlightables }, cmds )
 
         Save marker ->
             ( { model
-                | highlightables = Internal.saveHinted marker model.highlightables
+                | highlightables = saveHinted marker model.highlightables
                 , hasChanged = Changed
               }
             , cmds
@@ -507,7 +507,7 @@ performAction action ( model, cmds ) =
 
         Toggle index marker ->
             ( { model
-                | highlightables = Internal.toggleHinted index marker model.highlightables
+                | highlightables = toggleHinted index marker model.highlightables
                 , hasChanged = Changed
               }
             , cmds
@@ -515,7 +515,7 @@ performAction action ( model, cmds ) =
 
         RemoveHint ->
             ( { model
-                | highlightables = Internal.removeHinted model.highlightables
+                | highlightables = removeHinted model.highlightables
                 , hasChanged = Changed
               }
             , cmds
@@ -540,10 +540,107 @@ performAction action ( model, cmds ) =
             ( { model | selectionStartIndex = Nothing, selectionEndIndex = Nothing }, cmds )
 
 
+blurAt : Int -> List (Highlightable marker) -> List (Highlightable marker)
+blurAt index =
+    List.map
+        (\highlightable ->
+            if highlightable.groupIndex == index then
+                Highlightable.blur highlightable
+
+            else
+                highlightable
+        )
+
+
+hoverAt : Int -> List (Highlightable marker) -> List (Highlightable marker)
+hoverAt index =
+    List.map
+        (\highlightable ->
+            if highlightable.groupIndex == index then
+                Highlightable.hover highlightable
+
+            else
+                highlightable
+        )
+
+
+hintBetween : Int -> Int -> List (Highlightable marker) -> List (Highlightable marker)
+hintBetween beginning end =
+    List.map
+        (\highlightable ->
+            if between beginning end highlightable then
+                Highlightable.hint highlightable
+
+            else
+                Highlightable.clearHint highlightable
+        )
+
+
+between : Int -> Int -> Highlightable marker -> Bool
+between from to { groupIndex } =
+    if from < to then
+        from <= groupIndex && groupIndex <= to
+
+    else
+        to <= groupIndex && groupIndex <= from
+
+
+saveHinted : Tool.MarkerModel marker -> List (Highlightable marker) -> List (Highlightable marker)
+saveHinted marker =
+    List.map
+        (\highlightable ->
+            case highlightable.uiState of
+                Highlightable.Hinted ->
+                    highlightable
+                        |> Highlightable.set (Just marker)
+                        |> Highlightable.clearHint
+
+                _ ->
+                    Highlightable.clearHint highlightable
+        )
+
+
+toggleHinted : Int -> Tool.MarkerModel marker -> List (Highlightable marker) -> List (Highlightable marker)
+toggleHinted index marker highlightables =
+    let
+        hintedRange =
+            Grouping.inSameRange index highlightables
+
+        inClickedRange highlightable =
+            Set.member highlightable.groupIndex hintedRange
+
+        toggle highlightable =
+            if inClickedRange highlightable && Just marker == highlightable.marked then
+                Highlightable.set Nothing highlightable
+
+            else if highlightable.groupIndex == index then
+                Highlightable.set (Just marker) highlightable
+
+            else
+                highlightable
+    in
+    List.map (toggle >> Highlightable.clearHint) highlightables
+
+
+removeHinted : List (Highlightable marker) -> List (Highlightable marker)
+removeHinted =
+    List.map
+        (\highlightable ->
+            case highlightable.uiState of
+                Highlightable.Hinted ->
+                    highlightable
+                        |> Highlightable.set Nothing
+                        |> Highlightable.clearHint
+
+                _ ->
+                    Highlightable.clearHint highlightable
+        )
+
+
 {-| -}
 removeHighlights : Model marker -> Model marker
 removeHighlights model =
-    { model | highlightables = Internal.removeHighlights model.highlightables }
+    { model | highlightables = List.map (Highlightable.set Nothing) model.highlightables }
 
 
 
