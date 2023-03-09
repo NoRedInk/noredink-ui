@@ -295,10 +295,10 @@ nextInteractiveIndex index highlightables =
     List.foldl
         (\x ( maybeNextIndex, hasIndexMatched ) ->
             if hasIndexMatched then
-                ( Just x.groupIndex, False )
+                ( Just x.index, False )
 
             else
-                ( maybeNextIndex, x.groupIndex == index )
+                ( maybeNextIndex, x.index == index )
         )
         ( Nothing, False )
         interactiveHighlightables
@@ -317,10 +317,10 @@ previousInteractiveIndex index highlightables =
     List.foldr
         (\x ( maybeNextIndex, hasIndexMatched ) ->
             if hasIndexMatched then
-                ( Just x.groupIndex, False )
+                ( Just x.index, False )
 
             else
-                ( maybeNextIndex, x.groupIndex == index )
+                ( maybeNextIndex, x.index == index )
         )
         ( Nothing, False )
         interactiveHighlightables
@@ -543,7 +543,7 @@ blurAt : Int -> List (Highlightable marker) -> List (Highlightable marker)
 blurAt index =
     List.map
         (\highlightable ->
-            if highlightable.groupIndex == index then
+            if highlightable.index == index then
                 Highlightable.blur highlightable
 
             else
@@ -555,7 +555,7 @@ hoverAt : Int -> List (Highlightable marker) -> List (Highlightable marker)
 hoverAt index =
     List.map
         (\highlightable ->
-            if highlightable.groupIndex == index then
+            if highlightable.index == index then
                 Highlightable.hover highlightable
 
             else
@@ -576,12 +576,12 @@ hintBetween beginning end =
 
 
 between : Int -> Int -> Highlightable marker -> Bool
-between from to { groupIndex } =
+between from to { index } =
     if from < to then
-        from <= groupIndex && groupIndex <= to
+        from <= index && index <= to
 
     else
-        to <= groupIndex && groupIndex <= from
+        to <= index && index <= from
 
 
 saveHinted : Tool.MarkerModel marker -> List (Highlightable marker) -> List (Highlightable marker)
@@ -606,13 +606,13 @@ toggleHinted index marker highlightables =
             inSameRange index highlightables
 
         inClickedRange highlightable =
-            Set.member highlightable.groupIndex hintedRange
+            Set.member highlightable.index hintedRange
 
         toggle highlightable =
             if inClickedRange highlightable && Just marker == highlightable.marked then
                 Highlightable.set Nothing highlightable
 
-            else if highlightable.groupIndex == index then
+            else if highlightable.index == index then
                 Highlightable.set (Just marker) highlightable
 
             else
@@ -625,10 +625,10 @@ toggleHinted index marker highlightables =
 passed in the first argument.
 -}
 inSameRange : Int -> List (Highlightable marker) -> Set Int
-inSameRange groupIndex highlightables =
+inSameRange index highlightables =
     List.Extra.groupWhile (\a b -> a.marked == b.marked) highlightables
-        |> List.map (\( first, rest ) -> first.groupIndex :: List.map .groupIndex rest)
-        |> List.Extra.find (List.member groupIndex)
+        |> List.map (\( first, rest ) -> first.index :: List.map .index rest)
+        |> List.Extra.find (List.member index)
         |> Maybe.withDefault []
         |> Set.fromList
 
@@ -844,23 +844,23 @@ viewHighlightable renderMarkdown config highlightable =
                 { interactiveHighlighterId = Just config.id
                 , focusIndex = config.focusIndex
                 , eventListeners =
-                    [ onPreventDefault "mouseover" (Pointer <| Over highlightable.groupIndex)
-                    , onPreventDefault "mouseleave" (Pointer <| Out highlightable.groupIndex)
+                    [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
+                    , onPreventDefault "mouseleave" (Pointer <| Out highlightable.index)
                     , onPreventDefault "mouseup" (Pointer <| Up Nothing)
-                    , onPreventDefault "mousedown" (Pointer <| Down highlightable.groupIndex)
-                    , onPreventDefault "touchstart" (Pointer <| Down highlightable.groupIndex)
+                    , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
+                    , onPreventDefault "touchstart" (Pointer <| Down highlightable.index)
                     , attribute "data-interactive" ""
                     , Key.onKeyDownPreventDefault
-                        [ Key.space (Keyboard <| ToggleHighlight highlightable.groupIndex)
-                        , Key.right (Keyboard <| MoveRight highlightable.groupIndex)
-                        , Key.left (Keyboard <| MoveLeft highlightable.groupIndex)
-                        , Key.shiftRight (Keyboard <| SelectionExpandRight highlightable.groupIndex)
-                        , Key.shiftLeft (Keyboard <| SelectionExpandLeft highlightable.groupIndex)
+                        [ Key.space (Keyboard <| ToggleHighlight highlightable.index)
+                        , Key.right (Keyboard <| MoveRight highlightable.index)
+                        , Key.left (Keyboard <| MoveLeft highlightable.index)
+                        , Key.shiftRight (Keyboard <| SelectionExpandRight highlightable.index)
+                        , Key.shiftLeft (Keyboard <| SelectionExpandLeft highlightable.index)
                         ]
                     , Key.onKeyUpPreventDefault
-                        [ Key.shiftRight (Keyboard <| SelectionApplyTool highlightable.groupIndex)
-                        , Key.shiftLeft (Keyboard <| SelectionApplyTool highlightable.groupIndex)
-                        , Key.shift (Keyboard <| SelectionReset highlightable.groupIndex)
+                        [ Key.shiftRight (Keyboard <| SelectionApplyTool highlightable.index)
+                        , Key.shiftLeft (Keyboard <| SelectionApplyTool highlightable.index)
+                        , Key.shift (Keyboard <| SelectionReset highlightable.index)
                         ]
                     ]
                 , maybeTool = Just config.marker
@@ -876,8 +876,8 @@ viewHighlightable renderMarkdown config highlightable =
                     -- Static highlightables need listeners as well.
                     -- because otherwise we miss mouseup events
                     [ onPreventDefault "mouseup" (Pointer <| Up Nothing)
-                    , onPreventDefault "mousedown" (Pointer <| Down highlightable.groupIndex)
-                    , onPreventDefault "touchstart" (Pointer <| Down highlightable.groupIndex)
+                    , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
+                    , onPreventDefault "touchstart" (Pointer <| Down highlightable.index)
                     , attribute "data-static" ""
                     ]
                 , maybeTool = Just config.marker
@@ -926,10 +926,10 @@ viewHighlightableSegment { interactiveHighlighterId, focusIndex, eventListeners,
         (eventListeners
             ++ customToHtmlAttributes highlightable.customAttributes
             ++ whitespaceClass highlightable.text
-            ++ [ attribute "data-highlighter-item-index" <| String.fromInt highlightable.groupIndex
+            ++ [ attribute "data-highlighter-item-index" <| String.fromInt highlightable.index
                , case interactiveHighlighterId of
                     Just highlighterId ->
-                        Html.Styled.Attributes.id (highlightableId highlighterId highlightable.groupIndex)
+                        Html.Styled.Attributes.id (highlightableId highlighterId highlightable.index)
 
                     Nothing ->
                         AttributesExtra.none
@@ -952,7 +952,7 @@ viewHighlightableSegment { interactiveHighlighterId, focusIndex, eventListeners,
                                 False
 
                             Just i ->
-                                highlightable.groupIndex == i
+                                highlightable.index == i
                         )
 
                  else
@@ -1032,8 +1032,8 @@ inlinifyMarkdownBlock block =
 
 
 highlightableId : String -> Int -> String
-highlightableId highlighterId groupIndex =
-    "highlighter-" ++ highlighterId ++ "-highlightable-" ++ String.fromInt groupIndex
+highlightableId highlighterId index =
+    "highlighter-" ++ highlighterId ++ "-highlightable-" ++ String.fromInt index
 
 
 highlightableStyle : Maybe (Tool.Tool kind) -> Highlightable kind -> List Css.Style

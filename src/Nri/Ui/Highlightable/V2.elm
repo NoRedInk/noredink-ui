@@ -15,11 +15,12 @@ Highlighter is initialized, it's very possible for a Highlightable to consist of
 just a single whitespace.
 
 
-## Patch changes
+## Changes from V1
 
   - move asFragmentTuples, usedMarkers, and text to the Highlightable module
   - remove initFragment, splitHighlightableOnWords, splitWords
   - remove toggle, which is not used
+  - rename groupIndex -> index
 
 
 ## Types
@@ -79,7 +80,7 @@ import String.Extra
 
   - **marked**: Current highlight.
 
-  - **groupIndex**: Index that identifies the fragment this Highlightable belongs to.
+  - **index**: Index that identifies the fragment this Highlightable belongs to. Must be unique in the list of highlightables.
 
 -}
 type alias Highlightable marker =
@@ -87,7 +88,7 @@ type alias Highlightable marker =
     , uiState : UIState
     , customAttributes : List Attribute
     , marked : Maybe (Tool.MarkerModel marker)
-    , groupIndex : Int
+    , index : Int
     , type_ : Type
     }
 
@@ -152,7 +153,7 @@ init type_ marked index ( attributes, text_ ) =
     , uiState = None
     , customAttributes = attributes
     , marked = marked
-    , groupIndex = index
+    , index = index
     , type_ = type_
     }
 
@@ -394,7 +395,7 @@ Useful for encoding answers.
 asFragmentTuples : List (Highlightable marker) -> List ( Maybe marker, String )
 asFragmentTuples highlightables =
     highlightables
-        |> List.Extra.groupWhile (\a b -> a.groupIndex == b.groupIndex)
+        |> List.Extra.groupWhile (\a b -> a.index == b.index)
         |> List.map
             (\( first, rest ) ->
                 ( first.marked
