@@ -263,10 +263,10 @@ joinAdjacentInteractiveHighlights highlightables =
                     Highlightable.Interactive ->
                         let
                             static_ =
-                                case ( segment.marked, lastInteractiveHighlight ) of
+                                case ( List.head segment.marked, lastInteractiveHighlight ) of
                                     ( Just marker, Just lastMarker ) ->
                                         if marker == lastMarker then
-                                            List.map (\s -> { s | marked = Just marker }) staticAcc
+                                            List.map (\s -> { s | marked = [ marker ] }) staticAcc
 
                                         else
                                             staticAcc
@@ -274,7 +274,7 @@ joinAdjacentInteractiveHighlights highlightables =
                                     _ ->
                                         staticAcc
                         in
-                        ( segment.marked, [], segment :: static_ ++ acc )
+                        ( List.head segment.marked, [], segment :: static_ ++ acc )
 
                     Highlightable.Static ->
                         ( lastInteractiveHighlight, segment :: staticAcc, acc )
@@ -609,7 +609,7 @@ toggleHinted index marker highlightables =
             Set.member highlightable.index hintedRange
 
         toggle highlightable =
-            if inClickedRange highlightable && Just marker == highlightable.marked then
+            if inClickedRange highlightable && Just marker == List.head highlightable.marked then
                 Highlightable.set Nothing highlightable
 
             else if highlightable.index == index then
@@ -792,12 +792,12 @@ buildGroups =
 groupHighlightables : Highlightable marker -> Highlightable marker -> Bool
 groupHighlightables x y =
     ((x.uiState == y.uiState)
-        && (x.marked == Nothing)
-        && (y.marked == Nothing)
+        && (List.head x.marked == Nothing)
+        && (List.head y.marked == Nothing)
     )
-        || (x.marked == y.marked && x.marked /= Nothing)
-        || (x.marked /= Nothing && y.uiState == Highlightable.Hinted)
-        || (y.marked /= Nothing && x.uiState == Highlightable.Hinted)
+        || (List.head x.marked == List.head y.marked && List.head x.marked /= Nothing)
+        || (List.head x.marked /= Nothing && y.uiState == Highlightable.Hinted)
+        || (List.head y.marked /= Nothing && x.uiState == Highlightable.Hinted)
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
@@ -827,7 +827,7 @@ groupContainer config viewSegment highlightables =
                 Mark.view
     in
     highlightables
-        |> List.map (\highlightable -> ( highlightable, Maybe.map (toMark highlightable) highlightable.marked ))
+        |> List.map (\highlightable -> ( highlightable, Maybe.map (toMark highlightable) (List.head highlightable.marked) ))
         |> viewMark viewSegment
 
 
@@ -939,8 +939,8 @@ viewHighlightableSegment { interactiveHighlighterId, focusIndex, eventListeners,
                         ++ markStyles
                     )
                , class "highlighter-highlightable"
-               , case highlightable.marked of
-                    Just markedWith ->
+               , case List.head highlightable.marked of
+                    Just _ ->
                         class "highlighter-highlighted"
 
                     _ ->
@@ -1040,7 +1040,7 @@ highlightableStyle : Maybe (Tool.Tool kind) -> Highlightable kind -> List Css.St
 highlightableStyle tool ({ uiState, marked } as highlightable) =
     case tool of
         Nothing ->
-            [ case marked of
+            [ case List.head marked of
                 Just markedWith ->
                     Css.batch markedWith.highlightClass
 
@@ -1050,7 +1050,7 @@ highlightableStyle tool ({ uiState, marked } as highlightable) =
 
         Just (Tool.Marker marker) ->
             [ Css.property "user-select" "none"
-            , case ( uiState, marked ) of
+            , case ( uiState, List.head marked ) of
                 ( Highlightable.Hovered, Just markedWith ) ->
                     -- Override marking with selected tool
                     Css.batch marker.hoverHighlightClass
@@ -1074,7 +1074,7 @@ highlightableStyle tool ({ uiState, marked } as highlightable) =
             ]
 
         Just (Tool.Eraser eraser_) ->
-            case marked of
+            case List.head marked of
                 Just markedWith ->
                     [ Css.property "user-select" "none"
                     , Css.batch markedWith.highlightClass

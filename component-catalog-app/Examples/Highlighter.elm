@@ -17,6 +17,7 @@ import Example exposing (Example)
 import Examples.Colors
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
+import Maybe.Extra
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
@@ -59,7 +60,7 @@ example =
                     , ( "vow.", Nothing )
                     ]
                         |> List.intersperse ( " ", Nothing )
-                        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+                        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
                 }
             ]
         ]
@@ -166,7 +167,7 @@ example =
                                 , ( "vow.", Nothing )
                                 ]
                                     |> List.intersperse ( " ", Nothing )
-                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
                             }
                   }
                 , { viewName = "static"
@@ -186,7 +187,7 @@ example =
                                 , ( "vow.", Nothing )
                                 ]
                                     |> List.intersperse ( " ", Nothing )
-                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
                             }
                   }
                 , { viewName = "static"
@@ -205,7 +206,7 @@ example =
                                 , ( "vow.", Nothing )
                                 ]
                                     |> List.intersperse ( " ", Nothing )
-                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
                             }
                   }
                 , { viewName = "static"
@@ -257,7 +258,7 @@ multipleHighlightsHighlightables =
     , ( "How *vexingly* quick daft zebras jump!", Nothing )
     ]
         |> List.intersperse ( " ", Nothing )
-        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
 
 
 exampleMarker : Tool.MarkerModel ()
@@ -312,7 +313,7 @@ multipleHighlightsHighlightablesWithBorder =
     , ( "How *vexingly* quick daft zebras jump!", Nothing )
     ]
         |> List.intersperse ( " ", Nothing )
-        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
 
 
 claimMarkerWithBorder : Tool.MarkerModel ()
@@ -368,12 +369,12 @@ initHighlighter settings previousHighlightables =
         highlightables =
             if settings.splitOnSentences then
                 exampleParagraph
-                    |> List.map (\text i -> Highlightable.init Highlightable.Interactive Nothing i ( [], text ))
-                    |> List.intersperse (\i -> Highlightable.init Highlightable.Static Nothing i ( [], " " ))
+                    |> List.map (\text i -> Highlightable.init Highlightable.Interactive [] i ( [], text ))
+                    |> List.intersperse (\i -> Highlightable.init Highlightable.Static [] i ( [], " " ))
                     |> List.indexedMap (\i f -> f i)
 
             else
-                Highlightable.initFragments Nothing (String.join " " exampleParagraph)
+                Highlightable.initFragments [] (String.join " " exampleParagraph)
     in
     Highlighter.init
         { id = "example-romeo-and-juliet"

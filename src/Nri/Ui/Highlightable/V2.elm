@@ -22,6 +22,7 @@ just a single whitespace.
   - remove toggle, which is not used
   - rename groupIndex -> index
   - ensure that fromMarkdown indexes the fragments correctly
+  - support multiple kinds of mark
 
 
 ## Types
@@ -55,6 +56,7 @@ just a single whitespace.
 import List.Extra
 import Markdown.Block
 import Markdown.Inline
+import Maybe.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Regex exposing (Regex)
@@ -79,7 +81,7 @@ import String.Extra
 
   - **customAttributes**: User-supplied attributes that do not change once a Highlightable is initialized.
 
-  - **marked**: Current highlight.
+  - **marked**: Current highlights, if any.
 
   - **index**: Index that identifies the fragment this Highlightable belongs to. Must be unique in the list of highlightables.
 
@@ -88,7 +90,7 @@ type alias Highlightable marker =
     { text : String
     , uiState : UIState
     , customAttributes : List Attribute
-    , marked : Maybe (Tool.MarkerModel marker)
+    , marked : List (Tool.MarkerModel marker)
     , index : Int
     , type_ : Type
     }
@@ -148,7 +150,7 @@ type UIState
 
 
 {-| -}
-init : Type -> Maybe (Tool.MarkerModel marker) -> Int -> ( List Attribute, String ) -> Highlightable marker
+init : Type -> List (Tool.MarkerModel marker) -> Int -> ( List Attribute, String ) -> Highlightable marker
 init type_ marked index ( attributes, text_ ) =
     { text = text_
     , uiState = None
@@ -171,7 +173,7 @@ Note that we're transforming all whitespace to spaces, so newlines are not prese
 as me move to and from fragments. Spaces will be treated as static elements. Words will be interactive.
 
 -}
-initFragments : Maybe (Tool.MarkerModel marker) -> String -> List (Highlightable marker)
+initFragments : List (Tool.MarkerModel marker) -> String -> List (Highlightable marker)
 initFragments marked text_ =
     let
         spaceOrInit index maybeWord =
@@ -180,7 +182,7 @@ initFragments marked text_ =
                     init Interactive marked index ( [], word )
 
                 Nothing ->
-                    init Static Nothing index ( [], " " )
+                    init Static [] index ( [], " " )
     in
     Regex.split whitespace text_
         |> List.map Just
@@ -201,7 +203,7 @@ fromMarkdown : String -> List (Highlightable ())
 fromMarkdown markdownString =
     let
         static maybeMark mapStrings c =
-            init Static maybeMark -1 ( [], mapStrings c )
+            init Static (Maybe.Extra.toList maybeMark) -1 ( [], mapStrings c )
 
         defaultMark =
             Tool.buildMarker
@@ -318,7 +320,7 @@ fromMarkdown markdownString =
                     ( segment.marked
                     , case acc of
                         last :: remainder ->
-                            if segment.marked == last.marked then
+                            if List.head segment.marked == List.head last.marked then
                                 { segment | text = segment.text ++ last.text }
                                     :: remainder
 
@@ -329,7 +331,7 @@ fromMarkdown markdownString =
                             segment :: acc
                     )
                 )
-                ( Nothing, [] )
+                ( [], [] )
             |> Tuple.second
             |> List.indexedMap (\i highlightable -> { highlightable | index = i })
 
@@ -371,7 +373,7 @@ clearHint highlightable =
 {-| -}
 set : Maybe (Tool.MarkerModel marker) -> Highlightable marker -> Highlightable marker
 set marked highlightable =
-    { highlightable | marked = marked }
+    { highlightable | marked = Maybe.Extra.toList marked }
 
 
 {-| Get unique markers that have been used.
@@ -379,14 +381,13 @@ set marked highlightable =
 usedMarkers : Sorter marker -> List (Highlightable marker) -> Sort.Set.Set marker
 usedMarkers sorter highlightables =
     highlightables
-        |> List.filterMap
+        |> List.concatMap
             (\highlightable ->
                 if String.Extra.isBlank highlightable.text then
-                    Nothing
+                    []
 
                 else
-                    highlightable.marked
-                        |> Maybe.map .kind
+                    List.map .kind highlightable.marked
             )
         |> Sort.Set.fromList sorter
 
@@ -394,14 +395,13 @@ usedMarkers sorter highlightables =
 {-| Get a list of fragment texts and whether or not they are marked.
 Useful for encoding answers.
 -}
-asFragmentTuples : List (Highlightable marker) -> List ( Maybe marker, String )
+asFragmentTuples : List (Highlightable marker) -> List ( List marker, String )
 asFragmentTuples highlightables =
     highlightables
         |> List.Extra.groupWhile (\a b -> a.index == b.index)
         |> List.map
             (\( first, rest ) ->
-                ( first.marked
-                    |> Maybe.map .kind
+                ( List.map .kind first.marked
                 , text (first :: rest)
                 )
             )
