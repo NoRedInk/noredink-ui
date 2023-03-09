@@ -110,7 +110,7 @@ init config =
     { id = config.id
     , highlightables =
         if config.joinAdjacentInteractiveHighlights then
-            joinAdjacentInteractiveHighlights config.highlightables
+            Highlightable.joinAdjacentInteractiveHighlights config.highlightables
 
         else
             config.highlightables
@@ -248,39 +248,10 @@ update msg model =
 maybeJoinAdjacentInteractiveHighlights : Model m -> Model m
 maybeJoinAdjacentInteractiveHighlights model =
     if model.joinAdjacentInteractiveHighlights then
-        { model | highlightables = joinAdjacentInteractiveHighlights model.highlightables }
+        { model | highlightables = Highlightable.joinAdjacentInteractiveHighlights model.highlightables }
 
     else
         model
-
-
-joinAdjacentInteractiveHighlights : List (Highlightable m) -> List (Highlightable m)
-joinAdjacentInteractiveHighlights highlightables =
-    highlightables
-        |> List.foldr
-            (\segment ( lastInteractiveHighlight, staticAcc, acc ) ->
-                case segment.type_ of
-                    Highlightable.Interactive ->
-                        let
-                            static_ =
-                                case ( List.head segment.marked, lastInteractiveHighlight ) of
-                                    ( Just marker, Just lastMarker ) ->
-                                        if marker == lastMarker then
-                                            List.map (\s -> { s | marked = [ marker ] }) staticAcc
-
-                                        else
-                                            staticAcc
-
-                                    _ ->
-                                        staticAcc
-                        in
-                        ( List.head segment.marked, [], segment :: static_ ++ acc )
-
-                    Highlightable.Static ->
-                        ( lastInteractiveHighlight, segment :: staticAcc, acc )
-            )
-            ( Nothing, [], [] )
-        |> (\( _, static_, acc ) -> static_ ++ acc)
 
 
 nextInteractiveIndex : Int -> List (Highlightable marker) -> Maybe Int

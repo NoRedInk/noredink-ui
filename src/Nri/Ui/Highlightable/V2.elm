@@ -4,6 +4,7 @@ module Nri.Ui.Highlightable.V2 exposing
     , fromMarkdown
     , blur, clearHint, hint, hover
     , set
+    , joinAdjacentInteractiveHighlights
     , attributeSorter
     , asFragmentTuples, usedMarkers, text
     )
@@ -23,6 +24,7 @@ just a single whitespace.
   - rename groupIndex -> index
   - ensure that fromMarkdown indexes the fragments correctly
   - support multiple kinds of mark
+  - move joinAdjacentInteractiveHighlights to the Highlightable module
 
 
 ## Types
@@ -40,6 +42,7 @@ just a single whitespace.
 
 @docs blur, clearHint, hint, hover
 @docs set
+@docs joinAdjacentInteractiveHighlights
 
 
 ## Attribute related
@@ -320,6 +323,9 @@ fromMarkdown markdownString =
                     ( segment.marked
                     , case acc of
                         last :: remainder ->
+                            -- Since there's only 1 possible mark type here,
+                            -- it's safe to assume that the list is either empty or
+                            -- of length 1
                             if List.head segment.marked == List.head last.marked then
                                 { segment | text = segment.text ++ last.text }
                                     :: remainder
@@ -374,6 +380,36 @@ clearHint highlightable =
 set : Maybe (Tool.MarkerModel marker) -> Highlightable marker -> Highlightable marker
 set marked highlightable =
     { highlightable | marked = Maybe.Extra.toList marked }
+
+
+{-| -}
+joinAdjacentInteractiveHighlights : List (Highlightable m) -> List (Highlightable m)
+joinAdjacentInteractiveHighlights highlightables =
+    highlightables
+        |> List.foldr
+            (\segment ( lastInteractiveHighlight, staticAcc, acc ) ->
+                case segment.type_ of
+                    Interactive ->
+                        let
+                            static_ =
+                                case ( List.head segment.marked, lastInteractiveHighlight ) of
+                                    ( Just marker, Just lastMarker ) ->
+                                        if marker == lastMarker then
+                                            List.map (\s -> { s | marked = [ marker ] }) staticAcc
+
+                                        else
+                                            staticAcc
+
+                                    _ ->
+                                        staticAcc
+                        in
+                        ( List.head segment.marked, [], segment :: static_ ++ acc )
+
+                    Static ->
+                        ( lastInteractiveHighlight, segment :: staticAcc, acc )
+            )
+            ( Nothing, [], [] )
+        |> (\( _, static_, acc ) -> static_ ++ acc)
 
 
 {-| Get unique markers that have been used.
