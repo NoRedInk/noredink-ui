@@ -152,42 +152,42 @@ fromMarkdownSpec =
     , test "does not mark non-highlighted content" <|
         \() ->
             testFromMarkdown "A sentence without highlighted content"
-                [ ( "A sentence without highlighted content", Nothing ) ]
+                [ ( "A sentence without highlighted content", [] ) ]
     , test "does not strip emphasized content" <|
         \() ->
             testFromMarkdown "A *sentence without* **highlighted content**"
-                [ ( "A *sentence without* **highlighted content**", Nothing ) ]
+                [ ( "A *sentence without* **highlighted content**", [] ) ]
     , test "marks a single segment as highlighted" <|
         \() ->
             testFromMarkdown "[fake link]()"
-                [ ( "fake link", Just defaultMark ) ]
+                [ ( "fake link", [ defaultMark ] ) ]
     , test "does mark content that's intended to be highlighted" <|
         \() ->
             testFromMarkdown "A sentence with [highlighted content]()"
-                [ ( "A sentence with ", Nothing )
-                , ( "highlighted content", Just defaultMark )
+                [ ( "A sentence with ", [] )
+                , ( "highlighted content", [ defaultMark ] )
                 ]
     , test "marks content that's intended to be highlighted within an emphasis" <|
         \() ->
             testFromMarkdown "A sentence with *emphasized [highlighted content]()!*"
-                [ ( "A sentence with *emphasized *", Nothing )
-                , ( "*highlighted content*", Just defaultMark )
-                , ( "*!*", Nothing )
+                [ ( "A sentence with *emphasized *", [] )
+                , ( "*highlighted content*", [ defaultMark ] )
+                , ( "*!*", [] )
                 ]
     , test "marks content that's intended to be highlighted that also contains an emphasis" <|
         \() ->
             testFromMarkdown "A sentence with [highlighted *and partially emphasized* content]()"
-                [ ( "A sentence with ", Nothing )
-                , ( "highlighted *and partially emphasized* content", Just defaultMark )
+                [ ( "A sentence with ", [] )
+                , ( "highlighted *and partially emphasized* content", [ defaultMark ] )
                 ]
     , test "does not highlight actual links" <|
         \() ->
             testFromMarkdown "I am a [real link](google.com)"
-                [ ( "I am a [real link](google.com)", Nothing )
+                [ ( "I am a [real link](google.com)", [] )
                 ]
     , test "does not get confused by parentheses" <|
         \() ->
             testFromMarkdown "main thought (parenthetical)"
-                [ ( "main thought (parenthetical)", Nothing )
+                [ ( "main thought (parenthetical)", [] )
                 ]
     ]
