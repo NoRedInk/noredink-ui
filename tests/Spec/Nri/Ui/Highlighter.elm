@@ -5,8 +5,8 @@ import Expect exposing (Expectation)
 import Html.Styled exposing (Html, toUnstyled)
 import List.Extra
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
-import Nri.Ui.Highlighter.V2 as Highlighter
+import Nri.Ui.Highlightable.V2 as Highlightable exposing (Highlightable)
+import Nri.Ui.Highlighter.V3 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool exposing (Tool)
 import ProgramTest exposing (..)
 import Regex exposing (Regex)
@@ -19,7 +19,7 @@ import Test.Html.Selector as Selector exposing (Selector)
 
 spec : Test
 spec =
-    describe "Nri.Ui.Highlighter.V2"
+    describe "Nri.Ui.Highlighter"
         [ describe "keyboard behavior" keyboardTests
         , describe "markdown behavior" markdownTests
         , describe "joinAdjacentInteractiveHighlights" joinAdjacentInteractiveHighlightsTests
