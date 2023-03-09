@@ -6,55 +6,67 @@ module Nri.Ui.Highlightable.V1 exposing
     , blur, clearHint, hint, hover
     , set, toggle
     , attributeSorter
+    , asFragmentTuples, usedMarkers, text
     )
 
-{-| The next version of Highlightable should remove `groupIndex.`
-
-A Highlightable represents a span of text, typically a word, and its state.
+{-| A Highlightable represents a span of text, typically a word, and its state.
 
 Highlightable is the unit by which text-wrapping happens. Depending on how the
 Highlighter is initialized, it's very possible for a Highlightable to consist of
 just a single whitespace.
 
 
-# Types
+## Patch changes
+
+  - move asFragmentTuples, usedMarkers, and text to the Highlightable module
+
+
+## Types
 
 @docs Highlightable, Type, UIState, Attribute
 
 
-# Initializers
+## Initializers
 
 @docs init, initFragment, initFragments
 @docs fromMarkdown
 
 
-# Transformations
+## Transformations
 
 @docs splitHighlightableOnWords, splitWords
 
 
-# UIState related
+## UIState related
 
 @docs blur, clearHint, hint, hover
 
 
-# Marker related
+## Marker related
 
 @docs set, toggle
 
 
-# Attribute related
+## Attribute related
 
 @docs attributeSorter
 
+
+## Getters
+
+@docs asFragmentTuples, usedMarkers, text
+
 -}
 
+import List.Extra
 import Markdown.Block
 import Markdown.Inline
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Regex exposing (Regex)
 import Sort exposing (Sorter)
+import Sort.Set
+import String.Extra
 
 
 {-| A Highlightable comes in two flavors:
@@ -228,14 +240,14 @@ fromMarkdown markdownString =
         highlightableFromInline : Maybe (Tool.MarkerModel ()) -> (String -> String) -> Markdown.Inline.Inline i -> List (Highlightable ())
         highlightableFromInline maybeMark mapStrings inline =
             case inline of
-                Markdown.Inline.Text text ->
-                    [ static maybeMark mapStrings text ]
+                Markdown.Inline.Text text_ ->
+                    [ static maybeMark mapStrings text_ ]
 
                 Markdown.Inline.HardLineBreak ->
                     [ static maybeMark mapStrings "\n" ]
 
-                Markdown.Inline.CodeInline text ->
-                    [ static maybeMark mapStrings text ]
+                Markdown.Inline.CodeInline text_ ->
+                    [ static maybeMark mapStrings text_ ]
 
                 Markdown.Inline.Link "" maybeTitle inlines ->
                     -- empty links should be interpreted as content that's supposed to be highlighted!
@@ -292,8 +304,8 @@ fromMarkdown markdownString =
         highlightableFromBlock : Markdown.Block.Block b i -> List (Highlightable ())
         highlightableFromBlock block =
             case block of
-                Markdown.Block.BlankLine text ->
-                    [ static Nothing identity text ]
+                Markdown.Block.BlankLine text_ ->
+                    [ static Nothing identity text_ ]
 
                 Markdown.Block.ThematicBreak ->
                     []
@@ -301,8 +313,8 @@ fromMarkdown markdownString =
                 Markdown.Block.Heading _ _ inlines ->
                     List.concatMap (highlightableFromInline Nothing identity) inlines
 
-                Markdown.Block.CodeBlock _ text ->
-                    [ static Nothing identity text ]
+                Markdown.Block.CodeBlock _ text_ ->
+                    [ static Nothing identity text_ ]
 
                 Markdown.Block.Paragraph _ inlines ->
                     List.concatMap (highlightableFromInline Nothing identity) inlines
@@ -420,3 +432,44 @@ splitWords string =
     string
         |> String.split " "
         |> List.intersperse " "
+
+
+{-| Get unique markers that have been used.
+-}
+usedMarkers : Sorter marker -> List (Highlightable marker) -> Sort.Set.Set marker
+usedMarkers sorter highlightables =
+    highlightables
+        |> List.filterMap
+            (\highlightable ->
+                if String.Extra.isBlank highlightable.text then
+                    Nothing
+
+                else
+                    highlightable.marked
+                        |> Maybe.map .kind
+            )
+        |> Sort.Set.fromList sorter
+
+
+{-| Get a list of fragment texts and whether or not they are marked.
+Useful for encoding answers.
+-}
+asFragmentTuples : List (Highlightable marker) -> List ( Maybe marker, String )
+asFragmentTuples highlightables =
+    highlightables
+        |> List.Extra.groupWhile (\a b -> a.groupIndex == b.groupIndex)
+        |> List.map
+            (\( first, rest ) ->
+                ( first.marked
+                    |> Maybe.map .kind
+                , text (first :: rest)
+                )
+            )
+
+
+{-| Fetch the text from a series of highlightables.
+-}
+text : List (Highlightable marker) -> String
+text highlightables =
+    List.map .text highlightables
+        |> String.concat

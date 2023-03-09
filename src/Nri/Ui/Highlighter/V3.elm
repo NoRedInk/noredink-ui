@@ -5,12 +5,12 @@ module Nri.Ui.Highlighter.V3 exposing
     , viewMarkdown, staticMarkdown, staticMarkdownWithTags
     , Intent(..), hasChanged, HasChanged(..)
     , removeHighlights
-    , asFragmentTuples, usedMarkers, text
     )
 
 {-| Changes from V2:
 
   - support overlapping highlights (by way of removing the underlying mark element)
+  - move asFragmentTuples, usedMarkers, and text to the Highlightable module
 
 Highlighter provides a view/model/update to display a view to highlight text and show marks.
 
@@ -37,11 +37,6 @@ Highlighter provides a view/model/update to display a view to highlight text and
 
 @docs removeHighlights
 
-
-# Getters
-
-@docs asFragmentTuples, usedMarkers, text
-
 -}
 
 import Accessibility.Styled.Key as Key
@@ -60,9 +55,6 @@ import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Mark.V2 as Mark
-import Sort exposing (Sorter)
-import Sort.Set
-import String.Extra
 import Task
 
 
@@ -134,47 +126,6 @@ init config =
     , focusIndex =
         List.Extra.findIndex (\highlightable -> .type_ highlightable == Highlightable.Interactive) config.highlightables
     }
-
-
-{-| Get unique markers that have been used.
--}
-usedMarkers : Sorter marker -> Model marker -> Sort.Set.Set marker
-usedMarkers sorter { highlightables } =
-    highlightables
-        |> List.filterMap
-            (\highlightable ->
-                if String.Extra.isBlank highlightable.text then
-                    Nothing
-
-                else
-                    highlightable.marked
-                        |> Maybe.map .kind
-            )
-        |> Sort.Set.fromList sorter
-
-
-{-| Get a list of fragment texts and whether or not they are marked.
-Useful for encoding answers.
--}
-asFragmentTuples : List (Highlightable marker) -> List ( Maybe marker, String )
-asFragmentTuples highlightables =
-    highlightables
-        |> List.Extra.groupWhile (\a b -> a.groupIndex == b.groupIndex)
-        |> List.map
-            (\( first, rest ) ->
-                ( first.marked
-                    |> Maybe.map .kind
-                , text (first :: rest)
-                )
-            )
-
-
-{-| Fetch the text from a series of highlightables.
--}
-text : List (Highlightable marker) -> String
-text highlightables =
-    List.map .text highlightables
-        |> String.concat
 
 
 
