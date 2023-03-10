@@ -387,29 +387,35 @@ joinAdjacentInteractiveHighlights : List (Highlightable m) -> List (Highlightabl
 joinAdjacentInteractiveHighlights highlightables =
     highlightables
         |> List.foldr
-            (\segment ( lastInteractiveHighlight, staticAcc, acc ) ->
+            (\segment ( lastInteractiveHighlightMarkers, staticAcc, acc ) ->
                 case segment.type_ of
                     Interactive ->
                         let
                             static_ =
-                                case ( List.head segment.marked, lastInteractiveHighlight ) of
-                                    ( Just marker, Just lastMarker ) ->
-                                        if marker == lastMarker then
-                                            List.map (\s -> { s | marked = [ marker ] }) staticAcc
-
-                                        else
-                                            staticAcc
-
-                                    _ ->
-                                        staticAcc
+                                List.map (\s -> { s | marked = listUnion segment.marked lastInteractiveHighlightMarkers }) staticAcc
                         in
-                        ( List.head segment.marked, [], segment :: static_ ++ acc )
+                        ( segment.marked, [], segment :: static_ ++ acc )
 
                     Static ->
-                        ( lastInteractiveHighlight, segment :: staticAcc, acc )
+                        ( lastInteractiveHighlightMarkers, segment :: staticAcc, acc )
             )
-            ( Nothing, [], [] )
+            ( [], [], [] )
         |> (\( _, static_, acc ) -> static_ ++ acc)
+
+
+{-| This is not an efficient way to union values -- using a set would be way better!
+
+However,
+(a) this will only ever be used with a tiny lists and
+(b) if we use a set, we'll need to thread a sorter through, impacting the API negatively
+(c) if we use a set, we'll need to convert to and from a set
+
+This tradeoff balance here might change if we decide to model the marked values as a set instead of as a list.
+
+-}
+listUnion : List a -> List a -> List a
+listUnion xs ys =
+    List.filterMap (\x -> List.Extra.find ((==) x) ys) xs
 
 
 {-| Get unique markers that have been used.
