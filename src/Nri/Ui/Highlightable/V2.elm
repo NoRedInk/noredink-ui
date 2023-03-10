@@ -439,14 +439,11 @@ Useful for encoding answers.
 -}
 asFragmentTuples : List (Highlightable marker) -> List ( List marker, String )
 asFragmentTuples highlightables =
-    highlightables
-        |> List.Extra.groupWhile (\a b -> a.index == b.index)
-        |> List.map
-            (\( first, rest ) ->
-                ( List.map .kind first.marked
-                , text (first :: rest)
-                )
-            )
+    let
+        asFragmentTuple highlightable =
+            ( List.map .kind highlightable.marked, highlightable.text )
+    in
+    List.map asFragmentTuple highlightables
 
 
 {-| Fetch the text from a series of highlightables.
