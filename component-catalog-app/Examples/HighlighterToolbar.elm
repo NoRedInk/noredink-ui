@@ -14,7 +14,7 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes exposing (css, id)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.HighlighterToolbar.V2 as HighlighterToolbar
@@ -71,6 +71,7 @@ example =
                 { currentTool = state.currentTool
                 , tags = tags
                 }
+            , div [ id "highlighter" ] []
             ]
     , categories = [ Instructional ]
     , keyboardSupport = []
