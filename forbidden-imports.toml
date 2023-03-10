@@ -76,6 +76,9 @@ hint = 'upgrade to V3'
 [forbidden."Nri.Ui.Highlighter.V1"]
 hint = 'upgrade to V2'
 
+[forbidden."Nri.Ui.HighlighterToolbar.V1"]
+hint = 'upgrade to V2'
+
 [forbidden."Nri.Ui.Icon.V3"]
 hint = 'upgrade to V5'
 usages = ['component-catalog-app/../src/Nri/Ui/Modal/V3.elm']

@@ -20,7 +20,7 @@ import Test.Html.Selector as Selector
 
 spec : Test
 spec =
-    describe "Nri.Ui.HighlighterToolbar.V1"
+    describe "Nri.Ui.HighlighterToolbar.V2"
         [ describe "tool selection" selectionTests
         , describe "keyboard behavior" keyboardTests
         ]
