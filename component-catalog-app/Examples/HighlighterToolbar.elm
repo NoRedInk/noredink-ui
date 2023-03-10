@@ -63,7 +63,7 @@ example =
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , HighlighterToolbar.view
-                { focusAndSelect = FocusAndSelectTab
+                { focusAndSelect = FocusAndSelectTag
                 , getColor = getColor
                 , getName = getName
                 , highlighterId = "highlighter"
@@ -176,7 +176,7 @@ controlSettings =
 {-| -}
 type Msg
     = UpdateControls (Control Settings)
-    | FocusAndSelectTab { select : Maybe Tag, focus : Maybe String }
+    | FocusAndSelectTag { select : Maybe Tag, focus : Maybe String }
     | Focused (Result Dom.Error ())
 
 
@@ -187,7 +187,7 @@ update msg state =
         UpdateControls settings ->
             ( { state | settings = settings }, Cmd.none )
 
-        FocusAndSelectTab { select, focus } ->
+        FocusAndSelectTag { select, focus } ->
             ( { state | currentTool = select }
             , focus
                 |> Maybe.map (Dom.focus >> Task.attempt Focused)
