@@ -4,6 +4,12 @@ module Nri.Ui.HighlighterToolbar.V2 exposing (view)
 
 @docs view
 
+Changes from V1:
+
+  - replaces `onChangeTag` and `onSetEraser` with `focusAndSelect`.
+  - adds `highlighterId` to config
+  - adds keyboard navigation
+
 -}
 
 import Accessibility.Styled.Aria as Aria
