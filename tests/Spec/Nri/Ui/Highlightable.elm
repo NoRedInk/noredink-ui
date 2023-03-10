@@ -206,21 +206,15 @@ joinAdjacentInteractiveHighlightsSpec =
         init type_ marks index =
             Highlightable.init type_ marks index ( [], "Content" )
 
-        {- the test output on a failure is way too full of data to be useful without
-           doing some pre-processing to get a nice, clean failure diff.
-        -}
-        forTestComparison { marked, type_ } =
-            ( type_, List.map .kind marked )
-
         expectJoinsTo expected starting =
             let
                 processedExpected =
                     List.indexedMap (\i f -> f i) expected
-                        |> List.map forTestComparison
+                        |> Highlightable.asFragmentTuples
             in
             List.indexedMap (\i f -> f i) starting
                 |> Highlightable.joinAdjacentInteractiveHighlights
-                |> List.map forTestComparison
+                |> Highlightable.asFragmentTuples
                 |> Expect.equal processedExpected
     in
     [ test "without any segments, does nothing" <|
