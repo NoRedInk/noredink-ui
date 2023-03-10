@@ -1,6 +1,7 @@
 module Nri.Ui.Mark.V2 exposing
     ( Mark
     , view, viewWithInlineTags, viewWithBalloonTags
+    , viewWithOverlaps
     )
 
 {-|
@@ -9,9 +10,11 @@ module Nri.Ui.Mark.V2 exposing
 ### Patch changes
 
   - change how the start styles are attached when there is not an explicit tag to show in order to reduce how often the starting highlight ends up isolated on its own line
+  - add viewWithOverlaps
 
 @docs Mark
 @docs view, viewWithInlineTags, viewWithBalloonTags
+@docs viewWithOverlaps
 
 -}
 
@@ -47,6 +50,19 @@ view :
     -> List (Html msg)
 view =
     view_ HiddenTags
+
+
+{-| When elements are marked, add ::before and ::after elements indicating the start and end of the highlight.
+
+(We can't use a `mark` HTML element here because of the tree structure of HTML)
+
+-}
+viewWithOverlaps :
+    (content -> List Style -> Html msg)
+    -> List ( content, List Mark )
+    -> List (Html msg)
+viewWithOverlaps f content =
+    view_ HiddenTags f (List.map (Tuple.mapSecond List.head) content)
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.

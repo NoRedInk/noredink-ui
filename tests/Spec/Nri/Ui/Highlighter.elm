@@ -677,8 +677,22 @@ overlappingHighlightTests =
                 )
 
         start highlightables =
-            program { markerName = Just "Selected Tool", joinAdjacentInteractiveHighlights = False }
-                (initHighlightables highlightables)
+            ProgramTest.createSandbox
+                { init =
+                    Highlighter.init
+                        { id = "test-highlighter-container"
+                        , highlightables = initHighlightables highlightables
+                        , marker = markerModel (Just "Comment")
+                        , joinAdjacentInteractiveHighlights = False
+                        }
+                , update =
+                    \msg model ->
+                        case Highlighter.update msg model of
+                            ( newModel, _, _ ) ->
+                                newModel
+                , view = Highlighter.viewWithOverlappingHighlights >> toUnstyled
+                }
+                |> ProgramTest.start ()
     in
     [ describe "existing overlapping highlights with the same start segment"
         [ test "renders a single ::before element for both marks" <|
