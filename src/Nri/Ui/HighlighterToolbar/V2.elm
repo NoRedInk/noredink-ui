@@ -12,7 +12,7 @@ import Accessibility.Styled.Role as Role
 import Css exposing (Color)
 import EventExtras exposing (onClickPreventDefaultAndStopPropagation)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes exposing (css, id, tabindex)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
@@ -61,7 +61,7 @@ view config model =
 
         viewTagWithConfig : tag -> Html msg
         viewTagWithConfig tag =
-            viewTag config (model.currentTool == Just tag) tag tools
+            viewTag config (model.currentTool == Just tag) tag tools model.currentTool
 
         eraserSelected : Bool
         eraserSelected =
@@ -69,7 +69,7 @@ view config model =
     in
     toolbar config.highlighterId
         (List.map viewTagWithConfig model.tags
-            ++ [ viewEraser config.focusAndSelect eraserSelected tools ]
+            ++ [ viewEraser config.focusAndSelect eraserSelected tools model.currentTool config.getName ]
         )
 
 
@@ -82,18 +82,21 @@ viewTag :
     -> Bool
     -> tag
     -> List (Maybe tag)
+    -> Maybe tag
     -> Html msg
-viewTag { focusAndSelect, getColor, getName } selected tag tools =
+viewTag { focusAndSelect, getColor, getName } selected tag tools currentTool =
     toolContainer ("tag-" ++ getName tag)
-        (viewTool (getName tag) focusAndSelect (getColor tag) selected (Just tag) tools)
+        (viewTool (getName tag) focusAndSelect (getColor tag) selected (Just tag) tools currentTool getName)
 
 
 viewEraser :
     ({ select : Maybe tag, focus : Maybe String } -> msg)
     -> Bool
     -> List (Maybe tag)
+    -> Maybe tag
+    -> (tag -> String)
     -> Html msg
-viewEraser focusAndSelect selected tools =
+viewEraser focusAndSelect selected tools currentTool getName =
     toolContainer "eraser"
         (viewTool "Remove highlight"
             focusAndSelect
@@ -101,6 +104,8 @@ viewEraser focusAndSelect selected tools =
             selected
             Nothing
             tools
+            currentTool
+            getName
         )
 
 
@@ -111,10 +116,13 @@ viewTool :
     -> Bool
     -> Maybe tag
     -> List (Maybe tag)
+    -> Maybe tag
+    -> (tag -> String)
     -> Html msg
-viewTool name focusAndSelect theme selected tool tools =
+viewTool name focusAndSelect theme selected tag tools currentTool getName =
     button
-        [ css
+        [ id ("tag-" ++ name)
+        , css
             [ Css.backgroundColor Css.transparent
             , Css.borderRadius (Css.px 0)
             , Css.border (Css.px 0)
@@ -122,20 +130,36 @@ viewTool name focusAndSelect theme selected tool tools =
             , Css.focus [ Css.outlineStyle Css.none ]
             , Css.cursor Css.pointer
             ]
-        , onClickPreventDefaultAndStopPropagation (focusAndSelect { select = tool, focus = Nothing })
+        , onClickPreventDefaultAndStopPropagation (focusAndSelect { select = tag, focus = Nothing })
         , Aria.pressed (Just selected)
-        , Key.onKeyDownPreventDefault (keyEvents focusAndSelect tool tools)
+        , tabindex
+            (if selected then
+                0
+
+             else
+                -1
+            )
+        , Key.onKeyDownPreventDefault (keyEvents focusAndSelect currentTool tools getName)
         ]
-        [ toolContent name theme tool
+        [ toolContent name theme tag
         , viewIf (\() -> active theme) selected
         ]
 
 
-keyEvents : ({ select : Maybe tag, focus : Maybe String } -> msg) -> Maybe tag -> List (Maybe tag) -> List (Key.Event msg)
-keyEvents focusAndSelect tag tags =
+keyEvents : ({ select : Maybe tag, focus : Maybe String } -> msg) -> Maybe tag -> List (Maybe tag) -> (tag -> String) -> List (Key.Event msg)
+keyEvents focusAndSelect tag tools getName =
     let
         onFocus tag_ =
-            focusAndSelect { select = tag_, focus = Nothing }
+            focusAndSelect
+                { select = tag_
+                , focus =
+                    case tag_ of
+                        Just tag__ ->
+                            Just ("tag-" ++ getName tag__)
+
+                        Nothing ->
+                            Just "tag-Remove highlight"
+                }
 
         findAdjacentTag tag_ ( isAdjacentTab, acc ) =
             if isAdjacentTab then
@@ -149,9 +173,9 @@ keyEvents focusAndSelect tag tags =
             List.foldl findAdjacentTag
                 ( False
                 , -- if there is no adjacent tag, default to the first tag
-                  Maybe.map onFocus (List.head tags)
+                  Maybe.map onFocus (List.head tools)
                 )
-                tags
+                tools
                 |> Tuple.second
 
         goToPreviousTag : Maybe msg
@@ -159,9 +183,9 @@ keyEvents focusAndSelect tag tags =
             List.foldr findAdjacentTag
                 ( False
                 , -- if there is no adjacent tag, default to the last tag
-                  Maybe.map onFocus (List.head (List.reverse tags))
+                  Maybe.map onFocus (List.head (List.reverse tools))
                 )
-                tags
+                tools
                 |> Tuple.second
     in
     List.filterMap identity
