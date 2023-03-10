@@ -676,7 +676,7 @@ overlappingHighlightTests =
                     Highlightable.init Highlightable.Interactive (List.map (Just >> marker) marks) i ( [], text )
                 )
 
-        start highlightables =
+        start renderer highlightables =
             ProgramTest.createSandbox
                 { init =
                     Highlighter.init
@@ -690,54 +690,59 @@ overlappingHighlightTests =
                         case Highlighter.update msg model of
                             ( newModel, _, _ ) ->
                                 newModel
-                , view = Highlighter.viewWithOverlappingHighlights >> toUnstyled
+                , view = renderer >> toUnstyled
                 }
                 |> ProgramTest.start ()
-    in
-    [ describe "existing overlapping highlights with the same start segment"
-        [ test "renders a single ::before element for both marks" <|
-            \() ->
-                [ ( "Hello", [ "A", "B" ] ), ( " ", [] ), ( "World", [ "A" ] ), ( "!", [ "B" ] ) ]
-                    |> start
-                    |> ensureView (hasStartHighlightBeforeContent "Start A and B highlight" "Hello")
-                    |> done
-        , test "uses Oxford comma for more-than-2 marks" <|
-            \() ->
-                [ ( "Hello", [ "A", "B", "C" ] ), ( " ", [] ), ( "World", [ "A" ] ), ( "!", [ "B" ] ) ]
-                    |> start
-                    |> ensureView (hasStartHighlightBeforeContent "Start A, B, and C highlight" "Hello")
-                    |> done
-        ]
-    , describe "existing overlapping highlights with the same end segment"
-        [ test "renders a single ::after element for both marks" <|
-            \() ->
-                [ ( "Hello", [ "A" ] ), ( " ", [] ), ( "World", [ "B" ] ), ( "!", [ "A", "B" ] ) ]
-                    |> start
-                    |> ensureView (hasEndHighlightAfterContent "End A and B highlight" "!")
-                    |> done
-        , test "uses Oxford comma for more-than-2 marks" <|
-            \() ->
-                [ ( "Hello", [ "A" ] ), ( " ", [] ), ( "World", [ "B" ] ), ( "!", [ "A", "B" ] ) ]
-                    |> start
-                    |> ensureView (hasEndHighlightAfterContent "End A, B, and C highlight" "!")
-                    |> done
-        ]
-    , describe "existing overlapping highlights with differing start and end segments"
-        [ test "renders individual ::before and ::after elements" <|
-            \() ->
-                [ ( "Hello", [ "A" ] )
-                , ( " ", [] )
-                , ( "World!", [ "B" ] )
-                , ( " ", [] )
-                , ( "Hope you're", [ "A" ] )
-                , ( " ", [] )
-                , ( "well", [ "B" ] )
+
+        staticAssertions renderer =
+            [ describe "existing overlapping highlights with the same start segment"
+                [ test "renders a single ::before element for both marks" <|
+                    \() ->
+                        [ ( "Hello", [ "A", "B" ] ), ( " ", [] ), ( "World", [ "A" ] ), ( "!", [ "B" ] ) ]
+                            |> start renderer
+                            |> ensureView (hasStartHighlightBeforeContent "Start A and B highlight" "Hello")
+                            |> done
+                , test "uses Oxford comma for more-than-2 marks" <|
+                    \() ->
+                        [ ( "Hello", [ "A", "B", "C" ] ), ( " ", [] ), ( "World", [ "A" ] ), ( "!", [ "B" ] ) ]
+                            |> start renderer
+                            |> ensureView (hasStartHighlightBeforeContent "Start A, B, and C highlight" "Hello")
+                            |> done
                 ]
-                    |> start
-                    |> ensureView (hasStartHighlightBeforeContent "Start A highlight" "Hello")
-                    |> ensureView (hasEndHighlightAfterContent "End A highlight" "Hope you're")
-                    |> ensureView (hasStartHighlightBeforeContent "Start B highlight" "World!")
-                    |> ensureView (hasEndHighlightAfterContent "End B highlight" "well")
-                    |> done
-        ]
+            , describe "existing overlapping highlights with the same end segment"
+                [ test "renders a single ::after element for both marks" <|
+                    \() ->
+                        [ ( "Hello", [ "A" ] ), ( " ", [] ), ( "World", [ "B" ] ), ( "!", [ "A", "B" ] ) ]
+                            |> start renderer
+                            |> ensureView (hasEndHighlightAfterContent "End A and B highlight" "!")
+                            |> done
+                , test "uses Oxford comma for more-than-2 marks" <|
+                    \() ->
+                        [ ( "Hello", [ "A" ] ), ( " ", [] ), ( "World", [ "B" ] ), ( "!", [ "A", "B" ] ) ]
+                            |> start renderer
+                            |> ensureView (hasEndHighlightAfterContent "End A, B, and C highlight" "!")
+                            |> done
+                ]
+            , describe "existing overlapping highlights with differing start and end segments"
+                [ test "renders individual ::before and ::after elements" <|
+                    \() ->
+                        [ ( "Hello", [ "A" ] )
+                        , ( " ", [] )
+                        , ( "World!", [ "B" ] )
+                        , ( " ", [] )
+                        , ( "Hope you're", [ "A" ] )
+                        , ( " ", [] )
+                        , ( "well", [ "B" ] )
+                        ]
+                            |> start renderer
+                            |> ensureView (hasStartHighlightBeforeContent "Start A highlight" "Hello")
+                            |> ensureView (hasEndHighlightAfterContent "End A highlight" "Hope you're")
+                            |> ensureView (hasStartHighlightBeforeContent "Start B highlight" "World!")
+                            |> ensureView (hasEndHighlightAfterContent "End B highlight" "well")
+                            |> done
+                ]
+            ]
+    in
+    [ describe "viewWithOverlappingHighlights" (staticAssertions Highlighter.viewWithOverlappingHighlights)
+    , describe "staticWithOverlappingHighlights" (staticAssertions Highlighter.staticWithOverlappingHighlights)
     ]
