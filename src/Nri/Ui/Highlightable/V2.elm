@@ -418,7 +418,7 @@ listUnion xs ys =
     List.filterMap (\x -> List.Extra.find ((==) x) ys) xs
 
 
-{-| Get unique markers that have been used.
+{-| Get unique markers that have been used. Note: ignores marks on whitespace.
 -}
 usedMarkers : Sorter marker -> List (Highlightable marker) -> Sort.Set.Set marker
 usedMarkers sorter highlightables =

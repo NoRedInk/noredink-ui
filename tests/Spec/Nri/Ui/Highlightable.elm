@@ -7,6 +7,8 @@ import Nri.Ui.Highlightable.V1 as HighlightableV1
 import Nri.Ui.Highlightable.V2 as Highlightable exposing (Type(..))
 import Nri.Ui.Highlighter.V2 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
+import Sort
+import Sort.Set
 import String.Extra
 import Test exposing (..)
 
@@ -55,6 +57,7 @@ spec =
         , describe "HighlightableV1.fromMarkdown" fromMarkdownV1Spec
         , describe "fromMarkdown" fromMarkdownSpec
         , describe "joinAdjacentInteractiveHighlights" joinAdjacentInteractiveHighlightsSpec
+        , describe "usedMarkers" usedMarkersSpec
         ]
 
 
@@ -342,4 +345,59 @@ joinAdjacentInteractiveHighlightsSpec =
                     , init Static [ mark "B" ]
                     , init Interactive [ mark "B" ]
                     ]
+    ]
+
+
+usedMarkersSpec : List Test
+usedMarkersSpec =
+    let
+        testUsedMarkers =
+            List.indexedMap (\i f -> f i)
+                >> Highlightable.usedMarkers Sort.alphabetical
+                >> Sort.Set.toList
+
+        mark kind =
+            Tool.buildMarker
+                { highlightColor = Colors.highlightYellow
+                , hoverColor = Colors.highlightYellow
+                , hoverHighlightColor = Colors.highlightYellow
+                , kind = kind
+                , name = Nothing
+                }
+
+        init type_ marks index =
+            Highlightable.init type_ marks index ( [], "Content" )
+
+        initBlank type_ marks index =
+            Highlightable.init type_ marks index ( [], " " )
+    in
+    [ test "for an empty list of highlightables, returns an empty set" <|
+        \() ->
+            testUsedMarkers []
+                |> Expect.equal []
+    , test "for a static blank with marks, returns an empty set" <|
+        \() ->
+            testUsedMarkers [ initBlank Static [ mark "a", mark "b" ] ]
+                |> Expect.equal []
+    , test "for an interactive blank with marks, returns an empty set" <|
+        \() ->
+            testUsedMarkers [ initBlank Interactive [ mark "a", mark "b" ] ]
+                |> Expect.equal []
+    , test "for a static segment with marks, returns the marks" <|
+        \() ->
+            testUsedMarkers [ init Static [ mark "a", mark "b" ] ]
+                |> Expect.equal [ "a", "b" ]
+    , test "for an interactive segment with marks, returns the marks" <|
+        \() ->
+            testUsedMarkers [ init Interactive [ mark "a", mark "b" ] ]
+                |> Expect.equal [ "a", "b" ]
+    , test "for a list of segments, returns the correct marks" <|
+        \() ->
+            testUsedMarkers
+                [ init Interactive [ mark "e", mark "b" ]
+                , init Static [ mark "a" ]
+                , init Interactive [ mark "c" ]
+                , init Interactive [ mark "c", mark "d", mark "a" ]
+                ]
+                |> Expect.equal [ "a", "b", "c", "d", "e" ]
     ]
