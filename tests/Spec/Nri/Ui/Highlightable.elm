@@ -16,7 +16,7 @@ import Test exposing (..)
 spec : Test
 spec =
     describe "Highlightable"
-        [ describe "roundtrip from initFragment via toTuplesByFragment"
+        [ describe "roundtrip from initFragment via asFragmentTuples"
             [ fuzz (list string) "toTuplesByFragment (initFragment [str]) ... == [str]" <|
                 \strings ->
                     let
@@ -60,6 +60,7 @@ spec =
         , describe "usedMarkers" usedMarkersSpec
         , describe "blur" blurSpec
         , describe "hover" hoverSpec
+        , describe "asFragmentTuples" asFragmentTuplesSpec
         ]
 
 
@@ -202,15 +203,6 @@ fromMarkdownSpec =
 joinAdjacentInteractiveHighlightsSpec : List Test
 joinAdjacentInteractiveHighlightsSpec =
     let
-        mark kind =
-            Tool.buildMarker
-                { highlightColor = Colors.highlightYellow
-                , hoverColor = Colors.highlightYellow
-                , hoverHighlightColor = Colors.highlightYellow
-                , kind = kind
-                , name = Nothing
-                }
-
         init type_ marks index =
             Highlightable.init type_ marks index ( [], "Content" )
 
@@ -358,15 +350,6 @@ usedMarkersSpec =
                 >> Highlightable.usedMarkers Sort.alphabetical
                 >> Sort.Set.toList
 
-        mark kind =
-            Tool.buildMarker
-                { highlightColor = Colors.highlightYellow
-                , hoverColor = Colors.highlightYellow
-                , hoverHighlightColor = Colors.highlightYellow
-                , kind = kind
-                , name = Nothing
-                }
-
         init type_ marks index =
             Highlightable.init type_ marks index ( [], "Content" )
 
@@ -463,3 +446,61 @@ hoverSpec =
                 |> Highlightable.hover
                 |> Expect.equal (highlightable Highlightable.Hovered)
     ]
+
+
+asFragmentTuplesSpec : List Test
+asFragmentTuplesSpec =
+    [ test "for a size-1 list" <|
+        \() ->
+            [ { text = "Content"
+              , uiState = Highlightable.None
+              , customAttributes = []
+              , marked = [ mark "a", mark "b" ]
+              , index = 0
+              , type_ = Interactive
+              }
+            ]
+                |> Highlightable.asFragmentTuples
+                |> Expect.equal [ ( [ "a", "b" ], "Content" ) ]
+    , test "for a longer list" <|
+        \() ->
+            [ { text = "Content"
+              , uiState = Highlightable.None
+              , customAttributes = []
+              , marked = [ mark "a", mark "b" ]
+              , index = 0
+              , type_ = Interactive
+              }
+            , { text = " "
+              , uiState = Highlightable.None
+              , customAttributes = []
+              , marked = [ mark "a" ]
+              , index = 1
+              , type_ = Static
+              }
+            , { text = "Content"
+              , uiState = Highlightable.None
+              , customAttributes = []
+              , marked = [ mark "a", mark "c" ]
+              , index = 2
+              , type_ = Interactive
+              }
+            ]
+                |> Highlightable.asFragmentTuples
+                |> Expect.equal
+                    [ ( [ "a", "b" ], "Content" )
+                    , ( [ "a" ], " " )
+                    , ( [ "a", "c" ], "Content" )
+                    ]
+    ]
+
+
+mark : a -> Tool.MarkerModel a
+mark kind =
+    Tool.buildMarker
+        { highlightColor = Colors.highlightYellow
+        , hoverColor = Colors.highlightYellow
+        , hoverHighlightColor = Colors.highlightYellow
+        , kind = kind
+        , name = Nothing
+        }
