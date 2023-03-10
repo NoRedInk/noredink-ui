@@ -58,6 +58,7 @@ spec =
         , describe "fromMarkdown" fromMarkdownSpec
         , describe "joinAdjacentInteractiveHighlights" joinAdjacentInteractiveHighlightsSpec
         , describe "usedMarkers" usedMarkersSpec
+        , describe "blur" blurSpec
         ]
 
 
@@ -400,4 +401,34 @@ usedMarkersSpec =
                 , init Interactive [ mark "c", mark "d", mark "a" ]
                 ]
                 |> Expect.equal [ "a", "b", "c", "d", "e" ]
+    ]
+
+
+blurSpec : List Test
+blurSpec =
+    let
+        highlightable state =
+            { text = "Content"
+            , uiState = state
+            , customAttributes = []
+            , marked = []
+            , index = 0
+            , type_ = Interactive
+            }
+    in
+    [ test "when hinted, no change to state" <|
+        \() ->
+            highlightable Highlightable.Hinted
+                |> Highlightable.blur
+                |> Expect.equal (highlightable Highlightable.Hinted)
+    , test "when hovered, remove hover state" <|
+        \() ->
+            highlightable Highlightable.Hovered
+                |> Highlightable.blur
+                |> Expect.equal (highlightable Highlightable.None)
+    , test "when no UiState, no change to state" <|
+        \() ->
+            highlightable Highlightable.None
+                |> Highlightable.blur
+                |> Expect.equal (highlightable Highlightable.None)
     ]
