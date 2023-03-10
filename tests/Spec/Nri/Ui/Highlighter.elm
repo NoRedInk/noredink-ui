@@ -31,19 +31,19 @@ keyboardTests =
     [ test "has a focusable element when there is one" <|
         \() ->
             Highlightable.initFragments [] "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> done
     , test "has only one element included in the tab sequence" <|
         \() ->
             Highlightable.initFragments [] "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureOnlyOneInTabSequence (String.words "Pothos indirect light")
                 |> done
     , test "moves focus right on right arrow key" <|
         \() ->
             Highlightable.initFragments [] "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> rightArrow
                 |> ensureTabbable "indirect"
@@ -58,7 +58,7 @@ keyboardTests =
     , test "moves focus left on left arrow key" <|
         \() ->
             Highlightable.initFragments [] "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> rightArrow
                 |> ensureTabbable "indirect"
@@ -73,7 +73,7 @@ keyboardTests =
     , test "moves focus right on shift + right arrow" <|
         \() ->
             Highlightable.initFragments [] "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> shiftRight
                 |> ensureTabbable "indirect"
@@ -85,7 +85,7 @@ keyboardTests =
     , test "moves focus left on shift + left arrow" <|
         \() ->
             Highlightable.initFragments [] "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> rightArrow
                 |> ensureTabbable "indirect"
@@ -97,7 +97,7 @@ keyboardTests =
     , test "expands selection one element to the right on shift + right arrow and highlight selected elements" <|
         \() ->
             Highlightable.initFragments [] "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> shiftRight
                 |> releaseShiftRight
                 |> ensureMarked [ "Pothos", " ", "indirect" ]
@@ -111,7 +111,7 @@ keyboardTests =
     , test "expands selection one element to the left on shift + left arrow and highlight selected elements" <|
         \() ->
             Highlightable.initFragments [] "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> rightArrow
                 |> rightArrow
                 |> shiftLeft
@@ -127,7 +127,7 @@ keyboardTests =
     , test "merges highlights" <|
         \() ->
             Highlightable.initFragments [] "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> shiftRight
                 |> releaseShiftRight
@@ -142,7 +142,7 @@ keyboardTests =
     , test "selects element on MouseDown and highlights selected element on MouseUp" <|
         \() ->
             Highlightable.initFragments [] "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> mouseDown "Pothos"
                 |> mouseUp "Pothos"
@@ -151,7 +151,7 @@ keyboardTests =
     , test "selects element on MouseDown, expands selection on MouseOver, and highlights selected elements on MouseUp" <|
         \() ->
             Highlightable.initFragments [] "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> mouseDown "Pothos"
                 |> mouseOver "indirect"
@@ -161,7 +161,7 @@ keyboardTests =
     , test "Highlights element on Space" <|
         \() ->
             Highlightable.initFragments [] "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> space
                 |> ensureMarked [ "Pothos" ]
@@ -169,7 +169,7 @@ keyboardTests =
     , test "Removes highlight from element on MouseUp" <|
         \() ->
             Highlightable.initFragments [] "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> space
                 |> ensureMarked [ "Pothos" ]
@@ -180,7 +180,7 @@ keyboardTests =
     , test "Removes entire highlight from a group of elements on MouseUp" <|
         \() ->
             Highlightable.initFragments [] "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> shiftRight
                 |> releaseShiftRight
@@ -191,7 +191,7 @@ keyboardTests =
     , test "Removes highlight from element on Space" <|
         \() ->
             Highlightable.initFragments [] "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> space
                 |> ensureMarked [ "Pothos" ]
@@ -202,7 +202,7 @@ keyboardTests =
         [ test "generic start announcement is made when mark does not include first element" <|
             \() ->
                 Highlightable.initFragments [] "Pothos indirect light"
-                    |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                    |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                     |> rightArrow
                     |> shiftRight
                     |> releaseShiftRight
@@ -211,7 +211,7 @@ keyboardTests =
         , test "specific start announcement is made when mark does not include first element" <|
             \() ->
                 Highlightable.initFragments [] "Pothos indirect light"
-                    |> program { name = Just "banana", joinAdjacentInteractiveHighlights = False }
+                    |> program { markerName = Just "banana", joinAdjacentInteractiveHighlights = False }
                     |> rightArrow
                     |> ensureTabbable "indirect"
                     |> shiftRight
@@ -225,7 +225,7 @@ keyboardTests =
           test "Focus moves past 3rd element" <|
             \() ->
                 Highlightable.initFragments [] "Sir Walter Elliot, of Kellynch Hall, in Somersetshire..."
-                    |> program { name = Just "Claim", joinAdjacentInteractiveHighlights = False }
+                    |> program { markerName = Just "Claim", joinAdjacentInteractiveHighlights = False }
                     |> shiftRight
                     |> releaseShiftRight
                     |> ensureMarked [ "Sir", " ", "Walter" ]
@@ -536,7 +536,7 @@ type alias TestContext =
 
 
 program :
-    { name : Maybe String
+    { markerName : Maybe String
     , joinAdjacentInteractiveHighlights : Bool
     }
     -> List (Highlightable String)
@@ -547,7 +547,7 @@ program config highlightables =
             Highlighter.init
                 { id = "test-highlighter-container"
                 , highlightables = highlightables
-                , marker = markerModel config.name
+                , marker = markerModel config.markerName
                 , joinAdjacentInteractiveHighlights = config.joinAdjacentInteractiveHighlights
                 }
         , update =
@@ -571,7 +571,7 @@ joinAdjacentInteractiveHighlightsTests =
                         , Highlightable.init Highlightable.Interactive [] 1 ( [], "word" )
                         , Highlightable.init Highlightable.Static [] 2 ( [], " " )
                         ]
-                            |> program { name = Nothing, joinAdjacentInteractiveHighlights = joinAdjacentInteractiveHighlights }
+                            |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = joinAdjacentInteractiveHighlights }
                             |> click "word"
                             |> ensureMarked [ "word" ]
                             |> click "word"
@@ -592,7 +592,7 @@ joinAdjacentInteractiveHighlightsTests =
         [ test "not joining adjacent interactive highlights" <|
             \() ->
                 highlightables
-                    |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                    |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                     |> click "hello"
                     |> ensureMarks [ [ "hello" ] ]
                     |> click "world"
@@ -605,7 +605,7 @@ joinAdjacentInteractiveHighlightsTests =
         , test "joining adjacent interactive highlights" <|
             \() ->
                 highlightables
-                    |> program { name = Nothing, joinAdjacentInteractiveHighlights = True }
+                    |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = True }
                     |> click "hello"
                     |> ensureMarks [ [ "hello" ] ]
                     |> click "world"
@@ -621,7 +621,7 @@ joinAdjacentInteractiveHighlightsTests =
                 , Highlightable.init Highlightable.Static [] 1 ( [], " " )
                 , Highlightable.init Highlightable.Interactive [ marker (Just "type-1") ] 2 ( [], "world" )
                 ]
-                    |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                    |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                     |> ensureMarks [ [ "hello" ], [ "world" ] ]
                     |> done
         , test "with matching mark types, joining adjacent interactive highlights, joins marks" <|
@@ -630,7 +630,7 @@ joinAdjacentInteractiveHighlightsTests =
                 , Highlightable.init Highlightable.Static [] 1 ( [], " " )
                 , Highlightable.init Highlightable.Interactive [ marker (Just "type-1") ] 2 ( [], "world" )
                 ]
-                    |> program { name = Nothing, joinAdjacentInteractiveHighlights = True }
+                    |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = True }
                     |> ensureMarks [ [ "hello", " ", "world" ] ]
                     |> done
         , test "with differing mark types, not joining adjacent interactive highlights, does not join marks" <|
@@ -639,7 +639,7 @@ joinAdjacentInteractiveHighlightsTests =
                 , Highlightable.init Highlightable.Static [] 1 ( [], " " )
                 , Highlightable.init Highlightable.Interactive [ marker (Just "type-2") ] 2 ( [], "world" )
                 ]
-                    |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                    |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                     |> ensureMarks [ [ "hello" ], [ "world" ] ]
                     |> done
         , test "with differing mark types, joining adjacent interactive highlights, does not join marks" <|
@@ -648,7 +648,7 @@ joinAdjacentInteractiveHighlightsTests =
                 , Highlightable.init Highlightable.Static [] 1 ( [], " " )
                 , Highlightable.init Highlightable.Interactive [ marker (Just "type-2") ] 2 ( [], "world" )
                 ]
-                    |> program { name = Nothing, joinAdjacentInteractiveHighlights = True }
+                    |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = True }
                     |> ensureMarks [ [ "hello" ], [ "world" ] ]
                     |> done
         ]
