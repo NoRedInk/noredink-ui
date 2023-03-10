@@ -23,6 +23,7 @@ spec =
         [ describe "keyboard behavior" keyboardTests
         , describe "markdown behavior" markdownTests
         , describe "joinAdjacentInteractiveHighlights" joinAdjacentInteractiveHighlightsTests
+        , describe "overlapping highlights" overlappingHighlightTests
         ]
 
 
@@ -349,7 +350,17 @@ startWithoutMarker view highlightables =
 
 
 hasStartHighlightBeforeContent : String -> String -> Query.Single msg -> Expectation
-hasStartHighlightBeforeContent startHighlightMarker relevantHighlightableText view =
+hasStartHighlightBeforeContent =
+    hasPseudoElement "::before"
+
+
+hasEndHighlightAfterContent : String -> String -> Query.Single msg -> Expectation
+hasEndHighlightAfterContent =
+    hasPseudoElement "::after"
+
+
+hasPseudoElement : String -> String -> String -> Query.Single msg -> Expectation
+hasPseudoElement pseudoElement highlightMarker relevantHighlightableText view =
     let
         styles =
             view
@@ -359,8 +370,8 @@ hasStartHighlightBeforeContent startHighlightMarker relevantHighlightableText vi
 
         startHighlightClassRegex : Maybe Regex
         startHighlightClassRegex =
-            "\\.(\\_[a-zA-Z0-9]+)::before\\{content:\\\\\"\\s*\\s*"
-                ++ startHighlightMarker
+            ("\\.(\\_[a-zA-Z0-9]+)" ++ pseudoElement ++ "\\{content:\\\\\"\\s*\\s*")
+                ++ highlightMarker
                 |> Regex.fromString
 
         maybeClassName : Maybe String
@@ -386,8 +397,8 @@ hasStartHighlightBeforeContent startHighlightMarker relevantHighlightableText vi
                 view
 
         Nothing ->
-            "Expected to find a class defining a ::before element with content: `"
-                ++ startHighlightMarker
+            ("Expected to find a class defining a " ++ pseudoElement ++ " element with content: `")
+                ++ highlightMarker
                 ++ "`, but failed to find the class in the styles: \n\n"
                 ++ styles
                 |> Expect.fail
@@ -650,6 +661,69 @@ joinAdjacentInteractiveHighlightsTests =
                 ]
                     |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = True }
                     |> ensureMarks [ [ "hello" ], [ "world" ] ]
+                    |> done
+        ]
+    ]
+
+
+overlappingHighlightTests : List Test
+overlappingHighlightTests =
+    let
+        initHighlightables : List ( String, List String ) -> List (Highlightable String)
+        initHighlightables =
+            List.indexedMap
+                (\i ( text, marks ) ->
+                    Highlightable.init Highlightable.Interactive (List.map (Just >> marker) marks) i ( [], text )
+                )
+
+        start highlightables =
+            program { markerName = Just "Selected Tool", joinAdjacentInteractiveHighlights = False }
+                (initHighlightables highlightables)
+    in
+    [ describe "existing overlapping highlights with the same start segment"
+        [ test "renders a single ::before element for both marks" <|
+            \() ->
+                [ ( "Hello", [ "A", "B" ] ), ( " ", [] ), ( "World", [ "A" ] ), ( "!", [ "B" ] ) ]
+                    |> start
+                    |> ensureView (hasStartHighlightBeforeContent "Start A and B highlight" "Hello")
+                    |> done
+        , test "uses Oxford comma for more-than-2 marks" <|
+            \() ->
+                [ ( "Hello", [ "A", "B", "C" ] ), ( " ", [] ), ( "World", [ "A" ] ), ( "!", [ "B" ] ) ]
+                    |> start
+                    |> ensureView (hasStartHighlightBeforeContent "Start A, B, and C highlight" "Hello")
+                    |> done
+        ]
+    , describe "existing overlapping highlights with the same end segment"
+        [ test "renders a single ::after element for both marks" <|
+            \() ->
+                [ ( "Hello", [ "A" ] ), ( " ", [] ), ( "World", [ "B" ] ), ( "!", [ "A", "B" ] ) ]
+                    |> start
+                    |> ensureView (hasEndHighlightAfterContent "End A and B highlight" "!")
+                    |> done
+        , test "uses Oxford comma for more-than-2 marks" <|
+            \() ->
+                [ ( "Hello", [ "A" ] ), ( " ", [] ), ( "World", [ "B" ] ), ( "!", [ "A", "B" ] ) ]
+                    |> start
+                    |> ensureView (hasEndHighlightAfterContent "End A, B, and C highlight" "!")
+                    |> done
+        ]
+    , describe "existing overlapping highlights with differing start and end segments"
+        [ test "renders individual ::before and ::after elements" <|
+            \() ->
+                [ ( "Hello", [ "A" ] )
+                , ( " ", [] )
+                , ( "World!", [ "B" ] )
+                , ( " ", [] )
+                , ( "Hope you're", [ "A" ] )
+                , ( " ", [] )
+                , ( "well", [ "B" ] )
+                ]
+                    |> start
+                    |> ensureView (hasStartHighlightBeforeContent "Start A highlight" "Hello")
+                    |> ensureView (hasEndHighlightAfterContent "End A highlight" "Hope you're")
+                    |> ensureView (hasStartHighlightBeforeContent "Start B highlight" "World!")
+                    |> ensureView (hasEndHighlightAfterContent "End B highlight" "well")
                     |> done
         ]
     ]
