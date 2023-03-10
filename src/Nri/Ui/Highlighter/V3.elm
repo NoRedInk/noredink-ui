@@ -3,7 +3,7 @@ module Nri.Ui.Highlighter.V3 exposing
     , init, update
     , view, static, staticWithTags
     , viewMarkdown, staticMarkdown, staticMarkdownWithTags
-    , viewWithOverlappingHighlights
+    , viewWithOverlappingHighlights, staticWithOverlappingHighlights
     , Intent(..), hasChanged, HasChanged(..)
     , removeHighlights
     )
@@ -27,7 +27,7 @@ Highlighter provides a view/model/update to display a view to highlight text and
 
 @docs view, static, staticWithTags
 @docs viewMarkdown, staticMarkdown, staticMarkdownWithTags
-@docs viewWithOverlappingHighlights
+@docs viewWithOverlappingHighlights, staticWithOverlappingHighlights
 
 
 ## Intents
@@ -644,6 +644,21 @@ viewWithOverlappingHighlights : { config | id : String, highlightables : List (H
 viewWithOverlappingHighlights config =
     view_ { showTagsInline = False, maybeTool = Just config.marker, overlaps = True }
         (viewHighlightable False config)
+        config
+
+
+{-| -}
+staticWithOverlappingHighlights : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
+staticWithOverlappingHighlights config =
+    view_ { showTagsInline = False, maybeTool = Nothing, overlaps = True }
+        (viewHighlightableSegment
+            { interactiveHighlighterId = Nothing
+            , focusIndex = Nothing
+            , eventListeners = []
+            , maybeTool = Nothing
+            , renderMarkdown = False
+            }
+        )
         config
 
 

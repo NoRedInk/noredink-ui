@@ -243,6 +243,26 @@ example =
                             , highlightables = Highlightable.fromMarkdown "Select your [favorite phrase]() in **your** writing."
                             }
                   }
+                , { viewName = "viewWithOverlappingHighlights"
+                  , tool = "buildMarker"
+                  , highlightable = "init"
+                  , description = "Multiple kinds of highlights with overlaps."
+                  , example =
+                        Highlighter.staticWithOverlappingHighlights
+                            { id = "example-6"
+                            , highlightables =
+                                [ ( "Sphinx", [ claimMarker, evidenceMarker ] )
+                                , ( "of", [ evidenceMarker ] )
+                                , ( "black quartz,", [ reasoningMarker, evidenceMarker ] )
+                                , ( "judge", [ reasoningMarker, evidenceMarker ] )
+                                , ( "my", [ evidenceMarker ] )
+                                , ( "vow.", [] )
+                                ]
+                                    |> List.intersperse ( " ", [] )
+                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Interactive marker i ( [], word ))
+                                    |> Highlightable.joinAdjacentInteractiveHighlights
+                            }
+                  }
                 ]
             ]
     , categories = [ Instructional ]

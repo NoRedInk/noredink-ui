@@ -61,8 +61,13 @@ viewWithOverlaps :
     (content -> List Style -> Html msg)
     -> List ( content, List Mark )
     -> List (Html msg)
-viewWithOverlaps f content =
-    view_ HiddenTags f (List.map (Tuple.mapSecond List.head) content)
+viewWithOverlaps viewSegment =
+    List.indexedMap
+        (\index ( content, marks ) ->
+            viewSegment content
+                -- TODO: add back in the styles
+                []
+        )
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
