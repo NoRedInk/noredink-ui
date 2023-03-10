@@ -700,13 +700,13 @@ overlappingHighlightTests =
                     \() ->
                         [ ( "Hello", [ "A", "B" ] ), ( " ", [] ), ( "World", [ "A" ] ), ( "!", [ "B" ] ) ]
                             |> start renderer
-                            |> ensureView (hasStartHighlightBeforeContent "Start A and B highlight" "Hello")
+                            |> ensureView (hasStartHighlightBeforeContent "start A and B highlights" "Hello")
                             |> done
                 , test "uses Oxford comma for more-than-2 marks" <|
                     \() ->
                         [ ( "Hello", [ "A", "B", "C" ] ), ( " ", [] ), ( "World", [ "A" ] ), ( "!", [ "B" ] ) ]
                             |> start renderer
-                            |> ensureView (hasStartHighlightBeforeContent "Start A, B, and C highlight" "Hello")
+                            |> ensureView (hasStartHighlightBeforeContent "start A, B, and C highlights" "Hello")
                             |> done
                 ]
             , describe "existing overlapping highlights with the same end segment"
@@ -714,13 +714,13 @@ overlappingHighlightTests =
                     \() ->
                         [ ( "Hello", [ "A" ] ), ( " ", [] ), ( "World", [ "B" ] ), ( "!", [ "A", "B" ] ) ]
                             |> start renderer
-                            |> ensureView (hasEndHighlightAfterContent "End A and B highlight" "!")
+                            |> ensureView (hasEndHighlightAfterContent "end A and B highlights" "!")
                             |> done
                 , test "uses Oxford comma for more-than-2 marks" <|
                     \() ->
                         [ ( "Hello", [ "A" ] ), ( " ", [] ), ( "World", [ "B" ] ), ( "!", [ "A", "B" ] ) ]
                             |> start renderer
-                            |> ensureView (hasEndHighlightAfterContent "End A, B, and C highlight" "!")
+                            |> ensureView (hasEndHighlightAfterContent "end A, B, and C highlights" "!")
                             |> done
                 ]
             , describe "existing overlapping highlights with differing start and end segments"
@@ -735,10 +735,10 @@ overlappingHighlightTests =
                         , ( "well", [ "B" ] )
                         ]
                             |> start renderer
-                            |> ensureView (hasStartHighlightBeforeContent "Start A highlight" "Hello")
-                            |> ensureView (hasEndHighlightAfterContent "End A highlight" "Hope you're")
-                            |> ensureView (hasStartHighlightBeforeContent "Start B highlight" "World!")
-                            |> ensureView (hasEndHighlightAfterContent "End B highlight" "well")
+                            |> ensureView (hasStartHighlightBeforeContent "start A highlight" "Hello")
+                            |> ensureView (hasEndHighlightAfterContent "end A highlight" "Hope you're")
+                            |> ensureView (hasStartHighlightBeforeContent "start B highlight" "World!")
+                            |> ensureView (hasEndHighlightAfterContent "end B highlight" "well")
                             |> done
                 ]
             ]
