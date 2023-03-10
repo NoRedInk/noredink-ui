@@ -23,7 +23,7 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 
 toolbar : String -> List (Html msg) -> Html msg
 toolbar highlighterId =
-    ul
+    div
         [ nriDescription "tools"
         , Role.toolBar
         , Aria.label "Highlighter options"
@@ -41,7 +41,7 @@ toolbar highlighterId =
 
 toolContainer : String -> Html msg -> Html msg
 toolContainer toolName tool =
-    li [ nriDescription toolName ] [ tool ]
+    div [ nriDescription toolName ] [ tool ]
 
 
 {-| View renders each marker and an eraser. This is usually used with a Highlighter.
