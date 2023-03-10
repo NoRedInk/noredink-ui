@@ -59,6 +59,7 @@ spec =
         , describe "joinAdjacentInteractiveHighlights" joinAdjacentInteractiveHighlightsSpec
         , describe "usedMarkers" usedMarkersSpec
         , describe "blur" blurSpec
+        , describe "hover" hoverSpec
         ]
 
 
@@ -431,4 +432,34 @@ blurSpec =
             highlightable Highlightable.None
                 |> Highlightable.blur
                 |> Expect.equal (highlightable Highlightable.None)
+    ]
+
+
+hoverSpec : List Test
+hoverSpec =
+    let
+        highlightable state =
+            { text = "Content"
+            , uiState = state
+            , customAttributes = []
+            , marked = []
+            , index = 0
+            , type_ = Interactive
+            }
+    in
+    [ test "when hinted, no change to state" <|
+        \() ->
+            highlightable Highlightable.Hinted
+                |> Highlightable.hover
+                |> Expect.equal (highlightable Highlightable.Hinted)
+    , test "when already hovered, no change to state" <|
+        \() ->
+            highlightable Highlightable.Hovered
+                |> Highlightable.hover
+                |> Expect.equal (highlightable Highlightable.Hovered)
+    , test "when no UiState, hover" <|
+        \() ->
+            highlightable Highlightable.None
+                |> Highlightable.hover
+                |> Expect.equal (highlightable Highlightable.Hovered)
     ]
