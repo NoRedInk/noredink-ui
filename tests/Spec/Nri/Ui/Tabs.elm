@@ -91,10 +91,6 @@ keyboardTests =
     ]
 
 
-type alias TestContext =
-    ProgramTest State Msg ()
-
-
 update : Msg -> State -> State
 update msg model =
     case msg of
@@ -124,6 +120,10 @@ view model =
             , Tabs.build { id = 2, idString = "tab-2" } [ Tabs.tabString "Tab 2", Tabs.panelHtml (text "Panel 2") ]
             ]
         }
+
+
+type alias TestContext =
+    ProgramTest State Msg ()
 
 
 program : TestContext

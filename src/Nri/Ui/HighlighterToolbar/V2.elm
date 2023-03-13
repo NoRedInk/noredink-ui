@@ -1,17 +1,24 @@
-module Nri.Ui.HighlighterToolbar.V1 exposing (view)
+module Nri.Ui.HighlighterToolbar.V2 exposing (view)
 
 {-| Bar with markers for choosing how text will be highlighted in a highlighter.
 
 @docs view
 
+Changes from V1:
+
+  - replaces `onChangeTag` and `onSetEraser` with `focusAndSelect`.
+  - adds `highlighterId` to config
+  - adds keyboard navigation
+
 -}
 
 import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
 import Css exposing (Color)
 import EventExtras exposing (onClickPreventDefaultAndStopPropagation)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes exposing (css, id, tabindex)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
@@ -22,7 +29,7 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 
 toolbar : String -> List (Html msg) -> Html msg
 toolbar highlighterId =
-    ul
+    div
         [ nriDescription "tools"
         , Role.toolBar
         , Aria.label "Highlighter options"
@@ -40,14 +47,13 @@ toolbar highlighterId =
 
 toolContainer : String -> Html msg -> Html msg
 toolContainer toolName tool =
-    li [ nriDescription toolName ] [ tool ]
+    div [ nriDescription toolName ] [ tool ]
 
 
 {-| View renders each marker and an eraser. This is usually used with a Highlighter.
 -}
 view :
-    { onSetEraser : msg
-    , onChangeTag : tag -> msg
+    { focusAndSelect : { select : Maybe tag, focus : Maybe String } -> msg
     , getColor : tag -> { extras | colorSolid : Color, colorLight : Color }
     , getName : tag -> String
     , highlighterId : String
@@ -56,9 +62,12 @@ view :
     -> Html msg
 view config model =
     let
+        tools =
+            List.map Just model.tags ++ [ Nothing ]
+
         viewTagWithConfig : tag -> Html msg
         viewTagWithConfig tag =
-            viewTag config (model.currentTool == Just tag) tag
+            viewTag config (model.currentTool == Just tag) tag tools model.currentTool
 
         eraserSelected : Bool
         eraserSelected =
@@ -66,46 +75,60 @@ view config model =
     in
     toolbar config.highlighterId
         (List.map viewTagWithConfig model.tags
-            ++ [ viewEraser config.onSetEraser eraserSelected ]
+            ++ [ viewEraser config.focusAndSelect eraserSelected tools model.currentTool config.getName ]
         )
 
 
 viewTag :
-    { onSetEraser : msg
-    , onChangeTag : tag -> msg
+    { focusAndSelect : { select : Maybe tag, focus : Maybe String } -> msg
     , getColor : tag -> { extras | colorSolid : Color, colorLight : Color }
     , getName : tag -> String
     , highlighterId : String
     }
     -> Bool
     -> tag
+    -> List (Maybe tag)
+    -> Maybe tag
     -> Html msg
-viewTag { getColor, onChangeTag, getName } selected tag =
+viewTag { focusAndSelect, getColor, getName } selected tag tools currentTool =
     toolContainer ("tag-" ++ getName tag)
-        (viewTool (getName tag) (onChangeTag tag) (getColor tag) selected <| Just tag)
+        (viewTool (getName tag) focusAndSelect (getColor tag) selected (Just tag) tools currentTool getName)
 
 
-viewEraser : msg -> Bool -> Html msg
-viewEraser onSetEraser selected =
+viewEraser :
+    ({ select : Maybe tag, focus : Maybe String } -> msg)
+    -> Bool
+    -> List (Maybe tag)
+    -> Maybe tag
+    -> (tag -> String)
+    -> Html msg
+viewEraser focusAndSelect selected tools currentTool getName =
     toolContainer "eraser"
         (viewTool "Remove highlight"
-            onSetEraser
+            focusAndSelect
             { colorLight = Colors.gray75, colorSolid = Colors.white }
             selected
             Nothing
+            tools
+            currentTool
+            getName
         )
 
 
 viewTool :
     String
-    -> msg
+    -> ({ select : Maybe tag, focus : Maybe String } -> msg)
     -> { extras | colorSolid : Color, colorLight : Color }
     -> Bool
     -> Maybe tag
+    -> List (Maybe tag)
+    -> Maybe tag
+    -> (tag -> String)
     -> Html msg
-viewTool name onClick theme selected tool =
+viewTool name focusAndSelect theme selected tag tools currentTool getName =
     button
-        [ css
+        [ id ("tag-" ++ name)
+        , css
             [ Css.backgroundColor Css.transparent
             , Css.borderRadius (Css.px 0)
             , Css.border (Css.px 0)
@@ -113,11 +136,67 @@ viewTool name onClick theme selected tool =
             , Css.focus [ Css.outlineStyle Css.none ]
             , Css.cursor Css.pointer
             ]
-        , onClickPreventDefaultAndStopPropagation onClick
+        , onClickPreventDefaultAndStopPropagation (focusAndSelect { select = tag, focus = Nothing })
         , Aria.pressed (Just selected)
+        , tabindex
+            (if selected then
+                0
+
+             else
+                -1
+            )
+        , Key.onKeyDownPreventDefault (keyEvents focusAndSelect currentTool tools getName)
         ]
-        [ toolContent name theme tool
+        [ toolContent name theme tag
         , viewIf (\() -> active theme) selected
+        ]
+
+
+keyEvents : ({ select : Maybe tag, focus : Maybe String } -> msg) -> Maybe tag -> List (Maybe tag) -> (tag -> String) -> List (Key.Event msg)
+keyEvents focusAndSelect tag tools getName =
+    let
+        onFocus tag_ =
+            focusAndSelect
+                { select = tag_
+                , focus =
+                    case tag_ of
+                        Just tag__ ->
+                            Just ("tag-" ++ getName tag__)
+
+                        Nothing ->
+                            Just "tag-Remove highlight"
+                }
+
+        findAdjacentTag tag_ ( isAdjacentTab, acc ) =
+            if isAdjacentTab then
+                ( False, Just (onFocus tag_) )
+
+            else
+                ( tag_ == tag, acc )
+
+        goToNextTag : Maybe msg
+        goToNextTag =
+            List.foldl findAdjacentTag
+                ( False
+                , -- if there is no adjacent tag, default to the first tag
+                  Maybe.map onFocus (List.head tools)
+                )
+                tools
+                |> Tuple.second
+
+        goToPreviousTag : Maybe msg
+        goToPreviousTag =
+            List.foldr findAdjacentTag
+                ( False
+                , -- if there is no adjacent tag, default to the last tag
+                  Maybe.map onFocus (List.head (List.reverse tools))
+                )
+                tools
+                |> Tuple.second
+    in
+    List.filterMap identity
+        [ Maybe.map Key.right goToNextTag
+        , Maybe.map Key.left goToPreviousTag
         ]
 
 
