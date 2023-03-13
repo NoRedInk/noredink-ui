@@ -81,11 +81,19 @@ viewWithOverlaps viewSegment segments =
         |> List.foldl
             (\{ content, marks, after } ( lastMarks, acc ) ->
                 let
-                    segment =
+                    segment startingStyles =
                         viewSegment content
                             [ tagBeforeContent before
                             , tagAfterContent after
+                            , Css.batch startingStyles
+                            , Css.batch
+                                (List.concatMap (\markedWith -> markedWith.styles ++ markedWith.endStyles)
+                                    after
+                                )
                             ]
+
+                    startStyles =
+                        List.concatMap (\markedWith -> markedWith.styles ++ markedWith.startStyles) before
 
                     before =
                         ignoreRepeats lastMarks marks
@@ -94,19 +102,21 @@ viewWithOverlaps viewSegment segments =
                 , acc
                     ++ (case List.filterMap .name before of
                             [] ->
-                                [ segment ]
+                                [ segment startStyles ]
 
                             names ->
-                                [ viewInlineTag
-                                    [ Css.display Css.none
-                                    , MediaQuery.highContrastMode
-                                        [ Css.property "forced-color-adjust" "none"
-                                        , Css.display Css.inline |> Css.important
-                                        , Css.property "color" "initial" |> Css.important
+                                [ span [ css startStyles ]
+                                    [ viewInlineTag
+                                        [ Css.display Css.none
+                                        , MediaQuery.highContrastMode
+                                            [ Css.property "forced-color-adjust" "none"
+                                            , Css.display Css.inline |> Css.important
+                                            , Css.property "color" "initial" |> Css.important
+                                            ]
                                         ]
+                                        (String.Extra.toSentenceOxford names)
                                     ]
-                                    (String.Extra.toSentenceOxford names)
-                                , segment
+                                , segment []
                                 ]
                        )
                 )
