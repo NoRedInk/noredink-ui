@@ -67,7 +67,9 @@ viewWithOverlaps viewSegment segments =
         (\index ( content, marks ) ->
             viewSegment content
                 -- TODO: add back in the styles
-                [ tagBeforeContent marks ]
+                [ tagBeforeContent marks
+                , tagAfterContent marks
+                ]
         )
         segments
 
@@ -295,19 +297,36 @@ tagBeforeContent marks =
     in
     Css.before
         [ MediaQuery.notHighContrastMode
-            [ cssContent
-                (if names == "" then
-                    "start highlight"
-
-                 else if List.length marks == 1 then
-                    "start " ++ names ++ " highlight"
-
-                 else
-                    "start " ++ names ++ " highlights"
-                )
+            [ cssContent (highlightDescription "start" marks)
             , invisibleStyle
             ]
         ]
+
+
+tagAfterContent : List Mark -> Css.Style
+tagAfterContent marks =
+    Css.after
+        [ MediaQuery.notHighContrastMode
+            [ cssContent (highlightDescription "end" marks)
+            , invisibleStyle
+            ]
+        ]
+
+
+highlightDescription : String -> List Mark -> String
+highlightDescription prefix marks =
+    let
+        names =
+            String.Extra.toSentenceOxford (List.filterMap .name marks)
+    in
+    if names == "" then
+        prefix ++ " highlight"
+
+    else if List.length marks == 1 then
+        prefix ++ " " ++ names ++ " highlight"
+
+    else
+        prefix ++ " " ++ names ++ " highlights"
 
 
 cssContent : String -> Css.Style
