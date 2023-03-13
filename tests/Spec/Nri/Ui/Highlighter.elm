@@ -208,7 +208,7 @@ keyboardTests =
                     |> shiftRight
                     |> releaseShiftRight
                     |> ensureMarked [ "indirect" ]
-                    |> expectView (hasStartHighlightBeforeContent "start highlight" "indirect")
+                    |> expectView (hasBefore "start highlight" "indirect")
         , test "specific start announcement is made when mark does not include first element" <|
             \() ->
                 Highlightable.initFragments [] "Pothos indirect light"
@@ -218,7 +218,7 @@ keyboardTests =
                     |> shiftRight
                     |> releaseShiftRight
                     |> ensureMarked [ "indirect" ]
-                    |> expectView (hasStartHighlightBeforeContent "start banana highlight" "indirect")
+                    |> expectView (hasBefore "start banana highlight" "indirect")
         ]
     , describe "Regression tests for A11-1769"
         [ -- as far as I can tell, the problem is not in the Elm logic.
@@ -349,25 +349,63 @@ startWithoutMarker view highlightables =
         |> ProgramTest.start ()
 
 
-hasStartHighlightBeforeContent : String -> String -> Query.Single msg -> Expectation
-hasStartHighlightBeforeContent =
+hasBefore : String -> String -> Query.Single msg -> Expectation
+hasBefore =
     hasPseudoElement "::before"
 
 
-hasEndHighlightAfterContent : String -> String -> Query.Single msg -> Expectation
-hasEndHighlightAfterContent =
+hasAfter : String -> String -> Query.Single msg -> Expectation
+hasAfter =
     hasPseudoElement "::after"
+
+
+hasNotBefore : String -> String -> Query.Single msg -> Expectation
+hasNotBefore =
+    hasNotPseudoElement "::before"
+
+
+hasNotAfter : String -> String -> Query.Single msg -> Expectation
+hasNotAfter =
+    hasNotPseudoElement "::after"
 
 
 hasPseudoElement : String -> String -> String -> Query.Single msg -> Expectation
 hasPseudoElement pseudoElement highlightMarker relevantHighlightableText view =
-    let
-        styles =
-            view
-                |> Query.find [ Selector.tag "style" ]
-                |> Query.children []
-                |> Debug.toString
+    case pseudoElementSelector pseudoElement highlightMarker view of
+        Just className ->
+            Query.has
+                [ className
+                , Selector.containing [ Selector.text relevantHighlightableText ]
+                ]
+                view
 
+        Nothing ->
+            ("Expected to find a class defining a " ++ pseudoElement ++ " element with content: `")
+                ++ highlightMarker
+                ++ "`, but failed to find the class in the styles: \n\n"
+                ++ rawStyles view
+                |> Expect.fail
+
+
+hasNotPseudoElement : String -> String -> String -> Query.Single msg -> Expectation
+hasNotPseudoElement pseudoElement highlightMarker relevantHighlightableText view =
+    case pseudoElementSelector pseudoElement highlightMarker view of
+        Just className ->
+            view
+                |> Query.findAll [ className ]
+                |> Query.each (Query.hasNot [ Selector.containing [ Selector.text relevantHighlightableText ] ])
+
+        Nothing ->
+            ("Expected to find a class defining a " ++ pseudoElement ++ " element with content: `")
+                ++ highlightMarker
+                ++ "`, but failed to find the class in the styles: \n\n"
+                ++ rawStyles view
+                |> Expect.fail
+
+
+pseudoElementSelector : String -> String -> Query.Single msg -> Maybe Selector
+pseudoElementSelector pseudoElement highlightMarker view =
+    let
         startHighlightClassRegex : Maybe Regex
         startHighlightClassRegex =
             ("\\.(\\_[a-zA-Z0-9]+)" ++ pseudoElement ++ "\\{content:\\\\\"\\s*\\s*")
@@ -379,26 +417,21 @@ hasPseudoElement pseudoElement highlightMarker relevantHighlightableText view =
             startHighlightClassRegex
                 |> Maybe.andThen
                     (\regex ->
-                        Regex.find regex styles
+                        Regex.find regex (rawStyles view)
                             |> List.head
                             |> Maybe.andThen (.submatches >> List.head)
                     )
                 |> Maybe.withDefault Nothing
     in
-    case maybeClassName of
-        Just className ->
-            Query.has
-                [ Selector.class className
-                , Selector.containing [ Selector.text relevantHighlightableText ]
-                ]
-                view
+    Maybe.map Selector.class maybeClassName
 
-        Nothing ->
-            ("Expected to find a class defining a " ++ pseudoElement ++ " element with content: `")
-                ++ highlightMarker
-                ++ "`, but failed to find the class in the styles: \n\n"
-                ++ styles
-                |> Expect.fail
+
+rawStyles : Query.Single msg -> String
+rawStyles view =
+    view
+        |> Query.find [ Selector.tag "style" ]
+        |> Query.children []
+        |> Debug.toString
 
 
 ensureTabbable : String -> TestContext -> TestContext
@@ -695,29 +728,33 @@ overlappingHighlightTests =
             [ describe "existing overlapping highlights with the same start segment"
                 [ test "renders a single ::before element for both marks" <|
                     \() ->
-                        [ ( "Hello", [ "A", "B" ] ), ( " ", [] ), ( "World", [ "A" ] ), ( "!", [ "B" ] ) ]
+                        [ ( "Hello", [ "A", "B" ] ), ( "World", [ "A", "B" ] ), ( "!", [ "B" ] ) ]
                             |> start renderer
-                            |> ensureView (hasStartHighlightBeforeContent "start A and B highlights" "Hello")
+                            |> ensureView (hasBefore "start A and B highlights" "Hello")
+                            |> ensureView (hasNotBefore "start A and B highlights" "World")
+                            |> ensureView (hasNotBefore "start B highlight" "!")
                             |> done
                 , test "uses Oxford comma for more-than-2 marks" <|
                     \() ->
-                        [ ( "Hello", [ "A", "B", "C" ] ), ( " ", [] ), ( "World", [ "A" ] ), ( "!", [ "B" ] ) ]
+                        [ ( "Hello", [ "A", "B", "C" ] ), ( "World", [ "A", "B" ] ), ( "!", [ "B" ] ) ]
                             |> start renderer
-                            |> ensureView (hasStartHighlightBeforeContent "start A, B, and C highlights" "Hello")
+                            |> ensureView (hasBefore "start A, B, and C highlights" "Hello")
                             |> done
                 ]
             , describe "existing overlapping highlights with the same end segment"
                 [ test "renders a single ::after element for both marks" <|
                     \() ->
-                        [ ( "Hello", [ "A" ] ), ( " ", [] ), ( "World", [ "B" ] ), ( "!", [ "A", "B" ] ) ]
+                        [ ( "Hello", [ "A" ] ), ( "World", [ "A", "B" ] ), ( "!", [ "A", "B" ] ) ]
                             |> start renderer
-                            |> ensureView (hasEndHighlightAfterContent "end A and B highlights" "!")
+                            |> ensureView (hasAfter "end A and B highlights" "!")
+                            |> ensureView (hasNotAfter "end A highlight" "Hello,")
+                            |> ensureView (hasNotAfter "end A and B highlights" "World")
                             |> done
                 , test "uses Oxford comma for more-than-2 marks" <|
                     \() ->
-                        [ ( "Hello", [ "A" ] ), ( " ", [] ), ( "World", [ "B" ] ), ( "!", [ "A", "B", "C" ] ) ]
+                        [ ( "Hello", [ "A" ] ), ( "World", [ "B" ] ), ( "!", [ "A", "B", "C" ] ) ]
                             |> start renderer
-                            |> ensureView (hasEndHighlightAfterContent "end A, B, and C highlights" "!")
+                            |> ensureView (hasAfter "end A, B, and C highlights" "!")
                             |> done
                 ]
             , describe "existing overlapping highlights with differing start and end segments"
@@ -725,17 +762,17 @@ overlappingHighlightTests =
                     \() ->
                         [ ( "Hello", [ "A" ] )
                         , ( " ", [] )
-                        , ( "World!", [ "B" ] )
+                        , ( "World!", [ "A", "B" ] )
                         , ( " ", [] )
-                        , ( "Hope you're", [ "A" ] )
+                        , ( "Hope you're", [ "A", "B" ] )
                         , ( " ", [] )
                         , ( "well", [ "B" ] )
                         ]
                             |> start renderer
-                            |> ensureView (hasStartHighlightBeforeContent "start A highlight" "Hello")
-                            |> ensureView (hasEndHighlightAfterContent "end A highlight" "Hope you're")
-                            |> ensureView (hasStartHighlightBeforeContent "start B highlight" "World!")
-                            |> ensureView (hasEndHighlightAfterContent "end B highlight" "well")
+                            |> ensureView (hasBefore "start A highlight" "Hello")
+                            |> ensureView (hasAfter "end A highlight" "Hope you're")
+                            |> ensureView (hasBefore "start B highlight" "World!")
+                            |> ensureView (hasAfter "end B highlight" "well")
                             |> done
                 ]
             ]
