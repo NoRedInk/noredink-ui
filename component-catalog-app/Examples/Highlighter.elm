@@ -243,19 +243,19 @@ example =
                             , highlightables = Highlightable.fromMarkdown "Select your [favorite phrase]() in **your** writing."
                             }
                   }
-                , { viewName = "viewWithOverlappingHighlights"
-                  , tool = "buildMarker"
+                , { viewName = "staticWithOverlappingHighlights"
+                  , tool = "buildMarkerWithoutRounding"
                   , highlightable = "init"
                   , description = "Multiple kinds of highlights with overlaps."
                   , example =
                         Highlighter.staticWithOverlappingHighlights
                             { id = "example-6"
                             , highlightables =
-                                [ ( "Sphinx", [ claimMarker, evidenceMarker ] )
-                                , ( "of", [ evidenceMarker ] )
-                                , ( "black quartz,", [ reasoningMarker, evidenceMarker ] )
-                                , ( "judge", [ reasoningMarker, evidenceMarker ] )
-                                , ( "my", [ evidenceMarker ] )
+                                [ ( "Sphinx", [ inlineCommentMarker "Comment 1", inlineCommentMarker "Comment 2" ] )
+                                , ( "of", [ inlineCommentMarker "Comment 2" ] )
+                                , ( "black quartz,", [ inlineCommentMarker "Comment 3", inlineCommentMarker "Comment 2" ] )
+                                , ( "judge", [ inlineCommentMarker "Comment 3", inlineCommentMarker "Comment 2" ] )
+                                , ( "my", [ inlineCommentMarker "Comment 2" ] )
                                 , ( "vow.", [] )
                                 ]
                                     |> List.intersperse ( " ", [] )
@@ -323,6 +323,26 @@ reasoningMarker =
         , kind = ()
         , name = Just "Reasoning"
         }
+
+
+inlineCommentMarker : String -> Tool.MarkerModel ()
+inlineCommentMarker name =
+    Tool.buildMarkerWithoutRounding
+        { highlightColor = toLightColor Colors.highlightYellow
+        , hoverColor = Colors.highlightYellow
+        , hoverHighlightColor = Colors.highlightYellow
+        , kind = ()
+        , name = Just name
+        }
+
+
+toLightColor : Color -> Color
+toLightColor color =
+    let
+        tint value =
+            value + floor (toFloat (255 - value) * 0.5)
+    in
+    Css.rgb (tint color.red) (tint color.green) (tint color.blue)
 
 
 multipleHighlightsHighlightablesWithBorder : List (Highlightable ())

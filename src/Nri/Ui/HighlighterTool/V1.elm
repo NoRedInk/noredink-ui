@@ -1,7 +1,7 @@
 module Nri.Ui.HighlighterTool.V1 exposing
     ( Tool(..)
     , EraserModel, buildEraser
-    , MarkerModel, buildMarker, buildMarkerWithBorder
+    , MarkerModel, buildMarker, buildMarkerWithBorder, buildMarkerWithoutRounding
     )
 
 {-|
@@ -10,10 +10,11 @@ module Nri.Ui.HighlighterTool.V1 exposing
 ### Patch changes
 
   - change the high-contrast styles to be border-based instead of background-color based
+  - adds buildMarkerWithoutRounding for inline comment styling
 
 @docs Tool
 @docs EraserModel, buildEraser
-@docs MarkerModel, buildMarker, buildMarkerWithBorder
+@docs MarkerModel, buildMarker, buildMarkerWithBorder, buildMarkerWithoutRounding
 
 -}
 
@@ -203,3 +204,55 @@ buildMarkerWithBorder { highlightColor, kind, name } =
     , kind = kind
     , name = name
     }
+
+
+{-| Typically, this style of marker is used for inline comments.
+-}
+buildMarkerWithoutRounding :
+    { highlightColor : Css.Color
+    , hoverColor : Css.Color
+    , hoverHighlightColor : Css.Color
+    , kind : kind
+    , name : Maybe String
+    }
+    -> MarkerModel kind
+buildMarkerWithoutRounding { highlightColor, hoverColor, hoverHighlightColor, kind, name } =
+    { hoverClass = squareHoverStyles hoverColor
+    , hintClass = squareHoverStyles hoverColor
+    , startGroupClass = [ Css.paddingLeft (Css.px 4) ]
+    , endGroupClass = [ Css.paddingRight (Css.px 4) ]
+    , highlightClass = squareHighlightStyles highlightColor
+    , hoverHighlightClass = squareHighlightStyles hoverHighlightColor
+    , kind = kind
+    , name = name
+    }
+
+
+squareHighlightStyles : Css.Color -> List Css.Style
+squareHighlightStyles color =
+    List.append
+        squareSharedStyles
+        [ Css.backgroundColor color
+        , Css.boxShadow5 Css.zero (Css.px 1) Css.zero Css.zero Colors.gray75
+        ]
+
+
+squareSharedStyles : List Css.Style
+squareSharedStyles =
+    [ Css.paddingTop (Css.px 4)
+    , Css.paddingBottom (Css.px 3)
+    ]
+
+
+squareHoverStyles : Css.Color -> List Css.Style
+squareHoverStyles color =
+    List.append
+        squareSharedStyles
+        [ Css.important (Css.backgroundColor color)
+
+        -- The Highlighter applies both these styles and the startGroup and
+        -- endGroup styles. Here we disable the left and the right padding
+        -- because otherwise it would cause the text to move around.
+        , Css.important (Css.paddingLeft Css.zero)
+        , Css.important (Css.paddingRight Css.zero)
+        ]
