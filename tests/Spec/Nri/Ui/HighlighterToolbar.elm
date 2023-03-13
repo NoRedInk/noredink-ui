@@ -2,7 +2,6 @@ module Spec.Nri.Ui.HighlighterToolbar exposing (..)
 
 import Accessibility.Aria as Aria
 import Accessibility.Key as Key
-import Browser.Dom as Dom
 import Css exposing (Color)
 import Expect
 import Html.Attributes as Attributes
