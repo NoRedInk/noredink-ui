@@ -24,8 +24,6 @@ import Css exposing (Color, Style)
 import Css.Global
 import Html.Styled as Html exposing (Html, span)
 import Html.Styled.Attributes exposing (class, css)
-import List.Extra
-import Maybe.Extra
 import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
