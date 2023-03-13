@@ -715,7 +715,7 @@ overlappingHighlightTests =
                             |> done
                 , test "uses Oxford comma for more-than-2 marks" <|
                     \() ->
-                        [ ( "Hello", [ "A" ] ), ( " ", [] ), ( "World", [ "B" ] ), ( "!", [ "A", "B" ] ) ]
+                        [ ( "Hello", [ "A" ] ), ( " ", [] ), ( "World", [ "B" ] ), ( "!", [ "A", "B", "C" ] ) ]
                             |> start renderer
                             |> ensureView (hasEndHighlightAfterContent "end A, B, and C highlights" "!")
                             |> done
