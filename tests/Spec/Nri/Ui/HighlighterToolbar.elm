@@ -1,13 +1,15 @@
 module Spec.Nri.Ui.HighlighterToolbar exposing (..)
 
 import Accessibility.Aria as Aria
+import Accessibility.Key as Key
 import Css exposing (Color)
 import Expect
 import Html.Attributes as Attributes
 import Html.Styled as Html exposing (..)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.HighlighterToolbar.V1 as HighlighterToolbar
+import Nri.Ui.HighlighterToolbar.V2 as HighlighterToolbar
 import ProgramTest exposing (..)
+import Spec.KeyboardHelpers as KeyboardHelpers
 import Test exposing (..)
 import Test.Html.Event as Event
 import Test.Html.Query as Query
@@ -16,8 +18,9 @@ import Test.Html.Selector as Selector
 
 spec : Test
 spec =
-    describe "Nri.Ui.HighlighterToolbar.V1"
+    describe "Nri.Ui.HighlighterToolbar.V2"
         [ describe "tool selection" selectionTests
+        , describe "keyboard behavior" keyboardTests
         ]
 
 
@@ -41,6 +44,83 @@ selectionTests =
                 |> ensureNotActiveDoNotHaveVisualIndicator
                 |> done
     ]
+
+
+keyboardTests : List Test
+keyboardTests =
+    [ test "has a focusable tool" <|
+        \() ->
+            program
+                |> ensureTabbable "Remove highlight"
+                |> done
+    , test "has only one tool included in the tab sequence" <|
+        \() ->
+            program
+                |> ensureOnlyOneInTabSequence [ "Claim", "Evidence", "Reasoning", "Remove highlight" ]
+                |> done
+    , test "moves focus right on right arrow key. Should wrap focus on last element." <|
+        \() ->
+            program
+                |> ensureTabbable "Remove highlight"
+                |> rightArrow
+                |> ensureTabbable "Claim"
+                |> ensureOnlyOneInTabSequence [ "Claim", "Evidence", "Reasoning", "Remove highlight" ]
+                |> rightArrow
+                |> ensureTabbable "Evidence"
+                |> rightArrow
+                |> ensureTabbable "Reasoning"
+                |> rightArrow
+                |> ensureTabbable "Remove highlight"
+                |> done
+    , test "moves focus left on left arrow key. Should wrap focus on first element." <|
+        \() ->
+            program
+                |> ensureTabbable "Remove highlight"
+                |> leftArrow
+                |> ensureTabbable "Reasoning"
+                |> leftArrow
+                |> ensureTabbable "Evidence"
+                |> leftArrow
+                |> ensureTabbable "Claim"
+                |> leftArrow
+                |> ensureTabbable "Remove highlight"
+                |> ensureOnlyOneInTabSequence [ "Claim", "Evidence", "Reasoning", "Remove highlight" ]
+                |> done
+    ]
+
+
+ensureTabbable : String -> TestContext -> TestContext
+ensureTabbable word testContext =
+    testContext
+        |> ensureView
+            (Query.find [ Selector.attribute (Key.tabbable True) ]
+                >> Query.has [ Selector.text word ]
+            )
+
+
+ensureOnlyOneInTabSequence : List String -> TestContext -> TestContext
+ensureOnlyOneInTabSequence words testContext =
+    testContext
+        |> ensureView
+            (Query.findAll [ Selector.attribute (Key.tabbable True) ]
+                >> Query.count (Expect.equal 1)
+            )
+        |> ensureView
+            (Query.findAll [ Selector.attribute (Key.tabbable False) ]
+                >> Query.count (Expect.equal (List.length words - 1))
+            )
+
+
+rightArrow : TestContext -> TestContext
+rightArrow =
+    KeyboardHelpers.pressRightArrow { targetDetails = [] }
+        [ Selector.attribute (Key.tabbable True) ]
+
+
+leftArrow : TestContext -> TestContext
+leftArrow =
+    KeyboardHelpers.pressLeftArrow { targetDetails = [] }
+        [ Selector.attribute (Key.tabbable True) ]
 
 
 clickTool : String -> ProgramTest model msg effect -> ProgramTest model msg effect
@@ -152,24 +232,24 @@ init =
 
 {-| -}
 type Msg
-    = SetTool (Maybe Tag)
+    = FocusAndSelectTag { select : Maybe Tag, focus : Maybe String }
 
 
 {-| -}
 update : Msg -> State -> State
 update msg state =
     case msg of
-        SetTool tag ->
-            { state | currentTool = tag }
+        FocusAndSelectTag { select } ->
+            { state | currentTool = select }
 
 
 view : State -> Html Msg
 view model =
     HighlighterToolbar.view
-        { onSetEraser = SetTool Nothing
-        , onChangeTag = SetTool << Just
+        { focusAndSelect = FocusAndSelectTag
         , getColor = getColor
         , getName = getName
+        , highlighterId = "highlighter"
         }
         { currentTool = model.currentTool
         , tags = tags
