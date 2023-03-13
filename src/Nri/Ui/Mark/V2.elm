@@ -24,6 +24,8 @@ import Css exposing (Color, Style)
 import Css.Global
 import Html.Styled as Html exposing (Html, span)
 import Html.Styled.Attributes exposing (class, css)
+import List.Extra
+import Maybe.Extra
 import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
@@ -63,15 +65,48 @@ viewWithOverlaps :
     -> List ( content, List Mark )
     -> List (Html msg)
 viewWithOverlaps viewSegment segments =
-    List.indexedMap
-        (\index ( content, marks ) ->
-            viewSegment content
-                -- TODO: add back in the styles
-                [ tagBeforeContent marks
-                , tagAfterContent marks
-                ]
-        )
-        segments
+    let
+        {- This is not an efficient way to model marks with overlaps -- using a set would be way better!
+
+           However,
+           (a) this will only ever be used with a tiny lists and
+           (b) if we use a set, we'll need to thread a sorter through, impacting the API negatively
+           (c) if we use a set, we'll need to convert to and from a set
+
+           This tradeoff balance here might change if we decide to model the marked values as a set instead of as a list.
+
+        -}
+        ignoreRepeats : List Mark -> List Mark -> List Mark
+        ignoreRepeats lastMarks =
+            List.filter (\x -> Maybe.Extra.isNothing (List.Extra.find (.name >> (==) x.name) lastMarks))
+    in
+    segments
+        |> List.foldr
+            (\( content, marks ) ( lastMarks, acc ) ->
+                ( marks
+                , { content = content
+                  , marks = marks
+                  , after = ignoreRepeats lastMarks marks
+                  }
+                    :: acc
+                )
+            )
+            ( [], [] )
+        |> Tuple.second
+        |> List.foldl
+            (\{ content, marks, after } ( lastMarks, acc ) ->
+                ( marks
+                , acc
+                    ++ [ viewSegment content
+                            -- TODO: add back in the styles
+                            [ tagBeforeContent (ignoreRepeats lastMarks marks)
+                            , tagAfterContent after
+                            ]
+                       ]
+                )
+            )
+            ( [], [] )
+        |> Tuple.second
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
@@ -295,22 +330,30 @@ tagBeforeContent marks =
         names =
             String.Extra.toSentenceOxford (List.filterMap .name marks)
     in
-    Css.before
-        [ MediaQuery.notHighContrastMode
-            [ cssContent (highlightDescription "start" marks)
-            , invisibleStyle
+    if List.isEmpty marks then
+        Css.batch []
+
+    else
+        Css.before
+            [ MediaQuery.notHighContrastMode
+                [ cssContent (highlightDescription "start" marks)
+                , invisibleStyle
+                ]
             ]
-        ]
 
 
 tagAfterContent : List Mark -> Css.Style
 tagAfterContent marks =
-    Css.after
-        [ MediaQuery.notHighContrastMode
-            [ cssContent (highlightDescription "end" marks)
-            , invisibleStyle
+    if List.isEmpty marks then
+        Css.batch []
+
+    else
+        Css.after
+            [ MediaQuery.notHighContrastMode
+                [ cssContent (highlightDescription "end" marks)
+                , invisibleStyle
+                ]
             ]
-        ]
 
 
 highlightDescription : String -> List Mark -> String

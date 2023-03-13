@@ -725,7 +725,23 @@ overlappingHighlightTests =
                 |> ProgramTest.start ()
 
         staticAssertions renderer =
-            [ describe "existing overlapping highlights with the same start segment"
+            [ describe "without any overlaps"
+                [ test "renders a single ::before element" <|
+                    \() ->
+                        [ ( "Hello", [ "A" ] ), ( "World", [ "A" ] ) ]
+                            |> start renderer
+                            |> ensureView (hasBefore "start A highlight" "Hello")
+                            |> ensureView (hasNotBefore "start A highlight" "World")
+                            |> done
+                , test "renders a single ::after element" <|
+                    \() ->
+                        [ ( "Hello", [ "A" ] ), ( "World", [ "A" ] ) ]
+                            |> start renderer
+                            |> ensureView (hasAfter "end A highlight" "World")
+                            |> ensureView (hasNotAfter "end A highlight" "Hello")
+                            |> done
+                ]
+            , describe "existing overlapping highlights with the same start segment"
                 [ test "renders a single ::before element for both marks" <|
                     \() ->
                         [ ( "Hello", [ "A", "B" ] ), ( "World", [ "A", "B" ] ), ( "!", [ "B" ] ) ]
