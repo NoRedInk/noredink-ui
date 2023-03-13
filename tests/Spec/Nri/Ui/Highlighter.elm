@@ -388,11 +388,8 @@ hasPseudoElement pseudoElement highlightMarker relevantHighlightableText view =
     case maybeClassName of
         Just className ->
             Query.has
-                [ Selector.tag "mark"
-                , Selector.containing
-                    [ Selector.class className
-                    , Selector.containing [ Selector.text relevantHighlightableText ]
-                    ]
+                [ Selector.class className
+                , Selector.containing [ Selector.text relevantHighlightableText ]
                 ]
                 view
 
