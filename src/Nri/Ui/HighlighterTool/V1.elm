@@ -219,8 +219,18 @@ buildMarkerWithoutRounding :
 buildMarkerWithoutRounding { highlightColor, hoverColor, hoverHighlightColor, kind, name } =
     { hoverClass = squareHoverStyles hoverColor
     , hintClass = squareHoverStyles hoverColor
-    , startGroupClass = [ Css.paddingLeft (Css.px 4) ]
-    , endGroupClass = [ Css.paddingRight (Css.px 4) ]
+    , startGroupClass =
+        [ Css.paddingLeft (Css.px 4)
+        , MediaQuery.highContrastMode
+            [ Css.property "border-left" "2px solid Mark"
+            ]
+        ]
+    , endGroupClass =
+        [ Css.paddingRight (Css.px 4)
+        , MediaQuery.highContrastMode
+            [ Css.property "border-right" "2px solid Mark"
+            ]
+        ]
     , highlightClass = squareHighlightStyles highlightColor
     , hoverHighlightClass = squareHighlightStyles hoverHighlightColor
     , kind = kind
@@ -241,6 +251,11 @@ squareSharedStyles : List Css.Style
 squareSharedStyles =
     [ Css.paddingTop (Css.px 4)
     , Css.paddingBottom (Css.px 3)
+    , MediaQuery.highContrastMode
+        [ Css.property "color" "CanvasText"
+        , Css.property "border-top" "2px solid Mark"
+        , Css.property "border-bottom" "2px solid Mark"
+        ]
     ]
 
 
