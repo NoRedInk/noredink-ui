@@ -93,11 +93,15 @@ example =
                     , Fonts.quizFont
                     ]
                 ]
-                [ (if (Control.currentValue state.settings).asMarkdown then
-                    Highlighter.viewMarkdown state.highlighter
+                [ (case (Control.currentValue state.settings).highlighterType of
+                    Markdown ->
+                        Highlighter.viewMarkdown state.highlighter
 
-                   else
-                    Highlighter.view state.highlighter
+                    Standard ->
+                        Highlighter.view state.highlighter
+
+                    Overlapping ->
+                        Highlighter.viewWithOverlappingHighlights state.highlighter
                   )
                     |> map HighlighterMsg
                 ]
@@ -448,9 +452,15 @@ exampleParagraph =
 type alias Settings =
     { splitOnSentences : Bool
     , joinAdjacentInteractiveHighlights : Bool
-    , asMarkdown : Bool
+    , highlighterType : HighlighterType
     , tool : Tool.Tool ()
     }
+
+
+type HighlighterType
+    = Markdown
+    | Standard
+    | Overlapping
 
 
 controlSettings : Control Settings
@@ -458,7 +468,13 @@ controlSettings =
     Control.record Settings
         |> Control.field "splitOnSentences" (Control.bool True)
         |> Control.field "joinAdjacentInteractiveHighlights" (Control.bool False)
-        |> Control.field "asMarkdown" (Control.bool True)
+        |> Control.field "type"
+            (Control.choice
+                [ ( "Markdown", Control.value Markdown )
+                , ( "Standard", Control.value Standard )
+                , ( "Overlapping", Control.value Overlapping )
+                ]
+            )
         |> Control.field "tool"
             (Control.choice
                 [ ( "Marker", Control.map Tool.Marker controlMarker )
