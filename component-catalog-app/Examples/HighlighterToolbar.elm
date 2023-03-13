@@ -15,6 +15,7 @@ import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css, id)
+import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.HighlighterToolbar.V2 as HighlighterToolbar
@@ -74,7 +75,14 @@ example =
             , div [ id "highlighter" ] []
             ]
     , categories = [ Instructional ]
-    , keyboardSupport = []
+    , keyboardSupport =
+        [ { keys = [ Arrow KeyboardSupport.Left ]
+          , result = "Select the tool to the left of the currently-selected tool. If the first tool is selected, select the last tool."
+          }
+        , { keys = [ Arrow KeyboardSupport.Right ]
+          , result = "Select the tool to the right of the currently-selected tool. If the last tool is selected, select the first tool."
+          }
+        ]
     }
 
 
