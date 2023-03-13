@@ -234,7 +234,6 @@ init =
 {-| -}
 type Msg
     = FocusAndSelectTag { select : Maybe Tag, focus : Maybe String }
-    | Focused (Result Dom.Error ())
 
 
 {-| -}
@@ -243,9 +242,6 @@ update msg state =
     case msg of
         FocusAndSelectTag { select } ->
             { state | currentTool = select }
-
-        Focused _ ->
-            state
 
 
 view : State -> Html Msg
