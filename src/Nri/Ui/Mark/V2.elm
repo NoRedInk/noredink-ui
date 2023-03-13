@@ -31,6 +31,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
+import String.Extra
 
 
 {-| -}
@@ -61,13 +62,14 @@ viewWithOverlaps :
     (content -> List Style -> Html msg)
     -> List ( content, List Mark )
     -> List (Html msg)
-viewWithOverlaps viewSegment =
+viewWithOverlaps viewSegment segments =
     List.indexedMap
         (\index ( content, marks ) ->
             viewSegment content
                 -- TODO: add back in the styles
-                []
+                [ tagBeforeContent marks ]
         )
+        segments
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
@@ -131,19 +133,18 @@ markedWithBalloonStyles marked lastIndex index =
         [ if index == 0 then
             -- if we're on the first highlighted element, we add
             -- a `before` content saying what kind of highlight we're starting
-            tagBeforeContent marked :: marked.startStyles
+            tagBeforeContent [ marked ] :: marked.startStyles
 
           else
             []
         , marked.styles
         , if index == lastIndex then
             Css.after
-                [ Css.property "content"
-                    ("\" end "
+                [ cssContent
+                    ("end "
                         ++ (Maybe.map (\name -> name) marked.name
                                 |> Maybe.withDefault "highlight"
                            )
-                        ++ " \""
                     )
                 , invisibleStyle
                 ]
@@ -269,7 +270,7 @@ markStyles index marked =
         ( True, Just markedWith ) ->
             -- if we're on the first highlighted element, we add
             -- a `before` content saying what kind of highlight we're starting
-            tagBeforeContent markedWith
+            tagBeforeContent [ markedWith ]
                 :: markedWith.styles
                 ++ -- if we're on the first element, and the mark has a name,
                    -- there's an inline tag to show.
@@ -286,22 +287,32 @@ markStyles index marked =
                 |> Maybe.withDefault []
 
 
-tagBeforeContent : Mark -> Css.Style
-tagBeforeContent markedWith =
-    case markedWith.name of
-        Just name ->
-            Css.before
-                [ MediaQuery.notHighContrastMode
-                    [ Css.property "content" ("\" start " ++ name ++ " highlight \"")
-                    , invisibleStyle
-                    ]
-                ]
+tagBeforeContent : List Mark -> Css.Style
+tagBeforeContent marks =
+    let
+        names =
+            String.Extra.toSentenceOxford (List.filterMap .name marks)
+    in
+    Css.before
+        [ MediaQuery.notHighContrastMode
+            [ cssContent
+                (if names == "" then
+                    "start highlight"
 
-        Nothing ->
-            Css.before
-                [ Css.property "content" "\" start highlight \""
-                , invisibleStyle
-                ]
+                 else if List.length marks == 1 then
+                    "start " ++ names ++ " highlight"
+
+                 else
+                    "start " ++ names ++ " highlights"
+                )
+            , invisibleStyle
+            ]
+        ]
+
+
+cssContent : String -> Css.Style
+cssContent content =
+    Css.property "content" ("\" " ++ content ++ " \"")
 
 
 viewTag : TagStyle -> String -> Html msg
