@@ -6,6 +6,7 @@ module Nri.Ui.Highlighter.V3 exposing
     , viewWithOverlappingHighlights, staticWithOverlappingHighlights
     , Intent(..), hasChanged, HasChanged(..)
     , removeHighlights
+    , clickedHighlightable, hoveredHighlightable
     )
 
 {-| Changes from V2:
@@ -35,9 +36,14 @@ Highlighter provides a view/model/update to display a view to highlight text and
 @docs Intent, hasChanged, HasChanged
 
 
-# Setters
+## Setters
 
 @docs removeHighlights
+
+
+## Getters
+
+@docs clickedHighlightable, hoveredHighlightable
 
 -}
 
@@ -625,6 +631,20 @@ removeHinted =
 removeHighlights : Model marker -> Model marker
 removeHighlights model =
     { model | highlightables = List.map (Highlightable.set Nothing) model.highlightables }
+
+
+{-| You are not likely to need this helper unless you're working with inline commenting.
+-}
+clickedHighlightable : Model marker -> Maybe (Highlightable.Highlightable marker)
+clickedHighlightable model =
+    Maybe.andThen (\i -> Highlightable.byId i model.highlightables) model.mouseDownIndex
+
+
+{-| You are not likely to need this helper unless you're working with inline commenting.
+-}
+hoveredHighlightable : Model marker -> Maybe (Highlightable.Highlightable marker)
+hoveredHighlightable model =
+    Maybe.andThen (\i -> Highlightable.byId i model.highlightables) model.mouseOverIndex
 
 
 
