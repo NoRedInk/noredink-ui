@@ -6,7 +6,7 @@ module Nri.Ui.Highlightable.V2 exposing
     , set
     , joinAdjacentInteractiveHighlights
     , attributeSorter
-    , asFragmentTuples, usedMarkers, text
+    , asFragmentTuples, usedMarkers, text, byId
     )
 
 {-| A Highlightable represents a span of text, typically a word, and its state.
@@ -25,6 +25,7 @@ just a single whitespace.
   - ensure that fromMarkdown indexes the fragments correctly
   - support multiple kinds of mark
   - move joinAdjacentInteractiveHighlights to the Highlightable module
+  - adds byId
 
 
 ## Types
@@ -52,7 +53,7 @@ just a single whitespace.
 
 ## Getters
 
-@docs asFragmentTuples, usedMarkers, text
+@docs asFragmentTuples, usedMarkers, text, byId
 
 -}
 
@@ -401,6 +402,13 @@ joinAdjacentInteractiveHighlights highlightables =
             )
             ( [], [], [] )
         |> (\( _, static_, acc ) -> static_ ++ acc)
+
+
+{-| Get the highlightable matching the passed-in ID, if any.
+-}
+byId : Int -> List (Highlightable kind) -> Maybe (Highlightable kind)
+byId index =
+    List.filter (\h -> h.index == index) >> List.head
 
 
 {-| This is not an efficient way to union values -- using a set would be way better!

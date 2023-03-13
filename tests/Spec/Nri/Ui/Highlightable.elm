@@ -61,6 +61,7 @@ spec =
         , describe "blur" blurSpec
         , describe "hover" hoverSpec
         , describe "asFragmentTuples" asFragmentTuplesSpec
+        , describe "byId" byIdSpec
         ]
 
 
@@ -486,6 +487,31 @@ asFragmentTuplesSpec =
                     , ( [ "a" ], " " )
                     , ( [ "a", "c" ], "Content" )
                     ]
+    ]
+
+
+byIdSpec : List Test
+byIdSpec =
+    [ test "returns Nothing if a highlightable with the id is not found" <|
+        \() ->
+            []
+                |> Highlightable.byId 0
+                |> Expect.equal Nothing
+    , test "returns Just the highlightable if a highlightable with the id is found" <|
+        \() ->
+            let
+                highlightable =
+                    { text = "Content"
+                    , uiState = Highlightable.None
+                    , customAttributes = []
+                    , marked = []
+                    , index = 0
+                    , type_ = Interactive
+                    }
+            in
+            [ highlightable ]
+                |> Highlightable.byId 0
+                |> Expect.equal (Just highlightable)
     ]
 
 
