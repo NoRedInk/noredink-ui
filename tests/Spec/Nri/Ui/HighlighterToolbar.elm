@@ -11,7 +11,6 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.HighlighterToolbar.V2 as HighlighterToolbar
 import ProgramTest exposing (..)
 import Spec.KeyboardHelpers as KeyboardHelpers
-import Task
 import Test exposing (..)
 import Test.Html.Event as Event
 import Test.Html.Query as Query
@@ -242,16 +241,11 @@ type Msg
 update : Msg -> State -> State
 update msg state =
     case msg of
-        FocusAndSelectTag { select, focus } ->
-            Tuple.first
-                ( { state | currentTool = select }
-                , focus
-                    |> Maybe.map (Dom.focus >> Task.attempt Focused)
-                    |> Maybe.withDefault Cmd.none
-                )
+        FocusAndSelectTag { select } ->
+            { state | currentTool = select }
 
         Focused _ ->
-            Tuple.first ( state, Cmd.none )
+            state
 
 
 view : State -> Html Msg
