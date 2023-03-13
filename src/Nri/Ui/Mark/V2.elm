@@ -33,6 +33,8 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Sort exposing (Sorter)
+import Sort.Set as Set exposing (Set)
 import String.Extra
 
 
@@ -65,25 +67,10 @@ viewWithOverlaps :
     -> List ( content, List Mark )
     -> List (Html msg)
 viewWithOverlaps viewSegment segments =
-    let
-        {- This is not an efficient way to model marks with overlaps -- using a set would be way better!
-
-           However,
-           (a) this will only ever be used with a tiny lists and
-           (b) if we use a set, we'll need to thread a sorter through, impacting the API negatively
-           (c) if we use a set, we'll need to convert to and from a set
-
-           This tradeoff balance here might change if we decide to model the marked values as a set instead of as a list.
-
-        -}
-        ignoreRepeats : List Mark -> List Mark -> List Mark
-        ignoreRepeats lastMarks =
-            List.filter (\x -> Maybe.Extra.isNothing (List.Extra.find (.name >> (==) x.name) lastMarks))
-    in
     segments
         |> List.foldr
             (\( content, marks ) ( lastMarks, acc ) ->
-                ( marks
+                ( Set.fromList maybeStringSorter (List.map .name marks)
                 , { content = content
                   , marks = marks
                   , after = ignoreRepeats lastMarks marks
@@ -91,11 +78,11 @@ viewWithOverlaps viewSegment segments =
                     :: acc
                 )
             )
-            ( [], [] )
+            ( Set.empty maybeStringSorter, [] )
         |> Tuple.second
         |> List.foldl
             (\{ content, marks, after } ( lastMarks, acc ) ->
-                ( marks
+                ( Set.fromList maybeStringSorter (List.map .name marks)
                 , acc
                     ++ [ viewSegment content
                             -- TODO: add back in the styles
@@ -105,8 +92,18 @@ viewWithOverlaps viewSegment segments =
                        ]
                 )
             )
-            ( [], [] )
+            ( Set.empty maybeStringSorter, [] )
         |> Tuple.second
+
+
+ignoreRepeats : Set (Maybe String) -> List Mark -> List Mark
+ignoreRepeats lastMarks list =
+    List.filter (\x -> not (Set.memberOf lastMarks x.name)) list
+
+
+maybeStringSorter : Sorter (Maybe String)
+maybeStringSorter =
+    Sort.by (Maybe.withDefault "") Sort.alphabetical
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
