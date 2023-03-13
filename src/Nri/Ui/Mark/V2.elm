@@ -82,14 +82,35 @@ viewWithOverlaps viewSegment segments =
         |> Tuple.second
         |> List.foldl
             (\{ content, marks, after } ( lastMarks, acc ) ->
-                ( Set.fromList maybeStringSorter (List.map .name marks)
-                , acc
-                    ++ [ viewSegment content
-                            -- TODO: add back in the styles
-                            [ tagBeforeContent (ignoreRepeats lastMarks marks)
+                let
+                    segment =
+                        viewSegment content
+                            [ tagBeforeContent before
                             , tagAfterContent after
                             ]
-                       ]
+
+                    before =
+                        ignoreRepeats lastMarks marks
+                in
+                ( Set.fromList maybeStringSorter (List.map .name marks)
+                , acc
+                    ++ (case List.filterMap .name before of
+                            [] ->
+                                [ segment ]
+
+                            names ->
+                                [ viewInlineTag
+                                    [ Css.display Css.none
+                                    , MediaQuery.highContrastMode
+                                        [ Css.property "forced-color-adjust" "none"
+                                        , Css.display Css.inline |> Css.important
+                                        , Css.property "color" "initial" |> Css.important
+                                        ]
+                                    ]
+                                    (String.Extra.toSentenceOxford names)
+                                , segment
+                                ]
+                       )
                 )
             )
             ( Set.empty maybeStringSorter, [] )
@@ -323,10 +344,6 @@ markStyles index marked =
 
 tagBeforeContent : List Mark -> Css.Style
 tagBeforeContent marks =
-    let
-        names =
-            String.Extra.toSentenceOxford (List.filterMap .name marks)
-    in
     if List.isEmpty marks then
         Css.batch []
 
