@@ -396,11 +396,7 @@ hasNotPseudoElement pseudoElement highlightMarker relevantHighlightableText view
                 |> Query.each (Query.hasNot [ Selector.containing [ Selector.text relevantHighlightableText ] ])
 
         Nothing ->
-            ("Expected to find a class defining a " ++ pseudoElement ++ " element with content: `")
-                ++ highlightMarker
-                ++ "`, but failed to find the class in the styles: \n\n"
-                ++ rawStyles view
-                |> Expect.fail
+            Expect.pass
 
 
 pseudoElementSelector : String -> String -> Query.Single msg -> Maybe Selector
