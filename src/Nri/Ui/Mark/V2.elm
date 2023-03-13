@@ -357,10 +357,8 @@ tagBeforeContent marks =
 
     else
         Css.before
-            [ MediaQuery.notHighContrastMode
-                [ cssContent (highlightDescription "start" marks)
-                , invisibleStyle
-                ]
+            [ cssContent (highlightDescription "start" marks)
+            , invisibleStyle
             ]
 
 
@@ -371,10 +369,8 @@ tagAfterContent marks =
 
     else
         Css.after
-            [ MediaQuery.notHighContrastMode
-                [ cssContent (highlightDescription "end" marks)
-                , invisibleStyle
-                ]
+            [ cssContent (highlightDescription "end" marks)
+            , invisibleStyle
             ]
 
 
