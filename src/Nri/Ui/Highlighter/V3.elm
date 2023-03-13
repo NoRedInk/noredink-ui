@@ -654,32 +654,47 @@ hoveredHighlightable model =
 {-| -}
 view : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Maybe Int, marker : Tool.Tool marker } -> Html (Msg marker)
 view config =
-    view_ { showTagsInline = False, maybeTool = Just config.marker, overlaps = False }
-        (viewHighlightable False config)
-        config
+    view_
+        { showTagsInline = False
+        , maybeTool = Just config.marker
+        , overlaps = False
+        , viewSegment = viewHighlightable False config
+        , id = config.id
+        , highlightables = config.highlightables
+        }
 
 
 {-| -}
 viewWithOverlappingHighlights : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Maybe Int, marker : Tool.Tool marker } -> Html (Msg marker)
 viewWithOverlappingHighlights config =
-    view_ { showTagsInline = False, maybeTool = Just config.marker, overlaps = True }
-        (viewHighlightable False config)
-        config
+    view_
+        { showTagsInline = False
+        , maybeTool = Just config.marker
+        , overlaps = True
+        , viewSegment = viewHighlightable False config
+        , id = config.id
+        , highlightables = config.highlightables
+        }
 
 
 {-| -}
 staticWithOverlappingHighlights : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
 staticWithOverlappingHighlights config =
-    view_ { showTagsInline = False, maybeTool = Nothing, overlaps = True }
-        (viewHighlightableSegment
-            { interactiveHighlighterId = Nothing
-            , focusIndex = Nothing
-            , eventListeners = []
-            , maybeTool = Nothing
-            , renderMarkdown = False
-            }
-        )
-        config
+    view_
+        { showTagsInline = False
+        , maybeTool = Nothing
+        , overlaps = True
+        , viewSegment =
+            viewHighlightableSegment
+                { interactiveHighlighterId = Nothing
+                , focusIndex = Nothing
+                , eventListeners = []
+                , maybeTool = Nothing
+                , renderMarkdown = False
+                }
+        , id = config.id
+        , highlightables = config.highlightables
+        }
 
 
 {-| Same as `view`, but will render strings like "_blah_" inside of emphasis tags.
@@ -691,24 +706,34 @@ WARNING: markdown is rendered highlightable by highlightable, so be sure to prov
 -}
 viewMarkdown : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Maybe Int, marker : Tool.Tool marker } -> Html (Msg marker)
 viewMarkdown config =
-    view_ { showTagsInline = False, maybeTool = Just config.marker, overlaps = False }
-        (viewHighlightable True config)
-        config
+    view_
+        { showTagsInline = False
+        , maybeTool = Just config.marker
+        , overlaps = False
+        , viewSegment = viewHighlightable True config
+        , id = config.id
+        , highlightables = config.highlightables
+        }
 
 
 {-| -}
 static : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
 static config =
-    view_ { showTagsInline = False, maybeTool = Nothing, overlaps = False }
-        (viewHighlightableSegment
-            { interactiveHighlighterId = Nothing
-            , focusIndex = Nothing
-            , eventListeners = []
-            , maybeTool = Nothing
-            , renderMarkdown = False
-            }
-        )
-        config
+    view_
+        { showTagsInline = False
+        , maybeTool = Nothing
+        , overlaps = False
+        , viewSegment =
+            viewHighlightableSegment
+                { interactiveHighlighterId = Nothing
+                , focusIndex = Nothing
+                , eventListeners = []
+                , maybeTool = Nothing
+                , renderMarkdown = False
+                }
+        , id = config.id
+        , highlightables = config.highlightables
+        }
 
 
 {-| Same as `static`, but will render strings like "_blah_" inside of emphasis tags.
@@ -720,16 +745,21 @@ WARNING: markdown is rendered highlightable by highlightable, so be sure to prov
 -}
 staticMarkdown : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
 staticMarkdown config =
-    view_ { showTagsInline = False, maybeTool = Nothing, overlaps = False }
-        (viewHighlightableSegment
-            { interactiveHighlighterId = Nothing
-            , focusIndex = Nothing
-            , eventListeners = []
-            , maybeTool = Nothing
-            , renderMarkdown = True
-            }
-        )
-        config
+    view_
+        { showTagsInline = False
+        , maybeTool = Nothing
+        , overlaps = False
+        , viewSegment =
+            viewHighlightableSegment
+                { interactiveHighlighterId = Nothing
+                , focusIndex = Nothing
+                , eventListeners = []
+                , maybeTool = Nothing
+                , renderMarkdown = True
+                }
+        , id = config.id
+        , highlightables = config.highlightables
+        }
 
 
 {-| -}
@@ -746,9 +776,14 @@ staticWithTags config =
                 , renderMarkdown = False
                 }
     in
-    view_ { showTagsInline = True, maybeTool = Nothing, overlaps = False }
-        viewStaticHighlightableWithTags
-        config
+    view_
+        { showTagsInline = True
+        , maybeTool = Nothing
+        , overlaps = False
+        , viewSegment = viewStaticHighlightableWithTags
+        , id = config.id
+        , highlightables = config.highlightables
+        }
 
 
 {-| Same as `staticWithTags`, but will render strings like "_blah_" inside of emphasis tags.
@@ -771,30 +806,14 @@ staticMarkdownWithTags config =
                 , renderMarkdown = True
                 }
     in
-    view_ { showTagsInline = True, maybeTool = Nothing, overlaps = False }
-        viewStaticHighlightableWithTags
-        config
-
-
-view_ :
-    { showTagsInline : Bool, maybeTool : Maybe (Tool.Tool marker), overlaps : Bool }
-    -> (Highlightable marker -> List Css.Style -> Html msg)
-    -> { config | id : String, highlightables : List (Highlightable marker) }
-    -> Html msg
-view_ groupConfig viewSegment { id, highlightables } =
-    p [ Html.Styled.Attributes.id id, class "highlighter-container" ]
-        (viewSegments groupConfig viewSegment highlightables)
-
-
-viewSegments :
-    { showTagsInline : Bool, maybeTool : Maybe (Tool.Tool marker), overlaps : Bool }
-    -> (Highlightable marker -> List Css.Style -> Html msg)
-    -> List (Highlightable marker)
-    -> List (Html msg)
-viewSegments groupConfig viewSegment highlightables =
-    highlightables
-        |> buildGroups
-        |> List.concatMap (groupContainer groupConfig viewSegment)
+    view_
+        { showTagsInline = True
+        , maybeTool = Nothing
+        , overlaps = False
+        , viewSegment = viewStaticHighlightableWithTags
+        , id = config.id
+        , highlightables = config.highlightables
+        }
 
 
 {-| Groups highlightables with the same state together.
@@ -816,17 +835,18 @@ groupHighlightables x y =
         || (List.head y.marked /= Nothing && x.uiState == Highlightable.Hinted)
 
 
-{-| When elements are marked, wrap them in a single `mark` html node.
+{-| When elements are marked and the view doesn't support overlaps, wrap the marked elements in a single `mark` html node.
 -}
-groupContainer :
+view_ :
     { showTagsInline : Bool
     , maybeTool : Maybe (Tool.Tool marker)
     , overlaps : Bool
+    , viewSegment : Highlightable marker -> List Css.Style -> Html msg
+    , highlightables : List (Highlightable marker)
+    , id : String
     }
-    -> (Highlightable marker -> List Css.Style -> Html msg)
-    -> List (Highlightable marker)
-    -> List (Html msg)
-groupContainer config viewSegment highlightables =
+    -> Html msg
+view_ config =
     let
         toMark : Highlightable marker -> Tool.MarkerModel marker -> Mark.Mark
         toMark highlightable marker =
@@ -836,15 +856,20 @@ groupContainer config viewSegment highlightables =
             , endStyles = marker.endGroupClass
             }
 
-        withoutOverlaps : List ( Highlightable marker, Maybe Mark )
+        withoutOverlaps : List (List ( Highlightable marker, Maybe Mark ))
         withoutOverlaps =
-            List.map
-                (\highlightable ->
-                    ( highlightable
-                    , Maybe.map (toMark highlightable) (List.head highlightable.marked)
+            config.highlightables
+                |> buildGroups
+                |> List.map
+                    (\group ->
+                        List.map
+                            (\highlightable ->
+                                ( highlightable
+                                , Maybe.map (toMark highlightable) (List.head highlightable.marked)
+                                )
+                            )
+                            group
                     )
-                )
-                highlightables
 
         withOverlaps : List ( Highlightable marker, List Mark )
         withOverlaps =
@@ -854,16 +879,17 @@ groupContainer config viewSegment highlightables =
                     , List.map (toMark highlightable) highlightable.marked
                     )
                 )
-                highlightables
+                config.highlightables
     in
-    if config.showTagsInline then
-        Mark.viewWithInlineTags viewSegment withoutOverlaps
+    p [ Html.Styled.Attributes.id config.id, class "highlighter-container" ] <|
+        if config.showTagsInline then
+            List.concatMap (Mark.viewWithInlineTags config.viewSegment) withoutOverlaps
 
-    else if config.overlaps then
-        Mark.viewWithOverlaps viewSegment withOverlaps
+        else if config.overlaps then
+            Mark.viewWithOverlaps config.viewSegment withOverlaps
 
-    else
-        Mark.view viewSegment withoutOverlaps
+        else
+            List.concatMap (Mark.view config.viewSegment) withoutOverlaps
 
 
 viewHighlightable :
