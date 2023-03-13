@@ -26,6 +26,7 @@ import Nri.Ui.Highlightable.V2 as Highlightable exposing (Highlightable)
 import Nri.Ui.Highlighter.V3 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Table.V6 as Table
+import String.Extra
 
 
 moduleName : String
@@ -259,7 +260,14 @@ example =
                                 , ( "vow.", [] )
                                 ]
                                     |> List.intersperse ( " ", [] )
-                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Interactive marker i ( [], word ))
+                                    |> List.indexedMap
+                                        (\i ( word, marker ) ->
+                                            if String.Extra.isBlank word then
+                                                Highlightable.init Highlightable.Static marker i ( [], word )
+
+                                            else
+                                                Highlightable.init Highlightable.Interactive marker i ( [], word )
+                                        )
                                     |> Highlightable.joinAdjacentInteractiveHighlights
                             }
                   }
