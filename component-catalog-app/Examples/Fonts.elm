@@ -11,9 +11,11 @@ import Css exposing (Style)
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
+import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Table.V6 as Table
+import Nri.Ui.Text.V6 as Text
 
 
 {-| -}
@@ -42,12 +44,31 @@ example =
         , ( "ugFont", Fonts.ugFont )
         ]
             |> List.map viewPreview
-    , view = \ellieLinkConfig _ -> [ view ]
+    , view =
+        \ellieLinkConfig _ ->
+            [ viewFontFailurePatterns
+            , Text.mediumBody
+                [ Text.css [ Css.marginTop (Css.px 30) |> Css.important ]
+                , Text.html
+                    [ Html.text "Learn more about kid-friendly and accessible fonts starting at 24:40 in "
+                    , ClickableText.link "Kids Websites: Where Fun and Accessibility Come to Play"
+                        [ ClickableText.linkExternal "https://www.deque.com/axe-con/sessions/kids-websites-where-fun-and-accessibility-come-to-play/"
+                        , ClickableText.appearsInline
+                        ]
+                    , Html.text " and in "
+                    , ClickableText.link "Accessible fonts and readability: the basics"
+                        [ ClickableText.linkExternal "https://business.scope.org.uk/article/font-accessibility-and-readability-the-basics#:~:text=This%20can%20affect%20reading%20speed,does%20this%20is%20Gill%20Sans."
+                        , ClickableText.appearsInline
+                        ]
+                    , Html.text "."
+                    ]
+                ]
+            ]
     }
 
 
-view : Html msg
-view =
+viewFontFailurePatterns : Html msg
+viewFontFailurePatterns =
     let
         fontStyle font _ =
             [ font
