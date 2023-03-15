@@ -142,6 +142,13 @@ Any NoRedInk engineer can deploy a new version of `noredink-ui`. Generally, we p
   - `git pull`
 - Run `elm publish` and follow its prompts
   - Note: when you're asked to create a version tag, **please be sure to include a meaningful message**! Include details in the message that describe why this noredink-ui version exists at ll.
+  - Create an annotated tag like this:
+  ```
+  git tag -a 22.x.y -m "Description of this release version: i.e.: 'high-contrast mode highlight style change'"
+  ```
+  - Because of branch protection you will not be able to push a tag like: `git push origin master 22.x.y` (The previous command requires permissions to push directly to master even if you have no changes).
+  - Instead, please push your new `22.x.y` tag with the following: `git push origin 22.x.y`
+
 
 Once you've published, you should see the latest version at <https://package.elm-lang.org/packages/NoRedInk/noredink-ui/>. It can take a few minutes to show up.
 
