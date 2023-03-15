@@ -102,12 +102,12 @@ viewFontFailurePatterns =
             { header = "Info"
             , value = .info
             , width = Css.pct 30
-            , cellStyles = always [ Fonts.baseFont, Css.padding2 (Css.px 8) Css.zero ]
+            , cellStyles = always [ Fonts.baseFont, Css.padding2 (Css.px 8) Css.zero, Css.whiteSpace Css.preLine ]
             , sort = Nothing
             }
         ]
         [ { example = "Alphabet", text = "AaBbCcDdEeFfGg\nHhIiJjKkLlMmNn\nOoPpQqRrSsTtUu\nVvWwXxYyZz", info = "" }
-        , { example = "Imposter letters", text = "Il1 ecoa", info = "Note that capital i and lowercase l can look near-identical in some fonts. e, c, o, and a can also be difficult to distinguish from each other in some fonts." }
+        , { example = "Imposter letters", text = "Il1 ecoa", info = "Capital i and lowercase l can look near-identical in some fonts.\ne, c, o, and a can also be difficult to distinguish from each other in some fonts." }
         , { example = "Mirrored letters", text = "db\nqp", info = "Mirrored letters are not unique, and can make reading more difficult, particularly for some people with dyslexia." }
         , { example = "Letter spacing", text = "rn vv", info = "r and n next to each other can smoosh into an m shape and v and v into a w in some fonts." }
         ]
