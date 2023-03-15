@@ -46,7 +46,22 @@ example =
             |> List.map viewPreview
     , view =
         \ellieLinkConfig _ ->
-            [ viewFontFailurePatterns
+            let
+                dt =
+                    Html.dt [ css [ Css.fontWeight Css.bold ] ]
+
+                dd =
+                    Html.dd [ css [ Css.marginLeft Css.zero, Css.marginBottom (Css.px 8) ] ]
+            in
+            [ Html.dl [ css [ Fonts.baseFont ] ]
+                [ dt [ Html.text "quizFont" ]
+                , dd [ Html.text "Use for exercise content. Georgia" ]
+                , dt [ Html.text "ugFont" ]
+                , dd [ Html.text "Use for user-generated content. Georgia" ]
+                , dt [ Html.text "baseFont" ]
+                , dd [ Html.text "Use  for everything else! Mulish" ]
+                ]
+            , viewFontFailurePatterns
             , Text.mediumBody
                 [ Text.css [ Css.marginTop (Css.px 30) |> Css.important ]
                 , Text.html
