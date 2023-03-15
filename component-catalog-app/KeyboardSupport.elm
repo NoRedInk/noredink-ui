@@ -16,6 +16,7 @@ import Css exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Container.V2 as Container
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 
 
@@ -37,22 +38,21 @@ view keyboardSupport =
             Container.view
                 [ Container.html
                     [ Heading.h2 [ Heading.plaintext "Keyboard Support" ]
-                    , ul
-                        [ css [ listStyle none, margin2 (px 10) zero, padding zero ]
+                    , dl
+                        [ css [ listStyle none, margin2 (px 10) zero, padding zero, Fonts.baseFont ]
                         ]
-                        (List.map viewKeyboardActions keyboardSupport)
+                        (List.concatMap viewKeyboardActions keyboardSupport)
                     ]
                 ]
                 |> List.singleton
                 |> aside []
 
 
-viewKeyboardActions : KeyboardSupport -> Html msg
+viewKeyboardActions : KeyboardSupport -> List (Html msg)
 viewKeyboardActions { keys, result } =
-    li []
-        [ strong [] [ text (String.join "+" (List.map keyToString keys) ++ ": ") ]
-        , text result
-        ]
+    [ dt [ css [ Css.fontWeight Css.bold ] ] [ text (String.join "+" (List.map keyToString keys) ++ ": ") ]
+    , dd [ css [ Css.margin Css.zero, Css.marginBottom (Css.px 8) ] ] [ text result ]
+    ]
 
 
 {-| -}
