@@ -4,7 +4,13 @@ module Nri.Ui.HighlighterToolbar.V2 exposing (view)
 
 @docs view
 
-Changes from V1:
+
+### Patch changes:
+
+  - Ensure selected tool is clear in high contrast mode
+
+
+### Changes from V1:
 
   - replaces `onChangeTag` and `onSetEraser` with `focusAndSelect`.
   - adds `highlighterId` to config
@@ -208,8 +214,7 @@ active palette_ =
         [ nriDescription "active-tool"
         , css
             [ Css.width (Css.px 38)
-            , Css.height (Css.px 4)
-            , Css.backgroundColor palette_.colorLight
+            , Css.border3 (Css.px 2) Css.solid palette_.colorLight
             ]
         ]
         []
