@@ -76,7 +76,14 @@ example =
                 , mainType = Nothing
                 , extraCode = []
                 , renderExample = Code.unstyledView
-                , toExampleCode = \_ -> []
+                , toExampleCode =
+                    \_ ->
+                        [ { sectionName = "Code"
+                          , code =
+                                initHighlighter (Control.currentValue state.settings) state.highlighter.highlightables
+                                    |> Tuple.first
+                          }
+                        ]
                 }
             , Heading.h2 [ Heading.plaintext "Interactive example" ]
             , Heading.h3 [ Heading.plaintext "This example updates based on the settings you configure on this page." ]
@@ -410,35 +417,62 @@ init =
             controlSettings
     in
     { settings = settings
-    , highlighter = initHighlighter (Control.currentValue settings) []
+    , highlighter = initHighlighter (Control.currentValue settings) [] |> Tuple.second
     }
 
 
-initHighlighter : Settings -> List (Highlightable ()) -> Highlighter.Model ()
+initHighlighter : Settings -> List (Highlightable ()) -> ( String, Highlighter.Model () )
 initHighlighter settings previousHighlightables =
     let
-        highlightables : List (Highlightable ())
+        highlightables : ( String, List (Highlightable ()) )
         highlightables =
             if settings.splitOnSentences then
                 exampleParagraph
-                    |> List.map (\text i -> Highlightable.init Highlightable.Interactive [] i ( [], text ))
-                    |> List.intersperse (\i -> Highlightable.init Highlightable.Static [] i ( [], " " ))
+                    |> List.map
+                        (\text i ->
+                            ( "Highlightable.init Highlightable.Interactive [] " ++ String.fromInt i ++ " ( [], " ++ Code.string text ++ ")"
+                            , Highlightable.init Highlightable.Interactive [] i ( [], text )
+                            )
+                        )
+                    |> List.intersperse
+                        (\i ->
+                            ( "Highlightable.init Highlightable.Static [] " ++ String.fromInt i ++ " ( []," ++ Code.string " " ++ ")"
+                            , Highlightable.init Highlightable.Static [] i ( [], " " )
+                            )
+                        )
                     |> List.indexedMap (\i f -> f i)
+                    |> List.unzip
+                    |> Tuple.mapFirst (\c -> Code.listMultiline c 3)
 
             else
-                Highlightable.initFragments [] (String.join " " exampleParagraph)
+                ( "Highlightable.initFragments [] " ++ Code.string joinedExampleParagraph
+                , Highlightable.initFragments [] joinedExampleParagraph
+                )
+
+        joinedExampleParagraph =
+            String.join " " exampleParagraph
     in
-    Highlighter.init
+    ( Code.var "model" 1 <|
+        Code.fromModule moduleName "init"
+            ++ Code.recordMultiline
+                [ ( "id", Code.string "example-romeo-and-juliet" )
+                , ( "highlightables", Tuple.first highlightables )
+                , ( "marker", "TODO" )
+                , ( "joinAdjacentInteractiveHighlights", Code.bool settings.joinAdjacentInteractiveHighlights )
+                ]
+                2
+    , Highlighter.init
         { id = "example-romeo-and-juliet"
         , highlightables =
-            if List.map .text previousHighlightables == List.map .text highlightables then
+            if List.map .text previousHighlightables == List.map .text (Tuple.second highlightables) then
                 previousHighlightables
 
             else
-                highlightables
+                Tuple.second highlightables
         , marker = settings.tool
         , joinAdjacentInteractiveHighlights = settings.joinAdjacentInteractiveHighlights
         }
+    )
 
 
 exampleParagraph : List String
@@ -522,7 +556,9 @@ update msg state =
         UpdateControls settings ->
             ( { state
                 | settings = settings
-                , highlighter = initHighlighter (Control.currentValue settings) state.highlighter.highlightables
+                , highlighter =
+                    initHighlighter (Control.currentValue settings) state.highlighter.highlightables
+                        |> Tuple.second
               }
             , Cmd.none
             )
