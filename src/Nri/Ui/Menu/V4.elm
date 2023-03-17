@@ -780,23 +780,14 @@ styleGroupTitle =
     [ class "GroupTitle"
     , css
         [ Nri.Ui.Fonts.V1.baseFont
-        , fontSize (px 12)
+        , fontSize (px 13)
+        , fontWeight (int 600)
         , color Colors.gray45
         , margin zero
         , padding2 (px 5) zero
         , lineHeight initial
         , borderBottom zero
         , position relative
-        , before
-            [ property "content" "\"\""
-            , width (pct 100)
-            , backgroundColor Colors.gray75
-            , height (px 1)
-            , marginTop (px -1)
-            , display block
-            , top (pct 50)
-            , position absolute
-            ]
         ]
     ]
 
@@ -806,8 +797,6 @@ styleGroupTitleText config =
     [ class "GroupTitleText"
     , css
         [ backgroundColor Colors.white
-        , marginLeft (px 22)
-        , padding2 zero (px 5)
         , zIndex (int <| config.zIndex + 1)
         , position relative
         ]
@@ -821,6 +810,7 @@ styleGroupContainer =
         [ margin zero
         , padding zero
         , paddingBottom (px 15)
+        , border zero
         , lastChild
             [ paddingBottom zero ]
         ]
