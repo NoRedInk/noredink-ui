@@ -74,14 +74,22 @@ example =
                 , update = UpdateControls
                 , settings = state.settings
                 , mainType = Nothing
-                , extraCode = []
+                , extraCode =
+                    [ "import Nri.Ui.Highlightable.V2 as Highlightable"
+                    , "import Nri.Ui.HighlighterTool.V1 as Tool"
+                    ]
                 , renderExample = Code.unstyledView
                 , toExampleCode =
                     \_ ->
                         [ { sectionName = "Code"
                           , code =
-                                initHighlighter (Control.currentValue state.settings) state.highlighter.highlightables
-                                    |> Tuple.first
+                                -- view
+                                Tuple.first (view state)
+                                    ++ Code.newlines
+                                    ++ -- model
+                                       (initHighlighter (Control.currentValue state.settings) state.highlighter.highlightables
+                                            |> Tuple.first
+                                       )
                           }
                         ]
                 }
@@ -100,16 +108,7 @@ example =
                     , Fonts.quizFont
                     ]
                 ]
-                [ (case (Control.currentValue state.settings).highlighterType of
-                    Markdown ->
-                        Highlighter.viewMarkdown state.highlighter
-
-                    Standard ->
-                        Highlighter.view state.highlighter
-
-                    Overlapping ->
-                        Highlighter.viewWithOverlappingHighlights state.highlighter
-                  )
+                [ Tuple.second (view state)
                     |> map HighlighterMsg
                 ]
             , Heading.h2 [ Heading.plaintext "Non-interactive examples" ]
@@ -402,6 +401,29 @@ reasoningMarkerWithBorder =
         }
 
 
+view : State -> ( String, Html (Highlighter.Msg ()) )
+view state =
+    let
+        viewStr =
+            Code.var "view" 1
+    in
+    case (Control.currentValue state.settings).highlighterType of
+        Markdown ->
+            ( viewStr "Highlighter.viewMarkdown"
+            , Highlighter.viewMarkdown state.highlighter
+            )
+
+        Standard ->
+            ( viewStr "Highlighter.view"
+            , Highlighter.view state.highlighter
+            )
+
+        Overlapping ->
+            ( viewStr "Highlighter.viewWithOverlappingHighlights"
+            , Highlighter.viewWithOverlappingHighlights state.highlighter
+            )
+
+
 {-| -}
 type alias State =
     { settings : Control Settings
@@ -548,7 +570,7 @@ controlMarker =
 backgroundHighlightColors : Int -> Control ( String, Color )
 backgroundHighlightColors rotateWith =
     Examples.Colors.backgroundHighlightColors
-        |> List.map (\( name, value, _ ) -> ( name, Control.value ( name, value ) ))
+        |> List.map (\( name, value, _ ) -> ( name, Control.value ( Code.fromModule "Colors" name, value ) ))
         |> ControlExtra.rotatedChoice rotateWith
 
 
