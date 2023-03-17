@@ -457,7 +457,7 @@ initHighlighter settings previousHighlightables =
             ++ Code.recordMultiline
                 [ ( "id", Code.string "example-romeo-and-juliet" )
                 , ( "highlightables", Tuple.first highlightables )
-                , ( "marker", "TODO" )
+                , ( "marker", Code.newlineWithIndent 3 ++ Tuple.first settings.tool )
                 , ( "joinAdjacentInteractiveHighlights", Code.bool settings.joinAdjacentInteractiveHighlights )
                 ]
                 2
@@ -469,7 +469,7 @@ initHighlighter settings previousHighlightables =
 
             else
                 Tuple.second highlightables
-        , marker = settings.tool
+        , marker = Tuple.second settings.tool
         , joinAdjacentInteractiveHighlights = settings.joinAdjacentInteractiveHighlights
         }
     )
@@ -487,7 +487,7 @@ type alias Settings =
     { splitOnSentences : Bool
     , joinAdjacentInteractiveHighlights : Bool
     , highlighterType : HighlighterType
-    , tool : Tool.Tool ()
+    , tool : ( String, Tool.Tool () )
     }
 
 
@@ -511,23 +511,33 @@ controlSettings =
             )
         |> Control.field "tool"
             (Control.choice
-                [ ( "Marker", Control.map Tool.Marker controlMarker )
-                , ( "Eraser", Control.value (Tool.Eraser Tool.buildEraser) )
+                [ ( "Marker", Control.map (\( c, v ) -> ( "Tool.Marker" ++ c, Tool.Marker v )) controlMarker )
+                , ( "Eraser", Control.value ( "Tool.Eraser Tool.buildEraser", Tool.Eraser Tool.buildEraser ) )
                 ]
             )
 
 
-controlMarker : Control (Tool.MarkerModel ())
+controlMarker : Control ( String, Tool.MarkerModel () )
 controlMarker =
     Control.record
         (\a b c d ->
-            Tool.buildMarker
-                { highlightColor = a
-                , hoverColor = b
-                , hoverHighlightColor = c
+            ( Code.fromModule "Tool" "buildMarker"
+                ++ Code.recordMultiline
+                    [ ( "highlightColor", Tuple.first a )
+                    , ( "hoverColor", Tuple.first b )
+                    , ( "hoverHighlightColor", Tuple.first c )
+                    , ( "kind", "()" )
+                    , ( "name", Code.maybeString d )
+                    ]
+                    4
+            , Tool.buildMarker
+                { highlightColor = Tuple.second a
+                , hoverColor = Tuple.second b
+                , hoverHighlightColor = Tuple.second c
                 , kind = ()
                 , name = d
                 }
+            )
         )
         |> Control.field "highlightColor" (backgroundHighlightColors 0)
         |> Control.field "hoverColor" (backgroundHighlightColors 2)
@@ -535,10 +545,10 @@ controlMarker =
         |> Control.field "name" (Control.maybe True (Control.string "Claim"))
 
 
-backgroundHighlightColors : Int -> Control Color
+backgroundHighlightColors : Int -> Control ( String, Color )
 backgroundHighlightColors rotateWith =
     Examples.Colors.backgroundHighlightColors
-        |> List.map (\( name, value, _ ) -> ( name, Control.value value ))
+        |> List.map (\( name, value, _ ) -> ( name, Control.value ( name, value ) ))
         |> ControlExtra.rotatedChoice rotateWith
 
 
