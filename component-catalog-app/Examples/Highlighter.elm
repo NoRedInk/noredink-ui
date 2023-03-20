@@ -17,14 +17,16 @@ import Example exposing (Example)
 import Examples.Colors
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
+import Maybe.Extra
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
-import Nri.Ui.Highlighter.V2 as Highlighter
+import Nri.Ui.Highlightable.V2 as Highlightable exposing (Highlightable)
+import Nri.Ui.Highlighter.V3 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Table.V6 as Table
+import String.Extra
 
 
 moduleName : String
@@ -34,7 +36,7 @@ moduleName =
 
 version : Int
 version =
-    2
+    3
 
 
 {-| -}
@@ -59,7 +61,7 @@ example =
                     , ( "vow.", Nothing )
                     ]
                         |> List.intersperse ( " ", Nothing )
-                        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+                        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
                 }
             ]
         ]
@@ -91,11 +93,15 @@ example =
                     , Fonts.quizFont
                     ]
                 ]
-                [ (if (Control.currentValue state.settings).asMarkdown then
-                    Highlighter.viewMarkdown state.highlighter
+                [ (case (Control.currentValue state.settings).highlighterType of
+                    Markdown ->
+                        Highlighter.viewMarkdown state.highlighter
 
-                   else
-                    Highlighter.view state.highlighter
+                    Standard ->
+                        Highlighter.view state.highlighter
+
+                    Overlapping ->
+                        Highlighter.viewWithOverlappingHighlights state.highlighter
                   )
                     |> map HighlighterMsg
                 ]
@@ -166,7 +172,7 @@ example =
                                 , ( "vow.", Nothing )
                                 ]
                                     |> List.intersperse ( " ", Nothing )
-                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
                             }
                   }
                 , { viewName = "static"
@@ -186,7 +192,7 @@ example =
                                 , ( "vow.", Nothing )
                                 ]
                                     |> List.intersperse ( " ", Nothing )
-                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
                             }
                   }
                 , { viewName = "static"
@@ -205,7 +211,7 @@ example =
                                 , ( "vow.", Nothing )
                                 ]
                                     |> List.intersperse ( " ", Nothing )
-                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
                             }
                   }
                 , { viewName = "static"
@@ -242,6 +248,33 @@ example =
                             , highlightables = Highlightable.fromMarkdown "Select your [favorite phrase]() in **your** writing."
                             }
                   }
+                , { viewName = "staticWithOverlappingHighlights"
+                  , tool = "buildMarkerWithoutRounding"
+                  , highlightable = "init"
+                  , description = "Multiple kinds of highlights with overlaps."
+                  , example =
+                        Highlighter.staticWithOverlappingHighlights
+                            { id = "example-6"
+                            , highlightables =
+                                [ ( "Sphinx", [ inlineCommentMarker "Comment 1", inlineCommentMarker "Comment 2" ] )
+                                , ( "of", [ inlineCommentMarker "Comment 2" ] )
+                                , ( "black quartz,", [ inlineCommentMarker "Comment 3", inlineCommentMarker "Comment 2" ] )
+                                , ( "judge", [ inlineCommentMarker "Comment 3", inlineCommentMarker "Comment 2" ] )
+                                , ( "my", [ inlineCommentMarker "Comment 2" ] )
+                                , ( "vow.", [] )
+                                ]
+                                    |> List.intersperse ( " ", [] )
+                                    |> List.indexedMap
+                                        (\i ( word, marker ) ->
+                                            if String.Extra.isBlank word then
+                                                Highlightable.init Highlightable.Static marker i ( [], word )
+
+                                            else
+                                                Highlightable.init Highlightable.Interactive marker i ( [], word )
+                                        )
+                                    |> Highlightable.joinAdjacentInteractiveHighlights
+                            }
+                  }
                 ]
             ]
     , categories = [ Instructional ]
@@ -257,7 +290,7 @@ multipleHighlightsHighlightables =
     , ( "How *vexingly* quick daft zebras jump!", Nothing )
     ]
         |> List.intersperse ( " ", Nothing )
-        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
 
 
 exampleMarker : Tool.MarkerModel ()
@@ -304,6 +337,26 @@ reasoningMarker =
         }
 
 
+inlineCommentMarker : String -> Tool.MarkerModel ()
+inlineCommentMarker name =
+    Tool.buildMarkerWithoutRounding
+        { highlightColor = toLightColor Colors.highlightYellow
+        , hoverColor = Colors.highlightYellow
+        , hoverHighlightColor = Colors.highlightYellow
+        , kind = ()
+        , name = Just name
+        }
+
+
+toLightColor : Color -> Color
+toLightColor color =
+    let
+        tint value =
+            value + floor (toFloat (255 - value) * 0.5)
+    in
+    Css.rgb (tint color.red) (tint color.green) (tint color.blue)
+
+
 multipleHighlightsHighlightablesWithBorder : List (Highlightable ())
 multipleHighlightsHighlightablesWithBorder =
     [ ( "Waltz, bad nymph, for quick jigs vex.", Just claimMarkerWithBorder )
@@ -312,7 +365,7 @@ multipleHighlightsHighlightablesWithBorder =
     , ( "How *vexingly* quick daft zebras jump!", Nothing )
     ]
         |> List.intersperse ( " ", Nothing )
-        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
 
 
 claimMarkerWithBorder : Tool.MarkerModel ()
@@ -368,12 +421,12 @@ initHighlighter settings previousHighlightables =
         highlightables =
             if settings.splitOnSentences then
                 exampleParagraph
-                    |> List.map (\text i -> Highlightable.init Highlightable.Interactive Nothing i ( [], text ))
-                    |> List.intersperse (\i -> Highlightable.init Highlightable.Static Nothing i ( [], " " ))
+                    |> List.map (\text i -> Highlightable.init Highlightable.Interactive [] i ( [], text ))
+                    |> List.intersperse (\i -> Highlightable.init Highlightable.Static [] i ( [], " " ))
                     |> List.indexedMap (\i f -> f i)
 
             else
-                Highlightable.initFragments Nothing (String.join " " exampleParagraph)
+                Highlightable.initFragments [] (String.join " " exampleParagraph)
     in
     Highlighter.init
         { id = "example-romeo-and-juliet"
@@ -399,9 +452,15 @@ exampleParagraph =
 type alias Settings =
     { splitOnSentences : Bool
     , joinAdjacentInteractiveHighlights : Bool
-    , asMarkdown : Bool
+    , highlighterType : HighlighterType
     , tool : Tool.Tool ()
     }
+
+
+type HighlighterType
+    = Markdown
+    | Standard
+    | Overlapping
 
 
 controlSettings : Control Settings
@@ -409,7 +468,13 @@ controlSettings =
     Control.record Settings
         |> Control.field "splitOnSentences" (Control.bool True)
         |> Control.field "joinAdjacentInteractiveHighlights" (Control.bool False)
-        |> Control.field "asMarkdown" (Control.bool True)
+        |> Control.field "type"
+            (Control.choice
+                [ ( "Markdown", Control.value Markdown )
+                , ( "Standard", Control.value Standard )
+                , ( "Overlapping", Control.value Overlapping )
+                ]
+            )
         |> Control.field "tool"
             (Control.choice
                 [ ( "Marker", Control.map Tool.Marker controlMarker )

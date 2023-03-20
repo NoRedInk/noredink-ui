@@ -73,8 +73,19 @@ hint = 'upgrade to V2'
 [forbidden."Nri.Ui.Heading.V2"]
 hint = 'upgrade to V3'
 
+[forbidden."Nri.Ui.Highlightable.V1"]
+hint = 'upgrade to V2'
+usages = [
+    'component-catalog/../src/Highlighter/Grouping.elm',
+    'component-catalog/../src/Highlighter/Internal.elm',
+    'component-catalog/../src/Nri/Ui/Highlighter/V2.elm',
+]
+
 [forbidden."Nri.Ui.Highlighter.V1"]
 hint = 'upgrade to V2'
+
+[forbidden."Nri.Ui.Highlighter.V2"]
+hint = 'upgrade to V3'
 
 [forbidden."Nri.Ui.HighlighterToolbar.V1"]
 hint = 'upgrade to V2'
@@ -129,8 +140,11 @@ hint = 'upgrade to V8'
 hint = 'upgrade to V3'
 
 [forbidden."Nri.Ui.QuestionBox.V2"]
-hint = 'upgrade to V3'
+hint = 'upgrade to V4'
 usages = ['component-catalog/../src/Nri/Ui/Block/V3.elm']
+
+[forbidden."Nri.Ui.QuestionBox.V3"]
+hint = 'upgrade to V4'
 
 [forbidden."Nri.Ui.RadioButton.V1"]
 hint = 'upgrade to V2'
