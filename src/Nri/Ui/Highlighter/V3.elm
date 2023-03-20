@@ -968,17 +968,18 @@ viewHighlightableSegment { interactiveHighlighterId, focusIndex, eventListeners,
             -- Ideally we would be able to provide `List Css.Style` for these
             -- cases, since they'll probably be different for the quiz engine
             -- and essay writing.
-            if txt == "\t" then
-                [ class "highlighter-whitespace-tab" ]
+            case txt of
+                "\t" ->
+                    [ class "highlighter-whitespace-tab" ]
 
-            else if txt == " " then
-                [ class "highlighter-whitespace-single-space" ]
+                " " ->
+                    [ class "highlighter-whitespace-single-space" ]
 
-            else if txt == "\n" then
-                [ class "highlighter-whitespace-newline" ]
+                "\n" ->
+                    [ class "highlighter-whitespace-newline" ]
 
-            else
-                []
+                _ ->
+                    []
 
         isInteractive =
             interactiveHighlighterId /= Nothing
