@@ -7,7 +7,6 @@ module Nri.Ui.HighlighterToolbar.V1 exposing (view)
 -}
 
 import Accessibility.Styled.Aria as Aria
-import Accessibility.Styled.Role as Role
 import Css exposing (Color)
 import EventExtras exposing (onClickPreventDefaultAndStopPropagation)
 import Html.Styled exposing (..)
@@ -20,13 +19,10 @@ import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
-toolbar : String -> List (Html msg) -> Html msg
-toolbar highlighterId =
+toolbar : List (Html msg) -> Html msg
+toolbar =
     ul
         [ nriDescription "tools"
-        , Role.toolBar
-        , Aria.label "Highlighter options"
-        , Aria.controls [ highlighterId ]
         , css
             [ Css.displayFlex
             , Css.listStyle Css.none
@@ -50,7 +46,6 @@ view :
     , onChangeTag : tag -> msg
     , getColor : tag -> { extras | colorSolid : Color, colorLight : Color }
     , getName : tag -> String
-    , highlighterId : String
     }
     -> { model | currentTool : Maybe tag, tags : List tag }
     -> Html msg
@@ -64,7 +59,7 @@ view config model =
         eraserSelected =
             model.currentTool == Nothing
     in
-    toolbar config.highlighterId
+    toolbar
         (List.map viewTagWithConfig model.tags
             ++ [ viewEraser config.onSetEraser eraserSelected ]
         )
@@ -75,7 +70,6 @@ viewTag :
     , onChangeTag : tag -> msg
     , getColor : tag -> { extras | colorSolid : Color, colorLight : Color }
     , getName : tag -> String
-    , highlighterId : String
     }
     -> Bool
     -> tag
