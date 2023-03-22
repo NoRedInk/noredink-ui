@@ -194,6 +194,9 @@ viewStandalone config =
         [ viewBalloon config
             Nothing
             [ Balloon.nriDescription "standalone-balloon"
+            , Balloon.containerCss
+                [ Css.maxWidth (Css.px 500)
+                ]
             ]
         ]
 
@@ -275,7 +278,7 @@ viewPointingTo config blockId measurements =
                     Nothing ->
                         []
             , Css.textAlign Css.left
-            , Css.maxWidth (Css.px 440)
+            , Css.maxWidth (Css.px 386)
             , Css.property "width" "max-content"
             , Css.batch config.containerCss
             ]
