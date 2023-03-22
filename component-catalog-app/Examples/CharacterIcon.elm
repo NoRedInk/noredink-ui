@@ -52,6 +52,12 @@ all =
             , Css.width (Css.px 50)
             ]
           )
+        , ( "redPanda"
+          , CharacterIcon.redPanda
+          , [ Css.height (Css.px 50)
+            , Css.width (Css.px 50)
+            ]
+          )
         ]
       )
     ]
