@@ -93,7 +93,7 @@ describe("UI tests", function () {
 
     await page.waitForXPath(
       '//div[@data-nri-description="pointing-to-balloon"]',
-      200  
+      200
     );
 
     await percySnapshot(page, name);
