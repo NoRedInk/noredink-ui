@@ -74,9 +74,24 @@ example =
                 , update = UpdateControls
                 , settings = state.settings
                 , mainType = Nothing
-                , extraCode = []
+                , extraCode =
+                    [ "import Nri.Ui.Highlightable.V2 as Highlightable"
+                    , "import Nri.Ui.HighlighterTool.V1 as Tool"
+                    ]
                 , renderExample = Code.unstyledView
-                , toExampleCode = \_ -> []
+                , toExampleCode =
+                    \_ ->
+                        [ { sectionName = "Code"
+                          , code =
+                                -- view
+                                Tuple.first (view state)
+                                    ++ Code.newlines
+                                    ++ -- model
+                                       (initHighlighter (Control.currentValue state.settings) state.highlighter.highlightables
+                                            |> Tuple.first
+                                       )
+                          }
+                        ]
                 }
             , Heading.h2 [ Heading.plaintext "Interactive example" ]
             , Heading.h3 [ Heading.plaintext "This example updates based on the settings you configure on this page." ]
@@ -93,16 +108,7 @@ example =
                     , Fonts.quizFont
                     ]
                 ]
-                [ (case (Control.currentValue state.settings).highlighterType of
-                    Markdown ->
-                        Highlighter.viewMarkdown state.highlighter
-
-                    Standard ->
-                        Highlighter.view state.highlighter
-
-                    Overlapping ->
-                        Highlighter.viewWithOverlappingHighlights state.highlighter
-                  )
+                [ Tuple.second (view state)
                     |> map HighlighterMsg
                 ]
             , Heading.h2 [ Heading.plaintext "Non-interactive examples" ]
@@ -395,6 +401,29 @@ reasoningMarkerWithBorder =
         }
 
 
+view : State -> ( String, Html (Highlighter.Msg ()) )
+view state =
+    let
+        viewStr =
+            Code.var "view" 1
+    in
+    case (Control.currentValue state.settings).highlighterType of
+        Markdown ->
+            ( viewStr "Highlighter.viewMarkdown"
+            , Highlighter.viewMarkdown state.highlighter
+            )
+
+        Standard ->
+            ( viewStr "Highlighter.view"
+            , Highlighter.view state.highlighter
+            )
+
+        Overlapping ->
+            ( viewStr "Highlighter.viewWithOverlappingHighlights"
+            , Highlighter.viewWithOverlappingHighlights state.highlighter
+            )
+
+
 {-| -}
 type alias State =
     { settings : Control Settings
@@ -410,35 +439,62 @@ init =
             controlSettings
     in
     { settings = settings
-    , highlighter = initHighlighter (Control.currentValue settings) []
+    , highlighter = initHighlighter (Control.currentValue settings) [] |> Tuple.second
     }
 
 
-initHighlighter : Settings -> List (Highlightable ()) -> Highlighter.Model ()
+initHighlighter : Settings -> List (Highlightable ()) -> ( String, Highlighter.Model () )
 initHighlighter settings previousHighlightables =
     let
-        highlightables : List (Highlightable ())
+        highlightables : ( String, List (Highlightable ()) )
         highlightables =
             if settings.splitOnSentences then
                 exampleParagraph
-                    |> List.map (\text i -> Highlightable.init Highlightable.Interactive [] i ( [], text ))
-                    |> List.intersperse (\i -> Highlightable.init Highlightable.Static [] i ( [], " " ))
+                    |> List.map
+                        (\text i ->
+                            ( "Highlightable.init Highlightable.Interactive [] " ++ String.fromInt i ++ " ( [], " ++ Code.string text ++ ")"
+                            , Highlightable.init Highlightable.Interactive [] i ( [], text )
+                            )
+                        )
+                    |> List.intersperse
+                        (\i ->
+                            ( "Highlightable.init Highlightable.Static [] " ++ String.fromInt i ++ " ( []," ++ Code.string " " ++ ")"
+                            , Highlightable.init Highlightable.Static [] i ( [], " " )
+                            )
+                        )
                     |> List.indexedMap (\i f -> f i)
+                    |> List.unzip
+                    |> Tuple.mapFirst (\c -> Code.listMultiline c 3)
 
             else
-                Highlightable.initFragments [] (String.join " " exampleParagraph)
+                ( "Highlightable.initFragments [] " ++ Code.string joinedExampleParagraph
+                , Highlightable.initFragments [] joinedExampleParagraph
+                )
+
+        joinedExampleParagraph =
+            String.join " " exampleParagraph
     in
-    Highlighter.init
+    ( Code.var "model" 1 <|
+        Code.fromModule moduleName "init"
+            ++ Code.recordMultiline
+                [ ( "id", Code.string "example-romeo-and-juliet" )
+                , ( "highlightables", Tuple.first highlightables )
+                , ( "marker", Code.newlineWithIndent 3 ++ Tuple.first settings.tool )
+                , ( "joinAdjacentInteractiveHighlights", Code.bool settings.joinAdjacentInteractiveHighlights )
+                ]
+                2
+    , Highlighter.init
         { id = "example-romeo-and-juliet"
         , highlightables =
-            if List.map .text previousHighlightables == List.map .text highlightables then
+            if List.map .text previousHighlightables == List.map .text (Tuple.second highlightables) then
                 previousHighlightables
 
             else
-                highlightables
-        , marker = settings.tool
+                Tuple.second highlightables
+        , marker = Tuple.second settings.tool
         , joinAdjacentInteractiveHighlights = settings.joinAdjacentInteractiveHighlights
         }
+    )
 
 
 exampleParagraph : List String
@@ -453,7 +509,7 @@ type alias Settings =
     { splitOnSentences : Bool
     , joinAdjacentInteractiveHighlights : Bool
     , highlighterType : HighlighterType
-    , tool : Tool.Tool ()
+    , tool : ( String, Tool.Tool () )
     }
 
 
@@ -477,23 +533,33 @@ controlSettings =
             )
         |> Control.field "tool"
             (Control.choice
-                [ ( "Marker", Control.map Tool.Marker controlMarker )
-                , ( "Eraser", Control.value (Tool.Eraser Tool.buildEraser) )
+                [ ( "Marker", Control.map (\( c, v ) -> ( "Tool.Marker" ++ c, Tool.Marker v )) controlMarker )
+                , ( "Eraser", Control.value ( "Tool.Eraser Tool.buildEraser", Tool.Eraser Tool.buildEraser ) )
                 ]
             )
 
 
-controlMarker : Control (Tool.MarkerModel ())
+controlMarker : Control ( String, Tool.MarkerModel () )
 controlMarker =
     Control.record
         (\a b c d ->
-            Tool.buildMarker
-                { highlightColor = a
-                , hoverColor = b
-                , hoverHighlightColor = c
+            ( Code.fromModule "Tool" "buildMarker"
+                ++ Code.recordMultiline
+                    [ ( "highlightColor", Tuple.first a )
+                    , ( "hoverColor", Tuple.first b )
+                    , ( "hoverHighlightColor", Tuple.first c )
+                    , ( "kind", "()" )
+                    , ( "name", Code.maybeString d )
+                    ]
+                    4
+            , Tool.buildMarker
+                { highlightColor = Tuple.second a
+                , hoverColor = Tuple.second b
+                , hoverHighlightColor = Tuple.second c
                 , kind = ()
                 , name = d
                 }
+            )
         )
         |> Control.field "highlightColor" (backgroundHighlightColors 0)
         |> Control.field "hoverColor" (backgroundHighlightColors 2)
@@ -501,10 +567,10 @@ controlMarker =
         |> Control.field "name" (Control.maybe True (Control.string "Claim"))
 
 
-backgroundHighlightColors : Int -> Control Color
+backgroundHighlightColors : Int -> Control ( String, Color )
 backgroundHighlightColors rotateWith =
     Examples.Colors.backgroundHighlightColors
-        |> List.map (\( name, value, _ ) -> ( name, Control.value value ))
+        |> List.map (\( name, value, _ ) -> ( name, Control.value ( Code.fromModule "Colors" name, value ) ))
         |> ControlExtra.rotatedChoice rotateWith
 
 
@@ -522,7 +588,9 @@ update msg state =
         UpdateControls settings ->
             ( { state
                 | settings = settings
-                , highlighter = initHighlighter (Control.currentValue settings) state.highlighter.highlightables
+                , highlighter =
+                    initHighlighter (Control.currentValue settings) state.highlighter.highlightables
+                        |> Tuple.second
               }
             , Cmd.none
             )
