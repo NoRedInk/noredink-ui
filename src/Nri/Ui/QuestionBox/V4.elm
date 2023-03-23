@@ -256,7 +256,16 @@ viewPointingTo config blockId measurements =
     in
     viewBalloon config
         (Just blockId)
-        [ Balloon.containerCss [ Css.marginTop (Css.px 8) ]
+        [ Balloon.containerCss
+            [ Css.marginTop (Css.px 8)
+            , case measurements of
+                Just _ ->
+                    Css.opacity (Css.int 1)
+
+                Nothing ->
+                    -- Avoid the "jitter" of the balloon appearing in the wrong place by hiding it until we have measurements
+                    Css.opacity (Css.int 0)
+            ]
         , Balloon.nriDescription "pointing-to-balloon"
         , case config.id of
             Just id_ ->
