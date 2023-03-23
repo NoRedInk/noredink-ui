@@ -211,6 +211,7 @@ initDebugControls =
                         , ( "secondary", Button.secondary )
                         , ( "tertiary", Button.tertiary )
                         , ( "danger", Button.danger )
+                        , ( "dangerSecondary", Button.dangerSecondary )
                         , ( "premium", Button.premium )
                         ]
                     )
@@ -334,6 +335,7 @@ buttonsTable =
             , ( Button.secondary, "secondary" )
             , ( Button.tertiary, "tertiary" )
             , ( Button.danger, "danger" )
+            , ( Button.dangerSecondary, "dangerSecondary" )
             , ( Button.premium, "premium" )
             ]
 
