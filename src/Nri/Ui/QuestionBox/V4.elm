@@ -9,6 +9,11 @@ module Nri.Ui.QuestionBox.V4 exposing
 
 {-|
 
+
+## Patch Changes
+
+  - Modified `viewPointingTo` to be hidden when measurements are `Nothing` to reduce the jitter of the question box moving to its correct position.
+
 @docs view, Attribute
 
 @docs id, markdown, actions, character
@@ -132,7 +137,9 @@ calculate the offset from the viewport.
 
 Pass in the id for the block the QuestionBox should point to.
 
-You will need to pass 4 measurements, taken using Dom.Browser, in order for the question box to be positioned correctly.
+You will need to pass 4 measurements, taken using Dom.Browser, in order for the question box to be positioned correctly. The question box
+will be hidden the first time when you pass `Nothing` for the measurements to reduce the jitter of the question box moving to its correct
+position.
 
 -}
 pointingTo :
