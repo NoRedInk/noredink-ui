@@ -63,7 +63,7 @@ defaultConfig =
     , markdown = Nothing
     , actions = []
     , type_ = Standalone
-    , character = Just { name = "Panda", icon = CharacterIcon.panda }
+    , character = Just { name = "Panda", icon = CharacterIcon.redPanda }
     , containerCss = []
     , leftActions = text ""
     }
@@ -201,6 +201,9 @@ viewStandalone config =
         [ viewBalloon config
             Nothing
             [ Balloon.nriDescription "standalone-balloon"
+            , Balloon.containerCss
+                [ Css.maxWidth (Css.px 500)
+                ]
             ]
         ]
 
@@ -291,7 +294,7 @@ viewPointingTo config blockId measurements =
                     Nothing ->
                         []
             , Css.textAlign Css.left
-            , Css.maxWidth (Css.px 440)
+            , Css.maxWidth (Css.px 386)
             , Css.property "width" "max-content"
             , Css.batch config.containerCss
             ]
@@ -360,9 +363,10 @@ viewGuidance config referencingId markdown_ =
                 , viewSpeechBubble config
                     referencingId
                     [ Balloon.markdown markdown_
+                    , Balloon.css [ Css.minHeight (Css.px 46) ]
+                    , Balloon.containerCss [ Css.marginRight (Css.px 8) ]
                     , Balloon.onLeft
                     , Balloon.alignArrowEnd
-                    , Balloon.css [ Css.minHeight (Css.px 46) ]
                     ]
                 ]
 
@@ -408,12 +412,12 @@ viewCharacter : { name : String, icon : Svg } -> Html msg
 viewCharacter { name, icon } =
     icon
         |> Svg.withLabel (name ++ " says, ")
-        |> Svg.withWidth (Css.px 50)
+        |> Svg.withWidth (Css.px 70)
         |> Svg.withHeight (Css.px 70)
         |> Svg.withCss
             [ Css.position Css.absolute
-            , Css.bottom (Css.px -18)
-            , Css.right (Css.px -48)
+            , Css.bottom (Css.px -5)
+            , Css.right (Css.px -58)
             ]
         |> Svg.toHtml
 
