@@ -37,7 +37,7 @@ example =
     , name = "panda"
     , icon = CharacterIcon.panda
     , renderSvgCode = \name -> Code.fromModule moduleName name
-    , preview = IconExamples.preview [ CharacterIcon.panda ]
+    , preview = IconExamples.preview [ CharacterIcon.panda, CharacterIcon.redPanda ]
     , all = all
     }
         |> IconExamples.example

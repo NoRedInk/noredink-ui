@@ -59,7 +59,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , categories = [ Instructional ]
     , keyboardSupport = []
-    , preview = [ QuestionBox.view [ QuestionBox.markdown "Is good?" ] ]
+    , preview = [ QuestionBox.view [ QuestionBox.markdown "Gud?" ] ]
     , view = view
     }
 

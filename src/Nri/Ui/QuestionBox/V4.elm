@@ -347,9 +347,10 @@ viewGuidance config referencingId markdown_ =
                 , viewSpeechBubble config
                     referencingId
                     [ Balloon.markdown markdown_
+                    , Balloon.css [ Css.minHeight (Css.px 46) ]
+                    , Balloon.containerCss [ Css.marginRight (Css.px 8) ]
                     , Balloon.onLeft
                     , Balloon.alignArrowEnd
-                    , Balloon.css [ Css.minHeight (Css.px 46) ]
                     ]
                 ]
 
@@ -400,7 +401,7 @@ viewCharacter { name, icon } =
         |> Svg.withCss
             [ Css.position Css.absolute
             , Css.bottom (Css.px -5)
-            , Css.right (Css.px -75)
+            , Css.right (Css.px -58)
             ]
         |> Svg.toHtml
 
