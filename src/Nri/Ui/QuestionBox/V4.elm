@@ -58,7 +58,7 @@ defaultConfig =
     , markdown = Nothing
     , actions = []
     , type_ = Standalone
-    , character = Just { name = "Panda", icon = CharacterIcon.panda }
+    , character = Just { name = "Panda", icon = CharacterIcon.redPanda }
     , containerCss = []
     , leftActions = text ""
     }
@@ -395,12 +395,12 @@ viewCharacter : { name : String, icon : Svg } -> Html msg
 viewCharacter { name, icon } =
     icon
         |> Svg.withLabel (name ++ " says, ")
-        |> Svg.withWidth (Css.px 50)
+        |> Svg.withWidth (Css.px 70)
         |> Svg.withHeight (Css.px 70)
         |> Svg.withCss
             [ Css.position Css.absolute
-            , Css.bottom (Css.px -18)
-            , Css.right (Css.px -48)
+            , Css.bottom (Css.px -5)
+            , Css.right (Css.px -75)
             ]
         |> Svg.toHtml
 
