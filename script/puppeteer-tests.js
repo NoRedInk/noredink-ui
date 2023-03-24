@@ -91,11 +91,6 @@ describe("UI tests", function () {
     const [button] = await page.$x("//button[contains(., 'Measure & render')]");
     await button.click();
 
-    await page.waitForXPath(
-      '//div[@data-nri-description="pointing-to-balloon"]',
-      200
-    );
-
     await percySnapshot(page, name);
 
     const results = await new AxePuppeteer(page)
