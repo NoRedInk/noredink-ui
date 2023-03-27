@@ -56,7 +56,7 @@ view config model =
     in
     toolbar config.highlighterId
         (List.map viewTagWithConfig model.tags
-            ++ [ viewEraser config.onSelect model config.getName ]
+            ++ [ viewEraser config.onSelect model ]
         )
 
 
@@ -88,21 +88,19 @@ viewTag :
     -> { model | currentTool : Maybe tag }
     -> Html msg
 viewTag { onSelect, getColor, getName } tag model =
-    viewTool (getName tag) onSelect (getColor tag) (Just tag) model getName
+    viewTool (getName tag) onSelect (getColor tag) (Just tag) model
 
 
 viewEraser :
     (Maybe tag -> msg)
     -> { model | currentTool : Maybe tag }
-    -> (tag -> String)
     -> Html msg
-viewEraser onSelect model getName =
+viewEraser onSelect model =
     viewTool "Remove highlight"
         onSelect
         { colorLight = Colors.gray75, colorSolid = Colors.white }
         Nothing
         model
-        getName
 
 
 viewTool :
@@ -111,9 +109,8 @@ viewTool :
     -> { extras | colorSolid : Color, colorLight : Color }
     -> Maybe tag
     -> { model | currentTool : Maybe tag }
-    -> (tag -> String)
     -> Html msg
-viewTool name onSelect theme tag model getName =
+viewTool name onSelect theme tag model =
     let
         selected =
             model.currentTool == tag
