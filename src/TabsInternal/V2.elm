@@ -101,7 +101,6 @@ viewTabs config =
         -- if no tooltips are present, we can rely on the DOM structure to set up the relationships correctly.
         Html.div
             [ Role.tabList
-            , Aria.owns (List.map (tabToId << .idString) config.tabs)
             , Attributes.css config.tabListStyles
             ]
             (List.indexedMap (viewTab_ config) config.tabs)
