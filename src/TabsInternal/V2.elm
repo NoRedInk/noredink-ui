@@ -90,12 +90,15 @@ viewTabs config =
         -- will mess up the relationship of the tablist and tabs.
         -- the HTML structure also changes, since aria-owns only applies after descendent relationships
         -- (See definition of [aria-owns](https://www.w3.org/TR/wai-aria-1.2/#aria-owns))
-        Html.div
-            [ Role.tabList
-            , Aria.owns (List.map (tabToId << .idString) config.tabs)
-            , Attributes.css config.tabListStyles
+        Html.div []
+            [ Html.div
+                [ Role.tabList
+                , Aria.owns (List.map (tabToId << .idString) config.tabs)
+                ]
+                []
+            , Html.div [ Attributes.css config.tabListStyles ]
+                (List.indexedMap (viewTab_ config) config.tabs)
             ]
-            (List.indexedMap (viewTab_ config) config.tabs)
 
     else
         -- if no tooltips are present, we can rely on the DOM structure to set up the relationships correctly.
