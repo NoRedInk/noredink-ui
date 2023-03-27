@@ -18,7 +18,7 @@ import Html.Styled.Attributes exposing (css, id)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.HighlighterToolbar.V2 as HighlighterToolbar
+import Nri.Ui.HighlighterToolbar.V3 as HighlighterToolbar
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -32,7 +32,7 @@ moduleName =
 
 version : Int
 version =
-    2
+    3
 
 
 {-| -}

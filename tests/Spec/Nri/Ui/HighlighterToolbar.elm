@@ -7,7 +7,7 @@ import Expect
 import Html.Attributes as Attributes
 import Html.Styled as Html exposing (..)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.HighlighterToolbar.V2 as HighlighterToolbar
+import Nri.Ui.HighlighterToolbar.V3 as HighlighterToolbar
 import ProgramTest exposing (..)
 import Spec.KeyboardHelpers as KeyboardHelpers
 import Test exposing (..)
@@ -18,7 +18,7 @@ import Test.Html.Selector as Selector
 
 spec : Test
 spec =
-    describe "Nri.Ui.HighlighterToolbar.V2"
+    describe "Nri.Ui.HighlighterToolbar.V3"
         [ describe "tool selection" selectionTests
         , describe "keyboard behavior" keyboardTests
         ]
