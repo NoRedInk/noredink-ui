@@ -11,6 +11,7 @@ module Nri.Ui.Mark.V2 exposing
 
   - change how the start styles are attached when there is not an explicit tag to show in order to reduce how often the starting highlight ends up isolated on its own line
   - add viewWithOverlaps
+  - ensure that view and viewWithInlineTags never leave the starting styles isolated on their own line
 
 @docs Mark
 @docs view, viewWithInlineTags, viewWithBalloonTags
@@ -248,7 +249,7 @@ view_ tagStyle viewSegment highlightables =
             let
                 segments =
                     List.indexedMap
-                        (\index ( content, mark ) -> viewSegment content (markStyles index mark))
+                        (\index ( content, mark ) -> viewSegment content (markStyles tagStyle index mark))
                         highlightables
             in
             case marked of
@@ -321,14 +322,33 @@ viewMarked tagStyle markedWith segments =
 viewStartHighlightTag : TagStyle -> Mark -> String -> Html msg
 viewStartHighlightTag tagStyle marked name =
     span
-        [ css (marked.styles ++ marked.startStyles)
+        [ css
+            (marked.styles
+                ++ (-- start styles are attached to the first segment, unless there's
+                    -- an inline tag to show, in which case we'll attach the styles to the start tag.
+                    case tagStyle of
+                        HiddenTags ->
+                            if marked.name == Nothing then
+                                []
+
+                            else
+                                [ MediaQuery.highContrastMode marked.startStyles ]
+
+                        InlineTags ->
+                            if marked.name == Nothing then
+                                []
+
+                            else
+                                marked.startStyles
+                   )
+            )
         , class "highlighter-inline-tag highlighter-inline-tag-highlighted"
         ]
         [ viewTag tagStyle name ]
 
 
-markStyles : Int -> Maybe Mark -> List Css.Style
-markStyles index marked =
+markStyles : TagStyle -> Int -> Maybe Mark -> List Css.Style
+markStyles tagStyle index marked =
     case ( index == 0, marked ) of
         ( True, Just markedWith ) ->
             -- if we're on the first highlighted element, we add
@@ -336,13 +356,31 @@ markStyles index marked =
             tagBeforeContent [ markedWith ]
                 :: markedWith.styles
                 ++ -- if we're on the first element, and the mark has a name,
-                   -- there's an inline tag to show.
-                   -- but if not, we can attach the start styles to the first segment
-                   (if markedWith.name == Nothing then
-                        markedWith.startStyles
+                   -- there's an inline tag that we might need to show.
+                   -- if we're not showing a visual tag, we can attach the start styles to the first segment
+                   (case tagStyle of
+                        HiddenTags ->
+                            if markedWith.name == Nothing then
+                                markedWith.startStyles
 
-                    else
-                        []
+                            else
+                                [ MediaQuery.notHighContrastMode
+                                    (markedWith.startStyles
+                                        ++ [ -- override for the left border that's typically
+                                             -- added in Nri.Ui.HighlighterTool
+                                             MediaQuery.highContrastMode
+                                                [ Css.important (Css.borderLeftWidth Css.zero)
+                                                ]
+                                           ]
+                                    )
+                                ]
+
+                        InlineTags ->
+                            if markedWith.name == Nothing then
+                                markedWith.startStyles
+
+                            else
+                                []
                    )
 
         _ ->
