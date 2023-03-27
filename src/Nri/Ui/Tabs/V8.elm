@@ -178,8 +178,14 @@ updateConfig attr config =
 
 
 {-| -}
-view : ({ select : id, focus : Maybe String } -> msg) -> id -> List (Attribute id msg) -> List (Tab id msg) -> Html msg
-view focusAndSelect selected attrs tabs =
+view :
+    { focusAndSelect : { select : id, focus : Maybe String } -> msg
+    , selected : id
+    }
+    -> List (Attribute id msg)
+    -> List (Tab id msg)
+    -> Html msg
+view { focusAndSelect, selected } attrs tabs =
     let
         config =
             List.foldl updateConfig defaultConfig attrs
