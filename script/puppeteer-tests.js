@@ -171,9 +171,6 @@ describe("UI tests", function () {
     // Loading's color contrast check seems to change behavior depending on whether Percy snapshots are taken or not
     Loading: ["color-contrast"],
     RadioButton: ["duplicate-id"],
-    Carousel: ["aria-required-children"],
-    SegmentedControl: ["aria-required-children"],
-    Tabs: ["aria-required-children"],
   };
 
   const specialProcessing = {
