@@ -33,29 +33,6 @@ import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
-toolbar : String -> List (Html msg) -> Html msg
-toolbar highlighterId =
-    div
-        [ nriDescription "tools"
-        , Role.toolBar
-        , Aria.label "Highlighter options"
-        , Aria.controls [ highlighterId ]
-        , css
-            [ Css.displayFlex
-            , Css.listStyle Css.none
-            , Css.padding (Css.px 0)
-            , Css.margin (Css.px 0)
-            , Css.marginTop (Css.px 10)
-            , Css.flexWrap Css.wrap
-            ]
-        ]
-
-
-toolContainer : String -> Html msg -> Html msg
-toolContainer toolName tool =
-    div [ nriDescription toolName ] [ tool ]
-
-
 {-| View renders each marker and an eraser. This is usually used with a Highlighter.
 -}
 view :
@@ -83,6 +60,29 @@ view config model =
         (List.map viewTagWithConfig model.tags
             ++ [ viewEraser config.focusAndSelect eraserSelected tools model.currentTool config.getName ]
         )
+
+
+toolbar : String -> List (Html msg) -> Html msg
+toolbar highlighterId =
+    div
+        [ nriDescription "tools"
+        , Role.toolBar
+        , Aria.label "Highlighter options"
+        , Aria.controls [ highlighterId ]
+        , css
+            [ Css.displayFlex
+            , Css.listStyle Css.none
+            , Css.padding (Css.px 0)
+            , Css.margin (Css.px 0)
+            , Css.marginTop (Css.px 10)
+            , Css.flexWrap Css.wrap
+            ]
+        ]
+
+
+toolContainer : String -> Html msg -> Html msg
+toolContainer toolName tool =
+    div [ nriDescription toolName ] [ tool ]
 
 
 viewTag :
