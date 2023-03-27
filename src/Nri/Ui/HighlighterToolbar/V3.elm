@@ -55,15 +55,11 @@ view config model =
 
         viewTagWithConfig : tag -> Html msg
         viewTagWithConfig tag =
-            viewTag config (model.currentTool == Just tag) tag tools model.currentTool
-
-        eraserSelected : Bool
-        eraserSelected =
-            model.currentTool == Nothing
+            viewTag config tag tools model
     in
     toolbar config.highlighterId
         (List.map viewTagWithConfig model.tags
-            ++ [ viewEraser config.onSelect eraserSelected tools model.currentTool config.getName ]
+            ++ [ viewEraser config.onSelect tools model config.getName ]
         )
 
 
@@ -91,30 +87,27 @@ viewTag :
     , getName : tag -> String
     , highlighterId : String
     }
-    -> Bool
     -> tag
     -> List (Maybe tag)
-    -> Maybe tag
+    -> { model | currentTool : Maybe tag }
     -> Html msg
-viewTag { onSelect, getColor, getName } selected tag tools currentTool =
-    viewTool (getName tag) onSelect (getColor tag) selected (Just tag) tools currentTool getName
+viewTag { onSelect, getColor, getName } tag tools model =
+    viewTool (getName tag) onSelect (getColor tag) (Just tag) tools model getName
 
 
 viewEraser :
     (Maybe tag -> msg)
-    -> Bool
     -> List (Maybe tag)
-    -> Maybe tag
+    -> { model | currentTool : Maybe tag }
     -> (tag -> String)
     -> Html msg
-viewEraser onSelect selected tools currentTool getName =
+viewEraser onSelect tools model getName =
     viewTool "Remove highlight"
         onSelect
         { colorLight = Colors.gray75, colorSolid = Colors.white }
-        selected
         Nothing
         tools
-        currentTool
+        model
         getName
 
 
@@ -122,13 +115,16 @@ viewTool :
     String
     -> (Maybe tag -> msg)
     -> { extras | colorSolid : Color, colorLight : Color }
-    -> Bool
     -> Maybe tag
     -> List (Maybe tag)
-    -> Maybe tag
+    -> { model | currentTool : Maybe tag }
     -> (tag -> String)
     -> Html msg
-viewTool name onSelect theme selected tag tools currentTool getName =
+viewTool name onSelect theme tag tools model getName =
+    let
+        selected =
+            model.currentTool == tag
+    in
     label
         [ id ("tag-" ++ name)
         , css
@@ -142,7 +138,7 @@ viewTool name onSelect theme selected tag tools currentTool getName =
             [ Attributes.value name
             , Attributes.type_ "radio"
             , Attributes.name "highlighter-toolbar-tool"
-            , Attributes.checked (currentTool == tag)
+            , Attributes.checked selected
             , onClick (onSelect tag)
             , css
                 [ Css.cursor Css.pointer
