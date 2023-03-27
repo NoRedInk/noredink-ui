@@ -137,6 +137,7 @@ viewTool name focusAndSelect theme selected tag tools currentTool getName =
             [ Css.cursor Css.pointer
             , Css.position Css.relative
             , Css.pseudoClass "focus-within" FocusRing.styles
+            , Css.paddingBottom (Css.px 2)
             ]
         ]
         [ input
