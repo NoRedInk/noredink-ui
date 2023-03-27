@@ -4,7 +4,9 @@ module Nri.Ui.Carousel.V1 exposing
     , buildItem
     )
 
-{-|
+{-| Patch changes:
+
+  - remove tooltip-related code that is never used for Carousel
 
 @docs view
 @docs Item
