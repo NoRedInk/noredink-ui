@@ -29,7 +29,8 @@ import Accessibility.Styled.Role as Role
 import Css exposing (Color)
 import EventExtras exposing (onClickPreventDefaultAndStopPropagation)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css, id, tabindex)
+import Html.Styled.Attributes as Attributes exposing (css, id, tabindex)
+import Html.Styled.Events exposing (onClick)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
@@ -137,28 +138,33 @@ viewTool :
     -> (tag -> String)
     -> Html msg
 viewTool name focusAndSelect theme selected tag tools currentTool getName =
-    button
+    label
         [ id ("tag-" ++ name)
         , css
             [ Css.backgroundColor Css.transparent
             , Css.borderRadius (Css.px 0)
             , Css.border (Css.px 0)
-            , Css.active [ Css.outlineStyle Css.none ]
-            , Css.focus [ Css.outlineStyle Css.none ]
             , Css.cursor Css.pointer
+            , Css.position Css.relative
             ]
-        , onClickPreventDefaultAndStopPropagation (focusAndSelect { select = tag, focus = Nothing })
-        , Aria.pressed (Just selected)
-        , tabindex
-            (if selected then
-                0
-
-             else
-                -1
-            )
-        , Key.onKeyDownPreventDefault (keyEvents focusAndSelect currentTool tools getName)
         ]
-        [ toolContent name theme tag
+        [ input
+            [ Attributes.value name
+            , Attributes.type_ "radio"
+            , Attributes.name "highlighter-toolbar-tool"
+            , Attributes.checked (currentTool == tag)
+            , onClick (focusAndSelect { select = tag, focus = Nothing })
+            , css
+                [ Css.cursor Css.pointer
+
+                -- position the radio input underneath the tool content
+                , Css.position Css.absolute
+                , Css.top (Css.px 4)
+                , Css.left (Css.px 4)
+                ]
+            ]
+            []
+        , toolContent name theme tag
         , viewIf (\() -> active theme) selected
         ]
 
