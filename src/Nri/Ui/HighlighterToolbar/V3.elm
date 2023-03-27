@@ -24,12 +24,10 @@ module Nri.Ui.HighlighterToolbar.V3 exposing (view)
 -}
 
 import Accessibility.Styled.Aria as Aria
-import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
 import Css exposing (Color)
-import EventExtras exposing (onClickPreventDefaultAndStopPropagation)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes as Attributes exposing (css, id, tabindex)
+import Html.Styled.Attributes as Attributes exposing (css, id)
 import Html.Styled.Events exposing (onClick)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
@@ -159,54 +157,6 @@ viewTool name focusAndSelect theme selected tag tools currentTool getName =
             []
         , toolContent name theme tag
         , viewIf (\() -> active theme) selected
-        ]
-
-
-keyEvents : ({ select : Maybe tag, focus : Maybe String } -> msg) -> Maybe tag -> List (Maybe tag) -> (tag -> String) -> List (Key.Event msg)
-keyEvents focusAndSelect tag tools getName =
-    let
-        onFocus tag_ =
-            focusAndSelect
-                { select = tag_
-                , focus =
-                    case tag_ of
-                        Just tag__ ->
-                            Just ("tag-" ++ getName tag__)
-
-                        Nothing ->
-                            Just "tag-Remove highlight"
-                }
-
-        findAdjacentTag tag_ ( isAdjacentTab, acc ) =
-            if isAdjacentTab then
-                ( False, Just (onFocus tag_) )
-
-            else
-                ( tag_ == tag, acc )
-
-        goToNextTag : Maybe msg
-        goToNextTag =
-            List.foldl findAdjacentTag
-                ( False
-                , -- if there is no adjacent tag, default to the first tag
-                  Maybe.map onFocus (List.head tools)
-                )
-                tools
-                |> Tuple.second
-
-        goToPreviousTag : Maybe msg
-        goToPreviousTag =
-            List.foldr findAdjacentTag
-                ( False
-                , -- if there is no adjacent tag, default to the last tag
-                  Maybe.map onFocus (List.head (List.reverse tools))
-                )
-                tools
-                |> Tuple.second
-    in
-    List.filterMap identity
-        [ Maybe.map Key.right goToNextTag
-        , Maybe.map Key.left goToPreviousTag
         ]
 
 
