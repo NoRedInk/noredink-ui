@@ -80,12 +80,31 @@ views config =
 
 viewTabs : Config id msg -> Html msg
 viewTabs config =
-    Html.div
-        [ Role.tabList
-        , Aria.owns (List.map (tabToId << .idString) config.tabs)
-        , Attributes.css config.tabListStyles
-        ]
-        (List.indexedMap (viewTab_ config) config.tabs)
+    let
+        anyTooltips =
+            List.any (.tabTooltip >> List.isEmpty >> not) config.tabs
+    in
+    if anyTooltips then
+        -- if any tooltip setup is present, we use aria-owns to associate the
+        -- tabs with the tablist children, since otherwise the presence of the tooltips
+        -- will mess up the relationship of the tablist and tabs.
+        -- the HTML structure also changes, since aria-owns only applies after descendent relationships
+        -- (See definition of [aria-owns](https://www.w3.org/TR/wai-aria-1.2/#aria-owns))
+        Html.div
+            [ Role.tabList
+            , Aria.owns (List.map (tabToId << .idString) config.tabs)
+            , Attributes.css config.tabListStyles
+            ]
+            (List.indexedMap (viewTab_ config) config.tabs)
+
+    else
+        -- if no tooltips are present, we can rely on the DOM structure to set up the relationships correctly.
+        Html.div
+            [ Role.tabList
+            , Aria.owns (List.map (tabToId << .idString) config.tabs)
+            , Attributes.css config.tabListStyles
+            ]
+            (List.indexedMap (viewTab_ config) config.tabs)
 
 
 viewTab_ : Config id msg -> Int -> Tab id msg -> Html msg
