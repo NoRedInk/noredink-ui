@@ -52,7 +52,7 @@ view config model =
     let
         viewTagWithConfig : tag -> Html msg
         viewTagWithConfig tag =
-            viewTag config tag model
+            viewTool (config.getName tag) config.onSelect (config.getColor tag) (Just tag) model
     in
     toolbar config.highlighterId
         (List.map viewTagWithConfig model.tags
@@ -76,19 +76,6 @@ toolbar highlighterId =
             , Css.flexWrap Css.wrap
             ]
         ]
-
-
-viewTag :
-    { onSelect : Maybe tag -> msg
-    , getColor : tag -> { extras | colorSolid : Color, colorLight : Color }
-    , getName : tag -> String
-    , highlighterId : String
-    }
-    -> tag
-    -> { model | currentTool : Maybe tag }
-    -> Html msg
-viewTag { onSelect, getColor, getName } tag model =
-    viewTool (getName tag) onSelect (getColor tag) (Just tag) model
 
 
 viewEraser :
