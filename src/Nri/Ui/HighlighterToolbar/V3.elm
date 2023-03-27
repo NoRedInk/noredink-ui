@@ -5,6 +5,11 @@ module Nri.Ui.HighlighterToolbar.V3 exposing (view)
 @docs view
 
 
+### Changes from V2:
+
+  - Use radio inputs under the hood
+
+
 ### Patch changes:
 
   - Ensure selected tool is clear in high contrast mode
@@ -33,7 +38,7 @@ import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
-{-| View renders each marker and an eraser. This is usually used with a Highlighter.
+{-| View renders each marker and an eraser. This is exclusively used with an interactive Highlighter, whose id you should pass in when initializing the HighlighterToolbar.
 -}
 view :
     { focusAndSelect : { select : Maybe tag, focus : Maybe String } -> msg
