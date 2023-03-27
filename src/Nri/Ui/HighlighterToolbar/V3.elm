@@ -32,6 +32,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css, id, tabindex)
 import Html.Styled.Events exposing (onClick)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
 import Nri.Ui.Html.V3 exposing (viewIf)
@@ -86,11 +87,6 @@ toolbar highlighterId =
         ]
 
 
-toolContainer : String -> Html msg -> Html msg
-toolContainer toolName tool =
-    div [ nriDescription toolName ] [ tool ]
-
-
 viewTag :
     { focusAndSelect : { select : Maybe tag, focus : Maybe String } -> msg
     , getColor : tag -> { extras | colorSolid : Color, colorLight : Color }
@@ -103,8 +99,7 @@ viewTag :
     -> Maybe tag
     -> Html msg
 viewTag { focusAndSelect, getColor, getName } selected tag tools currentTool =
-    toolContainer ("tag-" ++ getName tag)
-        (viewTool (getName tag) focusAndSelect (getColor tag) selected (Just tag) tools currentTool getName)
+    viewTool (getName tag) focusAndSelect (getColor tag) selected (Just tag) tools currentTool getName
 
 
 viewEraser :
@@ -115,16 +110,14 @@ viewEraser :
     -> (tag -> String)
     -> Html msg
 viewEraser focusAndSelect selected tools currentTool getName =
-    toolContainer "eraser"
-        (viewTool "Remove highlight"
-            focusAndSelect
-            { colorLight = Colors.gray75, colorSolid = Colors.white }
-            selected
-            Nothing
-            tools
-            currentTool
-            getName
-        )
+    viewTool "Remove highlight"
+        focusAndSelect
+        { colorLight = Colors.gray75, colorSolid = Colors.white }
+        selected
+        Nothing
+        tools
+        currentTool
+        getName
 
 
 viewTool :
@@ -141,11 +134,9 @@ viewTool name focusAndSelect theme selected tag tools currentTool getName =
     label
         [ id ("tag-" ++ name)
         , css
-            [ Css.backgroundColor Css.transparent
-            , Css.borderRadius (Css.px 0)
-            , Css.border (Css.px 0)
-            , Css.cursor Css.pointer
+            [ Css.cursor Css.pointer
             , Css.position Css.relative
+            , Css.pseudoClass "focus-within" FocusRing.styles
             ]
         ]
         [ input
@@ -162,6 +153,7 @@ viewTool name focusAndSelect theme selected tag tools currentTool getName =
                 , Css.top (Css.px 4)
                 , Css.left (Css.px 4)
                 ]
+            , Attributes.class FocusRing.customClass
             ]
             []
         , toolContent name theme tag
