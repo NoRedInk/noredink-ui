@@ -188,6 +188,9 @@ viewTab_ config index tab =
         ( Just _, _ ) ->
             buttonOrLink []
 
+        ( _, [] ) ->
+            buttonOrLink []
+
         ( Nothing, tooltipAttributes ) ->
             Tooltip.view
                 { id = "tab-tooltip__" ++ tabToId tab.idString
