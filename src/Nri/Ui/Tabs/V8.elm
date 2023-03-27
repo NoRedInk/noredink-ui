@@ -1,5 +1,5 @@
 module Nri.Ui.Tabs.V8 exposing
-    ( view
+    ( Attribute, title, alignment, spacing, view
     , Alignment(..)
     , Tab, TabAttribute, build
     , tabString, tabHtml, withTooltip, disabled, labelledBy, describedBy
@@ -12,7 +12,7 @@ module Nri.Ui.Tabs.V8 exposing
   - Uses an HTML-like API
   - Adds sticky positioning
 
-@docs view
+@docs Attribute, title, alignment, spacing, view
 @docs Alignment
 @docs Tab, TabAttribute, build
 @docs tabString, tabHtml, withTooltip, disabled, labelledBy, describedBy
@@ -128,24 +128,68 @@ type Alignment
     | Right
 
 
-{-| -}
-view :
+type Attribute id msg
+    = Title String
+    | Alignment Alignment
+    | Spacing Float
+
+
+title : String -> Attribute id msg
+title =
+    Title
+
+
+alignment : Alignment -> Attribute id msg
+alignment =
+    Alignment
+
+
+spacing : Float -> Attribute id msg
+spacing =
+    Spacing
+
+
+type alias Config =
     { title : Maybe String
     , alignment : Alignment
-    , customSpacing : Maybe Float
-    , focusAndSelect : { select : id, focus : Maybe String } -> msg
-    , selected : id
-    , tabs : List (Tab id msg)
+    , spacing : Maybe Float
     }
-    -> Html msg
-view config =
+
+
+defaultConfig : Config
+defaultConfig =
+    { title = Nothing
+    , alignment = Left
+    , spacing = Nothing
+    }
+
+
+updateConfig : Attribute id msg -> Config -> Config
+updateConfig attr config =
+    case attr of
+        Title newTitle ->
+            { config | title = Just newTitle }
+
+        Alignment newAlignment ->
+            { config | alignment = newAlignment }
+
+        Spacing newSpacing ->
+            { config | spacing = Just newSpacing }
+
+
+{-| -}
+view : ({ select : id, focus : Maybe String } -> msg) -> id -> List (Attribute id msg) -> List (Tab id msg) -> Html msg
+view focusAndSelect selected attrs tabs =
     let
+        config =
+            List.foldl updateConfig defaultConfig attrs
+
         { tabList, tabPanels } =
             TabsInternal.views
-                { focusAndSelect = config.focusAndSelect
-                , selected = config.selected
-                , tabs = List.map (\(Tab t) -> t) config.tabs
-                , tabStyles = tabStyles config.customSpacing
+                { focusAndSelect = focusAndSelect
+                , selected = selected
+                , tabs = List.map (\(Tab t) -> t) tabs
+                , tabStyles = tabStyles config.spacing
                 , tabListStyles = stylesTabsAligned config.alignment
                 }
     in
@@ -173,17 +217,17 @@ view config =
 
 {-| -}
 viewTabDefault : String -> Html msg
-viewTabDefault title =
+viewTabDefault tabTitle =
     Html.div
         [ Attributes.css
             [ Css.padding4 (Css.px 14) (Css.px 20) (Css.px 12) (Css.px 20)
             ]
         ]
-        [ Html.text title ]
+        [ Html.text tabTitle ]
 
 
 viewTitle : String -> Html msg
-viewTitle title =
+viewTitle tabTitle =
     Html.styled Html.h1
         [ Css.flexGrow (Css.int 2)
         , Css.fontSize (Css.px 20)
@@ -192,7 +236,7 @@ viewTitle title =
         , Css.color Colors.navy
         ]
         []
-        [ Html.text title ]
+        [ Html.text tabTitle ]
 
 
 
@@ -200,10 +244,10 @@ viewTitle title =
 
 
 stylesTabsAligned : Alignment -> List Style
-stylesTabsAligned alignment =
+stylesTabsAligned tabAlignment =
     let
         alignmentStyles =
-            case alignment of
+            case tabAlignment of
                 Left ->
                     Css.justifyContent Css.flexStart
 
@@ -213,13 +257,13 @@ stylesTabsAligned alignment =
                 Right ->
                     Css.justifyContent Css.flexEnd
     in
-    alignmentStyles
-        :: [ Css.margin Css.zero
-           , Css.fontSize (Css.px 19)
-           , Css.displayFlex
-           , Css.flexGrow (Css.int 1)
-           , Css.padding Css.zero
-           ]
+    [ alignmentStyles
+    , Css.margin Css.zero
+    , Css.fontSize (Css.px 19)
+    , Css.displayFlex
+    , Css.flexGrow (Css.int 1)
+    , Css.padding Css.zero
+    ]
 
 
 tabStyles : Maybe Float -> Int -> Bool -> List Style
