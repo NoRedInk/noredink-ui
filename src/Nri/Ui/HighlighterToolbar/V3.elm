@@ -50,16 +50,13 @@ view :
     -> Html msg
 view config model =
     let
-        tools =
-            List.map Just model.tags ++ [ Nothing ]
-
         viewTagWithConfig : tag -> Html msg
         viewTagWithConfig tag =
-            viewTag config tag tools model
+            viewTag config tag model
     in
     toolbar config.highlighterId
         (List.map viewTagWithConfig model.tags
-            ++ [ viewEraser config.onSelect tools model config.getName ]
+            ++ [ viewEraser config.onSelect model config.getName ]
         )
 
 
@@ -88,25 +85,22 @@ viewTag :
     , highlighterId : String
     }
     -> tag
-    -> List (Maybe tag)
     -> { model | currentTool : Maybe tag }
     -> Html msg
-viewTag { onSelect, getColor, getName } tag tools model =
-    viewTool (getName tag) onSelect (getColor tag) (Just tag) tools model getName
+viewTag { onSelect, getColor, getName } tag model =
+    viewTool (getName tag) onSelect (getColor tag) (Just tag) model getName
 
 
 viewEraser :
     (Maybe tag -> msg)
-    -> List (Maybe tag)
     -> { model | currentTool : Maybe tag }
     -> (tag -> String)
     -> Html msg
-viewEraser onSelect tools model getName =
+viewEraser onSelect model getName =
     viewTool "Remove highlight"
         onSelect
         { colorLight = Colors.gray75, colorSolid = Colors.white }
         Nothing
-        tools
         model
         getName
 
@@ -116,11 +110,10 @@ viewTool :
     -> (Maybe tag -> msg)
     -> { extras | colorSolid : Color, colorLight : Color }
     -> Maybe tag
-    -> List (Maybe tag)
     -> { model | currentTool : Maybe tag }
     -> (tag -> String)
     -> Html msg
-viewTool name onSelect theme tag tools model getName =
+viewTool name onSelect theme tag model getName =
     let
         selected =
             model.currentTool == tag
