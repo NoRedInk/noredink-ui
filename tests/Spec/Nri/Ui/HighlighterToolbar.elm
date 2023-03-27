@@ -8,7 +8,6 @@ import Html.Styled as Html exposing (..)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.HighlighterToolbar.V3 as HighlighterToolbar
 import ProgramTest exposing (..)
-import Spec.KeyboardHelpers as KeyboardHelpers
 import Test exposing (..)
 import Test.Html.Event as Event
 import Test.Html.Query as Query
@@ -29,45 +28,16 @@ spec =
         ]
 
 
-ensureTabbable : String -> TestContext -> TestContext
-ensureTabbable word testContext =
-    testContext
-        |> ensureView
-            (Query.find [ Selector.attribute (Key.tabbable True) ]
-                >> Query.has [ Selector.text word ]
-            )
-
-
-ensureOnlyOneInTabSequence : List String -> TestContext -> TestContext
-ensureOnlyOneInTabSequence words testContext =
-    testContext
-        |> ensureView
-            (Query.findAll [ Selector.attribute (Key.tabbable True) ]
-                >> Query.count (Expect.equal 1)
-            )
-        |> ensureView
-            (Query.findAll [ Selector.attribute (Key.tabbable False) ]
-                >> Query.count (Expect.equal (List.length words - 1))
-            )
-
-
-rightArrow : TestContext -> TestContext
-rightArrow =
-    KeyboardHelpers.pressRightArrow { targetDetails = [] }
-        [ Selector.attribute (Key.tabbable True) ]
-
-
-leftArrow : TestContext -> TestContext
-leftArrow =
-    KeyboardHelpers.pressLeftArrow { targetDetails = [] }
-        [ Selector.attribute (Key.tabbable True) ]
-
-
 byLabel : String -> List Selector
 byLabel label =
     [ Selector.tag "label"
     , Selector.containing [ Selector.text label ]
     ]
+
+
+activeToolVisualIndicator : List Selector
+activeToolVisualIndicator =
+    [ Selector.attribute (Attributes.attribute "data-nri-description" "active-tool") ]
 
 
 clickTool : String -> ProgramTest model msg effect -> ProgramTest model msg effect
@@ -97,52 +67,6 @@ ensureActiveToolIs label testContext =
             -- has only 1 visual indicator of selection
             (Query.findAll activeToolVisualIndicator
                 >> Query.count (Expect.equal 1)
-            )
-
-
-activeToolVisualIndicator : List Selector
-activeToolVisualIndicator =
-    [ Selector.attribute (Attributes.attribute "data-nri-description" "active-tool") ]
-
-
-ensureActiveHasAriaPressedTrue : String -> TestContext -> TestContext
-ensureActiveHasAriaPressedTrue label testContext =
-    testContext
-        |> ensureView
-            (Query.find [ Selector.attribute (Attributes.checked True) ]
-                >> Query.has [ Selector.text label ]
-            )
-
-
-ensureNotActiveHaveAriaPressedFalse : List String -> TestContext -> TestContext
-ensureNotActiveHaveAriaPressedFalse labels testContext =
-    testContext
-        |> ensureView
-            (Query.findAll [ Selector.attribute (Attributes.checked False) ]
-                >> Expect.all (List.indexedMap (\i label -> Query.index i >> Query.has [ Selector.text label ]) labels)
-            )
-
-
-ensureActiveHasVisualIndicator : TestContext -> TestContext
-ensureActiveHasVisualIndicator testContext =
-    testContext
-        |> ensureView
-            (Query.find
-                [ Selector.attribute (Attributes.checked True) ]
-                >> Query.has [ Selector.attribute (Attributes.attribute "data-nri-description" "active-tool") ]
-            )
-
-
-ensureNotActiveDoNotHaveVisualIndicator : TestContext -> TestContext
-ensureNotActiveDoNotHaveVisualIndicator testContext =
-    testContext
-        |> ensureView
-            (Query.findAll
-                [ Selector.attribute (Attributes.checked False) ]
-                >> Query.each
-                    (Query.hasNot
-                        [ Selector.attribute (Attributes.attribute "data-nri-description" "active-tool") ]
-                    )
             )
 
 
@@ -189,53 +113,24 @@ getColor tag =
             }
 
 
-{-| -}
-type alias State =
-    { currentTool : Maybe Tag
-    }
-
-
-{-| -}
-init : State
-init =
-    { currentTool = Nothing }
-
-
-{-| -}
-type Msg
-    = FocusAndSelectTag (Maybe Tag)
-
-
-{-| -}
-update : Msg -> State -> State
-update msg state =
-    case msg of
-        FocusAndSelectTag select ->
-            { state | currentTool = select }
-
-
-view : State -> Html Msg
+view : Maybe Tag -> Html (Maybe Tag)
 view model =
     HighlighterToolbar.view
-        { onSelect = FocusAndSelectTag
+        { onSelect = identity
         , getColor = getColor
         , getName = getName
         , highlighterId = "highlighter"
         }
-        { currentTool = model.currentTool
+        { currentTool = model
         , tags = tags
         }
 
 
-type alias TestContext =
-    ProgramTest State Msg ()
-
-
-program : TestContext
+program : ProgramTest (Maybe Tag) (Maybe Tag) ()
 program =
     ProgramTest.createSandbox
-        { init = init
-        , update = update
+        { init = Nothing
+        , update = \new _ -> new
         , view = view >> Html.toUnstyled
         }
         |> ProgramTest.start ()
