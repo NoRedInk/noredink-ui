@@ -220,14 +220,12 @@ buildMarkerWithoutRounding { highlightColor, hoverColor, hoverHighlightColor, ki
     { hoverClass = squareHoverStyles hoverColor
     , hintClass = squareHoverStyles hoverColor
     , startGroupClass =
-        [ Css.paddingLeft (Css.px 4)
-        , MediaQuery.highContrastMode
+        [ MediaQuery.highContrastMode
             [ Css.property "border-left" "2px solid Mark"
             ]
         ]
     , endGroupClass =
-        [ Css.paddingRight (Css.px 4)
-        , MediaQuery.highContrastMode
+        [ MediaQuery.highContrastMode
             [ Css.property "border-right" "2px solid Mark"
             ]
         ]
@@ -261,13 +259,4 @@ squareSharedStyles =
 
 squareHoverStyles : Css.Color -> List Css.Style
 squareHoverStyles color =
-    List.append
-        squareSharedStyles
-        [ Css.important (Css.backgroundColor color)
-
-        -- The Highlighter applies both these styles and the startGroup and
-        -- endGroup styles. Here we disable the left and the right padding
-        -- because otherwise it would cause the text to move around.
-        , Css.important (Css.paddingLeft Css.zero)
-        , Css.important (Css.paddingRight Css.zero)
-        ]
+    List.append squareSharedStyles [ Css.important (Css.backgroundColor color) ]
