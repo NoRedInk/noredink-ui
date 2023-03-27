@@ -9,6 +9,11 @@ module Nri.Ui.QuestionBox.V4 exposing
 
 {-|
 
+
+## Patch Changes
+
+  - Modified `viewPointingTo` to be hidden when measurements are `Nothing` to reduce the jitter of the question box moving to its correct position.
+
 @docs view, Attribute
 
 @docs id, markdown, actions, character
@@ -58,7 +63,7 @@ defaultConfig =
     , markdown = Nothing
     , actions = []
     , type_ = Standalone
-    , character = Just { name = "Panda", icon = CharacterIcon.panda }
+    , character = Just { name = "Panda", icon = CharacterIcon.redPanda }
     , containerCss = []
     , leftActions = text ""
     }
@@ -132,7 +137,9 @@ calculate the offset from the viewport.
 
 Pass in the id for the block the QuestionBox should point to.
 
-You will need to pass 4 measurements, taken using Dom.Browser, in order for the question box to be positioned correctly.
+You will need to pass 4 measurements, taken using Dom.Browser, in order for the question box to be positioned correctly. The question box
+will be hidden the first time when you pass `Nothing` for the measurements to reduce the jitter of the question box moving to its correct
+position.
 
 -}
 pointingTo :
@@ -194,6 +201,9 @@ viewStandalone config =
         [ viewBalloon config
             Nothing
             [ Balloon.nriDescription "standalone-balloon"
+            , Balloon.containerCss
+                [ Css.maxWidth (Css.px 500)
+                ]
             ]
         ]
 
@@ -256,7 +266,16 @@ viewPointingTo config blockId measurements =
     in
     viewBalloon config
         (Just blockId)
-        [ Balloon.containerCss [ Css.marginTop (Css.px 8) ]
+        [ Balloon.containerCss
+            [ Css.marginTop (Css.px 8)
+            , case measurements of
+                Just _ ->
+                    Css.opacity (Css.int 1)
+
+                Nothing ->
+                    -- Avoid the "jitter" of the balloon appearing in the wrong place by hiding it until we have measurements
+                    Css.opacity (Css.int 0)
+            ]
         , Balloon.nriDescription "pointing-to-balloon"
         , case config.id of
             Just id_ ->
@@ -275,7 +294,7 @@ viewPointingTo config blockId measurements =
                     Nothing ->
                         []
             , Css.textAlign Css.left
-            , Css.maxWidth (Css.px 440)
+            , Css.maxWidth (Css.px 386)
             , Css.property "width" "max-content"
             , Css.batch config.containerCss
             ]
@@ -344,9 +363,10 @@ viewGuidance config referencingId markdown_ =
                 , viewSpeechBubble config
                     referencingId
                     [ Balloon.markdown markdown_
+                    , Balloon.css [ Css.minHeight (Css.px 46) ]
+                    , Balloon.containerCss [ Css.marginRight (Css.px 8) ]
                     , Balloon.onLeft
                     , Balloon.alignArrowEnd
-                    , Balloon.css [ Css.minHeight (Css.px 46) ]
                     ]
                 ]
 
@@ -364,10 +384,11 @@ viewSpeechBubble config referencingId extraAttributes =
         ([ Balloon.nriDescription "guidance-speech-bubble"
          , Balloon.white
          , Balloon.css
-            [ Css.borderRadius (Css.px 16)
-            , Css.padding (Css.px 10)
+            [ Css.borderRadius (Css.px 20)
+            , Css.padding (Css.px 20)
             , Css.boxShadow Css.none
             , Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ]
+            , Css.fontSize (Css.px 18)
             ]
          , Balloon.custom
             [ AttributesExtra.maybe (guidanceId >> Attributes.id) config.id
@@ -391,12 +412,12 @@ viewCharacter : { name : String, icon : Svg } -> Html msg
 viewCharacter { name, icon } =
     icon
         |> Svg.withLabel (name ++ " says, ")
-        |> Svg.withWidth (Css.px 50)
+        |> Svg.withWidth (Css.px 70)
         |> Svg.withHeight (Css.px 70)
         |> Svg.withCss
             [ Css.position Css.absolute
-            , Css.bottom (Css.px -18)
-            , Css.right (Css.px -48)
+            , Css.bottom (Css.px -5)
+            , Css.right (Css.px -58)
             ]
         |> Svg.toHtml
 

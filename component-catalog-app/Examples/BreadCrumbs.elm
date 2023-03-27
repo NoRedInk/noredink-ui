@@ -16,12 +16,13 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css, href)
+import Nri.Ui.AssignmentIcon.V2 as AssignmentIcon
 import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs exposing (BreadCrumbAttribute, BreadCrumbs)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Html.V3 exposing (viewJust)
-import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Table.V6 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -46,15 +47,28 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , categories = [ Layout ]
+    , categories = [ Navigation ]
     , keyboardSupport = []
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
-        [ previewContainer [ previewText "🏠 Home" ]
-        , previewContainer [ previewText "🏠 Home", previewArrowRight, previewText "🟠 Category " ]
-        , previewContainer [ previewText "🏠", previewArrowRight, previewText "🟠", previewArrowRight, previewText "🟣 Sub-Category " ]
+        [ previewContainer [ previewIcon UiIcon.home, previewText "Home" ]
+        , previewContainer
+            [ previewIcon UiIcon.home
+            , previewText "Home"
+            , previewArrowRight
+            , previewIcon (Svg.withColor Colors.greenDark AssignmentIcon.writing)
+            , previewText "Category "
+            ]
+        , previewContainer
+            [ previewIcon UiIcon.home
+            , previewArrowRight
+            , previewIcon (Svg.withColor Colors.greenDark AssignmentIcon.writing)
+            , previewArrowRight
+            , previewIcon (Svg.withColor Colors.ochre AssignmentIcon.quickWriteCircled)
+            , previewText "Sub-Category "
+            ]
         ]
     , view =
         \ellieLinkConfig state ->
@@ -202,11 +216,24 @@ previewContainer =
             [ Css.displayFlex
             , Css.alignItems Css.center
             , Fonts.baseFont
-            , Css.fontSize (Css.px 10)
+            , Css.fontSize previewFontSize
             , Css.fontWeight (Css.int 600)
             , Css.color Colors.navy
             ]
         ]
+
+
+previewFontSize : Css.Px
+previewFontSize =
+    Css.px 14
+
+
+previewIcon : Svg -> Html msg
+previewIcon svg =
+    svg
+        |> Svg.withWidth previewFontSize
+        |> Svg.withHeight previewFontSize
+        |> Svg.toHtml
 
 
 previewText : String -> Html msg
@@ -220,7 +247,7 @@ previewArrowRight =
         |> Svg.withColor Colors.gray75
         |> Svg.withHeight (Css.px 10)
         |> Svg.withWidth (Css.px 8)
-        |> Svg.withCss [ Css.flexShrink Css.zero ]
+        |> Svg.withCss [ Css.flexShrink Css.zero, Css.margin (Css.px 1) ]
         |> Svg.toHtml
 
 

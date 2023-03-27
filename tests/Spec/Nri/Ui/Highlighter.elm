@@ -5,8 +5,8 @@ import Expect exposing (Expectation)
 import Html.Styled exposing (Html, toUnstyled)
 import List.Extra
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
-import Nri.Ui.Highlighter.V2 as Highlighter
+import Nri.Ui.Highlightable.V2 as Highlightable exposing (Highlightable)
+import Nri.Ui.Highlighter.V3 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool exposing (Tool)
 import ProgramTest exposing (..)
 import Regex exposing (Regex)
@@ -19,10 +19,11 @@ import Test.Html.Selector as Selector exposing (Selector)
 
 spec : Test
 spec =
-    describe "Nri.Ui.Highlighter.V2"
+    describe "Nri.Ui.Highlighter"
         [ describe "keyboard behavior" keyboardTests
         , describe "markdown behavior" markdownTests
         , describe "joinAdjacentInteractiveHighlights" joinAdjacentInteractiveHighlightsTests
+        , describe "overlapping highlights" overlappingHighlightTests
         ]
 
 
@@ -30,20 +31,20 @@ keyboardTests : List Test
 keyboardTests =
     [ test "has a focusable element when there is one" <|
         \() ->
-            Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+            Highlightable.initFragments [] "Pothos indirect light"
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> done
     , test "has only one element included in the tab sequence" <|
         \() ->
-            Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+            Highlightable.initFragments [] "Pothos indirect light"
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureOnlyOneInTabSequence (String.words "Pothos indirect light")
                 |> done
     , test "moves focus right on right arrow key" <|
         \() ->
-            Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+            Highlightable.initFragments [] "Pothos indirect light"
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> rightArrow
                 |> ensureTabbable "indirect"
@@ -57,8 +58,8 @@ keyboardTests =
                 |> done
     , test "moves focus left on left arrow key" <|
         \() ->
-            Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+            Highlightable.initFragments [] "Pothos indirect light"
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> rightArrow
                 |> ensureTabbable "indirect"
@@ -72,8 +73,8 @@ keyboardTests =
                 |> done
     , test "moves focus right on shift + right arrow" <|
         \() ->
-            Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+            Highlightable.initFragments [] "Pothos indirect light"
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> shiftRight
                 |> ensureTabbable "indirect"
@@ -84,8 +85,8 @@ keyboardTests =
                 |> done
     , test "moves focus left on shift + left arrow" <|
         \() ->
-            Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+            Highlightable.initFragments [] "Pothos indirect light"
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> rightArrow
                 |> ensureTabbable "indirect"
@@ -96,8 +97,8 @@ keyboardTests =
                 |> done
     , test "expands selection one element to the right on shift + right arrow and highlight selected elements" <|
         \() ->
-            Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+            Highlightable.initFragments [] "Pothos indirect light"
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> shiftRight
                 |> releaseShiftRight
                 |> ensureMarked [ "Pothos", " ", "indirect" ]
@@ -110,8 +111,8 @@ keyboardTests =
                 |> done
     , test "expands selection one element to the left on shift + left arrow and highlight selected elements" <|
         \() ->
-            Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+            Highlightable.initFragments [] "Pothos indirect light"
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> rightArrow
                 |> rightArrow
                 |> shiftLeft
@@ -126,8 +127,8 @@ keyboardTests =
                 |> done
     , test "merges highlights" <|
         \() ->
-            Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+            Highlightable.initFragments [] "Pothos indirect light"
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> shiftRight
                 |> releaseShiftRight
@@ -141,8 +142,8 @@ keyboardTests =
                 |> done
     , test "selects element on MouseDown and highlights selected element on MouseUp" <|
         \() ->
-            Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+            Highlightable.initFragments [] "Pothos indirect light"
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> mouseDown "Pothos"
                 |> mouseUp "Pothos"
@@ -150,8 +151,8 @@ keyboardTests =
                 |> done
     , test "selects element on MouseDown, expands selection on MouseOver, and highlights selected elements on MouseUp" <|
         \() ->
-            Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+            Highlightable.initFragments [] "Pothos indirect light"
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> mouseDown "Pothos"
                 |> mouseOver "indirect"
@@ -160,16 +161,16 @@ keyboardTests =
                 |> done
     , test "Highlights element on Space" <|
         \() ->
-            Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+            Highlightable.initFragments [] "Pothos indirect light"
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> space
                 |> ensureMarked [ "Pothos" ]
                 |> done
     , test "Removes highlight from element on MouseUp" <|
         \() ->
-            Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+            Highlightable.initFragments [] "Pothos indirect light"
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> space
                 |> ensureMarked [ "Pothos" ]
@@ -179,8 +180,8 @@ keyboardTests =
                 |> expectViewHasNot [ Selector.tag "mark" ]
     , test "Removes entire highlight from a group of elements on MouseUp" <|
         \() ->
-            Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+            Highlightable.initFragments [] "Pothos indirect light"
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> shiftRight
                 |> releaseShiftRight
@@ -190,8 +191,8 @@ keyboardTests =
                 |> expectViewHasNot [ Selector.tag "mark" ]
     , test "Removes highlight from element on Space" <|
         \() ->
-            Highlightable.initFragments Nothing "Pothos indirect light"
-                |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+            Highlightable.initFragments [] "Pothos indirect light"
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> space
                 |> ensureMarked [ "Pothos" ]
@@ -201,31 +202,31 @@ keyboardTests =
     , describe "Regression tests for A11-1767"
         [ test "generic start announcement is made when mark does not include first element" <|
             \() ->
-                Highlightable.initFragments Nothing "Pothos indirect light"
-                    |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                Highlightable.initFragments [] "Pothos indirect light"
+                    |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                     |> rightArrow
                     |> shiftRight
                     |> releaseShiftRight
                     |> ensureMarked [ "indirect" ]
-                    |> expectView (hasStartHighlightBeforeContent "start highlight" "indirect")
+                    |> expectView (hasBefore "start highlight" "indirect")
         , test "specific start announcement is made when mark does not include first element" <|
             \() ->
-                Highlightable.initFragments Nothing "Pothos indirect light"
-                    |> program { name = Just "banana", joinAdjacentInteractiveHighlights = False }
+                Highlightable.initFragments [] "Pothos indirect light"
+                    |> program { markerName = Just "banana", joinAdjacentInteractiveHighlights = False }
                     |> rightArrow
                     |> ensureTabbable "indirect"
                     |> shiftRight
                     |> releaseShiftRight
                     |> ensureMarked [ "indirect" ]
-                    |> expectView (hasStartHighlightBeforeContent "start banana highlight" "indirect")
+                    |> expectView (hasBefore "start banana highlight" "indirect")
         ]
     , describe "Regression tests for A11-1769"
         [ -- as far as I can tell, the problem is not in the Elm logic.
           -- However, it still seemed worth adding an explicit check against the buggy behavior.
           test "Focus moves past 3rd element" <|
             \() ->
-                Highlightable.initFragments Nothing "Sir Walter Elliot, of Kellynch Hall, in Somersetshire..."
-                    |> program { name = Just "Claim", joinAdjacentInteractiveHighlights = False }
+                Highlightable.initFragments [] "Sir Walter Elliot, of Kellynch Hall, in Somersetshire..."
+                    |> program { markerName = Just "Claim", joinAdjacentInteractiveHighlights = False }
                     |> shiftRight
                     |> releaseShiftRight
                     |> ensureMarked [ "Sir", " ", "Walter" ]
@@ -257,7 +258,7 @@ testRendersRawContent testName view =
     describe (testName ++ " does not interpret content as markdown")
         [ test "using Highlightable.initFragments for initialization" <|
             \() ->
-                Highlightable.initFragments Nothing "*Pothos* prefer indirect [light]() to direct light."
+                Highlightable.initFragments [] "*Pothos* prefer indirect [light]() to direct light."
                     |> startWithoutMarker view
                     |> expectView
                         (Expect.all
@@ -287,7 +288,7 @@ testRendersMarkdownContent testName view =
     describe (testName ++ " does interpret content as markdown") <|
         [ test "using Highlightable.initFragments for initialization" <|
             \() ->
-                Highlightable.initFragments Nothing "*Pothos* prefer indirect [light]() to direct light."
+                Highlightable.initFragments [] "*Pothos* prefer indirect [light]() to direct light."
                     |> startWithoutMarker view
                     |> ensureViewHasNot [ Selector.text "*Pothos*" ]
                     |> expectView
@@ -348,19 +349,63 @@ startWithoutMarker view highlightables =
         |> ProgramTest.start ()
 
 
-hasStartHighlightBeforeContent : String -> String -> Query.Single msg -> Expectation
-hasStartHighlightBeforeContent startHighlightMarker relevantHighlightableText view =
-    let
-        styles =
-            view
-                |> Query.find [ Selector.tag "style" ]
-                |> Query.children []
-                |> Debug.toString
+hasBefore : String -> String -> Query.Single msg -> Expectation
+hasBefore =
+    hasPseudoElement "::before"
 
+
+hasAfter : String -> String -> Query.Single msg -> Expectation
+hasAfter =
+    hasPseudoElement "::after"
+
+
+hasNotBefore : String -> String -> Query.Single msg -> Expectation
+hasNotBefore =
+    hasNotPseudoElement "::before"
+
+
+hasNotAfter : String -> String -> Query.Single msg -> Expectation
+hasNotAfter =
+    hasNotPseudoElement "::after"
+
+
+hasPseudoElement : String -> String -> String -> Query.Single msg -> Expectation
+hasPseudoElement pseudoElement highlightMarker relevantHighlightableText view =
+    case pseudoElementSelector pseudoElement highlightMarker view of
+        Just className ->
+            Query.has
+                [ className
+                , Selector.containing [ Selector.text relevantHighlightableText ]
+                ]
+                view
+
+        Nothing ->
+            ("Expected to find a class defining a " ++ pseudoElement ++ " element with content: `")
+                ++ highlightMarker
+                ++ "`, but failed to find the class in the styles: \n\n"
+                ++ rawStyles view
+                |> Expect.fail
+
+
+hasNotPseudoElement : String -> String -> String -> Query.Single msg -> Expectation
+hasNotPseudoElement pseudoElement highlightMarker relevantHighlightableText view =
+    case pseudoElementSelector pseudoElement highlightMarker view of
+        Just className ->
+            view
+                |> Query.findAll [ className ]
+                |> Query.each (Query.hasNot [ Selector.containing [ Selector.text relevantHighlightableText ] ])
+
+        Nothing ->
+            Expect.pass
+
+
+pseudoElementSelector : String -> String -> Query.Single msg -> Maybe Selector
+pseudoElementSelector pseudoElement highlightMarker view =
+    let
         startHighlightClassRegex : Maybe Regex
         startHighlightClassRegex =
-            "\\.(\\_[a-zA-Z0-9]+)::before\\{content:\\\\\"\\s*\\s*"
-                ++ startHighlightMarker
+            ("\\.(\\_[a-zA-Z0-9]+)" ++ pseudoElement ++ "\\{content:\\\\\"\\s*\\s*")
+                ++ highlightMarker
                 |> Regex.fromString
 
         maybeClassName : Maybe String
@@ -368,29 +413,21 @@ hasStartHighlightBeforeContent startHighlightMarker relevantHighlightableText vi
             startHighlightClassRegex
                 |> Maybe.andThen
                     (\regex ->
-                        Regex.find regex styles
+                        Regex.find regex (rawStyles view)
                             |> List.head
                             |> Maybe.andThen (.submatches >> List.head)
                     )
                 |> Maybe.withDefault Nothing
     in
-    case maybeClassName of
-        Just className ->
-            Query.has
-                [ Selector.tag "mark"
-                , Selector.containing
-                    [ Selector.class className
-                    , Selector.containing [ Selector.text relevantHighlightableText ]
-                    ]
-                ]
-                view
+    Maybe.map Selector.class maybeClassName
 
-        Nothing ->
-            "Expected to find a class defining a ::before element with content: `"
-                ++ startHighlightMarker
-                ++ "`, but failed to find the class in the styles: \n\n"
-                ++ styles
-                |> Expect.fail
+
+rawStyles : Query.Single msg -> String
+rawStyles view =
+    view
+        |> Query.find [ Selector.tag "style" ]
+        |> Query.children []
+        |> Debug.toString
 
 
 ensureTabbable : String -> TestContext -> TestContext
@@ -536,7 +573,7 @@ type alias TestContext =
 
 
 program :
-    { name : Maybe String
+    { markerName : Maybe String
     , joinAdjacentInteractiveHighlights : Bool
     }
     -> List (Highlightable String)
@@ -547,7 +584,7 @@ program config highlightables =
             Highlighter.init
                 { id = "test-highlighter-container"
                 , highlightables = highlightables
-                , marker = markerModel config.name
+                , marker = markerModel config.markerName
                 , joinAdjacentInteractiveHighlights = config.joinAdjacentInteractiveHighlights
                 }
         , update =
@@ -567,11 +604,11 @@ joinAdjacentInteractiveHighlightsTests =
             runTest description { joinAdjacentInteractiveHighlights } =
                 test (description ++ ", static elements should not change state") <|
                     \() ->
-                        [ Highlightable.init Highlightable.Static Nothing 0 ( [], " " )
-                        , Highlightable.init Highlightable.Interactive Nothing 1 ( [], "word" )
-                        , Highlightable.init Highlightable.Static Nothing 2 ( [], " " )
+                        [ Highlightable.init Highlightable.Static [] 0 ( [], " " )
+                        , Highlightable.init Highlightable.Interactive [] 1 ( [], "word" )
+                        , Highlightable.init Highlightable.Static [] 2 ( [], " " )
                         ]
-                            |> program { name = Nothing, joinAdjacentInteractiveHighlights = joinAdjacentInteractiveHighlights }
+                            |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = joinAdjacentInteractiveHighlights }
                             |> click "word"
                             |> ensureMarked [ "word" ]
                             |> click "word"
@@ -584,15 +621,15 @@ joinAdjacentInteractiveHighlightsTests =
     , describe "interactive segments surrounding a single static segment" <|
         let
             highlightables =
-                [ Highlightable.init Highlightable.Interactive Nothing 0 ( [], "hello" )
-                , Highlightable.init Highlightable.Static Nothing 1 ( [], " " )
-                , Highlightable.init Highlightable.Interactive Nothing 2 ( [], "world" )
+                [ Highlightable.init Highlightable.Interactive [] 0 ( [], "hello" )
+                , Highlightable.init Highlightable.Static [] 1 ( [], " " )
+                , Highlightable.init Highlightable.Interactive [] 2 ( [], "world" )
                 ]
         in
         [ test "not joining adjacent interactive highlights" <|
             \() ->
                 highlightables
-                    |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                    |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                     |> click "hello"
                     |> ensureMarks [ [ "hello" ] ]
                     |> click "world"
@@ -605,7 +642,7 @@ joinAdjacentInteractiveHighlightsTests =
         , test "joining adjacent interactive highlights" <|
             \() ->
                 highlightables
-                    |> program { name = Nothing, joinAdjacentInteractiveHighlights = True }
+                    |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = True }
                     |> click "hello"
                     |> ensureMarks [ [ "hello" ] ]
                     |> click "world"
@@ -617,39 +654,141 @@ joinAdjacentInteractiveHighlightsTests =
     , describe "initialization"
         [ test "with matching mark types, not joining adjacent interactive highlights, does not join marks" <|
             \() ->
-                [ Highlightable.init Highlightable.Interactive (Just (marker (Just "type-1"))) 0 ( [], "hello" )
-                , Highlightable.init Highlightable.Static Nothing 1 ( [], " " )
-                , Highlightable.init Highlightable.Interactive (Just (marker (Just "type-1"))) 2 ( [], "world" )
+                [ Highlightable.init Highlightable.Interactive [ marker (Just "type-1") ] 0 ( [], "hello" )
+                , Highlightable.init Highlightable.Static [] 1 ( [], " " )
+                , Highlightable.init Highlightable.Interactive [ marker (Just "type-1") ] 2 ( [], "world" )
                 ]
-                    |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                    |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                     |> ensureMarks [ [ "hello" ], [ "world" ] ]
                     |> done
         , test "with matching mark types, joining adjacent interactive highlights, joins marks" <|
             \() ->
-                [ Highlightable.init Highlightable.Interactive (Just (marker (Just "type-1"))) 0 ( [], "hello" )
-                , Highlightable.init Highlightable.Static Nothing 1 ( [], " " )
-                , Highlightable.init Highlightable.Interactive (Just (marker (Just "type-1"))) 2 ( [], "world" )
+                [ Highlightable.init Highlightable.Interactive [ marker (Just "type-1") ] 0 ( [], "hello" )
+                , Highlightable.init Highlightable.Static [] 1 ( [], " " )
+                , Highlightable.init Highlightable.Interactive [ marker (Just "type-1") ] 2 ( [], "world" )
                 ]
-                    |> program { name = Nothing, joinAdjacentInteractiveHighlights = True }
+                    |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = True }
                     |> ensureMarks [ [ "hello", " ", "world" ] ]
                     |> done
         , test "with differing mark types, not joining adjacent interactive highlights, does not join marks" <|
             \() ->
-                [ Highlightable.init Highlightable.Interactive (Just (marker (Just "type-1"))) 0 ( [], "hello" )
-                , Highlightable.init Highlightable.Static Nothing 1 ( [], " " )
-                , Highlightable.init Highlightable.Interactive (Just (marker (Just "type-2"))) 2 ( [], "world" )
+                [ Highlightable.init Highlightable.Interactive [ marker (Just "type-1") ] 0 ( [], "hello" )
+                , Highlightable.init Highlightable.Static [] 1 ( [], " " )
+                , Highlightable.init Highlightable.Interactive [ marker (Just "type-2") ] 2 ( [], "world" )
                 ]
-                    |> program { name = Nothing, joinAdjacentInteractiveHighlights = False }
+                    |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                     |> ensureMarks [ [ "hello" ], [ "world" ] ]
                     |> done
         , test "with differing mark types, joining adjacent interactive highlights, does not join marks" <|
             \() ->
-                [ Highlightable.init Highlightable.Interactive (Just (marker (Just "type-1"))) 0 ( [], "hello" )
-                , Highlightable.init Highlightable.Static Nothing 1 ( [], " " )
-                , Highlightable.init Highlightable.Interactive (Just (marker (Just "type-2"))) 2 ( [], "world" )
+                [ Highlightable.init Highlightable.Interactive [ marker (Just "type-1") ] 0 ( [], "hello" )
+                , Highlightable.init Highlightable.Static [] 1 ( [], " " )
+                , Highlightable.init Highlightable.Interactive [ marker (Just "type-2") ] 2 ( [], "world" )
                 ]
-                    |> program { name = Nothing, joinAdjacentInteractiveHighlights = True }
+                    |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = True }
                     |> ensureMarks [ [ "hello" ], [ "world" ] ]
                     |> done
         ]
+    ]
+
+
+overlappingHighlightTests : List Test
+overlappingHighlightTests =
+    let
+        initHighlightables : List ( String, List String ) -> List (Highlightable String)
+        initHighlightables =
+            List.indexedMap
+                (\i ( text, marks ) ->
+                    Highlightable.init Highlightable.Interactive (List.map (Just >> marker) marks) i ( [], text )
+                )
+
+        start renderer highlightables =
+            ProgramTest.createSandbox
+                { init =
+                    Highlighter.init
+                        { id = "test-highlighter-container"
+                        , highlightables = initHighlightables highlightables
+                        , marker = markerModel (Just "Comment")
+                        , joinAdjacentInteractiveHighlights = False
+                        }
+                , update =
+                    \msg model ->
+                        case Highlighter.update msg model of
+                            ( newModel, _, _ ) ->
+                                newModel
+                , view = renderer >> toUnstyled
+                }
+                |> ProgramTest.start ()
+
+        staticAssertions renderer =
+            [ describe "without any overlaps"
+                [ test "renders a single ::before element" <|
+                    \() ->
+                        [ ( "Hello", [ "A" ] ), ( "World", [ "A" ] ) ]
+                            |> start renderer
+                            |> ensureView (hasBefore "start A highlight" "Hello")
+                            |> ensureView (hasNotBefore "start A highlight" "World")
+                            |> done
+                , test "renders a single ::after element" <|
+                    \() ->
+                        [ ( "Hello", [ "A" ] ), ( "World", [ "A" ] ) ]
+                            |> start renderer
+                            |> ensureView (hasAfter "end A highlight" "World")
+                            |> ensureView (hasNotAfter "end A highlight" "Hello")
+                            |> done
+                ]
+            , describe "existing overlapping highlights with the same start segment"
+                [ test "renders a single ::before element for both marks" <|
+                    \() ->
+                        [ ( "Hello", [ "A", "B" ] ), ( "World", [ "A", "B" ] ), ( "!", [ "B" ] ) ]
+                            |> start renderer
+                            |> ensureView (hasBefore "start A and B highlights" "Hello")
+                            |> ensureView (hasNotBefore "start A and B highlights" "World")
+                            |> ensureView (hasNotBefore "start B highlight" "!")
+                            |> done
+                , test "uses Oxford comma for more-than-2 marks" <|
+                    \() ->
+                        [ ( "Hello", [ "A", "B", "C" ] ), ( "World", [ "A", "B" ] ), ( "!", [ "B" ] ) ]
+                            |> start renderer
+                            |> ensureView (hasBefore "start A, B, and C highlights" "Hello")
+                            |> done
+                ]
+            , describe "existing overlapping highlights with the same end segment"
+                [ test "renders a single ::after element for both marks" <|
+                    \() ->
+                        [ ( "Hello", [ "A" ] ), ( "World", [ "A", "B" ] ), ( "!", [ "A", "B" ] ) ]
+                            |> start renderer
+                            |> ensureView (hasAfter "end A and B highlights" "!")
+                            |> ensureView (hasNotAfter "end A highlight" "Hello,")
+                            |> ensureView (hasNotAfter "end A and B highlights" "World")
+                            |> done
+                , test "uses Oxford comma for more-than-2 marks" <|
+                    \() ->
+                        [ ( "Hello", [ "A" ] ), ( "World", [ "B" ] ), ( "!", [ "A", "B", "C" ] ) ]
+                            |> start renderer
+                            |> ensureView (hasAfter "end A, B, and C highlights" "!")
+                            |> done
+                ]
+            , describe "existing overlapping highlights with differing start and end segments"
+                [ test "renders individual ::before and ::after elements" <|
+                    \() ->
+                        [ ( "Hello", [ "A" ] )
+                        , ( " ", [] )
+                        , ( "World!", [ "A", "B" ] )
+                        , ( " ", [] )
+                        , ( "Hope you're", [ "A", "B" ] )
+                        , ( " ", [] )
+                        , ( "well", [ "B" ] )
+                        ]
+                            |> start renderer
+                            |> ensureView (hasBefore "start A highlight" "Hello")
+                            |> ensureView (hasAfter "end A highlight" "Hope you're")
+                            |> ensureView (hasBefore "start B highlight" "World!")
+                            |> ensureView (hasAfter "end B highlight" "well")
+                            |> done
+                ]
+            ]
+    in
+    [ describe "viewWithOverlappingHighlights" (staticAssertions Highlighter.viewWithOverlappingHighlights)
+    , describe "staticWithOverlappingHighlights" (staticAssertions Highlighter.staticWithOverlappingHighlights)
     ]

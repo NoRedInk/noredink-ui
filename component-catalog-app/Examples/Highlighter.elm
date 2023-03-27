@@ -17,14 +17,16 @@ import Example exposing (Example)
 import Examples.Colors
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
+import Maybe.Extra
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Highlightable.V1 as Highlightable exposing (Highlightable)
-import Nri.Ui.Highlighter.V2 as Highlighter
+import Nri.Ui.Highlightable.V2 as Highlightable exposing (Highlightable)
+import Nri.Ui.Highlighter.V3 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Table.V6 as Table
+import String.Extra
 
 
 moduleName : String
@@ -34,7 +36,7 @@ moduleName =
 
 version : Int
 version =
-    2
+    3
 
 
 {-| -}
@@ -59,7 +61,7 @@ example =
                     , ( "vow.", Nothing )
                     ]
                         |> List.intersperse ( " ", Nothing )
-                        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+                        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
                 }
             ]
         ]
@@ -72,9 +74,24 @@ example =
                 , update = UpdateControls
                 , settings = state.settings
                 , mainType = Nothing
-                , extraCode = []
+                , extraCode =
+                    [ "import Nri.Ui.Highlightable.V2 as Highlightable"
+                    , "import Nri.Ui.HighlighterTool.V1 as Tool"
+                    ]
                 , renderExample = Code.unstyledView
-                , toExampleCode = \_ -> []
+                , toExampleCode =
+                    \_ ->
+                        [ { sectionName = "Code"
+                          , code =
+                                -- view
+                                Tuple.first (view state)
+                                    ++ Code.newlines
+                                    ++ -- model
+                                       (initHighlighter (Control.currentValue state.settings) state.highlighter.highlightables
+                                            |> Tuple.first
+                                       )
+                          }
+                        ]
                 }
             , Heading.h2 [ Heading.plaintext "Interactive example" ]
             , Heading.h3 [ Heading.plaintext "This example updates based on the settings you configure on this page." ]
@@ -91,12 +108,7 @@ example =
                     , Fonts.quizFont
                     ]
                 ]
-                [ (if (Control.currentValue state.settings).asMarkdown then
-                    Highlighter.viewMarkdown state.highlighter
-
-                   else
-                    Highlighter.view state.highlighter
-                  )
+                [ Tuple.second (view state)
                     |> map HighlighterMsg
                 ]
             , Heading.h2 [ Heading.plaintext "Non-interactive examples" ]
@@ -166,7 +178,7 @@ example =
                                 , ( "vow.", Nothing )
                                 ]
                                     |> List.intersperse ( " ", Nothing )
-                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
                             }
                   }
                 , { viewName = "static"
@@ -186,7 +198,7 @@ example =
                                 , ( "vow.", Nothing )
                                 ]
                                     |> List.intersperse ( " ", Nothing )
-                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
                             }
                   }
                 , { viewName = "static"
@@ -205,7 +217,7 @@ example =
                                 , ( "vow.", Nothing )
                                 ]
                                     |> List.intersperse ( " ", Nothing )
-                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
                             }
                   }
                 , { viewName = "static"
@@ -242,9 +254,36 @@ example =
                             , highlightables = Highlightable.fromMarkdown "Select your [favorite phrase]() in **your** writing."
                             }
                   }
+                , { viewName = "staticWithOverlappingHighlights"
+                  , tool = "buildMarkerWithoutRounding"
+                  , highlightable = "init"
+                  , description = "Multiple kinds of highlights with overlaps."
+                  , example =
+                        Highlighter.staticWithOverlappingHighlights
+                            { id = "example-6"
+                            , highlightables =
+                                [ ( "Sphinx", [ inlineCommentMarker "Comment 1", inlineCommentMarker "Comment 2" ] )
+                                , ( "of", [ inlineCommentMarker "Comment 2" ] )
+                                , ( "black quartz,", [ inlineCommentMarker "Comment 3", inlineCommentMarker "Comment 2" ] )
+                                , ( "judge", [ inlineCommentMarker "Comment 3", inlineCommentMarker "Comment 2" ] )
+                                , ( "my", [ inlineCommentMarker "Comment 2" ] )
+                                , ( "vow.", [] )
+                                ]
+                                    |> List.intersperse ( " ", [] )
+                                    |> List.indexedMap
+                                        (\i ( word, marker ) ->
+                                            if String.Extra.isBlank word then
+                                                Highlightable.init Highlightable.Static marker i ( [], word )
+
+                                            else
+                                                Highlightable.init Highlightable.Interactive marker i ( [], word )
+                                        )
+                                    |> Highlightable.joinAdjacentInteractiveHighlights
+                            }
+                  }
                 ]
             ]
-    , categories = [ Text, Interactions ]
+    , categories = [ Instructional ]
     , keyboardSupport = []
     }
 
@@ -257,7 +296,7 @@ multipleHighlightsHighlightables =
     , ( "How *vexingly* quick daft zebras jump!", Nothing )
     ]
         |> List.intersperse ( " ", Nothing )
-        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
 
 
 exampleMarker : Tool.MarkerModel ()
@@ -304,6 +343,26 @@ reasoningMarker =
         }
 
 
+inlineCommentMarker : String -> Tool.MarkerModel ()
+inlineCommentMarker name =
+    Tool.buildMarkerWithoutRounding
+        { highlightColor = toLightColor Colors.highlightYellow
+        , hoverColor = Colors.highlightYellow
+        , hoverHighlightColor = Colors.highlightYellow
+        , kind = ()
+        , name = Just name
+        }
+
+
+toLightColor : Color -> Color
+toLightColor color =
+    let
+        tint value =
+            value + floor (toFloat (255 - value) * 0.5)
+    in
+    Css.rgb (tint color.red) (tint color.green) (tint color.blue)
+
+
 multipleHighlightsHighlightablesWithBorder : List (Highlightable ())
 multipleHighlightsHighlightablesWithBorder =
     [ ( "Waltz, bad nymph, for quick jigs vex.", Just claimMarkerWithBorder )
@@ -312,7 +371,7 @@ multipleHighlightsHighlightablesWithBorder =
     , ( "How *vexingly* quick daft zebras jump!", Nothing )
     ]
         |> List.intersperse ( " ", Nothing )
-        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static marker i ( [], word ))
+        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
 
 
 claimMarkerWithBorder : Tool.MarkerModel ()
@@ -342,6 +401,29 @@ reasoningMarkerWithBorder =
         }
 
 
+view : State -> ( String, Html (Highlighter.Msg ()) )
+view state =
+    let
+        viewStr =
+            Code.var "view" 1
+    in
+    case (Control.currentValue state.settings).highlighterType of
+        Markdown ->
+            ( viewStr "Highlighter.viewMarkdown"
+            , Highlighter.viewMarkdown state.highlighter
+            )
+
+        Standard ->
+            ( viewStr "Highlighter.view"
+            , Highlighter.view state.highlighter
+            )
+
+        Overlapping ->
+            ( viewStr "Highlighter.viewWithOverlappingHighlights"
+            , Highlighter.viewWithOverlappingHighlights state.highlighter
+            )
+
+
 {-| -}
 type alias State =
     { settings : Control Settings
@@ -357,35 +439,62 @@ init =
             controlSettings
     in
     { settings = settings
-    , highlighter = initHighlighter (Control.currentValue settings) []
+    , highlighter = initHighlighter (Control.currentValue settings) [] |> Tuple.second
     }
 
 
-initHighlighter : Settings -> List (Highlightable ()) -> Highlighter.Model ()
+initHighlighter : Settings -> List (Highlightable ()) -> ( String, Highlighter.Model () )
 initHighlighter settings previousHighlightables =
     let
-        highlightables : List (Highlightable ())
+        highlightables : ( String, List (Highlightable ()) )
         highlightables =
             if settings.splitOnSentences then
                 exampleParagraph
-                    |> List.map (\text i -> Highlightable.init Highlightable.Interactive Nothing i ( [], text ))
-                    |> List.intersperse (\i -> Highlightable.init Highlightable.Static Nothing i ( [], " " ))
+                    |> List.map
+                        (\text i ->
+                            ( "Highlightable.init Highlightable.Interactive [] " ++ String.fromInt i ++ " ( [], " ++ Code.string text ++ ")"
+                            , Highlightable.init Highlightable.Interactive [] i ( [], text )
+                            )
+                        )
+                    |> List.intersperse
+                        (\i ->
+                            ( "Highlightable.init Highlightable.Static [] " ++ String.fromInt i ++ " ( []," ++ Code.string " " ++ ")"
+                            , Highlightable.init Highlightable.Static [] i ( [], " " )
+                            )
+                        )
                     |> List.indexedMap (\i f -> f i)
+                    |> List.unzip
+                    |> Tuple.mapFirst (\c -> Code.listMultiline c 3)
 
             else
-                Highlightable.initFragments Nothing (String.join " " exampleParagraph)
+                ( "Highlightable.initFragments [] " ++ Code.string joinedExampleParagraph
+                , Highlightable.initFragments [] joinedExampleParagraph
+                )
+
+        joinedExampleParagraph =
+            String.join " " exampleParagraph
     in
-    Highlighter.init
+    ( Code.var "model" 1 <|
+        Code.fromModule moduleName "init"
+            ++ Code.recordMultiline
+                [ ( "id", Code.string "example-romeo-and-juliet" )
+                , ( "highlightables", Tuple.first highlightables )
+                , ( "marker", Code.newlineWithIndent 3 ++ Tuple.first settings.tool )
+                , ( "joinAdjacentInteractiveHighlights", Code.bool settings.joinAdjacentInteractiveHighlights )
+                ]
+                2
+    , Highlighter.init
         { id = "example-romeo-and-juliet"
         , highlightables =
-            if List.map .text previousHighlightables == List.map .text highlightables then
+            if List.map .text previousHighlightables == List.map .text (Tuple.second highlightables) then
                 previousHighlightables
 
             else
-                highlightables
-        , marker = settings.tool
+                Tuple.second highlightables
+        , marker = Tuple.second settings.tool
         , joinAdjacentInteractiveHighlights = settings.joinAdjacentInteractiveHighlights
         }
+    )
 
 
 exampleParagraph : List String
@@ -399,9 +508,15 @@ exampleParagraph =
 type alias Settings =
     { splitOnSentences : Bool
     , joinAdjacentInteractiveHighlights : Bool
-    , asMarkdown : Bool
-    , tool : Tool.Tool ()
+    , highlighterType : HighlighterType
+    , tool : ( String, Tool.Tool () )
     }
+
+
+type HighlighterType
+    = Markdown
+    | Standard
+    | Overlapping
 
 
 controlSettings : Control Settings
@@ -409,26 +524,42 @@ controlSettings =
     Control.record Settings
         |> Control.field "splitOnSentences" (Control.bool True)
         |> Control.field "joinAdjacentInteractiveHighlights" (Control.bool False)
-        |> Control.field "asMarkdown" (Control.bool True)
+        |> Control.field "type"
+            (Control.choice
+                [ ( "Markdown", Control.value Markdown )
+                , ( "Standard", Control.value Standard )
+                , ( "Overlapping", Control.value Overlapping )
+                ]
+            )
         |> Control.field "tool"
             (Control.choice
-                [ ( "Marker", Control.map Tool.Marker controlMarker )
-                , ( "Eraser", Control.value (Tool.Eraser Tool.buildEraser) )
+                [ ( "Marker", Control.map (\( c, v ) -> ( "Tool.Marker" ++ c, Tool.Marker v )) controlMarker )
+                , ( "Eraser", Control.value ( "Tool.Eraser Tool.buildEraser", Tool.Eraser Tool.buildEraser ) )
                 ]
             )
 
 
-controlMarker : Control (Tool.MarkerModel ())
+controlMarker : Control ( String, Tool.MarkerModel () )
 controlMarker =
     Control.record
         (\a b c d ->
-            Tool.buildMarker
-                { highlightColor = a
-                , hoverColor = b
-                , hoverHighlightColor = c
+            ( Code.fromModule "Tool" "buildMarker"
+                ++ Code.recordMultiline
+                    [ ( "highlightColor", Tuple.first a )
+                    , ( "hoverColor", Tuple.first b )
+                    , ( "hoverHighlightColor", Tuple.first c )
+                    , ( "kind", "()" )
+                    , ( "name", Code.maybeString d )
+                    ]
+                    4
+            , Tool.buildMarker
+                { highlightColor = Tuple.second a
+                , hoverColor = Tuple.second b
+                , hoverHighlightColor = Tuple.second c
                 , kind = ()
                 , name = d
                 }
+            )
         )
         |> Control.field "highlightColor" (backgroundHighlightColors 0)
         |> Control.field "hoverColor" (backgroundHighlightColors 2)
@@ -436,10 +567,10 @@ controlMarker =
         |> Control.field "name" (Control.maybe True (Control.string "Claim"))
 
 
-backgroundHighlightColors : Int -> Control Color
+backgroundHighlightColors : Int -> Control ( String, Color )
 backgroundHighlightColors rotateWith =
     Examples.Colors.backgroundHighlightColors
-        |> List.map (\( name, value, _ ) -> ( name, Control.value value ))
+        |> List.map (\( name, value, _ ) -> ( name, Control.value ( Code.fromModule "Colors" name, value ) ))
         |> ControlExtra.rotatedChoice rotateWith
 
 
@@ -457,7 +588,9 @@ update msg state =
         UpdateControls settings ->
             ( { state
                 | settings = settings
-                , highlighter = initHighlighter (Control.currentValue settings) state.highlighter.highlightables
+                , highlighter =
+                    initHighlighter (Control.currentValue settings) state.highlighter.highlightables
+                        |> Tuple.second
               }
             , Cmd.none
             )

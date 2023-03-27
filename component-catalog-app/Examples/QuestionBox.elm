@@ -57,9 +57,9 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
-    , categories = [ Interactions ]
+    , categories = [ Instructional ]
     , keyboardSupport = []
-    , preview = [ QuestionBox.view [ QuestionBox.markdown "Is good?" ] ]
+    , preview = [ QuestionBox.view [ QuestionBox.markdown "Gud?" ] ]
     , view = view
     }
 

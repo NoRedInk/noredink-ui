@@ -6,6 +6,7 @@ module Examples.HighlighterToolbar exposing (Msg, State, example)
 
 -}
 
+import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Code
 import Css exposing (Color)
@@ -13,13 +14,15 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes exposing (css, id)
+import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.HighlighterToolbar.V1 as HighlighterToolbar
+import Nri.Ui.HighlighterToolbar.V2 as HighlighterToolbar
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Task
 
 
 moduleName : String
@@ -29,7 +32,7 @@ moduleName =
 
 version : Int
 version =
-    1
+    2
 
 
 {-| -}
@@ -61,17 +64,25 @@ example =
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , HighlighterToolbar.view
-                { onSetEraser = SetTool Nothing
-                , onChangeTag = SetTool << Just
+                { focusAndSelect = FocusAndSelectTag
                 , getColor = getColor
                 , getName = getName
+                , highlighterId = "highlighter"
                 }
                 { currentTool = state.currentTool
                 , tags = tags
                 }
+            , div [ id "highlighter" ] []
             ]
-    , categories = [ Buttons, Interactions ]
-    , keyboardSupport = []
+    , categories = [ Instructional ]
+    , keyboardSupport =
+        [ { keys = [ Arrow KeyboardSupport.Left ]
+          , result = "Select the tool to the left of the currently-selected tool. If the first tool is selected, select the last tool."
+          }
+        , { keys = [ Arrow KeyboardSupport.Right ]
+          , result = "Select the tool to the right of the currently-selected tool. If the last tool is selected, select the first tool."
+          }
+        ]
     }
 
 
@@ -174,7 +185,8 @@ controlSettings =
 {-| -}
 type Msg
     = UpdateControls (Control Settings)
-    | SetTool (Maybe Tag)
+    | FocusAndSelectTag { select : Maybe Tag, focus : Maybe String }
+    | Focused (Result Dom.Error ())
 
 
 {-| -}
@@ -184,5 +196,12 @@ update msg state =
         UpdateControls settings ->
             ( { state | settings = settings }, Cmd.none )
 
-        SetTool tag ->
-            ( { state | currentTool = tag }, Cmd.none )
+        FocusAndSelectTag { select, focus } ->
+            ( { state | currentTool = select }
+            , focus
+                |> Maybe.map (Dom.focus >> Task.attempt Focused)
+                |> Maybe.withDefault Cmd.none
+            )
+
+        Focused error ->
+            ( state, Cmd.none )

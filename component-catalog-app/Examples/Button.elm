@@ -17,9 +17,11 @@ import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Button.V10 as Button
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
 
@@ -159,6 +161,14 @@ initDebugControls =
             (ControlExtra.list
                 |> CommonControls.icon moduleName Button.icon
                 |> CommonControls.rightIcon moduleName Button.rightIcon
+                |> ControlExtra.optionalListItem "size"
+                    (CommonControls.choice moduleName
+                        [ ( "small", Button.small )
+                        , ( "medium", Button.medium )
+                        , ( "large", Button.large )
+                        , ( "modal", Button.modal )
+                        ]
+                    )
                 |> ControlExtra.optionalListItem "width"
                     (CommonControls.choice moduleName
                         [ ( "exactWidth 120", Button.exactWidth 120 )
@@ -166,6 +176,42 @@ initDebugControls =
                         , ( "boundedWidth 100 180", Button.boundedWidth { min = 100, max = 180 } )
                         , ( "unboundedWidth", Button.unboundedWidth )
                         , ( "fillContainerWidth", Button.fillContainerWidth )
+                        ]
+                    )
+                |> ControlExtra.optionalListItem "mobile width"
+                    (CommonControls.choice moduleName
+                        [ ( "exactWidthForMobile 120", Button.exactWidthForMobile 120 )
+                        , ( "exactWidthForMobile 70", Button.exactWidthForMobile 70 )
+                        , ( "boundedWidthForMobile 100 180", Button.boundedWidthForMobile { min = 100, max = 180 } )
+                        , ( "unboundedWidthForMobile", Button.unboundedWidthForMobile )
+                        , ( "fillContainerWidthForMobile", Button.fillContainerWidthForMobile )
+                        ]
+                    )
+                |> ControlExtra.optionalListItem "quiz engine mobile width"
+                    (CommonControls.choice moduleName
+                        [ ( "exactWidthForQuizEngineMobile 120", Button.exactWidthForQuizEngineMobile 120 )
+                        , ( "exactWidthForQuizEngineMobile 70", Button.exactWidthForQuizEngineMobile 70 )
+                        , ( "boundedWidthForQuizEngineMobile 100 180", Button.boundedWidthForQuizEngineMobile { min = 100, max = 180 } )
+                        , ( "unboundedWidthForQuizEngineMobile", Button.unboundedWidthForQuizEngineMobile )
+                        , ( "fillContainerWidthForQuizEngineMobile", Button.fillContainerWidthForQuizEngineMobile )
+                        ]
+                    )
+                |> ControlExtra.optionalListItem "narrow mobile width"
+                    (CommonControls.choice moduleName
+                        [ ( "exactWidthForNarrowMobile 120", Button.exactWidthForNarrowMobile 120 )
+                        , ( "exactWidthForNarrowMobile 70", Button.exactWidthForNarrowMobile 70 )
+                        , ( "boundedWidthForNarrowMobile 100 180", Button.boundedWidthForNarrowMobile { min = 100, max = 180 } )
+                        , ( "unboundedWidthForNarrowMobile", Button.unboundedWidthForNarrowMobile )
+                        , ( "fillContainerWidthForNarrowMobile", Button.fillContainerWidthForNarrowMobile )
+                        ]
+                    )
+                |> ControlExtra.optionalListItem "theme"
+                    (CommonControls.choice moduleName
+                        [ ( "primary", Button.primary )
+                        , ( "secondary", Button.secondary )
+                        , ( "tertiary", Button.tertiary )
+                        , ( "danger", Button.danger )
+                        , ( "premium", Button.premium )
                         ]
                     )
                 |> ControlExtra.optionalBoolListItem "disabled" ( "disabled", Button.disabled )
@@ -226,8 +272,7 @@ viewButtonExamples ellieLinkConfig state =
                             ++ fName
                             ++ " "
                             ++ Code.string label
-                            ++ " "
-                            ++ Code.list (List.map Tuple.first attributes)
+                            ++ Code.listMultiline (List.map Tuple.first attributes) 1
                 in
                 [ { sectionName = "Button"
                   , code = toCode "button"
@@ -237,7 +282,16 @@ viewButtonExamples ellieLinkConfig state =
                   }
                 ]
         }
-    , buttons model
+    , Heading.h2
+        [ Heading.plaintext "Interactive example"
+        , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
+        ]
+    , viewCustomizableExample model
+    , Heading.h2
+        [ Heading.plaintext "Non-interactive examples"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
+    , buttonsTable
     , toggleButtons state.pressedToggleButtons
     , Button.link "linkExternalWithTracking"
         [ Button.unboundedWidth
@@ -251,8 +305,23 @@ viewButtonExamples ellieLinkConfig state =
         |> div []
 
 
-buttons : Model -> Html Msg
-buttons model =
+viewCustomizableExample : Model -> Html Msg
+viewCustomizableExample model =
+    let
+        buttonOrLink =
+            case model.buttonType of
+                Link ->
+                    Button.link
+
+                Button ->
+                    Button.button
+    in
+    buttonOrLink model.label
+        (List.map Tuple.second model.attributes)
+
+
+buttonsTable : Html msg
+buttonsTable =
     let
         sizes =
             [ ( Button.small, "small" )
@@ -268,52 +337,69 @@ buttons model =
             , ( Button.premium, "premium" )
             ]
 
-        exampleRow ( style, styleName ) =
-            List.concat
-                [ [ td
-                        [ css
-                            [ verticalAlign middle
-                            ]
-                        ]
-                        [ text styleName ]
-                  ]
-                , List.map (Tuple.first >> exampleCell style) sizes
-                ]
-                |> tr []
-
-        buttonOrLink =
-            case model.buttonType of
-                Link ->
-                    Button.link
-
-                Button ->
-                    Button.button
-
-        exampleCell setStyle setSize =
-            buttonOrLink model.label
-                (setSize :: setStyle :: List.map Tuple.second model.attributes)
-                |> List.singleton
-                |> td
-                    [ css
-                        [ verticalAlign middle
-                        , Css.width (Css.px 200)
-                        ]
+        exampleRow styleTuple =
+            [ tr []
+                (td
+                    [ css [ verticalAlign middle, Css.borderTop3 (Css.px 1) Css.solid Colors.gray85 ]
+                    , Attributes.rowspan 2
                     ]
+                    [ code [] [ text (Code.fromModule moduleName (Tuple.second styleTuple)) ] ]
+                    :: List.map
+                        (exampleCell
+                            [ Css.borderTop3 (Css.px 1) Css.solid Colors.gray85
+                            , Css.paddingBottom Css.zero |> Css.important
+                            ]
+                            ( Button.button, "button" )
+                            styleTuple
+                        )
+                        sizes
+                    ++ [ td [ css [ verticalAlign middle, Css.borderTop3 (Css.px 1) Css.solid Colors.gray85 ] ]
+                            [ code [] [ text "Button.button" ] ]
+                       ]
+                )
+            , tr []
+                (List.map (exampleCell [] ( Button.link, "link" ) styleTuple) sizes
+                    ++ [ td [ css [ verticalAlign middle ] ]
+                            [ code [] [ text "Button.link" ] ]
+                       ]
+                )
+            ]
+
+        exampleCell cellStyle ( view, viewName ) ( style, styleName ) ( setSize, sizeName ) =
+            inCell cellStyle <| view (sizeName ++ " " ++ styleName ++ " " ++ viewName) [ setSize, style ]
+
+        inCell style content =
+            td
+                [ css
+                    [ verticalAlign middle
+                    , Css.batch style
+                    , Css.padding (Css.px 10)
+                    ]
+                ]
+                [ content ]
     in
     List.concat
         [ [ sizes
-                |> List.map (\( _, sizeName ) -> th [] [ text sizeName ])
-                |> (\cells -> tr [] (td [] [] :: cells))
+                |> List.map
+                    (\( _, sizeName ) ->
+                        th [ css [ Css.padding2 (Css.px 25) Css.zero ] ]
+                            [ code [] [ text (Code.fromModule moduleName sizeName) ]
+                            ]
+                    )
+                |> (\cells -> tr [] (th [] [] :: cells))
           ]
-        , List.map exampleRow styles
+        , List.concatMap exampleRow styles
         ]
-        |> table []
+        |> table [ css [ Css.borderCollapse Css.collapse ] ]
 
 
 toggleButtons : Set Int -> Html Msg
 toggleButtons pressedToggleButtons =
     div []
-        [ Heading.h3 [ Heading.plaintext "Button toggle" ]
+        [ Heading.h2
+            [ Heading.plaintext "Button toggle"
+            , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+            ]
         , div [ css [ Css.displayFlex, Css.marginBottom (Css.px 20) ] ]
             [ Button.toggleButton
                 { onDeselect = ToggleToggleButton 0

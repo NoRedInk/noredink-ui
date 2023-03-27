@@ -1,7 +1,7 @@
 # Ownership, policies, & key concepts
 
 NoRedInk’s accessibility team, the Accessibilibats, own the `noredink-ui` package and the Component Catalog app showcasing its components.
-While others may contribute to `noredink-ui` and are encouraged to do so, the Accessibilibats (a.k.a A11ybats) are responsible for oversight of the foundational aspects of the component library, a.k.a. “**[Component Library Foundations](#component-library-foundations)**.”
+While others may contribute to `noredink-ui` and are encouraged to do so, the Accessibilibats (a.k.a. A11ybats) are responsible for oversight of the foundational aspects of the component library, a.k.a. “**[Component Library Foundations](#component-library-foundations)**.”
 
 Given this ownership and responsibility, A11ybats will provide guidance and support to developers and designers who are building new components or working with existing components.
 
@@ -142,6 +142,13 @@ Any NoRedInk engineer can deploy a new version of `noredink-ui`. Generally, we p
   - `git pull`
 - Run `elm publish` and follow its prompts
   - Note: when you're asked to create a version tag, **please be sure to include a meaningful message**! Include details in the message that describe why this noredink-ui version exists at ll.
+  - Create an annotated tag like this:
+  ```
+  git tag -a 22.x.y -m "Description of this release version: i.e.: 'high-contrast mode highlight style change'"
+  ```
+  - Because of branch protection you will not be able to push a tag like: `git push origin master 22.x.y` (The previous command requires permissions to push directly to master even if you have no changes).
+  - Instead, please push your new `22.x.y` tag with the following: `git push origin 22.x.y`
+
 
 Once you've published, you should see the latest version at <https://package.elm-lang.org/packages/NoRedInk/noredink-ui/>. It can take a few minutes to show up.
 

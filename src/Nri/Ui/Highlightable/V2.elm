@@ -1,12 +1,12 @@
-module Nri.Ui.Highlightable.V1 exposing
+module Nri.Ui.Highlightable.V2 exposing
     ( Highlightable, Type(..), UIState(..), Attribute(..)
-    , init, initFragment, initFragments
+    , init, initFragments
     , fromMarkdown
-    , splitHighlightableOnWords, splitWords
     , blur, clearHint, hint, hover
-    , set, toggle
+    , set
+    , joinAdjacentInteractiveHighlights
     , attributeSorter
-    , asFragmentTuples, usedMarkers, text
+    , asFragmentTuples, usedMarkers, text, byId
     )
 
 {-| A Highlightable represents a span of text, typically a word, and its state.
@@ -16,9 +16,16 @@ Highlighter is initialized, it's very possible for a Highlightable to consist of
 just a single whitespace.
 
 
-## Patch changes
+## Changes from V1
 
   - move asFragmentTuples, usedMarkers, and text to the Highlightable module
+  - remove initFragment, splitHighlightableOnWords, splitWords
+  - remove toggle, which is not used
+  - rename groupIndex -> index
+  - ensure that fromMarkdown indexes the fragments correctly
+  - support multiple kinds of mark
+  - move joinAdjacentInteractiveHighlights to the Highlightable module
+  - adds byId
 
 
 ## Types
@@ -28,23 +35,15 @@ just a single whitespace.
 
 ## Initializers
 
-@docs init, initFragment, initFragments
+@docs init, initFragments
 @docs fromMarkdown
 
 
-## Transformations
-
-@docs splitHighlightableOnWords, splitWords
-
-
-## UIState related
+## UIState and marker
 
 @docs blur, clearHint, hint, hover
-
-
-## Marker related
-
-@docs set, toggle
+@docs set
+@docs joinAdjacentInteractiveHighlights
 
 
 ## Attribute related
@@ -54,13 +53,14 @@ just a single whitespace.
 
 ## Getters
 
-@docs asFragmentTuples, usedMarkers, text
+@docs asFragmentTuples, usedMarkers, text, byId
 
 -}
 
 import List.Extra
 import Markdown.Block
 import Markdown.Inline
+import Maybe.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Regex exposing (Regex)
@@ -85,17 +85,17 @@ import String.Extra
 
   - **customAttributes**: User-supplied attributes that do not change once a Highlightable is initialized.
 
-  - **marked**: Current highlight.
+  - **marked**: Current highlights, if any.
 
-  - **groupIndex**: Index that identifies the fragment this Highlightable belongs to.
+  - **index**: Index that identifies the fragment this Highlightable belongs to. Must be unique in the list of highlightables.
 
 -}
 type alias Highlightable marker =
     { text : String
     , uiState : UIState
     , customAttributes : List Attribute
-    , marked : Maybe (Tool.MarkerModel marker)
-    , groupIndex : Int
+    , marked : List (Tool.MarkerModel marker)
+    , index : Int
     , type_ : Type
     }
 
@@ -154,33 +154,15 @@ type UIState
 
 
 {-| -}
-init : Type -> Maybe (Tool.MarkerModel marker) -> Int -> ( List Attribute, String ) -> Highlightable marker
+init : Type -> List (Tool.MarkerModel marker) -> Int -> ( List Attribute, String ) -> Highlightable marker
 init type_ marked index ( attributes, text_ ) =
     { text = text_
     , uiState = None
     , customAttributes = attributes
     , marked = marked
-    , groupIndex = index
+    , index = index
     , type_ = type_
     }
-
-
-{-| Split a multi-word string into multiple single-word highlights.
-This is to deal with the highlighter not doing line breaks within a highlight group,
-which can look funny if a highlight contains longer text.
--}
-initFragment : Maybe (Tool.MarkerModel marker) -> Int -> List ( List Attribute, String ) -> List (Highlightable marker)
-initFragment marked index spans =
-    let
-        splitSpan ( classes, text_ ) =
-            text_
-                |> splitWords
-                |> List.filter (not << String.isEmpty)
-                |> List.map (Tuple.pair classes)
-    in
-    spans
-        |> List.concatMap splitSpan
-        |> List.map (init Interactive marked index)
 
 
 whitespace : Regex
@@ -189,14 +171,13 @@ whitespace =
         |> Maybe.withDefault Regex.never
 
 
-{-| Similar to initFragment but each word is treated as a fragment,
-instead of treating the whole string as a fragment.
+{-| Initialize highlightables from a string.
 
 Note that we're transforming all whitespace to spaces, so newlines are not preserved
-as me move to and from fragments
+as me move to and from fragments. Spaces will be treated as static elements. Words will be interactive.
 
 -}
-initFragments : Maybe (Tool.MarkerModel marker) -> String -> List (Highlightable marker)
+initFragments : List (Tool.MarkerModel marker) -> String -> List (Highlightable marker)
 initFragments marked text_ =
     let
         spaceOrInit index maybeWord =
@@ -205,7 +186,7 @@ initFragments marked text_ =
                     init Interactive marked index ( [], word )
 
                 Nothing ->
-                    init Static Nothing index ( [], " " )
+                    init Static [] index ( [], " " )
     in
     Regex.split whitespace text_
         |> List.map Just
@@ -226,7 +207,7 @@ fromMarkdown : String -> List (Highlightable ())
 fromMarkdown markdownString =
     let
         static maybeMark mapStrings c =
-            init Static maybeMark -1 ( [], mapStrings c )
+            init Static (Maybe.Extra.toList maybeMark) -1 ( [], mapStrings c )
 
         defaultMark =
             Tool.buildMarker
@@ -343,7 +324,10 @@ fromMarkdown markdownString =
                     ( segment.marked
                     , case acc of
                         last :: remainder ->
-                            if segment.marked == last.marked then
+                            -- Since there's only 1 possible mark type here,
+                            -- it's safe to assume that the list is either empty or
+                            -- of length 1
+                            if List.head segment.marked == List.head last.marked then
                                 { segment | text = segment.text ++ last.text }
                                     :: remainder
 
@@ -354,8 +338,9 @@ fromMarkdown markdownString =
                             segment :: acc
                     )
                 )
-                ( Nothing, [] )
+                ( [], [] )
             |> Tuple.second
+            |> List.indexedMap (\i highlightable -> { highlightable | index = i })
 
 
 {-| -}
@@ -395,58 +380,64 @@ clearHint highlightable =
 {-| -}
 set : Maybe (Tool.MarkerModel marker) -> Highlightable marker -> Highlightable marker
 set marked highlightable =
-    { highlightable | marked = marked }
+    { highlightable | marked = Maybe.Extra.toList marked }
 
 
 {-| -}
-toggle : Tool.MarkerModel marker -> Highlightable marker -> Highlightable marker
-toggle marker_ highlightable =
-    { highlightable
-        | marked =
-            case highlightable.marked of
-                Just oldMarker ->
-                    if oldMarker /= marker_ then
-                        Just marker_
+joinAdjacentInteractiveHighlights : List (Highlightable m) -> List (Highlightable m)
+joinAdjacentInteractiveHighlights highlightables =
+    highlightables
+        |> List.foldr
+            (\segment ( lastInteractiveHighlightMarkers, staticAcc, acc ) ->
+                case segment.type_ of
+                    Interactive ->
+                        let
+                            static_ =
+                                List.map (\s -> { s | marked = listUnion segment.marked lastInteractiveHighlightMarkers }) staticAcc
+                        in
+                        ( segment.marked, [], segment :: static_ ++ acc )
 
-                    else
-                        Nothing
+                    Static ->
+                        ( lastInteractiveHighlightMarkers, segment :: staticAcc, acc )
+            )
+            ( [], [], [] )
+        |> (\( _, static_, acc ) -> static_ ++ acc)
 
-                Nothing ->
-                    Just marker_
-    }
 
-
-{-| Split a highlightable into one highlightable per word.
+{-| Get the highlightable matching the passed-in ID, if any.
 -}
-splitHighlightableOnWords : Highlightable marker -> List (Highlightable marker)
-splitHighlightableOnWords highlightable =
-    highlightable.text
-        |> splitWords
-        |> List.map (\chunk -> { highlightable | text = chunk })
+byId : Int -> List (Highlightable kind) -> Maybe (Highlightable kind)
+byId index =
+    List.filter (\h -> h.index == index) >> List.head
 
 
-{-| Create list of words intersperse with spaces.
+{-| This is not an efficient way to union values -- using a set would be way better!
+
+However,
+(a) this will only ever be used with a tiny lists and
+(b) if we use a set, we'll need to thread a sorter through, impacting the API negatively
+(c) if we use a set, we'll need to convert to and from a set
+
+This tradeoff balance here might change if we decide to model the marked values as a set instead of as a list.
+
 -}
-splitWords : String -> List String
-splitWords string =
-    string
-        |> String.split " "
-        |> List.intersperse " "
+listUnion : List a -> List a -> List a
+listUnion xs ys =
+    List.filterMap (\x -> List.Extra.find ((==) x) ys) xs
 
 
-{-| Get unique markers that have been used.
+{-| Get unique markers that have been used. Note: ignores marks on whitespace.
 -}
 usedMarkers : Sorter marker -> List (Highlightable marker) -> Sort.Set.Set marker
 usedMarkers sorter highlightables =
     highlightables
-        |> List.filterMap
+        |> List.concatMap
             (\highlightable ->
                 if String.Extra.isBlank highlightable.text then
-                    Nothing
+                    []
 
                 else
-                    highlightable.marked
-                        |> Maybe.map .kind
+                    List.map .kind highlightable.marked
             )
         |> Sort.Set.fromList sorter
 
@@ -454,17 +445,13 @@ usedMarkers sorter highlightables =
 {-| Get a list of fragment texts and whether or not they are marked.
 Useful for encoding answers.
 -}
-asFragmentTuples : List (Highlightable marker) -> List ( Maybe marker, String )
+asFragmentTuples : List (Highlightable marker) -> List ( List marker, String )
 asFragmentTuples highlightables =
-    highlightables
-        |> List.Extra.groupWhile (\a b -> a.groupIndex == b.groupIndex)
-        |> List.map
-            (\( first, rest ) ->
-                ( first.marked
-                    |> Maybe.map .kind
-                , text (first :: rest)
-                )
-            )
+    let
+        asFragmentTuple highlightable =
+            ( List.map .kind highlightable.marked, highlightable.text )
+    in
+    List.map asFragmentTuple highlightables
 
 
 {-| Fetch the text from a series of highlightables.

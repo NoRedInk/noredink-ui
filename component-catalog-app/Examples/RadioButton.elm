@@ -117,8 +117,17 @@ view ellieLinkConfig state =
         , version = version
         , update = SetSelectionSettings
         , settings = state.selectionSettings
-        , mainType = Just "Html msg"
-        , extraCode = []
+        , mainType = Nothing
+        , extraCode =
+            [ "type Animals = Dogs | Cats\n"
+            , "toString : Animals -> String"
+            , "toString animals ="
+                ++ Code.caseExpression "animals"
+                    [ ( "Dogs", Code.string selectionSettings.dogsLabel )
+                    , ( "Cats", Code.string selectionSettings.catsLabel )
+                    ]
+                    1
+            ]
         , renderExample = Code.unstyledView
         , toExampleCode =
             \_ ->
@@ -154,26 +163,21 @@ view ellieLinkConfig state =
 viewExamplesCode : SelectionSettings -> Maybe Selection -> String
 viewExamplesCode selectionSettings selectedValue =
     let
-        selectedValueString =
-            case selectedValue of
-                Just value ->
-                    "Just " ++ selectionToString value
-
-                Nothing ->
-                    "Nothing"
-
         toExampleCode ( kind, settings ) =
-            "RadioButton.view"
-                ++ ("\n\t{ label = " ++ selectionToString kind)
-                ++ "\n\t, name = \"pets\""
-                ++ ("\n\t, value = " ++ selectionToString kind)
-                ++ ("\n\t, selectedValue = " ++ selectedValueString)
-                ++ "\n\t, valueToString = toString"
-                ++ "\n\t}\n\t[ "
-                ++ String.join "\n\t, " (List.map Tuple.first settings)
-                ++ "\n\t] "
+            Code.fromModule "RadioButton" "view"
+                ++ Code.recordMultiline
+                    [ ( "label", (selectionToString selectionSettings >> Code.string) kind )
+                    , ( "name", Code.string "pets" )
+                    , ( "value", selectionToString selectionSettings kind )
+                    , ( "selectedValue"
+                      , Code.maybe (Maybe.map (selectionToString selectionSettings) selectedValue)
+                      )
+                    , ( "valueToString", "toString" )
+                    ]
+                    2
+                ++ Code.listMultiline (List.map Tuple.first settings) 2
     in
-    "  " ++ String.join "\n, " (List.map toExampleCode (examples selectionSettings))
+    "div []" ++ Code.listMultiline (List.map toExampleCode (examples selectionSettings)) 1
 
 
 viewExamples : SelectionSettings -> Maybe Selection -> Html Msg
@@ -181,11 +185,11 @@ viewExamples selectionSettings selectedValue =
     let
         viewExample_ ( kind, settings ) =
             RadioButton.view
-                { label = selectionToString kind
+                { label = selectionToString selectionSettings kind
                 , name = "pets"
                 , value = kind
                 , selectedValue = selectedValue
-                , valueToString = selectionToString
+                , valueToString = selectionToString selectionSettings
                 }
                 (RadioButton.onSelect Select :: List.map Tuple.second settings)
     in
@@ -207,14 +211,14 @@ type Selection
     | Cats
 
 
-selectionToString : Selection -> String
-selectionToString selection =
+selectionToString : SelectionSettings -> Selection -> String
+selectionToString { dogsLabel, catsLabel } selection =
     case selection of
         Dogs ->
-            "Dogs"
+            dogsLabel
 
         Cats ->
-            "Cats"
+            catsLabel
 
 
 {-| -}
@@ -235,7 +239,9 @@ init =
 
 
 type alias SelectionSettings =
-    { dogs : List ( String, RadioButton.Attribute Selection Msg )
+    { dogsLabel : String
+    , dogs : List ( String, RadioButton.Attribute Selection Msg )
+    , catsLabel : String
     , cats : List ( String, RadioButton.Attribute Selection Msg )
     }
 
@@ -243,7 +249,9 @@ type alias SelectionSettings =
 initSelectionSettings : Control SelectionSettings
 initSelectionSettings =
     Control.record SelectionSettings
+        |> Control.field "Dogs label" (Control.string "Dogs")
         |> Control.field "Dogs" controlAttributes
+        |> Control.field "Cats label" (Control.string "Cats")
         |> Control.field "Cats" controlAttributes
 
 
@@ -263,7 +271,13 @@ controlAttributes =
             )
         |> ControlExtra.optionalListItem "containerCss"
             (Control.choice
-                [ ( "100% width"
+                [ ( "max-width with border"
+                  , Control.value
+                        ( "RadioButton.containerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]"
+                        , RadioButton.containerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]
+                        )
+                  )
+                , ( "100% width"
                   , Control.value
                         ( "RadioButton.containerCss [ Css.width (Css.pct 100) ]"
                         , RadioButton.containerCss [ Css.width (Css.pct 100) ]
