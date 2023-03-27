@@ -1,7 +1,7 @@
 module Nri.Ui.Tabs.V8 exposing
     ( view
     , Alignment(..)
-    , Tab, Attribute, build
+    , Tab, TabAttribute, build
     , tabString, tabHtml, withTooltip, disabled, labelledBy, describedBy
     , panelHtml
     , spaHref
@@ -14,7 +14,7 @@ module Nri.Ui.Tabs.V8 exposing
 
 @docs view
 @docs Alignment
-@docs Tab, Attribute, build
+@docs Tab, TabAttribute, build
 @docs tabString, tabHtml, withTooltip, disabled, labelledBy, describedBy
 @docs panelHtml
 @docs spaHref
@@ -39,32 +39,32 @@ type Tab id msg
 
 
 {-| -}
-type Attribute id msg
+type TabAttribute id msg
     = Attribute (TabsInternal.Tab id msg -> TabsInternal.Tab id msg)
 
 
 {-| -}
-tabString : String -> Attribute id msg
+tabString : String -> TabAttribute id msg
 tabString content =
     Attribute (\tab -> { tab | tabView = [ viewTabDefault content ] })
 
 
 {-| -}
-tabHtml : Html Never -> Attribute id msg
+tabHtml : Html Never -> TabAttribute id msg
 tabHtml content =
     Attribute (\tab -> { tab | tabView = [ Html.map never content ] })
 
 
 {-| Tooltip defaults: `[Tooltip.smallPadding, Tooltip.onBottom, Tooltip.fitToContent]`
 -}
-withTooltip : List (Tooltip.Attribute msg) -> Attribute id msg
+withTooltip : List (Tooltip.Attribute msg) -> TabAttribute id msg
 withTooltip attributes =
     Attribute (\tab -> { tab | tabTooltip = attributes })
 
 
 {-| Makes it so that the tab can't be clicked or focused via keyboard navigation
 -}
-disabled : Bool -> Attribute id msg
+disabled : Bool -> TabAttribute id msg
 disabled isDisabled =
     Attribute (\tab -> { tab | disabled = isDisabled })
 
@@ -72,7 +72,7 @@ disabled isDisabled =
 {-| Sets an overriding labelledBy on the tab for an external tooltip.
 This assumes an external tooltip is set and disables any internal tooltip configured.
 -}
-labelledBy : String -> Attribute id msg
+labelledBy : String -> TabAttribute id msg
 labelledBy labelledById =
     Attribute (\tab -> { tab | labelledBy = Just labelledById })
 
@@ -84,31 +84,31 @@ This attribute can be used multiple times if more than one element describes
 this tab.
 
 -}
-describedBy : String -> Attribute id msg
+describedBy : String -> TabAttribute id msg
 describedBy describedById =
     Attribute (\tab -> { tab | describedBy = describedById :: tab.describedBy })
 
 
 {-| -}
-panelHtml : Html msg -> Attribute id msg
+panelHtml : Html msg -> TabAttribute id msg
 panelHtml content =
     Attribute (\tab -> { tab | panelView = content })
 
 
 {-| -}
-spaHref : String -> Attribute id msg
+spaHref : String -> TabAttribute id msg
 spaHref url =
     Attribute (\tab -> { tab | spaHref = Just url })
 
 
 {-| -}
-tabAttributes : List (Html.Attribute msg) -> Attribute id msg
+tabAttributes : List (Html.Attribute msg) -> TabAttribute id msg
 tabAttributes attrs =
     Attribute (\tab -> { tab | tabAttributes = tab.tabAttributes ++ attrs })
 
 
 {-| -}
-build : { id : id, idString : String } -> List (Attribute id msg) -> Tab id msg
+build : { id : id, idString : String } -> List (TabAttribute id msg) -> Tab id msg
 build config attributes =
     Tab
         (TabsInternal.fromList config
