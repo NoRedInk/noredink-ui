@@ -7,15 +7,10 @@ module Nri.Ui.Tabs.V8 exposing
     , spaHref
     )
 
-{-| Patch changes:
+{-| Changes from V7:
 
-  - use Tooltip.V3 instead of Tooltip.V2
-
-Changes from V7:
-
-  - Changes Tab construction to follow attributes-based approach
-  - Adds tooltip support
-  - combine onFocus and onSelect into focusAndSelect msg handler (for tooltips)
+  - Uses an HTML-like API
+  - Adds sticky positioning
 
 @docs view
 @docs Alignment
