@@ -99,6 +99,7 @@ startGroupStyles =
         [ Css.property "border-left" "2px solid Mark"
         ]
     , Css.paddingLeft (Css.px 4)
+    , Css.marginLeft (Css.px -4)
     , Css.borderTopLeftRadius (Css.px 4)
     , Css.borderBottomLeftRadius (Css.px 4)
     ]
@@ -110,6 +111,7 @@ endGroupStyles =
         [ Css.property "border-right" "2px solid Mark"
         ]
     , Css.paddingRight (Css.px 4)
+    , Css.marginRight (Css.px -4)
     , Css.borderTopRightRadius (Css.px 4)
     , Css.borderBottomRightRadius (Css.px 4)
     ]
@@ -146,12 +148,6 @@ hoverStyles color =
         , MediaQuery.highContrastMode
             [ Css.property "border-color" "Highlight" |> Css.important
             ]
-
-        -- The Highlighter applies both these styles and the startGroup and
-        -- endGroup styles. Here we disable the left and the right padding
-        -- because otherwise it would cause the text to move around.
-        , Css.important (Css.paddingLeft Css.zero)
-        , Css.important (Css.paddingRight Css.zero)
         ]
 
 
