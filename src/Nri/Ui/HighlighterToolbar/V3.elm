@@ -17,7 +17,7 @@ module Nri.Ui.HighlighterToolbar.V3 exposing (view)
 
 ### Changes from V1:
 
-  - replaces `onChangeTag` and `onSetEraser` with `focusAndSelect`.
+  - replaces `onChangeTag` and `onSetEraser` with `onSelect`.
   - adds `highlighterId` to config
   - adds keyboard navigation
 
@@ -41,7 +41,7 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 {-| View renders each marker and an eraser. This is exclusively used with an interactive Highlighter, whose id you should pass in when initializing the HighlighterToolbar.
 -}
 view :
-    { focusAndSelect : { select : Maybe tag, focus : Maybe String } -> msg
+    { onSelect : Maybe tag -> msg
     , getColor : tag -> { extras | colorSolid : Color, colorLight : Color }
     , getName : tag -> String
     , highlighterId : String
@@ -63,7 +63,7 @@ view config model =
     in
     toolbar config.highlighterId
         (List.map viewTagWithConfig model.tags
-            ++ [ viewEraser config.focusAndSelect eraserSelected tools model.currentTool config.getName ]
+            ++ [ viewEraser config.onSelect eraserSelected tools model.currentTool config.getName ]
         )
 
 
@@ -86,7 +86,7 @@ toolbar highlighterId =
 
 
 viewTag :
-    { focusAndSelect : { select : Maybe tag, focus : Maybe String } -> msg
+    { onSelect : Maybe tag -> msg
     , getColor : tag -> { extras | colorSolid : Color, colorLight : Color }
     , getName : tag -> String
     , highlighterId : String
@@ -96,20 +96,20 @@ viewTag :
     -> List (Maybe tag)
     -> Maybe tag
     -> Html msg
-viewTag { focusAndSelect, getColor, getName } selected tag tools currentTool =
-    viewTool (getName tag) focusAndSelect (getColor tag) selected (Just tag) tools currentTool getName
+viewTag { onSelect, getColor, getName } selected tag tools currentTool =
+    viewTool (getName tag) onSelect (getColor tag) selected (Just tag) tools currentTool getName
 
 
 viewEraser :
-    ({ select : Maybe tag, focus : Maybe String } -> msg)
+    (Maybe tag -> msg)
     -> Bool
     -> List (Maybe tag)
     -> Maybe tag
     -> (tag -> String)
     -> Html msg
-viewEraser focusAndSelect selected tools currentTool getName =
+viewEraser onSelect selected tools currentTool getName =
     viewTool "Remove highlight"
-        focusAndSelect
+        onSelect
         { colorLight = Colors.gray75, colorSolid = Colors.white }
         selected
         Nothing
@@ -120,7 +120,7 @@ viewEraser focusAndSelect selected tools currentTool getName =
 
 viewTool :
     String
-    -> ({ select : Maybe tag, focus : Maybe String } -> msg)
+    -> (Maybe tag -> msg)
     -> { extras | colorSolid : Color, colorLight : Color }
     -> Bool
     -> Maybe tag
@@ -128,7 +128,7 @@ viewTool :
     -> Maybe tag
     -> (tag -> String)
     -> Html msg
-viewTool name focusAndSelect theme selected tag tools currentTool getName =
+viewTool name onSelect theme selected tag tools currentTool getName =
     label
         [ id ("tag-" ++ name)
         , css
@@ -143,7 +143,7 @@ viewTool name focusAndSelect theme selected tag tools currentTool getName =
             , Attributes.type_ "radio"
             , Attributes.name "highlighter-toolbar-tool"
             , Attributes.checked (currentTool == tag)
-            , onClick (focusAndSelect { select = tag, focus = Nothing })
+            , onClick (onSelect tag)
             , css
                 [ Css.cursor Css.pointer
 

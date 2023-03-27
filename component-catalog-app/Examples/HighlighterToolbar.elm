@@ -6,7 +6,6 @@ module Examples.HighlighterToolbar exposing (Msg, State, example)
 
 -}
 
-import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Code
 import Css exposing (Color)
@@ -22,7 +21,6 @@ import Nri.Ui.HighlighterToolbar.V3 as HighlighterToolbar
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
-import Task
 
 
 moduleName : String
@@ -64,7 +62,7 @@ example =
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , HighlighterToolbar.view
-                { focusAndSelect = FocusAndSelectTag
+                { onSelect = SelectTag
                 , getColor = getColor
                 , getName = getName
                 , highlighterId = "highlighter"
@@ -185,8 +183,7 @@ controlSettings =
 {-| -}
 type Msg
     = UpdateControls (Control Settings)
-    | FocusAndSelectTag { select : Maybe Tag, focus : Maybe String }
-    | Focused (Result Dom.Error ())
+    | SelectTag (Maybe Tag)
 
 
 {-| -}
@@ -196,12 +193,7 @@ update msg state =
         UpdateControls settings ->
             ( { state | settings = settings }, Cmd.none )
 
-        FocusAndSelectTag { select, focus } ->
-            ( { state | currentTool = select }
-            , focus
-                |> Maybe.map (Dom.focus >> Task.attempt Focused)
-                |> Maybe.withDefault Cmd.none
+        SelectTag newTool ->
+            ( { state | currentTool = newTool }
+            , Cmd.none
             )
-
-        Focused error ->
-            ( state, Cmd.none )
