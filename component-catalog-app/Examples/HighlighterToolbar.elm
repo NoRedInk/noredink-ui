@@ -58,7 +58,25 @@ example =
                 , mainType = Nothing
                 , extraCode = []
                 , renderExample = Code.unstyledView
-                , toExampleCode = \_ -> []
+                , toExampleCode =
+                    \_ ->
+                        [ { sectionName = "Example"
+                          , code =
+                                Code.fromModule moduleName "view"
+                                    ++ Code.recordMultiline
+                                        [ ( "onSelect", "identity -- msg for selecting the tag or eraser" )
+                                        , ( "getColor", "\\tag -> { colorSolid = tag.colorSolid, colorLight = tag.colorLight }" )
+                                        , ( "getName", ".name" )
+                                        , ( "highlighterId", Code.string "highlighter-id" )
+                                        ]
+                                        2
+                                    ++ Code.recordMultiline
+                                        [ ( "currentTool", "Nothing" )
+                                        , ( "tags", "[]" )
+                                        ]
+                                        2
+                          }
+                        ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , HighlighterToolbar.view
