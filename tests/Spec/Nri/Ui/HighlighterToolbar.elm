@@ -1,6 +1,5 @@
 module Spec.Nri.Ui.HighlighterToolbar exposing (..)
 
-import Accessibility.Aria as Aria
 import Accessibility.Key as Key
 import Css exposing (Color)
 import Expect
@@ -13,80 +12,21 @@ import Spec.KeyboardHelpers as KeyboardHelpers
 import Test exposing (..)
 import Test.Html.Event as Event
 import Test.Html.Query as Query
-import Test.Html.Selector as Selector
+import Test.Html.Selector as Selector exposing (Selector)
 
 
 spec : Test
 spec =
     describe "Nri.Ui.HighlighterToolbar.V3"
-        [ describe "tool selection" selectionTests
-        , describe "keyboard behavior" keyboardTests
+        [ test "sets selection status on the active tool" <|
+            \() ->
+                program
+                    |> clickTool "Claim"
+                    |> ensureActiveToolIs "Claim"
+                    |> clickTool "Evidence"
+                    |> ensureActiveToolIs "Evidence"
+                    |> done
         ]
-
-
-selectionTests : List Test
-selectionTests =
-    [ test "sets aria-pressed to true on the active tool only" <|
-        \() ->
-            program
-                |> clickTool "Claim"
-                |> ensureActiveHasAriaPressedTrue "Claim"
-                |> ensureNotActiveHaveAriaPressedFalse [ "Evidence", "Reasoning", "Remove highlight" ]
-                |> clickTool "Evidence"
-                |> ensureActiveHasAriaPressedTrue "Evidence"
-                |> ensureNotActiveHaveAriaPressedFalse [ "Claim", "Reasoning", "Remove highlight" ]
-                |> done
-    , test "adds visual indicator to the active tool only" <|
-        \() ->
-            program
-                |> clickTool "Claim"
-                |> ensureActiveHasVisualIndicator
-                |> ensureNotActiveDoNotHaveVisualIndicator
-                |> done
-    ]
-
-
-keyboardTests : List Test
-keyboardTests =
-    [ test "has a focusable tool" <|
-        \() ->
-            program
-                |> ensureTabbable "Remove highlight"
-                |> done
-    , test "has only one tool included in the tab sequence" <|
-        \() ->
-            program
-                |> ensureOnlyOneInTabSequence [ "Claim", "Evidence", "Reasoning", "Remove highlight" ]
-                |> done
-    , test "moves focus right on right arrow key. Should wrap focus on last element." <|
-        \() ->
-            program
-                |> ensureTabbable "Remove highlight"
-                |> rightArrow
-                |> ensureTabbable "Claim"
-                |> ensureOnlyOneInTabSequence [ "Claim", "Evidence", "Reasoning", "Remove highlight" ]
-                |> rightArrow
-                |> ensureTabbable "Evidence"
-                |> rightArrow
-                |> ensureTabbable "Reasoning"
-                |> rightArrow
-                |> ensureTabbable "Remove highlight"
-                |> done
-    , test "moves focus left on left arrow key. Should wrap focus on first element." <|
-        \() ->
-            program
-                |> ensureTabbable "Remove highlight"
-                |> leftArrow
-                |> ensureTabbable "Reasoning"
-                |> leftArrow
-                |> ensureTabbable "Evidence"
-                |> leftArrow
-                |> ensureTabbable "Claim"
-                |> leftArrow
-                |> ensureTabbable "Remove highlight"
-                |> ensureOnlyOneInTabSequence [ "Claim", "Evidence", "Reasoning", "Remove highlight" ]
-                |> done
-    ]
 
 
 ensureTabbable : String -> TestContext -> TestContext
@@ -123,22 +63,53 @@ leftArrow =
         [ Selector.attribute (Key.tabbable True) ]
 
 
+byLabel : String -> List Selector
+byLabel label =
+    [ Selector.tag "label"
+    , Selector.containing [ Selector.text label ]
+    ]
+
+
 clickTool : String -> ProgramTest model msg effect -> ProgramTest model msg effect
 clickTool label =
-    ProgramTest.simulateDomEvent
-        (Query.find
-            [ Selector.tag "button"
-            , Selector.containing [ Selector.text label ]
-            ]
+    ProgramTest.within (Query.find (byLabel label))
+        (ProgramTest.simulateDomEvent
+            (Query.find [ Selector.tag "input" ])
+            Event.click
         )
-        Event.click
+
+
+ensureActiveToolIs : String -> ProgramTest model msg effect -> ProgramTest model msg effect
+ensureActiveToolIs label testContext =
+    testContext
+        |> ProgramTest.within (Query.find (byLabel label))
+            -- has the attribute showing the radio as checked
+            (ProgramTest.ensureViewHas [ Selector.attribute (Attributes.checked True) ]
+                -- has a visual indicator of selection
+                >> ProgramTest.ensureViewHas activeToolVisualIndicator
+            )
+        |> ProgramTest.ensureView
+            -- has only 1 checked radio
+            (Query.findAll [ Selector.attribute (Attributes.checked True) ]
+                >> Query.count (Expect.equal 1)
+            )
+        |> ProgramTest.ensureView
+            -- has only 1 visual indicator of selection
+            (Query.findAll activeToolVisualIndicator
+                >> Query.count (Expect.equal 1)
+            )
+
+
+activeToolVisualIndicator : List Selector
+activeToolVisualIndicator =
+    [ Selector.attribute (Attributes.attribute "data-nri-description" "active-tool") ]
 
 
 ensureActiveHasAriaPressedTrue : String -> TestContext -> TestContext
 ensureActiveHasAriaPressedTrue label testContext =
     testContext
         |> ensureView
-            (Query.find [ Selector.attribute (Aria.pressed (Just True)) ]
+            (Query.find [ Selector.attribute (Attributes.checked True) ]
                 >> Query.has [ Selector.text label ]
             )
 
@@ -147,7 +118,7 @@ ensureNotActiveHaveAriaPressedFalse : List String -> TestContext -> TestContext
 ensureNotActiveHaveAriaPressedFalse labels testContext =
     testContext
         |> ensureView
-            (Query.findAll [ Selector.attribute (Aria.pressed (Just False)) ]
+            (Query.findAll [ Selector.attribute (Attributes.checked False) ]
                 >> Expect.all (List.indexedMap (\i label -> Query.index i >> Query.has [ Selector.text label ]) labels)
             )
 
@@ -157,7 +128,7 @@ ensureActiveHasVisualIndicator testContext =
     testContext
         |> ensureView
             (Query.find
-                [ Selector.attribute (Aria.pressed (Just True)) ]
+                [ Selector.attribute (Attributes.checked True) ]
                 >> Query.has [ Selector.attribute (Attributes.attribute "data-nri-description" "active-tool") ]
             )
 
@@ -167,7 +138,7 @@ ensureNotActiveDoNotHaveVisualIndicator testContext =
     testContext
         |> ensureView
             (Query.findAll
-                [ Selector.attribute (Aria.pressed (Just False)) ]
+                [ Selector.attribute (Attributes.checked False) ]
                 >> Query.each
                     (Query.hasNot
                         [ Selector.attribute (Attributes.attribute "data-nri-description" "active-tool") ]
@@ -232,21 +203,21 @@ init =
 
 {-| -}
 type Msg
-    = FocusAndSelectTag { select : Maybe Tag, focus : Maybe String }
+    = FocusAndSelectTag (Maybe Tag)
 
 
 {-| -}
 update : Msg -> State -> State
 update msg state =
     case msg of
-        FocusAndSelectTag { select } ->
+        FocusAndSelectTag select ->
             { state | currentTool = select }
 
 
 view : State -> Html Msg
 view model =
     HighlighterToolbar.view
-        { focusAndSelect = FocusAndSelectTag
+        { onSelect = FocusAndSelectTag
         , getColor = getColor
         , getName = getName
         , highlighterId = "highlighter"
