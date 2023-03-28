@@ -1,5 +1,5 @@
 module Nri.Ui.Tabs.V8 exposing
-    ( Attribute, title, alignment, spacing, headerBackgroundColor, highContrastHeaderBackgroundColor, view
+    ( Attribute, title, alignment, spacing, tabListBackgroundColor, highContrastTabListBackgroundColor, view
     , Alignment(..)
     , Tab, TabAttribute, build
     , tabString, tabHtml, withTooltip, disabled, labelledBy, describedBy
@@ -12,7 +12,7 @@ module Nri.Ui.Tabs.V8 exposing
   - Uses an HTML-like API
   - Adds sticky positioning
 
-@docs Attribute, title, alignment, spacing, headerBackgroundColor, highContrastHeaderBackgroundColor, view
+@docs Attribute, title, alignment, spacing, tabListBackgroundColor, highContrastTabListBackgroundColor, view
 @docs Alignment
 @docs Tab, TabAttribute, build
 @docs tabString, tabHtml, withTooltip, disabled, labelledBy, describedBy
@@ -133,8 +133,8 @@ type Attribute id msg
     = Title String
     | Alignment Alignment
     | Spacing Float
-    | HeaderBackgroundColor Css.Color
-    | HighContrastHeaderBackgroundColor Css.Color
+    | TabListBackgroundColor Css.Color
+    | HighContrasttabListBackgroundColor Css.Color
 
 
 title : String -> Attribute id msg
@@ -152,22 +152,22 @@ spacing =
     Spacing
 
 
-headerBackgroundColor : Css.Color -> Attribute id msg
-headerBackgroundColor =
-    HeaderBackgroundColor
+tabListBackgroundColor : Css.Color -> Attribute id msg
+tabListBackgroundColor =
+    TabListBackgroundColor
 
 
-highContrastHeaderBackgroundColor : Css.Color -> Attribute id msg
-highContrastHeaderBackgroundColor =
-    HighContrastHeaderBackgroundColor
+highContrastTabListBackgroundColor : Css.Color -> Attribute id msg
+highContrastTabListBackgroundColor =
+    HighContrasttabListBackgroundColor
 
 
 type alias Config =
     { title : Maybe String
     , alignment : Alignment
     , spacing : Maybe Float
-    , headerBackgroundColor : Maybe Css.Color
-    , highContrastHeaderBackgroundColor : Maybe Css.Color
+    , tabListBackgroundColor : Maybe Css.Color
+    , highContrastTabListBackgroundColor : Maybe Css.Color
     }
 
 
@@ -176,8 +176,8 @@ defaultConfig =
     { title = Nothing
     , alignment = Left
     , spacing = Nothing
-    , headerBackgroundColor = Nothing
-    , highContrastHeaderBackgroundColor = Nothing
+    , tabListBackgroundColor = Nothing
+    , highContrastTabListBackgroundColor = Nothing
     }
 
 
@@ -193,11 +193,11 @@ updateConfig attr config =
         Spacing newSpacing ->
             { config | spacing = Just newSpacing }
 
-        HeaderBackgroundColor newColor ->
-            { config | headerBackgroundColor = Just newColor }
+        TabListBackgroundColor newColor ->
+            { config | tabListBackgroundColor = Just newColor }
 
-        HighContrastHeaderBackgroundColor newColor ->
-            { config | highContrastHeaderBackgroundColor = Just newColor }
+        HighContrasttabListBackgroundColor newColor ->
+            { config | highContrastTabListBackgroundColor = Just newColor }
 
 
 {-| -}
@@ -292,10 +292,10 @@ stylesTabsAligned config =
     , Css.displayFlex
     , Css.flexGrow (Css.int 1)
     , Css.padding Css.zero
-    , maybeStyle Css.backgroundColor config.headerBackgroundColor
+    , maybeStyle Css.backgroundColor config.tabListBackgroundColor
     , maybeStyle
         (\color -> MediaQuery.highContrastMode [ Css.backgroundColor color ])
-        config.highContrastHeaderBackgroundColor
+        config.highContrastTabListBackgroundColor
     ]
 
 
