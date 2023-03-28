@@ -229,7 +229,13 @@ buildTooltip openTooltipId withTooltips id =
         ]
     , Tabs.build { id = id, idString = tabIdString }
         ([ Tabs.tabString tabName
-         , Tabs.panelHtml (Html.text panelName)
+         , panelName
+            |> List.repeat 50
+            |> String.join "\n"
+            |> Html.text
+            |> List.singleton
+            |> Html.pre []
+            |> Tabs.panelHtml
          ]
             ++ (if withTooltips then
                     [ Tabs.withTooltip
