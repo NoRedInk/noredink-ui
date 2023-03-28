@@ -122,13 +122,18 @@ example =
                         let
                             code =
                                 [ moduleName ++ ".view"
-                                , "    { title = " ++ Code.maybeString settings.title
-                                , "    , alignment = " ++ moduleName ++ "." ++ Debug.toString settings.alignment
-                                , "    , customSpacing = " ++ Code.maybeFloat settings.customSpacing
-                                , "    , focusAndSelect = identity"
+                                , "    { focusAndSelect = identity"
                                 , "    , selected = " ++ String.fromInt model.selected
-                                , "    , tabs = " ++ Code.listMultiline (List.map Tuple.first tabs) 2
                                 , "    }"
+                                , Code.listMultiline
+                                    (List.filterMap identity
+                                        [ Just (moduleName ++ ".alignment " ++ moduleName ++ "." ++ Debug.toString settings.alignment)
+                                        , Maybe.map (\title -> moduleName ++ ".title " ++ Code.string title) settings.title
+                                        , Maybe.map (\spacing -> moduleName ++ ".spacing " ++ String.fromFloat spacing) settings.customSpacing
+                                        ]
+                                    )
+                                    1
+                                , Code.listMultiline (List.map Tuple.first tabs) 1
                                 ]
                                     |> String.join "\n"
                         in
