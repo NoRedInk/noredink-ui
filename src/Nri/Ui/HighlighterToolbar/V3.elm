@@ -8,6 +8,7 @@ module Nri.Ui.HighlighterToolbar.V3 exposing (view)
 ### Changes from V2:
 
   - Use radio inputs under the hood
+  - don't arbitrarily complicate API -- match the usecases on the monolith side
 
 
 ### Patch changes:
@@ -42,8 +43,7 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 -}
 view :
     { onSelect : Maybe tag -> msg
-    , getColor : tag -> { extras | colorSolid : Color, colorLight : Color }
-    , getName : tag -> String
+    , getNameAndColor : tag -> { extras | name : String, colorSolid : Color, colorLight : Color }
     , highlighterId : String
     }
     -> { model | currentTool : Maybe tag, tags : List tag }
@@ -52,7 +52,7 @@ view config model =
     let
         viewTagWithConfig : tag -> Html msg
         viewTagWithConfig tag =
-            viewTool (config.getName tag) config.onSelect (config.getColor tag) (Just tag) model
+            viewTool config.onSelect (config.getNameAndColor tag) (Just tag) model
     in
     toolbar config.highlighterId
         (List.map viewTagWithConfig model.tags
@@ -83,21 +83,23 @@ viewEraser :
     -> { model | currentTool : Maybe tag }
     -> Html msg
 viewEraser onSelect model =
-    viewTool "Remove highlight"
+    viewTool
         onSelect
-        { colorLight = Colors.gray75, colorSolid = Colors.white }
+        { name = "Remove highlight"
+        , colorLight = Colors.gray75
+        , colorSolid = Colors.white
+        }
         Nothing
         model
 
 
 viewTool :
-    String
-    -> (Maybe tag -> msg)
-    -> { extras | colorSolid : Color, colorLight : Color }
+    (Maybe tag -> msg)
+    -> { extras | name : String, colorSolid : Color, colorLight : Color }
     -> Maybe tag
     -> { model | currentTool : Maybe tag }
     -> Html msg
-viewTool name onSelect theme tag model =
+viewTool onSelect ({ name } as theme) tag model =
     let
         selected =
             model.currentTool == tag

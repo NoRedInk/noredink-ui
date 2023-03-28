@@ -70,55 +70,35 @@ ensureActiveToolIs label testContext =
             )
 
 
-type Tag
-    = Claim
-    | Evidence
-    | Reasoning
+type alias Tag =
+    { name : String
+    , colorSolid : Css.Color
+    , colorLight : Css.Color
+    }
 
 
 tags : List Tag
 tags =
-    [ Claim, Evidence, Reasoning ]
-
-
-getName : Tag -> String
-getName tag =
-    case tag of
-        Claim ->
-            "Claim"
-
-        Evidence ->
-            "Evidence"
-
-        Reasoning ->
-            "Reasoning"
-
-
-getColor : Tag -> { colorSolid : Color, colorLight : Color }
-getColor tag =
-    case tag of
-        Claim ->
-            { colorSolid = Colors.mustard
-            , colorLight = Colors.highlightYellow
-            }
-
-        Evidence ->
-            { colorSolid = Colors.magenta
-            , colorLight = Colors.highlightMagenta
-            }
-
-        Reasoning ->
-            { colorSolid = Colors.cyan
-            , colorLight = Colors.highlightCyan
-            }
+    [ { name = "Claim"
+      , colorSolid = Colors.mustard
+      , colorLight = Colors.highlightYellow
+      }
+    , { name = "Evidence"
+      , colorSolid = Colors.magenta
+      , colorLight = Colors.highlightMagenta
+      }
+    , { name = "Reasoning"
+      , colorSolid = Colors.cyan
+      , colorLight = Colors.highlightCyan
+      }
+    ]
 
 
 view : Maybe Tag -> Html (Maybe Tag)
 view model =
     HighlighterToolbar.view
         { onSelect = identity
-        , getColor = getColor
-        , getName = getName
+        , getNameAndColor = identity
         , highlighterId = "highlighter"
         }
         { currentTool = model

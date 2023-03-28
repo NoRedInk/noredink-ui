@@ -65,8 +65,7 @@ example =
                                 Code.fromModule moduleName "view"
                                     ++ Code.recordMultiline
                                         [ ( "onSelect", "identity -- msg for selecting the tag or eraser" )
-                                        , ( "getColor", "\\tag -> { colorSolid = tag.colorSolid, colorLight = tag.colorLight }" )
-                                        , ( "getName", ".name" )
+                                        , ( "getNameAndColor", "identity" )
                                         , ( "highlighterId", Code.string "highlighter-id" )
                                         ]
                                         2
@@ -81,8 +80,7 @@ example =
             , Heading.h2 [ Heading.plaintext "Example" ]
             , HighlighterToolbar.view
                 { onSelect = SelectTag
-                , getColor = getColor
-                , getName = getName
+                , getNameAndColor = identity
                 , highlighterId = "highlighter"
                 }
                 { currentTool = state.currentTool
@@ -127,47 +125,28 @@ toolPreview color border icon name =
         ]
 
 
-type Tag
-    = Claim
-    | Evidence
-    | Reasoning
+type alias Tag =
+    { name : String
+    , colorSolid : Css.Color
+    , colorLight : Css.Color
+    }
 
 
 tags : List Tag
 tags =
-    [ Claim, Evidence, Reasoning ]
-
-
-getName : Tag -> String
-getName tag =
-    case tag of
-        Claim ->
-            "Claim"
-
-        Evidence ->
-            "Evidence"
-
-        Reasoning ->
-            "Reasoning"
-
-
-getColor : Tag -> { colorSolid : Color, colorLight : Color }
-getColor tag =
-    case tag of
-        Claim ->
-            { colorSolid = Colors.mustard
-            , colorLight = Colors.highlightYellow
-            }
-
-        Evidence ->
-            { colorSolid = Colors.magenta
-            , colorLight = Colors.highlightMagenta
-            }
-
-        Reasoning ->
-            { colorSolid = Colors.cyan
-            , colorLight = Colors.highlightCyan
-            }
+    [ { name = "Claim"
+      , colorSolid = Colors.mustard
+      , colorLight = Colors.highlightYellow
+      }
+    , { name = "Evidence"
+      , colorSolid = Colors.magenta
+      , colorLight = Colors.highlightMagenta
+      }
+    , { name = "Reasoning"
+      , colorSolid = Colors.cyan
+      , colorLight = Colors.highlightCyan
+      }
+    ]
 
 
 {-| -}
