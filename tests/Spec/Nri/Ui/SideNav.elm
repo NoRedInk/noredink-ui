@@ -28,12 +28,12 @@ currentPageTests =
         \() ->
             [ SideNav.entry "Cactus" [] ]
                 |> viewQuery { currentRoute = "a-different-route" } []
-                |> Query.hasNot [ attribute Aria.currentPage ]
+                |> expectNoCurrentPage
     , test "with 1 complete but not current entry" <|
         \() ->
             [ SideNav.entry "Cactus" [ SideNav.href "cactus" ] ]
                 |> viewQuery { currentRoute = "a-different-route" } []
-                |> Query.hasNot [ attribute Aria.currentPage ]
+                |> expectNoCurrentPage
     , test "with 1 current entry" <|
         \() ->
             [ SideNav.entry "Cactus" [ SideNav.href "cactus" ] ]
@@ -65,12 +65,25 @@ currentPageTests =
     ]
 
 
+expectNoCurrentPage : Query.Single msg -> Expectation
+expectNoCurrentPage =
+    Expect.all
+        [ Query.hasNot [ attribute Aria.currentPage ]
+        , Query.hasNot [ mobilePageName ]
+        ]
+
+
 expectCurrentPage : String -> String -> Query.Single msg -> Expectation
 expectCurrentPage name href_ =
     Expect.all
         [ Query.findAll [ attribute Aria.currentPage ]
             >> Query.count (Expect.equal 1)
         , Query.has [ currentPage name href_ ]
+        , -- for mobile, shows the currently-selected route in text
+          Query.has
+            [ mobilePageName
+            , containing [ text name ]
+            ]
         ]
 
 
@@ -82,6 +95,11 @@ currentPage name href_ =
         , attribute Aria.currentPage
         , text name
         ]
+
+
+mobilePageName : Selector
+mobilePageName =
+    attribute (Attributes.attribute "data-nri-description" "mobile-current-page-name")
 
 
 viewQuery :
