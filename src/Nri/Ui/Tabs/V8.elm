@@ -309,6 +309,22 @@ view { focusAndSelect, selected } attrs tabs =
             , Css.borderBottomStyle Css.solid
             , Css.borderBottomColor Colors.navy
             , Fonts.baseFont
+            , maybeStyle
+                (\{ topOffset, zIndex, includeMobile } ->
+                    let
+                        styles =
+                            [ Css.position Css.sticky
+                            , Css.top (Css.px topOffset)
+                            , Css.zIndex (Css.int zIndex)
+                            ]
+                    in
+                    if includeMobile then
+                        Css.batch styles
+
+                    else
+                        Css.Media.withMedia [ MediaQuery.notMobile ] styles
+                )
+                config.tabListStickyConfig
             ]
             []
             [ config.title
@@ -372,22 +388,6 @@ stylesTabsAligned config =
     , maybeStyle
         (\color -> MediaQuery.highContrastMode [ Css.backgroundColor color ])
         config.highContrastTabListBackgroundColor
-    , maybeStyle
-        (\{ topOffset, zIndex, includeMobile } ->
-            let
-                styles =
-                    [ Css.position Css.sticky
-                    , Css.top (Css.px topOffset)
-                    , Css.zIndex (Css.int zIndex)
-                    ]
-            in
-            if includeMobile then
-                Css.batch styles
-
-            else
-                Css.Media.withMedia [ MediaQuery.notMobile ] styles
-        )
-        config.tabListStickyConfig
     ]
 
 
