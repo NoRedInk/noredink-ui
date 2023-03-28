@@ -291,47 +291,70 @@ viewOpenCloseButton sidenavId navLabel_ { isOpen, toggle, isTooltipOpen, toggleT
                     |> Svg.withCss [ Css.transform (rotate (deg 180)) ]
                 )
 
-        trigger tooltipAttributes =
+        trigger attributes =
             ClickableSvg.button action
                 icon_
-                [ ClickableSvg.custom
+                ([ ClickableSvg.custom
                     [ Aria.controls [ sidenavId ]
                     , Aria.expanded isOpen
                     ]
-                , ClickableSvg.custom tooltipAttributes
-                , ClickableSvg.onClick (toggle (not isOpen))
-                , ClickableSvg.secondary
-                , ClickableSvg.withBorder
-                , ClickableSvg.iconForMobile (AnimatedIcon.mobileOpenClose isOpen)
-                ]
-    in
-    Tooltip.view
-        { trigger = trigger
-        , id = "open-close-sidebar-tooltip"
-        }
-        [ Tooltip.open isTooltipOpen
-        , Tooltip.onToggle toggleTooltip
-        , Tooltip.plaintext action
-        , Tooltip.smallPadding
-        , Tooltip.fitToContent
-        , if isOpen then
-            Tooltip.onLeft
+                 , ClickableSvg.onClick (toggle (not isOpen))
+                 , ClickableSvg.secondary
+                 , ClickableSvg.withBorder
+                 , ClickableSvg.iconForMobile (AnimatedIcon.mobileOpenClose isOpen)
+                 ]
+                    ++ attributes
+                )
 
-          else
-            Tooltip.onRight
-        , Tooltip.onRightForMobile
-        , Tooltip.containerCss
-            (if isOpen then
-                [ Css.Media.withMedia [ MediaQuery.notMobile ]
-                    [ Css.position Css.absolute
-                    , Css.top (Css.px 10)
-                    , Css.right (Css.px 10)
+        nonMobileTooltipView =
+            Tooltip.view
+                { trigger = \tooltipAttributes -> trigger [ ClickableSvg.custom tooltipAttributes ]
+                , id = "open-close-sidebar-tooltip"
+                }
+                [ Tooltip.open isTooltipOpen
+                , Tooltip.onToggle toggleTooltip
+                , Tooltip.plaintext action
+                , Tooltip.smallPadding
+                , Tooltip.fitToContent
+                , if isOpen then
+                    Tooltip.onLeft
+
+                  else
+                    Tooltip.onRight
+                , Tooltip.containerCss
+                    [ -- Hide the tooltip for mobile. We'll display static text instead
+                      Css.Media.withMedia [ MediaQuery.mobile ]
+                        [ Css.display Css.none ]
+                    ]
+                , Tooltip.containerCss
+                    (if isOpen then
+                        [ Css.Media.withMedia [ MediaQuery.notMobile ]
+                            [ Css.position Css.absolute
+                            , Css.top (Css.px 10)
+                            , Css.right (Css.px 10)
+                            ]
+                        ]
+
+                     else
+                        []
+                    )
+                ]
+
+        mobileButtonView =
+            div
+                [ Attributes.css
+                    [ -- Hide the plain button/static text if not on the mobile view
+                      Css.display Css.none
+                    , Css.Media.withMedia [ MediaQuery.mobile ]
+                        [ Css.display Css.block ]
                     ]
                 ]
-
-             else
-                []
-            )
+                [ trigger []
+                ]
+    in
+    div []
+        [ nonMobileTooltipView
+        , mobileButtonView
         ]
 
 
