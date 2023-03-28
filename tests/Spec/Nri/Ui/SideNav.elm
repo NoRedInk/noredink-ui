@@ -4,7 +4,7 @@ import Accessibility.Aria as Aria
 import Expect exposing (Expectation)
 import Html.Attributes as Attributes
 import Html.Styled exposing (toUnstyled)
-import Nri.Ui.SideNav.V4 as SideNav exposing (Entry, NavAttribute)
+import Nri.Ui.SideNav.V4 as SideNav exposing (Entry)
 import Test exposing (..)
 import Test.Html.Query as Query
 import Test.Html.Selector exposing (..)
