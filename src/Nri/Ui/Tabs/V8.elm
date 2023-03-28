@@ -129,6 +129,8 @@ type Alignment
     | Right
 
 
+{-| Ways to adapt the appearance of the tabs to your application.
+-}
 type Attribute id msg
     = Title String
     | Alignment Alignment
@@ -137,26 +139,38 @@ type Attribute id msg
     | HighContrasttabListBackgroundColor Css.Color
 
 
+{-| Set a title in the tab list.
+-}
 title : String -> Attribute id msg
 title =
     Title
 
 
+{-| Set the alignment of the tab list.
+-}
 alignment : Alignment -> Attribute id msg
 alignment =
     Alignment
 
 
+{-| Set the spacing between tabs in the tab list.
+-}
 spacing : Float -> Attribute id msg
 spacing =
     Spacing
 
 
+{-| Set the background color of the tab list. Mostly useful to set an explicit
+background color with sticky tabs.
+-}
 tabListBackgroundColor : Css.Color -> Attribute id msg
 tabListBackgroundColor =
     TabListBackgroundColor
 
 
+{-| Set the background color of the tab list in high-contrast mode. Mostly
+useful to set an explicit background color with sticky tabs.
+-}
 highContrastTabListBackgroundColor : Css.Color -> Attribute id msg
 highContrastTabListBackgroundColor =
     HighContrasttabListBackgroundColor
