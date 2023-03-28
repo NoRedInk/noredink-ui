@@ -1,6 +1,9 @@
 module Nri.Ui.Tabs.V8 exposing
-    ( Attribute, title, alignment, spacing, tabListBackgroundColor, highContrastTabListBackgroundColor, view
-    , Alignment(..)
+    ( Attribute, title, spacing
+    , Alignment(..), alignment
+    , tabListBackgroundColor, highContrastTabListBackgroundColor
+    , tabListSticky, TabListStickyConfig, tabListStickyCustom
+    , view
     , Tab, TabAttribute, build
     , tabString, tabHtml, withTooltip, disabled, labelledBy, describedBy
     , panelHtml
@@ -12,8 +15,18 @@ module Nri.Ui.Tabs.V8 exposing
   - Uses an HTML-like API
   - Adds sticky positioning
 
-@docs Attribute, title, alignment, spacing, tabListBackgroundColor, highContrastTabListBackgroundColor, view
-@docs Alignment
+
+### Attributes
+
+@docs Attribute, title, spacing
+@docs Alignment, alignment
+@docs tabListBackgroundColor, highContrastTabListBackgroundColor
+@docs tabListSticky, TabListStickyConfig, tabListStickyCustom
+@docs view
+
+
+### Tabs
+
 @docs Tab, TabAttribute, build
 @docs tabString, tabHtml, withTooltip, disabled, labelledBy, describedBy
 @docs panelHtml
@@ -22,6 +35,7 @@ module Nri.Ui.Tabs.V8 exposing
 -}
 
 import Css exposing (..)
+import Css.Media
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui
@@ -137,6 +151,7 @@ type Attribute id msg
     | Spacing Float
     | TabListBackgroundColor Css.Color
     | HighContrasttabListBackgroundColor Css.Color
+    | TabListSticky TabListStickyConfig
 
 
 {-| Set a title in the tab list.
@@ -176,12 +191,29 @@ highContrastTabListBackgroundColor =
     HighContrasttabListBackgroundColor
 
 
+{-| Make the tab list sticky. You probably want to set an explicit background
+color along with this!
+-}
+tabListSticky : Attribute id msg
+tabListSticky =
+    TabListSticky defaultTabListStickyConfig
+
+
+{-| Make the tab list sticky, overriding the default behavior. You should
+probably set an explicit background color along with this.
+-}
+tabListStickyCustom : TabListStickyConfig -> Attribute id msg
+tabListStickyCustom =
+    TabListSticky
+
+
 type alias Config =
     { title : Maybe String
     , alignment : Alignment
     , spacing : Maybe Float
     , tabListBackgroundColor : Maybe Css.Color
     , highContrastTabListBackgroundColor : Maybe Css.Color
+    , tabListStickyConfig : Maybe TabListStickyConfig
     }
 
 
@@ -192,6 +224,33 @@ defaultConfig =
     , spacing = Nothing
     , tabListBackgroundColor = Nothing
     , highContrastTabListBackgroundColor = Nothing
+    , tabListStickyConfig = Nothing
+    }
+
+
+{-| Configure how the top bar is sticky.
+
+  - `topOffset` controls how far from the top of the viewport the bar will
+    stick, in pixels. (**Default value:** 0)
+  - `zIndex` controls how high up the z-order the bar will float. (**Default
+    value:** 0)
+  - `onMobile` controls whether or not the bar is sticky on mobile. Be careful
+    about setting this to `True`; it can harm accessibility. (**Default value:**
+    `False`.)
+
+-}
+type alias TabListStickyConfig =
+    { topOffset : Float
+    , zIndex : Int
+    , includeMobile : Bool
+    }
+
+
+defaultTabListStickyConfig : TabListStickyConfig
+defaultTabListStickyConfig =
+    { topOffset = 0
+    , zIndex = 0
+    , includeMobile = False
     }
 
 
@@ -212,6 +271,9 @@ updateConfig attr config =
 
         HighContrasttabListBackgroundColor newColor ->
             { config | highContrastTabListBackgroundColor = Just newColor }
+
+        TabListSticky newConfig ->
+            { config | tabListStickyConfig = Just newConfig }
 
 
 {-| -}
@@ -310,6 +372,22 @@ stylesTabsAligned config =
     , maybeStyle
         (\color -> MediaQuery.highContrastMode [ Css.backgroundColor color ])
         config.highContrastTabListBackgroundColor
+    , maybeStyle
+        (\{ topOffset, zIndex, includeMobile } ->
+            let
+                styles =
+                    [ Css.position Css.sticky
+                    , Css.top (Css.px topOffset)
+                    , Css.zIndex (Css.int zIndex)
+                    ]
+            in
+            if includeMobile then
+                Css.batch styles
+
+            else
+                Css.Media.withMedia [ MediaQuery.notMobile ] styles
+        )
+        config.tabListStickyConfig
     ]
 
 
