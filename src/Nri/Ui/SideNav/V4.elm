@@ -350,7 +350,7 @@ viewOpenCloseButton sidenavId navLabel_ currentEntry { isOpen, toggle, isTooltip
                     [ -- Hide the plain button/static text if not on the mobile view
                       Css.display Css.none
                     , Css.Media.withMedia [ MediaQuery.mobile ]
-                        [ Css.display Css.block ]
+                        [ Css.displayFlex ]
                     ]
                 ]
                 [ trigger []
@@ -365,9 +365,9 @@ viewOpenCloseButton sidenavId navLabel_ currentEntry { isOpen, toggle, isTooltip
 
 mobileCurrentPage : String -> Html msg
 mobileCurrentPage name =
-    -- TODO: style
-    div
+    span
         [ AttributesExtra.nriDescription "mobile-current-page-name"
+        , Attributes.css (sharedEntryStyles ++ [ Css.display Css.inline, Css.padding (Css.px 8) ])
         ]
         [ text name ]
 
