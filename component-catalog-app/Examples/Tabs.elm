@@ -132,6 +132,23 @@ example =
                                         , Maybe.map (\spacing -> moduleName ++ ".spacing " ++ String.fromFloat spacing) settings.customSpacing
                                         , Maybe.map (\color -> moduleName ++ ".tabListBackgroundColor" ++ colorToCode color) settings.tabListBackgroundColor
                                         , Maybe.map (\color -> moduleName ++ ".highContrastTabListBackgroundColor" ++ colorToCode color) settings.highContrastTabListBackgroundColor
+                                        , Maybe.map
+                                            (\sticky ->
+                                                case sticky of
+                                                    Default ->
+                                                        moduleName ++ ".tabsListSticky"
+
+                                                    Custom stickyConfig ->
+                                                        moduleName
+                                                            ++ ".tabsListStickyCustom "
+                                                            ++ Code.recordMultiline
+                                                                [ ( "topOffset", String.fromFloat stickyConfig.topOffset )
+                                                                , ( "zIndex", String.fromInt stickyConfig.zIndex )
+                                                                , ( "includeMobile", Code.bool stickyConfig.includeMobile )
+                                                                ]
+                                                                2
+                                            )
+                                            settings.stickiness
                                         ]
                                     )
                                     1
@@ -154,6 +171,16 @@ example =
                     , Maybe.map Tabs.spacing settings.customSpacing
                     , Maybe.map (Tabs.tabListBackgroundColor << colorToCss) settings.tabListBackgroundColor
                     , Maybe.map (Tabs.highContrastTabListBackgroundColor << colorToCss) settings.highContrastTabListBackgroundColor
+                    , Maybe.map
+                        (\stickiness ->
+                            case stickiness of
+                                Default ->
+                                    Tabs.tabListSticky
+
+                                Custom stickyConfig ->
+                                    Tabs.tabListStickyCustom stickyConfig
+                        )
+                        settings.stickiness
                     ]
                 )
                 (List.map Tuple.second tabs)
