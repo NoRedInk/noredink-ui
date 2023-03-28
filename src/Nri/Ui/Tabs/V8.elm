@@ -1,5 +1,5 @@
 module Nri.Ui.Tabs.V8 exposing
-    ( Attribute, title, alignment, spacing, view
+    ( Attribute, title, alignment, spacing, headerBackgroundColor, highContrastHeaderBackgroundColor, view
     , Alignment(..)
     , Tab, TabAttribute, build
     , tabString, tabHtml, withTooltip, disabled, labelledBy, describedBy
@@ -12,7 +12,7 @@ module Nri.Ui.Tabs.V8 exposing
   - Uses an HTML-like API
   - Adds sticky positioning
 
-@docs Attribute, title, alignment, spacing, view
+@docs Attribute, title, alignment, spacing, headerBackgroundColor, highContrastHeaderBackgroundColor, view
 @docs Alignment
 @docs Tab, TabAttribute, build
 @docs tabString, tabHtml, withTooltip, disabled, labelledBy, describedBy
@@ -132,6 +132,8 @@ type Attribute id msg
     = Title String
     | Alignment Alignment
     | Spacing Float
+    | HeaderBackgroundColor Css.Color
+    | HighContrastHeaderBackgroundColor Css.Color
 
 
 title : String -> Attribute id msg
@@ -149,10 +151,22 @@ spacing =
     Spacing
 
 
+headerBackgroundColor : Css.Color -> Attribute id msg
+headerBackgroundColor =
+    HeaderBackgroundColor
+
+
+highContrastHeaderBackgroundColor : Css.Color -> Attribute id msg
+highContrastHeaderBackgroundColor =
+    HighContrastHeaderBackgroundColor
+
+
 type alias Config =
     { title : Maybe String
     , alignment : Alignment
     , spacing : Maybe Float
+    , headerBackgroundColor : Maybe Css.Color
+    , highContrastHeaderBackgroundColor : Maybe Css.Color
     }
 
 
@@ -161,6 +175,8 @@ defaultConfig =
     { title = Nothing
     , alignment = Left
     , spacing = Nothing
+    , headerBackgroundColor = Nothing
+    , highContrastHeaderBackgroundColor = Nothing
     }
 
 
@@ -175,6 +191,12 @@ updateConfig attr config =
 
         Spacing newSpacing ->
             { config | spacing = Just newSpacing }
+
+        HeaderBackgroundColor newColor ->
+            { config | headerBackgroundColor = Just newColor }
+
+        HighContrastHeaderBackgroundColor newColor ->
+            { config | highContrastHeaderBackgroundColor = Just newColor }
 
 
 {-| -}
