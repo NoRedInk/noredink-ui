@@ -130,6 +130,8 @@ example =
                                         [ Just (moduleName ++ ".alignment " ++ moduleName ++ "." ++ Debug.toString settings.alignment)
                                         , Maybe.map (\title -> moduleName ++ ".title " ++ Code.string title) settings.title
                                         , Maybe.map (\spacing -> moduleName ++ ".spacing " ++ String.fromFloat spacing) settings.customSpacing
+                                        , Maybe.map (\color -> moduleName ++ ".tabListBackgroundColor" ++ colorToCode color) settings.tabListBackgroundColor
+                                        , Maybe.map (\color -> moduleName ++ ".highContrastTabListBackgroundColor" ++ colorToCode color) settings.highContrastTabListBackgroundColor
                                         ]
                                     )
                                     1
@@ -150,6 +152,8 @@ example =
                     [ Just (Tabs.alignment settings.alignment)
                     , Maybe.map Tabs.title settings.title
                     , Maybe.map Tabs.spacing settings.customSpacing
+                    , Maybe.map (Tabs.tabListBackgroundColor << colorToCss) settings.tabListBackgroundColor
+                    , Maybe.map (Tabs.highContrastTabListBackgroundColor << colorToCss) settings.highContrastTabListBackgroundColor
                     ]
                 )
                 (List.map Tuple.second tabs)
@@ -235,11 +239,45 @@ type alias Settings =
     , alignment : Alignment
     , customSpacing : Maybe Float
     , withTooltips : Bool
+    , tabListBackgroundColor : Maybe Color
+    , highContrastTabListBackgroundColor : Maybe Color
     }
+
+
+type Color
+    = White
+    | Gray
+
+
+colorToCss : Color -> Css.Color
+colorToCss color =
+    case color of
+        White ->
+            Colors.white
+
+        Gray ->
+            Colors.gray92
+
+
+colorToCode : Color -> String
+colorToCode color =
+    case color of
+        White ->
+            "Colors.white"
+
+        Gray ->
+            "Colors.gray92"
 
 
 initSettings : Control Settings
 initSettings =
+    let
+        colorChoices =
+            Control.choice
+                [ ( "Gray", Control.value Gray )
+                , ( "White", Control.value White )
+                ]
+    in
     Control.record Settings
         |> Control.field "title" (Control.maybe False (Control.string "Title"))
         |> Control.field "alignment"
@@ -261,6 +299,8 @@ initSettings =
                 )
             )
         |> Control.field "withTooltips" (Control.bool True)
+        |> Control.field "tabListBackgroundColor" (Control.maybe False colorChoices)
+        |> Control.field "highContrastTabListBackgroundColor" (Control.maybe False colorChoices)
 
 
 type Msg
