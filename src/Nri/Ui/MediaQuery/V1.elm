@@ -15,6 +15,7 @@ module Nri.Ui.MediaQuery.V1 exposing
   - remove min-width:1 from media queries in order to support better composibility
   - adds narrowMobileBreakpoint and deprecates narrowMobileBreakPoint
   - adds withViewport for convenience when matching specific viewport size ranges
+  - fix `not` queries to not overlap with the regular breakpoint queries
 
 Standard media queries for responsive pages.
 
@@ -112,7 +113,7 @@ mobile =
 -}
 notMobile : MediaQuery
 notMobile =
-    only screen [ minWidth mobileBreakpoint ]
+    Css.Media.not screen [ maxWidth mobileBreakpoint ]
 
 
 {-| 1000px
@@ -133,7 +134,7 @@ quizEngineMobile =
 -}
 notQuizEngineMobile : MediaQuery
 notQuizEngineMobile =
-    only screen [ minWidth quizEngineBreakpoint ]
+    Css.Media.not screen [ maxWidth quizEngineBreakpoint ]
 
 
 {-| 750px
@@ -154,7 +155,7 @@ narrowMobile =
 -}
 notNarrowMobile : MediaQuery
 notNarrowMobile =
-    only screen [ minWidth narrowMobileBreakpoint ]
+    Css.Media.not screen [ maxWidth narrowMobileBreakpoint ]
 
 
 {-| 500px
