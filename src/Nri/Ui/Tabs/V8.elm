@@ -29,6 +29,7 @@ import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Tooltip.V3 as Tooltip
 import TabsInternal.V2 as TabsInternal
 
@@ -218,7 +219,7 @@ view { focusAndSelect, selected } attrs tabs =
                 , selected = selected
                 , tabs = List.map (\(Tab t) -> t) tabs
                 , tabStyles = tabStyles config.spacing
-                , tabListStyles = stylesTabsAligned config.alignment
+                , tabListStyles = stylesTabsAligned config
                 }
     in
     Nri.Ui.styled Html.div
@@ -271,11 +272,11 @@ viewTitle tabTitle =
 -- STYLES
 
 
-stylesTabsAligned : Alignment -> List Style
-stylesTabsAligned tabAlignment =
+stylesTabsAligned : Config -> List Style
+stylesTabsAligned config =
     let
         alignmentStyles =
-            case tabAlignment of
+            case config.alignment of
                 Left ->
                     Css.justifyContent Css.flexStart
 
@@ -291,7 +292,21 @@ stylesTabsAligned tabAlignment =
     , Css.displayFlex
     , Css.flexGrow (Css.int 1)
     , Css.padding Css.zero
+    , maybeStyle Css.backgroundColor config.headerBackgroundColor
+    , maybeStyle
+        (\color -> MediaQuery.highContrastMode [ Css.backgroundColor color ])
+        config.highContrastHeaderBackgroundColor
     ]
+
+
+maybeStyle : (a -> Style) -> Maybe a -> Style
+maybeStyle styler maybeValue =
+    case maybeValue of
+        Just value ->
+            styler value
+
+        Nothing ->
+            Css.batch []
 
 
 tabStyles : Maybe Float -> Int -> Bool -> List Style
