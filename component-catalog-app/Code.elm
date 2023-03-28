@@ -1,7 +1,6 @@
 module Code exposing
     ( string, stringMultiline, maybeString
     , maybe
-    , maybeFloat
     , bool
     , commentInline
     , list, listMultiline
@@ -20,7 +19,6 @@ module Code exposing
 
 @docs string, stringMultiline, maybeString
 @docs maybe
-@docs maybeFloat
 @docs bool
 @docs commentInline
 @docs list, listMultiline
@@ -64,12 +62,6 @@ maybe =
 maybeString : Maybe String -> String
 maybeString =
     maybe << Maybe.map string
-
-
-{-| -}
-maybeFloat : Maybe Float -> String
-maybeFloat =
-    maybe << Maybe.map String.fromFloat
 
 
 {-| -}
