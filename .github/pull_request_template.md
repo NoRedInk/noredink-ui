@@ -58,7 +58,7 @@ Please link to any relevant context and stories.
         - if you want to test the component directly, add tests under `tests/Spec`. Historically, this has been the more popular Elm testing strategy for noredink-ui.
 - [ ] Component API follows standard patterns in noredink-ui
     - e.g., as a dev, I can conveniently add an `nriDescription`
-    - and adding a new feature to the component will _not_ require major API changes to the comopnent
+    - and adding a new feature to the component will _not_ require major API changes to the component
 - [ ] Please assign [team-accessibilibats-a11ybats](https://github.com/orgs/NoRedInk/teams/team-accessibilibats-a11ybats) as a reviewer in addition to assigning a reviewer from your team
 
 
@@ -94,4 +94,4 @@ Please link to any relevant context and stories.
 - [ ] Changes to the component are tested/the new version of the component is tested
 - [ ] Component API follows standard patterns in noredink-ui
     - e.g., as a dev, I can conveniently add an `nriDescription`
-    - and adding a new feature to the component will _not_ require major API changes to the comopnent
+    - and adding a new feature to the component will _not_ require major API changes to the component
