@@ -111,6 +111,7 @@ viewTool onSelect ({ name } as theme) tag model =
             , Css.position Css.relative
             , Css.pseudoClass "focus-within" FocusRing.styles
             , Css.paddingBottom (Css.px 2)
+            , Css.marginRight (Css.px 15)
             ]
         ]
         [ input
@@ -161,7 +162,6 @@ toolContent name palette_ tool =
             [ Css.position Css.relative
             , Css.height (Css.pct 100)
             , Css.padding (Css.px 0)
-            , Css.paddingRight (Css.px 15)
             , Css.display Css.inlineFlex
             , Css.alignItems Css.center
             ]
