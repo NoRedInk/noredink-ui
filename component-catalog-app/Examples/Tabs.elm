@@ -21,7 +21,7 @@ import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Tabs.V7 as Tabs exposing (Alignment(..), Tab)
+import Nri.Ui.Tabs.V8 as Tabs exposing (Alignment(..), Tab)
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Task
@@ -34,7 +34,7 @@ moduleName =
 
 version : Int
 version =
-    7
+    8
 
 
 example : Example State Msg
@@ -138,13 +138,16 @@ example =
                         ]
                 }
             , Tabs.view
-                { title = settings.title
-                , alignment = settings.alignment
-                , customSpacing = settings.customSpacing
-                , focusAndSelect = FocusAndSelectTab
+                { focusAndSelect = FocusAndSelectTab
                 , selected = model.selected
-                , tabs = List.map Tuple.second tabs
                 }
+                (List.filterMap identity
+                    [ Just (Tabs.alignment settings.alignment)
+                    , Maybe.map Tabs.title settings.title
+                    , Maybe.map Tabs.spacing settings.customSpacing
+                    ]
+                )
+                (List.map Tuple.second tabs)
             ]
     }
 
