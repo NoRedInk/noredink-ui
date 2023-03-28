@@ -8,7 +8,7 @@ module Nri.Ui.Button.V10 exposing
     , exactWidthForMobile, boundedWidthForMobile, unboundedWidthForMobile, fillContainerWidthForMobile
     , exactWidthForQuizEngineMobile, boundedWidthForQuizEngineMobile, unboundedWidthForQuizEngineMobile, fillContainerWidthForQuizEngineMobile
     , exactWidthForNarrowMobile, boundedWidthForNarrowMobile, unboundedWidthForNarrowMobile, fillContainerWidthForNarrowMobile
-    , primary, secondary, tertiary, danger, premium
+    , primary, secondary, tertiary, danger, dangerSecondary, premium
     , enabled, unfulfilled, disabled, error, loading, success
     , icon, rightIcon
     , hideIconForMobile, hideIconFor
@@ -36,6 +36,7 @@ adding a span around the text could potentially lead to regressions.
   - support 'disabled' links according to [Scott O'Hara's disabled links](https://www.scottohara.me/blog/2021/05/28/disabled-links.html) article
   - adds `tertiary` style
   - adds `submit` and `opensModal`
+  - adds `secondaryDanger` style
 
 
 # Changes from V9:
@@ -67,7 +68,7 @@ adding a span around the text could potentially lead to regressions.
 
 ## Change the color scheme
 
-@docs primary, secondary, tertiary, danger, premium
+@docs primary, secondary, tertiary, danger, dangerSecondary, premium
 
 
 ## Change the state (buttons only)
@@ -576,6 +577,15 @@ danger =
 
 
 {-| -}
+dangerSecondary : Attribute msg
+dangerSecondary =
+    set
+        (\attributes ->
+            { attributes | style = dangerSecondaryColors }
+        )
+
+
+{-| -}
 premium : Attribute msg
 premium =
     set
@@ -1064,6 +1074,17 @@ tertiaryColors =
     , hoverText = Colors.navy
     , border = Just <| Colors.gray75
     , shadow = Colors.gray75
+    }
+
+
+dangerSecondaryColors : ColorPalette
+dangerSecondaryColors =
+    { background = Colors.white
+    , hoverBackground = Colors.redLight
+    , text = Colors.red
+    , hoverText = Colors.redDark
+    , border = Just <| Colors.red
+    , shadow = Colors.red
     }
 
 
