@@ -241,6 +241,7 @@ type alias Settings =
     , withTooltips : Bool
     , tabListBackgroundColor : Maybe Color
     , highContrastTabListBackgroundColor : Maybe Color
+    , stickiness : Maybe Stickiness
     }
 
 
@@ -269,6 +270,11 @@ colorToCode color =
             "Colors.gray92"
 
 
+type Stickiness
+    = Default
+    | Custom Tabs.TabListStickyConfig
+
+
 initSettings : Control Settings
 initSettings =
     let
@@ -287,20 +293,31 @@ initSettings =
                 , ( "Right", Control.value Right )
                 ]
             )
-        |> Control.field "customSpacing"
-            (Control.maybe False
-                (Control.choice
-                    [ ( "2", Control.value 2 )
-                    , ( "3", Control.value 3 )
-                    , ( "4", Control.value 4 )
-                    , ( "8", Control.value 8 )
-                    , ( "16", Control.value 16 )
-                    ]
-                )
-            )
+        |> Control.field "customSpacing" (Control.maybe False (values [ 2, 3, 4, 8, 16 ]))
         |> Control.field "withTooltips" (Control.bool True)
         |> Control.field "tabListBackgroundColor" (Control.maybe False colorChoices)
         |> Control.field "highContrastTabListBackgroundColor" (Control.maybe False colorChoices)
+        |> Control.field "tabListSticky"
+            (Control.maybe False
+                (Control.choice
+                    [ ( "Default", Control.value Default )
+                    , ( "Custom"
+                      , Control.record Tabs.TabListStickyConfig
+                            |> Control.field "topOffset" (values [ 0, 10, 50 ])
+                            |> Control.field "zIndex" (values [ 0, 1, 5, 10 ])
+                            |> Control.field "includeMobile" (Control.bool False)
+                            |> Control.map Custom
+                      )
+                    ]
+                )
+            )
+
+
+values : List a -> Control a
+values nums =
+    nums
+        |> List.map (\n -> ( Debug.toString n, Control.value n ))
+        |> Control.choice
 
 
 type Msg
