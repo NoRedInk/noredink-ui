@@ -19,6 +19,7 @@ module Nri.Ui.SideNav.V4 exposing
 
   - add missing aria-current=page attribute
   - don't render an empty nav when there are no entries
+  - adjust closed sidenav toggle button styles
 
 
 ### Changes from V3
@@ -246,6 +247,12 @@ view config navAttributes entries =
                 , marginRight Css.zero
                 , marginBottom (Css.px 20)
                 , width (pct 100)
+                , case Maybe.map .isOpen appliedNavAttributes.collapsible of
+                    Just False ->
+                        Css.padding2 (Css.px 25) (Css.px 20)
+
+                    _ ->
+                        Css.batch []
                 ]
             ]
     in
