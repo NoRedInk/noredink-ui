@@ -22,29 +22,29 @@ currentPageTests =
     [ test "without entries" <|
         \() ->
             []
-                |> viewQuery { currentRoute = "cactus" } []
+                |> viewQuery { currentRoute = "cactus" }
                 |> Query.hasNot [ tag "nav" ]
     , test "with 1 partial entry" <|
         \() ->
             [ SideNav.entry "Cactus" [] ]
-                |> viewQuery { currentRoute = "a-different-route" } []
+                |> viewQuery { currentRoute = "a-different-route" }
                 |> expectNoCurrentPage
     , test "with 1 complete but not current entry" <|
         \() ->
             [ SideNav.entry "Cactus" [ SideNav.href "cactus" ] ]
-                |> viewQuery { currentRoute = "a-different-route" } []
+                |> viewQuery { currentRoute = "a-different-route" }
                 |> expectNoCurrentPage
     , test "with 1 current entry" <|
         \() ->
             [ SideNav.entry "Cactus" [ SideNav.href "cactus" ] ]
-                |> viewQuery { currentRoute = "cactus" } []
+                |> viewQuery { currentRoute = "cactus" }
                 |> expectCurrentPage "Cactus" "cactus"
     , test "with multiple entries, one of which is current" <|
         \() ->
             [ SideNav.entry "Cactus" [ SideNav.href "cactus" ]
             , SideNav.entry "Epiphyllum" [ SideNav.href "epiphyllum" ]
             ]
-                |> viewQuery { currentRoute = "cactus" } []
+                |> viewQuery { currentRoute = "cactus" }
                 |> expectCurrentPage "Cactus" "cactus"
     , test "with a currently-selected entry with children" <|
         \() ->
@@ -52,7 +52,7 @@ currentPageTests =
                 [ SideNav.href "cactus" ]
                 [ SideNav.entry "Epiphyllum" [ SideNav.href "epiphyllum" ] ]
             ]
-                |> viewQuery { currentRoute = "cactus" } []
+                |> viewQuery { currentRoute = "cactus" }
                 |> expectCurrentPage "Cactus" "cactus"
     , test "with a currently-selected child entry" <|
         \() ->
@@ -60,7 +60,7 @@ currentPageTests =
                 [ SideNav.href "cactus" ]
                 [ SideNav.entry "Epiphyllum" [ SideNav.href "epiphyllum" ] ]
             ]
-                |> viewQuery { currentRoute = "epiphyllum" } []
+                |> viewQuery { currentRoute = "epiphyllum" }
                 |> expectCurrentPage "Epiphyllum" "epiphyllum"
     ]
 
@@ -104,16 +104,21 @@ mobilePageName =
 
 viewQuery :
     { currentRoute : String }
-    -> List (NavAttribute ())
     -> List (Entry String ())
     -> Query.Single ()
-viewQuery { currentRoute } navAttributes entries =
+viewQuery { currentRoute } entries =
     SideNav.view
         { isCurrentRoute = (==) currentRoute
         , routeToString = identity
         , onSkipNav = ()
         }
-        navAttributes
+        [ SideNav.collapsible
+            { isOpen = True
+            , toggle = \_ -> ()
+            , isTooltipOpen = False
+            , toggleTooltip = \_ -> ()
+            }
+        ]
         entries
         |> toUnstyled
         |> Query.fromHtml
