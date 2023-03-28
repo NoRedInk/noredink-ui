@@ -65,6 +65,7 @@ import Css.Media
 import Html.Styled
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
+import Maybe.Extra
 import Nri.Ui
 import Nri.Ui.AnimatedIcon.V1 as AnimatedIcon
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
@@ -255,10 +256,13 @@ view config navAttributes entries =
                         Css.batch []
                 ]
             ]
+
+        currentEntry =
+            currentRouteName config.isCurrentRoute entries
     in
     div [ Attributes.css (defaultCss ++ appliedNavAttributes.css) ]
         [ viewSkipLink config.onSkipNav
-        , viewJust (viewOpenCloseButton sidenavId appliedNavAttributes.navLabel) appliedNavAttributes.collapsible
+        , viewJust (viewOpenCloseButton sidenavId appliedNavAttributes.navLabel currentEntry) appliedNavAttributes.collapsible
         , case entries of
             [] ->
                 text ""
@@ -273,8 +277,8 @@ defaultSideNavId =
     "sidenav"
 
 
-viewOpenCloseButton : String -> Maybe String -> CollapsibleConfig msg -> Html msg
-viewOpenCloseButton sidenavId navLabel_ { isOpen, toggle, isTooltipOpen, toggleTooltip } =
+viewOpenCloseButton : String -> Maybe String -> Maybe String -> CollapsibleConfig msg -> Html msg
+viewOpenCloseButton sidenavId navLabel_ currentEntry { isOpen, toggle, isTooltipOpen, toggleTooltip } =
     let
         name =
             Maybe.withDefault "sidebar" navLabel_
@@ -350,12 +354,22 @@ viewOpenCloseButton sidenavId navLabel_ { isOpen, toggle, isTooltipOpen, toggleT
                     ]
                 ]
                 [ trigger []
+                , viewJust mobileCurrentPage currentEntry
                 ]
     in
     div []
         [ nonMobileTooltipView
         , mobileButtonView
         ]
+
+
+mobileCurrentPage : String -> Html msg
+mobileCurrentPage name =
+    -- TODO: style
+    div
+        [ AttributesExtra.nriDescription "mobile-current-page-name"
+        ]
+        [ text name ]
 
 
 viewNav : String -> Config route msg -> NavAttributeConfig msg -> List (Entry route msg) -> Bool -> Html msg
@@ -443,6 +457,28 @@ anyLinkDescendants f children =
                     False
         )
         children
+
+
+currentRouteName : (route -> Bool) -> List (Entry route msg) -> Maybe String
+currentRouteName isCurrentRoute_ entries =
+    List.foldl
+        (\entry_ acc ->
+            Maybe.Extra.or acc
+                (case entry_ of
+                    Entry children_ entryConfig ->
+                        case Maybe.map isCurrentRoute_ entryConfig.route of
+                            Just True ->
+                                Just entryConfig.title
+
+                            _ ->
+                                currentRouteName isCurrentRoute_ children_
+
+                    Html _ ->
+                        acc
+                )
+        )
+        Nothing
+        entries
 
 
 viewSidebarLeaf :
