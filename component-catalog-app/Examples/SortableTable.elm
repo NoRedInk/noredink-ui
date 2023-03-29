@@ -105,7 +105,7 @@ example =
                     Control.currentValue model.settings
 
                 config =
-                    { updateMsg = SetSortState
+                    { updateMsg = Just SetSortState
                     , state = Just sortState
                     }
 

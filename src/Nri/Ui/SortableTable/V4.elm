@@ -29,6 +29,8 @@ import Html.Styled.Events
 import Nri.Ui.Colors.V1
 import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Html.Attributes.V2 exposing (maybe)
+import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.Svg.V1
 import Nri.Ui.Table.V6 as Table exposing (SortDirection(..))
 import Nri.Ui.UiIcon.V1
@@ -60,7 +62,7 @@ type alias State id =
 
 {-| -}
 type alias Config id msg =
-    { updateMsg : State id -> msg
+    { updateMsg : Maybe (State id -> msg)
     , state : Maybe (State id)
     }
 
@@ -251,13 +253,13 @@ identitySorter =
         EQ
 
 
-buildTableColumn : (State id -> msg) -> Maybe (State id) -> Column id entry msg -> Table.Column entry msg
-buildTableColumn updateMsg maybeState (Column column) =
+buildTableColumn : Maybe (State id -> msg) -> Maybe (State id) -> Column id entry msg -> Table.Column entry msg
+buildTableColumn maybeUpdateMsg maybeState (Column column) =
     Table.custom
         { header =
             case maybeState of
                 Just state_ ->
-                    viewSortHeader (column.sorter /= Nothing) column.header updateMsg state_ column.id
+                    viewSortHeader (column.sorter /= Nothing) column.header maybeUpdateMsg state_ column.id
 
                 Nothing ->
                     Debug.todo "non-sorted header"
@@ -277,8 +279,8 @@ buildTableColumn updateMsg maybeState (Column column) =
         }
 
 
-viewSortHeader : Bool -> Html msg -> (State id -> msg) -> State id -> id -> Html msg
-viewSortHeader isSortable header updateMsg state_ id =
+viewSortHeader : Bool -> Html msg -> Maybe (State id -> msg) -> State id -> id -> Html msg
+viewSortHeader isSortable header maybeUpdateMsg state_ id =
     let
         nextState =
             nextTableState state_ id
@@ -307,13 +309,13 @@ viewSortHeader isSortable header updateMsg state_ id =
                 , Fonts.baseFont
                 , Css.fontSize (Css.em 1)
                 ]
-            , Html.Styled.Events.onClick (updateMsg nextState)
+            , maybe (\updateMsg -> Html.Styled.Events.onClick (updateMsg nextState)) maybeUpdateMsg
 
             -- screen readers should know what clicking this button will do
             , Aria.roleDescription "sort button"
             ]
             [ Html.div [] [ header ]
-            , viewSortButton updateMsg state_ id
+            , viewJust (\updateMsg -> viewSortButton updateMsg state_ id) maybeUpdateMsg
             ]
 
     else
