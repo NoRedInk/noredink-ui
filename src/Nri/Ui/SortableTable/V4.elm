@@ -78,6 +78,19 @@ defaultConfig =
     }
 
 
+{-| How the header will be set up to be sticky.
+
+  - `topOffset` controls how far off the top of the viewport the headers will
+    stick, in pixels. (**Default value:** 0)
+  - `zIndex` controls where in the stacking context the header will end
+    up. Useful to prevent elements in rows from appearing over the header.
+    (**Defualt value:** 0)
+  - `includeMobile`, if true, will make the header sticky on mobile (narrow)
+    viewports as well as desktop (wider) ones. Be careful about setting this to
+    `True`, as it can make it harder for folks on mobile devices to pinch and
+    zoom, creating accessibility problems. (**Default value:** False)
+
+-}
 type alias StickyConfig =
     { topOffset : Float
     , zIndex : Int
@@ -93,25 +106,42 @@ defaultStickyConfig =
     }
 
 
+{-| Customize how the table is rendered, for example by adding sorting or
+stickiness.
+-}
 type Attribute id msg
     = Attribute (Config id msg -> Config id msg)
 
 
+{-| Sort a column. You can get an initial state with `init` or `initDescending`.
+If you make this sorting interactive, you should store the state in your model
+and provide it to this function instead of recreating it on every update.
+-}
 state : State id -> Attribute id msg
 state state_ =
     Attribute (\config -> { config | state = Just state_ })
 
 
+{-| Add interactivity in sorting columns. When this attribute is provided and
+sorting is enabled, columns will be sortable by clicking the headers.
+-}
 updateMsg : (State id -> msg) -> Attribute id msg
 updateMsg updateMsg_ =
     Attribute (\config -> { config | updateMsg = Just updateMsg_ })
 
 
+{-| Make the header sticky (that is, it will stick to the top of the viewport
+when it otherwise would have been scrolled off.) You probably will want to set a
+background color on the header as well.
+-}
 stickyHeader : Attribute id msg
 stickyHeader =
     Attribute (\config -> { config | stickyHeader = Just defaultStickyConfig })
 
 
+{-| Does the same thing as `stickyHeader`, but with adaptations for your
+specific use.
+-}
 stickyHeaderCustom : StickyConfig -> Attribute id msg
 stickyHeaderCustom stickyConfig =
     Attribute (\config -> { config | stickyHeader = Just stickyConfig })
