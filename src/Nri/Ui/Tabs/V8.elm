@@ -1,7 +1,7 @@
 module Nri.Ui.Tabs.V8 exposing
     ( Attribute, title, spacing
     , Alignment(..), alignment
-    , tabListBackgroundColor, highContrastTabListBackgroundColor
+    , pageBackgroundColor, highContrastPageBackgroundColor
     , tabListSticky, TabListStickyConfig, tabListStickyCustom
     , view
     , Tab, TabAttribute, build
@@ -21,7 +21,7 @@ module Nri.Ui.Tabs.V8 exposing
 
 @docs Attribute, title, spacing
 @docs Alignment, alignment
-@docs tabListBackgroundColor, highContrastTabListBackgroundColor
+@docs pageBackgroundColor, highContrastPageBackgroundColor
 @docs tabListSticky, TabListStickyConfig, tabListStickyCustom
 @docs view
 
@@ -171,20 +171,21 @@ spacing spacing_ =
     Attribute (\config -> { config | spacing = Just spacing_ })
 
 
-{-| Set the background color of the tab list. Mostly useful to set an explicit
-background color with sticky tabs.
+{-| Tell this tab list about the background color of the page it lievs on. This
+is mostly useful when setting up sticky headers, to prevent page content from
+showing through the background.
 -}
-tabListBackgroundColor : Css.Color -> Attribute id msg
-tabListBackgroundColor color =
-    Attribute (\config -> { config | tabListBackgroundColor = Just color })
+pageBackgroundColor : Css.Color -> Attribute id msg
+pageBackgroundColor color =
+    Attribute (\config -> { config | pageBackgroundColor = Just color })
 
 
 {-| Set the background color of the tab list in high-contrast mode. Mostly
 useful to set an explicit background color with sticky tabs.
 -}
-highContrastTabListBackgroundColor : Css.Color -> Attribute id msg
-highContrastTabListBackgroundColor color =
-    Attribute (\config -> { config | highContrastTabListBackgroundColor = Just color })
+highContrastPageBackgroundColor : Css.Color -> Attribute id msg
+highContrastPageBackgroundColor color =
+    Attribute (\config -> { config | highContrastPageBackgroundColor = Just color })
 
 
 {-| Make the tab list sticky. You probably want to set an explicit background
@@ -207,8 +208,8 @@ type alias Config =
     { title : Maybe String
     , alignment : Alignment
     , spacing : Maybe Float
-    , tabListBackgroundColor : Maybe Css.Color
-    , highContrastTabListBackgroundColor : Maybe Css.Color
+    , pageBackgroundColor : Maybe Css.Color
+    , highContrastPageBackgroundColor : Maybe Css.Color
     , tabListStickyConfig : Maybe TabListStickyConfig
     }
 
@@ -218,8 +219,8 @@ defaultConfig =
     { title = Nothing
     , alignment = Left
     , spacing = Nothing
-    , tabListBackgroundColor = Nothing
-    , highContrastTabListBackgroundColor = Nothing
+    , pageBackgroundColor = Nothing
+    , highContrastPageBackgroundColor = Nothing
     , tabListStickyConfig = Nothing
     }
 
@@ -347,10 +348,10 @@ stylesTabsAligned config =
     , Css.displayFlex
     , Css.flexGrow (Css.int 1)
     , Css.padding Css.zero
-    , maybeStyle Css.backgroundColor config.tabListBackgroundColor
+    , maybeStyle Css.backgroundColor config.pageBackgroundColor
     , maybeStyle
         (\color -> MediaQuery.highContrastMode [ Css.backgroundColor color ])
-        config.highContrastTabListBackgroundColor
+        config.highContrastPageBackgroundColor
     ]
 
 

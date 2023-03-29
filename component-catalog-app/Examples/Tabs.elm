@@ -131,8 +131,8 @@ example =
                                         [ Just (moduleName ++ ".alignment " ++ moduleName ++ "." ++ Debug.toString settings.alignment)
                                         , Maybe.map (\title -> moduleName ++ ".title " ++ Code.string title) settings.title
                                         , Maybe.map (\spacing -> moduleName ++ ".spacing " ++ String.fromFloat spacing) settings.customSpacing
-                                        , Maybe.map (\color -> moduleName ++ ".tabListBackgroundColor" ++ colorToCode color) settings.tabListBackgroundColor
-                                        , Maybe.map (\color -> moduleName ++ ".highContrastTabListBackgroundColor" ++ colorToCode color) settings.highContrastTabListBackgroundColor
+                                        , Maybe.map (\color -> moduleName ++ ".pageBackgroundColor" ++ colorToCode color) settings.pageBackgroundColor
+                                        , Maybe.map (\color -> moduleName ++ ".highContrastPageBackgroundColor" ++ colorToCode color) settings.highContrastPageBackgroundColor
                                         , Maybe.map
                                             (\sticky ->
                                                 case sticky of
@@ -169,8 +169,8 @@ example =
                     [ Just (Tabs.alignment settings.alignment)
                     , Maybe.map Tabs.title settings.title
                     , Maybe.map Tabs.spacing settings.customSpacing
-                    , Maybe.map (Tabs.tabListBackgroundColor << colorToCss) settings.tabListBackgroundColor
-                    , Maybe.map (Tabs.highContrastTabListBackgroundColor << colorToCss) settings.highContrastTabListBackgroundColor
+                    , Maybe.map (Tabs.pageBackgroundColor << colorToCss) settings.pageBackgroundColor
+                    , Maybe.map (Tabs.highContrastPageBackgroundColor << colorToCss) settings.highContrastPageBackgroundColor
                     , Maybe.map
                         (\stickiness ->
                             case stickiness of
@@ -272,8 +272,8 @@ type alias Settings =
     , alignment : Alignment
     , customSpacing : Maybe Float
     , withTooltips : Bool
-    , tabListBackgroundColor : Maybe Color
-    , highContrastTabListBackgroundColor : Maybe Color
+    , pageBackgroundColor : Maybe Color
+    , highContrastPageBackgroundColor : Maybe Color
     , stickiness : Maybe Stickiness
     }
 
@@ -328,8 +328,8 @@ initSettings =
             )
         |> Control.field "customSpacing" (Control.maybe False (values String.fromFloat [ 2, 3, 4, 8, 16 ]))
         |> Control.field "withTooltips" (Control.bool True)
-        |> Control.field "tabListBackgroundColor" (Control.maybe False colorChoices)
-        |> Control.field "highContrastTabListBackgroundColor" (Control.maybe False colorChoices)
+        |> Control.field "pageBackgroundColor" (Control.maybe False colorChoices)
+        |> Control.field "highContrastPageBackgroundColor" (Control.maybe False colorChoices)
         |> Control.field "tabListSticky"
             (Control.maybe False
                 (Control.choice
