@@ -119,15 +119,16 @@ example =
                     { sectionName = viewName
                     , code =
                         [ moduleName ++ "." ++ viewName
-                        , Code.recordMultiline
-                            [ ( "updateMsg", "SetSortState" )
-                            , ( "columns", Code.listMultiline columnsCode 2 )
+                        , Code.listMultiline
+                            [ "SortableTable.updateMsg SetSortState"
+                            , "-- The SortableTable's state should be stored on the model, rather than initialized in the view"
+                                ++ "\n      "
+                                ++ "SortableTable.state (SortableTable.init "
+                                ++ Debug.toString model.sortState.column
+                                ++ ")"
                             ]
                             1
-                        , Code.newlineWithIndent 1
-                        , Code.commentInline "The SortableTable's state should be stored on the model, rather than initialized in the view"
-                        , Code.newlineWithIndent 1
-                        , Code.withParens ("SortableTable.init " ++ Debug.toString model.sortState.column)
+                        , Code.listMultiline columnsCode 1
                         , finalArgs
                         ]
                             |> String.join ""
