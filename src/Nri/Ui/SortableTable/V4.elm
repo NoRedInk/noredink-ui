@@ -2,7 +2,7 @@ module Nri.Ui.SortableTable.V4 exposing
     ( Column, Sorter, State
     , init, initDescending
     , custom, string
-    , Attribute, updateMsg, state, view, viewLoading
+    , Attribute, updateMsg, state, stickyHeader, stickyHeaderCustom, StickyConfig, view, viewLoading
     , invariantSort, simpleSort, combineSorters
     )
 
@@ -18,7 +18,7 @@ Changes from V3:
 @docs Column, Sorter, State
 @docs init, initDescending
 @docs custom, string
-@docs Attribute, updateMsg, state, view, viewLoading
+@docs Attribute, updateMsg, state, stickyHeader, stickyHeaderCustom, StickyConfig, view, viewLoading
 @docs invariantSort, simpleSort, combineSorters
 
 -}
@@ -66,6 +66,7 @@ type alias State id =
 type alias Config id msg =
     { updateMsg : Maybe (State id -> msg)
     , state : Maybe (State id)
+    , stickyHeader : Maybe StickyConfig
     }
 
 
@@ -73,6 +74,22 @@ defaultConfig : Config id msg
 defaultConfig =
     { updateMsg = Nothing
     , state = Nothing
+    , stickyHeader = Nothing
+    }
+
+
+type alias StickyConfig =
+    { topOffset : Float
+    , zIndex : Int
+    , includeMobile : Bool
+    }
+
+
+defaultStickyConfig : StickyConfig
+defaultStickyConfig =
+    { topOffset = 0
+    , zIndex = 0
+    , includeMobile = False
     }
 
 
@@ -88,6 +105,16 @@ state state_ =
 updateMsg : (State id -> msg) -> Attribute id msg
 updateMsg updateMsg_ =
     Attribute (\config -> { config | updateMsg = Just updateMsg_ })
+
+
+stickyHeader : Attribute id msg
+stickyHeader =
+    Attribute (\config -> { config | stickyHeader = Just defaultStickyConfig })
+
+
+stickyHeaderCustom : StickyConfig -> Attribute id msg
+stickyHeaderCustom stickyConfig =
+    Attribute (\config -> { config | stickyHeader = Just stickyConfig })
 
 
 {-| -}
