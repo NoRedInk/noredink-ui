@@ -1,4 +1,4 @@
-module Nri.Ui.Util exposing (dashify, removePunctuation, safeIdString)
+module Nri.Ui.Util exposing (dashify, isSubstringWithinDistance, levenshteinDistance, removePunctuation, safeIdString)
 
 import Regex exposing (Regex)
 
@@ -87,3 +87,59 @@ safeIdString =
 regexFromString : String -> Regex
 regexFromString =
     Regex.fromString >> Maybe.withDefault Regex.never
+
+
+levenshteinDistance : String -> String -> Int
+levenshteinDistance s t =
+    levenshteinDistanceHelper 0 (String.toList s) (String.toList t)
+
+
+levenshteinDistanceHelper : Int -> List Char -> List Char -> Int
+levenshteinDistanceHelper distance s t =
+    case ( s, t ) of
+        ( [], _ ) ->
+            distance + List.length t
+
+        ( _, [] ) ->
+            distance + List.length s
+
+        ( sHead :: sTail, tHead :: tTail ) ->
+            let
+                cost =
+                    if sHead == tHead then
+                        0
+
+                    else
+                        1
+            in
+            levenshteinDistanceHelper (distance + cost) sTail tTail
+
+
+isSubstringWithinDistance : String -> String -> Int -> Bool
+isSubstringWithinDistance s t d =
+    let
+        sLength =
+            String.length s
+
+        tLength =
+            String.length t
+
+        sList =
+            String.toList s
+
+        tList =
+            String.toList t
+    in
+    if sLength > tLength then
+        False
+
+    else
+        List.any
+            (\i ->
+                levenshteinDistanceHelper
+                    0
+                    (List.take sLength (List.drop i tList))
+                    sList
+                    <= d
+            )
+            (List.range 0 (tLength - sLength))

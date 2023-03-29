@@ -65,6 +65,15 @@
       };
     }
 
+    app.ports.scrollToItemInList.subscribe((e) => {
+      const el = document.getElementById(e.elementId);
+      if (el) {
+        const sibling = e.direction === "up" ? el.previousElementSibling : el.nextElementSibling;
+        if (sibling) {
+            sibling.scrollIntoView({ block: "nearest" });
+        }
+      }
+    });
   </script>
   <script src="bundle.js"></script>
 </body>

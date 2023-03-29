@@ -3,7 +3,7 @@ module Nri.Ui.TextInput.V7 exposing
     , number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, username, organization, organizationTitle, postalCode, sex, tel, date, datetime
     , readOnlyText
     , value, map
-    , onFocus, onBlur, onEnter
+    , onFocus, onBlur, onEnter, onClick, onKeyDownPreventDefault
     , Attribute, placeholder, autofocus
     , hiddenLabel, visibleLabel
     , css, custom, nriDescription, id, testId, noMargin
@@ -43,7 +43,7 @@ module Nri.Ui.TextInput.V7 exposing
 
 ### Event handlers
 
-@docs onFocus, onBlur, onEnter
+@docs onFocus, onBlur, onEnter, onClick, onKeyDownPreventDefault
 
 
 ### Attributes
@@ -56,6 +56,7 @@ module Nri.Ui.TextInput.V7 exposing
 
 -}
 
+import Accessibility.Styled.Key as Key
 import Css exposing (center, num, position, px, relative, textAlign)
 import Css.Global
 import Html.Styled as Html exposing (..)
@@ -629,6 +630,20 @@ onEnter msg =
     Attribute { emptyEventsAndValues | onEnter = Just msg } identity
 
 
+{-| Causes the TextInput to produce the given `msg` when the field is clicked.
+-}
+onClick : msg -> Attribute value msg
+onClick msg =
+    Attribute { emptyEventsAndValues | onClick = Just msg } identity
+
+
+{-| Causes the TextInput to produce the given `msg` on key down.
+-}
+onKeyDownPreventDefault : List (Key.Event msg) -> Attribute value msg
+onKeyDownPreventDefault msg =
+    Attribute { emptyEventsAndValues | onKeyDownPreventDefault = Just msg } identity
+
+
 {-| Sets the `autofocus` attribute of the resulting HTML input.
 -}
 autofocus : Attribute value msg
@@ -714,6 +729,8 @@ type alias EventsAndValues value msg =
     , onFocus : Maybe msg
     , onBlur : Maybe msg
     , onEnter : Maybe msg
+    , onClick : Maybe msg
+    , onKeyDownPreventDefault : Maybe (List (Key.Event msg))
     , floatingContent : Maybe (FloatingContentConfig msg -> Html msg)
     }
 
@@ -727,6 +744,8 @@ emptyEventsAndValues =
     , onBlur = Nothing
     , onEnter = Nothing
     , onInput = Nothing
+    , onClick = Nothing
+    , onKeyDownPreventDefault = Nothing
     , floatingContent = Nothing
     }
 
@@ -742,6 +761,8 @@ map f toString (Attribute eventsAndValues configF) =
         , onBlur = eventsAndValues.onBlur
         , onEnter = eventsAndValues.onEnter
         , onInput = eventsAndValues.onInput
+        , onClick = eventsAndValues.onClick
+        , onKeyDownPreventDefault = eventsAndValues.onKeyDownPreventDefault
         , floatingContent = eventsAndValues.floatingContent
         }
         configF
@@ -821,6 +842,8 @@ applyEvents =
             , floatingContent = orExisting .floatingContent eventsAndValues existing
             , onEnter = orExisting .onEnter eventsAndValues existing
             , onInput = orExisting .onInput eventsAndValues existing
+            , onClick = orExisting .onClick eventsAndValues existing
+            , onKeyDownPreventDefault = orExisting .onKeyDownPreventDefault eventsAndValues existing
             }
         )
         emptyEventsAndValues
@@ -936,6 +959,8 @@ view label attributes =
                    , Extra.maybe Events.onInput eventsAndValues.onInput
                    , Extra.maybe Events.onFocus eventsAndValues.onFocus
                    , Extra.maybe Events.onBlur eventsAndValues.onBlur
+                   , Extra.maybe Events.onClick eventsAndValues.onClick
+                   , Extra.maybe Key.onKeyDownPreventDefault eventsAndValues.onKeyDownPreventDefault
                    , Attributes.autofocus config.autofocus
                    , Extra.maybe type_ config.fieldType
                    , Extra.maybe (attribute "inputmode") config.inputMode
