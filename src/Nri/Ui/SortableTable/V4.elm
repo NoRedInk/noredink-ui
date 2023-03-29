@@ -181,17 +181,6 @@ combineSorters sorters =
 
 
 {-| -}
-viewLoading : Config id entry msg -> State id -> Html msg
-viewLoading config state =
-    let
-        tableColumns =
-            List.map (buildTableColumn config.updateMsg state) config.columns
-    in
-    Table.viewLoading
-        tableColumns
-
-
-{-| -}
 view : Config id entry msg -> State id -> List entry -> Html msg
 view config state entries =
     let
@@ -204,6 +193,17 @@ view config state entries =
     Table.view
         tableColumns
         (List.sortWith (sorter state.sortDirection) entries)
+
+
+{-| -}
+viewLoading : Config id entry msg -> State id -> Html msg
+viewLoading config state =
+    let
+        tableColumns =
+            List.map (buildTableColumn config.updateMsg state) config.columns
+    in
+    Table.viewLoading
+        tableColumns
 
 
 findSorter : List (Column id entry msg) -> id -> Sorter entry
