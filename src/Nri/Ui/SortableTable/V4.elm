@@ -1,7 +1,8 @@
 module Nri.Ui.SortableTable.V4 exposing
-    ( Column, Config, Sorter, State
+    ( Column, Sorter, State
     , init, initDescending
-    , custom, string, view, viewLoading
+    , custom, string
+    , Attribute, updateMsg, state, view, viewLoading
     , invariantSort, simpleSort, combineSorters
     )
 
@@ -14,9 +15,10 @@ Changes from V3:
   - Change to an HTML-like API
   - Allow the table header to be sticky
 
-@docs Column, Config, Sorter, State
+@docs Column, Sorter, State
 @docs init, initDescending
-@docs custom, string, view, viewLoading
+@docs custom, string
+@docs Attribute, updateMsg, state, view, viewLoading
 @docs invariantSort, simpleSort, combineSorters
 
 -}
@@ -67,13 +69,25 @@ type alias Config id msg =
     }
 
 
-type Attribute id entry msg
+defaultConfig : Config id msg
+defaultConfig =
+    { updateMsg = Nothing
+    , state = Nothing
+    }
+
+
+type Attribute id msg
     = Attribute (Config id msg -> Config id msg)
 
 
-state : State id -> Attribute id entry msg
+state : State id -> Attribute id msg
 state state_ =
     Attribute (\config -> { config | state = Just state_ })
+
+
+updateMsg : (State id -> msg) -> Attribute id msg
+updateMsg updateMsg_ =
+    Attribute (\config -> { config | updateMsg = Just updateMsg_ })
 
 
 {-| -}
@@ -192,9 +206,12 @@ combineSorters sorters =
 
 
 {-| -}
-view : Config id msg -> List (Column id entry msg) -> List entry -> Html msg
-view config columns entries =
+view : List (Attribute id msg) -> List (Column id entry msg) -> List entry -> Html msg
+view attributes columns entries =
     let
+        config =
+            List.foldl (\(Attribute fn) soFar -> fn soFar) defaultConfig attributes
+
         tableColumns =
             List.map (buildTableColumn config.updateMsg config.state) columns
     in
@@ -213,9 +230,12 @@ view config columns entries =
 
 
 {-| -}
-viewLoading : Config id msg -> List (Column id entry msg) -> Html msg
-viewLoading config columns =
+viewLoading : List (Attribute id msg) -> List (Column id entry msg) -> Html msg
+viewLoading attributes columns =
     let
+        config =
+            List.foldl (\(Attribute fn) soFar -> fn soFar) defaultConfig attributes
+
         tableColumns =
             List.map (buildTableColumn config.updateMsg config.state) columns
     in

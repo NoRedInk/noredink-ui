@@ -104,10 +104,10 @@ example =
                 settings =
                     Control.currentValue model.settings
 
-                config =
-                    { updateMsg = Just SetSortState
-                    , state = Just sortState
-                    }
+                attrs =
+                    [ SortableTable.updateMsg SetSortState
+                    , SortableTable.state sortState
+                    ]
 
                 ( dataCode, data ) =
                     List.unzip dataWithCode
@@ -149,10 +149,10 @@ example =
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , if settings.loading then
-                SortableTable.viewLoading config columns
+                SortableTable.viewLoading attrs columns
 
               else
-                SortableTable.view config columns data
+                SortableTable.view attrs columns data
             ]
     }
 
