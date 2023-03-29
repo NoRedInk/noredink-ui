@@ -15,6 +15,7 @@ import Category exposing (Category(..))
 import Code
 import Css
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra exposing (values)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html
@@ -325,7 +326,7 @@ initSettings =
                 , ( "Right", Control.value Right )
                 ]
             )
-        |> Control.field "customSpacing" (Control.maybe False (values [ 2, 3, 4, 8, 16 ]))
+        |> Control.field "customSpacing" (Control.maybe False (values String.fromFloat [ 2, 3, 4, 8, 16 ]))
         |> Control.field "withTooltips" (Control.bool True)
         |> Control.field "tabListBackgroundColor" (Control.maybe False colorChoices)
         |> Control.field "highContrastTabListBackgroundColor" (Control.maybe False colorChoices)
@@ -335,20 +336,13 @@ initSettings =
                     [ ( "Default", Control.value Default )
                     , ( "Custom"
                       , Control.record Tabs.TabListStickyConfig
-                            |> Control.field "topOffset" (values [ 0, 10, 50 ])
-                            |> Control.field "zIndex" (values [ 0, 1, 5, 10 ])
+                            |> Control.field "topOffset" (values String.fromFloat [ 0, 10, 50 ])
+                            |> Control.field "zIndex" (values String.fromInt [ 0, 1, 5, 10 ])
                             |> Control.map Custom
                       )
                     ]
                 )
             )
-
-
-values : List a -> Control a
-values nums =
-    nums
-        |> List.map (\n -> ( Debug.toString n, Control.value n ))
-        |> Control.choice
 
 
 type Msg
