@@ -106,7 +106,6 @@ example =
 
                 config =
                     { updateMsg = SetSortState
-                    , columns = columns
                     , state = Just sortState
                     }
 
@@ -150,10 +149,10 @@ example =
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , if settings.loading then
-                SortableTable.viewLoading config
+                SortableTable.viewLoading config columns
 
               else
-                SortableTable.view config data
+                SortableTable.view config columns data
             ]
     }
 

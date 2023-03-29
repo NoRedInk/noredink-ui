@@ -59,15 +59,14 @@ type alias State id =
 
 
 {-| -}
-type alias Config id entry msg =
+type alias Config id msg =
     { updateMsg : State id -> msg
-    , columns : List (Column id entry msg)
     , state : Maybe (State id)
     }
 
 
 type Attribute id entry msg
-    = Attribute (Config id entry msg -> Config id entry msg)
+    = Attribute (Config id msg -> Config id msg)
 
 
 state : State id -> Attribute id entry msg
@@ -191,17 +190,17 @@ combineSorters sorters =
 
 
 {-| -}
-view : Config id entry msg -> List entry -> Html msg
-view config entries =
+view : Config id msg -> List (Column id entry msg) -> List entry -> Html msg
+view config columns entries =
     let
         tableColumns =
-            List.map (buildTableColumn config.updateMsg config.state) config.columns
+            List.map (buildTableColumn config.updateMsg config.state) columns
     in
     case config.state of
         Just state_ ->
             let
                 sorter =
-                    findSorter config.columns state_.column
+                    findSorter columns state_.column
             in
             Table.view
                 tableColumns
@@ -212,11 +211,11 @@ view config entries =
 
 
 {-| -}
-viewLoading : Config id entry msg -> Html msg
-viewLoading config =
+viewLoading : Config id msg -> List (Column id entry msg) -> Html msg
+viewLoading config columns =
     let
         tableColumns =
-            List.map (buildTableColumn config.updateMsg config.state) config.columns
+            List.map (buildTableColumn config.updateMsg config.state) columns
     in
     Table.viewLoading
         tableColumns
