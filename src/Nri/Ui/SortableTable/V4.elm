@@ -62,7 +62,17 @@ type alias State id =
 type alias Config id entry msg =
     { updateMsg : State id -> msg
     , columns : List (Column id entry msg)
+    , state : Maybe (State id)
     }
+
+
+type Attribute id entry msg
+    = Attribute (Config id entry msg -> Config id entry msg)
+
+
+state : State id -> Attribute id entry msg
+state state_ =
+    Attribute (\config -> { config | state = Just state_ })
 
 
 {-| -}
@@ -181,26 +191,32 @@ combineSorters sorters =
 
 
 {-| -}
-view : Config id entry msg -> State id -> List entry -> Html msg
-view config state entries =
+view : Config id entry msg -> List entry -> Html msg
+view config entries =
     let
         tableColumns =
-            List.map (buildTableColumn config.updateMsg state) config.columns
-
-        sorter =
-            findSorter config.columns state.column
+            List.map (buildTableColumn config.updateMsg config.state) config.columns
     in
-    Table.view
-        tableColumns
-        (List.sortWith (sorter state.sortDirection) entries)
+    case config.state of
+        Just state_ ->
+            let
+                sorter =
+                    findSorter config.columns state_.column
+            in
+            Table.view
+                tableColumns
+                (List.sortWith (sorter state_.sortDirection) entries)
+
+        Nothing ->
+            Table.view tableColumns entries
 
 
 {-| -}
-viewLoading : Config id entry msg -> State id -> Html msg
-viewLoading config state =
+viewLoading : Config id entry msg -> Html msg
+viewLoading config =
     let
         tableColumns =
-            List.map (buildTableColumn config.updateMsg state) config.columns
+            List.map (buildTableColumn config.updateMsg config.state) config.columns
     in
     Table.viewLoading
         tableColumns
@@ -236,27 +252,37 @@ identitySorter =
         EQ
 
 
-buildTableColumn : (State id -> msg) -> State id -> Column id entry msg -> Table.Column entry msg
-buildTableColumn updateMsg state (Column column) =
+buildTableColumn : (State id -> msg) -> Maybe (State id) -> Column id entry msg -> Table.Column entry msg
+buildTableColumn updateMsg maybeState (Column column) =
     Table.custom
-        { header = viewSortHeader (column.sorter /= Nothing) column.header updateMsg state column.id
+        { header =
+            case maybeState of
+                Just state_ ->
+                    viewSortHeader (column.sorter /= Nothing) column.header updateMsg state_ column.id
+
+                Nothing ->
+                    Debug.todo "non-sorted header"
         , view = column.view
         , width = Css.px (toFloat column.width)
         , cellStyles = column.cellStyles
         , sort =
-            if state.column == column.id then
-                Just state.sortDirection
+            Maybe.andThen
+                (\state_ ->
+                    if state_.column == column.id then
+                        Just state_.sortDirection
 
-            else
-                Nothing
+                    else
+                        Nothing
+                )
+                maybeState
         }
 
 
 viewSortHeader : Bool -> Html msg -> (State id -> msg) -> State id -> id -> Html msg
-viewSortHeader isSortable header updateMsg state id =
+viewSortHeader isSortable header updateMsg state_ id =
     let
         nextState =
-            nextTableState state id
+            nextTableState state_ id
     in
     if isSortable then
         Html.button
@@ -265,7 +291,7 @@ viewSortHeader isSortable header updateMsg state id =
                 , Css.alignItems Css.center
                 , Css.justifyContent Css.spaceBetween
                 , CssVendorPrefix.property "user-select" "none"
-                , if state.column == id then
+                , if state_.column == id then
                     fontWeight bold
 
                   else
@@ -288,7 +314,7 @@ viewSortHeader isSortable header updateMsg state id =
             , Aria.roleDescription "sort button"
             ]
             [ Html.div [] [ header ]
-            , viewSortButton updateMsg state id
+            , viewSortButton updateMsg state_ id
             ]
 
     else
@@ -299,7 +325,7 @@ viewSortHeader isSortable header updateMsg state id =
 
 
 viewSortButton : (State id -> msg) -> State id -> id -> Html msg
-viewSortButton updateMsg state id =
+viewSortButton updateMsg state_ id =
     let
         arrows upHighlighted downHighlighted =
             Html.div
@@ -315,7 +341,7 @@ viewSortButton updateMsg state id =
                 ]
 
         buttonContent =
-            case ( state.column == id, state.sortDirection ) of
+            case ( state_.column == id, state_.sortDirection ) of
                 ( True, Ascending ) ->
                     arrows True False
 
@@ -329,10 +355,10 @@ viewSortButton updateMsg state id =
 
 
 nextTableState : State id -> id -> State id
-nextTableState state id =
-    if state.column == id then
+nextTableState state_ id =
+    if state_.column == id then
         { column = id
-        , sortDirection = flipSortDirection state.sortDirection
+        , sortDirection = flipSortDirection state_.sortDirection
         }
 
     else
