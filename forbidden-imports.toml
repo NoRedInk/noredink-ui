@@ -88,7 +88,10 @@ hint = 'upgrade to V2'
 hint = 'upgrade to V3'
 
 [forbidden."Nri.Ui.HighlighterToolbar.V1"]
-hint = 'upgrade to V2'
+hint = 'upgrade to V3'
+
+[forbidden."Nri.Ui.HighlighterToolbar.V2"]
+hint = 'upgrade to V3'
 
 [forbidden."Nri.Ui.Icon.V3"]
 hint = 'upgrade to V5'

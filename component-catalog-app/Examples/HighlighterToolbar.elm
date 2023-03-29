@@ -6,7 +6,6 @@ module Examples.HighlighterToolbar exposing (Msg, State, example)
 
 -}
 
-import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Code
 import Css exposing (Color)
@@ -18,11 +17,10 @@ import Html.Styled.Attributes exposing (css, id)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.HighlighterToolbar.V2 as HighlighterToolbar
+import Nri.Ui.HighlighterToolbar.V3 as HighlighterToolbar
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
-import Task
 
 
 moduleName : String
@@ -32,7 +30,7 @@ moduleName =
 
 version : Int
 version =
-    2
+    3
 
 
 {-| -}
@@ -60,13 +58,29 @@ example =
                 , mainType = Nothing
                 , extraCode = []
                 , renderExample = Code.unstyledView
-                , toExampleCode = \_ -> []
+                , toExampleCode =
+                    \_ ->
+                        [ { sectionName = "Example"
+                          , code =
+                                Code.fromModule moduleName "view"
+                                    ++ Code.recordMultiline
+                                        [ ( "onSelect", "identity -- msg for selecting the tag or eraser" )
+                                        , ( "getNameAndColor", "identity" )
+                                        , ( "highlighterId", Code.string "highlighter-id" )
+                                        ]
+                                        2
+                                    ++ Code.recordMultiline
+                                        [ ( "currentTool", "Nothing" )
+                                        , ( "tags", "[]" )
+                                        ]
+                                        2
+                          }
+                        ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , HighlighterToolbar.view
-                { focusAndSelect = FocusAndSelectTag
-                , getColor = getColor
-                , getName = getName
+                { onSelect = SelectTag
+                , getNameAndColor = identity
                 , highlighterId = "highlighter"
                 }
                 { currentTool = state.currentTool
@@ -111,47 +125,28 @@ toolPreview color border icon name =
         ]
 
 
-type Tag
-    = Claim
-    | Evidence
-    | Reasoning
+type alias Tag =
+    { name : String
+    , colorSolid : Css.Color
+    , colorLight : Css.Color
+    }
 
 
 tags : List Tag
 tags =
-    [ Claim, Evidence, Reasoning ]
-
-
-getName : Tag -> String
-getName tag =
-    case tag of
-        Claim ->
-            "Claim"
-
-        Evidence ->
-            "Evidence"
-
-        Reasoning ->
-            "Reasoning"
-
-
-getColor : Tag -> { colorSolid : Color, colorLight : Color }
-getColor tag =
-    case tag of
-        Claim ->
-            { colorSolid = Colors.mustard
-            , colorLight = Colors.highlightYellow
-            }
-
-        Evidence ->
-            { colorSolid = Colors.magenta
-            , colorLight = Colors.highlightMagenta
-            }
-
-        Reasoning ->
-            { colorSolid = Colors.cyan
-            , colorLight = Colors.highlightCyan
-            }
+    [ { name = "Claim"
+      , colorSolid = Colors.mustard
+      , colorLight = Colors.highlightYellow
+      }
+    , { name = "Evidence"
+      , colorSolid = Colors.magenta
+      , colorLight = Colors.highlightMagenta
+      }
+    , { name = "Reasoning"
+      , colorSolid = Colors.cyan
+      , colorLight = Colors.highlightCyan
+      }
+    ]
 
 
 {-| -}
@@ -185,8 +180,7 @@ controlSettings =
 {-| -}
 type Msg
     = UpdateControls (Control Settings)
-    | FocusAndSelectTag { select : Maybe Tag, focus : Maybe String }
-    | Focused (Result Dom.Error ())
+    | SelectTag (Maybe Tag)
 
 
 {-| -}
@@ -196,12 +190,7 @@ update msg state =
         UpdateControls settings ->
             ( { state | settings = settings }, Cmd.none )
 
-        FocusAndSelectTag { select, focus } ->
-            ( { state | currentTool = select }
-            , focus
-                |> Maybe.map (Dom.focus >> Task.attempt Focused)
-                |> Maybe.withDefault Cmd.none
+        SelectTag newTool ->
+            ( { state | currentTool = newTool }
+            , Cmd.none
             )
-
-        Focused error ->
-            ( state, Cmd.none )
