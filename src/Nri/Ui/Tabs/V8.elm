@@ -56,33 +56,33 @@ type Tab id msg
 
 {-| -}
 type TabAttribute id msg
-    = Attribute (TabsInternal.Tab id msg -> TabsInternal.Tab id msg)
+    = TabAttribute (TabsInternal.Tab id msg -> TabsInternal.Tab id msg)
 
 
 {-| -}
 tabString : String -> TabAttribute id msg
 tabString content =
-    Attribute (\tab -> { tab | tabView = [ viewTabDefault content ] })
+    TabAttribute (\tab -> { tab | tabView = [ viewTabDefault content ] })
 
 
 {-| -}
 tabHtml : Html Never -> TabAttribute id msg
 tabHtml content =
-    Attribute (\tab -> { tab | tabView = [ Html.map never content ] })
+    TabAttribute (\tab -> { tab | tabView = [ Html.map never content ] })
 
 
 {-| Tooltip defaults: `[Tooltip.smallPadding, Tooltip.onBottom, Tooltip.fitToContent]`
 -}
 withTooltip : List (Tooltip.Attribute msg) -> TabAttribute id msg
 withTooltip attributes =
-    Attribute (\tab -> { tab | tabTooltip = attributes })
+    TabAttribute (\tab -> { tab | tabTooltip = attributes })
 
 
 {-| Makes it so that the tab can't be clicked or focused via keyboard navigation
 -}
 disabled : Bool -> TabAttribute id msg
 disabled isDisabled =
-    Attribute (\tab -> { tab | disabled = isDisabled })
+    TabAttribute (\tab -> { tab | disabled = isDisabled })
 
 
 {-| Sets an overriding labelledBy on the tab for an external tooltip.
@@ -90,7 +90,7 @@ This assumes an external tooltip is set and disables any internal tooltip config
 -}
 labelledBy : String -> TabAttribute id msg
 labelledBy labelledById =
-    Attribute (\tab -> { tab | labelledBy = Just labelledById })
+    TabAttribute (\tab -> { tab | labelledBy = Just labelledById })
 
 
 {-| Like [`labelledBy`](#labelledBy), but it describes the given element
@@ -102,25 +102,25 @@ this tab.
 -}
 describedBy : String -> TabAttribute id msg
 describedBy describedById =
-    Attribute (\tab -> { tab | describedBy = describedById :: tab.describedBy })
+    TabAttribute (\tab -> { tab | describedBy = describedById :: tab.describedBy })
 
 
 {-| -}
 panelHtml : Html msg -> TabAttribute id msg
 panelHtml content =
-    Attribute (\tab -> { tab | panelView = content })
+    TabAttribute (\tab -> { tab | panelView = content })
 
 
 {-| -}
 spaHref : String -> TabAttribute id msg
 spaHref url =
-    Attribute (\tab -> { tab | spaHref = Just url })
+    TabAttribute (\tab -> { tab | spaHref = Just url })
 
 
 {-| -}
 tabAttributes : List (Html.Attribute msg) -> TabAttribute id msg
 tabAttributes attrs =
-    Attribute (\tab -> { tab | tabAttributes = tab.tabAttributes ++ attrs })
+    TabAttribute (\tab -> { tab | tabAttributes = tab.tabAttributes ++ attrs })
 
 
 {-| -}
@@ -128,7 +128,7 @@ build : { id : id, idString : String } -> List (TabAttribute id msg) -> Tab id m
 build config attributes =
     Tab
         (TabsInternal.fromList config
-            (List.map (\(Attribute f) -> f)
+            (List.map (\(TabAttribute f) -> f)
                 (tabAttributes [ Attributes.class FocusRing.customClass ]
                     :: attributes
                 )
@@ -147,49 +147,44 @@ type Alignment
 {-| Ways to adapt the appearance of the tabs to your application.
 -}
 type Attribute id msg
-    = Title String
-    | Alignment Alignment
-    | Spacing Float
-    | TabListBackgroundColor Css.Color
-    | HighContrasttabListBackgroundColor Css.Color
-    | TabListSticky TabListStickyConfig
+    = Attribute (Config -> Config)
 
 
 {-| Set a title in the tab list.
 -}
 title : String -> Attribute id msg
-title =
-    Title
+title title_ =
+    Attribute (\config -> { config | title = Just title_ })
 
 
 {-| Set the alignment of the tab list.
 -}
 alignment : Alignment -> Attribute id msg
-alignment =
-    Alignment
+alignment alignment_ =
+    Attribute (\config -> { config | alignment = alignment_ })
 
 
 {-| Set the spacing between tabs in the tab list.
 -}
 spacing : Float -> Attribute id msg
-spacing =
-    Spacing
+spacing spacing_ =
+    Attribute (\config -> { config | spacing = Just spacing_ })
 
 
 {-| Set the background color of the tab list. Mostly useful to set an explicit
 background color with sticky tabs.
 -}
 tabListBackgroundColor : Css.Color -> Attribute id msg
-tabListBackgroundColor =
-    TabListBackgroundColor
+tabListBackgroundColor color =
+    Attribute (\config -> { config | tabListBackgroundColor = Just color })
 
 
 {-| Set the background color of the tab list in high-contrast mode. Mostly
 useful to set an explicit background color with sticky tabs.
 -}
 highContrastTabListBackgroundColor : Css.Color -> Attribute id msg
-highContrastTabListBackgroundColor =
-    HighContrasttabListBackgroundColor
+highContrastTabListBackgroundColor color =
+    Attribute (\config -> { config | highContrastTabListBackgroundColor = Just color })
 
 
 {-| Make the tab list sticky. You probably want to set an explicit background
@@ -197,15 +192,15 @@ color along with this!
 -}
 tabListSticky : Attribute id msg
 tabListSticky =
-    TabListSticky defaultTabListStickyConfig
+    Attribute (\config -> { config | tabListStickyConfig = Just defaultTabListStickyConfig })
 
 
 {-| Make the tab list sticky, overriding the default behavior. You should
 probably set an explicit background color along with this.
 -}
 tabListStickyCustom : TabListStickyConfig -> Attribute id msg
-tabListStickyCustom =
-    TabListSticky
+tabListStickyCustom custom =
+    Attribute (\config -> { config | tabListStickyConfig = Just custom })
 
 
 type alias Config =
@@ -255,28 +250,6 @@ defaultTabListStickyConfig =
     }
 
 
-updateConfig : Attribute id msg -> Config -> Config
-updateConfig attr config =
-    case attr of
-        Title newTitle ->
-            { config | title = Just newTitle }
-
-        Alignment newAlignment ->
-            { config | alignment = newAlignment }
-
-        Spacing newSpacing ->
-            { config | spacing = Just newSpacing }
-
-        TabListBackgroundColor newColor ->
-            { config | tabListBackgroundColor = Just newColor }
-
-        HighContrasttabListBackgroundColor newColor ->
-            { config | highContrastTabListBackgroundColor = Just newColor }
-
-        TabListSticky newConfig ->
-            { config | tabListStickyConfig = Just newConfig }
-
-
 {-| -}
 view :
     { focusAndSelect : { select : id, focus : Maybe String } -> msg
@@ -288,7 +261,7 @@ view :
 view { focusAndSelect, selected } attrs tabs =
     let
         config =
-            List.foldl updateConfig defaultConfig attrs
+            List.foldl (\(Attribute fn) soFar -> fn soFar) defaultConfig attrs
 
         { tabList, tabPanels } =
             TabsInternal.views
