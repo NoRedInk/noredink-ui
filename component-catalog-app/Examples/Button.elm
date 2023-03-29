@@ -388,7 +388,7 @@ buttonsTable =
                             [ code [] [ text (Code.fromModule moduleName sizeName) ]
                             ]
                     )
-                |> (\cells -> tr [] (th [] [] :: cells))
+                |> (\cells -> tr [] (td [] [] :: cells))
           ]
         , List.concatMap exampleRow styles
         ]

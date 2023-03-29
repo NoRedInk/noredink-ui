@@ -180,7 +180,7 @@ viewExampleTable { label, icon, attributes } =
         [ Html.thead []
             [ Html.tr []
                 [ Html.th [] [ Html.text "theme" ]
-                , Html.th [ Attributes.colspan 2 ] [ Html.text "" ]
+                , Html.th [ Attributes.colspan 2 ] [ Html.text "(default)" ]
                 , Html.th [ Attributes.colspan 2 ] [ Html.text "withBorder" ]
                 ]
             ]

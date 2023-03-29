@@ -10,6 +10,7 @@ module Nri.Ui.Tabs.V7 exposing
 {-| Patch changes:
 
   - use Tooltip.V3 instead of Tooltip.V2
+  - when tooltips aren't used, avoid using aria-owns and rendering tooltip-related code
 
 Changes from V6:
 

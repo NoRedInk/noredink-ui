@@ -209,7 +209,7 @@ buttons settings =
             row label (List.map render sizes)
     in
     table []
-        [ sizeRow "" (\( size, sizeLabel ) -> th [] [ text sizeLabel ])
+        [ tr [] (td [] [] :: List.map (\( size, sizeLabel ) -> th [] [ text sizeLabel ]) sizes)
         , sizeRow ".link"
             (\( size, sizeLabel ) ->
                 ClickableText.link settings.label
