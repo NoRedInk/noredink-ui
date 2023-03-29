@@ -230,15 +230,11 @@ defaultConfig =
     stick, in pixels. (**Default value:** 0)
   - `zIndex` controls how high up the z-order the bar will float. (**Default
     value:** 0)
-  - `onMobile` controls whether or not the bar is sticky on mobile. Be careful
-    about setting this to `True`; it can harm accessibility. (**Default value:**
-    `False`.)
 
 -}
 type alias TabListStickyConfig =
     { topOffset : Float
     , zIndex : Int
-    , includeMobile : Bool
     }
 
 
@@ -246,7 +242,6 @@ defaultTabListStickyConfig : TabListStickyConfig
 defaultTabListStickyConfig =
     { topOffset = 0
     , zIndex = 0
-    , includeMobile = False
     }
 
 
@@ -284,19 +279,13 @@ view { focusAndSelect, selected } attrs tabs =
             , Css.borderBottomColor Colors.navy
             , Fonts.baseFont
             , maybeStyle
-                (\{ topOffset, zIndex, includeMobile } ->
-                    let
-                        styles =
-                            [ Css.position Css.sticky
-                            , Css.top (Css.px topOffset)
-                            , Css.zIndex (Css.int zIndex)
-                            ]
-                    in
-                    if includeMobile then
-                        Css.batch styles
-
-                    else
-                        Css.Media.withMedia [ MediaQuery.notMobile ] styles
+                (\{ topOffset, zIndex } ->
+                    Css.Media.withMedia
+                        [ MediaQuery.notMobile ]
+                        [ Css.position Css.sticky
+                        , Css.top (Css.px topOffset)
+                        , Css.zIndex (Css.int zIndex)
+                        ]
                 )
                 config.tabListStickyConfig
             ]

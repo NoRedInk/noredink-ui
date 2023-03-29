@@ -144,7 +144,6 @@ example =
                                                             ++ Code.recordMultiline
                                                                 [ ( "topOffset", String.fromFloat stickyConfig.topOffset )
                                                                 , ( "zIndex", String.fromInt stickyConfig.zIndex )
-                                                                , ( "includeMobile", Code.bool stickyConfig.includeMobile )
                                                                 ]
                                                                 2
                                             )
@@ -338,7 +337,6 @@ initSettings =
                       , Control.record Tabs.TabListStickyConfig
                             |> Control.field "topOffset" (values [ 0, 10, 50 ])
                             |> Control.field "zIndex" (values [ 0, 1, 5, 10 ])
-                            |> Control.field "includeMobile" (Control.bool False)
                             |> Control.map Custom
                       )
                     ]
