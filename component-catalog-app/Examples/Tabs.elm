@@ -132,7 +132,6 @@ example =
                                         , Maybe.map (\title -> moduleName ++ ".title " ++ Code.string title) settings.title
                                         , Maybe.map (\spacing -> moduleName ++ ".spacing " ++ String.fromFloat spacing) settings.customSpacing
                                         , Maybe.map (\color -> moduleName ++ ".pageBackgroundColor" ++ colorToCode color) settings.pageBackgroundColor
-                                        , Maybe.map (\color -> moduleName ++ ".highContrastPageBackgroundColor" ++ colorToCode color) settings.highContrastPageBackgroundColor
                                         , Maybe.map
                                             (\sticky ->
                                                 case sticky of
@@ -170,7 +169,6 @@ example =
                     , Maybe.map Tabs.title settings.title
                     , Maybe.map Tabs.spacing settings.customSpacing
                     , Maybe.map (Tabs.pageBackgroundColor << colorToCss) settings.pageBackgroundColor
-                    , Maybe.map (Tabs.highContrastPageBackgroundColor << colorToCss) settings.highContrastPageBackgroundColor
                     , Maybe.map
                         (\stickiness ->
                             case stickiness of

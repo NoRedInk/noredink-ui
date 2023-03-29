@@ -1,7 +1,7 @@
 module Nri.Ui.Tabs.V8 exposing
     ( Attribute, title, spacing
     , Alignment(..), alignment
-    , pageBackgroundColor, highContrastPageBackgroundColor
+    , pageBackgroundColor
     , tabListSticky, TabListStickyConfig, tabListStickyCustom
     , view
     , Tab, TabAttribute, build
@@ -21,7 +21,7 @@ module Nri.Ui.Tabs.V8 exposing
 
 @docs Attribute, title, spacing
 @docs Alignment, alignment
-@docs pageBackgroundColor, highContrastPageBackgroundColor
+@docs pageBackgroundColor
 @docs tabListSticky, TabListStickyConfig, tabListStickyCustom
 @docs view
 
@@ -180,14 +180,6 @@ pageBackgroundColor color =
     Attribute (\config -> { config | pageBackgroundColor = Just color })
 
 
-{-| Set the background color of the tab list in high-contrast mode. Mostly
-useful to set an explicit background color with sticky tabs.
--}
-highContrastPageBackgroundColor : Css.Color -> Attribute id msg
-highContrastPageBackgroundColor color =
-    Attribute (\config -> { config | highContrastPageBackgroundColor = Just color })
-
-
 {-| Make the tab list sticky. You probably want to set an explicit background
 color along with this!
 -}
@@ -209,7 +201,6 @@ type alias Config =
     , alignment : Alignment
     , spacing : Maybe Float
     , pageBackgroundColor : Maybe Css.Color
-    , highContrastPageBackgroundColor : Maybe Css.Color
     , tabListStickyConfig : Maybe TabListStickyConfig
     }
 
@@ -220,7 +211,6 @@ defaultConfig =
     , alignment = Left
     , spacing = Nothing
     , pageBackgroundColor = Nothing
-    , highContrastPageBackgroundColor = Nothing
     , tabListStickyConfig = Nothing
     }
 
@@ -349,9 +339,6 @@ stylesTabsAligned config =
     , Css.flexGrow (Css.int 1)
     , Css.padding Css.zero
     , maybeStyle Css.backgroundColor config.pageBackgroundColor
-    , maybeStyle
-        (\color -> MediaQuery.highContrastMode [ Css.backgroundColor color ])
-        config.highContrastPageBackgroundColor
     ]
 
 
