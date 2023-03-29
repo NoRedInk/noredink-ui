@@ -139,7 +139,7 @@ entries by name, no matter of the sort direction set on the table.
 -}
 invariantSort : (entry -> comparable) -> Sorter entry
 invariantSort mapper =
-    \sortDirection elem1 elem2 ->
+    \_ elem1 elem2 ->
         compare (mapper elem1) (mapper elem2)
 
 
@@ -249,7 +249,7 @@ listExtraFind predicate list =
 
 identitySorter : Sorter a
 identitySorter =
-    \sortDirection item1 item2 ->
+    \_ _ _ ->
         EQ
 
 
