@@ -309,13 +309,13 @@ viewSortHeader isSortable header maybeUpdateMsg state_ id =
                 , Fonts.baseFont
                 , Css.fontSize (Css.em 1)
                 ]
-            , maybe (\updateMsg -> Html.Styled.Events.onClick (updateMsg nextState)) maybeUpdateMsg
+            , maybe (\updateMsg_ -> Html.Styled.Events.onClick (updateMsg_ nextState)) maybeUpdateMsg
 
             -- screen readers should know what clicking this button will do
             , Aria.roleDescription "sort button"
             ]
             [ Html.div [] [ header ]
-            , viewJust (\updateMsg -> viewSortButton updateMsg state_ id) maybeUpdateMsg
+            , viewJust (\_ -> viewSortButton state_ id) maybeUpdateMsg
             ]
 
     else
@@ -325,8 +325,8 @@ viewSortHeader isSortable header maybeUpdateMsg state_ id =
             [ header ]
 
 
-viewSortButton : (State id -> msg) -> State id -> id -> Html msg
-viewSortButton updateMsg state_ id =
+viewSortButton : State id -> id -> Html msg
+viewSortButton state_ id =
     let
         arrows upHighlighted downHighlighted =
             Html.div
