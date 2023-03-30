@@ -271,7 +271,6 @@ type alias Settings =
     , customSpacing : Maybe Float
     , withTooltips : Bool
     , pageBackgroundColor : Maybe Color
-    , highContrastPageBackgroundColor : Maybe Color
     , stickiness : Maybe Stickiness
     }
 
@@ -327,7 +326,6 @@ initSettings =
         |> Control.field "customSpacing" (Control.maybe False (values String.fromFloat [ 2, 3, 4, 8, 16 ]))
         |> Control.field "withTooltips" (Control.bool True)
         |> Control.field "pageBackgroundColor" (Control.maybe False colorChoices)
-        |> Control.field "highContrastPageBackgroundColor" (Control.maybe False colorChoices)
         |> Control.field "tabListSticky"
             (Control.maybe False
                 (Control.choice
