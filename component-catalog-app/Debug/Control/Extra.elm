@@ -1,6 +1,6 @@
 module Debug.Control.Extra exposing
     ( float, int
-    , list, listItem, optionalListItem, optionalListItemDefaultChecked
+    , values, list, listItem, optionalListItem, optionalListItemDefaultChecked
     , optionalBoolListItem
     , bool
     , rotatedChoice, specificChoice
@@ -9,7 +9,7 @@ module Debug.Control.Extra exposing
 {-|
 
 @docs float, int
-@docs list, listItem, optionalListItem, optionalListItemDefaultChecked
+@docs values, list, listItem, optionalListItem, optionalListItemDefaultChecked
 @docs optionalBoolListItem
 @docs bool
 @docs rotatedChoice, specificChoice
@@ -33,6 +33,14 @@ int : Int -> Control Int
 int default =
     Control.map (String.toInt >> Maybe.withDefault default)
         (Control.string (String.fromInt default))
+
+
+{-| -}
+values : (a -> String) -> List a -> Control a
+values toString nums =
+    nums
+        |> List.map (\n -> ( toString n, Control.value n ))
+        |> Control.choice
 
 
 {-| Use with `listItem` and `optionalListItem`

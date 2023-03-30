@@ -15,13 +15,14 @@ import Category exposing (Category(..))
 import Code
 import Css
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra exposing (values)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Tabs.V7 as Tabs exposing (Alignment(..), Tab)
+import Nri.Ui.Tabs.V8 as Tabs exposing (Alignment(..), Tab)
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Task
@@ -34,7 +35,7 @@ moduleName =
 
 version : Int
 version =
-    7
+    8
 
 
 example : Example State Msg
@@ -122,13 +123,35 @@ example =
                         let
                             code =
                                 [ moduleName ++ ".view"
-                                , "    { title = " ++ Code.maybeString settings.title
-                                , "    , alignment = " ++ moduleName ++ "." ++ Debug.toString settings.alignment
-                                , "    , customSpacing = " ++ Code.maybeFloat settings.customSpacing
-                                , "    , focusAndSelect = identity"
+                                , "    { focusAndSelect = identity"
                                 , "    , selected = " ++ String.fromInt model.selected
-                                , "    , tabs = " ++ Code.listMultiline (List.map Tuple.first tabs) 2
                                 , "    }"
+                                , Code.listMultiline
+                                    (List.filterMap identity
+                                        [ Just (moduleName ++ ".alignment " ++ moduleName ++ "." ++ Debug.toString settings.alignment)
+                                        , Maybe.map (\title -> moduleName ++ ".title " ++ Code.string title) settings.title
+                                        , Maybe.map (\spacing -> moduleName ++ ".spacing " ++ String.fromFloat spacing) settings.customSpacing
+                                        , Maybe.map (\color -> moduleName ++ ".pageBackgroundColor" ++ colorToCode color) settings.pageBackgroundColor
+                                        , Maybe.map
+                                            (\sticky ->
+                                                case sticky of
+                                                    Default ->
+                                                        moduleName ++ ".tabsListSticky"
+
+                                                    Custom stickyConfig ->
+                                                        moduleName
+                                                            ++ ".tabsListStickyCustom "
+                                                            ++ Code.recordMultiline
+                                                                [ ( "topOffset", String.fromFloat stickyConfig.topOffset )
+                                                                , ( "zIndex", String.fromInt stickyConfig.zIndex )
+                                                                ]
+                                                                2
+                                            )
+                                            settings.stickiness
+                                        ]
+                                    )
+                                    1
+                                , Code.listMultiline (List.map Tuple.first tabs) 1
                                 ]
                                     |> String.join "\n"
                         in
@@ -138,13 +161,27 @@ example =
                         ]
                 }
             , Tabs.view
-                { title = settings.title
-                , alignment = settings.alignment
-                , customSpacing = settings.customSpacing
-                , focusAndSelect = FocusAndSelectTab
+                { focusAndSelect = FocusAndSelectTab
                 , selected = model.selected
-                , tabs = List.map Tuple.second tabs
                 }
+                (List.filterMap identity
+                    [ Just (Tabs.alignment settings.alignment)
+                    , Maybe.map Tabs.title settings.title
+                    , Maybe.map Tabs.spacing settings.customSpacing
+                    , Maybe.map (Tabs.pageBackgroundColor << colorToCss) settings.pageBackgroundColor
+                    , Maybe.map
+                        (\stickiness ->
+                            case stickiness of
+                                Default ->
+                                    Tabs.tabListSticky
+
+                                Custom stickyConfig ->
+                                    Tabs.tabListStickyCustom stickyConfig
+                        )
+                        settings.stickiness
+                    ]
+                )
+                (List.map Tuple.second tabs)
             ]
     }
 
@@ -190,7 +227,13 @@ buildTooltip openTooltipId withTooltips id =
         ]
     , Tabs.build { id = id, idString = tabIdString }
         ([ Tabs.tabString tabName
-         , Tabs.panelHtml (Html.text panelName)
+         , panelName
+            |> List.repeat 50
+            |> String.join "\n"
+            |> Html.text
+            |> List.singleton
+            |> Html.pre []
+            |> Tabs.panelHtml
          ]
             ++ (if withTooltips then
                     [ Tabs.withTooltip
@@ -227,11 +270,50 @@ type alias Settings =
     , alignment : Alignment
     , customSpacing : Maybe Float
     , withTooltips : Bool
+    , pageBackgroundColor : Maybe Color
+    , stickiness : Maybe Stickiness
     }
+
+
+type Color
+    = White
+    | Gray
+
+
+colorToCss : Color -> Css.Color
+colorToCss color =
+    case color of
+        White ->
+            Colors.white
+
+        Gray ->
+            Colors.gray92
+
+
+colorToCode : Color -> String
+colorToCode color =
+    case color of
+        White ->
+            "Colors.white"
+
+        Gray ->
+            "Colors.gray92"
+
+
+type Stickiness
+    = Default
+    | Custom Tabs.TabListStickyConfig
 
 
 initSettings : Control Settings
 initSettings =
+    let
+        colorChoices =
+            Control.choice
+                [ ( "Gray", Control.value Gray )
+                , ( "White", Control.value White )
+                ]
+    in
     Control.record Settings
         |> Control.field "title" (Control.maybe False (Control.string "Title"))
         |> Control.field "alignment"
@@ -241,18 +323,22 @@ initSettings =
                 , ( "Right", Control.value Right )
                 ]
             )
-        |> Control.field "customSpacing"
+        |> Control.field "customSpacing" (Control.maybe False (values String.fromFloat [ 2, 3, 4, 8, 16 ]))
+        |> Control.field "withTooltips" (Control.bool True)
+        |> Control.field "pageBackgroundColor" (Control.maybe False colorChoices)
+        |> Control.field "tabListSticky"
             (Control.maybe False
                 (Control.choice
-                    [ ( "2", Control.value 2 )
-                    , ( "3", Control.value 3 )
-                    , ( "4", Control.value 4 )
-                    , ( "8", Control.value 8 )
-                    , ( "16", Control.value 16 )
+                    [ ( "Default", Control.value Default )
+                    , ( "Custom"
+                      , Control.record Tabs.TabListStickyConfig
+                            |> Control.field "topOffset" (values String.fromFloat [ 0, 10, 50 ])
+                            |> Control.field "zIndex" (values String.fromInt [ 0, 1, 5, 10 ])
+                            |> Control.map Custom
+                      )
                     ]
                 )
             )
-        |> Control.field "withTooltips" (Control.bool True)
 
 
 type Msg

@@ -198,7 +198,10 @@ hint = 'upgrade to V5'
 hint = 'upgrade to V6'
 
 [forbidden."Nri.Ui.Tabs.V6"]
-hint = 'upgrade to V7'
+hint = 'upgrade to V8'
+
+[forbidden."Nri.Ui.Tabs.V7"]
+hint = 'upgrade to V8'
 
 [forbidden."Nri.Ui.Text.V2"]
 hint = 'upgrade to V5'
