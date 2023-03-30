@@ -3,6 +3,7 @@ module Spec.Nri.Ui.SortableTable exposing (spec)
 import Expect
 import Html.Styled
 import Nri.Ui.SortableTable.V4 as SortableTable
+import Nri.Ui.Table.V6 exposing (SortDirection)
 import Test exposing (..)
 import Test.Html.Query as Query
 import Test.Html.Selector as Selector
@@ -19,30 +20,23 @@ type alias Person =
     }
 
 
-type Msg
-    = NoOp
-
-
-config : SortableTable.Config Column Person Msg
-config =
-    { updateMsg = \_ -> NoOp
-    , columns =
-        [ SortableTable.string
-            { id = FirstName
-            , header = "First name"
-            , value = .firstName
-            , width = 125
-            , cellStyles = \_ -> []
-            }
-        , SortableTable.string
-            { id = LastName
-            , header = "Last name"
-            , value = .lastName
-            , width = 125
-            , cellStyles = \_ -> []
-            }
-        ]
-    }
+columns : List (SortableTable.Column Column Person msg)
+columns =
+    [ SortableTable.string
+        { id = FirstName
+        , header = "First name"
+        , value = .firstName
+        , width = 125
+        , cellStyles = \_ -> []
+        }
+    , SortableTable.string
+        { id = LastName
+        , header = "Last name"
+        , value = .lastName
+        , width = 125
+        , cellStyles = \_ -> []
+        }
+    ]
 
 
 entries : List Person
@@ -53,9 +47,9 @@ entries =
     ]
 
 
-tableView : SortableTable.State Column -> Query.Single Msg
+tableView : SortableTable.State Column -> Query.Single msg
 tableView sortState =
-    SortableTable.view config sortState entries
+    SortableTable.view [ SortableTable.state sortState ] columns entries
         |> Html.Styled.toUnstyled
         |> Query.fromHtml
 
@@ -70,10 +64,12 @@ sortByDescending field =
     SortableTable.initDescending field
 
 
+ascending : SortDirection
 ascending =
     sortBy FirstName |> .sortDirection
 
 
+descending : SortDirection
 descending =
     sortByDescending FirstName |> .sortDirection
 
