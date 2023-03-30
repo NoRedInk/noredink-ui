@@ -13,7 +13,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Table.V6 as Table
+import Nri.Ui.Table.V7 as Table
 import Nri.Ui.Text.V6 as Text
 
 

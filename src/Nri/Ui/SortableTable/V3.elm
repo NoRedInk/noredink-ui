@@ -32,7 +32,7 @@ import Nri.Ui.Colors.V1
 import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Svg.V1
-import Nri.Ui.Table.V6 as Table exposing (SortDirection(..))
+import Nri.Ui.Table.V7 as Table exposing (SortDirection(..))
 import Nri.Ui.UiIcon.V1
 
 

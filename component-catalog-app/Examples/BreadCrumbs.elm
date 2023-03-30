@@ -23,7 +23,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Table.V6 as Table
+import Nri.Ui.Table.V7 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 

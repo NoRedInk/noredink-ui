@@ -25,7 +25,7 @@ import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Highlightable.V2 as Highlightable exposing (Highlightable)
 import Nri.Ui.Highlighter.V3 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
-import Nri.Ui.Table.V6 as Table
+import Nri.Ui.Table.V7 as Table
 import String.Extra
 
 

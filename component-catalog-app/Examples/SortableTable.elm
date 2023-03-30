@@ -19,7 +19,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.SortableTable.V4 as SortableTable exposing (Column)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Table.V6 as Table
+import Nri.Ui.Table.V7 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 

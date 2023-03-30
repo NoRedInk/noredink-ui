@@ -34,7 +34,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 exposing (maybe)
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.Svg.V1
-import Nri.Ui.Table.V6 as Table exposing (SortDirection(..))
+import Nri.Ui.Table.V7 as Table exposing (SortDirection(..))
 import Nri.Ui.UiIcon.V1
 
 
