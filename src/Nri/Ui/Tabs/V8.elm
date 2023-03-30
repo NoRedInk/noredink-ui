@@ -279,6 +279,7 @@ view { focusAndSelect, selected } attrs tabs =
                         ]
                 )
                 config.tabListStickyConfig
+            , maybeStyle Css.backgroundColor config.pageBackgroundColor
             ]
             []
             [ config.title
@@ -338,7 +339,6 @@ stylesTabsAligned config =
     , Css.displayFlex
     , Css.flexGrow (Css.int 1)
     , Css.padding Css.zero
-    , maybeStyle Css.backgroundColor config.pageBackgroundColor
     ]
 
 
