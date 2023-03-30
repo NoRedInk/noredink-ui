@@ -4,15 +4,18 @@ import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
+import Browser.Dom as Dom
 import Css
 import Html.Styled as HtmlStyled
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import Json.Decode as Decode
+import List.Extra
 import Nri.Ui.Fonts.V1
 import Nri.Ui.TextInput.V7 as TextInput
 import Nri.Ui.Util exposing (isSubstringWithinDistance)
 import String
+import Task
 
 
 type alias Option =
@@ -29,8 +32,11 @@ type Msg
     = UpdateInput String
     | UpdateOptions Options
     | SelectOption (Maybe Option)
+    | SelectOptionAndFocus (Maybe Option)
     | Expand
     | Collapse
+    | CollapseAndFocus
+    | Focus (Result Dom.Error ())
     | Toggle
     | MoveUp
     | MoveDown
@@ -73,7 +79,7 @@ init id label zIndex options =
     }
 
 
-update : Msg -> Model -> ( Model, Cmd msg )
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         UpdateInput input ->
@@ -101,11 +107,34 @@ update msg model =
             , Cmd.none
             )
 
+        SelectOptionAndFocus maybeOption ->
+            ( { model
+                | selected = maybeOption
+                , activeDescendant = maybeOption
+                , input =
+                    case maybeOption of
+                        Just option ->
+                            option.label
+
+                        Nothing ->
+                            ""
+                , filteredOptions = model.options
+                , expanded = False
+              }
+            , Task.attempt Focus (Dom.focus (model.id ++ "-textbox"))
+            )
+
         Expand ->
             ( { model | expanded = True }, Cmd.none )
 
         Collapse ->
             ( { model | expanded = False }, Cmd.none )
+
+        CollapseAndFocus ->
+            ( { model | expanded = False }, Task.attempt Focus (Dom.focus (model.id ++ "-textbox")) )
+
+        Focus _ ->
+            ( model, Cmd.none )
 
         Toggle ->
             ( { model | expanded = not model.expanded }, Cmd.none )
@@ -161,7 +190,7 @@ normalizeString =
 
 filterOptions : Options -> String -> Options
 filterOptions options input =
-    List.filter (\option -> isSubstringWithinDistance (normalizeString input) (normalizeString option.label) 2) options
+    List.filter (\option -> isSubstringWithinDistance (normalizeString input) (normalizeString option.label) 1) options
 
 
 findNext : List a -> a -> Maybe a
@@ -185,7 +214,6 @@ findNext list current =
             Just next
 
         Nothing ->
-            -- List.head list
             List.head (List.reverse list)
 
 
@@ -210,7 +238,6 @@ findPrevious list current =
             Just previous
 
         Nothing ->
-            -- List.head (List.reverse list)
             List.head list
 
 
@@ -223,7 +250,7 @@ overlay model =
             , Css.zIndex (Css.int model.zIndex)
             , Css.backgroundColor Css.transparent
             ]
-        , Events.onClick Collapse
+        , Events.onClick CollapseAndFocus
         ]
         []
 
@@ -313,8 +340,39 @@ listbox model =
         visibleOptions =
             Debug.log "visibleOptions" <| List.drop startIndex (List.take (endIndex + 1) model.filteredOptions)
 
-        offset =
-            Css.px (Debug.log "offset" <| toFloat startIndex * model.optionHeight)
+        activeDescendantIndex =
+            case model.activeDescendant of
+                Just activeDescendant ->
+                    List.Extra.findIndex (\option -> option.value == activeDescendant.value) model.filteredOptions
+
+                Nothing ->
+                    Just -1
+
+        activeDescendantNeighborStartIndex =
+            case activeDescendantIndex of
+                Just index ->
+                    max 0 (index - bufferSize)
+
+                Nothing ->
+                    0
+
+        activeDescendantNeighborEndIndex =
+            case activeDescendantIndex of
+                Just index ->
+                    min (List.length model.filteredOptions - 1) (index + bufferSize)
+
+                Nothing ->
+                    0
+
+        activeDescendantNeighbors =
+            Debug.log "activeDescendantNeighbors" <|
+                List.drop activeDescendantNeighborStartIndex (List.take (activeDescendantNeighborEndIndex + 1) model.filteredOptions)
+
+        visibleOptionsOffset =
+            Css.px (Debug.log "visibleOptionsOffset" <| toFloat startIndex * model.optionHeight)
+
+        activeDescendantNeighborsOffset =
+            Css.px (Debug.log "activeDescendantNeighborsOffset" <| toFloat activeDescendantNeighborStartIndex * model.optionHeight)
 
         totalHeight =
             Css.px (Debug.log "totalHeight" <| toFloat (List.length model.filteredOptions) * model.optionHeight)
@@ -322,6 +380,7 @@ listbox model =
     HtmlStyled.ul
         [ Role.listBox
         , Aria.label model.label
+        , Aria.setSize (List.length model.filteredOptions)
         , Attributes.id (model.id ++ "-listbox")
         , Events.on "scroll" (Decode.map Scroll (Decode.at [ "target", "scrollTop" ] Decode.float))
         , css
@@ -354,11 +413,19 @@ listbox model =
             [ HtmlStyled.div
                 [ Attributes.css
                     [ Css.position Css.absolute
-                    , Css.top offset
+                    , Css.top visibleOptionsOffset
                     , Css.width (Css.pct 100)
                     ]
                 ]
                 (List.map (listboxOption model) visibleOptions)
+            , HtmlStyled.div
+                [ Attributes.css
+                    [ Css.position Css.absolute
+                    , Css.top activeDescendantNeighborsOffset
+                    , Css.width (Css.pct 100)
+                    ]
+                ]
+                (List.map (listboxOption model) activeDescendantNeighbors)
             ]
         ]
 
@@ -368,7 +435,7 @@ listboxOption model option =
     HtmlStyled.li
         [ Role.option
         , Aria.selected (model.activeDescendant == Just option)
-        , Events.onClick (SelectOption (Just option))
+        , Events.onClick (SelectOptionAndFocus (Just option))
         , Attributes.id (model.id ++ "-option-" ++ option.value)
         , css
             [ Css.boxSizing Css.borderBox
@@ -391,8 +458,6 @@ view model =
     div
         [ Attributes.css
             [ Css.position Css.relative
-
-            -- , Css.display Css.inlineBlock
             ]
         ]
         [ if model.expanded then
@@ -403,8 +468,6 @@ view model =
         , div
             [ Attributes.css
                 [ Css.position Css.relative
-
-                -- , Css.display Css.inlineBlock
                 , Css.zIndex (Css.int (model.zIndex + 1))
                 ]
             ]

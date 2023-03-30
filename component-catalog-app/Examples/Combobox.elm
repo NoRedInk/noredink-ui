@@ -211,8 +211,12 @@ update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
         ComboboxMsg comboboxMsg ->
-            Combobox.update comboboxMsg state.combobox
-                |> Tuple.mapFirst (\combobox -> { state | combobox = combobox })
+            let
+                (newCombobox, cmd) = Combobox.update comboboxMsg state.combobox
+            in
+            ( { state | combobox = newCombobox }
+            , Cmd.map ComboboxMsg cmd
+            )
 
         UpdateControls settings ->
             ( { state | settings = settings }, Cmd.none )
