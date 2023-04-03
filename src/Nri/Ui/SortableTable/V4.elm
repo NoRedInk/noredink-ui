@@ -6,11 +6,7 @@ module Nri.Ui.SortableTable.V4 exposing
     , invariantSort, simpleSort, combineSorters
     )
 
-{-| TODO for next major version:
-
-  - add the possibility to pass Aria.sortAscending and Aria.sortDescending attributes to the <th> tag
-
-Changes from V3:
+{-| Changes from V3:
 
   - Change to an HTML-like API
   - Allow the table header to be sticky
