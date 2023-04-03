@@ -98,8 +98,8 @@ startGroupStyles =
     [ MediaQuery.highContrastMode
         [ Css.property "border-left" "2px solid Mark"
         ]
-    , Css.paddingLeft (Css.px 4)
-    , Css.marginLeft (Css.px -4)
+    , Css.paddingLeft (Css.px paddingSize)
+    , Css.marginLeft (Css.px -paddingSize)
     , Css.borderTopLeftRadius (Css.px 4)
     , Css.borderBottomLeftRadius (Css.px 4)
     ]
@@ -110,11 +110,16 @@ endGroupStyles =
     [ MediaQuery.highContrastMode
         [ Css.property "border-right" "2px solid Mark"
         ]
-    , Css.paddingRight (Css.px 4)
-    , Css.marginRight (Css.px -4)
+    , Css.paddingRight (Css.px paddingSize)
+    , Css.marginRight (Css.px -paddingSize)
     , Css.borderTopRightRadius (Css.px 4)
     , Css.borderBottomRightRadius (Css.px 4)
     ]
+
+
+paddingSize : Float
+paddingSize =
+    2
 
 
 highlightStyles : Css.Color -> List Css.Style
