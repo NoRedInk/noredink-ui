@@ -351,6 +351,12 @@ controlSettings =
                       , Control.record SortableTable.StickyConfig
                             |> Control.field "topOffset" (values String.fromFloat [ 0, 10, 50 ])
                             |> Control.field "zIndex" (values String.fromInt [ 0, 1, 5, 10 ])
+                            |> Control.field "pageBackgroundColor"
+                                (Control.choice
+                                    [ ( "white", Control.value Colors.white)
+                                    , ( "gray", Control.value Colors.gray92)
+                                    ]
+                                )
                             |> Control.map Custom
                       )
                     ]

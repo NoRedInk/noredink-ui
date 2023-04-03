@@ -90,6 +90,7 @@ accessibility issues with zooming and panning.
 type alias StickyConfig =
     { topOffset : Float
     , zIndex : Int
+    , pageBackgroundColor : Css.Color
     }
 
 
@@ -97,16 +98,18 @@ defaultStickyConfig : StickyConfig
 defaultStickyConfig =
     { topOffset = 0
     , zIndex = 0
+    , pageBackgroundColor = Nri.Ui.Colors.V1.white
     }
 
 
 stickyConfigStyles : StickyConfig -> List Style
-stickyConfigStyles { topOffset, zIndex } =
+stickyConfigStyles { topOffset, zIndex, pageBackgroundColor } =
     [ Css.Global.children
         [ Css.Global.thead
             [ Css.position Css.sticky
             , Css.top (Css.px topOffset)
             , Css.zIndex (Css.int zIndex)
+            , Css.backgroundColor pageBackgroundColor
             ]
         ]
     ]
