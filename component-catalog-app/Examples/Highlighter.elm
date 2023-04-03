@@ -26,6 +26,7 @@ import Nri.Ui.Highlightable.V3 as Highlightable exposing (Highlightable)
 import Nri.Ui.Highlighter.V4 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Table.V6 as Table
+import Sort exposing (Sorter)
 import String.Extra
 
 
@@ -598,7 +599,7 @@ update msg state =
         HighlighterMsg highlighterMsg ->
             let
                 ( newHighlighter, effect, Highlighter.Intent intent ) =
-                    Highlighter.update highlighterMsg state.highlighter
+                    Highlighter.update sorter highlighterMsg state.highlighter
             in
             ( { state | highlighter = newHighlighter }
             , Cmd.batch
@@ -616,6 +617,16 @@ update msg state =
             ( { state | highlighter = Highlighter.removeHighlights state.highlighter }
             , Cmd.none
             )
+
+
+sorter : Sorter ()
+sorter =
+    Sort.custom
+        (\a b ->
+            case ( a, b ) of
+                ( (), () ) ->
+                    EQ
+        )
 
 
 

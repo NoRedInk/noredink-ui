@@ -9,10 +9,9 @@ module Nri.Ui.Highlighter.V4 exposing
     , clickedHighlightable, hoveredHighlightable
     )
 
-{-| Changes from V2:
+{-| Changes from V3:
 
-  - support overlapping highlights (by way of removing the underlying mark element)
-  - move asFragmentTuples, usedMarkers, and text to the Highlightable module
+  - Highlighter.update now takes a sorter for the markers
 
 Highlighter provides a view/model/update to display a view to highlight text and show marks.
 
@@ -62,6 +61,7 @@ import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Mark.V2 as Mark exposing (Mark)
 import Set exposing (Set)
+import Sort exposing (Sorter)
 import Task
 
 
@@ -235,8 +235,8 @@ type Action marker
 
 {-| Update for highlighter returning additional info about whether there was a change
 -}
-update : Msg marker -> Model marker -> ( Model marker, Cmd (Msg marker), Intent )
-update msg model =
+update : Sorter marker -> Msg marker -> Model marker -> ( Model marker, Cmd (Msg marker), Intent )
+update sorter msg model =
     withIntent <|
         case msg of
             Pointer pointerMsg ->
@@ -665,7 +665,14 @@ hoveredHighlightable model =
 
 
 {-| -}
-view : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Maybe Int, marker : Tool.Tool marker } -> Html (Msg marker)
+view :
+    { config
+        | id : String
+        , highlightables : List (Highlightable marker)
+        , focusIndex : Maybe Int
+        , marker : Tool.Tool marker
+    }
+    -> Html (Msg marker)
 view config =
     view_
         { showTagsInline = False
@@ -678,7 +685,14 @@ view config =
 
 
 {-| -}
-viewWithOverlappingHighlights : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Maybe Int, marker : Tool.Tool marker } -> Html (Msg marker)
+viewWithOverlappingHighlights :
+    { config
+        | id : String
+        , highlightables : List (Highlightable marker)
+        , focusIndex : Maybe Int
+        , marker : Tool.Tool marker
+    }
+    -> Html (Msg marker)
 viewWithOverlappingHighlights config =
     view_
         { showTagsInline = False
