@@ -496,6 +496,7 @@ performAction action ( model, cmds ) =
                     ( { model
                         | highlightables = saveHinted marker hinting model.highlightables
                         , hasChanged = Changed
+                        , hintingIndices = Nothing
                       }
                     , cmds
                     )
