@@ -21,6 +21,7 @@ module Nri.Ui.SortableTable.V4 exposing
 
 import Accessibility.Styled.Aria as Aria
 import Css exposing (..)
+import Css.Global
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events
@@ -97,6 +98,18 @@ defaultStickyConfig =
     { topOffset = 0
     , zIndex = 0
     }
+
+
+stickyConfigStyles : StickyConfig -> List Style
+stickyConfigStyles { topOffset, zIndex } =
+    [ Css.Global.children
+        [ Css.Global.thead
+            [ Css.position Css.sticky
+            , Css.top (Css.px topOffset)
+            , Css.zIndex (Css.int zIndex)
+            ]
+        ]
+    ]
 
 
 {-| Customize how the table is rendered, for example by adding sorting or
@@ -262,6 +275,10 @@ view attributes columns entries =
         config =
             List.foldl (\(Attribute fn) soFar -> fn soFar) defaultConfig attributes
 
+        stickyStyles =
+            Maybe.map stickyConfigStyles config.stickyHeader
+                |> Maybe.withDefault []
+
         tableColumns =
             List.map (buildTableColumn config.updateMsg config.state) columns
     in
@@ -271,12 +288,12 @@ view attributes columns entries =
                 sorter =
                     findSorter columns state_.column
             in
-            Table.view []
+            Table.view stickyStyles
                 tableColumns
                 (List.sortWith (sorter state_.sortDirection) entries)
 
         Nothing ->
-            Table.view [] tableColumns entries
+            Table.view stickyStyles tableColumns entries
 
 
 {-| -}
@@ -286,10 +303,14 @@ viewLoading attributes columns =
         config =
             List.foldl (\(Attribute fn) soFar -> fn soFar) defaultConfig attributes
 
+        stickyStyles =
+            Maybe.map stickyConfigStyles config.stickyHeader
+                |> Maybe.withDefault []
+
         tableColumns =
             List.map (buildTableColumn config.updateMsg config.state) columns
     in
-    Table.viewLoading [] tableColumns
+    Table.viewLoading stickyStyles tableColumns
 
 
 findSorter : List (Column id entry msg) -> id -> Sorter entry
