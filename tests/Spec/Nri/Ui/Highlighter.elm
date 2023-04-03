@@ -10,6 +10,7 @@ import Nri.Ui.Highlighter.V4 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool exposing (Tool)
 import ProgramTest exposing (..)
 import Regex exposing (Regex)
+import Sort
 import Spec.KeyboardHelpers as KeyboardHelpers
 import Spec.MouseHelpers as MouseHelpers
 import Test exposing (..)
@@ -589,7 +590,7 @@ program config highlightables =
                 }
         , update =
             \msg model ->
-                case Highlighter.update msg model of
+                case Highlighter.update Sort.alphabetical msg model of
                     ( newModel, _, _ ) ->
                         newModel
         , view = Highlighter.view >> toUnstyled
@@ -604,9 +605,9 @@ joinAdjacentInteractiveHighlightsTests =
             runTest description { joinAdjacentInteractiveHighlights } =
                 test (description ++ ", static elements should not change state") <|
                     \() ->
-                        [ Highlightable.init Highlightable.Static [] 0 ( [], " " )
-                        , Highlightable.init Highlightable.Interactive [] 1 ( [], "word" )
-                        , Highlightable.init Highlightable.Static [] 2 ( [], " " )
+                        [ Highlightable.initStatic [] 0 " "
+                        , Highlightable.initInteractive [] 1 "word"
+                        , Highlightable.initStatic [] 2 " "
                         ]
                             |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = joinAdjacentInteractiveHighlights }
                             |> click "word"
@@ -621,9 +622,9 @@ joinAdjacentInteractiveHighlightsTests =
     , describe "interactive segments surrounding a single static segment" <|
         let
             highlightables =
-                [ Highlightable.init Highlightable.Interactive [] 0 ( [], "hello" )
-                , Highlightable.init Highlightable.Static [] 1 ( [], " " )
-                , Highlightable.init Highlightable.Interactive [] 2 ( [], "world" )
+                [ Highlightable.initInteractive [] 0 "hello"
+                , Highlightable.initStatic [] 1 " "
+                , Highlightable.initInteractive [] 2 "world"
                 ]
         in
         [ test "not joining adjacent interactive highlights" <|
@@ -654,36 +655,36 @@ joinAdjacentInteractiveHighlightsTests =
     , describe "initialization"
         [ test "with matching mark types, not joining adjacent interactive highlights, does not join marks" <|
             \() ->
-                [ Highlightable.init Highlightable.Interactive [ marker (Just "type-1") ] 0 ( [], "hello" )
-                , Highlightable.init Highlightable.Static [] 1 ( [], " " )
-                , Highlightable.init Highlightable.Interactive [ marker (Just "type-1") ] 2 ( [], "world" )
+                [ Highlightable.initInteractive [ marker (Just "type-1") ] 0 "hello"
+                , Highlightable.initStatic [] 1 " "
+                , Highlightable.initInteractive [ marker (Just "type-1") ] 2 "world"
                 ]
                     |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                     |> ensureMarks [ [ "hello" ], [ "world" ] ]
                     |> done
         , test "with matching mark types, joining adjacent interactive highlights, joins marks" <|
             \() ->
-                [ Highlightable.init Highlightable.Interactive [ marker (Just "type-1") ] 0 ( [], "hello" )
-                , Highlightable.init Highlightable.Static [] 1 ( [], " " )
-                , Highlightable.init Highlightable.Interactive [ marker (Just "type-1") ] 2 ( [], "world" )
+                [ Highlightable.initInteractive [ marker (Just "type-1") ] 0 "hello"
+                , Highlightable.initStatic [] 1 " "
+                , Highlightable.initInteractive [ marker (Just "type-1") ] 2 "world"
                 ]
                     |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = True }
                     |> ensureMarks [ [ "hello", " ", "world" ] ]
                     |> done
         , test "with differing mark types, not joining adjacent interactive highlights, does not join marks" <|
             \() ->
-                [ Highlightable.init Highlightable.Interactive [ marker (Just "type-1") ] 0 ( [], "hello" )
-                , Highlightable.init Highlightable.Static [] 1 ( [], " " )
-                , Highlightable.init Highlightable.Interactive [ marker (Just "type-2") ] 2 ( [], "world" )
+                [ Highlightable.initInteractive [ marker (Just "type-1") ] 0 "hello"
+                , Highlightable.initStatic [] 1 " "
+                , Highlightable.initInteractive [ marker (Just "type-2") ] 2 "world"
                 ]
                     |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                     |> ensureMarks [ [ "hello" ], [ "world" ] ]
                     |> done
         , test "with differing mark types, joining adjacent interactive highlights, does not join marks" <|
             \() ->
-                [ Highlightable.init Highlightable.Interactive [ marker (Just "type-1") ] 0 ( [], "hello" )
-                , Highlightable.init Highlightable.Static [] 1 ( [], " " )
-                , Highlightable.init Highlightable.Interactive [ marker (Just "type-2") ] 2 ( [], "world" )
+                [ Highlightable.initInteractive [ marker (Just "type-1") ] 0 "hello"
+                , Highlightable.initStatic [] 1 " "
+                , Highlightable.initInteractive [ marker (Just "type-2") ] 2 "world"
                 ]
                     |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = True }
                     |> ensureMarks [ [ "hello" ], [ "world" ] ]
@@ -699,7 +700,7 @@ overlappingHighlightTests =
         initHighlightables =
             List.indexedMap
                 (\i ( text, marks ) ->
-                    Highlightable.init Highlightable.Interactive (List.map (Just >> marker) marks) i ( [], text )
+                    Highlightable.initInteractive (List.map (Just >> marker) marks) i text
                 )
 
         start renderer highlightables =
@@ -713,7 +714,7 @@ overlappingHighlightTests =
                         }
                 , update =
                     \msg model ->
-                        case Highlighter.update msg model of
+                        case Highlighter.update Sort.alphabetical msg model of
                             ( newModel, _, _ ) ->
                                 newModel
                 , view = renderer >> toUnstyled
