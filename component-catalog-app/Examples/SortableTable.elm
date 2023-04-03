@@ -10,8 +10,7 @@ import Category exposing (Category(..))
 import Code
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
-import Debug.Control.Extra as ControlExtra
-import Debug.Control.Extra exposing (values)
+import Debug.Control.Extra as ControlExtra exposing (values)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
@@ -154,7 +153,7 @@ example =
                                                     ++ Code.recordMultiline
                                                         [ ( "topOffset", String.fromFloat stickyConfig.topOffset )
                                                         , ( "zIndex", String.fromInt stickyConfig.zIndex )
-                                                        , ( "pageBackgroundColor", "Css.hex \"" ++ stickyConfig.pageBackgroundColor.value ++ "\"")
+                                                        , ( "pageBackgroundColor", "Css.hex \"" ++ stickyConfig.pageBackgroundColor.value ++ "\"" )
                                                         ]
                                                         2
                                     )
@@ -187,7 +186,8 @@ example =
                 SortableTable.viewLoading attrs columns
 
               else
-                SortableTable.view attrs columns
+                SortableTable.view attrs
+                    columns
                     (if isStickyAtAll then
                         data
                             |> List.repeat 10
@@ -354,8 +354,8 @@ controlSettings =
                             |> Control.field "zIndex" (values String.fromInt [ 0, 1, 5, 10 ])
                             |> Control.field "pageBackgroundColor"
                                 (Control.choice
-                                    [ ( "white", Control.value Colors.white)
-                                    , ( "gray", Control.value Colors.gray92)
+                                    [ ( "white", Control.value Colors.white )
+                                    , ( "gray", Control.value Colors.gray92 )
                                     ]
                                 )
                             |> Control.map Custom
