@@ -143,6 +143,7 @@ example =
                                                             ++ ".tabsListStickyCustom "
                                                             ++ Code.recordMultiline
                                                                 [ ( "topOffset", String.fromFloat stickyConfig.topOffset )
+                                                                , ( "topPadding", String.fromFloat stickyConfig.topPadding )
                                                                 , ( "zIndex", String.fromInt stickyConfig.zIndex )
                                                                 ]
                                                                 2
@@ -333,6 +334,7 @@ initSettings =
                     , ( "Custom"
                       , Control.record Tabs.TabListStickyConfig
                             |> Control.field "topOffset" (values String.fromFloat [ 0, 10, 50 ])
+                            |> Control.field "topPadding" (values String.fromFloat [ 0, 10, 50 ])
                             |> Control.field "zIndex" (values String.fromInt [ 0, 1, 5, 10 ])
                             |> Control.map Custom
                       )
