@@ -61,7 +61,7 @@ example =
                     , ( "vow.", Nothing )
                     ]
                         |> List.intersperse ( " ", Nothing )
-                        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
+                        |> List.indexedMap (\i ( word, marker ) -> Highlightable.initStatic (Maybe.Extra.toList marker) i word)
                 }
             ]
         ]
@@ -178,7 +178,7 @@ example =
                                 , ( "vow.", Nothing )
                                 ]
                                     |> List.intersperse ( " ", Nothing )
-                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
+                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.initStatic (Maybe.Extra.toList marker) i word)
                             }
                   }
                 , { viewName = "static"
@@ -198,7 +198,7 @@ example =
                                 , ( "vow.", Nothing )
                                 ]
                                     |> List.intersperse ( " ", Nothing )
-                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
+                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.initStatic (Maybe.Extra.toList marker) i word)
                             }
                   }
                 , { viewName = "static"
@@ -217,7 +217,7 @@ example =
                                 , ( "vow.", Nothing )
                                 ]
                                     |> List.intersperse ( " ", Nothing )
-                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
+                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.initStatic (Maybe.Extra.toList marker) i word)
                             }
                   }
                 , { viewName = "static"
@@ -273,10 +273,10 @@ example =
                                     |> List.indexedMap
                                         (\i ( word, marker ) ->
                                             if String.Extra.isBlank word then
-                                                Highlightable.init Highlightable.Static marker i ( [], word )
+                                                Highlightable.initStatic marker i word
 
                                             else
-                                                Highlightable.init Highlightable.Interactive marker i ( [], word )
+                                                Highlightable.initInteractive marker i word
                                         )
                                     |> Highlightable.joinAdjacentInteractiveHighlights
                             }
@@ -296,7 +296,7 @@ multipleHighlightsHighlightables =
     , ( "How *vexingly* quick daft zebras jump!", Nothing )
     ]
         |> List.intersperse ( " ", Nothing )
-        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
+        |> List.indexedMap (\i ( word, marker ) -> Highlightable.initStatic (Maybe.Extra.toList marker) i word)
 
 
 exampleMarker : Tool.MarkerModel ()
@@ -371,7 +371,7 @@ multipleHighlightsHighlightablesWithBorder =
     , ( "How *vexingly* quick daft zebras jump!", Nothing )
     ]
         |> List.intersperse ( " ", Nothing )
-        |> List.indexedMap (\i ( word, marker ) -> Highlightable.init Highlightable.Static (Maybe.Extra.toList marker) i ( [], word ))
+        |> List.indexedMap (\i ( word, marker ) -> Highlightable.initStatic (Maybe.Extra.toList marker) i word)
 
 
 claimMarkerWithBorder : Tool.MarkerModel ()
@@ -452,14 +452,14 @@ initHighlighter settings previousHighlightables =
                 exampleParagraph
                     |> List.map
                         (\text i ->
-                            ( "Highlightable.init Highlightable.Interactive [] " ++ String.fromInt i ++ " ( [], " ++ Code.string text ++ ")"
-                            , Highlightable.init Highlightable.Interactive [] i ( [], text )
+                            ( "Highlightable.initInteractive [] " ++ String.fromInt i ++ Code.string text
+                            , Highlightable.initInteractive [] i text
                             )
                         )
                     |> List.intersperse
                         (\i ->
-                            ( "Highlightable.init Highlightable.Static [] " ++ String.fromInt i ++ " ( []," ++ Code.string " " ++ ")"
-                            , Highlightable.init Highlightable.Static [] i ( [], " " )
+                            ( "Highlightable.initStatic [] " ++ String.fromInt i ++ Code.string " "
+                            , Highlightable.initStatic [] i " "
                             )
                         )
                     |> List.indexedMap (\i f -> f i)

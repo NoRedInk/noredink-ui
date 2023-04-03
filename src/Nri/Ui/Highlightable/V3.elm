@@ -1,6 +1,6 @@
 module Nri.Ui.Highlightable.V3 exposing
     ( Highlightable, Type(..), UIState(..)
-    , init, initFragments
+    , initStatic, initInteractive, initFragments
     , fromMarkdown
     , blur, clearHint, hint, hover
     , set
@@ -19,6 +19,7 @@ just a single whitespace.
 
   - move the uIState out of the Highlightable
   - make the attribute modeling more flexible
+  - replace init with initStatic and initInteractive, and remove attributes from the UI since they're seldom used
 
 
 ## Types
@@ -28,7 +29,7 @@ just a single whitespace.
 
 ## Initializers
 
-@docs init, initFragments
+@docs initStatic, initInteractive, initFragments
 @docs fromMarkdown
 
 
@@ -111,14 +112,26 @@ type UIState
 
 
 {-| -}
-init : Type -> List (Tool.MarkerModel marker) -> Int -> ( List (Attribute Never), String ) -> Highlightable marker
-init type_ marked index ( attributes, text_ ) =
+initStatic : List (Tool.MarkerModel marker) -> Int -> String -> Highlightable marker
+initStatic marked index text_ =
     { text = text_
     , uiState = None
-    , customAttributes = attributes
+    , customAttributes = []
     , marked = marked
     , index = index
-    , type_ = type_
+    , type_ = Static
+    }
+
+
+{-| -}
+initInteractive : List (Tool.MarkerModel marker) -> Int -> String -> Highlightable marker
+initInteractive marked index text_ =
+    { text = text_
+    , uiState = None
+    , customAttributes = []
+    , marked = marked
+    , index = index
+    , type_ = Interactive
     }
 
 
@@ -140,10 +153,10 @@ initFragments marked text_ =
         spaceOrInit index maybeWord =
             case maybeWord of
                 Just word ->
-                    init Interactive marked index ( [], word )
+                    initInteractive marked index word
 
                 Nothing ->
-                    init Static [] index ( [], " " )
+                    initStatic [] index " "
     in
     Regex.split whitespace text_
         |> List.map Just
@@ -164,7 +177,7 @@ fromMarkdown : String -> List (Highlightable ())
 fromMarkdown markdownString =
     let
         static maybeMark mapStrings c =
-            init Static (Maybe.Extra.toList maybeMark) -1 ( [], mapStrings c )
+            initStatic (Maybe.Extra.toList maybeMark) -1 (mapStrings c)
 
         defaultMark =
             Tool.buildMarker
