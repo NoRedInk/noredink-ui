@@ -241,7 +241,12 @@ tableBody toRow items =
 
 headersStyles : List Style
 headersStyles =
-    [ borderBottom3 (px 3) solid gray75
+    [ -- We use a inset box shadown for a bottom border instead of an actual
+      -- border because with our use of `border-collapse: collapse`, the bottom
+      -- gray border sticks to the table instead of traveling with the header
+      -- when the header has `position: sticky` applied.
+      boxShadow4 inset (px 0) (px -3) gray75
+    , paddingBottom (px 3)
     , height (px 45)
     , fontSize (px 15)
     ]
