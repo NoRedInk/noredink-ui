@@ -816,25 +816,6 @@ staticMarkdownWithTags config =
         }
 
 
-{-| Groups highlightables with the same state together.
--}
-buildGroups : List (Highlightable marker) -> List (List (Highlightable marker))
-buildGroups =
-    List.Extra.groupWhile groupHighlightables
-        >> List.map (\( elem, list ) -> elem :: list)
-
-
-groupHighlightables : Highlightable marker -> Highlightable marker -> Bool
-groupHighlightables x y =
-    ((x.uiState == y.uiState)
-        && (List.head x.marked == Nothing)
-        && (List.head y.marked == Nothing)
-    )
-        || (List.head x.marked == List.head y.marked && List.head x.marked /= Nothing)
-        || (List.head x.marked /= Nothing && y.uiState == Highlightable.Hinted)
-        || (List.head y.marked /= Nothing && x.uiState == Highlightable.Hinted)
-
-
 {-| When elements are marked and the view doesn't support overlaps, wrap the marked elements in a single `mark` html node.
 -}
 view_ :
@@ -856,20 +837,15 @@ view_ config =
             , endStyles = marker.endGroupClass
             }
 
-        withoutOverlaps : List (List ( Highlightable marker, Maybe Mark ))
+        withoutOverlaps : List ( Highlightable marker, Maybe Mark )
         withoutOverlaps =
-            config.highlightables
-                |> buildGroups
-                |> List.map
-                    (\group ->
-                        List.map
-                            (\highlightable ->
-                                ( highlightable
-                                , Maybe.map (toMark highlightable) (List.head highlightable.marked)
-                                )
-                            )
-                            group
+            List.map
+                (\highlightable ->
+                    ( highlightable
+                    , Maybe.map (toMark highlightable) (List.head highlightable.marked)
                     )
+                )
+                config.highlightables
 
         withOverlaps : List ( Highlightable marker, List Mark )
         withOverlaps =
@@ -883,13 +859,13 @@ view_ config =
     in
     p [ Html.Styled.Attributes.id config.id, class "highlighter-container" ] <|
         if config.showTagsInline then
-            List.concatMap (Mark.viewWithInlineTags config.viewSegment) withoutOverlaps
+            Mark.viewWithInlineTags config.viewSegment withoutOverlaps
 
         else if config.overlaps then
             Mark.viewWithOverlaps config.viewSegment withOverlaps
 
         else
-            List.concatMap (Mark.view config.viewSegment) withoutOverlaps
+            Mark.view config.viewSegment withoutOverlaps
 
 
 viewHighlightable :
