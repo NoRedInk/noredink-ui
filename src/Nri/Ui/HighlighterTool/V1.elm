@@ -11,6 +11,7 @@ module Nri.Ui.HighlighterTool.V1 exposing
 
   - change the high-contrast styles to be border-based instead of background-color based
   - adds buildMarkerWithoutRounding for inline comment styling
+  - changes the 4px of side padding on the marker to 2px of padding+negative margin
 
 @docs Tool
 @docs EraserModel, buildEraser
@@ -98,7 +99,8 @@ startGroupStyles =
     [ MediaQuery.highContrastMode
         [ Css.property "border-left" "2px solid Mark"
         ]
-    , Css.paddingLeft (Css.px 4)
+    , Css.paddingLeft (Css.px paddingSize)
+    , Css.marginLeft (Css.px -paddingSize)
     , Css.borderTopLeftRadius (Css.px 4)
     , Css.borderBottomLeftRadius (Css.px 4)
     ]
@@ -109,10 +111,16 @@ endGroupStyles =
     [ MediaQuery.highContrastMode
         [ Css.property "border-right" "2px solid Mark"
         ]
-    , Css.paddingRight (Css.px 4)
+    , Css.paddingRight (Css.px paddingSize)
+    , Css.marginRight (Css.px -paddingSize)
     , Css.borderTopRightRadius (Css.px 4)
     , Css.borderBottomRightRadius (Css.px 4)
     ]
+
+
+paddingSize : Float
+paddingSize =
+    2
 
 
 highlightStyles : Css.Color -> List Css.Style
@@ -146,12 +154,6 @@ hoverStyles color =
         , MediaQuery.highContrastMode
             [ Css.property "border-color" "Highlight" |> Css.important
             ]
-
-        -- The Highlighter applies both these styles and the startGroup and
-        -- endGroup styles. Here we disable the left and the right padding
-        -- because otherwise it would cause the text to move around.
-        , Css.important (Css.paddingLeft Css.zero)
-        , Css.important (Css.paddingRight Css.zero)
         ]
 
 
@@ -220,14 +222,12 @@ buildMarkerWithoutRounding { highlightColor, hoverColor, hoverHighlightColor, ki
     { hoverClass = squareHoverStyles hoverColor
     , hintClass = squareHoverStyles hoverColor
     , startGroupClass =
-        [ Css.paddingLeft (Css.px 4)
-        , MediaQuery.highContrastMode
+        [ MediaQuery.highContrastMode
             [ Css.property "border-left" "2px solid Mark"
             ]
         ]
     , endGroupClass =
-        [ Css.paddingRight (Css.px 4)
-        , MediaQuery.highContrastMode
+        [ MediaQuery.highContrastMode
             [ Css.property "border-right" "2px solid Mark"
             ]
         ]
@@ -261,13 +261,4 @@ squareSharedStyles =
 
 squareHoverStyles : Css.Color -> List Css.Style
 squareHoverStyles color =
-    List.append
-        squareSharedStyles
-        [ Css.important (Css.backgroundColor color)
-
-        -- The Highlighter applies both these styles and the startGroup and
-        -- endGroup styles. Here we disable the left and the right padding
-        -- because otherwise it would cause the text to move around.
-        , Css.important (Css.paddingLeft Css.zero)
-        , Css.important (Css.paddingRight Css.zero)
-        ]
+    List.append squareSharedStyles [ Css.important (Css.backgroundColor color) ]
