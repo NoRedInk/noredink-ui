@@ -7,6 +7,7 @@ module Nri.Ui.Highlighter.V4 exposing
     , Intent(..), hasChanged, HasChanged(..)
     , removeHighlights
     , clickedHighlightable, hoveredHighlightable
+    , selectShortest
     )
 
 {-| Changes from V3:
@@ -43,6 +44,7 @@ Highlighter provides a view/model/update to display a view to highlight text and
 ## Getters
 
 @docs clickedHighlightable, hoveredHighlightable
+@docs selectShortest
 
 -}
 
@@ -62,6 +64,8 @@ import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Mark.V2 as Mark exposing (Mark)
 import Set exposing (Set)
 import Sort exposing (Sorter)
+import Sort.Dict as Dict
+import Sort.Set
 import Task
 
 
@@ -626,6 +630,63 @@ clickedHighlightable model =
 hoveredHighlightable : Model marker -> Maybe (Highlightable.Highlightable marker)
 hoveredHighlightable model =
     Maybe.andThen (\i -> Highlightable.byId i model.highlightables) model.mouseOverIndex
+
+
+{-| Highlights can overlap. Sometimes, we want to apply a certain behavior (e.g., hover color change) on just the shortest
+highlight. Use this function to find out which marker applies to the least amount of text.
+
+Note that this is shortest by text length, not shortest by number of highlightables.
+
+You are not likely to need this helper unless you're working with inline commenting.
+
+-}
+selectShortest :
+    Sorter marker
+    -> (Model marker -> Maybe (Highlightable marker))
+    -> Model marker
+    -> Maybe marker
+selectShortest sorter getHighlightable state =
+    let
+        candidateIds : Sort.Set.Set marker
+        candidateIds =
+            getHighlightable state
+                |> Maybe.map (.marked >> List.map .kind)
+                |> Maybe.withDefault []
+                |> Sort.Set.fromList sorter
+    in
+    highlightLengths sorter state
+        |> List.filter (\{ marker } -> Sort.Set.memberOf candidateIds marker)
+        |> List.Extra.minimumBy .length
+        |> Maybe.map .marker
+
+
+highlightLengths : Sorter marker -> Model marker -> List { marker : marker, length : Int }
+highlightLengths sorter model =
+    model.highlightables
+        |> List.concatMap
+            (\highlightable ->
+                List.map
+                    (\{ kind } ->
+                        ( kind
+                        , String.length highlightable.text
+                        )
+                    )
+                    highlightable.marked
+            )
+        |> List.foldl
+            (\( marker, textLength ) lengths ->
+                Dict.update marker
+                    (\value ->
+                        value
+                            |> Maybe.map (\length -> length + textLength)
+                            |> Maybe.withDefault textLength
+                            |> Just
+                    )
+                    lengths
+            )
+            (Dict.empty sorter)
+        |> Dict.toList
+        |> List.map (\( marker, length ) -> { marker = marker, length = length })
 
 
 
