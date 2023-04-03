@@ -218,13 +218,19 @@ defaultConfig =
 {-| Configure how the top bar is sticky.
 
   - `topOffset` controls how far from the top of the viewport the bar will
-    stick, in pixels. (**Default value:** 0)
+    stick, in pixels. Content will be visible below this offset in the z-order.
+    (**Default value:** 0)
+  - `topPadding` controls how far from the top of the viewport the bar will
+    be padded. Unlike `topOffset`, content will _not_ be visible behind the
+    padding. Be aware that this padding will add space in the DOM even when the
+    bar is not sticky. (**Default value:** 0)
   - `zIndex` controls how high up the z-order the bar will float. (**Default
     value:** 0)
 
 -}
 type alias TabListStickyConfig =
     { topOffset : Float
+    , topPadding : Float
     , zIndex : Int
     }
 
@@ -232,6 +238,7 @@ type alias TabListStickyConfig =
 defaultTabListStickyConfig : TabListStickyConfig
 defaultTabListStickyConfig =
     { topOffset = 0
+    , topPadding = 0
     , zIndex = 0
     }
 
@@ -270,11 +277,12 @@ view { focusAndSelect, selected } attrs tabs =
             , Css.borderBottomColor Colors.navy
             , Fonts.baseFont
             , maybeStyle
-                (\{ topOffset, zIndex } ->
+                (\{ topOffset, topPadding, zIndex } ->
                     Css.Media.withMedia
                         [ MediaQuery.notMobile ]
                         [ Css.position Css.sticky
                         , Css.top (Css.px topOffset)
+                        , Css.paddingTop (Css.px topPadding)
                         , Css.zIndex (Css.int zIndex)
                         ]
                 )
