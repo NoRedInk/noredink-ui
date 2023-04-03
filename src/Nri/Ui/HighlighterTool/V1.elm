@@ -11,6 +11,7 @@ module Nri.Ui.HighlighterTool.V1 exposing
 
   - change the high-contrast styles to be border-based instead of background-color based
   - adds buildMarkerWithoutRounding for inline comment styling
+  - changes the 4px of side padding on the marker to 2px of padding+negative margin
 
 @docs Tool
 @docs EraserModel, buildEraser
