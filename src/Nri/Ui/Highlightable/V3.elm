@@ -1,11 +1,10 @@
 module Nri.Ui.Highlightable.V3 exposing
-    ( Highlightable, Type(..), UIState(..), Attribute(..)
+    ( Highlightable, Type(..), UIState(..)
     , init, initFragments
     , fromMarkdown
     , blur, clearHint, hint, hover
     , set
     , joinAdjacentInteractiveHighlights
-    , attributeSorter
     , asFragmentTuples, usedMarkers, text, byId
     )
 
@@ -19,11 +18,12 @@ just a single whitespace.
 ## Changes from V2
 
   - move the uIState out of the Highlightable
+  - make the attribute modeling more flexible
 
 
 ## Types
 
-@docs Highlightable, Type, UIState, Attribute
+@docs Highlightable, Type, UIState
 
 
 ## Initializers
@@ -39,17 +39,13 @@ just a single whitespace.
 @docs joinAdjacentInteractiveHighlights
 
 
-## Attribute related
-
-@docs attributeSorter
-
-
 ## Getters
 
 @docs asFragmentTuples, usedMarkers, text, byId
 
 -}
 
+import Html.Styled exposing (Attribute)
 import List.Extra
 import Markdown.Block
 import Markdown.Inline
@@ -72,7 +68,7 @@ import String.Extra
 
   - **text**: String to display.
 
-  - **customAttributes**: User-supplied attributes.
+  - **customAttributes**: User-supplied, non-interactive HTML attributes.
 
   - **marked**: Current highlights, if any.
 
@@ -81,7 +77,8 @@ import String.Extra
 -}
 type alias Highlightable marker =
     { text : String
-    , customAttributes : List Attribute
+    , uiState : UIState
+    , customAttributes : List (Attribute Never)
     , marked : List (Tool.MarkerModel marker)
     , index : Int
     , type_ : Type
@@ -92,34 +89,6 @@ type alias Highlightable marker =
 type Type
     = Interactive
     | Static
-
-
-{-| Custom attributes.
-
-  - `Class`: add a class to the highlight
-  - `Data`: add a `data-X` to the highlight (you don't need to prepend
-    `data-` to this name.)
-
--}
-type Attribute
-    = Class String
-    | Data String String
-
-
-{-| A Sorter for Attributes
--}
-attributeSorter : Sorter Attribute
-attributeSorter =
-    Sort.by
-        (\elem ->
-            case elem of
-                Class class ->
-                    "class-" ++ class
-
-                Data key value ->
-                    "data-" ++ key ++ "-" ++ value
-        )
-        Sort.alphabetical
 
 
 {-| UIState connects user-behavior to the highlightable.
@@ -142,7 +111,7 @@ type UIState
 
 
 {-| -}
-init : Type -> List (Tool.MarkerModel marker) -> Int -> ( List Attribute, String ) -> Highlightable marker
+init : Type -> List (Tool.MarkerModel marker) -> Int -> ( List (Attribute Never), String ) -> Highlightable marker
 init type_ marked index ( attributes, text_ ) =
     { text = text_
     , uiState = None

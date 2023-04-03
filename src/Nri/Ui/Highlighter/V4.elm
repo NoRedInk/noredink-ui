@@ -986,7 +986,7 @@ viewHighlightableSegment { interactiveHighlighterId, focusIndex, eventListeners,
     in
     span
         (eventListeners
-            ++ customToHtmlAttributes highlightable.customAttributes
+            ++ List.map (Html.Styled.Attributes.map never) highlightable.customAttributes
             ++ whitespaceClass highlightable.text
             ++ [ attribute "data-highlighter-item-index" <| String.fromInt highlightable.index
                , case interactiveHighlighterId of
@@ -1175,16 +1175,3 @@ onPreventDefault name msg =
     in
     Events.preventDefaultOn name
         checkIfCancelable
-
-
-customToHtmlAttributes : List Highlightable.Attribute -> List (Attribute msg)
-customToHtmlAttributes =
-    List.map
-        (\attr ->
-            case attr of
-                Highlightable.Class name ->
-                    class name
-
-                Highlightable.Data name value ->
-                    attribute ("data-" ++ name) value
-        )
