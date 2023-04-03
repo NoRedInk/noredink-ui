@@ -251,7 +251,7 @@ example =
                     , Block.labelPosition (Dict.get longId offsets)
                     ]
                 ]
-            , Table.view
+            , Table.view []
                 [ Table.custom
                     { header = text "Pattern name & description"
                     , view = .description >> Markdown.toHtml Nothing >> List.map fromUnstyled >> div []

@@ -189,8 +189,7 @@ viewLoading config state =
         tableColumns =
             List.map (buildTableColumn config.updateMsg state) config.columns
     in
-    Table.viewLoading
-        tableColumns
+    Table.viewLoading [] tableColumns
 
 
 {-| -}
@@ -203,7 +202,7 @@ view config state entries =
         sorter =
             findSorter config.columns state.column
     in
-    Table.view
+    Table.view []
         tableColumns
         (List.sortWith (sorter state.sortDirection) entries)
 

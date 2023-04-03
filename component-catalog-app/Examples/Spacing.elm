@@ -237,7 +237,7 @@ view ellieLinkConfig state =
     , Heading.h2 [ Heading.plaintext "Example", Heading.css [ Css.marginTop Spacing.verticalSpacerPx ] ]
     , fakePage [ exampleView ]
     , Heading.h2 [ Heading.plaintext "Content alignment", Heading.css [ Css.marginTop Spacing.verticalSpacerPx ] ]
-    , Table.view
+    , Table.view []
         [ Table.string
             { header = "Name"
             , value = .name
@@ -275,7 +275,7 @@ view ellieLinkConfig state =
         , { name = "centeredContentWithCustomWidth", alignment = "Centered", maxWidth = "(customizable)", sidePadding = "0px" }
         ]
     , Heading.h2 [ Heading.plaintext "Constants", Heading.css [ Css.marginTop Spacing.verticalSpacerPx ] ]
-    , Table.view
+    , Table.view []
         [ Table.string
             { header = "Name"
             , value = .name

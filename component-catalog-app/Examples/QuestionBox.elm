@@ -238,7 +238,7 @@ While these visions did appear.
                 ]
             ]
         ]
-    , Table.view
+    , Table.view []
         [ Table.custom
             { header = text "Pattern name & description"
             , view = .description >> Markdown.toHtml Nothing >> List.map fromUnstyled >> div []

@@ -278,12 +278,12 @@ view attributes columns entries =
                 sorter =
                     findSorter columns state_.column
             in
-            Table.view
+            Table.view []
                 tableColumns
                 (List.sortWith (sorter state_.sortDirection) entries)
 
         Nothing ->
-            Table.view tableColumns entries
+            Table.view [] tableColumns entries
 
 
 {-| -}
@@ -296,8 +296,7 @@ viewLoading attributes columns =
         tableColumns =
             List.map (buildTableColumn config.updateMsg config.state) columns
     in
-    Table.viewLoading
-        tableColumns
+    Table.viewLoading [] tableColumns
 
 
 findSorter : List (Column id entry msg) -> id -> Sorter entry

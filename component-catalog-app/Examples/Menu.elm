@@ -230,7 +230,7 @@ view ellieLinkConfig state =
         [ Heading.plaintext "Menu types"
         , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
         ]
-    , Table.view
+    , Table.view []
         [ Table.string
             { header = "Menu type"
             , value = .menu

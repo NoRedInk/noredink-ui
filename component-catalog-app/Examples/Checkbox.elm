@@ -66,7 +66,7 @@ example =
             , Heading.h2 [ Heading.plaintext "Customizable example" ]
             , exampleView
             , Heading.h2 [ Heading.plaintext "Examples" ]
-            , Table.view
+            , Table.view []
                 [ Table.string
                     { header = "State"
                     , value = .state

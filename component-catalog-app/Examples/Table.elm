@@ -44,7 +44,7 @@ example =
     , categories = [ Layout ]
     , keyboardSupport = []
     , preview =
-        [ Table.view
+        [ Table.view []
             [ Table.string
                 { header = "A"
                 , value = .a
@@ -98,6 +98,7 @@ example =
                                 { sectionName = moduleName ++ "." ++ viewName
                                 , code =
                                     (moduleName ++ "." ++ viewName)
+                                        ++ " [] "
                                         ++ Code.list columnsCode
                                         ++ dataStr
                                 }
@@ -111,16 +112,16 @@ example =
             , Heading.h2 [ Heading.plaintext "Example" ]
             , case ( showHeader, isLoading ) of
                 ( True, False ) ->
-                    Table.view columns data
+                    Table.view [] columns data
 
                 ( False, False ) ->
-                    Table.viewWithoutHeader columns data
+                    Table.viewWithoutHeader [] columns data
 
                 ( True, True ) ->
-                    Table.viewLoading columns
+                    Table.viewLoading [] columns
 
                 ( False, True ) ->
-                    Table.viewLoadingWithoutHeader columns
+                    Table.viewLoadingWithoutHeader [] columns
             ]
     }
 

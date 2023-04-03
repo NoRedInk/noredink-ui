@@ -173,7 +173,7 @@ example =
                 [ Heading.h2 [ Heading.plaintext "viewSecondary Example" ]
                 , viewJust (Tuple.second >> viewSecondaryExample settings.currentRoute) breadCrumbs
                 ]
-            , Table.view
+            , Table.view []
                 [ Table.string
                     { header = "Name"
                     , value = .name

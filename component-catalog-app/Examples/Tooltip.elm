@@ -136,7 +136,7 @@ view : EllieLink.Config -> State -> List (Html Msg)
 view ellieLinkConfig model =
     [ viewCustomizableExample ellieLinkConfig model.staticExampleSettings
     , Heading.h2 [ Heading.plaintext "What type of tooltip should I use?" ]
-    , Table.view
+    , Table.view []
         [ Table.string
             { header = "Type"
             , value = .name

@@ -4,10 +4,13 @@ module Nri.Ui.Table.V7 exposing
     , viewLoading, viewLoadingWithoutHeader
     )
 
-{-| Upgrading from V5:
+{-| Upgrading from V6:
 
-  - The columns take an additional `sort` property that allows
-    you to specify ARIA sorting
+  - If you don't have extra styles for the table, add an empty list to calls
+    to `view`.
+  - Consider moving to `SortableTable`, as in V4 a non-interactive table renders
+    just the same but has additional flexibility in the API and will make future
+    upgrades easier.
 
 @docs Column, SortDirection, custom, string, rowHeader
 
@@ -106,16 +109,16 @@ rowHeader options =
 
 {-| Displays a table of data without a header row
 -}
-viewWithoutHeader : List (Column data msg) -> List data -> Html msg
-viewWithoutHeader columns =
-    tableWithoutHeader [] columns (viewRow columns)
+viewWithoutHeader : List Style -> List (Column data msg) -> List data -> Html msg
+viewWithoutHeader additionalStyles columns =
+    tableWithoutHeader additionalStyles columns (viewRow columns)
 
 
 {-| Displays a table of data based on the provided column definitions
 -}
-view : List (Column data msg) -> List data -> Html msg
-view columns =
-    tableWithHeader [] columns (viewRow columns)
+view : List Style -> List (Column data msg) -> List data -> Html msg
+view additionalStyles columns =
+    tableWithHeader additionalStyles columns (viewRow columns)
 
 
 viewRow : List (Column data msg) -> data -> Html msg
@@ -141,16 +144,16 @@ viewColumn data (Column _ renderer width cellStyles _ cellType) =
 out text with an interesting animation. This view lets the user know that
 data is on its way and what it will look like when it arrives.
 -}
-viewLoading : List (Column data msg) -> Html msg
-viewLoading columns =
-    tableWithHeader loadingTableStyles columns (viewLoadingRow columns) (List.range 0 8)
+viewLoading : List Style -> List (Column data msg) -> Html msg
+viewLoading additionalStyles columns =
+    tableWithHeader (loadingTableStyles ++ additionalStyles) columns (viewLoadingRow columns) (List.range 0 8)
 
 
 {-| Display the loading table without a header row
 -}
-viewLoadingWithoutHeader : List (Column data msg) -> Html msg
-viewLoadingWithoutHeader columns =
-    tableWithoutHeader loadingTableStyles columns (viewLoadingRow columns) (List.range 0 8)
+viewLoadingWithoutHeader : List Style -> List (Column data msg) -> Html msg
+viewLoadingWithoutHeader additionalStyles columns =
+    tableWithoutHeader (loadingTableStyles ++ additionalStyles) columns (viewLoadingRow columns) (List.range 0 8)
 
 
 viewLoadingRow : List (Column data msg) -> Int -> Html msg

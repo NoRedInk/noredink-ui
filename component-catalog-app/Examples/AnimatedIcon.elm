@@ -88,7 +88,7 @@ example =
                         ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
-            , Table.view
+            , Table.view []
                 [ Table.custom
                     { header = text "Rendered"
                     , view =
