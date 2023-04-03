@@ -24,6 +24,7 @@ spec =
         [ describe "keyboard behavior" keyboardTests
         , describe "markdown behavior" markdownTests
         , describe "joinAdjacentInteractiveHighlights" joinAdjacentInteractiveHighlightsTests
+        , describe "selectShortest" selectShortestTests
         , describe "overlapping highlights" overlappingHighlightTests
         ]
 
@@ -692,6 +693,116 @@ joinAdjacentInteractiveHighlightsTests =
                     |> ensureMarks [ [ "hello" ], [ "world" ] ]
                     |> done
         ]
+    ]
+
+
+selectShortestTests : List Test
+selectShortestTests =
+    let
+        init highlightables =
+            Highlighter.init
+                { id = "test-highlighter-container"
+                , highlightables = highlightables
+                , marker = markerModel (Just "A")
+                , joinAdjacentInteractiveHighlights = False
+                , sorter = Sort.alphabetical
+                }
+    in
+    [ test "without any highlightables, returns Nothing" <|
+        \() ->
+            init []
+                |> Highlighter.selectShortest (.highlightables >> List.Extra.getAt 0)
+                |> Expect.equal Nothing
+    , test "with 1 unmarked highlightable, returns Nothing" <|
+        \() ->
+            init [ Highlightable.initInteractive [] 0 "hello" ]
+                |> Highlighter.selectShortest (.highlightables >> List.Extra.getAt 0)
+                |> Expect.equal Nothing
+    , test "with 1 marked highlightable, returns the singular mark type" <|
+        \() ->
+            init [ Highlightable.initInteractive [ marker (Just "B") ] 0 "hello" ]
+                |> Highlighter.selectShortest (.highlightables >> List.Extra.getAt 0)
+                |> Expect.equal (Just "B")
+    , test "with 1 multi-marked highlightable, returns one of the mark types depending on sort order" <|
+        \() ->
+            init
+                [ Highlightable.initInteractive
+                    [ marker (Just "C")
+                    , marker (Just "B")
+                    , marker (Just "D")
+                    ]
+                    0
+                    "hello"
+                ]
+                |> Highlighter.selectShortest (.highlightables >> List.Extra.getAt 0)
+                |> Expect.equal (Just "B")
+    , test "with multiple marked highlightables, selecting the first highlightable, returns the shortest mark type" <|
+        \() ->
+            init
+                [ Highlightable.initInteractive
+                    [ marker (Just "C")
+                    , marker (Just "B")
+                    ]
+                    0
+                    "hello"
+                , Highlightable.initInteractive
+                    [ marker (Just "B")
+                    ]
+                    1
+                    "world"
+                , Highlightable.initInteractive
+                    [ marker (Just "C")
+                    ]
+                    2
+                    "!"
+                ]
+                |> Highlighter.selectShortest (.highlightables >> List.Extra.getAt 0)
+                |> Expect.equal (Just "C")
+    , test "with multiple marked highlightables, selecting the second highlightable, returns the shortest mark type" <|
+        \() ->
+            init
+                [ Highlightable.initInteractive
+                    [ marker (Just "B")
+                    ]
+                    0
+                    "hello"
+                , Highlightable.initInteractive
+                    [ marker (Just "B")
+                    , marker (Just "C")
+                    ]
+                    1
+                    "world"
+                , Highlightable.initInteractive
+                    [ marker (Just "C")
+                    ]
+                    2
+                    "!"
+                ]
+                |> Highlighter.selectShortest (.highlightables >> List.Extra.getAt 1)
+                |> Expect.equal (Just "C")
+    , test "with multiple marked highlightables, selecting the third highlightable, returns the shortest mark type" <|
+        \() ->
+            init
+                [ Highlightable.initInteractive
+                    [ marker (Just "B")
+                    ]
+                    0
+                    "hello"
+                , Highlightable.initInteractive
+                    [ marker (Just "B")
+                    , marker (Just "C")
+                    ]
+                    1
+                    "world"
+                , Highlightable.initInteractive
+                    [ marker (Just "C")
+                    , marker (Just "B")
+                    ]
+                    2
+                    "!"
+                ]
+                |> Highlighter.selectShortest (.highlightables >> List.Extra.getAt 2)
+                |> Expect.equal (Just "C")
     ]
 
 

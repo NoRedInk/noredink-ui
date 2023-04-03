@@ -641,27 +641,26 @@ You are not likely to need this helper unless you're working with inline comment
 
 -}
 selectShortest :
-    Sorter marker
-    -> (Model marker -> Maybe (Highlightable marker))
+    (Model marker -> Maybe (Highlightable marker))
     -> Model marker
     -> Maybe marker
-selectShortest sorter getHighlightable state =
+selectShortest getHighlightable state =
     let
         candidateIds : Sort.Set.Set marker
         candidateIds =
             getHighlightable state
                 |> Maybe.map (.marked >> List.map .kind)
                 |> Maybe.withDefault []
-                |> Sort.Set.fromList sorter
+                |> Sort.Set.fromList state.sorter
     in
-    highlightLengths sorter state
+    highlightLengths state
         |> List.filter (\{ marker } -> Sort.Set.memberOf candidateIds marker)
         |> List.Extra.minimumBy .length
         |> Maybe.map .marker
 
 
-highlightLengths : Sorter marker -> Model marker -> List { marker : marker, length : Int }
-highlightLengths sorter model =
+highlightLengths : Model marker -> List { marker : marker, length : Int }
+highlightLengths model =
     model.highlightables
         |> List.concatMap
             (\highlightable ->
@@ -684,7 +683,7 @@ highlightLengths sorter model =
                     )
                     lengths
             )
-            (Dict.empty sorter)
+            (Dict.empty model.sorter)
         |> Dict.toList
         |> List.map (\( marker, length ) -> { marker = marker, length = length })
 
