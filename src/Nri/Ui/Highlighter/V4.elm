@@ -1218,14 +1218,15 @@ highlightableStyle { maybeTool, hoveringIndex, hintingIndices } ({ marked } as h
                     [ Css.property "user-select" "none"
                     , Css.batch markedWith.highlightClass
                     , Css.batch
-                        -- TODO: reimplement uiState
-                        --case uiState of
-                        --Highlightable.Hinted ->
-                        --    eraser_.hintClass
-                        --Highlightable.Hovered ->
-                        --    eraser_.hoverClass
-                        --_ ->
-                        []
+                        (if isHinted then
+                            eraser_.hintClass
+
+                         else if hoveringIndex == Just highlightable.index then
+                            eraser_.hoverClass
+
+                         else
+                            []
+                        )
                     ]
 
                 Nothing ->
