@@ -81,7 +81,7 @@ defaultConfig =
     stick, in pixels. (**Default value:** 0)
   - `zIndex` controls where in the stacking context the header will end
     up. Useful to prevent elements in rows from appearing over the header.
-    (**Defualt value:** 0)
+    (**Default value:** 0)
 
 Headers are never sticky on mobile-sized viewports because doing so causes some
 accessibility issues with zooming and panning.
