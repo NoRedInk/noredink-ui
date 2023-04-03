@@ -523,7 +523,8 @@ blurAt index =
     List.map
         (\highlightable ->
             if highlightable.index == index then
-                Highlightable.blur highlightable
+                -- TODO: reimplement blur
+                highlightable
 
             else
                 highlightable
@@ -535,7 +536,8 @@ hoverAt index =
     List.map
         (\highlightable ->
             if highlightable.index == index then
-                Highlightable.hover highlightable
+                -- TODO: reimplement hover
+                highlightable
 
             else
                 highlightable
@@ -547,10 +549,14 @@ hintBetween beginning end =
     List.map
         (\highlightable ->
             if between beginning end highlightable then
-                Highlightable.hint highlightable
+                -- TODO: reimplement hint
+                --Highlightable.hint highlightable
+                highlightable
 
             else
-                Highlightable.clearHint highlightable
+                -- TODO: reimplement clearHint
+                --Highlightable.clearHint highlightable
+                highlightable
         )
 
 
@@ -567,14 +573,15 @@ saveHinted : Tool.MarkerModel marker -> List (Highlightable marker) -> List (Hig
 saveHinted marker =
     List.map
         (\highlightable ->
-            case highlightable.uiState of
-                Highlightable.Hinted ->
-                    highlightable
-                        |> Highlightable.set (Just marker)
-                        |> Highlightable.clearHint
-
-                _ ->
-                    Highlightable.clearHint highlightable
+            -- TODO: reimplement saveHinted
+            --case highlightable.uiState of
+            --    Highlightable.Hinted ->
+            --        highlightable
+            --            |> Highlightable.set (Just marker)
+            --            |> Highlightable.clearHint
+            --    _ ->
+            --        Highlightable.clearHint highlightable
+            highlightable
         )
 
 
@@ -597,7 +604,12 @@ toggleHinted index marker highlightables =
             else
                 highlightable
     in
-    List.map (toggle >> Highlightable.clearHint) highlightables
+    List.map
+        (toggle
+         -- TODO: reimplement clearHint
+         -- >> Highlightable.clearHint
+        )
+        highlightables
 
 
 {-| Finds the group indexes of the groups which are in the same highlighting as the group index
@@ -616,14 +628,15 @@ removeHinted : List (Highlightable marker) -> List (Highlightable marker)
 removeHinted =
     List.map
         (\highlightable ->
-            case highlightable.uiState of
-                Highlightable.Hinted ->
-                    highlightable
-                        |> Highlightable.set Nothing
-                        |> Highlightable.clearHint
-
-                _ ->
-                    Highlightable.clearHint highlightable
+            -- TODO: reimplement removeHinted
+            --case highlightable.uiState of
+            --    Highlightable.Hinted ->
+            --        highlightable
+            --            |> Highlightable.set Nothing
+            --            |> Highlightable.clearHint
+            --    _ ->
+            --        Highlightable.clearHint highlightable
+            highlightable
         )
 
 
@@ -1075,7 +1088,7 @@ highlightableId highlighterId index =
 
 
 highlightableStyle : Maybe (Tool.Tool kind) -> Highlightable kind -> List Css.Style
-highlightableStyle tool ({ uiState, marked } as highlightable) =
+highlightableStyle tool ({ marked } as highlightable) =
     case tool of
         Nothing ->
             [ case List.head marked of
@@ -1088,27 +1101,25 @@ highlightableStyle tool ({ uiState, marked } as highlightable) =
 
         Just (Tool.Marker marker) ->
             [ Css.property "user-select" "none"
-            , case ( uiState, List.head marked ) of
-                ( Highlightable.Hovered, Just markedWith ) ->
-                    -- Override marking with selected tool
-                    Css.batch marker.hoverHighlightClass
 
-                ( Highlightable.Hovered, Nothing ) ->
-                    [ marker.hoverClass
-                    , marker.startGroupClass
-                    , marker.endGroupClass
-                    ]
-                        |> List.concat
-                        |> Css.batch
-
-                ( Highlightable.Hinted, _ ) ->
-                    Css.batch marker.hintClass
-
-                ( Highlightable.None, Just markedWith ) ->
-                    Css.batch markedWith.highlightClass
-
-                ( Highlightable.None, Nothing ) ->
-                    Css.backgroundColor Css.transparent
+            -- TODO: reimplement uiState
+            --, case ( uiState, List.head marked ) of
+            --( Highlightable.Hovered, Just markedWith ) ->
+            --    -- Override marking with selected tool
+            --    Css.batch marker.hoverHighlightClass
+            --( Highlightable.Hovered, Nothing ) ->
+            --    [ marker.hoverClass
+            --    , marker.startGroupClass
+            --    , marker.endGroupClass
+            --    ]
+            --        |> List.concat
+            --        |> Css.batch
+            --( Highlightable.Hinted, _ ) ->
+            --    Css.batch marker.hintClass
+            --( Highlightable.None, Just markedWith ) ->
+            --    Css.batch markedWith.highlightClass
+            --( Highlightable.None, Nothing ) ->
+            --    Css.backgroundColor Css.transparent
             ]
 
         Just (Tool.Eraser eraser_) ->
@@ -1117,16 +1128,14 @@ highlightableStyle tool ({ uiState, marked } as highlightable) =
                     [ Css.property "user-select" "none"
                     , Css.batch markedWith.highlightClass
                     , Css.batch
-                        (case uiState of
-                            Highlightable.Hinted ->
-                                eraser_.hintClass
-
-                            Highlightable.Hovered ->
-                                eraser_.hoverClass
-
-                            _ ->
-                                []
-                        )
+                        -- TODO: reimplement uiState
+                        --case uiState of
+                        --Highlightable.Hinted ->
+                        --    eraser_.hintClass
+                        --Highlightable.Hovered ->
+                        --    eraser_.hoverClass
+                        --_ ->
+                        []
                     ]
 
                 Nothing ->

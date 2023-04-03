@@ -1,8 +1,7 @@
 module Nri.Ui.Highlightable.V3 exposing
-    ( Highlightable, Type(..), UIState(..)
+    ( Highlightable, Type(..)
     , initStatic, initInteractive, initFragments
     , fromMarkdown
-    , blur, clearHint, hint, hover
     , set
     , joinAdjacentInteractiveHighlights
     , asFragmentTuples, usedMarkers, text, byId
@@ -20,11 +19,12 @@ just a single whitespace.
   - move the uIState out of the Highlightable
   - make the attribute modeling more flexible
   - replace init with initStatic and initInteractive, and remove attributes from the UI since they're seldom used
+  - remove UIState: it only makes sense in the context of an interactive highlighter
 
 
 ## Types
 
-@docs Highlightable, Type, UIState
+@docs Highlightable, Type
 
 
 ## Initializers
@@ -35,7 +35,6 @@ just a single whitespace.
 
 ## UIState and marker
 
-@docs blur, clearHint, hint, hover
 @docs set
 @docs joinAdjacentInteractiveHighlights
 
@@ -78,7 +77,6 @@ import String.Extra
 -}
 type alias Highlightable marker =
     { text : String
-    , uiState : UIState
     , customAttributes : List (Attribute Never)
     , marked : List (Tool.MarkerModel marker)
     , index : Int
@@ -92,30 +90,10 @@ type Type
     | Static
 
 
-{-| UIState connects user-behavior to the highlightable.
-
-State transitions:
-
-  - None → (mouse over) → Hovered
-  - None → (click & drag over highlightables) → Hinted
-  - Hovered → (mouse out) → None
-  - Hovered → (mouse down) → Hinted
-  - Hinted → (mouse out) → None
-  - Hinted → (mouse up while on a different Highlightable) → None
-  - Hinted → (mouse up while on me) → Hovered
-
--}
-type UIState
-    = Hovered
-    | Hinted
-    | None
-
-
 {-| -}
 initStatic : List (Tool.MarkerModel marker) -> Int -> String -> Highlightable marker
 initStatic marked index text_ =
     { text = text_
-    , uiState = None
     , customAttributes = []
     , marked = marked
     , index = index
@@ -127,7 +105,6 @@ initStatic marked index text_ =
 initInteractive : List (Tool.MarkerModel marker) -> Int -> String -> Highlightable marker
 initInteractive marked index text_ =
     { text = text_
-    , uiState = None
     , customAttributes = []
     , marked = marked
     , index = index
@@ -311,40 +288,6 @@ fromMarkdown markdownString =
                 ( [], [] )
             |> Tuple.second
             |> List.indexedMap (\i highlightable -> { highlightable | index = i })
-
-
-{-| -}
-hover : Highlightable marker -> Highlightable marker
-hover highlightable =
-    case highlightable.uiState of
-        Hinted ->
-            highlightable
-
-        _ ->
-            { highlightable | uiState = Hovered }
-
-
-{-| -}
-blur : Highlightable marker -> Highlightable marker
-blur highlightable =
-    case highlightable.uiState of
-        Hinted ->
-            highlightable
-
-        _ ->
-            { highlightable | uiState = None }
-
-
-{-| -}
-hint : Highlightable marker -> Highlightable marker
-hint highlightable =
-    { highlightable | uiState = Hinted }
-
-
-{-| -}
-clearHint : Highlightable marker -> Highlightable marker
-clearHint highlightable =
-    { highlightable | uiState = None }
 
 
 {-| -}
