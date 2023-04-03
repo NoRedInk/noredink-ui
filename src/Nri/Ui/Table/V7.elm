@@ -246,7 +246,6 @@ headersStyles =
       -- gray border sticks to the table instead of traveling with the header
       -- when the header has `position: sticky` applied.
       boxShadow4 inset (px 0) (px -3) gray75
-    , paddingBottom (px 3)
     , height (px 45)
     , fontSize (px 15)
     ]
