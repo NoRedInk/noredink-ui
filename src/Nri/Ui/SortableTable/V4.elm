@@ -81,16 +81,14 @@ defaultConfig =
   - `zIndex` controls where in the stacking context the header will end
     up. Useful to prevent elements in rows from appearing over the header.
     (**Defualt value:** 0)
-  - `includeMobile`, if true, will make the header sticky on mobile (narrow)
-    viewports as well as desktop (wider) ones. Be careful about setting this to
-    `True`, as it can make it harder for folks on mobile devices to pinch and
-    zoom, creating accessibility problems. (**Default value:** False)
+
+Headers are never sticky on mobile-sized viewports because doing so causes some
+accessibility issues with zooming and panning.
 
 -}
 type alias StickyConfig =
     { topOffset : Float
     , zIndex : Int
-    , includeMobile : Bool
     }
 
 
@@ -98,7 +96,6 @@ defaultStickyConfig : StickyConfig
 defaultStickyConfig =
     { topOffset = 0
     , zIndex = 0
-    , includeMobile = False
     }
 
 
