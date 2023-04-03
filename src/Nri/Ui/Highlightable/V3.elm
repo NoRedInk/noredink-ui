@@ -20,6 +20,7 @@ just a single whitespace.
   - make the attribute modeling more flexible
   - replace init with initStatic and initInteractive, and remove attributes from the UI since they're seldom used
   - remove UIState: it only makes sense in the context of an interactive highlighter
+  - joinAdjacentInteractiveHighlights now takes a sorter
 
 
 ## Types
@@ -54,7 +55,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Regex exposing (Regex)
 import Sort exposing (Sorter)
-import Sort.Set
+import Sort.Set as Set exposing (Set)
 import String.Extra
 
 
@@ -297,23 +298,33 @@ set marked highlightable =
 
 
 {-| -}
-joinAdjacentInteractiveHighlights : List (Highlightable m) -> List (Highlightable m)
-joinAdjacentInteractiveHighlights highlightables =
+joinAdjacentInteractiveHighlights : Sorter m -> List (Highlightable m) -> List (Highlightable m)
+joinAdjacentInteractiveHighlights sorter highlightables =
+    let
+        markerSorter =
+            Sort.by .kind sorter
+    in
     highlightables
         |> List.foldr
             (\segment ( lastInteractiveHighlightMarkers, staticAcc, acc ) ->
                 case segment.type_ of
                     Interactive ->
                         let
+                            segmentMarkerSet =
+                                Set.fromList markerSorter segment.marked
+
+                            staticMarkers =
+                                Set.keepIf (Set.memberOf segmentMarkerSet) lastInteractiveHighlightMarkers
+
                             static_ =
-                                List.map (\s -> { s | marked = listUnion segment.marked lastInteractiveHighlightMarkers }) staticAcc
+                                List.map (\s -> { s | marked = Set.toList staticMarkers }) staticAcc
                         in
-                        ( segment.marked, [], segment :: static_ ++ acc )
+                        ( segmentMarkerSet, [], segment :: static_ ++ acc )
 
                     Static ->
                         ( lastInteractiveHighlightMarkers, segment :: staticAcc, acc )
             )
-            ( [], [], [] )
+            ( Set.empty markerSorter, [], [] )
         |> (\( _, static_, acc ) -> static_ ++ acc)
 
 
@@ -324,24 +335,9 @@ byId index =
     List.filter (\h -> h.index == index) >> List.head
 
 
-{-| This is not an efficient way to union values -- using a set would be way better!
-
-However,
-(a) this will only ever be used with a tiny lists and
-(b) if we use a set, we'll need to thread a sorter through, impacting the API negatively
-(c) if we use a set, we'll need to convert to and from a set
-
-This tradeoff balance here might change if we decide to model the marked values as a set instead of as a list.
-
--}
-listUnion : List a -> List a -> List a
-listUnion xs ys =
-    List.filterMap (\x -> List.Extra.find ((==) x) ys) xs
-
-
 {-| Get unique markers that have been used. Note: ignores marks on whitespace.
 -}
-usedMarkers : Sorter marker -> List (Highlightable marker) -> Sort.Set.Set marker
+usedMarkers : Sorter marker -> List (Highlightable marker) -> Set marker
 usedMarkers sorter highlightables =
     highlightables
         |> List.concatMap
@@ -352,7 +348,7 @@ usedMarkers sorter highlightables =
                 else
                     List.map .kind highlightable.marked
             )
-        |> Sort.Set.fromList sorter
+        |> Set.fromList sorter
 
 
 {-| Get a list of fragment texts and whether or not they are marked.

@@ -79,6 +79,7 @@ type alias Model marker =
     , highlightables : List (Highlightable marker) -- The actual highlightable elements
     , marker : Tool.Tool marker -- Currently used marker
     , joinAdjacentInteractiveHighlights : Bool
+    , sorter : Sorter marker
 
     -- Internal state to track user's interactions
     , hoveringIndex : Maybe Int
@@ -114,18 +115,20 @@ init :
     , highlightables : List (Highlightable marker)
     , marker : Tool.Tool marker
     , joinAdjacentInteractiveHighlights : Bool
+    , sorter : Sorter marker
     }
     -> Model marker
 init config =
     { id = config.id
     , highlightables =
         if config.joinAdjacentInteractiveHighlights then
-            Highlightable.joinAdjacentInteractiveHighlights config.highlightables
+            Highlightable.joinAdjacentInteractiveHighlights config.sorter config.highlightables
 
         else
             config.highlightables
     , marker = config.marker
     , joinAdjacentInteractiveHighlights = config.joinAdjacentInteractiveHighlights
+    , sorter = config.sorter
 
     -- Internal state to track user's interactions
     , hoveringIndex = Nothing
@@ -241,8 +244,8 @@ type Action marker
 
 {-| Update for highlighter returning additional info about whether there was a change
 -}
-update : Sorter marker -> Msg marker -> Model marker -> ( Model marker, Cmd (Msg marker), Intent )
-update sorter msg model =
+update : Msg marker -> Model marker -> ( Model marker, Cmd (Msg marker), Intent )
+update msg model =
     withIntent <|
         case msg of
             Pointer pointerMsg ->
@@ -262,7 +265,7 @@ update sorter msg model =
 maybeJoinAdjacentInteractiveHighlights : Model m -> Model m
 maybeJoinAdjacentInteractiveHighlights model =
     if model.joinAdjacentInteractiveHighlights then
-        { model | highlightables = Highlightable.joinAdjacentInteractiveHighlights model.highlightables }
+        { model | highlightables = Highlightable.joinAdjacentInteractiveHighlights model.sorter model.highlightables }
 
     else
         model

@@ -10,7 +10,7 @@ import Nri.Ui.Highlighter.V4 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool exposing (Tool)
 import ProgramTest exposing (..)
 import Regex exposing (Regex)
-import Sort
+import Sort exposing (Sorter)
 import Spec.KeyboardHelpers as KeyboardHelpers
 import Spec.MouseHelpers as MouseHelpers
 import Test exposing (..)
@@ -334,7 +334,7 @@ testRendersMarkdownContent testName view =
         ]
 
 
-startWithoutMarker : (Highlighter.Model any -> Html msg) -> List (Highlightable any) -> ProgramTest (Highlighter.Model any) msg ()
+startWithoutMarker : (Highlighter.Model () -> Html msg) -> List (Highlightable ()) -> ProgramTest (Highlighter.Model ()) msg ()
 startWithoutMarker view highlightables =
     ProgramTest.createSandbox
         { init =
@@ -343,6 +343,7 @@ startWithoutMarker view highlightables =
                 , highlightables = highlightables
                 , marker = Tool.Eraser Tool.buildEraser
                 , joinAdjacentInteractiveHighlights = False
+                , sorter = Sort.custom (\() () -> EQ)
                 }
         , update = \_ m -> m
         , view = view >> toUnstyled
@@ -587,10 +588,11 @@ program config highlightables =
                 , highlightables = highlightables
                 , marker = markerModel config.markerName
                 , joinAdjacentInteractiveHighlights = config.joinAdjacentInteractiveHighlights
+                , sorter = Sort.alphabetical
                 }
         , update =
             \msg model ->
-                case Highlighter.update Sort.alphabetical msg model of
+                case Highlighter.update msg model of
                     ( newModel, _, _ ) ->
                         newModel
         , view = Highlighter.view >> toUnstyled
@@ -711,10 +713,11 @@ overlappingHighlightTests =
                         , highlightables = initHighlightables highlightables
                         , marker = markerModel (Just "Comment")
                         , joinAdjacentInteractiveHighlights = False
+                        , sorter = Sort.alphabetical
                         }
                 , update =
                     \msg model ->
-                        case Highlighter.update Sort.alphabetical msg model of
+                        case Highlighter.update msg model of
                             ( newModel, _, _ ) ->
                                 newModel
                 , view = renderer >> toUnstyled

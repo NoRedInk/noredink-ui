@@ -279,7 +279,7 @@ example =
                                             else
                                                 Highlightable.initInteractive marker i word
                                         )
-                                    |> Highlightable.joinAdjacentInteractiveHighlights
+                                    |> Highlightable.joinAdjacentInteractiveHighlights sorter
                             }
                   }
                 ]
@@ -493,6 +493,7 @@ initHighlighter settings previousHighlightables =
             else
                 Tuple.second highlightables
         , marker = Tuple.second settings.tool
+        , sorter = sorter
         , joinAdjacentInteractiveHighlights = settings.joinAdjacentInteractiveHighlights
         }
     )
@@ -599,7 +600,7 @@ update msg state =
         HighlighterMsg highlighterMsg ->
             let
                 ( newHighlighter, effect, Highlighter.Intent intent ) =
-                    Highlighter.update sorter highlighterMsg state.highlighter
+                    Highlighter.update highlighterMsg state.highlighter
             in
             ( { state | highlighter = newHighlighter }
             , Cmd.batch
