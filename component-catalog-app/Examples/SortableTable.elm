@@ -154,6 +154,7 @@ example =
                                                     ++ Code.recordMultiline
                                                         [ ( "topOffset", String.fromFloat stickyConfig.topOffset )
                                                         , ( "zIndex", String.fromInt stickyConfig.zIndex )
+                                                        , ( "pageBackgroundColor", "Css.hex \"" ++ stickyConfig.pageBackgroundColor.value ++ "\"")
                                                         ]
                                                         2
                                     )
