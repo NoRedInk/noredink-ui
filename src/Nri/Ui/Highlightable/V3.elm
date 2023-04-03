@@ -16,16 +16,9 @@ Highlighter is initialized, it's very possible for a Highlightable to consist of
 just a single whitespace.
 
 
-## Changes from V1
+## Changes from V2
 
-  - move asFragmentTuples, usedMarkers, and text to the Highlightable module
-  - remove initFragment, splitHighlightableOnWords, splitWords
-  - remove toggle, which is not used
-  - rename groupIndex -> index
-  - ensure that fromMarkdown indexes the fragments correctly
-  - support multiple kinds of mark
-  - move joinAdjacentInteractiveHighlights to the Highlightable module
-  - adds byId
+  - move the uIState out of the Highlightable
 
 
 ## Types
@@ -73,26 +66,21 @@ import String.Extra
 
   - **Highlightable** | Interactive piece of text.
 
-  - **Static** | Non-interactive piece of text. Gets highlighted grudgingly if the
-    UI is going to get unintuitive otherwise. i.e. does not get highlighted
-    when hovered etc.
+  - **Static** | Non-interactive piece of text.
 
     Data for a Highlightable:
 
   - **text**: String to display.
 
-  - **uiState**: How the user is currently interacting with the Highlightable.
-
-  - **customAttributes**: User-supplied attributes that do not change once a Highlightable is initialized.
+  - **customAttributes**: User-supplied attributes.
 
   - **marked**: Current highlights, if any.
 
-  - **index**: Index that identifies the fragment this Highlightable belongs to. Must be unique in the list of highlightables.
+  - **index**: Unique highlightable index.
 
 -}
 type alias Highlightable marker =
     { text : String
-    , uiState : UIState
     , customAttributes : List Attribute
     , marked : List (Tool.MarkerModel marker)
     , index : Int
@@ -106,7 +94,7 @@ type Type
     | Static
 
 
-{-| Custom attributes that do not change after initialization.
+{-| Custom attributes.
 
   - `Class`: add a class to the highlight
   - `Data`: add a `data-X` to the highlight (you don't need to prepend
