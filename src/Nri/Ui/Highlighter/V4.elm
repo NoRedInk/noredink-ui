@@ -822,21 +822,59 @@ staticMarkdownWithTags config =
 
 {-| Groups highlightables with the same state together.
 -}
-buildGroups : List (Highlightable marker) -> List (List (Highlightable marker))
-buildGroups =
-    List.Extra.groupWhile groupHighlightables
+buildGroups :
+    { model
+        | hintingIndices : Maybe ( Int, Int )
+        , hoveringIndex : Maybe Int
+    }
+    -> List (Highlightable marker)
+    -> List (List (Highlightable marker))
+buildGroups model =
+    List.Extra.groupWhile (groupHighlightables model)
         >> List.map (\( elem, list ) -> elem :: list)
 
 
-groupHighlightables : Highlightable marker -> Highlightable marker -> Bool
-groupHighlightables x y =
-    ((x.uiState == y.uiState)
+groupHighlightables :
+    { model
+        | hintingIndices : Maybe ( Int, Int )
+        , hoveringIndex : Maybe Int
+    }
+    -> Highlightable marker
+    -> Highlightable marker
+    -> Bool
+groupHighlightables { hintingIndices, hoveringIndex } x y =
+    let
+        xIsHinted =
+            -- x is Hinted
+            Maybe.map (\( a, b ) -> between a b x) hintingIndices
+                |> Maybe.withDefault False
+
+        yIsHinted =
+            -- y is Hinted
+            Maybe.map (\( a, b ) -> between a b y) hintingIndices
+                |> Maybe.withDefault False
+
+        xIsHovered =
+            hoveringIndex == Just x.index
+
+        yIsHovered =
+            hoveringIndex == Just y.index
+
+        xAndYHaveTheSameState =
+            -- Both are hinted
+            (xIsHinted && yIsHinted)
+                || -- Neither is hinted
+                   (not xIsHinted && not yIsHinted)
+                || -- Neither is hovered
+                   (not xIsHovered && not yIsHovered)
+    in
+    (xAndYHaveTheSameState
         && (List.head x.marked == Nothing)
         && (List.head y.marked == Nothing)
     )
         || (List.head x.marked == List.head y.marked && List.head x.marked /= Nothing)
-        || (List.head x.marked /= Nothing && y.uiState == Highlightable.Hinted)
-        || (List.head y.marked /= Nothing && x.uiState == Highlightable.Hinted)
+        || ((List.head x.marked /= Nothing) && yIsHinted)
+        || ((List.head y.marked /= Nothing) && xIsHinted)
 
 
 {-| When elements are marked and the view doesn't support overlaps, wrap the marked elements in a single `mark` html node.
@@ -865,7 +903,7 @@ view_ config =
         withoutOverlaps : List (List ( Highlightable marker, Maybe Mark ))
         withoutOverlaps =
             config.highlightables
-                |> buildGroups
+                |> buildGroups config
                 |> List.map
                     (\group ->
                         List.map
