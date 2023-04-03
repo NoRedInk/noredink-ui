@@ -81,6 +81,8 @@ type alias Model marker =
     , joinAdjacentInteractiveHighlights : Bool
 
     -- Internal state to track user's interactions
+    , hoveringIndex : Maybe Int
+    , hintingIndices : Maybe ( Int, Int )
     , mouseDownIndex : Maybe Int
     , mouseOverIndex : Maybe Int
     , isInitialized : Initialized
@@ -124,6 +126,10 @@ init config =
             config.highlightables
     , marker = config.marker
     , joinAdjacentInteractiveHighlights = config.joinAdjacentInteractiveHighlights
+
+    -- Internal state to track user's interactions
+    , hoveringIndex = Nothing
+    , hintingIndices = Nothing
     , mouseDownIndex = Nothing
     , mouseOverIndex = Nothing
     , isInitialized = NotInitialized
@@ -464,40 +470,54 @@ performAction : Action marker -> ( Model marker, List (Cmd (Msg m)) ) -> ( Model
 performAction action ( model, cmds ) =
     case action of
         Focus index ->
-            ( { model | focusIndex = Just index }, Task.attempt Focused (Dom.focus (highlightableId model.id index)) :: cmds )
+            ( { model | focusIndex = Just index }
+            , Task.attempt Focused (Dom.focus (highlightableId model.id index)) :: cmds
+            )
 
         Blur index ->
-            ( { model | highlightables = blurAt index model.highlightables }, cmds )
+            ( { model | hoveringIndex = Nothing }, cmds )
 
         Hover index ->
-            ( { model | highlightables = hoverAt index model.highlightables }, cmds )
+            ( { model | hoveringIndex = Just index }, cmds )
 
         Hint start end ->
-            ( { model | highlightables = hintBetween start end model.highlightables }, cmds )
+            ( { model | hintingIndices = Just ( start, end ) }, cmds )
 
         Save marker ->
-            ( { model
-                | highlightables = saveHinted marker model.highlightables
-                , hasChanged = Changed
-              }
-            , cmds
-            )
+            case model.hintingIndices of
+                Just hinting ->
+                    ( { model
+                        | highlightables = saveHinted marker hinting model.highlightables
+                        , hasChanged = Changed
+                      }
+                    , cmds
+                    )
+
+                Nothing ->
+                    ( model, cmds )
 
         Toggle index marker ->
             ( { model
                 | highlightables = toggleHinted index marker model.highlightables
                 , hasChanged = Changed
+                , hintingIndices = Nothing
               }
             , cmds
             )
 
         RemoveHint ->
-            ( { model
-                | highlightables = removeHinted model.highlightables
-                , hasChanged = Changed
-              }
-            , cmds
-            )
+            case model.hintingIndices of
+                Just hinting ->
+                    ( { model
+                        | highlightables = removeHinted hinting model.highlightables
+                        , hasChanged = Changed
+                        , hintingIndices = Nothing
+                      }
+                    , cmds
+                    )
+
+                Nothing ->
+                    ( model, cmds )
 
         MouseDown index ->
             ( { model | mouseDownIndex = Just index }, cmds )
@@ -518,48 +538,6 @@ performAction action ( model, cmds ) =
             ( { model | selectionStartIndex = Nothing, selectionEndIndex = Nothing }, cmds )
 
 
-blurAt : Int -> List (Highlightable marker) -> List (Highlightable marker)
-blurAt index =
-    List.map
-        (\highlightable ->
-            if highlightable.index == index then
-                -- TODO: reimplement blur
-                highlightable
-
-            else
-                highlightable
-        )
-
-
-hoverAt : Int -> List (Highlightable marker) -> List (Highlightable marker)
-hoverAt index =
-    List.map
-        (\highlightable ->
-            if highlightable.index == index then
-                -- TODO: reimplement hover
-                highlightable
-
-            else
-                highlightable
-        )
-
-
-hintBetween : Int -> Int -> List (Highlightable marker) -> List (Highlightable marker)
-hintBetween beginning end =
-    List.map
-        (\highlightable ->
-            if between beginning end highlightable then
-                -- TODO: reimplement hint
-                --Highlightable.hint highlightable
-                highlightable
-
-            else
-                -- TODO: reimplement clearHint
-                --Highlightable.clearHint highlightable
-                highlightable
-        )
-
-
 between : Int -> Int -> Highlightable marker -> Bool
 between from to { index } =
     if from < to then
@@ -569,19 +547,15 @@ between from to { index } =
         to <= index && index <= from
 
 
-saveHinted : Tool.MarkerModel marker -> List (Highlightable marker) -> List (Highlightable marker)
-saveHinted marker =
+saveHinted : Tool.MarkerModel marker -> ( Int, Int ) -> List (Highlightable marker) -> List (Highlightable marker)
+saveHinted marker ( hintBeginning, hintEnd ) =
     List.map
         (\highlightable ->
-            -- TODO: reimplement saveHinted
-            --case highlightable.uiState of
-            --    Highlightable.Hinted ->
-            --        highlightable
-            --            |> Highlightable.set (Just marker)
-            --            |> Highlightable.clearHint
-            --    _ ->
-            --        Highlightable.clearHint highlightable
-            highlightable
+            if between hintBeginning hintEnd highlightable then
+                Highlightable.set (Just marker) highlightable
+
+            else
+                highlightable
         )
 
 
@@ -604,12 +578,7 @@ toggleHinted index marker highlightables =
             else
                 highlightable
     in
-    List.map
-        (toggle
-         -- TODO: reimplement clearHint
-         -- >> Highlightable.clearHint
-        )
-        highlightables
+    List.map toggle highlightables
 
 
 {-| Finds the group indexes of the groups which are in the same highlighting as the group index
@@ -624,19 +593,15 @@ inSameRange index highlightables =
         |> Set.fromList
 
 
-removeHinted : List (Highlightable marker) -> List (Highlightable marker)
-removeHinted =
+removeHinted : ( Int, Int ) -> List (Highlightable marker) -> List (Highlightable marker)
+removeHinted ( hintBeginning, hintEnd ) =
     List.map
         (\highlightable ->
-            -- TODO: reimplement removeHinted
-            --case highlightable.uiState of
-            --    Highlightable.Hinted ->
-            --        highlightable
-            --            |> Highlightable.set Nothing
-            --            |> Highlightable.clearHint
-            --    _ ->
-            --        Highlightable.clearHint highlightable
-            highlightable
+            if between hintBeginning hintEnd highlightable then
+                Highlightable.set Nothing highlightable
+
+            else
+                highlightable
         )
 
 
@@ -665,42 +630,32 @@ hoveredHighlightable model =
 
 
 {-| -}
-view :
-    { config
-        | id : String
-        , highlightables : List (Highlightable marker)
-        , focusIndex : Maybe Int
-        , marker : Tool.Tool marker
-    }
-    -> Html (Msg marker)
-view config =
+view : Model marker -> Html (Msg marker)
+view model =
     view_
         { showTagsInline = False
-        , maybeTool = Just config.marker
+        , maybeTool = Just model.marker
+        , hoveringIndex = model.hoveringIndex
+        , hintingIndices = model.hintingIndices
         , overlaps = False
-        , viewSegment = viewHighlightable False config
-        , id = config.id
-        , highlightables = config.highlightables
+        , viewSegment = viewHighlightable False model
+        , id = model.id
+        , highlightables = model.highlightables
         }
 
 
 {-| -}
-viewWithOverlappingHighlights :
-    { config
-        | id : String
-        , highlightables : List (Highlightable marker)
-        , focusIndex : Maybe Int
-        , marker : Tool.Tool marker
-    }
-    -> Html (Msg marker)
-viewWithOverlappingHighlights config =
+viewWithOverlappingHighlights : Model marker -> Html (Msg marker)
+viewWithOverlappingHighlights model =
     view_
         { showTagsInline = False
-        , maybeTool = Just config.marker
+        , maybeTool = Just model.marker
+        , hoveringIndex = model.hoveringIndex
+        , hintingIndices = model.hintingIndices
         , overlaps = True
-        , viewSegment = viewHighlightable False config
-        , id = config.id
-        , highlightables = config.highlightables
+        , viewSegment = viewHighlightable False model
+        , id = model.id
+        , highlightables = model.highlightables
         }
 
 
@@ -710,6 +665,8 @@ staticWithOverlappingHighlights config =
     view_
         { showTagsInline = False
         , maybeTool = Nothing
+        , hoveringIndex = Nothing
+        , hintingIndices = Nothing
         , overlaps = True
         , viewSegment =
             viewHighlightableSegment
@@ -717,6 +674,8 @@ staticWithOverlappingHighlights config =
                 , focusIndex = Nothing
                 , eventListeners = []
                 , maybeTool = Nothing
+                , hoveringIndex = Nothing
+                , hintingIndices = Nothing
                 , renderMarkdown = False
                 }
         , id = config.id
@@ -731,15 +690,17 @@ WARNING: the version of markdown used here is extremely limited, as the highligh
 WARNING: markdown is rendered highlightable by highlightable, so be sure to provide highlightables like ["_New York Times_"]["*New York Times*"], NOT like ["_New ", "York ", "Times_"]["*New ", "York ", "Times*"]
 
 -}
-viewMarkdown : { config | id : String, highlightables : List (Highlightable marker), focusIndex : Maybe Int, marker : Tool.Tool marker } -> Html (Msg marker)
-viewMarkdown config =
+viewMarkdown : Model marker -> Html (Msg marker)
+viewMarkdown model =
     view_
         { showTagsInline = False
-        , maybeTool = Just config.marker
+        , maybeTool = Just model.marker
+        , hoveringIndex = model.hoveringIndex
+        , hintingIndices = model.hintingIndices
         , overlaps = False
-        , viewSegment = viewHighlightable True config
-        , id = config.id
-        , highlightables = config.highlightables
+        , viewSegment = viewHighlightable True model
+        , id = model.id
+        , highlightables = model.highlightables
         }
 
 
@@ -749,6 +710,8 @@ static config =
     view_
         { showTagsInline = False
         , maybeTool = Nothing
+        , hoveringIndex = Nothing
+        , hintingIndices = Nothing
         , overlaps = False
         , viewSegment =
             viewHighlightableSegment
@@ -756,6 +719,8 @@ static config =
                 , focusIndex = Nothing
                 , eventListeners = []
                 , maybeTool = Nothing
+                , hoveringIndex = Nothing
+                , hintingIndices = Nothing
                 , renderMarkdown = False
                 }
         , id = config.id
@@ -775,6 +740,8 @@ staticMarkdown config =
     view_
         { showTagsInline = False
         , maybeTool = Nothing
+        , hoveringIndex = Nothing
+        , hintingIndices = Nothing
         , overlaps = False
         , viewSegment =
             viewHighlightableSegment
@@ -782,6 +749,8 @@ staticMarkdown config =
                 , focusIndex = Nothing
                 , eventListeners = []
                 , maybeTool = Nothing
+                , hoveringIndex = Nothing
+                , hintingIndices = Nothing
                 , renderMarkdown = True
                 }
         , id = config.id
@@ -800,12 +769,16 @@ staticWithTags config =
                 , focusIndex = Nothing
                 , eventListeners = []
                 , maybeTool = Nothing
+                , hoveringIndex = Nothing
+                , hintingIndices = Nothing
                 , renderMarkdown = False
                 }
     in
     view_
         { showTagsInline = True
         , maybeTool = Nothing
+        , hoveringIndex = Nothing
+        , hintingIndices = Nothing
         , overlaps = False
         , viewSegment = viewStaticHighlightableWithTags
         , id = config.id
@@ -830,12 +803,16 @@ staticMarkdownWithTags config =
                 , focusIndex = Nothing
                 , eventListeners = []
                 , maybeTool = Nothing
+                , hoveringIndex = Nothing
+                , hintingIndices = Nothing
                 , renderMarkdown = True
                 }
     in
     view_
         { showTagsInline = True
         , maybeTool = Nothing
+        , hoveringIndex = Nothing
+        , hintingIndices = Nothing
         , overlaps = False
         , viewSegment = viewStaticHighlightableWithTags
         , id = config.id
@@ -848,6 +825,8 @@ staticMarkdownWithTags config =
 view_ :
     { showTagsInline : Bool
     , maybeTool : Maybe (Tool.Tool marker)
+    , hoveringIndex : Maybe Int
+    , hintingIndices : Maybe ( Int, Int )
     , overlaps : Bool
     , viewSegment : Highlightable marker -> List Css.Style -> Html msg
     , highlightables : List (Highlightable marker)
@@ -860,7 +839,7 @@ view_ config =
         toMark highlightable marker =
             { name = marker.name
             , startStyles = marker.startGroupClass
-            , styles = highlightableStyle config.maybeTool highlightable
+            , styles = highlightableStyle config highlightable
             , endStyles = marker.endGroupClass
             }
 
@@ -897,7 +876,14 @@ view_ config =
 
 viewHighlightable :
     Bool
-    -> { config | id : String, focusIndex : Maybe Int, marker : Tool.Tool marker }
+    ->
+        { config
+            | id : String
+            , focusIndex : Maybe Int
+            , marker : Tool.Tool marker
+            , hoveringIndex : Maybe Int
+            , hintingIndices : Maybe ( Int, Int )
+        }
     -> Highlightable marker
     -> List Css.Style
     -> Html (Msg marker)
@@ -927,8 +913,10 @@ viewHighlightable renderMarkdown config highlightable =
                         , Key.shift (Keyboard <| SelectionReset highlightable.index)
                         ]
                     ]
-                , maybeTool = Just config.marker
                 , renderMarkdown = renderMarkdown
+                , maybeTool = Just config.marker
+                , hoveringIndex = config.hoveringIndex
+                , hintingIndices = config.hintingIndices
                 }
                 highlightable
 
@@ -944,8 +932,10 @@ viewHighlightable renderMarkdown config highlightable =
                     , onPreventDefault "touchstart" (Pointer <| Down highlightable.index)
                     , attribute "data-static" ""
                     ]
-                , maybeTool = Just config.marker
                 , renderMarkdown = renderMarkdown
+                , maybeTool = Just config.marker
+                , hoveringIndex = config.hoveringIndex
+                , hintingIndices = config.hintingIndices
                 }
                 highlightable
 
@@ -955,12 +945,14 @@ viewHighlightableSegment :
     , focusIndex : Maybe Int
     , eventListeners : List (Attribute msg)
     , maybeTool : Maybe (Tool.Tool marker)
+    , hoveringIndex : Maybe Int
+    , hintingIndices : Maybe ( Int, Int )
     , renderMarkdown : Bool
     }
     -> Highlightable marker
     -> List Css.Style
     -> Html msg
-viewHighlightableSegment { interactiveHighlighterId, focusIndex, eventListeners, maybeTool, renderMarkdown } highlightable markStyles =
+viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners, renderMarkdown } as config) highlightable markStyles =
     let
         whitespaceClass txt =
             -- we need to override whitespace styles in order to support
@@ -1000,7 +992,7 @@ viewHighlightableSegment { interactiveHighlighterId, focusIndex, eventListeners,
                         AttributesExtra.none
                , css
                     (Css.focus [ Css.zIndex (Css.int 1), Css.position Css.relative ]
-                        :: highlightableStyle maybeTool highlightable
+                        :: highlightableStyle config highlightable
                         ++ markStyles
                     )
                , class "highlighter-highlightable"
@@ -1101,9 +1093,22 @@ highlightableId highlighterId index =
     "highlighter-" ++ highlighterId ++ "-highlightable-" ++ String.fromInt index
 
 
-highlightableStyle : Maybe (Tool.Tool kind) -> Highlightable kind -> List Css.Style
-highlightableStyle tool ({ marked } as highlightable) =
-    case tool of
+highlightableStyle :
+    { config
+        | maybeTool : Maybe (Tool.Tool marker)
+        , hoveringIndex : Maybe Int
+        , hintingIndices : Maybe ( Int, Int )
+    }
+    -> Highlightable kind
+    -> List Css.Style
+highlightableStyle { maybeTool, hoveringIndex, hintingIndices } ({ marked } as highlightable) =
+    let
+        isHinted =
+            hintingIndices
+                |> Maybe.map (\( a, b ) -> between a b highlightable)
+                |> Maybe.withDefault False
+    in
+    case maybeTool of
         Nothing ->
             [ case List.head marked of
                 Just markedWith ->
@@ -1115,25 +1120,34 @@ highlightableStyle tool ({ marked } as highlightable) =
 
         Just (Tool.Marker marker) ->
             [ Css.property "user-select" "none"
+            , case List.head marked of
+                Just markedWith ->
+                    if isHinted then
+                        Css.batch marker.hintClass
 
-            -- TODO: reimplement uiState
-            --, case ( uiState, List.head marked ) of
-            --( Highlightable.Hovered, Just markedWith ) ->
-            --    -- Override marking with selected tool
-            --    Css.batch marker.hoverHighlightClass
-            --( Highlightable.Hovered, Nothing ) ->
-            --    [ marker.hoverClass
-            --    , marker.startGroupClass
-            --    , marker.endGroupClass
-            --    ]
-            --        |> List.concat
-            --        |> Css.batch
-            --( Highlightable.Hinted, _ ) ->
-            --    Css.batch marker.hintClass
-            --( Highlightable.None, Just markedWith ) ->
-            --    Css.batch markedWith.highlightClass
-            --( Highlightable.None, Nothing ) ->
-            --    Css.backgroundColor Css.transparent
+                    else if hoveringIndex == Just highlightable.index then
+                        -- Override marking with selected tool
+                        Css.batch marker.hoverHighlightClass
+
+                    else
+                        -- otherwise, show the standard mark styles
+                        Css.batch markedWith.highlightClass
+
+                Nothing ->
+                    if isHinted then
+                        Css.batch marker.hintClass
+
+                    else if hoveringIndex == Just highlightable.index then
+                        -- When Hovered but not marked
+                        [ marker.hoverClass
+                        , marker.startGroupClass
+                        , marker.endGroupClass
+                        ]
+                            |> List.concat
+                            |> Css.batch
+
+                    else
+                        Css.backgroundColor Css.transparent
             ]
 
         Just (Tool.Eraser eraser_) ->
