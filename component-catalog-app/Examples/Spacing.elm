@@ -21,7 +21,7 @@ import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
-import Nri.Ui.Table.V6 as Table
+import Nri.Ui.Table.V7 as Table
 import Svg.Styled
 import Svg.Styled.Attributes
 
@@ -237,7 +237,7 @@ view ellieLinkConfig state =
     , Heading.h2 [ Heading.plaintext "Example", Heading.css [ Css.marginTop Spacing.verticalSpacerPx ] ]
     , fakePage [ exampleView ]
     , Heading.h2 [ Heading.plaintext "Content alignment", Heading.css [ Css.marginTop Spacing.verticalSpacerPx ] ]
-    , Table.view
+    , Table.view []
         [ Table.string
             { header = "Name"
             , value = .name
@@ -275,7 +275,7 @@ view ellieLinkConfig state =
         , { name = "centeredContentWithCustomWidth", alignment = "Centered", maxWidth = "(customizable)", sidePadding = "0px" }
         ]
     , Heading.h2 [ Heading.plaintext "Constants", Heading.css [ Css.marginTop Spacing.verticalSpacerPx ] ]
-    , Table.view
+    , Table.view []
         [ Table.string
             { header = "Name"
             , value = .name

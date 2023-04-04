@@ -19,7 +19,7 @@ import Nri.Ui.AnimatedIcon.V1 as AnimatedIcon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Table.V6 as Table
+import Nri.Ui.Table.V7 as Table
 
 
 moduleName : String
@@ -88,7 +88,7 @@ example =
                         ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
-            , Table.view
+            , Table.view []
                 [ Table.custom
                     { header = text "Rendered"
                     , view =

@@ -15,7 +15,7 @@ import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Table.V6 as Table exposing (Column)
+import Nri.Ui.Table.V7 as Table exposing (Column)
 
 
 {-| -}
@@ -30,7 +30,7 @@ moduleName =
 
 version : Int
 version =
-    6
+    7
 
 
 {-| -}
@@ -44,7 +44,7 @@ example =
     , categories = [ Layout ]
     , keyboardSupport = []
     , preview =
-        [ Table.view
+        [ Table.view []
             [ Table.string
                 { header = "A"
                 , value = .a
@@ -98,6 +98,7 @@ example =
                                 { sectionName = moduleName ++ "." ++ viewName
                                 , code =
                                     (moduleName ++ "." ++ viewName)
+                                        ++ " [] "
                                         ++ Code.list columnsCode
                                         ++ dataStr
                                 }
@@ -111,16 +112,16 @@ example =
             , Heading.h2 [ Heading.plaintext "Example" ]
             , case ( showHeader, isLoading ) of
                 ( True, False ) ->
-                    Table.view columns data
+                    Table.view [] columns data
 
                 ( False, False ) ->
-                    Table.viewWithoutHeader columns data
+                    Table.viewWithoutHeader [] columns data
 
                 ( True, True ) ->
-                    Table.viewLoading columns
+                    Table.viewLoading [] columns
 
                 ( False, True ) ->
-                    Table.viewLoadingWithoutHeader columns
+                    Table.viewLoadingWithoutHeader [] columns
             ]
     }
 

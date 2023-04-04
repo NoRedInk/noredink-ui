@@ -25,7 +25,7 @@ import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Highlightable.V2 as Highlightable exposing (Highlightable)
 import Nri.Ui.Highlighter.V3 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
-import Nri.Ui.Table.V6 as Table
+import Nri.Ui.Table.V7 as Table
 import String.Extra
 
 
@@ -113,7 +113,7 @@ example =
                 ]
             , Heading.h2 [ Heading.plaintext "Non-interactive examples" ]
             , Heading.h3 [ Heading.plaintext "These are examples of some different ways the highlighter can appear to users." ]
-            , Table.view
+            , Table.view []
                 [ Table.rowHeader
                     { header = text "Highlighter."
                     , view = .viewName >> text

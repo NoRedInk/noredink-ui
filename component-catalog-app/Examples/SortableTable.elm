@@ -10,16 +10,16 @@ import Category exposing (Category(..))
 import Code
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
-import Debug.Control.Extra as ControlExtra
+import Debug.Control.Extra as ControlExtra exposing (values)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.SortableTable.V3 as SortableTable exposing (Column)
+import Nri.Ui.SortableTable.V4 as SortableTable exposing (Column)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Table.V6 as Table
+import Nri.Ui.Table.V7 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -30,7 +30,7 @@ moduleName =
 
 version : Int
 version =
-    3
+    4
 
 
 {-| -}
@@ -74,7 +74,7 @@ example =
                     |> Svg.withHeight (Css.px 12)
                     |> Svg.toHtml
         in
-        [ Table.view
+        [ Table.view []
             [ Table.custom
                 { header = header "X"
                 , view = .x >> Html.text
@@ -104,10 +104,24 @@ example =
                 settings =
                     Control.currentValue model.settings
 
-                config =
-                    { updateMsg = SetSortState
-                    , columns = columns
-                    }
+                attrs =
+                    List.filterMap identity
+                        [ Just (SortableTable.updateMsg SetSortState)
+                        , Just (SortableTable.state sortState)
+                        , Maybe.map
+                            (\stickiness ->
+                                case stickiness of
+                                    Default ->
+                                        SortableTable.stickyHeader
+
+                                    Custom customConfig ->
+                                        SortableTable.stickyHeaderCustom customConfig
+                            )
+                            settings.stickyHeader
+                        ]
+
+                isStickyAtAll =
+                    settings.stickyHeader /= Nothing
 
                 ( dataCode, data ) =
                     List.unzip dataWithCode
@@ -119,15 +133,35 @@ example =
                     { sectionName = viewName
                     , code =
                         [ moduleName ++ "." ++ viewName
-                        , Code.recordMultiline
-                            [ ( "updateMsg", "SetSortState" )
-                            , ( "columns", Code.listMultiline columnsCode 2 )
-                            ]
+                        , Code.listMultiline
+                            (List.filterMap identity
+                                [ Just "SortableTable.updateMsg SetSortState"
+                                , "-- The SortableTable's state should be stored on the model, rather than initialized in the view"
+                                    ++ "\n      "
+                                    ++ "SortableTable.state (SortableTable.init "
+                                    ++ Debug.toString model.sortState.column
+                                    ++ ")"
+                                    |> Just
+                                , Maybe.map
+                                    (\stickiness ->
+                                        case stickiness of
+                                            Default ->
+                                                "SortableTable.stickyHeader"
+
+                                            Custom stickyConfig ->
+                                                "SortableTable.stickyHeaderCustom "
+                                                    ++ Code.recordMultiline
+                                                        [ ( "topOffset", String.fromFloat stickyConfig.topOffset )
+                                                        , ( "zIndex", String.fromInt stickyConfig.zIndex )
+                                                        , ( "pageBackgroundColor", "Css.hex \"" ++ stickyConfig.pageBackgroundColor.value ++ "\"" )
+                                                        ]
+                                                        2
+                                    )
+                                    settings.stickyHeader
+                                ]
+                            )
                             1
-                        , Code.newlineWithIndent 1
-                        , Code.commentInline "The SortableTable's state should be stored on the model, rather than initialized in the view"
-                        , Code.newlineWithIndent 1
-                        , Code.withParens ("SortableTable.init " ++ Debug.toString model.sortState.column)
+                        , Code.listMultiline columnsCode 1
                         , finalArgs
                         ]
                             |> String.join ""
@@ -149,10 +183,19 @@ example =
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
             , if settings.loading then
-                SortableTable.viewLoading config sortState
+                SortableTable.viewLoading attrs columns
 
               else
-                SortableTable.view config sortState data
+                SortableTable.view attrs
+                    columns
+                    (if isStickyAtAll then
+                        data
+                            |> List.repeat 10
+                            |> List.concat
+
+                     else
+                        data
+                    )
             ]
     }
 
@@ -274,7 +317,13 @@ type alias Settings =
     , customizableColumnWidth : Int
     , customizableColumnCellStyles : ( String, List Style )
     , loading : Bool
+    , stickyHeader : Maybe StickyHeader
     }
+
+
+type StickyHeader
+    = Default
+    | Custom SortableTable.StickyConfig
 
 
 controlSettings : Control Settings
@@ -295,6 +344,25 @@ controlSettings =
                 ]
             )
         |> Control.field "Is loading" (Control.bool False)
+        |> Control.field "Sticky header"
+            (Control.maybe False
+                (Control.choice
+                    [ ( "Default", Control.value Default )
+                    , ( "Custom"
+                      , Control.record SortableTable.StickyConfig
+                            |> Control.field "topOffset" (values String.fromFloat [ 0, 10, 50 ])
+                            |> Control.field "zIndex" (values String.fromInt [ 0, 1, 5, 10 ])
+                            |> Control.field "pageBackgroundColor"
+                                (Control.choice
+                                    [ ( "white", Control.value Colors.white )
+                                    , ( "gray", Control.value Colors.gray92 )
+                                    ]
+                                )
+                            |> Control.map Custom
+                      )
+                    ]
+                )
+            )
 
 
 type ColumnId
