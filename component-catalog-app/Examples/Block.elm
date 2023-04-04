@@ -192,10 +192,16 @@ example =
                     , Block.labelId prepositionId
                     , Block.labelPosition (Dict.get prepositionId offsets)
                     ]
-                , Block.view [ Block.plaintext " comic book pages. " ]
+                , Block.view <|
+                    [ Block.content 
+                        [ Block.bold (List.concat [ Block.phrase " comic ", [ Block.italic (Block.phrase "book") ], Block.phrase " pages. " ])
+                        ]
+                    ]
                 , Block.view
                     [ (List.concat >> Block.content)
-                        [ Block.phrase "This is heroically generous "
+                        [ Block.phrase "This is "
+                        , [ Block.italic ( Block.phrase "heroically" ) ]
+                        , [ Block.bold (Block.phrase " generous ") ]
                         , [ Block.blank ]
                         , Block.phrase " each comic book costs about $5."
                         ]

@@ -2,7 +2,7 @@ module Nri.Ui.Block.V4 exposing
     ( view, Attribute
     , plaintext
     , Content, content
-    , phrase, wordWithId, space, blank, blankWithId
+    , phrase, wordWithId, space, blank, blankWithId, bold, italic
     , emphasize
     , label, id
     , labelId, labelContentId
@@ -19,7 +19,7 @@ module Nri.Ui.Block.V4 exposing
 
 @docs plaintext
 @docs Content, content
-@docs phrase, wordWithId, space, blank, blankWithId
+@docs phrase, wordWithId, space, blank, blankWithId, bold, italic
 
 
 ## Content customization
@@ -214,6 +214,12 @@ type Content msg
     | Blank
     | BlankWithId String
     | FullHeightBlank
+    | Markdown Markdown (List (Content msg))
+
+
+type Markdown
+    = Bold
+    | Italic
 
 
 parseString : String -> List (Content msg)
@@ -228,23 +234,27 @@ renderContent :
     Content msg
     -> List Css.Style
     -> Html msg
-renderContent content_ =
+renderContent content_ styles =
     case content_ of
         Word str ->
             blockSegmentContainer Nothing
                 [ text str ]
+                styles
 
         WordWithId wordAndId ->
             blockSegmentContainer (Just wordAndId.id)
                 [ text wordAndId.word ]
+                styles
 
         Blank ->
             blockSegmentContainer Nothing
                 [ viewBlank [ Css.lineHeight (Css.num 1) ] ]
+                styles
 
         BlankWithId id_ ->
             blockSegmentContainer (Just id_)
                 [ viewBlank [ Css.lineHeight (Css.num 1) ] ]
+                styles
 
         FullHeightBlank ->
             blockSegmentContainer Nothing
@@ -254,6 +264,21 @@ renderContent content_ =
                     , Css.lineHeight Css.initial
                     ]
                 ]
+                styles
+
+        Markdown markdown contents ->
+            let
+                tag =
+                    case markdown of
+                        Bold ->
+                            strong []
+
+                        Italic ->
+                            em []
+            in
+            contents
+                |> List.map (\c -> renderContent c styles)
+                |> tag
 
 
 blockSegmentContainer : Maybe String -> List (Html msg) -> List Css.Style -> Html msg
@@ -302,6 +327,20 @@ blank =
 blankWithId : String -> Content msg
 blankWithId =
     BlankWithId
+
+
+{-| Wraps a group of content in a `strong` tag
+-}
+bold : List (Content msg) -> Content msg
+bold =
+    Markdown Bold
+
+
+{-| Wraps a group of content in a `em` tag
+-}
+italic : List (Content msg) -> Content msg
+italic =
+    Markdown Italic
 
 
 
