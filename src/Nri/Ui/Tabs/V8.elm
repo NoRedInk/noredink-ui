@@ -270,7 +270,7 @@ view { focusAndSelect, selected } attrs tabs =
                 { focusAndSelect = focusAndSelect
                 , selected = selected
                 , tabs = List.map (\(Tab t) -> t) tabs
-                , tabStyles = tabStyles config.spacing
+                , tabStyles = tabStyles config.spacing config.fadeToPanelBackgroundColor
                 , tabListStyles = stylesTabsAligned config
                 }
     in
@@ -369,15 +369,20 @@ maybeStyle styler maybeValue =
             Css.batch []
 
 
-tabStyles : Maybe Float -> Int -> Bool -> List Style
-tabStyles customSpacing index isSelected =
+tabStyles : Maybe Float -> Css.Color -> Int -> Bool -> List Style
+tabStyles customSpacing fadeToPanelBackgroundColor_ index isSelected =
     let
         stylesDynamic =
             if isSelected then
-                [ Css.backgroundColor Colors.white
-                , Css.borderBottom (Css.px 1)
+                [ Css.borderBottom (Css.px 1)
                 , Css.borderBottomStyle Css.solid
-                , Css.borderBottomColor Colors.white
+                , Css.backgroundColor Colors.white
+                , Css.borderBottomColor fadeToPanelBackgroundColor_
+                , Css.backgroundImage <|
+                    Css.linearGradient2 Css.toTop
+                        (Css.stop2 (withAlpha 1 fadeToPanelBackgroundColor_) (Css.pct 0))
+                        (Css.stop2 (withAlpha 0 fadeToPanelBackgroundColor_) (Css.pct 25))
+                        [ Css.stop2 (withAlpha 0 fadeToPanelBackgroundColor_) (Css.pct 100) ]
                 ]
 
             else
