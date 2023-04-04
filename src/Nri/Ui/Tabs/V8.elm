@@ -16,6 +16,7 @@ module Nri.Ui.Tabs.V8 exposing
   - Uses an HTML-like API
   - Adds sticky positioning
   - Adds background color in the tab list (for use with sticky positioning)
+  - Adds the ability to make the background of the active tab fade into the background of the panel below it
 
 
 ### Attributes
