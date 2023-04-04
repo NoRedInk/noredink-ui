@@ -9,7 +9,16 @@ module Nri.Ui.RadioButton.V4 exposing
     , disabled, enabled, errorIf, errorMessage, guidance
     )
 
-{-| Changes from V3:
+{-|
+
+
+### Patch changes:
+
+  - replace `height` use with `minHeight` to prevent vertical text overflow issues
+  - use `break-word` to prevent horiztonal text overflow issues
+
+
+### Changes from V3:
 
   - use PremiumDisplay instead of PremiumLevel
   - rename showPennant to onLockedClick since its display depends on premium now
@@ -303,7 +312,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
             , css
                 [ position relative
                 , Css.marginLeft (Css.px -2)
-                , Css.paddingLeft (Css.px 38)
+                , Css.paddingLeft (Css.px 30)
                 , Css.paddingTop (px 6)
                 , Css.paddingBottom (px 4)
                 , display inlineBlock
@@ -374,6 +383,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                     , Css.property "font-weight" "600"
                     , display inlineBlock
                     , Css.property "transition" "all 0.4s ease"
+                    , paddingLeft (px 8)
                     ]
                 ]
                 [ radioInputIcon
@@ -385,7 +395,8 @@ view { label, name, value, valueToString, selectedValue } attributes =
                     [ css
                         [ display inlineFlex
                         , alignItems center
-                        , Css.height (px 20)
+                        , Css.minHeight (px 20)
+                        , Css.property "word-break" "break-word"
                         ]
                     ]
                     [ Html.span
@@ -545,9 +556,6 @@ radioInputIcon config =
             , displayFlex
             , justifyContent center
             , alignItems center
-            , -- this padding creates a hit area "bridge" between the
-              -- absolutely-positioned icon SVG and the label text
-              paddingRight (Css.px 8)
             ]
         ]
         [ image

@@ -1,6 +1,70 @@
-# noredink-ui
+# Ownership, policies, & key concepts
 
-UI widgets we use.
+NoRedInk’s accessibility team, the Accessibilibats, own the `noredink-ui` package and the Component Catalog app showcasing its components.
+While others may contribute to `noredink-ui` and are encouraged to do so, the Accessibilibats (a.k.a. A11ybats) are responsible for oversight of the foundational aspects of the component library, a.k.a. “**[Component Library Foundations](#component-library-foundations)**.”
+
+Given this ownership and responsibility, A11ybats will provide guidance and support to developers and designers who are building new components or working with existing components.
+
+[The Component Catalog application can be found here](https://noredink-ui.netlify.app/).
+
+## Component Library Foundations
+- Adherence to the component library [accessibility policy](#accessibility-policy)
+- Adherence to the [NoRedInk UI Style Guide](https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats-PvOLxeX3oyujYEzdJx5pu) and [Guidelines for Sharing User-Facing Changes with Design](https://paper.dropbox.com/doc/Guidelines-for-Sharing-User-Facing-Changes-with-Design-bdKGQtYH9qO9I00hUkA6k)
+- Interoperability and consistency of components with each other and with the NoRedInk app
+- Quality and consistency of API design
+- Quality of internal code
+- Existence and quality of code documentation for each component
+- Existence, quality, and organization of component example pages in [the Component Catalog](https://noredink-ui.netlify.app/)
+- Test coverage and testability of each component and of [the Component Catalog](https://noredink-ui.netlify.app/)
+
+## Accessibility policy
+- No new components will be added to the component library if they do not conform to [WCAG 2.1 AA accessibility guidelines](https://www.w3.org/WAI/standards-guidelines/wcag/). Similarly, no existing components will be modified such that the component falls out of conformance with these guidelines.
+- For new components, UX designers & stakeholders are responsible for making their best faith effort to follow the [Accessibility Guidelines for Product Development](https://paper.dropbox.com/doc/PlcoE22OpOhB6eWCF4rFj?noDesktopRedirect=1) to include accessibility details in their spec and code. A11ybats will help fill in any gaps, but your team is responsible for the first pass.
+- Existing components that do not conform to [WCAG 2.1 AA accessibility guidelines](https://www.w3.org/WAI/standards-guidelines/wcag/) are being updated by A11ybats to be conformant. (We believe we have a comprehensive backlog of updates to make, but feel free to ask us if you think you spot an accessibility issue. 🙏 )
+- Components in the NoRedInk app which are NOT in the component library but which are shared or could be shared across multiple interfaces may be added to the component library over time by A11ybats or by any team, ideally with any necessary accessibility improvements, in accordance with the [`noredink-ui` versioning policy](#versioning-policy).
+
+# Contribution guidelines
+## What belongs in the component library?
+
+Assume anything that seems like it should be a shared component should probably be a shared component. The remaining contribution guidelines will help you make this determination.
+
+## How to contribute
+
+Contributing to the component library is characterized by close consultation with A11ybats, who will make every effort to be available as needed. All contributions require at least a quick check-in with A11ybats, ideally before you begin work and at minimum before you merge any PRs. To that end, A11ybats request that you follow the relevant process outlined below to ensure a streamlined workflow for everyone involved:
+
+**🔧 Modifying an existing component**
+
+1. As soon as you have a rough idea of the modification you need (from the product/design perspective), please ping A11ybats in the [#ask-accessibilibats](https://noredink.slack.com/archives/C02NVG4M45U) Slack channel with details about the modification you’re planning to make.
+    - We may either give you the okay in the Slack thread, or we may request a brief **kickoff sync** to discuss implementation details. You may also request a sync rather than providing details in Slack.
+    - Once A11ybats give you the go-ahead to begin work…
+2. Review the [PR template](/.github/pull_request_template.md) in advance so that you understand contribution requirements in advance, or go ahead and open a draft PR so you can use the [PR template](/.github/pull_request_template.md) as you work.
+3. Feel free to [reach out to A11ybats](https://noredink.slack.com/archives/C02NVG4M45U) with any questions as you work - it might save you headaches or code rewrites later!
+4. Request a PR review from your team as usual. There is no need to add A11ybats as a reviewer unless this was mentioned as a requirement in your kickoff sync.
+5. A11ybats keep an eye on all noredink-ui updates and may request modifications to your work if it does not adhere to the [Component Library Foundations](#component-library-foundations).
+
+**🌟 Creating a new component**
+
+1. As soon as you have a rough idea of the new component you need (from the product/design perspective), please ping A11ybats in the [#ask-accessibilibats](https://noredink.slack.com/archives/C02NVG4M45U) Slack channel to request a brief **kickoff sync**.
+    - A11ybats should be able to sync with you anywhere from immediately following your request to ~48 hours from your request. We want to unblock you asap!
+    - In the kickoff sync, you can expect to start by sharing your concept with A11ybats. Next, A11ybats will ensure you are aware of our contribution guidelines and will provide high-level guidance about anything important to know before you build your component. For example, in some cases, we may already have existing code that meets your needs or that we prefer you base your new component on. (Hooray! Less work for you!) We may also give you some accessibility pointers.
+    - If necessary for more complex work, we’ll schedule followup syncs/pairing with you.
+    - Once A11ybats give you the go-ahead to begin work…
+2. Feel free to [reach out to A11ybats](https://noredink.slack.com/archives/C02NVG4M45U) with any questions as you work - it might save you headaches or code rewrites later!
+3. Review the [PR template](/.github/pull_request_template.md) in advance so that you understand contribution requirements in advance, or go ahead and open a draft PR so you can use the [PR template](/.github/pull_request_template.md) as you work.
+4. Before beginning dev work, we strongly recommend working closely with a UX designer to produce a **clear, comprehensive** component spec. Here are some tips for developing a good spec before starting component work:
+    - UX designers & stakeholders are responsible for making their best faith effort at following the [Accessibility Guidelines for Product Development](https://paper.dropbox.com/doc/PlcoE22OpOhB6eWCF4rFj?noDesktopRedirect=1) to include accessibility details in their spec and code. A11ybats will help fill in any gaps, but your team is responsible for the first pass.
+    - In the spec, include details about which properties need to be configurable and which configuration options are necessary for each property. For example, if your component allows color configurations, you might want developers to specify any hex code as the color, or you may wish to limit them to a particular subset of [NoRedInk's colors](https://noredink-ui.netlify.app/#/doodad/Colors), etc.
+5. If you'd like to have multiple small PRs as you build out the functionality of the component, we recommend branching the small PRs off an omnibus-style component-specific branch instead of branching each small PR off of master.
+6. For your initial PR, please request a PR review from your team as usual, but also add A11ybats as an additional PR reviewer.
+    - A11ybats will review your PR solely for the purposes of ensuring that your new component adheres to the [Component Library Foundations](#component-library-foundations). We may point out bugs if we happen to find them, but that’s not what we’ll be looking for — **your team is ultimately responsible for testing/coordinating testing of your new component**.
+    - For minor iterations on your new component, there’s no need to request A11ybat PR review again. We’ll keep an eye on smaller changes as you make them. If you aren’t sure if your changes are big enough for another A11ybat PR review, just ask!
+7. Once your component is in a state that’s ready for production, please request an accessibility review from A11ybats by dropping a note in [#ask-accessibilibats](https://noredink.slack.com/archives/C02NVG4M45U). Our turnaround time should be relatively quick, but in the meantime…
+8. Start creating a [QA Flightplan](https://paper.dropbox.com/doc/QA-landing-page-FAQ--BNKlATfTHdgnJa48lcR5NrVSAg-wLYVa0lEmkaiJB09CXHRn) as if this were a new feature. We recommend requesting that the QA team *at least* tests your new component within the Component Catalog netlify branch preview. (You can always request additional QA of your component as implemented in the NoRedInk app later.) Simple components may have a simple flightplan, and that’s okay!
+9. Once A11ybats have completed their accessibility review, make updates to your QA Flightplan if needed and submit your QA Flightplan to QA according to [QA’s processes](https://paper.dropbox.com/doc/QA-landing-page-FAQ--BNKlATfTHdgnJa48lcR5NrVSAg-wLYVa0lEmkaiJB09CXHRn).
+10. When you're ready to publish your component, please refer to [the noredink-ui versioning policy](#versioning-policy), which includes guidance on permitted API changes per release.
+11. A11ybats keep an eye on all noredink-ui updates and may request modifications to your work if it does not adhere to the [Component Library Foundations](#component-library-foundations).
+
+# Developing, deploying, & versioning
 
 ## Getting Started
 1. Setup your [development environment](#developing-with-nix)
@@ -61,15 +125,35 @@ And go to http://localhost:8000/
 
 If you'd like to test your widget in the monolith before publishing, run `script/test-elm-package.py ../path_to_this_repo` from the monolith's directory.
 
-## Deploying
+## Publishing a new version
 
-Once your PR is merged, you can publish `master` as a new version:
+Any NoRedInk engineer can deploy a new version of `noredink-ui`. Generally, we prefer to do a release after every change, rather than trying to batch changes together. This is mostly to make QA more straightforward -- especially for the cases where we make a mistake!
 
-Run the following to bump && publish the version in `elm.json`:
+- Make a bump PR
+  - Make a new branch off of latest master
+  - Run `elm diff` and verify that the changes are not major ([versioning policy](https://github.com/NoRedInk/noredink-ui/blob/master/README.md#versioning-policy)) and are what you expect. Copy the diff (you'll paste it into a PR description later.)
+  - Run `elm bump`
+    - Getting a "PROBLEM LOADING DOCS" error? See [troubleshooting a release](https://github.com/NoRedInk/noredink-ui/blob/master/README.md#troubleshooting-a-release)
+  - Commit the changes to the `elm.json` file
+  - Make a PR and fill out the PR template (this is when you'll paste in the diff you copied earlier!)
+- Get your PR merged
+- Go to latest master
+  - `git checkout master`
+  - `git pull`
+- Run `elm publish` and follow its prompts
+  - Note: when you're asked to create a version tag, **please be sure to include a meaningful message**! Include details in the message that describe why this noredink-ui version exists at ll.
+  - Create an annotated tag like this:
+  ```
+  git tag -a 22.x.y -m "Description of this release version: i.e.: 'high-contrast mode highlight style change'"
+  ```
+  - Because of branch protection you will not be able to push a tag like: `git push origin master 22.x.y` (The previous command requires permissions to push directly to master even if you have no changes).
+  - Instead, please push your new `22.x.y` tag with the following: `git push origin 22.x.y`
 
-```
-elm bump
-```
+
+Once you've published, you should see the latest version at <https://package.elm-lang.org/packages/NoRedInk/noredink-ui/>. It can take a few minutes to show up.
+
+
+### Troubleshooting a release
 
 If you get something like this:
 
@@ -96,19 +180,6 @@ Then run it with 0.19.0 explicitly (0.19.1 has some problems with big docs):
 ```
 npx -p elm@0.19.0-no-deps elm bump
 ```
-
-Commit and push your changes in a PR. Once it's approved and merged,
-then:
-
-```
-git tag -a 5.10.0 -m "release version 5.10.0"
-git push origin 5.10.0
-elm publish
-```
-
-You can also add a tag in https://github.com/NoRedInk/noredink-ui/releases/new if you want to add more detail.
-
-Once you've published, you should see the latest version at <https://package.elm-lang.org/packages/NoRedInk/noredink-ui/>.
 
 ## Versioning policy
 
@@ -151,5 +222,4 @@ This means:
   - If you introduce a new version of a widget, please consider taking the time to upgrade all previous usages
     - If for some reason this isn't feasible, create a story in your team's backlog so that you can prioritize it separately without disrupting your current work
   - You can delete an old version of a widget when there are no usages left
-    - Currently, `noredink-ui` is used by the monolith, CCS and tutorials
     - Note: this will be a major version bump, so you may want to batch deletions together

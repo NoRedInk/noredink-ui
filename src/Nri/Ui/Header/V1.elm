@@ -2,7 +2,6 @@ module Nri.Ui.Header.V1 exposing
     ( view, Attribute
     , aTagAttributes, customPageWidth, breadCrumbsLabel
     , extraContent, description, extraNav
-    , extraSubheadContent
     )
 
 {-|
@@ -11,10 +10,14 @@ module Nri.Ui.Header.V1 exposing
 ## Changelog
 
 
-### Patch changes
+### Patch
 
-  - marked extraSubheadContent as deprecated
-  - added extraNav
+  - reduced the top-padding on the description from 20 to 5px
+
+
+### Major release adjustments
+
+  - removed extraSubheadContent
 
 @docs view, Attribute
 
@@ -27,11 +30,6 @@ module Nri.Ui.Header.V1 exposing
 ## Add additional content to the header
 
 @docs extraContent, description, extraNav
-
-
-### Deprecated, to be removed:
-
-@docs extraSubheadContent
 
 -}
 
@@ -82,13 +80,6 @@ extraNav label value =
         )
 
 
-{-| This attribute is unused and will be removed in the next version of Header.
--}
-extraSubheadContent : List (Html msg) -> Attribute route msg
-extraSubheadContent value =
-    Attribute (\soFar -> { soFar | extraSubheadContent = value })
-
-
 {-| -}
 description : String -> Attribute route msg
 description description_ =
@@ -116,7 +107,6 @@ type alias Config route msg =
     { aTagAttributes : route -> List (Html.Attribute msg)
     , containerAttributes : List (Html.Attribute Never)
     , extraContent : List (Html msg)
-    , extraSubheadContent : List (Html msg)
     , description : Maybe String
     , pageWidth : Css.Px
     , breadCrumbsLabel : String
@@ -130,7 +120,6 @@ customize =
         { aTagAttributes = \_ -> []
         , containerAttributes = []
         , extraContent = []
-        , extraSubheadContent = []
         , description = Nothing
         , pageWidth = MediaQuery.mobileBreakpoint
         , breadCrumbsLabel = "breadcrumbs"
@@ -192,21 +181,12 @@ view attrs { breadCrumbs, isCurrentRoute } =
                 :: config.containerAttributes
             )
             (Html.div [ css [ Css.flexGrow (Css.num 1) ] ]
-                [ let
-                    breadcrumbsView =
-                        BreadCrumbs.view
-                            { isCurrentRoute = isCurrentRoute
-                            , aTagAttributes = config.aTagAttributes
-                            , label = config.breadCrumbsLabel
-                            }
-                            breadCrumbs
-                  in
-                  case config.extraSubheadContent of
-                    [] ->
-                        breadcrumbsView
-
-                    _ ->
-                        Html.div [] (breadcrumbsView :: config.extraSubheadContent)
+                [ BreadCrumbs.view
+                    { isCurrentRoute = isCurrentRoute
+                    , aTagAttributes = config.aTagAttributes
+                    , label = config.breadCrumbsLabel
+                    }
+                    breadCrumbs
                 ]
                 :: extraContent_
             )
@@ -222,7 +202,7 @@ viewDescription pageWidth description_ =
             [ Spacing.centeredContentWithSidePaddingAndCustomWidth pageWidth
             , Css.color Colors.gray45
             , Css.important (Css.margin Css.auto)
-            , Css.important (Css.paddingTop (Css.px 20))
+            , Css.important (Css.paddingTop (Css.px 5))
             ]
         , Text.plaintext description_
         ]

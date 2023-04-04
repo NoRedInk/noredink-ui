@@ -34,9 +34,10 @@ module Nri.Ui.Panel.V1 exposing
 -}
 
 import Content
-import Css exposing (Style)
+import Css exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes
+import MarkdownStyles
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 
@@ -117,8 +118,13 @@ paragraph =
 {-| Use a markdown string for the panel content.
 -}
 markdown : String -> Attribute msg
-markdown =
-    Attribute << Content.markdown
+markdown content =
+    Attribute <|
+        \config ->
+            { config
+                | content = Content.markdownContent content
+                , css = MarkdownStyles.anchorAndButton ++ config.css
+            }
 
 
 {-| -}

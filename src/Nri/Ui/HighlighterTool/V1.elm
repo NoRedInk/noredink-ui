@@ -1,14 +1,21 @@
 module Nri.Ui.HighlighterTool.V1 exposing
     ( Tool(..)
     , EraserModel, buildEraser
-    , MarkerModel, buildMarker, buildMarkerWithBorder
+    , MarkerModel, buildMarker, buildMarkerWithBorder, buildMarkerWithoutRounding
     )
 
 {-|
 
+
+### Patch changes
+
+  - change the high-contrast styles to be border-based instead of background-color based
+  - adds buildMarkerWithoutRounding for inline comment styling
+  - changes the 4px of side padding on the marker to 2px of padding+negative margin
+
 @docs Tool
 @docs EraserModel, buildEraser
-@docs MarkerModel, buildMarker, buildMarkerWithBorder
+@docs MarkerModel, buildMarker, buildMarkerWithBorder, buildMarkerWithoutRounding
 
 -}
 
@@ -89,7 +96,11 @@ buildMarker { highlightColor, hoverColor, hoverHighlightColor, kind, name } =
 
 startGroupStyles : List Css.Style
 startGroupStyles =
-    [ Css.paddingLeft (Css.px 4)
+    [ MediaQuery.highContrastMode
+        [ Css.property "border-left" "2px solid Mark"
+        ]
+    , Css.paddingLeft (Css.px paddingSize)
+    , Css.marginLeft (Css.px -paddingSize)
     , Css.borderTopLeftRadius (Css.px 4)
     , Css.borderBottomLeftRadius (Css.px 4)
     ]
@@ -97,10 +108,19 @@ startGroupStyles =
 
 endGroupStyles : List Css.Style
 endGroupStyles =
-    [ Css.paddingRight (Css.px 4)
+    [ MediaQuery.highContrastMode
+        [ Css.property "border-right" "2px solid Mark"
+        ]
+    , Css.paddingRight (Css.px paddingSize)
+    , Css.marginRight (Css.px -paddingSize)
     , Css.borderTopRightRadius (Css.px 4)
     , Css.borderBottomRightRadius (Css.px 4)
     ]
+
+
+paddingSize : Float
+paddingSize =
+    2
 
 
 highlightStyles : Css.Color -> List Css.Style
@@ -109,10 +129,6 @@ highlightStyles color =
         sharedStyles
         [ Css.backgroundColor color
         , Css.boxShadow5 Css.zero (Css.px 1) Css.zero Css.zero Colors.gray75
-        , MediaQuery.highContrastMode
-            [ Css.property "background-color" "Mark"
-            , Css.property "forced-color-adjust" "none"
-            ]
         ]
 
 
@@ -121,6 +137,11 @@ sharedStyles =
     [ Css.paddingTop (Css.px 4)
     , Css.paddingBottom (Css.px 3)
     , Css.property "transition" "background-color 0.4s, box-shadow 0.4s"
+    , MediaQuery.highContrastMode
+        [ Css.property "color" "CanvasText"
+        , Css.property "border-top" "2px solid Mark"
+        , Css.property "border-bottom" "2px solid Mark"
+        ]
     ]
 
 
@@ -131,16 +152,8 @@ hoverStyles color =
         [ Css.boxShadow5 Css.zero Css.zero (Css.px 10) (Css.px 2) color
         , Css.important (Css.backgroundColor color)
         , MediaQuery.highContrastMode
-            [ Css.property "background-color" "Highlight" |> Css.important
-            , Css.property "color" "HighlightText"
-            , Css.property "forced-color-adjust" "none"
+            [ Css.property "border-color" "Highlight" |> Css.important
             ]
-
-        -- The Highlighter applies both these styles and the startGroup and
-        -- endGroup styles. Here we disable the left and the right padding
-        -- because otherwise it would cause the text to move around.
-        , Css.important (Css.paddingLeft Css.zero)
-        , Css.important (Css.paddingRight Css.zero)
         ]
 
 
@@ -159,8 +172,9 @@ buildMarkerWithBorder { highlightColor, kind, name } =
                 [ Css.padding2 (Css.px 6) Css.zero
                 , Css.lineHeight (Css.em 2.5)
                 , MediaQuery.highContrastMode
-                    [ Css.property "background-color" "Mark" |> Css.important
-                    , Css.property "forced-color-adjust" "none"
+                    [ Css.property "border-color" "Mark"
+                    , Css.property "color" "CanvasText"
+                    , Css.borderWidth (Css.px 2)
                     ]
                 ]
     in
@@ -192,3 +206,59 @@ buildMarkerWithBorder { highlightColor, kind, name } =
     , kind = kind
     , name = name
     }
+
+
+{-| Typically, this style of marker is used for inline comments.
+-}
+buildMarkerWithoutRounding :
+    { highlightColor : Css.Color
+    , hoverColor : Css.Color
+    , hoverHighlightColor : Css.Color
+    , kind : kind
+    , name : Maybe String
+    }
+    -> MarkerModel kind
+buildMarkerWithoutRounding { highlightColor, hoverColor, hoverHighlightColor, kind, name } =
+    { hoverClass = squareHoverStyles hoverColor
+    , hintClass = squareHoverStyles hoverColor
+    , startGroupClass =
+        [ MediaQuery.highContrastMode
+            [ Css.property "border-left" "2px solid Mark"
+            ]
+        ]
+    , endGroupClass =
+        [ MediaQuery.highContrastMode
+            [ Css.property "border-right" "2px solid Mark"
+            ]
+        ]
+    , highlightClass = squareHighlightStyles highlightColor
+    , hoverHighlightClass = squareHighlightStyles hoverHighlightColor
+    , kind = kind
+    , name = name
+    }
+
+
+squareHighlightStyles : Css.Color -> List Css.Style
+squareHighlightStyles color =
+    List.append
+        squareSharedStyles
+        [ Css.backgroundColor color
+        , Css.boxShadow5 Css.zero (Css.px 1) Css.zero Css.zero Colors.gray75
+        ]
+
+
+squareSharedStyles : List Css.Style
+squareSharedStyles =
+    [ Css.paddingTop (Css.px 4)
+    , Css.paddingBottom (Css.px 3)
+    , MediaQuery.highContrastMode
+        [ Css.property "color" "CanvasText"
+        , Css.property "border-top" "2px solid Mark"
+        , Css.property "border-bottom" "2px solid Mark"
+        ]
+    ]
+
+
+squareHoverStyles : Css.Color -> List Css.Style
+squareHoverStyles color =
+    List.append squareSharedStyles [ Css.important (Css.backgroundColor color) ]

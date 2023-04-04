@@ -68,6 +68,7 @@ import Css exposing (..)
 import Css.Media exposing (withMedia)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes
+import MarkdownStyles
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
@@ -356,5 +357,10 @@ to `p` tags by user agents.
 
 -}
 markdown : String -> Attribute msg
-markdown =
-    Attribute << Content.markdown
+markdown content =
+    Attribute <|
+        \config ->
+            { config
+                | content = Content.markdownContent content
+                , css = MarkdownStyles.anchorAndButton ++ config.css
+            }

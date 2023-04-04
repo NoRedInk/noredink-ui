@@ -3,6 +3,7 @@ module Nri.Ui.ClickableText.V3 exposing
     , link
     , Attribute
     , small, medium, large, modal
+    , appearsInline
     , onClick, submit, opensModal
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
     , disabled
@@ -10,7 +11,7 @@ module Nri.Ui.ClickableText.V3 exposing
     , hideIconForMobile, hideIconFor
     , custom, nriDescription, testId, id
     , hideTextForMobile, hideTextFor
-    , css, notMobileCss, mobileCss, quizEngineMobileCss
+    , css, notMobileCss, mobileCss, quizEngineMobileCss, rightIconCss
     )
 
 {-| Notes for V4:
@@ -70,6 +71,11 @@ HTML `<a>` elements and are created here with `*Link` functions.
 @docs small, medium, large, modal
 
 
+## Appearance
+
+@docs appearsInline
+
+
 ## Behavior
 
 @docs onClick, submit, opensModal
@@ -91,7 +97,7 @@ HTML `<a>` elements and are created here with `*Link` functions.
 ### CSS
 
 @docs hideTextForMobile, hideTextFor
-@docs css, notMobileCss, mobileCss, quizEngineMobileCss
+@docs css, notMobileCss, mobileCss, quizEngineMobileCss, rightIconCss
 
 -}
 
@@ -235,7 +241,8 @@ hideTextFor : MediaQuery -> Attribute msg
 hideTextFor mediaQuery =
     css
         [ Css.Media.withMedia [ mediaQuery ]
-            [ Css.Global.descendants
+            [ Css.borderStyle Css.none |> Css.important
+            , Css.Global.descendants
                 [ ExtraAttributes.nriDescriptionSelector "clickable-text-label"
                     [ invisibleStyle
                     ]
@@ -366,7 +373,7 @@ and essentially make the anchor a disabled placeholder.
 
 _Caveat!_
 
-The styleguide example will NOT work correctly because of <https://github.com/elm/browser/issues/34>, which describes a problem where "a tags without href generate a navigation event".
+The Component Catalog example will NOT work correctly because of <https://github.com/elm/browser/issues/34>, which describes a problem where "a tags without href generate a navigation event".
 
 In most cases, if you're not using Browser.application, disabled links should work just fine.
 
@@ -374,6 +381,30 @@ In most cases, if you're not using Browser.application, disabled links should wo
 disabled : Bool -> Attribute msg
 disabled value =
     set (\attributes -> { attributes | disabled = value })
+
+
+{-| Specifies whether it should have inline appearance.
+-}
+appearsInline : Attribute msg
+appearsInline =
+    css
+        [ Css.borderBottom3 (Css.px 1) Css.solid Colors.azure
+        , Css.Global.withAttribute "aria-disabled=true" [ Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45 ]
+        , Css.disabled [ Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45 ]
+        ]
+
+
+{-| Specifies custom styles for the rightIcon
+-}
+rightIconCss : List Css.Style -> Attribute msg
+rightIconCss styles =
+    set
+        (\config ->
+            { config
+                | rightIconStyles =
+                    List.append config.rightIconStyles styles
+            }
+        )
 
 
 {-| Creates a `<button>` element
@@ -390,7 +421,7 @@ button label_ attributes =
     in
     Nri.Ui.styled Html.button
         (dataDescriptor "button")
-        (clickableTextStyles config.disabled ++ config.customStyles)
+        (clickableTextSharedStyles config.disabled ++ clickableTextButtonStyles ++ config.customStyles)
         (ClickableAttributes.toButtonAttributes config.clickableAttributes
             { disabled = config.disabled }
             ++ config.customAttributes
@@ -419,7 +450,7 @@ link label_ attributes =
     in
     Nri.Ui.styled Html.a
         (dataDescriptor name)
-        (clickableTextStyles config.disabled ++ config.customStyles)
+        (clickableTextSharedStyles config.disabled ++ clickableTextLinkStyles ++ config.customStyles)
         (clickableAttributes ++ config.customAttributes)
         [ viewContent config ]
 
@@ -431,6 +462,7 @@ viewContent :
         , icon : Maybe Svg
         , rightIcon : Maybe Svg
         , iconStyles : List Style
+        , rightIconStyles : List Style
     }
     -> Html msg
 viewContent config =
@@ -473,7 +505,7 @@ viewContent config =
                 iconAndTextContainer
                     [ viewIcon (Css.marginRight iconSize :: config.iconStyles) leftIcon
                     , span [ ExtraAttributes.nriDescription "clickable-text-label" ] [ text config.label ]
-                    , viewIcon [ Css.marginLeft iconSize ] rightIcon_
+                    , viewIcon (Css.marginLeft iconSize :: config.rightIconStyles) rightIcon_
                     ]
 
             ( Just leftIcon, Nothing ) ->
@@ -485,7 +517,7 @@ viewContent config =
             ( Nothing, Just rightIcon_ ) ->
                 iconAndTextContainer
                     [ span [ ExtraAttributes.nriDescription "clickable-text-label" ] [ text config.label ]
-                    , viewIcon [ Css.marginLeft iconSize ] rightIcon_
+                    , viewIcon (Css.marginLeft iconSize :: config.rightIconStyles) rightIcon_
                     ]
 
             ( Nothing, Nothing ) ->
@@ -493,30 +525,17 @@ viewContent config =
         )
 
 
-clickableTextStyles : Bool -> List Css.Style
-clickableTextStyles isDisabled =
+clickableTextSharedStyles : Bool -> List Css.Style
+clickableTextSharedStyles isDisabled =
     let
         baseStyles =
             [ Nri.Ui.Fonts.V1.baseFont
-            , Css.backgroundImage Css.none
-            , Css.textShadow Css.none
-            , Css.boxShadow Css.none
-            , Css.border Css.zero
-            , Css.backgroundColor Css.transparent
             , Css.fontWeight (Css.int 600)
-            , Css.textAlign Css.left
-            , Css.borderStyle Css.none |> Css.important
-            , Css.textDecoration Css.none
-            , Css.padding Css.zero
-            , Css.display Css.inlineBlock
-            , Css.verticalAlign Css.textBottom
-            , Css.margin Css.zero -- Get rid of default margin Webkit adds to buttons
             ]
     in
     if isDisabled then
         Css.cursor Css.notAllowed
             :: Css.color Colors.gray45
-            :: Css.visited [ Css.important (Css.color Colors.gray45) ]
             :: baseStyles
 
     else
@@ -524,6 +543,23 @@ clickableTextStyles isDisabled =
             :: Css.color Colors.azure
             :: Css.hover [ Css.color Colors.azureDark ]
             :: baseStyles
+
+
+clickableTextLinkStyles : List Css.Style
+clickableTextLinkStyles =
+    [ Css.textDecoration Css.none
+    , Css.display Css.inlineBlock
+    ]
+
+
+clickableTextButtonStyles : List Css.Style
+clickableTextButtonStyles =
+    [ Css.margin Css.zero
+    , Css.padding Css.zero
+    , Css.borderStyle Css.none
+    , Css.backgroundColor Css.transparent
+    , Css.textAlign Css.left
+    ]
 
 
 sizeToPx : Size -> Css.Px
@@ -555,6 +591,7 @@ type alias ClickableTextAttributes msg =
     , icon : Maybe Svg
     , iconStyles : List Style
     , rightIcon : Maybe Svg
+    , rightIconStyles : List Style
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
     , disabled : Bool
@@ -569,6 +606,7 @@ defaults =
     , icon = Nothing
     , iconStyles = []
     , rightIcon = Nothing
+    , rightIconStyles = []
     , customAttributes = [ Attributes.class FocusRing.customClass ]
     , customStyles = [ Css.pseudoClass "focus-visible" (Css.borderRadius (Css.px 4) :: FocusRing.tightStyles) ]
     , disabled = False

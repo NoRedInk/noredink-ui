@@ -72,6 +72,7 @@ import Css.Global
 import Css.Media exposing (MediaQuery)
 import Html.Styled.Attributes as Attributes
 import Http
+import MarkdownStyles
 import Nri.Ui
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
@@ -400,8 +401,13 @@ paragraph =
 {-| Provide a string that will be rendered as markdown.
 -}
 markdown : String -> Attribute msg
-markdown =
-    Attribute << Content.markdown
+markdown content =
+    Attribute <|
+        \config ->
+            { config
+                | content = Content.markdownContent content
+                , customStyles = MarkdownStyles.anchorAndButton ++ config.customStyles
+            }
 
 
 {-| Provide a list of custom HTML.

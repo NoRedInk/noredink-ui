@@ -1,12 +1,21 @@
 module Nri.Ui.Mark.V2 exposing
     ( Mark
     , view, viewWithInlineTags, viewWithBalloonTags
+    , viewWithOverlaps
     )
 
 {-|
 
+
+### Patch changes
+
+  - change how the start styles are attached when there is not an explicit tag to show in order to reduce how often the starting highlight ends up isolated on its own line
+  - add viewWithOverlaps
+  - ensure that view and viewWithInlineTags never leave the starting styles isolated on their own line
+
 @docs Mark
 @docs view, viewWithInlineTags, viewWithBalloonTags
+@docs viewWithOverlaps
 
 -}
 
@@ -23,6 +32,9 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Sort exposing (Sorter)
+import Sort.Set as Set exposing (Set)
+import String.Extra
 
 
 {-| -}
@@ -42,6 +54,86 @@ view :
     -> List (Html msg)
 view =
     view_ HiddenTags
+
+
+{-| When elements are marked, add ::before and ::after elements indicating the start and end of the highlight.
+
+(We can't use a `mark` HTML element here because of the tree structure of HTML)
+
+-}
+viewWithOverlaps :
+    (content -> List Style -> Html msg)
+    -> List ( content, List Mark )
+    -> List (Html msg)
+viewWithOverlaps viewSegment segments =
+    segments
+        |> List.foldr
+            (\( content, marks ) ( lastMarks, acc ) ->
+                ( Set.fromList maybeStringSorter (List.map .name marks)
+                , { content = content
+                  , marks = marks
+                  , after = ignoreRepeats lastMarks marks
+                  }
+                    :: acc
+                )
+            )
+            ( Set.empty maybeStringSorter, [] )
+        |> Tuple.second
+        |> List.foldl
+            (\{ content, marks, after } ( lastMarks, acc ) ->
+                let
+                    segment startingStyles =
+                        viewSegment content
+                            [ tagBeforeContent before
+                            , tagAfterContent after
+                            , Css.batch startingStyles
+                            , Css.batch
+                                (List.concatMap (\markedWith -> markedWith.styles ++ markedWith.endStyles)
+                                    after
+                                )
+                            ]
+
+                    startStyles =
+                        List.concatMap (\markedWith -> markedWith.styles ++ markedWith.startStyles) before
+
+                    before =
+                        ignoreRepeats lastMarks marks
+                in
+                ( Set.fromList maybeStringSorter (List.map .name marks)
+                , acc
+                    ++ (case List.filterMap .name before of
+                            [] ->
+                                [ segment startStyles ]
+
+                            names ->
+                                [ span [ css startStyles ]
+                                    [ viewInlineTag
+                                        [ Css.display Css.none
+                                        , MediaQuery.highContrastMode
+                                            [ Css.property "forced-color-adjust" "none"
+                                            , Css.display Css.inline |> Css.important
+                                            , Css.property "color" "initial" |> Css.important
+                                            ]
+                                        ]
+                                        (String.Extra.toSentenceOxford names)
+                                    ]
+                                , segment []
+                                ]
+                       )
+                )
+            )
+            ( Set.empty maybeStringSorter, [] )
+        |> Tuple.second
+
+
+ignoreRepeats : Set (Maybe String) -> List Mark -> List Mark
+ignoreRepeats lastMarks list =
+    List.filter (\x -> not (Set.memberOf lastMarks x.name)) list
+
+
+maybeStringSorter : Sorter (Maybe String)
+maybeStringSorter =
+    Sort.by (Maybe.withDefault "") Sort.alphabetical
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
@@ -105,19 +197,18 @@ markedWithBalloonStyles marked lastIndex index =
         [ if index == 0 then
             -- if we're on the first highlighted element, we add
             -- a `before` content saying what kind of highlight we're starting
-            tagBeforeContent marked :: marked.startStyles
+            tagBeforeContent [ marked ] :: marked.startStyles
 
           else
             []
         , marked.styles
         , if index == lastIndex then
             Css.after
-                [ Css.property "content"
-                    ("\" end "
+                [ cssContent
+                    ("end "
                         ++ (Maybe.map (\name -> name) marked.name
                                 |> Maybe.withDefault "highlight"
                            )
-                        ++ " \""
                     )
                 , invisibleStyle
                 ]
@@ -158,7 +249,7 @@ view_ tagStyle viewSegment highlightables =
             let
                 segments =
                     List.indexedMap
-                        (\index ( content, mark ) -> viewSegment content (markStyles index mark))
+                        (\index ( content, mark ) -> viewSegment content (markStyles tagStyle index mark))
                         highlightables
             in
             case marked of
@@ -219,47 +310,127 @@ viewMarked tagStyle markedWith segments =
                 ]
             ]
         ]
-        (viewStartHighlight tagStyle markedWith :: segments)
+        (case markedWith.name of
+            Just name ->
+                viewStartHighlightTag tagStyle markedWith name :: segments
+
+            Nothing ->
+                segments
+        )
 
 
-viewStartHighlight : TagStyle -> Mark -> Html msg
-viewStartHighlight tagStyle marked =
+viewStartHighlightTag : TagStyle -> Mark -> String -> Html msg
+viewStartHighlightTag tagStyle marked name =
     span
-        [ css (marked.styles ++ marked.startStyles)
+        [ css
+            (marked.styles
+                ++ (-- start styles are attached to the first segment, unless there's
+                    -- an inline tag to show, in which case we'll attach the styles to the start tag.
+                    case tagStyle of
+                        HiddenTags ->
+                            if marked.name == Nothing then
+                                []
+
+                            else
+                                [ MediaQuery.highContrastMode marked.startStyles ]
+
+                        InlineTags ->
+                            if marked.name == Nothing then
+                                []
+
+                            else
+                                marked.startStyles
+                   )
+            )
         , class "highlighter-inline-tag highlighter-inline-tag-highlighted"
         ]
-        [ viewJust (viewTag tagStyle) marked.name ]
+        [ viewTag tagStyle name ]
 
 
-markStyles : Int -> Maybe Mark -> List Css.Style
-markStyles index marked =
+markStyles : TagStyle -> Int -> Maybe Mark -> List Css.Style
+markStyles tagStyle index marked =
     case ( index == 0, marked ) of
         ( True, Just markedWith ) ->
             -- if we're on the first highlighted element, we add
             -- a `before` content saying what kind of highlight we're starting
-            tagBeforeContent markedWith :: markedWith.styles
+            tagBeforeContent [ markedWith ]
+                :: markedWith.styles
+                ++ -- if we're on the first element, and the mark has a name,
+                   -- there's an inline tag that we might need to show.
+                   -- if we're not showing a visual tag, we can attach the start styles to the first segment
+                   (case tagStyle of
+                        HiddenTags ->
+                            if markedWith.name == Nothing then
+                                markedWith.startStyles
+
+                            else
+                                [ MediaQuery.notHighContrastMode
+                                    (markedWith.startStyles
+                                        ++ [ -- override for the left border that's typically
+                                             -- added in Nri.Ui.HighlighterTool
+                                             MediaQuery.highContrastMode
+                                                [ Css.important (Css.borderLeftWidth Css.zero)
+                                                ]
+                                           ]
+                                    )
+                                ]
+
+                        InlineTags ->
+                            if markedWith.name == Nothing then
+                                markedWith.startStyles
+
+                            else
+                                []
+                   )
 
         _ ->
             Maybe.map .styles marked
                 |> Maybe.withDefault []
 
 
-tagBeforeContent : Mark -> Css.Style
-tagBeforeContent markedWith =
-    case markedWith.name of
-        Just name ->
-            Css.before
-                [ MediaQuery.notHighContrastMode
-                    [ Css.property "content" ("\" start " ++ name ++ " highlight \"")
-                    , invisibleStyle
-                    ]
-                ]
+tagBeforeContent : List Mark -> Css.Style
+tagBeforeContent marks =
+    if List.isEmpty marks then
+        Css.batch []
 
-        Nothing ->
-            Css.before
-                [ Css.property "content" "\" start highlight \""
-                , invisibleStyle
-                ]
+    else
+        Css.before
+            [ cssContent (highlightDescription "start" marks)
+            , invisibleStyle
+            ]
+
+
+tagAfterContent : List Mark -> Css.Style
+tagAfterContent marks =
+    if List.isEmpty marks then
+        Css.batch []
+
+    else
+        Css.after
+            [ cssContent (highlightDescription "end" marks)
+            , invisibleStyle
+            ]
+
+
+highlightDescription : String -> List Mark -> String
+highlightDescription prefix marks =
+    let
+        names =
+            String.Extra.toSentenceOxford (List.filterMap .name marks)
+    in
+    if names == "" then
+        prefix ++ " highlight"
+
+    else if List.length marks == 1 then
+        prefix ++ " " ++ names ++ " highlight"
+
+    else
+        prefix ++ " " ++ names ++ " highlights"
+
+
+cssContent : String -> Css.Style
+cssContent content =
+    Css.property "content" ("\" " ++ content ++ " \"")
 
 
 viewTag : TagStyle -> String -> Html msg

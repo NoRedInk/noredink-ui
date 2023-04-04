@@ -332,7 +332,7 @@ getLabelPositionsSpec =
                      ]
                         |> Dict.fromList
                     )
-    , test "styleguide example regression test: 3 labels on 1 line, with 1 overlap to resolve" <|
+    , test "Component Catalog example regression test: 3 labels on 1 line, with 1 overlap to resolve" <|
         \() ->
             let
                 withElement element =

@@ -2,7 +2,8 @@ module Nri.Ui.Menu.V4 exposing
     ( view, Attribute
     , isOpen, isDisabled
     , opensOnHover
-    , defaultTrigger, button, clickableText, clickableSvg
+    , defaultTrigger, button, clickableText, clickableSvg, clickableSvgWithoutIndicator
+    , withTooltip
     , buttonId
     , navMenuList, disclosure, dialog
     , menuWidth, menuId, menuZIndex
@@ -10,7 +11,11 @@ module Nri.Ui.Menu.V4 exposing
     , Entry, group, entry
     )
 
-{-| Changes from V3:
+{-| Patch changes:
+
+  - improve interoperability with Tooltip (Note that tooltip keyboard events are not fully supported!)
+
+Changes from V3:
 
   - improve composability with Button, ClickableText, and ClickableSvg
 
@@ -32,7 +37,8 @@ A togglable menu view and related buttons.
 
 ## Triggering button options
 
-@docs defaultTrigger, button, clickableText, clickableSvg
+@docs defaultTrigger, button, clickableText, clickableSvg, clickableSvgWithoutIndicator
+@docs withTooltip
 @docs buttonId
 
 
@@ -66,6 +72,7 @@ import Nri.Ui.Fonts.V1
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
 
 
@@ -85,6 +92,7 @@ type alias MenuConfig msg =
     , zIndex : Int
     , opensOnHover : Bool
     , purpose : Purpose
+    , tooltipAttributes : List (Tooltip.Attribute msg)
     }
 
 
@@ -100,6 +108,7 @@ defaultConfig =
     , zIndex = 1
     , opensOnHover = False
     , purpose = NavMenu
+    , tooltipAttributes = []
     }
 
 
@@ -290,42 +299,22 @@ setButton button_ =
 
 {-| -}
 type Button msg
-    = Button (MenuConfig msg -> List (Html.Attribute msg) -> Html msg)
+    = DefaultTrigger String (List (Button.Attribute msg))
+    | Button String (List (Button.Attribute msg))
+    | ClickableText String (List (ClickableText.Attribute msg))
+    | ClickableSvg { includeIndicator : Bool } String Svg.Svg (List (ClickableSvg.Attribute msg))
 
 
 defaultButton : String -> List (Button.Attribute msg) -> Button msg
 defaultButton title attributes =
-    Button
-        (\menuConfig buttonAttributes ->
-            Button.button title
-                ([ Button.tertiary
-                 , Button.css
-                    [ Css.justifyContent Css.spaceBetween
-                    , Css.paddingLeft (Css.px 15)
-                    , Css.paddingRight (Css.px 15)
-                    , Css.color Colors.gray20 |> Css.important
-                    , Css.fontWeight (Css.int 600)
-                    , Css.hover [ Css.backgroundColor Colors.white ]
-                    ]
-                 , Button.custom buttonAttributes
-                 , if menuConfig.isDisabled then
-                    Button.disabled
+    DefaultTrigger title attributes
 
-                   else
-                    Button.css []
-                 , Button.rightIcon
-                    (AnimatedIcon.arrowDownUp menuConfig.isOpen
-                        |> (if menuConfig.isDisabled then
-                                identity
 
-                            else
-                                Svg.withColor Colors.azure
-                           )
-                    )
-                 ]
-                    ++ attributes
-                )
-        )
+{-| Warning: Tooltip keyboard events are not fully supported!
+-}
+withTooltip : List (Tooltip.Attribute msg) -> Attribute msg
+withTooltip tooltipAttributes =
+    Attribute <| \config -> { config | tooltipAttributes = tooltipAttributes }
 
 
 {-| Use Button with default styles as the triggering element for the Menu.
@@ -339,56 +328,28 @@ defaultTrigger title attributes =
 -}
 button : String -> List (Button.Attribute msg) -> Attribute msg
 button title attributes =
-    Button
-        (\menuConfig buttonAttributes ->
-            Button.button title
-                ([ Button.custom buttonAttributes
-                 , if menuConfig.isDisabled then
-                    Button.disabled
-
-                   else
-                    Button.css []
-                 , Button.rightIcon (AnimatedIcon.arrowDownUp menuConfig.isOpen)
-                 ]
-                    ++ attributes
-                )
-        )
-        |> setButton
+    setButton (Button title attributes)
 
 
 {-| Use ClickableText as the triggering element for the Menu.
 -}
 clickableText : String -> List (ClickableText.Attribute msg) -> Attribute msg
 clickableText title additionalAttributes =
-    Button
-        (\menuConfig buttonAttributes ->
-            ClickableText.button title
-                ([ ClickableText.custom buttonAttributes
-                 , ClickableText.disabled menuConfig.isDisabled
-                 , ClickableText.rightIcon (AnimatedIcon.arrowDownUp menuConfig.isOpen)
-                 ]
-                    ++ additionalAttributes
-                )
-        )
-        |> setButton
+    setButton (ClickableText title additionalAttributes)
 
 
 {-| Use ClickableSvg as the triggering element for the Menu.
 -}
 clickableSvg : String -> Svg.Svg -> List (ClickableSvg.Attribute msg) -> Attribute msg
 clickableSvg title icon additionalAttributes =
-    Button
-        (\menuConfig buttonAttributes ->
-            ClickableSvg.button title
-                icon
-                ([ ClickableSvg.custom buttonAttributes
-                 , ClickableSvg.disabled menuConfig.isDisabled
-                 , ClickableSvg.rightIcon (AnimatedIcon.arrowDownUp menuConfig.isOpen)
-                 ]
-                    ++ additionalAttributes
-                )
-        )
-        |> setButton
+    setButton (ClickableSvg { includeIndicator = True } title icon additionalAttributes)
+
+
+{-| Use ClickableSvg as the triggering element for the Menu without a dropdown indicator
+-}
+clickableSvgWithoutIndicator : String -> Svg.Svg -> List (ClickableSvg.Attribute msg) -> Attribute msg
+clickableSvgWithoutIndicator title icon additionalAttributes =
+    setButton (ClickableSvg { includeIndicator = False } title icon additionalAttributes)
 
 
 viewCustom :
@@ -534,7 +495,7 @@ viewCustom focusAndToggle config entries =
                 AttributesExtra.none
             ]
             [ let
-                buttonAttributes =
+                triggerAttributes =
                     [ Aria.disabled config.isDisabled
                     , -- Whether the menu is open or closed, move to the
                       -- first menu item if the "down" arrow is pressed
@@ -614,10 +575,36 @@ viewCustom focusAndToggle config entries =
                                 Dialog _ ->
                                     [ Aria.hasDialogPopUp ]
                            )
+
+                trigger tooltipAttributes =
+                    case config.button of
+                        DefaultTrigger title buttonAttributes ->
+                            viewDefaultTrigger title config buttonAttributes (tooltipAttributes ++ triggerAttributes)
+
+                        Button title buttonAttributes ->
+                            viewButton title config buttonAttributes (tooltipAttributes ++ triggerAttributes)
+
+                        ClickableText title clickableTextAttributes ->
+                            viewClickableText title config clickableTextAttributes (tooltipAttributes ++ triggerAttributes)
+
+                        ClickableSvg includeIndicator title icon clickableSvgAttributes ->
+                            viewClickableSvg includeIndicator
+                                title
+                                icon
+                                config
+                                clickableSvgAttributes
+                                (tooltipAttributes ++ triggerAttributes)
               in
-              case config.button of
-                Button standardButton ->
-                    standardButton config buttonAttributes
+              case config.tooltipAttributes of
+                [] ->
+                    trigger []
+
+                _ ->
+                    Tooltip.view
+                        { id = config.menuId ++ "-tooltip"
+                        , trigger = trigger
+                        }
+                        config.tooltipAttributes
             , div [ styleOuterContent contentVisible config ]
                 [ div
                     [ AttributesExtra.nriDescription "menu-hover-bridge"
@@ -793,23 +780,14 @@ styleGroupTitle =
     [ class "GroupTitle"
     , css
         [ Nri.Ui.Fonts.V1.baseFont
-        , fontSize (px 12)
+        , fontSize (px 13)
+        , fontWeight (int 600)
         , color Colors.gray45
         , margin zero
         , padding2 (px 5) zero
         , lineHeight initial
         , borderBottom zero
         , position relative
-        , before
-            [ property "content" "\"\""
-            , width (pct 100)
-            , backgroundColor Colors.gray75
-            , height (px 1)
-            , marginTop (px -1)
-            , display block
-            , top (pct 50)
-            , position absolute
-            ]
         ]
     ]
 
@@ -819,8 +797,6 @@ styleGroupTitleText config =
     [ class "GroupTitleText"
     , css
         [ backgroundColor Colors.white
-        , marginLeft (px 22)
-        , padding2 zero (px 5)
         , zIndex (int <| config.zIndex + 1)
         , position relative
         ]
@@ -834,6 +810,7 @@ styleGroupContainer =
         [ margin zero
         , padding zero
         , paddingBottom (px 15)
+        , border zero
         , lastChild
             [ paddingBottom zero ]
         ]
@@ -909,3 +886,87 @@ styleContainer =
         , display inlineBlock
         ]
     ]
+
+
+
+-- Trigger views
+
+
+viewDefaultTrigger : String -> MenuConfig msg -> List (Button.Attribute msg) -> List (Html.Attribute msg) -> Html msg
+viewDefaultTrigger title menuConfig buttonAttributes attributes =
+    Button.button title
+        ([ Button.tertiary
+         , Button.css
+            [ Css.justifyContent Css.spaceBetween
+            , Css.paddingLeft (Css.px 15)
+            , Css.paddingRight (Css.px 15)
+            , Css.color Colors.gray20 |> Css.important
+            , Css.fontWeight (Css.int 600)
+            , Css.hover [ Css.backgroundColor Colors.white ]
+            ]
+         , Button.custom attributes
+         , if menuConfig.isDisabled then
+            Button.disabled
+
+           else
+            Button.css []
+         , Button.rightIcon
+            (AnimatedIcon.arrowDownUp menuConfig.isOpen
+                |> (if menuConfig.isDisabled then
+                        identity
+
+                    else
+                        Svg.withColor Colors.azure
+                   )
+            )
+         ]
+            ++ buttonAttributes
+        )
+
+
+viewButton : String -> MenuConfig msg -> List (Button.Attribute msg) -> List (Html.Attribute msg) -> Html msg
+viewButton title menuConfig buttonAttributes attributes =
+    Button.button title
+        ([ Button.custom attributes
+         , if menuConfig.isDisabled then
+            Button.disabled
+
+           else
+            Button.css []
+         , Button.rightIcon (AnimatedIcon.arrowDownUp menuConfig.isOpen)
+         ]
+            ++ buttonAttributes
+        )
+
+
+viewClickableText : String -> MenuConfig msg -> List (ClickableText.Attribute msg) -> List (Html.Attribute msg) -> Html msg
+viewClickableText title menuConfig clickableTextAttributes attributes =
+    ClickableText.button title
+        ([ ClickableText.custom attributes
+         , ClickableText.disabled menuConfig.isDisabled
+         , ClickableText.rightIcon (AnimatedIcon.arrowDownUp menuConfig.isOpen)
+         , ClickableText.rightIconCss
+            [ Css.width (Css.px 15)
+            , Css.height (Css.px 15)
+            , Css.marginLeft (Css.px 8)
+            ]
+         ]
+            ++ clickableTextAttributes
+        )
+
+
+viewClickableSvg : { includeIndicator : Bool } -> String -> Svg.Svg -> MenuConfig msg -> List (ClickableSvg.Attribute msg) -> List (Html.Attribute msg) -> Html msg
+viewClickableSvg { includeIndicator } title icon menuConfig clickableSvgAttributes attributes =
+    ClickableSvg.button title
+        icon
+        ([ ClickableSvg.custom attributes
+         , ClickableSvg.disabled menuConfig.isDisabled
+         ]
+            ++ (if includeIndicator then
+                    [ ClickableSvg.rightIcon (AnimatedIcon.arrowDownUp menuConfig.isOpen) ]
+
+                else
+                    []
+               )
+            ++ clickableSvgAttributes
+        )

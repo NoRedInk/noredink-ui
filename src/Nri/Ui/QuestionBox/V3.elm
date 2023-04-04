@@ -3,6 +3,7 @@ module Nri.Ui.QuestionBox.V3 exposing
     , id, markdown, actions, character
     , standalone, pointingTo
     , containerCss
+    , setLeftActions
     , guidanceId
     )
 
@@ -13,6 +14,7 @@ module Nri.Ui.QuestionBox.V3 exposing
 @docs id, markdown, actions, character
 @docs standalone, pointingTo
 @docs containerCss
+@docs setLeftActions
 
 @docs guidanceId
 
@@ -46,6 +48,7 @@ type alias Config msg =
     , type_ : QuestionBoxType msg
     , character : Maybe { name : String, icon : Svg }
     , containerCss : List Css.Style
+    , leftActions : Html msg
     }
 
 
@@ -57,6 +60,7 @@ defaultConfig =
     , type_ = Standalone
     , character = Just { name = "Panda", icon = CharacterIcon.panda }
     , containerCss = []
+    , leftActions = text ""
     }
 
 
@@ -88,6 +92,13 @@ character details =
 containerCss : List Css.Style -> Attribute msg
 containerCss styles =
     Attribute (\config -> { config | containerCss = config.containerCss ++ styles })
+
+
+{-| Adds an arbitrary HTML on the left of the question box for the text to speech button
+-}
+setLeftActions : Html msg -> Attribute msg
+setLeftActions leftActions =
+    Attribute (\config -> { config | leftActions = leftActions })
 
 
 setType : QuestionBoxType msg -> Attribute msg
@@ -270,7 +281,13 @@ viewBalloon config referencingId attributes =
     Balloon.view
         ([ Balloon.html
             (List.filterMap identity
-                [ Maybe.map (viewGuidance config referencingId) config.markdown
+                [ Just <|
+                    div [ css [ Css.displayFlex ] ]
+                        (List.filterMap identity
+                            [ Just config.leftActions
+                            , Maybe.map (viewGuidance config referencingId) config.markdown
+                            ]
+                        )
                 , viewActions config.character config.actions
                 ]
             )

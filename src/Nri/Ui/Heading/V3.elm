@@ -47,6 +47,7 @@ import Content
 import Css exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes
+import MarkdownStyles
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
@@ -109,8 +110,13 @@ plaintext =
 {-| Provide a string that will be rendered as markdown.
 -}
 markdown : String -> Attribute msg
-markdown =
-    Attribute << Content.markdown
+markdown content =
+    Attribute <|
+        \config ->
+            { config
+                | content = Content.markdownContent content
+                , css = MarkdownStyles.anchorAndButton ++ config.css
+            }
 
 
 {-| Provide a list of custom HTML.

@@ -61,8 +61,8 @@ You're in the wrong place! Headings live in Nri.Ui.Heading.V3.
 import Accessibility.Styled as Html exposing (..)
 import Content
 import Css exposing (..)
-import Css.Global
 import Html.Styled.Attributes as Attributes
+import MarkdownStyles
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
@@ -251,15 +251,6 @@ paragraphStyles config =
     , padding zero
     , textAlign left
     , margin4 (px 0) (px 0) (px config.margin) (px 0)
-    , Css.Global.descendants
-        [ Css.Global.a
-            [ textDecoration none
-            , color azure
-            , borderBottom3 (px 1) solid azure
-            , visited
-                [ color azure ]
-            ]
-        ]
     , lastChild
         [ margin zero
         ]
@@ -355,8 +346,13 @@ plaintext =
 {-| Provide a string that will be rendered as markdown.
 -}
 markdown : String -> Attribute msg
-markdown =
-    Attribute << Content.markdown
+markdown content =
+    Attribute <|
+        \config ->
+            { config
+                | content = Content.markdownContent content
+                , styles = MarkdownStyles.anchorAndButton ++ config.styles
+            }
 
 
 {-| Provide a list of custom HTML.

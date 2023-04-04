@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>NoRedInk style guide</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css?family=Muli:400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <div id="svg-target"></div>
+  <script src="elm.js"></script>
+  <script>
+    const app = Elm.Main.init();
+
+    // HIGHLIGHTER
+
+    // start listening to events when the user starts dragging/clickingdown
+    app.ports.highlighterListen.subscribe(function (id) {
+      window.requestAnimationFrame(() => {
+        var highlighter = document.getElementById(id);
+        if (!id || !highlighter) {
+          // in a real application, report an error at this point.
+          return;
+        }
+
+        document.addEventListener("mouseup", onDocumentUp(id));
+        document.addEventListener("touchend", onDocumentUp(id));
+        highlighter.addEventListener("touchmove", handleTouchEvents("move", id));
+      });
+    });
+
+    /*
+     * Touchmove event always fire on the element that got the initial touchstart event.
+     * We need the element under the finger to highlight a section though.
+     */
+    function handleTouchEvents(type, id) {
+      return function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.touches.length > 1) return; // we don't care about multitouch
+        var loc = e.changedTouches[0];
+        var realTarget = document.elementFromPoint(loc.clientX, loc.clientY); // get the element under the finger
+        var data;
+
+        if (realTarget) {
+          data = realTarget.getAttribute("data-highlighter-item-index"); // each word has a data attribute with its index.
+        }
+
+        // we only want to be informed for touchmove-events in the current highlighter.
+        if (data && id === realTarget.parentNode.id) {
+          app.ports.highlighterOnTouch.send(
+            [type, id, parseInt(data, 10)]
+          );
+        }
+      };
+    }
+
+    /*
+     * inform elm when we receive a mouseup/touchend event.
+     */
+    function onDocumentUp(id) {
+      return function () {
+        app.ports.highlighterOnDocumentUp.send(id);
+      };
+    }
+
+  </script>
+  <script src="bundle.js"></script>
+</body>
+</html>
