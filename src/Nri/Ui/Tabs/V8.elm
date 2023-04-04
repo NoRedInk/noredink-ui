@@ -182,6 +182,11 @@ pageBackgroundColor color =
     Attribute (\config -> { config | pageBackgroundColor = Just color })
 
 
+{-| The active tab will be white by default, which may look bad if the panel
+below it doesn't have a white background. This attribute lets you make the
+active tab's background fade from white (at the top) to the desired color (at
+the bottom) to make it match the background of the current panel.
+-}
 fadeToPanelBackgroundColor : Css.Color -> Attribute id msg
 fadeToPanelBackgroundColor color =
     Attribute (\config -> { config | fadeToPanelBackgroundColor = color })
