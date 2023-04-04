@@ -25,6 +25,8 @@ import Css exposing (Color, Style)
 import Css.Global
 import Html.Styled as Html exposing (Html, span)
 import Html.Styled.Attributes exposing (class, css)
+import Markdown.Block
+import Markdown.Inline
 import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
@@ -260,6 +262,16 @@ view_ tagStyle viewSegment highlightables =
                     segments
 
 
+stripMarkdownSyntax : String -> String
+stripMarkdownSyntax markdown =
+    case Markdown.Block.parse Nothing markdown of
+        [ Markdown.Block.Paragraph _ inlines ] ->
+            Markdown.Inline.extractText inlines
+
+        _ ->
+            markdown
+
+
 viewMarkedByBalloon :
     { config
         | backgroundColor : Color
@@ -273,7 +285,7 @@ viewMarkedByBalloon :
 viewMarkedByBalloon config markedWith segments =
     Html.mark
         [ markedWith.name
-            |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
+            |> Maybe.map (\name -> Aria.roleDescription (stripMarkdownSyntax name ++ " highlight"))
             |> Maybe.withDefault AttributesExtra.none
         , css [ Css.backgroundColor Css.transparent, Css.position Css.relative ]
         ]
