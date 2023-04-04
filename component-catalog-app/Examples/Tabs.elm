@@ -131,7 +131,8 @@ example =
                                         [ Just (moduleName ++ ".alignment " ++ moduleName ++ "." ++ Debug.toString settings.alignment)
                                         , Maybe.map (\title -> moduleName ++ ".title " ++ Code.string title) settings.title
                                         , Maybe.map (\spacing -> moduleName ++ ".spacing " ++ String.fromFloat spacing) settings.customSpacing
-                                        , Maybe.map (\color -> moduleName ++ ".pageBackgroundColor" ++ colorToCode color) settings.pageBackgroundColor
+                                        , Maybe.map (\color -> moduleName ++ ".pageBackgroundColor " ++ colorToCode color) settings.pageBackgroundColor
+                                        , Maybe.map (\color -> moduleName ++ ".fadeToPanelBackgroundColor " ++ colorToCode color) settings.fadeToPanelBackgroundColor
                                         , Maybe.map
                                             (\sticky ->
                                                 case sticky of
@@ -170,6 +171,7 @@ example =
                     , Maybe.map Tabs.title settings.title
                     , Maybe.map Tabs.spacing settings.customSpacing
                     , Maybe.map (Tabs.pageBackgroundColor << colorToCss) settings.pageBackgroundColor
+                    , Maybe.map (Tabs.fadeToPanelBackgroundColor << colorToCss) settings.fadeToPanelBackgroundColor
                     , Maybe.map
                         (\stickiness ->
                             case stickiness of
@@ -272,6 +274,7 @@ type alias Settings =
     , customSpacing : Maybe Float
     , withTooltips : Bool
     , pageBackgroundColor : Maybe Color
+    , fadeToPanelBackgroundColor : Maybe Color
     , stickiness : Maybe Stickiness
     }
 
@@ -327,6 +330,7 @@ initSettings =
         |> Control.field "customSpacing" (Control.maybe False (values String.fromFloat [ 2, 3, 4, 8, 16 ]))
         |> Control.field "withTooltips" (Control.bool True)
         |> Control.field "pageBackgroundColor" (Control.maybe False colorChoices)
+        |> Control.field "fadeToPanelBackgroundColor" (Control.maybe False colorChoices)
         |> Control.field "tabListSticky"
             (Control.maybe False
                 (Control.choice

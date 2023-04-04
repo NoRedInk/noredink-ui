@@ -2,6 +2,7 @@ module Nri.Ui.Tabs.V8 exposing
     ( Attribute, title, spacing
     , Alignment(..), alignment
     , pageBackgroundColor
+    , fadeToPanelBackgroundColor
     , tabListSticky, TabListStickyConfig, tabListStickyCustom
     , view
     , Tab, TabAttribute, build
@@ -22,6 +23,7 @@ module Nri.Ui.Tabs.V8 exposing
 @docs Attribute, title, spacing
 @docs Alignment, alignment
 @docs pageBackgroundColor
+@docs fadeToPanelBackgroundColor
 @docs tabListSticky, TabListStickyConfig, tabListStickyCustom
 @docs view
 
@@ -180,6 +182,11 @@ pageBackgroundColor color =
     Attribute (\config -> { config | pageBackgroundColor = Just color })
 
 
+fadeToPanelBackgroundColor : Css.Color -> Attribute id msg
+fadeToPanelBackgroundColor color =
+    Attribute (\config -> { config | fadeToPanelBackgroundColor = color })
+
+
 {-| Make the tab list sticky. You probably want to set an explicit background
 color along with this!
 -}
@@ -201,6 +208,7 @@ type alias Config =
     , alignment : Alignment
     , spacing : Maybe Float
     , pageBackgroundColor : Maybe Css.Color
+    , fadeToPanelBackgroundColor : Css.Color
     , tabListStickyConfig : Maybe TabListStickyConfig
     }
 
@@ -211,6 +219,7 @@ defaultConfig =
     , alignment = Left
     , spacing = Nothing
     , pageBackgroundColor = Nothing
+    , fadeToPanelBackgroundColor = Colors.white
     , tabListStickyConfig = Nothing
     }
 
