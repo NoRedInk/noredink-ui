@@ -253,7 +253,7 @@ headersStyles =
 
 headerStyles : List Style
 headerStyles =
-    [ padding4 (px 15) (px 12) (px 11) (px 12)
+    [ padding4 (px 13) (px 12) (px 14) (px 12)
     , textAlign left
     , fontWeight bold
     ]
