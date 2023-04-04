@@ -10,7 +10,7 @@ import Nri.Ui.Highlighter.V4 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool exposing (Tool)
 import ProgramTest exposing (..)
 import Regex exposing (Regex)
-import Sort exposing (Sorter)
+import Sort
 import Spec.KeyboardHelpers as KeyboardHelpers
 import Spec.MouseHelpers as MouseHelpers
 import Test exposing (..)

@@ -47,7 +47,6 @@ just a single whitespace.
 -}
 
 import Html.Styled exposing (Attribute)
-import List.Extra
 import Markdown.Block
 import Markdown.Inline
 import Maybe.Extra
