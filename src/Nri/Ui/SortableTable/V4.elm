@@ -355,7 +355,7 @@ buildTableColumn maybeUpdateMsg maybeState (Column column) =
                     viewSortHeader (column.sorter /= Nothing) column.header maybeUpdateMsg state_ column.id
 
                 Nothing ->
-                    Debug.todo "non-sorted header"
+                    column.header
         , view = column.view
         , width = Css.px (toFloat column.width)
         , cellStyles = column.cellStyles
