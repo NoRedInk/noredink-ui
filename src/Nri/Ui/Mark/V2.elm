@@ -208,7 +208,7 @@ markedWithBalloonStyles marked lastIndex index =
             Css.after
                 [ cssContent
                     ("end "
-                        ++ (Maybe.map (\name -> name) marked.name
+                        ++ (Maybe.map (\name -> stripMarkdownSyntax name) marked.name
                                 |> Maybe.withDefault "highlight"
                            )
                     )
@@ -307,14 +307,14 @@ viewMarked : TagStyle -> Mark -> List (Html msg) -> Html msg
 viewMarked tagStyle markedWith segments =
     Html.mark
         [ markedWith.name
-            |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
+            |> Maybe.map (\name -> Aria.roleDescription (stripMarkdownSyntax name ++ " highlight"))
             |> Maybe.withDefault AttributesExtra.none
         , css
             [ Css.backgroundColor Css.transparent
             , Css.Global.children
                 [ Css.Global.selector ":last-child"
                     (Css.after
-                        [ Css.property "content" ("\" end " ++ (Maybe.map (\name -> name) markedWith.name |> Maybe.withDefault "highlight") ++ " \"")
+                        [ Css.property "content" ("\" end " ++ (Maybe.map (\name -> stripMarkdownSyntax name) markedWith.name |> Maybe.withDefault "highlight") ++ " \"")
                         , invisibleStyle
                         ]
                         :: markedWith.endStyles
@@ -428,7 +428,7 @@ highlightDescription : String -> List Mark -> String
 highlightDescription prefix marks =
     let
         names =
-            String.Extra.toSentenceOxford (List.filterMap .name marks)
+            String.Extra.toSentenceOxford (List.filterMap (.name >> Maybe.map stripMarkdownSyntax) marks)
     in
     if names == "" then
         prefix ++ " highlight"
