@@ -262,16 +262,6 @@ view_ tagStyle viewSegment highlightables =
                     segments
 
 
-stripMarkdownSyntax : String -> String
-stripMarkdownSyntax markdown =
-    case Markdown.Block.parse Nothing markdown of
-        [ Markdown.Block.Paragraph _ inlines ] ->
-            Markdown.Inline.extractText inlines
-
-        _ ->
-            markdown
-
-
 viewMarkedByBalloon :
     { config
         | backgroundColor : Color
@@ -598,3 +588,13 @@ viewBalloonSpacer config =
             ]
             [ Html.text "()" ]
         ]
+
+
+stripMarkdownSyntax : String -> String
+stripMarkdownSyntax markdown =
+    case Markdown.Block.parse Nothing markdown of
+        [ Markdown.Block.Paragraph _ inlines ] ->
+            Markdown.Inline.extractText inlines
+
+        _ ->
+            markdown
