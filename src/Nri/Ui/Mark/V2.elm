@@ -12,6 +12,7 @@ module Nri.Ui.Mark.V2 exposing
   - change how the start styles are attached when there is not an explicit tag to show in order to reduce how often the starting highlight ends up isolated on its own line
   - add viewWithOverlaps
   - ensure that view and viewWithInlineTags never leave the starting styles isolated on their own line
+  - markdown is now supported for the mark name
 
 @docs Mark
 @docs view, viewWithInlineTags, viewWithBalloonTags
