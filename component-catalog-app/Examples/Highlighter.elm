@@ -438,6 +438,7 @@ type alias State =
     { settings : Control Settings
     , highlighter : Highlighter.Model ()
     , overlappingHighlightsState : Highlighter.Model String
+    , overlappingHighlightsIndex : Int
     }
 
 
@@ -458,6 +459,7 @@ init =
             , sorter = Sort.alphabetical
             , joinAdjacentInteractiveHighlights = False
             }
+    , overlappingHighlightsIndex = 1
     }
 
 
@@ -665,6 +667,15 @@ update msg state =
 
                         highlighterState =
                             state.overlappingHighlightsState
+
+                        newComment =
+                            { state
+                                | overlappingHighlightsState =
+                                    { withAllCommentIds
+                                        | marker = Tool.Marker (inlineCommentMarker ("Comment " ++ String.fromInt (state.overlappingHighlightsIndex + 1)))
+                                    }
+                                , overlappingHighlightsIndex = state.overlappingHighlightsIndex + 1
+                            }
                     in
                     -- The Changed action will be triggered on the Highlighter Up event and
                     -- when there is an actual change in the highlightable elements. Note
@@ -692,7 +703,7 @@ update msg state =
                                         )
 
                                     else
-                                        ( { state | overlappingHighlightsState = withAllCommentIds }
+                                        ( newComment
                                         , Cmd.batch
                                             [ Cmd.map OverlappingHighlighterMsg effect
                                             , perform intent
@@ -700,7 +711,7 @@ update msg state =
                                         )
 
                                 _ ->
-                                    ( { state | overlappingHighlightsState = withAllCommentIds }
+                                    ( newComment
                                     , Cmd.batch
                                         [ Cmd.map OverlappingHighlighterMsg effect
                                         , perform intent
