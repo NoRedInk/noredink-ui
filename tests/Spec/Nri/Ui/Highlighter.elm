@@ -20,11 +20,32 @@ import Test.Html.Selector as Selector exposing (Selector)
 spec : Test
 spec =
     describe "Nri.Ui.Highlighter"
-        [ describe "keyboard behavior" keyboardTests
+        [ describe "mouse behavior" mouseTests
+        , describe "keyboard behavior" keyboardTests
         , describe "markdown behavior" markdownTests
         , describe "joinAdjacentInteractiveHighlights" joinAdjacentInteractiveHighlightsTests
         , describe "overlapping highlights" overlappingHighlightTests
         ]
+
+
+mouseTests : List Test
+mouseTests =
+    [ test "clicking on a static element does nothing" <|
+        \() ->
+            [ Highlightable.initStatic [] 0 "Pothos", Highlightable.initInteractive [] 1 "Philodendron" ]
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> click "Pothos"
+                |> ensureViewHasNot [ Selector.tag "mark" ]
+                |> done
+    , test "starting a highlight from a static element works" <|
+        \() ->
+            [ Highlightable.initStatic [] 0 "Pothos", Highlightable.initInteractive [] 1 "Philodendron" ]
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> mouseDown "Philodendron"
+                |> mouseUp "Pothos"
+                |> ensureMarked [ "Philodendron" ]
+                |> done
+    ]
 
 
 keyboardTests : List Test
