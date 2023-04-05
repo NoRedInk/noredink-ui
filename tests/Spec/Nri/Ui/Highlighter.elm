@@ -1,5 +1,6 @@
 module Spec.Nri.Ui.Highlighter exposing (spec)
 
+import Accessibility.Aria as Aria
 import Accessibility.Key as Key
 import Expect exposing (Expectation)
 import Html.Styled exposing (Html, toUnstyled)
@@ -353,7 +354,18 @@ markdownHighlightNameTests =
                         |> toUnstyled
                         |> Query.fromHtml
                         |> Expect.all
-                            [ hasBefore "start Markdown label highlight" "Highlightable"
+                            [ -- The rendered markdown tag should be hidden from SR users, since the label information
+                              -- is conveyed another way
+                              Query.has
+                                [ Selector.attribute (Aria.hidden True)
+                                , Selector.containing
+                                    [ Selector.tag "strong"
+                                    , Selector.containing [ Selector.text "Markdown label " ]
+                                    ]
+                                ]
+                            , -- The before and after elements that convey the mark type to AT users
+                              -- should not include markdown (e.g., no asterisks)
+                              hasBefore "start Markdown label highlight" "Highlightable"
                             ]
     in
     [ testIt "view" Highlighter.view
