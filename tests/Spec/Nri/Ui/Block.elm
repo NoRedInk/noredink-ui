@@ -16,6 +16,7 @@ spec =
     describe "Nri.Ui.Block.V4"
         [ describe "content" contentSpec
         , describe "labelId" labelIdSpec
+        , describe "labelMarkdown" labelMarkdownSpec
         , describe "getLabelPositions" getLabelPositionsSpec
         ]
 
@@ -91,6 +92,20 @@ labelIdSpec =
                 |> toQuery
                 |> Query.findAll [ Selector.attribute (Attributes.id "yo-id") ]
                 |> Query.count (Expect.equal 1)
+    ]
+
+
+labelMarkdownSpec : List Test
+labelMarkdownSpec =
+    [ test "An emphasized word with a markdown label" <|
+        \_ ->
+            [ Block.plaintext "Hello there"
+            , Block.emphasize
+            , Block.labelId "yo-id"
+            , Block.label "This **is** markdown"
+            ]
+                |> toQuery
+                |> Query.has [ Selector.text "This is markdown" ]
     ]
 
 
