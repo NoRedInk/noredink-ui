@@ -1,5 +1,6 @@
 module Spec.Nri.Ui.Highlighter exposing (spec)
 
+import Accessibility.Aria as Aria
 import Accessibility.Key as Key
 import Expect exposing (Expectation)
 import Html.Styled exposing (Html, toUnstyled)
@@ -9,9 +10,9 @@ import Nri.Ui.Highlightable.V2 as Highlightable exposing (Highlightable)
 import Nri.Ui.Highlighter.V3 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool exposing (Tool)
 import ProgramTest exposing (..)
-import Regex exposing (Regex)
 import Spec.KeyboardHelpers as KeyboardHelpers
 import Spec.MouseHelpers as MouseHelpers
+import Spec.PseudoElements exposing (..)
 import Test exposing (..)
 import Test.Html.Query as Query
 import Test.Html.Selector as Selector exposing (Selector)
@@ -21,7 +22,8 @@ spec : Test
 spec =
     describe "Nri.Ui.Highlighter"
         [ describe "keyboard behavior" keyboardTests
-        , describe "markdown behavior" markdownTests
+        , describe "markdown highlightable behavior" markdownContentTests
+        , describe "markdown highlight name behavior" markdownHighlightNameTests
         , describe "joinAdjacentInteractiveHighlights" joinAdjacentInteractiveHighlightsTests
         , describe "overlapping highlights" overlappingHighlightTests
         ]
@@ -242,8 +244,8 @@ keyboardTests =
     ]
 
 
-markdownTests : List Test
-markdownTests =
+markdownContentTests : List Test
+markdownContentTests =
     [ testRendersRawContent "view" Highlighter.view
     , testRendersMarkdownContent "viewMarkdown" Highlighter.viewMarkdown
     , testRendersRawContent "static" Highlighter.static
@@ -333,6 +335,49 @@ testRendersMarkdownContent testName view =
         ]
 
 
+markdownHighlightNameTests : List Test
+markdownHighlightNameTests =
+    let
+        model =
+            Highlighter.init
+                { id = "test-markdown-highlight-names-rendering"
+                , highlightables =
+                    [ Highlightable.init Highlightable.Static [ marker (Just "*Markdown label*") ] 0 ( [], "Highlightable" ) ]
+                , marker = markerModel Nothing
+                , joinAdjacentInteractiveHighlights = False
+                }
+
+        testIt viewName view =
+            test viewName <|
+                \() ->
+                    view model
+                        |> toUnstyled
+                        |> Query.fromHtml
+                        |> Expect.all
+                            [ -- The rendered markdown tag should be hidden from SR users, since the label information
+                              -- is conveyed another way
+                              Query.has
+                                [ Selector.attribute (Aria.hidden True)
+                                , Selector.containing
+                                    [ Selector.tag "strong"
+                                    , Selector.containing [ Selector.text "Markdown label " ]
+                                    ]
+                                ]
+                            , -- The before and after elements that convey the mark type to AT users
+                              -- should not include markdown (e.g., no asterisks)
+                              hasBefore "start Markdown label highlight" "Highlightable"
+                            ]
+    in
+    [ testIt "view" Highlighter.view
+    , testIt "viewMarkdown" Highlighter.viewMarkdown
+    , testIt "static" Highlighter.static
+    , testIt "staticMarkdown" Highlighter.staticMarkdown
+    , testIt "staticWithTags" Highlighter.staticWithTags
+    , testIt "staticMarkdownWithTags" Highlighter.staticMarkdownWithTags
+    , testIt "viewWithOverlappingHighlights" Highlighter.viewWithOverlappingHighlights
+    ]
+
+
 startWithoutMarker : (Highlighter.Model any -> Html msg) -> List (Highlightable any) -> ProgramTest (Highlighter.Model any) msg ()
 startWithoutMarker view highlightables =
     ProgramTest.createSandbox
@@ -347,87 +392,6 @@ startWithoutMarker view highlightables =
         , view = view >> toUnstyled
         }
         |> ProgramTest.start ()
-
-
-hasBefore : String -> String -> Query.Single msg -> Expectation
-hasBefore =
-    hasPseudoElement "::before"
-
-
-hasAfter : String -> String -> Query.Single msg -> Expectation
-hasAfter =
-    hasPseudoElement "::after"
-
-
-hasNotBefore : String -> String -> Query.Single msg -> Expectation
-hasNotBefore =
-    hasNotPseudoElement "::before"
-
-
-hasNotAfter : String -> String -> Query.Single msg -> Expectation
-hasNotAfter =
-    hasNotPseudoElement "::after"
-
-
-hasPseudoElement : String -> String -> String -> Query.Single msg -> Expectation
-hasPseudoElement pseudoElement highlightMarker relevantHighlightableText view =
-    case pseudoElementSelector pseudoElement highlightMarker view of
-        Just className ->
-            Query.has
-                [ className
-                , Selector.containing [ Selector.text relevantHighlightableText ]
-                ]
-                view
-
-        Nothing ->
-            ("Expected to find a class defining a " ++ pseudoElement ++ " element with content: `")
-                ++ highlightMarker
-                ++ "`, but failed to find the class in the styles: \n\n"
-                ++ rawStyles view
-                |> Expect.fail
-
-
-hasNotPseudoElement : String -> String -> String -> Query.Single msg -> Expectation
-hasNotPseudoElement pseudoElement highlightMarker relevantHighlightableText view =
-    case pseudoElementSelector pseudoElement highlightMarker view of
-        Just className ->
-            view
-                |> Query.findAll [ className ]
-                |> Query.each (Query.hasNot [ Selector.containing [ Selector.text relevantHighlightableText ] ])
-
-        Nothing ->
-            Expect.pass
-
-
-pseudoElementSelector : String -> String -> Query.Single msg -> Maybe Selector
-pseudoElementSelector pseudoElement highlightMarker view =
-    let
-        startHighlightClassRegex : Maybe Regex
-        startHighlightClassRegex =
-            ("\\.(\\_[a-zA-Z0-9]+)" ++ pseudoElement ++ "\\{content:\\\\\"\\s*\\s*")
-                ++ highlightMarker
-                |> Regex.fromString
-
-        maybeClassName : Maybe String
-        maybeClassName =
-            startHighlightClassRegex
-                |> Maybe.andThen
-                    (\regex ->
-                        Regex.find regex (rawStyles view)
-                            |> List.head
-                            |> Maybe.andThen (.submatches >> List.head)
-                    )
-                |> Maybe.withDefault Nothing
-    in
-    Maybe.map Selector.class maybeClassName
-
-
-rawStyles : Query.Single msg -> String
-rawStyles view =
-    view
-        |> Query.find [ Selector.tag "style" ]
-        |> Query.children []
-        |> Debug.toString
 
 
 ensureTabbable : String -> TestContext -> TestContext
@@ -785,23 +749,6 @@ overlappingHighlightTests =
                             |> ensureView (hasAfter "end A highlight" "Hope you're")
                             |> ensureView (hasBefore "start B highlight" "World!")
                             |> ensureView (hasAfter "end B highlight" "well")
-                            |> done
-                ]
-            , describe "strips markdown from segment labels"
-                [ test "in a non-overlapping case" <|
-                    \_ ->
-                        [ ( "Hello", [ "*Markdown label*" ] ), ( "World", [ "*Markdown label*" ] ) ]
-                            |> start renderer
-                            |> ensureView (hasBefore "start Markdown label highlight" "Hello")
-                            |> ensureView (hasNotBefore "start Markdown label highlight" "World")
-                            |> done
-                , test "in an overlapping case" <|
-                    \_ ->
-                        [ ( "Hello", [ "*A*", "**B**" ] ), ( "World", [ "*A*", "**B**" ] ), ( "!", [ "**B**" ] ) ]
-                            |> start renderer
-                            |> ensureView (hasBefore "start A and B highlights" "Hello")
-                            |> ensureView (hasNotBefore "start A and B highlights" "World")
-                            |> ensureView (hasNotBefore "start B highlight" "!")
                             |> done
                 ]
             ]
