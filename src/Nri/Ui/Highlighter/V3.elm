@@ -576,6 +576,7 @@ saveHinted marker =
                 _ ->
                     Highlightable.clearHint highlightable
         )
+        >> trimHighlightableGroups
 
 
 toggleHinted : Int -> Tool.MarkerModel marker -> List (Highlightable marker) -> List (Highlightable marker)
@@ -598,6 +599,30 @@ toggleHinted index marker highlightables =
                 highlightable
     in
     List.map (toggle >> Highlightable.clearHint) highlightables
+        |> trimHighlightableGroups
+
+
+{-| This removes all-static highlights. We need to track events on static elements,
+so that we don't miss mouse events if a user starts or ends a highlight on a space, say,
+but we should only persist changes to interactive segments.
+
+It is meant to be called as a clean up after the highlightings have been changed.
+
+-}
+trimHighlightableGroups : List (Highlightable marker) -> List (Highlightable marker)
+trimHighlightableGroups highlightables =
+    highlightables
+        |> List.Extra.groupWhile (\a b -> a.marked == b.marked)
+        |> List.concatMap (\( h, hs ) -> killOnlyStaticHighlights (h :: hs))
+
+
+killOnlyStaticHighlights : List (Highlightable marker) -> List (Highlightable marker)
+killOnlyStaticHighlights highlightables =
+    if List.all (\h -> h.type_ == Highlightable.Static) highlightables then
+        removeHighlights_ highlightables
+
+    else
+        highlightables
 
 
 {-| Finds the group indexes of the groups which are in the same highlighting as the group index
@@ -630,7 +655,12 @@ removeHinted =
 {-| -}
 removeHighlights : Model marker -> Model marker
 removeHighlights model =
-    { model | highlightables = List.map (Highlightable.set Nothing) model.highlightables }
+    { model | highlightables = removeHighlights_ model.highlightables }
+
+
+removeHighlights_ : List (Highlightable m) -> List (Highlightable m)
+removeHighlights_ =
+    List.map (Highlightable.set Nothing)
 
 
 {-| You are not likely to need this helper unless you're working with inline commenting.

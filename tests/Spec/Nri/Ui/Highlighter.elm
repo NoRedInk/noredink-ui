@@ -32,14 +32,18 @@ mouseTests : List Test
 mouseTests =
     [ test "clicking on a static element does nothing" <|
         \() ->
-            [ Highlightable.initStatic [] 0 "Pothos", Highlightable.initInteractive [] 1 "Philodendron" ]
+            [ Highlightable.init Highlightable.Static [] 0 ( [], "Pothos" )
+            , Highlightable.init Highlightable.Interactive [] 1 ( [], "Philodendron" )
+            ]
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> click "Pothos"
                 |> ensureViewHasNot [ Selector.tag "mark" ]
                 |> done
     , test "starting a highlight from a static element works" <|
         \() ->
-            [ Highlightable.initStatic [] 0 "Pothos", Highlightable.initInteractive [] 1 "Philodendron" ]
+            [ Highlightable.init Highlightable.Static [] 0 ( [], "Pothos" )
+            , Highlightable.init Highlightable.Interactive [] 1 ( [], "Philodendron" )
+            ]
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> mouseDown "Philodendron"
                 |> mouseUp "Pothos"
