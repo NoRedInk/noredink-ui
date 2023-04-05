@@ -905,5 +905,4 @@ overlappingHighlightTests =
             ]
     in
     [ describe "viewWithOverlappingHighlights" (staticAssertions Highlighter.viewWithOverlappingHighlights)
-    , describe "staticWithOverlappingHighlights" (staticAssertions Highlighter.staticWithOverlappingHighlights)
     ]
