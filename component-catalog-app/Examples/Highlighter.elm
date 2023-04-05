@@ -262,6 +262,7 @@ example =
                   , example =
                         Highlighter.staticWithOverlappingHighlights
                             { id = "example-6"
+                            , ariaDetails = Just "details-example"
                             , highlightables =
                                 [ ( "Sphinx", [ inlineCommentMarker "Comment 1", inlineCommentMarker "Comment 2" ] )
                                 , ( "of", [ inlineCommentMarker "Comment 2" ] )

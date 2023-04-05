@@ -48,6 +48,7 @@ Highlighter provides a view/model/update to display a view to highlight text and
 
 -}
 
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Browser.Dom as Dom
 import Css
@@ -95,6 +96,7 @@ type alias Model marker =
     , selectionStartIndex : Maybe Int
     , selectionEndIndex : Maybe Int
     , focusIndex : Maybe Int
+    , ariaDetails : Maybe String
     }
 
 
@@ -145,6 +147,7 @@ init config =
     , selectionEndIndex = Nothing
     , focusIndex =
         List.Extra.findIndex (\highlightable -> .type_ highlightable == Highlightable.Interactive) config.highlightables
+    , ariaDetails = Nothing
     }
 
 
@@ -724,7 +727,7 @@ viewWithOverlappingHighlights model =
 
 
 {-| -}
-staticWithOverlappingHighlights : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
+staticWithOverlappingHighlights : { config | id : String, highlightables : List (Highlightable marker), ariaDetails : Maybe String } -> Html msg
 staticWithOverlappingHighlights config =
     view_
         { showTagsInline = False
@@ -741,6 +744,7 @@ staticWithOverlappingHighlights config =
                 , hoveringIndex = Nothing
                 , hintingIndices = Nothing
                 , renderMarkdown = False
+                , ariaDetails = config.ariaDetails
                 }
         , id = config.id
         , highlightables = config.highlightables
@@ -786,6 +790,7 @@ static config =
                 , hoveringIndex = Nothing
                 , hintingIndices = Nothing
                 , renderMarkdown = False
+                , ariaDetails = Nothing
                 }
         , id = config.id
         , highlightables = config.highlightables
@@ -816,6 +821,7 @@ staticMarkdown config =
                 , hoveringIndex = Nothing
                 , hintingIndices = Nothing
                 , renderMarkdown = True
+                , ariaDetails = Nothing
                 }
         , id = config.id
         , highlightables = config.highlightables
@@ -836,6 +842,7 @@ staticWithTags config =
                 , hoveringIndex = Nothing
                 , hintingIndices = Nothing
                 , renderMarkdown = False
+                , ariaDetails = Nothing
                 }
     in
     view_
@@ -870,6 +877,7 @@ staticMarkdownWithTags config =
                 , hoveringIndex = Nothing
                 , hintingIndices = Nothing
                 , renderMarkdown = True
+                , ariaDetails = Nothing
                 }
     in
     view_
@@ -1043,6 +1051,7 @@ viewHighlightable renderMarkdown config highlightable =
                 , maybeTool = Just config.marker
                 , hoveringIndex = config.hoveringIndex
                 , hintingIndices = config.hintingIndices
+                , ariaDetails = Nothing
                 }
                 highlightable
 
@@ -1062,6 +1071,7 @@ viewHighlightable renderMarkdown config highlightable =
                 , maybeTool = Just config.marker
                 , hoveringIndex = config.hoveringIndex
                 , hintingIndices = config.hintingIndices
+                , ariaDetails = Nothing
                 }
                 highlightable
 
@@ -1074,11 +1084,12 @@ viewHighlightableSegment :
     , hoveringIndex : Maybe Int
     , hintingIndices : Maybe ( Int, Int )
     , renderMarkdown : Bool
+    , ariaDetails : Maybe String
     }
     -> Highlightable marker
     -> List Css.Style
     -> Html msg
-viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners, renderMarkdown } as config) highlightable markStyles =
+viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners, renderMarkdown, ariaDetails } as config) highlightable markStyles =
     let
         whitespaceClass txt =
             -- we need to override whitespace styles in order to support
@@ -1127,6 +1138,17 @@ viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners
                         class "highlighter-highlighted"
 
                     _ ->
+                        AttributesExtra.none
+               , case ariaDetails of
+                    Just details ->
+                        case highlightable.index of
+                            0 ->
+                                Aria.details details
+
+                            _ ->
+                                AttributesExtra.none
+
+                    Nothing ->
                         AttributesExtra.none
                , if isInteractive then
                     Key.tabbable
