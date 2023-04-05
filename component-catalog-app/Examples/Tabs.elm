@@ -328,7 +328,7 @@ colorToCss color =
             Colors.white
 
         Gray ->
-            Colors.gray92
+            Colors.gray96
 
 
 colorToCode : Color -> String
@@ -338,7 +338,7 @@ colorToCode color =
             "Colors.white"
 
         Gray ->
-            "Colors.gray92"
+            "Colors.gray96"
 
 
 type Stickiness
