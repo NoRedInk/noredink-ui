@@ -615,9 +615,41 @@ It is meant to be called as a clean up after the highlightings have been changed
 -}
 trimHighlightableGroups : List (Highlightable marker) -> List (Highlightable marker)
 trimHighlightableGroups highlightables =
+    let
+        apply segment ( lastInteractiveHighlighterMarkers, staticAcc, acc ) =
+            -- logic largely borrowed from joinAdjacentInteractiveHighlights.
+            -- TODO in the next version: clean up the implementation!
+            case segment.type_ of
+                Highlightable.Interactive ->
+                    let
+                        bracketingHighlightTypes =
+                            List.filterMap (\x -> List.Extra.find ((==) x) lastInteractiveHighlighterMarkers)
+                                segment.marked
+
+                        static_ =
+                            -- for every static tag, ensure that if it's not between interactive segments
+                            -- that share a mark in common, marks are removed.
+                            List.map
+                                (\s ->
+                                    { s
+                                        | marked =
+                                            List.filterMap (\x -> List.Extra.find ((==) x) bracketingHighlightTypes)
+                                                s.marked
+                                    }
+                                )
+                                staticAcc
+                    in
+                    ( segment.marked, [], segment :: static_ ++ acc )
+
+                Highlightable.Static ->
+                    ( lastInteractiveHighlighterMarkers, segment :: staticAcc, acc )
+    in
     highlightables
-        |> List.Extra.groupWhile (\a b -> a.marked == b.marked)
-        |> List.concatMap (\( h, hs ) -> killOnlyStaticHighlights (h :: hs))
+        |> List.foldr apply ( [], [], [] )
+        |> (\( _, static_, acc ) -> removeHighlights_ static_ ++ acc)
+        |> List.foldl apply ( [], [], [] )
+        |> (\( _, static_, acc ) -> removeHighlights_ static_ ++ acc)
+        |> List.reverse
 
 
 killOnlyStaticHighlights : List (Highlightable marker) -> List (Highlightable marker)
