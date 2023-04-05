@@ -2,7 +2,6 @@ module Nri.Ui.Tabs.V8 exposing
     ( Attribute, title, spacing
     , Alignment(..), alignment
     , pageBackgroundColor
-    , fadeToPanelBackgroundColor
     , tabListSticky, TabListStickyConfig, tabListStickyCustom
     , view
     , Tab, TabAttribute, build
@@ -24,7 +23,6 @@ module Nri.Ui.Tabs.V8 exposing
 @docs Attribute, title, spacing
 @docs Alignment, alignment
 @docs pageBackgroundColor
-@docs fadeToPanelBackgroundColor
 @docs tabListSticky, TabListStickyConfig, tabListStickyCustom
 @docs view
 
@@ -174,23 +172,20 @@ spacing spacing_ =
     Attribute (\config -> { config | spacing = Just spacing_ })
 
 
-{-| Tell this tab list about the background color of the page it lievs on. This
-is mostly useful when setting up sticky headers, to prevent page content from
-showing through the background.
+{-| Tell this tab list about the background color of the page it lievs on.
+
+You may want to use this if, for example:
+
+  - you are setting up sticky headers, to prevent page content from showing
+    through the background.
+
+  - you are using tabs in a page that has non-white background, so the
+    background of the active tab fades into the panel below it.
+
 -}
 pageBackgroundColor : Css.Color -> Attribute id msg
 pageBackgroundColor color =
     Attribute (\config -> { config | pageBackgroundColor = Just color })
-
-
-{-| The active tab will be white by default, which may look bad if the panel
-below it doesn't have a white background. This attribute lets you make the
-active tab's background fade from white (at the top) to the desired color (at
-the bottom) to make it match the background of the current panel.
--}
-fadeToPanelBackgroundColor : Css.Color -> Attribute id msg
-fadeToPanelBackgroundColor color =
-    Attribute (\config -> { config | fadeToPanelBackgroundColor = color })
 
 
 {-| Make the tab list sticky. You probably want to set an explicit background
@@ -214,7 +209,6 @@ type alias Config =
     , alignment : Alignment
     , spacing : Maybe Float
     , pageBackgroundColor : Maybe Css.Color
-    , fadeToPanelBackgroundColor : Css.Color
     , tabListStickyConfig : Maybe TabListStickyConfig
     }
 
@@ -225,7 +219,6 @@ defaultConfig =
     , alignment = Left
     , spacing = Nothing
     , pageBackgroundColor = Nothing
-    , fadeToPanelBackgroundColor = Colors.white
     , tabListStickyConfig = Nothing
     }
 
@@ -276,7 +269,10 @@ view { focusAndSelect, selected } attrs tabs =
                 { focusAndSelect = focusAndSelect
                 , selected = selected
                 , tabs = List.map (\(Tab t) -> t) tabs
-                , tabStyles = tabStyles config.spacing config.fadeToPanelBackgroundColor
+                , tabStyles =
+                    tabStyles
+                        config.spacing
+                        (Maybe.withDefault Colors.white config.pageBackgroundColor)
                 , tabListStyles = stylesTabsAligned config
                 }
     in
@@ -376,18 +372,18 @@ maybeStyle styler maybeValue =
 
 
 tabStyles : Maybe Float -> Css.Color -> Int -> Bool -> List Style
-tabStyles customSpacing fadeToPanelBackgroundColor_ index isSelected =
+tabStyles customSpacing pageBackgroundColor_ index isSelected =
     let
         stylesDynamic =
             if isSelected then
                 [ Css.borderBottom (Css.px 1)
                 , Css.borderBottomStyle Css.solid
                 , Css.backgroundColor Colors.white
-                , Css.borderBottomColor fadeToPanelBackgroundColor_
+                , Css.borderBottomColor pageBackgroundColor_
                 , Css.backgroundImage <|
                     Css.linearGradient2 Css.toTop
-                        (Css.stop2 (withAlpha 1 fadeToPanelBackgroundColor_) (Css.pct 0))
-                        (Css.stop2 (withAlpha 0 fadeToPanelBackgroundColor_) (Css.pct 100))
+                        (Css.stop2 (withAlpha 1 pageBackgroundColor_) (Css.pct 0))
+                        (Css.stop2 (withAlpha 0 pageBackgroundColor_) (Css.pct 100))
                         []
                 ]
 

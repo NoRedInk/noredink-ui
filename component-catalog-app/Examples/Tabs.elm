@@ -113,7 +113,7 @@ example =
                     allTabs
                         { openTooltipId = model.openTooltip
                         , withTooltips = settings.withTooltips
-                        , fadeToPanelBackgroundColor = settings.fadeToPanelBackgroundColor
+                        , pageBackgroundColor = settings.pageBackgroundColor
                         }
             in
             [ ControlView.view
@@ -139,7 +139,6 @@ example =
                                         , Maybe.map (\title -> moduleName ++ ".title " ++ Code.string title) settings.title
                                         , Maybe.map (\spacing -> moduleName ++ ".spacing " ++ String.fromFloat spacing) settings.customSpacing
                                         , Maybe.map (\color -> moduleName ++ ".pageBackgroundColor " ++ colorToCode color) settings.pageBackgroundColor
-                                        , Maybe.map (\color -> moduleName ++ ".fadeToPanelBackgroundColor " ++ colorToCode color) settings.fadeToPanelBackgroundColor
                                         , Maybe.map
                                             (\sticky ->
                                                 case sticky of
@@ -180,7 +179,17 @@ example =
                             Css.backgroundColor (colorToCss color)
                     ]
                 ]
-                [ Tabs.view
+                [ case settings.pageBackgroundColor of
+                    Nothing ->
+                        Html.text ""
+
+                    Just _ ->
+                        Message.view
+                            [ Message.tip
+                            , Message.plaintext "Container and tab panel background adjusted to match pageBackgroundColor. Note that the component won't do this for you automatically!"
+                            , Message.css [ Css.marginBottom (Css.px 20) ]
+                            ]
+                , Tabs.view
                     { focusAndSelect = FocusAndSelectTab
                     , selected = model.selected
                     }
@@ -189,7 +198,6 @@ example =
                         , Maybe.map Tabs.title settings.title
                         , Maybe.map Tabs.spacing settings.customSpacing
                         , Maybe.map (Tabs.pageBackgroundColor << colorToCss) settings.pageBackgroundColor
-                        , Maybe.map (Tabs.fadeToPanelBackgroundColor << colorToCss) settings.fadeToPanelBackgroundColor
                         , Maybe.map
                             (\stickiness ->
                                 case stickiness of
@@ -211,7 +219,7 @@ example =
 allTabs :
     { openTooltipId : Maybe Int
     , withTooltips : Bool
-    , fadeToPanelBackgroundColor : Maybe Color
+    , pageBackgroundColor : Maybe Color
     }
     -> List ( String, Tab Int Msg )
 allTabs config =
@@ -222,7 +230,7 @@ allTabs config =
 buildTab :
     { openTooltipId : Maybe Int
     , withTooltips : Bool
-    , fadeToPanelBackgroundColor : Maybe Color
+    , pageBackgroundColor : Maybe Color
     }
     -> Int
     -> ( String, Tab Int Msg )
@@ -260,7 +268,7 @@ buildTab config id =
         ]
     , Tabs.build { id = id, idString = tabIdString }
         ([ Tabs.tabString tabName
-         , Tabs.panelHtml (panelContent config.fadeToPanelBackgroundColor id panelName)
+         , Tabs.panelHtml (panelContent config.pageBackgroundColor id panelName)
          ]
             ++ (if config.withTooltips then
                     [ Tabs.withTooltip
@@ -278,7 +286,7 @@ buildTab config id =
 
 
 panelContent : Maybe Color -> Int -> String -> Html.Html msg
-panelContent fadeToPanelBackgroundColor_ id panelName =
+panelContent pageBackgroundColor_ id panelName =
     let
         pangrams =
             -- cycle panels so that panel contents change when changing tabs
@@ -299,30 +307,9 @@ panelContent fadeToPanelBackgroundColor_ id panelName =
                 |> List.Extra.splitAt id
                 |> (\( beforeSplit, afterSplit ) -> afterSplit ++ beforeSplit)
     in
-    Html.div
-        [ css
-            [ Css.padding2 (Css.px 20) (Css.px 10)
-            , case fadeToPanelBackgroundColor_ of
-                Nothing ->
-                    Css.batch []
-
-                Just color ->
-                    Css.backgroundColor (colorToCss color)
-            ]
-        ]
+    Html.div [ css [ Css.padding2 (Css.px 20) (Css.px 10) ] ]
         (List.concat
-            [ case fadeToPanelBackgroundColor_ of
-                Nothing ->
-                    []
-
-                Just _ ->
-                    [ Message.view
-                        [ Message.tip
-                        , Message.plaintext "Panel background adjusted to match fadeToPanelBackgroundColor attribute"
-                        , Message.css [ Css.marginBottom (Css.px 20) ]
-                        ]
-                    ]
-            , List.map
+            [ List.map
                 (\( title, content ) ->
                     Panel.view
                         [ Panel.header title
@@ -356,7 +343,6 @@ type alias Settings =
     , customSpacing : Maybe Float
     , withTooltips : Bool
     , pageBackgroundColor : Maybe Color
-    , fadeToPanelBackgroundColor : Maybe Color
     , stickiness : Maybe Stickiness
     }
 
@@ -412,7 +398,6 @@ initSettings =
         |> Control.field "customSpacing" (Control.maybe False (values String.fromFloat [ 2, 3, 4, 8, 16 ]))
         |> Control.field "withTooltips" (Control.bool True)
         |> Control.field "pageBackgroundColor" (Control.maybe False colorChoices)
-        |> Control.field "fadeToPanelBackgroundColor" (Control.maybe False colorChoices)
         |> Control.field "tabListSticky"
             (Control.maybe False
                 (Control.choice
