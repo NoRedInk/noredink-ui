@@ -12,7 +12,8 @@ module Nri.Ui.Highlighter.V4 exposing
 
 {-| Changes from V3:
 
-  - Highlighter.update now takes a sorter for the markers
+  - Highlighter.init now takes a sorter for the markers
+  - Modeling for highlightable ui state moved to the Highlighter model
   - removes staticWithOverlappingHighlights
 
 Highlighter provides a view/model/update to display a view to highlight text and show marks.
