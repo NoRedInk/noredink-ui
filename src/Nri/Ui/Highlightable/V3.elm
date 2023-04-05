@@ -21,6 +21,7 @@ just a single whitespace.
   - replace init with initStatic and initInteractive, and remove attributes from the UI since they're seldom used
   - remove UIState: it only makes sense in the context of an interactive highlighter
   - joinAdjacentInteractiveHighlights now takes a sorter
+  - initFragments no longer takes a list of markers
 
 
 ## Types
@@ -124,13 +125,13 @@ Note that we're transforming all whitespace to spaces, so newlines are not prese
 as me move to and from fragments. Spaces will be treated as static elements. Words will be interactive.
 
 -}
-initFragments : List (Tool.MarkerModel marker) -> String -> List (Highlightable marker)
-initFragments marked text_ =
+initFragments : String -> List (Highlightable marker)
+initFragments text_ =
     let
         spaceOrInit index maybeWord =
             case maybeWord of
                 Just word ->
-                    initInteractive marked index word
+                    initInteractive [] index word
 
                 Nothing ->
                     initStatic [] index " "

@@ -17,6 +17,7 @@ import Example exposing (Example)
 import Examples.Colors
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
+import List.Extra
 import Maybe.Extra
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
@@ -25,7 +26,8 @@ import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Highlightable.V3 as Highlightable exposing (Highlightable)
 import Nri.Ui.Highlighter.V4 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
-import Nri.Ui.Table.V6 as Table
+import Nri.Ui.Table.V7 as Table
+import Nri.Ui.Text.V6 as Text
 import Sort exposing (Sorter)
 import String.Extra
 
@@ -95,12 +97,11 @@ example =
                         ]
                 }
             , Heading.h2 [ Heading.plaintext "Interactive example" ]
-            , Heading.h3 [ Heading.plaintext "This example updates based on the settings you configure on this page." ]
+            , Text.mediumBody [ Text.plaintext "This example updates based on the settings you configure on this page." ]
             , Button.button "Clear all highlights"
                 [ Button.onClick ClearHighlights
                 , Button.secondary
                 , Button.small
-                , Button.css [ Css.marginTop (Css.px 10) ]
                 ]
             , div
                 [ css
@@ -112,9 +113,21 @@ example =
                 [ Tuple.second (view state)
                     |> map HighlighterMsg
                 ]
+            , Heading.h2 [ Heading.plaintext "Overlapping highlights example" ]
+            , Text.mediumBody [ Text.plaintext "Supporting overlapping highlights, as in inline comments, requires a lot of extra set-up. Generally, you won't need this." ]
+            , div
+                [ css
+                    [ Css.fontSize (Css.px 24)
+                    , Css.lineHeight (Css.num 1.75)
+                    , Fonts.ugFont
+                    ]
+                ]
+                [ Highlighter.viewWithOverlappingHighlights state.overlappingHighlightsState
+                    |> map OverlappingHighlighterMsg
+                ]
             , Heading.h2 [ Heading.plaintext "Non-interactive examples" ]
-            , Heading.h3 [ Heading.plaintext "These are examples of some different ways the highlighter can appear to users." ]
-            , Table.view
+            , Text.mediumBody [ Text.plaintext "These are examples of some different ways the highlighter can appear to users." ]
+            , Table.view []
                 [ Table.rowHeader
                     { header = text "Highlighter."
                     , view = .viewName >> text
@@ -255,34 +268,6 @@ example =
                             , highlightables = Highlightable.fromMarkdown "Select your [favorite phrase]() in **your** writing."
                             }
                   }
-                , { viewName = "staticWithOverlappingHighlights"
-                  , tool = "buildMarkerWithoutRounding"
-                  , highlightable = "init"
-                  , description = "Multiple kinds of highlights with overlaps."
-                  , example =
-                        Highlighter.staticWithOverlappingHighlights
-                            { id = "example-6"
-                            , ariaDetails = Just "details-example"
-                            , highlightables =
-                                [ ( "Sphinx", [ inlineCommentMarker "Comment 1", inlineCommentMarker "Comment 2" ] )
-                                , ( "of", [ inlineCommentMarker "Comment 2" ] )
-                                , ( "black quartz,", [ inlineCommentMarker "Comment 3", inlineCommentMarker "Comment 2" ] )
-                                , ( "judge", [ inlineCommentMarker "Comment 3", inlineCommentMarker "Comment 2" ] )
-                                , ( "my", [ inlineCommentMarker "Comment 2" ] )
-                                , ( "vow.", [] )
-                                ]
-                                    |> List.intersperse ( " ", [] )
-                                    |> List.indexedMap
-                                        (\i ( word, marker ) ->
-                                            if String.Extra.isBlank word then
-                                                Highlightable.initStatic marker i word
-
-                                            else
-                                                Highlightable.initInteractive marker i word
-                                        )
-                                    |> Highlightable.joinAdjacentInteractiveHighlights sorter
-                            }
-                  }
                 ]
             ]
     , categories = [ Instructional ]
@@ -345,13 +330,13 @@ reasoningMarker =
         }
 
 
-inlineCommentMarker : String -> Tool.MarkerModel ()
+inlineCommentMarker : String -> Tool.MarkerModel String
 inlineCommentMarker name =
     Tool.buildMarkerWithoutRounding
         { highlightColor = toLightColor Colors.highlightYellow
         , hoverColor = Colors.highlightYellow
         , hoverHighlightColor = Colors.highlightYellow
-        , kind = ()
+        , kind = name
         , name = Just name
         }
 
@@ -420,16 +405,13 @@ view state =
             , Highlighter.view state.highlighter
             )
 
-        Overlapping ->
-            ( viewStr "Highlighter.viewWithOverlappingHighlights"
-            , Highlighter.viewWithOverlappingHighlights state.highlighter
-            )
-
 
 {-| -}
 type alias State =
     { settings : Control Settings
     , highlighter : Highlighter.Model ()
+    , overlappingHighlightsState : Highlighter.Model String
+    , overlappingHighlightsIndex : Int
     }
 
 
@@ -442,6 +424,15 @@ init =
     in
     { settings = settings
     , highlighter = initHighlighter (Control.currentValue settings) [] |> Tuple.second
+    , overlappingHighlightsState =
+        Highlighter.init
+            { id = "student-writing"
+            , highlightables = Highlightable.initFragments "Letter grades have a variety of effects on students. Alfie Kohn, an American author who specializes in education issues, explains that students who are graded “tend to lose interest in the learning itself [and] avoid challenging tasks whenever possible.” Kohn’s argument illustrates how letter grades can become a source of stress for students and distract them from the joys of learning."
+            , marker = Tool.Marker (inlineCommentMarker "Comment 1")
+            , sorter = Sort.alphabetical
+            , joinAdjacentInteractiveHighlights = False
+            }
+    , overlappingHighlightsIndex = 1
     }
 
 
@@ -469,8 +460,8 @@ initHighlighter settings previousHighlightables =
                     |> Tuple.mapFirst (\c -> Code.listMultiline c 3)
 
             else
-                ( "Highlightable.initFragments [] " ++ Code.string joinedExampleParagraph
-                , Highlightable.initFragments [] joinedExampleParagraph
+                ( "Highlightable.initFragments " ++ Code.string joinedExampleParagraph
+                , Highlightable.initFragments joinedExampleParagraph
                 )
 
         joinedExampleParagraph =
@@ -519,7 +510,6 @@ type alias Settings =
 type HighlighterType
     = Markdown
     | Standard
-    | Overlapping
 
 
 controlSettings : Control Settings
@@ -531,7 +521,6 @@ controlSettings =
             (Control.choice
                 [ ( "Markdown", Control.value Markdown )
                 , ( "Standard", Control.value Standard )
-                , ( "Overlapping", Control.value Overlapping )
                 ]
             )
         |> Control.field "tool"
@@ -581,6 +570,7 @@ backgroundHighlightColors rotateWith =
 type Msg
     = UpdateControls (Control Settings)
     | HighlighterMsg (Highlighter.Msg ())
+    | OverlappingHighlighterMsg (Highlighter.Msg String)
     | ClearHighlights
 
 
@@ -619,6 +609,119 @@ update msg state =
             ( { state | highlighter = Highlighter.removeHighlights state.highlighter }
             , Cmd.none
             )
+
+        OverlappingHighlighterMsg highlighterMsg ->
+            -- This code is extracted with minimal updates from Nri.Writing.GuidedDrafts.WritingSamples.Highlighters
+            case Highlighter.update highlighterMsg state.overlappingHighlightsState of
+                ( newHighlighter, effect, intent ) ->
+                    let
+                        clickedCommentId =
+                            Highlighter.selectShortest Highlighter.clickedHighlightable state.overlappingHighlightsState
+
+                        hoveredCommentId =
+                            Highlighter.selectShortest Highlighter.hoveredHighlightable newHighlighter
+
+                        maybePreviousMouseDownIndex =
+                            highlighterState.mouseDownIndex
+
+                        mouseOverIndex =
+                            newHighlighter.mouseOverIndex
+
+                        withAllCommentIds =
+                            { newHighlighter
+                                | highlightables =
+                                    List.map2
+                                        (\newHighlightable oldHighlightable ->
+                                            { newHighlightable | marked = List.Extra.unique (newHighlightable.marked ++ oldHighlightable.marked) }
+                                        )
+                                        newHighlighter.highlightables
+                                        highlighterState.highlightables
+                            }
+
+                        highlighterState =
+                            state.overlappingHighlightsState
+
+                        newComment =
+                            { state
+                                | overlappingHighlightsState =
+                                    { withAllCommentIds
+                                        | marker = Tool.Marker (inlineCommentMarker ("Comment " ++ String.fromInt (state.overlappingHighlightsIndex + 1)))
+                                    }
+                                , overlappingHighlightsIndex = state.overlappingHighlightsIndex + 1
+                            }
+                    in
+                    -- The Changed action will be triggered on the Highlighter Up event and
+                    -- when there is an actual change in the highlightable elements. Note
+                    -- that when we click an existing highlight, from the point of view of
+                    -- the highlighter, this is just the same as starting a new highlight
+                    -- (instead we want to intercept that click and do something else).
+                    case Highlighter.hasChanged intent of
+                        Highlighter.Changed ->
+                            case ( clickedCommentId, maybePreviousMouseDownIndex, mouseOverIndex ) of
+                                ( Just commentId, Just previousMouseDownIndex, Just currentHover ) ->
+                                    if previousMouseDownIndex == currentHover then
+                                        -- User is clicking an existing highlight without dragging
+                                        -- we don't want to use the entire updated highlighter state, since we don't want to remove the focused highlight!
+                                        -- However, we do want to ensure that we don't end up in the middle of highlighting, where the user has to click around more to get out of the highlighting state.
+                                        ( { state
+                                            | overlappingHighlightsState =
+                                                { highlighterState
+                                                    | mouseDownIndex = Nothing
+                                                    , mouseOverIndex = Nothing
+                                                    , selectionStartIndex = Nothing
+                                                    , selectionEndIndex = Nothing
+                                                }
+                                          }
+                                        , Cmd.none
+                                        )
+
+                                    else
+                                        ( newComment
+                                        , Cmd.batch
+                                            [ Cmd.map OverlappingHighlighterMsg effect
+                                            , perform intent
+                                            ]
+                                        )
+
+                                _ ->
+                                    ( newComment
+                                    , Cmd.batch
+                                        [ Cmd.map OverlappingHighlighterMsg effect
+                                        , perform intent
+                                        ]
+                                    )
+
+                        Highlighter.NotChanged ->
+                            case maybePreviousMouseDownIndex of
+                                Just _ ->
+                                    -- User is dragging and highlighting. We don't want to show
+                                    -- any hover effect in case the current highlight starts to
+                                    -- overlaps with an existing highlight.
+                                    ( { state | overlappingHighlightsState = withAllCommentIds }
+                                    , Cmd.batch
+                                        [ Cmd.map OverlappingHighlighterMsg effect
+                                        , perform intent
+                                        ]
+                                    )
+
+                                Nothing ->
+                                    -- User is just hovering around the page
+                                    ( { state | overlappingHighlightsState = withAllCommentIds }
+                                    , Cmd.batch
+                                        [ Cmd.map OverlappingHighlighterMsg effect
+                                        , perform intent
+                                        ]
+                                    )
+
+
+perform : Highlighter.Intent -> Cmd msg
+perform (Highlighter.Intent intent) =
+    case intent.listenTo of
+        Just listenTo ->
+            highlighterListen listenTo
+
+        Nothing ->
+            Cmd.none
 
 
 sorter : Sorter ()
