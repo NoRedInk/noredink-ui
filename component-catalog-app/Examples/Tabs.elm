@@ -248,34 +248,7 @@ buildTab config id =
         ]
     , Tabs.build { id = id, idString = tabIdString }
         ([ Tabs.tabString tabName
-         , Tabs.panelHtml
-            (Html.pre
-                [ css
-                    [ Css.marginTop Css.zero
-                    , Css.padding (Css.px 10)
-                    , case config.fadeToPanelBackgroundColor of
-                        Nothing ->
-                            Css.batch []
-
-                        Just color ->
-                            Css.backgroundColor (colorToCss color)
-                    ]
-                ]
-                [ case config.fadeToPanelBackgroundColor of
-                    Nothing ->
-                        Html.text ""
-
-                    Just _ ->
-                        Message.view
-                            [ Message.tip
-                            , Message.plaintext "Panel background adjusted to match fadeToPanelBackgroundColor attribute"
-                            ]
-                , panelName
-                    |> List.repeat 50
-                    |> String.join "\n"
-                    |> Html.text
-                ]
-            )
+         , Tabs.panelHtml (panelContent config.fadeToPanelBackgroundColor panelName)
          ]
             ++ (if config.withTooltips then
                     [ Tabs.withTooltip
@@ -290,6 +263,36 @@ buildTab config id =
                )
         )
     )
+
+
+panelContent : Maybe Color -> String -> Html.Html msg
+panelContent fadeToPanelBackgroundColor_ panelName =
+    Html.pre
+        [ css
+            [ Css.marginTop Css.zero
+            , Css.padding (Css.px 10)
+            , case fadeToPanelBackgroundColor_ of
+                Nothing ->
+                    Css.batch []
+
+                Just color ->
+                    Css.backgroundColor (colorToCss color)
+            ]
+        ]
+        [ case fadeToPanelBackgroundColor_ of
+            Nothing ->
+                Html.text ""
+
+            Just _ ->
+                Message.view
+                    [ Message.tip
+                    , Message.plaintext "Panel background adjusted to match fadeToPanelBackgroundColor attribute"
+                    ]
+        , panelName
+            |> List.repeat 50
+            |> String.join "\n"
+            |> Html.text
+        ]
 
 
 type alias State =
