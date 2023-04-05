@@ -9,7 +9,11 @@ module Nri.Ui.Highlighter.V3 exposing
     , clickedHighlightable, hoveredHighlightable
     )
 
-{-| Changes from V2:
+{-| Patch changes:
+
+  - fixed :bug: where clicking on a static space would cause the space to be marked
+
+Changes from V2:
 
   - support overlapping highlights (by way of removing the underlying mark element)
   - move asFragmentTuples, usedMarkers, and text to the Highlightable module
