@@ -167,29 +167,31 @@ example =
                           }
                         ]
                 }
-            , Tabs.view
-                { focusAndSelect = FocusAndSelectTab
-                , selected = model.selected
-                }
-                (List.filterMap identity
-                    [ Just (Tabs.alignment settings.alignment)
-                    , Maybe.map Tabs.title settings.title
-                    , Maybe.map Tabs.spacing settings.customSpacing
-                    , Maybe.map (Tabs.pageBackgroundColor << colorToCss) settings.pageBackgroundColor
-                    , Maybe.map (Tabs.fadeToPanelBackgroundColor << colorToCss) settings.fadeToPanelBackgroundColor
-                    , Maybe.map
-                        (\stickiness ->
-                            case stickiness of
-                                Default ->
-                                    Tabs.tabListSticky
+            , Html.div [ css [ Css.padding (Css.px 20) ] ]
+                [ Tabs.view
+                    { focusAndSelect = FocusAndSelectTab
+                    , selected = model.selected
+                    }
+                    (List.filterMap identity
+                        [ Just (Tabs.alignment settings.alignment)
+                        , Maybe.map Tabs.title settings.title
+                        , Maybe.map Tabs.spacing settings.customSpacing
+                        , Maybe.map (Tabs.pageBackgroundColor << colorToCss) settings.pageBackgroundColor
+                        , Maybe.map (Tabs.fadeToPanelBackgroundColor << colorToCss) settings.fadeToPanelBackgroundColor
+                        , Maybe.map
+                            (\stickiness ->
+                                case stickiness of
+                                    Default ->
+                                        Tabs.tabListSticky
 
-                                Custom stickyConfig ->
-                                    Tabs.tabListStickyCustom stickyConfig
-                        )
-                        settings.stickiness
-                    ]
-                )
-                (List.map Tuple.second tabs)
+                                    Custom stickyConfig ->
+                                        Tabs.tabListStickyCustom stickyConfig
+                            )
+                            settings.stickiness
+                        ]
+                    )
+                    (List.map Tuple.second tabs)
+                ]
             ]
     }
 
