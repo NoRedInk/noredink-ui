@@ -307,14 +307,14 @@ panelContent pageBackgroundColor_ id panelName =
                 |> List.Extra.splitAt id
                 |> (\( beforeSplit, afterSplit ) -> afterSplit ++ beforeSplit)
     in
-    Html.div [ css [ Css.padding2 (Css.px 20) (Css.px 10) ] ]
+    Html.div []
         (List.concat
             [ List.map
                 (\( title, content ) ->
                     Panel.view
                         [ Panel.header title
                         , Panel.paragraph content
-                        , Panel.containerCss [ Css.marginBottom (Css.px 30) ]
+                        , Panel.containerCss [ Css.margin2 (Css.px 10) Css.zero ]
                         ]
                 )
                 pangrams
