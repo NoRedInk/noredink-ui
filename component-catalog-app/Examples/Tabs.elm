@@ -21,8 +21,10 @@ import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
+import List.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Message.V3 as Message
+import Nri.Ui.Panel.V1 as Panel
 import Nri.Ui.Tabs.V8 as Tabs exposing (Alignment(..), Tab)
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
@@ -248,7 +250,7 @@ buildTab config id =
         ]
     , Tabs.build { id = id, idString = tabIdString }
         ([ Tabs.tabString tabName
-         , Tabs.panelHtml (panelContent config.fadeToPanelBackgroundColor panelName)
+         , Tabs.panelHtml (panelContent config.fadeToPanelBackgroundColor id panelName)
          ]
             ++ (if config.withTooltips then
                     [ Tabs.withTooltip
@@ -265,12 +267,31 @@ buildTab config id =
     )
 
 
-panelContent : Maybe Color -> String -> Html.Html msg
-panelContent fadeToPanelBackgroundColor_ panelName =
-    Html.pre
+panelContent : Maybe Color -> Int -> String -> Html.Html msg
+panelContent fadeToPanelBackgroundColor_ id panelName =
+    let
+        pangrams =
+            -- cycle panels so that panel contents change when changing tabs
+            -- without getting too creative :-D
+            [ ( "The one about the fox"
+              , "The quick brown fox jumps over the lazy dog."
+              )
+            , ( "The one about the wizards"
+              , "The five boxing wizards jump quickly."
+              )
+            , ( "The one about the zebras"
+              , "How quickly daft jumping zebras vex!"
+              )
+            , ( "The one about the sphinxes"
+              , "Sphinx of black quartz, judge my vow."
+              )
+            ]
+                |> List.Extra.splitAt id
+                |> (\( beforeSplit, afterSplit ) -> afterSplit ++ beforeSplit)
+    in
+    Html.div
         [ css
-            [ Css.marginTop Css.zero
-            , Css.padding (Css.px 10)
+            [ Css.padding2 (Css.px 20) (Css.px 10)
             , case fadeToPanelBackgroundColor_ of
                 Nothing ->
                     Css.batch []
@@ -279,20 +300,29 @@ panelContent fadeToPanelBackgroundColor_ panelName =
                     Css.backgroundColor (colorToCss color)
             ]
         ]
-        [ case fadeToPanelBackgroundColor_ of
-            Nothing ->
-                Html.text ""
+        (List.concat
+            [ case fadeToPanelBackgroundColor_ of
+                Nothing ->
+                    []
 
-            Just _ ->
-                Message.view
-                    [ Message.tip
-                    , Message.plaintext "Panel background adjusted to match fadeToPanelBackgroundColor attribute"
+                Just _ ->
+                    [ Message.view
+                        [ Message.tip
+                        , Message.plaintext "Panel background adjusted to match fadeToPanelBackgroundColor attribute"
+                        , Message.css [ Css.marginBottom (Css.px 20) ]
+                        ]
                     ]
-        , panelName
-            |> List.repeat 50
-            |> String.join "\n"
-            |> Html.text
-        ]
+            , List.map
+                (\( title, content ) ->
+                    Panel.view
+                        [ Panel.header title
+                        , Panel.paragraph content
+                        , Panel.containerCss [ Css.marginBottom (Css.px 30) ]
+                        ]
+                )
+                pangrams
+            ]
+        )
 
 
 type alias State =
