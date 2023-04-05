@@ -787,6 +787,23 @@ overlappingHighlightTests =
                             |> ensureView (hasAfter "end B highlight" "well")
                             |> done
                 ]
+            , describe "strips markdown from segment labels"
+                [ test "in a non-overlapping case" <|
+                    \_ ->
+                        [ ( "Hello", [ "*Markdown label*" ] ), ( "World", [ "*Markdown label*" ] ) ]
+                            |> start renderer
+                            |> ensureView (hasBefore "start Markdown label highlight" "Hello")
+                            |> ensureView (hasNotBefore "start Markdown label highlight" "World")
+                            |> done
+                , test "in an overlapping case" <|
+                    \_ ->
+                        [ ( "Hello", [ "*A*", "**B**" ] ), ( "World", [ "*A*", "**B**" ] ), ( "!", [ "**B**" ] ) ]
+                            |> start renderer
+                            |> ensureView (hasBefore "start A and B highlights" "Hello")
+                            |> ensureView (hasNotBefore "start A and B highlights" "World")
+                            |> ensureView (hasNotBefore "start B highlight" "!")
+                            |> done
+                ]
             ]
     in
     [ describe "viewWithOverlappingHighlights" (staticAssertions Highlighter.viewWithOverlappingHighlights)
