@@ -29,7 +29,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Menu.V4 as Menu
 import Nri.Ui.Spacing.V1 as Spacing
-import Nri.Ui.Table.V6 as Table
+import Nri.Ui.Table.V7 as Table
 import Nri.Ui.TextInput.V7 as TextInput
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -230,7 +230,7 @@ view ellieLinkConfig state =
         [ Heading.plaintext "Menu types"
         , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
         ]
-    , Table.view
+    , Table.view []
         [ Table.string
             { header = "Menu type"
             , value = .menu

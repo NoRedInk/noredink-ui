@@ -312,7 +312,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
             , css
                 [ position relative
                 , Css.marginLeft (Css.px -2)
-                , Css.paddingLeft (Css.px 38)
+                , Css.paddingLeft (Css.px 30)
                 , Css.paddingTop (px 6)
                 , Css.paddingBottom (px 4)
                 , display inlineBlock
@@ -383,6 +383,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                     , Css.property "font-weight" "600"
                     , display inlineBlock
                     , Css.property "transition" "all 0.4s ease"
+                    , paddingLeft (px 8)
                     ]
                 ]
                 [ radioInputIcon
@@ -555,9 +556,6 @@ radioInputIcon config =
             , displayFlex
             , justifyContent center
             , alignItems center
-            , -- this padding creates a hit area "bridge" between the
-              -- absolutely-positioned icon SVG and the label text
-              paddingRight (Css.px 8)
             ]
         ]
         [ image

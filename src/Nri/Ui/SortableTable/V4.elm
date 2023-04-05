@@ -1,36 +1,35 @@
-module Nri.Ui.SortableTable.V3 exposing
-    ( Column, Config, Sorter, State
+module Nri.Ui.SortableTable.V4 exposing
+    ( Column, Sorter, State
     , init, initDescending
-    , custom, string, view, viewLoading
+    , custom, string
+    , Attribute, updateMsg, state, stickyHeader, stickyHeaderCustom, StickyConfig, view, viewLoading
     , invariantSort, simpleSort, combineSorters
     )
 
-{-| TODO for next major version:
+{-| Changes from V3:
 
-  - add the possibility to pass Aria.sortAscending and Aria.sortDescending attributes to the <th> tag
+  - Change to an HTML-like API
+  - Allow the table header to be sticky
 
-Changes from V2:
-
-  - made column non-sortable (e.g. buttons in a column should not be sorted)
-  - use a button instead of a clickable div in headers
-  - use Aria.roleDescription instead of Aria.label in sortable columns headers
-  - use Nri.Ui.UiIcon.V1 sortArrow and Nri.Ui.UiIcon.V1 sortArrowDown icons for the sort indicators
-
-@docs Column, Config, Sorter, State
+@docs Column, Sorter, State
 @docs init, initDescending
-@docs custom, string, view, viewLoading
+@docs custom, string
+@docs Attribute, updateMsg, state, stickyHeader, stickyHeaderCustom, StickyConfig, view, viewLoading
 @docs invariantSort, simpleSort, combineSorters
 
 -}
 
 import Accessibility.Styled.Aria as Aria
 import Css exposing (..)
+import Css.Global
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events
 import Nri.Ui.Colors.V1
 import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Html.Attributes.V2 exposing (maybe)
+import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.Svg.V1
 import Nri.Ui.Table.V7 as Table exposing (SortDirection(..))
 import Nri.Ui.UiIcon.V1
@@ -61,10 +60,100 @@ type alias State id =
 
 
 {-| -}
-type alias Config id entry msg =
-    { updateMsg : State id -> msg
-    , columns : List (Column id entry msg)
+type alias Config id msg =
+    { updateMsg : Maybe (State id -> msg)
+    , state : Maybe (State id)
+    , stickyHeader : Maybe StickyConfig
     }
+
+
+defaultConfig : Config id msg
+defaultConfig =
+    { updateMsg = Nothing
+    , state = Nothing
+    , stickyHeader = Nothing
+    }
+
+
+{-| How the header will be set up to be sticky.
+
+  - `topOffset` controls how far off the top of the viewport the headers will
+    stick, in pixels. (**Default value:** 0)
+  - `zIndex` controls where in the stacking context the header will end
+    up. Useful to prevent elements in rows from appearing over the header.
+    (**Default value:** 0)
+
+Headers are never sticky on mobile-sized viewports because doing so causes some
+accessibility issues with zooming and panning.
+
+-}
+type alias StickyConfig =
+    { topOffset : Float
+    , zIndex : Int
+    , pageBackgroundColor : Css.Color
+    }
+
+
+defaultStickyConfig : StickyConfig
+defaultStickyConfig =
+    { topOffset = 0
+    , zIndex = 0
+    , pageBackgroundColor = Nri.Ui.Colors.V1.white
+    }
+
+
+stickyConfigStyles : StickyConfig -> List Style
+stickyConfigStyles { topOffset, zIndex, pageBackgroundColor } =
+    [ Css.Global.children
+        [ Css.Global.thead
+            [ Css.position Css.sticky
+            , Css.top (Css.px topOffset)
+            , Css.zIndex (Css.int zIndex)
+            , Css.backgroundColor pageBackgroundColor
+            ]
+        ]
+    ]
+
+
+{-| Customize how the table is rendered, for example by adding sorting or
+stickiness.
+-}
+type Attribute id msg
+    = Attribute (Config id msg -> Config id msg)
+
+
+{-| Sort a column. You can get an initial state with `init` or `initDescending`.
+If you make this sorting interactive, you should store the state in your model
+and provide it to this function instead of recreating it on every update.
+-}
+state : State id -> Attribute id msg
+state state_ =
+    Attribute (\config -> { config | state = Just state_ })
+
+
+{-| Add interactivity in sorting columns. When this attribute is provided and
+sorting is enabled, columns will be sortable by clicking the headers.
+-}
+updateMsg : (State id -> msg) -> Attribute id msg
+updateMsg updateMsg_ =
+    Attribute (\config -> { config | updateMsg = Just updateMsg_ })
+
+
+{-| Make the header sticky (that is, it will stick to the top of the viewport
+when it otherwise would have been scrolled off.) You probably will want to set a
+background color on the header as well.
+-}
+stickyHeader : Attribute id msg
+stickyHeader =
+    Attribute (\config -> { config | stickyHeader = Just defaultStickyConfig })
+
+
+{-| Does the same thing as `stickyHeader`, but with adaptations for your
+specific use.
+-}
+stickyHeaderCustom : StickyConfig -> Attribute id msg
+stickyHeaderCustom stickyConfig =
+    Attribute (\config -> { config | stickyHeader = Just stickyConfig })
 
 
 {-| -}
@@ -130,7 +219,7 @@ entries by name, no matter of the sort direction set on the table.
 -}
 invariantSort : (entry -> comparable) -> Sorter entry
 invariantSort mapper =
-    \sortDirection elem1 elem2 ->
+    \_ elem1 elem2 ->
         compare (mapper elem1) (mapper elem2)
 
 
@@ -183,28 +272,48 @@ combineSorters sorters =
 
 
 {-| -}
-viewLoading : Config id entry msg -> State id -> Html msg
-viewLoading config state =
+view : List (Attribute id msg) -> List (Column id entry msg) -> List entry -> Html msg
+view attributes columns entries =
     let
+        config =
+            List.foldl (\(Attribute fn) soFar -> fn soFar) defaultConfig attributes
+
+        stickyStyles =
+            Maybe.map stickyConfigStyles config.stickyHeader
+                |> Maybe.withDefault []
+
         tableColumns =
-            List.map (buildTableColumn config.updateMsg state) config.columns
+            List.map (buildTableColumn config.updateMsg config.state) columns
     in
-    Table.viewLoading [] tableColumns
+    case config.state of
+        Just state_ ->
+            let
+                sorter =
+                    findSorter columns state_.column
+            in
+            Table.view stickyStyles
+                tableColumns
+                (List.sortWith (sorter state_.sortDirection) entries)
+
+        Nothing ->
+            Table.view stickyStyles tableColumns entries
 
 
 {-| -}
-view : Config id entry msg -> State id -> List entry -> Html msg
-view config state entries =
+viewLoading : List (Attribute id msg) -> List (Column id entry msg) -> Html msg
+viewLoading attributes columns =
     let
-        tableColumns =
-            List.map (buildTableColumn config.updateMsg state) config.columns
+        config =
+            List.foldl (\(Attribute fn) soFar -> fn soFar) defaultConfig attributes
 
-        sorter =
-            findSorter config.columns state.column
+        stickyStyles =
+            Maybe.map stickyConfigStyles config.stickyHeader
+                |> Maybe.withDefault []
+
+        tableColumns =
+            List.map (buildTableColumn config.updateMsg config.state) columns
     in
-    Table.view []
-        tableColumns
-        (List.sortWith (sorter state.sortDirection) entries)
+    Table.viewLoading stickyStyles tableColumns
 
 
 findSorter : List (Column id entry msg) -> id -> Sorter entry
@@ -233,31 +342,41 @@ listExtraFind predicate list =
 
 identitySorter : Sorter a
 identitySorter =
-    \sortDirection item1 item2 ->
+    \_ _ _ ->
         EQ
 
 
-buildTableColumn : (State id -> msg) -> State id -> Column id entry msg -> Table.Column entry msg
-buildTableColumn updateMsg state (Column column) =
+buildTableColumn : Maybe (State id -> msg) -> Maybe (State id) -> Column id entry msg -> Table.Column entry msg
+buildTableColumn maybeUpdateMsg maybeState (Column column) =
     Table.custom
-        { header = viewSortHeader (column.sorter /= Nothing) column.header updateMsg state column.id
+        { header =
+            case maybeState of
+                Just state_ ->
+                    viewSortHeader (column.sorter /= Nothing) column.header maybeUpdateMsg state_ column.id
+
+                Nothing ->
+                    column.header
         , view = column.view
         , width = Css.px (toFloat column.width)
         , cellStyles = column.cellStyles
         , sort =
-            if state.column == column.id then
-                Just state.sortDirection
+            Maybe.andThen
+                (\state_ ->
+                    if state_.column == column.id then
+                        Just state_.sortDirection
 
-            else
-                Nothing
+                    else
+                        Nothing
+                )
+                maybeState
         }
 
 
-viewSortHeader : Bool -> Html msg -> (State id -> msg) -> State id -> id -> Html msg
-viewSortHeader isSortable header updateMsg state id =
+viewSortHeader : Bool -> Html msg -> Maybe (State id -> msg) -> State id -> id -> Html msg
+viewSortHeader isSortable header maybeUpdateMsg state_ id =
     let
         nextState =
-            nextTableState state id
+            nextTableState state_ id
     in
     if isSortable then
         Html.button
@@ -266,7 +385,7 @@ viewSortHeader isSortable header updateMsg state id =
                 , Css.alignItems Css.center
                 , Css.justifyContent Css.spaceBetween
                 , CssVendorPrefix.property "user-select" "none"
-                , if state.column == id then
+                , if state_.column == id then
                     fontWeight bold
 
                   else
@@ -283,13 +402,13 @@ viewSortHeader isSortable header updateMsg state id =
                 , Fonts.baseFont
                 , Css.fontSize (Css.em 1)
                 ]
-            , Html.Styled.Events.onClick (updateMsg nextState)
+            , maybe (\updateMsg_ -> Html.Styled.Events.onClick (updateMsg_ nextState)) maybeUpdateMsg
 
             -- screen readers should know what clicking this button will do
             , Aria.roleDescription "sort button"
             ]
             [ Html.div [] [ header ]
-            , viewSortButton updateMsg state id
+            , viewJust (\_ -> viewSortButton state_ id) maybeUpdateMsg
             ]
 
     else
@@ -299,8 +418,8 @@ viewSortHeader isSortable header updateMsg state id =
             [ header ]
 
 
-viewSortButton : (State id -> msg) -> State id -> id -> Html msg
-viewSortButton updateMsg state id =
+viewSortButton : State id -> id -> Html msg
+viewSortButton state_ id =
     let
         arrows upHighlighted downHighlighted =
             Html.div
@@ -316,7 +435,7 @@ viewSortButton updateMsg state id =
                 ]
 
         buttonContent =
-            case ( state.column == id, state.sortDirection ) of
+            case ( state_.column == id, state_.sortDirection ) of
                 ( True, Ascending ) ->
                     arrows True False
 
@@ -330,10 +449,10 @@ viewSortButton updateMsg state id =
 
 
 nextTableState : State id -> id -> State id
-nextTableState state id =
-    if state.column == id then
+nextTableState state_ id =
+    if state_.column == id then
         { column = id
-        , sortDirection = flipSortDirection state.sortDirection
+        , sortDirection = flipSortDirection state_.sortDirection
         }
 
     else

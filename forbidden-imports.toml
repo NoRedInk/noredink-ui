@@ -195,6 +195,9 @@ hint = 'upgrade to V4'
 [forbidden."Nri.Ui.SortableTable.V2"]
 hint = 'upgrade to V3'
 
+[forbidden."Nri.Ui.SortableTable.V3"]
+hint = 'upgrade to V4'
+
 [forbidden."Nri.Ui.Switch.V1"]
 hint = 'upgrade to V2'
 
@@ -203,6 +206,9 @@ hint = 'upgrade to V5'
 
 [forbidden."Nri.Ui.Table.V5"]
 hint = 'upgrade to V6'
+
+[forbidden."Nri.Ui.Table.V6"]
+hint = 'upgrade to V7'
 
 [forbidden."Nri.Ui.Tabs.V6"]
 hint = 'upgrade to V8'
