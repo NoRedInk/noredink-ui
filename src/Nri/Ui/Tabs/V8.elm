@@ -387,8 +387,8 @@ tabStyles customSpacing fadeToPanelBackgroundColor_ index isSelected =
                 , Css.backgroundImage <|
                     Css.linearGradient2 Css.toTop
                         (Css.stop2 (withAlpha 1 fadeToPanelBackgroundColor_) (Css.pct 0))
-                        (Css.stop2 (withAlpha 0 fadeToPanelBackgroundColor_) (Css.pct 25))
-                        [ Css.stop2 (withAlpha 0 fadeToPanelBackgroundColor_) (Css.pct 100) ]
+                        (Css.stop2 (withAlpha 0 fadeToPanelBackgroundColor_) (Css.pct 100))
+                        []
                 ]
 
             else
