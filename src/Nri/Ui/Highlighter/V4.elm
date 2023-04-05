@@ -960,7 +960,7 @@ view_ config =
         toMark highlightable marker =
             { name = marker.name
             , startStyles = marker.startGroupClass
-            , styles = highlightableStyle config highlightable
+            , styles = highlightableStyle config config.highlightables highlightable
             , endStyles = marker.endGroupClass
             }
 
@@ -1118,7 +1118,7 @@ viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners
                         AttributesExtra.none
                , css
                     (Css.focus [ Css.zIndex (Css.int 1), Css.position Css.relative ]
-                        :: highlightableStyle config highlightable
+                        :: highlightableStyle config [] highlightable
                         ++ markStyles
                     )
                , class "highlighter-highlightable"
@@ -1225,14 +1225,26 @@ highlightableStyle :
         , hoveringIndex : Maybe Int
         , hintingIndices : Maybe ( Int, Int )
     }
+    -> List (Highlightable kind)
     -> Highlightable kind
     -> List Css.Style
-highlightableStyle { maybeTool, hoveringIndex, hintingIndices } ({ marked } as highlightable) =
+highlightableStyle ({ maybeTool, hoveringIndex, hintingIndices } as config) highlightables ({ marked } as highlightable) =
     let
         isHinted =
             hintingIndices
                 |> Maybe.map (\( a, b ) -> between a b highlightable)
                 |> Maybe.withDefault False
+
+        isHovered =
+            hoveringIndex
+                == Just highlightable.index
+                || (highlightables
+                        |> buildGroups config
+                        |> List.filter (List.any (.index >> (==) highlightable.index))
+                        |> List.head
+                        |> Maybe.withDefault []
+                        |> List.any (.index >> Just >> (==) hoveringIndex)
+                   )
     in
     case maybeTool of
         Nothing ->
@@ -1251,7 +1263,7 @@ highlightableStyle { maybeTool, hoveringIndex, hintingIndices } ({ marked } as h
                     if isHinted then
                         Css.batch marker.hintClass
 
-                    else if hoveringIndex == Just highlightable.index then
+                    else if isHovered then
                         -- Override marking with selected tool
                         Css.batch marker.hoverHighlightClass
 
@@ -1263,7 +1275,7 @@ highlightableStyle { maybeTool, hoveringIndex, hintingIndices } ({ marked } as h
                     if isHinted then
                         Css.batch marker.hintClass
 
-                    else if hoveringIndex == Just highlightable.index then
+                    else if isHovered then
                         -- When Hovered but not marked
                         [ marker.hoverClass
                         , marker.startGroupClass
