@@ -359,8 +359,8 @@ markdownHighlightNameTests =
                               Query.has
                                 [ Selector.attribute (Aria.hidden True)
                                 , Selector.containing
-                                    [ Selector.tag "strong"
-                                    , Selector.containing [ Selector.text "Markdown label " ]
+                                    [ Selector.tag "em"
+                                    , Selector.containing [ Selector.text "Markdown label" ]
                                     ]
                                 ]
                             , -- The before and after elements that convey the mark type to AT users

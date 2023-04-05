@@ -55,14 +55,12 @@ markdownContent content =
 
 {-| Provide a string that will be rendered as markdown and placed in a paragraph tag, with the default margin removed.
 -}
-markdownParagraph : String -> List (Html msg)
-markdownParagraph content =
+markdownInline : String -> List (Html msg)
+markdownInline content =
     case Markdown.Block.parse Nothing content of
         [ Markdown.Block.Paragraph _ inlines ] ->
             -- The library always parses into a paragraph and never into `PlainInline`
             List.map (Markdown.Inline.toHtml >> fromUnstyled) inlines
-                |> p [ css [ Css.margin Css.zero ] ]
-                |> List.singleton
 
         _ ->
             Markdown.toHtml Nothing content

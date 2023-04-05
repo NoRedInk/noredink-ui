@@ -22,6 +22,7 @@ module Nri.Ui.Mark.V2 exposing
 
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style exposing (invisibleStyle)
+import Content
 import Css exposing (Color, Style)
 import Css.Global
 import Html.Styled as Html exposing (Html, span)
@@ -475,7 +476,7 @@ viewInlineTag customizations name =
           -- highlighter to screenreaders, so the visual label is redundant
           Aria.hidden True
         ]
-        [ Html.text name ]
+        (Content.markdownInline name)
 
 
 viewBalloon :

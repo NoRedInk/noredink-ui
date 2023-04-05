@@ -114,16 +114,14 @@ labelMarkdownSpec =
                       Query.has
                         [ Selector.attribute (Aria.hidden True)
                         , Selector.containing
-                            [ Selector.tag "p"
-                            , Selector.text "This "
+                            [ Selector.text "This "
                             ]
                         , Selector.containing
-                            [ Selector.tag "p"
-                            , Selector.containing [ Selector.tag "strong" ]
+                            [ Selector.tag "strong"
+                            , Selector.text "is"
                             ]
                         , Selector.containing
-                            [ Selector.tag "p"
-                            , Selector.text " markdown"
+                            [ Selector.text " markdown"
                             ]
                         ]
 
