@@ -268,33 +268,6 @@ example =
                             , highlightables = Highlightable.fromMarkdown "Select your [favorite phrase]() in **your** writing."
                             }
                   }
-                , { viewName = "staticWithOverlappingHighlights"
-                  , tool = "buildMarkerWithoutRounding"
-                  , highlightable = "init"
-                  , description = "Multiple kinds of highlights with overlaps."
-                  , example =
-                        Highlighter.staticWithOverlappingHighlights
-                            { id = "example-6"
-                            , highlightables =
-                                [ ( "Sphinx", [ inlineCommentMarker "Comment 1", inlineCommentMarker "Comment 2" ] )
-                                , ( "of", [ inlineCommentMarker "Comment 2" ] )
-                                , ( "black quartz,", [ inlineCommentMarker "Comment 3", inlineCommentMarker "Comment 2" ] )
-                                , ( "judge", [ inlineCommentMarker "Comment 3", inlineCommentMarker "Comment 2" ] )
-                                , ( "my", [ inlineCommentMarker "Comment 2" ] )
-                                , ( "vow.", [] )
-                                ]
-                                    |> List.intersperse ( " ", [] )
-                                    |> List.indexedMap
-                                        (\i ( word, marker ) ->
-                                            if String.Extra.isBlank word then
-                                                Highlightable.initStatic marker i word
-
-                                            else
-                                                Highlightable.initInteractive marker i word
-                                        )
-                                    |> Highlightable.joinAdjacentInteractiveHighlights Sort.alphabetical
-                            }
-                  }
                 ]
             ]
     , categories = [ Instructional ]

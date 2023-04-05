@@ -3,7 +3,7 @@ module Nri.Ui.Highlighter.V4 exposing
     , init, update
     , view, static, staticWithTags
     , viewMarkdown, staticMarkdown, staticMarkdownWithTags
-    , viewWithOverlappingHighlights, staticWithOverlappingHighlights
+    , viewWithOverlappingHighlights
     , Intent(..), hasChanged, HasChanged(..)
     , removeHighlights
     , clickedHighlightable, hoveredHighlightable
@@ -13,6 +13,7 @@ module Nri.Ui.Highlighter.V4 exposing
 {-| Changes from V3:
 
   - Highlighter.update now takes a sorter for the markers
+  - removes staticWithOverlappingHighlights
 
 Highlighter provides a view/model/update to display a view to highlight text and show marks.
 
@@ -28,7 +29,7 @@ Highlighter provides a view/model/update to display a view to highlight text and
 
 @docs view, static, staticWithTags
 @docs viewMarkdown, staticMarkdown, staticMarkdownWithTags
-@docs viewWithOverlappingHighlights, staticWithOverlappingHighlights
+@docs viewWithOverlappingHighlights
 
 
 ## Intents
@@ -720,30 +721,6 @@ viewWithOverlappingHighlights model =
         , viewSegment = viewHighlightable False model
         , id = model.id
         , highlightables = model.highlightables
-        }
-
-
-{-| -}
-staticWithOverlappingHighlights : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
-staticWithOverlappingHighlights config =
-    view_
-        { showTagsInline = False
-        , maybeTool = Nothing
-        , hoveringIndex = Nothing
-        , hintingIndices = Nothing
-        , overlaps = True
-        , viewSegment =
-            viewHighlightableSegment
-                { interactiveHighlighterId = Nothing
-                , focusIndex = Nothing
-                , eventListeners = []
-                , maybeTool = Nothing
-                , hoveringIndex = Nothing
-                , hintingIndices = Nothing
-                , renderMarkdown = False
-                }
-        , id = config.id
-        , highlightables = config.highlightables
         }
 
 
