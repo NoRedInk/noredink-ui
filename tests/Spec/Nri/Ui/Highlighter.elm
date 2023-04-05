@@ -21,7 +21,8 @@ spec : Test
 spec =
     describe "Nri.Ui.Highlighter"
         [ describe "keyboard behavior" keyboardTests
-        , describe "markdown behavior" markdownTests
+        , describe "markdown highlightable behavior" markdownContentTests
+        , describe "markdown highlight name behavior" markdownHighlightNameTests
         , describe "joinAdjacentInteractiveHighlights" joinAdjacentInteractiveHighlightsTests
         , describe "overlapping highlights" overlappingHighlightTests
         ]
@@ -242,8 +243,8 @@ keyboardTests =
     ]
 
 
-markdownTests : List Test
-markdownTests =
+markdownContentTests : List Test
+markdownContentTests =
     [ testRendersRawContent "view" Highlighter.view
     , testRendersMarkdownContent "viewMarkdown" Highlighter.viewMarkdown
     , testRendersRawContent "static" Highlighter.static
@@ -331,6 +332,58 @@ testRendersMarkdownContent testName view =
                             ]
                         )
         ]
+
+
+markdownHighlightNameTests : List Test
+markdownHighlightNameTests =
+    let
+        model highlightables =
+            Highlighter.init
+                { id = "test-markdown-highlight-names-rendering"
+                , highlightables = initHighlightables highlightables
+                , marker = markerModel Nothing
+                , joinAdjacentInteractiveHighlights = False
+                }
+
+        initHighlightables : List ( String, List String ) -> List (Highlightable String)
+        initHighlightables =
+            List.indexedMap
+                (\i ( text, marks ) ->
+                    Highlightable.init Highlightable.Static (List.map (Just >> marker) marks) i ( [], text )
+                )
+
+        testIt viewName view =
+            test viewName <|
+                \() ->
+                    [ ( "Hello", [ "*Markdown label*" ] ), ( "World", [ "*Markdown label*" ] ) ]
+                        |> model
+                        |> view
+                        |> toUnstyled
+                        |> Query.fromHtml
+                        |> Expect.all
+                            [ hasBefore "start Markdown label highlight" "Hello"
+                            , hasNotBefore "start Markdown label highlight" "World"
+                            ]
+    in
+    [ testIt "view" Highlighter.view
+    , testIt "viewMarkdown" Highlighter.viewMarkdown
+    , testIt "static" Highlighter.static
+    , testIt "staticMarkdown" Highlighter.staticMarkdown
+    , testIt "staticWithTags" Highlighter.staticWithTags
+    , testIt "staticMarkdownWithTags" Highlighter.staticMarkdownWithTags
+    , test "viewWithOverlappingHighlights" <|
+        \() ->
+            [ ( "Hello", [ "*A*", "**B**" ] ), ( "World", [ "*A*", "**B**" ] ), ( "!", [ "**B**" ] ) ]
+                |> model
+                |> Highlighter.viewWithOverlappingHighlights
+                |> toUnstyled
+                |> Query.fromHtml
+                |> Expect.all
+                    [ hasBefore "start A and B highlights" "Hello"
+                    , hasNotBefore "start A and B highlights" "World"
+                    , hasNotBefore "start B highlight" "!"
+                    ]
+    ]
 
 
 startWithoutMarker : (Highlighter.Model any -> Html msg) -> List (Highlightable any) -> ProgramTest (Highlighter.Model any) msg ()
@@ -704,23 +757,6 @@ overlappingHighlightTests =
                             |> ensureView (hasAfter "end A highlight" "Hope you're")
                             |> ensureView (hasBefore "start B highlight" "World!")
                             |> ensureView (hasAfter "end B highlight" "well")
-                            |> done
-                ]
-            , describe "strips markdown from segment labels"
-                [ test "in a non-overlapping case" <|
-                    \_ ->
-                        [ ( "Hello", [ "*Markdown label*" ] ), ( "World", [ "*Markdown label*" ] ) ]
-                            |> start renderer
-                            |> ensureView (hasBefore "start Markdown label highlight" "Hello")
-                            |> ensureView (hasNotBefore "start Markdown label highlight" "World")
-                            |> done
-                , test "in an overlapping case" <|
-                    \_ ->
-                        [ ( "Hello", [ "*A*", "**B**" ] ), ( "World", [ "*A*", "**B**" ] ), ( "!", [ "**B**" ] ) ]
-                            |> start renderer
-                            |> ensureView (hasBefore "start A and B highlights" "Hello")
-                            |> ensureView (hasNotBefore "start A and B highlights" "World")
-                            |> ensureView (hasNotBefore "start B highlight" "!")
                             |> done
                 ]
             ]
