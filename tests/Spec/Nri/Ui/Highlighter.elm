@@ -33,19 +33,19 @@ keyboardTests : List Test
 keyboardTests =
     [ test "has a focusable element when there is one" <|
         \() ->
-            Highlightable.initFragments [] "Pothos indirect light"
+            Highlightable.initFragments "Pothos indirect light"
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> done
     , test "has only one element included in the tab sequence" <|
         \() ->
-            Highlightable.initFragments [] "Pothos indirect light"
+            Highlightable.initFragments "Pothos indirect light"
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureOnlyOneInTabSequence (String.words "Pothos indirect light")
                 |> done
     , test "moves focus right on right arrow key" <|
         \() ->
-            Highlightable.initFragments [] "Pothos indirect light"
+            Highlightable.initFragments "Pothos indirect light"
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> rightArrow
@@ -60,7 +60,7 @@ keyboardTests =
                 |> done
     , test "moves focus left on left arrow key" <|
         \() ->
-            Highlightable.initFragments [] "Pothos indirect light"
+            Highlightable.initFragments "Pothos indirect light"
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> rightArrow
@@ -75,7 +75,7 @@ keyboardTests =
                 |> done
     , test "moves focus right on shift + right arrow" <|
         \() ->
-            Highlightable.initFragments [] "Pothos indirect light"
+            Highlightable.initFragments "Pothos indirect light"
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> shiftRight
@@ -87,7 +87,7 @@ keyboardTests =
                 |> done
     , test "moves focus left on shift + left arrow" <|
         \() ->
-            Highlightable.initFragments [] "Pothos indirect light"
+            Highlightable.initFragments "Pothos indirect light"
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> rightArrow
@@ -99,7 +99,7 @@ keyboardTests =
                 |> done
     , test "expands selection one element to the right on shift + right arrow and highlight selected elements" <|
         \() ->
-            Highlightable.initFragments [] "Pothos indirect light"
+            Highlightable.initFragments "Pothos indirect light"
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> shiftRight
                 |> releaseShiftRight
@@ -113,7 +113,7 @@ keyboardTests =
                 |> done
     , test "expands selection one element to the left on shift + left arrow and highlight selected elements" <|
         \() ->
-            Highlightable.initFragments [] "Pothos indirect light"
+            Highlightable.initFragments "Pothos indirect light"
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> rightArrow
                 |> rightArrow
@@ -129,7 +129,7 @@ keyboardTests =
                 |> done
     , test "merges highlights" <|
         \() ->
-            Highlightable.initFragments [] "Pothos indirect light"
+            Highlightable.initFragments "Pothos indirect light"
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> shiftRight
@@ -144,7 +144,7 @@ keyboardTests =
                 |> done
     , test "selects element on MouseDown and highlights selected element on MouseUp" <|
         \() ->
-            Highlightable.initFragments [] "Pothos indirect light"
+            Highlightable.initFragments "Pothos indirect light"
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> mouseDown "Pothos"
@@ -153,7 +153,7 @@ keyboardTests =
                 |> done
     , test "selects element on MouseDown, expands selection on MouseOver, and highlights selected elements on MouseUp" <|
         \() ->
-            Highlightable.initFragments [] "Pothos indirect light"
+            Highlightable.initFragments "Pothos indirect light"
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> mouseDown "Pothos"
@@ -163,7 +163,7 @@ keyboardTests =
                 |> done
     , test "Highlights element on Space" <|
         \() ->
-            Highlightable.initFragments [] "Pothos indirect light"
+            Highlightable.initFragments "Pothos indirect light"
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> space
@@ -171,7 +171,7 @@ keyboardTests =
                 |> done
     , test "Removes highlight from element on MouseUp" <|
         \() ->
-            Highlightable.initFragments [] "Pothos indirect light"
+            Highlightable.initFragments "Pothos indirect light"
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> space
@@ -182,7 +182,7 @@ keyboardTests =
                 |> expectViewHasNot [ Selector.tag "mark" ]
     , test "Removes entire highlight from a group of elements on MouseUp" <|
         \() ->
-            Highlightable.initFragments [] "Pothos indirect light"
+            Highlightable.initFragments "Pothos indirect light"
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> shiftRight
@@ -193,7 +193,7 @@ keyboardTests =
                 |> expectViewHasNot [ Selector.tag "mark" ]
     , test "Removes highlight from element on Space" <|
         \() ->
-            Highlightable.initFragments [] "Pothos indirect light"
+            Highlightable.initFragments "Pothos indirect light"
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> space
@@ -204,7 +204,7 @@ keyboardTests =
     , describe "Regression tests for A11-1767"
         [ test "generic start announcement is made when mark does not include first element" <|
             \() ->
-                Highlightable.initFragments [] "Pothos indirect light"
+                Highlightable.initFragments "Pothos indirect light"
                     |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                     |> rightArrow
                     |> shiftRight
@@ -213,7 +213,7 @@ keyboardTests =
                     |> expectView (hasBefore "start highlight" "indirect")
         , test "specific start announcement is made when mark does not include first element" <|
             \() ->
-                Highlightable.initFragments [] "Pothos indirect light"
+                Highlightable.initFragments "Pothos indirect light"
                     |> program { markerName = Just "banana", joinAdjacentInteractiveHighlights = False }
                     |> rightArrow
                     |> ensureTabbable "indirect"
@@ -227,7 +227,7 @@ keyboardTests =
           -- However, it still seemed worth adding an explicit check against the buggy behavior.
           test "Focus moves past 3rd element" <|
             \() ->
-                Highlightable.initFragments [] "Sir Walter Elliot, of Kellynch Hall, in Somersetshire..."
+                Highlightable.initFragments "Sir Walter Elliot, of Kellynch Hall, in Somersetshire..."
                     |> program { markerName = Just "Claim", joinAdjacentInteractiveHighlights = False }
                     |> shiftRight
                     |> releaseShiftRight
@@ -260,7 +260,7 @@ testRendersRawContent testName view =
     describe (testName ++ " does not interpret content as markdown")
         [ test "using Highlightable.initFragments for initialization" <|
             \() ->
-                Highlightable.initFragments [] "*Pothos* prefer indirect [light]() to direct light."
+                Highlightable.initFragments "*Pothos* prefer indirect [light]() to direct light."
                     |> startWithoutMarker view
                     |> expectView
                         (Expect.all
@@ -290,7 +290,7 @@ testRendersMarkdownContent testName view =
     describe (testName ++ " does interpret content as markdown") <|
         [ test "using Highlightable.initFragments for initialization" <|
             \() ->
-                Highlightable.initFragments [] "*Pothos* prefer indirect [light]() to direct light."
+                Highlightable.initFragments "*Pothos* prefer indirect [light]() to direct light."
                     |> startWithoutMarker view
                     |> ensureViewHasNot [ Selector.text "*Pothos*" ]
                     |> expectView

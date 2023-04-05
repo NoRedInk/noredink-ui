@@ -427,7 +427,7 @@ init =
     , overlappingHighlightsState =
         Highlighter.init
             { id = "student-writing"
-            , highlightables = Highlightable.initFragments [] "Letter grades have a variety of effects on students. Alfie Kohn, an American author who specializes in education issues, explains that students who are graded “tend to lose interest in the learning itself [and] avoid challenging tasks whenever possible.” Kohn’s argument illustrates how letter grades can become a source of stress for students and distract them from the joys of learning."
+            , highlightables = Highlightable.initFragments "Letter grades have a variety of effects on students. Alfie Kohn, an American author who specializes in education issues, explains that students who are graded “tend to lose interest in the learning itself [and] avoid challenging tasks whenever possible.” Kohn’s argument illustrates how letter grades can become a source of stress for students and distract them from the joys of learning."
             , marker = Tool.Marker (inlineCommentMarker "Comment 1")
             , sorter = Sort.alphabetical
             , joinAdjacentInteractiveHighlights = False
@@ -460,8 +460,8 @@ initHighlighter settings previousHighlightables =
                     |> Tuple.mapFirst (\c -> Code.listMultiline c 3)
 
             else
-                ( "Highlightable.initFragments [] " ++ Code.string joinedExampleParagraph
-                , Highlightable.initFragments [] joinedExampleParagraph
+                ( "Highlightable.initFragments " ++ Code.string joinedExampleParagraph
+                , Highlightable.initFragments joinedExampleParagraph
                 )
 
         joinedExampleParagraph =
