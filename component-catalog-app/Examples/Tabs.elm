@@ -169,7 +169,17 @@ example =
                           }
                         ]
                 }
-            , Html.div [ css [ Css.padding (Css.px 20) ] ]
+            , Html.div
+                [ css
+                    [ Css.padding (Css.px 20)
+                    , case settings.pageBackgroundColor of
+                        Nothing ->
+                            Css.batch []
+
+                        Just color ->
+                            Css.backgroundColor (colorToCss color)
+                    ]
+                ]
                 [ Tabs.view
                     { focusAndSelect = FocusAndSelectTab
                     , selected = model.selected
