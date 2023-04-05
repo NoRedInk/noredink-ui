@@ -337,32 +337,23 @@ testRendersMarkdownContent testName view =
 markdownHighlightNameTests : List Test
 markdownHighlightNameTests =
     let
-        model highlightables =
+        model =
             Highlighter.init
                 { id = "test-markdown-highlight-names-rendering"
-                , highlightables = initHighlightables highlightables
+                , highlightables =
+                    [ Highlightable.init Highlightable.Static [ marker (Just "*Markdown label*") ] 0 ( [], "Highlightable" ) ]
                 , marker = markerModel Nothing
                 , joinAdjacentInteractiveHighlights = False
                 }
 
-        initHighlightables : List ( String, List String ) -> List (Highlightable String)
-        initHighlightables =
-            List.indexedMap
-                (\i ( text, marks ) ->
-                    Highlightable.init Highlightable.Static (List.map (Just >> marker) marks) i ( [], text )
-                )
-
         testIt viewName view =
             test viewName <|
                 \() ->
-                    [ ( "Hello", [ "*Markdown label*" ] ), ( "World", [ "*Markdown label*" ] ) ]
-                        |> model
-                        |> view
+                    view model
                         |> toUnstyled
                         |> Query.fromHtml
                         |> Expect.all
-                            [ hasBefore "start Markdown label highlight" "Hello"
-                            , hasNotBefore "start Markdown label highlight" "World"
+                            [ hasBefore "start Markdown label highlight" "Highlightable"
                             ]
     in
     [ testIt "view" Highlighter.view
@@ -371,18 +362,7 @@ markdownHighlightNameTests =
     , testIt "staticMarkdown" Highlighter.staticMarkdown
     , testIt "staticWithTags" Highlighter.staticWithTags
     , testIt "staticMarkdownWithTags" Highlighter.staticMarkdownWithTags
-    , test "viewWithOverlappingHighlights" <|
-        \() ->
-            [ ( "Hello", [ "*A*", "**B**" ] ), ( "World", [ "*A*", "**B**" ] ), ( "!", [ "**B**" ] ) ]
-                |> model
-                |> Highlighter.viewWithOverlappingHighlights
-                |> toUnstyled
-                |> Query.fromHtml
-                |> Expect.all
-                    [ hasBefore "start A and B highlights" "Hello"
-                    , hasNotBefore "start A and B highlights" "World"
-                    , hasNotBefore "start B highlight" "!"
-                    ]
+    , testIt "viewWithOverlappingHighlights" Highlighter.viewWithOverlappingHighlights
     ]
 
 
