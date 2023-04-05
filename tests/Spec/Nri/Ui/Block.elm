@@ -1,11 +1,13 @@
 module Spec.Nri.Ui.Block exposing (spec)
 
+import Accessibility.Aria as Aria
 import Browser.Dom exposing (Element)
 import Dict
 import Expect
 import Html.Attributes as Attributes
 import Html.Styled
 import Nri.Ui.Block.V4 as Block
+import Spec.PseudoElements exposing (hasAfter, hasBefore)
 import Test exposing (..)
 import Test.Html.Query as Query
 import Test.Html.Selector as Selector
@@ -105,7 +107,31 @@ labelMarkdownSpec =
             , Block.label "This **is** markdown"
             ]
                 |> toQuery
-                |> Query.has [ Selector.text "This is markdown" ]
+                |> Expect.all
+                    [ -- The rendered markdown label content should be in a paragraph tag.
+                      -- It should be hidden from SR users, since the label information
+                      -- is conveyed another way.
+                      Query.has
+                        [ Selector.attribute (Aria.hidden True)
+                        , Selector.containing
+                            [ Selector.tag "p"
+                            , Selector.text "This "
+                            ]
+                        , Selector.containing
+                            [ Selector.tag "p"
+                            , Selector.containing [ Selector.tag "strong" ]
+                            ]
+                        , Selector.containing
+                            [ Selector.tag "p"
+                            , Selector.text " markdown"
+                            ]
+                        ]
+
+                    -- The before and after elements that convey the mark type to AT users
+                    -- should not include markdown (e.g., no asterisks)
+                    , hasBefore "start This is markdown" "Hello"
+                    , hasAfter "end This is markdown" "there"
+                    ]
     ]
 
 
