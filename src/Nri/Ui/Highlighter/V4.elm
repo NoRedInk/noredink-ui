@@ -635,6 +635,39 @@ hoveredHighlightable model =
     Maybe.andThen (\i -> Highlightable.byId i model.highlightables) model.mouseOverIndex
 
 
+inHoveredGroupWithoutOverlaps :
+    { config | hoveringIndex : Maybe Int, hintingIndices : Maybe ( Int, Int ) }
+    -> List (Highlightable m)
+    -> Highlightable m
+    -> Bool
+inHoveredGroupWithoutOverlaps config highlightables highlightable =
+    highlightables
+        |> buildGroups config
+        |> List.filter (List.any (.index >> (==) highlightable.index))
+        |> List.head
+        |> Maybe.withDefault []
+        |> List.any (.index >> Just >> (==) config.hoveringIndex)
+
+
+inHoveredGroupForOverlaps :
+    Int
+    -> Sorter m
+    -> List (Highlightable m)
+    -> Highlightable m
+    -> Bool
+inHoveredGroupForOverlaps hoveringIndex sorter highlightables highlightable =
+    let
+        byIndex =
+            .highlightables >> List.Extra.find (\h -> h.index == hoveringIndex)
+    in
+    case selectShortest byIndex { highlightables = highlightables, sorter = sorter } of
+        Just marker ->
+            List.member marker (List.map .kind highlightable.marked)
+
+        Nothing ->
+            False
+
+
 {-| Highlights can overlap. Sometimes, we want to apply a certain behavior (e.g., hover color change) on just the shortest
 highlight. Use this function to find out which marker applies to the least amount of text.
 
@@ -644,8 +677,8 @@ You are not likely to need this helper unless you're working with inline comment
 
 -}
 selectShortest :
-    (Model marker -> Maybe (Highlightable marker))
-    -> Model marker
+    ({ model | highlightables : List (Highlightable marker), sorter : Sorter marker } -> Maybe (Highlightable marker))
+    -> { model | highlightables : List (Highlightable marker), sorter : Sorter marker }
     -> Maybe marker
 selectShortest getHighlightable state =
     let
@@ -662,7 +695,7 @@ selectShortest getHighlightable state =
         |> Maybe.map .marker
 
 
-highlightLengths : Model marker -> List { marker : marker, length : Int }
+highlightLengths : { model | highlightables : List (Highlightable marker), sorter : Sorter marker } -> List { marker : marker, length : Int }
 highlightLengths model =
     model.highlightables
         |> List.concatMap
@@ -704,9 +737,10 @@ view model =
         , hoveringIndex = model.hoveringIndex
         , hintingIndices = model.hintingIndices
         , overlaps = False
-        , viewSegment = viewHighlightable False model
+        , viewSegment = viewHighlightable { renderMarkdown = False, overlaps = False } model
         , id = model.id
         , highlightables = model.highlightables
+        , sorter = Just model.sorter
         }
 
 
@@ -719,9 +753,10 @@ viewWithOverlappingHighlights model =
         , hoveringIndex = model.hoveringIndex
         , hintingIndices = model.hintingIndices
         , overlaps = True
-        , viewSegment = viewHighlightable False model
+        , viewSegment = viewHighlightable { renderMarkdown = False, overlaps = True } model
         , id = model.id
         , highlightables = model.highlightables
+        , sorter = Just model.sorter
         }
 
 
@@ -740,9 +775,10 @@ viewMarkdown model =
         , hoveringIndex = model.hoveringIndex
         , hintingIndices = model.hintingIndices
         , overlaps = False
-        , viewSegment = viewHighlightable True model
+        , viewSegment = viewHighlightable { renderMarkdown = True, overlaps = False } model
         , id = model.id
         , highlightables = model.highlightables
+        , sorter = Just model.sorter
         }
 
 
@@ -764,9 +800,12 @@ static config =
                 , hoveringIndex = Nothing
                 , hintingIndices = Nothing
                 , renderMarkdown = False
+                , sorter = Nothing
+                , overlaps = False
                 }
         , id = config.id
         , highlightables = config.highlightables
+        , sorter = Nothing
         }
 
 
@@ -794,9 +833,12 @@ staticMarkdown config =
                 , hoveringIndex = Nothing
                 , hintingIndices = Nothing
                 , renderMarkdown = True
+                , sorter = Nothing
+                , overlaps = False
                 }
         , id = config.id
         , highlightables = config.highlightables
+        , sorter = Nothing
         }
 
 
@@ -814,6 +856,8 @@ staticWithTags config =
                 , hoveringIndex = Nothing
                 , hintingIndices = Nothing
                 , renderMarkdown = False
+                , sorter = Nothing
+                , overlaps = False
                 }
     in
     view_
@@ -825,6 +869,7 @@ staticWithTags config =
         , viewSegment = viewStaticHighlightableWithTags
         , id = config.id
         , highlightables = config.highlightables
+        , sorter = Nothing
         }
 
 
@@ -848,6 +893,8 @@ staticMarkdownWithTags config =
                 , hoveringIndex = Nothing
                 , hintingIndices = Nothing
                 , renderMarkdown = True
+                , sorter = Nothing
+                , overlaps = False
                 }
     in
     view_
@@ -859,6 +906,7 @@ staticMarkdownWithTags config =
         , viewSegment = viewStaticHighlightableWithTags
         , id = config.id
         , highlightables = config.highlightables
+        , sorter = Nothing
         }
 
 
@@ -926,6 +974,7 @@ view_ :
     , maybeTool : Maybe (Tool.Tool marker)
     , hoveringIndex : Maybe Int
     , hintingIndices : Maybe ( Int, Int )
+    , sorter : Maybe (Sorter marker)
     , overlaps : Bool
     , viewSegment : Highlightable marker -> List Css.Style -> Html msg
     , highlightables : List (Highlightable marker)
@@ -979,7 +1028,7 @@ view_ config =
 
 
 viewHighlightable :
-    Bool
+    { renderMarkdown : Bool, overlaps : Bool }
     ->
         { config
             | id : String
@@ -987,11 +1036,12 @@ viewHighlightable :
             , marker : Tool.Tool marker
             , hoveringIndex : Maybe Int
             , hintingIndices : Maybe ( Int, Int )
+            , sorter : Sorter marker
         }
     -> Highlightable marker
     -> List Css.Style
     -> Html (Msg marker)
-viewHighlightable renderMarkdown config highlightable =
+viewHighlightable { renderMarkdown, overlaps } config highlightable =
     case highlightable.type_ of
         Highlightable.Interactive ->
             viewHighlightableSegment
@@ -1021,6 +1071,8 @@ viewHighlightable renderMarkdown config highlightable =
                 , maybeTool = Just config.marker
                 , hoveringIndex = config.hoveringIndex
                 , hintingIndices = config.hintingIndices
+                , sorter = Just config.sorter
+                , overlaps = overlaps
                 }
                 highlightable
 
@@ -1040,6 +1092,8 @@ viewHighlightable renderMarkdown config highlightable =
                 , maybeTool = Just config.marker
                 , hoveringIndex = config.hoveringIndex
                 , hintingIndices = config.hintingIndices
+                , sorter = Just config.sorter
+                , overlaps = overlaps
                 }
                 highlightable
 
@@ -1052,6 +1106,8 @@ viewHighlightableSegment :
     , hoveringIndex : Maybe Int
     , hintingIndices : Maybe ( Int, Int )
     , renderMarkdown : Bool
+    , sorter : Maybe (Sorter marker)
+    , overlaps : Bool
     }
     -> Highlightable marker
     -> List Css.Style
@@ -1202,9 +1258,11 @@ highlightableStyle :
         | maybeTool : Maybe (Tool.Tool marker)
         , hoveringIndex : Maybe Int
         , hintingIndices : Maybe ( Int, Int )
+        , sorter : Maybe (Sorter marker)
+        , overlaps : Bool
     }
-    -> List (Highlightable kind)
-    -> Highlightable kind
+    -> List (Highlightable marker)
+    -> Highlightable marker
     -> List Css.Style
 highlightableStyle ({ maybeTool, hoveringIndex, hintingIndices } as config) highlightables ({ marked } as highlightable) =
     let
@@ -1216,12 +1274,16 @@ highlightableStyle ({ maybeTool, hoveringIndex, hintingIndices } as config) high
         isHovered =
             hoveringIndex
                 == Just highlightable.index
-                || (highlightables
-                        |> buildGroups config
-                        |> List.filter (List.any (.index >> (==) highlightable.index))
-                        |> List.head
-                        |> Maybe.withDefault []
-                        |> List.any (.index >> Just >> (==) hoveringIndex)
+                || (if config.overlaps then
+                        case ( hoveringIndex, config.sorter ) of
+                            ( Just i, Just sorter ) ->
+                                inHoveredGroupForOverlaps i sorter highlightables highlightable
+
+                            _ ->
+                                False
+
+                    else
+                        inHoveredGroupWithoutOverlaps config highlightables highlightable
                    )
     in
     case maybeTool of
@@ -1275,7 +1337,7 @@ highlightableStyle ({ maybeTool, hoveringIndex, hintingIndices } as config) high
                         (if isHinted then
                             eraser_.hintClass
 
-                         else if hoveringIndex == Just highlightable.index then
+                         else if isHovered then
                             eraser_.hoverClass
 
                          else
