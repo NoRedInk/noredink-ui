@@ -26,6 +26,7 @@ import Nri.Ui.Highlightable.V3 as Highlightable exposing (Highlightable)
 import Nri.Ui.Highlighter.V4 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Table.V7 as Table
+import Nri.Ui.Text.V6 as Text
 import Sort exposing (Sorter)
 import String.Extra
 
@@ -95,12 +96,11 @@ example =
                         ]
                 }
             , Heading.h2 [ Heading.plaintext "Interactive example" ]
-            , Heading.h3 [ Heading.plaintext "This example updates based on the settings you configure on this page." ]
+            , Text.mediumBody [ Text.plaintext "This example updates based on the settings you configure on this page." ]
             , Button.button "Clear all highlights"
                 [ Button.onClick ClearHighlights
                 , Button.secondary
                 , Button.small
-                , Button.css [ Css.marginTop (Css.px 10) ]
                 ]
             , div
                 [ css
@@ -112,8 +112,20 @@ example =
                 [ Tuple.second (view state)
                     |> map HighlighterMsg
                 ]
+            , Heading.h2 [ Heading.plaintext "Overlapping highlights example" ]
+            , Text.mediumBody [ Text.plaintext "Supporting overlapping highlights, as in inline comments, requires a lot of extra set-up. Generally, you won't need this." ]
+            , div
+                [ css
+                    [ Css.fontSize (Css.px 24)
+                    , Css.lineHeight (Css.num 1.75)
+                    , Fonts.ugFont
+                    ]
+                ]
+                [ Highlighter.viewWithOverlappingHighlights state.overlappingHighlightsState
+                    |> map OverlappingHighlighterMsg
+                ]
             , Heading.h2 [ Heading.plaintext "Non-interactive examples" ]
-            , Heading.h3 [ Heading.plaintext "These are examples of some different ways the highlighter can appear to users." ]
+            , Text.mediumBody [ Text.plaintext "These are examples of some different ways the highlighter can appear to users." ]
             , Table.view []
                 [ Table.rowHeader
                     { header = text "Highlighter."
@@ -279,7 +291,7 @@ example =
                                             else
                                                 Highlightable.initInteractive marker i word
                                         )
-                                    |> Highlightable.joinAdjacentInteractiveHighlights sorter
+                                    |> Highlightable.joinAdjacentInteractiveHighlights Sort.alphabetical
                             }
                   }
                 ]
@@ -344,13 +356,13 @@ reasoningMarker =
         }
 
 
-inlineCommentMarker : String -> Tool.MarkerModel ()
+inlineCommentMarker : String -> Tool.MarkerModel String
 inlineCommentMarker name =
     Tool.buildMarkerWithoutRounding
         { highlightColor = toLightColor Colors.highlightYellow
         , hoverColor = Colors.highlightYellow
         , hoverHighlightColor = Colors.highlightYellow
-        , kind = ()
+        , kind = name
         , name = Just name
         }
 
@@ -419,16 +431,12 @@ view state =
             , Highlighter.view state.highlighter
             )
 
-        Overlapping ->
-            ( viewStr "Highlighter.viewWithOverlappingHighlights"
-            , Highlighter.viewWithOverlappingHighlights state.highlighter
-            )
-
 
 {-| -}
 type alias State =
     { settings : Control Settings
     , highlighter : Highlighter.Model ()
+    , overlappingHighlightsState : Highlighter.Model String
     }
 
 
@@ -441,6 +449,14 @@ init =
     in
     { settings = settings
     , highlighter = initHighlighter (Control.currentValue settings) [] |> Tuple.second
+    , overlappingHighlightsState =
+        Highlighter.init
+            { id = "student-writing"
+            , highlightables = Highlightable.initFragments [] "Letter grades have a variety of effects on students. Alfie Kohn, an American author who specializes in education issues, explains that students who are graded “tend to lose interest in the learning itself [and] avoid challenging tasks whenever possible.” Kohn’s argument illustrates how letter grades can become a source of stress for students and distract them from the joys of learning."
+            , marker = Tool.Marker (inlineCommentMarker "Comment 1")
+            , sorter = Sort.alphabetical
+            , joinAdjacentInteractiveHighlights = False
+            }
     }
 
 
@@ -518,7 +534,6 @@ type alias Settings =
 type HighlighterType
     = Markdown
     | Standard
-    | Overlapping
 
 
 controlSettings : Control Settings
@@ -530,7 +545,6 @@ controlSettings =
             (Control.choice
                 [ ( "Markdown", Control.value Markdown )
                 , ( "Standard", Control.value Standard )
-                , ( "Overlapping", Control.value Overlapping )
                 ]
             )
         |> Control.field "tool"
@@ -580,6 +594,7 @@ backgroundHighlightColors rotateWith =
 type Msg
     = UpdateControls (Control Settings)
     | HighlighterMsg (Highlighter.Msg ())
+    | OverlappingHighlighterMsg (Highlighter.Msg String)
     | ClearHighlights
 
 
@@ -617,6 +632,23 @@ update msg state =
         ClearHighlights ->
             ( { state | highlighter = Highlighter.removeHighlights state.highlighter }
             , Cmd.none
+            )
+
+        OverlappingHighlighterMsg highlighterMsg ->
+            let
+                ( newHighlighter, effect, Highlighter.Intent intent ) =
+                    Highlighter.update highlighterMsg state.overlappingHighlightsState
+            in
+            ( { state | overlappingHighlightsState = newHighlighter }
+            , Cmd.batch
+                [ Cmd.map OverlappingHighlighterMsg effect
+                , case intent.listenTo of
+                    Just listenTo ->
+                        highlighterListen listenTo
+
+                    Nothing ->
+                        Cmd.none
+                ]
             )
 
 
