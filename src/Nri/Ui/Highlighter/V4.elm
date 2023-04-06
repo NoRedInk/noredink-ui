@@ -88,7 +88,6 @@ type alias Model marker =
     , sorter : Sorter marker
 
     -- Internal state to track user's interactions
-    , hoveringIndex : Maybe Int
     , hintingIndices : Maybe ( Int, Int )
     , mouseDownIndex : Maybe Int
     , mouseOverIndex : Maybe Int
@@ -137,7 +136,6 @@ init config =
     , sorter = config.sorter
 
     -- Internal state to track user's interactions
-    , hoveringIndex = Nothing
     , hintingIndices = Nothing
     , mouseDownIndex = Nothing
     , mouseOverIndex = Nothing
@@ -484,10 +482,10 @@ performAction action ( model, cmds ) =
             )
 
         Blur index ->
-            ( { model | hoveringIndex = Nothing }, cmds )
+            ( { model | mouseOverIndex = Nothing }, cmds )
 
         Hover index ->
-            ( { model | hoveringIndex = Just index }, cmds )
+            ( { model | mouseOverIndex = Just index }, cmds )
 
         Hint start end ->
             ( { model | hintingIndices = Just ( start, end ) }, cmds )
@@ -688,7 +686,7 @@ hoveredHighlightable model =
 
 isHovered_ :
     { config
-        | hoveringIndex : Maybe Int
+        | mouseOverIndex : Maybe Int
         , hintingIndices : Maybe ( Int, Int )
         , highlightables : List (Highlightable marker)
         , overlaps : Bool
@@ -696,48 +694,50 @@ isHovered_ :
     }
     -> Highlightable marker
     -> Bool
-isHovered_ ({ hoveringIndex, highlightables } as config) highlightable =
-    (hoveringIndex == Just highlightable.index)
+isHovered_ ({ mouseOverIndex } as config) highlightable =
+    (mouseOverIndex == Just highlightable.index)
         || (if config.overlaps then
-                case ( hoveringIndex, config.sorter ) of
-                    ( Just i, Just sorter ) ->
-                        inHoveredGroupForOverlaps i sorter highlightables highlightable
+                case config.sorter of
+                    Just sorter ->
+                        inHoveredGroupForOverlaps config sorter highlightable
 
                     _ ->
                         False
 
             else
-                inHoveredGroupWithoutOverlaps config highlightables highlightable
+                inHoveredGroupWithoutOverlaps config highlightable
            )
 
 
 inHoveredGroupWithoutOverlaps :
-    { config | hoveringIndex : Maybe Int, hintingIndices : Maybe ( Int, Int ) }
-    -> List (Highlightable m)
+    { config
+        | mouseOverIndex : Maybe Int
+        , hintingIndices : Maybe ( Int, Int )
+        , highlightables : List (Highlightable marker)
+    }
     -> Highlightable m
     -> Bool
-inHoveredGroupWithoutOverlaps config highlightables highlightable =
-    highlightables
+inHoveredGroupWithoutOverlaps config highlightable =
+    config.highlightables
         |> buildGroups config
         |> List.filter (List.any (.index >> (==) highlightable.index))
         |> List.head
         |> Maybe.withDefault []
-        |> List.any (.index >> Just >> (==) config.hoveringIndex)
+        |> List.any (.index >> Just >> (==) config.mouseOverIndex)
 
 
 inHoveredGroupForOverlaps :
-    Int
-    -> Sorter m
-    -> List (Highlightable m)
-    -> Highlightable m
+    { config | mouseOverIndex : Maybe Int, highlightables : List (Highlightable marker) }
+    -> Sorter marker
+    -> Highlightable marker
     -> Bool
-inHoveredGroupForOverlaps hoveringIndex sorter highlightables highlightable =
+inHoveredGroupForOverlaps config sorter highlightable =
     let
         byIndex =
             .highlightables
-                >> List.Extra.find (\h -> h.index == hoveringIndex)
+                >> List.Extra.find (\h -> Just h.index == config.mouseOverIndex)
     in
-    case selectShortest byIndex { highlightables = highlightables, sorter = sorter } of
+    case selectShortest byIndex { highlightables = config.highlightables, sorter = sorter } of
         Just marker ->
             List.member marker (List.map .kind highlightable.marked)
 
@@ -811,7 +811,7 @@ view model =
     view_
         { showTagsInline = False
         , maybeTool = Just model.marker
-        , hoveringIndex = model.hoveringIndex
+        , mouseOverIndex = model.mouseOverIndex
         , hintingIndices = model.hintingIndices
         , overlaps = False
         , viewSegment = viewHighlightable { renderMarkdown = False, overlaps = False } model
@@ -827,7 +827,7 @@ viewWithOverlappingHighlights model =
     view_
         { showTagsInline = False
         , maybeTool = Just model.marker
-        , hoveringIndex = model.hoveringIndex
+        , mouseOverIndex = model.mouseOverIndex
         , hintingIndices = model.hintingIndices
         , overlaps = True
         , viewSegment = viewHighlightable { renderMarkdown = False, overlaps = True } model
@@ -849,7 +849,7 @@ viewMarkdown model =
     view_
         { showTagsInline = False
         , maybeTool = Just model.marker
-        , hoveringIndex = model.hoveringIndex
+        , mouseOverIndex = model.mouseOverIndex
         , hintingIndices = model.hintingIndices
         , overlaps = False
         , viewSegment = viewHighlightable { renderMarkdown = True, overlaps = False } model
@@ -865,7 +865,7 @@ static config =
     view_
         { showTagsInline = False
         , maybeTool = Nothing
-        , hoveringIndex = Nothing
+        , mouseOverIndex = Nothing
         , hintingIndices = Nothing
         , overlaps = False
         , viewSegment =
@@ -874,7 +874,7 @@ static config =
                 , focusIndex = Nothing
                 , eventListeners = []
                 , maybeTool = Nothing
-                , hoveringIndex = Nothing
+                , mouseOverIndex = Nothing
                 , hintingIndices = Nothing
                 , renderMarkdown = False
                 , sorter = Nothing
@@ -898,7 +898,7 @@ staticMarkdown config =
     view_
         { showTagsInline = False
         , maybeTool = Nothing
-        , hoveringIndex = Nothing
+        , mouseOverIndex = Nothing
         , hintingIndices = Nothing
         , overlaps = False
         , viewSegment =
@@ -907,7 +907,7 @@ staticMarkdown config =
                 , focusIndex = Nothing
                 , eventListeners = []
                 , maybeTool = Nothing
-                , hoveringIndex = Nothing
+                , mouseOverIndex = Nothing
                 , hintingIndices = Nothing
                 , renderMarkdown = True
                 , sorter = Nothing
@@ -930,7 +930,7 @@ staticWithTags config =
                 , focusIndex = Nothing
                 , eventListeners = []
                 , maybeTool = Nothing
-                , hoveringIndex = Nothing
+                , mouseOverIndex = Nothing
                 , hintingIndices = Nothing
                 , renderMarkdown = False
                 , sorter = Nothing
@@ -940,7 +940,7 @@ staticWithTags config =
     view_
         { showTagsInline = True
         , maybeTool = Nothing
-        , hoveringIndex = Nothing
+        , mouseOverIndex = Nothing
         , hintingIndices = Nothing
         , overlaps = False
         , viewSegment = viewStaticHighlightableWithTags
@@ -967,7 +967,7 @@ staticMarkdownWithTags config =
                 , focusIndex = Nothing
                 , eventListeners = []
                 , maybeTool = Nothing
-                , hoveringIndex = Nothing
+                , mouseOverIndex = Nothing
                 , hintingIndices = Nothing
                 , renderMarkdown = True
                 , sorter = Nothing
@@ -977,7 +977,7 @@ staticMarkdownWithTags config =
     view_
         { showTagsInline = True
         , maybeTool = Nothing
-        , hoveringIndex = Nothing
+        , mouseOverIndex = Nothing
         , hintingIndices = Nothing
         , overlaps = False
         , viewSegment = viewStaticHighlightableWithTags
@@ -992,7 +992,7 @@ staticMarkdownWithTags config =
 buildGroups :
     { model
         | hintingIndices : Maybe ( Int, Int )
-        , hoveringIndex : Maybe Int
+        , mouseOverIndex : Maybe Int
     }
     -> List (Highlightable marker)
     -> List (List (Highlightable marker))
@@ -1004,12 +1004,12 @@ buildGroups model =
 groupHighlightables :
     { model
         | hintingIndices : Maybe ( Int, Int )
-        , hoveringIndex : Maybe Int
+        , mouseOverIndex : Maybe Int
     }
     -> Highlightable marker
     -> Highlightable marker
     -> Bool
-groupHighlightables { hintingIndices, hoveringIndex } x y =
+groupHighlightables { hintingIndices, mouseOverIndex } x y =
     let
         xIsHinted =
             -- x is Hinted
@@ -1022,10 +1022,10 @@ groupHighlightables { hintingIndices, hoveringIndex } x y =
                 |> Maybe.withDefault False
 
         xIsHovered =
-            hoveringIndex == Just x.index
+            mouseOverIndex == Just x.index
 
         yIsHovered =
-            hoveringIndex == Just y.index
+            mouseOverIndex == Just y.index
 
         xAndYHaveTheSameState =
             -- Both are hinted
@@ -1049,7 +1049,7 @@ groupHighlightables { hintingIndices, hoveringIndex } x y =
 view_ :
     { showTagsInline : Bool
     , maybeTool : Maybe (Tool.Tool marker)
-    , hoveringIndex : Maybe Int
+    , mouseOverIndex : Maybe Int
     , hintingIndices : Maybe ( Int, Int )
     , sorter : Maybe (Sorter marker)
     , overlaps : Bool
@@ -1111,7 +1111,7 @@ viewHighlightable :
             | id : String
             , focusIndex : Maybe Int
             , marker : Tool.Tool marker
-            , hoveringIndex : Maybe Int
+            , mouseOverIndex : Maybe Int
             , hintingIndices : Maybe ( Int, Int )
             , sorter : Sorter marker
         }
@@ -1146,7 +1146,7 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                     ]
                 , renderMarkdown = renderMarkdown
                 , maybeTool = Just config.marker
-                , hoveringIndex = config.hoveringIndex
+                , mouseOverIndex = config.mouseOverIndex
                 , hintingIndices = config.hintingIndices
                 , sorter = Just config.sorter
                 , overlaps = overlaps
@@ -1167,7 +1167,7 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                     ]
                 , renderMarkdown = renderMarkdown
                 , maybeTool = Just config.marker
-                , hoveringIndex = config.hoveringIndex
+                , mouseOverIndex = config.mouseOverIndex
                 , hintingIndices = config.hintingIndices
                 , sorter = Just config.sorter
                 , overlaps = overlaps
@@ -1180,7 +1180,7 @@ viewHighlightableSegment :
     , focusIndex : Maybe Int
     , eventListeners : List (Attribute msg)
     , maybeTool : Maybe (Tool.Tool marker)
-    , hoveringIndex : Maybe Int
+    , mouseOverIndex : Maybe Int
     , hintingIndices : Maybe ( Int, Int )
     , renderMarkdown : Bool
     , sorter : Maybe (Sorter marker)
@@ -1229,7 +1229,7 @@ viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners
                         AttributesExtra.none
                , css
                     (Css.focus [ Css.zIndex (Css.int 1), Css.position Css.relative ]
-                        :: highlightableStyle config (\{ index } -> config.hoveringIndex == Just index) highlightable
+                        :: highlightableStyle config (\{ index } -> config.mouseOverIndex == Just index) highlightable
                         ++ markStyles
                     )
                , class "highlighter-highlightable"
@@ -1333,7 +1333,7 @@ highlightableId highlighterId index =
 highlightableStyle :
     { config
         | maybeTool : Maybe (Tool.Tool marker)
-        , hoveringIndex : Maybe Int
+        , mouseOverIndex : Maybe Int
         , hintingIndices : Maybe ( Int, Int )
         , sorter : Maybe (Sorter marker)
         , overlaps : Bool
@@ -1341,7 +1341,7 @@ highlightableStyle :
     -> (Highlightable marker -> Bool)
     -> Highlightable marker
     -> List Css.Style
-highlightableStyle ({ maybeTool, hoveringIndex, hintingIndices } as config) getIsHovered ({ marked } as highlightable) =
+highlightableStyle ({ maybeTool, mouseOverIndex, hintingIndices } as config) getIsHovered ({ marked } as highlightable) =
     let
         isHinted =
             hintingIndices
