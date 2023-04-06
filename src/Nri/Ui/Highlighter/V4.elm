@@ -895,6 +895,7 @@ static config =
                 , renderMarkdown = False
                 , sorter = Nothing
                 , overlaps = False
+                , highlightables = config.highlightables
                 }
         , id = config.id
         , highlightables = config.highlightables
@@ -928,6 +929,7 @@ staticMarkdown config =
                 , renderMarkdown = True
                 , sorter = Nothing
                 , overlaps = False
+                , highlightables = config.highlightables
                 }
         , id = config.id
         , highlightables = config.highlightables
@@ -951,6 +953,7 @@ staticWithTags config =
                 , renderMarkdown = False
                 , sorter = Nothing
                 , overlaps = False
+                , highlightables = config.highlightables
                 }
     in
     view_
@@ -988,6 +991,7 @@ staticMarkdownWithTags config =
                 , renderMarkdown = True
                 , sorter = Nothing
                 , overlaps = False
+                , highlightables = config.highlightables
                 }
     in
     view_
@@ -1126,6 +1130,7 @@ viewHighlightable :
             , mouseOverIndex : Maybe Int
             , hintingIndices : Maybe ( Int, Int )
             , sorter : Sorter marker
+            , highlightables : List (Highlightable marker)
         }
     -> Highlightable marker
     -> List Css.Style
@@ -1162,6 +1167,7 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                 , hintingIndices = config.hintingIndices
                 , sorter = Just config.sorter
                 , overlaps = overlaps
+                , highlightables = config.highlightables
                 }
                 highlightable
 
@@ -1187,6 +1193,7 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                 , hintingIndices = config.hintingIndices
                 , sorter = Just config.sorter
                 , overlaps = overlaps
+                , highlightables = config.highlightables
                 }
                 highlightable
 
@@ -1201,6 +1208,7 @@ viewHighlightableSegment :
     , renderMarkdown : Bool
     , sorter : Maybe (Sorter marker)
     , overlaps : Bool
+    , highlightables : List (Highlightable marker)
     }
     -> Highlightable marker
     -> List Css.Style
@@ -1245,7 +1253,7 @@ viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners
                         AttributesExtra.none
                , css
                     (Css.focus [ Css.zIndex (Css.int 1), Css.position Css.relative ]
-                        :: highlightableStyle config (directlyHoveringInteractiveSegment config) highlightable
+                        :: highlightableStyle config (isHovered_ config) highlightable
                         ++ markStyles
                     )
                , class "highlighter-highlightable"
