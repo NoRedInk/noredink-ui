@@ -546,6 +546,16 @@ performAction action ( model, cmds ) =
             ( { model | selectionStartIndex = Nothing, selectionEndIndex = Nothing }, cmds )
 
 
+isHinted : Maybe ( Int, Int ) -> Highlightable marker -> Bool
+isHinted hintingIndices x =
+    case hintingIndices of
+        Just ( from, to ) ->
+            between from to x
+
+        Nothing ->
+            False
+
+
 between : Int -> Int -> Highlightable marker -> Bool
 between from to { index } =
     if from < to then
@@ -694,8 +704,8 @@ isHovered_ :
     }
     -> Highlightable marker
     -> Bool
-isHovered_ ({ mouseOverIndex } as config) highlightable =
-    (mouseOverIndex == Just highlightable.index)
+isHovered_ config highlightable =
+    directlyHoveringInteractiveSegment config highlightable
         || (if config.overlaps then
                 case config.sorter of
                     Just sorter ->
@@ -707,6 +717,12 @@ isHovered_ ({ mouseOverIndex } as config) highlightable =
             else
                 inHoveredGroupWithoutOverlaps config highlightable
            )
+
+
+directlyHoveringInteractiveSegment : { config | mouseOverIndex : Maybe Int } -> Highlightable m -> Bool
+directlyHoveringInteractiveSegment { mouseOverIndex } highlightable =
+    (mouseOverIndex == Just highlightable.index)
+        && (highlightable.type_ == Highlightable.Interactive)
 
 
 inHoveredGroupWithoutOverlaps :
@@ -1012,14 +1028,10 @@ groupHighlightables :
 groupHighlightables { hintingIndices, mouseOverIndex } x y =
     let
         xIsHinted =
-            -- x is Hinted
-            Maybe.map (\( a, b ) -> between a b x) hintingIndices
-                |> Maybe.withDefault False
+            isHinted hintingIndices x
 
         yIsHinted =
-            -- y is Hinted
-            Maybe.map (\( a, b ) -> between a b y) hintingIndices
-                |> Maybe.withDefault False
+            isHinted hintingIndices y
 
         xIsHovered =
             mouseOverIndex == Just x.index
@@ -1233,7 +1245,7 @@ viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners
                         AttributesExtra.none
                , css
                     (Css.focus [ Css.zIndex (Css.int 1), Css.position Css.relative ]
-                        :: highlightableStyle config (\{ index } -> config.mouseOverIndex == Just index) highlightable
+                        :: highlightableStyle config (directlyHoveringInteractiveSegment config) highlightable
                         ++ markStyles
                     )
                , class "highlighter-highlightable"
@@ -1347,10 +1359,8 @@ highlightableStyle :
     -> List Css.Style
 highlightableStyle ({ maybeTool, mouseOverIndex, hintingIndices } as config) getIsHovered ({ marked } as highlightable) =
     let
-        isHinted =
-            hintingIndices
-                |> Maybe.map (\( a, b ) -> between a b highlightable)
-                |> Maybe.withDefault False
+        isHinted_ =
+            isHinted hintingIndices highlightable
 
         isHovered =
             getIsHovered highlightable
@@ -1369,7 +1379,7 @@ highlightableStyle ({ maybeTool, mouseOverIndex, hintingIndices } as config) get
             [ Css.property "user-select" "none"
             , case List.head marked of
                 Just markedWith ->
-                    if isHinted then
+                    if isHinted_ then
                         Css.batch marker.hintClass
 
                     else if isHovered then
@@ -1381,7 +1391,7 @@ highlightableStyle ({ maybeTool, mouseOverIndex, hintingIndices } as config) get
                         Css.batch markedWith.highlightClass
 
                 Nothing ->
-                    if isHinted then
+                    if isHinted_ then
                         Css.batch marker.hintClass
 
                     else if isHovered then
@@ -1403,7 +1413,7 @@ highlightableStyle ({ maybeTool, mouseOverIndex, hintingIndices } as config) get
                     [ Css.property "user-select" "none"
                     , Css.batch markedWith.highlightClass
                     , Css.batch
-                        (if isHinted then
+                        (if isHinted_ then
                             eraser_.hintClass
 
                          else if isHovered then
