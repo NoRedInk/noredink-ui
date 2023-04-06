@@ -652,15 +652,6 @@ trimHighlightableGroups highlightables =
         |> List.reverse
 
 
-killOnlyStaticHighlights : List (Highlightable marker) -> List (Highlightable marker)
-killOnlyStaticHighlights highlightables =
-    if List.all (\h -> h.type_ == Highlightable.Static) highlightables then
-        removeHighlights_ highlightables
-
-    else
-        highlightables
-
-
 {-| Finds the group indexes of the groups which are in the same highlighting as the group index
 passed in the first argument.
 -}
