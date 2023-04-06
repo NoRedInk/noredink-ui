@@ -697,6 +697,7 @@ hoveredHighlightable model =
 isHovered_ :
     { config
         | mouseOverIndex : Maybe Int
+        , mouseDownIndex : Maybe Int
         , hintingIndices : Maybe ( Int, Int )
         , highlightables : List (Highlightable marker)
         , overlaps : Bool
@@ -743,7 +744,11 @@ inHoveredGroupWithoutOverlaps config highlightable =
 
 
 inHoveredGroupForOverlaps :
-    { config | mouseOverIndex : Maybe Int, highlightables : List (Highlightable marker) }
+    { config
+        | mouseOverIndex : Maybe Int
+        , mouseDownIndex : Maybe Int
+        , highlightables : List (Highlightable marker)
+    }
     -> Sorter marker
     -> Highlightable marker
     -> Bool
@@ -753,12 +758,20 @@ inHoveredGroupForOverlaps config sorter highlightable =
             .highlightables
                 >> List.Extra.find (\h -> Just h.index == config.mouseOverIndex)
     in
-    case selectShortest byIndex { highlightables = config.highlightables, sorter = sorter } of
-        Just marker ->
-            List.member marker (List.map .kind highlightable.marked)
+    case config.mouseDownIndex of
+        Just _ ->
+            -- If the user is actively highlighting, don't show the entire highlighted region as hovered
+            -- This is so that when creating an overlap, the hover styles don't imply that you've
+            -- selected more than you have
+            False
 
         Nothing ->
-            False
+            case selectShortest byIndex { highlightables = config.highlightables, sorter = sorter } of
+                Just marker ->
+                    List.member marker (List.map .kind highlightable.marked)
+
+                Nothing ->
+                    False
 
 
 {-| Highlights can overlap. Sometimes, we want to apply a certain behavior (e.g., hover color change) on just the shortest
@@ -828,6 +841,7 @@ view model =
         { showTagsInline = False
         , maybeTool = Just model.marker
         , mouseOverIndex = model.mouseOverIndex
+        , mouseDownIndex = model.mouseDownIndex
         , hintingIndices = model.hintingIndices
         , overlaps = False
         , viewSegment = viewHighlightable { renderMarkdown = False, overlaps = False } model
@@ -844,6 +858,7 @@ viewWithOverlappingHighlights model =
         { showTagsInline = False
         , maybeTool = Just model.marker
         , mouseOverIndex = model.mouseOverIndex
+        , mouseDownIndex = model.mouseDownIndex
         , hintingIndices = model.hintingIndices
         , overlaps = True
         , viewSegment = viewHighlightable { renderMarkdown = False, overlaps = True } model
@@ -866,6 +881,7 @@ viewMarkdown model =
         { showTagsInline = False
         , maybeTool = Just model.marker
         , mouseOverIndex = model.mouseOverIndex
+        , mouseDownIndex = model.mouseDownIndex
         , hintingIndices = model.hintingIndices
         , overlaps = False
         , viewSegment = viewHighlightable { renderMarkdown = True, overlaps = False } model
@@ -882,6 +898,7 @@ static config =
         { showTagsInline = False
         , maybeTool = Nothing
         , mouseOverIndex = Nothing
+        , mouseDownIndex = Nothing
         , hintingIndices = Nothing
         , overlaps = False
         , viewSegment =
@@ -891,6 +908,7 @@ static config =
                 , eventListeners = []
                 , maybeTool = Nothing
                 , mouseOverIndex = Nothing
+                , mouseDownIndex = Nothing
                 , hintingIndices = Nothing
                 , renderMarkdown = False
                 , sorter = Nothing
@@ -916,6 +934,7 @@ staticMarkdown config =
         { showTagsInline = False
         , maybeTool = Nothing
         , mouseOverIndex = Nothing
+        , mouseDownIndex = Nothing
         , hintingIndices = Nothing
         , overlaps = False
         , viewSegment =
@@ -925,6 +944,7 @@ staticMarkdown config =
                 , eventListeners = []
                 , maybeTool = Nothing
                 , mouseOverIndex = Nothing
+                , mouseDownIndex = Nothing
                 , hintingIndices = Nothing
                 , renderMarkdown = True
                 , sorter = Nothing
@@ -949,6 +969,7 @@ staticWithTags config =
                 , eventListeners = []
                 , maybeTool = Nothing
                 , mouseOverIndex = Nothing
+                , mouseDownIndex = Nothing
                 , hintingIndices = Nothing
                 , renderMarkdown = False
                 , sorter = Nothing
@@ -960,6 +981,7 @@ staticWithTags config =
         { showTagsInline = True
         , maybeTool = Nothing
         , mouseOverIndex = Nothing
+        , mouseDownIndex = Nothing
         , hintingIndices = Nothing
         , overlaps = False
         , viewSegment = viewStaticHighlightableWithTags
@@ -987,6 +1009,7 @@ staticMarkdownWithTags config =
                 , eventListeners = []
                 , maybeTool = Nothing
                 , mouseOverIndex = Nothing
+                , mouseDownIndex = Nothing
                 , hintingIndices = Nothing
                 , renderMarkdown = True
                 , sorter = Nothing
@@ -998,6 +1021,7 @@ staticMarkdownWithTags config =
         { showTagsInline = True
         , maybeTool = Nothing
         , mouseOverIndex = Nothing
+        , mouseDownIndex = Nothing
         , hintingIndices = Nothing
         , overlaps = False
         , viewSegment = viewStaticHighlightableWithTags
@@ -1066,6 +1090,7 @@ view_ :
     { showTagsInline : Bool
     , maybeTool : Maybe (Tool.Tool marker)
     , mouseOverIndex : Maybe Int
+    , mouseDownIndex : Maybe Int
     , hintingIndices : Maybe ( Int, Int )
     , sorter : Maybe (Sorter marker)
     , overlaps : Bool
@@ -1128,6 +1153,7 @@ viewHighlightable :
             , focusIndex : Maybe Int
             , marker : Tool.Tool marker
             , mouseOverIndex : Maybe Int
+            , mouseDownIndex : Maybe Int
             , hintingIndices : Maybe ( Int, Int )
             , sorter : Sorter marker
             , highlightables : List (Highlightable marker)
@@ -1164,6 +1190,7 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                 , renderMarkdown = renderMarkdown
                 , maybeTool = Just config.marker
                 , mouseOverIndex = config.mouseOverIndex
+                , mouseDownIndex = config.mouseDownIndex
                 , hintingIndices = config.hintingIndices
                 , sorter = Just config.sorter
                 , overlaps = overlaps
@@ -1190,6 +1217,7 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                 , renderMarkdown = renderMarkdown
                 , maybeTool = Just config.marker
                 , mouseOverIndex = config.mouseOverIndex
+                , mouseDownIndex = config.mouseDownIndex
                 , hintingIndices = config.hintingIndices
                 , sorter = Just config.sorter
                 , overlaps = overlaps
@@ -1204,6 +1232,7 @@ viewHighlightableSegment :
     , eventListeners : List (Attribute msg)
     , maybeTool : Maybe (Tool.Tool marker)
     , mouseOverIndex : Maybe Int
+    , mouseDownIndex : Maybe Int
     , hintingIndices : Maybe ( Int, Int )
     , renderMarkdown : Bool
     , sorter : Maybe (Sorter marker)
