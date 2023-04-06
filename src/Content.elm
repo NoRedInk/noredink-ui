@@ -53,7 +53,7 @@ markdownContent content =
         |> List.map fromUnstyled
 
 
-{-| Provide a string that will be rendered as markdown and placed in a paragraph tag, with the default margin removed.
+{-| Provide a string that will be rendered as inline markdown, with the default wrapping paragraph removed.
 -}
 markdownInline : String -> List (Html msg)
 markdownInline content =
