@@ -21,12 +21,61 @@ import Test.Html.Selector as Selector exposing (Selector)
 spec : Test
 spec =
     describe "Nri.Ui.Highlighter"
-        [ describe "keyboard behavior" keyboardTests
+        [ describe "mouse behavior" mouseTests
+        , describe "keyboard behavior" keyboardTests
         , describe "markdown highlightable behavior" markdownContentTests
         , describe "markdown highlight name behavior" markdownHighlightNameTests
         , describe "joinAdjacentInteractiveHighlights" joinAdjacentInteractiveHighlightsTests
         , describe "overlapping highlights" overlappingHighlightTests
         ]
+
+
+mouseTests : List Test
+mouseTests =
+    [ test "clicking on a static element does nothing" <|
+        \() ->
+            [ Highlightable.init Highlightable.Static [] 0 ( [], "Pothos" )
+            , Highlightable.init Highlightable.Interactive [] 1 ( [], "Philodendron" )
+            ]
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> click "Pothos"
+                |> noneMarked
+                |> done
+    , test "ending a highlight on a static element works" <|
+        \() ->
+            [ Highlightable.init Highlightable.Static [] 0 ( [], "Pothos" )
+            , Highlightable.init Highlightable.Interactive [] 1 ( [], "Philodendron" )
+            ]
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> mouseDown "Philodendron"
+                |> mouseUp "Pothos"
+                |> ensureNotMarked "Pothos"
+                |> ensureMarked [ "Philodendron" ]
+                |> done
+    , test "static element before a highlight cannot be highlighted" <|
+        \() ->
+            [ Highlightable.init Highlightable.Static [] 0 ( [], "Pothos" )
+            , Highlightable.init Highlightable.Interactive [] 1 ( [], "Philodendron" )
+            ]
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> click "Philodendron"
+                |> click "Pothos"
+                |> ensureNotMarked "Pothos"
+                |> ensureMarked [ "Philodendron" ]
+                |> done
+    , test "static element after a highlight cannot be highlighted" <|
+        \() ->
+            [ Highlightable.init Highlightable.Interactive [] 0 ( [], "Philodendron" )
+            , Highlightable.init Highlightable.Static [] 1 ( [], "Pothos" )
+            ]
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> click "Philodendron"
+                |> ensureMarked [ "Philodendron" ]
+                |> click "Pothos"
+                |> ensureNotMarked "Pothos"
+                |> ensureMarked [ "Philodendron" ]
+                |> done
+    ]
 
 
 keyboardTests : List Test
@@ -414,6 +463,16 @@ ensureOnlyOneInTabSequence words testContext =
             (Query.findAll [ Selector.attribute (Key.tabbable False) ]
                 >> Query.count (Expect.equal (List.length words - 1))
             )
+
+
+ensureNotMarked : String -> TestContext -> TestContext
+ensureNotMarked name =
+    ensureViewHasNot
+        [ Selector.all
+            [ Selector.tag "mark"
+            , Selector.containing [ Selector.text name ]
+            ]
+        ]
 
 
 ensureMarked : List String -> TestContext -> TestContext

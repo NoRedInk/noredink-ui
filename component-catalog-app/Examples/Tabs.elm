@@ -21,7 +21,10 @@ import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
+import List.Extra
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Message.V3 as Message
+import Nri.Ui.Panel.V1 as Panel
 import Nri.Ui.Tabs.V8 as Tabs exposing (Alignment(..), Tab)
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
@@ -107,7 +110,11 @@ example =
                     Control.currentValue model.settings
 
                 tabs =
-                    allTabs model.openTooltip settings.withTooltips
+                    allTabs
+                        { openTooltipId = model.openTooltip
+                        , withTooltips = settings.withTooltips
+                        , pageBackgroundColor = settings.pageBackgroundColor
+                        }
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -131,7 +138,7 @@ example =
                                         [ Just (moduleName ++ ".alignment " ++ moduleName ++ "." ++ Debug.toString settings.alignment)
                                         , Maybe.map (\title -> moduleName ++ ".title " ++ Code.string title) settings.title
                                         , Maybe.map (\spacing -> moduleName ++ ".spacing " ++ String.fromFloat spacing) settings.customSpacing
-                                        , Maybe.map (\color -> moduleName ++ ".pageBackgroundColor" ++ colorToCode color) settings.pageBackgroundColor
+                                        , Maybe.map (\color -> moduleName ++ ".pageBackgroundColor " ++ colorToCode color) settings.pageBackgroundColor
                                         , Maybe.map
                                             (\sticky ->
                                                 case sticky of
@@ -161,40 +168,73 @@ example =
                           }
                         ]
                 }
-            , Tabs.view
-                { focusAndSelect = FocusAndSelectTab
-                , selected = model.selected
-                }
-                (List.filterMap identity
-                    [ Just (Tabs.alignment settings.alignment)
-                    , Maybe.map Tabs.title settings.title
-                    , Maybe.map Tabs.spacing settings.customSpacing
-                    , Maybe.map (Tabs.pageBackgroundColor << colorToCss) settings.pageBackgroundColor
-                    , Maybe.map
-                        (\stickiness ->
-                            case stickiness of
-                                Default ->
-                                    Tabs.tabListSticky
+            , Html.div
+                [ css
+                    [ Css.padding (Css.px 20)
+                    , case settings.pageBackgroundColor of
+                        Nothing ->
+                            Css.batch []
 
-                                Custom stickyConfig ->
-                                    Tabs.tabListStickyCustom stickyConfig
-                        )
-                        settings.stickiness
+                        Just color ->
+                            Css.backgroundColor (colorToCss color)
                     ]
-                )
-                (List.map Tuple.second tabs)
+                ]
+                [ case settings.pageBackgroundColor of
+                    Nothing ->
+                        Html.text ""
+
+                    Just _ ->
+                        Message.view
+                            [ Message.tip
+                            , Message.plaintext "Container and tab panel background adjusted to match pageBackgroundColor. Note that the component won't do this for you automatically!"
+                            , Message.css [ Css.marginBottom (Css.px 20) ]
+                            ]
+                , Tabs.view
+                    { focusAndSelect = FocusAndSelectTab
+                    , selected = model.selected
+                    }
+                    (List.filterMap identity
+                        [ Just (Tabs.alignment settings.alignment)
+                        , Maybe.map Tabs.title settings.title
+                        , Maybe.map Tabs.spacing settings.customSpacing
+                        , Maybe.map (Tabs.pageBackgroundColor << colorToCss) settings.pageBackgroundColor
+                        , Maybe.map
+                            (\stickiness ->
+                                case stickiness of
+                                    Default ->
+                                        Tabs.tabListSticky
+
+                                    Custom stickyConfig ->
+                                        Tabs.tabListStickyCustom stickyConfig
+                            )
+                            settings.stickiness
+                        ]
+                    )
+                    (List.map Tuple.second tabs)
+                ]
             ]
     }
 
 
-allTabs : Maybe Int -> Bool -> List ( String, Tab Int Msg )
-allTabs openTooltipId withTooltips =
+allTabs :
+    { openTooltipId : Maybe Int
+    , withTooltips : Bool
+    , pageBackgroundColor : Maybe Color
+    }
+    -> List ( String, Tab Int Msg )
+allTabs config =
     List.repeat 4 ()
-        |> List.indexedMap (\i _ -> buildTooltip openTooltipId withTooltips i)
+        |> List.indexedMap (\i _ -> buildTab config i)
 
 
-buildTooltip : Maybe Int -> Bool -> Int -> ( String, Tab Int Msg )
-buildTooltip openTooltipId withTooltips id =
+buildTab :
+    { openTooltipId : Maybe Int
+    , withTooltips : Bool
+    , pageBackgroundColor : Maybe Color
+    }
+    -> Int
+    -> ( String, Tab Int Msg )
+buildTab config id =
     let
         idString =
             String.fromInt (id + 1)
@@ -212,13 +252,13 @@ buildTooltip openTooltipId withTooltips id =
         [ "Tabs.build { id = " ++ String.fromInt id ++ ", idString = " ++ Code.string tabIdString ++ " }"
         , "\n\t    [ Tabs.tabString " ++ Code.string tabName
         , "\n\t    , Tabs.panelHtml (text " ++ Code.string panelName ++ ")"
-        , if withTooltips then
+        , if config.withTooltips then
             String.join "\n\t    "
                 [ "\n\t    , Tabs.withTooltip"
                 , "   [ Tooltip.plaintext " ++ Code.string tabName
                 , "    -- You will need to have a tooltip handler"
                 , "    -- , Tooltip.onToggle ToggleTooltip " ++ ""
-                , "   , Tooltip.open " ++ Code.bool (openTooltipId == Just id)
+                , "   , Tooltip.open " ++ Code.bool (config.openTooltipId == Just id)
                 , "   ]"
                 ]
 
@@ -228,19 +268,13 @@ buildTooltip openTooltipId withTooltips id =
         ]
     , Tabs.build { id = id, idString = tabIdString }
         ([ Tabs.tabString tabName
-         , panelName
-            |> List.repeat 50
-            |> String.join "\n"
-            |> Html.text
-            |> List.singleton
-            |> Html.pre []
-            |> Tabs.panelHtml
+         , Tabs.panelHtml (panelContent config.pageBackgroundColor id panelName)
          ]
-            ++ (if withTooltips then
+            ++ (if config.withTooltips then
                     [ Tabs.withTooltip
                         [ Tooltip.plaintext tabName
                         , Tooltip.onToggle (ToggleTooltip id)
-                        , Tooltip.open (openTooltipId == Just id)
+                        , Tooltip.open (config.openTooltipId == Just id)
                         ]
                     ]
 
@@ -249,6 +283,43 @@ buildTooltip openTooltipId withTooltips id =
                )
         )
     )
+
+
+panelContent : Maybe Color -> Int -> String -> Html.Html msg
+panelContent pageBackgroundColor_ id panelName =
+    let
+        pangrams =
+            -- cycle panels so that panel contents change when changing tabs
+            -- without getting too creative :-D
+            [ ( "The one about the fox"
+              , "The quick brown fox jumps over the lazy dog."
+              )
+            , ( "The one about the wizards"
+              , "The five boxing wizards jump quickly."
+              )
+            , ( "The one about the zebras"
+              , "How quickly daft jumping zebras vex!"
+              )
+            , ( "The one about the sphinxes"
+              , "Sphinx of black quartz, judge my vow."
+              )
+            ]
+                |> List.Extra.splitAt id
+                |> (\( beforeSplit, afterSplit ) -> afterSplit ++ beforeSplit)
+    in
+    Html.div []
+        (List.concat
+            [ List.map
+                (\( title, content ) ->
+                    Panel.view
+                        [ Panel.header title
+                        , Panel.paragraph content
+                        , Panel.containerCss [ Css.margin2 (Css.px 10) Css.zero ]
+                        ]
+                )
+                pangrams
+            ]
+        )
 
 
 type alias State =
@@ -288,7 +359,7 @@ colorToCss color =
             Colors.white
 
         Gray ->
-            Colors.gray92
+            Colors.gray96
 
 
 colorToCode : Color -> String
@@ -298,7 +369,7 @@ colorToCode color =
             "Colors.white"
 
         Gray ->
-            "Colors.gray92"
+            "Colors.gray96"
 
 
 type Stickiness
