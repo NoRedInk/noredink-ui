@@ -161,6 +161,7 @@ view { label, id } attrs =
             [ Css.display Css.inlineFlex
             , Css.alignItems Css.center
             , Css.position Css.relative
+            , Css.fontSize (Css.px 15)
             , Css.pseudoClass "focus-within"
                 [ Global.descendants
                     [ Global.class "switch-track"

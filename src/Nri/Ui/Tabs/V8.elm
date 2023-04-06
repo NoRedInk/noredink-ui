@@ -15,6 +15,7 @@ module Nri.Ui.Tabs.V8 exposing
   - Uses an HTML-like API
   - Adds sticky positioning
   - Adds background color in the tab list (for use with sticky positioning)
+  - Adds the ability to make the background of the active tab fade into the background of the panel below it
 
 
 ### Attributes
@@ -171,9 +172,16 @@ spacing spacing_ =
     Attribute (\config -> { config | spacing = Just spacing_ })
 
 
-{-| Tell this tab list about the background color of the page it lievs on. This
-is mostly useful when setting up sticky headers, to prevent page content from
-showing through the background.
+{-| Tell this tab list about the background color of the page it lievs on.
+
+You may want to use this if, for example:
+
+  - you are setting up sticky headers, to prevent page content from showing
+    through the background.
+
+  - you are using tabs in a page that has non-white background, so the
+    background of the active tab fades into the panel below it.
+
 -}
 pageBackgroundColor : Css.Color -> Attribute id msg
 pageBackgroundColor color =
@@ -261,7 +269,10 @@ view { focusAndSelect, selected } attrs tabs =
                 { focusAndSelect = focusAndSelect
                 , selected = selected
                 , tabs = List.map (\(Tab t) -> t) tabs
-                , tabStyles = tabStyles config.spacing
+                , tabStyles =
+                    tabStyles
+                        config.spacing
+                        (Maybe.withDefault Colors.white config.pageBackgroundColor)
                 , tabListStyles = stylesTabsAligned config
                 }
     in
@@ -360,15 +371,20 @@ maybeStyle styler maybeValue =
             Css.batch []
 
 
-tabStyles : Maybe Float -> Int -> Bool -> List Style
-tabStyles customSpacing index isSelected =
+tabStyles : Maybe Float -> Css.Color -> Int -> Bool -> List Style
+tabStyles customSpacing pageBackgroundColor_ index isSelected =
     let
         stylesDynamic =
             if isSelected then
-                [ Css.backgroundColor Colors.white
-                , Css.borderBottom (Css.px 1)
+                [ Css.borderBottom (Css.px 1)
                 , Css.borderBottomStyle Css.solid
-                , Css.borderBottomColor Colors.white
+                , Css.backgroundColor Colors.white
+                , Css.borderBottomColor pageBackgroundColor_
+                , Css.backgroundImage <|
+                    Css.linearGradient2 Css.toTop
+                        (Css.stop2 (withAlpha 1 pageBackgroundColor_) (Css.pct 0))
+                        (Css.stop2 (withAlpha 0 pageBackgroundColor_) (Css.pct 100))
+                        []
                 ]
 
             else
