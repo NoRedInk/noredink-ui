@@ -312,7 +312,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
             , css
                 [ position relative
                 , Css.marginLeft (Css.px -2)
-                , Css.paddingLeft (Css.px 30)
+                , Css.paddingLeft (Css.px 38)
                 , Css.paddingTop (px 6)
                 , Css.paddingBottom (px 4)
                 , display inlineBlock
@@ -384,6 +384,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                     , display inlineBlock
                     , Css.property "transition" "all 0.4s ease"
                     , paddingLeft (px 8)
+                    , marginLeft (px -8)
                     ]
                 ]
                 [ radioInputIcon

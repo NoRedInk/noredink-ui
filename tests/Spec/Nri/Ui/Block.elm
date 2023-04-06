@@ -1,11 +1,13 @@
 module Spec.Nri.Ui.Block exposing (spec)
 
+import Accessibility.Aria as Aria
 import Browser.Dom exposing (Element)
 import Dict
 import Expect
 import Html.Attributes as Attributes
 import Html.Styled
 import Nri.Ui.Block.V4 as Block
+import Spec.PseudoElements exposing (hasAfter, hasBefore)
 import Test exposing (..)
 import Test.Html.Query as Query
 import Test.Html.Selector as Selector
@@ -16,6 +18,7 @@ spec =
     describe "Nri.Ui.Block.V4"
         [ describe "content" contentSpec
         , describe "labelId" labelIdSpec
+        , describe "labelMarkdown" labelMarkdownSpec
         , describe "getLabelPositions" getLabelPositionsSpec
         ]
 
@@ -91,6 +94,45 @@ labelIdSpec =
                 |> toQuery
                 |> Query.findAll [ Selector.attribute (Attributes.id "yo-id") ]
                 |> Query.count (Expect.equal 1)
+    ]
+
+
+labelMarkdownSpec : List Test
+labelMarkdownSpec =
+    [ test "An emphasized word with a markdown label" <|
+        \_ ->
+            [ Block.plaintext "Hello there"
+            , Block.emphasize
+            , Block.labelId "yo-id"
+            , Block.label "This **is** markdown"
+            ]
+                |> toQuery
+                |> Expect.all
+                    [ -- The rendered markdown label content should be in a paragraph tag.
+                      -- It should be hidden from SR users, since the label information
+                      -- is conveyed another way.
+                      Query.has
+                        [ Selector.attribute (Aria.hidden True)
+                        , Selector.containing
+                            [ Selector.text "This "
+                            ]
+                        , Selector.containing
+                            [ Selector.tag "strong"
+                            , Selector.text "is"
+                            ]
+                        , Selector.containing
+                            [ Selector.text " markdown"
+                            ]
+                        ]
+
+                    -- The before and after elements that convey the mark type to AT users
+                    -- should not include markdown (e.g., no asterisks)
+                    , hasBefore "start This is markdown" "Hello"
+                    , hasAfter "end This is markdown" "there"
+
+                    -- The roledescription should also not include markdown special characters
+                    , Query.has [ Selector.attribute (Aria.roleDescription "This is markdown highlight") ]
+                    ]
     ]
 
 

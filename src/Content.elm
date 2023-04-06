@@ -6,6 +6,8 @@ import Css
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Markdown
+import Markdown.Block
+import Markdown.Inline
 
 
 {-| Provide a plain-text string.
@@ -49,6 +51,20 @@ markdownContent :
 markdownContent content =
     Markdown.toHtml Nothing content
         |> List.map fromUnstyled
+
+
+{-| Provide a string that will be rendered as inline markdown, with the default wrapping paragraph removed.
+-}
+markdownInline : String -> List (Html msg)
+markdownInline content =
+    case Markdown.Block.parse Nothing content of
+        [ Markdown.Block.Paragraph _ inlines ] ->
+            -- The library always parses into a paragraph and never into `PlainInline`
+            List.map (Markdown.Inline.toHtml >> fromUnstyled) inlines
+
+        _ ->
+            Markdown.toHtml Nothing content
+                |> List.map fromUnstyled
 
 
 {-| Provide a list of custom HTML.
