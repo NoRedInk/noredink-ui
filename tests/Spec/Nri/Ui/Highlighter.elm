@@ -34,8 +34,8 @@ mouseTests : List Test
 mouseTests =
     [ test "clicking on a static element does nothing" <|
         \() ->
-            [ Highlightable.init Highlightable.Static [] 0 ( [], "Pothos" )
-            , Highlightable.init Highlightable.Interactive [] 1 ( [], "Philodendron" )
+            [ Highlightable.initStatic [] 0 "Pothos"
+            , Highlightable.initInteractive [] 1 "Philodendron"
             ]
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> click "Pothos"
@@ -43,8 +43,8 @@ mouseTests =
                 |> done
     , test "ending a highlight on a static element works" <|
         \() ->
-            [ Highlightable.init Highlightable.Static [] 0 ( [], "Pothos" )
-            , Highlightable.init Highlightable.Interactive [] 1 ( [], "Philodendron" )
+            [ Highlightable.initStatic [] 0 "Pothos"
+            , Highlightable.initInteractive [] 1 "Philodendron"
             ]
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> mouseDown "Philodendron"
@@ -54,8 +54,8 @@ mouseTests =
                 |> done
     , test "static element before a highlight cannot be highlighted" <|
         \() ->
-            [ Highlightable.init Highlightable.Static [] 0 ( [], "Pothos" )
-            , Highlightable.init Highlightable.Interactive [] 1 ( [], "Philodendron" )
+            [ Highlightable.initStatic [] 0 "Pothos"
+            , Highlightable.initInteractive [] 1 "Philodendron"
             ]
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> click "Philodendron"
@@ -65,8 +65,8 @@ mouseTests =
                 |> done
     , test "static element after a highlight cannot be highlighted" <|
         \() ->
-            [ Highlightable.init Highlightable.Interactive [] 0 ( [], "Philodendron" )
-            , Highlightable.init Highlightable.Static [] 1 ( [], "Pothos" )
+            [ Highlightable.initInteractive [] 0 "Philodendron"
+            , Highlightable.initStatic [] 1 "Pothos"
             ]
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> click "Philodendron"
