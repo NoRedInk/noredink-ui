@@ -12,6 +12,7 @@ module Nri.Ui.Mark.V2 exposing
   - change how the start styles are attached when there is not an explicit tag to show in order to reduce how often the starting highlight ends up isolated on its own line
   - add viewWithOverlaps
   - ensure that view and viewWithInlineTags never leave the starting styles isolated on their own line
+  - markdown is now supported for the mark name
 
 @docs Mark
 @docs view, viewWithInlineTags, viewWithBalloonTags
@@ -21,10 +22,13 @@ module Nri.Ui.Mark.V2 exposing
 
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style exposing (invisibleStyle)
+import Content
 import Css exposing (Color, Style)
 import Css.Global
 import Html.Styled as Html exposing (Html, span)
 import Html.Styled.Attributes exposing (class, css)
+import Markdown.Block
+import Markdown.Inline
 import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
@@ -206,7 +210,7 @@ markedWithBalloonStyles marked lastIndex index =
             Css.after
                 [ cssContent
                     ("end "
-                        ++ (Maybe.map (\name -> name) marked.name
+                        ++ (Maybe.map (\name -> stripMarkdownSyntax name) marked.name
                                 |> Maybe.withDefault "highlight"
                            )
                     )
@@ -273,7 +277,7 @@ viewMarkedByBalloon :
 viewMarkedByBalloon config markedWith segments =
     Html.mark
         [ markedWith.name
-            |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
+            |> Maybe.map (\name -> Aria.roleDescription (stripMarkdownSyntax name ++ " highlight"))
             |> Maybe.withDefault AttributesExtra.none
         , css [ Css.backgroundColor Css.transparent, Css.position Css.relative ]
         ]
@@ -295,14 +299,14 @@ viewMarked : TagStyle -> Mark -> List (Html msg) -> Html msg
 viewMarked tagStyle markedWith segments =
     Html.mark
         [ markedWith.name
-            |> Maybe.map (\name -> Aria.roleDescription (name ++ " highlight"))
+            |> Maybe.map (\name -> Aria.roleDescription (stripMarkdownSyntax name ++ " highlight"))
             |> Maybe.withDefault AttributesExtra.none
         , css
             [ Css.backgroundColor Css.transparent
             , Css.Global.children
                 [ Css.Global.selector ":last-child"
                     (Css.after
-                        [ Css.property "content" ("\" end " ++ (Maybe.map (\name -> name) markedWith.name |> Maybe.withDefault "highlight") ++ " \"")
+                        [ Css.property "content" ("\" end " ++ (Maybe.map (\name -> stripMarkdownSyntax name) markedWith.name |> Maybe.withDefault "highlight") ++ " \"")
                         , invisibleStyle
                         ]
                         :: markedWith.endStyles
@@ -416,7 +420,7 @@ highlightDescription : String -> List Mark -> String
 highlightDescription prefix marks =
     let
         names =
-            String.Extra.toSentenceOxford (List.filterMap .name marks)
+            String.Extra.toSentenceOxford (List.filterMap (.name >> Maybe.map stripMarkdownSyntax) marks)
     in
     if names == "" then
         prefix ++ " highlight"
@@ -472,7 +476,7 @@ viewInlineTag customizations name =
           -- highlighter to screenreaders, so the visual label is redundant
           Aria.hidden True
         ]
-        [ Html.text name ]
+        (Content.markdownInline name)
 
 
 viewBalloon :
@@ -544,7 +548,7 @@ viewBalloon config label =
 
             Nothing ->
                 Balloon.css []
-        , Balloon.plaintext label
+        , Balloon.markdown label
         , case config.labelId of
             Just id_ ->
                 Balloon.id id_
@@ -586,3 +590,13 @@ viewBalloonSpacer config =
             ]
             [ Html.text "()" ]
         ]
+
+
+stripMarkdownSyntax : String -> String
+stripMarkdownSyntax markdown =
+    case Markdown.Block.parse Nothing markdown of
+        [ Markdown.Block.Paragraph _ inlines ] ->
+            Markdown.Inline.extractText inlines
+
+        _ ->
+            markdown
