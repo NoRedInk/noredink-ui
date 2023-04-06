@@ -22,6 +22,7 @@ module Nri.Ui.SortableTable.V4 exposing
 import Accessibility.Styled.Aria as Aria
 import Css exposing (..)
 import Css.Global
+import Css.Media
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events
@@ -30,6 +31,7 @@ import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 exposing (maybe)
 import Nri.Ui.Html.V3 exposing (viewJust)
+import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1
 import Nri.Ui.Table.V7 as Table exposing (SortDirection(..))
 import Nri.Ui.UiIcon.V1
@@ -104,12 +106,15 @@ defaultStickyConfig =
 
 stickyConfigStyles : StickyConfig -> List Style
 stickyConfigStyles { topOffset, zIndex, pageBackgroundColor } =
-    [ Css.Global.children
-        [ Css.Global.thead
-            [ Css.position Css.sticky
-            , Css.top (Css.px topOffset)
-            , Css.zIndex (Css.int zIndex)
-            , Css.backgroundColor pageBackgroundColor
+    [ Css.Media.withMedia
+        [ MediaQuery.notMobile ]
+        [ Css.Global.children
+            [ Css.Global.thead
+                [ Css.position Css.sticky
+                , Css.top (Css.px topOffset)
+                , Css.zIndex (Css.int zIndex)
+                , Css.backgroundColor pageBackgroundColor
+                ]
             ]
         ]
     ]
