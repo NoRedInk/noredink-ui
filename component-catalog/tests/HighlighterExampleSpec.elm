@@ -1,10 +1,10 @@
 module HighlighterExampleSpec exposing (suite)
 
 import Examples.Highlighter exposing (Msg, State, example)
+import MouseHelpers
 import ProgramTest exposing (..)
+import PseudoElements exposing (hasAfter, hasBefore)
 import Routes exposing (Route)
-import Spec.MouseHelpers as MouseHelpers
-import Spec.PseudoElements exposing (hasAfter, hasBefore)
 import Test exposing (..)
 import Test.Html.Selector exposing (..)
 import TestApp exposing (app)
