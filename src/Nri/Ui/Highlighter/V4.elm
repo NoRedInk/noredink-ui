@@ -686,6 +686,31 @@ hoveredHighlightable model =
     Maybe.andThen (\i -> Highlightable.byId i model.highlightables) model.mouseOverIndex
 
 
+isHovered_ :
+    { config
+        | hoveringIndex : Maybe Int
+        , hintingIndices : Maybe ( Int, Int )
+        , highlightables : List (Highlightable marker)
+        , overlaps : Bool
+        , sorter : Maybe (Sorter marker)
+    }
+    -> Highlightable marker
+    -> Bool
+isHovered_ ({ hoveringIndex, highlightables } as config) highlightable =
+    (hoveringIndex == Just highlightable.index)
+        || (if config.overlaps then
+                case ( hoveringIndex, config.sorter ) of
+                    ( Just i, Just sorter ) ->
+                        inHoveredGroupForOverlaps i sorter highlightables highlightable
+
+                    _ ->
+                        False
+
+            else
+                inHoveredGroupWithoutOverlaps config highlightables highlightable
+           )
+
+
 inHoveredGroupWithoutOverlaps :
     { config | hoveringIndex : Maybe Int, hintingIndices : Maybe ( Int, Int ) }
     -> List (Highlightable m)
@@ -709,7 +734,8 @@ inHoveredGroupForOverlaps :
 inHoveredGroupForOverlaps hoveringIndex sorter highlightables highlightable =
     let
         byIndex =
-            .highlightables >> List.Extra.find (\h -> h.index == hoveringIndex)
+            .highlightables
+                >> List.Extra.find (\h -> h.index == hoveringIndex)
     in
     case selectShortest byIndex { highlightables = highlightables, sorter = sorter } of
         Just marker ->
@@ -1038,7 +1064,7 @@ view_ config =
         toMark highlightable marker =
             { name = marker.name
             , startStyles = marker.startGroupClass
-            , styles = highlightableStyle config config.highlightables highlightable
+            , styles = highlightableStyle config (isHovered_ config) highlightable
             , endStyles = marker.endGroupClass
             }
 
@@ -1203,7 +1229,7 @@ viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners
                         AttributesExtra.none
                , css
                     (Css.focus [ Css.zIndex (Css.int 1), Css.position Css.relative ]
-                        :: highlightableStyle config [] highlightable
+                        :: highlightableStyle config (\{ index } -> config.hoveringIndex == Just index) highlightable
                         ++ markStyles
                     )
                , class "highlighter-highlightable"
@@ -1312,10 +1338,10 @@ highlightableStyle :
         , sorter : Maybe (Sorter marker)
         , overlaps : Bool
     }
-    -> List (Highlightable marker)
+    -> (Highlightable marker -> Bool)
     -> Highlightable marker
     -> List Css.Style
-highlightableStyle ({ maybeTool, hoveringIndex, hintingIndices } as config) highlightables ({ marked } as highlightable) =
+highlightableStyle ({ maybeTool, hoveringIndex, hintingIndices } as config) getIsHovered ({ marked } as highlightable) =
     let
         isHinted =
             hintingIndices
@@ -1323,19 +1349,7 @@ highlightableStyle ({ maybeTool, hoveringIndex, hintingIndices } as config) high
                 |> Maybe.withDefault False
 
         isHovered =
-            hoveringIndex
-                == Just highlightable.index
-                || (if config.overlaps then
-                        case ( hoveringIndex, config.sorter ) of
-                            ( Just i, Just sorter ) ->
-                                inHoveredGroupForOverlaps i sorter highlightables highlightable
-
-                            _ ->
-                                False
-
-                    else
-                        inHoveredGroupWithoutOverlaps config highlightables highlightable
-                   )
+            getIsHovered highlightable
     in
     case maybeTool of
         Nothing ->

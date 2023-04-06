@@ -430,7 +430,7 @@ init =
             , highlightables = Highlightable.initFragments "Letter grades have a variety of effects on students. Alfie Kohn, an American author who specializes in education issues, explains that students who are graded “tend to lose interest in the learning itself [and] avoid challenging tasks whenever possible.” Kohn’s argument illustrates how letter grades can become a source of stress for students and distract them from the joys of learning."
             , marker = Tool.Marker (inlineCommentMarker "Comment 1")
             , sorter = Sort.alphabetical
-            , joinAdjacentInteractiveHighlights = False
+            , joinAdjacentInteractiveHighlights = True
             }
     , overlappingHighlightsIndex = 1
     }
