@@ -9,7 +9,11 @@ module Nri.Ui.Highlighter.V3 exposing
     , clickedHighlightable, hoveredHighlightable
     )
 
-{-| Changes from V2:
+{-| Patch changes:
+
+  - fixed :bug: where clicking on a static space would cause the space to be marked
+
+Changes from V2:
 
   - support overlapping highlights (by way of removing the underlying mark element)
   - move asFragmentTuples, usedMarkers, and text to the Highlightable module
@@ -576,6 +580,7 @@ saveHinted marker =
                 _ ->
                     Highlightable.clearHint highlightable
         )
+        >> trimHighlightableGroups
 
 
 toggleHinted : Int -> Tool.MarkerModel marker -> List (Highlightable marker) -> List (Highlightable marker)
@@ -598,6 +603,53 @@ toggleHinted index marker highlightables =
                 highlightable
     in
     List.map (toggle >> Highlightable.clearHint) highlightables
+        |> trimHighlightableGroups
+
+
+{-| This removes all-static highlights. We need to track events on static elements,
+so that we don't miss mouse events if a user starts or ends a highlight on a space, say,
+but we should only persist changes to interactive segments.
+
+It is meant to be called as a clean up after the highlightings have been changed.
+
+-}
+trimHighlightableGroups : List (Highlightable marker) -> List (Highlightable marker)
+trimHighlightableGroups highlightables =
+    let
+        apply segment ( lastInteractiveHighlighterMarkers, staticAcc, acc ) =
+            -- logic largely borrowed from joinAdjacentInteractiveHighlights.
+            -- TODO in the next version: clean up the implementation!
+            case segment.type_ of
+                Highlightable.Interactive ->
+                    let
+                        bracketingHighlightTypes =
+                            List.filterMap (\x -> List.Extra.find ((==) x) lastInteractiveHighlighterMarkers)
+                                segment.marked
+
+                        static_ =
+                            -- for every static tag, ensure that if it's not between interactive segments
+                            -- that share a mark in common, marks are removed.
+                            List.map
+                                (\s ->
+                                    { s
+                                        | marked =
+                                            List.filterMap (\x -> List.Extra.find ((==) x) bracketingHighlightTypes)
+                                                s.marked
+                                    }
+                                )
+                                staticAcc
+                    in
+                    ( segment.marked, [], segment :: static_ ++ acc )
+
+                Highlightable.Static ->
+                    ( lastInteractiveHighlighterMarkers, segment :: staticAcc, acc )
+    in
+    highlightables
+        |> List.foldr apply ( [], [], [] )
+        |> (\( _, static_, acc ) -> removeHighlights_ static_ ++ acc)
+        |> List.foldl apply ( [], [], [] )
+        |> (\( _, static_, acc ) -> removeHighlights_ static_ ++ acc)
+        |> List.reverse
 
 
 {-| Finds the group indexes of the groups which are in the same highlighting as the group index
@@ -630,7 +682,12 @@ removeHinted =
 {-| -}
 removeHighlights : Model marker -> Model marker
 removeHighlights model =
-    { model | highlightables = List.map (Highlightable.set Nothing) model.highlightables }
+    { model | highlightables = removeHighlights_ model.highlightables }
+
+
+removeHighlights_ : List (Highlightable m) -> List (Highlightable m)
+removeHighlights_ =
+    List.map (Highlightable.set Nothing)
 
 
 {-| You are not likely to need this helper unless you're working with inline commenting.
