@@ -1159,8 +1159,12 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                 , focusIndex = config.focusIndex
                 , eventListeners =
                     -- Static highlightables need listeners as well.
-                    -- because otherwise we miss mouseup events
-                    [ onPreventDefault "mouseup" (Pointer <| Up Nothing)
+                    -- because otherwise we miss mouse events.
+                    -- For example, a user hovering over a static space in a highlight
+                    -- should see the entire highlight change to hover styles.
+                    [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
+                    , onPreventDefault "mouseleave" (Pointer <| Out highlightable.index)
+                    , onPreventDefault "mouseup" (Pointer <| Up Nothing)
                     , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
                     , onPreventDefault "touchstart" (Pointer <| Down highlightable.index)
                     , attribute "data-static" ""
