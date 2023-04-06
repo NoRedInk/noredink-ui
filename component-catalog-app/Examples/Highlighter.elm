@@ -29,7 +29,6 @@ import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Table.V7 as Table
 import Nri.Ui.Text.V6 as Text
 import Sort exposing (Sorter)
-import String.Extra
 
 
 moduleName : String
@@ -617,9 +616,6 @@ update msg state =
                     let
                         clickedCommentId =
                             Highlighter.selectShortest Highlighter.clickedHighlightable state.overlappingHighlightsState
-
-                        hoveredCommentId =
-                            Highlighter.selectShortest Highlighter.hoveredHighlightable newHighlighter
 
                         maybePreviousMouseDownIndex =
                             highlighterState.mouseDownIndex
