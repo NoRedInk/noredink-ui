@@ -735,12 +735,23 @@ inHoveredGroupWithoutOverlaps :
     -> Highlightable m
     -> Bool
 inHoveredGroupWithoutOverlaps config highlightable =
-    config.highlightables
-        |> buildGroups config
-        |> List.filter (List.any (.index >> (==) highlightable.index))
-        |> List.head
-        |> Maybe.withDefault []
-        |> List.any (.index >> Just >> (==) config.mouseOverIndex)
+    case highlightable.marked of
+        [] ->
+            -- if the highlightable is not marked, then it shouldn't
+            -- take on group hover styles
+            -- if the mouse is over it, it's hovered.
+            -- otherwise, it's not!
+            Just highlightable.index == config.mouseOverIndex
+
+        _ ->
+            -- if the highlightable is in a group that's hovered,
+            -- apply hovered styles
+            config.highlightables
+                |> buildGroups config
+                |> List.filter (List.any (.index >> (==) highlightable.index))
+                |> List.head
+                |> Maybe.withDefault []
+                |> List.any (.index >> Just >> (==) config.mouseOverIndex)
 
 
 inHoveredGroupForOverlaps :
