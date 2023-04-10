@@ -114,6 +114,7 @@ example =
                 ]
             , Heading.h2 [ Heading.plaintext "Overlapping highlights example" ]
             , Text.mediumBody [ Text.plaintext "Supporting overlapping highlights, as in inline comments, requires a lot of extra set-up. Generally, you won't need this." ]
+            , Text.mediumBody [ Text.plaintext "This example does not support removing highlights. This is to enable you to create highlights that overlap." ]
             , div
                 [ css
                     [ Css.fontSize (Css.px 24)
