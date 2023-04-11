@@ -272,11 +272,10 @@ viewAuxillaryDescriptionToolip openTooltip =
                 ClickableText.link "Tooltips & Toggletips"
                     [ ClickableText.custom eventHandlers
                     , ClickableText.small
-                    , ClickableText.icon UiIcon.openInNewTab
                     , ClickableText.linkExternal "https://inclusive-components.design/tooltips-toggletips/"
                     ]
         }
-        [ Tooltip.plaintext "Opens in a new window"
+        [ Tooltip.plaintext "Opens in a new tab"
         , Tooltip.auxiliaryDescription
         , Tooltip.onToggle (ToggleTooltip AuxillaryDescription)
         , Tooltip.open (openTooltip == Just AuxillaryDescription)
