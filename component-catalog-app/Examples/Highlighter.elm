@@ -615,14 +615,8 @@ update msg state =
             case Highlighter.update highlighterMsg state.overlappingHighlightsState of
                 ( newHighlighter, effect, intent ) ->
                     let
-                        clickedCommentId =
-                            Highlighter.selectShortest Highlighter.clickedHighlightable state.overlappingHighlightsState
-
                         maybePreviousMouseDownIndex =
                             highlighterState.mouseDownIndex
-
-                        mouseOverIndex =
-                            newHighlighter.mouseOverIndex
 
                         withAllCommentIds =
                             { newHighlighter
@@ -648,45 +642,15 @@ update msg state =
                             }
                     in
                     -- The Changed action will be triggered on the Highlighter Up event and
-                    -- when there is an actual change in the highlightable elements. Note
-                    -- that when we click an existing highlight, from the point of view of
-                    -- the highlighter, this is just the same as starting a new highlight
-                    -- (instead we want to intercept that click and do something else).
+                    -- when there is an actual change in the highlightable elements.
                     case Highlighter.hasChanged intent of
                         Highlighter.Changed ->
-                            case ( clickedCommentId, maybePreviousMouseDownIndex, mouseOverIndex ) of
-                                ( Just commentId, Just previousMouseDownIndex, Just currentHover ) ->
-                                    if previousMouseDownIndex == currentHover then
-                                        -- User is clicking an existing highlight without dragging
-                                        -- we don't want to use the entire updated highlighter state, since we don't want to remove the focused highlight!
-                                        -- However, we do want to ensure that we don't end up in the middle of highlighting, where the user has to click around more to get out of the highlighting state.
-                                        ( { state
-                                            | overlappingHighlightsState =
-                                                { highlighterState
-                                                    | mouseDownIndex = Nothing
-                                                    , mouseOverIndex = Nothing
-                                                    , selectionStartIndex = Nothing
-                                                    , selectionEndIndex = Nothing
-                                                }
-                                          }
-                                        , Cmd.none
-                                        )
-
-                                    else
-                                        ( newComment
-                                        , Cmd.batch
-                                            [ Cmd.map OverlappingHighlighterMsg effect
-                                            , perform intent
-                                            ]
-                                        )
-
-                                _ ->
-                                    ( newComment
-                                    , Cmd.batch
-                                        [ Cmd.map OverlappingHighlighterMsg effect
-                                        , perform intent
-                                        ]
-                                    )
+                            ( newComment
+                            , Cmd.batch
+                                [ Cmd.map OverlappingHighlighterMsg effect
+                                , perform intent
+                                ]
+                            )
 
                         Highlighter.NotChanged ->
                             case maybePreviousMouseDownIndex of
