@@ -23,6 +23,7 @@ module Nri.Ui.Table.V7 exposing
 import Accessibility.Styled.Style as Style
 import Css exposing (..)
 import Css.Animations
+import Css.Global
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.V1 exposing (..)
@@ -241,11 +242,15 @@ tableBody toRow items =
 
 headersStyles : List Style
 headersStyles =
-    [ -- We use a inset box shadown for a bottom border instead of an actual
+    [ -- We use a inset box shadow for a bottom border instead of an actual
       -- border because with our use of `border-collapse: collapse`, the bottom
       -- gray border sticks to the table instead of traveling with the header
       -- when the header has `position: sticky` applied.
-      boxShadow4 inset (px 0) (px -3) gray75
+      --
+      -- We add the style on the children instead of on the parent because
+      -- `<tr>` tags do not display box shadows in Safari (although by the time
+      -- you read this, they may have fixed it. Feel free to try again!)
+      Css.Global.children [ Css.Global.th [ boxShadow4 inset (px 0) (px -3) gray75 ] ]
     , height (px 45)
     , fontSize (px 15)
     ]
