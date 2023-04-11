@@ -275,7 +275,7 @@ viewAuxillaryDescriptionToolip openTooltip =
                     , ClickableText.linkExternal "https://inclusive-components.design/tooltips-toggletips/"
                     ]
         }
-        [ Tooltip.plaintext "Leave noredink-ui"
+        [ Tooltip.plaintext "Opens in a new tab"
         , Tooltip.auxiliaryDescription
         , Tooltip.onToggle (ToggleTooltip AuxillaryDescription)
         , Tooltip.open (openTooltip == Just AuxillaryDescription)
