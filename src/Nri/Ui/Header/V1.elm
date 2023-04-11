@@ -153,8 +153,7 @@ view attrs { breadCrumbs, isCurrentRoute } =
                     ( config.extraContent
                     , viewJust
                         (viewExtraNav
-                            [ Spacing.centeredContentWithSidePaddingAndCustomWidth config.pageWidth
-                            ]
+                            []
                         )
                         config.extraNav
                     )
@@ -173,8 +172,7 @@ view attrs { breadCrumbs, isCurrentRoute } =
         ]
         [ Html.div
             (css
-                [ Spacing.centeredContentWithSidePaddingAndCustomWidth config.pageWidth
-                , Css.alignItems Css.center
+                [ Css.alignItems Css.center
                 , Css.displayFlex
                 , Media.withMedia [ MediaQuery.mobile ] [ Css.flexDirection Css.column ]
                 ]
@@ -199,8 +197,7 @@ viewDescription : Css.Px -> String -> Html msg
 viewDescription pageWidth description_ =
     Text.mediumBody
         [ Text.css
-            [ Spacing.centeredContentWithSidePaddingAndCustomWidth pageWidth
-            , Css.color Colors.gray45
+            [ Css.color Colors.gray45
             , Css.important (Css.margin Css.auto)
             , Css.important (Css.paddingTop (Css.px 5))
             ]
