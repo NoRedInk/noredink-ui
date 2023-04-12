@@ -256,13 +256,9 @@ view config navAttributes entries =
                         Css.batch []
                 ]
             ]
-
-        currentEntry =
-            currentRouteName config.isCurrentRoute entries
     in
     div [ Attributes.css (defaultCss ++ appliedNavAttributes.css) ]
         [ viewSkipLink config.onSkipNav
-        , viewJust (viewOpenCloseButton sidenavId appliedNavAttributes.navLabel currentEntry) appliedNavAttributes.collapsible
         , case entries of
             [] ->
                 text ""
@@ -374,18 +370,26 @@ mobileCurrentPage name =
 
 viewNav : String -> Config route msg -> NavAttributeConfig msg -> List (Entry route msg) -> Bool -> Html msg
 viewNav sidenavId config appliedNavAttributes entries showNav =
+    let
+        currentEntry =
+            currentRouteName config.isCurrentRoute entries
+
+        entryStyles =
+            if showNav then
+                []
+
+            else
+                [ Css.display Css.none ]
+    in
     nav
         ([ Maybe.map Aria.label appliedNavAttributes.navLabel
          , Just (Attributes.id sidenavId)
-         , if showNav then
-            Nothing
-
-           else
-            Just (Attributes.css [ Css.display Css.none ])
          ]
             |> List.filterMap identity
         )
-        (List.map (viewSidebarEntry config []) entries)
+        (viewJust (viewOpenCloseButton sidenavId appliedNavAttributes.navLabel currentEntry) appliedNavAttributes.collapsible
+            :: List.map (viewSidebarEntry config entryStyles) entries
+        )
 
 
 viewSkipLink : msg -> Html msg
@@ -429,7 +433,9 @@ viewSidebarEntry config extraStyles entry_ =
                         )
                         []
                         [ text entryConfig.title ]
-                        :: List.map (viewSidebarEntry config [ marginLeft (px 20) ]) children
+                        :: List.map
+                            (viewSidebarEntry config (marginLeft (px 20) :: extraStyles))
+                            children
                     )
 
             else
