@@ -249,10 +249,10 @@ view config navAttributes entries =
                 , marginBottom (Css.px 20)
                 , width (pct 100)
                 , case Maybe.map .isOpen appliedNavAttributes.collapsible of
-                    Just False ->
-                        Css.padding2 (Css.px 25) (Css.px 20)
+                    Just _ ->
+                        Css.padding (Css.px 10)
 
-                    _ ->
+                    Nothing ->
                         Css.batch []
                 ]
             ]
