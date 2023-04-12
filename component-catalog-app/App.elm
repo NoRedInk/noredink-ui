@@ -127,7 +127,11 @@ update action model =
                 route =
                     Routes.fromLocation model.moduleStates location
             in
-            ( { model | route = route, previousRoute = Just model.route }
+            ( { model
+                | route = route
+                , previousRoute = Just model.route
+                , isSideNavOpen = False
+              }
             , Maybe.map FocusOn (Routes.headerId route)
                 |> Maybe.withDefault None
             )
