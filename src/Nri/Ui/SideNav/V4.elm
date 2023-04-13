@@ -19,6 +19,7 @@ module Nri.Ui.SideNav.V4 exposing
 
   - add missing aria-current=page attribute
   - don't render an empty nav when there are no entries
+  - adjust closed sidenav toggle button styles
 
 
 ### Changes from V3
@@ -64,6 +65,7 @@ import Css.Media
 import Html.Styled
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
+import Maybe.Extra
 import Nri.Ui
 import Nri.Ui.AnimatedIcon.V1 as AnimatedIcon
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
@@ -246,12 +248,17 @@ view config navAttributes entries =
                 , marginRight Css.zero
                 , marginBottom (Css.px 20)
                 , width (pct 100)
+                , case Maybe.map .isOpen appliedNavAttributes.collapsible of
+                    Just _ ->
+                        Css.padding (Css.px 10)
+
+                    Nothing ->
+                        Css.batch []
                 ]
             ]
     in
     div [ Attributes.css (defaultCss ++ appliedNavAttributes.css) ]
         [ viewSkipLink config.onSkipNav
-        , viewJust (viewOpenCloseButton sidenavId appliedNavAttributes.navLabel) appliedNavAttributes.collapsible
         , case entries of
             [] ->
                 text ""
@@ -266,8 +273,8 @@ defaultSideNavId =
     "sidenav"
 
 
-viewOpenCloseButton : String -> Maybe String -> CollapsibleConfig msg -> Html msg
-viewOpenCloseButton sidenavId navLabel_ { isOpen, toggle, isTooltipOpen, toggleTooltip } =
+viewOpenCloseButton : String -> Maybe String -> Maybe String -> CollapsibleConfig msg -> Html msg
+viewOpenCloseButton sidenavId navLabel_ currentEntry { isOpen, toggle, isTooltipOpen, toggleTooltip } =
     let
         name =
             Maybe.withDefault "sidebar" navLabel_
@@ -284,64 +291,105 @@ viewOpenCloseButton sidenavId navLabel_ { isOpen, toggle, isTooltipOpen, toggleT
                     |> Svg.withCss [ Css.transform (rotate (deg 180)) ]
                 )
 
-        trigger tooltipAttributes =
+        trigger attributes =
             ClickableSvg.button action
                 icon_
-                [ ClickableSvg.custom
+                ([ ClickableSvg.custom
                     [ Aria.controls [ sidenavId ]
                     , Aria.expanded isOpen
                     ]
-                , ClickableSvg.custom tooltipAttributes
-                , ClickableSvg.onClick (toggle (not isOpen))
-                , ClickableSvg.secondary
-                , ClickableSvg.withBorder
-                , ClickableSvg.iconForMobile (AnimatedIcon.mobileOpenClose isOpen)
-                ]
-    in
-    Tooltip.view
-        { trigger = trigger
-        , id = "open-close-sidebar-tooltip"
-        }
-        [ Tooltip.open isTooltipOpen
-        , Tooltip.onToggle toggleTooltip
-        , Tooltip.plaintext action
-        , Tooltip.smallPadding
-        , Tooltip.fitToContent
-        , if isOpen then
-            Tooltip.onLeft
+                 , ClickableSvg.onClick (toggle (not isOpen))
+                 , ClickableSvg.secondary
+                 , ClickableSvg.withBorder
+                 , ClickableSvg.iconForMobile (AnimatedIcon.mobileOpenClose isOpen)
+                 ]
+                    ++ attributes
+                )
 
-          else
-            Tooltip.onRight
-        , Tooltip.onRightForMobile
-        , Tooltip.containerCss
-            (if isOpen then
-                [ Css.Media.withMedia [ MediaQuery.notMobile ]
-                    [ Css.position Css.absolute
-                    , Css.top (Css.px 10)
-                    , Css.right (Css.px 10)
+        nonMobileTooltipView =
+            Tooltip.view
+                { trigger = \tooltipAttributes -> trigger [ ClickableSvg.custom tooltipAttributes ]
+                , id = "open-close-sidebar-tooltip"
+                }
+                [ Tooltip.open isTooltipOpen
+                , Tooltip.onToggle toggleTooltip
+                , Tooltip.plaintext action
+                , Tooltip.smallPadding
+                , Tooltip.fitToContent
+                , if isOpen then
+                    Tooltip.onLeft
+
+                  else
+                    Tooltip.onRight
+                , Tooltip.containerCss
+                    [ -- Hide the tooltip for mobile. We'll display static text instead
+                      Css.Media.withMedia [ MediaQuery.mobile ]
+                        [ Css.display Css.none ]
+                    ]
+                , Tooltip.containerCss
+                    (if isOpen then
+                        [ Css.Media.withMedia [ MediaQuery.notMobile ]
+                            [ Css.position Css.absolute
+                            , Css.top (Css.px 10)
+                            , Css.right (Css.px 10)
+                            ]
+                        ]
+
+                     else
+                        []
+                    )
+                ]
+
+        mobileButtonView =
+            div
+                [ Attributes.css
+                    [ -- Hide the plain button/static text if not on the mobile view
+                      Css.display Css.none
+                    , Css.Media.withMedia [ MediaQuery.mobile ]
+                        [ Css.displayFlex ]
                     ]
                 ]
-
-             else
-                []
-            )
+                [ trigger []
+                , viewJust mobileCurrentPage currentEntry
+                ]
+    in
+    div []
+        [ nonMobileTooltipView
+        , mobileButtonView
         ]
+
+
+mobileCurrentPage : String -> Html msg
+mobileCurrentPage name =
+    span
+        [ AttributesExtra.nriDescription "mobile-current-page-name"
+        , Attributes.css (sharedEntryStyles ++ [ Css.display Css.inline, Css.padding (Css.px 8) ])
+        ]
+        [ text name ]
 
 
 viewNav : String -> Config route msg -> NavAttributeConfig msg -> List (Entry route msg) -> Bool -> Html msg
 viewNav sidenavId config appliedNavAttributes entries showNav =
+    let
+        currentEntry =
+            currentRouteName config.isCurrentRoute entries
+
+        entryStyles =
+            if showNav then
+                []
+
+            else
+                [ Css.display Css.none ]
+    in
     nav
         ([ Maybe.map Aria.label appliedNavAttributes.navLabel
          , Just (Attributes.id sidenavId)
-         , if showNav then
-            Nothing
-
-           else
-            Just (Attributes.css [ Css.display Css.none ])
          ]
             |> List.filterMap identity
         )
-        (List.map (viewSidebarEntry config []) entries)
+        (viewJust (viewOpenCloseButton sidenavId appliedNavAttributes.navLabel currentEntry) appliedNavAttributes.collapsible
+            :: List.map (viewSidebarEntry config entryStyles) entries
+        )
 
 
 viewSkipLink : msg -> Html msg
@@ -385,7 +433,9 @@ viewSidebarEntry config extraStyles entry_ =
                         )
                         []
                         [ text entryConfig.title ]
-                        :: List.map (viewSidebarEntry config [ marginLeft (px 20) ]) children
+                        :: List.map
+                            (viewSidebarEntry config (marginLeft (px 20) :: extraStyles))
+                            children
                     )
 
             else
@@ -413,6 +463,28 @@ anyLinkDescendants f children =
                     False
         )
         children
+
+
+currentRouteName : (route -> Bool) -> List (Entry route msg) -> Maybe String
+currentRouteName isCurrentRoute_ entries =
+    List.foldl
+        (\entry_ acc ->
+            Maybe.Extra.or acc
+                (case entry_ of
+                    Entry children_ entryConfig ->
+                        case Maybe.map isCurrentRoute_ entryConfig.route of
+                            Just True ->
+                                Just entryConfig.title
+
+                            _ ->
+                                currentRouteName isCurrentRoute_ children_
+
+                    Html _ ->
+                        acc
+                )
+        )
+        Nothing
+        entries
 
 
 viewSidebarLeaf :
