@@ -33,7 +33,7 @@
     "puppeteer": "^13.0.1",
     "request": "^2.88.2",
     "@axe-core/puppeteer": "^4.4.3",
-    "axe-core": "4.6.3",
+    "axe-core": "4.7.0",
     "expect": "^27.5.1",
     "mocha": "^9.2.2"
   },
