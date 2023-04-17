@@ -96,7 +96,7 @@ main = do
         cmd (WithStdout True) (FileStdout out) "elm-review"
 
       "log/elm-review-component-catalog.txt" %> \out -> do
-        elmFiles <- getDirectoryFiles "." ["component-catalog/**/*.elm", "component-catalog-app/**/*.elm"]
+        elmFiles <- getDirectoryFiles "." ["component-catalog/**/*.elm"]
         need (["package.json", "component-catalog/elm.json"] ++ elmFiles)
         cmd (Cwd "component-catalog") (WithStdout True) (FileStdout out) "elm-review"
 
@@ -110,7 +110,7 @@ main = do
         writeFileChanged out "formatting checks passed"
 
       "log/elm-format.txt" %> \out -> do
-        let placesToLook = ["src", "tests", "component-catalog", "component-catalog-app"]
+        let placesToLook = ["src", "tests", "component-catalog"]
         elmFiles <- getDirectoryFiles "." (map (\place -> place </> "**" </> "*.elm") placesToLook)
         need elmFiles
         cmd (WithStdout True) (FileStdout out) "elm-format" "--validate" placesToLook
@@ -156,9 +156,9 @@ main = do
         cmd_ "./node_modules/.bin/browserify" "--entry" "component-catalog/manifest.js" "--outfile" out
 
       "public/elm.js" %> \out -> do
-        elmSources <- getDirectoryFiles "." ["component-catalog-app/**/*.elm", "src/**/*.elm"]
+        elmSources <- getDirectoryFiles "." ["component-catalog/src/**/*.elm", "src/**/*.elm"]
         need elmSources
-        cmd_ (Cwd "component-catalog") "elm" "make" "Main.elm" "--output" (".." </> out)
+        cmd_ (Cwd "component-catalog") "elm" "make" "src/Main.elm" "--output" (".." </> out)
 
       "public/package.json" %> \out -> do
         copyFileChanged "elm.json" out
