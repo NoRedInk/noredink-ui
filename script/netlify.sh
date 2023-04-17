@@ -15,7 +15,7 @@ if test -d public; then rm -rf public; fi
 mkdir public
 
 # build the interactive parts
-(cd component-catalog && npx elm make Main.elm --output ../public/elm.js)
+(cd component-catalog && npx elm make src/Main.elm --output ../public/elm.js)
 npx browserify --entry component-catalog/manifest.js --outfile public/bundle.js
 
 # copy static files

@@ -6,9 +6,6 @@ elm-stuff
 # elm-repl generated files
 repl-temp-*
 
-### Styleguide App
-component-catalog-app/bundle.js
-
 ### Emacs ###
 # -*- mode: gitignore; -*-
 *~
