@@ -14,9 +14,9 @@ module Nri.Ui.Logo.V1 exposing
 {-|
 
 @docs noredink, noredinkMonochrome
-@docs cleverSecureSync, clever, cleverBlue, cleverC, cleverLibrary, cleverWhite
-@docs google, googleClassroom, googleClassroomFull, googleG
-@docs classLink, classLinkFull
+@docs cleverSecureSync, clever, cleverBlue, cleverC, cleverCWhite, cleverLibrary, cleverWhite
+@docs google, googleClassroom, googleClassroomFull, googleG, googleGWhite
+@docs classLink, classLinkWhite, classLinkFull
 @docs canvas
 @docs canvasCircle
 @docs schoology
