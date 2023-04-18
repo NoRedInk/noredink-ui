@@ -241,32 +241,33 @@ view { label, selected } attributes =
             , guidance = config.guidance
             , error = InputErrorAndGuidanceInternal.noError
             }
+
+        ( icon, disabledIcon ) =
+            case selected of
+                Selected ->
+                    ( CheckboxIcons.checked idValue
+                    , CheckboxIcons.checkedDisabled
+                    )
+
+                NotSelected ->
+                    ( CheckboxIcons.unchecked idValue
+                    , CheckboxIcons.uncheckedDisabled
+                    )
+
+                PartiallySelected ->
+                    ( CheckboxIcons.checkedPartially idValue
+                    , CheckboxIcons.checkedPartiallyDisabled
+                    )
     in
     checkboxContainer config_
         ([ viewCheckbox config_
-         , let
-            ( icon, disabledIcon ) =
-                case selected of
-                    Selected ->
-                        ( CheckboxIcons.checked idValue
-                        , CheckboxIcons.checkedDisabled
-                        )
+         , viewLabel config_
+            (if config.isDisabled then
+                ( disabledLabelCss, disabledIcon )
 
-                    NotSelected ->
-                        ( CheckboxIcons.unchecked idValue
-                        , CheckboxIcons.uncheckedDisabled
-                        )
-
-                    PartiallySelected ->
-                        ( CheckboxIcons.checkedPartially idValue
-                        , CheckboxIcons.checkedPartiallyDisabled
-                        )
-           in
-           if config.isDisabled then
-            viewDisabledLabel config_ disabledIcon
-
-           else
-            viewEnabledLabel config_ icon
+             else
+                ( enabledLabelCss, icon )
+            )
          ]
             ++ InputErrorAndGuidanceInternal.view config_.identifier (Css.marginTop Css.zero) config_
         )
@@ -360,7 +361,25 @@ onCheckMsg selected msg =
         |> msg
 
 
-viewEnabledLabel :
+enabledLabelCss : List Style
+enabledLabelCss =
+    [ display inlineBlock
+    , textStyle
+    , cursor pointer
+    ]
+
+
+disabledLabelCss : List Style
+disabledLabelCss =
+    [ display inlineBlock
+    , textStyle
+    , Css.outline3 (Css.px 2) Css.solid Css.transparent
+    , cursor auto
+    , color Colors.gray45
+    ]
+
+
+viewLabel :
     { a
         | identifier : String
         , selected : IsSelected
@@ -368,46 +387,16 @@ viewEnabledLabel :
         , hideLabel : Bool
         , labelCss : List Style
     }
-    -> Svg
+    ->
+        ( List Style
+        , Svg
+        )
     -> Html.Html msg
-viewEnabledLabel config icon =
+viewLabel config ( styles, icon ) =
     Html.label
         [ Attributes.for config.identifier
         , labelClass config.selected
-        , css
-            [ display inlineBlock
-            , textStyle
-            , cursor pointer
-            , Css.batch config.labelCss
-            ]
-        ]
-        [ viewIcon [] icon
-        , labelView config
-        ]
-
-
-viewDisabledLabel :
-    { a
-        | identifier : String
-        , selected : IsSelected
-        , label : String
-        , hideLabel : Bool
-        , labelCss : List Style
-    }
-    -> Svg
-    -> Html.Html msg
-viewDisabledLabel config icon =
-    Html.label
-        [ Attributes.for config.identifier
-        , labelClass config.selected
-        , css
-            [ display inlineBlock
-            , textStyle
-            , Css.outline3 (Css.px 2) Css.solid Css.transparent
-            , cursor auto
-            , color Colors.gray45
-            , Css.batch config.labelCss
-            ]
+        , css (styles ++ config.labelCss)
         ]
         [ viewIcon [] icon
         , labelView config
