@@ -306,21 +306,13 @@ checkboxContainer model =
     Html.span
         [ css
             [ display block
-            , height inherit
-            , position relative
             , marginLeft (px -4)
-            , padding4 (px 13) zero (px 13) (px 40)
+            , paddingTop (px 5)
+            , paddingBottom (px 5)
+            , height inherit
             , pseudoClass "focus-within"
                 [ Css.Global.descendants
                     [ Css.Global.class "checkbox-icon-container" FocusRing.tightStyles
-                    ]
-                ]
-            , Css.Global.descendants
-                [ Css.Global.input
-                    [ position absolute
-                    , top (calc (pct 50) minus (px 10))
-                    , left (px 10)
-                    , boxShadow none |> Css.important
                     ]
                 ]
             , Css.batch model.containerCss
@@ -341,7 +333,8 @@ onCheckMsg selected msg =
 
 enabledLabelCss : List Style
 enabledLabelCss =
-    [ display inlineBlock
+    [ displayFlex
+    , Css.alignItems Css.center
     , textStyle
     , cursor pointer
     ]
@@ -349,7 +342,8 @@ enabledLabelCss =
 
 disabledLabelCss : List Style
 disabledLabelCss =
-    [ display inlineBlock
+    [ displayFlex
+    , Css.alignItems Css.center
     , textStyle
     , Css.outline3 (Css.px 2) Css.solid Css.transparent
     , cursor auto
@@ -412,17 +406,12 @@ viewIcon : List Style -> Svg -> Html msg
 viewIcon styles icon =
     Html.div
         [ css
-            [ position absolute
-            , left zero
-            , top (calc (pct 50) minus (px 18))
-            , border3 (px 2) solid transparent
-            , padding (px 2)
+            [ border3 (px 2) solid transparent
             , borderRadius (px 3)
             , height (Css.px 27)
             , boxSizing contentBox
-            , -- this padding creates a hit area "bridge" between the
-              -- absolutely-positioned icon SVG and the label text
-              paddingRight (Css.px 8)
+            , margin (px 2)
+            , marginRight (px 7)
             ]
         , Attributes.class "checkbox-icon-container"
         ]
