@@ -143,7 +143,7 @@ all =
             , Css.margin (Css.px 4)
             ]
           )
-        , ( "classLink", Logo.classLinkWhite, defaults )
+        , ( "classLinkWhite", Logo.classLinkWhite, defaults )
         ]
       )
     , ( "Canvas"
