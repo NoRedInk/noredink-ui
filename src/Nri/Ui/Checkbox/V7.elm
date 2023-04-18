@@ -377,6 +377,7 @@ viewCheckbox config ( styles, icon ) =
         attributes =
             List.filterMap identity
                 [ Just (css (styles ++ config.labelCss))
+                , Just (Attributes.class FocusRing.customClass)
                 , Just Role.checkBox
                 , Just (Key.tabbable True)
                 , Just (Attributes.id config.identifier)
