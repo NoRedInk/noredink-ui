@@ -45,6 +45,8 @@ module Nri.Ui.Checkbox.V7 exposing
 
 import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Key as Key
+import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Style
 import CheckboxIcons
 import Css exposing (..)
@@ -261,7 +263,6 @@ view { label, selected } attributes =
     in
     checkboxContainer config_
         ([ viewCheckbox config_
-         , viewLabel config_
             (if config.isDisabled then
                 ( disabledLabelCss, disabledIcon )
 
@@ -325,32 +326,9 @@ checkboxContainer model =
             , Css.batch model.containerCss
             ]
         , Attributes.id (model.identifier ++ "-container")
-        , Events.stopPropagationOn "click" (Json.Decode.fail "stop click propagation")
+
+        --, Events.stopPropagationOn "click" (Json.Decode.fail "stop click propagation")
         ]
-
-
-viewCheckbox :
-    { a
-        | identifier : String
-        , onCheck : Maybe (Bool -> msg)
-        , selected : IsSelected
-        , disabled : Bool
-    }
-    -> Html.Html msg
-viewCheckbox config =
-    checkbox config.identifier
-        (selectedToMaybe config.selected)
-        (List.filterMap identity <|
-            [ Just <| Attributes.id config.identifier
-            , if config.disabled then
-                Just <| Aria.disabled True
-
-              else
-                config.onCheck
-                    |> Maybe.map (onCheckMsg config.selected)
-                    |> Maybe.map (\msg -> Events.onCheck (\_ -> msg))
-            ]
-        )
 
 
 onCheckMsg : IsSelected -> (Bool -> msg) -> msg
@@ -379,10 +357,12 @@ disabledLabelCss =
     ]
 
 
-viewLabel :
+viewCheckbox :
     { a
         | identifier : String
         , selected : IsSelected
+        , onCheck : Maybe (Bool -> msg)
+        , disabled : Bool
         , label : String
         , hideLabel : Bool
         , labelCss : List Style
@@ -392,33 +372,28 @@ viewLabel :
         , Svg
         )
     -> Html.Html msg
-viewLabel config ( styles, icon ) =
-    Html.label
-        [ Attributes.for config.identifier
-        , labelClass config.selected
-        , css (styles ++ config.labelCss)
-        ]
+viewCheckbox config ( styles, icon ) =
+    let
+        attributes =
+            List.filterMap identity
+                [ Just (css (styles ++ config.labelCss))
+                , Just Role.checkBox
+                , Just (Key.tabbable True)
+                , Just (Attributes.id config.identifier)
+                , if config.disabled then
+                    Just <| Aria.disabled True
+
+                  else
+                    config.onCheck
+                        |> Maybe.map (onCheckMsg config.selected)
+                        |> Maybe.map (\msg -> Events.onClick msg)
+                , Just (Aria.checked (selectedToMaybe config.selected))
+                ]
+    in
+    Html.div attributes
         [ viewIcon [] icon
         , labelView config
         ]
-
-
-labelClass : IsSelected -> Html.Attribute msg
-labelClass isSelected =
-    case isSelected of
-        Selected ->
-            toClassList [ "Label", "Checked" ]
-
-        NotSelected ->
-            toClassList [ "Label", "Unchecked" ]
-
-        PartiallySelected ->
-            toClassList [ "Label", "Indeterminate" ]
-
-
-toClassList : List String -> Html.Attribute msg
-toClassList =
-    List.map (\a -> ( "checkbox-V7__" ++ a, True )) >> Attributes.classList
 
 
 textStyle : Style
