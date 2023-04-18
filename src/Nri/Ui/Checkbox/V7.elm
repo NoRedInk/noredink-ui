@@ -318,8 +318,6 @@ checkboxContainer model =
             , Css.batch model.containerCss
             ]
         , Attributes.id (model.identifier ++ "-container")
-
-        --, Events.stopPropagationOn "click" (Json.Decode.fail "stop click propagation")
         ]
 
 
