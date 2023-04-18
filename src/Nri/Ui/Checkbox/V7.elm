@@ -60,7 +60,6 @@ import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import InputErrorAndGuidanceInternal exposing (Guidance)
-import Json.Decode
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
