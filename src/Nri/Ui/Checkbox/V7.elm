@@ -12,13 +12,18 @@ module Nri.Ui.Checkbox.V7 exposing
 {-|
 
 
-# Changes from V6:
+## Changes from V6:
 
   - Reworked api similar to other components based on Attributes
   - Add support for guidance
   - Dropped checkboxLockOnInside functionality
   - Dropped disabledLabelCss functionality. Use labelCss instead in case when the checkbox is disabled.
   - (breaking-change) By default the label is visible (ie: V6.viewWithLabel), use hiddenLabel to migrate from V6.view.
+
+
+## Patch changes:
+
+  - It turns out that "indeterminate" has to be set from JS -- it doesn't work to add the attribute as part of the HTML. So, instead of using an input under the hood, we're using aria-attributes instead. This also allows us to simplify the styles a bit.
 
 @docs view
 
