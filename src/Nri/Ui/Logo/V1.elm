@@ -1,14 +1,13 @@
 module Nri.Ui.Logo.V1 exposing
     ( noredink, noredinkMonochrome
-    , cleverSecureSync, clever, cleverBlue, cleverC, cleverLibrary, cleverWhite
-    , google, googleClassroom, googleClassroomFull, googleG
-    , classLink, classLinkFull
+    , cleverSecureSync, clever, cleverBlue, cleverC, cleverCWhite, cleverLibrary, cleverWhite
+    , google, googleClassroom, googleClassroomFull, googleG, googleGWhite
+    , classLink, classLinkWhite, classLinkFull
     , canvas
     , canvasCircle
     , schoology
     , schoologyCircle
     , facebook, twitter
-    , classLinkWhite, cleverCWhite, googleGWhite
     )
 
 {-|
