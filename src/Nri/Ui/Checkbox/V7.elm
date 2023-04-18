@@ -367,20 +367,27 @@ viewCheckbox :
 viewCheckbox config ( styles, icon ) =
     let
         attributes =
-            List.filterMap identity
-                [ Just (css (styles ++ config.labelCss))
-                , Just (Attributes.class FocusRing.customClass)
-                , Just Role.checkBox
-                , Just (Key.tabbable True)
-                , Just (Attributes.id config.identifier)
+            List.concat
+                [ [ css (styles ++ config.labelCss)
+                  , Attributes.class FocusRing.customClass
+                  , Role.checkBox
+                  , Key.tabbable True
+                  , Attributes.id config.identifier
+                  , Aria.checked (selectedToMaybe config.selected)
+                  ]
                 , if config.disabled then
-                    Just <| Aria.disabled True
+                    [ Aria.disabled True ]
 
                   else
                     config.onCheck
                         |> Maybe.map (onCheckMsg config.selected)
-                        |> Maybe.map (\msg -> Events.onClick msg)
-                , Just (Aria.checked (selectedToMaybe config.selected))
+                        |> Maybe.map
+                            (\msg ->
+                                [ Events.onClick msg
+                                , Key.onKeyDownPreventDefault [ Key.space msg ]
+                                ]
+                            )
+                        |> Maybe.withDefault []
                 ]
     in
     Html.div attributes
