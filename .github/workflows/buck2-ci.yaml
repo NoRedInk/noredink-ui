@@ -42,8 +42,21 @@ jobs:
         run: |
           echo "${{ github.workspace }}/buck2/bin" >> "$GITHUB_PATH"
 
+      - name: restore buck build cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}/buck-out
+          key: buck-out
+
       - name: build
         run: buck2 build //...
+
+      - name: save buck build cache
+        uses: actions/cache/save@v3
+        if: always()
+        with:
+          path: ${{ github.workspace }}/buck-out
+          key: buck-out
 
       - name: test
         run: buck2 test //...
