@@ -1,0 +1,46 @@
+name: CI
+
+on: [push]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: restore buck from cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}/buck2
+          key: buck2
+        id: buck-cache
+
+      - name: download and extract buck
+        if: steps.buck-cache.outputs.cache-hit != 'true'
+        run: |
+          set -x
+          wget -q https://github.com/facebook/buck2/releases/download/latest/buck2-x86_64-unknown-linux-gnu.zst
+
+          sudo apt-get install -y zstd
+          unzstd -q buck2-x86_64-unknown-linux-gnu.zst
+
+          mkdir -p ${{ github.workspace }}/buck2/bin
+          mv buck2-x86_64-unknown-linux-gnu ${{ github.workspace }}/buck2/bin/buck2
+          chmod +x ${{ github.workspace }}/buck2/bin/buck2
+
+          ls -ralh "${{ github.workspace }}/buck2/bin"
+        id: buck
+
+      - name: cache buck
+        if: steps.buck-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v3
+        with:
+          path: ${{ github.workspace }}/buck2
+          key: buck2
+
+      - name: add buck to PATH
+        run: |
+          echo "${{ github.workspace }}/buck2/bin" >> "$GITHUB_PATH"
+
+      - name: build
+        run: buck2 --help
