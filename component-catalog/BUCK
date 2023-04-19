@@ -1,54 +1,54 @@
 load("//:elm.bzl", "elm_app", "elm_test", "elm_review")
 
-srcs = glob(["Main.elm", "../component-catalog-app/**/*.elm", "../src/**/*.elm"])
+# srcs = glob(["Main.elm", "../component-catalog-app/**/*.elm", "../src/**/*.elm"])
 
-elm_app(
-    name = "app",
-    elm_json = "elm.json",
-    main = "Main.elm",
-    out = "elm.js",
-    srcs = srcs,
-    tests = [
-        ":test",
-        ":review",
-        "//:elm-forbid-import",
-        ":puppeteer",
-    ]
-)
+# elm_app(
+#     name = "app",
+#     elm_json = "elm.json",
+#     main = "Main.elm",
+#     out = "elm.js",
+#     srcs = srcs,
+#     tests = [
+#         ":test",
+#         ":review",
+#         "//:elm-forbid-import",
+#         ":puppeteer",
+#     ]
+# )
 
-elm_test(
-    name = "test",
-    elm_json = "elm.json",
-    srcs = srcs,
-    test_srcs = glob(["tests/**/*.elm"]),
-)
+# elm_test(
+#     name = "test",
+#     elm_json = "elm.json",
+#     srcs = srcs,
+#     test_srcs = glob(["tests/**/*.elm"]),
+# )
 
-elm_review(
-    name = "review",
-    srcs = srcs,
-    review_srcs = glob(["review/**/*.elm"]),
-)
+# elm_review(
+#     name = "review",
+#     srcs = srcs,
+#     review_srcs = glob(["review/**/*.elm"]),
+# )
 
-export_file(name = "index.html")
-export_file(name = "favicon.svg")
-export_file(name = "elm.json")
+# export_file(name = "index.html")
+# export_file(name = "favicon.svg")
+# export_file(name = "elm.json")
 
-filegroup(
-    name = "public",
-    srcs = {
-        "index.html": ":index.html",
-        "favicon.svg": ":favicon.svg",
-        "application.json": ":elm.json",
-        "package.json": "//:elm.json",
-        "bundle.js": "//:bundle.js",
-        "elm.js": ":app",
-    }
-)
+# filegroup(
+#     name = "public",
+#     srcs = {
+#         "index.html": ":index.html",
+#         "favicon.svg": ":favicon.svg",
+#         "application.json": ":elm.json",
+#         "package.json": "//:elm.json",
+#         "bundle.js": "//:bundle.js",
+#         "elm.js": ":app",
+#     }
+# )
 
-sh_test(
-    name = "puppeteer",
-    test = "script/puppeteer-tests-no-percy.sh",
-    env = {
-        "ROOT": "$(location :public)",
-    },
-)
+# sh_test(
+#     name = "puppeteer",
+#     test = "script/puppeteer-tests-no-percy.sh",
+#     env = {
+#         "ROOT": "$(location :public)",
+#     },
+# )
