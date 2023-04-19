@@ -50,7 +50,7 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.map HighlighterMsg subscriptions
     , preview =
-        [ div [ css [ Fonts.baseFont, Css.lineHeight (Css.int 2), Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ] ] ]
+        [ div [ css [ Fonts.baseFont, Css.lineHeight (Css.num 2), Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ] ] ]
             [ Highlighter.static
                 { id = "highlight-preview"
                 , highlightables =
