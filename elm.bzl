@@ -110,7 +110,6 @@ elm_format_diffs = rule(
 )
 
 def _elm_test_impl(ctx: "context"):
-    command = cmd_args(["elm-test"])
     command = cmd_args([
         "bash",
         "-euo", "pipefail",
