@@ -1,6 +1,24 @@
 load("@prelude//toolchains:genrule.bzl", "system_genrule_toolchain")
+load("@prelude//toolchains:python.bzl", "system_python_bootstrap_toolchain")
+load(":nix.bzl", "nix_binary")
+load(":elm.bzl", "system_elm_toolchain")
 
 system_genrule_toolchain(
     name = "genrule",
+    visibility = ["PUBLIC"],
+)
+
+system_python_bootstrap_toolchain(
+    name = "python_bootstrap",
+    visibility = ["PUBLIC"],
+)
+
+nix_binary(
+    name = "jq",
+    visibility = ["PUBLIC"],
+)
+
+system_elm_toolchain(
+    name = "elm",
     visibility = ["PUBLIC"],
 )
