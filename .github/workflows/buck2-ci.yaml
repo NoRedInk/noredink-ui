@@ -43,4 +43,7 @@ jobs:
           echo "${{ github.workspace }}/buck2/bin" >> "$GITHUB_PATH"
 
       - name: build
-        run: buck2 --help
+        run: buck2 build //...
+
+      - name: test
+        run: buck2 test //...
