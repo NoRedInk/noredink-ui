@@ -81,6 +81,7 @@ all =
             ]
           )
         , ( "googleG", Logo.googleG, defaults )
+        , ( "googleGWhite", Logo.googleGWhite, defaults )
         ]
       )
     , ( "Google Classroom"
@@ -124,6 +125,7 @@ all =
             ]
           )
         , ( "cleverC", Logo.cleverC, defaults )
+        , ( "cleverCWhite", Logo.cleverCWhite, defaults )
         ]
       )
     , ( "ClassLink"
@@ -141,6 +143,7 @@ all =
             , Css.margin (Css.px 4)
             ]
           )
+        , ( "classLinkWhite", Logo.classLinkWhite, defaults )
         ]
       )
     , ( "Canvas"
