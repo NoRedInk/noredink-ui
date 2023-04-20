@@ -12,13 +12,18 @@ module Nri.Ui.Checkbox.V7 exposing
 {-|
 
 
-# Changes from V6:
+## Changes from V6:
 
   - Reworked api similar to other components based on Attributes
   - Add support for guidance
   - Dropped checkboxLockOnInside functionality
   - Dropped disabledLabelCss functionality. Use labelCss instead in case when the checkbox is disabled.
   - (breaking-change) By default the label is visible (ie: V6.viewWithLabel), use hiddenLabel to migrate from V6.view.
+
+
+## Patch changes:
+
+  - It turns out that "indeterminate" has to be set from JS -- it doesn't work to add the attribute as part of the HTML. So, instead of using an input under the hood, we're using aria-attributes instead. This also allows us to simplify the styles a bit.
 
 @docs view
 
@@ -45,6 +50,8 @@ module Nri.Ui.Checkbox.V7 exposing
 
 import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Key as Key
+import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Style
 import CheckboxIcons
 import Css exposing (..)
@@ -53,7 +60,6 @@ import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import InputErrorAndGuidanceInternal exposing (Guidance)
-import Json.Decode
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
@@ -241,32 +247,32 @@ view { label, selected } attributes =
             , guidance = config.guidance
             , error = InputErrorAndGuidanceInternal.noError
             }
+
+        ( icon, disabledIcon ) =
+            case selected of
+                Selected ->
+                    ( CheckboxIcons.checked idValue
+                    , CheckboxIcons.checkedDisabled
+                    )
+
+                NotSelected ->
+                    ( CheckboxIcons.unchecked idValue
+                    , CheckboxIcons.uncheckedDisabled
+                    )
+
+                PartiallySelected ->
+                    ( CheckboxIcons.checkedPartially idValue
+                    , CheckboxIcons.checkedPartiallyDisabled
+                    )
     in
     checkboxContainer config_
         ([ viewCheckbox config_
-         , let
-            ( icon, disabledIcon ) =
-                case selected of
-                    Selected ->
-                        ( CheckboxIcons.checked idValue
-                        , CheckboxIcons.checkedDisabled
-                        )
+            (if config.isDisabled then
+                ( disabledLabelCss, disabledIcon )
 
-                    NotSelected ->
-                        ( CheckboxIcons.unchecked idValue
-                        , CheckboxIcons.uncheckedDisabled
-                        )
-
-                    PartiallySelected ->
-                        ( CheckboxIcons.checkedPartially idValue
-                        , CheckboxIcons.checkedPartiallyDisabled
-                        )
-           in
-           if config.isDisabled then
-            viewDisabledLabel config_ disabledIcon
-
-           else
-            viewEnabledLabel config_ icon
+             else
+                ( enabledLabelCss, icon )
+            )
          ]
             ++ InputErrorAndGuidanceInternal.view config_.identifier (Css.marginTop Css.zero) config_
         )
@@ -304,52 +310,19 @@ checkboxContainer model =
     Html.span
         [ css
             [ display block
-            , height inherit
-            , position relative
             , marginLeft (px -4)
-            , padding4 (px 13) zero (px 13) (px 40)
+            , paddingTop (px 5)
+            , paddingBottom (px 5)
+            , height inherit
             , pseudoClass "focus-within"
                 [ Css.Global.descendants
                     [ Css.Global.class "checkbox-icon-container" FocusRing.tightStyles
                     ]
                 ]
-            , Css.Global.descendants
-                [ Css.Global.input
-                    [ position absolute
-                    , top (calc (pct 50) minus (px 10))
-                    , left (px 10)
-                    , boxShadow none |> Css.important
-                    ]
-                ]
             , Css.batch model.containerCss
             ]
         , Attributes.id (model.identifier ++ "-container")
-        , Events.stopPropagationOn "click" (Json.Decode.fail "stop click propagation")
         ]
-
-
-viewCheckbox :
-    { a
-        | identifier : String
-        , onCheck : Maybe (Bool -> msg)
-        , selected : IsSelected
-        , disabled : Bool
-    }
-    -> Html.Html msg
-viewCheckbox config =
-    checkbox config.identifier
-        (selectedToMaybe config.selected)
-        (List.filterMap identity <|
-            [ Just <| Attributes.id config.identifier
-            , if config.disabled then
-                Just <| Aria.disabled True
-
-              else
-                config.onCheck
-                    |> Maybe.map (onCheckMsg config.selected)
-                    |> Maybe.map (\msg -> Events.onCheck (\_ -> msg))
-            ]
-        )
 
 
 onCheckMsg : IsSelected -> (Bool -> msg) -> msg
@@ -360,76 +333,71 @@ onCheckMsg selected msg =
         |> msg
 
 
-viewEnabledLabel :
+enabledLabelCss : List Style
+enabledLabelCss =
+    [ displayFlex
+    , Css.alignItems Css.center
+    , textStyle
+    , cursor pointer
+    ]
+
+
+disabledLabelCss : List Style
+disabledLabelCss =
+    [ displayFlex
+    , Css.alignItems Css.center
+    , textStyle
+    , Css.outline3 (Css.px 2) Css.solid Css.transparent
+    , cursor auto
+    , color Colors.gray45
+    ]
+
+
+viewCheckbox :
     { a
         | identifier : String
         , selected : IsSelected
+        , onCheck : Maybe (Bool -> msg)
+        , disabled : Bool
         , label : String
         , hideLabel : Bool
         , labelCss : List Style
     }
-    -> Svg
+    ->
+        ( List Style
+        , Svg
+        )
     -> Html.Html msg
-viewEnabledLabel config icon =
-    Html.label
-        [ Attributes.for config.identifier
-        , labelClass config.selected
-        , css
-            [ display inlineBlock
-            , textStyle
-            , cursor pointer
-            , Css.batch config.labelCss
-            ]
-        ]
+viewCheckbox config ( styles, icon ) =
+    let
+        attributes =
+            List.concat
+                [ [ css (styles ++ config.labelCss)
+                  , Attributes.class FocusRing.customClass
+                  , Role.checkBox
+                  , Key.tabbable True
+                  , Attributes.id config.identifier
+                  , Aria.checked (selectedToMaybe config.selected)
+                  ]
+                , if config.disabled then
+                    [ Aria.disabled True ]
+
+                  else
+                    config.onCheck
+                        |> Maybe.map (onCheckMsg config.selected)
+                        |> Maybe.map
+                            (\msg ->
+                                [ Events.onClick msg
+                                , Key.onKeyDownPreventDefault [ Key.space msg ]
+                                ]
+                            )
+                        |> Maybe.withDefault []
+                ]
+    in
+    Html.div attributes
         [ viewIcon [] icon
         , labelView config
         ]
-
-
-viewDisabledLabel :
-    { a
-        | identifier : String
-        , selected : IsSelected
-        , label : String
-        , hideLabel : Bool
-        , labelCss : List Style
-    }
-    -> Svg
-    -> Html.Html msg
-viewDisabledLabel config icon =
-    Html.label
-        [ Attributes.for config.identifier
-        , labelClass config.selected
-        , css
-            [ display inlineBlock
-            , textStyle
-            , Css.outline3 (Css.px 2) Css.solid Css.transparent
-            , cursor auto
-            , color Colors.gray45
-            , Css.batch config.labelCss
-            ]
-        ]
-        [ viewIcon [] icon
-        , labelView config
-        ]
-
-
-labelClass : IsSelected -> Html.Attribute msg
-labelClass isSelected =
-    case isSelected of
-        Selected ->
-            toClassList [ "Label", "Checked" ]
-
-        NotSelected ->
-            toClassList [ "Label", "Unchecked" ]
-
-        PartiallySelected ->
-            toClassList [ "Label", "Indeterminate" ]
-
-
-toClassList : List String -> Html.Attribute msg
-toClassList =
-    List.map (\a -> ( "checkbox-V7__" ++ a, True )) >> Attributes.classList
 
 
 textStyle : Style
@@ -447,17 +415,12 @@ viewIcon : List Style -> Svg -> Html msg
 viewIcon styles icon =
     Html.div
         [ css
-            [ position absolute
-            , left zero
-            , top (calc (pct 50) minus (px 18))
-            , border3 (px 2) solid transparent
-            , padding (px 2)
+            [ border3 (px 2) solid transparent
             , borderRadius (px 3)
             , height (Css.px 27)
             , boxSizing contentBox
-            , -- this padding creates a hit area "bridge" between the
-              -- absolutely-positioned icon SVG and the label text
-              paddingRight (Css.px 8)
+            , margin (px 2)
+            , marginRight (px 7)
             ]
         , Attributes.class "checkbox-icon-container"
         ]
