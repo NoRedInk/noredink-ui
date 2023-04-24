@@ -53,8 +53,9 @@ nix_binary(
 
 # this is probably not the right way to do things long-term, but it'll probably
 # get us off the ground!
-git_clone(
+http_archive(
     name = "nixpkgs",
-    repo = "https://github.com/NixOS/nixpkgs",
-    ref = "e78d25df6f1036b3fa76750ed4603dd9d5fe90fc",
+    urls = ["https://github.com/NixOS/nixpkgs/archive/e2b34f0f11ed8ad83d9ec9c14260192c3bcccb0d.tar.gz"],
+    sha256 = "9fe7947ac45904ddb8d79fad3d3fea43408905646b3835511429e99005399b79",
+    strip_prefix = "nixpkgs-e2b34f0f11ed8ad83d9ec9c14260192c3bcccb0d",
 )
