@@ -2,6 +2,7 @@ load("@prelude//toolchains:genrule.bzl", "system_genrule_toolchain")
 load("@prelude//toolchains:python.bzl", "system_python_bootstrap_toolchain")
 load(":nix.bzl", "nix_binary")
 load(":elm.bzl", "elm_toolchain")
+load(":git.bzl", "git_clone")
 
 system_genrule_toolchain(
     name = "genrule",
@@ -52,16 +53,8 @@ nix_binary(
 
 # this is probably not the right way to do things long-term, but it'll probably
 # get us off the ground!
-genrule(
+git_clone(
     name = "nixpkgs",
-    # assuming system git. Following the same steps as GitHub actions/checkout@v3
-    cmd = """
-    git init $OUT
-    cd $OUT
-    git config --local gc.auto 0
-    git remote add origin https://github.com/NixOS/nixpkgs
-    git fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin e78d25df6f1036b3fa76750ed4603dd9d5fe90fc:refs/remotes/origin/local-nixpkgs
-    git checkout --progress --force -B local-nixpkgs refs/remotes/origin/local-nixpkgs
-    """,
-    out = "nixpkgs",
+    repo = "https://github.com/NixOS/nixpkgs",
+    ref = "e78d25df6f1036b3fa76750ed4603dd9d5fe90fc",
 )
