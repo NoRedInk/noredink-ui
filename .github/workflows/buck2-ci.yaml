@@ -53,12 +53,12 @@ jobs:
       - name: build
         run: buck2 build //...
 
+      - name: test
+        run: buck2 test //... --verbose 3
+
       - name: save buck build cache
         uses: actions/cache/save@v3
         if: always()
         with:
           path: ${{ github.workspace }}/buck-out
           key: buck-out
-
-      - name: test
-        run: buck2 test //... --verbose 3
