@@ -61,4 +61,4 @@ jobs:
           key: buck-out
 
       - name: test
-        run: buck2 test //...
+        run: buck2 test //... --verbose 3
