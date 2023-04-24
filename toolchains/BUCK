@@ -13,20 +13,11 @@ system_python_bootstrap_toolchain(
     visibility = ["PUBLIC"],
 )
 
-nix_binary(
-    name = "jq",
-    visibility = ["PUBLIC"],
-)
-
-# system_elm_toolchain(
-#     name = "elm",
-#     visibility = ["PUBLIC"],
-# )
-
 elm_toolchain(
     name = "elm",
     visibility = ["PUBLIC"],
     elm = ":elm_compiler",
+    elm_test = ":elm_test",
 )
 
 ELM_COMPILER_URL = select({
@@ -50,4 +41,10 @@ genrule(
     cmd = "gzip --decompress --stdout --keep $(location :elm_compiler_archive) > $OUT && chmod +x $OUT",
     out = "elm",
     executable = True,
+)
+
+nix_binary(
+    name = "elm_test",
+    package = "elmPackages.elm-test",
+    binary = "elm-test",
 )

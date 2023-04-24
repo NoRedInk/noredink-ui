@@ -6,19 +6,19 @@ elm_docs(
     name = "docs",
     elm_json = "elm.json",
     srcs = glob(["src/**/*.elm"]),
-    # tests = [
-    #     ":test",
+    tests = [
+        ":test",
     #     ":review",
     #     ":elm-forbid-import"
-    # ]
+    ]
 )
 
-# elm_test(
-#     name = "test",
-#     elm_json = "elm.json",
-#     srcs = glob(["src/**/*.elm"]),
-#     test_srcs = glob(["tests/**/*.elm"]),
-# )
+elm_test(
+    name = "test",
+    elm_json = "elm.json",
+    srcs = glob(["src/**/*.elm"]),
+    test_srcs = glob(["tests/**/*.elm"]),
+)
 
 # elm_review(
 #     name = "review",
