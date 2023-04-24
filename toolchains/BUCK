@@ -47,4 +47,21 @@ nix_binary(
     name = "elm_test",
     package = "elmPackages.elm-test",
     binary = "elm-test",
+    nixpkgs = ":nixpkgs"
+)
+
+# this is probably not the right way to do things long-term, but it'll probably
+# get us off the ground!
+genrule(
+    name = "nixpkgs",
+    # assuming system git. Following the same steps as GitHub actions/checkout@v3
+    cmd = """
+    git init $OUT
+    cd $OUT
+    git config --local gc.auto 0
+    git remote add origin https://github.com/NixOS/nixpkgs
+    git fetch --no-tags --prune --progress --no-recurse-submodules --depth=1 origin e78d25df6f1036b3fa76750ed4603dd9d5fe90fc:refs/remotes/origin/local-nixpkgs
+    git checkout --progress --force -B local-nixpkgs refs/remotes/origin/local-nixpkgs
+    """,
+    out = "nixpkgs",
 )

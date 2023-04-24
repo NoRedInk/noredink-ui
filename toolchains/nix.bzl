@@ -6,11 +6,12 @@ def _nix_binary_impl(ctx: "context"):
         "-xeuo", "pipefail",
         "-c",
         """
-        PACKAGE="$(nix-build --no-out-link '<nixpkgs>' -A "${1:-}")"
-        BINARY="${2:-}"
+        PACKAGE="$(nix-build --no-out-link "${1:-}" -A "${2:-}")"
+        BINARY="${3:-}"
         ln -s "${PACKAGE}/bin/$(basename ${BINARY})" "$BINARY"
         """,
         "--",
+        ctx.attrs.nixpkgs,
         ctx.attrs.package or ctx.attrs.name,
         binary.as_output(),
     ])
@@ -27,5 +28,6 @@ nix_binary = rule(
     attrs = {
         "package": attrs.option(attrs.string(), default=None),
         "binary": attrs.option(attrs.string(), default=None),
+        "nixpkgs": attrs.source(),
     }
 )
