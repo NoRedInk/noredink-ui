@@ -8,6 +8,14 @@ def _nix_binary_impl(ctx: "context"):
         """
         PACKAGE="$(nix-build --no-out-link "${1:-}" -A "${2:-}")"
         BINARY="${3:-}"
+
+        if ! test -e "$BINARY"; then
+          echo "the package exists but the binary does not. Here's what I have:"
+          echo
+          ls -alhR "${PACKAGE}"
+          exit 1
+        fi
+
         ln -s "${PACKAGE}/bin/$(basename ${BINARY})" "$BINARY"
         """,
         "--",
