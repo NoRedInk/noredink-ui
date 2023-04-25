@@ -120,7 +120,7 @@ def _elm_test_impl(ctx: "context"):
         shift 2
 
         cd "$(dirname "$ELM_JSON")"
-        elm-test $@
+        "$ELM_TEST" $@
         """,
         "--",
         ctx.attrs._elm_toolchain.get(ElmToolchainInfo).elm_test,
