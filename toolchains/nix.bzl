@@ -29,7 +29,7 @@ def _nix_binary_impl(ctx: "context"):
 
     return [
         DefaultInfo(default_output = binary),
-        RunInfo(binary,)
+        RunInfo(binary),
     ]
 
 nix_binary = rule(
