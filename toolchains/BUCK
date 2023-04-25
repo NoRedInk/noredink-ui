@@ -83,3 +83,10 @@ http_archive(
     sha256 = "9fe7947ac45904ddb8d79fad3d3fea43408905646b3835511429e99005399b79",
     strip_prefix = "nixpkgs-e2b34f0f11ed8ad83d9ec9c14260192c3bcccb0d",
 )
+
+nix_binary(
+    name = "prettier",
+    package = "nodePackages.prettier",
+    nixpkgs = ":nixpkgs",
+    visibility = ["PUBLIC"],
+)

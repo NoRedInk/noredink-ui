@@ -72,7 +72,8 @@ elm_verify_examples(
 #     visibility = ["PUBLIC"],
 # )
 
-# prettier_diffs(
-#     name = "prettier",
-#     srcs = glob(["lib/**/*.js"]),
-# )
+prettier_diffs(
+    name = "prettier",
+    srcs = glob(["lib/**/*.js"]),
+    tool = "toolchains//:prettier",
+)
