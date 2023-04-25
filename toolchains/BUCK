@@ -90,3 +90,10 @@ nix_binary(
     nixpkgs = ":nixpkgs",
     visibility = ["PUBLIC"],
 )
+
+nix_binary(
+    name = "browserify",
+    package = "nodePackages.browserify",
+    nixpkgs = ":nixpkgs",
+    visibility = ["PUBLIC"],
+)

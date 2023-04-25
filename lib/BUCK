@@ -1,0 +1,7 @@
+load("//:browserify.bzl", "browserify")
+
+browserify(
+    name = "lib.js",
+    entry = "index.js",
+    srcs = glob(["**/*.js"]),
+)

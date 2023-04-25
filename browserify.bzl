@@ -2,7 +2,7 @@ def _browserify_impl(ctx: "context"):
     out = ctx.actions.declare_output(ctx.attrs.out or ctx.attrs.name)
 
     cmd = cmd_args([
-        ctx.attrs.tool,
+        ctx.attrs.tool[RunInfo],
         "--entry", ctx.attrs.entry,
         "--outfile", out.as_output(),
     ])
@@ -18,6 +18,6 @@ browserify = rule(
         "out": attrs.option(attrs.string(), default=None),
         "entry": attrs.source(),
         "srcs": attrs.list(attrs.source()),
-        "tool": attrs.string(default="node_modules/.bin/browserify"),
+        "tool": attrs.dep(providers = [RunInfo], default="toolchains//:browserify"),
     }
 )

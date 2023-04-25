@@ -41,13 +41,6 @@ filegroup(
     visibility = ["//component-catalog:app"],
 )
 
-# browserify(
-#     name = "bundle.js",
-#     entry = "lib/index.js",
-#     srcs = glob(["lib/**/*.js"]),
-#     visibility = ["PUBLIC"], # TODO: lock this down?
-# )
-
 elm_verify_examples(
     name = "elm_verify_examples",
     srcs = glob(["src/**/*.elm"]),
