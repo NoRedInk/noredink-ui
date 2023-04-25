@@ -29,7 +29,7 @@ def _elm_app_impl(ctx: "context"):
         "-xeuo", "pipefail",
         "-c",
         """
-        ELM="${1:-}"
+        ELM="${PWD}/${1:-}"
         ELM_JSON="${PWD}/${2:-}"
         ELM_MAIN="${PWD}/${3:-}"
         OUT="${PWD}/${4:-}"
