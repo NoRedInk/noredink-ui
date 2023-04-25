@@ -1,7 +1,9 @@
 load("//:browserify.bzl", "browserify")
 
 browserify(
-    name = "lib.js",
+    name = "bundle",
+    out = "bundle.js",
     entry = "index.js",
     srcs = glob(["**/*.js"]),
+    visibility = ["//component-catalog:public"],
 )

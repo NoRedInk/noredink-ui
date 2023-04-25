@@ -42,7 +42,7 @@ filegroup(
         "index.html": ":index.html",
         "favicon.svg": ":favicon.svg",
         "application.json": ":elm.json",
-        # "bundle.js": "//:bundle.js",
+        "bundle.js": "//lib:bundle",
         "elm.js": ":app",
     }
 )
