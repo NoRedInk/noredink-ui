@@ -49,6 +49,7 @@ jobs:
         with:
           path: ${{ github.workspace }}/buck-out
           key: buck-out
+        id: buck-out-cache
 
       - name: build
         run: buck2 build //...
@@ -58,7 +59,7 @@ jobs:
 
       - name: save buck build cache
         uses: actions/cache/save@v3
-        if: always()
+        if: steps.buck-out-cache.outputs.cache-hit != 'true'
         with:
           path: ${{ github.workspace }}/buck-out
           key: buck-out
