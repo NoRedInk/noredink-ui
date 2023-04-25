@@ -35,13 +35,21 @@ def _elm_toolchain_impl(ctx: "context"):
     An Elm toolchain which you can source binaries from wherever it makes sense
     to you.
     """
+    elm_format = None
+    if ctx.attrs.elm_format:
+        elm_format = ctx.attrs.elm_format[RunInfo]
+
     elm_test = None
     if ctx.attrs.elm_test:
         elm_test = ctx.attrs.elm_test[RunInfo]
 
-    elm_format = None
-    if ctx.attrs.elm_format:
-        elm_format = ctx.attrs.elm_format[RunInfo]
+    elm_review = None
+    if ctx.attrs.elm_review:
+        elm_review = ctx.attrs.elm_review[RunInfo]
+
+    elm_verify_examples = None
+    if ctx.attrs.elm_verify_examples:
+        elm_verify_examples = ctx.attrs.elm_verify_examples[RunInfo]
 
     return [
         DefaultInfo(),
@@ -49,8 +57,8 @@ def _elm_toolchain_impl(ctx: "context"):
             elm = ctx.attrs.elm[RunInfo],
             elm_format = elm_format,
             elm_test = elm_test,
-            elm_review = ctx.attrs.elm_review,
-            elm_verify_examples = ctx.attrs.elm_verify_examples,
+            elm_review = elm_review,
+            elm_verify_examples = elm_verify_examples,
         ),
     ]
 
