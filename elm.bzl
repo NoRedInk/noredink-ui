@@ -115,14 +115,16 @@ def _elm_test_impl(ctx: "context"):
         "-euo", "pipefail",
         "-c",
         """
-        ELM_TEST="${1:-}"
-        ELM_JSON="${2:-}"
-        shift 2
+        ELM="${1:-}"
+        ELM_TEST="${2:-}"
+        ELM_JSON="${3:-}"
+        shift 3
 
         cd "$(dirname "$ELM_JSON")"
-        "$ELM_TEST" $@
+        "$ELM_TEST" --compiler "$ELM" $@
         """,
         "--",
+        ctx.attrs._elm_toolchain.get(ElmToolchainInfo).elm,
         ctx.attrs._elm_toolchain.get(ElmToolchainInfo).elm_test,
         ctx.attrs.elm_json,
     ])
