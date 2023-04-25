@@ -55,7 +55,7 @@ jobs:
         run: buck2 build //...
 
       - name: test
-        run: buck2 test //... --verbose 3
+        run: buck2 test //...
 
       - name: save buck build cache
         uses: actions/cache/save@v3
