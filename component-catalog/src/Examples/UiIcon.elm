@@ -121,6 +121,7 @@ all =
         , ( "stretch", UiIcon.stretch, [] )
         , ( "graduateCap", UiIcon.graduateCap, [] )
         , ( "apple", UiIcon.apple, [] )
+        , ( "appleOutline", UiIcon.appleOutline, [] )
         , ( "briefcase", UiIcon.briefcase, [] )
         ]
       )
