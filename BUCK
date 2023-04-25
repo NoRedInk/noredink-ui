@@ -8,7 +8,7 @@ elm_docs(
     srcs = glob(["src/**/*.elm"]),
     tests = [
         ":test",
-    #     ":review",
+        ":review",
     #     ":elm-forbid-import"
     ]
 )
@@ -20,11 +20,11 @@ elm_test(
     test_srcs = glob(["tests/**/*.elm"]),
 )
 
-# elm_review(
-#     name = "review",
-#     srcs = glob(["src/**/*.elm"]),
-#     review_srcs = glob(["review/**/*.elm"]),
-# )
+elm_review(
+    name = "review",
+    srcs = glob(["src/**/*.elm"]),
+    review_srcs = glob(["review/**/*.elm"]),
+)
 
 # elm_format_diffs(
 #     name = "elm_format_diffs",

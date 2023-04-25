@@ -19,6 +19,7 @@ elm_toolchain(
     visibility = ["PUBLIC"],
     elm = ":elm_compiler",
     elm_test = ":elm_test",
+    elm_review = ":elm_review",
 )
 
 ELM_COMPILER_URL = select({
@@ -48,7 +49,14 @@ nix_binary(
     name = "elm_test",
     package = "elmPackages.elm-test",
     binary = "elm-test",
-    nixpkgs = ":nixpkgs"
+    nixpkgs = ":nixpkgs",
+)
+
+nix_binary(
+    name = "elm_review",
+    package = "elmPackages.elm-review",
+    binary = "elm-review",
+    nixpkgs = ":nixpkgs",
 )
 
 # this is probably not the right way to do things long-term, but it'll probably

@@ -153,7 +153,8 @@ elm_test = rule(
 )
 
 def _elm_review_impl(ctx: "context"):
-    command = cmd_args(ctx.attrs._elm_toolchain.get(ElmToolchainInfo).elm_review)
+    command = cmd_args(ctx.attrs._elm_toolchain.get(ElmToolchainInfo).elm_review[RunInfo])
+    command.add("--compiler", ctx.attrs._elm_toolchain.get(ElmToolchainInfo).elm)
     command.hidden(ctx.attrs.srcs, ctx.attrs.review_srcs)
 
     return [
