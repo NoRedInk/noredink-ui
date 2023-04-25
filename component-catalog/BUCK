@@ -32,21 +32,20 @@ elm_review(
     review_srcs = glob(["review/**/*.elm"]),
 )
 
-# export_file(name = "index.html")
-# export_file(name = "favicon.svg")
-# export_file(name = "elm.json")
+export_file(name = "index.html")
+export_file(name = "favicon.svg")
+export_file(name = "elm.json")
 
-# filegroup(
-#     name = "public",
-#     srcs = {
-#         "index.html": ":index.html",
-#         "favicon.svg": ":favicon.svg",
-#         "application.json": ":elm.json",
-#         "package.json": "//:elm.json",
-#         "bundle.js": "//:bundle.js",
-#         "elm.js": ":app",
-#     }
-# )
+filegroup(
+    name = "public",
+    srcs = {
+        "index.html": ":index.html",
+        "favicon.svg": ":favicon.svg",
+        "application.json": ":elm.json",
+        # "bundle.js": "//:bundle.js",
+        "elm.js": ":app",
+    }
+)
 
 # sh_test(
 #     name = "puppeteer",
