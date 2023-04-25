@@ -20,6 +20,7 @@ elm_toolchain(
     elm = ":elm_compiler",
     elm_test = ":elm_test",
     elm_review = ":elm_review",
+    elm_verify_examples = ":elm_verify_examples",
 )
 
 ELM_COMPILER_URL = select({
@@ -56,6 +57,13 @@ nix_binary(
     name = "elm_review",
     package = "elmPackages.elm-review",
     binary = "elm-review",
+    nixpkgs = ":nixpkgs",
+)
+
+nix_binary(
+    name = "elm_verify_examples",
+    package = "elmPackages.elm-verify-examples",
+    binary = "elm-verify-examples",
     nixpkgs = ":nixpkgs",
 )
 

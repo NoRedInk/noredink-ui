@@ -9,6 +9,7 @@ elm_docs(
     tests = [
         ":test",
         ":review",
+        ":elm_verify_examples",
     #     ":elm-forbid-import"
     ]
 )
@@ -43,10 +44,10 @@ elm_review(
 #     visibility = ["PUBLIC"], # TODO: lock this down?
 # )
 
-# elm_verify_examples(
-#     name = "elm_verify_examples",
-#     srcs = glob(["src/**/*.elm"]),
-# )
+elm_verify_examples(
+    name = "elm_verify_examples",
+    srcs = glob(["src/**/*.elm"]),
+)
 
 # export_file(
 #     name = "deprecated-modules-csv.py",

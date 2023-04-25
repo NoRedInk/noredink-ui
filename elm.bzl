@@ -175,8 +175,12 @@ elm_review = rule(
 )
 
 def _elm_verify_examples_impl(ctx: "context"):
+    toolchain = ctx.attrs._elm_toolchain.get(ElmToolchainInfo)
+
     command = cmd_args([
-        ctx.attrs._elm_toolchain.get(ElmToolchainInfo).elm_verify_examples,
+        toolchain.elm_verify_examples[RunInfo],
+        "--elm-test", toolchain.elm_test,
+        "--elm-test-args", "--compiler={}".format(toolchain.elm),
         "--run-tests",
     ])
     command.hidden(ctx.attrs.srcs)
