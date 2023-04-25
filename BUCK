@@ -41,11 +41,6 @@ filegroup(
     visibility = ["//component-catalog:app"],
 )
 
-# export_file(
-#     name = "elm.json",
-#     visibility = ["PUBLIC"], # TODO: lock this down?
-# )
-
 # browserify(
 #     name = "bundle.js",
 #     entry = "lib/index.js",
