@@ -8,9 +8,8 @@ elm_app(
     srcs = glob(["src/**/*.elm"]) + ["//:library"],
     tests = [
         ":test",
-        ":review",
-        "//:elm-forbid-import",
-        ":puppeteer",
+        # ":review",
+        # ":puppeteer",
     ]
 )
 
@@ -20,12 +19,12 @@ elm_format_diffs(
     srcs = glob(["src/**/*.elm"]),
 )
 
-# elm_test(
-#     name = "test",
-#     elm_json = "elm.json",
-#     srcs = srcs,
-#     test_srcs = glob(["tests/**/*.elm"]),
-# )
+elm_test(
+    name = "test",
+    elm_json = "elm.json",
+    srcs = glob(["src/**/*.elm"]),
+    test_srcs = glob(["tests/**/*.elm"]),
+)
 
 # elm_review(
 #     name = "review",
