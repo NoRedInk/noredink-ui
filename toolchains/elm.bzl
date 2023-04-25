@@ -1,6 +1,6 @@
 ElmToolchainInfo = provider(fields=[
     "elm",
-    # "elm_format",
+    "elm_format",
     "elm_test",
     "elm_review",
     "elm_verify_examples",
@@ -16,7 +16,7 @@ def _system_elm_toolchain_impl(_ctx):
         DefaultInfo(),
         ElmToolchainInfo(
             elm = RunInfo(args = ["elm"]),
-            # elm_format = RunInfo(args = ["elm-format"]),
+            elm_format = RunInfo(args = ["elm-format"]),
             elm_test = RunInfo(args = ["elm-test"]),
             elm_review = RunInfo(args = ["elm-review"]),
             elm_verify_examples = RunInfo(args = ["elm-verify-examples"]),
@@ -39,11 +39,15 @@ def _elm_toolchain_impl(ctx: "context"):
     if ctx.attrs.elm_test:
         elm_test = ctx.attrs.elm_test[RunInfo]
 
+    elm_format = None
+    if ctx.attrs.elm_format:
+        elm_format = ctx.attrs.elm_format[RunInfo]
+
     return [
         DefaultInfo(),
         ElmToolchainInfo(
             elm = ctx.attrs.elm[RunInfo],
-            # elm_format = ctx.attrs.elm_format,
+            elm_format = elm_format,
             elm_test = elm_test,
             elm_review = ctx.attrs.elm_review,
             elm_verify_examples = ctx.attrs.elm_verify_examples,
@@ -54,7 +58,7 @@ elm_toolchain = rule(
     impl = _elm_toolchain_impl,
     attrs = {
         "elm": attrs.dep(providers = [RunInfo]),
-        # "elm_format": attrs.dep(),
+        "elm_format": attrs.option(attrs.dep(providers = [RunInfo]), default = None),
         "elm_test": attrs.option(attrs.dep(providers = [RunInfo]), default = None),
         "elm_review": attrs.option(attrs.dep(providers = [RunInfo]), default = None),
         "elm_verify_examples": attrs.option(attrs.dep(providers = [RunInfo]), default = None),

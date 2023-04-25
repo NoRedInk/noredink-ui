@@ -27,10 +27,10 @@ elm_review(
     review_srcs = glob(["review/**/*.elm"]),
 )
 
-# elm_format_diffs(
-#     name = "elm_format_diffs",
-#     srcs = glob(["**/*.elm"]),
-# )
+elm_format_diffs(
+    name = "elm_format_diffs",
+    srcs = glob(["**/*.elm"]),
+)
 
 # export_file(
 #     name = "elm.json",
