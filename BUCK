@@ -29,7 +29,16 @@ elm_review(
 
 elm_format_diffs(
     name = "elm_format_diffs",
-    srcs = glob(["**/*.elm"]),
+    srcs = glob(["src/**/*.elm"]),
+)
+
+# TODO: eventually we will want to manage compilation packages in Elm apps via
+# Buck. For now, though, just making these files available to the styleguide app
+# should be OK.
+filegroup(
+    name = "library",
+    srcs = glob(['src/**/*.elm']),
+    visibility = ["//component-catalog:app"],
 )
 
 # export_file(

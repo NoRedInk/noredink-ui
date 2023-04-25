@@ -1,20 +1,24 @@
-load("//:elm.bzl", "elm_app", "elm_test", "elm_review")
+load("//:elm.bzl", "elm_app", "elm_test", "elm_review", "elm_format_diffs")
 
-# srcs = glob(["Main.elm", "../component-catalog-app/**/*.elm", "../src/**/*.elm"])
+elm_app(
+    name = "app",
+    elm_json = "elm.json",
+    main = "src/Main.elm",
+    out = "elm.js",
+    srcs = glob(["src/**/*.elm"]) + ["//:library"],
+    tests = [
+        ":test",
+        ":review",
+        "//:elm-forbid-import",
+        ":puppeteer",
+    ]
+)
 
-# elm_app(
-#     name = "app",
-#     elm_json = "elm.json",
-#     main = "Main.elm",
-#     out = "elm.js",
-#     srcs = srcs,
-#     tests = [
-#         ":test",
-#         ":review",
-#         "//:elm-forbid-import",
-#         ":puppeteer",
-#     ]
-# )
+
+elm_format_diffs(
+    name = "elm_format_diffs",
+    srcs = glob(["src/**/*.elm"]),
+)
 
 # elm_test(
 #     name = "test",
