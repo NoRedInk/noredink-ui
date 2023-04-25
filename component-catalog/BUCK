@@ -8,7 +8,7 @@ elm_app(
     srcs = glob(["src/**/*.elm"]) + ["//:library"],
     tests = [
         ":test",
-        # ":review",
+        ":review",
         # ":puppeteer",
     ]
 )
@@ -26,11 +26,11 @@ elm_test(
     test_srcs = glob(["tests/**/*.elm"]),
 )
 
-# elm_review(
-#     name = "review",
-#     srcs = srcs,
-#     review_srcs = glob(["review/**/*.elm"]),
-# )
+elm_review(
+    name = "review",
+    srcs = glob(["src/**/*.elm"]),
+    review_srcs = glob(["review/**/*.elm"]),
+)
 
 # export_file(name = "index.html")
 # export_file(name = "favicon.svg")
