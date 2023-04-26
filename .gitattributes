@@ -1,1 +1,2 @@
 component-catalog-app/assets/images/** filter=lfs diff=lfs merge=lfs -text
+prelude/**/*.bzl linguist-generated=true
