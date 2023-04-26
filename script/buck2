@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+if ! test -d buck-out; then
+  mkdir buck-out
+fi
+
+if ! test -f buck-out/buck2; then
+  # TODO: adjust download location for different os/arch combinations
+  curl -L https://github.com/facebook/buck2/releases/download/latest/buck2-aarch64-apple-darwin.zst | zstd -d > buck-out/buck2
+  chmod +x buck-out/buck2
+fi
+
+exec buck-out/buck2 $@
