@@ -8,7 +8,7 @@ module Nri.Ui.Logo.V1 exposing
     , schoology
     , schoologyCircle
     , facebook, twitter
-    , oneroster, onerosterFull
+    , oneRoster, oneRosterFull
     )
 
 {-|
@@ -22,7 +22,7 @@ module Nri.Ui.Logo.V1 exposing
 @docs schoology
 @docs schoologyCircle
 @docs facebook, twitter
-@docs oneroster, onerosterFull
+@docs oneRoster, oneRosterFull
 
 -}
 
@@ -667,8 +667,8 @@ schoologyCircle =
 
 
 {-| -}
-onerosterFull : Nri.Ui.Svg.V1.Svg
-onerosterFull =
+oneRosterFull : Nri.Ui.Svg.V1.Svg
+oneRosterFull =
     Nri.Ui.Svg.V1.init "0 0 200 50"
         [ Svg.image
             [ Attributes.x "0"
@@ -683,8 +683,8 @@ onerosterFull =
 
 
 {-| -}
-oneroster : Nri.Ui.Svg.V1.Svg
-oneroster =
+oneRoster : Nri.Ui.Svg.V1.Svg
+oneRoster =
     Nri.Ui.Svg.V1.init "0 0 60 51"
         [ Svg.image
             [ Attributes.x "0"

@@ -181,15 +181,15 @@ all =
         ]
       )
     , ( "OneRoster"
-      , [ ( "onerosterFull"
-          , Logo.onerosterFull
+      , [ ( "oneRosterFull"
+          , Logo.oneRosterFull
           , [ Css.height (Css.px 25)
             , Css.width (Css.px 100)
             , Css.margin (Css.px 4)
             ]
           )
-        , ( "oneroster"
-          , Logo.oneroster
+        , ( "oneRoster"
+          , Logo.oneRoster
           , [ Css.height (Css.px 25)
             , Css.width (Css.px 25)
             , Css.margin (Css.px 4)
