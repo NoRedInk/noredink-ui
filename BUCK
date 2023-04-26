@@ -7,3 +7,8 @@ elm_docs(
     srcs = glob(["src/**/*.elm"]),
 )
 
+filegroup(
+    name = "src",
+    srcs = glob(["src/**/*.elm"]),
+    visibility = ["//component-catalog:app"]
+)

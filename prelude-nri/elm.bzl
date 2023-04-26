@@ -43,3 +43,41 @@ elm_docs = rule(
     }
 )
 
+def _elm_app_impl(ctx: "context") -> [DefaultInfo.type]:
+    out = ctx.actions.declare_output(ctx.attrs.out)
+    compiler = get_compiler(ctx, ctx.attrs._elm_toolchain[ElmToolchainInfo], ctx.attrs.elm_json)
+
+    cmd = cmd_args([
+        compiler,
+        "make",
+        cmd_args(ctx.attrs.main).relative_to(ctx.attrs.elm_json, parent = 1),
+        "--output",
+        cmd_args(out.as_output()).relative_to(ctx.attrs.elm_json, parent = 1),
+    ])
+    cmd.hidden(ctx.attrs.elm_json, ctx.attrs.srcs)
+
+    if ctx.attrs.debug and ctx.attrs.optimize:
+        fail("Only one of `optimize` and `debug` may be true!")
+
+    if ctx.attrs.debug:
+        cmd.add("--debug")
+
+    if ctx.attrs.optimize:
+        cmd.add("--optimize")
+
+    ctx.actions.run(cmd, category = "elm")
+
+    return [DefaultInfo(default_output = out)]
+
+elm_app = rule(
+    impl = _elm_app_impl,
+    attrs = {
+        "out": attrs.string(default = "app.js"),
+        "elm_json": attrs.source(),
+        "main": attrs.source(),
+        "srcs": attrs.list(attrs.source()),
+        "debug": attrs.bool(default = False),
+        "optimize": attrs.bool(default = False),
+        "_elm_toolchain": attrs.toolchain_dep(default="toolchains//:elm"),
+    }
+)
