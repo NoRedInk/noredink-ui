@@ -9,5 +9,4 @@ elm_app(
         "../src": "//:src",
         "src": "src",
     }
-    # srcs = glob(["src/**/*.elm"]) + ["//:src"],
 )
