@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""
+Build an Elm app, but isolate the working directory so that multiple Elm
+compiler invocations can run in parallel without corrupting `.elmi` files.
+"""
 from argparse import ArgumentParser, ArgumentTypeError
 import json
 import os
@@ -9,6 +13,13 @@ import sys
 
 
 def symlink_if_necessary(source, target):
+    """
+    Do the same thing as `os.symlink`, but with these edge cases checked:
+
+     - If the target already exists and points to the source, do nothing.
+     - If the target already exists and points somewhere else, remove it
+       and relink.
+    """
     if os.path.exists(target):
         if os.readlink(target) == source:
             return
@@ -19,12 +30,16 @@ def symlink_if_necessary(source, target):
 
 
 def run_docs(args):
+    """
+    Compile JSON docs for an Elm library.
+    """
     shutil.copy(args.elm_json, os.path.join(args.build_dir, "elm.json"))
 
     # for libraries, the Elm compiler always assumes the source lives in a
     # directory named "src". We have one of those from the arguments, so let's
-    # set it up. For the sake of being able to reuse this build directory's
-    # `elm-stuff`, we take care to repoint the symlink if necessary.
+    # set it up under the build root. For the sake of being able to reuse this
+    # build directory's `elm-stuff`, we take care to repoint the symlink if
+    # necessary.
     symlink_if_necessary(
         os.path.abspath(args.src),
         os.path.join(args.build_dir, "src")
@@ -35,6 +50,8 @@ def run_docs(args):
             args.elm_compiler,
             "make",
             "--docs",
+            # since we're changing cwd, we need to output the absolute path
+            # instead of a (potentially) relative one.
             os.path.abspath(args.out),
         ],
         cwd = args.build_dir
@@ -45,8 +62,21 @@ def run_docs(args):
 
 
 def run_make(args):
+    """
+    Compile an Elm app to HTML or JavaScript.
+
+    Our basic approach here is to symlink all the source directories and the
+    Main.elm file into place and modify elm.json to look in those places. This
+    means that we can use the build directory as a working directory so we get
+    an isolated elm-stuff directory.
+    """
     with open(args.elm_json, 'r') as fh:
         elm_json = json.load(fh)
+
+    ##########################################################################
+    # STEP 1: symlink entries in `source-directories` to the right locations #
+    ##########################################################################
+
     try:
         original_source_directories = elm_json["source-directories"]
     except KeyError:
@@ -63,7 +93,7 @@ def run_make(args):
             print(f"I don't have a replacement path for `{directory}`. Please specify one with --source-directory {directory}=real-path-to-directory")
             return 1
 
-        dest = f"sd-{i}"
+        dest = f"src-{i}"
         symlink_if_necessary(
             os.path.abspath(replacement),
             os.path.join(args.build_dir, dest)
@@ -71,15 +101,26 @@ def run_make(args):
 
         new_source_directories.append(dest)
 
-    elm_json["source-directories"] = new_source_directories
+    #############################################################
+    # STEP 2: Modify and write `elm.json` to the right location #
+    #############################################################
 
+    elm_json["source-directories"] = new_source_directories
     with open(os.path.join(args.build_dir, "elm.json"), "w") as fh:
         json.dump(elm_json, fh)
+
+    #############################################################
+    # STEP 3: Symlink our entrypoint file to the right location #
+    #############################################################
 
     # TODO: this is not necessarily going to work if the name is not `Main`
     # because of the module declaration not matching the file name.
     main = "Main.elm"
     symlink_if_necessary(os.path.abspath(args.main), os.path.join(args.build_dir, main))
+
+    #####################################################
+    # STEP 4: Prepare and run the `elm make` invocation #
+    #####################################################
 
     command = [args.elm_compiler, "make", main, "--output", os.path.abspath(args.out)]
 
@@ -110,19 +151,19 @@ class SourceDirectory:
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser()
+    parser = ArgumentParser(description = __doc__)
     parser.add_argument("build_dir", help="Where to perform the build. Should be an empty directory, or one you've already run a build in.")
     parser.add_argument("elm_json", help="Location of the elm.json")
     parser.add_argument("--elm-compiler", help="path to the Elm compiler", default="elm")
 
     subparsers = parser.add_subparsers(required = True)
 
-    docs = subparsers.add_parser('docs', help="build docs for an Elm library")
+    docs = subparsers.add_parser('docs', help=run_docs.__doc__)
     docs.set_defaults(func=run_docs)
     docs.add_argument("out", help="Path for the resulting docs JSON file")
     docs.add_argument("--src", help="Path to library source", default="src")
 
-    make = subparsers.add_parser('make', help="compile an Elm app to JavaScript")
+    make = subparsers.add_parser('make', help=run_make.__doc__)
     make.set_defaults(func=run_make)
     make.add_argument("out", help="Path for the resulting JavaScript or HTML file")
     make.add_argument("main", help="Main.elm file to build")
