@@ -34,7 +34,7 @@ def run_docs(args):
             args.elm_compiler,
             "make",
             "--docs",
-            args.out,
+            os.path.abspath(args.out),
         ],
         cwd = args.build_dir
     )
