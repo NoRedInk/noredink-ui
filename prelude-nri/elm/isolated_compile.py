@@ -121,6 +121,18 @@ def run_make(args):
             return 1
 
         dest = f"src-{i}"
+
+        # special case: if the replacement is inside `buck-out` and contains
+        # only a single directory, we're being passed a Buck2 artifact directory
+        # and should take the single directory inside.
+        if replacement.startswith("buck-out"):
+            contents = os.listdir(replacement)
+            if len(contents) == 1 and os.path.isdir(contents[0]):
+                logging.info(
+                    f"I think `{replacement}` is a Buck2 artifact, so I'm symlinking `{contents[0]}` inside it instead."
+                )
+                replacement = os.path.join(replacement, contents[0])
+
         symlink_if_necessary(
             os.path.abspath(replacement), os.path.join(args.build_dir, dest)
         )
