@@ -171,7 +171,13 @@ def run_make(args):
     # STEP 4: Prepare and run the `elm make` invocation #
     #####################################################
 
-    command = [args.elm_compiler, "make", main, "--output", os.path.abspath(args.output)]
+    command = [
+        args.elm_compiler,
+        "make",
+        main,
+        "--output",
+        os.path.abspath(args.output),
+    ]
 
     if args.debug and args.optimize:
         print("Only one of --debug or --optimize can be set.")
@@ -227,7 +233,9 @@ if __name__ == "__main__":
     make.set_defaults(func=run_make)
     make.add_argument("main", help="Main.elm file to build")
     make.add_argument(
-        "--output", help="Path for the resulting JavaScript or HTML file", default="app.js"
+        "--output",
+        help="Path for the resulting JavaScript or HTML file",
+        default="app.js",
     )
     make.add_argument(
         "--source-directory",
