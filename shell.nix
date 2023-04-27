@@ -14,6 +14,7 @@ stdenv.mkDerivation {
     git
     niv.niv
     jq
+    zstd
 
     # building with Shake
     haskellPackages.ormolu
