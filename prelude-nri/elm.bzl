@@ -38,8 +38,8 @@ def _elm_docs_impl(ctx: "context") -> [DefaultInfo.type]:
         "--verbose",
         "docs",
         "--out", docs.as_output(),
+        "--src", ctx.attrs.src,
     )
-    cmd.hidden(ctx.attrs.srcs)
 
     ctx.actions.run(
         cmd,
@@ -54,7 +54,7 @@ elm_docs = rule(
     attrs = {
         "out": attrs.string(default="docs.json"),
         "elm_json": attrs.source(),
-        "srcs": attrs.list(attrs.source()),
+        "src": attrs.source(allow_directory = True),
         "_elm_toolchain": attrs.toolchain_dep(
             default="toolchains//:elm",
             providers=[ElmToolchainInfo]

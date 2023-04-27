@@ -4,7 +4,7 @@ load("@prelude-nri//:elm.bzl", "elm_docs")
 elm_docs(
     name = "docs.json",
     elm_json = "elm.json",
-    srcs = glob(["src/**/*.elm"]),
+    src = "src",
 )
 
 filegroup(
