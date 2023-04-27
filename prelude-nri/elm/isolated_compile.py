@@ -92,7 +92,9 @@ def run_make(args):
         (sd.src, sd.target) for sd in args.source_directory or []
     )
 
-    new_source_directories = []
+    # we're creating a mapping here so we can chain the Main file to be relative
+    # to the symlinks later.
+    new_source_directories = {}
     for i, directory in enumerate(original_source_directories):
         try:
             replacement = source_directory_replacements[directory]
@@ -107,7 +109,7 @@ def run_make(args):
             os.path.abspath(replacement), os.path.join(args.build_dir, dest)
         )
 
-        new_source_directories.append(dest)
+        new_source_directories[replacement] = dest
 
     logging.debug(f"new source directories: {new_source_directories}")
 
@@ -115,20 +117,32 @@ def run_make(args):
     # STEP 2: Modify and write `elm.json` to the right location #
     #############################################################
 
-    elm_json["source-directories"] = new_source_directories
+    elm_json["source-directories"] = list(new_source_directories.values())
     new_elm_json_path = os.path.join(args.build_dir, "elm.json")
     logging.debug(f"writing `{new_elm_json_path}`")
     with open(new_elm_json_path, "w") as fh:
         json.dump(elm_json, fh)
 
-    #############################################################
-    # STEP 3: Symlink our entrypoint file to the right location #
-    #############################################################
+    ##########################################################
+    # STEP 3: Make sure we're poining at the right main file #
+    ##########################################################
 
     # TODO: this is not necessarily going to work if the name is not `Main`
     # because of the module declaration not matching the file name.
-    main = "Main.elm"
-    symlink_if_necessary(os.path.abspath(args.main), os.path.join(args.build_dir, main))
+    main = args.main
+    replaced = False
+    logging.debug(f"original main: {main}")
+    for original, replacement in new_source_directories.items():
+        if main.startswith(original):
+            main = os.path.join(replacement, main[len(original) + 1 :])
+            logging.debug(f"using `{main}` instead of `{args.main}`")
+            replaced = True
+            break
+
+    if not replaced:
+        # it's fine to build a main file outside a source directory, but let's
+        # take the absolute path so we can make sure to get it.
+        main = os.path.abspath(main)
 
     #####################################################
     # STEP 4: Prepare and run the `elm make` invocation #
