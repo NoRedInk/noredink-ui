@@ -98,6 +98,11 @@ Here are some things you might need to do:
 | See all our dependencies | Look in `shell.nix` |
 | See all our sources | `niv show` |
 
+## Developing with Buck
+
+We are in the process of transitioning our build processes to [Buck 2](https://buck2.build).
+The instructions above will work until they're removed from the repo, but if you'd like to try the new thing, run `script/buck2 build //...` or `script/buck2 test //...`.
+
 ## Tests
 
 Run tests with
