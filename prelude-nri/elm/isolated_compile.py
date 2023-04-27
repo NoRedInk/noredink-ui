@@ -70,7 +70,7 @@ def run_docs(args):
         "--docs",
         # since we're changing cwd, we need to output the absolute path
         # instead of a (potentially) relative one.
-        os.path.abspath(args.out),
+        os.path.abspath(args.output),
     ]
     logging.debug(f"running {command} in `{args.build_dir}`")
     process = Popen(command, cwd=args.build_dir)
@@ -171,7 +171,7 @@ def run_make(args):
     # STEP 4: Prepare and run the `elm make` invocation #
     #####################################################
 
-    command = [args.elm_compiler, "make", main, "--output", os.path.abspath(args.out)]
+    command = [args.elm_compiler, "make", main, "--output", os.path.abspath(args.output)]
 
     if args.debug and args.optimize:
         print("Only one of --debug or --optimize can be set.")
@@ -219,16 +219,16 @@ if __name__ == "__main__":
     docs = subparsers.add_parser("docs", help=run_docs.__doc__)
     docs.set_defaults(func=run_docs)
     docs.add_argument(
-        "--out", help="Path for the resulting docs JSON file", default="docs.json"
+        "--output", help="Path for the resulting docs JSON file", default="docs.json"
     )
     docs.add_argument("--src", help="Path to library source", default="src")
 
     make = subparsers.add_parser("make", help=run_make.__doc__)
     make.set_defaults(func=run_make)
+    make.add_argument("main", help="Main.elm file to build")
     make.add_argument(
-        "--out", help="Path for the resulting JavaScript or HTML file", default="app.js"
+        "--output", help="Path for the resulting JavaScript or HTML file", default="app.js"
     )
-    make.add_argument("--main", help="Main.elm file to build", default="Main.elm")
     make.add_argument(
         "--source-directory",
         type=SourceDirectory,
