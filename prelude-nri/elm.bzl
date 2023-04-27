@@ -1,4 +1,5 @@
 load("//elm:toolchain.bzl", "ElmToolchainInfo")
+load("@prelude//python:toolchain.bzl", "PythonToolchainInfo")
 
 def get_compiler(ctx: "context", toolchain: ElmToolchainInfo.type, elm_json: "artifact") -> "artifact":
     """
@@ -23,13 +24,27 @@ def get_compiler(ctx: "context", toolchain: ElmToolchainInfo.type, elm_json: "ar
     )
 
 def _elm_docs_impl(ctx: "context") -> [DefaultInfo.type]:
+    build = ctx.actions.declare_output("build", dir = True)
     docs = ctx.actions.declare_output(ctx.attrs.out)
-    compiler = get_compiler(ctx, ctx.attrs._elm_toolchain[ElmToolchainInfo], ctx.attrs.elm_json)
 
-    cmd = cmd_args([compiler, "make", "--docs", docs.as_output()])
-    cmd.hidden(ctx.attrs.elm_json, ctx.attrs.srcs)
+    elm_toolchain = ctx.attrs._elm_toolchain[ElmToolchainInfo]
 
-    ctx.actions.run(cmd, category = "elm")
+    command = cmd_args(
+        ctx.attrs._python_toolchain[PythonToolchainInfo].interpreter,
+        elm_toolchain.isolated_compile[DefaultInfo].default_outputs,
+        ctx.attrs.elm_json,
+        "--build-dir", build.as_output(),
+        "--elm-compiler", elm_toolchain.elm,
+        "--verbose",
+        "docs",
+        "--out", docs.as_output(),
+    )
+
+    ctx.actions.run(
+        command,
+        category = "elm",
+        no_outputs_cleanup = True,
+    )
 
     return [DefaultInfo(default_output = docs)]
 
@@ -39,7 +54,14 @@ elm_docs = rule(
         "out": attrs.string(default="docs.json"),
         "elm_json": attrs.source(),
         "srcs": attrs.list(attrs.source()),
-        "_elm_toolchain": attrs.toolchain_dep(default="toolchains//:elm"),
+        "_elm_toolchain": attrs.toolchain_dep(
+            default="toolchains//:elm",
+            providers=[ElmToolchainInfo]
+        ),
+        "_python_toolchain": attrs.toolchain_dep(
+            default="toolchains//:python",
+            providers=[PythonToolchainInfo]
+        ),
     }
 )
 
