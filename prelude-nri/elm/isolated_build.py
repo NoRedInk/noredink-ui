@@ -11,6 +11,7 @@ import os.path
 import shutil
 from subprocess import Popen, PIPE
 import sys
+import tempfile
 
 
 def symlink_if_necessary(source, target):
@@ -164,11 +165,11 @@ class SourceDirectory:
 
 if __name__ == "__main__":
     parser = ArgumentParser(description=__doc__)
+    parser.add_argument("elm_json", help="Location of the elm.json")
     parser.add_argument(
-        "build_dir",
+        "--build-dir",
         help="Where to perform the build. Should be an empty directory, or one you've already run a build in.",
     )
-    parser.add_argument("elm_json", help="Location of the elm.json")
     parser.add_argument(
         "--elm-compiler", help="path to the Elm compiler", default="elm"
     )
@@ -211,4 +212,12 @@ if __name__ == "__main__":
     logger.setLevel(logging.DEBUG if args.verbose else logging.WARNING)
 
     # run!
-    sys.exit(args.func(args))
+    if args.build_dir is None:
+        with tempfile.TemporaryDirectory() as temp:
+            logging.warning(
+                f"building in temporary directory `{temp}`, which will be cleaned up after the build. If you want a persistent place to build, pass it in with `--build-dir`!"
+            )
+            args.build_dir = temp
+            sys.exit(args.func(args))
+    else:
+        sys.exit(args.func(args))
