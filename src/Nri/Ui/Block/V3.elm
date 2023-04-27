@@ -196,7 +196,9 @@ splitByOverlaps =
     -- consider the elements from top to bottom
     groupWithSort (\( _, a ) -> a.label.element.y + a.label.element.height)
         (\( _, a ) ( _, b ) ->
-            (a.label.element.y + a.label.element.height) == (b.label.element.y + b.label.element.height)
+            isRangeOverlapping
+                ( a.label.element.y, a.label.element.y + a.label.element.height )
+                ( b.label.element.y, b.label.element.y + b.label.element.height )
         )
         >> List.concatMap
             -- consider the elements from left to right
@@ -205,6 +207,11 @@ splitByOverlaps =
                     (a.label.element.x + xOffsetPx a.label + a.label.element.width) >= (b.label.element.x + xOffsetPx b.label)
                 )
             )
+
+
+isRangeOverlapping : ( Float, Float ) -> ( Float, Float ) -> Bool
+isRangeOverlapping ( a1, a2 ) ( b1, b2 ) =
+    (a1 <= b2 && a2 >= b1) || (a1 <= b2 && a2 >= b1)
 
 
 groupWithSort : (a -> comparable) -> (a -> a -> Bool) -> List a -> List (List a)
