@@ -29,7 +29,7 @@ def _elm_docs_impl(ctx: "context") -> [DefaultInfo.type]:
 
     elm_toolchain = ctx.attrs._elm_toolchain[ElmToolchainInfo]
 
-    command = cmd_args(
+    cmd = cmd_args(
         ctx.attrs._python_toolchain[PythonToolchainInfo].interpreter,
         elm_toolchain.isolated_compile[DefaultInfo].default_outputs,
         ctx.attrs.elm_json,
@@ -39,9 +39,10 @@ def _elm_docs_impl(ctx: "context") -> [DefaultInfo.type]:
         "docs",
         "--out", docs.as_output(),
     )
+    cmd.hidden(ctx.attrs.srcs)
 
     ctx.actions.run(
-        command,
+        cmd,
         category = "elm",
         no_outputs_cleanup = True,
     )
