@@ -180,13 +180,17 @@ if __name__ == "__main__":
 
     docs = subparsers.add_parser("docs", help=run_docs.__doc__)
     docs.set_defaults(func=run_docs)
-    docs.add_argument("out", help="Path for the resulting docs JSON file")
+    docs.add_argument(
+        "--out", help="Path for the resulting docs JSON file", default="docs.json"
+    )
     docs.add_argument("--src", help="Path to library source", default="src")
 
     make = subparsers.add_parser("make", help=run_make.__doc__)
     make.set_defaults(func=run_make)
-    make.add_argument("out", help="Path for the resulting JavaScript or HTML file")
-    make.add_argument("main", help="Main.elm file to build")
+    make.add_argument(
+        "--out", help="Path for the resulting JavaScript or HTML file", default="app.js"
+    )
+    make.add_argument("--main", help="Main.elm file to build", default="Main.elm")
     make.add_argument(
         "--source-directory",
         type=SourceDirectory,
