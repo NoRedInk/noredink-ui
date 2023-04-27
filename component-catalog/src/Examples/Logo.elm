@@ -180,6 +180,23 @@ all =
           )
         ]
       )
+    , ( "OneRoster"
+      , [ ( "oneRosterFull"
+          , Logo.oneRosterFull
+          , [ Css.height (Css.px 25)
+            , Css.width (Css.px 100)
+            , Css.margin (Css.px 4)
+            ]
+          )
+        , ( "oneRoster"
+          , Logo.oneRoster
+          , [ Css.height (Css.px 25)
+            , Css.width (Css.px 25)
+            , Css.margin (Css.px 4)
+            ]
+          )
+        ]
+      )
     ]
 
 
