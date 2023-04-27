@@ -121,7 +121,7 @@ def run_make(args):
     new_elm_json_path = os.path.join(args.build_dir, "elm.json")
     logging.debug(f"writing `{new_elm_json_path}`")
     with open(new_elm_json_path, "w") as fh:
-        json.dump(elm_json, fh)
+        json.dump(elm_json, fh, indent=4)
 
     ##########################################################
     # STEP 3: Make sure we're poining at the right main file #
