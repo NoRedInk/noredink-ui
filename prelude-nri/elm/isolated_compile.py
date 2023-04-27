@@ -248,6 +248,10 @@ if __name__ == "__main__":
     logger.addHandler(handler)
     logger.setLevel(logging.DEBUG if args.verbose else logging.WARNING)
 
+    # prep
+    if os.path.exists(args.elm_compiler):
+        args.elm_compiler = os.path.abspath(args.elm_compiler)
+
     # run!
     if args.build_dir is None:
         with tempfile.TemporaryDirectory() as temp:
@@ -257,4 +261,7 @@ if __name__ == "__main__":
             args.build_dir = temp
             sys.exit(args.func(args))
     else:
+        if not os.path.exists(args.build_dir):
+            logging.info(f"creating build dir at `{args.build_dir}`")
+            os.mkdir(args.build_dir)
         sys.exit(args.func(args))
