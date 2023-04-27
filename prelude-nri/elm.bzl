@@ -67,17 +67,25 @@ elm_docs = rule(
 )
 
 def _elm_app_impl(ctx: "context") -> [DefaultInfo.type]:
+    build = ctx.actions.declare_output("build", dir = True)
     out = ctx.actions.declare_output(ctx.attrs.out)
-    compiler = get_compiler(ctx, ctx.attrs._elm_toolchain[ElmToolchainInfo], ctx.attrs.elm_json)
 
-    cmd = cmd_args([
-        compiler,
+    elm_toolchain = ctx.attrs._elm_toolchain[ElmToolchainInfo]
+
+    cmd = cmd_args(
+        ctx.attrs._python_toolchain[PythonToolchainInfo].interpreter,
+        elm_toolchain.isolated_compile[DefaultInfo].default_outputs,
+        ctx.attrs.elm_json,
+        "--build-dir", build.as_output(),
+        "--elm-compiler", elm_toolchain.elm,
+        "--verbose",
         "make",
-        cmd_args(ctx.attrs.main).relative_to(ctx.attrs.elm_json, parent = 1),
-        "--output",
-        cmd_args(out.as_output()).relative_to(ctx.attrs.elm_json, parent = 1),
-    ])
-    cmd.hidden(ctx.attrs.elm_json, ctx.attrs.srcs)
+        ctx.attrs.main,
+        "--output", out.as_output(),
+    )
+
+    for (name, value) in ctx.attrs.source_directories.items():
+        cmd.add(cmd_args(value, format="--source-directory=" + name + "={}"))
 
     if ctx.attrs.debug and ctx.attrs.optimize:
         fail("Only one of `optimize` and `debug` may be true!")
@@ -88,7 +96,11 @@ def _elm_app_impl(ctx: "context") -> [DefaultInfo.type]:
     if ctx.attrs.optimize:
         cmd.add("--optimize")
 
-    ctx.actions.run(cmd, category = "elm")
+    ctx.actions.run(
+        cmd,
+        category = "elm",
+        no_outputs_cleanup = True,
+    )
 
     return [DefaultInfo(default_output = out)]
 
@@ -98,9 +110,19 @@ elm_app = rule(
         "out": attrs.string(default = "app.js"),
         "elm_json": attrs.source(),
         "main": attrs.source(),
-        "srcs": attrs.list(attrs.source()),
+        "source_directories": attrs.dict(
+            attrs.string(),
+            attrs.source(allow_directory=True),
+        ),
         "debug": attrs.bool(default = False),
         "optimize": attrs.bool(default = False),
-        "_elm_toolchain": attrs.toolchain_dep(default="toolchains//:elm"),
+        "_elm_toolchain": attrs.toolchain_dep(
+            default="toolchains//:elm",
+            providers=[ElmToolchainInfo]
+        ),
+        "_python_toolchain": attrs.toolchain_dep(
+            default="toolchains//:python",
+            providers=[PythonToolchainInfo]
+        ),
     }
 )

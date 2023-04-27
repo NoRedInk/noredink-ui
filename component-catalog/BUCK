@@ -5,5 +5,9 @@ elm_app(
     elm_json = "elm.json",
     main = "src/Main.elm",
     out = "elm.js",
-    srcs = glob(["src/**/*.elm"]) + ["//:src"],
+    source_directories = {
+        "../src": "//:src",
+        "src": "src",
+    }
+    # srcs = glob(["src/**/*.elm"]) + ["//:src"],
 )
