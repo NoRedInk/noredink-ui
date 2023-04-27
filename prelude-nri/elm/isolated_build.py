@@ -45,10 +45,7 @@ def run_docs(args):
     # set it up under the build root. For the sake of being able to reuse this
     # build directory's `elm-stuff`, we take care to repoint the symlink if
     # necessary.
-    symlink_if_necessary(
-        os.path.abspath(args.src),
-        os.path.join(args.build_dir, "src")
-    )
+    symlink_if_necessary(os.path.abspath(args.src), os.path.join(args.build_dir, "src"))
 
     command = [
         args.elm_compiler,
@@ -59,7 +56,7 @@ def run_docs(args):
         os.path.abspath(args.out),
     ]
     logging.debug(f"running {command} in `{args.build_dir}`")
-    process = Popen(command, cwd = args.build_dir)
+    process = Popen(command, cwd=args.build_dir)
     process.communicate()
 
     return process.returncode
@@ -75,7 +72,7 @@ def run_make(args):
     an isolated elm-stuff directory.
     """
     logging.debug(f"reading `{args.elm_json}`")
-    with open(args.elm_json, 'r') as fh:
+    with open(args.elm_json, "r") as fh:
         elm_json = json.load(fh)
 
     ##########################################################################
@@ -85,23 +82,28 @@ def run_make(args):
     try:
         original_source_directories = elm_json["source-directories"]
     except KeyError:
-        logging.error(f"`{args.elm_json}` did not have a \"source-directories\" entry. Is it a package?")
+        logging.error(
+            f'`{args.elm_json}` did not have a "source-directories" entry. Is it a package?'
+        )
         return 1
 
-    source_directory_replacements = dict((sd.src, sd.target) for sd in args.source_directory or [])
+    source_directory_replacements = dict(
+        (sd.src, sd.target) for sd in args.source_directory or []
+    )
 
     new_source_directories = []
-    for (i, directory) in enumerate(original_source_directories):
+    for i, directory in enumerate(original_source_directories):
         try:
             replacement = source_directory_replacements[directory]
         except KeyError:
-            logging.error(f"I don't have a replacement path for `{directory}`. Please specify one with --source-directory {directory}=real-path-to-directory")
+            logging.error(
+                f"I don't have a replacement path for `{directory}`. Please specify one with --source-directory {directory}=real-path-to-directory"
+            )
             return 1
 
         dest = f"src-{i}"
         symlink_if_necessary(
-            os.path.abspath(replacement),
-            os.path.join(args.build_dir, dest)
+            os.path.abspath(replacement), os.path.join(args.build_dir, dest)
         )
 
         new_source_directories.append(dest)
@@ -144,7 +146,7 @@ def run_make(args):
         command.append("--optimize")
 
     logging.debug(f"running {command} in `{args.build_dir}`")
-    process = Popen(command, cwd = args.build_dir)
+    process = Popen(command, cwd=args.build_dir)
     process.communicate()
 
     return process.returncode
@@ -153,7 +155,7 @@ def run_make(args):
 class SourceDirectory:
     def __init__(self, s):
         try:
-            src, target = s.split('=')
+            src, target = s.split("=")
             self.src = src
             self.target = target
         except:
@@ -161,24 +163,36 @@ class SourceDirectory:
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser(description = __doc__)
-    parser.add_argument("build_dir", help="Where to perform the build. Should be an empty directory, or one you've already run a build in.")
+    parser = ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "build_dir",
+        help="Where to perform the build. Should be an empty directory, or one you've already run a build in.",
+    )
     parser.add_argument("elm_json", help="Location of the elm.json")
-    parser.add_argument("--elm-compiler", help="path to the Elm compiler", default="elm")
-    parser.add_argument("--verbose", help="Turn on verbose logging", action="store_true")
+    parser.add_argument(
+        "--elm-compiler", help="path to the Elm compiler", default="elm"
+    )
+    parser.add_argument(
+        "--verbose", help="Turn on verbose logging", action="store_true"
+    )
 
-    subparsers = parser.add_subparsers(required = True)
+    subparsers = parser.add_subparsers(required=True)
 
-    docs = subparsers.add_parser('docs', help=run_docs.__doc__)
+    docs = subparsers.add_parser("docs", help=run_docs.__doc__)
     docs.set_defaults(func=run_docs)
     docs.add_argument("out", help="Path for the resulting docs JSON file")
     docs.add_argument("--src", help="Path to library source", default="src")
 
-    make = subparsers.add_parser('make', help=run_make.__doc__)
+    make = subparsers.add_parser("make", help=run_make.__doc__)
     make.set_defaults(func=run_make)
     make.add_argument("out", help="Path for the resulting JavaScript or HTML file")
     make.add_argument("main", help="Main.elm file to build")
-    make.add_argument("--source-directory", type=SourceDirectory, metavar="SRC=TARGET", action="append")
+    make.add_argument(
+        "--source-directory",
+        type=SourceDirectory,
+        metavar="SRC=TARGET",
+        action="append",
+    )
     make.add_argument("--debug", action="store_true", help="Build in debug mode")
     make.add_argument("--optimize", action="store_true", help="Build in optimize mode")
 
@@ -187,7 +201,7 @@ if __name__ == "__main__":
     # logging
     logger = logging.getLogger()
     handler = logging.StreamHandler(sys.stderr)
-    formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
+    formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     logger.setLevel(logging.DEBUG if args.verbose else logging.WARNING)
