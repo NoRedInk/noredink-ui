@@ -34,6 +34,22 @@ def symlink_if_necessary(source, target):
     os.symlink(source, target)
 
 
+def write_if_necessary(target, content):
+    """
+    Read the target file and check the content. If it's the same, don't write.
+    Otherwise, replace it.
+    """
+    if os.path.exists(target):
+        with open(target, "r") as fh:
+            if fh.read() == content:
+                logging.debug(f"`{target}` already had the requested content.")
+                return
+
+    logging.info(f"writing `{target}`")
+    with open(target, "w") as fh:
+        fh.write(content)
+
+
 def run_docs(args):
     """
     Compile JSON docs for an Elm library.
@@ -120,8 +136,15 @@ def run_make(args):
     elm_json["source-directories"] = list(new_source_directories.values())
     new_elm_json_path = os.path.join(args.build_dir, "elm.json")
     logging.debug(f"writing `{new_elm_json_path}`")
-    with open(new_elm_json_path, "w") as fh:
-        json.dump(elm_json, fh, indent=4)
+
+    # the compiler will do a full rebuild anytime the `elm.json` file changes.
+    # Writing only if necessary about halves the runtime for this script for
+    # noredink-ui's component catalog, with more expected savings the bigger the
+    # app gets.
+    write_if_necessary(
+        new_elm_json_path,
+        json.dumps(elm_json, indent=4),
+    )
 
     ##########################################################
     # STEP 3: Make sure we're poining at the right main file #
