@@ -428,7 +428,7 @@ getLabelPositionsSpec =
                      }
                    )
                  , ( "b"
-                   , { label = dummyElement { x = 0, y = 20, width = 100, height = 100 }
+                   , { label = dummyElement { x = 0, y = 150, width = 100, height = 100 }
                      , labelContent = dummyElement { x = 0, y = 0, width = 100, height = startingHeight }
                      }
                    )
@@ -474,7 +474,7 @@ getLabelPositionsSpec =
                    )
                  , -- C is the widest element and it is also on a new line by itself
                    ( "c"
-                   , { label = dummyElement { x = 0, y = 20, width = 300, height = 100 }
+                   , { label = dummyElement { x = 0, y = 150, width = 300, height = 100 }
                      , labelContent = dummyElement { x = 0, y = 0, width = 300, height = startingHeight }
                      }
                    )
@@ -532,7 +532,7 @@ getLabelPositionsSpec =
                    )
                  , -- C is the widest element and it is also on a new line by itself
                    ( "c"
-                   , { label = dummyElement { x = 0, y = 20, width = 300, height = 100 }
+                   , { label = dummyElement { x = 0, y = 150, width = 300, height = 100 }
                      , labelContent = dummyElement { x = 0, y = 0, width = 300, height = startingHeight }
                      }
                    )
