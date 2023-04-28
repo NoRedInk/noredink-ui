@@ -94,14 +94,13 @@ example =
                             ( ( defs
                                     ++ Code.newlines
                                     ++ (addStr
-                                            :: Code.recordMultiline
+                                            ++ Code.recordMultiline
                                                 [ ( "id", Code.string crumb.id )
                                                 , ( "text", Code.string crumb.text )
                                                 , ( "route", Code.string crumb.route )
                                                 ]
                                                 2
-                                            :: List.map Tuple.first crumb.attributes
-                                            |> String.join ""
+                                            ++ Code.listMultiline (List.map Tuple.first crumb.attributes) 2
                                             |> Code.var crumb.varName 1
                                        )
                               , crumb.varName
