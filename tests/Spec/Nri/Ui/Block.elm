@@ -616,6 +616,28 @@ getLabelPositionsSpec =
                      ]
                         |> Dict.fromList
                     )
+    , test "regression test - apparently impossible label top should not prevent identifying lables as being on same line" <|
+        \() ->
+            Block.getLabelPositions
+                (Dict.fromList
+                    [ ( "173-display-element-labeled-2-5"
+                      , { label = dummyElement { x = 350.984375, y = 212.5, width = 150, height = 53 }
+                        , labelContent = dummyElement { x = 350.984375, y = 261.5, width = 150, height = 45 }
+                        }
+                      )
+                    , ( "173-display-element-labeled-6-12"
+                      , { label = dummyElement { x = 477.2421875, y = 212.5, width = 150, height = 102 }
+                        , labelContent = dummyElement { x = 477.2421875, y = 212.5, width = 150, height = 45 }
+                        }
+                      )
+                    ]
+                )
+                |> Expect.equal
+                    ([ ( "173-display-element-labeled-2-5", { arrowHeight = 8, totalHeight = 53, xOffset = 0, zIndex = 1 } )
+                     , ( "173-display-element-labeled-6-12", { arrowHeight = 57, totalHeight = 102, xOffset = 0, zIndex = 0 } )
+                     ]
+                        |> Dict.fromList
+                    )
     ]
 
 
