@@ -1,28 +1,6 @@
 load("//elm:toolchain.bzl", "ElmToolchainInfo")
 load("@prelude//python:toolchain.bzl", "PythonToolchainInfo")
 
-def get_compiler(ctx: "context", toolchain: ElmToolchainInfo.type, elm_json: "artifact") -> "artifact":
-    """
-    Produce a script that `cd`s to the correct directory, then runs `elm`.
-    """
-    return ctx.actions.write(
-        "elm.sh",
-        [
-            "#!/usr/bin/env bash",
-            "set -euo pipefail",
-            cmd_args(
-                elm_json,
-                format = "cd $(dirname {})"
-            ),
-            cmd_args(
-                toolchain.elm,
-                format = "exec {} $@"
-            ).relative_to(elm_json, parent = 1)
-        ],
-        is_executable = True,
-        with_inputs = True,
-    )
-
 def _elm_docs_impl(ctx: "context") -> [DefaultInfo.type]:
     build = ctx.actions.declare_output("build", dir = True)
     docs = ctx.actions.declare_output(ctx.attrs.out)
