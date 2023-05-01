@@ -108,7 +108,7 @@ def run_make(args):
         (sd.src, sd.target) for sd in args.source_directory or []
     )
 
-    # we're creating a mapping here so we can chain the Main file to be relative
+    # we're creating a mapping here so we can change the Main file to be relative
     # to the symlinks later.
     new_source_directories = {}
     for i, directory in enumerate(original_source_directories):
@@ -162,8 +162,6 @@ def run_make(args):
     # STEP 3: Make sure we're poining at the right main file #
     ##########################################################
 
-    # TODO: this is not necessarily going to work if the name is not `Main`
-    # because of the module declaration not matching the file name.
     main = args.main
     replaced = False
     logging.debug(f"original main: {main}")
