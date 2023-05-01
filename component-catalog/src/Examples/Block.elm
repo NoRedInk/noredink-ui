@@ -210,7 +210,7 @@ example =
                     , Block.labelId editorsNoteId
                     , Block.labelPosition (Dict.get editorsNoteId offsets)
                     ]
-                , Block.view 
+                , Block.view
                     [ Block.plaintext " "
                     ]
                 , Block.view
