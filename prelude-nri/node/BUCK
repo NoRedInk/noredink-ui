@@ -4,7 +4,7 @@ _NODE_URL = select({
 })
 
 _NODE_SHA256 = select({
-    "config//os:linux": "0000000000000000000000000000000000000000000000000000000000000000",
+    "config//os:linux": "9e512f1f1cadb3a5e37a10aa2d5e632f93aaf9f37165803e2ed981009970a3d7",
     "config//os:macos": "ee27eea6694a5d8c834b11a12fb85a5dae01a91178be12920a6da12d8c299c43",
 })
 
