@@ -9,8 +9,20 @@ fi
 if ! test -f buck-out/buck2; then
   case "$(uname -s)" in
     Darwin)
-      # TODO: adjust for processor type
-      curl -L https://github.com/facebook/buck2/releases/download/latest/buck2-aarch64-apple-darwin.zst | zstd -d > buck-out/buck2
+      case "$(arch)" in
+        arm64)
+          curl -L https://github.com/facebook/buck2/releases/download/latest/buck2-aarch64-apple-darwin.zst | zstd -d > buck-out/buck2
+          ;;
+
+        i386)
+          curl -L https://github.com/facebook/buck2/releases/download/latest/buck2-x86_64-apple-darwin.zst | zstd -d > buck-out/buck2
+          ;;
+
+        *)
+          echo "I don't know how to get a download for $(arch) on macOS"
+          exit 1
+          ;;
+      esac
       ;;
 
     Linux)

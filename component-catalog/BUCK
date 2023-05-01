@@ -1,0 +1,12 @@
+load("@prelude-nri//:elm.bzl", "elm_app")
+
+elm_app(
+    name = "app",
+    elm_json = "elm.json",
+    main = "src/Main.elm",
+    out = "elm.js",
+    source_directories = {
+        "../src": "//:src",
+        "src": "src",
+    }
+)
