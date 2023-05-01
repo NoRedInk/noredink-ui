@@ -210,6 +210,13 @@ example =
                     , Block.labelId editorsNoteId
                     , Block.labelPosition (Dict.get editorsNoteId offsets)
                     ]
+                , Block.view 
+                    [ Block.plaintext " "
+                    ]
+                , Block.view
+                    [ Block.content [ Block.italic (Block.phrase "Emphasized Italics.") ]
+                    , Block.emphasize
+                    ]
                 ]
             , p
                 [ css
