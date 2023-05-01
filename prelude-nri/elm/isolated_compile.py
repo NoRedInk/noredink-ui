@@ -23,8 +23,10 @@ def symlink_if_necessary(source, target):
        and relink.
     """
     if os.path.exists(target):
-        logging.debug(f"`{target}` already exists")
-        if os.readlink(target) == source:
+        if os.path.isfile(target):
+            logging.debug(f"`{target}` is a regular file")
+
+        elif os.readlink(target) == source:
             logging.debug(f"`{target}` already points to `{source}`")
             return
 
@@ -55,7 +57,7 @@ def run_docs(args):
     Compile JSON docs for an Elm library.
     """
     logging.info(f"copying {args.elm_json} to {args.build_dir}")
-    shutil.copy(args.elm_json, os.path.join(args.build_dir, "elm.json"))
+    symlink_if_necessary(args.elm_json, os.path.join(args.build_dir, "elm.json"))
 
     # for libraries, the Elm compiler always assumes the source lives in a
     # directory named "src". We have one of those from the arguments, so let's
