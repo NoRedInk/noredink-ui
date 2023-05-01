@@ -1,6 +1,7 @@
 NodeToolchainInfo = provider(fields=[
     "bin",
     "node",
+    "build_node_modules",
 ])
 
 def _node_toolchain_impl(ctx) -> [[DefaultInfo.type, NodeToolchainInfo.type]]:
@@ -13,6 +14,7 @@ def _node_toolchain_impl(ctx) -> [[DefaultInfo.type, NodeToolchainInfo.type]]:
         NodeToolchainInfo(
             bin = ctx.attrs.bin[DefaultInfo].default_outputs,
             node = ctx.attrs.node[RunInfo],
+            build_node_modules = ctx.attrs._build_node_modules,
         ),
     ]
 
@@ -25,6 +27,9 @@ node_toolchain = rule(
         "node": attrs.dep(
             providers = [RunInfo],
             default="prelude-nri//node:node"
+        ),
+        "_build_node_modules": attrs.dep(
+            default="prelude-nri//node:build_node_modules.py",
         ),
     },
     is_toolchain_rule = True,
