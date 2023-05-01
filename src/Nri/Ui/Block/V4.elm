@@ -278,13 +278,13 @@ renderContent content_ styles =
                 tag =
                     case markdown of
                         Bold ->
-                            strong []
+                            strong [ css styles ]
 
                         Italic ->
-                            em []
+                            em [ css styles ]
             in
             contents
-                |> List.map (\c -> renderContent c styles)
+                |> List.map (\c -> renderContent c [])
                 |> tag
 
 
