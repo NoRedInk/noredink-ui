@@ -1,0 +1,36 @@
+_NODE_URL = select({
+    "config//os:linux": "https://nodejs.org/dist/v20.0.0/node-v20.0.0-linux-x64.tar.xz",
+    "config//os:macos": "https://nodejs.org/dist/v20.0.0/node-v20.0.0-darwin-arm64.tar.gz",
+})
+
+_NODE_SHA256 = select({
+    "config//os:linux": "0000000000000000000000000000000000000000000000000000000000000000",
+    "config//os:macos": "ee27eea6694a5d8c834b11a12fb85a5dae01a91178be12920a6da12d8c299c43",
+})
+
+_NODE_PREFIX = select({
+    "config//os:linux": "node-v20.0.0-linux-x64",
+    "config//os:macos": "node-v20.0.0-darwin-arm64",
+})
+
+http_archive(
+    name = "node_binaries",
+    urls = [_NODE_URL],
+    sha256 = _NODE_SHA256,
+    strip_prefix = _NODE_PREFIX,
+)
+
+genrule(
+    name = "bin",
+    out = "bin",
+    cmd = "ln -s $(location :node_binaries)/bin $OUT",
+    visibility = ["PUBLIC"],
+)
+
+genrule(
+    name = "node",
+    out = "node",
+    cmd = "ln -s $(location :node_binaries)/bin/node $OUT",
+    visibility = ["PUBLIC"],
+    executable = True,
+)
