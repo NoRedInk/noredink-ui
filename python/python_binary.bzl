@@ -60,6 +60,7 @@ load(
     "LinkableProviders",  # @unused Used as a type
     "linkables",
 )
+load("@prelude//linking:shared_libraries.bzl", "merge_shared_libraries", "traverse_shared_library_info")
 load(
     "@prelude//utils:types.bzl",
     "unchecked",  # @unused Used as a type
@@ -72,7 +73,7 @@ load(
     ":interface.bzl",
     "PythonLibraryInterface",  # @unused Used as a type
 )
-load(":make_pex.bzl", "PexModules", "PexProviders", "make_pex")
+load(":make_pex.bzl", "PexModules", "PexProviders", "make_default_info", "make_pex")
 load(
     ":manifest.bzl",
     "create_dep_manifest_for_source_map",
@@ -510,6 +511,12 @@ def convert_python_library_to_executable(
             link_group_info = link_group_info,
             auto_link_group_specs = auto_link_group_specs,
             exe_category_suffix = "python_exe",
+            extra_shared_libs = traverse_shared_library_info(
+                merge_shared_libraries(
+                    actions = ctx.actions,
+                    deps = [d.shared_library_info for d in extension_info.shared_only_libs.values()],
+                ),
+            ),
             extra_link_roots = (
                 extension_info.unembeddable_extensions.values() +
                 extension_info.dlopen_deps.values() +
@@ -622,10 +629,6 @@ def python_binary_impl(ctx: "context") -> ["provider"]:
         compile = value_or(ctx.attrs.compile, False),
     )
     return [
-        DefaultInfo(
-            default_output = pex.default_output,
-            other_outputs = pex.other_outputs,
-            sub_targets = pex.sub_targets,
-        ),
+        make_default_info(pex),
         RunInfo(pex.run_cmd),
     ]

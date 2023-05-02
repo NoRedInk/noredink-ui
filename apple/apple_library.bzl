@@ -7,11 +7,27 @@
 
 load("@prelude//apple:apple_dsym.bzl", "AppleDebuggableInfo", "DEBUGINFO_SUBTARGET", "DSYM_SUBTARGET", "get_apple_dsym")
 load("@prelude//apple:apple_stripping.bzl", "apple_strip_args")
-load("@prelude//apple/swift:swift_compilation.bzl", "compile_swift", "get_swift_anonymous_targets", "get_swift_dependency_info", "get_swift_pcm_uncompile_info", "uses_explicit_modules")
+load(
+    "@prelude//apple/swift:swift_compilation.bzl",
+    "SwiftDependencyInfo",  # @unused Used as a type
+    "compile_swift",
+    "get_swift_anonymous_targets",
+    "get_swift_dependency_info",
+    "get_swift_pcm_uncompile_info",
+    "get_swiftmodule_linkable",
+    "uses_explicit_modules",
+)
 load("@prelude//cxx:cxx_library.bzl", "cxx_library_parameterized")
 load("@prelude//cxx:cxx_library_utility.bzl", "cxx_attr_deps", "cxx_attr_exported_deps")
 load("@prelude//cxx:cxx_sources.bzl", "get_srcs_with_flags")
-load("@prelude//cxx:cxx_types.bzl", "CxxRuleAdditionalParams", "CxxRuleConstructorParams", "CxxRuleProviderParams", "CxxRuleSubTargetParams")
+load(
+    "@prelude//cxx:cxx_types.bzl",
+    "CxxAdditionalArgsfileParams",  # @unused Used as a type
+    "CxxRuleAdditionalParams",
+    "CxxRuleConstructorParams",
+    "CxxRuleProviderParams",
+    "CxxRuleSubTargetParams",
+)
 load(
     "@prelude//cxx:debug.bzl",
     "ExternalDebugInfoTSet",  # @unused Used as a type
@@ -29,6 +45,7 @@ load(
 load(
     "@prelude//cxx:preprocessor.bzl",
     "CPreprocessor",
+    "CPreprocessorInfo",  # @unused Used as a type
 )
 load("@prelude//linking:link_info.bzl", "LinkStyle")
 load(":apple_bundle_types.bzl", "AppleBundleLinkerMapInfo", "AppleMinDeploymentVersionInfo")
@@ -123,7 +140,9 @@ def apple_library_rule_constructor_params_and_swift_providers(ctx: "context", pa
     else:
         exported_pre = None
 
-    swift_providers = swift_compile.providers if swift_compile else [get_swift_dependency_info(ctx, exported_pre, None)]
+    # When linking, we expect each linked object to provide the transitively required swiftmodule AST entries for linking.
+    swiftmodule_linkable = get_swiftmodule_linkable(ctx, swift_compile.dependency_info) if swift_compile else None
+    swift_dependency_info = swift_compile.dependency_info if swift_compile else [get_swift_dependency_info(ctx, exported_pre, None)]
     swift_argsfile = swift_compile.swift_argsfile if swift_compile else None
 
     modular_pre = CPreprocessor(
@@ -142,7 +161,7 @@ def apple_library_rule_constructor_params_and_swift_providers(ctx: "context", pa
         ],
     )
 
-    def additional_providers_factory(propagated_exported_preprocessor_info: ["CPreprocessorInfo", None]) -> ["provider"]:
+    def additional_providers_factory(propagated_exported_preprocessor_info: [CPreprocessorInfo.type, None]) -> ["provider"]:
         # Expose `SwiftPCMUncompiledInfo` which represents the ObjC part of a target,
         # if a target also has a Swift part, the provider will expose the generated `-Swift.h` header.
         # This is used for Swift Explicit Modules, and allows compiling a PCM file out of the exported headers.
@@ -152,17 +171,19 @@ def apple_library_rule_constructor_params_and_swift_providers(ctx: "context", pa
             exported_pre,
         )
         providers = [swift_pcm_uncompile_info] if swift_pcm_uncompile_info else []
-        return providers + swift_providers
+        return providers + swift_dependency_info
 
     framework_search_path_pre = CPreprocessor(
         args = [get_framework_search_path_flags(ctx)],
     )
+
     return CxxRuleConstructorParams(
         rule_type = params.rule_type,
         is_test = (params.rule_type == "apple_test"),
         headers_layout = get_apple_cxx_headers_layout(ctx),
         extra_exported_link_flags = params.extra_exported_link_flags,
-        extra_link_flags = [_get_linker_flags(ctx, swift_providers)],
+        extra_link_flags = [_get_linker_flags(ctx)],
+        swiftmodule_linkable = swiftmodule_linkable,
         extra_link_input = swift_object_files,
         extra_link_input_has_external_debug_info = True,
         extra_preprocessors = get_min_deployment_version_target_preprocessor_flags(ctx) + [swift_pre, modular_pre],
@@ -174,7 +195,7 @@ def apple_library_rule_constructor_params_and_swift_providers(ctx: "context", pa
             # We need to add any swift modules that we include in the link, as
             # these will end up as `N_AST` entries that `dsymutil` will need to
             # follow.
-            external_debug_info = _get_external_debug_info(swift_providers),
+            external_debug_info = _get_external_debug_info(swift_dependency_info),
             subtargets = {
                 "swift-compile": [DefaultInfo(default_output = swift_compile.object_file if swift_compile else None)],
             },
@@ -242,27 +263,21 @@ def _get_shared_link_style_sub_targets_and_providers(
         providers += [AppleBundleLinkerMapInfo(linker_maps = [linker_map.map])]
     return (subtargets, providers)
 
-def _get_external_debug_info(swift_providers: ["provider"]) -> [ExternalDebugInfoTSet.type]:
+def _get_external_debug_info(swift_dependency_infos: [SwiftDependencyInfo.type]) -> [ExternalDebugInfoTSet.type]:
     tsets = []
-    for p in swift_providers:
-        if hasattr(p, "external_debug_info"):
-            if p.external_debug_info != None:
-                tsets.append(p.external_debug_info)
+    for info in swift_dependency_infos:
+        if info.external_debug_info:
+            tsets.append(info.external_debug_info)
     return tsets
 
-def _get_linker_flags(ctx: "context", swift_providers: ["provider"]) -> "cmd_args":
-    cmd = cmd_args(get_min_deployment_version_target_linker_flags(ctx))
-    for p in swift_providers:
-        if hasattr(p, "transitive_swiftmodule_paths"):
-            cmd.add(p.transitive_swiftmodule_paths.project_as_args("linker_args"))
-
-    return cmd
+def _get_linker_flags(ctx: "context") -> "cmd_args":
+    return cmd_args(get_min_deployment_version_target_linker_flags(ctx))
 
 def _xcode_populate_attributes(
         ctx,
         srcs: ["CxxSrcWithFlags"],
         argsfiles_by_ext: {str.type: "artifact"},
-        swift_argsfile: ["CxxAdditionalArgsfileParams", None],
+        swift_argsfile: [CxxAdditionalArgsfileParams.type, None],
         populate_xcode_attributes_func: "function",
         **_kwargs) -> {str.type: ""}:
     if swift_argsfile:

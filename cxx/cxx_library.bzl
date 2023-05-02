@@ -17,9 +17,13 @@ load(
 )
 load(
     "@prelude//apple:apple_frameworks.bzl",
-    "build_link_args_with_deduped_framework_flags",
-    "create_frameworks_linkable",
-    "get_frameworks_link_info_by_deduping_link_infos",
+    "apple_build_link_args_with_deduped_flags",
+    "apple_create_frameworks_linkable",
+    "apple_get_link_info_by_deduping_link_infos",
+)
+load(
+    "@prelude//apple/swift:swift_runtime.bzl",
+    "create_swift_runtime_linkable",
 )
 load(
     "@prelude//ide_integrations:xcode.bzl",
@@ -41,6 +45,7 @@ load(
 load(
     "@prelude//linking:link_info.bzl",
     "ArchiveLinkable",
+    "FrameworksLinkable",  # @unused Used as a type
     "LinkArgs",
     "LinkInfo",
     "LinkInfos",
@@ -50,6 +55,8 @@ load(
     "LinkedObject",  # @unused Used as a type
     "ObjectsLinkable",
     "SharedLibLinkable",
+    "SwiftRuntimeLinkable",  # @unused Used as a type
+    "SwiftmoduleLinkable",  # @unused Used as a type
     "create_merged_link_info",
     "get_actual_link_style",
     "get_link_args",
@@ -217,6 +224,7 @@ _CxxCompiledSourcesOutput = record(
     stripped_objects = field([["artifact"], None]),
     # PIC object files stripped of debug information
     stripped_pic_objects = field([["artifact"], None]),
+    objects_sub_target = field(["provider"]),
 )
 
 # The outputs of a cxx_library_parameterized rule.
@@ -317,8 +325,7 @@ def cxx_library_parameterized(ctx: "context", impl_params: "CxxRuleConstructorPa
             )]
 
     if impl_params.generate_sub_targets.objects:
-        object_sub_targets = {o.short_path: [DefaultInfo(o)] for o in compiled_srcs.objects or []}
-        sub_targets["objects"] = [DefaultInfo(sub_targets = object_sub_targets)]
+        sub_targets["objects"] = compiled_srcs.objects_sub_target
 
     # Compilation DB.
     if impl_params.generate_sub_targets.compilation_database:
@@ -356,7 +363,9 @@ def cxx_library_parameterized(ctx: "context", impl_params: "CxxRuleConstructorPa
         children = link_group_deps,
     )
 
-    frameworks_linkable = create_frameworks_linkable(ctx)
+    frameworks_linkable = apple_create_frameworks_linkable(ctx)
+    swiftmodule_linkable = impl_params.swiftmodule_linkable
+    swift_runtime_linkable = create_swift_runtime_linkable(ctx)
     shared_links, link_group_map = _get_shared_library_links(
         ctx,
         get_linkable_graph_node_map_func(deps_linkable_graph),
@@ -369,9 +378,19 @@ def cxx_library_parameterized(ctx: "context", impl_params: "CxxRuleConstructorPa
         impl_params.force_link_group_linking,
         frameworks_linkable,
         force_static_follows_dependents = impl_params.link_groups_force_static_follows_dependents,
+        swiftmodule_linkable = swiftmodule_linkable,
+        swift_runtime_linkable = swift_runtime_linkable,
     )
     if impl_params.generate_sub_targets.link_group_map and link_group_map:
         sub_targets[LINK_GROUP_MAP_DATABASE_SUB_TARGET] = [link_group_map]
+
+    extra_static_linkables = []
+    if frameworks_linkable:
+        extra_static_linkables.append(frameworks_linkable)
+    if swiftmodule_linkable:
+        extra_static_linkables.append(swiftmodule_linkable)
+    if swift_runtime_linkable:
+        extra_static_linkables.append(swift_runtime_linkable)
 
     library_outputs = _form_library_outputs(
         ctx = ctx,
@@ -379,7 +398,7 @@ def cxx_library_parameterized(ctx: "context", impl_params: "CxxRuleConstructorPa
         compiled_srcs = compiled_srcs,
         preferred_linkage = preferred_linkage,
         shared_links = shared_links,
-        extra_static_linkables = [frameworks_linkable] if frameworks_linkable else [],
+        extra_static_linkables = extra_static_linkables,
         gnu_use_link_groups = cxx_is_gnu(ctx) and bool(link_group_mappings),
     )
 
@@ -456,6 +475,7 @@ def cxx_library_parameterized(ctx: "context", impl_params: "CxxRuleConstructorPa
             # Export link info from out (exported) deps.
             exported_deps = [inherited_exported_link],
             frameworks_linkable = frameworks_linkable,
+            swift_runtime_linkable = swift_runtime_linkable,
         )
         if impl_params.generate_providers.merged_native_link_info:
             providers.append(merged_native_link_info)
@@ -709,8 +729,13 @@ def cxx_compile_srcs(
     pic_external_debug_info = [out.external_debug_info for out in pic_cxx_outs if out.external_debug_info != None]
     pic_clang_traces = [out.clang_trace for out in pic_cxx_outs if out.clang_trace != None]
     stripped_pic_objects = _strip_objects(ctx, pic_objects)
+
+    all_outs = []
+    all_outs.extend(pic_cxx_outs)
+
     if preferred_linkage != Linkage("shared"):
         cxx_outs = compile_cxx(ctx, compile_cmd_output.source_commands.src_compile_cmds, pic = False)
+        all_outs.extend(cxx_outs)
         objects = [out.object for out in cxx_outs]
         objects_have_external_debug_info = is_any(lambda out: out.object_has_external_debug_info, cxx_outs)
         external_debug_info = [out.external_debug_info for out in cxx_outs if out.external_debug_info != None]
@@ -724,6 +749,17 @@ def cxx_compile_srcs(
         objects += impl_params.extra_link_input
         stripped_objects += impl_params.extra_link_input
 
+    # Create the subtargets here
+    objects_sub_targets = {}
+    for obj in all_outs:
+        sub_targets = {}
+        if obj.clang_trace:
+            sub_targets["clang-trace"] = [DefaultInfo(obj.clang_trace)]
+        objects_sub_targets[obj.object.short_path] = [DefaultInfo(
+            obj.object,
+            sub_targets = sub_targets,
+        )]
+
     return _CxxCompiledSourcesOutput(
         compile_cmds = compile_cmd_output,
         objects = objects,
@@ -736,6 +772,7 @@ def cxx_compile_srcs(
         pic_clang_traces = pic_clang_traces,
         stripped_objects = stripped_objects,
         stripped_pic_objects = stripped_pic_objects,
+        objects_sub_target = [DefaultInfo(sub_targets = objects_sub_targets)],
     )
 
 def _form_library_outputs(
@@ -744,7 +781,7 @@ def _form_library_outputs(
         compiled_srcs: _CxxCompiledSourcesOutput.type,
         preferred_linkage: Linkage.type,
         shared_links: LinkArgs.type,
-        extra_static_linkables: ["FrameworksLinkable"],
+        extra_static_linkables: [[FrameworksLinkable.type, SwiftmoduleLinkable.type, SwiftRuntimeLinkable.type]],
         gnu_use_link_groups: bool.type) -> _CxxAllLibraryOutputs.type:
     # Build static/shared libs and the link info we use to export them to dependents.
     outputs = {}
@@ -880,9 +917,13 @@ def _get_shared_library_links(
         exported_deps: ["dependency"],
         non_exported_deps: ["dependency"],
         force_link_group_linking,
-        frameworks_linkable: ["FrameworksLinkable", None],
-        force_static_follows_dependents: bool.type = True) -> ("LinkArgs", [DefaultInfo.type, None]):
+        frameworks_linkable: [FrameworksLinkable.type, None],
+        force_static_follows_dependents: bool.type = True,
+        swiftmodule_linkable: [SwiftmoduleLinkable.type, None] = None,
+        swift_runtime_linkable: [SwiftRuntimeLinkable.type, None] = None) -> ("LinkArgs", [DefaultInfo.type, None]):
     """
+    Returns LinkArgs with the content to link, and a link group map json output if applicable.
+
     TODO(T110378116): Omnibus linking always creates shared libraries by linking
     against shared dependencies. This is not true for link groups and possibly
     other forms of shared libraries. Ideally we consolidate this logic and
@@ -908,11 +949,13 @@ def _get_shared_library_links(
         # loaded in the address space of any process at any address.
         link_style_value = "static_pic" if link_style_value == "static" else link_style_value
 
-        return build_link_args_with_deduped_framework_flags(
+        return apple_build_link_args_with_deduped_flags(
             ctx,
             link,
             frameworks_linkable,
             LinkStyle(link_style_value),
+            swiftmodule_linkable = swiftmodule_linkable,
+            swift_runtime_linkable = swift_runtime_linkable,
         ), None
 
     # Else get filtered link group links
@@ -937,10 +980,9 @@ def _get_shared_library_links(
 
     # Unfortunately, link_groups does not use MergedLinkInfo to represent the args
     # for the resolved nodes in the graph.
-    # Thus, we have no choice but to traverse all the nodes to dedupe the framework linker args.
-    frameworks_link_info = get_frameworks_link_info_by_deduping_link_infos(ctx, filtered_links, frameworks_linkable)
-    if frameworks_link_info:
-        filtered_links.append(frameworks_link_info)
+    additional_links = apple_get_link_info_by_deduping_link_infos(ctx, filtered_links, frameworks_linkable, swiftmodule_linkable, swift_runtime_linkable)
+    if additional_links:
+        filtered_links.append(additional_links)
 
     return LinkArgs(infos = filtered_links), get_link_group_map_json(ctx, filtered_targets)
 
@@ -959,7 +1001,7 @@ def _static_library(
         objects: ["artifact"],
         pic: bool.type,
         stripped: bool.type,
-        extra_linkables: ["FrameworksLinkable"],
+        extra_linkables: [[FrameworksLinkable.type, SwiftmoduleLinkable.type, SwiftRuntimeLinkable.type]],
         objects_have_external_debug_info: bool.type = False,
         external_debug_info: [ExternalDebugInfoTSet.type, None] = None) -> (_CxxLibraryOutput.type, LinkInfo.type):
     if len(objects) == 0:

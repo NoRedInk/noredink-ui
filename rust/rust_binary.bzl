@@ -12,7 +12,7 @@ load(
 )
 load("@prelude//cxx:cxx_library_utility.bzl", "cxx_attr_deps")
 load("@prelude//cxx:cxx_link_utility.bzl", "executable_shared_lib_arguments")
-load("@prelude//cxx:cxx_toolchain_types.bzl", "CxxToolchainInfo")
+load("@prelude//cxx:linker.bzl", "PDB_SUB_TARGET")
 load(
     "@prelude//linking:link_info.bzl",
     "LinkStyle",
@@ -69,7 +69,7 @@ def _rust_binary_common(
     specified_link_style = LinkStyle(ctx.attrs.link_style) if ctx.attrs.link_style else DEFAULT_STATIC_LINK_STYLE
 
     target_os_type = ctx.attrs._target_os_type[OsLookup]
-    linker_type = ctx.attrs._cxx_toolchain[CxxToolchainInfo].linker_info.type
+    linker_type = compile_ctx.cxx_toolchain_info.linker_info.type
 
     resources = flatten_dict(gather_resources(
         label = ctx.label,
@@ -107,7 +107,7 @@ def _rust_binary_common(
         extra_link_args, runtime_files, _ = executable_shared_lib_arguments(
             ctx.actions,
             ctx.label,
-            ctx.attrs._cxx_toolchain[CxxToolchainInfo],
+            compile_ctx.cxx_toolchain_info,
             output,
             shared_libs,
         )
@@ -130,6 +130,8 @@ def _rust_binary_common(
 
         args = cmd_args(link.outputs[Emit("link")]).hidden(runtime_files)
         extra_targets = [("check", meta.outputs[Emit("metadata")])] + meta.diag.items()
+        if link.pdb:
+            extra_targets.append((PDB_SUB_TARGET, link.pdb))
 
         # If we have some resources, write it to the resources JSON file and add
         # it and all resources to "runtime_files" so that we make to materialize
