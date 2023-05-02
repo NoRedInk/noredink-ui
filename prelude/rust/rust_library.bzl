@@ -6,10 +6,9 @@
 # of this source tree.
 
 load("@prelude//:resources.bzl", "ResourceInfo", "gather_resources")
-load("@prelude//cxx:cxx_context.bzl", "get_cxx_toolchain_info")
-load("@prelude//cxx:cxx_toolchain_types.bzl", "CxxToolchainInfo")
 load(
     "@prelude//cxx:linker.bzl",
+    "PDB_SUB_TARGET",
     "get_default_shared_library_name",
 )
 load(
@@ -108,6 +107,7 @@ def prebuilt_rust_library_impl(ctx: "context") -> ["provider"]:
             transitive_deps = tdeps,
             rmeta = ctx.attrs.rlib,
             transitive_rmeta_deps = tmetadeps,
+            pdb = None,
         )
     providers.append(
         RustLinkInfo(
@@ -167,7 +167,7 @@ def rust_library_impl(ctx: "context") -> ["provider"]:
     # Multiple styles and language linkages could generate the same crate types
     # (eg procmacro or using preferred_linkage), so we need to see how many
     # distinct kinds of build we actually need to deal with.
-    param_lang, lang_style_param = _build_params_for_styles(ctx)
+    param_lang, lang_style_param = _build_params_for_styles(ctx, compile_ctx)
 
     artifacts = _build_library_artifacts(ctx, compile_ctx, param_lang)
 
@@ -229,7 +229,7 @@ def rust_library_impl(ctx: "context") -> ["provider"]:
             link_style = doctest_link_style,
             preferred_linkage = Linkage(ctx.attrs.preferred_linkage),
             lang = LinkageLang("rust"),
-            linker_type = ctx.attrs._cxx_toolchain[CxxToolchainInfo].linker_info.type,
+            linker_type = compile_ctx.cxx_toolchain_info.linker_info.type,
             target_os_type = ctx.attrs._target_os_type[OsLookup],
         )
         rustdoc_test = generate_rustdoc_test(
@@ -269,6 +269,7 @@ def rust_library_impl(ctx: "context") -> ["provider"]:
     )
     providers += _native_providers(
         ctx = ctx,
+        compile_ctx = compile_ctx,
         lang_style_param = lang_style_param,
         param_artifact = native_param_artifact,
     )
@@ -281,7 +282,9 @@ def rust_library_impl(ctx: "context") -> ["provider"]:
 
     return providers
 
-def _build_params_for_styles(ctx: "context") -> (
+def _build_params_for_styles(
+        ctx: "context",
+        compile_ctx: CompileContext.type) -> (
     {BuildParams.type: [LinkageLang.type]},
     {(LinkageLang.type, LinkStyle.type): BuildParams.type},
 ):
@@ -301,7 +304,7 @@ def _build_params_for_styles(ctx: "context") -> (
     style_param = {}  # (linkage_lang, link_style) -> param
 
     target_os_type = ctx.attrs._target_os_type[OsLookup]
-    linker_type = ctx.attrs._cxx_toolchain[CxxToolchainInfo].linker_info.type
+    linker_type = compile_ctx.cxx_toolchain_info.linker_info.type
 
     # Styles+lang linkage to params
     for linkage_lang in LinkageLang:
@@ -382,6 +385,7 @@ def _handle_rust_artifact(
             transitive_deps = tdeps,
             rmeta = meta.outputs[Emit("metadata")],
             transitive_rmeta_deps = tmetadeps,
+            pdb = link.pdb,
         )
     else:
         # Proc macro deps are always the real thing
@@ -390,6 +394,7 @@ def _handle_rust_artifact(
             transitive_deps = tdeps,
             rmeta = link.outputs[Emit("link")],
             transitive_rmeta_deps = tdeps,
+            pdb = link.pdb,
         )
 
 def _default_providers(
@@ -401,14 +406,7 @@ def _default_providers(
         check_artifacts: {str.type: "artifact"},
         expand: "artifact",
         sources: "artifact") -> ["provider"]:
-    # Outputs indexed by LinkStyle
-    style_info = {
-        link_style: param_artifact[lang_style_param[(LinkageLang("rust"), link_style)]]
-        for link_style in LinkStyle
-    }
-
-    # Add provider for default output, and for each link-style...
-    targets = {k.value: v.rlib for (k, v) in style_info.items()}
+    targets = {}
     targets.update(check_artifacts)
     targets["sources"] = sources
     targets["expand"] = expand
@@ -417,6 +415,17 @@ def _default_providers(
         k: [DefaultInfo(default_output = v)]
         for (k, v) in targets.items()
     }
+
+    # Add provider for default output, and for each link-style...
+    for link_style in LinkStyle:
+        link_style_info = param_artifact[lang_style_param[(LinkageLang("rust"), link_style)]]
+        nested_sub_targets = {}
+        if link_style_info.pdb:
+            nested_sub_targets[PDB_SUB_TARGET] = [DefaultInfo(default_output = link_style_info.pdb)]
+        sub_targets[link_style.value] = [DefaultInfo(
+            default_output = link_style_info.rlib,
+            sub_targets = nested_sub_targets,
+        )]
 
     providers = []
 
@@ -490,6 +499,7 @@ def _rust_providers(
 
 def _native_providers(
         ctx: "context",
+        compile_ctx: CompileContext.type,
         lang_style_param: {(LinkageLang.type, LinkStyle.type): BuildParams.type},
         param_artifact: {BuildParams.type: "artifact"}) -> ["provider"]:
     """
@@ -503,7 +513,7 @@ def _native_providers(
     inherited_non_rust_link_deps = inherited_non_rust_exported_link_deps(ctx)
     inherited_non_rust_link = inherited_non_rust_link_info(ctx)
     inherited_non_rust_shlibs = inherited_non_rust_shared_libs(ctx)
-    linker_info = get_cxx_toolchain_info(ctx).linker_info
+    linker_info = compile_ctx.cxx_toolchain_info.linker_info
     linker_type = linker_info.type
 
     providers = []
@@ -537,7 +547,7 @@ def _native_providers(
     solibs = {}
 
     # Add the shared library to the list of shared libs.
-    linker_info = ctx.attrs._cxx_toolchain[CxxToolchainInfo].linker_info
+    linker_info = compile_ctx.cxx_toolchain_info.linker_info
     shlib_name = get_default_shared_library_name(linker_info, ctx.label)
 
     # Only add a shared library if we generated one.
