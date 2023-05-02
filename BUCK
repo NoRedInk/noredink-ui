@@ -23,4 +23,5 @@ node_modules(
 npm_bin(
     name = "browserify",
     node_modules = ":node_modules",
+    visibility = ["//lib:lib.js"],
 )
