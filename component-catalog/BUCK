@@ -8,7 +8,7 @@ elm_app(
     source_directories = {
         "../src": "//:src",
         "src": "src",
-    }
+    },
 )
 
 filegroup(
@@ -20,5 +20,5 @@ filegroup(
         "elm.js": ":app",
         "application.json": "elm.json",
         "package.json": "//:elm.json",
-    }
+    },
 )

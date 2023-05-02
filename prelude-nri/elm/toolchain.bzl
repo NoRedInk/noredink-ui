@@ -1,4 +1,4 @@
-ElmToolchainInfo = provider(fields=[
+ElmToolchainInfo = provider(fields = [
     "elm",
     "isolated_compile",
 ])
@@ -16,11 +16,10 @@ def _system_elm_toolchain_impl(ctx) -> [[DefaultInfo.type, ElmToolchainInfo.type
         ),
     ]
 
-
 system_elm_toolchain = rule(
     impl = _system_elm_toolchain_impl,
     attrs = {
-        "_isolated_compile": attrs.dep(default="prelude-nri//elm:isolated_compile.py"),
+        "_isolated_compile": attrs.dep(default = "prelude-nri//elm:isolated_compile.py"),
     },
     is_toolchain_rule = True,
 )
@@ -45,7 +44,7 @@ elm_toolchain = rule(
             providers = [RunInfo],
             default = "prelude-nri//elm:elm_compiler_binary",
         ),
-        "_isolated_compile": attrs.dep(default="prelude-nri//elm:isolated_compile.py"),
+        "_isolated_compile": attrs.dep(default = "prelude-nri//elm:isolated_compile.py"),
     },
     is_toolchain_rule = True,
 )

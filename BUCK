@@ -11,7 +11,7 @@ elm_docs(
 filegroup(
     name = "src",
     srcs = glob(["src/**/*.elm"]),
-    visibility = ["//component-catalog:app"]
+    visibility = ["//component-catalog:app"],
 )
 
 node_modules(

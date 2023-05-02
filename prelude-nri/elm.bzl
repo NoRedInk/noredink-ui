@@ -11,12 +11,16 @@ def _elm_docs_impl(ctx: "context") -> [DefaultInfo.type]:
         ctx.attrs._python_toolchain[PythonToolchainInfo].interpreter,
         elm_toolchain.isolated_compile[DefaultInfo].default_outputs,
         ctx.attrs.elm_json,
-        "--build-dir", build.as_output(),
-        "--elm-compiler", elm_toolchain.elm,
+        "--build-dir",
+        build.as_output(),
+        "--elm-compiler",
+        elm_toolchain.elm,
         "--verbose",
         "docs",
-        "--out", docs.as_output(),
-        "--src", ctx.attrs.src,
+        "--out",
+        docs.as_output(),
+        "--src",
+        ctx.attrs.src,
     )
 
     ctx.actions.run(
@@ -30,18 +34,18 @@ def _elm_docs_impl(ctx: "context") -> [DefaultInfo.type]:
 elm_docs = rule(
     impl = _elm_docs_impl,
     attrs = {
-        "out": attrs.string(default="docs.json"),
+        "out": attrs.string(default = "docs.json"),
         "elm_json": attrs.source(),
         "src": attrs.source(allow_directory = True),
         "_elm_toolchain": attrs.toolchain_dep(
-            default="toolchains//:elm",
-            providers=[ElmToolchainInfo]
+            default = "toolchains//:elm",
+            providers = [ElmToolchainInfo],
         ),
         "_python_toolchain": attrs.toolchain_dep(
-            default="toolchains//:python",
-            providers=[PythonToolchainInfo]
+            default = "toolchains//:python",
+            providers = [PythonToolchainInfo],
         ),
-    }
+    },
 )
 
 def _elm_app_impl(ctx: "context") -> [DefaultInfo.type]:
@@ -54,16 +58,19 @@ def _elm_app_impl(ctx: "context") -> [DefaultInfo.type]:
         ctx.attrs._python_toolchain[PythonToolchainInfo].interpreter,
         elm_toolchain.isolated_compile[DefaultInfo].default_outputs,
         ctx.attrs.elm_json,
-        "--build-dir", build.as_output(),
-        "--elm-compiler", elm_toolchain.elm,
+        "--build-dir",
+        build.as_output(),
+        "--elm-compiler",
+        elm_toolchain.elm,
         "--verbose",
         "make",
         ctx.attrs.main,
-        "--output", out.as_output(),
+        "--output",
+        out.as_output(),
     )
 
     for (name, value) in ctx.attrs.source_directories.items():
-        cmd.add(cmd_args(value, format="--source-directory=" + name + "={}"))
+        cmd.add(cmd_args(value, format = "--source-directory=" + name + "={}"))
 
     if ctx.attrs.debug and ctx.attrs.optimize:
         fail("Only one of `optimize` and `debug` may be true!")
@@ -90,17 +97,17 @@ elm_app = rule(
         "main": attrs.source(),
         "source_directories": attrs.dict(
             attrs.string(),
-            attrs.source(allow_directory=True),
+            attrs.source(allow_directory = True),
         ),
         "debug": attrs.bool(default = False),
         "optimize": attrs.bool(default = False),
         "_elm_toolchain": attrs.toolchain_dep(
-            default="toolchains//:elm",
-            providers=[ElmToolchainInfo]
+            default = "toolchains//:elm",
+            providers = [ElmToolchainInfo],
         ),
         "_python_toolchain": attrs.toolchain_dep(
-            default="toolchains//:python",
-            providers=[PythonToolchainInfo]
+            default = "toolchains//:python",
+            providers = [PythonToolchainInfo],
         ),
-    }
+    },
 )

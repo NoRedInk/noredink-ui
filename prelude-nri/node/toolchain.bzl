@@ -1,4 +1,4 @@
-NodeToolchainInfo = provider(fields=[
+NodeToolchainInfo = provider(fields = [
     "bin_dir",
     "node",
     "build_node_modules",
@@ -24,17 +24,17 @@ node_toolchain = rule(
     impl = _node_toolchain_impl,
     attrs = {
         "bin_dir": attrs.dep(
-            default="prelude-nri//node:bin"
+            default = "prelude-nri//node:bin",
         ),
         "node": attrs.dep(
             providers = [RunInfo],
-            default="prelude-nri//node:node"
+            default = "prelude-nri//node:node",
         ),
         "_build_node_modules": attrs.dep(
-            default="prelude-nri//node:build_node_modules.py",
+            default = "prelude-nri//node:build_node_modules.py",
         ),
         "_build_npm_bin": attrs.dep(
-            default="prelude-nri//node:build_npm_bin.py",
+            default = "prelude-nri//node:build_npm_bin.py",
         ),
     },
     is_toolchain_rule = True,

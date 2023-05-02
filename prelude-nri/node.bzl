@@ -11,9 +11,12 @@ def _node_modules_impl(ctx: "context") -> [DefaultInfo.type]:
             ctx.attrs._python_toolchain[PythonToolchainInfo].interpreter,
             node_toolchain.build_node_modules[DefaultInfo].default_outputs,
             out.as_output(),
-            "--package", ctx.attrs.package,
-            "--package-lock", ctx.attrs.package_lock,
-            "--bin-dir", node_toolchain.bin_dir[DefaultInfo].default_outputs,
+            "--package",
+            ctx.attrs.package,
+            "--package-lock",
+            ctx.attrs.package_lock,
+            "--bin-dir",
+            node_toolchain.bin_dir[DefaultInfo].default_outputs,
         ],
         category = "npm",
     )
@@ -26,14 +29,14 @@ node_modules = rule(
         "package": attrs.source(),
         "package_lock": attrs.source(),
         "_node_toolchain": attrs.toolchain_dep(
-            default="toolchains//:node",
-            providers=[NodeToolchainInfo]
+            default = "toolchains//:node",
+            providers = [NodeToolchainInfo],
         ),
         "_python_toolchain": attrs.toolchain_dep(
-            default="toolchains//:python",
-            providers=[PythonToolchainInfo]
+            default = "toolchains//:python",
+            providers = [PythonToolchainInfo],
         ),
-    }
+    },
 )
 
 def _npm_bin_impl(ctx: "context") -> [[DefaultInfo.type, RunInfo.type]]:
@@ -50,7 +53,8 @@ def _npm_bin_impl(ctx: "context") -> [[DefaultInfo.type, RunInfo.type]]:
             ctx.attrs.node_modules,
             bin_name,
             out.as_output(),
-            "--bin-dir", node_toolchain.bin_dir[DefaultInfo].default_outputs,
+            "--bin-dir",
+            node_toolchain.bin_dir[DefaultInfo].default_outputs,
         ],
         category = "build_npm_bin",
     )
@@ -63,15 +67,15 @@ def _npm_bin_impl(ctx: "context") -> [[DefaultInfo.type, RunInfo.type]]:
 npm_bin = rule(
     impl = _npm_bin_impl,
     attrs = {
-        "bin_name": attrs.option(attrs.string(), default=None),
+        "bin_name": attrs.option(attrs.string(), default = None),
         "node_modules": attrs.source(),
         "_node_toolchain": attrs.toolchain_dep(
-            default="toolchains//:node",
-            providers=[NodeToolchainInfo]
+            default = "toolchains//:node",
+            providers = [NodeToolchainInfo],
         ),
         "_python_toolchain": attrs.toolchain_dep(
-            default="toolchains//:python",
-            providers=[PythonToolchainInfo]
+            default = "toolchains//:python",
+            providers = [PythonToolchainInfo],
         ),
-    }
+    },
 )

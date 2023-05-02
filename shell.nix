@@ -41,5 +41,8 @@ stdenv.mkDerivation {
     # stuff we need for running builds in a `nix-shell --pure` environment.
     which
     netcat-gnu
+
+    # Buck dependencies
+    buildifier
   ] ++ lib.optionals stdenv.isLinux [ pkgs.fsatrace pkgs.strace pkgs.cacert ];
 }
