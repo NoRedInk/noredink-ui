@@ -25,3 +25,8 @@ npm_bin(
     node_modules = ":node_modules",
     visibility = ["//lib:bundle.js"],
 )
+
+export_file(
+    name = "elm.json",
+    visibility = ["//component-catalog:public"],
+)

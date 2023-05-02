@@ -18,5 +18,7 @@ filegroup(
         "favicon.svg": "favicon.svg",
         "bundle.js": "//lib:bundle.js",
         "elm.js": ":app",
+        "application.json": "elm.json",
+        "package.json": "//:elm.json",
     }
 )
