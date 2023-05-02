@@ -16,7 +16,10 @@ _NODE_SHA256 = select({
 
 _NODE_PREFIX = select({
     "config//os:linux": "node-v20.0.0-linux-x64",
-    "config//os:macos": "node-v20.0.0-darwin-arm64",
+    "config//os:macos": select({
+        "config//cpu:arm64": "node-v20.0.0-darwin-arm64",
+        "config//cpu:x86_64": "node-v20.0.0-darwin-x64",
+    }),
 })
 
 http_archive(
