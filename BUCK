@@ -23,5 +23,10 @@ node_modules(
 npm_bin(
     name = "browserify",
     node_modules = ":node_modules",
-    visibility = ["//lib:lib.js"],
+    visibility = ["//lib:bundle.js"],
+)
+
+export_file(
+    name = "elm.json",
+    visibility = ["//component-catalog:public"],
 )

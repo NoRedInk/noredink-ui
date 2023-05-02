@@ -1,6 +1,7 @@
 genrule(
-    name = "lib.js",
-    out = "lib.js",
+    name = "bundle.js",
+    out = "bundle.js",
     srcs = glob(["**/*.js"]),
     cmd = "$(exe //:browserify) index.js --outfile $OUT",
+    visibility = ["//component-catalog:public"],
 )

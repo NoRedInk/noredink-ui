@@ -10,3 +10,15 @@ elm_app(
         "src": "src",
     }
 )
+
+filegroup(
+    name = "public",
+    srcs = {
+        "index.html": "index.html",
+        "favicon.svg": "favicon.svg",
+        "bundle.js": "//lib:bundle.js",
+        "elm.js": ":app",
+        "application.json": "elm.json",
+        "package.json": "//:elm.json",
+    }
+)
