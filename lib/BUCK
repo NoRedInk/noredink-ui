@@ -1,0 +1,6 @@
+genrule(
+    name = "lib.js",
+    out = "lib.js",
+    srcs = glob(["**/*.js"]),
+    cmd = "$(exe //:browserify) index.js --outfile $OUT",
+)
