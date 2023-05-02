@@ -2,6 +2,7 @@ NodeToolchainInfo = provider(fields=[
     "bin_dir",
     "node",
     "build_node_modules",
+    "build_npm_bin",
 ])
 
 def _node_toolchain_impl(ctx) -> [[DefaultInfo.type, NodeToolchainInfo.type]]:
@@ -15,6 +16,7 @@ def _node_toolchain_impl(ctx) -> [[DefaultInfo.type, NodeToolchainInfo.type]]:
             bin_dir = ctx.attrs.bin_dir,
             node = ctx.attrs.node[RunInfo],
             build_node_modules = ctx.attrs._build_node_modules,
+            build_npm_bin = ctx.attrs._build_npm_bin,
         ),
     ]
 
@@ -30,6 +32,9 @@ node_toolchain = rule(
         ),
         "_build_node_modules": attrs.dep(
             default="prelude-nri//node:build_node_modules.py",
+        ),
+        "_build_npm_bin": attrs.dep(
+            default="prelude-nri//node:build_npm_bin.py",
         ),
     },
     is_toolchain_rule = True,
