@@ -41,7 +41,10 @@ def _elm_toolchain_impl(ctx: "context") -> [[DefaultInfo.type, ElmToolchainInfo.
 elm_toolchain = rule(
     impl = _elm_toolchain_impl,
     attrs = {
-        "elm": attrs.dep(providers = [RunInfo]),
+        "elm": attrs.dep(
+            providers = [RunInfo],
+            default = "prelude-nri//elm:elm_compiler_binary",
+        ),
         "_isolated_compile": attrs.dep(default="prelude-nri//elm:isolated_compile.py"),
     },
     is_toolchain_rule = True,

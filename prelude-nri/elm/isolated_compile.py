@@ -22,7 +22,7 @@ def symlink_if_necessary(source, target):
      - If the target already exists and points somewhere else, remove it
        and relink.
     """
-    if os.path.exists(target):
+    if os.path.lexists(target):
         if os.path.isfile(target):
             logging.debug(f"`{target}` is a regular file")
 
