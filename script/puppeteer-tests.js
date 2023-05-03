@@ -17,7 +17,9 @@ describe("UI tests", function () {
   let browser;
 
   before(async () => {
-    server = httpServer.createServer({ root: `${__dirname}/../public` });
+    server = httpServer.createServer({
+      root: process.env.ROOT || `${__dirname}/../public`,
+    });
     server.listen(PORT);
 
     browser = await puppeteer.launch({
