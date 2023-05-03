@@ -124,15 +124,12 @@ main = do
         cmd (WithStdout True) (FileStdout out) "./node_modules/.bin/prettier" "--check" jsFiles
 
       "log/puppeteer-tests.txt" %> \out -> do
-        percyToken <- getEnv "PERCY_TOKEN"
-        case percyToken of
-          Nothing -> do
-            writeFileChanged out "PERCY_TOKEN not set, so skipping visual diff testing."
-            need ["log/npm-install.txt", "log/public.txt"]
-            cmd (WithStdout True) (FileStdout out) "script/puppeteer-tests-no-percy.sh"
-          Just _ -> do
-            need ["log/npm-install.txt", "log/public.txt"]
-            cmd (WithStdout True) (FileStdout out) "script/puppeteer-tests-percy.sh"
+        -- `getEnv` looks like a no-op, but it actually makes Shake pay
+        -- attention to this variable so that if it changes this command will be
+        -- re-run with the new token.
+        getEnv "PERCY_TOKEN"
+        need ["log/npm-install.txt", "log/public.txt"]
+        cmd (WithStdout True) (FileStdout out) "script/puppeteer-tests.sh"
 
       "log/forbidden-imports-report.txt" %> \out -> do
         need ["forbidden-imports.toml"]
