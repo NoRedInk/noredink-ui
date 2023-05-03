@@ -75,7 +75,11 @@ def run_docs(args):
         os.path.abspath(args.output),
     ]
     logging.debug(f"running {command} in `{args.build_dir}`")
-    process = Popen(command, cwd=args.build_dir)
+    process = Popen(
+        command,
+        cwd=args.build_dir,
+        env={"ELM_HOME": os.path.join(args.build_dir, "elm_home")},
+    )
     process.communicate()
 
     return process.returncode
@@ -202,7 +206,11 @@ def run_make(args):
         command.append("--optimize")
 
     logging.debug(f"running {command} in `{args.build_dir}`")
-    process = Popen(command, cwd=args.build_dir)
+    process = Popen(
+        command,
+        cwd=args.build_dir,
+        env={"ELM_HOME": os.path.join(args.build_dir, "elm_home")},
+    )
     process.communicate()
 
     return process.returncode
