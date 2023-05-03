@@ -88,3 +88,30 @@ npm_bin = rule(
         ),
     },
 )
+
+def _npm_script_test_impl(ctx: "context") -> [[DefaultInfo.type, ExternalRunnerTestInfo.type]]:
+    script = ctx.attrs.script or ctx.attrs.name
+
+    cmd = ["npm", "run", script]
+    cmd.extend(ctx.attrs.args or [])
+
+    return [
+        ExternalRunnerTestInfo(
+            type = "npm",
+            command = cmd,
+            env = {
+                "NODE_PATH": ctx.attrs.node_modules,
+            },
+        ),
+        DefaultInfo(),
+    ]
+
+npm_script_test = rule(
+    impl = _npm_script_test_impl,
+    attrs = {
+        "script": attrs.option(attrs.string(), default = None),
+        "args": attrs.option(attrs.list(attrs.arg()), default = None),
+        "node_modules": attrs.source(),
+        "srcs": attrs.option(attrs.list(attrs.source()), default = None),
+    },
+)

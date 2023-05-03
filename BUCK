@@ -1,6 +1,6 @@
 # A list of available rules and their signatures can be found here: https://buck2.build/docs/api/rules/
 load("@prelude-nri//:elm.bzl", "elm_docs")
-load("@prelude-nri//:node.bzl", "node_modules", "npm_bin")
+load("@prelude-nri//:node.bzl", "node_modules", "npm_bin", "npm_script_test")
 
 elm_docs(
     name = "docs.json",
@@ -32,4 +32,10 @@ npm_bin(
 export_file(
     name = "elm.json",
     visibility = ["//component-catalog:public"],
+)
+
+npm_script_test(
+    name = "puppeteer",
+    node_modules = ":node_modules",
+    args = ["default", "$(location //component-catalog:public)"],
 )

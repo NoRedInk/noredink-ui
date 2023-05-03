@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export ONLYDOODAD=${1:-default}
+export ONLYDOODAD="${1:-default}"
+export ROOT="${2:-}"
 
 if test -n "${PERCY_TOKEN:-}"; then
   npx percy exec -- mocha script/puppeteer-tests.js --timeout 100000 --exit
