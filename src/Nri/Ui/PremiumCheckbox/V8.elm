@@ -291,8 +291,8 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
             [ Html.span
                 [ class "premium-checkbox-locked-V8__Label"
                 , css
-                    [ display inlineBlock
-                    , padding4 (px 13) zero (px 13) (px 40)
+                    [ displayFlex
+                    , alignItems center
                     , position relative
                     , Fonts.baseFont
                     , fontSize (px 15)
