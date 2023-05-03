@@ -22,3 +22,5 @@ jobs:
 
       - name: buck2 test
         run: script/buck2 test //...
+        env:
+          PERCY_TOKEN: '${{ secrets.PERCY_TOKEN }}'
