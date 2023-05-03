@@ -18,6 +18,9 @@ node_modules(
     name = "node_modules",
     package = "package.json",
     package_lock = "package-lock.json",
+    extra_files = {
+        "lib": "//lib:src"
+    },
 )
 
 npm_bin(

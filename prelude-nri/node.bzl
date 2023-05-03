@@ -6,20 +6,22 @@ def _node_modules_impl(ctx: "context") -> [DefaultInfo.type]:
 
     node_toolchain = ctx.attrs._node_toolchain[NodeToolchainInfo]
 
-    ctx.actions.run(
-        [
-            ctx.attrs._python_toolchain[PythonToolchainInfo].interpreter,
-            node_toolchain.build_node_modules[DefaultInfo].default_outputs,
-            out.as_output(),
-            "--package",
-            ctx.attrs.package,
-            "--package-lock",
-            ctx.attrs.package_lock,
-            "--bin-dir",
-            node_toolchain.bin_dir[DefaultInfo].default_outputs,
-        ],
-        category = "npm",
+    cmd = cmd_args(
+        ctx.attrs._python_toolchain[PythonToolchainInfo].interpreter,
+        node_toolchain.build_node_modules[DefaultInfo].default_outputs,
+        out.as_output(),
+        "--package",
+        ctx.attrs.package,
+        "--package-lock",
+        ctx.attrs.package_lock,
+        "--bin-dir",
+        node_toolchain.bin_dir[DefaultInfo].default_outputs,
     )
+
+    for (name, value) in (ctx.attrs.extra_files or {}).items():
+        cmd.add(cmd_args(value, format = "--extra-file=" + name + "={}"))
+
+    ctx.actions.run(cmd, category = "npm")
 
     return [DefaultInfo(default_output = out)]
 
@@ -28,6 +30,13 @@ node_modules = rule(
     attrs = {
         "package": attrs.source(),
         "package_lock": attrs.source(),
+        "extra_files": attrs.option(
+            attrs.dict(
+                attrs.string(),
+                attrs.source(allow_directory = True),
+            ),
+            default = None,
+        ),
         "_node_toolchain": attrs.toolchain_dep(
             default = "toolchains//:node",
             providers = [NodeToolchainInfo],
