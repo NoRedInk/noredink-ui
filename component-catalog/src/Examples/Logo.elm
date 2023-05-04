@@ -197,6 +197,23 @@ all =
           )
         ]
       )
+    , ( "Infinite Campus"
+      , [ ( "infiniteCampusFull"
+          , Logo.infiniteCampusFull
+          , [ Css.height (Css.px 25)
+            , Css.width (Css.px 100)
+            , Css.margin (Css.px 4)
+            ]
+          )
+        , ( "infiniteCampus"
+          , Logo.infiniteCampus
+          , [ Css.height (Css.px 25)
+            , Css.width (Css.px 25)
+            , Css.margin (Css.px 4)
+            ]
+          )
+        ]
+      )
     ]
 
 
