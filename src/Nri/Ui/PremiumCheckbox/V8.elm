@@ -263,6 +263,7 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
             , padding zero
             , cursor pointer
             , Css.batch containerCss
+            , textAlign left
             ]
         , Attributes.id (idValue ++ "-container")
         , case onLockedMsg of
@@ -277,12 +278,10 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
             [ css
                 [ outline Css.none
                 , Fonts.baseFont
-                , color Colors.navy
                 , margin zero
                 , marginLeft (px -4)
                 , padding zero
                 , fontSize (px 15)
-                , Css.property "font-weight" "600"
                 , display inlineBlock
                 , Css.property "transition" "all 0.4s ease"
                 , cursor pointer
@@ -296,8 +295,6 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
                     , position relative
                     , Fonts.baseFont
                     , fontSize (px 15)
-                    , fontWeight (int 600)
-                    , color Colors.navy
                     , Css.outline3 (Css.px 2) Css.solid Css.transparent
                     ]
                 ]
