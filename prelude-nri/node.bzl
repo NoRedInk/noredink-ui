@@ -92,16 +92,25 @@ npm_bin = rule(
 def _npm_script_test_impl(ctx: "context") -> [[DefaultInfo.type, ExternalRunnerTestInfo.type]]:
     script = ctx.attrs.script or ctx.attrs.name
 
-    cmd = ["npm", "run", script]
-    cmd.extend(ctx.attrs.args or [])
+    node_toolchain = ctx.attrs._node_toolchain[NodeToolchainInfo]
+
+    cmd = [
+        cmd_args(ctx.attrs._python_toolchain[PythonToolchainInfo].interpreter),
+        cmd_args(node_toolchain.run_npm_script[DefaultInfo].default_outputs),
+        "--node-modules",
+        ctx.attrs.node_modules,
+        "--node-bin",
+        cmd_args(node_toolchain.bin_dir[DefaultInfo].default_outputs),
+        script,
+    ]
+    if ctx.attrs.args:
+        cmd.append("--")
+        cmd.extend(ctx.attrs.args)
 
     return [
         ExternalRunnerTestInfo(
             type = "npm",
             command = cmd,
-            env = {
-                "NODE_PATH": ctx.attrs.node_modules,
-            },
         ),
         DefaultInfo(),
     ]
@@ -113,5 +122,13 @@ npm_script_test = rule(
         "args": attrs.option(attrs.list(attrs.arg()), default = None),
         "node_modules": attrs.source(),
         "srcs": attrs.option(attrs.list(attrs.source()), default = None),
+        "_node_toolchain": attrs.toolchain_dep(
+            default = "toolchains//:node",
+            providers = [NodeToolchainInfo],
+        ),
+        "_python_toolchain": attrs.toolchain_dep(
+            default = "toolchains//:python",
+            providers = [PythonToolchainInfo],
+        ),
     },
 )
