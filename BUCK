@@ -39,4 +39,8 @@ npm_script_test(
     name = "puppeteer",
     node_modules = ":node_modules",
     args = ["default", "$(location //component-catalog:public)"],
+    extra_files = {
+        "script/puppeteer-tests.sh": "script/puppeteer-tests.sh",
+        "script/puppeteer-tests.js": "script/puppeteer-tests.js",
+    },
 )

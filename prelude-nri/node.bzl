@@ -98,8 +98,6 @@ npm_bin = rule(
 )
 
 def _npm_script_test_impl(ctx: "context") -> [[DefaultInfo.type, ExternalRunnerTestInfo.type]]:
-    script = ctx.attrs.script or ctx.attrs.name
-
     node_toolchain = ctx.attrs._node_toolchain[NodeToolchainInfo]
 
     cmd = [
@@ -107,10 +105,15 @@ def _npm_script_test_impl(ctx: "context") -> [[DefaultInfo.type, ExternalRunnerT
         cmd_args(node_toolchain.run_npm_script[DefaultInfo].default_outputs),
         "--node-modules",
         ctx.attrs.node_modules,
-        "--node-bin",
+        "--bin-dir",
         cmd_args(node_toolchain.bin_dir[DefaultInfo].default_outputs),
-        script,
     ]
+
+    for (name, value) in (ctx.attrs.extra_files or {}).items():
+        cmd.append(cmd_args(value, format = "--extra-file=" + name + "={}"))
+
+    cmd.append(ctx.attrs.script or ctx.attrs.name)
+
     if ctx.attrs.args:
         cmd.append("--")
         cmd.extend(ctx.attrs.args)
@@ -129,7 +132,13 @@ npm_script_test = rule(
         "script": attrs.option(attrs.string(), default = None),
         "args": attrs.option(attrs.list(attrs.arg()), default = None),
         "node_modules": attrs.source(),
-        "srcs": attrs.option(attrs.list(attrs.source()), default = None),
+        "extra_files": attrs.option(
+            attrs.dict(
+                attrs.string(),
+                attrs.source(allow_directory = True),
+            ),
+            default = None,
+        ),
         "_node_toolchain": attrs.toolchain_dep(
             default = "toolchains//:node",
             providers = [NodeToolchainInfo],
