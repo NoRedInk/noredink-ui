@@ -358,6 +358,7 @@ controlSettings =
                                     , ( "gray", Control.value Colors.gray92 )
                                     ]
                                 )
+                            |> Control.field "hoverZIndex" (Control.maybe False (values String.fromInt [ 0, 1, 5, 10 ]))
                             |> Control.map Custom
                       )
                     ]
