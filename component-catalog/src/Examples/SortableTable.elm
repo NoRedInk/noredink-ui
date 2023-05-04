@@ -154,6 +154,14 @@ example =
                                                         [ ( "topOffset", String.fromFloat stickyConfig.topOffset )
                                                         , ( "zIndex", String.fromInt stickyConfig.zIndex )
                                                         , ( "pageBackgroundColor", "Css.hex \"" ++ stickyConfig.pageBackgroundColor.value ++ "\"" )
+                                                        , ( "customZIndex"
+                                                          , case stickyConfig.hoverZIndex of
+                                                                Nothing ->
+                                                                    "Nothing"
+
+                                                                Just zIndex ->
+                                                                    "Just " ++ String.fromInt zIndex
+                                                          )
                                                         ]
                                                         2
                                     )
