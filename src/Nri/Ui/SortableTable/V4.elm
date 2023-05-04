@@ -10,6 +10,7 @@ module Nri.Ui.SortableTable.V4 exposing
 
   - Change to an HTML-like API
   - Allow the table header to be sticky
+  - Adds an optional hover z-index for sticky table headers
 
 @docs Column, Sorter, State
 @docs init, initDescending
