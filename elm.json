@@ -3,7 +3,7 @@
     "name": "NoRedInk/noredink-ui",
     "summary": "UI Widgets we use at NRI",
     "license": "BSD-3-Clause",
-    "version": "22.12.2",
+    "version": "22.12.3",
     "exposed-modules": [
         "Browser.Events.Extra",
         "Nri.Ui",
