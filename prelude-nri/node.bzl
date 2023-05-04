@@ -21,6 +21,10 @@ def _node_modules_impl(ctx: "context") -> [DefaultInfo.type]:
     for (name, value) in (ctx.attrs.extra_files or {}).items():
         cmd.add(cmd_args(value, format = "--extra-file=" + name + "={}"))
 
+    if ctx.attrs.extra_args:
+        cmd.add("--")
+        cmd.add(ctx.attrs.extra_args)
+
     ctx.actions.run(cmd, category = "npm")
 
     return [DefaultInfo(default_output = out)]
@@ -35,6 +39,10 @@ node_modules = rule(
                 attrs.string(),
                 attrs.source(allow_directory = True),
             ),
+            default = None,
+        ),
+        "extra_args": attrs.option(
+            attrs.list(attrs.arg()),
             default = None,
         ),
         "_node_toolchain": attrs.toolchain_dep(

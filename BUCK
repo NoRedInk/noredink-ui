@@ -21,6 +21,7 @@ node_modules(
     extra_files = {
         "lib": "//lib:src"
     },
+    extra_args = ["--include=dev"],
 )
 
 npm_bin(
