@@ -48,7 +48,6 @@ import Css exposing (..)
 import Html.Styled.Attributes as Attributes exposing (class, css)
 import Html.Styled.Events as Events
 import Nri.Ui.Checkbox.V7 as Checkbox
-import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
@@ -263,6 +262,7 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
             , padding zero
             , cursor pointer
             , Css.batch containerCss
+            , textAlign left
             ]
         , Attributes.id (idValue ++ "-container")
         , case onLockedMsg of
@@ -277,12 +277,10 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
             [ css
                 [ outline Css.none
                 , Fonts.baseFont
-                , color Colors.navy
                 , margin zero
                 , marginLeft (px -4)
                 , padding zero
                 , fontSize (px 15)
-                , Css.property "font-weight" "600"
                 , display inlineBlock
                 , Css.property "transition" "all 0.4s ease"
                 , cursor pointer
@@ -291,13 +289,11 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
             [ Html.span
                 [ class "premium-checkbox-locked-V8__Label"
                 , css
-                    [ display inlineBlock
-                    , padding4 (px 13) zero (px 13) (px 40)
+                    [ displayFlex
+                    , alignItems center
                     , position relative
                     , Fonts.baseFont
                     , fontSize (px 15)
-                    , fontWeight (int 600)
-                    , color Colors.navy
                     , Css.outline3 (Css.px 2) Css.solid Css.transparent
                     ]
                 ]
