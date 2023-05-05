@@ -85,12 +85,44 @@ class Report:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--buck2-bin", default="buck2")
-    parser.add_argument("--patch-bin", default="patch")
-    parser.add_argument("--fix", action="store_true")
+    parser.add_argument(
+        "--buck2-bin",
+        default="buck2",
+        help="where does `buck2` live?",
+    )
+
+    # FIX
+    parser.add_argument(
+        "--fix",
+        action="store_true",
+        help="Automatically fix all formatting errors."
+    )
+    parser.add_argument(
+        "--patch-bin",
+        default="patch",
+        help="where does `patch` live? (only necessary with `--fix`)"
+    )
+
+    # GITHUB PR REVIEW
+    parser.add_argument(
+        "--review-github-pr",
+        action="store_true",
+        help="Leave a PR review on GitHub with suggested changes from this diff."
+    )
+    parser.add_argument(
+        "--github-token",
+        default=os.environ.get("GITHUB_TOKEN", None),
+        help="What GitHub token to use (only necessary with `--review-github-pr`. Reads from `GITHUB_TOKEN` if present.)"
+    )
+    parser.add_argument(
+        "--github-pr",
+        help="What GitHub PR should this review go to? (only necessary with `--review-github-pr`)",
+    )
 
     args = parser.parse_args()
 
+    # TODO: make this generic! The only thing specific to elm-format is the
+    # target kind here, and could accept that on the CLI.
     targets = subprocess.check_output([args.buck2_bin, "uquery", "kind(elm_format_diff, //...)"]).split()
     report = json.loads(subprocess.check_output([args.buck2_bin, "build", "--build-report=-"] + targets))
 
@@ -110,23 +142,6 @@ if __name__ == "__main__":
     if args.fix:
         subprocess.run([args.patch_bin, "-p0"], check=True, input=b"\n".join(out))
 
-    # print(repr(out))
-    # print(bytes(out.files[0]))
-    # import pprint
-    # pprint.pprint(list(out.files[0].hunks()))
-    # pprint.pprint(next(out.files[0].hunks()).new_code())
-
-    for file in out.files:
-        for hunk in file.hunks():
-            suggestion_line_length, suggestion = hunk.new_code()
-            end_line = hunk.start_line + suggestion_line_length
-
-            sys.stdout.buffer.write(b"In ")
-            sys.stdout.buffer.write(file.name)
-            sys.stdout.buffer.write(b", replace lines ")
-            sys.stdout.buffer.write(str(hunk.start_line).encode("utf-8"))
-            sys.stdout.buffer.write(b" to ")
-            sys.stdout.buffer.write(str(end_line).encode("utf-8"))
-            sys.stdout.buffer.write(b" with this:\n\n```suggestion\n")
-            sys.stdout.buffer.write(suggestion)
-            sys.stdout.buffer.write(b"\n```\n\n")
+    if not args.fix and out.files:
+        print(f"{len(out.files)} file(s) need fixes! Re-run me with `--fix` or `--review-github-pr` to fix these.")
+        sys.exit(1)
