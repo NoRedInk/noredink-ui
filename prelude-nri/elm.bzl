@@ -123,7 +123,7 @@ def _elm_format_diffs_impl(ctx: "context"):
                 "-xo", "pipefail",
                 "-c",
                 """
-                $1 --stdin < $2 | diff -u $2 - > $3
+                $1 --stdin < $2 | diff -u3 $2 - > $3
                 if test "$?" -eq 1; then
                   # we're fine with files being different; we'll catch that in
                   # the BXL script.
