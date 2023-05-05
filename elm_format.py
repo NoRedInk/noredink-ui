@@ -140,7 +140,11 @@ if __name__ == "__main__":
                 out.append(content)
 
     if args.fix:
-        subprocess.run([args.patch_bin, "-p0"], check=True, input=b"\n".join(out))
+        subprocess.run(
+            [args.patch_bin, "-p0"],
+            check=True,
+            input=b"\n".join(bytes(file) for file in out.files),
+        )
 
     if not args.fix and out.files:
         print(f"{len(out.files)} file(s) need fixes! Re-run me with `--fix` or `--review-github-pr` to fix these.")
