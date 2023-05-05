@@ -63,10 +63,7 @@ class File:
 
     @classmethod
     def from_universal_diff(cls, diff):
-        return cls(
-            re.match(b"--- (.+?)\t", diff).groups()[0],
-            diff
-        )
+        return cls(re.match(b"--- (.+?)\t", diff).groups()[0], diff)
 
 
 class Report:
@@ -77,7 +74,7 @@ class Report:
         return f"<Report: {self.files}>"
 
     def __bytes__(self):
-        return b'\n'.join(bytes(file) for file in self.files)
+        return b"\n".join(bytes(file) for file in self.files)
 
     def append(self, diff):
         self.files.append(File.from_universal_diff(diff))
@@ -93,26 +90,24 @@ if __name__ == "__main__":
 
     # FIX
     parser.add_argument(
-        "--fix",
-        action="store_true",
-        help="Automatically fix all formatting errors."
+        "--fix", action="store_true", help="Automatically fix all formatting errors."
     )
     parser.add_argument(
         "--patch-bin",
         default="patch",
-        help="where does `patch` live? (only necessary with `--fix`)"
+        help="where does `patch` live? (only necessary with `--fix`)",
     )
 
     # GITHUB PR REVIEW
     parser.add_argument(
         "--review-github-pr",
         action="store_true",
-        help="Leave a PR review on GitHub with suggested changes from this diff."
+        help="Leave a PR review on GitHub with suggested changes from this diff.",
     )
     parser.add_argument(
         "--github-token",
         default=os.environ.get("GITHUB_TOKEN", None),
-        help="What GitHub token to use (only necessary with `--review-github-pr`. Reads from `GITHUB_TOKEN` if present.)"
+        help="What GitHub token to use (only necessary with `--review-github-pr`. Reads from `GITHUB_TOKEN` if present.)",
     )
     parser.add_argument(
         "--github-pr",
@@ -123,17 +118,21 @@ if __name__ == "__main__":
 
     # TODO: make this generic! The only thing specific to elm-format is the
     # target kind here, and could accept that on the CLI.
-    targets = subprocess.check_output([args.buck2_bin, "uquery", "kind(elm_format_diff, //...)"]).split()
-    report = json.loads(subprocess.check_output([args.buck2_bin, "build", "--build-report=-"] + targets))
+    targets = subprocess.check_output(
+        [args.buck2_bin, "uquery", "kind(elm_format_diff, //...)"]
+    ).split()
+    report = json.loads(
+        subprocess.check_output([args.buck2_bin, "build", "--build-report=-"] + targets)
+    )
 
     out = Report()
 
-    for target, result in report['results'].items():
+    for target, result in report["results"].items():
         print(target)
-        diffs = result['outputs']['DEFAULT']
+        diffs = result["outputs"]["DEFAULT"]
 
         for diff in diffs:
-            with open(diff, 'rb') as fh:
+            with open(diff, "rb") as fh:
                 content = fh.read()
 
             if content:
@@ -147,5 +146,7 @@ if __name__ == "__main__":
         )
 
     if not args.fix and out.files:
-        print(f"{len(out.files)} file(s) need fixes! Re-run me with `--fix` or `--review-github-pr` to fix these.")
+        print(
+            f"{len(out.files)} file(s) need fixes! Re-run me with `--fix` or `--review-github-pr` to fix these."
+        )
         sys.exit(1)
