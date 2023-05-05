@@ -26,4 +26,4 @@ jobs:
           PERCY_TOKEN: '${{ secrets.PERCY_TOKEN }}'
 
       - name: buck2 elm-format
-        run: script/buck2 run //:elm_format
+        run: script/buck2 run //:elm_format -- --buck2-bin=script/buck2
