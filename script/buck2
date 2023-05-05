@@ -38,4 +38,4 @@ if ! test -f buck-out/buck2; then
   chmod +x buck-out/buck2
 fi
 
-exec buck-out/buck2 $@
+exec buck-out/buck2 "$@"
