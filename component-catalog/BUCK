@@ -1,4 +1,4 @@
-load("@prelude-nri//:elm.bzl", "elm_app")
+load("@prelude-nri//:elm.bzl", "elm_app", "elm_format_diffs")
 
 elm_app(
     name = "app",
@@ -25,4 +25,9 @@ filegroup(
     tests = [
         "//:puppeteer",
     ],
+)
+
+elm_format_diffs(
+    name = "elm_format_diffs",
+    srcs = glob(["src/**/*.elm"]),
 )

@@ -1,5 +1,5 @@
 # A list of available rules and their signatures can be found here: https://buck2.build/docs/api/rules/
-load("@prelude-nri//:elm.bzl", "elm_docs")
+load("@prelude-nri//:elm.bzl", "elm_docs", "elm_format_diffs")
 load("@prelude-nri//:node.bzl", "node_modules", "npm_bin", "npm_script_test")
 
 elm_docs(
@@ -43,4 +43,9 @@ npm_script_test(
         "script/puppeteer-tests.sh": "script/puppeteer-tests.sh",
         "script/puppeteer-tests.js": "script/puppeteer-tests.js",
     },
+)
+
+elm_format_diffs(
+    name = "elm_format_diffs",
+    srcs = glob(["src/**/*.elm"]),
 )
