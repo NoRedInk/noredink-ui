@@ -11,8 +11,8 @@ module Nri.Ui.Html.V3 exposing
 -}
 
 import Html.Styled as Html exposing (Attribute, Html)
-import Html.Styled.Events as Events exposing (..)
 import Json.Decode
+import Html.Styled.Events as Events exposing (..)
 
 
 {-| -}
@@ -21,6 +21,7 @@ viewIf view condition =
     case condition of
         True ->
             view ()
+
 
         False ->
             Html.text ""
