@@ -120,24 +120,23 @@ def _elm_format_diffs_impl(ctx: "context"):
         ctx.actions.run(
             [
                 "bash",
-                "-xo", "pipefail",
+                "-xuo", "pipefail",
                 "-c",
                 """
-                $1 --stdin < $2 | diff -u${CONTEXT_SIZE} $2 - > $3
+                $ELM_FORMAT --stdin < $SRC | diff -u${CONTEXT_SIZE} $SRC - > $OUT
                 if test "$?" -eq 1; then
                   # we're fine with files being different; we'll catch that in
                   # the BXL script.
                   exit 0
                 fi
                 """,
-                "--",
-                ctx.attrs._elm_toolchain.get(ElmToolchainInfo).elm_format,
-                src,
-                suggestion.as_output(),
             ],
             category = "elm_format_diffs",
             identifier = src.short_path,
             env = {
+                "ELM_FORMAT": ctx.attrs._elm_toolchain.get(ElmToolchainInfo).elm_format,
+                "SRC": src,
+                "OUT": suggestion.as_output(),
                 "CONTEXT_SIZE": str(ctx.attrs.context_size),
             },
         )
