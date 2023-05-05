@@ -24,3 +24,6 @@ jobs:
         run: script/buck2 test //... -- --env PERCY_TOKEN=$PERCY_TOKEN
         env:
           PERCY_TOKEN: '${{ secrets.PERCY_TOKEN }}'
+
+      - name: buck2 elm-format
+        run: script/buck2 bxl prelude-nri//elm/elm_format.bxl:elm_format
