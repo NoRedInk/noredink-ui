@@ -10,6 +10,7 @@ module Nri.Ui.SortableTable.V4 exposing
 
   - Change to an HTML-like API
   - Allow the table header to be sticky
+  - Adds an optional hover z-index for sticky table headers
 
 @docs Column, Sorter, State
 @docs init, initDescending
@@ -93,6 +94,7 @@ type alias StickyConfig =
     { topOffset : Float
     , zIndex : Int
     , pageBackgroundColor : Css.Color
+    , hoverZIndex : Maybe Int
     }
 
 
@@ -101,20 +103,33 @@ defaultStickyConfig =
     { topOffset = 0
     , zIndex = 0
     , pageBackgroundColor = Nri.Ui.Colors.V1.white
+    , hoverZIndex = Nothing
     }
 
 
+consJust : Maybe a -> List a -> List a
+consJust maybe_ list =
+    case maybe_ of
+        Just value ->
+            value :: list
+
+        Nothing ->
+            list
+
+
 stickyConfigStyles : StickyConfig -> List Style
-stickyConfigStyles { topOffset, zIndex, pageBackgroundColor } =
+stickyConfigStyles { topOffset, zIndex, pageBackgroundColor, hoverZIndex } =
     [ Css.Media.withMedia
         [ MediaQuery.notMobile ]
         [ Css.Global.children
             [ Css.Global.thead
-                [ Css.position Css.sticky
-                , Css.top (Css.px topOffset)
-                , Css.zIndex (Css.int zIndex)
-                , Css.backgroundColor pageBackgroundColor
-                ]
+                (consJust (Maybe.map (\index -> Css.hover [ Css.zIndex (Css.int index) ]) hoverZIndex)
+                    [ Css.position Css.sticky
+                    , Css.top (Css.px topOffset)
+                    , Css.zIndex (Css.int zIndex)
+                    , Css.backgroundColor pageBackgroundColor
+                    ]
+                )
             ]
         ]
     ]
