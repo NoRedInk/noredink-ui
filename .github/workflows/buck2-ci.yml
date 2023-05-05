@@ -17,6 +17,9 @@ jobs:
           path: buck-out
           key: ${{ runner.os }}-buck-out
 
+      - name: test
+        run: echo ${{ github.event.pull_request.id }}
+
       - name: buck2 build
         run: script/buck2 build //... --show-output
 
