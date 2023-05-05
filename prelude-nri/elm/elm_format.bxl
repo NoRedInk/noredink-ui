@@ -1,0 +1,13 @@
+def _elm_format_impl(ctx: "bxl_ctx"):
+    targets = ctx.uquery().eval('kind(elm_format_diffs, root//...)')
+    if len(targets) == 0:
+        fail("there were no `elm_format` targets for me to pull!")
+
+    built = ctx.build(targets)
+
+    print(built)
+
+elm_format = bxl(
+    impl = _elm_format_impl,
+    cli_args = {},
+)
