@@ -43,6 +43,7 @@ stdenv.mkDerivation {
     netcat-gnu
 
     # Buck dependencies
+    black
     buildifier
   ] ++ lib.optionals stdenv.isLinux [ pkgs.fsatrace pkgs.strace pkgs.cacert ];
 }
