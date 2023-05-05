@@ -145,7 +145,11 @@ if __name__ == "__main__":
             input=b"\n".join(bytes(file) for file in out.files),
         )
 
-    if not args.fix and out.files:
+    elif args.review_github_pr:
+        print("todo")
+        sys.exit(1)
+
+    elif out.files:
         print(
             f"{len(out.files)} file(s) need fixes! Re-run me with `--fix` or `--review-github-pr` to fix these."
         )
