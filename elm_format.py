@@ -110,8 +110,8 @@ if __name__ == "__main__":
         help="What GitHub token to use (only necessary with `--review-github-pr`. Reads from `GITHUB_TOKEN` if present.)",
     )
     parser.add_argument(
-        "--github-pr",
-        help="What GitHub PR should this review go to? (only necessary with `--review-github-pr`)",
+        "--github-pr-id",
+        help="The GraphQL node ID we should make this PR to (only necessary with `--review-github-pr`.) Retrieve with `${{ github.event.pull_reuqest.id }}` in GitHub actions.",
     )
 
     args = parser.parse_args()
@@ -128,7 +128,6 @@ if __name__ == "__main__":
     out = Report()
 
     for target, result in report["results"].items():
-        print(target)
         diffs = result["outputs"]["DEFAULT"]
 
         for diff in diffs:
@@ -138,6 +137,8 @@ if __name__ == "__main__":
             if content:
                 out.append(content)
 
+    file_or_files = "file" if len(out.files) == 1 else "files"
+
     if args.fix:
         subprocess.run(
             [args.patch_bin, "-p0"],
@@ -146,11 +147,38 @@ if __name__ == "__main__":
         )
 
     elif args.review_github_pr:
-        print("todo")
+        threads = []
+        for file in out.files:
+            for hunk in file.hunks():
+                suggestion_line_length, suggestion = hunk.new_code()
+
+                threads.append(
+                    {
+                        "path": file.name.decode("utf-8"),
+                        "startLine": hunk.start_line,
+                        "startSide": "RIGHT",
+                        "line": hunk.start_line + suggestion_line_length - 1,
+                        "side": "RIGHT",
+                        "body": "Formatting suggestion from `elm-format`:\n\n```suggestion\n{}\n```\n\n✨ 🎨 ✨".format(
+                            suggestion.decode("utf-8"),
+                        ),
+                    }
+                )
+                break
+
+        graphql_input_var = {
+            "pullRequestId": args.github_pr_id,
+            "body": f"🤖 `elm-format` has suggestions for {len(out.files)} {file_or_files}. Run `script/buck2 run //:elm_format -- --fix` in your local checkout to fix these, or accept the suggestions attached to this review comment. Have a very stylish day!",
+            # "event": "REQUEST_CHANGES",
+            "threads": threads,
+        }
+
+        print(json.dumps(graphql_input_var, indent=2))
+
         sys.exit(1)
 
     elif out.files:
         print(
-            f"{len(out.files)} file(s) need fixes! Re-run me with `--fix` or `--review-github-pr` to fix these."
+            f"{len(out.files)} {file_or_files} need fixes! Re-run me with `--fix` or `--review-github-pr` to fix these."
         )
         sys.exit(1)
