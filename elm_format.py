@@ -69,7 +69,7 @@ class DiffHunk:
 
         # if the suggestion was just to remove blank lines, we should include a
         # little more context so we don't just send a blank diff
-        while all(line == b" " for line in draft_suggestion):
+        while all(line == b" " or line == b"" for line in draft_suggestion):
             context_lines -= 1
             draft_suggestion = suggestion[context_lines:-context_lines]
 
