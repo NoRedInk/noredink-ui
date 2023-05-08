@@ -224,6 +224,9 @@ if __name__ == "__main__":
             )
             sys.exit(1)
 
+        if not out.files:
+            sys.exit(0)
+
         sys.stdout.write(
             f"Getting mutation ID for {args.github_repo}#{args.github_pr_number}\n"
         )
