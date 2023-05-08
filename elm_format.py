@@ -46,9 +46,12 @@ class DiffHunk:
         return f"<DiffHunk: {self.name} at line {self.start_line}>"
 
     def new_code(self):
-        context_lines = 0
+        context_before = 0
+        context_after = 0
         have_found_changes = False
 
+        # first step: get the entire change suggested by the diff in it's fully-
+        # applied form. (That is, the code after applying the diff.)
         suggestion = []
 
         for (i, line) in enumerate(self.hunk.split(b"\n")):
@@ -63,19 +66,26 @@ class DiffHunk:
                 have_found_changes = True
 
             if not have_found_changes:
-                context_lines += 1
+                context_before += 1
+                context_after += 1
 
-        draft_suggestion = suggestion[context_lines:-context_lines]
+        # second step: trim the suggestion to only the lines that we need to
+        # change. If we include too much, the GitHub comment looks really weird!
+        # On the other hand, if we don't include *enough* we will not be able to
+        # apply the suggestion cleanly.
+        context_after -= 1
 
-        # if the suggestion was just to remove blank lines, we should include a
-        # little more context so we don't just send a blank diff
-        while all(line == b" " or line == b"" for line in draft_suggestion):
-            context_lines -= 1
-            draft_suggestion = suggestion[context_lines:-context_lines]
+        while suggestion[context_before].strip() == "":
+            context_before -= 1
+
+        while suggestion[context_after].strip() == "":
+            context_after += 1
+
+        draft_suggestion = suggestion[context_before:-context_after]
 
         return (
             len(draft_suggestion),
-            context_lines,
+            context_before,
             b"\n".join(draft_suggestion),
         )
 
