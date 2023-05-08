@@ -79,13 +79,13 @@ class DiffHunk:
             context_before -= 1
 
         while suggestion[context_after].strip() == "":
-            context_after += 1
+            context_after -= 1
 
         draft_suggestion = suggestion[context_before:-context_after]
 
         return (
-            len(draft_suggestion),
             context_before,
+            len(draft_suggestion),
             b"\n".join(draft_suggestion),
         )
 
@@ -258,7 +258,7 @@ if __name__ == "__main__":
         threads = []
         for file in out.files:
             for hunk in file.hunks():
-                suggestion_line_length, lines_until_start, suggestion = hunk.new_code()
+                lines_until_start, suggestion_line_length, suggestion = hunk.new_code()
 
                 threads.append(
                     {
