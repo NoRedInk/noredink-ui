@@ -62,17 +62,7 @@ class DiffHunk:
             else:
                 break
 
-        trim_before = context_lines
-        if trim_before > 0 and lines[trim_before]["sigil"] == "-":
-            # add another line of context before the first removed line
-            trim_before -= 1
-
-        trim_after = -context_lines
-        if trim_after < 0 and lines[trim_after - 1]["sigil"] == "-":
-            # add another line of context after the last removed line
-            trim_after += 1
-
-        suggestion_lines = lines[trim_before:trim_after]
+        suggestion_lines = lines[context_lines:-context_lines]
 
         # we keep track of the amount of lines we added, since we're targeting
         # the final line to be calculated on the right-hand side of the GitHub
