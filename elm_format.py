@@ -45,53 +45,63 @@ class DiffHunk:
     def __repr__(self):
         return f"<DiffHunk: {self.name} at line {self.start_line}>"
 
-    def new_code(self):
-        context_lines_to_remove = 0
-        finished_context = False
+    def suggestion(self):
+        lines = [
+            {
+                "offset": i,
+                "sigil": line[0],
+                "line": line[1:],
+            }
+            for (i, line) in enumerate(self.hunk.decode("utf-8").split("\n"))
+        ]
 
-        # first step: get the entire change suggested by the diff in it's fully-
-        # applied form. (That is, the code after applying the diff.)
-        suggestion = []
+        context_lines = 0
+        for line in lines:
+            if line["sigil"] == " ":
+                context_lines += 1
+            else:
+                break
 
-        for (i, line) in enumerate(self.hunk.split(b"\n")):
-            if line.startswith(b"+"):
-                suggestion.append(line[1:])
-                finished_context = True
+        trim_before = context_lines
+        if trim_before > 0 and lines[trim_before]["sigil"] == "-":
+            # add another line of context before the first removed line
+            trim_before -= 1
 
-            elif line.startswith(b" "):
-                suggestion.append(line[1:])
+        trim_after = -context_lines
+        if trim_after < 0 and lines[trim_after - 1]["sigil"] == "-":
+            # add another line of context after the last removed line
+            trim_after += 1
 
-            elif line.startswith(b"-"):
-                finished_context = True
+        suggestion_lines = lines[trim_before:trim_after]
 
-            if not finished_context:
-                context_lines_to_remove += 1
+        # we keep track of the amount of lines we added, since we're targeting
+        # the final line to be calculated on the right-hand side of the GitHub
+        # diff, so we need to subtract from the offset we have.
+        old_lines = []
+        new_lines = []
 
-        # second step: trim the suggestion to only the lines that we need to
-        # change. If we include too much, the GitHub comment looks really weird!
-        # On the other hand, if we don't include *enough* we will not be able to
-        # apply the suggestion cleanly.
+        for line in suggestion_lines:
+            if line["sigil"] == " ":
+                old_lines.append(line)
+                new_lines.append(line)
 
-        # If we only have a single line, our diff will be a little confusing. We
-        # need at least two!
-        if len(suggestion) - context_lines_to_remove * 2 <= 1:
-            context_lines_to_remove -= 1
+            elif line["sigil"] == "+":
+                new_lines.append(line)
 
-        while (
-            all(
-                line.strip() == b""
-                for line in suggestion[context_lines_to_remove:-context_lines_to_remove]
-            )
-            and context_lines_to_remove > 0
-        ):
-            context_lines_to_remove -= 1
+            elif line["sigil"] == "-":
+                old_lines.append(line)
 
-        draft_suggestion = suggestion[context_lines_to_remove:-context_lines_to_remove]
+            else:
+                raise Exception(f"Unknown sigil: {line['sigil']}")
+
+        start_line = self.start_line + old_lines[0]["offset"]
+        # subtracting one so as not to double-count the first line
+        end_line = start_line + len(old_lines) - 1
 
         return (
-            context_lines_to_remove,
-            len(draft_suggestion),
-            b"\n".join(draft_suggestion),
+            start_line,
+            end_line,
+            "\n".join(line["line"] for line in new_lines),
         )
 
 
@@ -263,29 +273,32 @@ if __name__ == "__main__":
         threads = []
         for file in out.files:
             for hunk in file.hunks():
-                lines_until_start, suggestion_line_length, suggestion = hunk.new_code()
-
-                start_line = hunk.start_line + lines_until_start
+                start_line, end_line, suggestion = hunk.suggestion()
 
                 threads.append(
                     {
                         "path": file.name.decode("utf-8"),
                         "startLine": start_line,
                         "startSide": "RIGHT",
-                        "line": start_line + suggestion_line_length,
+                        "line": end_line,
                         "side": "RIGHT",
-                        "body": "Formatting suggestion from `elm-format`:\n\n```suggestion\n{}\n```\n\n✨ 🎨 ✨".format(
-                            suggestion.decode("utf-8"),
-                        ),
+                        "body": f"Formatting suggestion from `elm-format`:\n\n```suggestion\n{suggestion}\n```\n\n✨ 🎨 ✨",
                     }
                 )
+
+        params = {
+            "pullRequestId": id,
+            "body": f"🤖 `elm-format` has suggestions for {len(out.files)} {file_or_files}. Run `script/buck2 run //:elm_format -- --fix` in your local checkout to fix these, or accept the suggestions attached to this review comment. Have a very stylish day!",
+            "event": "REQUEST_CHANGES",
+            "threads": threads,
+        }
 
         comment_resp = graphql(
             args.github_token,
             textwrap.dedent(
                 """
-                    mutation ($input: AddPullRequestReviewInput!) {
-                      addPullRequestReview(input: $input) {
+                    mutation ($params: AddPullRequestReviewInput!) {
+                      addPullRequestReview(input: $params) {
                         pullRequestReview {
                           url
                         }
@@ -293,14 +306,7 @@ if __name__ == "__main__":
                     }
                 """
             ),
-            {
-                "input": {
-                    "pullRequestId": id,
-                    "body": f"🤖 `elm-format` has suggestions for {len(out.files)} {file_or_files}. Run `script/buck2 run //:elm_format -- --fix` in your local checkout to fix these, or accept the suggestions attached to this review comment. Have a very stylish day!",
-                    "event": "REQUEST_CHANGES",
-                    "threads": threads,
-                }
-            },
+            {"params": params},
         )
 
         try:
