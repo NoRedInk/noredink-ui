@@ -20,18 +20,37 @@ class DiffHunk:
         return f"<DiffHunk: {self.name} at line {self.start_line}>"
 
     def new_code(self):
+        context_lines = 0
+        have_found_changes = False
+
         suggestion = []
 
         for (i, line) in enumerate(self.hunk.split(b"\n")):
-            if line.startswith(b"+") or line.startswith(b" "):
+            if line.startswith(b"+"):
+                suggestion.append(line[1:])
+                have_found_changes = True
+
+            elif line.startswith(b" "):
                 suggestion.append(line[1:])
 
             elif line.startswith(b"-"):
-                continue
+                have_found_changes = True
+
+            if not have_found_changes:
+                context_lines += 1
+
+        draft_suggestion = suggestion[context_lines:-context_lines]
+
+        # if the suggestion was just to remove blank lines, we should include a
+        # little more context so we don't just send a blank diff
+        while all(line == b' ' for line in draft_suggestion):
+            context_lines -= 1
+            draft_suggestion = suggestion[context_lines:-context_lines]
 
         return (
-            len(suggestion),
-            b"\n".join(suggestion[:]),
+            len(draft_suggestion),
+            context_lines,
+            b"\n".join(draft_suggestion),
         )
 
 
@@ -110,8 +129,12 @@ if __name__ == "__main__":
         help="What GitHub token to use (only necessary with `--review-github-pr`. Reads from `GITHUB_TOKEN` if present.)",
     )
     parser.add_argument(
-        "--github-pr-id",
-        help="The GraphQL node ID we should make this PR to (only necessary with `--review-github-pr`.) Retrieve with `${{ github.event.pull_reuqest.id }}` in GitHub actions.",
+        "--github-repo",
+        help="The repo that owns the PR that will get the comment. (Format: person-or-org/repo-name)"
+    )
+    parser.add_argument(
+        "--github-pr-number",
+        help="The PR number.",
     )
 
     args = parser.parse_args()
@@ -147,33 +170,42 @@ if __name__ == "__main__":
         )
 
     elif args.review_github_pr:
+        if not args.github_repo:
+            sys.stdout.write("Please specify --github-repo to say which repo's PR to make a comment on.\n")
+            sys.exit(1)
+
+        if not args.github_pr_number:
+            sys.stdout.write("Please specify --github-pr-number to say which PR to comment on.\n")
+            sys.exit(1)
+
+        sys.stdout.write(f"Getting mutation ID for {args.github_repo}#{args.github_pr_number}\n")
+
         threads = []
         for file in out.files:
             for hunk in file.hunks():
-                suggestion_line_length, suggestion = hunk.new_code()
+                suggestion_line_length, lines_until_start, suggestion = hunk.new_code()
 
                 threads.append(
                     {
                         "path": file.name.decode("utf-8"),
-                        "startLine": hunk.start_line,
+                        "startLine": hunk.start_line + lines_until_start,
                         "startSide": "RIGHT",
-                        "line": hunk.start_line + suggestion_line_length - 1,
+                        "line": hunk.start_line + lines_until_start + suggestion_line_length,
                         "side": "RIGHT",
                         "body": "Formatting suggestion from `elm-format`:\n\n```suggestion\n{}\n```\n\n✨ 🎨 ✨".format(
                             suggestion.decode("utf-8"),
                         ),
                     }
                 )
-                break
 
         graphql_input_var = {
-            "pullRequestId": args.github_pr_id,
+            "pullRequestId": "TODO",
             "body": f"🤖 `elm-format` has suggestions for {len(out.files)} {file_or_files}. Run `script/buck2 run //:elm_format -- --fix` in your local checkout to fix these, or accept the suggestions attached to this review comment. Have a very stylish day!",
             # "event": "REQUEST_CHANGES",
             "threads": threads,
         }
 
-        print(json.dumps(graphql_input_var, indent=2))
+        print(json.dumps({"input": graphql_input_var}, indent=2))
 
         sys.exit(1)
 
