@@ -17,13 +17,13 @@ jobs:
           path: buck-out
           key: ${{ runner.os }}-buck-out
 
-      # - name: buck2 build
-      #   run: script/buck2 build //... --show-output
+      - name: buck2 build
+        run: script/buck2 build //... --show-output
 
-      # - name: buck2 test
-      #   run: script/buck2 test //... -- --env PERCY_TOKEN=$PERCY_TOKEN
-      #   env:
-      #     PERCY_TOKEN: '${{ secrets.PERCY_TOKEN }}'
+      - name: buck2 test
+        run: script/buck2 test //... -- --env PERCY_TOKEN=$PERCY_TOKEN
+        env:
+          PERCY_TOKEN: '${{ secrets.PERCY_TOKEN }}'
 
       - name: buck2 elm-format (with comments)
         if: github.event.pull_request
