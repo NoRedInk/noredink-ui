@@ -46,9 +46,8 @@ class DiffHunk:
         return f"<DiffHunk: {self.name} at line {self.start_line}>"
 
     def new_code(self):
-        context_before = 0
-        context_after = 0
-        have_found_changes = False
+        context_lines_to_remove = 0
+        finished_context = False
 
         # first step: get the entire change suggested by the diff in it's fully-
         # applied form. (That is, the code after applying the diff.)
@@ -57,34 +56,40 @@ class DiffHunk:
         for (i, line) in enumerate(self.hunk.split(b"\n")):
             if line.startswith(b"+"):
                 suggestion.append(line[1:])
-                have_found_changes = True
+                finished_context = True
 
             elif line.startswith(b" "):
                 suggestion.append(line[1:])
 
             elif line.startswith(b"-"):
-                have_found_changes = True
+                finished_context = True
 
-            if not have_found_changes:
-                context_before += 1
-                context_after += 1
+            if not finished_context:
+                context_lines_to_remove += 1
 
         # second step: trim the suggestion to only the lines that we need to
         # change. If we include too much, the GitHub comment looks really weird!
         # On the other hand, if we don't include *enough* we will not be able to
         # apply the suggestion cleanly.
-        context_before -= 1
 
-        while suggestion[context_before].strip() == b"":
-            context_before -= 1
+        # If we only have a single line, our diff will be a little confusing. We
+        # need at least two!
+        if len(suggestion) - context_lines_to_remove * 2 <= 1:
+            context_lines_to_remove -= 1
 
-        while suggestion[context_after].strip() == b"":
-            context_after -= 1
+        while (
+            all(
+                line.strip() == b""
+                for line in suggestion[context_lines_to_remove:-context_lines_to_remove]
+            )
+            and context_lines_to_remove > 0
+        ):
+            context_lines_to_remove -= 1
 
-        draft_suggestion = suggestion[context_before:-context_after]
+        draft_suggestion = suggestion[context_lines_to_remove:-context_lines_to_remove]
 
         return (
-            context_before,
+            context_lines_to_remove,
             len(draft_suggestion),
             b"\n".join(draft_suggestion),
         )
