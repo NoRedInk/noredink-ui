@@ -53,7 +53,7 @@ elm_format_diffs(
 genrule(
     name = "elm_format",
     out = "elm_format.py",
-    srcs = ["elm_format.py"],
+    srcs = ["script/elm_format.py"],
     cmd = "cp $SRCS $OUT",
     executable = True,
 )
