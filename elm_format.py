@@ -3,11 +3,37 @@
 Run elm-format targets and present changes in a structured format.
 """
 import argparse
+import http.client
+import json
 import json
 import os
+import re
 import subprocess
 import sys
-import re
+import textwrap
+
+
+def graphql(api_key, query, variables=None):
+    request_body = {"query": query}
+    if variables:
+        request_body["variables"] = variables
+
+    connection = http.client.HTTPSConnection("api.github.com")
+
+    connection.request(
+        "POST",
+        "/graphql",
+        body=json.dumps(request_body),
+        headers={"Authorization": f"Bearer {api_key}", "User-Agent": "Python"},
+    )
+    response = connection.getresponse()
+
+    response_body_json = response.read().decode("utf-8")
+    response_body = json.loads(response_body_json)
+
+    connection.close()
+
+    return response_body
 
 
 class DiffHunk:
@@ -43,7 +69,7 @@ class DiffHunk:
 
         # if the suggestion was just to remove blank lines, we should include a
         # little more context so we don't just send a blank diff
-        while all(line == b' ' for line in draft_suggestion):
+        while all(line == b" " for line in draft_suggestion):
             context_lines -= 1
             draft_suggestion = suggestion[context_lines:-context_lines]
 
@@ -130,10 +156,11 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--github-repo",
-        help="The repo that owns the PR that will get the comment. (Format: person-or-org/repo-name)"
+        help="The repo that owns the PR that will get the comment. (Format: person-or-org/repo-name)",
     )
     parser.add_argument(
         "--github-pr-number",
+        type=int,
         help="The PR number.",
     )
 
@@ -171,14 +198,52 @@ if __name__ == "__main__":
 
     elif args.review_github_pr:
         if not args.github_repo:
-            sys.stdout.write("Please specify --github-repo to say which repo's PR to make a comment on.\n")
+            sys.stdout.write(
+                "Please specify --github-repo to say which repo's PR to make a comment on.\n"
+            )
             sys.exit(1)
 
         if not args.github_pr_number:
-            sys.stdout.write("Please specify --github-pr-number to say which PR to comment on.\n")
+            sys.stdout.write(
+                "Please specify --github-pr-number to say which PR to comment on.\n"
+            )
             sys.exit(1)
 
-        sys.stdout.write(f"Getting mutation ID for {args.github_repo}#{args.github_pr_number}\n")
+        sys.stdout.write(
+            f"Getting mutation ID for {args.github_repo}#{args.github_pr_number}\n"
+        )
+
+        org, repo = args.github_repo.split("/")
+
+        id_resp = graphql(
+            args.github_token,
+            textwrap.dedent(
+                """
+                query ($org: String!, $repo: String!, $pullRequestNumber: Int!) {
+                  organization(login: $org) {
+                    repository(name: $repo) {
+                      pullRequest(number: $pullRequestNumber) {
+                        id
+                      }
+                    }
+                  }
+                }
+            """
+            ),
+            {
+                "org": org,
+                "repo": repo,
+                "pullRequestNumber": args.github_pr_number,
+            },
+        )
+
+        try:
+            id = id_resp["data"]["organization"]["repository"]["pullRequest"]["id"]
+        except (KeyError, TypeError):
+            sys.stdout.write(
+                f"Could not get the pull request ID from the GraphQL query. Here's the response so you can debug:\n\n{json.dumps(id_resp, indent=2)}"
+            )
+            sys.exit(1)
 
         threads = []
         for file in out.files:
@@ -190,7 +255,9 @@ if __name__ == "__main__":
                         "path": file.name.decode("utf-8"),
                         "startLine": hunk.start_line + lines_until_start,
                         "startSide": "RIGHT",
-                        "line": hunk.start_line + lines_until_start + suggestion_line_length,
+                        "line": hunk.start_line
+                        + lines_until_start
+                        + suggestion_line_length,
                         "side": "RIGHT",
                         "body": "Formatting suggestion from `elm-format`:\n\n```suggestion\n{}\n```\n\n✨ 🎨 ✨".format(
                             suggestion.decode("utf-8"),
@@ -198,16 +265,41 @@ if __name__ == "__main__":
                     }
                 )
 
-        graphql_input_var = {
-            "pullRequestId": "TODO",
-            "body": f"🤖 `elm-format` has suggestions for {len(out.files)} {file_or_files}. Run `script/buck2 run //:elm_format -- --fix` in your local checkout to fix these, or accept the suggestions attached to this review comment. Have a very stylish day!",
-            # "event": "REQUEST_CHANGES",
-            "threads": threads,
-        }
+        comment_resp = graphql(
+            args.github_token,
+            textwrap.dedent(
+                """
+                    mutation ($input: AddPullRequestReviewInput!) {
+                      addPullRequestReview(input: $input) {
+                        pullRequestReview {
+                          url
+                        }
+                      }
+                    }
+                """
+            ),
+            {
+                "input": {
+                    "pullRequestId": id,
+                    "body": f"🤖 `elm-format` has suggestions for {len(out.files)} {file_or_files}. Run `script/buck2 run //:elm_format -- --fix` in your local checkout to fix these, or accept the suggestions attached to this review comment. Have a very stylish day!",
+                    "event": "REQUEST_CHANGES",
+                    "threads": threads,
+                }
+            },
+        )
 
-        print(json.dumps({"input": graphql_input_var}, indent=2))
+        try:
+            url = comment_resp["data"]["addPullRequestReview"]["pullRequestReview"][
+                "url"
+            ]
+        except (KeyError, TypeError):
+            sys.stdout.write(
+                f"Could not get the pull request URL from the GraphQL query. Here's the response so you can debug:\n\n{json.dumps(comment_resp, indent=2)}"
+            )
+            sys.exit(1)
 
-        sys.exit(1)
+        sys.stdout.write(f"{url}\n")
+        # not exiting 1 here beacuse we're giving feedback in a different way!
 
     elif out.files:
         print(
