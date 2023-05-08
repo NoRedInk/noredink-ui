@@ -53,3 +53,8 @@ export_file(
     name = "build_npm_bin.py",
     visibility = ["PUBLIC"],
 )
+
+export_file(
+    name = "run_npm_script.py",
+    visibility = ["PUBLIC"],
+)

@@ -5,3 +5,9 @@ genrule(
     cmd = "$(exe //:browserify) index.js --outfile $OUT",
     visibility = ["//component-catalog:public"],
 )
+
+filegroup(
+    name = "src",
+    srcs = glob(["**/*.js"]),
+    visibility = ["//:node_modules"],
+)

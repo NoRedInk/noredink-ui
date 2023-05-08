@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
-Make a fresh `node_modules` directory in an isolated directory.
+Run an npm script in an isolated directory.
 """
 import argparse
 import os
@@ -22,8 +22,13 @@ if __name__ == "__main__":
         default="package-lock.json",
     )
     parser.add_argument(
+        "--node-modules",
+        help="Which node_modules folder do the dependencies live in?",
+        default="node_modules",
+    )
+    parser.add_argument(
         "--bin-dir",
-        help="Path to a node installation's binary directory. If present, will be treated as an extra entry in PATH for the duration of this command.",
+        help="Path to node binaries",
     )
     parser.add_argument(
         "--extra-file",
@@ -31,19 +36,25 @@ if __name__ == "__main__":
         metavar="FILE=SRC",
         help="Add a file that the package needs, sourced from the given path. This may be used, for example, to add files needed by a prepublish script.",
     )
-    parser.add_argument("out", help="Where you want node_modules to end up")
     parser.add_argument(
-        "npm_args",
-        nargs="*",
-        help="Specify extra args for the call to `npm clean-install`",
+        "script",
+        help="What script should we run?",
+    )
+    parser.add_argument(
+        "args",
+        help="What additional arguments should exist? (If they have flags, put them after a --)",
+        nargs=argparse.REMAINDER,
     )
 
-    args = parser.parse_intermixed_args()
+    args = parser.parse_args()
 
     if args.bin_dir:
-        os.environ["PATH"] = "{}:{}".format(
-            os.path.abspath(args.bin_dir), os.environ["PATH"]
-        )
+        os.environ["PATH"] = f"{args.bin_dir}:{os.environ['PATH']}"
+
+    if args.node_modules:
+        os.environ["PATH"] = f"{args.node_modules}/.bin:{os.environ['PATH']}"
+
+    os.environ["NODE_PRESERVE_SYMLINKS"] = "1"
 
     with tempfile.TemporaryDirectory() as tempdir:
         # npm wants these to be real files for whatever reason, and will throw
@@ -55,21 +66,20 @@ if __name__ == "__main__":
         for extra in args.extra_file or []:
             target, src = extra.split("=")
 
-            dir = os.path.dirname(target)
-            if dir:
-                os.makedirs(os.path.join(tempdir, dir))
+            dir = os.path.join(tempdir, os.path.dirname(target))
+            if not os.path.exists(dir):
+                os.makedirs(dir)
 
             os.symlink(os.path.abspath(src), os.path.join(tempdir, target))
 
-        cmd = ["npm", "clean-install"] + args.npm_args
+        os.symlink(
+            os.path.abspath(args.node_modules),
+            os.path.join(tempdir, "node_modules"),
+        )
 
-        proc = subprocess.Popen(cmd, cwd=tempdir)
-        proc.communicate()
+        exit_code = subprocess.call(
+            ["npm", "run", args.script, "--"] + args.args,
+            cwd = tempdir,
+        )
 
-        if proc.returncode == 0:
-            os.rename(
-                os.path.join(tempdir, "node_modules"),
-                args.out,
-            )
-
-    sys.exit(proc.returncode)
+    sys.exit(exit_code)

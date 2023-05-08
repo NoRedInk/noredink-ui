@@ -1,6 +1,6 @@
 # A list of available rules and their signatures can be found here: https://buck2.build/docs/api/rules/
 load("@prelude-nri//:elm.bzl", "elm_docs")
-load("@prelude-nri//:node.bzl", "node_modules", "npm_bin")
+load("@prelude-nri//:node.bzl", "node_modules", "npm_bin", "npm_script_test")
 
 elm_docs(
     name = "docs.json",
@@ -18,6 +18,10 @@ node_modules(
     name = "node_modules",
     package = "package.json",
     package_lock = "package-lock.json",
+    extra_files = {
+        "lib": "//lib:src"
+    },
+    extra_args = ["--include=dev"],
 )
 
 npm_bin(
@@ -29,4 +33,14 @@ npm_bin(
 export_file(
     name = "elm.json",
     visibility = ["//component-catalog:public"],
+)
+
+npm_script_test(
+    name = "puppeteer",
+    node_modules = ":node_modules",
+    args = ["default", "$(location //component-catalog:public)"],
+    extra_files = {
+        "script/puppeteer-tests.sh": "script/puppeteer-tests.sh",
+        "script/puppeteer-tests.js": "script/puppeteer-tests.js",
+    },
 )

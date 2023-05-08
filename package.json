@@ -13,7 +13,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublish": "npm run build-lib",
-    "build-lib": "npx browserify --entry lib/index.js --outfile dist.js"
+    "build-lib": "npx browserify --entry lib/index.js --outfile dist.js",
+    "puppeteer": "script/puppeteer-tests.sh"
   },
   "repository": {
     "type": "git",

@@ -21,4 +21,8 @@ filegroup(
         "application.json": "elm.json",
         "package.json": "//:elm.json",
     },
+    visibility = ["//:puppeteer"],
+    tests = [
+        "//:puppeteer",
+    ],
 )
