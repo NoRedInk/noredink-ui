@@ -26,6 +26,7 @@ jobs:
       #     PERCY_TOKEN: '${{ secrets.PERCY_TOKEN }}'
 
       - name: buck2 elm-format
+        if: github.event.pull_request
         run: |
           set -x
           script/buck2 run //:elm_format -- \
