@@ -265,16 +265,18 @@ if __name__ == "__main__":
             for hunk in file.hunks():
                 start_line, end_line, suggestion = hunk.suggestion()
 
-                threads.append(
-                    {
-                        "path": file.name.decode("utf-8"),
-                        "startLine": start_line,
-                        "startSide": "RIGHT",
-                        "line": end_line,
-                        "side": "RIGHT",
-                        "body": f"Formatting suggestion from `elm-format`:\n\n```suggestion\n{suggestion}\n```\n\n✨ 🎨 ✨",
-                    }
-                )
+                thread = {
+                    "path": file.name.decode("utf-8"),
+                    "line": end_line,
+                    "side": "RIGHT",
+                    "body": f"Formatting suggestion from `elm-format`:\n\n```suggestion\n{suggestion}\n```\n\n✨ 🎨 ✨",
+                }
+
+                if start_line != end_line:
+                    thread["startLine"] = start_line
+                    thread["startSide"] = "RIGHT"
+
+                threads.append(thread)
 
         params = {
             "pullRequestId": id,
