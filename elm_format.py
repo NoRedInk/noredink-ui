@@ -265,14 +265,14 @@ if __name__ == "__main__":
             for hunk in file.hunks():
                 lines_until_start, suggestion_line_length, suggestion = hunk.new_code()
 
+                start_line = hunk.start_line + lines_until_start
+
                 threads.append(
                     {
                         "path": file.name.decode("utf-8"),
-                        "startLine": hunk.start_line + lines_until_start,
+                        "startLine": start_line,
                         "startSide": "RIGHT",
-                        "line": hunk.start_line
-                        + lines_until_start
-                        + suggestion_line_length,
+                        "line": start_line + suggestion_line_length,
                         "side": "RIGHT",
                         "body": "Formatting suggestion from `elm-format`:\n\n```suggestion\n{}\n```\n\n✨ 🎨 ✨".format(
                             suggestion.decode("utf-8"),
