@@ -73,12 +73,12 @@ class DiffHunk:
         # change. If we include too much, the GitHub comment looks really weird!
         # On the other hand, if we don't include *enough* we will not be able to
         # apply the suggestion cleanly.
-        context_after -= 1
+        context_before -= 1
 
-        while suggestion[context_before].strip() == "":
+        while suggestion[context_before].strip() == b"":
             context_before -= 1
 
-        while suggestion[context_after].strip() == "":
+        while suggestion[context_after].strip() == b"":
             context_after -= 1
 
         draft_suggestion = suggestion[context_before:-context_after]
