@@ -312,7 +312,10 @@ if __name__ == "__main__":
         # not exiting 1 here beacuse we're giving feedback in a different way!
 
     elif out.files:
-        print(
-            f"{len(out.files)} {file_or_files} need fixes! Re-run me with `--fix` or `--review-github-pr` to fix these."
+        for file in out.files:
+            print(file.diff.decode("utf-8"))
+
+        sys.stderr.write(
+            f"{len(out.files)} {file_or_files} need fixes! Re-run me with `--fix` or `--review-github-pr` to fix these.\n"
         )
         sys.exit(1)
