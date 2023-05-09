@@ -30,6 +30,12 @@ npm_bin(
     visibility = ["//lib:bundle.js"],
 )
 
+npm_bin(
+    name = "prettier",
+    node_modules = ":node_modules",
+    visibility = ["//lib:prettier_diffs"]
+)
+
 export_file(
     name = "elm.json",
     visibility = ["//component-catalog:public"],
