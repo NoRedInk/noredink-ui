@@ -57,9 +57,9 @@ elm_format_diffs(
 )
 
 genrule(
-    name = "elm_format",
-    out = "elm_format.py",
-    srcs = ["script/elm_format.py"],
+    name = "diff_to_comment",
+    out = "diff_to_comment.py",
+    srcs = ["script/diff_to_comment.py"],
     cmd = "cp $SRCS $OUT",
     executable = True,
 )
