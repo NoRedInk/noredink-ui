@@ -15,8 +15,8 @@ import Test.Html.Selector as Selector
 spec : Test
 spec =
     describe "Nri.Ui.Checkbox.V7"
-        [ describe "hasRole" hasCorrectRole
-        , describe "hasAriaChecked" hasAriaChecked
+        [ describe "'checkbox' role" hasCorrectRole
+        , describe "aria-checked" hasAriaChecked
         ]
 
 
