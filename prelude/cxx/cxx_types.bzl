@@ -8,10 +8,15 @@
 load(
     "@prelude//linking:link_info.bzl",
     "LinkArgs",
+    "SwiftmoduleLinkable",  # @unused Used as a type
 )
 load(
     "@prelude//linking:linkables.bzl",
     "LinkableProviders",
+)
+load(
+    "@prelude//linking:shared_libraries.bzl",
+    "SharedLibrary",  # @unused Used as a type
 )
 load(
     ":compile.bzl",
@@ -98,7 +103,8 @@ CxxRuleAdditionalParams = record(
 # different and need to be specified. The following record holds the data which
 # is needed to specialize user-facing rule from generic implementation.
 CxxRuleConstructorParams = record(
-    # We need to build an empty shared library for rust_python_extensions so that they can link against the rust shared object
+    # Whether to build an empty shared library. This is utilized for rust_python_extensions
+    # so that they can link against the rust shared object.
     build_empty_so = field(bool.type, False),
     # Name of the top level rule utilizing the cxx rule.
     rule_type = str.type,
@@ -106,10 +112,10 @@ CxxRuleConstructorParams = record(
     is_test = field(bool.type, False),
     # Header layout to use importing headers.
     headers_layout = CxxHeadersLayout.type,
-    # Additional information used to preprocess every unit of translation in the rule
+    # Additional information used to preprocess every unit of translation in the rule.
     extra_preprocessors = field([CPreprocessor.type], []),
     extra_preprocessors_info = field([CPreprocessorInfo.type], []),
-    # Additional preprocessor info to export to other rules
+    # Additional preprocessor info to export to other rules.
     extra_exported_preprocessors = field([CPreprocessor.type], []),
     # Additional information used to link every object produced by the rule,
     # flags are _both_ exported and used to link the target itself.
@@ -118,12 +124,14 @@ CxxRuleConstructorParams = record(
     # These flags are _not_ propagated up the dep tree.
     extra_link_flags = field([""], []),
     extra_binary_link_flags = field([""], []),
-    # Additional artifacts to be linked together with the cxx compilation output
+    # Additional artifacts to be linked together with the cxx compilation output.
     extra_link_input = field(["artifact"], []),
-    # If True the extra_link_input should be considered as external debug info
+    # If True the extra_link_input should be considered as external debug info.
     extra_link_input_has_external_debug_info = field(bool.type, False),
-    # Additional args to be used to link the target
+    # Additional args to be used to link the target.
     extra_link_args = field([LinkArgs.type], []),
+    # The swift module linkable that should be included for linking.
+    swiftmodule_linkable = field([SwiftmoduleLinkable.type, None], None),
     # The source files to compile as part of this rule. This list can be generated
     # from ctx.attrs with the `get_srcs_with_flags` function.
     srcs = field([CxxSrcWithFlags.type]),
@@ -135,7 +143,7 @@ CxxRuleConstructorParams = record(
     # e.g. when building Apple tests, we want to link with `-bundle` instead of `-shared` to allow
     # linking against the bundle loader.
     shared_library_flags = field([SharedLibraryFlagOverrides.type, None], None),
-    # Optional argument to override the default name of the shared object being produced
+    # Optional argument to override the default name of the shared object being produced.
     soname = field([str.type, None], None),
     # If passed to cxx_executable, this field will be used to determine
     # a shared subtarget's default output should be stripped.
@@ -165,6 +173,8 @@ CxxRuleConstructorParams = record(
     # result (e.g. added to link group linking or needs to be searched for
     # shared libs to include in the symlink tree).
     extra_link_roots = field([LinkableProviders.type], []),
+    # Additional shared libs to "package".
+    extra_shared_libs = field({str.type: SharedLibrary.type}, {}),
     auto_link_group_specs = field([[LinkGroupLibSpec.type], None], None),
     link_group_info = field([LinkGroupInfo.type, None], None),
     # Whether to use pre-stripped objects when linking.

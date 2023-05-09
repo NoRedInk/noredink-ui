@@ -365,27 +365,6 @@ inlined_extra_attributes = {
         "_cxx_toolchain": toolchains_common.cxx(),
         "_go_toolchain": toolchains_common.go(),
     },
-    "command_alias": {
-        "_exec_os_type": buck.exec_os_type_arg(),
-        "_find_and_replace_bat": attrs.default_only(attrs.exec_dep(default = "prelude//tools:find_and_replace.bat")),
-        "_target_os_type": buck.target_os_type_arg(),
-    },
-    # The 'actual' attribute of configured_alias is a configured_label, which is
-    # currently unimplemented. Map it to dep so we can simply forward the providers.
-    "configured_alias": {
-        # TODO(nga): "actual" attribute exists here only to display it in query,
-        #   actual `actual` attribute used in rule implementation is named `configured_actual`.
-        #   Logically this should be `attrs.configuration_label`, but `configuration_label`
-        #   is currently an alias for `attrs.dep`, which makes non-transitioned dependency
-        #   also a dependency along with transitioned dependency. (See D40255132).
-        "actual": attrs.label(),
-        # We use a separate field instead of re-purposing `actual`, as we want
-        # to keep output format compatibility with v1.
-        "configured_actual": attrs.option(attrs.configured_dep(), default = None),
-        # If `configured_actual` is `None`, fallback to this unconfigured dep.
-        "fallback_actual": attrs.option(attrs.dep(), default = None),
-        "platform": attrs.option(attrs.configuration_label(), default = None),
-    },
     "cxx_binary": _cxx_binary_and_test_attrs(),
 
     #c++
@@ -419,18 +398,7 @@ inlined_extra_attributes = {
         **_cxx_binary_and_test_attrs()
     ),
     "cxx_toolchain": cxx_toolchain_extra_attributes(is_toolchain_rule = False),
-    "export_file": {
-        "src": attrs.source(allow_directory = True),
-    },
-    "filegroup": {
-        "copy": attrs.bool(default = True),
-        "srcs": attrs.named_set(attrs.source(allow_directory = True), sorted = False, default = []),
-    },
-    "genrule": genrule_attributes() | {
-        "env": attrs.dict(key = attrs.string(), value = attrs.arg(), sorted = False, default = {}),
-        "srcs": attrs.named_set(attrs.source(allow_directory = True), sorted = False, default = []),
-        "_exec_os_type": buck.exec_os_type_arg(),
-    },
+    "genrule": genrule_attributes(),
     "go_binary": {
         "embedcfg": attrs.option(attrs.source(allow_directory = False), default = None),
         "resources": attrs.list(attrs.one_of(attrs.dep(), attrs.source(allow_directory = True)), default = []),
@@ -461,6 +429,7 @@ inlined_extra_attributes = {
         "_haskell_toolchain": toolchains_common.haskell(),
     },
     "haskell_ide": {
+        "include_projects": attrs.list(attrs.dep(), default = []),
         "_haskell_toolchain": toolchains_common.haskell(),
     },
     "haskell_library": {
@@ -468,19 +437,6 @@ inlined_extra_attributes = {
         "template_deps": attrs.list(attrs.exec_dep(providers = [HaskellLibraryProvider]), default = []),
         "_cxx_toolchain": toolchains_common.cxx(),
         "_haskell_toolchain": toolchains_common.haskell(),
-    },
-
-    # http things get only 1 hash in v1 but in v2 we allow multiple. Also,
-    # don't default hashes to empty strings.
-    "http_archive": {
-        "sha1": attrs.option(attrs.string(), default = None),
-        "sha256": attrs.option(attrs.string(), default = None),
-        "_create_exclusion_list": attrs.default_only(attrs.exec_dep(default = "prelude//http_archive/tools:create_exclusion_list")),
-        "_exec_os_type": buck.exec_os_type_arg(),
-    },
-    "http_file": {
-        "sha1": attrs.option(attrs.string(), default = None),
-        "sha256": attrs.option(attrs.string(), default = None),
     },
     "ndk_toolchain": {
         "cxx_toolchain": attrs.toolchain_dep(providers = [CxxToolchainInfo, CxxPlatformInfo]),
@@ -548,19 +504,6 @@ inlined_extra_attributes = {
     },
     "rust_test": {},
     "sh_test": {},
-    "test_suite": {
-        # On buck1 query, tests attribute on test_suite is treated as deps, while on buck2 it is not.
-        # While buck2's behavior makes more sense, we want to preserve buck1 behavior on test_suite for now to make TD behavior match between buck1 and buck2.
-        # This diff makes the behaviors match by adding a test_deps attribute to test_suite on buck2 that is used as a deps attribute. In the macro layer, we set test_deps = tests if we are using buck2.
-        # For more context: https://fb.prod.workplace.com/groups/603286664133355/posts/682567096205311/?comment_id=682623719532982&reply_comment_id=682650609530293
-        "test_deps": attrs.list(attrs.dep(), default = []),
-    },
-    "worker_tool": {
-        # overridden to handle buck1's use of @Value.Default
-        "args": attrs.one_of(attrs.arg(), attrs.list(attrs.arg()), default = []),
-        # FIXME: prelude// should be standalone (not refer to fbsource//)
-        "_worker_tool_runner": attrs.default_only(attrs.dep(default = "fbsource//xplat/buck2/tools/worker:worker_tool_runner")),
-    },
 }
 
 all_extra_attributes = _merge_dictionaries([

@@ -8,13 +8,14 @@
 load("@prelude//:local_only.bzl", "link_cxx_binary_locally")
 load("@prelude//:paths.bzl", "paths")
 load("@prelude//:resources.bzl", "create_resource_db", "gather_resources")
+load("@prelude//cxx:cxx_context.bzl", "get_cxx_toolchain_info")
 load("@prelude//cxx:cxx_library_utility.bzl", "cxx_attr_deps")
 load(
     "@prelude//cxx:cxx_link_utility.bzl",
     "executable_shared_lib_arguments",
     "make_link_args",
 )
-load("@prelude//cxx:cxx_toolchain_types.bzl", "CxxToolchainInfo")
+load("@prelude//cxx:cxx_toolchain_types.bzl", "LinkerInfo")
 load(
     "@prelude//cxx:linker.bzl",
     "get_default_shared_library_name",
@@ -71,10 +72,12 @@ load(":rust_toolchain.bzl", "RustToolchainInfo", "ctx_toolchain_info")
 RustcOutput = record(
     outputs = field({Emit.type: "artifact"}),
     diag = field({str.type: "artifact"}),
+    pdb = field(["artifact", None]),
 )
 
 def compile_context(ctx: "context") -> CompileContext.type:
     toolchain_info = ctx_toolchain_info(ctx)
+    cxx_toolchain_info = get_cxx_toolchain_info(ctx)
 
     # Setup source symlink tree.
     srcs = {src.short_path: src for src in ctx.attrs.srcs}
@@ -98,11 +101,12 @@ def compile_context(ctx: "context") -> CompileContext.type:
     if not symlinked_srcs:
         symlinked_srcs = ctx.actions.symlinked_dir("__srcs", srcs)
 
-    linker = _linker_args(ctx)
+    linker = _linker_args(ctx, cxx_toolchain_info.linker_info)
     clippy_wrapper = _clippy_wrapper(ctx, toolchain_info)
 
     return CompileContext(
         toolchain_info = toolchain_info,
+        cxx_toolchain_info = cxx_toolchain_info,
         symlinked_srcs = symlinked_srcs,
         linker_args = linker,
         clippy_wrapper = clippy_wrapper,
@@ -216,7 +220,7 @@ def generate_rustdoc_test(
     extra_link_args, runtime_files, _ = executable_shared_lib_arguments(
         ctx.actions,
         ctx.label,
-        ctx.attrs._cxx_toolchain[CxxToolchainInfo],
+        compile_ctx.cxx_toolchain_info,
         resources,
         shared_libs,
     )
@@ -253,6 +257,11 @@ def generate_rustdoc_test(
         allow_args = True,
     )
 
+    if ctx.attrs._exec_os_type[OsLookup].platform == "windows":
+        runtool = ["--runtool=cmd.exe", "--runtool-arg=/C"]
+    else:
+        runtool = ["--runtool=/usr/bin/env"]
+
     rustdoc_cmd = cmd_args(
         toolchain_info.rustdoc,
         "--test",
@@ -265,7 +274,7 @@ def generate_rustdoc_test(
         "--extern=proc_macro" if ctx.attrs.proc_macro else [],
         compile_ctx.linker_args,
         cmd_args(linker_argsfile, format = "-Clink-arg=@{}"),
-        "--runtool=/usr/bin/env",
+        runtool,
         cmd_args(toolchain_info.rustdoc_test_with_resources, format = "--runtool-arg={}"),
         cmd_args("--runtool-arg=--resources=", resources, delimiter = ""),
         "--color=always",
@@ -371,13 +380,14 @@ def rust_compile(
             params = params,
         )
 
+    pdb_artifact = None
     if crate_type_linked(params.crate_type) and not common_args.is_check:
         subdir = common_args.subdir
         tempfile = common_args.tempfile
 
         # If this crate type has an associated native dep link style, include deps
         # of that style.
-        (link_args, hidden, _dwo_dir_unused_in_rust, _pdb_artifact) = make_link_args(
+        (link_args, hidden, _dwo_dir_unused_in_rust, pdb_artifact) = make_link_args(
             ctx,
             [
                 LinkArgs(flags = extra_link_args),
@@ -467,7 +477,7 @@ def rust_compile(
     else:
         filtered_outputs = outputs
 
-    return RustcOutput(outputs = filtered_outputs, diag = diag)
+    return RustcOutput(outputs = filtered_outputs, diag = diag, pdb = pdb_artifact)
 
 # --extern <crate>=<path> for direct dependencies
 # -Ldependency=<dir> for transitive dependencies
@@ -659,7 +669,7 @@ def _compute_common_args(
         dependency_args.add("--extern=proc_macro")
 
     if crate_type == CrateType("cdylib") and not is_check:
-        linker_info = ctx.attrs._cxx_toolchain[CxxToolchainInfo].linker_info
+        linker_info = compile_ctx.cxx_toolchain_info.linker_info
         shlib_name = get_default_shared_library_name(linker_info, ctx.label)
         dependency_args.add(cmd_args(
             get_shared_library_name_linker_flags(linker_info.type, shlib_name),
@@ -753,8 +763,9 @@ def _clippy_wrapper(
 # using -Clinker=path and there is currently no way of doing this
 # without an artifact. We create a wrapper (which is an artifact),
 # and add -Clinker=
-def _linker_args(ctx: "context") -> "cmd_args":
-    linker_info = ctx.attrs._cxx_toolchain[CxxToolchainInfo].linker_info
+def _linker_args(
+        ctx: "context",
+        linker_info: LinkerInfo.type) -> "cmd_args":
     linker = cmd_args(
         linker_info.linker,
         linker_info.linker_flags or [],
