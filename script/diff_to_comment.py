@@ -201,16 +201,11 @@ if __name__ == "__main__":
         diffs = result["outputs"]["DEFAULT"]
 
         for diff in diffs:
-            if os.path.isdir(diff):
-                for (dir, _, filenames) in os.walk(diff):
-                    diffs.extend(os.path.join(dir, filename) for filename in filenames)
+            with open(diff, "rb") as fh:
+                content = fh.read()
 
-            else:
-                with open(diff, "rb") as fh:
-                    content = fh.read()
-
-                if content:
-                    out.append(content)
+            if content:
+                out.append(content)
 
     file_or_files = "file" if len(out.files) == 1 else "files"
 
