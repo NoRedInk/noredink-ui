@@ -3,6 +3,7 @@
 Run Buck targets and present changes in a structured format.
 """
 import argparse
+from collections import defaultdict
 import http.client
 import json
 import json
@@ -34,6 +35,14 @@ def graphql(api_key, query, variables=None):
     connection.close()
 
     return response_body
+
+
+def pluralize(count, singular, plural):
+    if count == 1:
+        return singular
+
+    else:
+        return plural
 
 
 class DiffHunk:
@@ -197,6 +206,8 @@ if __name__ == "__main__":
 
     out = Report()
 
+    targets_with_patches = defaultdict(int)
+
     for target, result in report["results"].items():
         diffs = result["outputs"]["DEFAULT"]
 
@@ -206,8 +217,34 @@ if __name__ == "__main__":
 
             if content:
                 out.append(content)
+                targets_with_patches[target] += 1
 
     file_or_files = "file" if len(out.files) == 1 else "files"
+
+    if targets_with_patches:
+        if len(targets_with_patches) > 1:
+            comment_lines = [
+                "🤖 The following targets have suggestions:"
+                ""
+            ]
+            for target, file_count in targets_with_patches.items():
+                comment_lines.append(f" - `{target}` has suggestions for {file_count} {pluralize(file_count, 'file', 'files')}")
+
+        else:
+            target, file_count = list(targets_with_patches.items())[0]
+
+            comment_lines = [
+                f"🤖 `{target}` has suggestions for {file_count} {pluralize(file_count, 'file', 'files')}."
+            ]
+
+        comment_lines.extend([
+            "",
+            f"To fix, run `{args.call_fix_command_base} --fix {' '.join(targets_with_patches)}` in your local checkout or apply the attached suggestions!",
+            "",
+            "Have a very stylish day!",
+        ])
+
+        comment = "\n".join(comment_lines)
 
     if args.fix:
         subprocess.run(
@@ -288,7 +325,7 @@ if __name__ == "__main__":
 
         params = {
             "pullRequestId": id,
-            "body": f"🤖 I have suggestions for {len(out.files)} {file_or_files}. Run `{args.call_fix_command_base} --fix {' '.join(args.target)}` in your local checkout to fix these, or accept the suggestions attached to this review comment. Have a very stylish day!",
+            "body": comment,
             "event": "REQUEST_CHANGES",
             "threads": threads,
         }
@@ -326,7 +363,5 @@ if __name__ == "__main__":
         for file in out.files:
             print(file.diff.decode("utf-8"))
 
-        sys.stderr.write(
-            f"I have fixes for {len(out.files)} {file_or_files}! Re-run as `{args.call_fix_command_base} --fix {' '.join(args.target)}` to fix these!\n"
-        )
+        sys.stderr.write(f"---\n\n{comment}\n")
         sys.exit(1)
