@@ -1,3 +1,5 @@
+load("@prelude-nri//node.bzl", "prettier_diffs")
+
 genrule(
     name = "bundle.js",
     out = "bundle.js",
@@ -12,23 +14,8 @@ filegroup(
     visibility = ["//:node_modules"],
 )
 
-genrule(
+prettier_diffs(
     name = "prettier_diffs",
     srcs = glob(["**/*.js"]),
-    out = "diffs",
-    cmd = """
-    set +e # this script handles errors itself
-    set -uo pipefail
-
-    for SRC in $SRCS; do
-        CLEAN_SRC="\$(sed 's|\./||g' <<< "$SRC")"
-        OUT_SRC="$OUT/$CLEAN_SRC"
-        mkdir -p "\$(dirname "$OUT_SRC")"
-        $(exe //:prettier) "$CLEAN_SRC" | diff -u3 "$CLEAN_SRC" - > "$OUT_SRC"
-        if test "$?" -gt 1; then
-            # we're fine with diffs but not execution errors
-            exit 1
-        fi
-    done
-    """
+    prettier = "//:prettier",
 )

@@ -154,3 +154,44 @@ npm_script_test = rule(
         ),
     },
 )
+
+def _prettier_diffs_impl(ctx: "context"):
+    suggested_changes = []
+
+    for src in ctx.attrs.srcs:
+        suggestion = ctx.actions.declare_output("__suggested_changes__", src.short_path)
+        ctx.actions.run(
+            [
+                "bash",
+                "-xuo", "pipefail",
+                "-c",
+                """
+                $prettier $SRC | diff -u${CONTEXT_SIZE} $SRC - > $OUT
+                if test "$?" -eq 1; then
+                  # we're fine with files being different; we'll catch that in
+                  # the BXL script.
+                  exit 0
+                fi
+                """,
+            ],
+            category = "prettier_diffs",
+            identifier = src.short_path,
+            env = {
+                "prettier": ctx.attrs.prettier[RunInfo],
+                "SRC": src,
+                "OUT": suggestion.as_output(),
+                "CONTEXT_SIZE": str(ctx.attrs.context_size),
+            },
+        )
+        suggested_changes.append(suggestion)
+
+    return [DefaultInfo(default_outputs = suggested_changes)]
+
+prettier_diffs = rule(
+    impl = _prettier_diffs_impl,
+    attrs = {
+        "srcs": attrs.list(attrs.source()),
+        "context_size": attrs.int(default = 3),
+        "prettier": attrs.dep(providers = [RunInfo]),
+    }
+)
