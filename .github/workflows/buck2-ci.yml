@@ -33,7 +33,8 @@ jobs:
             --call-fix-command-base="script/buck2 run //:diff_to_comment --" \
             --review-github-pr \
             --github-repo=${{ github.repository }} \
-            --github-pr-number=${{ github.event.number }}
+            --github-pr-number=${{ github.event.number }} \
+            $(script/buck2 uquery 'kind("elm_format_diffs|prettier_diffs", //...)')
         env:
           GITHUB_TOKEN: '${{ secrets.github_token }}'
 
@@ -42,4 +43,5 @@ jobs:
         run: |
           script/buck2 run //:diff_to_comment -- \
             --buck2-bin=script/buck2 \
-            --call-fix-command-base="script/buck2 run //:diff_to_comment --"
+            --call-fix-command-base="script/buck2 run //:diff_to_comment --" \
+            $(script/buck2 uquery 'kind("elm_format_diffs|prettier_diffs", //...)')
