@@ -26,3 +26,33 @@ genrule(
     executable = True,
     visibility = ["PUBLIC"],
 )
+
+ELM_FORMAT_URL = select({
+    "config//os:linux": "https://github.com/avh4/elm-format/releases/download/0.8.7/elm-format-0.8.7-linux-x64.tgz",
+    "config//os:macos": select({
+        "config//cpu:arm64": "https://github.com/avh4/elm-format/releases/download/0.8.7/elm-format-0.8.7-mac-arm64.tgz",
+        "config//cpu:x86_64": "https://github.com/avh4/elm-format/releases/download/0.8.7/elm-format-0.8.7-mac-x64.tgz",
+    }),
+})
+
+ELM_FORMAT_SHA256 = select({
+    "config//os:linux": "44344c7b6f838dc5d9495dfe4253280a698c2251ee8cfa29b6d1a032b6efb13b",
+    "config//os:macos": select({
+        "config//cpu:arm64": "d8f898be599fa767d3b6607256e273dd4f62ea7abc41369a068e903159787098",
+        "config//cpu:x86_64": "064102cd471550beb43ff7eb3dd6ac7c2a1946cf038dbde389873384f62cbdc4",
+    }),
+})
+
+http_archive(
+    name = "elm_format_archive",
+    urls = [ELM_FORMAT_URL],
+    sha256 = ELM_FORMAT_SHA256,
+)
+
+genrule(
+    name = "elm_format_binary",
+    out = "elm-format",
+    cmd = "cp $(location :elm_format_archive)/elm-format $OUT",
+    executable = True,
+    visibility = ["PUBLIC"],
+)

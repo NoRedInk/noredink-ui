@@ -111,3 +111,47 @@ elm_app = rule(
         ),
     },
 )
+
+def _elm_format_diffs_impl(ctx: "context"):
+    suggested_changes = []
+
+    for src in ctx.attrs.srcs:
+        suggestion = ctx.actions.declare_output("__suggested_changes__", src.short_path)
+        ctx.actions.run(
+            [
+                "bash",
+                "-xuo", "pipefail",
+                "-c",
+                """
+                $ELM_FORMAT --stdin < $SRC | diff -u${CONTEXT_SIZE} $SRC - > $OUT
+                if test "$?" -eq 1; then
+                  # we're fine with files being different; we'll catch that in
+                  # the BXL script.
+                  exit 0
+                fi
+                """,
+            ],
+            category = "elm_format_diffs",
+            identifier = src.short_path,
+            env = {
+                "ELM_FORMAT": ctx.attrs._elm_toolchain.get(ElmToolchainInfo).elm_format,
+                "SRC": src,
+                "OUT": suggestion.as_output(),
+                "CONTEXT_SIZE": str(ctx.attrs.context_size),
+            },
+        )
+        suggested_changes.append(suggestion)
+
+    return [DefaultInfo(default_outputs = suggested_changes)]
+
+elm_format_diffs = rule(
+    impl = _elm_format_diffs_impl,
+    attrs = {
+        "srcs": attrs.list(attrs.source()),
+        "context_size": attrs.int(default = 3),
+        "_elm_toolchain": attrs.toolchain_dep(
+            default="toolchains//:elm",
+            providers = [ElmToolchainInfo],
+        ),
+    }
+)

@@ -15,4 +15,4 @@ buck = none
 target_platform_detector_spec = target:root//...->prelude//platforms:default
 
 [project]
-ignore = .git
+ignore = .git,elm-stuff,component-catalog/elm-stuff

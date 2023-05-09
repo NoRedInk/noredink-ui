@@ -24,3 +24,19 @@ jobs:
         run: script/buck2 test //... -- --env PERCY_TOKEN=$PERCY_TOKEN
         env:
           PERCY_TOKEN: '${{ secrets.PERCY_TOKEN }}'
+
+      - name: buck2 elm-format (with comments)
+        if: github.event.pull_request
+        run: |
+          set -x
+          script/buck2 run //:elm_format -- \
+            --buck2-bin=script/buck2 \
+            --review-github-pr \
+            --github-repo=${{ github.repository }} \
+            --github-pr-number=${{ github.event.number }}
+        env:
+          GITHUB_TOKEN: '${{ secrets.github_token }}'
+
+      - name: buck2 elm-format (without comments)
+        if: "!github.event.pull_request"
+        run: script/buck2 run //:elm_format -- --buck2-bin=script/buck2
