@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Run elm-format targets and present changes in a structured format.
+Run Buck targets and present changes in a structured format.
 """
 import argparse
 import http.client
@@ -143,9 +143,19 @@ class Report:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
+        "target",
+        nargs="+",
+        help="Target(s) to build and search for files.",
+    )
+    parser.add_argument(
         "--buck2-bin",
         default="buck2",
         help="where does `buck2` live?",
+    )
+    parser.add_argument(
+        "--call-fix-command-base",
+        default=sys.argv[0],
+        help="How should someone call this script to add the `--fix` option?"
     )
 
     # FIX
@@ -181,13 +191,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    # TODO: make this generic! The only thing specific to elm-format is the
-    # target kind here, and could accept that on the CLI.
-    targets = subprocess.check_output(
-        [args.buck2_bin, "uquery", "kind(elm_format_diff, //...)"]
-    ).split()
     report = json.loads(
-        subprocess.check_output([args.buck2_bin, "build", "--build-report=-"] + targets)
+        subprocess.check_output([args.buck2_bin, "build", "--build-report=-"] + args.target)
     )
 
     out = Report()
@@ -196,11 +201,16 @@ if __name__ == "__main__":
         diffs = result["outputs"]["DEFAULT"]
 
         for diff in diffs:
-            with open(diff, "rb") as fh:
-                content = fh.read()
+            if os.path.isdir(diff):
+                for (dir, _, filenames) in os.walk(diff):
+                    diffs.extend(os.path.join(dir, filename) for filename in filenames)
 
-            if content:
-                out.append(content)
+            else:
+                with open(diff, "rb") as fh:
+                    content = fh.read()
+
+                if content:
+                    out.append(content)
 
     file_or_files = "file" if len(out.files) == 1 else "files"
 
@@ -272,7 +282,7 @@ if __name__ == "__main__":
                     "path": file.name.decode("utf-8"),
                     "line": end_line,
                     "side": "RIGHT",
-                    "body": f"Formatting suggestion from `elm-format`:\n\n```suggestion\n{suggestion}\n```\n\n✨ 🎨 ✨",
+                    "body": f"Formatting suggestion:\n\n```suggestion\n{suggestion}\n```\n\n✨ 🎨 ✨",
                 }
 
                 if start_line != end_line:
@@ -283,7 +293,7 @@ if __name__ == "__main__":
 
         params = {
             "pullRequestId": id,
-            "body": f"🤖 `elm-format` has suggestions for {len(out.files)} {file_or_files}. Run `script/buck2 run //:elm_format -- --fix` in your local checkout to fix these, or accept the suggestions attached to this review comment. Have a very stylish day!",
+            "body": f"🤖 I have suggestions for {len(out.files)} {file_or_files}. Run `{args.call_fix_command_base} --fix {' '.join(args.target)}` in your local checkout to fix these, or accept the suggestions attached to this review comment. Have a very stylish day!",
             "event": "REQUEST_CHANGES",
             "threads": threads,
         }
@@ -322,6 +332,6 @@ if __name__ == "__main__":
             print(file.diff.decode("utf-8"))
 
         sys.stderr.write(
-            f"{len(out.files)} {file_or_files} need fixes! Re-run me with `--fix` or `--review-github-pr` to fix these.\n"
+            f"I have fixes for {len(out.files)} {file_or_files}! Re-run as `{args.call_fix_command_base} --fix {' '.join(args.target)}` to fix these!\n"
         )
         sys.exit(1)
