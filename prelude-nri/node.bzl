@@ -56,7 +56,7 @@ node_modules = rule(
     },
 )
 
-def _npm_bin_impl(ctx: "context") -> [[DefaultInfo.type, RunInfo.type]]:
+def _npm_bin_impl(ctx: "context") -> [[DefaultInfo.type, RunInfo.type, TemplatePlaceholderInfo.type]]:
     bin_name = ctx.attrs.bin_name or ctx.attrs.name
 
     out = ctx.actions.declare_output(bin_name)
@@ -79,6 +79,11 @@ def _npm_bin_impl(ctx: "context") -> [[DefaultInfo.type, RunInfo.type]]:
     return [
         DefaultInfo(default_output = out),
         RunInfo(out),
+        TemplatePlaceholderInfo(
+            keyed_variables = {
+                "exe": out,
+            },
+        ),
     ]
 
 npm_bin = rule(
