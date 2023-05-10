@@ -33,7 +33,10 @@ npm_bin(
 npm_bin(
     name = "prettier",
     node_modules = ":node_modules",
-    visibility = ["//lib:prettier_diffs"]
+    visibility = [
+        "//lib:prettier_diffs",
+        "//component-catalog:prettier_diffs",
+    ],
 )
 
 export_file(

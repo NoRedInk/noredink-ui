@@ -1,4 +1,5 @@
 load("@prelude-nri//:elm.bzl", "elm_app", "elm_format_diffs")
+load("@prelude-nri//:node.bzl", "prettier_diffs")
 
 elm_app(
     name = "app",
@@ -30,4 +31,10 @@ filegroup(
 elm_format_diffs(
     name = "elm_format_diffs",
     srcs = glob(["src/**/*.elm"]),
+)
+
+prettier_diffs(
+    name = "prettier_diffs",
+    srcs = glob(["**/*.html"]),
+    prettier = "//:prettier",
 )
