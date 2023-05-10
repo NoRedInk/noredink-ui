@@ -1,3 +1,5 @@
+load("@prelude-nri//node.bzl", "prettier_diffs")
+
 genrule(
     name = "bundle.js",
     out = "bundle.js",
@@ -10,4 +12,10 @@ filegroup(
     name = "src",
     srcs = glob(["**/*.js"]),
     visibility = ["//:node_modules"],
+)
+
+prettier_diffs(
+    name = "prettier_diffs",
+    srcs = glob(["**/*.js"]),
+    prettier = "//:prettier",
 )
