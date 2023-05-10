@@ -1,6 +1,6 @@
 # A list of available rules and their signatures can be found here: https://buck2.build/docs/api/rules/
 load("@prelude-nri//:elm.bzl", "elm_docs", "elm_format_diffs")
-load("@prelude-nri//:node.bzl", "node_modules", "npm_bin", "npm_script_test")
+load("@prelude-nri//:node.bzl", "node_modules", "npm_bin", "npm_script_test", "prettier_diffs")
 
 elm_docs(
     name = "docs.json",
@@ -62,4 +62,10 @@ genrule(
     srcs = ["script/diff_to_comment.py"],
     cmd = "cp $SRCS $OUT",
     executable = True,
+)
+
+prettier_diffs(
+    name = "prettier_diffs",
+    srcs = glob(["**/*.md"]),
+    prettier = "//:prettier",
 )
