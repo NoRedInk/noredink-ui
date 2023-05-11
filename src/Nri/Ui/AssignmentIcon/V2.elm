@@ -14,7 +14,7 @@ module Nri.Ui.AssignmentIcon.V2 exposing
 
 # Quiz Engine
 
-@docs diagnostic, planningDiagnosticCircled,    unitDiagnosticCircled
+@docs diagnostic, planningDiagnosticCircled, unitDiagnosticCircled
 @docs practice, practiceCircled
 @docs quiz, quizCircled, passageQuizCircled
 
@@ -55,8 +55,8 @@ module Nri.Ui.AssignmentIcon.V2 exposing
 
 -}
 
-import Svg.Styled as Svg
 import Nri.Ui.Svg.V1
+import Svg.Styled as Svg
 import Svg.Styled.Attributes as Attributes
 
 
@@ -72,7 +72,8 @@ peerReview : Nri.Ui.Svg.V1.Svg
 peerReview =
     Nri.Ui.Svg.V1.init "0 0 57 58"
         [ Svg.g
-            [ Attributes.fill "currentcolor", Attributes.fillRule "evenodd"
+            [ Attributes.fill "currentcolor"
+            , Attributes.fillRule "evenodd"
             ]
             [ Svg.path [ Attributes.d "M16.441 43.288v-10.59l.002-.095v-3.781l-1.263 2.46c-.373.728-1.244 1.029-1.945.668-.7-.36-.966-1.243-.593-1.97l2.476-4.826c.044-.083.092-.162.147-.232a1.648 1.648 0 0 1 1.558-1.11h4.399l-2.218 4.32c-.723 1.414-.238 3.208 1.228 3.963.919.47 1.944.392 2.758-.08l.056-.036v11.309H20.16v-9.093h-.751v9.093h-2.968zm.45-23.648a2.95 2.95 0 1 1 5.903 0 2.953 2.953 0 0 1-2.952 2.952 2.952 2.952 0 0 1-2.95-2.952z" ] []
             , Svg.path [ Attributes.d "M24.376 43.288v-11.55c0-.035 0-.07.002-.108V27.464l-1.392 2.71c-.412.805-1.373 1.135-2.146.739-.774-.396-1.064-1.371-.653-2.174l2.729-5.319c.047-.091.102-.176.162-.255a1.818 1.818 0 0 1 1.716-1.224h6.54c.796 0 1.472.512 1.717 1.224.06.079.114.164.161.255l2.73 5.32c.412.802.12 1.777-.654 2.173-.773.396-1.734.066-2.144-.739l-1.392-2.708v4.104c0 .054-.002.106-.008.158v11.56h-3.291v-9.901h-.786v9.9h-3.291zm3.744-29.2h.006a3.255 3.255 0 0 1 3.251 3.253 3.255 3.255 0 0 1-3.254 3.254 3.255 3.255 0 0 1-3.254-3.254 3.255 3.255 0 0 1 3.251-3.253z" ] []
