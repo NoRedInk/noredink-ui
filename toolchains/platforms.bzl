@@ -1,6 +1,10 @@
 def _platforms_impl(ctx: "context") -> [[DefaultInfo.type, ExecutionPlatformRegistrationInfo.type]]:
+    constraints = dict()
+    constraints.update(ctx.attrs.os_configuration[ConfigurationInfo].constraints)
+    constraints.update(ctx.attrs.arch_configuration[ConfigurationInfo].constraints)
+
     configuration = ConfigurationInfo(
-        constraints = {},
+        constraints = constraints,
         values = {},
     )
 
@@ -30,5 +34,14 @@ def _platforms_impl(ctx: "context") -> [[DefaultInfo.type, ExecutionPlatformRegi
 
 platforms = rule(
     impl = _platforms_impl,
-    attrs = {},
+    attrs = {
+        "os_configuration": attrs.dep(
+            providers = [ConfigurationInfo],
+            default = "prelude//os:linux",
+        ),
+        "arch_configuration": attrs.dep(
+            providers = [ConfigurationInfo],
+            default = "prelude//cpu:x86_64",
+        ),
+    },
 )
