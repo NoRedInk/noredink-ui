@@ -11,6 +11,8 @@ def _platforms_impl(ctx: "context") -> [[DefaultInfo.type, ExecutionPlatformRegi
             local_enabled = True,
             remote_enabled = True,
             use_limited_hybrid = True,
+            remote_cache_enabled = True,
+            allow_cache_uploads = True,
             # Set those up based on what workers you've registered with Buildbarn.
             remote_execution_properties = {
                 "OSFamily": "Linux",
