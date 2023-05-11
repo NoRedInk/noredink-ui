@@ -24,6 +24,7 @@ genrule(
     cmd = "gzip --decompress --stdout --keep $(location :elm_compiler_archive) > $OUT && chmod +x $OUT",
     out = "elm",
     executable = True,
+    remote = True,
     visibility = ["PUBLIC"],
 )
 
@@ -54,5 +55,6 @@ genrule(
     out = "elm-format",
     cmd = "cp $(location :elm_format_archive)/elm-format $OUT",
     executable = True,
+    remote = True,
     visibility = ["PUBLIC"],
 )
