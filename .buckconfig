@@ -16,3 +16,21 @@ target_platform_detector_spec = target:root//...->prelude//platforms:default
 
 [project]
 ignore = .git,elm-stuff,component-catalog/elm-stuff
+
+[buck2]
+digest_algorithms = SHA256
+materializations = deferred
+sqlite_materializer_state = true
+defer_write_actions = true
+hash_all_commands = true
+restarter = true
+
+[buck2_re_client]
+action_cache_address = buildbarn-frontend.noredink.com:8980
+engine_address = buildbarn-frontend.noredink.com:8980
+cas_address = buildbarn-frontend.noredink.com:8980
+tls = false
+instance_name = buildbarn
+
+[build]
+execution_platforms = toolchains//:platforms
