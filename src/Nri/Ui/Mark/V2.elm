@@ -516,6 +516,7 @@ viewBalloon config label =
               Css.minWidth (Css.px 30)
             , Css.maxWidth (Css.px 150)
             , Css.textAlign Css.center
+            , Css.whiteSpace Css.normal
             , Css.property "word-break" "break-word"
             , Css.batch <|
                 case config.labelPosition of

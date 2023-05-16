@@ -223,6 +223,7 @@ example =
                     [ Fonts.quizFont
                     , Css.fontSize (Css.px 30)
                     , Css.marginTop (Css.px 60)
+                    , Css.whiteSpace Css.pre
                     ]
                 ]
                 [ Block.view
@@ -262,6 +263,13 @@ example =
                     , Block.blue
                     , Block.labelId longId
                     , Block.labelPosition (Dict.get longId offsets)
+                    ]
+                , Block.view
+                    [ Block.plaintext "This is content"
+                    ]
+                , Block.view
+                    [ Block.plaintext ", that should not break before this comma!"
+                    , Block.label "Dont break"
                     ]
                 ]
             , Table.view []

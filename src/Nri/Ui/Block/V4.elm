@@ -244,9 +244,17 @@ renderContent :
 renderContent content_ styles =
     case content_ of
         Word str ->
-            blockSegmentContainer Nothing
-                [ text str ]
-                styles
+            let
+                blockContainer =
+                    blockSegmentContainer Nothing
+                        [ text str ]
+                        styles
+            in
+            if str == " " then
+                span [] [ blockContainer, wbr [] [] ]
+
+            else
+                blockContainer
 
         WordWithId wordAndId ->
             blockSegmentContainer (Just wordAndId.id)
@@ -292,7 +300,7 @@ blockSegmentContainer : Maybe String -> List (Html msg) -> List Css.Style -> Htm
 blockSegmentContainer id_ children styles =
     span
         [ css
-            (Css.whiteSpace Css.preWrap
+            (Css.whiteSpace Css.pre
                 :: Css.display Css.inlineBlock
                 :: Css.position Css.relative
                 :: styles
