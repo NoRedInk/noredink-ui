@@ -270,6 +270,8 @@ example =
                 , Block.view
                     [ Block.plaintext ", that should not break before this comma!"
                     , Block.label "Dont break"
+                    , Block.labelId dontBreakId
+                    , Block.labelPosition (Dict.get dontBreakId offsets)
                     ]
                 ]
             , Table.view []
@@ -576,6 +578,11 @@ longId =
     "long-label-id"
 
 
+dontBreakId : String
+dontBreakId =
+    "do-not-break-label-id"
+
+
 blocksWithLabelsIds : List String
 blocksWithLabelsIds =
     [ ageId
@@ -591,6 +598,7 @@ blocksWithLabelsIds =
     , goalId
     , shortId
     , longId
+    , dontBreakId
     ]
 
 
