@@ -56,9 +56,15 @@ import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Position exposing (xOffsetPx)
 
 
-{-|
+{-| Create a block element.
 
-    Block.view [ Block.plaintext "Hello, world!" ]
+Note that it is important that a series of Block elements be wrapped in a container with "whitespace; pre" set.
+This will ensure that line breaks only happen at whitespace, and not directly before an emphasis block in
+situations where it would look strange (like if the block started with a comma).
+
+    p
+        [ css [ Css.whitespace Css.pre ] ]
+        [ Block.view [ Block.plaintext "Hello, world!" ] ]
 
 -}
 view : List (Attribute msg) -> Html msg
