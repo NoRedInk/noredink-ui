@@ -2,13 +2,11 @@ module Spec.Nri.Ui.Checkbox exposing (..)
 
 import Accessibility.Aria as Aria
 import Accessibility.Role as Role
-import Expect
 import Html.Styled exposing (..)
 import Nri.Ui.Checkbox.V7 as Checkbox
 import ProgramTest exposing (..)
 import Spec.KeyboardHelpers as KeyboardHelpers
 import Test exposing (..)
-import Test.Html.Query as Query
 import Test.Html.Selector as Selector
 
 
@@ -25,7 +23,7 @@ hasCorrectRole =
     [ test "has role checkbox" <|
         \() ->
             program
-                |> ensureHasRoleCheckbox
+                |> ensureViewHas [ Selector.attribute Role.checkBox ]
                 |> done
     ]
 
@@ -35,40 +33,13 @@ hasAriaChecked =
     [ test "aria-checked reflects the state of the checkbox" <|
         \() ->
             program
-                |> ensureAriaCheckedIsFalse
+                |> ensureViewHas [ Selector.attribute (Aria.checked (Just False)) ]
                 |> pressSpace
-                |> ensureAriaCheckedIsTrue
+                |> ensureViewHas [ Selector.attribute (Aria.checked (Just True)) ]
                 |> pressSpace
-                |> ensureAriaCheckedIsFalse
+                |> ensureViewHas [ Selector.attribute (Aria.checked (Just False)) ]
                 |> done
     ]
-
-
-ensureHasRoleCheckbox : TestContext -> TestContext
-ensureHasRoleCheckbox context =
-    context
-        |> ensureView
-            (Query.findAll [ Selector.attribute Role.checkBox ]
-                >> Query.count (Expect.equal 1)
-            )
-
-
-ensureAriaCheckedIsFalse : TestContext -> TestContext
-ensureAriaCheckedIsFalse context =
-    context
-        |> ensureView
-            (Query.findAll [ Selector.attribute (Aria.checked (Just False)) ]
-                >> Query.count (Expect.equal 1)
-            )
-
-
-ensureAriaCheckedIsTrue : TestContext -> TestContext
-ensureAriaCheckedIsTrue context =
-    context
-        |> ensureView
-            (Query.findAll [ Selector.attribute (Aria.checked (Just True)) ]
-                >> Query.count (Expect.equal 1)
-            )
 
 
 pressSpace : TestContext -> TestContext
