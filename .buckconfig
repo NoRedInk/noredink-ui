@@ -26,10 +26,10 @@ hash_all_commands = true
 restarter = true
 
 [buck2_re_client]
-action_cache_address = buildbarn-frontend.noredink.com:8980
-engine_address = buildbarn-frontend.noredink.com:8980
-cas_address = buildbarn-frontend.noredink.com:8980
-tls = false
+action_cache_address = buildbarn-frontend.noredink.com:443
+engine_address = buildbarn-frontend.noredink.com:443
+cas_address = buildbarn-frontend.noredink.com:443
+tls = true
 instance_name = buildbarn
 
 [build]
