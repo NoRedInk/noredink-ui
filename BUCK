@@ -14,6 +14,7 @@ elm_docs(
 elm_test(
     name = "elm_test",
     test_srcs = glob(["test/**/*.elm"]),
+    elm_test = ":elm_test_binary",
 )
 
 filegroup(
@@ -45,6 +46,13 @@ npm_bin(
         "//lib:prettier_diffs",
         "//component-catalog:prettier_diffs",
     ],
+)
+
+npm_bin(
+    name = "elm_test_binary",
+    bin_name = "elm-test",
+    node_modules = ":node_modules",
+    visibility = ["//component-catalog:elm_test"],
 )
 
 export_file(

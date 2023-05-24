@@ -160,7 +160,8 @@ def _elm_test_impl(ctx: "context") -> [[DefaultInfo.type, ExternalRunnerTestInfo
     command = [
         ctx.attrs._python_toolchain[PythonToolchainInfo].interpreter,
         cmd_args(ctx.attrs._elm_toolchain[ElmToolchainInfo].elm_test_workdir[DefaultInfo].default_outputs),
-        "--elm-test-binary", "elm-test", # TODO parameterize
+        "--elm-test-binary",
+        ctx.attrs.elm_test[RunInfo] if ctx.attrs.elm_test else "elm-test",
         ctx.label.package or '.',
         cmd_args(ctx.attrs._elm_toolchain.get(ElmToolchainInfo).elm, format="--compiler={}"),
         cmd_args(str(ctx.attrs.fuzz), format="--fuzz={}"),
@@ -186,6 +187,7 @@ elm_test = rule(
         "test_srcs": attrs.list(attrs.source()),
         "fuzz": attrs.int(default=100),
         "seed": attrs.option(attrs.string(), default=None),
+        "elm_test": attrs.option(attrs.exec_dep(), default=None),
         "_elm_toolchain": attrs.toolchain_dep(
             default = "toolchains//:elm",
             providers = [ElmToolchainInfo],
