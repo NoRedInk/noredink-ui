@@ -6,11 +6,15 @@ let
     builtins.currentSystem;
   nixpkgs = import sources.nixpkgs { inherit system; };
   niv = import sources.niv { };
+  awsudo = nixpkgs.writeShellScriptBin "awsudo" ''
+    exec ${nixpkgs.aws-vault}/bin/aws-vault exec \
+      --duration="''${SUDO_DURATION:-1h}" "''${SUDO_ROLE:-sudo}" -- "$@"'';
 in with nixpkgs;
 stdenv.mkDerivation {
   name = "noredink-ui";
   buildInputs = [
     # base dependencies
+    awsudo
     git
     niv.niv
     jq
@@ -43,6 +47,8 @@ stdenv.mkDerivation {
     netcat-gnu
 
     # Buck dependencies
+    awscli2
+    jwt-cli
     black
     buildifier
   ] ++ lib.optionals stdenv.isLinux [ pkgs.fsatrace pkgs.strace pkgs.cacert ];
