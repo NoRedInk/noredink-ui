@@ -1,11 +1,19 @@
 # A list of available rules and their signatures can be found here: https://buck2.build/docs/api/rules/
-load("@prelude-nri//:elm.bzl", "elm_docs", "elm_format_diffs")
+load("@prelude-nri//:elm.bzl", "elm_docs", "elm_format_diffs", "elm_test")
 load("@prelude-nri//:node.bzl", "node_modules", "npm_bin", "npm_script_test", "prettier_diffs")
 
 elm_docs(
     name = "docs.json",
     elm_json = "elm.json",
     src = "src",
+    tests = [
+        ":elm_test",
+    ],
+)
+
+elm_test(
+    name = "elm_test",
+    test_srcs = glob(["test/**/*.elm"]),
 )
 
 filegroup(

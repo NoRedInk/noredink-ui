@@ -1,4 +1,4 @@
-load("@prelude-nri//:elm.bzl", "elm_app", "elm_format_diffs")
+load("@prelude-nri//:elm.bzl", "elm_app", "elm_format_diffs", "elm_test")
 load("@prelude-nri//:node.bzl", "prettier_diffs")
 
 elm_app(
@@ -10,6 +10,14 @@ elm_app(
         "../src": "//:src",
         "src": "src",
     },
+    tests = [
+        ":elm_test",
+    ],
+)
+
+elm_test(
+    name = "elm_test",
+    test_srcs = glob(["tests/**/*.elm"]),
 )
 
 filegroup(
