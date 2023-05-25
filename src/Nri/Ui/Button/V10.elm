@@ -3,6 +3,7 @@ module Nri.Ui.Button.V10 exposing
     , Attribute
     , onClick, submit, opensModal
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
+    , toggleButtonPressed
     , small, medium, large, modal
     , exactWidth, boundedWidth, unboundedWidth, fillContainerWidth
     , exactWidthForMobile, boundedWidthForMobile, unboundedWidthForMobile, fillContainerWidthForMobile
@@ -23,6 +24,7 @@ module Nri.Ui.Button.V10 exposing
 The next version of `Button` should add a `hideTextForMobile` helper.
 This will require adding a selector for the text. We are not making this change in V10, as
 adding a span around the text could potentially lead to regressions.
+The next version of `Button` should also remove `delete` and `toggleButton`
 
 
 # Patch changes:
@@ -37,6 +39,7 @@ adding a span around the text could potentially lead to regressions.
   - adds `tertiary` style
   - adds `submit` and `opensModal`
   - adds `secondaryDanger` style
+  - marked toggleButton as deprecated and added toggleButtonPressed attribute
 
 
 # Changes from V9:
@@ -55,6 +58,7 @@ adding a span around the text could potentially lead to regressions.
 
 @docs onClick, submit, opensModal
 @docs href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
+@docs toggleButtonPressed
 
 
 ## Sizing
@@ -598,6 +602,13 @@ premium =
 -- BUTTON STATE
 
 
+{-| Mark the button as a toggle button, and pass in its pressed state.
+-}
+toggleButtonPressed : Bool -> Attribute msg
+toggleButtonPressed pressed =
+    set (\attributes -> { attributes | pressed = Just pressed })
+
+
 type ButtonState
     = Enabled
     | Unfulfilled
@@ -710,6 +721,7 @@ build =
         , narrowMobileWidth = Nothing
         , label = ""
         , state = Enabled
+        , pressed = Nothing
         , icon = Nothing
         , iconStyles = []
         , rightIcon = Nothing
@@ -732,6 +744,7 @@ type alias ButtonOrLinkAttributes msg =
     , narrowMobileWidth : Maybe ButtonWidth
     , label : String
     , state : ButtonState
+    , pressed : Maybe Bool
     , icon : Maybe Svg
     , iconStyles : List Style
     , rightIcon : Maybe Svg
@@ -744,15 +757,11 @@ renderButton : ButtonOrLink msg -> Html msg
 renderButton ((ButtonOrLink config) as button_) =
     Nri.Ui.styled Html.button
         (styledName "customButton")
-        [ buttonStyles config
-        , Css.pseudoClass "focus-visible"
-            [ Css.outline3 (Css.px 2) Css.solid Css.transparent
-            , FocusRing.boxShadows []
-            ]
-        ]
+        (buttonStyles config)
         (ClickableAttributes.toButtonAttributes config.clickableAttributes
             { disabled = isDisabled config.state }
             ++ Attributes.class FocusRing.customClass
+            :: ExtraAttributes.maybe (Just >> Aria.pressed) config.pressed
             :: config.customAttributes
         )
         (viewContent button_)
@@ -770,10 +779,7 @@ renderLink ((ButtonOrLink config) as link_) =
     in
     Nri.Ui.styled Styled.a
         (styledName linkFunctionName)
-        [ buttonStyles config
-        , Css.pseudoClass "focus-visible"
-            [ Css.outline3 (Css.px 2) Css.solid Css.transparent, FocusRing.boxShadows [] ]
-        ]
+        (buttonStyles config)
         (Attributes.class FocusRing.customClass
             :: attributes
             ++ config.customAttributes
@@ -833,7 +839,10 @@ delete config =
 -- TOGGLE BUTTON
 
 
-{-| A button that can be toggled into a pressed state and back again.
+{-| DEPRECATED - this helper will be removed in Button.V11. Use `toggleButtonPressed` attribute instead.
+
+A button that can be toggled into a pressed state and back again.
+
 -}
 toggleButton :
     { label : String
@@ -844,13 +853,6 @@ toggleButton :
     -> Html msg
 toggleButton config =
     let
-        pressedShadowColor =
-            ColorsExtra.withAlpha 0.2 Colors.gray20
-
-        toggledBoxShadow =
-            "inset 0 3px 0 "
-                ++ ColorsExtra.toCssString pressedShadowColor
-
         toggledStyles =
             if config.pressed then
                 Css.batch
@@ -859,7 +861,9 @@ toggleButton config =
                     , Css.boxShadow5 Css.inset Css.zero (Css.px 3) Css.zero pressedShadowColor
                     , Css.pseudoClass "focus-visible"
                         [ Css.outline3 (Css.px 2) Css.solid Css.transparent
-                        , FocusRing.boxShadows [ toggledBoxShadow ]
+                        , FocusRing.boxShadows
+                            [ "inset 0 3px 0 " ++ ColorsExtra.toCssString pressedShadowColor
+                            ]
                         ]
                     , Css.border3 (Css.px 1) Css.solid Colors.azure
                     , Css.fontWeight Css.bold
@@ -884,7 +888,9 @@ toggleButton config =
             , style = secondaryColors
             , state = Enabled
             , customStyles = [ Css.hover [ Css.color Colors.navy ] ]
+            , pressed = Just config.pressed
             }
+            |> Css.batch
         , toggledStyles
         , Css.verticalAlign Css.middle
         ]
@@ -926,15 +932,51 @@ buttonStyles :
         , narrowMobileWidth : Maybe ButtonWidth
         , state : ButtonState
         , customStyles : List Style
+        , pressed : Maybe Bool
     }
-    -> Style
-buttonStyles ({ style, state, customStyles } as config) =
-    Css.batch
-        [ buttonStyle
-        , sizeStyle config
-        , colorStyle style state
-        , Css.batch customStyles
+    -> List Style
+buttonStyles ({ state, customStyles } as config) =
+    let
+        ( stringBoxShadow, pressedStyles, style ) =
+            case config.pressed of
+                Just True ->
+                    ( [ "inset 0 3px 0 " ++ ColorsExtra.toCssString pressedShadowColor ]
+                    , Css.batch
+                        [ Css.boxShadow5 Css.inset Css.zero (Css.px 3) Css.zero pressedShadowColor
+                        , Css.color Colors.navy
+                        , Css.backgroundColor Colors.glacier
+                        , Css.borderBottomWidth (Css.px 1)
+                        ]
+                    , secondaryColors
+                    )
+
+                Just False ->
+                    ( []
+                    , Css.hover [ Css.color Colors.navy ]
+                    , secondaryColors
+                    )
+
+                Nothing ->
+                    ( []
+                    , Css.batch []
+                    , config.style
+                    )
+    in
+    [ buttonStyle
+    , sizeStyle config
+    , colorStyle style state
+    , pressedStyles
+    , Css.batch customStyles
+    , Css.pseudoClass "focus-visible"
+        [ Css.outline3 (Css.px 2) Css.solid Css.transparent
+        , FocusRing.boxShadows stringBoxShadow
         ]
+    ]
+
+
+pressedShadowColor : Css.Color
+pressedShadowColor =
+    ColorsExtra.withAlpha 0.2 Colors.gray20
 
 
 viewLabel :
