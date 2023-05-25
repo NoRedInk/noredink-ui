@@ -725,6 +725,14 @@ initAttributes =
                 )
                 (ControlExtra.int 2)
             )
+        |> ControlExtra.listItem "theme"
+            (CommonControls.choice moduleName
+                [ ( "neutral", QuestionBox.neutral )
+                , ( "correct", QuestionBox.correct )
+                , ( "incorrect", QuestionBox.incorrect )
+                , ( "tip", QuestionBox.tip )
+                ]
+            )
         |> ControlExtra.optionalListItem "character"
             ([ { name = "(none)", icon = ( "Nothing", Nothing ) }
              , { name = "Gumby"

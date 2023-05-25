@@ -1,6 +1,7 @@
 module Nri.Ui.QuestionBox.V5 exposing
     ( view, Attribute
     , id, markdown, actions, character
+    , neutral, correct, incorrect, tip
     , standalone, pointingTo
     , containerCss
     , setLeftActions
@@ -17,6 +18,7 @@ module Nri.Ui.QuestionBox.V5 exposing
 @docs view, Attribute
 
 @docs id, markdown, actions, character
+@docs neutral, correct, incorrect, tip
 @docs standalone, pointingTo
 @docs containerCss
 @docs setLeftActions
@@ -51,10 +53,18 @@ type alias Config msg =
     , markdown : Maybe String
     , actions : List { label : String, onClick : msg }
     , type_ : QuestionBoxType msg
+    , theme : QuestionBoxTheme
     , character : Maybe { name : String, icon : Svg }
     , containerCss : List Css.Style
     , leftActions : Html msg
     }
+
+
+type QuestionBoxTheme
+    = Neutral
+    | Correct
+    | Incorrect
+    | Tip
 
 
 defaultConfig : Config msg
@@ -63,6 +73,7 @@ defaultConfig =
     , markdown = Nothing
     , actions = []
     , type_ = Standalone
+    , theme = Neutral
     , character = Just { name = "Panda", icon = CharacterIcon.redPanda }
     , containerCss = []
     , leftActions = text ""
@@ -104,6 +115,35 @@ containerCss styles =
 setLeftActions : Html msg -> Attribute msg
 setLeftActions leftActions =
     Attribute (\config -> { config | leftActions = leftActions })
+
+
+{-| -}
+neutral : Attribute msg
+neutral =
+    setTheme Neutral
+
+
+{-| -}
+correct : Attribute msg
+correct =
+    setTheme Correct
+
+
+{-| -}
+incorrect : Attribute msg
+incorrect =
+    setTheme Incorrect
+
+
+{-| -}
+tip : Attribute msg
+tip =
+    setTheme Tip
+
+
+setTheme : QuestionBoxTheme -> Attribute msg
+setTheme theme =
+    Attribute (\config -> { config | theme = theme })
 
 
 setType : QuestionBoxType msg -> Attribute msg
