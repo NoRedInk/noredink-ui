@@ -756,12 +756,7 @@ renderButton : ButtonOrLink msg -> Html msg
 renderButton ((ButtonOrLink config) as button_) =
     Nri.Ui.styled Html.button
         (styledName "customButton")
-        [ buttonStyles config
-        , Css.pseudoClass "focus-visible"
-            [ Css.outline3 (Css.px 2) Css.solid Css.transparent
-            , FocusRing.boxShadows []
-            ]
-        ]
+        (buttonStyles config)
         (ClickableAttributes.toButtonAttributes config.clickableAttributes
             { disabled = isDisabled config.state }
             ++ Attributes.class FocusRing.customClass
@@ -783,10 +778,7 @@ renderLink ((ButtonOrLink config) as link_) =
     in
     Nri.Ui.styled Styled.a
         (styledName linkFunctionName)
-        [ buttonStyles config
-        , Css.pseudoClass "focus-visible"
-            [ Css.outline3 (Css.px 2) Css.solid Css.transparent, FocusRing.boxShadows [] ]
-        ]
+        (buttonStyles config)
         (Attributes.class FocusRing.customClass
             :: attributes
             ++ config.customAttributes
@@ -860,13 +852,6 @@ toggleButton :
     -> Html msg
 toggleButton config =
     let
-        pressedShadowColor =
-            ColorsExtra.withAlpha 0.2 Colors.gray20
-
-        toggledBoxShadow =
-            "inset 0 3px 0 "
-                ++ ColorsExtra.toCssString pressedShadowColor
-
         toggledStyles =
             if config.pressed then
                 Css.batch
@@ -875,7 +860,9 @@ toggleButton config =
                     , Css.boxShadow5 Css.inset Css.zero (Css.px 3) Css.zero pressedShadowColor
                     , Css.pseudoClass "focus-visible"
                         [ Css.outline3 (Css.px 2) Css.solid Css.transparent
-                        , FocusRing.boxShadows [ toggledBoxShadow ]
+                        , FocusRing.boxShadows
+                            [ "inset 0 3px 0 " ++ ColorsExtra.toCssString pressedShadowColor
+                            ]
                         ]
                     , Css.border3 (Css.px 1) Css.solid Colors.azure
                     , Css.fontWeight Css.bold
@@ -900,7 +887,9 @@ toggleButton config =
             , style = secondaryColors
             , state = Enabled
             , customStyles = [ Css.hover [ Css.color Colors.navy ] ]
+            , pressed = Just config.pressed
             }
+            |> Css.batch
         , toggledStyles
         , Css.verticalAlign Css.middle
         ]
@@ -942,15 +931,51 @@ buttonStyles :
         , narrowMobileWidth : Maybe ButtonWidth
         , state : ButtonState
         , customStyles : List Style
+        , pressed : Maybe Bool
     }
-    -> Style
-buttonStyles ({ style, state, customStyles } as config) =
-    Css.batch
-        [ buttonStyle
-        , sizeStyle config
-        , colorStyle style state
-        , Css.batch customStyles
+    -> List Style
+buttonStyles ({ state, customStyles } as config) =
+    let
+        ( stringBoxShadow, pressedStyles, style ) =
+            case config.pressed of
+                Just True ->
+                    ( [ "inset 0 3px 0 " ++ ColorsExtra.toCssString pressedShadowColor ]
+                    , Css.batch
+                        [ Css.boxShadow5 Css.inset Css.zero (Css.px 3) Css.zero pressedShadowColor
+                        , Css.color Colors.navy
+                        , Css.backgroundColor Colors.glacier
+                        , Css.borderBottomWidth (Css.px 1)
+                        ]
+                    , secondaryColors
+                    )
+
+                Just False ->
+                    ( []
+                    , Css.hover [ Css.color Colors.navy ]
+                    , secondaryColors
+                    )
+
+                Nothing ->
+                    ( []
+                    , Css.batch []
+                    , config.style
+                    )
+    in
+    [ buttonStyle
+    , sizeStyle config
+    , colorStyle style state
+    , pressedStyles
+    , Css.batch customStyles
+    , Css.pseudoClass "focus-visible"
+        [ Css.outline3 (Css.px 2) Css.solid Css.transparent
+        , FocusRing.boxShadows stringBoxShadow
         ]
+    ]
+
+
+pressedShadowColor : Css.Color
+pressedShadowColor =
+    ColorsExtra.withAlpha 0.2 Colors.gray20
 
 
 viewLabel :
