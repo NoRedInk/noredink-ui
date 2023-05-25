@@ -403,17 +403,13 @@ toggleButtons pressedToggleButtons =
             , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
             ]
         , div [ css [ Css.displayFlex, Css.marginBottom (Css.px 20) ] ]
-            [ Button.toggleButton
-                { onDeselect = ToggleToggleButton 0
-                , onSelect = ToggleToggleButton 0
-                , label = "5"
-                , pressed = Set.member 0 pressedToggleButtons
-                }
-            , Button.toggleButton
-                { onDeselect = ToggleToggleButton 1
-                , onSelect = ToggleToggleButton 1
-                , label = "Kindergarten"
-                , pressed = Set.member 1 pressedToggleButtons
-                }
+            [ Button.button "5"
+                [ Button.toggleButtonPressed (Set.member 1 pressedToggleButtons)
+                , Button.onClick (ToggleToggleButton 1)
+                ]
+            , Button.button "Kindergarten"
+                [ Button.toggleButtonPressed (Set.member 2 pressedToggleButtons)
+                , Button.onClick (ToggleToggleButton 2)
+                ]
             ]
         ]
