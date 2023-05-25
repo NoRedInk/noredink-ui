@@ -224,6 +224,15 @@ initDebugControls =
                         , ( "success", Button.success )
                         ]
                     )
+                |> ControlExtra.optionalListItem "toggleButtonPressed"
+                    (Control.map
+                        (\bool ->
+                            ( "toggleButtonPressed " ++ Code.bool bool
+                            , Button.toggleButtonPressed bool
+                            )
+                        )
+                        (Control.bool True)
+                    )
                 |> ControlExtra.optionalBoolListItem "submit (button only)"
                     ( "Button.submit", Button.submit )
                 |> ControlExtra.optionalBoolListItem "opensModal (button only)"
