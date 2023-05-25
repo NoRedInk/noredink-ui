@@ -39,6 +39,7 @@ The next version of `Button` should also remove `delete` and `toggleButton`
   - adds `tertiary` style
   - adds `submit` and `opensModal`
   - adds `secondaryDanger` style
+  - marked toggleButton as deprecated and added toggleButtonPressed attribute
 
 
 # Changes from V9:
