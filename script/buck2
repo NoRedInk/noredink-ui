@@ -42,7 +42,8 @@ fi
 # for a better developer experience we don't actually validate the token when
 # checking expiry since that'd require fetching the hmac shared secret via awsudo
 # each time. at worst, we get an auth failure when connecting to remote buildbarn
-if ! test -f .buildbarn-token || test $(jwt decode --json "$(cat .buildbarn-token)" | jq '.payload.exp') -le $(date +%s); then
+token_path=buck-out/buildbarn-token
+if ! test -f ${token_path} || test $(jwt decode --json - <${token_path} | jq '.payload.exp') -le $(date +%s); then
   echo 'Looks like we need a new buildbarn jwt for auth; generating one'
 
   if test -z "${HMAC_SHARED_SECRET}"; then
@@ -51,8 +52,8 @@ if ! test -f .buildbarn-token || test $(jwt decode --json "$(cat .buildbarn-toke
   fi
 
   # set expiry to 1 day
-  jwt encode --nbf 0 --exp $(($(date +%s) + 24 * 60 * 60)) --secret "b64:${HMAC_SHARED_SECRET}" > .buildbarn-token
+  jwt encode --nbf 0 --exp $(($(date +%s) + 24 * 60 * 60)) --secret "b64:${HMAC_SHARED_SECRET}" > ${token_path}
 fi
 
-export BUILDBARN_AUTH_JWT="$(cat .buildbarn-token)"
+export BUILDBARN_AUTH_JWT="$(cat ${token_path})"
 exec buck-out/buck2 "$@"
