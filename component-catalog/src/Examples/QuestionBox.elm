@@ -30,7 +30,7 @@ import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (..)
-import Nri.Ui.QuestionBox.V4 as QuestionBox
+import Nri.Ui.QuestionBox.V5 as QuestionBox
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V7 as Table
