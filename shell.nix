@@ -16,6 +16,7 @@ stdenv.mkDerivation {
     # base dependencies
     awsudo
     git
+    gnutar
     niv.niv
     jq
     zstd
@@ -48,7 +49,6 @@ stdenv.mkDerivation {
 
     # Buck dependencies
     awscli2
-    jwt-cli
     black
     buildifier
   ] ++ lib.optionals stdenv.isLinux [ pkgs.fsatrace pkgs.strace pkgs.cacert ];

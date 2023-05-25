@@ -30,7 +30,7 @@ if ! test -f buck-out/buck2; then
       ;;
 
     *)
-      echo "I don't know how to get a download for $(uname -s)"
+      echo "I don't know how to get a buck2 download for $(uname -s)"
       exit 1
       ;;
   esac
@@ -38,21 +38,42 @@ if ! test -f buck-out/buck2; then
   chmod +x buck-out/buck2
 fi
 
+if ! test -f buck-out/jwt; then
+  case "$(uname -s)" in
+    Darwin)
+      curl -L https://github.com/mike-engel/jwt-cli/releases/download/5.0.3/jwt-macOS.tar.gz | tar -Oxzf- > buck-out/jwt
+      ;;
+
+    Linux)
+      curl -L https://github.com/mike-engel/jwt-cli/releases/download/5.0.3/jwt-linux.tar.gz | tar -Oxzf- > buck-out/jwt
+      ;;
+
+    *)
+      echo "I don't know how to get a jwt-cli download for $(uname -s)"
+      exit 1
+      ;;
+  esac
+
+  chmod +x buck-out/jwt
+fi
+
 # generate a new buildbarn token if none exists, or if one exists and is expired.
 # for a better developer experience we don't actually validate the token when
 # checking expiry since that'd require fetching the hmac shared secret via awsudo
 # each time. at worst, we get an auth failure when connecting to remote buildbarn
 token_path=buck-out/buildbarn-token
-if ! test -f ${token_path} || test $(jwt decode --json - <${token_path} | jq '.payload.exp') -le $(date +%s); then
+if ! test -f ${token_path} || test $(buck-out/jwt decode --json - <${token_path} | jq '.payload.exp') -le $(date +%s); then
   echo 'Looks like we need a new buildbarn jwt for auth; generating one'
 
   if test -z "${BUILDBARN_HMAC_SHARED_SECRET}"; then
     echo 'Env var `BUILDBARN_HMAC_SHARED_SECRET` is unset - fetching it from AWS Secrets Manager (requires awsudo)'
+    # double invocation of `jq` required since the `SecretString` field is itself a
+    # json-encoded string
     BUILDBARN_HMAC_SHARED_SECRET="$(awsudo aws secretsmanager get-secret-value --secret-id tooling/kubernetes/tooling/buildbarn | jq -r '.SecretString' | jq -r '.["hmac-shared-secret"]')"
   fi
 
   # set expiry to 1 day
-  jwt encode --nbf 0 --exp $(($(date +%s) + 24 * 60 * 60)) --secret "b64:${BUILDBARN_HMAC_SHARED_SECRET}" > ${token_path}
+  buck-out/jwt encode --nbf 0 --exp $(($(date +%s) + 24 * 60 * 60)) --secret "b64:${BUILDBARN_HMAC_SHARED_SECRET}" > ${token_path}
 fi
 
 export BUILDBARN_AUTH_JWT="$(cat ${token_path})"
