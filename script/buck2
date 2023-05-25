@@ -38,14 +38,18 @@ if ! test -f buck-out/buck2; then
   chmod +x buck-out/buck2
 fi
 
-if test -z "${HMAC_SHARED_SECRET}"; then
-  echo 'Env var `HMAC_SHARED_SECRET` is unset - fetching it from AWS Secrets Manager (requires awsudo)'
-  HMAC_SHARED_SECRET="$(awsudo aws secretsmanager get-secret-value --secret-id tooling/kubernetes/tooling/buildbarn | jq -r '.SecretString' | jq -r '.["hmac-shared-secret"]')"
-fi
-
-# generate a new buildbarn token if none exists, or if one exists and is invalid / expired
-if ! test -f .buildbarn-token || ! jwt decode --secret "b64:${HMAC_SHARED_SECRET}" "$(cat .buildbarn-token)" >/dev/null 2>&1 ; then
+# generate a new buildbarn token if none exists, or if one exists and is expired.
+# for a better developer experience we don't actually validate the token when
+# checking expiry since that'd require fetching the hmac shared secret via awsudo
+# each time. at worst, we get an auth failure when connecting to remote buildbarn
+if ! test -f .buildbarn-token || test $(jwt decode --json "$(cat .buildbarn-token)" | jq '.payload.exp') -le $(date +%s); then
   echo 'Looks like we need a new buildbarn jwt for auth; generating one'
+
+  if test -z "${HMAC_SHARED_SECRET}"; then
+    echo 'Env var `HMAC_SHARED_SECRET` is unset - fetching it from AWS Secrets Manager (requires awsudo)'
+    HMAC_SHARED_SECRET="$(awsudo aws secretsmanager get-secret-value --secret-id tooling/kubernetes/tooling/buildbarn | jq -r '.SecretString' | jq -r '.["hmac-shared-secret"]')"
+  fi
+
   # set expiry to 1 day
   jwt encode --nbf 0 --exp $(($(date +%s) + 24 * 60 * 60)) --secret "b64:${HMAC_SHARED_SECRET}" > .buildbarn-token
 fi
