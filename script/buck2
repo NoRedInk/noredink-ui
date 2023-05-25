@@ -54,4 +54,5 @@ if ! test -f .buildbarn-token || test $(jwt decode --json "$(cat .buildbarn-toke
   jwt encode --nbf 0 --exp $(($(date +%s) + 24 * 60 * 60)) --secret "b64:${HMAC_SHARED_SECRET}" > .buildbarn-token
 fi
 
+export BUILDBARN_AUTH_JWT="$(cat .buildbarn-token)"
 exec buck-out/buck2 "$@"

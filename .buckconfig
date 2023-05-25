@@ -31,6 +31,7 @@ engine_address = buildbarn-frontend.noredink.com:443
 cas_address = buildbarn-frontend.noredink.com:443
 tls = true
 instance_name = buildbarn
+http_headers = Authorization: Bearer $BUILDBARN_AUTH_JWT
 
 [build]
 execution_platforms = toolchains//:platforms
