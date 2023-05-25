@@ -3,6 +3,7 @@ module Nri.Ui.Button.V10 exposing
     , Attribute
     , onClick, submit, opensModal
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
+    , toggleButtonPressed
     , small, medium, large, modal
     , exactWidth, boundedWidth, unboundedWidth, fillContainerWidth
     , exactWidthForMobile, boundedWidthForMobile, unboundedWidthForMobile, fillContainerWidthForMobile
@@ -23,6 +24,7 @@ module Nri.Ui.Button.V10 exposing
 The next version of `Button` should add a `hideTextForMobile` helper.
 This will require adding a selector for the text. We are not making this change in V10, as
 adding a span around the text could potentially lead to regressions.
+The next version of `Button` should also remove `delete` and `toggleButton`
 
 
 # Patch changes:
@@ -55,6 +57,7 @@ adding a span around the text could potentially lead to regressions.
 
 @docs onClick, submit, opensModal
 @docs href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
+@docs toggleButtonPressed
 
 
 ## Sizing
@@ -598,6 +601,13 @@ premium =
 -- BUTTON STATE
 
 
+{-| Mark the button as a toggle button, and pass in its pressed state.
+-}
+toggleButtonPressed : Bool -> Attribute msg
+toggleButtonPressed pressed =
+    set (\attributes -> { attributes | pressed = Just pressed })
+
+
 type ButtonState
     = Enabled
     | Unfulfilled
@@ -710,6 +720,7 @@ build =
         , narrowMobileWidth = Nothing
         , label = ""
         , state = Enabled
+        , pressed = Nothing
         , icon = Nothing
         , iconStyles = []
         , rightIcon = Nothing
@@ -732,6 +743,7 @@ type alias ButtonOrLinkAttributes msg =
     , narrowMobileWidth : Maybe ButtonWidth
     , label : String
     , state : ButtonState
+    , pressed : Maybe Bool
     , icon : Maybe Svg
     , iconStyles : List Style
     , rightIcon : Maybe Svg
@@ -753,6 +765,7 @@ renderButton ((ButtonOrLink config) as button_) =
         (ClickableAttributes.toButtonAttributes config.clickableAttributes
             { disabled = isDisabled config.state }
             ++ Attributes.class FocusRing.customClass
+            :: ExtraAttributes.maybe (Just >> Aria.pressed) config.pressed
             :: config.customAttributes
         )
         (viewContent button_)
@@ -833,7 +846,10 @@ delete config =
 -- TOGGLE BUTTON
 
 
-{-| A button that can be toggled into a pressed state and back again.
+{-| DEPRECATED - this helper will be removed in Button.V11. Use `toggleButtonPressed` attribute instead.
+
+A button that can be toggled into a pressed state and back again.
+
 -}
 toggleButton :
     { label : String
