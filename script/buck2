@@ -46,13 +46,13 @@ token_path=buck-out/buildbarn-token
 if ! test -f ${token_path} || test $(jwt decode --json - <${token_path} | jq '.payload.exp') -le $(date +%s); then
   echo 'Looks like we need a new buildbarn jwt for auth; generating one'
 
-  if test -z "${HMAC_SHARED_SECRET}"; then
-    echo 'Env var `HMAC_SHARED_SECRET` is unset - fetching it from AWS Secrets Manager (requires awsudo)'
-    HMAC_SHARED_SECRET="$(awsudo aws secretsmanager get-secret-value --secret-id tooling/kubernetes/tooling/buildbarn | jq -r '.SecretString' | jq -r '.["hmac-shared-secret"]')"
+  if test -z "${BUILDBARN_HMAC_SHARED_SECRET}"; then
+    echo 'Env var `BUILDBARN_HMAC_SHARED_SECRET` is unset - fetching it from AWS Secrets Manager (requires awsudo)'
+    BUILDBARN_HMAC_SHARED_SECRET="$(awsudo aws secretsmanager get-secret-value --secret-id tooling/kubernetes/tooling/buildbarn | jq -r '.SecretString' | jq -r '.["hmac-shared-secret"]')"
   fi
 
   # set expiry to 1 day
-  jwt encode --nbf 0 --exp $(($(date +%s) + 24 * 60 * 60)) --secret "b64:${HMAC_SHARED_SECRET}" > ${token_path}
+  jwt encode --nbf 0 --exp $(($(date +%s) + 24 * 60 * 60)) --secret "b64:${BUILDBARN_HMAC_SHARED_SECRET}" > ${token_path}
 fi
 
 export BUILDBARN_AUTH_JWT="$(cat ${token_path})"

@@ -19,10 +19,13 @@ jobs:
 
       - name: buck2 build
         run: script/buck2 build //... --show-output
+        env:
+          BUILDBARN_HMAC_SHARED_SECRET: '${{ secrets.BUILDBARN_HMAC_SHARED_SECRET }}'
 
       - name: buck2 test
         run: script/buck2 test //... -- --env PERCY_TOKEN=$PERCY_TOKEN
         env:
+          BUILDBARN_HMAC_SHARED_SECRET: '${{ secrets.BUILDBARN_HMAC_SHARED_SECRET }}'
           PERCY_TOKEN: '${{ secrets.PERCY_TOKEN }}'
 
       - name: buck2 formatting (with comments)
@@ -36,6 +39,7 @@ jobs:
             --github-pr-number=${{ github.event.number }} \
             $(script/buck2 uquery 'kind("elm_format_diffs|prettier_diffs", //...)')
         env:
+          BUILDBARN_HMAC_SHARED_SECRET: '${{ secrets.BUILDBARN_HMAC_SHARED_SECRET }}'
           GITHUB_TOKEN: '${{ secrets.github_token }}'
 
       - name: buck2 formatting (without comments)
@@ -45,3 +49,5 @@ jobs:
             --buck2-bin=script/buck2 \
             --call-fix-command-base="script/buck2 run //:diff_to_comment --" \
             $(script/buck2 uquery 'kind("elm_format_diffs|prettier_diffs", //...)')
+        env:
+          BUILDBARN_HMAC_SHARED_SECRET: '${{ secrets.BUILDBARN_HMAC_SHARED_SECRET }}'
