@@ -301,7 +301,8 @@ viewGuidance config maybeCharacter markdown_ =
 viewContents : { config | id : Maybe String } -> String -> Html msg
 viewContents config markdown_ =
     styled div
-        [ Css.Global.children
+        [ Css.alignSelf Css.flexStart
+        , Css.Global.children
             [ Css.Global.p
                 [ Css.margin Css.zero
                 ]
