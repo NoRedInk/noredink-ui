@@ -34,11 +34,12 @@ import Css
 import Css.Global
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
+import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.CharacterIcon.V1 as CharacterIcon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
-import Nri.Ui.QuestionBox.BalloonTemp as Balloon
+import Nri.Ui.QuestionBox.BalloonTemp as BalloonTemp
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Position exposing (xOffsetPx, xOffsetPxAgainstContainer)
 
@@ -240,8 +241,8 @@ viewStandalone config =
         ]
         [ viewBalloon config
             Nothing
-            [ Balloon.nriDescription "standalone-balloon"
-            , Balloon.containerCss
+            [ BalloonTemp.nriDescription "standalone-balloon"
+            , BalloonTemp.containerCss
                 [ Css.maxWidth (Css.px 500)
                 ]
             ]
@@ -306,7 +307,7 @@ viewPointingTo config blockId measurements =
     in
     viewBalloon config
         (Just blockId)
-        [ Balloon.containerCss
+        [ BalloonTemp.containerCss
             [ Css.marginTop (Css.px 8)
             , case measurements of
                 Just _ ->
@@ -316,14 +317,14 @@ viewPointingTo config blockId measurements =
                     -- Avoid the "jitter" of the balloon appearing in the wrong place by hiding it until we have measurements
                     Css.opacity (Css.int 0)
             ]
-        , Balloon.nriDescription "pointing-to-balloon"
+        , BalloonTemp.nriDescription "pointing-to-balloon"
         , case config.id of
             Just id_ ->
-                Balloon.id id_
+                BalloonTemp.id id_
 
             Nothing ->
-                Balloon.css []
-        , Balloon.containerCss
+                BalloonTemp.css []
+        , BalloonTemp.containerCss
             [ Css.batch <|
                 case measurements of
                     Just measurements_ ->
@@ -338,7 +339,7 @@ viewPointingTo config blockId measurements =
             , Css.property "width" "max-content"
             , Css.batch config.containerCss
             ]
-        , Balloon.css <|
+        , BalloonTemp.css <|
             if xOffset /= 0 then
                 [ Css.transforms [ Css.translateX (Css.px xOffset) ]
                 ]
@@ -360,10 +361,10 @@ viewPointingTo config blockId measurements =
             ]
 
 
-viewBalloon : Config msg -> Maybe String -> List (Balloon.Attribute msg) -> Html msg
+viewBalloon : Config msg -> Maybe String -> List (BalloonTemp.Attribute msg) -> Html msg
 viewBalloon config referencingId attributes =
-    Balloon.view
-        ([ Balloon.html
+    BalloonTemp.view
+        ([ BalloonTemp.html
             (List.filterMap identity
                 [ Just <|
                     div [ css [ Css.displayFlex ] ]
@@ -375,8 +376,8 @@ viewBalloon config referencingId attributes =
                 , viewActions config.character config.actions
                 ]
             )
-         , Balloon.customTheme { backgroundColor = Colors.glacier, color = Colors.glacier }
-         , Balloon.css [ Css.padding (Css.px 0), Css.boxShadow Css.none ]
+         , BalloonTemp.customTheme { backgroundColor = Colors.glacier, color = Colors.glacier }
+         , BalloonTemp.css [ Css.padding (Css.px 0), Css.boxShadow Css.none ]
          ]
             ++ attributes
         )
