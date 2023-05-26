@@ -38,8 +38,8 @@ import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.CharacterIcon.V1 as CharacterIcon
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
-import Nri.Ui.QuestionBox.BalloonTemp as BalloonTemp
+import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Position exposing (xOffsetPx, xOffsetPxAgainstContainer)
 
@@ -223,164 +223,69 @@ view attributes =
         config =
             List.foldl (\(Attribute f) a -> f a) defaultConfig attributes
     in
-    case config.type_ of
-        Standalone ->
-            viewStandalone config
-
-        PointingTo blockId measurements ->
-            viewPointingTo config blockId measurements
+    viewContainer config
 
 
-{-| -}
-viewStandalone : Config msg -> Html msg
-viewStandalone config =
-    div
-        [ AttributesExtra.maybe Attributes.id config.id
-        , css config.containerCss
-        , nriDescription "standalone-balloon-container"
-        ]
-        [ viewBalloon config
-            Nothing
-            [ BalloonTemp.nriDescription "standalone-balloon"
-            , BalloonTemp.containerCss
-                [ Css.maxWidth (Css.px 500)
-                ]
-            ]
-        ]
-
-
-{-| -}
-viewPointingTo :
-    Config msg
-    -> String
-    ->
-        Maybe
-            { block : Element
-            , paragraph : Element
-            , questionBox : Element
-            , container : Maybe Element
-            }
-    -> Html msg
-viewPointingTo config blockId measurements =
+viewContainer : Config msg -> Html msg
+viewContainer config =
     let
-        -- the xoffset is used to translate the questionbox so that it remains in the viewport
-        -- or in its non-static positioned ancestor (depending on whether container measurements are passed in or not)
-        xOffset =
-            case ( centeredQuestionBoxPosition, Maybe.andThen .container measurements ) of
-                ( Just qbPosition, Just container ) ->
-                    xOffsetPxAgainstContainer { container = container, element = qbPosition }
-
-                ( Just qbPosition, Nothing ) ->
-                    xOffsetPx qbPosition
-
-                _ ->
-                    0
-
-        centeredQuestionBoxPosition =
-            Maybe.map
-                (\({ questionBox } as m) ->
-                    let
-                        element =
-                            questionBox.element
-                    in
-                    { questionBox | element = { element | x = centeredQuestionBoxLeftPx m } }
-                )
-                measurements
-
-        centeredQuestionBoxLeftPx { block, questionBox, container } =
-            -- position in the middle of the block
-            (block.element.x + (block.element.width / 2))
-                - -- against the middle of the question box
-                  (questionBox.element.width / 2)
-
-        -- calculate the offset between the viewport and the container
-        -- since we know container element will have non-static positioning, the question box will positioned against it
-        -- instead of against the entire viewport. So we need to offset the left value for the absolutely positioned QB, or
-        -- else the QB will be aligned too far to the right.
-        containerOffset =
-            case Maybe.andThen .container measurements of
-                Just containerElement ->
-                    containerElement.element.x
-
-                Nothing ->
-                    0
+        { backgroundColor, shadowColor } =
+            themeToColor config.theme
     in
-    viewBalloon config
-        (Just blockId)
-        [ BalloonTemp.containerCss
-            [ Css.marginTop (Css.px 8)
-            , case measurements of
-                Just _ ->
-                    Css.opacity (Css.int 1)
-
-                Nothing ->
-                    -- Avoid the "jitter" of the balloon appearing in the wrong place by hiding it until we have measurements
-                    Css.opacity (Css.int 0)
-            ]
-        , BalloonTemp.nriDescription "pointing-to-balloon"
-        , case config.id of
-            Just id_ ->
-                BalloonTemp.id id_
-
-            Nothing ->
-                BalloonTemp.css []
-        , BalloonTemp.containerCss
-            [ Css.batch <|
-                case measurements of
-                    Just measurements_ ->
-                        [ Css.position Css.absolute
-                        , Css.left (Css.px (centeredQuestionBoxLeftPx measurements_ - containerOffset))
-                        ]
-
-                    Nothing ->
-                        []
-            , Css.textAlign Css.left
-            , Css.maxWidth (Css.px 386)
-            , Css.property "width" "max-content"
-            , Css.batch config.containerCss
-            ]
-        , BalloonTemp.css <|
-            if xOffset /= 0 then
-                [ Css.transforms [ Css.translateX (Css.px xOffset) ]
-                ]
-
-            else
-                []
+    styled div
+        [ Css.backgroundColor backgroundColor
+        , Css.borderRadius (Css.px borderRounding)
+        , Css.borderBottom3 (Css.px 8) Css.solid shadowColor
+        , Css.maxWidth (Css.px 500)
         ]
-        |> List.singleton
-        |> div
-            [ nriDescription "question-box-absolute-positioning-spacer"
-            , css
-                (case measurements of
-                    Just { questionBox } ->
-                        [ Css.height (Css.px (questionBox.element.height + 8)) ]
-
-                    Nothing ->
-                        []
-                )
+        [ ExtraAttributes.nriDescription "question-box-container" ]
+        [ styled div
+            [ Css.lineHeight (Css.num 1.4)
+            , Css.textAlign Css.left
+            , Css.position Css.relative
+            , Css.borderLeft3 (Css.px 1) Css.solid Colors.gray85
+            , Css.borderTop3 (Css.px 1) Css.solid Colors.gray85
+            , Css.borderRight3 (Css.px 1) Css.solid Colors.gray85
+            , Css.borderTopLeftRadius (Css.px borderRounding)
+            , Css.borderTopRightRadius (Css.px borderRounding)
+            , Css.color Colors.gray20
+            , Fonts.baseFont
+            , Css.fontSize (Css.px 15)
             ]
-
-
-viewBalloon : Config msg -> Maybe String -> List (BalloonTemp.Attribute msg) -> Html msg
-viewBalloon config referencingId attributes =
-    BalloonTemp.view
-        ([ BalloonTemp.html
+            []
             (List.filterMap identity
                 [ Just <|
                     div [ css [ Css.displayFlex ] ]
                         (List.filterMap identity
                             [ Just config.leftActions
-                            , Maybe.map (viewGuidance config referencingId) config.markdown
+                            , Maybe.map (viewGuidance config Nothing) config.markdown
                             ]
                         )
                 , viewActions config.character config.actions
                 ]
             )
-         , BalloonTemp.customTheme { backgroundColor = Colors.glacier, color = Colors.glacier }
-         , BalloonTemp.css [ Css.padding (Css.px 0), Css.boxShadow Css.none ]
-         ]
-            ++ attributes
-        )
+        ]
+
+
+borderRounding : Float
+borderRounding =
+    8
+
+
+themeToColor : QuestionBoxTheme -> { backgroundColor : Css.Color, shadowColor : Css.Color }
+themeToColor theme =
+    case theme of
+        Neutral ->
+            { backgroundColor = Colors.cornflowerLight, shadowColor = Colors.cornflower }
+
+        Correct ->
+            { backgroundColor = Colors.greenLightest, shadowColor = Colors.green }
+
+        Incorrect ->
+            { backgroundColor = Colors.purpleLight, shadowColor = Colors.purple }
+
+        Tip ->
+            { backgroundColor = Colors.white, shadowColor = Colors.white }
 
 
 viewGuidance :
@@ -432,7 +337,7 @@ viewSpeechBubble config referencingId extraAttributes =
             , Css.fontSize (Css.px 18)
             ]
          , Balloon.custom
-            [ AttributesExtra.maybe (guidanceId >> Attributes.id) config.id
+            [ ExtraAttributes.maybe (guidanceId >> Attributes.id) config.id
             , Key.tabbable False
             ]
          , Balloon.custom <|
@@ -467,11 +372,7 @@ viewActions : Maybe character -> List { label : String, onClick : msg } -> Maybe
 viewActions maybeCharacter actions_ =
     let
         containerStyles =
-            [ Css.backgroundColor Colors.frost
-            , Css.border3 (Css.px 1) Css.solid Colors.glacier
-            , Css.borderBottomRightRadius (Css.px 8)
-            , Css.borderBottomLeftRadius (Css.px 8)
-            , Css.margin Css.zero
+            [ Css.margin Css.zero
             , case maybeCharacter of
                 Just _ ->
                     Css.padding4 (Css.px 10) (Css.px 30) (Css.px 10) (Css.px 10)
