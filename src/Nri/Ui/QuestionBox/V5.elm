@@ -4,25 +4,19 @@ module Nri.Ui.QuestionBox.V5 exposing
     , actions, actionsVertical, actionsHorizontal
     , neutral, correct, incorrect, tip
     , containerCss
-    , guidanceId
     , leftActions
+    , guidanceId
     )
 
 {-|
-
-
-## Patch Changes
-
-  - Modified `viewPointingTo` to be hidden when measurements are `Nothing` to reduce the jitter of the question box moving to its correct position.
 
 @docs view, Attribute
 
 @docs id, markdown, character
 @docs actions, actionsVertical, actionsHorizontal
 @docs neutral, correct, incorrect, tip
-@docs standalone, pointingTo
 @docs containerCss
-@docs setLeftActions
+@docs leftActions
 
 @docs guidanceId
 
