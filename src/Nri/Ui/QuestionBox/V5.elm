@@ -34,11 +34,11 @@ import Css
 import Css.Global
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
-import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.CharacterIcon.V1 as CharacterIcon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
+import Nri.Ui.QuestionBox.BalloonTemp as Balloon
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Position exposing (xOffsetPx, xOffsetPxAgainstContainer)
 
