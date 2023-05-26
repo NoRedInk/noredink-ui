@@ -322,7 +322,7 @@ initAttributes =
                             ]
                          ]
                             |> div
-                                [ ]
+                                []
                         )
                     )
                )
@@ -341,7 +341,15 @@ initAttributes =
                                             [ ( "label", Code.string ("Button " ++ String.fromInt i_) )
                                             , ( "onClick", "NoOp" )
                                             ]
-                                        , { label = "Button " ++ String.fromInt i_, theme = Button.primary, onClick = NoOp }
+                                        , { label = "Button " ++ String.fromInt i_
+                                          , theme =
+                                                if i_ == 1 then
+                                                    Button.primary
+
+                                                else
+                                                    Button.secondary
+                                          , onClick = NoOp
+                                          }
                                         )
                                     )
                                 |> List.unzip
@@ -351,6 +359,12 @@ initAttributes =
                     )
                 )
                 (ControlExtra.int 2)
+            )
+        |> ControlExtra.listItem "actionsOrientation"
+            (CommonControls.choice moduleName
+                [ ( "vertical", QuestionBox.actionsVertical )
+                , ( "horizontal", QuestionBox.actionsHorizontal )
+                ]
             )
         |> ControlExtra.listItem "theme"
             (CommonControls.choice moduleName
