@@ -141,8 +141,8 @@ view ellieLinkConfig state =
     , QuestionBox.view
         [ QuestionBox.markdown "Which words tell you **when** the party is?"
         , QuestionBox.actions
-            [ { label = "is having", onClick = NoOp }
-            , { label = "after the football game", onClick = NoOp }
+            [ { label = "is having", theme = Button.primary, onClick = NoOp }
+            , { label = "after the football game", theme = Button.primary, onClick = NoOp }
             ]
         ]
     , Table.view []
@@ -341,7 +341,7 @@ initAttributes =
                                             [ ( "label", Code.string ("Button " ++ String.fromInt i_) )
                                             , ( "onClick", "NoOp" )
                                             ]
-                                        , { label = "Button " ++ String.fromInt i_, onClick = NoOp }
+                                        , { label = "Button " ++ String.fromInt i_, theme = Button.primary, onClick = NoOp }
                                         )
                                     )
                                 |> List.unzip

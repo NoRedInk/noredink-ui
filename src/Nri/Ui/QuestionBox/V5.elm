@@ -47,12 +47,16 @@ type Attribute msg
 type alias Config msg =
     { id : Maybe String
     , markdown : Maybe String
-    , actions : List { label : String, onClick : msg }
+    , actions : List (Action msg)
     , theme : QuestionBoxTheme
     , character : Maybe { name : String, icon : Svg }
     , containerCss : List Css.Style
     , leftActions : Maybe (Html msg)
     }
+
+
+type alias Action msg =
+    { label : String, theme : Button.Attribute msg, onClick : msg }
 
 
 type QuestionBoxTheme
@@ -87,7 +91,7 @@ markdown content =
 
 
 {-| -}
-actions : List { label : String, onClick : msg } -> Attribute msg
+actions : List (Action msg) -> Attribute msg
 actions actions_ =
     Attribute (\config -> { config | actions = actions_ })
 
@@ -319,7 +323,7 @@ viewCharacter { name, icon } =
         |> Svg.toHtml
 
 
-viewActions : List { label : String, onClick : msg } -> Maybe (Html msg)
+viewActions : List (Action msg) -> Maybe (Html msg)
 viewActions actions_ =
     let
         containerStyles =
@@ -335,12 +339,13 @@ viewActions actions_ =
         [] ->
             Nothing
 
-        { label, onClick } :: [] ->
+        { label, theme, onClick } :: [] ->
             div [ css (Css.alignItems Css.center :: containerStyles) ]
                 [ Button.button label
                     [ Button.onClick onClick
-                    , Button.unboundedWidth
-                    , Button.small
+                    , Button.fillContainerWidth
+                    , Button.medium
+                    , theme
                     ]
                 ]
                 |> Just
@@ -348,12 +353,13 @@ viewActions actions_ =
         _ ->
             ul [ css containerStyles ]
                 (List.map
-                    (\{ label, onClick } ->
+                    (\{ label, theme, onClick } ->
                         li []
                             [ Button.button label
                                 [ Button.onClick onClick
                                 , Button.fillContainerWidth
                                 , Button.small
+                                , theme
                                 , Button.css [ Css.justifyContent Css.flexStart ]
                                 ]
                             ]
