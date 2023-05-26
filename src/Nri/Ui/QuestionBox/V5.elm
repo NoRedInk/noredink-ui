@@ -186,7 +186,13 @@ viewContainer config =
     styled div
         [ Css.backgroundColor backgroundColor
         , Css.borderRadius (Css.px borderRounding)
-        , Css.maxWidth (Css.px 500)
+        , Css.width (Css.pct 100)
+        , case config.theme of
+            Tip ->
+                Css.maxWidth (Css.px 443)
+
+            _ ->
+                Css.maxWidth (Css.px 500)
         , case config.theme of
             Tip ->
                 Css.border3 (Css.px 1) Css.solid Colors.gray85
@@ -274,14 +280,14 @@ viewGuidance config maybeCharacter markdown_ =
             div
                 [ css
                     [ Css.displayFlex
-                    , Css.justifyContent Css.flexEnd
-                    , Css.margin (Css.px 8)
-                    , Css.marginRight (Css.px 20)
-                    , Css.position Css.relative
+                    , Css.width (Css.pct 100)
+                    , Css.property "gap" "10px"
+                    , Css.alignItems Css.center
+                    , Css.justifyContent Css.spaceBetween
                     ]
                 ]
-                [ viewCharacter character_
-                , viewContents config markdown_
+                [ viewContents config markdown_
+                , viewCharacter character_
                 ]
 
         Nothing ->
@@ -305,9 +311,11 @@ viewCharacter : { name : String, icon : Svg } -> Html msg
 viewCharacter { name, icon } =
     icon
         |> Svg.withLabel (name ++ " says, ")
-        |> Svg.withWidth (Css.px 70)
-        |> Svg.withHeight (Css.px 70)
-        |> Svg.withCss []
+        |> Svg.withWidth (Css.px 60)
+        |> Svg.withCss
+            [ Css.position Css.relative
+            , Css.right (Css.px -15)
+            ]
         |> Svg.toHtml
 
 
