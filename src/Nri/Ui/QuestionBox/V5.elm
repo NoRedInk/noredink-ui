@@ -3,8 +3,8 @@ module Nri.Ui.QuestionBox.V5 exposing
     , id, markdown, actions, character
     , neutral, correct, incorrect, tip
     , containerCss
-    , setLeftActions
     , guidanceId
+    , leftActions
     )
 
 {-|
@@ -26,14 +26,11 @@ module Nri.Ui.QuestionBox.V5 exposing
 
 -}
 
-import Accessibility.Styled.Aria as Aria
-import Accessibility.Styled.Key as Key
 import Content
 import Css
 import Css.Global
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
-import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.CharacterIcon.V1 as CharacterIcon
 import Nri.Ui.Colors.V1 as Colors
@@ -54,7 +51,7 @@ type alias Config msg =
     , theme : QuestionBoxTheme
     , character : Maybe { name : String, icon : Svg }
     , containerCss : List Css.Style
-    , leftActions : Html msg
+    , leftActions : Maybe (Html msg)
     }
 
 
@@ -73,7 +70,7 @@ defaultConfig =
     , theme = Neutral
     , character = Just { name = "Panda", icon = CharacterIcon.redPanda }
     , containerCss = []
-    , leftActions = text ""
+    , leftActions = Nothing
     }
 
 
@@ -109,9 +106,9 @@ containerCss styles =
 
 {-| Adds an arbitrary HTML on the left of the question box for the text to speech button
 -}
-setLeftActions : Html msg -> Attribute msg
-setLeftActions leftActions =
-    Attribute (\config -> { config | leftActions = leftActions })
+leftActions : Html msg -> Attribute msg
+leftActions leftActions_ =
+    Attribute (\config -> { config | leftActions = Just leftActions_ })
 
 
 {-| -}
@@ -153,7 +150,7 @@ When showing multiple questions in a sequence based on the user's answer, we wan
 -}
 guidanceId : String -> String
 guidanceId id_ =
-    id_ ++ "__guidance-speech-bubble"
+    id_ ++ "__guidance-speech"
 
 
 {-|
@@ -177,6 +174,14 @@ viewContainer config =
     let
         { backgroundColor, shadowColor } =
             themeToColor config.theme
+
+        maybeCharacter =
+            case config.theme of
+                Tip ->
+                    config.character
+
+                _ ->
+                    Nothing
     in
     styled div
         [ Css.backgroundColor backgroundColor
@@ -194,6 +199,13 @@ viewContainer config =
             [ Css.lineHeight (Css.num 1.4)
             , Css.textAlign Css.left
             , Css.position Css.relative
+            , Css.color Colors.gray20
+            , Fonts.baseFont
+            , Css.fontSize (Css.px 18)
+            , Css.padding2 (Css.px 15) (Css.px 25)
+            , Css.displayFlex
+            , Css.property "gap" "30px"
+            , Css.flexDirection Css.column
             , case config.theme of
                 Tip ->
                     Css.batch []
@@ -206,23 +218,28 @@ viewContainer config =
                         , Css.borderTopLeftRadius (Css.px borderRounding)
                         , Css.borderTopRightRadius (Css.px borderRounding)
                         ]
-            , Css.color Colors.gray20
-            , Fonts.baseFont
-            , Css.fontSize (Css.px 18)
             ]
             []
             (List.filterMap identity
-                [ Just <|
-                    div [ css [ Css.displayFlex ] ]
-                        (List.filterMap identity
-                            [ Just config.leftActions
-                            , Maybe.map (viewGuidance config Nothing) config.markdown
-                            ]
-                        )
-                , viewActions Nothing config.actions
+                [ Maybe.map viewLeftActions config.leftActions
+                , Maybe.map (viewGuidance config maybeCharacter) config.markdown
+                , viewActions config.actions
                 ]
             )
         ]
+
+
+viewLeftActions : Html msg -> Html msg
+viewLeftActions contents =
+    styled div
+        [ Css.display Css.inlineBlock
+        , Css.position Css.absolute
+        , Css.top (Css.px 12)
+        , Css.left (Css.px 0)
+        , Css.transform (Css.translateX (Css.pct -50))
+        ]
+        []
+        [ contents ]
 
 
 borderRounding : Float
@@ -290,29 +307,20 @@ viewCharacter { name, icon } =
         |> Svg.withLabel (name ++ " says, ")
         |> Svg.withWidth (Css.px 70)
         |> Svg.withHeight (Css.px 70)
-        |> Svg.withCss
-            [ Css.position Css.absolute
-            , Css.bottom (Css.px -5)
-            , Css.right (Css.px -58)
-            ]
+        |> Svg.withCss []
         |> Svg.toHtml
 
 
-viewActions : Maybe character -> List { label : String, onClick : msg } -> Maybe (Html msg)
-viewActions maybeCharacter actions_ =
+viewActions : List { label : String, onClick : msg } -> Maybe (Html msg)
+viewActions actions_ =
     let
         containerStyles =
             [ Css.margin Css.zero
-            , case maybeCharacter of
-                Just _ ->
-                    Css.padding4 (Css.px 10) (Css.px 30) (Css.px 10) (Css.px 10)
-
-                Nothing ->
-                    Css.padding2 (Css.px 10) (Css.px 20)
             , Css.listStyle Css.none
             , Css.displayFlex
             , Css.property "gap" "10px"
             , Css.flexDirection Css.column
+            , Css.padding Css.zero
             ]
     in
     case actions_ of

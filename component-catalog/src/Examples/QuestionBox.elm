@@ -311,7 +311,7 @@ initAttributes =
                                     ]
                                 ]
                         )                      """
-                    , QuestionBox.setLeftActions
+                    , QuestionBox.leftActions
                         ([ ClickableSvg.button "Play"
                             UiIcon.playInCircle
                             [ ClickableSvg.exactSize 32
@@ -322,20 +322,7 @@ initAttributes =
                             ]
                          ]
                             |> div
-                                [ css
-                                    [ Css.position Css.relative
-                                    , Css.zIndex (Css.int 1)
-                                    , Css.left (Css.px -24)
-                                    , Css.top (Css.px 8)
-                                    , withMedia [ quizEngineMobile ]
-                                        [ Css.left Css.auto
-                                        , Css.top Css.auto
-                                        , Css.float Css.left
-                                        , Css.padding4 Css.zero (Css.px 5) Css.zero Css.zero
-                                        , Css.position Css.static
-                                        ]
-                                    ]
-                                ]
+                                [ ]
                         )
                     )
                )
