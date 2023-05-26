@@ -28,6 +28,7 @@ module Nri.Ui.QuestionBox.V5 exposing
 
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
+import Content
 import Css
 import Css.Global
 import Html.Styled exposing (..)
@@ -37,7 +38,7 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.CharacterIcon.V1 as CharacterIcon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 
 
@@ -180,22 +181,34 @@ viewContainer config =
     styled div
         [ Css.backgroundColor backgroundColor
         , Css.borderRadius (Css.px borderRounding)
-        , Css.borderBottom3 (Css.px 8) Css.solid shadowColor
         , Css.maxWidth (Css.px 500)
+        , case config.theme of
+            Tip ->
+                Css.border3 (Css.px 1) Css.solid Colors.gray85
+
+            _ ->
+                Css.borderBottom3 (Css.px 8) Css.solid shadowColor
         ]
-        [ ExtraAttributes.nriDescription "question-box-container" ]
+        [ AttributesExtra.nriDescription "question-box-container" ]
         [ styled div
             [ Css.lineHeight (Css.num 1.4)
             , Css.textAlign Css.left
             , Css.position Css.relative
-            , Css.borderLeft3 (Css.px 1) Css.solid Colors.gray85
-            , Css.borderTop3 (Css.px 1) Css.solid Colors.gray85
-            , Css.borderRight3 (Css.px 1) Css.solid Colors.gray85
-            , Css.borderTopLeftRadius (Css.px borderRounding)
-            , Css.borderTopRightRadius (Css.px borderRounding)
+            , case config.theme of
+                Tip ->
+                    Css.batch []
+
+                _ ->
+                    Css.batch
+                        [ Css.borderLeft3 (Css.px 1) Css.solid Colors.gray85
+                        , Css.borderTop3 (Css.px 1) Css.solid Colors.gray85
+                        , Css.borderRight3 (Css.px 1) Css.solid Colors.gray85
+                        , Css.borderTopLeftRadius (Css.px borderRounding)
+                        , Css.borderTopRightRadius (Css.px borderRounding)
+                        ]
             , Css.color Colors.gray20
             , Fonts.baseFont
-            , Css.fontSize (Css.px 15)
+            , Css.fontSize (Css.px 18)
             ]
             []
             (List.filterMap identity
@@ -206,7 +219,7 @@ viewContainer config =
                             , Maybe.map (viewGuidance config Nothing) config.markdown
                             ]
                         )
-                , viewActions config.character config.actions
+                , viewActions Nothing config.actions
                 ]
             )
         ]
@@ -234,12 +247,12 @@ themeToColor theme =
 
 
 viewGuidance :
-    { config | id : Maybe String, character : Maybe { name : String, icon : Svg } }
-    -> Maybe String
+    { config | id : Maybe String }
+    -> Maybe { name : String, icon : Svg }
     -> String
     -> Html msg
-viewGuidance config referencingId markdown_ =
-    case config.character of
+viewGuidance config maybeCharacter markdown_ =
+    case maybeCharacter of
         Just character_ ->
             div
                 [ css
@@ -251,52 +264,24 @@ viewGuidance config referencingId markdown_ =
                     ]
                 ]
                 [ viewCharacter character_
-                , viewSpeechBubble config
-                    referencingId
-                    [ Balloon.markdown markdown_
-                    , Balloon.css [ Css.minHeight (Css.px 46) ]
-                    , Balloon.containerCss [ Css.marginRight (Css.px 8) ]
-                    , Balloon.onLeft
-                    , Balloon.alignArrowEnd
-                    ]
+                , viewContents config markdown_
                 ]
 
         Nothing ->
-            viewSpeechBubble config
-                referencingId
-                [ Balloon.markdown markdown_
-                , Balloon.css [ Css.margin2 (Css.px 10) (Css.px 20) ]
+            viewContents config markdown_
+
+
+viewContents : { config | id : Maybe String } -> String -> Html msg
+viewContents config markdown_ =
+    styled div
+        [ Css.Global.children
+            [ Css.Global.p
+                [ Css.margin Css.zero
                 ]
-
-
-viewSpeechBubble : { config | id : Maybe String } -> Maybe String -> List (Balloon.Attribute msg) -> Html msg
-viewSpeechBubble config referencingId extraAttributes =
-    Balloon.view
-        ([ Balloon.nriDescription "guidance-speech-bubble"
-         , Balloon.white
-         , Balloon.css
-            [ Css.borderRadius (Css.px 20)
-            , Css.padding (Css.px 20)
-            , Css.boxShadow Css.none
-            , Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ]
-            , Css.fontSize (Css.px 18)
             ]
-         , Balloon.custom
-            [ ExtraAttributes.maybe (guidanceId >> Attributes.id) config.id
-            , Key.tabbable False
-            ]
-         , Balloon.custom <|
-            case referencingId of
-                Just id_ ->
-                    [ Aria.describedBy [ id_ ]
-                    , Aria.details id_
-                    ]
-
-                Nothing ->
-                    []
-         ]
-            ++ extraAttributes
-        )
+        ]
+        [ AttributesExtra.maybe (guidanceId >> Attributes.id) config.id ]
+        (Content.markdownInline markdown_)
 
 
 viewCharacter : { name : String, icon : Svg } -> Html msg
