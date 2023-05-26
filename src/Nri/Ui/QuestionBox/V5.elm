@@ -272,7 +272,7 @@ viewLeftActions contents =
     styled div
         [ Css.display Css.inlineBlock
         , Css.position Css.absolute
-        , Css.top (Css.px 12)
+        , Css.top (Css.px 16)
         , Css.left (Css.px 0)
         , Css.transform (Css.translateX (Css.pct -50))
         ]

@@ -276,7 +276,7 @@ initAttributes =
         |> ControlExtra.listItem "markdown"
             (Control.map
                 (\str ->
-                    ( Code.fromModule moduleName "markdown " ++ Code.string str
+                    ( Code.fromModule moduleName "markdown " ++ Code.stringMultiline str
                     , QuestionBox.markdown str
                     )
                 )
@@ -285,7 +285,7 @@ initAttributes =
         |> ControlExtra.optionalListItem "leftButton"
             ([ ( "Play button"
                , Control.value
-                    ( Code.fromModule moduleName "setLeftActions" ++ Code.string """
+                    ( Code.fromModule moduleName "leftActions " ++ Code.string """
                         ([ ClickableSvg.button "Play"
                             UiIcon.playInCircle
                             [ ClickableSvg.exactSize 32
@@ -295,34 +295,50 @@ initAttributes =
                                 ]
                             ]
                          ]
-                            |> div
-                                [ css
-                                    [ Css.position Css.relative
-                                    , Css.zIndex (Css.int 1)
-                                    , Css.left (Css.px -24)
-                                    , Css.top (Css.px 8)
-                                    , withMedia [ quizEngineMobile ]
-                                        [ Css.left Css.auto
-                                        , Css.top Css.auto
-                                        , Css.float Css.left
-                                        , Css.padding4 Css.zero (Css.px 5) Css.zero Css.zero
-                                        , Css.position Css.static
-                                        ]
-                                    ]
-                                ]
                         )                      """
                     , QuestionBox.leftActions
                         ([ ClickableSvg.button "Play"
                             UiIcon.playInCircle
-                            [ ClickableSvg.exactSize 32
+                            [ ClickableSvg.exactSize 24
                             , ClickableSvg.css
-                                [ Css.borderRadius (Css.px 32)
+                                [ Css.borderRadius (Css.px 24)
                                 , Css.backgroundColor Colors.white
                                 ]
                             ]
                          ]
                             |> div
                                 []
+                        )
+                    )
+               )
+             , ( "Pause/Stop button"
+               , Control.value
+                    ( Code.string ""
+                    , QuestionBox.leftActions
+                        ([ ClickableSvg.button "Pause"
+                            UiIcon.pauseInCircle
+                            [ ClickableSvg.exactSize 24
+                            , ClickableSvg.css
+                                [ Css.borderRadius (Css.px 24)
+                                , Css.backgroundColor Colors.white
+                                ]
+                            ]
+                         , ClickableSvg.button "Stop"
+                            UiIcon.stopInCircle
+                            [ ClickableSvg.exactSize 24
+                            , ClickableSvg.css
+                                [ Css.borderRadius (Css.px 24)
+                                , Css.backgroundColor Colors.white
+                                ]
+                            ]
+                         ]
+                            |> div
+                                [ css
+                                    [ Css.displayFlex
+                                    , Css.flexDirection Css.column
+                                    , Css.property "gap" "6px"
+                                    ]
+                                ]
                         )
                     )
                )
@@ -339,6 +355,13 @@ initAttributes =
                                     (\i_ ->
                                         ( Code.record
                                             [ ( "label", Code.string ("Button " ++ String.fromInt i_) )
+                                            , ( "theme"
+                                              , if i_ == 1 then
+                                                    Code.fromModule "Button" "primary"
+
+                                                else
+                                                    Code.fromModule "Button" "secondary"
+                                              )
                                             , ( "onClick", "NoOp" )
                                             ]
                                         , { label = "Button " ++ String.fromInt i_
