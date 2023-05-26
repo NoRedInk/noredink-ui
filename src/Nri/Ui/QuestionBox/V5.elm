@@ -1,6 +1,7 @@
 module Nri.Ui.QuestionBox.V5 exposing
     ( view, Attribute
-    , id, markdown, actions, character
+    , id, markdown, character
+    , actions, actionsVertical, actionsHorizontal
     , neutral, correct, incorrect, tip
     , containerCss
     , guidanceId
@@ -16,7 +17,8 @@ module Nri.Ui.QuestionBox.V5 exposing
 
 @docs view, Attribute
 
-@docs id, markdown, actions, character
+@docs id, markdown, character
+@docs actions, actionsVertical, actionsHorizontal
 @docs neutral, correct, incorrect, tip
 @docs standalone, pointingTo
 @docs containerCss
@@ -48,6 +50,7 @@ type alias Config msg =
     { id : Maybe String
     , markdown : Maybe String
     , actions : List (Action msg)
+    , actionOrientation : ActionOrientation
     , theme : QuestionBoxTheme
     , character : Maybe { name : String, icon : Svg }
     , containerCss : List Css.Style
@@ -57,6 +60,11 @@ type alias Config msg =
 
 type alias Action msg =
     { label : String, theme : Button.Attribute msg, onClick : msg }
+
+
+type ActionOrientation
+    = Horizontal
+    | Vertical
 
 
 type QuestionBoxTheme
@@ -71,6 +79,7 @@ defaultConfig =
     { id = Nothing
     , markdown = Nothing
     , actions = []
+    , actionOrientation = Vertical
     , theme = Neutral
     , character = Just { name = "Panda", icon = CharacterIcon.redPanda }
     , containerCss = []
@@ -94,6 +103,18 @@ markdown content =
 actions : List (Action msg) -> Attribute msg
 actions actions_ =
     Attribute (\config -> { config | actions = actions_ })
+
+
+{-| -}
+actionsHorizontal : Attribute msg
+actionsHorizontal =
+    Attribute (\config -> { config | actionOrientation = Horizontal })
+
+
+{-| -}
+actionsVertical : Attribute msg
+actionsVertical =
+    Attribute (\config -> { config | actionOrientation = Vertical })
 
 
 {-| -}
@@ -240,7 +261,7 @@ viewContainer config =
             (List.filterMap identity
                 [ Maybe.map viewLeftActions config.leftActions
                 , Maybe.map (viewGuidance config maybeCharacter) config.markdown
-                , viewActions config.actions
+                , viewActions config.actions config.actionOrientation
                 ]
             )
         ]
@@ -331,17 +352,40 @@ viewCharacter { name, icon } =
         |> Svg.toHtml
 
 
-viewActions : List (Action msg) -> Maybe (Html msg)
-viewActions actions_ =
+viewActions : List (Action msg) -> ActionOrientation -> Maybe (Html msg)
+viewActions actions_ actionOrientation =
     let
         containerStyles =
             [ Css.margin Css.zero
             , Css.listStyle Css.none
-            , Css.displayFlex
-            , Css.property "gap" "10px"
-            , Css.flexDirection Css.column
             , Css.padding Css.zero
             ]
+                ++ orientationStyles
+
+        orientationStyles =
+            case actionOrientation of
+                Horizontal ->
+                    [ Css.displayFlex
+                    , Css.property "gap" "10px"
+                    , Css.flexDirection Css.row
+                    ]
+
+                Vertical ->
+                    [ Css.displayFlex
+                    , Css.property "gap" "10px"
+                    , Css.flexDirection Css.column
+                    ]
+
+        buttonSize =
+            case ( actions_, actionOrientation ) of
+                ( _ :: [], _ ) ->
+                    Button.medium
+
+                ( _, Horizontal ) ->
+                    Button.medium
+
+                _ ->
+                    Button.small
     in
     case actions_ of
         [] ->
@@ -352,7 +396,7 @@ viewActions actions_ =
                 [ Button.button label
                     [ Button.onClick onClick
                     , Button.fillContainerWidth
-                    , Button.medium
+                    , buttonSize
                     , theme
                     ]
                 ]
@@ -362,13 +406,14 @@ viewActions actions_ =
             ul [ css containerStyles ]
                 (List.map
                     (\{ label, theme, onClick } ->
-                        li []
+                        li
+                            [ css [ Css.flexGrow (Css.num 1) ]
+                            ]
                             [ Button.button label
                                 [ Button.onClick onClick
                                 , Button.fillContainerWidth
-                                , Button.small
+                                , buttonSize
                                 , theme
-                                , Button.css [ Css.justifyContent Css.flexStart ]
                                 ]
                             ]
                     )
