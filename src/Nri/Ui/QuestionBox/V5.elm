@@ -189,20 +189,24 @@ viewContainer config =
     in
     styled div
         [ Css.backgroundColor backgroundColor
-        , Css.borderRadius (Css.px borderRounding)
+        , case config.theme of
+            Tip ->
+                Css.batch
+                    [ Css.maxWidth (Css.px 443)
+                    , Css.borderRadius (Css.px borderRounding)
+                    , Css.border3 (Css.px 1) Css.solid Colors.gray85
+                    ]
+
+            _ ->
+                Css.batch
+                    [ Css.maxWidth (Css.px 500)
+                    , Css.borderTopLeftRadius (Css.px borderRounding)
+                    , Css.borderTopRightRadius (Css.px borderRounding)
+                    , Css.borderBottomLeftRadius (Css.px (borderRounding * 2))
+                    , Css.borderBottomRightRadius (Css.px (borderRounding * 2))
+                    , Css.borderBottom3 (Css.px 8) Css.solid shadowColor
+                    ]
         , Css.width (Css.pct 100)
-        , case config.theme of
-            Tip ->
-                Css.maxWidth (Css.px 443)
-
-            _ ->
-                Css.maxWidth (Css.px 500)
-        , case config.theme of
-            Tip ->
-                Css.border3 (Css.px 1) Css.solid Colors.gray85
-
-            _ ->
-                Css.borderBottom3 (Css.px 8) Css.solid shadowColor
         ]
         [ AttributesExtra.nriDescription "question-box-container" ]
         [ styled div
@@ -212,13 +216,14 @@ viewContainer config =
             , Css.color Colors.gray20
             , Fonts.baseFont
             , Css.fontSize (Css.px 18)
-            , Css.padding2 (Css.px 15) (Css.px 25)
             , Css.displayFlex
             , Css.property "gap" "30px"
             , Css.flexDirection Css.column
             , case config.theme of
                 Tip ->
-                    Css.batch []
+                    Css.batch
+                        [ Css.padding2 (Css.px 15) (Css.px 25)
+                        ]
 
                 _ ->
                     Css.batch
@@ -227,6 +232,8 @@ viewContainer config =
                         , Css.borderRight3 (Css.px 1) Css.solid Colors.gray85
                         , Css.borderTopLeftRadius (Css.px borderRounding)
                         , Css.borderTopRightRadius (Css.px borderRounding)
+                        , Css.padding4 (Css.px 15) (Css.px 25) (Css.px 9) (Css.px 25)
+                        , Css.marginBottom (Css.px 6)
                         ]
             ]
             []
