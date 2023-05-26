@@ -2,7 +2,6 @@ module Nri.Ui.QuestionBox.V5 exposing
     ( view, Attribute
     , id, markdown, actions, character
     , neutral, correct, incorrect, tip
-    , standalone, pointingTo
     , containerCss
     , setLeftActions
     , guidanceId
@@ -29,7 +28,6 @@ module Nri.Ui.QuestionBox.V5 exposing
 
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
-import Browser.Dom exposing (Element)
 import Css
 import Css.Global
 import Html.Styled exposing (..)
@@ -41,7 +39,6 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Position exposing (xOffsetPx, xOffsetPxAgainstContainer)
 
 
 {-| -}
@@ -53,7 +50,6 @@ type alias Config msg =
     { id : Maybe String
     , markdown : Maybe String
     , actions : List { label : String, onClick : msg }
-    , type_ : QuestionBoxType msg
     , theme : QuestionBoxTheme
     , character : Maybe { name : String, icon : Svg }
     , containerCss : List Css.Style
@@ -73,7 +69,6 @@ defaultConfig =
     { id = Nothing
     , markdown = Nothing
     , actions = []
-    , type_ = Standalone
     , theme = Neutral
     , character = Just { name = "Panda", icon = CharacterIcon.redPanda }
     , containerCss = []
@@ -145,56 +140,6 @@ tip =
 setTheme : QuestionBoxTheme -> Attribute msg
 setTheme theme =
     Attribute (\config -> { config | theme = theme })
-
-
-setType : QuestionBoxType msg -> Attribute msg
-setType type_ =
-    Attribute (\config -> { config | type_ = type_ })
-
-
-type QuestionBoxType msg
-    = Standalone
-    | PointingTo
-        String
-        (Maybe
-            { block : Element
-            , paragraph : Element
-            , questionBox : Element
-            , container : Maybe Element
-            }
-        )
-
-
-{-| This is the default type of question box. It doesn't have a programmatic or direct visual relationship to any piece of content.
--}
-standalone : Attribute msg
-standalone =
-    setType Standalone
-
-
-{-| This type of `QuestionBox` has an arrow pointing to the block whose id you pass in, if that block is on the final line of its paragraph.
-The QuestionBox should be vertically aligned beneath the block, viewport permitting. When there is a container the container will be used to
-calculate the offset from the viewport.
-
-Pass in the id for the block the QuestionBox should point to.
-
-You will need to pass 4 measurements, taken using Dom.Browser, in order for the question box to be positioned correctly. The question box
-will be hidden the first time when you pass `Nothing` for the measurements to reduce the jitter of the question box moving to its correct
-position.
-
--}
-pointingTo :
-    String
-    ->
-        Maybe
-            { block : Element
-            , paragraph : Element
-            , questionBox : Element
-            , container : Maybe Element
-            }
-    -> Attribute msg
-pointingTo blockId measurements =
-    setType (PointingTo blockId measurements)
 
 
 {-| This helper is how we create an id for the guidance speech bubble element based on the `QuestionBox.id` value. Use this helper to manage focus.
