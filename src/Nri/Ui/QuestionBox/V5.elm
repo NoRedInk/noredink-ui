@@ -386,7 +386,7 @@ viewActions actions_ actionOrientation =
 
                 Vertical ->
                     [ Css.displayFlex
-                    , Css.property "gap" "10px"
+                    , Css.property "gap" "15px"
                     , Css.flexDirection Css.column
                     ]
 
