@@ -350,8 +350,8 @@ viewContents config markdown_ =
                 [ Css.margin Css.zero
                 ]
             , Css.Global.ul
-                [ Css.marginTop (Css.px 10)
-                , Css.marginBottom Css.zero
+                [ Css.marginTop (Css.px 5)
+                , Css.marginBottom (Css.px 10)
                 ]
             ]
         ]
