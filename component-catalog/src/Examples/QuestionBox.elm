@@ -264,6 +264,31 @@ secondaryButtonCode label =
     Code.recordMultiline [ ( "label", Code.string label ), ( "theme", Code.fromModule "Button" "secondary" ), ( "onClick", "NoOp" ) ] 3
 
 
+leftActionIconsCode : List ( String, String ) -> String
+leftActionIconsCode icons =
+    let
+        iconCode ( label, icon ) =
+            [ Code.fromModule "ClickableSvg" "button"
+            , Code.string label
+            , Code.fromModule "UiIcon" icon
+            , Code.listMultiline
+                [ Code.apply [ Code.fromModule "ClickableSvg" "exactSize", Code.int 24 ]
+                , Code.apply
+                    [ Code.fromModule "ClickableSvg" "css"
+                    , Code.listMultiline
+                        [ Code.apply [ Code.fromModule "Css" "borderRadius", Code.withParens (Code.apply [ Code.fromModule "Css" "px", Code.int 24 ]) ]
+                        , Code.apply [ Code.fromModule "Css" "backgroundColor", Code.fromModule "Colors" "white" ]
+                        ]
+                        5
+                    ]
+                ]
+                4
+            ]
+                |> Code.apply
+    in
+    Code.withParens <| Code.apply [ "div", "[]", Code.listMultiline (List.map iconCode icons) 3 ]
+
+
 anchorId : String
 anchorId =
     "anchor-id"
@@ -302,35 +327,24 @@ initAttributes =
         |> ControlExtra.optionalListItem "leftButton"
             ([ ( "Play button"
                , Control.value
-                    ( Code.fromModule moduleName "leftActions " ++ Code.string """
-                        ([ ClickableSvg.button "Play"
-                            UiIcon.playInCircle
-                            [ ClickableSvg.exactSize 32
-                            , ClickableSvg.css
-                                [ Css.borderRadius (Css.px 32)
-                                , Css.backgroundColor Colors.white
-                                ]
-                            ]
-                         ]
-                        )                      """
+                    ( Code.fromModule moduleName "leftActions" ++ Code.newlineWithIndent 2 ++ leftActionIconsCode [ ( "Play", "playInCircle" ) ]
                     , QuestionBox.leftActions
-                        ([ ClickableSvg.button "Play"
-                            UiIcon.playInCircle
-                            [ ClickableSvg.exactSize 24
-                            , ClickableSvg.css
-                                [ Css.borderRadius (Css.px 24)
-                                , Css.backgroundColor Colors.white
+                        (div []
+                            [ ClickableSvg.button "Play"
+                                UiIcon.playInCircle
+                                [ ClickableSvg.exactSize 24
+                                , ClickableSvg.css
+                                    [ Css.borderRadius (Css.px 24)
+                                    , Css.backgroundColor Colors.white
+                                    ]
                                 ]
                             ]
-                         ]
-                            |> div
-                                []
                         )
                     )
                )
              , ( "Pause/Stop button"
                , Control.value
-                    ( Code.string ""
+                    ( Code.fromModule moduleName "leftActions" ++ Code.newlineWithIndent 2 ++ leftActionIconsCode [ ( "Pause", "pauseInCircle" ), ( "Stop", "stopInCircle" ) ]
                     , QuestionBox.leftActions
                         ([ ClickableSvg.button "Pause"
                             UiIcon.pauseInCircle
