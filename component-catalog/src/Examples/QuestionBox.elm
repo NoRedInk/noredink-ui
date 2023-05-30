@@ -12,7 +12,6 @@ import Code
 import CommonControls
 import Css
 import Css.Global
-import Css.Media exposing (withMedia)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
@@ -26,10 +25,8 @@ import Nri.Ui.Block.V4 as Block
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.MediaQuery.V1 exposing (..)
 import Nri.Ui.QuestionBox.V5 as QuestionBox
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
@@ -72,9 +69,6 @@ view ellieLinkConfig state =
             , QuestionBox.id interactiveExampleId
             )
                 :: Control.currentValue state.attributes
-
-        offsets =
-            Block.getLabelPositions state.labelMeasurementsById
     in
     [ -- absolutely positioned elements that overflow in the x direction
       -- cause a horizontal scrollbar unless you explicitly hide overflowing x content
