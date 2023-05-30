@@ -372,14 +372,23 @@ viewActions actions_ actionOrientation =
 
         buttonSize =
             case ( actions_, actionOrientation ) of
-                ( _ :: [], _ ) ->
+                ( _, Horizontal ) ->
                     Button.medium
 
-                ( _, Horizontal ) ->
+                ( _ :: [], _ ) ->
                     Button.medium
 
                 _ ->
                     Button.small
+
+        buttonAlignment =
+            case ( actions_, actionOrientation ) of
+                ( _ :: _ :: _, Vertical ) ->
+                    -- With multiple vertically stacked buttons we want the text to be left aligned.
+                    [ Css.justifyContent Css.flexStart ]
+
+                ( _, _ ) ->
+                    []
     in
     case actions_ of
         [] ->
@@ -391,6 +400,7 @@ viewActions actions_ actionOrientation =
                     [ Button.onClick onClick
                     , Button.fillContainerWidth
                     , buttonSize
+                    , Button.css buttonAlignment
                     , theme
                     ]
                 ]
@@ -407,6 +417,7 @@ viewActions actions_ actionOrientation =
                                 [ Button.onClick onClick
                                 , Button.fillContainerWidth
                                 , buttonSize
+                                , Button.css buttonAlignment
                                 , theme
                                 ]
                             ]
