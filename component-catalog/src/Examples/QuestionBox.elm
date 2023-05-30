@@ -50,7 +50,12 @@ example =
     , subscriptions = \_ -> Sub.none
     , categories = [ Instructional ]
     , keyboardSupport = []
-    , preview = [ QuestionBox.view [ QuestionBox.markdown "Gud?" ] ]
+    , preview =
+        [ QuestionBox.view
+            [ QuestionBox.markdown "You got it! 🎉"
+            , QuestionBox.correct
+            ]
+        ]
     , view = view
     }
 
