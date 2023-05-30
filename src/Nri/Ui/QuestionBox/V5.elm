@@ -308,14 +308,16 @@ viewGuidance config maybeCharacter markdown_ =
             div
                 [ css
                     [ Css.displayFlex
+                    , Css.flexDirection Css.rowReverse
                     , Css.width (Css.pct 100)
                     , Css.property "gap" "10px"
                     , Css.alignItems Css.center
                     , Css.justifyContent Css.spaceBetween
                     ]
                 ]
-                [ viewContents config markdown_
-                , viewCharacter character_
+                -- We intentionally render the character first and use "rowReverse" so that a11y content is presented as "Pands says ..."
+                [ viewCharacter character_
+                , viewContents config markdown_
                 ]
 
         Nothing ->
