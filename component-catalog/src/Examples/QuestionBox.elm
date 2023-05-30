@@ -119,26 +119,6 @@ view ellieLinkConfig state =
         [ Heading.plaintext "Non-interactive examples"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
-    , Button.button "Measure & render"
-        [ Button.onClick GetMeasurements
-        , Button.small
-        , Button.secondary
-        , Button.css [ Css.marginTop Spacing.verticalSpacerPx ]
-        ]
-    , Text.caption
-        [ Text.plaintext "Click \"Measure & render\" to reposition the noninteractive examples' labels and question boxes to avoid overlaps given the current viewport."
-        ]
-    , Heading.h3
-        [ Heading.plaintext "QuestionBox.standalone"
-        , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
-        ]
-    , QuestionBox.view
-        [ QuestionBox.markdown "Which words tell you **when** the party is?"
-        , QuestionBox.actions
-            [ { label = "is having", theme = Button.primary, onClick = NoOp }
-            , { label = "after the football game", theme = Button.primary, onClick = NoOp }
-            ]
-        ]
     , Table.view []
         [ Table.custom
             { header = text "Pattern name & description"
@@ -168,17 +148,111 @@ view ellieLinkConfig state =
             , sort = Nothing
             }
         ]
-        [ { description = "**Plain block**"
+        [ { description = "**Neutral Step**"
           , example =
                 tableExample "paragraph-0"
-                    [ Block.view
-                        [ Block.plaintext "Dave"
-                        , Block.id "block-0"
-                        ]
-                    , Block.view [ Block.plaintext " scared his replacement cousin coming out of his room wearing a gorilla mask." ]
-                    ]
                     [ QuestionBox.id "question-box-0"
-                    , QuestionBox.markdown "Who?"
+                    , QuestionBox.markdown "**Adjectives describe nouns.** <br/><br/>Which word describes the noun **lollipop**?"
+                    , QuestionBox.actions
+                        [ { label = "won", theme = Button.secondary, onClick = NoOp }
+                        , { label = "huge", theme = Button.secondary, onClick = NoOp }
+                        , { label = "T’Challa", theme = Button.secondary, onClick = NoOp }
+                        ]
+                    ]
+          , pattern =
+                tableExampleCode
+                    [ Code.fromModule "Block" "view"
+                        ++ Code.listMultiline
+                            [ Code.fromModule "Block" "id " ++ Code.string "block-id"
+                            , Code.fromModule "Block" "plaintext " ++ Code.string "Dave"
+                            ]
+                            3
+                    , "…"
+                    ]
+                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                    , Code.fromModule moduleName "markdown " ++ Code.string "Who?"
+                    ]
+          }
+        , { description = "**Correct Step**"
+          , example =
+                tableExample "paragraph-1"
+                    [ QuestionBox.id "question-box-1"
+                    , QuestionBox.markdown "**That's right!** 🎉 <br/><br/> **Scary** tells us **what kind** of painting. <br/> That means **scary** is an **adjective**."
+                    , QuestionBox.correct
+                    , QuestionBox.actions
+                        [ { label = "try this question again", theme = Button.primary, onClick = NoOp }
+                        ]
+                    ]
+          , pattern =
+                tableExampleCode
+                    [ Code.fromModule "Block" "view"
+                        ++ Code.listMultiline
+                            [ Code.fromModule "Block" "id " ++ Code.string "block-id"
+                            , Code.fromModule "Block" "plaintext " ++ Code.string "Dave"
+                            ]
+                            3
+                    , "…"
+                    ]
+                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                    , Code.fromModule moduleName "markdown " ++ Code.string "Who?"
+                    ]
+          }
+        , { description = "**Incorrect Step**"
+          , example =
+                tableExample "paragraph-2"
+                    [ QuestionBox.id "question-box-2"
+                    , QuestionBox.markdown "**Not quite.** <br/><br /> **Past** doesn't tell us **what kind** of painting it is. <br/><br/> Look for word like these: \n- funny \n- pretty"
+                    , QuestionBox.incorrect
+                    , QuestionBox.actions
+                        [ { label = "Try again", theme = Button.secondary, onClick = NoOp }
+                        ]
+                    ]
+          , pattern =
+                tableExampleCode
+                    [ Code.fromModule "Block" "view"
+                        ++ Code.listMultiline
+                            [ Code.fromModule "Block" "id " ++ Code.string "block-id"
+                            , Code.fromModule "Block" "plaintext " ++ Code.string "Dave"
+                            ]
+                            3
+                    , "…"
+                    ]
+                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                    , Code.fromModule moduleName "markdown " ++ Code.string "Who?"
+                    ]
+          }
+        , { description = "**Retry Tip**"
+          , example =
+                tableExample "paragraph-3"
+                    [ QuestionBox.id "question-box-3"
+                    , QuestionBox.markdown "This list has **three items**, so you need two commas to separate them. **Put commas between the items.**"
+                    , QuestionBox.tip
+                    ]
+          , pattern =
+                tableExampleCode
+                    [ Code.fromModule "Block" "view"
+                        ++ Code.listMultiline
+                            [ Code.fromModule "Block" "id " ++ Code.string "block-id"
+                            , Code.fromModule "Block" "plaintext " ++ Code.string "Dave"
+                            ]
+                            3
+                    , "…"
+                    ]
+                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
+                    , Code.fromModule moduleName "markdown " ++ Code.string "Who?"
+                    ]
+          }
+        , { description = "**Retry Incorrect**"
+          , example =
+                tableExample "paragraph-4"
+                    [ QuestionBox.id "question-box-4"
+                    , QuestionBox.markdown "**Not quite.** <br/><br/> Remember, **adjectives** are **describing words**. In this sentence, **scary** is an adjective. It tells us **what kind** of **painting**."
+                    , QuestionBox.incorrect
+                    , QuestionBox.actionsHorizontal
+                    , QuestionBox.actions
+                        [ { label = "Next question", theme = Button.primary, onClick = NoOp }
+                        , { label = "Review tutorial", theme = Button.secondary, onClick = NoOp }
+                        ]
                     ]
           , pattern =
                 tableExampleCode
@@ -198,9 +272,9 @@ view ellieLinkConfig state =
     ]
 
 
-tableExample : String -> List (Html msg) -> List (QuestionBox.Attribute msg) -> Html msg
-tableExample paragraphId paragraphContents questionBoxAttributes =
-    div [] [ inParagraph paragraphId paragraphContents, QuestionBox.view questionBoxAttributes ]
+tableExample : String -> List (QuestionBox.Attribute msg) -> Html msg
+tableExample paragraphId questionBoxAttributes =
+    div [ css [ Css.padding2 (Css.px 15) (Css.zero) ] ] [ QuestionBox.view questionBoxAttributes ]
 
 
 tableExampleCode : List String -> List String -> String
@@ -239,28 +313,12 @@ interactiveExampleId =
 init : State
 init =
     { attributes = initAttributes
-    , labelMeasurementsById = Dict.empty
-    , questionBoxMeasurementsById = Dict.empty
     }
 
 
 {-| -}
 type alias State =
     { attributes : Control (List ( String, QuestionBox.Attribute Msg ))
-    , labelMeasurementsById :
-        Dict
-            String
-            { label : Element
-            , labelContent : Element
-            }
-    , questionBoxMeasurementsById :
-        Dict
-            String
-            { block : Element
-            , paragraph : Element
-            , questionBox : Element
-            , container : Maybe Element
-            }
     }
 
 
@@ -436,25 +494,6 @@ initialMarkdown =
 type Msg
     = UpdateControls (Control (List ( String, QuestionBox.Attribute Msg )))
     | NoOp
-    | GetMeasurements
-    | GotBlockLabelMeasurements
-        String
-        (Result
-            Dom.Error
-            { label : Element
-            , labelContent : Element
-            }
-        )
-    | GotQuestionBoxMeasurements
-        String
-        (Result
-            Dom.Error
-            { block : Element
-            , paragraph : Element
-            , questionBox : Element
-            , container : Maybe Element
-            }
-        )
 
 
 {-| -}
@@ -466,76 +505,3 @@ update msg state =
 
         NoOp ->
             ( state, Cmd.none )
-
-        GetMeasurements ->
-            ( state
-            , Cmd.batch
-                (List.map measureBlockLabel
-                    [ "label-1"
-                    , "label-3"
-                    ]
-                    ++ List.map measureQuestionBox
-                        [ { paragraphId = "paragraph-0", blockId = "block-0", questionBoxId = "question-box-0", containerId = Nothing }
-                        , { paragraphId = "paragraph-1", blockId = "block-1", questionBoxId = "question-box-1", containerId = Nothing }
-                        , { paragraphId = "paragraph-2", blockId = "block-2", questionBoxId = "question-box-2", containerId = Nothing }
-                        , { paragraphId = "paragraph-3", blockId = "block-3", questionBoxId = "question-box-3", containerId = Nothing }
-                        , { paragraphId = "paragraph-4", blockId = "block-4", questionBoxId = "question-box-4", containerId = Nothing }
-                        , { paragraphId = "paragraph-5", blockId = "block-5", questionBoxId = "question-box-5", containerId = Nothing }
-                        , { paragraphId = "paragraph-6", blockId = "block-6", questionBoxId = "question-box-6", containerId = Nothing }
-                        , { paragraphId = "paragraph-7", blockId = "block-7", questionBoxId = "question-box-7", containerId = Nothing }
-                        , { paragraphId = "paragraph-8", blockId = "block-8", questionBoxId = "left-viewport-question-box-example", containerId = Nothing }
-                        , { paragraphId = "paragraph-9", blockId = "block-9", questionBoxId = "right-viewport-question-box-example", containerId = Nothing }
-                        , { paragraphId = "paragraph-10", blockId = "block-10", questionBoxId = "question-box-10", containerId = Just "container-10" }
-                        , { paragraphId = "paragraph-11", blockId = "block-11", questionBoxId = "question-box-11", containerId = Just "container-11" }
-                        ]
-                )
-            )
-
-        GotBlockLabelMeasurements id (Ok measurement) ->
-            ( { state | labelMeasurementsById = Dict.insert id measurement state.labelMeasurementsById }
-            , Cmd.none
-            )
-
-        GotBlockLabelMeasurements _ (Err _) ->
-            ( state
-            , -- in a real application, log an error
-              Cmd.none
-            )
-
-        GotQuestionBoxMeasurements id (Ok measurement) ->
-            ( { state | questionBoxMeasurementsById = Dict.insert id measurement state.questionBoxMeasurementsById }
-            , Cmd.none
-            )
-
-        GotQuestionBoxMeasurements _ (Err _) ->
-            ( state
-            , -- in a real application, log an error
-              Cmd.none
-            )
-
-
-measureBlockLabel : String -> Cmd Msg
-measureBlockLabel labelId =
-    Task.map2 (\label labelContent -> { label = label, labelContent = labelContent })
-        (Dom.getElement labelId)
-        (Dom.getElement (Block.labelContentId labelId))
-        |> Task.attempt (GotBlockLabelMeasurements labelId)
-
-
-measureQuestionBox : { paragraphId : String, blockId : String, questionBoxId : String, containerId : Maybe String } -> Cmd Msg
-measureQuestionBox { paragraphId, blockId, questionBoxId, containerId } =
-    Task.map4
-        (\paragraph block questionBox container ->
-            { block = block
-            , paragraph = paragraph
-            , questionBox = questionBox
-            , container = container
-            }
-        )
-        (Dom.getElement paragraphId)
-        (Dom.getElement blockId)
-        (Dom.getElement questionBoxId)
-        (Maybe.map (Dom.getElement >> Task.map Just) containerId
-            |> Maybe.withDefault (Task.succeed Nothing)
-        )
-        |> Task.attempt (GotQuestionBoxMeasurements questionBoxId)
