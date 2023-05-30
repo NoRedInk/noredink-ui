@@ -203,8 +203,8 @@ viewContainer config =
                     Nothing
     in
     styled div
-        [ Css.backgroundColor backgroundColor
-        , case config.theme of
+        ([ Css.backgroundColor backgroundColor
+         , case config.theme of
             Tip ->
                 Css.batch
                     [ Css.maxWidth (Css.px 443)
@@ -221,8 +221,10 @@ viewContainer config =
                     , Css.borderBottomRightRadius (Css.px (borderRounding * 2))
                     , Css.borderBottom3 (Css.px 8) Css.solid shadowColor
                     ]
-        , Css.width (Css.pct 100)
-        ]
+         , Css.width (Css.pct 100)
+         ]
+            ++ config.containerCss
+        )
         [ AttributesExtra.nriDescription "question-box-container" ]
         [ styled div
             [ Css.lineHeight (Css.num 1.4)
