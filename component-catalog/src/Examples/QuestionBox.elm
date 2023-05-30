@@ -124,14 +124,14 @@ view ellieLinkConfig state =
         , Table.custom
             { header = text "Example"
             , view = .example
-            , width = Css.pct 50
+            , width = Css.pct 40
             , cellStyles = always []
             , sort = Nothing
             }
         , Table.custom
             { header = text "Code"
             , view = \{ pattern } -> code [] [ text pattern ]
-            , width = Css.px 50
+            , width = Css.pct 45
             , cellStyles =
                 always
                     [ Css.padding2 (Css.px 14) (Css.px 7)
@@ -144,9 +144,8 @@ view ellieLinkConfig state =
         ]
         [ { description = "**Neutral Step**"
           , example =
-                tableExample "paragraph-0"
-                    [ QuestionBox.id "question-box-0"
-                    , QuestionBox.markdown "**Adjectives describe nouns.** <br/><br/>Which word describes the noun **lollipop**?"
+                tableExample
+                    [ QuestionBox.markdown "**Adjectives describe nouns.** <br/><br/>Which word describes the noun **lollipop**?"
                     , QuestionBox.actions
                         [ { label = "won", theme = Button.secondary, onClick = NoOp }
                         , { label = "huge", theme = Button.secondary, onClick = NoOp }
@@ -155,23 +154,20 @@ view ellieLinkConfig state =
                     ]
           , pattern =
                 tableExampleCode
-                    [ Code.fromModule "Block" "view"
+                    [ Code.fromModule moduleName "markdown " ++ Code.string "**Adjectives describe nouns.** <br/><br/>Which word describes the noun **lollipop**?"
+                    , Code.fromModule moduleName "actions"
                         ++ Code.listMultiline
-                            [ Code.fromModule "Block" "id " ++ Code.string "block-id"
-                            , Code.fromModule "Block" "plaintext " ++ Code.string "Dave"
+                            [ secondaryButtonCode "won"
+                            , secondaryButtonCode "huge"
+                            , secondaryButtonCode "T’Challa"
                             ]
-                            3
-                    , "…"
-                    ]
-                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
-                    , Code.fromModule moduleName "markdown " ++ Code.string "Who?"
+                            2
                     ]
           }
         , { description = "**Correct Step**"
           , example =
-                tableExample "paragraph-1"
-                    [ QuestionBox.id "question-box-1"
-                    , QuestionBox.markdown "**That's right!** 🎉 <br/><br/> **Scary** tells us **what kind** of painting. <br/> That means **scary** is an **adjective**."
+                tableExample
+                    [ QuestionBox.markdown "**That's right!** 🎉 <br/><br/> **Scary** tells us **what kind** of painting. <br/> That means **scary** is an **adjective**."
                     , QuestionBox.correct
                     , QuestionBox.actions
                         [ { label = "try this question again", theme = Button.primary, onClick = NoOp }
@@ -179,23 +175,19 @@ view ellieLinkConfig state =
                     ]
           , pattern =
                 tableExampleCode
-                    [ Code.fromModule "Block" "view"
+                    [ Code.fromModule moduleName "markdown " ++ Code.string "**That's right!** 🎉 <br/><br/> **Scary** tells us **what kind** of painting. <br/> That means **scary** is an **adjective**."
+                    , Code.fromModule moduleName "correct"
+                    , Code.fromModule moduleName "actions"
                         ++ Code.listMultiline
-                            [ Code.fromModule "Block" "id " ++ Code.string "block-id"
-                            , Code.fromModule "Block" "plaintext " ++ Code.string "Dave"
+                            [ primaryButtonCode "try this question again"
                             ]
-                            3
-                    , "…"
-                    ]
-                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
-                    , Code.fromModule moduleName "markdown " ++ Code.string "Who?"
+                            2
                     ]
           }
         , { description = "**Incorrect Step**"
           , example =
-                tableExample "paragraph-2"
-                    [ QuestionBox.id "question-box-2"
-                    , QuestionBox.markdown "**Not quite.** <br/><br /> **Past** doesn't tell us **what kind** of painting it is. <br/><br/> Look for word like these: \n- funny \n- pretty"
+                tableExample
+                    [ QuestionBox.markdown "**Not quite.** <br/><br /> **Past** doesn't tell us **what kind** of painting it is. <br/><br/> Look for word like these: \n- funny \n- pretty"
                     , QuestionBox.incorrect
                     , QuestionBox.actions
                         [ { label = "Try again", theme = Button.secondary, onClick = NoOp }
@@ -203,44 +195,31 @@ view ellieLinkConfig state =
                     ]
           , pattern =
                 tableExampleCode
-                    [ Code.fromModule "Block" "view"
+                    [ Code.fromModule moduleName "markdown " ++ Code.string "**Not quite.** <br/><br /> **Past** doesn't tell us **what kind** of painting it is. <br/><br/> Look for word like these: \n- funny \n- pretty"
+                    , Code.fromModule moduleName "incorrect"
+                    , Code.fromModule moduleName "actions"
                         ++ Code.listMultiline
-                            [ Code.fromModule "Block" "id " ++ Code.string "block-id"
-                            , Code.fromModule "Block" "plaintext " ++ Code.string "Dave"
+                            [ secondaryButtonCode "Try again"
                             ]
-                            3
-                    , "…"
-                    ]
-                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
-                    , Code.fromModule moduleName "markdown " ++ Code.string "Who?"
+                            2
                     ]
           }
         , { description = "**Retry Tip**"
           , example =
-                tableExample "paragraph-3"
-                    [ QuestionBox.id "question-box-3"
-                    , QuestionBox.markdown "This list has **three items**, so you need two commas to separate them. **Put commas between the items.**"
+                tableExample
+                    [ QuestionBox.markdown "This list has **three items**, so you need two commas to separate them. **Put commas between the items.**"
                     , QuestionBox.tip
                     ]
           , pattern =
                 tableExampleCode
-                    [ Code.fromModule "Block" "view"
-                        ++ Code.listMultiline
-                            [ Code.fromModule "Block" "id " ++ Code.string "block-id"
-                            , Code.fromModule "Block" "plaintext " ++ Code.string "Dave"
-                            ]
-                            3
-                    , "…"
-                    ]
-                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
-                    , Code.fromModule moduleName "markdown " ++ Code.string "Who?"
+                    [ Code.fromModule moduleName "markdown " ++ Code.string "This list has **three items**, so you need two commas to separate them. **Put commas between the items.**"
+                    , Code.fromModule moduleName "tip"
                     ]
           }
         , { description = "**Retry Incorrect**"
           , example =
-                tableExample "paragraph-4"
-                    [ QuestionBox.id "question-box-4"
-                    , QuestionBox.markdown "**Not quite.** <br/><br/> Remember, **adjectives** are **describing words**. In this sentence, **scary** is an adjective. It tells us **what kind** of **painting**."
+                tableExample
+                    [ QuestionBox.markdown "**Not quite.** <br/><br/> Remember, **adjectives** are **describing words**. In this sentence, **scary** is an adjective. It tells us **what kind** of **painting**."
                     , QuestionBox.incorrect
                     , QuestionBox.actionsHorizontal
                     , QuestionBox.actions
@@ -250,35 +229,39 @@ view ellieLinkConfig state =
                     ]
           , pattern =
                 tableExampleCode
-                    [ Code.fromModule "Block" "view"
+                    [ Code.fromModule moduleName "markdown " ++ Code.string "**Not quite.** <br/><br/> Remember, **adjectives** are **describing words**. In this sentence, **scary** is an adjective. It tells us **what kind** of **painting**."
+                    , Code.fromModule moduleName "incorrect"
+                    , Code.fromModule moduleName "actionsHorizontal"
+                    , Code.fromModule moduleName "actions"
                         ++ Code.listMultiline
-                            [ Code.fromModule "Block" "id " ++ Code.string "block-id"
-                            , Code.fromModule "Block" "plaintext " ++ Code.string "Dave"
+                            [ primaryButtonCode "Next question"
+                            , secondaryButtonCode "Review tutorial"
                             ]
-                            3
-                    , "…"
-                    ]
-                    [ Code.fromModule moduleName "id " ++ Code.string "question-box-id"
-                    , Code.fromModule moduleName "markdown " ++ Code.string "Who?"
+                            2
                     ]
           }
         ]
     ]
 
 
-tableExample : String -> List (QuestionBox.Attribute msg) -> Html msg
-tableExample paragraphId questionBoxAttributes =
+tableExample : List (QuestionBox.Attribute msg) -> Html msg
+tableExample questionBoxAttributes =
     div [ css [ Css.padding2 (Css.px 15) Css.zero ] ] [ QuestionBox.view questionBoxAttributes ]
 
 
-tableExampleCode : List String -> List String -> String
-tableExampleCode blockAttributes questionBoxAttributes =
-    "div []"
-        ++ Code.listMultiline
-            [ "p [ id \"paragraph-id\" ]" ++ Code.listMultiline blockAttributes 2
-            , Code.fromModule moduleName "view" ++ Code.listMultiline questionBoxAttributes 2
-            ]
-            1
+tableExampleCode : List String -> String
+tableExampleCode questionBoxAttributes =
+    Code.fromModule moduleName "view" ++ Code.listMultiline questionBoxAttributes 1
+
+
+primaryButtonCode : String -> String
+primaryButtonCode label =
+    Code.recordMultiline [ ( "label", Code.string label ), ( "theme", Code.fromModule "Button" "primary" ), ( "onClick", "NoOp" ) ] 3
+
+
+secondaryButtonCode : String -> String
+secondaryButtonCode label =
+    Code.recordMultiline [ ( "label", Code.string label ), ( "theme", Code.fromModule "Button" "secondary" ), ( "onClick", "NoOp" ) ] 3
 
 
 anchorId : String
