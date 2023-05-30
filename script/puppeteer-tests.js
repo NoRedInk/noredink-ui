@@ -87,20 +87,6 @@ describe("UI tests", function () {
     await callback(option);
   };
 
-  const questionBoxProcessing = async (name, location) => {
-    await goTo(name, location);
-
-    const [button] = await page.$x("//button[contains(., 'Measure & render')]");
-    await button.click();
-
-    await percySnapshot(page, name);
-
-    const results = await new AxePuppeteer(page)
-      .disableRules(skippedRules[name] || [])
-      .analyze();
-    handleAxeResults(name, results);
-  };
-
   const messageProcessing = async (name, location) => {
     await goTo(name, location);
     await percySnapshot(page, name);
@@ -176,7 +162,6 @@ describe("UI tests", function () {
   };
 
   const specialProcessing = {
-    QuestionBox: questionBoxProcessing,
     Message: messageProcessing,
     Modal: modalProcessing,
     Page: pageProcessing,
