@@ -14,7 +14,9 @@ spec =
     describe "Nri.Ui.QuestionBox.V5"
         [ test "renders markdown as character guidance" <|
             \() ->
-                [ QuestionBox.markdown exampleGuidanceContent ]
+                [ QuestionBox.markdown exampleGuidanceContent
+                , QuestionBox.tip
+                ]
                     |> testContext
                     |> Expect.all
                         [ Query.has exampleGuidance
@@ -23,6 +25,7 @@ spec =
         , test "renders markdown as guidance with custom character" <|
             \() ->
                 [ QuestionBox.markdown exampleGuidanceContent
+                , QuestionBox.tip
                 , QuestionBox.character (Just { name = "Apply", icon = UiIcon.apple })
                 ]
                     |> testContext
@@ -43,7 +46,8 @@ spec =
         , test "renders extra HTML content with default character" <|
             \() ->
                 [ QuestionBox.markdown exampleGuidanceContent
-                , QuestionBox.setLeftActions (Html.Styled.text readAloudContent)
+                , QuestionBox.tip
+                , QuestionBox.leftActions (Html.Styled.text readAloudContent)
                 ]
                     |> testContext
                     |> Expect.all
@@ -54,7 +58,8 @@ spec =
         , test "renders extra HTML content with custom character" <|
             \() ->
                 [ QuestionBox.markdown exampleGuidanceContent
-                , QuestionBox.setLeftActions (Html.Styled.text readAloudContent)
+                , QuestionBox.leftActions (Html.Styled.text readAloudContent)
+                , QuestionBox.tip
                 , QuestionBox.character (Just { name = "Apply", icon = UiIcon.apple })
                 ]
                     |> testContext
@@ -66,7 +71,7 @@ spec =
         , test "renders extra HTML content without character" <|
             \() ->
                 [ QuestionBox.markdown exampleGuidanceContent
-                , QuestionBox.setLeftActions (Html.Styled.text readAloudContent)
+                , QuestionBox.leftActions (Html.Styled.text readAloudContent)
                 , QuestionBox.character Nothing
                 ]
                     |> testContext
