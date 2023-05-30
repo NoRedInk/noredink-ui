@@ -344,9 +344,14 @@ viewContents : { config | id : Maybe String } -> String -> Html msg
 viewContents config markdown_ =
     styled div
         [ Css.alignSelf Css.flexStart
+        , Css.lineHeight (Css.px 28)
         , Css.Global.children
             [ Css.Global.p
                 [ Css.margin Css.zero
+                ]
+            , Css.Global.ul
+                [ Css.marginTop (Css.px 10)
+                , Css.marginBottom Css.zero
                 ]
             ]
         ]
