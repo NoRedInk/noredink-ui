@@ -6,7 +6,6 @@ module Examples.QuestionBox exposing (Msg, State, example)
 
 -}
 
-import Browser.Dom as Dom exposing (Element)
 import Category exposing (Category(..))
 import Code
 import CommonControls
@@ -15,25 +14,20 @@ import Css.Global
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
-import Dict exposing (Dict)
 import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Markdown
-import Nri.Ui.Block.V4 as Block
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.QuestionBox.V5 as QuestionBox
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V7 as Table
-import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
-import Task
 
 
 moduleName : String
@@ -274,7 +268,7 @@ view ellieLinkConfig state =
 
 tableExample : String -> List (QuestionBox.Attribute msg) -> Html msg
 tableExample paragraphId questionBoxAttributes =
-    div [ css [ Css.padding2 (Css.px 15) (Css.zero) ] ] [ QuestionBox.view questionBoxAttributes ]
+    div [ css [ Css.padding2 (Css.px 15) Css.zero ] ] [ QuestionBox.view questionBoxAttributes ]
 
 
 tableExampleCode : List String -> List String -> String
@@ -285,18 +279,6 @@ tableExampleCode blockAttributes questionBoxAttributes =
             , Code.fromModule moduleName "view" ++ Code.listMultiline questionBoxAttributes 2
             ]
             1
-
-
-inParagraph : String -> List (Html msg) -> Html msg
-inParagraph id =
-    p
-        [ Attributes.id id
-        , css
-            [ Css.margin Css.zero
-            , Fonts.quizFont
-            , Css.fontSize (Css.px 30)
-            ]
-        ]
 
 
 anchorId : String
