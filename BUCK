@@ -13,7 +13,7 @@ elm_docs(
 
 elm_test(
     name = "elm_test",
-    test_srcs = glob(["test/**/*.elm"]),
+    test_srcs = glob(["tests/**/*.elm"]),
     elm_test = ":elm_test_binary",
 )
 
