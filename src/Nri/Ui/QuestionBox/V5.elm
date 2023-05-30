@@ -99,13 +99,15 @@ actions actions_ =
     Attribute (\config -> { config | actions = actions_ })
 
 
-{-| -}
+{-| Arranges the buttons horizontally on the QuestionBox.
+-}
 actionsHorizontal : Attribute msg
 actionsHorizontal =
     Attribute (\config -> { config | actionOrientation = Horizontal })
 
 
-{-| -}
+{-| Arranges the buttons vertically on the QuestionBox.
+-}
 actionsVertical : Attribute msg
 actionsVertical =
     Attribute (\config -> { config | actionOrientation = Vertical })
@@ -130,25 +132,38 @@ leftActions leftActions_ =
     Attribute (\config -> { config | leftActions = Just leftActions_ })
 
 
-{-| -}
+{-| A neutral dialog that should prompt the user with a question.
+
+This dialog DOES NOT show the character icon (they should be showed as part of the `CharacterStage`)
+
+-}
 neutral : Attribute msg
 neutral =
     setTheme Neutral
 
 
-{-| -}
+{-| A dialog that signifies that an answer was correct.
+
+This dialog DOES NOT show the character icon (they should be showed as part of the `CharacterStage`)
+
+-}
 correct : Attribute msg
 correct =
     setTheme Correct
 
 
-{-| -}
+{-| A dialog that signifies that an answer was incorrect.
+
+This dialog DOES NOT show the character icon (they should be showed as part of the `CharacterStage`)
+
+-}
 incorrect : Attribute msg
 incorrect =
     setTheme Incorrect
 
 
-{-| -}
+{-| An informational dialog that shows the character icon.
+-}
 tip : Attribute msg
 tip =
     setTheme Tip
@@ -315,7 +330,8 @@ viewGuidance config maybeCharacter markdown_ =
                     , Css.justifyContent Css.spaceBetween
                     ]
                 ]
-                -- We intentionally render the character first and use "rowReverse" so that a11y content is presented as "Pands says ..."
+                -- We intentionally render the character first and use "rowReverse" so that a11y content is presented as "Pands says ..." even
+                -- though the character is floating on the right.
                 [ viewCharacter character_
                 , viewContents config markdown_
                 ]
