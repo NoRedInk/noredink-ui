@@ -1,11 +1,20 @@
 # A list of available rules and their signatures can be found here: https://buck2.build/docs/api/rules/
-load("@prelude-nri//:elm.bzl", "elm_docs", "elm_format_diffs")
+load("@prelude-nri//:elm.bzl", "elm_docs", "elm_format_diffs", "elm_test")
 load("@prelude-nri//:node.bzl", "node_modules", "npm_bin", "npm_script_test", "prettier_diffs")
 
 elm_docs(
     name = "docs.json",
     elm_json = "elm.json",
     src = "src",
+    tests = [
+        ":elm_test",
+    ],
+)
+
+elm_test(
+    name = "elm_test",
+    test_srcs = glob(["tests/**/*.elm"]),
+    elm_test = ":elm_test_binary",
 )
 
 filegroup(
@@ -39,6 +48,13 @@ npm_bin(
     ],
 )
 
+npm_bin(
+    name = "elm_test_binary",
+    bin_name = "elm-test",
+    node_modules = ":node_modules",
+    visibility = ["//component-catalog:elm_test"],
+)
+
 export_file(
     name = "elm.json",
     visibility = ["//component-catalog:public"],
@@ -47,10 +63,11 @@ export_file(
 npm_script_test(
     name = "puppeteer",
     node_modules = ":node_modules",
-    args = ["default", "$(location //component-catalog:public)"],
+    args = ["default", "public"],
     extra_files = {
         "script/puppeteer-tests.sh": "script/puppeteer-tests.sh",
         "script/puppeteer-tests.js": "script/puppeteer-tests.js",
+        "public": "//component-catalog:public",
     },
 )
 
@@ -69,6 +86,6 @@ genrule(
 
 prettier_diffs(
     name = "prettier_diffs",
-    srcs = glob(["**/*.md"]),
+    srcs = glob(["**/*.md", "script/**/*.js"]),
     prettier = "//:prettier",
 )
