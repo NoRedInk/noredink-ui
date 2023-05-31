@@ -10,7 +10,7 @@ import Code
 import Css
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples exposing (Group)
-import Nri.Ui.CharacterIcon.V1 as CharacterIcon
+import Nri.Ui.CharacterIcon.V2 as CharacterIcon
 
 
 {-| -}
@@ -33,11 +33,11 @@ example : Example State Msg
 example =
     { moduleName = moduleName
     , version = 1
-    , label = "Panda"
-    , name = "panda"
-    , icon = CharacterIcon.panda
+    , label = "Lindy"
+    , name = "lindy"
+    , icon = CharacterIcon.lindyInstructive
     , renderSvgCode = \name -> Code.fromModule moduleName name
-    , preview = IconExamples.preview [ CharacterIcon.panda, CharacterIcon.redPanda ]
+    , preview = IconExamples.preview [ CharacterIcon.lindyInstructive ]
     , all = all
     }
         |> IconExamples.example
@@ -46,16 +46,10 @@ example =
 all : List Group
 all =
     [ ( "Scaffolding"
-      , [ ( "panda"
-          , CharacterIcon.panda
-          , [ Css.height (Css.px 50)
-            , Css.width (Css.px 50)
-            ]
-          )
-        , ( "redPanda"
-          , CharacterIcon.redPanda
-          , [ Css.height (Css.px 50)
-            , Css.width (Css.px 50)
+      , [ ( "lindyInstructive"
+          , CharacterIcon.lindyInstructive
+          , [ Css.width (Css.px 48)
+            , Css.height (Css.px 64)
             ]
           )
         ]
