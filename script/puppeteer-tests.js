@@ -1,4 +1,5 @@
 const expect = require("expect");
+const fs = require("fs");
 const puppeteer = require("puppeteer");
 const httpServer = require("http-server");
 const percySnapshot = require("@percy/puppeteer");
@@ -17,9 +18,17 @@ describe("UI tests", function () {
   let browser;
 
   before(async () => {
-    server = httpServer.createServer({
-      root: process.env.ROOT || `${__dirname}/../public`,
-    });
+    let root = process.env.ROOT || `${__dirname}/../public`
+
+    if (!fs.existsSync(root)) {
+      assert.fail(`Root was specified as ${root}, but that path does not exist.`)
+    }
+
+    if (!fs.existsSync(`${root}/index.html`)) {
+      assert.fail(`Root was specified as ${root}, but does not contain an index.html.`)
+    }
+
+    server = httpServer.createServer({ root });
     server.listen(PORT);
 
     browser = await puppeteer.launch({
