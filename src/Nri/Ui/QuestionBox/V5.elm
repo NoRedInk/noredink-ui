@@ -106,7 +106,7 @@ actionsHorizontal =
     Attribute (\config -> { config | actionOrientation = Horizontal })
 
 
-{-| Arranges the buttons vertically on the QuestionBox.
+{-| Arranges the buttons vertically on the QuestionBox. This is the default behavior.
 -}
 actionsVertical : Attribute msg
 actionsVertical =
@@ -132,7 +132,7 @@ leftActions leftActions_ =
     Attribute (\config -> { config | leftActions = Just leftActions_ })
 
 
-{-| A neutral dialog that should prompt the user with a question.
+{-| A neutral box that should prompt the user with a question. This is the default theme.
 
 This dialog DOES NOT show the character icon (they should be showed as part of the `CharacterStage`)
 
@@ -142,7 +142,7 @@ neutral =
     setTheme Neutral
 
 
-{-| A dialog that signifies that an answer was correct.
+{-| A box that signifies that an answer was correct.
 
 This dialog DOES NOT show the character icon (they should be showed as part of the `CharacterStage`)
 
@@ -152,7 +152,7 @@ correct =
     setTheme Correct
 
 
-{-| A dialog that signifies that an answer was incorrect.
+{-| A box that signifies that an answer was incorrect.
 
 This dialog DOES NOT show the character icon (they should be showed as part of the `CharacterStage`)
 
@@ -162,7 +162,7 @@ incorrect =
     setTheme Incorrect
 
 
-{-| An informational dialog that shows the character icon.
+{-| An informational box that shows the character icon.
 -}
 tip : Attribute msg
 tip =
