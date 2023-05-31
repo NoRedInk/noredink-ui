@@ -177,7 +177,7 @@ def _elm_test_impl(ctx: "context") -> [[DefaultInfo.type, ExternalRunnerTestInfo
         ExternalRunnerTestInfo(
             type = "elm_test",
             command = command,
-            run_from_project_root = False,
+            use_project_relative_paths = False,
         ),
     ]
 

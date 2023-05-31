@@ -127,6 +127,7 @@ def _npm_script_test_impl(ctx: "context") -> [[DefaultInfo.type, ExternalRunnerT
         ExternalRunnerTestInfo(
             type = "npm",
             command = cmd,
+            use_project_relative_paths = False,
         ),
         DefaultInfo(),
     ]
