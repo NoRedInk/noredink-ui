@@ -33,6 +33,12 @@ describe("UI tests", function () {
     server.close();
   });
 
+  const handlePageErrors = function (page) {
+    page.on('pageerror', (err) => {
+      console.log("Error from page:", err.toString());
+    })
+  }
+
   const handleAxeResults = function (name, results) {
     const violations = results["violations"];
     if (violations.length > 0) {
@@ -188,6 +194,7 @@ describe("UI tests", function () {
 
   it("All", async function () {
     page = await browser.newPage();
+    handlePageErrors(page);
     await page.goto(`http://localhost:${PORT}`);
     await page.$("#maincontent");
     await percySnapshot(page, this.test.fullTitle());
@@ -208,6 +215,7 @@ describe("UI tests", function () {
 
   it("Doodads", async function () {
     page = await browser.newPage();
+    handlePageErrors(page);
     await page.goto(`http://localhost:${PORT}`);
 
     await page.$("#maincontent");
