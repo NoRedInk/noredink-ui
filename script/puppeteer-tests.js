@@ -18,14 +18,18 @@ describe("UI tests", function () {
   let browser;
 
   before(async () => {
-    let root = process.env.ROOT || `${__dirname}/../public`
+    let root = process.env.ROOT || `${__dirname}/../public`;
 
     if (!fs.existsSync(root)) {
-      assert.fail(`Root was specified as ${root}, but that path does not exist.`)
+      assert.fail(
+        `Root was specified as ${root}, but that path does not exist.`
+      );
     }
 
     if (!fs.existsSync(`${root}/index.html`)) {
-      assert.fail(`Root was specified as ${root}, but does not contain an index.html.`)
+      assert.fail(
+        `Root was specified as ${root}, but does not contain an index.html.`
+      );
     }
 
     server = httpServer.createServer({ root });
@@ -43,10 +47,10 @@ describe("UI tests", function () {
   });
 
   const handlePageErrors = function (page) {
-    page.on('pageerror', (err) => {
+    page.on("pageerror", (err) => {
       console.log("Error from page:", err.toString());
-    })
-  }
+    });
+  };
 
   const handleAxeResults = function (name, results) {
     const violations = results["violations"];
@@ -204,7 +208,7 @@ describe("UI tests", function () {
   it("All", async function () {
     page = await browser.newPage();
     handlePageErrors(page);
-    await page.goto(`http://localhost:${PORT}`);
+    await page.goto(`http://localhost:${PORT}`, { waitUntil: "load" });
     await page.$("#maincontent");
     await percySnapshot(page, this.test.fullTitle());
 
