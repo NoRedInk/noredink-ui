@@ -63,10 +63,11 @@ export_file(
 npm_script_test(
     name = "puppeteer",
     node_modules = ":node_modules",
-    args = ["default", "$(location //component-catalog:public)"],
+    args = ["default", "public"],
     extra_files = {
         "script/puppeteer-tests.sh": "script/puppeteer-tests.sh",
         "script/puppeteer-tests.js": "script/puppeteer-tests.js",
+        "public": "//component-catalog:public",
     },
 )
 
