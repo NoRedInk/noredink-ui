@@ -114,9 +114,9 @@
         "tesk9/palette": "3.0.1 <= v < 4.0.0"
     },
     "test-dependencies": {
-        "avh4/elm-program-test": "3.3.0 <= v < 4.0.0",
+        "avh4/elm-program-test": "4.0.0 <= v < 5.0.0",
         "elm/html": "1.0.0 <= v < 2.0.0",
-        "elm-explorations/test": "1.2.2 <= v < 2.0.0",
+        "elm-explorations/test": "2.0.0 <= v < 3.0.0",
         "tesk9/accessible-html": "5.0.0 <= v < 6.0.0"
     }
 }
