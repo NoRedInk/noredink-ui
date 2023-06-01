@@ -155,3 +155,46 @@ elm_format_diffs = rule(
         ),
     }
 )
+
+def _elm_test_impl(ctx: "context") -> [[DefaultInfo.type, ExternalRunnerTestInfo.type]]:
+    command = [
+        ctx.attrs._python_toolchain[PythonToolchainInfo].interpreter,
+        cmd_args(ctx.attrs._elm_toolchain[ElmToolchainInfo].elm_test_workdir[DefaultInfo].default_outputs),
+        "--elm-test-binary",
+        ctx.attrs.elm_test[RunInfo] if ctx.attrs.elm_test else "elm-test",
+        ctx.label.package or '.',
+        cmd_args(ctx.attrs._elm_toolchain.get(ElmToolchainInfo).elm, format="--compiler={}"),
+        cmd_args(str(ctx.attrs.fuzz), format="--fuzz={}"),
+    ]
+
+    if ctx.attrs.seed:
+        command.append(cmd_args(ctx.attrs.seed, format="--seed={}"))
+
+    command.extend(ctx.attrs.test_srcs)
+
+    return [
+        DefaultInfo(),
+        ExternalRunnerTestInfo(
+            type = "elm_test",
+            command = command,
+            use_project_relative_paths = False,
+        ),
+    ]
+
+elm_test = rule(
+    impl = _elm_test_impl,
+    attrs = {
+        "test_srcs": attrs.list(attrs.source()),
+        "fuzz": attrs.int(default=100),
+        "seed": attrs.option(attrs.string(), default=None),
+        "elm_test": attrs.option(attrs.exec_dep(), default=None),
+        "_elm_toolchain": attrs.toolchain_dep(
+            default = "toolchains//:elm",
+            providers = [ElmToolchainInfo],
+        ),
+        "_python_toolchain": attrs.toolchain_dep(
+            default = "toolchains//:python",
+            providers = [PythonToolchainInfo],
+        ),
+    },
+)

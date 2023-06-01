@@ -274,7 +274,7 @@ view { label, selected } attributes =
                 ( enabledLabelCss, icon )
             )
          ]
-            ++ InputErrorAndGuidanceInternal.view config_.identifier (Css.marginTop Css.zero) config_
+            ++ [ div [ css [ paddingLeft (px 40) ] ] (InputErrorAndGuidanceInternal.view config_.identifier (Css.marginTop Css.zero) config_) ]
         )
 
 
