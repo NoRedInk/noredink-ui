@@ -32,12 +32,12 @@ moduleName =
 example : Example State Msg
 example =
     { moduleName = moduleName
-    , version = 1
+    , version = 2
     , label = "Lindy"
-    , name = "salInstructive"
-    , icon = CharacterIcon.salInstructive
+    , name = "salSupportive"
+    , icon = CharacterIcon.salSupportive
     , renderSvgCode = \name -> Code.fromModule moduleName name
-    , preview = IconExamples.preview [ CharacterIcon.lindyInstructive, CharacterIcon.lindySupportive ]
+    , preview = IconExamples.preview [ CharacterIcon.lindyInstructive, CharacterIcon.lindySupportive, CharacterIcon.salInstructive, CharacterIcon.salSupportive ]
     , all = all
     }
         |> IconExamples.example
@@ -60,6 +60,12 @@ all =
           )
         , ( "salInstructive"
           , CharacterIcon.salInstructive
+          , [ Css.width (Css.px 48)
+            , Css.height (Css.px 64)
+            ]
+          )
+        , ( "salSupportive"
+          , CharacterIcon.salSupportive
           , [ Css.width (Css.px 48)
             , Css.height (Css.px 64)
             ]
