@@ -116,7 +116,7 @@ Run tests with
 - `shake test`
 - `elm-test`
 
-You can run the Puppeteer tests for only one component by passing the name of the component to the test script, for example: `./script/puppeteer-tests-no-percy.sh Button`
+You can run the Puppeteer tests for only one component by passing the name of the component to the test script, for example: `./script/puppeteer-tests.sh Button`
 
 ### CI (Travis)
 
