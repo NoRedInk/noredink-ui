@@ -34,8 +34,8 @@ example =
     { moduleName = moduleName
     , version = 1
     , label = "Lindy"
-    , name = "lindyInstructive"
-    , icon = CharacterIcon.lindyInstructive
+    , name = "salInstructive"
+    , icon = CharacterIcon.salInstructive
     , renderSvgCode = \name -> Code.fromModule moduleName name
     , preview = IconExamples.preview [ CharacterIcon.lindyInstructive, CharacterIcon.lindySupportive ]
     , all = all
@@ -54,6 +54,12 @@ all =
           )
         , ( "lindySupportive"
           , CharacterIcon.lindySupportive
+          , [ Css.width (Css.px 48)
+            , Css.height (Css.px 64)
+            ]
+          )
+        , ( "salInstructive"
+          , CharacterIcon.salInstructive
           , [ Css.width (Css.px 48)
             , Css.height (Css.px 64)
             ]

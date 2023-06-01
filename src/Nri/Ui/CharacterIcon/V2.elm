@@ -1,4 +1,8 @@
-module Nri.Ui.CharacterIcon.V2 exposing (lindyInstructive, lindySupportive)
+module Nri.Ui.CharacterIcon.V2 exposing
+    ( lindyInstructive, lindySupportive
+    , salInstructive
+    , renderFullSal
+    )
 
 {-|
 
@@ -389,11 +393,259 @@ salHeadshot =
         []
 
 
+renderFullSal :
+    { name : String
+    , platformEllipse : Svg.Svg Never
+    , legPaths : List String
+    , sockPaths : List String
+    , shoePaths : List String
+    , shoeLacePaths : List String
+    , shoeStripPaths : List String
+    , skirtPath : String
+    , headPaths : List String
+    , facePath : String
+    , eyeStreakPaths : List String
+    , nosePath : String
+    , armPaths : List String
+    , sweaterPaths : List String
+    , shoulderFillPoints : List String
+    , eyeEllipses : List (Svg.Svg Never)
+    , irisEllipses : List (Svg.Svg Never)
+    , eyelidPaths : List String
+    , mouthPath : String
+    , eyebrowPaths : List String
+    , pointerPath : String
+    , pointerMagicPaths : List String
+    , fingerPaths : List String
+    , accentPaths : List String
+    , jewel1Ellipse : Svg.Svg Never
+    , jewel2Points : String
+    , jewel3Points : String
+    , cuffPaths : List String
+    }
+    -> Nri.Ui.Svg.V1.Svg
+renderFullSal config =
+    let
+        stroke =
+            { dark = Css.property "stroke" "#231F20"
+            , black = Css.property "stroke" "#000000"
+            , light = Css.property "stroke-width" "1.5"
+            , medium = Css.property "stroke-width" "1.87"
+            , heavy = Css.property "stroke-width" "2.62"
+            }
+
+        fill =
+            { platform = Css.fill (Css.hex "9E9EA9")
+            , body = Css.fill (Css.hex "B298A2")
+            , sock = Css.fill (Css.hex "F5C377")
+            , shoe = Css.fill (Css.hex "D33353")
+            , white = Css.fill (Css.hex "FFFFFF")
+            , none = Css.property "fill" "none"
+            , skirt = Css.fill (Css.hex "D88B29")
+            , face = Css.fill (Css.hex "E7DDE1")
+            , streak = Css.fill (Css.hex "6F5861")
+            , nose = Css.fill (Css.hex "352C31")
+            , sweater = Css.fill (Css.hex "FDF8DD")
+            , iris = Css.fill (Css.hex "231F20")
+            , eyebrow = Css.fill (Css.hex "5B4951")
+            , pointer = Css.fill (Css.hex "06CBBA")
+            , jewel3 = Css.fill (Css.hex "B1263F")
+            }
+    in
+    Nri.Ui.Svg.V1.init "0 0 480 600"
+        [ Svg.defs []
+            [ Svg.g
+                [ id (config.name ++ "_legs"), css [ stroke.heavy ] ]
+                (List.map (\path -> Svg.path [ d path ] []) config.legPaths)
+            , Svg.path
+                [ id (config.name ++ "_face"), css [ stroke.light ], d config.facePath ]
+                []
+            ]
+        , Svg.g
+            [ css
+                [ Css.color (Css.hex "231F20")
+                , Css.property "stroke-miterlimit" "10"
+                ]
+            ]
+            [ Svg.g
+                [ css [ fill.platform, Css.opacity (Css.num 0.35), Css.property "enable-background" "new" ] ]
+                [ config.platformEllipse
+                ]
+            , Svg.use [ xlinkHref ("#" ++ config.name ++ "_legs"), css [ fill.body, stroke.dark ] ] []
+            , Svg.mask [ id (config.name ++ "_legMask") ]
+                [ Svg.use [ xlinkHref ("#" ++ config.name ++ "_legs"), maskStyle ] []
+                ]
+            , Svg.g [ css [ Css.property "mask" ("url(#" ++ config.name ++ "_legMask" ++ ")") ] ]
+                [ Svg.g
+                    [ css [ fill.sock, stroke.black, stroke.light ]
+                    ]
+                    (List.map (\path -> Svg.path [ d path ] []) config.sockPaths)
+                , Svg.g
+                    [ css [ fill.shoe, stroke.dark, stroke.medium ]
+                    ]
+                    (List.map (\path -> Svg.path [ d path ] []) config.shoePaths)
+                , Svg.g
+                    [ css [ fill.white, stroke.black, stroke.light ] ]
+                    (List.map (\path -> Svg.path [ d path ] []) config.shoeStripPaths)
+                , Svg.g
+                    [ css [ fill.none, stroke.black, stroke.heavy ] ]
+                    (List.map (\path -> Svg.path [ d path ] []) config.shoeLacePaths)
+                ]
+            , Svg.path [ d config.skirtPath, css [ fill.skirt, stroke.dark, stroke.heavy ] ] []
+            , Svg.g
+                [ css [ fill.body, stroke.dark, stroke.heavy ] ]
+                (List.map (\path -> Svg.path [ d path ] []) config.headPaths)
+            , Svg.use [ xlinkHref ("#" ++ config.name ++ "_face"), css [ fill.face, stroke.dark ] ] []
+            , Svg.mask [ id (config.name ++ "_faceMask") ]
+                [ Svg.use [ xlinkHref ("#" ++ config.name ++ "_face"), maskStyle ] []
+                ]
+            , Svg.g
+                [ css [ fill.streak, stroke.dark, stroke.light, Css.property "mask" ("url(#" ++ config.name ++ "_faceMask" ++ ")") ] ]
+                (List.map (\path -> Svg.path [ d path ] []) config.eyeStreakPaths)
+            , Svg.path [ d config.nosePath, css [ fill.nose, stroke.dark, stroke.medium ] ] []
+            , Svg.g
+                [ css [ fill.body, stroke.dark, stroke.heavy ] ]
+                (List.map (\path -> Svg.path [ d path ] []) config.armPaths)
+            , Svg.g
+                [ css [ fill.sweater, stroke.dark, stroke.heavy ] ]
+                (List.map (\path -> Svg.path [ d path ] []) config.sweaterPaths)
+            , Svg.g
+                [ css [ fill.sweater ]
+                ]
+                (List.map (\pts -> Svg.polygon [ points pts ] []) config.shoulderFillPoints)
+            , Svg.g
+                [ css [ fill.white, stroke.dark, stroke.heavy ] ]
+                config.eyeEllipses
+            , Svg.g
+                [ css [ fill.iris ] ]
+                config.irisEllipses
+            , Svg.g
+                [ css [ fill.streak, stroke.dark, stroke.heavy ] ]
+                (List.map (\path -> Svg.path [ d path ] []) config.eyelidPaths)
+            , Svg.path [ d config.mouthPath, css [ fill.iris ] ] []
+            , Svg.g
+                [ css [ fill.eyebrow, stroke.dark, stroke.heavy ] ]
+                (List.map (\path -> Svg.path [ d path ] []) config.eyebrowPaths)
+            , Svg.path [ d config.pointerPath, css [ fill.pointer, stroke.black, stroke.medium ] ] []
+            , Svg.g
+                [ css [ fill.iris ] ]
+                (List.map (\path -> Svg.path [ d path ] []) config.pointerMagicPaths)
+            , Svg.g
+                [ css [ fill.streak, stroke.dark, stroke.heavy ] ]
+                (List.map (\path -> Svg.path [ d path ] []) config.fingerPaths)
+            , Svg.g
+                [ css [ fill.iris ] ]
+                (List.map (\path -> Svg.path [ d path ] []) config.accentPaths)
+            , Svg.g
+                [ css [ fill.sock, stroke.dark, stroke.medium ] ]
+                [ config.jewel1Ellipse
+                ]
+            , Svg.polygon [ points config.jewel2Points, css [ fill.shoe, stroke.dark, stroke.medium ] ] []
+            , Svg.polygon [ points config.jewel3Points, css [ fill.jewel3, stroke.dark, stroke.medium ] ] []
+            , Svg.g
+                [ css [ fill.none, stroke.dark, stroke.medium ] ]
+                (List.map (\path -> Svg.path [ d path ] []) config.cuffPaths)
+            ]
+        ]
+
+
 {-| -}
 salInstructive : Nri.Ui.Svg.V1.Svg
 salInstructive =
-    Nri.Ui.Svg.V1.init ""
-        []
+    renderFullSal
+        { name = "salInstructive"
+        , platformEllipse = Svg.ellipse [ cx "219.6", cy "572.4", rx "92.5", ry "17.4" ] []
+        , legPaths =
+            [ "M184.8,528c0.4,10.9,0.8,19.3,0.8,19.3s-15,9.7-16.5,15.9c-1.7,6.8,9.2,16.3,29,8.1c19.2-8,17.3-12.5,17.3-21.6\n\tc0-9,0-54.8,0-54.8l-30.2,4.2C185.2,499.2,184.4,517.2,184.8,528L184.8,528z"
+            , "M261.3,525.7c0.5,10.9,0.9,19.3,0.9,19.3s15.7,8.3,17.8,14.4c2.3,6.6-7.8,17-28.2,10.5\n\tc-19.8-6.3-18.3-11-19.1-20c-0.8-9-4.7-54.6-4.7-54.6l30.4,1.6C258.5,497,260.8,514.8,261.3,525.7L261.3,525.7z"
+            ]
+        , sockPaths =
+            [ "M195.7,547.1c0,0,6.1,0.8,12,0.6s9.7-1.8,9.7-1.8s0.5,11.6,0.3,12.1s-3.3,3.9-7.7,3.3\n\t\t\tC205.7,560.7,195.7,547.1,195.7,547.1L195.7,547.1z"
+            , "M252.2,545.6c0,0-5.9,1.3-11.9,1.6c-5.7,0.3-9.8-1-9.8-1s0.5,11.6,0.7,12.1s3.6,3.6,7.9,2.6\n\t\t\tS252.2,545.6,252.2,545.6z"
+            ]
+        , shoePaths =
+            [ "M221,559.3c0,0-6.7-6-13.4-7.5c-4.1-0.9-8.2-1.1-9.4-0.8c-0.4,0.1-0.8-0.3-0.7-0.7c0.6-2.1,1.6-6.5-0.4-7.4\n\t\t\tc-2.6-1.2-16.1,0.5-16.1,0.5v3.3c0,0-19.4,8.2-19.4,14.5s0.6,21,18.4,21.4S221,559.4,221,559.3L221,559.3z"
+            , "M228,560c0,0,6.1-6.6,12.7-8.6c4-1.2,8.1-1.8,9.2-1.7c0.4,0.1,0.8-0.4,0.6-0.8c-0.8-2-2.2-6.3-0.3-7.5\n\t\t\tc2.5-1.5,16.1-0.8,16.1-0.8l0.3,3.3c0,0,20,6.5,20.6,12.8c0.5,6.3,1.2,21-16.5,22.9S228,560,228,560L228,560z"
+            ]
+        , shoeLacePaths =
+            [ "M179.2,551.6c0.1,0.2,5.3-1.1,10.3,4.1"
+            , "M269,548.7c-0.1,0.2-4.9-0.2-9.7,5.5"
+            ]
+        , shoeStripPaths =
+            [ "M168.4,554.7c0,0,7.6-1.5,13,3.8c5.4,5.3,10.9,17.5,10.9,17.5s-8,9.4-15.9,6.3c-7.9-3.1-20.1-10.2-17.9-17.3\n\t\t\tC160.6,557.9,168.4,554.7,168.4,554.7L168.4,554.7z"
+            , "M166.4,565.9c0,0,5.8,3.3,15.6,2.9c9.9-0.4,23.5-6.3,28.5-10s5.4-6.1,5.4-6.1l3.1,1.3c0,0,2.8,3.6-0.5,9.4\n\t\t\tc-3.3,5.8-12.1,11.8-22.3,12.9s-23.7,4.3-28.1,0.6C163.7,573.3,166.4,565.9,166.4,565.9L166.4,565.9z"
+            , "M280,550.8c0,0-7.7-0.8-12.6,4.9c-4.9,5.7-9.3,18.4-9.3,18.4s8.8,8.7,16.4,4.9s19.1-11.9,16.3-18.8\n\t\t\tS280,550.8,280,550.8L280,550.8z"
+            , "M283,561.8c0,0-5.5,3.8-15.3,4.2s-24-4.3-29.2-7.5c-5.3-3.2-5.9-5.6-5.9-5.6l-3,1.5c0,0-2.5,3.8,1.3,9.3\n\t\t\tc3.8,5.5,13.1,10.7,23.3,10.9c10.2,0.2,24,2.2,28.1-1.8S283,561.8,283,561.8L283,561.8z"
+            ]
+        , skirtPath = "M158.8,527.3c0,0,5.8-17,8-26.5c2-8.6,5.6-28,5.6-28s18.9,5.3,46.7,3.8c26.7-1.4,45.9-7.8,45.9-7.8\n\ts1.3,15.1,4.4,25.8c3.1,10.7,10.3,25.4,10.3,25.4s-18.6,11.7-60.5,12.7C177.9,533.7,158.8,527.3,158.8,527.3z"
+        , headPaths =
+            [ "M182,382.7l2.1-15.5c0,0-23.5-2.7-35.7-22.1c-12.2-19.4-9.2-46.2,10.3-66.8c19.5-20.5,46.7-34,89.5-22.2\n\ts46.1,53,45.7,61.2c-0.4,9.2-3.3,28.7-21.4,39.6c-17.5,10.6-27.3,11.2-27.3,11.2l1.8,8.2c0,0-2,14.1-31.5,17.4\n\tC192.9,396.1,182,382.7,182,382.7L182,382.7z"
+            , "M193.5,257.2c0,0-8-2.2-7-14.6c1.1-13.9,15.3-17.3,15.3-17.3s-0.9,5.4,4.3,12.3c7.2,9.5,30.6,14,42.3,18.4"
+            ]
+        , facePath = "M270.6,307.4c3,12.4,3.8,26.1-5.1,37.2c-8.6,10.7-23.5,17.5-52.9,15.6c-32.5-2-47.2-11.5-56.8-24.7\n\tc-5.4-7.3-3.7-21.1-1.5-27.7c7.4-23,27.8-42,59.7-42S265.1,283.9,270.6,307.4L270.6,307.4z"
+        , eyeStreakPaths =
+            [ "M240.1,289.8c0,0,10.8,1.2,20.8,8.5c9.9,7.3,13.8,15.6,13.8,15.6l-0.6,15.5c0,0-18.9-6.5-28.5-6.7\n\t\t\tc-9.6-0.2-10.5-0.4-10.5-0.4L240.1,289.8L240.1,289.8z"
+            , "M184.6,284.7c0,0-14.6,2.9-24.5,10.2c-9.9,7.3-14.5,15.5-14.5,15.5l2.6,13c0,0,8.1-7.8,17.8-8.6\n\t\t\tc5.3-0.5,12.9-0.1,12.9-0.1L184.6,284.7L184.6,284.7z"
+            ]
+        , nosePath = "M191.4,325.1c-0.7-0.5-1.1-1.3-0.9-2.1c0.7-3.6,3.8-13.3,15.1-12.5c10.9,0.8,14.6,10.1,15.7,14.1\n\tc0.3,1-0.2,2.1-1.2,2.5c-2.9,1.2-9.5,3.3-16.9,2C196.5,327.9,193,326.1,191.4,325.1L191.4,325.1z"
+        , armPaths =
+            [ "M63.6,349c0,0-8.4-26-8-35.8c0.4-9.9,4-11.9,8-11.1s15.6,35.6,15.6,35.6L63.6,349z"
+            , "M308.1,454.7c0,0-27.3,1.5-36.7-1.4c-9.4-2.9-10.4-6.9-8.6-10.6c1.8-3.7,38.4-6,38.4-6L308.1,454.7z"
+            ]
+        , sweaterPaths =
+            [ "M166.6,434.1c0,0-46.2,3.2-69.3-16.3S62,355.1,62,355.1s-7.2-7-3.5-8.2c9.2-2.9,13.7-5.5,20.2-11.9\n\tc4.1-4,5.4,7.9,5.4,7.9s14.1,29.2,46.4,41.6c32.3,12.5,48.3,4.2,48.3,4.2"
+            , "M250.8,385.3c0,0,20.4-7.4,51.4,2.9c39.5,13.2,52.4,39,50.1,47.7c0,0-3,14.4-21.5,8.5\n\tc-16.3-5.2-23.6-12.1-37.4-15.5c-11.8-3-20.3-3.7-20.3-3.7"
+            , "M172.3,472.8c0,0-10.1-6.7-11.9-24.5c-3.2-32.6,19.8-58.9,19.8-58.9s-3.9-8.5-1.1-10.3\n\tc3.5-2.4,11.9,4.7,35.2,3.7s34-8.1,36.4-7.5c3.9,1,0,10,0,10s24.7,19.5,26,49c1.4,31.3-12.3,34.5-12.3,34.5s-19,8-45.3,10\n\tC194.2,480.7,172.3,472.8,172.3,472.8L172.3,472.8z"
+            , "M329.1,425.9c0,0-12.3,0.1-21.4,3.1c-3.9,1.3-11.2,5-14.7,4c-5.7-1.6-8.4,1.4-7.8,4.5\n\tc0.5,2.5,2.1,7.7,2.1,10.5c0,6.3-0.7,8.8,2.7,10.7s9.5-1.5,9.5-1.5s7.1,0.8,23.4-2.1s29.5-10.7,29.5-19.2"
+            ]
+        , shoulderFillPoints =
+            [ "248.8,385.4 258.7,385.4 279.5,402.7 279.5,415.6 253,415.6"
+            , "160.1,393.9 182.6,390.5 184.6,427.2 147.2,420.4 "
+            ]
+        , eyeEllipses =
+            [ Svg.ellipse [ transform "matrix(0.2565 -0.9666 0.9666 0.2565 -118.7166 459.3136)", cx "239.2", cy "306.8", rx "16", ry "12.3" ] []
+            , Svg.ellipse [ transform "matrix(0.999 -4.431684e-02 4.431684e-02 0.999 -13.1116 8.3431)", cx "181.6", cy "299.9", rx "12.3", ry "16" ] []
+            ]
+        , irisEllipses =
+            [ Svg.ellipse [ transform "matrix(0.2134 -0.977 0.977 0.2134 -112.2264 470.4945)", cx "236.1", cy "304.9", rx "7.3", ry "5.3" ] []
+            , Svg.ellipse [ cx "185.1", cy "298.7", rx "5.3", ry "7.3" ] []
+            ]
+        , eyelidPaths =
+            [ "M228.4,300.6c0,0,3.6-1.8,11.6,0.2c8.4,2.1,11.8,6,11.8,6s1.9-8.1-2.9-13c-4.1-4.3-9.7-5.3-14.6-2.1\n\tC230.2,294.5,228.4,300.6,228.4,300.6L228.4,300.6z"
+            , "M193.5,296.1c0,0-3.2-2.5-11.4-2.3c-8.6,0.2-12.9,3.3-12.9,3.3s-0.1-8.3,5.6-12.1c4.9-3.3,10.6-3.1,14.7,1.1\n\tC193,289.8,193.5,296.1,193.5,296.1z"
+            ]
+        , mouthPath = "M196.5,334.1c11.2,4.4,22.8,1.3,32.7-4.7C222.4,339.5,205.6,343.5,196.5,334.1L196.5,334.1z"
+        , eyebrowPaths =
+            [ "M254.3,279.8c0,0-8.8-4.4-14.2-5.9s-9.6-2.5-7.5-6.4c2.1-4,9.8-3.9,14.4,0S254.3,279.8,254.3,279.8z"
+            , "M178.1,275.9c0,0,9.3-2.9,14.9-3.6c5.6-0.7,9.8-0.9,8.4-5.2s-9-5.4-14.2-2.3S178.1,275.9,178.1,275.9z"
+            ]
+        , pointerPath = "M37.9,206.2l27.2,106.2l8.3-0.5L40.6,204.8c0,0-0.2-0.2-0.5-0.4\n\tC38.9,203.8,37.5,204.9,37.9,206.2L37.9,206.2z"
+        , pointerMagicPaths =
+            [ "M36.2,192.7c-1.9-5.7-3.9-11.5-5.8-17.2c-0.3-0.8-0.5-1.6-0.8-2.4c-0.6-1.7-3.3-1-2.7,0.8\n\t\t\tc1.9,5.7,3.9,11.5,5.8,17.2c0.3,0.8,0.5,1.6,0.8,2.4C34.1,195.1,36.8,194.4,36.2,192.7L36.2,192.7z"
+            , "M28.9,197.2c-3.3-2.2-6.5-4.4-9.8-6.7c-0.5-0.3-0.9-0.6-1.4-0.9c-0.6-0.4-1.6-0.1-1.9,0.5\n\t\t\tc-0.4,0.7-0.1,1.5,0.5,1.9c3.3,2.2,6.5,4.4,9.8,6.7c0.5,0.3,0.9,0.6,1.4,0.9c0.6,0.4,1.6,0.1,1.9-0.5\n\t\t\tC29.8,198.4,29.5,197.6,28.9,197.2L28.9,197.2z"
+            , "M45.2,193.4c1-2.9,2.1-5.7,3.1-8.6l0.5-1.2c0.3-0.7-0.3-1.5-1-1.7c-0.8-0.2-1.5,0.3-1.7,1\n\t\t\tc-1,2.9-2.1,5.7-3.1,8.6l-0.5,1.2c-0.3,0.7,0.3,1.5,1,1.7C44.3,194.6,45,194.1,45.2,193.4L45.2,193.4z"
+            ]
+        , fingerPaths =
+            [ "M83.5,289.4c1.3-0.4,1.2-2.2-0.2-2.4c-6.3-1-17-0.6-22.2,1.5c-7.8,3.2-9.7,10.1-7.3,14.6\n\tc1.3,2.4,0-1.7,11.2-6.8C71.5,293.4,79.3,290.6,83.5,289.4L83.5,289.4z"
+            , "M82.8,310.8c1.2,0.4,2.2-1.1,1.3-2.1c-4.6-4.4-13.6-10.2-19-11.5c-8.2-1.9-13.7,2.7-14.3,7.8\n\tc-0.3,2.7,1-1.4,13.1,0.9C70.7,307.1,82.8,310.8,82.8,310.8z"
+            , "M81.3,314c1.3,0.1,1.9-1.6,0.8-2.3c-5.4-3.4-14.4-8.3-20-8.4c-8.4,0-12.6,3.4-12.6,7.1c0,2.7,1.6,3.1,13.9,2.7\n\tC70.4,313,81.3,314,81.3,314z"
+            ]
+        , accentPaths =
+            [ "M178.1,384.8c1.4,20,8.7,50.7,35.1,43.3c20.1-6.1,33.4-31.2,41.1-49.5c-5.9,19.9-19.1,45.8-40.3,52.3\n\tC185.4,438.6,177.1,406.9,178.1,384.8L178.1,384.8L178.1,384.8z"
+            , "M199.7,226.6c-1.4,12,5.7,22.6,15.1,29.4C203.5,252.1,194.7,238.3,199.7,226.6L199.7,226.6z"
+            , "M161.1,429.2c-0.6-4.6,0.6-9.6,3.7-13.1C165.1,420.8,163.9,425.5,161.1,429.2L161.1,429.2z"
+            , "M275.9,425.9c-3.5-5.1-4.7-11-6.3-16.8C274,412.4,276.1,420.5,275.9,425.9L275.9,425.9z"
+            ]
+        , jewel1Ellipse = Svg.ellipse [ transform "matrix(0.2565 -0.9666 0.9666 0.2565 -268.3343 508.7718)", cx "196.5", cy "428.8", rx "6.2", ry "5.2" ] []
+        , jewel2Points = "205.9,426.7 203.2,442.7 216.2,442.7 213.4,425.9 "
+        , jewel3Points = "217.6,425.1 221.6,434.3 229.8,429.7 224.3,421.3 "
+        , cuffPaths =
+            [ "M178.8,388c0,0,9.1,7.8,30.9,7.4c21.8-0.5,41-10.1,41-10.1"
+            , "M163.6,461.1c0,0,12.6,10.1,52.1,8.8c34.1-1.1,58.9-14.3,58.9-14.3"
+            , "M61.1,355.8c0,0,4.6,1.1,11.9-3c7.3-4.1,12.1-10.9,12.1-10.9"
+            , "M296.7,458.2c0,0,3-3.4,2.4-11.3s-4.6-14.7-4.6-14.7"
+            ]
+        }
 
 
 {-| -}
