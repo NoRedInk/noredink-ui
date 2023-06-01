@@ -13,6 +13,8 @@ module Code exposing
     , browserElement, unstyledView
     , fromModule
     , var
+    , apply
+    , int
     )
 
 {-|
@@ -32,6 +34,7 @@ module Code exposing
 @docs always
 @docs fromModule
 @docs var
+@docs apply
 
 -}
 
@@ -68,6 +71,12 @@ maybeString =
 bool : Bool -> String
 bool =
     Debug.toString
+
+
+{-| -}
+int : Int -> String
+int =
+    String.fromInt
 
 
 {-| -}
@@ -226,3 +235,8 @@ fromModule moduleName name =
 var : String -> Int -> String -> String
 var varName indent body =
     varName ++ " =" ++ newlineWithIndent indent ++ body
+
+
+apply : List String -> String
+apply =
+    String.join " "
