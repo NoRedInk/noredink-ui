@@ -182,6 +182,8 @@ renderFullLindy config =
         ]
 
 
+{-| Full height Lindy to be shown when presenting a question.
+-}
 lindyInstructive : Nri.Ui.Svg.V1.Svg
 lindyInstructive =
     renderFullLindy
@@ -270,7 +272,8 @@ lindyInstructive =
         }
 
 
-{-| -}
+{-| Full height Lindy to be shown after getting an answer wrong.
+-}
 lindySupportive : Nri.Ui.Svg.V1.Svg
 lindySupportive =
     renderFullLindy
@@ -566,7 +569,8 @@ renderFullRed config =
         ]
 
 
-{-| -}
+{-| Full height Red to be shown when presenting a question.
+-}
 redInstructive : Nri.Ui.Svg.V1.Svg
 redInstructive =
     renderFullRed
@@ -674,7 +678,8 @@ redInstructive =
         }
 
 
-{-| -}
+{-| Full height Red to be shown on a wrong answer.
+-}
 redSupportive : Nri.Ui.Svg.V1.Svg
 redSupportive =
     renderFullRed
@@ -944,7 +949,8 @@ renderFullSal config =
         ]
 
 
-{-| -}
+{-| Full height Sal to be shown when presenting a question.
+-}
 salInstructive : Nri.Ui.Svg.V1.Svg
 salInstructive =
     renderFullSal
@@ -1044,7 +1050,8 @@ salInstructive =
         }
 
 
-{-| -}
+{-| Full height Sal to be shown on a wrong answer.
+-}
 salSupportive : Nri.Ui.Svg.V1.Svg
 salSupportive =
     renderFullSal
