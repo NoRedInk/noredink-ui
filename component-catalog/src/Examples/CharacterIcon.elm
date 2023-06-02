@@ -11,6 +11,7 @@ import Css
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples exposing (Group)
 import Nri.Ui.CharacterIcon.V2 as CharacterIcon
+import Nri.Ui.Svg.V1
 
 
 {-| -}
@@ -35,7 +36,9 @@ example =
     , version = 2
     , label = "Lindy"
     , name = "redSupportive"
-    , icon = CharacterIcon.redSupportive
+
+    -- We need to start off with a blank example image to avoid axe violations for having duplicated ids
+    , icon = Nri.Ui.Svg.V1.init "0 0 480 600" []
     , renderSvgCode = \name -> Code.fromModule moduleName name
     , preview = IconExamples.preview [ CharacterIcon.lindyInstructive, CharacterIcon.lindySupportive, CharacterIcon.salInstructive, CharacterIcon.salSupportive, CharacterIcon.redInstructive, CharacterIcon.redSupportive ]
     , all = all
