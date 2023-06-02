@@ -37,6 +37,7 @@ safeIdWithPrefix prefix string =
 {-| Creates a lowercased string that is safe to use for HTML IDs.
 Removes all groups of unsafe characters and replaces each group with a dash.
 prepends "id-" to the result to ensure that the ID starts with a letter. (necessary for CSS selectors including getElementById)
+See code pen for examples: <https://codepen.io/ap-nri/pen/OJENQLY>
 -}
 safeId : String -> String
 safeId unsafe =
