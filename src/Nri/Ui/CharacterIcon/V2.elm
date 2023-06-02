@@ -6,9 +6,9 @@ module Nri.Ui.CharacterIcon.V2 exposing
 
 {-|
 
-@docs lindyHeadshot, lindyInstructive, lindySupportive
-@docs redHeadshot, redInstructive, redSupportive
-@docs salHeadshot, salInstructive, salSupportive
+@docs lindyInstructive, lindySupportive
+@docs redInstructive, redSupportive
+@docs salInstructive, salSupportive
 
 -}
 
@@ -16,13 +16,6 @@ import Css
 import Nri.Ui.Svg.V1
 import Svg.Styled as Svg
 import Svg.Styled.Attributes exposing (..)
-
-
-{-| -}
-lindyHeadshot : Nri.Ui.Svg.V1.Svg
-lindyHeadshot =
-    Nri.Ui.Svg.V1.init ""
-        []
 
 
 {-| Use this to create a mask that **excludes** the stroke (this is almost always what we want)
@@ -363,13 +356,6 @@ lindySupportive =
         , crotchLine1Path = "M208.7,482.4c0,0,9.3,1,19.9,1.4c10.6,0.4,20.4-1.4,20.4-1.4"
         , crotchLine2Path = "M208.7,483.3c11.8,1.2,23.7,2.1,35.5,0.7c1.7-0.2,3.3-0.4,5-0.7c1.1-0.2,0.7-2-0.5-1.8c-13.1,2.4-26.8,1.3-40,0C207.5,481.4,207.5,483.2,208.7,483.3L208.7,483.3L208.7,483.3z"
         }
-
-
-{-| -}
-redHeadshot : Nri.Ui.Svg.V1.Svg
-redHeadshot =
-    Nri.Ui.Svg.V1.init ""
-        []
 
 
 redPalette =
@@ -797,13 +783,6 @@ redSupportive =
             , "m164.1,400.14c-.52-3.62-.25-7.17.26-10.74.59-3.55,1.35-7.08,3.11-10.3.38,7.24-.56,14.37-3.37,21.04h0Z"
             ]
         }
-
-
-{-| -}
-salHeadshot : Nri.Ui.Svg.V1.Svg
-salHeadshot =
-    Nri.Ui.Svg.V1.init ""
-        []
 
 
 renderFullSal :
