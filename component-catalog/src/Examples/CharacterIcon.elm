@@ -34,10 +34,10 @@ example =
     { moduleName = moduleName
     , version = 2
     , label = "Lindy"
-    , name = "redInstructive"
-    , icon = CharacterIcon.redInstructive
+    , name = "redSupportive"
+    , icon = CharacterIcon.redSupportive
     , renderSvgCode = \name -> Code.fromModule moduleName name
-    , preview = IconExamples.preview [ CharacterIcon.lindyInstructive, CharacterIcon.lindySupportive, CharacterIcon.salInstructive, CharacterIcon.salSupportive, CharacterIcon.redInstructive ]
+    , preview = IconExamples.preview [ CharacterIcon.lindyInstructive, CharacterIcon.lindySupportive, CharacterIcon.salInstructive, CharacterIcon.salSupportive, CharacterIcon.redInstructive, CharacterIcon.redSupportive ]
     , all = all
     }
         |> IconExamples.example
@@ -48,32 +48,38 @@ all =
     [ ( "Scaffolding"
       , [ ( "lindyInstructive"
           , CharacterIcon.lindyInstructive
-          , [ Css.width (Css.px 48)
-            , Css.height (Css.px 64)
+          , [ Css.width (Css.px 96)
+            , Css.height (Css.px 120)
             ]
           )
         , ( "lindySupportive"
           , CharacterIcon.lindySupportive
-          , [ Css.width (Css.px 48)
-            , Css.height (Css.px 64)
+          , [ Css.width (Css.px 96)
+            , Css.height (Css.px 120)
             ]
           )
         , ( "salInstructive"
           , CharacterIcon.salInstructive
-          , [ Css.width (Css.px 48)
-            , Css.height (Css.px 64)
+          , [ Css.width (Css.px 96)
+            , Css.height (Css.px 120)
             ]
           )
         , ( "salSupportive"
           , CharacterIcon.salSupportive
-          , [ Css.width (Css.px 48)
-            , Css.height (Css.px 64)
+          , [ Css.width (Css.px 96)
+            , Css.height (Css.px 120)
             ]
           )
         , ( "redInstructive"
           , CharacterIcon.redInstructive
-          , [ Css.width (Css.px 48)
-            , Css.height (Css.px 64)
+          , [ Css.width (Css.px 96)
+            , Css.height (Css.px 120)
+            ]
+          )
+        , ( "redSupportive"
+          , CharacterIcon.redSupportive
+          , [ Css.width (Css.px 96)
+            , Css.height (Css.px 120)
             ]
           )
         ]
