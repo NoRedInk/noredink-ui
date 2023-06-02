@@ -16,7 +16,6 @@ import Html.Styled.Events as Events
 import Html.Styled.Keyed as Keyed
 import Json.Decode
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
-import Nri.Ui.Util as Util
 
 
 {-| -}
@@ -53,7 +52,7 @@ viewTabs : Config id msg -> Html msg
 viewTabs config =
     Html.div
         [ Role.tabList
-        , Aria.owns (List.map (Util.safeId << .idString) config.tabs)
+        , Aria.owns (List.map (AttributesExtra.safeId << .idString) config.tabs)
         , Attributes.css config.tabListStyles
         ]
         (List.map (viewTab_ config) config.tabs)
@@ -103,7 +102,7 @@ viewTab_ config tab =
                , Aria.selected isSelected
                , Role.tab
                , Aria.controls [ tabToBodyId tab.idString ]
-               , Attributes.id (Util.safeId tab.idString)
+               , Attributes.id (AttributesExtra.safeId tab.idString)
                , Events.onFocus (config.onSelect tab.id)
                , Events.on "keyup" <|
                     Json.Decode.andThen (keyEvents config tab) Events.keyCode
@@ -121,7 +120,7 @@ keyEvents { onFocus, tabs } thisTab keyCode =
                     acc
 
                 ( True, Nothing ) ->
-                    ( True, Just (Util.safeId tab.idString) )
+                    ( True, Just (AttributesExtra.safeId tab.idString) )
 
                 ( False, Nothing ) ->
                     ( tab.id == thisTab.id, Nothing )
@@ -173,7 +172,7 @@ viewTabPanel : Tab id msg -> Bool -> Html msg
 viewTabPanel tab selected =
     Html.div
         ([ Role.tabPanel
-         , Aria.labelledBy (Util.safeId tab.idString)
+         , Aria.labelledBy (AttributesExtra.safeId tab.idString)
          , Attributes.id (tabToBodyId tab.idString)
          ]
             ++ (if selected then
@@ -193,9 +192,9 @@ viewTabPanel tab selected =
 
 tabToBodyId : String -> String
 tabToBodyId =
-    Util.safeIdWithPrefix "tab-body"
+    AttributesExtra.safeIdWithPrefix "tab-body"
 
 
 tabToKeyedNode : String -> String
 tabToKeyedNode =
-    Util.safeIdWithPrefix "tabs-internal-keyed-node"
+    AttributesExtra.safeIdWithPrefix "tabs-internal-keyed-node"

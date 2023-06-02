@@ -8,7 +8,7 @@ import Example exposing (Example)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs exposing (BreadCrumbs)
 import Nri.Ui.Header.V1 as Header
-import Nri.Ui.Util exposing (safeIdWithPrefix)
+import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
 import Parser exposing ((|.), (|=), Parser)
 import Url exposing (Url)
 

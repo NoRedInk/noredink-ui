@@ -92,7 +92,6 @@ import InputLabelInternal
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.InputStyles.V4 as InputStyles exposing (Theme(..))
-import Nri.Ui.Util as Util
 
 
 {-| This is private. The public API only exposes `Attribute`.
@@ -459,4 +458,4 @@ writingSingleLineHeight =
 {-| -}
 generateId : String -> String
 generateId =
-    Util.safeIdWithPrefix "nri-ui-text-area"
+    Extra.safeIdWithPrefix "nri-ui-text-area"

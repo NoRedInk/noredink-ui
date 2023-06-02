@@ -59,7 +59,6 @@ import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.InputStyles.V4 as InputStyles
-import Nri.Ui.Util exposing (safeIdWithPrefix)
 import SolidColor
 
 
@@ -476,7 +475,7 @@ viewChoice current choice =
 -}
 generateId : String -> String
 generateId =
-    safeIdWithPrefix "nri-select"
+    Extra.safeIdWithPrefix "nri-select"
 
 
 selectArrowsCss : { config | disabled : Bool } -> Css.Style

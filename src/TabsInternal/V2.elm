@@ -20,9 +20,8 @@ import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Html.Styled.Keyed as Keyed
 import Nri.Ui.FocusRing.V1 as FocusRing
-import Nri.Ui.Html.Attributes.V2 as AttributesExtra
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (safeId, safeIdWithPrefix)
 import Nri.Ui.Tooltip.V3 as Tooltip
-import Nri.Ui.Util exposing (safeId, safeIdWithPrefix)
 
 
 {-| -}

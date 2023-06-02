@@ -63,7 +63,6 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Pennant.V2 as Pennant
 import Nri.Ui.Svg.V1 exposing (Svg)
-import Nri.Ui.Util as Util
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttributes
 
@@ -277,7 +276,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                     specificId
 
                 Nothing ->
-                    Util.safeId (name ++ "-" ++ stringValue)
+                    Extra.safeId (name ++ "-" ++ stringValue)
 
         isChecked =
             selectedValue == Just value
