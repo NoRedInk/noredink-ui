@@ -3,6 +3,11 @@ export_file(
     visibility = ["PUBLIC"],
 )
 
+export_file(
+    name = "elm_test_workdir.py",
+    visibility = ["PUBLIC"],
+)
+
 ELM_COMPILER_URL = select({
     "config//os:linux": "https://github.com/elm/compiler/releases/download/0.19.1/binary-for-linux-64-bit.gz",
     "config//os:macos": "https://github.com/elm/compiler/releases/download/0.19.1/binary-for-mac-64-bit.gz",
@@ -24,6 +29,7 @@ genrule(
     cmd = "gzip --decompress --stdout --keep $(location :elm_compiler_archive) > $OUT && chmod +x $OUT",
     out = "elm",
     executable = True,
+    remote = True,
     visibility = ["PUBLIC"],
 )
 
@@ -54,5 +60,6 @@ genrule(
     out = "elm-format",
     cmd = "cp $(location :elm_format_archive)/elm-format $OUT",
     executable = True,
+    remote = True,
     visibility = ["PUBLIC"],
 )

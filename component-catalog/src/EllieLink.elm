@@ -80,6 +80,7 @@ generateElmExampleModule config example =
     , "import Nri.Ui.Colors.V1 as Colors"
     , "import Nri.Ui.UiIcon.V1 as UiIcon"
     , "import Nri.Ui.Svg.V1 as Svg"
+    , "import Nri.Ui.ClickableSvg.V2 as ClickableSvg"
     , "import " ++ example.fullModuleName ++ " as " ++ example.name
     , String.join "\n" example.extraCode
     , ""

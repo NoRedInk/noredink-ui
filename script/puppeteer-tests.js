@@ -1,4 +1,5 @@
 const expect = require("expect");
+const fs = require("fs");
 const puppeteer = require("puppeteer");
 const httpServer = require("http-server");
 const percySnapshot = require("@percy/puppeteer");
@@ -17,9 +18,21 @@ describe("UI tests", function () {
   let browser;
 
   before(async () => {
-    server = httpServer.createServer({
-      root: process.env.ROOT || `${__dirname}/../public`,
-    });
+    let root = process.env.ROOT || `${__dirname}/../public`;
+
+    if (!fs.existsSync(root)) {
+      assert.fail(
+        `Root was specified as ${root}, but that path does not exist.`
+      );
+    }
+
+    if (!fs.existsSync(`${root}/index.html`)) {
+      assert.fail(
+        `Root was specified as ${root}, but does not contain an index.html.`
+      );
+    }
+
+    server = httpServer.createServer({ root });
     server.listen(PORT);
 
     browser = await puppeteer.launch({
@@ -32,6 +45,12 @@ describe("UI tests", function () {
   after(() => {
     server.close();
   });
+
+  const handlePageErrors = function (page) {
+    page.on("pageerror", (err) => {
+      console.log("Error from page:", err.toString());
+    });
+  };
 
   const handleAxeResults = function (name, results) {
     const violations = results["violations"];
@@ -85,20 +104,6 @@ describe("UI tests", function () {
     const option = await page.evaluate((el) => el.innerText, optionEl);
     await page.select("select", option);
     await callback(option);
-  };
-
-  const questionBoxProcessing = async (name, location) => {
-    await goTo(name, location);
-
-    const [button] = await page.$x("//button[contains(., 'Measure & render')]");
-    await button.click();
-
-    await percySnapshot(page, name);
-
-    const results = await new AxePuppeteer(page)
-      .disableRules(skippedRules[name] || [])
-      .analyze();
-    handleAxeResults(name, results);
   };
 
   const messageProcessing = async (name, location) => {
@@ -176,7 +181,6 @@ describe("UI tests", function () {
   };
 
   const specialProcessing = {
-    QuestionBox: questionBoxProcessing,
     Message: messageProcessing,
     Modal: modalProcessing,
     Page: pageProcessing,
@@ -188,7 +192,8 @@ describe("UI tests", function () {
 
   it("All", async function () {
     page = await browser.newPage();
-    await page.goto(`http://localhost:${PORT}`);
+    handlePageErrors(page);
+    await page.goto(`http://localhost:${PORT}`, { waitUntil: "load" });
     await page.$("#maincontent");
     await percySnapshot(page, this.test.fullTitle());
 
@@ -208,6 +213,7 @@ describe("UI tests", function () {
 
   it("Doodads", async function () {
     page = await browser.newPage();
+    handlePageErrors(page);
     await page.goto(`http://localhost:${PORT}`);
 
     await page.$("#maincontent");
