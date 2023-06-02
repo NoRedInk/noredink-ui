@@ -57,6 +57,14 @@ hint = 'upgrade to V2'
 hint = 'upgrade to V10'
 usages = ['component-catalog-app/../src/Nri/Ui/SlideModal/V2.elm']
 
+[forbidden."Nri.Ui.CharacterIcon.V1"]
+hint = 'upgrade to V2'
+usages = [
+    'component-catalog/../src/Nri/Ui/QuestionBox/V2.elm',
+    'component-catalog/../src/Nri/Ui/QuestionBox/V3.elm',
+    'component-catalog/../src/Nri/Ui/QuestionBox/V4.elm',
+]
+
 [forbidden."Nri.Ui.Checkbox.V5"]
 hint = 'upgrade to V7'
 
