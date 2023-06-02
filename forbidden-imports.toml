@@ -63,6 +63,7 @@ usages = [
     'component-catalog/../src/Nri/Ui/QuestionBox/V2.elm',
     'component-catalog/../src/Nri/Ui/QuestionBox/V3.elm',
     'component-catalog/../src/Nri/Ui/QuestionBox/V4.elm',
+    'component-catalog/../src/Nri/Ui/QuestionBox/V5.elm',
 ]
 
 [forbidden."Nri.Ui.Checkbox.V5"]
