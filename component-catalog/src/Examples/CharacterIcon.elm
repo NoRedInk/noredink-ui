@@ -10,7 +10,8 @@ import Code
 import Css
 import Example exposing (Example)
 import Examples.IconExamples as IconExamples exposing (Group)
-import Nri.Ui.CharacterIcon.V1 as CharacterIcon
+import Nri.Ui.CharacterIcon.V2 as CharacterIcon
+import Nri.Ui.Svg.V1
 
 
 {-| -}
@@ -32,12 +33,14 @@ moduleName =
 example : Example State Msg
 example =
     { moduleName = moduleName
-    , version = 1
-    , label = "Panda"
-    , name = "panda"
-    , icon = CharacterIcon.panda
+    , version = 2
+    , label = "Lindy"
+    , name = "redSupportive"
+
+    -- We need to start off with a blank example image to avoid axe violations for having duplicated ids
+    , icon = Nri.Ui.Svg.V1.init "0 0 480 600" []
     , renderSvgCode = \name -> Code.fromModule moduleName name
-    , preview = IconExamples.preview [ CharacterIcon.panda, CharacterIcon.redPanda ]
+    , preview = IconExamples.preview [ CharacterIcon.lindyInstructive, CharacterIcon.lindySupportive, CharacterIcon.salInstructive, CharacterIcon.salSupportive, CharacterIcon.redInstructive, CharacterIcon.redSupportive ]
     , all = all
     }
         |> IconExamples.example
@@ -46,16 +49,40 @@ example =
 all : List Group
 all =
     [ ( "Scaffolding"
-      , [ ( "panda"
-          , CharacterIcon.panda
-          , [ Css.height (Css.px 50)
-            , Css.width (Css.px 50)
+      , [ ( "lindyInstructive"
+          , CharacterIcon.lindyInstructive
+          , [ Css.width (Css.px 96)
+            , Css.height (Css.px 120)
             ]
           )
-        , ( "redPanda"
-          , CharacterIcon.redPanda
-          , [ Css.height (Css.px 50)
-            , Css.width (Css.px 50)
+        , ( "lindySupportive"
+          , CharacterIcon.lindySupportive
+          , [ Css.width (Css.px 96)
+            , Css.height (Css.px 120)
+            ]
+          )
+        , ( "salInstructive"
+          , CharacterIcon.salInstructive
+          , [ Css.width (Css.px 96)
+            , Css.height (Css.px 120)
+            ]
+          )
+        , ( "salSupportive"
+          , CharacterIcon.salSupportive
+          , [ Css.width (Css.px 96)
+            , Css.height (Css.px 120)
+            ]
+          )
+        , ( "redInstructive"
+          , CharacterIcon.redInstructive
+          , [ Css.width (Css.px 96)
+            , Css.height (Css.px 120)
+            ]
+          )
+        , ( "redSupportive"
+          , CharacterIcon.redSupportive
+          , [ Css.width (Css.px 96)
+            , Css.height (Css.px 120)
             ]
           )
         ]
