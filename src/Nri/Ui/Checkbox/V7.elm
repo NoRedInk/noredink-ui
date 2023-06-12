@@ -65,7 +65,6 @@ import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Svg.V1 exposing (Svg)
-import Nri.Ui.Util as Util
 
 
 {-| This disables the input
@@ -233,7 +232,7 @@ view { label, selected } attributes =
                     specificId
 
                 Nothing ->
-                    "checkbox-v7-" ++ Util.safeIdString label
+                    Extra.safeIdWithPrefix "checkbox-v7" label
 
         config_ =
             { identifier = idValue

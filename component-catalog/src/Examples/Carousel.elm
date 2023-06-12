@@ -23,6 +23,7 @@ import Html.Styled.Attributes as Attributes
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Carousel.V1 as Carousel
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Html.Attributes.V2 as Attributes
 import Task
 
 
@@ -217,11 +218,11 @@ toCarouselItem : Int -> a -> ( String, Carousel.Item Int msg )
 toCarouselItem id _ =
     let
         idString =
-            String.fromInt id
+            Attributes.safeIdWithPrefix "slide" <| String.fromInt id
     in
     ( [ "Carousel.buildItem"
-      , "        { id = " ++ idString
-      , "        , idString = \"" ++ idString ++ "-slide\""
+      , "        { id = " ++ String.fromInt id
+      , "        , idString = \"" ++ idString ++ "\""
       , "        , controlHtml = Html.text \"" ++ String.fromInt (id + 1) ++ "\""
       , "        , slideHtml = Html.text \"" ++ String.fromInt (id + 1) ++ " slide\""
       , "        }"
@@ -229,7 +230,7 @@ toCarouselItem id _ =
         |> String.join "\n    "
     , Carousel.buildItem
         { id = id
-        , idString = String.fromInt id ++ "-slide"
+        , idString = idString
         , controlHtml = Html.text (String.fromInt (id + 1))
         , slideHtml = Html.text (String.fromInt (id + 1) ++ " slide")
         }

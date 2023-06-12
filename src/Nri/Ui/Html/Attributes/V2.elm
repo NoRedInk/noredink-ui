@@ -3,6 +3,7 @@ module Nri.Ui.Html.Attributes.V2 exposing
     , targetBlank
     , nriDescription, nriDescriptionSelector
     , testId
+    , safeIdWithPrefix, safeId
     )
 
 {-|
@@ -21,6 +22,7 @@ This is the new version of Nri.Ui.Html.Attributes.Extra.
 @docs targetBlank
 @docs nriDescription, nriDescriptionSelector
 @docs testId
+@docs safeIdWithPrefix, safeId
 
 -}
 
@@ -29,6 +31,7 @@ import Css.Global
 import Html.Styled exposing (Attribute)
 import Html.Styled.Attributes as Attributes
 import Json.Encode as Encode
+import Regex exposing (Regex)
 
 
 {-| Represents an attribute with no semantic meaning, useful for conditionals.
@@ -103,3 +106,47 @@ nriDescription description =
 nriDescriptionSelector : String -> List Css.Style -> Css.Global.Snippet
 nriDescriptionSelector description =
     Css.Global.selector (String.join "" [ "[data-nri-description=\"", description, "\"]" ])
+
+
+{-| Prepends a prefix to the result of safeId.
+-}
+safeIdWithPrefix : String -> String -> String
+safeIdWithPrefix prefix string =
+    safeId
+        (prefix
+            ++ "-"
+            ++ string
+        )
+
+
+{-| Creates a lowercased string that is safe to use for HTML IDs.
+Removes all groups of unsafe characters and replaces each group with a dash.
+prepends "id-" to the result to ensure that the ID starts with a letter. (necessary for CSS selectors including getElementById)
+See code pen for examples: <https://codepen.io/ap-nri/pen/OJENQLY>
+-}
+safeId : String -> String
+safeId unsafe =
+    let
+        nonAlphaNumUnderscoreHyphenAnywhere : Regex
+        nonAlphaNumUnderscoreHyphenAnywhere =
+            -- any contiguous block of characters that aren't any of
+            -- + ASCII letters
+            -- + numbers
+            -- + underscore
+            -- + the hyphen-minus character commonly called "dash" (seen in between "hyphen" and "minus" on this line)
+            -- This does not need the + at the end; Regex.replace is global by default
+            -- but we pay a penalty for calling the replacement function, so
+            -- calling it once per contiguous group is an easy way to cut down on that.
+            "[^a-zA-Z0-9_-]+"
+                |> Regex.fromString
+                |> Maybe.withDefault Regex.never
+
+        hyphenMinus : any -> String
+        hyphenMinus _ =
+            "-"
+    in
+    "id-"
+        ++ Regex.replace
+            nonAlphaNumUnderscoreHyphenAnywhere
+            hyphenMinus
+            unsafe

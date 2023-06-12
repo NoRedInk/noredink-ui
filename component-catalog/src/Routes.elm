@@ -8,7 +8,7 @@ import Example exposing (Example)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs exposing (BreadCrumbs)
 import Nri.Ui.Header.V1 as Header
-import Nri.Ui.Util exposing (dashify)
+import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
 import Parser exposing ((|.), (|=), Parser)
 import Url exposing (Url)
 
@@ -168,7 +168,7 @@ categoryCrumb category_ =
 doodadCrumb : BreadCrumbs (Route state msg) -> Example state msg -> BreadCrumbs (Route state msg)
 doodadCrumb previous example =
     BreadCrumbs.after previous
-        { id = "breadcrumbs__" ++ dashify example.name
+        { id = safeIdWithPrefix "breadcrumbs" example.name
         , text = Example.fullName example
         , route = Doodad example
         }
