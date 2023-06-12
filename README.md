@@ -95,12 +95,12 @@ It is automatically loaded in the Nix environment.
 
 Here are some things you might need to do:
 
-| Task                                                            | Action                                                                                             |
-| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| Add a non-npm, non-Elm dependency packaged with Nix             | Look in nixpkgs and add to `buildInputs` in `flake.nix`. If it's not in nixpkgs, add a new source. |
-| Update all our dependencies                                     | `nix flake update`                                                                                 |
-| Update Nixpkgs (or only one dependency)                         | `nix flake lock --update-input nixpkgs`                                                            |
-| See all our dependencies and sources                            | Look in `flake.nix` and `flake.lock`                                                               |
+| Task                                                | Action                                                                                             |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Add a non-npm, non-Elm dependency packaged with Nix | Look in nixpkgs and add to `buildInputs` in `flake.nix`. If it's not in nixpkgs, add a new source. |
+| Update all our dependencies                         | `nix flake update`                                                                                 |
+| Update Nixpkgs (or only one dependency)             | `nix flake lock --update-input nixpkgs`                                                            |
+| See all our dependencies and sources                | Look in `flake.nix` and `flake.lock`                                                               |
 
 ## Developing with Buck
 
