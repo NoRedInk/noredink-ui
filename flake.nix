@@ -1,12 +1,8 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-
-    elm-forbid-import = {
-      url = "git+https://git.bytes.zone/brian/elm-forbid-import.git";
-      flake = false;
-    };
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    elm-forbid-import.url = "git+https://git.bytes.zone/brian/elm-forbid-import.git";
   };
 
   outputs = inputs:
@@ -38,7 +34,7 @@
             pkgs.elmPackages.elm-verify-examples
             pkgs.elmPackages.elm-review
             pkgs.elmPackages.elm-json
-            # (pkgs.callPackage inputs.elm-forbid-import { })
+            inputs.elm-forbid-import.defaultPackage.${system}
 
             # preview dependencies
             pkgs.python3
