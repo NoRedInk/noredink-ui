@@ -23,6 +23,10 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
           extraPullNames: niv
 
-      - run: nix develop --ignore-environment --keep PERCY_TOKEN -c shake --verbose ci
+      # note about the command below: everything after `--command` is
+      # interpreted as command-line arguments. So the actual command that we're
+      # running is `shake --verbose ci`; `--verbose` and `ci` aren't being
+      # interpreted as flags to `nix develop`!
+      - run: nix develop --ignore-environment --keep PERCY_TOKEN --command shake --verbose ci
         env:
           PERCY_TOKEN: '${{ secrets.PERCY_TOKEN }}'
