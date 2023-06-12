@@ -45,18 +45,7 @@ init =
     {}
 
 
-type Msg
-    = NoOp
-
-
-update : Msg -> Model -> Model
-update msg state =
-    case msg of
-        NoOp ->
-            state
-
-
-viewMarkdown : Model -> Html Msg
+viewMarkdown : Model -> Html msg
 viewMarkdown model =
     Panel.view
         [ Panel.header "Header"
@@ -64,7 +53,7 @@ viewMarkdown model =
         ]
 
 
-viewHtml : Model -> Html Msg
+viewHtml : Model -> Html msg
 viewHtml model =
     Panel.view
         [ Panel.header "Header"
@@ -73,14 +62,14 @@ viewHtml model =
 
 
 type alias TestContext =
-    ProgramTest Model Msg ()
+    ProgramTest Model () ()
 
 
 programMarkdown : TestContext
 programMarkdown =
     ProgramTest.createSandbox
         { init = init
-        , update = update
+        , update = \msg model -> model
         , view = viewMarkdown >> toUnstyled
         }
         |> ProgramTest.start ()
@@ -90,7 +79,7 @@ programHtml : TestContext
 programHtml =
     ProgramTest.createSandbox
         { init = init
-        , update = update
+        , update = \msg model -> model
         , view = viewHtml >> toUnstyled
         }
         |> ProgramTest.start ()
