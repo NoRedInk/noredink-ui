@@ -46,12 +46,14 @@ init =
 
 
 type Msg
-    = Toggle Bool
+    = NoOp
 
 
 update : Msg -> Model -> Model
 update msg state =
-    state
+    case msg of
+        NoOp ->
+            state
 
 
 viewMarkdown : Model -> Html Msg
