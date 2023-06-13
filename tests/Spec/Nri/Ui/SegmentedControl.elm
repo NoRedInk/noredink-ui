@@ -37,7 +37,7 @@ panelRenderingTests =
     , test "has only one panel displayed" <|
         \() ->
             program
-                |> ensureOnlyOnePanelDisplayed [ "Page 0", "Page 1", "Page 2" ]
+                |> ensureOnlyOnePanelDisplayed "Page 0" [ "Page 1", "Page 2" ]
                 |> done
     ]
 
@@ -127,16 +127,16 @@ ensurePanelDisplayed word testContext =
             )
 
 
-ensureOnlyOnePanelDisplayed : List String -> TestContext -> TestContext
-ensureOnlyOnePanelDisplayed panels testContext =
+ensureOnlyOnePanelDisplayed : String -> List String -> TestContext -> TestContext
+ensureOnlyOnePanelDisplayed selectedPanel notSelectedPanels testContext =
     testContext
         |> ensureView
-            (Query.findAll [ Selector.attribute Role.tabPanel, Selector.style "display" "block" ]
-                >> Query.count (Expect.equal 1)
+            (Query.find [ Selector.attribute Role.tabPanel, Selector.style "display" "block" ]
+                >> Query.has [ Selector.text selectedPanel ]
             )
         |> ensureView
             (Query.findAll [ Selector.attribute Role.tabPanel, Selector.style "display" "none" ]
-                >> Query.count (Expect.equal (List.length panels - 1))
+                >> Expect.all (List.indexedMap (\i w -> Query.index i >> Query.has [ Selector.text w ]) notSelectedPanels)
             )
 
 
