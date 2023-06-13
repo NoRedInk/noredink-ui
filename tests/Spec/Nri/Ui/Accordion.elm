@@ -6,7 +6,6 @@ import Html.Styled as Html exposing (..)
 import Nri.Ui.Accordion.V3 as Accordion
 import ProgramTest exposing (..)
 import Set exposing (Set)
-import Spec.MouseHelpers exposing (click)
 import Task
 import Test exposing (..)
 import Test.Html.Query as Query
@@ -31,10 +30,10 @@ panelRenderingTests =
         \() ->
             program
                 |> ensurePanelNotDisplayed "header-1" "Content 1"
-                |> click [ Selector.id "header-1" ]
+                |> clickButton "Header 1"
                 |> ensurePanelDisplayed "header-1" "Content 1"
                 |> ensurePanelNotDisplayed "header-2" "Content 2"
-                |> click [ Selector.id "header-2" ]
+                |> clickButton "Header 2"
                 |> ensurePanelDisplayed "header-2" "Content 2"
                 |> done
     ]
@@ -46,10 +45,10 @@ ariaAttributesTests =
         \() ->
             program
                 |> ensureCorrectAriaExpanded "header-1" False
-                |> click [ Selector.id "header-1" ]
+                |> clickButton "Header 1"
                 |> ensureCorrectAriaExpanded "header-1" True
                 |> ensureCorrectAriaExpanded "header-2" False
-                |> click [ Selector.id "header-2" ]
+                |> clickButton "Header 2"
                 |> ensureCorrectAriaExpanded "header-2" True
                 |> done
     , test "header has aria-controls set to the id of the associated panel" <|
