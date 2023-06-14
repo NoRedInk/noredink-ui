@@ -6,16 +6,23 @@ module Examples.Confetti exposing (example, State, Msg)
 
 -}
 
+import Accessibility.Styled.Role as Role
 import Browser.Events
 import Category exposing (Category(..))
 import Code
+import Css exposing (Color)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Html.Styled.Attributes exposing (attribute)
 import Nri.Ui.Button.V10 as Button
+import Nri.Ui.Colors.Extra as ColorsExtra
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Confetti.V2 as Confetti
 import Nri.Ui.Html.V3 exposing (viewJust)
+import Svg.Styled as Svg exposing (Svg)
+import Svg.Styled.Attributes as SvgAttrs
 
 
 moduleName : String
@@ -48,7 +55,7 @@ example =
 
                 Nothing ->
                     Sub.none
-    , preview = []
+    , preview = preview
     , view =
         \ellieLinkConfig state ->
             [ viewJust Confetti.view state.model
@@ -109,6 +116,89 @@ example =
                 ]
             ]
     }
+
+
+preview : List (Svg msg)
+preview =
+    [ Svg.svg
+        [ SvgAttrs.viewBox "0 0 100 100"
+        , SvgAttrs.width "100%"
+        , SvgAttrs.height "100%"
+        , SvgAttrs.fill (ColorsExtra.toCssString Colors.white)
+        , Role.img
+        ]
+        (Svg.rect
+            [ SvgAttrs.x "0"
+            , SvgAttrs.y "0"
+            , SvgAttrs.width "100"
+            , SvgAttrs.height "100"
+            ]
+            []
+            :: List.map3
+                (\( x, y ) index color ->
+                    Svg.rect
+                        [ SvgAttrs.x (String.fromInt x)
+                        , SvgAttrs.y (String.fromInt y)
+                        , SvgAttrs.width "8"
+                        , SvgAttrs.height "8"
+                        , SvgAttrs.fill (ColorsExtra.toCssString color)
+                        , SvgAttrs.transform <|
+                            "rotate("
+                                ++ ((if modBy 3 index == 0 then
+                                        "45"
+
+                                     else if modBy 2 index == 0 then
+                                        "20"
+
+                                     else
+                                        "0"
+                                    )
+                                        ++ ","
+                                        ++ String.fromInt x
+                                        ++ ","
+                                        ++ String.fromInt y
+                                        ++ ")"
+                                   )
+                        ]
+                        []
+                )
+                confettiPositions
+                (List.range 0 10)
+                confettiColors
+        )
+    ]
+
+
+confettiPositions : List ( Int, Int )
+confettiPositions =
+    [ ( 40, 10 )
+    , ( 7, 15 )
+    , ( 80, 30 )
+    , ( 4, 80 )
+    , ( 23, 70 )
+    , ( 50, 69 )
+    , ( 19, 52 )
+    , ( 70, 90 )
+    , ( 60, 90 )
+    , ( 94, 60 )
+    , ( 80, 5 )
+    ]
+
+
+confettiColors : List Color
+confettiColors =
+    [ Colors.highlightMagentaDark
+    , Colors.highlightCyan
+    , Colors.highlightGreen
+    , Colors.highlightYellowDark
+    , Colors.highlightBlue
+    , Colors.highlightGreenDark
+    , Colors.highlightBlueDark
+    , Colors.highlightYellow
+    , Colors.highlightCyanDark
+    , Colors.highlightCyan
+    , Colors.highlightMagenta
+    ]
 
 
 {-| -}
