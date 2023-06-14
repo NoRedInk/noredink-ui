@@ -15,7 +15,6 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled.Attributes exposing (attribute)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
@@ -123,7 +122,7 @@ preview =
     [ Svg.svg
         [ SvgAttrs.viewBox "0 0 100 100"
         , SvgAttrs.width "100%"
-        , SvgAttrs.height "100%"
+        , SvgAttrs.height "120px"
         , SvgAttrs.fill (ColorsExtra.toCssString Colors.white)
         , Role.img
         ]
