@@ -1,38 +1,26 @@
 module Nri.Ui.MinimalTabs.V1 exposing
-    ( Attribute, title, spacing
-    , Alignment(..), alignment
-    , pageBackgroundColor
-    , tabListSticky, TabListStickyConfig, tabListStickyCustom
-    , view
+    ( view
     , Tab, TabAttribute, build
-    , tabString, tabHtml, withTooltip, disabled, labelledBy, describedBy
+    , tabString, tabHtml
     , panelHtml
     , spaHref
     )
 
 {-| This forks Nri.Ui.Tabs.V8
 
-
-### Attributes
-
-@docs Attribute, title, spacing
-@docs Alignment, alignment
-@docs pageBackgroundColor
-@docs tabListSticky, TabListStickyConfig, tabListStickyCustom
 @docs view
 
 
 ### Tabs
 
 @docs Tab, TabAttribute, build
-@docs tabString, tabHtml, withTooltip, disabled, labelledBy, describedBy
+@docs tabString, tabHtml
 @docs panelHtml
 @docs spaHref
 
 -}
 
 import Css exposing (..)
-import Css.Media
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui
@@ -40,8 +28,6 @@ import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.MediaQuery.V1 as MediaQuery
-import Nri.Ui.Tooltip.V3 as Tooltip
 import TabsInternal.V2 as TabsInternal
 
 
@@ -65,40 +51,6 @@ tabString content =
 tabHtml : Html Never -> TabAttribute id msg
 tabHtml content =
     TabAttribute (\tab -> { tab | tabView = [ Html.map never content ] })
-
-
-{-| Tooltip defaults: `[Tooltip.smallPadding, Tooltip.onBottom, Tooltip.fitToContent]`
--}
-withTooltip : List (Tooltip.Attribute msg) -> TabAttribute id msg
-withTooltip attributes =
-    TabAttribute (\tab -> { tab | tabTooltip = attributes })
-
-
-{-| Makes it so that the tab can't be clicked or focused via keyboard navigation
--}
-disabled : Bool -> TabAttribute id msg
-disabled isDisabled =
-    TabAttribute (\tab -> { tab | disabled = isDisabled })
-
-
-{-| Sets an overriding labelledBy on the tab for an external tooltip.
-This assumes an external tooltip is set and disables any internal tooltip configured.
--}
-labelledBy : String -> TabAttribute id msg
-labelledBy labelledById =
-    TabAttribute (\tab -> { tab | labelledBy = Just labelledById })
-
-
-{-| Like [`labelledBy`](#labelledBy), but it describes the given element
-instead of labeling it.
-
-This attribute can be used multiple times if more than one element describes
-this tab.
-
--}
-describedBy : String -> TabAttribute id msg
-describedBy describedById =
-    TabAttribute (\tab -> { tab | describedBy = describedById :: tab.describedBy })
 
 
 {-| -}
@@ -132,133 +84,15 @@ build config attributes =
         )
 
 
-{-| Determines whether tabs are centered or floating to the left or right.
--}
-type Alignment
-    = Left
-    | Center
-    | Right
-
-
-{-| Ways to adapt the appearance of the tabs to your application.
--}
-type Attribute id msg
-    = Attribute (Config -> Config)
-
-
-{-| Set a title in the tab list.
--}
-title : String -> Attribute id msg
-title title_ =
-    Attribute (\config -> { config | title = Just title_ })
-
-
-{-| Set the alignment of the tab list.
--}
-alignment : Alignment -> Attribute id msg
-alignment alignment_ =
-    Attribute (\config -> { config | alignment = alignment_ })
-
-
-{-| Set the spacing between tabs in the tab list.
--}
-spacing : Float -> Attribute id msg
-spacing spacing_ =
-    Attribute (\config -> { config | spacing = Just spacing_ })
-
-
-{-| Tell this tab list about the background color of the page it lievs on.
-
-You may want to use this if, for example:
-
-  - you are setting up sticky headers, to prevent page content from showing
-    through the background.
-
-  - you are using tabs in a page that has non-white background, so the
-    background of the active tab fades into the panel below it.
-
--}
-pageBackgroundColor : Css.Color -> Attribute id msg
-pageBackgroundColor color =
-    Attribute (\config -> { config | pageBackgroundColor = Just color })
-
-
-{-| Make the tab list sticky. You probably want to set an explicit background
-color along with this!
--}
-tabListSticky : Attribute id msg
-tabListSticky =
-    Attribute (\config -> { config | tabListStickyConfig = Just defaultTabListStickyConfig })
-
-
-{-| Make the tab list sticky, overriding the default behavior. You should
-probably set an explicit background color along with this.
--}
-tabListStickyCustom : TabListStickyConfig -> Attribute id msg
-tabListStickyCustom custom =
-    Attribute (\config -> { config | tabListStickyConfig = Just custom })
-
-
-type alias Config =
-    { title : Maybe String
-    , alignment : Alignment
-    , spacing : Maybe Float
-    , pageBackgroundColor : Maybe Css.Color
-    , tabListStickyConfig : Maybe TabListStickyConfig
-    }
-
-
-defaultConfig : Config
-defaultConfig =
-    { title = Nothing
-    , alignment = Left
-    , spacing = Nothing
-    , pageBackgroundColor = Nothing
-    , tabListStickyConfig = Nothing
-    }
-
-
-{-| Configure how the top bar is sticky.
-
-  - `topOffset` controls how far from the top of the viewport the bar will
-    stick, in pixels. Content will be visible below this offset in the z-order.
-    (**Default value:** 0)
-  - `topPadding` controls how far from the top of the viewport the bar will
-    be padded. Unlike `topOffset`, content will _not_ be visible behind the
-    padding. Be aware that this padding will add space in the DOM even when the
-    bar is not sticky. (**Default value:** 0)
-  - `zIndex` controls how high up the z-order the bar will float. (**Default
-    value:** 0)
-
--}
-type alias TabListStickyConfig =
-    { topOffset : Float
-    , topPadding : Float
-    , zIndex : Int
-    }
-
-
-defaultTabListStickyConfig : TabListStickyConfig
-defaultTabListStickyConfig =
-    { topOffset = 0
-    , topPadding = 0
-    , zIndex = 0
-    }
-
-
 {-| -}
 view :
     { focusAndSelect : { select : id, focus : Maybe String } -> msg
     , selected : id
     }
-    -> List (Attribute id msg)
     -> List (Tab id msg)
     -> Html msg
-view { focusAndSelect, selected } attrs tabs =
+view { focusAndSelect, selected } tabs =
     let
-        config =
-            List.foldl (\(Attribute fn) soFar -> fn soFar) defaultConfig attrs
-
         { tabList, tabPanels } =
             TabsInternal.views
                 { focusAndSelect = focusAndSelect
@@ -266,9 +100,7 @@ view { focusAndSelect, selected } attrs tabs =
                 , tabs = List.map (\(Tab t) -> t) tabs
                 , tabStyles =
                     tabStyles
-                        config.spacing
-                        (Maybe.withDefault Colors.white config.pageBackgroundColor)
-                , tabListStyles = stylesTabsAligned config
+                , tabListStyles = stylesTabsAligned
                 }
     in
     Nri.Ui.styled Html.div
@@ -282,25 +114,9 @@ view { focusAndSelect, selected } attrs tabs =
             , Css.borderBottomStyle Css.solid
             , Css.borderBottomColor Colors.navy
             , Fonts.baseFont
-            , maybeStyle
-                (\{ topOffset, topPadding, zIndex } ->
-                    Css.Media.withMedia
-                        [ MediaQuery.notMobile ]
-                        [ Css.position Css.sticky
-                        , Css.top (Css.px topOffset)
-                        , Css.paddingTop (Css.px topPadding)
-                        , Css.zIndex (Css.int zIndex)
-                        ]
-                )
-                config.tabListStickyConfig
-            , maybeStyle Css.backgroundColor config.pageBackgroundColor
             ]
             []
-            [ config.title
-                |> Maybe.map viewTitle
-                |> Maybe.withDefault (Html.text "")
-            , tabList
-            ]
+            [ tabList ]
         , tabPanels
         ]
 
@@ -316,38 +132,13 @@ viewTabDefault tabTitle =
         [ Html.text tabTitle ]
 
 
-viewTitle : String -> Html msg
-viewTitle tabTitle =
-    Html.styled Html.h1
-        [ Css.flexGrow (Css.int 2)
-        , Css.fontSize (Css.px 20)
-        , Css.fontWeight Css.bold
-        , Css.margin4 (Css.px 5) (Css.px 10) (Css.px 10) Css.zero
-        , Css.color Colors.navy
-        ]
-        []
-        [ Html.text tabTitle ]
-
-
 
 -- STYLES
 
 
-stylesTabsAligned : Config -> List Style
-stylesTabsAligned config =
-    let
-        alignmentStyles =
-            case config.alignment of
-                Left ->
-                    Css.justifyContent Css.flexStart
-
-                Center ->
-                    Css.justifyContent Css.center
-
-                Right ->
-                    Css.justifyContent Css.flexEnd
-    in
-    [ alignmentStyles
+stylesTabsAligned : List Style
+stylesTabsAligned =
+    [ Css.justifyContent Css.flexStart
     , Css.margin Css.zero
     , Css.fontSize (Css.px 19)
     , Css.displayFlex
@@ -356,30 +147,14 @@ stylesTabsAligned config =
     ]
 
 
-maybeStyle : (a -> Style) -> Maybe a -> Style
-maybeStyle styler maybeValue =
-    case maybeValue of
-        Just value ->
-            styler value
-
-        Nothing ->
-            Css.batch []
-
-
-tabStyles : Maybe Float -> Css.Color -> Int -> Bool -> List Style
-tabStyles customSpacing pageBackgroundColor_ index isSelected =
+tabStyles : Int -> Bool -> List Style
+tabStyles index isSelected =
     let
         stylesDynamic =
             if isSelected then
                 [ Css.borderBottom (Css.px 1)
                 , Css.borderBottomStyle Css.solid
                 , Css.backgroundColor Colors.white
-                , Css.borderBottomColor pageBackgroundColor_
-                , Css.backgroundImage <|
-                    Css.linearGradient2 Css.toTop
-                        (Css.stop2 (withAlpha 1 pageBackgroundColor_) (Css.pct 0))
-                        (Css.stop2 (withAlpha 0 pageBackgroundColor_) (Css.pct 100))
-                        []
                 ]
 
             else
@@ -437,6 +212,6 @@ tabStyles customSpacing pageBackgroundColor_ index isSelected =
             ]
 
         margin =
-            Maybe.withDefault 10 customSpacing / 2
+            10 / 2
     in
     baseStyles ++ stylesTab ++ stylesDynamic
