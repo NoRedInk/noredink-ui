@@ -26,6 +26,7 @@ import Examples.Loading as Loading
 import Examples.Logo as Logo
 import Examples.Menu as Menu
 import Examples.Message as Message
+import Examples.MinimalTabs as MinimalTabs
 import Examples.Modal as Modal
 import Examples.Page as Page
 import Examples.Pagination as Pagination
@@ -529,6 +530,25 @@ all =
                     _ ->
                         Nothing
             )
+    , MinimalTabs.example
+        |> Example.wrapMsg MinimalTabsMsg
+            (\msg ->
+                case msg of
+                    MinimalTabsMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState MinimalTabsState
+            (\msg ->
+                case msg of
+                    MinimalTabsState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , Modal.example
         |> Example.wrapMsg ModalMsg
             (\msg ->
@@ -1014,6 +1034,7 @@ type State
     | LogoState Logo.State
     | MenuState Menu.State
     | MessageState Message.State
+    | MinimalTabsState MinimalTabs.State
     | ModalState Modal.State
     | PageState Page.State
     | PaginationState Pagination.State
@@ -1065,6 +1086,7 @@ type Msg
     | LoadingMsg Loading.Msg
     | LogoMsg Logo.Msg
     | MenuMsg Menu.Msg
+    | MinimalTabsMsg MinimalTabs.Msg
     | MessageMsg Message.Msg
     | ModalMsg Modal.Msg
     | PageMsg Page.Msg

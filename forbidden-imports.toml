@@ -159,11 +159,14 @@ hint = 'upgrade to V8'
 hint = 'upgrade to V3'
 
 [forbidden."Nri.Ui.QuestionBox.V2"]
-hint = 'upgrade to V4'
+hint = 'upgrade to V5'
 usages = ['component-catalog/../src/Nri/Ui/Block/V3.elm']
 
 [forbidden."Nri.Ui.QuestionBox.V3"]
-hint = 'upgrade to V4'
+hint = 'upgrade to V5'
+
+[forbidden."Nri.Ui.QuestionBox.V4"]
+hint = 'upgrade to V5'
 
 [forbidden."Nri.Ui.RadioButton.V1"]
 hint = 'upgrade to V2'
