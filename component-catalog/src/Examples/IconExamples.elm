@@ -2,7 +2,7 @@ module Examples.IconExamples exposing
     ( example
     , Settings, Msg
     , Group
-    , preview
+    , preview, previewCustomSize
     )
 
 {-|
@@ -10,7 +10,7 @@ module Examples.IconExamples exposing
 @docs example
 @docs Settings, Msg
 @docs Group
-@docs preview
+@docs preview, previewCustomSize
 
 -}
 
@@ -60,7 +60,22 @@ example config =
 
 {-| -}
 preview : List Svg.Svg -> List (Html msg)
-preview icons =
+preview =
+    previewCustomSize ( Just 30, Just 30 )
+
+
+{-| -}
+previewCustomSize : ( Maybe Float, Maybe Float ) -> List Svg.Svg -> List (Html msg)
+previewCustomSize ( width, height ) icons =
+    let
+        setWidth =
+            Maybe.map (Svg.withWidth << Css.px) width
+                |> Maybe.withDefault identity
+
+        setHeight =
+            Maybe.map (Svg.withHeight << Css.px) height
+                |> Maybe.withDefault identity
+    in
     [ Html.div
         [ css
             [ Css.displayFlex
@@ -70,7 +85,7 @@ preview icons =
             ]
         ]
         (List.map
-            (Svg.withWidth (Css.px 30) >> Svg.withHeight (Css.px 30) >> Svg.toHtml)
+            (setWidth >> setHeight >> Svg.toHtml)
             icons
         )
     ]

@@ -40,7 +40,13 @@ example =
     -- We need to start off with a blank example image to avoid axe violations for having duplicated ids
     , icon = Nri.Ui.Svg.V1.init "0 0 480 600" []
     , renderSvgCode = \name -> Code.fromModule moduleName name
-    , preview = IconExamples.preview [ CharacterIcon.lindyInstructive, CharacterIcon.lindySupportive, CharacterIcon.salInstructive, CharacterIcon.salSupportive, CharacterIcon.redInstructive, CharacterIcon.redSupportive ]
+    , preview =
+        IconExamples.previewCustomSize ( Just 70, Just 80 )
+            [ CharacterIcon.lindyInstructive
+            , CharacterIcon.salInstructive
+            , CharacterIcon.redInstructive
+            , CharacterIcon.redSupportive
+            ]
     , all = all
     }
         |> IconExamples.example
