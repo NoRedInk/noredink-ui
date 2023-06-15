@@ -243,3 +243,4 @@ documentation.json
 /_build
 /log
 /buck-out
+/result

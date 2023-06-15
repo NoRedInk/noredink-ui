@@ -90,17 +90,17 @@ If you find that `direnv` loads too slow, [there are faster loading strategies t
 
 ### Working with upstream dependencies
 
-We use `niv` to manage Nix dependencies.
+We use `nix flake` to manage Nix dependencies.
 It is automatically loaded in the Nix environment.
 
 Here are some things you might need to do:
 
-| Task                                                | Command                                                    |
-| --------------------------------------------------- | ---------------------------------------------------------- |
-| Add a non-npm, non-Elm dependency packaged with Nix | Look if it's in nixpkgs, or `niv add github.com/user/repo` |
-| Update Nixpkgs                                      | `niv update nixpkgs`                                       |
-| See all our dependencies                            | Look in `shell.nix`                                        |
-| See all our sources                                 | `niv show`                                                 |
+| Task                                                | Action                                                                                             |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Add a non-npm, non-Elm dependency packaged with Nix | Look in nixpkgs and add to `buildInputs` in `flake.nix`. If it's not in nixpkgs, add a new source. |
+| Update all our dependencies                         | `nix flake update`                                                                                 |
+| Update Nixpkgs (or only one dependency)             | `nix flake lock --update-input nixpkgs`                                                            |
+| See all our dependencies and sources                | Look in `flake.nix` and `flake.lock`                                                               |
 
 ## Developing with Buck
 
