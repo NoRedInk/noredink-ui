@@ -37,10 +37,10 @@ Please link to any relevant context and stories.
 ## :framed_picture: What does this change look like?
 
 - Fill in with screenshots, movies, and states, and add a designer as a reviewer if there are user-facing changes:
-  - For writing-related component changes, add Stacey (@staceyadams)
-  - For quiz engine-related components, add Ravi (@ravi-morbia)
-  - For a11y-related changes to general components, add Ben (@bendansby)
-  - For general component-related changes or if you’re not sure about something, add the Design group (@NoRedInk/design)
+  - For writing-related component changes, add Stacey (staceyadams)
+  - For quiz engine-related components, add Ravi (ravi-morbia)
+  - For a11y-related changes to general components, add Ben (bendansby)
+  - For general component-related changes or if you’re not sure about something, add the Design group (NoRedInk/design)
 - Guidelines for an optimal design review: https://paper.dropbox.com/doc/Guidelines-for-Sharing-User-Facing-Changes-with-Design--BpL8hpJLMugy6033aT5m0JdaAg-bdKGQtYH9qO9I00hUkA6k
 
 
