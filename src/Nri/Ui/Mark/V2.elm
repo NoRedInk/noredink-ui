@@ -570,6 +570,7 @@ viewBalloonSpacer config =
     span
         [ css
             [ Css.display Css.inlineBlock
+            , Css.property "transition" "padding 2s ease"
             , config.labelPosition
                 |> Maybe.map
                     (\{ totalHeight } ->
