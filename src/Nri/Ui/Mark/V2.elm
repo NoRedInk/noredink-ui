@@ -24,6 +24,7 @@ import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style exposing (invisibleStyle)
 import Content
 import Css exposing (Color, Style)
+import Css.Animations
 import Css.Global
 import Html.Styled as Html exposing (Html, span)
 import Html.Styled.Attributes exposing (class, css)
@@ -506,6 +507,19 @@ viewBalloon config label =
 
                 Nothing ->
                     Css.batch []
+            , case config.labelPosition of
+                Nothing ->
+                    Css.opacity Css.zero
+
+                Just _ ->
+                    Css.batch
+                        [ Css.property "animation-delay" "2s"
+                        , Css.property "animation-duration" "0.5s"
+                        , Css.property "animation-fill-mode" "forwards"
+                        , Css.animationName balloonFadeInKeyframes
+                        , Css.property "animation-timing-function" "linear"
+                        , Css.opacity Css.zero
+                        ]
             ]
         , Balloon.css
             [ Css.padding3 Css.zero (Css.px 6) (Css.px 1)
@@ -562,6 +576,14 @@ viewBalloon config label =
 
             Nothing ->
                 Balloon.css []
+        ]
+
+
+balloonFadeInKeyframes : Css.Animations.Keyframes {}
+balloonFadeInKeyframes =
+    Css.Animations.keyframes
+        [ ( 0, [ Css.Animations.opacity Css.zero ] )
+        , ( 100, [ Css.Animations.opacity (Css.num 1) ] )
         ]
 
 
