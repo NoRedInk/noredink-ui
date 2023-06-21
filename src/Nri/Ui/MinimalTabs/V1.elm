@@ -24,7 +24,6 @@ import Css exposing (..)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui
-import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
@@ -44,7 +43,7 @@ type TabAttribute id msg
 {-| -}
 tabString : String -> TabAttribute id msg
 tabString content =
-    TabAttribute (\tab -> { tab | tabView = [ viewTabDefault content ] })
+    TabAttribute (\tab -> { tab | tabView = [ Html.text content ] })
 
 
 {-| -}
@@ -98,8 +97,7 @@ view { focusAndSelect, selected } tabs =
                 { focusAndSelect = focusAndSelect
                 , selected = selected
                 , tabs = List.map (\(Tab t) -> t) tabs
-                , tabStyles =
-                    tabStyles
+                , tabStyles = tabStyles
                 , tabListStyles = stylesTabsAligned
                 }
     in
@@ -112,24 +110,13 @@ view { focusAndSelect, selected } tabs =
             , Css.alignItems Css.flexEnd
             , Css.borderBottom (Css.px 1)
             , Css.borderBottomStyle Css.solid
-            , Css.borderBottomColor Colors.navy
+            , Css.borderBottomColor Colors.gray85
             , Fonts.baseFont
             ]
             []
             [ tabList ]
         , tabPanels
         ]
-
-
-{-| -}
-viewTabDefault : String -> Html msg
-viewTabDefault tabTitle =
-    Html.div
-        [ Attributes.css
-            [ Css.padding4 (Css.px 14) (Css.px 20) (Css.px 12) (Css.px 20)
-            ]
-        ]
-        [ Html.text tabTitle ]
 
 
 
@@ -140,7 +127,7 @@ stylesTabsAligned : List Style
 stylesTabsAligned =
     [ Css.justifyContent Css.flexStart
     , Css.margin Css.zero
-    , Css.fontSize (Css.px 19)
+    , Css.fontSize (Css.px 13)
     , Css.displayFlex
     , Css.flexGrow (Css.int 1)
     , Css.padding Css.zero
@@ -148,26 +135,21 @@ stylesTabsAligned =
 
 
 tabStyles : Int -> Bool -> List Style
-tabStyles index isSelected =
+tabStyles _ isSelected =
     let
         stylesDynamic =
             if isSelected then
                 [ Css.borderBottom (Css.px 1)
                 , Css.borderBottomStyle Css.solid
-                , Css.backgroundColor Colors.white
+                , Css.borderBottomColor Colors.gray45
+                , Css.color Colors.gray20
                 ]
 
             else
-                [ Css.backgroundColor Colors.frost
-                , Css.backgroundImage <|
-                    Css.linearGradient2 Css.toTop
-                        (Css.stop2 (withAlpha 0.25 Colors.azure) (Css.pct 0))
-                        (Css.stop2 (withAlpha 0 Colors.azure) (Css.pct 25))
-                        [ Css.stop2 (withAlpha 0 Colors.azure) (Css.pct 100) ]
-                ]
+                []
 
         baseStyles =
-            [ Css.color Colors.navy
+            [ Css.color Colors.gray45
             , Css.position Css.relative
 
             -- necessary because bourbon or bootstrap or whatever add underlines when tabs are used as links
@@ -178,40 +160,19 @@ tabStyles index isSelected =
             , Css.cursor Css.pointer
             , Css.border zero
             , Css.height (Css.pct 100)
+            , Css.displayFlex
+            , Css.alignItems Css.center
+            , Css.height (Css.px 38)
+            , Css.padding2 Css.zero (Css.px 15)
             ]
 
         stylesTab =
             [ Css.display Css.inlineBlock
-            , Css.borderTopLeftRadius (Css.px 10)
-            , Css.borderTopRightRadius (Css.px 10)
-            , Css.border3 (Css.px 1) Css.solid Colors.navy
-            , Css.marginTop Css.zero
-            , Css.marginLeft
-                (if index == 0 then
-                    Css.px 0
-
-                 else
-                    Css.px margin
-                )
-            , Css.marginRight (Css.px margin)
-            , Css.padding2 (Css.px 1) (Css.px 6)
-            , Css.marginBottom (Css.px -1)
             , Css.cursor Css.pointer
-            , property "transition" "background-color 0.2s"
-            , property "transition" "border-color 0.2s"
-            , hover
-                [ backgroundColor Colors.white
-                , borderTopColor Colors.azure
-                , borderRightColor Colors.azure
-                , borderLeftColor Colors.azure
-                ]
             , pseudoClass "focus-visible"
                 [ FocusRing.outerBoxShadow
                 , Css.outline3 (Css.px 2) Css.solid Css.transparent
                 ]
             ]
-
-        margin =
-            10 / 2
     in
     baseStyles ++ stylesTab ++ stylesDynamic

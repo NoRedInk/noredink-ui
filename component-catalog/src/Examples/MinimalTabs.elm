@@ -66,34 +66,18 @@ example =
           Html.div [ css [ Css.displayFlex, Css.flexWrap Css.wrap ] ]
             [ Html.div
                 [ css
-                    [ Css.backgroundColor Colors.white
-                    , Css.padding (Css.px 4)
-                    , Css.borderRadius4 (Css.px 4) (Css.px 4) Css.zero Css.zero
-                    , Css.border3 (Css.px 1) Css.solid Colors.navy
-                    , Css.borderBottomWidth Css.zero
-                    ]
-                ]
-                [ Text.smallBody [ Text.plaintext "Tab 1" ] ]
-            , Html.div
-                [ css [ Css.width (Css.px 4), Css.borderBottom3 (Css.px 1) Css.solid Colors.navy ]
-                ]
-                []
-            , Html.div
-                [ css
-                    [ Css.backgroundColor Colors.frost
-                    , Css.padding (Css.px 4)
-                    , Css.borderRadius4 (Css.px 4) (Css.px 4) Css.zero Css.zero
-                    , Css.border3 (Css.px 1) Css.solid Colors.navy
+                    [ Css.padding (Css.px 4)
+                    , Css.borderBottom3 (Css.px 3) Css.solid Colors.gray45
                     ]
                 ]
                 [ Text.smallBody [ Text.plaintext "Tab 1" ] ]
             , Html.div
                 [ css
-                    [ Css.width (Css.px 30)
-                    , Css.borderBottom3 (Css.px 1) Css.solid Colors.navy
+                    [ Css.padding (Css.px 4)
+                    , Css.borderBottom3 (Css.px 2) Css.solid Colors.gray85
                     ]
                 ]
-                []
+                [ Text.smallBody [ Text.plaintext "Tab 2" ] ]
             , Html.div
                 [ css
                     [ Css.paddingTop (Css.px 4)
@@ -105,13 +89,6 @@ example =
         ]
     , view =
         \ellieLinkConfig model ->
-            let
-                settings =
-                    Control.currentValue model.settings
-
-                tabs =
-                    allTabs
-            in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
                 , name = moduleName
@@ -129,7 +106,7 @@ example =
                                 , "    { focusAndSelect = identity"
                                 , "    , selected = " ++ String.fromInt model.selected
                                 , "    }"
-                                , Code.listMultiline (List.map Tuple.first tabs) 1
+                                , Code.listMultiline (List.map Tuple.first allTabs) 1
                                 ]
                                     |> String.join "\n"
                         in
@@ -142,7 +119,7 @@ example =
                 { focusAndSelect = FocusAndSelectTab
                 , selected = model.selected
                 }
-                (List.map Tuple.second tabs)
+                (List.map Tuple.second allTabs)
             ]
     }
 
@@ -230,43 +207,13 @@ type alias State =
 init : State
 init =
     { selected = 0
-    , settings = initSettings
+    , settings = Control.record ()
     , openTooltip = Nothing
     }
 
 
 type alias Settings =
-    {}
-
-
-type Color
-    = White
-    | Gray
-
-
-colorToCss : Color -> Css.Color
-colorToCss color =
-    case color of
-        White ->
-            Colors.white
-
-        Gray ->
-            Colors.gray96
-
-
-colorToCode : Color -> String
-colorToCode color =
-    case color of
-        White ->
-            "Colors.white"
-
-        Gray ->
-            "Colors.gray96"
-
-
-initSettings : Control Settings
-initSettings =
-    Control.record Settings
+    ()
 
 
 type Msg
