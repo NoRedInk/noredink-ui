@@ -102,7 +102,7 @@ view { focusAndSelect, selected } tabs =
                 }
     in
     Nri.Ui.styled Html.div
-        "Nri-Ui-Tabs__container"
+        "Nri-Ui-MinimalTabs__container"
         []
         []
         [ Html.styled Html.div

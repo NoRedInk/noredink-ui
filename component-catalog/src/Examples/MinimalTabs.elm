@@ -24,7 +24,7 @@ import KeyboardSupport exposing (Key(..))
 import List.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Message.V3 as Message
-import Nri.Ui.MinimalTabs.V1 as Tabs exposing (Tab)
+import Nri.Ui.MinimalTabs.V1 as MinimalTabs exposing (Tab)
 import Nri.Ui.Panel.V1 as Panel
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
@@ -61,7 +61,7 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
-        [ -- faking a mini version of the Tabs component to give Component Catalog users a sense of what the
+        [ -- faking a mini version of the MinimalTabs component to give Component Catalog users a sense of what the
           -- component might look like
           Html.div [ css [ Css.displayFlex, Css.flexWrap Css.wrap ] ]
             [ Html.div
@@ -115,7 +115,7 @@ example =
                           }
                         ]
                 }
-            , Tabs.view
+            , MinimalTabs.view
                 { focusAndSelect = FocusAndSelectTab
                 , selected = model.selected
                 }
@@ -126,8 +126,38 @@ example =
 
 allTabs : List ( String, Tab Int Msg )
 allTabs =
-    List.repeat 4 ()
-        |> List.indexedMap (\i _ -> buildTab i)
+    [ buildTab 0
+    , let
+        id =
+            1
+
+        idString =
+            String.fromInt (id + 1)
+
+        tabIdString =
+            "tab-" ++ idString
+
+        tabName =
+            "Tab " ++ idString
+
+        panelName =
+            "Panel " ++ idString
+      in
+      ( String.join ""
+            [ "MinimalTabs.build { id = " ++ String.fromInt id ++ ", idString = " ++ Code.string tabIdString ++ " }"
+            , "\n\t    [ MinimalTabs.tabHtml (Html.span [] [ Html.text " ++ Code.string "Tab " ++ ", Html.strong [] [ Html.text " ++ Code.string "Two" ++ " ] ])"
+            , "\n\t    , MinimalTabs.panelHtml (text " ++ Code.string "Panel Two" ++ ")"
+            , "\n\t    ]"
+            ]
+      , MinimalTabs.build { id = id, idString = idString }
+            [ MinimalTabs.tabHtml (Html.span [] [ Html.text "Tab ", Html.strong [] [ Html.text "Two" ] ])
+            , MinimalTabs.panelHtml (panelContent id "Panel Two")
+            ]
+      )
+    ]
+        ++ (List.range 2 3
+                |> List.map buildTab
+           )
 
 
 buildTab :
@@ -148,14 +178,14 @@ buildTab id =
             "Panel " ++ idString
     in
     ( String.join ""
-        [ "Tabs.build { id = " ++ String.fromInt id ++ ", idString = " ++ Code.string tabIdString ++ " }"
-        , "\n\t    [ Tabs.tabString " ++ Code.string tabName
-        , "\n\t    , Tabs.panelHtml (text " ++ Code.string panelName ++ ")"
+        [ "MinimalTabs.build { id = " ++ String.fromInt id ++ ", idString = " ++ Code.string tabIdString ++ " }"
+        , "\n\t    [ MinimalTabs.tabString " ++ Code.string tabName
+        , "\n\t    , MinimalTabs.panelHtml (text " ++ Code.string panelName ++ ")"
         , "\n\t    ]"
         ]
-    , Tabs.build { id = id, idString = tabIdString }
-        [ Tabs.tabString tabName
-        , Tabs.panelHtml (panelContent id panelName)
+    , MinimalTabs.build { id = id, idString = tabIdString }
+        [ MinimalTabs.tabString tabName
+        , MinimalTabs.panelHtml (panelContent id panelName)
         ]
     )
 
