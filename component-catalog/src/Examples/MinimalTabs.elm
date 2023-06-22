@@ -17,7 +17,7 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled as Html
+import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import List.Extra
@@ -149,23 +149,9 @@ buildTab settings id =
 
         ( tabContentCode, tabContentView ) =
             if settings.htmlTab && id == 3 then
-                ( Code.fromModule moduleName "tabString " ++ Code.string tabName
-                , MinimalTabs.tabHtml
-                    (Html.span
-                        []
-                        [ Html.text tabName
-                        , UiIcon.exclamation
-                            |> Svg.withWidth (Css.px 15)
-                            |> Svg.withHeight (Css.px 15)
-                            |> Svg.withLabel "Notification"
-                            |> Svg.withCss
-                                [ Css.verticalAlign Css.textTop
-                                , Css.marginLeft (Css.px 5)
-                                ]
-                            |> Svg.withColor Colors.red
-                            |> Svg.toHtml
-                        ]
-                    )
+                ( Code.fromModule moduleName "tabHtml "
+                    ++ Code.withParensMultiline (tabHtmlCode tabName) 3
+                , MinimalTabs.tabHtml (tabHtmlContent tabName)
                 )
 
             else
@@ -188,7 +174,46 @@ buildTab settings id =
     )
 
 
-panelContent : Int -> String -> Html.Html msg
+tabHtmlCode : String -> String
+tabHtmlCode tabName =
+    "span"
+        ++ Code.newlineWithIndent 4
+        ++ "[]"
+        ++ Code.listMultiline
+            [ "text " ++ Code.string tabName
+            , Code.pipelineMultiline
+                [ "UiIcon.exclamation"
+                , "Svg.withWidth (Css.px 15)"
+                , "Svg.withHeight (Css.px 15)"
+                , "Svg.withLabel " ++ Code.string "Notification"
+                , "Svg.withCss [ Css.verticalAlign Css.textTop, Css.marginLeft (Css.px 5) ]"
+                , "Svg.withColor Colors.red"
+                , "Svg.toHtml"
+                ]
+                5
+            ]
+            4
+
+
+tabHtmlContent : String -> Html msg
+tabHtmlContent tabName =
+    span
+        []
+        [ text tabName
+        , UiIcon.exclamation
+            |> Svg.withWidth (Css.px 15)
+            |> Svg.withHeight (Css.px 15)
+            |> Svg.withLabel "Notification"
+            |> Svg.withCss
+                [ Css.verticalAlign Css.textTop
+                , Css.marginLeft (Css.px 5)
+                ]
+            |> Svg.withColor Colors.red
+            |> Svg.toHtml
+        ]
+
+
+panelContent : Int -> String -> Html msg
 panelContent id panelName =
     let
         pangrams =
