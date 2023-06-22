@@ -123,33 +123,7 @@ example =
 
 allTabs : List ( String, Tab Int Msg )
 allTabs =
-    [ buildTab 0
-    , let
-        id =
-            1
-
-        idString =
-            String.fromInt (id + 1)
-
-        tabIdString =
-            "tab-" ++ idString
-
-        panelName =
-            "Panel " ++ idString
-      in
-      ( String.join ""
-            [ "MinimalTabs.build { id = " ++ String.fromInt id ++ ", idString = " ++ Code.string tabIdString ++ " }"
-            , "\n\t    [ MinimalTabs.tabHtml (Html.span [] [ Html.text " ++ Code.string "Tab " ++ ", Html.strong [] [ Html.text " ++ Code.string "Two" ++ " ] ])"
-            , "\n\t    , MinimalTabs.panelHtml (text " ++ Code.string "Panel Two" ++ ")"
-            , "\n\t    ]"
-            ]
-      , MinimalTabs.build { id = id, idString = idString }
-            [ MinimalTabs.tabHtml (Html.span [] [ Html.text "Tab ", Html.strong [] [ Html.text "Two" ] ])
-            , MinimalTabs.panelHtml (panelContent id panelName)
-            ]
-      )
-    ]
-        ++ List.map buildTab [ 2, 3 ]
+    List.map buildTab (List.range 0 3)
 
 
 buildTab :
