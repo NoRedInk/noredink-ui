@@ -1,3 +1,5 @@
+load("//nix:toolchain.bzl", "NixToolchainInfo")
+
 def _nix_bin_impl(ctx) -> [[DefaultInfo.type, RunInfo.type]]:
     bin_name = ctx.attrs.bin_name or ctx.attrs.name
     package_name = "{}#{}".format(
@@ -32,5 +34,9 @@ nix_bin = rule(
         "bin_name": attrs.option(attrs.string(), default = None),
         "package_name": attrs.option(attrs.string(), default = None),
         "source": attrs.string(default = "nixpkgs"),
+        "_nix_toolchain": attrs.toolchain_dep(
+            default = "toolchains//:nix",
+            providers = [NixToolchainInfo],
+        )
     }
 )

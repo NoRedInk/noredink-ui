@@ -2,6 +2,7 @@ load("@prelude//toolchains:genrule.bzl", "system_genrule_toolchain")
 load("@prelude//toolchains:python.bzl", "system_python_bootstrap_toolchain", "system_python_toolchain")
 load("@prelude-nri//elm:toolchain.bzl", "elm_toolchain")
 load("@prelude-nri//node:toolchain.bzl", "node_toolchain")
+load("@prelude-nri//nix:toolchain.bzl", "system_nix_toolchain")
 
 system_genrule_toolchain(
     name = "genrule",
@@ -25,5 +26,10 @@ elm_toolchain(
 
 node_toolchain(
     name = "node",
+    visibility = ["PUBLIC"],
+)
+
+system_nix_toolchain(
+    name = "nix",
     visibility = ["PUBLIC"],
 )
