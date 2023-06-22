@@ -1,6 +1,7 @@
 # A list of available rules and their signatures can be found here: https://buck2.build/docs/api/rules/
 load("@prelude-nri//:elm.bzl", "elm_docs", "elm_format_diffs", "elm_test")
 load("@prelude-nri//:node.bzl", "node_modules", "npm_bin", "npm_script_test", "prettier_diffs")
+load("@prelude-nri//:nix.bzl", "nix_bin")
 
 elm_docs(
     name = "docs.json",
@@ -48,10 +49,10 @@ npm_bin(
     ],
 )
 
-npm_bin(
+nix_bin(
     name = "elm_test_binary",
     bin_name = "elm-test",
-    node_modules = ":node_modules",
+    package_name = "elmPackages.elm-test",
     visibility = ["//component-catalog:elm_test"],
 )
 
