@@ -99,13 +99,13 @@ example =
                     \_ ->
                         let
                             code =
-                                [ moduleName ++ ".view"
-                                , "    { focusAndSelect = identity"
-                                , "    , selected = " ++ String.fromInt model.selected
-                                , "    }"
-                                , Code.listMultiline (List.map Tuple.first allTabs) 1
-                                ]
-                                    |> String.join "\n"
+                                Code.fromModule moduleName "view"
+                                    ++ Code.recordMultiline
+                                        [ ( "focusAndSelect", "identity" )
+                                        , ( "selected", String.fromInt model.selected )
+                                        ]
+                                        1
+                                    ++ Code.listMultiline (List.map Tuple.first allTabs) 1
                         in
                         [ { sectionName = "Example"
                           , code = code
