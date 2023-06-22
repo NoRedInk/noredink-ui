@@ -20,10 +20,8 @@ import Example exposing (Example)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
-import List.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.MinimalTabs.V1 as MinimalTabs exposing (Tab)
-import Nri.Ui.Panel.V1 as Panel
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -99,7 +97,7 @@ example =
                 , update = SetSettings
                 , settings = model.settings
                 , mainType = Just "RootHtml.Html { select : Int, focus : Maybe String }"
-                , extraCode = []
+                , extraCode = [ "import Nri.Ui.Text.V6 as Text" ]
                 , renderExample = Code.unstyledView
                 , toExampleCode =
                     \_ ->
@@ -164,12 +162,12 @@ buildTab settings id =
         ++ Code.listMultiline
             [ tabContentCode
             , Code.fromModule moduleName "panelHtml "
-                ++ Code.withParens ("text " ++ Code.string "Panel Two")
+                ++ Code.withParens ("Text.smallBody [ Text.plaintext " ++ Code.string panelName ++ "]")
             ]
             2
     , MinimalTabs.build { id = id, idString = tabIdString }
         [ tabContentView
-        , MinimalTabs.panelHtml (panelContent id panelName)
+        , MinimalTabs.panelHtml (Text.smallBody [ Text.plaintext panelName ])
         ]
     )
 
@@ -211,43 +209,6 @@ tabHtmlContent tabName =
             |> Svg.withColor Colors.red
             |> Svg.toHtml
         ]
-
-
-panelContent : Int -> String -> Html msg
-panelContent id panelName =
-    let
-        pangrams =
-            -- cycle panels so that panel contents change when changing tabs
-            -- without getting too creative :-D
-            [ ( "The one about the fox"
-              , "The quick brown fox jumps over the lazy dog."
-              )
-            , ( "The one about the wizards"
-              , "The five boxing wizards jump quickly."
-              )
-            , ( "The one about the zebras"
-              , "How quickly daft jumping zebras vex!"
-              )
-            , ( "The one about the sphinxes"
-              , "Sphinx of black quartz, judge my vow."
-              )
-            ]
-                |> List.Extra.splitAt id
-                |> (\( beforeSplit, afterSplit ) -> afterSplit ++ beforeSplit)
-    in
-    Html.div []
-        (List.concat
-            [ List.map
-                (\( title, content ) ->
-                    Panel.view
-                        [ Panel.header title
-                        , Panel.paragraph content
-                        , Panel.containerCss [ Css.margin2 (Css.px 10) Css.zero ]
-                        ]
-                )
-                pangrams
-            ]
-        )
 
 
 type alias State =
