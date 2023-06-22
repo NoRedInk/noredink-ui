@@ -10,6 +10,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - uses: cachix/install-nix-action@v22
+
       - name: cache buck-out
         id: buck-out
         uses: actions/cache@v3
