@@ -53,6 +53,8 @@ nix_bin(
     name = "elm_test_binary",
     bin_name = "elm-test",
     package_name = "elmPackages.elm-test",
+    flake = "flake.nix",
+    lock = "flake.lock",
     visibility = ["//component-catalog:elm_test"],
 )
 

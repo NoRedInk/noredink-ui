@@ -17,6 +17,7 @@ def _nix_bin_impl(ctx) -> [[DefaultInfo.type, RunInfo.type]]:
         "-c",
         cmd_args(out.as_output(), format = "ln -s $(which {}) {{}}".format(bin_name)),
     )
+    cmd.hidden(ctx.attrs.flake, ctx.attrs.lock)
 
     ctx.actions.run(
         cmd,
@@ -34,9 +35,11 @@ nix_bin = rule(
         "bin_name": attrs.option(attrs.string(), default = None),
         "package_name": attrs.option(attrs.string(), default = None),
         "source": attrs.string(default = "nixpkgs"),
+        "flake": attrs.source(),
+        "lock": attrs.source(),
         "_nix_toolchain": attrs.toolchain_dep(
             default = "toolchains//:nix",
             providers = [NixToolchainInfo],
-        )
+        ),
     }
 )
