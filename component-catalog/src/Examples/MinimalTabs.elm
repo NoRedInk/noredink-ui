@@ -24,7 +24,9 @@ import List.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.MinimalTabs.V1 as MinimalTabs exposing (Tab)
 import Nri.Ui.Panel.V1 as Panel
+import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
+import Nri.Ui.UiIcon.V1 as UiIcon
 import Task
 
 
@@ -86,6 +88,10 @@ example =
         ]
     , view =
         \ellieLinkConfig model ->
+            let
+                ( allTabsCode, allTabsView ) =
+                    List.unzip (allTabs (Control.currentValue model.settings))
+            in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
                 , name = moduleName
@@ -105,7 +111,7 @@ example =
                                         , ( "selected", String.fromInt model.selected )
                                         ]
                                         1
-                                    ++ Code.listMultiline (List.map Tuple.first allTabs) 1
+                                    ++ Code.listMultiline allTabsCode 1
                         in
                         [ { sectionName = "Example"
                           , code = code
@@ -116,20 +122,18 @@ example =
                 { focusAndSelect = FocusAndSelectTab
                 , selected = model.selected
                 }
-                (List.map Tuple.second allTabs)
+                allTabsView
             ]
     }
 
 
-allTabs : List ( String, Tab Int Msg )
-allTabs =
-    List.map buildTab (List.range 0 3)
+allTabs : Settings -> List ( String, Tab Int Msg )
+allTabs settings =
+    List.map (buildTab settings) (List.range 0 3)
 
 
-buildTab :
-    Int
-    -> ( String, Tab Int Msg )
-buildTab id =
+buildTab : Settings -> Int -> ( String, Tab Int Msg )
+buildTab settings id =
     let
         idString =
             String.fromInt (id + 1)
@@ -142,17 +146,43 @@ buildTab id =
 
         panelName =
             "Panel " ++ idString
+
+        ( tabContentCode, tabContentView ) =
+            if settings.htmlTab && id == 3 then
+                ( Code.fromModule moduleName "tabString " ++ Code.string tabName
+                , MinimalTabs.tabHtml
+                    (Html.span
+                        []
+                        [ Html.text tabName
+                        , UiIcon.exclamation
+                            |> Svg.withWidth (Css.px 15)
+                            |> Svg.withHeight (Css.px 15)
+                            |> Svg.withLabel "Notification"
+                            |> Svg.withCss
+                                [ Css.verticalAlign Css.textTop
+                                , Css.marginLeft (Css.px 5)
+                                ]
+                            |> Svg.withColor Colors.red
+                            |> Svg.toHtml
+                        ]
+                    )
+                )
+
+            else
+                ( Code.fromModule moduleName "tabString " ++ Code.string tabName
+                , MinimalTabs.tabString tabName
+                )
     in
     ( Code.fromModule moduleName "build "
         ++ Code.record [ ( "id", String.fromInt id ), ( "idString", Code.string tabIdString ) ]
         ++ Code.listMultiline
-            [ Code.fromModule moduleName "tabString " ++ Code.string tabName
+            [ tabContentCode
             , Code.fromModule moduleName "panelHtml "
                 ++ Code.withParens ("text " ++ Code.string "Panel Two")
             ]
             2
     , MinimalTabs.build { id = id, idString = tabIdString }
-        [ MinimalTabs.tabString tabName
+        [ tabContentView
         , MinimalTabs.panelHtml (panelContent id panelName)
         ]
     )
@@ -204,12 +234,19 @@ type alias State =
 init : State
 init =
     { selected = 0
-    , settings = Control.record ()
+    , settings = initSettings
     }
 
 
 type alias Settings =
-    ()
+    { htmlTab : Bool
+    }
+
+
+initSettings : Control Settings
+initSettings =
+    Control.record Settings
+        |> Control.field "Show an HTML tab" (Control.bool False)
 
 
 type Msg
