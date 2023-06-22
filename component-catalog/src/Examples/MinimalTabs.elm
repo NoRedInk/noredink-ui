@@ -169,12 +169,14 @@ buildTab id =
         panelName =
             "Panel " ++ idString
     in
-    ( String.join ""
-        [ "MinimalTabs.build { id = " ++ String.fromInt id ++ ", idString = " ++ Code.string tabIdString ++ " }"
-        , "\n\t    [ MinimalTabs.tabString " ++ Code.string tabName
-        , "\n\t    , MinimalTabs.panelHtml (text " ++ Code.string panelName ++ ")"
-        , "\n\t    ]"
-        ]
+    ( Code.fromModule moduleName "build "
+        ++ Code.record [ ( "id", String.fromInt id ), ( "idString", Code.string tabIdString ) ]
+        ++ Code.listMultiline
+            [ Code.fromModule moduleName "tabString " ++ Code.string tabName
+            , Code.fromModule moduleName "panelHtml "
+                ++ Code.withParens ("text " ++ Code.string "Panel Two")
+            ]
+            2
     , MinimalTabs.build { id = id, idString = tabIdString }
         [ MinimalTabs.tabString tabName
         , MinimalTabs.panelHtml (panelContent id panelName)
