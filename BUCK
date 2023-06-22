@@ -89,6 +89,6 @@ genrule(
 
 prettier_diffs(
     name = "prettier_diffs",
-    srcs = glob(["**/*.md", "script/**/*.js"]),
+    srcs = glob(["**/*.md", "script/**/*.js"], exclude = ["node_modules/**/*"]),
     prettier = "//:prettier",
 )
