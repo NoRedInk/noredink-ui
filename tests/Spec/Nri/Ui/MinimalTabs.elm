@@ -2,7 +2,7 @@ module Spec.Nri.Ui.MinimalTabs exposing (spec)
 
 import Browser.Dom as Dom
 import Html.Styled as Html exposing (..)
-import Nri.Ui.Tabs.V7 as Tabs
+import Nri.Ui.MinimalTabs.V1 as MinimalTabs
 import ProgramTest exposing (..)
 import Spec.TabsInternalHelpers exposing (..)
 import Task
@@ -11,7 +11,7 @@ import Test exposing (..)
 
 spec : Test
 spec =
-    describe "Nri.Ui.Tabs.V7"
+    describe "Nri.Ui.MinimalTabs.V1"
         [ describe "panel rendering" panelRenderingTests
         , describe "keyboard behavior" keyboardTests
         ]
@@ -108,18 +108,14 @@ update msg model =
 
 view : State -> Html Msg
 view model =
-    Tabs.view
-        { title = Nothing
-        , alignment = Tabs.Left
-        , customSpacing = Nothing
-        , focusAndSelect = FocusAndSelectTab
+    MinimalTabs.view
+        { focusAndSelect = FocusAndSelectTab
         , selected = model.selected
-        , tabs =
-            [ Tabs.build { id = 0, idString = "tab-0" } [ Tabs.tabString "Tab 0", Tabs.panelHtml (text "Panel 0") ]
-            , Tabs.build { id = 1, idString = "tab-1" } [ Tabs.tabString "Tab 1", Tabs.panelHtml (text "Panel 1") ]
-            , Tabs.build { id = 2, idString = "tab-2" } [ Tabs.tabString "Tab 2", Tabs.panelHtml (text "Panel 2") ]
-            ]
         }
+        [ MinimalTabs.build { id = 0, idString = "tab-0" } [ MinimalTabs.tabString "Tab 0", MinimalTabs.panelHtml (text "Panel 0") ]
+        , MinimalTabs.build { id = 1, idString = "tab-1" } [ MinimalTabs.tabString "Tab 1", MinimalTabs.panelHtml (text "Panel 1") ]
+        , MinimalTabs.build { id = 2, idString = "tab-2" } [ MinimalTabs.tabString "Tab 2", MinimalTabs.panelHtml (text "Panel 2") ]
+        ]
 
 
 type alias TestContext =

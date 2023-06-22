@@ -15,7 +15,6 @@ import Category exposing (Category(..))
 import Code
 import Css
 import Debug.Control as Control exposing (Control)
-import Debug.Control.Extra exposing (values)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html
@@ -23,11 +22,9 @@ import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import List.Extra
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Message.V3 as Message
 import Nri.Ui.MinimalTabs.V1 as MinimalTabs exposing (Tab)
 import Nri.Ui.Panel.V1 as Panel
 import Nri.Ui.Text.V6 as Text
-import Nri.Ui.Tooltip.V3 as Tooltip
 import Task
 
 
@@ -96,7 +93,7 @@ example =
                 , update = SetSettings
                 , settings = model.settings
                 , mainType = Just "RootHtml.Html { select : Int, focus : Maybe String }"
-                , extraCode = [ "import Nri.Ui.Tooltip.V3 as Tooltip" ]
+                , extraCode = []
                 , renderExample = Code.unstyledView
                 , toExampleCode =
                     \_ ->
@@ -137,9 +134,6 @@ allTabs =
         tabIdString =
             "tab-" ++ idString
 
-        tabName =
-            "Tab " ++ idString
-
         panelName =
             "Panel " ++ idString
       in
@@ -151,13 +145,11 @@ allTabs =
             ]
       , MinimalTabs.build { id = id, idString = idString }
             [ MinimalTabs.tabHtml (Html.span [] [ Html.text "Tab ", Html.strong [] [ Html.text "Two" ] ])
-            , MinimalTabs.panelHtml (panelContent id "Panel Two")
+            , MinimalTabs.panelHtml (panelContent id panelName)
             ]
       )
     ]
-        ++ (List.range 2 3
-                |> List.map buildTab
-           )
+        ++ List.map buildTab [ 2, 3 ]
 
 
 buildTab :
@@ -230,7 +222,6 @@ panelContent id panelName =
 type alias State =
     { selected : Int
     , settings : Control Settings
-    , openTooltip : Maybe Int
     }
 
 
@@ -238,7 +229,6 @@ init : State
 init =
     { selected = 0
     , settings = Control.record ()
-    , openTooltip = Nothing
     }
 
 
