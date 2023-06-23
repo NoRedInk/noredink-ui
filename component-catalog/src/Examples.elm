@@ -26,7 +26,6 @@ import Examples.Loading as Loading
 import Examples.Logo as Logo
 import Examples.Menu as Menu
 import Examples.Message as Message
-import Examples.TabsMinimal as TabsMinimal
 import Examples.Modal as Modal
 import Examples.Page as Page
 import Examples.Pagination as Pagination
@@ -46,6 +45,7 @@ import Examples.Sprite as Sprite
 import Examples.Switch as Switch
 import Examples.Table as Table
 import Examples.Tabs as Tabs
+import Examples.TabsMinimal as TabsMinimal
 import Examples.Text as Text
 import Examples.TextArea as TextArea
 import Examples.TextInput as TextInput
