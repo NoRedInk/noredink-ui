@@ -21,8 +21,8 @@ import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.TabsMinimal.V1 as TabsMinimal exposing (Tab)
 import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.TabsMinimal.V1 as TabsMinimal exposing (Tab)
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Task
