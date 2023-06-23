@@ -108,7 +108,7 @@ view { focusAndSelect, selected } tabs =
         [ Html.styled Html.div
             [ Css.displayFlex
             , Css.alignItems Css.flexEnd
-            , Css.borderBottom (Css.px 1)
+            , Css.borderBottom (Css.px tabBarBorderHeightPx)
             , Css.borderBottomStyle Css.solid
             , Css.borderBottomColor Colors.gray85
             , Fonts.baseFont
@@ -134,19 +134,27 @@ stylesTabsAligned =
     ]
 
 
+tabBarBorderHeightPx : Float
+tabBarBorderHeightPx =
+    1.0
+
+
 tabStyles : Int -> Bool -> List Style
 tabStyles _ isSelected =
     let
         stylesDynamic =
-            if isSelected then
-                [ Css.borderBottom (Css.px 1)
-                , Css.borderBottomStyle Css.solid
-                , Css.borderBottomColor Colors.gray45
+            (if isSelected then
+                [ Css.borderBottomColor Colors.gray45
                 , Css.color Colors.gray20
                 ]
 
-            else
-                []
+             else
+                [ Css.borderBottomColor Css.transparent ]
+            )
+                ++ [ Css.marginBottom (Css.px -tabBarBorderHeightPx)
+                   , Css.borderBottomWidth (Css.px 2)
+                   , Css.borderBottomStyle Css.solid
+                   ]
 
         baseStyles =
             [ Css.color Colors.gray45
