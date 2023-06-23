@@ -116,19 +116,6 @@ example =
                           }
                         ]
                 }
-            , div
-                [ css
-                    [ Css.padding Css.zero
-                    , Css.margin Css.zero
-                    , Css.border3 (Css.px 1) Css.solid Colors.gray85
-                    ]
-                ]
-                [ text
-                    """ This is a div with no margin or padding on it
-                        not getting too close to the tabs
-                        because the whole tab bar has a margin.
-                    """
-                ]
             , TabsMinimal.view
                 { focusAndSelect = FocusAndSelectTab
                 , selected = model.selected
