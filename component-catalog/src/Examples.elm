@@ -26,7 +26,7 @@ import Examples.Loading as Loading
 import Examples.Logo as Logo
 import Examples.Menu as Menu
 import Examples.Message as Message
-import Examples.MinimalTabs as MinimalTabs
+import Examples.TabsMinimal as TabsMinimal
 import Examples.Modal as Modal
 import Examples.Page as Page
 import Examples.Pagination as Pagination
@@ -530,25 +530,6 @@ all =
                     _ ->
                         Nothing
             )
-    , MinimalTabs.example
-        |> Example.wrapMsg MinimalTabsMsg
-            (\msg ->
-                case msg of
-                    MinimalTabsMsg childMsg ->
-                        Just childMsg
-
-                    _ ->
-                        Nothing
-            )
-        |> Example.wrapState MinimalTabsState
-            (\msg ->
-                case msg of
-                    MinimalTabsState childState ->
-                        Just childState
-
-                    _ ->
-                        Nothing
-            )
     , Modal.example
         |> Example.wrapMsg ModalMsg
             (\msg ->
@@ -910,6 +891,25 @@ all =
                     _ ->
                         Nothing
             )
+    , TabsMinimal.example
+        |> Example.wrapMsg TabsMinimalMsg
+            (\msg ->
+                case msg of
+                    TabsMinimalMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState TabsMinimalState
+            (\msg ->
+                case msg of
+                    TabsMinimalState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , Text.example
         |> Example.wrapMsg TextMsg
             (\msg ->
@@ -1034,7 +1034,6 @@ type State
     | LogoState Logo.State
     | MenuState Menu.State
     | MessageState Message.State
-    | MinimalTabsState MinimalTabs.State
     | ModalState Modal.State
     | PageState Page.State
     | PaginationState Pagination.State
@@ -1054,6 +1053,7 @@ type State
     | SwitchState Switch.State
     | TableState Table.State
     | TabsState Tabs.State
+    | TabsMinimalState TabsMinimal.State
     | TextState Text.State
     | TextAreaState TextArea.State
     | TextInputState TextInput.State
@@ -1086,7 +1086,7 @@ type Msg
     | LoadingMsg Loading.Msg
     | LogoMsg Logo.Msg
     | MenuMsg Menu.Msg
-    | MinimalTabsMsg MinimalTabs.Msg
+    | TabsMinimalMsg TabsMinimal.Msg
     | MessageMsg Message.Msg
     | ModalMsg Modal.Msg
     | PageMsg Page.Msg

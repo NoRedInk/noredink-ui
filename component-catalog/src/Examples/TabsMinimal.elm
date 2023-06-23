@@ -1,4 +1,4 @@
-module Examples.MinimalTabs exposing
+module Examples.TabsMinimal exposing
     ( example
     , State, Msg
     )
@@ -21,7 +21,7 @@ import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.MinimalTabs.V1 as MinimalTabs exposing (Tab)
+import Nri.Ui.TabsMinimal.V1 as TabsMinimal exposing (Tab)
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -30,7 +30,7 @@ import Task
 
 moduleName : String
 moduleName =
-    "MinimalTabs"
+    "TabsMinimal"
 
 
 version : Int
@@ -58,7 +58,7 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
-        [ -- faking a mini version of the MinimalTabs component to give Component Catalog users a sense of what the
+        [ -- faking a mini version of the TabsMinimal component to give Component Catalog users a sense of what the
           -- component might look like
           Html.div [ css [ Css.displayFlex, Css.flexWrap Css.wrap ] ]
             [ Html.div
@@ -116,7 +116,7 @@ example =
                           }
                         ]
                 }
-            , MinimalTabs.view
+            , TabsMinimal.view
                 { focusAndSelect = FocusAndSelectTab
                 , selected = model.selected
                 }
@@ -149,12 +149,12 @@ buildTab settings id =
             if settings.htmlTab && id == 3 then
                 ( Code.fromModule moduleName "tabHtml "
                     ++ Code.withParensMultiline (tabHtmlCode tabName) 3
-                , MinimalTabs.tabHtml (tabHtmlContent tabName)
+                , TabsMinimal.tabHtml (tabHtmlContent tabName)
                 )
 
             else
                 ( Code.fromModule moduleName "tabString " ++ Code.string tabName
-                , MinimalTabs.tabString tabName
+                , TabsMinimal.tabString tabName
                 )
     in
     ( Code.fromModule moduleName "build "
@@ -165,9 +165,9 @@ buildTab settings id =
                 ++ Code.withParens ("Text.smallBody [ Text.plaintext " ++ Code.string panelName ++ "]")
             ]
             2
-    , MinimalTabs.build { id = id, idString = tabIdString }
+    , TabsMinimal.build { id = id, idString = tabIdString }
         [ tabContentView
-        , MinimalTabs.panelHtml (Text.smallBody [ Text.plaintext panelName ])
+        , TabsMinimal.panelHtml (Text.smallBody [ Text.plaintext panelName ])
         ]
     )
 

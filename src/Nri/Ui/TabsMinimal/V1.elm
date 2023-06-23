@@ -1,4 +1,4 @@
-module Nri.Ui.MinimalTabs.V1 exposing
+module Nri.Ui.TabsMinimal.V1 exposing
     ( view
     , Tab, TabAttribute, build
     , tabString, tabHtml
@@ -102,7 +102,7 @@ view { focusAndSelect, selected } tabs =
                 }
     in
     Nri.Ui.styled Html.div
-        "Nri-Ui-MinimalTabs__container"
+        "Nri-Ui-TabsMinimal__container"
         []
         []
         [ Html.styled Html.div
