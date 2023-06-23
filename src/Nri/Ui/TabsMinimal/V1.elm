@@ -20,7 +20,7 @@ module Nri.Ui.TabsMinimal.V1 exposing
 
 -}
 
-import Css exposing (..)
+import Css exposing (Style)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui
@@ -112,6 +112,7 @@ view { focusAndSelect, selected } tabs =
             , Css.borderBottomStyle Css.solid
             , Css.borderBottomColor Colors.gray85
             , Fonts.baseFont
+            , Css.fontWeight (Css.int 700)
             ]
             []
             [ tabList ]
@@ -161,12 +162,12 @@ tabStyles _ isSelected =
             , Css.position Css.relative
 
             -- necessary because bourbon or bootstrap or whatever add underlines when tabs are used as links
-            , Css.textDecoration Css.none |> important
+            , Css.textDecoration Css.none |> Css.important
             , Css.property "background" "none"
             , Css.fontFamily Css.inherit
             , Css.fontSize Css.inherit
             , Css.cursor Css.pointer
-            , Css.border zero
+            , Css.border Css.zero
             , Css.height (Css.pct 100)
             , Css.displayFlex
             , Css.alignItems Css.center
@@ -177,7 +178,7 @@ tabStyles _ isSelected =
         stylesTab =
             [ Css.display Css.inlineBlock
             , Css.cursor Css.pointer
-            , pseudoClass "focus-visible"
+            , Css.pseudoClass "focus-visible"
                 [ FocusRing.outerBoxShadow
                 , Css.outline3 (Css.px 2) Css.solid Css.transparent
                 ]
