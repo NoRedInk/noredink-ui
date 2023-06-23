@@ -113,6 +113,7 @@ view { focusAndSelect, selected } tabs =
             , Css.borderBottomColor Colors.gray85
             , Fonts.baseFont
             , Css.fontWeight (Css.int 700)
+            , Css.marginTop (Css.px 15)
             ]
             []
             [ tabList ]
