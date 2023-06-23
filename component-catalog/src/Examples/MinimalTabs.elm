@@ -17,14 +17,14 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled as Html
+import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
-import List.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.MinimalTabs.V1 as MinimalTabs exposing (Tab)
-import Nri.Ui.Panel.V1 as Panel
+import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
+import Nri.Ui.UiIcon.V1 as UiIcon
 import Task
 
 
@@ -86,6 +86,10 @@ example =
         ]
     , view =
         \ellieLinkConfig model ->
+            let
+                ( allTabsCode, allTabsView ) =
+                    List.unzip (allTabs (Control.currentValue model.settings))
+            in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
                 , name = moduleName
@@ -93,19 +97,19 @@ example =
                 , update = SetSettings
                 , settings = model.settings
                 , mainType = Just "RootHtml.Html { select : Int, focus : Maybe String }"
-                , extraCode = []
+                , extraCode = [ "import Nri.Ui.Text.V6 as Text" ]
                 , renderExample = Code.unstyledView
                 , toExampleCode =
                     \_ ->
                         let
                             code =
-                                [ moduleName ++ ".view"
-                                , "    { focusAndSelect = identity"
-                                , "    , selected = " ++ String.fromInt model.selected
-                                , "    }"
-                                , Code.listMultiline (List.map Tuple.first allTabs) 1
-                                ]
-                                    |> String.join "\n"
+                                Code.fromModule moduleName "view"
+                                    ++ Code.recordMultiline
+                                        [ ( "focusAndSelect", "identity" )
+                                        , ( "selected", String.fromInt model.selected )
+                                        ]
+                                        1
+                                    ++ Code.listMultiline allTabsCode 1
                         in
                         [ { sectionName = "Example"
                           , code = code
@@ -116,46 +120,18 @@ example =
                 { focusAndSelect = FocusAndSelectTab
                 , selected = model.selected
                 }
-                (List.map Tuple.second allTabs)
+                allTabsView
             ]
     }
 
 
-allTabs : List ( String, Tab Int Msg )
-allTabs =
-    [ buildTab 0
-    , let
-        id =
-            1
-
-        idString =
-            String.fromInt (id + 1)
-
-        tabIdString =
-            "tab-" ++ idString
-
-        panelName =
-            "Panel " ++ idString
-      in
-      ( String.join ""
-            [ "MinimalTabs.build { id = " ++ String.fromInt id ++ ", idString = " ++ Code.string tabIdString ++ " }"
-            , "\n\t    [ MinimalTabs.tabHtml (Html.span [] [ Html.text " ++ Code.string "Tab " ++ ", Html.strong [] [ Html.text " ++ Code.string "Two" ++ " ] ])"
-            , "\n\t    , MinimalTabs.panelHtml (text " ++ Code.string "Panel Two" ++ ")"
-            , "\n\t    ]"
-            ]
-      , MinimalTabs.build { id = id, idString = idString }
-            [ MinimalTabs.tabHtml (Html.span [] [ Html.text "Tab ", Html.strong [] [ Html.text "Two" ] ])
-            , MinimalTabs.panelHtml (panelContent id panelName)
-            ]
-      )
-    ]
-        ++ List.map buildTab [ 2, 3 ]
+allTabs : Settings -> List ( String, Tab Int Msg )
+allTabs settings =
+    List.map (buildTab settings) (List.range 0 3)
 
 
-buildTab :
-    Int
-    -> ( String, Tab Int Msg )
-buildTab id =
+buildTab : Settings -> Int -> ( String, Tab Int Msg )
+buildTab settings id =
     let
         idString =
             String.fromInt (id + 1)
@@ -168,55 +144,71 @@ buildTab id =
 
         panelName =
             "Panel " ++ idString
+
+        ( tabContentCode, tabContentView ) =
+            if settings.htmlTab && id == 3 then
+                ( Code.fromModule moduleName "tabHtml "
+                    ++ Code.withParensMultiline (tabHtmlCode tabName) 3
+                , MinimalTabs.tabHtml (tabHtmlContent tabName)
+                )
+
+            else
+                ( Code.fromModule moduleName "tabString " ++ Code.string tabName
+                , MinimalTabs.tabString tabName
+                )
     in
-    ( String.join ""
-        [ "MinimalTabs.build { id = " ++ String.fromInt id ++ ", idString = " ++ Code.string tabIdString ++ " }"
-        , "\n\t    [ MinimalTabs.tabString " ++ Code.string tabName
-        , "\n\t    , MinimalTabs.panelHtml (text " ++ Code.string panelName ++ ")"
-        , "\n\t    ]"
-        ]
+    ( Code.fromModule moduleName "build "
+        ++ Code.record [ ( "id", String.fromInt id ), ( "idString", Code.string tabIdString ) ]
+        ++ Code.listMultiline
+            [ tabContentCode
+            , Code.fromModule moduleName "panelHtml "
+                ++ Code.withParens ("Text.smallBody [ Text.plaintext " ++ Code.string panelName ++ "]")
+            ]
+            2
     , MinimalTabs.build { id = id, idString = tabIdString }
-        [ MinimalTabs.tabString tabName
-        , MinimalTabs.panelHtml (panelContent id panelName)
+        [ tabContentView
+        , MinimalTabs.panelHtml (Text.smallBody [ Text.plaintext panelName ])
         ]
     )
 
 
-panelContent : Int -> String -> Html.Html msg
-panelContent id panelName =
-    let
-        pangrams =
-            -- cycle panels so that panel contents change when changing tabs
-            -- without getting too creative :-D
-            [ ( "The one about the fox"
-              , "The quick brown fox jumps over the lazy dog."
-              )
-            , ( "The one about the wizards"
-              , "The five boxing wizards jump quickly."
-              )
-            , ( "The one about the zebras"
-              , "How quickly daft jumping zebras vex!"
-              )
-            , ( "The one about the sphinxes"
-              , "Sphinx of black quartz, judge my vow."
-              )
+tabHtmlCode : String -> String
+tabHtmlCode tabName =
+    "span"
+        ++ Code.newlineWithIndent 4
+        ++ "[]"
+        ++ Code.listMultiline
+            [ "text " ++ Code.string tabName
+            , Code.pipelineMultiline
+                [ "UiIcon.exclamation"
+                , "Svg.withWidth (Css.px 15)"
+                , "Svg.withHeight (Css.px 15)"
+                , "Svg.withLabel " ++ Code.string "Notification"
+                , "Svg.withCss [ Css.verticalAlign Css.textTop, Css.marginLeft (Css.px 5) ]"
+                , "Svg.withColor Colors.red"
+                , "Svg.toHtml"
+                ]
+                5
             ]
-                |> List.Extra.splitAt id
-                |> (\( beforeSplit, afterSplit ) -> afterSplit ++ beforeSplit)
-    in
-    Html.div []
-        (List.concat
-            [ List.map
-                (\( title, content ) ->
-                    Panel.view
-                        [ Panel.header title
-                        , Panel.paragraph content
-                        , Panel.containerCss [ Css.margin2 (Css.px 10) Css.zero ]
-                        ]
-                )
-                pangrams
-            ]
-        )
+            4
+
+
+tabHtmlContent : String -> Html msg
+tabHtmlContent tabName =
+    span
+        []
+        [ text tabName
+        , UiIcon.exclamation
+            |> Svg.withWidth (Css.px 15)
+            |> Svg.withHeight (Css.px 15)
+            |> Svg.withLabel "Notification"
+            |> Svg.withCss
+                [ Css.verticalAlign Css.textTop
+                , Css.marginLeft (Css.px 5)
+                ]
+            |> Svg.withColor Colors.red
+            |> Svg.toHtml
+        ]
 
 
 type alias State =
@@ -228,12 +220,19 @@ type alias State =
 init : State
 init =
     { selected = 0
-    , settings = Control.record ()
+    , settings = initSettings
     }
 
 
 type alias Settings =
-    ()
+    { htmlTab : Bool
+    }
+
+
+initSettings : Control Settings
+initSettings =
+    Control.record Settings
+        |> Control.field "Show an HTML tab" (Control.bool False)
 
 
 type Msg
