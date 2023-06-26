@@ -96,6 +96,7 @@ import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 as MediaQuery exposing (mobileBreakpoint, narrowMobileBreakpoint, quizEngineBreakpoint)
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.Util as Util
 import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
 
 
@@ -882,7 +883,7 @@ viewToggleTip : { label : String, lastId : Maybe String } -> List (Attribute msg
 viewToggleTip { label, lastId } attributes_ =
     let
         id =
-            ExtraAttributes.safeId label
+            Util.safeIdString label
 
         triggerId =
             "tooltip-trigger__" ++ id

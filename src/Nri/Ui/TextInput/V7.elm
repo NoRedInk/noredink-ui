@@ -72,6 +72,7 @@ import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.InputStyles.V4 as InputStyles exposing (defaultMarginTop)
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.Util exposing (dashify)
 import Time
 
 
@@ -981,8 +982,8 @@ view label attributes =
 This is for use when you need the DOM element id for use in javascript (such as trigger an event to focus a particular text input)
 -}
 generateId : String -> String
-generateId =
-    Extra.safeIdWithPrefix "Nri-Ui-TextInput"
+generateId labelText =
+    "Nri-Ui-TextInput-" ++ dashify labelText
 
 
 type alias FloatingContentConfig msg =

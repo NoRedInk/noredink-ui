@@ -16,19 +16,19 @@ spec =
                 ungrouped
                     -- first option is selected automatically
                     |> ensureViewHas
-                        [ id "id-nri-select--Cat"
+                        [ id "nri-select-cat"
                         , selected True
                         , attribute (Attributes.value "Cat")
                         ]
                     |> selectAnimal Dog
                     |> ensureViewHas
-                        [ id "id-nri-select--Dog"
+                        [ id "nri-select-dog"
                         , selected True
                         , attribute (Attributes.value "Dog")
                         ]
                     |> selectAnimal Other
                     |> ensureViewHas
-                        [ id "id-nri-select--My-favorite-animal-is-something-else"
+                        [ id "nri-select-my-favorite-animal-is-something-else"
                         , selected True
                         , attribute (Attributes.value "My favorite animal is something else")
                         ]
@@ -38,25 +38,25 @@ spec =
                 grouped
                     -- first option is selected automatically
                     |> ensureViewHas
-                        [ id "id-nri-select--Cat"
+                        [ id "nri-select-cat"
                         , selected True
                         , attribute (Attributes.value "Cat")
                         ]
                     |> selectAnimal Dog
                     |> ensureViewHas
-                        [ id "id-nri-select--Dog"
+                        [ id "nri-select-dog"
                         , selected True
                         , attribute (Attributes.value "Dog")
                         ]
                     |> selectAnimal Axolotl
                     |> ensureViewHas
-                        [ id "id-nri-select--Axolotl"
+                        [ id "nri-select-axolotl"
                         , selected True
                         , attribute (Attributes.value "Axolotl")
                         ]
                     |> selectAnimal Other
                     |> ensureViewHas
-                        [ id "id-nri-select--My-favorite-animal-is-something-else"
+                        [ id "nri-select-my-favorite-animal-is-something-else"
                         , selected True
                         , attribute (Attributes.value "My favorite animal is something else")
                         ]

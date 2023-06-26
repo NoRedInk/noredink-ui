@@ -16,6 +16,7 @@ import Html.Styled.Events as Events
 import Html.Styled.Keyed as Keyed
 import Json.Decode
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
+import Nri.Ui.Util exposing (dashify)
 
 
 {-| -}
@@ -52,7 +53,7 @@ viewTabs : Config id msg -> Html msg
 viewTabs config =
     Html.div
         [ Role.tabList
-        , Aria.owns (List.map (AttributesExtra.safeId << .idString) config.tabs)
+        , Aria.owns (List.map (tabToId << .idString) config.tabs)
         , Attributes.css config.tabListStyles
         ]
         (List.map (viewTab_ config) config.tabs)
@@ -102,7 +103,7 @@ viewTab_ config tab =
                , Aria.selected isSelected
                , Role.tab
                , Aria.controls [ tabToBodyId tab.idString ]
-               , Attributes.id (AttributesExtra.safeId tab.idString)
+               , Attributes.id (tabToId tab.idString)
                , Events.onFocus (config.onSelect tab.id)
                , Events.on "keyup" <|
                     Json.Decode.andThen (keyEvents config tab) Events.keyCode
@@ -120,7 +121,7 @@ keyEvents { onFocus, tabs } thisTab keyCode =
                     acc
 
                 ( True, Nothing ) ->
-                    ( True, Just (AttributesExtra.safeId tab.idString) )
+                    ( True, Just (tabToId tab.idString) )
 
                 ( False, Nothing ) ->
                     ( tab.id == thisTab.id, Nothing )
@@ -172,7 +173,7 @@ viewTabPanel : Tab id msg -> Bool -> Html msg
 viewTabPanel tab selected =
     Html.div
         ([ Role.tabPanel
-         , Aria.labelledBy (AttributesExtra.safeId tab.idString)
+         , Aria.labelledBy (tabToId tab.idString)
          , Attributes.id (tabToBodyId tab.idString)
          ]
             ++ (if selected then
@@ -190,11 +191,16 @@ viewTabPanel tab selected =
         [ tab.panelView ]
 
 
+tabToId : String -> String
+tabToId tab =
+    dashify (String.toLower tab)
+
+
 tabToBodyId : String -> String
-tabToBodyId =
-    AttributesExtra.safeIdWithPrefix "tab-body"
+tabToBodyId tab =
+    "tab-body-" ++ tabToId tab
 
 
 tabToKeyedNode : String -> String
-tabToKeyedNode =
-    AttributesExtra.safeIdWithPrefix "tabs-internal-keyed-node"
+tabToKeyedNode tab =
+    "tabs-internal-keyed-node-" ++ tabToId tab

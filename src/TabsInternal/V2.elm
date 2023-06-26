@@ -20,8 +20,9 @@ import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Html.Styled.Keyed as Keyed
 import Nri.Ui.FocusRing.V1 as FocusRing
-import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (safeId, safeIdWithPrefix)
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Tooltip.V3 as Tooltip
+import Nri.Ui.Util exposing (dashify)
 
 
 {-| -}
@@ -92,7 +93,7 @@ viewTabs config =
         Html.div []
             [ Html.div
                 [ Role.tabList
-                , Aria.owns (List.map (safeId << .idString) config.tabs)
+                , Aria.owns (List.map (tabToId << .idString) config.tabs)
                 ]
                 []
             , Html.div [ Attributes.css config.tabListStyles ]
@@ -160,7 +161,7 @@ viewTab_ config index tab =
                        , Aria.selected isSelected
                        , Role.tab
                        , Aria.controls [ tabToBodyId tab.idString ]
-                       , Attributes.id (safeId tab.idString)
+                       , Attributes.id (tabToId tab.idString)
                        , Key.onKeyUpPreventDefault (keyEvents config tab)
                        ]
                     ++ (case tab.labelledBy of
@@ -192,7 +193,7 @@ viewTab_ config index tab =
 
         ( Nothing, tooltipAttributes ) ->
             Tooltip.view
-                { id = safeIdWithPrefix "tab-tooltip" tab.idString
+                { id = "tab-tooltip__" ++ tabToId tab.idString
                 , trigger = \eventHandlers -> buttonOrLink eventHandlers
                 }
                 ([ Tooltip.smallPadding
@@ -208,7 +209,7 @@ keyEvents { focusAndSelect, tabs } thisTab =
     let
         onFocus : Tab id msg -> msg
         onFocus tab =
-            focusAndSelect { select = tab.id, focus = Just (safeId tab.idString) }
+            focusAndSelect { select = tab.id, focus = Just (tabToId tab.idString) }
 
         findAdjacentTab : Tab id msg -> ( Bool, Maybe msg ) -> ( Bool, Maybe msg )
         findAdjacentTab tab ( isAdjacentTab, acc ) =
@@ -264,7 +265,7 @@ viewTabPanel : Tab id msg -> Bool -> Html msg
 viewTabPanel tab selected =
     Html.div
         ([ Role.tabPanel
-         , Aria.labelledBy (safeId tab.idString)
+         , Aria.labelledBy (tabToId tab.idString)
          , Attributes.id (tabToBodyId tab.idString)
          , Attributes.tabindex 0
          , Attributes.class FocusRing.customClass
@@ -286,11 +287,16 @@ viewTabPanel tab selected =
         [ tab.panelView ]
 
 
+tabToId : String -> String
+tabToId tab =
+    dashify (String.toLower tab)
+
+
 tabToBodyId : String -> String
-tabToBodyId =
-    safeIdWithPrefix "tab-body"
+tabToBodyId tab =
+    "tab-body-" ++ tabToId tab
 
 
 tabToKeyedNode : String -> String
-tabToKeyedNode =
-    safeIdWithPrefix "tabs-internal-keyed-node"
+tabToKeyedNode tab =
+    "tabs-internal-keyed-node-" ++ tabToId tab
