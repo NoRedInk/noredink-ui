@@ -164,3 +164,4 @@ safeId unsafe =
             nonAlphaNumUnderscoreHyphenAnywhere
             replaceWithHyphenMinus
             unsafe
+        |> String.toLower
