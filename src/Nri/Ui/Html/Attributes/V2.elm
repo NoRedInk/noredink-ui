@@ -141,12 +141,26 @@ safeId unsafe =
                 |> Regex.fromString
                 |> Maybe.withDefault Regex.never
 
-        hyphenMinus : any -> String
-        hyphenMinus _ =
+        alphaAtStart : Regex
+        alphaAtStart =
+            "^[a-zA-Z]"
+                |> Regex.fromString
+                |> Maybe.withDefault Regex.never
+
+        prefix : String
+        prefix =
+            if Regex.contains alphaAtStart unsafe then
+                ""
+
+            else
+                "id-"
+
+        replaceWithHyphenMinus : any -> String
+        replaceWithHyphenMinus _ =
             "-"
     in
-    "id-"
+    prefix
         ++ Regex.replace
             nonAlphaNumUnderscoreHyphenAnywhere
-            hyphenMinus
+            replaceWithHyphenMinus
             unsafe
