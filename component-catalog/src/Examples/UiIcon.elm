@@ -124,8 +124,8 @@ all =
         , ( "appleOutline", UiIcon.appleOutline, [] )
         , ( "briefcase", UiIcon.briefcase, [] )
         , ( "heapOfBoxes", UiIcon.heapOfBoxes, [] )
-        , ( "climbingStairs" , UiIcon.climbingStairs, [] )
-        , ( "twoHandsHoldingBox" , UiIcon.twoHandsHoldingBox, [] )
+        , ( "climbingStairs", UiIcon.climbingStairs, [] )
+        , ( "twoHandsHoldingBox", UiIcon.twoHandsHoldingBox, [] )
         , ( "atlas", UiIcon.atlas, [] )
         ]
       )
