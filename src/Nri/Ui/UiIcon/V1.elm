@@ -2267,6 +2267,7 @@ mutedSpeaker =
 
 
 {-| -}
+heapOfBoxes : Nri.Ui.Svg.V1.Svg
 heapOfBoxes =
     Nri.Ui.Svg.V1.init "0 0 39 38"
         [ Svg.g
@@ -2295,6 +2296,7 @@ heapOfBoxes =
 
 
 {-| -}
+climbingStairs : Nri.Ui.Svg.V1.Svg
 climbingStairs =
     Nri.Ui.Svg.V1.init "0 0 39 39"
         [ Svg.g
@@ -2333,6 +2335,7 @@ climbingStairs =
 
 
 {-| -}
+twoHandsHoldingBox : Nri.Ui.Svg.V1.Svg
 twoHandsHoldingBox =
     Nri.Ui.Svg.V1.init "0 0 39 39"
         [ Svg.path
@@ -2354,6 +2357,7 @@ twoHandsHoldingBox =
 
 
 {-| -}
+atlas : Nri.Ui.Svg.V1.Svg
 atlas =
     Nri.Ui.Svg.V1.init "0 0 44 100"
         [ Svg.g
