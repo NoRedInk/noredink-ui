@@ -123,6 +123,10 @@ all =
         , ( "apple", UiIcon.apple, [] )
         , ( "appleOutline", UiIcon.appleOutline, [] )
         , ( "briefcase", UiIcon.briefcase, [] )
+        , ( "heapOfBoxes", UiIcon.heapOfBoxes, [] )
+        , ( "climbingStairs", UiIcon.climbingStairs, [] )
+        , ( "twoHandsHoldingBox", UiIcon.twoHandsHoldingBox, [] )
+        , ( "atlas", UiIcon.atlas, [] )
         ]
       )
     , ( "Time"
