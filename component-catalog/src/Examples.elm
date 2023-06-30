@@ -45,6 +45,7 @@ import Examples.Sprite as Sprite
 import Examples.Switch as Switch
 import Examples.Table as Table
 import Examples.Tabs as Tabs
+import Examples.TabsMinimal as TabsMinimal
 import Examples.Text as Text
 import Examples.TextArea as TextArea
 import Examples.TextInput as TextInput
@@ -890,6 +891,25 @@ all =
                     _ ->
                         Nothing
             )
+    , TabsMinimal.example
+        |> Example.wrapMsg TabsMinimalMsg
+            (\msg ->
+                case msg of
+                    TabsMinimalMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState TabsMinimalState
+            (\msg ->
+                case msg of
+                    TabsMinimalState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , Text.example
         |> Example.wrapMsg TextMsg
             (\msg ->
@@ -1033,6 +1053,7 @@ type State
     | SwitchState Switch.State
     | TableState Table.State
     | TabsState Tabs.State
+    | TabsMinimalState TabsMinimal.State
     | TextState Text.State
     | TextAreaState TextArea.State
     | TextInputState TextInput.State
@@ -1065,6 +1086,7 @@ type Msg
     | LoadingMsg Loading.Msg
     | LogoMsg Logo.Msg
     | MenuMsg Menu.Msg
+    | TabsMinimalMsg TabsMinimal.Msg
     | MessageMsg Message.Msg
     | ModalMsg Modal.Msg
     | PageMsg Page.Msg

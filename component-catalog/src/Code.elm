@@ -5,9 +5,10 @@ module Code exposing
     , commentInline
     , list, listMultiline
     , tuple
+    , pipelineMultiline
     , record, recordMultiline
     , newlineWithIndent, newlines
-    , withParens
+    , withParens, withParensMultiline
     , anonymousFunction, always
     , caseExpression
     , browserElement, unstyledView
@@ -25,9 +26,10 @@ module Code exposing
 @docs commentInline
 @docs list, listMultiline
 @docs tuple
+@docs pipelineMultiline
 @docs record, recordMultiline
 @docs newlineWithIndent, newlines
-@docs withParens
+@docs withParens, withParensMultiline
 @docs anonymousFunction, always
 @docs caseExpression
 @docs browserElement, unstyledView
@@ -156,7 +158,7 @@ pipelineMultiline pipedWith indent =
         indents =
             newlineWithIndent (indent + 1)
     in
-    newlineWithIndent indent ++ String.join (indents ++ "|> ") pipedWith
+    String.join (indents ++ "|> ") pipedWith
 
 
 newlines : String
@@ -173,6 +175,16 @@ newlineWithIndent indent =
 withParens : String -> String
 withParens val =
     "(" ++ val ++ ")"
+
+
+{-| -}
+withParensMultiline : String -> Int -> String
+withParensMultiline val indent =
+    newlineWithIndent indent
+        ++ "("
+        ++ val
+        ++ newlineWithIndent indent
+        ++ ")"
 
 
 {-| -}
@@ -222,7 +234,7 @@ browserElement { init, view, update, subscriptions } =
 {-| -}
 unstyledView : String -> String
 unstyledView view =
-    pipelineMultiline [ view, "toUnstyled" ] 1
+    pipelineMultiline [ newlineWithIndent 1 ++ view, "toUnstyled" ] 1
 
 
 {-| -}
