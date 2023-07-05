@@ -1,5 +1,5 @@
 module Nri.Ui.UiIcon.V1 exposing
-    ( seeMore, openClose, download, sort, gear, flipper, hamburger, kebab, horizontalKebab
+    ( seeMore, openClose, download, sort, gear, flipper, hamburger, kebab
     , archive, unarchive
     , playInCircle, pauseInCircle, stopInCircle, speaker, mutedSpeaker
     , play, skip
@@ -37,7 +37,7 @@ module Nri.Ui.UiIcon.V1 exposing
 
 {-| How to add new icons: <https://paper.dropbox.com/doc/How-to-create-a-new-SVG-icon-for-use-in-Elm--Ay9uhSLfGUAix0ERIiJ0Dm8dAg-8WNqtARdr4EgjmYEHPeYD>
 
-@docs seeMore, openClose, download, sort, gear, flipper, hamburger, kebab, horizontalKebab
+@docs seeMore, openClose, download, sort, gear, flipper, hamburger, kebab
 @docs archive, unarchive
 @docs playInCircle, pauseInCircle, stopInCircle, speaker, mutedSpeaker
 @docs play, skip
@@ -148,11 +148,28 @@ share =
 {-| -}
 seeMore : Nri.Ui.Svg.V1.Svg
 seeMore =
-    Nri.Ui.Svg.V1.init "0 0 30 30"
-        [ Svg.ellipse [ Attributes.cx "8.1", Attributes.cy "15", Attributes.rx "2.3", Attributes.ry "2.2" ] []
-        , Svg.ellipse [ Attributes.cx "15", Attributes.cy "15", Attributes.rx "2.3", Attributes.ry "2.2" ] []
-        , Svg.ellipse [ Attributes.cx "21.5", Attributes.cy "15", Attributes.rx "2.3", Attributes.ry "2.2" ] []
-        , Svg.path [ Attributes.d "M28.3,0H1.9C1.1,0,0.7,0.1,0.4,0.4C0.1,0.7,0,1.1,0,1.9v26.2C0,29.7,0.4,30,1.8,30H27h1.1h0.1c0.1,0,0.2,0,0.3,0c0,0,0.1,0,0.1,0c0.1,0,0.3,0,0.4-0.1c0,0,0,0,0,0c0.8-0.2,1-0.6,1-1.7V1.9C30.1,0.4,29.7,0,28.3,0z M26.8,27H3.1v-0.1V3.2V3.1h0.1H27v23.8V27H26.8z" ] []
+    Nri.Ui.Svg.V1.init "0 0 100 100"
+        [ Svg.circle
+            [ Attributes.cx "13.7"
+            , Attributes.cy "50"
+            , Attributes.r "12"
+            , Attributes.fill "currentcolor"
+            ]
+            []
+        , Svg.circle
+            [ Attributes.cx "50"
+            , Attributes.cy "50"
+            , Attributes.r "12"
+            , Attributes.fill "currentcolor"
+            ]
+            []
+        , Svg.circle
+            [ Attributes.cx "86.3"
+            , Attributes.cy "50"
+            , Attributes.r "12"
+            , Attributes.fill "currentcolor"
+            ]
+            []
         ]
 
 
@@ -1044,34 +1061,6 @@ kebab =
         , Svg.circle
             [ Attributes.cx "50"
             , Attributes.cy "86.3"
-            , Attributes.r "12"
-            , Attributes.fill "currentcolor"
-            ]
-            []
-        ]
-
-
-{-| -}
-horizontalKebab : Nri.Ui.Svg.V1.Svg
-horizontalKebab =
-    Nri.Ui.Svg.V1.init "0 0 100 100"
-        [ Svg.circle
-            [ Attributes.cx "13.7"
-            , Attributes.cy "50"
-            , Attributes.r "12"
-            , Attributes.fill "currentcolor"
-            ]
-            []
-        , Svg.circle
-            [ Attributes.cx "50"
-            , Attributes.cy "50"
-            , Attributes.r "12"
-            , Attributes.fill "currentcolor"
-            ]
-            []
-        , Svg.circle
-            [ Attributes.cx "86.3"
-            , Attributes.cy "50"
             , Attributes.r "12"
             , Attributes.fill "currentcolor"
             ]
