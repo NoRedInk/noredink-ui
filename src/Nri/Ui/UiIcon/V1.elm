@@ -1051,6 +1051,7 @@ kebab =
         ]
 
 
+{-| -}
 horizontalKebab : Nri.Ui.Svg.V1.Svg
 horizontalKebab =
     Nri.Ui.Svg.V1.init "0 0 100 100"
