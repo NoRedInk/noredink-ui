@@ -60,6 +60,7 @@ all =
         , ( "gear", UiIcon.gear, [] )
         , ( "hamburger", UiIcon.hamburger, [] )
         , ( "kebab", UiIcon.kebab, [] )
+        , ( "horizontalKebab", UiIcon.horizontalKebab, [] )
         ]
       )
     , ( "Archive & Unarchive"

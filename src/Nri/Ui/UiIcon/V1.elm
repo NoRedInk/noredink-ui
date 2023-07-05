@@ -1,5 +1,5 @@
 module Nri.Ui.UiIcon.V1 exposing
-    ( seeMore, openClose, download, sort, gear, flipper, hamburger, kebab
+    ( seeMore, openClose, download, sort, gear, flipper, hamburger, kebab, horizontalKebab
     , archive, unarchive
     , playInCircle, pauseInCircle, stopInCircle, speaker, mutedSpeaker
     , play, skip
@@ -37,7 +37,7 @@ module Nri.Ui.UiIcon.V1 exposing
 
 {-| How to add new icons: <https://paper.dropbox.com/doc/How-to-create-a-new-SVG-icon-for-use-in-Elm--Ay9uhSLfGUAix0ERIiJ0Dm8dAg-8WNqtARdr4EgjmYEHPeYD>
 
-@docs seeMore, openClose, download, sort, gear, flipper, hamburger, kebab
+@docs seeMore, openClose, download, sort, gear, flipper, hamburger, kebab, horizontalKebab
 @docs archive, unarchive
 @docs playInCircle, pauseInCircle, stopInCircle, speaker, mutedSpeaker
 @docs play, skip
@@ -1044,6 +1044,33 @@ kebab =
         , Svg.circle
             [ Attributes.cx "50"
             , Attributes.cy "86.3"
+            , Attributes.r "12"
+            , Attributes.fill "currentcolor"
+            ]
+            []
+        ]
+
+
+horizontalKebab : Nri.Ui.Svg.V1.Svg
+horizontalKebab =
+    Nri.Ui.Svg.V1.init "0 0 100 100"
+        [ Svg.circle
+            [ Attributes.cx "13.7"
+            , Attributes.cy "50"
+            , Attributes.r "12"
+            , Attributes.fill "currentcolor"
+            ]
+            []
+        , Svg.circle
+            [ Attributes.cx "50"
+            , Attributes.cy "50"
+            , Attributes.r "12"
+            , Attributes.fill "currentcolor"
+            ]
+            []
+        , Svg.circle
+            [ Attributes.cx "86.3"
+            , Attributes.cy "50"
             , Attributes.r "12"
             , Attributes.fill "currentcolor"
             ]
