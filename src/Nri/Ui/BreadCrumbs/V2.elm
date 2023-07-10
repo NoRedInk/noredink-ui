@@ -23,17 +23,17 @@ Wide Viewport:
 
     Home
 
-    🏠 Home > 🟠 Category 1
+    🏠 Home > 🦇 Category 1
 
-    🏠 > 🟠 Category 1 > 🟣 Sub-Category 2
+    🏠 > 🦇 Category 1 > 🧛 Sub-Category 2
 
 Narrow Viewport:
 
     Home
 
-    🏠 > 🟠 Category 1
+    🏠 > 🦇 Category 1
 
-    🏠 > 🟠 > 🟣 Sub-Category 2
+    🏠 > 🦇 > 🧛 Sub-Category 2
 
 
 ## Creating breadcrumbs
