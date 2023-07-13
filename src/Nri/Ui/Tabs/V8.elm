@@ -467,6 +467,9 @@ tabStyles customSpacing pageBackgroundColor_ index isSelected =
             , Css.Media.withMedia
                 [ MediaQuery.narrowMobile ]
                 [ Css.marginLeft Css.zero
+                , Css.marginRight Css.zero
+                , Css.textAlign Css.left
+                , Css.padding Css.zero
                 ]
             , hover
                 [ backgroundColor Colors.white
