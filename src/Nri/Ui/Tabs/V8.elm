@@ -37,7 +37,7 @@ module Nri.Ui.Tabs.V8 exposing
 -}
 
 import Css exposing (..)
-import Css.Global exposing (children, div)
+import Css.Global
 import Css.Media
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
