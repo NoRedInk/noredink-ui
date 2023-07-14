@@ -37,6 +37,7 @@ module Nri.Ui.Tabs.V8 exposing
 -}
 
 import Css exposing (..)
+import Css.Global
 import Css.Media
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
@@ -287,6 +288,16 @@ view { focusAndSelect, selected } attrs tabs =
             , Css.borderBottomStyle Css.solid
             , Css.borderBottomColor Colors.navy
             , Fonts.baseFont
+            , Css.Media.withMedia
+                [ MediaQuery.narrowMobile ]
+                [ Css.backgroundColor Colors.gray96
+                , Css.padding (Css.px 20)
+                , Css.borderRadius (Css.px 8)
+                , Css.borderBottom Css.zero
+                , Css.flexDirection Css.column
+                , Css.alignItems flexStart
+                , Css.Global.children [ Css.Global.div [ Css.width (Css.pct 100) ] ]
+                ]
             , maybeStyle
                 (\{ topOffset, topPadding, zIndex } ->
                     Css.Media.withMedia
@@ -358,6 +369,10 @@ stylesTabsAligned config =
     , Css.displayFlex
     , Css.flexGrow (Css.int 1)
     , Css.padding Css.zero
+    , Css.Media.withMedia
+        [ MediaQuery.narrowMobile ]
+        [ Css.flexDirection Css.column
+        ]
     ]
 
 
@@ -385,6 +400,16 @@ tabStyles customSpacing pageBackgroundColor_ index isSelected =
                         (Css.stop2 (withAlpha 1 pageBackgroundColor_) (Css.pct 0))
                         (Css.stop2 (withAlpha 0 pageBackgroundColor_) (Css.pct 100))
                         []
+                , Css.Media.withMedia
+                    [ MediaQuery.narrowMobile ]
+                    [ Css.border Css.zero
+                    , Css.backgroundImage Css.none
+                    , Css.backgroundColor Colors.glacier
+                    , Css.borderRadius (Css.px 8)
+                    , Css.fontSize (Css.px 15)
+                    , Css.fontWeight (Css.int 700)
+                    , Css.width (Css.pct 100)
+                    ]
                 ]
 
             else
@@ -394,6 +419,16 @@ tabStyles customSpacing pageBackgroundColor_ index isSelected =
                         (Css.stop2 (withAlpha 0.25 Colors.azure) (Css.pct 0))
                         (Css.stop2 (withAlpha 0 Colors.azure) (Css.pct 25))
                         [ Css.stop2 (withAlpha 0 Colors.azure) (Css.pct 100) ]
+                , Css.Media.withMedia
+                    [ MediaQuery.narrowMobile ]
+                    [ Css.backgroundImage Css.none
+                    , Css.backgroundColor Colors.gray96
+                    , Css.border Css.zero
+                    , Css.borderRadius (Css.px 8)
+                    , Css.fontSize (Css.px 15)
+                    , Css.width (Css.pct 100)
+                    , Css.fontWeight (Css.int 600)
+                    ]
                 ]
 
         baseStyles =
@@ -429,11 +464,25 @@ tabStyles customSpacing pageBackgroundColor_ index isSelected =
             , Css.cursor Css.pointer
             , property "transition" "background-color 0.2s"
             , property "transition" "border-color 0.2s"
+            , Css.Media.withMedia
+                [ MediaQuery.narrowMobile ]
+                [ Css.marginLeft Css.zero
+                , Css.marginRight Css.zero
+                , Css.textAlign Css.left
+                , Css.padding Css.zero
+                ]
             , hover
                 [ backgroundColor Colors.white
                 , borderTopColor Colors.azure
                 , borderRightColor Colors.azure
                 , borderLeftColor Colors.azure
+                , Css.Media.withMedia
+                    [ MediaQuery.narrowMobile ]
+                    [ backgroundColor Colors.frost
+                    , borderTopColor Css.unset
+                    , borderRightColor Css.unset
+                    , borderLeftColor Css.unset
+                    ]
                 ]
             , pseudoClass "focus-visible"
                 [ FocusRing.outerBoxShadow
