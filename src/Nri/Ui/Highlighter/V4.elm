@@ -704,9 +704,10 @@ isHovered_ :
         , sorter : Maybe (Sorter marker)
         , maybeTool : Maybe tool
     }
+    -> List (List (Highlightable ma))
     -> Highlightable marker
     -> Bool
-isHovered_ config highlightable =
+isHovered_ config groups highlightable =
     case config.maybeTool of
         Nothing ->
             False
@@ -722,7 +723,7 @@ isHovered_ config highlightable =
                                 False
 
                     else
-                        inHoveredGroupWithoutOverlaps config highlightable
+                        inHoveredGroupWithoutOverlaps config groups highlightable
                    )
 
 
@@ -738,9 +739,10 @@ inHoveredGroupWithoutOverlaps :
         , hintingIndices : Maybe ( Int, Int )
         , highlightables : List (Highlightable marker)
     }
+    -> List (List (Highlightable ma))
     -> Highlightable m
     -> Bool
-inHoveredGroupWithoutOverlaps config highlightable =
+inHoveredGroupWithoutOverlaps config groups highlightable =
     case highlightable.marked of
         [] ->
             -- if the highlightable is not marked, then it shouldn't
@@ -752,8 +754,7 @@ inHoveredGroupWithoutOverlaps config highlightable =
         _ ->
             -- if the highlightable is in a group that's hovered,
             -- apply hovered styles
-            config.highlightables
-                |> buildGroups config
+            groups
                 |> List.filter (List.any (.index >> (==) highlightable.index))
                 |> List.head
                 |> Maybe.withDefault []
@@ -1118,24 +1119,29 @@ view_ config =
         toMark highlightable marker =
             { name = marker.name
             , startStyles = marker.startGroupClass
-            , styles = markedHighlightableStyles config (isHovered_ config) highlightable
+            , styles =
+                markedHighlightableStyles config
+                    (isHovered_ config highlightableGroups)
+                    highlightable
             , endStyles = marker.endGroupClass
             }
 
+        highlightableGroups =
+            buildGroups config config.highlightables
+
         withoutOverlaps : List (List ( Highlightable marker, Maybe Mark ))
         withoutOverlaps =
-            config.highlightables
-                |> buildGroups config
-                |> List.map
-                    (\group ->
-                        List.map
-                            (\highlightable ->
-                                ( highlightable
-                                , Maybe.map (toMark highlightable) (List.head highlightable.marked)
-                                )
+            List.map
+                (\group ->
+                    List.map
+                        (\highlightable ->
+                            ( highlightable
+                            , Maybe.map (toMark highlightable) (List.head highlightable.marked)
                             )
-                            group
-                    )
+                        )
+                        group
+                )
+                highlightableGroups
 
         withOverlaps : List ( Highlightable marker, List Mark )
         withOverlaps =
