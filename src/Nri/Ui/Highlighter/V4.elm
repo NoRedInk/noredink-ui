@@ -702,22 +702,28 @@ isHovered_ :
         , highlightables : List (Highlightable marker)
         , overlaps : Bool
         , sorter : Maybe (Sorter marker)
+        , maybeTool : Maybe tool
     }
     -> Highlightable marker
     -> Bool
 isHovered_ config highlightable =
-    directlyHoveringInteractiveSegment config highlightable
-        || (if config.overlaps then
-                case config.sorter of
-                    Just sorter ->
-                        inHoveredGroupForOverlaps config sorter highlightable
+    case config.maybeTool of
+        Nothing ->
+            False
 
-                    _ ->
-                        False
+        Just _ ->
+            directlyHoveringInteractiveSegment config highlightable
+                || (if config.overlaps then
+                        case config.sorter of
+                            Just sorter ->
+                                inHoveredGroupForOverlaps config sorter highlightable
 
-            else
-                inHoveredGroupWithoutOverlaps config highlightable
-           )
+                            _ ->
+                                False
+
+                    else
+                        inHoveredGroupWithoutOverlaps config highlightable
+                   )
 
 
 directlyHoveringInteractiveSegment : { config | mouseOverIndex : Maybe Int } -> Highlightable m -> Bool
