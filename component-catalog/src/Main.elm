@@ -308,11 +308,14 @@ view model =
                 viewWithTooltip Select
                     model
                     (\popupTriggerAttributes ->
-                        Select.view "Options" [ Select.custom popupTriggerAttributes ]
+                        Select.view "Options"
+                            [ Select.custom popupTriggerAttributes
+                            , Select.custom [ Aria.disabled True ]
+                            ]
                     )
-          , ariaDisabled = False
+          , ariaDisabled = True
           , disabled = False
-          , notes = "The published Select doesn't currently fully support tooltips. This Select has been modified."
+          , notes = "aria-disabled added manually.\n\nThe published Select doesn't currently fully support tooltips. This Select has been modified."
           }
         , { type_ = SelectDisabled
           , view =
