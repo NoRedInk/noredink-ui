@@ -12,9 +12,10 @@
   </head>
   <body>
     <div id="svg-target"></div>
+    <main></main>
     <script src="elm.js"></script>
     <script>
-      const app = Elm.Main.init();
+      const app = Elm.Main.init({ node: document.querySelector('main')})
 
       // HIGHLIGHTER
 
