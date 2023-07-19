@@ -82,14 +82,17 @@ example =
                         ]
                 }
             , Heading.h2 [ Heading.plaintext "Example" ]
-            , Select.view label (Select.value state.selectedValue :: attributes)
-                |> Html.Styled.map ChangedTheSelectorValue
+            , Select.view label
+                (Select.value state.selectedValue
+                    :: Select.onSelect ChangedTheSelectorValue
+                    :: attributes
+                )
             , Text.smallBody
                 [ """
                     Note that if the value is bound (and why would you ever make a `Select` where it isn't?)
                     then changing the list of options will not change its value.
                     Furthermore, `Select` will only fire an event when a new value is selected.
-                    This means that if the starting value is `Nothing` and there is no `defaultDisplayText` 
+                    This means that if the starting value is `Nothing` and there is no `defaultDisplayText`
                     then you cannot select the first item in the list without first selecting another one.
                     Use the "choices" selector above to get a feel for what that means.
                 """
@@ -135,11 +138,11 @@ init =
 
 type alias Settings =
     { label : String
-    , attributes : List ( String, Select.Attribute Choosable )
+    , attributes : List ( String, Select.Attribute Choosable Msg )
     }
 
 
-initControls : Control (List ( String, Select.Attribute Choosable ))
+initControls : Control (List ( String, Select.Attribute Choosable Msg ))
 initControls =
     ControlExtra.list
         |> ControlExtra.listItem "choices" initChoices
@@ -368,7 +371,7 @@ toOption c =
     { label = choosableToLabel c, value = c }
 
 
-initChoices : Control ( String, Select.Attribute Choosable )
+initChoices : Control ( String, Select.Attribute Choosable Msg )
 initChoices =
     let
         toOptionString : Choosable -> String
@@ -385,7 +388,7 @@ initChoices =
             , List.map toOption choosables
             )
 
-        toValue : List Choosable -> Control ( String, Select.Attribute Choosable )
+        toValue : List Choosable -> Control ( String, Select.Attribute Choosable Msg )
         toValue =
             toChoice >> Tuple.mapSecond (Select.choices choosableToLabel) >> Control.value
 

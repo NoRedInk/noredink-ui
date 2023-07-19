@@ -184,7 +184,7 @@ you want/expect if underlying styles change.
 Instead, please use the `css` helper.
 
 -}
-custom : List (Html.Attribute Never) -> Attribute value msg
+custom : List (Html.Attribute msg) -> Attribute value msg
 custom attributes =
     Attribute <| \config -> { config | custom = config.custom ++ attributes }
 
@@ -219,7 +219,7 @@ type alias Config value msg =
     , hideLabel : Bool
     , containerCss : List Css.Style
     , labelCss : List Css.Style
-    , custom : List (Html.Attribute Never)
+    , custom : List (Html.Attribute msg)
     , onSelect : Maybe (value -> msg)
     , onLockedMsg : Maybe msg
     , disclosedContent : List (Html msg)
@@ -349,7 +349,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                     , opacity zero
                     ]
                  ]
-                    ++ List.map (Attributes.map never) config.custom
+                    ++ config.custom
                 )
              , Html.label
                 [ for idValue

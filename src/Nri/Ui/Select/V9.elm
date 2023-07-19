@@ -10,6 +10,7 @@ module Nri.Ui.Select.V9 exposing
     , icon
     , containerCss, noMargin
     , batch
+    , onSelect
     )
 
 {-| Build a select input with a label, optional guidance, and error messaging.
@@ -45,6 +46,7 @@ module Nri.Ui.Select.V9 exposing
 @docs icon
 @docs containerCss, noMargin
 @docs batch
+@docs onSelect
 
 -}
 
@@ -70,13 +72,13 @@ import SolidColor
 
 
 {-| -}
-defaultDisplayText : String -> Attribute value
+defaultDisplayText : String -> Attribute value msg
 defaultDisplayText text =
     Attribute (\config -> { config | defaultDisplayText = Just text })
 
 
 {-| -}
-value : Maybe value -> Attribute value
+value : Maybe value -> Attribute value msg
 value value_ =
     Attribute (\config -> { config | value = value_ })
 
@@ -86,21 +88,21 @@ value value_ =
 If you have an error message to display, use `errorMessage` instead.
 
 -}
-errorIf : Bool -> Attribute value
+errorIf : Bool -> Attribute value msg
 errorIf =
     Attribute << InputErrorAndGuidanceInternal.setErrorIf
 
 
 {-| Disables the input
 -}
-disabled : Attribute value
+disabled : Attribute value msg
 disabled =
     Attribute (\config -> { config | disabled = True })
 
 
 {-| Use this while the form the input is a part of is being submitted.
 -}
-loading : Attribute value
+loading : Attribute value msg
 loading =
     Attribute (\config -> { config | loading = True })
 
@@ -108,35 +110,35 @@ loading =
 {-| If `Just`, the field will be highlighted as having a validation error,
 and the given error message will be shown.
 -}
-errorMessage : Maybe String -> Attribute value
+errorMessage : Maybe String -> Attribute value msg
 errorMessage =
     Attribute << InputErrorAndGuidanceInternal.setErrorMessage
 
 
 {-| Combine several attributes into one. A nice way to do nothing via batch []
 -}
-batch : List (Attribute value) -> Attribute value
+batch : List (Attribute value msg) -> Attribute value msg
 batch attrs =
     List.foldl (\(Attribute update) composition -> composition >> update) identity attrs |> Attribute
 
 
 {-| A guidance message shows below the input, unless an error message is showing instead.
 -}
-guidance : String -> Attribute value
+guidance : String -> Attribute value msg
 guidance =
     Attribute << InputErrorAndGuidanceInternal.setGuidance
 
 
 {-| Hides the visible label. (There will still be an invisible label for screen readers.)
 -}
-hiddenLabel : Attribute value
+hiddenLabel : Attribute value msg
 hiddenLabel =
     Attribute (\config -> { config | hideLabel = True })
 
 
 {-| Default behavior.
 -}
-visibleLabel : Attribute value
+visibleLabel : Attribute value msg
 visibleLabel =
     Attribute (\config -> { config | hideLabel = False })
 
@@ -146,7 +148,7 @@ we'll automatically generate one from the label you pass in, but this can
 cause problems if you have more than one text input with the same label on
 the page. Use this to be more specific and avoid issues with duplicate IDs!
 -}
-id : String -> Attribute value
+id : String -> Attribute value msg
 id id_ =
     Attribute (\config -> { config | id = Just id_ })
 
@@ -158,33 +160,33 @@ you want/expect if underlying styles change.
 Instead, please use the `css` helper.
 
 -}
-custom : List (Html.Attribute Never) -> Attribute value
+custom : List (Html.Attribute msg) -> Attribute value msg
 custom attributes =
     Attribute (\config -> { config | custom = config.custom ++ attributes })
 
 
 {-| -}
-nriDescription : String -> Attribute value
+nriDescription : String -> Attribute value msg
 nriDescription description =
     custom [ Extra.nriDescription description ]
 
 
 {-| -}
-testId : String -> Attribute value
+testId : String -> Attribute value msg
 testId id_ =
     custom [ Extra.testId id_ ]
 
 
 {-| Add an SVG icon that will render on top of the select by way of absolute positioning.
 -}
-icon : Svg -> Attribute msg
+icon : Svg -> Attribute value msg
 icon icon_ =
     Attribute <| \attributes -> { attributes | icon = Just icon_ }
 
 
 {-| Adds CSS to the element containing the input.
 -}
-containerCss : List Css.Style -> Attribute value
+containerCss : List Css.Style -> Attribute value msg
 containerCss styles =
     Attribute <|
         \config -> { config | containerCss = config.containerCss ++ styles }
@@ -192,9 +194,15 @@ containerCss styles =
 
 {-| Remove default spacing from the Input.
 -}
-noMargin : Bool -> Attribute value
+noMargin : Bool -> Attribute value msg
 noMargin removeMargin =
     Attribute <| \config -> { config | noMarginTop = removeMargin }
+
+
+{-| -}
+onSelect : (value -> msg) -> Attribute value msg
+onSelect onSelect_ =
+    Attribute <| \config -> { config | onSelect = Just onSelect_ }
 
 
 {-| Groupings of choices (will be added _after_ isolated choices.)
@@ -206,7 +214,7 @@ type alias ChoicesGroup value =
 
 
 {-| -}
-groupedChoices : (value -> String) -> List (ChoicesGroup value) -> Attribute value
+groupedChoices : (value -> String) -> List (ChoicesGroup value) -> Attribute value msg
 groupedChoices valueToString optgroups =
     Attribute
         (\config ->
@@ -224,7 +232,7 @@ type alias Choice value =
 
 
 {-| -}
-choices : (value -> String) -> List (Choice value) -> Attribute value
+choices : (value -> String) -> List (Choice value) -> Attribute value msg
 choices valueToString choices_ =
     Attribute
         (\config ->
@@ -237,18 +245,18 @@ choices valueToString choices_ =
 
 {-| Customizations for the Select.
 -}
-type Attribute value
-    = Attribute (Config value -> Config value)
+type Attribute value msg
+    = Attribute (Config value msg -> Config value msg)
 
 
-applyConfig : List (Attribute value) -> Config value
+applyConfig : List (Attribute value msg) -> Config value msg
 applyConfig attributes =
     List.foldl (\(Attribute update) config -> update config)
         defaultConfig
         attributes
 
 
-type alias Config value =
+type alias Config value msg =
     { id : Maybe String
     , value : Maybe value
     , choices : List (Choice value)
@@ -263,11 +271,12 @@ type alias Config value =
     , icon : Maybe Svg
     , noMarginTop : Bool
     , containerCss : List Css.Style
-    , custom : List (Html.Attribute Never)
+    , custom : List (Html.Attribute msg)
+    , onSelect : Maybe (value -> msg)
     }
 
 
-defaultConfig : Config value
+defaultConfig : Config value msg
 defaultConfig =
     { id = Nothing
     , value = Nothing
@@ -284,11 +293,12 @@ defaultConfig =
     , noMarginTop = False
     , containerCss = []
     , custom = []
+    , onSelect = Nothing
     }
 
 
 {-| -}
-view : String -> List (Attribute a) -> Html a
+view : String -> List (Attribute value msg) -> Html msg
 view label attributes =
     let
         config =
@@ -339,7 +349,7 @@ view label attributes =
         )
 
 
-viewIcon : { config | noMarginTop : Bool, disabled : Bool } -> Svg.Svg -> Html a
+viewIcon : { config | noMarginTop : Bool, disabled : Bool } -> Svg.Svg -> Html msg
 viewIcon config =
     let
         topPx =
@@ -373,7 +383,7 @@ viewIcon config =
         >> Svg.toHtml
 
 
-viewSelect : { id : String, disabled : Bool } -> Config a -> Html a
+viewSelect : { id : String, disabled : Bool } -> Config value msg -> Html msg
 viewSelect config_ config =
     let
         toChoice valueToString choice =
@@ -417,7 +427,13 @@ viewSelect config_ config =
                     )
 
         onSelectHandler =
-            Events.on "change" (Events.targetValue |> Json.Decode.andThen decodeValue)
+            case config.onSelect of
+                Just onSelect_ ->
+                    Events.on "change" (Events.targetValue |> Json.Decode.andThen decodeValue)
+                        |> Attributes.map onSelect_
+
+                Nothing ->
+                    Extra.none
 
         defaultOption =
             config.defaultDisplayText
@@ -510,11 +526,11 @@ viewSelect config_ config =
                 :: InputErrorAndGuidanceInternal.describedBy config_.id config
                 :: Attributes.id config_.id
                 :: Attributes.disabled config_.disabled
-                :: List.map (Attributes.map never) config.custom
+                :: config.custom
             )
 
 
-viewDefaultChoice : Maybe a -> String -> Html a
+viewDefaultChoice : Maybe a -> String -> Html msg
 viewDefaultChoice current displayText =
     Html.option
         [ Attributes.selected (current == Nothing)
@@ -523,7 +539,7 @@ viewDefaultChoice current displayText =
         [ Html.text displayText ]
 
 
-viewChoice : Maybe a -> { value : a, strValue : String, id : String, label : String } -> Html a
+viewChoice : Maybe a -> { value : a, strValue : String, id : String, label : String } -> Html msg
 viewChoice current choice =
     let
         isSelected =

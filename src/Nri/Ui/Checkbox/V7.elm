@@ -143,7 +143,7 @@ you want/expect if underlying styles change.
 Instead, please use the `css` helper.
 
 -}
-custom : List (Html.Attribute Never) -> Attribute msg
+custom : List (Html.Attribute msg) -> Attribute msg
 custom attributes =
     Attribute <| \config -> { config | custom = config.custom ++ attributes }
 
@@ -174,7 +174,7 @@ type alias Config msg =
     , onCheck : Maybe (Bool -> msg)
     , isDisabled : Bool
     , guidance : Guidance
-    , custom : List (Html.Attribute Never)
+    , custom : List (Html.Attribute msg)
     , containerCss : List Css.Style
     , labelCss : List Css.Style
     }

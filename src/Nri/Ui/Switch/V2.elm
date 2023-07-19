@@ -38,11 +38,12 @@ module Nri.Ui.Switch.V2 exposing
 
 -}
 
-import Accessibility.Styled as Html exposing (Html)
+import Accessibility.Styled
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
 import Css exposing (Color, Style)
 import Css.Global as Global
+import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Nri.Ui.Colors.Extra exposing (toCssString)
@@ -91,7 +92,7 @@ you want/expect if underlying styles change.
 Instead, please use `containerCss` or `labelCss`.
 
 -}
-custom : List (Html.Attribute Never) -> Attribute msg
+custom : List (Html.Attribute msg) -> Attribute msg
 custom custom_ =
     Attribute <| \config -> { config | custom = config.custom ++ custom_ }
 
@@ -131,7 +132,7 @@ type alias Config msg =
     , labelCss : List Style
     , isDisabled : Bool
     , isSelected : Bool
-    , custom : List (Html.Attribute Never)
+    , custom : List (Html.Attribute msg)
     }
 
 
@@ -175,7 +176,7 @@ view { label, id } attrs =
             ]
          , Attributes.for id
          ]
-            ++ List.map (Attributes.map never) config.custom
+            ++ config.custom
         )
         [ viewCheckbox id config
         , Nri.Ui.Svg.V1.toHtml
@@ -206,7 +207,7 @@ view { label, id } attrs =
 
 viewCheckbox : String -> Config msg -> Html msg
 viewCheckbox id config =
-    Html.checkbox id
+    Accessibility.Styled.checkbox id
         (Just config.isSelected)
         [ Attributes.id id
         , Role.switch
