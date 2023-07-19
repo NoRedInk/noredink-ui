@@ -51,6 +51,7 @@ type Type
     | RadioButton
     | SegmentedControlRadioButton
     | SegmentedControlTabs
+    | SelectDisabled
     | Select
     | Switch
 
@@ -80,6 +81,9 @@ typeToName type_ =
 
         SegmentedControlTabs ->
             "SegmentedControl (as tabs)"
+
+        SelectDisabled ->
+            "SelectDisabled"
 
         Select ->
             "Select"
@@ -302,6 +306,17 @@ view model =
         , { type_ = Select
           , view =
                 viewWithTooltip Select
+                    model
+                    (\popupTriggerAttributes ->
+                        Select.view "Options" [ Select.custom popupTriggerAttributes ]
+                    )
+          , ariaDisabled = False
+          , disabled = False
+          , notes = "The published Select doesn't currently fully support tooltips. This Select has been modified."
+          }
+        , { type_ = SelectDisabled
+          , view =
+                viewWithTooltip SelectDisabled
                     model
                     (\popupTriggerAttributes ->
                         Select.view "Options"
