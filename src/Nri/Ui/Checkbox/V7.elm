@@ -245,6 +245,7 @@ view { label, selected } attributes =
             , disabled = config.isDisabled
             , guidance = config.guidance
             , error = InputErrorAndGuidanceInternal.noError
+            , custom = config.custom
             }
 
         ( icon, disabledIcon ) =
@@ -361,6 +362,7 @@ viewCheckbox :
         , label : String
         , hideLabel : Bool
         , labelCss : List Style
+        , custom : List (Html.Attribute msg)
     }
     ->
         ( List Style
@@ -393,7 +395,7 @@ viewCheckbox config ( styles, icon ) =
                         |> Maybe.withDefault []
                 ]
     in
-    Html.div attributes
+    Html.div (attributes ++ config.custom)
         [ viewIcon [] icon
         , labelView config
         ]

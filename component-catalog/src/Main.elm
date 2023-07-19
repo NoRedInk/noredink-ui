@@ -198,7 +198,7 @@ view model =
                     )
           , ariaDisabled = True
           , disabled = False
-          , notes = "The published Checkbox doesn't currently fully support tooltips. This Checkbox has been modified."
+          , notes = "The published Checkbox doesn't currently fully support tooltips. This Checkbox has been modified.\n\n**There's a bug** in the actual Checkbox implementation! Custom attributes are *never being attached!*"
           }
         , { type_ = ClickableSvg
           , view =
@@ -267,7 +267,7 @@ view model =
                     }
           , ariaDisabled = True
           , disabled = False
-          , notes = "aria-disabled added manually, but *there's a bug!* It looks like custom attributes **are not attached** to SegmentedControl radio buttons. There are no disabled/unfulfilled styles."
+          , notes = "aria-disabled added manually, but **there's a bug!** It looks like custom attributes **are not attached** to SegmentedControl radio buttons. This also means the tooltip is not correctly attached. \n\nThere are no disabled/unfulfilled styles."
           }
         , { type_ = SegmentedControlTabs
           , view =
