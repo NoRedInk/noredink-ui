@@ -169,10 +169,11 @@ view model =
                             , selected = Checkbox.PartiallySelected
                             }
                             [ Checkbox.disabled
+                            , Checkbox.custom popupTriggerAttributes
                             ]
                     )
           , ariaDisabled = True
-          , notes = "Checkbox doesn't currently fully support tooltips"
+          , notes = "The published Checkbox doesn't currently fully support tooltips. This Checkbox has been modified."
           }
         , { type_ = ClickableSvg
           , view =
@@ -212,10 +213,12 @@ view model =
                             , selectedValue = Nothing
                             , valueToString = \_ -> "pets"
                             }
-                            [ RadioButton.disabled ]
+                            [ RadioButton.disabled
+                            , RadioButton.custom popupTriggerAttributes
+                            ]
                     )
           , ariaDisabled = True
-          , notes = "RadioButton doesn't currently fully support tooltips"
+          , notes = "The published RadioButton doesn't currently fully support tooltips. This RadioButton has been modified."
           }
         , { type_ = SegmentedControlRadioButton
           , view =
@@ -273,22 +276,24 @@ view model =
                     (\popupTriggerAttributes ->
                         Select.view "Options"
                             [ Select.disabled
+                            , Select.custom popupTriggerAttributes
                             ]
                     )
           , ariaDisabled = False
-          , notes = "Select doesn't currently fully support tooltips"
+          , notes = "The published Select doesn't currently fully support tooltips. This Select has been modified."
           }
         , { type_ = Switch
           , view =
                 viewWithTooltip Switch
                     model
                     (\popupTriggerAttributes ->
-                        Switch.view { id = "siwtch", label = "Show pandas in results" }
+                        Switch.view { id = "switch", label = "Show pandas in results" }
                             [ Switch.disabled True
+                            , Switch.custom popupTriggerAttributes
                             ]
                     )
           , ariaDisabled = True
-          , notes = "Switch doesn't currently fully support tooltips"
+          , notes = "The published Switch doesn't currently fully support tooltips. This Switch has been modified."
           }
         ]
 
