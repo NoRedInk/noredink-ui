@@ -282,14 +282,6 @@ view model =
                           , label = text "Source 1"
                           , value = 0
                           , idString = String.fromInt 0
-                          , tabTooltip = []
-                          , attributes = []
-                          , content = text "content"
-                          }
-                        , { icon = Nothing
-                          , label = text "Source 2"
-                          , value = 1
-                          , idString = String.fromInt 1
                           , tabTooltip = tooltipProperties SegmentedControlTabs model
                           , attributes = [ Aria.disabled True ]
                           , content = text "content"
@@ -301,7 +293,7 @@ view model =
                     }
           , ariaDisabled = True
           , disabled = False
-          , notes = "aria-disabled added manually to the second option. There are no disabled/unfulfilled styles."
+          , notes = "aria-disabled added manually to the first option. There are no disabled/unfulfilled styles."
           }
         , { type_ = Select
           , view =
