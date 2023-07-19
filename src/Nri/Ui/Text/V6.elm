@@ -350,7 +350,7 @@ markdown content =
     Attribute <|
         \config ->
             { config
-                | content = Content.markdownContent content
+                | content = Content.markdownInline content
                 , styles = MarkdownStyles.anchorAndButton ++ config.styles
             }
 

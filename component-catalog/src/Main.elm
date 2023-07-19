@@ -16,6 +16,7 @@ import Nri.Ui.Select.V9 as Select
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Switch.V2 as Switch
 import Nri.Ui.Table.V7 as Table
+import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Sort
@@ -124,9 +125,30 @@ view model =
             , cellStyles = always []
             , sort = Nothing
             }
-        , Table.string
-            { header = "Notes"
-            , value = .notes
+        , Table.custom
+            { header = text "disabled"
+            , width = Css.px 250
+            , view =
+                \{ disabled } ->
+                    if disabled then
+                        UiIcon.checkmark
+                            |> Svg.withLabel "Yes"
+                            |> Svg.withColor Colors.greenDark
+                            |> Svg.withWidth (Css.px 20)
+                            |> Svg.toHtml
+
+                    else
+                        UiIcon.x
+                            |> Svg.withLabel "No"
+                            |> Svg.withColor Colors.red
+                            |> Svg.withWidth (Css.px 20)
+                            |> Svg.toHtml
+            , cellStyles = always []
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Notes"
+            , view = \{ notes } -> Text.smallBody [ Text.markdown notes, Text.css [ Css.margin Css.zero ] ]
             , width = Css.px 50
             , cellStyles = always [ Css.paddingTop (Css.px 20), Css.paddingBottom (Css.px 20) ]
             , sort = Nothing
@@ -143,6 +165,7 @@ view model =
                             ]
                     )
           , ariaDisabled = False
+          , disabled = True
           , notes = "Button.disabled"
           }
         , { type_ = ButtonUnfulfilled
@@ -157,6 +180,7 @@ view model =
                             ]
                     )
           , ariaDisabled = True
+          , disabled = False
           , notes = "Button.unfulfilled theme does NOT automatically add aria-disabled property."
           }
         , { type_ = Checkbox
@@ -173,6 +197,7 @@ view model =
                             ]
                     )
           , ariaDisabled = True
+          , disabled = False
           , notes = "The published Checkbox doesn't currently fully support tooltips. This Checkbox has been modified."
           }
         , { type_ = ClickableSvg
@@ -187,6 +212,7 @@ view model =
                             ]
                     )
           , ariaDisabled = False
+          , disabled = True
           , notes = "There isn't an unfulfilled style for ClickableSvg."
           }
         , { type_ = ClickableText
@@ -199,6 +225,7 @@ view model =
                             ]
                     )
           , ariaDisabled = False
+          , disabled = False
           , notes = "ClickableText doesn't support disabling (no styles for it). Note that QW preview doesn't add either aria-disabled or disabled, so I haven't added it here."
           }
         , { type_ = RadioButton
@@ -218,6 +245,7 @@ view model =
                             ]
                     )
           , ariaDisabled = True
+          , disabled = False
           , notes = "The published RadioButton doesn't currently fully support tooltips. This RadioButton has been modified."
           }
         , { type_ = SegmentedControlRadioButton
@@ -238,7 +266,8 @@ view model =
                     , legend = "SegmentedControls 'viewSelectRadio' example"
                     }
           , ariaDisabled = True
-          , notes = "aria-disabled added manually. There are no disabled/unfulfilled styles."
+          , disabled = False
+          , notes = "aria-disabled added manually, but *there's a bug!* It looks like custom attributes **are not attached** to SegmentedControl radio buttons. There are no disabled/unfulfilled styles."
           }
         , { type_ = SegmentedControlTabs
           , view =
@@ -267,6 +296,7 @@ view model =
                     , toUrl = Nothing
                     }
           , ariaDisabled = True
+          , disabled = False
           , notes = "aria-disabled added manually to the second option. There are no disabled/unfulfilled styles."
           }
         , { type_ = Select
@@ -280,6 +310,7 @@ view model =
                             ]
                     )
           , ariaDisabled = False
+          , disabled = True
           , notes = "The published Select doesn't currently fully support tooltips. This Select has been modified."
           }
         , { type_ = Switch
@@ -293,6 +324,7 @@ view model =
                             ]
                     )
           , ariaDisabled = True
+          , disabled = False
           , notes = "The published Switch doesn't currently fully support tooltips. This Switch has been modified."
           }
         ]
