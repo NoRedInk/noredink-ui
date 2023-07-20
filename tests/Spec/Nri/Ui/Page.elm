@@ -54,7 +54,7 @@ all =
                         |> Expect.all
                             [ Query.has
                                 [ Selector.all
-                                    [ id "nri-ui-page-heading-h1"
+                                    [ id Page.headingId
                                     , attribute (Key.tabbable False)
                                     ]
                                 ]
