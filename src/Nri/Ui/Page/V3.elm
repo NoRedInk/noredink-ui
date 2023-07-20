@@ -6,8 +6,9 @@ module Nri.Ui.Page.V3 exposing
     )
 
 {-| Patch changes:
-- added `headingId` as the `id` of the `h1` produced by `Page`
-- made the `h1` produced by `Page` programmatically focusable
+
+  - added `headingId` as the `id` of the `h1` produced by `Page`
+  - made the `h1` produced by `Page` programmatically focusable
 
 A styled NRI error page.
 
