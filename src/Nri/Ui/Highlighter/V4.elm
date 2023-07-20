@@ -1424,31 +1424,33 @@ unmarkedHighlightableStyles config highlightable =
                     isHovered =
                         directlyHoveringInteractiveSegment config highlightable
                 in
-                case tool of
-                    Tool.Marker marker ->
-                        if isHinted_ then
-                            marker.hintClass
+                Css.property "user-select" "none"
+                    :: (case tool of
+                            Tool.Marker marker ->
+                                if isHinted_ then
+                                    marker.hintClass
 
-                        else if isHovered then
-                            -- When hovered, but not marked
-                            List.concat
-                                [ marker.hoverClass
-                                , marker.startGroupClass
-                                , marker.endGroupClass
-                                ]
+                                else if isHovered then
+                                    -- When hovered, but not marked
+                                    List.concat
+                                        [ marker.hoverClass
+                                        , marker.startGroupClass
+                                        , marker.endGroupClass
+                                        ]
 
-                        else
-                            []
+                                else
+                                    []
 
-                    Tool.Eraser eraser_ ->
-                        if isHinted_ then
-                            eraser_.hintClass
+                            Tool.Eraser eraser_ ->
+                                if isHinted_ then
+                                    eraser_.hintClass
 
-                        else if isHovered then
-                            eraser_.hoverClass
+                                else if isHovered then
+                                    eraser_.hoverClass
 
-                        else
-                            []
+                                else
+                                    []
+                       )
 
 
 markedHighlightableStyles :
