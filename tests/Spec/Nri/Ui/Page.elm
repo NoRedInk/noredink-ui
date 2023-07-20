@@ -1,15 +1,12 @@
 module Spec.Nri.Ui.Page exposing (all)
 
+import Accessibility.Key as Key
 import Expect
 import Html.Styled as Html
 import Nri.Ui.Page.V3 as Page
 import Test exposing (..)
 import Test.Html.Query as Query
-import Test.Html.Selector exposing (..)
-
-
-type Msg
-    = NoOp
+import Test.Html.Selector as Selector exposing (..)
 
 
 all : Test
@@ -19,7 +16,7 @@ all =
             [ test "handles recovery text for ReturnTo" <|
                 \() ->
                     Page.notFound
-                        { link = NoOp
+                        { link = ()
                         , recoveryText = Page.ReturnTo "the main page"
                         }
                         |> Html.toUnstyled
@@ -29,7 +26,7 @@ all =
             , test "handles recovery text for Reload" <|
                 \() ->
                     Page.notFound
-                        { link = NoOp
+                        { link = ()
                         , recoveryText = Page.Reload
                         }
                         |> Html.toUnstyled
@@ -39,12 +36,28 @@ all =
             , test "handles recovery text for Custom" <|
                 \() ->
                     Page.notFound
-                        { link = NoOp
+                        { link = ()
                         , recoveryText = Page.Custom "cats"
                         }
                         |> Html.toUnstyled
                         |> Query.fromHtml
                         |> Expect.all
                             [ Query.has [ text "cats" ] ]
+            , test "heading is focusable" <|
+                \() ->
+                    Page.notFound
+                        { link = ()
+                        , recoveryText = Page.Reload
+                        }
+                        |> Html.toUnstyled
+                        |> Query.fromHtml
+                        |> Expect.all
+                            [ Query.has
+                                [ Selector.all
+                                    [ id "nri-ui-page-heading-h1"
+                                    , attribute (Key.tabbable False)
+                                    ]
+                                ]
+                            ]
             ]
         ]
