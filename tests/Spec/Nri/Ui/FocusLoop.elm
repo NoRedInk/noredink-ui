@@ -75,10 +75,10 @@ forATwoElementList =
 allCases :
     List String
     ->
-        { noEvents : List ( String, List (Event msg) )
-        , justLeftRight : List ( String, List (Event msg) )
-        , justUpDown : List ( String, List (Event msg) )
-        , allEvents : List ( String, List (Event msg) )
+        { noEvents : List ( String, List (Event String) )
+        , justLeftRight : List ( String, List (Event String) )
+        , justUpDown : List ( String, List (Event String) )
+        , allEvents : List ( String, List (Event String) )
         }
     -> List Test
 allCases startingList expected =
@@ -86,6 +86,7 @@ allCases startingList expected =
         \() ->
             FocusLoop.addEvents
                 { toId = identity
+                , onFocus = identity
                 , leftRight = False
                 , upDown = False
                 }
@@ -95,6 +96,7 @@ allCases startingList expected =
         \() ->
             FocusLoop.addEvents
                 { toId = identity
+                , onFocus = identity
                 , leftRight = True
                 , upDown = False
                 }
@@ -104,6 +106,7 @@ allCases startingList expected =
         \() ->
             FocusLoop.addEvents
                 { toId = identity
+                , onFocus = identity
                 , leftRight = False
                 , upDown = True
                 }
@@ -113,6 +116,7 @@ allCases startingList expected =
         \() ->
             FocusLoop.addEvents
                 { toId = identity
+                , onFocus = identity
                 , leftRight = True
                 , upDown = True
                 }

@@ -12,6 +12,7 @@ import Accessibility.Styled.Key as Key exposing (Event)
 {-| -}
 addEvents :
     { toId : a -> String
+    , onFocus : String -> msg
     , leftRight : Bool
     , upDown : Bool
     }
@@ -31,6 +32,7 @@ addEvents config items =
 
 addEvents_ :
     { toId : a -> String
+    , onFocus : String -> msg
     , leftRight : Bool
     , upDown : Bool
     }
