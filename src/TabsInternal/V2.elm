@@ -83,6 +83,20 @@ viewTabs config =
     let
         anyTooltips =
             List.any (.tabTooltip >> List.isEmpty >> not) config.tabs
+
+        onFocus : Tab id msg -> msg
+        onFocus tab =
+            config.focusAndSelect { select = tab.id, focus = Just (safeId tab.idString) }
+
+        tabs : List (Html msg)
+        tabs =
+            config.tabs
+                |> FocusLoop.addEvents
+                    { focus = onFocus
+                    , leftRight = True
+                    , upDown = False
+                    }
+                |> List.indexedMap (viewTab_ config)
     in
     if anyTooltips then
         -- if any tooltip setup is present, we use aria-owns to associate the
@@ -97,7 +111,7 @@ viewTabs config =
                 ]
                 []
             , Html.div [ Attributes.css config.tabListStyles ]
-                (List.indexedMap (viewTab_ config) config.tabs)
+                tabs
             ]
 
     else
@@ -106,11 +120,11 @@ viewTabs config =
             [ Role.tabList
             , Attributes.css config.tabListStyles
             ]
-            (List.indexedMap (viewTab_ config) config.tabs)
+            tabs
 
 
-viewTab_ : Config id msg -> Int -> Tab id msg -> Html msg
-viewTab_ config index tab =
+viewTab_ : Config id msg -> Int -> ( Tab id msg, List (Key.Event msg) ) -> Html msg
+viewTab_ config index ( tab, keyEvents ) =
     let
         isSelected =
             config.selected == tab.id
@@ -162,7 +176,7 @@ viewTab_ config index tab =
                        , Role.tab
                        , Aria.controls [ tabToBodyId tab.idString ]
                        , Attributes.id (safeId tab.idString)
-                       , Key.onKeyUpPreventDefault (keyEvents config tab)
+                       , Key.onKeyUpPreventDefault keyEvents
                        ]
                     ++ (case tab.labelledBy of
                             Nothing ->
@@ -202,51 +216,6 @@ viewTab_ config index tab =
                  ]
                     ++ tooltipAttributes
                 )
-
-
-keyEvents : Config id msg -> Tab id msg -> List (Key.Event msg)
-keyEvents { focusAndSelect, tabs } thisTab =
-    let
-        onFocus : Tab id msg -> msg
-        onFocus tab =
-            focusAndSelect { select = tab.id, focus = Just (safeId tab.idString) }
-
-        findAdjacentTab : Tab id msg -> ( Bool, Maybe msg ) -> ( Bool, Maybe msg )
-        findAdjacentTab tab ( isAdjacentTab, acc ) =
-            if isAdjacentTab then
-                ( False, Just (onFocus tab) )
-
-            else
-                ( tab.id == thisTab.id, acc )
-
-        activeTabs : List (Tab id msg)
-        activeTabs =
-            List.filter (not << .disabled) tabs
-
-        goToNextTab : Maybe msg
-        goToNextTab =
-            List.foldl findAdjacentTab
-                ( False
-                , -- if there is no adjacent tab, default to the first tab
-                  Maybe.map onFocus (List.head activeTabs)
-                )
-                activeTabs
-                |> Tuple.second
-
-        goToPreviousTab : Maybe msg
-        goToPreviousTab =
-            List.foldr findAdjacentTab
-                ( False
-                , -- if there is no adjacent tab, default to the last tab
-                  Maybe.map onFocus (List.head (List.reverse activeTabs))
-                )
-                activeTabs
-                |> Tuple.second
-    in
-    List.filterMap identity
-        [ Maybe.map Key.right goToNextTab
-        , Maybe.map Key.left goToPreviousTab
-        ]
 
 
 viewTabPanels : Config id msg -> Html msg
