@@ -6,7 +6,7 @@ module Nri.Ui.FocusLoop.V1 exposing (addEvents)
 
 -}
 
-import Accessibility.Styled.Key exposing (Event)
+import Accessibility.Styled.Key as Key exposing (Event)
 
 
 {-| -}
@@ -18,4 +18,65 @@ addEvents :
     -> List a
     -> List ( a, List (Event msg) )
 addEvents config items =
-    []
+    case items of
+        [] ->
+            []
+
+        item :: [] ->
+            [ ( item, [] ) ]
+
+        _ ->
+            addEvents_ config items
+
+
+addEvents_ :
+    { toId : a -> String
+    , leftRight : Bool
+    , upDown : Bool
+    }
+    -> List a
+    -> List ( a, List (Event msg) )
+addEvents_ config items =
+    let
+        ids : List String
+        ids =
+            List.map config.toId items
+
+        previousIds : List (Maybe String)
+        previousIds =
+            finalId :: List.map Just ids
+
+        firstId : Maybe String
+        firstId =
+            List.head ids
+
+        finalId : Maybe String
+        finalId =
+            List.head (List.reverse ids)
+    in
+    List.map2 (\id nextItem -> ( id, nextItem )) previousIds items
+        |> List.foldr
+            (\( previousId, item ) ( nextId, acc ) ->
+                let
+                    leftRightEvents =
+                        if config.leftRight then
+                            -- TODO: add actual events
+                            []
+
+                        else
+                            []
+
+                    upDownEvents =
+                        if config.upDown then
+                            -- TODO: add actual events
+                            []
+
+                        else
+                            []
+                in
+                ( Just (config.toId item)
+                , ( item, leftRightEvents ++ upDownEvents ) :: acc
+                )
+            )
+            ( firstId, [] )
+        |> Tuple.second
