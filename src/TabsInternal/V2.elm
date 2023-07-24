@@ -44,7 +44,6 @@ type alias Tab id msg =
     , tabView : List (Html msg)
     , panelView : Html msg
     , spaHref : Maybe String
-    , disabled : Bool
     , labelledBy : Maybe String
     , describedBy : List String
     }
@@ -62,7 +61,6 @@ fromList { id, idString } attributes =
             , tabView = []
             , panelView = Html.text ""
             , spaHref = Nothing
-            , disabled = False
             , labelledBy = Nothing
             , describedBy = []
             }
@@ -171,8 +169,7 @@ viewTab_ config index ( tab, keyEvents ) =
                        , -- check for isSelected because otherwise users won't
                          -- be able to focus on the current tab with the
                          -- keyboard.
-                         Attributes.disabled (not isSelected && tab.disabled)
-                       , Aria.selected isSelected
+                         Aria.selected isSelected
                        , Role.tab
                        , Aria.controls [ tabToBodyId tab.idString ]
                        , Attributes.id (safeId tab.idString)
