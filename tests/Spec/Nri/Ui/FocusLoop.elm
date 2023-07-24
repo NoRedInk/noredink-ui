@@ -128,8 +128,7 @@ allCases startingList expected =
     [ test "without left/right or up/down events" <|
         \() ->
             FocusLoop.addEvents
-                { toId = identity
-                , focus = identity
+                { focus = identity
                 , leftRight = False
                 , upDown = False
                 }
@@ -138,8 +137,7 @@ allCases startingList expected =
     , test "with left/right and without up/down events" <|
         \() ->
             FocusLoop.addEvents
-                { toId = identity
-                , focus = identity
+                { focus = identity
                 , leftRight = True
                 , upDown = False
                 }
@@ -148,8 +146,7 @@ allCases startingList expected =
     , test "without left/right and with up/down events" <|
         \() ->
             FocusLoop.addEvents
-                { toId = identity
-                , focus = identity
+                { focus = identity
                 , leftRight = False
                 , upDown = True
                 }
@@ -158,8 +155,7 @@ allCases startingList expected =
     , test "with left/right and up/down events" <|
         \() ->
             FocusLoop.addEvents
-                { toId = identity
-                , focus = identity
+                { focus = identity
                 , leftRight = True
                 , upDown = True
                 }

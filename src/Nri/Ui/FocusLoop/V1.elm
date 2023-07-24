@@ -11,8 +11,7 @@ import Accessibility.Styled.Key as Key exposing (Event)
 
 {-| -}
 addEvents :
-    { toId : a -> String
-    , focus : String -> msg
+    { focus : a -> msg
     , leftRight : Bool
     , upDown : Bool
     }
@@ -31,8 +30,7 @@ addEvents config items =
 
 
 addEvents_ :
-    { toId : a -> String
-    , focus : String -> msg
+    { focus : a -> msg
     , leftRight : Bool
     , upDown : Bool
     }
@@ -40,21 +38,17 @@ addEvents_ :
     -> List ( a, List (Event msg) )
 addEvents_ config items =
     let
-        ids : List String
-        ids =
-            List.map config.toId items
-
-        previousIds : List (Maybe String)
+        previousIds : List (Maybe a)
         previousIds =
-            finalId :: List.map Just ids
+            finalId :: List.map Just items
 
-        firstId : Maybe String
+        firstId : Maybe a
         firstId =
-            List.head ids
+            List.head items
 
-        finalId : Maybe String
+        finalId : Maybe a
         finalId =
-            List.head (List.reverse ids)
+            List.head (List.reverse items)
     in
     List.map2 (\id nextItem -> ( id, nextItem )) previousIds items
         |> List.foldr
@@ -78,7 +72,7 @@ addEvents_ config items =
                         else
                             []
                 in
-                ( Just (config.toId item)
+                ( Just item
                 , ( item, List.filterMap identity (leftRightEvents ++ upDownEvents) ) :: acc
                 )
             )

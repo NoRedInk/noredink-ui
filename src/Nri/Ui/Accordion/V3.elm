@@ -274,8 +274,7 @@ view_ { entries, focus, leftId } =
         [ Html.Styled.Keyed.node "div"
             []
             (FocusLoop.addEvents
-                { toId = \(AccordionEntry { headerId } _) -> headerId
-                , focus = focus
+                { focus = \(AccordionEntry { headerId } _) -> focus headerId
                 , leftRight = False
                 , upDown = True
                 }
