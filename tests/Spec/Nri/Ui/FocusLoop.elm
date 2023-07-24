@@ -12,6 +12,7 @@ spec =
         [ forAnEmptyList
         , forASingletonList
         , forATwoElementList
+        , forAThreeElementList
         ]
 
 
@@ -65,6 +66,48 @@ forATwoElementList =
                     , Key.left "a"
                     , Key.down "a"
                     , Key.up "a"
+                    ]
+                  )
+                ]
+            }
+        )
+
+
+forAThreeElementList : Test
+forAThreeElementList =
+    describe "for a three-element list"
+        (allCases [ "a", "b", "c" ]
+            { noEvents = [ ( "a", [] ), ( "b", [] ), ( "c", [] ) ]
+            , justLeftRight =
+                [ ( "a", [ Key.right "b", Key.left "c" ] )
+                , ( "b", [ Key.right "c", Key.left "a" ] )
+                , ( "c", [ Key.right "a", Key.left "b" ] )
+                ]
+            , justUpDown =
+                [ ( "a", [ Key.down "b", Key.up "c" ] )
+                , ( "b", [ Key.down "c", Key.up "a" ] )
+                , ( "c", [ Key.down "a", Key.up "b" ] )
+                ]
+            , allEvents =
+                [ ( "a"
+                  , [ Key.right "b"
+                    , Key.left "c"
+                    , Key.down "b"
+                    , Key.up "c"
+                    ]
+                  )
+                , ( "b"
+                  , [ Key.right "c"
+                    , Key.left "a"
+                    , Key.down "c"
+                    , Key.up "a"
+                    ]
+                  )
+                , ( "c"
+                  , [ Key.right "a"
+                    , Key.left "b"
+                    , Key.down "a"
+                    , Key.up "b"
                     ]
                   )
                 ]
