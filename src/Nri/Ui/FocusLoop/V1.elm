@@ -12,7 +12,7 @@ import Accessibility.Styled.Key as Key exposing (Event)
 {-| -}
 addEvents :
     { toId : a -> String
-    , onFocus : String -> msg
+    , focus : String -> msg
     , leftRight : Bool
     , upDown : Bool
     }
@@ -32,7 +32,7 @@ addEvents config items =
 
 addEvents_ :
     { toId : a -> String
-    , onFocus : String -> msg
+    , focus : String -> msg
     , leftRight : Bool
     , upDown : Bool
     }
@@ -62,22 +62,24 @@ addEvents_ config items =
                 let
                     leftRightEvents =
                         if config.leftRight then
-                            -- TODO: add actual events
-                            []
+                            [ Maybe.map (config.focus >> Key.right) nextId
+                            , Maybe.map (config.focus >> Key.left) previousId
+                            ]
 
                         else
                             []
 
                     upDownEvents =
                         if config.upDown then
-                            -- TODO: add actual events
-                            []
+                            [ Maybe.map (config.focus >> Key.down) nextId
+                            , Maybe.map (config.focus >> Key.up) previousId
+                            ]
 
                         else
                             []
                 in
                 ( Just (config.toId item)
-                , ( item, leftRightEvents ++ upDownEvents ) :: acc
+                , ( item, List.filterMap identity (leftRightEvents ++ upDownEvents) ) :: acc
                 )
             )
             ( firstId, [] )

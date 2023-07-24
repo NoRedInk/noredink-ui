@@ -57,7 +57,7 @@ forATwoElementList =
                   , [ Key.right "b"
                     , Key.left "b"
                     , Key.down "b"
-                    , Key.up "a"
+                    , Key.up "b"
                     ]
                   )
                 , ( "b"
@@ -86,7 +86,7 @@ allCases startingList expected =
         \() ->
             FocusLoop.addEvents
                 { toId = identity
-                , onFocus = identity
+                , focus = identity
                 , leftRight = False
                 , upDown = False
                 }
@@ -96,7 +96,7 @@ allCases startingList expected =
         \() ->
             FocusLoop.addEvents
                 { toId = identity
-                , onFocus = identity
+                , focus = identity
                 , leftRight = True
                 , upDown = False
                 }
@@ -106,7 +106,7 @@ allCases startingList expected =
         \() ->
             FocusLoop.addEvents
                 { toId = identity
-                , onFocus = identity
+                , focus = identity
                 , leftRight = False
                 , upDown = True
                 }
@@ -116,7 +116,7 @@ allCases startingList expected =
         \() ->
             FocusLoop.addEvents
                 { toId = identity
-                , onFocus = identity
+                , focus = identity
                 , leftRight = True
                 , upDown = True
                 }
