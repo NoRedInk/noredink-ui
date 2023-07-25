@@ -3,18 +3,19 @@ module Nri.Ui.Block.V5 exposing
     , plaintext
     , Content, content
     , phrase, wordWithId, space, bold, italic
-    , blank, blankWithId, BlankLength(..)
+    , fullHeightBlank, blank, blankWithId, BlankLength(..)
     , emphasize
     , label, id
     , labelId, labelContentId
     , LabelPosition, getLabelPositions, labelPosition
     , yellow, cyan, magenta, green, blue, purple, brown
-    , fullHeightBlank, insertLineBreakOpportunities
+    , insertLineBreakOpportunities
     )
 
 {-| Changes from V4:
 
   - adds customizable BlankLength
+  - adds fullHeightBlank, insertLineBreakOpportunities
 
 @docs view, Attribute
 
@@ -24,7 +25,7 @@ module Nri.Ui.Block.V5 exposing
 @docs plaintext
 @docs Content, content
 @docs phrase, wordWithId, space, bold, italic
-@docs blank, blankWithId, BlankLength
+@docs fullHeightBlank, blank, blankWithId, BlankLength
 
 
 ## Content customization
@@ -45,6 +46,7 @@ You will need these helpers if you want to prevent label overlaps. (Which is to 
 ### Visual customization
 
 @docs yellow, cyan, magenta, green, blue, purple, brown
+@docs insertLineBreakOpportunities
 
 -}
 

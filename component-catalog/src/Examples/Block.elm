@@ -540,6 +540,36 @@ controlContent =
                 , Block.content [ Block.blank Block.LongWordPhrase ]
                 )
           )
+        , ( "full height single character blank"
+          , Control.value
+                ( Code.fromModule moduleName "content "
+                    ++ Code.withParens
+                        (Code.fromModule moduleName "fullHeightBlank "
+                            ++ Code.fromModule moduleName "SingleCharacter"
+                        )
+                , Block.content [ Block.fullHeightBlank Block.SingleCharacter ]
+                )
+          )
+        , ( "full height short word phrase blank"
+          , Control.value
+                ( Code.fromModule moduleName "content "
+                    ++ Code.withParens
+                        (Code.fromModule moduleName "fullHeightBlank "
+                            ++ Code.fromModule moduleName "ShortWordPhrase"
+                        )
+                , Block.content [ Block.fullHeightBlank Block.ShortWordPhrase ]
+                )
+          )
+        , ( "full height long word phrase blank"
+          , Control.value
+                ( Code.fromModule moduleName "content "
+                    ++ Code.withParens
+                        (Code.fromModule moduleName "fullHeightBlank "
+                            ++ Code.fromModule moduleName "LongWordPhrase"
+                        )
+                , Block.content [ Block.fullHeightBlank Block.LongWordPhrase ]
+                )
+          )
         ]
 
 
