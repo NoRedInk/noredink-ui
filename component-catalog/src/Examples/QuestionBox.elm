@@ -87,6 +87,7 @@ view ellieLinkConfig state =
                 [ { sectionName = Code.fromModule moduleName "view"
                   , code =
                         Code.fromModule moduleName "view "
+                            ++ "QuestionBox.characterPosition { width = 80, height = 103, top = -62 }"
                             ++ Code.list (List.map Tuple.first attributes)
                   }
                 ]
@@ -112,7 +113,10 @@ view ellieLinkConfig state =
                     |> Svg.withHeight (Css.px 30)
                     |> Svg.toHtml
                 ]
-            , QuestionBox.view (List.map Tuple.second attributes)
+            , QuestionBox.view
+                (QuestionBox.characterPosition { width = 80, height = 103, top = -62 }
+                    :: List.map Tuple.second attributes
+                )
             ]
         ]
     , Heading.h2
@@ -437,20 +441,20 @@ initAttributes =
         |> ControlExtra.optionalListItem "character"
             ([ { name = "Lindy"
                , icon =
-                    ( "<| Just CharacterIcon.lindyInstructive"
-                    , Just CharacterIcon.lindyInstructive
+                    ( "<| Just CharacterIcon.lindyHeadshot"
+                    , Just CharacterIcon.lindyHeadshot
                     )
                }
              , { name = "Red"
                , icon =
-                    ( "<| Just CharacterIcon.redInstructive"
-                    , Just CharacterIcon.redInstructive
+                    ( "<| Just CharacterIcon.redHeadshot"
+                    , Just CharacterIcon.redHeadshot
                     )
                }
              , { name = "Sal"
                , icon =
-                    ( "<| Just CharacterIcon.salInstructive"
-                    , Just CharacterIcon.salInstructive
+                    ( "<| Just CharacterIcon.salHeadshot"
+                    , Just CharacterIcon.salHeadshot
                     )
                }
              ]
