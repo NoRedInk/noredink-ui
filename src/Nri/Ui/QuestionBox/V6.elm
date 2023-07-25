@@ -29,7 +29,6 @@ import Css.Global
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Button.V10 as Button
-import Nri.Ui.CharacterIcon.V1 as CharacterIcon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
@@ -84,7 +83,7 @@ defaultConfig =
     , actions = []
     , actionOrientation = Vertical
     , theme = Neutral
-    , character = Just { name = "Panda", icon = CharacterIcon.redPanda }
+    , character = Nothing
     , containerCss = []
     , leftActions = Nothing
     , characterPosition = Nothing
