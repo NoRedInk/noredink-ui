@@ -1,19 +1,22 @@
 module Nri.Ui.QuestionBox.V6 exposing
     ( view, Attribute
-    , id, markdown, character
+    , id, markdown
+    , character, characterPosition
     , actions, actionsVertical, actionsHorizontal
     , neutral, correct, incorrect, tip
     , containerCss
     , leftActions
     , guidanceId
-    , characterPosition
     )
 
-{-|
+{-| Changes from V5:
+
+  - ???
 
 @docs view, Attribute
 
-@docs id, markdown, character
+@docs id, markdown
+@docs character, characterPosition
 @docs actions, actionsVertical, actionsHorizontal
 @docs neutral, correct, incorrect, tip
 @docs containerCss
