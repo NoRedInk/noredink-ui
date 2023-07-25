@@ -50,6 +50,9 @@ hint = 'upgrade to V4'
 [forbidden."Nri.Ui.Block.V3"]
 hint = 'upgrade to V4'
 
+[forbidden."Nri.Ui.Block.V4"]
+hint = 'upgrade to V5'
+
 [forbidden."Nri.Ui.BreadCrumbs.V1"]
 hint = 'upgrade to V2'
 
