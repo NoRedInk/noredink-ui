@@ -510,6 +510,36 @@ controlContent =
                     )
                 )
           )
+        , ( "single character blank"
+          , Control.value
+                ( Code.fromModule moduleName "content "
+                    ++ Code.withParens
+                        (Code.fromModule moduleName "blank "
+                            ++ Code.fromModule moduleName "SingleCharacter"
+                        )
+                , Block.content [ Block.blank Block.SingleCharacter ]
+                )
+          )
+        , ( "short word phrase blank"
+          , Control.value
+                ( Code.fromModule moduleName "content "
+                    ++ Code.withParens
+                        (Code.fromModule moduleName "blank "
+                            ++ Code.fromModule moduleName "ShortWordPhrase"
+                        )
+                , Block.content [ Block.blank Block.ShortWordPhrase ]
+                )
+          )
+        , ( "long word phrase blank"
+          , Control.value
+                ( Code.fromModule moduleName "content "
+                    ++ Code.withParens
+                        (Code.fromModule moduleName "blank "
+                            ++ Code.fromModule moduleName "LongWordPhrase"
+                        )
+                , Block.content [ Block.blank Block.LongWordPhrase ]
+                )
+          )
         ]
 
 
