@@ -12,7 +12,7 @@ import Test.Html.Selector exposing (..)
 spec : Test
 spec =
     describe "Nri.Ui.QuestionBox.V6"
-        [ test "renders markdown as character guidance" <|
+        [ test "renders markdown without character guidance" <|
             \() ->
                 [ QuestionBox.markdown exampleGuidanceContent
                 , QuestionBox.tip
@@ -20,7 +20,7 @@ spec =
                     |> testContext
                     |> Expect.all
                         [ Query.has exampleGuidance
-                        , Query.has [ character "Panda" ]
+                        , Query.hasNot [ character "Panda" ]
                         ]
         , test "renders markdown as guidance with custom character" <|
             \() ->
@@ -42,18 +42,6 @@ spec =
                     |> Expect.all
                         [ Query.has exampleGuidance
                         , Query.hasNot [ character "Panda" ]
-                        ]
-        , test "renders extra HTML content with default character" <|
-            \() ->
-                [ QuestionBox.markdown exampleGuidanceContent
-                , QuestionBox.tip
-                , QuestionBox.leftActions (Html.Styled.text readAloudContent)
-                ]
-                    |> testContext
-                    |> Expect.all
-                        [ Query.has [ text readAloudContent ]
-                        , Query.has exampleGuidance
-                        , Query.has [ character "Panda" ]
                         ]
         , test "renders extra HTML content with custom character" <|
             \() ->
