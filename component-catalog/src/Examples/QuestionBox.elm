@@ -23,7 +23,7 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.QuestionBox.V5 as QuestionBox
+import Nri.Ui.QuestionBox.V6 as QuestionBox
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V7 as Table
@@ -37,7 +37,7 @@ moduleName =
 
 version : Int
 version =
-    5
+    6
 
 
 {-| -}

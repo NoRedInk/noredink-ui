@@ -2,7 +2,7 @@ module Spec.Nri.Ui.QuestionBox exposing (spec)
 
 import Expect
 import Html.Styled
-import Nri.Ui.QuestionBox.V5 as QuestionBox
+import Nri.Ui.QuestionBox.V6 as QuestionBox
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Test exposing (..)
 import Test.Html.Query as Query
@@ -11,7 +11,7 @@ import Test.Html.Selector exposing (..)
 
 spec : Test
 spec =
-    describe "Nri.Ui.QuestionBox.V5"
+    describe "Nri.Ui.QuestionBox.V6"
         [ test "renders markdown as character guidance" <|
             \() ->
                 [ QuestionBox.markdown exampleGuidanceContent
