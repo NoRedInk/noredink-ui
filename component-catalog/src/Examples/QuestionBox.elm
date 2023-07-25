@@ -441,20 +441,20 @@ initAttributes =
         |> ControlExtra.optionalListItem "character"
             ([ { name = "Lindy"
                , icon =
-                    ( "<| Just CharacterIcon.lindyHeadshot"
-                    , Just CharacterIcon.lindyHeadshot
+                    ( "CharacterIcon.lindyHeadshot"
+                    , CharacterIcon.lindyHeadshot
                     )
                }
              , { name = "Red"
                , icon =
-                    ( "<| Just CharacterIcon.redHeadshot"
-                    , Just CharacterIcon.redHeadshot
+                    ( "CharacterIcon.redHeadshot"
+                    , CharacterIcon.redHeadshot
                     )
                }
              , { name = "Sal"
                , icon =
-                    ( "<| Just CharacterIcon.salHeadshot"
-                    , Just CharacterIcon.salHeadshot
+                    ( "CharacterIcon.salHeadshot"
+                    , CharacterIcon.salHeadshot
                     )
                }
              ]
@@ -464,9 +464,9 @@ initAttributes =
                         , Control.value
                             ( "QuestionBox.character " ++ Tuple.first icon
                             , QuestionBox.character
-                                (Maybe.map (\i -> { name = name, icon = i })
-                                    (Tuple.second icon)
-                                )
+                                { name = name
+                                , icon = Tuple.second icon
+                                }
                             )
                         )
                     )

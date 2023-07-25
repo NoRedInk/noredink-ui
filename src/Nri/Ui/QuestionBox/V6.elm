@@ -127,9 +127,9 @@ actionsVertical =
 
 {-| Note that the character _only_ appears when the theme is `tip`!
 -}
-character : Maybe { name : String, icon : Svg } -> Attribute msg
+character : { name : String, icon : Svg } -> Attribute msg
 character details =
-    Attribute (\config -> { config | character = details })
+    Attribute (\config -> { config | character = Just details })
 
 
 {-| -}

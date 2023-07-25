@@ -20,53 +20,31 @@ spec =
                     |> testContext
                     |> Expect.all
                         [ Query.has exampleGuidance
-                        , Query.hasNot [ character "Panda" ]
+                        , Query.hasNot [ tag "svg" ]
                         ]
         , test "renders markdown as guidance with custom character" <|
             \() ->
                 [ QuestionBox.markdown exampleGuidanceContent
                 , QuestionBox.tip
-                , QuestionBox.character (Just { name = "Apply", icon = UiIcon.apple })
+                , QuestionBox.character { name = "Apply", icon = UiIcon.apple }
                 ]
                     |> testContext
                     |> Expect.all
                         [ Query.has exampleGuidance
                         , Query.has [ character "Apply" ]
-                        ]
-        , test "renders markdown as guidance without character" <|
-            \() ->
-                [ QuestionBox.markdown exampleGuidanceContent
-                , QuestionBox.character Nothing
-                ]
-                    |> testContext
-                    |> Expect.all
-                        [ Query.has exampleGuidance
-                        , Query.hasNot [ character "Panda" ]
                         ]
         , test "renders extra HTML content with custom character" <|
             \() ->
                 [ QuestionBox.markdown exampleGuidanceContent
                 , QuestionBox.leftActions (Html.Styled.text readAloudContent)
                 , QuestionBox.tip
-                , QuestionBox.character (Just { name = "Apply", icon = UiIcon.apple })
+                , QuestionBox.character { name = "Apply", icon = UiIcon.apple }
                 ]
                     |> testContext
                     |> Expect.all
                         [ Query.has [ text readAloudContent ]
                         , Query.has exampleGuidance
                         , Query.has [ character "Apply" ]
-                        ]
-        , test "renders extra HTML content without character" <|
-            \() ->
-                [ QuestionBox.markdown exampleGuidanceContent
-                , QuestionBox.leftActions (Html.Styled.text readAloudContent)
-                , QuestionBox.character Nothing
-                ]
-                    |> testContext
-                    |> Expect.all
-                        [ Query.has [ text readAloudContent ]
-                        , Query.has exampleGuidance
-                        , Query.hasNot [ character "Panda" ]
                         ]
         ]
 
