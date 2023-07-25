@@ -20,7 +20,7 @@ import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Markdown
-import Nri.Ui.Block.V4 as Block
+import Nri.Ui.Block.V5 as Block
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Fonts.V1 as Fonts
@@ -39,7 +39,7 @@ moduleName =
 
 version : Int
 version =
-    4
+    5
 
 
 {-| -}
@@ -202,7 +202,7 @@ example =
                         [ Block.phrase "This is "
                         , [ Block.italic (Block.phrase "heroically") ]
                         , [ Block.bold (Block.phrase " generous ") ]
-                        , [ Block.blank ]
+                        , [ Block.blank Block.ShortWordPhrase ]
                         , Block.phrase " each comic book costs about $5."
                         ]
                     , Block.label "Editor's note (can *also* include **markdown**!)"
@@ -402,7 +402,7 @@ example =
                                 [ Block.emphasize
                                 , (List.concat >> Block.content)
                                     [ Block.phrase "emphasized subsegement "
-                                    , [ Block.blank ]
+                                    , [ Block.blank Block.ShortWordPhrase ]
                                     , Block.phrase " emphasized"
                                     ]
                                 ]
@@ -505,7 +505,7 @@ controlContent =
                         )
                 , Block.content
                     (Block.phrase "to think about "
-                        ++ Block.blank
+                        ++ Block.blank Block.ShortWordPhrase
                         :: Block.phrase " and so forth"
                     )
                 )

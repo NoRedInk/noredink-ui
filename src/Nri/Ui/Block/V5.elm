@@ -2,17 +2,19 @@ module Nri.Ui.Block.V5 exposing
     ( view, Attribute
     , plaintext
     , Content, content
-    , phrase, wordWithId, space, blank, blankWithId, bold, italic
+    , phrase, wordWithId, space, bold, italic
+    , blank, blankWithId, BlankLength(..)
     , emphasize
     , label, id
     , labelId, labelContentId
     , LabelPosition, getLabelPositions, labelPosition
     , yellow, cyan, magenta, green, blue, purple, brown
-    , BlankLength(..)
     , fullHeightBlank, insertLineBreakOpportunities
     )
 
-{-|
+{-| Changes from V4:
+
+  - adds customizable BlankLength
 
 @docs view, Attribute
 
@@ -21,7 +23,8 @@ module Nri.Ui.Block.V5 exposing
 
 @docs plaintext
 @docs Content, content
-@docs phrase, wordWithId, space, blank, blankWithId, bold, italic
+@docs phrase, wordWithId, space, bold, italic
+@docs blank, blankWithId, BlankLength
 
 
 ## Content customization
@@ -42,7 +45,6 @@ You will need these helpers if you want to prevent label overlaps. (Which is to 
 ### Visual customization
 
 @docs yellow, cyan, magenta, green, blue, purple, brown
-@docs BlankLength
 
 -}
 
@@ -56,6 +58,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
 import Nri.Ui.Mark.V2 as Mark exposing (Mark)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Position exposing (xOffsetPx)
 
 
 {-| Create a block element.
@@ -240,6 +243,7 @@ type Content msg
     | Markdown Markdown (List (Content msg))
 
 
+{-| -}
 type BlankLength
     = SingleCharacter
     | ShortWordPhrase
@@ -672,31 +676,3 @@ blankString =
             ]
         ]
         [ text "blank" ]
-
-
-{-| Figure out how much an element needs to shift along the horizontal axis in order to not be cut off by the viewport.
-
-Uses Brower.Dom's Element measurement.
-
--}
-xOffsetPx : Dom.Element -> Float
-xOffsetPx { element, viewport } =
-    let
-        xMax =
-            viewport.x + viewport.width
-    in
-    -- if the element is cut off by the viewport on the left side,
-    -- we need to adjust rightward by the cut-off amount
-    if element.x < viewport.x then
-        viewport.x - element.x
-
-    else
-    -- if the element is cut off by the viewport on the right side,
-    -- we need to adjust leftward by the cut-off amount
-    if
-        xMax < (element.x + element.width)
-    then
-        xMax - (element.x + element.width)
-
-    else
-        0
