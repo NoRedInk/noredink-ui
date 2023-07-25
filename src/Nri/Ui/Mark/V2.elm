@@ -13,6 +13,7 @@ module Nri.Ui.Mark.V2 exposing
   - add viewWithOverlaps
   - ensure that view and viewWithInlineTags never leave the starting styles isolated on their own line
   - markdown is now supported for the mark name
+  - adds animations to viewWithBalloonTags
 
 @docs Mark
 @docs view, viewWithInlineTags, viewWithBalloonTags
@@ -24,7 +25,9 @@ import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style exposing (invisibleStyle)
 import Content
 import Css exposing (Color, Style)
+import Css.Animations
 import Css.Global
+import Css.Media
 import Html.Styled as Html exposing (Html, span)
 import Html.Styled.Attributes exposing (class, css)
 import Markdown.Block
@@ -506,6 +509,26 @@ viewBalloon config label =
 
                 Nothing ->
                     Css.batch []
+            , case config.labelPosition of
+                Nothing ->
+                    Css.batch
+                        [ Css.property "animation-delay" "0.4s"
+                        , Css.property "animation-duration" "0.3s"
+                        , Css.property "animation-fill-mode" "backwards"
+                        , Css.animationName fadeInKeyframes
+                        , Css.property "animation-timing-function" "linear"
+                        , Css.opacity Css.zero
+                        ]
+
+                Just _ ->
+                    Css.batch
+                        [ Css.property "animation-delay" "0.4s"
+                        , Css.property "animation-duration" "0.3s"
+                        , Css.property "animation-fill-mode" "forwards"
+                        , Css.animationName fadeInKeyframes
+                        , Css.property "animation-timing-function" "linear"
+                        , Css.opacity Css.zero
+                        ]
             ]
         , Balloon.css
             [ Css.padding3 Css.zero (Css.px 6) (Css.px 1)
@@ -565,11 +588,22 @@ viewBalloon config label =
         ]
 
 
+fadeInKeyframes : Css.Animations.Keyframes {}
+fadeInKeyframes =
+    Css.Animations.keyframes
+        [ ( 0, [ Css.Animations.opacity Css.zero ] )
+        , ( 100, [ Css.Animations.opacity (Css.num 1) ] )
+        ]
+
+
 viewBalloonSpacer : { config | labelPosition : Maybe { b | totalHeight : Float } } -> Html msg
 viewBalloonSpacer config =
     span
         [ css
             [ Css.display Css.inlineBlock
+            , Css.Media.withMediaQuery
+                [ "(prefers-reduced-motion: no-preference)" ]
+                [ Css.property "transition" "padding 0.8s ease" ]
             , config.labelPosition
                 |> Maybe.map
                     (\{ totalHeight } ->
@@ -587,6 +621,16 @@ viewBalloonSpacer config =
                 , Css.overflowX Css.hidden
                 , Css.width (Css.px 0)
                 , Css.display Css.inlineBlock
+                , Css.Media.withMediaQuery
+                    [ "(prefers-reduced-motion: no-preference)" ]
+                    [ Css.property "transition" "line-height 0.8s ease"
+                    , case config.labelPosition of
+                        Nothing ->
+                            Css.lineHeight (Css.num 0)
+
+                        Just _ ->
+                            Css.lineHeight Css.unset
+                    ]
                 ]
             ]
             [ Html.text "()" ]
