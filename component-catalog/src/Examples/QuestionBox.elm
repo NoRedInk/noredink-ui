@@ -20,6 +20,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Markdown
 import Nri.Ui.Button.V10 as Button
+import Nri.Ui.CharacterIcon.V2 as CharacterIcon
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
@@ -79,7 +80,7 @@ view ellieLinkConfig state =
         , update = UpdateControls
         , settings = state.attributes
         , mainType = Nothing
-        , extraCode = []
+        , extraCode = [ "import Nri.Ui.CharacterIcon.V2 as CharacterIcon" ]
         , renderExample = Code.unstyledView
         , toExampleCode =
             \_ ->
@@ -434,11 +435,22 @@ initAttributes =
                 ]
             )
         |> ControlExtra.optionalListItem "character"
-            ([ { name = "(none)", icon = ( "Nothing", Nothing ) }
-             , { name = "Gumby"
+            ([ { name = "Lindy"
                , icon =
-                    ( "<| Just (Svg.withColor Colors.mustard UiIcon.stretch)"
-                    , Just (Svg.withColor Colors.mustard UiIcon.stretch)
+                    ( "<| Just CharacterIcon.lindyInstructive"
+                    , Just CharacterIcon.lindyInstructive
+                    )
+               }
+             , { name = "Red"
+               , icon =
+                    ( "<| Just CharacterIcon.redInstructive"
+                    , Just CharacterIcon.redInstructive
+                    )
+               }
+             , { name = "Sal"
+               , icon =
+                    ( "<| Just CharacterIcon.salInstructive"
+                    , Just CharacterIcon.salInstructive
                     )
                }
              ]

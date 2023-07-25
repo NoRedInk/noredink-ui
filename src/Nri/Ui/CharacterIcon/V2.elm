@@ -1180,6 +1180,7 @@ renderHeadshotFrame config =
         ]
 
 
+{-| -}
 lindyHeadshot : Nri.Ui.Svg.V1.Svg
 lindyHeadshot =
     let
@@ -1299,6 +1300,7 @@ redPalette =
     }
 
 
+{-| -}
 redHeadshot : Nri.Ui.Svg.V1.Svg
 redHeadshot =
     let
@@ -1459,6 +1461,7 @@ salPalette =
     }
 
 
+{-| -}
 salHeadshot : Nri.Ui.Svg.V1.Svg
 salHeadshot =
     let
