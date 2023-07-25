@@ -368,30 +368,6 @@ lindySupportive =
         }
 
 
-redPalette =
-    { stroke =
-        { black = Css.property "stroke" "#000000"
-        , width = \x -> Css.property "stroke-width" (String.fromFloat x)
-        }
-    , fill =
-        { platform = Css.fill (Css.hex "9f9faa")
-        , body = Css.fill (Css.hex "DF633F")
-        , bodySecondary = Css.fill (Css.hex "822D19")
-        , bodyTertiary = Css.fill (Css.hex "FFE4D1")
-        , shirt = Css.fill (Css.hex "F0EFED")
-        , pants = Css.fill (Css.hex "895C48")
-        , shoes = Css.fill (Css.hex "11222B")
-        , white = Css.fill (Css.hex "FFFFFF")
-        , iris = Css.fill (Css.hex "0E0A0B")
-        , dark = Css.fill (Css.hex "231F20")
-        , pointer = Css.fill (Css.hex "06CCBB")
-        , none = Css.property "fill" "none"
-        , button = Css.fill (Css.hex "F2336C")
-        , mouth = Css.fill (Css.hex "8c1111")
-        }
-    }
-
-
 renderFullRed :
     { name : String
     , platformEllipse : Svg.Svg Never
@@ -1153,16 +1129,6 @@ salSupportive =
             , "M310.3,473.9c0,0,1.9-4.1-0.9-11.5c-2.7-7.4-8.6-12.8-8.6-12.8"
             ]
         }
-
-
-{-| Use this to create a mask that **excludes** the stroke (this is almost always what we want)
--}
-maskStyle : Svg.Attribute msg
-maskStyle =
-    css
-        [ Css.fill (Css.hex "FFFFFF")
-        , Css.property "stroke" "#000000"
-        ]
 
 
 lindyPalette =

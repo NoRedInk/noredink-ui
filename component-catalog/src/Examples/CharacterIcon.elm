@@ -42,10 +42,10 @@ example =
     , renderSvgCode = \name -> Code.fromModule moduleName name
     , preview =
         IconExamples.previewCustomSize ( Just 70, Just 80 )
-            [ CharacterIcon.lindyInstructive
-            , CharacterIcon.salInstructive
+            [ CharacterIcon.redHeadshot
+            , CharacterIcon.salHeadshot
+            , CharacterIcon.lindyHeadshot
             , CharacterIcon.redInstructive
-            , CharacterIcon.redSupportive
             ]
     , all = all
     }
@@ -54,15 +54,24 @@ example =
 
 all : List Group
 all =
-    [ ( "Scaffolding"
+    [ ( "Headshots"
+      , [ ( "lindyHeadshot"
+          , CharacterIcon.lindyHeadshot
+          , [ Css.width (Css.px 96) ]
+          )
+        , ( "salHeadshot"
+          , CharacterIcon.salHeadshot
+          , [ Css.width (Css.px 96) ]
+          )
+        , ( "redHeadshot"
+          , CharacterIcon.redHeadshot
+          , [ Css.width (Css.px 96) ]
+          )
+        ]
+      )
+    , ( "Instructive"
       , [ ( "lindyInstructive"
           , CharacterIcon.lindyInstructive
-          , [ Css.width (Css.px 96)
-            , Css.height (Css.px 120)
-            ]
-          )
-        , ( "lindySupportive"
-          , CharacterIcon.lindySupportive
           , [ Css.width (Css.px 96)
             , Css.height (Css.px 120)
             ]
@@ -73,14 +82,23 @@ all =
             , Css.height (Css.px 120)
             ]
           )
-        , ( "salSupportive"
-          , CharacterIcon.salSupportive
+        , ( "redInstructive"
+          , CharacterIcon.redInstructive
           , [ Css.width (Css.px 96)
             , Css.height (Css.px 120)
             ]
           )
-        , ( "redInstructive"
-          , CharacterIcon.redInstructive
+        ]
+      )
+    , ( "Supportive"
+      , [ ( "lindySupportive"
+          , CharacterIcon.lindySupportive
+          , [ Css.width (Css.px 96)
+            , Css.height (Css.px 120)
+            ]
+          )
+        , ( "salSupportive"
+          , CharacterIcon.salSupportive
           , [ Css.width (Css.px 96)
             , Css.height (Css.px 120)
             ]
