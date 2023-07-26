@@ -160,6 +160,7 @@ view model =
 
 import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
 import Browser.Dom as Dom
 import Browser.Events.Extra
@@ -556,7 +557,11 @@ viewBackdrop wrapMsg color =
         []
 
 
-{-| -}
+{-| Id used for the `h1` that labels the modal.
+
+Useful if you're changing the modal contents and want to move the user's focus to the new modal's updated title to re-orient them.
+
+-}
 titleId : String
 titleId =
     "modal__title"
@@ -584,6 +589,7 @@ viewModal config =
             [ id titleId
             , Attrs.css (titleStyles config)
             , ExtraAttributes.nriDescription "modal-title"
+            , Key.tabbable False
             ]
             [ text config.title ]
         , div

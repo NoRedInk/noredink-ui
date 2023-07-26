@@ -1,5 +1,6 @@
 module Spec.Nri.Ui.Modal exposing (spec)
 
+import Accessibility.Key as Key
 import Browser.Dom as Dom
 import Html.Styled as Html exposing (Html, toUnstyled)
 import Html.Styled.Attributes as Attributes
@@ -22,6 +23,7 @@ spec =
                         [ id Modal.titleId
                         , tag "h1"
                         , containing [ text modalTitle ]
+                        , attribute (Key.tabbable False)
                         ]
                     |> done
         ]
