@@ -6,7 +6,7 @@ module Nri.Ui.Modal.V11 exposing
     , info, warning
     , showTitle, hideTitle
     , testId, css, custom
-    , isOpen
+    , isOpen, titleId
     )
 
 {-|
@@ -152,9 +152,9 @@ view model =
 @docs testId, css, custom
 
 
-### State checks
+### State checks and accessors
 
-@docs isOpen
+@docs isOpen, titleId
 
 -}
 
@@ -556,8 +556,9 @@ viewBackdrop wrapMsg color =
         []
 
 
-modalTitleId : String
-modalTitleId =
+{-| -}
+titleId : String
+titleId =
     "modal__title"
 
 
@@ -575,12 +576,12 @@ viewModal config =
     section
         ([ Role.dialog
          , Aria.modal True
-         , Aria.labeledBy modalTitleId
+         , Aria.labeledBy titleId
          ]
             ++ config.customAttributes
         )
         [ h1
-            [ id modalTitleId
+            [ id titleId
             , Attrs.css (titleStyles config)
             , ExtraAttributes.nriDescription "modal-title"
             ]
