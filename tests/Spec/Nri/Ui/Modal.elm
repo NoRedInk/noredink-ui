@@ -58,7 +58,6 @@ init =
 type Msg
     = OpenModal String
     | ModalMsg Modal.Msg
-    | CloseModal
     | Focus String
     | Focused (Result Dom.Error ())
 
@@ -83,13 +82,6 @@ update msg model =
                         { dismissOnEscAndOverlayClick = True }
                         modalMsg
                         model
-            in
-            ( newModel, Cmd.map ModalMsg cmd )
-
-        CloseModal ->
-            let
-                ( newModel, cmd ) =
-                    Modal.close model
             in
             ( newModel, Cmd.map ModalMsg cmd )
 
