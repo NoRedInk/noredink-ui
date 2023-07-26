@@ -17,6 +17,8 @@ module Nri.Ui.Modal.V11 exposing
   - adds `testId` helper
   - adds data-nri-descriptions to the header, content, and footer
   - use `Shadows`
+  - exposes `titleId`
+  - makes the title programmatically focusable
 
 
 # Changes from V10:
