@@ -128,65 +128,54 @@ view attributes_ =
     in
     case attributes.size of
         Tiny ->
-            let
-                tinyMessage =
-                    div
-                        [ ExtraAttributes.nriDescription "Nri-Ui-Message--tiny"
-                        , Attributes.css
-                            (baseStyles
-                                ++ [ displayFlex
-                                   , justifyContent start
-                                   , alignItems center
-                                   , fontSize (px 13)
-                                   , Css.Global.children
-                                        [ Css.Global.div
-                                            [ nthChild "2"
-                                                [ marginTop (px -3)
-                                                , Css.Global.children
-                                                    [ Css.Global.p [ margin zero ] ]
-                                                ]
-                                            ]
-                                        ]
-                                   ]
-                            )
+            div
+                [ ExtraAttributes.nriDescription "Nri-Ui-Message--tiny"
+                , Attributes.css
+                    (baseStyles
+                        ++ [ paddingTop (px 6)
+                           , paddingBottom (px 8)
+                           ]
+                    )
+                ]
+                [ div
+                    [ Attributes.css
+                        [ displayFlex
+                        , alignItems center
                         ]
-                        [ div
-                            ([ Attributes.css
-                                [ displayFlex
-                                , alignItems center
-                                , paddingTop (px 6)
-                                , paddingBottom (px 8)
-                                ]
-                             , tabbable False
-                             ]
-                                ++ role
-                                ++ attributes.customAttributes
-                            )
-                            [ Nri.Ui.styled div
-                                "Nri-Ui-Message--icon"
-                                [ alignSelf flexStart ]
-                                []
-                                [ icon_
-                                ]
-                            , div [] attributes.content
+                    ]
+                    [ div
+                        ([ Attributes.css
+                            [ displayFlex
+                            , alignItems center
+                            , fontSize (px 13)
                             ]
-                        , case attributes.onDismiss of
-                            Nothing ->
-                                text ""
-
-                            Just msg ->
-                                tinyDismissButton msg
+                         , tabbable False
+                         ]
+                            ++ role
+                            ++ attributes.customAttributes
+                        )
+                        [ Nri.Ui.styled div
+                            "Nri-Ui-Message--icon"
+                            []
+                            []
+                            [ icon_
+                            ]
+                        , div [] attributes.content
                         ]
-            in
-            case attributes.codeDetails of
-                Just details ->
-                    div []
-                        [ tinyMessage
-                        , viewCodeDetails details
-                        ]
+                    , case attributes.onDismiss of
+                        Nothing ->
+                            text ""
 
-                Nothing ->
-                    tinyMessage
+                        Just msg ->
+                            tinyDismissButton msg
+                    ]
+                , case attributes.codeDetails of
+                    Just details ->
+                        viewCodeDetails details
+
+                    Nothing ->
+                        text ""
+                ]
 
         Large ->
             div
@@ -201,11 +190,8 @@ view attributes_ =
                     )
                 ]
                 [ div
-                    ([ Attributes.css
-                        [ displayFlex
-                        , property "width" "fit-content"
-                        , alignItems center
-                        , fontSize (px 15)
+                    [ Attributes.css
+                        [ fontSize (px 15)
                         , fontWeight (int 600)
                         , lineHeight (px 21)
                         , padding (px 20)
@@ -214,33 +200,49 @@ view attributes_ =
                             [ padding (px 15)
                             ]
                         ]
-                     , tabbable False
-                     ]
-                        ++ role
-                        ++ attributes.customAttributes
-                    )
-                    [ icon_
-                    , div
+                    ]
+                    [ div
                         [ Attributes.css
-                            [ minWidth (px 100)
-                            , flexBasis (px 100)
-                            , flexGrow (int 1)
+                            [ displayFlex
+                            , alignItems center
                             ]
                         ]
-                        attributes.content
-                    , case attributes.onDismiss of
+                        [ div
+                            ([ Attributes.css
+                                [ displayFlex
+                                , alignItems center
+                                , property "width" "fit-content"
+                                ]
+                             , tabbable False
+                             ]
+                                ++ role
+                                ++ attributes.customAttributes
+                            )
+                            [ icon_
+                            , div
+                                [ Attributes.css
+                                    [ minWidth (px 100)
+                                    , flexBasis (px 100)
+                                    , flexGrow (int 1)
+                                    ]
+                                ]
+                                attributes.content
+                            ]
+                        , div [ Attributes.css [ flexGrow (int 1) ] ] []
+                        , case attributes.onDismiss of
+                            Nothing ->
+                                text ""
+
+                            Just msg ->
+                                largeDismissButton msg
+                        ]
+                    , case attributes.codeDetails of
+                        Just details ->
+                            viewCodeDetails details
+
                         Nothing ->
                             text ""
-
-                        Just msg ->
-                            largeDismissButton msg
                     ]
-                , case attributes.codeDetails of
-                    Just details ->
-                        viewCodeDetails details
-
-                    Nothing ->
-                        text ""
                 ]
 
         Banner ->
@@ -254,65 +256,70 @@ view attributes_ =
                 ]
                 [ div
                     [ Attributes.css
-                        [ alignItems center
-                        , displayFlex
-                        , justifyContent center
+                        [ fontSize (px 20)
+                        , fontWeight (int 700)
+                        , lineHeight (num 1.4)
+                        , padding (px 20)
+                        , Css.Media.withMedia
+                            [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
+                            [ fontSize (px 15)
+                            , fontWeight (int 600)
+                            , padding (px 15)
+                            ]
                         ]
                     ]
                     [ div
-                        ([ Attributes.css
-                            [ alignItems center
-                            , displayFlex
-                            , justifyContent center
-                            , property "width" "fit-content"
-                            , fontSize (px 20)
-                            , fontWeight (int 700)
-                            , lineHeight (num 1.4)
-                            , padding (px 20)
-                            , Css.Media.withMedia
-                                [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
-                                [ fontSize (px 15)
-                                , fontWeight (int 600)
-                                , padding (px 15)
-                                ]
+                        [ Attributes.css
+                            [ displayFlex
+                            , alignItems center
                             ]
-                         , tabbable False
-                         ]
-                            ++ role
-                            ++ attributes.customAttributes
-                        )
-                        [ icon_
-                        , Nri.Ui.styled div
-                            "banner-alert-notification"
-                            [ fontSize (px 20)
-                            , fontWeight (int 700)
-                            , lineHeight (num 1.4)
-                            , maxWidth (px 600)
-                            , minWidth (px 100)
-                            , flexShrink (int 1)
-                            , Fonts.baseFont
-                            , Css.Media.withMedia
-                                [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
-                                [ fontSize (px 15)
-                                , fontWeight (int 600)
-                                ]
-                            ]
-                            []
-                            attributes.content
                         ]
-                    , case attributes.onDismiss of
+                        [ div [ Attributes.css [ flexGrow (int 1) ] ] []
+                        , div
+                            ([ Attributes.css
+                                [ displayFlex
+                                , alignItems center
+                                , property "width" "fit-content"
+                                ]
+                             , tabbable False
+                             ]
+                                ++ role
+                                ++ attributes.customAttributes
+                            )
+                            [ icon_
+                            , Nri.Ui.styled div
+                                "banner-alert-notification"
+                                [ fontSize (px 20)
+                                , fontWeight (int 700)
+                                , lineHeight (num 1.4)
+                                , maxWidth (px 600)
+                                , minWidth (px 100)
+                                , flexShrink (int 1)
+                                , Fonts.baseFont
+                                , Css.Media.withMedia
+                                    [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
+                                    [ fontSize (px 15)
+                                    , fontWeight (int 600)
+                                    ]
+                                ]
+                                []
+                                attributes.content
+                            ]
+                        , div [ Attributes.css [ flexGrow (int 1) ] ] []
+                        , case attributes.onDismiss of
+                            Nothing ->
+                                text ""
+
+                            Just msg ->
+                                bannerDismissButton msg
+                        ]
+                    , case attributes.codeDetails of
+                        Just details ->
+                            viewCodeDetails details
+
                         Nothing ->
                             text ""
-
-                        Just msg ->
-                            bannerDismissButton msg
                     ]
-                , case attributes.codeDetails of
-                    Just details ->
-                        viewCodeDetails details
-
-                    Nothing ->
-                        text ""
                 ]
 
 
