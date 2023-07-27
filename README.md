@@ -102,13 +102,6 @@ Here are some things you might need to do:
 | Update Nixpkgs (or only one dependency)             | `nix flake lock --update-input nixpkgs`                                                            |
 | See all our dependencies and sources                | Look in `flake.nix` and `flake.lock`                                                               |
 
-## Developing with Buck
-
-We are in the process of transitioning our build processes to [Buck 2](https://buck2.build).
-The instructions above will work until they're removed from the repo, but if you'd like to try the new thing, run `script/buck2 build //...` or `script/buck2 test //...`.
-
-If you get a failure due to formatting in Buck, you can correct it with `buck2 run //:diff_to_comment -- --fix //the-target-that-ci-complained-about`.
-
 ## Tests
 
 Run tests with
