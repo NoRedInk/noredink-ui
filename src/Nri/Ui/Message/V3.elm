@@ -808,8 +808,8 @@ getIcon customIcon size theme =
                     div
                         [ Attributes.css
                             [ borderRadius (pct 50)
-                            , height (px 20)
-                            , width (px 20)
+                            , height (px 18)
+                            , width (px 18)
                             , Css.marginRight (Css.px 5)
                             , backgroundColor Colors.navy
                             , displayFlex
