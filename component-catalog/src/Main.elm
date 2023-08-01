@@ -51,7 +51,6 @@ type Type
     | Checkbox
     | RadioButton
     | SegmentedControlRadioButton
-    | SegmentedControlTabs
     | SelectDisabled
     | Select
     | Switch
@@ -82,9 +81,6 @@ typeToName type_ =
 
         SegmentedControlRadioButton ->
             "SegmentedControl (as radio buttons)"
-
-        SegmentedControlTabs ->
-            "SegmentedControl (as tabs)"
 
         SelectDisabled ->
             "SelectDisabled"
@@ -291,28 +287,6 @@ view model =
           , ariaDisabled = True
           , disabled = False
           , notes = "aria-disabled added manually, but **there's a bug!** It looks like custom attributes **are not attached** to SegmentedControl radio buttons. This also means the tooltip is not correctly attached. \n\nThere are no disabled/unfulfilled styles."
-          }
-        , { type_ = SegmentedControlTabs
-          , view =
-                SegmentedControl.view
-                    { focusAndSelect = \_ -> Swallow
-                    , options =
-                        [ { icon = Nothing
-                          , label = text "Source 1"
-                          , value = 0
-                          , idString = String.fromInt 0
-                          , tabTooltip = tooltipProperties SegmentedControlTabs model
-                          , attributes = [ Aria.disabled True ]
-                          , content = text "content"
-                          }
-                        ]
-                    , selected = 0
-                    , positioning = SegmentedControl.Left SegmentedControl.FitContent
-                    , toUrl = Nothing
-                    }
-          , ariaDisabled = True
-          , disabled = False
-          , notes = "aria-disabled added manually to the first option. There are no disabled/unfulfilled styles."
           }
         , { type_ = Select
           , view =
