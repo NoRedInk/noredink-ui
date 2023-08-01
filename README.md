@@ -41,9 +41,10 @@ Contributing to the component library is characterized by close consultation wit
    - We may either give you the okay in the Slack thread, or we may request a brief **kickoff sync** to discuss implementation details. You may also request a sync rather than providing details in Slack.
    - Once A11ybats give you the go-ahead to begin work…
 2. Review the [PR template](/.github/pull_request_template.md) in advance so that you understand contribution requirements in advance, or go ahead and open a draft PR so you can use the [PR template](/.github/pull_request_template.md) as you work.
-3. Feel free to [reach out to A11ybats](https://noredink.slack.com/archives/C02NVG4M45U) with any questions as you work - it might save you headaches or code rewrites later!
-4. Request a PR review from your team as usual. There is no need to add A11ybats as a reviewer unless this was mentioned as a requirement in your kickoff sync.
-5. A11ybats keep an eye on all noredink-ui updates and may request modifications to your work if it does not adhere to the [Component Library Foundations](#component-library-foundations).
+3. If you are releasing a new major version of a component, be prepared for your team to upgrade all instances of the component anywhere it is used and delete the old version of the component. We recommend creating stories now for this work - we will be asking for links to these stories in your PR!
+4. Feel free to [reach out to A11ybats](https://noredink.slack.com/archives/C02NVG4M45U) with any questions as you work - it might save you headaches or code rewrites later!
+5. Request a PR review from your team as usual. There is no need to add A11ybats as a reviewer unless this was mentioned as a requirement in your kickoff sync.
+6. A11ybats keep an eye on all noredink-ui updates and may request modifications to your work if it does not adhere to the [Component Library Foundations](#component-library-foundations).
 
 **🌟 Creating a new component**
 
@@ -205,16 +206,3 @@ To prevent these big Yaks from suddenly showing up in seemingly trivial tasks we
 That said, we may prune unused modules occasionally.
 
 We should change this process if we feel it's not working for us!
-
-## Phasing out old versions
-
-Our goal is to gradually move to the newest version of each widget, and remove the old versions when they are no longer used.
-
-This means:
-
-- We should avoid introducing new references to old versions of a widget
-- When touching code that uses a widget, prefer upgrading to the latest version
-- If you introduce a new version of a widget, please consider taking the time to upgrade all previous usages
-  - If for some reason this isn't feasible, create a story in your team's backlog so that you can prioritize it separately without disrupting your current work
-- You can delete an old version of a widget when there are no usages left
-  - Note: this will be a major version bump, so you may want to batch deletions together
