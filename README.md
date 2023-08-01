@@ -41,7 +41,7 @@ Contributing to the component library is characterized by close consultation wit
    - We may either give you the okay in the Slack thread, or we may request a brief **kickoff sync** to discuss implementation details. You may also request a sync rather than providing details in Slack.
    - Once A11ybats give you the go-ahead to begin work…
 2. Review the [PR template](/.github/pull_request_template.md) in advance so that you understand contribution requirements in advance, or go ahead and open a draft PR so you can use the [PR template](/.github/pull_request_template.md) as you work.
-3. If you are releasing a new major version of a component, be prepared for your team to upgrade all instances of the component anywhere it is used and delete the old version of the component. We recommend creating stories now for this work - we will be asking for links to these stories in your PR!
+3. If you are releasing a new major version of a component, be prepared for your team to upgrade all instances of the component anywhere it is used. We recommend creating stories now for this work - we will be asking for links to these stories in your PR!
 4. Feel free to [reach out to A11ybats](https://noredink.slack.com/archives/C02NVG4M45U) with any questions as you work - it might save you headaches or code rewrites later!
 5. Request a PR review from your team as usual. There is no need to add A11ybats as a reviewer unless this was mentioned as a requirement in your kickoff sync.
 6. A11ybats keep an eye on all noredink-ui updates and may request modifications to your work if it does not adhere to the [Component Library Foundations](#component-library-foundations).
