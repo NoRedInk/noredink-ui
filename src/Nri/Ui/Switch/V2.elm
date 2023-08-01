@@ -157,8 +157,8 @@ view { label, id } attrs =
             List.foldl (\(Attribute update) -> update) defaultConfig attrs
     in
     Html.label
-        ([ Attributes.id (id ++ "-container")
-         , Attributes.css
+        [ Attributes.id (id ++ "-container")
+        , Attributes.css
             [ Css.display Css.inlineFlex
             , Css.alignItems Css.center
             , Css.position Css.relative
@@ -174,10 +174,8 @@ view { label, id } attrs =
             , cursorStyle config
             , Css.batch config.containerCss
             ]
-         , Attributes.for id
-         ]
-            ++ config.custom
-        )
+        , Attributes.for id
+        ]
         [ viewCheckbox id config
         , Nri.Ui.Svg.V1.toHtml
             (viewSwitch
@@ -209,22 +207,24 @@ viewCheckbox : String -> Config msg -> Html msg
 viewCheckbox id config =
     Accessibility.Styled.checkbox id
         (Just config.isSelected)
-        [ Attributes.id id
-        , Role.switch
-        , Attributes.css
+        ([ Attributes.id id
+         , Role.switch
+         , Attributes.css
             [ Css.position Css.absolute
             , Css.top (Css.px 10)
             , Css.left (Css.px 10)
             , Css.opacity (Css.num 0)
             , cursorStyle config
             ]
-        , case ( config.onSwitch, config.isDisabled ) of
+         , case ( config.onSwitch, config.isDisabled ) of
             ( Just onSwitch_, False ) ->
                 Events.onCheck onSwitch_
 
             _ ->
                 Aria.disabled True
-        ]
+         ]
+            ++ config.custom
+        )
 
 
 notOperable : Config msg -> Bool
