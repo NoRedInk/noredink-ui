@@ -206,15 +206,6 @@ That said, we may prune unused modules occasionally.
 
 We should change this process if we feel it's not working for us!
 
-## Moving Widgets to `noredink-ui`
-
-If you are moving in a widget from the monolith:
-
-- Copy the contents of `Nri.SomeModule` and its tests to `Nri.Ui.SomeModule.V1` in `noredink-ui`
-- Publish!
-- If you feel confident upgrading pre-existing usages of the widget, switch over to it everywhere!
-- If the new version introduces big changes and you'd rather keep the old one around for now, rename `Nri.SomeModule` to `Nri.DEPRECATEDSomeModule` in the monolith and start using `Nri.Ui.SomeModule.V1` where you need it
-
 ## Phasing out old versions
 
 Our goal is to gradually move to the newest version of each widget, and remove the old versions when they are no longer used.
