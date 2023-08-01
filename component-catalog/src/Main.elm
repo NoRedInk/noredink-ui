@@ -44,6 +44,7 @@ main =
 
 type Type
     = ClickableSvg
+    | ClickableSvgAriaDisabled
     | ClickableText
     | ButtonDisabled
     | ButtonUnfulfilled
@@ -60,6 +61,9 @@ typeToName type_ =
     case type_ of
         ClickableSvg ->
             "ClickableSvg"
+
+        ClickableSvgAriaDisabled ->
+            "ClickableSvgAriaDisabled"
 
         ClickableText ->
             "ClickableText"
@@ -217,6 +221,21 @@ view model =
                     )
           , ariaDisabled = False
           , disabled = True
+          , notes = "There isn't an unfulfilled style for ClickableSvg."
+          }
+        , { type_ = ClickableSvgAriaDisabled
+          , view =
+            viewWithTooltip ClickableSvgAriaDisabled
+                    model
+                    (\popupTriggerAttributes ->
+                        ClickableSvg.button "Submit"
+                            UiIcon.arrowPointingRight
+                            [ ClickableSvg.custom popupTriggerAttributes
+                            , ClickableSvg.custom [ Aria.disabled True ]
+                            ]
+                    )
+          , ariaDisabled = True
+          , disabled = False
           , notes = "There isn't an unfulfilled style for ClickableSvg."
           }
         , { type_ = ClickableText
