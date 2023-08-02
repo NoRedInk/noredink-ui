@@ -9,7 +9,7 @@ module Nri.Ui.TextArea.V5 exposing
     , autoResize, autoResizeSingleLine
     , custom, nriDescription, id, testId
     , placeholder, autofocus
-    , disabled, errorIf, errorMessage, guidance
+    , disabled, errorIf, errorMessage, guidance, guidanceHtml
     )
 
 {-|
@@ -78,7 +78,7 @@ custom element, or else autosizing will break! This means doing the following:
 
 @docs custom, nriDescription, id, testId
 @docs placeholder, autofocus
-@docs disabled, errorIf, errorMessage, guidance
+@docs disabled, errorIf, errorMessage, guidance, guidanceHtml
 
 -}
 
@@ -98,7 +98,7 @@ import Nri.Ui.InputStyles.V4 as InputStyles exposing (Theme(..))
 -}
 type alias Config msg =
     { theme : Theme
-    , guidance : Guidance
+    , guidance : Guidance msg
     , error : ErrorState
     , hideLabel : Bool
     , value : String
@@ -211,6 +211,13 @@ errorMessage =
 guidance : String -> Attribute msg
 guidance =
     Attribute << InputErrorAndGuidanceInternal.setGuidance
+
+
+{-| A guidance message (HTML) shows below the input, unless an error message is showing instead.
+-}
+guidanceHtml : List (Html msg) -> Attribute msg
+guidanceHtml =
+    Attribute << InputErrorAndGuidanceInternal.setGuidanceHtml
 
 
 {-| Hides the visible label. (There will still be an invisible label for screen readers.)

@@ -66,14 +66,14 @@ spec =
         ]
 
 
-emptyErrorAndGuidance : { guidance : Guidance, error : ErrorState }
+emptyErrorAndGuidance : { guidance : Guidance msg, error : ErrorState }
 emptyErrorAndGuidance =
     { guidance = InputErrorAndGuidanceInternal.noGuidance
     , error = InputErrorAndGuidanceInternal.noError
     }
 
 
-viewQuery : { guidance : Guidance, error : ErrorState } -> Query.Single msg
+viewQuery : { guidance : Guidance msg, error : ErrorState } -> Query.Single msg
 viewQuery config =
     Html.Styled.div []
         (Html.Styled.input

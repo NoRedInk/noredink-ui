@@ -6,7 +6,7 @@ module Nri.Ui.RadioButton.V4 exposing
     , Attribute
     , hiddenLabel, visibleLabel
     , containerCss, labelCss, custom, nriDescription, id, testId
-    , disabled, enabled, errorIf, errorMessage, guidance
+    , disabled, enabled, errorIf, errorMessage, guidance, guidanceHtml
     )
 
 {-|
@@ -43,7 +43,7 @@ module Nri.Ui.RadioButton.V4 exposing
 @docs Attribute
 @docs hiddenLabel, visibleLabel
 @docs containerCss, labelCss, custom, nriDescription, id, testId
-@docs disabled, enabled, errorIf, errorMessage, guidance
+@docs disabled, enabled, errorIf, errorMessage, guidance, guidanceHtml
 
 -}
 
@@ -101,6 +101,13 @@ errorMessage =
 guidance : String -> Attribute value msg
 guidance =
     Attribute << InputErrorAndGuidanceInternal.setGuidance
+
+
+{-| A guidance message (HTML) shows below the input, unless an error message is showing instead.
+-}
+guidanceHtml : List (Html msg) -> Attribute value msg
+guidanceHtml =
+    Attribute << InputErrorAndGuidanceInternal.setGuidanceHtml
 
 
 {-| Fire a message parameterized by the value type when selecting a radio option
@@ -214,7 +221,7 @@ type alias Config value msg =
     , id : Maybe String
     , premiumDisplay : PremiumDisplay
     , isDisabled : Bool
-    , guidance : Guidance
+    , guidance : Guidance msg
     , error : ErrorState
     , hideLabel : Bool
     , containerCss : List Css.Style
