@@ -69,6 +69,7 @@ import Html.Styled.Events exposing (onClick)
 import Html.Styled.Keyed
 import Nri.Ui.AnimatedIcon.V1 as AnimatedIcon
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.FocusLoop.V1 as FocusLoop
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
@@ -269,49 +270,27 @@ view_ :
     }
     -> Html msg
 view_ { entries, focus, leftId } =
-    let
-        headerIds : List String
-        headerIds =
-            List.map getHeaderId entries
-
-        arrowUpIds : List (Maybe String)
-        arrowUpIds =
-            lastHeaderId :: List.map Just headerIds
-
-        firstHeaderId : Maybe String
-        firstHeaderId =
-            List.head headerIds
-
-        lastHeaderId : Maybe String
-        lastHeaderId =
-            List.head (List.reverse headerIds)
-    in
     div [ Attributes.class accordionClass ]
         [ Html.Styled.Keyed.node "div"
             []
-            (entries
-                |> List.map2 (\id nextEntry -> ( id, nextEntry )) arrowUpIds
-                |> List.foldr
-                    (\( previousId, AccordionEntry entry_ children ) ( nextId, acc ) ->
-                        let
-                            node =
-                                ( "keyed-section__" ++ entry_.headerId
-                                , viewEntry focus
-                                    { up = previousId
-                                    , down = nextId
-                                    , right = Maybe.map getHeaderId (List.head children)
-                                    , left = leftId
-                                    }
-                                    entry_
-                                    children
-                                )
-                        in
-                        ( Just entry_.headerId
-                        , node :: acc
+            (FocusLoop.addEvents
+                { focus = \(AccordionEntry { headerId } _) -> focus headerId
+                , leftRight = False
+                , upDown = True
+                }
+                entries
+                |> List.map
+                    (\( AccordionEntry entry_ children, upDownEvents ) ->
+                        ( "keyed-section__" ++ entry_.headerId
+                        , viewEntry focus
+                            { upDownEvents = upDownEvents
+                            , right = Maybe.map getHeaderId (List.head children)
+                            , left = leftId
+                            }
+                            entry_
+                            children
                         )
                     )
-                    ( firstHeaderId, [] )
-                |> Tuple.second
             )
         ]
 
@@ -319,8 +298,7 @@ view_ { entries, focus, leftId } =
 viewEntry :
     (String -> msg)
     ->
-        { up : Maybe String
-        , down : Maybe String
+        { upDownEvents : List (Key.Event msg)
         , right : Maybe String
         , left : Maybe String
         }
@@ -357,12 +335,11 @@ viewEntry focus arrows ({ headerId, headerLevel, caret, headerContent, entryClas
                     |> Maybe.map (\toggle -> onClick (toggle (not isExpanded)))
                     |> Maybe.withDefault AttributesExtra.none
                 , Key.onKeyDownPreventDefault
-                    ([ Maybe.map (\id -> Key.up (focus id)) arrows.up
-                     , Maybe.map (\id -> Key.down (focus id)) arrows.down
-                     , Maybe.map (\id -> Key.right (focus id)) arrows.right
-                     , Maybe.map (\id -> Key.left (focus id)) arrows.left
-                     ]
-                        |> List.filterMap identity
+                    (arrows.upDownEvents
+                        ++ List.filterMap identity
+                            [ Maybe.map (\id -> Key.right (focus id)) arrows.right
+                            , Maybe.map (\id -> Key.left (focus id)) arrows.left
+                            ]
                     )
                 ]
                 [ caret isExpanded
