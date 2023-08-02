@@ -20,7 +20,7 @@ import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Markdown
-import Nri.Ui.Block.V4 as Block
+import Nri.Ui.Block.V5 as Block
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Fonts.V1 as Fonts
@@ -39,7 +39,7 @@ moduleName =
 
 version : Int
 version =
-    4
+    5
 
 
 {-| -}
@@ -137,7 +137,10 @@ example =
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
             , [ Block.view [ Block.plaintext "I like " ]
-              , Block.view (List.map Tuple.second attributes)
+              , Block.view
+                    (Block.labelPosition (Dict.get fruitId offsets)
+                        :: List.map Tuple.second attributes
+                    )
               , Block.view [ Block.plaintext " a lot!" ]
               ]
                 |> p
@@ -202,7 +205,7 @@ example =
                         [ Block.phrase "This is "
                         , [ Block.italic (Block.phrase "heroically") ]
                         , [ Block.bold (Block.phrase " generous ") ]
-                        , [ Block.blank ]
+                        , [ Block.blank Block.ShortWordPhrase ]
                         , Block.phrase " each comic book costs about $5."
                         ]
                     , Block.label "Editor's note (can *also* include **markdown**!)"
@@ -402,7 +405,7 @@ example =
                                 [ Block.emphasize
                                 , (List.concat >> Block.content)
                                     [ Block.phrase "emphasized subsegement "
-                                    , [ Block.blank ]
+                                    , [ Block.blank Block.ShortWordPhrase ]
                                     , Block.phrase " emphasized"
                                     ]
                                 ]
@@ -482,7 +485,7 @@ initControl =
                 ]
             )
         |> ControlExtra.optionalListItem "labelId"
-            (CommonControls.string ( Code.fromModule moduleName "labelId", Block.labelId ) "fruit-block")
+            (CommonControls.string ( Code.fromModule moduleName "labelId", Block.labelId ) fruitId)
 
 
 controlContent : Control ( String, Block.Attribute msg )
@@ -505,9 +508,69 @@ controlContent =
                         )
                 , Block.content
                     (Block.phrase "to think about "
-                        ++ Block.blank
+                        ++ Block.blank Block.ShortWordPhrase
                         :: Block.phrase " and so forth"
                     )
+                )
+          )
+        , ( "single character blank"
+          , Control.value
+                ( Code.fromModule moduleName "content "
+                    ++ Code.withParens
+                        (Code.fromModule moduleName "blank "
+                            ++ Code.fromModule moduleName "SingleCharacter"
+                        )
+                , Block.content [ Block.blank Block.SingleCharacter ]
+                )
+          )
+        , ( "short word phrase blank"
+          , Control.value
+                ( Code.fromModule moduleName "content "
+                    ++ Code.withParens
+                        (Code.fromModule moduleName "blank "
+                            ++ Code.fromModule moduleName "ShortWordPhrase"
+                        )
+                , Block.content [ Block.blank Block.ShortWordPhrase ]
+                )
+          )
+        , ( "long word phrase blank"
+          , Control.value
+                ( Code.fromModule moduleName "content "
+                    ++ Code.withParens
+                        (Code.fromModule moduleName "blank "
+                            ++ Code.fromModule moduleName "LongWordPhrase"
+                        )
+                , Block.content [ Block.blank Block.LongWordPhrase ]
+                )
+          )
+        , ( "full height single character blank"
+          , Control.value
+                ( Code.fromModule moduleName "content "
+                    ++ Code.withParens
+                        (Code.fromModule moduleName "fullHeightBlank "
+                            ++ Code.fromModule moduleName "SingleCharacter"
+                        )
+                , Block.content [ Block.fullHeightBlank Block.SingleCharacter ]
+                )
+          )
+        , ( "full height short word phrase blank"
+          , Control.value
+                ( Code.fromModule moduleName "content "
+                    ++ Code.withParens
+                        (Code.fromModule moduleName "fullHeightBlank "
+                            ++ Code.fromModule moduleName "ShortWordPhrase"
+                        )
+                , Block.content [ Block.fullHeightBlank Block.ShortWordPhrase ]
+                )
+          )
+        , ( "full height long word phrase blank"
+          , Control.value
+                ( Code.fromModule moduleName "content "
+                    ++ Code.withParens
+                        (Code.fromModule moduleName "fullHeightBlank "
+                            ++ Code.fromModule moduleName "LongWordPhrase"
+                        )
+                , Block.content [ Block.fullHeightBlank Block.LongWordPhrase ]
                 )
           )
         ]
@@ -521,6 +584,11 @@ ageId =
 colorId : String
 colorId =
     "color-label-id"
+
+
+fruitId : String
+fruitId =
+    "fruit-block"
 
 
 purposeId : String
@@ -622,7 +690,7 @@ update msg state =
     case msg of
         UpdateSettings newControl ->
             ( { state | settings = newControl }
-            , Cmd.none
+            , measure fruitId
             )
 
         GetBlockLabelMeasurements ->

@@ -1,6 +1,7 @@
-module Nri.Ui.QuestionBox.V5 exposing
+module Nri.Ui.QuestionBox.V6 exposing
     ( view, Attribute
-    , id, markdown, character
+    , id, markdown
+    , character, characterPosition
     , actions, actionsVertical, actionsHorizontal
     , neutral, correct, incorrect, tip
     , containerCss
@@ -8,11 +9,14 @@ module Nri.Ui.QuestionBox.V5 exposing
     , guidanceId
     )
 
-{-|
+{-| Changes from V5:
+
+  - ???
 
 @docs view, Attribute
 
-@docs id, markdown, character
+@docs id, markdown
+@docs character, characterPosition
 @docs actions, actionsVertical, actionsHorizontal
 @docs neutral, correct, incorrect, tip
 @docs containerCss
@@ -28,7 +32,6 @@ import Css.Global
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Button.V10 as Button
-import Nri.Ui.CharacterIcon.V1 as CharacterIcon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
@@ -49,6 +52,14 @@ type alias Config msg =
     , character : Maybe { name : String, icon : Svg }
     , containerCss : List Css.Style
     , leftActions : Maybe (Html msg)
+    , characterPosition : Maybe CharacterPosition
+    }
+
+
+type alias CharacterPosition =
+    { width : Float
+    , height : Float
+    , top : Float
     }
 
 
@@ -75,9 +86,10 @@ defaultConfig =
     , actions = []
     , actionOrientation = Vertical
     , theme = Neutral
-    , character = Just { name = "Panda", icon = CharacterIcon.redPanda }
+    , character = Nothing
     , containerCss = []
     , leftActions = Nothing
+    , characterPosition = Nothing
     }
 
 
@@ -113,10 +125,17 @@ actionsVertical =
     Attribute (\config -> { config | actionOrientation = Vertical })
 
 
-{-| -}
-character : Maybe { name : String, icon : Svg } -> Attribute msg
+{-| Note that the character _only_ appears when the theme is `tip`!
+-}
+character : { name : String, icon : Svg } -> Attribute msg
 character details =
-    Attribute (\config -> { config | character = details })
+    Attribute (\config -> { config | character = Just details })
+
+
+{-| -}
+characterPosition : CharacterPosition -> Attribute msg
+characterPosition characterPosition_ =
+    Attribute (\config -> { config | characterPosition = Just characterPosition_ })
 
 
 {-| -}
@@ -218,8 +237,8 @@ viewContainer config =
                     Nothing
     in
     styled div
-        ([ Css.backgroundColor backgroundColor
-         , case config.theme of
+        [ Css.backgroundColor backgroundColor
+        , case config.theme of
             Tip ->
                 Css.batch
                     [ Css.maxWidth (Css.px 443)
@@ -236,11 +255,18 @@ viewContainer config =
                     , Css.borderBottomRightRadius (Css.px (borderRounding * 2))
                     , Css.borderBottom3 (Css.px 8) Css.solid shadowColor
                     ]
-         , Css.width (Css.pct 100)
-         ]
-            ++ config.containerCss
-        )
-        [ AttributesExtra.nriDescription "question-box-container" ]
+        , Css.width (Css.pct 100)
+        , Css.minHeight (Css.px 80)
+        , Css.batch config.containerCss
+        ]
+        [ AttributesExtra.nriDescription "question-box-container"
+        , case config.id of
+            Nothing ->
+                AttributesExtra.none
+
+            Just id_ ->
+                Attributes.id id_
+        ]
         [ styled div
             [ Css.lineHeight (Css.num 1.4)
             , Css.textAlign Css.left
@@ -271,7 +297,7 @@ viewContainer config =
             []
             (List.filterMap identity
                 [ Maybe.map viewLeftActions config.leftActions
-                , Maybe.map (viewGuidance config maybeCharacter) config.markdown
+                , Maybe.map (viewGuidance config maybeCharacter config.characterPosition) config.markdown
                 , viewActions config.actions config.actionOrientation
                 ]
             )
@@ -315,9 +341,10 @@ themeToColor theme =
 viewGuidance :
     { config | id : Maybe String }
     -> Maybe { name : String, icon : Svg }
+    -> Maybe CharacterPosition
     -> String
     -> Html msg
-viewGuidance config maybeCharacter markdown_ =
+viewGuidance config maybeCharacter maybeCharacterPosition markdown_ =
     case maybeCharacter of
         Just character_ ->
             div
@@ -330,9 +357,10 @@ viewGuidance config maybeCharacter markdown_ =
                     , Css.justifyContent Css.spaceBetween
                     ]
                 ]
-                -- We intentionally render the character first and use "rowReverse" so that a11y content is presented as "Pands says ..." even
+                -- We intentionally render the character first and use "rowReverse" so
+                -- that a11y content is presented as "Pands says ..." even
                 -- though the character is floating on the right.
-                [ viewCharacter character_
+                [ viewCharacter character_ maybeCharacterPosition
                 , viewContents config markdown_
                 ]
 
@@ -344,10 +372,13 @@ viewContents : { config | id : Maybe String } -> String -> Html msg
 viewContents config markdown_ =
     styled div
         [ Css.alignSelf Css.flexStart
+        , Css.width (Css.pct 100)
         , Css.lineHeight (Css.px 28)
         , Css.Global.children
             [ Css.Global.p
                 [ Css.margin Css.zero
+                , Css.marginBottom (Css.px 10)
+                , Css.lastOfType [ Css.marginBottom Css.zero ]
                 ]
             , Css.Global.ul
                 [ Css.marginTop (Css.px 5)
@@ -359,16 +390,39 @@ viewContents config markdown_ =
         (Content.markdownInline markdown_)
 
 
-viewCharacter : { name : String, icon : Svg } -> Html msg
-viewCharacter { name, icon } =
-    icon
-        |> Svg.withLabel (name ++ " says, ")
-        |> Svg.withWidth (Css.px 60)
-        |> Svg.withCss
-            [ Css.position Css.relative
-            , Css.right (Css.px -15)
-            ]
-        |> Svg.toHtml
+viewCharacter : { name : String, icon : Svg } -> Maybe CharacterPosition -> Html msg
+viewCharacter { name, icon } maybePosition =
+    case maybePosition of
+        Just position ->
+            div [ css [ Css.width (Css.px position.width) ] ]
+                [ div
+                    [ css
+                        [ Css.position Css.relative
+                        ]
+                    ]
+                    [ icon
+                        |> Svg.withLabel (name ++ " says, ")
+                        |> Svg.withWidth (Css.px 60)
+                        |> Svg.withCss
+                            [ Css.right (Css.px -15)
+                            , Css.top (Css.px position.top)
+                            , Css.width (Css.px position.width)
+                            , Css.height (Css.px position.height)
+                            , Css.position Css.absolute
+                            ]
+                        |> Svg.toHtml
+                    ]
+                ]
+
+        Nothing ->
+            icon
+                |> Svg.withLabel (name ++ " says, ")
+                |> Svg.withWidth (Css.px 60)
+                |> Svg.withCss
+                    [ Css.position Css.relative
+                    , Css.right (Css.px -15)
+                    ]
+                |> Svg.toHtml
 
 
 viewActions : List (Action msg) -> ActionOrientation -> Maybe (Html msg)
@@ -412,7 +466,7 @@ viewActions actions_ actionOrientation =
                     -- With multiple vertically stacked buttons we want the text to be left aligned.
                     [ Css.justifyContent Css.flexStart ]
 
-                ( _, _ ) ->
+                _ ->
                     []
     in
     case actions_ of

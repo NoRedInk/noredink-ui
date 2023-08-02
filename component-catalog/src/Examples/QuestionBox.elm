@@ -20,10 +20,11 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Markdown
 import Nri.Ui.Button.V10 as Button
+import Nri.Ui.CharacterIcon.V2 as CharacterIcon
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.QuestionBox.V5 as QuestionBox
+import Nri.Ui.QuestionBox.V6 as QuestionBox
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V7 as Table
@@ -37,7 +38,7 @@ moduleName =
 
 version : Int
 version =
-    5
+    6
 
 
 {-| -}
@@ -79,13 +80,14 @@ view ellieLinkConfig state =
         , update = UpdateControls
         , settings = state.attributes
         , mainType = Nothing
-        , extraCode = []
+        , extraCode = [ "import Nri.Ui.CharacterIcon.V2 as CharacterIcon" ]
         , renderExample = Code.unstyledView
         , toExampleCode =
             \_ ->
                 [ { sectionName = Code.fromModule moduleName "view"
                   , code =
                         Code.fromModule moduleName "view "
+                            ++ "QuestionBox.characterPosition { width = 80, height = 103, top = -62 }"
                             ++ Code.list (List.map Tuple.first attributes)
                   }
                 ]
@@ -111,7 +113,10 @@ view ellieLinkConfig state =
                     |> Svg.withHeight (Css.px 30)
                     |> Svg.toHtml
                 ]
-            , QuestionBox.view (List.map Tuple.second attributes)
+            , QuestionBox.view
+                (QuestionBox.characterPosition { width = 80, height = 103, top = -62 }
+                    :: List.map Tuple.second attributes
+                )
             ]
         ]
     , Heading.h2
@@ -434,11 +439,22 @@ initAttributes =
                 ]
             )
         |> ControlExtra.optionalListItem "character"
-            ([ { name = "(none)", icon = ( "Nothing", Nothing ) }
-             , { name = "Gumby"
+            ([ { name = "Lindy"
                , icon =
-                    ( "<| Just (Svg.withColor Colors.mustard UiIcon.stretch)"
-                    , Just (Svg.withColor Colors.mustard UiIcon.stretch)
+                    ( "CharacterIcon.lindyHeadshot"
+                    , CharacterIcon.lindyHeadshot
+                    )
+               }
+             , { name = "Red"
+               , icon =
+                    ( "CharacterIcon.redHeadshot"
+                    , CharacterIcon.redHeadshot
+                    )
+               }
+             , { name = "Sal"
+               , icon =
+                    ( "CharacterIcon.salHeadshot"
+                    , CharacterIcon.salHeadshot
                     )
                }
              ]
@@ -448,9 +464,9 @@ initAttributes =
                         , Control.value
                             ( "QuestionBox.character " ++ Tuple.first icon
                             , QuestionBox.character
-                                (Maybe.map (\i -> { name = name, icon = i })
-                                    (Tuple.second icon)
-                                )
+                                { name = name
+                                , icon = Tuple.second icon
+                                }
                             )
                         )
                     )

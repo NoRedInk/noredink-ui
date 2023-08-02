@@ -1,19 +1,21 @@
-module Nri.Ui.Block.V3 exposing
+module Nri.Ui.Block.V5 exposing
     ( view, Attribute
     , plaintext
     , Content, content
-    , phrase, wordWithQuestionBox
-    , space
-    , blank, blankWithQuestionBox
+    , phrase, wordWithId, space, bold, italic
+    , fullHeightBlank, blank, blankWithId, BlankLength(..)
     , emphasize
-    , label
+    , label, id
     , labelId, labelContentId
     , LabelPosition, getLabelPositions, labelPosition
     , yellow, cyan, magenta, green, blue, purple, brown
-    , withQuestionBox
+    , insertLineBreakOpportunities
     )
 
-{-|
+{-| Changes from V4:
+
+  - adds customizable BlankLength
+  - adds fullHeightBlank, insertLineBreakOpportunities
 
 @docs view, Attribute
 
@@ -22,9 +24,8 @@ module Nri.Ui.Block.V3 exposing
 
 @docs plaintext
 @docs Content, content
-@docs phrase, wordWithQuestionBox
-@docs space
-@docs blank, blankWithQuestionBox
+@docs phrase, wordWithId, space, bold, italic
+@docs fullHeightBlank, blank, blankWithId, BlankLength
 
 
 ## Content customization
@@ -34,7 +35,7 @@ module Nri.Ui.Block.V3 exposing
 
 ## Labels & positioning
 
-@docs label
+@docs label, id
 
 You will need these helpers if you want to prevent label overlaps. (Which is to say -- anytime you have labels!)
 
@@ -45,11 +46,7 @@ You will need these helpers if you want to prevent label overlaps. (Which is to 
 ### Visual customization
 
 @docs yellow, cyan, magenta, green, blue, purple, brown
-
-
-### Add a question box
-
-@docs withQuestionBox
+@docs insertLineBreakOpportunities
 
 -}
 
@@ -57,19 +54,24 @@ import Accessibility.Styled exposing (..)
 import Browser.Dom as Dom
 import Css exposing (Color)
 import Dict exposing (Dict)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes exposing (css)
 import List.Extra
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
 import Nri.Ui.Mark.V2 as Mark exposing (Mark)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
-import Nri.Ui.QuestionBox.V2 as QuestionBox
 import Position exposing (xOffsetPx)
 
 
-{-|
+{-| Create a block element.
 
-    Block.view [ Block.plaintext "Hello, world!" ]
+Note that it is important that a series of Block elements be wrapped in a container with "whitespace; pre" set.
+This will ensure that line breaks only happen at whitespace, and not directly before an emphasis block in
+situations where it would look strange (like if the block started with a comma).
+
+    p
+        [ css [ Css.whitespace Css.pre ] ]
+        [ Block.view [ Block.plaintext "Hello, world!" ] ]
 
 -}
 view : List (Attribute msg) -> Html msg
@@ -221,15 +223,38 @@ groupWithSort sortBy groupBy =
         >> List.map (\( first, rem ) -> first :: rem)
 
 
+{-| Insert the HTML <wbr> "line break opportunity" element if the content is a space
+(Only makes a difference on Chrome. Firefox and Safari treat this element like a <span>.)
+-}
+insertLineBreakOpportunities : Bool -> Attribute msg
+insertLineBreakOpportunities x =
+    Attribute <| \config -> { config | insertWbrAfterSpace = x }
+
+
 
 -- Content
 
 
 {-| -}
 type Content msg
-    = Word (List (QuestionBox.Attribute msg)) (Maybe Dom.Element) String
-    | Blank (List (QuestionBox.Attribute msg)) (Maybe Dom.Element)
-    | FullHeightBlank
+    = Word String
+    | WordWithId { id : String, word : String }
+    | Blank BlankLength
+    | BlankWithId String BlankLength
+    | FullHeightBlank BlankLength
+    | Markdown Markdown (List (Content msg))
+
+
+{-| -}
+type BlankLength
+    = SingleCharacter
+    | ShortWordPhrase
+    | LongWordPhrase
+
+
+type Markdown
+    = Bold
+    | Italic
 
 
 parseString : String -> List (Content msg)
@@ -237,77 +262,90 @@ parseString =
     String.split " "
         >> List.intersperse " "
         >> List.filter (\str -> str /= "")
-        >> List.map (Word [] Nothing)
+        >> List.map Word
 
 
 renderContent :
-    { config | questionBoxElement : Maybe Dom.Element }
+    Config msg
     -> Content msg
     -> List Css.Style
     -> Html msg
-renderContent config content_ markStyles =
-    let
-        marginBottom override =
-            case ( config.questionBoxElement, override ) of
-                ( Nothing, Just by ) ->
-                    Css.important (Css.marginBottom (Css.px (by.element.height + 8)))
-
-                ( Just by, _ ) ->
-                    Css.important (Css.marginBottom (Css.px (by.element.height + 8)))
-
-                _ ->
-                    Css.batch []
-
-        viewContainer marginOverride =
-            blockSegmentContainer (marginBottom marginOverride :: markStyles)
-    in
+renderContent config content_ styles =
     case content_ of
-        Word [] _ str ->
-            viewContainer Nothing [ text str ]
+        Word str ->
+            let
+                blockContainer =
+                    blockSegmentContainer Nothing
+                        [ text str ]
+                        styles
+            in
+            if str == " " then
+                if config.insertWbrAfterSpace then
+                    span []
+                        [ blockContainer
+                        , wbr [] []
+                        ]
 
-        Word questionBoxAttributes element str ->
-            viewContainer element
-                [ text str
-                , QuestionBox.view
-                    (QuestionBox.pointingTo element
-                        :: questionBoxAttributes
-                    )
-                ]
+                else
+                    blockContainer
 
-        Blank [] _ ->
-            viewContainer Nothing
-                [ viewBlank [ Css.lineHeight (Css.num 1) ] ]
+            else
+                blockContainer
 
-        Blank questionBoxAttributes element ->
-            viewContainer element
-                [ viewBlank [ Css.lineHeight (Css.num 1) ]
-                , QuestionBox.view
-                    (QuestionBox.pointingTo element
-                        :: questionBoxAttributes
-                    )
-                ]
+        WordWithId wordAndId ->
+            blockSegmentContainer (Just wordAndId.id)
+                [ text wordAndId.word ]
+                styles
 
-        FullHeightBlank ->
-            viewContainer Nothing
+        Blank length ->
+            blockSegmentContainer Nothing
+                [ viewBlank [ Css.lineHeight (Css.num 1) ] length ]
+                styles
+
+        BlankWithId id_ length ->
+            blockSegmentContainer (Just id_)
+                [ viewBlank [ Css.lineHeight (Css.num 1) ] length ]
+                styles
+
+        FullHeightBlank length ->
+            blockSegmentContainer Nothing
                 [ viewBlank
                     [ Css.paddingTop topBottomSpace
                     , Css.paddingBottom topBottomSpace
                     , Css.lineHeight Css.initial
                     ]
+                    length
                 ]
+                styles
+
+        Markdown markdown contents ->
+            let
+                tag =
+                    case markdown of
+                        Bold ->
+                            strong [ css styles ]
+
+                        Italic ->
+                            em [ css styles ]
+            in
+            contents
+                |> List.map (\c -> renderContent config c [])
+                |> tag
 
 
-blockSegmentContainer : List Css.Style -> List (Html msg) -> Html msg
-blockSegmentContainer styles =
+blockSegmentContainer : Maybe String -> List (Html msg) -> List Css.Style -> Html msg
+blockSegmentContainer id_ children styles =
     span
         [ css
-            (Css.whiteSpace Css.preWrap
+            (Css.whiteSpace Css.pre
                 :: Css.display Css.inlineBlock
                 :: Css.position Css.relative
                 :: styles
             )
+        , AttributesExtra.maybe Attributes.id id_
         , nriDescription "block-segment-container"
         ]
+        children
 
 
 {-| -}
@@ -319,27 +357,49 @@ phrase =
 {-| -}
 space : Content msg
 space =
-    Word [] Nothing " "
+    Word " "
 
 
-{-| -}
-wordWithQuestionBox : String -> List (QuestionBox.Attribute msg) -> Maybe Dom.Element -> Content msg
-wordWithQuestionBox str attributes element =
-    Word attributes element str
+{-| Use this helper with `content` when you need to attach an id to a particular word inside of an emphasis.
+-}
+wordWithId : { id : String, word : String } -> Content msg
+wordWithId =
+    WordWithId
 
 
 {-| You will only need to use this helper if you're also using `content` to construct a more complex Block. For a less complex blank Block, don't include content or plaintext in the list of attributes.
 -}
-blank : Content msg
+blank : BlankLength -> Content msg
 blank =
-    Blank [] Nothing
+    Blank
 
 
 {-| You will only need to use this helper if you're also using `content` to construct a more complex Block. For a less complex blank Block, don't include content or plaintext in the list of attributes.
 -}
-blankWithQuestionBox : List (QuestionBox.Attribute msg) -> Maybe Dom.Element -> Content msg
-blankWithQuestionBox attributes element =
-    Blank attributes element
+blankWithId : String -> BlankLength -> Content msg
+blankWithId =
+    BlankWithId
+
+
+{-| You will only need to use this helper if you're also using `content` to construct a more complex Block. For a less complex blank Block, don't include content or plaintext in the list of attributes.
+-}
+fullHeightBlank : BlankLength -> Content msg
+fullHeightBlank =
+    FullHeightBlank
+
+
+{-| Wraps a group of content in a `strong` tag
+-}
+bold : List (Content msg) -> Content msg
+bold =
+    Markdown Bold
+
+
+{-| Wraps a group of content in a `em` tag
+-}
+italic : List (Content msg) -> Content msg
+italic =
+    Markdown Italic
 
 
 
@@ -410,7 +470,7 @@ toMark :
     -> Maybe Mark
 toMark config { backgroundColor, borderColor } =
     case ( config.label, config.content, config.emphasize ) of
-        ( Just l, FullHeightBlank :: [], _ ) ->
+        ( Just l, (FullHeightBlank _) :: [], _ ) ->
             Just
                 { name = Just l
                 , startStyles = []
@@ -510,16 +570,15 @@ brown =
 
 
 {-| -}
+id : String -> Attribute msg
+id id_ =
+    Attribute (\config -> { config | id = Just id_ })
+
+
+{-| -}
 labelId : String -> Attribute msg
 labelId id_ =
     Attribute (\config -> { config | labelId = Just id_ })
-
-
-{-| Pass in a list of question box attributes and the sizing (taken using Dom.Browser.getElement) of the question box
--}
-withQuestionBox : List (QuestionBox.Attribute msg) -> Maybe Dom.Element -> Attribute msg
-withQuestionBox attributes element =
-    Attribute (\config -> { config | questionBox = attributes, questionBoxElement = element })
 
 
 
@@ -533,26 +592,26 @@ type Attribute msg
 
 defaultConfig : Config msg
 defaultConfig =
-    { content = [ FullHeightBlank ]
+    { content = [ FullHeightBlank ShortWordPhrase ]
+    , id = Nothing
     , label = Nothing
     , labelId = Nothing
     , labelPosition = Nothing
     , theme = Yellow
     , emphasize = False
-    , questionBoxElement = Nothing
-    , questionBox = []
+    , insertWbrAfterSpace = False
     }
 
 
 type alias Config msg =
     { content : List (Content msg)
+    , id : Maybe String
     , label : Maybe String
     , labelId : Maybe String
     , labelPosition : Maybe LabelPosition
     , theme : Theme
     , emphasize : Bool
-    , questionBoxElement : Maybe Dom.Element
-    , questionBox : List (QuestionBox.Attribute msg)
+    , insertWbrAfterSpace : Bool
     }
 
 
@@ -566,7 +625,7 @@ render config =
             toMark config palette
     in
     span
-        [ css [ Css.position Css.relative ] ]
+        [ css [ Css.position Css.relative ], AttributesExtra.maybe Attributes.id config.id ]
         (Mark.viewWithBalloonTags
             { renderSegment = renderContent config
             , backgroundColor = palette.backgroundColor
@@ -576,22 +635,11 @@ render config =
             , labelContentId = Maybe.map labelContentId config.labelId
             }
             config.content
-            ++ (case config.questionBox of
-                    [] ->
-                        []
-
-                    _ ->
-                        [ QuestionBox.view
-                            (QuestionBox.pointingTo config.questionBoxElement
-                                :: config.questionBox
-                            )
-                        ]
-               )
         )
 
 
-viewBlank : List Css.Style -> Html msg
-viewBlank styles =
+viewBlank : List Css.Style -> BlankLength -> Html msg
+viewBlank styles length =
     span
         [ css
             [ Css.border3 (Css.px 2) Css.dashed Colors.navy
@@ -600,7 +648,17 @@ viewBlank styles =
                 , Css.property "background-color" "Canvas"
                 ]
             , Css.backgroundColor Colors.white
-            , Css.minWidth (Css.px 80)
+            , Css.minWidth
+                (case length of
+                    SingleCharacter ->
+                        Css.px 25
+
+                    ShortWordPhrase ->
+                        Css.px 120
+
+                    LongWordPhrase ->
+                        Css.px 200
+                )
             , Css.display Css.inlineBlock
             , Css.borderRadius (Css.px 4)
             , Css.batch styles
