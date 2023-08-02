@@ -137,7 +137,10 @@ example =
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
             , [ Block.view [ Block.plaintext "I like " ]
-              , Block.view (List.map Tuple.second attributes)
+              , Block.view
+                    (Block.labelPosition (Dict.get fruitId offsets)
+                        :: List.map Tuple.second attributes
+                    )
               , Block.view [ Block.plaintext " a lot!" ]
               ]
                 |> p
@@ -482,7 +485,7 @@ initControl =
                 ]
             )
         |> ControlExtra.optionalListItem "labelId"
-            (CommonControls.string ( Code.fromModule moduleName "labelId", Block.labelId ) "fruit-block")
+            (CommonControls.string ( Code.fromModule moduleName "labelId", Block.labelId ) fruitId)
 
 
 controlContent : Control ( String, Block.Attribute msg )
@@ -582,6 +585,9 @@ colorId : String
 colorId =
     "color-label-id"
 
+fruitId : String
+fruitId =
+    "fruit-block"
 
 purposeId : String
 purposeId =
@@ -682,7 +688,7 @@ update msg state =
     case msg of
         UpdateSettings newControl ->
             ( { state | settings = newControl }
-            , Cmd.none
+            , measure fruitId
             )
 
         GetBlockLabelMeasurements ->
