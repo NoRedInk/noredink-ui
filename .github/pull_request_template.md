@@ -99,5 +99,5 @@ Please link to any relevant context and stories.
 - [ ] Component API follows standard patterns in noredink-ui
     - e.g., as a dev, I can conveniently add an `nriDescription`
     - and adding a new feature to the component will _not_ require major API changes to the component
-- [ ] If this is a new major version of the component, our team has stories created to upgrade all instances of the old component and delete the old version of the component. Here are links to the stories:
+- [ ] If this is a new major version of the component, our team has stories created to upgrade all instances of the old component. Here are links to the stories:
   - add your story links here OR just write this is not a new major version
