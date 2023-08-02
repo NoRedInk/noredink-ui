@@ -94,10 +94,8 @@ viewWithOverlaps viewSegment segments =
                             [ tagBeforeContent before
                             , tagAfterContent after
                             , Css.batch startingStyles
-                            , Css.batch
-                                (List.concatMap (\markedWith -> markedWith.styles ++ markedWith.endStyles)
-                                    after
-                                )
+                            , Css.batch (List.concatMap .styles marks)
+                            , Css.batch (List.concatMap .endStyles after)
                             ]
 
                     startStyles =

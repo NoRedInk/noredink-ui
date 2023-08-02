@@ -702,22 +702,29 @@ isHovered_ :
         , highlightables : List (Highlightable marker)
         , overlaps : Bool
         , sorter : Maybe (Sorter marker)
+        , maybeTool : Maybe tool
     }
+    -> List (List (Highlightable ma))
     -> Highlightable marker
     -> Bool
-isHovered_ config highlightable =
-    directlyHoveringInteractiveSegment config highlightable
-        || (if config.overlaps then
-                case config.sorter of
-                    Just sorter ->
-                        inHoveredGroupForOverlaps config sorter highlightable
+isHovered_ config groups highlightable =
+    case config.maybeTool of
+        Nothing ->
+            False
 
-                    _ ->
-                        False
+        Just _ ->
+            directlyHoveringInteractiveSegment config highlightable
+                || (if config.overlaps then
+                        case config.sorter of
+                            Just sorter ->
+                                inHoveredGroupForOverlaps config sorter highlightable
 
-            else
-                inHoveredGroupWithoutOverlaps config highlightable
-           )
+                            _ ->
+                                False
+
+                    else
+                        inHoveredGroupWithoutOverlaps config groups highlightable
+                   )
 
 
 directlyHoveringInteractiveSegment : { config | mouseOverIndex : Maybe Int } -> Highlightable m -> Bool
@@ -732,9 +739,10 @@ inHoveredGroupWithoutOverlaps :
         , hintingIndices : Maybe ( Int, Int )
         , highlightables : List (Highlightable marker)
     }
+    -> List (List (Highlightable ma))
     -> Highlightable m
     -> Bool
-inHoveredGroupWithoutOverlaps config highlightable =
+inHoveredGroupWithoutOverlaps config groups highlightable =
     case highlightable.marked of
         [] ->
             -- if the highlightable is not marked, then it shouldn't
@@ -746,8 +754,7 @@ inHoveredGroupWithoutOverlaps config highlightable =
         _ ->
             -- if the highlightable is in a group that's hovered,
             -- apply hovered styles
-            config.highlightables
-                |> buildGroups config
+            groups
                 |> List.filter (List.any (.index >> (==) highlightable.index))
                 |> List.head
                 |> Maybe.withDefault []
@@ -924,7 +931,6 @@ static config =
                 , renderMarkdown = False
                 , sorter = Nothing
                 , overlaps = False
-                , highlightables = config.highlightables
                 }
         , id = config.id
         , highlightables = config.highlightables
@@ -960,7 +966,6 @@ staticMarkdown config =
                 , renderMarkdown = True
                 , sorter = Nothing
                 , overlaps = False
-                , highlightables = config.highlightables
                 }
         , id = config.id
         , highlightables = config.highlightables
@@ -985,7 +990,6 @@ staticWithTags config =
                 , renderMarkdown = False
                 , sorter = Nothing
                 , overlaps = False
-                , highlightables = config.highlightables
                 }
     in
     view_
@@ -1025,7 +1029,6 @@ staticMarkdownWithTags config =
                 , renderMarkdown = True
                 , sorter = Nothing
                 , overlaps = False
-                , highlightables = config.highlightables
                 }
     in
     view_
@@ -1116,24 +1119,29 @@ view_ config =
         toMark highlightable marker =
             { name = marker.name
             , startStyles = marker.startGroupClass
-            , styles = highlightableStyle config (isHovered_ config) highlightable
+            , styles =
+                markedHighlightableStyles config
+                    (isHovered_ config highlightableGroups)
+                    highlightable
             , endStyles = marker.endGroupClass
             }
 
+        highlightableGroups =
+            buildGroups config config.highlightables
+
         withoutOverlaps : List (List ( Highlightable marker, Maybe Mark ))
         withoutOverlaps =
-            config.highlightables
-                |> buildGroups config
-                |> List.map
-                    (\group ->
-                        List.map
-                            (\highlightable ->
-                                ( highlightable
-                                , Maybe.map (toMark highlightable) (List.head highlightable.marked)
-                                )
+            List.map
+                (\group ->
+                    List.map
+                        (\highlightable ->
+                            ( highlightable
+                            , Maybe.map (toMark highlightable) (List.head highlightable.marked)
                             )
-                            group
-                    )
+                        )
+                        group
+                )
+                highlightableGroups
 
         withOverlaps : List ( Highlightable marker, List Mark )
         withOverlaps =
@@ -1205,7 +1213,6 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                 , hintingIndices = config.hintingIndices
                 , sorter = Just config.sorter
                 , overlaps = overlaps
-                , highlightables = config.highlightables
                 }
                 highlightable
 
@@ -1232,7 +1239,6 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                 , hintingIndices = config.hintingIndices
                 , sorter = Just config.sorter
                 , overlaps = overlaps
-                , highlightables = config.highlightables
                 }
                 highlightable
 
@@ -1248,7 +1254,6 @@ viewHighlightableSegment :
     , renderMarkdown : Bool
     , sorter : Maybe (Sorter marker)
     , overlaps : Bool
-    , highlightables : List (Highlightable marker)
     }
     -> Highlightable marker
     -> List Css.Style
@@ -1293,7 +1298,7 @@ viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners
                         AttributesExtra.none
                , css
                     (Css.focus [ Css.zIndex (Css.int 1), Css.position Css.relative ]
-                        :: highlightableStyle config (isHovered_ config) highlightable
+                        :: unmarkedHighlightableStyles config highlightable
                         ++ markStyles
                     )
                , class "highlighter-highlightable"
@@ -1394,7 +1399,61 @@ highlightableId highlighterId index =
     "highlighter-" ++ highlighterId ++ "-highlightable-" ++ String.fromInt index
 
 
-highlightableStyle :
+unmarkedHighlightableStyles :
+    { config
+        | maybeTool : Maybe (Tool.Tool marker)
+        , hintingIndices : Maybe ( Int, Int )
+        , mouseOverIndex : Maybe Int
+    }
+    -> Highlightable marker
+    -> List Css.Style
+unmarkedHighlightableStyles config highlightable =
+    if highlightable.marked /= [] then
+        []
+
+    else
+        case config.maybeTool of
+            Nothing ->
+                []
+
+            Just tool ->
+                let
+                    isHinted_ =
+                        isHinted config.hintingIndices highlightable
+
+                    isHovered =
+                        directlyHoveringInteractiveSegment config highlightable
+                in
+                Css.property "user-select" "none"
+                    :: (case tool of
+                            Tool.Marker marker ->
+                                if isHinted_ then
+                                    marker.hintClass
+
+                                else if isHovered then
+                                    -- When hovered, but not marked
+                                    List.concat
+                                        [ marker.hoverClass
+                                        , marker.startGroupClass
+                                        , marker.endGroupClass
+                                        ]
+
+                                else
+                                    []
+
+                            Tool.Eraser eraser_ ->
+                                if isHinted_ then
+                                    eraser_.hintClass
+
+                                else if isHovered then
+                                    eraser_.hoverClass
+
+                                else
+                                    []
+                       )
+
+
+markedHighlightableStyles :
     { config
         | maybeTool : Maybe (Tool.Tool marker)
         , mouseOverIndex : Maybe Int
@@ -1405,14 +1464,7 @@ highlightableStyle :
     -> (Highlightable marker -> Bool)
     -> Highlightable marker
     -> List Css.Style
-highlightableStyle ({ maybeTool, mouseOverIndex, hintingIndices } as config) getIsHovered ({ marked } as highlightable) =
-    let
-        isHinted_ =
-            isHinted hintingIndices highlightable
-
-        isHovered =
-            getIsHovered highlightable
-    in
+markedHighlightableStyles ({ maybeTool, mouseOverIndex, hintingIndices } as config) getIsHovered ({ marked } as highlightable) =
     case maybeTool of
         Nothing ->
             [ case List.head marked of
@@ -1423,57 +1475,66 @@ highlightableStyle ({ maybeTool, mouseOverIndex, hintingIndices } as config) get
                     Css.backgroundColor Css.transparent
             ]
 
-        Just (Tool.Marker marker) ->
-            [ Css.property "user-select" "none"
-            , case List.head marked of
-                Just markedWith ->
-                    if isHinted_ then
-                        Css.batch marker.hintClass
+        Just tool ->
+            let
+                isHinted_ =
+                    isHinted hintingIndices highlightable
 
-                    else if isHovered then
-                        -- Override marking with selected tool
-                        Css.batch marker.hoverHighlightClass
-
-                    else
-                        -- otherwise, show the standard mark styles
-                        Css.batch markedWith.highlightClass
-
-                Nothing ->
-                    if isHinted_ then
-                        Css.batch marker.hintClass
-
-                    else if isHovered then
-                        -- When Hovered but not marked
-                        [ marker.hoverClass
-                        , marker.startGroupClass
-                        , marker.endGroupClass
-                        ]
-                            |> List.concat
-                            |> Css.batch
-
-                    else
-                        Css.backgroundColor Css.transparent
-            ]
-
-        Just (Tool.Eraser eraser_) ->
-            case List.head marked of
-                Just markedWith ->
+                isHovered =
+                    getIsHovered highlightable
+            in
+            case tool of
+                Tool.Marker marker ->
                     [ Css.property "user-select" "none"
-                    , Css.batch markedWith.highlightClass
-                    , Css.batch
-                        (if isHinted_ then
-                            eraser_.hintClass
+                    , case List.head marked of
+                        Just markedWith ->
+                            if isHinted_ then
+                                Css.batch marker.hintClass
 
-                         else if isHovered then
-                            eraser_.hoverClass
+                            else if isHovered then
+                                -- Override marking with selected tool
+                                Css.batch marker.hoverHighlightClass
 
-                         else
-                            []
-                        )
+                            else
+                                -- otherwise, show the standard mark styles
+                                Css.batch markedWith.highlightClass
+
+                        Nothing ->
+                            if isHinted_ then
+                                Css.batch marker.hintClass
+
+                            else if isHovered then
+                                -- When Hovered but not marked
+                                [ marker.hoverClass
+                                , marker.startGroupClass
+                                , marker.endGroupClass
+                                ]
+                                    |> List.concat
+                                    |> Css.batch
+
+                            else
+                                Css.backgroundColor Css.transparent
                     ]
 
-                Nothing ->
-                    [ Css.property "user-select" "none", Css.backgroundColor Css.transparent ]
+                Tool.Eraser eraser_ ->
+                    case List.head marked of
+                        Just markedWith ->
+                            [ Css.property "user-select" "none"
+                            , Css.batch markedWith.highlightClass
+                            , Css.batch
+                                (if isHinted_ then
+                                    eraser_.hintClass
+
+                                 else if isHovered then
+                                    eraser_.hoverClass
+
+                                 else
+                                    []
+                                )
+                            ]
+
+                        Nothing ->
+                            [ Css.property "user-select" "none", Css.backgroundColor Css.transparent ]
 
 
 {-| Helper for `on` to preventDefault.

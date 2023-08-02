@@ -5,7 +5,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , play, skip
     , share, preview, copyToClipboard, gift, print
     , activity
-    , footsteps, compass, speedometer, help, checklist, checklistComplete
+    , footsteps, footstepsVideo, compass, speedometer, help, checklist, checklistComplete
     , sparkleBulb, baldBulb, bulb
     , hat, keychain
     , sprout, sapling, tree
@@ -43,7 +43,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs play, skip
 @docs share, preview, copyToClipboard, gift, print
 @docs activity
-@docs footsteps, compass, speedometer, help, checklist, checklistComplete
+@docs footsteps, footstepsVideo, compass, speedometer, help, checklist, checklistComplete
 @docs sparkleBulb, baldBulb, bulb
 @docs hat, keychain
 @docs sprout, sapling, tree
@@ -874,6 +874,53 @@ footsteps =
         [ Svg.path
             [ Attributes.fillRule "nonzero"
             , Attributes.d "M1.77335904,11.7922305 L5.90660307,11.0289328 C5.68935769,12.5383477 7.40861515,15.2884313 5.45646759,16.0478489 C2.76105632,17.0954131 1.9234042,14.6781572 1.77335904,11.7922305 Z M0.176718476,7.06612115 C0.458843391,8.43725287 1.41615152,9.74198306 1.69435526,11.1030145 L6.15429763,10.2795555 C7.60395395,3.97240957 6.1871195,0.900338486 4.18808583,0.126920592 C2.03987926,-0.705098659 -0.729754357,2.66141923 0.176718476,7.06612115 Z M13.2274465,15.4953161 L9.09420249,14.7320184 C9.31066764,16.2422134 7.59141017,18.992317 9.54433797,19.7509345 C12.2397492,20.7984988 13.0774014,18.3812428 13.2274465,15.4953161 Z M13.3056301,14.8061401 C13.5838338,13.4443886 14.5411619,12.1404785 14.8232668,10.7692468 C15.7297797,6.36454491 12.9602061,2.99806702 10.8110592,3.83008627 C8.81279779,4.60354417 7.39603137,7.67557525 8.84562767,13.9827211 L13.3056301,14.8061401 Z"
+            ]
+            []
+        ]
+
+
+{-| -}
+footstepsVideo : Nri.Ui.Svg.V1.Svg
+footstepsVideo =
+    Nri.Ui.Svg.V1.init "0 0 28 28"
+        [ Svg.path
+            [ Attributes.d "M4.92672 12.9714L9.41715 12.1318C9.18113 13.7921 11.049 16.8172 8.92812 17.6526C5.99977 18.8049 5.08973 16.1459 4.92672 12.9714Z"
+            , Attributes.fill "currentColor"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M3.19199 7.77273C3.4985 9.28097 4.53853 10.7162 4.84078 12.2133L9.68615 11.3075C11.2611 4.36965 9.72181 0.990372 7.55002 0.139613C5.21616 -0.775608 2.20718 2.92756 3.19199 7.77273Z"
+            , Attributes.fill "currentColor"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M17.3706 17.0448L12.8801 16.2052C13.1153 17.8664 11.2475 20.8915 13.3692 21.726C16.2975 22.8783 17.2076 20.2194 17.3706 17.0448Z"
+            , Attributes.fill "currentColor"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M17.4556 16.2867C17.7578 14.7888 18.7979 13.3545 19.1044 11.8461C20.0892 7.00096 17.0803 3.29783 14.7454 4.21305C12.5745 5.06386 11.0353 8.44309 12.6102 15.3809L17.4556 16.2867Z"
+            , Attributes.fill "currentColor"
+            ]
+            []
+        , Svg.circle
+            [ Attributes.cx "17.6482"
+            , Attributes.cy "20.5"
+            , Attributes.r "7.5"
+            , Attributes.fill "white"
+            ]
+            []
+        , Svg.circle
+            [ Attributes.cx "17.6482"
+            , Attributes.cy "20.5"
+            , Attributes.r "6"
+            , Attributes.fill "white"
+            , Attributes.stroke "currentColor"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M21.1732 20.2835C21.3398 20.3797 21.3398 20.6203 21.1732 20.7165L16.0732 23.661C15.9065 23.7572 15.6982 23.6369 15.6982 23.4445V17.5555C15.6982 17.3631 15.9065 17.2428 16.0732 17.339L21.1732 20.2835Z"
+            , Attributes.fill "currentColor"
             ]
             []
         ]

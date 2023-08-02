@@ -6,7 +6,7 @@ module Nri.Ui.Modal.V11 exposing
     , info, warning
     , showTitle, hideTitle
     , testId, css, custom
-    , isOpen
+    , isOpen, titleId
     )
 
 {-|
@@ -17,6 +17,8 @@ module Nri.Ui.Modal.V11 exposing
   - adds `testId` helper
   - adds data-nri-descriptions to the header, content, and footer
   - use `Shadows`
+  - exposes `titleId`
+  - makes the title programmatically focusable
 
 
 # Changes from V10:
@@ -152,14 +154,15 @@ view model =
 @docs testId, css, custom
 
 
-### State checks
+### State checks and accessors
 
-@docs isOpen
+@docs isOpen, titleId
 
 -}
 
 import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
 import Browser.Dom as Dom
 import Browser.Events.Extra
@@ -556,8 +559,13 @@ viewBackdrop wrapMsg color =
         []
 
 
-modalTitleId : String
-modalTitleId =
+{-| Id used for the `h1` that labels the modal.
+
+Useful if you're changing the modal contents and want to move the user's focus to the new modal's updated title to re-orient them.
+
+-}
+titleId : String
+titleId =
     "modal__title"
 
 
@@ -575,14 +583,15 @@ viewModal config =
     section
         ([ Role.dialog
          , Aria.modal True
-         , Aria.labeledBy modalTitleId
+         , Aria.labeledBy titleId
          ]
             ++ config.customAttributes
         )
         [ h1
-            [ id modalTitleId
+            [ id titleId
             , Attrs.css (titleStyles config)
             , ExtraAttributes.nriDescription "modal-title"
+            , Key.tabbable False
             ]
             [ text config.title ]
         , div

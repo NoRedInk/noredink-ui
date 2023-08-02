@@ -93,6 +93,7 @@ all =
       )
     , ( "Guidance"
       , [ ( "footsteps", UiIcon.footsteps, [] )
+        , ( "footstepsVideo", UiIcon.footstepsVideo, [] )
         , ( "help", UiIcon.help, [] )
         , ( "info", UiIcon.info, [] )
         , ( "checklist", UiIcon.checklist, [] )

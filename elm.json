@@ -3,7 +3,7 @@
     "name": "NoRedInk/noredink-ui",
     "summary": "UI Widgets we use at NRI",
     "license": "BSD-3-Clause",
-    "version": "23.3.0",
+    "version": "23.4.0",
     "exposed-modules": [
         "Browser.Events.Extra",
         "Nri.Ui",
@@ -29,6 +29,7 @@
         "Nri.Ui.Divider.V2",
         "Nri.Ui.Effects.V1",
         "Nri.Ui.WhenFocusLeaves.V1",
+        "Nri.Ui.FocusLoop.V1",
         "Nri.Ui.FocusRing.V1",
         "Nri.Ui.FocusTrap.V1",
         "Nri.Ui.Fonts.V1",

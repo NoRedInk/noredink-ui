@@ -5,7 +5,7 @@ module Nri.Ui.Tabs.V8 exposing
     , tabListSticky, TabListStickyConfig, tabListStickyCustom
     , view
     , Tab, TabAttribute, build
-    , tabString, tabHtml, withTooltip, disabled, labelledBy, describedBy
+    , tabString, tabHtml, withTooltip, labelledBy, describedBy
     , panelHtml
     , spaHref
     )
@@ -30,7 +30,7 @@ module Nri.Ui.Tabs.V8 exposing
 ### Tabs
 
 @docs Tab, TabAttribute, build
-@docs tabString, tabHtml, withTooltip, disabled, labelledBy, describedBy
+@docs tabString, tabHtml, withTooltip, labelledBy, describedBy
 @docs panelHtml
 @docs spaHref
 
@@ -78,13 +78,6 @@ tabHtml content =
 withTooltip : List (Tooltip.Attribute msg) -> TabAttribute id msg
 withTooltip attributes =
     TabAttribute (\tab -> { tab | tabTooltip = attributes })
-
-
-{-| Makes it so that the tab can't be clicked or focused via keyboard navigation
--}
-disabled : Bool -> TabAttribute id msg
-disabled isDisabled =
-    TabAttribute (\tab -> { tab | disabled = isDisabled })
 
 
 {-| Sets an overriding labelledBy on the tab for an external tooltip.
