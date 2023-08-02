@@ -157,7 +157,11 @@ view attributes_ =
                         [ Nri.Ui.styled div
                             "Nri-Ui-Message--icon"
                             []
-                            []
+                            [ Attributes.css
+                                [ displayFlex
+                                , alignItems center
+                                ]
+                            ]
                             [ icon_
                             ]
                         , div [] attributes.content
