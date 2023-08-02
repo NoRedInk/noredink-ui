@@ -182,6 +182,7 @@ type alias Settings =
     , containerCss : ( String, List Style )
     , labelCss : ( String, List Style )
     , guidance : Maybe String
+    , guidanceHtml : Maybe (List (Html Msg))
     }
 
 
@@ -215,6 +216,8 @@ controlSettings =
             )
         |> Control.field "guidance"
             (Control.maybe False (Control.string "There is something you need to be aware of."))
+        |> Control.field "guidanceHtml"
+            (Control.maybe False (Control.value [ text "There is ", b [] [ text "something" ], text " you need to be aware of." ]))
 
 
 viewExampleWithCode : State -> Settings -> ( String, Html Msg )
@@ -245,6 +248,7 @@ viewExampleWithCode state settings =
                 , Just <| "Checkbox.containerCss " ++ Tuple.first settings.containerCss
                 , Just <| "Checkbox.labelCss " ++ Tuple.first settings.labelCss
                 , settings.guidance |> Maybe.map (\v -> "Checkbox.guidance " ++ Code.string v)
+                , settings.guidanceHtml |> Maybe.map (\_ -> "Checkbox.guidanceHtml [ text \"There is \", b [] [ text \"something\" ], text \" you need to be aware of.\" ]")
                 ]
             )
       ]
@@ -269,6 +273,7 @@ viewExampleWithCode state settings =
             , Just <| Checkbox.containerCss (Tuple.second settings.containerCss)
             , Just <| Checkbox.labelCss (Tuple.second settings.labelCss)
             , settings.guidance |> Maybe.map Checkbox.guidance
+            , settings.guidanceHtml |> Maybe.map Checkbox.guidanceHtml
             ]
         )
     )
