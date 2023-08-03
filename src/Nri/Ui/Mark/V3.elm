@@ -2,6 +2,7 @@ module Nri.Ui.Mark.V3 exposing
     ( Mark
     , view, viewWithInlineTags, viewWithBalloonTags
     , viewWithOverlaps
+    , LabelState(..)
     )
 
 {-|
@@ -42,6 +43,12 @@ type alias Mark =
     , styles : List Css.Style
     , endStyles : List Css.Style
     }
+
+
+{-| -}
+type LabelState
+    = Visible
+    | FadeOut
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
@@ -163,6 +170,7 @@ viewWithBalloonTags :
     , backgroundColor : Color
     , maybeMarker : Maybe Mark
     , labelPosition : Maybe LabelPosition
+    , labelState : LabelState
     , labelId : Maybe String
     , labelContentId : Maybe String
     }
@@ -259,6 +267,7 @@ view_ tagStyle viewSegment highlightables =
 viewMarkedByBalloon :
     { config
         | backgroundColor : Color
+        , labelState : LabelState
         , labelPosition : Maybe LabelPosition
         , labelId : Maybe String
         , labelContentId : Maybe String
@@ -474,6 +483,7 @@ viewInlineTag customizations name =
 viewBalloon :
     { config
         | backgroundColor : Color
+        , labelState : LabelState
         , labelPosition : Maybe LabelPosition
         , labelId : Maybe String
         , labelContentId : Maybe String
@@ -498,8 +508,8 @@ viewBalloon config label =
 
                 Nothing ->
                     Css.batch []
-            , case config.labelPosition of
-                Nothing ->
+            , case config.labelState of
+                FadeOut ->
                     Css.batch
                         [ Css.property "animation-delay" "0.4s"
                         , Css.property "animation-duration" "0.3s"
@@ -509,7 +519,7 @@ viewBalloon config label =
                         , Css.opacity Css.zero
                         ]
 
-                Just _ ->
+                Visible ->
                     Css.batch
                         [ Css.property "animation-delay" "0.4s"
                         , Css.property "animation-duration" "0.3s"
