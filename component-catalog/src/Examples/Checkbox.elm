@@ -178,9 +178,6 @@ init =
 
 type alias Settings =
     { label : String
-    , hiddenLabel : Bool
-    , containerCss : ( String, List Style )
-    , labelCss : ( String, List Style )
     , guidance : Maybe String
     , guidanceHtml : Maybe (List (Html Msg))
     , attributes : List ( String, Checkbox.Attribute Msg )
@@ -191,29 +188,6 @@ controlSettings : Control Settings
 controlSettings =
     Control.record Settings
         |> Control.field "label" (Control.string "Enable Text-to-Speech")
-        |> Control.field "hiddenLabel" (Control.bool False)
-        |> Control.field "containerCss"
-            (Control.choice
-                [ ( "[]", Control.value ( "[]", [] ) )
-                , ( "Red dashed border"
-                  , Control.value
-                        ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
-                        , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
-                        )
-                  )
-                ]
-            )
-        |> Control.field "labelCss"
-            (Control.choice
-                [ ( "[]", Control.value ( "[]", [] ) )
-                , ( "Orange dotted border"
-                  , Control.value
-                        ( "[ Css.border3 (Css.px 4) Css.dotted Colors.orange ]"
-                        , [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]
-                        )
-                  )
-                ]
-            )
         |> Control.field "guidance"
             (Control.maybe False (Control.string "There is something you need to be aware of."))
         |> Control.field "guidanceHtml"
@@ -225,6 +199,27 @@ initAttributes : Control (List ( String, Checkbox.Attribute Msg ))
 initAttributes =
     ControlExtra.list
         |> ControlExtra.optionalBoolListItem "disabled" ( "disabled", Checkbox.disabled )
+        |> ControlExtra.optionalBoolListItem "hiddenLabel" ( "hiddenLabel", Checkbox.hiddenLabel )
+        |> ControlExtra.optionalListItem "containerCss"
+            (Control.choice
+                [ ( "Red dashed border"
+                  , Control.value
+                        ( "Checkbox.containerCss [ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
+                        , Checkbox.containerCss [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
+                        )
+                  )
+                ]
+            )
+        |> ControlExtra.optionalListItem "labelCss"
+            (Control.choice
+                [ ( "Orange dotted border"
+                  , Control.value
+                        ( "Checkbox.labelCss [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]"
+                        , Checkbox.labelCss [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]
+                        )
+                  )
+                ]
+            )
 
 
 viewExampleWithCode : State -> Settings -> ( String, Html Msg )
@@ -242,13 +237,6 @@ viewExampleWithCode state settings =
       , Code.list
             (List.filterMap identity
                 [ Just <| "Checkbox.onCheck identity"
-                , if settings.hiddenLabel then
-                    Just <| "Checkbox.hiddenLabel"
-
-                  else
-                    Just <| "Checkbox.visibleLabel"
-                , Just <| "Checkbox.containerCss " ++ Tuple.first settings.containerCss
-                , Just <| "Checkbox.labelCss " ++ Tuple.first settings.labelCss
                 , settings.guidance |> Maybe.map (\v -> "Checkbox.guidance " ++ Code.string v)
                 , settings.guidanceHtml |> Maybe.map (\_ -> "Checkbox.guidanceHtml [ text \"There is \", b [] [ text \"something\" ], text \" you need to be aware of.\" ]")
                 ]
@@ -263,13 +251,6 @@ viewExampleWithCode state settings =
         (List.filterMap identity
             [ Just <| Checkbox.id id
             , Just <| Checkbox.onCheck (ToggleCheck id)
-            , if settings.hiddenLabel then
-                Just <| Checkbox.hiddenLabel
-
-              else
-                Just <| Checkbox.visibleLabel
-            , Just <| Checkbox.containerCss (Tuple.second settings.containerCss)
-            , Just <| Checkbox.labelCss (Tuple.second settings.labelCss)
             , settings.guidance |> Maybe.map Checkbox.guidance
             , settings.guidanceHtml |> Maybe.map Checkbox.guidanceHtml
             ]
