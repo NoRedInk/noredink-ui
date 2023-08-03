@@ -11,6 +11,7 @@ import CheckboxIcons
 import Code
 import Css exposing (Style)
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (..)
@@ -177,12 +178,12 @@ init =
 
 type alias Settings =
     { label : String
-    , disabled : Bool
     , hiddenLabel : Bool
     , containerCss : ( String, List Style )
     , labelCss : ( String, List Style )
     , guidance : Maybe String
     , guidanceHtml : Maybe (List (Html Msg))
+    , attributes : List ( String, Checkbox.Attribute Msg )
     }
 
 
@@ -190,7 +191,6 @@ controlSettings : Control Settings
 controlSettings =
     Control.record Settings
         |> Control.field "label" (Control.string "Enable Text-to-Speech")
-        |> Control.field "disabled" (Control.bool False)
         |> Control.field "hiddenLabel" (Control.bool False)
         |> Control.field "containerCss"
             (Control.choice
@@ -218,6 +218,13 @@ controlSettings =
             (Control.maybe False (Control.string "There is something you need to be aware of."))
         |> Control.field "guidanceHtml"
             (Control.maybe False (Control.value [ text "There is ", b [] [ text "something" ], text " you need to be aware of." ]))
+        |> Control.field "attributes" initAttributes
+
+
+initAttributes : Control (List ( String, Checkbox.Attribute Msg ))
+initAttributes =
+    ControlExtra.list
+        |> ControlExtra.optionalBoolListItem "disabled" ( "disabled", Checkbox.disabled )
 
 
 viewExampleWithCode : State -> Settings -> ( String, Html Msg )
@@ -235,11 +242,6 @@ viewExampleWithCode state settings =
       , Code.list
             (List.filterMap identity
                 [ Just <| "Checkbox.onCheck identity"
-                , if settings.disabled then
-                    Just <| "Checkbox.disabled"
-
-                  else
-                    Just <| "Checkbox.enabled"
                 , if settings.hiddenLabel then
                     Just <| "Checkbox.hiddenLabel"
 
@@ -250,6 +252,7 @@ viewExampleWithCode state settings =
                 , settings.guidance |> Maybe.map (\v -> "Checkbox.guidance " ++ Code.string v)
                 , settings.guidanceHtml |> Maybe.map (\_ -> "Checkbox.guidanceHtml [ text \"There is \", b [] [ text \"something\" ], text \" you need to be aware of.\" ]")
                 ]
+                ++ List.map Tuple.first settings.attributes
             )
       ]
         |> String.join ""
@@ -265,16 +268,12 @@ viewExampleWithCode state settings =
 
               else
                 Just <| Checkbox.visibleLabel
-            , if settings.disabled then
-                Just <| Checkbox.disabled
-
-              else
-                Just <| Checkbox.enabled
             , Just <| Checkbox.containerCss (Tuple.second settings.containerCss)
             , Just <| Checkbox.labelCss (Tuple.second settings.labelCss)
             , settings.guidance |> Maybe.map Checkbox.guidance
             , settings.guidanceHtml |> Maybe.map Checkbox.guidanceHtml
             ]
+            ++ List.map Tuple.second settings.attributes
         )
     )
 
