@@ -179,7 +179,6 @@ init =
 
 type alias Settings =
     { label : String
-    , guidanceHtml : Maybe (List (Html Msg))
     , attributes : List ( String, Checkbox.Attribute Msg )
     }
 
@@ -188,8 +187,6 @@ controlSettings : Control Settings
 controlSettings =
     Control.record Settings
         |> Control.field "label" (Control.string "Enable Text-to-Speech")
-        |> Control.field "guidanceHtml"
-            (Control.maybe False (Control.value [ text "There is ", b [] [ text "something" ], text " you need to be aware of." ]))
         |> Control.field "attributes" initAttributes
 
 
@@ -199,6 +196,7 @@ initAttributes =
         |> CommonControls.guidanceAndErrorMessage
             { moduleName = moduleName
             , guidance = Checkbox.guidance
+            , guidanceHtml = Checkbox.guidanceHtml
             , errorMessage = Nothing
             , message = "There is something you need to be aware of."
             }
@@ -242,7 +240,6 @@ viewExampleWithCode state settings =
             (List.filterMap identity
                 [ Just <| Code.fromModule moduleName "id " ++ Code.string id
                 , Just <| Code.fromModule moduleName "onCheck " ++ "identity"
-                , settings.guidanceHtml |> Maybe.map (\_ -> "Checkbox.guidanceHtml [ text \"There is \", b [] [ text \"something\" ], text \" you need to be aware of.\" ]")
                 ]
                 ++ List.map Tuple.first settings.attributes
             )
@@ -256,7 +253,6 @@ viewExampleWithCode state settings =
         (List.filterMap identity
             [ Just <| Checkbox.id id
             , Just <| Checkbox.onCheck (ToggleCheck id)
-            , settings.guidanceHtml |> Maybe.map Checkbox.guidanceHtml
             ]
             ++ List.map Tuple.second settings.attributes
         )

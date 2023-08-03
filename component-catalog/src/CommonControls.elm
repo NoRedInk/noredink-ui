@@ -450,21 +450,31 @@ css_ helperName ( styles, default ) { moduleName, use } =
 guidanceAndErrorMessage :
     { moduleName : String
     , guidance : String -> b
+    , guidanceHtml : List (Html msg) -> b
     , message : String
     , errorMessage : Maybe (Maybe String -> b)
     }
     -> Control (List ( String, b ))
     -> Control (List ( String, b ))
 guidanceAndErrorMessage ({ moduleName } as config) controls =
-    [ ControlExtra.optionalListItem "guidance"
-        (Control.string config.message
-            |> Control.map
-                (\str ->
-                    ( Code.fromModule moduleName "guidance " ++ Code.string str
-                    , config.guidance str
+    [ Control.choice
+        [ ( "string"
+          , Control.string config.message
+                |> Control.map
+                    (\str ->
+                        ( Code.fromModule moduleName "guidance " ++ Code.string str
+                        , config.guidance str
+                        )
                     )
+          )
+        , ( "html"
+          , Control.value
+                ( Code.fromModule moduleName "guidanceHtml [ text \"There is \", b [] [ text \"something\" ], text \" you need to be aware of.\" ]"
+                , config.guidanceHtml [ Html.text "There is ", Html.b [] [ Html.text "something" ], Html.text " you need to be aware of." ]
                 )
-        )
+          )
+        ]
+        |> ControlExtra.optionalListItem "guidance"
         |> Just
     , Maybe.map
         (\errorMessage ->

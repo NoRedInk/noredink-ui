@@ -182,6 +182,7 @@ initControls =
         |> CommonControls.guidanceAndErrorMessage
             { moduleName = moduleName
             , guidance = Select.guidance
+            , guidanceHtml = Select.guidanceHtml
             , errorMessage = Just Select.errorMessage
             , message = "The right item must be selected."
             }

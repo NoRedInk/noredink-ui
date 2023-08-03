@@ -159,6 +159,7 @@ controlAttributes =
         |> CommonControls.guidanceAndErrorMessage
             { moduleName = moduleName
             , guidance = TextArea.guidance
+            , guidanceHtml = TextArea.guidanceHtml
             , errorMessage = Just TextArea.errorMessage
             , message = "The statement must be true."
             }

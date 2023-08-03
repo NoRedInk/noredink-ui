@@ -424,6 +424,7 @@ controlAttributes =
         |> CommonControls.guidanceAndErrorMessage
             { moduleName = moduleName
             , guidance = TextInput.guidance
+            , guidanceHtml = TextInput.guidanceHtml
             , errorMessage = Just TextInput.errorMessage
             , message = "The statement must be true."
             }
