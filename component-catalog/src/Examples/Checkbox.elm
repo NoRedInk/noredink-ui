@@ -10,7 +10,7 @@ import Category exposing (Category(..))
 import CheckboxIcons
 import Code
 import CommonControls
-import Css exposing (Style)
+import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
