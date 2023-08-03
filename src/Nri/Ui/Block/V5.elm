@@ -8,6 +8,7 @@ module Nri.Ui.Block.V5 exposing
     , label, id
     , labelId, labelContentId
     , LabelPosition, getLabelPositions, labelPosition
+    , LabelState(..), labelState
     , yellow, cyan, magenta, green, blue, purple, brown
     , insertLineBreakOpportunities
     )
@@ -41,6 +42,7 @@ You will need these helpers if you want to prevent label overlaps. (Which is to 
 
 @docs labelId, labelContentId
 @docs LabelPosition, getLabelPositions, labelPosition
+@docs LabelState, labelState
 
 
 ### Visual customization
@@ -58,7 +60,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import List.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
-import Nri.Ui.Mark.V2 as Mark exposing (Mark)
+import Nri.Ui.Mark.V3 as Mark exposing (Mark)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Position exposing (xOffsetPx)
 
@@ -133,6 +135,24 @@ type alias LabelPosition =
 labelPosition : Maybe LabelPosition -> Attribute msg
 labelPosition offset =
     Attribute <| \config -> { config | labelPosition = offset }
+
+
+{-| Controls label animations.
+
+Visible will fade in when first displayed.
+FadeOut will start visible and then fade out.
+
+-}
+type LabelState
+    = Visible
+    | FadeOut
+
+
+{-| Sets a Block's labels visible / fading-out state. Default is visible.
+-}
+labelState : LabelState -> Attribute msg
+labelState state =
+    Attribute <| \config -> { config | labelState = state }
 
 
 {-| -}
@@ -597,6 +617,7 @@ defaultConfig =
     , label = Nothing
     , labelId = Nothing
     , labelPosition = Nothing
+    , labelState = Visible
     , theme = Yellow
     , emphasize = False
     , insertWbrAfterSpace = False
@@ -609,6 +630,7 @@ type alias Config msg =
     , label : Maybe String
     , labelId : Maybe String
     , labelPosition : Maybe LabelPosition
+    , labelState : LabelState
     , theme : Theme
     , emphasize : Bool
     , insertWbrAfterSpace : Bool
@@ -631,6 +653,13 @@ render config =
             , backgroundColor = palette.backgroundColor
             , maybeMarker = maybeMark
             , labelPosition = config.labelPosition
+            , labelState =
+                case config.labelState of
+                    Visible ->
+                        Mark.Visible
+
+                    FadeOut ->
+                        Mark.FadeOut
             , labelId = config.labelId
             , labelContentId = Maybe.map labelContentId config.labelId
             }

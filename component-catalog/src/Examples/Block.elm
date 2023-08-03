@@ -486,6 +486,24 @@ initControl =
             )
         |> ControlExtra.optionalListItem "labelId"
             (CommonControls.string ( Code.fromModule moduleName "labelId", Block.labelId ) fruitId)
+        |> ControlExtra.optionalListItem "labelState"
+            (Control.choice
+                [ ( "Visible"
+                  , Control.value
+                        ( Code.fromModule moduleName "labelState "
+                            ++ Code.fromModule moduleName "Visible "
+                        , Block.labelState Block.Visible
+                        )
+                  )
+                , ( "FadeOut"
+                  , Control.value
+                        ( Code.fromModule moduleName "labelState "
+                            ++ Code.fromModule moduleName "FadeOut "
+                        , Block.labelState Block.FadeOut
+                        )
+                  )
+                ]
+            )
 
 
 controlContent : Control ( String, Block.Attribute msg )
