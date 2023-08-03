@@ -45,7 +45,12 @@ type alias Mark =
     }
 
 
-{-| -}
+{-| Controls label animations.
+
+Visible will fade in when first displayed.
+FadeOut will start visible and then fade out.
+
+-}
 type LabelState
     = Visible
     | FadeOut

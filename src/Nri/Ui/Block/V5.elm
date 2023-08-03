@@ -148,6 +148,8 @@ type LabelState
     | FadeOut
 
 
+{-| Sets a Block's labels visible / fading-out state. Default is visible.
+-}
 labelState : LabelState -> Attribute msg
 labelState state =
     Attribute <| \config -> { config | labelState = state }
