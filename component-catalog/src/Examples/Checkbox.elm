@@ -237,10 +237,9 @@ viewExampleWithCode state settings =
             ]
             1
       , Code.listMultiline
-            (List.filterMap identity
-                [ Just <| Code.fromModule moduleName "id " ++ Code.string id
-                , Just <| Code.fromModule moduleName "onCheck " ++ "identity"
-                ]
+            ([ Code.fromModule moduleName "id " ++ Code.string id
+             , Code.fromModule moduleName "onCheck " ++ "identity"
+             ]
                 ++ List.map Tuple.first settings.attributes
             )
             1
@@ -250,10 +249,9 @@ viewExampleWithCode state settings =
         { label = settings.label
         , selected = state.isChecked
         }
-        (List.filterMap identity
-            [ Just <| Checkbox.id id
-            , Just <| Checkbox.onCheck (ToggleCheck id)
-            ]
+        ([ Checkbox.id id
+         , Checkbox.onCheck (ToggleCheck id)
+         ]
             ++ List.map Tuple.second settings.attributes
         )
     )
