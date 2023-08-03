@@ -234,14 +234,16 @@ viewExampleWithCode state settings =
             , ( "selected", "Checkbox." ++ Debug.toString state.isChecked )
             ]
             1
-      , Code.list
+      , Code.listMultiline
             (List.filterMap identity
-                [ Just <| "Checkbox.onCheck identity"
+                [ Just <| Code.fromModule moduleName "id " ++ Code.string id
+                , Just <| "Checkbox.onCheck identity"
                 , settings.guidance |> Maybe.map (\v -> "Checkbox.guidance " ++ Code.string v)
                 , settings.guidanceHtml |> Maybe.map (\_ -> "Checkbox.guidanceHtml [ text \"There is \", b [] [ text \"something\" ], text \" you need to be aware of.\" ]")
                 ]
                 ++ List.map Tuple.first settings.attributes
             )
+            1
       ]
         |> String.join ""
     , Checkbox.view
