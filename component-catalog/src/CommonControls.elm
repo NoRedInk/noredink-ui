@@ -450,27 +450,35 @@ css_ helperName ( styles, default ) { moduleName, use } =
 guidanceAndErrorMessage :
     { moduleName : String
     , guidance : String -> b
-    , errorMessage : Maybe String -> b
     , message : String
+    , errorMessage : Maybe (Maybe String -> b)
     }
     -> Control (List ( String, b ))
     -> Control (List ( String, b ))
-guidanceAndErrorMessage { moduleName, guidance, errorMessage, message } =
-    ControlExtra.optionalListItem "guidance"
-        (Control.string message
+guidanceAndErrorMessage ({ moduleName } as config) controls =
+    [ ControlExtra.optionalListItem "guidance"
+        (Control.string config.message
             |> Control.map
                 (\str ->
                     ( Code.fromModule moduleName "guidance " ++ Code.string str
-                    , guidance str
+                    , config.guidance str
                     )
                 )
         )
-        >> ControlExtra.optionalListItem "errorMessage"
-            (Control.map
-                (\str ->
-                    ( Code.fromModule moduleName "errorMessage " ++ Code.withParens (Code.maybeString (Just str))
-                    , errorMessage (Just str)
+        |> Just
+    , Maybe.map
+        (\errorMessage ->
+            ControlExtra.optionalListItem "errorMessage"
+                (Control.map
+                    (\str ->
+                        ( Code.fromModule moduleName "errorMessage " ++ Code.withParens (Code.maybeString (Just str))
+                        , errorMessage (Just str)
+                        )
                     )
+                    (Control.string config.message)
                 )
-                (Control.string message)
-            )
+        )
+        config.errorMessage
+    ]
+        |> List.filterMap identity
+        |> List.foldl (\f a -> f a) controls
