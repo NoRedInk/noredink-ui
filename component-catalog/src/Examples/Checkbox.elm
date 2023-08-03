@@ -9,8 +9,10 @@ module Examples.Checkbox exposing (Msg, State, example)
 import Category exposing (Category(..))
 import CheckboxIcons
 import Code
-import Css exposing (Style)
+import CommonControls
+import Css
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (..)
@@ -177,12 +179,7 @@ init =
 
 type alias Settings =
     { label : String
-    , disabled : Bool
-    , hiddenLabel : Bool
-    , containerCss : ( String, List Style )
-    , labelCss : ( String, List Style )
-    , guidance : Maybe String
-    , guidanceHtml : Maybe (List (Html Msg))
+    , attributes : List ( String, Checkbox.Attribute Msg )
     }
 
 
@@ -190,34 +187,41 @@ controlSettings : Control Settings
 controlSettings =
     Control.record Settings
         |> Control.field "label" (Control.string "Enable Text-to-Speech")
-        |> Control.field "disabled" (Control.bool False)
-        |> Control.field "hiddenLabel" (Control.bool False)
-        |> Control.field "containerCss"
+        |> Control.field "attributes" initAttributes
+
+
+initAttributes : Control (List ( String, Checkbox.Attribute Msg ))
+initAttributes =
+    ControlExtra.list
+        |> CommonControls.guidanceAndErrorMessage
+            { moduleName = moduleName
+            , guidance = Checkbox.guidance
+            , guidanceHtml = Checkbox.guidanceHtml
+            , errorMessage = Nothing
+            , message = "There is something you need to be aware of."
+            }
+        |> ControlExtra.optionalBoolListItem "disabled" ( "disabled", Checkbox.disabled )
+        |> ControlExtra.optionalBoolListItem "hiddenLabel" ( "hiddenLabel", Checkbox.hiddenLabel )
+        |> ControlExtra.optionalListItem "containerCss"
             (Control.choice
-                [ ( "[]", Control.value ( "[]", [] ) )
-                , ( "Red dashed border"
+                [ ( "Red dashed border"
                   , Control.value
-                        ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
-                        , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
+                        ( "Checkbox.containerCss [ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
+                        , Checkbox.containerCss [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
                         )
                   )
                 ]
             )
-        |> Control.field "labelCss"
+        |> ControlExtra.optionalListItem "labelCss"
             (Control.choice
-                [ ( "[]", Control.value ( "[]", [] ) )
-                , ( "Orange dotted border"
+                [ ( "Orange dotted border"
                   , Control.value
-                        ( "[ Css.border3 (Css.px 4) Css.dotted Colors.orange ]"
-                        , [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]
+                        ( "Checkbox.labelCss [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]"
+                        , Checkbox.labelCss [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]
                         )
                   )
                 ]
             )
-        |> Control.field "guidance"
-            (Control.maybe False (Control.string "There is something you need to be aware of."))
-        |> Control.field "guidanceHtml"
-            (Control.maybe False (Control.value [ text "There is ", b [] [ text "something" ], text " you need to be aware of." ]))
 
 
 viewExampleWithCode : State -> Settings -> ( String, Html Msg )
@@ -226,55 +230,29 @@ viewExampleWithCode state settings =
         id =
             "unique-example-id"
     in
-    ( [ "Checkbox.view"
+    ( [ Code.fromModule moduleName "view"
       , Code.recordMultiline
             [ ( "label", Code.string settings.label )
-            , ( "selected", "Checkbox." ++ Debug.toString state.isChecked )
+            , ( "selected", Code.fromModule "Checkbox" (Debug.toString state.isChecked) )
             ]
             1
-      , Code.list
-            (List.filterMap identity
-                [ Just <| "Checkbox.onCheck identity"
-                , if settings.disabled then
-                    Just <| "Checkbox.disabled"
-
-                  else
-                    Just <| "Checkbox.enabled"
-                , if settings.hiddenLabel then
-                    Just <| "Checkbox.hiddenLabel"
-
-                  else
-                    Just <| "Checkbox.visibleLabel"
-                , Just <| "Checkbox.containerCss " ++ Tuple.first settings.containerCss
-                , Just <| "Checkbox.labelCss " ++ Tuple.first settings.labelCss
-                , settings.guidance |> Maybe.map (\v -> "Checkbox.guidance " ++ Code.string v)
-                , settings.guidanceHtml |> Maybe.map (\_ -> "Checkbox.guidanceHtml [ text \"There is \", b [] [ text \"something\" ], text \" you need to be aware of.\" ]")
-                ]
+      , Code.listMultiline
+            ([ Code.fromModule moduleName "id " ++ Code.string id
+             , Code.fromModule moduleName "onCheck " ++ "identity"
+             ]
+                ++ List.map Tuple.first settings.attributes
             )
+            1
       ]
         |> String.join ""
     , Checkbox.view
         { label = settings.label
         , selected = state.isChecked
         }
-        (List.filterMap identity
-            [ Just <| Checkbox.id id
-            , Just <| Checkbox.onCheck (ToggleCheck id)
-            , if settings.hiddenLabel then
-                Just <| Checkbox.hiddenLabel
-
-              else
-                Just <| Checkbox.visibleLabel
-            , if settings.disabled then
-                Just <| Checkbox.disabled
-
-              else
-                Just <| Checkbox.enabled
-            , Just <| Checkbox.containerCss (Tuple.second settings.containerCss)
-            , Just <| Checkbox.labelCss (Tuple.second settings.labelCss)
-            , settings.guidance |> Maybe.map Checkbox.guidance
-            , settings.guidanceHtml |> Maybe.map Checkbox.guidanceHtml
-            ]
+        ([ Checkbox.id id
+         , Checkbox.onCheck (ToggleCheck id)
+         ]
+            ++ List.map Tuple.second settings.attributes
         )
     )
 
