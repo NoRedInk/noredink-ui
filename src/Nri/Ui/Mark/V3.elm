@@ -513,10 +513,14 @@ viewBalloon config label =
                     Css.batch
                         [ Css.property "animation-delay" "0.4s"
                         , Css.property "animation-duration" "0.3s"
-                        , Css.property "animation-fill-mode" "backwards"
-                        , Css.animationName fadeInKeyframes
+                        , Css.property "animation-fill-mode" "forwards"
+                        , Css.animationName
+                            (Css.Animations.keyframes
+                                [ ( 0, [ Css.Animations.opacity (Css.num 1) ] )
+                                , ( 100, [ Css.Animations.opacity Css.zero ] )
+                                ]
+                            )
                         , Css.property "animation-timing-function" "linear"
-                        , Css.opacity Css.zero
                         ]
 
                 Visible ->
@@ -524,7 +528,12 @@ viewBalloon config label =
                         [ Css.property "animation-delay" "0.4s"
                         , Css.property "animation-duration" "0.3s"
                         , Css.property "animation-fill-mode" "forwards"
-                        , Css.animationName fadeInKeyframes
+                        , Css.animationName
+                            (Css.Animations.keyframes
+                                [ ( 0, [ Css.Animations.opacity Css.zero ] )
+                                , ( 100, [ Css.Animations.opacity (Css.num 1) ] )
+                                ]
+                            )
                         , Css.property "animation-timing-function" "linear"
                         , Css.opacity Css.zero
                         ]
@@ -584,14 +593,6 @@ viewBalloon config label =
 
             Nothing ->
                 Balloon.css []
-        ]
-
-
-fadeInKeyframes : Css.Animations.Keyframes {}
-fadeInKeyframes =
-    Css.Animations.keyframes
-        [ ( 0, [ Css.Animations.opacity Css.zero ] )
-        , ( 100, [ Css.Animations.opacity (Css.num 1) ] )
         ]
 
 
