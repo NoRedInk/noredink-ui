@@ -9,6 +9,7 @@ module Examples.Checkbox exposing (Msg, State, example)
 import Category exposing (Category(..))
 import CheckboxIcons
 import Code
+import CommonControls
 import Css exposing (Style)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -178,7 +179,6 @@ init =
 
 type alias Settings =
     { label : String
-    , guidance : Maybe String
     , guidanceHtml : Maybe (List (Html Msg))
     , attributes : List ( String, Checkbox.Attribute Msg )
     }
@@ -188,8 +188,6 @@ controlSettings : Control Settings
 controlSettings =
     Control.record Settings
         |> Control.field "label" (Control.string "Enable Text-to-Speech")
-        |> Control.field "guidance"
-            (Control.maybe False (Control.string "There is something you need to be aware of."))
         |> Control.field "guidanceHtml"
             (Control.maybe False (Control.value [ text "There is ", b [] [ text "something" ], text " you need to be aware of." ]))
         |> Control.field "attributes" initAttributes
@@ -198,6 +196,12 @@ controlSettings =
 initAttributes : Control (List ( String, Checkbox.Attribute Msg ))
 initAttributes =
     ControlExtra.list
+        |> CommonControls.guidanceAndErrorMessage
+            { moduleName = moduleName
+            , guidance = Checkbox.guidance
+            , errorMessage = Nothing
+            , message = "There is something you need to be aware of."
+            }
         |> ControlExtra.optionalBoolListItem "disabled" ( "disabled", Checkbox.disabled )
         |> ControlExtra.optionalBoolListItem "hiddenLabel" ( "hiddenLabel", Checkbox.hiddenLabel )
         |> ControlExtra.optionalListItem "containerCss"
@@ -238,7 +242,6 @@ viewExampleWithCode state settings =
             (List.filterMap identity
                 [ Just <| Code.fromModule moduleName "id " ++ Code.string id
                 , Just <| Code.fromModule moduleName "onCheck " ++ "identity"
-                , settings.guidance |> Maybe.map (\v -> "Checkbox.guidance " ++ Code.string v)
                 , settings.guidanceHtml |> Maybe.map (\_ -> "Checkbox.guidanceHtml [ text \"There is \", b [] [ text \"something\" ], text \" you need to be aware of.\" ]")
                 ]
                 ++ List.map Tuple.first settings.attributes
@@ -253,7 +256,6 @@ viewExampleWithCode state settings =
         (List.filterMap identity
             [ Just <| Checkbox.id id
             , Just <| Checkbox.onCheck (ToggleCheck id)
-            , settings.guidance |> Maybe.map Checkbox.guidance
             , settings.guidanceHtml |> Maybe.map Checkbox.guidanceHtml
             ]
             ++ List.map Tuple.second settings.attributes
