@@ -10,6 +10,7 @@ module Nri.Ui.Mark.V3 exposing
 @docs Mark
 @docs view, viewWithInlineTags, viewWithBalloonTags
 @docs viewWithOverlaps
+@docs LabelState
 
 -}
 
