@@ -23,7 +23,7 @@ import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import List.Extra
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Message.V3 as Message
+import Nri.Ui.Message.V4 as Message
 import Nri.Ui.Panel.V1 as Panel
 import Nri.Ui.Tabs.V8 as Tabs exposing (Alignment(..), Tab)
 import Nri.Ui.Text.V6 as Text

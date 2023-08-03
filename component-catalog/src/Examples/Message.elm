@@ -11,13 +11,13 @@ import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Message.V3 as Message
+import Nri.Ui.Message.V4 as Message
 import ViewHelpers exposing (viewExamples)
 
 
 version : Int
 version =
-    3
+    4
 
 
 type alias State =
@@ -111,7 +111,7 @@ controlRole : Control ( String, Message.Attribute msg )
 controlRole =
     CommonControls.choice "Message"
         [ ( "alertRole", Message.alertRole )
-        , ( "alertDialogRole", Message.alertDialogRole )
+        , ( "statusRole", Message.statusRole )
         ]
 
 
