@@ -5,7 +5,7 @@ module Nri.Ui.Checkbox.V7 exposing
     , hiddenLabel, visibleLabel
     , selectedFromBool
     , containerCss, labelCss, custom, nriDescription, id, testId
-    , disabled, enabled, guidance
+    , disabled, enabled, guidance, guidanceHtml
     , viewIcon
     )
 
@@ -39,7 +39,7 @@ module Nri.Ui.Checkbox.V7 exposing
 @docs hiddenLabel, visibleLabel
 @docs selectedFromBool
 @docs containerCss, labelCss, custom, nriDescription, id, testId
-@docs disabled, enabled, guidance
+@docs disabled, enabled, guidance, guidanceHtml
 
 
 ### Internal
@@ -86,6 +86,13 @@ enabled =
 guidance : String -> Attribute msg
 guidance =
     Attribute << InputErrorAndGuidanceInternal.setGuidance
+
+
+{-| A guidance message (HTML) shows below the input, unless an error message is showing instead.
+-}
+guidanceHtml : List (Html msg) -> Attribute msg
+guidanceHtml =
+    Attribute << InputErrorAndGuidanceInternal.setGuidanceHtml
 
 
 {-| Fire a message when toggling the checkbox.
@@ -173,7 +180,7 @@ type alias Config msg =
     , hideLabel : Bool
     , onCheck : Maybe (Bool -> msg)
     , isDisabled : Bool
-    , guidance : Guidance
+    , guidance : Guidance msg
     , custom : List (Html.Attribute Never)
     , containerCss : List Css.Style
     , labelCss : List Css.Style

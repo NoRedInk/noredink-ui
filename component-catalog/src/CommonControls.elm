@@ -450,27 +450,45 @@ css_ helperName ( styles, default ) { moduleName, use } =
 guidanceAndErrorMessage :
     { moduleName : String
     , guidance : String -> b
-    , errorMessage : Maybe String -> b
+    , guidanceHtml : List (Html msg) -> b
     , message : String
+    , errorMessage : Maybe (Maybe String -> b)
     }
     -> Control (List ( String, b ))
     -> Control (List ( String, b ))
-guidanceAndErrorMessage { moduleName, guidance, errorMessage, message } =
-    ControlExtra.optionalListItem "guidance"
-        (Control.string message
-            |> Control.map
-                (\str ->
-                    ( Code.fromModule moduleName "guidance " ++ Code.string str
-                    , guidance str
+guidanceAndErrorMessage ({ moduleName } as config) controls =
+    [ Control.choice
+        [ ( "string"
+          , Control.string config.message
+                |> Control.map
+                    (\str ->
+                        ( Code.fromModule moduleName "guidance " ++ Code.string str
+                        , config.guidance str
+                        )
                     )
+          )
+        , ( "html"
+          , Control.value
+                ( Code.fromModule moduleName "guidanceHtml [ text \"There is \", b [] [ text \"something\" ], text \" you need to be aware of.\" ]"
+                , config.guidanceHtml [ Html.text "There is ", Html.b [] [ Html.text "something" ], Html.text " you need to be aware of." ]
+                )
+          )
+        ]
+        |> ControlExtra.optionalListItem "guidance"
+        |> Just
+    , Maybe.map
+        (\errorMessage ->
+            ControlExtra.optionalListItem "errorMessage"
+                (Control.map
+                    (\str ->
+                        ( Code.fromModule moduleName "errorMessage " ++ Code.withParens (Code.maybeString (Just str))
+                        , errorMessage (Just str)
+                        )
+                    )
+                    (Control.string config.message)
                 )
         )
-        >> ControlExtra.optionalListItem "errorMessage"
-            (Control.map
-                (\str ->
-                    ( Code.fromModule moduleName "errorMessage " ++ Code.withParens (Code.maybeString (Just str))
-                    , errorMessage (Just str)
-                    )
-                )
-                (Control.string message)
-            )
+        config.errorMessage
+    ]
+        |> List.filterMap identity
+        |> List.foldl (\f a -> f a) controls

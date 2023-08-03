@@ -311,7 +311,8 @@ controlAttributes =
         |> CommonControls.guidanceAndErrorMessage
             { moduleName = moduleName
             , guidance = RadioButton.guidance
-            , errorMessage = RadioButton.errorMessage
+            , guidanceHtml = RadioButton.guidanceHtml
+            , errorMessage = Just RadioButton.errorMessage
             , message = "The statement must be true."
             }
 

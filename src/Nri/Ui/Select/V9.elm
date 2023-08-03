@@ -5,7 +5,7 @@ module Nri.Ui.Select.V9 exposing
     , value
     , Attribute, defaultDisplayText
     , hiddenLabel, visibleLabel
-    , disabled, loading, errorIf, errorMessage, guidance
+    , disabled, loading, errorIf, errorMessage, guidance, guidanceHtml
     , custom, nriDescription, id, testId
     , icon
     , containerCss, noMargin
@@ -40,7 +40,7 @@ module Nri.Ui.Select.V9 exposing
 
 @docs Attribute, defaultDisplayText
 @docs hiddenLabel, visibleLabel
-@docs disabled, loading, errorIf, errorMessage, guidance
+@docs disabled, loading, errorIf, errorMessage, guidance, guidanceHtml
 @docs custom, nriDescription, id, testId
 @docs icon
 @docs containerCss, noMargin
@@ -125,6 +125,13 @@ batch attrs =
 guidance : String -> Attribute value
 guidance =
     Attribute << InputErrorAndGuidanceInternal.setGuidance
+
+
+{-| A guidance message (HTML) shows below the input, unless an error message is showing instead.
+-}
+guidanceHtml : List (Html Never) -> Attribute value
+guidanceHtml =
+    Attribute << InputErrorAndGuidanceInternal.setGuidanceHtml
 
 
 {-| Hides the visible label. (There will still be an invisible label for screen readers.)
@@ -258,7 +265,7 @@ type alias Config value =
     , error : ErrorState
     , disabled : Bool
     , loading : Bool
-    , guidance : Guidance
+    , guidance : Guidance Never
     , hideLabel : Bool
     , icon : Maybe Svg
     , noMarginTop : Bool
@@ -335,7 +342,9 @@ view label attributes =
             }
             config
          ]
-            ++ InputErrorAndGuidanceInternal.view id_ InputErrorAndGuidanceInternal.smallMargin config
+            ++ (InputErrorAndGuidanceInternal.view id_ InputErrorAndGuidanceInternal.smallMargin config
+                    |> List.map (Html.map never)
+               )
         )
 
 
@@ -507,7 +516,7 @@ viewSelect config_ config =
             ]
             (onSelectHandler
                 :: Aria.invalid isInError
-                :: InputErrorAndGuidanceInternal.describedBy config_.id config
+                :: (InputErrorAndGuidanceInternal.describedBy config_.id config |> Attributes.map never)
                 :: Attributes.id config_.id
                 :: Attributes.disabled config_.disabled
                 :: List.map (Attributes.map never) config.custom

@@ -7,7 +7,7 @@ module Nri.Ui.TextInput.V7 exposing
     , Attribute, placeholder, autofocus
     , hiddenLabel, visibleLabel
     , css, custom, nriDescription, id, testId, noMargin
-    , disabled, loading, errorIf, errorMessage, guidance
+    , disabled, loading, errorIf, errorMessage, guidance, guidanceHtml
     , writing
     )
 
@@ -51,7 +51,7 @@ module Nri.Ui.TextInput.V7 exposing
 @docs Attribute, placeholder, autofocus
 @docs hiddenLabel, visibleLabel
 @docs css, custom, nriDescription, id, testId, noMargin
-@docs disabled, loading, errorIf, errorMessage, guidance
+@docs disabled, loading, errorIf, errorMessage, guidance, guidanceHtml
 @docs writing
 
 -}
@@ -592,6 +592,13 @@ guidance =
     Attribute emptyEventsAndValues << InputErrorAndGuidanceInternal.setGuidance
 
 
+{-| A guidance message (HTML) shows below the input, unless an error message is showing instead.
+-}
+guidanceHtml : List (Html msg) -> Attribute value msg
+guidanceHtml =
+    Attribute emptyEventsAndValues << InputErrorAndGuidanceInternal.setGuidanceHtml
+
+
 {-| Hides the visible label. (There will still be an invisible label for screen readers.)
 -}
 hiddenLabel : Attribute value msg
@@ -702,7 +709,7 @@ writing =
 {-| Customizations for the TextInput.
 -}
 type Attribute value msg
-    = Attribute (EventsAndValues value msg) (Config -> Config)
+    = Attribute (EventsAndValues value msg) (Config msg -> Config msg)
 
 
 type alias EventsAndValues value msg =
@@ -748,10 +755,10 @@ map f toString (Attribute eventsAndValues configF) =
 
 {-| This is private. The public API only exposes `Attribute`.
 -}
-type alias Config =
+type alias Config msg =
     { inputStyle : InputStyles.Theme
     , inputCss : List Css.Style
-    , guidance : Guidance
+    , guidance : Guidance msg
     , error : ErrorState
     , readOnly : Bool
     , disabled : Bool
@@ -769,7 +776,7 @@ type alias Config =
     }
 
 
-emptyConfig : Config
+emptyConfig : Config msg
 emptyConfig =
     { inputStyle = InputStyles.Standard
     , inputCss = []
@@ -791,7 +798,7 @@ emptyConfig =
     }
 
 
-applyConfig : List (Attribute value msg) -> Config
+applyConfig : List (Attribute value msg) -> Config msg
 applyConfig attributes =
     List.foldl (\(Attribute _ update) config -> update config)
         emptyConfig
@@ -830,7 +837,7 @@ applyEvents =
 view : String -> List (Attribute value msg) -> Html msg
 view label attributes =
     let
-        config : Config
+        config : Config msg
         config =
             applyConfig attributes
 

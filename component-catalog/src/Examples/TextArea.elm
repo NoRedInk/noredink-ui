@@ -159,7 +159,8 @@ controlAttributes =
         |> CommonControls.guidanceAndErrorMessage
             { moduleName = moduleName
             , guidance = TextArea.guidance
-            , errorMessage = TextArea.errorMessage
+            , guidanceHtml = TextArea.guidanceHtml
+            , errorMessage = Just TextArea.errorMessage
             , message = "The statement must be true."
             }
         |> ControlExtra.optionalBoolListItem "disabled"
