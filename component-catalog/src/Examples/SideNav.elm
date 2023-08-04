@@ -353,7 +353,7 @@ controlGroupOrEntryAttributes =
     ]
 
 
-controlGroupAttributes : Control (List ( String, SideNav.GroupAttribute msg ))
+controlGroupAttributes : Control (List ( String, SideNav.GroupAttribute ))
 controlGroupAttributes =
     List.foldl (\f acc -> f acc) ControlExtra.list controlGroupOrEntryAttributes
 

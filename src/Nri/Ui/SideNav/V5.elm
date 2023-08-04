@@ -79,7 +79,7 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 -}
 type Entry route msg
     = Entry (List (Entry route msg)) (EntryConfig route msg)
-    | CompactGroup (List (Entry route msg)) (GroupConfig msg)
+    | CompactGroup (List (Entry route msg)) GroupConfig
     | Html (List (Html msg))
 
 
@@ -109,7 +109,7 @@ entryWithChildren title attributes children =
         ]
 
 -}
-compactGroup : String -> List (GroupAttribute msg) -> List (Entry route msg) -> Entry route msg
+compactGroup : String -> List GroupAttribute -> List (Entry route msg) -> Entry route msg
 compactGroup title attributes children =
     attributes
         |> List.foldl (\(Attribute attribute) b -> attribute b) (initGroup title)
@@ -685,11 +685,11 @@ type alias EntryOrGroupConfig entryOrGroup msg =
     }
 
 
-type alias GroupConfig msg =
-    EntryOrGroupConfig {} msg
+type alias GroupConfig =
+    EntryOrGroupConfig {} Never
 
 
-initGroup : String -> GroupConfig msg
+initGroup : String -> GroupConfig
 initGroup title =
     { icon = Nothing
     , rightIcon = Nothing
@@ -732,8 +732,8 @@ type Attribute entryOrGroup msg
 
 
 {-| -}
-type alias GroupAttribute msg =
-    Attribute {} msg
+type alias GroupAttribute =
+    Attribute {} Never
 
 
 {-| -}
