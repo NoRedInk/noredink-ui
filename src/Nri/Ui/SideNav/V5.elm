@@ -462,13 +462,12 @@ viewSidebarEntry config extraStyles entry_ =
                         "sidenav-compact-group"
                         groupConfig.title
             in
-            div
-                [ Attributes.css
-                    (margin2 (px 8) zero
-                        :: extraStyles
-                        ++ groupConfig.customStyles
-                    )
-                ]
+            styled div
+                (margin2 (px 8) zero
+                    :: extraStyles
+                    ++ groupConfig.customStyles
+                )
+                (List.map (Attributes.map never) groupConfig.customAttributes)
                 [ styled span
                     [ Css.property "word-break" "normal"
                     , Css.property "overflow-wrap" "anywhere"
