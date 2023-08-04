@@ -271,7 +271,7 @@ controlHtml level =
         (Control.value [])
 
 
-controlEntryAttributes : String -> Control (List ( String, SideNav.Attribute String Msg ))
+controlEntryAttributes : String -> Control (List ( String, SideNav.EntryAttribute String Msg ))
 controlEntryAttributes href =
     ControlExtra.list
         |> ControlExtra.listItem "href"

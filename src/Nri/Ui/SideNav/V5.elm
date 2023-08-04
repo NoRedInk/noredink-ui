@@ -3,7 +3,8 @@ module Nri.Ui.SideNav.V5 exposing
     , collapsible
     , navLabel, navId
     , navCss, navNotMobileCss, navMobileCss, navQuizEngineMobileCss
-    , entry, entryWithChildren, html, Entry, Attribute
+    , entry, entryWithChildren, html, compactGroup
+    , Entry, Attribute, EntryAttribute, GroupAttribute
     , icon, rightIcon
     , custom, css, nriDescription, testId, id
     , onClick
@@ -28,7 +29,8 @@ module Nri.Ui.SideNav.V5 exposing
 
 ## Entries
 
-@docs entry, entryWithChildren, html, Entry, Attribute
+@docs entry, entryWithChildren, html, compactGroup
+@docs Entry, Attribute, EntryAttribute, GroupAttribute
 @docs icon, rightIcon
 @docs custom, css, nriDescription, testId, id
 
@@ -80,23 +82,32 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 -}
 type Entry route msg
     = Entry (List (Entry route msg)) (EntryConfig route msg)
+    | CompactGroup (List (Entry route msg)) (GroupConfig msg)
     | Html (List (Html msg))
 
 
 {-| -}
-entry : String -> List (Attribute route msg) -> Entry route msg
+entry : String -> List (EntryAttribute route msg) -> Entry route msg
 entry title attributes =
     attributes
-        |> List.foldl (\(Attribute attribute) b -> attribute b) (build title)
+        |> List.foldl (\(Attribute attribute) b -> attribute b) (initEntry title)
         |> Entry []
 
 
 {-| -}
-entryWithChildren : String -> List (Attribute route msg) -> List (Entry route msg) -> Entry route msg
+entryWithChildren : String -> List (EntryAttribute route msg) -> List (Entry route msg) -> Entry route msg
 entryWithChildren title attributes children =
     attributes
-        |> List.foldl (\(Attribute attribute) b -> attribute b) (build title)
+        |> List.foldl (\(Attribute attribute) b -> attribute b) (initEntry title)
         |> Entry children
+
+
+{-| -}
+compactGroup : String -> List (GroupAttribute msg) -> List (Entry route msg) -> Entry route msg
+compactGroup title attributes children =
+    attributes
+        |> List.foldl (\(Attribute attribute) b -> attribute b) (initGroup title)
+        |> CompactGroup children
 
 
 {-| -}
@@ -438,6 +449,9 @@ viewSidebarEntry config extraStyles entry_ =
         Html html_ ->
             div [ Attributes.css extraStyles ] html_
 
+        CompactGroup entries groupConfig ->
+            text "TODO"
+
 
 isCurrentRoute : Config route msg -> EntryConfig route msg -> Bool
 isCurrentRoute config { route } =
@@ -455,6 +469,9 @@ anyLinkDescendants f children =
 
                 Html _ ->
                     False
+
+                CompactGroup children_ groupConfig ->
+                    anyLinkDescendants f children_
         )
         children
 
@@ -475,6 +492,9 @@ currentRouteName isCurrentRoute_ entries =
 
                     Html _ ->
                         acc
+
+                    CompactGroup children_ _ ->
+                        currentRouteName isCurrentRoute_ children_
                 )
         )
         Nothing
@@ -591,25 +611,49 @@ sharedEntryStyles =
 
 
 
--- Entry Customization helpers
+-- Entry and Group Customization helpers
+
+
+{-| -}
+type alias EntryOrGroupConfig entryOrGroup msg =
+    { entryOrGroup
+        | icon : Maybe Svg
+        , rightIcon : Maybe Svg
+        , title : String
+        , customAttributes : List (Html.Styled.Attribute msg)
+        , customStyles : List Style
+    }
+
+
+initGroup : String -> EntryOrGroupConfig {} msg
+initGroup title =
+    { icon = Nothing
+    , rightIcon = Nothing
+    , title = title
+    , customAttributes = []
+    , customStyles = []
+    }
+
+
+type alias GroupConfig msg =
+    EntryOrGroupConfig {} msg
 
 
 {-| -}
 type alias EntryConfig route msg =
-    { icon : Maybe Svg
-    , rightIcon : Maybe Svg
-    , title : String
-    , route : Maybe route
+    EntryOrGroupConfig (EntrySpecificConfic route msg) msg
+
+
+type alias EntrySpecificConfic route msg =
+    { route : Maybe route
     , clickableAttributes : ClickableAttributes route msg
-    , customAttributes : List (Html.Styled.Attribute msg)
-    , customStyles : List Style
     , premiumDisplay : PremiumDisplay
     , onLockedContent : Maybe msg
     }
 
 
-build : String -> EntryConfig route msg
-build title =
+initEntry : String -> EntryConfig route msg
+initEntry title =
     { icon = Nothing
     , rightIcon = Nothing
     , title = title
@@ -623,24 +667,34 @@ build title =
 
 
 {-| -}
-type Attribute route msg
-    = Attribute (EntryConfig route msg -> EntryConfig route msg)
+type Attribute entryOrGroup msg
+    = Attribute (EntryOrGroupConfig entryOrGroup msg -> EntryOrGroupConfig entryOrGroup msg)
 
 
 {-| -}
-icon : Svg -> Attribute route msg
+type alias GroupAttribute msg =
+    Attribute {} msg
+
+
+{-| -}
+type alias EntryAttribute route msg =
+    Attribute (EntrySpecificConfic route msg) msg
+
+
+{-| -}
+icon : Svg -> Attribute entryOrGroup msg
 icon icon_ =
     Attribute (\attributes -> { attributes | icon = Just icon_ })
 
 
 {-| -}
-rightIcon : Svg -> Attribute route msg
+rightIcon : Svg -> Attribute entryOrGroup msg
 rightIcon icon_ =
     Attribute (\attributes -> { attributes | rightIcon = Just icon_ })
 
 
 {-| -}
-premiumDisplay : PremiumDisplay -> msg -> Attribute route msg
+premiumDisplay : PremiumDisplay -> msg -> EntryAttribute route msg
 premiumDisplay display ifLocked =
     Attribute
         (\attributes ->
@@ -654,11 +708,11 @@ premiumDisplay display ifLocked =
 {-| Use this helper to add custom attributes.
 
 Do NOT use this helper to add css styles, as they may not be applied the way
-you want/expect if underlying Button styles change.
+you want/expect if underlying styles change.
 Instead, please use the `css` helper.
 
 -}
-custom : List (Html.Styled.Attribute msg) -> Attribute route msg
+custom : List (Html.Styled.Attribute msg) -> Attribute entryOrGroup msg
 custom attributes =
     Attribute
         (\config ->
@@ -669,25 +723,25 @@ custom attributes =
 
 
 {-| -}
-nriDescription : String -> Attribute route msg
+nriDescription : String -> Attribute entryOrGroup msg
 nriDescription description =
     custom [ AttributesExtra.nriDescription description ]
 
 
 {-| -}
-testId : String -> Attribute route msg
+testId : String -> Attribute entryOrGroup msg
 testId id_ =
     custom [ AttributesExtra.testId id_ ]
 
 
 {-| -}
-id : String -> Attribute route msg
+id : String -> Attribute entryOrGroup msg
 id id_ =
     custom [ Attributes.id id_ ]
 
 
 {-| -}
-css : List Style -> Attribute route msg
+css : List Style -> Attribute entryOrGroup msg
 css styles =
     Attribute
         (\config ->
@@ -698,13 +752,13 @@ css styles =
 
 
 {-| -}
-primary : Attribute route msg
+primary : Attribute entryOrGroup msg
 primary =
     Attribute (\attributes -> { attributes | customStyles = [] })
 
 
 {-| -}
-secondary : Attribute route msg
+secondary : Attribute entryOrGroup msg
 secondary =
     Attribute
         (\attributes ->
@@ -722,19 +776,19 @@ secondary =
 -- LINKING, CLICKING, and TRACKING BEHAVIOR
 
 
-setClickableAttributesWithRoute : route -> (EntryConfig route msg -> EntryConfig route msg) -> Attribute route msg
+setClickableAttributesWithRoute : route -> (EntryConfig route msg -> EntryConfig route msg) -> EntryAttribute route msg
 setClickableAttributesWithRoute route apply =
     Attribute (\attributes -> apply { attributes | route = Just route })
 
 
 {-| -}
-onClick : msg -> Attribute route msg
+onClick : msg -> EntryAttribute route msg
 onClick msg =
     Attribute (ClickableAttributes.onClick msg)
 
 
 {-| -}
-href : route -> Attribute route msg
+href : route -> EntryAttribute route msg
 href route =
     setClickableAttributesWithRoute route (ClickableAttributes.href route)
 
@@ -746,33 +800,33 @@ This will make a normal <a> tag, but change the Events.onClick behavior to avoid
 See <https://github.com/elm-lang/html/issues/110> for details on this implementation.
 
 -}
-linkSpa : route -> Attribute route msg
+linkSpa : route -> EntryAttribute route msg
 linkSpa route =
     setClickableAttributesWithRoute route
         (ClickableAttributes.linkSpa route)
 
 
 {-| -}
-linkWithMethod : { method : String, url : route } -> Attribute route msg
+linkWithMethod : { method : String, url : route } -> EntryAttribute route msg
 linkWithMethod config =
     setClickableAttributesWithRoute config.url
         (ClickableAttributes.linkWithMethod config)
 
 
 {-| -}
-linkWithTracking : { track : msg, url : route } -> Attribute route msg
+linkWithTracking : { track : msg, url : route } -> EntryAttribute route msg
 linkWithTracking config =
     setClickableAttributesWithRoute config.url
         (ClickableAttributes.linkWithTracking config)
 
 
 {-| -}
-linkExternal : String -> Attribute route msg
+linkExternal : String -> EntryAttribute route msg
 linkExternal url =
     Attribute (ClickableAttributes.linkExternal url)
 
 
 {-| -}
-linkExternalWithTracking : { track : msg, url : String } -> Attribute route msg
+linkExternalWithTracking : { track : msg, url : String } -> EntryAttribute route msg
 linkExternalWithTracking config =
     Attribute (ClickableAttributes.linkExternalWithTracking config)
