@@ -159,6 +159,43 @@ view ellieLinkConfig state =
                 ]
             ]
         ]
+    , Heading.h2
+        [ Heading.plaintext "Compact Groups example"
+        , Heading.css [ Css.marginTop (Css.px 30) ]
+        ]
+    , SideNav.view
+        { isCurrentRoute = \route -> route == "complex-example__child-2"
+        , routeToString = identity
+        , onSkipNav = SkipToContent
+        }
+        [ SideNav.navLabel "Compact groups example"
+        , SideNav.navNotMobileCss [ Css.maxWidth (Css.px 300) ]
+        ]
+        [ SideNav.compactGroup "Support"
+            []
+            [ SideNav.entry "Announcements" []
+            , SideNav.entry "Schools" []
+            , SideNav.entry "Users" []
+            , SideNav.entry "Assignments" []
+            , SideNav.entry "Blueprints" []
+            , SideNav.entry "Compliance" []
+            , SideNav.entry "Back to School" []
+            , SideNav.entry "Essay recovery" []
+            ]
+        , SideNav.compactGroup "Curriculum"
+            []
+            [ SideNav.entry "Legacy Content Creation" []
+            , SideNav.entry "Guided Tutorial Editor" []
+            , SideNav.entry "Questions" []
+            ]
+        , SideNav.compactGroup "Engineering"
+            []
+            [ SideNav.entry "Configurable" []
+            , SideNav.entry "Quiz Engine Feature Flags" []
+            , SideNav.html [ Text.smallBody [ Text.plaintext "Demo Accounts disabled on staging" ] ]
+            , SideNav.entry "Sham Assignment" []
+            ]
+        ]
     ]
 
 
