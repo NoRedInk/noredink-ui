@@ -99,7 +99,16 @@ entryWithChildren title attributes children =
         |> Entry children
 
 
-{-| -}
+{-| Add a labelled "group" of entries, typically taking the form of plain links.
+
+    SideNav.compactGroup "Resources"
+        []
+        [ SideNav.entry "Docs" [ SideNav.linkExternal "www.docs.com" ]
+        , SideNav.entry "Examples" [ SideNav.linkExternal "www.examples.com" ]
+        , SideNav.entry "Google" [ SideNav.linkExternal "www.google.com" ]
+        ]
+
+-}
 compactGroup : String -> List (GroupAttribute msg) -> List (Entry route msg) -> Entry route msg
 compactGroup title attributes children =
     attributes
