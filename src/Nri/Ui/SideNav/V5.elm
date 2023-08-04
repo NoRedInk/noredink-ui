@@ -9,7 +9,6 @@ module Nri.Ui.SideNav.V5 exposing
     , custom, css, nriDescription, testId, id
     , onClick
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
-    , primary, secondary
     , premiumDisplay
     )
 
@@ -17,6 +16,9 @@ module Nri.Ui.SideNav.V5 exposing
 
 
 ### Changes from V4
+
+  - removes primary and secondary
+  - adds `compactGroup`
 
 
 ## View
@@ -39,11 +41,6 @@ module Nri.Ui.SideNav.V5 exposing
 
 @docs onClick
 @docs href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
-
-
-## Change the color scheme
-
-@docs primary, secondary
 
 
 ## Change the state
@@ -797,27 +794,6 @@ css styles =
         (\config ->
             { config
                 | customStyles = List.append config.customStyles styles
-            }
-        )
-
-
-{-| -}
-primary : Attribute entryOrGroup msg
-primary =
-    Attribute (\attributes -> { attributes | customStyles = [] })
-
-
-{-| -}
-secondary : Attribute entryOrGroup msg
-secondary =
-    Attribute
-        (\attributes ->
-            { attributes
-                | customStyles =
-                    [ backgroundColor Colors.white
-                    , boxShadow3 zero (px 2) Colors.gray75
-                    , border3 (px 1) solid Colors.gray75
-                    ]
             }
         )
 

@@ -313,7 +313,6 @@ controlGroupOrEntryAttributes =
     [ CommonControls.css { moduleName = moduleName, use = SideNav.css }
     , CommonControls.iconNotCheckedByDefault moduleName SideNav.icon
     , CommonControls.rightIcon moduleName SideNav.rightIcon
-    , ControlExtra.optionalBoolListItem "secondary" ( "SideNav.secondary", SideNav.secondary )
     ]
 
 
