@@ -149,6 +149,15 @@ view ellieLinkConfig state =
                 [ SideNav.href "complex-example__child-2"
                 ]
             ]
+        , SideNav.compactGroup "Compact Group"
+            []
+            [ SideNav.entry "Child 1"
+                [ SideNav.href "compact-group__child-1"
+                ]
+            , SideNav.entry "Child 2"
+                [ SideNav.href "compact-group__child-2"
+                ]
+            ]
         ]
     ]
 
