@@ -149,6 +149,9 @@ hint = 'upgrade to V3'
 [forbidden."Nri.Ui.Message.V2"]
 hint = 'upgrade to V3'
 
+[forbidden."Nri.Ui.Message.V3"]
+hint = 'upgrade to V4'
+
 [forbidden."Nri.Ui.Modal.V10"]
 hint = 'upgrade to V11'
 usages = ['component-catalog-app/Examples/RadioButton.elm']
@@ -210,6 +213,9 @@ hint = 'upgrade to V3'
 
 [forbidden."Nri.Ui.SideNav.V3"]
 hint = 'upgrade to V4'
+
+[forbidden."Nri.Ui.SideNav.V4"]
+hint = 'upgrade to V5'
 
 [forbidden."Nri.Ui.SortableTable.V2"]
 hint = 'upgrade to V3'

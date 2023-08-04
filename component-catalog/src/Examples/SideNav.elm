@@ -18,12 +18,12 @@ import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.SideNav.V4 as SideNav
+import Nri.Ui.SideNav.V5 as SideNav
 
 
 version : Int
 version =
-    4
+    5
 
 
 {-| -}

@@ -1,4 +1,4 @@
-module Nri.Ui.SideNav.V4 exposing
+module Nri.Ui.SideNav.V5 exposing
     ( view, Config, NavAttribute
     , collapsible
     , navLabel, navId
@@ -15,16 +15,10 @@ module Nri.Ui.SideNav.V4 exposing
 {-|
 
 
-### Patch changes
-
-  - add missing aria-current=page attribute
-  - don't render an empty nav when there are no entries
-  - adjust closed sidenav toggle button styles
+### Changes from V4
 
 
-### Changes from V3
-
-  - make the nav configurably collapsible
+## View
 
 @docs view, Config, NavAttribute
 @docs collapsible
