@@ -191,8 +191,8 @@ controlEntry : Int -> String -> Control ( String, SideNav.Entry String Msg )
 controlEntry level href =
     Control.record
         (\title attributes ->
-            ( "SideNav.entry \""
-                ++ title
+            ( Code.fromModule moduleName "entry "
+                ++ Code.string title
                 ++ Code.listMultiline (List.map Tuple.first attributes) level
             , SideNav.entry title (List.map Tuple.second attributes)
             )
@@ -205,8 +205,8 @@ controlEntryWithChildren : Int -> String -> Control ( String, SideNav.Entry Stri
 controlEntryWithChildren level href =
     Control.record
         (\title attributes children ->
-            ( "SideNav.entryWithChildren "
-                ++ title
+            ( Code.fromModule moduleName "entryWithChildren "
+                ++ Code.string title
                 ++ Code.listMultiline (List.map Tuple.first attributes) level
                 ++ Code.listMultiline (List.map Tuple.first children) level
             , SideNav.entryWithChildren title
@@ -228,7 +228,7 @@ controlHtml : Int -> Control ( String, SideNav.Entry String Msg )
 controlHtml level =
     Control.map
         (\html ->
-            ( "SideNav.html " ++ Code.list (List.map Tuple.first html)
+            ( Code.fromModule moduleName "html " ++ Code.list (List.map Tuple.first html)
             , SideNav.html (List.map Tuple.second html)
             )
         )
@@ -240,17 +240,17 @@ controlEntryAttributes : String -> Control (List ( String, SideNav.Attribute Str
 controlEntryAttributes href =
     ControlExtra.list
         |> ControlExtra.listItem "href"
-            (Control.map (\v -> ( "SideNav.href \"" ++ v ++ "\"", SideNav.href v ))
+            (Control.map (\v -> ( Code.fromModule moduleName "href \"" ++ v ++ "\"", SideNav.href v ))
                 (Control.string href)
             )
-        |> CommonControls.css { moduleName = "SideNav", use = SideNav.css }
-        |> CommonControls.iconNotCheckedByDefault "SideNav" SideNav.icon
-        |> CommonControls.rightIcon "SideNav" SideNav.rightIcon
+        |> CommonControls.css { moduleName = moduleName, use = SideNav.css }
+        |> CommonControls.iconNotCheckedByDefault moduleName SideNav.icon
+        |> CommonControls.rightIcon moduleName SideNav.rightIcon
         |> ControlExtra.optionalBoolListItem "secondary" ( "SideNav.secondary", SideNav.secondary )
         |> ControlExtra.optionalListItem "premiumDisplay"
             (Control.map
                 (\( displayStr, display ) ->
-                    ( "SideNav.premiumDisplay " ++ displayStr
+                    ( Code.fromModule moduleName "premiumDisplay " ++ displayStr
                     , SideNav.premiumDisplay display (ConsoleLog "Premium pennant clicked")
                     )
                 )
@@ -276,4 +276,4 @@ update msg state =
             ( state, Cmd.none )
 
         ConsoleLog message ->
-            ( Debug.log "SideNav" message |> always state, Cmd.none )
+            ( Debug.log moduleName message |> always state, Cmd.none )
