@@ -18,7 +18,9 @@ import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.SideNav.V5 as SideNav
+import Nri.Ui.Text.V6 as Text
 
 
 version : Int
@@ -108,6 +110,10 @@ view ellieLinkConfig state =
                   }
                 ]
         }
+    , Heading.h2
+        [ Heading.plaintext "Interactive example"
+        , Heading.css [ Css.marginTop (Css.px 30) ]
+        ]
     , SideNav.view
         { isCurrentRoute = (==) settings.currentRoute
         , routeToString = identity
@@ -115,6 +121,35 @@ view ellieLinkConfig state =
         }
         (List.map Tuple.second settings.navAttributes)
         (List.map Tuple.second settings.entries)
+    , Heading.h2
+        [ Heading.plaintext "Complex example"
+        , Heading.css [ Css.marginTop (Css.px 30) ]
+        ]
+    , SideNav.view
+        { isCurrentRoute = \route -> route == "complex-example__child-2"
+        , routeToString = identity
+        , onSkipNav = SkipToContent
+        }
+        [ SideNav.navLabel "Complex example"
+        , SideNav.navNotMobileCss [ Css.maxWidth (Css.px 300) ]
+        ]
+        [ SideNav.html
+            [ Text.smallBody
+                [ Text.plaintext "(Arbitrary HTML content)"
+                , Text.css [ Css.paddingBottom (Css.px 10) ]
+                ]
+            ]
+        , SideNav.entry "Entry" []
+        , SideNav.entryWithChildren "Entry with Children"
+            []
+            [ SideNav.entry "Child 1"
+                [ SideNav.href "complex-example__child-1"
+                ]
+            , SideNav.entry "Child 2"
+                [ SideNav.href "complex-example__child-2"
+                ]
+            ]
+        ]
     ]
 
 
