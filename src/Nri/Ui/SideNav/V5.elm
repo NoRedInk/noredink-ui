@@ -466,7 +466,7 @@ viewSidebarEntry config extraStyles entry_ =
                     , Fonts.baseFont
                     , fontSize (px 17)
                     , fontWeight bold
-                    , color Colors.navy
+                    , color Colors.gray20
                     , displayFlex
                     , alignItems center
                     ]
@@ -481,9 +481,13 @@ viewSidebarEntry config extraStyles entry_ =
                     , Aria.describedBy [ groupTitleId ]
                     ]
                     (List.map
-                        (viewSidebarEntry config (Css.padding Css.zero :: extraStyles)
+                        (viewSidebarEntry config
+                            (Css.padding Css.zero
+                                :: fontWeight (int 400)
+                                :: extraStyles
+                            )
                             >> List.singleton
-                            >> li [ Attributes.css [ listStyle none ] ]
+                            >> li [ Attributes.css [ listStyle none, margin2 (px 4) zero ] ]
                         )
                         children
                     )
