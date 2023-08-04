@@ -1147,7 +1147,7 @@ tooltipColor =
 
 outlineColor : Color
 outlineColor =
-    Colors.white
+    Css.rgba 255 255 255 0.5
 
 
 offCenterOffset : Float
