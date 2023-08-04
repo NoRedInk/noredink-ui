@@ -31,6 +31,7 @@ module Nri.Ui.Tooltip.V3 exposing
   - adds narrowMobileCss
   - use internal `Content` module
   - adds `paragraph` and `markdown` support
+  - add partially-transparent white border around tooltips
 
 Changes from V2:
 
