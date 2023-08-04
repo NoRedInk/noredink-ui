@@ -450,6 +450,12 @@ viewSidebarEntry config extraStyles entry_ =
             div [ Attributes.css extraStyles ] html_
 
         CompactGroup children groupConfig ->
+            let
+                groupTitleId =
+                    AttributesExtra.safeIdWithPrefix
+                        "sidenav-compact-group"
+                        groupConfig.title
+            in
             div [ Attributes.css (margin2 (px 8) zero :: extraStyles) ]
                 [ styled span
                     [ Css.property "word-break" "normal"
@@ -459,9 +465,13 @@ viewSidebarEntry config extraStyles entry_ =
                     , fontWeight bold
                     , color Colors.navy
                     ]
-                    []
+                    [ Attributes.id groupTitleId
+                    ]
                     [ text groupConfig.title ]
-                , ul [ Attributes.css [ margin zero, padding zero ] ]
+                , ul
+                    [ Attributes.css [ margin zero, padding zero ]
+                    , Aria.describedBy [ groupTitleId ]
+                    ]
                     (List.map
                         (viewSidebarEntry config (Css.padding Css.zero :: extraStyles)
                             >> List.singleton
