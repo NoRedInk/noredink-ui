@@ -464,10 +464,15 @@ viewSidebarEntry config extraStyles entry_ =
                     , fontSize (px 17)
                     , fontWeight bold
                     , color Colors.navy
+                    , displayFlex
+                    , alignItems center
                     ]
                     [ Attributes.id groupTitleId
                     ]
-                    [ text groupConfig.title ]
+                    [ viewLeftIcon groupConfig
+                    , text groupConfig.title
+                    , viewRightIcon groupConfig
+                    ]
                 , ul
                     [ Attributes.css [ margin zero, padding zero ]
                     , Aria.describedBy [ groupTitleId ]
@@ -568,26 +573,36 @@ viewSidebarLeaf config extraStyles entryConfig =
             :: attributes
             ++ entryConfig.customAttributes
         )
-        [ viewJust
-            (\icon_ ->
-                icon_
-                    |> Svg.withWidth (px 20)
-                    |> Svg.withHeight (px 20)
-                    |> Svg.withCss [ marginRight (px 5) ]
-                    |> Svg.toHtml
-            )
-            entryConfig.icon
+        [ viewLeftIcon entryConfig
         , text entryConfig.title
-        , viewJust
-            (\icon_ ->
-                icon_
-                    |> Svg.withWidth (px 20)
-                    |> Svg.withHeight (px 20)
-                    |> Svg.withCss [ marginLeft (px 5) ]
-                    |> Svg.toHtml
-            )
-            entryConfig.rightIcon
+        , viewRightIcon entryConfig
         ]
+
+
+viewLeftIcon : { config | icon : Maybe Svg.Svg } -> Html msg
+viewLeftIcon config =
+    viewJust
+        (\icon_ ->
+            icon_
+                |> Svg.withWidth (px 20)
+                |> Svg.withHeight (px 20)
+                |> Svg.withCss [ marginRight (px 5) ]
+                |> Svg.toHtml
+        )
+        config.icon
+
+
+viewRightIcon : { config | rightIcon : Maybe Svg.Svg } -> Html msg
+viewRightIcon config =
+    viewJust
+        (\icon_ ->
+            icon_
+                |> Svg.withWidth (px 20)
+                |> Svg.withHeight (px 20)
+                |> Svg.withCss [ marginLeft (px 5) ]
+                |> Svg.toHtml
+        )
+        config.rightIcon
 
 
 viewLockedEntry : List Style -> EntryConfig route msg -> Html msg
