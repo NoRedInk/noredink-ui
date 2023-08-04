@@ -5,6 +5,9 @@ import Expect exposing (Expectation)
 import Html.Attributes as Attributes
 import Html.Styled exposing (toUnstyled)
 import Nri.Ui.SideNav.V5 as SideNav exposing (Entry)
+import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.UiIcon.V1 as UiIcon
+import Spec.Helpers exposing (nriDescription)
 import Test exposing (..)
 import Test.Html.Query as Query
 import Test.Html.Selector exposing (..)
@@ -14,6 +17,7 @@ spec : Test
 spec =
     describe "SideNav"
         [ describe "tags the current page correctly" currentPageTests
+        , describe "compactGroup" compactGroupTests
         ]
 
 
@@ -100,6 +104,46 @@ currentPage name href_ =
 mobilePageName : Selector
 mobilePageName =
     attribute (Attributes.attribute "data-nri-description" "mobile-current-page-name")
+
+
+compactGroupTests : List Test
+compactGroupTests =
+    let
+        view view_ =
+            viewQuery { currentRoute = "/" } [ view_ ]
+    in
+    [ describe "without any children"
+        [ test "category renders" <|
+            \() ->
+                SideNav.compactGroup "Category" [] []
+                    |> view
+                    |> Query.has [ text "Category" ]
+        , test "icon renders" <|
+            \() ->
+                SideNav.compactGroup "Category"
+                    [ SideNav.icon (Svg.withLabel "eyeballs" UiIcon.seeMore)
+                    ]
+                    []
+                    |> view
+                    |> Query.has [ tag "title", containing [ text "eyeballs" ] ]
+        , test "right icon renders" <|
+            \() ->
+                SideNav.compactGroup "Category"
+                    [ SideNav.rightIcon (Svg.withLabel "kebab" UiIcon.kebab)
+                    ]
+                    []
+                    |> view
+                    |> Query.has [ tag "title", containing [ text "kebab" ] ]
+        , test "custom attributes are attached" <|
+            \() ->
+                SideNav.compactGroup "Category"
+                    [ SideNav.nriDescription "eyeball-kebab"
+                    ]
+                    []
+                    |> view
+                    |> Query.has [ nriDescription "eyeball-kebab" ]
+        ]
+    ]
 
 
 viewQuery :
