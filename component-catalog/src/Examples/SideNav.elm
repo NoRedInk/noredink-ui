@@ -34,7 +34,7 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
-    , categories = [ Layout ]
+    , categories = [ Layout, Navigation ]
     , keyboardSupport = []
     , preview = [ viewPreview ]
     , view = view
@@ -96,15 +96,15 @@ view ellieLinkConfig state =
             \{ navAttributes, entries } ->
                 [ { sectionName = "View"
                   , code =
-                        String.join ""
-                            [ moduleName ++ ".view"
-                            , "\n\t{ isCurrentRoute = (==) \"" ++ settings.currentRoute ++ "\""
-                            , "\n\t, routeToString = identity"
-                            , "\n\t, onSkipNav = SkipToContent"
-                            , "\n\t}"
-                            , Code.list (List.map Tuple.first navAttributes)
-                            , Code.list (List.map Tuple.first entries)
-                            ]
+                        Code.fromModule moduleName "view"
+                            ++ Code.recordMultiline
+                                [ ( "isCurrentRoute", "(==) \"" ++ settings.currentRoute ++ "\"" )
+                                , ( "routeToString", "identity" )
+                                , ( "onSkipNav", "SkipToContent" )
+                                ]
+                                1
+                            ++ Code.listMultiline (List.map Tuple.first navAttributes) 1
+                            ++ Code.listMultiline (List.map Tuple.first entries) 1
                   }
                 ]
         }
@@ -138,7 +138,7 @@ init =
         Control.record Settings
             |> Control.field "currentRoute" (Control.string "#some-route")
             |> Control.field "navAttributes" controlNavAttributes
-            |> Control.field "entries" (Control.map List.singleton (controlEntryType "#some-route"))
+            |> Control.field "entries" (Control.map List.singleton (controlEntryType 2 "#some-route"))
     }
 
 
@@ -178,24 +178,22 @@ controlNavAttributes =
             )
 
 
-controlEntryType : String -> Control ( String, SideNav.Entry String Msg )
-controlEntryType href =
+controlEntryType : Int -> String -> Control ( String, SideNav.Entry String Msg )
+controlEntryType level href =
     Control.choice
-        [ ( "entry", controlEntry href )
-        , ( "entryWithChildren", controlEntryWithChildren href )
-        , ( "html", controlHtml )
+        [ ( "entry", controlEntry level href )
+        , ( "entryWithChildren", controlEntryWithChildren level href )
+        , ( "html", controlHtml level )
         ]
 
 
-controlEntry : String -> Control ( String, SideNav.Entry String Msg )
-controlEntry href =
+controlEntry : Int -> String -> Control ( String, SideNav.Entry String Msg )
+controlEntry level href =
     Control.record
         (\title attributes ->
             ( "SideNav.entry \""
                 ++ title
-                ++ "\"\n\t\t[ "
-                ++ String.join "\n\t\t, " (List.map Tuple.first attributes)
-                ++ "\n\t\t]"
+                ++ Code.listMultiline (List.map Tuple.first attributes) level
             , SideNav.entry title (List.map Tuple.second attributes)
             )
         )
@@ -203,18 +201,14 @@ controlEntry href =
         |> Control.field "attributes" (controlEntryAttributes href)
 
 
-controlEntryWithChildren : String -> Control ( String, SideNav.Entry String Msg )
-controlEntryWithChildren href =
+controlEntryWithChildren : Int -> String -> Control ( String, SideNav.Entry String Msg )
+controlEntryWithChildren level href =
     Control.record
         (\title attributes children ->
             ( "SideNav.entryWithChildren "
                 ++ title
-                ++ " [\n\t"
-                ++ String.join "\n\t," (List.map Tuple.first attributes)
-                ++ "\n\t]"
-                ++ " [\n\t"
-                ++ String.join "\n\t," (List.map Tuple.first children)
-                ++ "\n\t]"
+                ++ Code.listMultiline (List.map Tuple.first attributes) level
+                ++ Code.listMultiline (List.map Tuple.first children) level
             , SideNav.entryWithChildren title
                 (List.map Tuple.second attributes)
                 (List.map Tuple.second children)
@@ -225,19 +219,16 @@ controlEntryWithChildren href =
         |> Control.field "children"
             (Control.lazy
                 (\() ->
-                    Control.map List.singleton (controlEntryType (href ++ "-child"))
+                    Control.map List.singleton (controlEntryType (level + 1) (href ++ "-child"))
                 )
             )
 
 
-controlHtml : Control ( String, SideNav.Entry String Msg )
-controlHtml =
+controlHtml : Int -> Control ( String, SideNav.Entry String Msg )
+controlHtml level =
     Control.map
         (\html ->
-            ( "SideNav.html "
-                ++ " [\n\t"
-                ++ String.join "\n\t," (List.map Tuple.first html)
-                ++ "\n\t]"
+            ( "SideNav.html " ++ Code.list (List.map Tuple.first html)
             , SideNav.html (List.map Tuple.second html)
             )
         )
