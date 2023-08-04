@@ -449,8 +449,27 @@ viewSidebarEntry config extraStyles entry_ =
         Html html_ ->
             div [ Attributes.css extraStyles ] html_
 
-        CompactGroup entries groupConfig ->
-            text "TODO"
+        CompactGroup children groupConfig ->
+            div [ Attributes.css (margin2 (px 8) zero :: extraStyles) ]
+                [ styled span
+                    [ Css.property "word-break" "normal"
+                    , Css.property "overflow-wrap" "anywhere"
+                    , Fonts.baseFont
+                    , fontSize (px 17)
+                    , fontWeight bold
+                    , color Colors.navy
+                    ]
+                    []
+                    [ text groupConfig.title ]
+                , ul [ Attributes.css [ margin zero, padding zero ] ]
+                    (List.map
+                        (viewSidebarEntry config (Css.padding Css.zero :: extraStyles)
+                            >> List.singleton
+                            >> li [ Attributes.css [ listStyle none ] ]
+                        )
+                        children
+                    )
+                ]
 
 
 isCurrentRoute : Config route msg -> EntryConfig route msg -> Bool
