@@ -228,6 +228,7 @@ controlEntryType level href =
         [ ( "entry", controlEntry level href )
         , ( "entryWithChildren", controlEntryWithChildren level href )
         , ( "html", controlHtml level )
+        , ( "compactGroup", controlCompactGroup level href )
         ]
 
 
@@ -280,26 +281,66 @@ controlHtml level =
         (Control.value [])
 
 
+controlCompactGroup : Int -> String -> Control ( String, SideNav.Entry String Msg )
+controlCompactGroup level href =
+    Control.record
+        (\title attributes children ->
+            ( Code.fromModule moduleName "compactGroup "
+                ++ Code.string title
+                ++ Code.listMultiline (List.map Tuple.first attributes) level
+                ++ Code.listMultiline (List.map Tuple.first children) level
+            , SideNav.compactGroup title
+                (List.map Tuple.second attributes)
+                (List.map Tuple.second children)
+            )
+        )
+        |> Control.field "title" (Control.string "Entry Category")
+        |> Control.field "attributes" controlGroupAttributes
+        |> Control.field "children"
+            (Control.lazy
+                (\() ->
+                    Control.map List.singleton (controlEntryType (level + 1) (href ++ "-child"))
+                )
+            )
+
+
+controlGroupOrEntryAttributes :
+    List
+        (Control (List ( String, SideNav.Attribute entryOrGroup msg ))
+         -> Control (List ( String, SideNav.Attribute entryOrGroup msg ))
+        )
+controlGroupOrEntryAttributes =
+    [ CommonControls.css { moduleName = moduleName, use = SideNav.css }
+    , CommonControls.iconNotCheckedByDefault moduleName SideNav.icon
+    , CommonControls.rightIcon moduleName SideNav.rightIcon
+    , ControlExtra.optionalBoolListItem "secondary" ( "SideNav.secondary", SideNav.secondary )
+    ]
+
+
+controlGroupAttributes : Control (List ( String, SideNav.GroupAttribute msg ))
+controlGroupAttributes =
+    List.foldl (\f acc -> f acc) ControlExtra.list controlGroupOrEntryAttributes
+
+
 controlEntryAttributes : String -> Control (List ( String, SideNav.EntryAttribute String Msg ))
 controlEntryAttributes href =
-    ControlExtra.list
-        |> ControlExtra.listItem "href"
-            (Control.map (\v -> ( Code.fromModule moduleName "href \"" ++ v ++ "\"", SideNav.href v ))
-                (Control.string href)
-            )
-        |> CommonControls.css { moduleName = moduleName, use = SideNav.css }
-        |> CommonControls.iconNotCheckedByDefault moduleName SideNav.icon
-        |> CommonControls.rightIcon moduleName SideNav.rightIcon
-        |> ControlExtra.optionalBoolListItem "secondary" ( "SideNav.secondary", SideNav.secondary )
-        |> ControlExtra.optionalListItem "premiumDisplay"
-            (Control.map
-                (\( displayStr, display ) ->
-                    ( Code.fromModule moduleName "premiumDisplay " ++ displayStr
-                    , SideNav.premiumDisplay display (ConsoleLog "Premium pennant clicked")
-                    )
+    ([ ControlExtra.listItem "href"
+        (Control.map (\v -> ( Code.fromModule moduleName "href \"" ++ v ++ "\"", SideNav.href v ))
+            (Control.string href)
+        )
+     , ControlExtra.optionalListItem "premiumDisplay"
+        (Control.map
+            (\( displayStr, display ) ->
+                ( Code.fromModule moduleName "premiumDisplay " ++ displayStr
+                , SideNav.premiumDisplay display (ConsoleLog "Premium pennant clicked")
                 )
-                CommonControls.premiumDisplay
             )
+            CommonControls.premiumDisplay
+        )
+     ]
+        ++ controlGroupOrEntryAttributes
+    )
+        |> List.foldl (\f acc -> f acc) ControlExtra.list
 
 
 {-| -}
