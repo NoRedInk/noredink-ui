@@ -456,7 +456,13 @@ viewSidebarEntry config extraStyles entry_ =
                         "sidenav-compact-group"
                         groupConfig.title
             in
-            div [ Attributes.css (margin2 (px 8) zero :: extraStyles) ]
+            div
+                [ Attributes.css
+                    (margin2 (px 8) zero
+                        :: extraStyles
+                        ++ groupConfig.customStyles
+                    )
+                ]
                 [ styled span
                     [ Css.property "word-break" "normal"
                     , Css.property "overflow-wrap" "anywhere"
@@ -669,7 +675,11 @@ type alias EntryOrGroupConfig entryOrGroup msg =
     }
 
 
-initGroup : String -> EntryOrGroupConfig {} msg
+type alias GroupConfig msg =
+    EntryOrGroupConfig {} msg
+
+
+initGroup : String -> GroupConfig msg
 initGroup title =
     { icon = Nothing
     , rightIcon = Nothing
@@ -677,10 +687,6 @@ initGroup title =
     , customAttributes = []
     , customStyles = []
     }
-
-
-type alias GroupConfig msg =
-    EntryOrGroupConfig {} msg
 
 
 {-| -}
