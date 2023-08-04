@@ -92,6 +92,7 @@ example =
 type alias State =
     { openTooltip : Maybe TooltipId
     , staticExampleSettings : Control (List ( String, Tooltip.Attribute Never ))
+    , pageSettings : Control PageSettings
     }
 
 
@@ -99,6 +100,19 @@ init : State
 init =
     { openTooltip = Nothing
     , staticExampleSettings = initStaticExampleSettings
+    , pageSettings =
+        Control.record PageSettings
+            |> Control.field "backgroundColor"
+                (Control.choice
+                    [ ( "azure", Control.value Colors.azure )
+                    , ( "white", Control.value Colors.white )
+                    ]
+                )
+    }
+
+
+type alias PageSettings =
+    { backgroundColor : Css.Color
     }
 
 
@@ -112,6 +126,7 @@ type TooltipId
 type Msg
     = ToggleTooltip TooltipId Bool
     | SetControl (Control (List ( String, Tooltip.Attribute Never )))
+    | UpdatePageSettings (Control PageSettings)
     | Log String
 
 
@@ -128,13 +143,16 @@ update msg model =
         SetControl settings ->
             ( { model | staticExampleSettings = settings }, Cmd.none )
 
+        UpdatePageSettings settings ->
+            ( { model | pageSettings = settings }, Cmd.none )
+
         Log message ->
             ( Debug.log "Tooltip Log:" |> always model, Cmd.none )
 
 
 view : EllieLink.Config -> State -> List (Html Msg)
 view ellieLinkConfig model =
-    [ viewCustomizableExample ellieLinkConfig model.staticExampleSettings
+    [ viewCustomizableExample ellieLinkConfig model
     , Heading.h2 [ Heading.plaintext "What type of tooltip should I use?" ]
     , Table.view []
         [ Table.string
@@ -497,15 +515,19 @@ controlPadding =
         ]
 
 
-viewCustomizableExample : EllieLink.Config -> Control (List ( String, Tooltip.Attribute Never )) -> Html Msg
-viewCustomizableExample ellieLinkConfig controlSettings =
+viewCustomizableExample : EllieLink.Config -> State -> Html Msg
+viewCustomizableExample ellieLinkConfig ({ staticExampleSettings } as state) =
+    let
+        pageSettings =
+            Control.currentValue state.pageSettings
+    in
     Html.div []
         [ ControlView.view
             { ellieLinkConfig = ellieLinkConfig
             , name = moduleName
             , version = version
             , update = SetControl
-            , settings = controlSettings
+            , settings = staticExampleSettings
             , mainType = Just "RootHtml.Html msg"
             , extraCode = [ "import Nri.Ui.ClickableSvg.V2 as ClickableSvg" ]
             , renderExample = Code.unstyledView
@@ -531,12 +553,14 @@ viewCustomizableExample ellieLinkConfig controlSettings =
                       }
                     ]
             }
+        , Control.view UpdatePageSettings state.pageSettings |> Html.fromUnstyled
         , Html.div
             [ css
                 [ Css.displayFlex
                 , Css.justifyContent Css.center
                 , Css.alignItems Css.center
                 , Css.height (Css.px 300)
+                , Css.backgroundColor pageSettings.backgroundColor
                 ]
             ]
             [ Tooltip.view
@@ -550,7 +574,7 @@ viewCustomizableExample ellieLinkConfig controlSettings =
                 , id = "an-id-for-the-tooltip"
                 }
                 (Tooltip.open True
-                    :: List.map Tuple.second (Control.currentValue controlSettings)
+                    :: List.map Tuple.second (Control.currentValue staticExampleSettings)
                 )
                 |> Html.map never
             ]
