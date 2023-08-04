@@ -154,7 +154,7 @@ controlNavAttributes =
                 )
                 (Control.string "Example")
             )
-        |> ControlExtra.optionalListItem "navNotMobileCss"
+        |> ControlExtra.optionalListItemDefaultChecked "navNotMobileCss"
             (Control.choice
                 [ ( "maxWidth"
                   , Control.value
