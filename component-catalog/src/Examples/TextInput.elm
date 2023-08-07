@@ -17,6 +17,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Dict exposing (Dict)
 import Example exposing (Example)
+import Guidance
 import Iso8601
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
@@ -53,7 +54,7 @@ example =
             , TextInput.custom [ Key.tabbable False ]
             ]
         ]
-    , about = []
+    , about = Guidance.useATACGuide moduleName
     , view =
         \ellieLinkConfig state ->
             let

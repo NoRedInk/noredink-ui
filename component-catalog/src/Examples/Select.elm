@@ -15,6 +15,7 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Guidance
 import Html.Styled
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
@@ -50,7 +51,7 @@ example =
             , Select.custom [ Key.tabbable False ]
             ]
         ]
-    , about = []
+    , about = Guidance.useATACGuide moduleName
     , view =
         \ellieLinkConfig state ->
             let
