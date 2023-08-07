@@ -31,6 +31,7 @@ module Nri.Ui.Tooltip.V3 exposing
   - adds narrowMobileCss
   - use internal `Content` module
   - adds `paragraph` and `markdown` support
+  - add partially-transparent white border around tooltips
 
 Changes from V2:
 
@@ -1067,7 +1068,7 @@ viewTooltip tooltipId config =
                  , Css.position Css.absolute
                  , Css.zIndex (Css.int 100)
                  , Css.backgroundColor Colors.navy
-                 , Css.border3 (Css.px 1) Css.solid Colors.navy
+                 , Css.border3 (Css.px 1) Css.solid outlineColor
                  , MediaQuery.withViewport (Just mobileBreakpoint) Nothing <|
                     [ positioning config.direction config.alignment
                     , applyTail config.direction
@@ -1143,6 +1144,11 @@ tailSize =
 tooltipColor : Color
 tooltipColor =
     Colors.navy
+
+
+outlineColor : Color
+outlineColor =
+    Css.rgba 255 255 255 0.5
 
 
 offCenterOffset : Float
@@ -1338,7 +1344,7 @@ bottomTail : Style
 bottomTail =
     Css.batch
         [ Css.before
-            [ Css.borderTopColor tooltipColor
+            [ Css.borderTopColor outlineColor
             , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
             , Css.marginLeft (Css.px (-tailSize - 1))
             ]
@@ -1354,7 +1360,7 @@ topTail : Style
 topTail =
     Css.batch
         [ Css.before
-            [ Css.borderBottomColor tooltipColor
+            [ Css.borderBottomColor outlineColor
             , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
             , Css.marginLeft (Css.px (-tailSize - 1))
             ]
@@ -1370,7 +1376,7 @@ rightTail : Style
 rightTail =
     Css.batch
         [ Css.before
-            [ Css.borderLeftColor tooltipColor
+            [ Css.borderLeftColor outlineColor
             , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
             ]
         , Css.after
@@ -1386,7 +1392,7 @@ leftTail : Style
 leftTail =
     Css.batch
         [ Css.before
-            [ Css.borderRightColor tooltipColor
+            [ Css.borderRightColor outlineColor
             , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
             ]
         , Css.after
