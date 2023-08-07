@@ -84,8 +84,6 @@ example =
         [ text "You might also know the Block element as a “Display Element”. Learn more in "
         , ClickableText.link "Display Elements and Scaffolding Container: additional things to know"
             [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Display-Elements-and-Scaffolding-Container-additional-things-to-know--BwRhBMKyXFFSWz~1mljN29bcAg-6vszpNDLoYIiMyg7Wv66s"
-            , ClickableText.rightIcon UiIcon.openInNewTab
-            , ClickableText.css [ Css.verticalAlign Css.baseline ]
             ]
         ]
     , view =

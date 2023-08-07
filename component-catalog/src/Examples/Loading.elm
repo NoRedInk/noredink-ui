@@ -10,6 +10,7 @@ import Browser.Events
 import Category exposing (Category(..))
 import Css
 import Example exposing (Example)
+import Guidance
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Events as Events
 import Json.Decode
@@ -98,7 +99,7 @@ example =
                 ]
             |> Svg.toHtml
         ]
-    , about = []
+    , about = Guidance.useATACGuide
     , view =
         \ellieLinkConfig { showLoadingFadeIn, showLoading, showSpinners } ->
             [ if showLoading then

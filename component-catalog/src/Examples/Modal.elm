@@ -16,6 +16,7 @@ import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Guidance
 import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport
 import Nri.Ui.Button.V10 as Button
@@ -178,7 +179,7 @@ example =
                 ]
             ]
         ]
-    , about = []
+    , about = Guidance.useATACGuide
     , view =
         \ellieLinkConfig state ->
             let

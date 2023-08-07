@@ -16,6 +16,7 @@ import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Examples.Colors
+import Guidance
 import Html.Styled exposing (Html)
 import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Colors.V1 as Colors
@@ -48,7 +49,7 @@ example =
             , Balloon.plaintext "This is a balloon."
             ]
         ]
-    , about = []
+    , about = Guidance.useATACGuide
     , view = view
     }
 
