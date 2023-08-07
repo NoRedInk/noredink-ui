@@ -131,6 +131,7 @@ view ellieLinkConfig state =
         , onSkipNav = SkipToContent
         }
         [ SideNav.navLabel "Complex example"
+        , SideNav.navId "complex-example-sidenav"
         , SideNav.navNotMobileCss [ Css.maxWidth (Css.px 300) ]
         ]
         [ SideNav.html
@@ -169,6 +170,7 @@ view ellieLinkConfig state =
         , onSkipNav = SkipToContent
         }
         [ SideNav.navLabel "Compact groups example"
+        , SideNav.navId "compact-groups-example-sidenav"
         , SideNav.navNotMobileCss [ Css.maxWidth (Css.px 300) ]
         ]
         [ SideNav.compactGroup "Support"
