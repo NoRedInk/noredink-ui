@@ -178,6 +178,7 @@ example =
                 ]
             ]
         ]
+    , about = []
     , view =
         \ellieLinkConfig state ->
             let

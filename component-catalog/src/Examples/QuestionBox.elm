@@ -57,6 +57,7 @@ example =
             , QuestionBox.correct
             ]
         ]
+    , about = []
     , view = view
     }
 

@@ -53,6 +53,7 @@ example =
             , ClickableText.custom [ Key.tabbable False ]
             ]
         ]
+    , about = []
     , view = \ellieLinkConfig state -> [ viewExamples ellieLinkConfig state ]
     , categories = [ Buttons ]
     , keyboardSupport = []

@@ -47,6 +47,7 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview = preview
+    , about = []
     , view = view
     }
 

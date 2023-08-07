@@ -37,6 +37,7 @@ example =
     , categories = [ Layout ]
     , keyboardSupport = []
     , preview = [ viewPreview ]
+    , about = []
     , view = view
     }
 

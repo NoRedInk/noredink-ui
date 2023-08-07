@@ -144,6 +144,7 @@ example =
         , Message.view [ Message.success, Message.plaintext "Tiny success" ]
         , Message.view [ Message.error, Message.plaintext "Tiny error" ]
         ]
+    , about = []
     , view =
         \ellieLinkConfig state ->
             let

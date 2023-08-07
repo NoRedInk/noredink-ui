@@ -53,6 +53,7 @@ example =
             , TextInput.custom [ Key.tabbable False ]
             ]
         ]
+    , about = []
     , view =
         \ellieLinkConfig state ->
             let

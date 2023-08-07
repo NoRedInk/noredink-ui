@@ -53,6 +53,7 @@ example =
     , update = update
     , subscriptions = subscriptions
     , preview = preview
+    , about = []
     , view = view
     , categories = [ Inputs ]
     , keyboardSupport =

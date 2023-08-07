@@ -43,6 +43,7 @@ example =
         , ( "ugFont", Fonts.ugFont )
         ]
             |> List.map viewPreview
+    , about = []
     , view =
         \ellieLinkConfig _ ->
             let

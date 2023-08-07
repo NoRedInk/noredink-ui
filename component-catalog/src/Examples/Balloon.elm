@@ -48,6 +48,7 @@ example =
             , Balloon.plaintext "This is a balloon."
             ]
         ]
+    , about = []
     , view = view
     }
 

@@ -65,6 +65,7 @@ example =
                 [ Html.text "Label" ]
             ]
         ]
+    , about = []
     , view =
         \ellieLinkConfig state ->
             let

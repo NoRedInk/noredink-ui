@@ -13,6 +13,8 @@ import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Header.V1 as Header
+import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Text.V6 as Text
 
 
 type alias Example state msg =
@@ -23,6 +25,7 @@ type alias Example state msg =
     , subscriptions : state -> Sub msg
     , preview : List (Html Never)
     , view : EllieLink.Config -> state -> List (Html msg)
+    , about : List (Html Never)
     , categories : List Category
     , keyboardSupport : List KeyboardSupport
     }
@@ -57,6 +60,7 @@ wrapMsg wrapMsg_ unwrapMsg example =
         \ellieLinkConfig state ->
             List.map (Html.map wrapMsg_)
                 (example.view ellieLinkConfig state)
+    , about = example.about
     , categories = example.categories
     , keyboardSupport = example.keyboardSupport
     }
@@ -89,6 +93,7 @@ wrapState wrapState_ unwrapState example =
         \ellieLinkConfig state ->
             Maybe.map (example.view ellieLinkConfig) (unwrapState state)
                 |> Maybe.withDefault []
+    , about = example.about
     , categories = example.categories
     , keyboardSupport = example.keyboardSupport
     }
@@ -149,10 +154,20 @@ view ellieLinkConfig example =
 
 view_ : EllieLink.Config -> Example state msg -> List (Html msg)
 view_ ellieLinkConfig example =
-    [ KeyboardSupport.view example.keyboardSupport
-    , Html.div [ Attributes.css [ Css.marginBottom (Css.px 200) ] ]
-        (example.view ellieLinkConfig example.state)
-    ]
+    (case example.about of
+        [] ->
+            []
+
+        _ ->
+            [ Heading.h2 [ Heading.plaintext "About" ]
+            , Text.mediumBody [ Text.html [ Html.p [] example.about ] ]
+                |> Html.map never
+            ]
+    )
+        ++ [ KeyboardSupport.view example.keyboardSupport
+           , Html.div [ Attributes.css [ Css.marginBottom (Css.px 200) ] ]
+                (example.view ellieLinkConfig example.state)
+           ]
 
 
 extraLinks : (msg -> msg2) -> Example state msg -> Header.Attribute route msg2

@@ -98,6 +98,7 @@ example =
                 ]
             |> Svg.toHtml
         ]
+    , about = []
     , view =
         \ellieLinkConfig { showLoadingFadeIn, showLoading, showSpinners } ->
             [ if showLoading then

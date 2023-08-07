@@ -88,6 +88,7 @@ example =
                 [ Html.text "There was a problem!" ]
             ]
         ]
+    , about = []
     , view =
         \ellieLinkConfig model ->
             let

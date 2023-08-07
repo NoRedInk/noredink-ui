@@ -161,6 +161,7 @@ example =
                 ]
             ]
         ]
+    , about = []
     , view =
         \ellieLinkConfig model ->
             let

@@ -54,6 +54,7 @@ example config =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview = config.preview
+    , about = []
     , view = \ellieLinkConfig settings -> view settings config.all
     }
 
