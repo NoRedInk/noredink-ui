@@ -13,6 +13,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Table.V7 as Table
 import Nri.Ui.Text.V6 as Text
 
@@ -43,7 +44,19 @@ example =
         , ( "ugFont", Fonts.ugFont )
         ]
             |> List.map viewPreview
-    , about = []
+    , about =
+        [ Html.text "Learn more about kid-friendly and accessible fonts starting at 24:40 in "
+        , ClickableText.link "Kids Websites: Where Fun and Accessibility Come to Play"
+            [ ClickableText.linkExternal "https://www.deque.com/axe-con/sessions/kids-websites-where-fun-and-accessibility-come-to-play/"
+            , ClickableText.appearsInline
+            ]
+        , Html.text " and in "
+        , ClickableText.link "Accessible fonts and readability: the basics"
+            [ ClickableText.linkExternal "https://business.scope.org.uk/article/font-accessibility-and-readability-the-basics#:~:text=This%20can%20affect%20reading%20speed,does%20this%20is%20Gill%20Sans."
+            , ClickableText.appearsInline
+            ]
+        , Html.text "."
+        ]
     , view =
         \ellieLinkConfig _ ->
             let
@@ -53,7 +66,8 @@ example =
                 dd =
                     Html.dd [ css [ Css.marginLeft Css.zero, Css.marginBottom (Css.px 8) ] ]
             in
-            [ Html.dl [ css [ Fonts.baseFont ] ]
+            [ Heading.h2 [ Heading.plaintext "Fonts" ]
+            , Html.dl [ css [ Fonts.baseFont ] ]
                 [ dt [ Html.text "quizFont" ]
                 , dd [ Html.text "Use for exercise content. Georgia" ]
                 , dt [ Html.text "ugFont" ]
@@ -61,23 +75,8 @@ example =
                 , dt [ Html.text "baseFont" ]
                 , dd [ Html.text "Use  for everything else! Mulish" ]
                 ]
+            , Heading.h2 [ Heading.plaintext "Font failure patterns" ]
             , viewFontFailurePatterns
-            , Text.mediumBody
-                [ Text.css [ Css.marginTop (Css.px 30) |> Css.important ]
-                , Text.html
-                    [ Html.text "Learn more about kid-friendly and accessible fonts starting at 24:40 in "
-                    , ClickableText.link "Kids Websites: Where Fun and Accessibility Come to Play"
-                        [ ClickableText.linkExternal "https://www.deque.com/axe-con/sessions/kids-websites-where-fun-and-accessibility-come-to-play/"
-                        , ClickableText.appearsInline
-                        ]
-                    , Html.text " and in "
-                    , ClickableText.link "Accessible fonts and readability: the basics"
-                        [ ClickableText.linkExternal "https://business.scope.org.uk/article/font-accessibility-and-readability-the-basics#:~:text=This%20can%20affect%20reading%20speed,does%20this%20is%20Gill%20Sans."
-                        , ClickableText.appearsInline
-                        ]
-                    , Html.text "."
-                    ]
-                ]
             ]
     }
 
