@@ -192,6 +192,11 @@ describe("UI tests", function () {
 
   it("All", async function () {
     page = await browser.newPage();
+
+    await page.emulateMediaFeatures([
+      {name: 'prefers-reduced-motion', value: 'reduce'},
+    ]);
+
     handlePageErrors(page);
     await page.goto(`http://localhost:${PORT}`, { waitUntil: "load" });
     await page.$("#maincontent");
@@ -213,6 +218,11 @@ describe("UI tests", function () {
 
   it("Doodads", async function () {
     page = await browser.newPage();
+
+    await page.emulateMediaFeatures([
+      {name: 'prefers-reduced-motion', value: 'reduce'},
+    ]);
+
     handlePageErrors(page);
     await page.goto(`http://localhost:${PORT}`);
 
