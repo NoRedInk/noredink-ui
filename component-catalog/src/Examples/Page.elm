@@ -89,7 +89,7 @@ example =
                 [ Html.text "There was a problem!" ]
             ]
         ]
-    , about = Guidance.useATACGuide
+    , about = Guidance.useATACGuide moduleName
     , view =
         \ellieLinkConfig model ->
             let

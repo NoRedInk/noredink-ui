@@ -179,7 +179,7 @@ example =
                 ]
             ]
         ]
-    , about = Guidance.useATACGuide
+    , about = Guidance.useATACGuide moduleName
     , view =
         \ellieLinkConfig state ->
             let

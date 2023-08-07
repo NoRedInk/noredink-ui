@@ -84,7 +84,7 @@ subscriptions { showLoadingFadeIn, showLoading, showSpinners } =
 {-| -}
 example : Example State Msg
 example =
-    { name = "Loading"
+    { name = moduleName
     , version = 1
     , categories = [ Animations ]
     , keyboardSupport = []
@@ -99,7 +99,7 @@ example =
                 ]
             |> Svg.toHtml
         ]
-    , about = Guidance.useATACGuide
+    , about = Guidance.useATACGuide moduleName
     , view =
         \ellieLinkConfig { showLoadingFadeIn, showLoading, showSpinners } ->
             [ if showLoading then
@@ -121,6 +121,11 @@ example =
                 button "Loading.spinning Colors.navy" ShowSpinners showLoadingFadeIn
             ]
     }
+
+
+moduleName : String
+moduleName =
+    "Loading"
 
 
 button : String -> Msg -> Bool -> Html Msg
