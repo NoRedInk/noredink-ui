@@ -104,8 +104,8 @@ init =
         Control.record PageSettings
             |> Control.field "backgroundColor"
                 (Control.choice
-                    [ ( "azure", Control.value Colors.azure )
-                    , ( "white", Control.value Colors.white )
+                    [ ( "white", Control.value Colors.white )
+                    , ( "azure", Control.value Colors.azure )
                     ]
                 )
     }
