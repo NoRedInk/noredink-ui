@@ -78,6 +78,9 @@ describe("UI tests", function () {
 
   const defaultProcessing = async (name, location) => {
     await goTo(name, location);
+    if (waitForInitialAnimation[name]){
+      await page.waitForTimeout(waitForInitialAnimation[name]);
+    }
     await percySnapshot(page, name);
 
     const results = await new AxePuppeteer(page)
@@ -175,6 +178,11 @@ describe("UI tests", function () {
     Loading: ["color-contrast"],
     RadioButton: ["duplicate-id"],
   };
+
+  const waitForInitialAnimation = {
+    // animation-delay + animation-duration in Mark's labelState animations
+    Block: 700,
+  }
 
   const specialProcessing = {
     Message: messageProcessing,
