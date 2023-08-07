@@ -230,9 +230,15 @@ perform navigationKey effect =
 subscriptions : Model key -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ Dict.values model.moduleStates
-            |> List.map (\example -> Sub.map (UpdateModuleStates example.name) (example.subscriptions example.state))
-            |> Sub.batch
+        [ case model.route of
+            Routes.Doodad example ->
+                Sub.map (UpdateModuleStates example.name) (example.subscriptions example.state)
+
+            Routes.CategoryDoodad _ example ->
+                Sub.map (UpdateModuleStates example.name) (example.subscriptions example.state)
+
+            _ ->
+                Sub.none
         , Sub.map NewInputMethod InputMethod.subscriptions
         ]
 
