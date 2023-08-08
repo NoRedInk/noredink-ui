@@ -21,8 +21,8 @@ import Json.Decode as Decode exposing (Decoder)
 onKeyDown :
     List (Key.Event msg)
     ->
-        { firstId : String
-        , lastId : String
+        { firstIds : List String
+        , lastIds : List String
         , tabBackAction : msg
         , tabForwardAction : msg
         }
@@ -36,8 +36,8 @@ onKeyDown otherEventListeners config =
 onKeyDownPreventDefault :
     List (Key.Event msg)
     ->
-        { firstId : String
-        , lastId : String
+        { firstIds : List String
+        , lastIds : List String
         , tabBackAction : msg
         , tabForwardAction : msg
         }
@@ -63,8 +63,8 @@ we are adding the attribute to.
     Events.on "keydown"
         (WhenFocusLeaves.toDecoder
             [ Key.escape CloseModal ]
-            { firstId = "first-id"
-            , lastId = "last-id"
+            { firstIds = ["first-id"]
+            , lastIds = ["last-id"]
             , tabBackAction = GoToLastId
             , tabForwardAction = GoToFirstId
             }
@@ -74,13 +74,13 @@ we are adding the attribute to.
 toDecoder :
     List (Key.Event msg)
     ->
-        { firstId : String
-        , lastId : String
+        { firstIds : List String
+        , lastIds : List String
         , tabBackAction : msg
         , tabForwardAction : msg
         }
     -> Decoder msg
-toDecoder otherEventListeners { firstId, lastId, tabBackAction, tabForwardAction } =
+toDecoder otherEventListeners { firstIds, lastIds, tabBackAction, tabForwardAction } =
     let
         keyDecoder : Decoder (Event msg)
         keyDecoder =
@@ -95,10 +95,10 @@ toDecoder otherEventListeners { firstId, lastId, tabBackAction, tabForwardAction
         applyKeyEvent ( elementId, event ) =
             -- if the user tabs back while on the first id,
             -- we execute the action
-            if event == TabBack && elementId == firstId then
+            if event == TabBack && List.member elementId firstIds then
                 Decode.succeed tabBackAction
 
-            else if event == Tab && elementId == lastId then
+            else if event == Tab && List.member elementId lastIds then
                 -- if the user tabs forward while on the last id,
                 -- we want to wrap around to the first id.
                 Decode.succeed tabForwardAction
