@@ -1086,14 +1086,14 @@ viewTooltip tooltipId config =
                     , applyTail narrowMobileDirection
                     ]
                  , Fonts.baseFont
-                 , Css.fontSize (Css.px 16)
+                 , Css.fontSize (Css.px 15)
                  , Css.fontWeight (Css.int 600)
                  , Css.color Colors.white
                  , Shadows.high
                  , Global.descendants
                     [ Global.a
-                        [ Css.textDecoration Css.underline
-                        , Css.color Colors.white
+                        [ Css.color Colors.white
+                        , Css.borderColor Colors.white
                         , Css.visited [ Css.color Colors.white ]
                         , Css.hover [ Css.color Colors.white ]
                         , Css.pseudoClass "focus-visible"
