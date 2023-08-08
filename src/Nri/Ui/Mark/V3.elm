@@ -517,8 +517,7 @@ viewBalloon config label =
             , case config.labelState of
                 FadeOut ->
                     Css.batch
-                        [ Css.property "animation-delay" "0.4s"
-                        , Css.property "animation-duration" "0.3s"
+                        [ Css.property "animation-duration" "0.3s"
                         , Css.property "animation-fill-mode" "forwards"
                         , Css.animationName
                             (Css.Animations.keyframes
@@ -531,8 +530,7 @@ viewBalloon config label =
 
                 Visible ->
                     Css.batch
-                        [ Css.property "animation-delay" "0.4s"
-                        , Css.property "animation-duration" "0.3s"
+                        [ Css.property "animation-duration" "0.3s"
                         , Css.property "animation-fill-mode" "forwards"
                         , Css.animationName
                             (Css.Animations.keyframes
