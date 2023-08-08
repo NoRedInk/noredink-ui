@@ -33,7 +33,7 @@ import Html.Styled.Events exposing (onClick)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
+import Nri.Ui.Html.Attributes.V2 exposing (nriDescription, safeIdWithPrefix)
 import Nri.Ui.Html.V3 exposing (viewIf)
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -105,7 +105,7 @@ viewTool onSelect ({ name } as theme) tag model =
             model.currentTool == tag
     in
     label
-        [ id ("tag-" ++ name)
+        [ id (safeIdWithPrefix "tag" name)
         , css
             [ Css.cursor Css.pointer
             , Css.position Css.relative
