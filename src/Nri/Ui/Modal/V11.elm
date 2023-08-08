@@ -541,9 +541,9 @@ view config attrsList model =
                 |> Root.div
                     [ WhenFocusLeaves.onKeyDownPreventDefault
                         []
-                        { firstIds = [ config.focusTrap.firstId ]
+                        { firstIds = [ config.focusTrap.firstId, titleId ]
                         , lastIds = [ config.focusTrap.lastId ]
-                        , -- if the user tabs back while on the first id,
+                        , -- if the user tabs back while on the first id or the modal heading's id,
                           -- we want to wrap around to the last id.
                           tabBackAction = config.focusTrap.focus config.focusTrap.lastId
                         , -- if the user tabs forward while on the last id,
