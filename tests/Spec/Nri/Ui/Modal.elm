@@ -11,7 +11,7 @@ import Json.Encode as Encode
 import Nri.Ui.Modal.V11 as Modal
 import ProgramTest exposing (..)
 import SimulatedEffect.Cmd
-import Spec.KeyboardHelpers exposing (pressTabBackKey)
+import Spec.KeyboardHelpers exposing (pressTabBackKey, pressTabKey)
 import Task
 import Test exposing (..)
 import Test.Html.Event as Event
@@ -38,6 +38,20 @@ spec =
                 start
                     |> clickButton "Open Modal"
                     |> tabBackWithinModal Modal.titleId
+                    |> ensureLastEffect (Expect.equal (FocusOn lastButtonId))
+                    |> done
+        , test "focus wraps from the close button correctly" <|
+            \() ->
+                start
+                    |> clickButton "Open Modal"
+                    |> tabBackWithinModal Modal.closeButtonId
+                    |> ensureLastEffect (Expect.equal (FocusOn lastButtonId))
+                    |> done
+        , test "focus wraps from the last button correctly" <|
+            \() ->
+                start
+                    |> clickButton "Open Modal"
+                    |> tabForwardWithinModal lastButtonId
                     |> ensureLastEffect (Expect.equal (FocusOn Modal.closeButtonId))
                     |> done
         ]
@@ -45,9 +59,17 @@ spec =
 
 tabBackWithinModal : String -> ProgramTest a b c -> ProgramTest a b c
 tabBackWithinModal onElementId =
-    pressTabBackKey { targetDetails = [ ( "id", Encode.string onElementId ) ] }
-        [ attribute (Html.Attributes.attribute "data-testid" "focus-trap-node")
-        ]
+    pressTabBackKey { targetDetails = [ ( "id", Encode.string onElementId ) ] } focusTrapNode
+
+
+tabForwardWithinModal : String -> ProgramTest a b c -> ProgramTest a b c
+tabForwardWithinModal onElementId =
+    pressTabKey { targetDetails = [ ( "id", Encode.string onElementId ) ] } focusTrapNode
+
+
+focusTrapNode : List Selector
+focusTrapNode =
+    [ attribute (Html.Attributes.attribute "data-testid" "focus-trap-node") ]
 
 
 start : ProgramTest Modal.Model Msg Effect
@@ -129,17 +151,28 @@ view model =
             { title = modalTitle
             , wrapMsg = ModalMsg
             , content = [ Html.text "Modal Content" ]
-            , footer = []
+            , footer =
+                [ Html.button
+                    [ Attributes.id lastButtonId
+                    ]
+                    [ Html.text "Last Button"
+                    ]
+                ]
             , focusTrap =
                 { focus = Focus
                 , firstId = Modal.closeButtonId
-                , lastId = Modal.closeButtonId
+                , lastId = lastButtonId
                 }
             }
             [ Modal.closeButton
             ]
             model
         ]
+
+
+lastButtonId : String
+lastButtonId =
+    "last-button-id"
 
 
 modalTitle : String
