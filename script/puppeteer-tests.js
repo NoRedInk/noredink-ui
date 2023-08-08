@@ -78,7 +78,7 @@ describe("UI tests", function () {
 
   const defaultProcessing = async (name, location) => {
     await goTo(name, location);
-    if (waitForInitialAnimation[name]){
+    if (waitForInitialAnimation[name]) {
       await page.waitForTimeout(waitForInitialAnimation[name]);
     }
     await percySnapshot(page, name);
@@ -182,7 +182,7 @@ describe("UI tests", function () {
   const waitForInitialAnimation = {
     // animation-delay + animation-duration in Mark's labelState animations
     Block: 700,
-  }
+  };
 
   const specialProcessing = {
     Message: messageProcessing,
@@ -198,7 +198,7 @@ describe("UI tests", function () {
     page = await browser.newPage();
 
     await page.emulateMediaFeatures([
-      {name: 'prefers-reduced-motion', value: 'reduce'},
+      { name: "prefers-reduced-motion", value: "reduce" },
     ]);
 
     handlePageErrors(page);
@@ -224,7 +224,7 @@ describe("UI tests", function () {
     page = await browser.newPage();
 
     await page.emulateMediaFeatures([
-      {name: 'prefers-reduced-motion', value: 'reduce'},
+      { name: "prefers-reduced-motion", value: "reduce" },
     ]);
 
     handlePageErrors(page);
