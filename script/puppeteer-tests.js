@@ -180,8 +180,8 @@ describe("UI tests", function () {
   };
 
   const waitForInitialAnimation = {
-    // animation-delay + animation-duration in Mark's labelState animations
-    Block: 700,
+    // animation-duration in Mark's labelState animations
+    Block: 300,
   };
 
   const specialProcessing = {
