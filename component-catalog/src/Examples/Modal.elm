@@ -51,7 +51,7 @@ type alias ViewSettings =
     , theme : Maybe ( String, Modal.Attribute )
     , customCss : Maybe ( String, Modal.Attribute )
     , showX : Bool
-    , showContinue : Bool
+    , showFocusOnTitle : Bool
     , showSecondary : Bool
     , dismissOnEscAndOverlayClick : Bool
     , content : String
@@ -66,7 +66,7 @@ initViewSettings =
         |> Control.field "Theme" (Control.maybe False controlTheme)
         |> Control.field "Custom css" (Control.maybe False controlCss)
         |> Control.field "X button" (Control.bool True)
-        |> Control.field "Continue button" (Control.bool True)
+        |> Control.field "Focus on title button" (Control.bool True)
         |> Control.field "Close button" (Control.bool True)
         |> Control.field "dismissOnEscAndOverlayClick" (Control.bool True)
         |> Control.field "Content"
@@ -210,7 +210,7 @@ example =
                                     ++ (if settings.showX then
                                             Code.string Modal.closeButtonId
 
-                                        else if settings.showContinue then
+                                        else if settings.showFocusOnTitle then
                                             Code.string continueButtonId
 
                                         else
@@ -220,7 +220,7 @@ example =
                                     ++ (if settings.showSecondary then
                                             Code.string closeClickableTextId
 
-                                        else if settings.showContinue then
+                                        else if settings.showFocusOnTitle then
                                             Code.string continueButtonId
 
                                         else
@@ -253,8 +253,8 @@ example =
                 , content = [ viewModalContent settings.content ]
                 , footer =
                     List.filterMap identity
-                        [ if settings.showContinue then
-                            Just continueButton
+                        [ if settings.showFocusOnTitle then
+                            Just focusOnModalTitle
 
                           else
                             Nothing
@@ -270,7 +270,7 @@ example =
                         if settings.showX then
                             Modal.closeButtonId
 
-                        else if settings.showContinue then
+                        else if settings.showFocusOnTitle then
                             continueButtonId
 
                         else
@@ -279,7 +279,7 @@ example =
                         if settings.showSecondary then
                             closeClickableTextId
 
-                        else if settings.showContinue then
+                        else if settings.showFocusOnTitle then
                             continueButtonId
 
                         else
@@ -309,7 +309,7 @@ launchModalButton settings =
             "launch-modal"
 
         startFocusId =
-            if settings.showContinue then
+            if settings.showFocusOnTitle then
                 Just continueButtonId
 
             else if settings.showX then
@@ -351,10 +351,10 @@ continueButtonId =
     "continue-button-id"
 
 
-continueButton : Html Msg
-continueButton =
-    Button.button "Continue"
-        [ Button.onClick CloseModal
+focusOnModalTitle : Html Msg
+focusOnModalTitle =
+    Button.button "Focus on modal title"
+        [ Button.onClick (Focus Modal.titleId)
         , Button.id continueButtonId
         , Button.modal
         ]
