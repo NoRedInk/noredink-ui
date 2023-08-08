@@ -19,6 +19,11 @@ module Nri.Ui.Block.V5 exposing
   - adds customizable BlankLength
   - adds fullHeightBlank, insertLineBreakOpportunities
 
+
+## Patch changes
+
+  - adds `labelCss` attribute
+
 @docs view, Attribute
 
 

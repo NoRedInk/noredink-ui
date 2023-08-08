@@ -7,6 +7,11 @@ module Nri.Ui.Mark.V3 exposing
 
 {-|
 
+
+### Patch changes
+
+  - adds `labelCss` to `viewWithBalloonTags`
+
 @docs Mark
 @docs view, viewWithInlineTags, viewWithBalloonTags
 @docs viewWithOverlaps
