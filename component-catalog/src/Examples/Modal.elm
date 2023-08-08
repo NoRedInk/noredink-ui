@@ -6,7 +6,6 @@ module Examples.Modal exposing (Msg, State, example)
 
 -}
 
-import Accessibility.Styled exposing (Html, div, text)
 import Accessibility.Styled.Key as Key
 import Browser.Dom as Dom
 import Category exposing (Category(..))
@@ -15,7 +14,9 @@ import CommonControls
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
+import EventExtras exposing (onClickStopPropagation)
 import Example exposing (Example)
+import Html.Styled exposing (Html, div, text)
 import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport
 import Nri.Ui.Button.V10 as Button
@@ -298,6 +299,8 @@ example =
                     |> List.filterMap identity
                 )
                 state.state
+                |> List.singleton
+                |> div [ onClickStopPropagation SwallowEvent ]
             ]
     }
 
@@ -382,6 +385,7 @@ type Msg
     | UpdateSettings (Control ViewSettings)
     | Focus String
     | Focused (Result Dom.Error ())
+    | SwallowEvent
 
 
 {-| -}
@@ -429,6 +433,9 @@ update msg state =
             ( state, Task.attempt Focused (Dom.focus id) )
 
         Focused _ ->
+            ( state, Cmd.none )
+
+        SwallowEvent ->
             ( state, Cmd.none )
 
 
