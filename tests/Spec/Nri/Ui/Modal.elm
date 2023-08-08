@@ -7,6 +7,7 @@ import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Nri.Ui.Modal.V11 as Modal
 import ProgramTest exposing (..)
+import SimulatedEffect.Cmd
 import Task
 import Test exposing (..)
 import Test.Html.Selector exposing (..)
@@ -29,17 +30,18 @@ spec =
         ]
 
 
-start : ProgramTest Modal.Model Msg (Cmd Msg)
+start : ProgramTest Modal.Model Msg Effect
 start =
     ProgramTest.createElement
         { init = \_ -> init
         , view = toUnstyled << view
         , update = update
         }
+        |> ProgramTest.withSimulatedEffects perform
         |> ProgramTest.start ()
 
 
-init : ( Modal.Model, Cmd Msg )
+init : ( Modal.Model, Effect )
 init =
     let
         ( model, cmd ) =
@@ -52,7 +54,7 @@ init =
                 , returnFocusTo = "maincontent"
                 }
     in
-    ( model, Cmd.map ModalMsg cmd )
+    ( model, ModalEffect cmd )
 
 
 type Msg
@@ -62,7 +64,7 @@ type Msg
     | Focused (Result Dom.Error ())
 
 
-update : Msg -> Modal.Model -> ( Modal.Model, Cmd Msg )
+update : Msg -> Modal.Model -> ( Modal.Model, Effect )
 update msg model =
     case msg of
         OpenModal returnFocusTo ->
@@ -73,7 +75,7 @@ update msg model =
                         , returnFocusTo = returnFocusTo
                         }
             in
-            ( newModel, Cmd.map ModalMsg cmd )
+            ( newModel, ModalEffect cmd )
 
         ModalMsg modalMsg ->
             let
@@ -83,13 +85,32 @@ update msg model =
                         modalMsg
                         model
             in
-            ( newModel, Cmd.map ModalMsg cmd )
+            ( newModel, ModalEffect cmd )
 
         Focus id ->
-            ( model, Task.attempt Focused (Dom.focus id) )
+            ( model, FocusOn id )
 
         Focused _ ->
-            ( model, Cmd.none )
+            ( model, None )
+
+
+type Effect
+    = ModalEffect (Cmd Modal.Msg)
+    | FocusOn String
+    | None
+
+
+perform : Effect -> SimulatedEffect Msg
+perform effect =
+    case effect of
+        ModalEffect modalMsg ->
+            SimulatedEffect.Cmd.none
+
+        FocusOn id ->
+            SimulatedEffect.Cmd.none
+
+        None ->
+            SimulatedEffect.Cmd.none
 
 
 view : Modal.Model -> Html Msg
