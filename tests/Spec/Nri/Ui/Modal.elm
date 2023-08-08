@@ -33,28 +33,12 @@ spec =
 start : ProgramTest Modal.Model Msg Effect
 start =
     ProgramTest.createElement
-        { init = \_ -> init
+        { init = \_ -> ( Modal.init, None )
         , view = toUnstyled << view
         , update = update
         }
         |> ProgramTest.withSimulatedEffects perform
         |> ProgramTest.start ()
-
-
-init : ( Modal.Model, Effect )
-init =
-    let
-        ( model, cmd ) =
-            -- When we load the page with a modal already open, we should return
-            -- the focus someplace sensible when the modal closes.
-            -- [This article](https://developer.paciellogroup.com/blog/2018/06/the-current-state-of-modal-dialog-accessibility/) recommends
-            -- focusing the main or body.
-            Modal.open
-                { startFocusOn = Modal.closeButtonId
-                , returnFocusTo = "maincontent"
-                }
-    in
-    ( model, ModalEffect cmd )
 
 
 type Msg
