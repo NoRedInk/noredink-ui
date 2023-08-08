@@ -1,7 +1,6 @@
 module Spec.Nri.Ui.Modal exposing (spec)
 
 import Accessibility.Key as Key
-import Browser.Dom as Dom
 import Expect
 import Html.Attributes
 import Html.Styled as Html exposing (Html, toUnstyled)
@@ -12,10 +11,7 @@ import Nri.Ui.Modal.V11 as Modal
 import ProgramTest exposing (..)
 import SimulatedEffect.Cmd
 import Spec.KeyboardHelpers exposing (pressTabBackKey, pressTabKey)
-import Task
 import Test exposing (..)
-import Test.Html.Event as Event
-import Test.Html.Query as Query
 import Test.Html.Selector exposing (..)
 
 
@@ -87,7 +83,6 @@ type Msg
     = OpenModal String
     | ModalMsg Modal.Msg
     | Focus String
-    | Focused (Result Dom.Error ())
 
 
 update : Msg -> Modal.Model -> ( Modal.Model, Effect )
@@ -115,9 +110,6 @@ update msg model =
 
         Focus id ->
             ( model, FocusOn id )
-
-        Focused _ ->
-            ( model, None )
 
 
 type Effect
