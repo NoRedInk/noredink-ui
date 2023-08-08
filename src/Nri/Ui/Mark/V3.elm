@@ -177,6 +177,7 @@ viewWithBalloonTags :
     , maybeMarker : Maybe Mark
     , labelPosition : Maybe LabelPosition
     , labelState : LabelState
+    , labelCss : List Css.Style
     , labelId : Maybe String
     , labelContentId : Maybe String
     }
@@ -275,6 +276,7 @@ viewMarkedByBalloon :
         | backgroundColor : Color
         , labelState : LabelState
         , labelPosition : Maybe LabelPosition
+        , labelCss : List Css.Style
         , labelId : Maybe String
         , labelContentId : Maybe String
     }
@@ -491,6 +493,7 @@ viewBalloon :
         | backgroundColor : Color
         , labelState : LabelState
         , labelPosition : Maybe LabelPosition
+        , labelCss : List Css.Style
         , labelId : Maybe String
         , labelContentId : Maybe String
     }
@@ -541,6 +544,7 @@ viewBalloon config label =
                         , Css.property "animation-timing-function" "linear"
                         , Css.opacity Css.zero
                         ]
+            , Css.batch config.labelCss
             ]
         , Balloon.css
             [ Css.padding3 Css.zero (Css.px 6) (Css.px 1)
