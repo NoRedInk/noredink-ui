@@ -550,6 +550,7 @@ view config attrsList model =
                           -- we want to wrap around to the first id.
                           tabForwardAction = config.focusTrap.focus config.focusTrap.firstId
                         }
+                    , ExtraAttributes.testId "focus-trap-node"
                     , Attrs.css [ Css.position Css.relative, Css.zIndex (Css.int 100) ]
                     ]
 

@@ -2,14 +2,20 @@ module Spec.Nri.Ui.Modal exposing (spec)
 
 import Accessibility.Key as Key
 import Browser.Dom as Dom
+import Expect
+import Html.Attributes
 import Html.Styled as Html exposing (Html, toUnstyled)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
+import Json.Encode as Encode
 import Nri.Ui.Modal.V11 as Modal
 import ProgramTest exposing (..)
 import SimulatedEffect.Cmd
+import Spec.KeyboardHelpers exposing (pressTabBackKey)
 import Task
 import Test exposing (..)
+import Test.Html.Event as Event
+import Test.Html.Query as Query
 import Test.Html.Selector exposing (..)
 
 
@@ -27,17 +33,31 @@ spec =
                         , attribute (Key.tabbable False)
                         ]
                     |> done
+        , test "focus wraps from the modal title correctly" <|
+            \() ->
+                start
+                    |> clickButton "Open Modal"
+                    |> tabBackWithinModal Modal.titleId
+                    |> ensureLastEffect (Expect.equal (FocusOn Modal.closeButtonId))
+                    |> done
+        ]
+
+
+tabBackWithinModal : String -> ProgramTest a b c -> ProgramTest a b c
+tabBackWithinModal onElementId =
+    pressTabBackKey { targetDetails = [ ( "id", Encode.string onElementId ) ] }
+        [ attribute (Html.Attributes.attribute "data-testid" "focus-trap-node")
         ]
 
 
 start : ProgramTest Modal.Model Msg Effect
 start =
-    ProgramTest.createElement
+    createElement
         { init = \_ -> ( Modal.init, None )
         , view = toUnstyled << view
         , update = update
         }
-        |> ProgramTest.withSimulatedEffects perform
+        |> withSimulatedEffects perform
         |> ProgramTest.start ()
 
 
