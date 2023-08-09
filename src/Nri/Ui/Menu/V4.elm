@@ -14,6 +14,7 @@ module Nri.Ui.Menu.V4 exposing
 {-| Patch changes:
 
   - improve interoperability with Tooltip (Note that tooltip keyboard events are not fully supported!)
+  - Use Nri.Ui.WhenFocusLeaves.V2
 
 Changes from V3:
 
@@ -73,7 +74,7 @@ import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Tooltip.V3 as Tooltip
-import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
+import Nri.Ui.WhenFocusLeaves.V2 as WhenFocusLeaves
 
 
 {-| -}
@@ -419,8 +420,8 @@ viewCustom focusAndToggle config entries =
                                     }
                                 )
                             ]
-                            { firstId = config.buttonId
-                            , lastId = lastId
+                            { firstIds = [ config.buttonId ]
+                            , lastIds = [ lastId ]
                             , tabBackAction =
                                 focusAndToggle
                                     { isOpen = False
@@ -442,8 +443,8 @@ viewCustom focusAndToggle config entries =
                                     }
                                 )
                             ]
-                            { firstId = firstId
-                            , lastId = lastId
+                            { firstIds = [ firstId ]
+                            , lastIds = [ lastId ]
                             , tabBackAction =
                                 focusAndToggle
                                     { isOpen = True

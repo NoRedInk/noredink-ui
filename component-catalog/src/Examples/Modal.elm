@@ -6,7 +6,6 @@ module Examples.Modal exposing (Msg, State, example)
 
 -}
 
-import Accessibility.Styled exposing (Html, div, text)
 import Accessibility.Styled.Key as Key
 import Browser.Dom as Dom
 import Category exposing (Category(..))
@@ -15,7 +14,9 @@ import CommonControls
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
+import EventExtras exposing (onClickStopPropagation)
 import Example exposing (Example)
+import Html.Styled exposing (Html, div, text)
 import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport
 import Nri.Ui.Button.V10 as Button
@@ -51,7 +52,7 @@ type alias ViewSettings =
     , theme : Maybe ( String, Modal.Attribute )
     , customCss : Maybe ( String, Modal.Attribute )
     , showX : Bool
-    , showContinue : Bool
+    , showFocusOnTitle : Bool
     , showSecondary : Bool
     , dismissOnEscAndOverlayClick : Bool
     , content : String
@@ -66,7 +67,7 @@ initViewSettings =
         |> Control.field "Theme" (Control.maybe False controlTheme)
         |> Control.field "Custom css" (Control.maybe False controlCss)
         |> Control.field "X button" (Control.bool True)
-        |> Control.field "Continue button" (Control.bool True)
+        |> Control.field "Focus on title button" (Control.bool True)
         |> Control.field "Close button" (Control.bool True)
         |> Control.field "dismissOnEscAndOverlayClick" (Control.bool True)
         |> Control.field "Content"
@@ -210,7 +211,7 @@ example =
                                     ++ (if settings.showX then
                                             Code.string Modal.closeButtonId
 
-                                        else if settings.showContinue then
+                                        else if settings.showFocusOnTitle then
                                             Code.string continueButtonId
 
                                         else
@@ -220,7 +221,7 @@ example =
                                     ++ (if settings.showSecondary then
                                             Code.string closeClickableTextId
 
-                                        else if settings.showContinue then
+                                        else if settings.showFocusOnTitle then
                                             Code.string continueButtonId
 
                                         else
@@ -253,8 +254,8 @@ example =
                 , content = [ viewModalContent settings.content ]
                 , footer =
                     List.filterMap identity
-                        [ if settings.showContinue then
-                            Just continueButton
+                        [ if settings.showFocusOnTitle then
+                            Just focusOnModalTitle
 
                           else
                             Nothing
@@ -270,7 +271,7 @@ example =
                         if settings.showX then
                             Modal.closeButtonId
 
-                        else if settings.showContinue then
+                        else if settings.showFocusOnTitle then
                             continueButtonId
 
                         else
@@ -279,7 +280,7 @@ example =
                         if settings.showSecondary then
                             closeClickableTextId
 
-                        else if settings.showContinue then
+                        else if settings.showFocusOnTitle then
                             continueButtonId
 
                         else
@@ -298,6 +299,8 @@ example =
                     |> List.filterMap identity
                 )
                 state.state
+                |> List.singleton
+                |> div [ onClickStopPropagation SwallowEvent ]
             ]
     }
 
@@ -309,7 +312,7 @@ launchModalButton settings =
             "launch-modal"
 
         startFocusId =
-            if settings.showContinue then
+            if settings.showFocusOnTitle then
                 Just continueButtonId
 
             else if settings.showX then
@@ -351,10 +354,10 @@ continueButtonId =
     "continue-button-id"
 
 
-continueButton : Html Msg
-continueButton =
-    Button.button "Continue"
-        [ Button.onClick CloseModal
+focusOnModalTitle : Html Msg
+focusOnModalTitle =
+    Button.button "Focus on modal title"
+        [ Button.onClick (Focus Modal.titleId)
         , Button.id continueButtonId
         , Button.modal
         ]
@@ -382,6 +385,7 @@ type Msg
     | UpdateSettings (Control ViewSettings)
     | Focus String
     | Focused (Result Dom.Error ())
+    | SwallowEvent
 
 
 {-| -}
@@ -429,6 +433,9 @@ update msg state =
             ( state, Task.attempt Focused (Dom.focus id) )
 
         Focused _ ->
+            ( state, Cmd.none )
+
+        SwallowEvent ->
             ( state, Cmd.none )
 
 
