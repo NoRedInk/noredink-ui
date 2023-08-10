@@ -272,14 +272,15 @@ view { label, selected } attributes =
                     )
     in
     checkboxContainer config_
-        [ viewCheckbox config_
+        (viewCheckbox config_
             (if config.isDisabled then
                 ( disabledLabelCss, disabledIcon )
 
              else
                 ( enabledLabelCss, icon )
             )
-        ]
+            :: inputGuidance config_
+        )
 
 
 {-| If your selectedness is always selected or not selected,
@@ -411,13 +412,21 @@ viewCheckbox config ( styles, icon ) =
     in
     Html.div attributes
         [ viewIcon [] icon
-        , Html.span []
-            (viewLabel
-                :: InputErrorAndGuidanceInternal.view config.identifier
-                    (Css.marginTop Css.zero)
-                    config
-            )
+        , viewLabel
         ]
+
+
+inputGuidance :
+    { a
+        | identifier : String
+        , error : InputErrorAndGuidanceInternal.ErrorState
+        , guidance : Guidance msg
+    }
+    -> List (Html msg)
+inputGuidance config =
+    InputErrorAndGuidanceInternal.view config.identifier
+        (Css.marginTop Css.zero)
+        config
 
 
 textStyle : Style
