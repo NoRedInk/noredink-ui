@@ -698,16 +698,16 @@ viewBlank styles length =
             , Css.minWidth
                 (case length of
                     SingleCharacter ->
-                        Css.px 25
+                        Css.em 0.83
 
                     ShortWordPhrase ->
-                        Css.px 120
+                        Css.em 4
 
                     LongWordPhrase ->
-                        Css.px 200
+                        Css.em 6.66
 
                     CharacterCount characters ->
-                        Css.px (max 25 (characters * 15) |> toFloat)
+                        Css.em (max 0.83 (toFloat characters * 0.5))
                 )
             , Css.display Css.inlineBlock
             , Css.borderRadius (Css.px 4)

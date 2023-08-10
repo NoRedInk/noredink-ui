@@ -289,7 +289,7 @@ example =
                     { header = text "Example"
                     , view = \characters -> Block.view [ Block.content [ Block.fullHeightBlank (Block.CharacterCount characters) ] ]
                     , width = Css.auto
-                    , cellStyles = always []
+                    , cellStyles = always [ Css.fontSize (Css.px 30) ]
                     , sort = Nothing
                     }
                 , Table.custom
