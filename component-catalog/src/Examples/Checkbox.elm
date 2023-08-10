@@ -113,7 +113,7 @@ example =
                 [ Table.custom
                     { header = text "Attribute"
                     , view = .name >> text
-                    , width = Css.px 150
+                    , width = Css.pct 10
                     , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
                     , sort = Nothing
                     }
@@ -128,7 +128,7 @@ example =
                                 [ Checkbox.id (safeIdWithPrefix "guidance-and-error-example" name)
                                 , attribute
                                 ]
-                    , width = Css.px 150
+                    , width = Css.pct 50
                     , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
                     , sort = Nothing
                     }
