@@ -510,8 +510,7 @@ viewBalloon config label =
             , case config.labelPosition of
                 Nothing ->
                     Css.batch
-                        [ Css.property "animation-delay" "0.4s"
-                        , Css.property "animation-duration" "0.3s"
+                        [ Css.property "animation-duration" "0.3s"
                         , Css.property "animation-fill-mode" "backwards"
                         , Css.animationName fadeInKeyframes
                         , Css.property "animation-timing-function" "linear"
@@ -520,8 +519,7 @@ viewBalloon config label =
 
                 Just _ ->
                     Css.batch
-                        [ Css.property "animation-delay" "0.4s"
-                        , Css.property "animation-duration" "0.3s"
+                        [ Css.property "animation-duration" "0.3s"
                         , Css.property "animation-fill-mode" "forwards"
                         , Css.animationName fadeInKeyframes
                         , Css.property "animation-timing-function" "linear"

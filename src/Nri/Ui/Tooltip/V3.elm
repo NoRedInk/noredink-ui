@@ -32,6 +32,7 @@ module Nri.Ui.Tooltip.V3 exposing
   - use internal `Content` module
   - adds `paragraph` and `markdown` support
   - add partially-transparent white border around tooltips
+  - Use Nri.Ui.WhenFocusLeaves.V2
 
 Changes from V2:
 
@@ -97,7 +98,7 @@ import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 as MediaQuery exposing (mobileBreakpoint, narrowMobileBreakpoint, quizEngineBreakpoint)
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.UiIcon.V1 as UiIcon
-import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
+import Nri.Ui.WhenFocusLeaves.V2 as WhenFocusLeaves
 
 
 {-| -}
@@ -933,8 +934,8 @@ viewTooltip_ { trigger, id } tooltip =
                             ( [ Events.onMouseEnter (msg True)
                               , Events.onMouseLeave (msg False)
                               , WhenFocusLeaves.onKeyDown []
-                                    { firstId = triggerId
-                                    , lastId = Maybe.withDefault triggerId lastId
+                                    { firstIds = [ triggerId ]
+                                    , lastIds = [ Maybe.withDefault triggerId lastId ]
                                     , tabBackAction = msg False
                                     , tabForwardAction = msg False
                                     }
@@ -1086,14 +1087,14 @@ viewTooltip tooltipId config =
                     , applyTail narrowMobileDirection
                     ]
                  , Fonts.baseFont
-                 , Css.fontSize (Css.px 16)
+                 , Css.fontSize (Css.px 15)
                  , Css.fontWeight (Css.int 600)
                  , Css.color Colors.white
                  , Shadows.high
                  , Global.descendants
                     [ Global.a
-                        [ Css.textDecoration Css.underline
-                        , Css.color Colors.white
+                        [ Css.color Colors.white
+                        , Css.borderColor Colors.white
                         , Css.visited [ Css.color Colors.white ]
                         , Css.hover [ Css.color Colors.white ]
                         , Css.pseudoClass "focus-visible"

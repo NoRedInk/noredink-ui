@@ -214,6 +214,9 @@ hint = 'upgrade to V3'
 [forbidden."Nri.Ui.SideNav.V3"]
 hint = 'upgrade to V4'
 
+[forbidden."Nri.Ui.SideNav.V4"]
+hint = 'upgrade to V5'
+
 [forbidden."Nri.Ui.SortableTable.V2"]
 hint = 'upgrade to V3'
 
@@ -272,3 +275,6 @@ usages = ['component-catalog/../src/Nri/Ui/Menu/V1.elm']
 
 [forbidden."Nri.Ui.Tooltip.V2"]
 hint = 'upgrade to V3'
+
+[forbidden."Nri.Ui.WhenFocusLeaves.V1"]
+hint = 'upgrade to V2'

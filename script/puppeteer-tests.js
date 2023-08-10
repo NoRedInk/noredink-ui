@@ -78,6 +78,9 @@ describe("UI tests", function () {
 
   const defaultProcessing = async (name, location) => {
     await goTo(name, location);
+    if (waitForInitialAnimation[name]) {
+      await page.waitForTimeout(waitForInitialAnimation[name]);
+    }
     await percySnapshot(page, name);
 
     const results = await new AxePuppeteer(page)
@@ -171,13 +174,14 @@ describe("UI tests", function () {
   };
 
   const skippedRules = {
-    // See https://github.com/dequelabs/axe-core/issues/3649 -- we may be able to remove the Highlighter, Mark, and Block skipped rule
-    Highlighter: ["aria-roledescription"],
-    Block: ["aria-roledescription"],
-    QuestionBox: ["aria-roledescription"],
     // Loading's color contrast check seems to change behavior depending on whether Percy snapshots are taken or not
     Loading: ["color-contrast"],
     RadioButton: ["duplicate-id"],
+  };
+
+  const waitForInitialAnimation = {
+    // animation-duration in Mark's labelState animations
+    Block: 300,
   };
 
   const specialProcessing = {
@@ -192,6 +196,11 @@ describe("UI tests", function () {
 
   it("All", async function () {
     page = await browser.newPage();
+
+    await page.emulateMediaFeatures([
+      { name: "prefers-reduced-motion", value: "reduce" },
+    ]);
+
     handlePageErrors(page);
     await page.goto(`http://localhost:${PORT}`, { waitUntil: "load" });
     await page.$("#maincontent");
@@ -213,6 +222,11 @@ describe("UI tests", function () {
 
   it("Doodads", async function () {
     page = await browser.newPage();
+
+    await page.emulateMediaFeatures([
+      { name: "prefers-reduced-motion", value: "reduce" },
+    ]);
+
     handlePageErrors(page);
     await page.goto(`http://localhost:${PORT}`);
 
