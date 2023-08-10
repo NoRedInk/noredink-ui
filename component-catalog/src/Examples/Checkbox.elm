@@ -23,6 +23,7 @@ import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V7 as Table
 
@@ -119,12 +120,13 @@ example =
                 , Table.custom
                     { header = text "Example"
                     , view =
-                        \{ attribute } ->
+                        \{ name, attribute } ->
                             Checkbox.view
                                 { label = "I agree to the terms and conditions"
                                 , selected = Checkbox.NotSelected
                                 }
-                                [ attribute
+                                [ Checkbox.id (safeIdWithPrefix "guidance-and-error-example" name)
+                                , attribute
                                 ]
                     , width = Css.px 150
                     , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
