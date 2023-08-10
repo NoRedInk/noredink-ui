@@ -278,19 +278,19 @@ example =
                     ]
                 ]
             , Table.view []
-                [ Table.custom 
+                [ Table.custom
                     { header = text "Blank Width"
                     , view = String.fromInt >> text
                     , width = Css.px 125
                     , cellStyles = always []
-                    , sort = Nothing 
+                    , sort = Nothing
                     }
                 , Table.custom
                     { header = text "Example"
                     , view = \characters -> Block.view [ Block.content [ Block.fullHeightBlank (Block.CharacterCount characters) ] ]
                     , width = Css.auto
                     , cellStyles = always []
-                    , sort = Nothing 
+                    , sort = Nothing
                     }
                 , Table.custom
                     { header = text "Code"
