@@ -37,7 +37,12 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
-        [ ClickableText.link "Small"
+        [ ClickableText.link "Caption"
+            [ ClickableText.icon UiIcon.link
+            , ClickableText.caption
+            , ClickableText.custom [ Key.tabbable False ]
+            ]
+        , ClickableText.link "Small"
             [ ClickableText.icon UiIcon.link
             , ClickableText.small
             , ClickableText.custom [ Key.tabbable False ]
@@ -179,7 +184,10 @@ viewExamples ellieLinkConfig (State control) =
         [ Text.html
             [ text "Sometimes, we'll want our clickable links: "
             , ClickableText.link settings.label
-                (ClickableText.appearsInline :: ClickableText.small :: clickableAttributes)
+                (ClickableText.appearsInline
+                    :: ClickableText.small
+                    :: clickableAttributes
+                )
             , text " and clickable buttons: "
             , ClickableText.button settings.label
                 (ClickableText.appearsInline
@@ -196,7 +204,8 @@ viewExamples ellieLinkConfig (State control) =
 
 sizes : List ( ClickableText.Attribute msg, String )
 sizes =
-    [ ( ClickableText.small, "small" )
+    [ ( ClickableText.caption, "caption" )
+    , ( ClickableText.small, "small" )
     , ( ClickableText.medium, "medium" )
     , ( ClickableText.large, "large" )
     ]
