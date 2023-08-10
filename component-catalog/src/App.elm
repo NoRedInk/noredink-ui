@@ -21,7 +21,7 @@ import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Header.V1 as Header
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Page.V3 as Page
-import Nri.Ui.SideNav.V4 as SideNav
+import Nri.Ui.SideNav.V5 as SideNav
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Sprite.V1 as Sprite
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -413,12 +413,17 @@ navigation { moduleStates, route, isSideNavOpen, openTooltip } =
         , SideNav.navLabel "categories"
         , SideNav.navId "sidenav__categories"
         ]
-        (SideNav.entry "Style Guide"
-            [ SideNav.linkExternal "https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats--BhJHYronm1RGM1hRfnkvhrZMAg-PvOLxeX3oyujYEzdJx5pu"
-            ]
-            :: SideNav.entry "All" [ SideNav.href Routes.All ]
+        (SideNav.entry "All" [ SideNav.href Routes.All ]
             :: categoryNavLinks
-            ++ [ SideNav.entry "Additional Components" [ SideNav.linkExternal "https://www.noredink.com/assorted_components/" ]
+            ++ [ SideNav.compactGroup "Resources"
+                    []
+                    [ SideNav.entry "Style Guide"
+                        [ SideNav.linkExternal "https://paper.dropbox.com/doc/UI-Style-Guide-and-Caveats--BhJHYronm1RGM1hRfnkvhrZMAg-PvOLxeX3oyujYEzdJx5pu"
+                        ]
+                    , SideNav.entry "Additional Components"
+                        [ SideNav.linkExternal "https://www.noredink.com/assorted_components/"
+                        ]
+                    ]
                ]
         )
 

@@ -7,6 +7,7 @@ import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Menu.V4 as Menu
 import Nri.Ui.Tooltip.V3 as Tooltip
 import ProgramTest exposing (ProgramTest, ensureViewHas, ensureViewHasNot)
+import Spec.Helpers exposing (nriDescription)
 import Spec.KeyboardHelpers as KeyboardHelpers
 import Test exposing (..)
 import Test.Html.Event as Event
@@ -200,11 +201,6 @@ menuDialogContentSelector content =
     , Selector.classes [ "Content", "ContentVisible" ]
     , Selector.containing [ text content ]
     ]
-
-
-nriDescription : String -> Selector.Selector
-nriDescription desc =
-    Selector.attribute (Attributes.attribute "data-nri-description" desc)
 
 
 mouseEnter : List Selector.Selector -> ProgramTest model msg effect -> ProgramTest model msg effect
