@@ -106,7 +106,7 @@ example =
                     ]
                 )
             , Heading.h2
-                [ Heading.plaintext "Error and Guidance Examples"
+                [ Heading.plaintext "Guidance Examples"
                 , Heading.css [ Css.marginTop (Css.px 30) ]
                 ]
             , Table.view []
