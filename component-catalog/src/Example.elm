@@ -3,6 +3,7 @@ module Example exposing (Example, extraLinks, fullName, preview, view, wrapMsg, 
 import Accessibility.Styled.Aria as Aria
 import Category exposing (Category)
 import Css
+import Css.Media exposing (withMedia)
 import EllieLink
 import ExampleSection
 import Html.Styled as Html exposing (Html)
@@ -15,6 +16,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Header.V1 as Header
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Text.V6 as Text
 
 
@@ -155,8 +157,21 @@ view ellieLinkConfig example =
 
 view_ : EllieLink.Config -> Example state msg -> List (Html msg)
 view_ ellieLinkConfig example =
-    [ ExampleSection.section "About" viewAbout example.about
-    , KeyboardSupport.view example.keyboardSupport
+    [ Html.div
+        [ Attributes.css
+            [ Css.displayFlex
+            , Css.alignItems Css.stretch
+            , Css.flexWrap Css.wrap
+            , Css.property "gap" "10px"
+            , withMedia [ mobile ] [ Css.flexDirection Css.column, Css.alignItems Css.stretch ]
+            ]
+        ]
+        [ ExampleSection.sectionWithCss "About"
+            [ Css.flex (Css.int 1) ]
+            viewAbout
+            example.about
+        , KeyboardSupport.view example.keyboardSupport
+        ]
     , Html.div [ Attributes.css [ Css.marginBottom (Css.px 200) ] ]
         (example.view ellieLinkConfig example.state)
     ]

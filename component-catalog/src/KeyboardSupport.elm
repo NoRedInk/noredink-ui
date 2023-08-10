@@ -29,7 +29,9 @@ type alias KeyboardSupport =
 {-| -}
 view : List KeyboardSupport -> Html msg
 view =
-    ExampleSection.aside "Keyboard Support" viewKeyboardActionsDl
+    ExampleSection.asideWithCss "Keyboard Support"
+        [ flex (int 1) ]
+        viewKeyboardActionsDl
 
 
 viewKeyboardActionsDl : List KeyboardSupport -> Html msg

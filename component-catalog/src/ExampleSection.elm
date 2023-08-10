@@ -1,11 +1,11 @@
 module ExampleSection exposing
-    ( aside
+    ( asideWithCss
     , section, sectionWithCss
     )
 
 {-|
 
-@docs aside
+@docs asideWithCss
 @docs section, sectionWithCss
 
 -}
@@ -18,9 +18,9 @@ import Nri.Ui.Heading.V3 as Heading
 
 
 {-| -}
-aside : String -> (List item -> Html msg) -> List item -> Html msg
-aside title renderItems list =
-    container title (Html.Styled.aside []) renderItems list
+asideWithCss : String -> List Style -> (List item -> Html msg) -> List item -> Html msg
+asideWithCss title styles renderItems list =
+    container title (Html.Styled.aside [ css styles ]) renderItems list
 
 
 {-| -}
