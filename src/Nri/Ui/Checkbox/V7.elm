@@ -383,6 +383,7 @@ viewCheckbox config ( styles, icon ) =
                   , Role.checkBox
                   , Key.tabbable True
                   , Attributes.id config.identifier
+                  , InputErrorAndGuidanceInternal.describedBy config.identifier config
                   , Aria.checked (selectedToMaybe config.selected)
                   ]
                 , if config.disabled then
