@@ -4,6 +4,7 @@ import Accessibility.Styled.Aria as Aria
 import Category exposing (Category)
 import Css
 import EllieLink
+import ExampleSection
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -154,20 +155,17 @@ view ellieLinkConfig example =
 
 view_ : EllieLink.Config -> Example state msg -> List (Html msg)
 view_ ellieLinkConfig example =
-    (case example.about of
-        [] ->
-            []
+    [ ExampleSection.section "About" viewAbout example.about
+    , KeyboardSupport.view example.keyboardSupport
+    , Html.div [ Attributes.css [ Css.marginBottom (Css.px 200) ] ]
+        (example.view ellieLinkConfig example.state)
+    ]
 
-        _ ->
-            [ Heading.h2 [ Heading.plaintext "About" ]
-            , Text.mediumBody [ Text.html example.about ]
-                |> Html.map never
-            ]
-    )
-        ++ [ KeyboardSupport.view example.keyboardSupport
-           , Html.div [ Attributes.css [ Css.marginBottom (Css.px 200) ] ]
-                (example.view ellieLinkConfig example.state)
-           ]
+
+viewAbout : List (Html Never) -> Html msg
+viewAbout about =
+    Text.mediumBody [ Text.html about ]
+        |> Html.map never
 
 
 extraLinks : (msg -> msg2) -> Example state msg -> Header.Attribute route msg2

@@ -1,8 +1,8 @@
-module ExampleSection exposing (aside)
+module ExampleSection exposing (aside, section)
 
 {-|
 
-@docs aside
+@docs aside, section
 
 -}
 
@@ -14,6 +14,16 @@ import Nri.Ui.Heading.V3 as Heading
 {-| -}
 aside : String -> (List item -> Html msg) -> List item -> Html msg
 aside title renderItems list =
+    Html.Styled.aside [] [ container title renderItems list ]
+
+
+section : String -> (List item -> Html msg) -> List item -> Html msg
+section title renderItems list =
+    Html.Styled.section [] [ container title renderItems list ]
+
+
+container : String -> (List item -> Html msg) -> List item -> Html msg
+container title renderItems list =
     case list of
         [] ->
             text ""
@@ -25,5 +35,3 @@ aside title renderItems list =
                     , renderItems list
                     ]
                 ]
-                |> List.singleton
-                |> Html.Styled.aside []
