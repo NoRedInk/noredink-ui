@@ -12,6 +12,11 @@ module Nri.Ui.Checkbox.V7 exposing
 {-|
 
 
+## Patch changes:
+
+  - reposition the guidance to be right below the label text
+
+
 ## Changes from V6:
 
   - Reworked api similar to other components based on Attributes
