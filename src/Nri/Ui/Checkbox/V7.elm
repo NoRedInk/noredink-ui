@@ -272,15 +272,18 @@ view { label, selected } attributes =
                     )
     in
     checkboxContainer config_
-        (viewCheckbox config_
-            (if config.isDisabled then
-                ( disabledLabelCss, disabledIcon )
+        [ viewIcon [] icon
+        , span []
+            (viewCheckbox config_
+                (if config.isDisabled then
+                    ( disabledLabelCss, disabledIcon )
 
-             else
-                ( enabledLabelCss, icon )
+                 else
+                    ( enabledLabelCss, icon )
+                )
+                :: inputGuidance config_
             )
-            :: inputGuidance config_
-        )
+        ]
 
 
 {-| If your selectedness is always selected or not selected,
@@ -314,7 +317,8 @@ checkboxContainer : { a | identifier : String, containerCss : List Style } -> Li
 checkboxContainer model =
     Html.span
         [ css
-            [ display block
+            [ displayFlex
+            , alignItems center
             , marginLeft (px -4)
             , paddingTop (px 5)
             , paddingBottom (px 5)
@@ -411,8 +415,7 @@ viewCheckbox config ( styles, icon ) =
                 Html.text config.label
     in
     Html.div attributes
-        [ viewIcon [] icon
-        , viewLabel
+        [ viewLabel
         ]
 
 
