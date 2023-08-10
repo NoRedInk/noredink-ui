@@ -278,6 +278,36 @@ example =
                     ]
                 ]
             , Table.view []
+                [ Table.custom 
+                    { header = text "Blank Width"
+                    , view = String.fromInt >> text
+                    , width = Css.px 125
+                    , cellStyles = always []
+                    , sort = Nothing 
+                    }
+                , Table.custom
+                    { header = text "Example"
+                    , view = \characters -> Block.view [ Block.content [ Block.fullHeightBlank (Block.CharacterCount characters) ] ]
+                    , width = Css.auto
+                    , cellStyles = always []
+                    , sort = Nothing 
+                    }
+                , Table.custom
+                    { header = text "Code"
+                    , view = \characters -> code [] [ text <| "Block.view \n  [ Block.content \n    [ Block.fullHeightBlank (Block.CharacterCount " ++ String.fromInt characters ++ ") \n    ] \n  ]" ]
+                    , width = Css.px 500
+                    , cellStyles =
+                        always
+                            [ Css.padding2 (Css.px 14) (Css.px 7)
+                            , Css.verticalAlign Css.top
+                            , Css.fontSize (Css.px 12)
+                            , Css.whiteSpace Css.preWrap
+                            ]
+                    , sort = Nothing
+                    }
+                ]
+                [ 1, 2, 3, 4, 5, 6, 7, 8 ]
+            , Table.view []
                 [ Table.custom
                     { header = text "Pattern name & description"
                     , view = .description >> Markdown.toHtml Nothing >> List.map fromUnstyled >> div []

@@ -284,6 +284,7 @@ type BlankLength
     = SingleCharacter
     | ShortWordPhrase
     | LongWordPhrase
+    | CharacterCount Int
 
 
 type Markdown
@@ -704,6 +705,9 @@ viewBlank styles length =
 
                     LongWordPhrase ->
                         Css.px 200
+
+                    CharacterCount characters ->
+                        Css.px (max 25 (characters * 15) |> toFloat)
                 )
             , Css.display Css.inlineBlock
             , Css.borderRadius (Css.px 4)
