@@ -31,6 +31,8 @@ module Nri.Ui.Tooltip.V3 exposing
   - adds narrowMobileCss
   - use internal `Content` module
   - adds `paragraph` and `markdown` support
+  - add partially-transparent white border around tooltips
+  - Use Nri.Ui.WhenFocusLeaves.V2
 
 Changes from V2:
 
@@ -96,7 +98,7 @@ import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 as MediaQuery exposing (mobileBreakpoint, narrowMobileBreakpoint, quizEngineBreakpoint)
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.UiIcon.V1 as UiIcon
-import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
+import Nri.Ui.WhenFocusLeaves.V2 as WhenFocusLeaves
 
 
 {-| -}
@@ -932,8 +934,8 @@ viewTooltip_ { trigger, id } tooltip =
                             ( [ Events.onMouseEnter (msg True)
                               , Events.onMouseLeave (msg False)
                               , WhenFocusLeaves.onKeyDown []
-                                    { firstId = triggerId
-                                    , lastId = Maybe.withDefault triggerId lastId
+                                    { firstIds = [ triggerId ]
+                                    , lastIds = [ Maybe.withDefault triggerId lastId ]
                                     , tabBackAction = msg False
                                     , tabForwardAction = msg False
                                     }
@@ -1067,7 +1069,7 @@ viewTooltip tooltipId config =
                  , Css.position Css.absolute
                  , Css.zIndex (Css.int 100)
                  , Css.backgroundColor Colors.navy
-                 , Css.border3 (Css.px 1) Css.solid Colors.navy
+                 , Css.border3 (Css.px 1) Css.solid outlineColor
                  , MediaQuery.withViewport (Just mobileBreakpoint) Nothing <|
                     [ positioning config.direction config.alignment
                     , applyTail config.direction
@@ -1085,14 +1087,14 @@ viewTooltip tooltipId config =
                     , applyTail narrowMobileDirection
                     ]
                  , Fonts.baseFont
-                 , Css.fontSize (Css.px 16)
+                 , Css.fontSize (Css.px 15)
                  , Css.fontWeight (Css.int 600)
                  , Css.color Colors.white
                  , Shadows.high
                  , Global.descendants
                     [ Global.a
-                        [ Css.textDecoration Css.underline
-                        , Css.color Colors.white
+                        [ Css.color Colors.white
+                        , Css.borderColor Colors.white
                         , Css.visited [ Css.color Colors.white ]
                         , Css.hover [ Css.color Colors.white ]
                         , Css.pseudoClass "focus-visible"
@@ -1143,6 +1145,11 @@ tailSize =
 tooltipColor : Color
 tooltipColor =
     Colors.navy
+
+
+outlineColor : Color
+outlineColor =
+    Css.rgba 255 255 255 0.5
 
 
 offCenterOffset : Float
@@ -1338,7 +1345,7 @@ bottomTail : Style
 bottomTail =
     Css.batch
         [ Css.before
-            [ Css.borderTopColor tooltipColor
+            [ Css.borderTopColor outlineColor
             , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
             , Css.marginLeft (Css.px (-tailSize - 1))
             ]
@@ -1354,7 +1361,7 @@ topTail : Style
 topTail =
     Css.batch
         [ Css.before
-            [ Css.borderBottomColor tooltipColor
+            [ Css.borderBottomColor outlineColor
             , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
             , Css.marginLeft (Css.px (-tailSize - 1))
             ]
@@ -1370,7 +1377,7 @@ rightTail : Style
 rightTail =
     Css.batch
         [ Css.before
-            [ Css.borderLeftColor tooltipColor
+            [ Css.borderLeftColor outlineColor
             , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
             ]
         , Css.after
@@ -1386,7 +1393,7 @@ leftTail : Style
 leftTail =
     Css.batch
         [ Css.before
-            [ Css.borderRightColor tooltipColor
+            [ Css.borderRightColor outlineColor
             , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
             ]
         , Css.after

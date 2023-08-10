@@ -12,6 +12,11 @@ module Nri.Ui.Modal.V11 exposing
 {-|
 
 
+# TODO for next major version:
+
+  - remove use of FocusTrap type alias (not using the alias causes a major version change)
+
+
 # Patch changes:
 
   - adds `testId` helper
@@ -19,6 +24,7 @@ module Nri.Ui.Modal.V11 exposing
   - use `Shadows`
   - exposes `titleId`
   - makes the title programmatically focusable
+  - use WhenFocusLeaves directly, instead of using FocusTrap as an intermediary
 
 
 # Changes from V10:
@@ -175,12 +181,13 @@ import Html.Styled.Events exposing (onClick)
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.FocusTrap.V1 as FocusTrap exposing (FocusTrap)
+import Nri.Ui.FocusTrap.V1 exposing (FocusTrap)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.WhenFocusLeaves.V2 as WhenFocusLeaves
 import Task
 
 
@@ -532,7 +539,18 @@ view config attrsList model =
                 ]
                 |> List.singleton
                 |> Root.div
-                    [ FocusTrap.toAttribute config.focusTrap
+                    [ WhenFocusLeaves.onKeyDownPreventDefault
+                        []
+                        { firstIds = [ config.focusTrap.firstId, titleId ]
+                        , lastIds = [ config.focusTrap.lastId ]
+                        , -- if the user tabs back while on the first id or the modal heading's id,
+                          -- we want to wrap around to the last id.
+                          tabBackAction = config.focusTrap.focus config.focusTrap.lastId
+                        , -- if the user tabs forward while on the last id,
+                          -- we want to wrap around to the first id.
+                          tabForwardAction = config.focusTrap.focus config.focusTrap.firstId
+                        }
+                    , ExtraAttributes.testId "focus-trap-node"
                     , Attrs.css [ Css.position Css.relative, Css.zIndex (Css.int 100) ]
                     ]
 

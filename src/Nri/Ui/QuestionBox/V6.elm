@@ -256,7 +256,6 @@ viewContainer config =
                     , Css.borderBottom3 (Css.px 8) Css.solid shadowColor
                     ]
         , Css.width (Css.pct 100)
-        , Css.minHeight (Css.px 80)
         , Css.batch config.containerCss
         ]
         [ AttributesExtra.nriDescription "question-box-container"
@@ -277,6 +276,9 @@ viewContainer config =
             , Css.displayFlex
             , Css.property "gap" "30px"
             , Css.flexDirection Css.column
+
+            -- Approximately one line of text
+            , Css.minHeight (Css.px 53)
             , case config.theme of
                 Tip ->
                     Css.batch

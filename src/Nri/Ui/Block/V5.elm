@@ -9,6 +9,7 @@ module Nri.Ui.Block.V5 exposing
     , labelId, labelContentId
     , LabelPosition, getLabelPositions, labelPosition
     , LabelState(..), labelState
+    , labelCss
     , yellow, cyan, magenta, green, blue, purple, brown
     , insertLineBreakOpportunities
     )
@@ -17,6 +18,11 @@ module Nri.Ui.Block.V5 exposing
 
   - adds customizable BlankLength
   - adds fullHeightBlank, insertLineBreakOpportunities
+
+
+## Patch changes
+
+  - adds `labelCss` attribute
 
 @docs view, Attribute
 
@@ -43,6 +49,7 @@ You will need these helpers if you want to prevent label overlaps. (Which is to 
 @docs labelId, labelContentId
 @docs LabelPosition, getLabelPositions, labelPosition
 @docs LabelState, labelState
+@docs labelCss
 
 
 ### Visual customization
@@ -153,6 +160,13 @@ type LabelState
 labelState : LabelState -> Attribute msg
 labelState state =
     Attribute <| \config -> { config | labelState = state }
+
+
+{-| Use to set a block's label's CSS
+-}
+labelCss : List Css.Style -> Attribute msg
+labelCss css =
+    Attribute <| \config -> { config | labelCss = List.append config.labelCss css }
 
 
 {-| -}
@@ -618,6 +632,7 @@ defaultConfig =
     , labelId = Nothing
     , labelPosition = Nothing
     , labelState = Visible
+    , labelCss = []
     , theme = Yellow
     , emphasize = False
     , insertWbrAfterSpace = False
@@ -631,6 +646,7 @@ type alias Config msg =
     , labelId : Maybe String
     , labelPosition : Maybe LabelPosition
     , labelState : LabelState
+    , labelCss : List Css.Style
     , theme : Theme
     , emphasize : Bool
     , insertWbrAfterSpace : Bool
@@ -660,6 +676,7 @@ render config =
 
                     FadeOut ->
                         Mark.FadeOut
+            , labelCss = config.labelCss
             , labelId = config.labelId
             , labelContentId = Maybe.map labelContentId config.labelId
             }
