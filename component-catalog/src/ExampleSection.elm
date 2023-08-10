@@ -1,12 +1,18 @@
-module ExampleSection exposing (aside, section)
+module ExampleSection exposing
+    ( aside
+    , section, sectionWithCss
+    )
 
 {-|
 
-@docs aside, section
+@docs aside
+@docs section, sectionWithCss
 
 -}
 
+import Css exposing (Style)
 import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Heading.V3 as Heading
 
@@ -14,24 +20,39 @@ import Nri.Ui.Heading.V3 as Heading
 {-| -}
 aside : String -> (List item -> Html msg) -> List item -> Html msg
 aside title renderItems list =
-    Html.Styled.aside [] [ container title renderItems list ]
+    container title (Html.Styled.aside []) renderItems list
 
 
+{-| -}
 section : String -> (List item -> Html msg) -> List item -> Html msg
 section title renderItems list =
-    Html.Styled.section [] [ container title renderItems list ]
+    container title (Html.Styled.section []) renderItems list
 
 
-container : String -> (List item -> Html msg) -> List item -> Html msg
-container title renderItems list =
+{-| -}
+sectionWithCss : String -> List Style -> (List item -> Html msg) -> List item -> Html msg
+sectionWithCss title styles renderItems list =
+    container title (Html.Styled.section [ css styles ]) renderItems list
+
+
+container :
+    String
+    -> (List (Html msg) -> Html msg)
+    -> (List item -> Html msg)
+    -> List item
+    -> Html msg
+container title node renderItems list =
     case list of
         [] ->
             text ""
 
         _ ->
-            Container.view
-                [ Container.html
-                    [ Heading.h2 [ Heading.plaintext title ]
-                    , renderItems list
+            node
+                [ Container.view
+                    [ Container.html
+                        [ Heading.h2 [ Heading.plaintext title ]
+                        , renderItems list
+                        ]
+                    , Container.css [ Css.height (Css.pct 100) ]
                     ]
                 ]
