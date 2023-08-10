@@ -160,7 +160,7 @@ view_ ellieLinkConfig example =
 
         _ ->
             [ Heading.h2 [ Heading.plaintext "About" ]
-            , Text.mediumBody [ Text.html [ Html.p [] example.about ] ]
+            , Text.mediumBody [ Text.html example.about ]
                 |> Html.map never
             ]
     )
