@@ -14,6 +14,8 @@ module Nri.Ui.HighlighterToolbar.V3 exposing (view)
 ### Patch changes:
 
   - Ensure selected tool is clear in high contrast mode
+  - Remove focus rings from the tools on click
+  - Use safeId to generate valid HTML ids
 
 
 ### Changes from V1:
