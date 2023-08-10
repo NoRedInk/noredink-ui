@@ -272,16 +272,14 @@ view { label, selected } attributes =
                     )
     in
     checkboxContainer config_
-        ([ viewCheckbox config_
+        [ viewCheckbox config_
             (if config.isDisabled then
                 ( disabledLabelCss, disabledIcon )
 
              else
                 ( enabledLabelCss, icon )
             )
-         ]
-            ++ [ div [ css [ paddingLeft (px 40) ] ] (InputErrorAndGuidanceInternal.view config_.identifier (Css.marginTop Css.zero) config_) ]
-        )
+        ]
 
 
 {-| If your selectedness is always selected or not selected,
@@ -368,6 +366,8 @@ viewCheckbox :
         , label : String
         , hideLabel : Bool
         , labelCss : List Style
+        , error : InputErrorAndGuidanceInternal.ErrorState
+        , guidance : Guidance msg
     }
     ->
         ( List Style
@@ -399,10 +399,23 @@ viewCheckbox config ( styles, icon ) =
                             )
                         |> Maybe.withDefault []
                 ]
+
+        viewLabel =
+            if config.hideLabel then
+                Html.span Accessibility.Styled.Style.invisible
+                    [ Html.text config.label ]
+
+            else
+                Html.text config.label
     in
     Html.div attributes
         [ viewIcon [] icon
-        , labelView config
+        , Html.span []
+            (viewLabel
+                :: InputErrorAndGuidanceInternal.view config.identifier
+                    (Css.marginTop Css.zero)
+                    config
+            )
         ]
 
 
@@ -441,13 +454,3 @@ viewIcon styles icon =
             [ Nri.Ui.Svg.V1.toHtml (Nri.Ui.Svg.V1.withCss styles icon)
             ]
         ]
-
-
-labelView : { a | hideLabel : Bool, label : String } -> Html msg
-labelView config =
-    if config.hideLabel then
-        Html.span Accessibility.Styled.Style.invisible
-            [ Html.text config.label ]
-
-    else
-        Html.span [] [ Html.text config.label ]
