@@ -383,7 +383,12 @@ viewCheckbox config ( styles, icon ) =
     let
         attributes =
             List.concat
-                [ [ css (styles ++ config.labelCss)
+                [ [ css
+                        (paddingLeft (Css.px checkboxIconWidth)
+                            :: marginLeft (Css.px -checkboxIconWidth)
+                            :: styles
+                            ++ config.labelCss
+                        )
                   , Attributes.class FocusRing.customClass
                   , Role.checkBox
                   , Key.tabbable True
@@ -417,6 +422,11 @@ viewCheckbox config ( styles, icon ) =
     Html.div attributes
         [ viewLabel
         ]
+
+
+checkboxIconWidth : Float
+checkboxIconWidth =
+    40
 
 
 inputGuidance :
