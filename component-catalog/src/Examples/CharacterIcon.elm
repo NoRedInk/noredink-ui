@@ -70,15 +70,15 @@ all =
         ]
       )
     , ( "Flipped Headshots"
-      , [ ( "lindyHeadshot"
+      , [ ( "lindyHeadshotFlipped"
           , CharacterIcon.lindyHeadshotFlipped
           , [ Css.width (Css.px 96) ]
           )
-        , ( "salHeadshot"
+        , ( "salHeadshotFlipped"
           , CharacterIcon.salHeadshotFlipped
           , [ Css.width (Css.px 96) ]
           )
-        , ( "redHeadshot"
+        , ( "redHeadshotFlipped"
           , CharacterIcon.redHeadshotFlipped
           , [ Css.width (Css.px 96) ]
           )
