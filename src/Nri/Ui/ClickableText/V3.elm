@@ -505,7 +505,6 @@ viewContent config =
                 [ Attributes.css
                     [ Css.display Css.inlineFlex
                     , Css.alignItems Css.center
-                    , Css.property "line-height" "normal"
                     , Css.fontSize fontSize
                     ]
                 ]
