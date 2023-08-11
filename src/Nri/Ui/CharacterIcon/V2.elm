@@ -1161,29 +1161,34 @@ renderHeadshotFrame :
     , clippedSvg : Svg.Svg Never
     , secondaryPath : String
     , secondaryColor : Css.Color
+    , circleStyles : List Css.Style
+    , styles : List Css.Style
     }
     -> Svg.Svg Never
 renderHeadshotFrame config =
     Svg.g
         []
-        [ Svg.defs
-            []
-            [ Svg.path [ id (config.name ++ "_circle"), d config.primaryPath ] []
-            , Svg.path [ id (config.name ++ "_circleShadow"), d config.secondaryPath ] []
+        [ Svg.g [ css config.circleStyles ]
+            [ Svg.defs
+                []
+                [ Svg.path [ id (config.name ++ "_circle"), d config.primaryPath ] []
+                , Svg.path [ id (config.name ++ "_circleShadow"), d config.secondaryPath ] []
+                ]
+            , Svg.use [ xlinkHref ("#" ++ config.name ++ "_circle"), css [ Css.fill config.primaryColor ] ] []
+            , Svg.clipPath
+                [ id (config.name ++ "_circleClip") ]
+                [ Svg.use [ xlinkHref ("#" ++ config.name ++ "_circle") ] [] ]
             ]
-        , Svg.use [ xlinkHref ("#" ++ config.name ++ "_circle"), css [ Css.fill config.primaryColor ] ] []
-        , Svg.clipPath
-            [ id (config.name ++ "_circleClip") ]
-            [ Svg.use [ xlinkHref ("#" ++ config.name ++ "_circle") ] [] ]
         , Svg.g [ css [ Css.property "clip-path" ("url(#" ++ config.name ++ "_circleClip)") ] ]
-            [ config.clippedSvg
-            , Svg.use [ css [ Css.fill config.secondaryColor ], xlinkHref ("#" ++ config.name ++ "_circleShadow") ] []
-            ]
+            [ config.clippedSvg ]
+        , Svg.g
+            [ css [ Css.property "clip-path" ("url(#" ++ config.name ++ "_circleClip)"), Css.batch config.circleStyles ] ]
+            [ Svg.use [ css [ Css.fill config.secondaryColor ], xlinkHref ("#" ++ config.name ++ "_circleShadow") ] [] ]
         ]
 
 
-lindyHeadshot_ : List Css.Style -> Nri.Ui.Svg.V1.Svg
-lindyHeadshot_ styles =
+lindyHeadshot_ : List Css.Style -> List Css.Style -> Nri.Ui.Svg.V1.Svg
+lindyHeadshot_ circleStyles styles =
     let
         fill =
             lindyPalette.fill
@@ -1202,21 +1207,22 @@ lindyHeadshot_ styles =
                 , Css.property "stroke-miterlimit" "10"
                 ]
             ]
-            [ Svg.g
+            [ renderHeadshotFrame
+                { name = "lindyHeadshot"
+                , primaryPath = "M0 72.0356C0 55.4671 13.4315 42.0356 30 42.0356V42.0356C46.5685 42.0356 60 55.4671 60 72.0356V72.0356C60 88.6042 46.5685 102.036 30 102.036V102.036C13.4315 102.036 0 88.6042 0 72.0356V72.0356Z"
+                , primaryColor = Css.hex "EAF1F1"
+                , clippedSvg =
+                    -- Neck
+                    Svg.path [ css [ fill.body, stroke.medium ], d "M33.8917 148.356C30.4543 148.26 6.03934 149.127 2.31284 133.193C-0.192913 122.592 5.75021 116.36 11.5327 107.3C16.8012 99.0764 20.0137 92.4587 20.7847 89.4389C21.7806 85.5197 24.5433 50.407 24.5433 50.407C24.5433 50.407 24.19 42.4079 32.9601 41.9903C41.3768 41.5727 43.2722 47.9334 43.5613 51.9812C43.8826 56.0289 44.2038 83.4636 47.9625 91.5591C51.7211 99.6546 53.0703 102.032 57.7606 108.585C62.4508 115.139 66.5307 118.737 66.338 127.796C65.9525 147.939 38.8711 148.517 33.8917 148.356Z" ] []
+                , secondaryPath = "M0 42.0356H60H0ZM62.5 73.2856C62.5 90.5445 48.5089 104.536 31.25 104.536C13.9911 104.536 0 90.5445 0 73.2856V72.0356C0 87.2235 13.4315 99.5356 30 99.5356C45.1878 99.5356 57.5 87.2235 57.5 72.0356L62.5 73.2856ZM0 102.036V42.0356V102.036ZM31.25 42.0356C48.5089 42.0356 62.5 56.0267 62.5 73.2856C62.5 90.5445 48.5089 104.536 31.25 104.536L30 99.5356C45.1878 99.5356 57.5 87.2235 57.5 72.0356C57.5 55.4671 45.1878 42.0356 30 42.0356H31.25Z"
+                , secondaryColor = Css.hex "95B7B7"
+                , circleStyles = circleStyles
+                , styles = styles
+                }
+            , Svg.g
                 [ css styles ]
-                [ renderHeadshotFrame
-                    { name = "lindyHeadshot"
-                    , primaryPath = "M0 72.0356C0 55.4671 13.4315 42.0356 30 42.0356V42.0356C46.5685 42.0356 60 55.4671 60 72.0356V72.0356C60 88.6042 46.5685 102.036 30 102.036V102.036C13.4315 102.036 0 88.6042 0 72.0356V72.0356Z"
-                    , primaryColor = Css.hex "EAF1F1"
-                    , clippedSvg =
-                        -- Neck
-                        Svg.path [ css [ fill.body, stroke.medium ], d "M33.8917 148.356C30.4543 148.26 6.03934 149.127 2.31284 133.193C-0.192913 122.592 5.75021 116.36 11.5327 107.3C16.8012 99.0764 20.0137 92.4587 20.7847 89.4389C21.7806 85.5197 24.5433 50.407 24.5433 50.407C24.5433 50.407 24.19 42.4079 32.9601 41.9903C41.3768 41.5727 43.2722 47.9334 43.5613 51.9812C43.8826 56.0289 44.2038 83.4636 47.9625 91.5591C51.7211 99.6546 53.0703 102.032 57.7606 108.585C62.4508 115.139 66.5307 118.737 66.338 127.796C65.9525 147.939 38.8711 148.517 33.8917 148.356Z" ] []
-                    , secondaryPath = "M0 42.0356H60H0ZM62.5 73.2856C62.5 90.5445 48.5089 104.536 31.25 104.536C13.9911 104.536 0 90.5445 0 73.2856V72.0356C0 87.2235 13.4315 99.5356 30 99.5356C45.1878 99.5356 57.5 87.2235 57.5 72.0356L62.5 73.2856ZM0 102.036V42.0356V102.036ZM31.25 42.0356C48.5089 42.0356 62.5 56.0267 62.5 73.2856C62.5 90.5445 48.5089 104.536 31.25 104.536L30 99.5356C45.1878 99.5356 57.5 87.2235 57.5 72.0356C57.5 55.4671 45.1878 42.0356 30 42.0356H31.25Z"
-                    , secondaryColor = Css.hex "95B7B7"
-                    }
-
-                -- Head
-                , Svg.path [ css [ fill.head, stroke.medium ], d "M40.7022 52.1421H26.2459C22.7764 52.1421 19.9815 49.3472 19.9815 45.8777L19.2748 32.4494C19.2748 28.9799 22.0697 26.1851 25.5392 26.1851H41.6338C45.1033 26.1851 47.8982 28.9799 47.8982 32.4494L46.9665 45.8777C46.9665 49.3151 44.1717 52.1421 40.7022 52.1421Z" ] []
+                [ -- Head
+                  Svg.path [ css [ fill.head, stroke.medium ], d "M40.7022 52.1421H26.2459C22.7764 52.1421 19.9815 49.3472 19.9815 45.8777L19.2748 32.4494C19.2748 28.9799 22.0697 26.1851 25.5392 26.1851H41.6338C45.1033 26.1851 47.8982 28.9799 47.8982 32.4494L46.9665 45.8777C46.9665 49.3151 44.1717 52.1421 40.7022 52.1421Z" ] []
 
                 -- Neck Cover
                 , Svg.path [ css [ fill.head ], d "M24.6718 50.0541V60.6874L41.955 61.7154L41.1519 47.6125L24.6718 50.0541Z" ] []
@@ -1282,13 +1288,13 @@ lindyHeadshot_ styles =
 {-| -}
 lindyHeadshot : Nri.Ui.Svg.V1.Svg
 lindyHeadshot =
-    lindyHeadshot_ []
+    lindyHeadshot_ [] []
 
 
 {-| -}
 lindyHeadshotFlipped : Nri.Ui.Svg.V1.Svg
 lindyHeadshotFlipped =
-    lindyHeadshot_ [ Css.transforms [ Css.scaleX -1, Css.translate (Css.pct -110) ] ]
+    lindyHeadshot_ [ Css.transforms [ Css.scaleX -1, Css.translate (Css.pct -100) ] ] [ Css.transforms [ Css.scaleX -1, Css.translate (Css.pct -110) ] ]
 
 
 redPalette =
@@ -1364,6 +1370,8 @@ redHeadshot =
                     ]
             , secondaryPath = "M0 43.1428H60H0ZM62.5 74.3928C62.5 91.6517 48.5089 105.643 31.25 105.643C13.9911 105.643 0 91.6517 0 74.3928V73.1428C0 88.3307 13.4315 100.643 30 100.643C45.1878 100.643 57.5 88.3307 57.5 73.1428L62.5 74.3928ZM0 103.143V43.1428V103.143ZM31.25 43.1428C48.5089 43.1428 62.5 57.1339 62.5 74.3928C62.5 91.6517 48.5089 105.643 31.25 105.643L30 100.643C45.1878 100.643 57.5 88.3307 57.5 73.1428C57.5 56.5743 45.1878 43.1428 30 43.1428H31.25Z"
             , secondaryColor = Css.hex "822D19"
+            , circleStyles = []
+            , styles = []
             }
 
         -- Ears
@@ -1524,6 +1532,8 @@ salHeadshot_ styles =
                         ]
                 , secondaryPath = "M0 42.1785H60H0ZM62.5 73.4285C62.5 90.6874 48.5089 104.678 31.25 104.678C13.9911 104.678 0 90.6874 0 73.4285V72.1785C0 87.3663 13.4315 99.6785 30 99.6785C45.1878 99.6785 57.5 87.3663 57.5 72.1785L62.5 73.4285ZM0 102.178V42.1785V102.178ZM31.25 42.1785C48.5089 42.1785 62.5 56.1696 62.5 73.4285C62.5 90.6874 48.5089 104.678 31.25 104.678L30 99.6785C45.1878 99.6785 57.5 87.3663 57.5 72.1785C57.5 55.6099 45.1878 42.1785 30 42.1785H31.25Z"
                 , secondaryColor = Css.hex "F6C477"
+                , circleStyles = []
+                , styles = styles
                 }
 
             -- Head
