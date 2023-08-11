@@ -349,18 +349,14 @@ onCheckMsg selected msg =
 
 enabledLabelCss : List Style
 enabledLabelCss =
-    [ displayFlex
-    , Css.alignItems Css.center
-    , textStyle
+    [ textStyle
     , cursor pointer
     ]
 
 
 disabledLabelCss : List Style
 disabledLabelCss =
-    [ displayFlex
-    , Css.alignItems Css.center
-    , textStyle
+    [ textStyle
     , Css.outline3 (Css.px 2) Css.solid Css.transparent
     , cursor auto
     , color Colors.gray45
