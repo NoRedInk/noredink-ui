@@ -69,17 +69,17 @@ all =
           )
         ]
       )
-    , ( "Flipped Headshots"
-      , [ ( "lindyHeadshotFlipped"
-          , CharacterIcon.lindyHeadshotFlipped
+    , ( "Headshots facing right"
+      , [ ( "lindyHeadshotFacingRight"
+          , CharacterIcon.lindyHeadshotFacingRight
           , [ Css.width (Css.px 96) ]
           )
-        , ( "salHeadshotFlipped"
-          , CharacterIcon.salHeadshotFlipped
+        , ( "salHeadshotFacingRight"
+          , CharacterIcon.salHeadshotFacingRight
           , [ Css.width (Css.px 96) ]
           )
-        , ( "redHeadshotFlipped"
-          , CharacterIcon.redHeadshotFlipped
+        , ( "redHeadshotFacingRight"
+          , CharacterIcon.redHeadshotFacingRight
           , [ Css.width (Css.px 96) ]
           )
         ]
