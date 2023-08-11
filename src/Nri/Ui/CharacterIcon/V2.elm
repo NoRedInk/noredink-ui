@@ -1161,14 +1161,13 @@ renderHeadshotFrame :
     , clippedSvg : Svg.Svg Never
     , secondaryPath : String
     , secondaryColor : Css.Color
-    , circleStyles : List Css.Style
-    , styles : List Css.Style
+    , circleFlipStyles : List Css.Style
     }
     -> Svg.Svg Never
 renderHeadshotFrame config =
     Svg.g
         []
-        [ Svg.g [ css config.circleStyles ]
+        [ Svg.g [ css config.circleFlipStyles ]
             [ Svg.defs
                 []
                 [ Svg.path [ id (config.name ++ "_circle"), d config.primaryPath ] []
@@ -1182,13 +1181,13 @@ renderHeadshotFrame config =
         , Svg.g [ css [ Css.property "clip-path" ("url(#" ++ config.name ++ "_circleClip)") ] ]
             [ config.clippedSvg ]
         , Svg.g
-            [ css [ Css.property "clip-path" ("url(#" ++ config.name ++ "_circleClip)"), Css.batch config.circleStyles ] ]
+            [ css [ Css.property "clip-path" ("url(#" ++ config.name ++ "_circleClip)"), Css.batch config.circleFlipStyles ] ]
             [ Svg.use [ css [ Css.fill config.secondaryColor ], xlinkHref ("#" ++ config.name ++ "_circleShadow") ] [] ]
         ]
 
 
 lindyHeadshot_ : String -> List Css.Style -> List Css.Style -> Nri.Ui.Svg.V1.Svg
-lindyHeadshot_ name circleStyles styles =
+lindyHeadshot_ name circleFlipStyles flipStyles =
     let
         fill =
             lindyPalette.fill
@@ -1216,11 +1215,10 @@ lindyHeadshot_ name circleStyles styles =
                     Svg.path [ css [ fill.body, stroke.medium ], d "M33.8917 148.356C30.4543 148.26 6.03934 149.127 2.31284 133.193C-0.192913 122.592 5.75021 116.36 11.5327 107.3C16.8012 99.0764 20.0137 92.4587 20.7847 89.4389C21.7806 85.5197 24.5433 50.407 24.5433 50.407C24.5433 50.407 24.19 42.4079 32.9601 41.9903C41.3768 41.5727 43.2722 47.9334 43.5613 51.9812C43.8826 56.0289 44.2038 83.4636 47.9625 91.5591C51.7211 99.6546 53.0703 102.032 57.7606 108.585C62.4508 115.139 66.5307 118.737 66.338 127.796C65.9525 147.939 38.8711 148.517 33.8917 148.356Z" ] []
                 , secondaryPath = "M0 42.0356H60H0ZM62.5 73.2856C62.5 90.5445 48.5089 104.536 31.25 104.536C13.9911 104.536 0 90.5445 0 73.2856V72.0356C0 87.2235 13.4315 99.5356 30 99.5356C45.1878 99.5356 57.5 87.2235 57.5 72.0356L62.5 73.2856ZM0 102.036V42.0356V102.036ZM31.25 42.0356C48.5089 42.0356 62.5 56.0267 62.5 73.2856C62.5 90.5445 48.5089 104.536 31.25 104.536L30 99.5356C45.1878 99.5356 57.5 87.2235 57.5 72.0356C57.5 55.4671 45.1878 42.0356 30 42.0356H31.25Z"
                 , secondaryColor = Css.hex "95B7B7"
-                , circleStyles = circleStyles
-                , styles = styles
+                , circleFlipStyles = circleFlipStyles
                 }
             , Svg.g
-                [ css styles ]
+                [ css flipStyles ]
                 [ -- Head
                   Svg.path [ css [ fill.head, stroke.medium ], d "M40.7022 52.1421H26.2459C22.7764 52.1421 19.9815 49.3472 19.9815 45.8777L19.2748 32.4494C19.2748 28.9799 22.0697 26.1851 25.5392 26.1851H41.6338C45.1033 26.1851 47.8982 28.9799 47.8982 32.4494L46.9665 45.8777C46.9665 49.3151 44.1717 52.1421 40.7022 52.1421Z" ] []
 
@@ -1324,7 +1322,7 @@ redPalette =
 
 {-| -}
 redHeadshot_ : String -> List Css.Style -> Nri.Ui.Svg.V1.Svg
-redHeadshot_ name styles =
+redHeadshot_ name flipStyles =
     let
         fill =
             redPalette.fill
@@ -1338,11 +1336,11 @@ redHeadshot_ name styles =
             }
     in
     Nri.Ui.Svg.V1.init "0 0 60 104"
-        [ Svg.g [ css styles ]
+        [ Svg.g [ css flipStyles ]
             [ Svg.defs
                 []
                 [ Svg.g
-                    [ id (name ++ "_ears" ), css [ Css.property "stroke-width" "0.81875" ] ]
+                    [ id (name ++ "_ears"), css [ Css.property "stroke-width" "0.81875" ] ]
                     [ Svg.path [ d "M23.4007 41.9574C23.4007 41.9574 23.7132 37.2386 19.6507 30.8949C15.9944 25.1449 12.2757 23.9886 9.83819 26.8011C8.65069 28.1761 4.93194 34.7699 2.77569 43.2386C0.775691 51.1136 0.525691 58.7699 0.431941 60.7074C0.275691 64.4574 23.4007 41.9574 23.4007 41.9574Z" ] []
                     , Svg.path [ d "M36.9944 42.0199C36.9944 42.0199 37.2756 37.3011 42.0569 31.4886C46.4006 26.2386 50.2131 25.5511 52.3069 28.6136C53.3381 30.1136 56.1819 37.1136 57.3069 45.7699C58.3381 53.8324 57.6194 61.4574 57.4944 63.3949C57.2131 67.1761 36.9944 42.0199 36.9944 42.0199Z" ] []
                     ]
@@ -1371,8 +1369,7 @@ redHeadshot_ name styles =
                         ]
                 , secondaryPath = "M0 43.1428H60H0ZM62.5 74.3928C62.5 91.6517 48.5089 105.643 31.25 105.643C13.9911 105.643 0 91.6517 0 74.3928V73.1428C0 88.3307 13.4315 100.643 30 100.643C45.1878 100.643 57.5 88.3307 57.5 73.1428L62.5 74.3928ZM0 103.143V43.1428V103.143ZM31.25 43.1428C48.5089 43.1428 62.5 57.1339 62.5 74.3928C62.5 91.6517 48.5089 105.643 31.25 105.643L30 100.643C45.1878 100.643 57.5 88.3307 57.5 73.1428C57.5 56.5743 45.1878 43.1428 30 43.1428H31.25Z"
                 , secondaryColor = Css.hex "822D19"
-                , circleStyles = []
-                , styles = []
+                , circleFlipStyles = []
                 }
 
             -- Ears
@@ -1500,7 +1497,7 @@ salPalette =
 
 
 salHeadshot_ : String -> List Css.Style -> Nri.Ui.Svg.V1.Svg
-salHeadshot_ name styles =
+salHeadshot_ name flipStyles =
     let
         blankStroke x =
             Css.property "stroke-width" (String.fromFloat x)
@@ -1516,7 +1513,7 @@ salHeadshot_ name styles =
     in
     Nri.Ui.Svg.V1.init "0 0 60 103"
         [ Svg.g
-            [ css styles ]
+            [ css flipStyles ]
             [ Svg.defs
                 []
                 [ Svg.path
@@ -1546,8 +1543,7 @@ salHeadshot_ name styles =
                         ]
                 , secondaryPath = "M0 42.1785H60H0ZM62.5 73.4285C62.5 90.6874 48.5089 104.678 31.25 104.678C13.9911 104.678 0 90.6874 0 73.4285V72.1785C0 87.3663 13.4315 99.6785 30 99.6785C45.1878 99.6785 57.5 87.3663 57.5 72.1785L62.5 73.4285ZM0 102.178V42.1785V102.178ZM31.25 42.1785C48.5089 42.1785 62.5 56.1696 62.5 73.4285C62.5 90.6874 48.5089 104.678 31.25 104.678L30 99.6785C45.1878 99.6785 57.5 87.3663 57.5 72.1785C57.5 55.6099 45.1878 42.1785 30 42.1785H31.25Z"
                 , secondaryColor = Css.hex "F6C477"
-                , circleStyles = []
-                , styles = styles
+                , circleFlipStyles = []
                 }
 
             -- Head
