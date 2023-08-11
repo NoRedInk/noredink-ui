@@ -148,9 +148,6 @@ viewExamples ellieLinkConfig (State control) =
     let
         settings =
             Control.currentValue control
-
-        clickableAttributes =
-            List.map Tuple.second settings.attributes
     in
     [ ControlView.view
         { ellieLinkConfig = ellieLinkConfig
