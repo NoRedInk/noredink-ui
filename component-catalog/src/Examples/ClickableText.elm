@@ -19,6 +19,7 @@ import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -180,26 +181,48 @@ viewExamples ellieLinkConfig (State control) =
                 ]
         }
     , buttons settings
-    , Text.smallBody
-        [ Text.html
-            [ text "Sometimes, we'll want our clickable links: "
-            , ClickableText.link settings.label
-                (ClickableText.appearsInline
-                    :: ClickableText.small
-                    :: clickableAttributes
-                )
-            , text " and clickable buttons: "
-            , ClickableText.button settings.label
-                (ClickableText.appearsInline
-                    :: ClickableText.small
-                    :: ClickableText.onClick (ShowItWorked moduleName "in-line button")
-                    :: clickableAttributes
-                )
-            , text " to show up in-line."
-            ]
+    , Heading.h2
+        [ Heading.plaintext "Inline ClickableTexts"
+        , Heading.css [ Css.marginTop (Css.px 30) ]
         ]
+    , Text.caption (inlineExample "Text.caption" ClickableText.caption)
+    , Text.smallBody (inlineExample "Text.smallBody" ClickableText.small)
+    , Text.mediumBody (inlineExample "Text.mediumBody" ClickableText.medium)
     ]
         |> div []
+
+
+inlineExample : String -> ClickableText.Attribute Msg -> List (Text.Attribute Msg)
+inlineExample textSizeName size =
+    [ Text.html
+        [ text "Sometimes, we'll want our "
+        , ClickableText.link "internal links"
+            [ ClickableText.appearsInline
+            , size
+            , ClickableText.href "/"
+            ]
+        , text ", "
+        , ClickableText.link "external links"
+            [ ClickableText.appearsInline
+            , size
+            , ClickableText.linkExternal "https://www.google.com/search?q=puppies"
+            ]
+        , text ", "
+        , ClickableText.button "buttons"
+            [ ClickableText.appearsInline
+            , size
+            , ClickableText.onClick (ShowItWorked moduleName "in-line button")
+            ]
+        , text " and "
+        , ClickableText.button "ClickableTexts with icons"
+            [ ClickableText.appearsInline
+            , size
+            , ClickableText.onClick (ShowItWorked moduleName "in-line button")
+            , ClickableText.icon UiIcon.star
+            ]
+        , text (" to show up in-line with " ++ textSizeName ++ " content.")
+        ]
+    ]
 
 
 sizes : List ( ClickableText.Attribute msg, String )
