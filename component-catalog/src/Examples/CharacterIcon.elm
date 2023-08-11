@@ -69,6 +69,21 @@ all =
           )
         ]
       )
+    , ( "Flipped Headshots"
+      , [ ( "lindyHeadshot"
+          , CharacterIcon.lindyHeadshotFlipped
+          , [ Css.width (Css.px 96) ]
+          )
+        , ( "salHeadshot"
+          , CharacterIcon.salHeadshot
+          , [ Css.width (Css.px 96) ]
+          )
+        , ( "redHeadshot"
+          , CharacterIcon.redHeadshot
+          , [ Css.width (Css.px 96) ]
+          )
+        ]
+      )
     , ( "Instructive"
       , [ ( "lindyInstructive"
           , CharacterIcon.lindyInstructive
