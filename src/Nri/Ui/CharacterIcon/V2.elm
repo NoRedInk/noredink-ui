@@ -1615,4 +1615,4 @@ salHeadshot =
 {-| -}
 salHeadshotFlipped : Nri.Ui.Svg.V1.Svg
 salHeadshotFlipped =
-    salHeadshot_ [ Css.transforms [ Css.scaleX -1, Css.translate (Css.pct -110) ] ]
+    salHeadshot_ [ Css.transforms [ Css.scaleX -1, Css.translate (Css.pct -100) ] ]
