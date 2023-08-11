@@ -12,6 +12,7 @@ import Css.Media exposing (withMedia)
 import Debug.Control as Control exposing (Control)
 import EllieLink
 import Example
+import ExampleSection
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Fonts.V1 as Fonts
@@ -49,6 +50,7 @@ view config =
     div
         [ css
             [ displayFlex
+            , alignItems stretch
             , Css.flexWrap Css.wrap
             , Css.property "gap" "10px"
             , withMedia [ mobile ] [ flexDirection column, alignItems stretch ]
@@ -56,8 +58,15 @@ view config =
             ]
         ]
         [ viewSection "Settings"
-            [ Css.Global.descendants [ Css.Global.everything [ Fonts.baseFont ] ] ]
-            [ fromUnstyled (Control.view config.update config.settings) ]
+            [ div
+                [ css
+                    [ Css.Global.descendants
+                        [ Css.Global.everything [ Fonts.baseFont ]
+                        ]
+                    ]
+                ]
+                [ fromUnstyled (Control.view config.update config.settings) ]
+            ]
         , viewIf
             (\_ -> viewExampleCode ellieLink config exampleCodes)
             (not (List.isEmpty exampleCodes))
@@ -77,7 +86,7 @@ viewExampleCode :
     -> List { sectionName : String, code : String }
     -> Html msg
 viewExampleCode ellieLink component values =
-    viewSection "Code Sample" [] <|
+    viewSection "Code Sample" <|
         Text.smallBodyGray
             [ Text.plaintext "😎 Configure the \"Settings\" on this page to update the code sample, then paste it into your editor!"
             ]
@@ -114,10 +123,6 @@ viewExampleCode ellieLink component values =
                 values
 
 
-viewSection : String -> List Css.Style -> List (Html msg) -> Html msg
-viewSection name styles children =
-    section
-        [ css (flex (int 1) :: styles) ]
-        (Heading.h2 [ Heading.plaintext name ]
-            :: children
-        )
+viewSection : String -> List (Html msg) -> Html msg
+viewSection name =
+    ExampleSection.sectionWithCss name [ flex (int 1) ] (div [])

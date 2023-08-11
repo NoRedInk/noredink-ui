@@ -52,6 +52,7 @@ example =
         , ( "mustard", Colors.mustard )
         ]
             |> List.map viewPreviewSwatch
+    , about = []
     , view =
         \ellieLinkConfig _ ->
             [ Heading.h2 [ Heading.plaintext "General Colors" ]

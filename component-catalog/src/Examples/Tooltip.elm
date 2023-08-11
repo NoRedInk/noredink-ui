@@ -85,6 +85,7 @@ example =
                 ]
             ]
         ]
+    , about = []
     , view = view
     }
 

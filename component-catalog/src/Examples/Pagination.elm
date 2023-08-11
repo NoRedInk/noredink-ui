@@ -57,6 +57,7 @@ example =
             , previewFakeLink "Next" []
             ]
         ]
+    , about = []
     , view =
         \ellieLinkConfig model ->
             let

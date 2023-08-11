@@ -70,6 +70,7 @@ example =
             , previewText "Sub-Category "
             ]
         ]
+    , about = []
     , view =
         \ellieLinkConfig state ->
             let

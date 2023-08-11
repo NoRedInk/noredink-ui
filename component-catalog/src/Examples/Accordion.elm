@@ -67,6 +67,7 @@ example =
             , Text.caption [ Text.plaintext "Accordion content." ]
             ]
         ]
+    , about = []
     , view = view
     , categories = [ Layout ]
     , keyboardSupport =

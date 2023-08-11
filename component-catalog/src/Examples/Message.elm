@@ -9,6 +9,7 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Guidance
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Message.V4 as Message
@@ -144,6 +145,7 @@ example =
         , Message.view [ Message.success, Message.plaintext "Tiny success" ]
         , Message.view [ Message.error, Message.plaintext "Tiny error" ]
         ]
+    , about = Guidance.useATACGuide moduleName
     , view =
         \ellieLinkConfig state ->
             let

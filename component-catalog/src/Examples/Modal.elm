@@ -16,6 +16,7 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import EventExtras exposing (onClickStopPropagation)
 import Example exposing (Example)
+import Guidance
 import Html.Styled exposing (Html, div, text)
 import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport
@@ -179,6 +180,7 @@ example =
                 ]
             ]
         ]
+    , about = Guidance.useATACGuide moduleName
     , view =
         \ellieLinkConfig state ->
             let

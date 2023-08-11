@@ -47,6 +47,7 @@ example =
             , Container.css [ Css.marginTop (Css.px 8) ]
             ]
         ]
+    , about = []
     , view =
         \ellieLinkConfig state ->
             let
