@@ -75,7 +75,7 @@ all =
           , [ Css.width (Css.px 96) ]
           )
         , ( "salHeadshot"
-          , CharacterIcon.salHeadshot
+          , CharacterIcon.salHeadshotFlipped
           , [ Css.width (Css.px 96) ]
           )
         , ( "redHeadshot"
