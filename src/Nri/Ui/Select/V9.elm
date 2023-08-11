@@ -324,7 +324,6 @@ view label attributes =
 
                else
                 Css.paddingTop (Css.px InputStyles.defaultMarginTop)
-             , Css.color Colors.gray20
              ]
                 ++ config.containerCss
             )
@@ -490,6 +489,7 @@ viewSelect config_ config =
             , Css.textOverflow Css.ellipsis
             , Css.overflow Css.hidden
             , Css.whiteSpace Css.noWrap
+            , Css.color Colors.gray20
 
             -- Interaction
             , Css.cursor
