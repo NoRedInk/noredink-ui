@@ -1344,7 +1344,7 @@ redHeadshot_ name flipStyles =
                     [ Svg.path [ d "M23.4007 41.9574C23.4007 41.9574 23.7132 37.2386 19.6507 30.8949C15.9944 25.1449 12.2757 23.9886 9.83819 26.8011C8.65069 28.1761 4.93194 34.7699 2.77569 43.2386C0.775691 51.1136 0.525691 58.7699 0.431941 60.7074C0.275691 64.4574 23.4007 41.9574 23.4007 41.9574Z" ] []
                     , Svg.path [ d "M36.9944 42.0199C36.9944 42.0199 37.2756 37.3011 42.0569 31.4886C46.4006 26.2386 50.2131 25.5511 52.3069 28.6136C53.3381 30.1136 56.1819 37.1136 57.3069 45.7699C58.3381 53.8324 57.6194 61.4574 57.4944 63.3949C57.2131 67.1761 36.9944 42.0199 36.9944 42.0199Z" ] []
                     ]
-                , Svg.path [ id "redHeadshot_head", css [ Css.property "stroke-width" "0.81875" ], d "M0.431885 61.3325C0.431885 61.3325 3.30689 49.5513 16.6506 43.1763C26.1506 38.645 37.3069 39.4263 47.3381 47.7075C58.7444 57.1138 57.7444 68.02 57.7444 68.02C57.7444 68.02 51.6194 77.02 43.4006 79.8638C41.4944 80.52 37.6194 81.0201 35.7756 80.8951C28.8381 80.4263 27.1506 80.6763 21.4319 79.9263C19.6506 79.6763 17.9006 79.5513 15.9006 78.895C3.46314 74.895 0.431885 61.3325 0.431885 61.3325Z" ] []
+                , Svg.path [ id (name ++ "_head"), css [ Css.property "stroke-width" "0.81875" ], d "M0.431885 61.3325C0.431885 61.3325 3.30689 49.5513 16.6506 43.1763C26.1506 38.645 37.3069 39.4263 47.3381 47.7075C58.7444 57.1138 57.7444 68.02 57.7444 68.02C57.7444 68.02 51.6194 77.02 43.4006 79.8638C41.4944 80.52 37.6194 81.0201 35.7756 80.8951C28.8381 80.4263 27.1506 80.6763 21.4319 79.9263C19.6506 79.6763 17.9006 79.5513 15.9006 78.895C3.46314 74.895 0.431885 61.3325 0.431885 61.3325Z" ] []
                 ]
             , renderHeadshotFrame
                 { name = name
@@ -1373,12 +1373,12 @@ redHeadshot_ name flipStyles =
                 }
 
             -- Ears
-            , Svg.use [ xlinkHref "#redHeadshot_ears", css [ fill.bodyTertiary, stroke.medium ] ] []
-            , Svg.mask [ id "redHeadshot_earsMask" ]
-                [ Svg.use [ xlinkHref "#redHeadshot_ears", maskStyle ] []
+            , Svg.use [ xlinkHref ("#" ++ name ++ "_ears"), css [ fill.bodyTertiary, stroke.medium ] ] []
+            , Svg.mask [ id ("name" ++ "_earsMask") ]
+                [ Svg.use [ xlinkHref ("#" ++ name ++ "_ears"), maskStyle ] []
                 ]
             , Svg.g
-                [ css [ Css.property "mask" "url(#redHeadshot_earsMask)" ] ]
+                [ css [ Css.property "mask" ("url(#" ++ name ++ "_earsMask)") ] ]
                 [ Svg.g
                     [ css [ fill.bodySecondary ] ]
                     [ Svg.path [ d "M13.9319 48.77C13.9319 48.77 18.1506 40.8638 17.3069 33.9888C16.4944 27.4888 9.46313 17.5513 9.46313 17.5513L24.8069 28.27L26.0256 37.6763V41.4888L13.9319 48.77Z" ] []
@@ -1395,14 +1395,14 @@ redHeadshot_ name flipStyles =
             , Svg.path [ css [ fill.none, stroke.light ], d "M32.3694 84.145L31.8694 93.645L27.4631 86.2075L23.0569 94.145L22.3069 84.7075" ] []
 
             -- Head
-            , Svg.use [ xlinkHref "#redHeadshot_head", css [ fill.body, stroke.medium ] ] []
-            , Svg.mask [ id "redHeadshot_headMask" ]
-                [ Svg.use [ xlinkHref "#redHeadshot_head", maskStyle ] []
+            , Svg.use [ xlinkHref ("#" ++ name ++ "_head"), css [ fill.body, stroke.medium ] ] []
+            , Svg.mask [ id (name ++ "_headMask") ]
+                [ Svg.use [ xlinkHref ("#" ++ name ++ "_head"), maskStyle ] []
                 ]
 
             -- Cheek patches
             , Svg.g
-                [ css [ fill.bodyTertiary, Css.property "mask" "url(#redHeadshot_headMask)" ] ]
+                [ css [ fill.bodyTertiary, Css.property "mask" ("url(#" ++ name ++ "_headMask)") ] ]
                 [ Svg.path [ css [ stroke.medium ], d "M19.4319 80.7073C19.4319 80.7073 20.1194 72.7698 23.1194 68.3948C25.6506 64.6761 27.7444 63.8948 30.8694 64.2698C33.9319 64.6136 36.9631 69.3323 37.7444 75.3636C38.5256 81.3948 38.3381 82.0823 38.3381 82.0823L19.4319 80.7073Z" ] []
                 , Svg.path [ css [ stroke.light ], d "M41.1505 80.395C41.1505 80.395 43.338 79.4887 44.6505 75.2075C45.963 70.9575 44.838 63.5512 49.4318 63.0825C54.0255 62.6137 53.9943 68.77 53.4943 71.7387C52.9943 74.6762 51.1193 80.9262 51.1193 80.9262L41.1505 80.395Z" ] []
                 , Svg.path [ css [ stroke.light ], d "M16.5568 79.1137C16.5568 79.1137 14.3693 78.2075 13.0568 73.9262C11.7443 69.6762 12.8693 62.27 8.27553 61.8012C3.68178 61.3325 3.71303 67.4887 4.21303 70.4575C4.74428 73.395 6.58803 79.645 6.58803 79.645L16.5568 79.1137Z" ] []
@@ -1552,19 +1552,19 @@ salHeadshot_ name flipStyles =
             , Svg.path [ css [ fill.none, stroke 0.8253 ], d "M22.5526 39.1579C22.5526 39.1579 20.0326 38.4649 20.3476 34.5589C20.6941 30.1804 25.1671 29.1094 25.1671 29.1094C25.1671 29.1094 24.8836 30.8104 26.5216 32.9839C28.7896 35.9764 36.1606 37.3939 39.8461 38.7799" ] []
 
             -- Sweater Neck
-            , Svg.mask [ id "salHeadshot_circleMask" ]
-                [ Svg.use [ xlinkHref "#salHeadshot_circle", css [ fill.white ] ] []
-                , Svg.use [ xlinkHref "#salHeadshot_circleShadow", css [ fill.black ] ] []
+            , Svg.mask [ id (name ++ "_circleMask") ]
+                [ Svg.use [ xlinkHref ("#" ++ name ++ "_circle"), css [ fill.white ] ] []
+                , Svg.use [ xlinkHref ("#" ++ name ++ "_circleShadow"), css [ fill.black ] ] []
                 ]
-            , Svg.path [ css [ fill.sweater, stroke 0.8253, Css.property "mask" "url(#salHeadshot_circleMask)" ], d "M15.8743 107.072C15.8743 107.072 12.6928 104.961 12.1258 99.3542C11.1178 89.0852 18.3627 80.8007 18.3627 80.8007C18.3627 80.8007 17.1343 78.1232 18.0163 77.5562C19.1188 76.8002 21.7648 79.0367 29.1042 78.7217C36.4437 78.4067 39.8142 76.1702 40.5702 76.3592C41.7987 76.6742 40.5702 79.5092 40.5702 79.5092C40.5702 79.5092 48.3507 85.6517 48.7602 94.9442C49.2012 104.804 44.8857 105.812 44.8857 105.812C44.8857 105.812 38.9007 108.332 30.6162 108.962C22.7728 109.56 15.8743 107.072 15.8743 107.072Z" ] []
+            , Svg.path [ css [ fill.sweater, stroke 0.8253, Css.property "mask" ("url(#" ++ name ++ "_circleMask)") ], d "M15.8743 107.072C15.8743 107.072 12.6928 104.961 12.1258 99.3542C11.1178 89.0852 18.3627 80.8007 18.3627 80.8007C18.3627 80.8007 17.1343 78.1232 18.0163 77.5562C19.1188 76.8002 21.7648 79.0367 29.1042 78.7217C36.4437 78.4067 39.8142 76.1702 40.5702 76.3592C41.7987 76.6742 40.5702 79.5092 40.5702 79.5092C40.5702 79.5092 48.3507 85.6517 48.7602 94.9442C49.2012 104.804 44.8857 105.812 44.8857 105.812C44.8857 105.812 38.9007 108.332 30.6162 108.962C22.7728 109.56 15.8743 107.072 15.8743 107.072Z" ] []
 
             -- Face
-            , Svg.use [ xlinkHref "#salHeadshot_face", css [ fill.face, stroke 0.4725 ] ] []
-            , Svg.mask [ id "salHeadshot_faceMask" ]
-                [ Svg.use [ xlinkHref "#salHeadshot_face", maskStyle ] []
+            , Svg.use [ xlinkHref ("#" ++ name ++ "_face"), css [ fill.face, stroke 0.4725 ] ] []
+            , Svg.mask [ id (name ++ "_faceMask") ]
+                [ Svg.use [ xlinkHref ("#" ++ name ++ "_face"), maskStyle ] []
                 ]
             , Svg.g
-                [ css [ Css.property "mask" "url(#salHeadshot_faceMask)" ] ]
+                [ css [ Css.property "mask" ("url(#" ++ name ++ "_faceMask)") ] ]
                 [ Svg.path [ css [ fill.streak, stroke 0.4725 ], d "M37.2314 49.4272C37.2314 49.4272 40.6334 49.8052 43.7834 52.1047C46.9019 54.4042 48.1304 57.0187 48.1304 57.0187L47.9414 61.9012C47.9414 61.9012 41.9879 59.8538 38.9639 59.7908C35.9399 59.7278 35.6564 59.6647 35.6564 59.6647L37.2314 49.4272Z" ] []
                 , Svg.path [ css [ fill.streak, stroke 0.4725 ], d "M19.749 47.8206C19.749 47.8206 15.15 48.7341 12.0315 51.0336C8.91299 53.3331 7.46399 55.9161 7.46399 55.9161L8.28299 60.0111C8.28299 60.0111 10.8345 57.554 13.89 57.302C15.5595 57.1445 17.9535 57.2706 17.9535 57.2706L19.749 47.8206Z" ] []
                 ]
