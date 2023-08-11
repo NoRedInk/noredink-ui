@@ -1187,8 +1187,8 @@ renderHeadshotFrame config =
         ]
 
 
-lindyHeadshot_ : List Css.Style -> List Css.Style -> Nri.Ui.Svg.V1.Svg
-lindyHeadshot_ circleStyles styles =
+lindyHeadshot_ : String -> List Css.Style -> List Css.Style -> Nri.Ui.Svg.V1.Svg
+lindyHeadshot_ name circleStyles styles =
     let
         fill =
             lindyPalette.fill
@@ -1208,7 +1208,7 @@ lindyHeadshot_ circleStyles styles =
                 ]
             ]
             [ renderHeadshotFrame
-                { name = "lindyHeadshot"
+                { name = name
                 , primaryPath = "M0 72.0356C0 55.4671 13.4315 42.0356 30 42.0356V42.0356C46.5685 42.0356 60 55.4671 60 72.0356V72.0356C60 88.6042 46.5685 102.036 30 102.036V102.036C13.4315 102.036 0 88.6042 0 72.0356V72.0356Z"
                 , primaryColor = Css.hex "EAF1F1"
                 , clippedSvg =
@@ -1288,13 +1288,13 @@ lindyHeadshot_ circleStyles styles =
 {-| -}
 lindyHeadshot : Nri.Ui.Svg.V1.Svg
 lindyHeadshot =
-    lindyHeadshot_ [] []
+    lindyHeadshot_ "lindyHeadshot" [] []
 
 
 {-| -}
 lindyHeadshotFlipped : Nri.Ui.Svg.V1.Svg
 lindyHeadshotFlipped =
-    lindyHeadshot_ [ Css.transforms [ Css.scaleX -1, Css.translate (Css.pct -100) ] ] [ Css.transforms [ Css.scaleX -1, Css.translate (Css.pct -110) ] ]
+    lindyHeadshot_ "lindyHeadshotFlipped" [ Css.transforms [ Css.scaleX -1, Css.translate (Css.pct -100) ] ] [ Css.transforms [ Css.scaleX -1, Css.translate (Css.pct -110) ] ]
 
 
 redPalette =
@@ -1323,8 +1323,8 @@ redPalette =
 
 
 {-| -}
-redHeadshot_ : List Css.Style -> Nri.Ui.Svg.V1.Svg
-redHeadshot_ styles =
+redHeadshot_ : String -> List Css.Style -> Nri.Ui.Svg.V1.Svg
+redHeadshot_ name styles =
     let
         fill =
             redPalette.fill
@@ -1342,14 +1342,14 @@ redHeadshot_ styles =
             [ Svg.defs
                 []
                 [ Svg.g
-                    [ id "redHeadshot_ears", css [ Css.property "stroke-width" "0.81875" ] ]
+                    [ id (name ++ "_ears" ), css [ Css.property "stroke-width" "0.81875" ] ]
                     [ Svg.path [ d "M23.4007 41.9574C23.4007 41.9574 23.7132 37.2386 19.6507 30.8949C15.9944 25.1449 12.2757 23.9886 9.83819 26.8011C8.65069 28.1761 4.93194 34.7699 2.77569 43.2386C0.775691 51.1136 0.525691 58.7699 0.431941 60.7074C0.275691 64.4574 23.4007 41.9574 23.4007 41.9574Z" ] []
                     , Svg.path [ d "M36.9944 42.0199C36.9944 42.0199 37.2756 37.3011 42.0569 31.4886C46.4006 26.2386 50.2131 25.5511 52.3069 28.6136C53.3381 30.1136 56.1819 37.1136 57.3069 45.7699C58.3381 53.8324 57.6194 61.4574 57.4944 63.3949C57.2131 67.1761 36.9944 42.0199 36.9944 42.0199Z" ] []
                     ]
                 , Svg.path [ id "redHeadshot_head", css [ Css.property "stroke-width" "0.81875" ], d "M0.431885 61.3325C0.431885 61.3325 3.30689 49.5513 16.6506 43.1763C26.1506 38.645 37.3069 39.4263 47.3381 47.7075C58.7444 57.1138 57.7444 68.02 57.7444 68.02C57.7444 68.02 51.6194 77.02 43.4006 79.8638C41.4944 80.52 37.6194 81.0201 35.7756 80.8951C28.8381 80.4263 27.1506 80.6763 21.4319 79.9263C19.6506 79.6763 17.9006 79.5513 15.9006 78.895C3.46314 74.895 0.431885 61.3325 0.431885 61.3325Z" ] []
                 ]
             , renderHeadshotFrame
-                { name = "redHeadshot"
+                { name = name
                 , primaryPath = "M0 73.1428C0 56.5743 13.4315 43.1428 30 43.1428V43.1428C46.5685 43.1428 60 56.5743 60 73.1428V73.1428C60 89.7114 46.5685 103.143 30 103.143V103.143C13.4315 103.143 0 89.7114 0 73.1428V73.1428Z"
                 , primaryColor = Css.hex "E6D5D1"
                 , clippedSvg =
@@ -1468,13 +1468,13 @@ redHeadshot_ styles =
 {-| -}
 redHeadshot : Nri.Ui.Svg.V1.Svg
 redHeadshot =
-    redHeadshot_ []
+    redHeadshot_ "redHeadshot" []
 
 
 {-| -}
 redHeadshotFlipped : Nri.Ui.Svg.V1.Svg
 redHeadshotFlipped =
-    redHeadshot_ [ Css.transforms [ Css.scaleX -1, Css.translate (Css.pct -100) ] ]
+    redHeadshot_ "redHeadshotFlipped" [ Css.transforms [ Css.scaleX -1, Css.translate (Css.pct -100) ] ]
 
 
 salPalette =
@@ -1499,8 +1499,8 @@ salPalette =
     }
 
 
-salHeadshot_ : List Css.Style -> Nri.Ui.Svg.V1.Svg
-salHeadshot_ styles =
+salHeadshot_ : String -> List Css.Style -> Nri.Ui.Svg.V1.Svg
+salHeadshot_ name styles =
     let
         blankStroke x =
             Css.property "stroke-width" (String.fromFloat x)
@@ -1520,14 +1520,14 @@ salHeadshot_ styles =
             [ Svg.defs
                 []
                 [ Svg.path
-                    [ id "salHeadshot_face"
+                    [ id (name ++ "_face")
                     , css [ blankStroke 0.4725 ]
                     , d "M46.839 54.9705C47.784 58.8765 48.036 63.192 45.2325 66.6885C42.5235 70.059 37.83 72.201 28.569 71.6025C18.3315 70.9725 13.701 67.98 10.677 63.822C8.976 61.5225 9.5115 57.1755 10.2045 55.0965C12.5355 47.8515 18.9615 41.8665 29.01 41.8665C39.0585 41.8665 45.1065 47.568 46.839 54.9705Z"
                     ]
                     []
                 ]
             , renderHeadshotFrame
-                { name = "salHeadshot"
+                { name = name
                 , primaryPath = "M0 72.1785C0 55.6099 13.4315 42.1785 30 42.1785V42.1785C46.5685 42.1785 60 55.6099 60 72.1785V72.1785C60 88.747 46.5685 102.178 30 102.178V102.178C13.4315 102.178 0 88.747 0 72.1785V72.1785Z"
                 , primaryColor = Css.hex "FDF3E4"
                 , clippedSvg =
@@ -1633,10 +1633,10 @@ salHeadshot_ styles =
 {-| -}
 salHeadshot : Nri.Ui.Svg.V1.Svg
 salHeadshot =
-    salHeadshot_ []
+    salHeadshot_ "salHeadshot" []
 
 
 {-| -}
 salHeadshotFlipped : Nri.Ui.Svg.V1.Svg
 salHeadshotFlipped =
-    salHeadshot_ [ Css.transforms [ Css.scaleX -1, Css.translate (Css.pct -100) ] ]
+    salHeadshot_ "salHeadshotFlipped" [ Css.transforms [ Css.scaleX -1, Css.translate (Css.pct -100) ] ]
