@@ -79,7 +79,7 @@ all =
           , [ Css.width (Css.px 96) ]
           )
         , ( "redHeadshot"
-          , CharacterIcon.redHeadshot
+          , CharacterIcon.redHeadshotFlipped
           , [ Css.width (Css.px 96) ]
           )
         ]
