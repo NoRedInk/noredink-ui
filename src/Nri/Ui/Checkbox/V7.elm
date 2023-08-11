@@ -386,6 +386,7 @@ viewCheckbox config ( styles, icon ) =
             List.concat
                 [ [ css
                         (paddingLeft (Css.px checkboxIconWidth)
+                            :: marginTop (Css.px -highContrastBorderWidth)
                             :: marginLeft (Css.px -checkboxIconWidth)
                             :: styles
                             ++ config.labelCss
@@ -458,7 +459,7 @@ viewIcon : List Style -> Svg -> Html msg
 viewIcon styles icon =
     Html.div
         [ css
-            [ border3 (px 2) solid transparent
+            [ border3 (px highContrastBorderWidth) solid transparent
             , borderRadius (px 3)
             , height (Css.px 27)
             , boxSizing contentBox
@@ -478,3 +479,8 @@ viewIcon styles icon =
             [ Nri.Ui.Svg.V1.toHtml (Nri.Ui.Svg.V1.withCss styles icon)
             ]
         ]
+
+
+highContrastBorderWidth : Float
+highContrastBorderWidth =
+    2
