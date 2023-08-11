@@ -1374,7 +1374,7 @@ redHeadshot_ name flipStyles =
 
             -- Ears
             , Svg.use [ xlinkHref ("#" ++ name ++ "_ears"), css [ fill.bodyTertiary, stroke.medium ] ] []
-            , Svg.mask [ id ("name" ++ "_earsMask") ]
+            , Svg.mask [ id (name ++ "_earsMask") ]
                 [ Svg.use [ xlinkHref ("#" ++ name ++ "_ears"), maskStyle ] []
                 ]
             , Svg.g
