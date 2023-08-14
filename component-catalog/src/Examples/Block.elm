@@ -25,6 +25,7 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V7 as Table
 import Nri.Ui.Text.V6 as Text
@@ -365,289 +366,13 @@ example =
                         """**Blank block**
 
 Represents a blank in the sentence.
+
+Please see the "Blank views and width guidance" table to learn more about using Blanks.
 """
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "I am a seed with " ]
                             , Block.view []
-                            , Block.view [ Block.plaintext " being used." ]
-                            ]
-                  }
-                , { pattern =
-                        Code.fromModule moduleName "view"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "content"
-                                    ++ Code.listMultiline
-                                        [ "…"
-                                        , Code.fromModule moduleName "blankWithId "
-                                            ++ Code.string "[id]"
-                                            ++ " "
-                                            ++ Code.fromModule moduleName "SingleCharacter"
-                                        , "…"
-                                        ]
-                                        2
-                                ]
-                                1
-                  , description =
-                        """**Blank block and SingleCharacter width**
-
-Represents a blank in the sentence.
-
-Often, this width will be used to represent punctuation, but note that the accessible name is "blank."
-We must convey that we're looking for a single character in place of the blank elsewhere on the page to provide an equitable experience.
-
-??? When would this height be chosen???
-"""
-                  , example =
-                        inParagraph
-                            [ Block.view [ Block.plaintext "I am a seed with " ]
-                            , Block.view
-                                [ Block.content
-                                    [ Block.blankWithId "blank-with-id-single-character-example" Block.SingleCharacter
-                                    ]
-                                ]
-                            , Block.view [ Block.plaintext " being used." ]
-                            ]
-                  }
-                , { pattern =
-                        Code.fromModule moduleName "view"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "content"
-                                    ++ Code.listMultiline
-                                        [ "…"
-                                        , Code.fromModule moduleName "blankWithId "
-                                            ++ Code.string "[id]"
-                                            ++ " "
-                                            ++ Code.fromModule moduleName "ShortWordPhrase"
-                                        , "…"
-                                        ]
-                                        2
-                                ]
-                                1
-                  , description =
-                        """**Blank block with id and ShortWordPhrase length**
-
-Represents a blank in the sentence.
-
-Often, this width will be used to represent  a short word or phrase, but note that the accessible name is "blank."
-We must convey that we're looking for a short word or phrase in place of the blank elsewhere on the page to provide an equitable experience.
-
-??? When would this height be chosen???
-"""
-                  , example =
-                        inParagraph
-                            [ Block.view [ Block.plaintext "I am a seed with " ]
-                            , Block.view
-                                [ Block.content
-                                    [ Block.blankWithId "blank-with-id-short-word-example" Block.ShortWordPhrase
-                                    ]
-                                ]
-                            , Block.view [ Block.plaintext " being used." ]
-                            ]
-                  }
-                , { pattern =
-                        Code.fromModule moduleName "view"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "content"
-                                    ++ Code.listMultiline
-                                        [ "…"
-                                        , Code.fromModule moduleName "blankWithId "
-                                            ++ Code.string "[id]"
-                                            ++ " "
-                                            ++ Code.fromModule moduleName "LongWordPhrase"
-                                        , "…"
-                                        ]
-                                        2
-                                ]
-                                1
-                  , description =
-                        """**Blank block with id and LongWordPhrase length**
-
-Represents a blank in the sentence.
-
-Often, this width will be used to represent  a long word or phrase, but note that the accessible name is "blank."
-We must convey that we're looking for a long word or phrase in place of the blank elsewhere on the page to provide an equitable experience.
-
-??? When would this height be chosen???
-"""
-                  , example =
-                        inParagraph
-                            [ Block.view [ Block.plaintext "I am a seed with " ]
-                            , Block.view
-                                [ Block.content
-                                    [ Block.blankWithId "blank-with-id-long-word-example" Block.LongWordPhrase
-                                    ]
-                                ]
-                            , Block.view [ Block.plaintext " being used." ]
-                            ]
-                  }
-                , { pattern =
-                        Code.fromModule moduleName "view"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "content"
-                                    ++ Code.listMultiline
-                                        [ "…"
-                                        , Code.fromModule moduleName "blankWithId "
-                                            ++ Code.string "[id]"
-                                            ++ " "
-                                            ++ Code.withParens (Code.fromModule moduleName "CharacterCount 8")
-                                        , "…"
-                                        ]
-                                        2
-                                ]
-                                1
-                  , description =
-                        """**Blank block with id and specific CharacterCount-based length**
-
-Represents a blank in the sentence.
-
-The accessible name is "blank." If we're looking for a specific length of content to put in the blank, that _must_ be communicated elsewhere on the page to provide an equitable experience.
-
-??? When would this height be chosen???
-"""
-                  , example =
-                        inParagraph
-                            [ Block.view [ Block.plaintext "I am a seed with " ]
-                            , Block.view
-                                [ Block.content
-                                    [ Block.blankWithId "blank-with-id-character-count-example" (Block.CharacterCount 8)
-                                    ]
-                                ]
-                            , Block.view [ Block.plaintext " being used." ]
-                            ]
-                  }
-                , { pattern =
-                        Code.fromModule moduleName "view"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "content"
-                                    ++ Code.listMultiline
-                                        [ "…"
-                                        , Code.fromModule moduleName "fullHeightBlank "
-                                            ++ Code.fromModule moduleName "SingleCharacter"
-                                        , "…"
-                                        ]
-                                        2
-                                ]
-                                1
-                  , description =
-                        """**Full height blank block and SingleCharacter length**
-
-Represents a blank in the sentence.
-
-Often, this width will be used to represent  a short word or phrase, but note that the accessible name is "blank."
-We must convey that we're looking for a short word or phrase in place of the blank elsewhere on the page to provide an equitable experience.
-
-??? When would this height be chosen???
-"""
-                  , example =
-                        inParagraph
-                            [ Block.view [ Block.plaintext "I am a seed with " ]
-                            , Block.view
-                                [ Block.content
-                                    [ Block.fullHeightBlank Block.SingleCharacter
-                                    ]
-                                ]
-                            , Block.view [ Block.plaintext " being used." ]
-                            ]
-                  }
-                , { pattern =
-                        Code.fromModule moduleName "view"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "content"
-                                    ++ Code.listMultiline
-                                        [ "…"
-                                        , Code.fromModule moduleName "fullHeightBlank "
-                                            ++ Code.fromModule moduleName "ShortWordPhrase"
-                                        , "…"
-                                        ]
-                                        2
-                                ]
-                                1
-                  , description =
-                        """**Full height blank block and ShortWordPhrase length**
-
-Represents a blank in the sentence.
-
-Often, this width will be used to represent  a short word or phrase, but note that the accessible name is "blank."
-We must convey that we're looking for a short word or phrase in place of the blank elsewhere on the page to provide an equitable experience.
-
-??? When would this height be chosen???
-"""
-                  , example =
-                        inParagraph
-                            [ Block.view [ Block.plaintext "I am a seed with " ]
-                            , Block.view
-                                [ Block.content
-                                    [ Block.fullHeightBlank Block.ShortWordPhrase
-                                    ]
-                                ]
-                            , Block.view [ Block.plaintext " being used." ]
-                            ]
-                  }
-                , { pattern =
-                        Code.fromModule moduleName "view"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "content"
-                                    ++ Code.listMultiline
-                                        [ "…"
-                                        , Code.fromModule moduleName "fullHeightBlank "
-                                            ++ Code.fromModule moduleName "LongWordPhrase"
-                                        , "…"
-                                        ]
-                                        2
-                                ]
-                                1
-                  , description =
-                        """**Full height blank block and LongWordPhrase length**
-
-Represents a blank in the sentence.
-
-Often, this width will be used to represent  a long word or phrase, but note that the accessible name is "blank."
-We must convey that we're looking for a long word or phrase in place of the blank elsewhere on the page to provide an equitable experience.
-
-??? When would this height be chosen???
-    """
-                  , example =
-                        inParagraph
-                            [ Block.view [ Block.plaintext "I am a seed with " ]
-                            , Block.view
-                                [ Block.content
-                                    [ Block.fullHeightBlank Block.LongWordPhrase
-                                    ]
-                                ]
-                            , Block.view [ Block.plaintext " being used." ]
-                            ]
-                  }
-                , { description =
-                        """**Full height blank block and specific CharacterCount-based length**
-
-Represents a blank in the sentence.
-
-The accessible name is "blank." If we're looking for a specific length of content to put in the blank, that _must_ be communicated elsewhere on the page to provide an equitable experience.
-
-??? When would this height be chosen???
-"""
-                  , pattern =
-                        Code.fromModule moduleName "view"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "content"
-                                    ++ Code.listMultiline
-                                        [ "…"
-                                        , Code.fromModule moduleName "fullHeightBlank "
-                                            ++ Code.withParens (Code.fromModule moduleName "CharacterCount 8")
-                                        , "…"
-                                        ]
-                                        2
-                                ]
-                                1
-                  , example =
-                        inParagraph
-                            [ Block.view [ Block.plaintext "I am a seed with " ]
-                            , Block.view
-                                [ Block.content
-                                    [ Block.fullHeightBlank (Block.CharacterCount 8)
-                                    ]
-                                ]
                             , Block.view [ Block.plaintext " being used." ]
                             ]
                   }
@@ -701,6 +426,129 @@ The accessible name is "blank." If we're looking for a specific length of conten
                                 [ Block.plaintext " in a seed."
                                 ]
                             ]
+                  }
+                ]
+            , Heading.h2
+                [ Heading.plaintext "Blank views and width guidance"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
+            , Table.view
+                []
+                [ Table.string
+                    { header = "Name"
+                    , value = .name
+                    , width = Css.pct 10
+                    , cellStyles = always []
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "Code"
+                    , view = \{ code } -> Html.Styled.code [] [ text code ]
+                    , width = Css.px 300
+                    , cellStyles =
+                        always
+                            [ Css.padding2 (Css.px 14) (Css.px 7)
+                            , Css.verticalAlign Css.top
+                            , Css.fontSize (Css.px 12)
+                            , Css.whiteSpace Css.preWrap
+                            ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "Description"
+                    , view =
+                        \{ description, guidance } ->
+                            Markdown.toHtml Nothing (description ++ "\n\n" ++ guidance)
+                                |> List.map fromUnstyled
+                                |> div []
+                    , width = Css.px 300
+                    , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "SingleCharacter"
+                    , view = .singleCharacter
+                    , width = Css.px 300
+                    , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "ShortWordPhrase"
+                    , view = .shortWordPhrase
+                    , width = Css.px 300
+                    , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "LongWordPhrase"
+                    , view = .longWordPhrase
+                    , width = Css.px 300
+                    , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "CharacterCount 20"
+                    , view = .characterCount
+                    , width = Css.px 300
+                    , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
+                    , sort = Nothing
+                    }
+                ]
+                [ { name = ""
+                  , code = ""
+                  , singleCharacter = text "Often, this width will be used to represent punctuation, but note that the accessible name is \"blank.\"\nWe must convey that we're looking for a single character in place of the blank elsewhere on the page to provide an equitable experience."
+                  , shortWordPhrase = text "Often, this width will be used to represent a short word or phrase, but note that the accessible name is \"blank.\" We must convey that we're looking for a short word or phrase in place of the blank elsewhere on the page to provide an equitable experience."
+                  , longWordPhrase = text "Often, this width will be used to represent  a long word or phrase, but note that the accessible name is \"blank.\" We must convey that we're looking for a long word or phrase in place of the blank elsewhere on the page to provide an equitable experience."
+                  , characterCount = text "The accessible name is \"blank.\" If we're looking for a specific length of content to put in the blank, that _must_ be communicated elsewhere on the page to provide an equitable experience."
+                  , description = ""
+                  , guidance = ""
+                  }
+                , { name = "(none)"
+                  , code = Code.fromModule moduleName "view []"
+                  , singleCharacter = text "N/A"
+                  , shortWordPhrase = text "N/A"
+                  , longWordPhrase = text "N/A"
+                  , characterCount = text "N/A"
+                  , description = "When no other attributes are passed to `Block.view`, Block will render a blank."
+                  , guidance = "This behavior is primarily provided as a convenience to devs."
+                  }
+                , { name = "blankWithId"
+                  , code =
+                        Code.fromModule moduleName "view"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "content"
+                                    ++ Code.listMultiline
+                                        [ Code.fromModule moduleName "blankWithId "
+                                            ++ Code.string "[id]"
+                                            ++ " [block length]"
+                                        ]
+                                        2
+                                ]
+                                1
+                  , singleCharacter = Block.view [ Block.content [ Block.blankWithId "blankWithId-single-char" Block.SingleCharacter ] ]
+                  , shortWordPhrase = Block.view [ Block.content [ Block.blankWithId "blankWithId-short-word-phrase" Block.ShortWordPhrase ] ]
+                  , longWordPhrase = Block.view [ Block.content [ Block.blankWithId "blankWithId-long-word-phrase" Block.LongWordPhrase ] ]
+                  , characterCount = Block.view [ Block.content [ Block.blankWithId "blankWithId-char-count" (Block.CharacterCount 20) ] ]
+                  , description = "`blankWithId` will render a blank with the specified id. The blank's height will not expand past the content."
+                  , guidance = "??? When should this helper be used ???"
+                  }
+                , { name = "fullHeightBlank"
+                  , code =
+                        Code.fromModule moduleName "view"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "content"
+                                    ++ Code.listMultiline
+                                        [ Code.fromModule moduleName "fullHeightBlank [block length]"
+                                        ]
+                                        2
+                                ]
+                                1
+                  , singleCharacter = Block.view [ Block.content [ Block.fullHeightBlank Block.SingleCharacter ] ]
+                  , shortWordPhrase = Block.view [ Block.content [ Block.fullHeightBlank Block.ShortWordPhrase ] ]
+                  , longWordPhrase = Block.view [ Block.content [ Block.fullHeightBlank Block.LongWordPhrase ] ]
+                  , characterCount = Block.view [ Block.content [ Block.fullHeightBlank (Block.CharacterCount 20) ] ]
+                  , description = "`fullHeightBlank` will render a blank whose height will be taller than the surrounding text"
+                  , guidance = "??? When should this helper be used ???"
                   }
                 ]
             ]
