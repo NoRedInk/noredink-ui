@@ -12,6 +12,7 @@ module Nri.Ui.Switch.V3 exposing
 ### Changes from V2:
 
     - Replace underlying checkbox input with a custom implementation
+    - Allow attributes that produce msgs to be passed through
 
 @docs view
 
@@ -79,7 +80,7 @@ you want/expect if underlying styles change.
 Instead, please use `containerCss` or `labelCss`.
 
 -}
-custom : List (Html.Attribute Never) -> Attribute msg
+custom : List (Html.Attribute msg) -> Attribute msg
 custom custom_ =
     Attribute <| \config -> { config | custom = config.custom ++ custom_ }
 
@@ -119,7 +120,7 @@ type alias Config msg =
     , labelCss : List Style
     , isDisabled : Bool
     , isSelected : Bool
-    , custom : List (Html.Attribute Never)
+    , custom : List (Html.Attribute msg)
     }
 
 
@@ -173,7 +174,7 @@ view { label, id } attrs =
          , Attributes.class FocusRing.customClass
          ]
             ++ switchAttributes id config
-            ++ List.map (Attributes.map never) config.custom
+            ++ config.custom
         )
         [ Nri.Ui.Svg.V1.toHtml
             (viewSwitch
