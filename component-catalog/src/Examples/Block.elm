@@ -279,36 +279,6 @@ example =
                 ]
             , Table.view []
                 [ Table.custom
-                    { header = text "Blank Width"
-                    , view = String.fromInt >> text
-                    , width = Css.px 125
-                    , cellStyles = always []
-                    , sort = Nothing
-                    }
-                , Table.custom
-                    { header = text "Example"
-                    , view = \characters -> Block.view [ Block.content [ Block.fullHeightBlank (Block.CharacterCount characters) ] ]
-                    , width = Css.auto
-                    , cellStyles = always [ Css.fontSize (Css.px 30) ]
-                    , sort = Nothing
-                    }
-                , Table.custom
-                    { header = text "Code"
-                    , view = \characters -> code [] [ text <| "Block.view \n  [ Block.content \n    [ Block.fullHeightBlank (Block.CharacterCount " ++ String.fromInt characters ++ ") \n    ] \n  ]" ]
-                    , width = Css.px 500
-                    , cellStyles =
-                        always
-                            [ Css.padding2 (Css.px 14) (Css.px 7)
-                            , Css.verticalAlign Css.top
-                            , Css.fontSize (Css.px 12)
-                            , Css.whiteSpace Css.preWrap
-                            ]
-                    , sort = Nothing
-                    }
-                ]
-                [ 1, 2, 3, 4, 5, 6, 7, 8 ]
-            , Table.view []
-                [ Table.custom
                     { header = text "Pattern name & description"
                     , view = .description >> Markdown.toHtml Nothing >> List.map fromUnstyled >> div []
                     , width = Css.px 125
@@ -849,65 +819,60 @@ controlContent =
                     )
                 )
           )
-        , ( "single character blank"
+        , blankType ( "blank", Block.blank )
+        , blankType ( "blankWithId \"example-id\"", Block.blankWithId "example-id" )
+        , blankType ( "fullHeightBlank", Block.fullHeightBlank )
+        ]
+
+
+blankType : ( String, Block.BlankLength -> Block.Content msg ) -> ( String, Control ( String, Block.Attribute msg ) )
+blankType ( typeStr, blank ) =
+    ( typeStr
+    , Control.map
+        (\( widthStr, width ) ->
+            ( Code.fromModule moduleName "content "
+                ++ Code.withParens
+                    (Code.fromModule moduleName typeStr
+                        ++ " "
+                        ++ widthStr
+                    )
+            , Block.content [ blank width ]
+            )
+        )
+        controlBlankWidth
+    )
+
+
+controlBlankWidth : Control ( String, Block.BlankLength )
+controlBlankWidth =
+    Control.choice
+        [ ( "SingleCharacter"
           , Control.value
-                ( Code.fromModule moduleName "content "
-                    ++ Code.withParens
-                        (Code.fromModule moduleName "blank "
-                            ++ Code.fromModule moduleName "SingleCharacter"
-                        )
-                , Block.content [ Block.blank Block.SingleCharacter ]
+                ( Code.fromModule moduleName "SingleCharacter"
+                , Block.SingleCharacter
                 )
           )
-        , ( "short word phrase blank"
+        , ( "ShortWordPhrase"
           , Control.value
-                ( Code.fromModule moduleName "content "
-                    ++ Code.withParens
-                        (Code.fromModule moduleName "blank "
-                            ++ Code.fromModule moduleName "ShortWordPhrase"
-                        )
-                , Block.content [ Block.blank Block.ShortWordPhrase ]
+                ( Code.fromModule moduleName "ShortWordPhrase"
+                , Block.ShortWordPhrase
                 )
           )
-        , ( "long word phrase blank"
+        , ( "LongWordPhrase"
           , Control.value
-                ( Code.fromModule moduleName "content "
-                    ++ Code.withParens
-                        (Code.fromModule moduleName "blank "
-                            ++ Code.fromModule moduleName "LongWordPhrase"
-                        )
-                , Block.content [ Block.blank Block.LongWordPhrase ]
+                ( Code.fromModule moduleName "LongWordPhrase"
+                , Block.LongWordPhrase
                 )
           )
-        , ( "full height single character blank"
-          , Control.value
-                ( Code.fromModule moduleName "content "
-                    ++ Code.withParens
-                        (Code.fromModule moduleName "fullHeightBlank "
-                            ++ Code.fromModule moduleName "SingleCharacter"
-                        )
-                , Block.content [ Block.fullHeightBlank Block.SingleCharacter ]
+        , ( "CharacterCount"
+          , Control.map
+                (\int ->
+                    ( Code.withParens
+                        (Code.fromModule moduleName "CharacterCount " ++ Code.int int)
+                    , Block.CharacterCount int
+                    )
                 )
-          )
-        , ( "full height short word phrase blank"
-          , Control.value
-                ( Code.fromModule moduleName "content "
-                    ++ Code.withParens
-                        (Code.fromModule moduleName "fullHeightBlank "
-                            ++ Code.fromModule moduleName "ShortWordPhrase"
-                        )
-                , Block.content [ Block.fullHeightBlank Block.ShortWordPhrase ]
-                )
-          )
-        , ( "full height long word phrase blank"
-          , Control.value
-                ( Code.fromModule moduleName "content "
-                    ++ Code.withParens
-                        (Code.fromModule moduleName "fullHeightBlank "
-                            ++ Code.fromModule moduleName "LongWordPhrase"
-                        )
-                , Block.content [ Block.fullHeightBlank Block.LongWordPhrase ]
-                )
+                (ControlExtra.int 0)
           )
         ]
 
