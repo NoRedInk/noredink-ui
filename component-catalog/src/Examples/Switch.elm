@@ -70,18 +70,20 @@ example =
                     \{ label, attributes } ->
                         [ { sectionName = "Example"
                           , code =
-                                moduleName
-                                    ++ ".view"
-                                    ++ " \""
-                                    ++ label
-                                    ++ "\"\t"
-                                    ++ Code.list
+                                Code.fromModule moduleName "view"
+                                    ++ Code.recordMultiline
+                                        [ ( "label", Code.string label )
+                                        , ( "id", Code.string "view-switch-example" )
+                                        ]
+                                        1
+                                    ++ Code.listMultiline
                                         (("Switch.selected "
                                             ++ Debug.toString state.selected
-                                            ++ Code.commentInline "\n,  Switch.onSwitch Switch -- <- you'll need to wire in a Msg for the Switch to work"
                                          )
+                                            :: "Switch.onSwitch Switch -- <- you'll need to wire in a Msg for the Switch to work"
                                             :: List.map Tuple.first attributes
                                         )
+                                        1
                           }
                         ]
                 }
