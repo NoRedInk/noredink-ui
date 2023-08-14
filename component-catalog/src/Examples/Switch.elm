@@ -10,11 +10,14 @@ import Accessibility.Styled.Key as Key
 import Category
 import Code
 import CommonControls
+import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import KeyboardSupport exposing (Key(..))
+import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Switch.V2 as Switch
 
 
@@ -80,6 +83,10 @@ example =
                           }
                         ]
                 }
+            , Heading.h2
+                [ Heading.plaintext "Interactive example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , Switch.view { label = currentValue.label, id = "view-switch-example" }
                 (Switch.selected state.selected
                     :: Switch.onSwitch Switch
