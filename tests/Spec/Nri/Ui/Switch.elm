@@ -23,6 +23,8 @@ hasCorrectRole =
         \() ->
             Switch.view { id = "switch", label = "Switch" }
                 []
+                |> List.singleton
+                |> div []
                 |> toUnstyled
                 |> Query.fromHtml
                 |> Query.find [ Selector.id "switch" ]
@@ -36,6 +38,8 @@ hasCorrectAriaDisabled =
         \() ->
             Switch.view { id = "switch", label = "Switch" }
                 [ Switch.disabled True ]
+                |> List.singleton
+                |> div []
                 |> toUnstyled
                 |> Query.fromHtml
                 |> Query.find [ Selector.id "switch" ]
