@@ -702,36 +702,37 @@ blankType ( typeStr, blank ) =
 
 controlBlankWidth : Control ( String, Block.BlankLength )
 controlBlankWidth =
-    Control.choice
-        [ ( "SingleCharacter"
-          , Control.value
-                ( Code.fromModule moduleName "SingleCharacter"
-                , Block.SingleCharacter
+    [ ( "SingleCharacter"
+      , Control.value
+            ( Code.fromModule moduleName "SingleCharacter"
+            , Block.SingleCharacter
+            )
+      )
+    , ( "ShortWordPhrase"
+      , Control.value
+            ( Code.fromModule moduleName "ShortWordPhrase"
+            , Block.ShortWordPhrase
+            )
+      )
+    , ( "LongWordPhrase"
+      , Control.value
+            ( Code.fromModule moduleName "LongWordPhrase"
+            , Block.LongWordPhrase
+            )
+      )
+    , ( "CharacterCount"
+      , Control.map
+            (\int ->
+                ( Code.withParens
+                    (Code.fromModule moduleName "CharacterCount " ++ Code.int int)
+                , Block.CharacterCount int
                 )
-          )
-        , ( "ShortWordPhrase"
-          , Control.value
-                ( Code.fromModule moduleName "ShortWordPhrase"
-                , Block.ShortWordPhrase
-                )
-          )
-        , ( "LongWordPhrase"
-          , Control.value
-                ( Code.fromModule moduleName "LongWordPhrase"
-                , Block.LongWordPhrase
-                )
-          )
-        , ( "CharacterCount"
-          , Control.map
-                (\int ->
-                    ( Code.withParens
-                        (Code.fromModule moduleName "CharacterCount " ++ Code.int int)
-                    , Block.CharacterCount int
-                    )
-                )
-                (ControlExtra.int 0)
-          )
-        ]
+            )
+            (ControlExtra.int 0)
+      )
+    ]
+        |> List.reverse
+        |> Control.choice
 
 
 ageId : String
