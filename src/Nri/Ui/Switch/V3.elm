@@ -148,8 +148,7 @@ view { label, id } attrs =
             notOperable config
     in
     Html.div
-        ([ Attributes.id (id ++ "-container")
-         , Attributes.css
+        ([ Attributes.css
             [ Css.display Css.inlineFlex
             , Css.alignItems Css.center
             , Css.fontSize (Css.px 15)
