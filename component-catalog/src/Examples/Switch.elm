@@ -19,7 +19,7 @@ import Html.Styled exposing (..)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
-import Nri.Ui.Switch.V2 as Switch
+import Nri.Ui.Switch.V3 as Switch
 import Nri.Ui.Table.V7 as Table
 
 
@@ -30,7 +30,7 @@ moduleName =
 
 version : Int
 version =
-    2
+    3
 
 
 example : Example State Msg

@@ -229,6 +229,9 @@ hint = 'upgrade to V4'
 [forbidden."Nri.Ui.Switch.V1"]
 hint = 'upgrade to V2'
 
+[forbidden."Nri.Ui.Switch.V2"]
+hint = 'upgrade to V3'
+
 [forbidden."Nri.Ui.Table.V4"]
 hint = 'upgrade to V5'
 

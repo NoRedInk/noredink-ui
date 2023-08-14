@@ -1,4 +1,4 @@
-module Nri.Ui.Switch.V2 exposing
+module Nri.Ui.Switch.V3 exposing
     ( view
     , Attribute
     , selected
@@ -9,22 +9,9 @@ module Nri.Ui.Switch.V2 exposing
 {-|
 
 
-### Patch Changes:
+### Changes from V2:
 
-    - Fix cursor styles when hovering over the transparent checkbox
-
-
-### Changes from V1:
-
-    - Fixes invalid ARIA use, [conformance requirements](https://www.w3.org/TR/html-aria/#docconformance)
-    - labels should only support strings (this is the only way they're actually used in practice)
-    - extends API to be more consistent with other form/control components
-    - Use Colors values instead of hardcoded hex strings
-    - Move the status (selected or not selected) to the list api
-    - REQUIRE label and id always
-    - Move custom attributes to the container
-    - change disabled to take a bool (which I think is the slighty more common pattern)
-    - Adds `role="switch"`
+    - Replace underlying checkbox input with a custom implementation
 
 @docs view
 

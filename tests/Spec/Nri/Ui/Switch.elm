@@ -3,7 +3,7 @@ module Spec.Nri.Ui.Switch exposing (..)
 import Accessibility.Aria as Aria
 import Accessibility.Role as Role
 import Html.Styled exposing (..)
-import Nri.Ui.Switch.V2 as Switch
+import Nri.Ui.Switch.V3 as Switch
 import Test exposing (..)
 import Test.Html.Query as Query
 import Test.Html.Selector as Selector
