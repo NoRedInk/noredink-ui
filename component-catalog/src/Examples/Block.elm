@@ -485,7 +485,7 @@ Please see the "Blank views and width guidance" table to learn more about using 
                     , sort = Nothing
                     }
                 , Table.custom
-                    { header = text "CharacterCount 20"
+                    { header = text "CharacterCount [int]"
                     , view = .characterCount
                     , width = Css.px 300
                     , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
@@ -494,10 +494,29 @@ Please see the "Blank views and width guidance" table to learn more about using 
                 ]
                 [ { name = "Width"
                   , code = ""
-                  , singleCharacter = text "Often, this width will be used to represent punctuation."
-                  , shortWordPhrase = text "Often, this width will be used to represent a short word or phrase."
-                  , longWordPhrase = text "Often, this width will be used to represent  a long word or phrase."
-                  , characterCount = text ""
+                  , singleCharacter =
+                        "Typically used to represent punctuation.\n\nThe width is 0.83em."
+                            |> Markdown.toHtml Nothing
+                            |> List.map fromUnstyled
+                            |> div []
+                  , shortWordPhrase =
+                        "Typically used to represent a short word or phrase.\n\nThe width is 4em."
+                            |> Markdown.toHtml Nothing
+                            |> List.map fromUnstyled
+                            |> div []
+                  , longWordPhrase =
+                        "Typically used to represent  a long word or phrase.\n\nThe width is 6.66em."
+                            |> Markdown.toHtml Nothing
+                            |> List.map fromUnstyled
+                            |> div []
+                  , characterCount =
+                        [ "Uses the number of characters expected in the blank to calculate a rough monospace-based width that visually looks like it _could_ match."
+                        , "Multiplies the number of characters by 0.5 to get the width in em. The width must be at least 0.83."
+                        ]
+                            |> String.join "\n\n"
+                            |> Markdown.toHtml Nothing
+                            |> List.map fromUnstyled
+                            |> div []
                   , description = "The accessible name of all blanks, regardless of width and view used, is \"blank.\""
                   , guidance = "If we're looking for a specific length of content to put in the blank, that _must_ be communicated elsewhere on the page to provide an equitable experience."
                   }
