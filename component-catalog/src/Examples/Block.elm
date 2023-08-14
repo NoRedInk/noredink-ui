@@ -390,12 +390,220 @@ example =
                                 ]
                             ]
                   }
-                , { pattern = Code.fromModule moduleName "view"
-                  , description = "**Blank block**\n\nRepresents a blank in the sentence. Used in Cycling interface scaffolding."
+                , { pattern = Code.fromModule moduleName "view []"
+                  , description = "**Blank block**\n\nRepresents a blank in the sentence."
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "I am a seed with " ]
                             , Block.view []
+                            , Block.view [ Block.plaintext " being used." ]
+                            ]
+                  }
+                , { pattern =
+                        Code.fromModule moduleName "view"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "content"
+                                    ++ Code.listMultiline
+                                        [ "…"
+                                        , Code.fromModule moduleName "blankWithId "
+                                            ++ Code.string "[id]"
+                                            ++ " "
+                                            ++ Code.fromModule moduleName "SingleCharacter"
+                                        , "…"
+                                        ]
+                                        2
+                                ]
+                                1
+                  , description = "**Blank block with id and SingleCharacter length**\n\n"
+                  , example =
+                        inParagraph
+                            [ Block.view [ Block.plaintext "I am a seed with " ]
+                            , Block.view
+                                [ Block.content
+                                    [ Block.blankWithId "blank-with-id-single-character-example" Block.SingleCharacter
+                                    ]
+                                ]
+                            , Block.view [ Block.plaintext " being used." ]
+                            ]
+                  }
+                , { pattern =
+                        Code.fromModule moduleName "view"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "content"
+                                    ++ Code.listMultiline
+                                        [ "…"
+                                        , Code.fromModule moduleName "blankWithId "
+                                            ++ Code.string "[id]"
+                                            ++ " "
+                                            ++ Code.fromModule moduleName "ShortWordPhrase"
+                                        , "…"
+                                        ]
+                                        2
+                                ]
+                                1
+                  , description = "**Blank block with id and ShortWordPhrase length**\n\n"
+                  , example =
+                        inParagraph
+                            [ Block.view [ Block.plaintext "I am a seed with " ]
+                            , Block.view
+                                [ Block.content
+                                    [ Block.blankWithId "blank-with-id-short-word-example" Block.ShortWordPhrase
+                                    ]
+                                ]
+                            , Block.view [ Block.plaintext " being used." ]
+                            ]
+                  }
+                , { pattern =
+                        Code.fromModule moduleName "view"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "content"
+                                    ++ Code.listMultiline
+                                        [ "…"
+                                        , Code.fromModule moduleName "blankWithId "
+                                            ++ Code.string "[id]"
+                                            ++ " "
+                                            ++ Code.fromModule moduleName "LongWordPhrase"
+                                        , "…"
+                                        ]
+                                        2
+                                ]
+                                1
+                  , description = "**Blank block with id and LongWordPhrase length**\n\n"
+                  , example =
+                        inParagraph
+                            [ Block.view [ Block.plaintext "I am a seed with " ]
+                            , Block.view
+                                [ Block.content
+                                    [ Block.blankWithId "blank-with-id-long-word-example" Block.LongWordPhrase
+                                    ]
+                                ]
+                            , Block.view [ Block.plaintext " being used." ]
+                            ]
+                  }
+                , { pattern =
+                        Code.fromModule moduleName "view"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "content"
+                                    ++ Code.listMultiline
+                                        [ "…"
+                                        , Code.fromModule moduleName "blankWithId "
+                                            ++ Code.string "[id]"
+                                            ++ " "
+                                            ++ Code.withParens (Code.fromModule moduleName "CharacterCount 8")
+                                        , "…"
+                                        ]
+                                        2
+                                ]
+                                1
+                  , description = "**Blank block with id and CharacterCount 8 length**\n\n"
+                  , example =
+                        inParagraph
+                            [ Block.view [ Block.plaintext "I am a seed with " ]
+                            , Block.view
+                                [ Block.content
+                                    [ Block.blankWithId "blank-with-id-character-count-example" (Block.CharacterCount 8)
+                                    ]
+                                ]
+                            , Block.view [ Block.plaintext " being used." ]
+                            ]
+                  }
+                , { pattern =
+                        Code.fromModule moduleName "view"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "content"
+                                    ++ Code.listMultiline
+                                        [ "…"
+                                        , Code.fromModule moduleName "fullHeightBlank "
+                                            ++ Code.fromModule moduleName "SingleCharacter"
+                                        , "…"
+                                        ]
+                                        2
+                                ]
+                                1
+                  , description = "**Full height blank block and SingleCharacter length**\n\n"
+                  , example =
+                        inParagraph
+                            [ Block.view [ Block.plaintext "I am a seed with " ]
+                            , Block.view
+                                [ Block.content
+                                    [ Block.fullHeightBlank Block.SingleCharacter
+                                    ]
+                                ]
+                            , Block.view [ Block.plaintext " being used." ]
+                            ]
+                  }
+                , { pattern =
+                        Code.fromModule moduleName "view"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "content"
+                                    ++ Code.listMultiline
+                                        [ "…"
+                                        , Code.fromModule moduleName "fullHeightBlank "
+                                            ++ Code.fromModule moduleName "ShortWordPhrase"
+                                        , "…"
+                                        ]
+                                        2
+                                ]
+                                1
+                  , description = "**Full height blank block and ShortWordPhrase length**\n\n"
+                  , example =
+                        inParagraph
+                            [ Block.view [ Block.plaintext "I am a seed with " ]
+                            , Block.view
+                                [ Block.content
+                                    [ Block.fullHeightBlank Block.ShortWordPhrase
+                                    ]
+                                ]
+                            , Block.view [ Block.plaintext " being used." ]
+                            ]
+                  }
+                , { pattern =
+                        Code.fromModule moduleName "view"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "content"
+                                    ++ Code.listMultiline
+                                        [ "…"
+                                        , Code.fromModule moduleName "fullHeightBlank "
+                                            ++ Code.fromModule moduleName "LongWordPhrase"
+                                        , "…"
+                                        ]
+                                        2
+                                ]
+                                1
+                  , description = "**Full height blank block and LongWordPhrase length**\n\n"
+                  , example =
+                        inParagraph
+                            [ Block.view [ Block.plaintext "I am a seed with " ]
+                            , Block.view
+                                [ Block.content
+                                    [ Block.fullHeightBlank Block.LongWordPhrase
+                                    ]
+                                ]
+                            , Block.view [ Block.plaintext " being used." ]
+                            ]
+                  }
+                , { pattern =
+                        Code.fromModule moduleName "view"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "content"
+                                    ++ Code.listMultiline
+                                        [ "…"
+                                        , Code.fromModule moduleName "fullHeightBlank "
+                                            ++ Code.withParens (Code.fromModule moduleName "CharacterCount 8")
+                                        , "…"
+                                        ]
+                                        2
+                                ]
+                                1
+                  , description = "**Full height blank block and CharacterCount 8 length**\n\n"
+                  , example =
+                        inParagraph
+                            [ Block.view [ Block.plaintext "I am a seed with " ]
+                            , Block.view
+                                [ Block.content
+                                    [ Block.fullHeightBlank (Block.CharacterCount 8)
+                                    ]
+                                ]
                             , Block.view [ Block.plaintext " being used." ]
                             ]
                   }
@@ -424,7 +632,13 @@ example =
                             ++ Code.listMultiline
                                 [ Code.fromModule moduleName "emphasize"
                                 , Code.fromModule moduleName "content "
-                                    ++ Code.list [ "…" ]
+                                    ++ Code.listMultiline
+                                        [ "…"
+                                        , Code.fromModule moduleName "blank "
+                                            ++ Code.fromModule moduleName "ShortWordPhrase"
+                                        , "…"
+                                        ]
+                                        2
                                 ]
                                 1
                   , description = "**Blanks with emphasis block**\n\nHelp students focus in on a phrase that includes a blank"
