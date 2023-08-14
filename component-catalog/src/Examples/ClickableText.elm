@@ -215,7 +215,7 @@ inlineExample textSizeName size =
             [ ClickableText.appearsInline
             , size
             , ClickableText.onClick (ShowItWorked moduleName "in-line button")
-            , ClickableText.icon UiIcon.star
+            , ClickableText.icon UiIcon.starFilled
             ]
         , text (" to show up in-line with " ++ textSizeName ++ " content.")
         ]
