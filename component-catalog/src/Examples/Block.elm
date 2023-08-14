@@ -391,7 +391,11 @@ example =
                             ]
                   }
                 , { pattern = Code.fromModule moduleName "view []"
-                  , description = "**Blank block**\n\nRepresents a blank in the sentence."
+                  , description =
+                        """**Blank block**
+
+Represents a blank in the sentence.
+"""
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "I am a seed with " ]
@@ -414,7 +418,16 @@ example =
                                         2
                                 ]
                                 1
-                  , description = "**Blank block with id and SingleCharacter length**\n\n"
+                  , description =
+                        """**Blank block and SingleCharacter width**
+
+Represents a blank in the sentence.
+
+Often, this width will be used to represent punctuation, but note that the accessible name is "blank."
+We must convey that we're looking for a single character in place of the blank elsewhere on the page to provide an equitable experience.
+
+??? When would this height be chosen???
+"""
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "I am a seed with " ]
@@ -441,7 +454,16 @@ example =
                                         2
                                 ]
                                 1
-                  , description = "**Blank block with id and ShortWordPhrase length**\n\n"
+                  , description =
+                        """**Blank block with id and ShortWordPhrase length**
+
+Represents a blank in the sentence.
+
+Often, this width will be used to represent  a short word or phrase, but note that the accessible name is "blank."
+We must convey that we're looking for a short word or phrase in place of the blank elsewhere on the page to provide an equitable experience.
+
+??? When would this height be chosen???
+"""
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "I am a seed with " ]
@@ -468,7 +490,16 @@ example =
                                         2
                                 ]
                                 1
-                  , description = "**Blank block with id and LongWordPhrase length**\n\n"
+                  , description =
+                        """**Blank block with id and LongWordPhrase length**
+
+Represents a blank in the sentence.
+
+Often, this width will be used to represent  a long word or phrase, but note that the accessible name is "blank."
+We must convey that we're looking for a long word or phrase in place of the blank elsewhere on the page to provide an equitable experience.
+
+??? When would this height be chosen???
+"""
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "I am a seed with " ]
@@ -495,7 +526,15 @@ example =
                                         2
                                 ]
                                 1
-                  , description = "**Blank block with id and CharacterCount 8 length**\n\n"
+                  , description =
+                        """**Blank block with id and specific CharacterCount-based length**
+
+Represents a blank in the sentence.
+
+The accessible name is "blank." If we're looking for a specific length of content to put in the blank, that _must_ be communicated elsewhere on the page to provide an equitable experience.
+
+??? When would this height be chosen???
+"""
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "I am a seed with " ]
@@ -520,7 +559,16 @@ example =
                                         2
                                 ]
                                 1
-                  , description = "**Full height blank block and SingleCharacter length**\n\n"
+                  , description =
+                        """**Full height blank block and SingleCharacter length**
+
+Represents a blank in the sentence.
+
+Often, this width will be used to represent  a short word or phrase, but note that the accessible name is "blank."
+We must convey that we're looking for a short word or phrase in place of the blank elsewhere on the page to provide an equitable experience.
+
+??? When would this height be chosen???
+"""
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "I am a seed with " ]
@@ -545,7 +593,16 @@ example =
                                         2
                                 ]
                                 1
-                  , description = "**Full height blank block and ShortWordPhrase length**\n\n"
+                  , description =
+                        """**Full height blank block and ShortWordPhrase length**
+
+Represents a blank in the sentence.
+
+Often, this width will be used to represent  a short word or phrase, but note that the accessible name is "blank."
+We must convey that we're looking for a short word or phrase in place of the blank elsewhere on the page to provide an equitable experience.
+
+??? When would this height be chosen???
+"""
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "I am a seed with " ]
@@ -570,7 +627,16 @@ example =
                                         2
                                 ]
                                 1
-                  , description = "**Full height blank block and LongWordPhrase length**\n\n"
+                  , description =
+                        """**Full height blank block and LongWordPhrase length**
+
+Represents a blank in the sentence.
+
+Often, this width will be used to represent  a long word or phrase, but note that the accessible name is "blank."
+We must convey that we're looking for a long word or phrase in place of the blank elsewhere on the page to provide an equitable experience.
+
+??? When would this height be chosen???
+    """
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "I am a seed with " ]
@@ -582,7 +648,16 @@ example =
                             , Block.view [ Block.plaintext " being used." ]
                             ]
                   }
-                , { pattern =
+                , { description =
+                        """**Full height blank block and specific CharacterCount-based length**
+
+Represents a blank in the sentence.
+
+The accessible name is "blank." If we're looking for a specific length of content to put in the blank, that _must_ be communicated elsewhere on the page to provide an equitable experience.
+
+??? When would this height be chosen???
+"""
+                  , pattern =
                         Code.fromModule moduleName "view"
                             ++ Code.listMultiline
                                 [ Code.fromModule moduleName "content"
@@ -595,7 +670,6 @@ example =
                                         2
                                 ]
                                 1
-                  , description = "**Full height blank block and CharacterCount 8 length**\n\n"
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "I am a seed with " ]
