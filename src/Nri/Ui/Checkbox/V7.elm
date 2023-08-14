@@ -382,11 +382,19 @@ viewCheckbox :
     -> Html.Html msg
 viewCheckbox config ( styles, icon ) =
     let
+        marginTopAdjustment =
+            case config.guidance of
+                Just _ ->
+                    marginTop (Css.px -highContrastBorderWidth)
+
+                Nothing ->
+                    Css.batch []
+
         attributes =
             List.concat
                 [ [ css
                         (paddingLeft (Css.px checkboxIconWidth)
-                            :: marginTop (Css.px -highContrastBorderWidth)
+                            :: marginTopAdjustment
                             :: marginLeft (Css.px -checkboxIconWidth)
                             :: styles
                             ++ config.labelCss
