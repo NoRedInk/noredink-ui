@@ -434,16 +434,14 @@ Please see the "Blank views and width guidance" table to learn more about using 
                 ]
             , Table.view
                 []
-                [ Table.string
-                    { header = "Name"
-                    , value = .name
-                    , width = Css.pct 10
-                    , cellStyles = always []
-                    , sort = Nothing
-                    }
-                , Table.custom
-                    { header = text "Code"
-                    , view = \{ code } -> Html.Styled.code [] [ text code ]
+                [ Table.custom
+                    { header = text "Pattern"
+                    , view =
+                        \{ name, code } ->
+                            div []
+                                [ Text.smallBody [ Text.plaintext name ]
+                                , Html.Styled.code [] [ text code ]
+                                ]
                     , width = Css.px 300
                     , cellStyles =
                         always
@@ -494,16 +492,16 @@ Please see the "Blank views and width guidance" table to learn more about using 
                     , sort = Nothing
                     }
                 ]
-                [ { name = ""
+                [ { name = "Width"
                   , code = ""
-                  , singleCharacter = text "Often, this width will be used to represent punctuation, but note that the accessible name is \"blank.\"\nWe must convey that we're looking for a single character in place of the blank elsewhere on the page to provide an equitable experience."
-                  , shortWordPhrase = text "Often, this width will be used to represent a short word or phrase, but note that the accessible name is \"blank.\" We must convey that we're looking for a short word or phrase in place of the blank elsewhere on the page to provide an equitable experience."
-                  , longWordPhrase = text "Often, this width will be used to represent  a long word or phrase, but note that the accessible name is \"blank.\" We must convey that we're looking for a long word or phrase in place of the blank elsewhere on the page to provide an equitable experience."
-                  , characterCount = text "The accessible name is \"blank.\" If we're looking for a specific length of content to put in the blank, that _must_ be communicated elsewhere on the page to provide an equitable experience."
-                  , description = ""
-                  , guidance = ""
+                  , singleCharacter = text "Often, this width will be used to represent punctuation."
+                  , shortWordPhrase = text "Often, this width will be used to represent a short word or phrase."
+                  , longWordPhrase = text "Often, this width will be used to represent  a long word or phrase."
+                  , characterCount = text ""
+                  , description = "The accessible name of all blanks, regardless of width and view used, is \"blank.\""
+                  , guidance = "If we're looking for a specific length of content to put in the blank, that _must_ be communicated elsewhere on the page to provide an equitable experience."
                   }
-                , { name = "(none)"
+                , { name = ""
                   , code = Code.fromModule moduleName "view []"
                   , singleCharacter = text "N/A"
                   , shortWordPhrase = text "N/A"
