@@ -361,21 +361,6 @@ example =
                                 ]
                             ]
                   }
-                , { pattern = Code.fromModule moduleName "view []"
-                  , description =
-                        """**Blank block**
-
-Represents a blank in the sentence.
-
-Please see the "Blank views and width guidance" table to learn more about using Blanks.
-"""
-                  , example =
-                        inParagraph
-                            [ Block.view [ Block.plaintext "I am a seed with " ]
-                            , Block.view []
-                            , Block.view [ Block.plaintext " being used." ]
-                            ]
-                  }
                 , { pattern =
                         Code.fromModule moduleName "view "
                             ++ Code.listMultiline
@@ -383,7 +368,14 @@ Please see the "Blank views and width guidance" table to learn more about using 
                                 , Code.fromModule moduleName "purple"
                                 ]
                                 1
-                  , description = "**Labeled blank block**\n\nA labelled blank in the sentence"
+                  , description =
+                        """**Labeled blank block**
+
+A labelled blank in the sentence.
+
+Please see the "Blank views and width guidance" table to learn more about using Blanks.
+
+"""
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "If a volcano is extinct, " ]
