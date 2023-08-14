@@ -591,8 +591,8 @@ type alias Settings =
 initControl : Control Settings
 initControl =
     ControlExtra.list
-        |> ControlExtra.optionalListItem "content" controlContent
-        |> ControlExtra.optionalBoolListItem "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )
+        |> ControlExtra.optionalListItemDefaultChecked "content" controlContent
+        |> ControlExtra.optionalBoolListItemDefaultChecked "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )
         |> ControlExtra.optionalListItem "label"
             (CommonControls.string ( Code.fromModule moduleName "label", Block.label ) "Fruit")
         |> ControlExtra.optionalListItem "labelPosition"
