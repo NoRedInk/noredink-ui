@@ -154,6 +154,9 @@ view { label, id } attrs =
     let
         config =
             List.foldl (\(Attribute update) -> update) defaultConfig attrs
+
+        isDisabled_ =
+            notOperable config
     in
     Html.label
         ([ Attributes.id (id ++ "-container")
@@ -182,18 +185,18 @@ view { label, id } attrs =
             (viewSwitch
                 { id = id
                 , isSelected = config.isSelected
-                , isDisabled = notOperable config
+                , isDisabled = isDisabled_
                 }
             )
         , Html.span
             [ Attributes.css
                 [ Css.fontWeight (Css.int 600)
                 , Css.color
-                    (if not config.isDisabled then
-                        Colors.navy
+                    (if isDisabled_ then
+                        Colors.gray45
 
                      else
-                        Colors.gray45
+                        Colors.navy
                     )
                 , Css.paddingLeft (Css.px 5)
                 , Fonts.baseFont
