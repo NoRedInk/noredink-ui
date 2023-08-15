@@ -279,36 +279,6 @@ example =
                 ]
             , Table.view []
                 [ Table.custom
-                    { header = text "Blank Width"
-                    , view = String.fromInt >> text
-                    , width = Css.px 125
-                    , cellStyles = always []
-                    , sort = Nothing
-                    }
-                , Table.custom
-                    { header = text "Example"
-                    , view = \characters -> Block.view [ Block.content [ Block.fullHeightBlank (Block.CharacterCount characters) ] ]
-                    , width = Css.auto
-                    , cellStyles = always [ Css.fontSize (Css.px 30) ]
-                    , sort = Nothing
-                    }
-                , Table.custom
-                    { header = text "Code"
-                    , view = \characters -> code [] [ text <| "Block.view \n  [ Block.content \n    [ Block.fullHeightBlank (Block.CharacterCount " ++ String.fromInt characters ++ ") \n    ] \n  ]" ]
-                    , width = Css.px 500
-                    , cellStyles =
-                        always
-                            [ Css.padding2 (Css.px 14) (Css.px 7)
-                            , Css.verticalAlign Css.top
-                            , Css.fontSize (Css.px 12)
-                            , Css.whiteSpace Css.preWrap
-                            ]
-                    , sort = Nothing
-                    }
-                ]
-                [ 1, 2, 3, 4, 5, 6, 7, 8 ]
-            , Table.view []
-                [ Table.custom
                     { header = text "Pattern name & description"
                     , view = .description >> Markdown.toHtml Nothing >> List.map fromUnstyled >> div []
                     , width = Css.px 125
@@ -390,15 +360,6 @@ example =
                                 ]
                             ]
                   }
-                , { pattern = Code.fromModule moduleName "view"
-                  , description = "**Blank block**\n\nRepresents a blank in the sentence. Used in Cycling interface scaffolding."
-                  , example =
-                        inParagraph
-                            [ Block.view [ Block.plaintext "I am a seed with " ]
-                            , Block.view []
-                            , Block.view [ Block.plaintext " being used." ]
-                            ]
-                  }
                 , { pattern =
                         Code.fromModule moduleName "view "
                             ++ Code.listMultiline
@@ -406,7 +367,14 @@ example =
                                 , Code.fromModule moduleName "purple"
                                 ]
                                 1
-                  , description = "**Labeled blank block**\n\nA labelled blank in the sentence"
+                  , description =
+                        """**Labeled blank block**
+
+A labelled blank in the sentence.
+
+Please see the "Blank views and width guidance" table to learn more about using Blanks.
+
+"""
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "If a volcano is extinct, " ]
@@ -424,7 +392,13 @@ example =
                             ++ Code.listMultiline
                                 [ Code.fromModule moduleName "emphasize"
                                 , Code.fromModule moduleName "content "
-                                    ++ Code.list [ "…" ]
+                                    ++ Code.listMultiline
+                                        [ "…"
+                                        , Code.fromModule moduleName "blank "
+                                            ++ Code.fromModule moduleName "ShortWordPhrase"
+                                        , "…"
+                                        ]
+                                        2
                                 ]
                                 1
                   , description = "**Blanks with emphasis block**\n\nHelp students focus in on a phrase that includes a blank"
@@ -443,6 +417,146 @@ example =
                                 [ Block.plaintext " in a seed."
                                 ]
                             ]
+                  }
+                ]
+            , Heading.h2
+                [ Heading.plaintext "Blank views and width guidance"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
+            , Table.view
+                []
+                [ Table.custom
+                    { header = text "Pattern"
+                    , view =
+                        \{ name, code } ->
+                            div []
+                                [ Text.smallBody [ Text.plaintext name ]
+                                , Html.Styled.code [] [ text code ]
+                                ]
+                    , width = Css.px 300
+                    , cellStyles =
+                        always
+                            [ Css.padding2 (Css.px 14) (Css.px 7)
+                            , Css.verticalAlign Css.top
+                            , Css.fontSize (Css.px 12)
+                            , Css.whiteSpace Css.preWrap
+                            ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "Description"
+                    , view =
+                        \{ description, guidance } ->
+                            Markdown.toHtml Nothing (description ++ "\n\n" ++ guidance)
+                                |> List.map fromUnstyled
+                                |> div []
+                    , width = Css.px 300
+                    , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "SingleCharacter"
+                    , view = .singleCharacter
+                    , width = Css.px 300
+                    , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "ShortWordPhrase"
+                    , view = .shortWordPhrase
+                    , width = Css.px 300
+                    , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "LongWordPhrase"
+                    , view = .longWordPhrase
+                    , width = Css.px 300
+                    , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "CharacterCount [int]"
+                    , view = .characterCount
+                    , width = Css.px 300
+                    , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
+                    , sort = Nothing
+                    }
+                ]
+                [ { name = "Width"
+                  , code = ""
+                  , singleCharacter =
+                        "Typically used to represent punctuation.\n\nThe width is 0.83em."
+                            |> Markdown.toHtml Nothing
+                            |> List.map fromUnstyled
+                            |> div []
+                  , shortWordPhrase =
+                        "Typically used to represent a short word or phrase.\n\nThe width is 4em."
+                            |> Markdown.toHtml Nothing
+                            |> List.map fromUnstyled
+                            |> div []
+                  , longWordPhrase =
+                        "Typically used to represent  a long word or phrase.\n\nThe width is 6.66em."
+                            |> Markdown.toHtml Nothing
+                            |> List.map fromUnstyled
+                            |> div []
+                  , characterCount =
+                        [ "Uses the number of characters expected in the blank to calculate a rough monospace-based width that visually looks like it _could_ match."
+                        , "Multiplies the number of characters by 0.5 to get the width in em. The width must be at least 0.83."
+                        ]
+                            |> String.join "\n\n"
+                            |> Markdown.toHtml Nothing
+                            |> List.map fromUnstyled
+                            |> div []
+                  , description = "The accessible name of all blanks, regardless of width and view used, is \"blank.\""
+                  , guidance = "If we're looking for a specific length of content to put in the blank, that _must_ be communicated elsewhere on the page to provide an equitable experience."
+                  }
+                , { name = ""
+                  , code = Code.fromModule moduleName "view []"
+                  , singleCharacter = text "N/A"
+                  , shortWordPhrase = text "N/A"
+                  , longWordPhrase = text "N/A"
+                  , characterCount = text "N/A"
+                  , description = "When no other attributes are passed to `Block.view`, Block will render a blank."
+                  , guidance = "This behavior is primarily provided as a convenience to devs."
+                  }
+                , { name = "blankWithId"
+                  , code =
+                        Code.fromModule moduleName "view"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "content"
+                                    ++ Code.listMultiline
+                                        [ Code.fromModule moduleName "blankWithId "
+                                            ++ Code.string "[id]"
+                                            ++ " [block length]"
+                                        ]
+                                        2
+                                ]
+                                1
+                  , singleCharacter = Block.view [ Block.content [ Block.blankWithId "blankWithId-single-char" Block.SingleCharacter ] ]
+                  , shortWordPhrase = Block.view [ Block.content [ Block.blankWithId "blankWithId-short-word-phrase" Block.ShortWordPhrase ] ]
+                  , longWordPhrase = Block.view [ Block.content [ Block.blankWithId "blankWithId-long-word-phrase" Block.LongWordPhrase ] ]
+                  , characterCount = Block.view [ Block.content [ Block.blankWithId "blankWithId-char-count" (Block.CharacterCount 20) ] ]
+                  , description = "`blankWithId` will render a blank with the specified id. The blank's height will not expand past the content."
+                  , guidance = "??? When should this helper be used ???"
+                  }
+                , { name = "fullHeightBlank"
+                  , code =
+                        Code.fromModule moduleName "view"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "content"
+                                    ++ Code.listMultiline
+                                        [ Code.fromModule moduleName "fullHeightBlank [block length]"
+                                        ]
+                                        2
+                                ]
+                                1
+                  , singleCharacter = Block.view [ Block.content [ Block.fullHeightBlank Block.SingleCharacter ] ]
+                  , shortWordPhrase = Block.view [ Block.content [ Block.fullHeightBlank Block.ShortWordPhrase ] ]
+                  , longWordPhrase = Block.view [ Block.content [ Block.fullHeightBlank Block.LongWordPhrase ] ]
+                  , characterCount = Block.view [ Block.content [ Block.fullHeightBlank (Block.CharacterCount 20) ] ]
+                  , description = "`fullHeightBlank` will render a blank whose height will be taller than the surrounding text"
+                  , guidance = "??? When should this helper be used ???"
                   }
                 ]
             ]
@@ -476,8 +590,8 @@ type alias Settings =
 initControl : Control Settings
 initControl =
     ControlExtra.list
-        |> ControlExtra.optionalListItem "content" controlContent
-        |> ControlExtra.optionalBoolListItem "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )
+        |> ControlExtra.optionalListItemDefaultChecked "content" controlContent
+        |> ControlExtra.optionalBoolListItemDefaultChecked "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )
         |> ControlExtra.optionalListItem "label"
             (CommonControls.string ( Code.fromModule moduleName "label", Block.label ) "Fruit")
         |> ControlExtra.optionalListItem "labelPosition"
@@ -561,67 +675,63 @@ controlContent =
                     )
                 )
           )
-        , ( "single character blank"
-          , Control.value
-                ( Code.fromModule moduleName "content "
-                    ++ Code.withParens
-                        (Code.fromModule moduleName "blank "
-                            ++ Code.fromModule moduleName "SingleCharacter"
-                        )
-                , Block.content [ Block.blank Block.SingleCharacter ]
-                )
-          )
-        , ( "short word phrase blank"
-          , Control.value
-                ( Code.fromModule moduleName "content "
-                    ++ Code.withParens
-                        (Code.fromModule moduleName "blank "
-                            ++ Code.fromModule moduleName "ShortWordPhrase"
-                        )
-                , Block.content [ Block.blank Block.ShortWordPhrase ]
-                )
-          )
-        , ( "long word phrase blank"
-          , Control.value
-                ( Code.fromModule moduleName "content "
-                    ++ Code.withParens
-                        (Code.fromModule moduleName "blank "
-                            ++ Code.fromModule moduleName "LongWordPhrase"
-                        )
-                , Block.content [ Block.blank Block.LongWordPhrase ]
-                )
-          )
-        , ( "full height single character blank"
-          , Control.value
-                ( Code.fromModule moduleName "content "
-                    ++ Code.withParens
-                        (Code.fromModule moduleName "fullHeightBlank "
-                            ++ Code.fromModule moduleName "SingleCharacter"
-                        )
-                , Block.content [ Block.fullHeightBlank Block.SingleCharacter ]
-                )
-          )
-        , ( "full height short word phrase blank"
-          , Control.value
-                ( Code.fromModule moduleName "content "
-                    ++ Code.withParens
-                        (Code.fromModule moduleName "fullHeightBlank "
-                            ++ Code.fromModule moduleName "ShortWordPhrase"
-                        )
-                , Block.content [ Block.fullHeightBlank Block.ShortWordPhrase ]
-                )
-          )
-        , ( "full height long word phrase blank"
-          , Control.value
-                ( Code.fromModule moduleName "content "
-                    ++ Code.withParens
-                        (Code.fromModule moduleName "fullHeightBlank "
-                            ++ Code.fromModule moduleName "LongWordPhrase"
-                        )
-                , Block.content [ Block.fullHeightBlank Block.LongWordPhrase ]
-                )
-          )
+        , blankType ( "blank", Block.blank )
+        , blankType ( "blankWithId \"example-id\"", Block.blankWithId "example-id" )
+        , blankType ( "fullHeightBlank", Block.fullHeightBlank )
         ]
+
+
+blankType : ( String, Block.BlankLength -> Block.Content msg ) -> ( String, Control ( String, Block.Attribute msg ) )
+blankType ( typeStr, blank ) =
+    ( typeStr
+    , Control.map
+        (\( widthStr, width ) ->
+            ( Code.fromModule moduleName "content "
+                ++ Code.withParens
+                    (Code.fromModule moduleName typeStr
+                        ++ " "
+                        ++ widthStr
+                    )
+            , Block.content [ blank width ]
+            )
+        )
+        controlBlankWidth
+    )
+
+
+controlBlankWidth : Control ( String, Block.BlankLength )
+controlBlankWidth =
+    [ ( "SingleCharacter"
+      , Control.value
+            ( Code.fromModule moduleName "SingleCharacter"
+            , Block.SingleCharacter
+            )
+      )
+    , ( "ShortWordPhrase"
+      , Control.value
+            ( Code.fromModule moduleName "ShortWordPhrase"
+            , Block.ShortWordPhrase
+            )
+      )
+    , ( "LongWordPhrase"
+      , Control.value
+            ( Code.fromModule moduleName "LongWordPhrase"
+            , Block.LongWordPhrase
+            )
+      )
+    , ( "CharacterCount"
+      , Control.map
+            (\int ->
+                ( Code.withParens
+                    (Code.fromModule moduleName "CharacterCount " ++ Code.int int)
+                , Block.CharacterCount int
+                )
+            )
+            (ControlExtra.int 0)
+      )
+    ]
+        |> List.reverse
+        |> Control.choice
 
 
 ageId : String
