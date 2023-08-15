@@ -302,7 +302,7 @@ renderContent blankHeight config content_ styles =
         Word str ->
             let
                 blockContainer =
-                    blockSegmentContainer Nothing
+                    blockSegmentContainer
                         [ text str ]
                         styles
             in
@@ -320,7 +320,7 @@ renderContent blankHeight config content_ styles =
                 blockContainer
 
         Blank length ->
-            blockSegmentContainer Nothing
+            blockSegmentContainer
                 [ viewBlank blankHeight length ]
                 styles
 
@@ -339,8 +339,8 @@ renderContent blankHeight config content_ styles =
                 |> tag
 
 
-blockSegmentContainer : Maybe String -> List (Html msg) -> List Css.Style -> Html msg
-blockSegmentContainer id_ children styles =
+blockSegmentContainer : List (Html msg) -> List Css.Style -> Html msg
+blockSegmentContainer children styles =
     span
         [ css
             (Css.whiteSpace Css.pre
@@ -348,7 +348,6 @@ blockSegmentContainer id_ children styles =
                 :: Css.position Css.relative
                 :: styles
             )
-        , AttributesExtra.maybe Attributes.id id_
         , nriDescription "block-segment-container"
         ]
         children
