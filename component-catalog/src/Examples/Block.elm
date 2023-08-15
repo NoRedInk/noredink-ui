@@ -454,20 +454,20 @@ Please see the "Blank views and width guidance" table to learn more about using 
                   }
                 ]
             , Heading.h2
-                [ Heading.plaintext "Blank views and width guidance"
+                [ Heading.plaintext "Blank width guidance"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
+            , Text.smallBody [ Text.markdown "The accessible name of all blanks, regardless of character width used, is \"blank.\"" ]
+            , Text.smallBody [ Text.markdown "If we're looking for a specific length of content to put in the blank, that _must_ be communicated elsewhere on the page to provide an equitable experience." ]
+            , Text.smallBody [ Text.markdown "The `characterWidth` parameter uses the number of characters expected in the blank to calculate a rough monospace-based width that visually looks like it _could_ match."]
             , Table.view
                 []
                 [ Table.custom
                     { header = text "Pattern"
                     , view =
-                        \{ name, code } ->
-                            div []
-                                [ Text.smallBody [ Text.plaintext name ]
-                                , Html.Styled.code [] [ text code ]
-                                ]
-                    , width = Css.px 300
+                        \{ code } ->
+                            Html.Styled.code [] [ text code ]
+                    , width = Css.px 400
                     , cellStyles =
                         always
                             [ Css.padding2 (Css.px 14) (Css.px 7)
@@ -480,79 +480,42 @@ Please see the "Blank views and width guidance" table to learn more about using 
                 , Table.custom
                     { header = text "Description"
                     , view =
-                        \{ description, guidance } ->
-                            Markdown.toHtml Nothing (description ++ "\n\n" ++ guidance)
-                                |> List.map fromUnstyled
-                                |> div []
+                        .description 
+                            >> Markdown.toHtml Nothing
+                            >> List.map fromUnstyled
+                            >> div []
                     , width = Css.px 300
                     , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
                     , sort = Nothing
                     }
                 , Table.custom
-                    { header = text "SingleCharacter"
-                    , view = .singleCharacter
-                    , width = Css.px 300
-                    , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
-                    , sort = Nothing
-                    }
-                , Table.custom
-                    { header = text "ShortWordPhrase"
-                    , view = .shortWordPhrase
-                    , width = Css.px 300
-                    , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
-                    , sort = Nothing
-                    }
-                , Table.custom
-                    { header = text "LongWordPhrase"
-                    , view = .longWordPhrase
-                    , width = Css.px 300
-                    , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
-                    , sort = Nothing
-                    }
-                , Table.custom
-                    { header = text "CharacterCount [int]"
-                    , view = .characterCount
+                    { header = text "Example"
+                    , view = 
+                        \{ textExample, blankExample } ->
+                            div
+                                []
+                                [ div [] [ textExample ]
+                                , div [] [ blankExample ]
+                                ]
                     , width = Css.px 300
                     , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
                     , sort = Nothing
                     }
                 ]
-                [ { name = "Width"
-                  , code = ""
-                  , singleCharacter =
-                        "Typically used to represent punctuation.\n\nThe width is 0.83em."
-                            |> Markdown.toHtml Nothing
-                            |> List.map fromUnstyled
-                            |> div []
-                  , shortWordPhrase =
-                        "Typically used to represent a short word or phrase.\n\nThe width is 4em."
-                            |> Markdown.toHtml Nothing
-                            |> List.map fromUnstyled
-                            |> div []
-                  , longWordPhrase =
-                        "Typically used to represent  a long word or phrase.\n\nThe width is 6.66em."
-                            |> Markdown.toHtml Nothing
-                            |> List.map fromUnstyled
-                            |> div []
-                  , characterCount =
-                        [ "Uses the number of characters expected in the blank to calculate a rough monospace-based width that visually looks like it _could_ match."
-                        , "Multiplies the number of characters by 0.5 to get the width in em. The width must be at least 0.83."
-                        ]
-                            |> String.join "\n\n"
-                            |> Markdown.toHtml Nothing
-                            |> List.map fromUnstyled
-                            |> div []
-                  , description = "The accessible name of all blanks, regardless of width and view used, is \"blank.\""
-                  , guidance = "If we're looking for a specific length of content to put in the blank, that _must_ be communicated elsewhere on the page to provide an equitable experience."
+                [ { code = Code.fromModule moduleName "blank " ++ Code.record [ ("characterWidth", "1") ]
+                  , description = "A single character.  Typically used to represent punctuation."
+                  , textExample = Block.view [ Block.emphasize, Block.plaintext "," ]
+                  , blankExample = Block.view [ Block.content [ Block.blank { characterWidth = 1 } ], Block.emphasize]
                   }
-                , { name = ""
-                  , code = Code.fromModule moduleName "view []"
-                  , singleCharacter = text "N/A"
-                  , shortWordPhrase = text "N/A"
-                  , longWordPhrase = text "N/A"
-                  , characterCount = text "N/A"
-                  , description = "When no other attributes are passed to `Block.view`, Block will render a blank."
-                  , guidance = "This behavior is primarily provided as a convenience to devs."
+                 , { code = Code.fromModule moduleName "blank " ++ Code.record [ ("characterWidth", "8") ]
+                  , description = "A short word or phrase.  "
+                  , textExample = Block.view [ Block.emphasize, Block.plaintext "a phrase" ]
+                  , blankExample = Block.view [ Block.content [ Block.blank { characterWidth = 8 } ], Block.emphasize]
+                  }
+                , { code = Code.fromModule moduleName "blank " ++ Code.record [ ("characterWidth", "16") ]
+                  , description = "A long word or phrase."
+                  , textExample = Block.view [ Block.emphasize, Block.plaintext "multifariousness" ]
+                  , blankExample = Block.view [ Block.content [ Block.blank { characterWidth = 16 } ], Block.emphasize]
                   }
                 ]
             ]
