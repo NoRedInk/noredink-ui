@@ -365,9 +365,10 @@ example =
 
 A labelled blank in the sentence.
 
-Please see the "Blank views and width guidance" table to learn more about using Blanks.
-
 """
+                            ++ "Please see the \""
+                            ++ blankWidthGuidanceSectionName
+                            ++ "\" table to learn more about using Blanks."
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "If a volcano is extinct, " ]
@@ -446,7 +447,7 @@ Please see the "Blank views and width guidance" table to learn more about using 
                   }
                 ]
             , Heading.h2
-                [ Heading.plaintext "Blank width guidance"
+                [ Heading.plaintext blankWidthGuidanceSectionName
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
             , Text.smallBody [ Text.markdown "The accessible name of all blanks, regardless of character width used, is \"blank.\"" ]
@@ -512,6 +513,11 @@ Please see the "Blank views and width guidance" table to learn more about using 
                 ]
             ]
     }
+
+
+blankWidthGuidanceSectionName : String
+blankWidthGuidanceSectionName =
+    "Blank width guidance"
 
 
 {-| -}
