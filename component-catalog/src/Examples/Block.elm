@@ -623,13 +623,13 @@ controlContent =
           , Control.value
                 ( Code.fromModule moduleName "content "
                     ++ Code.withParens
-                        ((Code.fromModule moduleName "string " ++ Code.string "to think about ")
-                            ++ (" ++ " ++ Code.fromModule moduleName "blank")
-                            ++ (" :: " ++ Code.fromModule moduleName "string " ++ Code.string " and so forth")
+                        ((Code.fromModule moduleName "italic (" ++ Code.fromModule moduleName "phrase " ++ Code.string "to think about" ++ ")")
+                            ++ (" :: " ++ Code.fromModule moduleName "blank")
+                            ++ (" :: " ++ Code.fromModule moduleName "phrase " ++ Code.string " and so forth")
                         )
                 , Block.content
-                    (Block.phrase "to think about "
-                        ++ Block.blank { characterWidth = 8 }
+                    (Block.italic (Block.phrase "to think about ")
+                        :: Block.blank { characterWidth = 8 }
                         :: Block.phrase " and so forth"
                     )
                 )
