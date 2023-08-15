@@ -17,6 +17,7 @@ module Nri.Ui.Block.V6 exposing
 {-| Changes from V5:
 
     - Remove `wordWithId` and `blankWithId` as we no longer are trying to point to words or blanks with the question box.
+    - Remove the `fullHeightBlank` attribute option - we can always infer this from the contents
 
 
 ## Patch changes
