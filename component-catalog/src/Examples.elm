@@ -685,21 +685,21 @@ all =
             )
     , RadioButtonDotless.example
         |> Example.wrapMsg RadioButtonDotlessMsg
-            (\msg -> 
-                case msg of 
+            (\msg ->
+                case msg of
                     RadioButtonDotlessMsg childMsg ->
                         Just childMsg
 
-                    _ -> 
+                    _ ->
                         Nothing
             )
         |> Example.wrapState RadioButtonDotlessState
             (\msg ->
-                case msg of 
-                    RadioButtonDotlessState childState -> 
+                case msg of
+                    RadioButtonDotlessState childState ->
                         Just childState
 
-                    _ -> 
+                    _ ->
                         Nothing
             )
     , RingGauge.example

@@ -54,9 +54,9 @@ init =
 
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
-    case msg of 
+    case msg of
         Select i ->
-            ( { state | radioValue = Just i}, Cmd.none )
+            ( { state | radioValue = Just i }, Cmd.none )
 
 
 preview : List (Html Never)
