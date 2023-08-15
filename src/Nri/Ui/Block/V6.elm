@@ -101,7 +101,7 @@ plaintext content_ =
 
     Block.view
         [ Block.emphasize
-        , Block.content (Block.phrase "Hello, " ++  Block.blank :: Block.phrase "!" ) ]
+        , Block.content (Block.phrase "Hello, " ++  Block.blank { characterWidth = 8 } :: Block.phrase "!" ) ]
         ]
 
 -}
