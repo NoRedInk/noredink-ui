@@ -101,6 +101,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                 , borderStyle solid
                 , Fonts.baseFont
                 , fontSize (px 18)
+                , cursor pointer
                 , if isChecked then
                     Css.batch
                         [ color Colors.navy
