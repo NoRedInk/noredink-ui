@@ -40,12 +40,12 @@ contentSpec =
                     ]
     , test "content with phrase and blank" <|
         \() ->
-            [ Block.content (Block.phrase "Yo hello" ++ [ Block.blank Block.ShortWordPhrase ]) ]
+            [ Block.content (Block.phrase "Yo hello" ++ [ Block.blank { characterWidth = 8 } ]) ]
                 |> toQuery
                 |> Query.has [ Selector.text "Yo", Selector.text "blank" ]
     , test "content with blankWithQuestionBox" <|
         \() ->
-            [ Block.content [ Block.blank Block.ShortWordPhrase ] ]
+            [ Block.content [ Block.blank { characterWidth = 8 } ] ]
                 |> toQuery
                 |> Query.has
                     [ Selector.all
