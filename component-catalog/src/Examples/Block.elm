@@ -396,7 +396,7 @@ Please see the "Blank views and width guidance" table to learn more about using 
                                     ++ Code.listMultiline
                                         [ "…"
                                         , Code.fromModule moduleName "blank "
-                                            ++ Code.fromModule moduleName "ShortWordPhrase"
+                                            ++ Code.record [("characterWidth", "8")]
                                         , "…"
                                         ]
                                         2
@@ -418,6 +418,38 @@ Please see the "Blank views and width guidance" table to learn more about using 
                                 [ Block.plaintext " in a seed."
                                 ]
                             ]
+                  }
+                , { pattern = 
+                        Code.fromModule moduleName "view "
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "emphasize"
+                                , Code.fromModule moduleName "content "
+                                    ++ Code.listMultiline
+                                        [ "…"
+                                        , Code.fromModule moduleName "bold ("
+                                            ++ (Code.fromModule moduleName "phrase " ++ "\"[bold text]\"") ++ ")"
+                                        , Code.fromModule moduleName "italic ("
+                                            ++ (Code.fromModule moduleName "phrase " ++ "\"[italic text]\"") ++ ")"
+                                        , "…"
+                                        ]
+                                        2
+                                ]
+                                1
+                  , description = "**Bold & Italic markdown**\n\nItalicize titles and highlight specific words inside of an emphasis block."
+                 , example =
+                        inParagraph
+                            [ Block.view [ Block.plaintext "The " ]
+                            , Block.view 
+                                [ Block.emphasize
+                                , (List.concat >> Block.content)
+                                    [ [Block.bold (Block.phrase "quick ") ]
+                                    , [Block.italic (Block.phrase "brown ") ]
+                                    , Block.phrase "fox"
+                                    ]
+                                ]
+                            , Block.view [ Block.plaintext " jumped over the lazy dog." ]
+                            ]
+
                   }
                 ]
             , Heading.h2
