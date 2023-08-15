@@ -396,7 +396,7 @@ Please see the "Blank views and width guidance" table to learn more about using 
                                     ++ Code.listMultiline
                                         [ "…"
                                         , Code.fromModule moduleName "blank "
-                                            ++ Code.record [("characterWidth", "8")]
+                                            ++ Code.record [ ( "characterWidth", "8" ) ]
                                         , "…"
                                         ]
                                         2
@@ -410,7 +410,7 @@ Please see the "Blank views and width guidance" table to learn more about using 
                                 [ Block.emphasize
                                 , (List.concat >> Block.content)
                                     [ Block.phrase "emphasized subsegement "
-                                    , [ Block.blank { characterWidth = 8 }]
+                                    , [ Block.blank { characterWidth = 8 } ]
                                     , Block.phrase " emphasized"
                                     ]
                                 ]
@@ -419,7 +419,7 @@ Please see the "Blank views and width guidance" table to learn more about using 
                                 ]
                             ]
                   }
-                , { pattern = 
+                , { pattern =
                         Code.fromModule moduleName "view "
                             ++ Code.listMultiline
                                 [ Code.fromModule moduleName "emphasize"
@@ -427,29 +427,30 @@ Please see the "Blank views and width guidance" table to learn more about using 
                                     ++ Code.listMultiline
                                         [ "…"
                                         , Code.fromModule moduleName "bold ("
-                                            ++ (Code.fromModule moduleName "phrase " ++ "\"[bold text]\"") ++ ")"
+                                            ++ (Code.fromModule moduleName "phrase " ++ "\"[bold text]\"")
+                                            ++ ")"
                                         , Code.fromModule moduleName "italic ("
-                                            ++ (Code.fromModule moduleName "phrase " ++ "\"[italic text]\"") ++ ")"
+                                            ++ (Code.fromModule moduleName "phrase " ++ "\"[italic text]\"")
+                                            ++ ")"
                                         , "…"
                                         ]
                                         2
                                 ]
                                 1
                   , description = "**Bold & Italic markdown**\n\nItalicize titles and highlight specific words inside of an emphasis block."
-                 , example =
+                  , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "The " ]
-                            , Block.view 
+                            , Block.view
                                 [ Block.emphasize
                                 , (List.concat >> Block.content)
-                                    [ [Block.bold (Block.phrase "quick ") ]
-                                    , [Block.italic (Block.phrase "brown ") ]
+                                    [ [ Block.bold (Block.phrase "quick ") ]
+                                    , [ Block.italic (Block.phrase "brown ") ]
                                     , Block.phrase "fox"
                                     ]
                                 ]
                             , Block.view [ Block.plaintext " jumped over the lazy dog." ]
                             ]
-
                   }
                 ]
             , Heading.h2
@@ -685,14 +686,14 @@ blankType ( typeStr, blank ) =
                         ++ " "
                         ++ widthString
                     )
-            , Block.content [ blank { characterWidth = width} ]
+            , Block.content [ blank { characterWidth = width } ]
             )
         )
         controlBlankWidth
     )
 
 
-controlBlankWidth : Control (String, Int)
+controlBlankWidth : Control ( String, Int )
 controlBlankWidth =
     Control.record
         (\characterWidth ->
