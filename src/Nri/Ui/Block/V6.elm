@@ -18,11 +18,7 @@ module Nri.Ui.Block.V6 exposing
 
     - Remove `wordWithId` and `blankWithId` as we no longer are trying to point to words or blanks with the question box.
     - Remove the `fullHeightBlank` attribute option - we can always infer this from the contents
-
-
-## Patch changes
-
-  - adds `labelCss` attribute
+    - Set a maximum blank width of ~60 characters as blanks won't line break
 
 @docs view, Attribute
 
@@ -94,7 +90,7 @@ view attributes =
 -- Attributes
 
 
-{-| Provide the main content of the block Fas a plain-text string. You can also use `content` for more complex cases, including a blank appearing within an emphasis.
+{-| Provide the main content of the block as a plain-text string. You can also use `content` for more complex cases, including a blank appearing within an emphasis.
 -}
 plaintext : String -> Attribute msg
 plaintext content_ =
@@ -121,7 +117,8 @@ emphasize =
     Attribute <| \config -> { config | emphasize = True }
 
 
-{-| -}
+{-| Add a label above content. This label supports markdown syntax for **bold** and _italics_
+-}
 label : String -> Attribute msg
 label label_ =
     Attribute <| \config -> { config | label = Just label_, emphasize = True }
@@ -357,19 +354,35 @@ blockSegmentContainer id_ children styles =
         children
 
 
-{-| -}
+{-| Add any arbitrary string as part of block content.
+-}
 phrase : String -> List (Content msg)
 phrase =
     parseString
 
 
-{-| -}
+{-| Convenience helper to insert a space into block content.
+
+Putting spaces in `phrase` is fine as well, but you might find this more useful around the edges of `blank`.
+
+-}
 space : Content msg
 space =
     Word " "
 
 
-{-| You will only need to use this helper if you're also using `content` to construct a more complex Block. For a less complex blank Block, don't include content or plaintext in the list of attributes.
+{-| Insert a blank into block content specify a number of characters to set the width.
+
+For simple blanks, you can call `view` with no `content` or `plaintext` specified,
+however if you need to control the width of the blank or put a blank inside of other emphasized content you need to use this function.
+
+The `characterWidth` will be multipled by 0.5em, which will roughly appear to be the same size as a string with that many characters.
+
+For example, the following two blocks should be approximately the same width.
+
+`phrase "Hello"`
+`blank { characterWidth = 5 }`
+
 -}
 blank : { characterWidth : Int } -> Content msg
 blank { characterWidth } =
