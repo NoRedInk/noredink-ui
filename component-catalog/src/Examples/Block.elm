@@ -485,30 +485,35 @@ A labelled blank in the sentence.
                     { header = text "Example"
                     , view =
                         \{ textExample, blankExample } ->
-                            div
-                                []
-                                [ div [] [ textExample ]
-                                , div [] [ blankExample ]
+                            div []
+                                [ div [] [ Block.view (Block.emphasize :: textExample) ]
+                                , div [] [ Block.view (Block.emphasize :: blankExample) ]
+                                , div [] [ Block.view blankExample ]
                                 ]
                     , width = Css.px 300
-                    , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
+                    , cellStyles = always [ Css.padding2 (Css.px 4) (Css.px 7), Css.verticalAlign Css.top ]
                     , sort = Nothing
                     }
                 ]
-                [ { code = Code.fromModule moduleName "blank " ++ Code.record [ ( "characterWidth", "1" ) ]
+                [ { code = Code.fromModule moduleName "view []"
+                  , description = "Default view of a blank, without customization."
+                  , textExample = [ Block.plaintext "" ]
+                  , blankExample = []
+                  }
+                , { code = Code.fromModule moduleName "blank " ++ Code.record [ ( "characterWidth", "1" ) ]
                   , description = "A single character.  Typically used to represent punctuation."
-                  , textExample = Block.view [ Block.emphasize, Block.plaintext "," ]
-                  , blankExample = Block.view [ Block.content [ Block.blank { characterWidth = 1 } ], Block.emphasize ]
+                  , textExample = [ Block.plaintext "," ]
+                  , blankExample = [ Block.content [ Block.blank { characterWidth = 1 } ] ]
                   }
                 , { code = Code.fromModule moduleName "blank " ++ Code.record [ ( "characterWidth", "8" ) ]
                   , description = "A short word or phrase.  "
-                  , textExample = Block.view [ Block.emphasize, Block.plaintext "a phrase" ]
-                  , blankExample = Block.view [ Block.content [ Block.blank { characterWidth = 8 } ], Block.emphasize ]
+                  , textExample = [ Block.plaintext "a phrase" ]
+                  , blankExample = [ Block.content [ Block.blank { characterWidth = 8 } ] ]
                   }
                 , { code = Code.fromModule moduleName "blank " ++ Code.record [ ( "characterWidth", "16" ) ]
                   , description = "A long word or phrase."
-                  , textExample = Block.view [ Block.emphasize, Block.plaintext "multifariousness" ]
-                  , blankExample = Block.view [ Block.content [ Block.blank { characterWidth = 16 } ], Block.emphasize ]
+                  , textExample = [ Block.plaintext "multifariousness" ]
+                  , blankExample = [ Block.content [ Block.blank { characterWidth = 16 } ] ]
                   }
                 ]
             ]
