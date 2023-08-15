@@ -43,6 +43,7 @@ example =
         , Heading.h3 [ Heading.plaintext "h3" ]
         , Heading.h4 [ Heading.plaintext "h4" ]
         ]
+    , about = []
     , view =
         \ellieLinkConfig state ->
             let

@@ -98,6 +98,7 @@ example =
               }
             ]
         ]
+    , about = []
     , view =
         \ellieLinkConfig ({ sortState } as model) ->
             let

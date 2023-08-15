@@ -14,6 +14,8 @@ module Nri.Ui.HighlighterToolbar.V3 exposing (view)
 ### Patch changes:
 
   - Ensure selected tool is clear in high contrast mode
+  - Remove focus rings from the tools on click
+  - Use safeId to generate valid HTML ids
 
 
 ### Changes from V1:
@@ -28,12 +30,12 @@ import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
 import Css exposing (Color)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes as Attributes exposing (css, id)
+import Html.Styled.Attributes as Attributes exposing (class, css, id)
 import Html.Styled.Events exposing (onClick)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Html.Attributes.V2 exposing (nriDescription)
+import Nri.Ui.Html.Attributes.V2 exposing (nriDescription, safeIdWithPrefix)
 import Nri.Ui.Html.V3 exposing (viewIf)
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -105,7 +107,7 @@ viewTool onSelect ({ name } as theme) tag model =
             model.currentTool == tag
     in
     label
-        [ id ("tag-" ++ name)
+        [ id (safeIdWithPrefix "tag" name)
         , css
             [ Css.cursor Css.pointer
             , Css.position Css.relative
@@ -113,6 +115,9 @@ viewTool onSelect ({ name } as theme) tag model =
             , Css.paddingBottom (Css.px 2)
             , Css.marginRight (Css.px 15)
             ]
+        , -- this class is used to remove focus styles for mouse users.
+          -- any changes should be applied to FocusRing as well.
+          class "highlighter-toolbar-label"
         ]
         [ input
             [ Attributes.value name

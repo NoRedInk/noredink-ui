@@ -13,11 +13,10 @@ module KeyboardSupport exposing
 -}
 
 import Css exposing (..)
+import ExampleSection
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
-import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Heading.V3 as Heading
 
 
 {-| -}
@@ -29,23 +28,18 @@ type alias KeyboardSupport =
 
 {-| -}
 view : List KeyboardSupport -> Html msg
-view keyboardSupport =
-    case keyboardSupport of
-        [] ->
-            text ""
+view =
+    ExampleSection.asideWithCss "Keyboard Support"
+        [ flex (int 1) ]
+        viewKeyboardActionsDl
 
-        _ ->
-            Container.view
-                [ Container.html
-                    [ Heading.h2 [ Heading.plaintext "Keyboard Support" ]
-                    , dl
-                        [ css [ listStyle none, margin2 (px 10) zero, padding zero, Fonts.baseFont ]
-                        ]
-                        (List.concatMap viewKeyboardActions keyboardSupport)
-                    ]
-                ]
-                |> List.singleton
-                |> aside []
+
+viewKeyboardActionsDl : List KeyboardSupport -> Html msg
+viewKeyboardActionsDl keyboardSupport =
+    dl
+        [ css [ listStyle none, margin2 (px 10) zero, padding zero, Fonts.baseFont ]
+        ]
+        (List.concatMap viewKeyboardActions keyboardSupport)
 
 
 viewKeyboardActions : KeyboardSupport -> List (Html msg)

@@ -3,7 +3,9 @@ module Example exposing (Example, extraLinks, fullName, preview, view, wrapMsg, 
 import Accessibility.Styled.Aria as Aria
 import Category exposing (Category)
 import Css
+import Css.Media exposing (withMedia)
 import EllieLink
+import ExampleSection
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -13,6 +15,8 @@ import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Header.V1 as Header
+import Nri.Ui.MediaQuery.V1 exposing (mobile)
+import Nri.Ui.Text.V6 as Text
 
 
 type alias Example state msg =
@@ -23,6 +27,7 @@ type alias Example state msg =
     , subscriptions : state -> Sub msg
     , preview : List (Html Never)
     , view : EllieLink.Config -> state -> List (Html msg)
+    , about : List (Html Never)
     , categories : List Category
     , keyboardSupport : List KeyboardSupport
     }
@@ -57,6 +62,7 @@ wrapMsg wrapMsg_ unwrapMsg example =
         \ellieLinkConfig state ->
             List.map (Html.map wrapMsg_)
                 (example.view ellieLinkConfig state)
+    , about = example.about
     , categories = example.categories
     , keyboardSupport = example.keyboardSupport
     }
@@ -89,6 +95,7 @@ wrapState wrapState_ unwrapState example =
         \ellieLinkConfig state ->
             Maybe.map (example.view ellieLinkConfig) (unwrapState state)
                 |> Maybe.withDefault []
+    , about = example.about
     , categories = example.categories
     , keyboardSupport = example.keyboardSupport
     }
@@ -149,10 +156,30 @@ view ellieLinkConfig example =
 
 view_ : EllieLink.Config -> Example state msg -> List (Html msg)
 view_ ellieLinkConfig example =
-    [ KeyboardSupport.view example.keyboardSupport
+    [ Html.div
+        [ Attributes.css
+            [ Css.displayFlex
+            , Css.alignItems Css.stretch
+            , Css.flexWrap Css.wrap
+            , Css.property "gap" "10px"
+            , withMedia [ mobile ] [ Css.flexDirection Css.column, Css.alignItems Css.stretch ]
+            ]
+        ]
+        [ ExampleSection.sectionWithCss "About"
+            [ Css.flex (Css.int 1) ]
+            viewAbout
+            example.about
+        , KeyboardSupport.view example.keyboardSupport
+        ]
     , Html.div [ Attributes.css [ Css.marginBottom (Css.px 200) ] ]
         (example.view ellieLinkConfig example.state)
     ]
+
+
+viewAbout : List (Html Never) -> Html msg
+viewAbout about =
+    Text.mediumBody [ Text.html about ]
+        |> Html.map never
 
 
 extraLinks : (msg -> msg2) -> Example state msg -> Header.Attribute route msg2

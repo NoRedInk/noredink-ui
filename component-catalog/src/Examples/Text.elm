@@ -46,6 +46,7 @@ example =
         , Text.mediumBody [ Text.plaintext "mediumBody" ]
         , Text.ugMediumBody [ Text.plaintext "ugMediumBody" ]
         ]
+    , about = []
     , view =
         \ellieLinkConfig state ->
             let

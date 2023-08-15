@@ -57,6 +57,7 @@ example =
             , ClickableSvg.custom [ Key.tabbable False ]
             ]
         ]
+    , about = []
     , view =
         \ellieLinkConfig state ->
             [ ControlView.view

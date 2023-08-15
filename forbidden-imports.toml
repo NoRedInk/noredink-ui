@@ -131,8 +131,11 @@ hint = 'upgrade to V2'
 usages = ['component-catalog/../src/Nri/Ui/Block/V1.elm']
 
 [forbidden."Nri.Ui.Mark.V2"]
-hint = 'upgrade to V3'
+hint = 'upgrade to V4'
 usages = ['component-catalog/../src/Nri/Ui/Block/V4.elm']
+
+[forbidden."Nri.Ui.Mark.V3"]
+hint = 'upgrade to V4'
 
 [forbidden."Nri.Ui.Menu.V1"]
 hint = 'upgrade to V3'
@@ -214,6 +217,9 @@ hint = 'upgrade to V3'
 [forbidden."Nri.Ui.SideNav.V3"]
 hint = 'upgrade to V4'
 
+[forbidden."Nri.Ui.SideNav.V4"]
+hint = 'upgrade to V5'
+
 [forbidden."Nri.Ui.SortableTable.V2"]
 hint = 'upgrade to V3'
 
@@ -222,6 +228,9 @@ hint = 'upgrade to V4'
 
 [forbidden."Nri.Ui.Switch.V1"]
 hint = 'upgrade to V2'
+
+[forbidden."Nri.Ui.Switch.V2"]
+hint = 'upgrade to V3'
 
 [forbidden."Nri.Ui.Table.V4"]
 hint = 'upgrade to V5'

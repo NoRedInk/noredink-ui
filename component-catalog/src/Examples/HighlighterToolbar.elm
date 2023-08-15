@@ -47,6 +47,7 @@ example =
         , highlighterPreview Colors.cyan "Reasoning"
         , toolPreview Colors.white Colors.gray75 UiIcon.eraser "Remove highlight"
         ]
+    , about = []
     , view =
         \ellieLinkConfig state ->
             [ ControlView.view

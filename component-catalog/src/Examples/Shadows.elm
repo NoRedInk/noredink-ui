@@ -36,6 +36,7 @@ example =
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
     , preview = List.map (\( _, style, _ ) -> viewPreviewShadow style) allShadows
+    , about = []
     , view =
         \ellieLinkConfig _ ->
             [ List.map (\( name, style, usage ) -> ( name, viewShadow ( usage, style ) )) allShadows

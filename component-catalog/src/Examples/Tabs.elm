@@ -103,6 +103,7 @@ example =
                 [ Text.caption [ Text.plaintext "Tab 1 content" ] ]
             ]
         ]
+    , about = []
     , view =
         \ellieLinkConfig model ->
             let

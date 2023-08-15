@@ -72,6 +72,7 @@ example =
         , { keys = [ Esc ], result = "Closes the menu" }
         ]
     , preview = [ preview ]
+    , about = []
     , view = view
     }
 

@@ -55,6 +55,7 @@ example =
                 Nothing ->
                     Sub.none
     , preview = preview
+    , about = []
     , view =
         \ellieLinkConfig state ->
             [ viewJust Confetti.view state.model

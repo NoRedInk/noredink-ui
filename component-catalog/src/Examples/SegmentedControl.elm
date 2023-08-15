@@ -52,6 +52,7 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview = [ viewPreview ]
+    , about = []
     , view =
         \ellieLinkConfig state ->
             let

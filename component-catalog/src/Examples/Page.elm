@@ -13,6 +13,7 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Guidance
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
@@ -88,6 +89,7 @@ example =
                 [ Html.text "There was a problem!" ]
             ]
         ]
+    , about = Guidance.useATACGuide moduleName
     , view =
         \ellieLinkConfig model ->
             let

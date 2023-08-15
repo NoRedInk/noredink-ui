@@ -46,6 +46,7 @@ example =
         [ panelPreview Colors.navy
         , panelPreview Colors.gray45
         ]
+    , about = []
     , view =
         \ellieLinkConfig state ->
             let

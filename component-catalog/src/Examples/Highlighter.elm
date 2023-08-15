@@ -67,6 +67,7 @@ example =
                 }
             ]
         ]
+    , about = []
     , view =
         \ellieLinkConfig state ->
             [ ControlView.view

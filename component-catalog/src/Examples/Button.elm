@@ -71,6 +71,7 @@ example =
             , Button.icon UiIcon.link
             ]
         ]
+    , about = []
     , view = \ellieLinkConfig state -> [ viewButtonExamples ellieLinkConfig state ]
     , categories = [ Buttons ]
     , keyboardSupport = []

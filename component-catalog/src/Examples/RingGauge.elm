@@ -57,6 +57,7 @@ example =
                         }
                 )
             |> IconExamples.preview
+    , about = []
     , view =
         \ellieLinkConfig state ->
             let

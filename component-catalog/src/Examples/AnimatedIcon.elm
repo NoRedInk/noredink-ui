@@ -49,6 +49,7 @@ example =
             , AnimatedIcon.arrowRightDown False
             , AnimatedIcon.arrowRightDown True
             ]
+    , about = []
     , view =
         \ellieLinkConfig state ->
             let

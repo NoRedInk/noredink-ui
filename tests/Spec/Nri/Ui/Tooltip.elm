@@ -5,6 +5,7 @@ import Html.Attributes as Attributes
 import Html.Styled as HtmlStyled
 import Nri.Ui.Tooltip.V3 as Tooltip
 import ProgramTest exposing (ProgramTest, ensureViewHas, ensureViewHasNot)
+import Spec.Helpers exposing (nriDescription)
 import Test exposing (..)
 import Test.Html.Event as Event
 import Test.Html.Query as Query
@@ -104,11 +105,6 @@ tooltipContentSelector tooltipContent =
     [ Selector.attribute (Attributes.attribute "data-tooltip-visible" "true")
     , Selector.containing [ text tooltipContent ]
     ]
-
-
-nriDescription : String -> Selector.Selector
-nriDescription desc =
-    Selector.attribute (Attributes.attribute "data-nri-description" desc)
 
 
 mouseEnter : List Selector.Selector -> ProgramTest model msg effect -> ProgramTest model msg effect
