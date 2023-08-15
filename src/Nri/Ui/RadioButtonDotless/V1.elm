@@ -114,6 +114,11 @@ view { label, name, value, valueToString, selectedValue } attributes =
                         [ color Colors.azure
                         , backgroundColor Colors.white
                         , borderColor Colors.glacier
+                        , hover
+                            [ color Colors.navy
+                            , backgroundColor Colors.glacier
+                            , borderColor Colors.glacier
+                            ]
                         ]
                 ]
             ]
