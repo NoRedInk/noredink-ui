@@ -665,7 +665,6 @@ render config =
 
                     FadeOut ->
                         Mark.FadeOut
-            , labelCss = config.labelCss
             , labelId = config.labelId
             , labelContentId = Maybe.map labelContentId config.labelId
             }
