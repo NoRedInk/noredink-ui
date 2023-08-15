@@ -2,8 +2,8 @@ module Nri.Ui.Block.V6 exposing
     ( view, Attribute
     , plaintext
     , Content, content
-    , phrase, wordWithId, space, bold, italic
-    , fullHeightBlank, blank, blankWithId, BlankLength(..)
+    , phrase, space, bold, italic
+    , fullHeightBlank, blank, BlankLength(..)
     , emphasize
     , label, id
     , labelId, labelContentId
@@ -15,6 +15,8 @@ module Nri.Ui.Block.V6 exposing
     )
 
 {-| Changes from V5:
+
+    - Remove `wordWithId` and `blankWithId` as we no longer are trying to point to words or blanks with the question box.
 
 
 ## Patch changes
@@ -269,9 +271,7 @@ insertLineBreakOpportunities x =
 {-| -}
 type Content msg
     = Word String
-    | WordWithId { id : String, word : String }
     | Blank BlankLength
-    | BlankWithId String BlankLength
     | FullHeightBlank BlankLength
     | Markdown Markdown (List (Content msg))
 
@@ -324,18 +324,8 @@ renderContent config content_ styles =
             else
                 blockContainer
 
-        WordWithId wordAndId ->
-            blockSegmentContainer (Just wordAndId.id)
-                [ text wordAndId.word ]
-                styles
-
         Blank length ->
             blockSegmentContainer Nothing
-                [ viewBlank [ Css.lineHeight (Css.num 1) ] length ]
-                styles
-
-        BlankWithId id_ length ->
-            blockSegmentContainer (Just id_)
                 [ viewBlank [ Css.lineHeight (Css.num 1) ] length ]
                 styles
 
@@ -392,25 +382,11 @@ space =
     Word " "
 
 
-{-| Use this helper with `content` when you need to attach an id to a particular word inside of an emphasis.
--}
-wordWithId : { id : String, word : String } -> Content msg
-wordWithId =
-    WordWithId
-
-
 {-| You will only need to use this helper if you're also using `content` to construct a more complex Block. For a less complex blank Block, don't include content or plaintext in the list of attributes.
 -}
 blank : BlankLength -> Content msg
 blank =
     Blank
-
-
-{-| You will only need to use this helper if you're also using `content` to construct a more complex Block. For a less complex blank Block, don't include content or plaintext in the list of attributes.
--}
-blankWithId : String -> BlankLength -> Content msg
-blankWithId =
-    BlankWithId
 
 
 {-| You will only need to use this helper if you're also using `content` to construct a more complex Block. For a less complex blank Block, don't include content or plaintext in the list of attributes.

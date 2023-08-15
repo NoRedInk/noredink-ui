@@ -45,22 +45,20 @@ contentSpec =
                 |> Query.has [ Selector.text "Yo", Selector.text "blank" ]
     , test "content with blankWithQuestionBox" <|
         \() ->
-            [ Block.content [ Block.blankWithId "block-id" Block.ShortWordPhrase ] ]
+            [ Block.content [ Block.blank Block.ShortWordPhrase ] ]
                 |> toQuery
                 |> Query.has
                     [ Selector.all
-                        [ Selector.attribute (Attributes.id "block-id")
-                        , Selector.containing [ Selector.text "blank" ]
+                        [ Selector.containing [ Selector.text "blank" ]
                         ]
                     ]
     , test "content with wordWithId" <|
         \() ->
-            [ Block.content [ Block.wordWithId { word = "word", id = "block-id" } ] ]
+            [ Block.content (Block.phrase "word") ]
                 |> toQuery
                 |> Query.has
                     [ Selector.all
-                        [ Selector.attribute (Attributes.id "block-id")
-                        , Selector.containing [ Selector.text "word" ]
+                        [ Selector.containing [ Selector.text "word" ]
                         ]
                     ]
     ]

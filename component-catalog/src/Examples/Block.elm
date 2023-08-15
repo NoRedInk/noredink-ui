@@ -520,26 +520,6 @@ Please see the "Blank views and width guidance" table to learn more about using 
                   , description = "When no other attributes are passed to `Block.view`, Block will render a blank."
                   , guidance = "This behavior is primarily provided as a convenience to devs."
                   }
-                , { name = "blankWithId"
-                  , code =
-                        Code.fromModule moduleName "view"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "content"
-                                    ++ Code.listMultiline
-                                        [ Code.fromModule moduleName "blankWithId "
-                                            ++ Code.string "[id]"
-                                            ++ " [block length]"
-                                        ]
-                                        2
-                                ]
-                                1
-                  , singleCharacter = Block.view [ Block.content [ Block.blankWithId "blankWithId-single-char" Block.SingleCharacter ] ]
-                  , shortWordPhrase = Block.view [ Block.content [ Block.blankWithId "blankWithId-short-word-phrase" Block.ShortWordPhrase ] ]
-                  , longWordPhrase = Block.view [ Block.content [ Block.blankWithId "blankWithId-long-word-phrase" Block.LongWordPhrase ] ]
-                  , characterCount = Block.view [ Block.content [ Block.blankWithId "blankWithId-char-count" (Block.CharacterCount 20) ] ]
-                  , description = "`blankWithId` will render a blank with the specified id. The blank's height will not expand past the content."
-                  , guidance = "??? When should this helper be used ???"
-                  }
                 , { name = "fullHeightBlank"
                   , code =
                         Code.fromModule moduleName "view"
