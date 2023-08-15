@@ -39,7 +39,7 @@ moduleName =
 
 version : Int
 version =
-    5
+    6
 
 
 {-| -}
@@ -194,6 +194,7 @@ example =
                     , Block.cyan
                     , Block.labelId prepositionId
                     , Block.labelPosition (Dict.get prepositionId offsets)
+                    , Block.emphasize
                     ]
                 , Block.view <|
                     [ Block.content
@@ -520,24 +521,6 @@ Please see the "Blank views and width guidance" table to learn more about using 
                   , description = "When no other attributes are passed to `Block.view`, Block will render a blank."
                   , guidance = "This behavior is primarily provided as a convenience to devs."
                   }
-                , { name = "fullHeightBlank"
-                  , code =
-                        Code.fromModule moduleName "view"
-                            ++ Code.listMultiline
-                                [ Code.fromModule moduleName "content"
-                                    ++ Code.listMultiline
-                                        [ Code.fromModule moduleName "fullHeightBlank [block length]"
-                                        ]
-                                        2
-                                ]
-                                1
-                  , singleCharacter = Block.view [ Block.content [ Block.fullHeightBlank Block.SingleCharacter ] ]
-                  , shortWordPhrase = Block.view [ Block.content [ Block.fullHeightBlank Block.ShortWordPhrase ] ]
-                  , longWordPhrase = Block.view [ Block.content [ Block.fullHeightBlank Block.LongWordPhrase ] ]
-                  , characterCount = Block.view [ Block.content [ Block.fullHeightBlank (Block.CharacterCount 20) ] ]
-                  , description = "`fullHeightBlank` will render a blank whose height will be taller than the surrounding text"
-                  , guidance = "??? When should this helper be used ???"
-                  }
                 ]
             ]
     }
@@ -656,8 +639,6 @@ controlContent =
                 )
           )
         , blankType ( "blank", Block.blank )
-        , blankType ( "blankWithId \"example-id\"", Block.blankWithId "example-id" )
-        , blankType ( "fullHeightBlank", Block.fullHeightBlank )
         ]
 
 

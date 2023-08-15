@@ -3,7 +3,7 @@ module Nri.Ui.Block.V6 exposing
     , plaintext
     , Content, content
     , phrase, space, bold, italic
-    , fullHeightBlank, blank, BlankLength(..)
+    , blank, BlankLength(..)
     , emphasize
     , label, id
     , labelId, labelContentId
@@ -272,7 +272,6 @@ insertLineBreakOpportunities x =
 type Content msg
     = Word String
     | Blank BlankLength
-    | FullHeightBlank BlankLength
     | Markdown Markdown (List (Content msg))
 
 
@@ -298,11 +297,12 @@ parseString =
 
 
 renderContent :
-    Config msg
+    BlankHeight
+    -> Config msg
     -> Content msg
     -> List Css.Style
     -> Html msg
-renderContent config content_ styles =
+renderContent blankHeight config content_ styles =
     case content_ of
         Word str ->
             let
@@ -326,18 +326,7 @@ renderContent config content_ styles =
 
         Blank length ->
             blockSegmentContainer Nothing
-                [ viewBlank [ Css.lineHeight (Css.num 1) ] length ]
-                styles
-
-        FullHeightBlank length ->
-            blockSegmentContainer Nothing
-                [ viewBlank
-                    [ Css.paddingTop topBottomSpace
-                    , Css.paddingBottom topBottomSpace
-                    , Css.lineHeight Css.initial
-                    ]
-                    length
-                ]
+                [ viewBlank blankHeight length ]
                 styles
 
         Markdown markdown contents ->
@@ -351,7 +340,7 @@ renderContent config content_ styles =
                             em [ css styles ]
             in
             contents
-                |> List.map (\c -> renderContent config c [])
+                |> List.map (\c -> renderContent blankHeight config c [])
                 |> tag
 
 
@@ -387,13 +376,6 @@ space =
 blank : BlankLength -> Content msg
 blank =
     Blank
-
-
-{-| You will only need to use this helper if you're also using `content` to construct a more complex Block. For a less complex blank Block, don't include content or plaintext in the list of attributes.
--}
-fullHeightBlank : BlankLength -> Content msg
-fullHeightBlank =
-    FullHeightBlank
 
 
 {-| Wraps a group of content in a `strong` tag
@@ -478,7 +460,8 @@ toMark :
     -> Maybe Mark
 toMark config { backgroundColor, borderColor } =
     case ( config.label, config.content, config.emphasize ) of
-        ( Just l, (FullHeightBlank _) :: [], _ ) ->
+        ( Just l, (Blank _) :: [], _ ) ->
+            -- If a blank is the **only** content, then wrapping it in an emphasize blocks looks awkward.
             Just
                 { name = Just l
                 , startStyles = []
@@ -600,7 +583,7 @@ type Attribute msg
 
 defaultConfig : Config msg
 defaultConfig =
-    { content = [ FullHeightBlank ShortWordPhrase ]
+    { content = [ Blank ShortWordPhrase ]
     , id = Nothing
     , label = Nothing
     , labelId = Nothing
@@ -627,6 +610,27 @@ type alias Config msg =
     }
 
 
+type BlankHeight
+    = BlankHeightFull
+    | BlankHeightInline
+
+
+findBlankHeight : { x | emphasize : Bool, content : List (Content msg) } -> BlankHeight
+findBlankHeight config =
+    case config.content of
+        [ Blank _ ] ->
+            -- Lonely blanks don't have the emphasized border draw around them (even if they have a label!)
+            -- So there is no need to make them inline
+            BlankHeightFull
+
+        _ ->
+            if config.emphasize then
+                BlankHeightInline
+
+            else
+                BlankHeightFull
+
+
 render : Config msg -> Html msg
 render config =
     let
@@ -639,7 +643,7 @@ render config =
     span
         [ css [ Css.position Css.relative ], AttributesExtra.maybe Attributes.id config.id ]
         (Mark.viewWithBalloonTags
-            { renderSegment = renderContent config
+            { renderSegment = renderContent (findBlankHeight config) config
             , backgroundColor = palette.backgroundColor
             , maybeMarker = maybeMark
             , labelPosition = config.labelPosition
@@ -658,8 +662,20 @@ render config =
         )
 
 
-viewBlank : List Css.Style -> BlankLength -> Html msg
-viewBlank styles length =
+viewBlank : BlankHeight -> BlankLength -> Html msg
+viewBlank blankHeight length =
+    let
+        heightStyles =
+            case blankHeight of
+                BlankHeightFull ->
+                    [ Css.paddingTop topBottomSpace
+                    , Css.paddingBottom topBottomSpace
+                    , Css.lineHeight Css.initial
+                    ]
+
+                BlankHeightInline ->
+                    [ Css.lineHeight (Css.num 1) ]
+    in
     span
         [ css
             [ Css.border3 (Css.px 2) Css.dashed Colors.navy
@@ -684,7 +700,7 @@ viewBlank styles length =
                 )
             , Css.display Css.inlineBlock
             , Css.borderRadius (Css.px 4)
-            , Css.batch styles
+            , Css.batch heightStyles
             ]
         ]
         [ blankString ]
