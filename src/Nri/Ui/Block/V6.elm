@@ -3,7 +3,7 @@ module Nri.Ui.Block.V6 exposing
     , plaintext
     , Content, content
     , phrase, space, bold, italic
-    , blank, BlankLength(..)
+    , blank
     , emphasize
     , label, id
     , labelId, labelContentId
@@ -31,8 +31,8 @@ module Nri.Ui.Block.V6 exposing
 
 @docs plaintext
 @docs Content, content
-@docs phrase, wordWithId, space, bold, italic
-@docs fullHeightBlank, blank, blankWithId, BlankLength
+@docs phrase, space, bold, italic
+@docs blank
 
 
 ## Content customization
@@ -272,16 +272,13 @@ insertLineBreakOpportunities x =
 {-| -}
 type Content msg
     = Word String
-    | Blank BlankLength
+    | Blank CharacterWidth
     | Markdown Markdown (List (Content msg))
 
 
 {-| -}
-type BlankLength
-    = SingleCharacter
-    | ShortWordPhrase
-    | LongWordPhrase
-    | CharacterCount Int
+type CharacterWidth
+    = CharacterWidth Int
 
 
 type Markdown
@@ -374,9 +371,9 @@ space =
 
 {-| You will only need to use this helper if you're also using `content` to construct a more complex Block. For a less complex blank Block, don't include content or plaintext in the list of attributes.
 -}
-blank : BlankLength -> Content msg
-blank =
-    Blank
+blank : { characterWidth : Int } -> Content msg
+blank { characterWidth } =
+    Blank (CharacterWidth characterWidth)
 
 
 {-| Wraps a group of content in a `strong` tag
@@ -462,7 +459,7 @@ toMark :
 toMark config { backgroundColor, borderColor } =
     case ( config.label, config.content, config.emphasize ) of
         ( Just l, (Blank _) :: [], _ ) ->
-            -- If a blank is the **only** content, then wrapping it in an emphasize blocks looks awkward.
+            -- If a blank is the **only** content and there is a label, then wrapping it in an emphasize block looks awkward.
             Just
                 { name = Just l
                 , startStyles = []
@@ -584,7 +581,7 @@ type Attribute msg
 
 defaultConfig : Config msg
 defaultConfig =
-    { content = [ Blank ShortWordPhrase ]
+    { content = [ blank { characterWidth = 8 } ]
     , id = Nothing
     , label = Nothing
     , labelId = Nothing
@@ -663,8 +660,8 @@ render config =
         )
 
 
-viewBlank : BlankHeight -> BlankLength -> Html msg
-viewBlank blankHeight length =
+viewBlank : BlankHeight -> CharacterWidth -> Html msg
+viewBlank blankHeight (CharacterWidth width) =
     let
         heightStyles =
             case blankHeight of
@@ -685,20 +682,7 @@ viewBlank blankHeight length =
                 , Css.property "background-color" "Canvas"
                 ]
             , Css.backgroundColor Colors.white
-            , Css.minWidth
-                (case length of
-                    SingleCharacter ->
-                        Css.em 0.83
-
-                    ShortWordPhrase ->
-                        Css.em 4
-
-                    LongWordPhrase ->
-                        Css.em 6.66
-
-                    CharacterCount characters ->
-                        Css.em (max 0.83 (toFloat characters * 0.5))
-                )
+            , Css.minWidth <| Css.em (max 0.83 (toFloat width * 0.5))
             , Css.display Css.inlineBlock
             , Css.borderRadius (Css.px 4)
             , Css.batch heightStyles

@@ -206,7 +206,7 @@ example =
                         [ Block.phrase "This is "
                         , [ Block.italic (Block.phrase "heroically") ]
                         , [ Block.bold (Block.phrase " generous ") ]
-                        , [ Block.blank Block.ShortWordPhrase ]
+                        , [ Block.blank { characterWidth = 8 } ]
                         , Block.phrase " each comic book costs about $5."
                         ]
                     , Block.label "Editor's note (can *also* include **markdown**!)"
@@ -410,7 +410,7 @@ Please see the "Blank views and width guidance" table to learn more about using 
                                 [ Block.emphasize
                                 , (List.concat >> Block.content)
                                     [ Block.phrase "emphasized subsegement "
-                                    , [ Block.blank Block.ShortWordPhrase ]
+                                    , [ Block.blank { characterWidth = 8 }]
                                     , Block.phrase " emphasized"
                                     ]
                                 ]
@@ -633,7 +633,7 @@ controlContent =
                         )
                 , Block.content
                     (Block.phrase "to think about "
-                        ++ Block.blank Block.ShortWordPhrase
+                        ++ Block.blank { characterWidth = 8 }
                         :: Block.phrase " and so forth"
                     )
                 )
@@ -642,57 +642,35 @@ controlContent =
         ]
 
 
-blankType : ( String, Block.BlankLength -> Block.Content msg ) -> ( String, Control ( String, Block.Attribute msg ) )
+blankType : ( String, { characterWidth : Int } -> Block.Content msg ) -> ( String, Control ( String, Block.Attribute msg ) )
 blankType ( typeStr, blank ) =
     ( typeStr
     , Control.map
-        (\( widthStr, width ) ->
+        (\( widthString, width ) ->
             ( Code.fromModule moduleName "content "
                 ++ Code.withParens
                     (Code.fromModule moduleName typeStr
                         ++ " "
-                        ++ widthStr
+                        ++ widthString
                     )
-            , Block.content [ blank width ]
+            , Block.content [ blank { characterWidth = width} ]
             )
         )
         controlBlankWidth
     )
 
 
-controlBlankWidth : Control ( String, Block.BlankLength )
+controlBlankWidth : Control (String, Int)
 controlBlankWidth =
-    [ ( "SingleCharacter"
-      , Control.value
-            ( Code.fromModule moduleName "SingleCharacter"
-            , Block.SingleCharacter
+    Control.record
+        (\characterWidth ->
+            ( Code.record
+                [ ( "characterWidth", String.fromInt characterWidth )
+                ]
+            , characterWidth
             )
-      )
-    , ( "ShortWordPhrase"
-      , Control.value
-            ( Code.fromModule moduleName "ShortWordPhrase"
-            , Block.ShortWordPhrase
-            )
-      )
-    , ( "LongWordPhrase"
-      , Control.value
-            ( Code.fromModule moduleName "LongWordPhrase"
-            , Block.LongWordPhrase
-            )
-      )
-    , ( "CharacterCount"
-      , Control.map
-            (\int ->
-                ( Code.withParens
-                    (Code.fromModule moduleName "CharacterCount " ++ Code.int int)
-                , Block.CharacterCount int
-                )
-            )
-            (ControlExtra.int 0)
-      )
-    ]
-        |> List.reverse
-        |> Control.choice
+        )
+        |> Control.field "characterWidth" (ControlExtra.int 8)
 
 
 ageId : String
