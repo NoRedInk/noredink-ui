@@ -682,7 +682,7 @@ viewBlank blankHeight (CharacterWidth width) =
                 , Css.property "background-color" "Canvas"
                 ]
             , Css.backgroundColor Colors.white
-            , Css.minWidth <| Css.em (max 0.83 (toFloat width * 0.5))
+            , Css.width <| Css.em (min 30 <| max 0.83 (toFloat width * 0.5))
             , Css.display Css.inlineBlock
             , Css.borderRadius (Css.px 4)
             , Css.batch heightStyles
