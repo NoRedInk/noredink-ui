@@ -459,7 +459,7 @@ Please see the "Blank views and width guidance" table to learn more about using 
                 ]
             , Text.smallBody [ Text.markdown "The accessible name of all blanks, regardless of character width used, is \"blank.\"" ]
             , Text.smallBody [ Text.markdown "If we're looking for a specific length of content to put in the blank, that _must_ be communicated elsewhere on the page to provide an equitable experience." ]
-            , Text.smallBody [ Text.markdown "The `characterWidth` parameter uses the number of characters expected in the blank to calculate a rough monospace-based width that visually looks like it _could_ match."]
+            , Text.smallBody [ Text.markdown "The `characterWidth` parameter uses the number of characters expected in the blank to calculate a rough monospace-based width that visually looks like it _could_ match." ]
             , Table.view
                 []
                 [ Table.custom
@@ -480,7 +480,7 @@ Please see the "Blank views and width guidance" table to learn more about using 
                 , Table.custom
                     { header = text "Description"
                     , view =
-                        .description 
+                        .description
                             >> Markdown.toHtml Nothing
                             >> List.map fromUnstyled
                             >> div []
@@ -490,7 +490,7 @@ Please see the "Blank views and width guidance" table to learn more about using 
                     }
                 , Table.custom
                     { header = text "Example"
-                    , view = 
+                    , view =
                         \{ textExample, blankExample } ->
                             div
                                 []
@@ -502,20 +502,20 @@ Please see the "Blank views and width guidance" table to learn more about using 
                     , sort = Nothing
                     }
                 ]
-                [ { code = Code.fromModule moduleName "blank " ++ Code.record [ ("characterWidth", "1") ]
+                [ { code = Code.fromModule moduleName "blank " ++ Code.record [ ( "characterWidth", "1" ) ]
                   , description = "A single character.  Typically used to represent punctuation."
                   , textExample = Block.view [ Block.emphasize, Block.plaintext "," ]
-                  , blankExample = Block.view [ Block.content [ Block.blank { characterWidth = 1 } ], Block.emphasize]
+                  , blankExample = Block.view [ Block.content [ Block.blank { characterWidth = 1 } ], Block.emphasize ]
                   }
-                 , { code = Code.fromModule moduleName "blank " ++ Code.record [ ("characterWidth", "8") ]
+                , { code = Code.fromModule moduleName "blank " ++ Code.record [ ( "characterWidth", "8" ) ]
                   , description = "A short word or phrase.  "
                   , textExample = Block.view [ Block.emphasize, Block.plaintext "a phrase" ]
-                  , blankExample = Block.view [ Block.content [ Block.blank { characterWidth = 8 } ], Block.emphasize]
+                  , blankExample = Block.view [ Block.content [ Block.blank { characterWidth = 8 } ], Block.emphasize ]
                   }
-                , { code = Code.fromModule moduleName "blank " ++ Code.record [ ("characterWidth", "16") ]
+                , { code = Code.fromModule moduleName "blank " ++ Code.record [ ( "characterWidth", "16" ) ]
                   , description = "A long word or phrase."
                   , textExample = Block.view [ Block.emphasize, Block.plaintext "multifariousness" ]
-                  , blankExample = Block.view [ Block.content [ Block.blank { characterWidth = 16 } ], Block.emphasize]
+                  , blankExample = Block.view [ Block.content [ Block.blank { characterWidth = 16 } ], Block.emphasize ]
                   }
                 ]
             ]
