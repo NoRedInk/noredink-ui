@@ -198,7 +198,7 @@ example =
                         [ Block.phrase "This is "
                         , [ Block.italic (Block.phrase "heroically") ]
                         , [ Block.bold (Block.phrase " generous ") ]
-                        , [ Block.blank { characterWidth = 8 } ]
+                        , [ Block.blank { widthInChars = 8 } ]
                         , Block.phrase " each comic book costs about $5."
                         ]
                     , Block.label "Editor's note (can *also* include **markdown**!)"
@@ -389,7 +389,7 @@ A labelled blank in the sentence.
                                     ++ Code.listMultiline
                                         [ "…"
                                         , Code.fromModule moduleName "blank "
-                                            ++ Code.record [ ( "characterWidth", "8" ) ]
+                                            ++ Code.record [ ( "widthInChars", "8" ) ]
                                         , "…"
                                         ]
                                         2
@@ -403,7 +403,7 @@ A labelled blank in the sentence.
                                 [ Block.emphasize
                                 , (List.concat >> Block.content)
                                     [ Block.phrase "emphasized subsegement "
-                                    , [ Block.blank { characterWidth = 8 } ]
+                                    , [ Block.blank { widthInChars = 8 } ]
                                     , Block.phrase " emphasized"
                                     ]
                                 ]
@@ -452,7 +452,7 @@ A labelled blank in the sentence.
                 ]
             , Text.smallBody [ Text.markdown "The accessible name of all blanks, regardless of character width used, is \"blank.\"" ]
             , Text.smallBody [ Text.markdown "If we're looking for a specific length of content to put in the blank, that _must_ be communicated elsewhere on the page to provide an equitable experience." ]
-            , Text.smallBody [ Text.markdown "The `characterWidth` parameter uses the number of characters expected in the blank to calculate a rough monospace-based width that visually looks like it _could_ match." ]
+            , Text.smallBody [ Text.markdown "The `widthInChars` parameter uses the number of characters expected in the blank to calculate a rough monospace-based width that visually looks like it _could_ match." ]
             , Table.view
                 []
                 [ Table.custom
@@ -502,20 +502,20 @@ A labelled blank in the sentence.
                   , textExample = [ Block.plaintext "" ]
                   , blankExample = []
                   }
-                , { code = Code.fromModule moduleName "blank " ++ Code.record [ ( "characterWidth", "1" ) ]
+                , { code = Code.fromModule moduleName "blank " ++ Code.record [ ( "widthInChars", "1" ) ]
                   , description = "A single character.  Typically used to represent punctuation."
                   , textExample = [ Block.plaintext "," ]
-                  , blankExample = [ Block.content [ Block.blank { characterWidth = 1 } ] ]
+                  , blankExample = [ Block.content [ Block.blank { widthInChars = 1 } ] ]
                   }
-                , { code = Code.fromModule moduleName "blank " ++ Code.record [ ( "characterWidth", "8" ) ]
+                , { code = Code.fromModule moduleName "blank " ++ Code.record [ ( "widthInChars", "8" ) ]
                   , description = "A short word or phrase.  "
                   , textExample = [ Block.plaintext "a phrase" ]
-                  , blankExample = [ Block.content [ Block.blank { characterWidth = 8 } ] ]
+                  , blankExample = [ Block.content [ Block.blank { widthInChars = 8 } ] ]
                   }
-                , { code = Code.fromModule moduleName "blank " ++ Code.record [ ( "characterWidth", "16" ) ]
+                , { code = Code.fromModule moduleName "blank " ++ Code.record [ ( "widthInChars", "16" ) ]
                   , description = "A long word or phrase."
                   , textExample = [ Block.plaintext "multifariousness" ]
-                  , blankExample = [ Block.content [ Block.blank { characterWidth = 16 } ] ]
+                  , blankExample = [ Block.content [ Block.blank { widthInChars = 16 } ] ]
                   }
                 ]
             ]
@@ -634,7 +634,7 @@ controlContent =
                         )
                 , Block.content
                     (Block.italic (Block.phrase "to think about ")
-                        :: Block.blank { characterWidth = 8 }
+                        :: Block.blank { widthInChars = 8 }
                         :: Block.phrase " and so forth"
                     )
                 )
@@ -643,7 +643,7 @@ controlContent =
         ]
 
 
-blankType : ( String, { characterWidth : Int } -> Block.Content msg ) -> ( String, Control ( String, Block.Attribute msg ) )
+blankType : ( String, { widthInChars : Int } -> Block.Content msg ) -> ( String, Control ( String, Block.Attribute msg ) )
 blankType ( typeStr, blank ) =
     ( typeStr
     , Control.map
@@ -654,7 +654,7 @@ blankType ( typeStr, blank ) =
                         ++ " "
                         ++ widthString
                     )
-            , Block.content [ blank { characterWidth = width } ]
+            , Block.content [ blank { widthInChars = width } ]
             )
         )
         controlBlankWidth
@@ -664,14 +664,14 @@ blankType ( typeStr, blank ) =
 controlBlankWidth : Control ( String, Int )
 controlBlankWidth =
     Control.record
-        (\characterWidth ->
+        (\widthInChars ->
             ( Code.record
-                [ ( "characterWidth", String.fromInt characterWidth )
+                [ ( "widthInChars", String.fromInt widthInChars )
                 ]
-            , characterWidth
+            , widthInChars
             )
         )
-        |> Control.field "characterWidth" (ControlExtra.int 8)
+        |> Control.field "widthInChars" (ControlExtra.int 8)
 
 
 ageId : String

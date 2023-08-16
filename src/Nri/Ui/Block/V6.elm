@@ -375,17 +375,17 @@ space =
 For simple blanks, you can call `view` with no `content` or `plaintext` specified,
 however if you need to control the width of the blank or put a blank inside of other emphasized content you need to use this function.
 
-The `characterWidth` will be multipled by 0.5em, which will roughly appear to be the same size as a string with that many characters.
+The `widthInChars` will be multipled by 0.5em, which will roughly appear to be the same size as a string with that many characters.
 
 For example, the following two blocks should be approximately the same width.
 
 `phrase "Hello"`
-`blank { characterWidth = 5 }`
+`blank { widthInChars = 5 }`
 
 -}
-blank : { characterWidth : Int } -> Content msg
-blank { characterWidth } =
-    Blank (CharacterWidth characterWidth)
+blank : { widthInChars : Int } -> Content msg
+blank { widthInChars } =
+    Blank (CharacterWidth widthInChars)
 
 
 {-| Wraps a group of content in a `strong` tag
@@ -593,7 +593,7 @@ type Attribute msg
 
 defaultConfig : Config msg
 defaultConfig =
-    { content = [ blank { characterWidth = 8 } ]
+    { content = [ blank { widthInChars = 8 } ]
     , id = Nothing
     , label = Nothing
     , labelId = Nothing
