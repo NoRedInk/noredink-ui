@@ -502,17 +502,44 @@ A labelled blank in the sentence.
                   , textExample = [ Block.plaintext "" ]
                   , blankExample = []
                   }
-                , { code = Code.fromModule moduleName "blank " ++ Code.record [ ( "widthInChars", "1" ) ]
+                , { code =
+                        Code.fromModule moduleName "view"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "contents"
+                                    ++ Code.listMultiline
+                                        [ Code.fromModule moduleName "blank " ++ Code.record [ ( "widthInChars", "1" ) ]
+                                        ]
+                                        2
+                                ]
+                                1
                   , description = "A single character.  Typically used to represent punctuation."
                   , textExample = [ Block.plaintext "," ]
                   , blankExample = [ Block.content [ Block.blank { widthInChars = 1 } ] ]
                   }
-                , { code = Code.fromModule moduleName "blank " ++ Code.record [ ( "widthInChars", "8" ) ]
+                , { code =
+                        Code.fromModule moduleName "view"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "contents"
+                                    ++ Code.listMultiline
+                                        [ Code.fromModule moduleName "blank " ++ Code.record [ ( "widthInChars", "8" ) ]
+                                        ]
+                                        2
+                                ]
+                                1
                   , description = "A short word or phrase.  "
                   , textExample = [ Block.plaintext "a phrase" ]
                   , blankExample = [ Block.content [ Block.blank { widthInChars = 8 } ] ]
                   }
-                , { code = Code.fromModule moduleName "blank " ++ Code.record [ ( "widthInChars", "16" ) ]
+                , { code =
+                        Code.fromModule moduleName "view"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "contents"
+                                    ++ Code.listMultiline
+                                        [ Code.fromModule moduleName "blank " ++ Code.record [ ( "widthInChars", "16" ) ]
+                                        ]
+                                        2
+                                ]
+                                1
                   , description = "A long word or phrase."
                   , textExample = [ Block.plaintext "multifariousness" ]
                   , blankExample = [ Block.content [ Block.blank { widthInChars = 16 } ] ]
