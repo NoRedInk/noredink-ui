@@ -488,8 +488,6 @@ A labelled blank in the sentence.
                             div []
                                 [ Block.view (Block.emphasize :: textExample)
                                 , Block.view [ Block.content [ Block.space ] ]
-                                , Block.view (Block.emphasize :: blankExample)
-                                , Block.view [ Block.content [ Block.space ] ]
                                 , Block.view blankExample
                                 ]
                     , width = Css.px 300
