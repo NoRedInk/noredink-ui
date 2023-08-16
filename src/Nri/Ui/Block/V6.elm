@@ -121,7 +121,7 @@ emphasize =
 -}
 label : String -> Attribute msg
 label label_ =
-    Attribute <| \config -> { config | label = Just label_, emphasize = True }
+    Attribute <| \config -> { config | label = Just label_ }
 
 
 {-| Use `getLabelPositions` to construct this value.
@@ -292,12 +292,11 @@ parseString =
 
 
 renderContent :
-    BlankHeight
-    -> Config msg
+    Config msg
     -> Content msg
     -> List Css.Style
     -> Html msg
-renderContent blankHeight config content_ styles =
+renderContent config content_ styles =
     case content_ of
         Word str ->
             let
@@ -320,6 +319,14 @@ renderContent blankHeight config content_ styles =
                 blockContainer
 
         Blank length ->
+            let
+                blankHeight =
+                    if shouldEmphasizeText config then
+                        BlankHeightInline
+
+                    else
+                        BlankHeightFull
+            in
             blockSegmentContainer
                 [ viewBlank blankHeight length ]
                 styles
@@ -335,7 +342,7 @@ renderContent blankHeight config content_ styles =
                             em [ css styles ]
             in
             contents
-                |> List.map (\c -> renderContent blankHeight config c [])
+                |> List.map (\c -> renderContent config c [])
                 |> tag
 
 
@@ -460,6 +467,32 @@ type alias Palette =
     { backgroundColor : Color, borderColor : Color }
 
 
+shouldEmphasizeText :
+    { config
+        | emphasize : Bool
+        , label : Maybe String
+        , content : List (Content msg)
+    }
+    -> Bool
+shouldEmphasizeText config =
+    case ( config.label, config.content, config.emphasize ) of
+        ( _, _, True ) ->
+            -- If the user passed the `emphasize` attribute, we always show text emphasis
+            True
+
+        ( Just l, [ Blank _ ], _ ) ->
+            -- A standalone blank is the one case we will allow a label w/o text emphasis
+            False
+
+        ( Just _, _, _ ) ->
+            -- If a label was specified, but `emphasize` was not passed as an attribute, we make it a full emphasis anyways (how else would the user know what the label references?)
+            True
+
+        ( Nothing, _, _ ) ->
+            -- No emphasis and no label, we just render as plain text
+            False
+
+
 toMark :
     { config
         | emphasize : Bool
@@ -469,58 +502,48 @@ toMark :
     -> Palette
     -> Maybe Mark
 toMark config { backgroundColor, borderColor } =
-    case ( config.label, config.content, config.emphasize ) of
-        ( Just l, (Blank _) :: [], _ ) ->
-            -- If a blank is the **only** content and there is a label, then wrapping it in an emphasize block looks awkward.
-            Just
-                { name = Just l
-                , startStyles = []
-                , styles = []
-                , endStyles = []
-                }
+    if shouldEmphasizeText config then
+        let
+            borderWidth =
+                Css.px 1
 
-        ( Just l, _, False ) ->
-            Just
-                { name = Just l
-                , startStyles = []
-                , styles = []
-                , endStyles = []
-                }
-
-        ( _, _, True ) ->
-            let
-                borderWidth =
-                    Css.px 1
-
-                borderStyle =
-                    Css.dashed
-            in
-            Just
-                { name = config.label
-                , startStyles =
-                    [ Css.borderLeft3 borderWidth borderStyle borderColor
-                    , Css.paddingLeft (Css.px 2)
+            borderStyle =
+                Css.dashed
+        in
+        Just
+            { name = config.label
+            , startStyles =
+                [ Css.borderLeft3 borderWidth borderStyle borderColor
+                , Css.paddingLeft (Css.px 2)
+                ]
+            , styles =
+                [ Css.paddingTop topBottomSpace
+                , Css.paddingBottom topBottomSpace
+                , Css.backgroundColor backgroundColor
+                , Css.borderTop3 borderWidth borderStyle borderColor
+                , Css.borderBottom3 borderWidth borderStyle borderColor
+                , MediaQuery.highContrastMode
+                    [ Css.property "background-color" "Mark"
+                    , Css.property "color" "MarkText"
+                    , Css.property "forced-color-adjust" "none"
                     ]
-                , styles =
-                    [ Css.paddingTop topBottomSpace
-                    , Css.paddingBottom topBottomSpace
-                    , Css.backgroundColor backgroundColor
-                    , Css.borderTop3 borderWidth borderStyle borderColor
-                    , Css.borderBottom3 borderWidth borderStyle borderColor
-                    , MediaQuery.highContrastMode
-                        [ Css.property "background-color" "Mark"
-                        , Css.property "color" "MarkText"
-                        , Css.property "forced-color-adjust" "none"
-                        ]
-                    ]
-                , endStyles =
-                    [ Css.borderRight3 borderWidth borderStyle borderColor
-                    , Css.paddingRight (Css.px 2)
-                    ]
-                }
+                ]
+            , endStyles =
+                [ Css.borderRight3 borderWidth borderStyle borderColor
+                , Css.paddingRight (Css.px 2)
+                ]
+            }
 
-        ( Nothing, _, False ) ->
-            Nothing
+    else
+        config.label
+            |> Maybe.map
+                (\l ->
+                    { name = Just l
+                    , startStyles = []
+                    , styles = []
+                    , endStyles = []
+                    }
+                )
 
 
 topBottomSpace : Css.Px
@@ -620,27 +643,6 @@ type alias Config msg =
     }
 
 
-type BlankHeight
-    = BlankHeightFull
-    | BlankHeightInline
-
-
-findBlankHeight : { x | emphasize : Bool, content : List (Content msg) } -> BlankHeight
-findBlankHeight config =
-    case config.content of
-        [ Blank _ ] ->
-            -- Lonely blanks don't have the emphasized border draw around them (even if they have a label!)
-            -- So there is no need to make them inline
-            BlankHeightFull
-
-        _ ->
-            if config.emphasize then
-                BlankHeightInline
-
-            else
-                BlankHeightFull
-
-
 render : Config msg -> Html msg
 render config =
     let
@@ -653,7 +655,7 @@ render config =
     span
         [ css [ Css.position Css.relative ], AttributesExtra.maybe Attributes.id config.id ]
         (Mark.viewWithBalloonTags
-            { renderSegment = renderContent (findBlankHeight config) config
+            { renderSegment = renderContent config
             , backgroundColor = palette.backgroundColor
             , maybeMarker = maybeMark
             , labelPosition = config.labelPosition
@@ -670,6 +672,11 @@ render config =
             }
             config.content
         )
+
+
+type BlankHeight
+    = BlankHeightFull
+    | BlankHeightInline
 
 
 viewBlank : BlankHeight -> CharacterWidth -> Html msg
