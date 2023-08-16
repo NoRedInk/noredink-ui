@@ -21,7 +21,6 @@ import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style exposing (invisibleStyle)
 import Content
 import Css exposing (Color, Style)
-import Css.Animations
 import Css.Global
 import Css.Media
 import Html.Styled as Html exposing (Html, span)
