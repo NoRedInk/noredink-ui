@@ -6,7 +6,7 @@ import Dict
 import Expect
 import Html.Attributes as Attributes
 import Html.Styled
-import Nri.Ui.Block.V5 as Block
+import Nri.Ui.Block.V6 as Block
 import Spec.PseudoElements exposing (hasAfter, hasBefore)
 import Test exposing (..)
 import Test.Html.Query as Query
@@ -40,27 +40,25 @@ contentSpec =
                     ]
     , test "content with phrase and blank" <|
         \() ->
-            [ Block.content (Block.phrase "Yo hello" ++ [ Block.blank Block.ShortWordPhrase ]) ]
+            [ Block.content (Block.phrase "Yo hello" ++ [ Block.blank { widthInChars = 8 } ]) ]
                 |> toQuery
                 |> Query.has [ Selector.text "Yo", Selector.text "blank" ]
     , test "content with blankWithQuestionBox" <|
         \() ->
-            [ Block.content [ Block.blankWithId "block-id" Block.ShortWordPhrase ] ]
+            [ Block.content [ Block.blank { widthInChars = 8 } ] ]
                 |> toQuery
                 |> Query.has
                     [ Selector.all
-                        [ Selector.attribute (Attributes.id "block-id")
-                        , Selector.containing [ Selector.text "blank" ]
+                        [ Selector.containing [ Selector.text "blank" ]
                         ]
                     ]
     , test "content with wordWithId" <|
         \() ->
-            [ Block.content [ Block.wordWithId { word = "word", id = "block-id" } ] ]
+            [ Block.content (Block.phrase "word") ]
                 |> toQuery
                 |> Query.has
                     [ Selector.all
-                        [ Selector.attribute (Attributes.id "block-id")
-                        , Selector.containing [ Selector.text "word" ]
+                        [ Selector.containing [ Selector.text "word" ]
                         ]
                     ]
     ]
