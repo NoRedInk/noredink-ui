@@ -486,9 +486,8 @@ A labelled blank in the sentence.
                     , view =
                         \{ textExample, blankExample } ->
                             div []
-                                [ Block.view (Block.emphasize :: textExample)
-                                , Block.view [ Block.content [ Block.space ] ]
-                                , Block.view blankExample
+                                [ div [] [ Block.view (Block.emphasize :: textExample) ]
+                                , div [] [ Block.view blankExample ]
                                 ]
                     , width = Css.px 300
                     , cellStyles = always [ Css.padding2 (Css.px 4) (Css.px 7), Css.verticalAlign Css.top ]
