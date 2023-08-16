@@ -18,6 +18,7 @@ module Nri.Ui.Block.V6 exposing
     - Remove `wordWithId` and `blankWithId` as we no longer are trying to point to words or blanks with the question box.
     - Remove the `fullHeightBlank` attribute option - we can always infer this from the contents
     - Set a maximum blank width of ~60 characters as blanks won't line break
+    - Remove `labelState` as we are shifting reposibility to consumers to animate labels via `labelCss`
 
 @docs view, Attribute
 
