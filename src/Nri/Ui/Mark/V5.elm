@@ -2,15 +2,14 @@ module Nri.Ui.Mark.V5 exposing
     ( Mark
     , view, viewWithInlineTags, viewWithBalloonTags
     , viewWithOverlaps
-    , LabelState(..)
     )
 
 {-|
 
 
-### Changes from V3
+### Changes from V4
 
-  - adds `labelCss` to `viewWithBalloonTags`
+    - Remove `LabelState` from API, the consumer will manage animations through `labelCss`
 
 @docs Mark
 @docs view, viewWithInlineTags, viewWithBalloonTags
@@ -49,17 +48,6 @@ type alias Mark =
     , styles : List Css.Style
     , endStyles : List Css.Style
     }
-
-
-{-| Controls label animations.
-
-Visible will fade in when first displayed.
-FadeOut will start visible and then fade out.
-
--}
-type LabelState
-    = Visible
-    | FadeOut
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
@@ -181,7 +169,6 @@ viewWithBalloonTags :
     , backgroundColor : Color
     , maybeMarker : Maybe Mark
     , labelPosition : Maybe LabelPosition
-    , labelState : LabelState
     , labelCss : List Css.Style
     , labelId : Maybe String
     , labelContentId : Maybe String
@@ -279,7 +266,6 @@ view_ tagStyle viewSegment highlightables =
 viewMarkedByBalloon :
     { config
         | backgroundColor : Color
-        , labelState : LabelState
         , labelPosition : Maybe LabelPosition
         , labelCss : List Css.Style
         , labelId : Maybe String
@@ -496,7 +482,6 @@ viewInlineTag customizations name =
 viewBalloon :
     { config
         | backgroundColor : Color
-        , labelState : LabelState
         , labelPosition : Maybe LabelPosition
         , labelCss : List Css.Style
         , labelId : Maybe String
@@ -522,33 +507,6 @@ viewBalloon config label =
 
                 Nothing ->
                     Css.batch []
-            , case config.labelState of
-                FadeOut ->
-                    Css.batch
-                        [ Css.property "animation-duration" "0.3s"
-                        , Css.property "animation-fill-mode" "forwards"
-                        , Css.animationName
-                            (Css.Animations.keyframes
-                                [ ( 0, [ Css.Animations.opacity (Css.num 1) ] )
-                                , ( 100, [ Css.Animations.opacity Css.zero ] )
-                                ]
-                            )
-                        , Css.property "animation-timing-function" "linear"
-                        ]
-
-                Visible ->
-                    Css.batch
-                        [ Css.property "animation-duration" "0.3s"
-                        , Css.property "animation-fill-mode" "forwards"
-                        , Css.animationName
-                            (Css.Animations.keyframes
-                                [ ( 0, [ Css.Animations.opacity Css.zero ] )
-                                , ( 100, [ Css.Animations.opacity (Css.num 1) ] )
-                                ]
-                            )
-                        , Css.property "animation-timing-function" "linear"
-                        , Css.opacity Css.zero
-                        ]
             , Css.batch config.labelCss
             ]
         , Balloon.css
