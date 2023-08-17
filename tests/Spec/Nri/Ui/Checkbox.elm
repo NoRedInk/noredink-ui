@@ -3,11 +3,12 @@ module Spec.Nri.Ui.Checkbox exposing (..)
 import Accessibility.Aria as Aria
 import Accessibility.Role as Role
 import Html.Styled exposing (..)
+import InputErrorAndGuidanceInternal exposing (guidanceId)
 import Nri.Ui.Checkbox.V7 as Checkbox
 import ProgramTest exposing (..)
 import Spec.KeyboardHelpers as KeyboardHelpers
 import Test exposing (..)
-import Test.Html.Selector as Selector
+import Test.Html.Selector exposing (..)
 
 
 spec : Test
@@ -15,6 +16,21 @@ spec =
     describe "Nri.Ui.Checkbox.V7"
         [ describe "'checkbox' role" hasCorrectRole
         , describe "aria-checked" hasAriaChecked
+        , test "guidance" <|
+            \() ->
+                let
+                    checkboxId =
+                        "custom-checkbox-id"
+                in
+                program
+                    [ Checkbox.id checkboxId
+                    , Checkbox.guidance "Some guidance"
+                    ]
+                    |> ensureViewHas
+                        [ id checkboxId
+                        , attribute (Aria.describedBy [ guidanceId checkboxId ])
+                        ]
+                    |> done
         ]
 
 
@@ -22,8 +38,8 @@ hasCorrectRole : List Test
 hasCorrectRole =
     [ test "has role checkbox" <|
         \() ->
-            program
-                |> ensureViewHas [ Selector.attribute Role.checkBox ]
+            program []
+                |> ensureViewHas [ attribute Role.checkBox ]
                 |> done
     ]
 
@@ -32,12 +48,12 @@ hasAriaChecked : List Test
 hasAriaChecked =
     [ test "aria-checked reflects the state of the checkbox" <|
         \() ->
-            program
-                |> ensureViewHas [ Selector.attribute (Aria.checked (Just False)) ]
+            program []
+                |> ensureViewHas [ attribute (Aria.checked (Just False)) ]
                 |> pressSpace
-                |> ensureViewHas [ Selector.attribute (Aria.checked (Just True)) ]
+                |> ensureViewHas [ attribute (Aria.checked (Just True)) ]
                 |> pressSpace
-                |> ensureViewHas [ Selector.attribute (Aria.checked (Just False)) ]
+                |> ensureViewHas [ attribute (Aria.checked (Just False)) ]
                 |> done
     ]
 
@@ -45,7 +61,7 @@ hasAriaChecked =
 pressSpace : TestContext -> TestContext
 pressSpace =
     KeyboardHelpers.pressSpaceKey { targetDetails = [] }
-        [ Selector.attribute Role.checkBox ]
+        [ attribute Role.checkBox ]
 
 
 type alias Model =
@@ -78,25 +94,24 @@ update msg state =
             { state | checked = checked_ }
 
 
-view : Model -> Html Msg
-view state =
+view : List (Checkbox.Attribute Msg) -> Model -> Html Msg
+view attributes state =
     Checkbox.view
         { label = "Checkbox"
         , selected = state.checked
         }
-        [ Checkbox.onCheck Toggle
-        ]
+        (Checkbox.onCheck Toggle :: attributes)
 
 
 type alias TestContext =
     ProgramTest Model Msg ()
 
 
-program : TestContext
-program =
+program : List (Checkbox.Attribute Msg) -> TestContext
+program attributes =
     ProgramTest.createSandbox
         { init = init
         , update = update
-        , view = view >> toUnstyled
+        , view = view attributes >> toUnstyled
         }
         |> ProgramTest.start ()

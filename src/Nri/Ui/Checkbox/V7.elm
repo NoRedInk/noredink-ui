@@ -12,6 +12,11 @@ module Nri.Ui.Checkbox.V7 exposing
 {-|
 
 
+## Patch changes:
+
+  - reposition the guidance to be right below the label text
+
+
 ## Changes from V6:
 
   - Reworked api similar to other components based on Attributes
@@ -272,16 +277,18 @@ view { label, selected } attributes =
                     )
     in
     checkboxContainer config_
-        ([ viewCheckbox config_
-            (if config.isDisabled then
-                ( disabledLabelCss, disabledIcon )
+        [ viewIcon [] icon
+        , span []
+            (viewCheckbox config_
+                (if config.isDisabled then
+                    ( disabledLabelCss, disabledIcon )
 
-             else
-                ( enabledLabelCss, icon )
+                 else
+                    ( enabledLabelCss, icon )
+                )
+                :: inputGuidance config_
             )
-         ]
-            ++ [ div [ css [ paddingLeft (px 40) ] ] (InputErrorAndGuidanceInternal.view config_.identifier (Css.marginTop Css.zero) config_) ]
-        )
+        ]
 
 
 {-| If your selectedness is always selected or not selected,
@@ -315,7 +322,8 @@ checkboxContainer : { a | identifier : String, containerCss : List Style } -> Li
 checkboxContainer model =
     Html.span
         [ css
-            [ display block
+            [ displayFlex
+            , alignItems center
             , marginLeft (px -4)
             , paddingTop (px 5)
             , paddingBottom (px 5)
@@ -341,18 +349,14 @@ onCheckMsg selected msg =
 
 enabledLabelCss : List Style
 enabledLabelCss =
-    [ displayFlex
-    , Css.alignItems Css.center
-    , textStyle
+    [ textStyle
     , cursor pointer
     ]
 
 
 disabledLabelCss : List Style
 disabledLabelCss =
-    [ displayFlex
-    , Css.alignItems Css.center
-    , textStyle
+    [ textStyle
     , Css.outline3 (Css.px 2) Css.solid Css.transparent
     , cursor auto
     , color Colors.gray45
@@ -368,6 +372,8 @@ viewCheckbox :
         , label : String
         , hideLabel : Bool
         , labelCss : List Style
+        , error : InputErrorAndGuidanceInternal.ErrorState
+        , guidance : Guidance msg
     }
     ->
         ( List Style
@@ -376,13 +382,28 @@ viewCheckbox :
     -> Html.Html msg
 viewCheckbox config ( styles, icon ) =
     let
+        marginTopAdjustment =
+            case config.guidance of
+                Just _ ->
+                    marginTop (Css.px -highContrastBorderWidth)
+
+                Nothing ->
+                    Css.batch []
+
         attributes =
             List.concat
-                [ [ css (styles ++ config.labelCss)
+                [ [ css
+                        (paddingLeft (Css.px checkboxIconWidth)
+                            :: marginTopAdjustment
+                            :: marginLeft (Css.px -checkboxIconWidth)
+                            :: styles
+                            ++ config.labelCss
+                        )
                   , Attributes.class FocusRing.customClass
                   , Role.checkBox
                   , Key.tabbable True
                   , Attributes.id config.identifier
+                  , InputErrorAndGuidanceInternal.describedBy config.identifier config
                   , Aria.checked (selectedToMaybe config.selected)
                   ]
                 , if config.disabled then
@@ -399,11 +420,36 @@ viewCheckbox config ( styles, icon ) =
                             )
                         |> Maybe.withDefault []
                 ]
+
+        viewLabel =
+            if config.hideLabel then
+                Html.span Accessibility.Styled.Style.invisible
+                    [ Html.text config.label ]
+
+            else
+                Html.text config.label
     in
     Html.div attributes
-        [ viewIcon [] icon
-        , labelView config
+        [ viewLabel
         ]
+
+
+checkboxIconWidth : Float
+checkboxIconWidth =
+    40
+
+
+inputGuidance :
+    { a
+        | identifier : String
+        , error : InputErrorAndGuidanceInternal.ErrorState
+        , guidance : Guidance msg
+    }
+    -> List (Html msg)
+inputGuidance config =
+    InputErrorAndGuidanceInternal.view config.identifier
+        (Css.marginTop Css.zero)
+        config
 
 
 textStyle : Style
@@ -421,7 +467,7 @@ viewIcon : List Style -> Svg -> Html msg
 viewIcon styles icon =
     Html.div
         [ css
-            [ border3 (px 2) solid transparent
+            [ border3 (px highContrastBorderWidth) solid transparent
             , borderRadius (px 3)
             , height (Css.px 27)
             , boxSizing contentBox
@@ -443,11 +489,6 @@ viewIcon styles icon =
         ]
 
 
-labelView : { a | hideLabel : Bool, label : String } -> Html msg
-labelView config =
-    if config.hideLabel then
-        Html.span Accessibility.Styled.Style.invisible
-            [ Html.text config.label ]
-
-    else
-        Html.span [] [ Html.text config.label ]
+highContrastBorderWidth : Float
+highContrastBorderWidth =
+    2

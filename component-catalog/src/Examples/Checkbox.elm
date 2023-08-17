@@ -19,9 +19,11 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Checkbox.V7 as Checkbox
+import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V7 as Table
 
@@ -66,9 +68,15 @@ example =
                 , renderExample = Code.unstyledView
                 , toExampleCode = \_ -> [ { sectionName = "Example", code = exampleCode } ]
                 }
-            , Heading.h2 [ Heading.plaintext "Customizable example" ]
+            , Heading.h2
+                [ Heading.plaintext "Customizable example"
+                , Heading.css [ Css.marginTop (Css.px 30) ]
+                ]
             , exampleView
-            , Heading.h2 [ Heading.plaintext "Examples" ]
+            , Heading.h2
+                [ Heading.plaintext "State Examples"
+                , Heading.css [ Css.marginTop (Css.px 30) ]
+                ]
             , Table.view []
                 [ Table.string
                     { header = "State"
@@ -98,11 +106,55 @@ example =
                     , ( "Selected", Checkbox.Selected )
                     ]
                 )
+            , Heading.h2
+                [ Heading.plaintext "Guidance Examples"
+                , Heading.css [ Css.marginTop (Css.px 30) ]
+                ]
+            , Table.view []
+                [ Table.custom
+                    { header = text "Attribute"
+                    , view = .name >> text
+                    , width = Css.pct 10
+                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "Example"
+                    , view =
+                        \{ name, attribute } ->
+                            Checkbox.view
+                                { label = "I agree to the terms and conditions"
+                                , selected = Checkbox.NotSelected
+                                }
+                                [ Checkbox.id (safeIdWithPrefix "guidance-and-error-example" name)
+                                , attribute
+                                ]
+                    , width = Css.pct 50
+                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+                    , sort = Nothing
+                    }
+                ]
+                [ { name = "guidance"
+                  , attribute = Checkbox.guidance "Be sure to read the terms and conditions before agreeing to follow them."
+                  }
+                , { name = "guidanceHtml"
+                  , attribute =
+                        Checkbox.guidanceHtml
+                            [ text "Be sure to read "
+                            , ClickableText.link "the terms and conditions"
+                                [ ClickableText.linkExternal "https://en.wikipedia.org/wiki/Terms_of_service"
+                                , ClickableText.caption
+                                , ClickableText.appearsInline
+                                ]
+                            , text " before agreeing to follow them."
+                            ]
+                  }
+                ]
             ]
     , categories = [ Inputs ]
     , keyboardSupport =
         [ { keys = [ Space ]
-          , result = "Select or deselect the checkbox (may cause page scroll)"
+          , result = "Select or deselect the checkbox"
           }
         ]
     }
