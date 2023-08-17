@@ -1,4 +1,4 @@
-module Nri.Ui.Switch.V2 exposing
+module Nri.Ui.Switch.V3 exposing
     ( view
     , Attribute
     , selected
@@ -9,22 +9,10 @@ module Nri.Ui.Switch.V2 exposing
 {-|
 
 
-### Patch Changes:
+### Changes from V2:
 
-    - Fix cursor styles when hovering over the transparent checkbox
-
-
-### Changes from V1:
-
-    - Fixes invalid ARIA use, [conformance requirements](https://www.w3.org/TR/html-aria/#docconformance)
-    - labels should only support strings (this is the only way they're actually used in practice)
-    - extends API to be more consistent with other form/control components
-    - Use Colors values instead of hardcoded hex strings
-    - Move the status (selected or not selected) to the list api
-    - REQUIRE label and id always
-    - Move custom attributes to the container
-    - change disabled to take a bool (which I think is the slighty more common pattern)
-    - Adds `role="switch"`
+    - Replace underlying checkbox input with a custom implementation
+    - Allow attributes that produce msgs to be passed through
 
 @docs view
 
@@ -38,11 +26,12 @@ module Nri.Ui.Switch.V2 exposing
 
 -}
 
-import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
 import Css exposing (Color, Style)
 import Css.Global as Global
+import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Nri.Ui.Colors.Extra exposing (toCssString)
@@ -91,7 +80,7 @@ you want/expect if underlying styles change.
 Instead, please use `containerCss` or `labelCss`.
 
 -}
-custom : List (Html.Attribute Never) -> Attribute msg
+custom : List (Html.Attribute msg) -> Attribute msg
 custom custom_ =
     Attribute <| \config -> { config | custom = config.custom ++ custom_ }
 
@@ -131,7 +120,7 @@ type alias Config msg =
     , labelCss : List Style
     , isDisabled : Bool
     , isSelected : Bool
-    , custom : List (Html.Attribute Never)
+    , custom : List (Html.Attribute msg)
     }
 
 
@@ -158,13 +147,12 @@ view { label, id } attrs =
         isDisabled_ =
             notOperable config
     in
-    Html.label
-        ([ Attributes.id (id ++ "-container")
-         , Attributes.css
+    Html.div
+        ([ Attributes.css
             [ Css.display Css.inlineFlex
             , Css.alignItems Css.center
-            , Css.position Css.relative
             , Css.fontSize (Css.px 15)
+            , Css.outline Css.none
             , Css.pseudoClass "focus-within"
                 [ Global.descendants
                     [ Global.class "switch-track"
@@ -173,15 +161,21 @@ view { label, id } attrs =
                         ]
                     ]
                 ]
-            , cursorStyle config
+            , Css.cursor
+                (if isDisabled_ then
+                    Css.notAllowed
+
+                 else
+                    Css.pointer
+                )
             , Css.batch config.containerCss
             ]
-         , Attributes.for id
+         , Attributes.class FocusRing.customClass
          ]
-            ++ List.map (Attributes.map never) config.custom
+            ++ switchAttributes id config
+            ++ config.custom
         )
-        [ viewCheckbox id config
-        , Nri.Ui.Svg.V1.toHtml
+        [ Nri.Ui.Svg.V1.toHtml
             (viewSwitch
                 { id = id
                 , isSelected = config.isSelected
@@ -207,42 +201,32 @@ view { label, id } attrs =
         ]
 
 
-viewCheckbox : String -> Config msg -> Html msg
-viewCheckbox id config =
-    Html.checkbox id
-        (Just config.isSelected)
-        [ Attributes.id id
-        , Role.switch
-        , Attributes.css
-            [ Css.position Css.absolute
-            , Css.top (Css.px 10)
-            , Css.left (Css.px 10)
-            , Css.opacity (Css.num 0)
-            , cursorStyle config
-            ]
-        , case ( config.onSwitch, config.isDisabled ) of
-            ( Just onSwitch_, False ) ->
-                Events.onCheck onSwitch_
+switchAttributes : String -> Config msg -> List (Html.Attribute msg)
+switchAttributes id config =
+    let
+        eventsOrDisabled =
+            case ( config.onSwitch, config.isDisabled ) of
+                ( Just onSwitch_, False ) ->
+                    [ Events.onClick (onSwitch_ (not config.isSelected))
+                    , Key.onKeyDownPreventDefault
+                        [ Key.space (onSwitch_ (not config.isSelected))
+                        ]
+                    ]
 
-            _ ->
-                Aria.disabled True
-        ]
+                _ ->
+                    [ Aria.disabled True ]
+    in
+    [ Attributes.id id
+    , Role.switch
+    , Aria.checked (Just config.isSelected)
+    , Key.tabbable True
+    ]
+        ++ eventsOrDisabled
 
 
 notOperable : Config msg -> Bool
 notOperable config =
     config.onSwitch == Nothing || config.isDisabled
-
-
-cursorStyle : Config msg -> Style
-cursorStyle config =
-    Css.cursor
-        (if notOperable config then
-            Css.notAllowed
-
-         else
-            Css.pointer
-        )
 
 
 viewSwitch :

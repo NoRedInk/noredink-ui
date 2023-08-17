@@ -20,7 +20,7 @@ import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Markdown
-import Nri.Ui.Block.V5 as Block
+import Nri.Ui.Block.V6 as Block
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Fonts.V1 as Fonts
@@ -38,7 +38,7 @@ moduleName =
 
 version : Int
 version =
-    5
+    6
 
 
 {-| -}
@@ -186,6 +186,7 @@ example =
                     , Block.cyan
                     , Block.labelId prepositionId
                     , Block.labelPosition (Dict.get prepositionId offsets)
+                    , Block.emphasize
                     ]
                 , Block.view <|
                     [ Block.content
@@ -197,7 +198,7 @@ example =
                         [ Block.phrase "This is "
                         , [ Block.italic (Block.phrase "heroically") ]
                         , [ Block.bold (Block.phrase " generous ") ]
-                        , [ Block.blank Block.ShortWordPhrase ]
+                        , [ Block.blank { widthInChars = 8 } ]
                         , Block.phrase " each comic book costs about $5."
                         ]
                     , Block.label "Editor's note (can *also* include **markdown**!)"
@@ -352,15 +353,6 @@ example =
                                 ]
                             ]
                   }
-                , { pattern = Code.fromModule moduleName "view"
-                  , description = "**Blank block**\n\nRepresents a blank in the sentence. Used in Cycling interface scaffolding."
-                  , example =
-                        inParagraph
-                            [ Block.view [ Block.plaintext "I am a seed with " ]
-                            , Block.view []
-                            , Block.view [ Block.plaintext " being used." ]
-                            ]
-                  }
                 , { pattern =
                         Code.fromModule moduleName "view "
                             ++ Code.listMultiline
@@ -368,7 +360,15 @@ example =
                                 , Code.fromModule moduleName "purple"
                                 ]
                                 1
-                  , description = "**Labeled blank block**\n\nA labelled blank in the sentence"
+                  , description =
+                        """**Labeled blank block**
+
+A labelled blank in the sentence.
+
+"""
+                            ++ "Please see the \""
+                            ++ blankWidthGuidanceSectionName
+                            ++ "\" table to learn more about using Blanks."
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "If a volcano is extinct, " ]
@@ -386,7 +386,13 @@ example =
                             ++ Code.listMultiline
                                 [ Code.fromModule moduleName "emphasize"
                                 , Code.fromModule moduleName "content "
-                                    ++ Code.list [ "…" ]
+                                    ++ Code.listMultiline
+                                        [ "…"
+                                        , Code.fromModule moduleName "blank "
+                                            ++ Code.record [ ( "widthInChars", "8" ) ]
+                                        , "…"
+                                        ]
+                                        2
                                 ]
                                 1
                   , description = "**Blanks with emphasis block**\n\nHelp students focus in on a phrase that includes a blank"
@@ -397,7 +403,7 @@ example =
                                 [ Block.emphasize
                                 , (List.concat >> Block.content)
                                     [ Block.phrase "emphasized subsegement "
-                                    , [ Block.blank Block.ShortWordPhrase ]
+                                    , [ Block.blank { widthInChars = 8 } ]
                                     , Block.phrase " emphasized"
                                     ]
                                 ]
@@ -406,9 +412,143 @@ example =
                                 ]
                             ]
                   }
+                , { pattern =
+                        Code.fromModule moduleName "view "
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "emphasize"
+                                , Code.fromModule moduleName "content "
+                                    ++ Code.listMultiline
+                                        [ "…"
+                                        , Code.fromModule moduleName "bold ("
+                                            ++ (Code.fromModule moduleName "phrase " ++ "\"[bold text]\"")
+                                            ++ ")"
+                                        , Code.fromModule moduleName "italic ("
+                                            ++ (Code.fromModule moduleName "phrase " ++ "\"[italic text]\"")
+                                            ++ ")"
+                                        , "…"
+                                        ]
+                                        2
+                                ]
+                                1
+                  , description = "**Bold & Italic markdown**\n\nItalicize titles and highlight specific words inside of an emphasis block."
+                  , example =
+                        inParagraph
+                            [ Block.view [ Block.plaintext "The " ]
+                            , Block.view
+                                [ Block.emphasize
+                                , (List.concat >> Block.content)
+                                    [ [ Block.bold (Block.phrase "quick ") ]
+                                    , [ Block.italic (Block.phrase "brown ") ]
+                                    , Block.phrase "fox"
+                                    ]
+                                ]
+                            , Block.view [ Block.plaintext " jumped over the lazy dog." ]
+                            ]
+                  }
+                ]
+            , Heading.h2
+                [ Heading.plaintext blankWidthGuidanceSectionName
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
+            , Text.smallBody [ Text.markdown "The accessible name of all blanks, regardless of character width used, is \"blank.\"" ]
+            , Text.smallBody [ Text.markdown "If we're looking for a specific length of content to put in the blank, that _must_ be communicated elsewhere on the page to provide an equitable experience." ]
+            , Text.smallBody [ Text.markdown "The `widthInChars` parameter uses the number of characters expected in the blank to calculate a rough monospace-based width that visually looks like it _could_ match." ]
+            , Table.view
+                []
+                [ Table.custom
+                    { header = text "Pattern"
+                    , view =
+                        \{ code } ->
+                            Html.Styled.code [] [ text code ]
+                    , width = Css.px 400
+                    , cellStyles =
+                        always
+                            [ Css.padding2 (Css.px 14) (Css.px 7)
+                            , Css.verticalAlign Css.top
+                            , Css.fontSize (Css.px 12)
+                            , Css.whiteSpace Css.preWrap
+                            ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "Description"
+                    , view =
+                        .description
+                            >> Markdown.toHtml Nothing
+                            >> List.map fromUnstyled
+                            >> div []
+                    , width = Css.px 300
+                    , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "Example"
+                    , view =
+                        \{ textExample, blankExample } ->
+                            div []
+                                [ div [] [ Block.view (Block.emphasize :: textExample) ]
+                                , div [] [ Block.view blankExample ]
+                                ]
+                    , width = Css.px 300
+                    , cellStyles = always [ Css.padding2 (Css.px 4) (Css.px 7), Css.verticalAlign Css.top ]
+                    , sort = Nothing
+                    }
+                ]
+                [ { code = Code.fromModule moduleName "view []"
+                  , description = "Default view of a blank, without customization."
+                  , textExample = [ Block.plaintext "" ]
+                  , blankExample = []
+                  }
+                , { code =
+                        Code.fromModule moduleName "view"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "contents"
+                                    ++ Code.listMultiline
+                                        [ Code.fromModule moduleName "blank " ++ Code.record [ ( "widthInChars", "1" ) ]
+                                        ]
+                                        2
+                                ]
+                                1
+                  , description = "A single character.  Typically used to represent punctuation."
+                  , textExample = [ Block.plaintext "," ]
+                  , blankExample = [ Block.content [ Block.blank { widthInChars = 1 } ] ]
+                  }
+                , { code =
+                        Code.fromModule moduleName "view"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "contents"
+                                    ++ Code.listMultiline
+                                        [ Code.fromModule moduleName "blank " ++ Code.record [ ( "widthInChars", "8" ) ]
+                                        ]
+                                        2
+                                ]
+                                1
+                  , description = "A short word or phrase.  "
+                  , textExample = [ Block.plaintext "a phrase" ]
+                  , blankExample = [ Block.content [ Block.blank { widthInChars = 8 } ] ]
+                  }
+                , { code =
+                        Code.fromModule moduleName "view"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "contents"
+                                    ++ Code.listMultiline
+                                        [ Code.fromModule moduleName "blank " ++ Code.record [ ( "widthInChars", "16" ) ]
+                                        ]
+                                        2
+                                ]
+                                1
+                  , description = "A long word or phrase."
+                  , textExample = [ Block.plaintext "multifariousness" ]
+                  , blankExample = [ Block.content [ Block.blank { widthInChars = 16 } ] ]
+                  }
                 ]
             ]
     }
+
+
+blankWidthGuidanceSectionName : String
+blankWidthGuidanceSectionName =
+    "Blank width guidance"
 
 
 {-| -}
@@ -438,8 +578,8 @@ type alias Settings =
 initControl : Control Settings
 initControl =
     ControlExtra.list
-        |> ControlExtra.optionalListItem "content" controlContent
-        |> ControlExtra.optionalBoolListItem "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )
+        |> ControlExtra.optionalListItemDefaultChecked "content" controlContent
+        |> ControlExtra.optionalBoolListItemDefaultChecked "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )
         |> ControlExtra.optionalListItem "label"
             (CommonControls.string ( Code.fromModule moduleName "label", Block.label ) "Fruit")
         |> ControlExtra.optionalListItem "labelPosition"
@@ -478,24 +618,6 @@ initControl =
             )
         |> ControlExtra.optionalListItem "labelId"
             (CommonControls.string ( Code.fromModule moduleName "labelId", Block.labelId ) fruitId)
-        |> ControlExtra.optionalListItem "labelState"
-            (Control.choice
-                [ ( "Visible"
-                  , Control.value
-                        ( Code.fromModule moduleName "labelState "
-                            ++ Code.fromModule moduleName "Visible "
-                        , Block.labelState Block.Visible
-                        )
-                  )
-                , ( "FadeOut"
-                  , Control.value
-                        ( Code.fromModule moduleName "labelState "
-                            ++ Code.fromModule moduleName "FadeOut "
-                        , Block.labelState Block.FadeOut
-                        )
-                  )
-                ]
-            )
 
 
 controlContent : Control ( String, Block.Attribute msg )
@@ -512,78 +634,50 @@ controlContent =
           , Control.value
                 ( Code.fromModule moduleName "content "
                     ++ Code.withParens
-                        ((Code.fromModule moduleName "string " ++ Code.string "to think about ")
-                            ++ (" ++ " ++ Code.fromModule moduleName "blank")
-                            ++ (" :: " ++ Code.fromModule moduleName "string " ++ Code.string " and so forth")
+                        ((Code.fromModule moduleName "italic (" ++ Code.fromModule moduleName "phrase " ++ Code.string "to think about" ++ ")")
+                            ++ (" :: " ++ Code.fromModule moduleName "blank")
+                            ++ (" :: " ++ Code.fromModule moduleName "phrase " ++ Code.string " and so forth")
                         )
                 , Block.content
-                    (Block.phrase "to think about "
-                        ++ Block.blank Block.ShortWordPhrase
+                    (Block.italic (Block.phrase "to think about ")
+                        :: Block.blank { widthInChars = 8 }
                         :: Block.phrase " and so forth"
                     )
                 )
           )
-        , ( "single character blank"
-          , Control.value
-                ( Code.fromModule moduleName "content "
-                    ++ Code.withParens
-                        (Code.fromModule moduleName "blank "
-                            ++ Code.fromModule moduleName "SingleCharacter"
-                        )
-                , Block.content [ Block.blank Block.SingleCharacter ]
-                )
-          )
-        , ( "short word phrase blank"
-          , Control.value
-                ( Code.fromModule moduleName "content "
-                    ++ Code.withParens
-                        (Code.fromModule moduleName "blank "
-                            ++ Code.fromModule moduleName "ShortWordPhrase"
-                        )
-                , Block.content [ Block.blank Block.ShortWordPhrase ]
-                )
-          )
-        , ( "long word phrase blank"
-          , Control.value
-                ( Code.fromModule moduleName "content "
-                    ++ Code.withParens
-                        (Code.fromModule moduleName "blank "
-                            ++ Code.fromModule moduleName "LongWordPhrase"
-                        )
-                , Block.content [ Block.blank Block.LongWordPhrase ]
-                )
-          )
-        , ( "full height single character blank"
-          , Control.value
-                ( Code.fromModule moduleName "content "
-                    ++ Code.withParens
-                        (Code.fromModule moduleName "fullHeightBlank "
-                            ++ Code.fromModule moduleName "SingleCharacter"
-                        )
-                , Block.content [ Block.fullHeightBlank Block.SingleCharacter ]
-                )
-          )
-        , ( "full height short word phrase blank"
-          , Control.value
-                ( Code.fromModule moduleName "content "
-                    ++ Code.withParens
-                        (Code.fromModule moduleName "fullHeightBlank "
-                            ++ Code.fromModule moduleName "ShortWordPhrase"
-                        )
-                , Block.content [ Block.fullHeightBlank Block.ShortWordPhrase ]
-                )
-          )
-        , ( "full height long word phrase blank"
-          , Control.value
-                ( Code.fromModule moduleName "content "
-                    ++ Code.withParens
-                        (Code.fromModule moduleName "fullHeightBlank "
-                            ++ Code.fromModule moduleName "LongWordPhrase"
-                        )
-                , Block.content [ Block.fullHeightBlank Block.LongWordPhrase ]
-                )
-          )
+        , blankType ( "blank", Block.blank )
         ]
+
+
+blankType : ( String, { widthInChars : Int } -> Block.Content msg ) -> ( String, Control ( String, Block.Attribute msg ) )
+blankType ( typeStr, blank ) =
+    ( typeStr
+    , Control.map
+        (\( widthString, width ) ->
+            ( Code.fromModule moduleName "content "
+                ++ Code.withParens
+                    (Code.fromModule moduleName typeStr
+                        ++ " "
+                        ++ widthString
+                    )
+            , Block.content [ blank { widthInChars = width } ]
+            )
+        )
+        controlBlankWidth
+    )
+
+
+controlBlankWidth : Control ( String, Int )
+controlBlankWidth =
+    Control.record
+        (\widthInChars ->
+            ( Code.record
+                [ ( "widthInChars", String.fromInt widthInChars )
+                ]
+            , widthInChars
+            )
+        )
+        |> Control.field "widthInChars" (ControlExtra.int 8)
 
 
 ageId : String

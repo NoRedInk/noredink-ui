@@ -78,9 +78,6 @@ describe("UI tests", function () {
 
   const defaultProcessing = async (name, location) => {
     await goTo(name, location);
-    if (waitForInitialAnimation[name]) {
-      await page.waitForTimeout(waitForInitialAnimation[name]);
-    }
     await percySnapshot(page, name);
 
     const results = await new AxePuppeteer(page)
@@ -177,11 +174,6 @@ describe("UI tests", function () {
     // Loading's color contrast check seems to change behavior depending on whether Percy snapshots are taken or not
     Loading: ["color-contrast"],
     RadioButton: ["duplicate-id"],
-  };
-
-  const waitForInitialAnimation = {
-    // animation-duration in Mark's labelState animations
-    Block: 300,
   };
 
   const specialProcessing = {
