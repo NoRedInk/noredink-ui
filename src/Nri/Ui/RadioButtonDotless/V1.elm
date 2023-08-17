@@ -1,6 +1,28 @@
-module Nri.Ui.RadioButtonDotless.V1 exposing (Attribute, id, onSelect, view)
+module Nri.Ui.RadioButtonDotless.V1 exposing
+    ( view
+    , Attribute
+    , onSelect
+    , id
+    )
 
 {-| Looks like a standard button, behaves like a radio button
+
+
+# Create a radio button
+
+@docs view
+@docs Attribute
+
+
+## Behavior
+
+@docs onSelect
+
+
+## Customization
+
+@docs id
+
 -}
 
 import Accessibility.Styled exposing (..)
