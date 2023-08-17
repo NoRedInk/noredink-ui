@@ -5,14 +5,21 @@ module Examples.RadioButtonDotless exposing
     )
 
 import Category exposing (Category(..))
+import Code
 import Css
+import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
+import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Guidance
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
+import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.RadioButtonDotless.V1 as RadioButtonDotless
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V7 as Table
 import Platform.Sub as Sub
 
@@ -21,13 +28,72 @@ type alias State =
     { shortRadioValue : Maybe String
     , mediumRadioValue : Maybe String
     , longRadioValue : Maybe String
+    , selectionSettings : Control SelectionSettings
+    , selectedValue : Maybe ControlSelection
     }
+
+
+type alias SelectionSettings =
+    { dogsLabel : String
+    , dogs : List ( String, RadioButtonDotless.Attribute ControlSelection Msg )
+    , catsLabel : String
+    , cats : List ( String, RadioButtonDotless.Attribute ControlSelection Msg )
+    }
+
+
+type ControlSelection
+    = Dogs
+    | Cats
+
+
+selectionToString : SelectionSettings -> ControlSelection -> String
+selectionToString selectionSettings selection =
+    case selection of
+        Dogs ->
+            selectionSettings.dogsLabel
+
+        Cats ->
+            selectionSettings.catsLabel
 
 
 type Msg
     = ShortRadioSelect String
     | MediumRadioSelect String
     | LongRadioSelect String
+    | SetSelectionSettings (Control SelectionSettings)
+    | Select ControlSelection
+
+
+controlAttributes : Control (List ( String, RadioButtonDotless.Attribute ControlSelection Msg ))
+controlAttributes =
+    ControlExtra.list
+        |> ControlExtra.listItem "textAlign" textAlignControl
+        |> ControlExtra.listItem "width" widthControl
+
+
+initSelectionSettings : Control SelectionSettings
+initSelectionSettings =
+    Control.record SelectionSettings
+        |> Control.field "Dogs label" (Control.string "Dogs")
+        |> Control.field "Dogs" controlAttributes
+        |> Control.field "Cats label" (Control.string "Cats")
+        |> Control.field "Cats" controlAttributes
+
+
+textAlignControl : Control ( String, RadioButtonDotless.Attribute ControlSelection Msg )
+textAlignControl =
+    Control.choice
+        [ ( "textAlignCenter", Control.value ( "RadioButtonDotless.textAlignCenter", RadioButtonDotless.textAlignCenter ) )
+        , ( "textAlignLeft", Control.value ( "RadioButtonDotless.textAlignLeft", RadioButtonDotless.textAlignLeft ) )
+        ]
+
+
+widthControl : Control ( String, RadioButtonDotless.Attribute ControlSelection Msg )
+widthControl =
+    Control.choice
+        [ ( "unboundedWidth", Control.value ( "RadioButtonDotless.unboundedWidth", RadioButtonDotless.unboundedWidth ) )
+        , ( "fillContainerWidth", Control.value ( "RadioButtonDotless.fillContainerWidth", RadioButtonDotless.fillContainerWidth ) )
+        ]
 
 
 moduleName : String
@@ -52,7 +118,17 @@ example =
     , about = Guidance.useATACGuide moduleName
     , view = view
     , categories = [ Inputs ]
-    , keyboardSupport = []
+    , keyboardSupport =
+        [ { keys = [ Arrow Left ]
+          , result = "Move the focus & select the radio button to the left"
+          }
+        , { keys = [ Arrow Right ]
+          , result = "Move the focus & select the radio button to the right"
+          }
+        , { keys = [ Space ]
+          , result = "Select the current radio button"
+          }
+        ]
     }
 
 
@@ -61,6 +137,8 @@ init =
     { shortRadioValue = Nothing
     , mediumRadioValue = Nothing
     , longRadioValue = Nothing
+    , selectionSettings = initSelectionSettings
+    , selectedValue = Nothing
     }
 
 
@@ -75,6 +153,12 @@ update msg state =
 
         LongRadioSelect value ->
             ( { state | longRadioValue = Just value }, Cmd.none )
+
+        SetSelectionSettings settings ->
+            ( { state | selectionSettings = settings }, Cmd.none )
+
+        Select selection ->
+            ( { state | selectedValue = Just selection }, Cmd.none )
 
 
 preview : List (Html Never)
@@ -107,8 +191,37 @@ preview =
 
 
 view : EllieLink.Config -> State -> List (Html Msg)
-view ellieLink state =
-    [ Table.view
+view ellieLinkConfig state =
+    let
+        selectionSettings =
+            Control.currentValue state.selectionSettings
+    in
+    [ Heading.h2
+        [ Heading.plaintext "Interactive example"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
+    , ControlView.view
+        { ellieLinkConfig = ellieLinkConfig
+        , name = moduleName
+        , version = version
+        , update = SetSelectionSettings
+        , settings = state.selectionSettings
+        , mainType = Nothing
+        , extraCode = []
+        , renderExample = Code.unstyledView
+        , toExampleCode =
+            \_ ->
+                [ { sectionName = "Example"
+                  , code = ""
+                  }
+                ]
+        }
+    , viewExamples selectionSettings state.selectedValue
+    , Heading.h2
+        [ Heading.plaintext "Layout Configurations"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
+    , Table.view
         []
         [ Table.custom
             { header = text "Description"
@@ -121,7 +234,7 @@ view ellieLink state =
             { header = text "Example"
             , view = .example
             , width = Css.px 500
-            , cellStyles = always [Css.padding (Css.px 10)]
+            , cellStyles = always [ Css.padding (Css.px 10) ]
             , sort = Nothing
             }
         ]
@@ -147,7 +260,7 @@ view ellieLink state =
                                     , valueToString = identity
                                     , selectedValue = state.shortRadioValue
                                     }
-                                    [ RadioButtonDotless.fillContainerWidth 
+                                    [ RadioButtonDotless.fillContainerWidth
                                     , RadioButtonDotless.onSelect ShortRadioSelect
                                     ]
                             )
@@ -219,3 +332,22 @@ view ellieLink state =
           }
         ]
     ]
+
+
+viewExamples : SelectionSettings -> Maybe ControlSelection -> Html Msg
+viewExamples selectionSettings selectedValue =
+    [ ( Dogs, selectionSettings.dogs )
+    , ( Cats, selectionSettings.cats )
+    ]
+        |> List.map
+            (\( kind, settings ) ->
+                RadioButtonDotless.view
+                    { label = selectionToString selectionSettings kind
+                    , name = "pets"
+                    , value = kind
+                    , selectedValue = selectedValue
+                    , valueToString = selectionToString selectionSettings
+                    }
+                    (RadioButtonDotless.onSelect Select :: List.map Tuple.second settings)
+            )
+        |> div [ css [ Css.marginTop (Css.px 30), Css.displayFlex, Css.flexDirection Css.row, Css.property "gap" "10px" ] ]
