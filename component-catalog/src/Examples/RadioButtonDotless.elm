@@ -5,10 +5,12 @@ module Examples.RadioButtonDotless exposing
     )
 
 import Category exposing (Category(..))
+import Css
 import EllieLink
 import Example exposing (Example)
 import Guidance
 import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (css)
 import Nri.Ui.RadioButtonDotless.V1 as RadioButtonDotless
 import Platform.Sub as Sub
 
@@ -61,7 +63,31 @@ update msg state =
 
 preview : List (Html Never)
 preview =
-    []
+    [ div
+        [ css
+            [ Css.displayFlex
+            , Css.flexDirection Css.column
+            , Css.property "gap" "5px"
+            ]
+        ]
+        [ RadioButtonDotless.view
+            { label = "Unselected"
+            , name = "choice-1"
+            , value = 1
+            , valueToString = String.fromInt
+            , selectedValue = Just 2
+            }
+            [ ]
+        , RadioButtonDotless.view
+            { label = "Selected"
+            , name = "choice-2"
+            , value = 2
+            , valueToString = String.fromInt
+            , selectedValue = Just 2
+            }
+            []
+        ]
+    ]
 
 
 view : EllieLink.Config -> State -> List (Html Msg)

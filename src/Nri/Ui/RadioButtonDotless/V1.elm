@@ -76,7 +76,13 @@ view { label, name, value, valueToString, selectedValue } attributes =
         isChecked =
             selectedValue == Just value
     in
-    span [ css [ position relative ] ]
+    span
+        [ css
+            [ position relative
+            , display inlineBlock
+            , textAlign center
+            ]
+        ]
         [ radio name
             (valueToString value)
             isChecked
@@ -95,13 +101,14 @@ view { label, name, value, valueToString, selectedValue } attributes =
         , Html.label
             [ Attributes.for idValue
             , css
-                [ padding2 (px 10) (px 20)
+                [ display inlineBlock
                 , borderRadius (px 8)
                 , borderWidth (px 2)
                 , borderStyle solid
                 , Fonts.baseFont
                 , fontSize (px 18)
                 , cursor pointer
+                , width (pct 100)
                 , if isChecked then
                     Css.batch
                         [ color Colors.navy
@@ -122,5 +129,13 @@ view { label, name, value, valueToString, selectedValue } attributes =
                         ]
                 ]
             ]
-            [ text label ]
+            [ span
+                [ css
+                    [ property "word-break" "break-word"
+                    , padding2 (px 10) (px 20)
+                    , display inlineBlock
+                    ]
+                ]
+                [ text label ]
+            ]
         ]
