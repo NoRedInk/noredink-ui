@@ -121,7 +121,7 @@ view ellieLink state =
             { header = text "Example"
             , view = .example
             , width = Css.px 500
-            , cellStyles = always []
+            , cellStyles = always [Css.padding (Css.px 10)]
             , sort = Nothing
             }
         ]
@@ -131,10 +131,10 @@ view ellieLink state =
                     [ css
                         [ Css.displayFlex
                         , Css.flexDirection Css.row
-                        , Css.property "gap" "5px"
+                        , Css.property "gap" "10px"
                         , Css.width (Css.px 550)
                         , Css.border3 (Css.px 1) Css.dashed Colors.navy
-                        , Css.padding (Css.px 5)
+                        , Css.padding (Css.px 10)
                         ]
                     ]
                     ([ "crept", "past", "scary" ]
@@ -159,10 +159,10 @@ view ellieLink state =
                     [ css
                         [ Css.displayFlex
                         , Css.flexDirection Css.column
-                        , Css.property "gap" "5px"
+                        , Css.property "gap" "10px"
                         , Css.width (Css.px 550)
                         , Css.border3 (Css.px 1) Css.dashed Colors.navy
-                        , Css.padding (Css.px 5)
+                        , Css.padding (Css.px 10)
                         ]
                     ]
                     ([ "The amount of homework eaten"
@@ -191,10 +191,10 @@ view ellieLink state =
                     [ css
                         [ Css.displayFlex
                         , Css.flexDirection Css.column
-                        , Css.property "gap" "5px"
+                        , Css.property "gap" "10px"
                         , Css.width (Css.px 550)
                         , Css.border3 (Css.px 1) Css.dashed Colors.navy
-                        , Css.padding (Css.px 5)
+                        , Css.padding (Css.px 10)
                         ]
                     ]
                     ([ "Future Perfect--an action will be completed before another future action"

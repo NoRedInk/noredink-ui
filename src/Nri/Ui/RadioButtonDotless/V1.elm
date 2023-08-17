@@ -35,6 +35,7 @@ import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributeExtra
 
@@ -176,6 +177,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
             ([ position relative
              , display inlineBlock
              , textAlign center
+             , pseudoClass "focus-within" FocusRing.styles
              , case config.width of
                 UnboundedWidth ->
                     width unset
@@ -190,6 +192,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
             (valueToString value)
             isChecked
             [ Attributes.id idValue
+            , Attributes.class "Nri-RadioButton-HiddenRadioInput"
             , case config.onSelect of
                 Just onSelect_ ->
                     Events.onClick (onSelect_ value)
@@ -203,6 +206,10 @@ view { label, name, value, valueToString, selectedValue } attributes =
             ]
         , Html.label
             [ Attributes.for idValue
+            , Attributes.classList
+                [ ( "Nri-RadioButton-RadioButton", True )
+                , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
+                ]
             , css
                 [ display inlineBlock
                 , borderRadius (px 8)
