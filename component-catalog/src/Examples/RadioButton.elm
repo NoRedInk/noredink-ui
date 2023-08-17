@@ -59,13 +59,19 @@ example =
     , categories = [ Inputs ]
     , keyboardSupport =
         [ { keys = [ Arrow Left ]
-          , result = "Move the focus & select the radio button to the left"
+          , result = "Move the focus & select the previous radio button "
+          }
+        , { keys = [ Arrow Up ]
+          , result = "Move the focus & select the previous radio button "
           }
         , { keys = [ Arrow Right ]
-          , result = "Move the focus & select the radio button to the right"
+          , result = "Move the focus & select the next radio button"
+          }
+        , { keys = [ Arrow Down ]
+          , result = "Move the focus & select the next radio button"
           }
         , { keys = [ Space ]
-          , result = "Select the current radio button"
+          , result = "Select the current radio button if none are selected"
           }
         ]
     }
