@@ -21,6 +21,7 @@ import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.RadioButtonDotless.V1 as RadioButtonDotless
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V7 as Table
+import Nri.Ui.Text.V6 as Text
 import Platform.Sub as Sub
 
 
@@ -71,13 +72,13 @@ controlAttributes =
         |> ControlExtra.listItem "width" widthControl
         |> ControlExtra.optionalListItem "containerCss"
             (Control.choice
-                [ ("max-width with border"
+                [ ( "max-width with border"
                   , Control.value
                         ( "RadioButtonDotless.containerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]"
                         , RadioButtonDotless.containerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]
                         )
                   )
-                 , ( "10px right margin"
+                , ( "10px right margin"
                   , Control.value
                         ( "RadioButtonDotless.containerCss [ Css.marginRight (Css.px 10) ]"
                         , RadioButtonDotless.containerCss [ Css.marginRight (Css.px 10) ]
@@ -141,7 +142,9 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview = preview
-    , about = Guidance.useATACGuide moduleName
+    , about =
+        [ Text.mediumBodyGray [ Text.markdown "This component behaves like a `RadioButton`, but has the look and feel of a normal `Button`.  It is a good choice to use for \"multiple choice\" style questions as it separates the act of choosing an answer and submitting the answer - preventing frustrating mistakes." ]
+        ]
     , view = view
     , categories = [ Inputs ]
     , keyboardSupport =
