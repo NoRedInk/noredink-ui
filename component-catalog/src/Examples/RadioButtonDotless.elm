@@ -68,19 +68,19 @@ type Msg
 controlAttributes : Control (List ( String, RadioButtonDotless.Attribute ControlSelection Msg ))
 controlAttributes =
     ControlExtra.list
-        |> ControlExtra.listItem "textAlign" textAlignControl
-        |> ControlExtra.listItem "width" widthControl
+        |> ControlExtra.optionalListItem "textAlign" textAlignControl
+        |> ControlExtra.optionalListItem "width" widthControl
         |> ControlExtra.optionalListItem "containerCss"
             (Control.choice
                 [ ( "max-width with border"
                   , Control.value
-                        ( "RadioButtonDotless.containerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]"
+                        ( "RadioButtonDotless.containerCss [ maxWidth (px 200), border3 (px 1) solid red ]"
                         , RadioButtonDotless.containerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]
                         )
                   )
                 , ( "10px right margin"
                   , Control.value
-                        ( "RadioButtonDotless.containerCss [ Css.marginRight (Css.px 10) ]"
+                        ( "RadioButtonDotless.containerCss [ marginRight (px 10) ]"
                         , RadioButtonDotless.containerCss [ Css.marginRight (Css.px 10) ]
                         )
                   )
@@ -90,7 +90,7 @@ controlAttributes =
             (Control.choice
                 [ ( "backgroundColor highlightMagenta"
                   , Control.value
-                        ( "RadioButtonDotless.labelCss [ Css.backgroundColor Colors.highlightMagenta ]"
+                        ( "RadioButtonDotless.labelCss [ backgroundColor Colors.highlightMagenta ]"
                         , RadioButtonDotless.labelCss [ Css.backgroundColor Colors.highlightMagenta ]
                         )
                   )
@@ -247,7 +247,7 @@ view ellieLinkConfig state =
         , toExampleCode =
             \_ ->
                 [ { sectionName = "Example"
-                  , code = ""
+                  , code = viewExamplesCode selectionSettings state.selectedValue
                   }
                 ]
         }
@@ -407,6 +407,33 @@ view ellieLinkConfig state =
           }
         ]
     ]
+
+
+viewExamplesCode : SelectionSettings -> Maybe ControlSelection -> String
+viewExamplesCode selectionSettings selectedValue =
+    let
+        toExampleCode ( kind, settings ) =
+            Code.fromModule "RadioButtonDotless" "view"
+                ++ Code.recordMultiline
+                    [ ( "label", (selectionToString selectionSettings >> Code.string) kind )
+                    , ( "name", Code.string "pets" )
+                    , ( "value", selectionToString selectionSettings kind )
+                    , ( "selectedValue"
+                      , Code.maybe (Maybe.map (selectionToString selectionSettings) selectedValue)
+                      )
+                    , ( "valueToString", "toString" )
+                    ]
+                    2
+                ++ Code.listMultiline (List.map Tuple.first settings) 2
+    in
+    "div []"
+        ++ Code.listMultiline
+            (List.map toExampleCode
+                [ ( Dogs, selectionSettings.dogs )
+                , ( Cats, selectionSettings.cats )
+                ]
+            )
+            1
 
 
 viewExamples : SelectionSettings -> Maybe ControlSelection -> Html Msg
