@@ -266,6 +266,20 @@ view ellieLinkConfig state =
             , sort = Nothing
             }
         , Table.custom
+            { header = text "Container Styles"
+            , view = \{ containerStyles } -> code [] (List.intersperse (br [] []) <| List.map text containerStyles)
+            , width = Css.px 200
+            , cellStyles = always []
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "RadioButtonDotless Attributes"
+            , view = \{ attributes } -> code [] (List.intersperse (br [] []) <| List.map text attributes)
+            , width = Css.px 200
+            , cellStyles = always []
+            , sort = Nothing
+            }
+        , Table.custom
             { header = text "Example"
             , view = .example
             , width = Css.px 500
@@ -274,6 +288,14 @@ view ellieLinkConfig state =
             }
         ]
         [ { description = "Short Buttons"
+          , containerStyles =
+                [ "displayFlex"
+                , "flexDirection row"
+                , "property \"gap\" \"10px\""
+                ]
+          , attributes =
+                [ "fillContainerWidth"
+                ]
           , example =
                 div
                     [ css
@@ -302,6 +324,15 @@ view ellieLinkConfig state =
                     )
           }
         , { description = "Medium Buttons"
+          , containerStyles =
+                [ "displayFlex"
+                , "flexDirection column"
+                , "property \"gap\" \"10px\""
+                ]
+          , attributes =
+                [ "fillContainerWidth"
+                , "textAlignLeft"
+                ]
           , example =
                 div
                     [ css
@@ -334,6 +365,15 @@ view ellieLinkConfig state =
                     )
           }
         , { description = "Long Buttons"
+          , containerStyles =
+                [ "displayFlex"
+                , "flexDirection column"
+                , "property \"gap\" \"10px\""
+                ]
+          , attributes =
+                [ "fillContainerWidth"
+                , "textAlignLeft"
+                ]
           , example =
                 div
                     [ css
