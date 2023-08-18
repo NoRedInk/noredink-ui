@@ -21,6 +21,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
+import Examples.RadioButtonDotless as RadioButtonDotlessExample
 import Guidance
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
@@ -29,9 +30,11 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Message.V4 as Message
 import Nri.Ui.Modal.V11 as Modal
 import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.Text.V6 as Text
+import Routes
 import Task
 
 
@@ -54,7 +57,15 @@ example =
     , update = update
     , subscriptions = subscriptions
     , preview = preview
-    , about = Guidance.useATACGuide moduleName
+    , about =
+        [ let
+            url =
+                Routes.toString <| Routes.Doodad RadioButtonDotlessExample.example
+          in
+          Message.view
+            [ Message.markdown <| "Looking for radio button that's styled more like a button?<br />Check out [RadioButtonDotless](" ++ url ++ ")"
+            ]
+        ]
     , view = view
     , categories = [ Inputs ]
     , keyboardSupport =
