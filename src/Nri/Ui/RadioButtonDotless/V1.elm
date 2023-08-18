@@ -250,27 +250,6 @@ view { label, name, value, valueToString, selectedValue } attributes =
 
                 FillContainerWidth ->
                     width (pct 100)
-             , case config.size of
-                Small ->
-                    Css.batch
-                        [ minHeight (px 36)
-                        , fontSize (px 15)
-                        , lineHeight (px 15)
-                        ]
-
-                Medium ->
-                    Css.batch
-                        [ minHeight (px 45)
-                        , fontSize (px 15)
-                        , lineHeight (px 19)
-                        ]
-
-                Large ->
-                    Css.batch
-                        [ minHeight (px 56)
-                        , fontSize (px 20)
-                        , lineHeight (px 22)
-                        ]
              ]
                 ++ config.containerCss
             )
@@ -300,18 +279,47 @@ view { label, name, value, valueToString, selectedValue } attributes =
                 , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
                 ]
             , css
-                [ display inlineBlock
+                [ displayFlex
+                , alignItems center
                 , borderRadius (px 8)
                 , borderWidth (px 2)
                 , borderStyle solid
                 , Fonts.baseFont
+                , fontWeight (int 600)
                 , cursor pointer
                 , case config.textAlign of
                     TextAlignLeft ->
-                        textAlign left
+                        Css.batch
+                            [ justifyContent flexStart
+                            , textAlign left
+                            ]
 
                     TextAlignCenter ->
-                        textAlign center
+                        Css.batch
+                            [ justifyContent center
+                            , textAlign center
+                            ]
+                , case config.size of
+                    Small ->
+                        Css.batch
+                            [ minHeight (px 36)
+                            , fontSize (px 15)
+                            , lineHeight (px 15)
+                            ]
+
+                    Medium ->
+                        Css.batch
+                            [ minHeight (px 45)
+                            , fontSize (px 15)
+                            , lineHeight (px 19)
+                            ]
+
+                    Large ->
+                        Css.batch
+                            [ minHeight (px 56)
+                            , fontSize (px 20)
+                            , lineHeight (px 22)
+                            ]
                 , width (pct 100)
                 , if isChecked then
                     Css.batch
