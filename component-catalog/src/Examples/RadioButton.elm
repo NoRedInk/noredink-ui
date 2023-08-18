@@ -22,7 +22,6 @@ import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Examples.RadioButtonDotless as RadioButtonDotlessExample
-import Guidance
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
