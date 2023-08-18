@@ -231,7 +231,11 @@ romeoAndJulietQuotation =
 
 markdown : String
 markdown =
-    "_Katie's dad suggests:_ Don't tip too much, or your waitress will **fall over**!"
+    """
+_Katie's dad suggests:_ Don't tip too much, or your waitress will **fall over**!
+
+A new paragraph and [last but not link](#)
+"""
 
 
 exampleHtml : List (Html msg)
