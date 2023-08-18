@@ -69,6 +69,32 @@ controlAttributes =
     ControlExtra.list
         |> ControlExtra.listItem "textAlign" textAlignControl
         |> ControlExtra.listItem "width" widthControl
+        |> ControlExtra.optionalListItem "containerCss"
+            (Control.choice
+                [ ("max-width with border"
+                  , Control.value
+                        ( "RadioButtonDotless.containerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]"
+                        , RadioButtonDotless.containerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]
+                        )
+                  )
+                 , ( "10px right margin"
+                  , Control.value
+                        ( "RadioButtonDotless.containerCss [ Css.marginRight (Css.px 10) ]"
+                        , RadioButtonDotless.containerCss [ Css.marginRight (Css.px 10) ]
+                        )
+                  )
+                ]
+            )
+        |> ControlExtra.optionalListItem "labelCss"
+            (Control.choice
+                [ ( "backgroundColor highlightMagenta"
+                  , Control.value
+                        ( "RadioButtonDotless.labelCss [ Css.backgroundColor Colors.highlightMagenta ]"
+                        , RadioButtonDotless.labelCss [ Css.backgroundColor Colors.highlightMagenta ]
+                        )
+                  )
+                ]
+            )
 
 
 initSelectionSettings : Control SelectionSettings
