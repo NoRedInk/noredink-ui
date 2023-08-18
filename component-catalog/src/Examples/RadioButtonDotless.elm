@@ -69,6 +69,7 @@ controlAttributes =
     ControlExtra.list
         |> ControlExtra.optionalListItem "textAlign" textAlignControl
         |> ControlExtra.optionalListItem "width" widthControl
+        |> ControlExtra.optionalListItem "size" sizeControl
         |> ControlExtra.optionalListItem "containerCss"
             (Control.choice
                 [ ( "max-width with border"
@@ -121,6 +122,13 @@ widthControl =
         , ( "fillContainerWidth", Control.value ( "RadioButtonDotless.fillContainerWidth", RadioButtonDotless.fillContainerWidth ) )
         ]
 
+sizeControl : Control ( String, RadioButtonDotless.Attribute ControlSelection Msg )
+sizeControl = 
+    Control.choice
+        [ ("small", Control.value ("RadioButtonDotless.small", RadioButtonDotless.small))
+        , ("medium", Control.value ("RadioButtonDotless.medium", RadioButtonDotless.medium))
+        , ("large", Control.value ("RadioButtonDotless.large", RadioButtonDotless.large))
+        ]
 
 moduleName : String
 moduleName =
@@ -294,6 +302,7 @@ view ellieLinkConfig state =
                 ]
           , attributes =
                 [ "fillContainerWidth"
+                , "large"
                 ]
           , example =
                 div
@@ -317,6 +326,7 @@ view ellieLinkConfig state =
                                     , selectedValue = state.shortRadioValue
                                     }
                                     [ RadioButtonDotless.fillContainerWidth
+                                    , RadioButtonDotless.large
                                     , RadioButtonDotless.onSelect ShortRadioSelect
                                     ]
                             )
@@ -331,6 +341,7 @@ view ellieLinkConfig state =
           , attributes =
                 [ "fillContainerWidth"
                 , "textAlignLeft"
+                , "large"
                 ]
           , example =
                 div
@@ -358,6 +369,7 @@ view ellieLinkConfig state =
                                     }
                                     [ RadioButtonDotless.fillContainerWidth
                                     , RadioButtonDotless.textAlignLeft
+                                    , RadioButtonDotless.large
                                     , RadioButtonDotless.onSelect MediumRadioSelect
                                     ]
                             )
@@ -372,6 +384,7 @@ view ellieLinkConfig state =
           , attributes =
                 [ "fillContainerWidth"
                 , "textAlignLeft"
+                , "large"
                 ]
           , example =
                 div
@@ -399,6 +412,7 @@ view ellieLinkConfig state =
                                     }
                                     [ RadioButtonDotless.fillContainerWidth
                                     , RadioButtonDotless.textAlignLeft
+                                    , RadioButtonDotless.large
                                     , RadioButtonDotless.onSelect LongRadioSelect
                                     ]
                             )
