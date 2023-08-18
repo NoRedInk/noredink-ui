@@ -2,9 +2,10 @@ module Nri.Ui.RadioButtonDotless.V1 exposing
     ( view
     , Attribute
     , onSelect
-    , id, containerCss, labelCss
+    , containerCss, labelCss
     , unboundedWidth, fillContainerWidth
     , textAlignCenter, textAlignLeft
+    , id, custom, nriDescription, testId
     )
 
 {-| Looks like a standard button, behaves like a radio button
@@ -23,9 +24,14 @@ module Nri.Ui.RadioButtonDotless.V1 exposing
 
 ## Customization
 
-@docs id, containerCss, labelCss
+@docs containerCss, labelCss
 @docs unboundedWidth, fillContainerWidth
 @docs textAlignCenter, textAlignLeft
+
+
+## Attributes
+
+@docs id, custom, nriDescription, testId
 
 -}
 
@@ -65,14 +71,8 @@ type alias Config value msg =
     , textAlign : TextAlign
     , containerCss : List Style
     , labelCss : List Style
+    , customAttributes : List (Html.Attribute Never)
     }
-
-
-{-| Set a unique identifier for the button. This id will be used as the root name for sub elements.
--}
-id : String -> Attribute value msg
-id id_ =
-    Attribute <| \config -> { config | id = Just id_ }
 
 
 {-| Fire a message upon selection of this radio button option
@@ -127,6 +127,39 @@ labelCss styles =
     Attribute <| \config -> { config | labelCss = config.labelCss ++ styles }
 
 
+{-| Set a unique identifier for the button. This id will also be used as the root name for sub elements.
+-}
+id : String -> Attribute value msg
+id id_ =
+    Attribute <| \config -> { config | id = Just id_ }
+
+
+{-| Use this helper to add custom attributes.
+
+Do NOT use this helper to add css styles, as they may not be applied the way
+you want/expect if underlying styles change.
+Instead, please use the `containerCss` or `labelCss` helper.
+
+-}
+custom : List (Html.Attribute Never) -> Attribute value msg
+custom attributes =
+    Attribute <| \config -> { config | customAttributes = config.customAttributes ++ attributes }
+
+
+{-| Set the "data-nri-description" attribute
+-}
+nriDescription : String -> Attribute value msg
+nriDescription description =
+    custom [ AttributeExtra.nriDescription description ]
+
+
+{-| See Cypress best practices: <https://docs.cypress.io/guides/references/best-practices.html#Selecting-Elements>
+-}
+testId : String -> Attribute value msg
+testId id_ =
+    custom [ AttributeExtra.testId id_ ]
+
+
 applyConfig : List (Attribute value msg) -> Config value msg -> Config value msg
 applyConfig attributes beginningConfig =
     List.foldl (\(Attribute update) config -> update config)
@@ -142,6 +175,7 @@ emptyConfig =
     , textAlign = TextAlignCenter
     , containerCss = []
     , labelCss = []
+    , customAttributes = []
     }
 
 
@@ -191,19 +225,21 @@ view { label, name, value, valueToString, selectedValue } attributes =
         [ radio name
             (valueToString value)
             isChecked
-            [ Attributes.id idValue
-            , Attributes.class "Nri-RadioButton-HiddenRadioInput"
-            , case config.onSelect of
+            ([ Attributes.id idValue
+             , Attributes.class "Nri-RadioButton-HiddenRadioInput"
+             , case config.onSelect of
                 Just onSelect_ ->
                     Events.onClick (onSelect_ value)
 
                 Nothing ->
                     AttributeExtra.none
-            , css
+             , css
                 [ position absolute
                 , opacity zero
                 ]
-            ]
+             ]
+                ++ List.map (Attributes.map never) config.customAttributes
+            )
         , Html.label
             [ Attributes.for idValue
             , Attributes.classList
