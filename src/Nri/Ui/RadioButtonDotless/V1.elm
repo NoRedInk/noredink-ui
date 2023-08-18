@@ -207,7 +207,8 @@ view { label, name, value, valueToString, selectedValue } attributes =
             selectedValue == Just value
     in
     span
-        [ css
+        [ Attributes.class "Nri-RadioButton-Dotless"
+        , css
             ([ position relative
              , display inlineBlock
              , textAlign center
