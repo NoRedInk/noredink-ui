@@ -122,13 +122,15 @@ widthControl =
         , ( "fillContainerWidth", Control.value ( "RadioButtonDotless.fillContainerWidth", RadioButtonDotless.fillContainerWidth ) )
         ]
 
+
 sizeControl : Control ( String, RadioButtonDotless.Attribute ControlSelection Msg )
-sizeControl = 
+sizeControl =
     Control.choice
-        [ ("small", Control.value ("RadioButtonDotless.small", RadioButtonDotless.small))
-        , ("medium", Control.value ("RadioButtonDotless.medium", RadioButtonDotless.medium))
-        , ("large", Control.value ("RadioButtonDotless.large", RadioButtonDotless.large))
+        [ ( "small", Control.value ( "RadioButtonDotless.small", RadioButtonDotless.small ) )
+        , ( "medium", Control.value ( "RadioButtonDotless.medium", RadioButtonDotless.medium ) )
+        , ( "large", Control.value ( "RadioButtonDotless.large", RadioButtonDotless.large ) )
         ]
+
 
 moduleName : String
 moduleName =
