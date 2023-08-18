@@ -2,9 +2,10 @@ module Nri.Ui.RadioButtonDotless.V1 exposing
     ( view
     , Attribute
     , onSelect
-    , containerCss, labelCss
     , unboundedWidth, fillContainerWidth
     , textAlignCenter, textAlignLeft
+    , small, medium, large
+    , containerCss, labelCss
     , id, custom, nriDescription, testId
     )
 
@@ -24,9 +25,10 @@ module Nri.Ui.RadioButtonDotless.V1 exposing
 
 ## Customization
 
-@docs containerCss, labelCss
 @docs unboundedWidth, fillContainerWidth
 @docs textAlignCenter, textAlignLeft
+@docs small, medium, large
+@docs containerCss, labelCss
 
 
 ## Attributes
@@ -62,6 +64,12 @@ type TextAlign
     | TextAlignCenter
 
 
+type ButtonSize
+    = Small
+    | Medium
+    | Large
+
+
 {-| This is private. The public API only exposes `Attribute`.
 -}
 type alias Config value msg =
@@ -69,6 +77,7 @@ type alias Config value msg =
     , onSelect : Maybe (value -> msg)
     , width : ButtonWidth
     , textAlign : TextAlign
+    , size : ButtonSize
     , containerCss : List Style
     , labelCss : List Style
     , customAttributes : List (Html.Attribute Never)
@@ -108,6 +117,27 @@ textAlignCenter =
 textAlignLeft : Attribute value msg
 textAlignLeft =
     Attribute <| \config -> { config | textAlign = TextAlignLeft }
+
+
+{-| A small sized button (~36px tall)
+-}
+small : Attribute value msg
+small =
+    Attribute <| \config -> { config | size = Small }
+
+
+{-| A medium sized button (~45px tall - this is the default)
+-}
+medium : Attribute value msg
+medium =
+    Attribute <| \config -> { config | size = Medium }
+
+
+{-| A large sized button (~56px tall)
+-}
+large : Attribute value msg
+large =
+    Attribute <| \config -> { config | size = Large }
 
 
 {-| Adds CSS to the element containing the input.
@@ -173,6 +203,7 @@ emptyConfig =
     , onSelect = Nothing
     , width = UnboundedWidth
     , textAlign = TextAlignCenter
+    , size = Medium
     , containerCss = []
     , labelCss = []
     , customAttributes = []
@@ -219,6 +250,27 @@ view { label, name, value, valueToString, selectedValue } attributes =
 
                 FillContainerWidth ->
                     width (pct 100)
+             , case config.size of
+                Small ->
+                    Css.batch
+                        [ minHeight (px 36)
+                        , fontSize (px 15)
+                        , lineHeight (px 15)
+                        ]
+
+                Medium ->
+                    Css.batch
+                        [ minHeight (px 45)
+                        , fontSize (px 15)
+                        , lineHeight (px 19)
+                        ]
+
+                Large ->
+                    Css.batch
+                        [ minHeight (px 56)
+                        , fontSize (px 20)
+                        , lineHeight (px 22)
+                        ]
              ]
                 ++ config.containerCss
             )
@@ -253,7 +305,6 @@ view { label, name, value, valueToString, selectedValue } attributes =
                 , borderWidth (px 2)
                 , borderStyle solid
                 , Fonts.baseFont
-                , fontSize (px 18)
                 , cursor pointer
                 , case config.textAlign of
                     TextAlignLeft ->
