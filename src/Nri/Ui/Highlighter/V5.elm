@@ -1,4 +1,4 @@
-module Nri.Ui.Highlighter.V4 exposing
+module Nri.Ui.Highlighter.V5 exposing
     ( Model, Msg(..), PointerMsg(..)
     , init, update
     , view, static, staticWithTags
@@ -10,11 +10,12 @@ module Nri.Ui.Highlighter.V4 exposing
     , selectShortest
     )
 
-{-| Changes from V3:
+{-| Changes from V4:
 
-  - Highlighter.init now takes a sorter for the markers
-  - Modeling for highlightable ui state moved to the Highlighter model
-  - removes staticWithOverlappingHighlights
+  - adds `isHovering` to track whether the user is already hovering over a group,
+    so that we don't reapply hover styles when the user toggles a highlight.
+  - renames `Blur` to `MouseOut` to be more consistent with `MouseOver` and because it's
+    not really a blur event.
 
 Highlighter provides a view/model/update to display a view to highlight text and show marks.
 
@@ -96,6 +97,10 @@ type alias Model marker =
     , selectionStartIndex : Maybe Int
     , selectionEndIndex : Maybe Int
     , focusIndex : Maybe Int
+
+    -- We want to track whether the user is already hovering over a group,
+    -- so that we don't reapply hover styles when the user toggles a highlight.
+    , isHovering : Bool
     }
 
 
@@ -145,6 +150,7 @@ init config =
     , selectionEndIndex = Nothing
     , focusIndex =
         List.Extra.findIndex (\highlightable -> .type_ highlightable == Highlightable.Interactive) config.highlightables
+    , isHovering = False
     }
 
 
@@ -163,7 +169,7 @@ type Msg marker
 -}
 type PointerMsg
     = Down Int
-    | Out Int
+    | Out
     | Over Int
       -- the `Maybe String`s here are for detecting touchend events via
       -- subscription--we listen at the document level but get the id associated
@@ -232,12 +238,11 @@ hasChanged (Intent { changed }) =
 -}
 type Action marker
     = Focus Int
-    | Blur Int
     | Hint Int Int
-    | Hover Int
     | MouseDown Int
-    | MouseOver Int
     | MouseUp
+    | MouseOver Int
+    | MouseOut
     | RemoveHint
     | Save (Tool.MarkerModel marker)
     | Toggle Int (Tool.MarkerModel marker)
@@ -425,9 +430,14 @@ pointerEventToActions msg model =
                     ]
 
                 Nothing ->
-                    [ MouseOver eventIndex
-                    , Hover eventIndex
-                    ]
+                    if not model.isHovering then
+                        [ MouseOver eventIndex ]
+
+                    else
+                        []
+
+        Out ->
+            [ MouseOut ]
 
         Down eventIndex ->
             [ MouseOver eventIndex
@@ -459,9 +469,6 @@ pointerEventToActions msg model =
                 Tool.Eraser _ ->
                     [ MouseUp, RemoveHint ]
 
-        Out eventIndex ->
-            [ Blur eventIndex ]
-
 
 {-| We fold over actions using (Model marker) as the accumulator.
 -}
@@ -480,12 +487,6 @@ performAction action ( model, cmds ) =
             ( { model | focusIndex = Just index }
             , Task.attempt Focused (Dom.focus (highlightableId model.id index)) :: cmds
             )
-
-        Blur index ->
-            ( { model | mouseOverIndex = Nothing }, cmds )
-
-        Hover index ->
-            ( { model | mouseOverIndex = Just index }, cmds )
 
         Hint start end ->
             ( { model | hintingIndices = Just ( start, end ) }, cmds )
@@ -530,11 +531,14 @@ performAction action ( model, cmds ) =
         MouseDown index ->
             ( { model | mouseDownIndex = Just index }, cmds )
 
-        MouseOver index ->
-            ( { model | mouseOverIndex = Just index }, cmds )
-
         MouseUp ->
-            ( { model | mouseDownIndex = Nothing }, cmds )
+            ( { model | mouseDownIndex = Nothing, mouseOverIndex = Nothing }, cmds )
+
+        MouseOver index ->
+            ( { model | mouseOverIndex = Just index, isHovering = True }, cmds )
+
+        MouseOut ->
+            ( { model | mouseOverIndex = Nothing, isHovering = False }, cmds )
 
         StartSelection index ->
             ( { model | selectionStartIndex = Just index }, cmds )
@@ -1188,7 +1192,7 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                 , focusIndex = config.focusIndex
                 , eventListeners =
                     [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
-                    , onPreventDefault "mouseleave" (Pointer <| Out highlightable.index)
+                    , onPreventDefault "mouseleave" (Pointer <| Out)
                     , onPreventDefault "mouseup" (Pointer <| Up Nothing)
                     , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
                     , onPreventDefault "touchstart" (Pointer <| Down highlightable.index)
@@ -1226,7 +1230,7 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                     -- For example, a user hovering over a static space in a highlight
                     -- should see the entire highlight change to hover styles.
                     [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
-                    , onPreventDefault "mouseleave" (Pointer <| Out highlightable.index)
+                    , onPreventDefault "mouseleave" (Pointer <| Out)
                     , onPreventDefault "mouseup" (Pointer <| Up Nothing)
                     , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
                     , onPreventDefault "touchstart" (Pointer <| Down highlightable.index)
