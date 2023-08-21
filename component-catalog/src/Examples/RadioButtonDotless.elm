@@ -13,7 +13,7 @@ import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
@@ -221,7 +221,12 @@ preview =
             , valueToString = String.fromInt
             , selectedValue = Just 2
             }
-            []
+            [ RadioButtonDotless.custom
+                [ Attributes.tabindex 0
+                , Attributes.attribute "aria-disabled" "true"
+                , Attributes.disabled True
+                ]
+            ]
         , RadioButtonDotless.view
             { label = "Selected"
             , name = "radio-button-dotless"
@@ -229,7 +234,12 @@ preview =
             , valueToString = String.fromInt
             , selectedValue = Just 2
             }
-            []
+            [ RadioButtonDotless.custom
+                [ Attributes.tabindex 0
+                , Attributes.attribute "aria-disabled" "true"
+                , Attributes.disabled True
+                ]
+            ]
         ]
     ]
 
