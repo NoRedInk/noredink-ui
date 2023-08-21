@@ -53,9 +53,6 @@ forMouseUsers =
     , Css.Global.selector ":focus-within .checkbox-icon-container"
         [ Css.important (Css.boxShadow Css.none)
         ]
-    , Css.Global.selector ":focus-within .Nri-RadioButton-RadioButtonIcon"
-        [ Css.important (Css.boxShadow Css.none)
-        ]
     , Css.Global.selector ".highlighter-toolbar-label:focus-within"
         [ Css.important (Css.boxShadow Css.none)
         ]
@@ -63,6 +60,9 @@ forMouseUsers =
         [ Css.important (Css.boxShadow Css.none)
         ]
     , Css.Global.selector ":focus-within .Nri-RadioButton-RadioButtonIcon"
+        [ Css.important (Css.boxShadow Css.none)
+        ]
+    , Css.Global.selector ":focus-within .Nri-RadioButton-Dotless"
         [ Css.important (Css.boxShadow Css.none)
         ]
     , Css.Global.selector ".nri-ui-input:focus"

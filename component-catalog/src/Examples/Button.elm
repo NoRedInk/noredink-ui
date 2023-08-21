@@ -16,13 +16,16 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
+import Examples.RadioButtonDotless as RadioButtonDotlessExample
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Message.V4 as Message
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Routes
 import Set exposing (Set)
 
 
@@ -71,7 +74,15 @@ example =
             , Button.icon UiIcon.link
             ]
         ]
-    , about = []
+    , about =
+        [ let
+            url =
+                Routes.toString <| Routes.Doodad RadioButtonDotlessExample.example
+          in
+          Message.view
+            [ Message.markdown <| "Looking for a group of buttons where only one button is selectable at a time? Check out [RadioButtonDotless](" ++ url ++ ")"
+            ]
+        ]
     , view = \ellieLinkConfig state -> [ viewButtonExamples ellieLinkConfig state ]
     , categories = [ Buttons ]
     , keyboardSupport = []

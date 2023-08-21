@@ -21,7 +21,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
-import Guidance
+import Examples.RadioButtonDotless as RadioButtonDotlessExample
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
@@ -29,9 +29,11 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Message.V4 as Message
 import Nri.Ui.Modal.V11 as Modal
 import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.Text.V6 as Text
+import Routes
 import Task
 
 
@@ -54,18 +56,32 @@ example =
     , update = update
     , subscriptions = subscriptions
     , preview = preview
-    , about = Guidance.useATACGuide moduleName
+    , about =
+        [ let
+            url =
+                Routes.toString <| Routes.Doodad RadioButtonDotlessExample.example
+          in
+          Message.view
+            [ Message.markdown <| "Looking for radio button that's styled more like a button?<br />Check out [RadioButtonDotless](" ++ url ++ ")"
+            ]
+        ]
     , view = view
     , categories = [ Inputs ]
     , keyboardSupport =
         [ { keys = [ Arrow Left ]
-          , result = "Move the focus & select the radio button to the left"
+          , result = "Move the focus & select the previous radio button "
+          }
+        , { keys = [ Arrow Up ]
+          , result = "Move the focus & select the previous radio button "
           }
         , { keys = [ Arrow Right ]
-          , result = "Move the focus & select the radio button to the right"
+          , result = "Move the focus & select the next radio button"
+          }
+        , { keys = [ Arrow Down ]
+          , result = "Move the focus & select the next radio button"
           }
         , { keys = [ Space ]
-          , result = "Select the current radio button"
+          , result = "Select the current radio button if none are selected"
           }
         ]
     }
