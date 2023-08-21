@@ -7,7 +7,7 @@ import Html.Styled exposing (Html, toUnstyled)
 import List.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Highlightable.V3 as Highlightable exposing (Highlightable)
-import Nri.Ui.Highlighter.V4 as Highlighter
+import Nri.Ui.Highlighter.V5 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool exposing (Tool)
 import ProgramTest exposing (..)
 import Sort

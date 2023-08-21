@@ -24,7 +24,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Highlightable.V3 as Highlightable exposing (Highlightable)
-import Nri.Ui.Highlighter.V4 as Highlighter
+import Nri.Ui.Highlighter.V5 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Table.V7 as Table
 import Nri.Ui.Text.V6 as Text
@@ -38,7 +38,7 @@ moduleName =
 
 version : Int
 version =
-    3
+    5
 
 
 {-| -}
@@ -78,7 +78,7 @@ example =
                 , settings = state.settings
                 , mainType = Nothing
                 , extraCode =
-                    [ "import Nri.Ui.Highlightable.V2 as Highlightable"
+                    [ "import Nri.Ui.Highlightable.V3 as Highlightable"
                     , "import Nri.Ui.HighlighterTool.V1 as Tool"
                     ]
                 , renderExample = Code.unstyledView
