@@ -109,6 +109,9 @@ hint = 'upgrade to V4'
 [forbidden."Nri.Ui.Highlighter.V3"]
 hint = 'upgrade to V4'
 
+[forbidden."Nri.Ui.Highlighter.V4"]
+hint = 'upgrade to V5'
+
 [forbidden."Nri.Ui.HighlighterToolbar.V1"]
 hint = 'upgrade to V3'
 
