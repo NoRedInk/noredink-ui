@@ -343,8 +343,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
             ]
             [ span
                 [ css
-                    ([ property "word-break" "break-word"
-                     , padding2 (px 10) (px 20)
+                    ([ padding2 (px 10) (px 20)
                      , display inlineBlock
                      ]
                         ++ config.labelCss
