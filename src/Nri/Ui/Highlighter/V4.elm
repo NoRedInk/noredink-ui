@@ -96,6 +96,7 @@ type alias Model marker =
     , selectionStartIndex : Maybe Int
     , selectionEndIndex : Maybe Int
     , focusIndex : Maybe Int
+    , canHover : Bool
     }
 
 
@@ -145,6 +146,7 @@ init config =
     , selectionEndIndex = Nothing
     , focusIndex =
         List.Extra.findIndex (\highlightable -> .type_ highlightable == Highlightable.Interactive) config.highlightables
+    , canHover = True
     }
 
 
@@ -163,7 +165,7 @@ type Msg marker
 -}
 type PointerMsg
     = Down Int
-    | Out Int
+    | Out
     | Over Int
       -- the `Maybe String`s here are for detecting touchend events via
       -- subscription--we listen at the document level but get the id associated
@@ -232,9 +234,8 @@ hasChanged (Intent { changed }) =
 -}
 type Action marker
     = Focus Int
-    | Blur Int
+    | Blur
     | Hint Int Int
-    | Hover Int
     | MouseDown Int
     | MouseOver Int
     | MouseUp
@@ -425,9 +426,11 @@ pointerEventToActions msg model =
                     ]
 
                 Nothing ->
-                    [ MouseOver eventIndex
-                    , Hover eventIndex
-                    ]
+                    if model.canHover then
+                        [ MouseOver eventIndex ]
+
+                    else
+                        []
 
         Down eventIndex ->
             [ MouseOver eventIndex
@@ -459,8 +462,8 @@ pointerEventToActions msg model =
                 Tool.Eraser _ ->
                     [ MouseUp, RemoveHint ]
 
-        Out eventIndex ->
-            [ Blur eventIndex ]
+        Out ->
+            [ Blur ]
 
 
 {-| We fold over actions using (Model marker) as the accumulator.
@@ -481,11 +484,8 @@ performAction action ( model, cmds ) =
             , Task.attempt Focused (Dom.focus (highlightableId model.id index)) :: cmds
             )
 
-        Blur index ->
-            ( { model | mouseOverIndex = Nothing }, cmds )
-
-        Hover index ->
-            ( { model | mouseOverIndex = Just index }, cmds )
+        Blur ->
+            ( { model | mouseOverIndex = Nothing, canHover = True }, cmds )
 
         Hint start end ->
             ( { model | hintingIndices = Just ( start, end ) }, cmds )
@@ -531,10 +531,10 @@ performAction action ( model, cmds ) =
             ( { model | mouseDownIndex = Just index }, cmds )
 
         MouseOver index ->
-            ( { model | mouseOverIndex = Just index }, cmds )
+            ( { model | mouseOverIndex = Just index, canHover = False }, cmds )
 
         MouseUp ->
-            ( { model | mouseDownIndex = Nothing }, cmds )
+            ( { model | mouseDownIndex = Nothing, mouseOverIndex = Nothing }, cmds )
 
         StartSelection index ->
             ( { model | selectionStartIndex = Just index }, cmds )
@@ -1188,7 +1188,7 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                 , focusIndex = config.focusIndex
                 , eventListeners =
                     [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
-                    , onPreventDefault "mouseleave" (Pointer <| Out highlightable.index)
+                    , onPreventDefault "mouseleave" (Pointer <| Out)
                     , onPreventDefault "mouseup" (Pointer <| Up Nothing)
                     , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
                     , onPreventDefault "touchstart" (Pointer <| Down highlightable.index)
@@ -1226,7 +1226,7 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                     -- For example, a user hovering over a static space in a highlight
                     -- should see the entire highlight change to hover styles.
                     [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
-                    , onPreventDefault "mouseleave" (Pointer <| Out highlightable.index)
+                    , onPreventDefault "mouseleave" (Pointer <| Out)
                     , onPreventDefault "mouseup" (Pointer <| Up Nothing)
                     , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
                     , onPreventDefault "touchstart" (Pointer <| Down highlightable.index)

@@ -38,7 +38,7 @@ moduleName =
 
 version : Int
 version =
-    3
+    4
 
 
 {-| -}
@@ -78,7 +78,7 @@ example =
                 , settings = state.settings
                 , mainType = Nothing
                 , extraCode =
-                    [ "import Nri.Ui.Highlightable.V2 as Highlightable"
+                    [ "import Nri.Ui.Highlightable.V3 as Highlightable"
                     , "import Nri.Ui.HighlighterTool.V1 as Tool"
                     ]
                 , renderExample = Code.unstyledView
