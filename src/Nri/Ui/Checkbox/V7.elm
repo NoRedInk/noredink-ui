@@ -16,6 +16,7 @@ module Nri.Ui.Checkbox.V7 exposing
 
   - reposition the guidance to be right below the label text
   - fix the hiddenLabel checkbox behavior
+  - fix the disabled styles
 
 
 ## Changes from V6:
@@ -278,14 +279,20 @@ view { label, selected } attributes =
                     )
     in
     checkboxContainer config_
-        [ viewIcon [] icon
+        [ viewIcon []
+            (if config.isDisabled then
+                disabledIcon
+
+             else
+                icon
+            )
         , span []
             (viewCheckbox config_
                 (if config.isDisabled then
-                    ( disabledLabelCss, disabledIcon )
+                    disabledLabelCss
 
                  else
-                    ( enabledLabelCss, icon )
+                    enabledLabelCss
                 )
                 :: inputGuidance config_
             )
@@ -376,12 +383,9 @@ viewCheckbox :
         , error : InputErrorAndGuidanceInternal.ErrorState
         , guidance : Guidance msg
     }
-    ->
-        ( List Style
-        , Svg
-        )
+    -> List Style
     -> Html.Html msg
-viewCheckbox config ( styles, icon ) =
+viewCheckbox config styles =
     let
         marginTopAdjustment =
             case config.guidance of
