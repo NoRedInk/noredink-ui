@@ -15,6 +15,7 @@ module Nri.Ui.Checkbox.V7 exposing
 ## Patch changes:
 
   - reposition the guidance to be right below the label text
+  - fix the hiddenLabel checkbox behavior
 
 
 ## Changes from V6:
