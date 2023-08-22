@@ -396,6 +396,12 @@ viewCheckbox config ( styles, icon ) =
                         (paddingLeft (Css.px checkboxIconWidth)
                             :: marginTopAdjustment
                             :: marginLeft (Css.px -checkboxIconWidth)
+                            :: (if config.hideLabel then
+                                    minHeight (Css.px checkboxIconHeight)
+
+                                else
+                                    Css.batch []
+                               )
                             :: styles
                             ++ config.labelCss
                         )
@@ -439,6 +445,11 @@ checkboxIconWidth =
     40
 
 
+checkboxIconHeight : Float
+checkboxIconHeight =
+    27
+
+
 inputGuidance :
     { a
         | identifier : String
@@ -469,7 +480,7 @@ viewIcon styles icon =
         [ css
             [ border3 (px highContrastBorderWidth) solid transparent
             , borderRadius (px 3)
-            , height (Css.px 27)
+            , height (Css.px checkboxIconHeight)
             , boxSizing contentBox
             , margin (px 2)
             , marginRight (px 7)
@@ -480,7 +491,7 @@ viewIcon styles icon =
             [ css
                 [ display inlineBlock
                 , backgroundColor Colors.white
-                , height (Css.px 27)
+                , height (Css.px checkboxIconHeight)
                 , borderRadius (px 4)
                 ]
             ]
