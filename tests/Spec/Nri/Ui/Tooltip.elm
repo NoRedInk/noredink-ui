@@ -4,7 +4,6 @@ import Accessibility.Aria as Aria
 import Expect
 import Html.Attributes
 import Html.Styled as HtmlStyled
-import Html.Styled.Events as Events
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Tooltip.V3 as Tooltip
 import ProgramTest exposing (ProgramTest, ensureViewHas, ensureViewHasNot)
