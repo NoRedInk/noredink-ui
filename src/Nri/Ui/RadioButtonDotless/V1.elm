@@ -5,6 +5,7 @@ module Nri.Ui.RadioButtonDotless.V1 exposing
     , unboundedWidth, fillContainerWidth
     , textAlignCenter, textAlignLeft
     , small, medium, large
+    , enabled, disabled
     , containerCss, labelCss
     , id, custom, nriDescription, testId
     )
@@ -28,6 +29,7 @@ module Nri.Ui.RadioButtonDotless.V1 exposing
 @docs unboundedWidth, fillContainerWidth
 @docs textAlignCenter, textAlignLeft
 @docs small, medium, large
+@docs enabled, disabled
 @docs containerCss, labelCss
 
 
@@ -78,6 +80,7 @@ type alias Config value msg =
     , width : ButtonWidth
     , textAlign : TextAlign
     , size : ButtonSize
+    , isDisabled : Bool
     , containerCss : List Style
     , labelCss : List Style
     , customAttributes : List (Html.Attribute Never)
@@ -138,6 +141,20 @@ medium =
 large : Attribute value msg
 large =
     Attribute <| \config -> { config | size = Large }
+
+
+{-| Enable the input (this is the default)
+-}
+enabled : Attribute value msg
+enabled =
+    Attribute <| \config -> { config | isDisabled = False }
+
+
+{-| Disable the input
+-}
+disabled : Attribute value msg
+disabled =
+    Attribute <| \config -> { config | isDisabled = True }
 
 
 {-| Adds CSS to the element containing the input.
@@ -204,6 +221,7 @@ emptyConfig =
     , width = UnboundedWidth
     , textAlign = TextAlignCenter
     , size = Medium
+    , isDisabled = False
     , containerCss = []
     , labelCss = []
     , customAttributes = []

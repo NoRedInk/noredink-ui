@@ -70,6 +70,7 @@ controlAttributes =
         |> ControlExtra.optionalListItem "textAlign" textAlignControl
         |> ControlExtra.optionalListItem "width" widthControl
         |> ControlExtra.optionalListItem "size" sizeControl
+        |> ControlExtra.optionalListItem "enablement" enablementControl
         |> ControlExtra.optionalListItem "containerCss"
             (Control.choice
                 [ ( "max-width with border"
@@ -131,6 +132,12 @@ sizeControl =
         , ( "large", Control.value ( "RadioButtonDotless.large", RadioButtonDotless.large ) )
         ]
 
+enablementControl : Control ( String, RadioButtonDotless.Attribute ControlSelection Msg)
+enablementControl =
+    Control.choice 
+        [ ("enabled", Control.value ( "RadioButtonDotless.enabled", RadioButtonDotless.enabled ))
+        , ("disabled", Control.value ("RadioButtonDotless.disabled", RadioButtonDotless.disabled))
+        ]
 
 moduleName : String
 moduleName =
