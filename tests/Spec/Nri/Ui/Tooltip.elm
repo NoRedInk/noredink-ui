@@ -9,7 +9,6 @@ import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Tooltip.V3 as Tooltip
 import ProgramTest exposing (ProgramTest, ensureViewHas, ensureViewHasNot)
 import Spec.Helpers exposing (nriDescription)
-import Spec.Nri.Ui.Checkbox exposing (Msg(..))
 import Test exposing (..)
 import Test.Html.Event as Event
 import Test.Html.Query as Query
@@ -106,53 +105,36 @@ spec =
                     triggerId =
                         "trigger"
 
-                    program_ =
-                        ProgramTest.createSandbox
-                            { init = { parentClicked = False, isOpen = False }
-                            , update =
-                                \msg model ->
-                                    case Debug.log "msg" msg of
-                                        ParentClicked ->
-                                            { model | parentClicked = True }
-
-                                        ToggleTooltip isOpen ->
-                                            { model | isOpen = isOpen }
-                            , view =
-                                \model ->
-                                    HtmlStyled.div
-                                        [ Events.onClick ParentClicked
-                                        ]
-                                        [ Tooltip.view
-                                            { trigger =
-                                                \attributes ->
-                                                    ClickableText.button triggerContent
-                                                        [ ClickableText.custom attributes
-                                                        , ClickableText.id triggerId
-                                                        ]
-                                            , id = tooltipId
-                                            }
-                                            [ Tooltip.open model.isOpen
-                                            , Tooltip.plaintext tooltipContent
-                                            , Tooltip.primaryLabel
-                                            , Tooltip.onToggle ToggleTooltip
-                                            , Tooltip.disclosure
-                                                { triggerId = triggerId
-                                                , lastId = Nothing
-                                                }
+                    view model =
+                        HtmlStyled.div
+                            [ Events.onClick ParentClicked
+                            ]
+                            [ Tooltip.view
+                                { trigger =
+                                    \attributes ->
+                                        ClickableText.button triggerContent
+                                            [ ClickableText.custom attributes
+                                            , ClickableText.id triggerId
                                             ]
-                                        ]
-                                        |> HtmlStyled.toUnstyled
-                            }
-                            |> ProgramTest.start ()
+                                , id = tooltipId
+                                }
+                                [ Tooltip.open model.isOpen
+                                , Tooltip.plaintext tooltipContent
+                                , Tooltip.primaryLabel
+                                , Tooltip.onToggle ToggleTooltip
+                                , Tooltip.disclosure
+                                    { triggerId = triggerId
+                                    , lastId = Nothing
+                                    }
+                                ]
+                            ]
+                            |> HtmlStyled.toUnstyled
                 in
-                program_
-                    |> ensureViewHasNot (tooltipContentSelector tooltipContent)
-                    |> clickById triggerId
-                    |> ensureViewHas (tooltipContentSelector tooltipContent)
-                    |> ProgramTest.expectModel
-                        (\model ->
-                            Expect.equal False model.parentClicked
-                        )
+                view { isOpen = False }
+                    |> Query.fromHtml
+                    |> Query.find [ Selector.id triggerId ]
+                    |> Event.simulate Event.click
+                    |> Expect.all [ Event.expectStopPropagation, Event.expectPreventDefault ]
         ]
 
 
@@ -196,11 +178,6 @@ blur selectors =
 focus : List Selector.Selector -> ProgramTest model msg effect -> ProgramTest model msg effect
 focus selectors =
     ProgramTest.simulateDomEvent (Query.find selectors) Event.focus
-
-
-clickById : String -> ProgramTest model msg effect -> ProgramTest model msg effect
-clickById id =
-    ProgramTest.simulateDomEvent (Query.find [ Selector.id id ]) Event.click
 
 
 clickButtonByLabel : String -> ProgramTest model msg effect -> ProgramTest model msg effect
