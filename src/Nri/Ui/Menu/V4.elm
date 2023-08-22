@@ -73,7 +73,7 @@ import Nri.Ui.Fonts.V1
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Tooltip.V3 as Tooltip
+import Nri.Ui.Tooltip.V4 as Tooltip
 import Nri.Ui.WhenFocusLeaves.V2 as WhenFocusLeaves
 
 

@@ -33,7 +33,7 @@ import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 exposing (safeId)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Tooltip.V3 as Tooltip
+import Nri.Ui.Tooltip.V4 as Tooltip
 import TabsInternal.V2 as TabsInternal
 
 

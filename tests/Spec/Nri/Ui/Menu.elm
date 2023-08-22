@@ -5,7 +5,7 @@ import Html.Styled as HtmlStyled
 import Json.Encode as Encode
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Menu.V4 as Menu
-import Nri.Ui.Tooltip.V3 as Tooltip
+import Nri.Ui.Tooltip.V4 as Tooltip
 import ProgramTest exposing (ProgramTest, ensureViewHas, ensureViewHasNot)
 import Spec.Helpers exposing (nriDescription)
 import Spec.KeyboardHelpers as KeyboardHelpers

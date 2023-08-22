@@ -26,13 +26,13 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V7 as Table
-import Nri.Ui.Tooltip.V3 as Tooltip
+import Nri.Ui.Tooltip.V4 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 version : Int
 version =
-    3
+    4
 
 
 moduleName : String

@@ -27,7 +27,7 @@ import Nri.Ui.Message.V4 as Message
 import Nri.Ui.Panel.V1 as Panel
 import Nri.Ui.Tabs.V8 as Tabs exposing (Alignment(..), Tab)
 import Nri.Ui.Text.V6 as Text
-import Nri.Ui.Tooltip.V3 as Tooltip
+import Nri.Ui.Tooltip.V4 as Tooltip
 import Task
 
 
@@ -124,7 +124,7 @@ example =
                 , update = SetSettings
                 , settings = model.settings
                 , mainType = Just "RootHtml.Html { select : Int, focus : Maybe String }"
-                , extraCode = [ "import Nri.Ui.Tooltip.V3 as Tooltip" ]
+                , extraCode = [ "import Nri.Ui.Tooltip.V4 as Tooltip" ]
                 , renderExample = Code.unstyledView
                 , toExampleCode =
                     \_ ->

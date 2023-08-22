@@ -14,7 +14,7 @@ import Test.Html.Selector as Selector exposing (id, text)
 
 spec : Test
 spec =
-    describe "Nri.Ui.Tooltip.V3"
+    describe "Nri.Ui.Tooltip.V4"
         [ test "Tooltip.viewToggleTip" <|
             \() ->
                 let
