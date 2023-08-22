@@ -132,12 +132,14 @@ sizeControl =
         , ( "large", Control.value ( "RadioButtonDotless.large", RadioButtonDotless.large ) )
         ]
 
-enablementControl : Control ( String, RadioButtonDotless.Attribute ControlSelection Msg)
+
+enablementControl : Control ( String, RadioButtonDotless.Attribute ControlSelection Msg )
 enablementControl =
-    Control.choice 
-        [ ("enabled", Control.value ( "RadioButtonDotless.enabled", RadioButtonDotless.enabled ))
-        , ("disabled", Control.value ("RadioButtonDotless.disabled", RadioButtonDotless.disabled))
+    Control.choice
+        [ ( "enabled", Control.value ( "RadioButtonDotless.enabled", RadioButtonDotless.enabled ) )
+        , ( "disabled", Control.value ( "RadioButtonDotless.disabled", RadioButtonDotless.disabled ) )
         ]
+
 
 moduleName : String
 moduleName =
