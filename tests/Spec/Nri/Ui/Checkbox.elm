@@ -8,6 +8,8 @@ import Nri.Ui.Checkbox.V7 as Checkbox
 import ProgramTest exposing (..)
 import Spec.KeyboardHelpers as KeyboardHelpers
 import Test exposing (..)
+import Test.Html.Event as Event
+import Test.Html.Query as Query
 import Test.Html.Selector exposing (..)
 
 
@@ -15,7 +17,7 @@ spec : Test
 spec =
     describe "Nri.Ui.Checkbox.V7"
         [ describe "'checkbox' role" hasCorrectRole
-        , describe "aria-checked" hasAriaChecked
+        , describe "state" stateSpec
         , test "guidance" <|
             \() ->
                 let
@@ -41,12 +43,17 @@ hasCorrectRole =
             program []
                 |> ensureViewHas [ attribute Role.checkBox ]
                 |> done
+    , test "has role checkbox when label is hidden" <|
+        \() ->
+            program [ Checkbox.hiddenLabel ]
+                |> ensureViewHas [ attribute Role.checkBox ]
+                |> done
     ]
 
 
-hasAriaChecked : List Test
-hasAriaChecked =
-    [ test "aria-checked reflects the state of the checkbox" <|
+stateSpec : List Test
+stateSpec =
+    [ test "checkbox works when the label is visible and the keyboard is used to change state" <|
         \() ->
             program []
                 |> ensureViewHas [ attribute (Aria.checked (Just False)) ]
@@ -55,13 +62,49 @@ hasAriaChecked =
                 |> pressSpace
                 |> ensureViewHas [ attribute (Aria.checked (Just False)) ]
                 |> done
+    , test "checkbox works when the label is hidden and the keyboard is used to change state" <|
+        \() ->
+            program [ Checkbox.hiddenLabel ]
+                |> ensureViewHas [ attribute (Aria.checked (Just False)) ]
+                |> pressSpace
+                |> ensureViewHas [ attribute (Aria.checked (Just True)) ]
+                |> pressSpace
+                |> ensureViewHas [ attribute (Aria.checked (Just False)) ]
+                |> done
+    , test "checkbox works when the label is visible and the mouse is used to change state" <|
+        \() ->
+            program []
+                |> ensureViewHas [ attribute (Aria.checked (Just False)) ]
+                |> clickIt
+                |> ensureViewHas [ attribute (Aria.checked (Just True)) ]
+                |> clickIt
+                |> ensureViewHas [ attribute (Aria.checked (Just False)) ]
+                |> done
+    , test "checkbox works when the label is hidden and the mouse is used to change state" <|
+        \() ->
+            program [ Checkbox.hiddenLabel ]
+                |> ensureViewHas [ attribute (Aria.checked (Just False)) ]
+                |> clickIt
+                |> ensureViewHas [ attribute (Aria.checked (Just True)) ]
+                |> clickIt
+                |> ensureViewHas [ attribute (Aria.checked (Just False)) ]
+                |> done
     ]
 
 
 pressSpace : TestContext -> TestContext
 pressSpace =
-    KeyboardHelpers.pressSpaceKey { targetDetails = [] }
-        [ attribute Role.checkBox ]
+    KeyboardHelpers.pressSpaceKey { targetDetails = [] } checkbox
+
+
+clickIt : TestContext -> TestContext
+clickIt =
+    simulateDomEvent (Query.find checkbox) Event.click
+
+
+checkbox : List Selector
+checkbox =
+    [ attribute Role.checkBox ]
 
 
 type alias Model =
