@@ -87,7 +87,7 @@ import Content
 import Css exposing (Color, Px, Style)
 import Css.Global as Global
 import Css.Media
-import EventExtras as Event
+import EventExtras as Events
 import Html.Styled as Root
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -941,7 +941,7 @@ viewTooltip_ { trigger, id } tooltip =
                                     , tabForwardAction = msg False
                                     }
                               ]
-                            , [ Event.onClickPreventDefaultAndStopPropagation (msg (not tooltip.isOpen))
+                            , [ Events.onClickPreventDefaultAndStopPropagation (msg (not tooltip.isOpen))
                               , Key.onKeyDown [ Key.escape (msg False) ]
                               ]
                             )

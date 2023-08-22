@@ -15,11 +15,6 @@ import Test.Html.Query as Query
 import Test.Html.Selector as Selector exposing (id, text)
 
 
-type Msg
-    = ParentClicked
-    | ToggleTooltip Bool
-
-
 spec : Test
 spec =
     describe "Nri.Ui.Tooltip.V3"
@@ -106,27 +101,23 @@ spec =
                         "trigger"
 
                     view model =
-                        HtmlStyled.div
-                            [ Events.onClick ParentClicked
-                            ]
-                            [ Tooltip.view
-                                { trigger =
-                                    \attributes ->
-                                        ClickableText.button triggerContent
-                                            [ ClickableText.custom attributes
-                                            , ClickableText.id triggerId
-                                            ]
-                                , id = tooltipId
+                        Tooltip.view
+                            { trigger =
+                                \attributes ->
+                                    ClickableText.button triggerContent
+                                        [ ClickableText.custom attributes
+                                        , ClickableText.id triggerId
+                                        ]
+                            , id = tooltipId
+                            }
+                            [ Tooltip.open model.isOpen
+                            , Tooltip.plaintext tooltipContent
+                            , Tooltip.primaryLabel
+                            , Tooltip.onToggle (\_ -> ())
+                            , Tooltip.disclosure
+                                { triggerId = triggerId
+                                , lastId = Nothing
                                 }
-                                [ Tooltip.open model.isOpen
-                                , Tooltip.plaintext tooltipContent
-                                , Tooltip.primaryLabel
-                                , Tooltip.onToggle ToggleTooltip
-                                , Tooltip.disclosure
-                                    { triggerId = triggerId
-                                    , lastId = Nothing
-                                    }
-                                ]
                             ]
                             |> HtmlStyled.toUnstyled
                 in
