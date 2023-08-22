@@ -277,6 +277,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
             isChecked
             ([ Attributes.id idValue
              , Attributes.class "Nri-RadioButton-HiddenRadioInput"
+             , Attributes.disabled config.isDisabled
              , case config.onSelect of
                 Just onSelect_ ->
                     Events.onClick (onSelect_ value)
@@ -304,7 +305,11 @@ view { label, name, value, valueToString, selectedValue } attributes =
                 , borderStyle solid
                 , Fonts.baseFont
                 , fontWeight (int 600)
-                , cursor pointer
+                , if config.isDisabled then
+                    cursor notAllowed
+
+                  else
+                    cursor pointer
                 , case config.textAlign of
                     TextAlignLeft ->
                         Css.batch
@@ -339,24 +344,39 @@ view { label, name, value, valueToString, selectedValue } attributes =
                             , lineHeight (px 22)
                             ]
                 , width (pct 100)
-                , if isChecked then
-                    Css.batch
-                        [ color Colors.navy
-                        , backgroundColor Colors.glacier
-                        , borderColor Colors.azure
-                        ]
-
-                  else
-                    Css.batch
-                        [ color Colors.azure
-                        , backgroundColor Colors.white
-                        , borderColor Colors.glacier
-                        , hover
+                , case ( isChecked, config.isDisabled ) of
+                    ( True, False ) ->
+                        Css.batch
                             [ color Colors.navy
                             , backgroundColor Colors.glacier
-                            , borderColor Colors.glacier
+                            , borderColor Colors.azure
                             ]
-                        ]
+
+                    ( False, False ) ->
+                        Css.batch
+                            [ color Colors.azure
+                            , backgroundColor Colors.white
+                            , borderColor Colors.glacier
+                            , hover
+                                [ color Colors.navy
+                                , backgroundColor Colors.glacier
+                                , borderColor Colors.glacier
+                                ]
+                            ]
+
+                    ( True, True ) ->
+                        Css.batch
+                            [ color Colors.gray45
+                            , backgroundColor Colors.gray92
+                            , borderColor Colors.gray45
+                            ]
+
+                    ( False, True ) ->
+                        Css.batch
+                            [ color Colors.gray45
+                            , backgroundColor Colors.gray92
+                            , borderWidth zero
+                            ]
                 ]
             ]
             [ span
