@@ -13,6 +13,11 @@ module Nri.Ui.RadioButtonDotless.V1 exposing
 {-| Looks like a standard button, behaves like a radio button
 
 
+### Patch changes:
+
+    - Introduce `enabled`/`disabled` attributes and styles
+
+
 # Create a radio button
 
 @docs view
