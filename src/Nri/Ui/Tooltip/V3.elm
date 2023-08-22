@@ -941,7 +941,8 @@ viewTooltip_ { trigger, id } tooltip =
                                     , tabForwardAction = msg False
                                     }
                               ]
-                            , [ Event.onClickPreventDefaultAndStopPropagation (msg (not tooltip.isOpen))
+                            , [ -- Event.onClickPreventDefaultAndStopPropagation (msg (not tooltip.isOpen))
+                                Events.onClick (msg (not tooltip.isOpen))
                               , Key.onKeyDown [ Key.escape (msg False) ]
                               ]
                             )
