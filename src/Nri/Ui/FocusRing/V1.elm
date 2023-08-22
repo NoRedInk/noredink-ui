@@ -28,10 +28,10 @@ import Nri.Ui.InputStyles.V4 as InputStyles exposing (focusedErrorInputBoxShadow
 Hides default focus ring from elements that are tagged as having a custom focus ring.
 
 -}
-forKeyboardUsers : List Css.Global.Snippet
+forKeyboardUsers : List Snippet
 forKeyboardUsers =
     [ Css.Global.class customClass [ Css.outlineColor Css.transparent ]
-    , Css.Global.selector (":not(." ++ customClass ++ "):focus-visible") styles
+    , defaultFocusVisibleStyles
     , Css.Global.selector "p a:focus-visible" [ Css.important (Css.batch tightStyles) ]
     , Css.Global.class InputStyles.inputClass
         [ Css.pseudoClass "focus-visible"
@@ -50,6 +50,7 @@ forKeyboardUsers =
 forMouseUsers : List Snippet
 forMouseUsers =
     [ Css.Global.everything [ Css.outline Css.none ]
+    , defaultFocusVisibleStyles
     , Css.Global.selector ":focus-within .checkbox-icon-container"
         [ Css.important (Css.boxShadow Css.none)
         ]
@@ -72,6 +73,11 @@ forMouseUsers =
         [ Css.important (Css.boxShadow Css.none)
         ]
     ]
+
+
+defaultFocusVisibleStyles : Snippet
+defaultFocusVisibleStyles =
+    Css.Global.selector (":not(." ++ customClass ++ "):focus-visible") styles
 
 
 {-| Add this class to remove global focus styles. Only do this
