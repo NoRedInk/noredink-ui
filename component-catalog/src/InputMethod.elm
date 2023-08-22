@@ -73,7 +73,21 @@ subscriptions =
                                 Decode.fail "Not a navigation key. Discarding event."
                     )
             )
-        , Browser.Events.onMouseDown (Decode.succeed Mouse)
+        , Browser.Events.onMouseDown
+            -- Some screenreaders (NVDA, JAWS) transform keyboard events into mouse events.
+            -- annoying as this is, apparently we have to deal with it anyway.
+            -- here, we use the [detail](https://developer.mozilla.org/en-US/docs/Web/API/UIEvent/detail) property
+            -- to determine whether a _real_ mouse event has fired or not.
+            (Decode.map
+                (\clickCount ->
+                    if clickCount == 0 then
+                        Keyboard
+
+                    else
+                        Mouse
+                )
+                (Decode.field "detail" Decode.int)
+            )
         ]
 
 
