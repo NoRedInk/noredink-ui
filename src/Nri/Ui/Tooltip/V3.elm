@@ -33,6 +33,7 @@ module Nri.Ui.Tooltip.V3 exposing
   - adds `paragraph` and `markdown` support
   - add partially-transparent white border around tooltips
   - Use Nri.Ui.WhenFocusLeaves.V2
+  - prevent default and stop propagation on click for disclosure tooltips
 
 Changes from V2:
 
