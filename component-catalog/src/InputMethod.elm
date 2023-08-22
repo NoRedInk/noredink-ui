@@ -47,7 +47,7 @@ subscriptions =
                 (Decode.at [ "target", "tagName" ] Decode.string)
                 |> Decode.andThen
                     (\( key, tagName ) ->
-                        case key of
+                        case Debug.log "keyboard event" key of
                             "ArrowUp" ->
                                 unlessInInput tagName
 
@@ -80,11 +80,11 @@ subscriptions =
             -- to determine whether a _real_ mouse event has fired or not.
             (Decode.map
                 (\clickCount ->
-                    if clickCount == 0 then
-                        Keyboard
+                    if Debug.log "clickCount" clickCount == 0 then
+                        Debug.log "Interpreting mousedown as keyboard event" Keyboard
 
                     else
-                        Mouse
+                        Debug.log "Interpreting mousedown as mouse event" Mouse
                 )
                 (Decode.field "detail" Decode.int)
             )
