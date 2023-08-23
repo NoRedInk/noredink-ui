@@ -354,8 +354,22 @@ controlIcon =
         , ( "UiIcon"
           , Control.map
                 (\( code, icon ) ->
-                    ( "\\_ -> Svg.toHtml " ++ code
-                    , \_ -> Svg.toHtml icon
+                    ( Code.newlineWithIndent 5
+                        ++ Code.anonymousFunction "_"
+                            (Code.newlineWithIndent 6
+                                ++ Code.pipelineMultiline
+                                    [ code
+                                    , "Svg.withWidth (Css.px 20)"
+                                    , "Svg.withHeight (Css.px 20)"
+                                    , "Svg.toHtml"
+                                    ]
+                                    6
+                            )
+                    , \_ ->
+                        icon
+                            |> Svg.withWidth (Css.px 20)
+                            |> Svg.withHeight (Css.px 20)
+                            |> Svg.toHtml
                     )
                 )
                 CommonControls.uiIcon
