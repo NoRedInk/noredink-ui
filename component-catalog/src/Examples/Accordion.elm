@@ -27,6 +27,8 @@ import Nri.Ui.Accordion.V3 as Accordion exposing (AccordionEntry(..))
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
+import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -140,6 +142,13 @@ view ellieLinkConfig model =
                   }
                 ]
         }
+    , Heading.h2
+        [ Heading.plaintext "Examples"
+        , Heading.css
+            [ Css.marginTop Spacing.verticalSpacerPx
+            , Css.marginBottom (Css.px 20)
+            ]
+        ]
     , Accordion.view
         { entries =
             [ AccordionEntry
