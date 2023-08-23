@@ -23,6 +23,7 @@ import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.RadioButton.V4 as RadioButton
+import Nri.Ui.SegmentedControl.V14 as SegmentedControl
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Switch.V3 as Switch
 import Nri.Ui.Table.V7 as Table
@@ -188,6 +189,21 @@ NOTE: use `boxShadows` instead if your focusable element:
           , examples =
                 [ Switch.view { label = "Switch", id = "switch" } []
                 , ClickableSvg.button "ClickableSvg button" UiIcon.playInCircle []
+                , SegmentedControl.viewRadioGroup
+                    { legend = "SegmentedControls.viewRadioGroup"
+                    , onSelect = \_ -> NoOp
+                    , options =
+                        [ { icon = Nothing
+                          , label = text "SegmentedControls"
+                          , value = 1
+                          , idString = "radio-1"
+                          , tooltip = []
+                          , attributes = []
+                          }
+                        ]
+                    , selected = Nothing
+                    , positioning = SegmentedControl.Left SegmentedControl.FitContent
+                    }
                 , Button.button "Button button" [ Button.small, Button.secondary ]
                 ]
           , about = ""
@@ -246,7 +262,7 @@ type alias State =
 type Msg
     = ToggleAccordion Bool
     | Focus String
-    | Focused
+    | NoOp
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -259,8 +275,8 @@ update msg model =
 
         Focus id ->
             ( model
-            , Task.attempt (\_ -> Focused) (Browser.Dom.focus id)
+            , Task.attempt (\_ -> NoOp) (Browser.Dom.focus id)
             )
 
-        Focused ->
+        NoOp ->
             ( model, Cmd.none )
