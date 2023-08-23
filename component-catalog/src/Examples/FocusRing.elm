@@ -25,6 +25,7 @@ import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.SegmentedControl.V14 as SegmentedControl
 import Nri.Ui.Spacing.V1 as Spacing
+import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Switch.V3 as Switch
 import Nri.Ui.Table.V7 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -85,10 +86,11 @@ example_ styles =
         []
 
 
-exampleWithBorder : List Style -> Html msg
-exampleWithBorder styles =
+exampleWithBorderAndBG : List Style -> Html msg
+exampleWithBorderAndBG styles =
     example_
         (Css.border3 (Css.px 2) Css.dashed Colors.gray20
+            :: Css.backgroundColor Colors.gray75
             :: styles
         )
 
@@ -130,6 +132,27 @@ viewTable model =
             , sort = Nothing
             }
         , Table.custom
+            { header = text "Two-toned"
+            , view =
+                \{ twoToned } ->
+                    if twoToned then
+                        UiIcon.checkmark
+                            |> Svg.withLabel "Yes"
+                            |> Svg.withWidth (Css.px 20)
+                            |> Svg.withColor Colors.greenDark
+                            |> Svg.toHtml
+
+                    else
+                        UiIcon.x
+                            |> Svg.withLabel "No"
+                            |> Svg.withWidth (Css.px 20)
+                            |> Svg.withColor Colors.red
+                            |> Svg.toHtml
+            , width = Css.pct 1
+            , cellStyles = always [ Css.padding2 (Css.px 8) (Css.px 16) ]
+            , sort = Nothing
+            }
+        , Table.custom
             { header = text "Examples"
             , view =
                 .examples
@@ -146,7 +169,8 @@ viewTable model =
             }
         ]
         [ { name = "styles"
-          , view = exampleWithBorder FocusRing.styles
+          , view = exampleWithBorderAndBG FocusRing.styles
+          , twoToned = True
           , examples =
                 [ button [] [ text "Button" ]
                 , label [] [ input [] [], text "Input" ]
@@ -163,7 +187,8 @@ NOTE: use `boxShadows` instead if your focusable element:
 """
           }
         , { name = "tightStyles"
-          , view = exampleWithBorder FocusRing.tightStyles
+          , view = exampleWithBorderAndBG FocusRing.tightStyles
+          , twoToned = True
           , examples =
                 [ ClickableText.button "ClickableText button" [ ClickableText.small ]
                 , ClickableText.link "ClickableText link" [ ClickableText.small ]
@@ -185,7 +210,8 @@ NOTE: use `boxShadows` instead if your focusable element:
           , about = "Prefer `styles` over tightStyles, except in cases where line spacing/font size will otherwise cause obscured content."
           }
         , { name = "boxShadows"
-          , view = exampleWithBorder [ FocusRing.boxShadows [] ]
+          , view = exampleWithBorderAndBG [ FocusRing.boxShadows [] ]
+          , twoToned = True
           , examples =
                 [ Switch.view { label = "Switch", id = "switch" } []
                 , ClickableSvg.button "ClickableSvg button" UiIcon.playInCircle []
@@ -209,7 +235,8 @@ NOTE: use `boxShadows` instead if your focusable element:
           , about = ""
           }
         , { name = "insetBoxShadows"
-          , view = exampleWithBorder [ FocusRing.insetBoxShadows [] ]
+          , view = exampleWithBorderAndBG [ FocusRing.insetBoxShadows [] ]
+          , twoToned = True
           , examples =
                 [ Accordion.view
                     { entries =
@@ -231,22 +258,34 @@ NOTE: use `boxShadows` instead if your focusable element:
           , about = "Please be sure that the padding on the element you add this style too is sufficient (at least 6px on all sides) that the inset box shadow won't cover any content."
           }
         , { name = "outerBoxShadow"
-          , view = exampleWithBorder [ FocusRing.outerBoxShadow ]
+          , view = exampleWithBorderAndBG [ FocusRing.outerBoxShadow ]
+          , twoToned = False
           , examples = [ text "(See Tabs and TabsMinimal)" ]
           , about = "In special cases, we don't use a two-tone focus ring. Be very sure this is what you need before using this!"
           }
         , { name = "insetBoxShadow"
-          , view = exampleWithBorder [ FocusRing.insetBoxShadow ]
+          , view = exampleWithBorderAndBG [ FocusRing.insetBoxShadow ]
+          , twoToned = False
           , examples = [ text "(See SideNav)" ]
           , about = "In special cases, we don't use a two-tone focus ring, and an outset focus ring would be obscured. Be very sure this is what you need before using this!"
           }
         , { name = "outerColor"
-          , view = exampleWithBorder [ Css.backgroundColor FocusRing.outerColor ]
+          , view =
+                example_
+                    [ Css.border3 (Css.px 2) Css.solid Colors.gray20
+                    , Css.backgroundColor FocusRing.outerColor
+                    ]
+          , twoToned = False
           , examples = []
           , about = "Colors.red"
           }
         , { name = "innerColor"
-          , view = exampleWithBorder [ Css.backgroundColor FocusRing.innerColor ]
+          , view =
+                example_
+                    [ Css.border3 (Css.px 2) Css.solid Colors.gray20
+                    , Css.backgroundColor FocusRing.innerColor
+                    ]
+          , twoToned = False
           , examples = []
           , about = "Colors.white"
           }
