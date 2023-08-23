@@ -37,7 +37,7 @@ example : Example State Msg
 example =
     { name = "FocusRing"
     , version = 1
-    , categories = [ Text, Atoms ]
+    , categories = [ Atoms ]
     , keyboardSupport = []
     , state = { isAccordionOpen = False }
     , update = update
