@@ -194,9 +194,8 @@ example =
                     \_ ->
                         let
                             code =
-                              -- TODO: fix this
-                                [
-                                  moduleName ++ ".viewWithTabControls"
+                                -- TODO: fix this
+                                [ moduleName ++ ".viewWithTabControls"
                                 , "    { focusAndSelect = identity"
                                 , "    , selected = " ++ String.fromInt model.selected
                                 , "    , tabControlListStyles = " ++ Tuple.first settings.controlListStyles
@@ -217,18 +216,23 @@ example =
     }
 
 
-toCarouselItem : Int -> a -> ( String, { id : Int
-                                        , slideHtml : Html msg
-                                        , tabControlHtml : Html Never
-                                        , idString : String
-                                          } )
+toCarouselItem :
+    Int
+    -> a
+    ->
+        ( String
+        , { id : Int
+          , slideHtml : Html msg
+          , tabControlHtml : Html Never
+          , idString : String
+          }
+        )
 toCarouselItem id _ =
     let
         idString =
             Attributes.safeIdWithPrefix "slide" <| String.fromInt id
     in
-    (
-      [ "{ id = " ++ String.fromInt id
+    ( [ "{ id = " ++ String.fromInt id
       , ", idString = \"" ++ idString ++ "\""
       , ", tabControlHtml = Html.text \"" ++ String.fromInt (id + 1) ++ "\""
       , ", slideHtml = Html.text \"" ++ String.fromInt (id + 1) ++ " slide\""
