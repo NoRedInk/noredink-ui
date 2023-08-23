@@ -21,21 +21,18 @@ import Nri.Ui.Text.V6 as Text
 
 type alias UsageExample state msg =
     { name : String
-    , version : Int
     , state : state
     , update : msg -> state -> ( state, Cmd msg )
     , subscriptions : state -> Sub msg
-    , preview : List (Html Never)
-    , view : EllieLink.Config -> state -> List (Html msg)
+    , view : state -> List (Html msg)
     , about : List (Html Never)
     , categories : List Category
-    , keyboardSupport : List KeyboardSupport
     }
 
 
-fullName : { example | version : Int, name : String } -> String
+fullName : { example | name : String } -> String
 fullName example =
-    "Nri.Ui." ++ example.name ++ ".V" ++ String.fromInt example.version
+    example.name
 
 
 wrapMsg :
@@ -45,7 +42,6 @@ wrapMsg :
     -> UsageExample state msg2
 wrapMsg wrapMsg_ unwrapMsg example =
     { name = example.name
-    , version = example.version
     , state = example.state
     , update =
         \msg2 state ->
@@ -57,14 +53,12 @@ wrapMsg wrapMsg_ unwrapMsg example =
                 Nothing ->
                     ( state, Cmd.none )
     , subscriptions = \state -> Sub.map wrapMsg_ (example.subscriptions state)
-    , preview = example.preview
     , view =
-        \ellieLinkConfig state ->
+        \state ->
             List.map (Html.map wrapMsg_)
-                (example.view ellieLinkConfig state)
+                (example.view state)
     , about = example.about
     , categories = example.categories
-    , keyboardSupport = example.keyboardSupport
     }
 
 
@@ -75,7 +69,6 @@ wrapState :
     -> UsageExample state2 msg
 wrapState wrapState_ unwrapState example =
     { name = example.name
-    , version = example.version
     , state = wrapState_ example.state
     , update =
         \msg state2 ->
@@ -90,14 +83,12 @@ wrapState wrapState_ unwrapState example =
         unwrapState
             >> Maybe.map example.subscriptions
             >> Maybe.withDefault Sub.none
-    , preview = example.preview
     , view =
-        \ellieLinkConfig state ->
-            Maybe.map (example.view ellieLinkConfig) (unwrapState state)
+        \state ->
+            Maybe.map example.view (unwrapState state)
                 |> Maybe.withDefault []
     , about = example.about
     , categories = example.categories
-    , keyboardSupport = example.keyboardSupport
     }
 
 
@@ -130,32 +121,22 @@ preview_ { navigate, exampleHref } example =
             ]
         , Container.custom [ Events.onClick (navigate example) ]
         , Container.html
-            (ClickableText.link example.name
+            [ ClickableText.link example.name
                 [ ClickableText.href (exampleHref example)
-                , ClickableText.css [ Css.marginBottom (Css.px 10) ]
-                , ClickableText.nriDescription "doodad-link"
+                , ClickableText.nriDescription "usage-example-link"
                 ]
-                :: [ Html.div
-                        [ Attributes.css
-                            [ Css.displayFlex
-                            , Css.flexDirection Css.column
-                            ]
-                        , Aria.hidden True
-                        ]
-                        (List.map (Html.map never) example.preview)
-                   ]
-            )
+            ]
         ]
 
 
-view : EllieLink.Config -> UsageExample state msg -> Html msg
-view ellieLinkConfig example =
-    Html.div [ Attributes.id (String.replace "." "-" example.name) ]
-        (view_ ellieLinkConfig example)
+view : UsageExample state msg -> Html msg
+view example =
+    Html.div [ Attributes.id (String.replace " " "-" example.name) ]
+        (view_ example)
 
 
-view_ : EllieLink.Config -> UsageExample state msg -> List (Html msg)
-view_ ellieLinkConfig example =
+view_ : UsageExample state msg -> List (Html msg)
+view_ example =
     [ Html.div
         [ Attributes.css
             [ Css.displayFlex
@@ -169,10 +150,9 @@ view_ ellieLinkConfig example =
             [ Css.flex (Css.int 1) ]
             viewAbout
             example.about
-        , KeyboardSupport.view example.keyboardSupport
         ]
     , Html.div [ Attributes.css [ Css.marginBottom (Css.px 200) ] ]
-        (example.view ellieLinkConfig example.state)
+        (example.view example.state)
     ]
 
 

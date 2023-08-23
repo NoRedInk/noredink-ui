@@ -36,7 +36,7 @@ import UsageExamples
 
 
 type alias Route =
-    Routes.Route Examples.State Examples.Msg () ()
+    Routes.Route Examples.State Examples.Msg UsageExamples.State UsageExamples.Msg
 
 
 type alias Model key =
@@ -44,7 +44,7 @@ type alias Model key =
       route : Route
     , previousRoute : Maybe Route
     , moduleStates : Dict String (Example Examples.State Examples.Msg)
-    , usageExampleStates : Dict String (UsageExample () ())
+    , usageExampleStates : Dict String (UsageExample UsageExamples.State UsageExamples.Msg)
     , isSideNavOpen : Bool
     , openTooltip : Maybe TooltipId
     , navigationKey : key
@@ -324,9 +324,9 @@ viewExample model example =
         |> viewLayout model [ Example.extraLinks (UpdateModuleStates example.name) example ]
 
 
-viewUsageExample : Model key -> Example a UsageExamples.Msg -> Html Msg
+viewUsageExample : Model key -> UsageExample a UsageExamples.Msg -> Html Msg
 viewUsageExample model example =
-    Example.view { packageDependencies = model.elliePackageDependencies } example
+    UsageExample.view example
         |> Html.map (UpdateUsageExamples example.name)
         |> viewLayout model [ UsageExample.extraLinks (UpdateUsageExamples example.name) example ]
 
@@ -420,7 +420,14 @@ viewExamplePreviews containerId exampleNavConfig usageNavConfig examples usageEx
     Html.div [ id containerId ]
         [ Heading.h2 [ Heading.plaintext "Components" ]
         , examplesContainer (List.map (Example.preview exampleNavConfig) examples)
-        , viewIf (\_ -> Heading.h2 [ Heading.plaintext "Usage Examples" ]) (List.length usageExamples > 0)
+        , viewIf
+            (\_ ->
+                Heading.h2
+                    [ Heading.plaintext "Usage Examples"
+                    , Heading.css [ Css.marginTop (Css.px 30) ]
+                    ]
+            )
+            (List.length usageExamples > 0)
         , examplesContainer (List.map (UsageExample.preview usageNavConfig) usageExamples)
         ]
 
