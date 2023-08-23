@@ -11,6 +11,7 @@ import Css exposing (Style)
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
+import Markdown
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
@@ -90,7 +91,11 @@ viewTable =
             { header = Html.text "Name"
             , view = \{ name } -> code [] [ text name ]
             , width = Css.pct 10
-            , cellStyles = always [ Css.textAlign Css.left ]
+            , cellStyles =
+                always
+                    [ Css.textAlign Css.left
+                    , Css.padding2 (Css.px 8) (Css.px 16)
+                    ]
             , sort = Nothing
             }
         , Table.custom
@@ -100,11 +105,19 @@ viewTable =
             , cellStyles = always []
             , sort = Nothing
             }
-        , Table.string
-            { header = "About"
-            , value = .about
-            , width = Css.pct 10
-            , cellStyles = \_ -> [ Fonts.baseFont, Css.padding (Css.px 8) ]
+        , Table.custom
+            { header = text "About"
+            , view =
+                .about
+                    >> Markdown.toHtml Nothing
+                    >> List.map fromUnstyled
+                    >> div []
+            , width = Css.px 300
+            , cellStyles =
+                always
+                    [ Css.padding2 (Css.px 8) (Css.px 16)
+                    , Css.verticalAlign Css.top
+                    ]
             , sort = Nothing
             }
         ]
