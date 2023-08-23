@@ -328,7 +328,7 @@ viewUsageExample : Model key -> UsageExample a UsageExamples.Msg -> Html Msg
 viewUsageExample model example =
     UsageExample.view example
         |> Html.map (UpdateUsageExamples example.name)
-        |> viewLayout model [ UsageExample.extraLinks (UpdateUsageExamples example.name) example ]
+        |> viewLayout model []
 
 
 notFound : Html Msg

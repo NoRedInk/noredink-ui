@@ -1,4 +1,4 @@
-module UsageExample exposing (UsageExample, extraLinks, fullName, preview, view, wrapMsg, wrapState)
+module UsageExample exposing (UsageExample, fromRouteName, fullName, preview, routeName, view, wrapMsg, wrapState)
 
 import Accessibility.Styled.Aria as Aria
 import Category exposing (Category)
@@ -33,6 +33,16 @@ type alias UsageExample state msg =
 fullName : { example | name : String } -> String
 fullName example =
     example.name
+
+
+routeName : { example | name : String } -> String
+routeName example =
+    String.replace " " "-" example.name
+
+
+fromRouteName : String -> String
+fromRouteName name =
+    String.replace "-" " " name
 
 
 wrapMsg :
@@ -160,32 +170,3 @@ viewAbout : List (Html Never) -> Html msg
 viewAbout about =
     Text.mediumBody [ Text.html about ]
         |> Html.map never
-
-
-extraLinks : (msg -> msg2) -> UsageExample state msg -> Header.Attribute route msg2
-extraLinks f example =
-    Header.extraNav (fullName example)
-        [ Html.map f (docsLink example)
-        , Html.map f (srcLink example)
-        ]
-
-
-docsLink : UsageExample state msg -> Html msg2
-docsLink example =
-    let
-        link =
-            "https://package.elm-lang.org/packages/NoRedInk/noredink-ui/latest/"
-                ++ String.replace "." "-" (fullName example)
-    in
-    ClickableText.link "Docs" [ ClickableText.linkExternal link ]
-
-
-srcLink : UsageExample state msg -> Html msg2
-srcLink example =
-    let
-        link =
-            String.replace "." "/" (fullName example)
-                ++ ".elm"
-                |> (++) "https://github.com/NoRedInk/noredink-ui/blob/master/src/"
-    in
-    ClickableText.link "Source" [ ClickableText.linkExternal link ]

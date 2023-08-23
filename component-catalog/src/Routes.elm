@@ -36,7 +36,7 @@ toString route_ =
             "#/category_doodad/" ++ Category.forRoute c ++ "/" ++ example.name
 
         Usage example ->
-            "#/usage_example/" ++ example.name
+            "#/usage_example/" ++ UsageExample.routeName example
 
         All ->
             "#/"
@@ -65,7 +65,7 @@ route examples usageExamples =
             -> String
             -> Route state msg usageState usageMsg
         findUsageExample toRoute name =
-            Dict.get name usageExamples
+            Dict.get (UsageExample.fromRouteName name) usageExamples
                 |> Maybe.map toRoute
                 |> Maybe.withDefault (NotFound name)
     in
