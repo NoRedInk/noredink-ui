@@ -361,6 +361,7 @@ controlIcon =
                                     [ code
                                     , "Svg.withWidth (Css.px 20)"
                                     , "Svg.withHeight (Css.px 20)"
+                                    , "Svg.withCss [ Css.marginRight (Css.px 8) ]"
                                     , "Svg.toHtml"
                                     ]
                                     6
@@ -369,6 +370,7 @@ controlIcon =
                         icon
                             |> Svg.withWidth (Css.px 20)
                             |> Svg.withHeight (Css.px 20)
+                            |> Svg.withCss [ Css.marginRight (Css.px 8) ]
                             |> Svg.toHtml
                     )
                 )
