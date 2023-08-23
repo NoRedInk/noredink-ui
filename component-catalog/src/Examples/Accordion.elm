@@ -372,7 +372,7 @@ controlIcon =
                             |> Svg.toHtml
                     )
                 )
-                CommonControls.uiIcon
+                (CommonControls.rotatedUiIcon 1)
           )
         ]
 
