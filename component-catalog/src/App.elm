@@ -19,6 +19,8 @@ import Json.Decode as Decode
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Header.V1 as Header
+import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Html.V3 exposing (viewIf)
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Page.V3 as Page
 import Nri.Ui.SideNav.V5 as SideNav
@@ -29,10 +31,12 @@ import Routes
 import Sort.Set as Set
 import Task
 import Url exposing (Url)
+import UsageExample exposing (UsageExample)
+import UsageExamples
 
 
 type alias Route =
-    Routes.Route Examples.State Examples.Msg
+    Routes.Route Examples.State Examples.Msg () ()
 
 
 type alias Model key =
@@ -40,6 +44,7 @@ type alias Model key =
       route : Route
     , previousRoute : Maybe Route
     , moduleStates : Dict String (Example Examples.State Examples.Msg)
+    , usageExampleStates : Dict String (UsageExample () ())
     , isSideNavOpen : Bool
     , openTooltip : Maybe TooltipId
     , navigationKey : key
@@ -54,10 +59,15 @@ init () url key =
         moduleStates =
             Dict.fromList
                 (List.map (\example -> ( example.name, example )) Examples.all)
+
+        usageExampleStates =
+            Dict.fromList
+                (List.map (\example -> ( example.name, example )) UsageExamples.all)
     in
-    ( { route = Routes.fromLocation moduleStates url
+    ( { route = Routes.fromLocation moduleStates usageExampleStates url
       , previousRoute = Nothing
       , moduleStates = moduleStates
+      , usageExampleStates = usageExampleStates
       , isSideNavOpen = False
       , openTooltip = Nothing
       , navigationKey = key
@@ -78,6 +88,7 @@ type TooltipId
 
 type Msg
     = UpdateModuleStates String Examples.Msg
+    | UpdateUsageExamples String UsageExamples.Msg
     | OnUrlRequest Browser.UrlRequest
     | OnUrlChange Url
     | ChangeRoute Route
@@ -114,6 +125,23 @@ update action model =
                 Nothing ->
                     ( model, None )
 
+        UpdateUsageExamples key exampleMsg ->
+            case Dict.get key model.usageExampleStates of
+                Just example ->
+                    example.update exampleMsg example.state
+                        |> Tuple.mapFirst
+                            (\newState ->
+                                let
+                                    newExample =
+                                        { example | state = newState }
+                                in
+                                { model | usageExampleStates = Dict.insert key newExample model.usageExampleStates }
+                            )
+                        |> Tuple.mapSecond (Cmd.map (UpdateUsageExamples key) >> Command)
+
+                Nothing ->
+                    ( model, None )
+
         OnUrlRequest request ->
             case request of
                 Internal loc ->
@@ -125,7 +153,7 @@ update action model =
         OnUrlChange location ->
             let
                 route =
-                    Routes.fromLocation model.moduleStates location
+                    Routes.fromLocation model.moduleStates model.usageExampleStates location
             in
             ( { model
                 | route = route
@@ -278,6 +306,11 @@ view model =
             , body = toBody (viewCategory model category)
             }
 
+        Routes.Usage example ->
+            { title = example.name ++ " Usage Example in the NoRedInk Component Catalog"
+            , body = viewUsageExample model example |> toBody
+            }
+
         Routes.All ->
             { title = "NoRedInk Component Catalog"
             , body = toBody (viewAll model)
@@ -291,6 +324,13 @@ viewExample model example =
         |> viewLayout model [ Example.extraLinks (UpdateModuleStates example.name) example ]
 
 
+viewUsageExample : Model key -> Example a UsageExamples.Msg -> Html Msg
+viewUsageExample model example =
+    Example.view { packageDependencies = model.elliePackageDependencies } example
+        |> Html.map (UpdateUsageExamples example.name)
+        |> viewLayout model [ UsageExample.extraLinks (UpdateUsageExamples example.name) example ]
+
+
 notFound : Html Msg
 notFound =
     Page.notFound
@@ -302,32 +342,42 @@ notFound =
 viewAll : Model key -> Html Msg
 viewAll model =
     viewLayout model [] <|
-        viewPreviews "all"
+        viewExamplePreviews "all"
             { navigate = Routes.Doodad >> ChangeRoute
             , exampleHref = Routes.Doodad >> Routes.toString
             }
+            { navigate = Routes.Usage >> ChangeRoute
+            , exampleHref = Routes.Usage >> Routes.toString
+            }
             (Dict.values model.moduleStates)
+            (Dict.values model.usageExampleStates)
 
 
 viewCategory : Model key -> Category -> Html Msg
 viewCategory model category =
-    viewLayout model [] <|
-        (model.moduleStates
-            |> Dict.values
-            |> List.filter
-                (\doodad ->
+    let
+        filtered items =
+            List.filter
+                (\item ->
                     Set.memberOf
-                        (Set.fromList Category.sorter doodad.categories)
+                        (Set.fromList Category.sorter item.categories)
                         category
                 )
-            |> viewPreviews (Category.forId category)
-                { navigate = Routes.CategoryDoodad category >> ChangeRoute
-                , exampleHref = Routes.CategoryDoodad category >> Routes.toString
-                }
-        )
+                (Dict.values items)
+    in
+    viewLayout model [] <|
+        viewExamplePreviews (Category.forId category)
+            { navigate = Routes.CategoryDoodad category >> ChangeRoute
+            , exampleHref = Routes.CategoryDoodad category >> Routes.toString
+            }
+            { navigate = Routes.Usage >> ChangeRoute
+            , exampleHref = Routes.Usage >> Routes.toString
+            }
+            (filtered model.moduleStates)
+            (filtered model.usageExampleStates)
 
 
-viewLayout : Model key -> List (Header.Attribute (Routes.Route Examples.State Examples.Msg) Msg) -> Html Msg -> Html Msg
+viewLayout : Model key -> List (Header.Attribute Route Msg) -> Html Msg -> Html Msg
 viewLayout model headerExtras content =
     Html.div []
         [ Html.header [] [ Routes.viewHeader model.route headerExtras ]
@@ -353,26 +403,38 @@ viewLayout model headerExtras content =
         ]
 
 
-viewPreviews :
+viewExamplePreviews :
     String
     ->
         { navigate : Example Examples.State Examples.Msg -> Msg
         , exampleHref : Example Examples.State Examples.Msg -> String
         }
+    ->
+        { navigate : UsageExample UsageExamples.State UsageExamples.Msg -> Msg
+        , exampleHref : UsageExample UsageExamples.State UsageExamples.Msg -> String
+        }
     -> List (Example Examples.State Examples.Msg)
+    -> List (UsageExample UsageExamples.State UsageExamples.Msg)
     -> Html Msg
-viewPreviews containerId navConfig examples =
-    examples
-        |> List.map (Example.preview navConfig)
-        |> Html.div
-            [ id containerId
-            , css
-                [ Css.displayFlex
-                , Css.flexWrap Css.wrap
-                , Css.property "row-gap" (.value Spacing.verticalSpacerPx)
-                , Css.property "column-gap" (.value Spacing.horizontalSpacerPx)
-                ]
+viewExamplePreviews containerId exampleNavConfig usageNavConfig examples usageExamples =
+    Html.div [ id containerId ]
+        [ Heading.h2 [ Heading.plaintext "Components" ]
+        , examplesContainer (List.map (Example.preview exampleNavConfig) examples)
+        , viewIf (\_ -> Heading.h2 [ Heading.plaintext "Usage Examples" ]) (List.length usageExamples > 0)
+        , examplesContainer (List.map (UsageExample.preview usageNavConfig) usageExamples)
+        ]
+
+
+examplesContainer : List (Html msg) -> Html msg
+examplesContainer =
+    Html.div
+        [ css
+            [ Css.displayFlex
+            , Css.flexWrap Css.wrap
+            , Css.property "row-gap" (.value Spacing.verticalSpacerPx)
+            , Css.property "column-gap" (.value Spacing.horizontalSpacerPx)
             ]
+        ]
 
 
 navigation : Model key -> Html Msg

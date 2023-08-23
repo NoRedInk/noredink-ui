@@ -11,17 +11,19 @@ import Nri.Ui.Header.V1 as Header
 import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
 import Parser exposing ((|.), (|=), Parser)
 import Url exposing (Url)
+import UsageExample exposing (UsageExample)
 
 
-type Route state msg
-    = Doodad (Example state msg)
+type Route exampleState exampleMsg usageExampleState usageExampleMsg
+    = Doodad (Example exampleState exampleMsg)
     | Category Category.Category
-    | CategoryDoodad Category.Category (Example state msg)
+    | CategoryDoodad Category.Category (Example exampleState exampleMsg)
+    | Usage (UsageExample usageExampleState usageExampleMsg)
     | All
     | NotFound String
 
 
-toString : Route state msg -> String
+toString : Route state msg usageState usageMsg -> String
 toString route_ =
     case route_ of
         Doodad example ->
@@ -33,6 +35,9 @@ toString route_ =
         CategoryDoodad c example ->
             "#/category_doodad/" ++ Category.forRoute c ++ "/" ++ example.name
 
+        Usage example ->
+            "#/usage_example/" ++ example.name
+
         All ->
             "#/"
 
@@ -40,12 +45,27 @@ toString route_ =
             unmatchedRoute
 
 
-route : Dict String (Example state msg) -> Parser (Route state msg)
-route examples =
+route :
+    Dict String (Example state msg)
+    -> Dict String (UsageExample usageState usageMsg)
+    -> Parser (Route state msg usageState usageMsg)
+route examples usageExamples =
     let
-        findExample : (Example state msg -> Route state msg) -> String -> Route state msg
+        findExample :
+            (Example state msg -> Route state msg usageState usageMsg)
+            -> String
+            -> Route state msg usageState usageMsg
         findExample toRoute name =
             Dict.get name examples
+                |> Maybe.map toRoute
+                |> Maybe.withDefault (NotFound name)
+
+        findUsageExample :
+            (UsageExample usageState usageMsg -> Route state msg usageState usageMsg)
+            -> String
+            -> Route state msg usageState usageMsg
+        findUsageExample toRoute name =
+            Dict.get name usageExamples
                 |> Maybe.map toRoute
                 |> Maybe.withDefault (NotFound name)
     in
@@ -62,6 +82,9 @@ route examples =
             |= (restOfPath |> Parser.andThen category)
         , Parser.succeed (findExample Doodad)
             |. Parser.token "/doodad/"
+            |= restOfPath
+        , Parser.succeed (findUsageExample Usage)
+            |. Parser.token "/usage_example/"
             |= restOfPath
         , Parser.succeed All
         ]
@@ -82,7 +105,7 @@ category string =
             Parser.problem e
 
 
-updateExample : Example state msg -> Route state msg -> Maybe (Route state msg)
+updateExample : Example state msg -> Route state msg usageState usageMsg -> Maybe (Route state msg usageState usageMsg)
 updateExample example route_ =
     case route_ of
         Doodad _ ->
@@ -95,15 +118,19 @@ updateExample example route_ =
             Nothing
 
 
-fromLocation : Dict String (Example state msg) -> Url -> Route state msg
-fromLocation examples location =
+fromLocation :
+    Dict String (Example state msg)
+    -> Dict String (UsageExample usageState usageMsg)
+    -> Url
+    -> Route state msg usageState usageMsg
+fromLocation examples usageExamples location =
     location.fragment
         |> Maybe.withDefault ""
-        |> Parser.run (route examples)
+        |> Parser.run (route examples usageExamples)
         |> Result.withDefault All
 
 
-viewHeader : Route state msg -> List (Header.Attribute (Route state msg) msg2) -> Html msg2
+viewHeader : Route state msg usageState usageMsg -> List (Header.Attribute (Route state msg usageState usageMsg) msg2) -> Html msg2
 viewHeader currentRoute extraContent =
     breadCrumbs currentRoute
         |> Maybe.map
@@ -121,12 +148,12 @@ viewHeader currentRoute extraContent =
         |> Maybe.withDefault (Html.text "")
 
 
-headerId : Route state msg -> Maybe String
+headerId : Route state msg usageState usageMsg -> Maybe String
 headerId route_ =
     Maybe.map BreadCrumbs.headerId (breadCrumbs route_)
 
 
-breadCrumbs : Route state msg -> Maybe (BreadCrumbs (Route state msg))
+breadCrumbs : Route state msg usageState usageMsg -> Maybe (BreadCrumbs (Route state msg usageState usageMsg))
 breadCrumbs route_ =
     case route_ of
         All ->
@@ -141,11 +168,14 @@ breadCrumbs route_ =
         CategoryDoodad category_ example ->
             Just (doodadCrumb (categoryCrumb category_) example)
 
+        Usage example ->
+            Just (usageExampleCrumb example)
+
         NotFound _ ->
             Nothing
 
 
-allBreadCrumb : BreadCrumbs (Route state msg)
+allBreadCrumb : BreadCrumbs (Route state msg usageState usageMsg)
 allBreadCrumb =
     BreadCrumbs.init
         { id = "breadcrumbs__all"
@@ -155,7 +185,7 @@ allBreadCrumb =
         []
 
 
-categoryCrumb : Category.Category -> BreadCrumbs (Route state msg)
+categoryCrumb : Category.Category -> BreadCrumbs (Route state msg usageState usageMsg)
 categoryCrumb category_ =
     BreadCrumbs.after allBreadCrumb
         { id = "breadcrumbs__" ++ Category.forId category_
@@ -165,11 +195,21 @@ categoryCrumb category_ =
         []
 
 
-doodadCrumb : BreadCrumbs (Route state msg) -> Example state msg -> BreadCrumbs (Route state msg)
+doodadCrumb : BreadCrumbs (Route state msg usageState usageMsg) -> Example state msg -> BreadCrumbs (Route state msg usageState usageMsg)
 doodadCrumb previous example =
     BreadCrumbs.after previous
         { id = safeIdWithPrefix "breadcrumbs" example.name
         , text = Example.fullName example
         , route = Doodad example
+        }
+        []
+
+
+usageExampleCrumb : UsageExample usageState usageMsg -> BreadCrumbs (Route state msg usageState usageMsg)
+usageExampleCrumb example =
+    BreadCrumbs.after allBreadCrumb
+        { id = safeIdWithPrefix "breadcrumbs" example.name
+        , text = UsageExample.fullName example
+        , route = Usage example
         }
         []
