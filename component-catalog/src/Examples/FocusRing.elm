@@ -6,29 +6,28 @@ module Examples.FocusRing exposing (example, State, Msg)
 
 -}
 
+import Browser.Dom
 import Category exposing (Category(..))
 import Css exposing (Style)
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes exposing (css, href)
 import Markdown
+import Nri.Ui.Accordion.V3 as Accordion exposing (AccordionEntry(..))
+import Nri.Ui.Button.V10 as Button
+import Nri.Ui.Checkbox.V7 as Checkbox
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.Spacing.V1 as Spacing
+import Nri.Ui.Switch.V3 as Switch
 import Nri.Ui.Table.V7 as Table
-
-
-{-| -}
-type alias State =
-    ()
-
-
-{-| -}
-type alias Msg =
-    ()
+import Nri.Ui.UiIcon.V1 as UiIcon
+import Task
 
 
 {-| -}
@@ -38,8 +37,8 @@ example =
     , version = 1
     , categories = [ Text, Atoms ]
     , keyboardSupport = []
-    , state = ()
-    , update = \_ state -> ( state, Cmd.none )
+    , state = { isAccordionOpen = False }
+    , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
         [ example_ (Css.marginBottom (Css.px 30) :: FocusRing.styles)
@@ -54,12 +53,21 @@ example =
         , text "."
         ]
     , view =
-        \_ _ ->
+        \_ state ->
             [ Heading.h2
                 [ Heading.plaintext "Examples"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
-            , viewTable
+            , viewTable state
+            , Accordion.styleAccordion
+                { entryStyles = []
+                , entryExpandedStyles = []
+                , entryClosedStyles = []
+                , headerStyles = []
+                , headerExpandedStyles = []
+                , headerClosedStyles = []
+                , contentStyles = []
+                }
             ]
     }
 
@@ -84,8 +92,8 @@ exampleWithBorder styles =
         )
 
 
-viewTable : Html msg
-viewTable =
+viewTable : State -> Html Msg
+viewTable model =
     Table.view []
         [ Table.rowHeader
             { header = Html.text "Name"
@@ -120,9 +128,29 @@ viewTable =
                     ]
             , sort = Nothing
             }
+        , Table.custom
+            { header = text "Examples"
+            , view =
+                .examples
+                    >> div
+                        [ css
+                            [ Css.displayFlex
+                            , Css.flexDirection Css.column
+                            , Css.property "gap" "10px"
+                            ]
+                        ]
+            , width = Css.pct 10
+            , cellStyles = always [ Css.padding2 (Css.px 8) (Css.px 16) ]
+            , sort = Nothing
+            }
         ]
         [ { name = "styles"
           , view = exampleWithBorder FocusRing.styles
+          , examples =
+                [ button [] [ text "Button" ]
+                , label [] [ input [] [], text "Input" ]
+                , a [ href "#" ] [ text "Link" ]
+                ]
           , about =
                 """
 A two-tone focus ring that will be visually apparent for any background/element combination.
@@ -135,30 +163,104 @@ NOTE: use `boxShadows` instead if your focusable element:
           }
         , { name = "tightStyles"
           , view = exampleWithBorder FocusRing.tightStyles
+          , examples =
+                [ ClickableText.button "ClickableText button" [ ClickableText.small ]
+                , ClickableText.link "ClickableText link" [ ClickableText.small ]
+                , RadioButton.view
+                    { label = "Radio button"
+                    , name = "radio-input"
+                    , value = "Selected"
+                    , selectedValue = Just "Selected"
+                    , valueToString = identity
+                    }
+                    []
+                , Checkbox.view
+                    { label = "Checkbox"
+                    , selected = Checkbox.Selected
+                    }
+                    []
+                , p [] [ a [ href "#" ] [ text "`a` in a `p`" ] ]
+                ]
           , about = "Prefer `styles` over tightStyles, except in cases where line spacing/font size will otherwise cause obscured content."
           }
         , { name = "boxShadows"
           , view = exampleWithBorder [ FocusRing.boxShadows [] ]
+          , examples =
+                [ Switch.view { label = "Switch", id = "switch" } []
+                , ClickableSvg.button "ClickableSvg button" UiIcon.playInCircle []
+                , Button.button "Button button" [ Button.small, Button.secondary ]
+                ]
           , about = ""
           }
         , { name = "insetBoxShadows"
           , view = exampleWithBorder [ FocusRing.insetBoxShadows [] ]
+          , examples =
+                [ Accordion.view
+                    { entries =
+                        [ AccordionEntry
+                            { caret = Accordion.defaultCaret
+                            , content = \() -> text "Content"
+                            , entryClass = "accordion-focus-ring"
+                            , headerContent = text "Accordion"
+                            , headerId = "accordion-focus-ring-example-header"
+                            , headerLevel = Accordion.H3
+                            , isExpanded = model.isAccordionOpen
+                            , toggle = Just ToggleAccordion
+                            }
+                            []
+                        ]
+                    , focus = Focus
+                    }
+                ]
           , about = "Please be sure that the padding on the element you add this style too is sufficient (at least 6px on all sides) that the inset box shadow won't cover any content."
           }
         , { name = "outerBoxShadow"
           , view = exampleWithBorder [ FocusRing.outerBoxShadow ]
+          , examples = [ text "(See Tabs and TabsMinimal)" ]
           , about = "In special cases, we don't use a two-tone focus ring. Be very sure this is what you need before using this!"
           }
         , { name = "insetBoxShadow"
           , view = exampleWithBorder [ FocusRing.insetBoxShadow ]
+          , examples = [ text "(See SideNav)" ]
           , about = "In special cases, we don't use a two-tone focus ring, and an outset focus ring would be obscured. Be very sure this is what you need before using this!"
           }
         , { name = "outerColor"
           , view = exampleWithBorder [ Css.backgroundColor FocusRing.outerColor ]
+          , examples = []
           , about = "Colors.red"
           }
         , { name = "innerColor"
           , view = exampleWithBorder [ Css.backgroundColor FocusRing.innerColor ]
+          , examples = []
           , about = "Colors.white"
           }
         ]
+
+
+{-| -}
+type alias State =
+    { isAccordionOpen : Bool }
+
+
+{-| -}
+type Msg
+    = ToggleAccordion Bool
+    | Focus String
+    | Focused
+
+
+update : Msg -> State -> ( State, Cmd Msg )
+update msg model =
+    case msg of
+        ToggleAccordion isOpen ->
+            ( { model | isAccordionOpen = isOpen }
+            , Cmd.none
+            )
+
+        Focus id ->
+            ( model
+            , Task.attempt (\_ -> Focused) (Browser.Dom.focus id)
+            )
+
+        Focused ->
+            ( model, Cmd.none )
