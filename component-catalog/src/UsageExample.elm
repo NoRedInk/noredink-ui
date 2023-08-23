@@ -1,20 +1,16 @@
 module UsageExample exposing (UsageExample, fromRouteName, fullName, preview, routeName, view, wrapMsg, wrapState)
 
-import Accessibility.Styled.Aria as Aria
 import Category exposing (Category)
 import Css
 import Css.Media exposing (withMedia)
-import EllieLink
 import ExampleSection
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Html.Styled.Lazy as Lazy
-import KeyboardSupport exposing (KeyboardSupport)
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
-import Nri.Ui.Header.V1 as Header
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Text.V6 as Text
 

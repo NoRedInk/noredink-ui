@@ -8,7 +8,6 @@ module UsageExamples.ClickableCardWithTooltip exposing (example, State, Msg)
 
 import Category exposing (Category(..))
 import Html.Styled exposing (Html)
-import Nri.Ui.Tooltip.V3 as Tooltip
 import UsageExample exposing (UsageExample)
 
 

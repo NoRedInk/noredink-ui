@@ -200,8 +200,7 @@ describe("UI tests", function () {
     Pennant: iconProcessing,
   };
 
-  const specialUsageProcessing = {
-  };
+  const specialUsageProcessing = {};
 
   it("All", async function () {
     if (process.env.ONLYDOODAD == "default") {
@@ -279,7 +278,9 @@ describe("UI tests", function () {
       await page.$("#maincontent");
       let links = await page.evaluate(() => {
         let nodes = Array.from(
-          document.querySelectorAll("[data-nri-description='usage-example-link']")
+          document.querySelectorAll(
+            "[data-nri-description='usage-example-link']"
+          )
         );
         return nodes.map((node) => [node.text, node.href]);
       });
@@ -288,7 +289,8 @@ describe("UI tests", function () {
         return acc.then(() => {
           console.log(`Testing ${name}`);
           let testName = name.replaceAll(" ", "");
-          let handler = specialUsageProcessing[testName] || defaultUsageExampleProcessing;
+          let handler =
+            specialUsageProcessing[testName] || defaultUsageExampleProcessing;
           return handler(testName, name, location);
         });
       }, Promise.resolve());
@@ -296,5 +298,4 @@ describe("UI tests", function () {
       page.close();
     }
   });
-
 });
