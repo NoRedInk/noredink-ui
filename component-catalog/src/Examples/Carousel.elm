@@ -18,10 +18,10 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled as Html
+import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import KeyboardSupport exposing (Key(..))
-import Nri.Ui.Carousel.V1 as Carousel
+import Nri.Ui.Carousel.V2 as Carousel
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as Attributes
 import Task
@@ -173,12 +173,12 @@ example =
                         |> List.indexedMap toCarouselItem
 
                 { controls, slides } =
-                    Carousel.view
+                    Carousel.viewWithTabControls
                         { focusAndSelect = FocusAndSelectItem
                         , selected = model.selected
-                        , controlListStyles = Tuple.second settings.controlListStyles
-                        , controlStyles = Tuple.second settings.controlStyles
-                        , items = List.map Tuple.second allItems
+                        , tabControlListStyles = Tuple.second settings.controlListStyles
+                        , tabControlStyles = Tuple.second settings.controlStyles
+                        , panels = List.map Tuple.second allItems
                         }
             in
             [ ControlView.view
@@ -194,12 +194,14 @@ example =
                     \_ ->
                         let
                             code =
-                                [ moduleName ++ ".view"
+                              -- TODO: fix this
+                                [
+                                  moduleName ++ ".viewWithTabControls"
                                 , "    { focusAndSelect = identity"
                                 , "    , selected = " ++ String.fromInt model.selected
-                                , "    , controlListStyles = " ++ Tuple.first settings.controlListStyles
-                                , "    , controlStyles = " ++ Tuple.first settings.controlStyles
-                                , "    , items =" ++ Code.listMultiline (List.map Tuple.first allItems) 2
+                                , "    , tabControlListStyles = " ++ Tuple.first settings.controlListStyles
+                                , "    , tabControlStyles = " ++ Tuple.first settings.controlStyles
+                                , "    , panels =" ++ Code.listMultiline (List.map Tuple.first allItems) 2
                                 , "    }"
                                 , "    |> (\\{ controls, slides } -> section [] [ slides, controls ] )"
                                 ]
@@ -215,24 +217,27 @@ example =
     }
 
 
-toCarouselItem : Int -> a -> ( String, Carousel.Item Int msg )
+toCarouselItem : Int -> a -> ( String, { id : Int
+                                        , slideHtml : Html msg
+                                        , tabControlHtml : Html Never
+                                        , idString : String
+                                          } )
 toCarouselItem id _ =
     let
         idString =
             Attributes.safeIdWithPrefix "slide" <| String.fromInt id
     in
-    ( [ "Carousel.buildItem"
-      , "        { id = " ++ String.fromInt id
-      , "        , idString = \"" ++ idString ++ "\""
-      , "        , controlHtml = Html.text \"" ++ String.fromInt (id + 1) ++ "\""
-      , "        , slideHtml = Html.text \"" ++ String.fromInt (id + 1) ++ " slide\""
-      , "        }"
+    (
+      [ "{ id = " ++ String.fromInt id
+      , ", idString = \"" ++ idString ++ "\""
+      , ", tabControlHtml = Html.text \"" ++ String.fromInt (id + 1) ++ "\""
+      , ", slideHtml = Html.text \"" ++ String.fromInt (id + 1) ++ " slide\""
+      , "}"
       ]
-        |> String.join "\n    "
-    , Carousel.buildItem
-        { id = id
-        , idString = idString
-        , controlHtml = Html.text (String.fromInt (id + 1))
-        , slideHtml = Html.text (String.fromInt (id + 1) ++ " slide")
-        }
+        |> String.join "\n          "
+    , { id = id
+      , idString = idString
+      , tabControlHtml = Html.text (String.fromInt (id + 1))
+      , slideHtml = Html.text (String.fromInt (id + 1) ++ " slide")
+      }
     )

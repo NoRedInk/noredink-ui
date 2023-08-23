@@ -1,4 +1,4 @@
-module Nri.Ui.Carousel.V2 exposing (..)
+module Nri.Ui.Carousel.V2 exposing (viewWithCombinedControls, viewWithPreviousAndNextControls, viewWithTabControls)
 
 import Css exposing (..)
 import Html.Styled as Html exposing (Html)
