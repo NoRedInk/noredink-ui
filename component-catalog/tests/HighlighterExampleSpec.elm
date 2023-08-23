@@ -10,7 +10,7 @@ import Test.Html.Selector exposing (..)
 import TestApp exposing (app)
 
 
-route : Route State Msg
+route : Route State Msg usageState usageMsg
 route =
     Routes.Doodad example
 
