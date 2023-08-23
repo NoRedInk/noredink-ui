@@ -14,6 +14,7 @@ import Html.Styled.Attributes exposing (css)
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V7 as Table
@@ -89,47 +90,62 @@ viewTable =
             { header = Html.text "Name"
             , view = \{ name } -> code [] [ text name ]
             , width = Css.pct 10
-            , cellStyles = always []
+            , cellStyles = always [ Css.textAlign Css.left ]
             , sort = Nothing
             }
         , Table.custom
-            { header = text "view"
+            { header = text "View"
             , view = .view
             , width = Css.pct 10
             , cellStyles = always []
             , sort = Nothing
             }
-
-        --, Table.string
-        --    { header = "about"
-        --    , value = \_ -> text ""
-        --    , width = Css.pct 10
-        --    , cellStyles = always []
-        --    , sort = Nothing
-        --    }
+        , Table.string
+            { header = "About"
+            , value = .about
+            , width = Css.pct 10
+            , cellStyles = \_ -> [ Fonts.baseFont, Css.padding (Css.px 8) ]
+            , sort = Nothing
+            }
         ]
         [ { name = "styles"
           , view = exampleWithBorder FocusRing.styles
+          , about =
+                """
+A two-tone focus ring that will be visually apparent for any background/element combination.
+
+NOTE: use `boxShadows` instead if your focusable element:
+
+  - already has a box shadow
+  - has an explicit border radius set
+"""
           }
         , { name = "tightStyles"
           , view = exampleWithBorder FocusRing.tightStyles
+          , about = "Prefer `styles` over tightStyles, except in cases where line spacing/font size will otherwise cause obscured content."
           }
         , { name = "boxShadows"
           , view = exampleWithBorder [ FocusRing.boxShadows [] ]
+          , about = ""
           }
         , { name = "insetBoxShadows"
           , view = exampleWithBorder [ FocusRing.insetBoxShadows [] ]
+          , about = "Please be sure that the padding on the element you add this style too is sufficient (at least 6px on all sides) that the inset box shadow won't cover any content."
           }
         , { name = "outerBoxShadow"
           , view = exampleWithBorder [ FocusRing.outerBoxShadow ]
+          , about = "In special cases, we don't use a two-tone focus ring. Be very sure this is what you need before using this!"
           }
         , { name = "insetBoxShadow"
           , view = exampleWithBorder [ FocusRing.insetBoxShadow ]
+          , about = "In special cases, we don't use a two-tone focus ring, and an outset focus ring would be obscured. Be very sure this is what you need before using this!"
           }
         , { name = "outerColor"
           , view = exampleWithBorder [ Css.backgroundColor FocusRing.outerColor ]
+          , about = "Colors.red"
           }
         , { name = "innerColor"
           , view = exampleWithBorder [ Css.backgroundColor FocusRing.innerColor ]
+          , about = "Colors.white"
           }
         ]
