@@ -17,6 +17,7 @@ import Examples.Colors as Colors
 import Examples.Confetti as Confetti
 import Examples.Container as Container
 import Examples.Divider as Divider
+import Examples.FocusRing as FocusRing
 import Examples.Fonts as Fonts
 import Examples.Header as Header
 import Examples.Heading as Heading
@@ -374,6 +375,25 @@ all =
             (\msg ->
                 case msg of
                     FontsState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , FocusRing.example
+        |> Example.wrapMsg FocusRingMsg
+            (\msg ->
+                case msg of
+                    FocusRingMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState FocusRingState
+            (\msg ->
+                case msg of
+                    FocusRingState childState ->
                         Just childState
 
                     _ ->
@@ -1046,6 +1066,7 @@ type State
     | ContainerState Container.State
     | DividerState Divider.State
     | FontsState Fonts.State
+    | FocusRingState FocusRing.State
     | HeaderState Header.State
     | HeadingState Heading.State
     | HighlighterState Highlighter.State
@@ -1100,6 +1121,7 @@ type Msg
     | ContainerMsg Container.Msg
     | DividerMsg Divider.Msg
     | FontsMsg Fonts.Msg
+    | FocusRingMsg FocusRing.Msg
     | HeaderMsg Header.Msg
     | HeadingMsg Heading.Msg
     | HighlighterMsg Highlighter.Msg
