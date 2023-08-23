@@ -68,7 +68,7 @@ describe("UI tests", function () {
     }
   };
 
-  const goTo = async (name, location) => {
+  const goToExample = async (name, location) => {
     await page.goto(location, { waitUntil: "load" });
     await page.waitForXPath(
       `//h1[contains(., 'Nri.Ui.${name}') and @aria-current='page']`,
@@ -77,11 +77,25 @@ describe("UI tests", function () {
   };
 
   const defaultProcessing = async (name, location) => {
-    await goTo(name, location);
+    await goToExample(name, location);
     await percySnapshot(page, name);
 
     const results = await new AxePuppeteer(page)
       .disableRules(skippedRules[name] || [])
+      .analyze();
+    handleAxeResults(name, results);
+  };
+
+  const defaultUsageExampleProcessing = async (testName, name, location) => {
+    await page.goto(location, { waitUntil: "load" });
+    await page.waitForXPath(
+      `//h1[contains(., '${name}') and @aria-current='page']`,
+      200
+    );
+    await percySnapshot(page, name);
+
+    const results = await new AxePuppeteer(page)
+      .disableRules(skippedRules[testName] || [])
       .analyze();
     handleAxeResults(name, results);
   };
@@ -107,7 +121,7 @@ describe("UI tests", function () {
   };
 
   const messageProcessing = async (name, location) => {
-    await goTo(name, location);
+    await goToExample(name, location);
     await percySnapshot(page, name);
 
     var axe = await new AxePuppeteer(page)
@@ -128,7 +142,7 @@ describe("UI tests", function () {
   };
 
   const modalProcessing = async (name, location) => {
-    await goTo(name, location);
+    await goToExample(name, location);
 
     await page.click("#launch-modal");
     await page.waitForSelector('[role="dialog"]');
@@ -142,7 +156,7 @@ describe("UI tests", function () {
   };
 
   const pageProcessing = async (name, location) => {
-    await goTo(name, location);
+    await goToExample(name, location);
 
     var axe = await new AxePuppeteer(page)
       .disableRules(skippedRules[name] || [])
@@ -184,6 +198,9 @@ describe("UI tests", function () {
     UiIcon: iconProcessing,
     Logo: iconProcessing,
     Pennant: iconProcessing,
+  };
+
+  const specialUsageProcessing = {
   };
 
   it("All", async function () {
@@ -247,4 +264,37 @@ describe("UI tests", function () {
 
     page.close();
   });
+
+  it("Usage examples", async function () {
+    if (process.env.ONLYDOODAD == "default") {
+      page = await browser.newPage();
+
+      await page.emulateMediaFeatures([
+        { name: "prefers-reduced-motion", value: "reduce" },
+      ]);
+
+      handlePageErrors(page);
+      await page.goto(`http://localhost:${PORT}`);
+
+      await page.$("#maincontent");
+      let links = await page.evaluate(() => {
+        let nodes = Array.from(
+          document.querySelectorAll("[data-nri-description='usage-example-link']")
+        );
+        return nodes.map((node) => [node.text, node.href]);
+      });
+
+      await links.reduce((acc, [name, location]) => {
+        return acc.then(() => {
+          console.log(`Testing ${name}`);
+          let testName = name.replaceAll(" ", "");
+          let handler = specialUsageProcessing[testName] || defaultUsageExampleProcessing;
+          return handler(testName, name, location);
+        });
+      }, Promise.resolve());
+
+      page.close();
+    }
+  });
+
 });
