@@ -119,7 +119,7 @@ view ellieLinkConfig model =
                             , "              , entryClass = \"customizable-example\""
                             , "              , headerContent = " ++ Tuple.first settings.headerContent
                             , "              , headerId = \"customizable-example-header\""
-                            , "              , headerLevel = Accordion.H4"
+                            , "              , headerLevel = Accordion.H3"
                             , "              , isExpanded = True"
                             , "              , toggle = Nothing"
                             , "              }"
@@ -157,7 +157,7 @@ view ellieLinkConfig model =
                 , entryClass = "customizable-example"
                 , headerContent = Tuple.second settings_.headerContent
                 , headerId = "customizable-example-header"
-                , headerLevel = Accordion.H4
+                , headerLevel = Accordion.H3
                 , isExpanded = Set.member 4 model.expanded
                 , toggle = Just (Toggle 4)
                 }
@@ -168,7 +168,7 @@ view ellieLinkConfig model =
                 , entryClass = "accordion-example"
                 , headerContent = Html.text "Apples (has children)"
                 , headerId = "accordion-entry__1"
-                , headerLevel = Accordion.H4
+                , headerLevel = Accordion.H3
                 , isExpanded = Set.member 1 model.expanded
                 , toggle = Just (Toggle 1)
                 }
@@ -187,7 +187,7 @@ view ellieLinkConfig model =
                     , entryClass = "accordion-example-child"
                     , headerContent = Html.text "Gala"
                     , headerId = "accordion-entry__11"
-                    , headerLevel = Accordion.H5
+                    , headerLevel = Accordion.H4
                     , isExpanded = Set.member 11 model.expanded
                     , toggle = Just (Toggle 11)
                     }
@@ -207,7 +207,7 @@ view ellieLinkConfig model =
                     , entryClass = "accordion-example-child"
                     , headerContent = Html.text "Granny Smith"
                     , headerId = "accordion-entry__12"
-                    , headerLevel = Accordion.H5
+                    , headerLevel = Accordion.H4
                     , isExpanded = Set.member 12 model.expanded
                     , toggle = Just (Toggle 12)
                     }
@@ -227,7 +227,7 @@ view ellieLinkConfig model =
                     , entryClass = "accordion-example-child"
                     , headerContent = Html.text "Fuji"
                     , headerId = "accordion-entry__13"
-                    , headerLevel = Accordion.H5
+                    , headerLevel = Accordion.H4
                     , isExpanded = Set.member 13 model.expanded
                     , toggle = Just (Toggle 13)
                     }
@@ -239,7 +239,7 @@ view ellieLinkConfig model =
                 , entryClass = "accordion-example"
                 , headerContent = Html.text "Oranges"
                 , headerId = "accordion-entry__2"
-                , headerLevel = Accordion.H4
+                , headerLevel = Accordion.H3
                 , isExpanded = Set.member 2 model.expanded
                 , toggle = Just (Toggle 2)
                 }
@@ -271,7 +271,7 @@ view ellieLinkConfig model =
                 , entryClass = "fixed-positioning-accordion-example"
                 , headerContent = Html.text "Advanced Example: Expand & Scroll!"
                 , headerId = "accordion-entry__6"
-                , headerLevel = Accordion.H4
+                , headerLevel = Accordion.H3
                 , isExpanded = Set.member 6 model.expanded
                 , toggle = Just (Toggle 6)
                 }
