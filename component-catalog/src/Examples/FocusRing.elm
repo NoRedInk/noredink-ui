@@ -135,19 +135,24 @@ viewTable model =
             { header = text "Two-toned"
             , view =
                 \{ twoToned } ->
-                    if twoToned then
-                        UiIcon.checkmark
-                            |> Svg.withLabel "Yes"
-                            |> Svg.withWidth (Css.px 20)
-                            |> Svg.withColor Colors.greenDark
-                            |> Svg.toHtml
+                    twoToned
+                        |> Maybe.map
+                            (\twoToned_ ->
+                                if twoToned_ then
+                                    UiIcon.checkmark
+                                        |> Svg.withLabel "Yes"
+                                        |> Svg.withWidth (Css.px 20)
+                                        |> Svg.withColor Colors.greenDark
+                                        |> Svg.toHtml
 
-                    else
-                        UiIcon.x
-                            |> Svg.withLabel "No"
-                            |> Svg.withWidth (Css.px 20)
-                            |> Svg.withColor Colors.red
-                            |> Svg.toHtml
+                                else
+                                    UiIcon.x
+                                        |> Svg.withLabel "No"
+                                        |> Svg.withWidth (Css.px 20)
+                                        |> Svg.withColor Colors.red
+                                        |> Svg.toHtml
+                            )
+                        |> Maybe.withDefault (text "N/A")
             , width = Css.pct 1
             , cellStyles = always [ Css.padding2 (Css.px 8) (Css.px 16) ]
             , sort = Nothing
@@ -170,7 +175,7 @@ viewTable model =
         ]
         [ { name = "styles"
           , view = exampleWithBorderAndBG FocusRing.styles
-          , twoToned = True
+          , twoToned = Just True
           , examples =
                 [ button [] [ text "Button" ]
                 , label [] [ input [] [], text "Input" ]
@@ -188,7 +193,7 @@ NOTE: use `boxShadows` instead if your focusable element:
           }
         , { name = "tightStyles"
           , view = exampleWithBorderAndBG FocusRing.tightStyles
-          , twoToned = True
+          , twoToned = Just True
           , examples =
                 [ ClickableText.button "ClickableText button" [ ClickableText.small ]
                 , ClickableText.link "ClickableText link" [ ClickableText.small ]
@@ -211,7 +216,7 @@ NOTE: use `boxShadows` instead if your focusable element:
           }
         , { name = "boxShadows"
           , view = exampleWithBorderAndBG [ FocusRing.boxShadows [] ]
-          , twoToned = True
+          , twoToned = Just True
           , examples =
                 [ Switch.view { label = "Switch", id = "switch" } []
                 , ClickableSvg.button "ClickableSvg button" UiIcon.playInCircle []
@@ -236,7 +241,7 @@ NOTE: use `boxShadows` instead if your focusable element:
           }
         , { name = "insetBoxShadows"
           , view = exampleWithBorderAndBG [ FocusRing.insetBoxShadows [] ]
-          , twoToned = True
+          , twoToned = Just True
           , examples =
                 [ Accordion.view
                     { entries =
@@ -259,13 +264,13 @@ NOTE: use `boxShadows` instead if your focusable element:
           }
         , { name = "outerBoxShadow"
           , view = exampleWithBorderAndBG [ FocusRing.outerBoxShadow ]
-          , twoToned = False
+          , twoToned = Just False
           , examples = [ text "(See Tabs and TabsMinimal)" ]
           , about = "In special cases, we don't use a two-tone focus ring. Be very sure this is what you need before using this!"
           }
         , { name = "insetBoxShadow"
           , view = exampleWithBorderAndBG [ FocusRing.insetBoxShadow ]
-          , twoToned = False
+          , twoToned = Just False
           , examples = [ text "(See SideNav)" ]
           , about = "In special cases, we don't use a two-tone focus ring, and an outset focus ring would be obscured. Be very sure this is what you need before using this!"
           }
@@ -275,7 +280,7 @@ NOTE: use `boxShadows` instead if your focusable element:
                     [ Css.border3 (Css.px 2) Css.solid Colors.gray20
                     , Css.backgroundColor FocusRing.outerColor
                     ]
-          , twoToned = False
+          , twoToned = Nothing
           , examples = []
           , about = "Colors.red"
           }
@@ -285,7 +290,7 @@ NOTE: use `boxShadows` instead if your focusable element:
                     [ Css.border3 (Css.px 2) Css.solid Colors.gray20
                     , Css.backgroundColor FocusRing.innerColor
                     ]
-          , twoToned = False
+          , twoToned = Nothing
           , examples = []
           , about = "Colors.white"
           }
