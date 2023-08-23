@@ -1,30 +1,74 @@
 module Nri.Ui.Carousel.V2 exposing (viewWithCombinedControls, viewWithPreviousAndNextControls, viewWithTabControls)
 
+import Accessibility.Styled.Aria as Aria
 import Css exposing (..)
-import Html.Styled as Html exposing (Html)
+import Html.Styled as Html exposing (..)
+import Html.Styled.Attributes as Attrs exposing (css)
 import TabsInternal.V2 as TabsInternal
 
 
-{-| General concern: this doesn't enforce proper usage of attributes needed at
-the top level carousel container (e.g. role=region and aria-roledescription=carousel)
--}
 viewWithPreviousAndNextControls :
     { selected : id
     , panels :
         List
             { id : id
             , slideHtml : Html msg
+            , ariaLabel : AriaLabel
             }
     , viewPreviousButton : Html msg
     , viewNextButton : Html msg
+    , ariaLabel : AriaLabel
+    , controlListStyles : List Style
     }
     ->
         { controls : Html msg
         , slides : Html msg
+        , containerAttributes : List (Attribute msg)
         }
-viewWithPreviousAndNextControls =
-    -- Implements the Basic carousel pattern, without using TabsInternal
-    Debug.todo "TODO"
+viewWithPreviousAndNextControls config =
+    { controls =
+        div []
+            [ config.viewPreviousButton, config.viewNextButton ]
+    , slides =
+        List.map
+            (\panel ->
+                Html.div
+                    [ Attrs.attribute "role" "group"
+                    , Aria.roleDescription "slide"
+                    , ariaLabelToAttr panel.ariaLabel
+                    , css
+                        [ if config.selected == panel.id then
+                            Css.display Css.block
+
+                          else
+                            Css.display Css.none
+                        ]
+                    ]
+                    [ panel.slideHtml ]
+            )
+            config.panels
+            |> Html.div [ Attrs.attribute "atomic" "false", Attrs.attribute "live" "polite" ]
+    , containerAttributes =
+        [ Attrs.attribute "role" "region"
+        , Aria.roleDescription "carousel"
+        , ariaLabelToAttr config.ariaLabel
+        ]
+    }
+
+
+ariaLabelToAttr : AriaLabel -> Attribute msg
+ariaLabelToAttr label =
+    case label of
+        IdLabel l ->
+            Aria.labeledBy l
+
+        StringLabel l ->
+            Aria.label l
+
+
+type AriaLabel
+    = IdLabel String
+    | StringLabel String
 
 
 viewWithTabControls :
