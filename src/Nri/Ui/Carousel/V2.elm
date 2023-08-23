@@ -1,4 +1,9 @@
-module Nri.Ui.Carousel.V2 exposing (viewWithCombinedControls, viewWithPreviousAndNextControls, viewWithTabControls)
+module Nri.Ui.Carousel.V2 exposing
+    ( viewWithCombinedControls
+    , viewWithPreviousAndNextControls
+    , viewWithTabControls
+    , AriaLabel(..)
+    )
 
 import Accessibility.Styled.Aria as Aria
 import Css exposing (..)
