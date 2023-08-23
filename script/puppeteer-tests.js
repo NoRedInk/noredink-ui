@@ -187,29 +187,31 @@ describe("UI tests", function () {
   };
 
   it("All", async function () {
-    page = await browser.newPage();
+    if (process.env.ONLYDOODAD == "default") {
+      page = await browser.newPage();
 
-    await page.emulateMediaFeatures([
-      { name: "prefers-reduced-motion", value: "reduce" },
-    ]);
+      await page.emulateMediaFeatures([
+        { name: "prefers-reduced-motion", value: "reduce" },
+      ]);
 
-    handlePageErrors(page);
-    await page.goto(`http://localhost:${PORT}`, { waitUntil: "load" });
-    await page.$("#maincontent");
-    await percySnapshot(page, this.test.fullTitle());
+      handlePageErrors(page);
+      await page.goto(`http://localhost:${PORT}`, { waitUntil: "load" });
+      await page.$("#maincontent");
+      await percySnapshot(page, this.test.fullTitle());
 
-    const results = await new AxePuppeteer(page)
-      .disableRules([
-        "aria-hidden-focus",
-        "color-contrast",
-        "duplicate-id-aria",
-        "duplicate-id",
-      ])
-      .analyze();
+      const results = await new AxePuppeteer(page)
+        .disableRules([
+          "aria-hidden-focus",
+          "color-contrast",
+          "duplicate-id-aria",
+          "duplicate-id",
+        ])
+        .analyze();
 
-    page.close();
+      page.close();
 
-    handleAxeResults("index view", results);
+      handleAxeResults("index view", results);
+    }
   });
 
   it("Doodads", async function () {
