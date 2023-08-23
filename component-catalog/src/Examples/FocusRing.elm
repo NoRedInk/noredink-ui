@@ -12,8 +12,10 @@ import Example exposing (Example)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V7 as Table
 
 
@@ -38,27 +40,96 @@ example =
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
     , preview =
-        [ div
-            [ css
-                [ Css.width (Css.pct 100)
-                , Css.height (Css.px 20)
-                , Css.batch FocusRing.styles
-                , Css.marginBottom (Css.px 30)
-                ]
-            ]
-            []
-        , div
-            [ css
-                [ Css.width (Css.pct 100)
-                , Css.height (Css.px 20)
-                , Css.batch FocusRing.tightStyles
-                ]
-            ]
-            []
+        [ example_ (Css.marginBottom (Css.px 30) :: FocusRing.styles)
+        , example_ FocusRing.tightStyles
         ]
-    , about = []
+    , about =
+        [ text "Custom high-contrast focus ring styles. Learn more about this component in "
+        , ClickableText.link "Custom Focus Rings on the NoRedInk blog"
+            [ ClickableText.linkExternal "https://blog.noredink.com/post/703458632758689792/custom-focus-rings"
+            , ClickableText.appearsInline
+            ]
+        , text "."
+        ]
     , view =
         \_ _ ->
-            [ Heading.h2 [ Heading.plaintext "Examples" ]
+            [ Heading.h2
+                [ Heading.plaintext "Examples"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
+            , viewTable
             ]
     }
+
+
+example_ : List Style -> Html msg
+example_ styles =
+    div
+        [ css
+            [ Css.width (Css.pct 100)
+            , Css.height (Css.px 20)
+            , Css.batch styles
+            ]
+        ]
+        []
+
+
+exampleWithBorder : List Style -> Html msg
+exampleWithBorder styles =
+    example_
+        (Css.border3 (Css.px 2) Css.dashed Colors.gray20
+            :: styles
+        )
+
+
+viewTable : Html msg
+viewTable =
+    Table.view []
+        [ Table.rowHeader
+            { header = Html.text "Name"
+            , view = \{ name } -> code [] [ text name ]
+            , width = Css.pct 10
+            , cellStyles = always []
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "view"
+            , view = .view
+            , width = Css.pct 10
+            , cellStyles = always []
+            , sort = Nothing
+            }
+
+        --, Table.string
+        --    { header = "about"
+        --    , value = \_ -> text ""
+        --    , width = Css.pct 10
+        --    , cellStyles = always []
+        --    , sort = Nothing
+        --    }
+        ]
+        [ { name = "styles"
+          , view = exampleWithBorder FocusRing.styles
+          }
+        , { name = "tightStyles"
+          , view = exampleWithBorder FocusRing.tightStyles
+          }
+        , { name = "boxShadows"
+          , view = exampleWithBorder [ FocusRing.boxShadows [] ]
+          }
+        , { name = "insetBoxShadows"
+          , view = exampleWithBorder [ FocusRing.insetBoxShadows [] ]
+          }
+        , { name = "outerBoxShadow"
+          , view = exampleWithBorder [ FocusRing.outerBoxShadow ]
+          }
+        , { name = "insetBoxShadow"
+          , view = exampleWithBorder [ FocusRing.insetBoxShadow ]
+          }
+        , { name = "outerColor"
+          , view = exampleWithBorder [ Css.backgroundColor FocusRing.outerColor ]
+          }
+        , { name = "innerColor"
+          , view = exampleWithBorder [ Css.backgroundColor FocusRing.innerColor ]
+          }
+        ]
