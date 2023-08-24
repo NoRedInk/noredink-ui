@@ -45,6 +45,7 @@ module Nri.Ui.RadioButtonDotless.V1 exposing
 -}
 
 import Accessibility.Styled exposing (..)
+import Accessibility.Styled.Aria as Aria
 import Css exposing (..)
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
@@ -282,12 +283,15 @@ view { label, name, value, valueToString, selectedValue } attributes =
             isChecked
             ([ Attributes.id idValue
              , Attributes.class "Nri-RadioButton-HiddenRadioInput"
-             , Attributes.disabled config.isDisabled
-             , case config.onSelect of
-                Just onSelect_ ->
+             , Aria.disabled config.isDisabled
+             , case ( config.isDisabled, config.onSelect ) of
+                ( True, _ ) ->
+                    AttributeExtra.none
+
+                ( False, Just onSelect_ ) ->
                     Events.onClick (onSelect_ value)
 
-                Nothing ->
+                ( False, Nothing ) ->
                     AttributeExtra.none
              , css
                 [ position absolute
