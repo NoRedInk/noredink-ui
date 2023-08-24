@@ -21,7 +21,7 @@ import Html.Styled.Attributes as Attributes
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Svg.V1 exposing (Svg)
-import Nri.Ui.Tooltip.V3 as Tooltip
+import Nri.Ui.Tooltip.V4 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 

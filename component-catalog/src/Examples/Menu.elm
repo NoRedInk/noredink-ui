@@ -31,7 +31,7 @@ import Nri.Ui.Menu.V4 as Menu
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V7 as Table
 import Nri.Ui.TextInput.V7 as TextInput
-import Nri.Ui.Tooltip.V3 as Tooltip
+import Nri.Ui.Tooltip.V4 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
 import Svg.Styled as Svg
@@ -147,7 +147,7 @@ view ellieLinkConfig state =
             [ "import Nri.Ui.Button.V10 as Button"
             , "import Nri.Ui.ClickableSvg.V2 as ClickableSvg"
             , "import Nri.Ui.ClickableText.V3 as ClickableText"
-            , "import Nri.Ui.Tooltip.V3 as Tooltip"
+            , "import Nri.Ui.Tooltip.V4 as Tooltip"
             , "\ntype Msg = ToggleMenu { focus : Maybe String, isOpen : Bool } | ToggleTooltip Bool"
             ]
         , renderExample = Code.unstyledView
