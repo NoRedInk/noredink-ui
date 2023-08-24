@@ -175,30 +175,34 @@ describe("UI tests", function () {
     await page.waitForSelector("#parent-button-clicks");
 
     const buttonClick = async () => {
-      const button = await page.$('#parent-button');
-      await page.evaluate(el => el.click(), button);
+      const button = await page.$("#parent-button");
+      await page.evaluate((el) => el.click(), button);
       await page.waitForTimeout(100);
     };
 
     const getCounterText = async () => {
-      const counter = await page.$('#parent-button-clicks');
-      const text = await page.evaluate(el => el.innerText, counter);
+      const counter = await page.$("#parent-button-clicks");
+      const text = await page.evaluate((el) => el.innerText, counter);
       return text;
     };
 
     const tooltipTriggerClick = async () => {
-      const button = await page.$('#tooltip__disclosure-trigger');
-      await page.evaluate(el => el.click(), button);
+      const button = await page.$("#tooltip__disclosure-trigger");
+      await page.evaluate((el) => el.click(), button);
       await page.waitForTimeout(100);
     };
 
     const isTooltipVisible = async () => {
       let res = await page.evaluate(() => {
-        return getComputedStyle(document.getElementById('tooltip__disclosure').parentElement).getPropertyValue('display') != 'none';
+        return (
+          getComputedStyle(
+            document.getElementById("tooltip__disclosure").parentElement
+          ).getPropertyValue("display") != "none"
+        );
       });
 
       return res;
-    }
+    };
 
     assert.equal(await getCounterText(), "Parent Clicks: 0");
     assert.equal(await isTooltipVisible(), false);
@@ -211,7 +215,7 @@ describe("UI tests", function () {
     assert.equal(await getCounterText(), "Parent Clicks: 1");
     await buttonClick();
     assert.equal(await getCounterText(), "Parent Clicks: 2");
-  }
+  };
 
   const skippedRules = {
     // Loading's color contrast check seems to change behavior depending on whether Percy snapshots are taken or not
