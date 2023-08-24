@@ -185,20 +185,41 @@ example =
             let
                 settings =
                     Control.currentValue model.settings
+
+                ( code, view ) =
+                    case settings.carouselType of
+                        Tabs ->
+                            viewWithTabControls model
+
+                        PrevNext ->
+                            viewWithPreviousAndNextControls model
+
+                        Combined ->
+                            viewWithCombinedControls model
             in
-            case settings.carouselType of
-                Tabs ->
-                    viewWithTabControls ellieLinkConfig model
-
-                PrevNext ->
-                    viewWithPreviousAndNextControls ellieLinkConfig model
-
-                Combined ->
-                    viewWithCombinedControls ellieLinkConfig model
+            [ ControlView.view
+                { ellieLinkConfig = ellieLinkConfig
+                , name = moduleName
+                , version = version
+                , update = SetSettings
+                , settings = model.settings
+                , mainType = Just "RootHtml.Html { select : Int, focus : Maybe String }"
+                , extraCode = []
+                , renderExample = Code.unstyledView
+                , toExampleCode =
+                    \_ ->
+                        [ { sectionName = "Example"
+                          , code = code
+                          }
+                        ]
+                }
+            , view
+            ]
     }
 
 
-viewWithPreviousAndNextControls ellieLinkConfig model =
+viewWithPreviousAndNextControls : State -> ( String, Html Msg )
+viewWithPreviousAndNextControls model =
     let
         settings =
             Control.currentValue model.settings
@@ -248,41 +269,23 @@ viewWithPreviousAndNextControls ellieLinkConfig model =
                 , controlListStyles = Tuple.second settings.controlListStyles
                 }
     in
-    [ ControlView.view
-        { ellieLinkConfig = ellieLinkConfig
-        , name = moduleName
-        , version = version
-        , update = SetSettings
-        , settings = model.settings
-        , mainType = Just "RootHtml.Html { select : Int, focus : Maybe String }"
-        , extraCode = []
-        , renderExample = Code.unstyledView
-        , toExampleCode =
-            \_ ->
-                let
-                    code =
-                        [ moduleName ++ ".viewWithPreviousAndNextControls"
-                        , "    { selected = " ++ String.fromInt model.selected
-                        , "    , controlListStyles = " ++ Tuple.first settings.controlListStyles
-                        , "    , ariaLabel = Carousel.StringLabel \"Items\""
-                        , "    , panels =" ++ Code.listMultiline (List.map Tuple.first allItems) 2
-                        , "    , viewPreviousButton = Html.button [ Events.onClick identity ] [ Html.text \"Previous\" ]"
-                        , "    , viewNextButton = Html.button [ Events.onClick identity ] [ Html.text \"Next\" ]"
-                        , "    }"
-                        , "    |> (\\{ controls, slides, containerAttributes } -> section containerAttributes [ slides, controls ] )"
-                        ]
-                            |> String.join "\n"
-                in
-                [ { sectionName = "Example"
-                  , code = code
-                  }
-                ]
-        }
+    ( [ moduleName ++ ".viewWithPreviousAndNextControls"
+      , "    { selected = " ++ String.fromInt model.selected
+      , "    , controlListStyles = " ++ Tuple.first settings.controlListStyles
+      , "    , ariaLabel = Carousel.StringLabel \"Items\""
+      , "    , panels =" ++ Code.listMultiline (List.map Tuple.first allItems) 2
+      , "    , viewPreviousButton = Html.button [ Events.onClick identity ] [ Html.text \"Previous\" ]"
+      , "    , viewNextButton = Html.button [ Events.onClick identity ] [ Html.text \"Next\" ]"
+      , "    }"
+      , "    |> (\\{ controls, slides, containerAttributes } -> section containerAttributes [ slides, controls ] )"
+      ]
+        |> String.join "\n"
     , Html.div containerAttributes [ slides, controls ]
-    ]
+    )
 
 
-viewWithCombinedControls ellieLinkConfig model =
+viewWithCombinedControls : State -> ( String, Html Msg )
+viewWithCombinedControls model =
     let
         settings =
             Control.currentValue model.settings
@@ -320,42 +323,24 @@ viewWithCombinedControls ellieLinkConfig model =
                         [ Html.text "Next" ]
                 }
     in
-    [ ControlView.view
-        { ellieLinkConfig = ellieLinkConfig
-        , name = moduleName
-        , version = version
-        , update = SetSettings
-        , settings = model.settings
-        , mainType = Just "RootHtml.Html { select : Int, focus : Maybe String }"
-        , extraCode = []
-        , renderExample = Code.unstyledView
-        , toExampleCode =
-            \_ ->
-                let
-                    code =
-                        [ moduleName ++ ".viewWithTabControls"
-                        , "    { focusAndSelect = identity"
-                        , "    , selected = " ++ String.fromInt model.selected
-                        , "    , tabControlListStyles = " ++ Tuple.first settings.controlListStyles
-                        , "    , tabControlStyles = " ++ Tuple.first settings.controlStyles
-                        , "    , panels =" ++ Code.listMultiline (List.map Tuple.first allItems) 2
-                        , "    , viewPreviousButton = Html.button [ Events.onClick identity ] [ Html.text \"Previous\" ]"
-                        , "    , viewNextButton = Html.button [ Events.onClick identity ] [ Html.text \"Next\" ]"
-                        , "    }"
-                        , "    |> (\\{ tabControls, slides, previousAndNextControls } -> section [] [ slides, tabControls, previousAndNextControls ] )"
-                        ]
-                            |> String.join "\n"
-                in
-                [ { sectionName = "Example"
-                  , code = code
-                  }
-                ]
-        }
+    ( [ moduleName ++ ".viewWithTabControls"
+      , "    { focusAndSelect = identity"
+      , "    , selected = " ++ String.fromInt model.selected
+      , "    , tabControlListStyles = " ++ Tuple.first settings.controlListStyles
+      , "    , tabControlStyles = " ++ Tuple.first settings.controlStyles
+      , "    , panels =" ++ Code.listMultiline (List.map Tuple.first allItems) 2
+      , "    , viewPreviousButton = Html.button [ Events.onClick identity ] [ Html.text \"Previous\" ]"
+      , "    , viewNextButton = Html.button [ Events.onClick identity ] [ Html.text \"Next\" ]"
+      , "    }"
+      , "    |> (\\{ tabControls, slides, previousAndNextControls } -> section [] [ slides, tabControls, previousAndNextControls ] )"
+      ]
+        |> String.join "\n"
     , Html.div [] [ slides, tabControls, previousAndNextControls ]
-    ]
+    )
 
 
-viewWithTabControls ellieLinkConfig model =
+viewWithTabControls : State -> ( String, Html Msg )
+viewWithTabControls model =
     let
         settings =
             Control.currentValue model.settings
@@ -373,37 +358,18 @@ viewWithTabControls ellieLinkConfig model =
                 , panels = List.map Tuple.second allItems
                 }
     in
-    [ ControlView.view
-        { ellieLinkConfig = ellieLinkConfig
-        , name = moduleName
-        , version = version
-        , update = SetSettings
-        , settings = model.settings
-        , mainType = Just "RootHtml.Html { select : Int, focus : Maybe String }"
-        , extraCode = []
-        , renderExample = Code.unstyledView
-        , toExampleCode =
-            \_ ->
-                let
-                    code =
-                        [ moduleName ++ ".viewWithTabControls"
-                        , "    { focusAndSelect = identity"
-                        , "    , selected = " ++ String.fromInt model.selected
-                        , "    , tabControlListStyles = " ++ Tuple.first settings.controlListStyles
-                        , "    , tabControlStyles = " ++ Tuple.first settings.controlStyles
-                        , "    , panels =" ++ Code.listMultiline (List.map Tuple.first allItems) 2
-                        , "    }"
-                        , "    |> (\\{ controls, slides } -> section [] [ slides, controls ] )"
-                        ]
-                            |> String.join "\n"
-                in
-                [ { sectionName = "Example"
-                  , code = code
-                  }
-                ]
-        }
+    ( [ moduleName ++ ".viewWithTabControls"
+      , "    { focusAndSelect = identity"
+      , "    , selected = " ++ String.fromInt model.selected
+      , "    , tabControlListStyles = " ++ Tuple.first settings.controlListStyles
+      , "    , tabControlStyles = " ++ Tuple.first settings.controlStyles
+      , "    , panels =" ++ Code.listMultiline (List.map Tuple.first allItems) 2
+      , "    }"
+      , "    |> (\\{ controls, slides } -> section [] [ slides, controls ] )"
+      ]
+        |> String.join "\n"
     , Html.div [] [ slides, controls ]
-    ]
+    )
 
 
 toCarouselItem :
