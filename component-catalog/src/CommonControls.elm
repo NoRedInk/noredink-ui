@@ -252,7 +252,7 @@ exampleHtml =
         ]
     , Html.text " When I stepped out, into the bright sunlight from the "
     , Html.a
-        [ href "https://example.com" ]
+        [ Attributes.href "https://example.com" ]
         [ Html.text "darkness of the movie house " ]
     , Html.text "I had only two things on my mind: Paul Newman, and a ride home."
     ]
