@@ -37,7 +37,7 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Examples.Colors
 import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes as Attributes exposing (href)
+import Html.Styled.Attributes as Attributes
 import Http
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
