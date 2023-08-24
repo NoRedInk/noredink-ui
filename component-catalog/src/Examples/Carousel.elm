@@ -192,6 +192,7 @@ example =
 
                 PrevNext ->
                     viewWithPreviousAndNextControls ellieLinkConfig model
+
                 Combined ->
                     viewWithCombinedControls ellieLinkConfig model
     }
@@ -280,6 +281,7 @@ viewWithPreviousAndNextControls ellieLinkConfig model =
     , Html.div containerAttributes [ slides, controls ]
     ]
 
+
 viewWithCombinedControls ellieLinkConfig model =
     let
         settings =
@@ -298,7 +300,6 @@ viewWithCombinedControls ellieLinkConfig model =
 
             else
                 0
-
 
         allItems =
             List.repeat settings.items ()
@@ -352,6 +353,7 @@ viewWithCombinedControls ellieLinkConfig model =
         }
     , Html.div [] [ slides, tabControls, previousAndNextControls ]
     ]
+
 
 viewWithTabControls ellieLinkConfig model =
     let

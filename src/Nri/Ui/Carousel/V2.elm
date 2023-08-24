@@ -1,11 +1,10 @@
 module Nri.Ui.Carousel.V2 exposing
-    ( AriaLabel(..)
-    , viewWithCombinedControls
-    , viewWithPreviousAndNextControls
-    , viewWithTabControls
+    ( viewWithCombinedControls, viewWithPreviousAndNextControls
+    , viewWithTabControls, AriaLabel(..)
     )
 
 {-| Patch changes:
+
   - added new carousel APIs (with tabbed controls/previous and next controls, and combined controls)
 
 @docs viewWithCombinedControls, viewWithPreviousAndNextControls
@@ -21,10 +20,10 @@ import TabsInternal.V2 as TabsInternal
 
 
 {-| Builds a carousel with previous and next controls
-  Returns:
-  `controls`: previous and next buttons element
-  `slides` the container with the carousel contents
-  `containerAttributes` attributes that should be used on the parent div of both the button and slides elements
+Returns:
+`controls`: previous and next buttons element
+`slides` the container with the carousel contents
+`containerAttributes` attributes that should be used on the parent div of both the button and slides elements
 -}
 viewWithPreviousAndNextControls :
     { selected : id
@@ -86,8 +85,8 @@ ariaLabelToAttr label =
 
 
 {-| Type which represents the type of aria label which will be used
-  `IdLabel` will point to an existing element id on the DOM
-  `StringLabel` will be a label of the element
+`IdLabel` will point to an existing element id on the DOM
+`StringLabel` will be a label of the element
 -}
 type AriaLabel
     = IdLabel String
@@ -95,9 +94,9 @@ type AriaLabel
 
 
 {-| Builds a carousel with tab buttons
-  Returns:
-  `controls`: tabs control buttons
-  `slides` container with the carousel contents
+Returns:
+`controls`: tabs control buttons
+`slides` container with the carousel contents
 -}
 viewWithTabControls :
     { cfg
@@ -140,10 +139,10 @@ viewWithTabControls config =
 
 
 {-| Builds a carousel with tab buttons
-  Returns:
-  `tabControls`: tabs control buttons
-  `slides` container with the carousel contents
-  `previousAndNextControls`: previous and next buttons element
+Returns:
+`tabControls`: tabs control buttons
+`slides` container with the carousel contents
+`previousAndNextControls`: previous and next buttons element
 -}
 viewWithCombinedControls :
     { selected : id
