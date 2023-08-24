@@ -77,17 +77,18 @@ type AriaLabel
 
 
 viewWithTabControls :
-    { selected : id
-    , panels :
-        List
-            { id : id
-            , slideHtml : Html msg
-            , tabControlHtml : Html Never
-            , idString : String
-            }
-    , focusAndSelect : { select : id, focus : Maybe String } -> msg
-    , tabControlStyles : Bool -> List Style
-    , tabControlListStyles : List Style
+    { cfg
+        | selected : id
+        , panels :
+            List
+                { id : id
+                , slideHtml : Html msg
+                , tabControlHtml : Html Never
+                , idString : String
+                }
+        , focusAndSelect : { select : id, focus : Maybe String } -> msg
+        , tabControlStyles : Bool -> List Style
+        , tabControlListStyles : List Style
     }
     ->
         { controls : Html msg
@@ -121,7 +122,8 @@ viewWithCombinedControls :
         List
             { id : id
             , slideHtml : Html msg
-            , tabControlHtml : Html msg
+            , tabControlHtml : Html Never
+            , idString : String
             }
     , focusAndSelect : { select : id, focus : Maybe String } -> msg
     , viewTabControl : id -> Html msg
@@ -131,12 +133,16 @@ viewWithCombinedControls :
     , viewNextButton : Html msg
     }
     ->
-        -- NOTE the change in the return type here!
         { tabControls : Html msg
         , previousAndNextControls : Html msg
         , slides : Html msg
         }
-viewWithCombinedControls =
-    -- Wraps the call to TabsInternal, adding previous/next buttons following
-    -- advice from https://www.w3.org/WAI/ARIA/apg/patterns/carousel/.
-    Debug.todo "TODO"
+viewWithCombinedControls config =
+    let
+        { controls, slides } =
+            viewWithTabControls config
+    in
+    { tabControls = controls
+    , slides = slides
+    , previousAndNextControls = div [] [ config.viewPreviousButton, config.viewNextButton ]
+    }
