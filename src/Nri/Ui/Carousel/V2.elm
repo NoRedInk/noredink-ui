@@ -1,8 +1,8 @@
 module Nri.Ui.Carousel.V2 exposing
-    ( viewWithCombinedControls
+    ( AriaLabel(..)
+    , viewWithCombinedControls
     , viewWithPreviousAndNextControls
     , viewWithTabControls
-    , AriaLabel(..)
     )
 
 import Accessibility.Styled.Aria as Aria
@@ -32,7 +32,7 @@ viewWithPreviousAndNextControls :
         }
 viewWithPreviousAndNextControls config =
     { controls =
-        div []
+        div [ css config.controlListStyles ]
             [ config.viewPreviousButton, config.viewNextButton ]
     , slides =
         List.map

@@ -212,18 +212,27 @@ viewWithPreviousAndNextControls ellieLinkConfig model =
             else
                 0
 
+        allItems =
+            List.repeat settings.items ()
+                |> List.indexedMap
+                    (\id _ ->
+                        ( [ "{ id = " ++ String.fromInt id
+                          , ", slideHtml = Html.text \"" ++ String.fromInt (id + 1) ++ " slide\""
+                          , ", ariaLabel = Carousel.StringLabel (String.fromInt (id + 1) ++ \" of \" ++ String.fromInt settings.items)"
+                          , "}"
+                          ]
+                            |> String.join "\n          "
+                        , { id = id
+                          , slideHtml = Html.text (String.fromInt (id + 1))
+                          , ariaLabel = Carousel.StringLabel (String.fromInt (id + 1) ++ " of " ++ String.fromInt settings.items)
+                          }
+                        )
+                    )
+
         { controls, slides, containerAttributes } =
             Carousel.viewWithPreviousAndNextControls
                 { selected = model.selected
-                , panels =
-                    List.repeat settings.items ()
-                        |> List.indexedMap
-                            (\id _ ->
-                                { id = id
-                                , slideHtml = Html.text (String.fromInt (id + 1))
-                                , ariaLabel = Carousel.StringLabel (String.fromInt (id + 1) ++ " of " ++ String.fromInt settings.items)
-                                }
-                            )
+                , panels = List.map Tuple.second allItems
                 , viewPreviousButton =
                     Html.button [ Events.onClick (FocusAndSelectItem { select = previousId, focus = Nothing }) ]
                         [ Html.text "Previous" ]
@@ -231,7 +240,7 @@ viewWithPreviousAndNextControls ellieLinkConfig model =
                     Html.button [ Events.onClick (FocusAndSelectItem { select = nextId, focus = Nothing }) ]
                         [ Html.text "Next" ]
                 , ariaLabel = Carousel.StringLabel "Items"
-                , controlListStyles = []
+                , controlListStyles = Tuple.second settings.controlListStyles
                 }
     in
     [ ControlView.view
@@ -247,15 +256,15 @@ viewWithPreviousAndNextControls ellieLinkConfig model =
             \_ ->
                 let
                     code =
-                        [-- TODO: create example
-                         --   moduleName ++ ".viewWithTabControls"
-                         -- , "    { focusAndSelect = identity"
-                         -- , "    , selected = " ++ String.fromInt model.selected
-                         -- , "    , tabControlListStyles = " ++ Tuple.first settings.controlListStyles
-                         -- , "    , tabControlStyles = " ++ Tuple.first settings.controlStyles
-                         -- , "    , panels =" ++ Code.listMultiline (List.map Tuple.first allItems) 2
-                         -- , "    }"
-                         -- , "    |> (\\{ controls, slides } -> section [] [ slides, controls ] )"
+                        [ moduleName ++ ".viewWithPreviousAndNextControls"
+                        , "    { selected = " ++ String.fromInt model.selected
+                        , "    , controlListStyles = " ++ Tuple.first settings.controlListStyles
+                        , "    , ariaLabel = Carousel.StringLabel \"Items\""
+                        , "    , panels =" ++ Code.listMultiline (List.map Tuple.first allItems) 2
+                        , "    , viewPreviousButton = Html.button [ Events.onClick identity ] [ Html.text \"Previous\" ]"
+                        , "    , viewNextButton = Html.button [ Events.onClick identity ] [ Html.text \"Next\" ]"
+                        , "    }"
+                        , "    |> (\\{ controls, slides, containerAttributes } -> section containerAttributes [ slides, controls ] )"
                         ]
                             |> String.join "\n"
                 in
