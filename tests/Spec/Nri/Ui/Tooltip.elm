@@ -1,8 +1,10 @@
 module Spec.Nri.Ui.Tooltip exposing (spec)
 
 import Accessibility.Aria as Aria
-import Html.Attributes as Attributes
+import Expect
+import Html.Attributes
 import Html.Styled as HtmlStyled
+import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Tooltip.V3 as Tooltip
 import ProgramTest exposing (ProgramTest, ensureViewHas, ensureViewHasNot)
 import Spec.Helpers exposing (nriDescription)
@@ -82,6 +84,47 @@ spec =
                         ]
                     |> ProgramTest.ensureViewHasNot (id tooltipId :: tooltipContentSelector tooltipContent)
                     |> ProgramTest.done
+        , test "Prevents default on disclosures" <|
+            \() ->
+                let
+                    tooltipContent =
+                        "This will be the primary label"
+
+                    triggerContent =
+                        "label-less icon"
+
+                    tooltipId =
+                        "primary-label"
+
+                    triggerId =
+                        "trigger"
+
+                    view model =
+                        Tooltip.view
+                            { trigger =
+                                \attributes ->
+                                    ClickableText.button triggerContent
+                                        [ ClickableText.custom attributes
+                                        , ClickableText.id triggerId
+                                        ]
+                            , id = tooltipId
+                            }
+                            [ Tooltip.open model.isOpen
+                            , Tooltip.plaintext tooltipContent
+                            , Tooltip.primaryLabel
+                            , Tooltip.onToggle (\_ -> ())
+                            , Tooltip.disclosure
+                                { triggerId = triggerId
+                                , lastId = Nothing
+                                }
+                            ]
+                            |> HtmlStyled.toUnstyled
+                in
+                view { isOpen = False }
+                    |> Query.fromHtml
+                    |> Query.find [ Selector.id triggerId ]
+                    |> Event.simulate Event.click
+                    |> Expect.all [ Event.expectStopPropagation, Event.expectPreventDefault ]
         ]
 
 
@@ -102,7 +145,7 @@ program view attributes =
 
 tooltipContentSelector : String -> List Selector.Selector
 tooltipContentSelector tooltipContent =
-    [ Selector.attribute (Attributes.attribute "data-tooltip-visible" "true")
+    [ Selector.attribute (Html.Attributes.attribute "data-tooltip-visible" "true")
     , Selector.containing [ text tooltipContent ]
     ]
 

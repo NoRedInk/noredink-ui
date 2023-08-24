@@ -170,10 +170,59 @@ describe("UI tests", function () {
     handleAxeResults(name, results);
   };
 
+  const tooltipProcessing = async (name, location) => {
+    await defaultProcessing(name, location);
+    await page.waitForSelector("#parent-button-clicks");
+
+    const buttonClick = async () => {
+      const button = await page.$("#parent-button");
+      await page.evaluate((el) => el.click(), button);
+      await page.waitForTimeout(100);
+    };
+
+    const getCounterText = async () => {
+      const counter = await page.$("#parent-button-clicks");
+      const text = await page.evaluate((el) => el.innerText, counter);
+      return text;
+    };
+
+    const tooltipTriggerClick = async () => {
+      const button = await page.$("#tooltip__disclosure-trigger");
+      await page.evaluate((el) => el.click(), button);
+      await page.waitForTimeout(100);
+    };
+
+    const isTooltipVisible = async () => {
+      let res = await page.evaluate(() => {
+        return (
+          getComputedStyle(
+            document.getElementById("tooltip__disclosure").parentElement
+          ).getPropertyValue("display") != "none"
+        );
+      });
+
+      return res;
+    };
+
+    assert.equal(await getCounterText(), "Parent Clicks: 0");
+    assert.equal(await isTooltipVisible(), false);
+    await tooltipTriggerClick();
+    assert.equal(await isTooltipVisible(), true);
+    await tooltipTriggerClick();
+    assert.equal(await isTooltipVisible(), false);
+    assert.equal(await getCounterText(), "Parent Clicks: 0");
+    await buttonClick();
+    assert.equal(await getCounterText(), "Parent Clicks: 1");
+    await buttonClick();
+    assert.equal(await getCounterText(), "Parent Clicks: 2");
+  };
+
   const skippedRules = {
     // Loading's color contrast check seems to change behavior depending on whether Percy snapshots are taken or not
     Loading: ["color-contrast"],
     RadioButton: ["duplicate-id"],
+    // We need nested-interactive to test the tooltip behavior
+    Tooltip: ["nested-interactive"],
   };
 
   const specialProcessing = {
@@ -184,6 +233,7 @@ describe("UI tests", function () {
     UiIcon: iconProcessing,
     Logo: iconProcessing,
     Pennant: iconProcessing,
+    Tooltip: tooltipProcessing,
   };
 
   it("All", async function () {
