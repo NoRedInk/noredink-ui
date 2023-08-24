@@ -9,7 +9,7 @@ module Nri.Ui.Carousel.V2 exposing
   - added new carousel APIs (with tabbed controls/previous and next controls, and combined controls)
 
 @docs viewWithCombinedControls, viewWithPreviousAndNextControls
-@docs viewWithTabControls
+@docs viewWithTabControls, AriaLabel
 
 -}
 
@@ -85,6 +85,10 @@ ariaLabelToAttr label =
             Aria.label l
 
 
+{-| Type which represents the type of aria label which will be used
+  `IdLabel` will point to an existing element id on the DOM
+  `StringLabel` will be a label of the element
+-}
 type AriaLabel
     = IdLabel String
     | StringLabel String
