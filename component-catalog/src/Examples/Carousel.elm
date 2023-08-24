@@ -52,6 +52,7 @@ type alias Settings =
 type CarouselType
     = Tabs
     | PrevNext
+    | Combined
 
 
 initSettings : Control Settings
@@ -68,6 +69,7 @@ controlCarouselType =
     Control.choice
         [ ( "Tabs", Control.value Tabs )
         , ( "PrevNext", Control.value PrevNext )
+        , ( "Combined", Control.value Combined )
         ]
 
 
@@ -143,7 +145,7 @@ moduleName =
 
 version : Int
 version =
-    1
+    2
 
 
 example : Example State Msg
@@ -190,6 +192,8 @@ example =
 
                 PrevNext ->
                     viewWithPreviousAndNextControls ellieLinkConfig model
+                Combined ->
+                    viewWithCombinedControls ellieLinkConfig model
     }
 
 
@@ -276,6 +280,78 @@ viewWithPreviousAndNextControls ellieLinkConfig model =
     , Html.div containerAttributes [ slides, controls ]
     ]
 
+viewWithCombinedControls ellieLinkConfig model =
+    let
+        settings =
+            Control.currentValue model.settings
+
+        previousId =
+            if model.selected - 1 >= 0 then
+                model.selected - 1
+
+            else
+                settings.items - 1
+
+        nextId =
+            if model.selected + 1 < settings.items then
+                model.selected + 1
+
+            else
+                0
+
+
+        allItems =
+            List.repeat settings.items ()
+                |> List.indexedMap toCarouselItem
+
+        { tabControls, slides, previousAndNextControls } =
+            Carousel.viewWithCombinedControls
+                { focusAndSelect = FocusAndSelectItem
+                , selected = model.selected
+                , tabControlListStyles = Tuple.second settings.controlListStyles
+                , tabControlStyles = Tuple.second settings.controlStyles
+                , panels = List.map Tuple.second allItems
+                , viewPreviousButton =
+                    Html.button [ Events.onClick (FocusAndSelectItem { select = previousId, focus = Nothing }) ]
+                        [ Html.text "Previous" ]
+                , viewNextButton =
+                    Html.button [ Events.onClick (FocusAndSelectItem { select = nextId, focus = Nothing }) ]
+                        [ Html.text "Next" ]
+                }
+    in
+    [ ControlView.view
+        { ellieLinkConfig = ellieLinkConfig
+        , name = moduleName
+        , version = version
+        , update = SetSettings
+        , settings = model.settings
+        , mainType = Just "RootHtml.Html { select : Int, focus : Maybe String }"
+        , extraCode = []
+        , renderExample = Code.unstyledView
+        , toExampleCode =
+            \_ ->
+                let
+                    code =
+                        [ moduleName ++ ".viewWithTabControls"
+                        , "    { focusAndSelect = identity"
+                        , "    , selected = " ++ String.fromInt model.selected
+                        , "    , tabControlListStyles = " ++ Tuple.first settings.controlListStyles
+                        , "    , tabControlStyles = " ++ Tuple.first settings.controlStyles
+                        , "    , panels =" ++ Code.listMultiline (List.map Tuple.first allItems) 2
+                        , "    , viewPreviousButton = Html.button [ Events.onClick identity ] [ Html.text \"Previous\" ]"
+                        , "    , viewNextButton = Html.button [ Events.onClick identity ] [ Html.text \"Next\" ]"
+                        , "    }"
+                        , "    |> (\\{ tabControls, slides, previousAndNextControls } -> section [] [ slides, tabControls, previousAndNextControls ] )"
+                        ]
+                            |> String.join "\n"
+                in
+                [ { sectionName = "Example"
+                  , code = code
+                  }
+                ]
+        }
+    , Html.div [] [ slides, tabControls, previousAndNextControls ]
+    ]
 
 viewWithTabControls ellieLinkConfig model =
     let

@@ -126,7 +126,6 @@ viewWithCombinedControls :
             , idString : String
             }
     , focusAndSelect : { select : id, focus : Maybe String } -> msg
-    , viewTabControl : id -> Html msg
     , tabControlStyles : Bool -> List Style
     , tabControlListStyles : List Style
     , viewPreviousButton : Html msg
