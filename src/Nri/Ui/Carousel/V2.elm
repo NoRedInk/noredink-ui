@@ -51,7 +51,6 @@ viewWithPreviousAndNextControls :
     , viewPreviousButton : Html msg
     , viewNextButton : Html msg
     , labelledBy : LabelledBy
-    , controlListStyles : List Style
     , role : Role
     }
     ->

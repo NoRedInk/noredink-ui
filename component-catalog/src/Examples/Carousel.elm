@@ -265,7 +265,6 @@ viewWithPreviousAndNextControls model =
                 , viewNextButton =
                     Html.button [ Events.onClick (FocusAndSelectItem { select = nextId, focus = Nothing }) ]
                         [ Html.text "Next" ]
-                , controlListStyles = Tuple.second settings.controlListStyles
                 , labelledBy = Carousel.LabelledByIdOfVisibleLabel "Items"
                 , role = Carousel.Group
                 }
