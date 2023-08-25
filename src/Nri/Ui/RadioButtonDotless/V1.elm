@@ -317,8 +317,8 @@ view { label, name, value, valueToString, selectedValue } attributes =
                     Large ->
                         Css.batch
                             [ minHeight (px 56)
-                            , fontSize (px 20)
-                            , lineHeight (px 22)
+                            , fontSize (px 18)
+                            , lineHeight (px 28)
                             ]
                 , width (pct 100)
                 , if isChecked then
