@@ -67,7 +67,7 @@ viewWithPreviousAndNextControls config =
         List.map
             (\panel ->
                 Html.div
-                    [ Attrs.attribute "role" (roleToString config.role)
+                    [ Attrs.attribute "role" "group"
                     , Aria.roleDescription "slide"
                     , labelledByToAttr panel.labelledBy
                     , css
@@ -83,7 +83,7 @@ viewWithPreviousAndNextControls config =
             config.panels
             |> Html.div [ Attrs.attribute "atomic" "false", Attrs.attribute "live" "polite" ]
     , containerAttributes =
-        [ Attrs.attribute "role" "region"
+        [ Attrs.attribute "role" (roleToString config.role)
         , Aria.roleDescription "carousel"
         , labelledByToAttr config.labelledBy
         ]
@@ -108,10 +108,13 @@ viewWithTabControls :
         , focusAndSelect : { select : id, focus : Maybe String } -> msg
         , tabControlStyles : Bool -> List Style
         , tabControlListStyles : List Style
+        , role : Role
+        , labelledBy : LabelledBy
     }
     ->
         { controls : Html msg
         , slides : Html msg
+        , containerAttributes : List (Attribute msg)
         }
 viewWithTabControls config =
     let
@@ -132,6 +135,11 @@ viewWithTabControls config =
     in
     { controls = tabList
     , slides = tabPanels
+    , containerAttributes =
+        [ Attrs.attribute "role" (roleToString config.role)
+        , Aria.roleDescription "carousel"
+        , labelledByToAttr config.labelledBy
+        ]
     }
 
 
@@ -155,20 +163,24 @@ viewWithCombinedControls :
     , tabControlListStyles : List Style
     , viewPreviousButton : Html msg
     , viewNextButton : Html msg
+    , role : Role
+    , labelledBy : LabelledBy
     }
     ->
         { tabControls : Html msg
         , previousAndNextControls : Html msg
         , slides : Html msg
+        , containerAttributes : List (Attribute msg)
         }
 viewWithCombinedControls config =
     let
-        { controls, slides } =
+        { controls, slides, containerAttributes } =
             viewWithTabControls config
     in
     { tabControls = controls
     , slides = slides
     , previousAndNextControls = div [] [ config.viewPreviousButton, config.viewNextButton ]
+    , containerAttributes = containerAttributes
     }
 
 

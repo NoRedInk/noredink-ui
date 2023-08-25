@@ -265,18 +265,18 @@ viewWithPreviousAndNextControls model =
                 , viewNextButton =
                     Html.button [ Events.onClick (FocusAndSelectItem { select = nextId, focus = Nothing }) ]
                         [ Html.text "Next" ]
-                , labelledBy = Carousel.LabelledByIdOfVisibleLabel "Items"
                 , controlListStyles = Tuple.second settings.controlListStyles
+                , labelledBy = Carousel.LabelledByIdOfVisibleLabel "Items"
                 , role = Carousel.Group
                 }
     in
     ( [ moduleName ++ ".viewWithPreviousAndNextControls"
       , "    { selected = " ++ String.fromInt model.selected
       , "    , controlListStyles = " ++ Tuple.first settings.controlListStyles
-      , "    , labelledBy = Carousel.LabelledByIdOfVisibleLabel \"Items\""
       , "    , panels =" ++ Code.listMultiline (List.map Tuple.first allItems) 2
       , "    , viewPreviousButton = Html.button [ Events.onClick identity ] [ Html.text \"Previous\" ]"
       , "    , viewNextButton = Html.button [ Events.onClick identity ] [ Html.text \"Next\" ]"
+      , "    , labelledBy = Carousel.LabelledByIdOfVisibleLabel \"Items\""
       , "    , role = Carousel.Group"
       , "    }"
       , "    |> (\\{ controls, slides, containerAttributes } -> section containerAttributes [ slides, controls ] )"
@@ -310,7 +310,7 @@ viewWithCombinedControls model =
             List.repeat settings.items ()
                 |> List.indexedMap toCarouselItem
 
-        { tabControls, slides, previousAndNextControls } =
+        { tabControls, slides, previousAndNextControls, containerAttributes } =
             Carousel.viewWithCombinedControls
                 { focusAndSelect = FocusAndSelectItem
                 , selected = model.selected
@@ -323,6 +323,8 @@ viewWithCombinedControls model =
                 , viewNextButton =
                     Html.button [ Events.onClick (FocusAndSelectItem { select = nextId, focus = Nothing }) ]
                         [ Html.text "Next" ]
+                , labelledBy = Carousel.LabelledByIdOfVisibleLabel "Items"
+                , role = Carousel.Group
                 }
     in
     ( [ moduleName ++ ".viewWithCombinedControls"
@@ -333,11 +335,13 @@ viewWithCombinedControls model =
       , "    , panels =" ++ Code.listMultiline (List.map Tuple.first allItems) 2
       , "    , viewPreviousButton = Html.button [ Events.onClick identity ] [ Html.text \"Previous\" ]"
       , "    , viewNextButton = Html.button [ Events.onClick identity ] [ Html.text \"Next\" ]"
+      , "    , labelledBy = Carousel.LabelledByIdOfVisibleLabel \"Items\""
+      , "    , role = Carousel.Group"
       , "    }"
-      , "    |> (\\{ tabControls, slides, previousAndNextControls } -> section [] [ slides, tabControls, previousAndNextControls ] )"
+      , "    |> (\\{ tabControls, slides, previousAndNextControls, containerAttributes } -> section containerAttributes [ slides, tabControls, previousAndNextControls ] )"
       ]
         |> String.join "\n"
-    , Html.div [] [ slides, tabControls, previousAndNextControls ]
+    , Html.div containerAttributes [ slides, tabControls, previousAndNextControls ]
     )
 
 
@@ -351,13 +355,15 @@ viewWithTabControls model =
             List.repeat settings.items ()
                 |> List.indexedMap toCarouselItem
 
-        { controls, slides } =
+        { controls, slides, containerAttributes } =
             Carousel.viewWithTabControls
                 { focusAndSelect = FocusAndSelectItem
                 , selected = model.selected
                 , tabControlListStyles = Tuple.second settings.controlListStyles
                 , tabControlStyles = Tuple.second settings.controlStyles
                 , panels = List.map Tuple.second allItems
+                , labelledBy = Carousel.LabelledByIdOfVisibleLabel "Items"
+                , role = Carousel.Group
                 }
     in
     ( [ moduleName ++ ".viewWithTabControls"
@@ -366,11 +372,13 @@ viewWithTabControls model =
       , "    , tabControlListStyles = " ++ Tuple.first settings.controlListStyles
       , "    , tabControlStyles = " ++ Tuple.first settings.controlStyles
       , "    , panels =" ++ Code.listMultiline (List.map Tuple.first allItems) 2
+      , "    , labelledBy = Carousel.LabelledByIdOfVisibleLabel \"Items\""
+      , "    , role = Carousel.Group"
       , "    }"
-      , "    |> (\\{ controls, slides } -> section [] [ slides, controls ] )"
+      , "    |> (\\{ controls, slides, containerAttributes } -> section [] [ slides, controls ] )"
       ]
         |> String.join "\n"
-    , Html.div [] [ slides, controls ]
+    , Html.div containerAttributes [ slides, controls ]
     )
 
 
