@@ -1,7 +1,6 @@
 module Nri.Ui.Carousel.V2 exposing
     ( viewWithCombinedControls, viewWithPreviousAndNextControls
-    , viewWithTabControls
-    , LabelledBy(..), Role(..)
+    , viewWithTabControls, LabelledBy(..), Role(..)
     )
 
 {-| Patch changes:
