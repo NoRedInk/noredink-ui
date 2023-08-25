@@ -37,6 +37,7 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Examples.Colors
 import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes as Attributes
 import Http
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
@@ -249,7 +250,11 @@ exampleHtml =
         , ClickableText.href "http://www.noredink.com"
         , ClickableText.appearsInline
         ]
-    , Html.text " When I stepped out, into the bright sunlight from the darkness of the movie house, I had only two things on my mind: Paul Newman, and a ride home."
+    , Html.text " When I stepped out, into the bright sunlight from the "
+    , Html.a
+        [ Attributes.href "https://example.com" ]
+        [ Html.text "darkness of the movie house " ]
+    , Html.text "I had only two things on my mind: Paul Newman, and a ride home."
     ]
 
 
