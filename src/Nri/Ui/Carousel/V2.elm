@@ -6,10 +6,10 @@ module Nri.Ui.Carousel.V2 exposing
 
 {-| Patch changes:
 
-  - added new carousel APIs (with tabbed controls/previous and next controls, and combined controls)
+  - added new carousel APIs (with tabbed controls/previous and next controls, and combined controls) using [W3C guidelines](https://www.w3.org/WAI/ARIA/apg/patterns/carousel/)
 
 @docs viewWithCombinedControls, viewWithPreviousAndNextControls
-@docs viewWithTabControls, AriaLabel
+@docs viewWithTabControls, LabelledBy, Role
 
 -}
 
@@ -29,6 +29,8 @@ type LabelledBy
     | LabelledByAccessibleLabelOnly String
 
 
+{-| `Role`, which can be either [Group](https://w3c.github.io/aria/#group) or [Region](https://w3c.github.io/aria/#region)
+-}
 type Role
     = Group
     | Region
