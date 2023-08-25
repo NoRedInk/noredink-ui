@@ -304,21 +304,21 @@ view { label, name, value, valueToString, selectedValue } attributes =
                         Css.batch
                             [ minHeight (px 36)
                             , fontSize (px 15)
-                            , lineHeight (px 15)
+                            , lineHeight (px 23)
                             ]
 
                     Medium ->
                         Css.batch
                             [ minHeight (px 45)
                             , fontSize (px 15)
-                            , lineHeight (px 19)
+                            , lineHeight (px 23)
                             ]
 
                     Large ->
                         Css.batch
                             [ minHeight (px 56)
-                            , fontSize (px 20)
-                            , lineHeight (px 22)
+                            , fontSize (px 18)
+                            , lineHeight (px 28)
                             ]
                 , width (pct 100)
                 , if isChecked then
