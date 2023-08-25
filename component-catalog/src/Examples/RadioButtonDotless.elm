@@ -214,7 +214,7 @@ update msg state =
         Select selection ->
             ( { state | selectedValue = Just selection }, Cmd.none )
 
-        NoOp -> 
+        NoOp ->
             ( state, Cmd.none )
 
 
