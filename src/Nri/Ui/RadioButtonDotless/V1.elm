@@ -5,11 +5,17 @@ module Nri.Ui.RadioButtonDotless.V1 exposing
     , unboundedWidth, fillContainerWidth
     , textAlignCenter, textAlignLeft
     , small, medium, large
+    , enabled, disabled
     , containerCss, labelCss
     , id, custom, nriDescription, testId
     )
 
 {-| Looks like a standard button, behaves like a radio button
+
+
+### Patch changes:
+
+    - Introduce `enabled`/`disabled` attributes and styles
 
 
 # Create a radio button
@@ -28,6 +34,7 @@ module Nri.Ui.RadioButtonDotless.V1 exposing
 @docs unboundedWidth, fillContainerWidth
 @docs textAlignCenter, textAlignLeft
 @docs small, medium, large
+@docs enabled, disabled
 @docs containerCss, labelCss
 
 
@@ -38,10 +45,12 @@ module Nri.Ui.RadioButtonDotless.V1 exposing
 -}
 
 import Accessibility.Styled exposing (..)
+import Accessibility.Styled.Aria as Aria
 import Css exposing (..)
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
+import Json.Decode
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
@@ -70,6 +79,11 @@ type ButtonSize
     | Large
 
 
+type State msg
+    = Enabled
+    | Disabled msg
+
+
 {-| This is private. The public API only exposes `Attribute`.
 -}
 type alias Config value msg =
@@ -78,6 +92,7 @@ type alias Config value msg =
     , width : ButtonWidth
     , textAlign : TextAlign
     , size : ButtonSize
+    , state : State msg
     , containerCss : List Style
     , labelCss : List Style
     , customAttributes : List (Html.Attribute Never)
@@ -138,6 +153,20 @@ medium =
 large : Attribute value msg
 large =
     Attribute <| \config -> { config | size = Large }
+
+
+{-| Enable the input (this is the default)
+-}
+enabled : Attribute value msg
+enabled =
+    Attribute <| \config -> { config | state = Enabled }
+
+
+{-| Disable the input
+-}
+disabled : msg -> Attribute value msg
+disabled noOp =
+    Attribute <| \config -> { config | state = Disabled noOp }
 
 
 {-| Adds CSS to the element containing the input.
@@ -204,6 +233,7 @@ emptyConfig =
     , width = UnboundedWidth
     , textAlign = TextAlignCenter
     , size = Medium
+    , state = Enabled
     , containerCss = []
     , labelCss = []
     , customAttributes = []
@@ -236,6 +266,14 @@ view { label, name, value, valueToString, selectedValue } attributes =
 
         isChecked =
             selectedValue == Just value
+
+        isDisabled =
+            case config.state of
+                Disabled _ ->
+                    True
+
+                Enabled ->
+                    False
     in
     span
         [ Attributes.class "Nri-RadioButton-Dotless"
@@ -259,11 +297,15 @@ view { label, name, value, valueToString, selectedValue } attributes =
             isChecked
             ([ Attributes.id idValue
              , Attributes.class "Nri-RadioButton-HiddenRadioInput"
-             , case config.onSelect of
-                Just onSelect_ ->
+             , Aria.disabled isDisabled
+             , case ( config.state, config.onSelect ) of
+                ( Disabled noOp, _ ) ->
+                    Events.custom "click" (Json.Decode.succeed { message = noOp, stopPropagation = False, preventDefault = True })
+
+                ( Enabled, Just onSelect_ ) ->
                     Events.onClick (onSelect_ value)
 
-                Nothing ->
+                ( Enabled, Nothing ) ->
                     AttributeExtra.none
              , css
                 [ position absolute
@@ -286,7 +328,11 @@ view { label, name, value, valueToString, selectedValue } attributes =
                 , borderStyle solid
                 , Fonts.baseFont
                 , fontWeight (int 600)
-                , cursor pointer
+                , if isDisabled then
+                    cursor notAllowed
+
+                  else
+                    cursor pointer
                 , case config.textAlign of
                     TextAlignLeft ->
                         Css.batch
@@ -321,24 +367,39 @@ view { label, name, value, valueToString, selectedValue } attributes =
                             , lineHeight (px 28)
                             ]
                 , width (pct 100)
-                , if isChecked then
-                    Css.batch
-                        [ color Colors.navy
-                        , backgroundColor Colors.glacier
-                        , borderColor Colors.azure
-                        ]
-
-                  else
-                    Css.batch
-                        [ color Colors.azure
-                        , backgroundColor Colors.white
-                        , borderColor Colors.glacier
-                        , hover
+                , case ( isChecked, isDisabled ) of
+                    ( True, False ) ->
+                        Css.batch
                             [ color Colors.navy
                             , backgroundColor Colors.glacier
-                            , borderColor Colors.glacier
+                            , borderColor Colors.azure
                             ]
-                        ]
+
+                    ( False, False ) ->
+                        Css.batch
+                            [ color Colors.azure
+                            , backgroundColor Colors.white
+                            , borderColor Colors.glacier
+                            , hover
+                                [ color Colors.navy
+                                , backgroundColor Colors.glacier
+                                , borderColor Colors.glacier
+                                ]
+                            ]
+
+                    ( True, True ) ->
+                        Css.batch
+                            [ color Colors.gray45
+                            , backgroundColor Colors.gray92
+                            , borderColor Colors.gray45
+                            ]
+
+                    ( False, True ) ->
+                        Css.batch
+                            [ color Colors.gray45
+                            , backgroundColor Colors.gray92
+                            , borderWidth zero
+                            ]
                 ]
             ]
             [ span

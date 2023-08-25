@@ -62,6 +62,7 @@ type Msg
     | LongRadioSelect String
     | SetSelectionSettings (Control SelectionSettings)
     | Select ControlSelection
+    | NoOp
 
 
 controlAttributes : Control (List ( String, RadioButtonDotless.Attribute ControlSelection Msg ))
@@ -70,6 +71,7 @@ controlAttributes =
         |> ControlExtra.optionalListItem "textAlign" textAlignControl
         |> ControlExtra.optionalListItem "width" widthControl
         |> ControlExtra.optionalListItem "size" sizeControl
+        |> ControlExtra.optionalListItem "enablement" enablementControl
         |> ControlExtra.optionalListItem "containerCss"
             (Control.choice
                 [ ( "max-width with border"
@@ -129,6 +131,14 @@ sizeControl =
         [ ( "small", Control.value ( "RadioButtonDotless.small", RadioButtonDotless.small ) )
         , ( "medium", Control.value ( "RadioButtonDotless.medium", RadioButtonDotless.medium ) )
         , ( "large", Control.value ( "RadioButtonDotless.large", RadioButtonDotless.large ) )
+        ]
+
+
+enablementControl : Control ( String, RadioButtonDotless.Attribute ControlSelection Msg )
+enablementControl =
+    Control.choice
+        [ ( "enabled", Control.value ( "RadioButtonDotless.enabled", RadioButtonDotless.enabled ) )
+        , ( "disabled", Control.value ( "RadioButtonDotless.disabled NoOp", RadioButtonDotless.disabled NoOp ) )
         ]
 
 
@@ -203,6 +213,9 @@ update msg state =
 
         Select selection ->
             ( { state | selectedValue = Just selection }, Cmd.none )
+
+        NoOp ->
+            ( state, Cmd.none )
 
 
 preview : List (Html Never)
