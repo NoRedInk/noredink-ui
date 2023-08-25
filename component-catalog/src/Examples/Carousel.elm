@@ -323,7 +323,7 @@ viewWithCombinedControls model =
                         [ Html.text "Next" ]
                 }
     in
-    ( [ moduleName ++ ".viewWithTabControls"
+    ( [ moduleName ++ ".viewWithCombinedControls"
       , "    { focusAndSelect = identity"
       , "    , selected = " ++ String.fromInt model.selected
       , "    , tabControlListStyles = " ++ Tuple.first settings.controlListStyles
