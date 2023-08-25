@@ -55,14 +55,14 @@ viewWithPreviousAndNextControls :
     , role : Role
     }
     ->
-        { controls : Html msg
+        { viewPreviousButton : Html msg
+        , viewNextButton : Html msg
         , slides : Html msg
         , containerAttributes : List (Attribute msg)
         }
 viewWithPreviousAndNextControls config =
-    { controls =
-        div [ css config.controlListStyles ]
-            [ config.viewPreviousButton, config.viewNextButton ]
+    { viewPreviousButton = config.viewPreviousButton
+    , viewNextButton = config.viewNextButton
     , slides =
         List.map
             (\panel ->
@@ -168,7 +168,8 @@ viewWithCombinedControls :
     }
     ->
         { tabControls : Html msg
-        , previousAndNextControls : Html msg
+        , viewPreviousButton : Html msg
+        , viewNextButton : Html msg
         , slides : Html msg
         , containerAttributes : List (Attribute msg)
         }
@@ -179,8 +180,9 @@ viewWithCombinedControls config =
     in
     { tabControls = controls
     , slides = slides
-    , previousAndNextControls = div [] [ config.viewPreviousButton, config.viewNextButton ]
     , containerAttributes = containerAttributes
+    , viewPreviousButton = config.viewPreviousButton
+    , viewNextButton = config.viewNextButton
     }
 
 

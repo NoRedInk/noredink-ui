@@ -255,7 +255,7 @@ viewWithPreviousAndNextControls model =
                         )
                     )
 
-        { controls, slides, containerAttributes } =
+        { viewPreviousButton, viewNextButton, slides, containerAttributes } =
             Carousel.viewWithPreviousAndNextControls
                 { selected = model.selected
                 , panels = List.map Tuple.second allItems
@@ -279,10 +279,10 @@ viewWithPreviousAndNextControls model =
       , "    , labelledBy = Carousel.LabelledByIdOfVisibleLabel \"Items\""
       , "    , role = Carousel.Group"
       , "    }"
-      , "    |> (\\{ controls, slides, containerAttributes } -> section containerAttributes [ slides, controls ] )"
+      , "    |> (\\{ viewPreviousButton, viewNextButton, slides, containerAttributes } -> section containerAttributes [ slides, controls, viewPreviousButton, viewNextButton ] )"
       ]
         |> String.join "\n"
-    , Html.div containerAttributes [ slides, controls ]
+    , Html.div containerAttributes [ slides, viewPreviousButton, viewNextButton ]
     )
 
 
@@ -310,7 +310,7 @@ viewWithCombinedControls model =
             List.repeat settings.items ()
                 |> List.indexedMap toCarouselItem
 
-        { tabControls, slides, previousAndNextControls, containerAttributes } =
+        { tabControls, slides, viewPreviousButton, viewNextButton, containerAttributes } =
             Carousel.viewWithCombinedControls
                 { focusAndSelect = FocusAndSelectItem
                 , selected = model.selected
@@ -338,10 +338,10 @@ viewWithCombinedControls model =
       , "    , labelledBy = Carousel.LabelledByIdOfVisibleLabel \"Items\""
       , "    , role = Carousel.Group"
       , "    }"
-      , "    |> (\\{ tabControls, slides, previousAndNextControls, containerAttributes } -> section containerAttributes [ slides, tabControls, previousAndNextControls ] )"
+      , "    |> (\\{ tabControls, slides, viewPreviousButton, viewNextButton, containerAttributes } -> section containerAttributes [ slides, tabControls, viewPreviousButton, viewNextButton  ] )"
       ]
         |> String.join "\n"
-    , Html.div containerAttributes [ slides, tabControls, previousAndNextControls ]
+    , Html.div containerAttributes [ slides, tabControls, viewPreviousButton, viewNextButton ]
     )
 
 
