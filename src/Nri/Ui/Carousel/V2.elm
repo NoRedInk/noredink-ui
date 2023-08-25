@@ -1,6 +1,6 @@
 module Nri.Ui.Carousel.V2 exposing
     ( viewWithCombinedControls, viewWithPreviousAndNextControls
-    , viewWithTabControls, AriaLabel(..)
+    , viewWithTabControls, LabelledBy(..)
     )
 
 {-| Patch changes:
@@ -31,11 +31,11 @@ viewWithPreviousAndNextControls :
         List
             { id : id
             , slideHtml : Html msg
-            , ariaLabel : AriaLabel
+            , labelledBy : LabelledBy
             }
     , viewPreviousButton : Html msg
     , viewNextButton : Html msg
-    , ariaLabel : AriaLabel
+    , labelledBy : LabelledBy
     , controlListStyles : List Style
     }
     ->
@@ -53,7 +53,7 @@ viewWithPreviousAndNextControls config =
                 Html.div
                     [ Attrs.attribute "role" "group"
                     , Aria.roleDescription "slide"
-                    , ariaLabelToAttr panel.ariaLabel
+                    , labelledByToAttr panel.labelledBy
                     , css
                         [ if config.selected == panel.id then
                             Css.display Css.block
@@ -69,28 +69,28 @@ viewWithPreviousAndNextControls config =
     , containerAttributes =
         [ Attrs.attribute "role" "region"
         , Aria.roleDescription "carousel"
-        , ariaLabelToAttr config.ariaLabel
+        , labelledByToAttr config.labelledBy
         ]
     }
 
 
-ariaLabelToAttr : AriaLabel -> Attribute msg
-ariaLabelToAttr label =
+labelledByToAttr : LabelledBy -> Attribute msg
+labelledByToAttr label =
     case label of
-        IdLabel l ->
+        LabelledByIdOfVisibleLabel l ->
             Aria.labeledBy l
 
-        StringLabel l ->
+        LabelledByAccessibleLabelOnly l ->
             Aria.label l
 
 
 {-| Type which represents the type of aria label which will be used
-`IdLabel` will point to an existing element id on the DOM
-`StringLabel` will be a label of the element
+`LabelledByIdOfVisibleLabel` will point to an existing element id on the DOM
+`LabelledByAccessibleLabelOnly` will be a label of the element
 -}
-type AriaLabel
-    = IdLabel String
-    | StringLabel String
+type LabelledBy
+    = LabelledByIdOfVisibleLabel String
+    | LabelledByAccessibleLabelOnly String
 
 
 {-| Builds a carousel with tab buttons

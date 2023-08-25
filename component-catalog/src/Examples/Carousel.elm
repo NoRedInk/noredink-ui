@@ -244,13 +244,13 @@ viewWithPreviousAndNextControls model =
                     (\id _ ->
                         ( [ "{ id = " ++ String.fromInt id
                           , ", slideHtml = Html.text \"" ++ String.fromInt (id + 1) ++ " slide\""
-                          , ", ariaLabel = Carousel.StringLabel (String.fromInt (id + 1) ++ \" of \" ++ String.fromInt settings.items)"
+                          , ", labelledBy = Carousel.LabelledByIdOfVisibleLabel (String.fromInt (id + 1) ++ \" of \" ++ String.fromInt settings.items)"
                           , "}"
                           ]
                             |> String.join "\n          "
                         , { id = id
                           , slideHtml = Html.text (String.fromInt (id + 1))
-                          , ariaLabel = Carousel.StringLabel (String.fromInt (id + 1) ++ " of " ++ String.fromInt settings.items)
+                          , labelledBy = Carousel.LabelledByIdOfVisibleLabel (String.fromInt (id + 1) ++ " of " ++ String.fromInt settings.items)
                           }
                         )
                     )
@@ -265,14 +265,14 @@ viewWithPreviousAndNextControls model =
                 , viewNextButton =
                     Html.button [ Events.onClick (FocusAndSelectItem { select = nextId, focus = Nothing }) ]
                         [ Html.text "Next" ]
-                , ariaLabel = Carousel.StringLabel "Items"
+                , labelledBy = Carousel.LabelledByIdOfVisibleLabel "Items"
                 , controlListStyles = Tuple.second settings.controlListStyles
                 }
     in
     ( [ moduleName ++ ".viewWithPreviousAndNextControls"
       , "    { selected = " ++ String.fromInt model.selected
       , "    , controlListStyles = " ++ Tuple.first settings.controlListStyles
-      , "    , ariaLabel = Carousel.StringLabel \"Items\""
+      , "    , labelledBy = Carousel.LabelledByIdOfVisibleLabel \"Items\""
       , "    , panels =" ++ Code.listMultiline (List.map Tuple.first allItems) 2
       , "    , viewPreviousButton = Html.button [ Events.onClick identity ] [ Html.text \"Previous\" ]"
       , "    , viewNextButton = Html.button [ Events.onClick identity ] [ Html.text \"Next\" ]"
