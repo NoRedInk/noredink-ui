@@ -267,6 +267,7 @@ viewWithPreviousAndNextControls model =
                         [ Html.text "Next" ]
                 , labelledBy = Carousel.LabelledByIdOfVisibleLabel "Items"
                 , controlListStyles = Tuple.second settings.controlListStyles
+                , role = Carousel.Group
                 }
     in
     ( [ moduleName ++ ".viewWithPreviousAndNextControls"
@@ -276,6 +277,7 @@ viewWithPreviousAndNextControls model =
       , "    , panels =" ++ Code.listMultiline (List.map Tuple.first allItems) 2
       , "    , viewPreviousButton = Html.button [ Events.onClick identity ] [ Html.text \"Previous\" ]"
       , "    , viewNextButton = Html.button [ Events.onClick identity ] [ Html.text \"Next\" ]"
+      , "    , role = Carousel.Group"
       , "    }"
       , "    |> (\\{ controls, slides, containerAttributes } -> section containerAttributes [ slides, controls ] )"
       ]

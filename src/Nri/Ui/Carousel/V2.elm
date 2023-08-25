@@ -1,6 +1,7 @@
 module Nri.Ui.Carousel.V2 exposing
     ( viewWithCombinedControls, viewWithPreviousAndNextControls
-    , viewWithTabControls, LabelledBy(..)
+    , viewWithTabControls
+    , LabelledBy(..), Role(..)
     )
 
 {-| Patch changes:
@@ -17,6 +18,20 @@ import Css exposing (..)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attrs exposing (css)
 import TabsInternal.V2 as TabsInternal
+
+
+{-| Type which represents the type of aria label which will be used
+`LabelledByIdOfVisibleLabel` will point to an existing element id on the DOM
+`LabelledByAccessibleLabelOnly` will be a label of the element
+-}
+type LabelledBy
+    = LabelledByIdOfVisibleLabel String
+    | LabelledByAccessibleLabelOnly String
+
+
+type Role
+    = Group
+    | Region
 
 
 {-| Builds a carousel with previous and next controls
@@ -37,6 +52,7 @@ viewWithPreviousAndNextControls :
     , viewNextButton : Html msg
     , labelledBy : LabelledBy
     , controlListStyles : List Style
+    , role : Role
     }
     ->
         { controls : Html msg
@@ -51,7 +67,7 @@ viewWithPreviousAndNextControls config =
         List.map
             (\panel ->
                 Html.div
-                    [ Attrs.attribute "role" "group"
+                    [ Attrs.attribute "role" (roleToString config.role)
                     , Aria.roleDescription "slide"
                     , labelledByToAttr panel.labelledBy
                     , css
@@ -72,25 +88,6 @@ viewWithPreviousAndNextControls config =
         , labelledByToAttr config.labelledBy
         ]
     }
-
-
-labelledByToAttr : LabelledBy -> Attribute msg
-labelledByToAttr label =
-    case label of
-        LabelledByIdOfVisibleLabel l ->
-            Aria.labeledBy l
-
-        LabelledByAccessibleLabelOnly l ->
-            Aria.label l
-
-
-{-| Type which represents the type of aria label which will be used
-`LabelledByIdOfVisibleLabel` will point to an existing element id on the DOM
-`LabelledByAccessibleLabelOnly` will be a label of the element
--}
-type LabelledBy
-    = LabelledByIdOfVisibleLabel String
-    | LabelledByAccessibleLabelOnly String
 
 
 {-| Builds a carousel with tab buttons
@@ -173,3 +170,23 @@ viewWithCombinedControls config =
     , slides = slides
     , previousAndNextControls = div [] [ config.viewPreviousButton, config.viewNextButton ]
     }
+
+
+labelledByToAttr : LabelledBy -> Attribute msg
+labelledByToAttr label =
+    case label of
+        LabelledByIdOfVisibleLabel l ->
+            Aria.labeledBy l
+
+        LabelledByAccessibleLabelOnly l ->
+            Aria.label l
+
+
+roleToString : Role -> String
+roleToString role =
+    case role of
+        Group ->
+            "group"
+
+        Region ->
+            "region"
