@@ -1097,6 +1097,8 @@ viewTooltip tooltipId config =
                     [ Global.a
                         [ Css.color Colors.white
                         , Css.borderColor Colors.white
+                        , Css.textDecoration Css.none
+                        , Css.borderBottom3 (Css.px 1) Css.solid Colors.white
                         , Css.visited [ Css.color Colors.white ]
                         , Css.hover [ Css.color Colors.white ]
                         , Css.pseudoClass "focus-visible"
