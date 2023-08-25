@@ -62,6 +62,7 @@ type Msg
     | LongRadioSelect String
     | SetSelectionSettings (Control SelectionSettings)
     | Select ControlSelection
+    | NoOp
 
 
 controlAttributes : Control (List ( String, RadioButtonDotless.Attribute ControlSelection Msg ))
@@ -137,7 +138,7 @@ enablementControl : Control ( String, RadioButtonDotless.Attribute ControlSelect
 enablementControl =
     Control.choice
         [ ( "enabled", Control.value ( "RadioButtonDotless.enabled", RadioButtonDotless.enabled ) )
-        , ( "disabled", Control.value ( "RadioButtonDotless.disabled", RadioButtonDotless.disabled ) )
+        , ( "disabled", Control.value ( "RadioButtonDotless.disabled NoOp", RadioButtonDotless.disabled NoOp ) )
         ]
 
 
@@ -212,6 +213,9 @@ update msg state =
 
         Select selection ->
             ( { state | selectedValue = Just selection }, Cmd.none )
+
+        NoOp -> 
+            ( state, Cmd.none )
 
 
 preview : List (Html Never)

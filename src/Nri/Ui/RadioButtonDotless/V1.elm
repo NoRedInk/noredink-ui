@@ -50,6 +50,7 @@ import Css exposing (..)
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
+import Json.Decode
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
@@ -78,6 +79,11 @@ type ButtonSize
     | Large
 
 
+type State msg
+    = Enabled
+    | Disabled msg
+
+
 {-| This is private. The public API only exposes `Attribute`.
 -}
 type alias Config value msg =
@@ -86,7 +92,7 @@ type alias Config value msg =
     , width : ButtonWidth
     , textAlign : TextAlign
     , size : ButtonSize
-    , isDisabled : Bool
+    , state : State msg
     , containerCss : List Style
     , labelCss : List Style
     , customAttributes : List (Html.Attribute Never)
@@ -153,14 +159,14 @@ large =
 -}
 enabled : Attribute value msg
 enabled =
-    Attribute <| \config -> { config | isDisabled = False }
+    Attribute <| \config -> { config | state = Enabled }
 
 
 {-| Disable the input
 -}
-disabled : Attribute value msg
-disabled =
-    Attribute <| \config -> { config | isDisabled = True }
+disabled : msg -> Attribute value msg
+disabled noOp =
+    Attribute <| \config -> { config | state = Disabled noOp }
 
 
 {-| Adds CSS to the element containing the input.
@@ -227,7 +233,7 @@ emptyConfig =
     , width = UnboundedWidth
     , textAlign = TextAlignCenter
     , size = Medium
-    , isDisabled = False
+    , state = Enabled
     , containerCss = []
     , labelCss = []
     , customAttributes = []
@@ -260,6 +266,14 @@ view { label, name, value, valueToString, selectedValue } attributes =
 
         isChecked =
             selectedValue == Just value
+
+        isDisabled =
+            case config.state of
+                Disabled _ ->
+                    True
+
+                Enabled ->
+                    False
     in
     span
         [ Attributes.class "Nri-RadioButton-Dotless"
@@ -283,15 +297,15 @@ view { label, name, value, valueToString, selectedValue } attributes =
             isChecked
             ([ Attributes.id idValue
              , Attributes.class "Nri-RadioButton-HiddenRadioInput"
-             , Aria.disabled config.isDisabled
-             , case ( config.isDisabled, config.onSelect ) of
-                ( True, _ ) ->
-                    AttributeExtra.none
+             , Aria.disabled isDisabled
+             , case ( config.state, config.onSelect ) of
+                ( Disabled noOp, _ ) ->
+                    Events.custom "click" (Json.Decode.succeed { message = noOp, stopPropagation = False, preventDefault = True })
 
-                ( False, Just onSelect_ ) ->
+                ( Enabled, Just onSelect_ ) ->
                     Events.onClick (onSelect_ value)
 
-                ( False, Nothing ) ->
+                ( Enabled, Nothing ) ->
                     AttributeExtra.none
              , css
                 [ position absolute
@@ -314,7 +328,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                 , borderStyle solid
                 , Fonts.baseFont
                 , fontWeight (int 600)
-                , if config.isDisabled then
+                , if isDisabled then
                     cursor notAllowed
 
                   else
@@ -353,7 +367,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                             , lineHeight (px 22)
                             ]
                 , width (pct 100)
-                , case ( isChecked, config.isDisabled ) of
+                , case ( isChecked, isDisabled ) of
                     ( True, False ) ->
                         Css.batch
                             [ color Colors.navy
