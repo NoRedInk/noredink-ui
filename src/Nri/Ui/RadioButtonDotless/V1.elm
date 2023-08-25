@@ -304,14 +304,14 @@ view { label, name, value, valueToString, selectedValue } attributes =
                         Css.batch
                             [ minHeight (px 36)
                             , fontSize (px 15)
-                            , lineHeight (px 15)
+                            , lineHeight (px 23)
                             ]
 
                     Medium ->
                         Css.batch
                             [ minHeight (px 45)
                             , fontSize (px 15)
-                            , lineHeight (px 19)
+                            , lineHeight (px 23)
                             ]
 
                     Large ->
