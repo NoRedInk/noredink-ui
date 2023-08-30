@@ -226,20 +226,6 @@ viewWithPreviousAndNextControls model =
         settings =
             Control.currentValue model.settings
 
-        previousId =
-            if model.selected - 1 >= 0 then
-                model.selected - 1
-
-            else
-                settings.items - 1
-
-        nextId =
-            if model.selected + 1 < settings.items then
-                model.selected + 1
-
-            else
-                0
-
         allItems =
             List.repeat settings.items ()
                 |> List.indexedMap
@@ -290,20 +276,6 @@ viewWithCombinedControls model =
     let
         settings =
             Control.currentValue model.settings
-
-        previousId =
-            if model.selected - 1 >= 0 then
-                model.selected - 1
-
-            else
-                settings.items - 1
-
-        nextId =
-            if model.selected + 1 < settings.items then
-                model.selected + 1
-
-            else
-                0
 
         allItems =
             List.repeat settings.items ()
