@@ -16,7 +16,10 @@ import Accessibility.Styled.Aria as Aria
 import Css exposing (..)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attrs exposing (css)
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
+import Nri.Ui.Svg.V1 exposing (Svg)
 import TabsInternal.V2 as TabsInternal
+import Accessibility.Styled.Role as Role
 
 
 {-| Type which represents the type of aria label which will be used
@@ -37,8 +40,9 @@ type Role
 
 {-| Builds a carousel with previous and next controls
 Returns:
-`controls`: previous and next buttons element
 `slides` the container with the carousel contents
+`viewPreviousButton` previous button
+`viewNextButton` next button
 `containerAttributes` attributes that should be used on the parent div of both the button and slides elements
 -}
 viewWithPreviousAndNextControls :
@@ -49,8 +53,8 @@ viewWithPreviousAndNextControls :
             , slideHtml : Html msg
             , labelledBy : LabelledBy
             }
-    , viewPreviousButton : Html msg
-    , viewNextButton : Html msg
+    , viewPreviousButton : { attributes : List (ClickableSvg.Attribute msg), icon : Svg, name : String }
+    , viewNextButton : { attributes : List (ClickableSvg.Attribute msg), icon : Svg, name : String }
     , labelledBy : LabelledBy
     , role : Role
     }
@@ -61,13 +65,13 @@ viewWithPreviousAndNextControls :
         , containerAttributes : List (Attribute msg)
         }
 viewWithPreviousAndNextControls config =
-    { viewPreviousButton = config.viewPreviousButton
-    , viewNextButton = config.viewNextButton
+    { viewPreviousButton = ClickableSvg.button config.viewPreviousButton.name config.viewPreviousButton.icon config.viewPreviousButton.attributes
+    , viewNextButton = ClickableSvg.button config.viewNextButton.name config.viewNextButton.icon config.viewNextButton.attributes
     , slides =
         List.map
             (\panel ->
                 Html.div
-                    [ Attrs.attribute "role" "group"
+                    [ Role.group
                     , Aria.roleDescription "slide"
                     , labelledByToAttr panel.labelledBy
                     , css
@@ -147,7 +151,8 @@ viewWithTabControls config =
 Returns:
 `tabControls`: tabs control buttons
 `slides` container with the carousel contents
-`previousAndNextControls`: previous and next buttons element
+`viewPreviousButton` previous button
+`viewNextButton` next button
 -}
 viewWithCombinedControls :
     { selected : id
@@ -161,8 +166,8 @@ viewWithCombinedControls :
     , focusAndSelect : { select : id, focus : Maybe String } -> msg
     , tabControlStyles : Bool -> List Style
     , tabControlListStyles : List Style
-    , viewPreviousButton : Html msg
-    , viewNextButton : Html msg
+    , viewPreviousButton : { attributes : List (ClickableSvg.Attribute msg), icon : Svg, name : String }
+    , viewNextButton : { attributes : List (ClickableSvg.Attribute msg), icon : Svg, name : String }
     , role : Role
     , labelledBy : LabelledBy
     }
@@ -181,8 +186,8 @@ viewWithCombinedControls config =
     { tabControls = controls
     , slides = slides
     , containerAttributes = containerAttributes
-    , viewPreviousButton = config.viewPreviousButton
-    , viewNextButton = config.viewNextButton
+    , viewPreviousButton = ClickableSvg.button config.viewPreviousButton.name config.viewPreviousButton.icon config.viewPreviousButton.attributes
+    , viewNextButton = ClickableSvg.button config.viewNextButton.name config.viewNextButton.icon config.viewNextButton.attributes
     }
 
 
