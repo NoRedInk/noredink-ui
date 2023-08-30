@@ -242,12 +242,15 @@ viewWithPreviousAndNextControls model =
             List.repeat settings.items ()
                 |> List.indexedMap
                     (\id _ ->
-                        ( [ "{ id = " ++ String.fromInt id
-                          , ", slideHtml = Html.text \"" ++ String.fromInt (id + 1) ++ " slide\""
-                          , ", labelledBy = Carousel.LabelledByIdOfVisibleLabel (String.fromInt (id + 1) ++ \" of \" ++ String.fromInt settings.items)"
-                          , "}"
-                          ]
-                            |> String.join "\n          "
+                        ( Code.recordMultiline
+                            [ ( "id", String.fromInt id )
+                            , ( "slideHtml", "Html.text " ++ Code.string (String.fromInt (id + 1) ++ " slide") )
+                            , ( "labelledBy"
+                              , Code.fromModule moduleName "LabelledByIdOfVisibleLabel "
+                                    ++ Code.string (String.fromInt (id + 1) ++ " of " ++ String.fromInt settings.items)
+                              )
+                            ]
+                            3
                         , { id = id
                           , slideHtml = Html.text (String.fromInt (id + 1))
                           , labelledBy = Carousel.LabelledByIdOfVisibleLabel (String.fromInt (id + 1) ++ " of " ++ String.fromInt settings.items)
@@ -269,18 +272,24 @@ viewWithPreviousAndNextControls model =
                 , role = Carousel.Group
                 }
     in
-    ( [ moduleName ++ ".viewWithPreviousAndNextControls"
-      , "    { selected = " ++ String.fromInt model.selected
-      , "    , controlListStyles = " ++ Tuple.first settings.controlListStyles
-      , "    , panels =" ++ Code.listMultiline (List.map Tuple.first allItems) 2
-      , "    , viewPreviousButton = Html.button [ Events.onClick identity ] [ Html.text \"Previous\" ]"
-      , "    , viewNextButton = Html.button [ Events.onClick identity ] [ Html.text \"Next\" ]"
-      , "    , labelledBy = Carousel.LabelledByIdOfVisibleLabel \"Items\""
-      , "    , role = Carousel.Group"
-      , "    }"
-      , "    |> (\\{ viewPreviousButton, viewNextButton, slides, containerAttributes } -> section containerAttributes [ slides, controls, viewPreviousButton, viewNextButton ] )"
-      ]
-        |> String.join "\n"
+    ( Code.pipelineMultiline
+        [ Code.fromModule moduleName "viewWithPreviousAndNextControls"
+            ++ Code.recordMultiline
+                [ ( "selected", Code.string (String.fromInt model.selected) )
+                , ( "controlListStyles", Tuple.first settings.controlListStyles )
+                , ( "panels", Code.listMultiline (List.map Tuple.first allItems) 3 )
+                , ( "viewPreviousButton", "Html.button [ Events.onClick identity ] [ Html.text \"Previous\" ]" )
+                , ( "viewNextButton", "Html.button [ Events.onClick identity ] [ Html.text \"Next\" ]" )
+                , ( "labelledBy", Code.fromModule moduleName "LabelledByIdOfVisibleLabel" ++ Code.string "Items" )
+                , ( "role", Code.fromModule moduleName "Group" )
+                ]
+                1
+        , Code.anonymousFunction "{ viewPreviousButton, viewNextButton, slides, containerAttributes }"
+            (Code.newlineWithIndent 2
+                ++ "section containerAttributes [ slides, controls, viewPreviousButton, viewNextButton ]"
+            )
+        ]
+        0
     , Html.div containerAttributes [ slides, viewPreviousButton, viewNextButton ]
     )
 
@@ -326,20 +335,25 @@ viewWithCombinedControls model =
                 , role = Carousel.Group
                 }
     in
-    ( [ moduleName ++ ".viewWithCombinedControls"
-      , "    { focusAndSelect = identity"
-      , "    , selected = " ++ String.fromInt model.selected
-      , "    , tabControlListStyles = " ++ Tuple.first settings.controlListStyles
-      , "    , tabControlStyles = " ++ Tuple.first settings.controlStyles
-      , "    , panels =" ++ Code.listMultiline (List.map Tuple.first allItems) 2
-      , "    , viewPreviousButton = Html.button [ Events.onClick identity ] [ Html.text \"Previous\" ]"
-      , "    , viewNextButton = Html.button [ Events.onClick identity ] [ Html.text \"Next\" ]"
-      , "    , labelledBy = Carousel.LabelledByIdOfVisibleLabel \"Items\""
-      , "    , role = Carousel.Group"
-      , "    }"
-      , "    |> (\\{ tabControls, slides, viewPreviousButton, viewNextButton, containerAttributes } -> section containerAttributes [ slides, tabControls, viewPreviousButton, viewNextButton  ] )"
-      ]
-        |> String.join "\n"
+    ( Code.pipelineMultiline
+        [ Code.fromModule moduleName "viewWithCombinedControls"
+            ++ Code.record
+                [ ( "focusAndSelect", "identity" )
+                , ( "selected", Code.string (String.fromInt model.selected) )
+                , ( "tabControlListStyles", Tuple.first settings.controlListStyles )
+                , ( "tabControlStyles", Tuple.first settings.controlStyles )
+                , ( "panels", Code.listMultiline (List.map Tuple.first allItems) 2 )
+                , ( "viewPreviousButton", "Html.button [ Events.onClick identity ] [ Html.text \"Previous\" ]" )
+                , ( "viewNextButton", "Html.button [ Events.onClick identity ] [ Html.text \"Next\" ]" )
+                , ( "labelledBy", Code.fromModule moduleName "LabelledByIdOfVisibleLabel " ++ Code.string "Items" )
+                , ( "role", Code.fromModule moduleName "Group" )
+                ]
+        , Code.anonymousFunction "{ tabControls, slides, viewPreviousButton, viewNextButton, containerAttributes }"
+            (Code.newlineWithIndent 2
+                ++ "section containerAttributes [ slides, tabControls, viewPreviousButton, viewNextButton  ]"
+            )
+        ]
+        0
     , Html.div containerAttributes [ slides, tabControls, viewPreviousButton, viewNextButton ]
     )
 
@@ -365,18 +379,23 @@ viewWithTabControls model =
                 , role = Carousel.Group
                 }
     in
-    ( [ moduleName ++ ".viewWithTabControls"
-      , "    { focusAndSelect = identity"
-      , "    , selected = " ++ String.fromInt model.selected
-      , "    , tabControlListStyles = " ++ Tuple.first settings.controlListStyles
-      , "    , tabControlStyles = " ++ Tuple.first settings.controlStyles
-      , "    , panels =" ++ Code.listMultiline (List.map Tuple.first allItems) 2
-      , "    , labelledBy = Carousel.LabelledByIdOfVisibleLabel \"Items\""
-      , "    , role = Carousel.Group"
-      , "    }"
-      , "    |> (\\{ controls, slides, containerAttributes } -> section [] [ slides, controls ] )"
-      ]
-        |> String.join "\n"
+    ( Code.pipelineMultiline
+        [ Code.fromModule moduleName "viewWithTabControls"
+            ++ Code.record
+                [ ( "focusAndSelect", "identity" )
+                , ( "selected", Code.string (String.fromInt model.selected) )
+                , ( "tabControlListStyles", Tuple.first settings.controlListStyles )
+                , ( "tabControlStyles", Tuple.first settings.controlStyles )
+                , ( "panels", Code.listMultiline (List.map Tuple.first allItems) 2 )
+                , ( "labelledBy", Code.fromModule moduleName "LabelledByIdOfVisibleLabel " ++ Code.string "Items" )
+                , ( "role", Code.fromModule moduleName "Group" )
+                ]
+        , Code.anonymousFunction "{ controls, slides, containerAttributes }"
+            (Code.newlineWithIndent 2
+                ++ "section containerAttributes [ slides, controls ]"
+            )
+        ]
+        0
     , Html.div containerAttributes [ slides, controls ]
     )
 
@@ -397,13 +416,13 @@ toCarouselItem id _ =
         idString =
             Attributes.safeIdWithPrefix "slide" <| String.fromInt id
     in
-    ( [ "{ id = " ++ String.fromInt id
-      , ", idString = \"" ++ idString ++ "\""
-      , ", tabControlHtml = Html.text \"" ++ String.fromInt (id + 1) ++ "\""
-      , ", slideHtml = Html.text \"" ++ String.fromInt (id + 1) ++ " slide\""
-      , "}"
-      ]
-        |> String.join "\n          "
+    ( Code.recordMultiline
+        [ ( "id", Code.string (String.fromInt id) )
+        , ( "idString", Code.string "idString" )
+        , ( "tabControlHtml", "Html.text " ++ Code.string (String.fromInt (id + 1)) )
+        , ( "slideHtml", "Html.text " ++ Code.string (String.fromInt (id + 1) ++ " slide") )
+        ]
+        2
     , { id = id
       , idString = idString
       , tabControlHtml = Html.text (String.fromInt (id + 1))
