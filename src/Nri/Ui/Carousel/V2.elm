@@ -40,8 +40,9 @@ type Role
 
 {-| Builds a carousel with previous and next controls
 Returns:
-`controls`: previous and next buttons element
 `slides` the container with the carousel contents
+`viewPreviousButton` previous button
+`viewNextButton` next button
 `containerAttributes` attributes that should be used on the parent div of both the button and slides elements
 -}
 viewWithPreviousAndNextControls :
@@ -150,7 +151,8 @@ viewWithTabControls config =
 Returns:
 `tabControls`: tabs control buttons
 `slides` container with the carousel contents
-`previousAndNextControls`: previous and next buttons element
+`viewPreviousButton` previous button
+`viewNextButton` next button
 -}
 viewWithCombinedControls :
     { selected : id
