@@ -87,6 +87,7 @@ type Msg
     | LoadedPackages (Result Http.Error (Dict String String))
     | Focused (Result Browser.Dom.Error ())
     | NewInputMethod InputMethod
+    | SwallowEvent
 
 
 update : Msg -> Model key -> ( Model key, Effect )
@@ -194,6 +195,9 @@ update action model =
 
         NewInputMethod inputMethod ->
             ( { model | inputMethod = inputMethod }, None )
+
+        SwallowEvent ->
+            ( model, None )
 
 
 type Effect
@@ -303,7 +307,8 @@ viewAll : Model key -> Html Msg
 viewAll model =
     viewLayout model [] <|
         viewPreviews "all"
-            { navigate = Routes.Doodad >> ChangeRoute
+            { swallowEvent = SwallowEvent
+            , navigate = Routes.Doodad >> ChangeRoute
             , exampleHref = Routes.Doodad >> Routes.toString
             }
             (Dict.values model.moduleStates)
@@ -321,7 +326,8 @@ viewCategory model category =
                         category
                 )
             |> viewPreviews (Category.forId category)
-                { navigate = Routes.CategoryDoodad category >> ChangeRoute
+                { swallowEvent = SwallowEvent
+                , navigate = Routes.CategoryDoodad category >> ChangeRoute
                 , exampleHref = Routes.CategoryDoodad category >> Routes.toString
                 }
         )
@@ -356,7 +362,8 @@ viewLayout model headerExtras content =
 viewPreviews :
     String
     ->
-        { navigate : Example Examples.State Examples.Msg -> Msg
+        { swallowEvent : Msg
+        , navigate : Example Examples.State Examples.Msg -> Msg
         , exampleHref : Example Examples.State Examples.Msg -> String
         }
     -> List (Example Examples.State Examples.Msg)

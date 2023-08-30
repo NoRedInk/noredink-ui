@@ -5,6 +5,7 @@ import Category exposing (Category)
 import Css
 import Css.Media exposing (withMedia)
 import EllieLink
+import EventExtras
 import ExampleSection
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
@@ -102,7 +103,8 @@ wrapState wrapState_ unwrapState example =
 
 
 preview :
-    { navigate : Example state msg -> msg2
+    { swallowEvent : msg2
+    , navigate : Example state msg -> msg2
     , exampleHref : Example state msg -> String
     }
     -> Example state msg
@@ -112,12 +114,13 @@ preview navConfig =
 
 
 preview_ :
-    { navigate : Example state msg -> msg2
+    { swallowEvent : msg2
+    , navigate : Example state msg -> msg2
     , exampleHref : Example state msg -> String
     }
     -> Example state msg
     -> Html msg2
-preview_ { navigate, exampleHref } example =
+preview_ { swallowEvent, navigate, exampleHref } example =
     Container.view
         [ Container.gray
         , Container.css
@@ -130,10 +133,12 @@ preview_ { navigate, exampleHref } example =
             ]
         , Container.custom [ Events.onClick (navigate example) ]
         , Container.html
-            (ClickableText.link example.name
-                [ ClickableText.href (exampleHref example)
-                , ClickableText.css [ Css.marginBottom (Css.px 10) ]
-                , ClickableText.nriDescription "doodad-link"
+            (Html.span [ EventExtras.onClickStopPropagation swallowEvent ]
+                [ ClickableText.link example.name
+                    [ ClickableText.href (exampleHref example)
+                    , ClickableText.css [ Css.marginBottom (Css.px 10) ]
+                    , ClickableText.nriDescription "doodad-link"
+                    ]
                 ]
                 :: [ Html.div
                         [ Attributes.css
