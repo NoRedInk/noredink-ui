@@ -13,13 +13,13 @@ module Nri.Ui.Carousel.V2 exposing
 -}
 
 import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Role as Role
 import Css exposing (..)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attrs exposing (css)
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Svg.V1 exposing (Svg)
 import TabsInternal.V2 as TabsInternal
-import Accessibility.Styled.Role as Role
 
 
 {-| Type which represents the type of aria label which will be used
