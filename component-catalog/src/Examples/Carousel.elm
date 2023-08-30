@@ -24,6 +24,8 @@ import Html.Styled.Events as Events
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Carousel.V2 as Carousel
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
+import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.Html.Attributes.V2 as Attributes
 import Task
 
@@ -260,11 +262,9 @@ viewWithPreviousAndNextControls model =
                 { selected = model.selected
                 , panels = List.map Tuple.second allItems
                 , viewPreviousButton =
-                    Html.button [ Events.onClick (FocusAndSelectItem { select = previousId, focus = Nothing }) ]
-                        [ Html.text "Previous" ]
+                    { attributes = [], icon = UiIcon.arrowLeft , name = "Previous" }
                 , viewNextButton =
-                    Html.button [ Events.onClick (FocusAndSelectItem { select = nextId, focus = Nothing }) ]
-                        [ Html.text "Next" ]
+                    { attributes = [], icon = UiIcon.arrowRight , name = "Next" }
                 , labelledBy = Carousel.LabelledByIdOfVisibleLabel "Items"
                 , role = Carousel.Group
                 }
@@ -273,8 +273,8 @@ viewWithPreviousAndNextControls model =
       , "    { selected = " ++ String.fromInt model.selected
       , "    , controlListStyles = " ++ Tuple.first settings.controlListStyles
       , "    , panels =" ++ Code.listMultiline (List.map Tuple.first allItems) 2
-      , "    , viewPreviousButton = Html.button [ Events.onClick identity ] [ Html.text \"Previous\" ]"
-      , "    , viewNextButton = Html.button [ Events.onClick identity ] [ Html.text \"Next\" ]"
+      , "    , viewPreviousButton = { attributes = [], icon = UiIcon.arrowLeft , name = \"Previous\" }"
+      , "    , viewNextButton = { attributes = [], icon = UiIcon.arrowLeft , name = \"Next\" }"
       , "    , labelledBy = Carousel.LabelledByIdOfVisibleLabel \"Items\""
       , "    , role = Carousel.Group"
       , "    }"
@@ -317,11 +317,9 @@ viewWithCombinedControls model =
                 , tabControlStyles = Tuple.second settings.controlStyles
                 , panels = List.map Tuple.second allItems
                 , viewPreviousButton =
-                    Html.button [ Events.onClick (FocusAndSelectItem { select = previousId, focus = Nothing }) ]
-                        [ Html.text "Previous" ]
+                    { attributes = [], icon = UiIcon.arrowLeft , name = "Previous" }
                 , viewNextButton =
-                    Html.button [ Events.onClick (FocusAndSelectItem { select = nextId, focus = Nothing }) ]
-                        [ Html.text "Next" ]
+                    { attributes = [], icon = UiIcon.arrowRight , name = "Next" }
                 , labelledBy = Carousel.LabelledByIdOfVisibleLabel "Items"
                 , role = Carousel.Group
                 }
@@ -332,8 +330,8 @@ viewWithCombinedControls model =
       , "    , tabControlListStyles = " ++ Tuple.first settings.controlListStyles
       , "    , tabControlStyles = " ++ Tuple.first settings.controlStyles
       , "    , panels =" ++ Code.listMultiline (List.map Tuple.first allItems) 2
-      , "    , viewPreviousButton = Html.button [ Events.onClick identity ] [ Html.text \"Previous\" ]"
-      , "    , viewNextButton = Html.button [ Events.onClick identity ] [ Html.text \"Next\" ]"
+      , "    , viewPreviousButton = { attributes = [], icon = UiIcon.arrowLeft , name = \"Previous\" }"
+      , "    , viewNextButton = { attributes = [], icon = UiIcon.arrowLeft , name = \"Next\" }"
       , "    , labelledBy = Carousel.LabelledByIdOfVisibleLabel \"Items\""
       , "    , role = Carousel.Group"
       , "    }"
