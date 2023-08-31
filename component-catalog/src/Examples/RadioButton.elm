@@ -167,11 +167,9 @@ view ellieLinkConfig state =
                 , Button.id "close-premium-modal"
                 ]
             ]
-        , focusTrap =
-            { focus = Focus
-            , firstId = Modal.closeButtonId
-            , lastId = "close-premium-modal"
-            }
+        , focus = Focus
+        , firstId = Modal.closeButtonId
+        , lastId = "close-premium-modal"
         }
         [ Modal.closeButton ]
         state.modal

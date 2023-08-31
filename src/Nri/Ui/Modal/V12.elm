@@ -25,7 +25,6 @@ import Css exposing (padding, px)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (id)
 import Html.Styled.Events as Events
-import Nri.Ui.FocusTrap.V1 as FocusTrap exposing (FocusTrap)
 import Nri.Ui.Modal.V12 as Modal
 import Task
 
@@ -115,11 +114,9 @@ view model =
                     ]
                     [ text "Close" ]
                 ]
-            , focusTrap =
-                { focus = Focus
-                , firstId = Modal.closeButtonId
-                , lastId = "last-element-id"
-                }
+            , focus = Focus
+            , firstId = Modal.closeButtonId
+            , lastId = "last-element-id"
             }
             [ Modal.hideTitle
             , Modal.css [ padding (px 10) ]
@@ -170,7 +167,6 @@ import Html.Styled.Events exposing (onClick)
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.FocusTrap.V1 exposing (FocusTrap)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
@@ -477,12 +473,13 @@ titleStyles config =
 -- VIEW
 
 
-{-| `FocusTrap` comes from `Nri.Ui.FocusTrap.V1`.
--}
+{-| -}
 view :
     { title : String
     , wrapMsg : Msg -> msg
-    , focusTrap : FocusTrap msg
+    , firstId : String
+    , lastId : String
+    , focus : String -> msg
     , content : List (Html msg)
     , footer : List (Html msg)
     }
@@ -530,14 +527,14 @@ view config attrsList model =
                 |> Root.div
                     [ WhenFocusLeaves.onKeyDownPreventDefault
                         []
-                        { firstIds = [ config.focusTrap.firstId, titleId ]
-                        , lastIds = [ config.focusTrap.lastId ]
+                        { firstIds = [ config.firstId, titleId ]
+                        , lastIds = [ config.lastId ]
                         , -- if the user tabs back while on the first id or the modal heading's id,
                           -- we want to wrap around to the last id.
-                          tabBackAction = config.focusTrap.focus config.focusTrap.lastId
+                          tabBackAction = config.focus config.lastId
                         , -- if the user tabs forward while on the last id,
                           -- we want to wrap around to the first id.
-                          tabForwardAction = config.focusTrap.focus config.focusTrap.firstId
+                          tabForwardAction = config.focus config.firstId
                         }
                     , ExtraAttributes.testId "focus-trap-node"
                     , Attrs.css [ Css.position Css.relative, Css.zIndex (Css.int 100) ]

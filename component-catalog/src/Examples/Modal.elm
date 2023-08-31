@@ -207,9 +207,8 @@ example =
                                 , "\n\t-- Use elements with Button.modal and ClickableText.modal for standardized footer elements"
                                 , "\n\t-- Remember to add an id to the first and final focusable element!"
                                 , "\n\t, footer = [] "
-                                , "\n\t, focusTrap ="
-                                , "\n\t\t{ focus = Focus"
-                                , "\n\t\t, firstId = "
+                                , "\n\t, focus = Focus"
+                                , "\n\t, firstId = "
                                     ++ (if settings.showX then
                                             Code.string Modal.closeButtonId
 
@@ -219,7 +218,7 @@ example =
                                         else
                                             Code.string closeClickableTextId
                                        )
-                                , "\n\t\t, lastId ="
+                                , "\n\t, lastId ="
                                     ++ (if settings.showSecondary then
                                             Code.string closeClickableTextId
 
@@ -229,7 +228,6 @@ example =
                                         else
                                             Code.string Modal.closeButtonId
                                        )
-                                , "\n\t\t}"
                                 , "\n\t}"
                                 , [ if settings.showX then
                                         Just "Modal.closeButton"
@@ -267,27 +265,25 @@ example =
                           else
                             Nothing
                         ]
-                , focusTrap =
-                    { focus = Focus
-                    , firstId =
-                        if settings.showX then
-                            Modal.closeButtonId
+                , focus = Focus
+                , firstId =
+                    if settings.showX then
+                        Modal.closeButtonId
 
-                        else if settings.showFocusOnTitle then
-                            continueButtonId
+                    else if settings.showFocusOnTitle then
+                        continueButtonId
 
-                        else
-                            closeClickableTextId
-                    , lastId =
-                        if settings.showSecondary then
-                            closeClickableTextId
+                    else
+                        closeClickableTextId
+                , lastId =
+                    if settings.showSecondary then
+                        closeClickableTextId
 
-                        else if settings.showFocusOnTitle then
-                            continueButtonId
+                    else if settings.showFocusOnTitle then
+                        continueButtonId
 
-                        else
-                            Modal.closeButtonId
-                    }
+                    else
+                        Modal.closeButtonId
                 }
                 ([ if settings.showX then
                     Just Modal.closeButton
