@@ -401,27 +401,29 @@ update msg state =
     case msg of
         OpenModal config ->
             let
-                ( newState, cmd ) =
+                ( newState, startFocusOn ) =
                     Modal.open config
             in
             ( { state | state = newState }
-            , Cmd.map ModalMsg cmd
+            , Task.attempt Focused (Dom.focus startFocusOn)
             )
 
         ModalMsg modalMsg ->
             case Modal.update updateConfig modalMsg state.state of
-                ( newState, cmd ) ->
+                ( newState, maybeFocus ) ->
                     ( { state | state = newState }
-                    , Cmd.map ModalMsg cmd
+                    , Maybe.map (Task.attempt Focused << Dom.focus) maybeFocus
+                        |> Maybe.withDefault Cmd.none
                     )
 
         CloseModal ->
             let
-                ( newState, cmd ) =
+                ( newState, maybeFocus ) =
                     Modal.close state.state
             in
             ( { state | state = newState }
-            , Cmd.map ModalMsg cmd
+            , Maybe.map (Task.attempt Focused << Dom.focus) maybeFocus
+                |> Maybe.withDefault Cmd.none
             )
 
         UpdateSettings value ->

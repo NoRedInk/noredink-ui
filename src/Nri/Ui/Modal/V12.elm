@@ -17,6 +17,7 @@ module Nri.Ui.Modal.V12 exposing
 # Changes fro V11:
 
   - remove use of FocusTrap type alias
+  - return ids to focus on instead of cmds (in order to make modals more testable via the effect pattern with program-test)
 
 ```
 import Browser exposing (element)
@@ -39,18 +40,12 @@ main =
 
 init : ( Modal.Model, Cmd Msg )
 init =
-    let
-        ( model, cmd ) =
-            -- When we load the page with a modal already open, we should return
-            -- the focus someplace sensible when the modal closes.
-            -- [This article](https://developer.paciellogroup.com/blog/2018/06/the-current-state-of-modal-dialog-accessibility/) recommends
-            -- focusing the main or body.
-            Modal.open
-                { startFocusOn = Modal.closeButtonId
-                , returnFocusTo = "maincontent"
-                }
-    in
-    ( model, Cmd.map ModalMsg cmd )
+    -- When we load the page with a modal already open, we should return
+    -- the focus someplace sensible when the modal closes.
+    -- [This article](https://developer.paciellogroup.com/blog/2018/06/the-current-state-of-modal-dialog-accessibility/) recommends
+    -- focusing the main or body.
+    Modal.open { returnFocusTo = "maincontent", startFocusOn = Modal.closeButtonId }
+        |> Tuple.mapSecond (Task.attempt Focused << Dom.focus)
 
 type Msg
     = OpenModal String
@@ -63,31 +58,34 @@ update : Msg -> Modal.Model -> ( Modal.Model, Cmd Msg )
 update msg model =
     case msg of
         OpenModal returnFocusTo ->
-            let
-                ( newModel, cmd ) =
-                    Modal.open
-                        { startFocusOn = Modal.closeButtonId
-                        , returnFocusTo = returnFocusTo
-                        }
-            in
-            ( newModel, Cmd.map ModalMsg cmd )
+            Modal.open
+                { returnFocusTo = returnFocusTo
+                , startFocusOn = Modal.closeButtonId
+                }
+                |> Tuple.mapSecond (Task.attempt Focused << Dom.focus)
 
         ModalMsg modalMsg ->
             let
-                ( newModel, cmd ) =
+                ( newModel, maybeFocus ) =
                     Modal.update
                         { dismissOnEscAndOverlayClick = True }
                         modalMsg
                         model
             in
-            ( newModel, Cmd.map ModalMsg cmd )
+            ( newModel
+            , Maybe.map (Task.attempt Focused << Dom.focus) maybeFocus
+                |> Maybe.withDefault Cmd.none
+            )
 
         CloseModal ->
             let
-                ( newModel, cmd ) =
+                ( newModel, maybeFocus ) =
                     Modal.close model
             in
-            ( newModel, Cmd.map ModalMsg cmd )
+            ( newModel
+            , Maybe.map (Task.attempt Focused << Dom.focus) maybeFocus
+                |> Maybe.withDefault Cmd.none
+            )
 
         Focus id ->
             ( model, Task.attempt Focused (Dom.focus id) )
@@ -156,7 +154,6 @@ import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
-import Browser.Dom as Dom
 import Browser.Events.Extra
 import Css exposing (..)
 import Css.Media
@@ -173,7 +170,6 @@ import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.WhenFocusLeaves.V2 as WhenFocusLeaves
-import Task
 
 
 {-| -}
@@ -195,23 +191,33 @@ init =
 
 <https://developer.paciellogroup.com/blog/2018/06/the-current-state-of-modal-dialog-accessibility/>
 
+---
+
+The second part of the returned tuple is the id of the element to which focus should be returned.
+
+_You will need to explicitly move focus to this element!_
+
 -}
-open : { startFocusOn : String, returnFocusTo : String } -> ( Model, Cmd Msg )
-open { startFocusOn, returnFocusTo } =
-    ( Opened returnFocusTo
-    , Task.attempt Focused (Dom.focus startFocusOn)
-    )
+open : { returnFocusTo : String, startFocusOn : String } -> ( Model, String )
+open { returnFocusTo, startFocusOn } =
+    ( Opened returnFocusTo, startFocusOn )
 
 
-{-| -}
-close : Model -> ( Model, Cmd Msg )
+{-| The second part of the tuple is the id of the element to which focus should be returned.
+
+_You will need to explicitly move focus to this element!_
+
+If you're an NRI employee working in the monorepo, pass the second part of the tuple to `Nri.Effect.maybeFocus`.
+
+-}
+close : Model -> ( Model, Maybe String )
 close model =
     case model of
         Opened returnFocusTo ->
-            ( Closed, Task.attempt Focused (Dom.focus returnFocusTo) )
+            ( Closed, Just returnFocusTo )
 
         Closed ->
-            ( Closed, Cmd.none )
+            ( Closed, Nothing )
 
 
 {-| -}
@@ -229,7 +235,6 @@ isOpen model =
 type Msg
     = CloseButtonClicked
     | EscOrOverlayClicked
-    | Focused (Result Dom.Error ())
 
 
 {-| Include the subscription if you want the modal to dismiss on `Esc`.
@@ -244,8 +249,14 @@ subscriptions model =
             Sub.none
 
 
-{-| -}
-update : { dismissOnEscAndOverlayClick : Bool } -> Msg -> Model -> ( Model, Cmd Msg )
+{-| The second part of the tuple is the id of the element to which focus should be returned.
+
+_You will need to explicitly move focus to this element!_
+
+If you're an NRI employee working in the monorepo, pass the second part of the tuple to `Nri.Effect.maybeFocus`.
+
+-}
+update : { dismissOnEscAndOverlayClick : Bool } -> Msg -> Model -> ( Model, Maybe String )
 update { dismissOnEscAndOverlayClick } msg model =
     case msg of
         CloseButtonClicked ->
@@ -256,12 +267,7 @@ update { dismissOnEscAndOverlayClick } msg model =
                 close model
 
             else
-                ( model, Cmd.none )
-
-        Focused _ ->
-            -- TODO: consider adding error handling when we didn't successfully
-            -- fous an element
-            ( model, Cmd.none )
+                ( model, Nothing )
 
 
 
@@ -313,8 +319,11 @@ hideTitle =
         , wrapMsg = ModalMsg
         , content = []
         , footer = []
+        , firstId : Modal.closeButtonId
+        , lastId : Modal.closeButtonId
+        , focus : Focus
         }
-        [ Modal.custom [ id "my-modal" ]]
+        [ Modal.custom [ id "my-modal" ], Modal.closeButton ]
         modalState
 
 -}

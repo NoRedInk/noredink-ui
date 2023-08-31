@@ -386,29 +386,37 @@ update msg model =
     case msg of
         OpenModal returnFocusTo ->
             let
-                ( modal, cmd ) =
+                ( modal, startFocusOn ) =
                     Modal.open
                         { startFocusOn = Modal.closeButtonId
                         , returnFocusTo = returnFocusTo
                         }
             in
-            ( { model | modal = modal }, Cmd.map ModalMsg cmd )
+            ( { model | modal = modal }
+            , Task.attempt Focused (Dom.focus startFocusOn)
+            )
 
         ModalMsg modalMsg ->
             let
-                ( modal, cmd ) =
+                ( modal, maybeFocus ) =
                     Modal.update { dismissOnEscAndOverlayClick = True }
                         modalMsg
                         model.modal
             in
-            ( { model | modal = modal }, Cmd.map ModalMsg cmd )
+            ( { model | modal = modal }
+            , Maybe.map (Task.attempt Focused << Dom.focus) maybeFocus
+                |> Maybe.withDefault Cmd.none
+            )
 
         CloseModal ->
             let
-                ( modal, cmd ) =
+                ( modal, maybeFocus ) =
                     Modal.close model.modal
             in
-            ( { model | modal = modal }, Cmd.map ModalMsg cmd )
+            ( { model | modal = modal }
+            , Maybe.map (Task.attempt Focused << Dom.focus) maybeFocus
+                |> Maybe.withDefault Cmd.none
+            )
 
         Select value ->
             ( { model | selectedValue = Just value }, Cmd.none )
