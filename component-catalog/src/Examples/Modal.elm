@@ -17,7 +17,7 @@ import Debug.Control.View as ControlView
 import EventExtras exposing (onClickStopPropagation)
 import Example exposing (Example)
 import Guidance
-import Html.Styled exposing (Html, div, text)
+import Html.Styled as Html exposing (Html, div, text)
 import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport
 import Nri.Ui.Button.V10 as Button
@@ -26,6 +26,7 @@ import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Modal.V12 as Modal
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -57,6 +58,7 @@ type alias ViewSettings =
     , showSecondary : Bool
     , dismissOnEscAndOverlayClick : Bool
     , content : String
+    , atac : Bool
     }
 
 
@@ -79,6 +81,7 @@ initViewSettings =
                     , "Candy cake danish gingerbread. Caramels toffee cupcake toffee sweet. Gummi bears candy cheesecake sweet. Pie gingerbread sugar plum halvah muffin icing marzipan wafer icing. Candy fruitcake gummies icing marzipan. Halvah jelly beans candy candy canes biscuit bonbon sesame snaps. Biscuit carrot cake croissant cake chocolate lollipop candy biscuit croissant. Topping jujubes apple pie croissant chocolate cake. Liquorice cookie dragée gummies cotton candy fruitcake lemon drops candy canes. Apple pie lemon drops gummies cake chocolate bar cake jelly-o tiramisu. Chocolate bar icing pudding marshmallow cake soufflé soufflé muffin. Powder lemon drops biscuit sugar plum cupcake carrot cake powder cake dragée. Bear claw gummi bears liquorice sweet roll."
                     ]
             )
+        |> Control.field "Show ATAC" (Control.bool False)
 
 
 controlTitleVisibility : Control ( String, Modal.Attribute )
@@ -241,6 +244,17 @@ example =
                                      , Maybe.map Tuple.first settings.titleVisibility
                                      , Maybe.map Tuple.first settings.theme
                                      , Maybe.map Tuple.first settings.customCss
+                                     , if settings.atac then
+                                        (Code.fromModule moduleName "atac"
+                                            ++ Code.withParens
+                                                ("text "
+                                                    ++ Code.string "Fake ATAC -- use the real one in real code!"
+                                                )
+                                        )
+                                            |> Just
+
+                                       else
+                                        Nothing
                                      ]
                                         |> List.filterMap identity
                                     )
@@ -298,6 +312,11 @@ example =
                  , Maybe.map Tuple.second settings.titleVisibility
                  , Maybe.map Tuple.second settings.theme
                  , Maybe.map Tuple.second settings.customCss
+                 , if settings.atac then
+                    Just (Modal.atac fakeATAC)
+
+                   else
+                    Nothing
                  ]
                     |> List.filterMap identity
                 )
@@ -306,6 +325,38 @@ example =
                 |> div [ onClickStopPropagation SwallowEvent ]
             ]
     }
+
+
+fakeATAC : Html msg
+fakeATAC =
+    Html.aside
+        [ Attributes.css
+            [ Css.position Css.fixed
+            , Css.bottom Css.zero
+            , Css.left Css.zero
+            , Css.maxWidth (Css.px 480)
+            , Css.backgroundColor Colors.gray96
+            , Css.borderTop3 (Css.px 1) Css.solid Colors.gray75
+            , Css.borderRight3 (Css.px 1) Css.solid Colors.gray75
+            , Css.minHeight (Css.px 80)
+            , Css.padding (Css.px 8)
+            , Fonts.baseFont
+            , Css.zIndex (Css.int 1)
+            ]
+        ]
+        [ Heading.h2
+            [ Heading.plaintext "(Fake) Announcement history"
+            ]
+        , Text.smallBody
+            [ Text.html
+                [ text "NRI employees can learn more about the real ATAC in "
+                , ClickableText.link "HERE"
+                    [ ClickableText.appearsInline
+                    , ClickableText.linkExternal ""
+                    ]
+                ]
+            ]
+        ]
 
 
 launchModalButton : ViewSettings -> Html Msg
