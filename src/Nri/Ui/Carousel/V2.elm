@@ -117,7 +117,6 @@ viewWithPreviousAndNextControls config =
                         |> Maybe.Extra.toList
                    )
             )
-
     , slides =
         List.map
             (\panel ->
@@ -234,12 +233,57 @@ viewWithCombinedControls config =
     let
         { controls, slides, containerAttributes } =
             viewWithTabControls config
+
+        currentPanelIndex =
+            List.Extra.findIndex (\p -> p.id == config.selected) config.panels
+
+        previousPanel =
+            currentPanelIndex
+                |> Maybe.andThen
+                    (\index ->
+                        List.Extra.getAt
+                            (if index - 1 >= 0 then
+                                index - 1
+
+                             else
+                                List.length config.panels - 1
+                            )
+                            config.panels
+                    )
+
+        nextPanel =
+            currentPanelIndex
+                |> Maybe.andThen
+                    (\index ->
+                        List.Extra.getAt
+                            (if index + 1 < List.length config.panels then
+                                index + 1
+
+                             else
+                                0
+                            )
+                            config.panels
+                    )
     in
     { tabControls = controls
     , slides = slides
     , containerAttributes = containerAttributes
-    , viewPreviousButton = ClickableSvg.button config.viewPreviousButton.name config.viewPreviousButton.icon config.viewPreviousButton.attributes
-    , viewNextButton = ClickableSvg.button config.viewNextButton.name config.viewNextButton.icon config.viewNextButton.attributes
+    , viewPreviousButton =
+        ClickableSvg.button config.viewPreviousButton.name
+            config.viewPreviousButton.icon
+            (config.viewPreviousButton.attributes
+                ++ (Maybe.map (\p -> ClickableSvg.onClick (config.focusAndSelect { select = p.id, focus = Just p.idString })) previousPanel
+                        |> Maybe.Extra.toList
+                   )
+            )
+    , viewNextButton =
+        ClickableSvg.button config.viewNextButton.name
+            config.viewNextButton.icon
+            (config.viewNextButton.attributes
+                ++ (Maybe.map (\p -> ClickableSvg.onClick (config.focusAndSelect { select = p.id, focus = Just p.idString })) nextPanel
+                        |> Maybe.Extra.toList
+                   )
+            )
     }
 
 
