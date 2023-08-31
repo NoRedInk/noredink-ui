@@ -29,7 +29,14 @@ spec =
                         , attribute (Key.tabbable False)
                         ]
                     |> done
-        , test "focus starts on the specified element in the modal" <|
+        , focusTests
+        ]
+
+
+focusTests : Test
+focusTests =
+    describe "Focus management"
+        [ test "focus starts on the specified element in the modal" <|
             \() ->
                 start
                     |> clickButton "Open Modal"
