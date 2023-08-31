@@ -20,10 +20,8 @@ import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
-import Html.Styled.Events as Events
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Carousel.V2 as Carousel
-import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as Attributes
 import Nri.Ui.UiIcon.V1 as UiIcon
