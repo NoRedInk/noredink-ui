@@ -350,9 +350,10 @@ fakeATAC =
         , Text.smallBody
             [ Text.html
                 [ text "NRI employees can learn more about the real ATAC in "
-                , ClickableText.link "HERE"
+                , ClickableText.link "Assistive Technology Announcement Center (“ATAC”)"
                     [ ClickableText.appearsInline
-                    , ClickableText.linkExternal ""
+                    , ClickableText.linkExternal "https://paper.dropbox.com/doc/Assistive-Technology-Announcement-Center-ATAC--B_GuqwWltzU432ueq7p6Z42mAg-bOnmcnzOj631NRls1IBe3"
+                    , ClickableText.small
                     ]
                 ]
             ]
