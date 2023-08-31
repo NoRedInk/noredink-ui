@@ -30,7 +30,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Message.V4 as Message
-import Nri.Ui.Modal.V11 as Modal
+import Nri.Ui.Modal.V12 as Modal
 import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.Text.V6 as Text
 import Routes

@@ -169,6 +169,9 @@ hint = 'upgrade to V4'
 hint = 'upgrade to V11'
 usages = ['component-catalog-app/Examples/RadioButton.elm']
 
+[forbidden."Nri.Ui.Modal.V11"]
+hint = 'upgrade to V12'
+
 [forbidden."Nri.Ui.Modal.V3"]
 hint = 'upgrade to V11'
 

@@ -1,4 +1,4 @@
-module Nri.Ui.Modal.V11 exposing
+module Nri.Ui.Modal.V12 exposing
     ( view, closeButton, closeButtonId
     , Model, init, open, close
     , Msg, update, subscriptions
@@ -43,7 +43,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (id)
 import Html.Styled.Events as Events
 import Nri.Ui.FocusTrap.V1 as FocusTrap exposing (FocusTrap)
-import Nri.Ui.Modal.V11 as Modal
+import Nri.Ui.Modal.V12 as Modal
 import Task
 
 main : Program () Modal.Model Msg

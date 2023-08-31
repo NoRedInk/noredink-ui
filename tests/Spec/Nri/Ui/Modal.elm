@@ -7,7 +7,7 @@ import Html.Styled as Html exposing (Html, toUnstyled)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Json.Encode as Encode
-import Nri.Ui.Modal.V11 as Modal
+import Nri.Ui.Modal.V12 as Modal
 import ProgramTest exposing (..)
 import SimulatedEffect.Cmd
 import Spec.KeyboardHelpers exposing (pressTabBackKey, pressTabKey)
