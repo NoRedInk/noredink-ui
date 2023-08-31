@@ -90,40 +90,39 @@ update msg model =
     case msg of
         OpenModal returnFocusTo ->
             let
-                ( newModel, cmd ) =
+                ( newModel, focusOn ) =
                     Modal.open
                         { startFocusOn = Modal.closeButtonId
                         , returnFocusTo = returnFocusTo
                         }
             in
-            ( newModel, ModalEffect cmd )
+            ( newModel, FocusOn focusOn )
 
         ModalMsg modalMsg ->
             let
-                ( newModel, cmd ) =
+                ( newModel, maybeFocus ) =
                     Modal.update
                         { dismissOnEscAndOverlayClick = True }
                         modalMsg
                         model
             in
-            ( newModel, ModalEffect cmd )
+            ( newModel
+            , Maybe.map FocusOn maybeFocus
+                |> Maybe.withDefault None
+            )
 
         Focus id ->
             ( model, FocusOn id )
 
 
 type Effect
-    = ModalEffect (Cmd Modal.Msg)
-    | FocusOn String
+    = FocusOn String
     | None
 
 
 perform : Effect -> SimulatedEffect Msg
 perform effect =
     case effect of
-        ModalEffect modalMsg ->
-            SimulatedEffect.Cmd.none
-
         FocusOn id ->
             SimulatedEffect.Cmd.none
 
@@ -150,11 +149,9 @@ view model =
                     [ Html.text "Last Button"
                     ]
                 ]
-            , focusTrap =
-                { focus = Focus
-                , firstId = Modal.closeButtonId
-                , lastId = lastButtonId
-                }
+            , focus = Focus
+            , firstId = Modal.closeButtonId
+            , lastId = lastButtonId
             }
             [ Modal.closeButton
             ]
