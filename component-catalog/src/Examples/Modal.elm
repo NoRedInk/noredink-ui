@@ -200,48 +200,53 @@ example =
                     \_ ->
                         let
                             code =
-                                [ "Modal.view"
-                                , "\n\t{ title = " ++ Code.string settings.title
-                                , "\n\t, wrapMsg = ModalMsg"
-                                , "\n\t, content = [] -- The body of the modal goes in here"
-                                , "\n\t-- Use elements with Button.modal and ClickableText.modal for standardized footer elements"
-                                , "\n\t-- Remember to add an id to the first and final focusable element!"
-                                , "\n\t, footer = [] "
-                                , "\n\t, focus = Focus"
-                                , "\n\t, firstId = "
-                                    ++ (if settings.showX then
-                                            Code.string Modal.closeButtonId
+                                [ Code.fromModule moduleName "view"
+                                    ++ Code.record
+                                        [ ( "title", Code.string settings.title )
+                                        , ( "wrapMsg", "ModalMsg" )
+                                        , ( "content", "[] -- The body of the modal goes in here" )
+                                        , ( "footer", "[] -- Use Button.modal and ClickableText.modal for standard styles" )
+                                        , ( "focus", "Focus" )
+                                        , ( "firstId"
+                                          , Code.string
+                                                (if settings.showX then
+                                                    Modal.closeButtonId
 
-                                        else if settings.showFocusOnTitle then
-                                            Code.string continueButtonId
+                                                 else if settings.showFocusOnTitle then
+                                                    continueButtonId
 
-                                        else
-                                            Code.string closeClickableTextId
-                                       )
-                                , "\n\t, lastId ="
-                                    ++ (if settings.showSecondary then
-                                            Code.string closeClickableTextId
+                                                 else
+                                                    closeClickableTextId
+                                                )
+                                          )
+                                        , ( "lastId"
+                                          , Code.string
+                                                (if settings.showSecondary then
+                                                    closeClickableTextId
 
-                                        else if settings.showFocusOnTitle then
-                                            Code.string continueButtonId
+                                                 else if settings.showFocusOnTitle then
+                                                    continueButtonId
 
-                                        else
-                                            Code.string Modal.closeButtonId
-                                       )
-                                , "\n\t}"
-                                , [ if settings.showX then
+                                                 else
+                                                    Modal.closeButtonId
+                                                )
+                                          )
+                                        ]
+                                , Code.listMultiline
+                                    ([ if settings.showX then
                                         Just "Modal.closeButton"
 
-                                    else
+                                       else
                                         Nothing
-                                  , Maybe.map Tuple.first settings.titleVisibility
-                                  , Maybe.map Tuple.first settings.theme
-                                  , Maybe.map Tuple.first settings.customCss
-                                  ]
-                                    |> List.filterMap identity
-                                    |> Code.list
-                                , "\n\t-- you should use the actual state, NEVER hardcode it open like this:"
-                                , "\n\t(Modal.open { startFocusOn = \"\", returnFocusTo = \"\"} |> Tuple.first)"
+                                     , Maybe.map Tuple.first settings.titleVisibility
+                                     , Maybe.map Tuple.first settings.theme
+                                     , Maybe.map Tuple.first settings.customCss
+                                     ]
+                                        |> List.filterMap identity
+                                    )
+                                    1
+                                , Code.newlineWithIndent 1
+                                , "modalState"
                                 ]
                                     |> String.join ""
                         in
