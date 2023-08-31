@@ -7,6 +7,7 @@ module Nri.Ui.Modal.V12 exposing
     , closeButton
     , showTitle, hideTitle
     , testId, css, custom
+    , atac
     , closeButtonId, titleId
     , isOpen
     )
@@ -139,6 +140,7 @@ view model =
 @docs closeButton
 @docs showTitle, hideTitle
 @docs testId, css, custom
+@docs atac
 
 
 ### Id accessors
@@ -169,6 +171,7 @@ import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
+import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -369,6 +372,16 @@ css styles =
         )
 
 
+{-| Pass the Assistive Technology Announcement Center and Announcement Log.
+
+HTML passed here will render after the footer.
+
+-}
+atac : Html Never -> Attribute
+atac atac_ =
+    Attribute (\attrs -> { attrs | atac = Just atac_ })
+
+
 {-| -}
 type Attribute
     = Attribute (Attributes -> Attributes)
@@ -385,6 +398,7 @@ type alias Attributes =
     , customStyles : List Style
     , customAttributes : List (Html.Attribute Never)
     , closeButton : Bool
+    , atac : Maybe (Html Never)
     }
 
 
@@ -396,6 +410,7 @@ defaultAttributes =
     , customStyles = []
     , customAttributes = []
     , closeButton = False
+    , atac = Nothing
     }
 
 
@@ -512,6 +527,7 @@ view config attrsList model =
                                 Nothing
                         , content = config.content
                         , footer = config.footer
+                        , atac = attrs.atac
                         }
                     ]
                 , Root.node "style" [] [ Root.text "body {overflow: hidden;} " ]
@@ -574,6 +590,7 @@ viewModal :
     , closeButton : Maybe msg
     , content : List (Html msg)
     , footer : List (Html msg)
+    , atac : Maybe (Html Never)
     }
     -> Html msg
 viewModal config =
@@ -595,6 +612,7 @@ viewModal config =
             []
             [ viewInnerContent config
             , viewFooter config.footer
+            , viewJust (map never) config.atac
             ]
         ]
 
