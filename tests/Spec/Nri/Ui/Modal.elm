@@ -29,26 +29,39 @@ spec =
                         , attribute (Key.tabbable False)
                         ]
                     |> done
+        , test "focus starts on the specified element in the modal" <|
+            \() ->
+                start
+                    |> clickButton "Open Modal"
+                    |> ensureFocused Modal.closeButtonId
+                    |> done
+        , test "focus returns to the element that opened the modal" <|
+            \() ->
+                start
+                    |> clickButton "Open Modal"
+                    |> clickButton "Close modal"
+                    |> ensureFocused "open-modal"
+                    |> done
         , test "focus wraps from the modal title correctly" <|
             \() ->
                 start
                     |> clickButton "Open Modal"
                     |> tabBackWithinModal Modal.titleId
-                    |> ensureLastEffect (Expect.equal (FocusOn lastButtonId))
+                    |> ensureFocused lastButtonId
                     |> done
         , test "focus wraps from the close button correctly" <|
             \() ->
                 start
                     |> clickButton "Open Modal"
                     |> tabBackWithinModal Modal.closeButtonId
-                    |> ensureLastEffect (Expect.equal (FocusOn lastButtonId))
+                    |> ensureFocused lastButtonId
                     |> done
         , test "focus wraps from the last button correctly" <|
             \() ->
                 start
                     |> clickButton "Open Modal"
                     |> tabForwardWithinModal lastButtonId
-                    |> ensureLastEffect (Expect.equal (FocusOn Modal.closeButtonId))
+                    |> ensureFocused Modal.closeButtonId
                     |> done
         ]
 
@@ -167,3 +180,8 @@ lastButtonId =
 modalTitle : String
 modalTitle =
     "Modal Title"
+
+
+ensureFocused : String -> ProgramTest a b Effect -> ProgramTest a b Effect
+ensureFocused id =
+    ensureLastEffect (Expect.equal (FocusOn id))
