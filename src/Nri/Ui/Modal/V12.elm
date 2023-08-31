@@ -1,39 +1,22 @@
 module Nri.Ui.Modal.V12 exposing
-    ( view, closeButton, closeButtonId
+    ( view
     , Model, init, open, close
     , Msg, update, subscriptions
     , Attribute
     , info, warning
+    , closeButton
     , showTitle, hideTitle
     , testId, css, custom
-    , isOpen, titleId
+    , closeButtonId, titleId
+    , isOpen
     )
 
 {-|
 
 
-# TODO for next major version:
+# Changes fro V11:
 
-  - remove use of FocusTrap type alias (not using the alias causes a major version change)
-
-
-# Patch changes:
-
-  - adds `testId` helper
-  - adds data-nri-descriptions to the header, content, and footer
-  - use `Shadows`
-  - exposes `titleId`
-  - makes the title programmatically focusable
-  - use WhenFocusLeaves directly, instead of using FocusTrap as an intermediary
-
-
-# Changes from V10:
-
-  - remove `initOpen`
-  - change `open`, `close` to return `(Model, Cmd Msg)` rather than `Msg`
-  - make info and warning themes
-  - adds `custom` helper for adding arbitrary html attributes (primarily useful to make limiting the scope of selectors in tests easier by adding ids to modals)
-  - tab and tabback events stop propagation and prevent default
+  - remove use of FocusTrap type alias
 
 ```
 import Browser exposing (element)
@@ -147,7 +130,7 @@ view model =
         ]
 ```
 
-@docs view, closeButton, closeButtonId
+@docs view
 @docs Model, init, open, close
 @docs Msg, update, subscriptions
 
@@ -156,13 +139,19 @@ view model =
 
 @docs Attribute
 @docs info, warning
+@docs closeButton
 @docs showTitle, hideTitle
 @docs testId, css, custom
 
 
-### State checks and accessors
+### Id accessors
 
-@docs isOpen, titleId
+@docs closeButtonId, titleId
+
+
+### State check
+
+@docs isOpen
 
 -}
 
