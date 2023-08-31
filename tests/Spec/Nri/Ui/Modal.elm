@@ -20,7 +20,7 @@ spec =
     describe "Nri.Ui.Modal"
         [ test "titleId is attached to the modal title" <|
             \() ->
-                start
+                start []
                     |> clickButton "Open Modal"
                     |> ensureViewHas
                         [ id Modal.titleId
@@ -30,6 +30,12 @@ spec =
                         ]
                     |> done
         , focusTests
+        , test "ATAC hole works" <|
+            \() ->
+                start [ Modal.atac (Html.text "ATAC content") ]
+                    |> clickButton "Open Modal"
+                    |> ensureViewHas [ text "ATAC content" ]
+                    |> done
         ]
 
 
@@ -38,34 +44,34 @@ focusTests =
     describe "Focus management"
         [ test "focus starts on the specified element in the modal" <|
             \() ->
-                start
+                start []
                     |> clickButton "Open Modal"
                     |> ensureFocused Modal.closeButtonId
                     |> done
         , test "focus returns to the element that opened the modal" <|
             \() ->
-                start
+                start []
                     |> clickButton "Open Modal"
                     |> clickButton "Close modal"
                     |> ensureFocused "open-modal"
                     |> done
         , test "focus wraps from the modal title correctly" <|
             \() ->
-                start
+                start []
                     |> clickButton "Open Modal"
                     |> tabBackWithinModal Modal.titleId
                     |> ensureFocused lastButtonId
                     |> done
         , test "focus wraps from the close button correctly" <|
             \() ->
-                start
+                start []
                     |> clickButton "Open Modal"
                     |> tabBackWithinModal Modal.closeButtonId
                     |> ensureFocused lastButtonId
                     |> done
         , test "focus wraps from the last button correctly" <|
             \() ->
-                start
+                start []
                     |> clickButton "Open Modal"
                     |> tabForwardWithinModal lastButtonId
                     |> ensureFocused Modal.closeButtonId
@@ -88,11 +94,11 @@ focusTrapNode =
     [ attribute (Html.Attributes.attribute "data-testid" "focus-trap-node") ]
 
 
-start : ProgramTest Modal.Model Msg Effect
-start =
+start : List Modal.Attribute -> ProgramTest Modal.Model Msg Effect
+start modalAttributes =
     createElement
         { init = \_ -> ( Modal.init, None )
-        , view = toUnstyled << view
+        , view = toUnstyled << view modalAttributes
         , update = update
         }
         |> withSimulatedEffects perform
@@ -150,8 +156,8 @@ perform effect =
             SimulatedEffect.Cmd.none
 
 
-view : Modal.Model -> Html Msg
-view model =
+view : List Modal.Attribute -> Modal.Model -> Html Msg
+view modalAttributes model =
     Html.main_ [ Attributes.id "maincontent" ]
         [ Html.button
             [ Attributes.id "open-modal"
@@ -173,8 +179,7 @@ view model =
             , firstId = Modal.closeButtonId
             , lastId = lastButtonId
             }
-            [ Modal.closeButton
-            ]
+            (Modal.closeButton :: modalAttributes)
             model
         ]
 
