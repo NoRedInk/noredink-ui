@@ -19,6 +19,7 @@ module Nri.Ui.Modal.V12 exposing
   - remove use of FocusTrap type alias
   - return ids to focus on instead of cmds (in order to make modals more testable via the effect pattern with program-test)
   - use tesk9/accessible-html-with-css for SR-only content
+  - simplify internal attributes pattern
 
 ```
 import Browser exposing (element)
@@ -280,16 +281,20 @@ update { dismissOnEscAndOverlayClick } msg model =
 -}
 info : Attribute
 info =
-    Batch []
+    Attribute identity
 
 
 {-| -}
 warning : Attribute
 warning =
-    Batch
-        [ overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.gray20)
-        , titleColor Colors.red
-        ]
+    Attribute
+        (\attrs ->
+            { attrs
+                | overlayColor =
+                    Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.gray20
+                , titleColor = Colors.red
+            }
+        )
 
 
 {-| Include the close button.
@@ -367,7 +372,6 @@ css styles =
 {-| -}
 type Attribute
     = Attribute (Attributes -> Attributes)
-    | Batch (List Attribute)
 
 
 
@@ -395,16 +399,6 @@ defaultAttributes =
     }
 
 
-titleColor : Color -> Attribute
-titleColor color =
-    Attribute (\attrs -> { attrs | titleColor = color })
-
-
-overlayColor : Color -> Attribute
-overlayColor color =
-    Attribute (\attrs -> { attrs | overlayColor = color })
-
-
 buildAttributes : List Attribute -> Attributes
 buildAttributes attrs =
     let
@@ -412,9 +406,6 @@ buildAttributes attrs =
             case attribute of
                 Attribute fun ->
                     fun acc
-
-                Batch functions ->
-                    List.foldl applyAttrs acc functions
     in
     List.foldl applyAttrs defaultAttributes attrs
 
