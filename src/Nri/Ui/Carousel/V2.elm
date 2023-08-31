@@ -16,7 +16,9 @@ import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
 import Css exposing (..)
 import Html.Styled as Html exposing (..)
-import Html.Styled.Attributes as Attrs exposing (css)
+import Html.Styled.Attributes as Attrs exposing (css, id)
+import List.Extra
+import Maybe.Extra
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Svg.V1 exposing (Svg)
 import TabsInternal.V2 as TabsInternal
@@ -52,11 +54,13 @@ viewWithPreviousAndNextControls :
             { id : id
             , slideHtml : Html msg
             , labelledBy : LabelledBy
+            , idString : String
             }
     , viewPreviousButton : { attributes : List (ClickableSvg.Attribute msg), icon : Svg, name : String }
     , viewNextButton : { attributes : List (ClickableSvg.Attribute msg), icon : Svg, name : String }
     , labelledBy : LabelledBy
     , role : Role
+    , focusAndSelect : { select : id, focus : Maybe String } -> msg
     }
     ->
         { viewPreviousButton : Html msg
@@ -65,14 +69,62 @@ viewWithPreviousAndNextControls :
         , containerAttributes : List (Attribute msg)
         }
 viewWithPreviousAndNextControls config =
-    { viewPreviousButton = ClickableSvg.button config.viewPreviousButton.name config.viewPreviousButton.icon config.viewPreviousButton.attributes
-    , viewNextButton = ClickableSvg.button config.viewNextButton.name config.viewNextButton.icon config.viewNextButton.attributes
+    let
+        currentPanelIndex =
+            List.Extra.findIndex (\p -> p.id == config.selected) config.panels
+
+        previousPanel =
+            currentPanelIndex
+                |> Maybe.andThen
+                    (\index ->
+                        List.Extra.getAt
+                            (if index - 1 >= 0 then
+                                index - 1
+
+                             else
+                                List.length config.panels - 1
+                            )
+                            config.panels
+                    )
+
+        nextPanel =
+            currentPanelIndex
+                |> Maybe.andThen
+                    (\index ->
+                        List.Extra.getAt
+                            (if index + 1 < List.length config.panels then
+                                index + 1
+
+                             else
+                                0
+                            )
+                            config.panels
+                    )
+    in
+    { viewPreviousButton =
+        ClickableSvg.button config.viewPreviousButton.name
+            config.viewPreviousButton.icon
+            (config.viewPreviousButton.attributes
+                ++ (Maybe.map (\p -> ClickableSvg.onClick (config.focusAndSelect { select = p.id, focus = Just p.idString })) previousPanel
+                        |> Maybe.Extra.toList
+                   )
+            )
+    , viewNextButton =
+        ClickableSvg.button config.viewNextButton.name
+            config.viewNextButton.icon
+            (config.viewNextButton.attributes
+                ++ (Maybe.map (\p -> ClickableSvg.onClick (config.focusAndSelect { select = p.id, focus = Just p.idString })) nextPanel
+                        |> Maybe.Extra.toList
+                   )
+            )
+
     , slides =
         List.map
             (\panel ->
                 Html.div
                     [ Role.group
                     , Aria.roleDescription "slide"
+                    , id panel.idString
                     , labelledByToAttr panel.labelledBy
                     , css
                         [ if config.selected == panel.id then

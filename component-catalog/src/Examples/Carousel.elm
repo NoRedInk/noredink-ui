@@ -232,6 +232,7 @@ viewWithPreviousAndNextControls model =
                     (\id _ ->
                         ( Code.recordMultiline
                             [ ( "id", String.fromInt id )
+                            , ( "idString", "\"" ++ String.fromInt id ++ "\"" )
                             , ( "slideHtml", "Html.text " ++ Code.string (String.fromInt (id + 1) ++ " slide") )
                             , ( "labelledBy"
                               , Code.fromModule moduleName "LabelledByIdOfVisibleLabel "
@@ -242,6 +243,7 @@ viewWithPreviousAndNextControls model =
                         , { id = id
                           , slideHtml = Html.text (String.fromInt (id + 1))
                           , labelledBy = Carousel.LabelledByIdOfVisibleLabel (String.fromInt (id + 1) ++ " of " ++ String.fromInt settings.items)
+                          , idString = String.fromInt id
                           }
                         )
                     )
@@ -256,6 +258,7 @@ viewWithPreviousAndNextControls model =
                     { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
                 , labelledBy = Carousel.LabelledByIdOfVisibleLabel "Items"
                 , role = Carousel.Group
+                , focusAndSelect = FocusAndSelectItem
                 }
     in
     ( Code.pipelineMultiline
@@ -268,6 +271,7 @@ viewWithPreviousAndNextControls model =
                 , ( "viewNextButton", "{ attributes = [], icon = UiIcon.arrowLeft , name = \"Next\" }" )
                 , ( "labelledBy", Code.fromModule moduleName "LabelledByIdOfVisibleLabel" ++ Code.string "Items" )
                 , ( "role", Code.fromModule moduleName "Group" )
+                , ( "focusAndSelect", "FocusAndSelectItem" )
                 ]
                 1
         , Code.anonymousFunction "{ viewPreviousButton, viewNextButton, slides, containerAttributes }"
