@@ -21,6 +21,7 @@ module Nri.Ui.Modal.V12 exposing
   - return ids to focus on instead of cmds (in order to make modals more testable via the effect pattern with program-test)
   - use tesk9/accessible-html-with-css for SR-only content
   - simplify internal attributes pattern
+  - adds Modal.atac to make a hole for the ATAC to render inside the modal
 
 ```
 import Browser exposing (element)
@@ -372,7 +373,7 @@ css styles =
         )
 
 
-{-| Pass the Assistive Technology Announcement Center and Announcement Log.
+{-| Pass the [Assistive Technology Announcement Center and Announcement Log]("https://paper.dropbox.com/doc/Assistive-Technology-Announcement-Center-ATAC--B_GuqwWltzU432ueq7p6Z42mAg-bOnmcnzOj631NRls1IBe3").
 
 HTML passed here will render after the footer.
 
