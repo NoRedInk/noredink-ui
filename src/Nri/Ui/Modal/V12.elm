@@ -18,6 +18,7 @@ module Nri.Ui.Modal.V12 exposing
 
   - remove use of FocusTrap type alias
   - return ids to focus on instead of cmds (in order to make modals more testable via the effect pattern with program-test)
+  - use tesk9/accessible-html-with-css for SR-only content
 
 ```
 import Browser exposing (element)
@@ -154,6 +155,7 @@ import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
+import Accessibility.Styled.Style as Style
 import Browser.Events.Extra
 import Css exposing (..)
 import Css.Media
@@ -466,16 +468,7 @@ titleStyles config =
         ]
 
     else
-        [ -- https://snook.ca/archives/html_and_css/hiding-content-for-accessibility
-          Css.property "clip" "rect(1px, 1px, 1px, 1px)"
-        , Css.position Css.absolute
-        , Css.height (Css.px 1)
-        , Css.width (Css.px 1)
-        , Css.overflow Css.hidden
-        , Css.margin (Css.px -1)
-        , Css.padding Css.zero
-        , Css.border Css.zero
-        ]
+        [ Style.invisibleStyle ]
 
 
 
