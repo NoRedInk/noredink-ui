@@ -1,14 +1,18 @@
 module Nri.Ui.Carousel.V2 exposing
-    ( viewWithCombinedControls, viewWithPreviousAndNextControls
-    , viewWithTabControls, LabelledBy(..), Role(..)
+    ( viewWithPreviousAndNextControls
+    , viewWithTabControls
+    , viewWithCombinedControls
+    , LabelledBy(..), Role(..)
     )
 
 {-| Patch changes:
 
   - added new carousel APIs (with tabbed controls/previous and next controls, and combined controls) using [W3C guidelines](https://www.w3.org/WAI/ARIA/apg/patterns/carousel/)
 
-@docs viewWithCombinedControls, viewWithPreviousAndNextControls
-@docs viewWithTabControls, LabelledBy, Role
+@docs viewWithPreviousAndNextControls
+@docs viewWithTabControls
+@docs viewWithCombinedControls
+@docs LabelledBy, Role
 
 -}
 

@@ -1,4 +1,8 @@
-module Spec.Nri.Ui.Carousel exposing (spec)
+module Spec.Nri.Ui.Carousel exposing
+    ( viewWithCombinedControlsSpec
+    , viewWithPreviousAndNextControlsSpec
+    , viewWithTabControlsSpec
+    )
 
 import Browser.Dom as Dom
 import Html.Styled exposing (..)
@@ -20,141 +24,133 @@ import Test exposing (..)
 import Test.Html.Selector as Selector
 
 
-spec : Test
-spec =
-    describe "Nri.Ui.Carousel.V2"
-        [ describe "viewWithTabControls rendering" panelRenderingTests
-        , describe "keyboard behavior on viewWithTabControls" keyboardTests
-        , describe "viewWithPreviousAndNextControls rendering" viewWithPreviousAndNextControlsTests
-        , describe "viewWithCombinedControls rendering" viewWithCombinedControlsTests
+viewWithPreviousAndNextControlsSpec : Test
+viewWithPreviousAndNextControlsSpec =
+    describe "viewWithPreviousAndNextControls"
+        [ test "rotate back and forward with 3 slides" <|
+            \() ->
+                program (viewWithPreviousAndNextControls 3)
+                    |> ensureSlideIsVisible "slide-0"
+                    |> clickButton "Next"
+                    |> ensureSlideIsVisible "slide-1"
+                    |> clickButton "Next"
+                    |> ensureSlideIsVisible "slide-2"
+                    |> clickButton "Next"
+                    |> ensureSlideIsVisible "slide-0"
+                    |> clickButton "Previous"
+                    |> ensureSlideIsVisible "slide-2"
+                    |> clickButton "Previous"
+                    |> ensureSlideIsVisible "slide-1"
+                    |> clickButton "Previous"
+                    |> ensureSlideIsVisible "slide-0"
+                    |> done
+        , test "rotate back and forward with 1 slides" <|
+            \() ->
+                program (viewWithPreviousAndNextControls 1)
+                    |> ensureSlideIsVisible "slide-0"
+                    |> clickButton "Next"
+                    |> ensureSlideIsVisible "slide-0"
+                    |> clickButton "Previous"
+                    |> ensureSlideIsVisible "slide-0"
+                    |> done
         ]
 
 
-panelRenderingTests : List Test
-panelRenderingTests =
-    [ test "displays the associated slide when a control is activated" <|
-        \() ->
-            program viewWithTabControls
-                |> ensureTabbable "Control 0"
-                |> ensurePanelDisplayed "Slide 0"
-                |> done
-    , test "has only one slide displayed" <|
-        \() ->
-            program viewWithTabControls
-                |> ensureOnlyOnePanelDisplayed [ "Slide 0", "Slide 1", "Slide 2" ]
-                |> done
-    ]
+viewWithTabControlsSpec : Test
+viewWithTabControlsSpec =
+    describe "viewWithTabControls"
+        [ describe "rendering"
+            [ test "displays the associated slide when a control is activated" <|
+                \() ->
+                    program viewWithTabControls
+                        |> ensureTabbable "Control 0"
+                        |> ensurePanelDisplayed "Slide 0"
+                        |> done
+            , test "has only one slide displayed" <|
+                \() ->
+                    program viewWithTabControls
+                        |> ensureOnlyOnePanelDisplayed [ "Slide 0", "Slide 1", "Slide 2" ]
+                        |> done
+            ]
+        , describe "keyboard behavior"
+            [ test "has a focusable control" <|
+                \() ->
+                    program viewWithTabControls
+                        |> ensureTabbable "Control 0"
+                        |> done
+            , test "all slides are focusable" <|
+                \() ->
+                    program viewWithTabControls
+                        |> ensurePanelsFocusable [ "Slide 0", "Slide 1", "Slide 2" ]
+                        |> done
+            , test "has only one control included in the tab sequence" <|
+                \() ->
+                    program viewWithTabControls
+                        |> ensureOnlyOneTabInSequence [ "Control 0", "Control 1", "Control 2" ]
+                        |> done
+            , test "moves focus right on right arrow key" <|
+                \() ->
+                    program viewWithTabControls
+                        |> ensureTabbable "Control 0"
+                        |> releaseRightArrow
+                        |> ensureTabbable "Control 1"
+                        |> ensureOnlyOneTabInSequence [ "Control 0", "Control 1", "Control 2" ]
+                        |> releaseRightArrow
+                        |> ensureTabbable "Control 2"
+                        |> done
+            , test "moves focus left on left arrow key" <|
+                \() ->
+                    program viewWithTabControls
+                        |> ensureTabbable "Control 0"
+                        |> releaseRightArrow
+                        |> ensureTabbable "Control 1"
+                        |> releaseLeftArrow
+                        |> ensureTabbable "Control 0"
+                        |> ensureOnlyOneTabInSequence [ "Control 0", "Control 1", "Control 2" ]
+                        |> done
+            , test "when the focus is on the first element, move focus to the last element on left arrow key" <|
+                \() ->
+                    program viewWithTabControls
+                        |> ensureTabbable "Control 0"
+                        |> releaseLeftArrow
+                        |> ensureTabbable "Control 2"
+                        |> ensureOnlyOneTabInSequence [ "Control 0", "Control 1", "Control 2" ]
+                        |> done
+            , test "when the focus is on the last element, move focus to the first element on right arrow key" <|
+                \() ->
+                    program viewWithTabControls
+                        |> ensureTabbable "Control 0"
+                        |> releaseLeftArrow
+                        |> ensureTabbable "Control 2"
+                        |> releaseRightArrow
+                        |> ensureTabbable "Control 0"
+                        |> ensureOnlyOneTabInSequence [ "Control 0", "Control 1", "Control 2" ]
+                        |> done
+            ]
+        ]
 
 
-keyboardTests : List Test
-keyboardTests =
-    [ test "has a focusable control" <|
-        \() ->
-            program viewWithTabControls
-                |> ensureTabbable "Control 0"
-                |> done
-    , test "all slides are focusable" <|
-        \() ->
-            program viewWithTabControls
-                |> ensurePanelsFocusable [ "Slide 0", "Slide 1", "Slide 2" ]
-                |> done
-    , test "has only one control included in the tab sequence" <|
-        \() ->
-            program viewWithTabControls
-                |> ensureOnlyOneTabInSequence [ "Control 0", "Control 1", "Control 2" ]
-                |> done
-    , test "moves focus right on right arrow key" <|
-        \() ->
-            program viewWithTabControls
-                |> ensureTabbable "Control 0"
-                |> releaseRightArrow
-                |> ensureTabbable "Control 1"
-                |> ensureOnlyOneTabInSequence [ "Control 0", "Control 1", "Control 2" ]
-                |> releaseRightArrow
-                |> ensureTabbable "Control 2"
-                |> done
-    , test "moves focus left on left arrow key" <|
-        \() ->
-            program viewWithTabControls
-                |> ensureTabbable "Control 0"
-                |> releaseRightArrow
-                |> ensureTabbable "Control 1"
-                |> releaseLeftArrow
-                |> ensureTabbable "Control 0"
-                |> ensureOnlyOneTabInSequence [ "Control 0", "Control 1", "Control 2" ]
-                |> done
-    , test "when the focus is on the first element, move focus to the last element on left arrow key" <|
-        \() ->
-            program viewWithTabControls
-                |> ensureTabbable "Control 0"
-                |> releaseLeftArrow
-                |> ensureTabbable "Control 2"
-                |> ensureOnlyOneTabInSequence [ "Control 0", "Control 1", "Control 2" ]
-                |> done
-    , test "when the focus is on the last element, move focus to the first element on right arrow key" <|
-        \() ->
-            program viewWithTabControls
-                |> ensureTabbable "Control 0"
-                |> releaseLeftArrow
-                |> ensureTabbable "Control 2"
-                |> releaseRightArrow
-                |> ensureTabbable "Control 0"
-                |> ensureOnlyOneTabInSequence [ "Control 0", "Control 1", "Control 2" ]
-                |> done
-    ]
-
-
-viewWithPreviousAndNextControlsTests : List Test
-viewWithPreviousAndNextControlsTests =
-    [ test "rotate back and forward with 3 slides" <|
-        \() ->
-            program (viewWithPreviousAndNextControls 3)
-                |> ensureSlideIsVisible "slide-0"
-                |> clickButton "Next"
-                |> ensureSlideIsVisible "slide-1"
-                |> clickButton "Next"
-                |> ensureSlideIsVisible "slide-2"
-                |> clickButton "Next"
-                |> ensureSlideIsVisible "slide-0"
-                |> clickButton "Previous"
-                |> ensureSlideIsVisible "slide-2"
-                |> clickButton "Previous"
-                |> ensureSlideIsVisible "slide-1"
-                |> clickButton "Previous"
-                |> ensureSlideIsVisible "slide-0"
-                |> done
-    , test "rotate back and forward with 1 slides" <|
-        \() ->
-            program (viewWithPreviousAndNextControls 1)
-                |> ensureSlideIsVisible "slide-0"
-                |> clickButton "Next"
-                |> ensureSlideIsVisible "slide-0"
-                |> clickButton "Previous"
-                |> ensureSlideIsVisible "slide-0"
-                |> done
-    ]
-
-
-viewWithCombinedControlsTests : List Test
-viewWithCombinedControlsTests =
-    [ test "rotate back and forward with 3 slides" <|
-        \() ->
-            program viewWithCombinedControls
-                |> ensurePanelDisplayed "Slide 0"
-                |> clickButton "Next"
-                |> ensurePanelDisplayed "Slide 1"
-                |> clickButton "Next"
-                |> ensurePanelDisplayed "Slide 2"
-                |> clickButton "Next"
-                |> ensurePanelDisplayed "Slide 0"
-                |> clickButton "Previous"
-                |> ensurePanelDisplayed "Slide 2"
-                |> clickButton "Previous"
-                |> ensurePanelDisplayed "Slide 1"
-                |> clickButton "Previous"
-                |> ensurePanelDisplayed "Slide 0"
-                |> done
-    ]
+viewWithCombinedControlsSpec : Test
+viewWithCombinedControlsSpec =
+    describe "viewWithCombinedControls"
+        [ test "rotate back and forward with 3 slides" <|
+            \() ->
+                program viewWithCombinedControls
+                    |> ensurePanelDisplayed "Slide 0"
+                    |> clickButton "Next"
+                    |> ensurePanelDisplayed "Slide 1"
+                    |> clickButton "Next"
+                    |> ensurePanelDisplayed "Slide 2"
+                    |> clickButton "Next"
+                    |> ensurePanelDisplayed "Slide 0"
+                    |> clickButton "Previous"
+                    |> ensurePanelDisplayed "Slide 2"
+                    |> clickButton "Previous"
+                    |> ensurePanelDisplayed "Slide 1"
+                    |> clickButton "Previous"
+                    |> ensurePanelDisplayed "Slide 0"
+                    |> done
+        ]
 
 
 ensureSlideIsVisible : String -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect
