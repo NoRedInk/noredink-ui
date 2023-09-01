@@ -2,7 +2,7 @@ module Spec.Nri.Ui.Carousel exposing (spec)
 
 import Browser.Dom as Dom
 import Html.Styled exposing (..)
-import Nri.Ui.Carousel.V1 as Carousel
+import Nri.Ui.Carousel.V2 as Carousel
 import ProgramTest exposing (..)
 import Spec.TabsInternalHelpers exposing (..)
 import Task
@@ -11,9 +11,9 @@ import Test exposing (..)
 
 spec : Test
 spec =
-    describe "Nri.Ui.Carousel.V1"
-        [ describe "panel rendering" panelRenderingTests
-        , describe "keyboard behavior" keyboardTests
+    describe "Nri.Ui.Carousel.V2"
+        [ describe "viewWithTabControls rendering" panelRenderingTests
+        , describe "keyboard behavior on viewWithTabControls" keyboardTests
         ]
 
 
@@ -21,13 +21,13 @@ panelRenderingTests : List Test
 panelRenderingTests =
     [ test "displays the associated slide when a control is activated" <|
         \() ->
-            program
+            program viewWithTabControls
                 |> ensureTabbable "Control 0"
                 |> ensurePanelDisplayed "Slide 0"
                 |> done
     , test "has only one slide displayed" <|
         \() ->
-            program
+            program viewWithTabControls
                 |> ensureOnlyOnePanelDisplayed [ "Slide 0", "Slide 1", "Slide 2" ]
                 |> done
     ]
@@ -37,22 +37,22 @@ keyboardTests : List Test
 keyboardTests =
     [ test "has a focusable control" <|
         \() ->
-            program
+            program viewWithTabControls
                 |> ensureTabbable "Control 0"
                 |> done
     , test "all slides are focusable" <|
         \() ->
-            program
+            program viewWithTabControls
                 |> ensurePanelsFocusable [ "Slide 0", "Slide 1", "Slide 2" ]
                 |> done
     , test "has only one control included in the tab sequence" <|
         \() ->
-            program
+            program viewWithTabControls
                 |> ensureOnlyOneTabInSequence [ "Control 0", "Control 1", "Control 2" ]
                 |> done
     , test "moves focus right on right arrow key" <|
         \() ->
-            program
+            program viewWithTabControls
                 |> ensureTabbable "Control 0"
                 |> releaseRightArrow
                 |> ensureTabbable "Control 1"
@@ -62,7 +62,7 @@ keyboardTests =
                 |> done
     , test "moves focus left on left arrow key" <|
         \() ->
-            program
+            program viewWithTabControls
                 |> ensureTabbable "Control 0"
                 |> releaseRightArrow
                 |> ensureTabbable "Control 1"
@@ -72,7 +72,7 @@ keyboardTests =
                 |> done
     , test "when the focus is on the first element, move focus to the last element on left arrow key" <|
         \() ->
-            program
+            program viewWithTabControls
                 |> ensureTabbable "Control 0"
                 |> releaseLeftArrow
                 |> ensureTabbable "Control 2"
@@ -80,7 +80,7 @@ keyboardTests =
                 |> done
     , test "when the focus is on the last element, move focus to the first element on right arrow key" <|
         \() ->
-            program
+            program viewWithTabControls
                 |> ensureTabbable "Control 0"
                 |> releaseLeftArrow
                 |> ensureTabbable "Control 2"
@@ -102,45 +102,42 @@ update msg model =
                     |> Maybe.withDefault Cmd.none
                 )
 
-        Focused error ->
+        Focused _ ->
             Tuple.first ( model, Cmd.none )
 
 
-view : State -> Html Msg
-view model =
-    Carousel.view
+viewWithTabControls : State -> Html Msg
+viewWithTabControls model =
+    Carousel.viewWithTabControls
         { focusAndSelect = FocusAndSelectTab
         , selected = model.selected
-        , controlListStyles = []
-        , controlStyles =
-            \isSelected ->
-                []
-        , items =
-            [ Carousel.buildItem
-                { id = 0
-                , idString = "slide-0"
-                , controlHtml = text "Control 0"
-                , slideHtml = text "Slide 0"
-                }
-            , Carousel.buildItem
-                { id = 1
-                , idString = "slide-1"
-                , controlHtml = text "Control 1"
-                , slideHtml = text "Slide 1"
-                }
-            , Carousel.buildItem
-                { id = 2
-                , idString = "slide-2"
-                , controlHtml = text "Control 2"
-                , slideHtml = text "Slide 2"
-                }
+        , tabControlListStyles = []
+        , role = Carousel.Group
+        , tabControlStyles = \_ -> []
+        , labelledBy = Carousel.LabelledByAccessibleLabelOnly "Label"
+        , panels =
+            [ { id = 0
+              , idString = "slide-0"
+              , tabControlHtml = text "Control 0"
+              , slideHtml = text "Slide 0"
+              }
+            , { id = 1
+              , idString = "slide-1"
+              , tabControlHtml = text "Control 1"
+              , slideHtml = text "Slide 1"
+              }
+            , { id = 2
+              , idString = "slide-2"
+              , tabControlHtml = text "Control 2"
+              , slideHtml = text "Slide 2"
+              }
             ]
         }
         |> (\{ controls, slides } -> section [] [ slides, controls ])
 
 
-program : TestContext
-program =
+program : (State -> Html Msg) -> TestContext
+program view =
     ProgramTest.createSandbox
         { init = init
         , update = update
