@@ -1,39 +1,27 @@
-module Nri.Ui.Modal.V11 exposing
-    ( view, closeButton, closeButtonId
+module Nri.Ui.Modal.V12 exposing
+    ( view
     , Model, init, open, close
     , Msg, update, subscriptions
     , Attribute
     , info, warning
+    , closeButton
     , showTitle, hideTitle
     , testId, css, custom
-    , isOpen, titleId
+    , atac
+    , closeButtonId, titleId
+    , isOpen
     )
 
 {-|
 
 
-# TODO for next major version:
+# Changes fro V11:
 
-  - remove use of FocusTrap type alias (not using the alias causes a major version change)
-
-
-# Patch changes:
-
-  - adds `testId` helper
-  - adds data-nri-descriptions to the header, content, and footer
-  - use `Shadows`
-  - exposes `titleId`
-  - makes the title programmatically focusable
-  - use WhenFocusLeaves directly, instead of using FocusTrap as an intermediary
-
-
-# Changes from V10:
-
-  - remove `initOpen`
-  - change `open`, `close` to return `(Model, Cmd Msg)` rather than `Msg`
-  - make info and warning themes
-  - adds `custom` helper for adding arbitrary html attributes (primarily useful to make limiting the scope of selectors in tests easier by adding ids to modals)
-  - tab and tabback events stop propagation and prevent default
+  - remove use of FocusTrap type alias
+  - return ids to focus on instead of cmds (in order to make modals more testable via the effect pattern with program-test)
+  - use tesk9/accessible-html-with-css for SR-only content
+  - simplify internal attributes pattern
+  - adds Modal.atac to make a hole for the ATAC to render inside the modal
 
 ```
 import Browser exposing (element)
@@ -42,7 +30,6 @@ import Css exposing (padding, px)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (id)
 import Html.Styled.Events as Events
-import Nri.Ui.FocusTrap.V1 as FocusTrap exposing (FocusTrap)
 import Nri.Ui.Modal.V12 as Modal
 import Task
 
@@ -57,18 +44,12 @@ main =
 
 init : ( Modal.Model, Cmd Msg )
 init =
-    let
-        ( model, cmd ) =
-            -- When we load the page with a modal already open, we should return
-            -- the focus someplace sensible when the modal closes.
-            -- [This article](https://developer.paciellogroup.com/blog/2018/06/the-current-state-of-modal-dialog-accessibility/) recommends
-            -- focusing the main or body.
-            Modal.open
-                { startFocusOn = Modal.closeButtonId
-                , returnFocusTo = "maincontent"
-                }
-    in
-    ( model, Cmd.map ModalMsg cmd )
+    -- When we load the page with a modal already open, we should return
+    -- the focus someplace sensible when the modal closes.
+    -- [This article](https://developer.paciellogroup.com/blog/2018/06/the-current-state-of-modal-dialog-accessibility/) recommends
+    -- focusing the main or body.
+    Modal.open { returnFocusTo = "maincontent", startFocusOn = Modal.closeButtonId }
+        |> Tuple.mapSecond (Task.attempt Focused << Dom.focus)
 
 type Msg
     = OpenModal String
@@ -81,31 +62,34 @@ update : Msg -> Modal.Model -> ( Modal.Model, Cmd Msg )
 update msg model =
     case msg of
         OpenModal returnFocusTo ->
-            let
-                ( newModel, cmd ) =
-                    Modal.open
-                        { startFocusOn = Modal.closeButtonId
-                        , returnFocusTo = returnFocusTo
-                        }
-            in
-            ( newModel, Cmd.map ModalMsg cmd )
+            Modal.open
+                { returnFocusTo = returnFocusTo
+                , startFocusOn = Modal.closeButtonId
+                }
+                |> Tuple.mapSecond (Task.attempt Focused << Dom.focus)
 
         ModalMsg modalMsg ->
             let
-                ( newModel, cmd ) =
+                ( newModel, maybeFocus ) =
                     Modal.update
                         { dismissOnEscAndOverlayClick = True }
                         modalMsg
                         model
             in
-            ( newModel, Cmd.map ModalMsg cmd )
+            ( newModel
+            , Maybe.map (Task.attempt Focused << Dom.focus) maybeFocus
+                |> Maybe.withDefault Cmd.none
+            )
 
         CloseModal ->
             let
-                ( newModel, cmd ) =
+                ( newModel, maybeFocus ) =
                     Modal.close model
             in
-            ( newModel, Cmd.map ModalMsg cmd )
+            ( newModel
+            , Maybe.map (Task.attempt Focused << Dom.focus) maybeFocus
+                |> Maybe.withDefault Cmd.none
+            )
 
         Focus id ->
             ( model, Task.attempt Focused (Dom.focus id) )
@@ -132,11 +116,9 @@ view model =
                     ]
                     [ text "Close" ]
                 ]
-            , focusTrap =
-                { focus = Focus
-                , firstId = Modal.closeButtonId
-                , lastId = "last-element-id"
-                }
+            , focus = Focus
+            , firstId = Modal.closeButtonId
+            , lastId = "last-element-id"
             }
             [ Modal.hideTitle
             , Modal.css [ padding (px 10) ]
@@ -147,7 +129,7 @@ view model =
         ]
 ```
 
-@docs view, closeButton, closeButtonId
+@docs view
 @docs Model, init, open, close
 @docs Msg, update, subscriptions
 
@@ -156,13 +138,20 @@ view model =
 
 @docs Attribute
 @docs info, warning
+@docs closeButton
 @docs showTitle, hideTitle
 @docs testId, css, custom
+@docs atac
 
 
-### State checks and accessors
+### Id accessors
 
-@docs isOpen, titleId
+@docs closeButtonId, titleId
+
+
+### State check
+
+@docs isOpen
 
 -}
 
@@ -170,7 +159,7 @@ import Accessibility.Styled as Html exposing (..)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
-import Browser.Dom as Dom
+import Accessibility.Styled.Style as Style
 import Browser.Events.Extra
 import Css exposing (..)
 import Css.Media
@@ -181,14 +170,13 @@ import Html.Styled.Events exposing (onClick)
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.FocusTrap.V1 exposing (FocusTrap)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
+import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.WhenFocusLeaves.V2 as WhenFocusLeaves
-import Task
 
 
 {-| -}
@@ -210,23 +198,33 @@ init =
 
 <https://developer.paciellogroup.com/blog/2018/06/the-current-state-of-modal-dialog-accessibility/>
 
+---
+
+The second part of the returned tuple is the id of the element to which focus should be returned.
+
+_You will need to explicitly move focus to this element!_
+
 -}
-open : { startFocusOn : String, returnFocusTo : String } -> ( Model, Cmd Msg )
-open { startFocusOn, returnFocusTo } =
-    ( Opened returnFocusTo
-    , Task.attempt Focused (Dom.focus startFocusOn)
-    )
+open : { returnFocusTo : String, startFocusOn : String } -> ( Model, String )
+open { returnFocusTo, startFocusOn } =
+    ( Opened returnFocusTo, startFocusOn )
 
 
-{-| -}
-close : Model -> ( Model, Cmd Msg )
+{-| The second part of the tuple is the id of the element to which focus should be returned.
+
+_You will need to explicitly move focus to this element!_
+
+If you're an NRI employee working in the monorepo, pass the second part of the tuple to `Nri.Effect.maybeFocus`.
+
+-}
+close : Model -> ( Model, Maybe String )
 close model =
     case model of
         Opened returnFocusTo ->
-            ( Closed, Task.attempt Focused (Dom.focus returnFocusTo) )
+            ( Closed, Just returnFocusTo )
 
         Closed ->
-            ( Closed, Cmd.none )
+            ( Closed, Nothing )
 
 
 {-| -}
@@ -244,7 +242,6 @@ isOpen model =
 type Msg
     = CloseButtonClicked
     | EscOrOverlayClicked
-    | Focused (Result Dom.Error ())
 
 
 {-| Include the subscription if you want the modal to dismiss on `Esc`.
@@ -259,8 +256,14 @@ subscriptions model =
             Sub.none
 
 
-{-| -}
-update : { dismissOnEscAndOverlayClick : Bool } -> Msg -> Model -> ( Model, Cmd Msg )
+{-| The second part of the tuple is the id of the element to which focus should be returned.
+
+_You will need to explicitly move focus to this element!_
+
+If you're an NRI employee working in the monorepo, pass the second part of the tuple to `Nri.Effect.maybeFocus`.
+
+-}
+update : { dismissOnEscAndOverlayClick : Bool } -> Msg -> Model -> ( Model, Maybe String )
 update { dismissOnEscAndOverlayClick } msg model =
     case msg of
         CloseButtonClicked ->
@@ -271,12 +274,7 @@ update { dismissOnEscAndOverlayClick } msg model =
                 close model
 
             else
-                ( model, Cmd.none )
-
-        Focused _ ->
-            -- TODO: consider adding error handling when we didn't successfully
-            -- fous an element
-            ( model, Cmd.none )
+                ( model, Nothing )
 
 
 
@@ -287,16 +285,20 @@ update { dismissOnEscAndOverlayClick } msg model =
 -}
 info : Attribute
 info =
-    Batch []
+    Attribute identity
 
 
 {-| -}
 warning : Attribute
 warning =
-    Batch
-        [ overlayColor (Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.gray20)
-        , titleColor Colors.red
-        ]
+    Attribute
+        (\attrs ->
+            { attrs
+                | overlayColor =
+                    Nri.Ui.Colors.Extra.withAlpha 0.9 Colors.gray20
+                , titleColor = Colors.red
+            }
+        )
 
 
 {-| Include the close button.
@@ -328,8 +330,11 @@ hideTitle =
         , wrapMsg = ModalMsg
         , content = []
         , footer = []
+        , firstId : Modal.closeButtonId
+        , lastId : Modal.closeButtonId
+        , focus : Focus
         }
-        [ Modal.custom [ id "my-modal" ]]
+        [ Modal.custom [ id "my-modal" ], Modal.closeButton ]
         modalState
 
 -}
@@ -368,10 +373,19 @@ css styles =
         )
 
 
+{-| Pass the [Assistive Technology Announcement Center and Announcement Log]("https://paper.dropbox.com/doc/Assistive-Technology-Announcement-Center-ATAC--B_GuqwWltzU432ueq7p6Z42mAg-bOnmcnzOj631NRls1IBe3").
+
+HTML passed here will render after the footer.
+
+-}
+atac : Html Never -> Attribute
+atac atac_ =
+    Attribute (\attrs -> { attrs | atac = Just atac_ })
+
+
 {-| -}
 type Attribute
     = Attribute (Attributes -> Attributes)
-    | Batch (List Attribute)
 
 
 
@@ -385,6 +399,7 @@ type alias Attributes =
     , customStyles : List Style
     , customAttributes : List (Html.Attribute Never)
     , closeButton : Bool
+    , atac : Maybe (Html Never)
     }
 
 
@@ -396,17 +411,8 @@ defaultAttributes =
     , customStyles = []
     , customAttributes = []
     , closeButton = False
+    , atac = Nothing
     }
-
-
-titleColor : Color -> Attribute
-titleColor color =
-    Attribute (\attrs -> { attrs | titleColor = color })
-
-
-overlayColor : Color -> Attribute
-overlayColor color =
-    Attribute (\attrs -> { attrs | overlayColor = color })
 
 
 buildAttributes : List Attribute -> Attributes
@@ -416,9 +422,6 @@ buildAttributes attrs =
             case attribute of
                 Attribute fun ->
                     fun acc
-
-                Batch functions ->
-                    List.foldl applyAttrs acc functions
     in
     List.foldl applyAttrs defaultAttributes attrs
 
@@ -472,28 +475,20 @@ titleStyles config =
         ]
 
     else
-        [ -- https://snook.ca/archives/html_and_css/hiding-content-for-accessibility
-          Css.property "clip" "rect(1px, 1px, 1px, 1px)"
-        , Css.position Css.absolute
-        , Css.height (Css.px 1)
-        , Css.width (Css.px 1)
-        , Css.overflow Css.hidden
-        , Css.margin (Css.px -1)
-        , Css.padding Css.zero
-        , Css.border Css.zero
-        ]
+        [ Style.invisibleStyle ]
 
 
 
 -- VIEW
 
 
-{-| `FocusTrap` comes from `Nri.Ui.FocusTrap.V1`.
--}
+{-| -}
 view :
     { title : String
     , wrapMsg : Msg -> msg
-    , focusTrap : FocusTrap msg
+    , firstId : String
+    , lastId : String
+    , focus : String -> msg
     , content : List (Html msg)
     , footer : List (Html msg)
     }
@@ -533,6 +528,7 @@ view config attrsList model =
                                 Nothing
                         , content = config.content
                         , footer = config.footer
+                        , atac = attrs.atac
                         }
                     ]
                 , Root.node "style" [] [ Root.text "body {overflow: hidden;} " ]
@@ -541,14 +537,14 @@ view config attrsList model =
                 |> Root.div
                     [ WhenFocusLeaves.onKeyDownPreventDefault
                         []
-                        { firstIds = [ config.focusTrap.firstId, titleId ]
-                        , lastIds = [ config.focusTrap.lastId ]
+                        { firstIds = [ config.firstId, titleId ]
+                        , lastIds = [ config.lastId ]
                         , -- if the user tabs back while on the first id or the modal heading's id,
                           -- we want to wrap around to the last id.
-                          tabBackAction = config.focusTrap.focus config.focusTrap.lastId
+                          tabBackAction = config.focus config.lastId
                         , -- if the user tabs forward while on the last id,
                           -- we want to wrap around to the first id.
-                          tabForwardAction = config.focusTrap.focus config.focusTrap.firstId
+                          tabForwardAction = config.focus config.firstId
                         }
                     , ExtraAttributes.testId "focus-trap-node"
                     , Attrs.css [ Css.position Css.relative, Css.zIndex (Css.int 100) ]
@@ -595,6 +591,7 @@ viewModal :
     , closeButton : Maybe msg
     , content : List (Html msg)
     , footer : List (Html msg)
+    , atac : Maybe (Html Never)
     }
     -> Html msg
 viewModal config =
@@ -616,6 +613,7 @@ viewModal config =
             []
             [ viewInnerContent config
             , viewFooter config.footer
+            , viewJust (map never) config.atac
             ]
         ]
 

@@ -7,7 +7,7 @@ import Html.Styled as Html exposing (Html, toUnstyled)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Json.Encode as Encode
-import Nri.Ui.Modal.V11 as Modal
+import Nri.Ui.Modal.V12 as Modal
 import ProgramTest exposing (..)
 import SimulatedEffect.Cmd
 import Spec.KeyboardHelpers exposing (pressTabBackKey, pressTabKey)
@@ -20,7 +20,7 @@ spec =
     describe "Nri.Ui.Modal"
         [ test "titleId is attached to the modal title" <|
             \() ->
-                start
+                start []
                     |> clickButton "Open Modal"
                     |> ensureViewHas
                         [ id Modal.titleId
@@ -29,26 +29,52 @@ spec =
                         , attribute (Key.tabbable False)
                         ]
                     |> done
+        , focusTests
+        , test "ATAC hole works" <|
+            \() ->
+                start [ Modal.atac (Html.text "ATAC content") ]
+                    |> clickButton "Open Modal"
+                    |> ensureViewHas [ text "ATAC content" ]
+                    |> done
+        ]
+
+
+focusTests : Test
+focusTests =
+    describe "Focus management"
+        [ test "focus starts on the specified element in the modal" <|
+            \() ->
+                start []
+                    |> clickButton "Open Modal"
+                    |> ensureFocused Modal.closeButtonId
+                    |> done
+        , test "focus returns to the element that opened the modal" <|
+            \() ->
+                start []
+                    |> clickButton "Open Modal"
+                    |> clickButton "Close modal"
+                    |> ensureFocused "open-modal"
+                    |> done
         , test "focus wraps from the modal title correctly" <|
             \() ->
-                start
+                start []
                     |> clickButton "Open Modal"
                     |> tabBackWithinModal Modal.titleId
-                    |> ensureLastEffect (Expect.equal (FocusOn lastButtonId))
+                    |> ensureFocused lastButtonId
                     |> done
         , test "focus wraps from the close button correctly" <|
             \() ->
-                start
+                start []
                     |> clickButton "Open Modal"
                     |> tabBackWithinModal Modal.closeButtonId
-                    |> ensureLastEffect (Expect.equal (FocusOn lastButtonId))
+                    |> ensureFocused lastButtonId
                     |> done
         , test "focus wraps from the last button correctly" <|
             \() ->
-                start
+                start []
                     |> clickButton "Open Modal"
                     |> tabForwardWithinModal lastButtonId
-                    |> ensureLastEffect (Expect.equal (FocusOn Modal.closeButtonId))
+                    |> ensureFocused Modal.closeButtonId
                     |> done
         ]
 
@@ -68,11 +94,11 @@ focusTrapNode =
     [ attribute (Html.Attributes.attribute "data-testid" "focus-trap-node") ]
 
 
-start : ProgramTest Modal.Model Msg Effect
-start =
+start : List Modal.Attribute -> ProgramTest Modal.Model Msg Effect
+start modalAttributes =
     createElement
         { init = \_ -> ( Modal.init, None )
-        , view = toUnstyled << view
+        , view = toUnstyled << view modalAttributes
         , update = update
         }
         |> withSimulatedEffects perform
@@ -90,40 +116,39 @@ update msg model =
     case msg of
         OpenModal returnFocusTo ->
             let
-                ( newModel, cmd ) =
+                ( newModel, focusOn ) =
                     Modal.open
                         { startFocusOn = Modal.closeButtonId
                         , returnFocusTo = returnFocusTo
                         }
             in
-            ( newModel, ModalEffect cmd )
+            ( newModel, FocusOn focusOn )
 
         ModalMsg modalMsg ->
             let
-                ( newModel, cmd ) =
+                ( newModel, maybeFocus ) =
                     Modal.update
                         { dismissOnEscAndOverlayClick = True }
                         modalMsg
                         model
             in
-            ( newModel, ModalEffect cmd )
+            ( newModel
+            , Maybe.map FocusOn maybeFocus
+                |> Maybe.withDefault None
+            )
 
         Focus id ->
             ( model, FocusOn id )
 
 
 type Effect
-    = ModalEffect (Cmd Modal.Msg)
-    | FocusOn String
+    = FocusOn String
     | None
 
 
 perform : Effect -> SimulatedEffect Msg
 perform effect =
     case effect of
-        ModalEffect modalMsg ->
-            SimulatedEffect.Cmd.none
-
         FocusOn id ->
             SimulatedEffect.Cmd.none
 
@@ -131,8 +156,8 @@ perform effect =
             SimulatedEffect.Cmd.none
 
 
-view : Modal.Model -> Html Msg
-view model =
+view : List Modal.Attribute -> Modal.Model -> Html Msg
+view modalAttributes model =
     Html.main_ [ Attributes.id "maincontent" ]
         [ Html.button
             [ Attributes.id "open-modal"
@@ -150,14 +175,11 @@ view model =
                     [ Html.text "Last Button"
                     ]
                 ]
-            , focusTrap =
-                { focus = Focus
-                , firstId = Modal.closeButtonId
-                , lastId = lastButtonId
-                }
+            , focus = Focus
+            , firstId = Modal.closeButtonId
+            , lastId = lastButtonId
             }
-            [ Modal.closeButton
-            ]
+            (Modal.closeButton :: modalAttributes)
             model
         ]
 
@@ -170,3 +192,8 @@ lastButtonId =
 modalTitle : String
 modalTitle =
     "Modal Title"
+
+
+ensureFocused : String -> ProgramTest a b Effect -> ProgramTest a b Effect
+ensureFocused id =
+    ensureLastEffect (Expect.equal (FocusOn id))

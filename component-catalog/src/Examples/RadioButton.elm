@@ -30,7 +30,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Message.V4 as Message
-import Nri.Ui.Modal.V11 as Modal
+import Nri.Ui.Modal.V12 as Modal
 import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.Text.V6 as Text
 import Routes
@@ -167,11 +167,9 @@ view ellieLinkConfig state =
                 , Button.id "close-premium-modal"
                 ]
             ]
-        , focusTrap =
-            { focus = Focus
-            , firstId = Modal.closeButtonId
-            , lastId = "close-premium-modal"
-            }
+        , focus = Focus
+        , firstId = Modal.closeButtonId
+        , lastId = "close-premium-modal"
         }
         [ Modal.closeButton ]
         state.modal
@@ -388,29 +386,37 @@ update msg model =
     case msg of
         OpenModal returnFocusTo ->
             let
-                ( modal, cmd ) =
+                ( modal, startFocusOn ) =
                     Modal.open
                         { startFocusOn = Modal.closeButtonId
                         , returnFocusTo = returnFocusTo
                         }
             in
-            ( { model | modal = modal }, Cmd.map ModalMsg cmd )
+            ( { model | modal = modal }
+            , Task.attempt Focused (Dom.focus startFocusOn)
+            )
 
         ModalMsg modalMsg ->
             let
-                ( modal, cmd ) =
+                ( modal, maybeFocus ) =
                     Modal.update { dismissOnEscAndOverlayClick = True }
                         modalMsg
                         model.modal
             in
-            ( { model | modal = modal }, Cmd.map ModalMsg cmd )
+            ( { model | modal = modal }
+            , Maybe.map (Task.attempt Focused << Dom.focus) maybeFocus
+                |> Maybe.withDefault Cmd.none
+            )
 
         CloseModal ->
             let
-                ( modal, cmd ) =
+                ( modal, maybeFocus ) =
                     Modal.close model.modal
             in
-            ( { model | modal = modal }, Cmd.map ModalMsg cmd )
+            ( { model | modal = modal }
+            , Maybe.map (Task.attempt Focused << Dom.focus) maybeFocus
+                |> Maybe.withDefault Cmd.none
+            )
 
         Select value ->
             ( { model | selectedValue = Just value }, Cmd.none )
