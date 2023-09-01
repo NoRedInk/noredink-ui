@@ -61,14 +61,16 @@ viewWithPreviousAndNextControls :
         List
             { id : id
             , idString : String
+            , accessibleLabel : String
+            , visibleLabelId : Maybe String
             , slideHtml : Html msg
-            , labelledBy : LabelledBy
             }
     , previousButton : { name : String, icon : Svg, attributes : List (ClickableSvg.Attribute msg) }
     , nextButton : { name : String, icon : Svg, attributes : List (ClickableSvg.Attribute msg) }
-    , labelledBy : LabelledBy
+    , accessibleLabel : String
+    , visibleLabelId : Maybe String
     , role : Role
-    , focusAndSelect : { select : id, focus : Maybe String } -> msg
+    , selectAndAnnounce : { select : id, announce : String } -> msg
     }
     ->
         { viewPreviousButton : Html msg
@@ -78,6 +80,7 @@ viewWithPreviousAndNextControls :
         }
 viewWithPreviousAndNextControls config =
     let
+        -- i think it's safe to assume that the selected index is valid here and use `withDefault`
         currentPanelIndex =
             List.Extra.findIndex (\p -> p.id == config.selected) config.panels
 
@@ -113,7 +116,16 @@ viewWithPreviousAndNextControls config =
         ClickableSvg.button config.previousButton.name
             config.previousButton.icon
             (config.previousButton.attributes
-                ++ (Maybe.map (\p -> ClickableSvg.onClick (config.focusAndSelect { select = p.id, focus = Just p.idString })) previousPanel
+                ++ (previousPanel
+                        |> Maybe.map
+                            (\p ->
+                                ClickableSvg.onClick
+                                    (config.selectAndAnnounce
+                                        { select = p.id
+                                        , announce = "Active slide of " ++ config.accessibleLabel ++ " changed to " ++ p.accessibleLabel
+                                        }
+                                    )
+                            )
                         |> Maybe.Extra.toList
                    )
             )
@@ -121,7 +133,16 @@ viewWithPreviousAndNextControls config =
         ClickableSvg.button config.nextButton.name
             config.nextButton.icon
             (config.nextButton.attributes
-                ++ (Maybe.map (\p -> ClickableSvg.onClick (config.focusAndSelect { select = p.id, focus = Just p.idString })) nextPanel
+                ++ (nextPanel
+                        |> Maybe.map
+                            (\p ->
+                                ClickableSvg.onClick
+                                    (config.selectAndAnnounce
+                                        { select = p.id
+                                        , announce = "Active slide of " ++ config.accessibleLabel ++ " changed to " ++ p.accessibleLabel
+                                        }
+                                    )
+                            )
                         |> Maybe.Extra.toList
                    )
             )
@@ -132,7 +153,7 @@ viewWithPreviousAndNextControls config =
                     [ Role.group
                     , Aria.roleDescription "slide"
                     , id panel.idString
-                    , labelledByToAttr panel.labelledBy
+                    , labelAttribute panel
 
                     -- use as attribute for testing
                     , if config.selected == panel.id then
@@ -148,7 +169,7 @@ viewWithPreviousAndNextControls config =
     , containerAttributes =
         [ Attrs.attribute "role" (roleToString config.role)
         , Aria.roleDescription "carousel"
-        , labelledByToAttr config.labelledBy
+        , labelAttribute config
         ]
     }
 
@@ -242,6 +263,7 @@ viewWithCombinedControls config =
         { controls, slides, containerAttributes } =
             viewWithTabControls config
 
+        -- let's de duplicate this!
         currentPanelIndex =
             List.Extra.findIndex (\p -> p.id == config.selected) config.panels
 
@@ -293,6 +315,16 @@ viewWithCombinedControls config =
                    )
             )
     }
+
+
+labelAttribute : { c | accessibleLabel : String, visibleLabelId : Maybe String } -> Attribute msg
+labelAttribute { accessibleLabel, visibleLabelId } =
+    case visibleLabelId of
+        Just visibleLabelId_ ->
+            Aria.labeledBy visibleLabelId_
+
+        Nothing ->
+            Aria.label accessibleLabel
 
 
 labelledByToAttr : LabelledBy -> Attribute msg

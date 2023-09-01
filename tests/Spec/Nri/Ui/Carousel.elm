@@ -25,32 +25,35 @@ import Test.Html.Selector as Selector
 
 
 type PreviousAndNextProgramMsg
-    = FocusAndSelect { select : Int, focus : Maybe String }
+    = SelectAndAnnounce { select : Int, announce : String }
 
 
 previousAndNextCarouselProgram : Int -> ProgramTest { selected : Int } PreviousAndNextProgramMsg ()
 previousAndNextCarouselProgram slidesCount =
     -- TODO: use program rather than sandbox so we can test effects
+    -- TODO: test label behavior
     ProgramTest.createSandbox
         { init = { selected = 0 }
         , update =
             \msg _ ->
                 case msg of
-                    FocusAndSelect { select } ->
+                    SelectAndAnnounce { select } ->
                         { selected = select }
         , view =
             \model ->
                 Carousel.viewWithPreviousAndNextControls
-                    { focusAndSelect = FocusAndSelect
+                    { selectAndAnnounce = SelectAndAnnounce
                     , selected = model.selected
                     , role = Carousel.Group
-                    , labelledBy = Carousel.LabelledByAccessibleLabelOnly "Label"
+                    , accessibleLabel = "Label"
+                    , visibleLabelId = Nothing
                     , panels =
                         List.map
                             (\i ->
                                 { id = i
                                 , idString = "slide-" ++ String.fromInt i
-                                , labelledBy = Carousel.LabelledByAccessibleLabelOnly ("Control " ++ String.fromInt i)
+                                , accessibleLabel = "Control " ++ String.fromInt i
+                                , visibleLabelId = Nothing
                                 , slideHtml = text ("Slide " ++ String.fromInt i)
                                 }
                             )
