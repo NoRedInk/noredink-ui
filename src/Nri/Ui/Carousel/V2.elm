@@ -22,6 +22,7 @@ import Maybe.Extra
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Svg.V1 exposing (Svg)
 import TabsInternal.V2 as TabsInternal
+import Accessibility.Styled.Key
 
 
 {-| Type which represents the type of aria label which will be used
@@ -136,7 +137,7 @@ viewWithPreviousAndNextControls config =
                     [ panel.slideHtml ]
             )
             config.panels
-            |> Html.div [ Attrs.attribute "atomic" "false", Attrs.attribute "live" "polite" ]
+            |> Html.div [ Attrs.attribute "atomic" "false", Accessibility.Styled.Key.tabbable False ]
     , containerAttributes =
         [ Attrs.attribute "role" (roleToString config.role)
         , Aria.roleDescription "carousel"
