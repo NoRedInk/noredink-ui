@@ -60,8 +60,8 @@ viewWithPreviousAndNextControls :
             , slideHtml : Html msg
             , labelledBy : LabelledBy
             }
-    , previousButton : { attributes : List (ClickableSvg.Attribute msg), icon : Svg, name : String }
-    , nextButton : { attributes : List (ClickableSvg.Attribute msg), icon : Svg, name : String }
+    , previousButton : { name : String, icon : Svg, attributes : List (ClickableSvg.Attribute msg) }
+    , nextButton : { name : String, icon : Svg, attributes : List (ClickableSvg.Attribute msg) }
     , labelledBy : LabelledBy
     , role : Role
     , focusAndSelect : { select : id, focus : Maybe String } -> msg
@@ -221,8 +221,8 @@ viewWithCombinedControls :
     , focusAndSelect : { select : id, focus : Maybe String } -> msg
     , tabControlStyles : Bool -> List Style
     , tabControlListStyles : List Style
-    , previousButton : { attributes : List (ClickableSvg.Attribute msg), icon : Svg, name : String }
-    , nextButton : { attributes : List (ClickableSvg.Attribute msg), icon : Svg, name : String }
+    , previousButton : { name : String, icon : Svg, attributes : List (ClickableSvg.Attribute msg) }
+    , nextButton : { name : String, icon : Svg, attributes : List (ClickableSvg.Attribute msg) }
     , role : Role
     , labelledBy : LabelledBy
     }
