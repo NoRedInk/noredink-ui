@@ -16,7 +16,8 @@ spec =
     describe "Nri.Ui.Carousel.V2"
         [ describe "viewWithTabControls rendering" panelRenderingTests
         , describe "keyboard behavior on viewWithTabControls" keyboardTests
-        , describe "viewWithPreviousAndNextControlsTests rendering" viewWithPreviousAndNextControlsTests
+        , describe "viewWithPreviousAndNextControls rendering" viewWithPreviousAndNextControlsTests
+        , describe "viewWithCombinedControls rendering" viewWithCombinedControlsTests
         ]
 
 
@@ -125,6 +126,28 @@ viewWithPreviousAndNextControlsTests =
     ]
 
 
+viewWithCombinedControlsTests : List Test
+viewWithCombinedControlsTests =
+    [ test "rotate back and forward with 3 slides" <|
+        \() ->
+            program viewWithCombinedControls
+                |> ensurePanelDisplayed "Slide 0"
+                |> clickButton "Next"
+                |> ensurePanelDisplayed "Slide 1"
+                |> clickButton "Next"
+                |> ensurePanelDisplayed "Slide 2"
+                |> clickButton "Next"
+                |> ensurePanelDisplayed "Slide 0"
+                |> clickButton "Previous"
+                |> ensurePanelDisplayed "Slide 2"
+                |> clickButton "Previous"
+                |> ensurePanelDisplayed "Slide 1"
+                |> clickButton "Previous"
+                |> ensurePanelDisplayed "Slide 0"
+                |> done
+    ]
+
+
 ensureSlideIsVisible : String -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect
 ensureSlideIsVisible id =
     ensureViewHas [ Selector.id id, Selector.style "display" "block" ]
@@ -173,6 +196,40 @@ viewWithTabControls model =
             ]
         }
         |> (\{ controls, slides, containerAttributes } -> section containerAttributes [ slides, controls ])
+
+
+viewWithCombinedControls : State -> Html Msg
+viewWithCombinedControls model =
+    Carousel.viewWithCombinedControls
+        { focusAndSelect = FocusAndSelectTab
+        , selected = model.selected
+        , tabControlListStyles = []
+        , role = Carousel.Group
+        , tabControlStyles = \_ -> []
+        , labelledBy = Carousel.LabelledByAccessibleLabelOnly "Label"
+        , panels =
+            [ { id = 0
+              , idString = "slide-0"
+              , tabControlHtml = text "Control 0"
+              , slideHtml = text "Slide 0"
+              }
+            , { id = 1
+              , idString = "slide-1"
+              , tabControlHtml = text "Control 1"
+              , slideHtml = text "Slide 1"
+              }
+            , { id = 2
+              , idString = "slide-2"
+              , tabControlHtml = text "Control 2"
+              , slideHtml = text "Slide 2"
+              }
+            ]
+        , viewNextButton = { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
+        , viewPreviousButton = { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
+        }
+        |> (\{ tabControls, slides, containerAttributes, viewNextButton, viewPreviousButton } ->
+                section containerAttributes [ slides, tabControls, viewNextButton, viewPreviousButton ]
+           )
 
 
 viewWithPreviousAndNextControls : Int -> State -> Html Msg
