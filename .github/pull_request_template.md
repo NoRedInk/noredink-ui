@@ -63,8 +63,11 @@ Please link to any relevant context and stories.
 - [ ] Component API follows standard patterns in noredink-ui
     - e.g., as a dev, I can conveniently add an `nriDescription`
     - and adding a new feature to the component will _not_ require major API changes to the component
-- [ ] Please assign [team-accessibilibats-a11ybats](https://github.com/orgs/NoRedInk/teams/team-accessibilibats-a11ybats) as a reviewer in addition to assigning a reviewer from your team
-
+- [ ] Please assign the following reviewers (applicable Sep 2023–Dec 2023):
+    - [ ] [a11y-volunteer-reviewers](https://github.com/orgs/NoRedInk/teams/volunteer-a11y-reviewers) - Someone from this group will review your PR in full.
+    - [ ]  [team-accessibilibats-a11ybats](https://github.com/orgs/NoRedInk/teams/team-accessibilibats-a11ybats) - Someone from this group will review your PR for ACCESSIBILITY ONLY.
+    - [ ]  Someone from your team who can review requirements from your team's perspective.
+    - [ ]  A designer, maybe - If there are user-facing changes, follow the guidelines above to assign the correct designer.
 
 ---
 
