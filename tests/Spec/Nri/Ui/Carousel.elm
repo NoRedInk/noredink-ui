@@ -3,10 +3,12 @@ module Spec.Nri.Ui.Carousel exposing (spec)
 import Browser.Dom as Dom
 import Html.Styled exposing (..)
 import Nri.Ui.Carousel.V2 as Carousel
+import Nri.Ui.UiIcon.V1 as UiIcon
 import ProgramTest exposing (..)
 import Spec.TabsInternalHelpers exposing (..)
 import Task
 import Test exposing (..)
+import Test.Html.Selector as Selector
 
 
 spec : Test
@@ -14,6 +16,7 @@ spec =
     describe "Nri.Ui.Carousel.V2"
         [ describe "viewWithTabControls rendering" panelRenderingTests
         , describe "keyboard behavior on viewWithTabControls" keyboardTests
+        , describe "viewWithPreviousAndNextControlsTests rendering" viewWithPreviousAndNextControlsTests
         ]
 
 
@@ -91,6 +94,42 @@ keyboardTests =
     ]
 
 
+viewWithPreviousAndNextControlsTests : List Test
+viewWithPreviousAndNextControlsTests =
+    [ test "rotate back and forward with 3 slides" <|
+        \() ->
+            program (viewWithPreviousAndNextControls 3)
+                |> ensureSlideIsVisible "slide-0"
+                |> clickButton "Next"
+                |> ensureSlideIsVisible "slide-1"
+                |> clickButton "Next"
+                |> ensureSlideIsVisible "slide-2"
+                |> clickButton "Next"
+                |> ensureSlideIsVisible "slide-0"
+                |> clickButton "Previous"
+                |> ensureSlideIsVisible "slide-2"
+                |> clickButton "Previous"
+                |> ensureSlideIsVisible "slide-1"
+                |> clickButton "Previous"
+                |> ensureSlideIsVisible "slide-0"
+                |> done
+    , test "rotate back and forward with 1 slides" <|
+        \() ->
+            program (viewWithPreviousAndNextControls 1)
+                |> ensureSlideIsVisible "slide-0"
+                |> clickButton "Next"
+                |> ensureSlideIsVisible "slide-0"
+                |> clickButton "Previous"
+                |> ensureSlideIsVisible "slide-0"
+                |> done
+    ]
+
+
+ensureSlideIsVisible : String -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect
+ensureSlideIsVisible id =
+    ensureViewHas [ Selector.id id, Selector.style "display" "block" ]
+
+
 update : Msg -> State -> State
 update msg model =
     case msg of
@@ -133,7 +172,32 @@ viewWithTabControls model =
               }
             ]
         }
-        |> (\{ controls, slides } -> section [] [ slides, controls ])
+        |> (\{ controls, slides, containerAttributes } -> section containerAttributes [ slides, controls ])
+
+
+viewWithPreviousAndNextControls : Int -> State -> Html Msg
+viewWithPreviousAndNextControls slidesCount model =
+    Carousel.viewWithPreviousAndNextControls
+        { focusAndSelect = FocusAndSelectTab
+        , selected = model.selected
+        , role = Carousel.Group
+        , labelledBy = Carousel.LabelledByAccessibleLabelOnly "Label"
+        , panels =
+            List.map
+                (\i ->
+                    { id = i
+                    , idString = "slide-" ++ String.fromInt i
+                    , labelledBy = Carousel.LabelledByAccessibleLabelOnly ("Control " ++ String.fromInt i)
+                    , slideHtml = text ("Slide " ++ String.fromInt i)
+                    }
+                )
+                (List.range 0 (slidesCount - 1))
+        , viewNextButton = { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
+        , viewPreviousButton = { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
+        }
+        |> (\{ viewPreviousButton, viewNextButton, slides, containerAttributes } ->
+                section containerAttributes [ slides, viewPreviousButton, viewNextButton ]
+           )
 
 
 program : (State -> Html Msg) -> TestContext

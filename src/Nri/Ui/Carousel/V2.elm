@@ -125,13 +125,13 @@ viewWithPreviousAndNextControls config =
                     , Aria.roleDescription "slide"
                     , id panel.idString
                     , labelledByToAttr panel.labelledBy
-                    , css
-                        [ if config.selected == panel.id then
-                            Css.display Css.block
 
-                          else
-                            Css.display Css.none
-                        ]
+                    -- use as attribute for testing
+                    , if config.selected == panel.id then
+                        Attrs.style "display" "block"
+
+                      else
+                        Attrs.style "display" "none"
                     ]
                     [ panel.slideHtml ]
             )
