@@ -274,6 +274,15 @@ subscriptions model =
             Routes.CategoryDoodad _ exampleName ->
                 exampleSubs exampleName
 
+            Routes.Usage exampleName ->
+                case Dict.get exampleName model.usageExampleStates of
+                    Just example ->
+                        Sub.map (UpdateUsageExamples exampleName)
+                            (example.subscriptions example.state)
+
+                    Nothing ->
+                        Sub.none
+
             _ ->
                 Sub.none
         , Sub.map NewInputMethod InputMethod.subscriptions
