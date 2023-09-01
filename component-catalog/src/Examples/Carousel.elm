@@ -263,7 +263,6 @@ viewWithPreviousAndNextControls model =
         [ Code.fromModule moduleName "viewWithPreviousAndNextControls"
             ++ Code.recordMultiline
                 [ ( "selected", Code.string (String.fromInt model.selected) )
-                , ( "controlListStyles", Tuple.first settings.controlListStyles )
                 , ( "panels", Code.listMultiline (List.map Tuple.first allItems) 3 )
                 , ( "viewPreviousButton", "{ attributes = [], icon = UiIcon.arrowLeft , name = \"Previous\" }" )
                 , ( "viewNextButton", "{ attributes = [], icon = UiIcon.arrowLeft , name = \"Next\" }" )
