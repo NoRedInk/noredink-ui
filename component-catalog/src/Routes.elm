@@ -1,4 +1,16 @@
-module Routes exposing (Route(..), exampleHref, fromLocation, headerId, toString, viewHeader)
+module Routes exposing
+    ( Route(..), toString, fromLocation
+    , viewHeader, headerId
+    , exampleHref, usageExampleHref
+    )
+
+{-|
+
+@docs Route, toString, fromLocation
+@docs viewHeader, headerId
+@docs exampleHref, usageExampleHref
+
+-}
 
 import Accessibility.Styled as Html exposing (Html)
 import Category
@@ -196,4 +208,10 @@ usageExampleCrumb example =
 exampleHref : Example a b -> String
 exampleHref example =
     Doodad (Example.routeName example)
+        |> toString
+
+
+usageExampleHref : UsageExample a b -> String
+usageExampleHref example =
+    Usage (UsageExample.routeName example)
         |> toString

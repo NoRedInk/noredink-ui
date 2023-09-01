@@ -29,6 +29,8 @@ import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V7 as Table
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Routes
+import UsageExamples.ClickableCardWithTooltip
 
 
 version : Int
@@ -234,13 +236,13 @@ Use when all of the following are true:
 This type may contain interactive elements such as links.
         """
           , description =
-                """
-Sometimes a tooltip trigger doesn't have any functionality itself outside of revealing information.
-
-This behavior is analogous to disclosure behavior, except that it's presented different visually. (For more information, please read [Sarah Higley's "Tooltips in the time of WCAG 2.1" post](https://sarahmhigley.com/writing/tooltips-in-wcag-21).)
-
-Are you trying to use this tooltip type inside a clickable card? Check out [the Clickable Card with Tooltip example](/#/usage_example/Clickable-Card-with-Tooltip).
-"""
+                [ "Sometimes a tooltip trigger doesn't have any functionality itself outside of revealing information.\n\n"
+                , "This behavior is analogous to disclosure behavior, except that it's presented different visually. (For more information, please read [Sarah Higley's \"Tooltips in the time of WCAG 2.1\" post](https://sarahmhigley.com/writing/tooltips-in-wcag-21).)\n\n"
+                , "Are you trying to use this tooltip type inside a clickable card? Check out [the Clickable Card with Tooltip example]("
+                , Routes.usageExampleHref UsageExamples.ClickableCardWithTooltip.example
+                , ")."
+                ]
+                    |> String.join ""
           , example = viewDisclosureToolip model.openTooltip
           , tooltipId = Disclosure
           }
@@ -254,11 +256,12 @@ This type may contain interactive elements such as links.
 
         """
           , description =
-                """
-This is a helper for using Tooltip.disclosure with a "?" icon because it is a commonly used UI pattern. We use this helper when we want to show more information about an element but we don't want the element itself to have its own tooltip. The "?" icon typically appears visually adjacent to the element it reveals information about.
-
-Are you trying to use this tooltip type inside a clickable card? Check out [the Clickable Card with Tooltip example](/#/usage_example/Clickable-Card-with-Tooltip).
-"""
+                [ "This is a helper for using Tooltip.disclosure with a \"?\" icon because it is a commonly used UI pattern. We use this helper when we want to show more information about an element but we don't want the element itself to have its own tooltip. The \"?\" icon typically appears visually adjacent to the element it reveals information about.\n\n"
+                , "Are you trying to use this tooltip type inside a clickable card? Check out [the Clickable Card with Tooltip example]("
+                , Routes.usageExampleHref UsageExamples.ClickableCardWithTooltip.example
+                , ")."
+                ]
+                    |> String.join ""
           , example = viewToggleTip model.openTooltip
           , tooltipId = LearnMore
           }
