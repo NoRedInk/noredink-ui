@@ -10,7 +10,7 @@ import Accessibility.Styled exposing (..)
 import Category exposing (Category(..))
 import Css
 import Html.Styled exposing (Html)
-import Html.Styled.Attributes exposing (css, id)
+import Html.Styled.Attributes exposing (id)
 import Html.Styled.Events as Events
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Container.V2 as Container
@@ -82,7 +82,7 @@ view model =
                 ]
             ]
         , Container.custom [ Events.onClick ParentClick ]
-        , Container.id "parent-button"
+        , Container.id "parent-container"
         , Container.css [ Css.maxWidth (Css.px 500) ]
         ]
     , p [ id "parent-button-clicks" ]
@@ -93,7 +93,7 @@ view model =
 
 viewTooltip : State -> Html Msg
 viewTooltip model =
-    Tooltip.viewToggleTip { label = "Clickable Card", lastId = Nothing }
+    Tooltip.viewToggleTip { label = "Tooltip trigger", lastId = Nothing }
         [ Tooltip.plaintext "Notice that even though this tooltip is in a clickable card, you can still interact with me!"
         , Tooltip.onToggle (ToggleTooltip ())
         , Tooltip.open (model.openTooltip == Just ())

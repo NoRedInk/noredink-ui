@@ -184,15 +184,13 @@ describe("UI tests", function () {
     handleAxeResults(name, results);
   };
 
-  const clickableCardWithTooltipProcessing = async (testName, name, location) => {
+  const clickableCardWithTooltipProcessing = async (
+    testName,
+    name,
+    location
+  ) => {
     await defaultUsageExampleProcessing(testName, name, location);
     await page.waitForSelector("#parent-button-clicks");
-
-    const buttonClick = async () => {
-      const button = await page.$("#parent-button");
-      await page.evaluate((el) => el.click(), button);
-      await page.waitForTimeout(100);
-    };
 
     const getCounterText = async () => {
       const counter = await page.$("#parent-button-clicks");
@@ -200,34 +198,26 @@ describe("UI tests", function () {
       return text;
     };
 
-    const tooltipTriggerClick = async () => {
-      const button = await page.$("#tooltip__disclosure-trigger");
-      await page.evaluate((el) => el.click(), button);
-      await page.waitForTimeout(100);
-    };
-
-    const isTooltipVisible = async () => {
-      let res = await page.evaluate(() => {
-        return (
-          getComputedStyle(
-            document.getElementById("tooltip__disclosure").parentElement
-          ).getPropertyValue("display") != "none"
-        );
-      });
-
-      return res;
-    };
-
     assert.equal(await getCounterText(), "Parent Clicks: 0");
-    assert.equal(await isTooltipVisible(), false);
-    await tooltipTriggerClick();
-    assert.equal(await isTooltipVisible(), true);
-    await tooltipTriggerClick();
-    assert.equal(await isTooltipVisible(), false);
+    await page.waitForSelector("[data-tooltip-visible=false]");
+
+    // Opening and closing the tooltip doesn't trigger the container effects
+    await page.click("[aria-label='Tooltip trigger']");
+    await page.waitForSelector("[data-tooltip-visible=true]");
+
+    await page.click("[aria-label='Tooltip trigger']");
+    await page.waitForSelector("[data-tooltip-visible=false]");
     assert.equal(await getCounterText(), "Parent Clicks: 0");
-    await buttonClick();
+
+    // Clicking the button does trigger container effects
+    const [button] = await page.$x("//button[contains(., 'Click me')]");
+    await button.click();
+
     assert.equal(await getCounterText(), "Parent Clicks: 1");
-    await buttonClick();
+
+    // Clicking the container does trigger container effects
+    const container = await page.$("#parent-container");
+    await page.evaluate((el) => el.click(), container);
     assert.equal(await getCounterText(), "Parent Clicks: 2");
   };
 
@@ -326,9 +316,7 @@ describe("UI tests", function () {
     await page.$("#maincontent");
     let links = await page.evaluate(() => {
       let nodes = Array.from(
-        document.querySelectorAll(
-          "[data-nri-description='usage-example-link']"
-        )
+        document.querySelectorAll("[data-nri-description='usage-example-link']")
       );
       return nodes.map((node) => [node.text, node.href]);
     });
