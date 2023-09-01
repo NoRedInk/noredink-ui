@@ -80,72 +80,30 @@ viewWithPreviousAndNextControls :
         }
 viewWithPreviousAndNextControls config =
     let
-        -- i think it's safe to assume that the selected index is valid here and use `withDefault`
         currentPanelIndex =
-            List.Extra.findIndex (\p -> p.id == config.selected) config.panels
+            config.panels
+                |> List.Extra.findIndex (\p -> p.id == config.selected)
+                |> -- assuming the provided id is valid. there's not much we can
+                   -- do otherwise, anyways!
+                   Maybe.withDefault 0
 
-        previousPanel =
-            currentPanelIndex
-                |> Maybe.andThen
-                    (\index ->
-                        List.Extra.getAt
-                            (if index - 1 >= 0 then
-                                index - 1
-
-                             else
-                                List.length config.panels - 1
-                            )
-                            config.panels
+        viewSlideChangeButtonWithDelta delta buttonConfig =
+            config.panels
+                |> List.Extra.getAt (modBy (List.length config.panels) (currentPanelIndex + delta))
+                |> Maybe.map
+                    (\slide ->
+                        viewSlideChangeButton
+                            { buttonConfig = buttonConfig
+                            , targetSlideId = slide.id
+                            , targetSlideLabel = slide.accessibleLabel
+                            , carouselLabel = config.accessibleLabel
+                            , selectAndAnnounce = config.selectAndAnnounce
+                            }
                     )
-
-        nextPanel =
-            currentPanelIndex
-                |> Maybe.andThen
-                    (\index ->
-                        List.Extra.getAt
-                            (if index + 1 < List.length config.panels then
-                                index + 1
-
-                             else
-                                0
-                            )
-                            config.panels
-                    )
+                |> Maybe.withDefault (text "")
     in
-    { viewPreviousButton =
-        ClickableSvg.button config.previousButton.name
-            config.previousButton.icon
-            (config.previousButton.attributes
-                ++ (previousPanel
-                        |> Maybe.map
-                            (\p ->
-                                ClickableSvg.onClick
-                                    (config.selectAndAnnounce
-                                        { select = p.id
-                                        , announce = "Active slide of " ++ config.accessibleLabel ++ " changed to " ++ p.accessibleLabel
-                                        }
-                                    )
-                            )
-                        |> Maybe.Extra.toList
-                   )
-            )
-    , viewNextButton =
-        ClickableSvg.button config.nextButton.name
-            config.nextButton.icon
-            (config.nextButton.attributes
-                ++ (nextPanel
-                        |> Maybe.map
-                            (\p ->
-                                ClickableSvg.onClick
-                                    (config.selectAndAnnounce
-                                        { select = p.id
-                                        , announce = "Active slide of " ++ config.accessibleLabel ++ " changed to " ++ p.accessibleLabel
-                                        }
-                                    )
-                            )
-                        |> Maybe.Extra.toList
-                   )
-            )
+    { viewPreviousButton = viewSlideChangeButtonWithDelta -1 config.previousButton
+    , viewNextButton = viewSlideChangeButtonWithDelta 1 config.nextButton
     , slides =
         List.map
             (\panel ->
@@ -172,6 +130,28 @@ viewWithPreviousAndNextControls config =
         , labelAttribute config
         ]
     }
+
+
+viewSlideChangeButton :
+    { buttonConfig : { name : String, icon : Svg, attributes : List (ClickableSvg.Attribute msg) }
+    , targetSlideId : id
+    , targetSlideLabel : String
+    , carouselLabel : String
+    , selectAndAnnounce : { select : id, announce : String } -> msg
+    }
+    -> Html msg
+viewSlideChangeButton { buttonConfig, targetSlideId, targetSlideLabel, carouselLabel, selectAndAnnounce } =
+    ClickableSvg.button buttonConfig.name
+        buttonConfig.icon
+        (buttonConfig.attributes
+            ++ [ ClickableSvg.onClick
+                    (selectAndAnnounce
+                        { select = targetSlideId
+                        , announce = "Active slide of " ++ carouselLabel ++ " changed to " ++ targetSlideLabel
+                        }
+                    )
+               ]
+        )
 
 
 {-| Builds a carousel with tab buttons
