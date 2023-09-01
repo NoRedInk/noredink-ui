@@ -13,6 +13,7 @@ module Nri.Ui.Carousel.V2 exposing
 -}
 
 import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Key
 import Accessibility.Styled.Role as Role
 import Css exposing (..)
 import Html.Styled as Html exposing (..)
@@ -22,7 +23,6 @@ import Maybe.Extra
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Svg.V1 exposing (Svg)
 import TabsInternal.V2 as TabsInternal
-import Accessibility.Styled.Key
 
 
 {-| Type which represents the type of aria label which will be used
@@ -42,23 +42,26 @@ type Role
 
 
 {-| Builds a carousel with previous and next controls
+
 Returns:
-`slides` the container with the carousel contents
-`viewPreviousButton` previous button
-`viewNextButton` next button
-`containerAttributes` attributes that should be used on the parent div of both the button and slides elements
+
+  - `slides` the container with the carousel contents
+  - `viewPreviousButton` previous button
+  - `viewNextButton` next button
+  - `containerAttributes` attributes that should be used on the parent div of both the button and slides elements
+
 -}
 viewWithPreviousAndNextControls :
     { selected : id
     , panels :
         List
             { id : id
+            , idString : String
             , slideHtml : Html msg
             , labelledBy : LabelledBy
-            , idString : String
             }
-    , viewPreviousButton : { attributes : List (ClickableSvg.Attribute msg), icon : Svg, name : String }
-    , viewNextButton : { attributes : List (ClickableSvg.Attribute msg), icon : Svg, name : String }
+    , previousButton : { attributes : List (ClickableSvg.Attribute msg), icon : Svg, name : String }
+    , nextButton : { attributes : List (ClickableSvg.Attribute msg), icon : Svg, name : String }
     , labelledBy : LabelledBy
     , role : Role
     , focusAndSelect : { select : id, focus : Maybe String } -> msg
@@ -103,17 +106,17 @@ viewWithPreviousAndNextControls config =
                     )
     in
     { viewPreviousButton =
-        ClickableSvg.button config.viewPreviousButton.name
-            config.viewPreviousButton.icon
-            (config.viewPreviousButton.attributes
+        ClickableSvg.button config.previousButton.name
+            config.previousButton.icon
+            (config.previousButton.attributes
                 ++ (Maybe.map (\p -> ClickableSvg.onClick (config.focusAndSelect { select = p.id, focus = Just p.idString })) previousPanel
                         |> Maybe.Extra.toList
                    )
             )
     , viewNextButton =
-        ClickableSvg.button config.viewNextButton.name
-            config.viewNextButton.icon
-            (config.viewNextButton.attributes
+        ClickableSvg.button config.nextButton.name
+            config.nextButton.icon
+            (config.nextButton.attributes
                 ++ (Maybe.map (\p -> ClickableSvg.onClick (config.focusAndSelect { select = p.id, focus = Just p.idString })) nextPanel
                         |> Maybe.Extra.toList
                    )
@@ -218,8 +221,8 @@ viewWithCombinedControls :
     , focusAndSelect : { select : id, focus : Maybe String } -> msg
     , tabControlStyles : Bool -> List Style
     , tabControlListStyles : List Style
-    , viewPreviousButton : { attributes : List (ClickableSvg.Attribute msg), icon : Svg, name : String }
-    , viewNextButton : { attributes : List (ClickableSvg.Attribute msg), icon : Svg, name : String }
+    , previousButton : { attributes : List (ClickableSvg.Attribute msg), icon : Svg, name : String }
+    , nextButton : { attributes : List (ClickableSvg.Attribute msg), icon : Svg, name : String }
     , role : Role
     , labelledBy : LabelledBy
     }
@@ -270,17 +273,17 @@ viewWithCombinedControls config =
     , slides = slides
     , containerAttributes = containerAttributes
     , viewPreviousButton =
-        ClickableSvg.button config.viewPreviousButton.name
-            config.viewPreviousButton.icon
-            (config.viewPreviousButton.attributes
+        ClickableSvg.button config.previousButton.name
+            config.previousButton.icon
+            (config.previousButton.attributes
                 ++ (Maybe.map (\p -> ClickableSvg.onClick (config.focusAndSelect { select = p.id, focus = Just p.idString })) previousPanel
                         |> Maybe.Extra.toList
                    )
             )
     , viewNextButton =
-        ClickableSvg.button config.viewNextButton.name
-            config.viewNextButton.icon
-            (config.viewNextButton.attributes
+        ClickableSvg.button config.nextButton.name
+            config.nextButton.icon
+            (config.nextButton.attributes
                 ++ (Maybe.map (\p -> ClickableSvg.onClick (config.focusAndSelect { select = p.id, focus = Just p.idString })) nextPanel
                         |> Maybe.Extra.toList
                    )

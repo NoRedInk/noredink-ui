@@ -224,8 +224,8 @@ viewWithCombinedControls model =
               , slideHtml = text "Slide 2"
               }
             ]
-        , viewNextButton = { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
-        , viewPreviousButton = { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
+        , previousButton = { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
+        , nextButton = { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
         }
         |> (\{ tabControls, slides, containerAttributes, viewNextButton, viewPreviousButton } ->
                 section containerAttributes [ slides, tabControls, viewNextButton, viewPreviousButton ]
@@ -249,8 +249,8 @@ viewWithPreviousAndNextControls slidesCount model =
                     }
                 )
                 (List.range 0 (slidesCount - 1))
-        , viewNextButton = { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
-        , viewPreviousButton = { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
+        , previousButton = { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
+        , nextButton = { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
         }
         |> (\{ viewPreviousButton, viewNextButton, slides, containerAttributes } ->
                 section containerAttributes [ slides, viewPreviousButton, viewNextButton ]
