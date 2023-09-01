@@ -184,8 +184,8 @@ describe("UI tests", function () {
     handleAxeResults(name, results);
   };
 
-  const tooltipProcessing = async (name, location) => {
-    await defaultProcessing(name, location);
+  const clickableCardWithTooltipProcessing = async (testName, name, location) => {
+    await defaultUsageExampleProcessing(testName, name, location);
     await page.waitForSelector("#parent-button-clicks");
 
     const buttonClick = async () => {
@@ -235,8 +235,6 @@ describe("UI tests", function () {
     // Loading's color contrast check seems to change behavior depending on whether Percy snapshots are taken or not
     Loading: ["color-contrast"],
     RadioButton: ["duplicate-id"],
-    // We need nested-interactive to test the tooltip behavior
-    Tooltip: ["nested-interactive"],
   };
 
   const specialProcessing = {
@@ -247,10 +245,11 @@ describe("UI tests", function () {
     UiIcon: iconProcessing,
     Logo: iconProcessing,
     Pennant: iconProcessing,
-    Tooltip: tooltipProcessing,
   };
 
-  const specialUsageProcessing = {};
+  const specialUsageProcessing = {
+    ClickableCardwithTooltip: clickableCardWithTooltipProcessing,
+  };
 
   it("All", async function () {
     if (process.env.ONLYDOODAD == "default") {
@@ -315,37 +314,40 @@ describe("UI tests", function () {
   });
 
   it("Usage examples", async function () {
-    if (process.env.ONLYDOODAD == "default") {
-      page = await browser.newPage();
+    page = await browser.newPage();
 
-      await page.emulateMediaFeatures([
-        { name: "prefers-reduced-motion", value: "reduce" },
-      ]);
+    await page.emulateMediaFeatures([
+      { name: "prefers-reduced-motion", value: "reduce" },
+    ]);
 
-      handlePageErrors(page);
-      await page.goto(`http://localhost:${PORT}`);
+    handlePageErrors(page);
+    await page.goto(`http://localhost:${PORT}`);
 
-      await page.$("#maincontent");
-      let links = await page.evaluate(() => {
-        let nodes = Array.from(
-          document.querySelectorAll(
-            "[data-nri-description='usage-example-link']"
-          )
-        );
-        return nodes.map((node) => [node.text, node.href]);
-      });
+    await page.$("#maincontent");
+    let links = await page.evaluate(() => {
+      let nodes = Array.from(
+        document.querySelectorAll(
+          "[data-nri-description='usage-example-link']"
+        )
+      );
+      return nodes.map((node) => [node.text, node.href]);
+    });
 
-      await links.reduce((acc, [name, location]) => {
-        return acc.then(() => {
-          console.log(`Testing ${name}`);
-          let testName = name.replaceAll(" ", "");
+    await links.reduce((acc, [name, location]) => {
+      return acc.then(() => {
+        let testName = name.replaceAll(" ", "");
+        if (
+          process.env.ONLYDOODAD == "default" ||
+          process.env.ONLYDOODAD == testName
+        ) {
+          console.log(`Testing Usage Example ${testName}`);
           let handler =
             specialUsageProcessing[testName] || defaultUsageExampleProcessing;
           return handler(testName, name, location);
-        });
-      }, Promise.resolve());
+        }
+      });
+    }, Promise.resolve());
 
-      page.close();
-    }
+    page.close();
   });
 });
