@@ -202,10 +202,10 @@ describe("UI tests", function () {
     await page.waitForSelector("[data-tooltip-visible=false]");
 
     // Opening and closing the tooltip doesn't trigger the container effects
-    await page.click("[aria-label='Tooltip trigger']");
+    await page.hover('[aria-label="Tooltip trigger"]');
     await page.waitForSelector("[data-tooltip-visible=true]");
 
-    await page.click("[aria-label='Tooltip trigger']");
+    await page.click('[aria-label="Tooltip trigger"]');
     await page.waitForSelector("[data-tooltip-visible=false]");
     assert.equal(await getCounterText(), "Parent Clicks: 0");
 
@@ -216,8 +216,8 @@ describe("UI tests", function () {
     assert.equal(await getCounterText(), "Parent Clicks: 1");
 
     // Clicking the container does trigger container effects
-    const container = await page.$("#parent-container");
-    await page.evaluate((el) => el.click(), container);
+    const [container] = await page.$x("//div[contains(., 'in the Container!')]");
+    await container.click();
     assert.equal(await getCounterText(), "Parent Clicks: 2");
   };
 

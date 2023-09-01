@@ -77,12 +77,11 @@ view model =
                 [ Text.html
                     [ ClickableText.button "Click me" [ ClickableText.appearsInline ]
                     , viewTooltip model
-                    , text "... or click anywhere in the Container!"
+                    , text "…or click anywhere in the Container!"
                     ]
                 ]
             ]
         , Container.custom [ Events.onClick ParentClick ]
-        , Container.id "parent-container"
         , Container.css [ Css.maxWidth (Css.px 500) ]
         ]
     , p [ id "parent-button-clicks" ]
