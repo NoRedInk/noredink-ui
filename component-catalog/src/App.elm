@@ -36,7 +36,7 @@ import UsageExamples
 
 
 type alias Route =
-    Routes.Route Examples.State Examples.Msg UsageExamples.State UsageExamples.Msg
+    Routes.Route Examples.State Examples.Msg
 
 
 type alias Model key =
@@ -59,15 +59,15 @@ init () url key =
         moduleStates =
             Dict.fromList
                 (List.map (\example -> ( example.name, example )) Examples.all)
-
-        usageExampleStates =
-            Dict.fromList
-                (List.map (\example -> ( example.name, example )) UsageExamples.all)
     in
-    ( { route = Routes.fromLocation moduleStates usageExampleStates url
+    ( { route = Routes.fromLocation moduleStates url
       , previousRoute = Nothing
       , moduleStates = moduleStates
-      , usageExampleStates = usageExampleStates
+      , usageExampleStates =
+            Dict.fromList
+                (List.map (\example -> ( UsageExample.routeName example, example ))
+                    UsageExamples.all
+                )
       , isSideNavOpen = False
       , openTooltip = Nothing
       , navigationKey = key
@@ -128,15 +128,17 @@ update action model =
 
         UpdateUsageExamples key exampleMsg ->
             case Dict.get key model.usageExampleStates of
-                Just example ->
-                    example.update exampleMsg example.state
+                Just usageExample ->
+                    usageExample.update exampleMsg usageExample.state
                         |> Tuple.mapFirst
                             (\newState ->
                                 let
                                     newExample =
-                                        { example | state = newState }
+                                        { usageExample | state = newState }
                                 in
-                                { model | usageExampleStates = Dict.insert key newExample model.usageExampleStates }
+                                { model
+                                    | usageExampleStates = Dict.insert key newExample model.usageExampleStates
+                                }
                             )
                         |> Tuple.mapSecond (Cmd.map (UpdateUsageExamples key) >> Command)
 
@@ -154,14 +156,14 @@ update action model =
         OnUrlChange location ->
             let
                 route =
-                    Routes.fromLocation model.moduleStates model.usageExampleStates location
+                    Routes.fromLocation model.moduleStates location
             in
             ( { model
                 | route = route
                 , previousRoute = Just model.route
                 , isSideNavOpen = False
               }
-            , Maybe.map FocusOn (Routes.headerId route)
+            , Maybe.map FocusOn (Routes.headerId route model.usageExampleStates)
                 |> Maybe.withDefault None
             )
 
@@ -310,10 +312,20 @@ view model =
             , body = toBody (viewCategory model category)
             }
 
-        Routes.Usage example ->
-            { title = example.name ++ " Usage Example in the NoRedInk Component Catalog"
-            , body = viewUsageExample model example |> toBody
-            }
+        Routes.Usage exampleName ->
+            case Dict.get exampleName model.usageExampleStates of
+                Just example ->
+                    { title = example.name ++ " Usage Example in the NoRedInk Component Catalog"
+                    , body = viewUsageExample model example |> toBody
+                    }
+
+                Nothing ->
+                    { title =
+                        "Usage example \""
+                            ++ UsageExample.fromRouteName exampleName
+                            ++ "\" was not found in the NoRedInk Component Catalog"
+                    , body = toBody notFound
+                    }
 
         Routes.All ->
             { title = "NoRedInk Component Catalog"
@@ -331,7 +343,7 @@ viewExample model example =
 viewUsageExample : Model key -> UsageExample a UsageExamples.Msg -> Html Msg
 viewUsageExample model example =
     UsageExample.view example
-        |> Html.map (UpdateUsageExamples example.name)
+        |> Html.map (UpdateUsageExamples (UsageExample.routeName example))
         |> viewLayout model []
 
 
@@ -352,8 +364,8 @@ viewAll model =
             , exampleHref = Routes.Doodad >> Routes.toString
             }
             { swallowEvent = SwallowEvent
-            , navigate = Routes.Usage >> ChangeRoute
-            , exampleHref = Routes.Usage >> Routes.toString
+            , navigate = UsageExample.routeName >> Routes.Usage >> ChangeRoute
+            , exampleHref = UsageExample.routeName >> Routes.Usage >> Routes.toString
             }
             (Dict.values model.moduleStates)
             (Dict.values model.usageExampleStates)
@@ -378,8 +390,8 @@ viewCategory model category =
             , exampleHref = Routes.CategoryDoodad category >> Routes.toString
             }
             { swallowEvent = SwallowEvent
-            , navigate = Routes.Usage >> ChangeRoute
-            , exampleHref = Routes.Usage >> Routes.toString
+            , navigate = UsageExample.routeName >> Routes.Usage >> ChangeRoute
+            , exampleHref = UsageExample.routeName >> Routes.Usage >> Routes.toString
             }
             (filtered model.moduleStates)
             (filtered model.usageExampleStates)
@@ -388,7 +400,7 @@ viewCategory model category =
 viewLayout : Model key -> List (Header.Attribute Route Msg) -> Html Msg -> Html Msg
 viewLayout model headerExtras content =
     Html.div []
-        [ Html.header [] [ Routes.viewHeader model.route headerExtras ]
+        [ Html.header [] [ Routes.viewHeader model.route model.usageExampleStates headerExtras ]
         , Html.div
             [ css
                 [ displayFlex
