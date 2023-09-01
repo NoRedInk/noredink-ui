@@ -27,16 +27,12 @@ import Nri.Ui.SideNav.V5 as SideNav
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Sprite.V1 as Sprite
 import Nri.Ui.UiIcon.V1 as UiIcon
-import Routes
+import Routes exposing (Route)
 import Sort.Set as Set
 import Task
 import Url exposing (Url)
 import UsageExample exposing (UsageExample)
 import UsageExamples
-
-
-type alias Route =
-    Routes.Route Examples.State Examples.Msg
 
 
 type alias Model key =
@@ -55,14 +51,14 @@ type alias Model key =
 
 init : () -> Url -> key -> ( Model key, Effect )
 init () url key =
-    let
-        moduleStates =
-            Dict.fromList
-                (List.map (\example -> ( example.name, example )) Examples.all)
-    in
-    ( { route = Routes.fromLocation moduleStates url
+    ( { route = Routes.fromLocation url
       , previousRoute = Nothing
-      , moduleStates = moduleStates
+      , moduleStates =
+            Dict.fromList
+                (List.map
+                    (\example -> ( Example.routeName example, example ))
+                    Examples.all
+                )
       , usageExampleStates =
             Dict.fromList
                 (List.map (\example -> ( UsageExample.routeName example, example ))
@@ -116,9 +112,6 @@ update action model =
                                 in
                                 { model
                                     | moduleStates = Dict.insert key newExample model.moduleStates
-                                    , route =
-                                        Maybe.withDefault model.route
-                                            (Routes.updateExample newExample model.route)
                                 }
                             )
                         |> Tuple.mapSecond (Cmd.map (UpdateModuleStates key) >> Command)
@@ -156,14 +149,14 @@ update action model =
         OnUrlChange location ->
             let
                 route =
-                    Routes.fromLocation model.moduleStates location
+                    Routes.fromLocation location
             in
             ( { model
                 | route = route
                 , previousRoute = Just model.route
                 , isSideNavOpen = False
               }
-            , Maybe.map FocusOn (Routes.headerId route model.usageExampleStates)
+            , Maybe.map FocusOn (Routes.headerId route model.moduleStates model.usageExampleStates)
                 |> Maybe.withDefault None
             )
 
@@ -263,13 +256,23 @@ perform navigationKey effect =
 
 subscriptions : Model key -> Sub Msg
 subscriptions model =
+    let
+        exampleSubs exampleName =
+            case Dict.get exampleName model.moduleStates of
+                Just example ->
+                    Sub.map (UpdateModuleStates exampleName)
+                        (example.subscriptions example.state)
+
+                Nothing ->
+                    Sub.none
+    in
     Sub.batch
         [ case model.route of
-            Routes.Doodad example ->
-                Sub.map (UpdateModuleStates example.name) (example.subscriptions example.state)
+            Routes.Doodad exampleName ->
+                exampleSubs exampleName
 
-            Routes.CategoryDoodad _ example ->
-                Sub.map (UpdateModuleStates example.name) (example.subscriptions example.state)
+            Routes.CategoryDoodad _ exampleName ->
+                exampleSubs exampleName
 
             _ ->
                 Sub.none
@@ -290,17 +293,28 @@ view model =
                     , Css.Global.body [ Css.margin Css.zero ]
                     ]
                 ]
+
+        exampleDocument exampleName =
+            case Dict.get exampleName model.moduleStates of
+                Just example ->
+                    { title = example.name ++ " in the NoRedInk Component Catalog"
+                    , body = viewExample model example |> toBody
+                    }
+
+                Nothing ->
+                    { title =
+                        "Component example \""
+                            ++ Example.fromRouteName exampleName
+                            ++ "\" was not found in the NoRedInk Component Catalog"
+                    , body = toBody notFound
+                    }
     in
     case model.route of
-        Routes.Doodad example ->
-            { title = example.name ++ " in the NoRedInk Component Catalog"
-            , body = viewExample model example |> toBody
-            }
+        Routes.Doodad exampleName ->
+            exampleDocument exampleName
 
-        Routes.CategoryDoodad _ example ->
-            { title = example.name ++ " in the NoRedInk Component Catalog"
-            , body = viewExample model example |> toBody
-            }
+        Routes.CategoryDoodad _ exampleName ->
+            exampleDocument exampleName
 
         Routes.NotFound name ->
             { title = name ++ " was not found in the NoRedInk Component Catalog"
@@ -360,8 +374,8 @@ viewAll model =
     viewLayout model [] <|
         viewExamplePreviews "all"
             { swallowEvent = SwallowEvent
-            , navigate = Routes.Doodad >> ChangeRoute
-            , exampleHref = Routes.Doodad >> Routes.toString
+            , navigate = Example.routeName >> Routes.Doodad >> ChangeRoute
+            , exampleHref = Example.routeName >> Routes.Doodad >> Routes.toString
             }
             { swallowEvent = SwallowEvent
             , navigate = UsageExample.routeName >> Routes.Usage >> ChangeRoute
@@ -386,8 +400,8 @@ viewCategory model category =
     viewLayout model [] <|
         viewExamplePreviews (Category.forId category)
             { swallowEvent = SwallowEvent
-            , navigate = Routes.CategoryDoodad category >> ChangeRoute
-            , exampleHref = Routes.CategoryDoodad category >> Routes.toString
+            , navigate = Example.routeName >> Routes.CategoryDoodad category >> ChangeRoute
+            , exampleHref = Example.routeName >> Routes.CategoryDoodad category >> Routes.toString
             }
             { swallowEvent = SwallowEvent
             , navigate = UsageExample.routeName >> Routes.Usage >> ChangeRoute
@@ -400,7 +414,12 @@ viewCategory model category =
 viewLayout : Model key -> List (Header.Attribute Route Msg) -> Html Msg -> Html Msg
 viewLayout model headerExtras content =
     Html.div []
-        [ Html.header [] [ Routes.viewHeader model.route model.usageExampleStates headerExtras ]
+        [ Html.header []
+            [ Routes.viewHeader model.route
+                model.moduleStates
+                model.usageExampleStates
+                headerExtras
+            ]
         , Html.div
             [ css
                 [ displayFlex
@@ -477,7 +496,8 @@ navigation { moduleStates, route, isSideNavOpen, openTooltip } =
                 |> List.map
                     (\example ->
                         SideNav.entry example.name
-                            [ SideNav.href (Routes.CategoryDoodad category example)
+                            [ SideNav.href
+                                (Routes.CategoryDoodad category (Example.routeName example))
                             ]
                     )
 

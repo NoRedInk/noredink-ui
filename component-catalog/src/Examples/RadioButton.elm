@@ -59,7 +59,7 @@ example =
     , about =
         [ let
             url =
-                Routes.toString <| Routes.Doodad RadioButtonDotlessExample.example
+                Routes.exampleHref RadioButtonDotlessExample.example
           in
           Message.view
             [ Message.markdown <| "Looking for radio button that's styled more like a button?<br />Check out [RadioButtonDotless](" ++ url ++ ")"

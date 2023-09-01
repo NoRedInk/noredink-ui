@@ -1,4 +1,4 @@
-module Example exposing (Example, extraLinks, fullName, preview, view, wrapMsg, wrapState)
+module Example exposing (Example, extraLinks, fromRouteName, fullName, preview, routeName, view, wrapMsg, wrapState)
 
 import Accessibility.Styled.Aria as Aria
 import Category exposing (Category)
@@ -37,6 +37,16 @@ type alias Example state msg =
 fullName : { example | version : Int, name : String } -> String
 fullName example =
     "Nri.Ui." ++ example.name ++ ".V" ++ String.fromInt example.version
+
+
+routeName : { example | name : String } -> String
+routeName example =
+    String.replace " " "-" example.name
+
+
+fromRouteName : String -> String
+fromRouteName name =
+    String.replace "-" " " name
 
 
 wrapMsg :
