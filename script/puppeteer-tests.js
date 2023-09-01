@@ -46,6 +46,12 @@ describe("UI tests", function () {
     server.close();
   });
 
+  const hasText = async (xPathSelector = "//html", text) => {
+    let [node] = await page.$x(xPathSelector);
+    let innerText = await page.evaluate((el) => el.innerText, node);
+    assert.equal(innerText, text);
+  };
+
   const handlePageErrors = function (page) {
     page.on("pageerror", (err) => {
       console.log("Error from page:", err.toString());
@@ -189,9 +195,17 @@ describe("UI tests", function () {
     name,
     location
   ) => {
+    const hasParentClicks = async (count) => {
+      await page.waitForTimeout(100);
+      await hasText(
+        "//p[contains(., 'Parent Clicks')]",
+        `Parent Clicks: ${count}`
+      );
+    };
+
     await defaultUsageExampleProcessing(testName, name, location);
 
-    await page.waitForXPath("//p[contains(., 'Parent Clicks: 0')]", 200 );
+    await hasParentClicks(0);
     await page.waitForSelector("[data-tooltip-visible=false]");
 
     // Opening and closing the tooltip doesn't trigger the container effects
@@ -201,18 +215,18 @@ describe("UI tests", function () {
     await page.click('[aria-label="Tooltip trigger"]');
     await page.waitForSelector("[data-tooltip-visible=false]");
 
-    await page.waitForXPath("//p[contains(., 'Parent Clicks: 0')]", 200 );
+    await hasParentClicks(0);
 
     // Clicking the button does trigger container effects
     const [button] = await page.$x("//button[contains(., 'Click me')]");
     await button.click();
 
-    await page.waitForXPath("//p[contains(., 'Parent Clicks: 1')]", 200 );
+    await page.waitForSelector("[data-tooltip-visible=false]");
+    await hasParentClicks(1);
 
     // Clicking the container does trigger container effects
-    const [container] = await page.$x("//div[contains(., 'in the Container!')]");
-    await container.click();
-    await page.waitForXPath("//p[contains(., 'Parent Clicks: 2')]", 200 );
+    await page.click("#container-element");
+    await hasParentClicks(2);
   };
 
   const skippedRules = {

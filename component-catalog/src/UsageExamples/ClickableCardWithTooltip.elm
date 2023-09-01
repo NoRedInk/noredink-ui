@@ -6,11 +6,9 @@ module UsageExamples.ClickableCardWithTooltip exposing (example, State, Msg)
 
 -}
 
-import Accessibility.Styled exposing (..)
 import Category exposing (Category(..))
 import Css
 import Html.Styled exposing (Html)
-import Html.Styled.Attributes exposing (id)
 import Html.Styled.Events as Events
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Container.V2 as Container
@@ -77,8 +75,11 @@ view model =
                 [ Text.html
                     [ ClickableText.button "Click me" [ ClickableText.appearsInline ]
                     , viewTooltip model
-                    , text "…or click anywhere in the Container!"
                     ]
+                ]
+            , Text.smallBody
+                [ Text.plaintext "…or click anywhere in the Container!"
+                , Text.id "container-element"
                 ]
             ]
         , Container.custom [ Events.onClick ParentClick ]
