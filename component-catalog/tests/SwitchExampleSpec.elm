@@ -2,7 +2,7 @@ module SwitchExampleSpec exposing (suite)
 
 import Accessibility.Aria as Aria
 import Accessibility.Role as Role
-import Examples.Switch exposing (Msg, State, example)
+import Examples.Switch exposing (example)
 import ProgramTest exposing (..)
 import Routes exposing (Route)
 import Test exposing (..)
@@ -12,9 +12,9 @@ import Test.Html.Selector exposing (..)
 import TestApp exposing (app)
 
 
-route : Route State Msg usageState usageMsg
+route : Route
 route =
-    Routes.Doodad example
+    Routes.exampleRoute example
 
 
 suite : Test

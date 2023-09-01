@@ -1,6 +1,6 @@
 module HighlighterExampleSpec exposing (suite)
 
-import Examples.Highlighter exposing (Msg, State, example)
+import Examples.Highlighter exposing (example)
 import MouseHelpers
 import ProgramTest exposing (..)
 import PseudoElements exposing (hasAfter, hasBefore)
@@ -10,9 +10,9 @@ import Test.Html.Selector exposing (..)
 import TestApp exposing (app)
 
 
-route : Route State Msg usageState usageMsg
+route : Route
 route =
-    Routes.Doodad example
+    Routes.exampleRoute example
 
 
 suite : Test
