@@ -5,6 +5,7 @@ module Spec.Nri.Ui.Carousel exposing
     )
 
 import Browser.Dom as Dom
+import Expect
 import Html.Styled exposing (..)
 import Nri.Ui.Carousel.V2 as Carousel
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -28,24 +29,30 @@ type PreviousAndNextProgramMsg
     = SelectAndAnnounce { select : Int, announce : String }
 
 
-previousAndNextCarouselProgram : Int -> ProgramTest { selected : Int } PreviousAndNextProgramMsg ()
+type PreviousAndNextProgramEffect
+    = NoEffect
+    | Announce String
+
+
+previousAndNextCarouselProgram : Int -> ProgramTest { selected : Int } PreviousAndNextProgramMsg PreviousAndNextProgramEffect
 previousAndNextCarouselProgram slidesCount =
-    -- TODO: use program rather than sandbox so we can test effects
     -- TODO: test label behavior
-    ProgramTest.createSandbox
-        { init = { selected = 0 }
+    ProgramTest.createElement
+        { init = \_ -> ( { selected = 0 }, NoEffect )
         , update =
             \msg _ ->
                 case msg of
-                    SelectAndAnnounce { select } ->
-                        { selected = select }
+                    SelectAndAnnounce { select, announce } ->
+                        ( { selected = select }
+                        , Announce announce
+                        )
         , view =
             \model ->
                 Carousel.viewWithPreviousAndNextControls
                     { selectAndAnnounce = SelectAndAnnounce
                     , selected = model.selected
                     , role = Carousel.Group
-                    , accessibleLabel = "Label"
+                    , accessibleLabel = "Previous/Next Carousel"
                     , visibleLabelId = Nothing
                     , panels =
                         List.map
@@ -97,6 +104,17 @@ viewWithPreviousAndNextControlsSpec =
                     |> ensureSlideIsVisible "slide-0"
                     |> clickButton "Previous"
                     |> ensureSlideIsVisible "slide-0"
+                    |> done
+        , test "Announces card changes for screen reader users" <|
+            \_ ->
+                previousAndNextCarouselProgram 3
+                    |> ensureSlideIsVisible "slide-0"
+                    |> clickButton "Next"
+                    |> ensureLastEffect (Expect.equal (Announce "Active slide of Previous/Next Carousel changed to Control 1"))
+                    |> clickButton "Next"
+                    |> ensureLastEffect (Expect.equal (Announce "Active slide of Previous/Next Carousel changed to Control 2"))
+                    |> clickButton "Previous"
+                    |> ensureLastEffect (Expect.equal (Announce "Active slide of Previous/Next Carousel changed to Control 1"))
                     |> done
         ]
 
