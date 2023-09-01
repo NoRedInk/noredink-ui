@@ -254,6 +254,7 @@ view config navAttributes entries =
             , borderRadius (px 8)
             , backgroundColor Colors.gray96
             , alignSelf flexStart
+            , width (px 300)
             , Css.Media.withMedia [ MediaQuery.mobile ]
                 [ Css.property "flex-basis" "unset"
                 , marginRight Css.zero

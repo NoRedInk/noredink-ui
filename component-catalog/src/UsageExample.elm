@@ -3,6 +3,7 @@ module UsageExample exposing (UsageExample, fromRouteName, fullName, preview, ro
 import Category exposing (Category)
 import Css
 import Css.Media exposing (withMedia)
+import EventExtras
 import ExampleSection
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
@@ -99,7 +100,8 @@ wrapState wrapState_ unwrapState example =
 
 
 preview :
-    { navigate : UsageExample state msg -> msg2
+    { swallowEvent : msg2
+    , navigate : UsageExample state msg -> msg2
     , exampleHref : UsageExample state msg -> String
     }
     -> UsageExample state msg
@@ -109,12 +111,13 @@ preview navConfig =
 
 
 preview_ :
-    { navigate : UsageExample state msg -> msg2
+    { swallowEvent : msg2
+    , navigate : UsageExample state msg -> msg2
     , exampleHref : UsageExample state msg -> String
     }
     -> UsageExample state msg
     -> Html msg2
-preview_ { navigate, exampleHref } example =
+preview_ { swallowEvent, navigate, exampleHref } example =
     Container.view
         [ Container.gray
         , Container.css
@@ -127,9 +130,11 @@ preview_ { navigate, exampleHref } example =
             ]
         , Container.custom [ Events.onClick (navigate example) ]
         , Container.html
-            [ ClickableText.link example.name
-                [ ClickableText.href (exampleHref example)
-                , ClickableText.nriDescription "usage-example-link"
+            [ Html.span [ EventExtras.onClickStopPropagation swallowEvent ]
+                [ ClickableText.link example.name
+                    [ ClickableText.href (exampleHref example)
+                    , ClickableText.nriDescription "usage-example-link"
+                    ]
                 ]
             ]
         ]

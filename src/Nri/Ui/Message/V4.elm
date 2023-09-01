@@ -124,6 +124,14 @@ view attributes_ =
             , color color_
             , boxSizing borderBox
             , Css.batch attributes.customStyles
+            , Css.Global.descendants
+                [ Css.Global.a
+                    [ color Colors.azure
+                    , borderBottom3 (px 1) solid Colors.azure
+                    , textDecoration none
+                    , visited [ color Colors.azure ]
+                    ]
+                ]
             ]
     in
     case attributes.size of

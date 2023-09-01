@@ -133,7 +133,6 @@ view ellieLinkConfig state =
         }
         [ SideNav.navLabel "Complex example"
         , SideNav.navId "complex-example-sidenav"
-        , SideNav.navNotMobileCss [ Css.maxWidth (Css.px 300) ]
         ]
         [ SideNav.html
             [ Text.smallBody
@@ -172,7 +171,6 @@ view ellieLinkConfig state =
         }
         [ SideNav.navLabel "Compact groups example"
         , SideNav.navId "compact-groups-example-sidenav"
-        , SideNav.navNotMobileCss [ Css.maxWidth (Css.px 300) ]
         ]
         [ SideNav.compactGroup "Support"
             []

@@ -33,6 +33,7 @@ module Nri.Ui.Tooltip.V3 exposing
   - adds `paragraph` and `markdown` support
   - add partially-transparent white border around tooltips
   - Use Nri.Ui.WhenFocusLeaves.V2
+  - prevent default and stop propagation on click for disclosure tooltips
 
 Changes from V2:
 
@@ -87,6 +88,7 @@ import Content
 import Css exposing (Color, Px, Style)
 import Css.Global as Global
 import Css.Media
+import EventExtras as Events
 import Html.Styled as Root
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -940,7 +942,7 @@ viewTooltip_ { trigger, id } tooltip =
                                     , tabForwardAction = msg False
                                     }
                               ]
-                            , [ Events.onClick (msg (not tooltip.isOpen))
+                            , [ Events.onClickPreventDefaultAndStopPropagation (msg (not tooltip.isOpen))
                               , Key.onKeyDown [ Key.escape (msg False) ]
                               ]
                             )
@@ -1095,6 +1097,8 @@ viewTooltip tooltipId config =
                     [ Global.a
                         [ Css.color Colors.white
                         , Css.borderColor Colors.white
+                        , Css.textDecoration Css.none
+                        , Css.borderBottom3 (Css.px 1) Css.solid Colors.white
                         , Css.visited [ Css.color Colors.white ]
                         , Css.hover [ Css.color Colors.white ]
                         , Css.pseudoClass "focus-visible"
