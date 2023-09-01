@@ -185,6 +185,13 @@ Then run it with 0.19.0 explicitly (0.19.1 has some problems with big docs):
 npx -p elm@0.19.0-no-deps elm bump
 ```
 
+If you encounter issues with using npx, you can manually download and use the Elm 0.19.0 binary as an alternative:
+
+- [Download the Elm 0.19.0 binary for Mac](https://github.com/elm/compiler/releases/download/0.19.0/binaries-for-mac.tar.gz)
+- Extract the file into your project directory.
+- Right-click on it, select "Open" from the context menu, and give the necessary permissions for it to run. Note that double-clicking on the file will not request the necessary permissions.
+- Run `./elm bump`
+
 ## Versioning policy
 
 We try to avoid breaking changes and the associated major version bumps in this package. The reason for that is to avoid the following scenario:
