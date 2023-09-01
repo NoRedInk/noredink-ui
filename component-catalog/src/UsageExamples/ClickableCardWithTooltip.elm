@@ -12,6 +12,9 @@ import Css
 import Html.Styled exposing (Html)
 import Html.Styled.Attributes exposing (css, id)
 import Html.Styled.Events as Events
+import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.Container.V2 as Container
+import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
 import UsageExample exposing (UsageExample)
 
@@ -67,17 +70,32 @@ update msg model =
 
 view : State -> List (Html Msg)
 view model =
-    [ button
-        [ css [ Css.padding (Css.px 40) ]
-        , Events.onClick ParentClick
-        , id "parent-button"
-        ]
-        [ Tooltip.viewToggleTip { label = "Clickable Card", lastId = Nothing }
-            [ Tooltip.plaintext "Notice that even though this tooltip is in a clickable card, you can still interact with me!"
-            , Tooltip.onToggle (ToggleTooltip ())
-            , Tooltip.open (model.openTooltip == Just ())
-            , Tooltip.alignEndForMobile (Css.px 144)
+    [ Container.view
+        [ Container.buttony
+        , Container.html
+            [ Text.smallBody
+                [ Text.html
+                    [ ClickableText.button "Click me" [ ClickableText.appearsInline ]
+                    , viewTooltip model
+                    , text "... or click anywhere in the Container!"
+                    ]
+                ]
             ]
-        , div [ id "parent-button-clicks" ] [ text ("Parent Clicks: " ++ String.fromInt model.parentClicks) ]
+        , Container.custom [ Events.onClick ParentClick ]
+        , Container.id "parent-button"
+        , Container.css [ Css.maxWidth (Css.px 500) ]
+        ]
+    , p [ id "parent-button-clicks" ]
+        [ text ("Parent Clicks: " ++ String.fromInt model.parentClicks)
         ]
     ]
+
+
+viewTooltip : State -> Html Msg
+viewTooltip model =
+    Tooltip.viewToggleTip { label = "Clickable Card", lastId = Nothing }
+        [ Tooltip.plaintext "Notice that even though this tooltip is in a clickable card, you can still interact with me!"
+        , Tooltip.onToggle (ToggleTooltip ())
+        , Tooltip.open (model.openTooltip == Just ())
+        , Tooltip.onRight
+        ]
