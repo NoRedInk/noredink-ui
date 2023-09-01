@@ -5,7 +5,16 @@ import Html.Styled exposing (..)
 import Nri.Ui.Carousel.V2 as Carousel
 import Nri.Ui.UiIcon.V1 as UiIcon
 import ProgramTest exposing (..)
-import Spec.TabsInternalHelpers exposing (..)
+import Spec.TabsInternalHelpers as TabsHelpers
+    exposing
+        ( ensureOnlyOnePanelDisplayed
+        , ensureOnlyOneTabInSequence
+        , ensurePanelDisplayed
+        , ensurePanelsFocusable
+        , ensureTabbable
+        , releaseLeftArrow
+        , releaseRightArrow
+        )
 import Task
 import Test exposing (..)
 import Test.Html.Selector as Selector
@@ -153,25 +162,25 @@ ensureSlideIsVisible id =
     ensureViewHas [ Selector.id id, Selector.style "display" "block" ]
 
 
-update : Msg -> State -> State
+update : TabsHelpers.Msg -> TabsHelpers.State -> TabsHelpers.State
 update msg model =
     case msg of
-        FocusAndSelectTab { select, focus } ->
+        TabsHelpers.FocusAndSelectTab { select, focus } ->
             Tuple.first
                 ( { model | selected = select }
                 , focus
-                    |> Maybe.map (Dom.focus >> Task.attempt Focused)
+                    |> Maybe.map (Dom.focus >> Task.attempt TabsHelpers.Focused)
                     |> Maybe.withDefault Cmd.none
                 )
 
-        Focused _ ->
+        TabsHelpers.Focused _ ->
             Tuple.first ( model, Cmd.none )
 
 
-viewWithTabControls : State -> Html Msg
+viewWithTabControls : TabsHelpers.State -> Html TabsHelpers.Msg
 viewWithTabControls model =
     Carousel.viewWithTabControls
-        { focusAndSelect = FocusAndSelectTab
+        { focusAndSelect = TabsHelpers.FocusAndSelectTab
         , selected = model.selected
         , tabControlListStyles = []
         , role = Carousel.Group
@@ -198,10 +207,10 @@ viewWithTabControls model =
         |> (\{ controls, slides, containerAttributes } -> section containerAttributes [ slides, controls ])
 
 
-viewWithCombinedControls : State -> Html Msg
+viewWithCombinedControls : TabsHelpers.State -> Html TabsHelpers.Msg
 viewWithCombinedControls model =
     Carousel.viewWithCombinedControls
-        { focusAndSelect = FocusAndSelectTab
+        { focusAndSelect = TabsHelpers.FocusAndSelectTab
         , selected = model.selected
         , tabControlListStyles = []
         , role = Carousel.Group
@@ -232,10 +241,10 @@ viewWithCombinedControls model =
            )
 
 
-viewWithPreviousAndNextControls : Int -> State -> Html Msg
+viewWithPreviousAndNextControls : Int -> TabsHelpers.State -> Html TabsHelpers.Msg
 viewWithPreviousAndNextControls slidesCount model =
     Carousel.viewWithPreviousAndNextControls
-        { focusAndSelect = FocusAndSelectTab
+        { focusAndSelect = TabsHelpers.FocusAndSelectTab
         , selected = model.selected
         , role = Carousel.Group
         , labelledBy = Carousel.LabelledByAccessibleLabelOnly "Label"
@@ -257,10 +266,10 @@ viewWithPreviousAndNextControls slidesCount model =
            )
 
 
-program : (State -> Html Msg) -> TestContext
+program : (TabsHelpers.State -> Html TabsHelpers.Msg) -> TabsHelpers.TestContext
 program view =
     ProgramTest.createSandbox
-        { init = init
+        { init = TabsHelpers.init
         , update = update
         , view = view >> toUnstyled
         }
