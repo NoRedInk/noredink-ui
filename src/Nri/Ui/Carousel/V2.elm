@@ -16,7 +16,7 @@ import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Role as Role
 import Css exposing (..)
 import Html.Styled as Html exposing (..)
-import Html.Styled.Attributes as Attrs exposing (css, id)
+import Html.Styled.Attributes as Attrs exposing (id)
 import List.Extra
 import Maybe.Extra
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
