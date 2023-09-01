@@ -24,12 +24,54 @@ import Test exposing (..)
 import Test.Html.Selector as Selector
 
 
+type PreviousAndNextProgramMsg
+    = FocusAndSelect { select : Int, focus : Maybe String }
+
+
+previousAndNextCarouselProgram : Int -> ProgramTest { selected : Int } PreviousAndNextProgramMsg ()
+previousAndNextCarouselProgram slidesCount =
+    -- TODO: use program rather than sandbox so we can test effects
+    ProgramTest.createSandbox
+        { init = { selected = 0 }
+        , update =
+            \msg _ ->
+                case msg of
+                    FocusAndSelect { select } ->
+                        { selected = select }
+        , view =
+            \model ->
+                Carousel.viewWithPreviousAndNextControls
+                    { focusAndSelect = FocusAndSelect
+                    , selected = model.selected
+                    , role = Carousel.Group
+                    , labelledBy = Carousel.LabelledByAccessibleLabelOnly "Label"
+                    , panels =
+                        List.map
+                            (\i ->
+                                { id = i
+                                , idString = "slide-" ++ String.fromInt i
+                                , labelledBy = Carousel.LabelledByAccessibleLabelOnly ("Control " ++ String.fromInt i)
+                                , slideHtml = text ("Slide " ++ String.fromInt i)
+                                }
+                            )
+                            (List.range 0 (slidesCount - 1))
+                    , previousButton = { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
+                    , nextButton = { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
+                    }
+                    |> (\{ viewPreviousButton, viewNextButton, slides, containerAttributes } ->
+                            section containerAttributes [ slides, viewPreviousButton, viewNextButton ]
+                       )
+                    |> toUnstyled
+        }
+        |> ProgramTest.start ()
+
+
 viewWithPreviousAndNextControlsSpec : Test
 viewWithPreviousAndNextControlsSpec =
     describe "viewWithPreviousAndNextControls"
         [ test "rotate back and forward with 3 slides" <|
             \() ->
-                program (viewWithPreviousAndNextControls 3)
+                previousAndNextCarouselProgram 3
                     |> ensureSlideIsVisible "slide-0"
                     |> clickButton "Next"
                     |> ensureSlideIsVisible "slide-1"
@@ -46,7 +88,7 @@ viewWithPreviousAndNextControlsSpec =
                     |> done
         , test "rotate back and forward with 1 slides" <|
             \() ->
-                program (viewWithPreviousAndNextControls 1)
+                previousAndNextCarouselProgram 1
                     |> ensureSlideIsVisible "slide-0"
                     |> clickButton "Next"
                     |> ensureSlideIsVisible "slide-0"
@@ -234,31 +276,6 @@ viewWithCombinedControls model =
         }
         |> (\{ tabControls, slides, containerAttributes, viewNextButton, viewPreviousButton } ->
                 section containerAttributes [ slides, tabControls, viewNextButton, viewPreviousButton ]
-           )
-
-
-viewWithPreviousAndNextControls : Int -> TabsHelpers.State -> Html TabsHelpers.Msg
-viewWithPreviousAndNextControls slidesCount model =
-    Carousel.viewWithPreviousAndNextControls
-        { focusAndSelect = TabsHelpers.FocusAndSelectTab
-        , selected = model.selected
-        , role = Carousel.Group
-        , labelledBy = Carousel.LabelledByAccessibleLabelOnly "Label"
-        , panels =
-            List.map
-                (\i ->
-                    { id = i
-                    , idString = "slide-" ++ String.fromInt i
-                    , labelledBy = Carousel.LabelledByAccessibleLabelOnly ("Control " ++ String.fromInt i)
-                    , slideHtml = text ("Slide " ++ String.fromInt i)
-                    }
-                )
-                (List.range 0 (slidesCount - 1))
-        , previousButton = { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
-        , nextButton = { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
-        }
-        |> (\{ viewPreviousButton, viewNextButton, slides, containerAttributes } ->
-                section containerAttributes [ slides, viewPreviousButton, viewNextButton ]
            )
 
 
