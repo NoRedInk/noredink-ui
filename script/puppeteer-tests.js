@@ -190,15 +190,8 @@ describe("UI tests", function () {
     location
   ) => {
     await defaultUsageExampleProcessing(testName, name, location);
-    await page.waitForSelector("#parent-button-clicks");
 
-    const getCounterText = async () => {
-      const counter = await page.$("#parent-button-clicks");
-      const text = await page.evaluate((el) => el.innerText, counter);
-      return text;
-    };
-
-    assert.equal(await getCounterText(), "Parent Clicks: 0");
+    await page.waitForXPath("//p[contains(., 'Parent Clicks: 0')]", 200 );
     await page.waitForSelector("[data-tooltip-visible=false]");
 
     // Opening and closing the tooltip doesn't trigger the container effects
@@ -207,18 +200,19 @@ describe("UI tests", function () {
 
     await page.click('[aria-label="Tooltip trigger"]');
     await page.waitForSelector("[data-tooltip-visible=false]");
-    assert.equal(await getCounterText(), "Parent Clicks: 0");
+
+    await page.waitForXPath("//p[contains(., 'Parent Clicks: 0')]", 200 );
 
     // Clicking the button does trigger container effects
     const [button] = await page.$x("//button[contains(., 'Click me')]");
     await button.click();
 
-    assert.equal(await getCounterText(), "Parent Clicks: 1");
+    await page.waitForXPath("//p[contains(., 'Parent Clicks: 1')]", 200 );
 
     // Clicking the container does trigger container effects
     const [container] = await page.$x("//div[contains(., 'in the Container!')]");
     await container.click();
-    assert.equal(await getCounterText(), "Parent Clicks: 2");
+    await page.waitForXPath("//p[contains(., 'Parent Clicks: 2')]", 200 );
   };
 
   const skippedRules = {

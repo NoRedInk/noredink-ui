@@ -84,9 +84,7 @@ view model =
         , Container.custom [ Events.onClick ParentClick ]
         , Container.css [ Css.maxWidth (Css.px 500) ]
         ]
-    , p [ id "parent-button-clicks" ]
-        [ text ("Parent Clicks: " ++ String.fromInt model.parentClicks)
-        ]
+    , Text.mediumBody [ Text.plaintext ("Parent Clicks: " ++ String.fromInt model.parentClicks) ]
     ]
 
 
