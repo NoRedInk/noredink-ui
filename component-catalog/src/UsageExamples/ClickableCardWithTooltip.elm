@@ -6,8 +6,13 @@ module UsageExamples.ClickableCardWithTooltip exposing (example, State, Msg)
 
 -}
 
+import Accessibility.Styled exposing (..)
 import Category exposing (Category(..))
+import Css
 import Html.Styled exposing (Html)
+import Html.Styled.Attributes exposing (css, href, id)
+import Html.Styled.Events as Events
+import Nri.Ui.Tooltip.V3 as Tooltip
 import UsageExample exposing (UsageExample)
 
 
@@ -24,25 +29,55 @@ example =
 
 
 type alias State =
-    {}
+    { openTooltip : Maybe Tooltip
+    , parentClicks : Int
+    }
 
 
 init : State
 init =
-    {}
+    { openTooltip = Nothing
+    , parentClicks = 0
+    }
 
 
-type alias Msg =
+type alias Tooltip =
     ()
+
+
+type Msg
+    = ToggleTooltip Tooltip Bool
+    | ParentClick
 
 
 update : Msg -> State -> ( State, Cmd Msg )
 update msg model =
     case msg of
-        () ->
-            ( model, Cmd.none )
+        ToggleTooltip tooltip True ->
+            ( { model | openTooltip = Just tooltip }, Cmd.none )
+
+        ToggleTooltip _ False ->
+            ( { model | openTooltip = Nothing }, Cmd.none )
+
+        ParentClick ->
+            ( { model | parentClicks = model.parentClicks + 1 }
+            , Cmd.none
+            )
 
 
 view : State -> List (Html Msg)
 view model =
-    []
+    [ button
+        [ css [ Css.padding (Css.px 40) ]
+        , Events.onClick ParentClick
+        , id "parent-button"
+        ]
+        [ Tooltip.viewToggleTip { label = "Clickable Card", lastId = Nothing }
+            [ Tooltip.plaintext "Notice that even though this tooltip is in a clickable card, you can still interact with me!"
+            , Tooltip.onToggle (ToggleTooltip ())
+            , Tooltip.open (model.openTooltip == Just ())
+            , Tooltip.alignEndForMobile (Css.px 144)
+            ]
+        , div [ id "parent-button-clicks" ] [ text ("Parent Clicks: " ++ String.fromInt model.parentClicks) ]
+        ]
+    ]
