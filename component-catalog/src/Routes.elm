@@ -1,6 +1,7 @@
 module Routes exposing
     ( Route(..), toString, fromLocation
     , viewHeader, headerId
+    , exampleRoute
     , exampleHref, usageExampleHref
     )
 
@@ -8,6 +9,7 @@ module Routes exposing
 
 @docs Route, toString, fromLocation
 @docs viewHeader, headerId
+@docs exampleRoute
 @docs exampleHref, usageExampleHref
 
 -}
@@ -32,7 +34,6 @@ type Route
     | CategoryDoodad Category.Category String
     | Usage String
     | All
-    | NotFound String
 
 
 toString : Route -> String
@@ -52,9 +53,6 @@ toString route_ =
 
         All ->
             "#/"
-
-        NotFound unmatchedRoute ->
-            unmatchedRoute
 
 
 route : Parser Route
@@ -161,9 +159,6 @@ breadCrumbs route_ examples usageExamples =
         Usage exampleName ->
             Maybe.map usageExampleCrumb (Dict.get exampleName usageExamples)
 
-        NotFound _ ->
-            Nothing
-
 
 allBreadCrumb : BreadCrumbs Route
 allBreadCrumb =
@@ -205,13 +200,21 @@ usageExampleCrumb example =
         []
 
 
-exampleHref : Example a b -> String
-exampleHref example =
+exampleRoute : Example a b -> Route
+exampleRoute example =
     Doodad (Example.routeName example)
-        |> toString
+
+
+exampleHref : Example a b -> String
+exampleHref =
+    exampleRoute >> toString
+
+
+usageExampleRoute : UsageExample a b -> Route
+usageExampleRoute example =
+    Usage (UsageExample.routeName example)
 
 
 usageExampleHref : UsageExample a b -> String
-usageExampleHref example =
-    Usage (UsageExample.routeName example)
-        |> toString
+usageExampleHref =
+    usageExampleRoute >> toString

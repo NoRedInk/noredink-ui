@@ -18,7 +18,6 @@ import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css, href, id)
-import Html.Styled.Events as Events
 import KeyboardSupport exposing (Key(..))
 import Markdown
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg

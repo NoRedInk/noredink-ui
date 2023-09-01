@@ -10,7 +10,7 @@ import Accessibility.Styled exposing (..)
 import Category exposing (Category(..))
 import Css
 import Html.Styled exposing (Html)
-import Html.Styled.Attributes exposing (css, href, id)
+import Html.Styled.Attributes exposing (css, id)
 import Html.Styled.Events as Events
 import Nri.Ui.Tooltip.V3 as Tooltip
 import UsageExample exposing (UsageExample)

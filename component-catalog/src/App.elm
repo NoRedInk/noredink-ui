@@ -325,11 +325,6 @@ view model =
         Routes.CategoryDoodad _ exampleName ->
             exampleDocument exampleName
 
-        Routes.NotFound name ->
-            { title = name ++ " was not found in the NoRedInk Component Catalog"
-            , body = toBody notFound
-            }
-
         Routes.Category category ->
             { title = Category.forDisplay category ++ " Category in the NoRedInk Component Catalog"
             , body = toBody (viewCategory model category)
