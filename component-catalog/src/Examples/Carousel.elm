@@ -117,6 +117,7 @@ controlControlStyles =
 
 type Msg
     = FocusAndSelectItem { select : Int, focus : Maybe String }
+    | SelectAndAnnounce { select : Int, announce : String }
     | Focused (Result Dom.Error ())
     | SetSettings (Control Settings)
 
@@ -136,6 +137,11 @@ update msg model =
 
         SetSettings settings ->
             ( { model | settings = settings }, Cmd.none )
+
+        SelectAndAnnounce { select, announce } ->
+            ( { model | selected = select }
+            , Cmd.none
+            )
 
 
 moduleName : String
@@ -232,15 +238,17 @@ viewWithPreviousAndNextControls model =
                             [ ( "id", String.fromInt id )
                             , ( "idString", "\"" ++ String.fromInt id ++ "\"" )
                             , ( "slideHtml", "Html.text " ++ Code.string (String.fromInt (id + 1) ++ " slide") )
-                            , ( "labelledBy"
+                            , ( "accessibleLabel"
                               , Code.fromModule moduleName "LabelledByIdOfVisibleLabel "
                                     ++ Code.string (String.fromInt (id + 1) ++ " of " ++ String.fromInt settings.items)
                               )
+                            , ( "visibleLabelId", "Nothing" )
                             ]
                             3
                         , { id = id
                           , slideHtml = Html.text (String.fromInt (id + 1))
-                          , labelledBy = Carousel.LabelledByIdOfVisibleLabel (String.fromInt (id + 1) ++ " of " ++ String.fromInt settings.items)
+                          , accessibleLabel = String.fromInt (id + 1) ++ " of " ++ String.fromInt settings.items
+                          , visibleLabelId = Nothing
                           , idString = String.fromInt id
                           }
                         )
@@ -250,13 +258,14 @@ viewWithPreviousAndNextControls model =
             Carousel.viewWithPreviousAndNextControls
                 { selected = model.selected
                 , panels = List.map Tuple.second allItems
-                , viewPreviousButton =
+                , previousButton =
                     { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
-                , viewNextButton =
+                , nextButton =
                     { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
-                , labelledBy = Carousel.LabelledByIdOfVisibleLabel "Items"
+                , accessibleLabel = "Items"
+                , visibleLabelId = Nothing
                 , role = Carousel.Group
-                , focusAndSelect = FocusAndSelectItem
+                , selectAndAnnounce = SelectAndAnnounce
                 }
     in
     ( Code.pipelineMultiline
@@ -264,9 +273,10 @@ viewWithPreviousAndNextControls model =
             ++ Code.recordMultiline
                 [ ( "selected", Code.string (String.fromInt model.selected) )
                 , ( "panels", Code.listMultiline (List.map Tuple.first allItems) 3 )
-                , ( "viewPreviousButton", "{ attributes = [], icon = UiIcon.arrowLeft , name = \"Previous\" }" )
-                , ( "viewNextButton", "{ attributes = [], icon = UiIcon.arrowLeft , name = \"Next\" }" )
-                , ( "labelledBy", Code.fromModule moduleName "LabelledByIdOfVisibleLabel" ++ Code.string "Items" )
+                , ( "previousButton", "{ attributes = [], icon = UiIcon.arrowLeft , name = \"Previous\" }" )
+                , ( "nextButton", "{ attributes = [], icon = UiIcon.arrowLeft , name = \"Next\" }" )
+                , ( "accessibleLabel", "Items" )
+                , ( "visibleLabelId", "Nothing" )
                 , ( "role", Code.fromModule moduleName "Group" )
                 , ( "focusAndSelect", "FocusAndSelectItem" )
                 ]
@@ -298,9 +308,9 @@ viewWithCombinedControls model =
                 , tabControlListStyles = Tuple.second settings.controlListStyles
                 , tabControlStyles = Tuple.second settings.controlStyles
                 , panels = List.map Tuple.second allItems
-                , viewPreviousButton =
+                , previousButton =
                     { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
-                , viewNextButton =
+                , nextButton =
                     { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
                 , labelledBy = Carousel.LabelledByIdOfVisibleLabel "Items"
                 , role = Carousel.Group
@@ -314,8 +324,8 @@ viewWithCombinedControls model =
                 , ( "tabControlListStyles", Tuple.first settings.controlListStyles )
                 , ( "tabControlStyles", Tuple.first settings.controlStyles )
                 , ( "panels", Code.listMultiline (List.map Tuple.first allItems) 2 )
-                , ( "viewPreviousButton", "{ attributes = [], icon = UiIcon.arrowLeft , name = \"Previous\" }" )
-                , ( "viewNextButton", "{ attributes = [], icon = UiIcon.arrowLeft , name = \"Next\" }" )
+                , ( "previousButton", "{ attributes = [], icon = UiIcon.arrowLeft , name = \"Previous\" }" )
+                , ( "nextButton", "{ attributes = [], icon = UiIcon.arrowLeft , name = \"Next\" }" )
                 , ( "labelledBy", Code.fromModule moduleName "LabelledByIdOfVisibleLabel " ++ Code.string "Items" )
                 , ( "role", Code.fromModule moduleName "Group" )
                 ]
