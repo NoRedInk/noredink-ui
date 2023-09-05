@@ -101,25 +101,26 @@ viewWithPreviousAndNextControls config =
     { viewPreviousButton = viewPreviousButton
     , viewNextButton = viewNextButton
     , slides =
-        List.map
-            (\slide ->
-                Html.div
-                    [ Role.group
-                    , Aria.roleDescription "slide"
-                    , id slide.idString
-                    , labelAttribute slide
+        Html.div [ Accessibility.Styled.Key.tabbable False ]
+            (List.map
+                (\slide ->
+                    Html.div
+                        [ Role.group
+                        , Aria.roleDescription "slide"
+                        , id slide.idString
+                        , labelAttribute slide
 
-                    -- use as attribute for testing
-                    , if config.selected == slide.id then
-                        Attrs.style "display" "block"
+                        -- use as attribute for testing
+                        , if config.selected == slide.id then
+                            Attrs.style "display" "block"
 
-                      else
-                        Attrs.style "display" "none"
-                    ]
-                    [ slide.slideHtml ]
+                          else
+                            Attrs.style "display" "none"
+                        ]
+                        [ slide.slideHtml ]
+                )
+                config.slides
             )
-            config.slides
-            |> Html.div [ Attrs.attribute "atomic" "false", Accessibility.Styled.Key.tabbable False ]
     , containerAttributes =
         [ Attrs.attribute "role" (roleToString config.role)
         , Aria.roleDescription "carousel"
