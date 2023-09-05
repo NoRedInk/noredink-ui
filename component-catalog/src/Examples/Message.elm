@@ -10,9 +10,12 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Guidance
+import Http
+import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Message.V4 as Message
+import Nri.Ui.Table.V7 as Table
 import ViewHelpers exposing (viewExamples)
 
 
@@ -119,6 +122,7 @@ controlRole =
 type Msg
     = Dismiss
     | UpdateControl (Control (List ( String, Message.Attribute Msg )))
+    | Ignore
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -129,6 +133,9 @@ update msg state =
 
         UpdateControl newControl ->
             ( { state | control = newControl }, Cmd.none )
+
+        Ignore ->
+            ( state, Cmd.none )
 
 
 example : Example State Msg
@@ -191,13 +198,17 @@ example =
                           }
                         ]
                 }
+            , Heading.h2
+                [ Heading.plaintext "Customizable example"
+                , Heading.css [ Css.marginTop (Css.px 30) ]
+                ]
             , orDismiss <|
                 viewExamples
                     [ ( "tiny", Message.view attributes )
                     , ( "large", Message.view (Message.large :: attributes) )
                     , ( "banner", Message.view (Message.banner :: attributes) )
                     ]
-            , Heading.h3
+            , Heading.h2
                 [ Heading.css
                     [ Css.marginTop (Css.px 20)
                     , Css.borderTop3 (Css.px 2) Css.solid Colors.gray96
@@ -206,8 +217,75 @@ example =
                 , Heading.plaintext "Message.somethingWentWrong"
                 ]
             , Message.somethingWentWrong exampleRailsError
+            , Heading.h2
+                [ Heading.plaintext "Content type variations"
+                , Heading.css [ Css.marginTop (Css.px 30) ]
+                ]
+            , Heading.h3 [ Heading.plaintext "Message.tiny" ]
+            , Table.view []
+                [ Table.rowHeader
+                    { header = text "Content type"
+                    , view = \{ contentType } -> code [] [ text contentType ]
+                    , width = Css.pct 10
+                    , cellStyles =
+                        always
+                            [ Css.textAlign Css.left
+                            , Css.padding2 (Css.px 8) (Css.px 16)
+                            ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "Non-dismissible view"
+                    , view = \{ content } -> Message.view [ Message.tiny, content ]
+                    , width = Css.pct 50
+                    , cellStyles = always []
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "Dismissible view"
+                    , view =
+                        \{ content } ->
+                            Message.view
+                                [ Message.tiny
+                                , content
+                                , Message.onDismiss Ignore
+                                ]
+                    , width = Css.pct 50
+                    , cellStyles = always []
+                    , sort = Nothing
+                    }
+                ]
+                contentTypes
             ]
     }
+
+
+contentTypes : List { contentType : String, content : Message.Attribute msg }
+contentTypes =
+    [ { contentType = "paragraph"
+      , content = Message.paragraph "*Hello, there!* Hope you're doing well. Use the following link to go to [a fake destination](google.com)."
+      }
+    , { contentType = "plaintext"
+      , content = Message.plaintext "*Hello, there!* Hope you're doing well. Use the following link to go to [a fake destination](google.com)."
+      }
+    , { contentType = "markdown"
+      , content = Message.markdown "Hello, there! Hope you're doing well. Use the following link to go to [a fake destination](google.com)."
+      }
+    , { contentType = "html"
+      , content =
+            Message.html
+                [ text "Hello, there! Hope you're doing well. Use the following link to go to "
+                , ClickableText.link "a fake destination"
+                    [ ClickableText.href "google.com"
+                    , ClickableText.caption
+                    ]
+                , text "."
+                ]
+      }
+    , { contentType = "httpError (Bad Body)"
+      , content = Message.httpError (Http.BadBody CommonControls.badBodyString)
+      }
+    ]
 
 
 exampleRailsError : String
