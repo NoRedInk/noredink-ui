@@ -261,7 +261,7 @@ viewWithPreviousAndNextControls model =
                         ]
                         2
                   )
-                , ( "name", "Items" )
+                , ( "name", Code.string "Items" )
                 , ( "visibleLabelId", Code.maybe Nothing )
                 , ( "role", Code.fromModule moduleName "Group" )
                 , ( "announceAndSelect", "AnnounceAndSelect" )
@@ -269,7 +269,7 @@ viewWithPreviousAndNextControls model =
                 1
         , Code.anonymousFunction "{ viewPreviousButton, viewNextButton, slides, containerAttributes }"
             (Code.newlineWithIndent 2
-                ++ "section containerAttributes [ slides, controls, viewPreviousButton, viewNextButton ]"
+                ++ "section containerAttributes [ slides, viewPreviousButton, viewNextButton ]"
             )
         ]
         0
@@ -375,7 +375,7 @@ viewWithTabControls model =
                 , ( "tabControlStyles", "(\\_ -> [])" )
                 , ( "tabControlListStyles", Code.list [] )
                 , ( "role", Code.fromModule moduleName "Group" )
-                , ( "name", "Items" )
+                , ( "name", Code.string "Items" )
                 , ( "visibleLabelId", Code.maybe Nothing )
                 , ( "focusAndSelect", "FocusAndSelect" )
                 , ( "announceAndSelect", "AnnounceAndSelect" )
