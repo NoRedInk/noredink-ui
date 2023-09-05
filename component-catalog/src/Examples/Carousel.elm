@@ -39,6 +39,7 @@ type alias State =
     , settings : Control Settings
     , tip : Tip
     , testimonial : Testimonial
+    , package : Package
     }
 
 
@@ -48,6 +49,7 @@ init =
     , settings = initSettings
     , tip = AvoidWhiteAfterLaborDay
     , testimonial = GreatService
+    , package = FreeTrial
     }
 
 
@@ -103,6 +105,8 @@ type Msg
     | AnnounceAndSelect { select : Int, announce : String }
     | SelectTip { select : Tip, announce : String }
     | SelectTestimonial { select : Testimonial, focus : Maybe String }
+    | SelectPackageAndFocus { select : Package, focus : Maybe String }
+    | SelectPackageAndAnnounce { select : Package, announce : String }
     | Focused (Result Dom.Error ())
     | SetSettings (Control Settings)
 
@@ -140,6 +144,19 @@ update msg model =
             , focus
                 |> Maybe.map (Dom.focus >> Task.attempt Focused)
                 |> Maybe.withDefault Cmd.none
+            )
+
+        SelectPackageAndFocus { select, focus } ->
+            ( { model | package = select }
+            , focus
+                |> Maybe.map (Dom.focus >> Task.attempt Focused)
+                |> Maybe.withDefault Cmd.none
+            )
+
+        SelectPackageAndAnnounce { select, announce } ->
+            ( { model | package = select }
+            , -- TODO: actually announce!
+              Cmd.none
             )
 
 
@@ -217,7 +234,7 @@ example =
                             viewCustomizableWithPreviousAndNextControls model
 
                         Combined ->
-                            viewWithCombinedControls model
+                            viewCustomizableWithCombinedControls model
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -278,7 +295,7 @@ example =
                   , example = viewTestimonials model.testimonial
                   }
                 , { viewName = "viewWithCombinedControls"
-                  , example = text ""
+                  , example = viewPackages model.package
                   }
                 ]
             ]
@@ -347,8 +364,8 @@ viewCustomizableWithPreviousAndNextControls model =
     )
 
 
-viewWithCombinedControls : State -> ( String, Html Msg )
-viewWithCombinedControls model =
+viewCustomizableWithCombinedControls : State -> ( String, Html Msg )
+viewCustomizableWithCombinedControls model =
     let
         settings =
             Control.currentValue model.settings
@@ -644,33 +661,8 @@ viewTestimonials selected =
                       , tabControlHtml = span Style.invisible [ text "Testimonial 3" ]
                       }
                     ]
-                , tabControlStyles =
-                    \isSelected ->
-                        [ borderRadius (pct 100)
-                        , overflow hidden
-                        , padding zero
-                        , height (px 22)
-                        , width (px 22)
-                        , border zero
-                        , batch <|
-                            if isSelected then
-                                [ pseudoClass "focus-visible"
-                                    [ FocusRing.boxShadows []
-                                    , outline zero
-                                    ]
-                                , backgroundColor Colors.azure
-                                ]
-
-                            else
-                                [ cursor pointer
-                                , backgroundColor Colors.gray92
-                                ]
-                        ]
-                , tabControlListStyles =
-                    [ displayFlex
-                    , property "gap" "15px"
-                    , justifyContent center
-                    ]
+                , tabControlStyles = tabControlStyles
+                , tabControlListStyles = tabControlListStyles
                 , role = Carousel.Group
                 , name = "Testimonials"
                 , visibleLabelId = Nothing
@@ -691,3 +683,123 @@ type Testimonial
     = GreatService
     | GreatProduct
     | GreatMission
+
+
+viewPackages : Package -> Html Msg
+viewPackages selected =
+    let
+        { tabControls, slides, viewPreviousButton, viewNextButton, containerAttributes } =
+            Carousel.viewWithCombinedControls
+                { selected = selected
+                , slides =
+                    [ { id = FreeTrial
+                      , idString = "free-trial"
+                      , name = "Free trial"
+                      , visibleLabelId = Nothing
+                      , slideHtml = text "Free trial"
+                      , tabControlHtml = span Style.invisible [ text "Free trial" ]
+                      }
+                    , { id = DeveloperTier
+                      , idString = "developer-tier"
+                      , name = "Developer Tier"
+                      , visibleLabelId = Nothing
+                      , slideHtml = text "Developer Tier"
+                      , tabControlHtml = span Style.invisible [ text "Developer tier" ]
+                      }
+                    , { id = EnterpriseTier
+                      , idString = "enterprise-tier"
+                      , name = "Enterprise Tier"
+                      , visibleLabelId = Nothing
+                      , slideHtml = text "Enterprise Tier"
+                      , tabControlHtml = span Style.invisible [ text "Enterprise tier" ]
+                      }
+                    ]
+                , tabControlStyles = tabControlStyles
+                , tabControlListStyles = tabControlListStyles
+                , previousButton =
+                    { attributes =
+                        [ ClickableSvg.withBorder
+                        , ClickableSvg.css
+                            [ position absolute
+                            , left (px -15)
+                            , top (px 20)
+                            ]
+                        ]
+                    , icon = UiIcon.arrowLeft
+                    , name = "Previous"
+                    }
+                , nextButton =
+                    { attributes =
+                        [ ClickableSvg.withBorder
+                        , ClickableSvg.css
+                            [ position absolute
+                            , right (px -15)
+                            , top (px 20)
+                            ]
+                        ]
+                    , icon = UiIcon.arrowRight
+                    , name = "Next"
+                    }
+                , role = Carousel.Group
+                , name = "Packages"
+                , visibleLabelId = Nothing
+                , focusAndSelect = SelectPackageAndFocus
+                , announceAndSelect = SelectPackageAndAnnounce
+                }
+    in
+    Container.view
+        [ Container.custom containerAttributes
+        , Container.css
+            [ maxWidth (px 210)
+            , position relative
+            , marginLeft (px 15)
+            , marginRight (px 15)
+            , paddingLeft (px 30)
+            , paddingRight (px 30)
+            , displayFlex
+            , flexDirection column
+            , alignItems center
+            ]
+        , Container.html
+            [ div [] [ viewPreviousButton, slides, viewNextButton ]
+            , tabControls
+            ]
+        ]
+
+
+type Package
+    = FreeTrial
+    | DeveloperTier
+    | EnterpriseTier
+
+
+tabControlStyles : Bool -> List Style
+tabControlStyles isSelected =
+    [ borderRadius (pct 100)
+    , overflow hidden
+    , padding zero
+    , height (px 22)
+    , width (px 22)
+    , border zero
+    , batch <|
+        if isSelected then
+            [ pseudoClass "focus-visible"
+                [ FocusRing.boxShadows []
+                , outline zero
+                ]
+            , backgroundColor Colors.azure
+            ]
+
+        else
+            [ cursor pointer
+            , backgroundColor Colors.gray92
+            ]
+    ]
+
+
+tabControlListStyles : List Style
+tabControlListStyles =
+    [ displayFlex
+    , property "gap" "15px"
+    , justifyContent center
+    ]
