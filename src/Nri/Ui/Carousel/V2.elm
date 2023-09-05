@@ -200,15 +200,18 @@ viewWithTabControls :
         , slides :
             List
                 { id : id
+                , idString : String
+                , accessibleLabel : String
+                , visibleLabelId : Maybe String
                 , slideHtml : Html msg
                 , tabControlHtml : Html Never
-                , idString : String
                 }
         , focusAndSelect : { select : id, focus : Maybe String } -> msg
         , tabControlStyles : Bool -> List Style
         , tabControlListStyles : List Style
         , role : Role
-        , labelledBy : LabelledBy
+        , accessibleLabel : String
+        , visibleLabelId : Maybe String
     }
     ->
         { controls : Html msg
@@ -237,7 +240,7 @@ viewWithTabControls config =
     , containerAttributes =
         [ Attrs.attribute "role" (roleToString config.role)
         , Aria.roleDescription "carousel"
-        , labelledByToAttr config.labelledBy
+        , labelAttribute config
         ]
     }
 
@@ -254,17 +257,21 @@ viewWithCombinedControls :
     , slides :
         List
             { id : id
+            , idString : String
+            , accessibleLabel : String
+            , visibleLabelId : Maybe String
             , slideHtml : Html msg
             , tabControlHtml : Html Never
-            , idString : String
             }
-    , focusAndSelect : { select : id, focus : Maybe String } -> msg
     , tabControlStyles : Bool -> List Style
     , tabControlListStyles : List Style
     , previousButton : { name : String, icon : Svg, attributes : List (ClickableSvg.Attribute msg) }
     , nextButton : { name : String, icon : Svg, attributes : List (ClickableSvg.Attribute msg) }
     , role : Role
-    , labelledBy : LabelledBy
+    , accessibleLabel : String
+    , visibleLabelId : Maybe String
+    , focusAndSelect : { select : id, focus : Maybe String } -> msg
+    , announceAndSelect : { select : id, announce : String } -> msg
     }
     ->
         { tabControls : Html msg
@@ -340,16 +347,6 @@ labelAttribute { accessibleLabel, visibleLabelId } =
 
         Nothing ->
             Aria.label accessibleLabel
-
-
-labelledByToAttr : LabelledBy -> Attribute msg
-labelledByToAttr label =
-    case label of
-        LabelledByIdOfVisibleLabel l ->
-            Aria.labeledBy l
-
-        LabelledByAccessibleLabelOnly l ->
-            Aria.label l
 
 
 roleToString : Role -> String

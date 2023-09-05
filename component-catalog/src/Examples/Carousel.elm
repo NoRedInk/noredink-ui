@@ -231,28 +231,9 @@ viewWithPreviousAndNextControls model =
             Control.currentValue model.settings
 
         allItems =
-            List.repeat settings.items ()
-                |> List.indexedMap
-                    (\id _ ->
-                        ( Code.recordMultiline
-                            [ ( "id", String.fromInt id )
-                            , ( "idString", "\"" ++ String.fromInt id ++ "\"" )
-                            , ( "slideHtml", "Html.text " ++ Code.string (String.fromInt (id + 1) ++ " slide") )
-                            , ( "accessibleLabel"
-                              , Code.fromModule moduleName "LabelledByIdOfVisibleLabel "
-                                    ++ Code.string (String.fromInt (id + 1) ++ " of " ++ String.fromInt settings.items)
-                              )
-                            , ( "visibleLabelId", "Nothing" )
-                            ]
-                            3
-                        , { id = id
-                          , slideHtml = Html.text (String.fromInt (id + 1))
-                          , accessibleLabel = String.fromInt (id + 1) ++ " of " ++ String.fromInt settings.items
-                          , visibleLabelId = Nothing
-                          , idString = String.fromInt id
-                          }
-                        )
-                    )
+            settings.items
+                |> indicesForItemCount
+                |> List.map toNonTabbedCarouselItem
 
         { viewPreviousButton, viewNextButton, slides, containerAttributes } =
             Carousel.viewWithPreviousAndNextControls
@@ -298,22 +279,25 @@ viewWithCombinedControls model =
             Control.currentValue model.settings
 
         allItems =
-            List.repeat settings.items ()
-                |> List.indexedMap toCarouselItem
+            settings.items
+                |> indicesForItemCount
+                |> List.map toTabbedCarouselItem
 
         { tabControls, slides, viewPreviousButton, viewNextButton, containerAttributes } =
             Carousel.viewWithCombinedControls
-                { focusAndSelect = FocusAndSelectItem
-                , selected = model.selected
+                { selected = model.selected
+                , slides = List.map Tuple.second allItems
                 , tabControlListStyles = Tuple.second settings.controlListStyles
                 , tabControlStyles = Tuple.second settings.controlStyles
-                , slides = List.map Tuple.second allItems
                 , previousButton =
                     { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
                 , nextButton =
                     { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
-                , labelledBy = Carousel.LabelledByIdOfVisibleLabel "Items"
                 , role = Carousel.Group
+                , accessibleLabel = "Items"
+                , visibleLabelId = Nothing
+                , focusAndSelect = FocusAndSelectItem
+                , announceAndSelect = AnnounceAndSelect
                 }
     in
     ( Code.pipelineMultiline
@@ -346,18 +330,20 @@ viewWithTabControls model =
             Control.currentValue model.settings
 
         allItems =
-            List.repeat settings.items ()
-                |> List.indexedMap toCarouselItem
+            settings.items
+                |> indicesForItemCount
+                |> List.map toTabbedCarouselItem
 
         { controls, slides, containerAttributes } =
             Carousel.viewWithTabControls
-                { focusAndSelect = FocusAndSelectItem
-                , selected = model.selected
+                { selected = model.selected
+                , slides = List.map Tuple.second allItems
+                , focusAndSelect = FocusAndSelectItem
                 , tabControlListStyles = Tuple.second settings.controlListStyles
                 , tabControlStyles = Tuple.second settings.controlStyles
-                , slides = List.map Tuple.second allItems
-                , labelledBy = Carousel.LabelledByIdOfVisibleLabel "Items"
                 , role = Carousel.Group
+                , accessibleLabel = "Items"
+                , visibleLabelId = Nothing
                 }
     in
     ( Code.pipelineMultiline
@@ -381,32 +367,81 @@ viewWithTabControls model =
     )
 
 
-toCarouselItem :
+indicesForItemCount : Int -> List Int
+indicesForItemCount itemCount =
+    List.range 0 (max 0 (itemCount - 1))
+
+
+toNonTabbedCarouselItem :
     Int
-    -> a
     ->
         ( String
         , { id : Int
-          , slideHtml : Html msg
-          , tabControlHtml : Html Never
           , idString : String
+          , accessibleLabel : String
+          , visibleLabelId : Maybe String
+          , slideHtml : Html msg
           }
         )
-toCarouselItem id _ =
+toNonTabbedCarouselItem id =
     let
         idString =
             Attributes.safeIdWithPrefix "slide" <| String.fromInt id
+
+        humanizedId =
+            String.fromInt (id + 1)
     in
     ( Code.recordMultiline
-        [ ( "id", Code.string (String.fromInt id) )
-        , ( "idString", Code.string "idString" )
-        , ( "tabControlHtml", "Html.text " ++ Code.string (String.fromInt (id + 1)) )
-        , ( "slideHtml", "Html.text " ++ Code.string (String.fromInt (id + 1) ++ " slide") )
+        [ ( "id", Code.int id )
+        , ( "idString", Code.string (String.fromInt id) )
+        , ( "accessibleLabel", Code.string ("Slide " ++ humanizedId) )
+        , ( "visibleLabelId", Code.maybe Nothing )
+        , ( "slideHtml", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
         ]
         2
     , { id = id
       , idString = idString
-      , tabControlHtml = Html.text (String.fromInt (id + 1))
-      , slideHtml = Html.text (String.fromInt (id + 1) ++ " slide")
+      , accessibleLabel = "Slide " ++ humanizedId
+      , visibleLabelId = Nothing
+      , slideHtml = Html.text ("Contents for slide " ++ humanizedId)
+      }
+    )
+
+
+toTabbedCarouselItem :
+    Int
+    ->
+        ( String
+        , { id : Int
+          , idString : String
+          , accessibleLabel : String
+          , visibleLabelId : Maybe String
+          , slideHtml : Html msg
+          , tabControlHtml : Html Never
+          }
+        )
+toTabbedCarouselItem id =
+    let
+        idString =
+            Attributes.safeIdWithPrefix "slide" <| String.fromInt id
+
+        humanizedId =
+            String.fromInt (id + 1)
+    in
+    ( Code.recordMultiline
+        [ ( "id", Code.int id )
+        , ( "idString", Code.string (String.fromInt id) )
+        , ( "accessibleLabel", Code.string ("Slide " ++ humanizedId) )
+        , ( "visibleLabelId", Code.maybe Nothing )
+        , ( "tabControlHtml", "Html.text " ++ Code.string ("Slide " ++ humanizedId) )
+        , ( "slideHtml", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
+        ]
+        2
+    , { id = id
+      , idString = idString
+      , accessibleLabel = "Slide " ++ humanizedId
+      , visibleLabelId = Nothing
+      , tabControlHtml = Html.text ("Slide " ++ humanizedId)
+      , slideHtml = Html.text ("Contents for slide " ++ humanizedId)
       }
     )
