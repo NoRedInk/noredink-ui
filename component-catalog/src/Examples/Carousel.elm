@@ -117,7 +117,7 @@ controlControlStyles =
 
 
 type Msg
-    = FocusAndSelectItem { select : Int, focus : Maybe String }
+    = FocusAndSelect { select : Int, focus : Maybe String }
     | AnnounceAndSelect { select : Int, announce : String }
     | Focused (Result Dom.Error ())
     | SetSettings (Control Settings)
@@ -126,7 +126,7 @@ type Msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg model =
     case msg of
-        FocusAndSelectItem { select, focus } ->
+        FocusAndSelect { select, focus } ->
             ( { model | selected = select }
             , focus
                 |> Maybe.map (Dom.focus >> Task.attempt Focused)
@@ -270,26 +270,28 @@ viewWithPreviousAndNextControls model =
     ( Code.pipelineMultiline
         [ Code.fromModule moduleName "viewWithPreviousAndNextControls"
             ++ Code.recordMultiline
-                [ ( "selected", Code.string (String.fromInt model.selected) )
+                [ ( "selected", Code.int model.selected )
                 , ( "slides", Code.listMultiline (List.map Tuple.first allItems) 3 )
                 , ( "previousButton"
-                  , Code.record
+                  , Code.recordMultiline
                         [ ( "name", Code.string "Previous" )
                         , ( "icon", "UiIcon.arrowLeft" )
                         , ( "attributes", Code.list [] )
                         ]
+                        2
                   )
                 , ( "nextButton"
-                  , Code.record
+                  , Code.recordMultiline
                         [ ( "name", Code.string "Previous" )
                         , ( "icon", "UiIcon.arrowRight" )
                         , ( "attributes", Code.list [] )
                         ]
+                        2
                   )
                 , ( "name", "Items" )
-                , ( "visibleLabelId", "Nothing" )
+                , ( "visibleLabelId", Code.maybe Nothing )
                 , ( "role", Code.fromModule moduleName "Group" )
-                , ( "focusAndSelect", "FocusAndSelectItem" )
+                , ( "announceAndSelect", "AnnounceAndSelect" )
                 ]
                 1
         , Code.anonymousFunction "{ viewPreviousButton, viewNextButton, slides, containerAttributes }"
@@ -326,35 +328,38 @@ viewWithCombinedControls model =
                 , role = Carousel.Group
                 , name = "Items"
                 , visibleLabelId = Nothing
-                , focusAndSelect = FocusAndSelectItem
+                , focusAndSelect = FocusAndSelect
                 , announceAndSelect = AnnounceAndSelect
                 }
     in
     ( Code.pipelineMultiline
         [ Code.fromModule moduleName "viewWithCombinedControls"
             ++ Code.record
-                [ ( "focusAndSelect", "identity" )
-                , ( "announceAndSelect", "identity" )
-                , ( "selected", Code.string (String.fromInt model.selected) )
+                [ ( "selected", Code.int model.selected )
+                , ( "slides", Code.listMultiline (List.map Tuple.first allItems) 2 )
                 , ( "tabControlListStyles", Tuple.first settings.controlListStyles )
                 , ( "tabControlStyles", Tuple.first settings.controlStyles )
-                , ( "slides", Code.listMultiline (List.map Tuple.first allItems) 2 )
                 , ( "previousButton"
-                  , Code.record
+                  , Code.recordMultiline
                         [ ( "name", Code.string "Previous" )
                         , ( "icon", "UiIcon.arrowLeft" )
                         , ( "attributes", Code.list [] )
                         ]
+                        2
                   )
                 , ( "nextButton"
-                  , Code.record
+                  , Code.recordMultiline
                         [ ( "name", Code.string "Previous" )
                         , ( "icon", "UiIcon.arrowRight" )
                         , ( "attributes", Code.list [] )
                         ]
+                        2
                   )
-                , ( "labelledBy", Code.fromModule moduleName "LabelledByIdOfVisibleLabel " ++ Code.string "Items" )
                 , ( "role", Code.fromModule moduleName "Group" )
+                , ( "name", Code.string "Items" )
+                , ( "visibleLabelId", Code.maybe Nothing )
+                , ( "focusAndSelect", "FocusAndSelect" )
+                , ( "announceAndSelect", "AnnounceAndSelect" )
                 ]
         , Code.anonymousFunction "{ tabControls, slides, viewPreviousButton, viewNextButton, containerAttributes }"
             (Code.newlineWithIndent 2
@@ -381,24 +386,26 @@ viewWithTabControls model =
             Carousel.viewWithTabControls
                 { selected = model.selected
                 , slides = List.map Tuple.second allItems
-                , focusAndSelect = FocusAndSelectItem
                 , tabControlListStyles = Tuple.second settings.controlListStyles
                 , tabControlStyles = Tuple.second settings.controlStyles
                 , role = Carousel.Group
                 , name = "Items"
                 , visibleLabelId = Nothing
+                , focusAndSelect = FocusAndSelect
                 }
     in
     ( Code.pipelineMultiline
         [ Code.fromModule moduleName "viewWithTabControls"
             ++ Code.record
-                [ ( "focusAndSelect", "identity" )
-                , ( "selected", Code.string (String.fromInt model.selected) )
+                [ ( "selected", Code.int model.selected )
+                , ( "slides", Code.listMultiline (List.map Tuple.first allItems) 2 )
                 , ( "tabControlListStyles", Tuple.first settings.controlListStyles )
                 , ( "tabControlStyles", Tuple.first settings.controlStyles )
-                , ( "slides", Code.listMultiline (List.map Tuple.first allItems) 2 )
-                , ( "labelledBy", Code.fromModule moduleName "LabelledByIdOfVisibleLabel " ++ Code.string "Items" )
                 , ( "role", Code.fromModule moduleName "Group" )
+                , ( "name", "Items" )
+                , ( "visibleLabelId", Code.maybe Nothing )
+                , ( "focusAndSelect", "FocusAndSelect" )
+                , ( "announceAndSelect", "AnnounceAndSelect" )
                 ]
         , Code.anonymousFunction "{ controls, slides, containerAttributes }"
             (Code.newlineWithIndent 2
