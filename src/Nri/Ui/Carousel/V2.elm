@@ -137,23 +137,22 @@ Returns:
 
 -}
 viewWithTabControls :
-    { cfg
-        | selected : id
-        , slides :
-            List
-                { id : id
-                , idString : String
-                , name : String
-                , visibleLabelId : Maybe String
-                , slideHtml : Html msg
-                , tabControlHtml : Html Never
-                }
-        , tabControlStyles : Bool -> List Style
-        , tabControlListStyles : List Style
-        , role : Role
-        , name : String
-        , visibleLabelId : Maybe String
-        , focusAndSelect : { select : id, focus : Maybe String } -> msg
+    { selected : id
+    , slides :
+        List
+            { id : id
+            , idString : String
+            , name : String
+            , visibleLabelId : Maybe String
+            , slideHtml : Html msg
+            , tabControlHtml : Html Never
+            }
+    , tabControlStyles : Bool -> List Style
+    , tabControlListStyles : List Style
+    , role : Role
+    , name : String
+    , visibleLabelId : Maybe String
+    , focusAndSelect : { select : id, focus : Maybe String } -> msg
     }
     ->
         { controls : Html msg
@@ -227,7 +226,16 @@ viewWithCombinedControls :
 viewWithCombinedControls config =
     let
         { controls, slides, containerAttributes } =
-            viewWithTabControls config
+            viewWithTabControls
+                { selected = config.selected
+                , slides = config.slides
+                , tabControlStyles = config.tabControlStyles
+                , tabControlListStyles = config.tabControlListStyles
+                , role = config.role
+                , name = config.name
+                , visibleLabelId = config.visibleLabelId
+                , focusAndSelect = config.focusAndSelect
+                }
 
         { viewPreviousButton, viewNextButton } =
             case findPreviousAndNextSlides .id config of

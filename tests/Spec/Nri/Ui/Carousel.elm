@@ -278,7 +278,6 @@ viewWithTabControlsSpec =
                                     VisibleLabel ->
                                         Just "carousel-label"
                             , focusAndSelect = FocusAndSelect
-                            , announceAndSelect = AnnounceAndSelect
                             }
                             |> (\{ controls, slides, containerAttributes } ->
                                     section containerAttributes [ slides, controls ]
