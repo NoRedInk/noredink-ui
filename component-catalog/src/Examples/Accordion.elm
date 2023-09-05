@@ -27,6 +27,8 @@ import Nri.Ui.Accordion.V3 as Accordion exposing (AccordionEntry(..))
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
+import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -117,7 +119,7 @@ view ellieLinkConfig model =
                             , "              , entryClass = \"customizable-example\""
                             , "              , headerContent = " ++ Tuple.first settings.headerContent
                             , "              , headerId = \"customizable-example-header\""
-                            , "              , headerLevel = Accordion.H4"
+                            , "              , headerLevel = Accordion.H3"
                             , "              , isExpanded = True"
                             , "              , toggle = Nothing"
                             , "              }"
@@ -140,6 +142,13 @@ view ellieLinkConfig model =
                   }
                 ]
         }
+    , Heading.h2
+        [ Heading.plaintext "Examples"
+        , Heading.css
+            [ Css.marginTop Spacing.verticalSpacerPx
+            , Css.marginBottom (Css.px 20)
+            ]
+        ]
     , Accordion.view
         { entries =
             [ AccordionEntry
@@ -148,7 +157,7 @@ view ellieLinkConfig model =
                 , entryClass = "customizable-example"
                 , headerContent = Tuple.second settings_.headerContent
                 , headerId = "customizable-example-header"
-                , headerLevel = Accordion.H4
+                , headerLevel = Accordion.H3
                 , isExpanded = Set.member 4 model.expanded
                 , toggle = Just (Toggle 4)
                 }
@@ -159,7 +168,7 @@ view ellieLinkConfig model =
                 , entryClass = "accordion-example"
                 , headerContent = Html.text "Apples (has children)"
                 , headerId = "accordion-entry__1"
-                , headerLevel = Accordion.H4
+                , headerLevel = Accordion.H3
                 , isExpanded = Set.member 1 model.expanded
                 , toggle = Just (Toggle 1)
                 }
@@ -178,7 +187,7 @@ view ellieLinkConfig model =
                     , entryClass = "accordion-example-child"
                     , headerContent = Html.text "Gala"
                     , headerId = "accordion-entry__11"
-                    , headerLevel = Accordion.H5
+                    , headerLevel = Accordion.H4
                     , isExpanded = Set.member 11 model.expanded
                     , toggle = Just (Toggle 11)
                     }
@@ -198,7 +207,7 @@ view ellieLinkConfig model =
                     , entryClass = "accordion-example-child"
                     , headerContent = Html.text "Granny Smith"
                     , headerId = "accordion-entry__12"
-                    , headerLevel = Accordion.H5
+                    , headerLevel = Accordion.H4
                     , isExpanded = Set.member 12 model.expanded
                     , toggle = Just (Toggle 12)
                     }
@@ -218,7 +227,7 @@ view ellieLinkConfig model =
                     , entryClass = "accordion-example-child"
                     , headerContent = Html.text "Fuji"
                     , headerId = "accordion-entry__13"
-                    , headerLevel = Accordion.H5
+                    , headerLevel = Accordion.H4
                     , isExpanded = Set.member 13 model.expanded
                     , toggle = Just (Toggle 13)
                     }
@@ -230,7 +239,7 @@ view ellieLinkConfig model =
                 , entryClass = "accordion-example"
                 , headerContent = Html.text "Oranges"
                 , headerId = "accordion-entry__2"
-                , headerLevel = Accordion.H4
+                , headerLevel = Accordion.H3
                 , isExpanded = Set.member 2 model.expanded
                 , toggle = Just (Toggle 2)
                 }
@@ -262,7 +271,7 @@ view ellieLinkConfig model =
                 , entryClass = "fixed-positioning-accordion-example"
                 , headerContent = Html.text "Advanced Example: Expand & Scroll!"
                 , headerId = "accordion-entry__6"
-                , headerLevel = Accordion.H4
+                , headerLevel = Accordion.H3
                 , isExpanded = Set.member 6 model.expanded
                 , toggle = Just (Toggle 6)
                 }
@@ -354,11 +363,27 @@ controlIcon =
         , ( "UiIcon"
           , Control.map
                 (\( code, icon ) ->
-                    ( "\\_ -> Svg.toHtml " ++ code
-                    , \_ -> Svg.toHtml icon
+                    ( Code.newlineWithIndent 5
+                        ++ Code.anonymousFunction "_"
+                            (Code.newlineWithIndent 6
+                                ++ Code.pipelineMultiline
+                                    [ code
+                                    , "Svg.withWidth (Css.px 20)"
+                                    , "Svg.withHeight (Css.px 20)"
+                                    , "Svg.withCss [ Css.marginRight (Css.px 8) ]"
+                                    , "Svg.toHtml"
+                                    ]
+                                    6
+                            )
+                    , \_ ->
+                        icon
+                            |> Svg.withWidth (Css.px 20)
+                            |> Svg.withHeight (Css.px 20)
+                            |> Svg.withCss [ Css.marginRight (Css.px 8) ]
+                            |> Svg.toHtml
                     )
                 )
-                CommonControls.uiIcon
+                (CommonControls.rotatedUiIcon 1)
           )
         ]
 
