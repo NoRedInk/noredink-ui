@@ -4,6 +4,7 @@ module Spec.Nri.Ui.Carousel exposing
     , viewWithTabControlsSpec
     )
 
+import Accessibility.Aria as Aria
 import Expect
 import Html.Attributes as Attrs
 import Html.Styled exposing (..)
@@ -182,8 +183,8 @@ viewWithPreviousAndNextControlsSpec =
                     }
                     |> ensureViewHas
                         [ Selector.all
-                            [ Selector.attribute (Attrs.attribute "aria-roledescription" "carousel")
-                            , Selector.attribute (Attrs.attribute "aria-label" "Slides")
+                            [ Selector.attribute (Aria.roleDescription "carousel")
+                            , Selector.attribute (Aria.label "Slides")
                             ]
                         ]
                     |> done
@@ -196,8 +197,8 @@ viewWithPreviousAndNextControlsSpec =
                     }
                     |> ensureViewHas
                         [ Selector.all
-                            [ Selector.attribute (Attrs.attribute "aria-roledescription" "carousel")
-                            , Selector.attribute (Attrs.attribute "aria-labelledby" "carousel-label")
+                            [ Selector.attribute (Aria.roleDescription "carousel")
+                            , Selector.attribute (Aria.labelledBy "carousel-label")
                             ]
                         ]
                     |> done
@@ -211,7 +212,7 @@ viewWithPreviousAndNextControlsSpec =
                     |> ensureViewHas
                         [ Selector.all
                             [ Selector.id "slide-0"
-                            , Selector.attribute (Attrs.attribute "aria-label" "Slide 0")
+                            , Selector.attribute (Aria.label "Slide 0")
                             ]
                         ]
                     |> done
@@ -225,7 +226,7 @@ viewWithPreviousAndNextControlsSpec =
                     |> ensureViewHas
                         [ Selector.all
                             [ Selector.id "slide-0"
-                            , Selector.attribute (Attrs.attribute "aria-labelledby" "slide-0-label")
+                            , Selector.attribute (Aria.labelledBy "slide-0-label")
                             ]
                         ]
                     |> done
@@ -359,8 +360,8 @@ viewWithTabControlsSpec =
                     start AccessibleLabel
                         |> ensureViewHas
                             [ Selector.all
-                                [ Selector.attribute (Attrs.attribute "aria-roledescription" "carousel")
-                                , Selector.attribute (Attrs.attribute "aria-label" "Slides")
+                                [ Selector.attribute (Aria.roleDescription "carousel")
+                                , Selector.attribute (Aria.label "Slides")
                                 ]
                             ]
                         |> done
@@ -369,8 +370,8 @@ viewWithTabControlsSpec =
                     start VisibleLabel
                         |> ensureViewHas
                             [ Selector.all
-                                [ Selector.attribute (Attrs.attribute "aria-roledescription" "carousel")
-                                , Selector.attribute (Attrs.attribute "aria-labelledby" "carousel-label")
+                                [ Selector.attribute (Aria.roleDescription "carousel")
+                                , Selector.attribute (Aria.labelledBy "carousel-label")
                                 ]
                             ]
                         |> done
