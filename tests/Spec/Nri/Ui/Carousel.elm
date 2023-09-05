@@ -68,7 +68,7 @@ update msg model =
 viewWithPreviousAndNextControlsSpec : Test
 viewWithPreviousAndNextControlsSpec =
     let
-        start { visibleLabelId, slideCount } =
+        start { relyOnVisibileLabelForContainer, relyOnVisibleLabelForSlides, slideCount } =
             ProgramTest.createElement
                 { init = init
                 , update = update
@@ -79,15 +79,27 @@ viewWithPreviousAndNextControlsSpec =
                             , selected = model.selected
                             , role = Carousel.Group
                             , accessibleLabel = "Previous/Next Carousel"
-                            , visibleLabelId = visibleLabelId
+                            , visibleLabelId =
+                                if relyOnVisibileLabelForContainer then
+                                    Just "carousel-label"
+
+                                else
+                                    Nothing
                             , slides =
                                 List.map
                                     (\i ->
                                         { id = i
                                         , idString = "slide-" ++ String.fromInt i
-                                        , accessibleLabel = "Control " ++ String.fromInt i
-                                        , visibleLabelId = Nothing
-                                        , slideHtml = text ("Slide " ++ String.fromInt i)
+                                        , accessibleLabel = "Slide " ++ String.fromInt i
+                                        , visibleLabelId =
+                                            if relyOnVisibleLabelForSlides then
+                                                Just ("slide-" ++ String.fromInt i ++ "-label")
+
+                                            else
+                                                Nothing
+                                        , slideHtml =
+                                            div [ StyledAttrs.id ("slide-" ++ String.fromInt i ++ "-label") ]
+                                                [ text ("Slide " ++ String.fromInt i) ]
                                         }
                                     )
                                     (List.range 0 (slideCount - 1))
@@ -109,7 +121,7 @@ viewWithPreviousAndNextControlsSpec =
     describe "viewWithPreviousAndNextControls"
         [ test "rotate back and forward with 3 slides" <|
             \() ->
-                start { visibleLabelId = Nothing, slideCount = 3 }
+                start { relyOnVisibleLabelForSlides = False, relyOnVisibileLabelForContainer = False, slideCount = 3 }
                     |> ensureSlideIsVisible "slide-0"
                     |> clickButton "Next"
                     |> ensureSlideIsVisible "slide-1"
@@ -126,7 +138,7 @@ viewWithPreviousAndNextControlsSpec =
                     |> done
         , test "rotate back and forward with 1 slides" <|
             \() ->
-                start { visibleLabelId = Nothing, slideCount = 1 }
+                start { relyOnVisibleLabelForSlides = False, relyOnVisibileLabelForContainer = False, slideCount = 1 }
                     |> ensureSlideIsVisible "slide-0"
                     |> clickButton "Next"
                     |> ensureSlideIsVisible "slide-0"
@@ -135,18 +147,18 @@ viewWithPreviousAndNextControlsSpec =
                     |> done
         , test "Announces card changes for screen reader users" <|
             \_ ->
-                start { visibleLabelId = Nothing, slideCount = 3 }
+                start { relyOnVisibleLabelForSlides = False, relyOnVisibileLabelForContainer = False, slideCount = 3 }
                     |> ensureSlideIsVisible "slide-0"
                     |> clickButton "Next"
-                    |> ensureLastEffect (Expect.equal (Announce "Active slide of Previous/Next Carousel changed to Control 1"))
+                    |> ensureLastEffect (Expect.equal (Announce "Active slide of Previous/Next Carousel changed to Slide 1"))
                     |> clickButton "Next"
-                    |> ensureLastEffect (Expect.equal (Announce "Active slide of Previous/Next Carousel changed to Control 2"))
+                    |> ensureLastEffect (Expect.equal (Announce "Active slide of Previous/Next Carousel changed to Slide 2"))
                     |> clickButton "Previous"
-                    |> ensureLastEffect (Expect.equal (Announce "Active slide of Previous/Next Carousel changed to Control 1"))
+                    |> ensureLastEffect (Expect.equal (Announce "Active slide of Previous/Next Carousel changed to Slide 1"))
                     |> done
         , test "If the visibleLabelId is Nothing the container aria label is set to the accessibleLabel" <|
             \_ ->
-                start { visibleLabelId = Nothing, slideCount = 3 }
+                start { relyOnVisibleLabelForSlides = False, relyOnVisibileLabelForContainer = False, slideCount = 3 }
                     |> ensureViewHas
                         [ Selector.all
                             [ Selector.id "carousel-root"
@@ -156,11 +168,31 @@ viewWithPreviousAndNextControlsSpec =
                     |> done
         , test "If the visibleLabelId is set the container aria labelledby is set to the visibleLabelId" <|
             \_ ->
-                start { visibleLabelId = Just "carousel-label", slideCount = 3 }
+                start { relyOnVisibleLabelForSlides = False, relyOnVisibileLabelForContainer = True, slideCount = 3 }
                     |> ensureViewHas
                         [ Selector.all
                             [ Selector.id "carousel-root"
                             , Selector.attribute (Attrs.attribute "aria-labelledby" "carousel-label")
+                            ]
+                        ]
+                    |> done
+        , test "If the visibleLabelId is Nothing the slides container aria label is set to the accessibleLabel" <|
+            \_ ->
+                start { relyOnVisibleLabelForSlides = False, relyOnVisibileLabelForContainer = False, slideCount = 1 }
+                    |> ensureViewHas
+                        [ Selector.all
+                            [ Selector.id "slide-0"
+                            , Selector.attribute (Attrs.attribute "aria-label" "Slide 0")
+                            ]
+                        ]
+                    |> done
+        , test "If the visibleLabelId is set the slides container aria label is set to the visibleLabelId" <|
+            \_ ->
+                start { relyOnVisibleLabelForSlides = True, relyOnVisibileLabelForContainer = False, slideCount = 1 }
+                    |> ensureViewHas
+                        [ Selector.all
+                            [ Selector.id "slide-0"
+                            , Selector.attribute (Attrs.attribute "aria-labelledby" "slide-0-label")
                             ]
                         ]
                     |> done
