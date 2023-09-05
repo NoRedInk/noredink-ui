@@ -80,30 +80,36 @@ viewWithPreviousAndNextControls :
         }
 viewWithPreviousAndNextControls config =
     let
-        currentSlideIndex =
-            config.slides
-                |> List.Extra.findIndex (\p -> p.id == config.selected)
-                |> -- assuming the provided id is valid. there's not much we can
-                   -- do otherwise, anyways!
-                   Maybe.withDefault 0
+        { viewPreviousButton, viewNextButton } =
+            case findPreviousAndNextSlides .id config of
+                Nothing ->
+                    { viewPreviousButton = text "", viewNextButton = text "" }
 
-        viewSlideChangeButtonWithDelta delta buttonConfig =
-            config.slides
-                |> List.Extra.getAt (modBy (List.length config.slides) (currentSlideIndex + delta))
-                |> Maybe.map
-                    (\slide ->
+                Just { previousSlide, nextSlide } ->
+                    { viewPreviousButton =
                         viewSlideChangeButton
-                            { buttonConfig = buttonConfig
-                            , targetSlideId = slide.id
-                            , targetSlideLabel = slide.accessibleLabel
+                            { name = config.previousButton.name
+                            , icon = config.previousButton.icon
+                            , attributes = config.previousButton.attributes
+                            , targetSlideId = previousSlide.id
+                            , targetSlideLabel = previousSlide.accessibleLabel
                             , carouselLabel = config.accessibleLabel
                             , selectAndAnnounce = config.selectAndAnnounce
                             }
-                    )
-                |> Maybe.withDefault (text "")
+                    , viewNextButton =
+                        viewSlideChangeButton
+                            { name = config.nextButton.name
+                            , icon = config.nextButton.icon
+                            , attributes = config.nextButton.attributes
+                            , targetSlideId = nextSlide.id
+                            , targetSlideLabel = nextSlide.accessibleLabel
+                            , carouselLabel = config.accessibleLabel
+                            , selectAndAnnounce = config.selectAndAnnounce
+                            }
+                    }
     in
-    { viewPreviousButton = viewSlideChangeButtonWithDelta -1 config.previousButton
-    , viewNextButton = viewSlideChangeButtonWithDelta 1 config.nextButton
+    { viewPreviousButton = viewPreviousButton
+    , viewNextButton = viewNextButton
     , slides =
         List.map
             (\slide ->
@@ -132,18 +138,47 @@ viewWithPreviousAndNextControls config =
     }
 
 
+findPreviousAndNextSlides :
+    (slide -> id)
+    -> { config | selected : id, slides : List slide }
+    -> Maybe { previousSlide : slide, nextSlide : slide }
+findPreviousAndNextSlides getId { selected, slides } =
+    let
+        currentIndex =
+            slides
+                |> List.Extra.findIndex (\slide -> getId slide == selected)
+                |> -- assuming the provided id is valid. there's not much we can
+                   -- do otherwise, anyways!
+                   Maybe.withDefault 0
+
+        length =
+            List.length slides
+
+        getByIndexWrappingAround index =
+            List.Extra.getAt (modBy length index) slides
+    in
+    case ( getByIndexWrappingAround (currentIndex - 1), getByIndexWrappingAround (currentIndex + 1) ) of
+        ( Just a, Just b ) ->
+            Just { previousSlide = a, nextSlide = b }
+
+        _ ->
+            Nothing
+
+
 viewSlideChangeButton :
-    { buttonConfig : { name : String, icon : Svg, attributes : List (ClickableSvg.Attribute msg) }
+    { name : String
+    , icon : Svg
+    , attributes : List (ClickableSvg.Attribute msg)
     , targetSlideId : id
     , targetSlideLabel : String
     , carouselLabel : String
     , selectAndAnnounce : { select : id, announce : String } -> msg
     }
     -> Html msg
-viewSlideChangeButton { buttonConfig, targetSlideId, targetSlideLabel, carouselLabel, selectAndAnnounce } =
-    ClickableSvg.button buttonConfig.name
-        buttonConfig.icon
-        (buttonConfig.attributes
+viewSlideChangeButton { name, icon, attributes, targetSlideId, targetSlideLabel, carouselLabel, selectAndAnnounce } =
+    ClickableSvg.button name
+        icon
+        (attributes
             ++ [ ClickableSvg.onClick
                     (selectAndAnnounce
                         { select = targetSlideId
