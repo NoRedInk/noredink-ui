@@ -67,8 +67,8 @@ initSettings =
 controlCarouselType : Control CarouselType
 controlCarouselType =
     Control.choice
-        [ ( "viewWithTabControls", Control.value Tabs )
-        , ( "viewWithPreviousAndNextControls", Control.value PrevNext )
+        [ ( "viewWithPreviousAndNextControls", Control.value PrevNext )
+        , ( "viewWithTabControls", Control.value Tabs )
         , ( "viewWithCombinedControls", Control.value Combined )
         ]
 
