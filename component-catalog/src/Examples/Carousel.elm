@@ -19,12 +19,13 @@ import Debug.Control.Extra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
-import Html.Styled.Attributes as Attributes
+import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Carousel.V2 as Carousel
+import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as Attributes
-import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.UiIcon.V1 as UiIcon exposing (arrowLeft, arrowRight)
 import Task
 
 
@@ -176,12 +177,29 @@ example =
     , preview =
         [ -- faking a mini version of the Carousel component to give Component Catalog users a sense of what the
           -- component might look like
-          Html.div []
-            [ Html.text "1 slide"
-            , Html.div [ Attributes.css [ Css.displayFlex, Css.property "gap" "5px" ] ]
+          Html.div [ css [ Css.position Css.relative ] ]
+            [ Html.div
+                [ css
+                    [ Css.displayFlex
+                    , Css.alignItems Css.center
+                    , Css.justifyContent Css.spaceBetween
+                    , Css.marginBottom (Css.px 10)
+                    ]
+                ]
+                [ ClickableSvg.button "Previous" UiIcon.arrowLeft []
+                , Html.text "First Slide"
+                , ClickableSvg.button "Next" UiIcon.arrowRight []
+                ]
+            , Html.div
+                [ Attributes.css
+                    [ Css.displayFlex
+                    , Css.justifyContent Css.center
+                    , Css.property "gap" "5px"
+                    ]
+                ]
                 [ Html.div [ Attributes.css (controlStyles True) ] [ Html.text "1" ]
                 , Html.div [ Attributes.css (controlStyles False) ] [ Html.text "2" ]
-                , Html.div [ Attributes.css (controlStyles False) ] [ Html.text "2" ]
+                , Html.div [ Attributes.css (controlStyles False) ] [ Html.text "3" ]
                 ]
             ]
         ]
