@@ -44,8 +44,6 @@ init =
 
 type alias Settings =
     { items : Int
-    , controlListStyles : ( String, List Style )
-    , controlStyles : ( String, Bool -> List Style )
     , carouselType : CarouselType
     }
 
@@ -60,8 +58,6 @@ initSettings : Control Settings
 initSettings =
     Control.record Settings
         |> Control.field "items" (Debug.Control.Extra.int 4)
-        |> Control.field "controlListStyles" controlControlListStyles
-        |> Control.field "controlStyles" controlControlStyles
         |> Control.field "carouselType" controlCarouselType
 
 
@@ -72,16 +68,6 @@ controlCarouselType =
         , ( "viewWithTabControls", Control.value Tabs )
         , ( "viewWithCombinedControls", Control.value Combined )
         ]
-
-
-controlControlListStyles : Control ( String, List Style )
-controlControlListStyles =
-    ( "[ Css.displayFlex, Css.property \"gap\" \"20px\" ]"
-    , [ Css.displayFlex, Css.property "gap" "20px" ]
-    )
-        |> Control.value
-        |> Control.maybe False
-        |> Control.map (Maybe.withDefault ( "[]", [] ))
 
 
 controlStyles : Bool -> List Css.Style
@@ -101,19 +87,6 @@ controlStyles isSelected =
     , Css.color textColor
     , Css.cursor Css.pointer
     ]
-
-
-controlControlStyles : Control ( String, Bool -> List Css.Style )
-controlControlStyles =
-    let
-        simplifiedCodeVersion =
-            "\\isSelected -> [ -- styles that depend on selection status\n    ]"
-    in
-    controlStyles
-        |> Control.value
-        |> Control.maybe False
-        |> Control.map (Maybe.withDefault (\_ -> []))
-        |> Control.map (\v -> ( simplifiedCodeVersion, v ))
 
 
 type Msg
@@ -319,8 +292,8 @@ viewWithCombinedControls model =
             Carousel.viewWithCombinedControls
                 { selected = model.selected
                 , slides = List.map Tuple.second allItems
-                , tabControlListStyles = Tuple.second settings.controlListStyles
-                , tabControlStyles = Tuple.second settings.controlStyles
+                , tabControlStyles = \_ -> []
+                , tabControlListStyles = []
                 , previousButton =
                     { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
                 , nextButton =
@@ -337,8 +310,8 @@ viewWithCombinedControls model =
             ++ Code.record
                 [ ( "selected", Code.int model.selected )
                 , ( "slides", Code.listMultiline (List.map Tuple.first allItems) 2 )
-                , ( "tabControlListStyles", Tuple.first settings.controlListStyles )
-                , ( "tabControlStyles", Tuple.first settings.controlStyles )
+                , ( "tabControlStyles", "(\\_ -> [])" )
+                , ( "tabControlListStyles", Code.list [] )
                 , ( "previousButton"
                   , Code.recordMultiline
                         [ ( "name", Code.string "Previous" )
@@ -386,8 +359,8 @@ viewWithTabControls model =
             Carousel.viewWithTabControls
                 { selected = model.selected
                 , slides = List.map Tuple.second allItems
-                , tabControlListStyles = Tuple.second settings.controlListStyles
-                , tabControlStyles = Tuple.second settings.controlStyles
+                , tabControlStyles = \_ -> []
+                , tabControlListStyles = []
                 , role = Carousel.Group
                 , name = "Items"
                 , visibleLabelId = Nothing
@@ -399,8 +372,8 @@ viewWithTabControls model =
             ++ Code.record
                 [ ( "selected", Code.int model.selected )
                 , ( "slides", Code.listMultiline (List.map Tuple.first allItems) 2 )
-                , ( "tabControlListStyles", Tuple.first settings.controlListStyles )
-                , ( "tabControlStyles", Tuple.first settings.controlStyles )
+                , ( "tabControlStyles", "(\\_ -> [])" )
+                , ( "tabControlListStyles", Code.list [] )
                 , ( "role", Code.fromModule moduleName "Group" )
                 , ( "name", "Items" )
                 , ( "visibleLabelId", Code.maybe Nothing )
