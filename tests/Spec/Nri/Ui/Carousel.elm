@@ -332,7 +332,6 @@ viewWithTabControlsSpec =
                                 ]
                             ]
                         |> done
-
             , test "If the visibleLabelId is set the container aria labelledby is set to the visibleLabelId" <|
                 \_ ->
                     start True
@@ -421,4 +420,4 @@ viewWithCombinedControlsSpec =
 
 ensureSlideIsVisible : String -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect
 ensureSlideIsVisible id =
-    ensureViewHas [ Selector.id id, Selector.style "display" "block" ]
+    ensureViewHas [ Selector.all [ Selector.id id, Selector.style "display" "block" ] ]
