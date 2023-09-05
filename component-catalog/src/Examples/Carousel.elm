@@ -13,18 +13,21 @@ module Examples.Carousel exposing
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Code
-import Css
+import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Styled as Html exposing (Html)
+import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Carousel.V2 as Carousel
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Container.V2 as Container
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Html.Attributes.V2 as Attributes
+import Nri.Ui.Table.V7 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Task
 
@@ -32,6 +35,7 @@ import Task
 type alias State =
     { selected : Int
     , settings : Control Settings
+    , tip : Tip
     }
 
 
@@ -39,6 +43,7 @@ init : State
 init =
     { selected = 0
     , settings = initSettings
+    , tip = AvoidWhiteAfterLaborDay
     }
 
 
@@ -92,6 +97,7 @@ controlStyles isSelected =
 type Msg
     = FocusAndSelect { select : Int, focus : Maybe String }
     | AnnounceAndSelect { select : Int, announce : String }
+    | SelectTip { select : Tip, announce : String }
     | Focused (Result Dom.Error ())
     | SetSettings (Control Settings)
 
@@ -114,7 +120,14 @@ update msg model =
 
         AnnounceAndSelect { select, announce } ->
             ( { model | selected = select }
-            , Cmd.none
+            , -- TODO: actually announce!
+              Cmd.none
+            )
+
+        SelectTip { select, announce } ->
+            ( { model | tip = select }
+            , -- TODO: actually announce!
+              Cmd.none
             )
 
 
@@ -183,13 +196,13 @@ example =
                 settings =
                     Control.currentValue model.settings
 
-                ( code, view ) =
+                ( code_, view ) =
                     case settings.carouselType of
                         Tabs ->
                             viewWithTabControls model
 
                         PrevNext ->
-                            viewWithPreviousAndNextControls model
+                            viewCustomizableWithPreviousAndNextControls model
 
                         Combined ->
                             viewWithCombinedControls model
@@ -206,17 +219,62 @@ example =
                 , toExampleCode =
                     \_ ->
                         [ { sectionName = "Example"
-                          , code = code
+                          , code = code_
                           }
                         ]
                 }
+            , Heading.h2
+                [ Heading.plaintext "Customizable example"
+                , Heading.css [ Css.marginTop (Css.px 30) ]
+                ]
             , view
+            , Heading.h2
+                [ Heading.plaintext "Usage examples"
+                , Heading.css [ Css.marginTop (Css.px 30) ]
+                ]
+            , Table.view []
+                [ Table.rowHeader
+                    { header = text (moduleName ++ " view name")
+                    , view = \{ viewName } -> code [] [ text viewName ]
+                    , width = Css.zero
+                    , cellStyles =
+                        always
+                            [ Css.padding2 (Css.px 14) (Css.px 7)
+                            , Css.verticalAlign Css.middle
+                            , Css.textAlign Css.left
+                            , Css.fontWeight Css.normal
+                            ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "Example with added styles"
+                    , view = .example
+                    , width = Css.pct 60
+                    , cellStyles =
+                        always
+                            [ Css.padding2 (Css.px 14) (Css.px 7)
+                            , Css.verticalAlign Css.middle
+                            , Css.lineHeight (Css.num 2)
+                            ]
+                    , sort = Nothing
+                    }
+                ]
+                [ { viewName = "viewWithPreviousAndNextControls"
+                  , example = viewTips model.tip
+                  }
+                , { viewName = "viewWithTabControls"
+                  , example = text ""
+                  }
+                , { viewName = "viewWithCombinedControls"
+                  , example = text ""
+                  }
+                ]
             ]
     }
 
 
-viewWithPreviousAndNextControls : State -> ( String, Html Msg )
-viewWithPreviousAndNextControls model =
+viewCustomizableWithPreviousAndNextControls : State -> ( String, Html Msg )
+viewCustomizableWithPreviousAndNextControls model =
     let
         settings =
             Control.currentValue model.settings
@@ -468,3 +526,78 @@ toTabbedCarouselItem id =
       , slideHtml = Html.text ("Contents for slide " ++ humanizedId)
       }
     )
+
+
+viewTips : Tip -> Html Msg
+viewTips selected =
+    let
+        { viewPreviousButton, viewNextButton, slides, containerAttributes } =
+            Carousel.viewWithPreviousAndNextControls
+                { selected = selected
+                , slides =
+                    [ { id = AvoidWhiteAfterLaborDay
+                      , idString = "avoid-white-after-labor-day"
+                      , name = "Avoid White After Labor Day"
+                      , visibleLabelId = Nothing
+                      , slideHtml = text "Avoid wearing white after Labor Day"
+                      }
+                    , { id = AvoidNavyAndBlack
+                      , idString = "avoid-navy-and-black"
+                      , name = "Avoid pairing navy and black"
+                      , visibleLabelId = Nothing
+                      , slideHtml = text "Avoid pairing navy and black"
+                      }
+                    , { id = TailorOffTheShelfClothes
+                      , idString = "tailor-off-the-shelf-clothes"
+                      , name = "Tailor off the shelf clothes"
+                      , visibleLabelId = Nothing
+                      , slideHtml = text "Tailor off the shelf clothes"
+                      }
+                    ]
+                , previousButton =
+                    { attributes = [ ClickableSvg.small, ClickableSvg.withBorder ]
+                    , icon = UiIcon.arrowTop
+                    , name = "Previous"
+                    }
+                , nextButton =
+                    { attributes = [ ClickableSvg.small, ClickableSvg.withBorder ]
+                    , icon = UiIcon.arrowDown
+                    , name = "Next"
+                    }
+                , name = "Tips"
+                , visibleLabelId = Nothing
+                , role = Carousel.Group
+                , announceAndSelect = SelectTip
+                }
+    in
+    Container.view
+        [ Container.custom containerAttributes
+        , Container.css
+            [ displayFlex
+            , alignItems center
+            , position relative
+            , marginRight (px 20)
+            , maxWidth (px 210)
+            ]
+        , Container.html
+            [ slides
+            , div
+                [ css
+                    [ displayFlex
+                    , flexDirection column
+                    , property "gap" "4px"
+                    , right (px -20)
+                    , position absolute
+                    ]
+                ]
+                [ viewPreviousButton
+                , viewNextButton
+                ]
+            ]
+        ]
+
+
+type Tip
+    = AvoidWhiteAfterLaborDay
+    | AvoidNavyAndBlack
+    | TailorOffTheShelfClothes
