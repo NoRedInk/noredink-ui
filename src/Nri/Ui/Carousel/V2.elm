@@ -206,12 +206,12 @@ viewWithTabControls :
                 , slideHtml : Html msg
                 , tabControlHtml : Html Never
                 }
-        , focusAndSelect : { select : id, focus : Maybe String } -> msg
         , tabControlStyles : Bool -> List Style
         , tabControlListStyles : List Style
         , role : Role
         , accessibleLabel : String
         , visibleLabelId : Maybe String
+        , focusAndSelect : { select : id, focus : Maybe String } -> msg
     }
     ->
         { controls : Html msg

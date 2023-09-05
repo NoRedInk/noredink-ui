@@ -4,13 +4,12 @@ module Spec.Nri.Ui.Carousel exposing
     , viewWithTabControlsSpec
     )
 
-import Browser.Dom as Dom
 import Expect
 import Html.Styled exposing (..)
 import Nri.Ui.Carousel.V2 as Carousel
 import Nri.Ui.UiIcon.V1 as UiIcon
 import ProgramTest exposing (..)
-import Spec.TabsInternalHelpers as TabsHelpers
+import Spec.TabsInternalHelpers
     exposing
         ( ensureOnlyOnePanelDisplayed
         , ensureOnlyOneTabInSequence
@@ -20,68 +19,90 @@ import Spec.TabsInternalHelpers as TabsHelpers
         , releaseLeftArrow
         , releaseRightArrow
         )
-import Task
 import Test exposing (..)
 import Test.Html.Selector as Selector
 
 
-type PreviousAndNextProgramMsg
+type alias Model =
+    { selected : Int
+    }
+
+
+type Msg
     = AnnounceAndSelect { select : Int, announce : String }
+    | FocusAndSelect { select : Int, focus : Maybe String }
 
 
-type PreviousAndNextProgramEffect
+type Effect
     = NoEffect
     | Announce String
+    | Focus String
 
 
-previousAndNextCarouselProgram : Int -> ProgramTest { selected : Int } PreviousAndNextProgramMsg PreviousAndNextProgramEffect
-previousAndNextCarouselProgram slidesCount =
-    -- TODO: test label behavior
-    ProgramTest.createElement
-        { init = \_ -> ( { selected = 0 }, NoEffect )
-        , update =
-            \msg _ ->
-                case msg of
-                    AnnounceAndSelect { select, announce } ->
-                        ( { selected = select }
-                        , Announce announce
-                        )
-        , view =
-            \model ->
-                Carousel.viewWithPreviousAndNextControls
-                    { announceAndSelect = AnnounceAndSelect
-                    , selected = model.selected
-                    , role = Carousel.Group
-                    , accessibleLabel = "Previous/Next Carousel"
-                    , visibleLabelId = Nothing
-                    , slides =
-                        List.map
-                            (\i ->
-                                { id = i
-                                , idString = "slide-" ++ String.fromInt i
-                                , accessibleLabel = "Control " ++ String.fromInt i
-                                , visibleLabelId = Nothing
-                                , slideHtml = text ("Slide " ++ String.fromInt i)
-                                }
-                            )
-                            (List.range 0 (slidesCount - 1))
-                    , previousButton = { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
-                    , nextButton = { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
-                    }
-                    |> (\{ viewPreviousButton, viewNextButton, slides, containerAttributes } ->
-                            section containerAttributes [ slides, viewPreviousButton, viewNextButton ]
-                       )
-                    |> toUnstyled
-        }
-        |> ProgramTest.start ()
+init : flags -> ( Model, Effect )
+init _ =
+    ( { selected = 0 }, NoEffect )
+
+
+update : Msg -> Model -> ( Model, Effect )
+update msg model =
+    case msg of
+        AnnounceAndSelect { select, announce } ->
+            ( { model | selected = select }
+            , Announce announce
+            )
+
+        FocusAndSelect { select, focus } ->
+            ( { model | selected = select }
+            , case focus of
+                Nothing ->
+                    NoEffect
+
+                Just id ->
+                    Focus id
+            )
 
 
 viewWithPreviousAndNextControlsSpec : Test
 viewWithPreviousAndNextControlsSpec =
+    let
+        start slideCount =
+            ProgramTest.createElement
+                { init = init
+                , update = update
+                , view =
+                    \model ->
+                        Carousel.viewWithPreviousAndNextControls
+                            { announceAndSelect = AnnounceAndSelect
+                            , selected = model.selected
+                            , role = Carousel.Group
+                            , accessibleLabel = "Previous/Next Carousel"
+                            , visibleLabelId = Nothing
+                            , slides =
+                                List.map
+                                    (\i ->
+                                        { id = i
+                                        , idString = "slide-" ++ String.fromInt i
+                                        , accessibleLabel = "Control " ++ String.fromInt i
+                                        , visibleLabelId = Nothing
+                                        , slideHtml = text ("Slide " ++ String.fromInt i)
+                                        }
+                                    )
+                                    (List.range 0 (slideCount - 1))
+                            , previousButton = { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
+                            , nextButton = { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
+                            }
+                            |> (\{ viewPreviousButton, viewNextButton, slides, containerAttributes } ->
+                                    section containerAttributes [ slides, viewPreviousButton, viewNextButton ]
+                               )
+                            |> toUnstyled
+                }
+                |> ProgramTest.start ()
+    in
     describe "viewWithPreviousAndNextControls"
         [ test "rotate back and forward with 3 slides" <|
             \() ->
-                previousAndNextCarouselProgram 3
+                start 3
                     |> ensureSlideIsVisible "slide-0"
                     |> clickButton "Next"
                     |> ensureSlideIsVisible "slide-1"
@@ -98,7 +119,7 @@ viewWithPreviousAndNextControlsSpec =
                     |> done
         , test "rotate back and forward with 1 slides" <|
             \() ->
-                previousAndNextCarouselProgram 1
+                start 1
                     |> ensureSlideIsVisible "slide-0"
                     |> clickButton "Next"
                     |> ensureSlideIsVisible "slide-0"
@@ -107,7 +128,7 @@ viewWithPreviousAndNextControlsSpec =
                     |> done
         , test "Announces card changes for screen reader users" <|
             \_ ->
-                previousAndNextCarouselProgram 3
+                start 3
                     |> ensureSlideIsVisible "slide-0"
                     |> clickButton "Next"
                     |> ensureLastEffect (Expect.equal (Announce "Active slide of Previous/Next Carousel changed to Control 1"))
@@ -121,39 +142,84 @@ viewWithPreviousAndNextControlsSpec =
 
 viewWithTabControlsSpec : Test
 viewWithTabControlsSpec =
+    let
+        start =
+            ProgramTest.createElement
+                { init = init
+                , update = update
+                , view =
+                    \model ->
+                        Carousel.viewWithTabControls
+                            { selected = model.selected
+                            , slides =
+                                [ { id = 0
+                                  , idString = "slide-0"
+                                  , accessibleLabel = "Slide 0"
+                                  , visibleLabelId = Nothing
+                                  , tabControlHtml = text "Control 0"
+                                  , slideHtml = text "Slide 0"
+                                  }
+                                , { id = 1
+                                  , idString = "slide-1"
+                                  , accessibleLabel = "Slide 1"
+                                  , visibleLabelId = Nothing
+                                  , tabControlHtml = text "Control 1"
+                                  , slideHtml = text "Slide 1"
+                                  }
+                                , { id = 2
+                                  , idString = "slide-2"
+                                  , accessibleLabel = "Slide 2"
+                                  , visibleLabelId = Nothing
+                                  , tabControlHtml = text "Control 2"
+                                  , slideHtml = text "Slide 2"
+                                  }
+                                ]
+                            , tabControlStyles = \_ -> []
+                            , tabControlListStyles = []
+                            , role = Carousel.Group
+                            , accessibleLabel = "Slides"
+                            , visibleLabelId = Nothing
+                            , focusAndSelect = FocusAndSelect
+                            , announceAndSelect = AnnounceAndSelect
+                            }
+                            |> (\{ controls, slides, containerAttributes } -> section containerAttributes [ slides, controls ])
+                            |> toUnstyled
+                }
+                |> ProgramTest.start ()
+    in
     describe "viewWithTabControls"
         [ describe "rendering"
             [ test "displays the associated slide when a control is activated" <|
                 \() ->
-                    program viewWithTabControls
+                    start
                         |> ensureTabbable "Control 0"
                         |> ensurePanelDisplayed "Slide 0"
                         |> done
             , test "has only one slide displayed" <|
                 \() ->
-                    program viewWithTabControls
+                    start
                         |> ensureOnlyOnePanelDisplayed [ "Slide 0", "Slide 1", "Slide 2" ]
                         |> done
             ]
         , describe "keyboard behavior"
             [ test "has a focusable control" <|
                 \() ->
-                    program viewWithTabControls
+                    start
                         |> ensureTabbable "Control 0"
                         |> done
             , test "all slides are focusable" <|
                 \() ->
-                    program viewWithTabControls
+                    start
                         |> ensurePanelsFocusable [ "Slide 0", "Slide 1", "Slide 2" ]
                         |> done
             , test "has only one control included in the tab sequence" <|
                 \() ->
-                    program viewWithTabControls
+                    start
                         |> ensureOnlyOneTabInSequence [ "Control 0", "Control 1", "Control 2" ]
                         |> done
             , test "moves focus right on right arrow key" <|
                 \() ->
-                    program viewWithTabControls
+                    start
                         |> ensureTabbable "Control 0"
                         |> releaseRightArrow
                         |> ensureTabbable "Control 1"
@@ -163,7 +229,7 @@ viewWithTabControlsSpec =
                         |> done
             , test "moves focus left on left arrow key" <|
                 \() ->
-                    program viewWithTabControls
+                    start
                         |> ensureTabbable "Control 0"
                         |> releaseRightArrow
                         |> ensureTabbable "Control 1"
@@ -173,7 +239,7 @@ viewWithTabControlsSpec =
                         |> done
             , test "when the focus is on the first element, move focus to the last element on left arrow key" <|
                 \() ->
-                    program viewWithTabControls
+                    start
                         |> ensureTabbable "Control 0"
                         |> releaseLeftArrow
                         |> ensureTabbable "Control 2"
@@ -181,7 +247,7 @@ viewWithTabControlsSpec =
                         |> done
             , test "when the focus is on the last element, move focus to the first element on right arrow key" <|
                 \() ->
-                    program viewWithTabControls
+                    start
                         |> ensureTabbable "Control 0"
                         |> releaseLeftArrow
                         |> ensureTabbable "Control 2"
@@ -195,10 +261,59 @@ viewWithTabControlsSpec =
 
 viewWithCombinedControlsSpec : Test
 viewWithCombinedControlsSpec =
+    let
+        start =
+            ProgramTest.createElement
+                { init = init
+                , update = update
+                , view =
+                    \model ->
+                        Carousel.viewWithCombinedControls
+                            { selected = model.selected
+                            , slides =
+                                [ { id = 0
+                                  , idString = "slide-0"
+                                  , accessibleLabel = "Slide 0"
+                                  , visibleLabelId = Nothing
+                                  , tabControlHtml = text "Control 0"
+                                  , slideHtml = text "Slide 0"
+                                  }
+                                , { id = 1
+                                  , idString = "slide-1"
+                                  , accessibleLabel = "Slide 1"
+                                  , visibleLabelId = Nothing
+                                  , tabControlHtml = text "Control 1"
+                                  , slideHtml = text "Slide 1"
+                                  }
+                                , { id = 2
+                                  , idString = "slide-2"
+                                  , accessibleLabel = "Slide 2"
+                                  , visibleLabelId = Nothing
+                                  , tabControlHtml = text "Control 2"
+                                  , slideHtml = text "Slide 2"
+                                  }
+                                ]
+                            , role = Carousel.Group
+                            , tabControlStyles = \_ -> []
+                            , tabControlListStyles = []
+                            , accessibleLabel = "Slides"
+                            , visibleLabelId = Nothing
+                            , previousButton = { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
+                            , nextButton = { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
+                            , focusAndSelect = FocusAndSelect
+                            , announceAndSelect = AnnounceAndSelect
+                            }
+                            |> (\{ tabControls, slides, containerAttributes, viewNextButton, viewPreviousButton } ->
+                                    section containerAttributes [ slides, tabControls, viewNextButton, viewPreviousButton ]
+                               )
+                            |> toUnstyled
+                }
+                |> ProgramTest.start ()
+    in
     describe "viewWithCombinedControls"
         [ test "rotate back and forward with 3 slides" <|
-            \() ->
-                program viewWithCombinedControls
+            \_ ->
+                start
                     |> ensurePanelDisplayed "Slide 0"
                     |> clickButton "Next"
                     |> ensurePanelDisplayed "Slide 1"
@@ -219,92 +334,3 @@ viewWithCombinedControlsSpec =
 ensureSlideIsVisible : String -> ProgramTest.ProgramTest model msg effect -> ProgramTest.ProgramTest model msg effect
 ensureSlideIsVisible id =
     ensureViewHas [ Selector.id id, Selector.style "display" "block" ]
-
-
-update : TabsHelpers.Msg -> TabsHelpers.State -> TabsHelpers.State
-update msg model =
-    case msg of
-        TabsHelpers.FocusAndSelectTab { select, focus } ->
-            Tuple.first
-                ( { model | selected = select }
-                , focus
-                    |> Maybe.map (Dom.focus >> Task.attempt TabsHelpers.Focused)
-                    |> Maybe.withDefault Cmd.none
-                )
-
-        TabsHelpers.Focused _ ->
-            Tuple.first ( model, Cmd.none )
-
-
-viewWithTabControls : TabsHelpers.State -> Html TabsHelpers.Msg
-viewWithTabControls model =
-    Carousel.viewWithTabControls
-        { focusAndSelect = TabsHelpers.FocusAndSelectTab
-        , selected = model.selected
-        , tabControlListStyles = []
-        , role = Carousel.Group
-        , tabControlStyles = \_ -> []
-        , labelledBy = Carousel.LabelledByAccessibleLabelOnly "Label"
-        , slides =
-            [ { id = 0
-              , idString = "slide-0"
-              , tabControlHtml = text "Control 0"
-              , slideHtml = text "Slide 0"
-              }
-            , { id = 1
-              , idString = "slide-1"
-              , tabControlHtml = text "Control 1"
-              , slideHtml = text "Slide 1"
-              }
-            , { id = 2
-              , idString = "slide-2"
-              , tabControlHtml = text "Control 2"
-              , slideHtml = text "Slide 2"
-              }
-            ]
-        }
-        |> (\{ controls, slides, containerAttributes } -> section containerAttributes [ slides, controls ])
-
-
-viewWithCombinedControls : TabsHelpers.State -> Html TabsHelpers.Msg
-viewWithCombinedControls model =
-    Carousel.viewWithCombinedControls
-        { focusAndSelect = TabsHelpers.FocusAndSelectTab
-        , selected = model.selected
-        , tabControlListStyles = []
-        , role = Carousel.Group
-        , tabControlStyles = \_ -> []
-        , labelledBy = Carousel.LabelledByAccessibleLabelOnly "Label"
-        , slides =
-            [ { id = 0
-              , idString = "slide-0"
-              , tabControlHtml = text "Control 0"
-              , slideHtml = text "Slide 0"
-              }
-            , { id = 1
-              , idString = "slide-1"
-              , tabControlHtml = text "Control 1"
-              , slideHtml = text "Slide 1"
-              }
-            , { id = 2
-              , idString = "slide-2"
-              , tabControlHtml = text "Control 2"
-              , slideHtml = text "Slide 2"
-              }
-            ]
-        , previousButton = { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
-        , nextButton = { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
-        }
-        |> (\{ tabControls, slides, containerAttributes, viewNextButton, viewPreviousButton } ->
-                section containerAttributes [ slides, tabControls, viewNextButton, viewPreviousButton ]
-           )
-
-
-program : (TabsHelpers.State -> Html TabsHelpers.Msg) -> TabsHelpers.TestContext
-program view =
-    ProgramTest.createSandbox
-        { init = TabsHelpers.init
-        , update = update
-        , view = view >> toUnstyled
-        }
-        |> ProgramTest.start ()
