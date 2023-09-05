@@ -51,13 +51,13 @@ viewWithPreviousAndNextControls :
         List
             { id : id
             , idString : String
-            , accessibleLabel : String
+            , name : String
             , visibleLabelId : Maybe String
             , slideHtml : Html msg
             }
     , previousButton : { name : String, icon : Svg, attributes : List (ClickableSvg.Attribute msg) }
     , nextButton : { name : String, icon : Svg, attributes : List (ClickableSvg.Attribute msg) }
-    , accessibleLabel : String
+    , name : String
     , visibleLabelId : Maybe String
     , role : Role
     , announceAndSelect : { select : id, announce : String } -> msg
@@ -82,8 +82,8 @@ viewWithPreviousAndNextControls config =
                             , icon = config.previousButton.icon
                             , attributes = config.previousButton.attributes
                             , targetSlideId = previousSlide.id
-                            , targetSlideLabel = previousSlide.accessibleLabel
-                            , carouselLabel = config.accessibleLabel
+                            , targetSlideLabel = previousSlide.name
+                            , carouselLabel = config.name
                             , announceAndSelect = config.announceAndSelect
                             }
                     , viewNextButton =
@@ -92,8 +92,8 @@ viewWithPreviousAndNextControls config =
                             , icon = config.nextButton.icon
                             , attributes = config.nextButton.attributes
                             , targetSlideId = nextSlide.id
-                            , targetSlideLabel = nextSlide.accessibleLabel
-                            , carouselLabel = config.accessibleLabel
+                            , targetSlideLabel = nextSlide.name
+                            , carouselLabel = config.name
                             , announceAndSelect = config.announceAndSelect
                             }
                     }
@@ -191,7 +191,7 @@ viewWithTabControls :
             List
                 { id : id
                 , idString : String
-                , accessibleLabel : String
+                , name : String
                 , visibleLabelId : Maybe String
                 , slideHtml : Html msg
                 , tabControlHtml : Html Never
@@ -199,7 +199,7 @@ viewWithTabControls :
         , tabControlStyles : Bool -> List Style
         , tabControlListStyles : List Style
         , role : Role
-        , accessibleLabel : String
+        , name : String
         , visibleLabelId : Maybe String
         , focusAndSelect : { select : id, focus : Maybe String } -> msg
     }
@@ -248,7 +248,7 @@ viewWithCombinedControls :
         List
             { id : id
             , idString : String
-            , accessibleLabel : String
+            , name : String
             , visibleLabelId : Maybe String
             , slideHtml : Html msg
             , tabControlHtml : Html Never
@@ -258,7 +258,7 @@ viewWithCombinedControls :
     , previousButton : { name : String, icon : Svg, attributes : List (ClickableSvg.Attribute msg) }
     , nextButton : { name : String, icon : Svg, attributes : List (ClickableSvg.Attribute msg) }
     , role : Role
-    , accessibleLabel : String
+    , name : String
     , visibleLabelId : Maybe String
     , focusAndSelect : { select : id, focus : Maybe String } -> msg
     , announceAndSelect : { select : id, announce : String } -> msg
@@ -287,8 +287,8 @@ viewWithCombinedControls config =
                             , icon = config.previousButton.icon
                             , attributes = config.previousButton.attributes
                             , targetSlideId = previousSlide.id
-                            , targetSlideLabel = previousSlide.accessibleLabel
-                            , carouselLabel = config.accessibleLabel
+                            , targetSlideLabel = previousSlide.name
+                            , carouselLabel = config.name
                             , announceAndSelect = config.announceAndSelect
                             }
                     , viewNextButton =
@@ -297,8 +297,8 @@ viewWithCombinedControls config =
                             , icon = config.nextButton.icon
                             , attributes = config.nextButton.attributes
                             , targetSlideId = nextSlide.id
-                            , targetSlideLabel = nextSlide.accessibleLabel
-                            , carouselLabel = config.accessibleLabel
+                            , targetSlideLabel = nextSlide.name
+                            , carouselLabel = config.name
                             , announceAndSelect = config.announceAndSelect
                             }
                     }
@@ -311,14 +311,14 @@ viewWithCombinedControls config =
     }
 
 
-labelAttribute : { c | accessibleLabel : String, visibleLabelId : Maybe String } -> Attribute msg
-labelAttribute { accessibleLabel, visibleLabelId } =
+labelAttribute : { c | name : String, visibleLabelId : Maybe String } -> Attribute msg
+labelAttribute { name, visibleLabelId } =
     case visibleLabelId of
         Just visibleLabelId_ ->
             Aria.labeledBy visibleLabelId_
 
         Nothing ->
-            Aria.label accessibleLabel
+            Aria.label name
 
 
 roleToString : Role -> String

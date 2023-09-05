@@ -243,7 +243,7 @@ viewWithPreviousAndNextControls model =
                     { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
                 , nextButton =
                     { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
-                , accessibleLabel = "Items"
+                , name = "Items"
                 , visibleLabelId = Nothing
                 , role = Carousel.Group
                 , announceAndSelect = AnnounceAndSelect
@@ -256,7 +256,7 @@ viewWithPreviousAndNextControls model =
                 , ( "slides", Code.listMultiline (List.map Tuple.first allItems) 3 )
                 , ( "previousButton", "{ attributes = [], icon = UiIcon.arrowLeft , name = \"Previous\" }" )
                 , ( "nextButton", "{ attributes = [], icon = UiIcon.arrowLeft , name = \"Next\" }" )
-                , ( "accessibleLabel", "Items" )
+                , ( "name", "Items" )
                 , ( "visibleLabelId", "Nothing" )
                 , ( "role", Code.fromModule moduleName "Group" )
                 , ( "focusAndSelect", "FocusAndSelectItem" )
@@ -294,7 +294,7 @@ viewWithCombinedControls model =
                 , nextButton =
                     { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
                 , role = Carousel.Group
-                , accessibleLabel = "Items"
+                , name = "Items"
                 , visibleLabelId = Nothing
                 , focusAndSelect = FocusAndSelectItem
                 , announceAndSelect = AnnounceAndSelect
@@ -342,7 +342,7 @@ viewWithTabControls model =
                 , tabControlListStyles = Tuple.second settings.controlListStyles
                 , tabControlStyles = Tuple.second settings.controlStyles
                 , role = Carousel.Group
-                , accessibleLabel = "Items"
+                , name = "Items"
                 , visibleLabelId = Nothing
                 }
     in
@@ -378,7 +378,7 @@ toNonTabbedCarouselItem :
         ( String
         , { id : Int
           , idString : String
-          , accessibleLabel : String
+          , name : String
           , visibleLabelId : Maybe String
           , slideHtml : Html msg
           }
@@ -394,14 +394,14 @@ toNonTabbedCarouselItem id =
     ( Code.recordMultiline
         [ ( "id", Code.int id )
         , ( "idString", Code.string (String.fromInt id) )
-        , ( "accessibleLabel", Code.string ("Slide " ++ humanizedId) )
+        , ( "name", Code.string ("Slide " ++ humanizedId) )
         , ( "visibleLabelId", Code.maybe Nothing )
         , ( "slideHtml", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
         ]
         2
     , { id = id
       , idString = idString
-      , accessibleLabel = "Slide " ++ humanizedId
+      , name = "Slide " ++ humanizedId
       , visibleLabelId = Nothing
       , slideHtml = Html.text ("Contents for slide " ++ humanizedId)
       }
@@ -414,7 +414,7 @@ toTabbedCarouselItem :
         ( String
         , { id : Int
           , idString : String
-          , accessibleLabel : String
+          , name : String
           , visibleLabelId : Maybe String
           , slideHtml : Html msg
           , tabControlHtml : Html Never
@@ -431,7 +431,7 @@ toTabbedCarouselItem id =
     ( Code.recordMultiline
         [ ( "id", Code.int id )
         , ( "idString", Code.string (String.fromInt id) )
-        , ( "accessibleLabel", Code.string ("Slide " ++ humanizedId) )
+        , ( "name", Code.string ("Slide " ++ humanizedId) )
         , ( "visibleLabelId", Code.maybe Nothing )
         , ( "tabControlHtml", "Html.text " ++ Code.string ("Slide " ++ humanizedId) )
         , ( "slideHtml", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
@@ -439,7 +439,7 @@ toTabbedCarouselItem id =
         2
     , { id = id
       , idString = idString
-      , accessibleLabel = "Slide " ++ humanizedId
+      , name = "Slide " ++ humanizedId
       , visibleLabelId = Nothing
       , tabControlHtml = Html.text ("Slide " ++ humanizedId)
       , slideHtml = Html.text ("Contents for slide " ++ humanizedId)

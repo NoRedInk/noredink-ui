@@ -78,7 +78,7 @@ viewWithPreviousAndNextControlsSpec =
                             { announceAndSelect = AnnounceAndSelect
                             , selected = model.selected
                             , role = Carousel.Group
-                            , accessibleLabel = "Previous/Next Carousel"
+                            , name = "Previous/Next Carousel"
                             , visibleLabelId =
                                 if relyOnVisibileLabelForContainer then
                                     Just "carousel-label"
@@ -90,7 +90,7 @@ viewWithPreviousAndNextControlsSpec =
                                     (\i ->
                                         { id = i
                                         , idString = "slide-" ++ String.fromInt i
-                                        , accessibleLabel = "Slide " ++ String.fromInt i
+                                        , name = "Slide " ++ String.fromInt i
                                         , visibleLabelId =
                                             if relyOnVisibleLabelForSlides then
                                                 Just ("slide-" ++ String.fromInt i ++ "-label")
@@ -156,7 +156,7 @@ viewWithPreviousAndNextControlsSpec =
                     |> clickButton "Previous"
                     |> ensureLastEffect (Expect.equal (Announce "Active slide of Previous/Next Carousel changed to Slide 1"))
                     |> done
-        , test "If the visibleLabelId is Nothing the container aria label is set to the accessibleLabel" <|
+        , test "If the visibleLabelId is Nothing the container aria label is set to the name" <|
             \_ ->
                 start { relyOnVisibleLabelForSlides = False, relyOnVisibileLabelForContainer = False, slideCount = 3 }
                     |> ensureViewHas
@@ -176,7 +176,7 @@ viewWithPreviousAndNextControlsSpec =
                             ]
                         ]
                     |> done
-        , test "If the visibleLabelId is Nothing the slides container aria label is set to the accessibleLabel" <|
+        , test "If the visibleLabelId is Nothing the slides container aria label is set to the name" <|
             \_ ->
                 start { relyOnVisibleLabelForSlides = False, relyOnVisibileLabelForContainer = False, slideCount = 1 }
                     |> ensureViewHas
@@ -213,21 +213,21 @@ viewWithTabControlsSpec =
                             , slides =
                                 [ { id = 0
                                   , idString = "slide-0"
-                                  , accessibleLabel = "Slide 0"
+                                  , name = "Slide 0"
                                   , visibleLabelId = Nothing
                                   , tabControlHtml = text "Control 0"
                                   , slideHtml = text "Slide 0"
                                   }
                                 , { id = 1
                                   , idString = "slide-1"
-                                  , accessibleLabel = "Slide 1"
+                                  , name = "Slide 1"
                                   , visibleLabelId = Nothing
                                   , tabControlHtml = text "Control 1"
                                   , slideHtml = text "Slide 1"
                                   }
                                 , { id = 2
                                   , idString = "slide-2"
-                                  , accessibleLabel = "Slide 2"
+                                  , name = "Slide 2"
                                   , visibleLabelId = Nothing
                                   , tabControlHtml = text "Control 2"
                                   , slideHtml = text "Slide 2"
@@ -236,7 +236,7 @@ viewWithTabControlsSpec =
                             , tabControlStyles = \_ -> []
                             , tabControlListStyles = []
                             , role = Carousel.Group
-                            , accessibleLabel = "Slides"
+                            , name = "Slides"
                             , visibleLabelId =
                                 if relyOnVisibileLabelForContainer then
                                     Just "container-label"
@@ -322,7 +322,7 @@ viewWithTabControlsSpec =
                         |> ensureTabbable "Control 0"
                         |> ensureOnlyOneTabInSequence [ "Control 0", "Control 1", "Control 2" ]
                         |> done
-            , test "If the visibleLabelId is Nothing the container aria label is set to the accessibleLabel" <|
+            , test "If the visibleLabelId is Nothing the container aria label is set to the name" <|
                 \_ ->
                     start False
                         |> ensureViewHas
@@ -361,21 +361,21 @@ viewWithCombinedControlsSpec =
                             , slides =
                                 [ { id = 0
                                   , idString = "slide-0"
-                                  , accessibleLabel = "Slide 0"
+                                  , name = "Slide 0"
                                   , visibleLabelId = Nothing
                                   , tabControlHtml = text "Control 0"
                                   , slideHtml = text "Slide 0"
                                   }
                                 , { id = 1
                                   , idString = "slide-1"
-                                  , accessibleLabel = "Slide 1"
+                                  , name = "Slide 1"
                                   , visibleLabelId = Nothing
                                   , tabControlHtml = text "Control 1"
                                   , slideHtml = text "Slide 1"
                                   }
                                 , { id = 2
                                   , idString = "slide-2"
-                                  , accessibleLabel = "Slide 2"
+                                  , name = "Slide 2"
                                   , visibleLabelId = Nothing
                                   , tabControlHtml = text "Control 2"
                                   , slideHtml = text "Slide 2"
@@ -384,7 +384,7 @@ viewWithCombinedControlsSpec =
                             , role = Carousel.Group
                             , tabControlStyles = \_ -> []
                             , tabControlListStyles = []
-                            , accessibleLabel = "Slides"
+                            , name = "Slides"
                             , visibleLabelId = Nothing
                             , previousButton = { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
                             , nextButton = { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
