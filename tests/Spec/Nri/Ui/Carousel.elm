@@ -65,10 +65,31 @@ update msg model =
             )
 
 
+type LabelWith
+    = AccessibleLabel
+    | VisibleLabel
+
+
 viewWithPreviousAndNextControlsSpec : Test
 viewWithPreviousAndNextControlsSpec =
     let
-        start { relyOnVisibileLabelForContainer, relyOnVisibleLabelForSlides, slideCount } =
+        createSlide labelWith index =
+            { id = index
+            , idString = "slide-" ++ String.fromInt index
+            , name = "Slide " ++ String.fromInt index
+            , visibleLabelId =
+                case labelWith of
+                    AccessibleLabel ->
+                        Nothing
+
+                    VisibleLabel ->
+                        Just ("slide-" ++ String.fromInt index ++ "-label")
+            , slideHtml =
+                div [ StyledAttrs.id ("slide-" ++ String.fromInt index ++ "-label") ]
+                    [ text ("Slide " ++ String.fromInt index) ]
+            }
+
+        start { containerLabel, slideLabels, slideCount } =
             ProgramTest.createElement
                 { init = init
                 , update = update
@@ -80,34 +101,18 @@ viewWithPreviousAndNextControlsSpec =
                             , role = Carousel.Group
                             , name = "Slides"
                             , visibleLabelId =
-                                if relyOnVisibileLabelForContainer then
-                                    Just "carousel-label"
+                                case containerLabel of
+                                    AccessibleLabel ->
+                                        Nothing
 
-                                else
-                                    Nothing
-                            , slides =
-                                List.map
-                                    (\i ->
-                                        { id = i
-                                        , idString = "slide-" ++ String.fromInt i
-                                        , name = "Slide " ++ String.fromInt i
-                                        , visibleLabelId =
-                                            if relyOnVisibleLabelForSlides then
-                                                Just ("slide-" ++ String.fromInt i ++ "-label")
-
-                                            else
-                                                Nothing
-                                        , slideHtml =
-                                            div [ StyledAttrs.id ("slide-" ++ String.fromInt i ++ "-label") ]
-                                                [ text ("Slide " ++ String.fromInt i) ]
-                                        }
-                                    )
-                                    (List.range 0 (slideCount - 1))
+                                    VisibleLabel ->
+                                        Just "carousel-label"
+                            , slides = List.map (createSlide slideLabels) (List.range 0 (slideCount - 1))
                             , previousButton = { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
                             , nextButton = { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
                             }
                             |> (\{ viewPreviousButton, viewNextButton, slides, containerAttributes } ->
-                                    section (StyledAttrs.id "carousel-root" :: containerAttributes)
+                                    section containerAttributes
                                         [ span [ StyledAttrs.id "carousel-label" ] [ text "Slides" ]
                                         , slides
                                         , viewPreviousButton
@@ -121,7 +126,11 @@ viewWithPreviousAndNextControlsSpec =
     describe "viewWithPreviousAndNextControls"
         [ test "rotate back and forward with 3 slides" <|
             \() ->
-                start { relyOnVisibleLabelForSlides = False, relyOnVisibileLabelForContainer = False, slideCount = 3 }
+                start
+                    { slideCount = 3
+                    , slideLabels = AccessibleLabel
+                    , containerLabel = AccessibleLabel
+                    }
                     |> ensureSlideIsVisible "slide-0"
                     |> clickButton "Next"
                     |> ensureSlideIsVisible "slide-1"
@@ -138,7 +147,11 @@ viewWithPreviousAndNextControlsSpec =
                     |> done
         , test "rotate back and forward with 1 slides" <|
             \() ->
-                start { relyOnVisibleLabelForSlides = False, relyOnVisibileLabelForContainer = False, slideCount = 1 }
+                start
+                    { slideCount = 1
+                    , slideLabels = AccessibleLabel
+                    , containerLabel = AccessibleLabel
+                    }
                     |> ensureSlideIsVisible "slide-0"
                     |> clickButton "Next"
                     |> ensureSlideIsVisible "slide-0"
@@ -147,7 +160,11 @@ viewWithPreviousAndNextControlsSpec =
                     |> done
         , test "Announces card changes for screen reader users" <|
             \_ ->
-                start { relyOnVisibleLabelForSlides = False, relyOnVisibileLabelForContainer = False, slideCount = 3 }
+                start
+                    { slideCount = 3
+                    , slideLabels = AccessibleLabel
+                    , containerLabel = AccessibleLabel
+                    }
                     |> ensureSlideIsVisible "slide-0"
                     |> clickButton "Next"
                     |> ensureLastEffect (Expect.equal (Announce "Active slide of Slides changed to Slide 1"))
@@ -158,27 +175,39 @@ viewWithPreviousAndNextControlsSpec =
                     |> done
         , test "If the visibleLabelId is Nothing the container aria label is set to the name" <|
             \_ ->
-                start { relyOnVisibleLabelForSlides = False, relyOnVisibileLabelForContainer = False, slideCount = 3 }
+                start
+                    { slideCount = 3
+                    , slideLabels = AccessibleLabel
+                    , containerLabel = AccessibleLabel
+                    }
                     |> ensureViewHas
                         [ Selector.all
-                            [ Selector.id "carousel-root"
+                            [ Selector.attribute (Attrs.attribute "aria-roledescription" "carousel")
                             , Selector.attribute (Attrs.attribute "aria-label" "Slides")
                             ]
                         ]
                     |> done
         , test "If the visibleLabelId is set the container aria labelledby is set to the visibleLabelId" <|
             \_ ->
-                start { relyOnVisibleLabelForSlides = False, relyOnVisibileLabelForContainer = True, slideCount = 3 }
+                start
+                    { slideCount = 3
+                    , slideLabels = AccessibleLabel
+                    , containerLabel = VisibleLabel
+                    }
                     |> ensureViewHas
                         [ Selector.all
-                            [ Selector.id "carousel-root"
+                            [ Selector.attribute (Attrs.attribute "aria-roledescription" "carousel")
                             , Selector.attribute (Attrs.attribute "aria-labelledby" "carousel-label")
                             ]
                         ]
                     |> done
         , test "If the visibleLabelId is Nothing the slides container aria label is set to the name" <|
             \_ ->
-                start { relyOnVisibleLabelForSlides = False, relyOnVisibileLabelForContainer = False, slideCount = 1 }
+                start
+                    { slideCount = 1
+                    , slideLabels = AccessibleLabel
+                    , containerLabel = AccessibleLabel
+                    }
                     |> ensureViewHas
                         [ Selector.all
                             [ Selector.id "slide-0"
@@ -188,7 +217,11 @@ viewWithPreviousAndNextControlsSpec =
                     |> done
         , test "If the visibleLabelId is set the slides container aria label is set to the visibleLabelId" <|
             \_ ->
-                start { relyOnVisibleLabelForSlides = True, relyOnVisibileLabelForContainer = False, slideCount = 1 }
+                start
+                    { slideCount = 1
+                    , slideLabels = VisibleLabel
+                    , containerLabel = AccessibleLabel
+                    }
                     |> ensureViewHas
                         [ Selector.all
                             [ Selector.id "slide-0"
@@ -202,7 +235,7 @@ viewWithPreviousAndNextControlsSpec =
 viewWithTabControlsSpec : Test
 viewWithTabControlsSpec =
     let
-        start relyOnVisibileLabelForContainer =
+        start containerLabel =
             ProgramTest.createElement
                 { init = init
                 , update = update
@@ -238,17 +271,17 @@ viewWithTabControlsSpec =
                             , role = Carousel.Group
                             , name = "Slides"
                             , visibleLabelId =
-                                if relyOnVisibileLabelForContainer then
-                                    Just "container-label"
+                                case containerLabel of
+                                    AccessibleLabel ->
+                                        Nothing
 
-                                else
-                                    Nothing
+                                    VisibleLabel ->
+                                        Just "carousel-label"
                             , focusAndSelect = FocusAndSelect
                             , announceAndSelect = AnnounceAndSelect
                             }
                             |> (\{ controls, slides, containerAttributes } ->
-                                    section (StyledAttrs.id "container-root" :: containerAttributes)
-                                        [ slides, controls ]
+                                    section containerAttributes [ slides, controls ]
                                )
                             |> toUnstyled
                 }
@@ -258,35 +291,35 @@ viewWithTabControlsSpec =
         [ describe "rendering"
             [ test "displays the associated slide when a control is activated" <|
                 \() ->
-                    start False
+                    start AccessibleLabel
                         |> ensureTabbable "Control 0"
                         |> ensurePanelDisplayed "Slide 0"
                         |> done
             , test "has only one slide displayed" <|
                 \() ->
-                    start False
+                    start AccessibleLabel
                         |> ensureOnlyOnePanelDisplayed [ "Slide 0", "Slide 1", "Slide 2" ]
                         |> done
             ]
         , describe "keyboard behavior"
             [ test "has a focusable control" <|
                 \() ->
-                    start False
+                    start AccessibleLabel
                         |> ensureTabbable "Control 0"
                         |> done
             , test "all slides are focusable" <|
                 \() ->
-                    start False
+                    start AccessibleLabel
                         |> ensurePanelsFocusable [ "Slide 0", "Slide 1", "Slide 2" ]
                         |> done
             , test "has only one control included in the tab sequence" <|
                 \() ->
-                    start False
+                    start AccessibleLabel
                         |> ensureOnlyOneTabInSequence [ "Control 0", "Control 1", "Control 2" ]
                         |> done
             , test "moves focus right on right arrow key" <|
                 \() ->
-                    start False
+                    start AccessibleLabel
                         |> ensureTabbable "Control 0"
                         |> releaseRightArrow
                         |> ensureTabbable "Control 1"
@@ -296,7 +329,7 @@ viewWithTabControlsSpec =
                         |> done
             , test "moves focus left on left arrow key" <|
                 \() ->
-                    start False
+                    start AccessibleLabel
                         |> ensureTabbable "Control 0"
                         |> releaseRightArrow
                         |> ensureTabbable "Control 1"
@@ -306,7 +339,7 @@ viewWithTabControlsSpec =
                         |> done
             , test "when the focus is on the first element, move focus to the last element on left arrow key" <|
                 \() ->
-                    start False
+                    start AccessibleLabel
                         |> ensureTabbable "Control 0"
                         |> releaseLeftArrow
                         |> ensureTabbable "Control 2"
@@ -314,7 +347,7 @@ viewWithTabControlsSpec =
                         |> done
             , test "when the focus is on the last element, move focus to the first element on right arrow key" <|
                 \() ->
-                    start False
+                    start AccessibleLabel
                         |> ensureTabbable "Control 0"
                         |> releaseLeftArrow
                         |> ensureTabbable "Control 2"
@@ -324,21 +357,21 @@ viewWithTabControlsSpec =
                         |> done
             , test "If the visibleLabelId is Nothing the container aria label is set to the name" <|
                 \_ ->
-                    start False
+                    start AccessibleLabel
                         |> ensureViewHas
                             [ Selector.all
-                                [ Selector.id "container-root"
+                                [ Selector.attribute (Attrs.attribute "aria-roledescription" "carousel")
                                 , Selector.attribute (Attrs.attribute "aria-label" "Slides")
                                 ]
                             ]
                         |> done
             , test "If the visibleLabelId is set the container aria labelledby is set to the visibleLabelId" <|
                 \_ ->
-                    start True
+                    start VisibleLabel
                         |> ensureViewHas
                             [ Selector.all
-                                [ Selector.id "container-root"
-                                , Selector.attribute (Attrs.attribute "aria-labelledby" "container-label")
+                                [ Selector.attribute (Attrs.attribute "aria-roledescription" "carousel")
+                                , Selector.attribute (Attrs.attribute "aria-labelledby" "carousel-label")
                                 ]
                             ]
                         |> done
