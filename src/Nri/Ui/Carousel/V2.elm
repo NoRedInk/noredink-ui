@@ -285,57 +285,39 @@ viewWithCombinedControls config =
         { controls, slides, containerAttributes } =
             viewWithTabControls config
 
-        -- let's de duplicate this!
-        currentSlideIndex =
-            List.Extra.findIndex (\p -> p.id == config.selected) config.slides
+        { viewPreviousButton, viewNextButton } =
+            case findPreviousAndNextSlides .id config of
+                Nothing ->
+                    { viewPreviousButton = text "", viewNextButton = text "" }
 
-        previousSlide =
-            currentSlideIndex
-                |> Maybe.andThen
-                    (\index ->
-                        List.Extra.getAt
-                            (if index - 1 >= 0 then
-                                index - 1
-
-                             else
-                                List.length config.slides - 1
-                            )
-                            config.slides
-                    )
-
-        nextSlide =
-            currentSlideIndex
-                |> Maybe.andThen
-                    (\index ->
-                        List.Extra.getAt
-                            (if index + 1 < List.length config.slides then
-                                index + 1
-
-                             else
-                                0
-                            )
-                            config.slides
-                    )
+                Just { previousSlide, nextSlide } ->
+                    { viewPreviousButton =
+                        viewSlideChangeButton
+                            { name = config.previousButton.name
+                            , icon = config.previousButton.icon
+                            , attributes = config.previousButton.attributes
+                            , targetSlideId = previousSlide.id
+                            , targetSlideLabel = previousSlide.accessibleLabel
+                            , carouselLabel = config.accessibleLabel
+                            , announceAndSelect = config.announceAndSelect
+                            }
+                    , viewNextButton =
+                        viewSlideChangeButton
+                            { name = config.nextButton.name
+                            , icon = config.nextButton.icon
+                            , attributes = config.nextButton.attributes
+                            , targetSlideId = nextSlide.id
+                            , targetSlideLabel = nextSlide.accessibleLabel
+                            , carouselLabel = config.accessibleLabel
+                            , announceAndSelect = config.announceAndSelect
+                            }
+                    }
     in
     { tabControls = controls
     , slides = slides
     , containerAttributes = containerAttributes
-    , viewPreviousButton =
-        ClickableSvg.button config.previousButton.name
-            config.previousButton.icon
-            (config.previousButton.attributes
-                ++ (Maybe.map (\p -> ClickableSvg.onClick (config.focusAndSelect { select = p.id, focus = Just p.idString })) previousSlide
-                        |> Maybe.Extra.toList
-                   )
-            )
-    , viewNextButton =
-        ClickableSvg.button config.nextButton.name
-            config.nextButton.icon
-            (config.nextButton.attributes
-                ++ (Maybe.map (\p -> ClickableSvg.onClick (config.focusAndSelect { select = p.id, focus = Just p.idString })) nextSlide
-                        |> Maybe.Extra.toList
-                   )
-            )
+    , viewPreviousButton = viewPreviousButton
+    , viewNextButton = viewNextButton
     }
 
 
