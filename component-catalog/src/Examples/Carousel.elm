@@ -304,6 +304,7 @@ viewWithCombinedControls model =
         [ Code.fromModule moduleName "viewWithCombinedControls"
             ++ Code.record
                 [ ( "focusAndSelect", "identity" )
+                , ( "announceAndSelect", "identity")
                 , ( "selected", Code.string (String.fromInt model.selected) )
                 , ( "tabControlListStyles", Tuple.first settings.controlListStyles )
                 , ( "tabControlStyles", Tuple.first settings.controlStyles )
