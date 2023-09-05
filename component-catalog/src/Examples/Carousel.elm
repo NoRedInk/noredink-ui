@@ -10,6 +10,7 @@ module Examples.Carousel exposing
 
 -}
 
+import Accessibility.Styled.Live as Live
 import Accessibility.Styled.Style as Style
 import Browser.Dom as Dom
 import Category exposing (Category(..))
@@ -24,12 +25,15 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Carousel.V2 as Carousel
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
+import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Html.Attributes.V2 as Attributes
+import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.Table.V7 as Table
+import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Task
 
@@ -40,6 +44,7 @@ type alias State =
     , tip : Tip
     , testimonial : Testimonial
     , package : Package
+    , announcement : Maybe String
     }
 
 
@@ -50,6 +55,7 @@ init =
     , tip = AvoidWhiteAfterLaborDay
     , testimonial = GreatService
     , package = FreeTrial
+    , announcement = Nothing
     }
 
 
@@ -128,15 +134,19 @@ update msg model =
             ( { model | settings = settings }, Cmd.none )
 
         AnnounceAndSelect { select, announce } ->
-            ( { model | selected = select }
-            , -- TODO: actually announce!
-              Cmd.none
+            ( { model
+                | selected = select
+                , announcement = Just announce
+              }
+            , Cmd.none
             )
 
         SelectTip { select, announce } ->
-            ( { model | tip = select }
-            , -- TODO: actually announce!
-              Cmd.none
+            ( { model
+                | tip = select
+                , announcement = Just announce
+              }
+            , Cmd.none
             )
 
         SelectTestimonial { select, focus } ->
@@ -154,9 +164,11 @@ update msg model =
             )
 
         SelectPackageAndAnnounce { select, announce } ->
-            ( { model | package = select }
-            , -- TODO: actually announce!
-              Cmd.none
+            ( { model
+                | package = select
+                , announcement = Just announce
+              }
+            , Cmd.none
             )
 
 
@@ -297,6 +309,30 @@ example =
                 , { viewName = "viewWithCombinedControls"
                   , example = viewPackages model.package
                   }
+                ]
+            , Heading.h2
+                [ Heading.plaintext "Assistive Technology Announcement Center"
+                , Heading.css [ Css.marginTop (Css.px 30) ]
+                ]
+            , Text.smallBody
+                [ Text.html
+                    [ text "NRI employees can learn more about the real ATAC in "
+                    , ClickableText.link "Assistive Technology Announcement Center (“ATAC”)"
+                        [ ClickableText.appearsInline
+                        , ClickableText.linkExternal "https://paper.dropbox.com/doc/Assistive-Technology-Announcement-Center-ATAC--B_GuqwWltzU432ueq7p6Z42mAg-bOnmcnzOj631NRls1IBe3"
+                        , ClickableText.small
+                        ]
+                    ]
+                ]
+            , div
+                [ Live.polite
+                , Live.atomic True
+                ]
+                [ viewJust
+                    (\announcement ->
+                        Text.mediumBody [ Text.plaintext announcement ]
+                    )
+                    model.announcement
                 ]
             ]
     }
