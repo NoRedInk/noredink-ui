@@ -13,7 +13,7 @@ module Examples.Carousel exposing
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Code
-import Css exposing (Style)
+import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra
 import Debug.Control.View as ControlView
@@ -25,7 +25,7 @@ import Nri.Ui.Carousel.V2 as Carousel
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as Attributes
-import Nri.Ui.UiIcon.V1 as UiIcon exposing (arrowLeft, arrowRight)
+import Nri.Ui.UiIcon.V1 as UiIcon
 import Task
 
 
