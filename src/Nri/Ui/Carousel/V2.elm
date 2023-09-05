@@ -181,8 +181,10 @@ viewSlideChangeButton { name, icon, attributes, targetSlideId, targetSlideLabel,
 
 {-| Builds a carousel with tab buttons
 Returns:
-`controls`: tabs control buttons
-`slides` container with the carousel contents
+
+  - `controls`: tabs control buttons
+  - `slides` container with the carousel contents
+
 -}
 viewWithTabControls :
     { cfg
@@ -237,10 +239,12 @@ viewWithTabControls config =
 
 {-| Builds a carousel with tab buttons
 Returns:
-`tabControls`: tabs control buttons
-`slides` container with the carousel contents
-`viewPreviousButton` previous button
-`viewNextButton` next button
+
+  - `tabControls`: tabs control buttons
+  - `slides` container with the carousel contents
+  - `viewPreviousButton` previous button
+  - `viewNextButton` next button
+
 -}
 viewWithCombinedControls :
     { selected : id
