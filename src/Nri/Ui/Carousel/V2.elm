@@ -57,7 +57,7 @@ Returns:
 -}
 viewWithPreviousAndNextControls :
     { selected : id
-    , panels :
+    , slides :
         List
             { id : id
             , idString : String
@@ -80,16 +80,16 @@ viewWithPreviousAndNextControls :
         }
 viewWithPreviousAndNextControls config =
     let
-        currentPanelIndex =
-            config.panels
+        currentSlideIndex =
+            config.slides
                 |> List.Extra.findIndex (\p -> p.id == config.selected)
                 |> -- assuming the provided id is valid. there's not much we can
                    -- do otherwise, anyways!
                    Maybe.withDefault 0
 
         viewSlideChangeButtonWithDelta delta buttonConfig =
-            config.panels
-                |> List.Extra.getAt (modBy (List.length config.panels) (currentPanelIndex + delta))
+            config.slides
+                |> List.Extra.getAt (modBy (List.length config.slides) (currentSlideIndex + delta))
                 |> Maybe.map
                     (\slide ->
                         viewSlideChangeButton
@@ -106,23 +106,23 @@ viewWithPreviousAndNextControls config =
     , viewNextButton = viewSlideChangeButtonWithDelta 1 config.nextButton
     , slides =
         List.map
-            (\panel ->
+            (\slide ->
                 Html.div
                     [ Role.group
                     , Aria.roleDescription "slide"
-                    , id panel.idString
-                    , labelAttribute panel
+                    , id slide.idString
+                    , labelAttribute slide
 
                     -- use as attribute for testing
-                    , if config.selected == panel.id then
+                    , if config.selected == slide.id then
                         Attrs.style "display" "block"
 
                       else
                         Attrs.style "display" "none"
                     ]
-                    [ panel.slideHtml ]
+                    [ slide.slideHtml ]
             )
-            config.panels
+            config.slides
             |> Html.div [ Attrs.attribute "atomic" "false", Accessibility.Styled.Key.tabbable False ]
     , containerAttributes =
         [ Attrs.attribute "role" (roleToString config.role)
@@ -162,7 +162,7 @@ Returns:
 viewWithTabControls :
     { cfg
         | selected : id
-        , panels :
+        , slides :
             List
                 { id : id
                 , slideHtml : Html msg
@@ -192,7 +192,7 @@ viewWithTabControls config =
             TabsInternal.views
                 { focusAndSelect = config.focusAndSelect
                 , selected = config.selected
-                , tabs = List.map buildTab config.panels
+                , tabs = List.map buildTab config.slides
                 , tabStyles = always config.tabControlStyles
                 , tabListStyles = config.tabControlListStyles
                 }
@@ -216,7 +216,7 @@ Returns:
 -}
 viewWithCombinedControls :
     { selected : id
-    , panels :
+    , slides :
         List
             { id : id
             , slideHtml : Html msg
@@ -244,11 +244,11 @@ viewWithCombinedControls config =
             viewWithTabControls config
 
         -- let's de duplicate this!
-        currentPanelIndex =
-            List.Extra.findIndex (\p -> p.id == config.selected) config.panels
+        currentSlideIndex =
+            List.Extra.findIndex (\p -> p.id == config.selected) config.slides
 
-        previousPanel =
-            currentPanelIndex
+        previousSlide =
+            currentSlideIndex
                 |> Maybe.andThen
                     (\index ->
                         List.Extra.getAt
@@ -256,23 +256,23 @@ viewWithCombinedControls config =
                                 index - 1
 
                              else
-                                List.length config.panels - 1
+                                List.length config.slides - 1
                             )
-                            config.panels
+                            config.slides
                     )
 
-        nextPanel =
-            currentPanelIndex
+        nextSlide =
+            currentSlideIndex
                 |> Maybe.andThen
                     (\index ->
                         List.Extra.getAt
-                            (if index + 1 < List.length config.panels then
+                            (if index + 1 < List.length config.slides then
                                 index + 1
 
                              else
                                 0
                             )
-                            config.panels
+                            config.slides
                     )
     in
     { tabControls = controls
@@ -282,7 +282,7 @@ viewWithCombinedControls config =
         ClickableSvg.button config.previousButton.name
             config.previousButton.icon
             (config.previousButton.attributes
-                ++ (Maybe.map (\p -> ClickableSvg.onClick (config.focusAndSelect { select = p.id, focus = Just p.idString })) previousPanel
+                ++ (Maybe.map (\p -> ClickableSvg.onClick (config.focusAndSelect { select = p.id, focus = Just p.idString })) previousSlide
                         |> Maybe.Extra.toList
                    )
             )
@@ -290,7 +290,7 @@ viewWithCombinedControls config =
         ClickableSvg.button config.nextButton.name
             config.nextButton.icon
             (config.nextButton.attributes
-                ++ (Maybe.map (\p -> ClickableSvg.onClick (config.focusAndSelect { select = p.id, focus = Just p.idString })) nextPanel
+                ++ (Maybe.map (\p -> ClickableSvg.onClick (config.focusAndSelect { select = p.id, focus = Just p.idString })) nextSlide
                         |> Maybe.Extra.toList
                    )
             )

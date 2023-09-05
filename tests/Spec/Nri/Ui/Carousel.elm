@@ -54,7 +54,7 @@ previousAndNextCarouselProgram slidesCount =
                     , role = Carousel.Group
                     , accessibleLabel = "Previous/Next Carousel"
                     , visibleLabelId = Nothing
-                    , panels =
+                    , slides =
                         List.map
                             (\i ->
                                 { id = i
@@ -245,7 +245,7 @@ viewWithTabControls model =
         , role = Carousel.Group
         , tabControlStyles = \_ -> []
         , labelledBy = Carousel.LabelledByAccessibleLabelOnly "Label"
-        , panels =
+        , slides =
             [ { id = 0
               , idString = "slide-0"
               , tabControlHtml = text "Control 0"
@@ -275,7 +275,7 @@ viewWithCombinedControls model =
         , role = Carousel.Group
         , tabControlStyles = \_ -> []
         , labelledBy = Carousel.LabelledByAccessibleLabelOnly "Label"
-        , panels =
+        , slides =
             [ { id = 0
               , idString = "slide-0"
               , tabControlHtml = text "Control 0"

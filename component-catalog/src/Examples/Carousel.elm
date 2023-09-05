@@ -257,7 +257,7 @@ viewWithPreviousAndNextControls model =
         { viewPreviousButton, viewNextButton, slides, containerAttributes } =
             Carousel.viewWithPreviousAndNextControls
                 { selected = model.selected
-                , panels = List.map Tuple.second allItems
+                , slides = List.map Tuple.second allItems
                 , previousButton =
                     { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
                 , nextButton =
@@ -272,7 +272,7 @@ viewWithPreviousAndNextControls model =
         [ Code.fromModule moduleName "viewWithPreviousAndNextControls"
             ++ Code.recordMultiline
                 [ ( "selected", Code.string (String.fromInt model.selected) )
-                , ( "panels", Code.listMultiline (List.map Tuple.first allItems) 3 )
+                , ( "slides", Code.listMultiline (List.map Tuple.first allItems) 3 )
                 , ( "previousButton", "{ attributes = [], icon = UiIcon.arrowLeft , name = \"Previous\" }" )
                 , ( "nextButton", "{ attributes = [], icon = UiIcon.arrowLeft , name = \"Next\" }" )
                 , ( "accessibleLabel", "Items" )
@@ -307,7 +307,7 @@ viewWithCombinedControls model =
                 , selected = model.selected
                 , tabControlListStyles = Tuple.second settings.controlListStyles
                 , tabControlStyles = Tuple.second settings.controlStyles
-                , panels = List.map Tuple.second allItems
+                , slides = List.map Tuple.second allItems
                 , previousButton =
                     { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
                 , nextButton =
@@ -323,7 +323,7 @@ viewWithCombinedControls model =
                 , ( "selected", Code.string (String.fromInt model.selected) )
                 , ( "tabControlListStyles", Tuple.first settings.controlListStyles )
                 , ( "tabControlStyles", Tuple.first settings.controlStyles )
-                , ( "panels", Code.listMultiline (List.map Tuple.first allItems) 2 )
+                , ( "slides", Code.listMultiline (List.map Tuple.first allItems) 2 )
                 , ( "previousButton", "{ attributes = [], icon = UiIcon.arrowLeft , name = \"Previous\" }" )
                 , ( "nextButton", "{ attributes = [], icon = UiIcon.arrowLeft , name = \"Next\" }" )
                 , ( "labelledBy", Code.fromModule moduleName "LabelledByIdOfVisibleLabel " ++ Code.string "Items" )
@@ -355,7 +355,7 @@ viewWithTabControls model =
                 , selected = model.selected
                 , tabControlListStyles = Tuple.second settings.controlListStyles
                 , tabControlStyles = Tuple.second settings.controlStyles
-                , panels = List.map Tuple.second allItems
+                , slides = List.map Tuple.second allItems
                 , labelledBy = Carousel.LabelledByIdOfVisibleLabel "Items"
                 , role = Carousel.Group
                 }
@@ -367,7 +367,7 @@ viewWithTabControls model =
                 , ( "selected", Code.string (String.fromInt model.selected) )
                 , ( "tabControlListStyles", Tuple.first settings.controlListStyles )
                 , ( "tabControlStyles", Tuple.first settings.controlStyles )
-                , ( "panels", Code.listMultiline (List.map Tuple.first allItems) 2 )
+                , ( "slides", Code.listMultiline (List.map Tuple.first allItems) 2 )
                 , ( "labelledBy", Code.fromModule moduleName "LabelledByIdOfVisibleLabel " ++ Code.string "Items" )
                 , ( "role", Code.fromModule moduleName "Group" )
                 ]
