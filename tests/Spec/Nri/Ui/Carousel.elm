@@ -26,7 +26,7 @@ import Test.Html.Selector as Selector
 
 
 type PreviousAndNextProgramMsg
-    = SelectAndAnnounce { select : Int, announce : String }
+    = AnnounceAndSelect { select : Int, announce : String }
 
 
 type PreviousAndNextProgramEffect
@@ -42,14 +42,14 @@ previousAndNextCarouselProgram slidesCount =
         , update =
             \msg _ ->
                 case msg of
-                    SelectAndAnnounce { select, announce } ->
+                    AnnounceAndSelect { select, announce } ->
                         ( { selected = select }
                         , Announce announce
                         )
         , view =
             \model ->
                 Carousel.viewWithPreviousAndNextControls
-                    { selectAndAnnounce = SelectAndAnnounce
+                    { announceAndSelect = AnnounceAndSelect
                     , selected = model.selected
                     , role = Carousel.Group
                     , accessibleLabel = "Previous/Next Carousel"

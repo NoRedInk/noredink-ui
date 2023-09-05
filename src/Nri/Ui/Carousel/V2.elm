@@ -70,7 +70,7 @@ viewWithPreviousAndNextControls :
     , accessibleLabel : String
     , visibleLabelId : Maybe String
     , role : Role
-    , selectAndAnnounce : { select : id, announce : String } -> msg
+    , announceAndSelect : { select : id, announce : String } -> msg
     }
     ->
         { viewPreviousButton : Html msg
@@ -94,7 +94,7 @@ viewWithPreviousAndNextControls config =
                             , targetSlideId = previousSlide.id
                             , targetSlideLabel = previousSlide.accessibleLabel
                             , carouselLabel = config.accessibleLabel
-                            , selectAndAnnounce = config.selectAndAnnounce
+                            , announceAndSelect = config.announceAndSelect
                             }
                     , viewNextButton =
                         viewSlideChangeButton
@@ -104,7 +104,7 @@ viewWithPreviousAndNextControls config =
                             , targetSlideId = nextSlide.id
                             , targetSlideLabel = nextSlide.accessibleLabel
                             , carouselLabel = config.accessibleLabel
-                            , selectAndAnnounce = config.selectAndAnnounce
+                            , announceAndSelect = config.announceAndSelect
                             }
                     }
     in
@@ -172,15 +172,15 @@ viewSlideChangeButton :
     , targetSlideId : id
     , targetSlideLabel : String
     , carouselLabel : String
-    , selectAndAnnounce : { select : id, announce : String } -> msg
+    , announceAndSelect : { select : id, announce : String } -> msg
     }
     -> Html msg
-viewSlideChangeButton { name, icon, attributes, targetSlideId, targetSlideLabel, carouselLabel, selectAndAnnounce } =
+viewSlideChangeButton { name, icon, attributes, targetSlideId, targetSlideLabel, carouselLabel, announceAndSelect } =
     ClickableSvg.button name
         icon
         (attributes
             ++ [ ClickableSvg.onClick
-                    (selectAndAnnounce
+                    (announceAndSelect
                         { select = targetSlideId
                         , announce = "Active slide of " ++ carouselLabel ++ " changed to " ++ targetSlideLabel
                         }

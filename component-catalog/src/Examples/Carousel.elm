@@ -117,7 +117,7 @@ controlControlStyles =
 
 type Msg
     = FocusAndSelectItem { select : Int, focus : Maybe String }
-    | SelectAndAnnounce { select : Int, announce : String }
+    | AnnounceAndSelect { select : Int, announce : String }
     | Focused (Result Dom.Error ())
     | SetSettings (Control Settings)
 
@@ -138,7 +138,7 @@ update msg model =
         SetSettings settings ->
             ( { model | settings = settings }, Cmd.none )
 
-        SelectAndAnnounce { select, announce } ->
+        AnnounceAndSelect { select, announce } ->
             ( { model | selected = select }
             , Cmd.none
             )
@@ -265,7 +265,7 @@ viewWithPreviousAndNextControls model =
                 , accessibleLabel = "Items"
                 , visibleLabelId = Nothing
                 , role = Carousel.Group
-                , selectAndAnnounce = SelectAndAnnounce
+                , announceAndSelect = AnnounceAndSelect
                 }
     in
     ( Code.pipelineMultiline
