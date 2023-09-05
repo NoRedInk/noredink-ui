@@ -202,7 +202,7 @@ viewWithPreviousAndNextControlsSpec =
 viewWithTabControlsSpec : Test
 viewWithTabControlsSpec =
     let
-        start =
+        start relyOnVisibileLabelForContainer =
             ProgramTest.createElement
                 { init = init
                 , update = update
@@ -237,11 +237,19 @@ viewWithTabControlsSpec =
                             , tabControlListStyles = []
                             , role = Carousel.Group
                             , accessibleLabel = "Slides"
-                            , visibleLabelId = Nothing
+                            , visibleLabelId =
+                                if relyOnVisibileLabelForContainer then
+                                    Just "container-label"
+
+                                else
+                                    Nothing
                             , focusAndSelect = FocusAndSelect
                             , announceAndSelect = AnnounceAndSelect
                             }
-                            |> (\{ controls, slides, containerAttributes } -> section containerAttributes [ slides, controls ])
+                            |> (\{ controls, slides, containerAttributes } ->
+                                    section (StyledAttrs.id "container-root" :: containerAttributes)
+                                        [ slides, controls ]
+                               )
                             |> toUnstyled
                 }
                 |> ProgramTest.start ()
@@ -250,35 +258,35 @@ viewWithTabControlsSpec =
         [ describe "rendering"
             [ test "displays the associated slide when a control is activated" <|
                 \() ->
-                    start
+                    start False
                         |> ensureTabbable "Control 0"
                         |> ensurePanelDisplayed "Slide 0"
                         |> done
             , test "has only one slide displayed" <|
                 \() ->
-                    start
+                    start False
                         |> ensureOnlyOnePanelDisplayed [ "Slide 0", "Slide 1", "Slide 2" ]
                         |> done
             ]
         , describe "keyboard behavior"
             [ test "has a focusable control" <|
                 \() ->
-                    start
+                    start False
                         |> ensureTabbable "Control 0"
                         |> done
             , test "all slides are focusable" <|
                 \() ->
-                    start
+                    start False
                         |> ensurePanelsFocusable [ "Slide 0", "Slide 1", "Slide 2" ]
                         |> done
             , test "has only one control included in the tab sequence" <|
                 \() ->
-                    start
+                    start False
                         |> ensureOnlyOneTabInSequence [ "Control 0", "Control 1", "Control 2" ]
                         |> done
             , test "moves focus right on right arrow key" <|
                 \() ->
-                    start
+                    start False
                         |> ensureTabbable "Control 0"
                         |> releaseRightArrow
                         |> ensureTabbable "Control 1"
@@ -288,7 +296,7 @@ viewWithTabControlsSpec =
                         |> done
             , test "moves focus left on left arrow key" <|
                 \() ->
-                    start
+                    start False
                         |> ensureTabbable "Control 0"
                         |> releaseRightArrow
                         |> ensureTabbable "Control 1"
@@ -298,7 +306,7 @@ viewWithTabControlsSpec =
                         |> done
             , test "when the focus is on the first element, move focus to the last element on left arrow key" <|
                 \() ->
-                    start
+                    start False
                         |> ensureTabbable "Control 0"
                         |> releaseLeftArrow
                         |> ensureTabbable "Control 2"
@@ -306,13 +314,34 @@ viewWithTabControlsSpec =
                         |> done
             , test "when the focus is on the last element, move focus to the first element on right arrow key" <|
                 \() ->
-                    start
+                    start False
                         |> ensureTabbable "Control 0"
                         |> releaseLeftArrow
                         |> ensureTabbable "Control 2"
                         |> releaseRightArrow
                         |> ensureTabbable "Control 0"
                         |> ensureOnlyOneTabInSequence [ "Control 0", "Control 1", "Control 2" ]
+                        |> done
+            , test "If the visibleLabelId is Nothing the container aria label is set to the accessibleLabel" <|
+                \_ ->
+                    start False
+                        |> ensureViewHas
+                            [ Selector.all
+                                [ Selector.id "container-root"
+                                , Selector.attribute (Attrs.attribute "aria-label" "Slides")
+                                ]
+                            ]
+                        |> done
+
+            , test "If the visibleLabelId is set the container aria labelledby is set to the visibleLabelId" <|
+                \_ ->
+                    start True
+                        |> ensureViewHas
+                            [ Selector.all
+                                [ Selector.id "container-root"
+                                , Selector.attribute (Attrs.attribute "aria-labelledby" "container-label")
+                                ]
+                            ]
                         |> done
             ]
         ]
