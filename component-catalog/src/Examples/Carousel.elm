@@ -272,8 +272,20 @@ viewWithPreviousAndNextControls model =
             ++ Code.recordMultiline
                 [ ( "selected", Code.string (String.fromInt model.selected) )
                 , ( "slides", Code.listMultiline (List.map Tuple.first allItems) 3 )
-                , ( "previousButton", "{ attributes = [], icon = UiIcon.arrowLeft , name = \"Previous\" }" )
-                , ( "nextButton", "{ attributes = [], icon = UiIcon.arrowLeft , name = \"Next\" }" )
+                , ( "previousButton"
+                  , Code.record
+                        [ ( "name", Code.string "Previous" )
+                        , ( "icon", "UiIcon.arrowLeft" )
+                        , ( "attributes", Code.list [] )
+                        ]
+                  )
+                , ( "nextButton"
+                  , Code.record
+                        [ ( "name", Code.string "Previous" )
+                        , ( "icon", "UiIcon.arrowRight" )
+                        , ( "attributes", Code.list [] )
+                        ]
+                  )
                 , ( "name", "Items" )
                 , ( "visibleLabelId", "Nothing" )
                 , ( "role", Code.fromModule moduleName "Group" )
@@ -327,8 +339,20 @@ viewWithCombinedControls model =
                 , ( "tabControlListStyles", Tuple.first settings.controlListStyles )
                 , ( "tabControlStyles", Tuple.first settings.controlStyles )
                 , ( "slides", Code.listMultiline (List.map Tuple.first allItems) 2 )
-                , ( "previousButton", "{ attributes = [], icon = UiIcon.arrowLeft , name = \"Previous\" }" )
-                , ( "nextButton", "{ attributes = [], icon = UiIcon.arrowLeft , name = \"Next\" }" )
+                , ( "previousButton"
+                  , Code.record
+                        [ ( "name", Code.string "Previous" )
+                        , ( "icon", "UiIcon.arrowLeft" )
+                        , ( "attributes", Code.list [] )
+                        ]
+                  )
+                , ( "nextButton"
+                  , Code.record
+                        [ ( "name", Code.string "Previous" )
+                        , ( "icon", "UiIcon.arrowRight" )
+                        , ( "attributes", Code.list [] )
+                        ]
+                  )
                 , ( "labelledBy", Code.fromModule moduleName "LabelledByIdOfVisibleLabel " ++ Code.string "Items" )
                 , ( "role", Code.fromModule moduleName "Group" )
                 ]
@@ -417,7 +441,7 @@ toNonTabbedCarouselItem id =
         , ( "visibleLabelId", Code.maybe Nothing )
         , ( "slideHtml", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
         ]
-        2
+        4
     , { id = id
       , idString = idString
       , name = "Slide " ++ humanizedId
@@ -455,7 +479,7 @@ toTabbedCarouselItem id =
         , ( "tabControlHtml", "Html.text " ++ Code.string ("Slide " ++ humanizedId) )
         , ( "slideHtml", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
         ]
-        2
+        3
     , { id = id
       , idString = idString
       , name = "Slide " ++ humanizedId
