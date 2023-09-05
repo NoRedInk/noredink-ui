@@ -10,6 +10,7 @@ module Examples.Carousel exposing
 
 -}
 
+import Accessibility.Styled.Style as Style
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Code
@@ -25,6 +26,7 @@ import Nri.Ui.Carousel.V2 as Carousel
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
+import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Html.Attributes.V2 as Attributes
 import Nri.Ui.Table.V7 as Table
@@ -36,6 +38,7 @@ type alias State =
     { selected : Int
     , settings : Control Settings
     , tip : Tip
+    , testimonial : Testimonial
     }
 
 
@@ -44,6 +47,7 @@ init =
     { selected = 0
     , settings = initSettings
     , tip = AvoidWhiteAfterLaborDay
+    , testimonial = GreatService
     }
 
 
@@ -98,6 +102,7 @@ type Msg
     = FocusAndSelect { select : Int, focus : Maybe String }
     | AnnounceAndSelect { select : Int, announce : String }
     | SelectTip { select : Tip, announce : String }
+    | SelectTestimonial { select : Testimonial, focus : Maybe String }
     | Focused (Result Dom.Error ())
     | SetSettings (Control Settings)
 
@@ -128,6 +133,13 @@ update msg model =
             ( { model | tip = select }
             , -- TODO: actually announce!
               Cmd.none
+            )
+
+        SelectTestimonial { select, focus } ->
+            ( { model | testimonial = select }
+            , focus
+                |> Maybe.map (Dom.focus >> Task.attempt Focused)
+                |> Maybe.withDefault Cmd.none
             )
 
 
@@ -199,7 +211,7 @@ example =
                 ( code_, view ) =
                     case settings.carouselType of
                         Tabs ->
-                            viewWithTabControls model
+                            viewCustomizableWithTabControls model
 
                         PrevNext ->
                             viewCustomizableWithPreviousAndNextControls model
@@ -263,7 +275,7 @@ example =
                   , example = viewTips model.tip
                   }
                 , { viewName = "viewWithTabControls"
-                  , example = text ""
+                  , example = viewTestimonials model.testimonial
                   }
                 , { viewName = "viewWithCombinedControls"
                   , example = text ""
@@ -402,8 +414,8 @@ viewWithCombinedControls model =
     )
 
 
-viewWithTabControls : State -> ( String, Html Msg )
-viewWithTabControls model =
+viewCustomizableWithTabControls : State -> ( String, Html Msg )
+viewCustomizableWithTabControls model =
     let
         settings =
             Control.currentValue model.settings
@@ -601,3 +613,81 @@ type Tip
     = AvoidWhiteAfterLaborDay
     | AvoidNavyAndBlack
     | TailorOffTheShelfClothes
+
+
+viewTestimonials : Testimonial -> Html Msg
+viewTestimonials selected =
+    let
+        { controls, slides, containerAttributes } =
+            Carousel.viewWithTabControls
+                { selected = selected
+                , slides =
+                    [ { id = GreatService
+                      , idString = "great-service"
+                      , name = "Great Service"
+                      , visibleLabelId = Nothing
+                      , slideHtml = text "Great service!"
+                      , tabControlHtml = span Style.invisible [ text "Testimonial 1" ]
+                      }
+                    , { id = GreatProduct
+                      , idString = "great-product"
+                      , name = "Great Product"
+                      , visibleLabelId = Nothing
+                      , slideHtml = text "Great product!"
+                      , tabControlHtml = span Style.invisible [ text "Testimonial 2" ]
+                      }
+                    , { id = GreatMission
+                      , idString = "great-mission"
+                      , name = "Great Mission"
+                      , visibleLabelId = Nothing
+                      , slideHtml = text "Great mission!"
+                      , tabControlHtml = span Style.invisible [ text "Testimonial 3" ]
+                      }
+                    ]
+                , tabControlStyles =
+                    \isSelected ->
+                        [ borderRadius (pct 100)
+                        , overflow hidden
+                        , padding zero
+                        , height (px 22)
+                        , width (px 22)
+                        , border zero
+                        , batch <|
+                            if isSelected then
+                                [ pseudoClass "focus-visible"
+                                    [ FocusRing.boxShadows []
+                                    , outline zero
+                                    ]
+                                , backgroundColor Colors.azure
+                                ]
+
+                            else
+                                [ cursor pointer
+                                , backgroundColor Colors.gray92
+                                ]
+                        ]
+                , tabControlListStyles =
+                    [ displayFlex
+                    , property "gap" "15px"
+                    , justifyContent center
+                    ]
+                , role = Carousel.Group
+                , name = "Testimonials"
+                , visibleLabelId = Nothing
+                , focusAndSelect = SelectTestimonial
+                }
+    in
+    Container.view
+        [ Container.custom containerAttributes
+        , Container.css [ maxWidth (px 210) ]
+        , Container.html
+            [ slides
+            , controls
+            ]
+        ]
+
+
+type Testimonial
+    = GreatService
+    | GreatProduct
+    | GreatMission
