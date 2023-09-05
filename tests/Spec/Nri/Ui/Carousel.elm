@@ -5,6 +5,7 @@ module Spec.Nri.Ui.Carousel exposing
     )
 
 import Accessibility.Aria as Aria
+import Accessibility.Role as Role
 import Expect
 import Html.Attributes as Attrs
 import Html.Styled exposing (..)
@@ -146,6 +147,15 @@ viewWithPreviousAndNextControlsSpec =
                     |> clickButton "Previous"
                     |> ensureSlideIsVisible "slide-0"
                     |> done
+        , test "does not crash with 0 slides" <|
+            \() ->
+                start
+                    { slideCount = 0
+                    , slideLabels = AccessibleLabel
+                    , containerLabel = AccessibleLabel
+                    }
+                    |> ensureViewHas [ Selector.text "Slides" ]
+                    |> done
         , test "rotate back and forward with 1 slides" <|
             \() ->
                 start
@@ -236,7 +246,31 @@ viewWithPreviousAndNextControlsSpec =
 viewWithTabControlsSpec : Test
 viewWithTabControlsSpec =
     let
-        start containerLabel =
+        allSlides =
+            [ { id = 0
+              , idString = "slide-0"
+              , name = "Slide 0"
+              , visibleLabelId = Nothing
+              , tabControlHtml = text "Control 0"
+              , slideHtml = text "Slide 0"
+              }
+            , { id = 1
+              , idString = "slide-1"
+              , name = "Slide 1"
+              , visibleLabelId = Nothing
+              , tabControlHtml = text "Control 1"
+              , slideHtml = text "Slide 1"
+              }
+            , { id = 2
+              , idString = "slide-2"
+              , name = "Slide 2"
+              , visibleLabelId = Nothing
+              , tabControlHtml = text "Control 2"
+              , slideHtml = text "Slide 2"
+              }
+            ]
+
+        start slideCount containerLabel =
             ProgramTest.createElement
                 { init = init
                 , update = update
@@ -244,29 +278,7 @@ viewWithTabControlsSpec =
                     \model ->
                         Carousel.viewWithTabControls
                             { selected = model.selected
-                            , slides =
-                                [ { id = 0
-                                  , idString = "slide-0"
-                                  , name = "Slide 0"
-                                  , visibleLabelId = Nothing
-                                  , tabControlHtml = text "Control 0"
-                                  , slideHtml = text "Slide 0"
-                                  }
-                                , { id = 1
-                                  , idString = "slide-1"
-                                  , name = "Slide 1"
-                                  , visibleLabelId = Nothing
-                                  , tabControlHtml = text "Control 1"
-                                  , slideHtml = text "Slide 1"
-                                  }
-                                , { id = 2
-                                  , idString = "slide-2"
-                                  , name = "Slide 2"
-                                  , visibleLabelId = Nothing
-                                  , tabControlHtml = text "Control 2"
-                                  , slideHtml = text "Slide 2"
-                                  }
-                                ]
+                            , slides = List.take slideCount allSlides
                             , tabControlStyles = \_ -> []
                             , tabControlListStyles = []
                             , role = Carousel.Group
@@ -291,35 +303,40 @@ viewWithTabControlsSpec =
         [ describe "rendering"
             [ test "displays the associated slide when a control is activated" <|
                 \() ->
-                    start AccessibleLabel
+                    start 3 AccessibleLabel
                         |> ensureTabbable "Control 0"
                         |> ensurePanelDisplayed "Slide 0"
                         |> done
+            , test "does not crash with 0 slides" <|
+                \() ->
+                    start 0 AccessibleLabel
+                        |> ensureViewHas [ Selector.attribute Role.tabList ]
+                        |> done
             , test "has only one slide displayed" <|
                 \() ->
-                    start AccessibleLabel
+                    start 3 AccessibleLabel
                         |> ensureOnlyOnePanelDisplayed [ "Slide 0", "Slide 1", "Slide 2" ]
                         |> done
             ]
         , describe "keyboard behavior"
             [ test "has a focusable control" <|
                 \() ->
-                    start AccessibleLabel
+                    start 3 AccessibleLabel
                         |> ensureTabbable "Control 0"
                         |> done
             , test "all slides are focusable" <|
                 \() ->
-                    start AccessibleLabel
+                    start 3 AccessibleLabel
                         |> ensurePanelsFocusable [ "Slide 0", "Slide 1", "Slide 2" ]
                         |> done
             , test "has only one control included in the tab sequence" <|
                 \() ->
-                    start AccessibleLabel
+                    start 3 AccessibleLabel
                         |> ensureOnlyOneTabInSequence [ "Control 0", "Control 1", "Control 2" ]
                         |> done
             , test "moves focus right on right arrow key" <|
                 \() ->
-                    start AccessibleLabel
+                    start 3 AccessibleLabel
                         |> ensureTabbable "Control 0"
                         |> releaseRightArrow
                         |> ensureTabbable "Control 1"
@@ -329,7 +346,7 @@ viewWithTabControlsSpec =
                         |> done
             , test "moves focus left on left arrow key" <|
                 \() ->
-                    start AccessibleLabel
+                    start 3 AccessibleLabel
                         |> ensureTabbable "Control 0"
                         |> releaseRightArrow
                         |> ensureTabbable "Control 1"
@@ -339,7 +356,7 @@ viewWithTabControlsSpec =
                         |> done
             , test "when the focus is on the first element, move focus to the last element on left arrow key" <|
                 \() ->
-                    start AccessibleLabel
+                    start 3 AccessibleLabel
                         |> ensureTabbable "Control 0"
                         |> releaseLeftArrow
                         |> ensureTabbable "Control 2"
@@ -347,7 +364,7 @@ viewWithTabControlsSpec =
                         |> done
             , test "when the focus is on the last element, move focus to the first element on right arrow key" <|
                 \() ->
-                    start AccessibleLabel
+                    start 3 AccessibleLabel
                         |> ensureTabbable "Control 0"
                         |> releaseLeftArrow
                         |> ensureTabbable "Control 2"
@@ -357,7 +374,7 @@ viewWithTabControlsSpec =
                         |> done
             , test "If the visibleLabelId is Nothing the container aria label is set to the name" <|
                 \_ ->
-                    start AccessibleLabel
+                    start 3 AccessibleLabel
                         |> ensureViewHas
                             [ Selector.all
                                 [ Selector.attribute (Aria.roleDescription "carousel")
@@ -367,7 +384,7 @@ viewWithTabControlsSpec =
                         |> done
             , test "If the visibleLabelId is set the container aria labelledby is set to the visibleLabelId" <|
                 \_ ->
-                    start VisibleLabel
+                    start 3 VisibleLabel
                         |> ensureViewHas
                             [ Selector.all
                                 [ Selector.attribute (Aria.roleDescription "carousel")
@@ -382,7 +399,31 @@ viewWithTabControlsSpec =
 viewWithCombinedControlsSpec : Test
 viewWithCombinedControlsSpec =
     let
-        start =
+        allSlides =
+            [ { id = 0
+              , idString = "slide-0"
+              , name = "Slide 0"
+              , visibleLabelId = Nothing
+              , tabControlHtml = text "Control 0"
+              , slideHtml = text "Slide 0"
+              }
+            , { id = 1
+              , idString = "slide-1"
+              , name = "Slide 1"
+              , visibleLabelId = Nothing
+              , tabControlHtml = text "Control 1"
+              , slideHtml = text "Slide 1"
+              }
+            , { id = 2
+              , idString = "slide-2"
+              , name = "Slide 2"
+              , visibleLabelId = Nothing
+              , tabControlHtml = text "Control 2"
+              , slideHtml = text "Slide 2"
+              }
+            ]
+
+        start slideCount =
             ProgramTest.createElement
                 { init = init
                 , update = update
@@ -390,29 +431,7 @@ viewWithCombinedControlsSpec =
                     \model ->
                         Carousel.viewWithCombinedControls
                             { selected = model.selected
-                            , slides =
-                                [ { id = 0
-                                  , idString = "slide-0"
-                                  , name = "Slide 0"
-                                  , visibleLabelId = Nothing
-                                  , tabControlHtml = text "Control 0"
-                                  , slideHtml = text "Slide 0"
-                                  }
-                                , { id = 1
-                                  , idString = "slide-1"
-                                  , name = "Slide 1"
-                                  , visibleLabelId = Nothing
-                                  , tabControlHtml = text "Control 1"
-                                  , slideHtml = text "Slide 1"
-                                  }
-                                , { id = 2
-                                  , idString = "slide-2"
-                                  , name = "Slide 2"
-                                  , visibleLabelId = Nothing
-                                  , tabControlHtml = text "Control 2"
-                                  , slideHtml = text "Slide 2"
-                                  }
-                                ]
+                            , slides = List.take slideCount allSlides
                             , role = Carousel.Group
                             , tabControlStyles = \_ -> []
                             , tabControlListStyles = []
@@ -431,9 +450,14 @@ viewWithCombinedControlsSpec =
                 |> ProgramTest.start ()
     in
     describe "viewWithCombinedControls"
-        [ test "rotate back and forward with 3 slides" <|
+        [ test "does not crash with 0 slides" <|
+            \() ->
+                start 0
+                    |> ensureViewHas [ Selector.attribute (Aria.label "Slides") ]
+                    |> done
+        , test "rotate back and forward with 3 slides" <|
             \_ ->
-                start
+                start 3
                     |> ensurePanelDisplayed "Slide 0"
                     |> clickButton "Next"
                     |> ensurePanelDisplayed "Slide 1"
