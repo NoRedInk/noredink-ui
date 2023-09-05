@@ -129,57 +129,6 @@ viewWithPreviousAndNextControls config =
     }
 
 
-findPreviousAndNextSlides :
-    (slide -> id)
-    -> { config | selected : id, slides : List slide }
-    -> Maybe { previousSlide : slide, nextSlide : slide }
-findPreviousAndNextSlides getId { selected, slides } =
-    let
-        currentIndex =
-            slides
-                |> List.Extra.findIndex (\slide -> getId slide == selected)
-                |> -- assuming the provided id is valid. there's not much we can
-                   -- do otherwise, anyways!
-                   Maybe.withDefault 0
-
-        length =
-            List.length slides
-
-        getByIndexWrappingAround index =
-            List.Extra.getAt (modBy length index) slides
-    in
-    case ( getByIndexWrappingAround (currentIndex - 1), getByIndexWrappingAround (currentIndex + 1) ) of
-        ( Just a, Just b ) ->
-            Just { previousSlide = a, nextSlide = b }
-
-        _ ->
-            Nothing
-
-
-viewSlideChangeButton :
-    { name : String
-    , icon : Svg
-    , attributes : List (ClickableSvg.Attribute msg)
-    , targetSlideId : id
-    , targetSlideLabel : String
-    , carouselLabel : String
-    , announceAndSelect : { select : id, announce : String } -> msg
-    }
-    -> Html msg
-viewSlideChangeButton { name, icon, attributes, targetSlideId, targetSlideLabel, carouselLabel, announceAndSelect } =
-    ClickableSvg.button name
-        icon
-        (attributes
-            ++ [ ClickableSvg.onClick
-                    (announceAndSelect
-                        { select = targetSlideId
-                        , announce = "Active slide of " ++ carouselLabel ++ " changed to " ++ targetSlideLabel
-                        }
-                    )
-               ]
-        )
-
-
 {-| Builds a carousel with tab buttons
 Returns:
 
@@ -334,3 +283,54 @@ roleToString role =
 
         Region ->
             "region"
+
+
+findPreviousAndNextSlides :
+    (slide -> id)
+    -> { config | selected : id, slides : List slide }
+    -> Maybe { previousSlide : slide, nextSlide : slide }
+findPreviousAndNextSlides getId { selected, slides } =
+    let
+        currentIndex =
+            slides
+                |> List.Extra.findIndex (\slide -> getId slide == selected)
+                |> -- assuming the provided id is valid. there's not much we can
+                   -- do otherwise, anyways!
+                   Maybe.withDefault 0
+
+        length =
+            List.length slides
+
+        getByIndexWrappingAround index =
+            List.Extra.getAt (modBy length index) slides
+    in
+    case ( getByIndexWrappingAround (currentIndex - 1), getByIndexWrappingAround (currentIndex + 1) ) of
+        ( Just a, Just b ) ->
+            Just { previousSlide = a, nextSlide = b }
+
+        _ ->
+            Nothing
+
+
+viewSlideChangeButton :
+    { name : String
+    , icon : Svg
+    , attributes : List (ClickableSvg.Attribute msg)
+    , targetSlideId : id
+    , targetSlideLabel : String
+    , carouselLabel : String
+    , announceAndSelect : { select : id, announce : String } -> msg
+    }
+    -> Html msg
+viewSlideChangeButton { name, icon, attributes, targetSlideId, targetSlideLabel, carouselLabel, announceAndSelect } =
+    ClickableSvg.button name
+        icon
+        (attributes
+            ++ [ ClickableSvg.onClick
+                    (announceAndSelect
+                        { select = targetSlideId
+                        , announce = "Active slide of " ++ carouselLabel ++ " changed to " ++ targetSlideLabel
+                        }
+                    )
+               ]
+        )
