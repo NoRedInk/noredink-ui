@@ -2,7 +2,7 @@ module Nri.Ui.Carousel.V2 exposing
     ( viewWithPreviousAndNextControls
     , viewWithTabControls
     , viewWithCombinedControls
-    , LabelledBy(..), Role(..)
+    , Role(..)
     )
 
 {-| Patch changes:
@@ -12,7 +12,7 @@ module Nri.Ui.Carousel.V2 exposing
 @docs viewWithPreviousAndNextControls
 @docs viewWithTabControls
 @docs viewWithCombinedControls
-@docs LabelledBy, Role
+@docs Role
 
 -}
 
@@ -23,19 +23,9 @@ import Css exposing (..)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attrs exposing (id)
 import List.Extra
-import Maybe.Extra
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Svg.V1 exposing (Svg)
 import TabsInternal.V2 as TabsInternal
-
-
-{-| Type which represents the type of aria label which will be used
-`LabelledByIdOfVisibleLabel` will point to an existing element id on the DOM
-`LabelledByAccessibleLabelOnly` will be a label of the element
--}
-type LabelledBy
-    = LabelledByIdOfVisibleLabel String
-    | LabelledByAccessibleLabelOnly String
 
 
 {-| `Role`, which can be either [Group](https://w3c.github.io/aria/#group) or [Region](https://w3c.github.io/aria/#region)

@@ -5,7 +5,9 @@ module Spec.Nri.Ui.Carousel exposing
     )
 
 import Expect
+import Html.Attributes as Attrs
 import Html.Styled exposing (..)
+import Html.Styled.Attributes as StyledAttrs
 import Nri.Ui.Carousel.V2 as Carousel
 import Nri.Ui.UiIcon.V1 as UiIcon
 import ProgramTest exposing (..)
@@ -66,7 +68,7 @@ update msg model =
 viewWithPreviousAndNextControlsSpec : Test
 viewWithPreviousAndNextControlsSpec =
     let
-        start slideCount =
+        start { visibleLabelId, slideCount } =
             ProgramTest.createElement
                 { init = init
                 , update = update
@@ -77,7 +79,7 @@ viewWithPreviousAndNextControlsSpec =
                             , selected = model.selected
                             , role = Carousel.Group
                             , accessibleLabel = "Previous/Next Carousel"
-                            , visibleLabelId = Nothing
+                            , visibleLabelId = visibleLabelId
                             , slides =
                                 List.map
                                     (\i ->
@@ -93,7 +95,12 @@ viewWithPreviousAndNextControlsSpec =
                             , nextButton = { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
                             }
                             |> (\{ viewPreviousButton, viewNextButton, slides, containerAttributes } ->
-                                    section containerAttributes [ slides, viewPreviousButton, viewNextButton ]
+                                    section (StyledAttrs.id "carousel-root" :: containerAttributes)
+                                        [ span [ StyledAttrs.id "carousel-label" ] [ text "Previous/Next Carousel" ]
+                                        , slides
+                                        , viewPreviousButton
+                                        , viewNextButton
+                                        ]
                                )
                             |> toUnstyled
                 }
@@ -102,7 +109,7 @@ viewWithPreviousAndNextControlsSpec =
     describe "viewWithPreviousAndNextControls"
         [ test "rotate back and forward with 3 slides" <|
             \() ->
-                start 3
+                start { visibleLabelId = Nothing, slideCount = 3 }
                     |> ensureSlideIsVisible "slide-0"
                     |> clickButton "Next"
                     |> ensureSlideIsVisible "slide-1"
@@ -119,7 +126,7 @@ viewWithPreviousAndNextControlsSpec =
                     |> done
         , test "rotate back and forward with 1 slides" <|
             \() ->
-                start 1
+                start { visibleLabelId = Nothing, slideCount = 1 }
                     |> ensureSlideIsVisible "slide-0"
                     |> clickButton "Next"
                     |> ensureSlideIsVisible "slide-0"
@@ -128,7 +135,7 @@ viewWithPreviousAndNextControlsSpec =
                     |> done
         , test "Announces card changes for screen reader users" <|
             \_ ->
-                start 3
+                start { visibleLabelId = Nothing, slideCount = 3 }
                     |> ensureSlideIsVisible "slide-0"
                     |> clickButton "Next"
                     |> ensureLastEffect (Expect.equal (Announce "Active slide of Previous/Next Carousel changed to Control 1"))
@@ -136,6 +143,26 @@ viewWithPreviousAndNextControlsSpec =
                     |> ensureLastEffect (Expect.equal (Announce "Active slide of Previous/Next Carousel changed to Control 2"))
                     |> clickButton "Previous"
                     |> ensureLastEffect (Expect.equal (Announce "Active slide of Previous/Next Carousel changed to Control 1"))
+                    |> done
+        , test "If the visibleLabelId is Nothing the container aria label is set to the accessibleLabel" <|
+            \_ ->
+                start { visibleLabelId = Nothing, slideCount = 3 }
+                    |> ensureViewHas
+                        [ Selector.all
+                            [ Selector.id "carousel-root"
+                            , Selector.attribute (Attrs.attribute "aria-label" "Previous/Next Carousel")
+                            ]
+                        ]
+                    |> done
+        , test "If the visibleLabelId is set the container aria labelledby is set to the visibleLabelId" <|
+            \_ ->
+                start { visibleLabelId = Just "carousel-label", slideCount = 3 }
+                    |> ensureViewHas
+                        [ Selector.all
+                            [ Selector.id "carousel-root"
+                            , Selector.attribute (Attrs.attribute "aria-labelledby" "carousel-label")
+                            ]
+                        ]
                     |> done
         ]
 
