@@ -80,7 +80,7 @@ viewWithPreviousAndNextControlsSpec =
 
                     VisibleLabel ->
                         Just ("slide-" ++ String.fromInt index ++ "-label")
-            , slideHtml =
+            , slideView =
                 div [ StyledAttrs.id ("slide-" ++ String.fromInt index ++ "-label") ]
                     [ text ("Slide " ++ String.fromInt index) ]
             }
@@ -249,18 +249,18 @@ viewWithTabControlsSpec =
         allSlides =
             [ { id = 0
               , idString = "slide-0"
-              , tabControlHtml = text "Control 0"
-              , slideHtml = text "Slide 0"
+              , tabView = text "Control 0"
+              , slideView = text "Slide 0"
               }
             , { id = 1
               , idString = "slide-1"
-              , tabControlHtml = text "Control 1"
-              , slideHtml = text "Slide 1"
+              , tabView = text "Control 1"
+              , slideView = text "Slide 1"
               }
             , { id = 2
               , idString = "slide-2"
-              , tabControlHtml = text "Control 2"
-              , slideHtml = text "Slide 2"
+              , tabView = text "Control 2"
+              , slideView = text "Slide 2"
               }
             ]
 
@@ -404,22 +404,22 @@ viewWithCombinedControlsSpec =
               , idString = "slide-0"
               , name = "Slide 0"
               , visibleLabelId = Nothing
-              , tabControlHtml = text "Control 0"
-              , slideHtml = text "Slide 0"
+              , tabView = text "Control 0"
+              , slideView = text "Slide 0"
               }
             , { id = 1
               , idString = "slide-1"
               , name = "Slide 1"
               , visibleLabelId = Nothing
-              , tabControlHtml = text "Control 1"
-              , slideHtml = text "Slide 1"
+              , tabView = text "Control 1"
+              , slideView = text "Slide 1"
               }
             , { id = 2
               , idString = "slide-2"
               , name = "Slide 2"
               , visibleLabelId = Nothing
-              , tabControlHtml = text "Control 2"
-              , slideHtml = text "Slide 2"
+              , tabView = text "Control 2"
+              , slideView = text "Slide 2"
               }
             ]
 

@@ -537,7 +537,7 @@ toNonTabbedCarouselItem :
           , idString : String
           , name : String
           , visibleLabelId : Maybe String
-          , slideHtml : Html msg
+          , slideView : Html msg
           }
         )
 toNonTabbedCarouselItem id =
@@ -553,14 +553,14 @@ toNonTabbedCarouselItem id =
         , ( "idString", Code.string (String.fromInt id) )
         , ( "name", Code.string ("Slide " ++ humanizedId) )
         , ( "visibleLabelId", Code.maybe Nothing )
-        , ( "slideHtml", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
+        , ( "slideView", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
         ]
         4
     , { id = id
       , idString = idString
       , name = "Slide " ++ humanizedId
       , visibleLabelId = Nothing
-      , slideHtml = Html.text ("Contents for slide " ++ humanizedId)
+      , slideView = Html.text ("Contents for slide " ++ humanizedId)
       }
     )
 
@@ -571,8 +571,8 @@ toTabbedCarouselItem :
         ( String
         , { id : Int
           , idString : String
-          , slideHtml : Html msg
-          , tabControlHtml : Html Never
+          , slideView : Html msg
+          , tabView : Html Never
           }
         )
 toTabbedCarouselItem id =
@@ -586,14 +586,14 @@ toTabbedCarouselItem id =
     ( Code.recordMultiline
         [ ( "id", Code.int id )
         , ( "idString", Code.string (String.fromInt id) )
-        , ( "tabControlHtml", "Html.text " ++ Code.string ("Slide " ++ humanizedId) )
-        , ( "slideHtml", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
+        , ( "tabView", "Html.text " ++ Code.string ("Slide " ++ humanizedId) )
+        , ( "slideView", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
         ]
         3
     , { id = id
       , idString = idString
-      , tabControlHtml = Html.text ("Slide " ++ humanizedId)
-      , slideHtml = Html.text ("Contents for slide " ++ humanizedId)
+      , tabView = Html.text ("Slide " ++ humanizedId)
+      , slideView = Html.text ("Contents for slide " ++ humanizedId)
       }
     )
 
@@ -606,8 +606,8 @@ toCombinedCarouselItem :
           , idString : String
           , name : String
           , visibleLabelId : Maybe String
-          , slideHtml : Html msg
-          , tabControlHtml : Html Never
+          , slideView : Html msg
+          , tabView : Html Never
           }
         )
 toCombinedCarouselItem id =
@@ -623,16 +623,16 @@ toCombinedCarouselItem id =
         , ( "idString", Code.string (String.fromInt id) )
         , ( "name", Code.string ("Slide " ++ humanizedId) )
         , ( "visibleLabelId", Code.maybe Nothing )
-        , ( "tabControlHtml", "Html.text " ++ Code.string ("Slide " ++ humanizedId) )
-        , ( "slideHtml", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
+        , ( "tabView", "Html.text " ++ Code.string ("Slide " ++ humanizedId) )
+        , ( "slideView", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
         ]
         3
     , { id = id
       , idString = idString
       , name = "Slide " ++ humanizedId
       , visibleLabelId = Nothing
-      , tabControlHtml = Html.text ("Slide " ++ humanizedId)
-      , slideHtml = Html.text ("Contents for slide " ++ humanizedId)
+      , tabView = Html.text ("Slide " ++ humanizedId)
+      , slideView = Html.text ("Contents for slide " ++ humanizedId)
       }
     )
 
@@ -648,19 +648,19 @@ viewTips selected =
                       , idString = "avoid-white-after-labor-day"
                       , name = "Avoid White After Labor Day"
                       , visibleLabelId = Nothing
-                      , slideHtml = text "Avoid wearing white after Labor Day"
+                      , slideView = text "Avoid wearing white after Labor Day"
                       }
                     , { id = AvoidNavyAndBlack
                       , idString = "avoid-navy-and-black"
                       , name = "Avoid pairing navy and black"
                       , visibleLabelId = Nothing
-                      , slideHtml = text "Avoid pairing navy and black"
+                      , slideView = text "Avoid pairing navy and black"
                       }
                     , { id = TailorOffTheShelfClothes
                       , idString = "tailor-off-the-shelf-clothes"
                       , name = "Tailor off the shelf clothes"
                       , visibleLabelId = Nothing
-                      , slideHtml = text "Tailor off the shelf clothes"
+                      , slideView = text "Tailor off the shelf clothes"
                       }
                     ]
                 , previousButton =
@@ -721,18 +721,18 @@ viewTestimonials selected =
                 , slides =
                     [ { id = GreatService
                       , idString = "great-service"
-                      , slideHtml = text "Great service!"
-                      , tabControlHtml = span Style.invisible [ text "Testimonial 1" ]
+                      , slideView = text "Great service!"
+                      , tabView = span Style.invisible [ text "Testimonial 1" ]
                       }
                     , { id = GreatProduct
                       , idString = "great-product"
-                      , slideHtml = text "Great product!"
-                      , tabControlHtml = span Style.invisible [ text "Testimonial 2" ]
+                      , slideView = text "Great product!"
+                      , tabView = span Style.invisible [ text "Testimonial 2" ]
                       }
                     , { id = GreatMission
                       , idString = "great-mission"
-                      , slideHtml = text "Great mission!"
-                      , tabControlHtml = span Style.invisible [ text "Testimonial 3" ]
+                      , slideView = text "Great mission!"
+                      , tabView = span Style.invisible [ text "Testimonial 3" ]
                       }
                     ]
                 , tabStyles = tabStyles
@@ -770,22 +770,22 @@ viewPackages selected =
                       , idString = "free-trial"
                       , name = "Free trial"
                       , visibleLabelId = Nothing
-                      , slideHtml = text "Free trial"
-                      , tabControlHtml = span Style.invisible [ text "Free trial" ]
+                      , slideView = text "Free trial"
+                      , tabView = span Style.invisible [ text "Free trial" ]
                       }
                     , { id = DeveloperTier
                       , idString = "developer-tier"
                       , name = "Developer Tier"
                       , visibleLabelId = Nothing
-                      , slideHtml = text "Developer Tier"
-                      , tabControlHtml = span Style.invisible [ text "Developer tier" ]
+                      , slideView = text "Developer Tier"
+                      , tabView = span Style.invisible [ text "Developer tier" ]
                       }
                     , { id = EnterpriseTier
                       , idString = "enterprise-tier"
                       , name = "Enterprise Tier"
                       , visibleLabelId = Nothing
-                      , slideHtml = text "Enterprise Tier"
-                      , tabControlHtml = span Style.invisible [ text "Enterprise tier" ]
+                      , slideView = text "Enterprise Tier"
+                      , tabView = span Style.invisible [ text "Enterprise tier" ]
                       }
                     ]
                 , tabStyles = tabStyles

@@ -57,7 +57,7 @@ viewWithPreviousAndNextControls :
             , idString : String
             , name : String
             , visibleLabelId : Maybe String
-            , slideHtml : Html msg
+            , slideView : Html msg
             }
     , previousButton : { name : String, icon : Svg, attributes : List (ClickableSvg.Attribute msg) }
     , nextButton : { name : String, icon : Svg, attributes : List (ClickableSvg.Attribute msg) }
@@ -121,7 +121,7 @@ viewWithPreviousAndNextControls config =
                           else
                             Attrs.style "display" "none"
                         ]
-                        [ slide.slideHtml ]
+                        [ slide.slideView ]
                 )
                 config.slides
             )
@@ -147,8 +147,8 @@ viewWithTabControls :
         List
             { id : id
             , idString : String
-            , slideHtml : Html msg
-            , tabControlHtml : Html Never
+            , slideView : Html msg
+            , tabView : Html Never
             }
     , tabStyles : Bool -> List Style
     , tabListStyles : List Style
@@ -166,8 +166,8 @@ viewWithTabControls config =
     let
         buildTab tabConfig =
             TabsInternal.fromList { id = tabConfig.id, idString = tabConfig.idString }
-                [ \tab -> { tab | panelView = tabConfig.slideHtml }
-                , \tab -> { tab | tabView = [ Html.map never tabConfig.tabControlHtml ] }
+                [ \tab -> { tab | panelView = tabConfig.slideView }
+                , \tab -> { tab | tabView = [ Html.map never tabConfig.tabView ] }
                 ]
 
         { tabList, tabPanels } =
@@ -207,8 +207,8 @@ viewWithCombinedControls :
             , idString : String
             , name : String
             , visibleLabelId : Maybe String
-            , slideHtml : Html msg
-            , tabControlHtml : Html Never
+            , slideView : Html msg
+            , tabView : Html Never
             }
     , tabStyles : Bool -> List Style
     , tabListStyles : List Style
@@ -252,8 +252,8 @@ viewWithCombinedControls config =
                         (\slide ->
                             { id = slide.id
                             , idString = slide.idString
-                            , slideHtml = slide.slideHtml
-                            , tabControlHtml = slide.tabControlHtml
+                            , slideView = slide.slideView
+                            , tabView = slide.tabView
                             }
                         )
                         config.slides
