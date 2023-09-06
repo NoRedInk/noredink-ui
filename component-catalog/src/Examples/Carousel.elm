@@ -15,6 +15,7 @@ import Accessibility.Styled.Style as Style
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Code
+import CommonControls
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra
@@ -23,7 +24,7 @@ import Example exposing (Example)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (class, css)
 import KeyboardSupport exposing (Key(..))
-import Nri.Ui.Carousel.V2 as Carousel
+import Nri.Ui.Carousel.V2 as Carousel exposing (Role(..))
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
@@ -62,13 +63,8 @@ init =
 type alias Settings =
     { items : Int
     , carouselType : CarouselType
+    , role : ( String, Role )
     }
-
-
-type CarouselType
-    = Tabs
-    | PrevNext
-    | Combined
 
 
 initSettings : Control Settings
@@ -76,6 +72,13 @@ initSettings =
     Control.record Settings
         |> Control.field "items" (Debug.Control.Extra.int 4)
         |> Control.field "carouselType" controlCarouselType
+        |> Control.field "role" controlRole
+
+
+type CarouselType
+    = Tabs
+    | PrevNext
+    | Combined
 
 
 controlCarouselType : Control CarouselType
@@ -85,6 +88,12 @@ controlCarouselType =
         , ( "viewWithTabControls", Control.value Tabs )
         , ( "viewWithCombinedControls", Control.value Combined )
         ]
+
+
+controlRole : Control ( String, Role )
+controlRole =
+    CommonControls.choice moduleName
+        [ ( "Group", Group ), ( "Region", Region ) ]
 
 
 controlStyles : Bool -> List Css.Style
@@ -240,13 +249,13 @@ example =
                 ( code_, view ) =
                     case settings.carouselType of
                         Tabs ->
-                            viewCustomizableWithTabControls model
+                            viewCustomizableWithTabControls settings model.selected
 
                         PrevNext ->
-                            viewCustomizableWithPreviousAndNextControls model
+                            viewCustomizableWithPreviousAndNextControls settings model.selected
 
                         Combined ->
-                            viewCustomizableWithCombinedControls model
+                            viewCustomizableWithCombinedControls settings model.selected
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -338,12 +347,9 @@ example =
     }
 
 
-viewCustomizableWithPreviousAndNextControls : State -> ( String, Html Msg )
-viewCustomizableWithPreviousAndNextControls model =
+viewCustomizableWithPreviousAndNextControls : Settings -> Int -> ( String, Html Msg )
+viewCustomizableWithPreviousAndNextControls settings selected =
     let
-        settings =
-            Control.currentValue model.settings
-
         allItems =
             settings.items
                 |> indicesForItemCount
@@ -351,7 +357,7 @@ viewCustomizableWithPreviousAndNextControls model =
 
         { viewPreviousButton, viewNextButton, slides, containerAttributes } =
             Carousel.viewWithPreviousAndNextControls
-                { selected = model.selected
+                { selected = selected
                 , slides = List.map Tuple.second allItems
                 , previousButton =
                     { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
@@ -359,7 +365,7 @@ viewCustomizableWithPreviousAndNextControls model =
                     { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
                 , name = "Items"
                 , visibleLabelId = Nothing
-                , role = Carousel.Group
+                , role = Tuple.second settings.role
                 , announceAndSelect =
                     \{ select, announce } ->
                         Select
@@ -372,7 +378,7 @@ viewCustomizableWithPreviousAndNextControls model =
     ( Code.pipelineMultiline
         [ Code.fromModule moduleName "viewWithPreviousAndNextControls"
             ++ Code.recordMultiline
-                [ ( "selected", Code.int model.selected )
+                [ ( "selected", Code.int selected )
                 , ( "slides", Code.listMultiline (List.map Tuple.first allItems) 3 )
                 , ( "previousButton"
                   , Code.recordMultiline
@@ -392,7 +398,7 @@ viewCustomizableWithPreviousAndNextControls model =
                   )
                 , ( "name", Code.string "Items" )
                 , ( "visibleLabelId", Code.maybe Nothing )
-                , ( "role", Code.fromModule moduleName "Group" )
+                , ( "role", Tuple.first settings.role )
                 , ( "announceAndSelect", "AnnounceAndSelect" )
                 ]
                 1
@@ -406,12 +412,9 @@ viewCustomizableWithPreviousAndNextControls model =
     )
 
 
-viewCustomizableWithCombinedControls : State -> ( String, Html Msg )
-viewCustomizableWithCombinedControls model =
+viewCustomizableWithCombinedControls : Settings -> Int -> ( String, Html Msg )
+viewCustomizableWithCombinedControls settings selected =
     let
-        settings =
-            Control.currentValue model.settings
-
         allItems =
             settings.items
                 |> indicesForItemCount
@@ -419,7 +422,7 @@ viewCustomizableWithCombinedControls model =
 
         { tabs, slides, viewPreviousButton, viewNextButton, containerAttributes } =
             Carousel.viewWithCombinedControls
-                { selected = model.selected
+                { selected = selected
                 , slides = List.map Tuple.second allItems
                 , tabStyles = \_ -> []
                 , tabListStyles = []
@@ -427,7 +430,7 @@ viewCustomizableWithCombinedControls model =
                     { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
                 , nextButton =
                     { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
-                , role = Carousel.Group
+                , role = Tuple.second settings.role
                 , name = "Items"
                 , visibleLabelId = Nothing
                 , select = Select
@@ -436,7 +439,7 @@ viewCustomizableWithCombinedControls model =
     ( Code.pipelineMultiline
         [ Code.fromModule moduleName "viewWithCombinedControls"
             ++ Code.record
-                [ ( "selected", Code.int model.selected )
+                [ ( "selected", Code.int selected )
                 , ( "slides", Code.listMultiline (List.map Tuple.first allItems) 2 )
                 , ( "tabStyles", "(\\_ -> [])" )
                 , ( "tabListStyles", Code.list [] )
@@ -456,7 +459,7 @@ viewCustomizableWithCombinedControls model =
                         ]
                         2
                   )
-                , ( "role", Code.fromModule moduleName "Group" )
+                , ( "role", Tuple.first settings.role )
                 , ( "name", Code.string "Items" )
                 , ( "visibleLabelId", Code.maybe Nothing )
                 , ( "focusAndSelect", "FocusAndSelect" )
@@ -472,12 +475,9 @@ viewCustomizableWithCombinedControls model =
     )
 
 
-viewCustomizableWithTabControls : State -> ( String, Html Msg )
-viewCustomizableWithTabControls model =
+viewCustomizableWithTabControls : Settings -> Int -> ( String, Html Msg )
+viewCustomizableWithTabControls settings selected =
     let
-        settings =
-            Control.currentValue model.settings
-
         allItems =
             settings.items
                 |> indicesForItemCount
@@ -485,11 +485,11 @@ viewCustomizableWithTabControls model =
 
         { tabs, slides, containerAttributes } =
             Carousel.viewWithTabControls
-                { selected = model.selected
+                { selected = selected
                 , slides = List.map Tuple.second allItems
                 , tabStyles = \_ -> []
                 , tabListStyles = []
-                , role = Carousel.Group
+                , role = Tuple.second settings.role
                 , name = "Items"
                 , visibleLabelId = Nothing
                 , focusAndSelect =
@@ -504,11 +504,11 @@ viewCustomizableWithTabControls model =
     ( Code.pipelineMultiline
         [ Code.fromModule moduleName "viewWithTabControls"
             ++ Code.record
-                [ ( "selected", Code.int model.selected )
+                [ ( "selected", Code.int selected )
                 , ( "slides", Code.listMultiline (List.map Tuple.first allItems) 2 )
                 , ( "tabStyles", "(\\_ -> [])" )
                 , ( "tabListStyles", Code.list [] )
-                , ( "role", Code.fromModule moduleName "Group" )
+                , ( "role", Tuple.first settings.role )
                 , ( "name", Code.string "Items" )
                 , ( "visibleLabelId", Code.maybe Nothing )
                 , ( "focusAndSelect", "FocusAndSelect" )
