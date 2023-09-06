@@ -1292,7 +1292,13 @@ lindyHeadshot =
 {-| -}
 lindyHeadshotFacingRight : Nri.Ui.Svg.V1.Svg
 lindyHeadshotFacingRight =
-    lindyHeadshot_ "lindyHeadshotFacingRight" [ Css.transforms [ Css.scaleX -1, Css.translate (Css.pct -100) ] ] [ Css.transforms [ Css.scaleX -1, Css.translate (Css.pct -110) ] ]
+    lindyHeadshot_ "lindyHeadshotFacingRight"
+        [ Css.transforms [ Css.scaleX -1 ]
+        , Css.property "transform-origin" "1.88rem 0"
+        ]
+        [ Css.transforms [ Css.scaleX -1 ]
+        , Css.property "transform-origin" "2.1rem 0"
+        ]
 
 
 redPalette =
