@@ -417,7 +417,7 @@ viewCustomizableWithCombinedControls model =
                 |> indicesForItemCount
                 |> List.map toCombinedCarouselItem
 
-        { tabControls, slides, viewPreviousButton, viewNextButton, containerAttributes } =
+        { tabs, slides, viewPreviousButton, viewNextButton, containerAttributes } =
             Carousel.viewWithCombinedControls
                 { selected = model.selected
                 , slides = List.map Tuple.second allItems
@@ -462,13 +462,13 @@ viewCustomizableWithCombinedControls model =
                 , ( "focusAndSelect", "FocusAndSelect" )
                 , ( "announceAndSelect", "AnnounceAndSelect" )
                 ]
-        , Code.anonymousFunction "{ tabControls, slides, viewPreviousButton, viewNextButton, containerAttributes }"
+        , Code.anonymousFunction "{ tabs, slides, viewPreviousButton, viewNextButton, containerAttributes }"
             (Code.newlineWithIndent 2
-                ++ "section containerAttributes [ slides, tabControls, viewPreviousButton, viewNextButton  ]"
+                ++ "section containerAttributes [ slides, tabs, viewPreviousButton, viewNextButton  ]"
             )
         ]
         0
-    , Html.div containerAttributes [ slides, tabControls, viewPreviousButton, viewNextButton ]
+    , Html.div containerAttributes [ slides, tabs, viewPreviousButton, viewNextButton ]
     )
 
 
@@ -483,7 +483,7 @@ viewCustomizableWithTabControls model =
                 |> indicesForItemCount
                 |> List.map toTabbedCarouselItem
 
-        { controls, slides, containerAttributes } =
+        { tabs, slides, containerAttributes } =
             Carousel.viewWithTabControls
                 { selected = model.selected
                 , slides = List.map Tuple.second allItems
@@ -514,13 +514,13 @@ viewCustomizableWithTabControls model =
                 , ( "focusAndSelect", "FocusAndSelect" )
                 , ( "announceAndSelect", "AnnounceAndSelect" )
                 ]
-        , Code.anonymousFunction "{ controls, slides, containerAttributes }"
+        , Code.anonymousFunction "{ tabs, slides, containerAttributes }"
             (Code.newlineWithIndent 2
-                ++ "section containerAttributes [ slides, controls ]"
+                ++ "section containerAttributes [ slides, tabs ]"
             )
         ]
         0
-    , Html.div containerAttributes [ slides, controls ]
+    , Html.div containerAttributes [ slides, tabs ]
     )
 
 
@@ -715,7 +715,7 @@ type Tip
 viewTestimonials : Testimonial -> Html Msg
 viewTestimonials selected =
     let
-        { controls, slides, containerAttributes } =
+        { tabs, slides, containerAttributes } =
             Carousel.viewWithTabControls
                 { selected = selected
                 , slides =
@@ -748,7 +748,7 @@ viewTestimonials selected =
         , Container.css [ maxWidth (px 210) ]
         , Container.html
             [ slides
-            , controls
+            , tabs
             ]
         ]
 
@@ -762,7 +762,7 @@ type Testimonial
 viewPackages : Package -> Html Msg
 viewPackages selected =
     let
-        { tabControls, slides, viewPreviousButton, viewNextButton, containerAttributes } =
+        { tabs, slides, viewPreviousButton, viewNextButton, containerAttributes } =
             Carousel.viewWithCombinedControls
                 { selected = selected
                 , slides =
@@ -835,7 +835,7 @@ viewPackages selected =
             ]
         , Container.html
             [ div [] [ viewPreviousButton, slides, viewNextButton ]
-            , tabControls
+            , tabs
             ]
         ]
 

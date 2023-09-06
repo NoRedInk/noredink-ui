@@ -292,8 +292,8 @@ viewWithTabControlsSpec =
                                         , focus = focus
                                         }
                             }
-                            |> (\{ controls, slides, containerAttributes } ->
-                                    section containerAttributes [ slides, controls ]
+                            |> (\{ tabs, slides, containerAttributes } ->
+                                    section containerAttributes [ slides, tabs ]
                                )
                             |> toUnstyled
                 }
@@ -441,8 +441,8 @@ viewWithCombinedControlsSpec =
                             , nextButton = { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
                             , select = Select
                             }
-                            |> (\{ tabControls, slides, containerAttributes, viewNextButton, viewPreviousButton } ->
-                                    section containerAttributes [ slides, tabControls, viewNextButton, viewPreviousButton ]
+                            |> (\{ tabs, slides, containerAttributes, viewNextButton, viewPreviousButton } ->
+                                    section containerAttributes [ slides, tabs, viewNextButton, viewPreviousButton ]
                                )
                             |> toUnstyled
                 }

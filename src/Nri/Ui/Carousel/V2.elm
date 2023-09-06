@@ -136,7 +136,7 @@ viewWithPreviousAndNextControls config =
 {-| Builds a carousel with tab buttons
 Returns:
 
-  - `controls`: tabs control buttons
+  - `tabs`: tabs control buttons
   - `slides` container with the carousel contents
   - `containerAttributes` attributes that should be used on the parent div of both the button and slides elements
 
@@ -158,7 +158,7 @@ viewWithTabControls :
     , focusAndSelect : { select : id, focus : Maybe String } -> msg
     }
     ->
-        { controls : Html msg
+        { tabs : Html msg
         , slides : Html msg
         , containerAttributes : List (Attribute msg)
         }
@@ -179,7 +179,7 @@ viewWithTabControls config =
                 , tabListStyles = config.tabControlListStyles
                 }
     in
-    { controls = tabList
+    { tabs = tabList
     , slides = tabPanels
     , containerAttributes =
         [ roleAttribute config.role
@@ -192,7 +192,7 @@ viewWithTabControls config =
 {-| Builds a carousel with tab buttons
 Returns:
 
-  - `tabControls`: tabs control buttons
+  - `tabs`: tabs control buttons
   - `slides` container with the carousel contents
   - `viewPreviousButton` previous button
   - `viewNextButton` next button
@@ -220,7 +220,7 @@ viewWithCombinedControls :
     , select : { select : id, announce : Maybe String, focus : Maybe String } -> msg
     }
     ->
-        { tabControls : Html msg
+        { tabs : Html msg
         , viewPreviousButton : Html msg
         , viewNextButton : Html msg
         , slides : Html msg
@@ -244,7 +244,7 @@ viewWithCombinedControls config =
                     , focus = Nothing
                     }
 
-        { controls, slides, containerAttributes } =
+        { tabs, slides, containerAttributes } =
             viewWithTabControls
                 { selected = config.selected
                 , slides =
@@ -293,7 +293,7 @@ viewWithCombinedControls config =
                             }
                     }
     in
-    { tabControls = controls
+    { tabs = tabs
     , slides = slides
     , containerAttributes = containerAttributes
     , viewPreviousButton = viewPreviousButton
