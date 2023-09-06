@@ -9,6 +9,7 @@ module Nri.Ui.CharacterIcon.V2 exposing
 {-| Patch changes:
 
   - added missing headshots
+  - made flipped headshots scale correctly in Safari
 
 TODO: There was a bunch of work on <https://github.com/NoRedInk/noredink-ui/pull/1403>
 towards reusing code in the SVGs to make them smaller. We should do the same for headshots.
