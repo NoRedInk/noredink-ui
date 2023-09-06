@@ -107,12 +107,10 @@ controlStyles isSelected =
 
 
 type Msg
-    = FocusAndSelect { select : Int, focus : Maybe String }
-    | AnnounceAndSelect { select : Int, announce : String }
+    = Select { select : Int, announce : Maybe String, focus : Maybe String }
     | SelectTip { select : Tip, announce : String }
     | SelectTestimonial { select : Testimonial, focus : Maybe String }
-    | SelectPackageAndFocus { select : Package, focus : Maybe String }
-    | SelectPackageAndAnnounce { select : Package, announce : String }
+    | SelectPackage { select : Package, announce : Maybe String, focus : Maybe String }
     | Focused (Result Dom.Error ())
     | SetSettings (Control Settings)
 
@@ -120,8 +118,17 @@ type Msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg model =
     case msg of
-        FocusAndSelect { select, focus } ->
-            ( { model | selected = select }
+        Select { select, announce, focus } ->
+            ( { model
+                | selected = select
+                , announcement =
+                    case announce of
+                        Just announcement ->
+                            Just announcement
+
+                        Nothing ->
+                            model.announcement
+              }
             , focus
                 |> Maybe.map (Dom.focus >> Task.attempt Focused)
                 |> Maybe.withDefault Cmd.none
@@ -132,14 +139,6 @@ update msg model =
 
         SetSettings settings ->
             ( { model | settings = settings }, Cmd.none )
-
-        AnnounceAndSelect { select, announce } ->
-            ( { model
-                | selected = select
-                , announcement = Just announce
-              }
-            , Cmd.none
-            )
 
         SelectTip { select, announce } ->
             ( { model
@@ -156,19 +155,20 @@ update msg model =
                 |> Maybe.withDefault Cmd.none
             )
 
-        SelectPackageAndFocus { select, focus } ->
-            ( { model | package = select }
+        SelectPackage { select, announce, focus } ->
+            ( { model
+                | package = select
+                , announcement =
+                    case announce of
+                        Just announcement ->
+                            Just announcement
+
+                        Nothing ->
+                            model.announcement
+              }
             , focus
                 |> Maybe.map (Dom.focus >> Task.attempt Focused)
                 |> Maybe.withDefault Cmd.none
-            )
-
-        SelectPackageAndAnnounce { select, announce } ->
-            ( { model
-                | package = select
-                , announcement = Just announce
-              }
-            , Cmd.none
             )
 
 
@@ -360,7 +360,13 @@ viewCustomizableWithPreviousAndNextControls model =
                 , name = "Items"
                 , visibleLabelId = Nothing
                 , role = Carousel.Group
-                , announceAndSelect = AnnounceAndSelect
+                , announceAndSelect =
+                    \{ select, announce } ->
+                        Select
+                            { select = select
+                            , announce = Just announce
+                            , focus = Nothing
+                            }
                 }
     in
     ( Code.pipelineMultiline
@@ -424,8 +430,7 @@ viewCustomizableWithCombinedControls model =
                 , role = Carousel.Group
                 , name = "Items"
                 , visibleLabelId = Nothing
-                , focusAndSelect = FocusAndSelect
-                , announceAndSelect = AnnounceAndSelect
+                , select = Select
                 }
     in
     ( Code.pipelineMultiline
@@ -487,7 +492,13 @@ viewCustomizableWithTabControls model =
                 , role = Carousel.Group
                 , name = "Items"
                 , visibleLabelId = Nothing
-                , focusAndSelect = FocusAndSelect
+                , focusAndSelect =
+                    \{ select, focus } ->
+                        Select
+                            { select = select
+                            , announce = Nothing
+                            , focus = focus
+                            }
                 }
     in
     ( Code.pipelineMultiline
@@ -806,8 +817,7 @@ viewPackages selected =
                 , role = Carousel.Group
                 , name = "Packages"
                 , visibleLabelId = Nothing
-                , focusAndSelect = SelectPackageAndFocus
-                , announceAndSelect = SelectPackageAndAnnounce
+                , select = SelectPackage
                 }
     in
     Container.view

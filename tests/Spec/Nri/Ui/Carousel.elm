@@ -32,37 +32,32 @@ type alias Model =
 
 
 type Msg
-    = AnnounceAndSelect { select : Int, announce : String }
-    | FocusAndSelect { select : Int, focus : Maybe String }
+    = Select
+        { select : Int
+        , announce : Maybe String
+        , focus : Maybe String
+        }
 
 
 type Effect
-    = NoEffect
-    | Announce String
+    = Announce String
     | Focus String
 
 
-init : flags -> ( Model, Effect )
+init : flags -> ( Model, List Effect )
 init _ =
-    ( { selected = 0 }, NoEffect )
+    ( { selected = 0 }, [] )
 
 
-update : Msg -> Model -> ( Model, Effect )
+update : Msg -> Model -> ( Model, List Effect )
 update msg model =
     case msg of
-        AnnounceAndSelect { select, announce } ->
+        Select { select, announce, focus } ->
             ( { model | selected = select }
-            , Announce announce
-            )
-
-        FocusAndSelect { select, focus } ->
-            ( { model | selected = select }
-            , case focus of
-                Nothing ->
-                    NoEffect
-
-                Just id ->
-                    Focus id
+            , List.filterMap identity
+                [ Maybe.map Announce announce
+                , Maybe.map Focus focus
+                ]
             )
 
 
@@ -97,7 +92,13 @@ viewWithPreviousAndNextControlsSpec =
                 , view =
                     \model ->
                         Carousel.viewWithPreviousAndNextControls
-                            { announceAndSelect = AnnounceAndSelect
+                            { announceAndSelect =
+                                \{ select, announce } ->
+                                    Select
+                                        { select = select
+                                        , announce = Just announce
+                                        , focus = Nothing
+                                        }
                             , selected = model.selected
                             , role = Carousel.Group
                             , name = "Slides"
@@ -177,11 +178,11 @@ viewWithPreviousAndNextControlsSpec =
                     }
                     |> ensureSlideIsVisible "slide-0"
                     |> clickButton "Next"
-                    |> ensureLastEffect (Expect.equal (Announce "Active slide of Slides changed to Slide 1"))
+                    |> ensureLastEffect (Expect.equal [ Announce "Active slide of Slides changed to Slide 1" ])
                     |> clickButton "Next"
-                    |> ensureLastEffect (Expect.equal (Announce "Active slide of Slides changed to Slide 2"))
+                    |> ensureLastEffect (Expect.equal [ Announce "Active slide of Slides changed to Slide 2" ])
                     |> clickButton "Previous"
-                    |> ensureLastEffect (Expect.equal (Announce "Active slide of Slides changed to Slide 1"))
+                    |> ensureLastEffect (Expect.equal [ Announce "Active slide of Slides changed to Slide 1" ])
                     |> done
         , test "If the visibleLabelId is Nothing the container aria label is set to the name" <|
             \_ ->
@@ -283,7 +284,13 @@ viewWithTabControlsSpec =
 
                                     VisibleLabel ->
                                         Just "carousel-label"
-                            , focusAndSelect = FocusAndSelect
+                            , focusAndSelect =
+                                \{ select, focus } ->
+                                    Select
+                                        { select = select
+                                        , announce = Nothing
+                                        , focus = focus
+                                        }
                             }
                             |> (\{ controls, slides, containerAttributes } ->
                                     section containerAttributes [ slides, controls ]
@@ -432,8 +439,7 @@ viewWithCombinedControlsSpec =
                             , visibleLabelId = Nothing
                             , previousButton = { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
                             , nextButton = { attributes = [], icon = UiIcon.arrowRight, name = "Next" }
-                            , focusAndSelect = FocusAndSelect
-                            , announceAndSelect = AnnounceAndSelect
+                            , select = Select
                             }
                             |> (\{ tabControls, slides, containerAttributes, viewNextButton, viewPreviousButton } ->
                                     section containerAttributes [ slides, tabControls, viewNextButton, viewPreviousButton ]

@@ -217,8 +217,7 @@ viewWithCombinedControls :
     , role : Role
     , name : String
     , visibleLabelId : Maybe String
-    , focusAndSelect : { select : id, focus : Maybe String } -> msg
-    , announceAndSelect : { select : id, announce : String } -> msg
+    , select : { select : id, announce : Maybe String, focus : Maybe String } -> msg
     }
     ->
         { tabControls : Html msg
@@ -229,6 +228,22 @@ viewWithCombinedControls :
         }
 viewWithCombinedControls config =
     let
+        onTabSelection =
+            \{ select, focus } ->
+                config.select
+                    { select = select
+                    , announce = Nothing
+                    , focus = focus
+                    }
+
+        onButtonSelection =
+            \{ select, announce } ->
+                config.select
+                    { select = select
+                    , announce = Just announce
+                    , focus = Nothing
+                    }
+
         { controls, slides, containerAttributes } =
             viewWithTabControls
                 { selected = config.selected
@@ -247,7 +262,7 @@ viewWithCombinedControls config =
                 , role = config.role
                 , name = config.name
                 , visibleLabelId = config.visibleLabelId
-                , focusAndSelect = config.focusAndSelect
+                , focusAndSelect = onTabSelection
                 }
 
         { viewPreviousButton, viewNextButton } =
@@ -264,7 +279,7 @@ viewWithCombinedControls config =
                             , targetSlideId = previousSlide.id
                             , targetSlideLabel = previousSlide.name
                             , carouselLabel = config.name
-                            , announceAndSelect = config.announceAndSelect
+                            , announceAndSelect = onButtonSelection
                             }
                     , viewNextButton =
                         viewSlideChangeButton
@@ -274,7 +289,7 @@ viewWithCombinedControls config =
                             , targetSlideId = nextSlide.id
                             , targetSlideLabel = nextSlide.name
                             , carouselLabel = config.name
-                            , announceAndSelect = config.announceAndSelect
+                            , announceAndSelect = onButtonSelection
                             }
                     }
     in
