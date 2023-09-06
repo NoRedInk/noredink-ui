@@ -126,7 +126,7 @@ viewWithPreviousAndNextControls config =
                 config.slides
             )
     , containerAttributes =
-        [ roleToString config.role
+        [ roleAttribute config.role
         , Aria.roleDescription "carousel"
         , labelAttribute config
         ]
@@ -182,7 +182,7 @@ viewWithTabControls config =
     { controls = tabList
     , slides = tabPanels
     , containerAttributes =
-        [ roleToString config.role
+        [ roleAttribute config.role
         , Aria.roleDescription "carousel"
         , labelAttribute config
         ]
@@ -296,8 +296,8 @@ labelAttribute { name, visibleLabelId } =
             Aria.label name
 
 
-roleToString : Role -> Html.Attribute msg
-roleToString role =
+roleAttribute : Role -> Html.Attribute msg
+roleAttribute role =
     case role of
         Group ->
             Role.group
