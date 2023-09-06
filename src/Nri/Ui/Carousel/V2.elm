@@ -18,6 +18,7 @@ module Nri.Ui.Carousel.V2 exposing
 
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key
+import Accessibility.Styled.Landmark as Landmark
 import Accessibility.Styled.Role as Role
 import Css exposing (..)
 import Html.Styled as Html exposing (..)
@@ -322,7 +323,7 @@ roleAttribute role =
             Role.group
 
         Region ->
-            Attrs.attribute "role" "region"
+            Landmark.region
 
 
 findPreviousAndNextSlides :
