@@ -1644,4 +1644,8 @@ salHeadshot =
 {-| -}
 salHeadshotFacingRight : Nri.Ui.Svg.V1.Svg
 salHeadshotFacingRight =
-    salHeadshot_ "salHeadshotFacingRight" [ Css.transforms [ Css.scaleX -1, Css.translate (Css.pct -100) ] ]
+    salHeadshot_ "salHeadshotFacingRight" 
+        [ Css.transforms [ Css.scaleX -1 ]
+        , Css.property "transform-origin" "1.88rem 0"
+        ]
+
