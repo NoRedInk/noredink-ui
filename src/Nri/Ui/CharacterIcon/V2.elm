@@ -1477,7 +1477,10 @@ redHeadshot =
 {-| -}
 redHeadshotFacingRight : Nri.Ui.Svg.V1.Svg
 redHeadshotFacingRight =
-    redHeadshot_ "redHeadshotFacingRight" [ Css.transforms [ Css.scaleX -1, Css.translate (Css.pct -100) ] ]
+    redHeadshot_ "redHeadshotFacingRight" 
+        [ Css.transforms [ Css.scaleX -1 ]
+        , Css.property "transform-origin" "1.88rem 0"
+        ]
 
 
 salPalette =
