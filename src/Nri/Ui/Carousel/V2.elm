@@ -310,7 +310,11 @@ findPreviousAndNextSlides getId { selected, slides } =
             List.length slides
 
         getByIndexWrappingAround index =
-            List.Extra.getAt (modBy length index) slides
+            if length > 0 then
+                List.Extra.getAt (modBy length index) slides
+
+            else
+                Nothing
     in
     case ( getByIndexWrappingAround (currentIndex - 1), getByIndexWrappingAround (currentIndex + 1) ) of
         ( Just a, Just b ) ->
