@@ -138,6 +138,7 @@ Returns:
 
   - `controls`: tabs control buttons
   - `slides` container with the carousel contents
+  - `containerAttributes` attributes that should be used on the parent div of both the button and slides elements
 
 -}
 viewWithTabControls :
@@ -195,6 +196,7 @@ Returns:
   - `slides` container with the carousel contents
   - `viewPreviousButton` previous button
   - `viewNextButton` next button
+  - `containerAttributes` attributes that should be used on the parent div of both the button and slides elements
 
 -}
 viewWithCombinedControls :
