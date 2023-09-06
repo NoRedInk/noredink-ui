@@ -409,7 +409,7 @@ viewCustomizableWithCombinedControls model =
         allItems =
             settings.items
                 |> indicesForItemCount
-                |> List.map toTabbedCarouselItem
+                |> List.map toCombinedCarouselItem
 
         { tabControls, slides, viewPreviousButton, viewNextButton, containerAttributes } =
             Carousel.viewWithCombinedControls
@@ -560,13 +560,46 @@ toTabbedCarouselItem :
         ( String
         , { id : Int
           , idString : String
+          , slideHtml : Html msg
+          , tabControlHtml : Html Never
+          }
+        )
+toTabbedCarouselItem id =
+    let
+        idString =
+            Attributes.safeIdWithPrefix "slide" <| String.fromInt id
+
+        humanizedId =
+            String.fromInt (id + 1)
+    in
+    ( Code.recordMultiline
+        [ ( "id", Code.int id )
+        , ( "idString", Code.string (String.fromInt id) )
+        , ( "tabControlHtml", "Html.text " ++ Code.string ("Slide " ++ humanizedId) )
+        , ( "slideHtml", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
+        ]
+        3
+    , { id = id
+      , idString = idString
+      , tabControlHtml = Html.text ("Slide " ++ humanizedId)
+      , slideHtml = Html.text ("Contents for slide " ++ humanizedId)
+      }
+    )
+
+
+toCombinedCarouselItem :
+    Int
+    ->
+        ( String
+        , { id : Int
+          , idString : String
           , name : String
           , visibleLabelId : Maybe String
           , slideHtml : Html msg
           , tabControlHtml : Html Never
           }
         )
-toTabbedCarouselItem id =
+toCombinedCarouselItem id =
     let
         idString =
             Attributes.safeIdWithPrefix "slide" <| String.fromInt id
@@ -677,22 +710,16 @@ viewTestimonials selected =
                 , slides =
                     [ { id = GreatService
                       , idString = "great-service"
-                      , name = "Great Service"
-                      , visibleLabelId = Nothing
                       , slideHtml = text "Great service!"
                       , tabControlHtml = span Style.invisible [ text "Testimonial 1" ]
                       }
                     , { id = GreatProduct
                       , idString = "great-product"
-                      , name = "Great Product"
-                      , visibleLabelId = Nothing
                       , slideHtml = text "Great product!"
                       , tabControlHtml = span Style.invisible [ text "Testimonial 2" ]
                       }
                     , { id = GreatMission
                       , idString = "great-mission"
-                      , name = "Great Mission"
-                      , visibleLabelId = Nothing
                       , slideHtml = text "Great mission!"
                       , tabControlHtml = span Style.invisible [ text "Testimonial 3" ]
                       }

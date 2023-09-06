@@ -29,8 +29,10 @@ import TabsInternal.V2 as TabsInternal
 
 
 {-| `Role`, which can be either [Group](https://w3c.github.io/aria/#group) or [Region](https://w3c.github.io/aria/#region)
+
   - Use `Group` when the contents of the slides are not intended to be included in a page summary or table of contents by assistive technologies.
   - Use `Region` when the contents the slides should be included in a page summary or table of contents.
+
 -}
 type Role
     = Group
@@ -144,8 +146,6 @@ viewWithTabControls :
         List
             { id : id
             , idString : String
-            , name : String
-            , visibleLabelId : Maybe String
             , slideHtml : Html msg
             , tabControlHtml : Html Never
             }
@@ -230,7 +230,16 @@ viewWithCombinedControls config =
         { controls, slides, containerAttributes } =
             viewWithTabControls
                 { selected = config.selected
-                , slides = config.slides
+                , slides =
+                    config.slides
+                        |> List.map
+                            (\slide ->
+                                { id = slide.id
+                                , idString = slide.idString
+                                , slideHtml = slide.slideHtml
+                                , tabControlHtml = slide.tabControlHtml
+                                }
+                            )
                 , tabControlStyles = config.tabControlStyles
                 , tabControlListStyles = config.tabControlListStyles
                 , role = config.role

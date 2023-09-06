@@ -7,7 +7,6 @@ module Spec.Nri.Ui.Carousel exposing
 import Accessibility.Aria as Aria
 import Accessibility.Role as Role
 import Expect
-import Html.Attributes as Attrs
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as StyledAttrs
 import Nri.Ui.Carousel.V2 as Carousel
@@ -249,22 +248,16 @@ viewWithTabControlsSpec =
         allSlides =
             [ { id = 0
               , idString = "slide-0"
-              , name = "Slide 0"
-              , visibleLabelId = Nothing
               , tabControlHtml = text "Control 0"
               , slideHtml = text "Slide 0"
               }
             , { id = 1
               , idString = "slide-1"
-              , name = "Slide 1"
-              , visibleLabelId = Nothing
               , tabControlHtml = text "Control 1"
               , slideHtml = text "Slide 1"
               }
             , { id = 2
               , idString = "slide-2"
-              , name = "Slide 2"
-              , visibleLabelId = Nothing
               , tabControlHtml = text "Control 2"
               , slideHtml = text "Slide 2"
               }
