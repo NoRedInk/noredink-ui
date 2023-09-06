@@ -150,8 +150,8 @@ viewWithTabControls :
             , slideHtml : Html msg
             , tabControlHtml : Html Never
             }
-    , tabControlStyles : Bool -> List Style
-    , tabControlListStyles : List Style
+    , tabStyles : Bool -> List Style
+    , tabListStyles : List Style
     , role : Role
     , name : String
     , visibleLabelId : Maybe String
@@ -175,8 +175,8 @@ viewWithTabControls config =
                 { focusAndSelect = config.focusAndSelect
                 , selected = config.selected
                 , tabs = List.map buildTab config.slides
-                , tabStyles = always config.tabControlStyles
-                , tabListStyles = config.tabControlListStyles
+                , tabStyles = always config.tabStyles
+                , tabListStyles = config.tabListStyles
                 }
     in
     { tabs = tabList
@@ -210,8 +210,8 @@ viewWithCombinedControls :
             , slideHtml : Html msg
             , tabControlHtml : Html Never
             }
-    , tabControlStyles : Bool -> List Style
-    , tabControlListStyles : List Style
+    , tabStyles : Bool -> List Style
+    , tabListStyles : List Style
     , previousButton : { name : String, icon : Svg, attributes : List (ClickableSvg.Attribute msg) }
     , nextButton : { name : String, icon : Svg, attributes : List (ClickableSvg.Attribute msg) }
     , role : Role
@@ -257,8 +257,8 @@ viewWithCombinedControls config =
                             }
                         )
                         config.slides
-                , tabControlStyles = config.tabControlStyles
-                , tabControlListStyles = config.tabControlListStyles
+                , tabStyles = config.tabStyles
+                , tabListStyles = config.tabListStyles
                 , role = config.role
                 , name = config.name
                 , visibleLabelId = config.visibleLabelId

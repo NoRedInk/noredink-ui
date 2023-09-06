@@ -273,8 +273,8 @@ viewWithTabControlsSpec =
                         Carousel.viewWithTabControls
                             { selected = model.selected
                             , slides = List.take slideCount allSlides
-                            , tabControlStyles = \_ -> []
-                            , tabControlListStyles = []
+                            , tabStyles = \_ -> []
+                            , tabListStyles = []
                             , role = Carousel.Group
                             , name = "Slides"
                             , visibleLabelId =
@@ -433,8 +433,8 @@ viewWithCombinedControlsSpec =
                             { selected = model.selected
                             , slides = List.take slideCount allSlides
                             , role = Carousel.Group
-                            , tabControlStyles = \_ -> []
-                            , tabControlListStyles = []
+                            , tabStyles = \_ -> []
+                            , tabListStyles = []
                             , name = "Slides"
                             , visibleLabelId = Nothing
                             , previousButton = { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }

@@ -421,8 +421,8 @@ viewCustomizableWithCombinedControls model =
             Carousel.viewWithCombinedControls
                 { selected = model.selected
                 , slides = List.map Tuple.second allItems
-                , tabControlStyles = \_ -> []
-                , tabControlListStyles = []
+                , tabStyles = \_ -> []
+                , tabListStyles = []
                 , previousButton =
                     { attributes = [], icon = UiIcon.arrowLeft, name = "Previous" }
                 , nextButton =
@@ -438,8 +438,8 @@ viewCustomizableWithCombinedControls model =
             ++ Code.record
                 [ ( "selected", Code.int model.selected )
                 , ( "slides", Code.listMultiline (List.map Tuple.first allItems) 2 )
-                , ( "tabControlStyles", "(\\_ -> [])" )
-                , ( "tabControlListStyles", Code.list [] )
+                , ( "tabStyles", "(\\_ -> [])" )
+                , ( "tabListStyles", Code.list [] )
                 , ( "previousButton"
                   , Code.recordMultiline
                         [ ( "name", Code.string "Previous" )
@@ -487,8 +487,8 @@ viewCustomizableWithTabControls model =
             Carousel.viewWithTabControls
                 { selected = model.selected
                 , slides = List.map Tuple.second allItems
-                , tabControlStyles = \_ -> []
-                , tabControlListStyles = []
+                , tabStyles = \_ -> []
+                , tabListStyles = []
                 , role = Carousel.Group
                 , name = "Items"
                 , visibleLabelId = Nothing
@@ -506,8 +506,8 @@ viewCustomizableWithTabControls model =
             ++ Code.record
                 [ ( "selected", Code.int model.selected )
                 , ( "slides", Code.listMultiline (List.map Tuple.first allItems) 2 )
-                , ( "tabControlStyles", "(\\_ -> [])" )
-                , ( "tabControlListStyles", Code.list [] )
+                , ( "tabStyles", "(\\_ -> [])" )
+                , ( "tabListStyles", Code.list [] )
                 , ( "role", Code.fromModule moduleName "Group" )
                 , ( "name", Code.string "Items" )
                 , ( "visibleLabelId", Code.maybe Nothing )
@@ -735,8 +735,8 @@ viewTestimonials selected =
                       , tabControlHtml = span Style.invisible [ text "Testimonial 3" ]
                       }
                     ]
-                , tabControlStyles = tabControlStyles
-                , tabControlListStyles = tabControlListStyles
+                , tabStyles = tabStyles
+                , tabListStyles = tabListStyles
                 , role = Carousel.Group
                 , name = "Testimonials"
                 , visibleLabelId = Nothing
@@ -788,8 +788,8 @@ viewPackages selected =
                       , tabControlHtml = span Style.invisible [ text "Enterprise tier" ]
                       }
                     ]
-                , tabControlStyles = tabControlStyles
-                , tabControlListStyles = tabControlListStyles
+                , tabStyles = tabStyles
+                , tabListStyles = tabListStyles
                 , previousButton =
                     { attributes =
                         [ ClickableSvg.withBorder
@@ -846,8 +846,8 @@ type Package
     | EnterpriseTier
 
 
-tabControlStyles : Bool -> List Style
-tabControlStyles isSelected =
+tabStyles : Bool -> List Style
+tabStyles isSelected =
     [ borderRadius (pct 100)
     , overflow hidden
     , padding zero
@@ -870,8 +870,8 @@ tabControlStyles isSelected =
     ]
 
 
-tabControlListStyles : List Style
-tabControlListStyles =
+tabListStyles : List Style
+tabListStyles =
     [ displayFlex
     , property "gap" "15px"
     , justifyContent center
