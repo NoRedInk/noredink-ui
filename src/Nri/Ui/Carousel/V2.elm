@@ -233,15 +233,15 @@ viewWithCombinedControls config =
             viewWithTabControls
                 { selected = config.selected
                 , slides =
-                    config.slides
-                        |> List.map
-                            (\slide ->
-                                { id = slide.id
-                                , idString = slide.idString
-                                , slideHtml = slide.slideHtml
-                                , tabControlHtml = slide.tabControlHtml
-                                }
-                            )
+                    List.map
+                        (\slide ->
+                            { id = slide.id
+                            , idString = slide.idString
+                            , slideHtml = slide.slideHtml
+                            , tabControlHtml = slide.tabControlHtml
+                            }
+                        )
+                        config.slides
                 , tabControlStyles = config.tabControlStyles
                 , tabControlListStyles = config.tabControlListStyles
                 , role = config.role
