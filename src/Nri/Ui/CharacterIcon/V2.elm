@@ -1478,7 +1478,7 @@ redHeadshot =
 {-| -}
 redHeadshotFacingRight : Nri.Ui.Svg.V1.Svg
 redHeadshotFacingRight =
-    redHeadshot_ "redHeadshotFacingRight" 
+    redHeadshot_ "redHeadshotFacingRight"
         [ Css.transforms [ Css.scaleX -1 ]
         , Css.property "transform-origin" "1.88rem 0"
         ]
@@ -1645,8 +1645,7 @@ salHeadshot =
 {-| -}
 salHeadshotFacingRight : Nri.Ui.Svg.V1.Svg
 salHeadshotFacingRight =
-    salHeadshot_ "salHeadshotFacingRight" 
+    salHeadshot_ "salHeadshotFacingRight"
         [ Css.transforms [ Css.scaleX -1 ]
         , Css.property "transform-origin" "1.88rem 0"
         ]
-
