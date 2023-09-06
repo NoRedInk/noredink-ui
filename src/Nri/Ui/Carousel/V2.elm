@@ -29,6 +29,8 @@ import TabsInternal.V2 as TabsInternal
 
 
 {-| `Role`, which can be either [Group](https://w3c.github.io/aria/#group) or [Region](https://w3c.github.io/aria/#region)
+  - Use `Group` when the contents of the slides are not intended to be included in a page summary or table of contents by assistive technologies.
+  - Use `Region` when the contents the slides should be included in a page summary or table of contents.
 -}
 type Role
     = Group
