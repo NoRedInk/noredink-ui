@@ -573,6 +573,7 @@ toTabbedCarouselItem :
           , idString : String
           , slideView : Html msg
           , tabView : Html Never
+          , tabAttributes : List (Html.Attribute msg)
           }
         )
 toTabbedCarouselItem id =
@@ -586,14 +587,16 @@ toTabbedCarouselItem id =
     ( Code.recordMultiline
         [ ( "id", Code.int id )
         , ( "idString", Code.string (String.fromInt id) )
-        , ( "tabView", "Html.text " ++ Code.string ("Slide " ++ humanizedId) )
         , ( "slideView", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
+        , ( "tabView", "Html.text " ++ Code.string ("Slide " ++ humanizedId) )
+        , ( "tabAttributes", Code.list [] )
         ]
         3
     , { id = id
       , idString = idString
-      , tabView = Html.text ("Slide " ++ humanizedId)
       , slideView = Html.text ("Contents for slide " ++ humanizedId)
+      , tabView = Html.text ("Slide " ++ humanizedId)
+      , tabAttributes = []
       }
     )
 
@@ -608,6 +611,7 @@ toCombinedCarouselItem :
           , visibleLabelId : Maybe String
           , slideView : Html msg
           , tabView : Html Never
+          , tabAttributes : List (Html.Attribute msg)
           }
         )
 toCombinedCarouselItem id =
@@ -623,16 +627,18 @@ toCombinedCarouselItem id =
         , ( "idString", Code.string (String.fromInt id) )
         , ( "name", Code.string ("Slide " ++ humanizedId) )
         , ( "visibleLabelId", Code.maybe Nothing )
-        , ( "tabView", "Html.text " ++ Code.string ("Slide " ++ humanizedId) )
         , ( "slideView", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
+        , ( "tabView", "Html.text " ++ Code.string ("Slide " ++ humanizedId) )
+        , ( "tabAttributes", Code.list [] )
         ]
         3
     , { id = id
       , idString = idString
       , name = "Slide " ++ humanizedId
       , visibleLabelId = Nothing
-      , tabView = Html.text ("Slide " ++ humanizedId)
       , slideView = Html.text ("Contents for slide " ++ humanizedId)
+      , tabView = Html.text ("Slide " ++ humanizedId)
+      , tabAttributes = []
       }
     )
 
@@ -723,16 +729,19 @@ viewTestimonials selected =
                       , idString = "great-service"
                       , slideView = text "Great service!"
                       , tabView = span Style.invisible [ text "Testimonial 1" ]
+                      , tabAttributes = []
                       }
                     , { id = GreatProduct
                       , idString = "great-product"
                       , slideView = text "Great product!"
                       , tabView = span Style.invisible [ text "Testimonial 2" ]
+                      , tabAttributes = []
                       }
                     , { id = GreatMission
                       , idString = "great-mission"
                       , slideView = text "Great mission!"
                       , tabView = span Style.invisible [ text "Testimonial 3" ]
+                      , tabAttributes = []
                       }
                     ]
                 , tabStyles = tabStyles
@@ -772,6 +781,7 @@ viewPackages selected =
                       , visibleLabelId = Nothing
                       , slideView = text "Free trial"
                       , tabView = span Style.invisible [ text "Free trial" ]
+                      , tabAttributes = []
                       }
                     , { id = DeveloperTier
                       , idString = "developer-tier"
@@ -779,6 +789,7 @@ viewPackages selected =
                       , visibleLabelId = Nothing
                       , slideView = text "Developer Tier"
                       , tabView = span Style.invisible [ text "Developer tier" ]
+                      , tabAttributes = []
                       }
                     , { id = EnterpriseTier
                       , idString = "enterprise-tier"
@@ -786,6 +797,7 @@ viewPackages selected =
                       , visibleLabelId = Nothing
                       , slideView = text "Enterprise Tier"
                       , tabView = span Style.invisible [ text "Enterprise tier" ]
+                      , tabAttributes = []
                       }
                     ]
                 , tabStyles = tabStyles

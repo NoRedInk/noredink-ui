@@ -149,6 +149,7 @@ viewWithTabControls :
             , idString : String
             , slideView : Html msg
             , tabView : Html Never
+            , tabAttributes : List (Html.Attribute msg)
             }
     , tabStyles : Bool -> List Style
     , tabListStyles : List Style
@@ -168,6 +169,7 @@ viewWithTabControls config =
             TabsInternal.fromList { id = tabConfig.id, idString = tabConfig.idString }
                 [ \tab -> { tab | panelView = tabConfig.slideView }
                 , \tab -> { tab | tabView = [ Html.map never tabConfig.tabView ] }
+                , \tab -> { tab | tabAttributes = tabConfig.tabAttributes }
                 ]
 
         { tabList, tabPanels } =
@@ -209,6 +211,7 @@ viewWithCombinedControls :
             , visibleLabelId : Maybe String
             , slideView : Html msg
             , tabView : Html Never
+            , tabAttributes : List (Html.Attribute msg)
             }
     , tabStyles : Bool -> List Style
     , tabListStyles : List Style
@@ -254,6 +257,7 @@ viewWithCombinedControls config =
                             , idString = slide.idString
                             , slideView = slide.slideView
                             , tabView = slide.tabView
+                            , tabAttributes = slide.tabAttributes
                             }
                         )
                         config.slides

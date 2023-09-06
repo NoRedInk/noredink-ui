@@ -249,18 +249,21 @@ viewWithTabControlsSpec =
         allSlides =
             [ { id = 0
               , idString = "slide-0"
-              , tabView = text "Control 0"
               , slideView = text "Slide 0"
+              , tabView = text "Control 0"
+              , tabAttributes = []
               }
             , { id = 1
               , idString = "slide-1"
-              , tabView = text "Control 1"
               , slideView = text "Slide 1"
+              , tabView = text "Control 1"
+              , tabAttributes = []
               }
             , { id = 2
               , idString = "slide-2"
-              , tabView = text "Control 2"
               , slideView = text "Slide 2"
+              , tabView = text "Control 2"
+              , tabAttributes = []
               }
             ]
 
@@ -404,22 +407,25 @@ viewWithCombinedControlsSpec =
               , idString = "slide-0"
               , name = "Slide 0"
               , visibleLabelId = Nothing
-              , tabView = text "Control 0"
               , slideView = text "Slide 0"
+              , tabView = text "Control 0"
+              , tabAttributes = []
               }
             , { id = 1
               , idString = "slide-1"
               , name = "Slide 1"
               , visibleLabelId = Nothing
-              , tabView = text "Control 1"
               , slideView = text "Slide 1"
+              , tabView = text "Control 1"
+              , tabAttributes = []
               }
             , { id = 2
               , idString = "slide-2"
               , name = "Slide 2"
               , visibleLabelId = Nothing
-              , tabView = text "Control 2"
               , slideView = text "Slide 2"
+              , tabView = text "Control 2"
+              , tabAttributes = []
               }
             ]
 
