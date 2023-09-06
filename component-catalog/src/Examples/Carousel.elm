@@ -21,7 +21,7 @@ import Debug.Control.Extra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
-import Html.Styled.Attributes as Attributes exposing (css)
+import Html.Styled.Attributes as Attributes exposing (class, css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Carousel.V2 as Carousel
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
@@ -729,19 +729,19 @@ viewTestimonials selected =
                       , idString = "great-service"
                       , slideView = text "Great service!"
                       , tabView = span Style.invisible [ text "Testimonial 1" ]
-                      , tabAttributes = []
+                      , tabAttributes = [ class FocusRing.customClass ]
                       }
                     , { id = GreatProduct
                       , idString = "great-product"
                       , slideView = text "Great product!"
                       , tabView = span Style.invisible [ text "Testimonial 2" ]
-                      , tabAttributes = []
+                      , tabAttributes = [ class FocusRing.customClass ]
                       }
                     , { id = GreatMission
                       , idString = "great-mission"
                       , slideView = text "Great mission!"
                       , tabView = span Style.invisible [ text "Testimonial 3" ]
-                      , tabAttributes = []
+                      , tabAttributes = [ class FocusRing.customClass ]
                       }
                     ]
                 , tabStyles = tabStyles
@@ -781,7 +781,7 @@ viewPackages selected =
                       , visibleLabelId = Nothing
                       , slideView = text "Free trial"
                       , tabView = span Style.invisible [ text "Free trial" ]
-                      , tabAttributes = []
+                      , tabAttributes = [ class FocusRing.customClass ]
                       }
                     , { id = DeveloperTier
                       , idString = "developer-tier"
@@ -789,7 +789,7 @@ viewPackages selected =
                       , visibleLabelId = Nothing
                       , slideView = text "Developer Tier"
                       , tabView = span Style.invisible [ text "Developer tier" ]
-                      , tabAttributes = []
+                      , tabAttributes = [ class FocusRing.customClass ]
                       }
                     , { id = EnterpriseTier
                       , idString = "enterprise-tier"
@@ -797,7 +797,7 @@ viewPackages selected =
                       , visibleLabelId = Nothing
                       , slideView = text "Enterprise Tier"
                       , tabView = span Style.invisible [ text "Enterprise tier" ]
-                      , tabAttributes = []
+                      , tabAttributes = [ class FocusRing.customClass ]
                       }
                     ]
                 , tabStyles = tabStyles
