@@ -55,7 +55,6 @@ module Nri.Ui.Checkbox.V7 exposing
 
 -}
 
-import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
@@ -63,7 +62,8 @@ import Accessibility.Styled.Style
 import CheckboxIcons
 import Css exposing (..)
 import Css.Global
-import Html.Styled as Html
+import EventExtras
+import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import InputErrorAndGuidanceInternal exposing (Guidance)
@@ -279,15 +279,20 @@ view { label, selected } attributes =
                     )
     in
     checkboxContainer config_
-        [ viewIcon []
-            (if config.isDisabled then
-                disabledIcon
+        [ if config.isDisabled then
+            div [] [ viewIcon [] disabledIcon ]
 
-             else
-                icon
-            )
+          else
+            -- ensure the entire checkbox icon is always clickable
+            div
+                (config.onCheck
+                    |> Maybe.map (onCheckMsg config_.selected)
+                    |> Maybe.map (\msg -> [ EventExtras.onClickStopPropagation msg ])
+                    |> Maybe.withDefault []
+                )
+                [ viewIcon [] icon ]
         , span []
-            (viewCheckbox config_
+            (viewCheckboxLabel config_
                 (if config.isDisabled then
                     disabledLabelCss
 
@@ -371,7 +376,7 @@ disabledLabelCss =
     ]
 
 
-viewCheckbox :
+viewCheckboxLabel :
     { a
         | identifier : String
         , selected : IsSelected
@@ -385,7 +390,7 @@ viewCheckbox :
     }
     -> List Style
     -> Html.Html msg
-viewCheckbox config styles =
+viewCheckboxLabel config styles =
     let
         marginTopAdjustment =
             case config.guidance of
@@ -440,9 +445,7 @@ viewCheckbox config styles =
             else
                 Html.text config.label
     in
-    Html.div attributes
-        [ viewLabel
-        ]
+    Html.div attributes [ viewLabel ]
 
 
 checkboxIconWidth : Float
