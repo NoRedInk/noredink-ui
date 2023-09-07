@@ -9,6 +9,7 @@ module Nri.Ui.CharacterIcon.V2 exposing
 {-| Patch changes:
 
   - added missing headshots
+  - made flipped headshots scale correctly in Safari
 
 TODO: There was a bunch of work on <https://github.com/NoRedInk/noredink-ui/pull/1403>
 towards reusing code in the SVGs to make them smaller. We should do the same for headshots.
@@ -1292,7 +1293,13 @@ lindyHeadshot =
 {-| -}
 lindyHeadshotFacingRight : Nri.Ui.Svg.V1.Svg
 lindyHeadshotFacingRight =
-    lindyHeadshot_ "lindyHeadshotFacingRight" [ Css.transforms [ Css.scaleX -1, Css.translate (Css.pct -100) ] ] [ Css.transforms [ Css.scaleX -1, Css.translate (Css.pct -110) ] ]
+    lindyHeadshot_ "lindyHeadshotFacingRight"
+        [ Css.transforms [ Css.scaleX -1 ]
+        , Css.property "transform-origin" "1.88rem 0"
+        ]
+        [ Css.transforms [ Css.scaleX -1 ]
+        , Css.property "transform-origin" "2.1rem 0"
+        ]
 
 
 redPalette =
@@ -1471,7 +1478,10 @@ redHeadshot =
 {-| -}
 redHeadshotFacingRight : Nri.Ui.Svg.V1.Svg
 redHeadshotFacingRight =
-    redHeadshot_ "redHeadshotFacingRight" [ Css.transforms [ Css.scaleX -1, Css.translate (Css.pct -100) ] ]
+    redHeadshot_ "redHeadshotFacingRight"
+        [ Css.transforms [ Css.scaleX -1 ]
+        , Css.property "transform-origin" "1.88rem 0"
+        ]
 
 
 salPalette =
@@ -1635,4 +1645,7 @@ salHeadshot =
 {-| -}
 salHeadshotFacingRight : Nri.Ui.Svg.V1.Svg
 salHeadshotFacingRight =
-    salHeadshot_ "salHeadshotFacingRight" [ Css.transforms [ Css.scaleX -1, Css.translate (Css.pct -100) ] ]
+    salHeadshot_ "salHeadshotFacingRight"
+        [ Css.transforms [ Css.scaleX -1 ]
+        , Css.property "transform-origin" "1.88rem 0"
+        ]
