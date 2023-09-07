@@ -370,7 +370,6 @@ enabledLabelCss =
 disabledLabelCss : List Style
 disabledLabelCss =
     [ textStyle
-    , Css.outline3 (Css.px 2) Css.solid Css.transparent
     , cursor auto
     , color Colors.gray45
     ]
@@ -412,6 +411,7 @@ viewCheckboxLabel config styles =
                                 else
                                     Css.batch []
                                )
+                            :: outline none
                             :: styles
                             ++ config.labelCss
                         )
