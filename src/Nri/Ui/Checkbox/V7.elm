@@ -17,6 +17,8 @@ module Nri.Ui.Checkbox.V7 exposing
   - reposition the guidance to be right below the label text
   - fix the hiddenLabel checkbox behavior
   - fix the disabled styles
+  - fix "checkboxes can’t be clicked in the lower half when there’s guidance" issue
+  - fix duplicative focus ring issue
 
 
 ## Changes from V6:
