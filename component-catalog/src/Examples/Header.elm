@@ -62,7 +62,10 @@ example =
                 , update = UpdateControl
                 , settings = state.control
                 , mainType = Just "RootHtml.Html msg"
-                , extraCode = []
+                , extraCode =
+                    [ "import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs"
+                    , "import Nri.Ui.ClickableText.V3 as ClickableText"
+                    ]
                 , renderExample = Code.unstyledView
                 , toExampleCode =
                     \settings ->
@@ -155,7 +158,7 @@ init selection =
         ControlExtra.list
             |> ControlExtra.optionalListItem "extraContent"
                 (Control.value
-                    ( "Header.extraContent [ Html.text \"…\" ]"
+                    ( "Header.extraContent [ text \"…\" ]"
                     , Header.extraContent
                         [ Select.view "Tortilla Selector"
                             [ Select.choices identity
@@ -198,7 +201,7 @@ init selection =
             |> ControlExtra.optionalListItem "customPageWidth"
                 (Control.map
                     (\width ->
-                        ( "Header.customPageWidth (Css.px" ++ String.fromFloat width ++ ")"
+                        ( "Header.customPageWidth (Css.px " ++ String.fromFloat width ++ ")"
                         , Header.customPageWidth (Css.px width)
                         )
                     )
