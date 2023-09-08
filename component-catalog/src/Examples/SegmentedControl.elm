@@ -71,22 +71,31 @@ example =
                 , version = version
                 , update = ChangeOptions
                 , settings = state.optionsControl
-                , mainType = Just "RootHtml.Html msg"
-                , extraCode = []
+                , mainType = Just "RootHtml.Html Msg"
+                , extraCode =
+                    [ "import Nri.Ui.Tooltip.V3 as Tooltip"
+                    , Code.newlines
+                    , Code.unionType "Msg"
+                        [ "FocusAndSelectPage { focus : Maybe String, select : String }"
+                        , "OpenTooltip Bool"
+                        ]
+                    ]
                 , renderExample = Code.unstyledView
                 , toExampleCode =
                     \settings ->
                         [ { sectionName = "view"
                           , code =
-                                [ moduleName ++ ".view "
-                                , "    { focusAndSelect = FocusAndSelectPage"
-                                , "    , options = " ++ Code.list (List.map Tuple.first pageOptions)
-                                , "    , selected = \"" ++ Debug.toString state.page ++ "\""
-                                , "    , positioning = " ++ Tuple.first options.positioning
-                                , "    , toUrl = Nothing"
-                                , "    }"
+                                [ Code.fromModule moduleName "view "
+                                , Code.recordMultiline
+                                    [ ( "focusAndSelect", "FocusAndSelectPage" )
+                                    , ( "options", Code.listOfRecordsMultiline (List.map Tuple.first pageOptions) 2 )
+                                    , ( "selected", Code.string (Debug.toString state.page) )
+                                    , ( "positioning", Tuple.first options.positioning )
+                                    , ( "toUrl", "Nothing" )
+                                    ]
+                                    1
                                 ]
-                                    |> String.join "\n"
+                                    |> String.join ""
                           }
                         , { sectionName = "viewRadioGroup"
                           , code =
@@ -190,7 +199,7 @@ type Page
     | Activity
 
 
-buildOptions : { options | content : Content, longContent : Bool, tooltips : Bool } -> Maybe Page -> List ( String, SegmentedControl.Option Page Msg )
+buildOptions : { options | content : Content, longContent : Bool, tooltips : Bool } -> Maybe Page -> List ( List ( String, String ), SegmentedControl.Option Page Msg )
 buildOptions { content, longContent, tooltips } openTooltip =
     let
         buildOption value icon_ =
@@ -199,27 +208,27 @@ buildOptions { content, longContent, tooltips } openTooltip =
                     getIconAndLabel content icon_ (Debug.toString value)
 
                 valueStr =
-                    "\"" ++ Debug.toString value ++ "\""
+                    Code.string (Debug.toString value)
             in
-            ( [ "{ icon = " ++ Debug.toString (Maybe.map Tuple.first maybeIcon)
-              , ", label = text " ++ valueStr
-              , ", value = " ++ valueStr
-              , ", idString = String.toLower " ++ valueStr
-              , ", attributes = []"
-              , ", tabTooltip = "
-                    ++ (if tooltips then
-                            ("\n\t\t[ Tooltip.plaintext " ++ valueStr)
-                                ++ ("\n\t\t, Tooltip.onToggle (OpenTooltip " ++ valueStr ++ ")")
-                                ++ ("\n\t\t, Tooltip.open (openTooltip == Just " ++ valueStr ++ ")")
-                                ++ "\n\t\t]"
+            ( [ ( "icon", Code.maybe (Maybe.map Tuple.first maybeIcon) )
+              , ( "label", "text " ++ valueStr )
+              , ( "content", "text " ++ valueStr )
+              , ( "value", valueStr )
+              , ( "idString", "String.toLower " ++ valueStr )
+              , ( "attributes", Code.list [] )
+              , ( "tabTooltip"
+                , if tooltips then
+                    Code.listMultiline
+                        [ "Tooltip.plaintext " ++ valueStr
+                        , "Tooltip.onToggle OpenTooltip -- generally, you'll want to support more than 1 tooltip type"
+                        , "Tooltip.open True -- pass the actual tooltip state"
+                        ]
+                        4
 
-                        else
-                            "[]"
-                       )
-              , ", content = text \"...\""
-              , "}"
+                  else
+                    Code.list []
+                )
               ]
-                |> String.join "\n\t  "
             , { icon = Maybe.map Tuple.second maybeIcon
               , label = Html.text label
               , value = value
