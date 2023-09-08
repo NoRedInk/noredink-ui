@@ -371,7 +371,7 @@ viewResults state =
             ]
             [ [ Code.varWithType "color" "Css.Color" <|
                     ("Css.rgb " ++ String.fromFloat red ++ " " ++ String.fromFloat green ++ " " ++ String.fromFloat blue)
-              , "\n\n\n"
+              , Code.newlines
               , "renderedSvg : Svg\n"
               , "renderedSvg =\n"
               , "   " ++ state.renderSvgCode (Tuple.first state.icon) ++ "\n"

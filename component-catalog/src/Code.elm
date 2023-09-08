@@ -279,7 +279,7 @@ type_ name value =
 {-| -}
 var : String -> Int -> String -> String
 var varName indent body =
-    varName ++ " =" ++ newlineWithIndent indent ++ body
+    varName ++ " =" ++ newlineWithIndent indent ++ body ++ "\n"
 
 
 apply : List String -> String
