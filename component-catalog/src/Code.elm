@@ -93,7 +93,10 @@ structure open close items =
         monolineStructure =
             structureSingleline open close items
     in
-    if String.length monolineStructure > 80 then
+    if List.length items == 0 then
+        open ++ close
+
+    else if String.length monolineStructure > 80 then
         structureMultiline open close items 1
 
     else
@@ -111,9 +114,13 @@ structureMultiline open close items indent =
         indents =
             newlineWithIndent indent
     in
-    (indents ++ open ++ " ")
-        ++ String.join (indents ++ ", ") items
-        ++ (indents ++ "" ++ close)
+    if List.length items == 0 then
+        indents ++ open ++ close
+
+    else
+        (indents ++ open ++ " ")
+            ++ String.join (indents ++ ", ") items
+            ++ (indents ++ "" ++ close)
 
 
 {-| -}
