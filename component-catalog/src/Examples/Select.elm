@@ -74,12 +74,9 @@ example =
                     \_ ->
                         [ { sectionName = "Example"
                           , code =
-                                "Select.view \""
-                                    ++ label
-                                    ++ "\""
-                                    ++ "\n    [ "
-                                    ++ String.join "\n    , " attributesCode
-                                    ++ "\n    ] "
+                                Code.fromModule moduleName "view "
+                                    ++ Code.string label
+                                    ++ Code.listMultiline attributesCode 1
                           }
                         ]
                 }
@@ -380,8 +377,7 @@ initChoices =
 
         toChoice : List Choosable -> ( String, List (Select.Choice Choosable) )
         toChoice choosables =
-            ( """Select.choices
-        choosableToLabel
+            ( """Select.choices choosableToLabel
         [ """
                 ++ String.join "\n        , " (List.map toOptionString choosables)
                 ++ "\n        ]"
@@ -403,8 +399,7 @@ initChoices =
         , ( "81 Kg 2020 Olympic Weightlifters", toValue all81kg2020OlympicWeightlifters )
         , ( "Grouped Things"
           , Control.value <|
-                ( """Select.groupedChoices
-        choosableToLabel
+                ( """Select.groupedChoices choosableToLabel
         [ { label = \""""
                     ++ texMexLabel
                     ++ "\"\n          , choices = \n              "
@@ -418,8 +413,7 @@ initChoices =
                     ++ """
           }
         ]
-        , Select.choices
-            choosableToLabel
+        , Select.choices choosableToLabel
             [ """
                     ++ toOptionString TragicSingleton
                     ++ """ ]"""
