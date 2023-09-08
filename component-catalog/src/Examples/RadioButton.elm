@@ -137,7 +137,9 @@ view ellieLinkConfig state =
         , settings = state.selectionSettings
         , mainType = Nothing
         , extraCode =
-            [ "type Animals = Dogs | Cats\n"
+            [ Code.newlines
+            , Code.unionType "Animals" [ "Dogs", "Cats" ]
+            , Code.newlines
             , "toString : Animals -> String"
             , "toString animals ="
                 ++ Code.caseExpression "animals"
