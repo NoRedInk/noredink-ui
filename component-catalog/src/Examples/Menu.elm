@@ -148,7 +148,11 @@ view ellieLinkConfig state =
             , "import Nri.Ui.ClickableSvg.V2 as ClickableSvg"
             , "import Nri.Ui.ClickableText.V3 as ClickableText"
             , "import Nri.Ui.Tooltip.V3 as Tooltip"
-            , "\ntype Msg = ToggleMenu { focus : Maybe String, isOpen : Bool } | ToggleTooltip Bool"
+            , Code.newlines
+            , Code.unionType "Msg"
+                [ "ToggleMenu { focus : Maybe String, isOpen : Bool }"
+                , "ToggleTooltip Bool"
+                ]
             ]
         , renderExample = Code.unstyledView
         , toExampleCode =
@@ -156,8 +160,7 @@ view ellieLinkConfig state =
                 let
                     code : String
                     code =
-                        moduleName
-                            ++ ".view ToggleMenu"
+                        Code.fromModule moduleName "view ToggleMenu"
                             ++ Code.listMultiline
                                 ((if (Control.currentValue state.settings).withTooltip then
                                     [ Code.fromModule "Menu" "withTooltip"
