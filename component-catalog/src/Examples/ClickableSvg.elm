@@ -73,14 +73,12 @@ example =
                     \{ label, icon, attributes } ->
                         let
                             toCode fName =
-                                moduleName
-                                    ++ "."
-                                    ++ fName
-                                    ++ " \""
-                                    ++ label
-                                    ++ "\"\n\t"
+                                Code.fromModule moduleName fName
+                                    ++ " "
+                                    ++ Code.string label
+                                    ++ Code.newlineWithIndent 1
                                     ++ Tuple.first icon
-                                    ++ Code.list (List.map Tuple.first attributes)
+                                    ++ Code.listMultiline (List.map Tuple.first attributes) 1
                         in
                         [ { sectionName = "Button"
                           , code = toCode "button"
