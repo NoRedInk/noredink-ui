@@ -78,6 +78,7 @@ example =
                     , Code.unionType "Msg"
                         [ "FocusAndSelectPage { focus : Maybe String, select : String }"
                         , "OpenTooltip Bool"
+                        , "SelectRadio Int"
                         ]
                     ]
                 , renderExample = Code.unstyledView
@@ -99,15 +100,17 @@ example =
                           }
                         , { sectionName = "viewRadioGroup"
                           , code =
-                                [ moduleName ++ ".viewRadioGroup"
-                                , "    { onSelect = SelectRadio"
-                                , "    , options = " ++ Code.list (List.map Tuple.first radioOptions)
-                                , "    , selected = " ++ Debug.toString state.optionallySelected
-                                , "    , positioning = " ++ Tuple.first options.positioning
-                                , "    , legend = \"SegmentedControls 'viewSelectRadio' example\""
-                                , "    }"
+                                [ Code.fromModule moduleName "viewRadioGroup"
+                                , Code.recordMultiline
+                                    [ ( "onSelect", "SelectRadio" )
+                                    , ( "options", Code.listOfRecordsMultiline (List.map Tuple.first radioOptions) 2 )
+                                    , ( "selected", Debug.toString state.optionallySelected )
+                                    , ( "positioning", Tuple.first options.positioning )
+                                    , ( "legend", Code.string "SegmentedControls 'viewSelectRadio' example" )
+                                    ]
+                                    1
                                 ]
-                                    |> String.join "\n"
+                                    |> String.join ""
                           }
                         ]
                 }
@@ -273,10 +276,9 @@ buildOptions { content, longContent, tooltips } openTooltip =
     ]
 
 
-buildRadioOptions : { options | tooltips : Bool } -> Maybe Int -> Content -> List ( String, SegmentedControl.Radio Int Msg )
+buildRadioOptions : { options | tooltips : Bool } -> Maybe Int -> Content -> List ( List ( String, String ), SegmentedControl.Radio Int Msg )
 buildRadioOptions options currentlyHovered content =
     let
-        buildOption : Int -> ( String, Svg ) -> ( String, SegmentedControl.Radio Int Msg )
         buildOption value ( text, icon ) =
             let
                 ( icon_, label ) =
@@ -284,25 +286,25 @@ buildRadioOptions options currentlyHovered content =
                         icon
                         ("Source " ++ Debug.toString (value + 1))
             in
-            ( [ "{ icon = " ++ Debug.toString (Maybe.map (\_ -> "UiIcon." ++ toLower label) icon_)
-              , ", label = Html.text " ++ label
-              , ", value = " ++ String.fromInt value
-              , ", idString = String.fromInt " ++ String.fromInt value
-              , ", tooltip = "
-                    ++ (if options.tooltips then
-                            ("\n\t\t[ Tooltip.plaintext " ++ String.fromInt value)
-                                ++ ("\n\t\t, Tooltip.onToggle (OpenTooltip " ++ String.fromInt value ++ ")")
-                                ++ ("\n\t\t, Tooltip.open (openTooltip == Just " ++ String.fromInt value ++ ")")
-                                ++ "\n\t\t]"
+            ( [ ( "icon", Code.maybe (Maybe.map Tuple.first icon_) )
+              , ( "label", "text " ++ Code.string label )
+              , ( "value", String.fromInt value )
+              , ( "idString", Code.string (String.fromInt value) )
+              , ( "tooltip"
+                , if options.tooltips then
+                    Code.listMultiline
+                        [ "Tooltip.plaintext " ++ Code.string (String.fromInt value)
+                        , "Tooltip.onToggle OpenTooltip -- generally, you'll want to support more than 1 tooltip type"
+                        , "Tooltip.open True -- pass the actual tooltip state"
+                        ]
+                        4
 
-                        else
-                            "[]"
-                       )
-              , ", attributes = []"
-              , "}"
+                  else
+                    Code.list []
+                )
+              , ( "attributes", Code.list [] )
               ]
-                |> String.join "\n\t  "
-            , { icon = icon_
+            , { icon = Maybe.map Tuple.second icon_
               , label = Html.text label
               , value = value
               , idString = String.fromInt value
@@ -331,14 +333,14 @@ buildRadioOptions options currentlyHovered content =
             )
     in
     List.indexedMap buildOption
-        [ ( "Leaderboard", UiIcon.leaderboard )
-        , ( "Person", UiIcon.person )
-        , ( "Performance", UiIcon.performance )
-        , ( "Gift", UiIcon.gift )
-        , ( "Document", UiIcon.document )
-        , ( "Key", UiIcon.key )
-        , ( "Badge", UiIcon.badge )
-        , ( "Hat", UiIcon.hat )
+        [ ( "Leaderboard", ( "UiIcon.leaderboard", UiIcon.leaderboard ) )
+        , ( "Person", ( "UiIcon.person", UiIcon.person ) )
+        , ( "Performance", ( "UiIcon.performance", UiIcon.performance ) )
+        , ( "Gift", ( "UiIcon.gift", UiIcon.gift ) )
+        , ( "Document", ( "UiIcon.document", UiIcon.document ) )
+        , ( "Key", ( "UiIcon.key", UiIcon.key ) )
+        , ( "Badge", ( "UiIcon.badge", UiIcon.badge ) )
+        , ( "Hat", ( "UiIcon.hat", UiIcon.hat ) )
         ]
 
 
