@@ -179,13 +179,13 @@ example =
                     \settings ->
                         let
                             toCode maybeSize =
-                                "Message.view\n\t[ "
-                                    ++ (maybeSize
+                                Code.fromModule moduleName "view"
+                                    ++ Code.listMultiline
+                                        (maybeSize
                                             :: List.map (Tuple.first >> Just) settings
                                             |> List.filterMap identity
-                                            |> String.join "\n\t, "
-                                       )
-                                    ++ "\n\t]"
+                                        )
+                                        1
                         in
                         [ { sectionName = "Tiny"
                           , code = toCode Nothing
