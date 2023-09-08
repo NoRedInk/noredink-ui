@@ -7,6 +7,7 @@ module Code exposing
     , tuple
     , pipelineMultiline
     , record, recordMultiline
+    , listOfRecordsMultiline
     , newlineWithIndent, newlines
     , withParens, withParensMultiline
     , anonymousFunction, always
@@ -28,6 +29,7 @@ module Code exposing
 @docs tuple
 @docs pipelineMultiline
 @docs record, recordMultiline
+@docs listOfRecordsMultiline
 @docs newlineWithIndent, newlines
 @docs withParens, withParensMultiline
 @docs anonymousFunction, always
@@ -110,17 +112,22 @@ structureSingleline open close items =
 
 structureMultiline : String -> String -> List String -> Int -> String
 structureMultiline open close items indent =
+    newlineWithIndent indent ++ structureMultilineFlat open close items indent
+
+
+structureMultilineFlat : String -> String -> List String -> Int -> String
+structureMultilineFlat open close items indent =
     let
         indents =
             newlineWithIndent indent
     in
     if List.length items == 0 then
-        indents ++ open ++ close
+        open ++ close
 
     else
-        (indents ++ open ++ " ")
+        (open ++ " ")
             ++ String.join (indents ++ ", ") items
-            ++ (indents ++ "" ++ close)
+            ++ (indents ++ close)
 
 
 {-| -}
@@ -156,6 +163,33 @@ record =
 recordMultiline : List ( String, String ) -> Int -> String
 recordMultiline items =
     structureMultiline "{" "}" (recordValues items)
+
+
+{-| -}
+recordMultilineFlat : List ( String, String ) -> Int -> String
+recordMultilineFlat items =
+    structureMultilineFlat "{" "}" (recordValues items)
+
+
+{-| -}
+listOfRecordsMultiline : List (List ( String, String )) -> Int -> String
+listOfRecordsMultiline records indent =
+    let
+        indents =
+            newlineWithIndent indent
+
+        items =
+            List.map
+                (\record_ -> "  " ++ recordMultilineFlat record_ (indent + 1))
+                records
+    in
+    if List.length records == 0 then
+        "[]"
+
+    else
+        (indents ++ "[ ")
+            ++ String.join (indents ++ ", ") items
+            ++ (indents ++ "]")
 
 
 {-| -}

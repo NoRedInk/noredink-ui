@@ -379,7 +379,7 @@ viewCustomizableWithPreviousAndNextControls settings selected =
         [ Code.fromModule moduleName "viewWithPreviousAndNextControls"
             ++ Code.recordMultiline
                 [ ( "selected", Code.int selected )
-                , ( "slides", Code.listMultiline (List.map Tuple.first allItems) 3 )
+                , ( "slides", Code.listOfRecordsMultiline (List.map Tuple.first allItems) 2 )
                 , ( "previousButton"
                   , Code.recordMultiline
                         [ ( "name", Code.string "Previous" )
@@ -440,7 +440,7 @@ viewCustomizableWithCombinedControls settings selected =
         [ Code.fromModule moduleName "viewWithCombinedControls"
             ++ Code.record
                 [ ( "selected", Code.int selected )
-                , ( "slides", Code.listMultiline (List.map Tuple.first allItems) 2 )
+                , ( "slides", Code.listOfRecordsMultiline (List.map Tuple.first allItems) 2 )
                 , ( "tabStyles", "(\\_ -> [])" )
                 , ( "tabListStyles", Code.list [] )
                 , ( "previousButton"
@@ -505,7 +505,7 @@ viewCustomizableWithTabControls settings selected =
         [ Code.fromModule moduleName "viewWithTabControls"
             ++ Code.record
                 [ ( "selected", Code.int selected )
-                , ( "slides", Code.listMultiline (List.map Tuple.first allItems) 2 )
+                , ( "slides", Code.listOfRecordsMultiline (List.map Tuple.first allItems) 2 )
                 , ( "tabStyles", "(\\_ -> [])" )
                 , ( "tabListStyles", Code.list [] )
                 , ( "role", Tuple.first settings.role )
@@ -532,7 +532,7 @@ indicesForItemCount itemCount =
 toNonTabbedCarouselItem :
     Int
     ->
-        ( String
+        ( List ( String, String )
         , { id : Int
           , idString : String
           , name : String
@@ -548,14 +548,12 @@ toNonTabbedCarouselItem id =
         humanizedId =
             String.fromInt (id + 1)
     in
-    ( Code.recordMultiline
-        [ ( "id", Code.int id )
-        , ( "idString", Code.string (String.fromInt id) )
-        , ( "name", Code.string ("Slide " ++ humanizedId) )
-        , ( "visibleLabelId", Code.maybe Nothing )
-        , ( "slideView", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
-        ]
-        4
+    ( [ ( "id", Code.int id )
+      , ( "idString", Code.string (String.fromInt id) )
+      , ( "name", Code.string ("Slide " ++ humanizedId) )
+      , ( "visibleLabelId", Code.maybe Nothing )
+      , ( "slideView", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
+      ]
     , { id = id
       , idString = idString
       , name = "Slide " ++ humanizedId
@@ -568,7 +566,7 @@ toNonTabbedCarouselItem id =
 toTabbedCarouselItem :
     Int
     ->
-        ( String
+        ( List ( String, String )
         , { id : Int
           , idString : String
           , slideView : Html msg
@@ -584,14 +582,12 @@ toTabbedCarouselItem id =
         humanizedId =
             String.fromInt (id + 1)
     in
-    ( Code.recordMultiline
-        [ ( "id", Code.int id )
-        , ( "idString", Code.string (String.fromInt id) )
-        , ( "slideView", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
-        , ( "tabView", "Html.text " ++ Code.string ("Slide " ++ humanizedId) )
-        , ( "tabAttributes", Code.list [] )
-        ]
-        3
+    ( [ ( "id", Code.int id )
+      , ( "idString", Code.string (String.fromInt id) )
+      , ( "slideView", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
+      , ( "tabView", "Html.text " ++ Code.string ("Slide " ++ humanizedId) )
+      , ( "tabAttributes", Code.list [] )
+      ]
     , { id = id
       , idString = idString
       , slideView = Html.text ("Contents for slide " ++ humanizedId)
@@ -604,7 +600,7 @@ toTabbedCarouselItem id =
 toCombinedCarouselItem :
     Int
     ->
-        ( String
+        ( List ( String, String )
         , { id : Int
           , idString : String
           , name : String
@@ -622,16 +618,14 @@ toCombinedCarouselItem id =
         humanizedId =
             String.fromInt (id + 1)
     in
-    ( Code.recordMultiline
-        [ ( "id", Code.int id )
-        , ( "idString", Code.string (String.fromInt id) )
-        , ( "name", Code.string ("Slide " ++ humanizedId) )
-        , ( "visibleLabelId", Code.maybe Nothing )
-        , ( "slideView", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
-        , ( "tabView", "Html.text " ++ Code.string ("Slide " ++ humanizedId) )
-        , ( "tabAttributes", Code.list [] )
-        ]
-        3
+    ( [ ( "id", Code.int id )
+      , ( "idString", Code.string (String.fromInt id) )
+      , ( "name", Code.string ("Slide " ++ humanizedId) )
+      , ( "visibleLabelId", Code.maybe Nothing )
+      , ( "slideView", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
+      , ( "tabView", "Html.text " ++ Code.string ("Slide " ++ humanizedId) )
+      , ( "tabAttributes", Code.list [] )
+      ]
     , { id = id
       , idString = idString
       , name = "Slide " ++ humanizedId
