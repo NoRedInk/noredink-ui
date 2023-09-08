@@ -289,9 +289,7 @@ viewButtonExamples ellieLinkConfig state =
             \{ label, attributes } ->
                 let
                     toCode fName =
-                        moduleName
-                            ++ "."
-                            ++ fName
+                        Code.fromModule moduleName fName
                             ++ " "
                             ++ Code.string label
                             ++ Code.listMultiline (List.map Tuple.first attributes) 1
