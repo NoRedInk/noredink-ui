@@ -76,20 +76,55 @@ example =
                 , version = version
                 , update = UpdateControls
                 , settings = state.settings
-                , mainType = Nothing
+                , mainType = Just "Program () (Highlighter.Model ()) (Highlighter.Msg ())"
                 , extraCode =
-                    [ "import Nri.Ui.Highlightable.V3 as Highlightable"
+                    [ "import Browser"
+                    , "import Nri.Ui.Highlightable.V3 as Highlightable"
                     , "import Nri.Ui.HighlighterTool.V1 as Tool"
+                    , "import Sort"
                     ]
-                , renderExample = Code.unstyledView
+                , renderExample = identity
                 , toExampleCode =
                     \_ ->
                         [ { sectionName = "Code"
                           , code =
-                                -- view
-                                Tuple.first (view state)
+                                Code.browserElement
+                                    { init =
+                                        Code.always
+                                            (Code.tuple
+                                                "init"
+                                                "Cmd.none"
+                                            )
+                                    , update =
+                                        Code.newlineWithIndent 2
+                                            ++ Code.anonymousFunction
+                                                "msg model"
+                                                (Code.pipelineMultiline
+                                                    [ Code.fromModule moduleName "update msg model"
+                                                    , Code.anonymousFunction "(newModel, cmd, intent)" <|
+                                                        Code.tuple "newModel" "cmd"
+                                                    ]
+                                                    3
+                                                )
+                                    , view = "view >> toUnstyled"
+                                    , subscriptions =
+                                        Code.newlineWithIndent 2
+                                            ++ Code.anonymousFunction "model"
+                                                (Code.newlineWithIndent 3
+                                                    ++ " -- for the highlighter to work correctly for touch users,"
+                                                    ++ Code.newlineWithIndent 3
+                                                    ++ "-- you will need to wire up subscriptions."
+                                                    ++ Code.newlineWithIndent 3
+                                                    ++ "-- See the Highlighter example source code."
+                                                    ++ Code.newlineWithIndent 3
+                                                    ++ "Sub.none "
+                                                )
+                                    }
                                     ++ Code.newlines
-                                    ++ -- model
+                                    ++ -- view
+                                       Tuple.first (view state)
+                                    ++ Code.newlines
+                                    ++ -- init
                                        (initHighlighter (Control.currentValue state.settings) state.highlighter.highlightables
                                             |> Tuple.first
                                        )
@@ -458,7 +493,7 @@ initHighlighter settings previousHighlightables =
                         )
                     |> List.indexedMap (\i f -> f i)
                     |> List.unzip
-                    |> Tuple.mapFirst (\c -> Code.listMultiline c 3)
+                    |> Tuple.mapFirst (\c -> Code.listMultiline (List.take 2 c) 3)
 
             else
                 ( "Highlightable.initFragments " ++ Code.string joinedExampleParagraph
@@ -468,13 +503,14 @@ initHighlighter settings previousHighlightables =
         joinedExampleParagraph =
             String.join " " exampleParagraph
     in
-    ( Code.var "model" 1 <|
+    ( Code.var "init" 1 <|
         Code.fromModule moduleName "init"
             ++ Code.recordMultiline
                 [ ( "id", Code.string "example-romeo-and-juliet" )
                 , ( "highlightables", Tuple.first highlightables )
                 , ( "marker", Code.newlineWithIndent 3 ++ Tuple.first settings.tool )
                 , ( "joinAdjacentInteractiveHighlights", Code.bool settings.joinAdjacentInteractiveHighlights )
+                , ( "sorter", "Sort.custom (\\() () -> EQ)" )
                 ]
                 2
     , Highlighter.init
@@ -526,7 +562,7 @@ controlSettings =
             )
         |> Control.field "tool"
             (Control.choice
-                [ ( "Marker", Control.map (\( c, v ) -> ( "Tool.Marker" ++ c, Tool.Marker v )) controlMarker )
+                [ ( "Marker", Control.map (\( c, v ) -> ( "Tool.Marker" ++ Code.withParensMultiline c 4, Tool.Marker v )) controlMarker )
                 , ( "Eraser", Control.value ( "Tool.Eraser Tool.buildEraser", Tool.Eraser Tool.buildEraser ) )
                 ]
             )
@@ -544,7 +580,7 @@ controlMarker =
                     , ( "kind", "()" )
                     , ( "name", Code.maybeString d )
                     ]
-                    4
+                    5
             , Tool.buildMarker
                 { highlightColor = Tuple.second a
                 , hoverColor = Tuple.second b
@@ -688,12 +724,7 @@ perform (Highlighter.Intent intent) =
 
 sorter : Sorter ()
 sorter =
-    Sort.custom
-        (\a b ->
-            case ( a, b ) of
-                ( (), () ) ->
-                    EQ
-        )
+    Sort.custom (\() () -> EQ)
 
 
 
