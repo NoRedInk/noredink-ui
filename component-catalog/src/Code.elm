@@ -56,8 +56,8 @@ stringMultiline : String -> String
 stringMultiline s =
     newlineWithIndent 1
         ++ "\"\"\""
-        ++ String.replace "\n" (newlineWithIndent 1) s
-        ++ newlineWithIndent 1
+        ++ String.replace "\n" (newlineWithIndent 0) s
+        ++ newlineWithIndent 0
         ++ "\"\"\""
 
 
