@@ -85,8 +85,8 @@ example =
                 , version = version
                 , update = UpdateControls
                 , settings = model.settings
-                , mainType = Nothing
-                , extraCode = []
+                , mainType = Just "RootHtml.Html Msg"
+                , extraCode = [ Code.unionType "Msg" [ "SelectPage Int" ] ]
                 , renderExample = Code.unstyledView
                 , toExampleCode =
                     \_ ->
