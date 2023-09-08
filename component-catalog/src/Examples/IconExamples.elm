@@ -372,23 +372,27 @@ viewResults state =
             [ [ Code.varWithType "color" "Css.Color" <|
                     ("Css.rgb " ++ String.fromFloat red ++ " " ++ String.fromFloat green ++ " " ++ String.fromFloat blue)
               , Code.newlines
-              , "renderedSvg : Svg\n"
-              , "renderedSvg =\n"
-              , "   " ++ state.renderSvgCode (Tuple.first state.icon) ++ "\n"
-              , "       |> Svg.withColor color\n"
-              , "       |> Svg.withWidth (Css.px " ++ String.fromFloat state.width ++ ")\n"
-              , "       |> Svg.withHeight (Css.px " ++ String.fromFloat state.height ++ ")\n"
-              , if state.showBorder then
-                    "       |> Svg.withCss [ Css.border3 (Css.px 1) Css.solid Colors.gray20 ]\n"
+              , Code.varWithType "renderedSvg" "Svg" <|
+                    Code.pipelineMultiline
+                        ([ Just <| state.renderSvgCode (Tuple.first state.icon)
+                         , Just "Svg.withColor color"
+                         , Just <| "Svg.withWidth (Css.px " ++ String.fromFloat state.width ++ ")"
+                         , Just <| "Svg.withHeight (Css.px " ++ String.fromFloat state.height ++ ")"
+                         , if state.showBorder then
+                            Just "Svg.withCss [ Css.border3 (Css.px 1) Css.solid Colors.gray20 ]"
 
-                else
-                    ""
-              , if String.isEmpty state.label then
-                    ""
+                           else
+                            Nothing
+                         , if String.isEmpty state.label then
+                            Nothing
 
-                else
-                    "       |> Svg.withLabel \"" ++ state.label ++ "\"\n"
-              , "       |> Svg.toHtml\n"
+                           else
+                            Just ("Svg.withLabel " ++ Code.string state.label)
+                         , Just "Svg.toHtml"
+                         ]
+                            |> List.filterMap identity
+                        )
+                        1
               ]
                 |> String.join ""
                 |> Html.text
