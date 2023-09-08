@@ -13,7 +13,7 @@ module Code exposing
     , caseExpression
     , browserElement, unstyledView
     , fromModule
-    , var
+    , type_, var, varWithType
     , apply
     , int
     )
@@ -35,7 +35,7 @@ module Code exposing
 @docs browserElement, unstyledView
 @docs always
 @docs fromModule
-@docs var
+@docs type_, var, varWithType
 @docs apply
 
 -}
@@ -175,7 +175,12 @@ newlines =
 
 newlineWithIndent : Int -> String
 newlineWithIndent indent =
-    "\n" ++ String.repeat indent "    "
+    "\n" ++ String.repeat indent tab
+
+
+tab : String
+tab =
+    "    "
 
 
 {-| -}
@@ -248,6 +253,27 @@ unstyledView view =
 fromModule : String -> String -> String
 fromModule moduleName name =
     moduleName ++ "." ++ name
+
+
+{-| -}
+varWithType : String -> String -> String -> String
+varWithType name typeValue body =
+    varWithTypeMultiline name typeValue body 0
+
+
+{-| -}
+varWithTypeMultiline : String -> String -> String -> Int -> String
+varWithTypeMultiline name typeValue body indent =
+    String.repeat indent tab
+        ++ type_ name typeValue
+        ++ newlineWithIndent indent
+        ++ var name (indent + 1) body
+
+
+{-| -}
+type_ : String -> String -> String
+type_ name value =
+    name ++ " : " ++ value
 
 
 {-| -}

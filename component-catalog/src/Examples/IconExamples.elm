@@ -15,6 +15,7 @@ module Examples.IconExamples exposing
 -}
 
 import Category exposing (Category(..))
+import Code
 import Css
 import Css.Global
 import Example exposing (Example)
@@ -368,9 +369,8 @@ viewResults state =
                 , Css.marginRight (Css.px 20)
                 ]
             ]
-            [ [ "color : Css.Color\n"
-              , "color =\n"
-              , "    Css.rgb " ++ String.fromFloat red ++ " " ++ String.fromFloat green ++ " " ++ String.fromFloat blue
+            [ [ Code.varWithType "color" "Css.Color" <|
+                    ("Css.rgb " ++ String.fromFloat red ++ " " ++ String.fromFloat green ++ " " ++ String.fromFloat blue)
               , "\n\n\n"
               , "renderedSvg : Svg\n"
               , "renderedSvg =\n"
