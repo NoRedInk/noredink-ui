@@ -274,7 +274,18 @@ view ellieLinkConfig state =
         , update = SetSelectionSettings
         , settings = state.selectionSettings
         , mainType = Nothing
-        , extraCode = []
+        , extraCode =
+            [ Code.newlines
+            , Code.unionType "Animals" [ "Dogs", "Cats" ]
+            , Code.newlines
+            , "toString : Animals -> String"
+            , "toString animals ="
+                ++ Code.caseExpression "animals"
+                    [ ( "Dogs", Code.string selectionSettings.dogsLabel )
+                    , ( "Cats", Code.string selectionSettings.catsLabel )
+                    ]
+                    1
+            ]
         , renderExample = Code.unstyledView
         , toExampleCode =
             \_ ->
