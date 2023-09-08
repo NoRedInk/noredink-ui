@@ -263,8 +263,15 @@ example =
                 , version = version
                 , update = SetSettings
                 , settings = model.settings
-                , mainType = Just "RootHtml.Html { select : Int, focus : Maybe String }"
-                , extraCode = []
+                , mainType = Nothing
+                , extraCode =
+                    [ Code.newlines
+                    , Code.unionType "Msg"
+                        [ "AnnounceAndSelect { select : Int, announce : String }"
+                        , "FocusAndSelect { select : Int, focus : Maybe String }"
+                        , "FocusSelectAndAnnounce { select : Int, focus : Maybe String, announce : Maybe String }"
+                        ]
+                    ]
                 , renderExample = Code.unstyledView
                 , toExampleCode =
                     \_ ->
@@ -379,7 +386,7 @@ viewCustomizableWithPreviousAndNextControls settings selected =
         [ Code.fromModule moduleName "viewWithPreviousAndNextControls"
             ++ Code.recordMultiline
                 [ ( "selected", Code.int selected )
-                , ( "slides", Code.listOfRecordsMultiline (List.map Tuple.first allItems) 2 )
+                , ( "slides", Code.listOfRecordsMultiline (List.take 2 <| List.map Tuple.first allItems) 2 )
                 , ( "previousButton"
                   , Code.recordMultiline
                         [ ( "name", Code.string "Previous" )
@@ -402,7 +409,7 @@ viewCustomizableWithPreviousAndNextControls settings selected =
                 , ( "announceAndSelect", "AnnounceAndSelect" )
                 ]
                 1
-        , Code.anonymousFunction "{ viewPreviousButton, viewNextButton, slides, containerAttributes }"
+        , Code.anonymousFunction "{viewPreviousButton, viewNextButton, slides, containerAttributes}"
             (Code.newlineWithIndent 2
                 ++ "section containerAttributes [ slides, viewPreviousButton, viewNextButton ]"
             )
@@ -440,8 +447,8 @@ viewCustomizableWithCombinedControls settings selected =
         [ Code.fromModule moduleName "viewWithCombinedControls"
             ++ Code.record
                 [ ( "selected", Code.int selected )
-                , ( "slides", Code.listOfRecordsMultiline (List.map Tuple.first allItems) 2 )
-                , ( "tabStyles", "(\\_ -> [])" )
+                , ( "slides", Code.listOfRecordsMultiline (List.take 2 <| List.map Tuple.first allItems) 2 )
+                , ( "tabStyles", Code.anonymousFunction "_" (Code.list []) )
                 , ( "tabListStyles", Code.list [] )
                 , ( "previousButton"
                   , Code.recordMultiline
@@ -462,12 +469,11 @@ viewCustomizableWithCombinedControls settings selected =
                 , ( "role", Tuple.first settings.role )
                 , ( "name", Code.string "Items" )
                 , ( "visibleLabelId", Code.maybe Nothing )
-                , ( "focusAndSelect", "FocusAndSelect" )
-                , ( "announceAndSelect", "AnnounceAndSelect" )
+                , ( "select", "FocusSelectAndAnnounce" )
                 ]
-        , Code.anonymousFunction "{ tabs, slides, viewPreviousButton, viewNextButton, containerAttributes }"
+        , Code.anonymousFunction "{tabs, slides, viewPreviousButton, viewNextButton, containerAttributes}"
             (Code.newlineWithIndent 2
-                ++ "section containerAttributes [ slides, tabs, viewPreviousButton, viewNextButton  ]"
+                ++ "section containerAttributes [slides, tabs, viewPreviousButton, viewNextButton]"
             )
         ]
         0
@@ -505,14 +511,13 @@ viewCustomizableWithTabControls settings selected =
         [ Code.fromModule moduleName "viewWithTabControls"
             ++ Code.record
                 [ ( "selected", Code.int selected )
-                , ( "slides", Code.listOfRecordsMultiline (List.map Tuple.first allItems) 2 )
+                , ( "slides", Code.listOfRecordsMultiline (List.take 2 <| List.map Tuple.first allItems) 2 )
                 , ( "tabStyles", "(\\_ -> [])" )
                 , ( "tabListStyles", Code.list [] )
                 , ( "role", Tuple.first settings.role )
                 , ( "name", Code.string "Items" )
                 , ( "visibleLabelId", Code.maybe Nothing )
                 , ( "focusAndSelect", "FocusAndSelect" )
-                , ( "announceAndSelect", "AnnounceAndSelect" )
                 ]
         , Code.anonymousFunction "{ tabs, slides, containerAttributes }"
             (Code.newlineWithIndent 2
@@ -552,7 +557,7 @@ toNonTabbedCarouselItem id =
       , ( "idString", Code.string (String.fromInt id) )
       , ( "name", Code.string ("Slide " ++ humanizedId) )
       , ( "visibleLabelId", Code.maybe Nothing )
-      , ( "slideView", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
+      , ( "slideView", "text " ++ Code.string ("Contents for slide " ++ humanizedId) )
       ]
     , { id = id
       , idString = idString
@@ -584,8 +589,8 @@ toTabbedCarouselItem id =
     in
     ( [ ( "id", Code.int id )
       , ( "idString", Code.string (String.fromInt id) )
-      , ( "slideView", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
-      , ( "tabView", "Html.text " ++ Code.string ("Slide " ++ humanizedId) )
+      , ( "slideView", "text " ++ Code.string ("Contents for slide " ++ humanizedId) )
+      , ( "tabView", "text " ++ Code.string ("Slide " ++ humanizedId) )
       , ( "tabAttributes", Code.list [] )
       ]
     , { id = id
@@ -622,8 +627,8 @@ toCombinedCarouselItem id =
       , ( "idString", Code.string (String.fromInt id) )
       , ( "name", Code.string ("Slide " ++ humanizedId) )
       , ( "visibleLabelId", Code.maybe Nothing )
-      , ( "slideView", "Html.text " ++ Code.string ("Contents for slide " ++ humanizedId) )
-      , ( "tabView", "Html.text " ++ Code.string ("Slide " ++ humanizedId) )
+      , ( "slideView", "text " ++ Code.string ("Contents for slide " ++ humanizedId) )
+      , ( "tabView", "text " ++ Code.string ("Slide " ++ humanizedId) )
       , ( "tabAttributes", Code.list [] )
       ]
     , { id = id

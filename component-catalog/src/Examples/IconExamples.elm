@@ -369,10 +369,10 @@ viewResults state =
                 , Css.marginRight (Css.px 20)
                 ]
             ]
-            [ [ Code.varWithType "color" "Css.Color" <|
+            [ [ Code.varWithTypeAnnotation "color" "Css.Color" <|
                     ("Css.rgb " ++ String.fromFloat red ++ " " ++ String.fromFloat green ++ " " ++ String.fromFloat blue)
               , Code.newlines
-              , Code.varWithType "renderedSvg" "Svg" <|
+              , Code.varWithTypeAnnotation "renderedSvg" "Svg" <|
                     Code.pipelineMultiline
                         ([ Just <| state.renderSvgCode (Tuple.first state.icon)
                          , Just "Svg.withColor color"

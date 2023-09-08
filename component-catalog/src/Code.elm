@@ -14,7 +14,8 @@ module Code exposing
     , caseExpression
     , browserElement, unstyledView
     , fromModule
-    , type_, var, varWithType
+    , typeAnnotation, var, varWithTypeAnnotation
+    , unionType
     , apply
     , int
     )
@@ -37,7 +38,8 @@ module Code exposing
 @docs browserElement, unstyledView
 @docs always
 @docs fromModule
-@docs type_, var, varWithType
+@docs typeAnnotation, var, varWithTypeAnnotation
+@docs unionType
 @docs apply
 
 -}
@@ -290,8 +292,8 @@ fromModule moduleName name =
 
 
 {-| -}
-varWithType : String -> String -> String -> String
-varWithType name typeValue body =
+varWithTypeAnnotation : String -> String -> String -> String
+varWithTypeAnnotation name typeValue body =
     varWithTypeMultiline name typeValue body 0
 
 
@@ -299,14 +301,14 @@ varWithType name typeValue body =
 varWithTypeMultiline : String -> String -> String -> Int -> String
 varWithTypeMultiline name typeValue body indent =
     String.repeat indent tab
-        ++ type_ name typeValue
+        ++ typeAnnotation name typeValue
         ++ newlineWithIndent indent
         ++ var name (indent + 1) body
 
 
 {-| -}
-type_ : String -> String -> String
-type_ name value =
+typeAnnotation : String -> String -> String
+typeAnnotation name value =
     name ++ " : " ++ value
 
 
@@ -319,3 +321,13 @@ var varName indent body =
 apply : List String -> String
 apply =
     String.join " "
+
+
+{-| -}
+unionType : String -> List String -> String
+unionType name constructors =
+    "type "
+        ++ name
+        ++ newlineWithIndent 1
+        ++ "= "
+        ++ String.join (newlineWithIndent 1 ++ "| ") constructors
