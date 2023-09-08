@@ -69,7 +69,11 @@ example =
                 , extraCode =
                     [ "import Browser"
                     , "import Browser.Events"
-                    , "\ntype Msg = ConfettiMsg Confetti.Msg | WindowResized Int Int"
+                    , Code.newlines
+                    , Code.unionType "Msg"
+                        [ "ConfettiMsg Confetti.Msg"
+                        , "WindowResized Int Int"
+                        ]
                     ]
                 , renderExample = identity
                 , toExampleCode =
@@ -84,26 +88,26 @@ example =
                                                 "Cmd.none"
                                             )
                                     , update =
-                                        Code.newlineWithIndent 3
+                                        Code.newlineWithIndent 2
                                             ++ Code.anonymousFunction
                                                 "msg model"
                                                 (Code.caseExpression "msg"
                                                     [ ( "ConfettiMsg confettiMsg", Code.tuple "Confetti.update confettiMsg model" "Cmd.none" )
                                                     , ( "WindowResized width _", Code.tuple "Confetti.updatePageWidth width model" "Cmd.none" )
                                                     ]
-                                                    4
+                                                    3
                                                 )
                                     , view = moduleName ++ ".view >> toUnstyled"
                                     , subscriptions =
-                                        Code.newlineWithIndent 3
+                                        Code.newlineWithIndent 2
                                             ++ Code.anonymousFunction "model"
-                                                (Code.newlineWithIndent 4
+                                                (Code.newlineWithIndent 3
                                                     ++ "Sub.batch "
                                                     ++ Code.listMultiline
                                                         [ "Browser.Events.onResize WindowResized"
                                                         , "Confetti.subscriptions ConfettiMsg model"
                                                         ]
-                                                        5
+                                                        4
                                                 )
                                     }
                           }

@@ -269,13 +269,13 @@ browserElement : { init : String, view : String, update : String, subscriptions 
 browserElement { init, view, update, subscriptions } =
     String.join (newlineWithIndent 1)
         [ "Browser.element"
-        , recordMultiline
+        , recordMultilineFlat
             [ ( "init", init )
             , ( "view", view )
             , ( "update", update )
             , ( "subscriptions", subscriptions )
             ]
-            2
+            1
         ]
 
 
