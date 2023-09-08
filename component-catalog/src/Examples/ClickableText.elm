@@ -163,12 +163,10 @@ viewExamples ellieLinkConfig (State control) =
             \{ label, attributes } ->
                 let
                     toCode fName =
-                        "ClickableText."
-                            ++ fName
-                            ++ " \""
-                            ++ label
-                            ++ "\"\n\t"
-                            ++ Code.list (List.map Tuple.first attributes)
+                        Code.fromModule moduleName fName
+                            ++ " "
+                            ++ Code.string label
+                            ++ Code.listMultiline (List.map Tuple.first attributes) 1
                 in
                 [ { sectionName = "Button"
                   , code = toCode "button"
