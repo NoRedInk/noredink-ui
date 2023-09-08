@@ -19,20 +19,20 @@ import Json.Decode as Decode
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Header.V1 as Header
+import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Html.V3 exposing (viewIf)
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Page.V3 as Page
 import Nri.Ui.SideNav.V5 as SideNav
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Sprite.V1 as Sprite
 import Nri.Ui.UiIcon.V1 as UiIcon
-import Routes
+import Routes exposing (Route)
 import Sort.Set as Set
 import Task
 import Url exposing (Url)
-
-
-type alias Route =
-    Routes.Route Examples.State Examples.Msg
+import UsageExample exposing (UsageExample)
+import UsageExamples
 
 
 type alias Model key =
@@ -40,6 +40,7 @@ type alias Model key =
       route : Route
     , previousRoute : Maybe Route
     , moduleStates : Dict String (Example Examples.State Examples.Msg)
+    , usageExampleStates : Dict String (UsageExample UsageExamples.State UsageExamples.Msg)
     , isSideNavOpen : Bool
     , openTooltip : Maybe TooltipId
     , navigationKey : key
@@ -50,14 +51,19 @@ type alias Model key =
 
 init : () -> Url -> key -> ( Model key, Effect )
 init () url key =
-    let
-        moduleStates =
-            Dict.fromList
-                (List.map (\example -> ( example.name, example )) Examples.all)
-    in
-    ( { route = Routes.fromLocation moduleStates url
+    ( { route = Routes.fromLocation url
       , previousRoute = Nothing
-      , moduleStates = moduleStates
+      , moduleStates =
+            Dict.fromList
+                (List.map
+                    (\example -> ( Example.routeName example, example ))
+                    Examples.all
+                )
+      , usageExampleStates =
+            Dict.fromList
+                (List.map (\example -> ( UsageExample.routeName example, example ))
+                    UsageExamples.all
+                )
       , isSideNavOpen = False
       , openTooltip = Nothing
       , navigationKey = key
@@ -78,6 +84,7 @@ type TooltipId
 
 type Msg
     = UpdateModuleStates String Examples.Msg
+    | UpdateUsageExamples String UsageExamples.Msg
     | OnUrlRequest Browser.UrlRequest
     | OnUrlChange Url
     | ChangeRoute Route
@@ -105,12 +112,28 @@ update action model =
                                 in
                                 { model
                                     | moduleStates = Dict.insert key newExample model.moduleStates
-                                    , route =
-                                        Maybe.withDefault model.route
-                                            (Routes.updateExample newExample model.route)
                                 }
                             )
                         |> Tuple.mapSecond (Cmd.map (UpdateModuleStates key) >> Command)
+
+                Nothing ->
+                    ( model, None )
+
+        UpdateUsageExamples key exampleMsg ->
+            case Dict.get key model.usageExampleStates of
+                Just usageExample ->
+                    usageExample.update exampleMsg usageExample.state
+                        |> Tuple.mapFirst
+                            (\newState ->
+                                let
+                                    newExample =
+                                        { usageExample | state = newState }
+                                in
+                                { model
+                                    | usageExampleStates = Dict.insert key newExample model.usageExampleStates
+                                }
+                            )
+                        |> Tuple.mapSecond (Cmd.map (UpdateUsageExamples key) >> Command)
 
                 Nothing ->
                     ( model, None )
@@ -126,14 +149,14 @@ update action model =
         OnUrlChange location ->
             let
                 route =
-                    Routes.fromLocation model.moduleStates location
+                    Routes.fromLocation location
             in
             ( { model
                 | route = route
                 , previousRoute = Just model.route
                 , isSideNavOpen = False
               }
-            , Maybe.map FocusOn (Routes.headerId route)
+            , Maybe.map FocusOn (Routes.headerId route model.moduleStates model.usageExampleStates)
                 |> Maybe.withDefault None
             )
 
@@ -233,13 +256,32 @@ perform navigationKey effect =
 
 subscriptions : Model key -> Sub Msg
 subscriptions model =
+    let
+        exampleSubs exampleName =
+            case Dict.get exampleName model.moduleStates of
+                Just example ->
+                    Sub.map (UpdateModuleStates exampleName)
+                        (example.subscriptions example.state)
+
+                Nothing ->
+                    Sub.none
+    in
     Sub.batch
         [ case model.route of
-            Routes.Doodad example ->
-                Sub.map (UpdateModuleStates example.name) (example.subscriptions example.state)
+            Routes.Doodad exampleName ->
+                exampleSubs exampleName
 
-            Routes.CategoryDoodad _ example ->
-                Sub.map (UpdateModuleStates example.name) (example.subscriptions example.state)
+            Routes.CategoryDoodad _ exampleName ->
+                exampleSubs exampleName
+
+            Routes.Usage exampleName ->
+                case Dict.get exampleName model.usageExampleStates of
+                    Just example ->
+                        Sub.map (UpdateUsageExamples exampleName)
+                            (example.subscriptions example.state)
+
+                    Nothing ->
+                        Sub.none
 
             _ ->
                 Sub.none
@@ -260,27 +302,48 @@ view model =
                     , Css.Global.body [ Css.margin Css.zero ]
                     ]
                 ]
+
+        exampleDocument exampleName =
+            case Dict.get exampleName model.moduleStates of
+                Just example ->
+                    { title = example.name ++ " in the NoRedInk Component Catalog"
+                    , body = viewExample model example |> toBody
+                    }
+
+                Nothing ->
+                    { title =
+                        "Component example \""
+                            ++ Example.fromRouteName exampleName
+                            ++ "\" was not found in the NoRedInk Component Catalog"
+                    , body = toBody notFound
+                    }
     in
     case model.route of
-        Routes.Doodad example ->
-            { title = example.name ++ " in the NoRedInk Component Catalog"
-            , body = viewExample model example |> toBody
-            }
+        Routes.Doodad exampleName ->
+            exampleDocument exampleName
 
-        Routes.CategoryDoodad _ example ->
-            { title = example.name ++ " in the NoRedInk Component Catalog"
-            , body = viewExample model example |> toBody
-            }
-
-        Routes.NotFound name ->
-            { title = name ++ " was not found in the NoRedInk Component Catalog"
-            , body = toBody notFound
-            }
+        Routes.CategoryDoodad _ exampleName ->
+            exampleDocument exampleName
 
         Routes.Category category ->
             { title = Category.forDisplay category ++ " Category in the NoRedInk Component Catalog"
             , body = toBody (viewCategory model category)
             }
+
+        Routes.Usage exampleName ->
+            case Dict.get exampleName model.usageExampleStates of
+                Just example ->
+                    { title = example.name ++ " Usage Example in the NoRedInk Component Catalog"
+                    , body = viewUsageExample model example |> toBody
+                    }
+
+                Nothing ->
+                    { title =
+                        "Usage example \""
+                            ++ UsageExample.fromRouteName exampleName
+                            ++ "\" was not found in the NoRedInk Component Catalog"
+                    , body = toBody notFound
+                    }
 
         Routes.All ->
             { title = "NoRedInk Component Catalog"
@@ -295,6 +358,13 @@ viewExample model example =
         |> viewLayout model [ Example.extraLinks (UpdateModuleStates example.name) example ]
 
 
+viewUsageExample : Model key -> UsageExample a UsageExamples.Msg -> Html Msg
+viewUsageExample model example =
+    UsageExample.view example
+        |> Html.map (UpdateUsageExamples (UsageExample.routeName example))
+        |> viewLayout model []
+
+
 notFound : Html Msg
 notFound =
     Page.notFound
@@ -306,37 +376,54 @@ notFound =
 viewAll : Model key -> Html Msg
 viewAll model =
     viewLayout model [] <|
-        viewPreviews "all"
+        viewExamplePreviews "all"
             { swallowEvent = SwallowEvent
-            , navigate = Routes.Doodad >> ChangeRoute
-            , exampleHref = Routes.Doodad >> Routes.toString
+            , navigate = Example.routeName >> Routes.Doodad >> ChangeRoute
+            , exampleHref = Example.routeName >> Routes.Doodad >> Routes.toString
+            }
+            { swallowEvent = SwallowEvent
+            , navigate = UsageExample.routeName >> Routes.Usage >> ChangeRoute
+            , exampleHref = UsageExample.routeName >> Routes.Usage >> Routes.toString
             }
             (Dict.values model.moduleStates)
+            (Dict.values model.usageExampleStates)
 
 
 viewCategory : Model key -> Category -> Html Msg
 viewCategory model category =
-    viewLayout model [] <|
-        (model.moduleStates
-            |> Dict.values
-            |> List.filter
-                (\doodad ->
+    let
+        filtered items =
+            List.filter
+                (\item ->
                     Set.memberOf
-                        (Set.fromList Category.sorter doodad.categories)
+                        (Set.fromList Category.sorter item.categories)
                         category
                 )
-            |> viewPreviews (Category.forId category)
-                { swallowEvent = SwallowEvent
-                , navigate = Routes.CategoryDoodad category >> ChangeRoute
-                , exampleHref = Routes.CategoryDoodad category >> Routes.toString
-                }
-        )
+                (Dict.values items)
+    in
+    viewLayout model [] <|
+        viewExamplePreviews (Category.forId category)
+            { swallowEvent = SwallowEvent
+            , navigate = Example.routeName >> Routes.CategoryDoodad category >> ChangeRoute
+            , exampleHref = Example.routeName >> Routes.CategoryDoodad category >> Routes.toString
+            }
+            { swallowEvent = SwallowEvent
+            , navigate = UsageExample.routeName >> Routes.Usage >> ChangeRoute
+            , exampleHref = UsageExample.routeName >> Routes.Usage >> Routes.toString
+            }
+            (filtered model.moduleStates)
+            (filtered model.usageExampleStates)
 
 
-viewLayout : Model key -> List (Header.Attribute (Routes.Route Examples.State Examples.Msg) Msg) -> Html Msg -> Html Msg
+viewLayout : Model key -> List (Header.Attribute Route Msg) -> Html Msg -> Html Msg
 viewLayout model headerExtras content =
     Html.div []
-        [ Html.header [] [ Routes.viewHeader model.route headerExtras ]
+        [ Html.header []
+            [ Routes.viewHeader model.route
+                model.moduleStates
+                model.usageExampleStates
+                headerExtras
+            ]
         , Html.div
             [ css
                 [ displayFlex
@@ -359,27 +446,47 @@ viewLayout model headerExtras content =
         ]
 
 
-viewPreviews :
+viewExamplePreviews :
     String
     ->
         { swallowEvent : Msg
         , navigate : Example Examples.State Examples.Msg -> Msg
         , exampleHref : Example Examples.State Examples.Msg -> String
         }
+    ->
+        { swallowEvent : Msg
+        , navigate : UsageExample UsageExamples.State UsageExamples.Msg -> Msg
+        , exampleHref : UsageExample UsageExamples.State UsageExamples.Msg -> String
+        }
     -> List (Example Examples.State Examples.Msg)
+    -> List (UsageExample UsageExamples.State UsageExamples.Msg)
     -> Html Msg
-viewPreviews containerId navConfig examples =
-    examples
-        |> List.map (Example.preview navConfig)
-        |> Html.div
-            [ id containerId
-            , css
-                [ Css.displayFlex
-                , Css.flexWrap Css.wrap
-                , Css.property "row-gap" (.value Spacing.verticalSpacerPx)
-                , Css.property "column-gap" (.value Spacing.horizontalSpacerPx)
-                ]
+viewExamplePreviews containerId exampleNavConfig usageNavConfig examples usageExamples =
+    Html.div [ id containerId ]
+        [ Heading.h2 [ Heading.plaintext "Components" ]
+        , examplesContainer (List.map (Example.preview exampleNavConfig) examples)
+        , viewIf
+            (\_ ->
+                Heading.h2
+                    [ Heading.plaintext "Usage Examples"
+                    , Heading.css [ Css.marginTop (Css.px 30) ]
+                    ]
+            )
+            (List.length usageExamples > 0)
+        , examplesContainer (List.map (UsageExample.preview usageNavConfig) usageExamples)
+        ]
+
+
+examplesContainer : List (Html msg) -> Html msg
+examplesContainer =
+    Html.div
+        [ css
+            [ Css.displayFlex
+            , Css.flexWrap Css.wrap
+            , Css.property "row-gap" (.value Spacing.verticalSpacerPx)
+            , Css.property "column-gap" (.value Spacing.horizontalSpacerPx)
             ]
+        ]
 
 
 navigation : Model key -> Html Msg
@@ -393,7 +500,8 @@ navigation { moduleStates, route, isSideNavOpen, openTooltip } =
                 |> List.map
                     (\example ->
                         SideNav.entry example.name
-                            [ SideNav.href (Routes.CategoryDoodad category example)
+                            [ SideNav.href
+                                (Routes.CategoryDoodad category (Example.routeName example))
                             ]
                     )
 

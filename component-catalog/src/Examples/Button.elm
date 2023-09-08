@@ -77,7 +77,7 @@ example =
     , about =
         [ let
             url =
-                Routes.toString <| Routes.Doodad RadioButtonDotlessExample.example
+                Routes.exampleHref RadioButtonDotlessExample.example
           in
           Message.view
             [ Message.markdown <| "Looking for a group of buttons where only one button is selectable at a time? Check out [RadioButtonDotless](" ++ url ++ ")"

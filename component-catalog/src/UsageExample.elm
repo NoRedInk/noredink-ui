@@ -1,42 +1,35 @@
-module Example exposing (Example, extraLinks, fromRouteName, fullName, preview, routeName, view, wrapMsg, wrapState)
+module UsageExample exposing (UsageExample, fromRouteName, fullName, preview, routeName, view, wrapMsg, wrapState)
 
-import Accessibility.Styled.Aria as Aria
 import Category exposing (Category)
 import Css
 import Css.Media exposing (withMedia)
-import EllieLink
 import EventExtras
 import ExampleSection
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Html.Styled.Lazy as Lazy
-import KeyboardSupport exposing (KeyboardSupport)
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
-import Nri.Ui.Header.V1 as Header
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Text.V6 as Text
 
 
-type alias Example state msg =
+type alias UsageExample state msg =
     { name : String
-    , version : Int
     , state : state
     , update : msg -> state -> ( state, Cmd msg )
     , subscriptions : state -> Sub msg
-    , preview : List (Html Never)
-    , view : EllieLink.Config -> state -> List (Html msg)
+    , view : state -> List (Html msg)
     , about : List (Html Never)
     , categories : List Category
-    , keyboardSupport : List KeyboardSupport
     }
 
 
-fullName : { example | version : Int, name : String } -> String
+fullName : { example | name : String } -> String
 fullName example =
-    "Nri.Ui." ++ example.name ++ ".V" ++ String.fromInt example.version
+    example.name
 
 
 routeName : { example | name : String } -> String
@@ -52,11 +45,10 @@ fromRouteName name =
 wrapMsg :
     (msg -> msg2)
     -> (msg2 -> Maybe msg)
-    -> Example state msg
-    -> Example state msg2
+    -> UsageExample state msg
+    -> UsageExample state msg2
 wrapMsg wrapMsg_ unwrapMsg example =
     { name = example.name
-    , version = example.version
     , state = example.state
     , update =
         \msg2 state ->
@@ -68,25 +60,22 @@ wrapMsg wrapMsg_ unwrapMsg example =
                 Nothing ->
                     ( state, Cmd.none )
     , subscriptions = \state -> Sub.map wrapMsg_ (example.subscriptions state)
-    , preview = example.preview
     , view =
-        \ellieLinkConfig state ->
+        \state ->
             List.map (Html.map wrapMsg_)
-                (example.view ellieLinkConfig state)
+                (example.view state)
     , about = example.about
     , categories = example.categories
-    , keyboardSupport = example.keyboardSupport
     }
 
 
 wrapState :
     (state -> state2)
     -> (state2 -> Maybe state)
-    -> Example state msg
-    -> Example state2 msg
+    -> UsageExample state msg
+    -> UsageExample state2 msg
 wrapState wrapState_ unwrapState example =
     { name = example.name
-    , version = example.version
     , state = wrapState_ example.state
     , update =
         \msg state2 ->
@@ -101,23 +90,21 @@ wrapState wrapState_ unwrapState example =
         unwrapState
             >> Maybe.map example.subscriptions
             >> Maybe.withDefault Sub.none
-    , preview = example.preview
     , view =
-        \ellieLinkConfig state ->
-            Maybe.map (example.view ellieLinkConfig) (unwrapState state)
+        \state ->
+            Maybe.map example.view (unwrapState state)
                 |> Maybe.withDefault []
     , about = example.about
     , categories = example.categories
-    , keyboardSupport = example.keyboardSupport
     }
 
 
 preview :
     { swallowEvent : msg2
-    , navigate : Example state msg -> msg2
-    , exampleHref : Example state msg -> String
+    , navigate : UsageExample state msg -> msg2
+    , exampleHref : UsageExample state msg -> String
     }
-    -> Example state msg
+    -> UsageExample state msg
     -> Html msg2
 preview navConfig =
     Lazy.lazy (preview_ navConfig)
@@ -125,10 +112,10 @@ preview navConfig =
 
 preview_ :
     { swallowEvent : msg2
-    , navigate : Example state msg -> msg2
-    , exampleHref : Example state msg -> String
+    , navigate : UsageExample state msg -> msg2
+    , exampleHref : UsageExample state msg -> String
     }
-    -> Example state msg
+    -> UsageExample state msg
     -> Html msg2
 preview_ { swallowEvent, navigate, exampleHref } example =
     Container.view
@@ -143,34 +130,24 @@ preview_ { swallowEvent, navigate, exampleHref } example =
             ]
         , Container.custom [ Events.onClick (navigate example) ]
         , Container.html
-            (Html.span [ EventExtras.onClickStopPropagation swallowEvent ]
+            [ Html.span [ EventExtras.onClickStopPropagation swallowEvent ]
                 [ ClickableText.link example.name
                     [ ClickableText.href (exampleHref example)
-                    , ClickableText.css [ Css.marginBottom (Css.px 10) ]
-                    , ClickableText.nriDescription "doodad-link"
+                    , ClickableText.nriDescription "usage-example-link"
                     ]
                 ]
-                :: [ Html.div
-                        [ Attributes.css
-                            [ Css.displayFlex
-                            , Css.flexDirection Css.column
-                            ]
-                        , Aria.hidden True
-                        ]
-                        (List.map (Html.map never) example.preview)
-                   ]
-            )
+            ]
         ]
 
 
-view : EllieLink.Config -> Example state msg -> Html msg
-view ellieLinkConfig example =
-    Html.div [ Attributes.id (String.replace "." "-" example.name) ]
-        (view_ ellieLinkConfig example)
+view : UsageExample state msg -> Html msg
+view example =
+    Html.div [ Attributes.id (String.replace " " "-" example.name) ]
+        (view_ example)
 
 
-view_ : EllieLink.Config -> Example state msg -> List (Html msg)
-view_ ellieLinkConfig example =
+view_ : UsageExample state msg -> List (Html msg)
+view_ example =
     [ Html.div
         [ Attributes.css
             [ Css.displayFlex
@@ -184,10 +161,9 @@ view_ ellieLinkConfig example =
             [ Css.flex (Css.int 1) ]
             viewAbout
             example.about
-        , KeyboardSupport.view example.keyboardSupport
         ]
     , Html.div [ Attributes.css [ Css.marginBottom (Css.px 200) ] ]
-        (example.view ellieLinkConfig example.state)
+        (example.view example.state)
     ]
 
 
@@ -195,32 +171,3 @@ viewAbout : List (Html Never) -> Html msg
 viewAbout about =
     Text.mediumBody [ Text.html about ]
         |> Html.map never
-
-
-extraLinks : (msg -> msg2) -> Example state msg -> Header.Attribute route msg2
-extraLinks f example =
-    Header.extraNav (fullName example)
-        [ Html.map f (docsLink example)
-        , Html.map f (srcLink example)
-        ]
-
-
-docsLink : Example state msg -> Html msg2
-docsLink example =
-    let
-        link =
-            "https://package.elm-lang.org/packages/NoRedInk/noredink-ui/latest/"
-                ++ String.replace "." "-" (fullName example)
-    in
-    ClickableText.link "Docs" [ ClickableText.linkExternal link ]
-
-
-srcLink : Example state msg -> Html msg2
-srcLink example =
-    let
-        link =
-            String.replace "." "/" (fullName example)
-                ++ ".elm"
-                |> (++) "https://github.com/NoRedInk/noredink-ui/blob/master/src/"
-    in
-    ClickableText.link "Source" [ ClickableText.linkExternal link ]

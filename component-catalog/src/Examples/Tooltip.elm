@@ -18,7 +18,6 @@ import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css, href, id)
-import Html.Styled.Events as Events
 import KeyboardSupport exposing (Key(..))
 import Markdown
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
@@ -29,6 +28,8 @@ import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V7 as Table
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Routes
+import UsageExamples.ClickableCardWithTooltip
 
 
 version : Int
@@ -94,7 +95,6 @@ example =
 type alias State =
     { openTooltip : Maybe TooltipId
     , staticExampleSettings : Control (List ( String, Tooltip.Attribute Never ))
-    , disclosureModel : { parentClicks : Int }
     , pageSettings : Control PageSettings
     }
 
@@ -103,7 +103,6 @@ init : State
 init =
     { openTooltip = Nothing
     , staticExampleSettings = initStaticExampleSettings
-    , disclosureModel = { parentClicks = 0 }
     , pageSettings =
         Control.record PageSettings
             |> Control.field "backgroundColor"
@@ -132,11 +131,6 @@ type Msg
     | SetControl (Control (List ( String, Tooltip.Attribute Never )))
     | UpdatePageSettings (Control PageSettings)
     | Log String
-    | DisclosureMsg DisclosureMsg
-
-
-type DisclosureMsg
-    = ParentClick
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -157,9 +151,6 @@ update msg model =
 
         Log message ->
             ( Debug.log "Tooltip Log:" |> always model, Cmd.none )
-
-        DisclosureMsg ParentClick ->
-            ( { model | disclosureModel = { parentClicks = model.disclosureModel.parentClicks + 1 } }, Cmd.none )
 
 
 view : EllieLink.Config -> State -> List (Html Msg)
@@ -244,12 +235,14 @@ Use when all of the following are true:
 This type may contain interactive elements such as links.
         """
           , description =
-                """
-Sometimes a tooltip trigger doesn't have any functionality itself outside of revealing information.
-
-This behavior is analogous to disclosure behavior, except that it's presented different visually. (For more information, please read [Sarah Higley's "Tooltips in the time of WCAG 2.1" post](https://sarahmhigley.com/writing/tooltips-in-wcag-21).)
-"""
-          , example = viewDisclosureToolip model.openTooltip model.disclosureModel
+                [ "Sometimes a tooltip trigger doesn't have any functionality itself outside of revealing information.\n\n"
+                , "This behavior is analogous to disclosure behavior, except that it's presented different visually. (For more information, please read [Sarah Higley's \"Tooltips in the time of WCAG 2.1\" post](https://sarahmhigley.com/writing/tooltips-in-wcag-21).)\n\n"
+                , "Are you trying to use this tooltip type inside a clickable card? Check out [the Clickable Card with Tooltip example]("
+                , Routes.usageExampleHref UsageExamples.ClickableCardWithTooltip.example
+                , ")."
+                ]
+                    |> String.join ""
+          , example = viewDisclosureToolip model.openTooltip
           , tooltipId = Disclosure
           }
         , { name = "Tooltip.viewToggleTip"
@@ -262,9 +255,12 @@ This type may contain interactive elements such as links.
 
         """
           , description =
-                """
-This is a helper for using Tooltip.disclosure with a "?" icon because it is a commonly used UI pattern. We use this helper when we want to show more information about an element but we don't want the element itself to have its own tooltip. The "?" icon typically appears visually adjacent to the element it reveals information about.
-"""
+                [ "This is a helper for using Tooltip.disclosure with a \"?\" icon because it is a commonly used UI pattern. We use this helper when we want to show more information about an element but we don't want the element itself to have its own tooltip. The \"?\" icon typically appears visually adjacent to the element it reveals information about.\n\n"
+                , "Are you trying to use this tooltip type inside a clickable card? Check out [the Clickable Card with Tooltip example]("
+                , Routes.usageExampleHref UsageExamples.ClickableCardWithTooltip.example
+                , ")."
+                ]
+                    |> String.join ""
           , example = viewToggleTip model.openTooltip
           , tooltipId = LearnMore
           }
@@ -315,8 +311,8 @@ viewAuxillaryDescriptionToolip openTooltip =
         ]
 
 
-viewDisclosureToolip : Maybe TooltipId -> { parentClicks : Int } -> Html Msg
-viewDisclosureToolip openTooltip { parentClicks } =
+viewDisclosureToolip : Maybe TooltipId -> Html Msg
+viewDisclosureToolip openTooltip =
     let
         triggerId =
             "tooltip__disclosure-trigger"
@@ -324,36 +320,29 @@ viewDisclosureToolip openTooltip { parentClicks } =
         lastId =
             "tooltip__disclosure-what-is-mastery"
     in
-    Html.button
-        [ css [ Css.padding (Css.px 40) ]
-        , Events.onClick (DisclosureMsg ParentClick)
-        , id "parent-button"
-        ]
-        [ Tooltip.view
-            { id = "tooltip__disclosure"
-            , trigger =
-                \eventHandlers ->
-                    ClickableSvg.button "Previously mastered"
-                        (Svg.withColor Colors.green UiIcon.starFilled)
-                        [ ClickableSvg.custom eventHandlers
-                        , ClickableSvg.id triggerId
-                        ]
-            }
-            [ Tooltip.html
-                [ Html.text "You mastered this skill in a previous year! Way to go! "
-                , Html.a
-                    [ id lastId
-                    , href "https://noredink.zendesk.com/hc/en-us/articles/203022319-What-is-mastery-"
+    Tooltip.view
+        { id = "tooltip__disclosure"
+        , trigger =
+            \eventHandlers ->
+                ClickableSvg.button "Previously mastered"
+                    (Svg.withColor Colors.green UiIcon.starFilled)
+                    [ ClickableSvg.custom eventHandlers
+                    , ClickableSvg.id triggerId
                     ]
-                    [ Html.text "Learn more about NoRedInk Mastery" ]
+        }
+        [ Tooltip.html
+            [ Html.text "You mastered this skill in a previous year! Way to go! "
+            , Html.a
+                [ id lastId
+                , href "https://noredink.zendesk.com/hc/en-us/articles/203022319-What-is-mastery-"
                 ]
-            , Tooltip.disclosure { triggerId = triggerId, lastId = Just lastId }
-            , Tooltip.onToggle (ToggleTooltip Disclosure)
-            , Tooltip.open (openTooltip == Just Disclosure)
-            , Tooltip.smallPadding
-            , Tooltip.alignEndForMobile (Css.px 148)
+                [ Html.text "Learn more about NoRedInk Mastery" ]
             ]
-        , Html.div [ id "parent-button-clicks" ] [ Html.text ("Parent Clicks: " ++ String.fromInt parentClicks) ]
+        , Tooltip.disclosure { triggerId = triggerId, lastId = Just lastId }
+        , Tooltip.onToggle (ToggleTooltip Disclosure)
+        , Tooltip.open (openTooltip == Just Disclosure)
+        , Tooltip.smallPadding
+        , Tooltip.alignEndForMobile (Css.px 148)
         ]
 
 
