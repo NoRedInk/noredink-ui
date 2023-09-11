@@ -39,7 +39,10 @@ The next version of `Button` should also remove `delete` and `toggleButton`
   - adds `tertiary` style
   - adds `submit` and `opensModal`
   - adds `secondaryDanger` style
-  - marked toggleButton as deprecated and added toggleButtonPressed attribute
+  - marks toggleButton as deprecated and adds toggleButtonPressed attribute
+  - replaces the `disabled` attribute with `aria-disabled="true"`
+  - removes click handler from disabled buttons
+  - prevents default behavior for disabled submit buttons by setting `type="button"`
 
 
 # Changes from V9:
