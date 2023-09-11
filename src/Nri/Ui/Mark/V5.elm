@@ -598,7 +598,7 @@ viewBalloonSpacer config =
                             Css.lineHeight (Css.num 0)
 
                         Just _ ->
-                            Css.lineHeight Css.unset
+                            Css.lineHeight Css.initial
                     ]
                 ]
             ]
