@@ -14,8 +14,8 @@ module Code exposing
     , caseExpression
     , browserElement, unstyledView
     , fromModule
-    , typeAnnotation, var, varWithTypeAnnotation
-    , funcWithType, funcWithTypeMultiline
+    , var, varWithTypeAnnotation
+    , funcWithType
     , unionType
     , apply
     , int
@@ -39,8 +39,8 @@ module Code exposing
 @docs browserElement, unstyledView
 @docs always
 @docs fromModule
-@docs typeAnnotation, var, varWithTypeAnnotation
-@docs funcWithType, funcWithTypeMultiline
+@docs var, varWithTypeAnnotation
+@docs funcWithType
 @docs unionType
 @docs apply
 

@@ -26,7 +26,7 @@ import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.SegmentedControl.V14 as SegmentedControl
-import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import String exposing (toLower)
