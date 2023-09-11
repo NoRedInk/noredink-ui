@@ -388,7 +388,7 @@ initChoices =
         toValue =
             toChoice >> Tuple.mapSecond (Select.choices choosableToLabel) >> Control.value
     in
-    List.map identity
+    Control.choice
         [ ( texMexLabel, toValue allTexMex )
         , ( "81 Kg 2020 Olympic Weightlifters", toValue all81kg2020OlympicWeightlifters )
         , ( "Grouped Things"
@@ -430,7 +430,6 @@ initChoices =
           )
         , ( "Unselectable list with only one item", toValue [ TragicSingleton ] )
         ]
-        |> Control.choice
 
 
 {-| -}
