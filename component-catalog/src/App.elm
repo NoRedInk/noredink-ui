@@ -26,6 +26,7 @@ import Nri.Ui.Page.V3 as Page
 import Nri.Ui.SideNav.V5 as SideNav
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Sprite.V1 as Sprite
+import Nri.Ui.Tabs.V8 as Tabs exposing (Tab)
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes exposing (Route)
 import Sort.Set as Set
@@ -43,6 +44,7 @@ type alias Model key =
     , usageExampleStates : Dict String (UsageExample UsageExamples.State UsageExamples.Msg)
     , isSideNavOpen : Bool
     , openTooltip : Maybe TooltipId
+    , selectedContent : Content
     , navigationKey : key
     , elliePackageDependencies : Result Http.Error (Dict String String)
     , inputMethod : InputMethod
@@ -66,6 +68,7 @@ init () url key =
                 )
       , isSideNavOpen = False
       , openTooltip = Nothing
+      , selectedContent = ComponentExamples
       , navigationKey = key
       , elliePackageDependencies = Ok Dict.empty
       , inputMethod = InputMethod.init
@@ -91,6 +94,7 @@ type Msg
     | SkipToMainContent
     | ToggleSideNav Bool
     | ToggleTooltip TooltipId Bool
+    | SelectContent { select : Content, focus : Maybe String }
     | LoadedPackages (Result Http.Error (Dict String String))
     | Focused (Result Browser.Dom.Error ())
     | NewInputMethod InputMethod
@@ -178,6 +182,12 @@ update action model =
 
         ToggleTooltip _ False ->
             ( { model | openTooltip = Nothing }, None )
+
+        SelectContent { select, focus } ->
+            ( { model | selectedContent = select }
+            , Maybe.map FocusOn focus
+                |> Maybe.withDefault None
+            )
 
         LoadedPackages newPackagesResult ->
             let
@@ -387,6 +397,7 @@ viewAll model =
             }
             (Dict.values model.moduleStates)
             (Dict.values model.usageExampleStates)
+            model.selectedContent
 
 
 viewCategory : Model key -> Category -> Html Msg
@@ -413,6 +424,7 @@ viewCategory model category =
             }
             (filtered model.moduleStates)
             (filtered model.usageExampleStates)
+            model.selectedContent
 
 
 viewLayout : Model key -> List (Header.Attribute Route Msg) -> Html Msg -> Html Msg
@@ -446,6 +458,11 @@ viewLayout model headerExtras content =
         ]
 
 
+type Content
+    = ComponentExamples
+    | UsageExamples
+
+
 viewExamplePreviews :
     String
     ->
@@ -460,20 +477,31 @@ viewExamplePreviews :
         }
     -> List (Example Examples.State Examples.Msg)
     -> List (UsageExample UsageExamples.State UsageExamples.Msg)
+    -> Content
     -> Html Msg
-viewExamplePreviews containerId exampleNavConfig usageNavConfig examples usageExamples =
+viewExamplePreviews containerId exampleNavConfig usageNavConfig examples usageExamples selectedContent =
     Html.div [ id containerId ]
-        [ Heading.h2 [ Heading.plaintext "Components" ]
-        , examplesContainer (List.map (Example.preview exampleNavConfig) examples)
-        , viewIf
-            (\_ ->
-                Heading.h2
-                    [ Heading.plaintext "Usage Examples"
-                    , Heading.css [ Css.marginTop (Css.px 30) ]
-                    ]
-            )
-            (List.length usageExamples > 0)
-        , examplesContainer (List.map (UsageExample.preview usageNavConfig) usageExamples)
+        [ Tabs.view
+            { focusAndSelect = SelectContent
+            , selected = selectedContent
+            }
+            [ Tabs.alignment Tabs.Left
+            ]
+            [ Tabs.build { id = ComponentExamples, idString = "component-examples" }
+                [ Tabs.tabString "Component examples"
+                , examples
+                    |> List.map (Example.preview exampleNavConfig)
+                    |> examplesContainer
+                    |> Tabs.panelHtml
+                ]
+            , Tabs.build { id = UsageExamples, idString = "usage-examples" }
+                [ Tabs.tabString "Usage examples"
+                , usageExamples
+                    |> List.map (UsageExample.preview usageNavConfig)
+                    |> examplesContainer
+                    |> Tabs.panelHtml
+                ]
+            ]
         ]
 
 
@@ -481,7 +509,8 @@ examplesContainer : List (Html msg) -> Html msg
 examplesContainer =
     Html.div
         [ css
-            [ Css.displayFlex
+            [ Spacing.pageTopWhitespace
+            , Css.displayFlex
             , Css.flexWrap Css.wrap
             , Css.property "row-gap" (.value Spacing.verticalSpacerPx)
             , Css.property "column-gap" (.value Spacing.horizontalSpacerPx)
@@ -521,7 +550,8 @@ navigation { moduleStates, route, isSideNavOpen, openTooltip } =
         , routeToString = Routes.toString
         , onSkipNav = SkipToMainContent
         }
-        [ SideNav.navNotMobileCss
+        [ SideNav.navCss [ Css.zIndex (Css.int 1) ]
+        , SideNav.navNotMobileCss
             [ VendorPrefixed.value "position" "sticky"
             , top (px 8)
             ]
