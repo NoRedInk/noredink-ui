@@ -75,10 +75,12 @@ example =
 
                 toExampleCode name =
                     [ moduleName ++ "." ++ name ++ " " ++ Code.string label
-                    , Code.list <|
-                        ("TextArea.value " ++ Code.string state.value)
+                    , Code.listMultiline
+                        (("TextArea.value " ++ Code.string state.value)
                             :: "TextArea.onInput identity"
                             :: List.map Tuple.first attributes
+                        )
+                        1
                     ]
                         |> String.join ""
             in
