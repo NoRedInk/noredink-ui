@@ -21,6 +21,8 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Outline.V1 as Outline exposing (RowTheme)
 import Nri.Ui.Spacing.V1 as Spacing
+import Svg.Styled as Svg
+import Svg.Styled.Attributes as SvgAttrs
 
 
 moduleName : String
@@ -43,8 +45,7 @@ example =
     , state = init
     , update = update
     , subscriptions = \_ -> Sub.none
-    , preview =
-        []
+    , preview = [ preview ]
     , about = []
     , view =
         \ellieLinkConfig state ->
@@ -106,6 +107,101 @@ example =
                 ]
             ]
     }
+
+
+preview : Html msg
+preview =
+    Svg.svg
+        [ SvgAttrs.viewBox "5 0 90 90"
+        , SvgAttrs.width "100%"
+        , SvgAttrs.height "100%"
+        ]
+        [ -- Connecting lines
+          Svg.path
+            [ SvgAttrs.d "M14 41, 14 58 Q14 60 16 60 L 20 60"
+            , SvgAttrs.stroke Colors.purple.value
+            , SvgAttrs.fill "none"
+            ]
+            []
+        , Svg.path
+            [ SvgAttrs.d "M14 29, 14 40 Q14 42 16 42 L 20 42"
+            , SvgAttrs.stroke Colors.greenDarkest.value
+            , SvgAttrs.fill "none"
+            ]
+            []
+
+        -- Azure node
+        , -- white box
+          Svg.rect
+            [ SvgAttrs.x "10"
+            , SvgAttrs.y "13"
+            , SvgAttrs.width "80"
+            , SvgAttrs.height "16"
+            , SvgAttrs.rx "2"
+            , SvgAttrs.fill Colors.white.value
+            , SvgAttrs.stroke Colors.azure.value
+            , SvgAttrs.strokeWidth "0.5"
+            ]
+            []
+        , -- azure label
+          Svg.rect
+            [ SvgAttrs.x "5"
+            , SvgAttrs.y "10"
+            , SvgAttrs.width "16"
+            , SvgAttrs.height "6"
+            , SvgAttrs.rx "4"
+            , SvgAttrs.fill Colors.azure.value
+            ]
+            []
+
+        -- Green node
+        , -- white box
+          Svg.rect
+            [ SvgAttrs.x "20"
+            , SvgAttrs.y "35"
+            , SvgAttrs.width "70"
+            , SvgAttrs.height "12"
+            , SvgAttrs.rx "2"
+            , SvgAttrs.fill Colors.white.value
+            , SvgAttrs.stroke Colors.greenDarkest.value
+            , SvgAttrs.strokeWidth "0.5"
+            ]
+            []
+        , -- green label
+          Svg.rect
+            [ SvgAttrs.x "16"
+            , SvgAttrs.y "32"
+            , SvgAttrs.width "14"
+            , SvgAttrs.height "6"
+            , SvgAttrs.rx "4"
+            , SvgAttrs.fill Colors.greenDarkest.value
+            ]
+            []
+
+        -- Purple node
+        , -- white box
+          Svg.rect
+            [ SvgAttrs.x "20"
+            , SvgAttrs.y "54"
+            , SvgAttrs.width "70"
+            , SvgAttrs.height "12"
+            , SvgAttrs.rx "2"
+            , SvgAttrs.fill Colors.white.value
+            , SvgAttrs.stroke Colors.purple.value
+            , SvgAttrs.strokeWidth "0.5"
+            ]
+            []
+        , -- purple label
+          Svg.rect
+            [ SvgAttrs.x "16"
+            , SvgAttrs.y "50"
+            , SvgAttrs.width "17"
+            , SvgAttrs.height "6"
+            , SvgAttrs.rx "4"
+            , SvgAttrs.fill Colors.purple.value
+            ]
+            []
+        ]
 
 
 allRowThemes : List ( String, RowTheme )
