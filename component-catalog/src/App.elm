@@ -480,40 +480,55 @@ viewExamplePreviews :
     -> Content
     -> Html Msg
 viewExamplePreviews containerId exampleNavConfig usageNavConfig examples usageExamples selectedContent =
+    let
+        viewBothTabs =
+            [ Tabs.view
+                { focusAndSelect = SelectContent
+                , selected = selectedContent
+                }
+                [ Tabs.alignment Tabs.Left
+                ]
+                [ Tabs.build { id = ComponentExamples, idString = "component-examples" }
+                    [ Tabs.tabString "Component examples"
+                    , examples
+                        |> List.map (Example.preview exampleNavConfig)
+                        |> examplesContainer [ Spacing.pageTopWhitespace ]
+                        |> Tabs.panelHtml
+                    ]
+                , Tabs.build { id = UsageExamples, idString = "usage-examples" }
+                    [ Tabs.tabString "Usage examples"
+                    , usageExamples
+                        |> List.map (UsageExample.preview usageNavConfig)
+                        |> examplesContainer [ Spacing.pageTopWhitespace ]
+                        |> Tabs.panelHtml
+                    ]
+                ]
+            ]
+
+        viewJustComponents =
+            [ Heading.h2 [ Heading.plaintext "Components" ]
+            , examplesContainer []
+                (List.map (Example.preview exampleNavConfig) examples)
+            ]
+    in
     Html.div [ id containerId ]
-        [ Tabs.view
-            { focusAndSelect = SelectContent
-            , selected = selectedContent
-            }
-            [ Tabs.alignment Tabs.Left
-            ]
-            [ Tabs.build { id = ComponentExamples, idString = "component-examples" }
-                [ Tabs.tabString "Component examples"
-                , examples
-                    |> List.map (Example.preview exampleNavConfig)
-                    |> examplesContainer
-                    |> Tabs.panelHtml
-                ]
-            , Tabs.build { id = UsageExamples, idString = "usage-examples" }
-                [ Tabs.tabString "Usage examples"
-                , usageExamples
-                    |> List.map (UsageExample.preview usageNavConfig)
-                    |> examplesContainer
-                    |> Tabs.panelHtml
-                ]
-            ]
-        ]
+        (if List.isEmpty usageExamples then
+            viewJustComponents
+
+         else
+            viewBothTabs
+        )
 
 
-examplesContainer : List (Html msg) -> Html msg
-examplesContainer =
+examplesContainer : List Css.Style -> List (Html msg) -> Html msg
+examplesContainer extraStyles =
     Html.div
         [ css
-            [ Spacing.pageTopWhitespace
-            , Css.displayFlex
+            [ Css.displayFlex
             , Css.flexWrap Css.wrap
             , Css.property "row-gap" (.value Spacing.verticalSpacerPx)
             , Css.property "column-gap" (.value Spacing.horizontalSpacerPx)
+            , Css.batch extraStyles
             ]
         ]
 
