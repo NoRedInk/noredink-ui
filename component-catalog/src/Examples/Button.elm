@@ -323,6 +323,14 @@ viewButtonExamples ellieLinkConfig state =
             , track = ShowItWorked "ButtonExample" "linkExternalWithTracking clicked"
             }
         ]
+    , form
+        [ css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
+        [ Button.button "Submit"
+            [ Button.submit
+            , Button.disabled
+            ]
+        ]
     ]
         |> div []
 
