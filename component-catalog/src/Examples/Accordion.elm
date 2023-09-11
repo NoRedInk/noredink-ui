@@ -109,36 +109,44 @@ view ellieLinkConfig model =
             \settings ->
                 [ { sectionName = "Partial example"
                   , code =
-                        String.join "\n"
-                            [ "  div [] ["
-                            , "    Accordion.view"
-                            , "      { entries ="
-                            , "          [ Accordion.AccordionEntry"
-                            , "              { caret = " ++ Tuple.first settings.icon
-                            , "              , content = \\() -> " ++ Tuple.first settings.content
-                            , "              , entryClass = \"customizable-example\""
-                            , "              , headerContent = " ++ Tuple.first settings.headerContent
-                            , "              , headerId = \"customizable-example-header\""
-                            , "              , headerLevel = Accordion.H3"
-                            , "              , isExpanded = True"
-                            , "              , toggle = Nothing"
-                            , "              }"
-                            , "              []"
-                            , "          ]"
-                            , "      , -- When using Accordion, be sure to wire up Focus management correctly!"
-                            , "        focus = identity"
-                            , "      }"
-                            , "    , Accordion.styleAccordion"
-                            , "      { entryStyles = []"
-                            , "      , entryExpandedStyles = []"
-                            , "      , entryClosedStyles = []"
-                            , "      , headerStyles = []"
-                            , "      , headerExpandedStyles = []"
-                            , "      , headerClosedStyles = []"
-                            , "      , contentStyles = []"
-                            , "      }"
-                            , "  ]"
-                            ]
+                        "div []"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "view"
+                                    ++ Code.recordMultiline
+                                        [ ( "entries"
+                                          , Code.listMultiline
+                                                [ Code.fromModule moduleName "AccordionEntry"
+                                                    ++ Code.recordMultiline
+                                                        [ ( "caret", Tuple.first settings.icon )
+                                                        , ( "content", Code.anonymousFunction "()" (Tuple.first settings.content) )
+                                                        , ( "entryClass", Code.string "customizable-example" )
+                                                        , ( "headerContent", Tuple.first settings.headerContent )
+                                                        , ( "headerId", Code.string "customizable-example-header" )
+                                                        , ( "headerLevel", Code.fromModule moduleName "H3" )
+                                                        , ( "isExpanded", "True" )
+                                                        , ( "toggle", "Nothing" )
+                                                        ]
+                                                        4
+                                                    ++ Code.listMultiline [] 4
+                                                ]
+                                                3
+                                          )
+                                        , ( "focus", "identity -- When using Accordion, be sure to wire up Focus management correctly!" )
+                                        ]
+                                        2
+                                , Code.fromModule moduleName "styleAccordion"
+                                    ++ Code.recordMultiline
+                                        [ ( "entryStyles", Code.list [] )
+                                        , ( "entryExpandedStyles", Code.list [] )
+                                        , ( "entryClosedStyles", Code.list [] )
+                                        , ( "headerStyles", Code.list [] )
+                                        , ( "headerExpandedStyles", Code.list [] )
+                                        , ( "headerClosedStyles", Code.list [] )
+                                        , ( "contentStyles", Code.list [] )
+                                        ]
+                                        2
+                                ]
+                                1
                   }
                 ]
         }

@@ -81,15 +81,19 @@ view ellieLinkConfig state =
         , update = UpdateControls
         , settings = state.attributes
         , mainType = Nothing
-        , extraCode = [ "import Nri.Ui.CharacterIcon.V2 as CharacterIcon" ]
+        , extraCode =
+            [ "import Nri.Ui.CharacterIcon.V2 as CharacterIcon"
+            , "import Nri.Ui.Button.V10 as Button"
+            , Code.newlines
+            , Code.unionType "Msg" [ "NoOp" ]
+            ]
         , renderExample = Code.unstyledView
         , toExampleCode =
             \_ ->
                 [ { sectionName = Code.fromModule moduleName "view"
                   , code =
                         Code.fromModule moduleName "view "
-                            ++ "QuestionBox.characterPosition { width = 80, height = 103, top = -62 }"
-                            ++ Code.list (List.map Tuple.first attributes)
+                            ++ Code.list ("QuestionBox.characterPosition { width = 80, height = 103, top = -62 }" :: List.map Tuple.first attributes)
                   }
                 ]
         }
@@ -427,8 +431,8 @@ initAttributes =
             )
         |> ControlExtra.listItem "actionsOrientation"
             (CommonControls.choice moduleName
-                [ ( "vertical", QuestionBox.actionsVertical )
-                , ( "horizontal", QuestionBox.actionsHorizontal )
+                [ ( "actionsHorizontal", QuestionBox.actionsVertical )
+                , ( "actionsHorizontal", QuestionBox.actionsHorizontal )
                 ]
             )
         |> ControlExtra.listItem "theme"

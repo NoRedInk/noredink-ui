@@ -65,8 +65,11 @@ example =
                 , mainType = Just "RootHtml.Html Msg"
                 , extraCode =
                     [ "import Nri.Ui.Data.PremiumDisplay as PremiumDisplay"
-                    , "\n\n"
-                    , "type Msg = ToggleCheck Bool | ClickedPremiumLock"
+                    , Code.newlines
+                    , Code.unionType "Msg"
+                        [ "ToggleCheck Bool"
+                        , "ClickedPremiumLock"
+                        ]
                     ]
                 , renderExample = Code.unstyledView
                 , toExampleCode = \_ -> [ { sectionName = "view", code = exampleCode } ]

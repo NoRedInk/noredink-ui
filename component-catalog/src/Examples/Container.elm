@@ -130,10 +130,8 @@ viewExample { name, description } attributes =
 
 viewExampleCode : List String -> String
 viewExampleCode attributes =
-    moduleName
-        ++ ".view\n    [ "
-        ++ String.join "\n    , " attributes
-        ++ "\n    ]"
+    Code.fromModule moduleName "view"
+        ++ Code.listMultiline attributes 1
 
 
 {-| -}

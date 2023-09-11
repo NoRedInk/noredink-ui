@@ -7,13 +7,16 @@ module Code exposing
     , tuple
     , pipelineMultiline
     , record, recordMultiline
+    , listOfRecordsMultiline
     , newlineWithIndent, newlines
     , withParens, withParensMultiline
     , anonymousFunction, always
     , caseExpression
     , browserElement, unstyledView
     , fromModule
-    , var
+    , var, varWithTypeAnnotation
+    , funcWithType
+    , unionType
     , apply
     , int
     )
@@ -28,6 +31,7 @@ module Code exposing
 @docs tuple
 @docs pipelineMultiline
 @docs record, recordMultiline
+@docs listOfRecordsMultiline
 @docs newlineWithIndent, newlines
 @docs withParens, withParensMultiline
 @docs anonymousFunction, always
@@ -35,7 +39,9 @@ module Code exposing
 @docs browserElement, unstyledView
 @docs always
 @docs fromModule
-@docs var
+@docs var, varWithTypeAnnotation
+@docs funcWithType
+@docs unionType
 @docs apply
 
 -}
@@ -52,8 +58,8 @@ stringMultiline : String -> String
 stringMultiline s =
     newlineWithIndent 1
         ++ "\"\"\""
-        ++ String.replace "\n" (newlineWithIndent 1) s
-        ++ newlineWithIndent 1
+        ++ String.replace "\n" (newlineWithIndent 0) s
+        ++ newlineWithIndent 0
         ++ "\"\"\""
 
 
@@ -93,7 +99,10 @@ structure open close items =
         monolineStructure =
             structureSingleline open close items
     in
-    if String.length monolineStructure > 80 then
+    if List.length items == 0 then
+        open ++ close
+
+    else if String.length monolineStructure > 80 then
         structureMultiline open close items 1
 
     else
@@ -107,13 +116,22 @@ structureSingleline open close items =
 
 structureMultiline : String -> String -> List String -> Int -> String
 structureMultiline open close items indent =
+    newlineWithIndent indent ++ structureMultilineFlat open close items indent
+
+
+structureMultilineFlat : String -> String -> List String -> Int -> String
+structureMultilineFlat open close items indent =
     let
         indents =
             newlineWithIndent indent
     in
-    (indents ++ open ++ " ")
-        ++ String.join (indents ++ ", ") items
-        ++ (indents ++ "" ++ close)
+    if List.length items == 0 then
+        open ++ close
+
+    else
+        (open ++ " ")
+            ++ String.join (indents ++ ", ") items
+            ++ (indents ++ close)
 
 
 {-| -}
@@ -152,6 +170,33 @@ recordMultiline items =
 
 
 {-| -}
+recordMultilineFlat : List ( String, String ) -> Int -> String
+recordMultilineFlat items =
+    structureMultilineFlat "{" "}" (recordValues items)
+
+
+{-| -}
+listOfRecordsMultiline : List (List ( String, String )) -> Int -> String
+listOfRecordsMultiline records indent =
+    let
+        indents =
+            newlineWithIndent indent
+
+        items =
+            List.map
+                (\record_ -> "  " ++ recordMultilineFlat record_ (indent + 1))
+                records
+    in
+    if List.length records == 0 then
+        "[]"
+
+    else
+        (indents ++ "[ ")
+            ++ String.join (indents ++ ", ") items
+            ++ (indents ++ "]")
+
+
+{-| -}
 pipelineMultiline : List String -> Int -> String
 pipelineMultiline pipedWith indent =
     let
@@ -168,7 +213,12 @@ newlines =
 
 newlineWithIndent : Int -> String
 newlineWithIndent indent =
-    "\n" ++ String.repeat indent "    "
+    "\n" ++ String.repeat indent tab
+
+
+tab : String
+tab =
+    "    "
 
 
 {-| -}
@@ -221,13 +271,13 @@ browserElement : { init : String, view : String, update : String, subscriptions 
 browserElement { init, view, update, subscriptions } =
     String.join (newlineWithIndent 1)
         [ "Browser.element"
-        , recordMultiline
+        , recordMultilineFlat
             [ ( "init", init )
             , ( "view", view )
             , ( "update", update )
             , ( "subscriptions", subscriptions )
             ]
-            2
+            1
         ]
 
 
@@ -244,11 +294,57 @@ fromModule moduleName name =
 
 
 {-| -}
+varWithTypeAnnotation : String -> String -> String -> String
+varWithTypeAnnotation name typeValue body =
+    varWithTypeMultiline name typeValue body 0
+
+
+{-| -}
+varWithTypeMultiline : String -> String -> String -> Int -> String
+varWithTypeMultiline name typeValue body indent =
+    String.repeat indent tab
+        ++ typeAnnotation name typeValue
+        ++ newlineWithIndent indent
+        ++ var name (indent + 1) body
+
+
+{-| -}
+funcWithType : String -> String -> String -> String -> String
+funcWithType name typeValue vars body =
+    funcWithTypeMultiline name typeValue vars body 0
+
+
+{-| -}
+funcWithTypeMultiline : String -> String -> String -> String -> Int -> String
+funcWithTypeMultiline name typeValue vars body indent =
+    String.repeat indent tab
+        ++ typeAnnotation name typeValue
+        ++ newlineWithIndent indent
+        ++ var (name ++ " " ++ vars) (indent + 1) body
+
+
+{-| -}
+typeAnnotation : String -> String -> String
+typeAnnotation name value =
+    name ++ " : " ++ value
+
+
+{-| -}
 var : String -> Int -> String -> String
 var varName indent body =
-    varName ++ " =" ++ newlineWithIndent indent ++ body
+    varName ++ " =" ++ newlineWithIndent indent ++ body ++ "\n"
 
 
 apply : List String -> String
 apply =
     String.join " "
+
+
+{-| -}
+unionType : String -> List String -> String
+unionType name constructors =
+    "type "
+        ++ name
+        ++ newlineWithIndent 1
+        ++ "= "
+        ++ String.join (newlineWithIndent 1 ++ "| ") constructors

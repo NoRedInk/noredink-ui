@@ -67,19 +67,31 @@ example =
                 , version = version
                 , update = UpdateSettings
                 , settings = state.control
-                , mainType = Just "RootHtml.Html String"
-                , extraCode = []
+                , mainType = Just "RootHtml.Html Choosable"
+                , extraCode =
+                    [ Code.newlines
+                    , Code.unionType "Choosable"
+                        [ "Tacos"
+                        , "Burritos"
+                        , "Enchiladas"
+                        , "NixtamalizedCorn"
+                        , "LüXiaojun"
+                        , "ZacaríasBonnat"
+                        , "AntoninoPizzolato"
+                        , "HarrisonMaurus"
+                        , "TragicSingleton"
+                        ]
+                    , Code.newlines
+                    , choosableToValueCode
+                    ]
                 , renderExample = Code.unstyledView
                 , toExampleCode =
                     \_ ->
                         [ { sectionName = "Example"
                           , code =
-                                "Select.view \""
-                                    ++ label
-                                    ++ "\""
-                                    ++ "\n    [ "
-                                    ++ String.join "\n    , " attributesCode
-                                    ++ "\n    ] "
+                                Code.fromModule moduleName "view "
+                                    ++ Code.string label
+                                    ++ Code.listMultiline attributesCode 1
                           }
                         ]
                 }
@@ -285,8 +297,8 @@ all81kg2020OlympicWeightlifters =
     help []
 
 
-choosableToLabel : Choosable -> String
-choosableToLabel tm =
+choosableToValue : Choosable -> String
+choosableToValue tm =
     case tm of
         Tacos ->
             "Tacos"
@@ -301,12 +313,7 @@ choosableToLabel tm =
             """
                 The nixtamalization process was very important in the early Mesoamerican diet,
                 as most of the niacin content in unprocessed maize is bound to hemicellulose,
-                drastically reducing its bioavailability.
-                A population that depends on untreated maize as a staple food risks malnourishment
-                and is more likely to develop deficiency diseases such as pellagra, niacin deficiency,
-                or kwashiorkor, the absence of certain amino acids that maize is deficient in.
-                Maize cooked with lime or other alkali provided bioavailable niacin to Mesoamericans.
-                Beans provided the otherwise missing amino acids required to balance maize for complete protein.
+                drastically reducing its bioavailability…
             """ |> String.trim |> String.lines |> List.map String.trim |> String.join " "
 
         LüXiaojun ->
@@ -323,6 +330,30 @@ choosableToLabel tm =
 
         TragicSingleton ->
             "Tragic Singleton"
+
+
+choosableToValueCode : String
+choosableToValueCode =
+    Code.funcWithType "choosableToValue" "Choosable -> String" "tm" <|
+        Code.caseExpression "tm"
+            (List.map
+                (\choosable ->
+                    ( choosableToCodeString choosable
+                    , Code.string (choosableToValue choosable)
+                    )
+                )
+                [ Tacos
+                , Burritos
+                , Enchiladas
+                , NixtamalizedCorn
+                , LüXiaojun
+                , ZacaríasBonnat
+                , AntoninoPizzolato
+                , HarrisonMaurus
+                , TragicSingleton
+                ]
+            )
+            1
 
 
 choosableToCodeString : Choosable -> String
@@ -368,73 +399,71 @@ weightLifterLabel =
 
 toOption : Choosable -> Select.Choice Choosable
 toOption c =
-    { label = choosableToLabel c, value = c }
+    { label = choosableToValue c, value = c }
 
 
 initChoices : Control ( String, Select.Attribute Choosable )
 initChoices =
     let
-        toOptionString : Choosable -> String
+        toOptionString : Choosable -> List ( String, String )
         toOptionString c =
-            "{ value = " ++ choosableToCodeString c ++ ", label = \"" ++ choosableToLabel c ++ "\" } "
+            [ ( "value", choosableToCodeString c )
+            , ( "label", Code.string (choosableToValue c) )
+            ]
 
         toChoice : List Choosable -> ( String, List (Select.Choice Choosable) )
         toChoice choosables =
-            ( """Select.choices
-        choosableToLabel
-        [ """
-                ++ String.join "\n        , " (List.map toOptionString choosables)
-                ++ "\n        ]"
+            ( Code.fromModule moduleName "choices choosableToValue"
+                ++ Code.listOfRecordsMultiline (List.map toOptionString choosables) 2
             , List.map toOption choosables
             )
 
         toValue : List Choosable -> Control ( String, Select.Attribute Choosable )
         toValue =
-            toChoice >> Tuple.mapSecond (Select.choices choosableToLabel) >> Control.value
-
-        toOptionsString : List Choosable -> String
-        toOptionsString choosables =
-            "[ "
-                ++ (List.map toOptionString choosables |> String.join "\n              , ")
-                ++ "\n              ]"
+            toChoice >> Tuple.mapSecond (Select.choices choosableToValue) >> Control.value
     in
-    List.map identity
+    Control.choice
         [ ( texMexLabel, toValue allTexMex )
         , ( "81 Kg 2020 Olympic Weightlifters", toValue all81kg2020OlympicWeightlifters )
         , ( "Grouped Things"
           , Control.value <|
-                ( """Select.groupedChoices
-        choosableToLabel
-        [ { label = \""""
-                    ++ texMexLabel
-                    ++ "\"\n          , choices = \n              "
-                    ++ toOptionsString allTexMex
-                    ++ """
-          }
-        , { label = \""""
-                    ++ weightLifterLabel
-                    ++ "\"\n          , choices = \n              "
-                    ++ toOptionsString all81kg2020OlympicWeightlifters
-                    ++ """
-          }
-        ]
-        , Select.choices
-            choosableToLabel
-            [ """
-                    ++ toOptionString TragicSingleton
-                    ++ """ ]"""
+                ( Code.fromModule moduleName "batch"
+                    ++ Code.listMultiline
+                        [ Code.fromModule moduleName "groupedChoices choosableToValue"
+                            ++ Code.listOfRecordsMultiline
+                                [ [ ( "label", Code.string texMexLabel )
+                                  , ( "choices"
+                                    , Code.listOfRecordsMultiline
+                                        (List.map toOptionString allTexMex)
+                                        5
+                                    )
+                                  ]
+                                , [ ( "label", Code.string weightLifterLabel )
+                                  , ( "choices"
+                                    , Code.listOfRecordsMultiline
+                                        (List.map toOptionString all81kg2020OlympicWeightlifters)
+                                        5
+                                    )
+                                  ]
+                                ]
+                                3
+                        , Code.fromModule moduleName "choices choosableToValue"
+                            ++ Code.listOfRecordsMultiline
+                                [ toOptionString TragicSingleton ]
+                                4
+                        ]
+                        2
                 , Select.batch
-                    [ Select.groupedChoices choosableToLabel
+                    [ Select.groupedChoices choosableToValue
                         [ { label = texMexLabel, choices = List.map toOption allTexMex }
                         , { label = weightLifterLabel, choices = List.map toOption all81kg2020OlympicWeightlifters }
                         ]
-                    , Select.choices choosableToLabel [ toOption TragicSingleton ]
+                    , Select.choices choosableToValue [ toOption TragicSingleton ]
                     ]
                 )
           )
         , ( "Unselectable list with only one item", toValue [ TragicSingleton ] )
         ]
-        |> Control.choice
 
 
 {-| -}

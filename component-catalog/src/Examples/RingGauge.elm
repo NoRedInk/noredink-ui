@@ -77,20 +77,19 @@ example =
                     \_ ->
                         [ { sectionName = "Example"
                           , code =
-                                "RingGauge.view"
-                                    ++ Code.record
-                                        [ ( "backgroundColor", Tuple.first settings.backgroundColor )
-                                        , ( "emptyColor", Tuple.first settings.emptyColor )
-                                        , ( "filledColor", Tuple.first settings.filledColor )
-                                        , ( "percentage", String.fromFloat settings.percentage )
-                                        ]
-                                    ++ ([ Code.newlineWithIndent 1
-                                        , "|> Svg.withWidth (Css.px 200)"
-                                        , "|> Svg.withHeight (Css.px 200)"
-                                        , "|> Svg.toHtml"
-                                        ]
-                                            |> String.join (Code.newlineWithIndent 1)
-                                       )
+                                Code.pipelineMultiline
+                                    [ "RingGauge.view"
+                                        ++ Code.record
+                                            [ ( "backgroundColor", Tuple.first settings.backgroundColor )
+                                            , ( "emptyColor", Tuple.first settings.emptyColor )
+                                            , ( "filledColor", Tuple.first settings.filledColor )
+                                            , ( "percentage", String.fromFloat settings.percentage )
+                                            ]
+                                    , "Svg.withWidth (Css.px 200)"
+                                    , "Svg.withHeight (Css.px 200)"
+                                    , "Svg.toHtml"
+                                    ]
+                                    0
                           }
                         ]
                 }

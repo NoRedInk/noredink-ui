@@ -69,13 +69,14 @@ example =
                     \settings ->
                         let
                             toCode viewName =
-                                moduleName
-                                    ++ "."
-                                    ++ viewName
-                                    ++ " "
-                                    ++ Tuple.first settings.isOpen
-                                    ++ "\n  |> Svg.withCss [ Css.maxWidth (Css.px 30) ]"
-                                    ++ "\n  |> Svg.toHtml"
+                                Code.pipelineMultiline
+                                    [ Code.fromModule moduleName viewName
+                                        ++ " "
+                                        ++ Tuple.first settings.isOpen
+                                    , "Svg.withCss [ Css.maxWidth (Css.px 30) ]"
+                                    , "Svg.toHtml"
+                                    ]
+                                    0
                         in
                         [ { sectionName = "mobileOpenClose"
                           , code = toCode "mobileOpenClose"

@@ -227,7 +227,10 @@ view ellieLinkConfig state =
         , settings = state.settings
         , renderExample = Code.unstyledView
         , mainType = Just "RootHtml.Html msg"
-        , extraCode = []
+        , extraCode =
+            [ "import Nri.Ui.Container.V2 as Container"
+            , "import Html.Styled.Attributes exposing (css)"
+            ]
         , toExampleCode =
             \_ ->
                 [ { sectionName = "Example"
@@ -313,7 +316,7 @@ container : List ( String, Css.Style ) -> ( String, Html msg )
 container styles =
     ( [ "div [ css " ++ Code.listMultiline (List.map Tuple.first styles) 2
       , "]"
-      , "[ Container.view [ Container.paragraph \"Content...\" ]"
+      , "[ Container.view [ Container.paragraph \"Content...\" ] ]"
       ]
         |> String.join (Code.newlineWithIndent 1)
     , div [ css (List.map Tuple.second styles) ]

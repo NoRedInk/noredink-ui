@@ -92,8 +92,11 @@ view ellieLinkConfig state =
         , version = version
         , update = SetControls
         , settings = state.settings
-        , mainType = Just "RootHtml.Html msg"
-        , extraCode = []
+        , mainType = Just "RootHtml.Html Msg"
+        , extraCode =
+            [ Code.newlines
+            , Code.unionType "Msg" [ "SkipToContent" ]
+            ]
         , renderExample = Code.unstyledView
         , toExampleCode =
             \{ navAttributes, entries } ->

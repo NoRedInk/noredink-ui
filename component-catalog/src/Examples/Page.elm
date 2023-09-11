@@ -110,9 +110,11 @@ example =
                         [ { sectionName = "Example"
                           , code =
                                 Tuple.first page
-                                    ++ "\n\t{ link = ()\n\t, recoveryText = "
-                                    ++ Debug.toString recoveryText
-                                    ++ "\n\t}"
+                                    ++ Code.recordMultiline
+                                        [ ( "link", "()" )
+                                        , ( "recoveryText", Debug.toString recoveryText )
+                                        ]
+                                        1
                           }
                         ]
                 }
