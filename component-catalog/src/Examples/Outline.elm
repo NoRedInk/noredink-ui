@@ -19,7 +19,8 @@ import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Outline.V1 as Outline
+import Nri.Ui.Outline.V1 as Outline exposing (RowTheme)
+import Nri.Ui.Spacing.V1 as Spacing
 
 
 moduleName : String
@@ -74,11 +75,56 @@ example =
                 }
             , Heading.h2
                 [ Heading.plaintext "Example"
-                , Heading.css [ Css.marginTop (Css.px 30) ]
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
             , Outline.view []
+            , Heading.h2
+                [ Heading.plaintext "Row Themes"
+                , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
+                ]
+            , Outline.view
+                [ Outline.row
+                    { title = Just "Row Themes"
+                    , content = text "Outline supports custom row themes (like this node's theme), but it also has a predefined list of themes."
+                    , palette =
+                        { border = Colors.azure
+                        , borderStyle = Css.batch []
+                        , background = Colors.gray96
+                        }
+                    , rows =
+                        List.map
+                            (\( themeName, theme ) ->
+                                Outline.row
+                                    { title = Just themeName
+                                    , content = text ""
+                                    , palette = theme
+                                    , rows = []
+                                    }
+                            )
+                            allRowThemes
+                    }
+                ]
             ]
     }
+
+
+allRowThemes : List ( String, RowTheme )
+allRowThemes =
+    [ ( "purpleBordered", Outline.purpleBordered )
+    , ( "greenBordered", Outline.greenBordered )
+    , ( "blueDashBordered", Outline.blueDashBordered )
+    , ( "red", Outline.red )
+    , ( "green", Outline.green )
+    , ( "aqua", Outline.aqua )
+    , ( "turquoise", Outline.turquoise )
+    , ( "cornflower", Outline.cornflower )
+    , ( "blue", Outline.blue )
+    , ( "darkBlue", Outline.darkBlue )
+    , ( "purple", Outline.purple )
+    , ( "darkGray", Outline.darkGray )
+    , ( "gray", Outline.gray )
+    , ( "white", Outline.white )
+    ]
 
 
 {-| -}
