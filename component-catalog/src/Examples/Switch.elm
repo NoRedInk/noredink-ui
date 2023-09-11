@@ -63,8 +63,11 @@ example =
                 , version = version
                 , update = UpdateSettings
                 , settings = state.settings
-                , mainType = Just "RootHtml.Html msg"
-                , extraCode = []
+                , mainType = Just "RootHtml.Html Msg"
+                , extraCode =
+                    [ Code.newlines
+                    , Code.unionType "Msg" [ "Switch Bool" ]
+                    ]
                 , renderExample = Code.unstyledView
                 , toExampleCode =
                     \{ label, attributes } ->
