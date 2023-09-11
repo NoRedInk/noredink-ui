@@ -489,14 +489,14 @@ viewExamplePreviews containerId exampleNavConfig usageNavConfig examples usageEx
                 [ Tabs.alignment Tabs.Left
                 ]
                 [ Tabs.build { id = ComponentExamples, idString = "component-examples" }
-                    [ Tabs.tabString "Component examples"
+                    [ Tabs.tabString "Component Examples"
                     , examples
                         |> List.map (Example.preview exampleNavConfig)
                         |> examplesContainer [ Spacing.pageTopWhitespace ]
                         |> Tabs.panelHtml
                     ]
                 , Tabs.build { id = UsageExamples, idString = "usage-examples" }
-                    [ Tabs.tabString "Usage examples"
+                    [ Tabs.tabString "Usage Examples"
                     , usageExamples
                         |> List.map (UsageExample.preview usageNavConfig)
                         |> examplesContainer [ Spacing.pageTopWhitespace ]
