@@ -1,13 +1,12 @@
 module Spec.Nri.Ui.Button exposing (spec)
 
 import Accessibility.Aria as Aria
-import Expect exposing (Expectation)
 import Html.Styled exposing (Html, toUnstyled)
 import Nri.Ui.Button.V10 as Button
 import ProgramTest exposing (..)
+import Spec.Helpers exposing (expectFailure)
 import Test exposing (..)
 import Test.Html.Selector exposing (..)
-import Test.Runner
 
 
 spec : Test
@@ -36,17 +35,6 @@ toggleButtonPressed =
                 |> ensureViewHas [ attribute (Aria.pressed (Just False)) ]
                 |> done
     ]
-
-
-expectFailure : String -> Expectation -> Expectation
-expectFailure expectedDescriptionSubstring expectation =
-    case Test.Runner.getFailureReason expectation of
-        Nothing ->
-            Expect.fail "Expected a failure, but there was none."
-
-        Just reason ->
-            String.contains expectedDescriptionSubstring reason.description
-                |> Expect.equal True
 
 
 helpfullyDisabledButton : List Test
