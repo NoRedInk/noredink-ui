@@ -766,12 +766,7 @@ renderButton ((ButtonOrLink config) as button_) =
             :: (if isDisabled config.state then
                     Aria.disabled True
                         :: (if config.clickableAttributes.buttonType == "submit" then
-                                case config.state of
-                                    Disabled ->
-                                        [ Attributes.type_ "button" ]
-
-                                    _ ->
-                                        [ Attributes.type_ "submit" ]
+                                [ Attributes.type_ "button" ]
 
                             else
                                 [ Attributes.type_ config.clickableAttributes.buttonType ]
