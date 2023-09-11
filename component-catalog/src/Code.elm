@@ -15,6 +15,7 @@ module Code exposing
     , browserElement, unstyledView
     , fromModule
     , typeAnnotation, var, varWithTypeAnnotation
+    , funcWithType, funcWithTypeMultiline
     , unionType
     , apply
     , int
@@ -39,6 +40,7 @@ module Code exposing
 @docs always
 @docs fromModule
 @docs typeAnnotation, var, varWithTypeAnnotation
+@docs funcWithType, funcWithTypeMultiline
 @docs unionType
 @docs apply
 
@@ -304,6 +306,21 @@ varWithTypeMultiline name typeValue body indent =
         ++ typeAnnotation name typeValue
         ++ newlineWithIndent indent
         ++ var name (indent + 1) body
+
+
+{-| -}
+funcWithType : String -> String -> String -> String -> String
+funcWithType name typeValue vars body =
+    funcWithTypeMultiline name typeValue vars body 0
+
+
+{-| -}
+funcWithTypeMultiline : String -> String -> String -> String -> Int -> String
+funcWithTypeMultiline name typeValue vars body indent =
+    String.repeat indent tab
+        ++ typeAnnotation name typeValue
+        ++ newlineWithIndent indent
+        ++ var (name ++ " " ++ vars) (indent + 1) body
 
 
 {-| -}

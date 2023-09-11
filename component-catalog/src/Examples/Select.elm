@@ -67,7 +67,7 @@ example =
                 , version = version
                 , update = UpdateSettings
                 , settings = state.control
-                , mainType = Just "RootHtml.Html String"
+                , mainType = Just "RootHtml.Html Choosable"
                 , extraCode =
                     [ Code.newlines
                     , Code.unionType "Choosable"
@@ -313,12 +313,7 @@ choosableToValue tm =
             """
                 The nixtamalization process was very important in the early Mesoamerican diet,
                 as most of the niacin content in unprocessed maize is bound to hemicellulose,
-                drastically reducing its bioavailability.
-                A population that depends on untreated maize as a staple food risks malnourishment
-                and is more likely to develop deficiency diseases such as pellagra, niacin deficiency,
-                or kwashiorkor, the absence of certain amino acids that maize is deficient in.
-                Maize cooked with lime or other alkali provided bioavailable niacin to Mesoamericans.
-                Beans provided the otherwise missing amino acids required to balance maize for complete protein.
+                drastically reducing its bioavailability…
             """ |> String.trim |> String.lines |> List.map String.trim |> String.join " "
 
         LüXiaojun ->
@@ -339,7 +334,7 @@ choosableToValue tm =
 
 choosableToValueCode : String
 choosableToValueCode =
-    Code.varWithTypeAnnotation "choosableToValue" "Choosable -> String" <|
+    Code.funcWithType "choosableToValue" "Choosable -> String" "tm" <|
         Code.caseExpression "tm"
             (List.map
                 (\choosable ->
@@ -358,7 +353,7 @@ choosableToValueCode =
                 , TragicSingleton
                 ]
             )
-            0
+            1
 
 
 choosableToCodeString : Choosable -> String
