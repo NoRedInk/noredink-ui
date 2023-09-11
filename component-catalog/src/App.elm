@@ -482,7 +482,7 @@ viewExamplePreviews :
 viewExamplePreviews containerId exampleNavConfig usageNavConfig examples usageExamples selectedContent =
     let
         viewBothTabs =
-            [ Tabs.view
+            Tabs.view
                 { focusAndSelect = SelectContent
                 , selected = selectedContent
                 }
@@ -503,21 +503,14 @@ viewExamplePreviews containerId exampleNavConfig usageNavConfig examples usageEx
                         |> Tabs.panelHtml
                     ]
                 ]
-            ]
-
-        viewJustComponents =
-            [ Heading.h2 [ Heading.plaintext "Components" ]
-            , examplesContainer []
-                (List.map (Example.preview exampleNavConfig) examples)
-            ]
     in
     Html.div [ id containerId ]
-        (if List.isEmpty usageExamples then
-            viewJustComponents
+        [ if List.isEmpty usageExamples then
+            examplesContainer [] (List.map (Example.preview exampleNavConfig) examples)
 
-         else
+          else
             viewBothTabs
-        )
+        ]
 
 
 examplesContainer : List Css.Style -> List (Html msg) -> Html msg
