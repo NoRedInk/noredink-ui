@@ -289,7 +289,12 @@ view { label, selected } attributes =
             div
                 (config.onCheck
                     |> Maybe.map (onCheckMsg config_.selected)
-                    |> Maybe.map (\msg -> [ EventExtras.onClickStopPropagation msg ])
+                    |> Maybe.map
+                        (\msg ->
+                            [ EventExtras.onClickStopPropagation msg
+                            , css [ cursor pointer ]
+                            ]
+                        )
                     |> Maybe.withDefault []
                 )
                 [ viewIcon [] icon ]
