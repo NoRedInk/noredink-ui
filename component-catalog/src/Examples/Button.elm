@@ -6,6 +6,7 @@ module Examples.Button exposing (Msg, State, example)
 
 -}
 
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
 import Code
@@ -24,6 +25,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Message.V4 as Message
 import Nri.Ui.Spacing.V1 as Spacing
+import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes
 import Set exposing (Set)
@@ -270,6 +272,11 @@ initDebugControls =
             )
 
 
+tooltipId : String
+tooltipId =
+    "tooltip"
+
+
 viewButtonExamples : EllieLink.Config -> State -> Html Msg
 viewButtonExamples ellieLinkConfig state =
     let
@@ -324,11 +331,25 @@ viewButtonExamples ellieLinkConfig state =
             }
         ]
     , form
-        [ css [ Css.marginTop Spacing.verticalSpacerPx ]
-        ]
+        [ css [ Css.marginTop Spacing.verticalSpacerPx ] ]
         [ Button.button "Submit"
             [ Button.submit
             , Button.disabled
+            ]
+        ]
+    , div [ css [ Css.marginTop Spacing.verticalSpacerPx ] ]
+        [ Tooltip.view
+            { trigger =
+                \attrs ->
+                    Button.button "Disabled with tooltip"
+                        [ Button.disabled
+                        , Button.custom (Aria.describedBy [ tooltipId ] :: attrs)
+                        ]
+            , id = tooltipId
+            }
+            [ Tooltip.open True
+            , Tooltip.paragraph "The quick brown fox jumps over the lazy dog."
+            , Tooltip.onRight
             ]
         ]
     ]
