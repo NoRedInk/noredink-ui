@@ -1,7 +1,7 @@
 module Nri.Ui.Outline.V1 exposing
     ( Outline
     , view
-    , row, rowWithExtraContent, customRow
+    , row, customRow
     )
 
 {-| A nestable layout that can be themed.
@@ -12,7 +12,7 @@ module Nri.Ui.Outline.V1 exposing
 
 ## Rows
 
-@docs row, rowWithExtraContent, customRow
+@docs row, customRow
 
 -}
 
@@ -123,22 +123,3 @@ customRow :
     -> Outline msg
 customRow config =
     Outline config
-
-
-{-| -}
-rowWithExtraContent :
-    { rows : List (Outline msg)
-    , extraContent : { border : Maybe Color, content : Html msg }
-    , title : Maybe String
-    , content : Html msg
-    , palette : RowTheme
-    }
-    -> Outline msg
-rowWithExtraContent config =
-    Outline
-        { title = config.title
-        , content = config.content
-        , palette = config.palette
-        , rows = config.rows
-        , extraContent = Just config.extraContent
-        }
