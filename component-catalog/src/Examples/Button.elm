@@ -313,15 +313,28 @@ viewButtonExamples ellieLinkConfig state =
         }
     , Heading.h2
         [ Heading.plaintext "Interactive example"
-        , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
+        , Heading.css
+            [ Css.margin2 Spacing.verticalSpacerPx Css.zero
+            , Css.marginBottom (Css.px 10)
+            ]
         ]
     , viewCustomizableExample model
     , Heading.h2
         [ Heading.plaintext "Non-interactive examples"
-        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        , Heading.css
+            [ Css.marginTop Spacing.verticalSpacerPx
+            , Css.marginBottom (Css.px 10)
+            ]
         ]
     , buttonsTable
     , toggleButtons state.pressedToggleButtons
+    , Heading.h2
+        [ Heading.plaintext "Link with tracking"
+        , Heading.css
+            [ Css.marginTop Spacing.verticalSpacerPx
+            , Css.marginBottom (Css.px 10)
+            ]
+        ]
     , Button.link "linkExternalWithTracking"
         [ Button.unboundedWidth
         , Button.secondary
@@ -330,27 +343,40 @@ viewButtonExamples ellieLinkConfig state =
             , track = ShowItWorked "ButtonExample" "linkExternalWithTracking clicked"
             }
         ]
+    , Heading.h2
+        [ Heading.plaintext "Disabled form submit button"
+        , Heading.css
+            [ Css.marginTop Spacing.verticalSpacerPx
+            , Css.marginBottom (Css.px 10)
+            ]
+        ]
     , form
-        [ css [ Css.marginTop Spacing.verticalSpacerPx ] ]
+        []
         [ Button.button "Submit"
             [ Button.submit
             , Button.disabled
             ]
         ]
-    , div [ css [ Css.marginTop Spacing.verticalSpacerPx ] ]
-        [ Tooltip.view
-            { trigger =
-                \attrs ->
-                    Button.button "Disabled with tooltip"
-                        [ Button.disabled
-                        , Button.custom (Aria.describedBy [ tooltipId ] :: attrs)
-                        ]
-            , id = tooltipId
-            }
-            [ Tooltip.open True
-            , Tooltip.paragraph "The quick brown fox jumps over the lazy dog."
-            , Tooltip.onRight
+    , Heading.h2
+        [ Heading.plaintext "Disabled button with tooltip"
+        , Heading.css
+            [ Css.marginTop Spacing.verticalSpacerPx
+            , Css.marginBottom (Css.px 10)
             ]
+        ]
+    , Tooltip.view
+        { trigger =
+            \attrs ->
+                Button.button "Save"
+                    [ Button.disabled
+                    , Button.custom (Aria.describedBy [ tooltipId ] :: attrs)
+                    ]
+        , id = tooltipId
+        }
+        [ Tooltip.open True
+        , Tooltip.paragraph "Reasons why you can't save"
+        , Tooltip.onRight
+        , Tooltip.fitToContent
         ]
     ]
         |> div []
@@ -450,7 +476,10 @@ toggleButtons pressedToggleButtons =
     div []
         [ Heading.h2
             [ Heading.plaintext "Button toggle"
-            , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+            , Heading.css
+                [ Css.marginTop Spacing.verticalSpacerPx
+                , Css.marginBottom (Css.px 10)
+                ]
             ]
         , div [ css [ Css.displayFlex, Css.marginBottom (Css.px 20) ] ]
             [ Button.button "5"
