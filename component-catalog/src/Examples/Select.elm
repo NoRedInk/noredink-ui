@@ -371,52 +371,54 @@ toOption c =
 initChoices : Control ( String, Select.Attribute Choosable )
 initChoices =
     let
-        toOptionString : Choosable -> String
+        toOptionString : Choosable -> List ( String, String )
         toOptionString c =
-            "{ value = " ++ choosableToCodeString c ++ ", label = \"" ++ choosableToLabel c ++ "\" } "
+            [ ( "value", choosableToCodeString c )
+            , ( "label", Code.string (choosableToLabel c) )
+            ]
 
         toChoice : List Choosable -> ( String, List (Select.Choice Choosable) )
         toChoice choosables =
-            ( """Select.choices choosableToLabel
-        [ """
-                ++ String.join "\n        , " (List.map toOptionString choosables)
-                ++ "\n        ]"
+            ( Code.fromModule moduleName "choices choosableToLabel"
+                ++ Code.listOfRecordsMultiline (List.map toOptionString choosables) 2
             , List.map toOption choosables
             )
 
         toValue : List Choosable -> Control ( String, Select.Attribute Choosable )
         toValue =
             toChoice >> Tuple.mapSecond (Select.choices choosableToLabel) >> Control.value
-
-        toOptionsString : List Choosable -> String
-        toOptionsString choosables =
-            "[ "
-                ++ (List.map toOptionString choosables |> String.join "\n              , ")
-                ++ "\n              ]"
     in
     List.map identity
         [ ( texMexLabel, toValue allTexMex )
         , ( "81 Kg 2020 Olympic Weightlifters", toValue all81kg2020OlympicWeightlifters )
         , ( "Grouped Things"
           , Control.value <|
-                ( """Select.groupedChoices choosableToLabel
-        [ { label = \""""
-                    ++ texMexLabel
-                    ++ "\"\n          , choices = \n              "
-                    ++ toOptionsString allTexMex
-                    ++ """
-          }
-        , { label = \""""
-                    ++ weightLifterLabel
-                    ++ "\"\n          , choices = \n              "
-                    ++ toOptionsString all81kg2020OlympicWeightlifters
-                    ++ """
-          }
-        ]
-        , Select.choices choosableToLabel
-            [ """
-                    ++ toOptionString TragicSingleton
-                    ++ """ ]"""
+                ( Code.fromModule moduleName "batch"
+                    ++ Code.listMultiline
+                        [ Code.fromModule moduleName "groupedChoices choosableToLabel"
+                            ++ Code.listOfRecordsMultiline
+                                [ [ ( "label", Code.string texMexLabel )
+                                  , ( "choices"
+                                    , Code.listOfRecordsMultiline
+                                        (List.map toOptionString allTexMex)
+                                        5
+                                    )
+                                  ]
+                                , [ ( "label", Code.string weightLifterLabel )
+                                  , ( "choices"
+                                    , Code.listOfRecordsMultiline
+                                        (List.map toOptionString all81kg2020OlympicWeightlifters)
+                                        5
+                                    )
+                                  ]
+                                ]
+                                3
+                        , Code.fromModule moduleName "choices choosableToLabel"
+                            ++ Code.listOfRecordsMultiline
+                                [ toOptionString TragicSingleton ]
+                                4
+                        ]
+                        2
                 , Select.batch
                     [ Select.groupedChoices choosableToLabel
                         [ { label = texMexLabel, choices = List.map toOption allTexMex }
