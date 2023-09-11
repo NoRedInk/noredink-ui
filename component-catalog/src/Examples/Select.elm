@@ -68,7 +68,22 @@ example =
                 , update = UpdateSettings
                 , settings = state.control
                 , mainType = Just "RootHtml.Html String"
-                , extraCode = []
+                , extraCode =
+                    [ Code.newlines
+                    , Code.unionType "Choosable"
+                        [ "Tacos"
+                        , "Burritos"
+                        , "Enchiladas"
+                        , "NixtamalizedCorn"
+                        , "LüXiaojun"
+                        , "ZacaríasBonnat"
+                        , "AntoninoPizzolato"
+                        , "HarrisonMaurus"
+                        , "TragicSingleton"
+                        ]
+                    , Code.newlines
+                    , choosableToValueCode
+                    ]
                 , renderExample = Code.unstyledView
                 , toExampleCode =
                     \_ ->
@@ -282,8 +297,8 @@ all81kg2020OlympicWeightlifters =
     help []
 
 
-choosableToLabel : Choosable -> String
-choosableToLabel tm =
+choosableToValue : Choosable -> String
+choosableToValue tm =
     case tm of
         Tacos ->
             "Tacos"
@@ -320,6 +335,30 @@ choosableToLabel tm =
 
         TragicSingleton ->
             "Tragic Singleton"
+
+
+choosableToValueCode : String
+choosableToValueCode =
+    Code.varWithTypeAnnotation "choosableToValue" "Choosable -> String" <|
+        Code.caseExpression "tm"
+            (List.map
+                (\choosable ->
+                    ( choosableToCodeString choosable
+                    , Code.string (choosableToValue choosable)
+                    )
+                )
+                [ Tacos
+                , Burritos
+                , Enchiladas
+                , NixtamalizedCorn
+                , LüXiaojun
+                , ZacaríasBonnat
+                , AntoninoPizzolato
+                , HarrisonMaurus
+                , TragicSingleton
+                ]
+            )
+            0
 
 
 choosableToCodeString : Choosable -> String
@@ -365,7 +404,7 @@ weightLifterLabel =
 
 toOption : Choosable -> Select.Choice Choosable
 toOption c =
-    { label = choosableToLabel c, value = c }
+    { label = choosableToValue c, value = c }
 
 
 initChoices : Control ( String, Select.Attribute Choosable )
@@ -374,19 +413,19 @@ initChoices =
         toOptionString : Choosable -> List ( String, String )
         toOptionString c =
             [ ( "value", choosableToCodeString c )
-            , ( "label", Code.string (choosableToLabel c) )
+            , ( "label", Code.string (choosableToValue c) )
             ]
 
         toChoice : List Choosable -> ( String, List (Select.Choice Choosable) )
         toChoice choosables =
-            ( Code.fromModule moduleName "choices choosableToLabel"
+            ( Code.fromModule moduleName "choices choosableToValue"
                 ++ Code.listOfRecordsMultiline (List.map toOptionString choosables) 2
             , List.map toOption choosables
             )
 
         toValue : List Choosable -> Control ( String, Select.Attribute Choosable )
         toValue =
-            toChoice >> Tuple.mapSecond (Select.choices choosableToLabel) >> Control.value
+            toChoice >> Tuple.mapSecond (Select.choices choosableToValue) >> Control.value
     in
     Control.choice
         [ ( texMexLabel, toValue allTexMex )
@@ -395,7 +434,7 @@ initChoices =
           , Control.value <|
                 ( Code.fromModule moduleName "batch"
                     ++ Code.listMultiline
-                        [ Code.fromModule moduleName "groupedChoices choosableToLabel"
+                        [ Code.fromModule moduleName "groupedChoices choosableToValue"
                             ++ Code.listOfRecordsMultiline
                                 [ [ ( "label", Code.string texMexLabel )
                                   , ( "choices"
@@ -413,18 +452,18 @@ initChoices =
                                   ]
                                 ]
                                 3
-                        , Code.fromModule moduleName "choices choosableToLabel"
+                        , Code.fromModule moduleName "choices choosableToValue"
                             ++ Code.listOfRecordsMultiline
                                 [ toOptionString TragicSingleton ]
                                 4
                         ]
                         2
                 , Select.batch
-                    [ Select.groupedChoices choosableToLabel
+                    [ Select.groupedChoices choosableToValue
                         [ { label = texMexLabel, choices = List.map toOption allTexMex }
                         , { label = weightLifterLabel, choices = List.map toOption all81kg2020OlympicWeightlifters }
                         ]
-                    , Select.choices choosableToLabel [ toOption TragicSingleton ]
+                    , Select.choices choosableToValue [ toOption TragicSingleton ]
                     ]
                 )
           )
