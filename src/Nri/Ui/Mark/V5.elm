@@ -7,6 +7,11 @@ module Nri.Ui.Mark.V5 exposing
 {-|
 
 
+### Patch changes:
+
+    - Fix line-height for spacer element reducing the amount of vertical space consumed by the balloons
+
+
 ### Changes from V4
 
     - Remove `LabelState` from API, the consumer will manage animations through `labelCss`
@@ -598,7 +603,7 @@ viewBalloonSpacer config =
                             Css.lineHeight (Css.num 0)
 
                         Just _ ->
-                            Css.lineHeight Css.unset
+                            Css.lineHeight Css.initial
                     ]
                 ]
             ]
