@@ -52,9 +52,6 @@ example =
             let
                 settings =
                     Control.currentValue state.control
-
-                attributes =
-                    List.map Tuple.second settings
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -67,18 +64,35 @@ example =
                 , renderExample = Code.unstyledView
                 , toExampleCode =
                     \_ ->
-                        [ { sectionName = "Example"
+                        [ { sectionName = "Customizable Example"
                           , code =
                                 Code.fromModule moduleName "view"
-                                    ++ Code.list (List.map Tuple.first settings)
+                                    ++ Code.listMultiline
+                                        [ Code.fromModule moduleName "row "
+                                            ++ Code.recordMultiline
+                                                [ ( "title", Code.maybe (Maybe.map Code.string settings.title) )
+                                                , ( "content", "text \"\"" )
+                                                , ( "palette", Tuple.first settings.palette )
+                                                , ( "rows", Code.list [] )
+                                                ]
+                                                2
+                                        ]
+                                        1
                           }
                         ]
                 }
             , Heading.h2
-                [ Heading.plaintext "Example"
+                [ Heading.plaintext "Customizable Example"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
-            , Outline.view []
+            , Outline.view
+                [ Outline.row
+                    { title = settings.title
+                    , content = text ""
+                    , palette = Tuple.second settings.palette
+                    , rows = []
+                    }
+                ]
             , Heading.h2
                 [ Heading.plaintext "Row Themes"
                 , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
@@ -232,12 +246,16 @@ type alias State =
 init : State
 init =
     { control =
-        ControlExtra.list
+        Control.record Settings
+            |> Control.field "title" (Control.maybe True (Control.string "Title"))
+            |> Control.field "palette" (CommonControls.choice "palette" allRowThemes)
     }
 
 
 type alias Settings =
-    List ( String, () )
+    { title : Maybe String
+    , palette : ( String, RowTheme )
+    }
 
 
 {-| -}
