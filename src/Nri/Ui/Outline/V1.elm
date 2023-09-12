@@ -40,8 +40,7 @@ import Nri.Ui.Html.V3 exposing (viewJust)
 {-| -}
 type Outline msg
     = Outline
-        { extraContent : Maybe { border : Maybe Color, content : Html msg }
-        , rows : List (Outline msg)
+        { rows : List (Outline msg)
         , title : Maybe String
         , content : Html msg
         , palette : RowTheme
@@ -82,8 +81,15 @@ viewRows hierarchy rows =
 
 viewRow : Hierarchy -> Maybe Css.Color -> Outline msg -> Html msg
 viewRow hierarchy nextNodeColor (Outline config) =
-    utilViewRow hierarchy nextNodeColor config <|
-        Html.Styled.ul
+    utilViewRow hierarchy
+        nextNodeColor
+        { rows = config.rows
+        , title = config.title
+        , content = config.content
+        , palette = config.palette
+        , extraContent = Nothing
+        }
+        (Html.Styled.ul
             [ css
                 [ Css.marginLeft (Css.px 25)
                 , Css.paddingLeft (Css.px 25)
@@ -92,6 +98,7 @@ viewRow hierarchy nextNodeColor (Outline config) =
                 ]
             ]
             (viewRows Child config.rows)
+        )
 
 
 {-|
@@ -122,14 +129,12 @@ row config =
         , content = config.content
         , palette = config.palette
         , rows = config.rows
-        , extraContent = Nothing
         }
 
 
 {-| -}
 customRow :
-    { extraContent : Maybe { border : Maybe Color, content : Html msg }
-    , rows : List (Outline msg)
+    { rows : List (Outline msg)
     , title : Maybe String
     , content : Html msg
     , palette : RowTheme
