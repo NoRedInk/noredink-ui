@@ -17,6 +17,8 @@ module Nri.Ui.Checkbox.V7 exposing
   - reposition the guidance to be right below the label text
   - fix the hiddenLabel checkbox behavior
   - fix the disabled styles
+  - fix "checkboxes can’t be clicked in the lower half when there’s guidance" issue
+  - fix duplicative focus ring issue
 
 
 ## Changes from V6:
@@ -55,7 +57,6 @@ module Nri.Ui.Checkbox.V7 exposing
 
 -}
 
-import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
@@ -63,7 +64,8 @@ import Accessibility.Styled.Style
 import CheckboxIcons
 import Css exposing (..)
 import Css.Global
-import Html.Styled as Html
+import EventExtras
+import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import InputErrorAndGuidanceInternal exposing (Guidance)
@@ -279,15 +281,25 @@ view { label, selected } attributes =
                     )
     in
     checkboxContainer config_
-        [ viewIcon []
-            (if config.isDisabled then
-                disabledIcon
+        [ if config.isDisabled then
+            div [] [ viewIcon [] disabledIcon ]
 
-             else
-                icon
-            )
+          else
+            -- ensure the entire checkbox icon is always clickable
+            div
+                (config.onCheck
+                    |> Maybe.map (onCheckMsg config_.selected)
+                    |> Maybe.map
+                        (\msg ->
+                            [ EventExtras.onClickStopPropagation msg
+                            , css [ cursor pointer ]
+                            ]
+                        )
+                    |> Maybe.withDefault []
+                )
+                [ viewIcon [] icon ]
         , span []
-            (viewCheckbox config_
+            (viewCheckboxLabel config_
                 (if config.isDisabled then
                     disabledLabelCss
 
@@ -365,13 +377,12 @@ enabledLabelCss =
 disabledLabelCss : List Style
 disabledLabelCss =
     [ textStyle
-    , Css.outline3 (Css.px 2) Css.solid Css.transparent
     , cursor auto
     , color Colors.gray45
     ]
 
 
-viewCheckbox :
+viewCheckboxLabel :
     { a
         | identifier : String
         , selected : IsSelected
@@ -385,7 +396,7 @@ viewCheckbox :
     }
     -> List Style
     -> Html.Html msg
-viewCheckbox config styles =
+viewCheckboxLabel config styles =
     let
         marginTopAdjustment =
             case config.guidance of
@@ -407,6 +418,7 @@ viewCheckbox config styles =
                                 else
                                     Css.batch []
                                )
+                            :: outline none
                             :: styles
                             ++ config.labelCss
                         )
@@ -440,9 +452,7 @@ viewCheckbox config styles =
             else
                 Html.text config.label
     in
-    Html.div attributes
-        [ viewLabel
-        ]
+    Html.div attributes [ viewLabel ]
 
 
 checkboxIconWidth : Float
