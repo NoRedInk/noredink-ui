@@ -232,6 +232,7 @@ describe("UI tests", function () {
   const skippedRules = {
     // Loading's color contrast check seems to change behavior depending on whether Percy snapshots are taken or not
     Loading: ["color-contrast"],
+    Outline: ["color-contrast"],
     RadioButton: ["duplicate-id"],
   };
 

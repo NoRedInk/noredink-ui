@@ -28,6 +28,7 @@ import Examples.Logo as Logo
 import Examples.Menu as Menu
 import Examples.Message as Message
 import Examples.Modal as Modal
+import Examples.Outline as Outline
 import Examples.Page as Page
 import Examples.Pagination as Pagination
 import Examples.Panel as Panel
@@ -570,6 +571,25 @@ all =
                     _ ->
                         Nothing
             )
+    , Outline.example
+        |> Example.wrapMsg OutlineMsg
+            (\msg ->
+                case msg of
+                    OutlineMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState OutlineState
+            (\msg ->
+                case msg of
+                    OutlineState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , Page.example
         |> Example.wrapMsg PageMsg
             (\msg ->
@@ -1076,6 +1096,7 @@ type State
     | MenuState Menu.State
     | MessageState Message.State
     | ModalState Modal.State
+    | OutlineState Outline.State
     | PageState Page.State
     | PaginationState Pagination.State
     | PanelState Panel.State
@@ -1132,6 +1153,7 @@ type Msg
     | TabsMinimalMsg TabsMinimal.Msg
     | MessageMsg Message.Msg
     | ModalMsg Modal.Msg
+    | OutlineMsg Outline.Msg
     | PageMsg Page.Msg
     | PaginationMsg Pagination.Msg
     | PanelMsg Panel.Msg
