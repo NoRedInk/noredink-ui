@@ -367,13 +367,15 @@ viewResults state =
         ( red, green, blue ) =
             SolidColor.toRGB state.color
     in
-    Html.div [ Attributes.css [ Css.displayFlex ] ]
-        [ Html.pre
-            [ Attributes.css
-                [ Css.width (Css.px 400)
-                , Css.marginRight (Css.px 20)
-                ]
+    Html.div
+        [ Attributes.css
+            [ Css.displayFlex
+            , Css.property "gap" "20px"
+            , Css.marginTop Spacing.verticalSpacerPx
+            , Css.maxWidth (Css.px 600)
             ]
+        ]
+        [ Html.pre [ Attributes.css [ Css.maxWidth (Css.px 400) ] ]
             [ [ Code.varWithTypeAnnotation "color" "Css.Color" <|
                     ("Css.rgb " ++ String.fromFloat red ++ " " ++ String.fromFloat green ++ " " ++ String.fromFloat blue)
               , Code.newlines
