@@ -40,7 +40,7 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , categories = [ Layout ]
+    , categories = [ Layout, Instructional ]
     , keyboardSupport = []
     , state = init
     , update = update
