@@ -7,7 +7,6 @@ module Examples.Tooltip exposing (example, State, Msg)
 -}
 
 import Accessibility.Styled as Html exposing (Html)
-import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
 import Code
