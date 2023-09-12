@@ -57,6 +57,16 @@ type Outline msg
 -}
 view : List (Outline msg) -> Html msg
 view rows =
+    case rows of
+        [] ->
+            text ""
+
+        _ ->
+            view_ rows
+
+
+view_ : List (Outline msg) -> Html msg
+view_ rows =
     Html.Styled.ul
         [ Html.Styled.Attributes.css
             [ Css.listStyle Css.none
@@ -155,6 +165,16 @@ type KeyedOutline msg
 -}
 viewKeyed : List (KeyedOutline msg) -> Html msg
 viewKeyed rows =
+    case rows of
+        [] ->
+            text ""
+
+        _ ->
+            viewKeyed_ rows
+
+
+viewKeyed_ : List (KeyedOutline msg) -> Html msg
+viewKeyed_ rows =
     Html.Styled.Keyed.node "ul"
         [ Html.Styled.Attributes.css
             [ Css.listStyle Css.none
