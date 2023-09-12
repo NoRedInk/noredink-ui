@@ -1,7 +1,6 @@
 module Nri.Ui.Outline.V1 exposing
-    ( Outline
-    , view
-    , row, customRow
+    ( Outline, view, row, customRow
+    , KeyedOutline, viewKeyed, keyedRow, keyedRowWithExtraContent
     , RowTheme
     , white, gray, darkGray, blue, darkBlue, purple, turquoise, green, red, aqua, cornflower
     , blueDashBordered
@@ -10,16 +9,14 @@ module Nri.Ui.Outline.V1 exposing
 
 {-| A nestable layout that can be themed.
 
-@docs Outline
-@docs view
+@docs Outline, view, row, customRow
+
+When you're adding or removing elements, use KeyedOutline and corresponding helpers:
+
+@docs KeyedOutline, viewKeyed, keyedRow, keyedRowWithExtraContent
 
 
-## Rows
-
-@docs row, customRow
-
-
-## Predefined color palettes for use with Outline.
+## Predefined color palettes for use with Outlines and KeyedOutlines.
 
 @docs RowTheme
 @docs white, gray, darkGray, blue, darkBlue, purple, turquoise, green, red, aqua, cornflower
@@ -31,6 +28,7 @@ module Nri.Ui.Outline.V1 exposing
 import Css exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
+import Html.Styled.Keyed
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Attributes
@@ -142,6 +140,145 @@ customRow :
     -> Outline msg
 customRow config =
     Outline config
+
+
+
+-- KEYED OUTLINE
+
+
+{-| Aliased strictly for exporting
+-}
+type KeyedOutline msg
+    = KeyedOutline
+        String
+        { extraContent : Maybe { border : Maybe Color, content : Html msg }
+        , rows : List (KeyedOutline msg)
+        , title : Maybe String
+        , content : Html msg
+        , palette : RowTheme
+        }
+
+
+{-| The row view.
+
+    import Html.Styled exposing (..)
+    import Nri.Ui.Outline.V1 as Outline
+
+    main : Html msg
+    main =
+        Outline.viewKeyed [{- Rows go here -}]
+
+-}
+viewKeyed : List (KeyedOutline msg) -> Html msg
+viewKeyed rows =
+    Html.Styled.Keyed.node "ul"
+        [ Html.Styled.Attributes.css
+            [ Css.listStyle Css.none
+            , Css.margin4 (Css.px 10) Css.zero Css.zero Css.zero
+            , Css.padding Css.zero
+            ]
+        ]
+        (viewKeyedRows Root rows)
+
+
+viewKeyedRows : Hierarchy -> List (KeyedOutline msg) -> List ( String, Html msg )
+viewKeyedRows hierarchy rows =
+    let
+        orderedNodeColors =
+            (List.map (\(KeyedOutline _ { palette }) -> Just palette.border) rows ++ [ Nothing ])
+                |> List.drop 1
+    in
+    List.map2 (viewKeyedRow hierarchy) orderedNodeColors rows
+
+
+viewKeyedRow : Hierarchy -> Maybe Css.Color -> KeyedOutline msg -> ( String, Html msg )
+viewKeyedRow hierarchy nextNodeColor (KeyedOutline key config) =
+    ( key
+    , utilViewRow hierarchy nextNodeColor config <|
+        Html.Styled.Keyed.node "ul"
+            [ css
+                [ Css.marginLeft (Css.px 25)
+                , Css.paddingLeft (Css.px 25)
+                , Css.paddingTop (Css.px 25)
+                , Css.listStyleType Css.none
+                ]
+            ]
+            (viewKeyedRows Child config.rows)
+    )
+
+
+{-| Render an unstyled row with only the outline styles.
+
+    import Html.Styled exposing (..)
+    import Nri.Ui.Outline.V1 as Outline
+
+    main : Html msg
+    main =
+        Outline.viewKeyed []
+            [ Outline.keyedRow someKey
+                { title = Just "My outline node"
+                , content = text "This is my content"
+                , palette = RowTheme.red
+                , rows = []
+                }
+            ]
+
+-}
+keyedRow :
+    String
+    ->
+        { title : Maybe String
+        , content : Html msg
+        , palette : RowTheme
+        , rows : List (KeyedOutline msg)
+        }
+    -> KeyedOutline msg
+keyedRow key config =
+    KeyedOutline key
+        { title = config.title
+        , content = config.content
+        , palette = config.palette
+        , rows = config.rows
+        , extraContent = Nothing
+        }
+
+
+{-| Render a row with extra content. This row cannot have child rows.
+
+    import Html.Styled exposing (..)
+    import Nri.Ui.Outline.V1 as Outline
+
+    main : Html msg
+    main =
+        Outline.view
+            [ Outline.keyedRowWithExtraContent someKey
+                { title = Just "My outline node"
+                , content = text "This is my content"
+                , palette = RowTheme.red
+                , extraContent = { border = Just RowTheme.blue, content = text "My extra content" }
+                , rows = []
+                }
+            ]
+
+-}
+keyedRowWithExtraContent :
+    String
+    ->
+        { rows : List (KeyedOutline msg)
+        , extraContent : { border : Maybe Color, content : Html msg }
+        , title : Maybe String
+        , content : Html msg
+        , palette : RowTheme
+        }
+    -> KeyedOutline msg
+keyedRowWithExtraContent key config =
+    KeyedOutline key
+        { title = config.title
+        , content = config.content
+        , palette = config.palette
+        , rows = config.rows
+        , extraContent = Just config.extraContent
+        }
 
 
 
