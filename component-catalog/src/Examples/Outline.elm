@@ -73,7 +73,7 @@ example =
                                                 [ ( "title", Code.maybe (Maybe.map Code.string settings.title) )
                                                 , ( "content", "text \"\"" )
                                                 , ( "palette", Tuple.first settings.palette )
-                                                , ( "rows", Code.list [] )
+                                                , ( "rows", Code.listMultiline [ "-- …" ] 3 )
                                                 ]
                                                 2
                                         ]
@@ -90,7 +90,20 @@ example =
                     { title = settings.title
                     , content = text ""
                     , palette = Tuple.second settings.palette
-                    , rows = []
+                    , rows =
+                        [ Outline.row
+                            { title = Just "Node 2"
+                            , content = text ""
+                            , palette = Outline.cornflower
+                            , rows = []
+                            }
+                        , Outline.row
+                            { title = Just "Node 3"
+                            , content = text ""
+                            , palette = Outline.cornflower
+                            , rows = []
+                            }
+                        ]
                     }
                 ]
             , Heading.h2
