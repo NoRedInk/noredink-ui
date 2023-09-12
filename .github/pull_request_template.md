@@ -34,12 +34,8 @@ Please link to any relevant context and stories.
 
 ## :framed_picture: What does this change look like?
 
-- Fill in with screenshots, movies, and states, and add a designer as a reviewer if there are user-facing changes:
-  - For writing-related component changes, add Stacey (staceyadams)
-  - For quiz engine-related components, add Ravi (ravi-morbia)
-  - For a11y-related changes to general components, add Ben (bendansby)
-  - For general component-related changes or if you’re not sure about something, add the Design group (NoRedInk/design)
-- Guidelines for an optimal design review: <https://paper.dropbox.com/doc/Guidelines-for-Sharing-User-Facing-Changes-with-Design--BpL8hpJLMugy6033aT5m0JdaAg-bdKGQtYH9qO9I00hUkA6k>
+- If there are user facing changes, you will be asked later to add a designer as a reviewer. Please fill in this section by following [the guidelines for an optimal design review](https://paper.dropbox.com/doc/Guidelines-for-Sharing-User-Facing-Changes-with-Design--BpL8hpJLMugy6033aT5m0JdaAg-bdKGQtYH9qO9I00hUkA6k).
+- If there are not user facing changes, include any screenshots or videos that would be helpful to reviewers.
 
 ## Component completion checklist
 
@@ -64,7 +60,11 @@ Please link to any relevant context and stories.
   - [ ] [a11y-volunteer-reviewers](https://github.com/orgs/NoRedInk/teams/volunteer-a11y-reviewers) - Someone from this group will review your PR in full.
   - [ ]  [team-accessibilibats-a11ybats](https://github.com/orgs/NoRedInk/teams/team-accessibilibats-a11ybats) - Someone from this group will review your PR for ACCESSIBILITY ONLY.
   - [ ]  Someone from your team who can review requirements from your team's perspective. (This could be the same person from the [a11y-volunteer-reviewers](https://github.com/orgs/NoRedInk/teams/volunteer-a11y-reviewers) group if you'd like.)
-  - [ ]  A designer, maybe - If there are user-facing changes, follow the guidelines above to assign the correct designer.
+  - [ ]  If there are user-facing changes, a designer:
+    - For writing-related component changes, add Stacey (staceyadams)
+    - For quiz engine-related components, add Ravi (ravi-morbia)
+    - For a11y-related changes to general components, add Ben (bendansby)
+    - For general component-related changes or if you’re not sure about something, add the Design group (NoRedInk/design)
 
 ---
 
@@ -76,12 +76,8 @@ Please link to any relevant context and stories.
 
 ## :framed_picture: What does this change look like?
 
-- Fill in with screenshots, movies, and states, and add a designer as a reviewer if there are user-facing changes:
-  - For writing-related component changes, add Stacey (staceyadams)
-  - For quiz engine-related components, add Ravi (ravi-morbia)
-  - For a11y-related changes to general components, add Ben (bendansby)
-  - For general component-related changes or if you’re not sure about something, add the Design group (NoRedInk/design)
-- Guidelines for an optimal design review: <https://paper.dropbox.com/doc/Guidelines-for-Sharing-User-Facing-Changes-with-Design--BpL8hpJLMugy6033aT5m0JdaAg-bdKGQtYH9qO9I00hUkA6k>
+- If there are user facing changes, you will be asked later to add a designer as a reviewer. Please fill in this section by following [the guidelines for an optimal design review](https://paper.dropbox.com/doc/Guidelines-for-Sharing-User-Facing-Changes-with-Design--BpL8hpJLMugy6033aT5m0JdaAg-bdKGQtYH9qO9I00hUkA6k).
+- If there are not user facing changes, include any screenshots or videos that would be helpful to reviewers.
 
 ## Component completion checklist
 
@@ -108,4 +104,8 @@ Please link to any relevant context and stories.
   - [ ] [a11y-volunteer-reviewers](https://github.com/orgs/NoRedInk/teams/volunteer-a11y-reviewers) - Someone from this group will review your PR in full.
   - [ ]  [team-accessibilibats-a11ybats](https://github.com/orgs/NoRedInk/teams/team-accessibilibats-a11ybats) - Someone from this group will review your PR for ACCESSIBILITY ONLY.
   - [ ]  Someone from your team who can review requirements from your team's perspective. (This could be the same person from the [a11y-volunteer-reviewers](https://github.com/orgs/NoRedInk/teams/volunteer-a11y-reviewers) group if you'd like.)
-  - [ ]  A designer, maybe - If there are user-facing changes, follow the guidelines above to assign the correct designer.
+  - [ ]  If there are user-facing changes, a designer:
+    - For writing-related component changes, add Stacey (staceyadams)
+    - For quiz engine-related components, add Ravi (ravi-morbia)
+    - For a11y-related changes to general components, add Ben (bendansby)
+    - For general component-related changes or if you’re not sure about something, add the Design group (NoRedInk/design)
