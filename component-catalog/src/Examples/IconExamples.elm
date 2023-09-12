@@ -372,7 +372,8 @@ viewResults state =
             [ Css.displayFlex
             , Css.property "gap" "20px"
             , Css.marginTop Spacing.verticalSpacerPx
-            , Css.maxWidth (Css.px 600)
+            , Css.maxWidth (Css.px 700)
+            , Css.flexWrap Css.wrap
             ]
         ]
         [ Html.pre [ Attributes.css [ Css.maxWidth (Css.px 400) ] ]
@@ -386,7 +387,11 @@ viewResults state =
                          , Just <| "Svg.withWidth (Css.px " ++ String.fromFloat state.width ++ ")"
                          , Just <| "Svg.withHeight (Css.px " ++ String.fromFloat state.height ++ ")"
                          , if state.showBorder then
-                            Just "Svg.withCss [ Css.border3 (Css.px 1) Css.solid Colors.gray20 ]"
+                            Just
+                                ("Svg.withCss"
+                                    ++ Code.newlineWithIndent 3
+                                    ++ "[ Css.border3 (Css.px 1) Css.solid Colors.gray20 ]"
+                                )
 
                            else
                             Nothing
