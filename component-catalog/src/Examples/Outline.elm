@@ -98,8 +98,26 @@ example =
                                                 ]
                                                 1
 
-                                    KeyedWithExtraContent ->
-                                        "TODO"
+                                    KeyedWithExtraContent extraContent ->
+                                        Code.fromModule moduleName "viewKeyed"
+                                            ++ Code.listMultiline
+                                                [ Code.fromModule moduleName "keyedRowWithExtraContent "
+                                                    ++ Code.string "base-node"
+                                                    ++ Code.recordMultiline
+                                                        [ ( "title", Code.maybe (Maybe.map Code.string settings.title) )
+                                                        , ( "content", "text " ++ Code.string settings.content )
+                                                        , ( "palette", Tuple.first settings.palette )
+                                                        , ( "rows", Code.listMultiline [ "-- …" ] 3 )
+                                                        , ( "extraContent"
+                                                          , Code.record
+                                                                [ ( "border", Code.maybe (Just "Outline.cornflower.border") )
+                                                                , ( "content", "text " ++ Code.string "Extra content…" )
+                                                                ]
+                                                          )
+                                                        ]
+                                                        2
+                                                ]
+                                                1
                           }
                         ]
                 }
@@ -128,8 +146,21 @@ example =
                             }
                         ]
 
-                KeyedWithExtraContent ->
-                    text "TODO"
+                KeyedWithExtraContent extraContent ->
+                    Outline.viewKeyed
+                        [ Outline.keyedRowWithExtraContent "base-node"
+                            { title = settings.title
+                            , content = text settings.content
+                            , palette = Tuple.second settings.palette
+                            , rows = keyedRows
+                            , extraContent =
+                                { border = Just Outline.cornflower.border
+                                , content =
+                                    pre [ css [ Css.margin Css.zero ] ]
+                                        [ text extraContent ]
+                                }
+                            }
+                        ]
             , Heading.h2
                 [ Heading.plaintext "Row Themes"
                 , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
@@ -400,7 +431,16 @@ init =
                 (Control.choice
                     [ ( "plain", Control.value Plain )
                     , ( "keyed", Control.value Keyed )
-                    , ( "keyed with extra content", Control.value KeyedWithExtraContent )
+                    , ( "keyed with extra content"
+                      , [ "Extra content!"
+                        , "This content requires the height of the connecting arrow to increase. Do NOT use vertical margin on this element."
+                        , "Extra content is used for selecting which drafts to compare on the results views for Topic Sentence Peer Review results."
+                        , "Check it out!"
+                        ]
+                            |> String.join "\n\n"
+                            |> Control.stringTextarea
+                            |> Control.map KeyedWithExtraContent
+                      )
                     ]
                 )
     }
@@ -409,7 +449,7 @@ init =
 type RowType
     = Plain
     | Keyed
-    | KeyedWithExtraContent
+    | KeyedWithExtraContent String
 
 
 customRowTheme : Control ( String, RowTheme )
