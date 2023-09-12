@@ -71,7 +71,7 @@ example =
                                         [ Code.fromModule moduleName "row "
                                             ++ Code.recordMultiline
                                                 [ ( "title", Code.maybe (Maybe.map Code.string settings.title) )
-                                                , ( "content", "text \"\"" )
+                                                , ( "content", "text " ++ Code.string settings.content )
                                                 , ( "palette", Tuple.first settings.palette )
                                                 , ( "rows", Code.listMultiline [ "-- …" ] 3 )
                                                 ]
@@ -88,7 +88,7 @@ example =
             , Outline.view
                 [ Outline.row
                     { title = settings.title
-                    , content = text ""
+                    , content = text settings.content
                     , palette = Tuple.second settings.palette
                     , rows =
                         [ Outline.row
@@ -284,11 +284,19 @@ type alias State =
     }
 
 
+type alias Settings =
+    { title : Maybe String
+    , content : String
+    , palette : ( String, RowTheme )
+    }
+
+
 init : State
 init =
     { control =
         Control.record Settings
             |> Control.field "title" (Control.maybe True (Control.string "Title"))
+            |> Control.field "content" (Control.string "")
             |> Control.field "palette"
                 (Control.choice
                     (List.map
@@ -334,12 +342,6 @@ customRowTheme =
                 ]
             )
         |> Control.field "background" (CommonControls.choice "Colors" backgroundColorList)
-
-
-type alias Settings =
-    { title : Maybe String
-    , palette : ( String, RowTheme )
-    }
 
 
 {-| -}
