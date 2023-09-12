@@ -18,7 +18,7 @@ module Nri.Ui.Tooltip.V3 exposing
     , css, notMobileCss, mobileCss, quizEngineMobileCss, narrowMobileCss, containerCss
     , custom
     , nriDescription, testId
-    , primaryLabel, auxiliaryDescription, disclosure
+    , primaryLabel, auxiliaryDescription, helpfullyDisabled, disclosure
     )
 
 {-| Patch changes:
@@ -76,7 +76,7 @@ These tooltips aim to follow the accessibility recommendations from:
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss, narrowMobileCss, containerCss
 @docs custom
 @docs nriDescription, testId
-@docs primaryLabel, auxiliaryDescription, disclosure
+@docs primaryLabel, auxiliaryDescription, helpfullyDisabled, disclosure
 
 -}
 
@@ -809,6 +809,7 @@ onToggle msg =
 type Purpose
     = PrimaryLabel
     | AuxillaryDescription
+    | HelpfullyDisabled
     | Disclosure { triggerId : String, lastId : Maybe String }
 
 
@@ -833,6 +834,12 @@ An auxiliary description is used when the tooltip content provides supplementary
 auxiliaryDescription : Attribute msg
 auxiliaryDescription =
     Attribute (\config -> { config | purpose = AuxillaryDescription })
+
+
+{-| -}
+helpfullyDisabled : Attribute msg
+helpfullyDisabled =
+    Attribute (\config -> { config | purpose = HelpfullyDisabled })
 
 
 {-| Sometimes a "tooltip" only _looks_ like a tooltip, but is really more about hiding and showing extra information when the user asks for it.
@@ -983,6 +990,9 @@ viewTooltip_ { trigger, id } tooltip =
                         ]
 
                     AuxillaryDescription ->
+                        [ Aria.describedBy [ id ] ]
+
+                    HelpfullyDisabled ->
                         [ Aria.describedBy [ id ] ]
 
                     Disclosure _ ->
