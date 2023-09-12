@@ -68,18 +68,34 @@ example =
                     \_ ->
                         [ { sectionName = "Customizable Example"
                           , code =
-                                Code.fromModule moduleName "view"
-                                    ++ Code.listMultiline
-                                        [ Code.fromModule moduleName "row "
-                                            ++ Code.recordMultiline
-                                                [ ( "title", Code.maybe (Maybe.map Code.string settings.title) )
-                                                , ( "content", "text " ++ Code.string settings.content )
-                                                , ( "palette", Tuple.first settings.palette )
-                                                , ( "rows", Code.listMultiline [ "-- …" ] 3 )
-                                                ]
-                                                2
-                                        ]
-                                        1
+                                if settings.keyed then
+                                    Code.fromModule moduleName "viewKeyed"
+                                        ++ Code.listMultiline
+                                            [ Code.fromModule moduleName "keyedRow "
+                                                ++ Code.string "base-node"
+                                                ++ Code.recordMultiline
+                                                    [ ( "title", Code.maybe (Maybe.map Code.string settings.title) )
+                                                    , ( "content", "text " ++ Code.string settings.content )
+                                                    , ( "palette", Tuple.first settings.palette )
+                                                    , ( "rows", Code.listMultiline [ "-- …" ] 3 )
+                                                    ]
+                                                    2
+                                            ]
+                                            1
+
+                                else
+                                    Code.fromModule moduleName "view"
+                                        ++ Code.listMultiline
+                                            [ Code.fromModule moduleName "row "
+                                                ++ Code.recordMultiline
+                                                    [ ( "title", Code.maybe (Maybe.map Code.string settings.title) )
+                                                    , ( "content", "text " ++ Code.string settings.content )
+                                                    , ( "palette", Tuple.first settings.palette )
+                                                    , ( "rows", Code.listMultiline [ "-- …" ] 3 )
+                                                    ]
+                                                    2
+                                            ]
+                                            1
                           }
                         ]
                 }
@@ -87,27 +103,51 @@ example =
                 [ Heading.plaintext "Customizable Example"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
-            , Outline.view
-                [ Outline.row
-                    { title = settings.title
-                    , content = text settings.content
-                    , palette = Tuple.second settings.palette
-                    , rows =
-                        [ Outline.row
-                            { title = Just "Node 2"
-                            , content = text ""
-                            , palette = Outline.cornflower
-                            , rows = []
-                            }
-                        , Outline.row
-                            { title = Just "Node 3"
-                            , content = text ""
-                            , palette = Outline.cornflower
-                            , rows = []
-                            }
-                        ]
-                    }
-                ]
+            , if settings.keyed then
+                Outline.viewKeyed
+                    [ Outline.keyedRow "base-node"
+                        { title = settings.title
+                        , content = text settings.content
+                        , palette = Tuple.second settings.palette
+                        , rows =
+                            [ Outline.keyedRow "node-2"
+                                { title = Just "Node 2"
+                                , content = text ""
+                                , palette = Outline.cornflower
+                                , rows = []
+                                }
+                            , Outline.keyedRow "node-3"
+                                { title = Just "Node 3"
+                                , content = text ""
+                                , palette = Outline.cornflower
+                                , rows = []
+                                }
+                            ]
+                        }
+                    ]
+
+              else
+                Outline.view
+                    [ Outline.row
+                        { title = settings.title
+                        , content = text settings.content
+                        , palette = Tuple.second settings.palette
+                        , rows =
+                            [ Outline.row
+                                { title = Just "Node 2"
+                                , content = text ""
+                                , palette = Outline.cornflower
+                                , rows = []
+                                }
+                            , Outline.row
+                                { title = Just "Node 3"
+                                , content = text ""
+                                , palette = Outline.cornflower
+                                , rows = []
+                                }
+                            ]
+                        }
+                    ]
             , Heading.h2
                 [ Heading.plaintext "Row Themes"
                 , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
@@ -320,6 +360,7 @@ type alias Settings =
     { title : Maybe String
     , content : String
     , palette : ( String, RowTheme )
+    , keyed : Bool
     }
 
 
@@ -339,6 +380,7 @@ init =
                         ++ [ ( "custom", customRowTheme ) ]
                     )
                 )
+            |> Control.field "keyed" (Control.bool False)
     }
 
 
