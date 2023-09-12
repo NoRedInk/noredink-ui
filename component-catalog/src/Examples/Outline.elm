@@ -109,10 +109,7 @@ example =
                                                         , ( "palette", Tuple.first settings.palette )
                                                         , ( "rows", Code.listMultiline [ "-- …" ] 3 )
                                                         , ( "extraContent"
-                                                          , Code.record
-                                                                [ ( "border", Code.maybe (Just "Outline.cornflower.border") )
-                                                                , ( "content", "text " ++ Code.string "Extra content…" )
-                                                                ]
+                                                          , "text " ++ Code.string "Extra content…"
                                                           )
                                                         ]
                                                         2
@@ -154,11 +151,8 @@ example =
                             , palette = Tuple.second settings.palette
                             , rows = keyedRows
                             , extraContent =
-                                { border = Just Outline.cornflower.border
-                                , content =
-                                    pre [ css [ Css.margin Css.zero ] ]
-                                        [ text extraContent ]
-                                }
+                                pre [ css [ Css.margin Css.zero ] ]
+                                    [ text extraContent ]
                             }
                         ]
             , Heading.h2

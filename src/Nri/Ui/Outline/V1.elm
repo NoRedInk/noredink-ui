@@ -87,6 +87,7 @@ viewRow hierarchy nextNodeColor (Outline config) =
         , palette = config.palette
         , extraContent = Nothing
         }
+        (\(Outline { palette }) -> palette.border)
         (Html.Styled.ul
             [ css
                 [ Css.marginLeft (Css.px 25)
@@ -134,7 +135,7 @@ row config =
 type KeyedOutline msg
     = KeyedOutline
         String
-        { extraContent : Maybe { border : Maybe Color, content : Html msg }
+        { extraContent : Maybe (Html msg)
         , rows : List (KeyedOutline msg)
         , title : Maybe String
         , content : Html msg
@@ -177,8 +178,11 @@ viewKeyedRows hierarchy rows =
 viewKeyedRow : Hierarchy -> Maybe Css.Color -> KeyedOutline msg -> ( String, Html msg )
 viewKeyedRow hierarchy nextNodeColor (KeyedOutline key config) =
     ( key
-    , utilViewRow hierarchy nextNodeColor config <|
-        Html.Styled.Keyed.node "ul"
+    , utilViewRow hierarchy
+        nextNodeColor
+        config
+        (\(KeyedOutline _ { palette }) -> palette.border)
+        (Html.Styled.Keyed.node "ul"
             [ css
                 [ Css.marginLeft (Css.px 25)
                 , Css.paddingLeft (Css.px 25)
@@ -187,6 +191,7 @@ viewKeyedRow hierarchy nextNodeColor (KeyedOutline key config) =
                 ]
             ]
             (viewKeyedRows Child config.rows)
+        )
     )
 
 
@@ -238,7 +243,7 @@ keyedRow key config =
                 { title = Just "My outline node"
                 , content = text "This is my content"
                 , palette = RowTheme.red
-                , extraContent = { border = Just RowTheme.blue, content = text "My extra content" }
+                , extraContent = text "My extra content"
                 , rows = []
                 }
             ]
@@ -248,7 +253,7 @@ keyedRowWithExtraContent :
     String
     ->
         { rows : List (KeyedOutline msg)
-        , extraContent : { border : Maybe Color, content : Html msg }
+        , extraContent : Html msg
         , title : Maybe String
         , content : Html msg
         , palette : RowTheme
@@ -476,13 +481,14 @@ utilViewRow :
     ->
         { title : Maybe String
         , content : Html msg
-        , extraContent : Maybe { border : Maybe Color, content : Html msg }
+        , extraContent : Maybe (Html msg)
         , palette : RowTheme
         , rows : List outline
         }
+    -> (outline -> Color)
     -> Html msg
     -> Html msg
-utilViewRow hierarchy nextNodeColor config children =
+utilViewRow hierarchy nextNodeColor config getOutlineBorder children =
     let
         rowAttrs =
             [ Html.Styled.Attributes.attribute "data-nri-description" "outline-row"
@@ -522,7 +528,7 @@ utilViewRow hierarchy nextNodeColor config children =
 
                 Nothing ->
                     config.content
-            , viewJust viewExtraContent config.extraContent
+            , viewJust (viewExtraContent (Maybe.map getOutlineBorder (List.head config.rows))) config.extraContent
             ]
         , if List.isEmpty config.rows then
             text ""
@@ -584,8 +590,8 @@ horizontalChildConnector paletteBorder =
         ]
 
 
-viewExtraContent : { border : Maybe Color, content : Html msg } -> Html msg
-viewExtraContent { border, content } =
+viewExtraContent : Maybe Color -> Html msg -> Html msg
+viewExtraContent border content =
     div
         [ css
             [ marginLeft (px 32)
