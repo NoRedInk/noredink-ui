@@ -20,6 +20,8 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 exposing (Svg)
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -88,7 +90,15 @@ example =
                           }
                         ]
                 }
+            , Heading.h2
+                [ Heading.plaintext "Customizable Examples"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , viewExampleTable (Control.currentValue state.settings)
+            , Heading.h2
+                [ Heading.plaintext "Tooltip Example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , viewExample
                 """
 Tooltip.view

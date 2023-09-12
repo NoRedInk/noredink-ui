@@ -20,6 +20,7 @@ import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.SideNav.V5 as SideNav
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Text.V6 as Text
 
 
@@ -116,7 +117,7 @@ view ellieLinkConfig state =
         }
     , Heading.h2
         [ Heading.plaintext "Interactive example"
-        , Heading.css [ Css.marginTop (Css.px 30) ]
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
     , SideNav.view
         { isCurrentRoute = (==) settings.currentRoute
@@ -127,7 +128,7 @@ view ellieLinkConfig state =
         (List.map Tuple.second settings.entries)
     , Heading.h2
         [ Heading.plaintext "Complex example"
-        , Heading.css [ Css.marginTop (Css.px 30) ]
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
     , SideNav.view
         { isCurrentRoute = \route -> route == "complex-example__child-2"
@@ -165,7 +166,7 @@ view ellieLinkConfig state =
         ]
     , Heading.h2
         [ Heading.plaintext "Compact Groups example"
-        , Heading.css [ Css.marginTop (Css.px 30) ]
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
     , SideNav.view
         { isCurrentRoute = \route -> route == "complex-example__child-2"

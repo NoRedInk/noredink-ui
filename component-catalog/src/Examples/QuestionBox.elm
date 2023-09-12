@@ -98,7 +98,7 @@ view ellieLinkConfig state =
                 ]
         }
     , Heading.h2
-        [ Heading.plaintext "Interactive example"
+        [ Heading.plaintext "Customizable example"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
     , div [ css [ Css.minHeight (Css.px 350) ] ]
@@ -125,7 +125,7 @@ view ellieLinkConfig state =
             ]
         ]
     , Heading.h2
-        [ Heading.plaintext "Non-interactive examples"
+        [ Heading.plaintext "Non-customizable examples"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
     , Table.view []

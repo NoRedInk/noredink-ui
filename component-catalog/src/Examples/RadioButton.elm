@@ -32,6 +32,7 @@ import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Message.V4 as Message
 import Nri.Ui.Modal.V12 as Modal
 import Nri.Ui.RadioButton.V4 as RadioButton
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Text.V6 as Text
 import Routes
 import Task
@@ -156,7 +157,10 @@ view ellieLinkConfig state =
                   }
                 ]
         }
-    , Heading.h2 [ Heading.plaintext "Example" ]
+    , Heading.h2
+        [ Heading.plaintext "Customizable Example"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
     , viewExamples selectionSettings state.selectedValue
     , Modal.view
         { title = "Go Premium!"

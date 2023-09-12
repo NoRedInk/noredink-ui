@@ -310,9 +310,9 @@ viewButtonExamples ellieLinkConfig state =
                 ]
         }
     , Heading.h2
-        [ Heading.plaintext "Interactive example"
+        [ Heading.plaintext "Customizable example"
         , Heading.css
-            [ Css.margin2 Spacing.verticalSpacerPx Css.zero
+            [ Css.marginTop Spacing.verticalSpacerPx
             , Css.marginBottom (Css.px 10)
             ]
         ]

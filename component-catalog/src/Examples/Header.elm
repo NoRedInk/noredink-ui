@@ -23,6 +23,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Header.V1 as Header
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Select.V9 as Select
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -92,7 +93,10 @@ example =
                           }
                         ]
                 }
-            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Heading.h2
+                [ Heading.plaintext "Customizable Example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , Header.view
                 (Header.breadCrumbsLabel "header example breadcrumbs" :: attributes)
                 { breadCrumbs =

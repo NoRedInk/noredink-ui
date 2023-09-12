@@ -23,6 +23,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Pennant.V2 as Pennant
 import Nri.Ui.PremiumCheckbox.V8 as PremiumCheckbox
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Set exposing (Set)
 
@@ -74,7 +75,10 @@ example =
                 , renderExample = Code.unstyledView
                 , toExampleCode = \_ -> [ { sectionName = "view", code = exampleCode } ]
                 }
-            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Heading.h2
+                [ Heading.plaintext "Customizable Example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , exampleView
             ]
     , categories = [ Inputs ]

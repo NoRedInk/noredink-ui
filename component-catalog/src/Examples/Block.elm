@@ -125,7 +125,7 @@ example =
                         ]
                 }
             , Heading.h2
-                [ Heading.plaintext "Interactive example"
+                [ Heading.plaintext "Customizable example"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
             , [ Block.view [ Block.plaintext "I like " ]

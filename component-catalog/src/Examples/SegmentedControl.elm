@@ -25,7 +25,9 @@ import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.SegmentedControl.V14 as SegmentedControl
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -114,8 +116,10 @@ example =
                           }
                         ]
                 }
-            , Html.h3 [ css [ Css.marginBottom Css.zero ] ]
-                [ Html.code [] [ Html.text "view" ] ]
+            , Heading.h2
+                [ Heading.html [ Html.code [] [ Html.text "view" ], Html.text " Example" ]
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , Html.p [ css [ Css.marginTop (Css.px 1) ] ]
                 [ Html.text "Use in cases where it would also be reasonable to use Tabs." ]
             , SegmentedControl.view
@@ -125,8 +129,10 @@ example =
                 , toUrl = Nothing
                 , options = List.map Tuple.second pageOptions
                 }
-            , Html.h3 [ css [ Css.marginBottom Css.zero ] ]
-                [ Html.code [] [ Html.text "viewRadioGroup" ] ]
+            , Heading.h2
+                [ Heading.html [ Html.code [] [ Html.text "viewRadioGroup" ], Html.text " Example" ]
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , Html.p [ css [ Css.marginTop (Css.px 1) ] ]
                 [ Html.text "Use in cases where it would be reasonable to use radio buttons for the same purpose." ]
             , SegmentedControl.viewRadioGroup

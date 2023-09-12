@@ -19,6 +19,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Pagination.V1 as Pagination
+import Nri.Ui.Spacing.V1 as Spacing
 
 
 moduleName : String
@@ -100,7 +101,10 @@ example =
                           }
                         ]
                 }
-            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Heading.h2
+                [ Heading.plaintext "Customizable Example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , Pagination.view (Tuple.second pages) model.currentPage
             ]
     }

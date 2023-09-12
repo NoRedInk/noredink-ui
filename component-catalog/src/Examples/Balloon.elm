@@ -20,6 +20,8 @@ import Guidance
 import Html.Styled exposing (Html)
 import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Spacing.V1 as Spacing
 
 
 moduleName : String
@@ -186,5 +188,9 @@ view ellieLinkConfig state =
                   }
                 ]
         }
+    , Heading.h2
+        [ Heading.plaintext "Customizable Example"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
     , Balloon.view (List.map Tuple.second attributes)
     ]
