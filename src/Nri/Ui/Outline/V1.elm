@@ -1,5 +1,5 @@
 module Nri.Ui.Outline.V1 exposing
-    ( Outline, view, row, customRow
+    ( Outline, view, row
     , KeyedOutline, viewKeyed, keyedRow, keyedRowWithExtraContent
     , RowTheme
     , white, gray, darkGray, blue, darkBlue, purple, turquoise, green, red, aqua, cornflower
@@ -9,7 +9,7 @@ module Nri.Ui.Outline.V1 exposing
 
 {-| A nestable layout that can be themed.
 
-@docs Outline, view, row, customRow
+@docs Outline, view, row
 
 When you're adding or removing elements, use KeyedOutline and corresponding helpers:
 
@@ -122,23 +122,6 @@ row :
     }
     -> Outline msg
 row config =
-    Outline
-        { title = config.title
-        , content = config.content
-        , palette = config.palette
-        , rows = config.rows
-        }
-
-
-{-| -}
-customRow :
-    { rows : List (Outline msg)
-    , title : Maybe String
-    , content : Html msg
-    , palette : RowTheme
-    }
-    -> Outline msg
-customRow config =
     Outline config
 
 

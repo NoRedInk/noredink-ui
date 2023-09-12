@@ -83,9 +83,6 @@ example =
                                                 ]
                                                 1
 
-                                    Custom ->
-                                        "TODO"
-
                                     Keyed ->
                                         Code.fromModule moduleName "viewKeyed"
                                             ++ Code.listMultiline
@@ -114,16 +111,6 @@ example =
                 Plain ->
                     Outline.view
                         [ Outline.row
-                            { title = settings.title
-                            , content = text settings.content
-                            , palette = Tuple.second settings.palette
-                            , rows = plainRows
-                            }
-                        ]
-
-                Custom ->
-                    Outline.view
-                        [ Outline.customRow
                             { title = settings.title
                             , content = text settings.content
                             , palette = Tuple.second settings.palette
@@ -412,7 +399,6 @@ init =
             |> Control.field "type"
                 (Control.choice
                     [ ( "plain", Control.value Plain )
-                    , ( "custom", Control.value Custom )
                     , ( "keyed", Control.value Keyed )
                     , ( "keyed with extra content", Control.value KeyedWithExtraContent )
                     ]
@@ -422,7 +408,6 @@ init =
 
 type RowType
     = Plain
-    | Custom
     | Keyed
     | KeyedWithExtraContent
 
