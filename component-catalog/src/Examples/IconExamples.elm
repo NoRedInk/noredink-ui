@@ -27,6 +27,7 @@ import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Select.V9 as Select
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.TextInput.V7 as TextInput
@@ -199,10 +200,14 @@ view settings groups =
         viewExampleSection ( group, values ) =
             viewWithCustomStyles settings group values
     in
-    viewSettings settings
+    Heading.h2 [ Heading.plaintext "Grouped Icons" ]
+        :: viewSettings settings
         :: List.map viewExampleSection groups
-        ++ [ Html.section [ css [ Css.margin2 (Css.px 30) Css.zero ] ]
-                [ Heading.h3 [ Heading.plaintext "Example Usage" ]
+        ++ [ Html.section []
+                [ Heading.h2
+                    [ Heading.plaintext "Example Usage"
+                    , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                    ]
                 , viewSingularExampleSettings groups settings
                 , viewResults settings
                 ]
