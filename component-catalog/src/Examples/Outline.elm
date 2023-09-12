@@ -9,7 +9,7 @@ module Examples.Outline exposing (example, State, Msg)
 import Category exposing (Category(..))
 import Code
 import CommonControls
-import Css
+import Css exposing (Color)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
@@ -237,6 +237,34 @@ allRowThemes =
     ]
 
 
+borderColorList : List ( String, Color )
+borderColorList =
+    [ ( "azure", Colors.azure )
+    , ( "cornflower", Colors.cornflower )
+    , ( "gray45", Colors.gray45 )
+    , ( "gray75", Colors.gray75 )
+    , ( "green", Colors.green )
+    , ( "navy", Colors.navy )
+    , ( "purple", Colors.purple )
+    , ( "red", Colors.red )
+    , ( "turquoise", Colors.turquoise )
+    ]
+
+
+backgroundColorList : List ( String, Color )
+backgroundColorList =
+    [ ( "gray96", Colors.gray96 )
+    , ( "aquaLight", Colors.aquaLight )
+    , ( "cornflowerLight", Colors.cornflowerLight )
+    , ( "frost", Colors.frost )
+    , ( "greenLightest", Colors.greenLightest )
+    , ( "purpleLight", Colors.purpleLight )
+    , ( "redLight", Colors.redLight )
+    , ( "turquoiseLight", Colors.turquoiseLight )
+    , ( "white", Colors.white )
+    ]
+
+
 {-| -}
 type alias State =
     { control : Control Settings
@@ -248,8 +276,51 @@ init =
     { control =
         Control.record Settings
             |> Control.field "title" (Control.maybe True (Control.string "Title"))
-            |> Control.field "palette" (CommonControls.choice "palette" allRowThemes)
+            |> Control.field "palette"
+                (Control.choice
+                    (List.map
+                        (\( name, value ) ->
+                            ( name, Control.value ( Code.fromModule moduleName "." ++ name, value ) )
+                        )
+                        allRowThemes
+                        ++ [ ( "custom", customRowTheme ) ]
+                    )
+                )
     }
+
+
+customRowTheme : Control ( String, RowTheme )
+customRowTheme =
+    Control.record
+        (\( a1, a2 ) ( b1, b2 ) ( c1, c2 ) ->
+            ( Code.recordMultiline
+                [ ( "border", a1 )
+                , ( "borderStyle", b1 )
+                , ( "background", c1 )
+                ]
+                3
+            , RowTheme a2 b2 c2
+            )
+        )
+        |> Control.field "border" (CommonControls.choice "Colors" borderColorList)
+        |> Control.field "borderStyle"
+            (Control.choice
+                [ ( "none", Control.value ( "Css.batch []", Css.batch [] ) )
+                , ( "1px solid"
+                  , Control.value
+                        ( "Css.batch [ Css.borderWidth (Css.px 1), Css.borderStyle Css.solid ]"
+                        , Css.batch [ Css.borderWidth (Css.px 1), Css.borderStyle Css.solid ]
+                        )
+                  )
+                , ( "1px dashed"
+                  , Control.value
+                        ( "Css.batch [ Css.borderWidth (Css.px 1), Css.borderStyle Css.dashed ]"
+                        , Css.batch [ Css.borderWidth (Css.px 1), Css.borderStyle Css.dashed ]
+                        )
+                  )
+                ]
+            )
+        |> Control.field "background" (CommonControls.choice "Colors" backgroundColorList)
 
 
 type alias Settings =
