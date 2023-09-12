@@ -8,6 +8,7 @@ import Test.Html.Query as Query
 import Test.Html.Selector exposing (..)
 
 
+spec : Test
 spec =
     describe "Nri.Ui.Outline"
         [ test "view without rows does not render anything" <|

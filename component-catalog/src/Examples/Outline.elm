@@ -12,13 +12,11 @@ import CommonControls
 import Css exposing (Color)
 import Css.Media exposing (withMedia)
 import Debug.Control as Control exposing (Control)
-import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Outline.V1 as Outline exposing (KeyedOutline, Outline, RowTheme)
