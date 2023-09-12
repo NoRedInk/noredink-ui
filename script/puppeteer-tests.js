@@ -322,6 +322,10 @@ describe("UI tests", function () {
     await page.goto(`http://localhost:${PORT}`);
 
     await page.$("#maincontent");
+
+    const [usageTab] = await page.$x("//button[contains(., 'Usage Examples')]");
+    await usageTab.click();
+
     let links = await page.evaluate(() => {
       let nodes = Array.from(
         document.querySelectorAll("[data-nri-description='usage-example-link']")
