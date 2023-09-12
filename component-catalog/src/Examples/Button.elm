@@ -6,6 +6,7 @@ module Examples.Button exposing (Msg, State, example)
 
 -}
 
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
 import Code
@@ -24,6 +25,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Message.V4 as Message
 import Nri.Ui.Spacing.V1 as Spacing
+import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes
 import Set exposing (Set)
@@ -270,6 +272,11 @@ initDebugControls =
             )
 
 
+tooltipId : String
+tooltipId =
+    "tooltip"
+
+
 viewButtonExamples : EllieLink.Config -> State -> Html Msg
 viewButtonExamples ellieLinkConfig state =
     let
@@ -304,15 +311,28 @@ viewButtonExamples ellieLinkConfig state =
         }
     , Heading.h2
         [ Heading.plaintext "Interactive example"
-        , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
+        , Heading.css
+            [ Css.margin2 Spacing.verticalSpacerPx Css.zero
+            , Css.marginBottom (Css.px 10)
+            ]
         ]
     , viewCustomizableExample model
     , Heading.h2
         [ Heading.plaintext "Non-interactive examples"
-        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        , Heading.css
+            [ Css.marginTop Spacing.verticalSpacerPx
+            , Css.marginBottom (Css.px 10)
+            ]
         ]
     , buttonsTable
     , toggleButtons state.pressedToggleButtons
+    , Heading.h2
+        [ Heading.plaintext "Link with tracking"
+        , Heading.css
+            [ Css.marginTop Spacing.verticalSpacerPx
+            , Css.marginBottom (Css.px 10)
+            ]
+        ]
     , Button.link "linkExternalWithTracking"
         [ Button.unboundedWidth
         , Button.secondary
@@ -320,6 +340,41 @@ viewButtonExamples ellieLinkConfig state =
             { url = "#"
             , track = ShowItWorked "ButtonExample" "linkExternalWithTracking clicked"
             }
+        ]
+    , Heading.h2
+        [ Heading.plaintext "Disabled form submit button"
+        , Heading.css
+            [ Css.marginTop Spacing.verticalSpacerPx
+            , Css.marginBottom (Css.px 10)
+            ]
+        ]
+    , form
+        []
+        [ Button.button "Submit"
+            [ Button.submit
+            , Button.disabled
+            ]
+        ]
+    , Heading.h2
+        [ Heading.plaintext "Disabled button with tooltip"
+        , Heading.css
+            [ Css.marginTop Spacing.verticalSpacerPx
+            , Css.marginBottom (Css.px 10)
+            ]
+        ]
+    , Tooltip.view
+        { trigger =
+            \attrs ->
+                Button.button "Save"
+                    [ Button.disabled
+                    , Button.custom (Aria.describedBy [ tooltipId ] :: attrs)
+                    ]
+        , id = tooltipId
+        }
+        [ Tooltip.open True
+        , Tooltip.paragraph "Reasons why you can't save"
+        , Tooltip.onRight
+        , Tooltip.fitToContent
         ]
     ]
         |> div []
@@ -419,7 +474,10 @@ toggleButtons pressedToggleButtons =
     div []
         [ Heading.h2
             [ Heading.plaintext "Button toggle"
-            , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+            , Heading.css
+                [ Css.marginTop Spacing.verticalSpacerPx
+                , Css.marginBottom (Css.px 10)
+                ]
             ]
         , div [ css [ Css.displayFlex, Css.marginBottom (Css.px 20) ] ]
             [ Button.button "5"

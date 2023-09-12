@@ -39,7 +39,10 @@ The next version of `Button` should also remove `delete` and `toggleButton`
   - adds `tertiary` style
   - adds `submit` and `opensModal`
   - adds `secondaryDanger` style
-  - marked toggleButton as deprecated and added toggleButtonPressed attribute
+  - marks toggleButton as deprecated and adds toggleButtonPressed attribute
+  - replaces the `disabled` attribute with `aria-disabled="true"`
+  - removes click handler from disabled buttons
+  - prevents default behavior for disabled submit buttons by setting `type="button"`
 
 
 # Changes from V9:
@@ -758,8 +761,22 @@ renderButton ((ButtonOrLink config) as button_) =
     Nri.Ui.styled Html.button
         (styledName "customButton")
         (buttonStyles config)
-        (ClickableAttributes.toButtonAttributes config.clickableAttributes
-            { disabled = isDisabled config.state }
+        (ExtraAttributes.includeIf config.clickableAttributes.opensModal
+            (Attributes.attribute "aria-haspopup" "true")
+            :: (if isDisabled config.state then
+                    Aria.disabled True
+                        :: (if config.clickableAttributes.buttonType == "submit" then
+                                [ Attributes.type_ "button" ]
+
+                            else
+                                [ Attributes.type_ config.clickableAttributes.buttonType ]
+                           )
+
+                else
+                    [ Attributes.type_ config.clickableAttributes.buttonType
+                    , ExtraAttributes.maybe Events.onClick config.clickableAttributes.onClick
+                    ]
+               )
             ++ Attributes.class FocusRing.customClass
             :: ExtraAttributes.maybe (Just >> Aria.pressed) config.pressed
             :: config.customAttributes
@@ -1229,6 +1246,7 @@ applyColorStyle colorPalette =
             [ Css.color colorPalette.hoverText
             , Css.backgroundColor colorPalette.hoverBackground
             , Css.disabled [ Css.backgroundColor colorPalette.background ]
+            , Css.Global.withAttribute "aria-disabled=true" [ Css.backgroundColor colorPalette.background ]
             ]
         , Css.visited [ Css.color colorPalette.text ]
         ]
