@@ -1,19 +1,25 @@
 module Nri.Ui.Pennant.V3 exposing (..)
 
-{-| Used for indicating Premium content
+{-| Changes from V3:
+
+    - premiumFlag replaced by a newly designed contentPremiumFlag and activePremiumFlag
+    - disabledPremiumFlag updated to inactivePremiumFlag with new design
+    - expiredPremiumFlag updated with new design
+    - giftPremiumFlag added for vouchered content
+
+Used for indicating Premium content
 
 @docs contentPremiumFlag, activePremiumFlag, inactivePremiumFlag, expiredPremiumFlag, giftPremiumFlag
 
 -}
 
-import Nri.Ui.Colors.Extra exposing (toCssString)
-import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Svg.V1 exposing (Svg)
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as Attributes
 
 
-{-| -}
+{-| Pennant to indicate that particular content is premium only
+-}
 contentPremiumFlag : Svg
 contentPremiumFlag =
     Nri.Ui.Svg.V1.init "0 0 25 15"
@@ -33,7 +39,8 @@ contentPremiumFlag =
         ]
 
 
-{-| -}
+{-| Pennant to indicate that premium status is active
+-}
 activePremiumFlag : Svg
 activePremiumFlag =
     Nri.Ui.Svg.V1.init "0 0 25 25"
@@ -57,7 +64,8 @@ activePremiumFlag =
         ]
 
 
-{-| -}
+{-| Pennant to indicate that premium status is inactive
+-}
 inactivePremiumFlag : Nri.Ui.Svg.V1.Svg
 inactivePremiumFlag =
     Nri.Ui.Svg.V1.init "0 0 25 18"
@@ -94,7 +102,8 @@ inactivePremiumFlag =
         ]
 
 
-{-| -}
+{-| Pennant to indicate that premium status has expired
+-}
 expiredPremiumFlag : Nri.Ui.Svg.V1.Svg
 expiredPremiumFlag =
     Nri.Ui.Svg.V1.init "0 0 25 25"
@@ -123,7 +132,8 @@ expiredPremiumFlag =
         ]
 
 
-{-| -}
+{-| Pennant to indicate premium content that is currently accessible through premium vouchers
+-}
 giftPremiumFlag : Svg
 giftPremiumFlag =
     Nri.Ui.Svg.V1.init "0 0 25 25"
