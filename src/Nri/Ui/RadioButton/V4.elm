@@ -61,7 +61,7 @@ import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
-import Nri.Ui.Pennant.V2 as Pennant
+import Nri.Ui.Pennant.V3 as Pennant
 import Nri.Ui.Svg.V1 exposing (Svg)
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttributes
@@ -507,7 +507,7 @@ viewLockedButton { idValue, label } config =
 
 premiumPennant : Html msg
 premiumPennant =
-    Pennant.premiumFlag
+    Pennant.contentPremiumFlag
         |> Nri.Ui.Svg.V1.withWidth (Css.px 26)
         |> Nri.Ui.Svg.V1.withHeight (Css.px 24)
         |> Nri.Ui.Svg.V1.withCss

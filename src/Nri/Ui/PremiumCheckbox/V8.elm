@@ -51,7 +51,7 @@ import Nri.Ui.Checkbox.V7 as Checkbox
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
-import Nri.Ui.Pennant.V2 exposing (premiumFlag)
+import Nri.Ui.Pennant.V3 exposing (contentPremiumFlag)
 import Nri.Ui.Svg.V1 as Svg
 
 
@@ -303,7 +303,7 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
 
 viewPremiumFlag : Html msg
 viewPremiumFlag =
-    premiumFlag
+    contentPremiumFlag
         |> Svg.withLabel "Premium"
         |> Svg.withWidth (Css.px iconWidth)
         |> Svg.withHeight (Css.px 30)
