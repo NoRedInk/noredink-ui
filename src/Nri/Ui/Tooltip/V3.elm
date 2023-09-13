@@ -809,7 +809,6 @@ onToggle msg =
 type Purpose
     = PrimaryLabel
     | AuxillaryDescription
-    | HelpfullyDisabled
     | Disclosure { triggerId : String, lastId : Maybe String }
 
 
@@ -839,7 +838,7 @@ auxiliaryDescription =
 {-| -}
 helpfullyDisabled : Attribute msg
 helpfullyDisabled =
-    Attribute (\config -> { config | purpose = HelpfullyDisabled })
+    Attribute (\config -> { config | purpose = AuxillaryDescription })
 
 
 {-| Sometimes a "tooltip" only _looks_ like a tooltip, but is really more about hiding and showing extra information when the user asks for it.
@@ -990,9 +989,6 @@ viewTooltip_ { trigger, id } tooltip =
                         ]
 
                     AuxillaryDescription ->
-                        [ Aria.describedBy [ id ] ]
-
-                    HelpfullyDisabled ->
                         [ Aria.describedBy [ id ] ]
 
                     Disclosure _ ->
