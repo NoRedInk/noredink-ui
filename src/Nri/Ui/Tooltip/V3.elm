@@ -34,6 +34,7 @@ module Nri.Ui.Tooltip.V3 exposing
   - add partially-transparent white border around tooltips
   - Use Nri.Ui.WhenFocusLeaves.V2
   - prevent default and stop propagation on click for disclosure tooltips
+  - adds `helpfullyDisabled` option
 
 Changes from V2:
 
