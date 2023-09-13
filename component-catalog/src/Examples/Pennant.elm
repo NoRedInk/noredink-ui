@@ -26,7 +26,7 @@ type alias Msg =
 example : Example State Msg
 example =
     { moduleName = "Pennant"
-    , version = 2
+    , version = 3
     , label = "Premium"
     , name = "premiumFlag"
     , icon = Pennant.contentPremiumFlag
