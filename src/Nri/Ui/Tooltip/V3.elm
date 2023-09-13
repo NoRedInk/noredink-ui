@@ -835,7 +835,11 @@ auxiliaryDescription =
     Attribute (\config -> { config | purpose = AuxillaryDescription })
 
 
-{-| -}
+{-| Used when the tooltip trigger is disabled.
+
+Provides information about why the tooltip trigger is disabled.
+
+-}
 helpfullyDisabled : Attribute msg
 helpfullyDisabled =
     Attribute (\config -> { config | purpose = AuxillaryDescription })
