@@ -59,11 +59,11 @@ all =
           , Pennant.inactivePremiumFlag
           , [ Css.width (Css.px 80) ]
           )
-          , ( "expiredPremiumFlag"
+        , ( "expiredPremiumFlag"
           , Pennant.expiredPremiumFlag
           , [ Css.width (Css.px 80) ]
           )
-          , ( "giftPremiumFlag"
+        , ( "giftPremiumFlag"
           , Pennant.giftPremiumFlag
           , [ Css.width (Css.px 80) ]
           )
