@@ -129,6 +129,8 @@ view model =
         ]
 ```
 
+If you're an NRI employee working in the monorepo, you should use `Nri.Effect.focus` instead of `Dom.focus`. `Test.Nri.Effect` exposes `ensureFocused`, which helps you test whether the correct effect has been produced and whether the id you attempted to focus on actually exists in the DOM.
+
 @docs view
 @docs Model, init, open, close
 @docs Msg, update, subscriptions
