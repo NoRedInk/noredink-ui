@@ -136,12 +136,13 @@ expiredPremiumFlag =
 -}
 giftPremiumFlag : Svg
 giftPremiumFlag =
-    Nri.Ui.Svg.V1.init "0 0 25 25"
+    Nri.Ui.Svg.V1.init "0 0 40 40"
         [ Svg.g
             [ Attributes.stroke "none"
             , Attributes.strokeWidth "1"
             , Attributes.fill "none"
             , Attributes.fillRule "evenodd"
+            , Attributes.transform "translate(8, 8)"
             ]
             [ Svg.rect
                 [ Attributes.x "1.25391"
