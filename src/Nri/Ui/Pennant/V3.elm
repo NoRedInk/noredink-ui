@@ -1,4 +1,4 @@
-module Nri.Ui.Pennant.V3 exposing (..)
+module Nri.Ui.Pennant.V3 exposing (contentPremiumFlag, activePremiumFlag, inactivePremiumFlag, expiredPremiumFlag, giftPremiumFlag)
 
 {-| Changes from V3:
 
