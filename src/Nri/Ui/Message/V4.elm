@@ -746,7 +746,7 @@ getColor size theme =
         Error ->
             case size of
                 Tiny ->
-                    Colors.purple
+                    Colors.purpleDark
 
                 _ ->
                     Colors.purpleDark
