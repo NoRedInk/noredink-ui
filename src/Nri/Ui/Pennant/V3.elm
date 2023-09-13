@@ -1,6 +1,6 @@
 module Nri.Ui.Pennant.V3 exposing (contentPremiumFlag, activePremiumFlag, inactivePremiumFlag, expiredPremiumFlag, giftPremiumFlag)
 
-{-| Changes from V3:
+{-| Changes from V2:
 
     - premiumFlag replaced by a newly designed contentPremiumFlag and activePremiumFlag
     - disabledPremiumFlag updated to inactivePremiumFlag with new design
