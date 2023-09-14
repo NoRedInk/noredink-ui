@@ -21,7 +21,7 @@ import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Pennant.V2 as Pennant
+import Nri.Ui.Pennant.V3 as Pennant
 import Nri.Ui.PremiumCheckbox.V8 as PremiumCheckbox
 import Nri.Ui.Svg.V1 as Svg
 import Set exposing (Set)
@@ -100,7 +100,7 @@ preview =
                     , Css.alignItems Css.center
                     ]
                 ]
-                [ Pennant.premiumFlag
+                [ Pennant.contentPremiumFlag
                     |> Svg.withCss [ Css.marginRight (Css.px 8) ]
                     |> Svg.withWidth (Css.px 25)
                     |> Svg.withHeight (Css.px 30)
