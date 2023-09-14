@@ -20,6 +20,7 @@ import Example exposing (Example)
 import Html.Styled.Attributes exposing (css, href, id)
 import KeyboardSupport exposing (Key(..))
 import Markdown
+import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
@@ -122,6 +123,7 @@ type alias PageSettings =
 type TooltipId
     = PrimaryLabel
     | AuxillaryDescription
+    | HelpfullyDisabled
     | LearnMore
     | Disclosure
 
@@ -223,8 +225,26 @@ Examples:
 - We might show an icon to indicate that a link opens in a new tab. This icon would have a tooltip to explain ***how*** the link will open.
 - On a Quick Write teacher preview, we use Tooltip.auxiliaryDescription on the Save button to let teachers know that the Save button will not actually save in the preview.
 """
-          , example = viewAuxillaryDescriptionToolip model.openTooltip
+          , example = viewAuxillaryDescriptionTooltip model.openTooltip
           , tooltipId = AuxillaryDescription
+          }
+        , { name = "Tooltip.helpfullyDisabled"
+          , usage = """
+Use when all of the following are true:
+- the tooltip trigger is disabled
+- the content of the tooltip provides information explaining why the tooltip trigger is disabled
+- the tooltip trigger will become enabled through user interactions
+- the content of the tooltip doesn't contain interactive elements, such as links
+"""
+          , description =
+                """
+Tooltip.helpfullyDisabled provides information about ***why*** the tooltip trigger is disabled.
+
+Example:
+- A tooltip might appear on a disabled button to inform the user that the button will become enabled once they've filled out a required form.
+"""
+          , example = viewHelpfullyDisabledTooltip model.openTooltip
+          , tooltipId = HelpfullyDisabled
           }
         , { name = "Tooltip.disclosure"
           , usage = """
@@ -242,7 +262,7 @@ This type may contain interactive elements such as links.
                 , ")."
                 ]
                     |> String.join ""
-          , example = viewDisclosureToolip model.openTooltip
+          , example = viewDisclosureTooltip model.openTooltip
           , tooltipId = Disclosure
           }
         , { name = "Tooltip.viewToggleTip"
@@ -289,8 +309,8 @@ viewPrimaryLabelTooltip openTooltip =
         ]
 
 
-viewAuxillaryDescriptionToolip : Maybe TooltipId -> Html Msg
-viewAuxillaryDescriptionToolip openTooltip =
+viewAuxillaryDescriptionTooltip : Maybe TooltipId -> Html Msg
+viewAuxillaryDescriptionTooltip openTooltip =
     Tooltip.view
         { id = "tooltip__auxiliaryDescription"
         , trigger =
@@ -311,8 +331,28 @@ viewAuxillaryDescriptionToolip openTooltip =
         ]
 
 
-viewDisclosureToolip : Maybe TooltipId -> Html Msg
-viewDisclosureToolip openTooltip =
+viewHelpfullyDisabledTooltip : Maybe TooltipId -> Html Msg
+viewHelpfullyDisabledTooltip openTooltip =
+    Tooltip.view
+        { id = "tooltip__helpfullyDisabled"
+        , trigger =
+            \attrs ->
+                Button.button "Save"
+                    [ Button.custom attrs
+                    , Button.onClick (Log "")
+                    , Button.disabled
+                    ]
+        }
+        [ Tooltip.plaintext "Fill out the required fields before saving."
+        , Tooltip.helpfullyDisabled
+        , Tooltip.onToggle (ToggleTooltip HelpfullyDisabled)
+        , Tooltip.open (openTooltip == Just HelpfullyDisabled)
+        , Tooltip.onLeftForMobile
+        ]
+
+
+viewDisclosureTooltip : Maybe TooltipId -> Html Msg
+viewDisclosureTooltip openTooltip =
     let
         triggerId =
             "tooltip__disclosure-trigger"

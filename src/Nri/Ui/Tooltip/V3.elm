@@ -18,7 +18,7 @@ module Nri.Ui.Tooltip.V3 exposing
     , css, notMobileCss, mobileCss, quizEngineMobileCss, narrowMobileCss, containerCss
     , custom
     , nriDescription, testId
-    , primaryLabel, auxiliaryDescription, disclosure
+    , primaryLabel, auxiliaryDescription, helpfullyDisabled, disclosure
     )
 
 {-| Patch changes:
@@ -34,6 +34,7 @@ module Nri.Ui.Tooltip.V3 exposing
   - add partially-transparent white border around tooltips
   - Use Nri.Ui.WhenFocusLeaves.V2
   - prevent default and stop propagation on click for disclosure tooltips
+  - adds `helpfullyDisabled` option
 
 Changes from V2:
 
@@ -76,7 +77,7 @@ These tooltips aim to follow the accessibility recommendations from:
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss, narrowMobileCss, containerCss
 @docs custom
 @docs nriDescription, testId
-@docs primaryLabel, auxiliaryDescription, disclosure
+@docs primaryLabel, auxiliaryDescription, helpfullyDisabled, disclosure
 
 -}
 
@@ -832,6 +833,16 @@ An auxiliary description is used when the tooltip content provides supplementary
 -}
 auxiliaryDescription : Attribute msg
 auxiliaryDescription =
+    Attribute (\config -> { config | purpose = AuxillaryDescription })
+
+
+{-| Used when the tooltip trigger is disabled.
+
+Provides information about why the tooltip trigger is disabled.
+
+-}
+helpfullyDisabled : Attribute msg
+helpfullyDisabled =
     Attribute (\config -> { config | purpose = AuxillaryDescription })
 
 
