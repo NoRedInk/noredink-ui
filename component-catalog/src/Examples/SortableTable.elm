@@ -18,6 +18,7 @@ import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.SortableTable.V4 as SortableTable exposing (Column)
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Table.V7 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -190,7 +191,10 @@ example =
                 , renderExample = Code.unstyledView
                 , toExampleCode = \_ -> [ toExampleCode "view" (Code.list dataCode), toExampleCode "viewLoading" "" ]
                 }
-            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Heading.h2
+                [ Heading.plaintext "Customizable Example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , if settings.loading then
                 SortableTable.viewLoading attrs columns
 

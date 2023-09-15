@@ -22,6 +22,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Html.V3 exposing (viewJust)
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Table.V7 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -165,13 +166,23 @@ example =
                           }
                         ]
                 }
-            , section [ css [ Css.margin2 (Css.px 20) Css.zero ] ]
-                [ Heading.h2 [ Heading.plaintext "view Example" ]
+            , section []
+                [ Heading.h2
+                    [ Heading.plaintext "Customizable view Example"
+                    , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                    ]
                 , viewJust (Tuple.second >> viewExample settings.currentRoute) breadCrumbs
                 ]
-            , section [ css [ Css.margin2 (Css.px 20) Css.zero ] ]
-                [ Heading.h2 [ Heading.plaintext "viewSecondary Example" ]
+            , section []
+                [ Heading.h2
+                    [ Heading.plaintext "Customizable viewSecondary Example"
+                    , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                    ]
                 , viewJust (Tuple.second >> viewSecondaryExample settings.currentRoute) breadCrumbs
+                ]
+            , Heading.h2
+                [ Heading.plaintext "Other Helpers"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
             , Table.view []
                 [ Table.string

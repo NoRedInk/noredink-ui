@@ -263,11 +263,7 @@ view ellieLinkConfig state =
         selectionSettings =
             Control.currentValue state.selectionSettings
     in
-    [ Heading.h2
-        [ Heading.plaintext "Interactive example"
-        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
-        ]
-    , ControlView.view
+    [ ControlView.view
         { ellieLinkConfig = ellieLinkConfig
         , name = moduleName
         , version = version
@@ -294,6 +290,10 @@ view ellieLinkConfig state =
                   }
                 ]
         }
+    , Heading.h2
+        [ Heading.plaintext "Interactive example"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
     , viewExamples selectionSettings state.selectedValue
     , Heading.h2
         [ Heading.plaintext "Layout Configurations"

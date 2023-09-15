@@ -18,6 +18,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Spacing.V1 as Spacing
 
 
 moduleName : String
@@ -86,6 +87,10 @@ example =
                           }
                         ]
                 }
+            , Heading.h2
+                [ Heading.plaintext "Customizable Examples"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , viewExample
                 { name = "Default Container"
                 , description = "Your go-to container."

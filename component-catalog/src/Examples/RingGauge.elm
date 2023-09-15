@@ -19,6 +19,7 @@ import Nri.Ui.Colors.Extra exposing (fromCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.RingGauge.V1 as RingGauge
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V7 as Table
 import Round
@@ -93,7 +94,10 @@ example =
                           }
                         ]
                 }
-            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Heading.h2
+                [ Heading.plaintext "Customizable example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , RingGauge.view
                 { backgroundColor = Tuple.second settings.backgroundColor
                 , emptyColor = Tuple.second settings.emptyColor

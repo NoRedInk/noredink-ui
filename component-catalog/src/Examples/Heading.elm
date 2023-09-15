@@ -9,11 +9,13 @@ module Examples.Heading exposing (example, State, Msg)
 import Category exposing (Category(..))
 import Code
 import CommonControls
+import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Spacing.V1 as Spacing
 import ViewHelpers exposing (viewExamples)
 
 
@@ -83,6 +85,10 @@ example =
                         in
                         List.map toExampleCode examples
                 }
+            , Heading.h2
+                [ Heading.plaintext "Customizable Examples"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , examples
                 |> List.map (\( name, view ) -> ( name, view attributes ))
                 |> viewExamples

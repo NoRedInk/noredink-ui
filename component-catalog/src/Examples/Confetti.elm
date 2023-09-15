@@ -19,7 +19,9 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Confetti.V2 as Confetti
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Html.V3 exposing (viewJust)
+import Nri.Ui.Spacing.V1 as Spacing
 import Svg.Styled as Svg exposing (Svg)
 import Svg.Styled.Attributes as SvgAttrs
 
@@ -113,6 +115,10 @@ example =
                           }
                         ]
                 }
+            , Heading.h2
+                [ Heading.plaintext "Example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , Button.button "Launch confetti!"
                 [ Button.onClick LaunchConfetti
                 , Button.small

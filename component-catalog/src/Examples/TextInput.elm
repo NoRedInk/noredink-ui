@@ -21,6 +21,7 @@ import Guidance
 import Iso8601
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.TextInput.V7 as TextInput
 import ViewHelpers exposing (viewExamples)
 
@@ -92,7 +93,10 @@ example =
                             )
                             examples
                 }
-            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Heading.h2
+                [ Heading.plaintext "Customizable Examples"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , viewExamples (List.map (\( name, _, ex ) -> ( name, ex )) examples)
             ]
     }

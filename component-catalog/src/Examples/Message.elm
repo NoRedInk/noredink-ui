@@ -15,6 +15,7 @@ import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Message.V4 as Message
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V7 as Table
 import ViewHelpers exposing (viewExamples)
 
@@ -199,8 +200,8 @@ example =
                         ]
                 }
             , Heading.h2
-                [ Heading.plaintext "Customizable example"
-                , Heading.css [ Css.marginTop (Css.px 30) ]
+                [ Heading.plaintext "Customizable Examples"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
             , orDismiss <|
                 viewExamples
@@ -210,7 +211,7 @@ example =
                     ]
             , Heading.h2
                 [ Heading.css
-                    [ Css.marginTop (Css.px 20)
+                    [ Css.marginTop Spacing.verticalSpacerPx
                     , Css.borderTop3 (Css.px 2) Css.solid Colors.gray96
                     , Css.paddingTop (Css.px 20)
                     ]
@@ -218,8 +219,8 @@ example =
                 ]
             , Message.somethingWentWrong exampleRailsError
             , Heading.h2
-                [ Heading.plaintext "Content type variations"
-                , Heading.css [ Css.marginTop (Css.px 30) ]
+                [ Heading.plaintext "Content Type Variations"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
             , viewContentTable "Message.tiny" Message.tiny ClickableText.caption
             , viewContentTable "Message.large" Message.large ClickableText.medium

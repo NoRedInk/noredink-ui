@@ -20,6 +20,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -176,10 +177,14 @@ viewExamples ellieLinkConfig (State control) =
                   }
                 ]
         }
+    , Heading.h2
+        [ Heading.plaintext "Customizable Examples"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
     , buttons settings
     , Heading.h2
-        [ Heading.plaintext "Inline ClickableTexts"
-        , Heading.css [ Css.marginTop (Css.px 30) ]
+        [ Heading.plaintext "Inline ClickableText Examples"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
     , Text.caption (inlineExample "Text.caption" ClickableText.caption)
     , Text.smallBody (inlineExample "Text.smallBody" ClickableText.small)

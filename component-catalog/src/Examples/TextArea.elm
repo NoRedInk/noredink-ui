@@ -20,6 +20,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.InputStyles.V4 as InputStyles exposing (Theme(..))
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.TextArea.V5 as TextArea
 
 
@@ -100,7 +101,10 @@ example =
                           }
                         ]
                 }
-            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Heading.h2
+                [ Heading.plaintext "Customizable Example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , TextArea.view label
                 (TextArea.value state.value
                     :: TextArea.onInput UpdateValue

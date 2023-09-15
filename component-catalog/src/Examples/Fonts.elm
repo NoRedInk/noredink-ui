@@ -14,6 +14,7 @@ import Html.Styled.Attributes exposing (css)
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V7 as Table
 
 
@@ -65,7 +66,10 @@ example =
                 dd =
                     Html.dd [ css [ Css.marginLeft Css.zero, Css.marginBottom (Css.px 8) ] ]
             in
-            [ Heading.h2 [ Heading.plaintext "Fonts" ]
+            [ Heading.h2
+                [ Heading.plaintext "Fonts"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , Html.dl [ css [ Fonts.baseFont ] ]
                 [ dt [ Html.text "quizFont" ]
                 , dd [ Html.text "Use for exercise content. Georgia" ]
@@ -74,7 +78,10 @@ example =
                 , dt [ Html.text "baseFont" ]
                 , dd [ Html.text "Use  for everything else! Mulish" ]
                 ]
-            , Heading.h2 [ Heading.plaintext "Font failure patterns" ]
+            , Heading.h2
+                [ Heading.plaintext "Font failure patterns"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , viewFontFailurePatterns
             ]
     }

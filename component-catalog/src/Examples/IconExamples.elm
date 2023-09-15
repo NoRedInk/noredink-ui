@@ -27,6 +27,7 @@ import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Select.V9 as Select
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.TextInput.V7 as TextInput
@@ -199,10 +200,14 @@ view settings groups =
         viewExampleSection ( group, values ) =
             viewWithCustomStyles settings group values
     in
-    viewSettings settings
+    Heading.h2 [ Heading.plaintext "Grouped Icons" ]
+        :: viewSettings settings
         :: List.map viewExampleSection groups
-        ++ [ Html.section [ css [ Css.margin2 (Css.px 30) Css.zero ] ]
-                [ Heading.h3 [ Heading.plaintext "Example Usage" ]
+        ++ [ Html.section []
+                [ Heading.h2
+                    [ Heading.plaintext "Example Usage"
+                    , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                    ]
                 , viewSingularExampleSettings groups settings
                 , viewResults settings
                 ]
@@ -362,13 +367,16 @@ viewResults state =
         ( red, green, blue ) =
             SolidColor.toRGB state.color
     in
-    Html.div [ Attributes.css [ Css.displayFlex ] ]
-        [ Html.pre
-            [ Attributes.css
-                [ Css.width (Css.px 400)
-                , Css.marginRight (Css.px 20)
-                ]
+    Html.div
+        [ Attributes.css
+            [ Css.displayFlex
+            , Css.property "gap" "20px"
+            , Css.marginTop Spacing.verticalSpacerPx
+            , Css.maxWidth (Css.px 700)
+            , Css.flexWrap Css.wrap
             ]
+        ]
+        [ Html.pre [ Attributes.css [ Css.maxWidth (Css.px 400) ] ]
             [ [ Code.varWithTypeAnnotation "color" "Css.Color" <|
                     ("Css.rgb " ++ String.fromFloat red ++ " " ++ String.fromFloat green ++ " " ++ String.fromFloat blue)
               , Code.newlines
@@ -379,7 +387,11 @@ viewResults state =
                          , Just <| "Svg.withWidth (Css.px " ++ String.fromFloat state.width ++ ")"
                          , Just <| "Svg.withHeight (Css.px " ++ String.fromFloat state.height ++ ")"
                          , if state.showBorder then
-                            Just "Svg.withCss [ Css.border3 (Css.px 1) Css.solid Colors.gray20 ]"
+                            Just
+                                ("Svg.withCss"
+                                    ++ Code.newlineWithIndent 3
+                                    ++ "[ Css.border3 (Css.px 1) Css.solid Colors.gray20 ]"
+                                )
 
                            else
                             Nothing

@@ -20,6 +20,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Page.V3 as Page exposing (DefaultPage, RecoveryText(..))
+import Nri.Ui.Spacing.V1 as Spacing
 
 
 {-| -}
@@ -118,7 +119,10 @@ example =
                           }
                         ]
                 }
-            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Heading.h2
+                [ Heading.plaintext "Customizable Example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , Tuple.second settings.page
                 { link = ShowItWorked
                 , recoveryText = settings.recoveryText
