@@ -304,6 +304,16 @@ example =
                             , highlightables = Highlightable.fromMarkdown "Select your [favorite phrase]() in **your** writing."
                             }
                   }
+                , { viewName = "staticMarkdown"
+                  , tool = "buildMarker"
+                  , highlightable = "fromMarkdown"
+                  , description = "Interpreting highlight tags with a custom color."
+                  , example =
+                        Highlighter.staticMarkdown
+                            { id = "example-6"
+                            , highlightables = Highlightable.fromMarkdown "Select your <nri-highlight color=\"cyan\">favorite phrase with favorite color</nri-highlight> in **your** writing."
+                            }
+                  }
                 ]
             ]
     , categories = [ Instructional ]
