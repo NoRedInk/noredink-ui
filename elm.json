@@ -116,7 +116,8 @@
         "rtfeldman/elm-iso8601-date-strings": "1.1.4 <= v < 2.0.0",
         "rtfeldman/elm-sorter-experiment": "2.1.1 <= v < 3.0.0",
         "tesk9/accessible-html-with-css": "4.1.0 <= v < 6.0.0",
-        "tesk9/palette": "3.0.1 <= v < 4.0.0"
+        "tesk9/palette": "3.0.1 <= v < 4.0.0",
+        "avh4/elm-program-test": "4.0.0 <= v < 5.0.0"
     },
     "test-dependencies": {
         "avh4/elm-program-test": "4.0.0 <= v < 5.0.0",
