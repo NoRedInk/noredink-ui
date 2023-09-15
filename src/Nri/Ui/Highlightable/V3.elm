@@ -16,7 +16,7 @@ just a single whitespace.
 
 ## Patch
 
-  - add new syntax for highlight on markdown parse, which support custom colors
+  - add new syntax for highlight on markdown parse, which supports custom colors
 
 
 ## Changes from V2
@@ -151,7 +151,7 @@ initFragments text_ =
 
 {-| Initialize highlightables from a markdown string.
 This will get all `nri-highlight` tags into markded elements, you can add a specific color
-using the `color` attribute. The default color used is yellow.
+using the `color` attribute. The default color is yellow.
 
     fromMarkdown "for example, <nri-highlight>this phrase</nri-highlight> will show as highlighted"
 
@@ -161,7 +161,7 @@ will result in a list of highlightables where "this phrase" is marked with the d
 
 will result in a list of highlightables where "this phrase" is marked with the cyan marker.
 
-The available are the highlight colors available on [Nri.Colors](https://noredink-ui.netlify.app/#/doodad/Colors),
+The available highlight colors are listed in the [Nri.Colors docs](https://noredink-ui.netlify.app/#/doodad/Colors),
 which are the following:
 
   - `magenta` -> `Colors.highlightMagenta`
