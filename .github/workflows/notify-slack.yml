@@ -14,8 +14,7 @@ jobs:
         with:
           payload: |
             { "pr_url": "${{ github.event.pull_request.html_url }}",
-              "pr_title": "${{ github.event.pull_request.title }}",
-              "pr_author": "${{ github.event.pull_request.user.name }}"
+              "pr_title": "${{ github.event.pull_request.title }}"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
