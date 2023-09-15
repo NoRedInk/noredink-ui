@@ -5,14 +5,14 @@ import Accessibility.Key as Key
 import Expect exposing (Expectation)
 import Html.Styled exposing (Html, toUnstyled)
 import List.Extra
+import Nri.Test.KeyboardHelpers.V1 as KeyboardHelpers
+import Nri.Test.MouseHelpers.V1 as MouseHelpers
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Highlightable.V3 as Highlightable exposing (Highlightable)
 import Nri.Ui.Highlighter.V5 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool exposing (Tool)
 import ProgramTest exposing (..)
 import Sort
-import Spec.KeyboardHelpers as KeyboardHelpers
-import Spec.MouseHelpers as MouseHelpers
 import Spec.PseudoElements exposing (..)
 import Test exposing (..)
 import Test.Html.Query as Query
@@ -519,7 +519,7 @@ highlightable index selector =
 
 space : TestContext -> TestContext
 space =
-    KeyboardHelpers.pressSpaceKey { targetDetails = [] }
+    KeyboardHelpers.pressSpace { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 

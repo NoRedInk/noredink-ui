@@ -6,7 +6,8 @@
     "version": "24.8.2",
     "exposed-modules": [
         "Browser.Events.Extra",
-        "Nri.Ui",
+        "Nri.Test.KeyboardHelpers.V1",
+        "Nri.Test.MouseHelpers.V1",
         "Nri.Ui.Accordion.V3",
         "Nri.Ui.AnimatedIcon.V1",
         "Nri.Ui.AssignmentIcon.V2",

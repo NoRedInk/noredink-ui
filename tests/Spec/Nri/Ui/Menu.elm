@@ -3,12 +3,12 @@ module Spec.Nri.Ui.Menu exposing (spec)
 import Html.Attributes as Attributes
 import Html.Styled as HtmlStyled
 import Json.Encode as Encode
+import Nri.Test.KeyboardHelpers.V1 as KeyboardHelpers
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Menu.V4 as Menu
 import Nri.Ui.Tooltip.V3 as Tooltip
 import ProgramTest exposing (ProgramTest, ensureViewHas, ensureViewHasNot)
 import Spec.Helpers exposing (nriDescription)
-import Spec.KeyboardHelpers as KeyboardHelpers
 import Test exposing (..)
 import Test.Html.Event as Event
 import Test.Html.Query as Query
@@ -42,7 +42,7 @@ spec =
                     -- Menu opens on mouse click and closes on tab key
                     |> clickMenuButton
                     |> ensureViewHas (menuContentSelector menuContent)
-                    |> pressTabKey { targetId = "some-random-id" }
+                    |> pressTab { targetId = "some-random-id" }
                     |> ensureViewHasNot (menuContentSelector menuContent)
                     |> ProgramTest.done
         , test "Close on esc key" <|
@@ -51,7 +51,7 @@ spec =
                     -- Menu opens on mouse click and closes on tab key
                     |> clickMenuButton
                     |> ensureViewHas (menuContentSelector menuContent)
-                    |> pressEscKey { targetId = "some-random-id" }
+                    |> pressEsc { targetId = "some-random-id" }
                     |> ensureViewHasNot (menuContentSelector menuContent)
                     |> ProgramTest.done
         , test "Opens on down arrow" <|
@@ -75,7 +75,7 @@ spec =
                         -- Menu opens on mouse click and closes on esc key
                         |> clickMenuButton
                         |> ensureViewHas (menuContentSelector menuContent)
-                        |> pressEscKey { targetId = "some-random-id" }
+                        |> pressEsc { targetId = "some-random-id" }
                         |> ensureViewHasNot (menuContentSelector menuContent)
                         |> ProgramTest.done
             , test "Closes after tab on lastId" <|
@@ -83,8 +83,8 @@ spec =
                     program [ Menu.disclosure { lastId = "last-button" } ]
                         |> clickMenuButton
                         |> ensureViewHas (menuContentSelector menuContent)
-                        -- NOTE: unable to simulate pressTabKey with other targetId since those decoders will fail
-                        |> pressTabKey { targetId = "last-button" }
+                        -- NOTE: unable to simulate pressTab with other targetId since those decoders will fail
+                        |> pressTab { targetId = "last-button" }
                         |> ensureViewHasNot (menuContentSelector menuContent)
                         |> ProgramTest.done
             ]
@@ -95,7 +95,7 @@ spec =
                         -- Menu opens on mouse click and closes on esc key
                         |> clickMenuButton
                         |> ensureViewHas (menuDialogContentSelector menuContent)
-                        |> pressEscKey { targetId = "some-random-id" }
+                        |> pressEsc { targetId = "some-random-id" }
                         |> ensureViewHasNot (menuDialogContentSelector menuContent)
                         |> ProgramTest.done
             , test "Selects firstId after tab on lastId" <|
@@ -103,8 +103,8 @@ spec =
                     program [ Menu.dialog { firstId = "hello-button", lastId = "last-button" } ]
                         |> clickMenuButton
                         |> ensureViewHas (menuDialogContentSelector menuContent)
-                        -- NOTE: unable to simulate pressTabKey with other targetId since those decoders will fail
-                        |> pressTabKey { targetId = "last-button" }
+                        -- NOTE: unable to simulate pressTab with other targetId since those decoders will fail
+                        |> pressTab { targetId = "last-button" }
                         |> ensureViewHas (menuDialogContentSelector menuContent)
                         |> ProgramTest.done
             , test "Selects lastId after back tab on firstId" <|
@@ -112,8 +112,8 @@ spec =
                     program [ Menu.dialog { firstId = "hello-button", lastId = "last-button" } ]
                         |> clickMenuButton
                         |> ensureViewHas (menuDialogContentSelector menuContent)
-                        -- NOTE: unable to simulate pressTabKey with other targetId since those decoders will fail
-                        |> pressTabBackKey { targetId = "hello-button" }
+                        -- NOTE: unable to simulate pressTab with other targetId since those decoders will fail
+                        |> pressTabBack { targetId = "hello-button" }
                         |> ensureViewHas (menuDialogContentSelector menuContent)
                         |> ProgramTest.done
             ]
@@ -223,22 +223,22 @@ targetDetails targetId =
     [ ( "id", Encode.string targetId ) ]
 
 
-pressTabKey : { targetId : String } -> ProgramTest model msg effect -> ProgramTest model msg effect
-pressTabKey { targetId } =
-    KeyboardHelpers.pressTabKey
+pressTab : { targetId : String } -> ProgramTest model msg effect -> ProgramTest model msg effect
+pressTab { targetId } =
+    KeyboardHelpers.pressTab
         { targetDetails = targetDetails targetId }
         [ Selector.class "Container" ]
 
 
-pressTabBackKey : { targetId : String } -> ProgramTest model msg effect -> ProgramTest model msg effect
-pressTabBackKey { targetId } =
-    KeyboardHelpers.pressTabBackKey
+pressTabBack : { targetId : String } -> ProgramTest model msg effect -> ProgramTest model msg effect
+pressTabBack { targetId } =
+    KeyboardHelpers.pressTabBack
         { targetDetails = targetDetails targetId }
         [ Selector.class "Container" ]
 
 
-pressEscKey : { targetId : String } -> ProgramTest model msg effect -> ProgramTest model msg effect
-pressEscKey { targetId } =
-    KeyboardHelpers.pressEscKey
+pressEsc : { targetId : String } -> ProgramTest model msg effect -> ProgramTest model msg effect
+pressEsc { targetId } =
+    KeyboardHelpers.pressEsc
         { targetDetails = targetDetails targetId }
         [ Selector.class "Container" ]

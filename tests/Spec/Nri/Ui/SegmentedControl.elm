@@ -5,9 +5,9 @@ import Accessibility.Role as Role
 import Browser.Dom as Dom
 import Expect
 import Html.Styled as Html exposing (..)
+import Nri.Test.KeyboardHelpers.V1 as KeyboardHelpers
 import Nri.Ui.SegmentedControl.V14 as SegmentedControl
 import ProgramTest exposing (..)
-import Spec.KeyboardHelpers as KeyboardHelpers
 import Task
 import Test exposing (..)
 import Test.Html.Query as Query
