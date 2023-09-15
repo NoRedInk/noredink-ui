@@ -178,6 +178,9 @@ hint = 'upgrade to V12'
 [forbidden."Nri.Ui.Modal.V3"]
 hint = 'upgrade to V11'
 
+[forbidden."Nri.Ui.Pennant.V2"]
+hint = 'upgrade to V3'
+
 [forbidden."Nri.Ui.PremiumCheckbox.V6"]
 hint = 'upgrade to V8'
 

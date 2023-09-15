@@ -1,4 +1,21 @@
-module Spec.KeyboardHelpers exposing (..)
+module Nri.Test.KeyboardHelpers.V1 exposing
+    ( pressKey, releaseKey
+    , pressTab, pressTabBack, pressEsc, pressSpace, pressDownArrow, pressRightArrow, pressLeftArrow, pressShiftRight, pressShiftLeft, releaseRightArrow, releaseLeftArrow, releaseShiftRight, releaseShiftLeft
+    )
+
+{-| `KeyboardHelpers` provides a set of functions to simulate keyboard events for testing Elm programs.
+
+
+# Basic helpers
+
+@docs pressKey, releaseKey
+
+
+# Common helpers
+
+@docs pressTab, pressTabBack, pressEsc, pressSpace, pressDownArrow, pressRightArrow, pressLeftArrow, pressShiftRight, pressShiftLeft, releaseRightArrow, releaseLeftArrow, releaseShiftRight, releaseShiftLeft
+
+-}
 
 import Json.Encode as Encode
 import ProgramTest exposing (ProgramTest)
@@ -7,6 +24,8 @@ import Test.Html.Query as Query
 import Test.Html.Selector exposing (Selector)
 
 
+{-| Simulate a "keydown" event on the given element.
+-}
 pressKey :
     { targetDetails : List ( String, Encode.Value )
     , keyCode : Int
@@ -31,6 +50,8 @@ pressKey { targetDetails, keyCode, shiftKey } selectors =
         )
 
 
+{-| Simulate a "keyup" event on the given element.
+-}
 releaseKey :
     { targetDetails : List ( String, Encode.Value )
     , keyCode : Int
@@ -55,42 +76,52 @@ releaseKey { targetDetails, keyCode, shiftKey } selectors =
         )
 
 
-pressTabKey :
+{-| Simulate a tab key press on the given element.
+-}
+pressTab :
     { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
     -> ProgramTest model msg effect
     -> ProgramTest model msg effect
-pressTabKey { targetDetails } =
+pressTab { targetDetails } =
     pressKey { targetDetails = targetDetails, keyCode = 9, shiftKey = False }
 
 
-pressTabBackKey :
+{-| Simulate a shift-tab key press on the given element.
+-}
+pressTabBack :
     { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
     -> ProgramTest model msg effect
     -> ProgramTest model msg effect
-pressTabBackKey { targetDetails } =
+pressTabBack { targetDetails } =
     pressKey { targetDetails = targetDetails, keyCode = 9, shiftKey = True }
 
 
-pressEscKey :
+{-| Simulate an escape key press on the given element.
+-}
+pressEsc :
     { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
     -> ProgramTest model msg effect
     -> ProgramTest model msg effect
-pressEscKey { targetDetails } =
+pressEsc { targetDetails } =
     pressKey { targetDetails = targetDetails, keyCode = 27, shiftKey = False }
 
 
-pressSpaceKey :
+{-| Simulate a spacebar key press on the given element.
+-}
+pressSpace :
     { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
     -> ProgramTest model msg effect
     -> ProgramTest model msg effect
-pressSpaceKey { targetDetails } =
+pressSpace { targetDetails } =
     pressKey { targetDetails = targetDetails, keyCode = 32, shiftKey = False }
 
 
+{-| Simulate a down arrow key press on the given element.
+-}
 pressDownArrow :
     { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
@@ -100,6 +131,8 @@ pressDownArrow { targetDetails } =
     pressKey { targetDetails = targetDetails, keyCode = 40, shiftKey = False }
 
 
+{-| Simulate a right arrow key press on the given element.
+-}
 pressRightArrow :
     { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
@@ -109,6 +142,8 @@ pressRightArrow { targetDetails } =
     pressKey { targetDetails = targetDetails, keyCode = 39, shiftKey = False }
 
 
+{-| Simulate a left arrow key press on the given element.
+-}
 pressLeftArrow :
     { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
@@ -118,6 +153,8 @@ pressLeftArrow { targetDetails } =
     pressKey { targetDetails = targetDetails, keyCode = 37, shiftKey = False }
 
 
+{-| Simulate a right arrow key press with the shift key held down on the given element.
+-}
 pressShiftRight :
     { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
@@ -127,6 +164,8 @@ pressShiftRight { targetDetails } =
     pressKey { targetDetails = targetDetails, keyCode = 39, shiftKey = True }
 
 
+{-| Simulate a left arrow key press with the shift key held down on the given element.
+-}
 pressShiftLeft :
     { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
@@ -136,6 +175,8 @@ pressShiftLeft { targetDetails } =
     pressKey { targetDetails = targetDetails, keyCode = 37, shiftKey = True }
 
 
+{-| Simulate a right arrow key release on the given element.
+-}
 releaseRightArrow :
     { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
@@ -145,6 +186,8 @@ releaseRightArrow { targetDetails } =
     releaseKey { targetDetails = targetDetails, keyCode = 39, shiftKey = False }
 
 
+{-| Simulate a left arrow key release on the given element.
+-}
 releaseLeftArrow :
     { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
@@ -154,6 +197,8 @@ releaseLeftArrow { targetDetails } =
     releaseKey { targetDetails = targetDetails, keyCode = 37, shiftKey = False }
 
 
+{-| Simulate a right arrow key release with the shift key held down on the given element.
+-}
 releaseShiftRight :
     { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
@@ -163,6 +208,8 @@ releaseShiftRight { targetDetails } =
     releaseKey { targetDetails = targetDetails, keyCode = 39, shiftKey = True }
 
 
+{-| Simulate a left arrow key release with the shift key held down on the given element.
+-}
 releaseShiftLeft :
     { targetDetails : List ( String, Encode.Value ) }
     -> List Selector

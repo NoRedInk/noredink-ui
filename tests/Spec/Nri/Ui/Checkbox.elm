@@ -4,9 +4,9 @@ import Accessibility.Aria as Aria
 import Accessibility.Role as Role
 import Html.Styled exposing (..)
 import InputErrorAndGuidanceInternal exposing (guidanceId)
+import Nri.Test.KeyboardHelpers.V1 as KeyboardHelpers
 import Nri.Ui.Checkbox.V7 as Checkbox
 import ProgramTest exposing (..)
-import Spec.KeyboardHelpers as KeyboardHelpers
 import Test exposing (..)
 import Test.Html.Event as Event
 import Test.Html.Query as Query
@@ -94,7 +94,7 @@ stateSpec =
 
 pressSpace : TestContext -> TestContext
 pressSpace =
-    KeyboardHelpers.pressSpaceKey { targetDetails = [] } checkbox
+    KeyboardHelpers.pressSpace { targetDetails = [] } checkbox
 
 
 clickIt : TestContext -> TestContext

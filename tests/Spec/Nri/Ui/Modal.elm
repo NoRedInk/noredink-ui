@@ -7,10 +7,10 @@ import Html.Styled as Html exposing (Html, toUnstyled)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Json.Encode as Encode
+import Nri.Test.KeyboardHelpers.V1 exposing (pressTab, pressTabBack)
 import Nri.Ui.Modal.V12 as Modal
 import ProgramTest exposing (..)
 import SimulatedEffect.Cmd
-import Spec.KeyboardHelpers exposing (pressTabBackKey, pressTabKey)
 import Test exposing (..)
 import Test.Html.Selector exposing (..)
 
@@ -81,12 +81,12 @@ focusTests =
 
 tabBackWithinModal : String -> ProgramTest a b c -> ProgramTest a b c
 tabBackWithinModal onElementId =
-    pressTabBackKey { targetDetails = [ ( "id", Encode.string onElementId ) ] } focusTrapNode
+    pressTabBack { targetDetails = [ ( "id", Encode.string onElementId ) ] } focusTrapNode
 
 
 tabForwardWithinModal : String -> ProgramTest a b c -> ProgramTest a b c
 tabForwardWithinModal onElementId =
-    pressTabKey { targetDetails = [ ( "id", Encode.string onElementId ) ] } focusTrapNode
+    pressTab { targetDetails = [ ( "id", Encode.string onElementId ) ] } focusTrapNode
 
 
 focusTrapNode : List Selector

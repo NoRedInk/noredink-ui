@@ -5,8 +5,8 @@ import Accessibility.Role as Role
 import Browser.Dom as Dom
 import Expect
 import Html.Styled exposing (..)
+import Nri.Test.KeyboardHelpers.V1 as KeyboardHelpers
 import ProgramTest exposing (..)
-import Spec.KeyboardHelpers as KeyboardHelpers
 import Test.Html.Query as Query
 import Test.Html.Selector as Selector
 
