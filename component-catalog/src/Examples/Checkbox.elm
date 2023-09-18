@@ -39,11 +39,6 @@ version =
     7
 
 
-tooltipId : String
-tooltipId =
-    "tooltip"
-
-
 type TooltipType
     = HelpfullyDisabled
 
@@ -175,7 +170,7 @@ example =
                             , Checkbox.disabled
                             , Checkbox.custom attrs
                             ]
-                , id = tooltipId
+                , id = "tooltip"
                 }
                 [ Tooltip.helpfullyDisabled
                 , Tooltip.open (state.openTooltip == Just HelpfullyDisabled)
