@@ -26,6 +26,7 @@ import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V7 as Table
+import Nri.Ui.Tooltip.V3 as Tooltip
 
 
 moduleName : String
@@ -36,6 +37,15 @@ moduleName =
 version : Int
 version =
     7
+
+
+tooltipId : String
+tooltipId =
+    "tooltip"
+
+
+type TooltipType
+    = HelpfullyDisabled
 
 
 {-| -}
@@ -150,6 +160,30 @@ example =
                             ]
                   }
                 ]
+            , Heading.h2
+                [ Heading.plaintext "Tooltip Example"
+                , Heading.css [ Css.marginTop (Css.px 30) ]
+                ]
+            , Tooltip.view
+                { trigger =
+                    \attrs ->
+                        Checkbox.view
+                            { label = "Enable Text-to-Speech"
+                            , selected = Checkbox.NotSelected
+                            }
+                            [ Checkbox.id "tooltip-example"
+                            , Checkbox.disabled
+                            , Checkbox.custom attrs
+                            ]
+                , id = tooltipId
+                }
+                [ Tooltip.helpfullyDisabled
+                , Tooltip.open (state.openTooltip == Just HelpfullyDisabled)
+                , Tooltip.onToggle (ToggleTooltip HelpfullyDisabled)
+                , Tooltip.paragraph "Reasons why you can't enable Text-to-Speech"
+                , Tooltip.onRight
+                , Tooltip.fitToContent
+                ]
             ]
     , categories = [ Inputs ]
     , keyboardSupport =
@@ -219,6 +253,7 @@ preview =
 type alias State =
     { isChecked : Checkbox.IsSelected
     , settings : Control Settings
+    , openTooltip : Maybe TooltipType
     }
 
 
@@ -227,6 +262,7 @@ init : State
 init =
     { isChecked = Checkbox.PartiallySelected
     , settings = controlSettings
+    , openTooltip = Nothing
     }
 
 
@@ -315,6 +351,7 @@ type Msg
     = ToggleCheck Id Bool
     | UpdateControls (Control Settings)
     | Swallow
+    | ToggleTooltip TooltipType Bool
 
 
 {-| -}
@@ -337,6 +374,13 @@ update msg state =
 
         Swallow ->
             ( state, Cmd.none )
+
+        ToggleTooltip type_ isOpen ->
+            if isOpen then
+                ( { state | openTooltip = Just type_ }, Cmd.none )
+
+            else
+                ( { state | openTooltip = Nothing }, Cmd.none )
 
 
 type alias Id =

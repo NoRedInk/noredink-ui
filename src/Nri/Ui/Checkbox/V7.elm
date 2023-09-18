@@ -159,7 +159,7 @@ you want/expect if underlying styles change.
 Instead, please use the `css` helper.
 
 -}
-custom : List (Html.Attribute Never) -> Attribute msg
+custom : List (Html.Attribute msg) -> Attribute msg
 custom attributes =
     Attribute <| \config -> { config | custom = config.custom ++ attributes }
 
@@ -190,7 +190,7 @@ type alias Config msg =
     , onCheck : Maybe (Bool -> msg)
     , isDisabled : Bool
     , guidance : Guidance msg
-    , custom : List (Html.Attribute Never)
+    , custom : List (Html.Attribute msg)
     , containerCss : List Css.Style
     , labelCss : List Css.Style
     }
@@ -260,6 +260,7 @@ view { label, selected } attributes =
             , selected = selected
             , disabled = config.isDisabled
             , guidance = config.guidance
+            , custom = config.custom
             , error = InputErrorAndGuidanceInternal.noError
             }
 
@@ -393,6 +394,7 @@ viewCheckboxLabel :
         , labelCss : List Style
         , error : InputErrorAndGuidanceInternal.ErrorState
         , guidance : Guidance msg
+        , custom : List (Html.Attribute msg)
     }
     -> List Style
     -> Html.Html msg
@@ -429,6 +431,7 @@ viewCheckboxLabel config styles =
                   , InputErrorAndGuidanceInternal.describedBy config.identifier config
                   , Aria.checked (selectedToMaybe config.selected)
                   ]
+                    ++ config.custom
                 , if config.disabled then
                     [ Aria.disabled True ]
 
