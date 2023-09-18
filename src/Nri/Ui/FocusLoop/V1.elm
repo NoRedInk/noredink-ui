@@ -26,17 +26,39 @@ addEvents config items =
             [ ( item, [] ) ]
 
         _ ->
-            addEvents_ config items
+            siblings items
+                |> List.map (Tuple.mapSecond (keyEvents config))
 
 
-addEvents_ :
-    { focus : a -> msg
-    , leftRight : Bool
-    , upDown : Bool
-    }
-    -> List a
-    -> List ( a, List (Event msg) )
-addEvents_ config items =
+keyEvents :
+    { focus : a -> msg, leftRight : Bool, upDown : Bool }
+    -> ( a, a )
+    -> List (Event msg)
+keyEvents config ( prev, next ) =
+    let
+        leftRightEvents =
+            if config.leftRight then
+                [ Key.right (config.focus next)
+                , Key.left (config.focus prev)
+                ]
+
+            else
+                []
+
+        upDownEvents =
+            if config.upDown then
+                [ Key.down (config.focus next)
+                , Key.up (config.focus prev)
+                ]
+
+            else
+                []
+    in
+    leftRightEvents ++ upDownEvents
+
+
+siblings : List a -> List ( a, ( a, a ) )
+siblings items =
     let
         previousIds : List (Maybe a)
         previousIds =
@@ -53,28 +75,13 @@ addEvents_ config items =
     List.map2 (\id nextItem -> ( id, nextItem )) previousIds items
         |> List.foldr
             (\( previousId, item ) ( nextId, acc ) ->
-                let
-                    leftRightEvents =
-                        if config.leftRight then
-                            [ Maybe.map (config.focus >> Key.right) nextId
-                            , Maybe.map (config.focus >> Key.left) previousId
-                            ]
-
-                        else
-                            []
-
-                    upDownEvents =
-                        if config.upDown then
-                            [ Maybe.map (config.focus >> Key.down) nextId
-                            , Maybe.map (config.focus >> Key.up) previousId
-                            ]
-
-                        else
-                            []
-                in
                 ( Just item
-                , ( item, List.filterMap identity (leftRightEvents ++ upDownEvents) ) :: acc
+                , ( item, Maybe.map2 Tuple.pair previousId nextId ) :: acc
                 )
             )
             ( firstId, [] )
         |> Tuple.second
+        |> List.filterMap
+            (\( item, maybeSiblings ) ->
+                Maybe.map (Tuple.pair item) maybeSiblings
+            )
