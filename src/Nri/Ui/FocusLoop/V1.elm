@@ -153,7 +153,7 @@ addEvents :
     , upDown : Bool
     }
     -> List a
-    -> List ( a, Attribute msg )
+    -> List ( a, List (Key.Event msg) )
 addEvents config =
     siblings >> List.map (Tuple.mapSecond (keyEvents config))
 
@@ -169,7 +169,7 @@ view :
     -> a
     -> html
 view config prevId nextId =
-    config.view (keyEvents config ( prevId, nextId ))
+    config.view (Key.onKeyDownPreventDefault (keyEvents config ( prevId, nextId )))
 
 
 keyEvents :
@@ -179,7 +179,7 @@ keyEvents :
         , upDown : Bool
     }
     -> ( a, a )
-    -> Attribute msg
+    -> List (Key.Event msg)
 keyEvents config ( prev, next ) =
     let
         leftRightEvents =
@@ -200,7 +200,7 @@ keyEvents config ( prev, next ) =
             else
                 []
     in
-    Key.onKeyDownPreventDefault (leftRightEvents ++ upDownEvents)
+    leftRightEvents ++ upDownEvents
 
 
 siblings : List a -> List ( a, ( a, a ) )
