@@ -337,7 +337,7 @@ themeToColor theme =
             { backgroundColor = Colors.purpleLight, shadowColor = Colors.purple }
 
         Tip ->
-            { backgroundColor = Colors.white, shadowColor = Colors.white }
+            { backgroundColor = Colors.sunshine, shadowColor = Colors.white }
 
 
 viewGuidance :
