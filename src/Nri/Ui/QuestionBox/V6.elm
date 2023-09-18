@@ -12,6 +12,7 @@ module Nri.Ui.QuestionBox.V6 exposing
 {-| Patch Changes
 
   - Background color in Tip theme changed from white to sunshine yellow
+  - added html function
 
 Changes from V5:
 
