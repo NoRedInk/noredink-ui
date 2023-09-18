@@ -16,8 +16,8 @@ import Html.Styled.Lazy as Lazy
 
 {-| Helper for creating a list of elements navigable via arrow keys, with wrapping.
 
-Your `view` function will be called with a list of `Event`s that you can use to
-add the keyboard handlers to your elements.
+Your `view` function will be called for each item with the corresponding keyboard
+event handlers, as well as the item itself.
 
 e.g.
 
@@ -27,11 +27,10 @@ e.g.
         , leftRight = True
         , upDown = True
         , view =
-            \keyEventHandlers ->
-                \item ->
-                    div
-                        [ keyEventHandlers ]
-                        [ text item.name ]
+            \handlers item ->
+                div
+                    [ handlers ]
+                    [ text item.name ]
         }
         items
 
