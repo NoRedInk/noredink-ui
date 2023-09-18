@@ -349,10 +349,10 @@ initAttributes =
                                 [ p []
                                     [ text "Let's remember the rules "
                                     , ul []
-                                        [ li [] [text "Always capitalize the first word of a title"]
-                                        , li [] [text "Capitalize all words except small words like “and,” “of” and “an.”"]
+                                        [ li [] [ text "Always capitalize the first word of a title" ]
+                                        , li [] [ text "Capitalize all words except small words like “and,” “of” and “an.”" ]
                                         ]
-                                    , strong [] [text "How should this be capitalized?"]
+                                    , strong [] [ text "How should this be capitalized?" ]
                                     ]
                                 ]
                             )
