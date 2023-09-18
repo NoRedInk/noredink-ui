@@ -13,7 +13,36 @@ import Accessibility.Styled.Key as Key exposing (Event)
 import Html.Styled.Lazy as Lazy
 
 
-{-| -}
+{-| Helper for creating a list of elements navigable via arrow keys, with wrapping.
+
+Your `view` function will be called with a list of `Event`s that you can use to
+add the keyboard handlers to your elements.
+
+e.g.
+
+    FocusLoop.lazy
+        { id = .id
+        , focus = Focus
+        , leftRight = True
+        , upDown = True
+        , view =
+            \keyEventHandlers ->
+                \item ->
+                    div
+                        [ Key.onKeyDownPreventDefault keyEventHandlers ]
+                        [ text item.name ]
+        }
+        items
+
+As the name suggests, this function uses Html.Lazy.lazy to render your `view` function.
+
+Please ensure that the arguments you are passing to `view`, that is the contents
+of your array, will behave as expected with Html.Lazy. Hint, you may need to
+flatten records into tuples and use lazy2, lazy3, etc. if your arguments are being
+checked by reference instead of by value. See <https://guide.elm-lang.org/optimization/lazy>
+for more information.
+
+-}
 lazy :
     { id : a -> String
     , focus : String -> msg
@@ -39,7 +68,8 @@ lazy config items =
                 (siblings items)
 
 
-{-| -}
+{-| Like FocusLoop.lazy, but with 2 arguments to your view function.
+-}
 lazy2 :
     { id : ( a1, a2 ) -> String
     , focus : String -> msg
@@ -65,7 +95,8 @@ lazy2 config items =
                 (siblings items)
 
 
-{-| -}
+{-| Like FocusLoop.lazy, but with 3 arguments to your view function.
+-}
 lazy3 :
     { id : ( a1, a2, a3 ) -> String
     , focus : String -> msg
@@ -91,7 +122,8 @@ lazy3 config items =
                 (siblings items)
 
 
-{-| -}
+{-| Like FocusLoop.lazy, but with 4 arguments to your view function.
+-}
 lazy4 :
     { id : { a1 : a1, a2 : a2, a3 : a3, a4 : a4 } -> String
     , focus : String -> msg
@@ -117,7 +149,8 @@ lazy4 config items =
                 (siblings items)
 
 
-{-| -}
+{-| Like FocusLoop.lazy, but with 5 arguments to your view function.
+-}
 lazy5 :
     { id : { a1 : a1, a2 : a2, a3 : a3, a4 : a4, a5 : a5 } -> String
     , focus : String -> msg
@@ -143,7 +176,17 @@ lazy5 config items =
                 (siblings items)
 
 
-{-| -}
+{-| Zip a list of items with its corresponding keyboard events.
+
+Prefer `lazy`, `lazy2`, `lazy3`, `lazy4`, or `lazy5` to this function where possible.
+
+If you must use this and intend to use Html.Lazy yourself, please keep in mind
+that the List (Event msg) returned from this function will be checked by reference,
+so you must attach it to your model in such a way that each vdom evaluation is
+receiving the same reference. In other words, call this in init/update and keep a reference
+to the event handlers in the model, don't call it directly in the view.
+
+-}
 addEvents :
     { focus : a -> msg
     , leftRight : Bool
