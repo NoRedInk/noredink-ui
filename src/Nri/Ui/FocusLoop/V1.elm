@@ -9,7 +9,8 @@ This module makes it easier to set up this focus and wrapping behavior.
 -}
 
 import Accessibility.Styled exposing (Html)
-import Accessibility.Styled.Key as Key exposing (Event)
+import Accessibility.Styled.Key as Key
+import Html.Styled exposing (Attribute)
 import Html.Styled.Lazy as Lazy
 
 
@@ -29,7 +30,7 @@ e.g.
             \keyEventHandlers ->
                 \item ->
                     div
-                        [ Key.onKeyDownPreventDefault keyEventHandlers ]
+                        [ keyEventHandlers ]
                         [ text item.name ]
         }
         items
@@ -46,26 +47,18 @@ for more information.
 lazy :
     { id : a -> String
     , focus : String -> msg
-    , view : List (Event msg) -> a -> Html msg
+    , view : Attribute msg -> a -> Html msg
     , leftRight : Bool
     , upDown : Bool
     }
     -> List a
     -> List (Html msg)
-lazy config items =
-    case items of
-        [] ->
-            []
-
-        item :: [] ->
-            [ Lazy.lazy2 config.view [] item ]
-
-        _ ->
-            List.map
-                (\( item_, ( prev, next ) ) ->
-                    Lazy.lazy3 (view config) (config.id prev) (config.id next) item_
-                )
-                (siblings items)
+lazy config =
+    siblings
+        >> List.map
+            (\( item, ( prev, next ) ) ->
+                Lazy.lazy3 (view config) (config.id prev) (config.id next) item
+            )
 
 
 {-| Like FocusLoop.lazy, but with 2 arguments to your view function.
@@ -73,26 +66,18 @@ lazy config items =
 lazy2 :
     { id : ( a1, a2 ) -> String
     , focus : String -> msg
-    , view : List (Event msg) -> a1 -> a2 -> Html msg
+    , view : Attribute msg -> a1 -> a2 -> Html msg
     , leftRight : Bool
     , upDown : Bool
     }
     -> List ( a1, a2 )
     -> List (Html msg)
-lazy2 config items =
-    case items of
-        [] ->
-            []
-
-        ( a1, a2 ) :: [] ->
-            [ Lazy.lazy3 config.view [] a1 a2 ]
-
-        _ ->
-            List.map
-                (\( ( a1, a2 ), ( prev, next ) ) ->
-                    Lazy.lazy4 (view config) (config.id prev) (config.id next) a1 a2
-                )
-                (siblings items)
+lazy2 config =
+    siblings
+        >> List.map
+            (\( ( a1, a2 ), ( prev, next ) ) ->
+                Lazy.lazy4 (view config) (config.id prev) (config.id next) a1 a2
+            )
 
 
 {-| Like FocusLoop.lazy, but with 3 arguments to your view function.
@@ -100,26 +85,18 @@ lazy2 config items =
 lazy3 :
     { id : ( a1, a2, a3 ) -> String
     , focus : String -> msg
-    , view : List (Event msg) -> a1 -> a2 -> a3 -> Html msg
+    , view : Attribute msg -> a1 -> a2 -> a3 -> Html msg
     , leftRight : Bool
     , upDown : Bool
     }
     -> List ( a1, a2, a3 )
     -> List (Html msg)
-lazy3 config items =
-    case items of
-        [] ->
-            []
-
-        ( a1, a2, a3 ) :: [] ->
-            [ Lazy.lazy4 config.view [] a1 a2 a3 ]
-
-        _ ->
-            List.map
-                (\( ( a1, a2, a3 ), ( prev, next ) ) ->
-                    Lazy.lazy5 (view config) (config.id prev) (config.id next) a1 a2 a3
-                )
-                (siblings items)
+lazy3 config =
+    siblings
+        >> List.map
+            (\( ( a1, a2, a3 ), ( prev, next ) ) ->
+                Lazy.lazy5 (view config) (config.id prev) (config.id next) a1 a2 a3
+            )
 
 
 {-| Like FocusLoop.lazy, but with 4 arguments to your view function.
@@ -127,26 +104,18 @@ lazy3 config items =
 lazy4 :
     { id : { a1 : a1, a2 : a2, a3 : a3, a4 : a4 } -> String
     , focus : String -> msg
-    , view : List (Event msg) -> a1 -> a2 -> a3 -> a4 -> Html msg
+    , view : Attribute msg -> a1 -> a2 -> a3 -> a4 -> Html msg
     , leftRight : Bool
     , upDown : Bool
     }
     -> List { a1 : a1, a2 : a2, a3 : a3, a4 : a4 }
     -> List (Html msg)
-lazy4 config items =
-    case items of
-        [] ->
-            []
-
-        { a1, a2, a3, a4 } :: [] ->
-            [ Lazy.lazy5 config.view [] a1 a2 a3 a4 ]
-
-        _ ->
-            List.map
-                (\( { a1, a2, a3, a4 }, ( prev, next ) ) ->
-                    Lazy.lazy6 (view config) (config.id prev) (config.id next) a1 a2 a3 a4
-                )
-                (siblings items)
+lazy4 config =
+    siblings
+        >> List.map
+            (\( { a1, a2, a3, a4 }, ( prev, next ) ) ->
+                Lazy.lazy6 (view config) (config.id prev) (config.id next) a1 a2 a3 a4
+            )
 
 
 {-| Like FocusLoop.lazy, but with 5 arguments to your view function.
@@ -154,26 +123,18 @@ lazy4 config items =
 lazy5 :
     { id : { a1 : a1, a2 : a2, a3 : a3, a4 : a4, a5 : a5 } -> String
     , focus : String -> msg
-    , view : List (Event msg) -> a1 -> a2 -> a3 -> a4 -> a5 -> Html msg
+    , view : Attribute msg -> a1 -> a2 -> a3 -> a4 -> a5 -> Html msg
     , leftRight : Bool
     , upDown : Bool
     }
     -> List { a1 : a1, a2 : a2, a3 : a3, a4 : a4, a5 : a5 }
     -> List (Html msg)
-lazy5 config items =
-    case items of
-        [] ->
-            []
-
-        { a1, a2, a3, a4, a5 } :: [] ->
-            [ Lazy.lazy6 config.view [] a1 a2 a3 a4 a5 ]
-
-        _ ->
-            List.map
-                (\( { a1, a2, a3, a4, a5 }, ( prev, next ) ) ->
-                    Lazy.lazy7 (view config) (config.id prev) (config.id next) a1 a2 a3 a4 a5
-                )
-                (siblings items)
+lazy5 config =
+    siblings
+        >> List.map
+            (\( { a1, a2, a3, a4, a5 }, ( prev, next ) ) ->
+                Lazy.lazy7 (view config) (config.id prev) (config.id next) a1 a2 a3 a4 a5
+            )
 
 
 {-| Zip a list of items with its corresponding keyboard events.
@@ -193,23 +154,14 @@ addEvents :
     , upDown : Bool
     }
     -> List a
-    -> List ( a, List (Event msg) )
-addEvents config items =
-    case items of
-        [] ->
-            []
-
-        item :: [] ->
-            [ ( item, [] ) ]
-
-        _ ->
-            siblings items
-                |> List.map (Tuple.mapSecond (keyEvents config))
+    -> List ( a, Attribute msg )
+addEvents config =
+    siblings >> List.map (Tuple.mapSecond (keyEvents config))
 
 
 view :
     { config
-        | view : List (Event msg) -> html
+        | view : Attribute msg -> html
         , focus : a -> msg
         , leftRight : Bool
         , upDown : Bool
@@ -222,9 +174,13 @@ view config prevId nextId =
 
 
 keyEvents :
-    { config | focus : a -> msg, leftRight : Bool, upDown : Bool }
+    { config
+        | focus : a -> msg
+        , leftRight : Bool
+        , upDown : Bool
+    }
     -> ( a, a )
-    -> List (Event msg)
+    -> Attribute msg
 keyEvents config ( prev, next ) =
     let
         leftRightEvents =
@@ -245,7 +201,7 @@ keyEvents config ( prev, next ) =
             else
                 []
     in
-    leftRightEvents ++ upDownEvents
+    Key.onKeyDownPreventDefault (leftRightEvents ++ upDownEvents)
 
 
 siblings : List a -> List ( a, ( a, a ) )
