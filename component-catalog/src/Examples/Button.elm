@@ -6,7 +6,6 @@ module Examples.Button exposing (Msg, State, example)
 
 -}
 
-import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
 import Code
@@ -272,11 +271,6 @@ initDebugControls =
             )
 
 
-tooltipId : String
-tooltipId =
-    "tooltip"
-
-
 viewButtonExamples : EllieLink.Config -> State -> Html Msg
 viewButtonExamples ellieLinkConfig state =
     let
@@ -367,11 +361,12 @@ viewButtonExamples ellieLinkConfig state =
             \attrs ->
                 Button.button "Save"
                     [ Button.disabled
-                    , Button.custom (Aria.describedBy [ tooltipId ] :: attrs)
+                    , Button.custom attrs
                     ]
-        , id = tooltipId
+        , id = "tooltip"
         }
-        [ Tooltip.open True
+        [ Tooltip.helpfullyDisabled
+        , Tooltip.open True
         , Tooltip.paragraph "Reasons why you can't save"
         , Tooltip.onRight
         , Tooltip.fitToContent
