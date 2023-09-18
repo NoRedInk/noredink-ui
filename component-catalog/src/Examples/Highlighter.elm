@@ -317,7 +317,7 @@ example =
                 , { viewName = "staticMarkdown"
                   , tool = "buildMarker"
                   , highlightable = "fromMarkdown"
-                  , description = "Interpreting highlight tags with a custom color."
+                  , description = "Interpreting <nri-highlight> tags with a custom color."
                   , example =
                         Highlighter.staticMarkdown
                             { id = "example-6"
