@@ -9,7 +9,11 @@ module Nri.Ui.QuestionBox.V6 exposing
     , guidanceId
     )
 
-{-| Changes from V5:
+{-| Patch Changes
+
+  - Background color in Tip theme changed from white to sunshine yellow
+
+Changes from V5:
 
   - ???
 
@@ -351,7 +355,7 @@ themeToColor theme =
             { backgroundColor = Colors.purpleLight, shadowColor = Colors.purple }
 
         Tip ->
-            { backgroundColor = Colors.white, shadowColor = Colors.white }
+            { backgroundColor = Colors.sunshine, shadowColor = Colors.white }
 
 
 viewGuidance :
