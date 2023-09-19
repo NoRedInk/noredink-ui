@@ -21,6 +21,7 @@ import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Switch.V3 as Switch
 import Nri.Ui.Table.V7 as Table
+import Nri.Ui.Tooltip.V3 as Tooltip
 
 
 moduleName : String
@@ -31,6 +32,10 @@ moduleName =
 version : Int
 version =
     3
+
+
+type TooltipType
+    = HelpfullyDisabled
 
 
 example : Example State Msg
@@ -163,6 +168,29 @@ example =
                             ]
                   }
                 ]
+            , Heading.h2
+                [ Heading.plaintext "Tooltip example"
+                , Heading.css
+                    [ Css.marginTop Spacing.verticalSpacerPx
+                    , Css.marginBottom (Css.px 10)
+                    ]
+                ]
+            , Tooltip.view
+                { trigger =
+                    \attrs ->
+                        Switch.view { id = "tooltip-example", label = "Show pandas in results" }
+                            [ Switch.disabled True
+                            , Switch.custom attrs
+                            ]
+                , id = "tooltip"
+                }
+                [ Tooltip.helpfullyDisabled
+                , Tooltip.open (state.openTooltip == Just HelpfullyDisabled)
+                , Tooltip.onToggle (ToggleTooltip HelpfullyDisabled)
+                , Tooltip.paragraph "Reasons why you can't toggle this switch"
+                , Tooltip.onRight
+                , Tooltip.fitToContent
+                ]
             ]
     , categories = [ Category.Inputs ]
     , keyboardSupport =
@@ -177,6 +205,7 @@ example =
 type alias State =
     { selected : Bool
     , settings : Control Settings
+    , openTooltip : Maybe TooltipType
     }
 
 
@@ -184,6 +213,7 @@ init : State
 init =
     { selected = True
     , settings = controlSettings
+    , openTooltip = Nothing
     }
 
 
@@ -211,6 +241,7 @@ type Msg
     = Switch Bool
     | UpdateSettings (Control Settings)
     | Swallow
+    | ToggleTooltip TooltipType Bool
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -230,3 +261,10 @@ update msg state =
             ( state
             , Cmd.none
             )
+
+        ToggleTooltip type_ isOpen ->
+            if isOpen then
+                ( { state | openTooltip = Just type_ }, Cmd.none )
+
+            else
+                ( { state | openTooltip = Nothing }, Cmd.none )

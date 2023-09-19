@@ -3,11 +3,10 @@ module SwitchExampleSpec exposing (suite)
 import Accessibility.Aria as Aria
 import Accessibility.Role as Role
 import Examples.Switch exposing (example)
+import Nri.Test.MouseHelpers.V1 as MouseHelpers
 import ProgramTest exposing (..)
 import Routes exposing (Route)
 import Test exposing (..)
-import Test.Html.Event as Event
-import Test.Html.Query as Query
 import Test.Html.Selector exposing (..)
 import TestApp exposing (app)
 
@@ -36,10 +35,8 @@ suite =
 
 switchIt : String -> ProgramTest a b c -> ProgramTest a b c
 switchIt name =
-    simulateDomEvent
-        (Query.find
-            [ attribute Role.switch
-            , containing [ text name ]
-            ]
-        )
-        Event.click
+    MouseHelpers.click
+        [ attribute Role.switch
+        , containing [ text name ]
+        , id "view-switch-example"
+        ]
