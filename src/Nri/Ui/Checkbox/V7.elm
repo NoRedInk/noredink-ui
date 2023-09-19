@@ -20,6 +20,7 @@ module Nri.Ui.Checkbox.V7 exposing
   - fix "checkboxes can’t be clicked in the lower half when there’s guidance" issue
   - fix duplicative focus ring issue
   - apply custom attributes to the element with the `"checkbox"` role
+  - set cursor to not-allowed when disabled
 
 
 ## Changes from V6:
