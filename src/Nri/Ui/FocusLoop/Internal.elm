@@ -1,21 +1,6 @@
 module Nri.Ui.FocusLoop.Internal exposing (..)
 
-import Accessibility.Styled exposing (Attribute, Html)
 import Accessibility.Styled.Key as Key
-
-
-type alias Config id msg args =
-    { id : args -> id
-    , focus : id -> msg
-    , view : Attribute msg -> args -> Html msg
-    , leftRight : Bool
-    , upDown : Bool
-    }
-
-
-view : Config id msg args -> args -> id -> id -> Html msg
-view config current prevId nextId =
-    config.view (Key.onKeyDownPreventDefault (keyEvents config ( prevId, nextId ))) current
 
 
 keyEvents :

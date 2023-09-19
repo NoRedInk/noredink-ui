@@ -10,7 +10,8 @@ This module makes it easier to set up this focus and wrapping behavior.
 
 import Accessibility.Styled exposing (Html)
 import Html.Styled.Lazy as Lazy
-import Nri.Ui.FocusLoop.Internal exposing (Config, siblings, view)
+import Nri.Ui.FocusLoop.Internal exposing (siblings)
+import Nri.Ui.FocusLoop.V1 exposing (Config, view)
 
 
 type alias Lazy id msg args =
@@ -45,13 +46,14 @@ e.g.
         , focus = Focus
         , leftRight = True
         , upDown = True
-        , view =
-            \handlers item ->
-                div
-                    [ handlers ]
-                    [ text item.name ]
+        , view = viewFocusableItem
         }
         items
+
+    viewFocusableItem handlers item =
+        div
+            [ handlers ]
+            [ text item.name ]
 
 As the name suggests, this function uses Html.Lazy.lazy to render your `view` function.
 
@@ -88,37 +90,21 @@ lazy config =
 
 {-| Like FocusLoop.lazy, but with 2 arguments to your view function.
 
-For safest usage, place `FocusLoop.lazy2` at the top level of its own function.
-
 e.g.
 
-    viewSelectedTermsKeyed :
-        SelectedTermToggleSource
-        -> Maybe Tooltip
-        -> List SerializableSelectableTerm
-        -> List ( String, Html Msg )
-    viewSelectedTermsKeyed source selectedTerms =
-        List.map (\\term -> ( term, source )) >> viewSelectedTermsKeyed\_
-
-    viewSelectedTermsKeyed\_ :
-        List
-        ( SerializableSelectableTerm
-        , SelectedTermToggleSource
-        , Bool
-        )
-        -> List ( String, Html Msg )
-    viewSelectedTermsKeyed\_ =
-        FocusLoop.lazy3
-        { id = ( term, source, \_ ) -> selectedTermToggleId source term.id
+    FocusLoop.lazy
+        { id = \(FocusLoop.Args2 a1 a2) -> ...
         , focus = Focus
         , leftRight = True
-        , upDown = False
-        , view = viewSelectedTerm
+        , upDown = True
+        , view = viewFocusableItem
         }
+        [ FocusLoop.Args2 a1 a2
+        , FocusLoop.Args2 b1 a2
+        ]
 
-This ensures anything used in the view function is being accounted for by the lazy
-equality check and you don't end up with broken interactions that don't cause
-re-renders when they should.
+    viewFocusableItem handlers (FocusLoop.Args2 arg1 arg2) =
+        ...
 
 -}
 lazy2 : Lazy id msg (Args2 a1 a2)
