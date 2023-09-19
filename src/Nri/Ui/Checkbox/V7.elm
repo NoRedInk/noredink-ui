@@ -284,7 +284,10 @@ view { label, selected } attributes =
     in
     checkboxContainer config_
         [ if config.isDisabled then
-            div [] [ viewIcon [] disabledIcon ]
+            div
+                [ css [ cursor notAllowed ]
+                ]
+                [ viewIcon [] disabledIcon ]
 
           else
             -- ensure the entire checkbox icon is always clickable
@@ -379,7 +382,7 @@ enabledLabelCss =
 disabledLabelCss : List Style
 disabledLabelCss =
     [ textStyle
-    , cursor auto
+    , cursor notAllowed
     , color Colors.gray45
     ]
 
