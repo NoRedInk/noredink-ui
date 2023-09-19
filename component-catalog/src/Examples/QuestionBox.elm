@@ -335,7 +335,7 @@ initAttributes =
                 [ ( "markdown"
                   , Control.map
                         (\str ->
-                            ( Code.fromModule moduleName "content " ++ Code.stringMultiline str
+                            ( Code.fromModule moduleName "markdown " ++ Code.stringMultiline str
                             , QuestionBox.markdown str
                             )
                         )
