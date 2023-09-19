@@ -9,9 +9,28 @@ This module makes it easier to set up this focus and wrapping behavior.
 -}
 
 import Accessibility.Styled exposing (Html)
-import Html.Styled exposing (Attribute)
 import Html.Styled.Lazy as Lazy
-import Nri.Ui.FocusLoop.Internal exposing (siblings, view)
+import Nri.Ui.FocusLoop.Internal exposing (Config, siblings, view)
+
+
+type alias Lazy id msg args =
+    Config id msg args -> List args -> List ( id, Html msg )
+
+
+type Args2 a1 a2
+    = Args2 a1 a2
+
+
+type Args3 a1 a2 a3
+    = Args3 a1 a2 a3
+
+
+type Args4 a1 a2 a3 a4
+    = Args4 a1 a2 a3 a4
+
+
+type Args5 a1 a2 a3 a4 a5
+    = Args5 a1 a2 a3 a4 a5
 
 
 {-| Helper for creating a list of elements navigable via arrow keys, with wrapping.
@@ -51,15 +70,7 @@ are checked by value, or individual references (i.e. not a record container many
 `config`).
 
 -}
-lazy :
-    { id : a -> id
-    , focus : id -> msg
-    , view : Attribute msg -> a -> Html msg
-    , leftRight : Bool
-    , upDown : Bool
-    }
-    -> List a
-    -> List ( id, Html msg )
+lazy : Lazy id msg a
 lazy config =
     let
         -- DO NOT INLINE THIS.
@@ -70,13 +81,9 @@ lazy config =
         >> List.map
             (\( item, ( prev, next ) ) ->
                 ( config.id item
-                , Lazy.lazy3 view_ (config.id prev) (config.id next) item
+                , Lazy.lazy3 view_ item (config.id prev) (config.id next)
                 )
             )
-
-
-type Args2 a1 a2
-    = Args2 a1 a2
 
 
 {-| Like FocusLoop.lazy, but with 2 arguments to your view function.
@@ -114,111 +121,67 @@ equality check and you don't end up with broken interactions that don't cause
 re-renders when they should.
 
 -}
-lazy2 :
-    { id : Args2 a1 a2 -> id
-    , focus : id -> msg
-    , view : Attribute msg -> a1 -> a2 -> Html msg
-    , leftRight : Bool
-    , upDown : Bool
-    }
-    -> List (Args2 a1 a2)
-    -> List ( id, Html msg )
+lazy2 : Lazy id msg (Args2 a1 a2)
 lazy2 config =
     let
-        view_ =
-            view config
+        view_ a1 a2 =
+            view config (Args2 a1 a2)
     in
     siblings
         >> List.map
             (\( (Args2 a1 a2) as args, ( prev, next ) ) ->
                 ( config.id args
-                , Lazy.lazy4 view_ (config.id prev) (config.id next) a1 a2
+                , Lazy.lazy4 view_ a1 a2 (config.id prev) (config.id next)
                 )
             )
 
 
-type Args3 a1 a2 a3
-    = Args3 a1 a2 a3
-
-
 {-| Like FocusLoop.lazy, but with 3 arguments to your view function.
 -}
-lazy3 :
-    { id : Args3 a1 a2 a3 -> id
-    , focus : id -> msg
-    , view : Attribute msg -> a1 -> a2 -> a3 -> Html msg
-    , leftRight : Bool
-    , upDown : Bool
-    }
-    -> List (Args3 a1 a2 a3)
-    -> List ( id, Html msg )
+lazy3 : Lazy id msg (Args3 a1 a2 a3)
 lazy3 config =
     let
-        view_ =
-            view config
+        view_ a1 a2 a3 =
+            view config (Args3 a1 a2 a3)
     in
     siblings
         >> List.map
             (\( (Args3 a1 a2 a3) as args, ( prev, next ) ) ->
                 ( config.id args
-                , Lazy.lazy5 view_ (config.id prev) (config.id next) a1 a2 a3
+                , Lazy.lazy5 view_ a1 a2 a3 (config.id prev) (config.id next)
                 )
             )
 
 
-type Args4 a1 a2 a3 a4
-    = Args4 a1 a2 a3 a4
-
-
 {-| Like FocusLoop.lazy, but with 4 arguments to your view function.
 -}
-lazy4 :
-    { id : Args4 a1 a2 a3 a4 -> id
-    , focus : id -> msg
-    , view : Attribute msg -> a1 -> a2 -> a3 -> a4 -> Html msg
-    , leftRight : Bool
-    , upDown : Bool
-    }
-    -> List (Args4 a1 a2 a3 a4)
-    -> List ( id, Html msg )
+lazy4 : Lazy id msg (Args4 a1 a2 a3 a4)
 lazy4 config =
     let
-        view_ =
-            view config
+        view_ a1 a2 a3 a4 =
+            view config (Args4 a1 a2 a3 a4)
     in
     siblings
         >> List.map
             (\( (Args4 a1 a2 a3 a4) as args, ( prev, next ) ) ->
                 ( config.id args
-                , Lazy.lazy6 view_ (config.id prev) (config.id next) a1 a2 a3 a4
+                , Lazy.lazy6 view_ a1 a2 a3 a4 (config.id prev) (config.id next)
                 )
             )
 
 
-type Args5 a1 a2 a3 a4 a5
-    = Args5 a1 a2 a3 a4 a5
-
-
 {-| Like FocusLoop.lazy, but with 5 arguments to your view function.
 -}
-lazy5 :
-    { id : Args5 a1 a2 a3 a4 a5 -> id
-    , focus : id -> msg
-    , view : Attribute msg -> a1 -> a2 -> a3 -> a4 -> a5 -> Html msg
-    , leftRight : Bool
-    , upDown : Bool
-    }
-    -> List (Args5 a1 a2 a3 a4 a5)
-    -> List ( id, Html msg )
+lazy5 : Lazy id msg (Args5 a1 a2 a3 a4 a5)
 lazy5 config =
     let
-        view_ =
-            view config
+        view_ a1 a2 a3 a4 a5 =
+            view config (Args5 a1 a2 a3 a4 a5)
     in
     siblings
         >> List.map
             (\( (Args5 a1 a2 a3 a4 a5) as args, ( prev, next ) ) ->
                 ( config.id args
-                , Lazy.lazy7 view_ (config.id prev) (config.id next) a1 a2 a3 a4 a5
+                , Lazy.lazy7 view_ a1 a2 a3 a4 a5 (config.id prev) (config.id next)
                 )
             )
