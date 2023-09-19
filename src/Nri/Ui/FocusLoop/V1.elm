@@ -36,11 +36,19 @@ e.g.
 
 As the name suggests, this function uses Html.Lazy.lazy to render your `view` function.
 
-Please ensure that the arguments you are passing to `view`, that is the contents
-of your array, will behave as expected with Html.Lazy. Hint, you may need to
-flatten records into tuples and use lazy2, lazy3, etc. if your arguments are being
-checked by reference instead of by value. See <https://guide.elm-lang.org/optimization/lazy>
-for more information.
+Please ensure that the arguments you are passing to `view`, i.e. the contents
+of your array, will behave as expected with Html.Lazy. tl;dr, only primitives are
+checked by value; everything else is checked by reference. This means that if you are
+constructing records in your view that are passed into `lazy`, they will be reconstructed
+on every call to view, causing the lazy to evaluate as not equal and ultimately cause your
+view to re-render on every call to `view`.
+
+See <https://guide.elm-lang.org/optimization/lazy> for more details.
+
+Hint, you may need to flatten records into individual arguments (tuples in the list
+of items) and use lazy2, lazy3, etc. so that you can pass primitives and ensure they
+are checked by value, or individual references (i.e. not a record container many, a la
+`config`).
 
 -}
 lazy :
@@ -137,15 +145,6 @@ lazy5 config =
 
 
 {-| Zip a list of items with its corresponding keyboard events.
-
-Prefer `lazy`, `lazy2`, `lazy3`, `lazy4`, or `lazy5` to this function where possible.
-
-If you must use this and intend to use Html.Lazy yourself, please keep in mind
-that the List (Event msg) returned from this function will be checked by reference,
-so you must attach it to your model in such a way that each vdom evaluation is
-receiving the same reference. In other words, call this in init/update and keep a reference
-to the event handlers in the model, don't call it directly in the view.
-
 -}
 addEvents :
     { focus : a -> msg
@@ -206,26 +205,25 @@ keyEvents config ( prev, next ) =
 siblings : List a -> List ( a, ( a, a ) )
 siblings items =
     let
-        previousIds : List (Maybe a)
-        previousIds =
-            finalId :: List.map Just items
+        previousItems : List (Maybe a)
+        previousItems =
+            finalItem :: List.map Just items
 
-        firstId : Maybe a
-        firstId =
-            List.head items
-
-        finalId : Maybe a
-        finalId =
+        finalItem : Maybe a
+        finalItem =
             List.head (List.reverse items)
+
+        init =
+            ( List.head items, [] )
     in
-    List.map2 (\id nextItem -> ( id, nextItem )) previousIds items
+    List.map2 Tuple.pair previousItems items
         |> List.foldr
             (\( previousId, item ) ( nextId, acc ) ->
                 ( Just item
                 , ( item, Maybe.map2 Tuple.pair previousId nextId ) :: acc
                 )
             )
-            ( firstId, [] )
+            init
         |> Tuple.second
         |> List.filterMap
             (\( item, maybeSiblings ) ->
