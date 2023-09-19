@@ -61,11 +61,16 @@ lazy :
     -> List a
     -> List ( String, Html msg )
 lazy config =
+    let
+        -- DO NOT INLINE THIS.
+        view_ =
+            view config
+    in
     siblings
         >> List.map
             (\( item, ( prev, next ) ) ->
                 ( config.id item
-                , Lazy.lazy3 (view config) (config.id prev) (config.id next) item
+                , Lazy.lazy3 view_ (config.id prev) (config.id next) item
                 )
             )
 
@@ -115,19 +120,20 @@ lazy2 :
     -> List ( a1, a2 )
     -> List ( String, Html msg )
 lazy2 config =
+    let
+        view_ =
+            view config
+    in
     siblings
         >> List.map
             (\( ( a1, a2 ) as args, ( prev, next ) ) ->
                 ( config.id args
-                , Lazy.lazy4 (view config) (config.id prev) (config.id next) a1 a2
+                , Lazy.lazy4 view_ (config.id prev) (config.id next) a1 a2
                 )
             )
 
 
 {-| Like FocusLoop.lazy, but with 3 arguments to your view function.
-
-See note on `lazy2` for safest usage.
-
 -}
 lazy3 :
     { id : ( a1, a2, a3 ) -> String
@@ -139,19 +145,20 @@ lazy3 :
     -> List ( a1, a2, a3 )
     -> List ( String, Html msg )
 lazy3 config =
+    let
+        view_ =
+            view config
+    in
     siblings
         >> List.map
             (\( ( a1, a2, a3 ) as args, ( prev, next ) ) ->
                 ( config.id args
-                , Lazy.lazy5 (view config) (config.id prev) (config.id next) a1 a2 a3
+                , Lazy.lazy5 view_ (config.id prev) (config.id next) a1 a2 a3
                 )
             )
 
 
 {-| Like FocusLoop.lazy, but with 4 arguments to your view function.
-
-See note on `lazy2` for safest usage.
-
 -}
 lazy4 :
     { id : { a1 : a1, a2 : a2, a3 : a3, a4 : a4 } -> String
@@ -163,19 +170,20 @@ lazy4 :
     -> List { a1 : a1, a2 : a2, a3 : a3, a4 : a4 }
     -> List ( String, Html msg )
 lazy4 config =
+    let
+        view_ =
+            view config
+    in
     siblings
         >> List.map
             (\( { a1, a2, a3, a4 } as args, ( prev, next ) ) ->
                 ( config.id args
-                , Lazy.lazy6 (view config) (config.id prev) (config.id next) a1 a2 a3 a4
+                , Lazy.lazy6 view_ (config.id prev) (config.id next) a1 a2 a3 a4
                 )
             )
 
 
 {-| Like FocusLoop.lazy, but with 5 arguments to your view function.
-
-See note on `lazy2` for safest usage.
-
 -}
 lazy5 :
     { id : { a1 : a1, a2 : a2, a3 : a3, a4 : a4, a5 : a5 } -> String
@@ -187,10 +195,14 @@ lazy5 :
     -> List { a1 : a1, a2 : a2, a3 : a3, a4 : a4, a5 : a5 }
     -> List ( String, Html msg )
 lazy5 config =
+    let
+        view_ =
+            view config
+    in
     siblings
         >> List.map
             (\( { a1, a2, a3, a4, a5 } as args, ( prev, next ) ) ->
                 ( config.id args
-                , Lazy.lazy7 (view config) (config.id prev) (config.id next) a1 a2 a3 a4 a5
+                , Lazy.lazy7 view_ (config.id prev) (config.id next) a1 a2 a3 a4 a5
                 )
             )
