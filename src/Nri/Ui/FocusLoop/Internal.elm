@@ -65,10 +65,3 @@ siblings items =
                     )
                     init
                 |> Tuple.second
-
-
-
--- |> List.filterMap
---     (\( item, maybeSiblings ) ->
---         Maybe.map (Tuple.pair item) maybeSiblings
---     )

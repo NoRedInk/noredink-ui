@@ -49,9 +49,18 @@ Does your list support adding and removing items? If so, check out `FocusLoop.La
 will prevent the need to re-calculate event handlers for all items each time the list changes.
 
 -}
-view : Config id msg args -> args -> id -> id -> Html msg
-view config current prevId nextId =
-    config.view (keyEvents config ( prevId, nextId )) current
+view : Config id msg item -> List item -> List (Html msg)
+view config =
+    siblings
+        >> List.map
+            (\( item, maybeSiblings ) ->
+                config.view
+                    (maybeSiblings
+                        |> Maybe.map (\( prev, next ) -> keyEvents config ( config.id prev, config.id next ))
+                        |> Maybe.withDefault []
+                    )
+                    item
+            )
 
 
 {-| Zip a list of items with its corresponding keyboard events.

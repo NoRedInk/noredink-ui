@@ -10,7 +10,7 @@ This module makes it easier to set up this focus and wrapping behavior.
 
 import Accessibility.Styled exposing (Html)
 import Html.Styled.Lazy as Lazy
-import Nri.Ui.FocusLoop.Internal exposing (siblings)
+import Nri.Ui.FocusLoop.Internal exposing (keyEvents, siblings)
 import Nri.Ui.FocusLoop.V1 exposing (Config, view)
 
 
@@ -145,3 +145,8 @@ lazyHelp { id } view_ =
         ( id args
         , view_ args prevId nextId
         )
+
+
+view : Config id msg args -> args -> id -> id -> Html msg
+view config current prevId nextId =
+    config.view (keyEvents config ( prevId, nextId )) current
