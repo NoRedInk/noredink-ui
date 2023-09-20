@@ -8,7 +8,7 @@ This module makes it easier to set up this focus and wrapping behavior.
 
 -}
 
-import Accessibility.Styled exposing (Attribute, Html)
+import Accessibility.Styled exposing (Html)
 import Accessibility.Styled.Key as Key
 import Nri.Ui.FocusLoop.Internal exposing (keyEvents, siblings)
 
@@ -18,17 +18,40 @@ import Nri.Ui.FocusLoop.Internal exposing (keyEvents, siblings)
 type alias Config id msg args =
     { id : args -> id
     , focus : id -> msg
-    , view : Attribute msg -> args -> Html msg
+    , view : List (Key.Event msg) -> args -> Html msg
     , leftRight : Bool
     , upDown : Bool
     }
 
 
-{-| View a group of elements that should be keyboard navigable in a loop.
+{-| Helper for creating a list of elements navigable via arrow keys, with wrapping.
+
+Your `view` function will be called for each item with the corresponding keyboard
+event handlers, as well as the item itself.
+
+e.g.
+
+    FocusLoop.view
+        { id = .id
+        , focus = Focus
+        , leftRight = True
+        , upDown = True
+        , view = viewFocusableItem
+        }
+        items
+
+    viewFocusableItem handlers item =
+        div
+            [ handlers ]
+            [ text item.name ]
+
+Does your list support adding and removing items? If so, check out `FocusLoop.Lazy` which
+will prevent the need to re-calculate event handlers for all items each time the list changes.
+
 -}
 view : Config id msg args -> args -> id -> id -> Html msg
 view config current prevId nextId =
-    config.view (Key.onKeyDownPreventDefault (keyEvents config ( prevId, nextId ))) current
+    config.view (keyEvents config ( prevId, nextId )) current
 
 
 {-| Zip a list of items with its corresponding keyboard events.
@@ -41,4 +64,4 @@ addEvents :
     -> List a
     -> List ( a, List (Key.Event msg) )
 addEvents config =
-    siblings >> List.map (Tuple.mapSecond (keyEvents config))
+    siblings >> List.map (Tuple.mapSecond (Maybe.map (keyEvents config) >> Maybe.withDefault []))

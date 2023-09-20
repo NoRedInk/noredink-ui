@@ -33,17 +33,9 @@ forASingletonList =
     describe "for a singleton list"
         (allCases [ "a" ]
             { noEvents = [ ( "a", [] ) ]
-            , justLeftRight = [ ( "a", [ Key.right "a", Key.left "a" ] ) ]
-            , justUpDown = [ ( "a", [ Key.down "a", Key.up "a" ] ) ]
-            , allEvents =
-                [ ( "a"
-                  , [ Key.right "a"
-                    , Key.left "a"
-                    , Key.down "a"
-                    , Key.up "a"
-                    ]
-                  )
-                ]
+            , justLeftRight = [ ( "a", [] ) ]
+            , justUpDown = [ ( "a", [] ) ]
+            , allEvents = [ ( "a", [] ) ]
             }
         )
 

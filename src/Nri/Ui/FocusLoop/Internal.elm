@@ -34,7 +34,7 @@ keyEvents config ( prev, next ) =
     leftRightEvents ++ upDownEvents
 
 
-siblings : List a -> List ( a, ( a, a ) )
+siblings : List a -> List ( a, Maybe ( a, a ) )
 siblings items =
     let
         previousItems : List (Maybe a)
@@ -48,16 +48,27 @@ siblings items =
         init =
             ( List.head items, [] )
     in
-    List.map2 Tuple.pair previousItems items
-        |> List.foldr
-            (\( previousId, item ) ( nextId, acc ) ->
-                ( Just item
-                , ( item, Maybe.map2 Tuple.pair previousId nextId ) :: acc
-                )
-            )
-            init
-        |> Tuple.second
-        |> List.filterMap
-            (\( item, maybeSiblings ) ->
-                Maybe.map (Tuple.pair item) maybeSiblings
-            )
+    case items of
+        [] ->
+            []
+
+        singleton :: [] ->
+            [ ( singleton, Nothing ) ]
+
+        _ ->
+            List.map2 Tuple.pair previousItems items
+                |> List.foldr
+                    (\( previousId, item ) ( nextId, acc ) ->
+                        ( Just item
+                        , ( item, Maybe.map2 Tuple.pair previousId nextId ) :: acc
+                        )
+                    )
+                    init
+                |> Tuple.second
+
+
+
+-- |> List.filterMap
+--     (\( item, maybeSiblings ) ->
+--         Maybe.map (Tuple.pair item) maybeSiblings
+--     )
