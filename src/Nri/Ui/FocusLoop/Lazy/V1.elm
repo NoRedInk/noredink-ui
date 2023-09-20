@@ -18,18 +18,26 @@ type alias LazyFocusLoop msg a =
     Config String msg a -> List a -> List ( String, Html msg )
 
 
+{-| Helper type for lazy2
+-}
 type Args2 a1 a2
     = Args2 a1 a2
 
 
+{-| Helper type for lazy3
+-}
 type Args3 a1 a2 a3
     = Args3 a1 a2 a3
 
 
+{-| Helper type for lazy4
+-}
 type Args4 a1 a2 a3 a4
     = Args4 a1 a2 a3 a4
 
 
+{-| Helper type for lazy5
+-}
 type Args5 a1 a2 a3 a4 a5
     = Args5 a1 a2 a3 a4 a5
 
