@@ -11,11 +11,11 @@ This module makes it easier to set up this focus and wrapping behavior.
 import Accessibility.Styled exposing (Html)
 import Html.Styled.Lazy as Lazy
 import Nri.Ui.FocusLoop.Internal exposing (keyEvents, siblings)
-import Nri.Ui.FocusLoop.V1 exposing (Config, view)
+import Nri.Ui.FocusLoop.V1 exposing (Config)
 
 
-type alias Lazy msg args =
-    Config String msg args -> List args -> List ( String, Html msg )
+type alias LazyFocusLoop msg a =
+    Config String msg a -> List a -> List ( String, Html msg )
 
 
 type Args2 a1 a2
@@ -53,14 +53,14 @@ are checked by value, or individual references (i.e. not a record container many
 `config`).
 
 -}
-lazy : Lazy msg a
+lazy : LazyFocusLoop msg a
 lazy config =
     let
         -- DO NOT INLINE THIS.
         --
         -- Lazy.lazyN will not work if this is an anonymous function.
         view_ =
-            view config
+            viewHelp config
     in
     siblings >> List.map (lazyHelp config (Lazy.lazy3 view_))
 
@@ -84,22 +84,22 @@ e.g.
         ...
 
 -}
-lazy2 : Lazy msg (Args2 a1 a2)
+lazy2 : LazyFocusLoop msg (Args2 a1 a2)
 lazy2 config =
     let
         view_ a1 a2 =
-            view config (Args2 a1 a2)
+            viewHelp config (Args2 a1 a2)
     in
     siblings >> List.map (lazyHelp config (\(Args2 a1 a2) -> Lazy.lazy4 view_ a1 a2))
 
 
 {-| Like FocusLoop.lazy, but with 3 arguments to your view function.
 -}
-lazy3 : Lazy msg (Args3 a1 a2 a3)
+lazy3 : LazyFocusLoop msg (Args3 a1 a2 a3)
 lazy3 config =
     let
         view_ a1 a2 a3 =
-            view config (Args3 a1 a2 a3)
+            viewHelp config (Args3 a1 a2 a3)
     in
     siblings
         >> List.map (lazyHelp config (\(Args3 a1 a2 a3) -> Lazy.lazy5 view_ a1 a2 a3))
@@ -107,11 +107,11 @@ lazy3 config =
 
 {-| Like FocusLoop.lazy, but with 4 arguments to your view function.
 -}
-lazy4 : Lazy msg (Args4 a1 a2 a3 a4)
+lazy4 : LazyFocusLoop msg (Args4 a1 a2 a3 a4)
 lazy4 config =
     let
         view_ a1 a2 a3 a4 =
-            view config (Args4 a1 a2 a3 a4)
+            viewHelp config (Args4 a1 a2 a3 a4)
     in
     siblings
         >> List.map (lazyHelp config (\(Args4 a1 a2 a3 a4) -> Lazy.lazy6 view_ a1 a2 a3 a4))
@@ -119,14 +119,25 @@ lazy4 config =
 
 {-| Like FocusLoop.lazy, but with 5 arguments to your view function.
 -}
-lazy5 : Lazy msg (Args5 a1 a2 a3 a4 a5)
+lazy5 : LazyFocusLoop msg (Args5 a1 a2 a3 a4 a5)
 lazy5 config =
     let
         view_ a1 a2 a3 a4 a5 =
-            view config (Args5 a1 a2 a3 a4 a5)
+            viewHelp config (Args5 a1 a2 a3 a4 a5)
     in
     siblings
         >> List.map (lazyHelp config (\(Args5 a1 a2 a3 a4 a5) -> Lazy.lazy7 view_ a1 a2 a3 a4 a5))
+
+
+viewHelp : Config String msg a -> a -> String -> String -> Html msg
+viewHelp config item prevId nextId =
+    config.view item <|
+        case ( prevId, nextId ) of
+            ( "", "" ) ->
+                []
+
+            _ ->
+                keyEvents config ( prevId, nextId )
 
 
 lazyHelp :
@@ -140,13 +151,10 @@ lazyHelp { id } view_ =
             ( prevId, nextId ) =
                 maybeSiblings
                     |> Maybe.map (Tuple.mapBoth id id)
+                    -- We have to use empty strings here instead of maybes
+                    -- so that lazy will check by value instead of by reference.
                     |> Maybe.withDefault ( "", "" )
         in
         ( id args
         , view_ args prevId nextId
         )
-
-
-view : Config id msg args -> args -> id -> id -> Html msg
-view config current prevId nextId =
-    config.view (keyEvents config ( prevId, nextId )) current

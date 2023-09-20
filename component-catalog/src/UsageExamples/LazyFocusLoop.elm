@@ -12,6 +12,7 @@ import Browser.Dom as Dom
 import Css
 import Html.Styled.Attributes as Attrs
 import Html.Styled.Keyed as Keyed
+import Html.Styled.Lazy as Lazy
 import List.Extra as List
 import Maybe.Extra as Maybe
 import Nri.Ui.Button.V10 as Button
@@ -19,6 +20,8 @@ import Nri.Ui.CharacterIcon.V2 as Characters
 import Nri.Ui.FocusLoop.Lazy.V1 as FocusLoop
 import Nri.Ui.FocusLoop.V1 as FocusLoop
 import Nri.Ui.Switch.V3 as Switch
+import Nri.Ui.Text.V6 as Text
+import Nri.Ui.TextInput.V7 as TextInput
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Task
 import UsageExample exposing (UsageExample)
@@ -36,11 +39,18 @@ example =
     }
 
 
+type alias Settings =
+    { useLazy : Bool
+    , simulateExpensiveComputation : Bool
+    , simulateExpensiveComputationIterations : Int
+    }
+
+
 type alias State =
     { characters : List ( Int, Character )
     , tooltip : Maybe Tooltip
     , counter : Int
-    , useLazy : Bool
+    , settings : Settings
     }
 
 
@@ -64,7 +74,11 @@ init =
     { characters = []
     , tooltip = Nothing
     , counter = 0
-    , useLazy = True
+    , settings =
+        { useLazy = True
+        , simulateExpensiveComputation = False
+        , simulateExpensiveComputationIterations = 50
+        }
     }
         |> addCharacters 50
 
@@ -90,7 +104,9 @@ addCharacter state =
 
 type Msg
     = ToggleLazy Bool
+    | ToggleSimulateExpensiveComputation Bool
     | ToggleTooltip Int Bool
+    | SetExpensiveComputationIterations (Maybe Int)
     | Focus String
     | AddCharacters Int
     | RemoveCharacter Int
@@ -99,9 +115,16 @@ type Msg
 
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
+    let
+        settings =
+            state.settings
+    in
     case msg of
         ToggleLazy useLazy ->
-            ( { state | useLazy = useLazy }, Cmd.none )
+            ( { state | settings = { settings | useLazy = useLazy } }, Cmd.none )
+
+        ToggleSimulateExpensiveComputation simulateExpensiveComputation ->
+            ( { state | settings = { settings | simulateExpensiveComputation = simulateExpensiveComputation } }, Cmd.none )
 
         ToggleTooltip tooltipId isOpen ->
             ( { state
@@ -111,6 +134,17 @@ update msg state =
 
                     else
                         Nothing
+              }
+            , Cmd.none
+            )
+
+        SetExpensiveComputationIterations maybeIter ->
+            ( { state
+                | settings =
+                    { settings
+                        | simulateExpensiveComputationIterations =
+                            maybeIter |> Maybe.withDefault settings.simulateExpensiveComputationIterations
+                    }
               }
             , Cmd.none
             )
@@ -147,26 +181,27 @@ view state =
             ( "add-100-characters", Html.li [] [ Button.button "Add 100 characters" [ Button.onClick (AddCharacters 100) ] ] )
 
         removeCharacterButtonsKeyed =
-            if state.useLazy then
-                viewCharactersLazy <|
-                    List.map
-                        (\( id, character ) -> FocusLoop.Args3 id character (state.tooltip == Just (Tooltip id)))
-                        state.characters
+            state.characters
+                |> List.map
+                    (\( id, character ) ->
+                        FocusLoop.Args4
+                            state.settings
+                            id
+                            character
+                            (state.tooltip == Just (Tooltip id))
+                    )
+                |> (if state.settings.useLazy then
+                        viewCharactersLazy
 
-            else
-                let
-                    keys =
-                        List.map (Tuple.first >> String.fromInt) state.characters
-                in
-                List.zip keys (viewCharacters state)
+                    else
+                        viewCharacters
+                   )
     in
-    [ Switch.view
-        { label = "Use Lazy"
-        , id = "lazy-switch"
-        }
-        [ Switch.selected state.useLazy
-        , Switch.onSwitch ToggleLazy
+    [ Text.mediumBody
+        [ Text.plaintext "Open the developer console to see when/where vDOM diff evaluations are occuring"
         ]
+    , viewLazyToggle state.settings.useLazy
+    , viewSimulateExpensiveComputationToggle state.settings
     , Keyed.ul
         [ Attrs.css
             [ Css.listStyle Css.none
@@ -179,32 +214,101 @@ view state =
     ]
 
 
-viewCharacters : State -> List (Html Msg)
-viewCharacters state =
-    FocusLoop.view
-        { id = \( id, _ ) -> buttonDomId id
-        , focus = Focus
-        , leftRight = True
-        , upDown = False
-        , view = \focusKeyEvents ( id, character ) -> viewCharacter focusKeyEvents id character (state.tooltip == Just (Tooltip id))
-        }
-        state.characters
+viewLazyToggle : Bool -> Html Msg
+viewLazyToggle =
+    Lazy.lazy <|
+        \useLazy ->
+            Switch.view
+                { label = "Use Lazy"
+                , id = "lazy-switch"
+                }
+                [ Switch.selected useLazy
+                , Switch.onSwitch ToggleLazy
+                ]
 
 
-viewCharactersLazy : List (FocusLoop.Args3 Int Character Bool) -> List ( String, Html Msg )
+viewSimulateExpensiveComputationToggle : Settings -> Html Msg
+viewSimulateExpensiveComputationToggle =
+    Lazy.lazy <|
+        \settings ->
+            Html.div [ Attrs.css [ Css.displayFlex, Css.property "gap" "10px" ] ]
+                [ Switch.view
+                    { label = "Simulate Expensive Computation"
+                    , id = "simulate-expensive-computation-switch"
+                    }
+                    [ Switch.selected settings.simulateExpensiveComputation
+                    , Switch.onSwitch ToggleSimulateExpensiveComputation
+                    ]
+                , if settings.simulateExpensiveComputation then
+                    TextInput.view "Complexity"
+                        [ TextInput.number SetExpensiveComputationIterations
+                        , TextInput.value (Just settings.simulateExpensiveComputationIterations)
+                        , TextInput.guidance "Higher = more expensive"
+                        ]
+
+                  else
+                    Html.text ""
+                ]
+
+
+viewCharacters : List (FocusLoop.Args4 Settings Int Character Bool) -> List ( String, Html Msg )
+viewCharacters items =
+    let
+        keys =
+            List.map (\(FocusLoop.Args4 _ id _ _) -> String.fromInt id)
+
+        views =
+            FocusLoop.view
+                { id = \(FocusLoop.Args4 _ id _ _) -> buttonDomId id
+                , focus = Focus
+                , leftRight = True
+                , upDown = False
+                , view =
+                    \(FocusLoop.Args4 settings id character tooltipOpen) ->
+                        viewCharacter settings id character tooltipOpen
+                }
+    in
+    List.zip (keys items) (views items)
+
+
+viewCharactersLazy : List (FocusLoop.Args4 Settings Int Character Bool) -> List ( String, Html Msg )
 viewCharactersLazy =
-    FocusLoop.lazy3
-        { id = \(FocusLoop.Args3 id _ _) -> buttonDomId id
+    FocusLoop.lazy4
+        { id = \(FocusLoop.Args4 _ id _ _) -> buttonDomId id
         , focus = Focus
         , leftRight = True
         , upDown = False
-        , view = \focusKeyEvents (FocusLoop.Args3 id character tooltipOpen) -> viewCharacter focusKeyEvents id character tooltipOpen
+        , view =
+            \(FocusLoop.Args4 settings id character tooltipOpen) ->
+                viewCharacter settings id character tooltipOpen
         }
 
 
-viewCharacter : List (Key.Event Msg) -> Int -> Character -> Bool -> Html Msg
-viewCharacter focusKeyEvents id character tooltipOpen =
-    Html.li []
+goBrrrrr : Int -> Int -> String
+goBrrrrr input iterations =
+    let
+        computeHash n base modulus x =
+            -- This needs to be here or elm will optimize it out
+            if Debug.log "brrrr" n <= 0 then
+                1
+
+            else
+                remainderBy (computeHash (n - 1) base modulus x * base * x) modulus
+    in
+    computeHash iterations 37 104729 input |> String.fromInt
+
+
+viewCharacter : Settings -> Int -> Character -> Bool -> List (Key.Event Msg) -> Html Msg
+viewCharacter settings id character tooltipOpen focusKeyEvents =
+    let
+        hash =
+            if settings.simulateExpensiveComputation then
+                goBrrrrr id settings.simulateExpensiveComputationIterations
+
+            else
+                ""
+    in
+    Html.li [ Attrs.class hash ]
         [ Tooltip.view
             { id =
                 String.fromInt id
