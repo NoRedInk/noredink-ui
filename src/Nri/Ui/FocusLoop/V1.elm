@@ -24,7 +24,7 @@ type alias Config id msg args =
     }
 
 
-{-| Helper for creating a list of elements navigable via arrow keys, with wrapping.
+{-| Helper for creating a list of elements with looping arrow-key navigation.
 
 Your `view` function will be called for each item with the corresponding keyboard
 event handlers, as well as the item itself.
@@ -38,15 +38,15 @@ e.g.
         , upDown = True
         , view = viewFocusableItem
         }
-        items
+        [ { id = 1, name = "Foo" } ]
 
-    viewFocusableItem handlers item =
+    viewFocusableItem item arrowKeyHandlers =
         div
-            [ handlers ]
+            [ Key.onKeyDownPreventDefault arrowKeyHandlers ]
             [ text item.name ]
 
 Does your list support adding and removing items? If so, check out `FocusLoop.Lazy` which
-will prevent the need to re-calculate event handlers for all items each time the list changes.
+will prevent recalculation of event handlers for every item when the list changes.
 
 -}
 view : Config id msg item -> List item -> List (Html msg)
