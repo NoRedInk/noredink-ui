@@ -298,7 +298,13 @@ view { label, selected } attributes =
                     |> Maybe.withDefault []
                 )
                 [ viewIcon [] icon ]
-        , span []
+        , span
+            [ css
+                [ displayFlex
+                , flexDirection column
+                , property "gap" "2px"
+                ]
+            ]
             (viewCheckboxLabel config_
                 (if config.isDisabled then
                     disabledLabelCss
