@@ -258,7 +258,7 @@ view state =
         , toId = identity
         , leftRight = True
         , upDown = True
-        , view = \item arrowKeyHandlers -> Html.button [ Key.onKeyDownPreventDefault arrowKeyHandlers ] [ Html.text item ]
+        , view = \arrowKeyHandlers item -> Html.button [ Key.onKeyDownPreventDefault arrowKeyHandlers ] [ Html.text item ]
         }
         state.foos
 

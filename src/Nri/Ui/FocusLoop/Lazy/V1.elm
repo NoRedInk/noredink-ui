@@ -11,13 +11,9 @@ module Nri.Ui.FocusLoop.Lazy.V1 exposing
 -}
 
 import Accessibility.Styled exposing (Html)
+import Accessibility.Styled.Key as Key
 import Html.Styled.Lazy as Lazy
 import Nri.Ui.FocusLoop.Internal exposing (keyEvents, siblings)
-import Nri.Ui.FocusLoop.V1 exposing (Config)
-
-
-type alias LazyFocusLoop msg a =
-    Config String msg a -> List a -> List ( String, Html msg )
 
 
 {-| Helper type for lazy2
@@ -62,9 +58,21 @@ so that you can pass primitives and ensure they are checked by value, or individ
 (i.e. not a record container many, a la `config`).
 
 -}
-lazy : LazyFocusLoop msg a
+lazy :
+    { toId : item -> String
+    , focus : String -> msg
+    , view : List (Key.Event msg) -> item -> Html msg
+    , leftRight : Bool
+    , upDown : Bool
+    }
+    -> List item
+    -> List ( String, Html msg )
 lazy =
-    lazyHelp Lazy.lazy3 (\f a -> f a) (\f a -> f a)
+    let
+        apply f a =
+            f a
+    in
+    lazyHelp Lazy.lazy3 apply apply
 
 
 {-| Like FocusLoop.lazy, but with 2 arguments to your view function.
@@ -72,7 +80,7 @@ lazy =
 e.g.
 
     FocusLoop.lazy2
-        { id = \(FocusLoop.Args2 a1 a2) -> ...
+        { id = a1 -> a2 -> ...
         , focus = Focus
         , leftRight = True
         , upDown = True
@@ -82,13 +90,25 @@ e.g.
         , FocusLoop.Args2 b1 a2
         ]
 
-    viewFocusableItem (FocusLoop.Args2 arg1 arg2) arrowKeyHandlers =
+    viewFocusableItem arg1 arg2 arrowKeyHandlers =
         ...
 
 -}
-lazy2 : LazyFocusLoop msg (Args2 a1 a2)
+lazy2 :
+    { toId : a -> b -> String
+    , focus : String -> msg
+    , view : List (Key.Event msg) -> a -> b -> Html msg
+    , leftRight : Bool
+    , upDown : Bool
+    }
+    -> List (Args2 a b)
+    -> List ( String, Html msg )
 lazy2 =
-    lazyHelp Lazy.lazy4 (\f (Args2 a b) -> f a b) (\f a b -> f (Args2 a b))
+    let
+        apply f (Args2 a b) =
+            f a b
+    in
+    lazyHelp Lazy.lazy4 apply apply
 
 
 {-| Like FocusLoop.lazy, but with 3 arguments to your view function.
@@ -96,9 +116,21 @@ lazy2 =
 See lazy2 usage example for more details.
 
 -}
-lazy3 : LazyFocusLoop msg (Args3 a1 a2 a3)
+lazy3 :
+    { toId : a -> b -> c -> String
+    , focus : String -> msg
+    , view : List (Key.Event msg) -> a -> b -> c -> Html msg
+    , leftRight : Bool
+    , upDown : Bool
+    }
+    -> List (Args3 a b c)
+    -> List ( String, Html msg )
 lazy3 =
-    lazyHelp Lazy.lazy5 (\f (Args3 a b c) -> f a b c) (\f a b c -> f (Args3 a b c))
+    let
+        apply f (Args3 a b c) =
+            f a b c
+    in
+    lazyHelp Lazy.lazy5 apply apply
 
 
 {-| Like FocusLoop.lazy, but with 4 arguments to your view function.
@@ -106,9 +138,21 @@ lazy3 =
 See lazy2 usage example for more details.
 
 -}
-lazy4 : LazyFocusLoop msg (Args4 a1 a2 a3 a4)
+lazy4 :
+    { toId : a -> b -> c -> d -> String
+    , focus : String -> msg
+    , view : List (Key.Event msg) -> a -> b -> c -> d -> Html msg
+    , leftRight : Bool
+    , upDown : Bool
+    }
+    -> List (Args4 a b c d)
+    -> List ( String, Html msg )
 lazy4 =
-    lazyHelp Lazy.lazy6 (\f (Args4 a b c d) -> f a b c d) (\f a b c d -> f (Args4 a b c d))
+    let
+        apply f (Args4 a b c d) =
+            f a b c d
+    in
+    lazyHelp Lazy.lazy6 apply apply
 
 
 {-| Like FocusLoop.lazy, but with 5 arguments to your view function.
@@ -116,43 +160,60 @@ lazy4 =
 See lazy2 usage example for more details.
 
 -}
-lazy5 : LazyFocusLoop msg (Args5 a1 a2 a3 a4 a5)
+lazy5 :
+    { toId : a -> b -> c -> d -> e -> String
+    , focus : String -> msg
+    , view : List (Key.Event msg) -> a -> b -> c -> d -> e -> Html msg
+    , leftRight : Bool
+    , upDown : Bool
+    }
+    -> List (Args5 a b c d e)
+    -> List ( String, Html msg )
 lazy5 =
-    lazyHelp Lazy.lazy7 (\f (Args5 a b c d e) -> f a b c d e) (\f a b c d e -> f (Args5 a b c d e))
+    let
+        apply f (Args5 a b c d e) =
+            f a b c d e
+    in
+    lazyHelp Lazy.lazy7 apply apply
 
 
 lazyHelp :
-    (uncurried -> fn)
-    -> (fn -> args -> String -> String -> Html msg)
-    -> ((args -> String -> String -> Html msg) -> uncurried)
-    -> Config String msg args
+    ((String -> String -> toView) -> String -> String -> toView)
+    -> (toId -> args -> String)
+    -> (toView -> args -> Html msg)
+    ->
+        { view : List (Key.Event msg) -> toView
+        , toId : toId
+        , focus : String -> msg
+        , leftRight : Bool
+        , upDown : Bool
+        }
     -> List args
     -> List ( String, Html msg )
-lazyHelp lazyN applyN uncurryN config =
+lazyHelp lazyN applyId applyView config =
     let
         -- Don't inline this, lazy will not work if passed an anonymous function.
-        view =
-            uncurryN <|
-                \item prevId nextId ->
-                    config.view item <|
-                        case ( prevId, nextId ) of
-                            ( "", "" ) ->
-                                []
+        view prevId nextId =
+            config.view
+                (case ( prevId, nextId ) of
+                    ( "", "" ) ->
+                        []
 
-                            _ ->
-                                keyEvents config ( prevId, nextId )
+                    _ ->
+                        keyEvents config ( prevId, nextId )
+                )
     in
     siblings
         >> List.map
             (\( args, maybeSiblings ) ->
                 let
                     ( prevId, nextId ) =
-                        Maybe.map (Tuple.mapBoth config.toId config.toId) maybeSiblings
+                        Maybe.map (Tuple.mapBoth (applyId config.toId) (applyId config.toId)) maybeSiblings
                             -- We have to use empty strings here instead of maybes
                             -- so that lazy will check by value instead of by reference.
                             |> Maybe.withDefault ( "", "" )
                 in
-                ( config.toId args
-                , applyN (lazyN view) args prevId nextId
+                ( applyId config.toId args
+                , applyView (lazyN view prevId nextId) args
                 )
             )

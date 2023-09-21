@@ -1,4 +1,4 @@
-module Nri.Ui.FocusLoop.V1 exposing (Config, view, addEvents)
+module Nri.Ui.FocusLoop.V1 exposing (view, addEvents)
 
 {-| Sometimes, there are sets of interactive elements that we want users to be able to navigate
 through with arrow keys rather than with tabs, and we want the final focus change to wrap.
@@ -11,17 +11,6 @@ This module makes it easier to set up this focus and wrapping behavior.
 import Accessibility.Styled exposing (Html)
 import Accessibility.Styled.Key as Key
 import Nri.Ui.FocusLoop.Internal exposing (keyEvents, siblings)
-
-
-{-| FocusLoop.view Configuration
--}
-type alias Config id msg args =
-    { toId : args -> id
-    , focus : id -> msg
-    , view : args -> List (Key.Event msg) -> Html msg
-    , leftRight : Bool
-    , upDown : Bool
-    }
 
 
 {-| Helper for creating a list of elements with looping arrow-key navigation.
@@ -49,17 +38,25 @@ Does your list support adding and removing items? If so, check out `FocusLoop.La
 will prevent recalculation of event handlers for every item when the list changes.
 
 -}
-view : Config id msg item -> List item -> List (Html msg)
+view :
+    { toId : item -> id
+    , focus : id -> msg
+    , view : List (Key.Event msg) -> item -> Html msg
+    , leftRight : Bool
+    , upDown : Bool
+    }
+    -> List item
+    -> List (Html msg)
 view config =
     siblings
         >> List.map
             (\( item, maybeSiblings ) ->
                 config.view
-                    item
                     (maybeSiblings
                         |> Maybe.map (\( prev, next ) -> keyEvents config ( config.toId prev, config.toId next ))
                         |> Maybe.withDefault []
                     )
+                    item
             )
 
 

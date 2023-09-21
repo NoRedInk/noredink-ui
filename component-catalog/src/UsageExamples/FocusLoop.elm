@@ -157,9 +157,8 @@ view state =
 
         itemButtonsKeyed =
             if state.settings.useLazy then
-                state.items
-                    |> List.map (\id -> FocusLoop.Args3 state.settings id (tooltipOpen id))
-                    |> viewItemsLazy
+                viewItemsLazy <|
+                    List.map (\id -> FocusLoop.Args3 state.settings id (tooltipOpen id)) state.items
 
             else
                 viewItems state.settings state.tooltip state.items
@@ -242,7 +241,7 @@ viewItems settings tooltip items =
                 , focus = Focus
                 , leftRight = True
                 , upDown = False
-                , view = \id -> viewItem settings id (tooltip == Just (ItemTooltip id))
+                , view = \keyEvents id -> viewItem keyEvents settings id (tooltip == Just (ItemTooltip id))
                 }
     in
     List.zip (keys items) (views items)
@@ -251,11 +250,11 @@ viewItems settings tooltip items =
 viewItemsLazy : List (FocusLoop.Args3 Settings Int Bool) -> List ( String, Html Msg )
 viewItemsLazy =
     FocusLoop.lazy3
-        { toId = \(FocusLoop.Args3 _ id _) -> buttonDomId id
+        { toId = \_ id _ -> buttonDomId id
         , focus = Focus
         , leftRight = True
         , upDown = False
-        , view = \(FocusLoop.Args3 settings id tooltipOpen) -> viewItem settings id tooltipOpen
+        , view = viewItem
         }
 
 
@@ -273,8 +272,8 @@ goBrrrrr input iterations =
     computeHash iterations 37 104729 input |> String.fromInt
 
 
-viewItem : Settings -> Int -> Bool -> List (Key.Event Msg) -> Html Msg
-viewItem settings id tooltipOpen focusKeyEvents =
+viewItem : List (Key.Event Msg) -> Settings -> Int -> Bool -> Html Msg
+viewItem focusKeyEvents settings id tooltipOpen =
     let
         hash =
             if settings.simulateExpensiveComputation then
