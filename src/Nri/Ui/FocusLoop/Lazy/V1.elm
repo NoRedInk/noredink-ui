@@ -161,6 +161,8 @@ i.e.
                         -- vvv This lambda is `f` in the above example. vvv --
     Html.Lazy.lazy2 <|              \item tooltipOpen -> ...
 
+For a more in-depth example, see UsageExamples/FocusLoop in the component catalog.
+
 -}
 lazy2 :
     { apply : (a -> b -> Args2 a b) -> item -> Args2 a b
