@@ -114,7 +114,7 @@ lazy config =
     lazyHelp Lazy.lazy3
         apply
         identity
-        { apply = \f item -> f item
+        { apply = apply
         , toId = config.toId
         , focus = config.focus
         , view = config.view
