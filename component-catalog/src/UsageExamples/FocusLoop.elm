@@ -105,6 +105,11 @@ type Tooltip
     | SimulateExpensiveComputationToggleHelpTooltip
 
 
+itemTooltipOpen : Maybe Tooltip -> Int -> Bool
+itemTooltipOpen activeTooltip id =
+    activeTooltip == Just (ItemTooltip id)
+
+
 init : State
 init =
     { items = []
@@ -201,6 +206,11 @@ update msg state =
 
         NoOp ->
             ( state, Cmd.none )
+
+
+buttonDomId : Int -> String
+buttonDomId id =
+    "button-" ++ String.fromInt id
 
 
 view : State -> List (Html Msg)
@@ -317,15 +327,7 @@ viewItems settings tooltip items =
                 , upDown = False
                 , view =
                     \keyEvents id ->
-                        viewItem keyEvents
-                            (if settings.simulateExpensiveComputation then
-                                settingValue settings.simulateExpensiveComputationIterations
-
-                             else
-                                0
-                            )
-                            id
-                            (tooltip == Just (ItemTooltip id))
+                        viewItem keyEvents (howMuchBrrrrr settings) id (itemTooltipOpen tooltip id)
                 }
     in
     List.zip (keys items) (views items)
@@ -347,30 +349,8 @@ viewItemsLazy =
         , view = viewItem
         , apply =
             \view_ { settings, tooltip, item } ->
-                view_
-                    (if settings.simulateExpensiveComputation then
-                        settingValue settings.simulateExpensiveComputationIterations
-
-                     else
-                        0
-                    )
-                    item
-                    (tooltip == Just (ItemTooltip item))
+                view_ (howMuchBrrrrr settings) item (itemTooltipOpen tooltip item)
         }
-
-
-goBrrrrr : Int -> Int -> String
-goBrrrrr input iterations =
-    let
-        computeHash n base modulus x =
-            -- This needs to be here or elm will optimize it out
-            if Debug.log "brrrr" n <= 0 then
-                1
-
-            else
-                remainderBy (computeHash (n - 1) base modulus x * base * x) modulus
-    in
-    computeHash iterations 37 104729 input |> String.fromInt
 
 
 viewItem : List (Key.Event Msg) -> Int -> Int -> Bool -> Html Msg
@@ -409,6 +389,24 @@ viewTrigger id focusKeyEvents attrs =
         ]
 
 
-buttonDomId : Int -> String
-buttonDomId id =
-    "button-" ++ String.fromInt id
+howMuchBrrrrr : Settings -> Int
+howMuchBrrrrr settings =
+    if settings.simulateExpensiveComputation then
+        settingValue settings.simulateExpensiveComputationIterations
+
+    else
+        0
+
+
+goBrrrrr : Int -> Int -> String
+goBrrrrr input iterations =
+    let
+        computeHash n base modulus x =
+            if n <= 0 then
+                1
+
+            else
+                -- This Debug.log is here to make sure Elm doesn't optimize away the computation
+                Debug.log "brrrr" <| remainderBy (computeHash (n - 1) base modulus x * base * x) modulus
+    in
+    computeHash iterations 37 104729 input |> String.fromInt
