@@ -4,7 +4,7 @@ module Nri.Ui.FocusLoop.V1 exposing (view, addEvents)
 through with arrow keys rather than with tabs, and we want the final focus change to wrap.
 This module makes it easier to set up this focus and wrapping behavior.
 
-@docs Config, view, addEvents
+@docs view, addEvents
 
 -}
 
