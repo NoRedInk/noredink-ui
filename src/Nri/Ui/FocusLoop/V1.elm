@@ -16,7 +16,7 @@ import Nri.Ui.FocusLoop.Internal exposing (keyEvents, siblings)
 {-| FocusLoop.view Configuration
 -}
 type alias Config id msg args =
-    { id : args -> id
+    { toId : args -> id
     , focus : id -> msg
     , view : args -> List (Key.Event msg) -> Html msg
     , leftRight : Bool
@@ -57,7 +57,7 @@ view config =
                 config.view
                     item
                     (maybeSiblings
-                        |> Maybe.map (\( prev, next ) -> keyEvents config ( config.id prev, config.id next ))
+                        |> Maybe.map (\( prev, next ) -> keyEvents config ( config.toId prev, config.toId next ))
                         |> Maybe.withDefault []
                     )
             )

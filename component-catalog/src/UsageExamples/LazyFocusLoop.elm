@@ -259,7 +259,7 @@ viewCharacters items =
 
         views =
             FocusLoop.view
-                { id = \(FocusLoop.Args4 _ id _ _) -> buttonDomId id
+                { toId = \(FocusLoop.Args4 _ id _ _) -> buttonDomId id
                 , focus = Focus
                 , leftRight = True
                 , upDown = False
@@ -274,7 +274,7 @@ viewCharacters items =
 viewCharactersLazy : List (FocusLoop.Args4 Settings Int Character Bool) -> List ( String, Html Msg )
 viewCharactersLazy =
     FocusLoop.lazy4
-        { id = \(FocusLoop.Args4 _ id _ _) -> buttonDomId id
+        { toId = \(FocusLoop.Args4 _ id _ _) -> buttonDomId id
         , focus = Focus
         , leftRight = True
         , upDown = False

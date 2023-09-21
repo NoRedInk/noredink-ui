@@ -63,8 +63,8 @@ so that you can pass primitives and ensure they are checked by value, or individ
 
 -}
 lazy : LazyFocusLoop msg a
-lazy config =
-    lazyHelp config (\f a -> f a) (\f a -> f a) Lazy.lazy3
+lazy =
+    lazyHelp Lazy.lazy3 (\f a -> f a) (\f a -> f a)
 
 
 {-| Like FocusLoop.lazy, but with 2 arguments to your view function.
@@ -87,8 +87,8 @@ e.g.
 
 -}
 lazy2 : LazyFocusLoop msg (Args2 a1 a2)
-lazy2 config =
-    lazyHelp config Lazy.lazy4 (\f (Args2 a b) -> f a b) (\f a b -> f (Args2 a b))
+lazy2 =
+    lazyHelp Lazy.lazy4 (\f (Args2 a b) -> f a b) (\f a b -> f (Args2 a b))
 
 
 {-| Like FocusLoop.lazy, but with 3 arguments to your view function.
@@ -97,8 +97,8 @@ See lazy2 usage example for more details.
 
 -}
 lazy3 : LazyFocusLoop msg (Args3 a1 a2 a3)
-lazy3 config =
-    lazyHelp config Lazy.lazy5 (\f (Args3 a b c) -> f a b c) (\f a b c -> f (Args3 a b c))
+lazy3 =
+    lazyHelp Lazy.lazy5 (\f (Args3 a b c) -> f a b c) (\f a b c -> f (Args3 a b c))
 
 
 {-| Like FocusLoop.lazy, but with 4 arguments to your view function.
@@ -107,8 +107,8 @@ See lazy2 usage example for more details.
 
 -}
 lazy4 : LazyFocusLoop msg (Args4 a1 a2 a3 a4)
-lazy4 config =
-    lazyHelp config Lazy.lazy6 (\f (Args4 a b c d) -> f a b c d) (\f a b c d -> f (Args4 a b c d))
+lazy4 =
+    lazyHelp Lazy.lazy6 (\f (Args4 a b c d) -> f a b c d) (\f a b c d -> f (Args4 a b c d))
 
 
 {-| Like FocusLoop.lazy, but with 5 arguments to your view function.
@@ -117,18 +117,18 @@ See lazy2 usage example for more details.
 
 -}
 lazy5 : LazyFocusLoop msg (Args5 a1 a2 a3 a4 a5)
-lazy5 config =
-    lazyHelp config Lazy.lazy7 (\f (Args5 a b c d e) -> f a b c d e) (\f a b c d e -> f (Args5 a b c d e))
+lazy5 =
+    lazyHelp Lazy.lazy7 (\f (Args5 a b c d e) -> f a b c d e) (\f a b c d e -> f (Args5 a b c d e))
 
 
 lazyHelp :
-    Config String msg args
-    -> (uncurried -> fn)
+    (uncurried -> fn)
     -> (fn -> args -> String -> String -> Html msg)
     -> ((args -> String -> String -> Html msg) -> uncurried)
+    -> Config String msg args
     -> List args
     -> List ( String, Html msg )
-lazyHelp config lazyN applyN uncurryN =
+lazyHelp lazyN applyN uncurryN config =
     let
         -- Don't inline this, lazy will not work if passed an anonymous function.
         view =
@@ -140,12 +140,12 @@ lazyHelp config lazyN applyN uncurryN =
                 let
                     ( prevId, nextId ) =
                         maybeSiblings
-                            |> Maybe.map (Tuple.mapBoth config.id config.id)
+                            |> Maybe.map (Tuple.mapBoth config.toId config.toId)
                             -- We have to use empty strings here instead of maybes
                             -- so that lazy will check by value instead of by reference.
                             |> Maybe.withDefault ( "", "" )
                 in
-                ( config.id args
+                ( config.toId args
                 , applyN (lazyN view) args prevId nextId
                 )
             )

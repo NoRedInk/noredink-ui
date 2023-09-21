@@ -102,7 +102,7 @@ view : State -> List (Html Msg)
 view state =
     FocusLoop.lazy
         { focus = Focus
-        , id = identity
+        , toId = identity
         , leftRight = True
         , upDown = True
         , view = \item arrowKeyHandlers -> Html.button [ Key.onKeyDownPreventDefault arrowKeyHandlers ] [ Html.text item ]
