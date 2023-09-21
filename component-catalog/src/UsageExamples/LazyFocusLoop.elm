@@ -96,8 +96,8 @@ addCharacter state =
             state.characters
                 |> Maybe.cons
                     (characters
-                        |> List.getAt (List.length state.characters |> modBy (List.length characters))
-                        |> Maybe.map (\character -> ( state.counter, character ))
+                        |> List.getAt (modBy (List.length characters) state.counter)
+                        |> Maybe.map (Tuple.pair state.counter)
                     )
     }
 
@@ -160,10 +160,7 @@ update msg state =
             )
 
         RemoveCharacter id ->
-            ( { state
-                | characters =
-                    List.filter (\( id_, _ ) -> id /= id_) state.characters
-              }
+            ( { state | characters = List.filter (Tuple.first >> (/=) id) state.characters }
             , Cmd.none
             )
 
@@ -177,8 +174,8 @@ view state =
         addCharacterButtonKeyed =
             ( "add-character", Html.li [] [ Button.button "Add character" [ Button.onClick (AddCharacters 1) ] ] )
 
-        add100CharactersButtonKeyed =
-            ( "add-100-characters", Html.li [] [ Button.button "Add 100 characters" [ Button.onClick (AddCharacters 100) ] ] )
+        add10CharactersButtonKeyed =
+            ( "add-10-characters", Html.li [] [ Button.button "Add 10 characters" [ Button.onClick (AddCharacters 10) ] ] )
 
         removeCharacterButtonsKeyed =
             state.characters
@@ -210,7 +207,7 @@ view state =
             , Css.property "gap" "20px"
             ]
         ]
-        (addCharacterButtonKeyed :: add100CharactersButtonKeyed :: removeCharacterButtonsKeyed)
+        (addCharacterButtonKeyed :: add10CharactersButtonKeyed :: removeCharacterButtonsKeyed)
     ]
 
 

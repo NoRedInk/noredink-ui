@@ -147,8 +147,7 @@ lazyHelp lazyN applyN uncurryN config =
             (\( args, maybeSiblings ) ->
                 let
                     ( prevId, nextId ) =
-                        maybeSiblings
-                            |> Maybe.map (Tuple.mapBoth config.toId config.toId)
+                        Maybe.map (Tuple.mapBoth config.toId config.toId) maybeSiblings
                             -- We have to use empty strings here instead of maybes
                             -- so that lazy will check by value instead of by reference.
                             |> Maybe.withDefault ( "", "" )
