@@ -2,8 +2,8 @@ module UsageExamples exposing (Msg, State, all)
 
 import UsageExample exposing (UsageExample)
 import UsageExamples.ClickableCardWithTooltip as ClickableCardWithTooltip
+import UsageExamples.FocusLoop as FocusLoop
 import UsageExamples.Form as Form
-import UsageExamples.LazyFocusLoop as LazyFocusLoop
 
 
 all : List (UsageExample State Msg)
@@ -46,20 +46,20 @@ all =
                     _ ->
                         Nothing
             )
-    , LazyFocusLoop.example
-        |> UsageExample.wrapMsg LazyFocusLoopMsg
+    , FocusLoop.example
+        |> UsageExample.wrapMsg FocusLoopMsg
             (\msg ->
                 case msg of
-                    LazyFocusLoopMsg childMsg ->
+                    FocusLoopMsg childMsg ->
                         Just childMsg
 
                     _ ->
                         Nothing
             )
-        |> UsageExample.wrapState LazyFocusLoopState
+        |> UsageExample.wrapState FocusLoopState
             (\msg ->
                 case msg of
-                    LazyFocusLoopState childState ->
+                    FocusLoopState childState ->
                         Just childState
 
                     _ ->
@@ -71,10 +71,10 @@ all =
 type State
     = ClickableCardWithTooltipState ClickableCardWithTooltip.State
     | FormState Form.State
-    | LazyFocusLoopState LazyFocusLoop.State
+    | FocusLoopState FocusLoop.State
 
 
 type Msg
     = ClickableCardWithTooltipMsg ClickableCardWithTooltip.Msg
     | FormMsg Form.Msg
-    | LazyFocusLoopMsg LazyFocusLoop.Msg
+    | FocusLoopMsg FocusLoop.Msg

@@ -234,7 +234,6 @@ describe("UI tests", function () {
     Loading: ["color-contrast"],
     Outline: ["color-contrast"],
     RadioButton: ["duplicate-id"],
-    LazyFocusLoop: ["duplicate-id"],
   };
 
   const specialProcessing = {
