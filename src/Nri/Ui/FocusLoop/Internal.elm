@@ -37,11 +37,9 @@ keyEvents config ( prev, next ) =
 siblings : List a -> List ( a, Maybe ( a, a ) )
 siblings items =
     let
-        previousItems : List (Maybe a)
         previousItems =
             finalItem :: List.map Just items
 
-        finalItem : Maybe a
         finalItem =
             List.head (List.reverse items)
 
