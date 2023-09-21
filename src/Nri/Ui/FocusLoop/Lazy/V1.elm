@@ -16,18 +16,89 @@ import Nri.Ui.FocusLoop.Internal exposing (keyEvents, siblings)
 
 As the name suggests, this function uses Html.Lazy.lazy to render your `view` function.
 
-Please ensure that the arguments you are passing to `view`, i.e. the contents
-of your array, will behave as expected with Html.Lazy. tl;dr, only primitives are
-checked by value; everything else is checked by reference. This means that if you are
-constructing records in your view that are passed into `lazy`, they will be reconstructed
-on every call to view, causing the lazy to evaluate as not equal and ultimately cause your
-view to re-render on every call to `view`.
+There are special considerations to take into account when using this or the laziness will
+not actually work. It is very easy to get this wrong or to accidentally break it, so please
+read the following carefully.
 
-See <https://guide.elm-lang.org/optimization/lazy> for more details.
+This function MUST be called with with a configuration and assigned to a TOP-LEVEL CONSTANT.
 
-Hint, you may need to flatten records into individual arguments and use lazy2, lazy3, etc.
-so that you can pass primitives and ensure they are checked by value, or individual references
-(i.e. not a record container many, a la `config`).
+Specifically, this works:
+
+    viewFocusLoop : List item -> List ( String, Html msg )
+    viewFocusLoop =
+        FocusLoop.lazy
+            { toId = .id
+            , focus = Focus
+            , view = \arrowKeyHandlers item -> ...
+            , leftRight = True
+            , upDown = True
+            }
+
+This does NOT work:
+
+    viewFocusLoop : List item -> List ( String, Html msg )
+    viewFocusLoop items =
+        FocusLoop.lazy
+            { toId = .id
+            , focus = Focus
+            , view = \arrowKeyHandlers item -> ...
+            , leftRight = True
+            , upDown = True
+            }
+            items
+
+Further, the same considerations you would take for `Html.Lazy.lazyN` apply
+to the `item`s passed to this function. That is primitives are checked by value
+and everything else is checked by reference, see <https://guide.elm-lang.org/optimization/lazy>
+
+Crucially, this means that you cannot use records or instances of custom types that do not exist
+on the model (such that the same reference will be passed on each render). Or put into inverse
+terms, you may not pass records or custom types that are instantiated in the view.
+
+Consider the following example using Tooltips. Knowing that we must assign the result of
+`FocusLoop.lazy` to a top-level constant, we might try the following:
+
+    type alias Model =
+        { activeTooltip : Maybe Tooltip
+        , items : List Item
+        }
+
+    type Tooltip
+        = ItemTooltip ItemId
+
+    type alias Item =
+        { id : ItemId
+        }
+
+    view : Model -> Html msg
+    view model =
+        div []
+            [ viewFocusLoop
+                (List.map
+                    (\item ->
+                        { item = item
+                        , tooltipOpen = model.activeTooltip == Just (ItemTooltip item.id)
+                        }
+                    )
+                    model.items
+                )
+            ]
+
+    viewFocusLoop : List { item, tooltipOpen } -> List ( String, Html msg )
+    viewFocusLoop =
+        FocusLoop.lazy
+            { toId = .item.id
+            , focus = Focus
+            , view = \arrowKeyHandlers { item, tooltipOpen } -> ...
+            , leftRight = True
+            , upDown = True
+            }
+
+However this will not work, because in the List.map call we are instantiating
+a new anonymous record, and thus a new reference, on each call to view.
+
+In this case, you will need to use one of the other FocusLoop.lazy functions. To follow
+this thread, see the example for FocusLoop.lazy2.
 
 -}
 lazy :
@@ -54,19 +125,41 @@ lazy config =
 
 {-| Like FocusLoop.lazy, but with 2 arguments to your view function.
 
-Use FocusLoop.lazy2Args to construct your arguments, e.g.
+Picking up from the usage example for FocusLoop.lazy, we can use this function to
+use Html.Lazy.lazy2 (actually Html.Lazy.lazy4, but the first two arguments are used
+by FocusLoop.lazy2 itself!) to check on individual arguments.
+
+Because the restriction regarding assigning to a top-level constant still applies,
+our mapping side is the same as before:
+
+    view : Model -> Html msg
+    view model =
+        div []
+            [ viewFocusLoop
+                (List.map
+                    (\item ->
+                        { item = item
+                        , tooltipOpen = model.activeTooltip == Just (ItemTooltip item.id)
+                        }
+                    )
+                    model.items
+                )
+            ]
+
+But for our `viewFocusLoop` function we will use `lazy2` and supply an additional `apply`
+in the configuration to extract our arguments:
 
     FocusLoop.lazy2
-        { id = \arg1 -> arg2 -> ...
-        , applyLazy = \lazy item -> lazy item.arg1 item.arg2
-        , focus = Focus
-        , leftRight = True
-        , upDown = True
-        , view = \arrowKeyHandlers arg1 arg2 -> ...
+        { apply = \f { item, tooltipOpen } -> f item tooltipOpen
+        , ...
         }
-        [ FocusLoop.lazy2Args a1 a2
-        , FocusLoop.lazy2Args b1 b2
-        ]
+
+You can think of `f` in this function as being the `view` function passed to `Html.Lazy.lazy2`.
+
+i.e.
+
+                        -- vvv This lambda is `f` in the above example. vvv --
+    Html.Lazy.lazy2 <|              \item tooltipOpen -> ...
 
 -}
 lazy2 :
@@ -85,7 +178,7 @@ lazy2 =
 
 {-| Like FocusLoop.lazy, but with 3 arguments to your view function.
 
-See lazy2 usage example for more details.
+See lazy and lazy2 usage example for more details.
 
 -}
 lazy3 :
@@ -104,7 +197,7 @@ lazy3 =
 
 {-| Like FocusLoop.lazy, but with 4 arguments to your view function.
 
-See lazy2 usage example for more details.
+See lazy and lazy2 usage example for more details.
 
 -}
 lazy4 :
@@ -123,7 +216,7 @@ lazy4 =
 
 {-| Like FocusLoop.lazy, but with 5 arguments to your view function.
 
-See lazy2 usage example for more details.
+See lazy and lazy2 usage example for more details.
 
 -}
 lazy5 :
@@ -184,26 +277,18 @@ lazyHelp lazyN applyView toArgs config =
             )
 
 
-{-| Helper type for lazy2
--}
 type Args2 a1 a2
     = Args2 a1 a2
 
 
-{-| Helper type for lazy3
--}
 type Args3 a1 a2 a3
     = Args3 a1 a2 a3
 
 
-{-| Helper type for lazy4
--}
 type Args4 a1 a2 a3 a4
     = Args4 a1 a2 a3 a4
 
 
-{-| Helper type for lazy5
--}
 type Args5 a1 a2 a3 a4 a5
     = Args5 a1 a2 a3 a4 a5
 
