@@ -10,7 +10,9 @@ import Accessibility.Styled as Html exposing (Attribute, Html)
 import Accessibility.Styled.Key as Key
 import Browser.Dom as Dom
 import Css
+import Html.Styled
 import Html.Styled.Attributes as Attrs
+import Html.Styled.Events as Events
 import Html.Styled.Keyed as Keyed
 import Html.Styled.Lazy as Lazy
 import List.Extra as List
@@ -37,19 +39,64 @@ example =
     }
 
 
+type alias State =
+    { settings : Settings
+    , counter : Int
+    , items : List Int
+    , tooltip : Maybe Tooltip
+    }
+
+
 type alias Settings =
     { useLazy : Bool
     , simulateExpensiveComputation : Bool
-    , simulateExpensiveComputationIterations : Int
+    , simulateExpensiveComputationIterations : Setting Int
     }
 
 
-type alias State =
-    { items : List Int
-    , tooltip : Maybe Tooltip
-    , counter : Int
-    , settings : Settings
-    }
+type Setting a
+    = Setting a
+    | UnsavedSetting ( a, a )
+
+
+updateSetting : Setting a -> a -> Setting a
+updateSetting setting unsavedValue =
+    case setting of
+        Setting savedValue ->
+            UnsavedSetting ( savedValue, unsavedValue )
+
+        UnsavedSetting ( savedValue, _ ) ->
+            UnsavedSetting ( savedValue, unsavedValue )
+
+
+saveSetting : Setting a -> Setting a
+saveSetting setting =
+    case setting of
+        Setting _ ->
+            setting
+
+        UnsavedSetting ( _, unsavedValue ) ->
+            Setting unsavedValue
+
+
+settingValue : Setting a -> a
+settingValue setting =
+    case setting of
+        Setting savedValue ->
+            savedValue
+
+        UnsavedSetting ( savedValue, _ ) ->
+            savedValue
+
+
+unsavedSettingValue : Setting a -> a
+unsavedSettingValue setting =
+    case setting of
+        Setting savedValue ->
+            savedValue
+
+        UnsavedSetting ( _, unsavedValue ) ->
+            unsavedValue
 
 
 type Tooltip
@@ -66,7 +113,7 @@ init =
     , settings =
         { useLazy = True
         , simulateExpensiveComputation = False
-        , simulateExpensiveComputationIterations = 50
+        , simulateExpensiveComputationIterations = Setting 50
         }
     }
         |> addItems 50
@@ -81,7 +128,8 @@ type Msg
     = ToggleTooltip Tooltip Bool
     | ToggleLazy Bool
     | ToggleSimulateExpensiveComputation Bool
-    | SetExpensiveComputationIterations (Maybe Int)
+    | UpdateExpensiveComputationIterations (Maybe Int)
+    | SaveExpensiveComputationIterations
     | AddItems Int
     | RemoveItem Int
     | Focus String
@@ -113,12 +161,24 @@ update msg state =
             , Cmd.none
             )
 
-        SetExpensiveComputationIterations maybeIter ->
+        UpdateExpensiveComputationIterations maybeIter ->
             ( { state
                 | settings =
                     { settings
                         | simulateExpensiveComputationIterations =
-                            maybeIter |> Maybe.withDefault settings.simulateExpensiveComputationIterations
+                            maybeIter
+                                |> Maybe.map (updateSetting settings.simulateExpensiveComputationIterations)
+                                |> Maybe.withDefault settings.simulateExpensiveComputationIterations
+                    }
+              }
+            , Cmd.none
+            )
+
+        SaveExpensiveComputationIterations ->
+            ( { state
+                | settings =
+                    { settings
+                        | simulateExpensiveComputationIterations = settings.simulateExpensiveComputationIterations |> saveSetting
                     }
               }
             , Cmd.none
@@ -215,7 +275,13 @@ viewSimulateExpensiveComputationToggle =
                     [ Switch.selected settings.simulateExpensiveComputation
                     , Switch.onSwitch ToggleSimulateExpensiveComputation
                     ]
-                , viewIf (\_ -> viewComplexityInput settings.simulateExpensiveComputationIterations) settings.simulateExpensiveComputation
+                , viewIf
+                    (\_ ->
+                        Html.div [ Attrs.css [ Css.displayFlex ] ]
+                            [ viewComplexityInput (unsavedSettingValue settings.simulateExpensiveComputationIterations)
+                            ]
+                    )
+                    settings.simulateExpensiveComputation
                 , Tooltip.viewToggleTip { label = "simulate-expensive-computation-tip", lastId = Nothing }
                     [ Tooltip.plaintext "This will simulate an expensive computation when rendering each individual item. You must have the developer console open to see the effects of this setting."
                     , Tooltip.open tooltipOpen
@@ -226,10 +292,14 @@ viewSimulateExpensiveComputationToggle =
 
 viewComplexityInput : Int -> Html Msg
 viewComplexityInput complexity =
-    TextInput.view "Complexity"
-        [ TextInput.number SetExpensiveComputationIterations
-        , TextInput.value (Just complexity)
-        , TextInput.guidance "Higher = Slower"
+    Html.Styled.div [ Events.onMouseLeave SaveExpensiveComputationIterations ]
+        [ TextInput.view "Complexity"
+            [ TextInput.number UpdateExpensiveComputationIterations
+            , TextInput.value (Just complexity)
+            , TextInput.onBlur SaveExpensiveComputationIterations
+            , TextInput.onEnter SaveExpensiveComputationIterations
+            , TextInput.guidance "Higher = Slower"
+            ]
         ]
 
 
@@ -245,7 +315,17 @@ viewItems settings tooltip items =
                 , focus = Focus
                 , leftRight = True
                 , upDown = False
-                , view = \keyEvents id -> viewItem keyEvents settings id (tooltip == Just (ItemTooltip id))
+                , view =
+                    \keyEvents id ->
+                        viewItem keyEvents
+                            (if settings.simulateExpensiveComputation then
+                                settingValue settings.simulateExpensiveComputationIterations
+
+                             else
+                                0
+                            )
+                            id
+                            (tooltip == Just (ItemTooltip id))
                 }
     in
     List.zip (keys items) (views items)
@@ -260,12 +340,22 @@ viewItemsLazy :
     -> List ( String, Html Msg )
 viewItemsLazy =
     FocusLoop.lazy3
-        { toId = \{ item } -> buttonDomId item
+        { toId = .item >> buttonDomId
         , focus = Focus
         , leftRight = True
         , upDown = False
         , view = viewItem
-        , apply = \view_ { settings, tooltip, item } -> view_ settings item (tooltip == Just (ItemTooltip item))
+        , apply =
+            \view_ { settings, tooltip, item } ->
+                view_
+                    (if settings.simulateExpensiveComputation then
+                        settingValue settings.simulateExpensiveComputationIterations
+
+                     else
+                        0
+                    )
+                    item
+                    (tooltip == Just (ItemTooltip item))
         }
 
 
@@ -283,15 +373,11 @@ goBrrrrr input iterations =
     computeHash iterations 37 104729 input |> String.fromInt
 
 
-viewItem : List (Key.Event Msg) -> Settings -> Int -> Bool -> Html Msg
-viewItem focusKeyEvents settings id tooltipOpen =
+viewItem : List (Key.Event Msg) -> Int -> Int -> Bool -> Html Msg
+viewItem focusKeyEvents expensiveComputationIters id tooltipOpen =
     let
         hash =
-            if settings.simulateExpensiveComputation then
-                goBrrrrr id settings.simulateExpensiveComputationIterations
-
-            else
-                ""
+            goBrrrrr id expensiveComputationIters
     in
     Html.li [ Attrs.class hash ]
         [ Tooltip.view
