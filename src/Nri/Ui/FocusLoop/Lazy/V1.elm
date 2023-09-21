@@ -1,6 +1,6 @@
 module Nri.Ui.FocusLoop.Lazy.V1 exposing
     ( lazy, lazy2, lazy3, lazy4, lazy5
-    , Args2(..), Args3(..), Args4(..), Args5(..)
+    , Args2, Args3(..), Args4(..), Args5(..)
     )
 
 {-| Like FocusLoop, but with lazy rendering. Prefer this when the set of items can change.
@@ -68,10 +68,6 @@ lazy :
     -> List item
     -> List ( String, Html msg )
 lazy =
-    let
-        apply f a =
-            f a
-    in
     lazyHelp Lazy.lazy3 apply apply
 
 
@@ -104,11 +100,7 @@ lazy2 :
     -> List (Args2 a b)
     -> List ( String, Html msg )
 lazy2 =
-    let
-        apply f (Args2 a b) =
-            f a b
-    in
-    lazyHelp Lazy.lazy4 apply apply
+    lazyHelp Lazy.lazy4 apply2 apply2
 
 
 {-| Like FocusLoop.lazy, but with 3 arguments to your view function.
@@ -126,11 +118,7 @@ lazy3 :
     -> List (Args3 a b c)
     -> List ( String, Html msg )
 lazy3 =
-    let
-        apply f (Args3 a b c) =
-            f a b c
-    in
-    lazyHelp Lazy.lazy5 apply apply
+    lazyHelp Lazy.lazy5 apply3 apply3
 
 
 {-| Like FocusLoop.lazy, but with 4 arguments to your view function.
@@ -148,11 +136,7 @@ lazy4 :
     -> List (Args4 a b c d)
     -> List ( String, Html msg )
 lazy4 =
-    let
-        apply f (Args4 a b c d) =
-            f a b c d
-    in
-    lazyHelp Lazy.lazy6 apply apply
+    lazyHelp Lazy.lazy6 apply4 apply4
 
 
 {-| Like FocusLoop.lazy, but with 5 arguments to your view function.
@@ -170,11 +154,7 @@ lazy5 :
     -> List (Args5 a b c d e)
     -> List ( String, Html msg )
 lazy5 =
-    let
-        apply f (Args5 a b c d e) =
-            f a b c d e
-    in
-    lazyHelp Lazy.lazy7 apply apply
+    lazyHelp Lazy.lazy7 apply5 apply5
 
 
 lazyHelp :
@@ -217,3 +197,28 @@ lazyHelp lazyN applyId applyView config =
                 , applyView (lazyN view prevId nextId) args
                 )
             )
+
+
+apply : (a -> b) -> a -> b
+apply f a =
+    f a
+
+
+apply2 : (a -> b -> c) -> Args2 a b -> c
+apply2 f (Args2 a b) =
+    f a b
+
+
+apply3 : (a -> b -> c -> d) -> Args3 a b c -> d
+apply3 f (Args3 a b c) =
+    f a b c
+
+
+apply4 : (a -> b -> c -> d -> e) -> Args4 a b c d -> e
+apply4 f (Args4 a b c d) =
+    f a b c d
+
+
+apply5 : (a -> b -> c -> d -> e -> f) -> Args5 a b c d e -> f
+apply5 f (Args5 a b c d e) =
+    f a b c d e
