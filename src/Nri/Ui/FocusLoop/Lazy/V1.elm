@@ -1,12 +1,8 @@
-module Nri.Ui.FocusLoop.Lazy.V1 exposing
-    ( lazy, lazy2, lazy3, lazy4, lazy5
-    , Args2, Args3(..), Args4(..), Args5(..)
-    )
+module Nri.Ui.FocusLoop.Lazy.V1 exposing (lazy, lazy2, lazy3, lazy4, lazy5)
 
 {-| Like FocusLoop, but with lazy rendering. Prefer this when the set of items can change.
 
 @docs lazy, lazy2, lazy3, lazy4, lazy5
-@docs Args2, Args3, Args4, Args5
 
 -}
 
@@ -14,30 +10,6 @@ import Accessibility.Styled exposing (Html)
 import Accessibility.Styled.Key as Key
 import Html.Styled.Lazy as Lazy
 import Nri.Ui.FocusLoop.Internal exposing (keyEvents, siblings)
-
-
-{-| Helper type for lazy2
--}
-type Args2 a1 a2
-    = Args2 a1 a2
-
-
-{-| Helper type for lazy3
--}
-type Args3 a1 a2 a3
-    = Args3 a1 a2 a3
-
-
-{-| Helper type for lazy4
--}
-type Args4 a1 a2 a3 a4
-    = Args4 a1 a2 a3 a4
-
-
-{-| Helper type for lazy5
--}
-type Args5 a1 a2 a3 a4 a5
-    = Args5 a1 a2 a3 a4 a5
 
 
 {-| Lazy version of FocusLoop.view
@@ -67,40 +39,49 @@ lazy :
     }
     -> List item
     -> List ( String, Html msg )
-lazy =
-    lazyHelp Lazy.lazy3 apply apply
+lazy config =
+    lazyHelp Lazy.lazy3
+        apply
+        apply
+        identity
+        { apply = \f item -> f item
+        , toId = config.toId
+        , focus = config.focus
+        , view = config.view
+        , leftRight = config.leftRight
+        , upDown = config.upDown
+        }
 
 
 {-| Like FocusLoop.lazy, but with 2 arguments to your view function.
 
-e.g.
+Use FocusLoop.lazy2Args to construct your arguments, e.g.
 
     FocusLoop.lazy2
-        { id = a1 -> a2 -> ...
+        { id = \arg1 -> arg2 -> ...
+        , applyLazy = \lazy item -> lazy item.arg1 item.arg2
         , focus = Focus
         , leftRight = True
         , upDown = True
-        , view = viewFocusableItem
+        , view = \arrowKeyHandlers arg1 arg2 -> ...
         }
-        [ FocusLoop.Args2 a1 a2
-        , FocusLoop.Args2 b1 a2
+        [ FocusLoop.lazy2Args a1 a2
+        , FocusLoop.lazy2Args b1 b2
         ]
-
-    viewFocusableItem arg1 arg2 arrowKeyHandlers =
-        ...
 
 -}
 lazy2 :
-    { toId : a -> b -> String
+    { apply : (a -> b -> Args2 a b) -> item -> Args2 a b
+    , toId : a -> b -> String
     , focus : String -> msg
     , view : List (Key.Event msg) -> a -> b -> Html msg
     , leftRight : Bool
     , upDown : Bool
     }
-    -> List (Args2 a b)
+    -> List item
     -> List ( String, Html msg )
 lazy2 =
-    lazyHelp Lazy.lazy4 apply2 apply2
+    lazyHelp Lazy.lazy4 apply2 apply2 Args2
 
 
 {-| Like FocusLoop.lazy, but with 3 arguments to your view function.
@@ -109,16 +90,17 @@ See lazy2 usage example for more details.
 
 -}
 lazy3 :
-    { toId : a -> b -> c -> String
+    { apply : (a -> b -> c -> Args3 a b c) -> item -> Args3 a b c
+    , toId : a -> b -> c -> String
     , focus : String -> msg
     , view : List (Key.Event msg) -> a -> b -> c -> Html msg
     , leftRight : Bool
     , upDown : Bool
     }
-    -> List (Args3 a b c)
+    -> List item
     -> List ( String, Html msg )
 lazy3 =
-    lazyHelp Lazy.lazy5 apply3 apply3
+    lazyHelp Lazy.lazy5 apply3 apply3 Args3
 
 
 {-| Like FocusLoop.lazy, but with 4 arguments to your view function.
@@ -127,16 +109,17 @@ See lazy2 usage example for more details.
 
 -}
 lazy4 :
-    { toId : a -> b -> c -> d -> String
+    { apply : (a -> b -> c -> d -> Args4 a b c d) -> item -> Args4 a b c d
+    , toId : a -> b -> c -> d -> String
     , focus : String -> msg
     , view : List (Key.Event msg) -> a -> b -> c -> d -> Html msg
     , leftRight : Bool
     , upDown : Bool
     }
-    -> List (Args4 a b c d)
+    -> List item
     -> List ( String, Html msg )
 lazy4 =
-    lazyHelp Lazy.lazy6 apply4 apply4
+    lazyHelp Lazy.lazy6 apply4 apply4 Args4
 
 
 {-| Like FocusLoop.lazy, but with 5 arguments to your view function.
@@ -145,32 +128,36 @@ See lazy2 usage example for more details.
 
 -}
 lazy5 :
-    { toId : a -> b -> c -> d -> e -> String
+    { apply : (a -> b -> c -> d -> e -> Args5 a b c d e) -> item -> Args5 a b c d e
+    , toId : a -> b -> c -> d -> e -> String
     , focus : String -> msg
     , view : List (Key.Event msg) -> a -> b -> c -> d -> e -> Html msg
     , leftRight : Bool
     , upDown : Bool
     }
-    -> List (Args5 a b c d e)
+    -> List item
     -> List ( String, Html msg )
 lazy5 =
-    lazyHelp Lazy.lazy7 apply5 apply5
+    lazyHelp Lazy.lazy7 apply5 apply5 Args5
 
 
 lazyHelp :
     ((String -> String -> toView) -> String -> String -> toView)
     -> (toId -> args -> String)
     -> (toView -> args -> Html msg)
+    -> toArgs
     ->
-        { view : List (Key.Event msg) -> toView
-        , toId : toId
-        , focus : String -> msg
-        , leftRight : Bool
-        , upDown : Bool
+        { config
+            | view : List (Key.Event msg) -> toView
+            , toId : toId
+            , focus : String -> msg
+            , leftRight : Bool
+            , upDown : Bool
+            , apply : toArgs -> item -> args
         }
-    -> List args
+    -> List item
     -> List ( String, Html msg )
-lazyHelp lazyN applyId applyView config =
+lazyHelp lazyN applyId applyView toArgs config =
     let
         -- Don't inline this, lazy will not work if passed an anonymous function.
         view prevId nextId =
@@ -183,7 +170,8 @@ lazyHelp lazyN applyId applyView config =
                         keyEvents config ( prevId, nextId )
                 )
     in
-    siblings
+    List.map (config.apply toArgs)
+        >> siblings
         >> List.map
             (\( args, maybeSiblings ) ->
                 let
@@ -197,6 +185,30 @@ lazyHelp lazyN applyId applyView config =
                 , applyView (lazyN view prevId nextId) args
                 )
             )
+
+
+{-| Helper type for lazy2
+-}
+type Args2 a1 a2
+    = Args2 a1 a2
+
+
+{-| Helper type for lazy3
+-}
+type Args3 a1 a2 a3
+    = Args3 a1 a2 a3
+
+
+{-| Helper type for lazy4
+-}
+type Args4 a1 a2 a3 a4
+    = Args4 a1 a2 a3 a4
+
+
+{-| Helper type for lazy5
+-}
+type Args5 a1 a2 a3 a4 a5
+    = Args5 a1 a2 a3 a4 a5
 
 
 apply : (a -> b) -> a -> b

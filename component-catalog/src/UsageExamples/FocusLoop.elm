@@ -152,13 +152,17 @@ view state =
         add10ItemsButtonKeyed =
             ( "add-10-items", Html.li [] [ Button.button "Add 10" [ Button.onClick (AddItems 10) ] ] )
 
-        tooltipOpen id =
-            state.tooltip == Just (ItemTooltip id)
-
         itemButtonsKeyed =
             if state.settings.useLazy then
                 viewItemsLazy <|
-                    List.map (\id -> FocusLoop.Args3 state.settings id (tooltipOpen id)) state.items
+                    List.map
+                        (\item ->
+                            { settings = state.settings
+                            , tooltip = state.tooltip
+                            , item = item
+                            }
+                        )
+                        state.items
 
             else
                 viewItems state.settings state.tooltip state.items
@@ -247,13 +251,20 @@ viewItems settings tooltip items =
     List.zip (keys items) (views items)
 
 
-viewItemsLazy : List (FocusLoop.Args3 Settings Int Bool) -> List ( String, Html Msg )
+viewItemsLazy :
+    List
+        { settings : Settings
+        , tooltip : Maybe Tooltip
+        , item : Int
+        }
+    -> List ( String, Html Msg )
 viewItemsLazy =
     FocusLoop.lazy3
         { toId = \_ id _ -> buttonDomId id
         , focus = Focus
         , leftRight = True
         , upDown = False
+        , apply = \view_ { settings, tooltip, item } -> view_ settings item (tooltip == Just (ItemTooltip item))
         , view = viewItem
         }
 
