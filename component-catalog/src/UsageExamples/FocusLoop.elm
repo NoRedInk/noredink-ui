@@ -260,12 +260,12 @@ viewItemsLazy :
     -> List ( String, Html Msg )
 viewItemsLazy =
     FocusLoop.lazy3
-        { toId = \_ id _ -> buttonDomId id
+        { toId = \{ item } -> buttonDomId item
         , focus = Focus
         , leftRight = True
         , upDown = False
-        , apply = \view_ { settings, tooltip, item } -> view_ settings item (tooltip == Just (ItemTooltip item))
         , view = viewItem
+        , apply = \view_ { settings, tooltip, item } -> view_ settings item (tooltip == Just (ItemTooltip item))
         }
 
 

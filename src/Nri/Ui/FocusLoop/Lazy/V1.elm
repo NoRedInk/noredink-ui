@@ -42,7 +42,6 @@ lazy :
 lazy config =
     lazyHelp Lazy.lazy3
         apply
-        apply
         identity
         { apply = \f item -> f item
         , toId = config.toId
@@ -72,7 +71,7 @@ Use FocusLoop.lazy2Args to construct your arguments, e.g.
 -}
 lazy2 :
     { apply : (a -> b -> Args2 a b) -> item -> Args2 a b
-    , toId : a -> b -> String
+    , toId : item -> String
     , focus : String -> msg
     , view : List (Key.Event msg) -> a -> b -> Html msg
     , leftRight : Bool
@@ -81,7 +80,7 @@ lazy2 :
     -> List item
     -> List ( String, Html msg )
 lazy2 =
-    lazyHelp Lazy.lazy4 apply2 apply2 Args2
+    lazyHelp Lazy.lazy4 apply2 Args2
 
 
 {-| Like FocusLoop.lazy, but with 3 arguments to your view function.
@@ -91,7 +90,7 @@ See lazy2 usage example for more details.
 -}
 lazy3 :
     { apply : (a -> b -> c -> Args3 a b c) -> item -> Args3 a b c
-    , toId : a -> b -> c -> String
+    , toId : item -> String
     , focus : String -> msg
     , view : List (Key.Event msg) -> a -> b -> c -> Html msg
     , leftRight : Bool
@@ -100,7 +99,7 @@ lazy3 :
     -> List item
     -> List ( String, Html msg )
 lazy3 =
-    lazyHelp Lazy.lazy5 apply3 apply3 Args3
+    lazyHelp Lazy.lazy5 apply3 Args3
 
 
 {-| Like FocusLoop.lazy, but with 4 arguments to your view function.
@@ -110,7 +109,7 @@ See lazy2 usage example for more details.
 -}
 lazy4 :
     { apply : (a -> b -> c -> d -> Args4 a b c d) -> item -> Args4 a b c d
-    , toId : a -> b -> c -> d -> String
+    , toId : item -> String
     , focus : String -> msg
     , view : List (Key.Event msg) -> a -> b -> c -> d -> Html msg
     , leftRight : Bool
@@ -119,7 +118,7 @@ lazy4 :
     -> List item
     -> List ( String, Html msg )
 lazy4 =
-    lazyHelp Lazy.lazy6 apply4 apply4 Args4
+    lazyHelp Lazy.lazy6 apply4 Args4
 
 
 {-| Like FocusLoop.lazy, but with 5 arguments to your view function.
@@ -129,7 +128,7 @@ See lazy2 usage example for more details.
 -}
 lazy5 :
     { apply : (a -> b -> c -> d -> e -> Args5 a b c d e) -> item -> Args5 a b c d e
-    , toId : a -> b -> c -> d -> e -> String
+    , toId : item -> String
     , focus : String -> msg
     , view : List (Key.Event msg) -> a -> b -> c -> d -> e -> Html msg
     , leftRight : Bool
@@ -138,18 +137,17 @@ lazy5 :
     -> List item
     -> List ( String, Html msg )
 lazy5 =
-    lazyHelp Lazy.lazy7 apply5 apply5 Args5
+    lazyHelp Lazy.lazy7 apply5 Args5
 
 
 lazyHelp :
     ((String -> String -> toView) -> String -> String -> toView)
-    -> (toId -> args -> String)
     -> (toView -> args -> Html msg)
     -> toArgs
     ->
         { config
             | view : List (Key.Event msg) -> toView
-            , toId : toId
+            , toId : item -> String
             , focus : String -> msg
             , leftRight : Bool
             , upDown : Bool
@@ -157,7 +155,7 @@ lazyHelp :
         }
     -> List item
     -> List ( String, Html msg )
-lazyHelp lazyN applyId applyView toArgs config =
+lazyHelp lazyN applyView toArgs config =
     let
         -- Don't inline this, lazy will not work if passed an anonymous function.
         view prevId nextId =
@@ -170,19 +168,18 @@ lazyHelp lazyN applyId applyView toArgs config =
                         keyEvents config ( prevId, nextId )
                 )
     in
-    List.map (config.apply toArgs)
-        >> siblings
+    siblings
         >> List.map
-            (\( args, maybeSiblings ) ->
+            (\( item, maybeSiblings ) ->
                 let
                     ( prevId, nextId ) =
-                        Maybe.map (Tuple.mapBoth (applyId config.toId) (applyId config.toId)) maybeSiblings
+                        Maybe.map (Tuple.mapBoth config.toId config.toId) maybeSiblings
                             -- We have to use empty strings here instead of maybes
                             -- so that lazy will check by value instead of by reference.
                             |> Maybe.withDefault ( "", "" )
                 in
-                ( applyId config.toId args
-                , applyView (lazyN view prevId nextId) args
+                ( config.toId item
+                , applyView (lazyN view prevId nextId) (config.apply toArgs item)
                 )
             )
 
