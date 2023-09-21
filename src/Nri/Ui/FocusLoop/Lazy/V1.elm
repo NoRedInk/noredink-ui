@@ -132,7 +132,15 @@ lazyHelp lazyN applyN uncurryN config =
     let
         -- Don't inline this, lazy will not work if passed an anonymous function.
         view =
-            uncurryN (viewHelp config)
+            uncurryN <|
+                \item prevId nextId ->
+                    config.view item <|
+                        case ( prevId, nextId ) of
+                            ( "", "" ) ->
+                                []
+
+                            _ ->
+                                keyEvents config ( prevId, nextId )
     in
     siblings
         >> List.map
@@ -149,14 +157,3 @@ lazyHelp lazyN applyN uncurryN config =
                 , applyN (lazyN view) args prevId nextId
                 )
             )
-
-
-viewHelp : Config String msg a -> a -> String -> String -> Html msg
-viewHelp config item prevId nextId =
-    config.view item <|
-        case ( prevId, nextId ) of
-            ( "", "" ) ->
-                []
-
-            _ ->
-                keyEvents config ( prevId, nextId )
