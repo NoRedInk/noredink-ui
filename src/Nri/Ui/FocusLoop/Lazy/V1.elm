@@ -251,6 +251,7 @@ lazyHelp :
     -> List item
     -> List ( String, Html msg )
 lazyHelp lazyN applyView toArgs config =
+    -- This has to be point-free, adding an `items` arg will break lazy.
     let
         -- Don't inline this, lazy will not work if passed an anonymous function.
         view prevId nextId =

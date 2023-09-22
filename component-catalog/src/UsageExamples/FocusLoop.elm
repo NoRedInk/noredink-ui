@@ -286,11 +286,7 @@ viewSimulateExpensiveComputationToggle =
                     , Switch.onSwitch ToggleSimulateExpensiveComputation
                     ]
                 , viewIf
-                    (\_ ->
-                        Html.div [ Attrs.css [ Css.displayFlex ] ]
-                            [ viewComplexityInput (unsavedSettingValue settings.simulateExpensiveComputationIterations)
-                            ]
-                    )
+                    (\_ -> viewComplexityInput (unsavedSettingValue settings.simulateExpensiveComputationIterations))
                     settings.simulateExpensiveComputation
                 , Tooltip.viewToggleTip { label = "simulate-expensive-computation-tip", lastId = Nothing }
                     [ Tooltip.plaintext "This will simulate an expensive computation when rendering each individual item. You must have the developer console open to see the effects of this setting."
@@ -401,12 +397,11 @@ howMuchBrrrrr settings =
 goBrrrrr : Int -> Int -> String
 goBrrrrr input iterations =
     let
-        computeHash n base modulus x =
-            if n <= 0 then
-                1
+        brrr i =
+            if Debug.log "brrrr" i < 0 then
+                "done"
 
             else
-                -- This Debug.log is here to make sure Elm doesn't optimize away the computation
-                Debug.log "brrrr" <| remainderBy (computeHash (n - 1) base modulus x * base * x) modulus
+                brrr (i - 1)
     in
-    computeHash iterations 37 104729 input |> String.fromInt
+    brrr iterations
