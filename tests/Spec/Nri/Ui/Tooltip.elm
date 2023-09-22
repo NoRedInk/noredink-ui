@@ -1,9 +1,12 @@
 module Spec.Nri.Ui.Tooltip exposing (spec)
 
 import Accessibility.Aria as Aria
+import Accessibility.Styled.Key as Key
 import Expect
 import Html.Attributes
 import Html.Styled as HtmlStyled
+import Html.Styled.Attributes as Attrs
+import Nri.Test.KeyboardHelpers.V1 as KeyboardHelpers
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.Tooltip.V3 as Tooltip
 import ProgramTest exposing (ProgramTest, ensureViewHas, ensureViewHasNot)
@@ -28,7 +31,7 @@ spec =
                 in
                 program (Tooltip.viewToggleTip { label = label, lastId = Nothing })
                     [ Tooltip.plaintext tooltipContent
-                    , Tooltip.onToggle identity
+                    , Tooltip.onToggle Toggle
                     ]
                     -- Tooltip opens on mouse enter
                     |> mouseEnter [ nriDescription "Nri-Ui-Tooltip-V2" ]
@@ -63,7 +66,7 @@ spec =
                     )
                     [ Tooltip.plaintext tooltipContent
                     , Tooltip.primaryLabel
-                    , Tooltip.onToggle identity
+                    , Tooltip.onToggle Toggle
                     ]
                     -- Tooltip opens on mouse enter
                     |> mouseEnter [ nriDescription "Nri-Ui-Tooltip-V2" ]
@@ -125,16 +128,72 @@ spec =
                     |> Query.find [ Selector.id triggerId ]
                     |> Event.simulate Event.click
                     |> Expect.all [ Event.expectStopPropagation, Event.expectPreventDefault ]
+        , test "Adds additional keyDown event handlers with Tooltip.onTriggerKeyDown" <|
+            \() ->
+                let
+                    tooltipContent =
+                        "This will be the primary label"
+
+                    triggerContent =
+                        "label-less icon"
+
+                    tooltipId =
+                        "primary-label"
+
+                    triggerId =
+                        "trigger"
+                in
+                program
+                    (Tooltip.view
+                        { trigger = \events -> HtmlStyled.button (Attrs.id triggerId :: events) [ HtmlStyled.text triggerContent ]
+                        , id = tooltipId
+                        }
+                    )
+                    [ Tooltip.plaintext tooltipContent
+                    , Tooltip.primaryLabel
+                    , Tooltip.onToggle Toggle
+                    , Tooltip.onTriggerKeyDown
+                        [ Key.space SpaceKeyPressed ]
+                    ]
+                    |> KeyboardHelpers.pressSpace { targetDetails = [] }
+                        [ Selector.id triggerId
+                        ]
+                    |> ProgramTest.expectModel (\model -> Expect.equal (Just SpaceKeyPressed) model.lastMsg)
         ]
 
 
-program : (List (Tooltip.Attribute Bool) -> HtmlStyled.Html Bool) -> List (Tooltip.Attribute Bool) -> ProgramTest Bool Bool ()
+type alias Model =
+    { isOpen : Bool
+    , lastMsg : Maybe Msg
+    }
+
+
+type Msg
+    = Toggle Bool
+    | SpaceKeyPressed
+
+
+program : (List (Tooltip.Attribute Msg) -> HtmlStyled.Html Msg) -> List (Tooltip.Attribute Msg) -> ProgramTest Model Msg ()
 program view attributes =
     ProgramTest.createSandbox
-        { init = False
-        , update = \msg model -> msg
+        { init =
+            { isOpen = False
+            , lastMsg = Nothing
+            }
+        , update =
+            \msg model ->
+                let
+                    updatedModel =
+                        case msg of
+                            Toggle isOpen ->
+                                { model | isOpen = isOpen }
+
+                            _ ->
+                                model
+                in
+                { updatedModel | lastMsg = Just msg }
         , view =
-            \isOpen ->
+            \{ isOpen } ->
                 HtmlStyled.div []
                     [ view (Tooltip.open isOpen :: attributes)
                     ]

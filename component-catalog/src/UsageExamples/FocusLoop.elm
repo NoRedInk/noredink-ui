@@ -358,7 +358,7 @@ viewItem focusKeyEvents expensiveComputationIters id tooltipOpen =
     Html.li [ Attrs.class hash ]
         [ Tooltip.view
             { id = String.fromInt id |> Debug.log "vDOM evaluated for"
-            , trigger = viewTrigger id focusKeyEvents
+            , trigger = viewTrigger id
             }
             [ Tooltip.open tooltipOpen
             , Tooltip.primaryLabel
@@ -366,21 +366,16 @@ viewItem focusKeyEvents expensiveComputationIters id tooltipOpen =
             , Tooltip.fitToContent
             , Tooltip.plaintext "Remove me!"
             , Tooltip.onToggle (ToggleTooltip (ItemTooltip id))
+            , Tooltip.onTriggerKeyDown focusKeyEvents
             ]
         ]
 
 
-viewTrigger : Int -> List (Key.Event Msg) -> List (Attribute Msg) -> Html Msg
-viewTrigger id focusKeyEvents attrs =
+viewTrigger : Int -> List (Attribute Msg) -> Html Msg
+viewTrigger id attrs =
     Button.button (String.fromInt id)
         [ Button.id (buttonDomId id)
-        , Button.custom
-            (attrs
-                -- @TODO get rid of the conflict with the tooltip so that we can listen to all
-                -- key events (this is currently overriding the esc key handl/er from the tooltip
-                -- attrs on the line above)
-                ++ [ Key.onKeyDownPreventDefault focusKeyEvents ]
-            )
+        , Button.custom attrs
         , Button.onClick (RemoveItem id)
         ]
 
