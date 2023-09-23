@@ -98,8 +98,8 @@ update msg model =
             }
 
 
-view : State -> List (Html Msg)
-view state =
+view : List String -> List ( String, Html Msg )
+view =
     FocusLoop.lazy
         { focus = Focus
         , toId = identity
@@ -107,8 +107,6 @@ view state =
         , upDown = True
         , view = \arrowKeyHandlers item -> Html.button [ Key.onKeyDownPreventDefault arrowKeyHandlers ] [ Html.text item ]
         }
-        state.foos
-        |> List.map Tuple.second
 
 
 program : TestContext
@@ -119,6 +117,8 @@ program =
             , focused = Nothing
             }
         , update = update
-        , view = view >> Html.div [] >> Html.toUnstyled
+        , view =
+            \state ->
+                Html.toUnstyled (Html.div [] (view state.foos |> List.map Tuple.second))
         }
         |> ProgramTest.start ()

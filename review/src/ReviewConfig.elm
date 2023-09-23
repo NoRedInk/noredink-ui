@@ -19,6 +19,7 @@ import NoUnused.Modules
 import NoUnused.Parameters
 import NoUnused.Patterns
 import NoUnused.Variables
+import Nri.Ui.ElmReview.MemoizedFocusLoopLazy as MemoizedFocusLoopLazy
 import Review.Rule exposing (Rule)
 
 
@@ -38,4 +39,7 @@ config =
     -- , NoUnused.Parameters.rule
     -- , NoUnused.Patterns.rule
     , NoUnused.Variables.rule
+
+    --
+    , MemoizedFocusLoopLazy.rule
     ]

@@ -90,6 +90,7 @@
         "Nri.Ui.TextArea.V5",
         "Nri.Ui.TextInput.V7",
         "Nri.Ui.Tooltip.V3",
-        "Nri.Ui.UiIcon.V1"
+        "Nri.Ui.UiIcon.V1",
+        "Nri.Ui.ElmReview.MemoizedFocusLoopLazy"
     ]
 }
