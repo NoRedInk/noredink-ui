@@ -41,7 +41,7 @@ import Html.Styled exposing (Attribute)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Json.Decode
-import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (targetBlank)
+import Nri.Ui.Html.Attributes.V2 as ExtraAttributes exposing (targetBlank)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -178,16 +178,22 @@ linkExternalWithTrackingInternal { track, url } ({ clickableAttributes } as conf
 {-| -}
 toButtonAttributes : ClickableAttributes route msg -> { disabled : Bool } -> List (Attribute msg)
 toButtonAttributes clickableAttributes { disabled } =
-    [ AttributesExtra.maybe Events.onClick clickableAttributes.onClick
-    , Attributes.type_ clickableAttributes.buttonType
-    , -- why "aria-haspopup=true" instead of "aria-haspopup=dialog"?
-      -- AT support for aria-haspopup=dialog is currently (Nov 2022) limited.
-      -- See https://html5accessibility.com/stuff/2021/02/02/haspopup-haspoop/
-      -- If time has passed, feel free to revisit and see if dialog support has improved!
-      AttributesExtra.includeIf clickableAttributes.opensModal
+    ExtraAttributes.includeIf clickableAttributes.opensModal
         (Attributes.attribute "aria-haspopup" "true")
-    , Attributes.disabled disabled
-    ]
+        :: (if disabled then
+                Aria.disabled True
+                    :: (if clickableAttributes.buttonType == "submit" then
+                            [ Attributes.type_ "button" ]
+
+                        else
+                            [ Attributes.type_ clickableAttributes.buttonType ]
+                       )
+
+            else
+                [ Attributes.type_ clickableAttributes.buttonType
+                , ExtraAttributes.maybe Events.onClick clickableAttributes.onClick
+                ]
+           )
 
 
 {-| -}

@@ -22,6 +22,9 @@ module Nri.Ui.ClickableSvg.V2 exposing
     - adds `nriDescription`, `testId`, and `id` helpers
     - adds `iconForMobile`, `iconForQuizEngineMobile`, `iconForNarrowMobile`
     - adds `submit` and `opensModal`
+    - replaces the `disabled` attribute with `aria-disabled="true"`
+    - removes click handler from disabled buttons
+    - prevents default behavior for disabled submit buttons by setting `type="button"`
 
 
 # Create a button or link

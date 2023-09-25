@@ -761,22 +761,8 @@ renderButton ((ButtonOrLink config) as button_) =
     Nri.Ui.styled Html.button
         (styledName "customButton")
         (buttonStyles config)
-        (ExtraAttributes.includeIf config.clickableAttributes.opensModal
-            (Attributes.attribute "aria-haspopup" "true")
-            :: (if isDisabled config.state then
-                    Aria.disabled True
-                        :: (if config.clickableAttributes.buttonType == "submit" then
-                                [ Attributes.type_ "button" ]
-
-                            else
-                                [ Attributes.type_ config.clickableAttributes.buttonType ]
-                           )
-
-                else
-                    [ Attributes.type_ config.clickableAttributes.buttonType
-                    , ExtraAttributes.maybe Events.onClick config.clickableAttributes.onClick
-                    ]
-               )
+        (ClickableAttributes.toButtonAttributes config.clickableAttributes
+            { disabled = isDisabled config.state }
             ++ Attributes.class FocusRing.customClass
             :: ExtraAttributes.maybe (Just >> Aria.pressed) config.pressed
             :: config.customAttributes

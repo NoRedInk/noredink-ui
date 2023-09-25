@@ -18,6 +18,9 @@ module Nri.Ui.ClickableText.V3 exposing
 
   - Remove the -v2- from dataDescriptor to avoid version specific
   - Use dataDescriptor for clickable-text-label
+  - replaces the `disabled` attribute with `aria-disabled="true"`
+  - removes click handler from disabled buttons
+  - prevents default behavior for disabled submit buttons by setting `type="button"`
 
 
 # Post-release patches
