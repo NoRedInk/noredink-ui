@@ -13,7 +13,7 @@ module Nri.Ui.Tooltip.V3 exposing
     , alignStartForMobile, alignMiddleForMobile, alignEndForMobile
     , exactWidth, fitToContent
     , smallPadding, normalPadding, customPadding
-    , onToggle
+    , onToggle, onTriggerKeyDown
     , open
     , css, notMobileCss, mobileCss, quizEngineMobileCss, narrowMobileCss, containerCss
     , custom
@@ -35,6 +35,7 @@ module Nri.Ui.Tooltip.V3 exposing
   - Use Nri.Ui.WhenFocusLeaves.V2
   - prevent default and stop propagation on click for disclosure tooltips
   - adds `helpfullyDisabled` option
+  - adds `onTriggerKeyDown` option
 
 Changes from V2:
 
@@ -72,7 +73,7 @@ These tooltips aim to follow the accessibility recommendations from:
 
 @docs exactWidth, fitToContent
 @docs smallPadding, normalPadding, customPadding
-@docs onToggle
+@docs onToggle, onTriggerKeyDown
 @docs open
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss, narrowMobileCss, containerCss
 @docs custom
@@ -127,6 +128,7 @@ type alias Tooltip msg =
     , padding : Padding
     , trigger : Maybe (Trigger msg)
     , triggerAttributes : List (Html.Attribute msg)
+    , triggerKeyDownEvents : List (Key.Event msg)
     , purpose : Purpose
     , isOpen : Bool
     }
@@ -159,6 +161,7 @@ buildAttributes =
             , padding = NormalPadding
             , trigger = Nothing
             , triggerAttributes = []
+            , triggerKeyDownEvents = []
             , purpose = PrimaryLabel
             , isOpen = False
             }
@@ -807,6 +810,19 @@ onToggle msg =
     Attribute (\config -> { config | trigger = Just (OnHover msg) })
 
 
+{-| Add additional keydown handlers to the trigger element.
+
+This is required rather than applying them directly to the trigger element because the attributes
+passed into the trigger view function (to be applied to the trigger) include an onKeyDown event
+handler that is used to close the tooltip when the escape key is pressed, and Elm requires that
+only one onKeyDown event handler be applied to an element (otherwise, the last one wins).
+
+-}
+onTriggerKeyDown : List (Key.Event msg) -> Attribute msg
+onTriggerKeyDown keyEvents =
+    Attribute (\config -> { config | triggerKeyDownEvents = keyEvents })
+
+
 type Purpose
     = PrimaryLabel
     | AuxillaryDescription
@@ -954,7 +970,7 @@ viewTooltip_ { trigger, id } tooltip =
                                     }
                               ]
                             , [ Events.onClickPreventDefaultAndStopPropagation (msg (not tooltip.isOpen))
-                              , Key.onKeyDown [ Key.escape (msg False) ]
+                              , Key.onKeyDown (Key.escape (msg False) :: tooltip.triggerKeyDownEvents)
                               ]
                             )
 
@@ -964,12 +980,12 @@ viewTooltip_ { trigger, id } tooltip =
                               ]
                             , [ Events.onFocus (msg True)
                               , Events.onBlur (msg False)
-                              , Key.onKeyDown [ Key.escape (msg False) ]
+                              , Key.onKeyDown (Key.escape (msg False) :: tooltip.triggerKeyDownEvents)
                               ]
                             )
 
                 Nothing ->
-                    ( [], [] )
+                    ( [], [ Key.onKeyDown tooltip.triggerKeyDownEvents ] )
     in
     Nri.Ui.styled Root.div
         "Nri-Ui-Tooltip-V2"
