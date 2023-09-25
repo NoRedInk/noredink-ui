@@ -8,6 +8,7 @@
         "Browser.Events.Extra",
         "Nri.Test.KeyboardHelpers.V1",
         "Nri.Test.MouseHelpers.V1",
+        "Nri.Ui",
         "Nri.Ui.Accordion.V3",
         "Nri.Ui.AnimatedIcon.V1",
         "Nri.Ui.AssignmentIcon.V2",
