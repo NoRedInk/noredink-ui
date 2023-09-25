@@ -7,6 +7,7 @@ import InputErrorAndGuidanceInternal exposing (guidanceId)
 import Nri.Test.KeyboardHelpers.V1 as KeyboardHelpers
 import Nri.Ui.Checkbox.V7 as Checkbox
 import ProgramTest exposing (..)
+import Spec.Helpers exposing (expectFailure)
 import Test exposing (..)
 import Test.Html.Event as Event
 import Test.Html.Query as Query
@@ -33,6 +34,7 @@ spec =
                         , attribute (Aria.describedBy [ guidanceId checkboxId ])
                         ]
                     |> done
+        , describe "helpfullyDisabledCheckbox" helpfullyDisabledCheckbox
         ]
 
 
@@ -89,6 +91,34 @@ stateSpec =
                 |> clickIt
                 |> ensureViewHas [ attribute (Aria.checked (Just False)) ]
                 |> done
+    ]
+
+
+helpfullyDisabledCheckbox : List Test
+helpfullyDisabledCheckbox =
+    [ test "does not have `aria-disabled=\"true\" when not disabled" <|
+        \() ->
+            program []
+                |> ensureViewHasNot [ attribute (Aria.disabled True) ]
+                |> done
+    , test "has `aria-disabled=\"true\" when disabled" <|
+        \() ->
+            program [ Checkbox.disabled ]
+                |> ensureViewHas [ attribute (Aria.disabled True) ]
+                |> done
+    , test "is clickable when not disabled" <|
+        \() ->
+            program []
+                |> clickIt
+                |> done
+    , test "is not clickable when disabled" <|
+        \() ->
+            program
+                [ Checkbox.disabled
+                ]
+                |> clickIt
+                |> done
+                |> expectFailure "Event.expectEvent: I found a node, but it does not listen for \"click\" events like I expected it would."
     ]
 
 

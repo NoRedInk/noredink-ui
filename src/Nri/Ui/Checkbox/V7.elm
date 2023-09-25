@@ -19,6 +19,8 @@ module Nri.Ui.Checkbox.V7 exposing
   - fix the disabled styles
   - fix "checkboxes can’t be clicked in the lower half when there’s guidance" issue
   - fix duplicative focus ring issue
+  - apply custom attributes to the element with the `"checkbox"` role
+  - set cursor to not-allowed when disabled
 
 
 ## Changes from V6:
@@ -159,7 +161,7 @@ you want/expect if underlying styles change.
 Instead, please use the `css` helper.
 
 -}
-custom : List (Html.Attribute Never) -> Attribute msg
+custom : List (Html.Attribute msg) -> Attribute msg
 custom attributes =
     Attribute <| \config -> { config | custom = config.custom ++ attributes }
 
@@ -190,7 +192,7 @@ type alias Config msg =
     , onCheck : Maybe (Bool -> msg)
     , isDisabled : Bool
     , guidance : Guidance msg
-    , custom : List (Html.Attribute Never)
+    , custom : List (Html.Attribute msg)
     , containerCss : List Css.Style
     , labelCss : List Css.Style
     }
@@ -260,6 +262,7 @@ view { label, selected } attributes =
             , selected = selected
             , disabled = config.isDisabled
             , guidance = config.guidance
+            , custom = config.custom
             , error = InputErrorAndGuidanceInternal.noError
             }
 
@@ -282,7 +285,10 @@ view { label, selected } attributes =
     in
     checkboxContainer config_
         [ if config.isDisabled then
-            div [] [ viewIcon [] disabledIcon ]
+            div
+                [ css [ cursor notAllowed ]
+                ]
+                [ viewIcon [] disabledIcon ]
 
           else
             -- ensure the entire checkbox icon is always clickable
@@ -383,7 +389,7 @@ enabledLabelCss =
 disabledLabelCss : List Style
 disabledLabelCss =
     [ textStyle
-    , cursor auto
+    , cursor notAllowed
     , color Colors.gray45
     ]
 
@@ -399,6 +405,7 @@ viewCheckboxLabel :
         , labelCss : List Style
         , error : InputErrorAndGuidanceInternal.ErrorState
         , guidance : Guidance msg
+        , custom : List (Html.Attribute msg)
     }
     -> List Style
     -> Html.Html msg
@@ -435,6 +442,7 @@ viewCheckboxLabel config styles =
                   , InputErrorAndGuidanceInternal.describedBy config.identifier config
                   , Aria.checked (selectedToMaybe config.selected)
                   ]
+                    ++ config.custom
                 , if config.disabled then
                     [ Aria.disabled True ]
 
