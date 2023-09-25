@@ -1,6 +1,6 @@
 module Nri.Ui.QuestionBox.V6 exposing
     ( view, Attribute
-    , id, markdown
+    , id, markdown, html
     , character, characterPosition
     , actions, actionsVertical, actionsHorizontal
     , neutral, correct, incorrect, tip
@@ -12,6 +12,7 @@ module Nri.Ui.QuestionBox.V6 exposing
 {-| Patch Changes
 
   - Background color in Tip theme changed from white to sunshine yellow
+  - added html function
 
 Changes from V5:
 
@@ -19,7 +20,7 @@ Changes from V5:
 
 @docs view, Attribute
 
-@docs id, markdown
+@docs id, markdown, html
 @docs character, characterPosition
 @docs actions, actionsVertical, actionsHorizontal
 @docs neutral, correct, incorrect, tip
@@ -33,7 +34,7 @@ Changes from V5:
 import Content
 import Css
 import Css.Global
-import Html.Styled exposing (..)
+import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
@@ -49,7 +50,7 @@ type Attribute msg
 
 type alias Config msg =
     { id : Maybe String
-    , markdown : Maybe String
+    , content : Maybe Content
     , actions : List (Action msg)
     , actionOrientation : ActionOrientation
     , theme : QuestionBoxTheme
@@ -83,10 +84,15 @@ type QuestionBoxTheme
     | Tip
 
 
+type Content
+    = MarkdownContent String
+    | HtmlContent (Html Never)
+
+
 defaultConfig : Config msg
 defaultConfig =
     { id = Nothing
-    , markdown = Nothing
+    , content = Nothing
     , actions = []
     , actionOrientation = Vertical
     , theme = Neutral
@@ -103,10 +109,19 @@ id id_ =
     Attribute (\config -> { config | id = Just id_ })
 
 
-{-| -}
+{-| Content inside the question box, just before the buttons, is rendered from markdown syntax
+-}
 markdown : String -> Attribute msg
 markdown content =
-    Attribute (\config -> { config | markdown = Just content })
+    Attribute (\config -> { config | content = Just (MarkdownContent content) })
+
+
+{-| Content inside the question box, just before the buttons, is rendered as HTML.
+We purposely don't allow the html to be interactive.
+-}
+html : Html Never -> Attribute msg
+html content =
+    Attribute (\config -> { config | content = Just (HtmlContent content) })
 
 
 {-| -}
@@ -303,7 +318,7 @@ viewContainer config =
             []
             (List.filterMap identity
                 [ Maybe.map viewLeftActions config.leftActions
-                , Maybe.map (viewGuidance config maybeCharacter config.characterPosition) config.markdown
+                , Maybe.map (viewGuidance config maybeCharacter config.characterPosition) config.content
                 , viewActions config.actions config.actionOrientation
                 ]
             )
@@ -348,9 +363,9 @@ viewGuidance :
     { config | id : Maybe String }
     -> Maybe { name : String, icon : Svg }
     -> Maybe CharacterPosition
-    -> String
+    -> Content
     -> Html msg
-viewGuidance config maybeCharacter maybeCharacterPosition markdown_ =
+viewGuidance config maybeCharacter maybeCharacterPosition content =
     case maybeCharacter of
         Just character_ ->
             div
@@ -367,15 +382,15 @@ viewGuidance config maybeCharacter maybeCharacterPosition markdown_ =
                 -- that a11y content is presented as "Pands says ..." even
                 -- though the character is floating on the right.
                 [ viewCharacter character_ maybeCharacterPosition
-                , viewContents config markdown_
+                , viewContents config content
                 ]
 
         Nothing ->
-            viewContents config markdown_
+            viewContents config content
 
 
-viewContents : { config | id : Maybe String } -> String -> Html msg
-viewContents config markdown_ =
+viewContents : { config | id : Maybe String } -> Content -> Html msg
+viewContents config content =
     styled div
         [ Css.alignSelf Css.flexStart
         , Css.width (Css.pct 100)
@@ -393,7 +408,13 @@ viewContents config markdown_ =
             ]
         ]
         [ AttributesExtra.maybe (guidanceId >> Attributes.id) config.id ]
-        (Content.markdownInline markdown_)
+        (case content of
+            MarkdownContent markdown_ ->
+                Content.markdownInline markdown_
+
+            HtmlContent html_ ->
+                [ Html.map never html_ ]
+        )
 
 
 viewCharacter : { name : String, icon : Svg } -> Maybe CharacterPosition -> Html msg

@@ -330,14 +330,35 @@ type alias State =
 initAttributes : Control (List ( String, QuestionBox.Attribute Msg ))
 initAttributes =
     ControlExtra.list
-        |> ControlExtra.listItem "markdown"
-            (Control.map
-                (\str ->
-                    ( Code.fromModule moduleName "markdown " ++ Code.stringMultiline str
-                    , QuestionBox.markdown str
-                    )
-                )
-                (Control.stringTextarea initialMarkdown)
+        |> ControlExtra.listItem "content"
+            (Control.choice
+                [ ( "markdown"
+                  , Control.map
+                        (\str ->
+                            ( Code.fromModule moduleName "markdown " ++ Code.stringMultiline str
+                            , QuestionBox.markdown str
+                            )
+                        )
+                        (Control.stringTextarea initialMarkdown)
+                  )
+                , ( "html"
+                  , Control.value
+                        ( "QuestionBox.html = ... "
+                        , QuestionBox.html
+                            (div []
+                                [ p []
+                                    [ text "Let's remember the rules "
+                                    , ul []
+                                        [ li [] [ text "Always capitalize the first word of a title" ]
+                                        , li [] [ text "Capitalize all words except small words like “and,” “of” and “an.”" ]
+                                        ]
+                                    , strong [] [ text "How should this be capitalized?" ]
+                                    ]
+                                ]
+                            )
+                        )
+                  )
+                ]
             )
         |> ControlExtra.optionalListItem "leftButton"
             ([ ( "Play button"
