@@ -588,7 +588,7 @@ unselectedSvg =
             [ Svg.g []
                 [ Svg.g []
                     [ Svg.use
-                        [ SvgAttributes.fill "#EBEBEB"
+                        [ SvgAttributes.fill "#F5F5F5"
                         , SvgAttributes.fillRule "evenodd"
                         , SvgAttributes.xlinkHref "#unselected-path-1"
                         ]
@@ -625,7 +625,7 @@ selectedSvg =
             [ Svg.g []
                 [ Svg.g []
                     [ Svg.use
-                        [ SvgAttributes.fill "#D4F0FF"
+                        [ SvgAttributes.fill "#EEF9FF"
                         , SvgAttributes.fillRule "evenodd"
                         , SvgAttributes.xlinkHref "#selected-path-1"
                         ]
@@ -639,7 +639,7 @@ selectedSvg =
                         []
                     ]
                 , Svg.circle
-                    [ SvgAttributes.fill "#146AFF"
+                    [ SvgAttributes.fill "#0A64FF"
                     , SvgAttributes.cx "13.5"
                     , SvgAttributes.cy "13.5"
                     , SvgAttributes.r "6.3"
@@ -655,7 +655,7 @@ unselectedDisabledSvg : Svg
 unselectedDisabledSvg =
     Nri.Ui.Svg.V1.init "0 0 27 27"
         [ Svg.circle
-            [ SvgAttributes.fill Colors.gray75.value
+            [ SvgAttributes.fill Colors.gray85.value
             , SvgAttributes.cx "13.5"
             , SvgAttributes.cy "13.5"
             , SvgAttributes.r "13.5"
@@ -668,14 +668,14 @@ selectedDisabledSvg : Svg
 selectedDisabledSvg =
     Nri.Ui.Svg.V1.init "0 0 27 27"
         [ Svg.circle
-            [ SvgAttributes.fill Colors.gray45.value
+            [ SvgAttributes.fill Colors.gray85.value
             , SvgAttributes.cx "13.5"
             , SvgAttributes.cy "13.5"
             , SvgAttributes.r "13.5"
             ]
             []
         , Svg.circle
-            [ SvgAttributes.fill Colors.white.value
+            [ SvgAttributes.fill Colors.gray45.value
             , SvgAttributes.cx "13.5"
             , SvgAttributes.cy "13.5"
             , SvgAttributes.r "6.5"
@@ -699,7 +699,7 @@ lockedSvg =
             ]
             [ Svg.g []
                 [ Svg.use
-                    [ SvgAttributes.fill "#EBEBEB"
+                    [ SvgAttributes.fill "#F5F5F5"
                     , SvgAttributes.fillRule "evenodd"
                     , SvgAttributes.xlinkHref "#locked-path-1"
                     ]
