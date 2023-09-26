@@ -21,6 +21,7 @@ module Nri.Ui.Checkbox.V7 exposing
   - fix duplicative focus ring issue
   - apply custom attributes to the element with the `"checkbox"` role
   - set cursor to not-allowed when disabled
+  - update color styling
 
 
 ## Changes from V6:
