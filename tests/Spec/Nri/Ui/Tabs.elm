@@ -9,7 +9,7 @@ import Spec.Helpers exposing (nriDescription)
 import Spec.TabsInternalHelpers exposing (..)
 import Task
 import Test exposing (..)
-import Test.Html.Selector as Selector exposing (all, containing)
+import Test.Html.Selector as Selector exposing (Selector, all, containing)
 
 
 spec : Test
@@ -33,46 +33,36 @@ panelRenderingTests =
             program (\_ -> [])
                 |> ensureOnlyOnePanelDisplayed [ "Panel 0", "Panel 1", "Panel 2" ]
                 |> done
-    , describe "identifying tabs container"
-        [ test "uses an attribute to identify the tabs container (without tooltips)" <|
-            \() ->
-                program (\_ -> [])
-                    |> ensureViewHas
-                        [ all
-                            [ nriDescription "Nri-Ui__tabs"
-                            , containing [ Selector.text "Tab 0" ]
-                            , containing [ Selector.text "Tab 1" ]
-                            , containing [ Selector.text "Tab 2" ]
-                            ]
+    , describe "identifying tabs container" <|
+        let
+            ensureTabContainerHas : List Selector -> TestContext -> TestContext
+            ensureTabContainerHas attrs =
+                ensureViewHas
+                    [ all
+                        [ all attrs
+                        , containing [ Selector.text "Tab 0" ]
+                        , containing [ Selector.text "Tab 1" ]
+                        , containing [ Selector.text "Tab 2" ]
                         ]
-                    |> ensureViewHasNot
+                    ]
+                    >> ensureViewHasNot
                         [ all
-                            [ nriDescription "Nri-Ui__tabs"
+                            [ all attrs
                             , containing [ Selector.text "Panel 0" ]
                             , containing [ Selector.text "Panel 1" ]
                             , containing [ Selector.text "Panel 2" ]
                             ]
                         ]
+        in
+        [ test "uses an attribute to identify the tabs container (without tooltips)" <|
+            \() ->
+                program (\_ -> [])
+                    |> ensureTabContainerHas [ nriDescription "Nri-Ui__tabs" ]
                     |> done
         , test "uses an attribute to identify the tabs container (with tooltips)" <|
             \() ->
                 program (\tabId -> [ Tabs.withTooltip [ Tooltip.plaintext (Debug.toString tabId) ] ])
-                    |> ensureViewHas
-                        [ all
-                            [ nriDescription "Nri-Ui__tabs"
-                            , containing [ Selector.text "Tab 0" ]
-                            , containing [ Selector.text "Tab 1" ]
-                            , containing [ Selector.text "Tab 2" ]
-                            ]
-                        ]
-                    |> ensureViewHasNot
-                        [ all
-                            [ nriDescription "Nri-Ui__tabs"
-                            , containing [ Selector.text "Panel 0" ]
-                            , containing [ Selector.text "Panel 1" ]
-                            , containing [ Selector.text "Panel 2" ]
-                            ]
-                        ]
+                    |> ensureTabContainerHas [ nriDescription "Nri-Ui__tabs" ]
                     |> done
         ]
     ]
