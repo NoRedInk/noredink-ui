@@ -50,6 +50,8 @@ module Nri.Ui.Select.V9 exposing
 
 import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Key as Key
+import Accessibility.Styled.Role as Role
 import Css
 import Dict
 import Html.Styled.Attributes as Attributes exposing (css)
@@ -455,13 +457,8 @@ viewSelect config_ config =
 
         isInError =
             InputErrorAndGuidanceInternal.getIsInError config.error
-    in
-    (defaultOption
-        ++ List.map (viewChoice currentVal) optionStringChoices
-        ++ List.map viewGroupedChoices config.optgroups
-    )
-        |> Nri.Ui.styled Html.select
-            "nri-select-menu"
+
+        selectStyles =
             [ -- border
               Css.border3 (Css.px 1)
                 Css.solid
@@ -514,13 +511,56 @@ viewSelect config_ config =
             -- Icons
             , selectArrowsCss config
             ]
-            (onSelectHandler
-                :: Aria.invalid isInError
-                :: (InputErrorAndGuidanceInternal.describedBy config_.id config |> Attributes.map never)
-                :: Attributes.id config_.id
-                :: Attributes.disabled config_.disabled
-                :: List.map (Attributes.map never) config.custom
+
+        selectAttributes =
+            [ Aria.invalid isInError
+            , InputErrorAndGuidanceInternal.describedBy config_.id config |> Attributes.map never
+            , Attributes.id config_.id
+            ]
+                ++ List.map (Attributes.map never) config.custom
+
+        enabledSelectAttributes =
+            [ onSelectHandler
+            ]
+
+        disabledSelectAttributes =
+            [ Aria.disabled True
+            , Key.tabbable True
+            , Role.listBox
+            ]
+    in
+    if config_.disabled then
+        Nri.Ui.styled Html.div
+            "nri-select-menu"
+            selectStyles
+            (selectAttributes ++ disabledSelectAttributes)
+            (case config.valueToString of
+                Just valueToString ->
+                    [ Html.div [ Attributes.css [ Css.paddingTop (Css.px 12) ] ]
+                        [ Html.text
+                            (case currentVal of
+                                Just val ->
+                                    valueToString val
+
+                                Nothing ->
+                                    ""
+                            )
+                        ]
+                    ]
+
+                Nothing ->
+                    []
             )
+
+    else
+        (defaultOption
+            ++ List.map (viewChoice currentVal) optionStringChoices
+            ++ List.map viewGroupedChoices config.optgroups
+        )
+            |> Nri.Ui.styled Html.select
+                "nri-select-menu"
+                selectStyles
+                (selectAttributes ++ enabledSelectAttributes)
 
 
 viewDefaultChoice : Maybe a -> String -> Html a
