@@ -61,7 +61,7 @@ panelRenderingTests =
                     |> done
         , test "uses an attribute to identify the tabs container (with tooltips)" <|
             \() ->
-                program (\tabId -> [ Tabs.withTooltip [ Tooltip.plaintext (Debug.toString tabId) ] ])
+                program (\tabId -> [ Tabs.withTooltip [ Tooltip.plaintext (String.fromInt tabId) ] ])
                     |> ensureTabContainerHas [ nriDescription "Nri-Ui__tabs" ]
                     |> done
         ]
