@@ -4,9 +4,11 @@ import Browser.Dom as Dom
 import Html.Styled as Html exposing (..)
 import Nri.Ui.Tabs.V8 as Tabs
 import ProgramTest exposing (..)
+import Spec.Helpers exposing (nriDescription)
 import Spec.TabsInternalHelpers exposing (..)
 import Task
 import Test exposing (..)
+import Test.Html.Selector as Selector exposing (all, containing)
 
 
 spec : Test
@@ -29,6 +31,26 @@ panelRenderingTests =
         \() ->
             program
                 |> ensureOnlyOnePanelDisplayed [ "Panel 0", "Panel 1", "Panel 2" ]
+                |> done
+    , test "uses an attribute to identify the tabs container" <|
+        \() ->
+            program
+                |> ensureViewHas
+                    [ all
+                        [ nriDescription "Nri-Ui__tabs"
+                        , containing [ Selector.text "Tab 0" ]
+                        , containing [ Selector.text "Tab 1" ]
+                        , containing [ Selector.text "Tab 2" ]
+                        ]
+                    ]
+                |> ensureViewHasNot
+                    [ all
+                        [ nriDescription "Nri-Ui__tabs"
+                        , containing [ Selector.text "Panel 0" ]
+                        , containing [ Selector.text "Panel 1" ]
+                        , containing [ Selector.text "Panel 2" ]
+                        ]
+                    ]
                 |> done
     ]
 
