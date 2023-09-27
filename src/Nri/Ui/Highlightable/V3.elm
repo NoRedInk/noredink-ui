@@ -1,11 +1,10 @@
 module Nri.Ui.Highlightable.V3 exposing
     ( Highlightable, Type(..)
     , initStatic, initInteractive, initFragments
-    , fromMarkdown
+    , fromMarkdown, fromMarkdownInlines
     , set
     , joinAdjacentInteractiveHighlights
     , asFragmentTuples, usedMarkers, text, byId
-    , fromMarkdownInlines
     )
 
 {-| A Highlightable represents a span of text, typically a word, and its state.
