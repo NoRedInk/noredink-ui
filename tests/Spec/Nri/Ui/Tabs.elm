@@ -3,6 +3,7 @@ module Spec.Nri.Ui.Tabs exposing (spec)
 import Browser.Dom as Dom
 import Html.Styled as Html exposing (..)
 import Nri.Ui.Tabs.V8 as Tabs
+import Nri.Ui.Tooltip.V3 as Tooltip
 import ProgramTest exposing (..)
 import Spec.Helpers exposing (nriDescription)
 import Spec.TabsInternalHelpers exposing (..)
@@ -23,35 +24,57 @@ panelRenderingTests : List Test
 panelRenderingTests =
     [ test "displays the associated panel when a tab is activated" <|
         \() ->
-            program
+            program (\_ -> [])
                 |> ensureTabbable "Tab 0"
                 |> ensurePanelDisplayed "Panel 0"
                 |> done
     , test "has only one panel displayed" <|
         \() ->
-            program
+            program (\_ -> [])
                 |> ensureOnlyOnePanelDisplayed [ "Panel 0", "Panel 1", "Panel 2" ]
                 |> done
-    , test "uses an attribute to identify the tabs container" <|
-        \() ->
-            program
-                |> ensureViewHas
-                    [ all
-                        [ nriDescription "Nri-Ui__tabs"
-                        , containing [ Selector.text "Tab 0" ]
-                        , containing [ Selector.text "Tab 1" ]
-                        , containing [ Selector.text "Tab 2" ]
+    , describe "identifying tabs container"
+        [ test "uses an attribute to identify the tabs container (without tooltips)" <|
+            \() ->
+                program (\_ -> [])
+                    |> ensureViewHas
+                        [ all
+                            [ nriDescription "Nri-Ui__tabs"
+                            , containing [ Selector.text "Tab 0" ]
+                            , containing [ Selector.text "Tab 1" ]
+                            , containing [ Selector.text "Tab 2" ]
+                            ]
                         ]
-                    ]
-                |> ensureViewHasNot
-                    [ all
-                        [ nriDescription "Nri-Ui__tabs"
-                        , containing [ Selector.text "Panel 0" ]
-                        , containing [ Selector.text "Panel 1" ]
-                        , containing [ Selector.text "Panel 2" ]
+                    |> ensureViewHasNot
+                        [ all
+                            [ nriDescription "Nri-Ui__tabs"
+                            , containing [ Selector.text "Panel 0" ]
+                            , containing [ Selector.text "Panel 1" ]
+                            , containing [ Selector.text "Panel 2" ]
+                            ]
                         ]
-                    ]
-                |> done
+                    |> done
+        , test "uses an attribute to identify the tabs container (with tooltips)" <|
+            \() ->
+                program (\tabId -> [ Tabs.withTooltip [ Tooltip.plaintext (Debug.toString tabId) ] ])
+                    |> ensureViewHas
+                        [ all
+                            [ nriDescription "Nri-Ui__tabs"
+                            , containing [ Selector.text "Tab 0" ]
+                            , containing [ Selector.text "Tab 1" ]
+                            , containing [ Selector.text "Tab 2" ]
+                            ]
+                        ]
+                    |> ensureViewHasNot
+                        [ all
+                            [ nriDescription "Nri-Ui__tabs"
+                            , containing [ Selector.text "Panel 0" ]
+                            , containing [ Selector.text "Panel 1" ]
+                            , containing [ Selector.text "Panel 2" ]
+                            ]
+                        ]
+                    |> done
+        ]
     ]
 
 
@@ -59,22 +82,22 @@ keyboardTests : List Test
 keyboardTests =
     [ test "has a focusable tab" <|
         \() ->
-            program
+            program (\_ -> [])
                 |> ensureTabbable "Tab 0"
                 |> done
     , test "all panels are focusable" <|
         \() ->
-            program
+            program (\_ -> [])
                 |> ensurePanelsFocusable [ "Panel 0", "Panel 1", "Panel 2" ]
                 |> done
     , test "has only one tab included in the tab sequence" <|
         \() ->
-            program
+            program (\_ -> [])
                 |> ensureOnlyOneTabInSequence [ "Tab 0", "Tab 1", "Tab 2" ]
                 |> done
     , test "moves focus right on right arrow key" <|
         \() ->
-            program
+            program (\_ -> [])
                 |> ensureTabbable "Tab 0"
                 |> releaseRightArrow
                 |> ensureTabbable "Tab 1"
@@ -84,7 +107,7 @@ keyboardTests =
                 |> done
     , test "moves focus left on left arrow key" <|
         \() ->
-            program
+            program (\_ -> [])
                 |> ensureTabbable "Tab 0"
                 |> releaseRightArrow
                 |> ensureTabbable "Tab 1"
@@ -94,7 +117,7 @@ keyboardTests =
                 |> done
     , test "when the focus is on the first element, move focus to the last element on left arrow key" <|
         \() ->
-            program
+            program (\_ -> [])
                 |> ensureTabbable "Tab 0"
                 |> releaseLeftArrow
                 |> ensureTabbable "Tab 2"
@@ -102,7 +125,7 @@ keyboardTests =
                 |> done
     , test "when the focus is on the last element, move focus to the first element on right arrow key" <|
         \() ->
-            program
+            program (\_ -> [])
                 |> ensureTabbable "Tab 0"
                 |> releaseLeftArrow
                 |> ensureTabbable "Tab 2"
@@ -124,32 +147,43 @@ update msg model =
                     |> Maybe.withDefault Cmd.none
                 )
 
-        Focused error ->
+        Focused _ ->
             Tuple.first ( model, Cmd.none )
 
 
-view : State -> Html Msg
-view model =
+view : (Int -> List (Tabs.TabAttribute Int Msg)) -> State -> Html Msg
+view tabAttributes model =
     Tabs.view
         { focusAndSelect = FocusAndSelectTab
         , selected = model.selected
         }
         []
-        [ Tabs.build { id = 0, idString = "tab-0" } [ Tabs.tabString "Tab 0", Tabs.panelHtml (text "Panel 0") ]
-        , Tabs.build { id = 1, idString = "tab-1" } [ Tabs.tabString "Tab 1", Tabs.panelHtml (text "Panel 1") ]
-        , Tabs.build { id = 2, idString = "tab-2" } [ Tabs.tabString "Tab 2", Tabs.panelHtml (text "Panel 2") ]
+        [ buildTestTab 0 tabAttributes
+        , buildTestTab 1 tabAttributes
+        , buildTestTab 2 tabAttributes
         ]
+
+
+buildTestTab : Int -> (Int -> List (Tabs.TabAttribute Int msg)) -> Tabs.Tab Int msg
+buildTestTab id tabAttributes =
+    Tabs.build { id = id, idString = "tab-" ++ String.fromInt id }
+        (List.append
+            [ Tabs.tabString ("Tab " ++ String.fromInt id)
+            , Tabs.panelHtml (text ("Panel " ++ String.fromInt id))
+            ]
+            (tabAttributes id)
+        )
 
 
 type alias TestContext =
     ProgramTest State Msg ()
 
 
-program : TestContext
-program =
+program : (Int -> List (Tabs.TabAttribute Int Msg)) -> TestContext
+program tabAttributes =
     ProgramTest.createSandbox
         { init = init
         , update = update
-        , view = view >> Html.toUnstyled
+        , view = view tabAttributes >> Html.toUnstyled
         }
         |> ProgramTest.start ()
