@@ -21,7 +21,7 @@ import Html.Styled.Events as Events
 import Html.Styled.Keyed as Keyed
 import Nri.Ui.FocusLoop.V1 as FocusLoop
 import Nri.Ui.FocusRing.V1 as FocusRing
-import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (safeId, safeIdWithPrefix)
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription, safeId, safeIdWithPrefix)
 import Nri.Ui.Tooltip.V3 as Tooltip
 
 
@@ -95,6 +95,13 @@ viewTabs config =
                     , upDown = False
                     }
                 |> List.indexedMap (viewTab_ config)
+
+        tabsAttribute =
+            -- used to identify the actual container of the tabs. we should
+            -- ideally be able to target `[role=tablist]` when needed but that
+            -- won't work because the markup changes slightly in the presence of
+            -- tooltips (see comment below!).
+            nriDescription "Nri-Ui__tabs"
     in
     if anyTooltips then
         -- if any tooltip setup is present, we use aria-owns to associate the
@@ -108,7 +115,10 @@ viewTabs config =
                 , Aria.owns (List.map (safeId << .idString) config.tabs)
                 ]
                 []
-            , Html.div [ Attributes.css config.tabListStyles ]
+            , Html.div
+                [ tabsAttribute
+                , Attributes.css config.tabListStyles
+                ]
                 tabs
             ]
 
@@ -116,6 +126,7 @@ viewTabs config =
         -- if no tooltips are present, we can rely on the DOM structure to set up the relationships correctly.
         Html.div
             [ Role.tabList
+            , tabsAttribute
             , Attributes.css config.tabListStyles
             ]
             tabs
