@@ -3,10 +3,12 @@ module Spec.Nri.Ui.FocusLoop exposing (spec)
 import Accessibility.Styled.Key as Key exposing (Event)
 import Expect
 import Html.Styled as Html exposing (Html)
-import Nri.Test.KeyboardHelpers.V1 exposing (pressLeftArrow, pressRightArrow)
+import Nri.Test.KeyboardHelpers.V1 as KeyboardHelpers
 import Nri.Ui.FocusLoop.V1 as FocusLoop
 import ProgramTest exposing (..)
 import Test exposing (..)
+import Test.Html.Event as Event
+import Test.Html.Query as Query
 import Test.Html.Selector as Selector
 
 
@@ -182,7 +184,7 @@ viewSpec =
         [ test "moves focus right on right arrow" <|
             \() ->
                 program
-                    |> pressRightArrow ProgramTest.simulateDomEvent
+                    |> KeyboardHelpers.pressRightArrow khConfig
                         { targetDetails = [] }
                         [ Selector.all
                             [ Selector.tag "button"
@@ -195,7 +197,7 @@ viewSpec =
         , test "moves focus left on left arrow" <|
             \() ->
                 program
-                    |> pressLeftArrow ProgramTest.simulateDomEvent
+                    |> KeyboardHelpers.pressLeftArrow khConfig
                         { targetDetails = [] }
                         [ Selector.all
                             [ Selector.tag "button"
@@ -208,7 +210,7 @@ viewSpec =
         , test "loops to end" <|
             \() ->
                 program
-                    |> pressLeftArrow ProgramTest.simulateDomEvent
+                    |> KeyboardHelpers.pressLeftArrow khConfig
                         { targetDetails = [] }
                         [ Selector.all
                             [ Selector.tag "button"
@@ -221,7 +223,7 @@ viewSpec =
         , test "loops to beginning" <|
             \() ->
                 program
-                    |> pressRightArrow ProgramTest.simulateDomEvent
+                    |> KeyboardHelpers.pressRightArrow khConfig
                         { targetDetails = [] }
                         [ Selector.all
                             [ Selector.tag "button"
@@ -278,3 +280,11 @@ program =
         , view = view >> Html.div [] >> Html.toUnstyled
         }
         |> ProgramTest.start ()
+
+
+khConfig : KeyboardHelpers.Config (ProgramTest model msg effect) Selector.Selector (Query.Single msg)
+khConfig =
+    { programTest_simulateDomEvent = ProgramTest.simulateDomEvent
+    , query_find = Query.find
+    , event_custom = Event.custom
+    }

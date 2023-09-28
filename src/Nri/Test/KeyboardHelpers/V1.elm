@@ -1,6 +1,7 @@
 module Nri.Test.KeyboardHelpers.V1 exposing
     ( pressKey, releaseKey
     , pressTab, pressTabBack, pressEsc, pressSpace, pressDownArrow, pressRightArrow, pressLeftArrow, pressShiftRight, pressShiftLeft, releaseRightArrow, releaseLeftArrow, releaseShiftRight, releaseShiftLeft
+    , Config
     )
 
 {-| `KeyboardHelpers` provides a set of functions to simulate keyboard events for testing Elm programs.
@@ -15,34 +16,41 @@ module Nri.Test.KeyboardHelpers.V1 exposing
 
 @docs pressTab, pressTabBack, pressEsc, pressSpace, pressDownArrow, pressRightArrow, pressLeftArrow, pressShiftRight, pressShiftLeft, releaseRightArrow, releaseLeftArrow, releaseShiftRight, releaseShiftLeft
 
+
+# Config
+
+@docs Config
+
 -}
 
 import Json.Encode as Encode
-import Test.Html.Event as Event
-import Test.Html.Query as Query
-import Test.Html.Selector exposing (Selector)
 
 
-type alias SimulateDomEvent msg programTest =
-    (Query.Single msg -> Query.Single msg) -> ( String, Encode.Value ) -> programTest -> programTest
+{-| A `Config` allow us to not depend strictly on elm-explorations/test and avh4/elm-program-test packages.
+-}
+type alias Config programTest selector querySingle =
+    { programTest_simulateDomEvent : (querySingle -> querySingle) -> ( String, Encode.Value ) -> programTest -> programTest
+    , query_find : List selector -> querySingle -> querySingle
+    , event_custom : String -> Encode.Value -> ( String, Encode.Value )
+    }
 
 
 {-| Simulate a "keydown" event on the given element.
 -}
 pressKey :
-    SimulateDomEvent msg programTest
+    Config programTest selector querySingle
     ->
         { targetDetails : List ( String, Encode.Value )
         , keyCode : Int
         , shiftKey : Bool
         }
-    -> List Selector
+    -> List selector
     -> programTest
     -> programTest
-pressKey simulateDomEvent { targetDetails, keyCode, shiftKey } selectors =
-    simulateDomEvent
-        (Query.find selectors)
-        (Event.custom
+pressKey config { targetDetails, keyCode, shiftKey } selectors =
+    config.programTest_simulateDomEvent
+        (config.query_find selectors)
+        (config.event_custom
             "keydown"
             (Encode.object
                 [ ( "keyCode", Encode.int keyCode )
@@ -58,19 +66,19 @@ pressKey simulateDomEvent { targetDetails, keyCode, shiftKey } selectors =
 {-| Simulate a "keyup" event on the given element.
 -}
 releaseKey :
-    SimulateDomEvent msg programTest
+    Config programTest selector querySingle
     ->
         { targetDetails : List ( String, Encode.Value )
         , keyCode : Int
         , shiftKey : Bool
         }
-    -> List Selector
+    -> List selector
     -> programTest
     -> programTest
-releaseKey simulateDomEvent { targetDetails, keyCode, shiftKey } selectors =
-    simulateDomEvent
-        (Query.find selectors)
-        (Event.custom
+releaseKey config { targetDetails, keyCode, shiftKey } selectors =
+    config.programTest_simulateDomEvent
+        (config.query_find selectors)
+        (config.event_custom
             "keyup"
             (Encode.object
                 [ ( "keyCode", Encode.int keyCode )
@@ -86,154 +94,154 @@ releaseKey simulateDomEvent { targetDetails, keyCode, shiftKey } selectors =
 {-| Simulate a tab key press on the given element.
 -}
 pressTab :
-    SimulateDomEvent msg programTest
+    Config programTest selector querySingle
     -> { targetDetails : List ( String, Encode.Value ) }
-    -> List Selector
+    -> List selector
     -> programTest
     -> programTest
-pressTab simulateDomEvent { targetDetails } =
-    pressKey simulateDomEvent { targetDetails = targetDetails, keyCode = 9, shiftKey = False }
+pressTab config { targetDetails } =
+    pressKey config { targetDetails = targetDetails, keyCode = 9, shiftKey = False }
 
 
 {-| Simulate a shift-tab key press on the given element.
 -}
 pressTabBack :
-    SimulateDomEvent msg programTest
+    Config programTest selector querySingle
     -> { targetDetails : List ( String, Encode.Value ) }
-    -> List Selector
+    -> List selector
     -> programTest
     -> programTest
-pressTabBack simulateDomEvent { targetDetails } =
-    pressKey simulateDomEvent { targetDetails = targetDetails, keyCode = 9, shiftKey = True }
+pressTabBack config { targetDetails } =
+    pressKey config { targetDetails = targetDetails, keyCode = 9, shiftKey = True }
 
 
 {-| Simulate an escape key press on the given element.
 -}
 pressEsc :
-    SimulateDomEvent msg programTest
+    Config programTest selector querySingle
     -> { targetDetails : List ( String, Encode.Value ) }
-    -> List Selector
+    -> List selector
     -> programTest
     -> programTest
-pressEsc simulateDomEvent { targetDetails } =
-    pressKey simulateDomEvent { targetDetails = targetDetails, keyCode = 27, shiftKey = False }
+pressEsc config { targetDetails } =
+    pressKey config { targetDetails = targetDetails, keyCode = 27, shiftKey = False }
 
 
 {-| Simulate a spacebar key press on the given element.
 -}
 pressSpace :
-    SimulateDomEvent msg programTest
+    Config programTest selector querySingle
     -> { targetDetails : List ( String, Encode.Value ) }
-    -> List Selector
+    -> List selector
     -> programTest
     -> programTest
-pressSpace simulateDomEvent { targetDetails } =
-    pressKey simulateDomEvent { targetDetails = targetDetails, keyCode = 32, shiftKey = False }
+pressSpace config { targetDetails } =
+    pressKey config { targetDetails = targetDetails, keyCode = 32, shiftKey = False }
 
 
 {-| Simulate a down arrow key press on the given element.
 -}
 pressDownArrow :
-    SimulateDomEvent msg programTest
+    Config programTest selector querySingle
     -> { targetDetails : List ( String, Encode.Value ) }
-    -> List Selector
+    -> List selector
     -> programTest
     -> programTest
-pressDownArrow simulateDomEvent { targetDetails } =
-    pressKey simulateDomEvent { targetDetails = targetDetails, keyCode = 40, shiftKey = False }
+pressDownArrow config { targetDetails } =
+    pressKey config { targetDetails = targetDetails, keyCode = 40, shiftKey = False }
 
 
 {-| Simulate a right arrow key press on the given element.
 -}
 pressRightArrow :
-    SimulateDomEvent msg programTest
+    Config programTest selector querySingle
     -> { targetDetails : List ( String, Encode.Value ) }
-    -> List Selector
+    -> List selector
     -> programTest
     -> programTest
-pressRightArrow simulateDomEvent { targetDetails } =
-    pressKey simulateDomEvent { targetDetails = targetDetails, keyCode = 39, shiftKey = False }
+pressRightArrow config { targetDetails } =
+    pressKey config { targetDetails = targetDetails, keyCode = 39, shiftKey = False }
 
 
 {-| Simulate a left arrow key press on the given element.
 -}
 pressLeftArrow :
-    SimulateDomEvent msg programTest
+    Config programTest selector querySingle
     -> { targetDetails : List ( String, Encode.Value ) }
-    -> List Selector
+    -> List selector
     -> programTest
     -> programTest
-pressLeftArrow simulateDomEvent { targetDetails } =
-    pressKey simulateDomEvent { targetDetails = targetDetails, keyCode = 37, shiftKey = False }
+pressLeftArrow config { targetDetails } =
+    pressKey config { targetDetails = targetDetails, keyCode = 37, shiftKey = False }
 
 
 {-| Simulate a right arrow key press with the shift key held down on the given element.
 -}
 pressShiftRight :
-    SimulateDomEvent msg programTest
+    Config programTest selector querySingle
     -> { targetDetails : List ( String, Encode.Value ) }
-    -> List Selector
+    -> List selector
     -> programTest
     -> programTest
-pressShiftRight simulateDomEvent { targetDetails } =
-    pressKey simulateDomEvent { targetDetails = targetDetails, keyCode = 39, shiftKey = True }
+pressShiftRight config { targetDetails } =
+    pressKey config { targetDetails = targetDetails, keyCode = 39, shiftKey = True }
 
 
 {-| Simulate a left arrow key press with the shift key held down on the given element.
 -}
 pressShiftLeft :
-    SimulateDomEvent msg programTest
+    Config programTest selector querySingle
     -> { targetDetails : List ( String, Encode.Value ) }
-    -> List Selector
+    -> List selector
     -> programTest
     -> programTest
-pressShiftLeft simulateDomEvent { targetDetails } =
-    pressKey simulateDomEvent { targetDetails = targetDetails, keyCode = 37, shiftKey = True }
+pressShiftLeft config { targetDetails } =
+    pressKey config { targetDetails = targetDetails, keyCode = 37, shiftKey = True }
 
 
 {-| Simulate a right arrow key release on the given element.
 -}
 releaseRightArrow :
-    SimulateDomEvent msg programTest
+    Config programTest selector querySingle
     -> { targetDetails : List ( String, Encode.Value ) }
-    -> List Selector
+    -> List selector
     -> programTest
     -> programTest
-releaseRightArrow simulateDomEvent { targetDetails } =
-    releaseKey simulateDomEvent { targetDetails = targetDetails, keyCode = 39, shiftKey = False }
+releaseRightArrow config { targetDetails } =
+    releaseKey config { targetDetails = targetDetails, keyCode = 39, shiftKey = False }
 
 
 {-| Simulate a left arrow key release on the given element.
 -}
 releaseLeftArrow :
-    SimulateDomEvent msg programTest
+    Config programTest selector querySingle
     -> { targetDetails : List ( String, Encode.Value ) }
-    -> List Selector
+    -> List selector
     -> programTest
     -> programTest
-releaseLeftArrow simulateDomEvent { targetDetails } =
-    releaseKey simulateDomEvent { targetDetails = targetDetails, keyCode = 37, shiftKey = False }
+releaseLeftArrow config { targetDetails } =
+    releaseKey config { targetDetails = targetDetails, keyCode = 37, shiftKey = False }
 
 
 {-| Simulate a right arrow key release with the shift key held down on the given element.
 -}
 releaseShiftRight :
-    SimulateDomEvent msg programTest
+    Config programTest selector querySingle
     -> { targetDetails : List ( String, Encode.Value ) }
-    -> List Selector
+    -> List selector
     -> programTest
     -> programTest
-releaseShiftRight simulateDomEvent { targetDetails } =
-    releaseKey simulateDomEvent { targetDetails = targetDetails, keyCode = 39, shiftKey = True }
+releaseShiftRight config { targetDetails } =
+    releaseKey config { targetDetails = targetDetails, keyCode = 39, shiftKey = True }
 
 
 {-| Simulate a left arrow key release with the shift key held down on the given element.
 -}
 releaseShiftLeft :
-    SimulateDomEvent msg programTest
+    Config programTest selector querySingle
     -> { targetDetails : List ( String, Encode.Value ) }
-    -> List Selector
+    -> List selector
     -> programTest
     -> programTest
-releaseShiftLeft simulateDomEvent { targetDetails } =
-    releaseKey simulateDomEvent { targetDetails = targetDetails, keyCode = 37, shiftKey = True }
+releaseShiftLeft config { targetDetails } =
+    releaseKey config { targetDetails = targetDetails, keyCode = 37, shiftKey = True }

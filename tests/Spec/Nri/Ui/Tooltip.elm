@@ -155,7 +155,7 @@ spec =
                     , Tooltip.onTriggerKeyDown
                         [ Key.space SpaceKeyPressed ]
                     ]
-                    |> KeyboardHelpers.pressSpace ProgramTest.simulateDomEvent
+                    |> KeyboardHelpers.pressSpace khConfig
                         { targetDetails = [] }
                         [ Selector.id triggerId
                         ]
@@ -239,3 +239,11 @@ clickButtonByLabel label =
             ]
         )
         Event.click
+
+
+khConfig : KeyboardHelpers.Config (ProgramTest model msg effect) Selector.Selector (Query.Single msg)
+khConfig =
+    { programTest_simulateDomEvent = ProgramTest.simulateDomEvent
+    , query_find = Query.find
+    , event_custom = Event.custom
+    }

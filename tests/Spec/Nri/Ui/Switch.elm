@@ -9,7 +9,9 @@ import Nri.Ui.Switch.V3 as Switch
 import ProgramTest exposing (..)
 import Spec.Helpers exposing (expectFailure)
 import Test exposing (..)
-import Test.Html.Selector exposing (..)
+import Test.Html.Event as Event
+import Test.Html.Query as Query
+import Test.Html.Selector as Selector exposing (..)
 
 
 spec : Test
@@ -74,7 +76,7 @@ helpfullyDisabledSwitch =
 
 pressSpace : TestContext -> TestContext
 pressSpace =
-    KeyboardHelpers.pressSpace ProgramTest.simulateDomEvent { targetDetails = [] } switch
+    KeyboardHelpers.pressSpace khConfig { targetDetails = [] } switch
 
 
 click : TestContext -> TestContext
@@ -132,3 +134,11 @@ program attributes =
         , view = view attributes >> toUnstyled
         }
         |> ProgramTest.start ()
+
+
+khConfig : KeyboardHelpers.Config (ProgramTest model msg effect) Selector.Selector (Query.Single msg)
+khConfig =
+    { programTest_simulateDomEvent = ProgramTest.simulateDomEvent
+    , query_find = Query.find
+    , event_custom = Event.custom
+    }

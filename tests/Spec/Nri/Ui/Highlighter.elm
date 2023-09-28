@@ -15,6 +15,7 @@ import ProgramTest exposing (..)
 import Sort
 import Spec.PseudoElements exposing (..)
 import Test exposing (..)
+import Test.Html.Event as Event
 import Test.Html.Query as Query
 import Test.Html.Selector as Selector exposing (Selector)
 
@@ -519,49 +520,49 @@ highlightable index selector =
 
 space : TestContext -> TestContext
 space =
-    KeyboardHelpers.pressSpace ProgramTest.simulateDomEvent
+    KeyboardHelpers.pressSpace khConfig
         { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
 rightArrow : TestContext -> TestContext
 rightArrow =
-    KeyboardHelpers.pressRightArrow ProgramTest.simulateDomEvent
+    KeyboardHelpers.pressRightArrow khConfig
         { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
 leftArrow : TestContext -> TestContext
 leftArrow =
-    KeyboardHelpers.pressLeftArrow ProgramTest.simulateDomEvent
+    KeyboardHelpers.pressLeftArrow khConfig
         { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
 shiftRight : TestContext -> TestContext
 shiftRight =
-    KeyboardHelpers.pressShiftRight ProgramTest.simulateDomEvent
+    KeyboardHelpers.pressShiftRight khConfig
         { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
 shiftLeft : TestContext -> TestContext
 shiftLeft =
-    KeyboardHelpers.pressShiftLeft ProgramTest.simulateDomEvent
+    KeyboardHelpers.pressShiftLeft khConfig
         { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
 releaseShiftRight : TestContext -> TestContext
 releaseShiftRight =
-    KeyboardHelpers.releaseShiftRight ProgramTest.simulateDomEvent
+    KeyboardHelpers.releaseShiftRight khConfig
         { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
 releaseShiftLeft : TestContext -> TestContext
 releaseShiftLeft =
-    KeyboardHelpers.releaseShiftLeft ProgramTest.simulateDomEvent
+    KeyboardHelpers.releaseShiftLeft khConfig
         { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
@@ -937,3 +938,11 @@ overlappingHighlightTests =
     in
     [ describe "viewWithOverlappingHighlights" (staticAssertions Highlighter.viewWithOverlappingHighlights)
     ]
+
+
+khConfig : KeyboardHelpers.Config (ProgramTest model msg effect) Selector.Selector (Query.Single msg)
+khConfig =
+    { programTest_simulateDomEvent = ProgramTest.simulateDomEvent
+    , query_find = Query.find
+    , event_custom = Event.custom
+    }
