@@ -491,7 +491,7 @@ viewSelect config_ config =
             -- Interaction
             , Css.cursor
                 (if config.disabled then
-                    Css.default
+                    Css.notAllowed
 
                  else
                     Css.pointer
