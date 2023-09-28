@@ -21,6 +21,10 @@ module Nri.Ui.Select.V9 exposing
       This is not a breaking change to the API, but affects automated tests
       that are looking for this prefix.
     - adds `icon` support
+    - when disabled, the select element is now replaced by a div element with
+      `aria-disabled="true"` and `tabindex="0"`. This change prevents user
+      interactions while maintaining the element in the tab order.
+    - sets cursor to `not-allowed` when disabled`
 
 @docs view, generateId
 
