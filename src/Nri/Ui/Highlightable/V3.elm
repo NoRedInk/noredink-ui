@@ -258,9 +258,10 @@ fromMarkdown markdownString =
             |> List.indexedMap (\i highlightable -> { highlightable | index = i })
 
 
-{-| Same as `fromMarkdown`, but receives a list of inlines parsed markdown instead of a string.
+{-| Same as [`fromMarkdown`](#fromMarkdown), but receives a list of inlines parsed markdown instead of a string.
 
 You might want to use this if you are parsing highlightables out of lists or in other block contexts that [`fromMarkdown`](#fromMarkdown) does not support.
+
 -}
 fromMarkdownInlines : List (Markdown.Inline.Inline i) -> List (Highlightable ())
 fromMarkdownInlines inlines =
