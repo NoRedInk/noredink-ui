@@ -62,6 +62,7 @@ premiumDisplay =
         [ ( "Free", Control.value ( "PremiumDisplay.Free", PremiumDisplay.Free ) )
         , ( "Premium Locked", Control.value ( "PremiumDisplay.PremiumLocked", PremiumDisplay.PremiumLocked ) )
         , ( "Premium Unlocked", Control.value ( "PremiumDisplay.PremiumUnlocked", PremiumDisplay.PremiumUnlocked ) )
+        , ( "Premium Vouchered", Control.value ( "PremiumDisplay.PremiumVouchered", PremiumDisplay.PremiumVouchered ) )
         ]
 
 

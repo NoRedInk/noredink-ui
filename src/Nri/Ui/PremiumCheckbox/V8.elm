@@ -51,7 +51,7 @@ import Nri.Ui.Checkbox.V7 as Checkbox
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
-import Nri.Ui.Pennant.V3 exposing (contentPremiumFlag)
+import Nri.Ui.Pennant.V3 exposing (contentPremiumFlag, giftPremiumFlag)
 import Nri.Ui.Svg.V1 as Svg
 
 
@@ -209,6 +209,9 @@ view { label, onChange } attributes =
 
         isLocked =
             config.premiumDisplay == PremiumDisplay.PremiumLocked
+
+        isVouchered =
+            config.premiumDisplay == PremiumDisplay.PremiumVouchered
     in
     if isLocked then
         viewLockedButton
@@ -220,8 +223,11 @@ view { label, onChange } attributes =
 
     else
         Html.div [ css config.containerCss ]
-            [ if isPremium then
-                viewPremiumFlag
+            [ if isVouchered then
+                viewPremiumFlag giftPremiumFlag
+
+              else if isPremium then
+                viewPremiumFlag contentPremiumFlag
 
               else
                 -- left-align the checkbox with checkboxes that _do_ have the premium pennant
@@ -269,7 +275,7 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
             Nothing ->
                 Extra.none
         ]
-        [ viewPremiumFlag
+        [ viewPremiumFlag contentPremiumFlag
         , Html.span
             [ css
                 [ outline Css.none
@@ -301,9 +307,9 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
         ]
 
 
-viewPremiumFlag : Html msg
-viewPremiumFlag =
-    contentPremiumFlag
+viewPremiumFlag : Svg.Svg -> Html msg
+viewPremiumFlag icon =
+    icon
         |> Svg.withLabel "Premium"
         |> Svg.withWidth (Css.px iconWidth)
         |> Svg.withHeight (Css.px 30)

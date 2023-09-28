@@ -316,8 +316,11 @@ view { label, selected } attributes =
                 (if config.isDisabled then
                     disabledLabelCss
 
-                 else
+                 else if selected == NotSelected then
                     enabledLabelCss
+
+                 else
+                    selectedLabelCss
                 )
                 :: inputGuidance config_
             )
@@ -380,10 +383,18 @@ onCheckMsg selected msg =
         |> msg
 
 
+selectedLabelCss : List Style
+selectedLabelCss =
+    [ textStyle
+    , cursor pointer
+    ]
+
+
 enabledLabelCss : List Style
 enabledLabelCss =
     [ textStyle
     , cursor pointer
+    , color Colors.gray20
     ]
 
 

@@ -374,6 +374,11 @@ view { label, name, value, valueToString, selectedValue } attributes =
                             , cursor notAllowed
                             ]
 
+                         else if not isChecked then
+                            [ color Colors.gray20
+                            , cursor pointer
+                            ]
+
                          else if isInError then
                             [ color Colors.purple
                             , cursor pointer
