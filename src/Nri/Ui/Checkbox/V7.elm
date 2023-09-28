@@ -22,6 +22,7 @@ module Nri.Ui.Checkbox.V7 exposing
   - apply custom attributes to the element with the `"checkbox"` role
   - set cursor to not-allowed when disabled
   - update color styling
+  - update unselected enabled label color
 
 
 ## Changes from V6:

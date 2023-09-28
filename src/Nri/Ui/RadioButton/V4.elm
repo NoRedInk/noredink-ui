@@ -17,6 +17,7 @@ module Nri.Ui.RadioButton.V4 exposing
   - replace `height` use with `minHeight` to prevent vertical text overflow issues
   - use `break-word` to prevent horiztonal text overflow issues
   - update color styling
+  - update unselected enabled label color
 
 
 ### Changes from V3:

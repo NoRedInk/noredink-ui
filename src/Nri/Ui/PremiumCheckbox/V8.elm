@@ -10,7 +10,15 @@ module Nri.Ui.PremiumCheckbox.V8 exposing
     , setCheckboxDisabledLabelCss
     )
 
-{-| Changes from V7:
+{-|
+
+
+## Patch changes:
+
+  - Added vouchered state for premium vouchers with gift pennant
+
+
+## Changes from V7:
 
   - Use PremiumDisplay instead of PremiumLevel
   - Rename showPennant to onLockedClick
