@@ -81,7 +81,7 @@ pressSpace =
 
 click : TestContext -> TestContext
 click =
-    MouseHelpers.click ProgramTest.simulateDomEvent switch
+    MouseHelpers.click mhConfig switch
 
 
 switch : List Selector
@@ -140,5 +140,17 @@ khConfig : KeyboardHelpers.Config (ProgramTest model msg effect) Selector.Select
 khConfig =
     { programTest_simulateDomEvent = ProgramTest.simulateDomEvent
     , query_find = Query.find
+    , event_custom = Event.custom
+    }
+
+
+mhConfig : MouseHelpers.Config (ProgramTest model msg effect) Selector.Selector (Query.Single msg)
+mhConfig =
+    { programTest_simulateDomEvent = ProgramTest.simulateDomEvent
+    , query_find = Query.find
+    , event_click = Event.click
+    , event_mouseDown = Event.mouseDown
+    , event_mouseUp = Event.mouseUp
+    , event_mouseOver = Event.mouseOver
     , event_custom = Event.custom
     }

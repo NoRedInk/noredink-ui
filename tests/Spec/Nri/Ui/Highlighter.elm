@@ -569,12 +569,12 @@ releaseShiftLeft =
 
 mouseDown : String -> TestContext -> TestContext
 mouseDown word =
-    MouseHelpers.cancelableMouseDown ProgramTest.simulateDomEvent [ Selector.tag "span", Selector.containing [ Selector.text word ] ]
+    MouseHelpers.cancelableMouseDown mhConfig [ Selector.tag "span", Selector.containing [ Selector.text word ] ]
 
 
 mouseUp : String -> TestContext -> TestContext
 mouseUp word =
-    MouseHelpers.cancelableMouseUp ProgramTest.simulateDomEvent [ Selector.tag "span", Selector.containing [ Selector.text word ] ]
+    MouseHelpers.cancelableMouseUp mhConfig [ Selector.tag "span", Selector.containing [ Selector.text word ] ]
 
 
 click : String -> TestContext -> TestContext
@@ -584,7 +584,7 @@ click word =
 
 mouseOver : String -> TestContext -> TestContext
 mouseOver word =
-    MouseHelpers.cancelableMouseOver ProgramTest.simulateDomEvent [ Selector.tag "span", Selector.containing [ Selector.text word ] ]
+    MouseHelpers.cancelableMouseOver mhConfig [ Selector.tag "span", Selector.containing [ Selector.text word ] ]
 
 
 markerModel : Maybe String -> Tool String
@@ -944,5 +944,17 @@ khConfig : KeyboardHelpers.Config (ProgramTest model msg effect) Selector.Select
 khConfig =
     { programTest_simulateDomEvent = ProgramTest.simulateDomEvent
     , query_find = Query.find
+    , event_custom = Event.custom
+    }
+
+
+mhConfig : MouseHelpers.Config (ProgramTest model msg effect) Selector.Selector (Query.Single msg)
+mhConfig =
+    { programTest_simulateDomEvent = ProgramTest.simulateDomEvent
+    , query_find = Query.find
+    , event_click = Event.click
+    , event_mouseDown = Event.mouseDown
+    , event_mouseUp = Event.mouseUp
+    , event_mouseOver = Event.mouseOver
     , event_custom = Event.custom
     }
