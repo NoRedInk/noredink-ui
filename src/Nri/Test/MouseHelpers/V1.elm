@@ -18,53 +18,56 @@ module Nri.Test.MouseHelpers.V1 exposing
 -}
 
 import Json.Encode as Encode
-import ProgramTest exposing (ProgramTest)
 import Test.Html.Event as Event
 import Test.Html.Query as Query
 import Test.Html.Selector exposing (Selector)
 
 
+type alias SimulateDomEvent msg programTest =
+    (Query.Single msg -> Query.Single msg) -> ( String, Encode.Value ) -> programTest -> programTest
+
+
 {-| Simulate a click event on elements that match the given selectors.
 -}
-click : List Selector -> ProgramTest model msg effect -> ProgramTest model msg effect
-click selectors =
-    ProgramTest.simulateDomEvent
+click : SimulateDomEvent msg programTest -> List Selector -> programTest -> programTest
+click simulateDomEvent selectors =
+    simulateDomEvent
         (Query.find selectors)
         Event.click
 
 
 {-| Simulate a mouse down event on elements that match the given selectors.
 -}
-mouseDown : List Selector -> ProgramTest model msg effect -> ProgramTest model msg effect
-mouseDown selectors =
-    ProgramTest.simulateDomEvent
+mouseDown : SimulateDomEvent msg programTest -> List Selector -> programTest -> programTest
+mouseDown simulateDomEvent selectors =
+    simulateDomEvent
         (Query.find selectors)
         Event.mouseDown
 
 
 {-| Simulate a mouse up event on elements that match the given selectors.
 -}
-mouseUp : List Selector -> ProgramTest model msg effect -> ProgramTest model msg effect
-mouseUp selectors =
-    ProgramTest.simulateDomEvent
+mouseUp : SimulateDomEvent msg programTest -> List Selector -> programTest -> programTest
+mouseUp simulateDomEvent selectors =
+    simulateDomEvent
         (Query.find selectors)
         Event.mouseUp
 
 
 {-| Simulate a mouse over event on elements that match the given selectors.
 -}
-mouseOver : List Selector -> ProgramTest model msg effect -> ProgramTest model msg effect
-mouseOver selectors =
-    ProgramTest.simulateDomEvent
+mouseOver : SimulateDomEvent msg programTest -> List Selector -> programTest -> programTest
+mouseOver simulateDomEvent selectors =
+    simulateDomEvent
         (Query.find selectors)
         Event.mouseOver
 
 
 {-| Simulate a cancelable mouse down event on elements that match the given selectors.
 -}
-cancelableMouseDown : List Selector -> ProgramTest model msg effect -> ProgramTest model msg effect
-cancelableMouseDown selectors =
-    ProgramTest.simulateDomEvent
+cancelableMouseDown : SimulateDomEvent msg programTest -> List Selector -> programTest -> programTest
+cancelableMouseDown simulateDomEvent selectors =
+    simulateDomEvent
         (Query.find selectors)
         (Event.custom
             "mousedown"
@@ -74,9 +77,9 @@ cancelableMouseDown selectors =
 
 {-| Simulate a cancelable mouse up event on elements that match the given selectors.
 -}
-cancelableMouseUp : List Selector -> ProgramTest model msg effect -> ProgramTest model msg effect
-cancelableMouseUp selectors =
-    ProgramTest.simulateDomEvent
+cancelableMouseUp : SimulateDomEvent msg programTest -> List Selector -> programTest -> programTest
+cancelableMouseUp simulateDomEvent selectors =
+    simulateDomEvent
         (Query.find selectors)
         (Event.custom
             "mouseup"
@@ -86,9 +89,9 @@ cancelableMouseUp selectors =
 
 {-| Simulate a cancelable mouse over event on elements that match the given selectors.
 -}
-cancelableMouseOver : List Selector -> ProgramTest model msg effect -> ProgramTest model msg effect
-cancelableMouseOver selectors =
-    ProgramTest.simulateDomEvent
+cancelableMouseOver : SimulateDomEvent msg programTest -> List Selector -> programTest -> programTest
+cancelableMouseOver simulateDomEvent selectors =
+    simulateDomEvent
         (Query.find selectors)
         (Event.custom
             "mouseover"

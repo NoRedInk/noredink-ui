@@ -57,14 +57,16 @@ spec =
         , test "Opens on down arrow" <|
             \() ->
                 program []
-                    |> KeyboardHelpers.pressDownArrow { targetDetails = targetDetails "hello-button" }
+                    |> KeyboardHelpers.pressDownArrow ProgramTest.simulateDomEvent
+                        { targetDetails = targetDetails "hello-button" }
                         [ Selector.tag "button", Selector.id "hello-button" ]
                     |> ensureViewHas (menuContentSelector menuContent)
                     |> ProgramTest.done
         , test "Opens on down arrow when there's a tooltip attached" <|
             \() ->
                 program [ Menu.withTooltip [ Tooltip.onToggle ToggleTooltip ] ]
-                    |> KeyboardHelpers.pressDownArrow { targetDetails = targetDetails "hello-button" }
+                    |> KeyboardHelpers.pressDownArrow ProgramTest.simulateDomEvent
+                        { targetDetails = targetDetails "hello-button" }
                         [ Selector.tag "button", Selector.id "hello-button" ]
                     |> ensureViewHas (menuContentSelector menuContent)
                     |> ProgramTest.done
@@ -225,20 +227,20 @@ targetDetails targetId =
 
 pressTab : { targetId : String } -> ProgramTest model msg effect -> ProgramTest model msg effect
 pressTab { targetId } =
-    KeyboardHelpers.pressTab
+    KeyboardHelpers.pressTab ProgramTest.simulateDomEvent
         { targetDetails = targetDetails targetId }
         [ Selector.class "Container" ]
 
 
 pressTabBack : { targetId : String } -> ProgramTest model msg effect -> ProgramTest model msg effect
 pressTabBack { targetId } =
-    KeyboardHelpers.pressTabBack
+    KeyboardHelpers.pressTabBack ProgramTest.simulateDomEvent
         { targetDetails = targetDetails targetId }
         [ Selector.class "Container" ]
 
 
 pressEsc : { targetId : String } -> ProgramTest model msg effect -> ProgramTest model msg effect
 pressEsc { targetId } =
-    KeyboardHelpers.pressEsc
+    KeyboardHelpers.pressEsc ProgramTest.simulateDomEvent
         { targetDetails = targetDetails targetId }
         [ Selector.class "Container" ]

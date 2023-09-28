@@ -36,6 +36,7 @@ suite =
 switchIt : String -> ProgramTest a b c -> ProgramTest a b c
 switchIt name =
     MouseHelpers.click
+        ProgramTest.simulateDomEvent
         [ attribute Role.switch
         , containing [ text name ]
         , id "view-switch-example"

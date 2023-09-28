@@ -18,24 +18,29 @@ module Nri.Test.KeyboardHelpers.V1 exposing
 -}
 
 import Json.Encode as Encode
-import ProgramTest exposing (ProgramTest)
 import Test.Html.Event as Event
 import Test.Html.Query as Query
 import Test.Html.Selector exposing (Selector)
 
 
+type alias SimulateDomEvent msg programTest =
+    (Query.Single msg -> Query.Single msg) -> ( String, Encode.Value ) -> programTest -> programTest
+
+
 {-| Simulate a "keydown" event on the given element.
 -}
 pressKey :
-    { targetDetails : List ( String, Encode.Value )
-    , keyCode : Int
-    , shiftKey : Bool
-    }
+    SimulateDomEvent msg programTest
+    ->
+        { targetDetails : List ( String, Encode.Value )
+        , keyCode : Int
+        , shiftKey : Bool
+        }
     -> List Selector
-    -> ProgramTest model msg effect
-    -> ProgramTest model msg effect
-pressKey { targetDetails, keyCode, shiftKey } selectors =
-    ProgramTest.simulateDomEvent
+    -> programTest
+    -> programTest
+pressKey simulateDomEvent { targetDetails, keyCode, shiftKey } selectors =
+    simulateDomEvent
         (Query.find selectors)
         (Event.custom
             "keydown"
@@ -53,15 +58,17 @@ pressKey { targetDetails, keyCode, shiftKey } selectors =
 {-| Simulate a "keyup" event on the given element.
 -}
 releaseKey :
-    { targetDetails : List ( String, Encode.Value )
-    , keyCode : Int
-    , shiftKey : Bool
-    }
+    SimulateDomEvent msg programTest
+    ->
+        { targetDetails : List ( String, Encode.Value )
+        , keyCode : Int
+        , shiftKey : Bool
+        }
     -> List Selector
-    -> ProgramTest model msg effect
-    -> ProgramTest model msg effect
-releaseKey { targetDetails, keyCode, shiftKey } selectors =
-    ProgramTest.simulateDomEvent
+    -> programTest
+    -> programTest
+releaseKey simulateDomEvent { targetDetails, keyCode, shiftKey } selectors =
+    simulateDomEvent
         (Query.find selectors)
         (Event.custom
             "keyup"
@@ -79,141 +86,154 @@ releaseKey { targetDetails, keyCode, shiftKey } selectors =
 {-| Simulate a tab key press on the given element.
 -}
 pressTab :
-    { targetDetails : List ( String, Encode.Value ) }
+    SimulateDomEvent msg programTest
+    -> { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
-    -> ProgramTest model msg effect
-    -> ProgramTest model msg effect
-pressTab { targetDetails } =
-    pressKey { targetDetails = targetDetails, keyCode = 9, shiftKey = False }
+    -> programTest
+    -> programTest
+pressTab simulateDomEvent { targetDetails } =
+    pressKey simulateDomEvent { targetDetails = targetDetails, keyCode = 9, shiftKey = False }
 
 
 {-| Simulate a shift-tab key press on the given element.
 -}
 pressTabBack :
-    { targetDetails : List ( String, Encode.Value ) }
+    SimulateDomEvent msg programTest
+    -> { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
-    -> ProgramTest model msg effect
-    -> ProgramTest model msg effect
-pressTabBack { targetDetails } =
-    pressKey { targetDetails = targetDetails, keyCode = 9, shiftKey = True }
+    -> programTest
+    -> programTest
+pressTabBack simulateDomEvent { targetDetails } =
+    pressKey simulateDomEvent { targetDetails = targetDetails, keyCode = 9, shiftKey = True }
 
 
 {-| Simulate an escape key press on the given element.
 -}
 pressEsc :
-    { targetDetails : List ( String, Encode.Value ) }
+    SimulateDomEvent msg programTest
+    -> { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
-    -> ProgramTest model msg effect
-    -> ProgramTest model msg effect
-pressEsc { targetDetails } =
-    pressKey { targetDetails = targetDetails, keyCode = 27, shiftKey = False }
+    -> programTest
+    -> programTest
+pressEsc simulateDomEvent { targetDetails } =
+    pressKey simulateDomEvent { targetDetails = targetDetails, keyCode = 27, shiftKey = False }
 
 
 {-| Simulate a spacebar key press on the given element.
 -}
 pressSpace :
-    { targetDetails : List ( String, Encode.Value ) }
+    SimulateDomEvent msg programTest
+    -> { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
-    -> ProgramTest model msg effect
-    -> ProgramTest model msg effect
-pressSpace { targetDetails } =
-    pressKey { targetDetails = targetDetails, keyCode = 32, shiftKey = False }
+    -> programTest
+    -> programTest
+pressSpace simulateDomEvent { targetDetails } =
+    pressKey simulateDomEvent { targetDetails = targetDetails, keyCode = 32, shiftKey = False }
 
 
 {-| Simulate a down arrow key press on the given element.
 -}
 pressDownArrow :
-    { targetDetails : List ( String, Encode.Value ) }
+    SimulateDomEvent msg programTest
+    -> { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
-    -> ProgramTest model msg effect
-    -> ProgramTest model msg effect
-pressDownArrow { targetDetails } =
-    pressKey { targetDetails = targetDetails, keyCode = 40, shiftKey = False }
+    -> programTest
+    -> programTest
+pressDownArrow simulateDomEvent { targetDetails } =
+    pressKey simulateDomEvent { targetDetails = targetDetails, keyCode = 40, shiftKey = False }
 
 
 {-| Simulate a right arrow key press on the given element.
 -}
 pressRightArrow :
-    { targetDetails : List ( String, Encode.Value ) }
+    SimulateDomEvent msg programTest
+    -> { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
-    -> ProgramTest model msg effect
-    -> ProgramTest model msg effect
-pressRightArrow { targetDetails } =
-    pressKey { targetDetails = targetDetails, keyCode = 39, shiftKey = False }
+    -> programTest
+    -> programTest
+pressRightArrow simulateDomEvent { targetDetails } =
+    pressKey simulateDomEvent { targetDetails = targetDetails, keyCode = 39, shiftKey = False }
 
 
 {-| Simulate a left arrow key press on the given element.
 -}
 pressLeftArrow :
-    { targetDetails : List ( String, Encode.Value ) }
+    SimulateDomEvent msg programTest
+    -> { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
-    -> ProgramTest model msg effect
-    -> ProgramTest model msg effect
-pressLeftArrow { targetDetails } =
-    pressKey { targetDetails = targetDetails, keyCode = 37, shiftKey = False }
+    -> programTest
+    -> programTest
+pressLeftArrow simulateDomEvent { targetDetails } =
+    pressKey simulateDomEvent { targetDetails = targetDetails, keyCode = 37, shiftKey = False }
 
 
 {-| Simulate a right arrow key press with the shift key held down on the given element.
 -}
 pressShiftRight :
-    { targetDetails : List ( String, Encode.Value ) }
+    SimulateDomEvent msg programTest
+    -> { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
-    -> ProgramTest model msg effect
-    -> ProgramTest model msg effect
-pressShiftRight { targetDetails } =
-    pressKey { targetDetails = targetDetails, keyCode = 39, shiftKey = True }
+    -> programTest
+    -> programTest
+pressShiftRight simulateDomEvent { targetDetails } =
+    pressKey simulateDomEvent { targetDetails = targetDetails, keyCode = 39, shiftKey = True }
 
 
 {-| Simulate a left arrow key press with the shift key held down on the given element.
 -}
 pressShiftLeft :
-    { targetDetails : List ( String, Encode.Value ) }
+    SimulateDomEvent msg programTest
+    -> { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
-    -> ProgramTest model msg effect
-    -> ProgramTest model msg effect
-pressShiftLeft { targetDetails } =
-    pressKey { targetDetails = targetDetails, keyCode = 37, shiftKey = True }
+    -> programTest
+    -> programTest
+pressShiftLeft simulateDomEvent { targetDetails } =
+    pressKey simulateDomEvent { targetDetails = targetDetails, keyCode = 37, shiftKey = True }
 
 
 {-| Simulate a right arrow key release on the given element.
 -}
 releaseRightArrow :
-    { targetDetails : List ( String, Encode.Value ) }
+    SimulateDomEvent msg programTest
+    -> { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
-    -> ProgramTest model msg effect
-    -> ProgramTest model msg effect
-releaseRightArrow { targetDetails } =
-    releaseKey { targetDetails = targetDetails, keyCode = 39, shiftKey = False }
+    -> programTest
+    -> programTest
+releaseRightArrow simulateDomEvent { targetDetails } =
+    releaseKey simulateDomEvent { targetDetails = targetDetails, keyCode = 39, shiftKey = False }
 
 
 {-| Simulate a left arrow key release on the given element.
 -}
 releaseLeftArrow :
-    { targetDetails : List ( String, Encode.Value ) }
+    SimulateDomEvent msg programTest
+    -> { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
-    -> ProgramTest model msg effect
-    -> ProgramTest model msg effect
-releaseLeftArrow { targetDetails } =
-    releaseKey { targetDetails = targetDetails, keyCode = 37, shiftKey = False }
+    -> programTest
+    -> programTest
+releaseLeftArrow simulateDomEvent { targetDetails } =
+    releaseKey simulateDomEvent { targetDetails = targetDetails, keyCode = 37, shiftKey = False }
 
 
 {-| Simulate a right arrow key release with the shift key held down on the given element.
 -}
 releaseShiftRight :
-    { targetDetails : List ( String, Encode.Value ) }
+    SimulateDomEvent msg programTest
+    -> { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
-    -> ProgramTest model msg effect
-    -> ProgramTest model msg effect
-releaseShiftRight { targetDetails } =
-    releaseKey { targetDetails = targetDetails, keyCode = 39, shiftKey = True }
+    -> programTest
+    -> programTest
+releaseShiftRight simulateDomEvent { targetDetails } =
+    releaseKey simulateDomEvent { targetDetails = targetDetails, keyCode = 39, shiftKey = True }
 
 
 {-| Simulate a left arrow key release with the shift key held down on the given element.
 -}
 releaseShiftLeft :
-    { targetDetails : List ( String, Encode.Value ) }
+    SimulateDomEvent msg programTest
+    -> { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
-    -> ProgramTest model msg effect
-    -> ProgramTest model msg effect
-releaseShiftLeft { targetDetails } =
-    releaseKey { targetDetails = targetDetails, keyCode = 37, shiftKey = True }
+    -> programTest
+    -> programTest
+releaseShiftLeft simulateDomEvent { targetDetails } =
+    releaseKey simulateDomEvent { targetDetails = targetDetails, keyCode = 37, shiftKey = True }

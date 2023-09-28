@@ -86,11 +86,13 @@ ensureOnlyOneTabInSequence tabs testContext =
 
 releaseRightArrow : ProgramTest model msg effect -> ProgramTest model msg effect
 releaseRightArrow =
-    KeyboardHelpers.releaseRightArrow { targetDetails = [] }
+    KeyboardHelpers.releaseRightArrow ProgramTest.simulateDomEvent
+        { targetDetails = [] }
         [ Selector.attribute Role.tab, Selector.attribute (Key.tabbable True) ]
 
 
 releaseLeftArrow : ProgramTest model msg effect -> ProgramTest model msg effect
 releaseLeftArrow =
-    KeyboardHelpers.releaseLeftArrow { targetDetails = [] }
+    KeyboardHelpers.releaseLeftArrow ProgramTest.simulateDomEvent
+        { targetDetails = [] }
         [ Selector.attribute Role.tab, Selector.attribute (Key.tabbable True) ]

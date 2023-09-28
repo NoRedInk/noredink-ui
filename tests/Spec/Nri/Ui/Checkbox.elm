@@ -124,7 +124,7 @@ helpfullyDisabledCheckbox =
 
 pressSpace : TestContext -> TestContext
 pressSpace =
-    KeyboardHelpers.pressSpace { targetDetails = [] } checkbox
+    KeyboardHelpers.pressSpace ProgramTest.simulateDomEvent { targetDetails = [] } checkbox
 
 
 clickIt : TestContext -> TestContext

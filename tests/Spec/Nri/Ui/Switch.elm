@@ -74,12 +74,12 @@ helpfullyDisabledSwitch =
 
 pressSpace : TestContext -> TestContext
 pressSpace =
-    KeyboardHelpers.pressSpace { targetDetails = [] } switch
+    KeyboardHelpers.pressSpace ProgramTest.simulateDomEvent { targetDetails = [] } switch
 
 
 click : TestContext -> TestContext
 click =
-    MouseHelpers.click switch
+    MouseHelpers.click ProgramTest.simulateDomEvent switch
 
 
 switch : List Selector

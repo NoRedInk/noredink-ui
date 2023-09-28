@@ -182,7 +182,8 @@ viewSpec =
         [ test "moves focus right on right arrow" <|
             \() ->
                 program
-                    |> pressRightArrow { targetDetails = [] }
+                    |> pressRightArrow ProgramTest.simulateDomEvent
+                        { targetDetails = [] }
                         [ Selector.all
                             [ Selector.tag "button"
                             , Selector.containing
@@ -194,7 +195,8 @@ viewSpec =
         , test "moves focus left on left arrow" <|
             \() ->
                 program
-                    |> pressLeftArrow { targetDetails = [] }
+                    |> pressLeftArrow ProgramTest.simulateDomEvent
+                        { targetDetails = [] }
                         [ Selector.all
                             [ Selector.tag "button"
                             , Selector.containing
@@ -206,7 +208,8 @@ viewSpec =
         , test "loops to end" <|
             \() ->
                 program
-                    |> pressLeftArrow { targetDetails = [] }
+                    |> pressLeftArrow ProgramTest.simulateDomEvent
+                        { targetDetails = [] }
                         [ Selector.all
                             [ Selector.tag "button"
                             , Selector.containing
@@ -218,7 +221,8 @@ viewSpec =
         , test "loops to beginning" <|
             \() ->
                 program
-                    |> pressRightArrow { targetDetails = [] }
+                    |> pressRightArrow ProgramTest.simulateDomEvent
+                        { targetDetails = [] }
                         [ Selector.all
                             [ Selector.tag "button"
                             , Selector.containing

@@ -81,12 +81,12 @@ focusTests =
 
 tabBackWithinModal : String -> ProgramTest a b c -> ProgramTest a b c
 tabBackWithinModal onElementId =
-    pressTabBack { targetDetails = [ ( "id", Encode.string onElementId ) ] } focusTrapNode
+    pressTabBack ProgramTest.simulateDomEvent { targetDetails = [ ( "id", Encode.string onElementId ) ] } focusTrapNode
 
 
 tabForwardWithinModal : String -> ProgramTest a b c -> ProgramTest a b c
 tabForwardWithinModal onElementId =
-    pressTab { targetDetails = [ ( "id", Encode.string onElementId ) ] } focusTrapNode
+    pressTab ProgramTest.simulateDomEvent { targetDetails = [ ( "id", Encode.string onElementId ) ] } focusTrapNode
 
 
 focusTrapNode : List Selector
