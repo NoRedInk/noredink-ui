@@ -7,12 +7,14 @@ import Html.Styled as Html exposing (Html, toUnstyled)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Json.Encode as Encode
-import Nri.Test.KeyboardHelpers.V1 exposing (pressTab, pressTabBack)
+import Nri.Test.KeyboardHelpers.V1 as KeyboardHelpers
 import Nri.Ui.Modal.V12 as Modal
 import ProgramTest exposing (..)
 import SimulatedEffect.Cmd
 import Test exposing (..)
-import Test.Html.Selector exposing (..)
+import Test.Html.Event as Event
+import Test.Html.Query as Query
+import Test.Html.Selector as Selector exposing (..)
 
 
 spec : Test
@@ -81,12 +83,12 @@ focusTests =
 
 tabBackWithinModal : String -> ProgramTest a b c -> ProgramTest a b c
 tabBackWithinModal onElementId =
-    pressTabBack { targetDetails = [ ( "id", Encode.string onElementId ) ] } focusTrapNode
+    KeyboardHelpers.pressTabBack khConfig { targetDetails = [ ( "id", Encode.string onElementId ) ] } focusTrapNode
 
 
 tabForwardWithinModal : String -> ProgramTest a b c -> ProgramTest a b c
 tabForwardWithinModal onElementId =
-    pressTab { targetDetails = [ ( "id", Encode.string onElementId ) ] } focusTrapNode
+    KeyboardHelpers.pressTab khConfig { targetDetails = [ ( "id", Encode.string onElementId ) ] } focusTrapNode
 
 
 focusTrapNode : List Selector
@@ -197,3 +199,11 @@ modalTitle =
 ensureFocused : String -> ProgramTest a b Effect -> ProgramTest a b Effect
 ensureFocused id =
     ensureLastEffect (Expect.equal (FocusOn id))
+
+
+khConfig : KeyboardHelpers.Config (ProgramTest model msg effect) Selector.Selector (Query.Single msg)
+khConfig =
+    { programTest_simulateDomEvent = ProgramTest.simulateDomEvent
+    , query_find = Query.find
+    , event_custom = Event.custom
+    }
