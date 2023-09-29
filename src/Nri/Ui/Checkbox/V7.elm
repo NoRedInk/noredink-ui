@@ -22,6 +22,7 @@ module Nri.Ui.Checkbox.V7 exposing
   - apply custom attributes to the element with the `"checkbox"` role
   - set cursor to not-allowed when disabled
   - update color styling
+  - update unselected enabled label color
 
 
 ## Changes from V6:
@@ -316,8 +317,11 @@ view { label, selected } attributes =
                 (if config.isDisabled then
                     disabledLabelCss
 
-                 else
+                 else if selected == NotSelected then
                     enabledLabelCss
+
+                 else
+                    selectedLabelCss
                 )
                 :: inputGuidance config_
             )
@@ -380,10 +384,18 @@ onCheckMsg selected msg =
         |> msg
 
 
+selectedLabelCss : List Style
+selectedLabelCss =
+    [ textStyle
+    , cursor pointer
+    ]
+
+
 enabledLabelCss : List Style
 enabledLabelCss =
     [ textStyle
     , cursor pointer
+    , color Colors.gray20
     ]
 
 
