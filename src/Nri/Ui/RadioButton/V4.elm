@@ -15,9 +15,12 @@ module Nri.Ui.RadioButton.V4 exposing
 ### Patch changes:
 
   - replace `height` use with `minHeight` to prevent vertical text overflow issues
-  - use `break-word` to prevent horiztonal text overflow issues
+  - use `break-word` to prevent horizontal text overflow issues
   - update color styling
   - update unselected enabled label color
+  - when disabled, the radio element is now replaced by a div element with
+    `aria-disabled="true"` and `tabindex="0"`. This change prevents user
+    interactions while maintaining the element in the tab order.
 
 
 ### Changes from V3:
@@ -51,6 +54,8 @@ module Nri.Ui.RadioButton.V4 exposing
 
 import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Key as Key
+import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Style
 import Css exposing (..)
 import Css.Global
@@ -333,103 +338,132 @@ view { label, name, value, valueToString, selectedValue } attributes =
                 , Css.batch config.containerCss
                 ]
             ]
-            ([ radio name
-                stringValue
-                isChecked
-                ([ Attributes.id idValue
-                 , Aria.disabled config.isDisabled
-                 , InputErrorAndGuidanceInternal.describedBy idValue config
-                 , case config.onSelect of
-                    Just onSelect_ ->
-                        onClick (onSelect_ value)
+            ((if config.isDisabled then
+                [ Html.div
+                    ([ Attributes.id idValue
+                     , Role.radio
+                     , Aria.label label
+                     , Key.tabbable True
+                     , Aria.checked (Just isChecked)
+                     , Aria.disabled config.isDisabled
+                     , InputErrorAndGuidanceInternal.describedBy idValue config
+                     , class "Nri-RadioButton-HiddenRadioInput"
+                     , if List.length disclosureIds > 0 then
+                        Aria.describedBy disclosureIds
 
-                    Nothing ->
+                       else
                         Extra.none
-                 , class "Nri-RadioButton-HiddenRadioInput"
-                 , if List.length disclosureIds > 0 then
-                    Aria.describedBy disclosureIds
-
-                   else
-                    Extra.none
-                 , css
-                    [ position absolute
-                    , top (pct 50)
-                    , left (px 4)
-                    , opacity zero
-                    ]
-                 ]
-                    ++ List.map (Attributes.map never) config.custom
-                )
-             , Html.label
-                [ for idValue
-                , classList
-                    [ ( "Nri-RadioButton-RadioButton", True )
-                    , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
-                    ]
-                , css
-                    [ Css.outline3 (Css.px 2) Css.solid Css.transparent
-                    , Fonts.baseFont
-                    , Css.batch
-                        (if config.isDisabled then
-                            [ color Colors.gray45
-                            , cursor notAllowed
-                            ]
-
-                         else if not isChecked then
-                            [ color Colors.gray20
-                            , cursor pointer
-                            ]
-
-                         else if isInError then
-                            [ color Colors.purple
-                            , cursor pointer
-                            ]
-
-                         else
-                            [ color Colors.navy
-                            , cursor pointer
-                            ]
-                        )
-                    , margin zero
-                    , padding zero
-                    , fontSize (px 15)
-                    , Css.property "font-weight" "600"
-                    , display inlineBlock
-                    , Css.property "transition" "all 0.4s ease"
-                    , paddingLeft (px 8)
-                    , marginLeft (px -8)
-                    ]
+                     , css
+                        [ position absolute
+                        , top (pct 50)
+                        , left (px 4)
+                        , opacity zero
+                        ]
+                     ]
+                        ++ List.map (Attributes.map never) config.custom
+                    )
+                    []
                 ]
-                [ radioInputIcon
-                    { isLocked = isLocked
-                    , isDisabled = config.isDisabled
-                    , isChecked = isChecked
-                    }
-                , span
-                    [ css
-                        [ display inlineFlex
-                        , alignItems center
-                        , Css.minHeight (px 20)
-                        , Css.property "word-break" "break-word"
+
+              else
+                [ radio name
+                    stringValue
+                    isChecked
+                    ([ Attributes.id idValue
+                     , Aria.disabled config.isDisabled
+                     , InputErrorAndGuidanceInternal.describedBy idValue config
+                     , case config.onSelect of
+                        Just onSelect_ ->
+                            onClick (onSelect_ value)
+
+                        Nothing ->
+                            Extra.none
+                     , class "Nri-RadioButton-HiddenRadioInput"
+                     , if List.length disclosureIds > 0 then
+                        Aria.describedBy disclosureIds
+
+                       else
+                        Extra.none
+                     , css
+                        [ position absolute
+                        , top (pct 50)
+                        , left (px 4)
+                        , opacity zero
+                        ]
+                     ]
+                        ++ List.map (Attributes.map never) config.custom
+                    )
+                ]
+             )
+                ++ Html.label
+                    [ for idValue
+                    , classList
+                        [ ( "Nri-RadioButton-RadioButton", True )
+                        , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
+                        ]
+                    , css
+                        [ Css.outline3 (Css.px 2) Css.solid Css.transparent
+                        , Fonts.baseFont
+                        , Css.batch
+                            (if config.isDisabled then
+                                [ color Colors.gray45
+                                , cursor notAllowed
+                                ]
+
+                             else if not isChecked then
+                                [ color Colors.gray20
+                                , cursor pointer
+                                ]
+
+                             else if isInError then
+                                [ color Colors.purple
+                                , cursor pointer
+                                ]
+
+                             else
+                                [ color Colors.navy
+                                , cursor pointer
+                                ]
+                            )
+                        , margin zero
+                        , padding zero
+                        , fontSize (px 15)
+                        , Css.property "font-weight" "600"
+                        , display inlineBlock
+                        , Css.property "transition" "all 0.4s ease"
+                        , paddingLeft (px 8)
+                        , marginLeft (px -8)
                         ]
                     ]
-                    [ Html.span
-                        (if config.hideLabel then
-                            Accessibility.Styled.Style.invisible
+                    [ radioInputIcon
+                        { isLocked = isLocked
+                        , isDisabled = config.isDisabled
+                        , isChecked = isChecked
+                        }
+                    , span
+                        [ css
+                            [ display inlineFlex
+                            , alignItems center
+                            , Css.minHeight (px 20)
+                            , Css.property "word-break" "break-word"
+                            ]
+                        ]
+                        [ Html.span
+                            (if config.hideLabel then
+                                Accessibility.Styled.Style.invisible
 
-                         else
-                            [ css config.labelCss ]
-                        )
-                        [ Html.text label ]
-                    , if isPremium then
-                        premiumPennant
+                             else
+                                [ css config.labelCss ]
+                            )
+                            [ Html.text label ]
+                        , if isPremium then
+                            premiumPennant
 
-                      else
-                        text ""
+                          else
+                            text ""
+                        ]
                     ]
-                ]
-             ]
-                ++ InputErrorAndGuidanceInternal.view idValue (Css.marginTop Css.zero) config
+                :: InputErrorAndGuidanceInternal.view idValue (Css.marginTop Css.zero) config
                 ++ (if isChecked then
                         disclosedElements
 
@@ -462,7 +496,7 @@ viewLockedButton { idValue, label } config =
             Nothing ->
                 Extra.none
         ]
-        ([ Html.div
+        (div
             [ class "Nri-RadioButton-LockedPremiumButton"
             , css
                 [ outline Css.none
@@ -507,8 +541,7 @@ viewLockedButton { idValue, label } config =
                 , premiumPennant
                 ]
             ]
-         ]
-            ++ InputErrorAndGuidanceInternal.view idValue (Css.marginTop Css.zero) config
+            :: InputErrorAndGuidanceInternal.view idValue (Css.marginTop Css.zero) config
         )
 
 
