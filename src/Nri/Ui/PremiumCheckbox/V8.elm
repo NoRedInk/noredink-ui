@@ -56,6 +56,7 @@ import Css exposing (..)
 import Html.Styled.Attributes as Attributes exposing (class, css)
 import Html.Styled.Events as Events
 import Nri.Ui.Checkbox.V7 as Checkbox
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
@@ -302,14 +303,20 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
                 , css
                     [ displayFlex
                     , alignItems center
+                    , cursor notAllowed
                     , position relative
                     , Fonts.baseFont
                     , fontSize (px 15)
                     , Css.outline3 (Css.px 2) Css.solid Css.transparent
                     ]
                 ]
-                [ Checkbox.viewIcon [] (CheckboxIcons.lockOnInside idValue)
-                , Html.span [] [ Html.text label ]
+                [ Checkbox.viewIcon [] CheckboxIcons.uncheckedDisabled
+                , Html.span
+                    [ css
+                        [ color Colors.gray45
+                        ]
+                    ]
+                    [ Html.text label ]
                 ]
             ]
         ]
