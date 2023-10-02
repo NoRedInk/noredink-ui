@@ -16,6 +16,7 @@ module Nri.Ui.PremiumCheckbox.V8 exposing
 ## Patch changes:
 
   - Added vouchered state for premium vouchers with gift pennant
+  - Replaced lock icon with disabled checkbox for locked state
 
 
 ## Changes from V7:
