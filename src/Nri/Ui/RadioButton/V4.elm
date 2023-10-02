@@ -345,7 +345,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                      , Aria.label label
                      , Key.tabbable True
                      , Aria.checked (Just isChecked)
-                     , Aria.disabled config.isDisabled
+                     , Aria.disabled True
                      , InputErrorAndGuidanceInternal.describedBy idValue config
                      , class "Nri-RadioButton-HiddenRadioInput"
                      , if List.length disclosureIds > 0 then
@@ -370,7 +370,6 @@ view { label, name, value, valueToString, selectedValue } attributes =
                     stringValue
                     isChecked
                     ([ Attributes.id idValue
-                     , Aria.disabled config.isDisabled
                      , InputErrorAndGuidanceInternal.describedBy idValue config
                      , case config.onSelect of
                         Just onSelect_ ->
