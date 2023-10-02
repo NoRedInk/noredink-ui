@@ -192,9 +192,9 @@ view ellieLinkConfig state =
         { trigger =
             \attrs ->
                 RadioButton.view
-                    { label = "Dogs"
+                    { label = "Rabbits"
                     , name = "pets"
-                    , value = "Dogs"
+                    , value = "Rabbits"
                     , selectedValue = Just "Selected"
                     , valueToString = identity
                     }
