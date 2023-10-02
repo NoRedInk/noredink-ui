@@ -34,6 +34,7 @@ import Nri.Ui.Modal.V12 as Modal
 import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Text.V6 as Text
+import Nri.Ui.Tooltip.V3 as Tooltip
 import Routes
 import Task
 
@@ -46,6 +47,10 @@ moduleName =
 version : Int
 version =
     4
+
+
+type TooltipType
+    = HelpfullyDisabled
 
 
 {-| -}
@@ -179,6 +184,30 @@ view ellieLinkConfig state =
         }
         [ Modal.closeButton ]
         state.modal
+    , Heading.h2
+        [ Heading.plaintext "Tooltip Example"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
+    , Tooltip.view
+        { trigger =
+            \attrs ->
+                RadioButton.view
+                    { label = "Dogs"
+                    , name = "pets"
+                    , value = "Dogs"
+                    , selectedValue = Just "Selected"
+                    , valueToString = identity
+                    }
+                    [ RadioButton.disabled, RadioButton.custom attrs ]
+        , id = "tooltip"
+        }
+        [ Tooltip.helpfullyDisabled
+        , Tooltip.open (state.openTooltip == Just HelpfullyDisabled)
+        , Tooltip.onToggle (ToggleTooltip HelpfullyDisabled)
+        , Tooltip.paragraph "Reasons why you can't select this option"
+        , Tooltip.onRight
+        , Tooltip.fitToContent
+        ]
     ]
 
 
@@ -248,6 +277,7 @@ type alias State =
     { selectedValue : Maybe Selection
     , modal : Modal.Model
     , selectionSettings : Control SelectionSettings
+    , openTooltip : Maybe TooltipType
     }
 
 
@@ -257,6 +287,7 @@ init =
     { selectedValue = Nothing
     , modal = Modal.init
     , selectionSettings = initSelectionSettings
+    , openTooltip = Nothing
     }
 
 
@@ -384,6 +415,7 @@ type Msg
     | SetSelectionSettings (Control SelectionSettings)
     | Focus String
     | Focused (Result Dom.Error ())
+    | ToggleTooltip TooltipType Bool
 
 
 {-| -}
@@ -437,6 +469,13 @@ update msg model =
 
         Focused _ ->
             ( model, Cmd.none )
+
+        ToggleTooltip type_ isOpen ->
+            if isOpen then
+                ( { model | openTooltip = Just type_ }, Cmd.none )
+
+            else
+                ( { model | openTooltip = Nothing }, Cmd.none )
 
 
 subscriptions : State -> Sub Msg
