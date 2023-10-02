@@ -93,7 +93,7 @@ example =
 preview : List (Html Never)
 preview =
     let
-        renderPreview ( icon, label_ ) =
+        renderPreview ( icon, label_, labelCss ) =
             span
                 [ css
                     [ Css.color Colors.navy
@@ -110,12 +110,12 @@ preview =
                     |> Svg.withHeight (Css.px 30)
                     |> Svg.toHtml
                 , Svg.toHtml (Svg.withCss [ Css.marginRight (Css.px 8) ] icon)
-                , text label_
+                , span [ css labelCss ] [ text label_ ]
                 ]
     in
-    [ ( CheckboxIcons.lockOnInside "lockOnInside-preview-lockOnInside", "Locked" )
-    , ( CheckboxIcons.unchecked "unchecked-preview-unchecked", "Unchecked" )
-    , ( CheckboxIcons.checked "checkbox-preview-checked", "Checked" )
+    [ ( CheckboxIcons.uncheckedDisabled, "Locked", [ Css.color Colors.gray45 ] )
+    , ( CheckboxIcons.unchecked "unchecked-preview-unchecked", "Unchecked", [ Css.color Colors.gray20 ] )
+    , ( CheckboxIcons.checked "checkbox-preview-checked", "Checked", [] )
     ]
         |> List.map renderPreview
 
