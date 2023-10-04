@@ -144,13 +144,14 @@ view ellieLinkConfig state =
         , mainType = Nothing
         , extraCode =
             [ Code.newlines
-            , Code.unionType "Animals" [ "Dogs", "Cats" ]
+            , Code.unionType "Animals" [ "Dogs", "Cats", "Rabbits" ]
             , Code.newlines
             , "toString : Animals -> String"
             , "toString animals ="
                 ++ Code.caseExpression "animals"
                     [ ( "Dogs", Code.string selectionSettings.dogsLabel )
                     , ( "Cats", Code.string selectionSettings.catsLabel )
+                    , ( "Rabbits", Code.string selectionSettings.rabbitsLabel )
                     ]
                     1
             ]
@@ -188,25 +189,43 @@ view ellieLinkConfig state =
         [ Heading.plaintext "Tooltip Example"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
-    , Tooltip.view
-        { trigger =
-            \attrs ->
-                RadioButton.view
-                    { label = "Rabbits"
-                    , name = "pets"
-                    , value = "Rabbits"
-                    , selectedValue = Just "Selected"
-                    , valueToString = identity
-                    }
-                    [ RadioButton.disabled, RadioButton.custom attrs ]
-        , id = "tooltip"
-        }
-        [ Tooltip.helpfullyDisabled
-        , Tooltip.open (state.openTooltip == Just HelpfullyDisabled)
-        , Tooltip.onToggle (ToggleTooltip HelpfullyDisabled)
-        , Tooltip.paragraph "Reasons why you can't select this option"
-        , Tooltip.onRight
-        , Tooltip.fitToContent
+    , div []
+        [ RadioButton.view
+            { label = "Dogs"
+            , name = "pets-2"
+            , value = Dogs
+            , selectedValue = state.selectedValue2
+            , valueToString = selectionToString selectionSettings
+            }
+            [ RadioButton.onSelect Select2 ]
+        , RadioButton.view
+            { label = "Cats"
+            , name = "pets-2"
+            , value = Cats
+            , selectedValue = state.selectedValue2
+            , valueToString = selectionToString selectionSettings
+            }
+            [ RadioButton.onSelect Select2 ]
+        , Tooltip.view
+            { trigger =
+                \attrs ->
+                    RadioButton.view
+                        { label = "Rabbits"
+                        , name = "pets-2"
+                        , value = Rabbits
+                        , selectedValue = state.selectedValue2
+                        , valueToString = selectionToString selectionSettings
+                        }
+                        [ RadioButton.disabled, RadioButton.custom attrs ]
+            , id = "tooltip"
+            }
+            [ Tooltip.helpfullyDisabled
+            , Tooltip.open (state.openTooltip == Just HelpfullyDisabled)
+            , Tooltip.onToggle (ToggleTooltip HelpfullyDisabled)
+            , Tooltip.paragraph "Reasons why you can't select this option"
+            , Tooltip.onRight
+            , Tooltip.fitToContent
+            ]
         ]
     ]
 
@@ -254,16 +273,18 @@ examples :
 examples selectionSettings =
     [ ( Dogs, selectionSettings.dogs )
     , ( Cats, selectionSettings.cats )
+    , ( Rabbits, selectionSettings.rabbits )
     ]
 
 
 type Selection
     = Dogs
     | Cats
+    | Rabbits
 
 
 selectionToString : SelectionSettings -> Selection -> String
-selectionToString { dogsLabel, catsLabel } selection =
+selectionToString { dogsLabel, catsLabel, rabbitsLabel } selection =
     case selection of
         Dogs ->
             dogsLabel
@@ -271,10 +292,14 @@ selectionToString { dogsLabel, catsLabel } selection =
         Cats ->
             catsLabel
 
+        Rabbits ->
+            rabbitsLabel
+
 
 {-| -}
 type alias State =
     { selectedValue : Maybe Selection
+    , selectedValue2 : Maybe Selection
     , modal : Modal.Model
     , selectionSettings : Control SelectionSettings
     , openTooltip : Maybe TooltipType
@@ -285,6 +310,7 @@ type alias State =
 init : State
 init =
     { selectedValue = Nothing
+    , selectedValue2 = Nothing
     , modal = Modal.init
     , selectionSettings = initSelectionSettings
     , openTooltip = Nothing
@@ -296,6 +322,8 @@ type alias SelectionSettings =
     , dogs : List ( String, RadioButton.Attribute Selection Msg )
     , catsLabel : String
     , cats : List ( String, RadioButton.Attribute Selection Msg )
+    , rabbitsLabel : String
+    , rabbits : List ( String, RadioButton.Attribute Selection Msg )
     }
 
 
@@ -306,6 +334,8 @@ initSelectionSettings =
         |> Control.field "Dogs" controlAttributes
         |> Control.field "Cats label" (Control.string "Cats")
         |> Control.field "Cats" controlAttributes
+        |> Control.field "Rabbits label" (Control.string "Rabbits")
+        |> Control.field "Rabbits" controlAttributes
 
 
 controlAttributes : Control (List ( String, RadioButton.Attribute Selection Msg ))
@@ -412,6 +442,7 @@ type Msg
     | ModalMsg Modal.Msg
     | CloseModal
     | Select Selection
+    | Select2 Selection
     | SetSelectionSettings (Control SelectionSettings)
     | Focus String
     | Focused (Result Dom.Error ())
@@ -458,6 +489,9 @@ update msg model =
 
         Select value ->
             ( { model | selectedValue = Just value }, Cmd.none )
+
+        Select2 value ->
+            ( { model | selectedValue2 = Just value }, Cmd.none )
 
         SetSelectionSettings selectionSettings ->
             ( { model | selectionSettings = selectionSettings }

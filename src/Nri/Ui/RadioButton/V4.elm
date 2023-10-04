@@ -18,9 +18,10 @@ module Nri.Ui.RadioButton.V4 exposing
   - use `break-word` to prevent horizontal text overflow issues
   - update color styling
   - update unselected enabled label color
-  - when disabled, the radio element is now replaced by a div element with
-    `aria-disabled="true"` and `tabindex="0"`. This change prevents user
-    interactions while maintaining the element in the tab order.
+  - when disabled, replaces the `disabled` attribute with `aria-disabled="true"`
+    and removes onClick event handler. These changes prevent the element from
+    being selected but keep it in the tab order and ensure that tooltips can
+    still be displayed when the element is focused.
 
 
 ### Changes from V3:
@@ -54,8 +55,6 @@ module Nri.Ui.RadioButton.V4 exposing
 
 import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
-import Accessibility.Styled.Key as Key
-import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Style
 import Css exposing (..)
 import Css.Global
@@ -152,7 +151,7 @@ disclosure childNodes =
 
 {-| Adds CSS to the element containing the input.
 -}
-containerCss : List Css.Style -> Attribute value msg
+containerCss : List Style -> Attribute value msg
 containerCss styles =
     Attribute <| \config -> { config | containerCss = config.containerCss ++ styles }
 
@@ -162,7 +161,7 @@ containerCss styles =
 Note that these styles don't apply to the literal HTML label element, since it contains the icon SVG as well.
 
 -}
-labelCss : List Css.Style -> Attribute value msg
+labelCss : List Style -> Attribute value msg
 labelCss styles =
     Attribute <| \config -> { config | labelCss = config.labelCss ++ styles }
 
@@ -231,8 +230,8 @@ type alias Config value msg =
     , guidance : Guidance msg
     , error : ErrorState
     , hideLabel : Bool
-    , containerCss : List Css.Style
-    , labelCss : List Css.Style
+    , containerCss : List Style
+    , labelCss : List Style
     , custom : List (Html.Attribute msg)
     , onSelect : Maybe (value -> msg)
     , onLockedMsg : Maybe msg
@@ -324,10 +323,10 @@ view { label, name, value, valueToString, selectedValue } attributes =
             [ Attributes.id (idValue ++ "-container")
             , css
                 [ position relative
-                , Css.marginLeft (Css.px -2)
-                , Css.paddingLeft (Css.px 38)
-                , Css.paddingTop (px 6)
-                , Css.paddingBottom (px 4)
+                , marginLeft (px -2)
+                , paddingLeft (px 38)
+                , paddingTop (px 6)
+                , paddingBottom (px 4)
                 , display inlineBlock
                 , pseudoClass "focus-within"
                     [ Css.Global.descendants
@@ -335,134 +334,114 @@ view { label, name, value, valueToString, selectedValue } attributes =
                             FocusRing.tightStyles
                         ]
                     ]
-                , Css.batch config.containerCss
+                , batch config.containerCss
                 ]
             ]
-            ((if config.isDisabled then
-                [ Html.div
-                    ([ Attributes.id idValue
-                     , Role.radio
-                     , Aria.label label
-                     , Key.tabbable True
-                     , Aria.checked (Just isChecked)
-                     , Aria.disabled True
-                     , InputErrorAndGuidanceInternal.describedBy idValue config
-                     , class "Nri-RadioButton-HiddenRadioInput"
-                     , if List.length disclosureIds > 0 then
-                        Aria.describedBy disclosureIds
+            ([ radio name
+                stringValue
+                isChecked
+                ([ Attributes.id idValue
+                 , InputErrorAndGuidanceInternal.describedBy idValue config
+                 , if config.isDisabled then
+                    Extra.none
 
-                       else
-                        Extra.none
-                     , css
-                        [ position absolute
-                        , top (pct 50)
-                        , left (px 4)
-                        , opacity zero
-                        ]
-                     ]
-                        ++ config.custom
-                    )
-                    []
-                ]
-
-              else
-                [ radio name
-                    stringValue
-                    isChecked
-                    ([ Attributes.id idValue
-                     , InputErrorAndGuidanceInternal.describedBy idValue config
-                     , case config.onSelect of
+                   else
+                    case config.onSelect of
                         Just onSelect_ ->
                             onClick (onSelect_ value)
 
                         Nothing ->
                             Extra.none
-                     , class "Nri-RadioButton-HiddenRadioInput"
-                     , if List.length disclosureIds > 0 then
-                        Aria.describedBy disclosureIds
+                 , class "Nri-RadioButton-HiddenRadioInput"
+                 , if config.isDisabled then
+                    Aria.disabled True
 
-                       else
-                        Extra.none
-                     , css
-                        [ position absolute
-                        , top (pct 50)
-                        , left (px 4)
-                        , opacity zero
-                        ]
-                     ]
-                        ++ config.custom
-                    )
-                ]
-             )
-                ++ Html.label
-                    [ for idValue
-                    , classList
-                        [ ( "Nri-RadioButton-RadioButton", True )
-                        , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
-                        ]
-                    , css
-                        [ Css.outline3 (Css.px 2) Css.solid Css.transparent
-                        , Fonts.baseFont
-                        , Css.batch
-                            (if config.isDisabled then
-                                [ color Colors.gray45
-                                , cursor notAllowed
-                                ]
+                   else
+                    Extra.none
+                 , if List.length disclosureIds > 0 then
+                    Aria.describedBy disclosureIds
 
-                             else if not isChecked then
-                                [ color Colors.gray20
-                                , cursor pointer
-                                ]
-
-                             else if isInError then
-                                [ color Colors.purple
-                                , cursor pointer
-                                ]
-
-                             else
-                                [ color Colors.navy
-                                , cursor pointer
-                                ]
-                            )
-                        , margin zero
-                        , padding zero
-                        , fontSize (px 15)
-                        , Css.property "font-weight" "600"
-                        , display inlineBlock
-                        , Css.property "transition" "all 0.4s ease"
-                        , paddingLeft (px 8)
-                        , marginLeft (px -8)
-                        ]
+                   else
+                    Extra.none
+                 , css
+                    [ position absolute
+                    , top (pct 50)
+                    , left (px 4)
+                    , opacity zero
                     ]
-                    [ radioInputIcon
-                        { isLocked = isLocked
-                        , isDisabled = config.isDisabled
-                        , isChecked = isChecked
-                        }
-                    , span
-                        [ css
-                            [ display inlineFlex
-                            , alignItems center
-                            , Css.minHeight (px 20)
-                            , Css.property "word-break" "break-word"
+                 ]
+                    ++ config.custom
+                )
+             , Html.label
+                [ for idValue
+                , classList
+                    [ ( "Nri-RadioButton-RadioButton", True )
+                    , ( "Nri-RadioButton-RadioButtonChecked", isChecked )
+                    ]
+                , css
+                    [ outline3 (px 2) solid transparent
+                    , Fonts.baseFont
+                    , batch
+                        (if config.isDisabled then
+                            [ color Colors.gray45
+                            , cursor notAllowed
                             ]
-                        ]
-                        [ Html.span
-                            (if config.hideLabel then
-                                Accessibility.Styled.Style.invisible
 
-                             else
-                                [ css config.labelCss ]
-                            )
-                            [ Html.text label ]
-                        , if isPremium then
-                            premiumPennant
+                         else if not isChecked then
+                            [ color Colors.gray20
+                            , cursor pointer
+                            ]
 
-                          else
-                            text ""
+                         else if isInError then
+                            [ color Colors.purple
+                            , cursor pointer
+                            ]
+
+                         else
+                            [ color Colors.navy
+                            , cursor pointer
+                            ]
+                        )
+                    , margin zero
+                    , padding zero
+                    , fontSize (px 15)
+                    , property "font-weight" "600"
+                    , display inlineBlock
+                    , property "transition" "all 0.4s ease"
+                    , paddingLeft (px 8)
+                    , marginLeft (px -8)
+                    ]
+                ]
+                [ radioInputIcon
+                    { isLocked = isLocked
+                    , isDisabled = config.isDisabled
+                    , isChecked = isChecked
+                    }
+                , span
+                    [ css
+                        [ display inlineFlex
+                        , alignItems center
+                        , minHeight (px 20)
+                        , property "word-break" "break-word"
                         ]
                     ]
-                :: InputErrorAndGuidanceInternal.view idValue (Css.marginTop Css.zero) config
+                    [ Html.span
+                        (if config.hideLabel then
+                            Accessibility.Styled.Style.invisible
+
+                         else
+                            [ css config.labelCss ]
+                        )
+                        [ Html.text label ]
+                    , if isPremium then
+                        premiumPennant
+
+                      else
+                        text ""
+                    ]
+                ]
+             ]
+                ++ InputErrorAndGuidanceInternal.view idValue (marginTop zero) config
                 ++ (if isChecked then
                         disclosedElements
 
@@ -479,14 +458,14 @@ viewLockedButton { idValue, label } config =
         , css
             [ position relative
             , marginLeft (px -2)
-            , Css.paddingLeft (Css.px 38)
-            , Css.paddingTop (px 6)
-            , Css.paddingBottom (px 4)
+            , paddingLeft (px 38)
+            , paddingTop (px 6)
+            , paddingBottom (px 4)
             , display inlineBlock
-            , backgroundColor Css.transparent
-            , border Css.zero
+            , backgroundColor transparent
+            , border zero
             , cursor pointer
-            , Css.batch config.containerCss
+            , batch config.containerCss
             ]
         , case config.onLockedMsg of
             Just msg ->
@@ -498,15 +477,15 @@ viewLockedButton { idValue, label } config =
         (div
             [ class "Nri-RadioButton-LockedPremiumButton"
             , css
-                [ outline Css.none
+                [ outline none
                 , Fonts.baseFont
                 , color Colors.navy
                 , margin zero
                 , padding zero
                 , fontSize (px 15)
-                , Css.property "font-weight" "600"
+                , property "font-weight" "600"
                 , displayFlex
-                , Css.property "transition" "all 0.4s ease"
+                , property "transition" "all 0.4s ease"
                 ]
             ]
             [ radioInputIcon
@@ -518,14 +497,14 @@ viewLockedButton { idValue, label } config =
                 [ css
                     [ display inlineFlex
                     , alignItems center
-                    , Css.height (px 20)
+                    , height (px 20)
                     ]
                 ]
                 [ Html.span
                     [ css <|
                         if config.hideLabel then
-                            [ Css.width (px 1)
-                            , overflow Css.hidden
+                            [ width (px 1)
+                            , overflow hidden
                             , margin (px -1)
                             , padding (px 0)
                             , border (px 0)
@@ -540,15 +519,15 @@ viewLockedButton { idValue, label } config =
                 , premiumPennant
                 ]
             ]
-            :: InputErrorAndGuidanceInternal.view idValue (Css.marginTop Css.zero) config
+            :: InputErrorAndGuidanceInternal.view idValue (marginTop zero) config
         )
 
 
 premiumPennant : Html msg
 premiumPennant =
     Pennant.contentPremiumFlag
-        |> Nri.Ui.Svg.V1.withWidth (Css.px 26)
-        |> Nri.Ui.Svg.V1.withHeight (Css.px 24)
+        |> Nri.Ui.Svg.V1.withWidth (px 26)
+        |> Nri.Ui.Svg.V1.withHeight (px 24)
         |> Nri.Ui.Svg.V1.withCss
             [ marginLeft (px 8)
             , verticalAlign middle
@@ -595,8 +574,8 @@ radioInputIcon config =
         , css
             [ position absolute
             , left zero
-            , top (calc (pct 50) Css.minus (Css.px ((iconHeight - 2 + iconPadding) / 2)))
-            , Css.property "transition" ".3s all"
+            , top (calc (pct 50) minus (px ((iconHeight - 2 + iconPadding) / 2)))
+            , property "transition" ".3s all"
             , borderRadius (px 50)
             , padding (px iconPadding)
             , displayFlex
@@ -605,8 +584,8 @@ radioInputIcon config =
             ]
         ]
         [ image
-            |> Nri.Ui.Svg.V1.withHeight (Css.px iconHeight)
-            |> Nri.Ui.Svg.V1.withWidth (Css.px 26)
+            |> Nri.Ui.Svg.V1.withHeight (px iconHeight)
+            |> Nri.Ui.Svg.V1.withWidth (px 26)
             |> Nri.Ui.Svg.V1.toHtml
         ]
 
@@ -773,6 +752,6 @@ lockedSvg =
 withImageBorder : Color -> Svg -> Svg
 withImageBorder color =
     Nri.Ui.Svg.V1.withCss
-        [ Css.border3 (px 1) solid color
-        , Css.borderRadius (Css.pct 50)
+        [ border3 (px 1) solid color
+        , borderRadius (pct 50)
         ]

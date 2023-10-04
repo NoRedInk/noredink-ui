@@ -1,7 +1,6 @@
 module Spec.Nri.Ui.RadioButton exposing (..)
 
 import Accessibility.Aria as Aria
-import Accessibility.Role as Role
 import Html.Attributes exposing (type_)
 import Html.Styled exposing (..)
 import Nri.Test.KeyboardHelpers.V1 as KeyboardHelpers
@@ -27,7 +26,7 @@ hasCorrectTypeWhenEnabled : List Test
 hasCorrectTypeWhenEnabled =
     [ test "has type 'radio'" <|
         \() ->
-            program False []
+            program []
                 |> ensureViewHas [ attribute (type_ "radio") ]
                 |> done
     ]
@@ -37,44 +36,27 @@ helpfullyDisabledRadioButton : List Test
 helpfullyDisabledRadioButton =
     [ test "does not have `aria-disabled=\"true\" when not disabled" <|
         \() ->
-            program False []
+            program []
                 |> ensureViewHasNot [ attribute (Aria.disabled True) ]
                 |> done
     , test "does not have `aria-disabled=\"false\" when not disabled" <|
         \() ->
-            program False []
+            program []
                 |> ensureViewHasNot [ attribute (Aria.disabled False) ]
                 |> done
     , test "has `aria-disabled=\"true\" when disabled" <|
         \() ->
-            program False [ RadioButton.disabled ]
+            program [ RadioButton.disabled ]
                 |> ensureViewHas [ attribute (Aria.disabled True) ]
-                |> done
-    , test "has `role=\"radio\" when disabled" <|
-        \() ->
-            program False [ RadioButton.disabled ]
-                |> ensureViewHas [ attribute Role.radio ]
-                |> done
-    , test "has `aria-checked=\"true\" when disabled and not selected" <|
-        \() ->
-            program True [ RadioButton.disabled ]
-                |> ensureViewHas [ attribute (Aria.checked (Just True)) ]
-                |> done
-    , test "has `aria-checked=\"false\" when disabled and not selected" <|
-        \() ->
-            program False [ RadioButton.disabled ]
-                |> ensureViewHas [ attribute (Aria.checked (Just False)) ]
                 |> done
     , test "is clickable when not disabled" <|
         \() ->
-            program False []
+            program []
                 |> click
                 |> done
     , test "is not clickable when disabled" <|
         \() ->
-            program
-                False
-                [ RadioButton.disabled ]
+            program [ RadioButton.disabled ]
                 |> click
                 |> done
                 |> expectFailure "Event.expectEvent: I found a node, but it does not listen for \"click\" events like I expected it would."
@@ -129,19 +111,14 @@ update msg model =
             { model | selectedValue = Just value }
 
 
-view : Bool -> List (RadioButton.Attribute Selection Msg) -> Model -> Html Msg
-view selected attributes state =
+view : List (RadioButton.Attribute Selection Msg) -> Model -> Html Msg
+view attributes state =
     div []
         [ RadioButton.view
             { label = "Dogs"
             , name = "pets"
             , value = Dogs
-            , selectedValue =
-                if selected then
-                    Just Dogs
-
-                else
-                    state.selectedValue
+            , selectedValue = state.selectedValue
             , valueToString = selectionToString
             }
             (RadioButton.onSelect Select :: attributes)
@@ -152,12 +129,12 @@ type alias TestContext =
     ProgramTest Model Msg ()
 
 
-program : Bool -> List (RadioButton.Attribute Selection Msg) -> ProgramTest Model Msg ()
-program selected attributes =
+program : List (RadioButton.Attribute Selection Msg) -> ProgramTest Model Msg ()
+program attributes =
     ProgramTest.createSandbox
         { init = init
         , update = update
-        , view = view selected attributes >> toUnstyled
+        , view = view attributes >> toUnstyled
         }
         |> ProgramTest.start ()
 
