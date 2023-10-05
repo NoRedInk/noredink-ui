@@ -300,7 +300,7 @@ view { label, selected } attributes =
                     |> Maybe.map
                         (\msg ->
                             [ EventExtras.onClickStopPropagation msg
-                            , css [ cursor pointer ]
+                            , css [ cursor pointer, zIndex (int 1) ]
                             ]
                         )
                     |> Maybe.withDefault []
@@ -535,6 +535,7 @@ viewIcon styles icon =
                 , backgroundColor Colors.white
                 , height (Css.px checkboxIconHeight)
                 , borderRadius (px 4)
+                , zIndex (int 2)
                 ]
             ]
             [ Nri.Ui.Svg.V1.toHtml (Nri.Ui.Svg.V1.withCss styles icon)
