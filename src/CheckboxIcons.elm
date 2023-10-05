@@ -67,7 +67,7 @@ unchecked idSuffix =
             , SvgAttributes.css
                 [ Css.hover
                     [ Css.Global.descendants
-                        [ Css.Global.typeSelector "rect"
+                        [ Css.Global.rect
                             [ Css.fill Colors.frost
                             , Css.property "stroke" (toCssString Colors.azure)
                             ]
