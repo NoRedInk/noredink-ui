@@ -395,7 +395,6 @@ enabledLabelCss : List Style
 enabledLabelCss =
     [ textStyle
     , cursor pointer
-    , color Colors.gray20
     ]
 
 
