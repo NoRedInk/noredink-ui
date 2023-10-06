@@ -535,6 +535,7 @@ viewIcon styles icon =
                 , height (Css.px checkboxIconHeight)
                 , borderRadius (px 4)
                 , zIndex (int 2)
+                , position relative -- for z index to work
                 ]
             ]
             [ Nri.Ui.Svg.V1.toHtml (Nri.Ui.Svg.V1.withCss styles icon)
