@@ -9,6 +9,7 @@ module CheckboxIcons exposing
     )
 
 import Css
+import Css.Global
 import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Svg.V1 exposing (Svg)
@@ -63,6 +64,16 @@ unchecked idSuffix =
             , SvgAttributes.strokeWidth "1"
             , SvgAttributes.fill "none"
             , SvgAttributes.fillRule "evenodd"
+            , SvgAttributes.css
+                [ Css.hover
+                    [ Css.Global.descendants
+                        [ Css.Global.rect
+                            [ Css.fill Colors.frost
+                            , Css.property "stroke" (toCssString Colors.azure)
+                            ]
+                        ]
+                    ]
+                ]
             ]
             [ Svg.g
                 []
