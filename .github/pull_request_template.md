@@ -60,7 +60,7 @@ Please link to any relevant context and stories.
   - [ ] [a11y-volunteer-reviewers](https://github.com/orgs/NoRedInk/teams/volunteer-a11y-reviewers) - Someone from this group will review your PR in full.
   - [ ]  [team-accessibilibats-a11ybats](https://github.com/orgs/NoRedInk/teams/team-accessibilibats-a11ybats) - Someone from this group will review your PR for ACCESSIBILITY ONLY.
   - [ ]  Someone from your team who can review requirements from your team's perspective. (This could be the same person from the [a11y-volunteer-reviewers](https://github.com/orgs/NoRedInk/teams/volunteer-a11y-reviewers) group if you'd like.)
-  - [ ]  If there are user-facing changes, a designer:
+  - [ ]  If there are user-facing changes, a designer. (You may want to direct your designer to the [deploy preview](https://github.com/NoRedInk/noredink-ui#reviews--preview-environments) for easy review):
     - For writing-related component changes, add Stacey (staceyadams)
     - For quiz engine-related components, add Ravi (ravi-morbia)
     - For a11y-related changes to general components, add Ben (bendansby)
@@ -104,7 +104,7 @@ Please link to any relevant context and stories.
   - [ ] [a11y-volunteer-reviewers](https://github.com/orgs/NoRedInk/teams/volunteer-a11y-reviewers) - Someone from this group will review your PR in full.
   - [ ]  [team-accessibilibats-a11ybats](https://github.com/orgs/NoRedInk/teams/team-accessibilibats-a11ybats) - Someone from this group will review your PR for ACCESSIBILITY ONLY.
   - [ ]  Someone from your team who can review requirements from your team's perspective. (This could be the same person from the [a11y-volunteer-reviewers](https://github.com/orgs/NoRedInk/teams/volunteer-a11y-reviewers) group if you'd like.)
-  - [ ]  If there are user-facing changes, a designer:
+  - [ ]  If there are user-facing changes, a designer. (You may want to direct your designer to the [deploy preview](https://github.com/NoRedInk/noredink-ui#reviews--preview-environments) for easy review):
     - For writing-related component changes, add Stacey (staceyadams)
     - For quiz engine-related components, add Ravi (ravi-morbia)
     - For a11y-related changes to general components, add Ben (bendansby)
