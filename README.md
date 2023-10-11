@@ -117,6 +117,15 @@ You can run the Puppeteer tests for only one component by passing the name of th
 Travis will run `shake ci` to verify everything looks good.
 You can run this locally to catch errors before you push!
 
+## Reviews & preview environments
+Follow the PR template to ensure your PR is reviewed by the appropriate parties.
+
+Netlify provides a preview environment on the web for each PR. You can share the preview environment URL to allow anyone to preview your changes, even if they don't run local code. This allows for easy functional and visual non-code reviews.
+
+To access the preview environment URL, look in the CI area of your PR for the "deploy preview" row. The "Details" link is the preview environment URL. The URL will be something like `https://deploy-preview-PrIdNum--noredink-ui.netlify.app/`
+
+![Screenshot of the GitHub CI section annotated to point to the Details link](assets/preview-url.jpg)
+
 ## Examples
 
 This repo contains an app showcasing all of these UI widgets.
