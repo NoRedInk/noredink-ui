@@ -1084,6 +1084,7 @@ type alias ColorPalette =
     , hoverBackground : Css.Color
     , text : Css.Color
     , hoverText : Css.Color
+    , visitedHoverText : Css.Color
     , border : Maybe Css.Color
     , shadow : Css.Color
     }
@@ -1095,6 +1096,7 @@ primaryColors =
     , hoverBackground = Colors.azureDark
     , text = Colors.white
     , hoverText = Colors.white
+    , visitedHoverText = Colors.white
     , border = Nothing
     , shadow = Colors.azureDark
     }
@@ -1106,6 +1108,7 @@ secondaryColors =
     , hoverBackground = Colors.glacier
     , text = Colors.azure
     , hoverText = Colors.azureDark
+    , visitedHoverText = Colors.azure
     , border = Just <| Colors.azure
     , shadow = Colors.azure
     }
@@ -1117,6 +1120,7 @@ tertiaryColors =
     , hoverBackground = Colors.frost
     , text = Colors.navy
     , hoverText = Colors.navy
+    , visitedHoverText = Colors.navy
     , border = Just <| Colors.gray75
     , shadow = Colors.gray75
     }
@@ -1128,6 +1132,7 @@ dangerSecondaryColors =
     , hoverBackground = Colors.redLight
     , text = Colors.red
     , hoverText = Colors.redDark
+    , visitedHoverText = Colors.red
     , border = Just <| Colors.red
     , shadow = Colors.red
     }
@@ -1139,6 +1144,7 @@ dangerColors =
     , hoverBackground = Colors.redDark
     , text = Colors.white
     , hoverText = Colors.white
+    , visitedHoverText = Colors.white
     , border = Nothing
     , shadow = Colors.redDark
     }
@@ -1149,7 +1155,8 @@ premiumColors =
     { background = Colors.yellow
     , hoverBackground = Colors.ochre
     , text = Colors.navy
-    , hoverText = Colors.navy
+    , hoverText = Colors.gray20
+    , visitedHoverText = Colors.gray20
     , border = Nothing
     , shadow = Colors.ochre
     }
@@ -1166,6 +1173,7 @@ colorStyle defaultStyle state =
             , hoverBackground = Colors.gray92
             , text = Colors.gray45
             , hoverText = Colors.gray45
+            , visitedHoverText = Colors.gray45
             , border = Just <| Colors.gray75
             , shadow = Colors.gray75
             }
@@ -1175,6 +1183,7 @@ colorStyle defaultStyle state =
             , hoverBackground = Colors.purple
             , text = Colors.white
             , hoverText = Colors.white
+            , visitedHoverText = Colors.white
             , border = Nothing
             , shadow = Colors.purple
             }
@@ -1184,6 +1193,7 @@ colorStyle defaultStyle state =
             , hoverBackground = Colors.glacier
             , text = Colors.azure
             , hoverText = Colors.azureDark
+            , visitedHoverText = Colors.azure
             , border = Just <| Colors.gray75
             , shadow = Colors.gray75
             }
@@ -1193,6 +1203,7 @@ colorStyle defaultStyle state =
             , hoverBackground = Colors.glacier
             , text = Colors.navy
             , hoverText = Colors.navy
+            , visitedHoverText = Colors.navy
             , border = Nothing
             , shadow = Colors.glacier
             }
@@ -1202,6 +1213,7 @@ colorStyle defaultStyle state =
             , hoverBackground = Colors.greenDarkest
             , text = Colors.white
             , hoverText = Colors.white
+            , visitedHoverText = Colors.white
             , border = Nothing
             , shadow = Colors.greenDarkest
             }
@@ -1234,7 +1246,10 @@ applyColorStyle colorPalette =
             , Css.disabled [ Css.backgroundColor colorPalette.background ]
             , Css.Global.withAttribute "aria-disabled=true" [ Css.backgroundColor colorPalette.background ]
             ]
-        , Css.visited [ Css.color colorPalette.text ]
+        , Css.visited
+            [ Css.color colorPalette.text
+            , Css.hover [ Css.color colorPalette.visitedHoverText ]
+            ]
         ]
 
 
