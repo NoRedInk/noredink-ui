@@ -260,4 +260,9 @@ all =
         , ( "globe", UiIcon.globe, [] )
         ]
       )
+    , ( "Grading Assistant"
+      , [ ( "gradingAssistant", UiIcon.gradingAssistant, [] )
+        , ( "manuallyGraded", UiIcon.manuallyGraded, [] )
+        ]
+      )
     ]
