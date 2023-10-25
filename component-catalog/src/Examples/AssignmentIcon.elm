@@ -81,6 +81,7 @@ all =
         , ( "guidedDraftCircled", AssignmentIcon.guidedDraftCircled, [] )
         , ( "peerReviewCircled", AssignmentIcon.peerReviewCircled, [] )
         , ( "selfReviewCircled", AssignmentIcon.selfReviewCircled, [] )
+        , ( "gradingAssistantCircled", AssignmentIcon.gradingAssistantCircled, [] )
         ]
       )
     , ( "Stages"
