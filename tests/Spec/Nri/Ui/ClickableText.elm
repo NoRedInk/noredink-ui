@@ -36,6 +36,8 @@ elementTests =
     [ testAsButton
     , testAsAnchor
     , testIconAsSvg
+    , testRightIconAsSvg
+    , testLinkExternalIconAsSvg
     ]
 
 
@@ -62,6 +64,24 @@ testIconAsSvg =
     test "renders an svg element when an icon is provided" <|
         \() ->
             program Button [ ClickableText.icon UiIcon.arrowLeft ]
+                |> ensureViewHas [ tag "svg" ]
+                |> done
+
+
+testRightIconAsSvg : Test
+testRightIconAsSvg =
+    test "renders an svg element when a right icon is provided" <|
+        \() ->
+            program Button [ ClickableText.rightIcon UiIcon.arrowLeft ]
+                |> ensureViewHas [ tag "svg" ]
+                |> done
+
+
+testLinkExternalIconAsSvg : Test
+testLinkExternalIconAsSvg =
+    test "renders an svg element when an external link is provided" <|
+        \() ->
+            program Link [ ClickableText.linkExternal "https://example.com" ]
                 |> ensureViewHas [ tag "svg" ]
                 |> done
 
