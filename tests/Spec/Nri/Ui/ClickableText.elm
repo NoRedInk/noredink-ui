@@ -4,7 +4,6 @@ import Accessibility.Aria as Aria
 import Accessibility.Role as Role
 import Html.Attributes as Attributes
 import Html.Styled exposing (..)
-import Nri.Test.KeyboardHelpers.V1 as KeyboardHelpers
 import Nri.Test.MouseHelpers.V1 as MouseHelpers
 import Nri.Ui.ClickableText.V3 as ClickableText
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -269,14 +268,6 @@ programButton attributes =
         , view = viewButton attributes >> toUnstyled
         }
         |> ProgramTest.start ()
-
-
-keyboardHelperConfig : KeyboardHelpers.Config (ProgramTest model msg effect) Selector.Selector (Query.Single msg)
-keyboardHelperConfig =
-    { programTest_simulateDomEvent = ProgramTest.simulateDomEvent
-    , query_find = Query.find
-    , event_custom = Event.custom
-    }
 
 
 mouseHelperConfig : MouseHelpers.Config (ProgramTest model msg effect) Selector.Selector (Query.Single msg)
