@@ -1,4 +1,4 @@
-module Spec.Nri.Ui.ClickableText exposing (..)
+module Spec.Nri.Ui.ClickableText exposing (spec)
 
 import Accessibility.Aria as Aria
 import Accessibility.Role as Role
