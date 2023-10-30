@@ -212,11 +212,6 @@ type alias TestContext =
     ProgramTest Model Msg ()
 
 
-pressSpaceOnButton : TestContext -> TestContext
-pressSpaceOnButton =
-    KeyboardHelpers.pressSpace keyboardHelperConfig { targetDetails = [] } buttonSelectors
-
-
 clickOnButton : TestContext -> TestContext
 clickOnButton =
     MouseHelpers.click mouseHelperConfig buttonSelectors
