@@ -26,36 +26,31 @@ spec =
         ]
 
 
-type Type_
-    = Button
-    | Link
-
-
 elementTests : List Test
 elementTests =
     [ test "the `button` type renders as a button element" <|
         \() ->
-            program Button []
+            programButton []
                 |> ensureViewHas [ tag "button" ]
                 |> done
     , test "the `link` type renders as an anchor element" <|
         \() ->
-            program Link []
+            programLink []
                 |> ensureViewHas [ tag "a" ]
                 |> done
     , test "renders an svg element when an icon is provided" <|
         \() ->
-            program Button [ ClickableText.icon UiIcon.arrowLeft ]
+            programButton [ ClickableText.icon UiIcon.arrowLeft ]
                 |> ensureViewHas [ tag "svg" ]
                 |> done
     , test "renders an svg element when a right icon is provided" <|
         \() ->
-            program Button [ ClickableText.rightIcon UiIcon.arrowLeft ]
+            programButton [ ClickableText.rightIcon UiIcon.arrowLeft ]
                 |> ensureViewHas [ tag "svg" ]
                 |> done
     , test "renders an svg element when an external link is provided" <|
         \() ->
-            program Link [ ClickableText.linkExternal "https://example.com" ]
+            programLink [ ClickableText.linkExternal "https://example.com" ]
                 |> ensureViewHas [ tag "svg" ]
                 |> done
     ]
@@ -65,35 +60,35 @@ attributeTests : List Test
 attributeTests =
     [ test "a link has the `href` attribute set to the provided value" <|
         \() ->
-            program Link [ ClickableText.href "https://example.com" ]
+            programLink [ ClickableText.href "https://example.com" ]
                 |> ensureViewHas
                     [ attribute (Attributes.href "https://example.com")
                     ]
                 |> done
     , test "an external link has the `href` attribute set to the provided value" <|
         \() ->
-            program Link [ ClickableText.linkExternal "https://example.com" ]
+            programLink [ ClickableText.linkExternal "https://example.com" ]
                 |> ensureViewHas
                     [ attribute (Attributes.href "https://example.com")
                     ]
                 |> done
     , test "a default link has the `target` attribute set to `\"_self\"`" <|
         \() ->
-            program Link [ ClickableText.href "https://example.com" ]
+            programLink [ ClickableText.href "https://example.com" ]
                 |> ensureViewHas
                     [ attribute (Attributes.target "_self")
                     ]
                 |> done
     , test "an external link has the `target` attribute set to `\"_blank\"`" <|
         \() ->
-            program Link [ ClickableText.linkExternal "https://example.com" ]
+            programLink [ ClickableText.linkExternal "https://example.com" ]
                 |> ensureViewHas
                     [ attribute (Attributes.target "_blank")
                     ]
                 |> done
     , test "an external link has the `rel` attribute set to `\"noopener noreferrer\"`" <|
         \() ->
-            program Link [ ClickableText.linkExternal "https://example.com" ]
+            programLink [ ClickableText.linkExternal "https://example.com" ]
                 |> ensureViewHas
                     [ attribute (Attributes.rel "noopener noreferrer")
                     ]
@@ -105,70 +100,70 @@ iconAccessibilityTests : List Test
 iconAccessibilityTests =
     [ test "the icon has the `aria-hidden` attribute set to `\"true\"`" <|
         \() ->
-            program Button [ ClickableText.icon UiIcon.arrowLeft ]
+            programButton [ ClickableText.icon UiIcon.arrowLeft ]
                 |> ensureViewHas
                     [ attribute (Aria.hidden True)
                     ]
                 |> done
     , test "the icon has the `role` attribute set to `\"img\"`" <|
         \() ->
-            program Button [ ClickableText.icon UiIcon.arrowLeft ]
+            programButton [ ClickableText.icon UiIcon.arrowLeft ]
                 |> ensureViewHas
                     [ attribute Role.img
                     ]
                 |> done
     , test "the icon has the `focusable` attribute set to `\"false\"`" <|
         \() ->
-            program Button [ ClickableText.icon UiIcon.arrowLeft ]
+            programButton [ ClickableText.icon UiIcon.arrowLeft ]
                 |> ensureViewHas
                     [ attribute (Attributes.attribute "focusable" "false")
                     ]
                 |> done
     , test "the right icon has the `aria-hidden` attribute set to `\"true\"`" <|
         \() ->
-            program Button [ ClickableText.rightIcon UiIcon.arrowLeft ]
+            programButton [ ClickableText.rightIcon UiIcon.arrowLeft ]
                 |> ensureViewHas
                     [ attribute (Aria.hidden True)
                     ]
                 |> done
     , test "the right icon has the `role` attribute set to `\"img\"`" <|
         \() ->
-            program Button [ ClickableText.rightIcon UiIcon.arrowLeft ]
+            programButton [ ClickableText.rightIcon UiIcon.arrowLeft ]
                 |> ensureViewHas
                     [ attribute Role.img
                     ]
                 |> done
     , test "the right icon has the `focusable` attribute set to `\"false\"`" <|
         \() ->
-            program Button [ ClickableText.rightIcon UiIcon.arrowLeft ]
+            programButton [ ClickableText.rightIcon UiIcon.arrowLeft ]
                 |> ensureViewHas
                     [ attribute (Attributes.attribute "focusable" "false")
                     ]
                 |> done
     , test "the `aria-hidden` attribute is not present for an external link icon" <|
         \() ->
-            program Link [ ClickableText.linkExternal "https://example.com" ]
+            programLink [ ClickableText.linkExternal "https://example.com" ]
                 |> ensureViewHasNot
                     [ attribute (Aria.hidden True)
                     ]
                 |> done
     , test "the external link icon has the `role` attribute set to `\"img\"`" <|
         \() ->
-            program Link [ ClickableText.linkExternal "https://example.com" ]
+            programLink [ ClickableText.linkExternal "https://example.com" ]
                 |> ensureViewHas
                     [ attribute Role.img
                     ]
                 |> done
     , test "the external link icon has the `focusable` attribute set to `\"false\"`" <|
         \() ->
-            program Link [ ClickableText.linkExternal "https://example.com" ]
+            programLink [ ClickableText.linkExternal "https://example.com" ]
                 |> ensureViewHas
                     [ attribute (Attributes.attribute "focusable" "false")
                     ]
                 |> done
     , test "the external link icon has the `title` tag set to `\"Opens in a new tab\"`" <|
         \() ->
-            program Link [ ClickableText.linkExternal "https://example.com" ]
+            programLink [ ClickableText.linkExternal "https://example.com" ]
                 |> ensureViewHas
                     [ tag "title"
                     , containing [ Selector.text "Opens in a new tab" ]
@@ -181,24 +176,24 @@ disabledStateTests : List Test
 disabledStateTests =
     [ test "the `aria-disabled` attribute is not present for an enabled ClickableText" <|
         \() ->
-            program Button []
+            programButton []
                 |> ensureViewHasNot [ attribute (Aria.disabled True) ]
                 |> done
     , test "the `aria-disabled` attribute is present and set to `\"true\"` for a disabled ClickableText" <|
         \() ->
-            program Button [ ClickableText.disabled True ]
+            programButton [ ClickableText.disabled True ]
                 |> ensureViewHas [ attribute (Aria.disabled True) ]
                 |> done
     , test "is clickable when enabled" <|
         \() ->
-            program Button
+            programButton
                 [ ClickableText.onClick NoOp
                 ]
                 |> clickOnButton
                 |> done
     , test "is not clickable when disabled" <|
         \() ->
-            program Button
+            programButton
                 [ ClickableText.disabled True
                 ]
                 |> clickOnButton
@@ -247,26 +242,36 @@ update msg state =
             state
 
 
-view : Type_ -> List (ClickableText.Attribute Msg) -> Model -> Html Msg
-view type_ attributes _ =
+viewLink : List (ClickableText.Attribute Msg) -> Model -> Html Msg
+viewLink attributes _ =
     div []
-        (case type_ of
-            Button ->
-                [ ClickableText.button "Accessible name" attributes
-                ]
-
-            Link ->
-                [ ClickableText.link "Accessible name" attributes
-                ]
-        )
+        [ ClickableText.link "Accessible name" attributes
+        ]
 
 
-program : Type_ -> List (ClickableText.Attribute Msg) -> TestContext
-program type_ attributes =
+viewButton : List (ClickableText.Attribute Msg) -> Model -> Html Msg
+viewButton attributes _ =
+    div []
+        [ ClickableText.button "Accessible name" attributes
+        ]
+
+
+programLink : List (ClickableText.Attribute Msg) -> TestContext
+programLink attributes =
     ProgramTest.createSandbox
         { init = init
         , update = update
-        , view = view type_ attributes >> toUnstyled
+        , view = viewLink attributes >> toUnstyled
+        }
+        |> ProgramTest.start ()
+
+
+programButton : List (ClickableText.Attribute Msg) -> TestContext
+programButton attributes =
+    ProgramTest.createSandbox
+        { init = init
+        , update = update
+        , view = viewButton attributes >> toUnstyled
         }
         |> ProgramTest.start ()
 
