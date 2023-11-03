@@ -250,7 +250,7 @@ Example:
           , usage = """
 Use when all of the following are true:
 - the tooltip trigger only opens the tooltip without doing anything else
-- the tooltip trigger ***isn't*** a "?" icon (Use Tooltip.viewToggleTip	for this case.)
+- the tooltip trigger ***isn't*** a "?" icon (Use Tooltip.viewToggleTip for this case.)
 
 This type may contain interactive elements such as links.
         """
