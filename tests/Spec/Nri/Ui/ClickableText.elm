@@ -57,7 +57,17 @@ elementTests =
 
 attributeTests : List Test
 attributeTests =
-    [ test "a link has the `href` attribute set to the provided value" <|
+    [ test "a button has the `type` attribute set to `\"button\"`" <|
+        \() ->
+            programButton []
+                |> ensureViewHas [ attribute (Attributes.type_ "button") ]
+                |> done
+    , test "a button with the `submit` type has the `type` attribute set to `\"submit\"`" <|
+        \() ->
+            programButton [ ClickableText.submit ]
+                |> ensureViewHas [ attribute (Attributes.type_ "submit") ]
+                |> done
+    , test "a link has the `href` attribute set to the provided value" <|
         \() ->
             programLink [ ClickableText.href "https://example.com" ]
                 |> ensureViewHas
@@ -198,6 +208,21 @@ disabledStateTests =
                 |> clickOnButton
                 |> done
                 |> expectFailure "Event.expectEvent: I found a node, but it does not listen for \"click\" events like I expected it would."
+    , test "the `type` attribute is present and set to `\"button\"` for a disabled ClickableText" <|
+        \() ->
+            programButton
+                [ ClickableText.disabled True
+                ]
+                |> ensureViewHas [ attribute (Attributes.type_ "button") ]
+                |> done
+    , test "the `type` attribute is present and set to `\"button\"` for a disabled ClickableText with the `submit` type" <|
+        \() ->
+            programButton
+                [ ClickableText.disabled True
+                , ClickableText.submit
+                ]
+                |> ensureViewHas [ attribute (Attributes.type_ "button") ]
+                |> done
     ]
 
 
