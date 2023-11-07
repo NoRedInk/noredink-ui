@@ -469,6 +469,7 @@ gradingAssistantCircled =
         ]
 
 
+{-| -}
 dailyWritingCircled : Nri.Ui.Svg.V1.Svg
 dailyWritingCircled =
     Nri.Ui.Svg.V1.init "0 0 70 70"
