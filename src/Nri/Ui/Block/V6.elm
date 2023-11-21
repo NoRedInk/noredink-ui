@@ -1,5 +1,5 @@
 module Nri.Ui.Block.V6 exposing
-    ( view, Attribute
+    ( view, renderReadaloud, Attribute
     , plaintext
     , Content, content
     , phrase, space, bold, italic
@@ -20,7 +20,12 @@ module Nri.Ui.Block.V6 exposing
     - Set a maximum blank width of ~60 characters as blanks won't line break
     - Remove `labelState` as we are shifting reposibility to consumers to animate labels via `labelCss`
 
-@docs view, Attribute
+
+## Patch changes
+
+    Add renderReadaloud
+
+@docs view, renderReadaloud, Attribute
 
 
 ## Content
@@ -83,6 +88,26 @@ view attributes =
     attributes
         |> List.foldl (\(Attribute attribute) b -> attribute b) defaultConfig
         |> render
+
+
+renderReadaloud : List (Attribute msg) -> String
+renderReadaloud attributes =
+    let
+        renderContentReadAloud c =
+            case c of
+                Word string ->
+                    [ string ]
+
+                Blank _ ->
+                    [ "blank" ]
+
+                Markdown _ subContent ->
+                    List.concatMap renderContentReadAloud subContent
+    in
+    List.foldl (\(Attribute attribute) b -> attribute b) defaultConfig attributes
+        |> .content
+        |> List.concatMap renderContentReadAloud
+        |> String.join ""
 
 
 
