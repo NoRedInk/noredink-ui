@@ -1,5 +1,5 @@
 module Nri.Ui.Block.V6 exposing
-    ( view, renderReadaloud, Attribute
+    ( view, renderReadAloud, Attribute
     , plaintext
     , Content, content
     , phrase, space, bold, italic
@@ -23,9 +23,9 @@ module Nri.Ui.Block.V6 exposing
 
 ## Patch changes
 
-    Add renderReadaloud
+    Add renderReadAloud
 
-@docs view, renderReadaloud, Attribute
+@docs view, renderReadAloud, Attribute
 
 
 ## Content
@@ -89,9 +89,11 @@ view attributes =
         |> List.foldl (\(Attribute attribute) b -> attribute b) defaultConfig
         |> render
 
-{-| Render a block to a ReadAloud friendly string.  -}
-renderReadaloud : List (Attribute msg) -> String
-renderReadaloud attributes =
+
+{-| Render a block to a ReadAloud friendly string.
+-}
+renderReadAloud : List (Attribute msg) -> String
+renderReadAloud attributes =
     let
         renderContentReadAloud c =
             case c of
