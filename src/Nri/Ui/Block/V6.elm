@@ -89,7 +89,7 @@ view attributes =
         |> List.foldl (\(Attribute attribute) b -> attribute b) defaultConfig
         |> render
 
-
+{-| Render a block to a ReadAloud friendly string.  -}
 renderReadaloud : List (Attribute msg) -> String
 renderReadaloud attributes =
     let
