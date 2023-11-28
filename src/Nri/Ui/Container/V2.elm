@@ -4,6 +4,7 @@ module Nri.Ui.Container.V2 exposing
     , css, notMobileCss, mobileCss, quizEngineMobileCss
     , paddingPx
     , paragraph, plaintext, markdown, html
+    , topLeftIcon, hideIconShadow
     , gray, default, disabled, invalid, pillow, buttony
     )
 
@@ -55,6 +56,7 @@ module Nri.Ui.Container.V2 exposing
 ## Content
 
 @docs paragraph, plaintext, markdown, html
+@docs topLeftIcon, hideIconShadow
 
 
 ## Themes
@@ -67,13 +69,16 @@ import Content
 import Css exposing (..)
 import Css.Media exposing (withMedia)
 import Html.Styled as Html exposing (..)
-import Html.Styled.Attributes
+import Html.Styled.Attributes as Attr
 import MarkdownStyles
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Shadows.V1 as Shadows
+import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Svg.Styled as RootSvg
+import Svg.Styled.Attributes as SvgAttr
 
 
 {-| -}
@@ -86,10 +91,42 @@ type Attribute msg
 type alias Settings msg =
     { containerType : String
     , padding : Float
-    , css : List Css.Style
+    , css : List Style
     , content : List (Html msg)
     , attributes : List (Html.Attribute msg)
+    , topLeftIcon : Maybe ( Svg, TopLeftIconShadow )
     }
+
+
+type TopLeftIconShadow
+    = Shown
+    | Hidden
+
+
+{-| Add an icon in the top left corner of the container.
+-}
+topLeftIcon : Svg -> Attribute msg
+topLeftIcon icon =
+    Attribute <|
+        \config ->
+            { config
+                | topLeftIcon = Just ( icon, Shown )
+            }
+
+
+hideIconShadow : Attribute msg
+hideIconShadow =
+    Attribute <|
+        \config ->
+            { config
+                | topLeftIcon =
+                    case config.topLeftIcon of
+                        Just ( icon, _ ) ->
+                            Just ( icon, Hidden )
+
+                        _ ->
+                            Nothing
+            }
 
 
 {-| Changes the padding inside the container border around the content.
@@ -125,11 +162,11 @@ testId id_ =
 {-| -}
 id : String -> Attribute msg
 id id_ =
-    custom [ Html.Styled.Attributes.id id_ ]
+    custom [ Attr.id id_ ]
 
 
 {-| -}
-css : List Css.Style -> Attribute msg
+css : List Style -> Attribute msg
 css css_ =
     Attribute <| \config -> { config | css = config.css ++ css_ }
 
@@ -182,12 +219,55 @@ view attributes =
             List.foldl (\(Attribute set) -> set)
                 defaultSettings
                 attributes
+
+        shadowCircle =
+            div
+                [ Attr.css
+                    [ position absolute
+                    , top (px 14)
+                    , left (px -14)
+                    , Css.zIndex (Css.int -1)
+                    , Shadows.high
+                    , width (px 28)
+                    , height (px 28)
+                    , borderRadius (px 14)
+                    , Css.boxShadow5
+                        -- see Nri.Ui.Shadows.V1.high
+                        (px -2)
+                        (px 2)
+                        (px 3)
+                        zero
+                        (hsla 0 0 0 0.075)
+                    ]
+                ]
+                []
     in
     Nri.Ui.styled div
         settings.containerType
         (padding (px settings.padding) :: settings.css)
         settings.attributes
-        settings.content
+        (case settings.topLeftIcon of
+            Just ( icon, showShadow ) ->
+                (icon
+                    |> Svg.withWidth (px 28)
+                    |> Svg.withHeight (px 28)
+                    |> Svg.withCss
+                        [ position absolute
+                        , top (px 14)
+                        , left (px -14)
+                        ]
+                    |> Svg.toHtml
+                )
+                    :: (if showShadow == Shown then
+                            shadowCircle :: settings.content
+
+                        else
+                            settings.content
+                       )
+
+            Nothing ->
+                settings.content
+        )
 
 
 {-| Used for the default container case.
@@ -204,12 +284,14 @@ defaultSettings =
     , css = defaultStyles
     , content = []
     , attributes = []
+    , topLeftIcon = Nothing
     }
 
 
-defaultStyles : List Css.Style
+defaultStyles : List Style
 defaultStyles =
-    [ borderRadius (px 8)
+    [ position relative
+    , borderRadius (px 8)
     , border3 (px 1) solid Colors.gray92
     , Shadows.low
     , backgroundColor Colors.white
@@ -229,9 +311,10 @@ gray =
             }
 
 
-grayStyles : List Css.Style
+grayStyles : List Style
 grayStyles =
-    [ borderRadius (px 8)
+    [ position relative
+    , borderRadius (px 8)
     , backgroundColor Colors.gray96
     ]
 
@@ -248,9 +331,10 @@ disabled =
             }
 
 
-disabledStyles : List Css.Style
+disabledStyles : List Style
 disabledStyles =
-    [ borderRadius (px 8)
+    [ position relative
+    , borderRadius (px 8)
     , border3 (px 1) solid Colors.gray92
     , backgroundColor Colors.white
     , color Colors.gray45
@@ -270,9 +354,10 @@ invalid =
             }
 
 
-invalidStyles : List Css.Style
+invalidStyles : List Style
 invalidStyles =
-    [ borderRadius (px 8)
+    [ position relative
+    , borderRadius (px 8)
     , border3 (px 1) solid Colors.purpleLight
     , boxShadow5 zero (px 1) (px 1) zero Colors.purple
     , backgroundColor Colors.purpleLight
@@ -294,7 +379,8 @@ pillow =
 
 pillowStyles : List Style
 pillowStyles =
-    [ borderRadius (px 20)
+    [ position relative
+    , borderRadius (px 20)
     , border3 (px 1) solid Colors.gray92
     , Shadows.medium
     , backgroundColor Colors.white
@@ -319,7 +405,8 @@ buttony =
 
 buttonyStyles : List Style
 buttonyStyles =
-    [ borderRadius (px 20)
+    [ position relative
+    , borderRadius (px 20)
     , border3 (px 1) solid Colors.gray85
     , borderBottom3 (px 4) solid Colors.gray85
     , backgroundColor Colors.white
