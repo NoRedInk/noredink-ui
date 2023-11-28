@@ -20,6 +20,7 @@ spec =
         , describe "labelId" labelIdSpec
         , describe "labelMarkdown" labelMarkdownSpec
         , describe "getLabelPositions" getLabelPositionsSpec
+        , describe "renderReadAloud" renderReadAloudTests
         ]
 
 
@@ -636,6 +637,67 @@ getLabelPositionsSpec =
                      ]
                         |> Dict.fromList
                     )
+    ]
+
+
+renderReadAloudTests : List Test
+renderReadAloudTests =
+    [ test "Simple Text" <|
+        \_ ->
+            Block.renderReadAloud [ Block.plaintext "Simple Text" ]
+                |> Expect.equal "Simple Text"
+    , test "Simple emphasize block" <|
+        \_ ->
+            Block.renderReadAloud [ Block.emphasize, Block.content (Block.phrase "Simple Text") ]
+                |> Expect.equal "Simple Text"
+    , test "Simple blank" <|
+        \_ ->
+            Block.renderReadAloud []
+                |> Expect.equal "blank"
+    , test "Bold markup is ignored" <|
+        \_ ->
+            Block.renderReadAloud
+                [ Block.content
+                    (List.concat
+                        [ Block.phrase "Hello there "
+                        , [ Block.bold (Block.phrase "Mr.") ]
+                        , Block.phrase " President"
+                        ]
+                    )
+                ]
+                |> Expect.equal "Hello there Mr. President"
+    , test "Italic markup is ignored" <|
+        \_ ->
+            Block.renderReadAloud
+                [ Block.content
+                    (List.concat
+                        [ Block.phrase "Hello there "
+                        , [ Block.italic (Block.phrase "Mr.") ]
+                        , Block.phrase " President"
+                        ]
+                    )
+                ]
+                |> Expect.equal "Hello there Mr. President"
+    , test "Blanks in content are read" <|
+        \_ ->
+            Block.renderReadAloud
+                [ Block.content
+                    (List.concat
+                        [ Block.phrase "Hello there "
+                        , [ Block.blank { widthInChars = 5 } ]
+                        , Block.phrase " President"
+                        ]
+                    )
+                ]
+                |> Expect.equal "Hello there blank President"
+    , test "Label text is ignored" <|
+        \_ ->
+            Block.renderReadAloud
+                [ Block.emphasize
+                , Block.plaintext "Hello there Mr. President"
+                , Block.label "Read this"
+                ]
+                |> Expect.equal "Hello there Mr. President"
     ]
 
 
