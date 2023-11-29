@@ -611,8 +611,8 @@ controlMarker =
             )
         )
         |> Control.field "highlightColor" (backgroundHighlightColors 0)
-        |> Control.field "hoverColor" (backgroundHighlightColors 2)
-        |> Control.field "hoverHighlightColor" (backgroundHighlightColors 4)
+        |> Control.field "hoverColor" (backgroundHighlightColors 3)
+        |> Control.field "hoverHighlightColor" (backgroundHighlightColors 6)
         |> Control.field "name" (Control.maybe True (Control.string "Claim"))
 
 

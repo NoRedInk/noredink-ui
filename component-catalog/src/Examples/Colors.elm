@@ -169,18 +169,25 @@ uncategorizedColors =
 backgroundHighlightColors : List ColorExample
 backgroundHighlightColors =
     [ ( "highlightYellow", Colors.highlightYellow, "Yellow background highlights" )
+    , ( "highlightYellowLightest", Colors.highlightYellowLightest, "Lightest yellow background highlights" )
     , ( "highlightYellowDark", Colors.highlightYellowDark, "Dark yellow background highlights" )
     , ( "highlightCyan", Colors.highlightCyan, "Cyan background highlights" )
+    , ( "highlightCyanLightest", Colors.highlightCyanLightest, "Lightest cyan background highlights" )
     , ( "highlightCyanDark", Colors.highlightCyanDark, "Dark cyan background highlights" )
     , ( "highlightMagenta", Colors.highlightMagenta, "Magenta background highlights" )
+    , ( "highlightMagentaLightest", Colors.highlightMagentaLightest, "Lightest magenta background highlights" )
     , ( "highlightMagentaDark", Colors.highlightMagentaDark, "Dark magenta background highlights" )
     , ( "highlightGreen", Colors.highlightGreen, "Green background highlights" )
+    , ( "highlightGreenLightest", Colors.highlightGreenLightest, "Lightest green background highlights" )
     , ( "highlightGreenDark", Colors.highlightGreenDark, "Dark green background highlights" )
     , ( "highlightBlue", Colors.highlightBlue, "Blue background highlights" )
+    , ( "highlightBlueLightest", Colors.highlightBlueLightest, "Lightest blue background highlights" )
     , ( "highlightBlueDark", Colors.highlightBlueDark, "Dark blue background highlights" )
     , ( "highlightPurple", Colors.highlightPurple, "Purple background highlights" )
+    , ( "highlightPurpleLightest", Colors.highlightPurpleLightest, "Lightest purple background highlights" )
     , ( "highlightPurpleDark", Colors.highlightPurpleDark, "Dark purple background highlights" )
     , ( "highlightBrown", Colors.highlightBrown, "Brown background highlights" )
+    , ( "highlightBrownLightest", Colors.highlightBrownLightest, "Lightest brown background highlights" )
     , ( "highlightBrownDark", Colors.highlightBrownDark, "Dark brown background highlights" )
     ]
 
