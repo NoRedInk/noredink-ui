@@ -295,18 +295,19 @@ viewContainer config =
             , Css.displayFlex
             , Css.property "gap" "30px"
             , Css.flexDirection Css.column
-
-            -- Approximately one line of text
-            , Css.minHeight (Css.px 53)
             , case config.theme of
                 Tip ->
                     Css.batch
-                        [ Css.padding2 (Css.px 15) (Css.px 25)
+                        [ -- Enough space that the character circle fits in the box
+                          Css.minHeight (Css.px 80)
+                        , Css.padding2 (Css.px 15) (Css.px 25)
                         ]
 
                 _ ->
                     Css.batch
-                        [ Css.borderLeft3 (Css.px 1) Css.solid Colors.gray85
+                        [ -- Approximately one line of text
+                          Css.minHeight (Css.px 53)
+                        , Css.borderLeft3 (Css.px 1) Css.solid Colors.gray85
                         , Css.borderTop3 (Css.px 1) Css.solid Colors.gray85
                         , Css.borderRight3 (Css.px 1) Css.solid Colors.gray85
                         , Css.borderTopLeftRadius (Css.px borderRounding)
