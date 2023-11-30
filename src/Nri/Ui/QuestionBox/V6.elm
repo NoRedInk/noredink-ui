@@ -13,6 +13,7 @@ module Nri.Ui.QuestionBox.V6 exposing
 
   - Background color in Tip theme changed from white to sunshine yellow
   - added html function
+  - Increase `minHeight` for tip question box so character fits
 
 Changes from V5:
 
