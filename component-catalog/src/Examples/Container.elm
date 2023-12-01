@@ -21,7 +21,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
-import Nri.Ui.Svg.V1 as Svg exposing (Svg)
+import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -161,7 +161,6 @@ init =
             |> CommonControls.notMobileCss { moduleName = moduleName, use = Container.notMobileCss }
             |> ControlExtra.listItem "content" controlContent
             |> ControlExtra.optionalListItem "topLeftIcon" iconOptions
-            |> ControlExtra.optionalBoolListItem "hideIconShadow" ( "Container.hideIconShadow", Container.hideIconShadow )
     }
 
 
@@ -348,7 +347,7 @@ iconOptions =
     in
     ((goodOptions
         ++ List.map
-            (Tuple.mapFirst (\name -> name ++ " -- not circular—hide the shadow if you must use"))
+            (Tuple.mapFirst (\name -> name ++ " -- not recommended"))
             badOptions
      )
         |> List.map

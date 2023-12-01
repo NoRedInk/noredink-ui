@@ -4,7 +4,7 @@ module Nri.Ui.Container.V2 exposing
     , css, notMobileCss, mobileCss, quizEngineMobileCss
     , paddingPx
     , paragraph, plaintext, markdown, html
-    , topLeftIcon, hideIconShadow
+    , topLeftIcon
     , gray, default, disabled, invalid, pillow, buttony
     )
 
@@ -25,6 +25,7 @@ module Nri.Ui.Container.V2 exposing
   - add notMobileCss, mobileCss, quizEngineMobileCss
   - use internal `Content` module
   - adds paragraph
+  - adds topLeftIcon
 
 
 ## Changes from V1
@@ -56,7 +57,7 @@ module Nri.Ui.Container.V2 exposing
 ## Content
 
 @docs paragraph, plaintext, markdown, html
-@docs topLeftIcon, hideIconShadow
+@docs topLeftIcon
 
 
 ## Themes
@@ -77,8 +78,6 @@ import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Svg.Styled as RootSvg
-import Svg.Styled.Attributes as SvgAttr
 
 
 {-| -}
@@ -94,38 +93,23 @@ type alias Settings msg =
     , css : List Style
     , content : List (Html msg)
     , attributes : List (Html.Attribute msg)
-    , topLeftIcon : Maybe ( Svg, TopLeftIconShadow )
+    , topLeftIcon : Maybe Svg
     }
 
 
-type TopLeftIconShadow
-    = Shown
-    | Hidden
-
-
-{-| Add an icon in the top left corner of the container.
+{-| Add a 28x28px icon in the top left corner of the container.
+This works best with our icons that are colored circles with the actual icon in white.
+Any transparency in the icon will show the edge of the container.
+By default this adds a drop shadow behind the icon. You can hide it with hideIconShadow.
+The shadow emanates from a copy of the icon z-indexed behind the container.
+This prevents the shadow from casting onto the container.
 -}
 topLeftIcon : Svg -> Attribute msg
 topLeftIcon icon =
     Attribute <|
         \config ->
             { config
-                | topLeftIcon = Just ( icon, Shown )
-            }
-
-
-hideIconShadow : Attribute msg
-hideIconShadow =
-    Attribute <|
-        \config ->
-            { config
-                | topLeftIcon =
-                    case config.topLeftIcon of
-                        Just ( icon, _ ) ->
-                            Just ( icon, Hidden )
-
-                        _ ->
-                            Nothing
+                | topLeftIcon = Just icon
             }
 
 
@@ -219,51 +203,41 @@ view attributes =
             List.foldl (\(Attribute set) -> set)
                 defaultSettings
                 attributes
-
-        shadowCircle =
-            div
-                [ Attr.css
-                    [ position absolute
-                    , top (px 14)
-                    , left (px -14)
-                    , Css.zIndex (Css.int -1)
-                    , Shadows.high
-                    , width (px 28)
-                    , height (px 28)
-                    , borderRadius (px 14)
-                    , Css.boxShadow5
-                        -- see Nri.Ui.Shadows.V1.high
-                        (px -2)
-                        (px 2)
-                        (px 3)
-                        zero
-                        (hsla 0 0 0 0.075)
-                    ]
-                ]
-                []
     in
     Nri.Ui.styled div
         settings.containerType
         (padding (px settings.padding) :: settings.css)
         settings.attributes
         (case settings.topLeftIcon of
-            Just ( icon, showShadow ) ->
-                (icon
-                    |> Svg.withWidth (px 28)
-                    |> Svg.withHeight (px 28)
-                    |> Svg.withCss
-                        [ position absolute
-                        , top (px 14)
-                        , left (px -14)
+            Just icon ->
+                let
+                    styledIcon =
+                        icon
+                            |> Svg.withWidth (px 28)
+                            |> Svg.withHeight (px 28)
+                            |> Svg.withCss
+                                [ position absolute
+                                , top (px 14)
+                                , left (px -14)
+                                ]
+                in
+                (styledIcon
+                    |> Svg.withCustom
+                        [ ExtraAttributes.nriDescription "top-left-icon"
                         ]
                     |> Svg.toHtml
                 )
-                    :: (if showShadow == Shown then
-                            shadowCircle :: settings.content
-
-                        else
-                            settings.content
+                    :: (styledIcon
+                            |> Svg.withCustom
+                                [ ExtraAttributes.nriDescription "top-left-icon-shadow"
+                                ]
+                            |> Svg.withCss
+                                [ Css.property "filter" "drop-shadow(-2px 2px 3px rgba(0, 0, 0, 0.075))"
+                                , Css.zIndex (Css.int -1)
+                                ]
+                            |> Svg.toHtml
                        )
+                    :: settings.content
 
             Nothing ->
                 settings.content
