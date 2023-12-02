@@ -84,7 +84,7 @@ all =
       )
     , ( "Writing II"
       , [ ( "quickWriteCircled", AssignmentIcon.quickWriteCircled, [] )
-      , ( "quickWriteCircledX", AssignmentIcon.quickWriteCircledX, [] )
+        , ( "quickWriteCircledX", AssignmentIcon.quickWriteCircledX, [] )
         , ( "guidedDraftCircled", AssignmentIcon.guidedDraftCircled, [] )
         , ( "guidedDraftCircledX", AssignmentIcon.guidedDraftCircledX, [] )
         , ( "peerReviewCircled", AssignmentIcon.peerReviewCircled, [] )
@@ -111,8 +111,9 @@ all =
       )
     , ( "Activities"
       , [ ( "assessment", AssignmentIcon.assessment, [] )
-      , ( "assessmentX", AssignmentIcon.assessmentX, [] )
+        , ( "assessmentX", AssignmentIcon.assessmentX, [] )
         , ( "standards", AssignmentIcon.standards, [] )
+
         -- , ( "standardsX", AssignmentIcon.standardsX, [] )
         , ( "writing", AssignmentIcon.writing, [] )
         , ( "writingX", AssignmentIcon.writingX, [] )
