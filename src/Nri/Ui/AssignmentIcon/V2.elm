@@ -7,10 +7,15 @@ module Nri.Ui.AssignmentIcon.V2 exposing
     , submitting, rating, revising
     , startPrimary, startSecondary
     , assessment, standards, writing, modules
-    , assessmentX, dailyWritingCircledX, guidedDraftCircledX, modulesX, passageQuizCircledX, peerReviewCircledX, planningDiagnosticCircledX, practiceCircledX, quickWriteCircledX, quizCircledX, selfReviewCircledX, startSecondaryX, unitDiagnosticCircledX, writingX
+    , assessmentX, dailyWritingCircledX, gradingAssistantCircledX, guidedDraftCircledX, modulesX, passageQuizCircledX, peerReviewCircledX, planningDiagnosticCircledX, practiceCircledX, quickWriteCircledX, quizCircledX, selfReviewCircledX, startPrimaryX, unitDiagnosticCircledX, writingX
     )
 
 {-|
+
+
+### Patch changes
+
+  - change circular path elements to circle elements using encircle helper
 
 
 # Quiz Engine
@@ -39,6 +44,11 @@ module Nri.Ui.AssignmentIcon.V2 exposing
 # Activities
 
 @docs assessment, standards, writing, modules
+
+
+# to be removed later
+
+@docs assessmentX, dailyWritingCircledX, gradingAssistantCircledX, guidedDraftCircledX, modulesX, passageQuizCircledX, peerReviewCircledX, planningDiagnosticCircledX, practiceCircledX, quickWriteCircledX, quizCircledX, selfReviewCircledX, startPrimaryX, unitDiagnosticCircledX, writingX
 
 
 # Example usage
@@ -298,8 +308,8 @@ revising =
 
 
 {-| -}
-startPrimary : Nri.Ui.Svg.V1.Svg
-startPrimary =
+startPrimaryX : Nri.Ui.Svg.V1.Svg
+startPrimaryX =
     Nri.Ui.Svg.V1.init "0 0 50 50"
         [ Svg.path [ Attributes.fill "currentcolor", Attributes.d "M0,24.9999988 C0,38.8087481 11.19375,50 25,50 C38.80875,50 50,38.8087481 50,24.9999988 C50,11.1937494 38.80625,0 25,0 C11.19375,0 0,11.1937494 0,24.9999988 Z" ] []
         , Svg.path [ Attributes.fill "#fff", Attributes.d "M21.0869565,33.8146977 C20.6577447,34.0617674 20.1248751,34.0617674 19.6956522,33.8146977 C19.2664403,33.5683165 19,33.1074898 19,32.61405 L19,17.38595 C19,16.889723 19.2664403,16.4316724 19.6956522,16.1853023 C20.1248751,15.9382326 20.6577447,15.9382326 21.0869565,16.1853023 L34.3043478,23.8007347 C34.7335708,24.0478044 35,24.5051666 35,25.002082 C35,25.4955219 34.7363534,25.9535725 34.3043478,26.1999537 L21.0869565,33.8146977 Z" ] []
@@ -307,8 +317,20 @@ startPrimary =
 
 
 {-| -}
-startSecondaryX : Nri.Ui.Svg.V1.Svg
-startSecondaryX =
+startPrimary : Nri.Ui.Svg.V1.Svg
+startPrimary =
+    let
+        toIcon circle =
+            [ circle
+            , Svg.path [ Attributes.fill "#fff", Attributes.d "M21.0869565,33.8146977 C20.6577447,34.0617674 20.1248751,34.0617674 19.6956522,33.8146977 C19.2664403,33.5683165 19,33.1074898 19,32.61405 L19,17.38595 C19,16.889723 19.2664403,16.4316724 19.6956522,16.1853023 C20.1248751,15.9382326 20.6577447,15.9382326 21.0869565,16.1853023 L34.3043478,23.8007347 C34.7335708,24.0478044 35,24.5051666 35,25.002082 C35,25.4955219 34.7363534,25.9535725 34.3043478,26.1999537 L21.0869565,33.8146977 Z" ] []
+            ]
+    in
+    encircle 50 toIcon
+
+
+{-| -}
+startSecondary : Nri.Ui.Svg.V1.Svg
+startSecondary =
     Nri.Ui.Svg.V1.init "0 60 50 51"
         [ Svg.g [ Attributes.transform "translate(0.000000, 60.000000)" ]
             [ Svg.path
@@ -330,24 +352,6 @@ startSecondaryX =
                 []
             ]
         ]
-
-
-{-| -}
-startSecondary : Nri.Ui.Svg.V1.Svg
-startSecondary =
-    let
-        toIcon circle =
-            [ Svg.g []
-                [ circle
-                , Svg.path
-                    [ Attributes.fill "#fff"
-                    , Attributes.d "M20.946522,34.4104003 C20.5071165,34.6639342 19.9615913,34.6639342 19.5221743,34.4104003 C19.0827687,34.1575729 18.8100004,33.6846894 18.8100004,33.1783395 L18.8100004,17.5518211 C18.8100004,17.0426111 19.0827687,16.5725764 19.5221743,16.3197604 C19.9615913,16.0662265 20.5071165,16.0662265 20.946522,16.3197604 L34.4778257,24.1344382 C34.9172427,24.3879721 35.1899996,24.8573004 35.1899996,25.3672168 C35.1899996,25.8735667 34.9200914,26.3436015 34.4778257,26.5964289 L20.946522,34.4104003 Z"
-                    ]
-                    []
-                ]
-            ]
-    in
-    encircle 50 toIcon
 
 
 {-| -}
@@ -536,6 +540,7 @@ passageQuizCircled =
     encircle 70 toIcon
 
 
+{-| -}
 planningDiagnosticCircledX : Nri.Ui.Svg.V1.Svg
 planningDiagnosticCircledX =
     Nri.Ui.Svg.V1.init "0 0 71 70"

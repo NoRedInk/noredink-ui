@@ -37,7 +37,6 @@ example =
             , AssignmentIcon.practiceCircled
             , AssignmentIcon.quizCircled
             , AssignmentIcon.quickWriteCircled
-            , AssignmentIcon.quickWriteCircledX
             , AssignmentIcon.guidedDraftCircled
             , AssignmentIcon.peerReviewCircled
             , AssignmentIcon.selfReviewCircled
@@ -106,8 +105,8 @@ all =
       )
     , ( "Start"
       , [ ( "startPrimary", AssignmentIcon.startPrimary, [] )
+        , ( "startPrimaryX", AssignmentIcon.startPrimaryX, [] )
         , ( "startSecondary", AssignmentIcon.startSecondary, [] )
-        , ( "startSecondaryX", AssignmentIcon.startSecondaryX, [] )
         ]
       )
     , ( "Activities"
