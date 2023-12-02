@@ -93,6 +93,7 @@ all =
         , ( "selfReviewCircled", AssignmentIcon.selfReviewCircled, [] )
         , ( "selfReviewCircledX", AssignmentIcon.selfReviewCircledX, [] )
         , ( "gradingAssistantCircled", AssignmentIcon.gradingAssistantCircled, [] )
+        , ( "gradingAssistantCircledX", AssignmentIcon.gradingAssistantCircledX, [] )
         , ( "dailyWritingCircled", AssignmentIcon.dailyWritingCircled, [] )
         , ( "dailyWritingCircledX", AssignmentIcon.dailyWritingCircledX, [] )
         ]
@@ -117,6 +118,7 @@ all =
         , ( "writing", AssignmentIcon.writing, [] )
         , ( "writingX", AssignmentIcon.writingX, [] )
         , ( "modules", AssignmentIcon.modules, [] )
+        , ( "modulesX", AssignmentIcon.modulesX, [] )
         ]
       )
     ]
