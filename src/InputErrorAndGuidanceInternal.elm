@@ -206,7 +206,6 @@ renderGuidance idValue marginTop guidanceContent =
             [ Css.important (Css.paddingTop Css.zero)
             , Css.important (Css.paddingBottom Css.zero)
             , Css.important marginTop
-            , Css.lineHeight (Css.num 1)
             ]
         ]
 
