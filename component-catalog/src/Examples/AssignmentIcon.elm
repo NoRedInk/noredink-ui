@@ -55,23 +55,18 @@ all =
     [ ( "Diagnostic"
       , [ ( "diagnostic", AssignmentIcon.diagnostic, [] )
         , ( "planningDiagnosticCircled", AssignmentIcon.planningDiagnosticCircled, [] )
-        , ( "planningDiagnosticCircledX", AssignmentIcon.planningDiagnosticCircledX, [] )
         , ( "unitDiagnosticCircled", AssignmentIcon.unitDiagnosticCircled, [] )
-        , ( "unitDiagnosticCircledX", AssignmentIcon.unitDiagnosticCircledX, [] )
         ]
       )
     , ( "Practice"
       , [ ( "practice", AssignmentIcon.practice, [] )
         , ( "practiceCircled", AssignmentIcon.practiceCircled, [] )
-        , ( "practiceCircledX", AssignmentIcon.practiceCircledX, [] )
         ]
       )
     , ( "Quiz"
       , [ ( "quiz", AssignmentIcon.quiz, [] )
         , ( "quizCircled", AssignmentIcon.quizCircled, [] )
-        , ( "quizCircledX", AssignmentIcon.quizCircledX, [] )
         , ( "passageQuizCircled", AssignmentIcon.passageQuizCircled, [] )
-        , ( "passageQuizCircledX", AssignmentIcon.passageQuizCircledX, [] )
         ]
       )
     , ( "Writing"
@@ -84,17 +79,11 @@ all =
       )
     , ( "Writing II"
       , [ ( "quickWriteCircled", AssignmentIcon.quickWriteCircled, [] )
-        , ( "quickWriteCircledX", AssignmentIcon.quickWriteCircledX, [] )
         , ( "guidedDraftCircled", AssignmentIcon.guidedDraftCircled, [] )
-        , ( "guidedDraftCircledX", AssignmentIcon.guidedDraftCircledX, [] )
         , ( "peerReviewCircled", AssignmentIcon.peerReviewCircled, [] )
-        , ( "peerReviewCircledX", AssignmentIcon.peerReviewCircledX, [] )
         , ( "selfReviewCircled", AssignmentIcon.selfReviewCircled, [] )
-        , ( "selfReviewCircledX", AssignmentIcon.selfReviewCircledX, [] )
         , ( "gradingAssistantCircled", AssignmentIcon.gradingAssistantCircled, [] )
-        , ( "gradingAssistantCircledX", AssignmentIcon.gradingAssistantCircledX, [] )
         , ( "dailyWritingCircled", AssignmentIcon.dailyWritingCircled, [] )
-        , ( "dailyWritingCircledX", AssignmentIcon.dailyWritingCircledX, [] )
         ]
       )
     , ( "Stages"
@@ -105,20 +94,14 @@ all =
       )
     , ( "Start"
       , [ ( "startPrimary", AssignmentIcon.startPrimary, [] )
-        , ( "startPrimaryX", AssignmentIcon.startPrimaryX, [] )
         , ( "startSecondary", AssignmentIcon.startSecondary, [] )
         ]
       )
     , ( "Activities"
       , [ ( "assessment", AssignmentIcon.assessment, [] )
-        , ( "assessmentX", AssignmentIcon.assessmentX, [] )
         , ( "standards", AssignmentIcon.standards, [] )
-
-        -- , ( "standardsX", AssignmentIcon.standardsX, [] )
         , ( "writing", AssignmentIcon.writing, [] )
-        , ( "writingX", AssignmentIcon.writingX, [] )
         , ( "modules", AssignmentIcon.modules, [] )
-        , ( "modulesX", AssignmentIcon.modulesX, [] )
         ]
       )
     ]
