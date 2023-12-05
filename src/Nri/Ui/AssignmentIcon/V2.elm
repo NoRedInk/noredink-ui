@@ -804,7 +804,7 @@ dailyWritingCircledX =
             ]
             []
         , Svg.g
-            [ Attributes.clipPath "url(#clip0_220_902)"
+            [ Attributes.clipPath "url(#clip0_220_902_X)"
             ]
             [ Svg.path
                 [ Attributes.fillRule "evenodd"
@@ -851,7 +851,7 @@ dailyWritingCircledX =
             ]
         , Svg.defs []
             [ Svg.clipPath
-                [ Attributes.id "clip0_220_902"
+                [ Attributes.id "clip0_220_902_X"
                 ]
                 [ Svg.rect
                     [ Attributes.width "39"
