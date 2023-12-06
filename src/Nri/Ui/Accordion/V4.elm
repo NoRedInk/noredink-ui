@@ -3,6 +3,7 @@ module Nri.Ui.Accordion.V4 exposing
     , AccordionEntry(..), Entry
     , StyleOptions, styleAccordion
     , defaultCaret
+    , ExpansionDirection(..), upwardCaret
     )
 
 {-|
@@ -11,6 +12,7 @@ module Nri.Ui.Accordion.V4 exposing
 ## Changes from V3
 
   - Enables accordion expansion either upwards or downwards
+  - Added animated caret for upward accordions
 
 
 ## Example
@@ -21,7 +23,7 @@ module Nri.Ui.Accordion.V4 exposing
             [ Accordion.view
                 { entries =
                     [ AccordionEntry
-                        { caret = Accordion.defaultCaret
+                        { caret = Accordion.updwardCaret
                         , content = \() -> text "Accordion Content"
                         , entryClass = "a-class-distinguishing-this-accordion-from-others-on-the-page"
                         , expansionDirection = Accordion.Upwards
@@ -67,6 +69,7 @@ import Nri.Ui.FocusLoop.V1 as FocusLoop
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
+import Nri.Ui.Html.V3 exposing (viewIf)
 import Nri.Ui.Svg.V1 as Svg
 
 
@@ -74,6 +77,17 @@ import Nri.Ui.Svg.V1 as Svg
 defaultCaret : Bool -> Html msg
 defaultCaret isOpen =
     AnimatedIcon.arrowRightDown isOpen
+        |> Svg.withColor Colors.azure
+        |> Svg.withWidth (Css.px 17)
+        |> Svg.withHeight (Css.px 17)
+        |> Svg.withCss [ Css.marginRight (Css.px 8) ]
+        |> Svg.toHtml
+
+
+{-| -}
+upwardCaret : Bool -> Html msg
+upwardCaret isOpen =
+    AnimatedIcon.arrowRightUp isOpen
         |> Svg.withColor Colors.azure
         |> Svg.withWidth (Css.px 17)
         |> Svg.withHeight (Css.px 17)
@@ -184,6 +198,11 @@ accordionEntryPanelClass =
     "accordion-v3-entry-panel"
 
 
+type ExpansionDirection
+    = Upwards
+    | Downwards
+
+
 {-| Corresponds to h1, h2, h3 etc.
 Choose the correct header level given your page context.
 -}
@@ -228,6 +247,7 @@ type alias Entry msg =
     { caret : Bool -> Html msg
     , content : () -> Html msg
     , entryClass : String
+    , expansionDirection : ExpansionDirection
     , headerContent : Html msg
     , headerId : String
     , headerLevel : HeaderLevel
@@ -299,10 +319,29 @@ viewEntry :
     -> Entry msg
     -> List (AccordionEntry msg)
     -> Html msg
-viewEntry focus arrows ({ headerId, headerLevel, caret, headerContent, entryClass, content, isExpanded } as config) children =
+viewEntry focus arrows ({ headerId, headerLevel, caret, headerContent, entryClass, expansionDirection, content, isExpanded } as config) children =
     let
         panelId =
             "accordion-panel__" ++ headerId
+
+        contents =
+            section
+                [ Attributes.id panelId
+                , Aria.labelledBy headerId
+                , Attributes.classList
+                    [ ( accordionEntryPanelClass, True )
+                    , ( entryClass, True )
+                    ]
+                , Attributes.hidden (not isExpanded)
+                ]
+                (if isExpanded then
+                    [ content ()
+                    , view_ { focus = focus, entries = children, leftId = Just headerId }
+                    ]
+
+                 else
+                    []
+                )
     in
     div
         [ Attributes.classList
@@ -312,7 +351,8 @@ viewEntry focus arrows ({ headerId, headerLevel, caret, headerContent, entryClas
             , ( accordionEntryCollapsedClass, not isExpanded )
             ]
         ]
-        [ header headerLevel <|
+        [ viewIf (\_ -> contents) (expansionDirection == Upwards)
+        , header headerLevel <|
             button
                 [ Attributes.id headerId
                 , Attributes.classList
@@ -339,21 +379,5 @@ viewEntry focus arrows ({ headerId, headerLevel, caret, headerContent, entryClas
                 [ caret isExpanded
                 , headerContent
                 ]
-        , section
-            [ Attributes.id panelId
-            , Aria.labelledBy headerId
-            , Attributes.classList
-                [ ( accordionEntryPanelClass, True )
-                , ( entryClass, True )
-                ]
-            , Attributes.hidden (not isExpanded)
-            ]
-            (if isExpanded then
-                [ content ()
-                , view_ { focus = focus, entries = children, leftId = Just headerId }
-                ]
-
-             else
-                []
-            )
+        , viewIf (\_ -> contents) (expansionDirection == Downwards)
         ]

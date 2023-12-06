@@ -23,7 +23,7 @@ import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes as Attributes exposing (css, src)
 import KeyboardSupport exposing (Key(..))
-import Nri.Ui.Accordion.V3 as Accordion exposing (AccordionEntry(..))
+import Nri.Ui.Accordion.V4 as Accordion exposing (AccordionEntry(..))
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
@@ -163,6 +163,7 @@ view ellieLinkConfig model =
                 { caret = Tuple.second settings_.icon
                 , content = \() -> Tuple.second settings_.content
                 , entryClass = "customizable-example"
+                , expansionDirection = Accordion.Downwards
                 , headerContent = Tuple.second settings_.headerContent
                 , headerId = "customizable-example-header"
                 , headerLevel = Accordion.H3
@@ -174,6 +175,7 @@ view ellieLinkConfig model =
                 { caret = Accordion.defaultCaret
                 , content = \_ -> Html.text "🍎 There are many kinds of apples! Apples are more genetically diverse than humans. The genetic diversity of apples means that to preserve delicious apple varieties, growers must use grafting rather than seeds. In the apple market, clones have already taken over! 🍏"
                 , entryClass = "accordion-example"
+                , expansionDirection = Accordion.Downwards
                 , headerContent = Html.text "Apples (has children)"
                 , headerId = "accordion-entry__1"
                 , headerLevel = Accordion.H3
@@ -193,6 +195,7 @@ view ellieLinkConfig model =
                                     [ Html.text "Wikipedia article on Gala Apples" ]
                                 ]
                     , entryClass = "accordion-example-child"
+                    , expansionDirection = Accordion.Downwards
                     , headerContent = Html.text "Gala"
                     , headerId = "accordion-entry__11"
                     , headerLevel = Accordion.H4
@@ -213,6 +216,7 @@ view ellieLinkConfig model =
                                     [ Html.text "Wikipedia article on Granny Smith Apples" ]
                                 ]
                     , entryClass = "accordion-example-child"
+                    , expansionDirection = Accordion.Downwards
                     , headerContent = Html.text "Granny Smith"
                     , headerId = "accordion-entry__12"
                     , headerLevel = Accordion.H4
@@ -233,6 +237,7 @@ view ellieLinkConfig model =
                                     [ Html.text "Wikipedia article on Fuji Apples" ]
                                 ]
                     , entryClass = "accordion-example-child"
+                    , expansionDirection = Accordion.Downwards
                     , headerContent = Html.text "Fuji"
                     , headerId = "accordion-entry__13"
                     , headerLevel = Accordion.H4
@@ -242,10 +247,11 @@ view ellieLinkConfig model =
                     []
                 ]
             , AccordionEntry
-                { caret = Accordion.defaultCaret
+                { caret = Accordion.upwardCaret
                 , content = \_ -> Html.text "🍊 I don't know anything about oranges! Except: YUM! 🍊"
                 , entryClass = "accordion-example"
-                , headerContent = Html.text "Oranges"
+                , expansionDirection = Accordion.Upwards
+                , headerContent = Html.text "Oranges (Upward accordion!)"
                 , headerId = "accordion-entry__2"
                 , headerLevel = Accordion.H3
                 , isExpanded = Set.member 2 model.expanded
@@ -277,6 +283,7 @@ view ellieLinkConfig model =
                                 [ Html.img "Wild Apple" [ src "https://upload.wikimedia.org/wikipedia/commons/9/92/95apple.jpeg" ] ]
                             ]
                 , entryClass = "fixed-positioning-accordion-example"
+                , expansionDirection = Accordion.Downwards
                 , headerContent = Html.text "Advanced Example: Expand & Scroll!"
                 , headerId = "accordion-entry__6"
                 , headerLevel = Accordion.H3
