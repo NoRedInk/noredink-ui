@@ -84,7 +84,8 @@ defaultCaret isOpen =
         |> Svg.toHtml
 
 
-{-| -}
+{-| Animated caret used for accordions that expand upwards.
+-}
 upwardCaret : Bool -> Html msg
 upwardCaret isOpen =
     AnimatedIcon.arrowRightUp isOpen
