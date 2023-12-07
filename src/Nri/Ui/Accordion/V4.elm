@@ -52,6 +52,7 @@ module Nri.Ui.Accordion.V4 exposing
 @docs AccordionEntry, Entry
 @docs StyleOptions, styleAccordion
 @docs defaultCaret
+@docs ExpansionDirection, upwardCaret
 
 -}
 
