@@ -3,7 +3,7 @@ module Spec.Nri.Ui.Accordion exposing (spec)
 import Accessibility.Aria as Aria
 import Browser.Dom as Dom
 import Html.Styled as Html exposing (..)
-import Nri.Ui.Accordion.V3 as Accordion
+import Nri.Ui.Accordion.V4 as Accordion
 import ProgramTest exposing (..)
 import Set exposing (Set)
 import Task
@@ -14,7 +14,7 @@ import Test.Html.Selector as Selector
 
 spec : Test
 spec =
-    describe "Nri.Ui.Accordion.V3"
+    describe "Nri.Ui.Accordion.V4"
         [ describe "panel rendering" panelRenderingTests
         , describe "aria attributes" ariaAttributesTests
         ]
@@ -157,6 +157,7 @@ view model =
                     { caret = Accordion.defaultCaret
                     , content = \() -> text "Content 1"
                     , entryClass = ""
+                    , expansionDirection = Accordion.Downwards
                     , headerContent = text "Header 1"
                     , headerId = "header-1"
                     , headerLevel = Accordion.H4
@@ -165,9 +166,10 @@ view model =
                     }
                     []
                 , Accordion.AccordionEntry
-                    { caret = Accordion.defaultCaret
+                    { caret = Accordion.upwardCaret
                     , content = \() -> text "Content 2"
                     , entryClass = ""
+                    , expansionDirection = Accordion.Upwards
                     , headerContent = text "Header 2"
                     , headerId = "header-2"
                     , headerLevel = Accordion.H4
