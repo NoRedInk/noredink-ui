@@ -155,49 +155,51 @@ styleAccordion styleOptions =
 
 accordionClass : String
 accordionClass =
-    "accordion-v3"
+    "accordion-v4"
 
 
 accordionHeaderClass : String
 accordionHeaderClass =
-    "accordion-v3-header"
+    "accordion-v4-header"
 
 
 accordionEntryHeaderClass : String
 accordionEntryHeaderClass =
-    "accordion-v3-entry-header"
+    "accordion-v4-entry-header"
 
 
 accordionEntryHeaderExpandedClass : String
 accordionEntryHeaderExpandedClass =
-    "accordion-v3-entry-header-expanded"
+    "accordion-v4-entry-header-expanded"
 
 
 accordionEntryHeaderCollapsedClass : String
 accordionEntryHeaderCollapsedClass =
-    "accordion-v3-entry-header-collapsed"
+    "accordion-v4-entry-header-collapsed"
 
 
 accordionEntryClass : String
 accordionEntryClass =
-    "accordion-v3-entry"
+    "accordion-v4-entry"
 
 
 accordionEntryExpandedClass : String
 accordionEntryExpandedClass =
-    "accordion-v3-entry-state-expanded"
+    "accordion-v4-entry-state-expanded"
 
 
 accordionEntryCollapsedClass : String
 accordionEntryCollapsedClass =
-    "accordion-v3-entry-state-collapsed"
+    "accordion-v4-entry-state-collapsed"
 
 
 accordionEntryPanelClass : String
 accordionEntryPanelClass =
-    "accordion-v3-entry-panel"
+    "accordion-v4-entry-panel"
 
 
+{-| Determines in which direction the accordion expands.
+-}
 type ExpansionDirection
     = Upwards
     | Downwards
