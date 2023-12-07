@@ -43,7 +43,7 @@ moduleName =
 
 version : Int
 version =
-    3
+    4
 
 
 {-| -}
@@ -120,6 +120,7 @@ view ellieLinkConfig model =
                                                         [ ( "caret", Tuple.first settings.icon )
                                                         , ( "content", Code.anonymousFunction "()" (Tuple.first settings.content) )
                                                         , ( "entryClass", Code.string "customizable-example" )
+                                                        , ( "expansionDirection", Tuple.first settings.expansionDirection )
                                                         , ( "headerContent", Tuple.first settings.headerContent )
                                                         , ( "headerId", Code.string "customizable-example-header" )
                                                         , ( "headerLevel", Code.fromModule moduleName "H3" )
@@ -163,7 +164,7 @@ view ellieLinkConfig model =
                 { caret = Tuple.second settings_.icon
                 , content = \() -> Tuple.second settings_.content
                 , entryClass = "customizable-example"
-                , expansionDirection = Accordion.Downwards
+                , expansionDirection = Tuple.second settings_.expansionDirection
                 , headerContent = Tuple.second settings_.headerContent
                 , headerId = "customizable-example-header"
                 , headerLevel = Accordion.H3
@@ -251,7 +252,7 @@ view ellieLinkConfig model =
                 , content = \_ -> Html.text "🍊 I don't know anything about oranges! Except: YUM! 🍊"
                 , entryClass = "accordion-example"
                 , expansionDirection = Accordion.Upwards
-                , headerContent = Html.text "Oranges (Upward accordion!)"
+                , headerContent = Html.text "Oranges (upward accordion)"
                 , headerId = "accordion-entry__2"
                 , headerLevel = Accordion.H3
                 , isExpanded = Set.member 2 model.expanded
@@ -355,6 +356,7 @@ type alias State =
 
 type alias Settings =
     { icon : ( String, Bool -> Html Msg )
+    , expansionDirection : ( String, Accordion.ExpansionDirection )
     , headerContent : ( String, Html Msg )
     , content : ( String, Html Msg )
     }
@@ -364,6 +366,7 @@ initSettings : Control Settings
 initSettings =
     Control.record Settings
         |> Control.field "icon" controlIcon
+        |> Control.field "expansionDirection" controlExpansionDirection
         |> Control.field "headerContent" controlHeaderContent
         |> Control.field "content" controlContent
 
@@ -373,6 +376,9 @@ controlIcon =
     Control.choice
         [ ( "defaultCaret"
           , Control.value ( "Accordion.defaultCaret", Accordion.defaultCaret )
+          )
+        , ( "upwardCaret"
+          , Control.value ( "Accordion.upwardCaret", Accordion.upwardCaret )
           )
         , ( "none", Control.value ( "\\_ -> text \"\"", \_ -> Html.text "" ) )
         , ( "UiIcon"
@@ -408,6 +414,17 @@ controlHeaderContent =
     Control.map
         (\v -> ( quoteF "text" v, Html.text v ))
         (Control.string "Berries")
+
+controlExpansionDirection : Control ( String, Accordion.ExpansionDirection )
+controlExpansionDirection =
+    Control.choice
+        [ ( "Downwards"
+          , Control.value ( "Accordion.Downwards", Accordion.Downwards )
+          )
+        , ( "Upwards"
+          , Control.value ( "Accordion.Upwards", Accordion.Upwards )
+          )
+        ]
 
 
 controlContent : Control ( String, Html Msg )
