@@ -17,7 +17,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick, sortArrow, sortArrowDown
     , checkmark, checkmarkInCircle, checkmarkInCircleInverse, emptyCircle, x, xInCircle
     , attention, exclamation
-    , flag, star, starFilled, starOutline
+    , flag, star, starFilled, starOutline, no
     , equals, plus, null
     , key, lock, premiumLock
     , badge, tada, count
@@ -56,7 +56,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick, sortArrow, sortArrowDown
 @docs checkmark, checkmarkInCircle, checkmarkInCircleInverse, emptyCircle, x, xInCircle
 @docs attention, exclamation
-@docs flag, star, starFilled, starOutline
+@docs flag, star, starFilled, starOutline, no
 @docs equals, plus, null
 @docs key, lock, premiumLock
 @docs badge, tada, count
@@ -834,6 +834,23 @@ starOutline =
             , Attributes.stroke "currentcolor"
             , Attributes.strokeWidth "1.5"
             , Attributes.d "M13.396.554l3.121 6.259a1 1 0 0 0 .744.542l6.89 1.054a1 1 0 0 1 .554 1.698l-4.966 4.937a1 1 0 0 0-.282.87l1.132 6.924a1 1 0 0 1-1.448 1.049l-6.18-3.216a1 1 0 0 0-.923 0L5.86 23.887a1 1 0 0 1-1.448-1.049l1.132-6.924a1 1 0 0 0-.282-.87L.295 10.107A1 1 0 0 1 .849 8.41l6.89-1.054a1 1 0 0 0 .744-.542l3.123-6.26a1 1 0 0 1 1.79.001z"
+            ]
+            []
+        ]
+
+
+{-| -}
+no : Nri.Ui.Svg.V1.Svg
+no =
+    Nri.Ui.Svg.V1.init "0 0 15 16"
+        [ Svg.path
+            [ Attributes.d "M7.4996 2.0381C10.8559 2.0381 13.562 4.74293 13.562 8.09877C13.562 11.4554 10.8559 14.1602 7.4996 14.1602C4.14412 14.1602 1.43877 11.4554 1.43877 8.09877C1.438 4.74293 4.14412 2.0381 7.4996 2.0381ZM7.4996 0.600006C3.36564 0.600006 0 3.96601 0 8.09881C0 12.2332 3.36564 15.6 7.4996 15.6C11.6336 15.6 15 12.2332 15 8.09881C15 3.96601 11.6328 0.600006 7.4996 0.600006Z"
+            , Attributes.fill "currentcolor"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M11.565 3.30261C11.3782 3.30806 11.2007 3.38514 11.0706 3.52063L2.91234 11.6619C2.6196 11.9398 2.61339 12.4062 2.89988 12.692C3.18483 12.9785 3.65116 12.9738 3.92989 12.6803L12.0866 4.53906C12.5568 4.08123 12.2213 3.28391 11.565 3.30261Z"
+            , Attributes.fill "currentcolor"
             ]
             []
         ]

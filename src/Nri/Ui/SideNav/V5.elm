@@ -19,6 +19,7 @@ module Nri.Ui.SideNav.V5 exposing
 
   - removes primary and secondary
   - adds `compactGroup`
+  - premium flag replaces lock icon in lock display
 
 
 ## View
@@ -70,6 +71,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.Pennant.V3 as Pennant
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -638,7 +640,7 @@ viewLockedEntry extraStyles entryConfig =
             Nothing ->
                 entryConfig.customAttributes
         )
-        [ UiIcon.premiumLock
+        [ Pennant.contentPremiumFlag
             |> Svg.withWidth (px 17)
             |> Svg.withHeight (px 25)
             |> Svg.withCss [ marginRight (px 10), minWidth (px 17) ]
