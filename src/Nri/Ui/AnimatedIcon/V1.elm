@@ -1,8 +1,8 @@
-module Nri.Ui.AnimatedIcon.V1 exposing (mobileOpenClose, arrowRightDown, arrowDownUp)
+module Nri.Ui.AnimatedIcon.V1 exposing (mobileOpenClose, arrowRightDown, arrowRightUp, arrowDownUp)
 
 {-|
 
-@docs mobileOpenClose, arrowRightDown, arrowDownUp
+@docs mobileOpenClose, arrowRightDown, arrowRightUp, arrowDownUp
 
 -}
 
@@ -70,6 +70,21 @@ arrowRightDown isOpen =
 
           else
             Css.transform (Css.rotate (Css.deg -180))
+        ]
+        squareArrowLeft
+
+
+{-| An arrow that animates between pointing right and pointing up. Typically used for disclosures and accordions.
+-}
+arrowRightUp : Bool -> Nri.Ui.Svg.V1.Svg
+arrowRightUp isOpen =
+    Nri.Ui.Svg.V1.withCss
+        [ Css.property "transition" "transform 0.1s"
+        , if isOpen then
+            Css.transform (Css.rotate (Css.deg 90))
+
+          else
+            Css.transform (Css.rotate (Css.deg 180))
         ]
         squareArrowLeft
 
