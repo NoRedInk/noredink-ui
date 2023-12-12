@@ -70,7 +70,6 @@ import Nri.Ui.FocusLoop.V1 as FocusLoop
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
-import Nri.Ui.Html.V3 exposing (viewIf)
 import Nri.Ui.Svg.V1 as Svg
 
 
@@ -152,6 +151,8 @@ styleAccordion styleOptions =
             )
         , Css.Global.class accordionEntryPanelClass
             styleOptions.contentStyles
+        , Css.Global.class accordionExpandsUpwardsClass
+            [ Css.displayFlex, Css.flexDirection Css.columnReverse ]
         ]
 
 
@@ -198,6 +199,11 @@ accordionEntryCollapsedClass =
 accordionEntryPanelClass : String
 accordionEntryPanelClass =
     "accordion-v4-entry-panel"
+
+
+accordionExpandsUpwardsClass : String
+accordionExpandsUpwardsClass =
+    "accordion-v4-expands-upwards"
 
 
 {-| Determines in which direction the accordion expands.
@@ -353,10 +359,10 @@ viewEntry focus arrows ({ headerId, headerLevel, caret, headerContent, entryClas
             , ( entryClass, True )
             , ( accordionEntryExpandedClass, isExpanded )
             , ( accordionEntryCollapsedClass, not isExpanded )
+            , ( accordionExpandsUpwardsClass, expansionDirection == Upwards )
             ]
         ]
-        [ viewIf (\_ -> contents) (expansionDirection == Upwards)
-        , header headerLevel <|
+        [ header headerLevel <|
             button
                 [ Attributes.id headerId
                 , Attributes.classList
@@ -383,5 +389,5 @@ viewEntry focus arrows ({ headerId, headerLevel, caret, headerContent, entryClas
                 [ caret isExpanded
                 , headerContent
                 ]
-        , viewIf (\_ -> contents) (expansionDirection == Downwards)
+        , contents
         ]
