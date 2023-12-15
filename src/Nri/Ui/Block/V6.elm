@@ -24,7 +24,7 @@ module Nri.Ui.Block.V6 exposing
 
 ## Patch changes
 
-    Add renderReadAloud
+    Add border styles `dashed` and `underline`
 
 @docs view, renderReadAloud, Attribute
 
