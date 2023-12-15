@@ -579,6 +579,7 @@ initControl : Control Settings
 initControl =
     ControlExtra.list
         |> ControlExtra.optionalListItemDefaultChecked "content" controlContent
+        |> ControlExtra.optionalListItemDefaultChecked "borderStyle" borderStyleContent
         |> ControlExtra.optionalBoolListItemDefaultChecked "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )
         |> ControlExtra.optionalListItem "label"
             (CommonControls.string ( Code.fromModule moduleName "label", Block.label ) "Fruit")
@@ -648,6 +649,16 @@ controlContent =
         , blankType ( "blank", Block.blank )
         ]
 
+borderStyleContent : Control ( String, Block.Attribute msg )
+borderStyleContent =
+    Control.choice
+        [ ( "Dashed"
+          , Control.value ( "Dashed", Block.dashed )
+          )
+        , ( "Underline"
+          , Control.value ( "Underline", Block.underline )
+          )
+        ]
 
 blankType : ( String, { widthInChars : Int } -> Block.Content msg ) -> ( String, Control ( String, Block.Attribute msg ) )
 blankType ( typeStr, blank ) =
