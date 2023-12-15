@@ -649,6 +649,7 @@ controlContent =
         , blankType ( "blank", Block.blank )
         ]
 
+
 borderStyleContent : Control ( String, Block.Attribute msg )
 borderStyleContent =
     Control.choice
@@ -659,6 +660,7 @@ borderStyleContent =
           , Control.value ( "Underline", Block.underline )
           )
         ]
+
 
 blankType : ( String, { widthInChars : Int } -> Block.Content msg ) -> ( String, Control ( String, Block.Attribute msg ) )
 blankType ( typeStr, blank ) =
