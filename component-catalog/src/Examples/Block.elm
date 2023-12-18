@@ -654,10 +654,10 @@ borderStyleContent : Control ( String, Block.Attribute msg )
 borderStyleContent =
     Control.choice
         [ ( "Dashed"
-          , Control.value ( "Dashed", Block.dashed )
+          , Control.value ( "Block.dashed", Block.dashed )
           )
         , ( "Underline"
-          , Control.value ( "Underline", Block.underline )
+          , Control.value ( "Block.underline", Block.underline )
           )
         ]
 
