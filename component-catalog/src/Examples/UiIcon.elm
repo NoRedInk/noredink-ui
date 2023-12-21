@@ -197,7 +197,7 @@ all =
         , ( "star", UiIcon.star, [] )
         , ( "starFilled", UiIcon.starFilled, [] )
         , ( "starOutline", UiIcon.starOutline, [] )
-        , ( "no", UiIcon.no, [])
+        , ( "no", UiIcon.no, [] )
         ]
       )
     , ( "Badges & Celebration"

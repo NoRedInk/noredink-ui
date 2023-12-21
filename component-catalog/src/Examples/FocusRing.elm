@@ -13,7 +13,7 @@ import Example exposing (Example)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css, href)
 import Markdown
-import Nri.Ui.Accordion.V3 as Accordion exposing (AccordionEntry(..))
+import Nri.Ui.Accordion.V4 as Accordion exposing (AccordionEntry(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Checkbox.V7 as Checkbox
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
@@ -248,6 +248,7 @@ NOTE: use `boxShadows` instead if your focusable element:
                             { caret = Accordion.defaultCaret
                             , content = \() -> text "Content"
                             , entryClass = "accordion-focus-ring"
+                            , expansionDirection = Accordion.Downwards
                             , headerContent = text "Accordion"
                             , headerId = "accordion-focus-ring-example-header"
                             , headerLevel = Accordion.H3

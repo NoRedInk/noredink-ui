@@ -128,9 +128,6 @@ labelMarkdownSpec =
                     -- should not include markdown (e.g., no asterisks)
                     , hasBefore "start This is markdown" "Hello"
                     , hasAfter "end This is markdown" "there"
-
-                    -- The roledescription should also not include markdown special characters
-                    , Query.has [ Selector.attribute (Aria.roleDescription "This is markdown highlight") ]
                     ]
     ]
 

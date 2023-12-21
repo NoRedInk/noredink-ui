@@ -10,6 +10,7 @@ module Nri.Ui.Mark.V5 exposing
 ### Patch changes:
 
     - Fix line-height for spacer element reducing the amount of vertical space consumed by the balloons
+    - Fix SR experience for <mark> tags
 
 
 ### Changes from V4
@@ -23,6 +24,7 @@ module Nri.Ui.Mark.V5 exposing
 -}
 
 import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Style exposing (invisibleStyle)
 import Content
 import Css exposing (Color, Style)
@@ -279,9 +281,9 @@ viewMarkedByBalloon :
     -> Html msg
 viewMarkedByBalloon config markedWith segments =
     Html.mark
-        [ markedWith.name
-            |> Maybe.map (\name -> Aria.roleDescription (stripMarkdownSyntax name ++ " highlight"))
-            |> Maybe.withDefault AttributesExtra.none
+        [ -- Drop the `mark` role as various screen readers interpret it differently.
+          -- Instead we offer additional invisible and accessible content to denote the highlight.
+          Role.presentation
         , css [ Css.backgroundColor Css.transparent, Css.position Css.relative ]
         ]
         -- the balloon should never end up on a line by itself, so we put it in the DOM
@@ -301,9 +303,9 @@ viewMarkedByBalloon config markedWith segments =
 viewMarked : TagStyle -> Mark -> List (Html msg) -> Html msg
 viewMarked tagStyle markedWith segments =
     Html.mark
-        [ markedWith.name
-            |> Maybe.map (\name -> Aria.roleDescription (stripMarkdownSyntax name ++ " highlight"))
-            |> Maybe.withDefault AttributesExtra.none
+        [ -- Drop the `mark` role as various screen readers interpret it differently.
+          -- Instead we offer additional invisible and accessible content to denote the highlight.
+          Role.presentation
         , css
             [ Css.backgroundColor Css.transparent
             , Css.Global.children
