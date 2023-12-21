@@ -13,7 +13,7 @@ module Nri.Ui.Tooltip.V3 exposing
     , alignStartForMobile, alignMiddleForMobile, alignEndForMobile
     , exactWidth, fitToContent
     , smallPadding, normalPadding, customPadding
-    , onToggle, onTriggerKeyDown
+    , onToggle, onTriggerKeyDown, stopTooltipMousePropagation
     , open
     , css, notMobileCss, mobileCss, quizEngineMobileCss, narrowMobileCss, containerCss
     , custom
@@ -36,6 +36,7 @@ module Nri.Ui.Tooltip.V3 exposing
   - prevent default and stop propagation on click for disclosure tooltips
   - adds `helpfullyDisabled` option
   - adds `onTriggerKeyDown` option
+  - add `stopTooltipMousePropagation` option
 
 Changes from V2:
 
@@ -73,7 +74,7 @@ These tooltips aim to follow the accessibility recommendations from:
 
 @docs exactWidth, fitToContent
 @docs smallPadding, normalPadding, customPadding
-@docs onToggle, onTriggerKeyDown
+@docs onToggle, onTriggerKeyDown, stopTooltipMousePropagation
 @docs open
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss, narrowMobileCss, containerCss
 @docs custom
@@ -94,6 +95,7 @@ import EventExtras as Events
 import Html.Styled as Root
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
+import Json.Decode
 import Nri.Ui
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
@@ -129,6 +131,7 @@ type alias Tooltip msg =
     , trigger : Maybe (Trigger msg)
     , triggerAttributes : List (Html.Attribute msg)
     , triggerKeyDownEvents : List (Key.Event msg)
+    , stopTooltipMousePropagation : Maybe msg
     , purpose : Purpose
     , isOpen : Bool
     }
@@ -162,6 +165,7 @@ buildAttributes =
             , trigger = Nothing
             , triggerAttributes = []
             , triggerKeyDownEvents = []
+            , stopTooltipMousePropagation = Nothing
             , purpose = PrimaryLabel
             , isOpen = False
             }
@@ -823,6 +827,17 @@ onTriggerKeyDown keyEvents =
     Attribute (\config -> { config | triggerKeyDownEvents = keyEvents })
 
 
+{-| Stops propagation of mouseup / mousedown / click on the tooltip bubble.
+
+Use this if your tooltip is contained withing a clickable/draggable element and you do not
+want clicking on the tooltip bubble to act like a click on the parent.
+
+-}
+stopTooltipMousePropagation : msg -> Attribute msg
+stopTooltipMousePropagation noopMsg =
+    Attribute (\config -> { config | stopTooltipMousePropagation = Just noopMsg })
+
+
 type Purpose
     = PrimaryLabel
     | AuxillaryDescription
@@ -1084,7 +1099,7 @@ viewTooltip tooltipId config =
           -- *already have* an accessible name. It is not helpful to have the "Print" read out twice.
           Aria.hidden (config.purpose == PrimaryLabel)
         ]
-        [ Html.div
+        [ Root.div
             ([ Attributes.css
                 ([ Css.boxSizing Css.borderBox
                  , Css.borderRadius (Css.px 8)
@@ -1144,7 +1159,19 @@ viewTooltip tooltipId config =
              , Attributes.class "dont-disable-animation"
              , Role.toolTip
              ]
-                ++ config.attributes
+                ++ List.map (Attributes.map never) config.attributes
+                ++ (case config.stopTooltipMousePropagation of
+                        Nothing ->
+                            []
+
+                        Just msg ->
+                            -- Adding events to a div is generally "bad" which is why `Accessibility.Styled` does not allow it.
+                            -- But in this case we only need to add events to stop them from propagating, so that feels fine in spirit.
+                            [ Events.stopPropagationOn "mousedown" (Json.Decode.succeed ( msg, True ))
+                            , Events.stopPropagationOn "mouseup" (Json.Decode.succeed ( msg, True ))
+                            , Events.stopPropagationOn "click" (Json.Decode.succeed ( msg, True ))
+                            ]
+                   )
                 ++ [ Attributes.id tooltipId ]
             )
             (config.content
