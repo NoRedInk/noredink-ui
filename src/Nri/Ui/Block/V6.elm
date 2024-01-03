@@ -11,6 +11,7 @@ module Nri.Ui.Block.V6 exposing
     , labelCss
     , yellow, cyan, magenta, green, blue, purple, brown
     , insertLineBreakOpportunities
+    , dashed, underline
     )
 
 {-| Changes from V5:
@@ -24,6 +25,7 @@ module Nri.Ui.Block.V6 exposing
 ## Patch changes
 
     Add renderReadAloud
+    Add border styles `dashed` and `underline`
 
 @docs view, renderReadAloud, Attribute
 
@@ -56,6 +58,7 @@ You will need these helpers if you want to prevent label overlaps. (Which is to 
 
 @docs yellow, cyan, magenta, green, blue, purple, brown
 @docs insertLineBreakOpportunities
+@docs dashed, underline
 
 -}
 
@@ -336,7 +339,7 @@ renderContent config content_ styles =
                         BlankHeightFull
             in
             blockSegmentContainer
-                [ viewBlank blankHeight length ]
+                [ viewBlank config.borderStyle blankHeight length ]
                 styles
 
         Markdown markdown contents ->
@@ -415,6 +418,20 @@ bold =
 italic : List (Content msg) -> Content msg
 italic =
     Markdown Italic
+
+
+{-| Sets the border style to be dashed
+-}
+dashed : Attribute msg
+dashed =
+    Attribute (\config -> { config | borderStyle = Dashed })
+
+
+{-| Sets the border style to be underlined
+-}
+underline : Attribute msg
+underline =
+    Attribute (\config -> { config | borderStyle = Underline })
 
 
 
@@ -506,6 +523,7 @@ toMark :
         | emphasize : Bool
         , label : Maybe String
         , content : List (Content msg)
+        , borderStyle : BorderStyle
     }
     -> Palette
     -> Maybe Mark
@@ -516,19 +534,32 @@ toMark config { backgroundColor, borderColor } =
                 Css.px 1
 
             borderStyle =
-                Css.dashed
+                case config.borderStyle of
+                    Dashed ->
+                        Css.dashed
+
+                    Underline ->
+                        Css.solid
+
+            notBottomBorderColor =
+                case config.borderStyle of
+                    Dashed ->
+                        borderColor
+
+                    Underline ->
+                        backgroundColor
         in
         Just
             { name = config.label
             , startStyles =
-                [ Css.borderLeft3 borderWidth borderStyle borderColor
+                [ Css.borderLeft3 borderWidth borderStyle notBottomBorderColor
                 , Css.paddingLeft (Css.px 2)
                 ]
             , styles =
                 [ Css.paddingTop topBottomSpace
                 , Css.paddingBottom topBottomSpace
                 , Css.backgroundColor backgroundColor
-                , Css.borderTop3 borderWidth borderStyle borderColor
+                , Css.borderTop3 borderWidth borderStyle notBottomBorderColor
                 , Css.borderBottom3 borderWidth borderStyle borderColor
                 , MediaQuery.highContrastMode
                     [ Css.property "background-color" "Mark"
@@ -537,7 +568,7 @@ toMark config { backgroundColor, borderColor } =
                     ]
                 ]
             , endStyles =
-                [ Css.borderRight3 borderWidth borderStyle borderColor
+                [ Css.borderRight3 borderWidth borderStyle notBottomBorderColor
                 , Css.paddingRight (Css.px 2)
                 ]
             }
@@ -633,6 +664,7 @@ defaultConfig =
     , theme = Yellow
     , emphasize = False
     , insertWbrAfterSpace = False
+    , borderStyle = Dashed
     }
 
 
@@ -646,7 +678,13 @@ type alias Config msg =
     , theme : Theme
     , emphasize : Bool
     , insertWbrAfterSpace : Bool
+    , borderStyle : BorderStyle
     }
+
+
+type BorderStyle
+    = Dashed
+    | Underline
 
 
 render : Config msg -> Html msg
@@ -678,8 +716,8 @@ type BlankHeight
     | BlankHeightInline
 
 
-viewBlank : BlankHeight -> CharacterWidth -> Html msg
-viewBlank blankHeight (CharacterWidth width) =
+viewBlank : BorderStyle -> BlankHeight -> CharacterWidth -> Html msg
+viewBlank borderStyle blankHeight (CharacterWidth width) =
     let
         heightStyles =
             case blankHeight of
@@ -694,7 +732,12 @@ viewBlank blankHeight (CharacterWidth width) =
     in
     span
         [ css
-            [ Css.border3 (Css.px 2) Css.dashed Colors.navy
+            [ case borderStyle of
+                Dashed ->
+                    Css.border3 (Css.px 2) Css.dashed Colors.navy
+
+                Underline ->
+                    Css.borderBottom3 (Css.px 2) Css.solid Colors.navy
             , MediaQuery.highContrastMode
                 [ Css.property "border-color" "CanvasText"
                 , Css.property "background-color" "Canvas"
@@ -702,7 +745,16 @@ viewBlank blankHeight (CharacterWidth width) =
             , Css.backgroundColor Colors.white
             , Css.width <| Css.em (min 30 <| max 0.83 (toFloat width * 0.5))
             , Css.display Css.inlineBlock
-            , Css.borderRadius (Css.px 4)
+            , Css.borderRadius
+                (Css.px
+                    (case borderStyle of
+                        Dashed ->
+                            4
+
+                        Underline ->
+                            0
+                    )
+                )
             , Css.batch heightStyles
             ]
         ]
