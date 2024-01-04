@@ -26,6 +26,7 @@ module Nri.Ui.Block.V6 exposing
 
     Add renderReadAloud
     Add border styles `dashed` and `underline`
+    Correctly display a transparent background for underline blanks
 
 @docs view, renderReadAloud, Attribute
 
@@ -737,12 +738,19 @@ viewBlank borderStyle blankHeight (CharacterWidth width) =
                     Css.border3 (Css.px 2) Css.dashed Colors.navy
 
                 Underline ->
-                    Css.borderBottom3 (Css.px 2) Css.solid Colors.navy
+                    Css.borderBottom2 (Css.px 2) Css.solid
             , MediaQuery.highContrastMode
                 [ Css.property "border-color" "CanvasText"
                 , Css.property "background-color" "Canvas"
                 ]
-            , Css.backgroundColor Colors.white
+            , Css.backgroundColor
+                (case borderStyle of
+                    Dashed ->
+                        Colors.white
+
+                    Underline ->
+                        Css.rgba 0 0 0 0
+                )
             , Css.width <| Css.em (min 30 <| max 0.83 (toFloat width * 0.5))
             , Css.display Css.inlineBlock
             , Css.borderRadius
