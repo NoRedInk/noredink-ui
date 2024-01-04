@@ -24,9 +24,9 @@ module Nri.Ui.Block.V6 exposing
 
 ## Patch changes
 
-    Add renderReadAloud
-    Add border styles `dashed` and `underline`
-    Correctly display a transparent background for underline blanks
+    - Add renderReadAloud
+    - Add border styles `dashed` and`underline`
+    - Correctly display a transparent background for underline blanks
 
 @docs view, renderReadAloud, Attribute
 
