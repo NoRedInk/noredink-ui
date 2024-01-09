@@ -61,6 +61,7 @@ You're in the wrong place! Headings live in Nri.Ui.Heading.V3.
 import Accessibility.Styled as Html exposing (..)
 import Content
 import Css exposing (..)
+import Css.Global exposing (children, typeSelector)
 import Html.Styled.Attributes as Attributes
 import MarkdownStyles
 import Nri.Ui.Colors.V1 exposing (..)
@@ -262,6 +263,13 @@ paragraphStyles config =
     , margin4 (px 0) (px 0) (px config.margin) (px 0)
     , lastChild
         [ margin zero
+        ]
+    , children
+        [ typeSelector "a"
+            [ Css.fontFamily Css.inherit
+            , Css.fontWeight Css.inherit
+            , Css.display Css.inline
+            ]
         ]
     ]
 

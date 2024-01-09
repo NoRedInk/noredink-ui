@@ -98,6 +98,7 @@ import Html.Styled.Attributes as Attributes
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
@@ -527,8 +528,8 @@ clickableTextSharedStyles : Bool -> List Css.Style
 clickableTextSharedStyles isDisabled =
     let
         baseStyles =
-            [ Css.fontFamily Css.inherit
-            , Css.fontWeight Css.inherit
+            [ Fonts.baseFont
+            , Css.fontWeight (Css.int 600)
             ]
     in
     if isDisabled then
@@ -546,6 +547,7 @@ clickableTextSharedStyles isDisabled =
 clickableTextLinkStyles : List Css.Style
 clickableTextLinkStyles =
     [ Css.textDecoration Css.none
+    , Css.display Css.inlineBlock
     ]
 
 
