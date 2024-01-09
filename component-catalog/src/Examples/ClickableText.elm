@@ -181,37 +181,33 @@ viewExamples ellieLinkConfig (State control) =
         [ Heading.plaintext "Inline ClickableText Examples"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
-    , Text.smallBody (inlineExample "Text.smallBody" ClickableText.small)
-    , Text.mediumBody (inlineExample "Text.mediumBody" ClickableText.medium)
+    , Text.smallBody (inlineExample "Text.smallBody")
+    , Text.mediumBody (inlineExample "Text.mediumBody")
     ]
         |> div []
 
 
-inlineExample : String -> ClickableText.Attribute Msg -> List (Text.Attribute Msg)
-inlineExample textSizeName size =
+inlineExample : String -> List (Text.Attribute Msg)
+inlineExample textSizeName =
     [ Text.html
         [ text "Sometimes, we'll want our "
         , ClickableText.link "internal links"
             [ ClickableText.appearsInline
-            , size
             , ClickableText.href "/"
             ]
         , text ", "
         , ClickableText.link "external links"
             [ ClickableText.appearsInline
-            , size
             , ClickableText.linkExternal "https://www.google.com/search?q=puppies"
             ]
         , text ", "
         , ClickableText.button "buttons"
             [ ClickableText.appearsInline
-            , size
             , ClickableText.onClick (ShowItWorked moduleName "in-line button")
             ]
         , text " and "
         , ClickableText.button "ClickableTexts with icons"
             [ ClickableText.appearsInline
-            , size
             , ClickableText.onClick (ShowItWorked moduleName "in-line button")
             , ClickableText.icon UiIcon.starFilled
             ]

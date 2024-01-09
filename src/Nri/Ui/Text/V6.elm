@@ -264,13 +264,6 @@ paragraphStyles config =
     , lastChild
         [ margin zero
         ]
-    , children
-        [ typeSelector "a"
-            [ Css.fontFamily Css.inherit
-            , Css.fontWeight Css.inherit
-            , Css.display Css.inline
-            ]
-        ]
     ]
 
 

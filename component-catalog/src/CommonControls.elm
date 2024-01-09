@@ -246,8 +246,7 @@ exampleHtml =
     , Html.strong [] [ Html.text "bolded phrase" ]
     , Html.text ". "
     , ClickableText.link quickBrownFox
-        [ ClickableText.small
-        , ClickableText.icon UiIcon.starFilled
+        [ ClickableText.icon UiIcon.starFilled
         , ClickableText.href "http://www.noredink.com"
         , ClickableText.appearsInline
         ]
@@ -257,6 +256,7 @@ exampleHtml =
         [ Html.text "darkness of the movie house " ]
     , Html.text "I had only two things on my mind: Paul Newman, and a ride home."
     ]
+    
 
 
 icon :

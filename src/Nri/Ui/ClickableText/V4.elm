@@ -26,6 +26,8 @@ module Nri.Ui.ClickableText.V4 exposing
   - uses `Css.display Css.inlineFlex` only on buttons
   - removes `"-v2"` from data descriptor
   - uses dataDescriptor for `"clickable-text-label"`
+  - adds `Inherited` size as default
+  - adjusts icon margins for `Inherited` size
 
 
 # About:
@@ -141,7 +143,8 @@ modal =
 
 
 type Size
-    = Small
+    = Inherited
+    | Small
     | Medium
     | Large
 
@@ -383,6 +386,10 @@ appearsInline =
         [ Css.borderBottom3 (Css.px 1) Css.solid Colors.azure
         , Css.Global.withAttribute "aria-disabled=true" [ Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45 ]
         , Css.disabled [ Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45 ]
+        , Css.display Css.inline
+        , Css.fontFamily Css.inherit
+        , Css.fontWeight Css.inherit
+        , Css.fontSize Css.inherit
         ]
 
 
@@ -461,30 +468,56 @@ viewContent :
 viewContent config kind =
     let
         fontSize =
-            sizeToPx config.size
+            case config.size of
+                Inherited ->
+                    Css.fontSize Css.inherit
+
+                Small ->
+                    Css.fontSize (Css.px 13)
+
+                Medium ->
+                    Css.fontSize (Css.px 15)
+
+                Large ->
+                    Css.fontSize (Css.px 18)
 
         viewIcon styles icon_ =
             icon_
-                |> Svg.withWidth fontSize
-                |> Svg.withHeight fontSize
                 |> Svg.withCss styles
                 |> Svg.toHtml
 
-        iconSize =
+        iconMarginRight =
             case config.size of
+                Inherited ->
+                    Css.marginRight (Css.em 0.2)
+
                 Small ->
-                    Css.px 3
+                    Css.marginRight (Css.px 3)
 
                 Medium ->
-                    Css.px 3
+                    Css.marginRight (Css.px 3)
 
                 Large ->
-                    Css.px 4
+                    Css.marginRight (Css.px 4)
+
+        iconMarginLeft =
+            case config.size of
+                Inherited ->
+                    Css.marginLeft (Css.em 0.2)
+
+                Small ->
+                    Css.marginLeft (Css.px 3)
+
+                Medium ->
+                    Css.marginLeft (Css.px 3)
+
+                Large ->
+                    Css.marginLeft (Css.px 4)
 
         iconAndTextContainer =
             span
                 [ Attributes.css
-                    (Css.fontSize fontSize
+                    (fontSize
                         :: (case kind of
                                 Button ->
                                     [ Css.display Css.inlineFlex
@@ -498,25 +531,53 @@ viewContent config kind =
                 ]
                 >> List.singleton
     in
-    span [ Attributes.css [ Css.fontSize fontSize ] ]
+    span [ Attributes.css [ fontSize ] ]
         (case ( config.icon, config.rightIcon ) of
             ( Just leftIcon, Just rightIcon_ ) ->
                 iconAndTextContainer
-                    [ viewIcon (Css.marginRight iconSize :: config.iconStyles) leftIcon
+                    [ viewIcon
+                        ([ iconMarginRight
+                         , Css.width (Css.em 1)
+                         , Css.height (Css.em 1)
+                         ]
+                            ++ config.iconStyles
+                        )
+                        leftIcon
                     , span [ ExtraAttributes.nriDescription (dataDescriptor "label") ] [ text config.label ]
-                    , viewIcon (Css.marginLeft iconSize :: config.rightIconStyles) rightIcon_
+                    , viewIcon
+                        ([ iconMarginLeft
+                         , Css.width (Css.em 1)
+                         , Css.height (Css.em 1)
+                         ]
+                            ++ config.rightIconStyles
+                        )
+                        rightIcon_
                     ]
 
             ( Just leftIcon, Nothing ) ->
                 iconAndTextContainer
-                    [ viewIcon (Css.marginRight iconSize :: config.iconStyles) leftIcon
+                    [ viewIcon
+                        ([ iconMarginRight
+                         , Css.width (Css.em 1)
+                         , Css.height (Css.em 1)
+                         ]
+                            ++ config.iconStyles
+                        )
+                        leftIcon
                     , span [ ExtraAttributes.nriDescription (dataDescriptor "label") ] [ text config.label ]
                     ]
 
             ( Nothing, Just rightIcon_ ) ->
                 iconAndTextContainer
                     [ span [ ExtraAttributes.nriDescription (dataDescriptor "label") ] [ text config.label ]
-                    , viewIcon (Css.marginLeft iconSize :: config.rightIconStyles) rightIcon_
+                    , viewIcon
+                        ([ iconMarginLeft
+                         , Css.width (Css.em 1)
+                         , Css.height (Css.em 1)
+                         ]
+                            ++ config.rightIconStyles
+                        )
+                        rightIcon_
                     ]
 
             ( Nothing, Nothing ) ->
@@ -561,19 +622,6 @@ clickableTextButtonStyles =
     ]
 
 
-sizeToPx : Size -> Css.Px
-sizeToPx size =
-    case size of
-        Small ->
-            Css.px 13
-
-        Medium ->
-            Css.px 15
-
-        Large ->
-            Css.px 18
-
-
 dataDescriptor : String -> String
 dataDescriptor descriptor =
     "clickable-text-" ++ descriptor
@@ -600,7 +648,7 @@ type alias ClickableTextAttributes msg =
 defaults : ClickableTextAttributes msg
 defaults =
     { clickableAttributes = ClickableAttributes.init
-    , size = Medium
+    , size = Inherited
     , label = ""
     , icon = Nothing
     , iconStyles = []
