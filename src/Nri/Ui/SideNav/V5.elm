@@ -401,9 +401,17 @@ viewNav sidenavId config appliedNavAttributes entries showNav =
          ]
             |> List.filterMap identity
         )
-        (viewJust (viewOpenCloseButton sidenavId appliedNavAttributes.navLabel currentEntry) appliedNavAttributes.collapsible
-            :: List.map (viewSidebarEntry config entryStyles) entries
-        )
+        [ ul
+            [ Attributes.css
+                [ listStyle none
+                , padding zero
+                , margin zero
+                ]
+            ]
+            (viewJust (viewOpenCloseButton sidenavId appliedNavAttributes.navLabel currentEntry) appliedNavAttributes.collapsible
+                :: List.map (viewSidebarEntry config entryStyles) entries
+            )
+        ]
 
 
 viewSkipLink : msg -> Html msg
@@ -435,7 +443,20 @@ viewSidebarEntry config extraStyles entry_ =
                 viewLockedEntry extraStyles entryConfig
 
             else if anyLinkDescendants (isCurrentRoute config) children then
-                div [ Attributes.css extraStyles ]
+                let
+                    id_ =
+                        AttributesExtra.safeIdWithPrefix "sidenav-group" entryConfig.title
+                in
+                ul
+                    [ Attributes.css
+                        ([ listStyle none
+                         , padding zero
+                         , margin zero
+                         ]
+                            ++ extraStyles
+                        )
+                    , Aria.labelledBy id_
+                    ]
                     (styled span
                         (sharedEntryStyles
                             ++ [ backgroundColor Colors.gray92
@@ -445,7 +466,7 @@ viewSidebarEntry config extraStyles entry_ =
                                , marginBottom (px 10)
                                ]
                         )
-                        []
+                        [ Attributes.id id_, Aria.currentItem True ]
                         [ text entryConfig.title ]
                         :: List.map
                             (viewSidebarEntry config (marginLeft (px 20) :: extraStyles))
@@ -570,30 +591,34 @@ viewSidebarLeaf config extraStyles entryConfig =
         isCurrent =
             isCurrentRoute config entryConfig
     in
-    Nri.Ui.styled Html.Styled.a
-        ("Nri-Ui-SideNav-" ++ linkFunctionName)
-        (sharedEntryStyles
-            ++ extraStyles
-            ++ (if isCurrent then
-                    [ backgroundColor Colors.glacier
-                    , color Colors.navy
-                    , fontWeight bold
-                    , visited [ color Colors.navy ]
-                    ]
+    li
+        [ Attributes.css []
+        ]
+        [ Nri.Ui.styled Html.Styled.a
+            ("Nri-Ui-SideNav-" ++ linkFunctionName)
+            (sharedEntryStyles
+                ++ extraStyles
+                ++ (if isCurrent then
+                        [ backgroundColor Colors.glacier
+                        , color Colors.navy
+                        , fontWeight bold
+                        , visited [ color Colors.navy ]
+                        ]
 
-                else
-                    []
-               )
-            ++ entryConfig.customStyles
-        )
-        (Attributes.class FocusRing.customClass
-            :: AttributesExtra.includeIf isCurrent Aria.currentPage
-            :: attributes
-            ++ entryConfig.customAttributes
-        )
-        [ viewLeftIcon entryConfig
-        , text entryConfig.title
-        , viewRightIcon entryConfig
+                    else
+                        []
+                   )
+                ++ entryConfig.customStyles
+            )
+            (Attributes.class FocusRing.customClass
+                :: AttributesExtra.includeIf isCurrent Aria.currentPage
+                :: attributes
+                ++ entryConfig.customAttributes
+            )
+            [ viewLeftIcon entryConfig
+            , text entryConfig.title
+            , viewRightIcon entryConfig
+            ]
         ]
 
 
