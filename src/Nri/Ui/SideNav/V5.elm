@@ -15,6 +15,12 @@ module Nri.Ui.SideNav.V5 exposing
 {-|
 
 
+### Patch changes:
+
+  - uses `ul>li` for the structure
+  - adds `aria-current="true"` to the parent of the current page
+
+
 ### Changes from V4
 
   - removes primary and secondary
