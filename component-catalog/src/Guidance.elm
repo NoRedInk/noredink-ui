@@ -1,7 +1,7 @@
 module Guidance exposing (..)
 
 import Html.Styled exposing (..)
-import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.ClickableText.V4 as ClickableText
 
 
 useATACGuide : String -> List (Html msg)

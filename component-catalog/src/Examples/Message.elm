@@ -11,7 +11,7 @@ import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Guidance
 import Http
-import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Message.V4 as Message
@@ -222,7 +222,7 @@ example =
                 [ Heading.plaintext "Content Type Variations"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
-            , viewContentTable "Message.tiny" Message.tiny ClickableText.caption
+            , viewContentTable "Message.tiny" Message.tiny ClickableText.small
             , viewContentTable "Message.large" Message.large ClickableText.medium
             , viewContentTable "Message.banner" Message.banner ClickableText.large
             ]

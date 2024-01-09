@@ -19,7 +19,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Checkbox.V7 as Checkbox
-import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
@@ -148,7 +148,7 @@ example =
                             [ text "Be sure to read "
                             , ClickableText.link "the terms and conditions"
                                 [ ClickableText.linkExternal "https://en.wikipedia.org/wiki/Terms_of_service"
-                                , ClickableText.caption
+                                , ClickableText.small
                                 , ClickableText.appearsInline
                                 ]
                             , text " before agreeing to follow them."

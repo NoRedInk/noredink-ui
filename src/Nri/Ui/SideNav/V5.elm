@@ -63,7 +63,7 @@ import Maybe.Extra
 import Nri.Ui
 import Nri.Ui.AnimatedIcon.V1 as AnimatedIcon
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
-import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.FocusRing.V1 as FocusRing

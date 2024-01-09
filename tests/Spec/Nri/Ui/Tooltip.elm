@@ -7,7 +7,7 @@ import Html.Attributes
 import Html.Styled as HtmlStyled
 import Html.Styled.Attributes as Attrs
 import Nri.Test.KeyboardHelpers.V1 as KeyboardHelpers
-import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Tooltip.V3 as Tooltip
 import ProgramTest exposing (ProgramTest, ensureViewHas, ensureViewHasNot)
 import Spec.Helpers exposing (nriDescription)

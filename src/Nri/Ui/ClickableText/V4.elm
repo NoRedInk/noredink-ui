@@ -1,8 +1,8 @@
-module Nri.Ui.ClickableText.V3 exposing
+module Nri.Ui.ClickableText.V4 exposing
     ( button
     , link
     , Attribute
-    , caption, small, medium, large, modal
+    , small, medium, large, modal
     , appearsInline
     , onClick, submit, opensModal
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
@@ -14,35 +14,18 @@ module Nri.Ui.ClickableText.V3 exposing
     , css, notMobileCss, mobileCss, quizEngineMobileCss, rightIconCss
     )
 
-{-| Notes for V4:
-
-  - Remove the -v2- from dataDescriptor to avoid version specific
-  - Use dataDescriptor for clickable-text-label
+{-|
 
 
-# Post-release patches
+# Changes from V3
 
-  - uses ClickableAttributes
-  - adds `css` helper
-  - removes underline on hover and recolors to azureDark
-  - removes bottom border
-  - adds `nriDescription`, `testId`, and `id` helpers
-  - adds `modal` helper, for use in modal footers, same as applying large and Css.marginTop (Css.px 15)
-  - adds `notMobileCss`, `mobileCss`, `quizEngineMobileCss`
-  - adds `hideIconForMobile` and `hideIconAt`
-  - adds `hideTextForMobile` and `hideTextAt`
-  - adds `submit` and `opensModal`
-  - adds `disabled`
-  - adds `caption` size that matches up with Text.caption's font size
-  - replaces the `disabled` attribute with `aria-disabled="true"`
-  - removes click handler from disabled buttons
-  - prevents default behavior for disabled submit buttons by setting `type="button"`
-
-
-# Changes from V2
-
-  - Changes API to be attributes-based rather than config-based
-  - Makes a hole for custom attributes (like ids and styles)
+  - removes the `caption` attribute
+  - removes `Css.display Css.inlineBlock`
+  - inherits font family and weight from parent
+  - adjusts font sizes
+  - uses `Css.display Css.inlineFlex` only on buttons
+  - removes `"-v2"` from data descriptor
+  - uses dataDescriptor for `"clickable-text-label"`
 
 
 # About:
@@ -72,7 +55,7 @@ HTML `<a>` elements and are created here with `*Link` functions.
 
 ## Sizing
 
-@docs caption, small, medium, large, modal
+@docs small, medium, large, modal
 
 
 ## Appearance
@@ -115,7 +98,6 @@ import Html.Styled.Attributes as Attributes
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
-import Nri.Ui.Fonts.V1
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
@@ -124,13 +106,6 @@ import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 label : String -> Attribute msg
 label label_ =
     set (\attributes -> { attributes | label = label_ })
-
-
-{-| This size setting corresponds to Text.caption's font size.
--}
-caption : Attribute msg
-caption =
-    set (\attributes -> { attributes | size = Caption })
 
 
 {-| -}
@@ -165,10 +140,14 @@ modal =
 
 
 type Size
-    = Caption
-    | Small
+    = Small
     | Medium
     | Large
+
+
+type Kind
+    = Button
+    | Link
 
 
 {-| -}
@@ -255,7 +234,7 @@ hideTextFor mediaQuery =
         [ Css.Media.withMedia [ mediaQuery ]
             [ Css.borderStyle Css.none |> Css.important
             , Css.Global.descendants
-                [ ExtraAttributes.nriDescriptionSelector "clickable-text-label"
+                [ ExtraAttributes.nriDescriptionSelector (dataDescriptor "label")
                     [ invisibleStyle
                     ]
                 ]
@@ -438,7 +417,7 @@ button label_ attributes =
             { disabled = config.disabled }
             ++ config.customAttributes
         )
-        [ viewContent config ]
+        [ viewContent config Button ]
 
 
 {-| Creates a `<a>` element
@@ -464,7 +443,7 @@ link label_ attributes =
         (dataDescriptor name)
         (clickableTextSharedStyles config.disabled ++ clickableTextLinkStyles ++ config.customStyles)
         (clickableAttributes ++ config.customAttributes)
-        [ viewContent config ]
+        [ viewContent config Link ]
 
 
 viewContent :
@@ -476,8 +455,9 @@ viewContent :
         , iconStyles : List Style
         , rightIconStyles : List Style
     }
+    -> Kind
     -> Html msg
-viewContent config =
+viewContent config kind =
     let
         fontSize =
             sizeToPx config.size
@@ -491,9 +471,6 @@ viewContent config =
 
         iconSize =
             case config.size of
-                Caption ->
-                    Css.px 3
-
                 Small ->
                     Css.px 3
 
@@ -506,10 +483,17 @@ viewContent config =
         iconAndTextContainer =
             span
                 [ Attributes.css
-                    [ Css.display Css.inlineFlex
-                    , Css.alignItems Css.center
-                    , Css.fontSize fontSize
-                    ]
+                    (Css.fontSize fontSize
+                        :: (case kind of
+                                Button ->
+                                    [ Css.display Css.inlineFlex
+                                    , Css.alignItems Css.center
+                                    ]
+
+                                Link ->
+                                    []
+                           )
+                    )
                 ]
                 >> List.singleton
     in
@@ -518,19 +502,19 @@ viewContent config =
             ( Just leftIcon, Just rightIcon_ ) ->
                 iconAndTextContainer
                     [ viewIcon (Css.marginRight iconSize :: config.iconStyles) leftIcon
-                    , span [ ExtraAttributes.nriDescription "clickable-text-label" ] [ text config.label ]
+                    , span [ ExtraAttributes.nriDescription (dataDescriptor "label") ] [ text config.label ]
                     , viewIcon (Css.marginLeft iconSize :: config.rightIconStyles) rightIcon_
                     ]
 
             ( Just leftIcon, Nothing ) ->
                 iconAndTextContainer
                     [ viewIcon (Css.marginRight iconSize :: config.iconStyles) leftIcon
-                    , span [ ExtraAttributes.nriDescription "clickable-text-label" ] [ text config.label ]
+                    , span [ ExtraAttributes.nriDescription (dataDescriptor "label") ] [ text config.label ]
                     ]
 
             ( Nothing, Just rightIcon_ ) ->
                 iconAndTextContainer
-                    [ span [ ExtraAttributes.nriDescription "clickable-text-label" ] [ text config.label ]
+                    [ span [ ExtraAttributes.nriDescription (dataDescriptor "label") ] [ text config.label ]
                     , viewIcon (Css.marginLeft iconSize :: config.rightIconStyles) rightIcon_
                     ]
 
@@ -543,8 +527,8 @@ clickableTextSharedStyles : Bool -> List Css.Style
 clickableTextSharedStyles isDisabled =
     let
         baseStyles =
-            [ Nri.Ui.Fonts.V1.baseFont
-            , Css.fontWeight (Css.int 600)
+            [ Css.fontFamily Css.inherit
+            , Css.fontWeight Css.inherit
             ]
     in
     if isDisabled then
@@ -562,7 +546,6 @@ clickableTextSharedStyles isDisabled =
 clickableTextLinkStyles : List Css.Style
 clickableTextLinkStyles =
     [ Css.textDecoration Css.none
-    , Css.display Css.inlineBlock
     ]
 
 
@@ -579,22 +562,19 @@ clickableTextButtonStyles =
 sizeToPx : Size -> Css.Px
 sizeToPx size =
     case size of
-        Caption ->
+        Small ->
             Css.px 13
 
-        Small ->
+        Medium ->
             Css.px 15
 
-        Medium ->
-            Css.px 17
-
         Large ->
-            Css.px 20
+            Css.px 18
 
 
 dataDescriptor : String -> String
 dataDescriptor descriptor =
-    "clickable-text-v2-" ++ descriptor
+    "clickable-text-" ++ descriptor
 
 
 
