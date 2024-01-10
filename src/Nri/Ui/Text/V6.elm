@@ -61,7 +61,6 @@ You're in the wrong place! Headings live in Nri.Ui.Heading.V3.
 import Accessibility.Styled as Html exposing (..)
 import Content
 import Css exposing (..)
-import Css.Global exposing (children, typeSelector)
 import Html.Styled.Attributes as Attributes
 import MarkdownStyles
 import Nri.Ui.Colors.V1 exposing (..)
