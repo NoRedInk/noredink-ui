@@ -407,17 +407,17 @@ viewNav sidenavId config appliedNavAttributes entries showNav =
          ]
             |> List.filterMap identity
         )
-        [ ul
-            [ Attributes.css
-                [ listStyle none
-                , padding zero
-                , margin zero
-                ]
-            ]
-            (viewJust (viewOpenCloseButton sidenavId appliedNavAttributes.navLabel currentEntry) appliedNavAttributes.collapsible
-                :: List.map (viewSidebarEntry config entryStyles) entries
-            )
-        ]
+        (viewJust (viewOpenCloseButton sidenavId appliedNavAttributes.navLabel currentEntry) appliedNavAttributes.collapsible
+            :: [ ul
+                    [ Attributes.css
+                        [ listStyle none
+                        , padding zero
+                        , margin zero
+                        ]
+                    ]
+                    (List.map (viewSidebarEntry config entryStyles) entries)
+               ]
+        )
 
 
 viewSkipLink : msg -> Html msg
@@ -453,31 +453,33 @@ viewSidebarEntry config extraStyles entry_ =
                     id_ =
                         AttributesExtra.safeIdWithPrefix "sidenav-group" entryConfig.title
                 in
-                ul
-                    [ Attributes.css
-                        ([ listStyle none
-                         , padding zero
-                         , margin zero
-                         ]
-                            ++ extraStyles
+                li []
+                    [ ul
+                        [ Attributes.css
+                            ([ listStyle none
+                             , padding zero
+                             , margin zero
+                             ]
+                                ++ extraStyles
+                            )
+                        , Aria.labelledBy id_
+                        ]
+                        (styled span
+                            (sharedEntryStyles
+                                ++ [ backgroundColor Colors.gray92
+                                   , color Colors.navy
+                                   , fontWeight bold
+                                   , cursor default
+                                   , marginBottom (px 10)
+                                   ]
+                            )
+                            [ Attributes.id id_, Aria.currentItem True ]
+                            [ text entryConfig.title ]
+                            :: List.map
+                                (viewSidebarEntry config (marginLeft (px 20) :: extraStyles))
+                                children
                         )
-                    , Aria.labelledBy id_
                     ]
-                    (styled span
-                        (sharedEntryStyles
-                            ++ [ backgroundColor Colors.gray92
-                               , color Colors.navy
-                               , fontWeight bold
-                               , cursor default
-                               , marginBottom (px 10)
-                               ]
-                        )
-                        [ Attributes.id id_, Aria.currentItem True ]
-                        [ text entryConfig.title ]
-                        :: List.map
-                            (viewSidebarEntry config (marginLeft (px 20) :: extraStyles))
-                            children
-                    )
 
             else
                 viewSidebarLeaf config extraStyles entryConfig
@@ -515,7 +517,7 @@ viewSidebarEntry config extraStyles entry_ =
                     , viewRightIcon groupConfig
                     ]
                 , ul
-                    [ Attributes.css [ margin zero, padding zero ]
+                    [ Attributes.css [ margin zero, padding zero, listStyle none ]
                     , Aria.describedBy [ groupTitleId ]
                     ]
                     (List.map
@@ -524,8 +526,8 @@ viewSidebarEntry config extraStyles entry_ =
                                 :: fontWeight (int 400)
                                 :: extraStyles
                             )
-                            >> List.singleton
-                            >> li [ Attributes.css [ listStyle none, margin2 (px 4) zero ] ]
+                         -- >> List.singleton
+                         -- >> span [ Attributes.css [ listStyle none, margin2 (px 4) zero ] ]
                         )
                         children
                     )
@@ -598,8 +600,7 @@ viewSidebarLeaf config extraStyles entryConfig =
             isCurrentRoute config entryConfig
     in
     li
-        [ Attributes.css []
-        ]
+        []
         [ Nri.Ui.styled Html.Styled.a
             ("Nri-Ui-SideNav-" ++ linkFunctionName)
             (sharedEntryStyles
