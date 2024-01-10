@@ -494,7 +494,7 @@ viewSidebarEntry config extraStyles entry_ =
                         "sidenav-compact-group"
                         groupConfig.title
             in
-            styled div
+            styled li
                 (margin2 (px 8) zero
                     :: extraStyles
                     ++ groupConfig.customStyles
