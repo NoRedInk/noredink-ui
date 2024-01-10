@@ -256,7 +256,6 @@ exampleHtml =
         [ Html.text "darkness of the movie house " ]
     , Html.text "I had only two things on my mind: Paul Newman, and a ride home."
     ]
-    
 
 
 icon :
