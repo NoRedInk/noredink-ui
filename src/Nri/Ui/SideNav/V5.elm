@@ -454,7 +454,18 @@ viewSidebarEntry config extraStyles entry_ =
                         AttributesExtra.safeIdWithPrefix "sidenav-group" entryConfig.title
                 in
                 li []
-                    [ ul
+                    [ styled span
+                        (sharedEntryStyles
+                            ++ [ backgroundColor Colors.gray92
+                               , color Colors.navy
+                               , fontWeight bold
+                               , cursor default
+                               , marginBottom (px 10)
+                               ]
+                        )
+                        [ Attributes.id id_, Aria.currentItem True ]
+                        [ text entryConfig.title ]
+                    , ul
                         [ Attributes.css
                             ([ listStyle none
                              , padding zero
@@ -464,20 +475,9 @@ viewSidebarEntry config extraStyles entry_ =
                             )
                         , Aria.labelledBy id_
                         ]
-                        (styled span
-                            (sharedEntryStyles
-                                ++ [ backgroundColor Colors.gray92
-                                   , color Colors.navy
-                                   , fontWeight bold
-                                   , cursor default
-                                   , marginBottom (px 10)
-                                   ]
-                            )
-                            [ Attributes.id id_, Aria.currentItem True ]
-                            [ text entryConfig.title ]
-                            :: List.map
-                                (viewSidebarEntry config (marginLeft (px 20) :: extraStyles))
-                                children
+                        (List.map
+                            (viewSidebarEntry config (marginLeft (px 20) :: extraStyles))
+                            children
                         )
                     ]
 
@@ -485,7 +485,7 @@ viewSidebarEntry config extraStyles entry_ =
                 viewSidebarLeaf config extraStyles entryConfig
 
         Html html_ ->
-            div [ Attributes.css extraStyles ] html_
+            li [ Attributes.css extraStyles ] html_
 
         CompactGroup children groupConfig ->
             let
