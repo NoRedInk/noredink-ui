@@ -75,6 +75,7 @@ all =
         , ( "peerReview", AssignmentIcon.peerReview, [] )
         , ( "selfReview", AssignmentIcon.selfReview, [] )
         , ( "dailyWriting", AssignmentIcon.dailyWriting, [] )
+        , ( "novels", AssignmentIcon.novels, [] )
         ]
       )
     , ( "Writing II"
@@ -84,6 +85,7 @@ all =
         , ( "selfReviewCircled", AssignmentIcon.selfReviewCircled, [] )
         , ( "gradingAssistantCircled", AssignmentIcon.gradingAssistantCircled, [] )
         , ( "dailyWritingCircled", AssignmentIcon.dailyWritingCircled, [] )
+        , ( "novelsCircled", AssignmentIcon.novelsCircled, [] )
         ]
       )
     , ( "Stages"
