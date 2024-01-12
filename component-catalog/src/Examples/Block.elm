@@ -491,12 +491,24 @@ A labelled blank in the sentence.
                     , sort = Nothing
                     }
                 , Table.custom
-                    { header = text "Example"
+                    { header = text "Dashed Example"
                     , view =
                         \{ textExample, blankExample } ->
                             div []
                                 [ div [] [ Block.view (Block.emphasize :: textExample) ]
                                 , div [] [ Block.view blankExample ]
+                                ]
+                    , width = Css.px 300
+                    , cellStyles = always [ Css.padding2 (Css.px 4) (Css.px 7), Css.verticalAlign Css.top ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "Underline Example"
+                    , view =
+                        \{ textExample, blankExample } ->
+                            div []
+                                [ div [] [ Block.view (Block.emphasize :: Block.underline :: textExample) ]
+                                , div [] [ Block.view (Block.underline :: blankExample) ]
                                 ]
                     , width = Css.px 300
                     , cellStyles = always [ Css.padding2 (Css.px 4) (Css.px 7), Css.verticalAlign Css.top ]
