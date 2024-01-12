@@ -656,6 +656,7 @@ dailyWritingCircled =
     encircle 70 toIcon
 
 
+{-| -}
 novelsCircled : Nri.Ui.Svg.V1.Svg
 novelsCircled =
     let
