@@ -704,7 +704,16 @@ render config =
             , backgroundColor = palette.backgroundColor
             , maybeMarker = maybeMark
             , labelPosition = config.labelPosition
-            , labelCss = config.labelCss
+            , labelCss =
+                config.labelCss
+                    ++ (case ( config.borderStyle, config.content ) of
+                            ( Underline, [ Blank _ ] ) ->
+                                [ Css.top (Css.px 6)
+                                ]
+
+                            _ ->
+                                []
+                       )
             , labelId = config.labelId
             , labelContentId = Maybe.map labelContentId config.labelId
             }
@@ -721,14 +730,19 @@ viewBlank : BorderStyle -> BlankHeight -> CharacterWidth -> Html msg
 viewBlank borderStyle blankHeight (CharacterWidth width) =
     let
         heightStyles =
-            case blankHeight of
-                BlankHeightFull ->
-                    [ Css.paddingTop topBottomSpace
-                    , Css.paddingBottom topBottomSpace
-                    , Css.lineHeight Css.initial
-                    ]
+            case borderStyle of
+                Dashed ->
+                    case blankHeight of
+                        BlankHeightFull ->
+                            [ Css.paddingTop topBottomSpace
+                            , Css.paddingBottom topBottomSpace
+                            , Css.lineHeight Css.initial
+                            ]
 
-                BlankHeightInline ->
+                        BlankHeightInline ->
+                            [ Css.lineHeight (Css.num 1) ]
+
+                Underline ->
                     [ Css.lineHeight (Css.num 1) ]
     in
     span
@@ -738,7 +752,7 @@ viewBlank borderStyle blankHeight (CharacterWidth width) =
                     Css.border3 (Css.px 2) Css.dashed Colors.navy
 
                 Underline ->
-                    Css.borderBottom2 (Css.px 2) Css.solid
+                    Css.borderBottom2 (Css.px 1) Css.solid
             , MediaQuery.highContrastMode
                 [ Css.property "border-color" "CanvasText"
                 , Css.property "background-color" "Canvas"
