@@ -276,31 +276,30 @@ viewContentTable name size =
 contentTypes :
     List
         { contentType : String
-        , content : ClickableText.Attribute msg -> Message.Attribute msg
+        , content : Message.Attribute msg
         }
 contentTypes =
     [ { contentType = "paragraph"
-      , content = \_ -> Message.paragraph "*Hello, there!* Hope you're doing well. Use the following link to go to [a fake destination](google.com)."
+      , content = Message.paragraph "*Hello, there!* Hope you're doing well. Use the following link to go to [a fake destination](google.com)."
       }
     , { contentType = "plaintext"
-      , content = \_ -> Message.plaintext "*Hello, there!* Hope you're doing well. Use the following link to go to [a fake destination](google.com)."
+      , content = Message.plaintext "*Hello, there!* Hope you're doing well. Use the following link to go to [a fake destination](google.com)."
       }
     , { contentType = "markdown"
-      , content = \_ -> Message.markdown "Hello, there! Hope you're doing well. Use the following link to go to [a fake destination](google.com)."
+      , content = Message.markdown "Hello, there! Hope you're doing well. Use the following link to go to [a fake destination](google.com)."
       }
     , { contentType = "html"
       , content =
-            \_ ->
-                Message.html
-                    [ text "Hello, there! Hope you're doing well. Use the following link to go to "
-                    , ClickableText.link "a fake destination"
-                        [ ClickableText.href "google.com"
-                        ]
-                    , text "."
+            Message.html
+                [ text "Hello, there! Hope you're doing well. Use the following link to go to "
+                , ClickableText.link "a fake destination"
+                    [ ClickableText.href "google.com"
                     ]
+                , text "."
+                ]
       }
     , { contentType = "httpError (Bad Body)"
-      , content = \_ -> Message.httpError (Http.BadBody CommonControls.badBodyString)
+      , content = Message.httpError (Http.BadBody CommonControls.badBodyString)
       }
     ]
 
