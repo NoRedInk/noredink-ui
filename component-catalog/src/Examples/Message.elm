@@ -222,15 +222,15 @@ example =
                 [ Heading.plaintext "Content Type Variations"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
-            , viewContentTable "Message.tiny" Message.tiny ClickableText.small
-            , viewContentTable "Message.large" Message.large ClickableText.medium
-            , viewContentTable "Message.banner" Message.banner ClickableText.large
+            , viewContentTable "Message.tiny" Message.tiny
+            , viewContentTable "Message.large" Message.large
+            , viewContentTable "Message.banner" Message.banner
             ]
     }
 
 
-viewContentTable : String -> Message.Attribute Msg -> ClickableText.Attribute Msg -> Html Msg
-viewContentTable name size clickableTextSize =
+viewContentTable : String -> Message.Attribute Msg -> Html Msg
+viewContentTable name size =
     div []
         [ Heading.h3
             [ Heading.plaintext name
@@ -250,7 +250,7 @@ viewContentTable name size clickableTextSize =
                 }
             , Table.custom
                 { header = text "Non-dismissible view"
-                , view = \{ content } -> Message.view [ size, content clickableTextSize ]
+                , view = \{ content } -> Message.view [ size, content ]
                 , width = Css.pct 45
                 , cellStyles = always []
                 , sort = Nothing
@@ -261,7 +261,7 @@ viewContentTable name size clickableTextSize =
                     \{ content } ->
                         Message.view
                             [ size
-                            , content clickableTextSize
+                            , content
                             , Message.onDismiss Ignore
                             ]
                 , width = Css.pct 45
@@ -290,12 +290,11 @@ contentTypes =
       }
     , { contentType = "html"
       , content =
-            \clickableTextSize ->
+            \_ ->
                 Message.html
                     [ text "Hello, there! Hope you're doing well. Use the following link to go to "
                     , ClickableText.link "a fake destination"
                         [ ClickableText.href "google.com"
-                        , clickableTextSize
                         ]
                     , text "."
                     ]
