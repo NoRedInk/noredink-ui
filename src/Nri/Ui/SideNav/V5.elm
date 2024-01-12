@@ -61,6 +61,7 @@ import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style as Style
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (..)
+import Css.Global
 import Css.Media
 import Html.Styled
 import Html.Styled.Attributes as Attributes
@@ -517,7 +518,12 @@ viewSidebarEntry config extraStyles entry_ =
                     , viewRightIcon groupConfig
                     ]
                 , ul
-                    [ Attributes.css [ margin zero, padding zero, listStyle none ]
+                    [ Attributes.css
+                        [ margin zero
+                        , padding zero
+                        , listStyle none
+                        , Css.Global.children [ Css.Global.typeSelector "li" [ margin2 (px 4) zero ] ]
+                        ]
                     , Aria.describedBy [ groupTitleId ]
                     ]
                     (List.map
@@ -526,8 +532,6 @@ viewSidebarEntry config extraStyles entry_ =
                                 :: fontWeight (int 400)
                                 :: extraStyles
                             )
-                         -- >> List.singleton
-                         -- >> span [ Attributes.css [ listStyle none, margin2 (px 4) zero ] ]
                         )
                         children
                     )
