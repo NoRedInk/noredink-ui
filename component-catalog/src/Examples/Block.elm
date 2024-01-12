@@ -370,7 +370,7 @@ example =
                                 ]
                                 1
                   , description =
-                        """**Labeled blank block**
+                        """**Labeled dashed blank block**
 
 A labelled blank in the sentence.
 
@@ -393,6 +393,36 @@ A labelled blank in the sentence.
                 , { pattern =
                         Code.fromModule moduleName "view "
                             ++ Code.listMultiline
+                                [ Code.fromModule moduleName "label " ++ Code.string "[label text]"
+                                , Code.fromModule moduleName "purple"
+                                , Code.fromModule moduleName "underline"
+                                ]
+                                1
+                  , description =
+                        """**Labeled underline blank block**
+
+A labelled blank in the sentence.
+
+"""
+                            ++ "Please see the \""
+                            ++ blankWidthGuidanceSectionName
+                            ++ "\" table to learn more about using Blanks."
+                  , example =
+                        inParagraph
+                            [ Block.view [ Block.plaintext "If a volcano is extinct, " ]
+                            , Block.view
+                                [ Block.label "pronoun"
+                                , Block.purple
+                                , Block.underline
+                                , Block.labelId pronounId
+                                , Block.labelPosition (Dict.get pronounId offsets)
+                                ]
+                            , Block.view [ Block.plaintext " will never erupt again." ]
+                            ]
+                  }
+                , { pattern =
+                        Code.fromModule moduleName "view "
+                            ++ Code.listMultiline
                                 [ Code.fromModule moduleName "emphasize"
                                 , Code.fromModule moduleName "content "
                                     ++ Code.listMultiline
@@ -404,7 +434,7 @@ A labelled blank in the sentence.
                                         2
                                 ]
                                 1
-                  , description = "**Blanks with emphasis block**\n\nHelp students focus in on a phrase that includes a blank"
+                  , description = "**Dashed Blanks in emphasis block**\n\nHelp students focus in on a phrase that includes a blank"
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "This is an " ]
