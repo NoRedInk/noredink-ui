@@ -188,7 +188,16 @@ example =
                     , Block.labelPosition (Dict.get prepositionId offsets)
                     , Block.emphasize
                     ]
-                , Block.view <|
+                , Block.view [ Block.plaintext " " ]
+                , Block.view
+                    [ Block.label "adjective"
+                    , Block.underline
+                    , Block.purple
+                    , Block.labelId adjectiveId
+                    , Block.labelPosition (Dict.get adjectiveId offsets)
+                    , Block.emphasize
+                    ]
+                , Block.view
                     [ Block.content
                         [ Block.bold (List.concat [ Block.phrase " comic ", [ Block.italic (Block.phrase "book") ], Block.phrase " pages. " ])
                         ]
@@ -728,6 +737,11 @@ prepositionId =
     "preposition-label-id"
 
 
+adjectiveId : String
+adjectiveId =
+    "adjective-label-id"
+
+
 editorsNoteId : String
 editorsNoteId =
     "editors-note-label-id"
@@ -776,6 +790,7 @@ blocksWithLabelsIds =
     , subjectId
     , directObjectId
     , prepositionId
+    , adjectiveId
     , editorsNoteId
     , pronounId
     , articleId
