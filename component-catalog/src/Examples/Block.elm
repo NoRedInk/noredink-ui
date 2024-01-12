@@ -414,8 +414,8 @@ A labelled blank in the sentence.
                                 [ Block.label "pronoun"
                                 , Block.purple
                                 , Block.underline
-                                , Block.labelId pronounId
-                                , Block.labelPosition (Dict.get pronounId offsets)
+                                , Block.labelId pronoun2Id
+                                , Block.labelPosition (Dict.get pronoun2Id offsets)
                                 ]
                             , Block.view [ Block.plaintext " will never erupt again." ]
                             ]
@@ -827,6 +827,11 @@ pronounId =
     "pronoun-label-id"
 
 
+pronoun2Id : String
+pronoun2Id =
+    "pronoun-label-id-2"
+
+
 articleId : String
 articleId =
     "article-label-id"
@@ -868,6 +873,7 @@ blocksWithLabelsIds =
     , adjectiveId
     , editorsNoteId
     , pronounId
+    , pronoun2Id
     , articleId
     , trickyId
     , goalId
