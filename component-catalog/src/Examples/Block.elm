@@ -455,6 +455,39 @@ A labelled blank in the sentence.
                         Code.fromModule moduleName "view "
                             ++ Code.listMultiline
                                 [ Code.fromModule moduleName "emphasize"
+                                , Code.fromModule moduleName "underline"
+                                , Code.fromModule moduleName "content "
+                                    ++ Code.listMultiline
+                                        [ "…"
+                                        , Code.fromModule moduleName "blank "
+                                            ++ Code.record [ ( "widthInChars", "8" ) ]
+                                        , "…"
+                                        ]
+                                        2
+                                ]
+                                1
+                  , description = "**Underline Blanks in emphasis block**\n\nHelp students focus in on a phrase that includes a blank"
+                  , example =
+                        inParagraph
+                            [ Block.view [ Block.plaintext "This is an " ]
+                            , Block.view
+                                [ Block.emphasize
+                                , Block.underline
+                                , (List.concat >> Block.content)
+                                    [ Block.phrase "emphasized subsegement "
+                                    , [ Block.blank { widthInChars = 8 } ]
+                                    , Block.phrase " emphasized"
+                                    ]
+                                ]
+                            , Block.view
+                                [ Block.plaintext " in a seed."
+                                ]
+                            ]
+                  }
+                , { pattern =
+                        Code.fromModule moduleName "view "
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "emphasize"
                                 , Code.fromModule moduleName "content "
                                     ++ Code.listMultiline
                                         [ "…"
