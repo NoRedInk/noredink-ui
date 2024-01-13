@@ -542,7 +542,7 @@ toMark config { backgroundColor, borderColor } =
                     Underline ->
                         Css.solid
 
-            notBottomBorderColor =
+            borderColor_ =
                 case config.borderStyle of
                     Dashed ->
                         borderColor
@@ -553,23 +553,34 @@ toMark config { backgroundColor, borderColor } =
         Just
             { name = config.label
             , startStyles =
-                [ Css.borderLeft3 borderWidth borderStyle notBottomBorderColor
+                [ Css.borderLeft3 borderWidth borderStyle borderColor_
                 , Css.paddingLeft (Css.px 2)
                 ]
             , styles =
                 [ Css.paddingTop topBottomSpace
                 , Css.paddingBottom topBottomSpace
                 , Css.backgroundColor backgroundColor
-                , Css.borderTop3 borderWidth borderStyle notBottomBorderColor
-                , Css.borderBottom3 borderWidth borderStyle borderColor
+                , Css.borderTop3 borderWidth borderStyle borderColor_
+                , Css.borderBottom3 borderWidth borderStyle borderColor_
                 , MediaQuery.highContrastMode
                     [ Css.property "background-color" "Mark"
                     , Css.property "color" "MarkText"
                     , Css.property "forced-color-adjust" "none"
                     ]
+                , Css.batch
+                    (case config.borderStyle of
+                        Dashed ->
+                            []
+
+                        Underline ->
+                            [ Css.textDecoration Css.underline
+                            , Css.property "text-decoration-thickness" "1px"
+                            , Css.property "text-underline-offset" "4.5px"
+                            ]
+                    )
                 ]
             , endStyles =
-                [ Css.borderRight3 borderWidth borderStyle notBottomBorderColor
+                [ Css.borderRight3 borderWidth borderStyle borderColor_
                 , Css.paddingRight (Css.px 2)
                 ]
             }
