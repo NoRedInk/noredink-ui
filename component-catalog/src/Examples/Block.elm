@@ -188,7 +188,16 @@ example =
                     , Block.labelPosition (Dict.get prepositionId offsets)
                     , Block.emphasize
                     ]
-                , Block.view <|
+                , Block.view [ Block.plaintext " " ]
+                , Block.view
+                    [ Block.label "adjective"
+                    , Block.underline
+                    , Block.purple
+                    , Block.labelId adjectiveId
+                    , Block.labelPosition (Dict.get adjectiveId offsets)
+                    , Block.emphasize
+                    ]
+                , Block.view
                     [ Block.content
                         [ Block.bold (List.concat [ Block.phrase " comic ", [ Block.italic (Block.phrase "book") ], Block.phrase " pages. " ])
                         ]
@@ -361,7 +370,7 @@ example =
                                 ]
                                 1
                   , description =
-                        """**Labeled blank block**
+                        """**Labeled dashed blank block**
 
 A labelled blank in the sentence.
 
@@ -384,6 +393,36 @@ A labelled blank in the sentence.
                 , { pattern =
                         Code.fromModule moduleName "view "
                             ++ Code.listMultiline
+                                [ Code.fromModule moduleName "label " ++ Code.string "[label text]"
+                                , Code.fromModule moduleName "purple"
+                                , Code.fromModule moduleName "underline"
+                                ]
+                                1
+                  , description =
+                        """**Labeled underline blank block**
+
+A labelled blank in the sentence.
+
+"""
+                            ++ "Please see the \""
+                            ++ blankWidthGuidanceSectionName
+                            ++ "\" table to learn more about using Blanks."
+                  , example =
+                        inParagraph
+                            [ Block.view [ Block.plaintext "If a volcano is extinct, " ]
+                            , Block.view
+                                [ Block.label "pronoun"
+                                , Block.purple
+                                , Block.underline
+                                , Block.labelId pronoun2Id
+                                , Block.labelPosition (Dict.get pronoun2Id offsets)
+                                ]
+                            , Block.view [ Block.plaintext " will never erupt again." ]
+                            ]
+                  }
+                , { pattern =
+                        Code.fromModule moduleName "view "
+                            ++ Code.listMultiline
                                 [ Code.fromModule moduleName "emphasize"
                                 , Code.fromModule moduleName "content "
                                     ++ Code.listMultiline
@@ -395,12 +434,45 @@ A labelled blank in the sentence.
                                         2
                                 ]
                                 1
-                  , description = "**Blanks with emphasis block**\n\nHelp students focus in on a phrase that includes a blank"
+                  , description = "**Dashed Blanks in emphasis block**\n\nHelp students focus in on a phrase that includes a blank"
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "This is an " ]
                             , Block.view
                                 [ Block.emphasize
+                                , (List.concat >> Block.content)
+                                    [ Block.phrase "emphasized subsegement "
+                                    , [ Block.blank { widthInChars = 8 } ]
+                                    , Block.phrase " emphasized"
+                                    ]
+                                ]
+                            , Block.view
+                                [ Block.plaintext " in a seed."
+                                ]
+                            ]
+                  }
+                , { pattern =
+                        Code.fromModule moduleName "view "
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "emphasize"
+                                , Code.fromModule moduleName "underline"
+                                , Code.fromModule moduleName "content "
+                                    ++ Code.listMultiline
+                                        [ "…"
+                                        , Code.fromModule moduleName "blank "
+                                            ++ Code.record [ ( "widthInChars", "8" ) ]
+                                        , "…"
+                                        ]
+                                        2
+                                ]
+                                1
+                  , description = "**Underline Blanks in emphasis block**\n\nHelp students focus in on a phrase that includes a blank"
+                  , example =
+                        inParagraph
+                            [ Block.view [ Block.plaintext "This is an " ]
+                            , Block.view
+                                [ Block.emphasize
+                                , Block.underline
                                 , (List.concat >> Block.content)
                                     [ Block.phrase "emphasized subsegement "
                                     , [ Block.blank { widthInChars = 8 } ]
@@ -482,12 +554,24 @@ A labelled blank in the sentence.
                     , sort = Nothing
                     }
                 , Table.custom
-                    { header = text "Example"
+                    { header = text "Dashed Example"
                     , view =
                         \{ textExample, blankExample } ->
                             div []
                                 [ div [] [ Block.view (Block.emphasize :: textExample) ]
                                 , div [] [ Block.view blankExample ]
+                                ]
+                    , width = Css.px 300
+                    , cellStyles = always [ Css.padding2 (Css.px 4) (Css.px 7), Css.verticalAlign Css.top ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "Underline Example"
+                    , view =
+                        \{ textExample, blankExample } ->
+                            div []
+                                [ div [] [ Block.view (Block.emphasize :: Block.underline :: textExample) ]
+                                , div [] [ Block.view (Block.underline :: blankExample) ]
                                 ]
                     , width = Css.px 300
                     , cellStyles = always [ Css.padding2 (Css.px 4) (Css.px 7), Css.verticalAlign Css.top ]
@@ -728,6 +812,11 @@ prepositionId =
     "preposition-label-id"
 
 
+adjectiveId : String
+adjectiveId =
+    "adjective-label-id"
+
+
 editorsNoteId : String
 editorsNoteId =
     "editors-note-label-id"
@@ -736,6 +825,11 @@ editorsNoteId =
 pronounId : String
 pronounId =
     "pronoun-label-id"
+
+
+pronoun2Id : String
+pronoun2Id =
+    "pronoun-label-id-2"
 
 
 articleId : String
@@ -776,8 +870,10 @@ blocksWithLabelsIds =
     , subjectId
     , directObjectId
     , prepositionId
+    , adjectiveId
     , editorsNoteId
     , pronounId
+    , pronoun2Id
     , articleId
     , trickyId
     , goalId
