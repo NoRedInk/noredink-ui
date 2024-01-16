@@ -715,16 +715,7 @@ render config =
             , backgroundColor = palette.backgroundColor
             , maybeMarker = maybeMark
             , labelPosition = config.labelPosition
-            , labelCss =
-                config.labelCss
-                    ++ (case ( config.borderStyle, config.content ) of
-                            ( Underline, [ Blank _ ] ) ->
-                                [ Css.top (Css.px 6)
-                                ]
-
-                            _ ->
-                                []
-                       )
+            , labelCss = config.labelCss
             , labelId = config.labelId
             , labelContentId = Maybe.map labelContentId config.labelId
             }
