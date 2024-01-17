@@ -7,6 +7,7 @@ module Nri.Ui.Checkbox.V7 exposing
     , containerCss, labelCss, custom, nriDescription, id, testId
     , disabled, enabled, guidance, guidanceHtml
     , viewIcon
+    , noMargin
     )
 
 {-|
@@ -23,6 +24,7 @@ module Nri.Ui.Checkbox.V7 exposing
   - set cursor to not-allowed when disabled
   - update color styling
   - update unselected enabled label color
+  - adds noMargin
 
 
 ## Changes from V6:
@@ -180,6 +182,13 @@ testId id_ =
     custom [ Extra.testId id_ ]
 
 
+{-| Remove default spacing from the top and bottom of the checkbox.
+-}
+noMargin : Bool -> Attribute value
+noMargin removeMargin =
+    Attribute <| \config -> { config | removeMargin = removeMargin }
+
+
 {-| Customizations for the Checkbox.
 -}
 type Attribute msg
@@ -197,6 +206,7 @@ type alias Config msg =
     , custom : List (Html.Attribute msg)
     , containerCss : List Css.Style
     , labelCss : List Css.Style
+    , removeMargin : Bool
     }
 
 
@@ -223,6 +233,7 @@ emptyConfig =
     , custom = []
     , containerCss = []
     , labelCss = []
+    , removeMargin = False
     }
 
 
@@ -286,6 +297,7 @@ view { label, selected } attributes =
                     )
     in
     checkboxContainer config_
+        config
         [ if config.isDisabled then
             div
                 [ css [ cursor notAllowed ]
@@ -355,15 +367,28 @@ selectedToMaybe selected =
             Nothing
 
 
-checkboxContainer : { a | identifier : String, containerCss : List Style } -> List (Html msg) -> Html msg
-checkboxContainer model =
+checkboxContainer :
+    { a
+        | identifier : String
+        , containerCss : List Style
+    }
+    -> { b | removeMargin : Bool }
+    -> List (Html msg)
+    -> Html msg
+checkboxContainer model { removeMargin } =
     Html.span
         [ css
             [ displayFlex
             , alignItems center
             , marginLeft (px -4)
-            , paddingTop (px 5)
-            , paddingBottom (px 5)
+            , batch <|
+                if removeMargin then
+                    []
+
+                else
+                    [ paddingTop (px 5)
+                    , paddingBottom (px 5)
+                    ]
             , height inherit
             , pseudoClass "focus-within"
                 [ Css.Global.descendants

@@ -306,6 +306,7 @@ initAttributes =
                   )
                 ]
             )
+        |> ControlExtra.optionalBoolListItem "noMargin" ( "noMargin True", Checkbox.noMargin True )
 
 
 viewExampleWithCode : State -> Settings -> ( String, Html Msg )
