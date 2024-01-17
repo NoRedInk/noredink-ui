@@ -15,6 +15,12 @@ module Nri.Ui.SideNav.V5 exposing
 {-|
 
 
+### Patch changes:
+
+  - uses `ul>li` for the structure
+  - adds `aria-current="true"` to the parent of the current page
+
+
 ### Changes from V4
 
   - removes primary and secondary
@@ -55,6 +61,7 @@ import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style as Style
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (..)
+import Css.Global
 import Css.Media
 import Html.Styled
 import Html.Styled.Attributes as Attributes
@@ -402,7 +409,15 @@ viewNav sidenavId config appliedNavAttributes entries showNav =
             |> List.filterMap identity
         )
         (viewJust (viewOpenCloseButton sidenavId appliedNavAttributes.navLabel currentEntry) appliedNavAttributes.collapsible
-            :: List.map (viewSidebarEntry config entryStyles) entries
+            :: [ ul
+                    [ Attributes.css
+                        [ listStyle none
+                        , padding zero
+                        , margin zero
+                        ]
+                    ]
+                    (List.map (viewSidebarEntry config entryStyles) entries)
+               ]
         )
 
 
@@ -435,8 +450,12 @@ viewSidebarEntry config extraStyles entry_ =
                 viewLockedEntry extraStyles entryConfig
 
             else if anyLinkDescendants (isCurrentRoute config) children then
-                div [ Attributes.css extraStyles ]
-                    (styled span
+                let
+                    id_ =
+                        AttributesExtra.safeIdWithPrefix "sidenav-group" entryConfig.title
+                in
+                li []
+                    [ styled span
                         (sharedEntryStyles
                             ++ [ backgroundColor Colors.gray92
                                , color Colors.navy
@@ -445,18 +464,29 @@ viewSidebarEntry config extraStyles entry_ =
                                , marginBottom (px 10)
                                ]
                         )
-                        []
+                        [ Attributes.id id_, Aria.currentItem True ]
                         [ text entryConfig.title ]
-                        :: List.map
+                    , ul
+                        [ Attributes.css
+                            ([ listStyle none
+                             , padding zero
+                             , margin zero
+                             ]
+                                ++ extraStyles
+                            )
+                        , Aria.labelledBy id_
+                        ]
+                        (List.map
                             (viewSidebarEntry config (marginLeft (px 20) :: extraStyles))
                             children
-                    )
+                        )
+                    ]
 
             else
                 viewSidebarLeaf config extraStyles entryConfig
 
         Html html_ ->
-            div [ Attributes.css extraStyles ] html_
+            li [ Attributes.css extraStyles ] html_
 
         CompactGroup children groupConfig ->
             let
@@ -465,7 +495,7 @@ viewSidebarEntry config extraStyles entry_ =
                         "sidenav-compact-group"
                         groupConfig.title
             in
-            styled div
+            styled li
                 (margin2 (px 8) zero
                     :: extraStyles
                     ++ groupConfig.customStyles
@@ -488,7 +518,12 @@ viewSidebarEntry config extraStyles entry_ =
                     , viewRightIcon groupConfig
                     ]
                 , ul
-                    [ Attributes.css [ margin zero, padding zero ]
+                    [ Attributes.css
+                        [ margin zero
+                        , padding zero
+                        , listStyle none
+                        , Css.Global.children [ Css.Global.typeSelector "li" [ margin2 (px 4) zero ] ]
+                        ]
                     , Aria.describedBy [ groupTitleId ]
                     ]
                     (List.map
@@ -497,8 +532,6 @@ viewSidebarEntry config extraStyles entry_ =
                                 :: fontWeight (int 400)
                                 :: extraStyles
                             )
-                            >> List.singleton
-                            >> li [ Attributes.css [ listStyle none, margin2 (px 4) zero ] ]
                         )
                         children
                     )
@@ -570,30 +603,33 @@ viewSidebarLeaf config extraStyles entryConfig =
         isCurrent =
             isCurrentRoute config entryConfig
     in
-    Nri.Ui.styled Html.Styled.a
-        ("Nri-Ui-SideNav-" ++ linkFunctionName)
-        (sharedEntryStyles
-            ++ extraStyles
-            ++ (if isCurrent then
-                    [ backgroundColor Colors.glacier
-                    , color Colors.navy
-                    , fontWeight bold
-                    , visited [ color Colors.navy ]
-                    ]
+    li
+        []
+        [ Nri.Ui.styled Html.Styled.a
+            ("Nri-Ui-SideNav-" ++ linkFunctionName)
+            (sharedEntryStyles
+                ++ extraStyles
+                ++ (if isCurrent then
+                        [ backgroundColor Colors.glacier
+                        , color Colors.navy
+                        , fontWeight bold
+                        , visited [ color Colors.navy ]
+                        ]
 
-                else
-                    []
-               )
-            ++ entryConfig.customStyles
-        )
-        (Attributes.class FocusRing.customClass
-            :: AttributesExtra.includeIf isCurrent Aria.currentPage
-            :: attributes
-            ++ entryConfig.customAttributes
-        )
-        [ viewLeftIcon entryConfig
-        , text entryConfig.title
-        , viewRightIcon entryConfig
+                    else
+                        []
+                   )
+                ++ entryConfig.customStyles
+            )
+            (Attributes.class FocusRing.customClass
+                :: AttributesExtra.includeIf isCurrent Aria.currentPage
+                :: attributes
+                ++ entryConfig.customAttributes
+            )
+            [ viewLeftIcon entryConfig
+            , text entryConfig.title
+            , viewRightIcon entryConfig
+            ]
         ]
 
 
