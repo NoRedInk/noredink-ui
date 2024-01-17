@@ -469,6 +469,9 @@ viewSelect config_ config =
                 (if isInError then
                     Colors.purple
 
+                 else if config.disabled then
+                    Colors.gray85
+
                  else
                     Colors.gray75
                 )
@@ -604,7 +607,7 @@ selectArrowsCss config =
     let
         color =
             (if config.disabled then
-                Colors.gray20
+                Colors.gray45
 
              else
                 Colors.azure
