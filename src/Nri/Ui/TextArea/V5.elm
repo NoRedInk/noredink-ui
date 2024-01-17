@@ -373,6 +373,7 @@ view_ label config =
             , Css.batch
                 (if config.disabled then
                     [ Css.boxShadow Css.none |> Css.important
+                    , Css.borderColor Colors.gray85 |> Css.important
                     , Css.backgroundColor Colors.gray85
                     ]
 

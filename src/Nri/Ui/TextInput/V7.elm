@@ -928,6 +928,7 @@ view label attributes =
                         , Css.batch
                             (if config.disabled then
                                 [ Css.backgroundColor Colors.gray85
+                                , Css.borderColor Colors.gray85 |> Css.important
                                 , Css.property "box-shadow" "none" |> Css.important
                                 ]
 
