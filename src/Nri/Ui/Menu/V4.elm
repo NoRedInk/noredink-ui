@@ -911,10 +911,18 @@ viewDefaultTrigger title menuConfig buttonAttributes attributes =
 
            else
             Button.css []
+         , if menuConfig.isDisabled then
+            Button.css
+                [ Css.borderColor Colors.gray85 |> Css.important
+                , Css.backgroundColor Colors.gray85 |> Css.important
+                ]
+
+           else
+            Button.css []
          , Button.rightIcon
             (AnimatedIcon.arrowDownUp menuConfig.isOpen
                 |> (if menuConfig.isDisabled then
-                        identity
+                        Svg.withColor Colors.gray45
 
                     else
                         Svg.withColor Colors.azure
