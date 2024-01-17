@@ -730,7 +730,14 @@ viewBlank blankStyle blankHeight (CharacterWidth width) =
                     Css.borderBottom2 (Css.rem 0.1) Css.solid
             , MediaQuery.highContrastMode
                 [ Css.property "border-color" "CanvasText"
-                , Css.property "background-color" "Canvas"
+                , Css.batch
+                    (case blankStyle of
+                        Dashed ->
+                            [ Css.property "background-color" "Canvas" ]
+
+                        Underline ->
+                            []
+                    )
                 ]
             , Css.backgroundColor
                 (case blankStyle of
