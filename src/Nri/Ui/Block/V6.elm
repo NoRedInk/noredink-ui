@@ -340,7 +340,7 @@ renderContent config content_ styles =
                         BlankHeightFull
             in
             blockSegmentContainer
-                [ viewBlank config.borderStyle blankHeight length ]
+                [ viewBlank config.blankStyle blankHeight length ]
                 styles
 
         Markdown markdown contents ->
@@ -425,14 +425,14 @@ italic =
 -}
 dashed : Attribute msg
 dashed =
-    Attribute (\config -> { config | borderStyle = Dashed })
+    Attribute (\config -> { config | blankStyle = Dashed })
 
 
 {-| Sets the border style to be underlined
 -}
 underline : Attribute msg
 underline =
-    Attribute (\config -> { config | borderStyle = Underline })
+    Attribute (\config -> { config | blankStyle = Underline })
 
 
 
@@ -524,7 +524,7 @@ toMark :
         | emphasize : Bool
         , label : Maybe String
         , content : List (Content msg)
-        , borderStyle : BorderStyle
+        , blankStyle : BlankStyle
     }
     -> Palette
     -> Maybe Mark
@@ -533,35 +533,19 @@ toMark config { backgroundColor, borderColor } =
         let
             borderWidth =
                 Css.px 1
-
-            borderStyle =
-                case config.borderStyle of
-                    Dashed ->
-                        Css.dashed
-
-                    Underline ->
-                        Css.solid
-
-            notBottomBorderColor =
-                case config.borderStyle of
-                    Dashed ->
-                        borderColor
-
-                    Underline ->
-                        backgroundColor
         in
         Just
             { name = config.label
             , startStyles =
-                [ Css.borderLeft3 borderWidth borderStyle notBottomBorderColor
+                [ Css.borderLeft3 borderWidth Css.dashed borderColor
                 , Css.paddingLeft (Css.px 2)
                 ]
             , styles =
                 [ Css.paddingTop topBottomSpace
                 , Css.paddingBottom topBottomSpace
                 , Css.backgroundColor backgroundColor
-                , Css.borderTop3 borderWidth borderStyle notBottomBorderColor
-                , Css.borderBottom3 borderWidth borderStyle borderColor
+                , Css.borderTop3 borderWidth Css.dashed borderColor
+                , Css.borderBottom3 borderWidth Css.dashed borderColor
                 , MediaQuery.highContrastMode
                     [ Css.property "background-color" "Mark"
                     , Css.property "color" "MarkText"
@@ -569,7 +553,7 @@ toMark config { backgroundColor, borderColor } =
                     ]
                 ]
             , endStyles =
-                [ Css.borderRight3 borderWidth borderStyle notBottomBorderColor
+                [ Css.borderRight3 borderWidth Css.dashed borderColor
                 , Css.paddingRight (Css.px 2)
                 ]
             }
@@ -665,7 +649,7 @@ defaultConfig =
     , theme = Yellow
     , emphasize = False
     , insertWbrAfterSpace = False
-    , borderStyle = Dashed
+    , blankStyle = Dashed
     }
 
 
@@ -679,11 +663,11 @@ type alias Config msg =
     , theme : Theme
     , emphasize : Bool
     , insertWbrAfterSpace : Bool
-    , borderStyle : BorderStyle
+    , blankStyle : BlankStyle
     }
 
 
-type BorderStyle
+type BlankStyle
     = Dashed
     | Underline
 
@@ -717,34 +701,46 @@ type BlankHeight
     | BlankHeightInline
 
 
-viewBlank : BorderStyle -> BlankHeight -> CharacterWidth -> Html msg
-viewBlank borderStyle blankHeight (CharacterWidth width) =
+viewBlank : BlankStyle -> BlankHeight -> CharacterWidth -> Html msg
+viewBlank blankStyle blankHeight (CharacterWidth width) =
     let
         heightStyles =
-            case blankHeight of
-                BlankHeightFull ->
-                    [ Css.paddingTop topBottomSpace
-                    , Css.paddingBottom topBottomSpace
-                    , Css.lineHeight Css.initial
-                    ]
+            case blankStyle of
+                Dashed ->
+                    case blankHeight of
+                        BlankHeightFull ->
+                            [ Css.paddingTop topBottomSpace
+                            , Css.paddingBottom topBottomSpace
+                            , Css.lineHeight Css.initial
+                            ]
 
-                BlankHeightInline ->
-                    [ Css.lineHeight (Css.num 1) ]
+                        BlankHeightInline ->
+                            [ Css.lineHeight (Css.num 1) ]
+
+                Underline ->
+                    [ Css.lineHeight (Css.num 0.75) ]
     in
     span
         [ css
-            [ case borderStyle of
+            [ case blankStyle of
                 Dashed ->
                     Css.border3 (Css.px 2) Css.dashed Colors.navy
 
                 Underline ->
-                    Css.borderBottom2 (Css.px 2) Css.solid
+                    Css.borderBottom2 (Css.rem 0.1) Css.solid
             , MediaQuery.highContrastMode
                 [ Css.property "border-color" "CanvasText"
-                , Css.property "background-color" "Canvas"
+                , Css.batch
+                    (case blankStyle of
+                        Dashed ->
+                            [ Css.property "background-color" "Canvas" ]
+
+                        Underline ->
+                            []
+                    )
                 ]
             , Css.backgroundColor
-                (case borderStyle of
+                (case blankStyle of
                     Dashed ->
                         Colors.white
 
@@ -755,7 +751,7 @@ viewBlank borderStyle blankHeight (CharacterWidth width) =
             , Css.display Css.inlineBlock
             , Css.borderRadius
                 (Css.px
-                    (case borderStyle of
+                    (case blankStyle of
                         Dashed ->
                             4
 
