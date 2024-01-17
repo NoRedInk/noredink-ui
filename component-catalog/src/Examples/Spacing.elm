@@ -397,6 +397,10 @@ controlSettings =
                     |> asChoice
                  , ( "quizEngineCenteredContent", Spacing.quizEngineCenteredContent )
                     |> asChoice
+                 , ( "centeredNarrowContentWithSidePadding", Spacing.centeredNarrowContentWithSidePadding )
+                    |> asChoice
+                 , ( "narrowCenteredContent", Spacing.narrowCenteredContent )
+                    |> asChoice
                  , ( "centeredContentWithSidePaddingAndCustomWidth"
                    , Control.map
                         (\value ->
