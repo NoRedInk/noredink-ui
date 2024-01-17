@@ -12,10 +12,11 @@ module Nri.Ui.Modal.V12 exposing
     , isOpen
     )
 
-{-|
+{-| Patch changes:
 
+  - adjust the padding of the heading when the close X is present for viewports less than 1000px wide
 
-# Changes fro V11:
+Changes from V11:
 
   - remove use of FocusTrap type alias
   - return ids to focus on instead of cmds (in order to make modals more testable via the effect pattern with program-test)
