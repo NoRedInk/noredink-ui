@@ -250,13 +250,6 @@ view ellieLinkConfig state =
             , sort = Nothing
             }
         , Table.string
-            { header = "Content alignment"
-            , value = .alignment
-            , width = Css.pct 10
-            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
-            , sort = Nothing
-            }
-        , Table.string
             { header = "Content max-width"
             , value = .maxWidth
             , width = Css.pct 10
@@ -270,13 +263,54 @@ view ellieLinkConfig state =
             , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
             , sort = Nothing
             }
+        , Table.string
+            { header = "Relevant breakpoint"
+            , value = .breakpoint
+            , width = Css.pct 10
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
         ]
-        [ { name = "centeredContentWithSidePadding", alignment = "Centered", maxWidth = "1000px", sidePadding = "when viewport <= 970px" }
-        , { name = "centeredContent", alignment = "Centered", maxWidth = "1000px", sidePadding = "0px" }
-        , { name = "centeredQuizEngineContentWithSidePadding", alignment = "Centered", maxWidth = "750px", sidePadding = "when viewport <= 720px" }
-        , { name = "centeredQuizEngineContent", alignment = "Centered", maxWidth = "750px", sidePadding = "0px" }
-        , { name = "centeredContentWithSidePaddingAndCustomWidth", alignment = "Centered", maxWidth = "(customizable)", sidePadding = "when viewport <= (custom breakpoint value - 30)" }
-        , { name = "centeredContentWithCustomWidth", alignment = "Centered", maxWidth = "(customizable)", sidePadding = "0px" }
+        [ { name = "centeredContentWithSidePadding"
+          , maxWidth = "1000px"
+          , sidePadding = "when viewport <= 970px"
+          , breakpoint = "MediaQuery.mobileBreakpoint"
+          }
+        , { name = "centeredContent"
+          , maxWidth = "1000px"
+          , sidePadding = "0px"
+          , breakpoint = "MediaQuery.mobileBreakpoint"
+          }
+        , { name = "centeredQuizEngineContentWithSidePadding"
+          , maxWidth = "750px"
+          , sidePadding = "when viewport <= 720px"
+          , breakpoint = "MediaQuery.quizEngineMobileBreakpoint"
+          }
+        , { name = "centeredQuizEngineContent"
+          , maxWidth = "750px"
+          , sidePadding = "0px"
+          , breakpoint = "MediaQuery.quizEngineMobileBreakpoint"
+          }
+        , { name = "centeredNarrowContentWithSidePadding"
+          , maxWidth = "500px"
+          , sidePadding = "when viewport <= 470px"
+          , breakpoint = "MediaQuery.narrowMobileBreakpoint"
+          }
+        , { name = "centeredNarrowContent"
+          , maxWidth = "500px"
+          , sidePadding = "0px"
+          , breakpoint = "MediaQuery.narrowMobileBreakpoint"
+          }
+        , { name = "centeredContentWithSidePaddingAndCustomWidth"
+          , maxWidth = "(customizable)"
+          , sidePadding = "when viewport <= (custom breakpoint value - 30)"
+          , breakpoint = "(customizable)"
+          }
+        , { name = "centeredContentWithCustomWidth"
+          , maxWidth = "(customizable)"
+          , sidePadding = "0px"
+          , breakpoint = "(customizable)"
+          }
         ]
     , Heading.h2 [ Heading.plaintext "Constants", Heading.css [ Css.marginTop Spacing.verticalSpacerPx ] ]
     , Table.view []
