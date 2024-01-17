@@ -15,6 +15,7 @@ module Nri.Ui.Menu.V4 exposing
 
   - improve interoperability with Tooltip (Note that tooltip keyboard events are not fully supported!)
   - Use Nri.Ui.WhenFocusLeaves.V2
+  - Adjust disabled styles
 
 Changes from V3:
 

@@ -17,6 +17,7 @@ module Nri.Ui.TextInput.V7 exposing
 # Patch changes
 
   - no longer defaults the placeholder value to the label text
+  - Adjust disabled styles
 
 
 # Changes from V6

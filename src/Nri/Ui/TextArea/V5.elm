@@ -21,6 +21,7 @@ module Nri.Ui.TextArea.V5 exposing
 ### Patch changes
 
   - no longer defaults the placeholder value to the label text
+  - Adjust disabled styles
 
 
 ### Changes from V4
