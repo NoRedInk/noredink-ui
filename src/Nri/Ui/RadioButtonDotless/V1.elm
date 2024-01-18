@@ -243,6 +243,9 @@ emptyConfig =
 
 
 {-| View the single dotless radio button
+
+`label` supports bold and italic markdown syntax
+
 -}
 view :
     { label : String
