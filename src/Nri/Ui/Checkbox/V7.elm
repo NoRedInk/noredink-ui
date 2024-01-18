@@ -299,9 +299,7 @@ view { label, selected } attributes =
     checkboxContainer config_
         config
         [ if config.isDisabled then
-            div
-                [ css [ cursor notAllowed ]
-                ]
+            div [ css [ cursor notAllowed ] ]
                 [ viewIcon [] disabledIcon ]
 
           else
@@ -380,14 +378,13 @@ checkboxContainer model { removeMargin } =
         [ css
             [ displayFlex
             , alignItems center
-            , marginLeft (px -4)
             , batch <|
                 if removeMargin then
                     []
 
                 else
-                    [ paddingTop (px 5)
-                    , paddingBottom (px 5)
+                    [ paddingTop (px 9)
+                    , paddingBottom (px 9)
                     ]
             , height inherit
             , pseudoClass "focus-within"
@@ -448,19 +445,10 @@ viewCheckboxLabel :
     -> Html.Html msg
 viewCheckboxLabel config styles =
     let
-        marginTopAdjustment =
-            case config.guidance of
-                Just _ ->
-                    marginTop (Css.px -highContrastBorderWidth)
-
-                Nothing ->
-                    Css.batch []
-
         attributes =
             List.concat
                 [ [ css
                         (paddingLeft (Css.px checkboxIconWidth)
-                            :: marginTopAdjustment
                             :: marginLeft (Css.px -checkboxIconWidth)
                             :: (if config.hideLabel then
                                     minHeight (Css.px checkboxIconHeight)
@@ -544,11 +532,9 @@ viewIcon : List Style -> Svg -> Html msg
 viewIcon styles icon =
     Html.div
         [ css
-            [ border3 (px highContrastBorderWidth) solid transparent
-            , borderRadius (px 3)
+            [ borderRadius (px 3)
             , height (Css.px checkboxIconHeight)
             , boxSizing contentBox
-            , margin (px 2)
             , marginRight (px 7)
             ]
         , Attributes.class "checkbox-icon-container"
@@ -566,8 +552,3 @@ viewIcon styles icon =
             [ Nri.Ui.Svg.V1.toHtml (Nri.Ui.Svg.V1.withCss styles icon)
             ]
         ]
-
-
-highContrastBorderWidth : Float
-highContrastBorderWidth =
-    2
