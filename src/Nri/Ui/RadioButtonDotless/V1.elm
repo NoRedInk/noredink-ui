@@ -46,6 +46,7 @@ module Nri.Ui.RadioButtonDotless.V1 exposing
 
 import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
+import Content
 import Css exposing (..)
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
@@ -410,6 +411,6 @@ view { label, name, value, valueToString, selectedValue } attributes =
                         ++ config.labelCss
                     )
                 ]
-                [ text label ]
+                (Content.markdownInline label)
             ]
         ]
