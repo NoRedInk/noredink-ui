@@ -466,7 +466,7 @@ viewExamplesCode selectionSettings selectedValue =
                 ++ Code.recordMultiline
                     [ ( "label", (selectionToString selectionSettings >> Code.string) kind )
                     , ( "name", Code.string "pets" )
-                    , ( "value", selectionToString selectionSettings kind )
+                    , ( "value", Debug.toString kind )
                     , ( "selectedValue"
                       , Code.maybe (Maybe.map (selectionToString selectionSettings) selectedValue)
                       )
