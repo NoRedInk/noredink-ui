@@ -89,7 +89,7 @@ example =
             , Table.view []
                 [ Table.string
                     { header = "Premium Display"
-                    , value = Debug.toString
+                    , value = \( _, premiumDisplay ) -> Debug.toString premiumDisplay
                     , width = Css.pct 30
                     , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
                     , sort = Nothing
@@ -97,9 +97,9 @@ example =
                 , Table.custom
                     { header = text "View"
                     , view =
-                        \premiumDisplay ->
+                        \( index, premiumDisplay ) ->
                             PremiumCheckbox.view
-                                { label = "Thesis statement is interesting"
+                                { label = "Thesis statement is interesting " ++ String.fromInt index
                                 , onChange = ToggleCheck (Debug.toString premiumDisplay)
                                 }
                                 [ PremiumCheckbox.selected (Set.member (Debug.toString premiumDisplay) state.isChecked)
@@ -110,11 +110,13 @@ example =
                     , sort = Nothing
                     }
                 ]
-                [ PremiumDisplay.Free
-                , PremiumDisplay.PremiumLocked
-                , PremiumDisplay.PremiumUnlocked
-                , PremiumDisplay.PremiumVouchered
-                ]
+                (List.indexedMap (\a b -> ( a, b ))
+                    [ PremiumDisplay.Free
+                    , PremiumDisplay.PremiumLocked
+                    , PremiumDisplay.PremiumUnlocked
+                    , PremiumDisplay.PremiumVouchered
+                    ]
+                )
             ]
     , categories = [ Inputs ]
     , keyboardSupport =
