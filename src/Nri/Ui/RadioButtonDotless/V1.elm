@@ -16,6 +16,7 @@ module Nri.Ui.RadioButtonDotless.V1 exposing
 ### Patch changes:
 
     - Introduce `enabled`/`disabled` attributes and styles
+    - Support markdown for radio button contents (like Button does)
 
 
 # Create a radio button
