@@ -103,7 +103,7 @@ controlAttributes =
 initSelectionSettings : Control SelectionSettings
 initSelectionSettings =
     Control.record SelectionSettings
-        |> Control.field "Dogs label" (Control.string "Dogs")
+        |> Control.field "Dogs label" (Control.string "**Dogs**")
         |> Control.field "Dogs" controlAttributes
         |> Control.field "Cats label" (Control.string "Cats")
         |> Control.field "Cats" controlAttributes
