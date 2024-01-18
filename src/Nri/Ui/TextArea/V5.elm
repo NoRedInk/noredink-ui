@@ -21,6 +21,7 @@ module Nri.Ui.TextArea.V5 exposing
 ### Patch changes
 
   - no longer defaults the placeholder value to the label text
+  - Adjust disabled styles
 
 
 ### Changes from V4
@@ -373,6 +374,7 @@ view_ label config =
             , Css.batch
                 (if config.disabled then
                     [ Css.boxShadow Css.none |> Css.important
+                    , Css.borderColor Colors.gray85 |> Css.important
                     , Css.backgroundColor Colors.gray85
                     ]
 

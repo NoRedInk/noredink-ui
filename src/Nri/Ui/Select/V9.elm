@@ -14,8 +14,11 @@ module Nri.Ui.Select.V9 exposing
 
 {-| Build a select input with a label, optional guidance, and error messaging.
 
+Patch changes:
 
-# Changes from V8
+  - Adjust disabled styles
+
+Changes from V8
 
     - The option `value` attribute is no longer prefixed with `nri-select-`;
       This is not a breaking change to the API, but affects automated tests
@@ -469,6 +472,9 @@ viewSelect config_ config =
                 (if isInError then
                     Colors.purple
 
+                 else if config.disabled then
+                    Colors.gray85
+
                  else
                     Colors.gray75
                 )
@@ -604,7 +610,7 @@ selectArrowsCss config =
     let
         color =
             (if config.disabled then
-                Colors.gray20
+                Colors.gray45
 
              else
                 Colors.azure

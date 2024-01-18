@@ -17,6 +17,7 @@ module Nri.Ui.TextInput.V7 exposing
 # Patch changes
 
   - no longer defaults the placeholder value to the label text
+  - Adjust disabled styles
 
 
 # Changes from V6
@@ -928,6 +929,7 @@ view label attributes =
                         , Css.batch
                             (if config.disabled then
                                 [ Css.backgroundColor Colors.gray85
+                                , Css.borderColor Colors.gray85 |> Css.important
                                 , Css.property "box-shadow" "none" |> Css.important
                                 ]
 
