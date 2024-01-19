@@ -27,7 +27,7 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 
 version : Int
 version =
-    3
+    4
 
 
 {-| -}
