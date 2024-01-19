@@ -154,6 +154,11 @@ type Kind
     | Link
 
 
+type IconPosition
+    = Left
+    | Right
+
+
 {-| -}
 icon : Svg -> Attribute msg
 icon icon_ =
@@ -481,11 +486,6 @@ viewContent config kind =
                 Large ->
                     Css.fontSize (Css.px 18)
 
-        viewIcon styles icon_ =
-            icon_
-                |> Svg.withCss styles
-                |> Svg.toHtml
-
         iconMarginRight =
             case config.size of
                 Inherited ->
@@ -514,6 +514,45 @@ viewContent config kind =
                 Large ->
                     Css.marginLeft (Css.px 4)
 
+        viewIcon position icon_ =
+            icon_
+                |> Svg.withCss
+                    ([ Css.width (Css.em 1)
+                     , Css.height (Css.em 1)
+                     , Css.position Css.relative
+                     , Css.top (Css.em 0.1)
+                     ]
+                        ++ (case position of
+                                Left ->
+                                    iconMarginRight
+                                        :: (case kind of
+                                                Button ->
+                                                    [ -- Position absolute makes the parent ignore the icon's height, preventing misalignment with other inline text
+                                                      Css.position Css.absolute
+                                                    , Css.left Css.zero
+                                                    ]
+
+                                                Link ->
+                                                    []
+                                           )
+                                        ++ config.iconStyles
+
+                                Right ->
+                                    iconMarginLeft
+                                        :: (case kind of
+                                                Button ->
+                                                    [ Css.position Css.absolute
+                                                    , Css.right Css.zero
+                                                    ]
+
+                                                Link ->
+                                                    []
+                                           )
+                                        ++ config.rightIconStyles
+                           )
+                    )
+                |> Svg.toHtml
+
         iconAndTextContainer =
             span
                 [ Attributes.css
@@ -522,6 +561,7 @@ viewContent config kind =
                                 Button ->
                                     [ Css.display Css.inlineFlex
                                     , Css.alignItems Css.center
+                                    , Css.position Css.relative
                                     ]
 
                                 Link ->
@@ -535,49 +575,58 @@ viewContent config kind =
         (case ( config.icon, config.rightIcon ) of
             ( Just leftIcon, Just rightIcon_ ) ->
                 iconAndTextContainer
-                    [ viewIcon
-                        ([ iconMarginRight
-                         , Css.width (Css.em 1)
-                         , Css.height (Css.em 1)
-                         ]
-                            ++ config.iconStyles
-                        )
-                        leftIcon
-                    , span [ ExtraAttributes.nriDescription (dataDescriptor "label") ] [ text config.label ]
-                    , viewIcon
-                        ([ iconMarginLeft
-                         , Css.width (Css.em 1)
-                         , Css.height (Css.em 1)
-                         ]
-                            ++ config.rightIconStyles
-                        )
-                        rightIcon_
+                    [ viewIcon Left leftIcon
+                    , span
+                        [ ExtraAttributes.nriDescription (dataDescriptor "label")
+                        , Attributes.css
+                            (case kind of
+                                Button ->
+                                    [ Css.paddingLeft (Css.em 1.2)
+                                    , Css.paddingRight (Css.em 1.2)
+                                    ]
+
+                                Link ->
+                                    []
+                            )
+                        ]
+                        [ text config.label ]
+                    , viewIcon Right rightIcon_
                     ]
 
             ( Just leftIcon, Nothing ) ->
                 iconAndTextContainer
-                    [ viewIcon
-                        ([ iconMarginRight
-                         , Css.width (Css.em 1)
-                         , Css.height (Css.em 1)
-                         ]
-                            ++ config.iconStyles
-                        )
-                        leftIcon
-                    , span [ ExtraAttributes.nriDescription (dataDescriptor "label") ] [ text config.label ]
+                    [ viewIcon Left leftIcon
+                    , span
+                        [ ExtraAttributes.nriDescription (dataDescriptor "label")
+                        , Attributes.css
+                            (case kind of
+                                Button ->
+                                    [ Css.paddingLeft (Css.em 1.2)
+                                    ]
+
+                                Link ->
+                                    []
+                            )
+                        ]
+                        [ text config.label ]
                     ]
 
             ( Nothing, Just rightIcon_ ) ->
                 iconAndTextContainer
-                    [ span [ ExtraAttributes.nriDescription (dataDescriptor "label") ] [ text config.label ]
-                    , viewIcon
-                        ([ iconMarginLeft
-                         , Css.width (Css.em 1)
-                         , Css.height (Css.em 1)
-                         ]
-                            ++ config.rightIconStyles
-                        )
-                        rightIcon_
+                    [ span
+                        [ ExtraAttributes.nriDescription (dataDescriptor "label")
+                        , Attributes.css
+                            (case kind of
+                                Button ->
+                                    [ Css.paddingRight (Css.em 1.2)
+                                    ]
+
+                                Link ->
+                                    []
+                            )
+                        ]
+                        [ text config.label ]
+                    , viewIcon Right rightIcon_
                     ]
 
             ( Nothing, Nothing ) ->

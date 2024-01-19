@@ -205,11 +205,24 @@ inlineExample textSizeName =
             [ ClickableText.appearsInline
             , ClickableText.onClick (ShowItWorked moduleName "in-line button")
             ]
-        , text " and "
-        , ClickableText.button "ClickableTexts with icons"
+        , text ", "
+        , ClickableText.button "ClickableTexts with left icons"
             [ ClickableText.appearsInline
             , ClickableText.onClick (ShowItWorked moduleName "in-line button")
             , ClickableText.icon UiIcon.starFilled
+            ]
+        , text ", "
+        , ClickableText.button "ClickableTexts with right icons"
+            [ ClickableText.appearsInline
+            , ClickableText.onClick (ShowItWorked moduleName "in-line button")
+            , ClickableText.rightIcon UiIcon.starFilled
+            ]
+        , text ", and "
+        , ClickableText.button "ClickableTexts with left and right icons"
+            [ ClickableText.appearsInline
+            , ClickableText.onClick (ShowItWorked moduleName "in-line button")
+            , ClickableText.icon UiIcon.starFilled
+            , ClickableText.rightIcon UiIcon.starFilled
             ]
         , text (" to show up in-line with " ++ textSizeName ++ " content.")
         ]
