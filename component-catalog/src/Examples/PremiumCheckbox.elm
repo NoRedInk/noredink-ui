@@ -19,12 +19,14 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Pennant.V3 as Pennant
 import Nri.Ui.PremiumCheckbox.V8 as PremiumCheckbox
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Table.V7 as Table
 import Set exposing (Set)
 
 
@@ -80,6 +82,41 @@ example =
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
             , exampleView
+            , Heading.h2
+                [ Heading.plaintext "Premium Examples"
+                , Heading.css [ Css.marginTop (Css.px 30) ]
+                ]
+            , Table.view []
+                [ Table.string
+                    { header = "Premium Display"
+                    , value = \( _, premiumDisplay ) -> Debug.toString premiumDisplay
+                    , width = Css.pct 30
+                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "View"
+                    , view =
+                        \( index, premiumDisplay ) ->
+                            PremiumCheckbox.view
+                                { label = "Thesis statement is interesting " ++ String.fromInt index
+                                , onChange = ToggleCheck (Debug.toString premiumDisplay)
+                                }
+                                [ PremiumCheckbox.selected (Set.member (Debug.toString premiumDisplay) state.isChecked)
+                                , PremiumCheckbox.premium premiumDisplay
+                                ]
+                    , width = Css.px 150
+                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+                    , sort = Nothing
+                    }
+                ]
+                (List.indexedMap (\a b -> ( a, b ))
+                    [ PremiumDisplay.Free
+                    , PremiumDisplay.PremiumLocked
+                    , PremiumDisplay.PremiumUnlocked
+                    , PremiumDisplay.PremiumVouchered
+                    ]
+                )
             ]
     , categories = [ Inputs ]
     , keyboardSupport =
@@ -220,7 +257,7 @@ viewExampleWithCode state settings =
 
 {-| -}
 type Msg
-    = ToggleCheck Id Bool
+    = ToggleCheck String Bool
     | UpdateControls (Control Settings)
     | ClickedPremiumLock
 
@@ -245,7 +282,3 @@ update msg state =
 
         ClickedPremiumLock ->
             ( Debug.log moduleName "clicked a premium lock" |> always state, Cmd.none )
-
-
-type alias Id =
-    String
