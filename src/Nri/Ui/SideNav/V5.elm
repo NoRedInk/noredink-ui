@@ -1,6 +1,6 @@
 module Nri.Ui.SideNav.V5 exposing
     ( view, Config, NavAttribute
-    , collapsible
+    , collapsible, CollapsibleConfig
     , navLabel, navId
     , navCss, navNotMobileCss, navMobileCss, navQuizEngineMobileCss
     , entry, entryWithChildren, html, compactGroup
@@ -19,6 +19,7 @@ module Nri.Ui.SideNav.V5 exposing
 
   - uses `ul>li` for the structure
   - adds `aria-current="true"` to the parent of the current page
+  - expose missing import
 
 
 ### Changes from V4
@@ -31,7 +32,7 @@ module Nri.Ui.SideNav.V5 exposing
 ## View
 
 @docs view, Config, NavAttribute
-@docs collapsible
+@docs collapsible, CollapsibleConfig
 @docs navLabel, navId
 @docs navCss, navNotMobileCss, navMobileCss, navQuizEngineMobileCss
 
