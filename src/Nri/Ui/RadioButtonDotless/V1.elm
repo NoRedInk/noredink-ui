@@ -16,6 +16,7 @@ module Nri.Ui.RadioButtonDotless.V1 exposing
 ### Patch changes:
 
     - Introduce `enabled`/`disabled` attributes and styles
+    - Support markdown for radio button contents (like Button does)
 
 
 # Create a radio button
@@ -46,6 +47,7 @@ module Nri.Ui.RadioButtonDotless.V1 exposing
 
 import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
+import Content
 import Css exposing (..)
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
@@ -241,6 +243,9 @@ emptyConfig =
 
 
 {-| View the single dotless radio button
+
+`label` supports bold and italic markdown syntax
+
 -}
 view :
     { label : String
@@ -410,6 +415,6 @@ view { label, name, value, valueToString, selectedValue } attributes =
                         ++ config.labelCss
                     )
                 ]
-                [ text label ]
+                (Content.markdownInline label)
             ]
         ]

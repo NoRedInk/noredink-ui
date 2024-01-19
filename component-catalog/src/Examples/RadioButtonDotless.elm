@@ -103,7 +103,7 @@ controlAttributes =
 initSelectionSettings : Control SelectionSettings
 initSelectionSettings =
     Control.record SelectionSettings
-        |> Control.field "Dogs label" (Control.string "Dogs")
+        |> Control.field "Dogs label" (Control.string "**Dogs**")
         |> Control.field "Dogs" controlAttributes
         |> Control.field "Cats label" (Control.string "Cats")
         |> Control.field "Cats" controlAttributes
@@ -466,7 +466,7 @@ viewExamplesCode selectionSettings selectedValue =
                 ++ Code.recordMultiline
                     [ ( "label", (selectionToString selectionSettings >> Code.string) kind )
                     , ( "name", Code.string "pets" )
-                    , ( "value", selectionToString selectionSettings kind )
+                    , ( "value", Debug.toString kind )
                     , ( "selectedValue"
                       , Code.maybe (Maybe.map (selectionToString selectionSettings) selectedValue)
                       )
