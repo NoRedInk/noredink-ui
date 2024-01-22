@@ -534,8 +534,7 @@ viewIcon styles icon =
         [ css
             [ borderRadius (px 3)
             , height (Css.px checkboxIconHeight)
-            , boxSizing contentBox
-            , marginRight (px 7)
+            , marginRight (px 9)
             ]
         , Attributes.class "checkbox-icon-container"
         ]

@@ -272,7 +272,7 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
             , position relative
             , backgroundColor Css.transparent
             , border Css.zero
-            , padding zero
+            , padding2 (px 9) zero
             , cursor pointer
             , Css.batch containerCss
             , textAlign left
@@ -290,9 +290,6 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
             [ css
                 [ outline Css.none
                 , Fonts.baseFont
-                , margin zero
-                , marginLeft (px -4)
-                , padding zero
                 , fontSize (px 15)
                 , display inlineBlock
                 , Css.property "transition" "all 0.4s ease"
@@ -308,14 +305,11 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
                     , position relative
                     , Fonts.baseFont
                     , fontSize (px 15)
-                    , Css.outline3 (Css.px 2) Css.solid Css.transparent
                     ]
                 ]
                 [ Checkbox.viewIcon [] CheckboxIcons.uncheckedDisabled
                 , Html.span
-                    [ css
-                        [ color Colors.gray45
-                        ]
+                    [ css [ color Colors.gray45 ]
                     ]
                     [ Html.text label ]
                 ]
@@ -328,7 +322,9 @@ viewPremiumFlag icon =
     icon
         |> Svg.withLabel "Premium"
         |> Svg.withWidth (Css.px iconWidth)
-        |> Svg.withHeight (Css.px 30)
+        |> Svg.withHeight
+            -- The checkbox is 27px by 27px, which we should match
+            (Css.px 27)
         |> Svg.withCss [ Css.marginRight (Css.px iconRightMargin), Css.flexShrink Css.zero ]
         |> Svg.toHtml
 
