@@ -221,6 +221,7 @@ controlAttributes =
             { moduleName = moduleName
             , use = PremiumCheckbox.setCheckboxDisabledLabelCss
             }
+        |> ControlExtra.optionalBoolListItem "noMargin" ( "noMargin True", PremiumCheckbox.noMargin True )
 
 
 viewExampleWithCode : State -> Settings -> ( String, Html Msg )

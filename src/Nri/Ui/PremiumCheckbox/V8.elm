@@ -8,6 +8,7 @@ module Nri.Ui.PremiumCheckbox.V8 exposing
     , setCheckboxContainerCss
     , setCheckboxEnabledLabelCss
     , setCheckboxDisabledLabelCss
+    , noMargin
     )
 
 {-|
@@ -17,6 +18,8 @@ module Nri.Ui.PremiumCheckbox.V8 exposing
 
   - Added vouchered state for premium vouchers with gift pennant
   - Replaced lock icon with disabled checkbox for locked state
+  - Adjust height of locked Premium button to match other checkbox states
+  - Support no-margin option
 
 
 ## Changes from V7:
@@ -48,6 +51,7 @@ module Nri.Ui.PremiumCheckbox.V8 exposing
 @docs setCheckboxContainerCss
 @docs setCheckboxEnabledLabelCss
 @docs setCheckboxDisabledLabelCss
+@docs noMargin
 
 -}
 
@@ -132,6 +136,13 @@ setCheckboxDisabledLabelCss checkboxDisabledLabelCss =
     Attribute <| \config -> { config | checkboxDisabledLabelCss = checkboxDisabledLabelCss }
 
 
+{-| Remove default spacing from the top and bottom of the checkbox.
+-}
+noMargin : Bool -> Attribute value
+noMargin removeMargin =
+    Attribute <| \config -> { config | removeMargin = removeMargin }
+
+
 {-| -}
 selected : Bool -> Attribute msg
 selected isSelected =
@@ -167,6 +178,7 @@ type alias Config msg =
     , checkboxContainerCss : List Css.Style
     , checkboxEnabledLabelCss : List Css.Style
     , checkboxDisabledLabelCss : List Css.Style
+    , removeMargin : Bool
     }
 
 
@@ -184,6 +196,7 @@ emptyConfig =
     , checkboxContainerCss = []
     , checkboxEnabledLabelCss = []
     , checkboxDisabledLabelCss = []
+    , removeMargin = False
     }
 
 
@@ -229,6 +242,7 @@ view { label, onChange } attributes =
             , label = label
             , containerCss = config.containerCss
             , onLockedMsg = config.onLockedMsg
+            , removeMargin = config.removeMargin
             }
 
     else
@@ -259,12 +273,21 @@ view { label, onChange } attributes =
 
                   else
                     Checkbox.labelCss config.checkboxEnabledLabelCss
+                , Checkbox.noMargin config.removeMargin
                 ]
             ]
 
 
-viewLockedButton : { a | idValue : String, label : String, containerCss : List Style, onLockedMsg : Maybe msg } -> Html msg
-viewLockedButton { idValue, label, containerCss, onLockedMsg } =
+viewLockedButton :
+    { a
+        | idValue : String
+        , label : String
+        , containerCss : List Style
+        , onLockedMsg : Maybe msg
+        , removeMargin : Bool
+    }
+    -> Html msg
+viewLockedButton { idValue, label, containerCss, onLockedMsg, removeMargin } =
     Html.button
         [ css
             [ height inherit
@@ -272,7 +295,11 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
             , position relative
             , backgroundColor Css.transparent
             , border Css.zero
-            , padding2 (px 9) zero
+            , if removeMargin then
+                padding zero
+
+              else
+                padding2 (px 9) zero
             , cursor pointer
             , Css.batch containerCss
             , textAlign left
