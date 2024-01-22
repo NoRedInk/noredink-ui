@@ -524,30 +524,28 @@ viewContent config kind =
                      ]
                         ++ (case position of
                                 Left ->
-                                    iconMarginRight
-                                        :: (case kind of
-                                                Button ->
-                                                    [ -- Position absolute makes the parent ignore the icon's height, preventing misalignment with other inline text
-                                                      Css.position Css.absolute
-                                                    , Css.left Css.zero
-                                                    ]
+                                    (case kind of
+                                        Button ->
+                                            [ -- Position absolute makes the parent ignore the icon's height, preventing misalignment with other inline text
+                                              Css.position Css.absolute
+                                            , Css.left Css.zero
+                                            ]
 
-                                                Link ->
-                                                    []
-                                           )
+                                        Link ->
+                                            [ iconMarginRight ]
+                                    )
                                         ++ config.iconStyles
 
                                 Right ->
-                                    iconMarginLeft
-                                        :: (case kind of
-                                                Button ->
-                                                    [ Css.position Css.absolute
-                                                    , Css.right Css.zero
-                                                    ]
+                                    (case kind of
+                                        Button ->
+                                            [ Css.position Css.absolute
+                                            , Css.right Css.zero
+                                            ]
 
-                                                Link ->
-                                                    []
-                                           )
+                                        Link ->
+                                            [ iconMarginLeft ]
+                                    )
                                         ++ config.rightIconStyles
                            )
                     )
