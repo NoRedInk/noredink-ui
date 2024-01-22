@@ -20,6 +20,7 @@ module Nri.Ui.SideNav.V5 exposing
   - uses `ul>li` for the structure
   - adds `aria-current="true"` to the parent of the current page
   - expose missing import
+  - correct locked premium content to match `ul>li` structure
 
 
 ### Changes from V4
