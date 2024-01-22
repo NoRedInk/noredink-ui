@@ -448,7 +448,7 @@ viewSidebarEntry config extraStyles entry_ =
     case entry_ of
         Entry children entryConfig ->
             if entryConfig.premiumDisplay == PremiumDisplay.PremiumLocked then
-                viewLockedEntry extraStyles entryConfig
+                li [] [ viewLockedEntry extraStyles entryConfig ]
 
             else if anyLinkDescendants (isCurrentRoute config) children then
                 let
