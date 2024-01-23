@@ -22,7 +22,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
-import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
@@ -358,7 +358,6 @@ fakeATAC =
                 , ClickableText.link "Assistive Technology Announcement Center (“ATAC”)"
                     [ ClickableText.appearsInline
                     , ClickableText.linkExternal "https://paper.dropbox.com/doc/Assistive-Technology-Announcement-Center-ATAC--B_GuqwWltzU432ueq7p6Z42mAg-bOnmcnzOj631NRls1IBe3"
-                    , ClickableText.small
                     ]
                 ]
             ]

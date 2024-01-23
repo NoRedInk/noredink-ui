@@ -3,7 +3,7 @@ module EllieLink exposing (Config, SectionExample, view)
 import Dict exposing (Dict)
 import Html.Styled exposing (..)
 import Http
-import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Url.Builder
 
 

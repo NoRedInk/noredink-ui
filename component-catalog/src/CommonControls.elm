@@ -39,7 +39,7 @@ import Examples.Colors
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Http
-import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.Svg.V1 exposing (Svg)
@@ -246,8 +246,7 @@ exampleHtml =
     , Html.strong [] [ Html.text "bolded phrase" ]
     , Html.text ". "
     , ClickableText.link quickBrownFox
-        [ ClickableText.small
-        , ClickableText.icon UiIcon.starFilled
+        [ ClickableText.icon UiIcon.starFilled
         , ClickableText.href "http://www.noredink.com"
         , ClickableText.appearsInline
         ]

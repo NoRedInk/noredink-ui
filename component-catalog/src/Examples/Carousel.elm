@@ -26,7 +26,7 @@ import Html.Styled.Attributes as Attributes exposing (class, css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Carousel.V2 as Carousel exposing (Role(..))
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
-import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.FocusRing.V1 as FocusRing
@@ -336,7 +336,6 @@ example =
                     , ClickableText.link "Assistive Technology Announcement Center (“ATAC”)"
                         [ ClickableText.appearsInline
                         , ClickableText.linkExternal "https://paper.dropbox.com/doc/Assistive-Technology-Announcement-Center-ATAC--B_GuqwWltzU432ueq7p6Z42mAg-bOnmcnzOj631NRls1IBe3"
-                        , ClickableText.small
                         ]
                     ]
                 ]

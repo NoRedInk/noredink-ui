@@ -18,7 +18,7 @@ import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
-import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Text.V6 as Text
@@ -27,7 +27,7 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 
 version : Int
 version =
-    3
+    4
 
 
 {-| -}
@@ -39,12 +39,7 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
-        [ ClickableText.link "Caption"
-            [ ClickableText.icon UiIcon.link
-            , ClickableText.caption
-            , ClickableText.custom [ Key.tabbable False ]
-            ]
-        , ClickableText.link "Small"
+        [ ClickableText.link "Small"
             [ ClickableText.icon UiIcon.link
             , ClickableText.small
             , ClickableText.custom [ Key.tabbable False ]
@@ -186,40 +181,48 @@ viewExamples ellieLinkConfig (State control) =
         [ Heading.plaintext "Inline ClickableText Examples"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
-    , Text.caption (inlineExample "Text.caption" ClickableText.caption)
-    , Text.smallBody (inlineExample "Text.smallBody" ClickableText.small)
-    , Text.mediumBody (inlineExample "Text.mediumBody" ClickableText.medium)
+    , Text.smallBody (inlineExample "Text.smallBody")
+    , Text.mediumBody (inlineExample "Text.mediumBody")
     ]
         |> div []
 
 
-inlineExample : String -> ClickableText.Attribute Msg -> List (Text.Attribute Msg)
-inlineExample textSizeName size =
+inlineExample : String -> List (Text.Attribute Msg)
+inlineExample textSizeName =
     [ Text.html
         [ text "Sometimes, we'll want our "
         , ClickableText.link "internal links"
             [ ClickableText.appearsInline
-            , size
             , ClickableText.href "/"
             ]
         , text ", "
         , ClickableText.link "external links"
             [ ClickableText.appearsInline
-            , size
             , ClickableText.linkExternal "https://www.google.com/search?q=puppies"
             ]
         , text ", "
         , ClickableText.button "buttons"
             [ ClickableText.appearsInline
-            , size
             , ClickableText.onClick (ShowItWorked moduleName "in-line button")
             ]
-        , text " and "
-        , ClickableText.button "ClickableTexts with icons"
+        , text ", "
+        , ClickableText.button "ClickableTexts with left icons"
             [ ClickableText.appearsInline
-            , size
             , ClickableText.onClick (ShowItWorked moduleName "in-line button")
             , ClickableText.icon UiIcon.starFilled
+            ]
+        , text ", "
+        , ClickableText.button "ClickableTexts with right icons"
+            [ ClickableText.appearsInline
+            , ClickableText.onClick (ShowItWorked moduleName "in-line button")
+            , ClickableText.rightIcon UiIcon.starFilled
+            ]
+        , text ", and "
+        , ClickableText.button "ClickableTexts with left and right icons"
+            [ ClickableText.appearsInline
+            , ClickableText.onClick (ShowItWorked moduleName "in-line button")
+            , ClickableText.icon UiIcon.starFilled
+            , ClickableText.rightIcon UiIcon.starFilled
             ]
         , text (" to show up in-line with " ++ textSizeName ++ " content.")
         ]
@@ -228,8 +231,7 @@ inlineExample textSizeName size =
 
 sizes : List ( ClickableText.Attribute msg, String )
 sizes =
-    [ ( ClickableText.caption, "caption" )
-    , ( ClickableText.small, "small" )
+    [ ( ClickableText.small, "small" )
     , ( ClickableText.medium, "medium" )
     , ( ClickableText.large, "large" )
     ]
