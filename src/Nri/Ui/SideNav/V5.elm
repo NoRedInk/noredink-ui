@@ -20,6 +20,7 @@ module Nri.Ui.SideNav.V5 exposing
   - uses `ul>li` for the structure
   - adds `aria-current="true"` to the parent of the current page
   - expose missing import
+  - correct locked premium content to match `ul>li` structure
 
 
 ### Changes from V4
@@ -448,7 +449,7 @@ viewSidebarEntry config extraStyles entry_ =
     case entry_ of
         Entry children entryConfig ->
             if entryConfig.premiumDisplay == PremiumDisplay.PremiumLocked then
-                viewLockedEntry extraStyles entryConfig
+                li [] [ viewLockedEntry extraStyles entryConfig ]
 
             else if anyLinkDescendants (isCurrentRoute config) children then
                 let

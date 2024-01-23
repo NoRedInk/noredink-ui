@@ -18,6 +18,7 @@ import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.SideNav.V5 as SideNav
 import Nri.Ui.Spacing.V1 as Spacing
@@ -200,6 +201,56 @@ view ellieLinkConfig state =
             , SideNav.html [ Text.smallBody [ Text.plaintext "Demo Accounts disabled on staging" ] ]
             , SideNav.entry "Sham Assignment" []
             ]
+        ]
+    , Heading.h2
+        [ Heading.plaintext "Premium Display"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
+    , SideNav.view
+        { isCurrentRoute = \route -> route == "/subchildren-unlocked"
+        , routeToString = identity
+        , onSkipNav = SkipToContent
+        }
+        [ SideNav.navLabel "Premium Display"
+        , SideNav.navId "premium-display-sidenav"
+        ]
+        (premiumDisplayEntries "/"
+            ++ [ SideNav.entryWithChildren "As subchildren"
+                    []
+                    (premiumDisplayEntries "/subchildren")
+               , SideNav.compactGroup "In a compact group"
+                    []
+                    (premiumDisplayEntries "/compact")
+               ]
+        )
+    ]
+
+
+premiumDisplayEntries : String -> List (SideNav.Entry String Msg)
+premiumDisplayEntries hrefPrefix =
+    [ SideNav.entry "Free"
+        [ SideNav.premiumDisplay
+            PremiumDisplay.Free
+            (ConsoleLog "Clicked Free SideNav Entry")
+        , SideNav.href (hrefPrefix ++ "-free")
+        ]
+    , SideNav.entry "Unlocked"
+        [ SideNav.premiumDisplay
+            PremiumDisplay.PremiumUnlocked
+            (ConsoleLog "Clicked PremiumUnlocked SideNav Entry")
+        , SideNav.href (hrefPrefix ++ "-unlocked")
+        ]
+    , SideNav.entry "Locked"
+        [ SideNav.premiumDisplay
+            PremiumDisplay.PremiumLocked
+            (ConsoleLog "Clicked PremiumLocked SideNav Entry")
+        , SideNav.href (hrefPrefix ++ "-locked")
+        ]
+    , SideNav.entry "Vouchered"
+        [ SideNav.premiumDisplay
+            PremiumDisplay.PremiumVouchered
+            (ConsoleLog "Clicked PremiumVouchered SideNav Entry")
+        , SideNav.href (hrefPrefix ++ "-vouchered")
         ]
     ]
 
