@@ -6,6 +6,7 @@ module Nri.Ui.Checkbox.V7 exposing
     , selectedFromBool
     , containerCss, labelCss, custom, nriDescription, id, testId
     , disabled, enabled, guidance, guidanceHtml
+    , noMargin
     , viewIcon
     )
 
@@ -23,6 +24,7 @@ module Nri.Ui.Checkbox.V7 exposing
   - set cursor to not-allowed when disabled
   - update color styling
   - update unselected enabled label color
+  - adds noMargin
 
 
 ## Changes from V6:
@@ -53,6 +55,7 @@ module Nri.Ui.Checkbox.V7 exposing
 @docs selectedFromBool
 @docs containerCss, labelCss, custom, nriDescription, id, testId
 @docs disabled, enabled, guidance, guidanceHtml
+@docs noMargin
 
 
 ### Internal
@@ -180,6 +183,13 @@ testId id_ =
     custom [ Extra.testId id_ ]
 
 
+{-| Remove default spacing from the top and bottom of the checkbox.
+-}
+noMargin : Bool -> Attribute value
+noMargin removeMargin =
+    Attribute <| \config -> { config | removeMargin = removeMargin }
+
+
 {-| Customizations for the Checkbox.
 -}
 type Attribute msg
@@ -197,6 +207,7 @@ type alias Config msg =
     , custom : List (Html.Attribute msg)
     , containerCss : List Css.Style
     , labelCss : List Css.Style
+    , removeMargin : Bool
     }
 
 
@@ -223,6 +234,7 @@ emptyConfig =
     , custom = []
     , containerCss = []
     , labelCss = []
+    , removeMargin = False
     }
 
 
@@ -286,10 +298,9 @@ view { label, selected } attributes =
                     )
     in
     checkboxContainer config_
+        config
         [ if config.isDisabled then
-            div
-                [ css [ cursor notAllowed ]
-                ]
+            div [ css [ cursor notAllowed ] ]
                 [ viewIcon [] disabledIcon ]
 
           else
@@ -355,15 +366,27 @@ selectedToMaybe selected =
             Nothing
 
 
-checkboxContainer : { a | identifier : String, containerCss : List Style } -> List (Html msg) -> Html msg
-checkboxContainer model =
+checkboxContainer :
+    { a
+        | identifier : String
+        , containerCss : List Style
+    }
+    -> { b | removeMargin : Bool }
+    -> List (Html msg)
+    -> Html msg
+checkboxContainer model { removeMargin } =
     Html.span
         [ css
             [ displayFlex
             , alignItems center
-            , marginLeft (px -4)
-            , paddingTop (px 5)
-            , paddingBottom (px 5)
+            , batch <|
+                if removeMargin then
+                    []
+
+                else
+                    [ paddingTop (px 9)
+                    , paddingBottom (px 9)
+                    ]
             , height inherit
             , pseudoClass "focus-within"
                 [ Css.Global.descendants
@@ -423,19 +446,10 @@ viewCheckboxLabel :
     -> Html.Html msg
 viewCheckboxLabel config styles =
     let
-        marginTopAdjustment =
-            case config.guidance of
-                Just _ ->
-                    marginTop (Css.px -highContrastBorderWidth)
-
-                Nothing ->
-                    Css.batch []
-
         attributes =
             List.concat
                 [ [ css
                         (paddingLeft (Css.px checkboxIconWidth)
-                            :: marginTopAdjustment
                             :: marginLeft (Css.px -checkboxIconWidth)
                             :: (if config.hideLabel then
                                     minHeight (Css.px checkboxIconHeight)
@@ -519,12 +533,9 @@ viewIcon : List Style -> Svg -> Html msg
 viewIcon styles icon =
     Html.div
         [ css
-            [ border3 (px highContrastBorderWidth) solid transparent
-            , borderRadius (px 3)
+            [ borderRadius (px 3)
             , height (Css.px checkboxIconHeight)
-            , boxSizing contentBox
-            , margin (px 2)
-            , marginRight (px 7)
+            , marginRight (px 9)
             ]
         , Attributes.class "checkbox-icon-container"
         ]
@@ -541,8 +552,3 @@ viewIcon styles icon =
             [ Nri.Ui.Svg.V1.toHtml (Nri.Ui.Svg.V1.withCss styles icon)
             ]
         ]
-
-
-highContrastBorderWidth : Float
-highContrastBorderWidth =
-    2
