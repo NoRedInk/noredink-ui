@@ -516,8 +516,9 @@ examplesContainer : List Css.Style -> List (Html msg) -> Html msg
 examplesContainer extraStyles =
     Html.div
         [ css
-            [ Css.displayFlex
-            , Css.flexWrap Css.wrap
+            [ Css.property "display" "grid"
+            , Css.property "grid-template-columns" "repeat(auto-fit, minmax(200px, 1fr))"
+            , Css.justifyContent Css.start
             , Css.property "row-gap" (.value Spacing.verticalSpacerPx)
             , Css.property "column-gap" (.value Spacing.horizontalSpacerPx)
             , Css.batch extraStyles
