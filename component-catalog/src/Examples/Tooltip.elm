@@ -540,7 +540,7 @@ controlWidth =
                 (\int ->
                     ( "Tooltip.exactWidth " ++ String.fromInt int, Tooltip.exactWidth int )
                 )
-                (ControlExtra.int 320)
+                (Control.int 320)
           )
         , ( "fitToContent", Control.value ( "Tooltip.fitToContent", Tooltip.fitToContent ) )
         ]

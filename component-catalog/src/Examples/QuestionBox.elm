@@ -448,7 +448,7 @@ initAttributes =
                     , QuestionBox.actions actions
                     )
                 )
-                (ControlExtra.int 2)
+                (Control.int 2)
             )
         |> ControlExtra.listItem "actionsOrientation"
             (CommonControls.choice moduleName

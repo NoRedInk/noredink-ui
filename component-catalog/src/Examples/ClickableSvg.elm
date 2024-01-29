@@ -290,17 +290,17 @@ initSettings =
                 |> ControlExtra.optionalListItem "exactSize"
                     (Control.map
                         (\v -> ( "ClickableSvg.exactSize " ++ String.fromInt v, ClickableSvg.exactSize v ))
-                        (ControlExtra.int 36)
+                        (Control.int 36)
                     )
                 |> ControlExtra.optionalListItem "exactWidth"
                     (Control.map
                         (\v -> ( "ClickableSvg.exactWidth " ++ String.fromInt v, ClickableSvg.exactWidth v ))
-                        (ControlExtra.int 36)
+                        (Control.int 36)
                     )
                 |> ControlExtra.optionalListItem "exactHeight"
                     (Control.map
                         (\v -> ( "ClickableSvg.exactHeight " ++ String.fromInt v, ClickableSvg.exactHeight v ))
-                        (ControlExtra.int 36)
+                        (Control.int 36)
                     )
                 |> CommonControls.css
                     { moduleName = "ClickableSvg"

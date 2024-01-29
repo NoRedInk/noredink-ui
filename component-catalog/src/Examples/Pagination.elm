@@ -147,7 +147,7 @@ type alias Settings =
 controlSettings : Control Settings
 controlSettings =
     Control.record Settings
-        |> Control.field "Page count" (ControlExtra.int 6)
+        |> Control.field "Page count" (Control.int 6)
 
 
 {-| -}

@@ -2,7 +2,7 @@ module Debug.Control exposing
     ( Control
     , value
     , bool, string, stringTextarea
-    , float
+    , float, int
     , maybe, choice, field
     , map
     , view, currentValue
@@ -17,7 +17,7 @@ Create interactive controls for complex data structures.
 @docs Control
 @docs value
 @docs bool, string, stringTextarea
-@docs float
+@docs float, int
 @docs maybe, choice, field
 @docs map
 
@@ -164,6 +164,25 @@ float initialValue =
                         TextInput.view labelText
                             [ TextInput.id (labelId labelText)
                             , TextInput.float (Maybe.withDefault initialValue >> float)
+                            , TextInput.value (Just initialValue)
+                            ]
+                            |> toUnstyled
+        }
+
+
+{-| A `Control` that allows int input.
+-}
+int : Int -> Control Int
+int initialValue =
+    Control
+        { currentValue = \() -> initialValue
+        , view =
+            \() ->
+                SingleView <|
+                    \labelText ->
+                        TextInput.view labelText
+                            [ TextInput.id (labelId labelText)
+                            , TextInput.number (Maybe.withDefault initialValue >> int)
                             , TextInput.value (Just initialValue)
                             ]
                             |> toUnstyled

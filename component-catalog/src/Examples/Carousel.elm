@@ -70,7 +70,7 @@ type alias Settings =
 initSettings : Control Settings
 initSettings =
     Control.record Settings
-        |> Control.field "items" (Debug.Control.Extra.int 4)
+        |> Control.field "items" (Control.int 4)
         |> Control.field "carouselType" controlCarouselType
         |> Control.field "role" controlRole
 

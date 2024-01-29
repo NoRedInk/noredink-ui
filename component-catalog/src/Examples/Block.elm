@@ -774,7 +774,7 @@ controlBlankWidth =
             , widthInChars
             )
         )
-        |> Control.field "widthInChars" (ControlExtra.int 8)
+        |> Control.field "widthInChars" (Control.int 8)
 
 
 ageId : String

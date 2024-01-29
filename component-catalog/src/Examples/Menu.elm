@@ -543,7 +543,7 @@ controlButtonAttributes =
                     , Button.exactWidth i
                     )
                 )
-                (ControlExtra.int 220)
+                (Control.int 220)
             )
         |> Control.map List.unzip
 
@@ -559,7 +559,7 @@ controlMenuWidth : Control ( String, Menu.Attribute msg )
 controlMenuWidth =
     Control.map
         (\val -> ( "Menu.menuWidth " ++ String.fromInt val, Menu.menuWidth val ))
-        (ControlExtra.int 220)
+        (Control.int 220)
 
 
 {-| -}
