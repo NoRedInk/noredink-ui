@@ -35,6 +35,7 @@ import Json.Decode
 import Nri.Ui.Checkbox.V7 as Checkbox
 import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
 import Nri.Ui.Select.V9 as Select
+import Nri.Ui.TextArea.V5 as TextArea
 import Nri.Ui.TextInput.V7 as TextInput
 
 
@@ -213,22 +214,11 @@ stringTextarea initialValue =
             \() ->
                 SingleView <|
                     \labelText ->
-                        let
-                            id =
-                                labelId labelText
-                        in
-                        Html.span []
-                            [ Html.textarea
-                                [ Html.Attributes.value initialValue
-                                , Html.Events.onInput stringTextarea
-                                , Html.Attributes.id id
-                                ]
-                                []
-                            , Html.label
-                                [ Html.Attributes.for id
-                                ]
-                                [ Html.text labelText ]
+                        TextArea.view labelText
+                            [ TextArea.value initialValue
+                            , TextArea.onInput stringTextarea
                             ]
+                            |> toUnstyled
         }
 
 
