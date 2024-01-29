@@ -413,6 +413,8 @@ view ellieLinkConfig state =
                 Menu.view (FocusAndToggle "defaultTrigger")
                     [ Menu.defaultTrigger "Log in" []
                     , Menu.isOpen (isOpen "defaultTrigger")
+                    , Menu.buttonId "defaultTrigger"
+                    , Menu.menuId "defaultTrigger"
                     ]
                     []
           }
@@ -421,6 +423,8 @@ view ellieLinkConfig state =
                 Menu.view (FocusAndToggle "button")
                     [ Menu.button "Log in" []
                     , Menu.isOpen (isOpen "button")
+                    , Menu.buttonId "button"
+                    , Menu.menuId "button"
                     ]
                     []
           }
@@ -429,6 +433,8 @@ view ellieLinkConfig state =
                 Menu.view (FocusAndToggle "clickableText")
                     [ Menu.clickableText "Log in" []
                     , Menu.isOpen (isOpen "clickableText")
+                    , Menu.buttonId "clickableText"
+                    , Menu.menuId "clickableText"
                     ]
                     []
           }
@@ -437,6 +443,8 @@ view ellieLinkConfig state =
                 Menu.view (FocusAndToggle "clickableSvg")
                     [ Menu.clickableSvg "Log in" UiIcon.gear []
                     , Menu.isOpen (isOpen "clickableSvg")
+                    , Menu.buttonId "clickableSvg"
+                    , Menu.menuId "clickableSvg"
                     ]
                     []
           }
@@ -445,6 +453,8 @@ view ellieLinkConfig state =
                 Menu.view (FocusAndToggle "clickableSvgWithoutIndicator")
                     [ Menu.clickableSvgWithoutIndicator "Log in" UiIcon.gear []
                     , Menu.isOpen (isOpen "clickableSvgWithoutIndicator")
+                    , Menu.buttonId "clickableSvgWithoutIndicator"
+                    , Menu.menuId "clickableSvgWithoutIndicator"
                     ]
                     []
           }
