@@ -223,6 +223,7 @@ aboutMsg =
 - Our icons are Elm SVGs, not separate files or sprites. We use an opaque type to represent them, which enables nice type-safe composability across our components.
 - For decorative SVGs (which is the default), we add `aria-hidden=true` to the SVG node.
 - For non-decorative SVGs, we use Pattern #5 `<svg>` + `role='img'` + `<title>` from [Accessible SVGs: Perfect Patterns For Screen Reader Users](https://www.smashingmagazine.com/2021/05/accessible-svg-patterns-comparison/).
+- Instructions for adding new SVG icons can be found in the [monolith README](https://github.com/NoRedInk/NoRedInk/blob/master/monolith/README.md#adding-new-svg-icons).
 
 """
 
