@@ -30,6 +30,7 @@ import Html.Attributes
 import Html.Events
 import Html.Styled exposing (toUnstyled)
 import Json.Decode
+import Nri.Ui.Checkbox.V7 as Checkbox
 import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
 import Nri.Ui.TextInput.V7 as TextInput
 
@@ -84,25 +85,16 @@ maybe isJust (Control control) =
             \() ->
                 SingleView <|
                     \labelText ->
-                        let
-                            id =
-                                labelId ("Maybe " ++ labelText)
-                        in
-                        Html.span
-                            [ Html.Attributes.style "white-space" "nowrap"
-                            ]
-                            [ Html.input
-                                [ Html.Attributes.type_ "checkbox"
-                                , Html.Events.onCheck (\a -> maybe a (Control control))
-                                , Html.Attributes.checked isJust
-                                , Html.Attributes.id id
+                        Html.div
+                            []
+                            [ Checkbox.view
+                                { label = labelText
+                                , selected = Checkbox.selectedFromBool isJust
+                                }
+                                [ Checkbox.id (labelId ("Maybe " ++ labelText))
+                                , Checkbox.onCheck (\a -> maybe a (Control control))
                                 ]
-                                []
-                            , Html.label
-                                [ Html.Attributes.for id
-                                ]
-                                [ Html.text labelText ]
-                            , Html.text " "
+                                |> toUnstyled
                             , if isJust then
                                 view_ (maybe isJust) (Control control) labelText
 
@@ -126,19 +118,14 @@ bool initialValue =
                             id =
                                 labelId labelText
                         in
-                        Html.span []
-                            [ Html.input
-                                [ Html.Attributes.type_ "checkbox"
-                                , Html.Events.onCheck bool
-                                , Html.Attributes.checked initialValue
-                                , Html.Attributes.id id
-                                ]
-                                []
-                            , Html.label
-                                [ Html.Attributes.for id
-                                ]
-                                [ Html.text labelText ]
+                        Checkbox.view
+                            { label = labelText
+                            , selected = Checkbox.selectedFromBool initialValue
+                            }
+                            [ Checkbox.id (labelId labelText)
+                            , Checkbox.onCheck bool
                             ]
+                            |> toUnstyled
         }
 
 
