@@ -32,6 +32,7 @@ import Html.Styled exposing (toUnstyled)
 import Json.Decode
 import Nri.Ui.Checkbox.V7 as Checkbox
 import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
+import Nri.Ui.Select.V9 as Select
 import Nri.Ui.TextInput.V7 as TextInput
 
 
@@ -208,10 +209,13 @@ choice_ left current right =
                 SingleView <|
                     \labelText ->
                         let
-                            option selected ( label, _ ) =
-                                Html.option
-                                    [ Html.Attributes.selected selected ]
-                                    [ Html.text label ]
+                            option index ( label, _ ) =
+                                { label = label, value = index }
+
+                            choices : List (Select.Choice Int)
+                            choices =
+                                (List.reverse left ++ current :: right)
+                                    |> List.indexedMap option
 
                             selectNew i =
                                 let
@@ -244,21 +248,11 @@ choice_ left current right =
                                 labelId labelText
                         in
                         Html.div []
-                            [ Html.map selectNew <|
-                                Html.select
-                                    [ Html.Events.on "change" (Json.Decode.at [ "target", "selectedIndex" ] Json.Decode.int)
-                                    , Html.Attributes.id id
-                                    ]
-                                <|
-                                    List.concat
-                                        [ List.map (option False) <| List.reverse left
-                                        , [ option True current ]
-                                        , List.map (option False) right
-                                        ]
-                            , Html.label
-                                [ Html.Attributes.for id
+                            [ Select.view labelText
+                                [ Select.choices String.fromInt choices
                                 ]
-                                [ Html.text labelText ]
+                                |> toUnstyled
+                                |> Html.map selectNew
                             , view_ updateChild (Tuple.second current) ""
                             ]
         }
