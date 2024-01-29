@@ -137,7 +137,7 @@ type alias Settings =
 
 controlAttributes : Control (List ( String, TextArea.Attribute Msg ))
 controlAttributes =
-    ControlExtra.list
+    Control.list
         |> ControlExtra.optionalListItem
             "theme"
             (CommonControls.choice moduleName

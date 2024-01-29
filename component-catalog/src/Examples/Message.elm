@@ -35,7 +35,7 @@ init : State
 init =
     { show = True
     , control =
-        ControlExtra.list
+        Control.list
             |> ControlExtra.optionalListItem "theme" controlTheme
             |> ControlExtra.listItem "content"
                 (CommonControls.content

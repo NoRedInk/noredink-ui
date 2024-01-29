@@ -72,7 +72,7 @@ type alias Settings =
 
 controlSettings : Control Settings
 controlSettings =
-    ControlExtra.list
+    Control.list
         |> ControlExtra.listItem "content"
             (CommonControls.content
                 { moduleName = moduleName

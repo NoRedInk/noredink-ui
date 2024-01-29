@@ -149,7 +149,7 @@ type alias State =
 init : State
 init =
     { control =
-        ControlExtra.list
+        Control.list
             |> ControlExtra.optionalListItem "paddingPx" controlPaddingPx
             |> CommonControls.css { moduleName = moduleName, use = Container.css }
             |> CommonControls.mobileCss { moduleName = moduleName, use = Container.mobileCss }

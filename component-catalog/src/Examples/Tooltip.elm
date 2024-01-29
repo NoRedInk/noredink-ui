@@ -401,7 +401,7 @@ viewToggleTip openTooltip =
 
 initStaticExampleSettings : Control (List ( String, Tooltip.Attribute Never ))
 initStaticExampleSettings =
-    ControlExtra.list
+    Control.list
         |> ControlExtra.listItem "content" controlContent
         |> ControlExtra.optionalListItem "direction" controlDirection
         |> ControlExtra.optionalListItem "direction -- viewport up to 1000px" controlDirectionForMobile

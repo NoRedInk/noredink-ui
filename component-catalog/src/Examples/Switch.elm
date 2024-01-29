@@ -232,7 +232,7 @@ controlSettings =
 
 initAttributes : Control (List ( String, Switch.Attribute msg ))
 initAttributes =
-    ControlExtra.list
+    Control.list
         |> CommonControls.disabledListItem moduleName Switch.disabled
 
 

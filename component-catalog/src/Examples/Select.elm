@@ -159,7 +159,7 @@ type alias Settings =
 
 initControls : Control (List ( String, Select.Attribute Choosable ))
 initControls =
-    ControlExtra.list
+    Control.list
         |> ControlExtra.listItem "choices" initChoices
         |> ControlExtra.optionalListItem "hiddenLabel"
             (Control.value ( "Select.hiddenLabel", Select.hiddenLabel ))

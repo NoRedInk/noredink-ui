@@ -661,7 +661,7 @@ type alias Settings =
 
 initControl : Control Settings
 initControl =
-    ControlExtra.list
+    Control.list
         |> ControlExtra.optionalListItemDefaultChecked "content" controlContent
         |> ControlExtra.optionalListItem "blankStyle" blankStyleContent
         |> ControlExtra.optionalBoolListItemDefaultChecked "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )

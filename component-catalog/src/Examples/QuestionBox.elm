@@ -329,7 +329,7 @@ type alias State =
 
 initAttributes : Control (List ( String, QuestionBox.Attribute Msg ))
 initAttributes =
-    ControlExtra.list
+    Control.list
         |> ControlExtra.listItem "content"
             (Control.choice
                 [ ( "markdown"

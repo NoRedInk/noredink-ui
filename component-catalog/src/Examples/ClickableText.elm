@@ -78,7 +78,7 @@ init =
     Control.record Settings
         |> Control.field "label" (Control.string "Clickable Text")
         |> Control.field "attributes"
-            (ControlExtra.list
+            (Control.list
                 |> CommonControls.icon moduleName ClickableText.icon
                 |> CommonControls.rightIcon moduleName ClickableText.rightIcon
                 |> ControlExtra.optionalBoolListItem "appearsInline"

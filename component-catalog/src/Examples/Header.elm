@@ -159,7 +159,7 @@ type alias State =
 init : Maybe String -> State
 init selection =
     { control =
-        ControlExtra.list
+        Control.list
             |> ControlExtra.optionalListItem "extraContent"
                 (Control.value
                     ( "Header.extraContent [ text \"…\" ]"

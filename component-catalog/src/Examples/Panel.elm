@@ -130,7 +130,7 @@ init =
                 { moduleName = moduleName, use = f }
     in
     { control =
-        ControlExtra.list
+        Control.list
             |> ControlExtra.optionalListItem "theme"
                 (CommonControls.choice moduleName
                     [ ( "secondary", Panel.secondary )

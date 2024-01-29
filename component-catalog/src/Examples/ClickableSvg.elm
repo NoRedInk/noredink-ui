@@ -285,7 +285,7 @@ initSettings =
         |> Control.field "label" (Control.string "Back")
         |> Control.field "icon" CommonControls.uiIcon
         |> Control.field "attributes"
-            (ControlExtra.list
+            (Control.list
                 |> CommonControls.disabledListItem "ClickableSvg" ClickableSvg.disabled
                 |> ControlExtra.optionalListItem "exactSize"
                     (Control.map

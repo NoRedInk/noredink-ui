@@ -2,10 +2,11 @@ module Debug.Control exposing
     ( Control
     , value
     , bool, string, stringTextarea
-    , maybe, choice, record, field
+    , maybe, choice, field
     , map
     , view, currentValue
     , lazy
+    , record, list
     )
 
 {-| Copied in from avh4/elm-debug-control.
@@ -15,11 +16,12 @@ Create interactive controls for complex data structures.
 @docs Control
 @docs value
 @docs bool, string, stringTextarea
-@docs maybe, choice, record, field
+@docs maybe, choice, field
 @docs map
 
 @docs view, currentValue
 @docs lazy
+@docs record, list
 
 -}
 
@@ -259,10 +261,7 @@ record fn =
         }
 
 
-{-| Used with `record` to create a `Control` representing a record.
-
-See [`record`](#record).
-
+{-| Used with [`record`](#record) or [`list`](#list) to create a `Control`.
 -}
 field : String -> Control a -> Control (a -> b) -> Control b
 field name (Control control) (Control pipeline) =
@@ -285,6 +284,18 @@ field name (Control control) (Control pipeline) =
                 in
                 FieldViews (( name, newView ) :: otherFields)
         }
+
+
+{-| Use with `listItem` and `optionalListItem`
+
+    list
+        |> listItem "first name" string
+        |> listItem "last name" string
+
+-}
+list : Control (List a)
+list =
+    record []
 
 
 {-| Transform the value produced by a `Control`.

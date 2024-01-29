@@ -415,7 +415,7 @@ initControl =
 
 controlAttributes : Control (List ( String, TextInput.Attribute value msg ))
 controlAttributes =
-    ControlExtra.list
+    Control.list
         |> ControlExtra.optionalListItem "placeholder"
             (Control.string "Learning with commas"
                 |> Control.map

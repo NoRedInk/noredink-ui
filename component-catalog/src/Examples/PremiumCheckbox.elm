@@ -187,7 +187,7 @@ controlSettings =
 
 controlAttributes : Control (List ( String, PremiumCheckbox.Attribute Msg ))
 controlAttributes =
-    ControlExtra.list
+    Control.list
         |> ControlExtra.optionalListItem "premiumDisplay"
             (Control.map
                 (\( str, val ) -> ( "PremiumCheckbox.premium " ++ str, PremiumCheckbox.premium val ))

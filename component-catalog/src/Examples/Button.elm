@@ -171,7 +171,7 @@ initDebugControls =
             )
         |> Control.field "label" (Control.string "Label **bold**   *emphasis*")
         |> Control.field "attributes"
-            (ControlExtra.list
+            (Control.list
                 |> CommonControls.icon moduleName Button.icon
                 |> CommonControls.rightIcon moduleName Button.rightIcon
                 |> ControlExtra.optionalListItem "size"

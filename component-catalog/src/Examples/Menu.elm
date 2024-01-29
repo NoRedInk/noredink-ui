@@ -425,7 +425,7 @@ initSettings =
 
 initSettingAttributes : Control (List ( String, Menu.Attribute Msg ))
 initSettingAttributes =
-    ControlExtra.list
+    Control.list
         |> ControlExtra.optionalListItem "alignment" controlAlignment
         |> ControlExtra.optionalBoolListItem "isDisabled" ( "Menu.isDisabled True", Menu.isDisabled True )
         |> ControlExtra.optionalListItem "menuWidth" controlMenuWidth
@@ -534,7 +534,7 @@ controlTrigger =
 
 controlButtonAttributes : Control ( List String, List (Button.Attribute msg) )
 controlButtonAttributes =
-    ControlExtra.list
+    Control.list
         |> CommonControls.iconNotCheckedByDefault "Button" Button.icon
         |> ControlExtra.optionalListItem "exactWidth"
             (Control.map
@@ -550,7 +550,7 @@ controlButtonAttributes =
 
 controlClickableTextAttributes : Control ( List String, List (ClickableText.Attribute msg) )
 controlClickableTextAttributes =
-    ControlExtra.list
+    Control.list
         |> CommonControls.iconNotCheckedByDefault "ClickableText" ClickableText.icon
         |> Control.map List.unzip
 

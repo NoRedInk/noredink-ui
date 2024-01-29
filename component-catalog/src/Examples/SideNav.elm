@@ -281,7 +281,7 @@ init =
 
 controlNavAttributes : Control (List ( String, SideNav.NavAttribute Msg ))
 controlNavAttributes =
-    ControlExtra.list
+    Control.list
         |> ControlExtra.optionalListItemDefaultChecked "navLabel"
             (Control.map
                 (\val ->
@@ -411,7 +411,7 @@ controlGroupOrEntryAttributes =
 
 controlGroupAttributes : Control (List ( String, SideNav.GroupAttribute ))
 controlGroupAttributes =
-    List.foldl (\f acc -> f acc) ControlExtra.list controlGroupOrEntryAttributes
+    List.foldl (\f acc -> f acc) Control.list controlGroupOrEntryAttributes
 
 
 controlEntryAttributes : String -> Control (List ( String, SideNav.EntryAttribute String Msg ))
@@ -432,7 +432,7 @@ controlEntryAttributes href =
      ]
         ++ controlGroupOrEntryAttributes
     )
-        |> List.foldl (\f acc -> f acc) ControlExtra.list
+        |> List.foldl (\f acc -> f acc) Control.list
 
 
 {-| -}

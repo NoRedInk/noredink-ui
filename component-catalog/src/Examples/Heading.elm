@@ -105,7 +105,7 @@ type alias State =
 init : State
 init =
     { control =
-        ControlExtra.list
+        Control.list
             |> ControlExtra.listItem "content" controlContent
             |> CommonControls.css { moduleName = moduleName, use = Heading.css }
             |> ControlExtra.optionalListItem "style" controlStyle

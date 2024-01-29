@@ -276,7 +276,7 @@ controlSettings =
 
 initAttributes : Control (List ( String, Checkbox.Attribute Msg ))
 initAttributes =
-    ControlExtra.list
+    Control.list
         |> CommonControls.guidanceAndErrorMessage
             { moduleName = moduleName
             , guidance = Checkbox.guidance

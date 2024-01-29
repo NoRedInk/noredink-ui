@@ -1,6 +1,6 @@
 module Debug.Control.Extra exposing
     ( float, int
-    , values, list, listItem, optionalListItem, optionalListItemDefaultChecked
+    , values, listItem, optionalListItem, optionalListItemDefaultChecked
     , optionalBoolListItem, optionalBoolListItemDefaultChecked
     , bool
     , rotatedChoice, specificChoice
@@ -9,7 +9,7 @@ module Debug.Control.Extra exposing
 {-|
 
 @docs float, int
-@docs values, list, listItem, optionalListItem, optionalListItemDefaultChecked
+@docs values, listItem, optionalListItem, optionalListItemDefaultChecked
 @docs optionalBoolListItem, optionalBoolListItemDefaultChecked
 @docs bool
 @docs rotatedChoice, specificChoice
@@ -41,18 +41,6 @@ values toString nums =
     nums
         |> List.map (\n -> ( toString n, Control.value n ))
         |> Control.choice
-
-
-{-| Use with `listItem` and `optionalListItem`
-
-    list
-        |> listItem "first name" string
-        |> listItem "last name" string
-
--}
-list : Control (List a)
-list =
-    Control.record []
 
 
 {-| -}
