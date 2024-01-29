@@ -34,7 +34,6 @@ import Json.Decode
 type Control a
     = Control
         { currentValue : () -> a
-        , allValues : () -> List a
         , view : () -> ControlView a
         }
 
@@ -51,7 +50,6 @@ value : a -> Control a
 value initial =
     Control
         { currentValue = \() -> initial
-        , allValues = \() -> [ initial ]
         , view = \() -> NoView
         }
 
@@ -72,10 +70,6 @@ maybe isJust (Control control) =
 
                 else
                     Nothing
-        , allValues =
-            \() ->
-                Nothing
-                    :: List.map Just (control.allValues ())
         , view =
             \() ->
                 SingleView <|
@@ -104,11 +98,6 @@ bool : Bool -> Control Bool
 bool initialValue =
     Control
         { currentValue = \() -> initialValue
-        , allValues =
-            \() ->
-                [ initialValue
-                , not initialValue
-                ]
         , view =
             \() ->
                 SingleView <|
@@ -136,14 +125,6 @@ string : String -> Control String
 string initialValue =
     Control
         { currentValue = \() -> initialValue
-        , allValues =
-            \() ->
-                [ initialValue
-                , ""
-                , "short"
-                , "Longwordyesverylongwithnospacessupercalifragilisticexpialidocious"
-                , "Long text lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-                ]
         , view =
             \() ->
                 SingleView <|
@@ -161,22 +142,6 @@ stringTextarea : String -> Control String
 stringTextarea initialValue =
     Control
         { currentValue = \() -> initialValue
-        , allValues =
-            \() ->
-                [ initialValue
-                , ""
-                , "short"
-                , "Longwordyesverylongwithnospacessupercalifragilisticexpialidocious"
-                , """
-                    Long text lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                    sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
-                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                    nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-                    reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                  """
-                ]
         , view =
             \() ->
                 SingleView <|
@@ -214,11 +179,6 @@ choice_ :
 choice_ left current right =
     Control
         { currentValue = \() -> current |> Tuple.second |> currentValue
-        , allValues =
-            \() ->
-                (List.reverse left ++ [ current ] ++ right)
-                    |> List.map (Tuple.second >> allValues)
-                    |> List.concat
         , view =
             \() ->
                 SingleView <|
@@ -295,7 +255,6 @@ record : a -> Control a
 record fn =
     Control
         { currentValue = \() -> fn
-        , allValues = \() -> [ fn ]
         , view = \() -> FieldViews []
         }
 
@@ -309,14 +268,6 @@ field : String -> Control a -> Control (a -> b) -> Control b
 field name (Control control) (Control pipeline) =
     Control
         { currentValue = \() -> pipeline.currentValue () (control.currentValue ())
-        , allValues =
-            \() ->
-                control.allValues ()
-                    |> List.concatMap
-                        (\v ->
-                            List.map (\p -> p v)
-                                (pipeline.allValues ())
-                        )
         , view =
             \() ->
                 let
@@ -342,7 +293,6 @@ map : (a -> b) -> Control a -> Control b
 map fn (Control a) =
     Control
         { currentValue = \() -> fn (a.currentValue ())
-        , allValues = mapAllValues fn a.allValues
         , view = \() -> mapView fn (a.view ())
         }
 
@@ -371,14 +321,8 @@ lazy fn =
     in
     Control
         { currentValue = \() -> (unwrap (fn ())).currentValue ()
-        , allValues = \() -> (unwrap (fn ())).allValues ()
         , view = \() -> (unwrap (fn ())).view ()
         }
-
-
-mapAllValues : (a -> b) -> (() -> List a) -> (() -> List b)
-mapAllValues fn allValues_ =
-    \() -> List.map fn (allValues_ ())
 
 
 mapView : (a -> b) -> ControlView a -> ControlView b
