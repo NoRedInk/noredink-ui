@@ -28,8 +28,10 @@ Create interactive controls for complex data structures.
 import Html exposing (Html)
 import Html.Attributes
 import Html.Events
+import Html.Styled exposing (toUnstyled)
 import Json.Decode
 import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
+import Nri.Ui.TextInput.V7 as TextInput
 
 
 {-| An interactive control that produces a value `a`.
@@ -150,22 +152,12 @@ string initialValue =
             \() ->
                 SingleView <|
                     \labelText ->
-                        let
-                            id =
-                                labelId labelText
-                        in
-                        Html.span []
-                            [ Html.input
-                                [ Html.Attributes.value initialValue
-                                , Html.Events.onInput string
-                                , Html.Attributes.id id
-                                ]
-                                []
-                            , Html.label
-                                [ Html.Attributes.for id
-                                ]
-                                [ Html.text labelText ]
+                        TextInput.view labelText
+                            [ TextInput.id (labelId labelText)
+                            , TextInput.text string
+                            , TextInput.value initialValue
                             ]
+                            |> toUnstyled
         }
 
 
