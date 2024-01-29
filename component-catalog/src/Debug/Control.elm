@@ -43,12 +43,7 @@ type Control a
 type ControlView a
     = NoView
     | SingleView (Html (Control a))
-    | FieldViews FieldViewsStyle (List ( String, Html (Control a) ))
-
-
-type FieldViewsStyle
-    = Record
-    | List
+    | FieldViews (List ( String, Html (Control a) ))
 
 
 {-| A `Control` that has a static value (and no UI).
@@ -262,7 +257,7 @@ record : a -> Control a
 record fn =
     Control
         { currentValue = \() -> fn
-        , view = \() -> FieldViews Record []
+        , view = \() -> FieldViews []
         }
 
 
@@ -275,10 +270,7 @@ record fn =
 -}
 list : Control (List a)
 list =
-    Control
-        { currentValue = \() -> []
-        , view = \() -> FieldViews List []
-        }
+    record []
 
 
 {-| Used with [`record`](#record) or [`list`](#list) to create a `Control`.
@@ -290,21 +282,19 @@ field name (Control control) (Control pipeline) =
         , view =
             \() ->
                 let
-                    ( style, otherFields ) =
+                    otherFields =
                         case pipeline.view () of
-                            FieldViews style_ fs ->
-                                ( style_
-                                , List.map (Tuple.mapSecond (\x -> Html.map (field name (Control control)) x))
+                            FieldViews fs ->
+                                List.map (Tuple.mapSecond (\x -> Html.map (field name (Control control)) x))
                                     fs
-                                )
 
                             _ ->
-                                ( Record, [] )
+                                []
 
                     newView =
                         view_ (\v -> field name v (Control pipeline)) (Control control)
                 in
-                FieldViews style (( name, newView ) :: otherFields)
+                FieldViews (( name, newView ) :: otherFields)
         }
 
 
@@ -355,8 +345,8 @@ mapView fn controlView =
         SingleView v ->
             SingleView (Html.map (map fn) v)
 
-        FieldViews style fs ->
-            FieldViews style
+        FieldViews fs ->
+            FieldViews
                 (List.map (Tuple.mapSecond (Html.map (map fn))) fs)
 
 
@@ -385,42 +375,10 @@ view_ msg (Control c) =
         SingleView v ->
             Html.map msg v
 
-        FieldViews Record fs ->
-            List.concat
-                [ fs
-                    |> List.reverse
-                    |> List.indexedMap (fieldRow '{')
-                , [ Html.div
-                        [ Html.Attributes.style "display" "table-row"
-                        ]
-                        [ Html.div
-                            [ Html.Attributes.style "display" "table-cell"
-                            ]
-                            [ Html.text "}" ]
-                        ]
-                  ]
-                ]
-                |> Html.div
-                    [ Html.Attributes.style "display" "table"
-                    , Html.Attributes.style "border-spacing" "2px"
-                    ]
-                |> Html.map msg
-
-        FieldViews List fs ->
-            List.concat
-                [ fs
-                    |> List.reverse
-                    |> List.indexedMap (fieldRow '[')
-                , [ Html.div
-                        [ Html.Attributes.style "display" "table-row"
-                        ]
-                        [ Html.div
-                            [ Html.Attributes.style "display" "table-cell"
-                            ]
-                            [ Html.text "]" ]
-                        ]
-                  ]
-                ]
+        FieldViews fs ->
+            fs
+                |> List.reverse
+                |> List.map fieldRow
                 |> Html.div
                     [ Html.Attributes.style "display" "table"
                     , Html.Attributes.style "border-spacing" "2px"
@@ -428,32 +386,17 @@ view_ msg (Control c) =
                 |> Html.map msg
 
 
-fieldRow : Char -> Int -> ( String, Html msg ) -> Html msg
-fieldRow openingChar index ( name, fieldView ) =
+fieldRow : ( String, Html msg ) -> Html msg
+fieldRow ( name, fieldView ) =
     Html.label
         [ Html.Attributes.style "display" "table-row"
         , Html.Attributes.style "vertical-align" "text-top"
         ]
         [ Html.span
             [ Html.Attributes.style "display" "table-cell"
-            ]
-            [ Html.text
-                (if index == 0 then
-                    String.fromChar openingChar
-
-                 else
-                    ","
-                )
-            ]
-        , Html.span
-            [ Html.Attributes.style "display" "table-cell"
             , Html.Attributes.style "text-align" "right"
             ]
             [ Html.text name ]
-        , Html.span
-            [ Html.Attributes.style "display" "table-cell"
-            ]
-            [ Html.text " = " ]
         , Html.div
             [ Html.Attributes.style "display" "table-cell"
             ]
