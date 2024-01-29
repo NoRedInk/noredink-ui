@@ -209,7 +209,7 @@ init selection =
                         , Header.customPageWidth (Css.px width)
                         )
                     )
-                    (ControlExtra.float 750)
+                    (Control.float 750)
                 )
     , selection = Nothing
     }

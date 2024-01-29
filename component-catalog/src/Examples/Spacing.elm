@@ -411,7 +411,7 @@ controlSettings =
                             , Spacing.centeredContentWithSidePaddingAndCustomWidth (Css.px value)
                             )
                         )
-                        (ControlExtra.float 400)
+                        (Control.float 400)
                    )
                  , ( "centeredContentWithCustomWidth"
                    , Control.map
@@ -423,7 +423,7 @@ controlSettings =
                             , Spacing.centeredContentWithCustomWidth (Css.px value)
                             )
                         )
-                        (ControlExtra.float 400)
+                        (Control.float 400)
                    )
                  ]
                     |> Control.choice

@@ -93,7 +93,7 @@ controlSettings =
                     , Balloon.arrowHeight v
                     )
                 )
-                (ControlExtra.float 20)
+                (Control.float 20)
             )
         |> CommonControls.css_ "containerCss"
             ( "[ Css.backgroundColor Colors.magenta ]", [ Css.backgroundColor Colors.magenta ] )

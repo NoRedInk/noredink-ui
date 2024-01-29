@@ -2,6 +2,7 @@ module Debug.Control exposing
     ( Control
     , value
     , bool, string, stringTextarea
+    , float
     , maybe, choice, field
     , map
     , view, currentValue
@@ -16,6 +17,7 @@ Create interactive controls for complex data structures.
 @docs Control
 @docs value
 @docs bool, string, stringTextarea
+@docs float
 @docs maybe, choice, field
 @docs map
 
@@ -145,6 +147,39 @@ string initialValue =
                             , TextInput.text string
                             , TextInput.value initialValue
                             ]
+                            |> toUnstyled
+        }
+
+
+{-| A `Control` that allows float input.
+-}
+float : Float -> Control Float
+float initialValue =
+    Control
+        { currentValue = \() -> initialValue
+        , view =
+            \() ->
+                SingleView <|
+                    \labelText ->
+                        TextInput.view labelText
+                            [ TextInput.id (labelId labelText)
+                            , TextInput.float (Maybe.withDefault initialValue >> float)
+                            , TextInput.value (Just initialValue)
+                            ]
+                            |> toUnstyled
+        }
+
+
+textInput : List (TextInput.Attribute value (Control value)) -> value -> Control value
+textInput attributes initialValue =
+    Control
+        { currentValue = \() -> initialValue
+        , view =
+            \() ->
+                SingleView <|
+                    \labelText ->
+                        TextInput.view labelText
+                            (TextInput.id (labelId labelText) :: attributes)
                             |> toUnstyled
         }
 

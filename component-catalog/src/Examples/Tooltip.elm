@@ -489,7 +489,7 @@ controlAlignment_ ( middleName, middleValue ) others =
                             , val (Css.px float)
                             )
                         )
-                        (ControlExtra.float 0)
+                        (Control.float 0)
                     )
                 )
                 others
@@ -558,7 +558,7 @@ controlPadding =
                     , Tooltip.customPadding float
                     )
                 )
-                (ControlExtra.float 0)
+                (Control.float 0)
           )
         ]
 

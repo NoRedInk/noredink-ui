@@ -685,9 +685,9 @@ initControl =
                         , { arrowHeight = a, totalHeight = b, zIndex = 0, xOffset = c }
                         )
                     )
-                    |> Control.field "arrowHeight" (ControlExtra.float 40)
-                    |> Control.field "totalHeight" (ControlExtra.float 80)
-                    |> Control.field "xOffset" (ControlExtra.float 0)
+                    |> Control.field "arrowHeight" (Control.float 40)
+                    |> Control.field "totalHeight" (Control.float 80)
+                    |> Control.field "xOffset" (Control.float 0)
                 )
             )
         |> ControlExtra.optionalListItem "theme"

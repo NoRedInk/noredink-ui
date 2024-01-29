@@ -233,7 +233,7 @@ type alias Settings =
 initSettings : Control Settings
 initSettings =
     Control.record Settings
-        |> Control.field "center" (ControlExtra.float 700)
+        |> Control.field "center" (Control.float 700)
 
 
 {-| -}

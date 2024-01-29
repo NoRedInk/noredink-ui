@@ -1,5 +1,5 @@
 module Debug.Control.Extra exposing
-    ( float, int
+    ( int
     , values, listItem, optionalListItem, optionalListItemDefaultChecked
     , optionalBoolListItem, optionalBoolListItemDefaultChecked
     , bool
@@ -8,7 +8,7 @@ module Debug.Control.Extra exposing
 
 {-|
 
-@docs float, int
+@docs int
 @docs values, listItem, optionalListItem, optionalListItemDefaultChecked
 @docs optionalBoolListItem, optionalBoolListItemDefaultChecked
 @docs bool
@@ -19,13 +19,6 @@ module Debug.Control.Extra exposing
 import Code
 import Debug.Control as Control exposing (Control)
 import List.Extra
-
-
-{-| -}
-float : Float -> Control Float
-float default =
-    Control.map (String.toFloat >> Maybe.withDefault default)
-        (Control.string (String.fromFloat default))
 
 
 {-| -}

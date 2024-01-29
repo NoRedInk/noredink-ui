@@ -383,7 +383,7 @@ controlBreadCrumbs_ name index =
                                 , BreadCrumbs.iconSize (Css.px v)
                                 )
                             )
-                            (ControlExtra.float 40)
+                            (Control.float 40)
                         )
                 )
             )

@@ -181,4 +181,4 @@ controlSettings =
         |> Control.field "backgroundColor" (CommonControls.specificColor "white")
         |> Control.field "emptyColor" (CommonControls.specificColor "gray92")
         |> Control.field "filledColor" (CommonControls.specificColor "cornflower")
-        |> Control.field "percentage" (ControlExtra.float 15)
+        |> Control.field "percentage" (Control.float 15)

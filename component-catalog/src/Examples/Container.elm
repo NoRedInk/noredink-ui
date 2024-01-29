@@ -167,7 +167,7 @@ controlPaddingPx =
             , Container.paddingPx val
             )
         )
-        (ControlExtra.float 20)
+        (Control.float 20)
 
 
 controlContent : Control ( String, Container.Attribute msg )
