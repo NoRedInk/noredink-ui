@@ -138,46 +138,55 @@ type alias Settings =
 controlAttributes : Control (List ( String, TextArea.Attribute Msg ))
 controlAttributes =
     Control.list
-        |> ControlExtra.optionalListItem
-            "theme"
-            (CommonControls.choice moduleName
-                [ ( "standard", TextArea.standard )
-                , ( "writing", TextArea.writing )
-                ]
-            )
-        |> ControlExtra.optionalBoolListItem "onBlur"
-            ( "TextArea.onBlur " ++ Code.string "Neener neener Blur happened"
-            , TextArea.onBlur (UpdateValue "Neener neener Blur happened")
-            )
-        |> ControlExtra.optionalListItem "placeholder"
-            (Control.string "A long time ago, in a galaxy pretty near here actually..."
-                |> Control.map
-                    (\str ->
-                        ( "TextArea.placeholder " ++ Code.string str
-                        , TextArea.placeholder str
-                        )
+        |> ControlExtra.listItems "Theme, CSS, and Style Extras"
+            (Control.list
+                |> ControlExtra.optionalListItem
+                    "theme"
+                    (CommonControls.choice moduleName
+                        [ ( "standard", TextArea.standard )
+                        , ( "writing", TextArea.writing )
+                        ]
+                    )
+                |> ControlExtra.optionalListItem "height"
+                    (CommonControls.choice moduleName
+                        [ ( "autoResize", TextArea.autoResize )
+                        , ( "autoResizeSingleLine", TextArea.autoResizeSingleLine )
+                        ]
+                    )
+                |> ControlExtra.optionalBoolListItem "noMargin"
+                    ( "TextArea.noMargin True", TextArea.noMargin True )
+                |> ControlExtra.optionalBoolListItem "css"
+                    ( "TextArea.css [ Css.backgroundColor Colors.azure ]"
+                    , TextArea.css [ Css.backgroundColor Colors.azure ]
                     )
             )
-        |> ControlExtra.optionalListItem "height"
-            (CommonControls.choice moduleName
-                [ ( "autoResize", TextArea.autoResize )
-                , ( "autoResizeSingleLine", TextArea.autoResizeSingleLine )
-                ]
+        |> ControlExtra.listItems "State and Behavior"
+            (Control.list
+                |> ControlExtra.optionalBoolListItem "disabled"
+                    ( "TextArea.disabled", TextArea.disabled )
+                |> ControlExtra.optionalBoolListItem "onBlur"
+                    ( "TextArea.onBlur " ++ Code.string "Neener neener Blur happened"
+                    , TextArea.onBlur (UpdateValue "Neener neener Blur happened")
+                    )
             )
-        |> CommonControls.guidanceAndErrorMessage
-            { moduleName = moduleName
-            , guidance = TextArea.guidance
-            , guidanceHtml = TextArea.guidanceHtml
-            , errorMessage = Just TextArea.errorMessage
-            , message = "The statement must be true."
-            }
-        |> ControlExtra.optionalBoolListItem "disabled"
-            ( "TextArea.disabled", TextArea.disabled )
-        |> ControlExtra.optionalBoolListItem "noMargin"
-            ( "TextArea.noMargin True", TextArea.noMargin True )
-        |> ControlExtra.optionalBoolListItem "css"
-            ( "TextArea.css [ Css.backgroundColor Colors.azure ]"
-            , TextArea.css [ Css.backgroundColor Colors.azure ]
+        |> ControlExtra.listItems "Content"
+            (Control.list
+                |> ControlExtra.optionalListItem "placeholder"
+                    (Control.string "A long time ago, in a galaxy pretty near here actually..."
+                        |> Control.map
+                            (\str ->
+                                ( "TextArea.placeholder " ++ Code.string str
+                                , TextArea.placeholder str
+                                )
+                            )
+                    )
+                |> CommonControls.guidanceAndErrorMessage
+                    { moduleName = moduleName
+                    , guidance = TextArea.guidance
+                    , guidanceHtml = TextArea.guidanceHtml
+                    , errorMessage = Just TextArea.errorMessage
+                    , message = "The statement must be true."
+                    }
             )
 
 
@@ -185,7 +194,7 @@ initControls : Control Settings
 initControls =
     Control.record Settings
         |> Control.field "label" (Control.string "Introductory paragraph")
-        |> Control.field "attributes" controlAttributes
+        |> Control.field "" controlAttributes
 
 
 {-| -}
