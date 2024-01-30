@@ -12,7 +12,6 @@ import Category exposing (Category(..))
 import Code
 import Css exposing (Color)
 import Debug.Control as Control exposing (Control)
-import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Nri.Ui.Button.V10 as Button

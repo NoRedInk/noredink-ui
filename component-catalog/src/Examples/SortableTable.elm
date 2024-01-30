@@ -10,7 +10,7 @@ import Category exposing (Category(..))
 import Code
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
-import Debug.Control.Extra as ControlExtra exposing (values)
+import Debug.Control.Extra exposing (values)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)

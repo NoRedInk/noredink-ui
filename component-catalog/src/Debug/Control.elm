@@ -28,11 +28,8 @@ Create interactive controls for complex data structures.
 -}
 
 import Css exposing (..)
-import Html.Attributes
-import Html.Events
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
-import Json.Decode
 import Nri.Ui.Checkbox.V7 as Checkbox
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
@@ -117,10 +114,6 @@ bool initialValue =
             \() ->
                 SingleView <|
                     \labelText ->
-                        let
-                            id =
-                                labelId labelText
-                        in
                         [ Checkbox.view
                             { label = labelText
                             , selected = Checkbox.selectedFromBool initialValue
@@ -185,20 +178,6 @@ int initialValue =
                             , TextInput.number (Maybe.withDefault initialValue >> int)
                             , TextInput.value (Just initialValue)
                             ]
-                        ]
-        }
-
-
-textInput : List (TextInput.Attribute value (Control value)) -> value -> Control value
-textInput attributes initialValue =
-    Control
-        { currentValue = \() -> initialValue
-        , view =
-            \() ->
-                SingleView <|
-                    \labelText ->
-                        [ TextInput.view labelText
-                            (TextInput.id (labelId labelText) :: attributes)
                         ]
         }
 
@@ -288,9 +267,6 @@ choice_ left current right =
 
                             updateChild new =
                                 choice_ left ( Tuple.first current, new ) right
-
-                            id =
-                                labelId labelText
                         in
                         (Select.view labelText
                             [ Select.choices String.fromInt choices

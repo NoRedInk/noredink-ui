@@ -18,7 +18,6 @@ import Code
 import CommonControls
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
-import Debug.Control.Extra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)

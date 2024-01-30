@@ -10,7 +10,6 @@ import Category exposing (Category(..))
 import Code
 import Css exposing (Style)
 import Debug.Control as Control exposing (Control)
-import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
