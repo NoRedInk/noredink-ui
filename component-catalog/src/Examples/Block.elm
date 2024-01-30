@@ -662,47 +662,53 @@ type alias Settings =
 initControl : Control Settings
 initControl =
     Control.list
-        |> ControlExtra.optionalListItemDefaultChecked "content" controlContent
-        |> ControlExtra.optionalListItem "blankStyle" blankStyleContent
-        |> ControlExtra.optionalBoolListItemDefaultChecked "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )
-        |> ControlExtra.optionalListItem "label"
-            (CommonControls.string ( Code.fromModule moduleName "label", Block.label ) "Fruit")
-        |> ControlExtra.optionalListItem "labelPosition"
-            (Control.map
-                (\( code, v ) ->
-                    ( Code.fromModule moduleName "labelPosition (Just" ++ code ++ ")"
-                    , Block.labelPosition (Just v)
+        |> ControlExtra.listItems "Text or Blank"
+            (Control.list
+                |> ControlExtra.optionalListItemDefaultChecked "content" controlContent
+                |> ControlExtra.optionalListItem "blankStyle" blankStyleContent
+            )
+        |> ControlExtra.listItems "Label and Emphasis"
+            (Control.list
+                |> ControlExtra.optionalBoolListItemDefaultChecked "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )
+                |> ControlExtra.optionalListItem "theme"
+                    (CommonControls.choice moduleName
+                        [ ( "yellow", Block.yellow )
+                        , ( "cyan", Block.cyan )
+                        , ( "magenta", Block.magenta )
+                        , ( "green", Block.green )
+                        , ( "blue", Block.blue )
+                        , ( "purple", Block.purple )
+                        , ( "brown", Block.brown )
+                        ]
                     )
-                )
-                (Control.record
-                    (\a b c ->
-                        ( Code.record
-                            [ ( "arrowHeight", String.fromFloat a )
-                            , ( "totalHeight", String.fromFloat b )
-                            , ( "zIndex", "0" )
-                            , ( "xOffset", String.fromFloat c )
-                            ]
-                        , { arrowHeight = a, totalHeight = b, zIndex = 0, xOffset = c }
+                |> ControlExtra.optionalListItem "label"
+                    (CommonControls.string ( Code.fromModule moduleName "label", Block.label ) "Fruit")
+                |> ControlExtra.optionalListItem "labelPosition"
+                    (Control.map
+                        (\( code, v ) ->
+                            ( Code.fromModule moduleName "labelPosition (Just" ++ code ++ ")"
+                            , Block.labelPosition (Just v)
+                            )
+                        )
+                        (Control.record
+                            (\a b c ->
+                                ( Code.record
+                                    [ ( "arrowHeight", String.fromFloat a )
+                                    , ( "totalHeight", String.fromFloat b )
+                                    , ( "zIndex", "0" )
+                                    , ( "xOffset", String.fromFloat c )
+                                    ]
+                                , { arrowHeight = a, totalHeight = b, zIndex = 0, xOffset = c }
+                                )
+                            )
+                            |> Control.field "arrowHeight" (Control.float 40)
+                            |> Control.field "totalHeight" (Control.float 80)
+                            |> Control.field "xOffset" (Control.float 0)
                         )
                     )
-                    |> Control.field "arrowHeight" (Control.float 40)
-                    |> Control.field "totalHeight" (Control.float 80)
-                    |> Control.field "xOffset" (Control.float 0)
-                )
+                |> ControlExtra.optionalListItem "labelId"
+                    (CommonControls.string ( Code.fromModule moduleName "labelId", Block.labelId ) fruitId)
             )
-        |> ControlExtra.optionalListItem "theme"
-            (CommonControls.choice moduleName
-                [ ( "yellow", Block.yellow )
-                , ( "cyan", Block.cyan )
-                , ( "magenta", Block.magenta )
-                , ( "green", Block.green )
-                , ( "blue", Block.blue )
-                , ( "purple", Block.purple )
-                , ( "brown", Block.brown )
-                ]
-            )
-        |> ControlExtra.optionalListItem "labelId"
-            (CommonControls.string ( Code.fromModule moduleName "labelId", Block.labelId ) fruitId)
 
 
 controlContent : Control ( String, Block.Attribute msg )
