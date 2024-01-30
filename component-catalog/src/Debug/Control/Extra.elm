@@ -3,6 +3,7 @@ module Debug.Control.Extra exposing
     , optionalBoolListItem, optionalBoolListItemDefaultChecked
     , bool
     , rotatedChoice, specificChoice
+    , listItems
     )
 
 {-|

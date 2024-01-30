@@ -601,7 +601,7 @@ viewCustomizableExample ellieLinkConfig ({ staticExampleSettings } as state) =
                       }
                     ]
             }
-        , Control.view UpdatePageSettings state.pageSettings |> Html.fromUnstyled
+        , Control.view UpdatePageSettings state.pageSettings
         , Html.div
             [ css
                 [ Css.displayFlex

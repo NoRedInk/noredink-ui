@@ -27,12 +27,14 @@ Create interactive controls for complex data structures.
 
 -}
 
-import Html exposing (Html)
+import Css exposing (..)
 import Html.Attributes
 import Html.Events
-import Html.Styled exposing (toUnstyled)
+import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes exposing (css)
 import Json.Decode
 import Nri.Ui.Checkbox.V7 as Checkbox
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
 import Nri.Ui.Select.V9 as Select
 import Nri.Ui.TextArea.V5 as TextArea
@@ -98,7 +100,6 @@ maybe isJust (Control control) =
                                 [ Checkbox.id (labelId ("Maybe " ++ labelText))
                                 , Checkbox.onCheck (\a -> maybe a (Control control))
                                 ]
-                                |> toUnstyled
                             , if isJust then
                                 view_ (maybe isJust) (Control control) labelText
 
@@ -129,7 +130,6 @@ bool initialValue =
                             [ Checkbox.id (labelId labelText)
                             , Checkbox.onCheck bool
                             ]
-                            |> toUnstyled
         }
 
 
@@ -148,7 +148,6 @@ string initialValue =
                             , TextInput.text string
                             , TextInput.value initialValue
                             ]
-                            |> toUnstyled
         }
 
 
@@ -167,7 +166,6 @@ float initialValue =
                             , TextInput.float (Maybe.withDefault initialValue >> float)
                             , TextInput.value (Just initialValue)
                             ]
-                            |> toUnstyled
         }
 
 
@@ -186,7 +184,6 @@ int initialValue =
                             , TextInput.number (Maybe.withDefault initialValue >> int)
                             , TextInput.value (Just initialValue)
                             ]
-                            |> toUnstyled
         }
 
 
@@ -200,7 +197,6 @@ textInput attributes initialValue =
                     \labelText ->
                         TextInput.view labelText
                             (TextInput.id (labelId labelText) :: attributes)
-                            |> toUnstyled
         }
 
 
@@ -218,7 +214,6 @@ stringTextarea initialValue =
                             [ TextArea.value initialValue
                             , TextArea.onInput stringTextarea
                             ]
-                            |> toUnstyled
         }
 
 
@@ -295,7 +290,6 @@ choice_ left current right =
                             [ Select.view labelText
                                 [ Select.choices String.fromInt choices
                                 ]
-                                |> toUnstyled
                                 |> Html.map selectNew
                             , view_ updateChild (Tuple.second current) ""
                             ]
@@ -434,7 +428,7 @@ currentValue (Control c) =
 view : (Control a -> msg) -> Control a -> Html msg
 view msg (Control c) =
     Html.div []
-        [ view_ msg (Control c) "First label"
+        [ view_ msg (Control c) ""
         ]
 
 
@@ -448,8 +442,37 @@ view_ msg (Control c) currentLabel =
             Html.map msg (v currentLabel)
 
         FieldViews fs ->
-            fs
-                |> List.reverse
-                |> List.map (\( label, viewInput ) -> viewInput label)
-                |> Html.div []
-                |> Html.map msg
+            let
+                contents =
+                    fs
+                        |> List.reverse
+                        |> List.map (\( label, viewInput ) -> viewInput label)
+                        |> List.map (Html.map msg)
+            in
+            if currentLabel /= "" then
+                Html.fieldset
+                    [ css
+                        [ border3 (px 1) solid Colors.gray75
+                        , borderRadius (px 3)
+                        , minWidth (pct 45)
+                        ]
+                    ]
+                    (Html.legend
+                        [ css
+                            [ fontSize (rem 1)
+                            , color Colors.navy
+                            ]
+                        ]
+                        [ Html.text currentLabel ]
+                        :: contents
+                    )
+
+            else
+                Html.div
+                    [ css
+                        [ displayFlex
+                        , flexWrap wrap
+                        , Css.property "gap" "10px"
+                        ]
+                    ]
+                    contents

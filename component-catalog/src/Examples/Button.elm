@@ -170,10 +170,21 @@ initDebugControls =
                 ]
             )
         |> Control.field "label" (Control.string "Label **bold**   *emphasis*")
-        |> Control.field "attributes"
+        |> Control.field "" controlAttributes
+
+
+controlAttributes : Control (List ( String, Button.Attribute Msg ))
+controlAttributes =
+    Control.list
+        |> ControlExtra.listItems "Icons"
             (Control.list
                 |> CommonControls.icon moduleName Button.icon
                 |> CommonControls.rightIcon moduleName Button.rightIcon
+                |> ControlExtra.optionalBoolListItem "hideIconForMobile"
+                    ( "Button.hideIconForMobile", Button.hideIconForMobile )
+            )
+        |> ControlExtra.listItems "Size and Width"
+            (Control.list
                 |> ControlExtra.optionalListItem "size"
                     (CommonControls.choice moduleName
                         [ ( "small", Button.small )
@@ -218,16 +229,9 @@ initDebugControls =
                         , ( "fillContainerWidthForNarrowMobile", Button.fillContainerWidthForNarrowMobile )
                         ]
                     )
-                |> ControlExtra.optionalListItem "theme"
-                    (CommonControls.choice moduleName
-                        [ ( "primary", Button.primary )
-                        , ( "secondary", Button.secondary )
-                        , ( "tertiary", Button.tertiary )
-                        , ( "danger", Button.danger )
-                        , ( "dangerSecondary", Button.dangerSecondary )
-                        , ( "premium", Button.premium )
-                        ]
-                    )
+            )
+        |> ControlExtra.listItems "State & Type"
+            (Control.list
                 |> ControlExtra.optionalBoolListItem "disabled" ( "disabled", Button.disabled )
                 |> ControlExtra.optionalListItem "state (button only)"
                     (CommonControls.choice moduleName
@@ -250,8 +254,19 @@ initDebugControls =
                     ( "Button.submit", Button.submit )
                 |> ControlExtra.optionalBoolListItem "opensModal (button only)"
                     ( "Button.opensModal", Button.opensModal )
-                |> ControlExtra.optionalBoolListItem "hideIconForMobile"
-                    ( "Button.hideIconForMobile", Button.hideIconForMobile )
+            )
+        |> ControlExtra.listItems "Theme & CSS"
+            (Control.list
+                |> ControlExtra.optionalListItem "theme"
+                    (CommonControls.choice moduleName
+                        [ ( "primary", Button.primary )
+                        , ( "secondary", Button.secondary )
+                        , ( "tertiary", Button.tertiary )
+                        , ( "danger", Button.danger )
+                        , ( "dangerSecondary", Button.dangerSecondary )
+                        , ( "premium", Button.premium )
+                        ]
+                    )
                 |> CommonControls.css
                     { moduleName = moduleName
                     , use = Button.css
