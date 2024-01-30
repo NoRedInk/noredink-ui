@@ -665,7 +665,6 @@ initControl =
         |> ControlExtra.listItems "Text or Blank"
             (Control.list
                 |> ControlExtra.listItems "content" controlContent
-                |> ControlExtra.optionalListItem "blankStyle" blankStyleContent
             )
         |> ControlExtra.listItems "Label and Emphasis"
             (Control.list
@@ -724,38 +723,45 @@ controlContent =
                 |> Control.map List.singleton
           )
         , ( "with mixed content"
-          , Control.value
-                ( Code.fromModule moduleName "content "
-                    ++ Code.withParens
-                        ((Code.fromModule moduleName "italic (" ++ Code.fromModule moduleName "phrase " ++ Code.string "to think about" ++ ")")
-                            ++ (" :: " ++ Code.fromModule moduleName "blank")
-                            ++ (" :: " ++ Code.fromModule moduleName "phrase " ++ Code.string " and so forth")
+          , Control.list
+                |> ControlExtra.listItem ""
+                    (Control.value
+                        ( Code.fromModule moduleName "content "
+                            ++ Code.withParens
+                                ((Code.fromModule moduleName "italic (" ++ Code.fromModule moduleName "phrase " ++ Code.string "to think about" ++ ")")
+                                    ++ (" :: " ++ Code.fromModule moduleName "blank")
+                                    ++ (" :: " ++ Code.fromModule moduleName "phrase " ++ Code.string " and so forth")
+                                )
+                        , Block.content
+                            (Block.italic (Block.phrase "to think about ")
+                                :: Block.blank { widthInChars = 8 }
+                                :: Block.phrase " and so forth"
+                            )
                         )
-                , Block.content
-                    (Block.italic (Block.phrase "to think about ")
-                        :: Block.blank { widthInChars = 8 }
-                        :: Block.phrase " and so forth"
                     )
-                )
-                |> Control.map List.singleton
+                |> ControlExtra.optionalListItem "blankStyle" blankStyleContent
           )
         , ( "blank"
-          , Control.record
-                (\widthInChars ->
-                    ( Code.fromModule moduleName "content "
-                        ++ Code.withParens
-                            (Code.fromModule moduleName "blank"
-                                ++ " "
-                                ++ Code.record [ ( "widthInChars", String.fromInt widthInChars ) ]
+          , Control.list
+                |> ControlExtra.listItem "widthInChars"
+                    (Control.map
+                        (\widthInChars ->
+                            ( Code.fromModule moduleName "content "
+                                ++ Code.withParens
+                                    (Code.fromModule moduleName "blank"
+                                        ++ " "
+                                        ++ Code.record [ ( "widthInChars", String.fromInt widthInChars ) ]
+                                    )
+                            , Block.content [ Block.blank { widthInChars = widthInChars } ]
                             )
-                    , Block.content [ Block.blank { widthInChars = widthInChars } ]
+                        )
+                        (Control.int 8)
                     )
-                )
-                |> Control.field "widthInChars" (Control.int 8)
-                |> Control.map List.singleton
+                |> ControlExtra.optionalListItem "blankStyle" blankStyleContent
           )
         , ( "(none)"
-          , Control.value []
+          , Control.revealed "blankStyle" blankStyleContent
+                |> Control.map List.singleton
           )
         ]
 
