@@ -275,7 +275,10 @@ init =
         Control.record Settings
             |> Control.field "currentRoute" (Control.string "#some-route")
             |> Control.field "navAttributes" controlNavAttributes
-            |> Control.field "entries" (Control.map List.singleton (controlEntryType 2 "#some-route"))
+            |> Control.field "Level 1"
+                (Control.map List.singleton (controlEntryType 2 "#some-route")
+                    |> Control.revealed "entry type"
+                )
     }
 
 
@@ -336,7 +339,7 @@ controlEntry level href =
             )
         )
         |> Control.field "title" (Control.string "Entry Category")
-        |> Control.field "attributes" (controlEntryAttributes href)
+        |> Control.field "" (controlEntryAttributes href)
 
 
 controlEntryWithChildren : Int -> String -> Control ( String, SideNav.Entry String Msg )
@@ -353,11 +356,12 @@ controlEntryWithChildren level href =
             )
         )
         |> Control.field "title" (Control.string "Entry Category")
-        |> Control.field "attributes" (controlEntryAttributes href)
-        |> Control.field "children"
+        |> Control.field "" (controlEntryAttributes href)
+        |> Control.field ("Level " ++ String.fromInt level)
             (Control.lazy
                 (\() ->
                     Control.map List.singleton (controlEntryType (level + 1) (href ++ "-child"))
+                        |> Control.revealed "entry type"
                 )
             )
 
