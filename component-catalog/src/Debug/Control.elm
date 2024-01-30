@@ -418,9 +418,11 @@ view : (Control a -> msg) -> Control a -> Html msg
 view msg (Control c) =
     Html.div
         [ css
-            [ displayFlex
-            , flexWrap wrap
-            , Css.property "gap" "10px"
+            [ Css.property "display" "grid"
+            , Css.property "grid-template-columns" "repeat(auto-fit, minmax(300px, 1fr))"
+            , Css.justifyContent Css.start
+            , Css.property "row-gap" "10px"
+            , Css.property "column-gap" "10px"
             ]
         ]
         (view_ msg (Control c) "")
