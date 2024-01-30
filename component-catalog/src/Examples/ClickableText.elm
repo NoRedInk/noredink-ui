@@ -77,38 +77,47 @@ init : State
 init =
     Control.record Settings
         |> Control.field "label" (Control.string "Clickable Text")
-        |> Control.field "attributes"
+        |> Control.field ""
             (Control.list
-                |> CommonControls.icon moduleName ClickableText.icon
-                |> CommonControls.rightIcon moduleName ClickableText.rightIcon
-                |> ControlExtra.optionalBoolListItem "appearsInline"
-                    ( "ClickableText.appearsInline", ClickableText.appearsInline )
-                |> ControlExtra.optionalBoolListItem "hideIconForMobile"
-                    ( "ClickableText.hideIconForMobile", ClickableText.hideIconForMobile )
-                |> ControlExtra.optionalBoolListItem "hideTextForMobile"
-                    ( "ClickableText.hideTextForMobile", ClickableText.hideTextForMobile )
-                |> CommonControls.css
-                    { moduleName = moduleName
-                    , use = ClickableText.css
-                    }
-                |> CommonControls.mobileCss
-                    { moduleName = moduleName
-                    , use = ClickableText.mobileCss
-                    }
-                |> CommonControls.quizEngineMobileCss
-                    { moduleName = moduleName
-                    , use = ClickableText.quizEngineMobileCss
-                    }
-                |> CommonControls.notMobileCss
-                    { moduleName = moduleName
-                    , use = ClickableText.notMobileCss
-                    }
-                |> ControlExtra.optionalBoolListItem "submit (button only)"
-                    ( "ClickableText.submit", ClickableText.submit )
-                |> ControlExtra.optionalBoolListItem "opensModal (button only)"
-                    ( "ClickableText.opensModal", ClickableText.opensModal )
-                |> ControlExtra.optionalBoolListItem "disabled"
-                    ( "ClickableText.disabled True", ClickableText.disabled True )
+                |> ControlExtra.listItems "Icons"
+                    (Control.list
+                        |> CommonControls.icon moduleName ClickableText.icon
+                        |> CommonControls.rightIcon moduleName ClickableText.rightIcon
+                        |> ControlExtra.optionalBoolListItem "hideIconForMobile"
+                            ( "ClickableText.hideIconForMobile", ClickableText.hideIconForMobile )
+                    )
+                |> ControlExtra.listItems "State & Type"
+                    (Control.list
+                        |> ControlExtra.optionalBoolListItem "disabled"
+                            ( "ClickableText.disabled True", ClickableText.disabled True )
+                        |> ControlExtra.optionalBoolListItem "submit (button only)"
+                            ( "ClickableText.submit", ClickableText.submit )
+                        |> ControlExtra.optionalBoolListItem "opensModal (button only)"
+                            ( "ClickableText.opensModal", ClickableText.opensModal )
+                    )
+                |> ControlExtra.listItems "CSS & Extra style options"
+                    (Control.list
+                        |> ControlExtra.optionalBoolListItem "appearsInline"
+                            ( "ClickableText.appearsInline", ClickableText.appearsInline )
+                        |> ControlExtra.optionalBoolListItem "hideTextForMobile"
+                            ( "ClickableText.hideTextForMobile", ClickableText.hideTextForMobile )
+                        |> CommonControls.css
+                            { moduleName = moduleName
+                            , use = ClickableText.css
+                            }
+                        |> CommonControls.mobileCss
+                            { moduleName = moduleName
+                            , use = ClickableText.mobileCss
+                            }
+                        |> CommonControls.quizEngineMobileCss
+                            { moduleName = moduleName
+                            , use = ClickableText.quizEngineMobileCss
+                            }
+                        |> CommonControls.notMobileCss
+                            { moduleName = moduleName
+                            , use = ClickableText.notMobileCss
+                            }
+                    )
             )
         |> State
 

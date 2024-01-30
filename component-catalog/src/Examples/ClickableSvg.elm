@@ -343,7 +343,7 @@ initSettings =
                         |> ControlExtra.optionalBoolListItem "opensModal (button only)"
                             ( "ClickableSvg.opensModal", ClickableSvg.opensModal )
                     )
-                |> ControlExtra.listItems "Theme & CSS"
+                |> ControlExtra.listItems "CSS"
                     (Control.list
                         |> CommonControls.css
                             { moduleName = "ClickableSvg"
