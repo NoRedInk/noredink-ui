@@ -3,11 +3,11 @@ module Debug.Control exposing
     , value
     , bool, string, stringTextarea
     , float, int
-    , maybe, choice, field
+    , maybe, choice, revealed
     , map
     , view, currentValue
     , lazy
-    , record, list
+    , record, list, field
     )
 
 {-| Copied in from avh4/elm-debug-control.
@@ -18,12 +18,12 @@ Create interactive controls for complex data structures.
 @docs value
 @docs bool, string, stringTextarea
 @docs float, int
-@docs maybe, choice, field
+@docs maybe, choice, revealed
 @docs map
 
 @docs view, currentValue
 @docs lazy
-@docs record, list
+@docs record, list, field
 
 -}
 
@@ -223,6 +223,8 @@ This will crash if you provide an empty list.
 
 The first entry will be the initial value.
 
+Often used along with `revealed` to ensure that every control has a label.
+
 -}
 choice : List ( String, Control a ) -> Control a
 choice choices =
@@ -294,6 +296,14 @@ choice_ left current right =
                             , view_ updateChild (Tuple.second current) ""
                             ]
         }
+
+
+{-| Attach a name to options that are revealed based on a `choice`.
+-}
+revealed : String -> Control a -> Control a
+revealed name control =
+    record identity
+        |> field name control
 
 
 {-| Create a `Control` representing a record with multiple fields.

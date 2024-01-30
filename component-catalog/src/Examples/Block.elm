@@ -714,6 +714,7 @@ controlContent =
                 , Block.plaintext
                 )
                 "bananas"
+                |> Control.revealed "plaintext"
           )
         , ( "with mixed content"
           , Control.value
@@ -749,32 +750,19 @@ blankStyleContent =
 blankType : ( String, { widthInChars : Int } -> Block.Content msg ) -> ( String, Control ( String, Block.Attribute msg ) )
 blankType ( typeStr, blank ) =
     ( typeStr
-    , Control.map
-        (\( widthString, width ) ->
+    , Control.record
+        (\widthInChars ->
             ( Code.fromModule moduleName "content "
                 ++ Code.withParens
                     (Code.fromModule moduleName typeStr
                         ++ " "
-                        ++ widthString
+                        ++ Code.record [ ( "widthInChars", String.fromInt widthInChars ) ]
                     )
-            , Block.content [ blank { widthInChars = width } ]
-            )
-        )
-        controlBlankWidth
-    )
-
-
-controlBlankWidth : Control ( String, Int )
-controlBlankWidth =
-    Control.record
-        (\widthInChars ->
-            ( Code.record
-                [ ( "widthInChars", String.fromInt widthInChars )
-                ]
-            , widthInChars
+            , Block.content [ blank { widthInChars = widthInChars } ]
             )
         )
         |> Control.field "widthInChars" (Control.int 8)
+    )
 
 
 ageId : String
