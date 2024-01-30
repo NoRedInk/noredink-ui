@@ -480,6 +480,7 @@ guidanceAndErrorMessage ({ moduleName } as config) controls =
                         , config.guidance str
                         )
                     )
+                |> Control.revealed "Guidance string"
           )
         , ( "html"
           , Control.value

@@ -330,179 +330,189 @@ type alias State =
 initAttributes : Control (List ( String, QuestionBox.Attribute Msg ))
 initAttributes =
     Control.list
-        |> ControlExtra.listItem "content"
-            (Control.choice
-                [ ( "markdown"
-                  , Control.map
-                        (\str ->
-                            ( Code.fromModule moduleName "markdown " ++ Code.stringMultiline str
-                            , QuestionBox.markdown str
-                            )
-                        )
-                        (Control.stringTextarea initialMarkdown)
-                  )
-                , ( "html"
-                  , Control.value
-                        ( "QuestionBox.html = ... "
-                        , QuestionBox.html
-                            (div []
-                                [ p []
-                                    [ text "Let's remember the rules "
-                                    , ul []
-                                        [ li [] [ text "Always capitalize the first word of a title" ]
-                                        , li [] [ text "Capitalize all words except small words like “and,” “of” and “an.”" ]
-                                        ]
-                                    , strong [] [ text "How should this be capitalized?" ]
-                                    ]
-                                ]
-                            )
-                        )
-                  )
-                ]
-            )
-        |> ControlExtra.optionalListItem "leftButton"
-            ([ ( "Play button"
-               , Control.value
-                    ( Code.fromModule moduleName "leftActions" ++ Code.newlineWithIndent 2 ++ leftActionIconsCode [ ( "Play", "playInCircle" ) ]
-                    , QuestionBox.leftActions
-                        (div []
-                            [ ClickableSvg.button "Play"
-                                UiIcon.playInCircle
-                                [ ClickableSvg.exactSize 24
-                                , ClickableSvg.css
-                                    [ Css.borderRadius (Css.px 24)
-                                    , Css.backgroundColor Colors.white
-                                    ]
-                                ]
-                            ]
-                        )
-                    )
-               )
-             , ( "Pause/Stop button"
-               , Control.value
-                    ( Code.fromModule moduleName "leftActions" ++ Code.newlineWithIndent 2 ++ leftActionIconsCode [ ( "Pause", "pauseInCircle" ), ( "Stop", "stopInCircle" ) ]
-                    , QuestionBox.leftActions
-                        ([ ClickableSvg.button "Pause"
-                            UiIcon.pauseInCircle
-                            [ ClickableSvg.exactSize 24
-                            , ClickableSvg.css
-                                [ Css.borderRadius (Css.px 24)
-                                , Css.backgroundColor Colors.white
-                                ]
-                            ]
-                         , ClickableSvg.button "Stop"
-                            UiIcon.stopInCircle
-                            [ ClickableSvg.exactSize 24
-                            , ClickableSvg.css
-                                [ Css.borderRadius (Css.px 24)
-                                , Css.backgroundColor Colors.white
-                                ]
-                            ]
-                         ]
-                            |> div
-                                [ css
-                                    [ Css.displayFlex
-                                    , Css.flexDirection Css.column
-                                    , Css.property "gap" "6px"
-                                    ]
-                                ]
-                        )
-                    )
-               )
-             ]
-                |> Control.choice
-            )
-        |> ControlExtra.listItem "actions"
-            (Control.map
-                (\i ->
-                    let
-                        ( code, actions ) =
-                            List.range 1 i
-                                |> List.map
-                                    (\i_ ->
-                                        ( Code.record
-                                            [ ( "label", Code.string ("Button " ++ String.fromInt i_) )
-                                            , ( "theme"
-                                              , if i_ == 1 then
-                                                    Code.fromModule "Button" "primary"
-
-                                                else
-                                                    Code.fromModule "Button" "secondary"
-                                              )
-                                            , ( "onClick", "NoOp" )
-                                            ]
-                                        , { label = "Button " ++ String.fromInt i_
-                                          , theme =
-                                                if i_ == 1 then
-                                                    Button.primary
-
-                                                else
-                                                    Button.secondary
-                                          , onClick = NoOp
-                                          }
-                                        )
+        |> ControlExtra.listItems "Content"
+            (Control.list
+                |> ControlExtra.listItem "body"
+                    (Control.choice
+                        [ ( "markdown"
+                          , Control.map
+                                (\str ->
+                                    ( Code.fromModule moduleName "markdown " ++ Code.stringMultiline str
+                                    , QuestionBox.markdown str
                                     )
-                                |> List.unzip
-                    in
-                    ( Code.fromModule moduleName "actions " ++ Code.list code
-                    , QuestionBox.actions actions
+                                )
+                                (Control.stringTextarea initialMarkdown)
+                                |> Control.revealed "markdown"
+                          )
+                        , ( "html"
+                          , Control.value
+                                ( "QuestionBox.html = ... "
+                                , QuestionBox.html
+                                    (div []
+                                        [ p []
+                                            [ text "Let's remember the rules "
+                                            , ul []
+                                                [ li [] [ text "Always capitalize the first word of a title" ]
+                                                , li [] [ text "Capitalize all words except small words like “and,” “of” and “an.”" ]
+                                                ]
+                                            , strong [] [ text "How should this be capitalized?" ]
+                                            ]
+                                        ]
+                                    )
+                                )
+                          )
+                        ]
                     )
-                )
-                (Control.int 2)
+                |> ControlExtra.optionalListItem "leftButton"
+                    ([ ( "Play button"
+                       , Control.value
+                            ( Code.fromModule moduleName "leftActions" ++ Code.newlineWithIndent 2 ++ leftActionIconsCode [ ( "Play", "playInCircle" ) ]
+                            , QuestionBox.leftActions
+                                (div []
+                                    [ ClickableSvg.button "Play"
+                                        UiIcon.playInCircle
+                                        [ ClickableSvg.exactSize 24
+                                        , ClickableSvg.css
+                                            [ Css.borderRadius (Css.px 24)
+                                            , Css.backgroundColor Colors.white
+                                            ]
+                                        ]
+                                    ]
+                                )
+                            )
+                       )
+                     , ( "Pause/Stop button"
+                       , Control.value
+                            ( Code.fromModule moduleName "leftActions" ++ Code.newlineWithIndent 2 ++ leftActionIconsCode [ ( "Pause", "pauseInCircle" ), ( "Stop", "stopInCircle" ) ]
+                            , QuestionBox.leftActions
+                                ([ ClickableSvg.button "Pause"
+                                    UiIcon.pauseInCircle
+                                    [ ClickableSvg.exactSize 24
+                                    , ClickableSvg.css
+                                        [ Css.borderRadius (Css.px 24)
+                                        , Css.backgroundColor Colors.white
+                                        ]
+                                    ]
+                                 , ClickableSvg.button "Stop"
+                                    UiIcon.stopInCircle
+                                    [ ClickableSvg.exactSize 24
+                                    , ClickableSvg.css
+                                        [ Css.borderRadius (Css.px 24)
+                                        , Css.backgroundColor Colors.white
+                                        ]
+                                    ]
+                                 ]
+                                    |> div
+                                        [ css
+                                            [ Css.displayFlex
+                                            , Css.flexDirection Css.column
+                                            , Css.property "gap" "6px"
+                                            ]
+                                        ]
+                                )
+                            )
+                       )
+                     ]
+                        |> Control.choice
+                    )
             )
-        |> ControlExtra.listItem "actionsOrientation"
-            (CommonControls.choice moduleName
-                [ ( "actionsHorizontal", QuestionBox.actionsVertical )
-                , ( "actionsHorizontal", QuestionBox.actionsHorizontal )
-                ]
-            )
-        |> ControlExtra.listItem "theme"
-            (CommonControls.choice moduleName
-                [ ( "neutral", QuestionBox.neutral )
-                , ( "correct", QuestionBox.correct )
-                , ( "incorrect", QuestionBox.incorrect )
-                , ( "tip", QuestionBox.tip )
-                ]
-            )
-        |> ControlExtra.optionalListItem "character"
-            ([ { name = "Lindy"
-               , icon =
-                    ( "CharacterIcon.lindyHeadshot"
-                    , CharacterIcon.lindyHeadshot
-                    )
-               }
-             , { name = "Red"
-               , icon =
-                    ( "CharacterIcon.redHeadshot"
-                    , CharacterIcon.redHeadshot
-                    )
-               }
-             , { name = "Sal"
-               , icon =
-                    ( "CharacterIcon.salHeadshot"
-                    , CharacterIcon.salHeadshot
-                    )
-               }
-             ]
-                |> List.map
-                    (\{ name, icon } ->
-                        ( name
-                        , Control.value
-                            ( "QuestionBox.character " ++ Tuple.first icon
-                            , QuestionBox.character
-                                { name = name
-                                , icon = Tuple.second icon
-                                }
+        |> ControlExtra.listItems "Actions"
+            (Control.list
+                |> ControlExtra.listItem "actions"
+                    (Control.map
+                        (\i ->
+                            let
+                                ( code, actions ) =
+                                    List.range 1 i
+                                        |> List.map
+                                            (\i_ ->
+                                                ( Code.record
+                                                    [ ( "label", Code.string ("Button " ++ String.fromInt i_) )
+                                                    , ( "theme"
+                                                      , if i_ == 1 then
+                                                            Code.fromModule "Button" "primary"
+
+                                                        else
+                                                            Code.fromModule "Button" "secondary"
+                                                      )
+                                                    , ( "onClick", "NoOp" )
+                                                    ]
+                                                , { label = "Button " ++ String.fromInt i_
+                                                  , theme =
+                                                        if i_ == 1 then
+                                                            Button.primary
+
+                                                        else
+                                                            Button.secondary
+                                                  , onClick = NoOp
+                                                  }
+                                                )
+                                            )
+                                        |> List.unzip
+                            in
+                            ( Code.fromModule moduleName "actions " ++ Code.list code
+                            , QuestionBox.actions actions
                             )
                         )
+                        (Control.int 2)
                     )
-                |> Control.choice
+                |> ControlExtra.listItem "actionsOrientation"
+                    (CommonControls.choice moduleName
+                        [ ( "actionsHorizontal", QuestionBox.actionsVertical )
+                        , ( "actionsHorizontal", QuestionBox.actionsHorizontal )
+                        ]
+                    )
             )
-        |> CommonControls.css_ "containerCss"
-            ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
-            , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
+        |> ControlExtra.listItems "Theme and CSS"
+            (Control.list
+                |> ControlExtra.listItem "theme"
+                    (CommonControls.choice moduleName
+                        [ ( "neutral", QuestionBox.neutral )
+                        , ( "correct", QuestionBox.correct )
+                        , ( "incorrect", QuestionBox.incorrect )
+                        , ( "tip", QuestionBox.tip )
+                        ]
+                    )
+                |> ControlExtra.optionalListItem "character (tip theme only)"
+                    ([ { name = "Lindy"
+                       , icon =
+                            ( "CharacterIcon.lindyHeadshot"
+                            , CharacterIcon.lindyHeadshot
+                            )
+                       }
+                     , { name = "Red"
+                       , icon =
+                            ( "CharacterIcon.redHeadshot"
+                            , CharacterIcon.redHeadshot
+                            )
+                       }
+                     , { name = "Sal"
+                       , icon =
+                            ( "CharacterIcon.salHeadshot"
+                            , CharacterIcon.salHeadshot
+                            )
+                       }
+                     ]
+                        |> List.map
+                            (\{ name, icon } ->
+                                ( name
+                                , Control.value
+                                    ( "QuestionBox.character " ++ Tuple.first icon
+                                    , QuestionBox.character
+                                        { name = name
+                                        , icon = Tuple.second icon
+                                        }
+                                    )
+                                )
+                            )
+                        |> Control.choice
+                    )
+                |> CommonControls.css_ "containerCss"
+                    ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
+                    , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
+                    )
+                    { moduleName = moduleName, use = QuestionBox.containerCss }
             )
-            { moduleName = moduleName, use = QuestionBox.containerCss }
 
 
 initialMarkdown : String
