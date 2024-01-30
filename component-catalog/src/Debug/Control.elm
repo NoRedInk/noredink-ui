@@ -440,7 +440,14 @@ currentValue (Control c) =
 -}
 view : (Control a -> msg) -> Control a -> Html msg
 view msg (Control c) =
-    Html.div [] (view_ msg (Control c) "")
+    Html.div
+        [ css
+            [ displayFlex
+            , flexWrap wrap
+            , Css.property "gap" "10px"
+            ]
+        ]
+        (view_ msg (Control c) "")
 
 
 view_ : (Control a -> msg) -> Control a -> String -> List (Html msg)
