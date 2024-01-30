@@ -52,8 +52,8 @@ type Control a
 
 type ControlView a
     = NoView
-    | SingleView (String -> Html (Control a))
-    | FieldViews (List ( String, String -> Html (Control a) ))
+    | SingleView (String -> List (Html (Control a)))
+    | FieldViews (List ( String, String -> List (Html (Control a)) ))
 
 
 {-| A `Control` that has a static value (and no UI).
@@ -91,21 +91,19 @@ maybe isJust (Control control) =
             \() ->
                 SingleView <|
                     \labelText ->
-                        Html.div
-                            []
-                            [ Checkbox.view
-                                { label = labelText
-                                , selected = Checkbox.selectedFromBool isJust
-                                }
-                                [ Checkbox.id (labelId ("Maybe " ++ labelText))
-                                , Checkbox.onCheck (\a -> maybe a (Control control))
-                                ]
-                            , if isJust then
-                                view_ (maybe isJust) (Control control) labelText
-
-                              else
-                                Html.text ""
+                        Checkbox.view
+                            { label = labelText
+                            , selected = Checkbox.selectedFromBool isJust
+                            }
+                            [ Checkbox.id (labelId ("Maybe " ++ labelText))
+                            , Checkbox.onCheck (\a -> maybe a (Control control))
                             ]
+                            :: (if isJust then
+                                    view_ (maybe isJust) (Control control) labelText
+
+                                else
+                                    []
+                               )
         }
 
 
@@ -123,13 +121,14 @@ bool initialValue =
                             id =
                                 labelId labelText
                         in
-                        Checkbox.view
+                        [ Checkbox.view
                             { label = labelText
                             , selected = Checkbox.selectedFromBool initialValue
                             }
                             [ Checkbox.id (labelId labelText)
                             , Checkbox.onCheck bool
                             ]
+                        ]
         }
 
 
@@ -143,11 +142,12 @@ string initialValue =
             \() ->
                 SingleView <|
                     \labelText ->
-                        TextInput.view labelText
+                        [ TextInput.view labelText
                             [ TextInput.id (labelId labelText)
                             , TextInput.text string
                             , TextInput.value initialValue
                             ]
+                        ]
         }
 
 
@@ -161,11 +161,12 @@ float initialValue =
             \() ->
                 SingleView <|
                     \labelText ->
-                        TextInput.view labelText
+                        [ TextInput.view labelText
                             [ TextInput.id (labelId labelText)
                             , TextInput.float (Maybe.withDefault initialValue >> float)
                             , TextInput.value (Just initialValue)
                             ]
+                        ]
         }
 
 
@@ -179,11 +180,12 @@ int initialValue =
             \() ->
                 SingleView <|
                     \labelText ->
-                        TextInput.view labelText
+                        [ TextInput.view labelText
                             [ TextInput.id (labelId labelText)
                             , TextInput.number (Maybe.withDefault initialValue >> int)
                             , TextInput.value (Just initialValue)
                             ]
+                        ]
         }
 
 
@@ -195,8 +197,9 @@ textInput attributes initialValue =
             \() ->
                 SingleView <|
                     \labelText ->
-                        TextInput.view labelText
+                        [ TextInput.view labelText
                             (TextInput.id (labelId labelText) :: attributes)
+                        ]
         }
 
 
@@ -210,10 +213,11 @@ stringTextarea initialValue =
             \() ->
                 SingleView <|
                     \labelText ->
-                        TextArea.view labelText
+                        [ TextArea.view labelText
                             [ TextArea.value initialValue
                             , TextArea.onInput stringTextarea
                             ]
+                        ]
         }
 
 
@@ -288,13 +292,12 @@ choice_ left current right =
                             id =
                                 labelId labelText
                         in
-                        Html.div []
-                            [ Select.view labelText
-                                [ Select.choices String.fromInt choices
-                                ]
-                                |> Html.map selectNew
-                            , view_ updateChild (Tuple.second current) ""
+                        (Select.view labelText
+                            [ Select.choices String.fromInt choices
                             ]
+                            |> Html.map selectNew
+                        )
+                            :: view_ updateChild (Tuple.second current) ""
         }
 
 
@@ -360,7 +363,7 @@ field name (Control control) (Control pipeline) =
                             FieldViews fs ->
                                 List.map
                                     (Tuple.mapSecond
-                                        (\x label -> Html.map (field name (Control control)) (x label))
+                                        (\x label -> List.map (Html.map (field name (Control control))) (x label))
                                     )
                                     fs
 
@@ -419,11 +422,11 @@ mapView fn controlView =
             NoView
 
         SingleView v ->
-            SingleView (\label -> Html.map (map fn) (v label))
+            SingleView (\label -> List.map (Html.map (map fn)) (v label))
 
         FieldViews fs ->
             FieldViews
-                (List.map (Tuple.mapSecond (\x label -> Html.map (map fn) (x label))) fs)
+                (List.map (Tuple.mapSecond (\x label -> List.map (Html.map (map fn)) (x label))) fs)
 
 
 {-| Gets the current value of a `Control`.
@@ -437,30 +440,28 @@ currentValue (Control c) =
 -}
 view : (Control a -> msg) -> Control a -> Html msg
 view msg (Control c) =
-    Html.div []
-        [ view_ msg (Control c) ""
-        ]
+    Html.div [] (view_ msg (Control c) "")
 
 
-view_ : (Control a -> msg) -> Control a -> String -> Html msg
+view_ : (Control a -> msg) -> Control a -> String -> List (Html msg)
 view_ msg (Control c) currentLabel =
     case c.view () of
         NoView ->
-            Html.text ""
+            []
 
         SingleView v ->
-            Html.map msg (v currentLabel)
+            List.map (Html.map msg) (v currentLabel)
 
         FieldViews fs ->
             let
                 contents =
                     fs
                         |> List.reverse
-                        |> List.map (\( label, viewInput ) -> viewInput label)
+                        |> List.concatMap (\( label, viewInput ) -> viewInput label)
                         |> List.map (Html.map msg)
             in
             if currentLabel /= "" then
-                Html.fieldset
+                [ Html.fieldset
                     [ css
                         [ border3 (px 1) solid Colors.gray75
                         , borderRadius (px 3)
@@ -476,13 +477,7 @@ view_ msg (Control c) currentLabel =
                         [ Html.text currentLabel ]
                         :: contents
                     )
+                ]
 
             else
-                Html.div
-                    [ css
-                        [ displayFlex
-                        , flexWrap wrap
-                        , Css.property "gap" "10px"
-                        ]
-                    ]
-                    contents
+                contents
