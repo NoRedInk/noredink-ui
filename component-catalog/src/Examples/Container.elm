@@ -150,12 +150,18 @@ init : State
 init =
     { control =
         Control.list
-            |> ControlExtra.optionalListItem "paddingPx" controlPaddingPx
-            |> CommonControls.css { moduleName = moduleName, use = Container.css }
-            |> CommonControls.mobileCss { moduleName = moduleName, use = Container.mobileCss }
-            |> CommonControls.quizEngineMobileCss { moduleName = moduleName, use = Container.quizEngineMobileCss }
-            |> CommonControls.notMobileCss { moduleName = moduleName, use = Container.notMobileCss }
-            |> ControlExtra.listItem "content" controlContent
+            |> ControlExtra.listItems "Content"
+                (Control.list
+                    |> ControlExtra.listItem "content" controlContent
+                )
+            |> ControlExtra.listItems "CSS and Style options"
+                (Control.list
+                    |> ControlExtra.optionalListItem "paddingPx" controlPaddingPx
+                    |> CommonControls.css { moduleName = moduleName, use = Container.css }
+                    |> CommonControls.mobileCss { moduleName = moduleName, use = Container.mobileCss }
+                    |> CommonControls.quizEngineMobileCss { moduleName = moduleName, use = Container.quizEngineMobileCss }
+                    |> CommonControls.notMobileCss { moduleName = moduleName, use = Container.notMobileCss }
+                )
     }
 
 
