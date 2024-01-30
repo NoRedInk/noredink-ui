@@ -419,18 +419,24 @@ type alias Settings =
 initSettings : Control Settings
 initSettings =
     Control.record Settings
-        |> Control.field "attributes" initSettingAttributes
+        |> Control.field "" initSettingAttributes
         |> Control.field "withTooltip" (Control.bool False)
 
 
 initSettingAttributes : Control (List ( String, Menu.Attribute Msg ))
 initSettingAttributes =
     Control.list
-        |> ControlExtra.optionalListItem "alignment" controlAlignment
-        |> ControlExtra.optionalBoolListItem "isDisabled" ( "Menu.isDisabled True", Menu.isDisabled True )
-        |> ControlExtra.optionalListItem "menuWidth" controlMenuWidth
-        |> ControlExtra.optionalBoolListItem "opensOnHover" ( "Menu.opensOnHover True", Menu.opensOnHover True )
-        |> ControlExtra.listItem "triggering element" controlTrigger
+        |> ControlExtra.listItems "popout"
+            (Control.list
+                |> ControlExtra.optionalListItem "alignment" controlAlignment
+                |> ControlExtra.optionalListItem "menuWidth" controlMenuWidth
+            )
+        |> ControlExtra.listItems "triggering element"
+            (Control.list
+                |> ControlExtra.optionalBoolListItem "isDisabled" ( "Menu.isDisabled True", Menu.isDisabled True )
+                |> ControlExtra.optionalBoolListItem "opensOnHover" ( "Menu.opensOnHover True", Menu.opensOnHover True )
+                |> ControlExtra.listItem "trigger" controlTrigger
+            )
 
 
 controlAlignment : Control ( String, Menu.Attribute msg )
