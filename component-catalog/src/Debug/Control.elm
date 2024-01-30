@@ -10,9 +10,9 @@ module Debug.Control exposing
     , record, list, field
     )
 
-{-| Copied in from avh4/elm-debug-control.
+{-| This module is heavily based on `avh4/elm-debug-control`. It was copied in directly from that package and then modified.
 
-Create interactive controls for complex data structures.
+Create interactive controls for arbitrary data structures.
 
 @docs Control
 @docs value
