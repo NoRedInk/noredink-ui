@@ -664,7 +664,7 @@ initControl =
     Control.list
         |> ControlExtra.listItems "Text or Blank"
             (Control.list
-                |> ControlExtra.optionalListItemDefaultChecked "content" controlContent
+                |> ControlExtra.listItems "content" controlContent
                 |> ControlExtra.optionalListItem "blankStyle" blankStyleContent
             )
         |> ControlExtra.listItems "Label and Emphasis"
@@ -711,7 +711,7 @@ initControl =
             )
 
 
-controlContent : Control ( String, Block.Attribute msg )
+controlContent : Control (List ( String, Block.Attribute msg ))
 controlContent =
     Control.choice
         [ ( "plaintext"
@@ -721,6 +721,7 @@ controlContent =
                 )
                 "bananas"
                 |> Control.revealed "plaintext"
+                |> Control.map List.singleton
           )
         , ( "with mixed content"
           , Control.value
@@ -736,8 +737,26 @@ controlContent =
                         :: Block.phrase " and so forth"
                     )
                 )
+                |> Control.map List.singleton
           )
-        , blankType ( "blank", Block.blank )
+        , ( "blank"
+          , Control.record
+                (\widthInChars ->
+                    ( Code.fromModule moduleName "content "
+                        ++ Code.withParens
+                            (Code.fromModule moduleName "blank"
+                                ++ " "
+                                ++ Code.record [ ( "widthInChars", String.fromInt widthInChars ) ]
+                            )
+                    , Block.content [ Block.blank { widthInChars = widthInChars } ]
+                    )
+                )
+                |> Control.field "widthInChars" (Control.int 8)
+                |> Control.map List.singleton
+          )
+        , ( "(none)"
+          , Control.value []
+          )
         ]
 
 
@@ -751,24 +770,6 @@ blankStyleContent =
           , Control.value ( "Block.dashed", Block.dashed )
           )
         ]
-
-
-blankType : ( String, { widthInChars : Int } -> Block.Content msg ) -> ( String, Control ( String, Block.Attribute msg ) )
-blankType ( typeStr, blank ) =
-    ( typeStr
-    , Control.record
-        (\widthInChars ->
-            ( Code.fromModule moduleName "content "
-                ++ Code.withParens
-                    (Code.fromModule moduleName typeStr
-                        ++ " "
-                        ++ Code.record [ ( "widthInChars", String.fromInt widthInChars ) ]
-                    )
-            , Block.content [ blank { widthInChars = widthInChars } ]
-            )
-        )
-        |> Control.field "widthInChars" (Control.int 8)
-    )
 
 
 ageId : String
