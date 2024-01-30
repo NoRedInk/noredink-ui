@@ -79,6 +79,7 @@ httpError =
           , Control.value (Http.BadBody badBodyString)
           )
         ]
+        |> Control.revealed "HTTP error"
 
 
 badBodyString : String
