@@ -227,7 +227,7 @@ controlSettings : Control Settings
 controlSettings =
     Control.record Settings
         |> Control.field "label" (Control.string "Show pandas in results")
-        |> Control.field "attributes" initAttributes
+        |> Control.field "" initAttributes
 
 
 initAttributes : Control (List ( String, Switch.Attribute msg ))
