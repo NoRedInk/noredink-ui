@@ -403,22 +403,34 @@ initStaticExampleSettings : Control (List ( String, Tooltip.Attribute Never ))
 initStaticExampleSettings =
     Control.list
         |> ControlExtra.listItem "content" controlContent
-        |> ControlExtra.optionalListItem "direction" controlDirection
-        |> ControlExtra.optionalListItem "direction -- viewport up to 1000px" controlDirectionForMobile
-        |> ControlExtra.optionalListItem "direction -- viewport up to 750px" controlDirectionForQuizEngineMobile
-        |> ControlExtra.optionalListItem "direction -- viewport up to 500px" controlDirectionForNarrowMobile
-        |> ControlExtra.optionalListItem "alignment" controlAlignment
-        |> ControlExtra.optionalListItem "alignment -- viewport up to 1000px" controlAlignmentForMobile
-        |> ControlExtra.optionalListItem "alignment -- viewport up to 750px" controlAlignmentForQuizEngineMobile
-        |> ControlExtra.optionalListItem "alignment -- viewport up to 500px" controlAlignmentForNarrowMobile
         |> ControlExtra.optionalBoolListItem "withoutTail" ( "Tooltip.withoutTail", Tooltip.withoutTail )
-        |> ControlExtra.optionalListItem "width" controlWidth
-        |> ControlExtra.optionalListItem "padding" controlPadding
-        |> CommonControls.css { moduleName = moduleName, use = Tooltip.css }
-        |> CommonControls.mobileCss { moduleName = moduleName, use = Tooltip.mobileCss }
-        |> CommonControls.quizEngineMobileCss { moduleName = moduleName, use = Tooltip.quizEngineMobileCss }
-        |> CommonControls.narrowMobileCss { moduleName = moduleName, use = Tooltip.narrowMobileCss }
-        |> CommonControls.notMobileCss { moduleName = moduleName, use = Tooltip.notMobileCss }
+        |> ControlExtra.listItems "direction"
+            (Control.list
+                |> ControlExtra.optionalListItem "direction" controlDirection
+                |> ControlExtra.optionalListItem "direction (viewport <= 1000px)" controlDirectionForMobile
+                |> ControlExtra.optionalListItem "direction (viewport <= 750px)" controlDirectionForQuizEngineMobile
+                |> ControlExtra.optionalListItem "direction (viewport <= 500px)" controlDirectionForNarrowMobile
+            )
+        |> ControlExtra.listItems "alignment"
+            (Control.list
+                |> ControlExtra.optionalListItem "alignment" controlAlignment
+                |> ControlExtra.optionalListItem "alignment (viewport <= 1000px)" controlAlignmentForMobile
+                |> ControlExtra.optionalListItem "alignment (viewport <= 750px)" controlAlignmentForQuizEngineMobile
+                |> ControlExtra.optionalListItem "alignment (viewport <= 500px)" controlAlignmentForNarrowMobile
+            )
+        |> ControlExtra.listItems "Size and Padding"
+            (Control.list
+                |> ControlExtra.optionalListItem "width" controlWidth
+                |> ControlExtra.optionalListItem "padding" controlPadding
+            )
+        |> ControlExtra.listItems "CSS"
+            (Control.list
+                |> CommonControls.css { moduleName = moduleName, use = Tooltip.css }
+                |> CommonControls.mobileCss { moduleName = moduleName, use = Tooltip.mobileCss }
+                |> CommonControls.quizEngineMobileCss { moduleName = moduleName, use = Tooltip.quizEngineMobileCss }
+                |> CommonControls.narrowMobileCss { moduleName = moduleName, use = Tooltip.narrowMobileCss }
+                |> CommonControls.notMobileCss { moduleName = moduleName, use = Tooltip.notMobileCss }
+            )
 
 
 controlContent : Control ( String, Tooltip.Attribute Never )
