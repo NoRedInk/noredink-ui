@@ -21,6 +21,7 @@ module Nri.Ui.SideNav.V5 exposing
   - adds `aria-current="true"` to the parent of the current page
   - expose missing import
   - correct locked premium content to match `ul>li` structure
+  - honor icon/rightIcon for entries with children
 
 
 ### Changes from V4
@@ -467,7 +468,10 @@ viewSidebarEntry config extraStyles entry_ =
                                ]
                         )
                         [ Attributes.id id_, Aria.currentItem True ]
-                        [ text entryConfig.title ]
+                        [ viewLeftIcon entryConfig
+                        , text entryConfig.title
+                        , viewRightIcon entryConfig
+                        ]
                     , ul
                         [ Attributes.css
                             ([ listStyle none
