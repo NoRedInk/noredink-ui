@@ -357,7 +357,7 @@ controlSettings =
                 ]
             )
         |> Control.field "Is loading" (Control.bool False)
-        |> Control.field "Sticky header"
+        |> Control.field "Header"
             (Control.maybe False
                 (Control.choice
                     [ ( "Default", Control.value Default )
@@ -376,6 +376,7 @@ controlSettings =
                       )
                     ]
                 )
+                |> Control.revealed "Sticky Header"
             )
 
 
