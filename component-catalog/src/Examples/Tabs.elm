@@ -412,6 +412,7 @@ initSettings =
                       )
                     ]
                 )
+                |> Control.revealed "Tablist Sticky"
             )
 
 
