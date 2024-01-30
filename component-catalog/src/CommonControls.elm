@@ -131,6 +131,7 @@ content ({ moduleName } as config) =
                 Just
                     ( "paragraph"
                     , string ( Code.fromModule moduleName "paragraph", f ) quickBrownFox
+                        |> Control.revealed "paragraph"
                     )
 
             Nothing ->
@@ -138,6 +139,7 @@ content ({ moduleName } as config) =
          , Just
             ( "plain text (short)"
             , string ( Code.fromModule moduleName "plaintext", config.plaintext ) quickBrownFox
+                |> Control.revealed "plain text"
             )
          , Just
             ( "plain text (long, no newlines)"
@@ -148,6 +150,7 @@ content ({ moduleName } as config) =
                         , config.plaintext str
                         )
                     )
+                |> Control.revealed "plain text"
             )
          , Just
             ( "plain text (long, with newlines)"
@@ -158,6 +161,7 @@ content ({ moduleName } as config) =
                         , config.plaintext str
                         )
                     )
+                |> Control.revealed "plain text"
             )
          , case config.markdown of
             Just markdown_ ->
@@ -170,6 +174,7 @@ content ({ moduleName } as config) =
                                 , markdown_ str
                                 )
                             )
+                        |> Control.revealed "markdown"
                     )
 
             Nothing ->
