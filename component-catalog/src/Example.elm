@@ -134,9 +134,7 @@ preview_ { swallowEvent, navigate, exampleHref } example =
     Container.view
         [ Container.gray
         , Container.css
-            [ Css.flexBasis (Css.px 200)
-            , Css.flexShrink Css.zero
-            , Css.hover
+            [ Css.hover
                 [ Css.backgroundColor Colors.glacier
                 , Css.cursor Css.pointer
                 ]
