@@ -8,6 +8,7 @@ module Examples.TextInput exposing (Msg, State, example)
 
 import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Key as Key
+import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Code
 import CommonControls
@@ -23,6 +24,8 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.TextInput.V7 as TextInput
+import Process
+import Task
 import ViewHelpers exposing (viewExamples)
 
 
@@ -453,6 +456,10 @@ type Msg
     = SetInput Int String
     | SetShowPassword Bool
     | UpdateControl (Control ExampleConfig)
+    | Focus String
+    | Focused (Result Dom.Error ())
+    | Blur String
+    | Blurred (Result Dom.Error ())
 
 
 {-| -}
@@ -466,10 +473,27 @@ update msg state =
 
         SetShowPassword showPassword ->
             ( { state | showPassword = showPassword }
-            , Cmd.none
+            , Cmd.batch
+                [ Task.attempt Blurred (Dom.blur "text-input__newPassword-example__visibility-toggle")
+                , Process.sleep 10
+                    |> Task.andThen (\_ -> Dom.focus "text-input__newPassword-example__visibility-toggle")
+                    |> Task.attempt Focused
+                ]
             )
 
         UpdateControl newControl ->
             ( { state | control = newControl }
             , Cmd.none
             )
+
+        Focus id ->
+            ( state, Task.attempt Focused (Dom.focus id) )
+
+        Focused _ ->
+            ( state, Cmd.none )
+
+        Blur id ->
+            ( state, Task.attempt Focused (Dom.blur id) )
+
+        Blurred _ ->
+            ( state, Cmd.none )

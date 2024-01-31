@@ -227,6 +227,7 @@ password autocomplete settings =
                 , inputMode = Nothing
                 , autocomplete = Just autocomplete
                 , inputCss = Css.paddingRight (Css.px 135) :: config.inputCss
+                , isPassword = True
             }
         )
 
@@ -774,6 +775,7 @@ type alias Config msg =
     , fieldType : Maybe String
     , inputMode : Maybe String
     , autocomplete : Maybe String
+    , isPassword : Bool
     }
 
 
@@ -796,6 +798,7 @@ emptyConfig =
     , fieldType = Nothing
     , inputMode = Nothing
     , autocomplete = Nothing
+    , isPassword = False
     }
 
 
@@ -976,6 +979,12 @@ view label attributes =
                     , stringValue = stringValue
                     , onInput = onStringInput_
                     , noMarginTop = config.noMarginTop
+                    , passwordVisibilityToggleId =
+                        if config.isPassword then
+                            Just idValue |> Maybe.map (\id_ -> id_ ++ "__visibility-toggle")
+
+                        else
+                            Nothing
                     }
             )
             eventsAndValues.floatingContent
@@ -999,6 +1008,7 @@ type alias FloatingContentConfig msg =
     , stringValue : String
     , onInput : String -> msg
     , noMarginTop : Bool
+    , passwordVisibilityToggleId : Maybe String
     }
 
 
@@ -1060,9 +1070,9 @@ viewPasswordFloatingContent label toggle config =
         -- adding additional aria attributes connecting this clickable
         -- text to the password field.
         ClickableText.button label
-            [ ClickableText.onClick toggle
-            , ClickableText.small
-            , ClickableText.css
+            ([ ClickableText.onClick toggle
+             , ClickableText.small
+             , ClickableText.css
                 [ Css.position Css.absolute
                 , Css.right (Css.px 15)
                 , if config.noMarginTop then
@@ -1072,5 +1082,13 @@ viewPasswordFloatingContent label toggle config =
                     Css.top (Css.px 22)
                 , Css.fontSize (Css.px 13)
                 ]
-            , ClickableText.custom [ Attributes.type_ "button" ]
-            ]
+             , ClickableText.custom [ Attributes.type_ "button" ]
+             ]
+                ++ (case config.passwordVisibilityToggleId of
+                        Just id_ ->
+                            [ ClickableText.id id_ ]
+
+                        Nothing ->
+                            []
+                   )
+            )
