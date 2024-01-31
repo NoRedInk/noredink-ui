@@ -18,6 +18,7 @@ module Nri.Ui.TextInput.V7 exposing
 
   - no longer defaults the placeholder value to the label text
   - Adjust disabled styles
+  - add `passwordVisibilityToggleId`
 
 
 # Changes from V6
