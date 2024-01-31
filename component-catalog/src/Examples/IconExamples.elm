@@ -20,6 +20,7 @@ import Css
 import Css.Global
 import Example exposing (Example)
 import ExampleSection
+import Examples.Colors
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
@@ -346,8 +347,23 @@ viewSingularExampleSettings groups state =
                 [ Attributes.type_ "color"
                 , Attributes.value (SolidColor.toHex state.color)
                 , Events.onInput (SetColor << SolidColor.fromHex)
+                , Attributes.list "noredink-ui-colors"
                 ]
                 []
+            , Examples.Colors.all
+                |> List.map (\( name, color ) -> Html.option [ Attributes.value color.value ] [])
+                |> Html.datalist [ Attributes.id "noredink-ui-colors" ]
+            , Examples.Colors.all
+                |> List.filterMap
+                    (\( name, color ) ->
+                        if fromCssColor color == state.color then
+                            Just (Text.smallBody [ Text.plaintext name ])
+
+                        else
+                            Nothing
+                    )
+                |> List.head
+                |> Maybe.withDefault (Html.text "")
             ]
         , Html.label []
             [ Html.text "Width: "
