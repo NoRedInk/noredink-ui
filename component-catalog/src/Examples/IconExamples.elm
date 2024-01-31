@@ -372,8 +372,9 @@ viewSingularExampleSettings groups state =
                         ]
                     , Css.color Colors.gray20
                     , Css.backgroundColor Colors.white
+                    , Css.minWidth (Css.px 94)
                     , Css.height (Css.px 45)
-                    , Css.padding4 (Css.px 7) (Css.px 15) (Css.px 5) (Css.px 7)
+                    , Css.padding4 (Css.px 7) (Css.px 30) (Css.px 5) (Css.px 7)
 
                     -- Dropdown Arrow
                     --
@@ -385,7 +386,7 @@ viewSingularExampleSettings groups state =
                         |> urlUtf8
                         |> Css.property "background"
                     , Css.backgroundRepeat Css.noRepeat
-                    , Css.property "background-position" "center right 0"
+                    , Css.property "background-position" "center right -20px"
                     , Css.backgroundOrigin Css.contentBox
                     ]
                 ]
