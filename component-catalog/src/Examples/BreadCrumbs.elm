@@ -18,6 +18,7 @@ import Example exposing (Example)
 import Html.Styled.Attributes exposing (css, href)
 import Nri.Ui.AssignmentIcon.V2 as AssignmentIcon
 import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs exposing (BreadCrumbAttribute, BreadCrumbs)
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
@@ -71,7 +72,18 @@ example =
             , previewText "Sub-Category "
             ]
         ]
-    , about = []
+    , about =
+        [ text "BreadCrumbs orient users to their location and provide convenient links to go 'up' to parent pages."
+        , text "Typically, you'll use Header.view rather than BreadCrumbs.view to render primary/h1-level BreadCrumbs."
+        , text "You may use BreadCrumbs.viewSecondary to render h2-level BreadCrumbs."
+        , text "You should use BreadCrumbs.headerId to move focus to the current h1 or h2 and BreadCrumbs.toPageTitle to dynamically change the title when the page context changes."
+        , text "This and more is all explained in more depth in Tessa's "
+        , ClickableText.link "BreadCrumbs component demo"
+            [ ClickableText.linkExternal "https://noredink.zoom.us/rec/play/x1x2Vz0fpj-qz0qf5gi5cpTy9Is1sIWGfwCoZ1_iOELkmkBtGUpdKyD6TydBM9vvFgJdD0jP3DUmZp4K.BU8uDgAVoRddWSd2?canPlayFromShare=true&from=share_recording_detail&startTime=1682608412000&componentName=rec-play&originRequestUrl=https%3A%2F%2Fnoredink.zoom.us%2Frec%2Fshare%2FtmIuIbuqWmFU20191vHs15QJv1ikMYQrcSKLXOMOOXlDQTHOg2-23ehZbZyG9f8L.c05C6jZecqKyPjub%3FstartTime%3D1682608412000"
+            , ClickableText.appearsInline
+            ]
+        , text "."
+        ]
     , view =
         \ellieLinkConfig state ->
             let
