@@ -72,7 +72,6 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Pennant.V3 as Pennant
 import Nri.Ui.Svg.V1 exposing (Svg)
-import Nri.Ui.UiIcon.V1 as UiIcon
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttributes
 
