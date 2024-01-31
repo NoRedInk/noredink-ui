@@ -456,9 +456,7 @@ type Msg
     = SetInput Int String
     | SetShowPassword Bool
     | UpdateControl (Control ExampleConfig)
-    | Focus String
     | Focused (Result Dom.Error ())
-    | Blur String
     | Blurred (Result Dom.Error ())
 
 
@@ -475,7 +473,7 @@ update msg state =
             ( { state | showPassword = showPassword }
             , Cmd.batch
                 [ Task.attempt Blurred (Dom.blur "text-input__newPassword-example__visibility-toggle")
-                , Process.sleep 10
+                , Process.sleep 0
                     |> Task.andThen (\_ -> Dom.focus "text-input__newPassword-example__visibility-toggle")
                     |> Task.attempt Focused
                 ]
@@ -486,14 +484,8 @@ update msg state =
             , Cmd.none
             )
 
-        Focus id ->
-            ( state, Task.attempt Focused (Dom.focus id) )
-
         Focused _ ->
             ( state, Cmd.none )
-
-        Blur id ->
-            ( state, Task.attempt Focused (Dom.blur id) )
 
         Blurred _ ->
             ( state, Cmd.none )
