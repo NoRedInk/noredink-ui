@@ -317,7 +317,7 @@ initSettings =
                                 (CommonControls.rotatedUiIcon 3)
                             )
                     )
-                |> ControlExtra.listItems "Size and Width"
+                |> ControlExtra.listItems "Size & Width"
                     (Control.list
                         |> ControlExtra.optionalListItem "exactSize"
                             (Control.map

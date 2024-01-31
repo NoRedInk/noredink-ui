@@ -154,7 +154,7 @@ init =
                 (Control.list
                     |> ControlExtra.listItem "content" controlContent
                 )
-            |> ControlExtra.listItems "CSS and Style options"
+            |> ControlExtra.listItems "CSS & Style options"
                 (Control.list
                     |> ControlExtra.optionalListItem "paddingPx" controlPaddingPx
                     |> CommonControls.css { moduleName = moduleName, use = Container.css }

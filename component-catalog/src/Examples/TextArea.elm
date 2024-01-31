@@ -138,7 +138,7 @@ type alias Settings =
 controlAttributes : Control (List ( String, TextArea.Attribute Msg ))
 controlAttributes =
     Control.list
-        |> ControlExtra.listItems "Theme, CSS, and Style Extras"
+        |> ControlExtra.listItems "Theme, CSS, & Style Extras"
             (Control.list
                 |> ControlExtra.optionalListItem
                     "theme"
@@ -160,7 +160,7 @@ controlAttributes =
                     , TextArea.css [ Css.backgroundColor Colors.azure ]
                     )
             )
-        |> ControlExtra.listItems "State and Behavior"
+        |> ControlExtra.listItems "State & Behavior"
             (Control.list
                 |> ControlExtra.optionalBoolListItem "disabled"
                     ( "TextArea.disabled", TextArea.disabled )

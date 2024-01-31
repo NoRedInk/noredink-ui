@@ -463,7 +463,7 @@ initAttributes =
                         ]
                     )
             )
-        |> ControlExtra.listItems "Theme and CSS"
+        |> ControlExtra.listItems "Theme & CSS"
             (Control.list
                 |> ControlExtra.listItem "theme"
                     (CommonControls.choice moduleName

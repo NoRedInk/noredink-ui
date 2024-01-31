@@ -181,7 +181,7 @@ initControls =
                     }
                 |> CommonControls.icon moduleName Select.icon
             )
-        |> ControlExtra.listItems "CSS and Extra Styles"
+        |> ControlExtra.listItems "CSS & Extra Styles"
             (Control.list
                 |> ControlExtra.optionalListItem "hiddenLabel"
                     (Control.value ( "Select.hiddenLabel", Select.hiddenLabel ))

@@ -426,7 +426,7 @@ controlAttributes =
                 |> ControlExtra.optionalBoolListItem "loading"
                     ( "TextInput.loading", TextInput.loading )
             )
-        |> ControlExtra.listItems "Theme, CSS, and Style Extras"
+        |> ControlExtra.listItems "Theme, CSS, & Style Extras"
             (Control.list
                 |> ControlExtra.optionalBoolListItem "hiddenLabel"
                     ( "TextInput.hiddenLabel", TextInput.hiddenLabel )

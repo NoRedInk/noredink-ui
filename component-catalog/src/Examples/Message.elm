@@ -55,7 +55,7 @@ init =
                     |> ControlExtra.optionalBoolListItem "dismissable"
                         ( "Message.onDismiss Dismiss", Message.onDismiss Dismiss )
                 )
-            |> ControlExtra.listItems "Theme and Semantics"
+            |> ControlExtra.listItems "Theme & Semantics"
                 (Control.list
                     |> ControlExtra.optionalListItem "theme" controlTheme
                     |> ControlExtra.optionalListItem "role" controlRole

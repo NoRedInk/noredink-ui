@@ -666,7 +666,7 @@ initControl =
             (Control.list
                 |> ControlExtra.listItems "content" controlContent
             )
-        |> ControlExtra.listItems "Label and Emphasis"
+        |> ControlExtra.listItems "Label & Emphasis"
             (Control.list
                 |> ControlExtra.optionalBoolListItemDefaultChecked "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )
                 |> ControlExtra.optionalListItem "theme"

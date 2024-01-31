@@ -183,7 +183,7 @@ controlAttributes =
                 |> ControlExtra.optionalBoolListItem "hideIconForMobile"
                     ( "Button.hideIconForMobile", Button.hideIconForMobile )
             )
-        |> ControlExtra.listItems "Size and Width"
+        |> ControlExtra.listItems "Size & Width"
             (Control.list
                 |> ControlExtra.optionalListItem "size"
                     (CommonControls.choice moduleName

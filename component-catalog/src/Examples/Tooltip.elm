@@ -418,7 +418,7 @@ initStaticExampleSettings =
                 |> ControlExtra.optionalListItem "alignment (viewport <= 750px)" controlAlignmentForQuizEngineMobile
                 |> ControlExtra.optionalListItem "alignment (viewport <= 500px)" controlAlignmentForNarrowMobile
             )
-        |> ControlExtra.listItems "Size and Padding"
+        |> ControlExtra.listItems "Size & Padding"
             (Control.list
                 |> ControlExtra.optionalListItem "width" controlWidth
                 |> ControlExtra.optionalListItem "padding" controlPadding
