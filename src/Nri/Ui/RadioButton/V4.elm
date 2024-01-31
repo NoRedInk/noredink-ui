@@ -7,6 +7,7 @@ module Nri.Ui.RadioButton.V4 exposing
     , hiddenLabel, visibleLabel
     , containerCss, labelCss, custom, nriDescription, id, testId
     , disabled, enabled, errorIf, errorMessage, guidance, guidanceHtml
+    , rightIcon
     )
 
 {-|
@@ -50,6 +51,7 @@ module Nri.Ui.RadioButton.V4 exposing
 @docs hiddenLabel, visibleLabel
 @docs containerCss, labelCss, custom, nriDescription, id, testId
 @docs disabled, enabled, errorIf, errorMessage, guidance, guidanceHtml
+@docs rightIcon
 
 -}
 
@@ -69,6 +71,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.Pennant.V3 as Pennant
 import Nri.Ui.Svg.V1 exposing (Svg)
+import Nri.Ui.UiIcon.V1 as UiIcon
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttributes
 
@@ -114,6 +117,13 @@ guidance =
 guidanceHtml : List (Html msg) -> Attribute value msg
 guidanceHtml =
     Attribute << InputErrorAndGuidanceInternal.setGuidanceHtml
+
+
+{-| Adds an icon to the right of the label
+-}
+rightIcon : Svg -> Attribute value msg
+rightIcon icon =
+    Attribute <| \config -> { config | rightIcon = Just icon }
 
 
 {-| Fire a message parameterized by the value type when selecting a radio option
@@ -236,6 +246,7 @@ type alias Config value msg =
     , onSelect : Maybe (value -> msg)
     , onLockedMsg : Maybe msg
     , disclosedContent : List (Html msg)
+    , rightIcon : Maybe Svg
     }
 
 
@@ -254,6 +265,7 @@ emptyConfig =
     , onSelect = Nothing
     , onLockedMsg = Nothing
     , disclosedContent = []
+    , rightIcon = Nothing
     }
 
 
@@ -437,7 +449,19 @@ view { label, name, value, valueToString, selectedValue } attributes =
                         premiumPennant
 
                       else
-                        text ""
+                        case config.rightIcon of
+                            Just icon ->
+                                icon
+                                    |> Nri.Ui.Svg.V1.withWidth (px 20)
+                                    |> Nri.Ui.Svg.V1.withHeight (px 20)
+                                    |> Nri.Ui.Svg.V1.withCss
+                                        [ marginLeft (px 4)
+                                        , verticalAlign middle
+                                        ]
+                                    |> Nri.Ui.Svg.V1.toHtml
+
+                            Nothing ->
+                                text ""
                     ]
                 ]
              ]

@@ -398,6 +398,7 @@ controlAttributes =
             , errorMessage = Just RadioButton.errorMessage
             , message = "The statement must be true."
             }
+        |> CommonControls.icon "RadioButton" RadioButton.rightIcon
 
 
 labelVisibility : Control ( String, RadioButton.Attribute Selection Msg )
