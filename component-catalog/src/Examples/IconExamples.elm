@@ -24,10 +24,14 @@ import Examples.Colors
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
+import InputErrorAndGuidanceInternal
+import InputLabelInternal
 import Nri.Ui.Checkbox.V7 as Checkbox
 import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.InputStyles.V4 as InputStyles
 import Nri.Ui.Select.V9 as Select
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
@@ -341,13 +345,49 @@ viewSingularExampleSettings groups state =
             [ Checkbox.id "show-border"
             , Checkbox.onCheck SetBorder
             ]
-        , Html.label []
-            [ Html.text "Color: "
+        , Html.div [ css [ Css.position Css.relative, Css.paddingTop (Css.px InputStyles.defaultMarginTop) ] ]
+            [ InputLabelInternal.view
+                { for = "color-picker"
+                , label = "Color"
+                , theme = InputStyles.Standard
+                }
+                { error = InputErrorAndGuidanceInternal.noError
+                , noMarginTop = False
+                , hideLabel = False
+                , disabled = False
+                }
             , Html.input
-                [ Attributes.type_ "color"
+                [ Attributes.id "color-picker"
+                , Attributes.type_ "color"
                 , Attributes.value (SolidColor.toHex state.color)
                 , Events.onInput (SetColor << SolidColor.fromHex)
                 , Attributes.list "noredink-ui-colors"
+                , css
+                    [ Css.border3 (Css.px 1) Css.solid Colors.gray75
+                    , Css.borderBottomWidth (Css.px 3)
+                    , Css.borderRadius (Css.px 8)
+                    , Css.focus
+                        [ Css.borderColor Colors.azure
+                        , Css.borderRadius (Css.px 8) |> Css.important
+                        ]
+                    , Css.color Colors.gray20
+                    , Css.backgroundColor Colors.white
+                    , Css.height (Css.px 45)
+                    , Css.padding4 (Css.px 7) (Css.px 15) (Css.px 5) (Css.px 7)
+
+                    -- Dropdown Arrow
+                    --
+                    -- "appearance: none" removes the default dropdown arrows
+                    , VendorPrefixed.property "appearance" "none"
+                    , """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16px" height="16px" viewBox="0 0 25 15"><g fill=" """
+                        ++ SolidColor.toRGBString (fromCssColor Colors.azure)
+                        ++ """ "><path transform="rotate(270) translate(-20)" d="M19.2677026,20.7322696 C20.2443584,21.7070736 20.2443584,23.2915005 19.2677026,24.2677859 C18.7788191,24.7555583 18.139567,25 17.4999444,25 C16.8603219,25 16.2210698,24.7555583 15.7321863,24.2677859 L5.73229742,14.267897 C4.7556416,13.293093 4.7556416,11.7086662 5.73229742,10.7323808 L15.7321863,0.732491861 C16.7084718,-0.244163954 18.2914171,-0.244163954 19.2677026,0.732491861 C20.2443584,1.70729584 20.2443584,3.29172268 19.2677026,4.26800813 L11.0359422,12.5001389 L19.2677026,20.7322696 Z" ></path></g></svg> """
+                        |> urlUtf8
+                        |> Css.property "background"
+                    , Css.backgroundRepeat Css.noRepeat
+                    , Css.property "background-position" "center right 0"
+                    , Css.backgroundOrigin Css.contentBox
+                    ]
                 ]
                 []
             , Examples.Colors.all
@@ -477,3 +517,8 @@ viewResults state =
                )
             |> Svg.toHtml
         ]
+
+
+urlUtf8 : String -> String
+urlUtf8 content =
+    """url('data:image/svg+xml;utf8,""" ++ content ++ """')"""
