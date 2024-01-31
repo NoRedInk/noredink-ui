@@ -16,6 +16,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V7 as Table
+import Nri.Ui.Text.V6 as Text
 
 
 {-| -}
@@ -45,17 +46,21 @@ example =
         ]
             |> List.map viewPreview
     , about =
-        [ Html.text "Learn more about kid-friendly and accessible fonts starting at 24:40 in "
-        , ClickableText.link "Kids Websites: Where Fun and Accessibility Come to Play"
-            [ ClickableText.linkExternal "https://www.deque.com/axe-con/sessions/kids-websites-where-fun-and-accessibility-come-to-play/"
-            , ClickableText.appearsInline
+        [ Text.mediumBody
+            [ Text.html
+                [ Html.text "Learn more about kid-friendly and accessible fonts starting at 24:40 in "
+                , ClickableText.link "Kids Websites: Where Fun and Accessibility Come to Play"
+                    [ ClickableText.linkExternal "https://www.deque.com/axe-con/sessions/kids-websites-where-fun-and-accessibility-come-to-play/"
+                    , ClickableText.appearsInline
+                    ]
+                , Html.text " and in "
+                , ClickableText.link "Accessible fonts and readability: the basics"
+                    [ ClickableText.linkExternal "https://business.scope.org.uk/article/font-accessibility-and-readability-the-basics#:~:text=This%20can%20affect%20reading%20speed,does%20this%20is%20Gill%20Sans."
+                    , ClickableText.appearsInline
+                    ]
+                , Html.text "."
+                ]
             ]
-        , Html.text " and in "
-        , ClickableText.link "Accessible fonts and readability: the basics"
-            [ ClickableText.linkExternal "https://business.scope.org.uk/article/font-accessibility-and-readability-the-basics#:~:text=This%20can%20affect%20reading%20speed,does%20this%20is%20Gill%20Sans."
-            , ClickableText.appearsInline
-            ]
-        , Html.text "."
         ]
     , view =
         \ellieLinkConfig _ ->

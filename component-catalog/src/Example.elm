@@ -191,7 +191,7 @@ view_ ellieLinkConfig example =
 
 viewAbout : List (Html Never) -> Html msg
 viewAbout about =
-    Text.mediumBody [ Text.html about ]
+    Html.div [] about
         |> Html.map never
 
 
