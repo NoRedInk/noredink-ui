@@ -353,17 +353,6 @@ viewSingularExampleSettings groups state =
             , Examples.Colors.all
                 |> List.map (\( name, color ) -> Html.option [ Attributes.value color.value ] [])
                 |> Html.datalist [ Attributes.id "noredink-ui-colors" ]
-            , Examples.Colors.all
-                |> List.filterMap
-                    (\( name, color ) ->
-                        if fromCssColor color == state.color then
-                            Just (Text.smallBody [ Text.plaintext name ])
-
-                        else
-                            Nothing
-                    )
-                |> List.head
-                |> Maybe.withDefault (Html.text "")
             ]
         , Html.label []
             [ Html.text "Width: "
@@ -395,6 +384,19 @@ viewResults state =
     let
         ( red, green, blue ) =
             SolidColor.toRGB state.color
+
+        selectedNriUiColor : Maybe String
+        selectedNriUiColor =
+            Examples.Colors.all
+                |> List.filterMap
+                    (\( name, color ) ->
+                        if fromCssColor color == state.color then
+                            Just name
+
+                        else
+                            Nothing
+                    )
+                |> List.head
     in
     Html.div
         [ Attributes.css
@@ -406,35 +408,52 @@ viewResults state =
             ]
         ]
         [ Html.pre [ Attributes.css [ Css.maxWidth (Css.px 400) ] ]
-            [ [ Code.varWithTypeAnnotation "color" "Css.Color" <|
-                    ("Css.rgb " ++ String.fromFloat red ++ " " ++ String.fromFloat green ++ " " ++ String.fromFloat blue)
-              , Code.newlines
-              , Code.varWithTypeAnnotation "renderedSvg" "Svg" <|
-                    Code.pipelineMultiline
-                        ([ Just <| state.renderSvgCode (Tuple.first state.icon)
-                         , Just "Svg.withColor color"
-                         , Just <| "Svg.withWidth (Css.px " ++ String.fromFloat state.width ++ ")"
-                         , Just <| "Svg.withHeight (Css.px " ++ String.fromFloat state.height ++ ")"
-                         , if state.showBorder then
-                            Just
-                                ("Svg.withCss"
-                                    ++ Code.newlineWithIndent 3
-                                    ++ "[ Css.border3 (Css.px 1) Css.solid Colors.gray20 ]"
-                                )
+            [ (case selectedNriUiColor of
+                Just color ->
+                    []
 
-                           else
-                            Nothing
-                         , if String.isEmpty state.label then
-                            Nothing
+                Nothing ->
+                    [ Code.varWithTypeAnnotation "color" "Css.Color" <|
+                        "Css.rgb "
+                            ++ String.fromFloat red
+                            ++ " "
+                            ++ String.fromFloat green
+                            ++ " "
+                            ++ String.fromFloat blue
+                    , Code.newlines
+                    ]
+              )
+                ++ [ Code.varWithTypeAnnotation "renderedSvg" "Svg" <|
+                        Code.pipelineMultiline
+                            ([ Just <| state.renderSvgCode (Tuple.first state.icon)
+                             , case selectedNriUiColor of
+                                Just color ->
+                                    Just ("Svg.withColor Colors." ++ color)
 
-                           else
-                            Just ("Svg.withLabel " ++ Code.string state.label)
-                         , Just "Svg.toHtml"
-                         ]
-                            |> List.filterMap identity
-                        )
-                        1
-              ]
+                                Nothing ->
+                                    Just "Svg.withColor color"
+                             , Just <| "Svg.withWidth (Css.px " ++ String.fromFloat state.width ++ ")"
+                             , Just <| "Svg.withHeight (Css.px " ++ String.fromFloat state.height ++ ")"
+                             , if state.showBorder then
+                                Just
+                                    ("Svg.withCss"
+                                        ++ Code.newlineWithIndent 3
+                                        ++ "[ Css.border3 (Css.px 1) Css.solid Colors.gray20 ]"
+                                    )
+
+                               else
+                                Nothing
+                             , if String.isEmpty state.label then
+                                Nothing
+
+                               else
+                                Just ("Svg.withLabel " ++ Code.string state.label)
+                             , Just "Svg.toHtml"
+                             ]
+                                |> List.filterMap identity
+                            )
+                            1
+                   ]
                 |> String.join ""
                 |> Html.text
             ]
