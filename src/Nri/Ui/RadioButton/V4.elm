@@ -23,6 +23,7 @@ module Nri.Ui.RadioButton.V4 exposing
     and removes onClick event handler. These changes prevent the element from
     being selected but keep it in the tab order and ensure that tooltips can
     still be displayed when the element is focused.
+  - add `rightIcon` property
 
 
 ### Changes from V3:
