@@ -70,6 +70,7 @@ import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
+import Nri.Ui.Html.V3 exposing (viewIf, viewJust)
 import Nri.Ui.Pennant.V3 as Pennant
 import Nri.Ui.Svg.V1 exposing (Svg)
 import Svg.Styled as Svg
@@ -445,23 +446,8 @@ view { label, name, value, valueToString, selectedValue } attributes =
                             [ css config.labelCss ]
                         )
                         [ Html.text label ]
-                    , if isPremium then
-                        premiumPennant
-
-                      else
-                        case config.rightIcon of
-                            Just icon ->
-                                icon
-                                    |> Nri.Ui.Svg.V1.withWidth (px 20)
-                                    |> Nri.Ui.Svg.V1.withHeight (px 20)
-                                    |> Nri.Ui.Svg.V1.withCss
-                                        [ marginLeft (px 4)
-                                        , verticalAlign middle
-                                        ]
-                                    |> Nri.Ui.Svg.V1.toHtml
-
-                            Nothing ->
-                                text ""
+                    , viewJust viewIcon config.rightIcon
+                    , viewIf (\_ -> premiumPennant) isPremium
                     ]
                 ]
              ]
@@ -473,6 +459,18 @@ view { label, name, value, valueToString, selectedValue } attributes =
                         []
                    )
             )
+
+
+viewIcon : Svg -> Html msg
+viewIcon icon =
+    icon
+        |> Nri.Ui.Svg.V1.withWidth (px 20)
+        |> Nri.Ui.Svg.V1.withHeight (px 20)
+        |> Nri.Ui.Svg.V1.withCss
+            [ marginLeft (px 4)
+            , verticalAlign middle
+            ]
+        |> Nri.Ui.Svg.V1.toHtml
 
 
 viewLockedButton : { idValue : String, label : String } -> Config value msg -> Html msg
@@ -540,6 +538,7 @@ viewLockedButton { idValue, label } config =
                             config.labelCss
                     ]
                     [ Html.text label ]
+                , viewJust viewIcon config.rightIcon
                 , premiumPennant
                 ]
             ]
