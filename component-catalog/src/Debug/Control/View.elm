@@ -52,9 +52,11 @@ view config =
         [ Container.html
             [ section
                 [ css
-                    [ withMedia [ notMobile ]
-                        [ flexBasis (pct 55)
-                        , marginRight Spacing.horizontalSpacerPx
+                    [ padding4 (px 20) zero (px 20) (px 20)
+                    , border3 (px 2) solid Colors.red
+                    , withMedia [ notMobile ]
+                        [ flexBasis (pct 50)
+                        , marginRight (px 30)
                         ]
                     ]
                 ]
@@ -63,7 +65,10 @@ view config =
                 ]
             , section
                 [ css
-                    [ withMedia [ mobile ] [ marginTop Spacing.verticalSpacerPx ]
+                    [ padding (px 20)
+                    , flexGrow (num 1)
+                    , border3 (px 2) solid Colors.purple
+                    , withMedia [ mobile ] [ marginTop Spacing.verticalSpacerPx ]
                     ]
                 ]
                 (Heading.h2 [ Heading.plaintext "Code Sample" ]
@@ -73,9 +78,9 @@ view config =
         , Container.css
             [ marginTop Spacing.verticalSpacerPx
             , displayFlex
-            , flexWrap wrap
             , withMedia [ mobile ] [ flexDirection column ]
             ]
+        , Container.paddingPx 0
         ]
 
 
