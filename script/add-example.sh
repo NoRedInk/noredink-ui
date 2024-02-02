@@ -27,24 +27,26 @@ case $yn in
         template="${template//FIRST_ICON_MEANING/"$icon_meaning"}"
         template="${template//firstIconName/"$icon_name"}"
 
-        echo "${template}"
         break;;
     [nN] )
         echo ""
         echo "Great, we'll set up a typical blank example page in \`Examples.${example_name}\`."
-        echo "🚨 There will be TODOs for you to complete in the file. 🚨"
-        echo ""
 
         template=$( cat script/templates/standard-example.elm )
 
         template="${template//COMPONENT_NAME/"$example_name"}"
 
-        echo "${template}"
-        exit;;
+        break;;
     * ) echo "Please enter Y, y, N, or n to proceed.";;
 esac
 done
 
+echo ""
 echo "Creating \`Examples.${example_name}\` for you in the component-catalog folder."
 
-printf "${template}" >| component-catalog/src/Examples/"${example_name}.elm"
+path=component-catalog/src/Examples/"${example_name}.elm"
+printf "${template}" >| "${path}"
+
+echo ""
+echo "🚨 There are TODOs for you to complete in ${path}. 🚨"
+echo ""
