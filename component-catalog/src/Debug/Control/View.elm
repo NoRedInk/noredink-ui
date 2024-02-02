@@ -128,7 +128,7 @@ codeSampleHeading =
 viewCodeDetails : Html msg -> { sectionName : String, code : String } -> Html msg
 viewCodeDetails ellieLink example =
     details
-        []
+        [ css [ marginTop (px 10) ] ]
         [ summary [ css [ color Colors.yellow ] ]
             [ Heading.h3
                 [ Heading.css [ display inline, color Colors.yellow ]
