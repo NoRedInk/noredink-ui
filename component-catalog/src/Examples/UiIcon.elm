@@ -7,7 +7,7 @@ module Examples.UiIcon exposing (example, State, Msg)
 -}
 
 import Example exposing (Example)
-import Examples.IconExamples as IconExamples exposing (Group)
+import IconExamples as IconExamples exposing (Group)
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 

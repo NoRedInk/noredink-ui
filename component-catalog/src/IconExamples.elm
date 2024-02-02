@@ -1,4 +1,4 @@
-module Examples.IconExamples exposing
+module IconExamples exposing
     ( example
     , Settings, Msg
     , Group

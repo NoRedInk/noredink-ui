@@ -9,7 +9,7 @@ module Examples.CharacterIcon exposing (example, State, Msg)
 import Code
 import Css
 import Example exposing (Example)
-import Examples.IconExamples as IconExamples exposing (Group)
+import IconExamples as IconExamples exposing (Group)
 import Nri.Ui.CharacterIcon.V2 as CharacterIcon
 import Nri.Ui.Svg.V1
 
