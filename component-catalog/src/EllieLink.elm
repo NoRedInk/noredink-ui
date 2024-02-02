@@ -3,7 +3,7 @@ module EllieLink exposing (Config, SectionExample, view)
 import Dict exposing (Dict)
 import Html.Styled exposing (..)
 import Http
-import Nri.Ui.ClickableText.V4 as ClickableText
+import Nri.Ui.Button.V10 as Button
 import Url.Builder
 
 
@@ -25,9 +25,10 @@ type alias SectionExample =
 
 view : Config -> SectionExample -> Html msg
 view config example =
-    ClickableText.link ("View " ++ example.sectionName ++ " example on Ellie")
-        [ ClickableText.linkExternal (generateEllieLink config example)
-        , ClickableText.small
+    Button.link ("View " ++ example.sectionName ++ " example on Ellie")
+        [ Button.linkExternal (generateEllieLink config example)
+        , Button.tertiary
+        , Button.small
         ]
 
 

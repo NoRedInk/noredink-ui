@@ -83,20 +83,26 @@ view config =
             ]
         , Container.view
             [ Container.html
-                (Heading.h2
-                    [ Heading.plaintext "Code Sample"
-                    , Heading.css [ color Colors.white ]
-                    ]
-                    :: (case exampleCodes of
-                            singular :: [] ->
-                                [ ellieLink singular
-                                , viewCode singular.code
+                (case exampleCodes of
+                    singular :: [] ->
+                        [ div
+                            [ css
+                                [ displayFlex
+                                , flexWrap wrap
+                                , property "gap" "5px"
+                                , justifyContent spaceBetween
                                 ]
+                            ]
+                            [ codeSampleHeading
+                            , ellieLink singular
+                            ]
+                        , viewCode singular.code
+                        ]
 
-                            _ ->
-                                List.map (\example -> viewCodeDetails (ellieLink example) example)
-                                    exampleCodes
-                       )
+                    _ ->
+                        codeSampleHeading
+                            :: List.map (\example -> viewCodeDetails (ellieLink example) example)
+                                exampleCodes
                 )
             , Container.css
                 [ padding (px 20)
@@ -115,6 +121,14 @@ view config =
         ]
 
 
+codeSampleHeading : Html msg
+codeSampleHeading =
+    Heading.h2
+        [ Heading.plaintext "Code Sample"
+        , Heading.css [ color Colors.white ]
+        ]
+
+
 viewCodeDetails : Html msg -> { sectionName : String, code : String } -> Html msg
 viewCodeDetails ellieLink example =
     details
@@ -125,8 +139,16 @@ viewCodeDetails ellieLink example =
                 , Heading.plaintext example.sectionName
                 ]
             ]
-        , ellieLink
-        , viewCode example.code
+        , div
+            [ css
+                [ displayFlex
+                , flexWrap wrap
+                , property "gap" "5px"
+                , alignItems flexStart
+                , justifyContent spaceBetween
+                ]
+            ]
+            [ viewCode example.code, ellieLink ]
         ]
 
 
