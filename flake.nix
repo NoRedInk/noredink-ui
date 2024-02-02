@@ -39,6 +39,7 @@
             # preview dependencies
             pkgs.python3
             pkgs.watchexec
+            pkgs.elmPackages.elm-live
 
             # stuff we need for running builds in a `nix-shell --pure` environment.
             pkgs.which
