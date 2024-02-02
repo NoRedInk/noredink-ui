@@ -136,7 +136,7 @@ example =
           , result = "If 'dismissOnEscAndOverlayClick' is set to true, closes the modal. Else, does nothing."
           }
         ]
-    , state = init
+    , init = init
     , update = update
     , subscriptions = subscriptions
     , preview =

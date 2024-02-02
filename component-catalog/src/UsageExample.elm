@@ -18,7 +18,7 @@ import Nri.Ui.Text.V6 as Text
 
 type alias UsageExample state msg =
     { name : String
-    , state : state
+    , init : state
     , update : msg -> state -> ( state, Cmd msg )
     , subscriptions : state -> Sub msg
     , view : state -> List (Html msg)
@@ -49,7 +49,7 @@ wrapMsg :
     -> UsageExample state msg2
 wrapMsg wrapMsg_ unwrapMsg example =
     { name = example.name
-    , state = example.state
+    , init = example.init
     , update =
         \msg2 state ->
             case unwrapMsg msg2 of
@@ -76,7 +76,7 @@ wrapState :
     -> UsageExample state2 msg
 wrapState wrapState_ unwrapState example =
     { name = example.name
-    , state = wrapState_ example.state
+    , init = wrapState_ example.init
     , update =
         \msg state2 ->
             case unwrapState state2 of
@@ -140,14 +140,14 @@ preview_ { swallowEvent, navigate, exampleHref } example =
         ]
 
 
-view : UsageExample state msg -> Html msg
-view example =
+view : UsageExample state msg -> state -> Html msg
+view example state =
     Html.div [ Attributes.id (String.replace " " "-" example.name) ]
-        (view_ example)
+        (view_ example state)
 
 
-view_ : UsageExample state msg -> List (Html msg)
-view_ example =
+view_ : UsageExample state msg -> state -> List (Html msg)
+view_ example state =
     [ Html.div
         [ Attributes.css
             [ Css.displayFlex
@@ -163,7 +163,7 @@ view_ example =
             example.about
         ]
     , Html.div [ Attributes.css [ Css.marginBottom (Css.px 200) ] ]
-        (example.view example.state)
+        (example.view state)
     ]
 
 
