@@ -7,21 +7,17 @@ module Debug.Control.View exposing (view)
 -}
 
 import Css exposing (..)
-import Css.Global
 import Css.Media exposing (withMedia)
 import Debug.Control as Control exposing (Control)
 import EllieLink
 import Example
-import ExampleSection
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Html.V3 exposing (viewIf)
 import Nri.Ui.MediaQuery.V1 exposing (mobile, notMobile)
 import Nri.Ui.Spacing.V1 as Spacing
-import Nri.Ui.Text.V6 as Text
 
 
 {-| -}
