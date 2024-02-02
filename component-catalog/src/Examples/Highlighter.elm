@@ -450,7 +450,7 @@ view state =
         viewStr =
             Code.var "view" 1
     in
-    case (Control.currentValue state.settings).highlighterType of
+    case (Control.currentValue state.settings).textSettings.highlighterType of
         Markdown ->
             ( viewStr "Highlighter.viewMarkdown"
             , Highlighter.viewMarkdown state.highlighter
@@ -497,7 +497,7 @@ initHighlighter settings previousHighlightables =
     let
         highlightables : ( String, List (Highlightable ()) )
         highlightables =
-            if settings.splitOnSentences then
+            if settings.textSettings.splitOnSentences then
                 exampleParagraph
                     |> List.map
                         (\text i ->
@@ -528,8 +528,8 @@ initHighlighter settings previousHighlightables =
             ++ Code.recordMultiline
                 [ ( "id", Code.string "example-romeo-and-juliet" )
                 , ( "highlightables", Tuple.first highlightables )
-                , ( "marker", Code.newlineWithIndent 3 ++ Tuple.first settings.tool )
-                , ( "joinAdjacentInteractiveHighlights", Code.bool settings.joinAdjacentInteractiveHighlights )
+                , ( "marker", Code.newlineWithIndent 3 ++ Tuple.first settings.tool.tool )
+                , ( "joinAdjacentInteractiveHighlights", Code.bool settings.textSettings.joinAdjacentInteractiveHighlights )
                 , ( "sorter", "Sort.custom (\\() () -> EQ)" )
                 ]
                 2
@@ -541,9 +541,9 @@ initHighlighter settings previousHighlightables =
 
             else
                 Tuple.second highlightables
-        , marker = Tuple.second settings.tool
+        , marker = Tuple.second settings.tool.tool
         , sorter = sorter
-        , joinAdjacentInteractiveHighlights = settings.joinAdjacentInteractiveHighlights
+        , joinAdjacentInteractiveHighlights = settings.textSettings.joinAdjacentInteractiveHighlights
         }
     )
 
@@ -557,10 +557,12 @@ exampleParagraph =
 
 
 type alias Settings =
-    { splitOnSentences : Bool
-    , joinAdjacentInteractiveHighlights : Bool
-    , highlighterType : HighlighterType
-    , tool : ( String, Tool.Tool () )
+    { textSettings :
+        { splitOnSentences : Bool
+        , joinAdjacentInteractiveHighlights : Bool
+        , highlighterType : HighlighterType
+        }
+    , tool : { tool : ( String, Tool.Tool () ) }
     }
 
 
@@ -572,19 +574,25 @@ type HighlighterType
 controlSettings : Control Settings
 controlSettings =
     Control.record Settings
-        |> Control.field "splitOnSentences" (Control.bool True)
-        |> Control.field "joinAdjacentInteractiveHighlights" (Control.bool False)
-        |> Control.field "type"
-            (Control.choice
-                [ ( "Markdown", Control.value Markdown )
-                , ( "Standard", Control.value Standard )
-                ]
+        |> Control.field "Text settings"
+            (Control.record (\a b c -> { splitOnSentences = a, joinAdjacentInteractiveHighlights = b, highlighterType = c })
+                |> Control.field "splitOnSentences" (Control.bool True)
+                |> Control.field "joinAdjacentInteractiveHighlights" (Control.bool False)
+                |> Control.field "type"
+                    (Control.choice
+                        [ ( "Markdown", Control.value Markdown )
+                        , ( "Standard", Control.value Standard )
+                        ]
+                    )
             )
-        |> Control.field "tool"
-            (Control.choice
-                [ ( "Marker", Control.map (\( c, v ) -> ( "Tool.Marker" ++ Code.withParensMultiline c 4, Tool.Marker v )) controlMarker )
-                , ( "Eraser", Control.value ( "Tool.Eraser Tool.buildEraser", Tool.Eraser Tool.buildEraser ) )
-                ]
+        |> Control.field "Highlighter or Eraser tool settings"
+            (Control.record (\tool -> { tool = tool })
+                |> Control.field "tool"
+                    (Control.choice
+                        [ ( "Marker", Control.map (\( c, v ) -> ( "Tool.Marker" ++ Code.withParensMultiline c 4, Tool.Marker v )) controlMarker )
+                        , ( "Eraser", Control.value ( "Tool.Eraser Tool.buildEraser", Tool.Eraser Tool.buildEraser ) )
+                        ]
+                    )
             )
 
 

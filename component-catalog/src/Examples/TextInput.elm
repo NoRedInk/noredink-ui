@@ -405,46 +405,58 @@ type alias ExampleConfig =
 
 initControl : Control ExampleConfig
 initControl =
-    Control.record ExampleConfig
+    Control.record (\a b ( c, d, e ) -> ExampleConfig a b c d e)
         |> Control.field "label" (Control.string "Assignment name")
-        |> Control.field "attributes" controlAttributes
-        |> Control.field "onFocus" (Control.bool False)
-        |> Control.field "onBlur" (Control.bool False)
-        |> Control.field "onEnter" (Control.bool False)
+        |> Control.field "" controlAttributes
+        |> Control.field "Event listeners"
+            (Control.record (\a b c -> ( a, b, c ))
+                |> Control.field "onFocus" (Control.bool False)
+                |> Control.field "onBlur" (Control.bool False)
+                |> Control.field "onEnter" (Control.bool False)
+            )
 
 
 controlAttributes : Control (List ( String, TextInput.Attribute value msg ))
 controlAttributes =
-    ControlExtra.list
-        |> ControlExtra.optionalListItem "placeholder"
-            (Control.string "Learning with commas"
-                |> Control.map
-                    (\str ->
-                        ( "TextInput.placeholder " ++ Code.string str
-                        , TextInput.placeholder str
-                        )
+    Control.list
+        |> ControlExtra.listItems "State"
+            (Control.list
+                |> ControlExtra.optionalBoolListItem "disabled"
+                    ( "TextInput.disabled", TextInput.disabled )
+                |> ControlExtra.optionalBoolListItem "loading"
+                    ( "TextInput.loading", TextInput.loading )
+            )
+        |> ControlExtra.listItems "Theme, CSS, & Style Extras"
+            (Control.list
+                |> ControlExtra.optionalBoolListItem "hiddenLabel"
+                    ( "TextInput.hiddenLabel", TextInput.hiddenLabel )
+                |> ControlExtra.optionalBoolListItem "writing"
+                    ( "TextInput.writing", TextInput.writing )
+                |> ControlExtra.optionalBoolListItem "noMargin"
+                    ( "TextInput.noMargin True", TextInput.noMargin True )
+                |> ControlExtra.optionalBoolListItem "css"
+                    ( "TextInput.css [ Css.backgroundColor Colors.azure ]"
+                    , TextInput.css [ Css.backgroundColor Colors.azure ]
                     )
             )
-        |> ControlExtra.optionalBoolListItem "hiddenLabel"
-            ( "TextInput.hiddenLabel", TextInput.hiddenLabel )
-        |> CommonControls.guidanceAndErrorMessage
-            { moduleName = moduleName
-            , guidance = TextInput.guidance
-            , guidanceHtml = TextInput.guidanceHtml
-            , errorMessage = Just TextInput.errorMessage
-            , message = "The statement must be true."
-            }
-        |> ControlExtra.optionalBoolListItem "disabled"
-            ( "TextInput.disabled", TextInput.disabled )
-        |> ControlExtra.optionalBoolListItem "loading"
-            ( "TextInput.loading", TextInput.loading )
-        |> ControlExtra.optionalBoolListItem "writing"
-            ( "TextInput.writing", TextInput.writing )
-        |> ControlExtra.optionalBoolListItem "noMargin"
-            ( "TextInput.noMargin True", TextInput.noMargin True )
-        |> ControlExtra.optionalBoolListItem "css"
-            ( "TextInput.css [ Css.backgroundColor Colors.azure ]"
-            , TextInput.css [ Css.backgroundColor Colors.azure ]
+        |> ControlExtra.listItems "Content"
+            (Control.list
+                |> ControlExtra.optionalListItem "placeholder"
+                    (Control.string "Learning with commas"
+                        |> Control.map
+                            (\str ->
+                                ( "TextInput.placeholder " ++ Code.string str
+                                , TextInput.placeholder str
+                                )
+                            )
+                    )
+                |> CommonControls.guidanceAndErrorMessage
+                    { moduleName = moduleName
+                    , guidance = TextInput.guidance
+                    , guidanceHtml = TextInput.guidanceHtml
+                    , errorMessage = Just TextInput.errorMessage
+                    , message = "The statement must be true."
+                    }
             )
 
 

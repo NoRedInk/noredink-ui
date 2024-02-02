@@ -343,7 +343,7 @@ initSelectionSettings =
 
 controlAttributes : Control (List ( String, RadioButton.Attribute Selection Msg ))
 controlAttributes =
-    ControlExtra.list
+    Control.list
         |> ControlExtra.optionalListItem "visibility" labelVisibility
         |> ControlExtra.optionalListItem "status" disabledOrEnabled
         |> ControlExtra.optionalListItem "onLockedClick" onLockedClick

@@ -182,46 +182,52 @@ controlSettings : Control Settings
 controlSettings =
     Control.record Settings
         |> Control.field "label" (Control.string "Identify Adjectives 1")
-        |> Control.field "attributes" controlAttributes
+        |> Control.field "" controlAttributes
 
 
 controlAttributes : Control (List ( String, PremiumCheckbox.Attribute Msg ))
 controlAttributes =
-    ControlExtra.list
-        |> ControlExtra.optionalListItem "premiumDisplay"
-            (Control.map
-                (\( str, val ) -> ( "PremiumCheckbox.premium " ++ str, PremiumCheckbox.premium val ))
-                CommonControls.premiumDisplay
+    Control.list
+        |> ControlExtra.optionalBoolListItem "disabled" ( "PremiumCheckbox.disabled", PremiumCheckbox.disabled )
+        |> ControlExtra.listItems "Premium"
+            (Control.list
+                |> ControlExtra.optionalListItem "premiumDisplay"
+                    (Control.map
+                        (\( str, val ) -> ( "PremiumCheckbox.premium " ++ str, PremiumCheckbox.premium val ))
+                        CommonControls.premiumDisplay
+                    )
+                |> ControlExtra.optionalListItem "onLockedClick"
+                    (Control.value
+                        ( "PremiumCheckbox.onLockedClick ClickedPremiumLock"
+                        , PremiumCheckbox.onLockedClick ClickedPremiumLock
+                        )
+                    )
             )
-        |> ControlExtra.optionalListItem "onLockedClick"
-            (Control.value
-                ( "PremiumCheckbox.onLockedClick ClickedPremiumLock"
-                , PremiumCheckbox.onLockedClick ClickedPremiumLock
-                )
+        |> ControlExtra.listItems "CSS & Extra Styles"
+            (Control.list
+                |> CommonControls.css_ "setCheckboxContainerCss"
+                    ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
+                    , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
+                    )
+                    { moduleName = moduleName
+                    , use = PremiumCheckbox.setCheckboxContainerCss
+                    }
+                |> CommonControls.css_ "setCheckboxEnabledLabelCss"
+                    ( "[ Css.border3 (Css.px 4) Css.dotted Colors.orange ]"
+                    , [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]
+                    )
+                    { moduleName = moduleName
+                    , use = PremiumCheckbox.setCheckboxEnabledLabelCss
+                    }
+                |> CommonControls.css_ "setCheckboxDisabledLabelCss"
+                    ( "[ Css.textDecoration Css.lineThrough ]"
+                    , [ Css.textDecoration Css.lineThrough ]
+                    )
+                    { moduleName = moduleName
+                    , use = PremiumCheckbox.setCheckboxDisabledLabelCss
+                    }
+                |> ControlExtra.optionalBoolListItem "noMargin" ( "noMargin True", PremiumCheckbox.noMargin True )
             )
-        |> ControlExtra.optionalBoolListItem "PremiumCheckbox.disabled" ( "PremiumCheckbox.disabled", PremiumCheckbox.disabled )
-        |> CommonControls.css_ "setCheckboxContainerCss"
-            ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
-            , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
-            )
-            { moduleName = moduleName
-            , use = PremiumCheckbox.setCheckboxContainerCss
-            }
-        |> CommonControls.css_ "setCheckboxEnabledLabelCss"
-            ( "[ Css.border3 (Css.px 4) Css.dotted Colors.orange ]"
-            , [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]
-            )
-            { moduleName = moduleName
-            , use = PremiumCheckbox.setCheckboxEnabledLabelCss
-            }
-        |> CommonControls.css_ "setCheckboxDisabledLabelCss"
-            ( "[ Css.textDecoration Css.lineThrough ]"
-            , [ Css.textDecoration Css.lineThrough ]
-            )
-            { moduleName = moduleName
-            , use = PremiumCheckbox.setCheckboxDisabledLabelCss
-            }
-        |> ControlExtra.optionalBoolListItem "noMargin" ( "noMargin True", PremiumCheckbox.noMargin True )
 
 
 viewExampleWithCode : State -> Settings -> ( String, Html Msg )

@@ -271,42 +271,48 @@ controlSettings : Control Settings
 controlSettings =
     Control.record Settings
         |> Control.field "label" (Control.string "Enable Text-to-Speech")
-        |> Control.field "attributes" initAttributes
+        |> Control.field "" initAttributes
 
 
 initAttributes : Control (List ( String, Checkbox.Attribute Msg ))
 initAttributes =
-    ControlExtra.list
-        |> CommonControls.guidanceAndErrorMessage
-            { moduleName = moduleName
-            , guidance = Checkbox.guidance
-            , guidanceHtml = Checkbox.guidanceHtml
-            , errorMessage = Nothing
-            , message = "There is something you need to be aware of."
-            }
+    Control.list
         |> ControlExtra.optionalBoolListItem "disabled" ( "disabled", Checkbox.disabled )
-        |> ControlExtra.optionalBoolListItem "hiddenLabel" ( "hiddenLabel", Checkbox.hiddenLabel )
-        |> ControlExtra.optionalListItem "containerCss"
-            (Control.choice
-                [ ( "Red dashed border"
-                  , Control.value
-                        ( "Checkbox.containerCss [ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
-                        , Checkbox.containerCss [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
-                        )
-                  )
-                ]
+        |> ControlExtra.listItems "Guidance"
+            (Control.list
+                |> CommonControls.guidanceAndErrorMessage
+                    { moduleName = moduleName
+                    , guidance = Checkbox.guidance
+                    , guidanceHtml = Checkbox.guidanceHtml
+                    , errorMessage = Nothing
+                    , message = "There is something you need to be aware of."
+                    }
             )
-        |> ControlExtra.optionalListItem "labelCss"
-            (Control.choice
-                [ ( "Orange dotted border"
-                  , Control.value
-                        ( "Checkbox.labelCss [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]"
-                        , Checkbox.labelCss [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]
-                        )
-                  )
-                ]
+        |> ControlExtra.listItems "CSS & Extra Styles"
+            (Control.list
+                |> ControlExtra.optionalListItem "containerCss"
+                    (Control.choice
+                        [ ( "Red dashed border"
+                          , Control.value
+                                ( "Checkbox.containerCss [ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
+                                , Checkbox.containerCss [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
+                                )
+                          )
+                        ]
+                    )
+                |> ControlExtra.optionalListItem "labelCss"
+                    (Control.choice
+                        [ ( "Orange dotted border"
+                          , Control.value
+                                ( "Checkbox.labelCss [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]"
+                                , Checkbox.labelCss [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]
+                                )
+                          )
+                        ]
+                    )
+                |> ControlExtra.optionalBoolListItem "noMargin" ( "noMargin True", Checkbox.noMargin True )
+                |> ControlExtra.optionalBoolListItem "hiddenLabel" ( "hiddenLabel", Checkbox.hiddenLabel )
             )
-        |> ControlExtra.optionalBoolListItem "noMargin" ( "noMargin True", Checkbox.noMargin True )
 
 
 viewExampleWithCode : State -> Settings -> ( String, Html Msg )

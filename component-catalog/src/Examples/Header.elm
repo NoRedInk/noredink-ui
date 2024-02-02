@@ -159,7 +159,7 @@ type alias State =
 init : Maybe String -> State
 init selection =
     { control =
-        ControlExtra.list
+        Control.list
             |> ControlExtra.optionalListItem "extraContent"
                 (Control.value
                     ( "Header.extraContent [ text \"…\" ]"
@@ -209,7 +209,7 @@ init selection =
                         , Header.customPageWidth (Css.px width)
                         )
                     )
-                    (ControlExtra.float 750)
+                    (Control.float 750)
                 )
     , selection = Nothing
     }

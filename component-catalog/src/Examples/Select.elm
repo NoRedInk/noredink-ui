@@ -146,7 +146,7 @@ init =
     { control =
         Control.record Settings
             |> Control.field "label" (Control.string "Thematically Incoherent Selector")
-            |> Control.field "attributes" initControls
+            |> Control.field "" initControls
     , selectedValue = Nothing
     }
 
@@ -159,56 +159,58 @@ type alias Settings =
 
 initControls : Control (List ( String, Select.Attribute Choosable ))
 initControls =
-    ControlExtra.list
-        |> ControlExtra.listItem "choices" initChoices
-        |> ControlExtra.optionalListItem "hiddenLabel"
-            (Control.value ( "Select.hiddenLabel", Select.hiddenLabel ))
-        |> ControlExtra.optionalListItem "defaultDisplayText"
-            (Control.map
-                (\str ->
-                    ( "Select.defaultDisplayText \"" ++ str ++ "\""
-                    , Select.defaultDisplayText str
-                    )
-                )
-                (Control.string "Select a tortilla-based treat, a 2020 81kg Olympic Weightlifter, or nothing at all")
-            )
-        |> ControlExtra.optionalListItem "containerCss"
-            (Control.choice
-                [ ( "max-width: 300px"
-                  , Control.value
-                        ( "Select.containerCss [ Css.maxWidth (Css.px 300) ]"
-                        , Select.containerCss [ Css.maxWidth (Css.px 300) ]
+    Control.list
+        |> ControlExtra.listItems "Content"
+            (Control.list
+                |> ControlExtra.listItem "choices" initChoices
+                |> ControlExtra.optionalListItem "defaultDisplayText"
+                    (Control.map
+                        (\str ->
+                            ( "Select.defaultDisplayText \"" ++ str ++ "\""
+                            , Select.defaultDisplayText str
+                            )
                         )
-                  )
-                , ( "background-color: lichen"
-                  , Control.value
-                        ( "Select.containerCss [ Css.backgroundColor Colors.lichen ]"
-                        , Select.containerCss [ Css.backgroundColor Colors.lichen ]
-                        )
-                  )
-                ]
-            )
-        |> ControlExtra.optionalListItem "noMargin"
-            (Control.map
-                (\bool ->
-                    ( "Select.noMargin " ++ Debug.toString bool
-                    , Select.noMargin bool
+                        (Control.string "Select a tortilla-based treat, a 2020 81kg Olympic Weightlifter, or nothing at all")
                     )
-                )
-                (Control.bool True)
+                |> CommonControls.guidanceAndErrorMessage
+                    { moduleName = moduleName
+                    , guidance = Select.guidance
+                    , guidanceHtml = Select.guidanceHtml
+                    , errorMessage = Just Select.errorMessage
+                    , message = "The right item must be selected."
+                    }
+                |> CommonControls.icon moduleName Select.icon
             )
-        |> CommonControls.guidanceAndErrorMessage
-            { moduleName = moduleName
-            , guidance = Select.guidance
-            , guidanceHtml = Select.guidanceHtml
-            , errorMessage = Just Select.errorMessage
-            , message = "The right item must be selected."
-            }
-        |> ControlExtra.optionalListItem "disabled"
-            (Control.value ( "Select.disabled", Select.disabled ))
-        |> ControlExtra.optionalListItem "loading"
-            (Control.value ( "Select.loading", Select.loading ))
-        |> CommonControls.icon moduleName Select.icon
+        |> ControlExtra.listItems "CSS & Extra Styles"
+            (Control.list
+                |> ControlExtra.optionalListItem "hiddenLabel"
+                    (Control.value ( "Select.hiddenLabel", Select.hiddenLabel ))
+                |> ControlExtra.optionalListItem "containerCss"
+                    (Control.choice
+                        [ ( "max-width: 300px"
+                          , Control.value
+                                ( "Select.containerCss [ Css.maxWidth (Css.px 300) ]"
+                                , Select.containerCss [ Css.maxWidth (Css.px 300) ]
+                                )
+                          )
+                        , ( "background-color: lichen"
+                          , Control.value
+                                ( "Select.containerCss [ Css.backgroundColor Colors.lichen ]"
+                                , Select.containerCss [ Css.backgroundColor Colors.lichen ]
+                                )
+                          )
+                        ]
+                    )
+                |> ControlExtra.optionalBoolListItem "noMargin"
+                    ( "Select.noMargin True", Select.noMargin True )
+            )
+        |> ControlExtra.listItems "State"
+            (Control.list
+                |> ControlExtra.optionalListItem "disabled"
+                    (Control.value ( "Select.disabled", Select.disabled ))
+                |> ControlExtra.optionalListItem "loading"
+                    (Control.value ( "Select.loading", Select.loading ))
+            )
 
 
 type Choosable
