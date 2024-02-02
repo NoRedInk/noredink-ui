@@ -55,8 +55,8 @@ init : () -> Url -> key -> ( Model key, Effect )
 init () url key =
     ( { route = Routes.fromLocation url
       , previousRoute = Nothing
-      , moduleStates = Dict.map (\_ example -> example.state) examplesDict
-      , usageExampleStates = Dict.map (\_ example -> example.state) usageExamplesDict
+      , moduleStates = Dict.map (\_ example -> example.init) examplesDict
+      , usageExampleStates = Dict.map (\_ example -> example.init) usageExamplesDict
       , isSideNavOpen = False
       , openTooltip = Nothing
       , selectedContent = ComponentExamples
@@ -360,10 +360,10 @@ view model =
             }
 
         Routes.Usage exampleName ->
-            case Dict.get exampleName usageExamplesDict of
-                Just example ->
+            case findUsageExample model exampleName of
+                Just ( example, state ) ->
                     { title = example.name ++ " Usage Example in the NoRedInk Component Catalog"
-                    , body = viewUsageExample model example |> toBody
+                    , body = viewUsageExample model example state |> toBody
                     }
 
                 Nothing ->
@@ -381,19 +381,15 @@ view model =
 
 
 viewExample : Model key -> Example a Examples.Msg -> a -> Html Msg
-viewExample model example0 exampleState =
-    let
-        example =
-            { example0 | state = exampleState }
-    in
-    Example.view { packageDependencies = model.elliePackageDependencies } example
+viewExample model example state =
+    Example.view { packageDependencies = model.elliePackageDependencies } example state
         |> Html.map (UpdateModuleStates example.name)
         |> viewLayout model [ Example.extraLinks (UpdateModuleStates example.name) example ]
 
 
-viewUsageExample : Model key -> UsageExample a UsageExamples.Msg -> Html Msg
-viewUsageExample model example =
-    UsageExample.view example
+viewUsageExample : Model key -> UsageExample a UsageExamples.Msg -> a -> Html Msg
+viewUsageExample model example state =
+    UsageExample.view example state
         |> Html.map (UpdateUsageExamples (UsageExample.routeName example))
         |> viewLayout model []
 
