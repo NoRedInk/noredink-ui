@@ -15,10 +15,11 @@ import Example
 import ExampleSection
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
-import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Html.V3 exposing (viewIf)
-import Nri.Ui.MediaQuery.V1 exposing (mobile)
+import Nri.Ui.MediaQuery.V1 exposing (mobile, notMobile)
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Text.V6 as Text
 
@@ -47,27 +48,34 @@ view config =
         exampleCodes =
             config.toExampleCode value
     in
-    div
-        [ css
-            [ displayFlex
-            , alignItems stretch
-            , Css.flexWrap Css.wrap
-            , Css.property "gap" "10px"
-            , withMedia [ mobile ] [ flexDirection column, alignItems stretch ]
-            , Spacing.pageTopWhitespace
-            ]
-        ]
-        [ viewSection "Settings"
-            [ div
+    Container.view
+        [ Container.html
+            [ section
                 [ css
-                    [ Css.Global.descendants
-                        [ Css.Global.everything [ Fonts.baseFont ]
+                    [ withMedia [ notMobile ]
+                        [ flexBasis (pct 55)
+                        , marginRight Spacing.horizontalSpacerPx
                         ]
                     ]
                 ]
-                [ Control.view config.update config.settings ]
+                [ Heading.h2 [ Heading.plaintext "Settings" ]
+                , Control.view config.update config.settings
+                ]
+            , section
+                [ css
+                    [ withMedia [ mobile ] [ marginTop Spacing.verticalSpacerPx ]
+                    ]
+                ]
+                (Heading.h2 [ Heading.plaintext "Code Sample" ]
+                    :: List.map (viewExampleCode ellieLink config) exampleCodes
+                )
             ]
-        , viewExampleCode ellieLink config exampleCodes
+        , Container.css
+            [ marginTop Spacing.verticalSpacerPx
+            , displayFlex
+            , flexWrap wrap
+            , withMedia [ mobile ] [ flexDirection column ]
+            ]
         ]
 
 
@@ -81,46 +89,32 @@ viewExampleCode :
             , extraCode : List String
             , renderExample : String -> String
         }
-    -> List { sectionName : String, code : String }
+    -> { sectionName : String, code : String }
     -> Html msg
-viewExampleCode ellieLink component values =
-    viewSection "Code Sample" <|
-        Text.smallBodyGray
-            [ Text.plaintext "😎 Configure the \"Settings\" on this page to update the code sample, then paste it into your editor!"
+viewExampleCode ellieLink component example =
+    details
+        []
+        [ summary []
+            [ Heading.h3
+                [ Heading.css [ display inline ]
+                , Heading.plaintext example.sectionName
+                ]
             ]
-            :: List.concatMap
-                (\example ->
-                    [ details
-                        []
-                        [ summary []
-                            [ Heading.h3
-                                [ Heading.css [ Css.display Css.inline ]
-                                , Heading.plaintext example.sectionName
-                                ]
-                            ]
-                        , ellieLink
-                            { fullModuleName = Example.fullName component
-                            , name = component.name
-                            , sectionName = example.sectionName
-                            , mainType = component.mainType
-                            , extraCode = component.extraCode
-                            , renderExample = component.renderExample
-                            , code = example.code
-                            }
-                        , code
-                            [ css
-                                [ display block
-                                , whiteSpace preWrap
-                                , Css.marginTop (px 8)
-                                ]
-                            ]
-                            [ text example.code ]
-                        ]
-                    ]
-                )
-                values
-
-
-viewSection : String -> List (Html msg) -> Html msg
-viewSection name =
-    ExampleSection.sectionWithCss name [ flex (int 1) ] (div [])
+        , ellieLink
+            { fullModuleName = Example.fullName component
+            , name = component.name
+            , sectionName = example.sectionName
+            , mainType = component.mainType
+            , extraCode = component.extraCode
+            , renderExample = component.renderExample
+            , code = example.code
+            }
+        , code
+            [ css
+                [ display block
+                , whiteSpace preWrap
+                , marginTop (px 8)
+                ]
+            ]
+            [ text example.code ]
+        ]
