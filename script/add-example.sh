@@ -15,7 +15,7 @@ read -p "Is this component a collection of icons? (y/n) " yn
 case $yn in
     [yY] )
         echo ""
-        echo "Great, we'll use \`IconExamples\` to set up a standard icon collection example in \`Examples.${example_name}\` in the component-catalog folder."
+        echo "Great, we'll use \`IconExamples\` to set up a standard icon collection example."
         echo ""
 
         template=$( cat script/templates/icon-collection-example.elm )
@@ -29,10 +29,22 @@ case $yn in
 
         echo "${template}"
         break;;
-    [nN] ) echo "Great, we'll set up a typical blank example page in \`Examples.${example_name}\` in the component-catalog folder.";
+    [nN] )
+        echo ""
+        echo "Great, we'll set up a typical blank example page in \`Examples.${example_name}\`."
+        echo "🚨 There will be TODOs for you to complete in the file. 🚨"
+        echo ""
+
+        template=$( cat script/templates/standard-example.elm )
+
+        template="${template//COMPONENT_NAME/"$example_name"}"
+
+        echo "${template}"
         exit;;
     * ) echo "Please enter Y, y, N, or n to proceed.";;
 esac
 done
 
-echo "${example_name}"
+echo "Creating \`Examples.${example_name}\` for you in the component-catalog folder."
+
+printf "${template}" >| component-catalog/src/Examples/"${example_name}.elm"
