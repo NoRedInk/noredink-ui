@@ -5,7 +5,7 @@ module IconExamples exposing
     , preview, previewCustomSize
     )
 
-{-|
+{-| 🚨 If you update this module, please be sure that `script/add-example.sh` keeps working too.
 
 @docs example
 @docs Settings, Msg
