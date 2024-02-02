@@ -8,7 +8,7 @@ module Examples.Pennant exposing (example, State, Msg)
 
 import Css
 import Example exposing (Example)
-import IconExamples as IconExamples exposing (Group)
+import IconExamples exposing (Group)
 import Nri.Ui.Pennant.V3 as Pennant
 
 

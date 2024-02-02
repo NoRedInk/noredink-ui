@@ -14,7 +14,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (..)
-import IconExamples as IconExamples
+import IconExamples
 import Nri.Ui.AnimatedIcon.V1 as AnimatedIcon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading

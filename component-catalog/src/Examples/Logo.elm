@@ -10,7 +10,7 @@ import Css
 import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
-import IconExamples as IconExamples exposing (Group)
+import IconExamples exposing (Group)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Logo.V1 as Logo
 import Nri.Ui.Svg.V1 as Svg
