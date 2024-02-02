@@ -39,7 +39,7 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , state = controlSettings
+    , init = controlSettings
     , update = update
     , subscriptions = \_ -> Sub.none
     , categories = [ Layout ]

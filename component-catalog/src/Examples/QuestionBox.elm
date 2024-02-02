@@ -46,7 +46,7 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , state = init
+    , init = init
     , update = update
     , subscriptions = \_ -> Sub.none
     , categories = [ Instructional ]

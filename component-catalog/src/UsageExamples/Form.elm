@@ -21,7 +21,7 @@ example : UsageExample State Msg
 example =
     { name = "Form"
     , categories = [ Inputs ]
-    , state = init
+    , init = init
     , update = update
     , subscriptions = \_ -> Sub.none
     , about = []

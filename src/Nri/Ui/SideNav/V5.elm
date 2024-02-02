@@ -457,7 +457,7 @@ viewSidebarEntry config extraStyles entry_ =
                     id_ =
                         AttributesExtra.safeIdWithPrefix "sidenav-group" entryConfig.title
                 in
-                li []
+                li [ Attributes.css extraStyles ]
                     [ styled span
                         (sharedEntryStyles
                             ++ [ backgroundColor Colors.gray92

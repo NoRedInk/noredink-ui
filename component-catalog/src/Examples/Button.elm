@@ -20,6 +20,7 @@ import Examples.RadioButtonDotless as RadioButtonDotlessExample
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Button.V10 as Button
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Message.V4 as Message
@@ -40,7 +41,7 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , state = init
+    , init = init
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -76,12 +77,14 @@ example =
             ]
         ]
     , about =
-        [ let
-            url =
-                Routes.exampleHref RadioButtonDotlessExample.example
-          in
-          Message.view
-            [ Message.markdown <| "Looking for a group of buttons where only one button is selectable at a time? Check out [RadioButtonDotless](" ++ url ++ ")"
+        [ Message.view
+            [ Message.html
+                [ text "Looking for a group of buttons where only one button is selectable at a time? Check out "
+                , ClickableText.link "RadioButtonDotless"
+                    [ ClickableText.href (Routes.exampleHref RadioButtonDotlessExample.example)
+                    , ClickableText.appearsInline
+                    ]
+                ]
             ]
         ]
     , view = \ellieLinkConfig state -> [ viewButtonExamples ellieLinkConfig state ]

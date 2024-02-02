@@ -21,7 +21,7 @@ example : UsageExample State Msg
 example =
     { name = "Clickable Card with Tooltip"
     , categories = [ Messaging ]
-    , state = init
+    , init = init
     , update = update
     , subscriptions = \_ -> Sub.none
     , about = []
