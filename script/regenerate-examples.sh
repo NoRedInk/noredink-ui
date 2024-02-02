@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+file_open=$(cat <<-TOP
+module Examples exposing (Msg, State, all)
+
+{-| Use \`script/regenerate-examples.sh\` to regenerate this module.
+-}
+TOP
+)
+
 import_code_block="import Examples.ExampleName as ExampleName"
 
 example_code_block=$(cat <<-END
@@ -77,8 +85,10 @@ do
 done
 
 cd ..
-printf "module Examples exposing (Msg, State, all)\n\n" >| Examples.elm
-printf "${imports}\n\n\n" >> Examples.elm
+
+
+printf "${file_open}" >| Examples.elm
+printf "\n\n${imports}\n\n\n" >> Examples.elm
 printf "${all}\n\n\n" >> Examples.elm
 printf "${state}\n\n\n" >> Examples.elm
 printf "${msg}\n" >> Examples.elm

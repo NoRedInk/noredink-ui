@@ -1,5 +1,8 @@
 module Examples exposing (Msg, State, all)
 
+{-| Use `script/regenerate-examples.sh` to regenerate this module.
+-}
+
 import Example exposing (Example)
 import Examples.Accordion as Accordion
 import Examples.AnimatedIcon as AnimatedIcon
