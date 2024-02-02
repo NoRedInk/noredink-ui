@@ -27,6 +27,7 @@ import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Switch.V3 as Switch
 import Nri.Ui.Table.V7 as Table
+import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Task
 
@@ -46,12 +47,16 @@ example =
         , example_ FocusRing.tightStyles
         ]
     , about =
-        [ text "Custom high-contrast focus ring styles. Learn more about this component in "
-        , ClickableText.link "Custom Focus Rings on the NoRedInk blog"
-            [ ClickableText.linkExternal "https://blog.noredink.com/post/703458632758689792/custom-focus-rings"
-            , ClickableText.appearsInline
+        [ Text.mediumBody
+            [ Text.html
+                [ text "Custom high-contrast focus ring styles. Learn more about this component in "
+                , ClickableText.link "Custom Focus Rings on the NoRedInk blog"
+                    [ ClickableText.linkExternal "https://blog.noredink.com/post/703458632758689792/custom-focus-rings"
+                    , ClickableText.appearsInline
+                    ]
+                , text "."
+                ]
             ]
-        , text "."
         ]
     , view =
         \_ state ->

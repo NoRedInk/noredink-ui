@@ -80,9 +80,13 @@ example =
             |> p [ css [ Fonts.baseFont, Css.fontSize (Css.px 12), Css.margin Css.zero ] ]
         ]
     , about =
-        [ text "You might also know the Block element as a “Display Element”. Learn more in "
-        , ClickableText.link "Display Elements and Scaffolding Container: additional things to know"
-            [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Display-Elements-and-Scaffolding-Container-additional-things-to-know--BwRhBMKyXFFSWz~1mljN29bcAg-6vszpNDLoYIiMyg7Wv66s"
+        [ Text.mediumBody
+            [ Text.html
+                [ text "You might also know the Block element as a “Display Element”. Learn more in "
+                , ClickableText.link "Display Elements and Scaffolding Container: additional things to know"
+                    [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Display-Elements-and-Scaffolding-Container-additional-things-to-know--BwRhBMKyXFFSWz~1mljN29bcAg-6vszpNDLoYIiMyg7Wv66s"
+                    ]
+                ]
             ]
         ]
     , view =

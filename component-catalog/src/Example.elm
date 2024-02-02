@@ -17,7 +17,6 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Header.V1 as Header
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
-import Nri.Ui.Text.V6 as Text
 
 
 type alias Example state msg =
@@ -191,7 +190,7 @@ view_ ellieLinkConfig example =
 
 viewAbout : List (Html Never) -> Html msg
 viewAbout about =
-    Text.mediumBody [ Text.html about ]
+    Html.div [] about
         |> Html.map never
 
 
