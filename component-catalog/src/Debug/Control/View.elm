@@ -48,39 +48,53 @@ view config =
         exampleCodes =
             config.toExampleCode value
     in
-    Container.view
-        [ Container.html
-            [ section
-                [ css
-                    [ padding4 (px 20) zero (px 20) (px 20)
-                    , border3 (px 2) solid Colors.red
-                    , withMedia [ notMobile ]
-                        [ flexBasis (pct 50)
-                        , marginRight (px 30)
-                        ]
-                    ]
-                ]
-                [ Heading.h2 [ Heading.plaintext "Settings" ]
-                , Control.view config.update config.settings
-                ]
-            , section
-                [ css
-                    [ padding (px 20)
-                    , flexGrow (num 1)
-                    , border3 (px 2) solid Colors.purple
-                    , withMedia [ mobile ] [ marginTop Spacing.verticalSpacerPx ]
-                    ]
-                ]
-                (Heading.h2 [ Heading.plaintext "Code Sample" ]
-                    :: List.map (viewExampleCode ellieLink config) exampleCodes
-                )
-            ]
-        , Container.css
+    div
+        [ css
             [ marginTop Spacing.verticalSpacerPx
             , displayFlex
             , withMedia [ mobile ] [ flexDirection column ]
             ]
-        , Container.paddingPx 0
+        ]
+        [ Container.view
+            [ Container.html
+                [ Heading.h2 [ Heading.plaintext "Settings" ]
+                , Control.view config.update config.settings
+                ]
+            , Container.css
+                [ withMedia [ mobile ]
+                    [ borderBottomLeftRadius zero
+                    , borderBottomRightRadius zero
+                    ]
+                , withMedia [ notMobile ]
+                    [ flexBasis (pct 50)
+                    , paddingRight (px 30)
+                    , borderTopRightRadius zero
+                    , borderBottomRightRadius zero
+                    ]
+                ]
+            ]
+        , Container.view
+            [ Container.html
+                (Heading.h2
+                    [ Heading.plaintext "Code Sample"
+                    , Heading.css [ color Colors.white ]
+                    ]
+                    :: List.map (viewExampleCode ellieLink config) exampleCodes
+                )
+            , Container.css
+                [ padding (px 20)
+                , flexGrow (num 1)
+                , backgroundColor Colors.gray20
+                , withMedia [ mobile ]
+                    [ borderTopLeftRadius zero
+                    , borderTopRightRadius zero
+                    ]
+                , withMedia [ notMobile ]
+                    [ borderTopLeftRadius zero
+                    , borderBottomLeftRadius zero
+                    ]
+                ]
+            ]
         ]
 
 
@@ -99,9 +113,9 @@ viewExampleCode :
 viewExampleCode ellieLink component example =
     details
         []
-        [ summary []
+        [ summary [ css [ color Colors.yellow ] ]
             [ Heading.h3
-                [ Heading.css [ display inline ]
+                [ Heading.css [ display inline, color Colors.yellow ]
                 , Heading.plaintext example.sectionName
                 ]
             ]
@@ -119,6 +133,7 @@ viewExampleCode ellieLink component example =
                 [ display block
                 , whiteSpace preWrap
                 , marginTop (px 8)
+                , color Colors.yellow
                 ]
             ]
             [ text example.code ]
