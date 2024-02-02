@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# This script generates the `Examples` Elm module,
+# which ties the disparate examples of components in the Component Catalog together.
+# You typically won't need to use this script directly.
+# Instead, it will be used by `script/add-example.sh` when you add a new component example.
+
 file_open=$(cat <<-TOP
 module Examples exposing (Msg, State, all)
 
