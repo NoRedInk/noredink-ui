@@ -48,5 +48,14 @@ path=component-catalog/src/Examples/"${example_name}.elm"
 printf "${template}" >| "${path}"
 
 echo ""
+echo "Created ${path}."
+
+echo ""
+echo "Regenerating \`Examples.elm\` so it inclues \`Examples.${example_name}\`."
+
+. ./script/regenerate-examples.sh
+
+
+echo ""
 echo "🚨 There are TODOs for you to complete in ${path}. 🚨"
 echo ""

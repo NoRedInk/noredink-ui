@@ -63,6 +63,8 @@ type Msg
 MSG
 )
 
+echo "Cataloging the \`component-catalog/src/Examples/\` folder..."
+
 cd component-catalog/src/Examples/
 i=0
 for example in *
@@ -92,8 +94,12 @@ done
 cd ..
 
 
+echo "Replacing \`component-catalog/src/Examples.elm\`..."
+
 printf "${file_open}" >| Examples.elm
 printf "\n\n${imports}\n\n\n" >> Examples.elm
 printf "${all}\n\n\n" >> Examples.elm
 printf "${state}\n\n\n" >> Examples.elm
 printf "${msg}\n" >> Examples.elm
+
+echo "Done! \`Examples\` should now be up to date."
