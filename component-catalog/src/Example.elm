@@ -17,13 +17,12 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Header.V1 as Header
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
-import Nri.Ui.Text.V6 as Text
 
 
 type alias Example state msg =
     { name : String
     , version : Int
-    , state : state
+    , init : state
     , update : msg -> state -> ( state, Cmd msg )
     , subscriptions : state -> Sub msg
     , preview : List (Html Never)
@@ -57,7 +56,7 @@ wrapMsg :
 wrapMsg wrapMsg_ unwrapMsg example =
     { name = example.name
     , version = example.version
-    , state = example.state
+    , init = example.init
     , update =
         \msg2 state ->
             case unwrapMsg msg2 of
@@ -87,7 +86,7 @@ wrapState :
 wrapState wrapState_ unwrapState example =
     { name = example.name
     , version = example.version
-    , state = wrapState_ example.state
+    , init = wrapState_ example.init
     , update =
         \msg state2 ->
             case unwrapState state2 of
@@ -161,14 +160,14 @@ preview_ { swallowEvent, navigate, exampleHref } example =
         ]
 
 
-view : EllieLink.Config -> Example state msg -> Html msg
-view ellieLinkConfig example =
+view : EllieLink.Config -> Example state msg -> state -> Html msg
+view ellieLinkConfig example state =
     Html.div [ Attributes.id (String.replace "." "-" example.name) ]
-        (view_ ellieLinkConfig example)
+        (view_ ellieLinkConfig example state)
 
 
-view_ : EllieLink.Config -> Example state msg -> List (Html msg)
-view_ ellieLinkConfig example =
+view_ : EllieLink.Config -> Example state msg -> state -> List (Html msg)
+view_ ellieLinkConfig example state =
     [ Html.div
         [ Attributes.css
             [ Css.displayFlex
@@ -185,13 +184,13 @@ view_ ellieLinkConfig example =
         , KeyboardSupport.view example.keyboardSupport
         ]
     , Html.div [ Attributes.css [ Css.marginBottom (Css.px 200) ] ]
-        (example.view ellieLinkConfig example.state)
+        (example.view ellieLinkConfig state)
     ]
 
 
 viewAbout : List (Html Never) -> Html msg
 viewAbout about =
-    Text.mediumBody [ Text.html about ]
+    Html.div [] about
         |> Html.map never
 
 
