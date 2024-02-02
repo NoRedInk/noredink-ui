@@ -67,9 +67,7 @@ view config =
                 ]
                 [ Control.view config.update config.settings ]
             ]
-        , viewIf
-            (\_ -> viewExampleCode ellieLink config exampleCodes)
-            (not (List.isEmpty exampleCodes))
+        , viewExampleCode ellieLink config exampleCodes
         ]
 
 
