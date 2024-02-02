@@ -42,7 +42,7 @@ example =
     , version = version
     , categories = [ Animations ]
     , keyboardSupport = []
-    , state = init
+    , init = init
     , update = update
     , subscriptions =
         \state ->

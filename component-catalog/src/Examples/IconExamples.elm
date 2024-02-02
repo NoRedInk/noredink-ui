@@ -19,6 +19,7 @@ import Code
 import Css
 import Css.Global
 import Example exposing (Example)
+import ExampleSection
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
@@ -52,7 +53,7 @@ example config =
     , version = config.version
     , categories = [ Icons ]
     , keyboardSupport = []
-    , state = init config
+    , init = init config
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview = config.preview
@@ -200,7 +201,8 @@ view settings groups =
         viewExampleSection ( group, values ) =
             viewWithCustomStyles settings group values
     in
-    Heading.h2 [ Heading.plaintext "Grouped Icons" ]
+    ExampleSection.sectionWithCss "About" [ Css.flex (Css.int 1) ] Text.smallBody [ aboutMsg ]
+        :: Heading.h2 [ Heading.plaintext "Grouped Icons", Heading.css [ Css.marginTop (Css.px 10) ] ]
         :: viewSettings settings
         :: List.map viewExampleSection groups
         ++ [ Html.section []
@@ -214,7 +216,18 @@ view settings groups =
            ]
 
 
-{-| -}
+aboutMsg : Text.Attribute msg
+aboutMsg =
+    Text.markdown
+        """
+- Our icons are Elm SVGs, not separate files or sprites. We use an opaque type to represent them, which enables nice type-safe composability across our components.
+- For decorative SVGs (which is the default), we add `aria-hidden=true` to the SVG node.
+- For non-decorative SVGs, we use Pattern #5 `<svg>` + `role='img'` + `<title>` from [Accessible SVGs: Perfect Patterns For Screen Reader Users](https://www.smashingmagazine.com/2021/05/accessible-svg-patterns-comparison/).
+- Instructions for adding new SVG icons can be found in the [monolith README](https://github.com/NoRedInk/NoRedInk/blob/master/monolith/README.md#adding-new-svg-icons).
+
+"""
+
+
 viewWithCustomStyles : Settings -> String -> List ( String, Svg.Svg, List Css.Style ) -> Html msg
 viewWithCustomStyles { showIconName } headerText icons =
     Html.section

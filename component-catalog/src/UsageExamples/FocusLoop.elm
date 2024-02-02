@@ -31,7 +31,7 @@ example : UsageExample State Msg
 example =
     { name = "Focus Loop"
     , categories = []
-    , state = init
+    , init = init
     , update = update
     , subscriptions = \_ -> Sub.none
     , about = []

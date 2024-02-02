@@ -206,7 +206,7 @@ example =
           , result = "Select the tab to the right of the currently-selected Tab"
           }
         ]
-    , state = init
+    , init = init
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =

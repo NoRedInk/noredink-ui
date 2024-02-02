@@ -54,7 +54,7 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , state = init
+    , init = init
     , update = update
     , subscriptions = \_ -> Sub.none
     , categories = [ Layout ]
@@ -386,6 +386,77 @@ view ellieLinkConfig state =
                                     ]
                                 ]
                     ]
+          }
+        ]
+    , Heading.h2
+        [ Heading.plaintext "Menu trigger base styles"
+        , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
+        ]
+    , Table.view []
+        [ Table.string
+            { header = "Trigger type"
+            , value = .menu
+            , width = Css.pct 30
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Example"
+            , view = .example
+            , width = Css.px 300
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        ]
+        [ { menu = "Menu.defaultTrigger"
+          , example =
+                Menu.view (FocusAndToggle "defaultTrigger")
+                    [ Menu.defaultTrigger "Log in" []
+                    , Menu.isOpen (isOpen "defaultTrigger")
+                    , Menu.buttonId "defaultTrigger"
+                    , Menu.menuId "defaultTrigger"
+                    ]
+                    []
+          }
+        , { menu = "Menu.button"
+          , example =
+                Menu.view (FocusAndToggle "button")
+                    [ Menu.button "Log in" []
+                    , Menu.isOpen (isOpen "button")
+                    , Menu.buttonId "button"
+                    , Menu.menuId "button"
+                    ]
+                    []
+          }
+        , { menu = "Menu.clickableText"
+          , example =
+                Menu.view (FocusAndToggle "clickableText")
+                    [ Menu.clickableText "Log in" []
+                    , Menu.isOpen (isOpen "clickableText")
+                    , Menu.buttonId "clickableText"
+                    , Menu.menuId "clickableText"
+                    ]
+                    []
+          }
+        , { menu = "Menu.clickableSvg with UiIcon.gear"
+          , example =
+                Menu.view (FocusAndToggle "clickableSvg")
+                    [ Menu.clickableSvg "Log in" UiIcon.gear []
+                    , Menu.isOpen (isOpen "clickableSvg")
+                    , Menu.buttonId "clickableSvg"
+                    , Menu.menuId "clickableSvg"
+                    ]
+                    []
+          }
+        , { menu = "Menu.clickableSvgWithoutIndicator with UiIcon.gear"
+          , example =
+                Menu.view (FocusAndToggle "clickableSvgWithoutIndicator")
+                    [ Menu.clickableSvgWithoutIndicator "Log in" UiIcon.gear []
+                    , Menu.isOpen (isOpen "clickableSvgWithoutIndicator")
+                    , Menu.buttonId "clickableSvgWithoutIndicator"
+                    , Menu.menuId "clickableSvgWithoutIndicator"
+                    ]
+                    []
           }
         ]
     ]
