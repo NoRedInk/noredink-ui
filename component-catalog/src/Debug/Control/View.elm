@@ -42,8 +42,16 @@ view config =
         value =
             Control.currentValue config.settings
 
-        ellieLink =
+        ellieLink example =
             EllieLink.view config.ellieLinkConfig
+                { fullModuleName = Example.fullName config
+                , name = config.name
+                , sectionName = example.sectionName
+                , mainType = config.mainType
+                , extraCode = config.extraCode
+                , renderExample = config.renderExample
+                , code = example.code
+                }
 
         exampleCodes =
             config.toExampleCode value
@@ -79,7 +87,16 @@ view config =
                     [ Heading.plaintext "Code Sample"
                     , Heading.css [ color Colors.white ]
                     ]
-                    :: List.map (viewExampleCode ellieLink config) exampleCodes
+                    :: (case exampleCodes of
+                            singular :: [] ->
+                                [ ellieLink singular
+                                , viewCode singular.code
+                                ]
+
+                            _ ->
+                                List.map (\example -> viewCodeDetails (ellieLink example) example)
+                                    exampleCodes
+                       )
                 )
             , Container.css
                 [ padding (px 20)
@@ -98,19 +115,8 @@ view config =
         ]
 
 
-viewExampleCode :
-    (EllieLink.SectionExample -> Html msg)
-    ->
-        { component
-            | name : String
-            , version : Int
-            , mainType : Maybe String
-            , extraCode : List String
-            , renderExample : String -> String
-        }
-    -> { sectionName : String, code : String }
-    -> Html msg
-viewExampleCode ellieLink component example =
+viewCodeDetails : Html msg -> { sectionName : String, code : String } -> Html msg
+viewCodeDetails ellieLink example =
     details
         []
         [ summary [ css [ color Colors.yellow ] ]
@@ -120,21 +126,18 @@ viewExampleCode ellieLink component example =
                 ]
             ]
         , ellieLink
-            { fullModuleName = Example.fullName component
-            , name = component.name
-            , sectionName = example.sectionName
-            , mainType = component.mainType
-            , extraCode = component.extraCode
-            , renderExample = component.renderExample
-            , code = example.code
-            }
-        , code
-            [ css
-                [ display block
-                , whiteSpace preWrap
-                , marginTop (px 8)
-                , color Colors.yellow
-                ]
-            ]
-            [ text example.code ]
+        , viewCode example.code
         ]
+
+
+viewCode : String -> Html msg
+viewCode code_ =
+    code
+        [ css
+            [ display block
+            , whiteSpace preWrap
+            , marginTop (px 8)
+            , color Colors.yellow
+            ]
+        ]
+        [ text code_ ]
