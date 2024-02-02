@@ -5,15 +5,24 @@ import_code_block="import Examples.ExampleName as ExampleName"
 
 example_code_block=$(cat <<-END
 ExampleName.example
-    |> Example.wrapMsg ExampleNameMsg
-        (\msg ->
-            case msg of
-                ExampleNameMsg childMsg ->
-                    Just childMsg
+        |> Example.wrapMsg ExampleNameMsg
+            (\msg ->
+                case msg of
+                    ExampleNameMsg childMsg ->
+                        Just childMsg
 
-                _ ->
-                    Nothing
-        )
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState ExampleNameState
+            (\msg ->
+                case msg of
+                    ExampleNameState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
 END
 )
 
@@ -59,7 +68,7 @@ do
     state+=" ${subbed_state}"
     msg+=" ${subbed_msg}"
   else
-    all="${all//\]/    , ${subbed_example}}\n    ]"
+    all="${all//\]/, ${subbed_example}}\n    ]"
     state+="\n    | ${subbed_state}"
     msg+="\n    | ${subbed_msg}"
   fi
@@ -72,4 +81,4 @@ printf "module Examples exposing (Msg, State, all)\n\n" >| Examples.elm
 printf "${imports}\n\n\n" >> Examples.elm
 printf "${all}\n\n\n" >> Examples.elm
 printf "${state}\n\n\n" >> Examples.elm
-printf "${msg}\n\n\n" >> Examples.elm
+printf "${msg}\n" >> Examples.elm

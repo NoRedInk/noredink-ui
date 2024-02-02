@@ -362,25 +362,6 @@ all =
                     _ ->
                         Nothing
             )
-    , Fonts.example
-        |> Example.wrapMsg FontsMsg
-            (\msg ->
-                case msg of
-                    FontsMsg childMsg ->
-                        Just childMsg
-
-                    _ ->
-                        Nothing
-            )
-        |> Example.wrapState FontsState
-            (\msg ->
-                case msg of
-                    FontsState childState ->
-                        Just childState
-
-                    _ ->
-                        Nothing
-            )
     , FocusRing.example
         |> Example.wrapMsg FocusRingMsg
             (\msg ->
@@ -395,6 +376,25 @@ all =
             (\msg ->
                 case msg of
                     FocusRingState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , Fonts.example
+        |> Example.wrapMsg FontsMsg
+            (\msg ->
+                case msg of
+                    FontsMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState FontsState
+            (\msg ->
+                case msg of
+                    FontsState childState ->
                         Just childState
 
                     _ ->
@@ -1085,8 +1085,8 @@ type State
     | ConfettiState Confetti.State
     | ContainerState Container.State
     | DividerState Divider.State
-    | FontsState Fonts.State
     | FocusRingState FocusRing.State
+    | FontsState Fonts.State
     | HeaderState Header.State
     | HeadingState Heading.State
     | HighlighterState Highlighter.State
@@ -1141,8 +1141,8 @@ type Msg
     | ConfettiMsg Confetti.Msg
     | ContainerMsg Container.Msg
     | DividerMsg Divider.Msg
-    | FontsMsg Fonts.Msg
     | FocusRingMsg FocusRing.Msg
+    | FontsMsg Fonts.Msg
     | HeaderMsg Header.Msg
     | HeadingMsg Heading.Msg
     | HighlighterMsg Highlighter.Msg
@@ -1150,7 +1150,6 @@ type Msg
     | LoadingMsg Loading.Msg
     | LogoMsg Logo.Msg
     | MenuMsg Menu.Msg
-    | TabsMinimalMsg TabsMinimal.Msg
     | MessageMsg Message.Msg
     | ModalMsg Modal.Msg
     | OutlineMsg Outline.Msg
@@ -1173,6 +1172,7 @@ type Msg
     | SwitchMsg Switch.Msg
     | TableMsg Table.Msg
     | TabsMsg Tabs.Msg
+    | TabsMinimalMsg TabsMinimal.Msg
     | TextMsg Text.Msg
     | TextAreaMsg TextArea.Msg
     | TextInputMsg TextInput.Msg
