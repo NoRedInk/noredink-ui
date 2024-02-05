@@ -14,6 +14,7 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Guidance
 import Html.Styled exposing (..)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Heading.V3 as Heading
@@ -54,7 +55,7 @@ example =
             , Switch.custom [ Key.tabbable False ]
             ]
         ]
-    , about = []
+    , about = [ Guidance.helpfullyDisabled ]
     , view =
         \ellieLinkConfig state ->
             let
@@ -168,7 +169,7 @@ example =
                   }
                 ]
             , Heading.h2
-                [ Heading.plaintext "Tooltip example"
+                [ Heading.plaintext "Helpfully-Disabled Example"
                 , Heading.css
                     [ Css.marginTop Spacing.verticalSpacerPx
                     , Css.marginBottom (Css.px 10)
