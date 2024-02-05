@@ -35,7 +35,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
 import Nri.Ui.Select.V9 as Select
 import Nri.Ui.TextArea.V5 as TextArea
-import Nri.Ui.TextInput.V7 as TextInput
+import Nri.Ui.TextInput.V8 as TextInput
 
 
 {-| An interactive control that produces a value `a`.

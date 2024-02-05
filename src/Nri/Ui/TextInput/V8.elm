@@ -1,4 +1,4 @@
-module Nri.Ui.TextInput.V7 exposing
+module Nri.Ui.TextInput.V8 exposing
     ( view, generateId
     , number, float, text, newPassword, currentPassword, email, search, addressLevel2, addressLine1, countryName, familyName, givenName, username, organization, organizationTitle, postalCode, sex, tel, date, datetime
     , readOnlyText
@@ -14,19 +14,9 @@ module Nri.Ui.TextInput.V7 exposing
 {-|
 
 
-# Patch changes
+# Changes from V7
 
-  - no longer defaults the placeholder value to the label text
-  - Adjust disabled styles
-
-
-# Changes from V6
-
-  - custom takes a list of attributes and appends them to the end of the previous attributes, instead of prepending a single attr.
-  - change `view` API so it only takes a list of attributes (meaning the value and input type are now passed in as attributes)
-  - make the search icon and reset pattern the default for `search`
-  - add "Show password" and "Hide password" as default behavior for `password` inputs
-  - split password into `newPassword` and `currentPassword` to fix the autocomplete behavior
+  - add `visibilityToggleId` to password inputs to enable blurring and refocusing on the toggle button, ensuring that screen readers announce the label change.
 
 @docs view, generateId
 
@@ -67,7 +57,7 @@ import InputLabelInternal
 import Iso8601
 import Keyboard.Event
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
-import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.InputStyles.V4 as InputStyles exposing (defaultMarginTop)
@@ -166,6 +156,7 @@ newPassword :
     { onInput : String -> msg
     , showPassword : Bool
     , setShowPassword : Bool -> msg
+    , visibilityToggleId : String
     }
     -> Attribute String msg
 newPassword =
@@ -184,6 +175,7 @@ currentPassword :
     { onInput : String -> msg
     , showPassword : Bool
     , setShowPassword : Bool -> msg
+    , visibilityToggleId : String
     }
     -> Attribute String msg
 currentPassword =
@@ -196,6 +188,7 @@ password :
         { onInput : String -> msg
         , showPassword : Bool
         , setShowPassword : Bool -> msg
+        , visibilityToggleId : String
         }
     -> Attribute String msg
 password autocomplete settings =
@@ -204,7 +197,7 @@ password autocomplete settings =
             | toString = Just identity
             , fromString = Just identity
             , onInput = Just settings.onInput
-            , floatingContent =
+            , passwordFloatingContent =
                 Just <|
                     viewPasswordFloatingContent
                         (if settings.showPassword then
@@ -227,6 +220,8 @@ password autocomplete settings =
                 , inputMode = Nothing
                 , autocomplete = Just autocomplete
                 , inputCss = Css.paddingRight (Css.px 135) :: config.inputCss
+                , isPassword = True
+                , passwordVisibilityToggleId = Just settings.visibilityToggleId
             }
         )
 
@@ -722,6 +717,7 @@ type alias EventsAndValues value msg =
     , onBlur : Maybe msg
     , onEnter : Maybe msg
     , floatingContent : Maybe (FloatingContentConfig msg -> Html msg)
+    , passwordFloatingContent : Maybe (PasswordFloatingContentConfig msg -> Html msg)
     }
 
 
@@ -735,6 +731,7 @@ emptyEventsAndValues =
     , onEnter = Nothing
     , onInput = Nothing
     , floatingContent = Nothing
+    , passwordFloatingContent = Nothing
     }
 
 
@@ -750,6 +747,7 @@ map f toString (Attribute eventsAndValues configF) =
         , onEnter = eventsAndValues.onEnter
         , onInput = eventsAndValues.onInput
         , floatingContent = eventsAndValues.floatingContent
+        , passwordFloatingContent = eventsAndValues.passwordFloatingContent
         }
         configF
 
@@ -774,6 +772,8 @@ type alias Config msg =
     , fieldType : Maybe String
     , inputMode : Maybe String
     , autocomplete : Maybe String
+    , isPassword : Bool
+    , passwordVisibilityToggleId : Maybe String
     }
 
 
@@ -796,6 +796,8 @@ emptyConfig =
     , fieldType = Nothing
     , inputMode = Nothing
     , autocomplete = Nothing
+    , isPassword = False
+    , passwordVisibilityToggleId = Nothing
     }
 
 
@@ -826,6 +828,7 @@ applyEvents =
             , onFocus = orExisting .onFocus eventsAndValues existing
             , onBlur = orExisting .onBlur eventsAndValues existing
             , floatingContent = orExisting .floatingContent eventsAndValues existing
+            , passwordFloatingContent = orExisting .passwordFloatingContent eventsAndValues existing
             , onEnter = orExisting .onEnter eventsAndValues existing
             , onInput = orExisting .onInput eventsAndValues existing
             }
@@ -969,18 +972,34 @@ view label attributes =
             , theme = config.inputStyle
             }
             config
-         , Maybe.map2
-            (\view_ onStringInput_ ->
-                view_
-                    { label = label
-                    , stringValue = stringValue
-                    , onInput = onStringInput_
-                    , noMarginTop = config.noMarginTop
-                    }
-            )
-            eventsAndValues.floatingContent
-            eventsAndValues.onInput
-            |> Maybe.withDefault (Html.text "")
+         , if config.isPassword then
+            Maybe.map2
+                (\view_ onStringInput_ ->
+                    view_
+                        { label = label
+                        , stringValue = stringValue
+                        , onInput = onStringInput_
+                        , noMarginTop = config.noMarginTop
+                        , visibilityToggleId = Maybe.withDefault "" config.passwordVisibilityToggleId
+                        }
+                )
+                eventsAndValues.passwordFloatingContent
+                eventsAndValues.onInput
+                |> Maybe.withDefault (Html.text "")
+
+           else
+            Maybe.map2
+                (\view_ onStringInput_ ->
+                    view_
+                        { label = label
+                        , stringValue = stringValue
+                        , onInput = onStringInput_
+                        , noMarginTop = config.noMarginTop
+                        }
+                )
+                eventsAndValues.floatingContent
+                eventsAndValues.onInput
+                |> Maybe.withDefault (Html.text "")
          ]
             ++ InputErrorAndGuidanceInternal.view idValue InputErrorAndGuidanceInternal.smallMargin config
         )
@@ -999,6 +1018,15 @@ type alias FloatingContentConfig msg =
     , stringValue : String
     , onInput : String -> msg
     , noMarginTop : Bool
+    }
+
+
+type alias PasswordFloatingContentConfig msg =
+    { label : String
+    , stringValue : String
+    , onInput : String -> msg
+    , noMarginTop : Bool
+    , visibilityToggleId : String
     }
 
 
@@ -1049,7 +1077,7 @@ resetButton config =
         ]
 
 
-viewPasswordFloatingContent : String -> msg -> FloatingContentConfig msg -> Html msg
+viewPasswordFloatingContent : String -> msg -> PasswordFloatingContentConfig msg -> Html msg
 viewPasswordFloatingContent label toggle config =
     if config.stringValue == "" then
         Html.text ""
@@ -1073,4 +1101,5 @@ viewPasswordFloatingContent label toggle config =
                 , Css.fontSize (Css.px 13)
                 ]
             , ClickableText.custom [ Attributes.type_ "button" ]
+            , ClickableText.id config.visibilityToggleId
             ]

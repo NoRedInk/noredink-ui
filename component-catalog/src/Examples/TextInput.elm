@@ -23,7 +23,7 @@ import Iso8601
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
-import Nri.Ui.TextInput.V7 as TextInput
+import Nri.Ui.TextInput.V8 as TextInput
 import Process
 import Task
 import ViewHelpers exposing (viewExamples)
@@ -35,7 +35,7 @@ moduleName =
 
 
 version =
-    7
+    8
 
 
 {-| -}
