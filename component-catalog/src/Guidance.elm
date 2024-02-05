@@ -1,8 +1,11 @@
 module Guidance exposing (..)
 
+import Examples.RadioButtonDotless as RadioButtonDotlessExample
 import Html.Styled exposing (..)
 import Nri.Ui.ClickableText.V4 as ClickableText
+import Nri.Ui.Message.V4 as Message
 import Nri.Ui.Text.V6 as Text
+import Routes
 
 
 useATACGuide : String -> List (Html msg)
@@ -17,3 +20,16 @@ useATACGuide moduleName =
             ]
         ]
     ]
+
+
+useRadioButtonDotless : Html msg
+useRadioButtonDotless =
+    Message.view
+        [ Message.html
+            [ text "Looking for a group of buttons where only one button is selectable at a time? Check out "
+            , ClickableText.link "RadioButtonDotless"
+                [ ClickableText.href (Routes.exampleHref RadioButtonDotlessExample.example)
+                , ClickableText.appearsInline
+                ]
+            ]
+        ]
