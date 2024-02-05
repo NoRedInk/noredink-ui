@@ -82,9 +82,20 @@ example =
     , about =
         [ Text.mediumBody
             [ Text.html
-                [ text "You might also know the Block element as a “Display Element”. Learn more in "
-                , ClickableText.link "Display Elements and Scaffolding Container: additional things to know"
-                    [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Display-Elements-and-Scaffolding-Container-additional-things-to-know--BwRhBMKyXFFSWz~1mljN29bcAg-6vszpNDLoYIiMyg7Wv66s"
+                [ text "You might also know the Block element as a “Display Element”. Learn more about this component in: "
+                , ul []
+                    [ li []
+                        [ ClickableText.link "Display Elements and Scaffolding Container: additional things to know"
+                            [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Display-Elements-and-Scaffolding-Container-additional-things-to-know--BwRhBMKyXFFSWz~1mljN29bcAg-6vszpNDLoYIiMyg7Wv66s"
+                            ]
+                        , text ", which identifies a number of interesting edge cases and known trade-offs."
+                        ]
+                    , li []
+                        [ ClickableText.link "Tessa's blog post"
+                            [ ClickableText.linkExternal "https://blog.noredink.com/post/710448547697426432/word-labels]"
+                            ]
+                        , text " explaining the initial constraints and approach."
+                        ]
                     ]
                 ]
             ]
