@@ -47,7 +47,7 @@ example =
         , example_ FocusRing.tightStyles
         ]
     , about =
-        [ Text.mediumBody
+        [ Text.smallBody
             [ Text.html
                 [ text "Custom high-contrast focus ring styles. Learn more about this component in "
                 , ClickableText.link "Custom Focus Rings on the NoRedInk blog"

@@ -190,7 +190,7 @@ view_ ellieLinkConfig example state =
 
 viewAbout : List (Html Never) -> Html msg
 viewAbout about =
-    Html.div [] about
+    Html.div [ Attributes.css [ Css.margin2 (Css.px 10) Css.zero ] ] about
         |> Html.map never
 
 

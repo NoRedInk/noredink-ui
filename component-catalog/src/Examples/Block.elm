@@ -80,7 +80,7 @@ example =
             |> p [ css [ Fonts.baseFont, Css.fontSize (Css.px 12), Css.margin Css.zero ] ]
         ]
     , about =
-        [ Text.mediumBody
+        [ Text.smallBody
             [ Text.html
                 [ text "You might also know the Block element as a “Display Element”. Learn more in "
                 , ClickableText.link "Display Elements and Scaffolding Container: additional things to know"
