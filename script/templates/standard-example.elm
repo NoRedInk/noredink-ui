@@ -162,7 +162,7 @@ init =
 
 initAttributes : Control (List ( String, COMPONENT_NAME.Attribute msg ))
 initAttributes =
-    ControlExtra.list
+    Control.list
 
 
 {-| -}
