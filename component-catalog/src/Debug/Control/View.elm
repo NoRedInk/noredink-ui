@@ -71,6 +71,8 @@ view config =
                     ]
                 , withMedia [ notMobile ]
                     [ flexBasis (pct 50)
+                    , flexGrow zero
+                    , flexShrink zero
                     , paddingRight (px 30)
                     , borderTopRightRadius zero
                     , borderBottomRightRadius zero
