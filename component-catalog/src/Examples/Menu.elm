@@ -54,7 +54,7 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , state = init
+    , init = init
     , update = update
     , subscriptions = \_ -> Sub.none
     , categories = [ Layout ]
@@ -388,6 +388,77 @@ view ellieLinkConfig state =
                     ]
           }
         ]
+    , Heading.h2
+        [ Heading.plaintext "Menu trigger base styles"
+        , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
+        ]
+    , Table.view []
+        [ Table.string
+            { header = "Trigger type"
+            , value = .menu
+            , width = Css.pct 30
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Example"
+            , view = .example
+            , width = Css.px 300
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        ]
+        [ { menu = "Menu.defaultTrigger"
+          , example =
+                Menu.view (FocusAndToggle "defaultTrigger")
+                    [ Menu.defaultTrigger "Log in" []
+                    , Menu.isOpen (isOpen "defaultTrigger")
+                    , Menu.buttonId "defaultTrigger"
+                    , Menu.menuId "defaultTrigger"
+                    ]
+                    []
+          }
+        , { menu = "Menu.button"
+          , example =
+                Menu.view (FocusAndToggle "button")
+                    [ Menu.button "Log in" []
+                    , Menu.isOpen (isOpen "button")
+                    , Menu.buttonId "button"
+                    , Menu.menuId "button"
+                    ]
+                    []
+          }
+        , { menu = "Menu.clickableText"
+          , example =
+                Menu.view (FocusAndToggle "clickableText")
+                    [ Menu.clickableText "Log in" []
+                    , Menu.isOpen (isOpen "clickableText")
+                    , Menu.buttonId "clickableText"
+                    , Menu.menuId "clickableText"
+                    ]
+                    []
+          }
+        , { menu = "Menu.clickableSvg with UiIcon.gear"
+          , example =
+                Menu.view (FocusAndToggle "clickableSvg")
+                    [ Menu.clickableSvg "Log in" UiIcon.gear []
+                    , Menu.isOpen (isOpen "clickableSvg")
+                    , Menu.buttonId "clickableSvg"
+                    , Menu.menuId "clickableSvg"
+                    ]
+                    []
+          }
+        , { menu = "Menu.clickableSvgWithoutIndicator with UiIcon.gear"
+          , example =
+                Menu.view (FocusAndToggle "clickableSvgWithoutIndicator")
+                    [ Menu.clickableSvgWithoutIndicator "Log in" UiIcon.gear []
+                    , Menu.isOpen (isOpen "clickableSvgWithoutIndicator")
+                    , Menu.buttonId "clickableSvgWithoutIndicator"
+                    , Menu.menuId "clickableSvgWithoutIndicator"
+                    ]
+                    []
+          }
+        ]
     ]
 
 
@@ -419,18 +490,24 @@ type alias Settings =
 initSettings : Control Settings
 initSettings =
     Control.record Settings
-        |> Control.field "attributes" initSettingAttributes
+        |> Control.field "" initSettingAttributes
         |> Control.field "withTooltip" (Control.bool False)
 
 
 initSettingAttributes : Control (List ( String, Menu.Attribute Msg ))
 initSettingAttributes =
-    ControlExtra.list
-        |> ControlExtra.optionalListItem "alignment" controlAlignment
-        |> ControlExtra.optionalBoolListItem "isDisabled" ( "Menu.isDisabled True", Menu.isDisabled True )
-        |> ControlExtra.optionalListItem "menuWidth" controlMenuWidth
-        |> ControlExtra.optionalBoolListItem "opensOnHover" ( "Menu.opensOnHover True", Menu.opensOnHover True )
-        |> ControlExtra.listItem "triggering element" controlTrigger
+    Control.list
+        |> ControlExtra.listItems "popout"
+            (Control.list
+                |> ControlExtra.optionalListItem "alignment" controlAlignment
+                |> ControlExtra.optionalListItem "menuWidth" controlMenuWidth
+            )
+        |> ControlExtra.listItems "triggering element"
+            (Control.list
+                |> ControlExtra.optionalBoolListItem "isDisabled" ( "Menu.isDisabled True", Menu.isDisabled True )
+                |> ControlExtra.optionalBoolListItem "opensOnHover" ( "Menu.opensOnHover True", Menu.opensOnHover True )
+                |> ControlExtra.listItem "trigger" controlTrigger
+            )
 
 
 controlAlignment : Control ( String, Menu.Attribute msg )
@@ -534,7 +611,7 @@ controlTrigger =
 
 controlButtonAttributes : Control ( List String, List (Button.Attribute msg) )
 controlButtonAttributes =
-    ControlExtra.list
+    Control.list
         |> CommonControls.iconNotCheckedByDefault "Button" Button.icon
         |> ControlExtra.optionalListItem "exactWidth"
             (Control.map
@@ -543,14 +620,14 @@ controlButtonAttributes =
                     , Button.exactWidth i
                     )
                 )
-                (ControlExtra.int 220)
+                (Control.int 220)
             )
         |> Control.map List.unzip
 
 
 controlClickableTextAttributes : Control ( List String, List (ClickableText.Attribute msg) )
 controlClickableTextAttributes =
-    ControlExtra.list
+    Control.list
         |> CommonControls.iconNotCheckedByDefault "ClickableText" ClickableText.icon
         |> Control.map List.unzip
 
@@ -559,7 +636,7 @@ controlMenuWidth : Control ( String, Menu.Attribute msg )
 controlMenuWidth =
     Control.map
         (\val -> ( "Menu.menuWidth " ++ String.fromInt val, Menu.menuWidth val ))
-        (ControlExtra.int 220)
+        (Control.int 220)
 
 
 {-| -}

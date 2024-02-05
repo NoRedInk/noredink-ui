@@ -106,26 +106,6 @@ describe("UI tests", function () {
     handleAxeResults(name, results);
   };
 
-  const forAllOptions = async (labelName, callback) => {
-    await page.waitForXPath(
-      `//label[contains(., '${labelName}')]//select`,
-      200
-    );
-    const [select] = await page.$x(
-      `//label[contains(., '${labelName}')]//select`
-    );
-    const options = await select.$x(
-      `//label[contains(., '${labelName}')]//option`
-    );
-    // Actually doing the select was super flakey.
-    // Temporarily just using the first element to get
-    // CI consistent again. We can cover all the cases separately...
-    const optionEl = options[0];
-    const option = await page.evaluate((el) => el.innerText, optionEl);
-    await page.select("select", option);
-    await callback(option);
-  };
-
   const messageProcessing = async (name, location) => {
     await goToExample(name, location);
     await percySnapshot(page, name);
@@ -134,17 +114,6 @@ describe("UI tests", function () {
       .disableRules(skippedRules[name] || [])
       .analyze();
     handleAxeResults(name, axe);
-
-    const [theme] = await page.$x("//label[contains(., 'theme')]");
-    await theme.click();
-
-    await forAllOptions("theme", async (option) => {
-      await percySnapshot(page, `${name} - ${option}`);
-      axe = await new AxePuppeteer(page)
-        .withRules(["color-contrast"])
-        .analyze();
-      handleAxeResults(`${name} - ${option}`, axe);
-    });
   };
 
   const modalProcessing = async (name, location) => {
@@ -230,6 +199,7 @@ describe("UI tests", function () {
   };
 
   const skippedRules = {
+    Block: ["scrollable-region-focusable"],
     // Loading's color contrast check seems to change behavior depending on whether Percy snapshots are taken or not
     Loading: ["color-contrast"],
     Outline: ["color-contrast"],

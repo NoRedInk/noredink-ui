@@ -88,6 +88,9 @@ hint = 'upgrade to V7'
 hint = 'upgrade to V2'
 usages = ['component-catalog-app/Examples/Tooltip.elm']
 
+[forbidden."Nri.Ui.ClickableText.V3"]
+hint = 'upgrade to V4'
+
 [forbidden."Nri.Ui.Container.V1"]
 hint = 'upgrade to V2'
 

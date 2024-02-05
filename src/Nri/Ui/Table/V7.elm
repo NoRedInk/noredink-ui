@@ -261,6 +261,7 @@ headerStyles =
     [ padding4 (px 11) (px 12) (px 14) (px 12)
     , textAlign left
     , fontWeight bold
+    , color gray20
     ]
 
 

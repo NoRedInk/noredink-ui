@@ -65,7 +65,7 @@ view config =
                         ]
                     ]
                 ]
-                [ fromUnstyled (Control.view config.update config.settings) ]
+                [ Control.view config.update config.settings ]
             ]
         , viewIf
             (\_ -> viewExampleCode ellieLink config exampleCodes)

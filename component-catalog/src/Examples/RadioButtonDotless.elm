@@ -67,7 +67,7 @@ type Msg
 
 controlAttributes : Control (List ( String, RadioButtonDotless.Attribute ControlSelection Msg ))
 controlAttributes =
-    ControlExtra.list
+    Control.list
         |> ControlExtra.optionalListItem "textAlign" textAlignControl
         |> ControlExtra.optionalListItem "width" widthControl
         |> ControlExtra.optionalListItem "size" sizeControl
@@ -157,7 +157,7 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , state = init
+    , init = init
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview = preview

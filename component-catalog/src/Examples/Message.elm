@@ -35,44 +35,53 @@ init : State
 init =
     { show = True
     , control =
-        ControlExtra.list
-            |> ControlExtra.optionalListItem "theme" controlTheme
-            |> ControlExtra.listItem "content"
-                (CommonControls.content
-                    { moduleName = moduleName
-                    , paragraph = Just Message.paragraph
-                    , plaintext = Message.plaintext
-                    , markdown = Just Message.markdown
-                    , html = Message.html
-                    , httpError = Just Message.httpError
-                    }
+        Control.list
+            |> ControlExtra.listItems "Content & Behavior"
+                (Control.list
+                    |> ControlExtra.listItem "content"
+                        (CommonControls.content
+                            { moduleName = moduleName
+                            , paragraph = Just Message.paragraph
+                            , plaintext = Message.plaintext
+                            , markdown = Just Message.markdown
+                            , html = Message.html
+                            , httpError = Just Message.httpError
+                            }
+                        )
+                    |> ControlExtra.optionalListItem "codeDetails"
+                        (Control.map (\str -> ( "Message.codeDetails " ++ Code.stringMultiline str, Message.codeDetails str ))
+                            (Control.stringTextarea CommonControls.badBodyString)
+                        )
+                    |> ControlExtra.optionalBoolListItem "dismissable"
+                        ( "Message.onDismiss Dismiss", Message.onDismiss Dismiss )
                 )
-            |> ControlExtra.optionalListItem "role" controlRole
-            |> ControlExtra.optionalListItem "codeDetails"
-                (Control.map (\str -> ( "Message.codeDetails " ++ Code.stringMultiline str, Message.codeDetails str ))
-                    (Control.stringTextarea CommonControls.badBodyString)
+            |> ControlExtra.listItems "Theme & Semantics"
+                (Control.list
+                    |> ControlExtra.optionalListItem "theme" controlTheme
+                    |> ControlExtra.optionalListItem "role" controlRole
+                    |> CommonControls.iconNotCheckedByDefault "Message" Message.icon
+                    |> ControlExtra.optionalBoolListItem "hideIconForMobile"
+                        ( "Message.hideIconForMobile", Message.hideIconForMobile )
                 )
-            |> ControlExtra.optionalBoolListItem "dismissable"
-                ( "Message.onDismiss Dismiss", Message.onDismiss Dismiss )
-            |> CommonControls.iconNotCheckedByDefault "Message" Message.icon
-            |> ControlExtra.optionalBoolListItem "hideIconForMobile"
-                ( "Message.hideIconForMobile", Message.hideIconForMobile )
-            |> CommonControls.css
-                { moduleName = moduleName
-                , use = Message.css
-                }
-            |> CommonControls.mobileCss
-                { moduleName = moduleName
-                , use = Message.mobileCss
-                }
-            |> CommonControls.quizEngineMobileCss
-                { moduleName = moduleName
-                , use = Message.quizEngineMobileCss
-                }
-            |> CommonControls.notMobileCss
-                { moduleName = moduleName
-                , use = Message.notMobileCss
-                }
+            |> ControlExtra.listItems "CSS"
+                (Control.list
+                    |> CommonControls.css
+                        { moduleName = moduleName
+                        , use = Message.css
+                        }
+                    |> CommonControls.mobileCss
+                        { moduleName = moduleName
+                        , use = Message.mobileCss
+                        }
+                    |> CommonControls.quizEngineMobileCss
+                        { moduleName = moduleName
+                        , use = Message.quizEngineMobileCss
+                        }
+                    |> CommonControls.notMobileCss
+                        { moduleName = moduleName
+                        , use = Message.notMobileCss
+                        }
+                )
     }
 
 
@@ -145,7 +154,7 @@ example =
     , version = version
     , categories = [ Messaging ]
     , keyboardSupport = []
-    , state = init
+    , init = init
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =

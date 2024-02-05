@@ -36,7 +36,7 @@ example =
     , version = version
     , categories = [ Text ]
     , keyboardSupport = []
-    , state = init
+    , init = init
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -105,7 +105,7 @@ type alias State =
 init : State
 init =
     { control =
-        ControlExtra.list
+        Control.list
             |> ControlExtra.listItem "content" controlContent
             |> CommonControls.css { moduleName = moduleName, use = Heading.css }
             |> ControlExtra.optionalListItem "style" controlStyle

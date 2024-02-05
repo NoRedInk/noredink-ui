@@ -26,6 +26,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
 import Nri.Ui.Heading.V3 as Heading
@@ -58,17 +59,19 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , state = init
+    , init = init
     , update = update
     , subscriptions = subscriptions
     , preview = preview
     , about =
-        [ let
-            url =
-                Routes.exampleHref RadioButtonDotlessExample.example
-          in
-          Message.view
-            [ Message.markdown <| "Looking for radio button that's styled more like a button?<br />Check out [RadioButtonDotless](" ++ url ++ ")"
+        [ Message.view
+            [ Message.html
+                [ text "Looking for a group of buttons where only one button is selectable at a time? Check out "
+                , ClickableText.link "RadioButtonDotless"
+                    [ ClickableText.href (Routes.exampleHref RadioButtonDotlessExample.example)
+                    , ClickableText.appearsInline
+                    ]
+                ]
             ]
         ]
     , view = view
@@ -340,7 +343,7 @@ initSelectionSettings =
 
 controlAttributes : Control (List ( String, RadioButton.Attribute Selection Msg ))
 controlAttributes =
-    ControlExtra.list
+    Control.list
         |> ControlExtra.optionalListItem "visibility" labelVisibility
         |> ControlExtra.optionalListItem "status" disabledOrEnabled
         |> ControlExtra.optionalListItem "onLockedClick" onLockedClick

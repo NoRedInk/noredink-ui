@@ -59,7 +59,7 @@ example =
           , result = "While focusing a tooltip trigger, opens/closes the tooltip. May trigger the underlying action too."
           }
         ]
-    , state = init
+    , init = init
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -401,24 +401,36 @@ viewToggleTip openTooltip =
 
 initStaticExampleSettings : Control (List ( String, Tooltip.Attribute Never ))
 initStaticExampleSettings =
-    ControlExtra.list
+    Control.list
         |> ControlExtra.listItem "content" controlContent
-        |> ControlExtra.optionalListItem "direction" controlDirection
-        |> ControlExtra.optionalListItem "direction -- viewport up to 1000px" controlDirectionForMobile
-        |> ControlExtra.optionalListItem "direction -- viewport up to 750px" controlDirectionForQuizEngineMobile
-        |> ControlExtra.optionalListItem "direction -- viewport up to 500px" controlDirectionForNarrowMobile
-        |> ControlExtra.optionalListItem "alignment" controlAlignment
-        |> ControlExtra.optionalListItem "alignment -- viewport up to 1000px" controlAlignmentForMobile
-        |> ControlExtra.optionalListItem "alignment -- viewport up to 750px" controlAlignmentForQuizEngineMobile
-        |> ControlExtra.optionalListItem "alignment -- viewport up to 500px" controlAlignmentForNarrowMobile
         |> ControlExtra.optionalBoolListItem "withoutTail" ( "Tooltip.withoutTail", Tooltip.withoutTail )
-        |> ControlExtra.optionalListItem "width" controlWidth
-        |> ControlExtra.optionalListItem "padding" controlPadding
-        |> CommonControls.css { moduleName = moduleName, use = Tooltip.css }
-        |> CommonControls.mobileCss { moduleName = moduleName, use = Tooltip.mobileCss }
-        |> CommonControls.quizEngineMobileCss { moduleName = moduleName, use = Tooltip.quizEngineMobileCss }
-        |> CommonControls.narrowMobileCss { moduleName = moduleName, use = Tooltip.narrowMobileCss }
-        |> CommonControls.notMobileCss { moduleName = moduleName, use = Tooltip.notMobileCss }
+        |> ControlExtra.listItems "direction"
+            (Control.list
+                |> ControlExtra.optionalListItem "direction" controlDirection
+                |> ControlExtra.optionalListItem "direction (viewport <= 1000px)" controlDirectionForMobile
+                |> ControlExtra.optionalListItem "direction (viewport <= 750px)" controlDirectionForQuizEngineMobile
+                |> ControlExtra.optionalListItem "direction (viewport <= 500px)" controlDirectionForNarrowMobile
+            )
+        |> ControlExtra.listItems "alignment"
+            (Control.list
+                |> ControlExtra.optionalListItem "alignment" controlAlignment
+                |> ControlExtra.optionalListItem "alignment (viewport <= 1000px)" controlAlignmentForMobile
+                |> ControlExtra.optionalListItem "alignment (viewport <= 750px)" controlAlignmentForQuizEngineMobile
+                |> ControlExtra.optionalListItem "alignment (viewport <= 500px)" controlAlignmentForNarrowMobile
+            )
+        |> ControlExtra.listItems "Size & Padding"
+            (Control.list
+                |> ControlExtra.optionalListItem "width" controlWidth
+                |> ControlExtra.optionalListItem "padding" controlPadding
+            )
+        |> ControlExtra.listItems "CSS"
+            (Control.list
+                |> CommonControls.css { moduleName = moduleName, use = Tooltip.css }
+                |> CommonControls.mobileCss { moduleName = moduleName, use = Tooltip.mobileCss }
+                |> CommonControls.quizEngineMobileCss { moduleName = moduleName, use = Tooltip.quizEngineMobileCss }
+                |> CommonControls.narrowMobileCss { moduleName = moduleName, use = Tooltip.narrowMobileCss }
+                |> CommonControls.notMobileCss { moduleName = moduleName, use = Tooltip.notMobileCss }
+            )
 
 
 controlContent : Control ( String, Tooltip.Attribute Never )
@@ -489,7 +501,7 @@ controlAlignment_ ( middleName, middleValue ) others =
                             , val (Css.px float)
                             )
                         )
-                        (ControlExtra.float 0)
+                        (Control.float 0)
                     )
                 )
                 others
@@ -540,7 +552,7 @@ controlWidth =
                 (\int ->
                     ( "Tooltip.exactWidth " ++ String.fromInt int, Tooltip.exactWidth int )
                 )
-                (ControlExtra.int 320)
+                (Control.int 320)
           )
         , ( "fitToContent", Control.value ( "Tooltip.fitToContent", Tooltip.fitToContent ) )
         ]
@@ -558,7 +570,7 @@ controlPadding =
                     , Tooltip.customPadding float
                     )
                 )
-                (ControlExtra.float 0)
+                (Control.float 0)
           )
         ]
 
@@ -601,7 +613,7 @@ viewCustomizableExample ellieLinkConfig ({ staticExampleSettings } as state) =
                       }
                     ]
             }
-        , Control.view UpdatePageSettings state.pageSettings |> Html.fromUnstyled
+        , Control.view UpdatePageSettings state.pageSettings
         , Html.div
             [ css
                 [ Css.displayFlex

@@ -10,7 +10,7 @@ import Category exposing (Category(..))
 import Code
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
-import Debug.Control.Extra as ControlExtra exposing (values)
+import Debug.Control.Extra exposing (values)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
@@ -41,7 +41,7 @@ example =
     , version = version
     , categories = [ Layout ]
     , keyboardSupport = []
-    , state = init
+    , init = init
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -344,7 +344,7 @@ controlSettings =
     Control.record Settings
         |> Control.field "Customizable column name" (Control.string "Grade")
         |> Control.field "Customizable column sorter" (Control.bool True)
-        |> Control.field "Customizable column width" (ControlExtra.int 10)
+        |> Control.field "Customizable column width" (Control.int 10)
         |> Control.field "Customizable column cell styles"
             (Control.choice
                 [ ( "[]", Control.value ( "[]", [] ) )
@@ -357,7 +357,7 @@ controlSettings =
                 ]
             )
         |> Control.field "Is loading" (Control.bool False)
-        |> Control.field "Sticky header"
+        |> Control.field "Header"
             (Control.maybe False
                 (Control.choice
                     [ ( "Default", Control.value Default )
@@ -376,6 +376,7 @@ controlSettings =
                       )
                     ]
                 )
+                |> Control.revealed "Sticky Header"
             )
 
 

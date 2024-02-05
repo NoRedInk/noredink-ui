@@ -362,25 +362,6 @@ all =
                     _ ->
                         Nothing
             )
-    , Fonts.example
-        |> Example.wrapMsg FontsMsg
-            (\msg ->
-                case msg of
-                    FontsMsg childMsg ->
-                        Just childMsg
-
-                    _ ->
-                        Nothing
-            )
-        |> Example.wrapState FontsState
-            (\msg ->
-                case msg of
-                    FontsState childState ->
-                        Just childState
-
-                    _ ->
-                        Nothing
-            )
     , FocusRing.example
         |> Example.wrapMsg FocusRingMsg
             (\msg ->
@@ -395,6 +376,25 @@ all =
             (\msg ->
                 case msg of
                     FocusRingState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , Fonts.example
+        |> Example.wrapMsg FontsMsg
+            (\msg ->
+                case msg of
+                    FontsMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState FontsState
+            (\msg ->
+                case msg of
+                    FontsState childState ->
                         Just childState
 
                     _ ->

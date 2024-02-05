@@ -40,8 +40,8 @@ type alias Model key =
     { -- Global UI
       route : Route
     , previousRoute : Maybe Route
-    , moduleStates : Dict String (Example Examples.State Examples.Msg)
-    , usageExampleStates : Dict String (UsageExample UsageExamples.State UsageExamples.Msg)
+    , moduleStates : Dict String Examples.State
+    , usageExampleStates : Dict String UsageExamples.State
     , isSideNavOpen : Bool
     , openTooltip : Maybe TooltipId
     , selectedContent : Content
@@ -55,17 +55,8 @@ init : () -> Url -> key -> ( Model key, Effect )
 init () url key =
     ( { route = Routes.fromLocation url
       , previousRoute = Nothing
-      , moduleStates =
-            Dict.fromList
-                (List.map
-                    (\example -> ( Example.routeName example, example ))
-                    Examples.all
-                )
-      , usageExampleStates =
-            Dict.fromList
-                (List.map (\example -> ( UsageExample.routeName example, example ))
-                    UsageExamples.all
-                )
+      , moduleStates = Dict.map (\_ example -> example.init) examplesDict
+      , usageExampleStates = Dict.map (\_ example -> example.init) usageExamplesDict
       , isSideNavOpen = False
       , openTooltip = Nothing
       , selectedContent = ComponentExamples
@@ -101,21 +92,54 @@ type Msg
     | SwallowEvent
 
 
+examplesDict : Dict String (Example Examples.State Examples.Msg)
+examplesDict =
+    Dict.fromList
+        (List.map
+            (\example -> ( Example.routeName example, example ))
+            Examples.all
+        )
+
+
+findExample : Model k -> String -> Maybe ( Example Examples.State Examples.Msg, Examples.State )
+findExample model key =
+    Dict.get key model.moduleStates
+        |> Maybe.andThen
+            (\state ->
+                Dict.get key examplesDict
+                    |> Maybe.map (\example -> ( example, state ))
+            )
+
+
+usageExamplesDict : Dict String (UsageExample UsageExamples.State UsageExamples.Msg)
+usageExamplesDict =
+    Dict.fromList
+        (List.map (\example -> ( UsageExample.routeName example, example ))
+            UsageExamples.all
+        )
+
+
+findUsageExample : Model k -> String -> Maybe ( UsageExample UsageExamples.State UsageExamples.Msg, UsageExamples.State )
+findUsageExample model key =
+    Dict.get key model.usageExampleStates
+        |> Maybe.andThen
+            (\state ->
+                Dict.get key usageExamplesDict
+                    |> Maybe.map (\example -> ( example, state ))
+            )
+
+
 update : Msg -> Model key -> ( Model key, Effect )
 update action model =
     case action of
         UpdateModuleStates key exampleMsg ->
-            case Dict.get key model.moduleStates of
-                Just example ->
-                    example.update exampleMsg example.state
+            case findExample model key of
+                Just ( example, exampleState ) ->
+                    example.update exampleMsg exampleState
                         |> Tuple.mapFirst
                             (\newState ->
-                                let
-                                    newExample =
-                                        { example | state = newState }
-                                in
                                 { model
-                                    | moduleStates = Dict.insert key newExample model.moduleStates
+                                    | moduleStates = Dict.insert key newState model.moduleStates
                                 }
                             )
                         |> Tuple.mapSecond (Cmd.map (UpdateModuleStates key) >> Command)
@@ -124,17 +148,13 @@ update action model =
                     ( model, None )
 
         UpdateUsageExamples key exampleMsg ->
-            case Dict.get key model.usageExampleStates of
-                Just usageExample ->
-                    usageExample.update exampleMsg usageExample.state
+            case findUsageExample model key of
+                Just ( usageExample, usageExampleState ) ->
+                    usageExample.update exampleMsg usageExampleState
                         |> Tuple.mapFirst
                             (\newState ->
-                                let
-                                    newExample =
-                                        { usageExample | state = newState }
-                                in
                                 { model
-                                    | usageExampleStates = Dict.insert key newExample model.usageExampleStates
+                                    | usageExampleStates = Dict.insert key newState model.usageExampleStates
                                 }
                             )
                         |> Tuple.mapSecond (Cmd.map (UpdateUsageExamples key) >> Command)
@@ -160,7 +180,7 @@ update action model =
                 , previousRoute = Just model.route
                 , isSideNavOpen = False
               }
-            , Maybe.map FocusOn (Routes.headerId route model.moduleStates model.usageExampleStates)
+            , Maybe.map FocusOn (Routes.headerId route examplesDict usageExamplesDict)
                 |> Maybe.withDefault None
             )
 
@@ -267,10 +287,10 @@ subscriptions : Model key -> Sub Msg
 subscriptions model =
     let
         exampleSubs exampleName =
-            case Dict.get exampleName model.moduleStates of
-                Just example ->
+            case findExample model exampleName of
+                Just ( example, exampleState ) ->
                     Sub.map (UpdateModuleStates exampleName)
-                        (example.subscriptions example.state)
+                        (example.subscriptions exampleState)
 
                 Nothing ->
                     Sub.none
@@ -284,10 +304,10 @@ subscriptions model =
                 exampleSubs exampleName
 
             Routes.Usage exampleName ->
-                case Dict.get exampleName model.usageExampleStates of
-                    Just example ->
+                case findUsageExample model exampleName of
+                    Just ( example, exampleState ) ->
                         Sub.map (UpdateUsageExamples exampleName)
-                            (example.subscriptions example.state)
+                            (example.subscriptions exampleState)
 
                     Nothing ->
                         Sub.none
@@ -313,10 +333,10 @@ view model =
                 ]
 
         exampleDocument exampleName =
-            case Dict.get exampleName model.moduleStates of
-                Just example ->
+            case findExample model exampleName of
+                Just ( example, exampleState ) ->
                     { title = example.name ++ " in the NoRedInk Component Catalog"
-                    , body = viewExample model example |> toBody
+                    , body = viewExample model example exampleState |> toBody
                     }
 
                 Nothing ->
@@ -340,10 +360,10 @@ view model =
             }
 
         Routes.Usage exampleName ->
-            case Dict.get exampleName model.usageExampleStates of
-                Just example ->
+            case findUsageExample model exampleName of
+                Just ( example, state ) ->
                     { title = example.name ++ " Usage Example in the NoRedInk Component Catalog"
-                    , body = viewUsageExample model example |> toBody
+                    , body = viewUsageExample model example state |> toBody
                     }
 
                 Nothing ->
@@ -360,16 +380,16 @@ view model =
             }
 
 
-viewExample : Model key -> Example a Examples.Msg -> Html Msg
-viewExample model example =
-    Example.view { packageDependencies = model.elliePackageDependencies } example
+viewExample : Model key -> Example a Examples.Msg -> a -> Html Msg
+viewExample model example state =
+    Example.view { packageDependencies = model.elliePackageDependencies } example state
         |> Html.map (UpdateModuleStates example.name)
         |> viewLayout model [ Example.extraLinks (UpdateModuleStates example.name) example ]
 
 
-viewUsageExample : Model key -> UsageExample a UsageExamples.Msg -> Html Msg
-viewUsageExample model example =
-    UsageExample.view example
+viewUsageExample : Model key -> UsageExample a UsageExamples.Msg -> a -> Html Msg
+viewUsageExample model example state =
+    UsageExample.view example state
         |> Html.map (UpdateUsageExamples (UsageExample.routeName example))
         |> viewLayout model []
 
@@ -394,8 +414,8 @@ viewAll model =
             , navigate = UsageExample.routeName >> Routes.Usage >> ChangeRoute
             , exampleHref = UsageExample.routeName >> Routes.Usage >> Routes.toString
             }
-            (Dict.values model.moduleStates)
-            (Dict.values model.usageExampleStates)
+            Examples.all
+            UsageExamples.all
             model.selectedContent
 
 
@@ -409,7 +429,7 @@ viewCategory model category =
                         (Set.fromList Category.sorter item.categories)
                         category
                 )
-                (Dict.values items)
+                items
     in
     viewLayout model [] <|
         viewExamplePreviews (Category.forId category)
@@ -421,8 +441,8 @@ viewCategory model category =
             , navigate = UsageExample.routeName >> Routes.Usage >> ChangeRoute
             , exampleHref = UsageExample.routeName >> Routes.Usage >> Routes.toString
             }
-            (filtered model.moduleStates)
-            (filtered model.usageExampleStates)
+            (filtered Examples.all)
+            (filtered UsageExamples.all)
             model.selectedContent
 
 
@@ -431,8 +451,8 @@ viewLayout model headerExtras content =
     Html.div []
         [ Html.header []
             [ Routes.viewHeader model.route
-                model.moduleStates
-                model.usageExampleStates
+                examplesDict
+                usageExamplesDict
                 headerExtras
             ]
         , Html.div
@@ -516,8 +536,9 @@ examplesContainer : List Css.Style -> List (Html msg) -> Html msg
 examplesContainer extraStyles =
     Html.div
         [ css
-            [ Css.displayFlex
-            , Css.flexWrap Css.wrap
+            [ Css.property "display" "grid"
+            , Css.property "grid-template-columns" "repeat(auto-fit, minmax(200px, 1fr))"
+            , Css.justifyContent Css.start
             , Css.property "row-gap" (.value Spacing.verticalSpacerPx)
             , Css.property "column-gap" (.value Spacing.horizontalSpacerPx)
             , Css.batch extraStyles
@@ -529,7 +550,7 @@ navigation : Model key -> Html Msg
 navigation { moduleStates, route, isSideNavOpen, openTooltip } =
     let
         examples =
-            Dict.values moduleStates
+            Examples.all
 
         exampleEntriesForCategory category =
             List.filter (\{ categories } -> List.any ((==) category) categories) examples

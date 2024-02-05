@@ -12,7 +12,6 @@ import Category exposing (Category(..))
 import Code
 import Css exposing (Color)
 import Debug.Control as Control exposing (Control)
-import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Nri.Ui.Button.V10 as Button
@@ -43,7 +42,7 @@ example =
     , version = version
     , categories = [ Animations ]
     , keyboardSupport = []
-    , state = init
+    , init = init
     , update = update
     , subscriptions =
         \state ->
@@ -233,7 +232,7 @@ type alias Settings =
 initSettings : Control Settings
 initSettings =
     Control.record Settings
-        |> Control.field "center" (ControlExtra.float 700)
+        |> Control.field "center" (Control.float 700)
 
 
 {-| -}

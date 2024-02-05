@@ -40,7 +40,7 @@ example =
     , version = version
     , categories = [ Layout ]
     , keyboardSupport = []
-    , state = init
+    , init = init
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -130,46 +130,52 @@ init =
                 { moduleName = moduleName, use = f }
     in
     { control =
-        ControlExtra.list
-            |> ControlExtra.optionalListItem "theme"
-                (CommonControls.choice moduleName
-                    [ ( "secondary", Panel.secondary )
-                    , ( "primary", Panel.primary )
-                    ]
-                )
-            |> ControlExtra.listItem "header"
-                (Control.map
-                    (\v ->
-                        ( Code.fromModule moduleName "header " ++ Code.string v
-                        , Panel.header v
+        Control.list
+            |> ControlExtra.listItems "Content"
+                (Control.list
+                    |> ControlExtra.listItem "header"
+                        (Control.map
+                            (\v ->
+                                ( Code.fromModule moduleName "header " ++ Code.string v
+                                , Panel.header v
+                                )
+                            )
+                            (Control.string "Header")
                         )
-                    )
-                    (Control.string "Header")
+                    |> ControlExtra.listItem "content"
+                        (CommonControls.content
+                            { moduleName = moduleName
+                            , paragraph = Just Panel.paragraph
+                            , plaintext = Panel.plaintext
+                            , markdown = Just Panel.markdown
+                            , html = Panel.html
+                            , httpError = Nothing
+                            }
+                        )
                 )
-            |> ControlExtra.listItem "content"
-                (CommonControls.content
-                    { moduleName = moduleName
-                    , paragraph = Just Panel.paragraph
-                    , plaintext = Panel.plaintext
-                    , markdown = Just Panel.markdown
-                    , html = Panel.html
-                    , httpError = Nothing
-                    }
-                )
-            |> controlStyles "containerCss"
-                Panel.containerCss
-                ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
-                , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
-                )
-            |> controlStyles "headerCss"
-                Panel.headerCss
-                ( "[ Css.border3 (Css.px 4) Css.solid Colors.aqua ]"
-                , [ Css.border3 (Css.px 4) Css.solid Colors.aqua ]
-                )
-            |> controlStyles "css"
-                Panel.css
-                ( "[ Css.border3 (Css.px 4) Css.dotted Colors.orange ]"
-                , [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]
+            |> ControlExtra.listItems "Theme & CSS"
+                (Control.list
+                    |> ControlExtra.optionalListItem "theme"
+                        (CommonControls.choice moduleName
+                            [ ( "secondary", Panel.secondary )
+                            , ( "primary", Panel.primary )
+                            ]
+                        )
+                    |> controlStyles "containerCss"
+                        Panel.containerCss
+                        ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
+                        , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
+                        )
+                    |> controlStyles "headerCss"
+                        Panel.headerCss
+                        ( "[ Css.border3 (Css.px 4) Css.solid Colors.aqua ]"
+                        , [ Css.border3 (Css.px 4) Css.solid Colors.aqua ]
+                        )
+                    |> controlStyles "css"
+                        Panel.css
+                        ( "[ Css.border3 (Css.px 4) Css.dotted Colors.orange ]"
+                        , [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]
+                        )
                 )
     }
 

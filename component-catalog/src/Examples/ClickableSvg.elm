@@ -39,7 +39,7 @@ example =
     , version = version
     , categories = [ Buttons, Icons ]
     , keyboardSupport = []
-    , state = init
+    , init = init
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -284,70 +284,82 @@ initSettings =
     Control.record Settings
         |> Control.field "label" (Control.string "Back")
         |> Control.field "icon" CommonControls.uiIcon
-        |> Control.field "attributes"
-            (ControlExtra.list
-                |> CommonControls.disabledListItem "ClickableSvg" ClickableSvg.disabled
-                |> ControlExtra.optionalListItem "exactSize"
-                    (Control.map
-                        (\v -> ( "ClickableSvg.exactSize " ++ String.fromInt v, ClickableSvg.exactSize v ))
-                        (ControlExtra.int 36)
-                    )
-                |> ControlExtra.optionalListItem "exactWidth"
-                    (Control.map
-                        (\v -> ( "ClickableSvg.exactWidth " ++ String.fromInt v, ClickableSvg.exactWidth v ))
-                        (ControlExtra.int 36)
-                    )
-                |> ControlExtra.optionalListItem "exactHeight"
-                    (Control.map
-                        (\v -> ( "ClickableSvg.exactHeight " ++ String.fromInt v, ClickableSvg.exactHeight v ))
-                        (ControlExtra.int 36)
-                    )
-                |> CommonControls.css
-                    { moduleName = "ClickableSvg"
-                    , use = ClickableSvg.css
-                    }
-                |> CommonControls.mobileCss
-                    { moduleName = "ClickableSvg"
-                    , use = ClickableSvg.mobileCss
-                    }
-                |> CommonControls.quizEngineMobileCss
-                    { moduleName = "ClickableSvg"
-                    , use = ClickableSvg.quizEngineMobileCss
-                    }
-                |> CommonControls.notMobileCss
-                    { moduleName = "ClickableSvg"
-                    , use = ClickableSvg.notMobileCss
-                    }
-                |> CommonControls.rightIcon moduleName ClickableSvg.rightIcon
-                |> ControlExtra.optionalListItem "iconForMobile"
-                    (Control.map
-                        (\( name, icon ) ->
-                            ( "ClickableSvg.iconForMobile " ++ name
-                            , ClickableSvg.iconForMobile icon
+        |> Control.field ""
+            (Control.list
+                |> ControlExtra.listItems "Icon additional options"
+                    (Control.list
+                        |> CommonControls.rightIcon moduleName ClickableSvg.rightIcon
+                        |> ControlExtra.optionalListItem "iconForMobile"
+                            (Control.map
+                                (\( name, icon ) ->
+                                    ( "ClickableSvg.iconForMobile " ++ name
+                                    , ClickableSvg.iconForMobile icon
+                                    )
+                                )
+                                (CommonControls.rotatedUiIcon 1)
                             )
-                        )
-                        (CommonControls.rotatedUiIcon 1)
-                    )
-                |> ControlExtra.optionalListItem "iconForQuizEngineMobile"
-                    (Control.map
-                        (\( name, icon ) ->
-                            ( "ClickableSvg.iconForQuizEngineMobile " ++ name
-                            , ClickableSvg.iconForQuizEngineMobile icon
+                        |> ControlExtra.optionalListItem "iconForQuizEngineMobile"
+                            (Control.map
+                                (\( name, icon ) ->
+                                    ( "ClickableSvg.iconForQuizEngineMobile " ++ name
+                                    , ClickableSvg.iconForQuizEngineMobile icon
+                                    )
+                                )
+                                (CommonControls.rotatedUiIcon 2)
                             )
-                        )
-                        (CommonControls.rotatedUiIcon 2)
-                    )
-                |> ControlExtra.optionalListItem "iconForNarrowMobile"
-                    (Control.map
-                        (\( name, icon ) ->
-                            ( "ClickableSvg.iconForNarrowMobile " ++ name
-                            , ClickableSvg.iconForNarrowMobile icon
+                        |> ControlExtra.optionalListItem "iconForNarrowMobile"
+                            (Control.map
+                                (\( name, icon ) ->
+                                    ( "ClickableSvg.iconForNarrowMobile " ++ name
+                                    , ClickableSvg.iconForNarrowMobile icon
+                                    )
+                                )
+                                (CommonControls.rotatedUiIcon 3)
                             )
-                        )
-                        (CommonControls.rotatedUiIcon 3)
                     )
-                |> ControlExtra.optionalBoolListItem "submit (button only)"
-                    ( "ClickableSvg.submit", ClickableSvg.submit )
-                |> ControlExtra.optionalBoolListItem "opensModal (button only)"
-                    ( "ClickableSvg.opensModal", ClickableSvg.opensModal )
+                |> ControlExtra.listItems "Size & Width"
+                    (Control.list
+                        |> ControlExtra.optionalListItem "exactSize"
+                            (Control.map
+                                (\v -> ( "ClickableSvg.exactSize " ++ String.fromInt v, ClickableSvg.exactSize v ))
+                                (Control.int 36)
+                            )
+                        |> ControlExtra.optionalListItem "exactWidth"
+                            (Control.map
+                                (\v -> ( "ClickableSvg.exactWidth " ++ String.fromInt v, ClickableSvg.exactWidth v ))
+                                (Control.int 36)
+                            )
+                        |> ControlExtra.optionalListItem "exactHeight"
+                            (Control.map
+                                (\v -> ( "ClickableSvg.exactHeight " ++ String.fromInt v, ClickableSvg.exactHeight v ))
+                                (Control.int 36)
+                            )
+                    )
+                |> ControlExtra.listItems "State & Type"
+                    (Control.list
+                        |> CommonControls.disabledListItem "ClickableSvg" ClickableSvg.disabled
+                        |> ControlExtra.optionalBoolListItem "submit (button only)"
+                            ( "ClickableSvg.submit", ClickableSvg.submit )
+                        |> ControlExtra.optionalBoolListItem "opensModal (button only)"
+                            ( "ClickableSvg.opensModal", ClickableSvg.opensModal )
+                    )
+                |> ControlExtra.listItems "CSS"
+                    (Control.list
+                        |> CommonControls.css
+                            { moduleName = "ClickableSvg"
+                            , use = ClickableSvg.css
+                            }
+                        |> CommonControls.mobileCss
+                            { moduleName = "ClickableSvg"
+                            , use = ClickableSvg.mobileCss
+                            }
+                        |> CommonControls.quizEngineMobileCss
+                            { moduleName = "ClickableSvg"
+                            , use = ClickableSvg.quizEngineMobileCss
+                            }
+                        |> CommonControls.notMobileCss
+                            { moduleName = "ClickableSvg"
+                            , use = ClickableSvg.notMobileCss
+                            }
+                    )
             )

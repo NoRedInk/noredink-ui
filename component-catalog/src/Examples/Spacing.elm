@@ -10,7 +10,6 @@ import Category exposing (Category(..))
 import Code
 import Css exposing (Style)
 import Debug.Control as Control exposing (Control)
-import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
@@ -43,7 +42,7 @@ example =
     , version = version
     , categories = [ Layout ]
     , keyboardSupport = []
-    , state = init
+    , init = init
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview = preview
@@ -411,7 +410,7 @@ controlSettings =
                             , Spacing.centeredContentWithSidePaddingAndCustomWidth (Css.px value)
                             )
                         )
-                        (ControlExtra.float 400)
+                        (Control.float 400)
                    )
                  , ( "centeredContentWithCustomWidth"
                    , Control.map
@@ -423,7 +422,7 @@ controlSettings =
                             , Spacing.centeredContentWithCustomWidth (Css.px value)
                             )
                         )
-                        (ControlExtra.float 400)
+                        (Control.float 400)
                    )
                  ]
                     |> Control.choice

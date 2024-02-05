@@ -38,7 +38,7 @@ example =
     , version = version
     , categories = [ Text ]
     , keyboardSupport = []
-    , state = init
+    , init = init
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -138,7 +138,7 @@ type alias State =
 init : State
 init =
     { control =
-        ControlExtra.list
+        Control.list
             |> ControlExtra.listItem "content" controlContent
             |> ControlExtra.optionalBoolListItem "noBreak"
                 ( "Text.noBreak True", Text.noBreak True )

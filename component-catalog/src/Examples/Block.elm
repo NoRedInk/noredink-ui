@@ -48,7 +48,7 @@ example =
     , version = version
     , categories = [ Instructional ]
     , keyboardSupport = []
-    , state = init
+    , init = init
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -80,9 +80,13 @@ example =
             |> p [ css [ Fonts.baseFont, Css.fontSize (Css.px 12), Css.margin Css.zero ] ]
         ]
     , about =
-        [ text "You might also know the Block element as a “Display Element”. Learn more in "
-        , ClickableText.link "Display Elements and Scaffolding Container: additional things to know"
-            [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Display-Elements-and-Scaffolding-Container-additional-things-to-know--BwRhBMKyXFFSWz~1mljN29bcAg-6vszpNDLoYIiMyg7Wv66s"
+        [ Text.mediumBody
+            [ Text.html
+                [ text "You might also know the Block element as a “Display Element”. Learn more in "
+                , ClickableText.link "Display Elements and Scaffolding Container: additional things to know"
+                    [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Display-Elements-and-Scaffolding-Container-additional-things-to-know--BwRhBMKyXFFSWz~1mljN29bcAg-6vszpNDLoYIiMyg7Wv66s"
+                    ]
+                ]
             ]
         ]
     , view =
@@ -661,51 +665,56 @@ type alias Settings =
 
 initControl : Control Settings
 initControl =
-    ControlExtra.list
-        |> ControlExtra.optionalListItemDefaultChecked "content" controlContent
-        |> ControlExtra.optionalListItem "blankStyle" blankStyleContent
-        |> ControlExtra.optionalBoolListItemDefaultChecked "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )
-        |> ControlExtra.optionalListItem "label"
-            (CommonControls.string ( Code.fromModule moduleName "label", Block.label ) "Fruit")
-        |> ControlExtra.optionalListItem "labelPosition"
-            (Control.map
-                (\( code, v ) ->
-                    ( Code.fromModule moduleName "labelPosition (Just" ++ code ++ ")"
-                    , Block.labelPosition (Just v)
+    Control.list
+        |> ControlExtra.listItems "Text or Blank"
+            (Control.list
+                |> ControlExtra.listItems "content" controlContent
+            )
+        |> ControlExtra.listItems "Label & Emphasis"
+            (Control.list
+                |> ControlExtra.optionalBoolListItemDefaultChecked "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )
+                |> ControlExtra.optionalListItem "theme"
+                    (CommonControls.choice moduleName
+                        [ ( "yellow", Block.yellow )
+                        , ( "cyan", Block.cyan )
+                        , ( "magenta", Block.magenta )
+                        , ( "green", Block.green )
+                        , ( "blue", Block.blue )
+                        , ( "purple", Block.purple )
+                        , ( "brown", Block.brown )
+                        ]
                     )
-                )
-                (Control.record
-                    (\a b c ->
-                        ( Code.record
-                            [ ( "arrowHeight", String.fromFloat a )
-                            , ( "totalHeight", String.fromFloat b )
-                            , ( "zIndex", "0" )
-                            , ( "xOffset", String.fromFloat c )
-                            ]
-                        , { arrowHeight = a, totalHeight = b, zIndex = 0, xOffset = c }
+                |> ControlExtra.optionalListItem "label"
+                    (CommonControls.string ( Code.fromModule moduleName "label", Block.label ) "Fruit")
+                |> ControlExtra.optionalListItem "labelPosition"
+                    (Control.map
+                        (\( code, v ) ->
+                            ( Code.fromModule moduleName "labelPosition (Just" ++ code ++ ")"
+                            , Block.labelPosition (Just v)
+                            )
+                        )
+                        (Control.record
+                            (\a b c ->
+                                ( Code.record
+                                    [ ( "arrowHeight", String.fromFloat a )
+                                    , ( "totalHeight", String.fromFloat b )
+                                    , ( "zIndex", "0" )
+                                    , ( "xOffset", String.fromFloat c )
+                                    ]
+                                , { arrowHeight = a, totalHeight = b, zIndex = 0, xOffset = c }
+                                )
+                            )
+                            |> Control.field "arrowHeight" (Control.float 40)
+                            |> Control.field "totalHeight" (Control.float 80)
+                            |> Control.field "xOffset" (Control.float 0)
                         )
                     )
-                    |> Control.field "arrowHeight" (ControlExtra.float 40)
-                    |> Control.field "totalHeight" (ControlExtra.float 80)
-                    |> Control.field "xOffset" (ControlExtra.float 0)
-                )
+                |> ControlExtra.optionalListItem "labelId"
+                    (CommonControls.string ( Code.fromModule moduleName "labelId", Block.labelId ) fruitId)
             )
-        |> ControlExtra.optionalListItem "theme"
-            (CommonControls.choice moduleName
-                [ ( "yellow", Block.yellow )
-                , ( "cyan", Block.cyan )
-                , ( "magenta", Block.magenta )
-                , ( "green", Block.green )
-                , ( "blue", Block.blue )
-                , ( "purple", Block.purple )
-                , ( "brown", Block.brown )
-                ]
-            )
-        |> ControlExtra.optionalListItem "labelId"
-            (CommonControls.string ( Code.fromModule moduleName "labelId", Block.labelId ) fruitId)
 
 
-controlContent : Control ( String, Block.Attribute msg )
+controlContent : Control (List ( String, Block.Attribute msg ))
 controlContent =
     Control.choice
         [ ( "plaintext"
@@ -714,23 +723,50 @@ controlContent =
                 , Block.plaintext
                 )
                 "bananas"
+                |> Control.revealed "plaintext"
+                |> Control.map List.singleton
           )
         , ( "with mixed content"
-          , Control.value
-                ( Code.fromModule moduleName "content "
-                    ++ Code.withParens
-                        ((Code.fromModule moduleName "italic (" ++ Code.fromModule moduleName "phrase " ++ Code.string "to think about" ++ ")")
-                            ++ (" :: " ++ Code.fromModule moduleName "blank")
-                            ++ (" :: " ++ Code.fromModule moduleName "phrase " ++ Code.string " and so forth")
+          , Control.list
+                |> ControlExtra.listItem ""
+                    (Control.value
+                        ( Code.fromModule moduleName "content "
+                            ++ Code.withParens
+                                ((Code.fromModule moduleName "italic (" ++ Code.fromModule moduleName "phrase " ++ Code.string "to think about" ++ ")")
+                                    ++ (" :: " ++ Code.fromModule moduleName "blank")
+                                    ++ (" :: " ++ Code.fromModule moduleName "phrase " ++ Code.string " and so forth")
+                                )
+                        , Block.content
+                            (Block.italic (Block.phrase "to think about ")
+                                :: Block.blank { widthInChars = 8 }
+                                :: Block.phrase " and so forth"
+                            )
                         )
-                , Block.content
-                    (Block.italic (Block.phrase "to think about ")
-                        :: Block.blank { widthInChars = 8 }
-                        :: Block.phrase " and so forth"
                     )
-                )
+                |> ControlExtra.optionalListItem "blankStyle" blankStyleContent
           )
-        , blankType ( "blank", Block.blank )
+        , ( "blank"
+          , Control.list
+                |> ControlExtra.listItem "widthInChars"
+                    (Control.map
+                        (\widthInChars ->
+                            ( Code.fromModule moduleName "content "
+                                ++ Code.withParens
+                                    (Code.fromModule moduleName "blank"
+                                        ++ " "
+                                        ++ Code.record [ ( "widthInChars", String.fromInt widthInChars ) ]
+                                    )
+                            , Block.content [ Block.blank { widthInChars = widthInChars } ]
+                            )
+                        )
+                        (Control.int 8)
+                    )
+                |> ControlExtra.optionalListItem "blankStyle" blankStyleContent
+          )
+        , ( "(none)"
+          , Control.revealed "blankStyle" blankStyleContent
+                |> Control.map List.singleton
+          )
         ]
 
 
@@ -744,37 +780,6 @@ blankStyleContent =
           , Control.value ( "Block.dashed", Block.dashed )
           )
         ]
-
-
-blankType : ( String, { widthInChars : Int } -> Block.Content msg ) -> ( String, Control ( String, Block.Attribute msg ) )
-blankType ( typeStr, blank ) =
-    ( typeStr
-    , Control.map
-        (\( widthString, width ) ->
-            ( Code.fromModule moduleName "content "
-                ++ Code.withParens
-                    (Code.fromModule moduleName typeStr
-                        ++ " "
-                        ++ widthString
-                    )
-            , Block.content [ blank { widthInChars = width } ]
-            )
-        )
-        controlBlankWidth
-    )
-
-
-controlBlankWidth : Control ( String, Int )
-controlBlankWidth =
-    Control.record
-        (\widthInChars ->
-            ( Code.record
-                [ ( "widthInChars", String.fromInt widthInChars )
-                ]
-            , widthInChars
-            )
-        )
-        |> Control.field "widthInChars" (ControlExtra.int 8)
 
 
 ageId : String

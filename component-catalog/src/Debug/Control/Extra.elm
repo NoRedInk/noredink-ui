@@ -1,15 +1,14 @@
 module Debug.Control.Extra exposing
-    ( float, int
-    , values, list, listItem, optionalListItem, optionalListItemDefaultChecked
+    ( values, listItem, optionalListItem, optionalListItemDefaultChecked
     , optionalBoolListItem, optionalBoolListItemDefaultChecked
     , bool
     , rotatedChoice, specificChoice
+    , listItems
     )
 
 {-|
 
-@docs float, int
-@docs values, list, listItem, optionalListItem, optionalListItemDefaultChecked
+@docs values, listItem, optionalListItem, optionalListItemDefaultChecked
 @docs optionalBoolListItem, optionalBoolListItemDefaultChecked
 @docs bool
 @docs rotatedChoice, specificChoice
@@ -22,37 +21,11 @@ import List.Extra
 
 
 {-| -}
-float : Float -> Control Float
-float default =
-    Control.map (String.toFloat >> Maybe.withDefault default)
-        (Control.string (String.fromFloat default))
-
-
-{-| -}
-int : Int -> Control Int
-int default =
-    Control.map (String.toInt >> Maybe.withDefault default)
-        (Control.string (String.fromInt default))
-
-
-{-| -}
 values : (a -> String) -> List a -> Control a
 values toString nums =
     nums
         |> List.map (\n -> ( toString n, Control.value n ))
         |> Control.choice
-
-
-{-| Use with `listItem` and `optionalListItem`
-
-    list
-        |> listItem "first name" string
-        |> listItem "last name" string
-
--}
-list : Control (List a)
-list =
-    Control.record []
 
 
 {-| -}

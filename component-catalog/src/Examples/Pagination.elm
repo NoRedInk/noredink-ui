@@ -10,7 +10,6 @@ import Category exposing (Category(..))
 import Code
 import Css
 import Debug.Control as Control exposing (Control)
-import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (..)
@@ -39,7 +38,7 @@ example =
     , version = version
     , categories = [ Navigation ]
     , keyboardSupport = []
-    , state = init
+    , init = init
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -147,7 +146,7 @@ type alias Settings =
 controlSettings : Control Settings
 controlSettings =
     Control.record Settings
-        |> Control.field "Page count" (ControlExtra.int 6)
+        |> Control.field "Page count" (Control.int 6)
 
 
 {-| -}
