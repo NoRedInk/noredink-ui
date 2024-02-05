@@ -383,7 +383,7 @@ controlBreadCrumbs_ name index =
         |> Control.field "text" (Control.string (name ++ " " ++ String.fromInt index))
         |> Control.field "optional attributes"
             (Control.maybe False
-                (ControlExtra.list
+                (Control.list
                     |> CommonControls.customIcon
                         (CommonControls.choice "UiIcon"
                             [ ( "homeInCircle", UiIcon.homeInCircle )
@@ -399,7 +399,7 @@ controlBreadCrumbs_ name index =
                                 , BreadCrumbs.iconSize (Css.px v)
                                 )
                             )
-                            (ControlExtra.float 40)
+                            (Control.float 40)
                         )
                 )
             )

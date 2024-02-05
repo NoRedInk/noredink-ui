@@ -31,7 +31,7 @@ import Nri.Ui.Select.V9 as Select
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Text.V6 as Text
-import Nri.Ui.TextInput.V7 as TextInput
+import Nri.Ui.TextInput.V8 as TextInput
 import SolidColor exposing (SolidColor)
 
 

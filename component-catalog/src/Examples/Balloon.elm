@@ -72,7 +72,7 @@ type alias Settings =
 
 controlSettings : Control Settings
 controlSettings =
-    ControlExtra.list
+    Control.list
         |> ControlExtra.listItem "content"
             (CommonControls.content
                 { moduleName = moduleName
@@ -83,25 +83,31 @@ controlSettings =
                 , httpError = Nothing
                 }
             )
-        |> ControlExtra.optionalListItem "theme" themeOptions
-        |> ControlExtra.optionalListItemDefaultChecked "position" positionOptions
-        |> ControlExtra.optionalListItem "arrowAlignment" arrowAlignmentOptions
-        |> ControlExtra.optionalListItem "arrowHeight"
-            (Control.map
-                (\v ->
-                    ( "Balloon.arrowHeight " ++ String.fromFloat v ++ ""
-                    , Balloon.arrowHeight v
+        |> ControlExtra.listItems "Arrow & Balloon Direction"
+            (Control.list
+                |> ControlExtra.optionalListItemDefaultChecked "position" positionOptions
+                |> ControlExtra.optionalListItem "arrowAlignment" arrowAlignmentOptions
+                |> ControlExtra.optionalListItem "arrowHeight"
+                    (Control.map
+                        (\v ->
+                            ( "Balloon.arrowHeight " ++ String.fromFloat v ++ ""
+                            , Balloon.arrowHeight v
+                            )
+                        )
+                        (Control.float 20)
                     )
-                )
-                (ControlExtra.float 20)
             )
-        |> CommonControls.css_ "containerCss"
-            ( "[ Css.backgroundColor Colors.magenta ]", [ Css.backgroundColor Colors.magenta ] )
-            { moduleName = moduleName, use = Balloon.containerCss }
-        |> CommonControls.css { moduleName = moduleName, use = Balloon.css }
-        |> CommonControls.mobileCss { moduleName = moduleName, use = Balloon.mobileCss }
-        |> CommonControls.quizEngineMobileCss { moduleName = moduleName, use = Balloon.quizEngineMobileCss }
-        |> CommonControls.notMobileCss { moduleName = moduleName, use = Balloon.notMobileCss }
+        |> ControlExtra.listItems "Theme & Custom CSS"
+            (Control.list
+                |> ControlExtra.optionalListItem "theme" themeOptions
+                |> CommonControls.css_ "containerCss"
+                    ( "[ Css.backgroundColor Colors.magenta ]", [ Css.backgroundColor Colors.magenta ] )
+                    { moduleName = moduleName, use = Balloon.containerCss }
+                |> CommonControls.css { moduleName = moduleName, use = Balloon.css }
+                |> CommonControls.mobileCss { moduleName = moduleName, use = Balloon.mobileCss }
+                |> CommonControls.quizEngineMobileCss { moduleName = moduleName, use = Balloon.quizEngineMobileCss }
+                |> CommonControls.notMobileCss { moduleName = moduleName, use = Balloon.notMobileCss }
+            )
 
 
 themeOptions : Control ( String, Balloon.Attribute msg )

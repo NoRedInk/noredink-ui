@@ -67,7 +67,7 @@ type Msg
 
 controlAttributes : Control (List ( String, RadioButtonDotless.Attribute ControlSelection Msg ))
 controlAttributes =
-    ControlExtra.list
+    Control.list
         |> ControlExtra.optionalListItem "textAlign" textAlignControl
         |> ControlExtra.optionalListItem "width" widthControl
         |> ControlExtra.optionalListItem "size" sizeControl

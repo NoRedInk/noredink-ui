@@ -11,7 +11,6 @@ import Code
 import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
-import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import IconExamples
@@ -181,4 +180,4 @@ controlSettings =
         |> Control.field "backgroundColor" (CommonControls.specificColor "white")
         |> Control.field "emptyColor" (CommonControls.specificColor "gray92")
         |> Control.field "filledColor" (CommonControls.specificColor "cornflower")
-        |> Control.field "percentage" (ControlExtra.float 15)
+        |> Control.field "percentage" (Control.float 15)
