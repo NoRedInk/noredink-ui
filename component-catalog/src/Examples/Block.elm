@@ -96,6 +96,10 @@ example =
                             ]
                         , text " explaining the initial constraints and approach."
                         ]
+                    , li []
+                        [ ClickableText.link "Tessa's demo on early versions of Block and Question Block"
+                            [ ClickableText.linkExternal "https://www.dropbox.com/preview/NRI%20Engineering/Demos/2022-12-22%20-%20Tessa%20-%20QuestionBox%20and%20Block.mp4?role=work" ]
+                        ]
                     ]
                 ]
             ]
