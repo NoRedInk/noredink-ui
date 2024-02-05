@@ -335,6 +335,7 @@ rightIcon moduleName f =
               , "(Svg.withLabel \"Opens in new tab\" UiIcon.openInNewTab)"
               , UiIcon.openInNewTab
               )
+            , ( "gradingAssistant", "UiIcon.gradingAssistant", UiIcon.gradingAssistant )
             ]
             |> Control.choice
         )
