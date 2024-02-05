@@ -74,8 +74,8 @@ example =
             ]
         ]
     , about =
-        [ Guidance.useRadioButtonDotless
-        , Guidance.helpfullyDisabled
+        [ Guidance.helpfullyDisabled
+        , Guidance.useRadioButtonDotless
         ]
     , view = \ellieLinkConfig state -> [ viewButtonExamples ellieLinkConfig state ]
     , categories = [ Buttons ]
