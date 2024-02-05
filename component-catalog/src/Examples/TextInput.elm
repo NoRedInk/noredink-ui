@@ -8,6 +8,7 @@ module Examples.TextInput exposing (Msg, State, example)
 
 import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Key as Key
+import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Code
 import CommonControls
@@ -22,7 +23,9 @@ import Iso8601
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
-import Nri.Ui.TextInput.V7 as TextInput
+import Nri.Ui.TextInput.V8 as TextInput
+import Process
+import Task
 import ViewHelpers exposing (viewExamples)
 
 
@@ -32,7 +35,7 @@ moduleName =
 
 
 version =
-    7
+    8
 
 
 {-| -}
@@ -100,6 +103,16 @@ example =
             , viewExamples (List.map (\( name, _, ex ) -> ( name, ex )) examples)
             ]
     }
+
+
+newPasswordVisibilityToggleId : String
+newPasswordVisibilityToggleId =
+    "text-input__newPassword-example__visibility-toggle"
+
+
+currentPasswordVisibilityToggleId : String
+currentPasswordVisibilityToggleId =
+    "text-input__currentPassword-example__visibility-toggle"
 
 
 customizableExamples : State -> List ( String, String, Html Msg )
@@ -203,16 +216,44 @@ customizableExamples state =
                 \onInput ->
                     TextInput.newPassword
                         { onInput = onInput
-                        , showPassword = state.showPassword
-                        , setShowPassword = SetShowPassword
+                        , showPassword = state.showNewPassword
+                        , setShowPassword = SetShowNewPassword
+                        , visibilityToggleId = newPasswordVisibilityToggleId
                         }
             , inputTypeCode =
                 """TextInput.newPassword <|
         \\onInput ->
             TextInput.newPassword
                 { onInput = onInput
-                , showPassword = model.showPassword -- pass in whether the PW should be shown as plaintext. You'll need to wire this in.
-                , setShowPassword = SetShowPassword -- You'll need to wire this in before the code will compile
+                , showNewPassword = model.showNewPassword -- pass in whether the PW should be shown as plaintext. You'll need to wire this in.
+                , setShowNewPassword = SetShowNewPassword -- You'll need to wire this in before the code will compile
+                , visibilityToggleId = newPasswordVisibilityToggleId
+                }
+                """
+            , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
+            , onFocus = "Focused!!!"
+            , onBlur = "Blurred!!!"
+            , onEnter = "Entered!!!"
+            }
+        , toExample
+            { name = "currentPassword"
+            , toString = identity
+            , inputType =
+                \onInput ->
+                    TextInput.currentPassword
+                        { onInput = onInput
+                        , showPassword = state.showCurrentPassword
+                        , setShowPassword = SetShowCurrentPassword
+                        , visibilityToggleId = currentPasswordVisibilityToggleId
+                        }
+            , inputTypeCode =
+                """TextInput.currentPassword <|
+        \\onInput ->
+            TextInput.currentPassword
+                { onInput = onInput
+                , showPassword = model.showCurrentPassword -- pass in whether the PW should be shown as plaintext. You'll need to wire this in.
+                , setShowPassword = SetShowCurrentPassword -- You'll need to wire this in before the code will compile
+                , visibilityToggleId = currentPasswordVisibilityToggleId
                 }
                 """
             , inputTypeValueCode = \value -> Code.string (Maybe.withDefault "" value)
@@ -380,7 +421,8 @@ customizableExamples state =
 {-| -}
 type alias State =
     { inputValues : Dict Int String
-    , showPassword : Bool
+    , showNewPassword : Bool
+    , showCurrentPassword : Bool
     , control : Control ExampleConfig
     }
 
@@ -389,7 +431,8 @@ type alias State =
 init : State
 init =
     { inputValues = Dict.empty
-    , showPassword = False
+    , showNewPassword = False
+    , showCurrentPassword = False
     , control = initControl
     }
 
@@ -463,8 +506,11 @@ controlAttributes =
 {-| -}
 type Msg
     = SetInput Int String
-    | SetShowPassword Bool
+    | SetShowNewPassword Bool
+    | SetShowCurrentPassword Bool
     | UpdateControl (Control ExampleConfig)
+    | Focused (Result Dom.Error ())
+    | Blurred (Result Dom.Error ())
 
 
 {-| -}
@@ -476,12 +522,33 @@ update msg state =
             , Cmd.none
             )
 
-        SetShowPassword showPassword ->
-            ( { state | showPassword = showPassword }
-            , Cmd.none
+        SetShowNewPassword showNewPassword ->
+            ( { state | showNewPassword = showNewPassword }
+            , Cmd.batch
+                [ Task.attempt Blurred (Dom.blur newPasswordVisibilityToggleId)
+                , Process.sleep 0
+                    |> Task.andThen (\_ -> Dom.focus newPasswordVisibilityToggleId)
+                    |> Task.attempt Focused
+                ]
+            )
+
+        SetShowCurrentPassword showCurrentPassword ->
+            ( { state | showCurrentPassword = showCurrentPassword }
+            , Cmd.batch
+                [ Task.attempt Blurred (Dom.blur currentPasswordVisibilityToggleId)
+                , Process.sleep 0
+                    |> Task.andThen (\_ -> Dom.focus currentPasswordVisibilityToggleId)
+                    |> Task.attempt Focused
+                ]
             )
 
         UpdateControl newControl ->
             ( { state | control = newControl }
             , Cmd.none
             )
+
+        Focused _ ->
+            ( state, Cmd.none )
+
+        Blurred _ ->
+            ( state, Cmd.none )
