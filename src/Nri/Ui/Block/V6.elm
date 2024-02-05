@@ -11,7 +11,7 @@ module Nri.Ui.Block.V6 exposing
     , labelCss
     , yellow, cyan, magenta, green, blue, purple, brown
     , insertLineBreakOpportunities
-    , dashed, underline
+    , dashed, underline, skipLabelAnimation
     )
 
 {-| Changes from V5:
@@ -27,6 +27,7 @@ module Nri.Ui.Block.V6 exposing
     - Add renderReadAloud
     - Add border styles `dashed` and`underline`
     - Correctly display a transparent background for underline blanks
+    - Add `skipLabelAnimation`, so balloon animation can be skipped
 
 @docs view, renderReadAloud, Attribute
 
@@ -59,7 +60,7 @@ You will need these helpers if you want to prevent label overlaps. (Which is to 
 
 @docs yellow, cyan, magenta, green, blue, purple, brown
 @docs insertLineBreakOpportunities
-@docs dashed, underline
+@docs dashed, underline, skipLabelAnimation
 
 -}
 
@@ -629,6 +630,12 @@ labelId id_ =
     Attribute (\config -> { config | labelId = Just id_ })
 
 
+{-| -}
+skipLabelAnimation : Attribute msg
+skipLabelAnimation =
+    Attribute (\config -> { config | skipLabelAnimation = True })
+
+
 
 -- Internals
 
@@ -650,6 +657,7 @@ defaultConfig =
     , emphasize = False
     , insertWbrAfterSpace = False
     , blankStyle = Dashed
+    , skipLabelAnimation = False
     }
 
 
@@ -664,6 +672,7 @@ type alias Config msg =
     , emphasize : Bool
     , insertWbrAfterSpace : Bool
     , blankStyle : BlankStyle
+    , skipLabelAnimation : Bool
     }
 
 
