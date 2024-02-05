@@ -6,6 +6,7 @@ module Nri.Ui.Mark.V6 exposing
 
 {-|
 
+
 ### Changes from V5
 
     -  Add `skipTagAnimation` for skipping balloon animations
@@ -286,7 +287,8 @@ viewMarkedByBalloon config markedWith segments =
         (case segments of
             first :: remainder ->
                 first
-                    :: viewJust (viewBalloon config) markedWith.name                    :: viewJust (\_ -> viewBalloonSpacer config) markedWith.name
+                    :: viewJust (viewBalloon config) markedWith.name
+                    :: viewJust (\_ -> viewBalloonSpacer config) markedWith.name
                     :: remainder
 
             [] ->
@@ -312,7 +314,7 @@ viewMarked tagStyle markedWith segments =
                     )
                 ]
             ]
-       ]
+        ]
         (case markedWith.name of
             Just name ->
                 viewStartHighlightTag tagStyle markedWith name :: segments
@@ -619,4 +621,3 @@ stripMarkdownSyntax markdown =
 
         _ ->
             markdown
-
