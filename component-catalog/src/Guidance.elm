@@ -15,6 +15,7 @@ useATACGuide moduleName =
             [ text ("To ensure your use of " ++ moduleName ++ " is accessible to assistive technology, please review the ")
             , ClickableText.link "Assistive technology notification design & development guide"
                 [ ClickableText.linkExternal "https://noredinkaccessibility.screenstepslive.com/a/1651037-assistive-technology-notification-design-development-guide"
+                , ClickableText.appearsInline
                 ]
             , text (" to see if your use case fits any listed in the guide. If it does, please follow the guide to learn how to properly implement " ++ moduleName ++ ".")
             ]
@@ -31,5 +32,20 @@ useRadioButtonDotless =
                 [ ClickableText.href (Routes.exampleHref RadioButtonDotlessExample.example)
                 , ClickableText.appearsInline
                 ]
+            , text "."
+            ]
+        ]
+
+
+helpfullyDisabled : Html msg
+helpfullyDisabled =
+    Text.smallBody
+        [ Text.html
+            [ text "Is your button disabled? Be sure to watch "
+            , ClickableText.link "Charbel's demo on the helpfully disabled pattern"
+                [ ClickableText.linkExternal "https://noredink.zoom.us/rec/play/fwV3mqsxjvF_95N2au0vAN2PmnH2IHZx2yCoAQ76gvZ0fLlrkNcFIuVL6i7ze7y1ivSxq0f6e2EXE-RJ.kHMKX9CBHI1kFM50?canPlayFromShare=true&from=share_recording_detail&continueMode=true&componentName=rec-play&originRequestUrl=https://noredink.zoom.us/rec/share/YvgK0427ADw42fY2edJ_tmkwwvPxz505Kpfhkz5DqF1_eh8sgj7wVfwBQ5FmieM8.P9YlMkM_XY_Kamm6&autoplay=true&startTime=1696520905000&_x_zm_rtaid=VeLjvOzDToKMf1R0XllC7A.1707171050117.67806369f8182aa5b282c10165d75544&_x_zm_rhtaid=323"
+                , ClickableText.appearsInline
+                ]
+            , text "."
             ]
         ]
