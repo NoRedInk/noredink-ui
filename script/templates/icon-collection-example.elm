@@ -32,6 +32,7 @@ example =
     , icon = COLLECTION_NAME.starFilled
     , renderSvgCode = Code.fromModule "COLLECTION_NAME"
     , preview =
+        -- TODO: add more icons to the preview
         IconExamples.preview
             [ COLLECTION_NAME.firstIconName
             ]
@@ -42,7 +43,8 @@ example =
 
 all : List Group
 all =
-    [ ( "[Name this sub-collection!]"
+    [ -- TODO: add all icons in nicely-organized named groups
+      ( "[Name this sub-collection!]"
       , [ ( "firstIconName", COLLECTION_NAME.firstIconName, [] )
         ]
       )
