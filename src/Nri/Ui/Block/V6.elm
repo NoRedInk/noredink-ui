@@ -72,7 +72,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import List.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
-import Nri.Ui.Mark.V5 as Mark exposing (Mark)
+import Nri.Ui.Mark.V6 as Mark exposing (Mark)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Position exposing (xOffsetPx)
 
@@ -700,6 +700,7 @@ render config =
             , labelCss = config.labelCss
             , labelId = config.labelId
             , labelContentId = Maybe.map labelContentId config.labelId
+            , skipTagAnimation = False
             }
             config.content
         )
