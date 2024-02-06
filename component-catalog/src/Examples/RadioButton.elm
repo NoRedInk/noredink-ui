@@ -60,7 +60,7 @@ example =
     , update = update
     , subscriptions = subscriptions
     , preview = preview
-    , about = [ Guidance.useRadioButtonDotless ]
+    , about = [ Guidance.helpfullyDisabled moduleName, Guidance.useRadioButtonDotless ]
     , view = view
     , categories = [ Inputs ]
     , keyboardSupport =
@@ -176,7 +176,7 @@ view ellieLinkConfig state =
         [ Modal.closeButton ]
         state.modal
     , Heading.h2
-        [ Heading.plaintext "Tooltip Example"
+        [ Heading.plaintext "Helpfully Disabled Example"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
     , div []

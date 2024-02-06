@@ -55,7 +55,7 @@ example =
             , Switch.custom [ Key.tabbable False ]
             ]
         ]
-    , about = [ Guidance.helpfullyDisabled ]
+    , about = [ Guidance.helpfullyDisabled moduleName ]
     , view =
         \ellieLinkConfig state ->
             let

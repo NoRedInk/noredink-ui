@@ -37,11 +37,11 @@ useRadioButtonDotless =
         ]
 
 
-helpfullyDisabled : Html msg
-helpfullyDisabled =
+helpfullyDisabled : String -> Html msg
+helpfullyDisabled moduleName =
     Text.smallBody
         [ Text.html
-            [ text "Is your button sometimes disabled? Be sure to "
+            [ text ("Is your " ++ moduleName ++ " sometimes disabled? Be sure to ")
             , ClickableText.link "read the docs"
                 [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Helpfully-disabled-components--CI8Ma_KHKL1CcCWpWG~p_RTwAg-2RUPgKnBsBNI7ScGDHS73"
                 , ClickableText.appearsInline
