@@ -59,10 +59,10 @@ specificColor match =
 premiumDisplay : Control ( String, PremiumDisplay )
 premiumDisplay =
     Control.choice
-        [ ( "Free", Control.value ( "PremiumDisplay.Free", PremiumDisplay.Free ) )
-        , ( "Premium Locked", Control.value ( "PremiumDisplay.PremiumLocked", PremiumDisplay.PremiumLocked ) )
+        [ ( "Premium Locked", Control.value ( "PremiumDisplay.PremiumLocked", PremiumDisplay.PremiumLocked ) )
         , ( "Premium Unlocked", Control.value ( "PremiumDisplay.PremiumUnlocked", PremiumDisplay.PremiumUnlocked ) )
         , ( "Premium Vouchered", Control.value ( "PremiumDisplay.PremiumVouchered", PremiumDisplay.PremiumVouchered ) )
+        , ( "Free", Control.value ( "PremiumDisplay.Free", PremiumDisplay.Free ) )
         ]
 
 
