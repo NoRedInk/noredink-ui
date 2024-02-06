@@ -154,8 +154,8 @@ view ellieLinkConfig state =
             , "toString : Animals -> String"
             , "toString animals ="
                 ++ Code.caseExpression "animals"
-                    [ ( "Dogs", Code.string selectionSettings.dogsLabel )
-                    , ( "Cats", Code.string selectionSettings.catsLabel )
+                    [ ( "Dogs", Code.string "Dogs" )
+                    , ( "Cats", Code.string "Cats" )
                     , ( "Rabbits", Code.string selectionSettings.rabbitsLabel )
                     ]
                     1
@@ -411,8 +411,8 @@ examples :
     SelectionSettings
     -> List ( Selection, List ( String, RadioButton.Attribute Selection Msg ) )
 examples selectionSettings =
-    [ ( Dogs, selectionSettings.dogs )
-    , ( Cats, selectionSettings.cats )
+    [ ( Dogs, [] )
+    , ( Cats, [] )
     , ( Rabbits, selectionSettings.rabbits )
     ]
 
@@ -424,13 +424,13 @@ type Selection
 
 
 selectionToString : SelectionSettings -> Selection -> String
-selectionToString { dogsLabel, catsLabel, rabbitsLabel } selection =
+selectionToString { rabbitsLabel } selection =
     case selection of
         Dogs ->
-            dogsLabel
+            "Dogs"
 
         Cats ->
-            catsLabel
+            "Cats"
 
         Rabbits ->
             rabbitsLabel
@@ -458,11 +458,7 @@ init =
 
 
 type alias SelectionSettings =
-    { dogsLabel : String
-    , dogs : List ( String, RadioButton.Attribute Selection Msg )
-    , catsLabel : String
-    , cats : List ( String, RadioButton.Attribute Selection Msg )
-    , rabbitsLabel : String
+    { rabbitsLabel : String
     , rabbits : List ( String, RadioButton.Attribute Selection Msg )
     }
 
@@ -470,18 +466,14 @@ type alias SelectionSettings =
 initSelectionSettings : Control SelectionSettings
 initSelectionSettings =
     Control.record SelectionSettings
-        |> Control.field "Dogs label" (Control.string "Dogs")
-        |> Control.field "Dogs" controlAttributes
-        |> Control.field "Cats label" (Control.string "Cats")
-        |> Control.field "Cats" controlAttributes
-        |> Control.field "Rabbits label" (Control.string "Rabbits")
-        |> Control.field "Rabbits" controlAttributes
+        |> Control.field "3rd radio label" (Control.string "Rabbits (customizable)")
+        |> Control.field "" controlAttributes
 
 
 controlAttributes : Control (List ( String, RadioButton.Attribute Selection Msg ))
 controlAttributes =
     Control.list
-        |> ControlExtra.optionalListItem "visibility" labelVisibility
+        |> ControlExtra.optionalListItem "label visibility" labelVisibility
         |> ControlExtra.optionalListItem "status" disabledOrEnabled
         |> ControlExtra.optionalListItem "onLockedClick" onLockedClick
         |> ControlExtra.optionalListItem "premium"
