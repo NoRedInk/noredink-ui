@@ -197,7 +197,7 @@ view ellieLinkConfig state =
             , view =
                 \{ name, selectedValue, premiumDisplay } ->
                     RadioButton.view
-                        { label = "Include pandas"
+                        { label = "Send back for revisions"
                         , name = safeIdWithPrefix ("enabled-" ++ Debug.toString premiumDisplay) name
                         , value = ()
                         , selectedValue = selectedValue
@@ -213,7 +213,7 @@ view ellieLinkConfig state =
             , view =
                 \{ name, selectedValue, premiumDisplay } ->
                     RadioButton.view
-                        { label = "Include pandas"
+                        { label = "Send back for revisions"
                         , name = safeIdWithPrefix ("disabled-" ++ Debug.toString premiumDisplay) name
                         , value = ()
                         , selectedValue = selectedValue
