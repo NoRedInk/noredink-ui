@@ -25,6 +25,7 @@ import Examples.RadioButtonDotless as RadioButtonDotlessExample
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
+import Markdown
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
@@ -259,7 +260,7 @@ view ellieLinkConfig state =
           }
         ]
     , Heading.h2
-        [ Heading.plaintext "Guidance Examples"
+        [ Heading.plaintext "Extra Content Examples"
         , Heading.css [ Css.marginTop (Css.px 30) ]
         ]
     , Table.view []
@@ -277,35 +278,82 @@ view ellieLinkConfig state =
             }
         , Table.custom
             { header = text "Example"
-            , view =
-                \{ name, attribute } ->
-                    RadioButton.view
-                        { label = "No default integration"
-                        , name = safeIdWithPrefix "default-integration" name
-                        , value = ()
-                        , selectedValue = Nothing
-                        , valueToString = \_ -> ""
-                        }
-                        [ attribute ]
+            , view = .view
             , width = Css.pct 50
             , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
             , sort = Nothing
             }
+        , Table.custom
+            { header = text "Notes"
+            , view = .description >> Markdown.toHtml Nothing >> List.map fromUnstyled >> span []
+            , width = Css.px 150
+            , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
+            , sort = Nothing
+            }
         ]
         [ { name = "guidance"
-          , attribute = RadioButton.guidance "Teachers will be able to use any integration."
+          , view =
+                RadioButton.view
+                    { label = "No default integration"
+                    , name = safeIdWithPrefix "default-integration" "guidance"
+                    , value = ()
+                    , selectedValue = Nothing
+                    , valueToString = \_ -> ""
+                    }
+                    [ RadioButton.guidance "Teachers will be able to use any integration." ]
+          , description = ""
           }
         , { name = "guidanceHtml"
-          , attribute =
-                RadioButton.guidanceHtml
-                    [ text "Teachers will be able to use any "
-                    , ClickableText.link "LMS supported by NoRedInk"
-                        [ ClickableText.linkExternal "https://noredink.zendesk.com/hc/en-us/categories/6424228197403-Integrations"
-                        , ClickableText.small
-                        , ClickableText.appearsInline
+          , view =
+                RadioButton.view
+                    { label = "No default integration"
+                    , name = safeIdWithPrefix "default-integration" "guidanceHtml"
+                    , value = ()
+                    , selectedValue = Nothing
+                    , valueToString = \_ -> ""
+                    }
+                    [ RadioButton.guidanceHtml
+                        [ text "Teachers will be able to use any "
+                        , ClickableText.link "LMS supported by NoRedInk"
+                            [ ClickableText.linkExternal "https://noredink.zendesk.com/hc/en-us/categories/6424228197403-Integrations"
+                            , ClickableText.small
+                            , ClickableText.appearsInline
+                            ]
+                        , text "."
                         ]
-                    , text "."
                     ]
+          , description = ""
+          }
+        , { name = "errorMessage"
+          , view =
+                RadioButton.view
+                    { label = "No default integration"
+                    , name = safeIdWithPrefix "default-integration" "errorMessage"
+                    , value = ()
+                    , selectedValue = Nothing
+                    , valueToString = \_ -> ""
+                    }
+                    [ RadioButton.errorMessage (Just "Uh oh! I'm not sure why you can't make this selection.")
+                    ]
+          , description = "\"errorMessage\" is never used in the monorepo. I can't imagine a case when it would be used, since errors seem likely to apply to the group of radio buttons, and not to an individual radio button option. Presented here for completeness."
+          }
+        , { name = "disclosure"
+          , view =
+                RadioButton.view
+                    { label = "Only students who have mastered NoRedInk’s practice topics"
+                    , name = "who-can-rate"
+                    , value = ()
+                    , selectedValue = Just ()
+                    , valueToString = \_ -> ""
+                    }
+                    [ RadioButton.disclosure
+                        [ Text.caption
+                            [ Text.plaintext
+                                "Requiring students to achieve mastery on criteria before rating will help prepare them to give feedback, but it will also add significant time to the assignment."
+                            ]
+                        ]
+                    ]
+          , description = "\"disclosure\" content only appears when the given RadioButton is selected."
           }
         ]
     , Modal.view
