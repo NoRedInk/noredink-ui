@@ -686,6 +686,8 @@ initControl =
                     )
                 |> ControlExtra.optionalListItem "label"
                     (CommonControls.string ( Code.fromModule moduleName "label", Block.label ) "Fruit")
+                |> ControlExtra.optionalBoolListItem "skipLabelAnimation"
+                    ( Code.fromModule moduleName "skipLabelAnimation", Block.skipLabelAnimation )
                 |> ControlExtra.optionalListItem "labelPosition"
                     (Control.map
                         (\( code, v ) ->
