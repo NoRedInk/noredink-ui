@@ -1,11 +1,11 @@
-module Examples.IconExamples exposing
+module IconExamples exposing
     ( example
     , Settings, Msg
     , Group
     , preview, previewCustomSize
     )
 
-{-|
+{-| 🚨 If you update this module, please be sure that `script/add-example.sh` keeps working too.
 
 @docs example
 @docs Settings, Msg
