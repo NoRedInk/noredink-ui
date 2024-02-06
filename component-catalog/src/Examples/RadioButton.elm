@@ -531,10 +531,10 @@ controlAttributes =
                                 , RadioButton.containerCss [ Css.width (Css.pct 100) ]
                                 )
                           )
-                        , ( "10px right margin"
+                        , ( "10px left margin"
                           , Control.value
-                                ( "RadioButton.containerCss [ Css.marginRight (Css.px 10) ]"
-                                , RadioButton.containerCss [ Css.marginRight (Css.px 10) ]
+                                ( "RadioButton.containerCss [ Css.marginLeft (Css.px 10) ]"
+                                , RadioButton.containerCss [ Css.marginLeft (Css.px 10) ]
                                 )
                           )
                         ]
