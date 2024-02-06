@@ -169,7 +169,7 @@ example =
                   }
                 ]
             , Heading.h2
-                [ Heading.plaintext "Helpfully-Disabled Example"
+                [ Heading.plaintext "Helpfully Disabled Example"
                 , Heading.css
                     [ Css.marginTop Spacing.verticalSpacerPx
                     , Css.marginBottom (Css.px 10)
