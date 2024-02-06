@@ -28,8 +28,9 @@ import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
+import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (..)
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
 import Nri.Ui.Message.V4 as Message
 import Nri.Ui.Modal.V12 as Modal
 import Nri.Ui.RadioButton.V4 as RadioButton
@@ -173,29 +174,36 @@ view ellieLinkConfig state =
         ]
     , viewExamples selectionSettings state.selectedValue
     , Heading.h2
-        [ Heading.plaintext "State Examples"
+        [ Heading.plaintext "State & Premium Display Examples"
         , Heading.css [ Css.marginTop (Css.px 30) ]
         ]
     , Table.view []
         [ Table.string
             { header = "State"
             , value = .name
-            , width = Css.pct 30
+            , width = Css.px 10
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
+            , sort = Nothing
+            }
+        , Table.string
+            { header = "Premium Display"
+            , value = .premiumDisplay >> Debug.toString
+            , width = Css.px 10
             , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
             , sort = Nothing
             }
         , Table.custom
             { header = text "Enabled"
             , view =
-                \{ name, selectedValue } ->
+                \{ name, selectedValue, premiumDisplay } ->
                     RadioButton.view
                         { label = "Include pandas"
-                        , name = name ++ "-" ++ "enabled"
+                        , name = safeIdWithPrefix ("enabled-" ++ Debug.toString premiumDisplay) name
                         , value = ()
                         , selectedValue = selectedValue
                         , valueToString = \_ -> ""
                         }
-                        []
+                        [ RadioButton.premium premiumDisplay ]
             , width = Css.px 150
             , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
             , sort = Nothing
@@ -203,15 +211,15 @@ view ellieLinkConfig state =
         , Table.custom
             { header = text "Disabled"
             , view =
-                \{ name, selectedValue } ->
+                \{ name, selectedValue, premiumDisplay } ->
                     RadioButton.view
                         { label = "Include pandas"
-                        , name = name ++ "-" ++ "disabled"
+                        , name = safeIdWithPrefix ("disabled-" ++ Debug.toString premiumDisplay) name
                         , value = ()
                         , selectedValue = selectedValue
                         , valueToString = \_ -> ""
                         }
-                        [ RadioButton.disabled ]
+                        [ RadioButton.disabled, RadioButton.premium premiumDisplay ]
             , width = Css.px 150
             , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
             , sort = Nothing
@@ -219,9 +227,11 @@ view ellieLinkConfig state =
         ]
         [ { name = "Deselected"
           , selectedValue = Nothing
+          , premiumDisplay = Free
           }
         , { name = "Selected"
           , selectedValue = Just ()
+          , premiumDisplay = Free
           }
         ]
     , Modal.view
