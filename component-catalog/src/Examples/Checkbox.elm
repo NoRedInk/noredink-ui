@@ -157,7 +157,7 @@ example =
                   }
                 ]
             , Heading.h2
-                [ Heading.plaintext "Helpfully-Disabled Example"
+                [ Heading.plaintext "Helpfully Disabled Example"
                 , Heading.css [ Css.marginTop (Css.px 30) ]
                 ]
             , Tooltip.view
