@@ -258,6 +258,56 @@ view ellieLinkConfig state =
           , premiumDisplay = PremiumLocked
           }
         ]
+    , Heading.h2
+        [ Heading.plaintext "Guidance Examples"
+        , Heading.css [ Css.marginTop (Css.px 30) ]
+        ]
+    , Table.view []
+        [ Table.custom
+            { header = text "Attribute"
+            , view = .name >> text
+            , width = Css.pct 10
+            , cellStyles =
+                always
+                    [ Css.padding2 (Css.px 14) (Css.px 7)
+                    , Css.verticalAlign Css.middle
+                    , Css.fontWeight Css.bold
+                    ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Example"
+            , view =
+                \{ name, attribute } ->
+                    RadioButton.view
+                        { label = "No default integration"
+                        , name = safeIdWithPrefix "default-integration" name
+                        , value = ()
+                        , selectedValue = Nothing
+                        , valueToString = \_ -> ""
+                        }
+                        [ attribute ]
+            , width = Css.pct 50
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        ]
+        [ { name = "guidance"
+          , attribute = RadioButton.guidance "Teachers will be able to use any integration."
+          }
+        , { name = "guidanceHtml"
+          , attribute =
+                RadioButton.guidanceHtml
+                    [ text "Teachers will be able to use any "
+                    , ClickableText.link "LMS supported by NoRedInk"
+                        [ ClickableText.linkExternal "https://noredink.zendesk.com/hc/en-us/categories/6424228197403-Integrations"
+                        , ClickableText.small
+                        , ClickableText.appearsInline
+                        ]
+                    , text "."
+                    ]
+          }
+        ]
     , Modal.view
         { title = "Go Premium!"
         , wrapMsg = ModalMsg
