@@ -700,7 +700,7 @@ render config =
             , labelCss = config.labelCss
             , labelId = config.labelId
             , labelContentId = Maybe.map labelContentId config.labelId
-            , skipTagAnimation = False
+            , skipTagAnimation = config.skipLabelAnimation
             }
             config.content
         )
