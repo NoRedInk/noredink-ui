@@ -34,6 +34,7 @@ import Nri.Ui.Message.V4 as Message
 import Nri.Ui.Modal.V12 as Modal
 import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.Spacing.V1 as Spacing
+import Nri.Ui.Table.V7 as Table
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Routes
@@ -171,6 +172,58 @@ view ellieLinkConfig state =
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
     , viewExamples selectionSettings state.selectedValue
+    , Heading.h2
+        [ Heading.plaintext "State Examples"
+        , Heading.css [ Css.marginTop (Css.px 30) ]
+        ]
+    , Table.view []
+        [ Table.string
+            { header = "State"
+            , value = .name
+            , width = Css.pct 30
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Enabled"
+            , view =
+                \{ name, selectedValue } ->
+                    RadioButton.view
+                        { label = "Include pandas"
+                        , name = name ++ "-" ++ "enabled"
+                        , value = ()
+                        , selectedValue = selectedValue
+                        , valueToString = \_ -> ""
+                        }
+                        []
+            , width = Css.px 150
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Disabled"
+            , view =
+                \{ name, selectedValue } ->
+                    RadioButton.view
+                        { label = "Include pandas"
+                        , name = name ++ "-" ++ "disabled"
+                        , value = ()
+                        , selectedValue = selectedValue
+                        , valueToString = \_ -> ""
+                        }
+                        [ RadioButton.disabled ]
+            , width = Css.px 150
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        ]
+        [ { name = "Deselected"
+          , selectedValue = Nothing
+          }
+        , { name = "Selected"
+          , selectedValue = Just ()
+          }
+        ]
     , Modal.view
         { title = "Go Premium!"
         , wrapMsg = ModalMsg
