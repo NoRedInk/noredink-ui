@@ -156,7 +156,7 @@ view ellieLinkConfig state =
                 ++ Code.caseExpression "animals"
                     [ ( "Dogs", Code.string "Dogs" )
                     , ( "Cats", Code.string "Cats" )
-                    , ( "Rabbits", Code.string selectionSettings.rabbitsLabel )
+                    , ( "Rabbits", Code.string selectionSettings.label )
                     ]
                     1
             ]
@@ -372,22 +372,40 @@ view ellieLinkConfig state =
 
 viewExamplesCode : SelectionSettings -> Maybe Selection -> String
 viewExamplesCode selectionSettings selectedValue =
-    let
-        toExampleCode ( kind, settings ) =
-            Code.fromModule "RadioButton" "view"
+    "div []"
+        ++ Code.listMultiline
+            [ Code.fromModule "RadioButton" "view"
                 ++ Code.recordMultiline
-                    [ ( "label", (selectionToString selectionSettings >> Code.string) kind )
+                    [ ( "label", Code.string "Dogs" )
                     , ( "name", Code.string "pets" )
-                    , ( "value", selectionToString selectionSettings kind )
-                    , ( "selectedValue"
-                      , Code.maybe (Maybe.map (selectionToString selectionSettings) selectedValue)
-                      )
+                    , ( "value", "Dogs" )
+                    , ( "selectedValue", Debug.toString selectedValue )
                     , ( "valueToString", "toString" )
                     ]
                     2
-                ++ Code.listMultiline (List.map Tuple.first settings) 2
-    in
-    "div []" ++ Code.listMultiline (List.map toExampleCode (examples selectionSettings)) 1
+                ++ Code.list []
+            , Code.fromModule "RadioButton" "view"
+                ++ Code.recordMultiline
+                    [ ( "label", Code.string "Cats" )
+                    , ( "name", Code.string "pets" )
+                    , ( "value", "Cats" )
+                    , ( "selectedValue", Debug.toString selectedValue )
+                    , ( "valueToString", "toString" )
+                    ]
+                    2
+                ++ Code.list []
+            , Code.fromModule "RadioButton" "view"
+                ++ Code.recordMultiline
+                    [ ( "label", Code.string selectionSettings.label )
+                    , ( "name", Code.string "pets" )
+                    , ( "value", "Rabbits" )
+                    , ( "selectedValue", Debug.toString selectedValue )
+                    , ( "valueToString", "toString" )
+                    ]
+                    2
+                ++ Code.listMultiline (List.map Tuple.first selectionSettings.attributes) 2
+            ]
+            1
 
 
 viewExamples : SelectionSettings -> Maybe Selection -> Html Msg
@@ -413,7 +431,7 @@ examples :
 examples selectionSettings =
     [ ( Dogs, [] )
     , ( Cats, [] )
-    , ( Rabbits, selectionSettings.rabbits )
+    , ( Rabbits, selectionSettings.attributes )
     ]
 
 
@@ -424,7 +442,7 @@ type Selection
 
 
 selectionToString : SelectionSettings -> Selection -> String
-selectionToString { rabbitsLabel } selection =
+selectionToString { label } selection =
     case selection of
         Dogs ->
             "Dogs"
@@ -433,7 +451,7 @@ selectionToString { rabbitsLabel } selection =
             "Cats"
 
         Rabbits ->
-            rabbitsLabel
+            label
 
 
 {-| -}
@@ -458,8 +476,8 @@ init =
 
 
 type alias SelectionSettings =
-    { rabbitsLabel : String
-    , rabbits : List ( String, RadioButton.Attribute Selection Msg )
+    { label : String
+    , attributes : List ( String, RadioButton.Attribute Selection Msg )
     }
 
 
