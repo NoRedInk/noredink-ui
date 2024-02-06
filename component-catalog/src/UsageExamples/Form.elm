@@ -13,7 +13,7 @@ import Dict exposing (Dict)
 import Html.Styled exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Select.V9 as Select
-import Nri.Ui.TextInput.V7 as TextInput
+import Nri.Ui.TextInput.V8 as TextInput
 import UsageExample exposing (UsageExample)
 
 

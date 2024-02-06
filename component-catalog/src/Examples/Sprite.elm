@@ -7,7 +7,7 @@ module Examples.Sprite exposing (example, State, Msg)
 -}
 
 import Example exposing (Example)
-import Examples.IconExamples as IconExamples exposing (Group)
+import IconExamples exposing (Group)
 import Nri.Ui.Sprite.V1 as Sprite exposing (SpriteId)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 

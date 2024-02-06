@@ -30,7 +30,7 @@ import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Menu.V4 as Menu
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V7 as Table
-import Nri.Ui.TextInput.V7 as TextInput
+import Nri.Ui.TextInput.V8 as TextInput
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
@@ -490,18 +490,24 @@ type alias Settings =
 initSettings : Control Settings
 initSettings =
     Control.record Settings
-        |> Control.field "attributes" initSettingAttributes
+        |> Control.field "" initSettingAttributes
         |> Control.field "withTooltip" (Control.bool False)
 
 
 initSettingAttributes : Control (List ( String, Menu.Attribute Msg ))
 initSettingAttributes =
-    ControlExtra.list
-        |> ControlExtra.optionalListItem "alignment" controlAlignment
-        |> ControlExtra.optionalBoolListItem "isDisabled" ( "Menu.isDisabled True", Menu.isDisabled True )
-        |> ControlExtra.optionalListItem "menuWidth" controlMenuWidth
-        |> ControlExtra.optionalBoolListItem "opensOnHover" ( "Menu.opensOnHover True", Menu.opensOnHover True )
-        |> ControlExtra.listItem "triggering element" controlTrigger
+    Control.list
+        |> ControlExtra.listItems "popout"
+            (Control.list
+                |> ControlExtra.optionalListItem "alignment" controlAlignment
+                |> ControlExtra.optionalListItem "menuWidth" controlMenuWidth
+            )
+        |> ControlExtra.listItems "triggering element"
+            (Control.list
+                |> ControlExtra.optionalBoolListItem "isDisabled" ( "Menu.isDisabled True", Menu.isDisabled True )
+                |> ControlExtra.optionalBoolListItem "opensOnHover" ( "Menu.opensOnHover True", Menu.opensOnHover True )
+                |> ControlExtra.listItem "trigger" controlTrigger
+            )
 
 
 controlAlignment : Control ( String, Menu.Attribute msg )
@@ -605,7 +611,7 @@ controlTrigger =
 
 controlButtonAttributes : Control ( List String, List (Button.Attribute msg) )
 controlButtonAttributes =
-    ControlExtra.list
+    Control.list
         |> CommonControls.iconNotCheckedByDefault "Button" Button.icon
         |> ControlExtra.optionalListItem "exactWidth"
             (Control.map
@@ -614,14 +620,14 @@ controlButtonAttributes =
                     , Button.exactWidth i
                     )
                 )
-                (ControlExtra.int 220)
+                (Control.int 220)
             )
         |> Control.map List.unzip
 
 
 controlClickableTextAttributes : Control ( List String, List (ClickableText.Attribute msg) )
 controlClickableTextAttributes =
-    ControlExtra.list
+    Control.list
         |> CommonControls.iconNotCheckedByDefault "ClickableText" ClickableText.icon
         |> Control.map List.unzip
 
@@ -630,7 +636,7 @@ controlMenuWidth : Control ( String, Menu.Attribute msg )
 controlMenuWidth =
     Control.map
         (\val -> ( "Menu.menuWidth " ++ String.fromInt val, Menu.menuWidth val ))
-        (ControlExtra.int 220)
+        (Control.int 220)
 
 
 {-| -}

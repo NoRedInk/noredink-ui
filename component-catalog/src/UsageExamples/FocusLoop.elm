@@ -21,7 +21,7 @@ import Nri.Ui.FocusLoop.Lazy.V1 as FocusLoop
 import Nri.Ui.FocusLoop.V1 as FocusLoop
 import Nri.Ui.Html.V3 exposing (viewIf)
 import Nri.Ui.Switch.V3 as Switch
-import Nri.Ui.TextInput.V7 as TextInput
+import Nri.Ui.TextInput.V8 as TextInput
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Task
 import UsageExample exposing (UsageExample)

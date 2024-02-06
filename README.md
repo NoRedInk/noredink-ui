@@ -68,6 +68,17 @@ Contributing to the component library is characterized by close consultation wit
 10. When you're ready to publish your component, please refer to [the noredink-ui versioning policy](#versioning-policy), which includes guidance on permitted API changes per release.
 11. A11ybats keep an eye on all noredink-ui updates and may request modifications to your work if it does not adhere to the [Component Library Foundations](#component-library-foundations).
 
+**💫 Adding a component to the Component Catalog**
+
+There is a script to help you add your components to the Component Catalog quickly & easily!
+
+Run:
+```
+$ script/add-example.sh
+```
+
+And the script will help you wire up an example page. There will still be some TODOs left for you to fill out. Depending on your component's API, you may also need to adjust the generated code a bit for it to compile.
+
 # Developing, deploying, & versioning
 
 ## Getting Started

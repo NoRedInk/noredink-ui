@@ -1,5 +1,8 @@
 module Examples exposing (Msg, State, all)
 
+{-| Use `script/regenerate-examples.sh` to regenerate this module.
+-}
+
 import Example exposing (Example)
 import Examples.Accordion as Accordion
 import Examples.AnimatedIcon as AnimatedIcon
@@ -1085,8 +1088,8 @@ type State
     | ConfettiState Confetti.State
     | ContainerState Container.State
     | DividerState Divider.State
-    | FontsState Fonts.State
     | FocusRingState FocusRing.State
+    | FontsState Fonts.State
     | HeaderState Header.State
     | HeadingState Heading.State
     | HighlighterState Highlighter.State
@@ -1141,8 +1144,8 @@ type Msg
     | ConfettiMsg Confetti.Msg
     | ContainerMsg Container.Msg
     | DividerMsg Divider.Msg
-    | FontsMsg Fonts.Msg
     | FocusRingMsg FocusRing.Msg
+    | FontsMsg Fonts.Msg
     | HeaderMsg Header.Msg
     | HeadingMsg Heading.Msg
     | HighlighterMsg Highlighter.Msg
@@ -1150,7 +1153,6 @@ type Msg
     | LoadingMsg Loading.Msg
     | LogoMsg Logo.Msg
     | MenuMsg Menu.Msg
-    | TabsMinimalMsg TabsMinimal.Msg
     | MessageMsg Message.Msg
     | ModalMsg Modal.Msg
     | OutlineMsg Outline.Msg
@@ -1173,6 +1175,7 @@ type Msg
     | SwitchMsg Switch.Msg
     | TableMsg Table.Msg
     | TabsMsg Tabs.Msg
+    | TabsMinimalMsg TabsMinimal.Msg
     | TextMsg Text.Msg
     | TextAreaMsg TextArea.Msg
     | TextInputMsg TextInput.Msg

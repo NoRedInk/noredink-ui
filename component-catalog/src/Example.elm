@@ -1,5 +1,8 @@
 module Example exposing (Example, extraLinks, fromRouteName, fullName, preview, routeName, view, wrapMsg, wrapState)
 
+{-| 🚨 If you update this module, please be sure that `script/add-example.sh` keeps working too.
+-}
+
 import Accessibility.Styled.Aria as Aria
 import Category exposing (Category)
 import Css

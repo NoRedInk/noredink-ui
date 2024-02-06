@@ -343,7 +343,7 @@ initSelectionSettings =
 
 controlAttributes : Control (List ( String, RadioButton.Attribute Selection Msg ))
 controlAttributes =
-    ControlExtra.list
+    Control.list
         |> ControlExtra.optionalListItem "visibility" labelVisibility
         |> ControlExtra.optionalListItem "status" disabledOrEnabled
         |> ControlExtra.optionalListItem "onLockedClick" onLockedClick
@@ -401,6 +401,7 @@ controlAttributes =
             , errorMessage = Just RadioButton.errorMessage
             , message = "The statement must be true."
             }
+        |> CommonControls.rightIcon "RadioButton" RadioButton.rightIcon
 
 
 labelVisibility : Control ( String, RadioButton.Attribute Selection Msg )
