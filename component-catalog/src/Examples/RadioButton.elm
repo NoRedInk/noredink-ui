@@ -36,9 +36,11 @@ import Nri.Ui.Message.V4 as Message
 import Nri.Ui.Modal.V12 as Modal
 import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.Spacing.V1 as Spacing
+import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V7 as Table
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
+import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes
 import Task
 
@@ -354,6 +356,20 @@ view ellieLinkConfig state =
                         ]
                     ]
           , description = "\"disclosure\" content only appears when the given RadioButton is selected."
+          }
+        , { name = "rightIcon"
+          , view =
+                RadioButton.view
+                    { label = "Automatically assign a grade"
+                    , name = "grading-assistant"
+                    , value = ()
+                    , selectedValue = Nothing
+                    , valueToString = \_ -> ""
+                    }
+                    [ RadioButton.rightIcon
+                        (Svg.withLabel "Grade with Grading Assistant" UiIcon.gradingAssistant)
+                    ]
+          , description = ""
           }
         ]
     , Modal.view
