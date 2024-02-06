@@ -473,64 +473,72 @@ initSelectionSettings =
 controlAttributes : Control (List ( String, RadioButton.Attribute Selection Msg ))
 controlAttributes =
     Control.list
-        |> ControlExtra.optionalListItem "label visibility" labelVisibility
-        |> ControlExtra.optionalListItem "status" disabledOrEnabled
-        |> ControlExtra.optionalListItem "onLockedClick" onLockedClick
-        |> ControlExtra.optionalListItem "premium"
-            -- TODO: allow the teacher premium level to vary as well:
-            (Control.map
-                (\( premiumDisplay, pDisplay ) ->
-                    ( "RadioButton.premium " ++ premiumDisplay, RadioButton.premium pDisplay )
-                )
-                premiumDisplay
+        |> ControlExtra.listItems "Content & Status"
+            (Control.list
+                |> ControlExtra.optionalListItem "status" disabledOrEnabled
+                |> ControlExtra.optionalListItem "disclosure" controlDisclosure
+                |> CommonControls.guidanceAndErrorMessage
+                    { moduleName = moduleName
+                    , guidance = RadioButton.guidance
+                    , guidanceHtml = RadioButton.guidanceHtml
+                    , errorMessage = Just RadioButton.errorMessage
+                    , message = "The statement must be true."
+                    }
+                |> CommonControls.rightIcon "RadioButton" RadioButton.rightIcon
             )
-        |> ControlExtra.optionalListItem "containerCss"
-            (Control.choice
-                [ ( "max-width with border"
-                  , Control.value
-                        ( "RadioButton.containerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]"
-                        , RadioButton.containerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]
+        |> ControlExtra.listItems "Upsell options"
+            (Control.list
+                |> ControlExtra.optionalListItem "onLockedClick" onLockedClick
+                |> ControlExtra.optionalListItem "premium"
+                    (Control.map
+                        (\( premiumDisplay, pDisplay ) ->
+                            ( "RadioButton.premium " ++ premiumDisplay, RadioButton.premium pDisplay )
                         )
-                  )
-                , ( "100% width"
-                  , Control.value
-                        ( "RadioButton.containerCss [ Css.width (Css.pct 100) ]"
-                        , RadioButton.containerCss [ Css.width (Css.pct 100) ]
-                        )
-                  )
-                , ( "10px right margin"
-                  , Control.value
-                        ( "RadioButton.containerCss [ Css.marginRight (Css.px 10) ]"
-                        , RadioButton.containerCss [ Css.marginRight (Css.px 10) ]
-                        )
-                  )
-                ]
+                        premiumDisplay
+                    )
             )
-        |> ControlExtra.optionalListItem "labelCss"
-            (Control.choice
-                [ ( "backgroundColor highlightMagenta"
-                  , Control.value
-                        ( "RadioButton.labelCss [ Css.backgroundColor Colors.highlightMagenta ]"
-                        , RadioButton.labelCss [ Css.backgroundColor Colors.highlightMagenta ]
-                        )
-                  )
-                , ( "1px ochreDark border"
-                  , Control.value
-                        ( "RadioButton.labelCss [ Css.border3 (Css.px 1) Css.solid Colors.ochreDark ]"
-                        , RadioButton.labelCss [ Css.border3 (Css.px 1) Css.solid Colors.ochreDark ]
-                        )
-                  )
-                ]
+        |> ControlExtra.listItems "Style Extras"
+            (Control.list
+                |> ControlExtra.optionalListItem "containerCss"
+                    (Control.choice
+                        [ ( "max-width with border"
+                          , Control.value
+                                ( "RadioButton.containerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]"
+                                , RadioButton.containerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]
+                                )
+                          )
+                        , ( "100% width"
+                          , Control.value
+                                ( "RadioButton.containerCss [ Css.width (Css.pct 100) ]"
+                                , RadioButton.containerCss [ Css.width (Css.pct 100) ]
+                                )
+                          )
+                        , ( "10px right margin"
+                          , Control.value
+                                ( "RadioButton.containerCss [ Css.marginRight (Css.px 10) ]"
+                                , RadioButton.containerCss [ Css.marginRight (Css.px 10) ]
+                                )
+                          )
+                        ]
+                    )
+                |> ControlExtra.optionalListItem "labelCss"
+                    (Control.choice
+                        [ ( "backgroundColor highlightMagenta"
+                          , Control.value
+                                ( "RadioButton.labelCss [ Css.backgroundColor Colors.highlightMagenta ]"
+                                , RadioButton.labelCss [ Css.backgroundColor Colors.highlightMagenta ]
+                                )
+                          )
+                        , ( "1px ochreDark border"
+                          , Control.value
+                                ( "RadioButton.labelCss [ Css.border3 (Css.px 1) Css.solid Colors.ochreDark ]"
+                                , RadioButton.labelCss [ Css.border3 (Css.px 1) Css.solid Colors.ochreDark ]
+                                )
+                          )
+                        ]
+                    )
+                |> ControlExtra.optionalListItem "label visibility" labelVisibility
             )
-        |> ControlExtra.optionalListItem "disclosure" controlDisclosure
-        |> CommonControls.guidanceAndErrorMessage
-            { moduleName = moduleName
-            , guidance = RadioButton.guidance
-            , guidanceHtml = RadioButton.guidanceHtml
-            , errorMessage = Just RadioButton.errorMessage
-            , message = "The statement must be true."
-            }
-        |> CommonControls.rightIcon "RadioButton" RadioButton.rightIcon
 
 
 labelVisibility : Control ( String, RadioButton.Attribute Selection Msg )
