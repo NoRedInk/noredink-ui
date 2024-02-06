@@ -233,6 +233,30 @@ view ellieLinkConfig state =
           , selectedValue = Just ()
           , premiumDisplay = Free
           }
+        , { name = "Deselected"
+          , selectedValue = Nothing
+          , premiumDisplay = PremiumUnlocked
+          }
+        , { name = "Selected"
+          , selectedValue = Just ()
+          , premiumDisplay = PremiumUnlocked
+          }
+        , { name = "Deselected"
+          , selectedValue = Nothing
+          , premiumDisplay = PremiumVouchered
+          }
+        , { name = "Selected"
+          , selectedValue = Just ()
+          , premiumDisplay = PremiumVouchered
+          }
+        , { name = "Deselected"
+          , selectedValue = Nothing
+          , premiumDisplay = PremiumLocked
+          }
+        , { name = "Selected"
+          , selectedValue = Just ()
+          , premiumDisplay = PremiumLocked
+          }
         ]
     , Modal.view
         { title = "Go Premium!"
