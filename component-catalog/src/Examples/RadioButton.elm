@@ -393,7 +393,7 @@ view ellieLinkConfig state =
         [ Heading.plaintext "Tooltip Example"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
-    , div []
+    , Tuple.second container
         [ RadioButton.view
             { label = "Dogs"
             , name = "pets-2"
@@ -436,7 +436,7 @@ view ellieLinkConfig state =
 
 viewExamplesCode : SelectionSettings -> Maybe Selection -> String
 viewExamplesCode selectionSettings selectedValue =
-    "div []"
+    Tuple.first container
         ++ Code.listMultiline
             [ Code.fromModule "RadioButton" "view"
                 ++ Code.recordMultiline
@@ -485,14 +485,33 @@ viewExamples selectionSettings selectedValue =
                 }
                 (RadioButton.onSelect Select :: List.map Tuple.second settings)
     in
-    div
+    Tuple.second container
+        (List.map viewExample_ (examples selectionSettings))
+
+
+container : ( String, List (Html msg) -> Html msg )
+container =
+    ( "div"
+        ++ Code.listMultiline
+            [ "css"
+                ++ Code.listMultiline
+                    [ "Css.displayFlex"
+                    , "Css.flexDirection Css.column"
+                    , "Css.property \"gap\" \"10px\""
+                    , "Css.alignItems Css.flexStart"
+                    ]
+                    2
+            ]
+            1
+    , div
         [ css
             [ Css.displayFlex
             , Css.flexDirection Css.column
             , Css.property "gap" "10px"
+            , Css.alignItems Css.flexStart
             ]
         ]
-        (List.map viewExample_ (examples selectionSettings))
+    )
 
 
 examples :
