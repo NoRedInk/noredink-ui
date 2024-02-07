@@ -485,7 +485,13 @@ viewExamples selectionSettings selectedValue =
                 }
                 (RadioButton.onSelect Select :: List.map Tuple.second settings)
     in
-    div [ css [ Css.flexBasis (Css.px 300) ] ]
+    div
+        [ css
+            [ Css.displayFlex
+            , Css.flexDirection Css.column
+            , Css.property "gap" "10px"
+            ]
+        ]
         (List.map viewExample_ (examples selectionSettings))
 
 
@@ -589,10 +595,10 @@ controlAttributes =
                                 , RadioButton.containerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]
                                 )
                           )
-                        , ( "100% width"
+                        , ( "backgroundColor aquaLight"
                           , Control.value
-                                ( "RadioButton.containerCss [ Css.width (Css.pct 100) ]"
-                                , RadioButton.containerCss [ Css.width (Css.pct 100) ]
+                                ( "RadioButton.containerCss [ Css.backgroundColor Colors.aquaLight ]"
+                                , RadioButton.containerCss [ Css.backgroundColor Colors.aquaLight ]
                                 )
                           )
                         , ( "10px left margin"
