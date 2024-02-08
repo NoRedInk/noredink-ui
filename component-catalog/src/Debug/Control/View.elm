@@ -34,10 +34,31 @@ view :
     }
     -> Html msg
 view config =
-    let
-        value =
-            Control.currentValue config.settings
+    viewWithCustomControls
+        { ellieLinkConfig = config.ellieLinkConfig
+        , name = config.name
+        , version = config.version
+        , controls = Control.view config.update config.settings
+        , mainType = config.mainType
+        , extraCode = config.extraCode
+        , renderExample = config.renderExample
+        , exampleCode = config.toExampleCode (Control.currentValue config.settings)
+        }
 
+
+viewWithCustomControls :
+    { ellieLinkConfig : EllieLink.Config
+    , name : String
+    , version : Int
+    , controls : Html msg
+    , mainType : Maybe String
+    , extraCode : List String
+    , renderExample : String -> String
+    , exampleCode : List { sectionName : String, code : String }
+    }
+    -> Html msg
+viewWithCustomControls config =
+    let
         ellieLink example =
             EllieLink.view config.ellieLinkConfig
                 { fullModuleName = Example.fullName config
@@ -48,9 +69,6 @@ view config =
                 , renderExample = config.renderExample
                 , code = example.code
                 }
-
-        exampleCodes =
-            config.toExampleCode value
     in
     div
         [ css
@@ -62,7 +80,7 @@ view config =
         [ Container.view
             [ Container.html
                 [ Heading.h2 [ Heading.plaintext "Settings" ]
-                , Control.view config.update config.settings
+                , config.controls
                 ]
             , Container.css
                 [ withMedia [ mobile ]
@@ -81,7 +99,7 @@ view config =
             ]
         , Container.view
             [ Container.html
-                (case exampleCodes of
+                (case config.exampleCode of
                     singular :: [] ->
                         [ div
                             [ css
@@ -100,7 +118,7 @@ view config =
                     _ ->
                         codeSampleHeading
                             :: List.map (\example -> viewCodeDetails (ellieLink example) example)
-                                exampleCodes
+                                config.exampleCode
                 )
             , Container.css
                 [ padding (px 20)
