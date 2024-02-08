@@ -218,9 +218,9 @@ view config ellieLinkConfig settings groups =
                 , name = config.moduleName
                 , version = config.version
                 , controls = viewCustomizableExample groups settings
-                , mainType = Nothing
+                , mainType = Just "RootHtml.Html msg"
                 , extraCode = []
-                , renderExample = \_ -> "TODO"
+                , renderExample = \renderedSvgDefinition -> "toUnstyled renderedSvg" ++ Code.newlines ++ renderedSvgDefinition
                 , exampleCode =
                     [ { sectionName = config.moduleName
                       , code = code
@@ -470,7 +470,7 @@ toCustomizableExampleResults state =
             ]
                 |> String.join ""
       )
-        ++ (Code.varWithTypeAnnotation "renderedSvg" "Svg" <|
+        ++ (Code.varWithTypeAnnotation "renderedSvg" "Html msg" <|
                 Code.pipelineMultiline
                     ([ Just <| state.renderSvgCode (Tuple.first state.icon)
                      , case selectedNriUiColor of
