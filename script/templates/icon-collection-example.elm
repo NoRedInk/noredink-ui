@@ -29,7 +29,7 @@ example =
     , version = 1
     , label = "FIRST_ICON_MEANING"
     , name = "firstIconName"
-    , icon = COLLECTION_NAME.starFilled
+    , icon = COLLECTION_NAME.firstIconName
     , renderSvgCode = Code.fromModule "COLLECTION_NAME"
     , preview =
         -- TODO: add more icons to the preview
