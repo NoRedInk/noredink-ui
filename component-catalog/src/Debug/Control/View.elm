@@ -1,8 +1,8 @@
-module Debug.Control.View exposing (view)
+module Debug.Control.View exposing (view, viewWithCustomControls)
 
 {-|
 
-@docs view
+@docs view, viewWithCustomControls
 
 -}
 
