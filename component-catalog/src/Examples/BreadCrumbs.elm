@@ -74,10 +74,10 @@ example =
             ]
         ]
     , about =
-        [ Text.mediumBody [ Text.markdown "`BreadCrumbs` orient users and provide convenient links to go \"up\" to parent pages." ]
-        , Text.mediumBody [ Text.markdown "Typically, you'll use `Header.view` (rather than `BreadCrumbs.view`) to render primary/`h1`-level `BreadCrumbs`. You may use `BreadCrumbs.viewSecondary` to render `h2`-level `BreadCrumbs`." ]
-        , Text.mediumBody [ Text.markdown "You should use `BreadCrumbs.headerId` to move focus to the current `h1` or `h2` and `BreadCrumbs.toPageTitle` to dynamically change the title when the page context changes." ]
-        , Text.mediumBody
+        [ Text.smallBody [ Text.markdown "`BreadCrumbs` orient users and provide convenient links to go \"up\" to parent pages." ]
+        , Text.smallBody [ Text.markdown "Typically, you'll use `Header.view` (rather than `BreadCrumbs.view`) to render primary/`h1`-level `BreadCrumbs`. You may use `BreadCrumbs.viewSecondary` to render `h2`-level `BreadCrumbs`." ]
+        , Text.smallBody [ Text.markdown "You should use `BreadCrumbs.headerId` to move focus to the current `h1` or `h2` and `BreadCrumbs.toPageTitle` to dynamically change the title when the page context changes." ]
+        , Text.smallBody
             [ Text.html
                 [ text "This and more is explained in depth in Tessa's "
                 , ClickableText.link "BreadCrumbs component demo"

@@ -46,7 +46,7 @@ example =
         ]
             |> List.map viewPreview
     , about =
-        [ Text.mediumBody
+        [ Text.smallBody
             [ Text.html
                 [ Html.text "Learn more about kid-friendly and accessible fonts starting at 24:40 in "
                 , ClickableText.link "Kids Websites: Where Fun and Accessibility Come to Play"
