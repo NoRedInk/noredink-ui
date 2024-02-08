@@ -243,6 +243,7 @@ sizes =
     [ ( ClickableText.small, "small" )
     , ( ClickableText.medium, "medium" )
     , ( ClickableText.large, "large" )
+    , ( ClickableText.modal, "modal" )
     ]
 
 
