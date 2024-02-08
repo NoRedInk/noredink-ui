@@ -461,7 +461,9 @@ buttonsTable =
           ]
         , List.concatMap exampleRow styles
         ]
-        |> table [ css [ Css.borderCollapse Css.collapse ] ]
+        |> table [ css [ Css.borderCollapse Css.collapse, Css.width (Css.pct 100) ] ]
+        |> List.singleton
+        |> div [ css [ Css.overflow Css.auto ] ]
 
 
 toggleButtons : Set Int -> Html Msg
