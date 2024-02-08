@@ -15,6 +15,7 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Guidance
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
@@ -52,7 +53,7 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview = preview
-    , about = []
+    , about = [ Guidance.helpfullyDisabled moduleName ]
     , view =
         \ellieLinkConfig state ->
             let
@@ -156,7 +157,7 @@ example =
                   }
                 ]
             , Heading.h2
-                [ Heading.plaintext "Tooltip Example"
+                [ Heading.plaintext "Helpfully Disabled Example"
                 , Heading.css [ Css.marginTop (Css.px 30) ]
                 ]
             , Tooltip.view

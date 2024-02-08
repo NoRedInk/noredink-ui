@@ -21,22 +21,19 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
-import Examples.RadioButtonDotless as RadioButtonDotlessExample
+import Guidance
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
 import Nri.Ui.Button.V10 as Button
-import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Message.V4 as Message
 import Nri.Ui.Modal.V12 as Modal
 import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
-import Routes
 import Task
 
 
@@ -63,17 +60,7 @@ example =
     , update = update
     , subscriptions = subscriptions
     , preview = preview
-    , about =
-        [ Message.view
-            [ Message.html
-                [ text "Looking for a group of buttons where only one button is selectable at a time? Check out "
-                , ClickableText.link "RadioButtonDotless"
-                    [ ClickableText.href (Routes.exampleHref RadioButtonDotlessExample.example)
-                    , ClickableText.appearsInline
-                    ]
-                ]
-            ]
-        ]
+    , about = [ Guidance.helpfullyDisabled moduleName, Guidance.useRadioButtonDotless ]
     , view = view
     , categories = [ Inputs ]
     , keyboardSupport =
@@ -189,7 +176,7 @@ view ellieLinkConfig state =
         [ Modal.closeButton ]
         state.modal
     , Heading.h2
-        [ Heading.plaintext "Tooltip Example"
+        [ Heading.plaintext "Helpfully Disabled Example"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
     , div []
