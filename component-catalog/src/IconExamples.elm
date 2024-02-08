@@ -207,18 +207,20 @@ view settings groups =
             viewWithCustomStyles settings group values
     in
     ExampleSection.sectionWithCss "About" [ Css.flex (Css.int 1) ] Text.smallBody [ aboutMsg ]
-        :: Heading.h2 [ Heading.plaintext "Grouped Icons", Heading.css [ Css.marginTop (Css.px 10) ] ]
+        :: Html.section []
+            [ Heading.h2
+                [ Heading.plaintext "Customizable example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
+            , viewCustomizableExample groups settings
+            , viewResults settings
+            ]
+        :: Heading.h2
+            [ Heading.plaintext "Grouped Icons"
+            , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+            ]
         :: viewSettings settings
         :: List.map viewExampleSection groups
-        ++ [ Html.section []
-                [ Heading.h2
-                    [ Heading.plaintext "Example Usage"
-                    , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
-                    ]
-                , viewSingularExampleSettings groups settings
-                , viewResults settings
-                ]
-           ]
 
 
 aboutMsg : Text.Attribute msg
@@ -310,8 +312,8 @@ viewIcon showIconName ( name, icon, style ) =
         ]
 
 
-viewSingularExampleSettings : List Group -> Settings -> Html.Html Msg
-viewSingularExampleSettings groups state =
+viewCustomizableExample : List Group -> Settings -> Html.Html Msg
+viewCustomizableExample groups state =
     let
         svgGroupedChoices ( groupName, items ) =
             let
