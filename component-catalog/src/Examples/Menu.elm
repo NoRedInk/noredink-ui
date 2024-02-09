@@ -247,7 +247,7 @@ view ellieLinkConfig state =
         [ Table.string
             { header = "Menu type"
             , value = .menu
-            , width = Css.pct 30
+            , width = Css.pct 15
             , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
             , sort = Nothing
             }
@@ -256,6 +256,13 @@ view ellieLinkConfig state =
             , view = .example
             , width = Css.px 300
             , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Description"
+            , view = \{ description } -> Text.smallBody [ Text.markdown description ]
+            , width = Css.pct 60
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.top ]
             , sort = Nothing
             }
         ]
@@ -309,6 +316,7 @@ view ellieLinkConfig state =
                                 , ClickableText.custom attrs
                                 ]
                     ]
+          , description = "Makes the menu follow the [Navigation Menu pattern](https://www.w3.org/WAI/ARIA/apg/example-index/menu-button/menu-button-links.html), but without the ul/li structure."
           }
         , { menu = "Menu.navMenuList"
           , example =
@@ -341,6 +349,9 @@ view ellieLinkConfig state =
                                 , ClickableText.custom attrs
                                 ]
                     ]
+          , description = """
+Same as navMenu, except that a ul/li structure will be added as a fall-through.
+    """
           }
         , { menu = "Menu.disclosure"
           , example =
@@ -368,6 +379,17 @@ view ellieLinkConfig state =
                                     ]
                                 ]
                     ]
+          , description =
+                """
+ Makes the menu behave as a disclosure.
+
+For more information, please read [Disclosure (Show/Hide) pattern](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/).
+
+You will need to pass in the last focusable element in the disclosed content in order for:
+
+  - any focusable elements in the disclosed content to be keyboard accessible
+  - the disclosure to close appropriately when the user tabs past all of the disclosed content
+"""
           }
         , { menu = "Menu.dialog"
           , example =
@@ -395,6 +417,18 @@ view ellieLinkConfig state =
                                     ]
                                 ]
                     ]
+          , description =
+                """
+ Makes the menu behave as a dialog.
+
+For more information, please read [Dialog pattern](https://w3c.github.io/aria-practices/examples/dialog-modal/dialog.html/).
+
+You will need to pass in the first and last focusable element in the dialog content in order for:
+
+  - any focusable elements in the dialog content to be keyboard accessible
+  - the tab to wrap around appropriately when the user tabs past all of the dialog content
+
+"""
           }
         ]
     , Heading.h2
