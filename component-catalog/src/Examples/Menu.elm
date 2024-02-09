@@ -30,7 +30,9 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
 import Nri.Ui.Menu.V4 as Menu
+import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.Spacing.V1 as Spacing
+import Nri.Ui.Switch.V3 as Switch
 import Nri.Ui.Table.V7 as Table
 import Nri.Ui.TextInput.V8 as TextInput
 import Nri.Ui.Tooltip.V3 as Tooltip
@@ -536,6 +538,43 @@ view ellieLinkConfig state =
                             ]
                 ]
           }
+        , { name = "Grouped entries"
+          , entries =
+                [ List.range 1 2
+                    |> List.map
+                        (\i ->
+                            Menu.entry ("group-clickable-text-entry-" ++ String.fromInt i) <|
+                                \attributes ->
+                                    ClickableText.button ("Thing " ++ String.fromInt i)
+                                        [ ClickableText.small
+                                        , ClickableText.custom attributes
+                                        ]
+                        )
+                    |> Menu.group "Group of ClickableTexts"
+                , List.range 1 3
+                    |> List.map
+                        (\i ->
+                            Menu.entry ("group-button-entry-" ++ String.fromInt i) <|
+                                \attributes ->
+                                    Button.button ("Thing " ++ String.fromInt i)
+                                        [ Button.small
+                                        , Button.custom attributes
+                                        ]
+                        )
+                    |> Menu.group "Group of Buttons"
+                ]
+          }
+        , { name = "Mix of singular entries and grouped entries"
+          , entries =
+                [ Menu.group "Display scores as"
+                    [ Menu.entry "percentages" <| viewScoreDisplay "Percentage" Nothing
+                    , Menu.entry "points" <| viewScoreDisplay "Points" Nothing
+                    ]
+                , Menu.group "Dropped students"
+                    [ Menu.entry "dropped-students" <| viewDroppedStudentsSwitch
+                    ]
+                ]
+          }
         ]
     ]
 
@@ -553,6 +592,30 @@ forcedOpenExample name =
 forcedOpenExampleButtonId : String -> String
 forcedOpenExampleButtonId name =
     safeIdWithPrefix name "buttonId"
+
+
+viewScoreDisplay : String -> Maybe String -> List (Attribute msg) -> Html msg
+viewScoreDisplay value selected attributes =
+    RadioButton.view
+        { label = value
+        , value = value
+        , name = "score-display"
+        , selectedValue = selected
+        , valueToString = identity
+        }
+        [ RadioButton.custom attributes
+        ]
+
+
+viewDroppedStudentsSwitch : List (Attribute msg) -> Html msg
+viewDroppedStudentsSwitch attributes =
+    Switch.view
+        { label = "Show dropped students"
+        , id = "show-dropped-students"
+        }
+        [ Switch.selected False
+        , Switch.custom attributes
+        ]
 
 
 {-| -}
