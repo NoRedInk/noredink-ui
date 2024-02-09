@@ -7,9 +7,7 @@ import Nri.Test.MouseHelpers.V1 as MouseHelpers
 import ProgramTest exposing (..)
 import Routes exposing (Route)
 import Test exposing (..)
-import Test.Html.Event as Event
-import Test.Html.Query as Query
-import Test.Html.Selector as Selector exposing (..)
+import Test.Html.Selector exposing (..)
 import TestApp exposing (app)
 
 
