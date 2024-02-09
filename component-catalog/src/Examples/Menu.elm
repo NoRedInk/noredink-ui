@@ -478,7 +478,7 @@ view ellieLinkConfig state =
             }
         , Table.custom
             { header = text "Example"
-            , view = \{ name, entries } -> forcedOpenExample name entries
+            , view = \{ name, menuType, entries } -> forcedOpenExample name menuType entries
             , width = Css.px 300
             , cellStyles =
                 \{ name } ->
@@ -527,6 +527,7 @@ view ellieLinkConfig state =
             }
         ]
         [ { name = "List of entries"
+          , menuType = Menu.navMenuList
           , entries =
                 [ Menu.entry "list-of-entries-clickable-text-entry" <|
                     \attributes ->
@@ -552,6 +553,7 @@ view ellieLinkConfig state =
           , about = "Pass any interactive elements in using `Menu.entry`."
           }
         , { name = "Grouped entries"
+          , menuType = Menu.navMenuList
           , entries =
                 [ List.range 1 2
                     |> List.map
@@ -589,6 +591,7 @@ The structures are recursive and flexible:
 """
           }
         , { name = "Mix of singular entries and grouped entries"
+          , menuType = Menu.disclosure { lastId = droppedStudentsId }
           , entries =
                 [ Menu.entry "grades-and-perf" <|
                     \attributes ->
@@ -618,8 +621,8 @@ In this realistic example, we can't actually pass the correct attributes to Radi
     ]
 
 
-forcedOpenExample : String -> List (Menu.Entry Msg) -> Html Msg
-forcedOpenExample name =
+forcedOpenExample : String -> Menu.Attribute Msg -> List (Menu.Entry Msg) -> Html Msg
+forcedOpenExample name type_ =
     Menu.view (FocusAndToggle name)
         [ Menu.clickableSvgWithoutIndicator (name ++ " example")
             UiIcon.arrowDown
@@ -630,6 +633,7 @@ forcedOpenExample name =
         , Menu.buttonId (forcedOpenExampleButtonId name)
         , Menu.menuId (safeIdWithPrefix name "menuId")
         , Menu.alignLeft
+        , type_
         ]
 
 
@@ -659,7 +663,7 @@ viewDroppedStudentsSwitch : Bool -> List (Attribute Msg) -> Html Msg
 viewDroppedStudentsSwitch showDroppedStudents attributes =
     Switch.view
         { label = "Show dropped students"
-        , id = "show-dropped-students"
+        , id = droppedStudentsId
         }
         [ Switch.onSwitch ShowDroppedStudents
         , Switch.selected showDroppedStudents
@@ -669,6 +673,11 @@ viewDroppedStudentsSwitch showDroppedStudents attributes =
         -- the Switch become inoperable.
         --, Switch.custom attributes
         ]
+
+
+droppedStudentsId : String
+droppedStudentsId =
+    "show-dropped-students"
 
 
 {-| -}
