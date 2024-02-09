@@ -229,6 +229,11 @@ view config ellieLinkConfig settings groups =
                 }
             ]
         :: Heading.h2
+            [ Heading.plaintext "Customizable Example"
+            , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+            ]
+        :: renderedExample
+        :: Heading.h2
             [ Heading.plaintext "Icons in This Collection"
             , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
             ]
