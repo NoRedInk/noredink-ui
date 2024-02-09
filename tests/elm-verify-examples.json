@@ -28,7 +28,6 @@
         "Nri.Ui.Data.PremiumDisplay",
         "Nri.Ui.Divider.V2",
         "Nri.Ui.Effects.V1",
-        "Nri.Ui.WhenFocusLeaves.V1",
         "Nri.Ui.WhenFocusLeaves.V2",
         "Nri.Ui.FocusLoop.V1",
         "Nri.Ui.FocusLoop.Lazy.V1",
