@@ -33,6 +33,7 @@ import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
 import Nri.Ui.InputStyles.V4 as InputStyles
 import Nri.Ui.Select.V9 as Select
 import Nri.Ui.Spacing.V1 as Spacing
@@ -357,28 +358,10 @@ viewCustomizableExample groups state =
             ]
         , inputGroup
             [ colorPicker state.color
-            , Html.label [ css [ Css.alignSelf Css.center ] ]
-                [ Html.text "Width: "
-                , Html.input
-                    [ Attributes.type_ "range"
-                    , Attributes.min "0"
-                    , Attributes.max "200"
-                    , Attributes.value (String.fromFloat state.width)
-                    , Events.onInput (SetWidth << String.toFloat)
-                    ]
-                    []
-                ]
-            , Html.label [ css [ Css.alignSelf Css.center ] ]
-                [ Html.text "Height: "
-                , Html.input
-                    [ Attributes.type_ "range"
-                    , Attributes.min "0"
-                    , Attributes.max "200"
-                    , Attributes.value (String.fromFloat state.height)
-                    , Events.onInput (SetHeight << String.toFloat)
-                    ]
-                    []
-                ]
+            , sizeSlider "Width" state.width
+                |> Html.map SetWidth
+            , sizeSlider "Height" state.height
+                |> Html.map SetHeight
             ]
         , Checkbox.view
             { label = "Show border"
@@ -398,6 +381,41 @@ inputGroup =
             , Css.justifyContent Css.spaceBetween
             , Css.flexWrap Css.wrap
             ]
+        ]
+
+
+sizeSlider : String -> Float -> Html (Maybe Float)
+sizeSlider name value =
+    let
+        id =
+            safeIdWithPrefix "size-slider" name
+    in
+    Html.div
+        [ css
+            [ Css.position Css.relative
+            , Css.paddingTop (Css.px 18)
+            , Css.display Css.inlineBlock
+            ]
+        ]
+        [ InputLabelInternal.view
+            { for = id
+            , label = name
+            , theme = InputStyles.Standard
+            }
+            { error = InputErrorAndGuidanceInternal.noError
+            , noMarginTop = False
+            , hideLabel = False
+            , disabled = False
+            }
+        , Html.input
+            [ Attributes.type_ "range"
+            , Attributes.min "0"
+            , Attributes.max "200"
+            , Attributes.id id
+            , Attributes.value (String.fromFloat value)
+            , Events.onInput String.toFloat
+            ]
+            []
         ]
 
 
