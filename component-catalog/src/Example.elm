@@ -6,7 +6,6 @@ module Example exposing (Example, extraLinks, fromRouteName, fullName, preview, 
 import Accessibility.Styled.Aria as Aria
 import Category exposing (Category)
 import Css
-import Css.Global
 import Css.Media exposing (withMedia)
 import EllieLink
 import EventExtras
@@ -181,30 +180,12 @@ view_ ellieLinkConfig example state =
             , withMedia [ mobile ] [ Css.flexDirection Css.column, Css.alignItems Css.stretch ]
             ]
         ]
-        [ ExampleSection.sectionWithCss "About"
-            [ Css.flex (Css.int 1) ]
-            viewAbout
-            example.about
+        [ ExampleSection.aboutSection example.about
         , KeyboardSupport.view example.keyboardSupport
         ]
     , Html.div [ Attributes.css [ Css.marginBottom (Css.px 200) ] ]
         (example.view ellieLinkConfig state)
     ]
-
-
-viewAbout : List (Html Never) -> Html msg
-viewAbout about =
-    Html.div
-        [ Attributes.css
-            [ Css.margin2 (Css.px 10) Css.zero
-            , Css.Global.descendants
-                [ Css.Global.code
-                    [ Css.fontSize (Css.px 13.5) ]
-                ]
-            ]
-        ]
-        about
-        |> Html.map never
 
 
 extraLinks : (msg -> msg2) -> Example state msg -> Header.Attribute route msg2
