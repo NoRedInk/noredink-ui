@@ -506,9 +506,6 @@ view ellieLinkConfig state =
                           -- content is always visible.
                           Css.Global.selector ("#" ++ buttonId ++ " + div")
                             [ Css.position Css.relative ]
-                        , -- Hide the trigger element
-                          Css.Global.id buttonId
-                            [ Css.display Css.none ]
                         ]
                     ]
             , sort = Nothing
@@ -589,10 +586,15 @@ view ellieLinkConfig state =
 forcedOpenExample : String -> List (Menu.Entry Msg) -> Html Msg
 forcedOpenExample name =
     Menu.view (FocusAndToggle name)
-        [ Menu.clickableSvgWithoutIndicator (name ++ " example") UiIcon.starFilled []
+        [ Menu.clickableSvgWithoutIndicator (name ++ " example")
+            UiIcon.arrowDown
+            [ ClickableSvg.exactSize 15
+            , ClickableSvg.css [ Css.marginLeft (Css.px 17) ]
+            ]
         , Menu.isOpen True
         , Menu.buttonId (forcedOpenExampleButtonId name)
         , Menu.menuId (safeIdWithPrefix name "menuId")
+        , Menu.alignLeft
         ]
 
 
