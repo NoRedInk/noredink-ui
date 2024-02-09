@@ -16,6 +16,7 @@ module Nri.Ui.Menu.V4 exposing
   - improve interoperability with Tooltip (Note that tooltip keyboard events are not fully supported!)
   - Use Nri.Ui.WhenFocusLeaves.V2
   - Adjust disabled styles
+  - when the Menu is a dialog or disclosure, _don't_ add role menuitem to the entries
 
 Changes from V3:
 
@@ -725,7 +726,18 @@ viewEntry config focusAndToggle { upId, downId, entry_ } =
                     ]
                 ]
                 [ view_
-                    [ Role.menuItem
+                    [ case config.purpose of
+                        NavMenu ->
+                            Role.menuItem
+
+                        NavMenuList ->
+                            Role.menuItem
+
+                        Disclosure _ ->
+                            AttributesExtra.none
+
+                        Dialog _ ->
+                            AttributesExtra.none
                     , Attributes.id id
                     , Key.tabbable False
                     , Key.onKeyDownPreventDefault
