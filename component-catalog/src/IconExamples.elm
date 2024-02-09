@@ -346,6 +346,7 @@ viewCustomizableExample groups state =
         [ TextInput.view "Title"
             [ TextInput.value state.label
             , TextInput.text SetLabel
+            , TextInput.guidance "Required for non-decorative/meaningful icons"
             ]
         , Select.view "Icon"
             [ Select.groupedChoices Tuple.first
