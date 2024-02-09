@@ -515,7 +515,14 @@ view ellieLinkConfig state =
             { header = text "Pattern Notes"
             , view = \{ about } -> Text.smallBody [ Text.markdown about ]
             , width = Css.px 300
-            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , cellStyles =
+                always
+                    [ Css.padding2 (Css.px 14) (Css.px 7)
+                    , Css.verticalAlign Css.top
+                    , Css.Global.descendants
+                        [ Css.Global.pre [ Css.whiteSpace Css.preWrap ]
+                        ]
+                    ]
             , sort = Nothing
             }
         ]
@@ -542,7 +549,7 @@ view ellieLinkConfig state =
                             , ClickableSvg.withBorder
                             ]
                 ]
-          , about = "TODO"
+          , about = "Pass any interactive elements in using `Menu.entry`."
           }
         , { name = "Grouped entries"
           , entries =
@@ -569,7 +576,17 @@ view ellieLinkConfig state =
                         )
                     |> Menu.group "Group of Buttons"
                 ]
-          , about = "TODO"
+          , about =
+                """Use `Menu.group` to create named groups of entries.
+
+
+The structures are recursive and flexible:
+
+    group : String -> List (Entry msg) -> Entry msg
+
+    entry : String -> (List (Html.Attribute msg) -> Html msg) -> Entry msg
+
+"""
           }
         , { name = "Mix of singular entries and grouped entries"
           , entries =
@@ -588,7 +605,14 @@ view ellieLinkConfig state =
                     [ Menu.entry "dropped-students" <| viewDroppedStudentsSwitch state.showDroppedStudents
                     ]
                 ]
-          , about = "TODO"
+          , about =
+                """
+Because `group` and `entry` both result in the same type, individual entries and grouped entries can be displayed together.
+
+Please note that depending on the interactive component you select, our composability may not work correctly yet.
+
+In this realistic example, we can't actually pass the correct attributes to RadioButton or Switch because it will cause the events for those components to be swallowed, rendering them inoperable.
+"""
           }
         ]
     ]
