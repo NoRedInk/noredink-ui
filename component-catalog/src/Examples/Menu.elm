@@ -34,6 +34,7 @@ import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Switch.V3 as Switch
 import Nri.Ui.Table.V7 as Table
+import Nri.Ui.Text.V6 as Text
 import Nri.Ui.TextInput.V8 as TextInput
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -510,6 +511,13 @@ view ellieLinkConfig state =
                     ]
             , sort = Nothing
             }
+        , Table.custom
+            { header = text "Pattern Notes"
+            , view = \{ about } -> Text.smallBody [ Text.markdown about ]
+            , width = Css.px 300
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
         ]
         [ { name = "List of entries"
           , entries =
@@ -534,6 +542,7 @@ view ellieLinkConfig state =
                             , ClickableSvg.withBorder
                             ]
                 ]
+          , about = "TODO"
           }
         , { name = "Grouped entries"
           , entries =
@@ -560,6 +569,7 @@ view ellieLinkConfig state =
                         )
                     |> Menu.group "Group of Buttons"
                 ]
+          , about = "TODO"
           }
         , { name = "Mix of singular entries and grouped entries"
           , entries =
@@ -578,6 +588,7 @@ view ellieLinkConfig state =
                     [ Menu.entry "dropped-students" <| viewDroppedStudentsSwitch state.showDroppedStudents
                     ]
                 ]
+          , about = "TODO"
           }
         ]
     ]
