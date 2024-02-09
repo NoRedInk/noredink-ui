@@ -19,6 +19,9 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
+import Examples.Button
+import Examples.ClickableSvg
+import Examples.ClickableText
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Button.V10 as Button
@@ -38,6 +41,7 @@ import Nri.Ui.Text.V6 as Text
 import Nri.Ui.TextInput.V8 as TextInput
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Routes
 import Set exposing (Set)
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttrs
@@ -401,19 +405,39 @@ view ellieLinkConfig state =
         [ Table.string
             { header = "Trigger type"
             , value = .menu
-            , width = Css.pct 30
+            , width = Css.px 0
             , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Type Signature"
+            , view = \{ typeAnnotation } -> code [] [ text typeAnnotation ]
+            , width = Css.pct 30
+            , cellStyles =
+                always
+                    [ Css.padding2 (Css.px 14) (Css.px 7)
+                    , Css.verticalAlign Css.middle
+                    , Css.fontSize (Css.px 12)
+                    ]
             , sort = Nothing
             }
         , Table.custom
             { header = text "Example"
             , view = .example
-            , width = Css.px 300
+            , width = Css.pct 20
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Pattern Notes"
+            , view = .patternNotes >> Text.smallBody
+            , width = Css.pct 30
             , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
             , sort = Nothing
             }
         ]
         [ { menu = "Menu.defaultTrigger"
+          , typeAnnotation = "String -> List (Button.Attribute msg) -> Attribute msg"
           , example =
                 Menu.view (FocusAndToggle "defaultTrigger")
                     [ Menu.defaultTrigger "Log in" []
@@ -422,8 +446,19 @@ view ellieLinkConfig state =
                     , Menu.menuId "defaultTrigger"
                     ]
                     []
+          , patternNotes =
+                [ Text.html
+                    [ text "Composes with "
+                    , ClickableText.link "Button"
+                        [ ClickableText.href (Routes.exampleHref Examples.Button.example)
+                        , ClickableText.appearsInline
+                        ]
+                    , text ", so any attribute you use for a Button can also used with this trigger."
+                    ]
+                ]
           }
         , { menu = "Menu.button"
+          , typeAnnotation = "String -> List (Button.Attribute msg) -> Menu.Attribute msg"
           , example =
                 Menu.view (FocusAndToggle "button")
                     [ Menu.button "Log in" []
@@ -432,8 +467,19 @@ view ellieLinkConfig state =
                     , Menu.menuId "button"
                     ]
                     []
+          , patternNotes =
+                [ Text.html
+                    [ text "Composes with "
+                    , ClickableText.link "Button"
+                        [ ClickableText.href (Routes.exampleHref Examples.Button.example)
+                        , ClickableText.appearsInline
+                        ]
+                    , text ", so any attribute you use for a Button can also used with this trigger."
+                    ]
+                ]
           }
         , { menu = "Menu.clickableText"
+          , typeAnnotation = "String -> List (ClickableText.Attribute msg) -> Menu.Attribute msg"
           , example =
                 Menu.view (FocusAndToggle "clickableText")
                     [ Menu.clickableText "Log in" []
@@ -442,8 +488,19 @@ view ellieLinkConfig state =
                     , Menu.menuId "clickableText"
                     ]
                     []
+          , patternNotes =
+                [ Text.html
+                    [ text "Composes with "
+                    , ClickableText.link "ClickableText"
+                        [ ClickableText.href (Routes.exampleHref Examples.ClickableText.example)
+                        , ClickableText.appearsInline
+                        ]
+                    , text ", so any attribute you use for a ClickableText can also used with this trigger."
+                    ]
+                ]
           }
         , { menu = "Menu.clickableSvg with UiIcon.gear"
+          , typeAnnotation = "String -> Svg.Svg -> List (ClickableSvg.Attribute msg) -> Menu.Attribute msg"
           , example =
                 Menu.view (FocusAndToggle "clickableSvg")
                     [ Menu.clickableSvg "Log in" UiIcon.gear []
@@ -452,8 +509,19 @@ view ellieLinkConfig state =
                     , Menu.menuId "clickableSvg"
                     ]
                     []
+          , patternNotes =
+                [ Text.html
+                    [ text "Composes with "
+                    , ClickableText.link "ClickableSvg"
+                        [ ClickableText.href (Routes.exampleHref Examples.ClickableSvg.example)
+                        , ClickableText.appearsInline
+                        ]
+                    , text ", so any attribute you use for a ClickableSvg can also used with this trigger."
+                    ]
+                ]
           }
         , { menu = "Menu.clickableSvgWithoutIndicator with UiIcon.gear"
+          , typeAnnotation = "String -> Svg.Svg -> List (ClickableSvg.Attribute msg) -> Menu.Attribute msg"
           , example =
                 Menu.view (FocusAndToggle "clickableSvgWithoutIndicator")
                     [ Menu.clickableSvgWithoutIndicator "Log in" UiIcon.gear []
@@ -462,6 +530,16 @@ view ellieLinkConfig state =
                     , Menu.menuId "clickableSvgWithoutIndicator"
                     ]
                     []
+          , patternNotes =
+                [ Text.html
+                    [ text "Composes with "
+                    , ClickableText.link "ClickableSvg"
+                        [ ClickableText.href (Routes.exampleHref Examples.ClickableSvg.example)
+                        , ClickableText.appearsInline
+                        ]
+                    , text ", so any attribute you use for a ClickableSvg can also used with this trigger."
+                    ]
+                ]
           }
         ]
     , Heading.h2
@@ -472,14 +550,14 @@ view ellieLinkConfig state =
         [ Table.string
             { header = "Content"
             , value = .name
-            , width = Css.pct 30
+            , width = Css.pct 20
             , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
             , sort = Nothing
             }
         , Table.custom
             { header = text "Example"
             , view = \{ name, menuType, entries } -> forcedOpenExample name menuType entries
-            , width = Css.px 300
+            , width = Css.pct 20
             , cellStyles =
                 \{ name } ->
                     let
@@ -514,7 +592,7 @@ view ellieLinkConfig state =
         , Table.custom
             { header = text "Pattern Notes"
             , view = \{ about } -> Text.smallBody [ Text.markdown about ]
-            , width = Css.px 300
+            , width = Css.pct 60
             , cellStyles =
                 always
                     [ Css.padding2 (Css.px 14) (Css.px 7)
