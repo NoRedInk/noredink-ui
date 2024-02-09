@@ -17,6 +17,7 @@ module Nri.Ui.Menu.V4 exposing
   - Use Nri.Ui.WhenFocusLeaves.V2
   - Adjust disabled styles
   - when the Menu is a dialog or disclosure, _don't_ add role menuitem to the entries
+  - Use ClickableText.medium as the default size when the trigger is `Menu.clickableText`
 
 Changes from V3:
 
@@ -968,6 +969,7 @@ viewClickableText : String -> MenuConfig msg -> List (ClickableText.Attribute ms
 viewClickableText title menuConfig clickableTextAttributes attributes =
     ClickableText.button title
         ([ ClickableText.custom attributes
+         , ClickableText.medium
          , ClickableText.disabled menuConfig.isDisabled
          , ClickableText.rightIcon (AnimatedIcon.arrowDownUp menuConfig.isOpen)
          , ClickableText.rightIconCss

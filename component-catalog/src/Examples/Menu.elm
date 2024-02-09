@@ -464,7 +464,7 @@ You will need to pass in the first and last focusable element in the dialog cont
             }
         , Table.custom
             { header = text "Pattern Notes"
-            , view = .patternNotes >> Text.smallBody
+            , view = .patternNotes >> List.map (List.singleton >> Text.smallBody) >> div []
             , width = Css.pct 30
             , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
             , sort = Nothing
@@ -531,6 +531,7 @@ You will need to pass in the first and last focusable element in the dialog cont
                         ]
                     , text ", so any attribute you use for a ClickableText can also used with this trigger."
                     ]
+                , Text.markdown " Defaults to using the `ClickableText.medium` size, although this can be overriden."
                 ]
           }
         , { menu = "Menu.clickableSvg with UiIcon.gear"
