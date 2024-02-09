@@ -241,8 +241,8 @@ aboutBullets =
     [ Html.ul
         []
         [ Html.li [] [ Text.smallBody [ Text.plaintext "Our icons are Elm SVGs, not separate files or sprites. We use an opaque type to represent them, which enables nice type-safe composability across our components." ] ]
-        , Html.li [] [ Text.smallBody [ Text.markdown "For decorative SVGs (which is the default), we add `aria-hidden=true` to the SVG node." ] ]
-        , Html.li [] [ Text.smallBody [ Text.markdown "For non-decorative SVGs, we use Pattern #5 `<svg>` + `role='img'` + `<title>` from [Accessible SVGs: Perfect Patterns For Screen Reader Users](https://www.smashingmagazine.com/2021/05/accessible-svg-patterns-comparison/)." ] ]
+        , Html.li [] [ Text.smallBody [ Text.markdown "An icon is **decorative** if the user does not need to see the icon at all or know it exists to still use the functionality related to the icon. Decorative icons do not need a `Title`. For decorative SVGs (which is the default), we add `aria-hidden=true` to the SVG node." ] ]
+        , Html.li [] [ Text.smallBody [ Text.markdown "A **non-decorative (or \"meaningful\") icon** requires a `Title` so that all users understand its function. For non-decorative SVGs, we use Pattern #5 `<svg> + role='img' + <title>` from [Accessible SVGs: Perfect Patterns For Screen Reader Users](https://www.smashingmagazine.com/2021/05/accessible-svg-patterns-comparison/)." ] ]
         , Html.li [] [ Text.smallBody [ Text.markdown "Instructions for adding new SVG icons can be found in the [monolith README](https://github.com/NoRedInk/NoRedInk/blob/master/monolith/README.md#adding-new-svg-icons)." ] ]
         ]
     ]
