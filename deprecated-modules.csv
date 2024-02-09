@@ -1,13 +1,13 @@
 Nri.Ui.Accordion.V3,upgrade to V4
-Nri.Ui.Block.V4,upgrade to V6
 Nri.Ui.Block.V5,upgrade to V6
 Nri.Ui.Carousel.V1,upgrade to V2
 Nri.Ui.ClickableText.V3,upgrade to V4
 Nri.Ui.WhenFocusLeaves.V1,upgrade to V2
 Nri.Ui.Highlighter.V4,upgrade to V5
-Nri.Ui.Mark.V2,upgrade to V5
-Nri.Ui.Mark.V3,upgrade to V5
-Nri.Ui.Mark.V4,upgrade to V5
+Nri.Ui.Mark.V2,upgrade to V6
+Nri.Ui.Mark.V3,upgrade to V6
+Nri.Ui.Mark.V4,upgrade to V6
+Nri.Ui.Mark.V5,upgrade to V6
 Nri.Ui.Message.V3,upgrade to V4
 Nri.Ui.Modal.V11,upgrade to V12
 Nri.Ui.Pennant.V2,upgrade to V3
@@ -15,3 +15,4 @@ Nri.Ui.SideNav.V4,upgrade to V5
 Nri.Ui.Switch.V2,upgrade to V3
 Nri.Ui.Table.V6,upgrade to V7
 Nri.Ui.Tabs.V6,upgrade to V8
+Nri.Ui.TextInput.V7,upgrade to V8
