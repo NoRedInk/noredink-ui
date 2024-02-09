@@ -32,6 +32,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Checkbox.V7 as Checkbox
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
 import Nri.Ui.Select.V9 as Select
 import Nri.Ui.TextArea.V5 as TextArea
@@ -457,6 +458,7 @@ view_ msg (Control c) currentLabel =
                         [ css
                             [ fontSize (rem 1)
                             , color Colors.navy
+                            , Fonts.baseFont
                             ]
                         ]
                         [ Html.text currentLabel ]

@@ -6,6 +6,7 @@ module Example exposing (Example, extraLinks, fromRouteName, fullName, preview, 
 import Accessibility.Styled.Aria as Aria
 import Category exposing (Category)
 import Css
+import Css.Global
 import Css.Media exposing (withMedia)
 import EllieLink
 import EventExtras
@@ -193,7 +194,16 @@ view_ ellieLinkConfig example state =
 
 viewAbout : List (Html Never) -> Html msg
 viewAbout about =
-    Html.div [] about
+    Html.div
+        [ Attributes.css
+            [ Css.margin2 (Css.px 10) Css.zero
+            , Css.Global.descendants
+                [ Css.Global.code
+                    [ Css.fontSize (Css.px 13.5) ]
+                ]
+            ]
+        ]
+        about
         |> Html.map never
 
 

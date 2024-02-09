@@ -162,7 +162,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , preview = preview
     , about =
-        [ Text.mediumBodyGray [ Text.markdown "This component behaves like a `RadioButton`, but has the look and feel of a normal `Button`.  It is a good choice to use for \"multiple choice\" style questions as it separates the act of choosing an answer and submitting the answer - preventing frustrating mistakes." ]
+        [ Text.smallBody [ Text.markdown "This component behaves like a `RadioButton`, but has the look and feel of a normal `Button`.  It is a good choice to use for \"multiple choice\" style questions as it separates the act of choosing an answer and submitting the answer - preventing frustrating mistakes." ]
         ]
     , view = view
     , categories = [ Inputs ]
