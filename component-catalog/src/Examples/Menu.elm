@@ -566,7 +566,14 @@ view ellieLinkConfig state =
           }
         , { name = "Mix of singular entries and grouped entries"
           , entries =
-                [ Menu.group "Display scores as"
+                [ Menu.entry "grades-and-perf" <|
+                    \attributes ->
+                        ClickableText.link "Grades and Performance Help"
+                            [ ClickableText.linkExternal "https://noredink.zendesk.com/hc/en-us/sections/115001041146-Grades-Performance"
+                            , ClickableText.custom attributes
+                            , ClickableText.icon UiIcon.help
+                            ]
+                , Menu.group "Display scores as"
                     [ Menu.entry "percentages" <| viewScoreDisplay "Percentage" Nothing
                     , Menu.entry "points" <| viewScoreDisplay "Points" Nothing
                     ]
