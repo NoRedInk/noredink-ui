@@ -9,9 +9,7 @@ import Nri.Ui.RadioButton.V4 as RadioButton
 import ProgramTest exposing (..)
 import Spec.Helpers exposing (expectFailure)
 import Test exposing (..)
-import Test.Html.Event as Event
-import Test.Html.Query as Query
-import Test.Html.Selector as Selector exposing (..)
+import Test.Html.Selector exposing (..)
 
 
 spec : Test
@@ -70,7 +68,7 @@ pressSpace =
 
 click : TestContext -> TestContext
 click =
-    MouseHelpers.click mhConfig radio
+    MouseHelpers.click radio
 
 
 radio : List Selector
@@ -137,15 +135,3 @@ program attributes =
         , view = view attributes >> toUnstyled
         }
         |> ProgramTest.start ()
-
-
-mhConfig : MouseHelpers.Config (ProgramTest model msg effect) Selector.Selector (Query.Single msg)
-mhConfig =
-    { programTest_simulateDomEvent = ProgramTest.simulateDomEvent
-    , query_find = Query.find
-    , event_click = Event.click
-    , event_mouseDown = Event.mouseDown
-    , event_mouseUp = Event.mouseUp
-    , event_mouseOver = Event.mouseOver
-    , event_custom = Event.custom
-    }

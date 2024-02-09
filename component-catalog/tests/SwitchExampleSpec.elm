@@ -38,20 +38,7 @@ suite =
 switchIt : String -> ProgramTest a b c -> ProgramTest a b c
 switchIt name =
     MouseHelpers.click
-        mhConfig
         [ attribute Role.switch
         , containing [ text name ]
         , id "view-switch-example"
         ]
-
-
-mhConfig : MouseHelpers.Config (ProgramTest model msg effect) Selector.Selector (Query.Single msg)
-mhConfig =
-    { programTest_simulateDomEvent = ProgramTest.simulateDomEvent
-    , query_find = Query.find
-    , event_click = Event.click
-    , event_mouseDown = Event.mouseDown
-    , event_mouseUp = Event.mouseUp
-    , event_mouseOver = Event.mouseOver
-    , event_custom = Event.custom
-    }
