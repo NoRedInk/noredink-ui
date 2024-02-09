@@ -10,6 +10,29 @@ read -p "What is the name of the new component? " example_name
 
 echo ""
 
+path=component-catalog/src/Examples/"${example_name}.elm"
+
+if test -f "${path}"; then
+    echo "${path} exists."
+    echo ""
+    read -p "Do you want to overwrite the existing ${example_name} example? (y/n) " overwrite
+
+    while true; do
+    case $overwrite in
+        [yY] )
+            echo ""
+            echo "Okay, we'll proceed and plan to overwrite ${path}."
+            echo ""
+            break;;
+        [nN] )
+            echo ""
+            echo "Okay, not overwriting the example. Exiting, bye 👋"
+            exit;;
+        * ) echo "Please enter Y, y, N, or n to proceed.";;
+    esac
+    done
+fi
+
 while true; do
 read -p "Is this component a collection of icons? (y/n) " yn
 case $yn in
@@ -44,7 +67,7 @@ done
 echo ""
 echo "Creating \`Examples.${example_name}\` for you in the component-catalog folder."
 
-path=component-catalog/src/Examples/"${example_name}.elm"
+
 printf "${template}" >| "${path}"
 
 echo ""
@@ -52,6 +75,7 @@ echo "Created ${path}."
 
 echo ""
 echo "Regenerating \`Examples.elm\` so it inclues \`Examples.${example_name}\`."
+echo ""
 
 . ./script/regenerate-examples.sh
 
