@@ -196,7 +196,7 @@ view ellieLinkConfig state =
                                         (Code.newlineWithIndent 2
                                             ++ (Code.fromModule "ClickableText" "button " ++ Code.string "Button")
                                             ++ Code.listMultiline
-                                                [ Code.fromModule "ClickableText" "small"
+                                                [ Code.fromModule "ClickableText" "medium"
                                                 , Code.fromModule "ClickableText" "custom" ++ " attributes"
                                                 ]
                                                 3
@@ -233,7 +233,7 @@ view ellieLinkConfig state =
             [ Menu.entry "customizable-example" <|
                 \attrs ->
                     ClickableText.button "Button"
-                        [ ClickableText.small
+                        [ ClickableText.medium
                         , ClickableText.onClick (ConsoleLog "Interactive example")
                         , ClickableText.custom attrs
                         ]
@@ -280,7 +280,7 @@ view ellieLinkConfig state =
                         \attrs ->
                             ClickableText.button "Hello"
                                 [ ClickableText.onClick (ConsoleLog "Hello")
-                                , ClickableText.small
+                                , ClickableText.medium
                                 , ClickableText.custom attrs
                                 ]
                     , Menu.group "Menu group"
@@ -288,7 +288,7 @@ view ellieLinkConfig state =
                             \attrs ->
                                 ClickableText.button "Gift"
                                     [ ClickableText.onClick (ConsoleLog "Gift")
-                                    , ClickableText.small
+                                    , ClickableText.medium
                                     , ClickableText.custom attrs
                                     , ClickableText.icon UiIcon.gift
                                     ]
@@ -296,7 +296,7 @@ view ellieLinkConfig state =
                             \attrs ->
                                 ClickableText.button "Nope!"
                                     [ ClickableText.onClick (ConsoleLog "Nope!")
-                                    , ClickableText.small
+                                    , ClickableText.medium
                                     , ClickableText.custom attrs
                                     , ClickableText.icon UiIcon.null
                                     ]
@@ -304,7 +304,7 @@ view ellieLinkConfig state =
                             \attrs ->
                                 ClickableText.button "Skip"
                                     [ ClickableText.onClick (ConsoleLog "Skip")
-                                    , ClickableText.small
+                                    , ClickableText.medium
                                     , ClickableText.custom attrs
                                     ]
                         ]
@@ -312,7 +312,7 @@ view ellieLinkConfig state =
                         \attrs ->
                             ClickableText.button "Performance"
                                 [ ClickableText.onClick (ConsoleLog "Performance")
-                                , ClickableText.small
+                                , ClickableText.medium
                                 , ClickableText.custom attrs
                                 ]
                     ]
@@ -330,21 +330,21 @@ view ellieLinkConfig state =
                     [ Menu.entry "dropdown_list__first" <|
                         \attrs ->
                             ClickableText.button "First"
-                                [ ClickableText.small
+                                [ ClickableText.medium
                                 , ClickableText.onClick (ConsoleLog "First")
                                 , ClickableText.custom attrs
                                 ]
                     , Menu.entry "dropdown_list__second" <|
                         \attrs ->
                             ClickableText.button "Second"
-                                [ ClickableText.small
+                                [ ClickableText.medium
                                 , ClickableText.onClick (ConsoleLog "Second")
                                 , ClickableText.custom attrs
                                 ]
                     , Menu.entry "dropdown_list__third" <|
                         \attrs ->
                             ClickableText.button "Third"
-                                [ ClickableText.small
+                                [ ClickableText.medium
                                 , ClickableText.onClick (ConsoleLog "Third")
                                 , ClickableText.custom attrs
                                 ]
@@ -644,7 +644,7 @@ You will need to pass in the first and last focusable element in the dialog cont
                 [ Menu.entry "list-of-entries-clickable-text-entry" <|
                     \attributes ->
                         ClickableText.button "ClickableText"
-                            [ ClickableText.small
+                            [ ClickableText.medium
                             , ClickableText.custom attributes
                             ]
                 , Menu.entry "list-of-entries-button-entry" <|
@@ -673,7 +673,7 @@ You will need to pass in the first and last focusable element in the dialog cont
                             Menu.entry ("group-clickable-text-entry-" ++ String.fromInt i) <|
                                 \attributes ->
                                     ClickableText.button ("Thing " ++ String.fromInt i)
-                                        [ ClickableText.small
+                                        [ ClickableText.medium
                                         , ClickableText.custom attributes
                                         ]
                         )
