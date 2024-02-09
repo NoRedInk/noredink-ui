@@ -186,7 +186,7 @@ example =
     , about =
         Guidance.useATACGuide moduleName
             ++ [ Text.smallBody
-                    [ Text.markdown "Generally, you'll want to pair the `Modal.warning` theme with the `Button.danger` theme and the `Modal.info` theme with the `Button.primary` theme."
+                    [ Text.markdown "Pair the `Modal.warning` theme with the `Button.danger` theme and the `Modal.info` theme with the `Button.primary` theme."
                     ]
                , Text.smallBody
                     [ Text.markdown "Use `Button.modal` and/or `ClickableText.modal` within the `Modal` footer." ]
