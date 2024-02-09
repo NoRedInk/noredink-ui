@@ -574,8 +574,8 @@ view ellieLinkConfig state =
                             , ClickableText.icon UiIcon.help
                             ]
                 , Menu.group "Display scores as"
-                    [ Menu.entry "percentages" <| viewScoreDisplay "Percentage" Nothing
-                    , Menu.entry "points" <| viewScoreDisplay "Points" Nothing
+                    [ Menu.entry "percentages" <| viewScoreDisplay "Percentage" state.scoreDisplay
+                    , Menu.entry "points" <| viewScoreDisplay "Points" state.scoreDisplay
                     ]
                 , Menu.group "Dropped students"
                     [ Menu.entry "dropped-students" <| viewDroppedStudentsSwitch
@@ -601,7 +601,7 @@ forcedOpenExampleButtonId name =
     safeIdWithPrefix name "buttonId"
 
 
-viewScoreDisplay : String -> Maybe String -> List (Attribute msg) -> Html msg
+viewScoreDisplay : String -> Maybe String -> List (Attribute Msg) -> Html Msg
 viewScoreDisplay value selected attributes =
     RadioButton.view
         { label = value
@@ -610,7 +610,11 @@ viewScoreDisplay value selected attributes =
         , selectedValue = selected
         , valueToString = identity
         }
-        [ RadioButton.custom attributes
+        [ -- TODO: when the Menu attributes are attached to the RadioButton
+          -- (as is required for the focus trap to work correctly),
+          -- the RadioButtons become inoperable.
+          -- RadioButton.custom attributes ,
+          RadioButton.onSelect SelectScoreDisplay
         ]
 
 
@@ -632,6 +636,7 @@ init =
     , checkboxChecked = False
     , openTooltips = Set.empty
     , settings = initSettings
+    , scoreDisplay = Nothing
     }
 
 
@@ -641,6 +646,7 @@ type alias State =
     , checkboxChecked : Bool
     , openTooltips : Set String
     , settings : Control Settings
+    , scoreDisplay : Maybe String
     }
 
 
@@ -809,6 +815,7 @@ type Msg
     | ToggleTooltip String Bool
     | FocusAndToggle String { isOpen : Bool, focus : Maybe String }
     | Focused (Result Dom.Error ())
+    | SelectScoreDisplay String
 
 
 {-| -}
@@ -842,6 +849,9 @@ update msg state =
 
         Focused _ ->
             ( state, Cmd.none )
+
+        SelectScoreDisplay name ->
+            ( { state | scoreDisplay = Just name }, Cmd.none )
 
 
 
