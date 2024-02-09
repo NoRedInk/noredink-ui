@@ -7,8 +7,6 @@ import Nri.Test.KeyboardHelpers.V1 as KeyboardHelpers
 import Nri.Ui.FocusLoop.V1 as FocusLoop
 import ProgramTest exposing (..)
 import Test exposing (..)
-import Test.Html.Event as Event
-import Test.Html.Query as Query
 import Test.Html.Selector as Selector
 
 
@@ -184,7 +182,7 @@ viewSpec =
         [ test "moves focus right on right arrow" <|
             \() ->
                 program
-                    |> KeyboardHelpers.pressRightArrow khConfig
+                    |> KeyboardHelpers.pressRightArrow
                         { targetDetails = [] }
                         [ Selector.all
                             [ Selector.tag "button"
@@ -197,7 +195,7 @@ viewSpec =
         , test "moves focus left on left arrow" <|
             \() ->
                 program
-                    |> KeyboardHelpers.pressLeftArrow khConfig
+                    |> KeyboardHelpers.pressLeftArrow
                         { targetDetails = [] }
                         [ Selector.all
                             [ Selector.tag "button"
@@ -210,7 +208,7 @@ viewSpec =
         , test "loops to end" <|
             \() ->
                 program
-                    |> KeyboardHelpers.pressLeftArrow khConfig
+                    |> KeyboardHelpers.pressLeftArrow
                         { targetDetails = [] }
                         [ Selector.all
                             [ Selector.tag "button"
@@ -223,7 +221,7 @@ viewSpec =
         , test "loops to beginning" <|
             \() ->
                 program
-                    |> KeyboardHelpers.pressRightArrow khConfig
+                    |> KeyboardHelpers.pressRightArrow
                         { targetDetails = [] }
                         [ Selector.all
                             [ Selector.tag "button"
@@ -280,11 +278,3 @@ program =
         , view = view >> Html.div [] >> Html.toUnstyled
         }
         |> ProgramTest.start ()
-
-
-khConfig : KeyboardHelpers.Config (ProgramTest model msg effect) Selector.Selector (Query.Single msg)
-khConfig =
-    { programTest_simulateDomEvent = ProgramTest.simulateDomEvent
-    , query_find = Query.find
-    , event_custom = Event.custom
-    }

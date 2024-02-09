@@ -520,49 +520,49 @@ highlightable index selector =
 
 space : TestContext -> TestContext
 space =
-    KeyboardHelpers.pressSpace khConfig
+    KeyboardHelpers.pressSpace
         { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
 rightArrow : TestContext -> TestContext
 rightArrow =
-    KeyboardHelpers.pressRightArrow khConfig
+    KeyboardHelpers.pressRightArrow
         { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
 leftArrow : TestContext -> TestContext
 leftArrow =
-    KeyboardHelpers.pressLeftArrow khConfig
+    KeyboardHelpers.pressLeftArrow
         { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
 shiftRight : TestContext -> TestContext
 shiftRight =
-    KeyboardHelpers.pressShiftRight khConfig
+    KeyboardHelpers.pressShiftRight
         { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
 shiftLeft : TestContext -> TestContext
 shiftLeft =
-    KeyboardHelpers.pressShiftLeft khConfig
+    KeyboardHelpers.pressShiftLeft
         { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
 releaseShiftRight : TestContext -> TestContext
 releaseShiftRight =
-    KeyboardHelpers.releaseShiftRight khConfig
+    KeyboardHelpers.releaseShiftRight
         { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
 releaseShiftLeft : TestContext -> TestContext
 releaseShiftLeft =
-    KeyboardHelpers.releaseShiftLeft khConfig
+    KeyboardHelpers.releaseShiftLeft
         { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
@@ -938,14 +938,6 @@ overlappingHighlightTests =
     in
     [ describe "viewWithOverlappingHighlights" (staticAssertions Highlighter.viewWithOverlappingHighlights)
     ]
-
-
-khConfig : KeyboardHelpers.Config (ProgramTest model msg effect) Selector.Selector (Query.Single msg)
-khConfig =
-    { programTest_simulateDomEvent = ProgramTest.simulateDomEvent
-    , query_find = Query.find
-    , event_custom = Event.custom
-    }
 
 
 mhConfig : MouseHelpers.Config (ProgramTest model msg effect) Selector.Selector (Query.Single msg)

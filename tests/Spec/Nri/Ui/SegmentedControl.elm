@@ -10,7 +10,6 @@ import Nri.Ui.SegmentedControl.V14 as SegmentedControl
 import ProgramTest exposing (..)
 import Task
 import Test exposing (..)
-import Test.Html.Event as Event
 import Test.Html.Query as Query
 import Test.Html.Selector as Selector
 
@@ -156,14 +155,14 @@ ensureOnlyOneTabInSequence tabs testContext =
 
 releaseRightArrow : TestContext -> TestContext
 releaseRightArrow =
-    KeyboardHelpers.releaseRightArrow khConfig
+    KeyboardHelpers.releaseRightArrow
         { targetDetails = [] }
         [ Selector.attribute Role.tab, Selector.attribute (Key.tabbable True) ]
 
 
 releaseLeftArrow : TestContext -> TestContext
 releaseLeftArrow =
-    KeyboardHelpers.releaseLeftArrow khConfig
+    KeyboardHelpers.releaseLeftArrow
         { targetDetails = [] }
         [ Selector.attribute Role.tab, Selector.attribute (Key.tabbable True) ]
 
@@ -249,11 +248,3 @@ program =
         , view = view >> Html.toUnstyled
         }
         |> ProgramTest.start ()
-
-
-khConfig : KeyboardHelpers.Config (ProgramTest model msg effect) Selector.Selector (Query.Single msg)
-khConfig =
-    { programTest_simulateDomEvent = ProgramTest.simulateDomEvent
-    , query_find = Query.find
-    , event_custom = Event.custom
-    }

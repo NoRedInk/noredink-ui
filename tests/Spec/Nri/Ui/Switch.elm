@@ -76,7 +76,7 @@ helpfullyDisabledSwitch =
 
 pressSpace : TestContext -> TestContext
 pressSpace =
-    KeyboardHelpers.pressSpace khConfig { targetDetails = [] } switch
+    KeyboardHelpers.pressSpace { targetDetails = [] } switch
 
 
 click : TestContext -> TestContext
@@ -134,14 +134,6 @@ program attributes =
         , view = view attributes >> toUnstyled
         }
         |> ProgramTest.start ()
-
-
-khConfig : KeyboardHelpers.Config (ProgramTest model msg effect) Selector.Selector (Query.Single msg)
-khConfig =
-    { programTest_simulateDomEvent = ProgramTest.simulateDomEvent
-    , query_find = Query.find
-    , event_custom = Event.custom
-    }
 
 
 mhConfig : MouseHelpers.Config (ProgramTest model msg effect) Selector.Selector (Query.Single msg)

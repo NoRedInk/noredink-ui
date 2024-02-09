@@ -7,7 +7,6 @@ import Expect
 import Html.Styled exposing (..)
 import Nri.Test.KeyboardHelpers.V1 as KeyboardHelpers
 import ProgramTest exposing (..)
-import Test.Html.Event as Event
 import Test.Html.Query as Query
 import Test.Html.Selector as Selector
 
@@ -87,21 +86,13 @@ ensureOnlyOneTabInSequence tabs testContext =
 
 releaseRightArrow : ProgramTest model msg effect -> ProgramTest model msg effect
 releaseRightArrow =
-    KeyboardHelpers.releaseRightArrow khConfig
+    KeyboardHelpers.releaseRightArrow
         { targetDetails = [] }
         [ Selector.attribute Role.tab, Selector.attribute (Key.tabbable True) ]
 
 
 releaseLeftArrow : ProgramTest model msg effect -> ProgramTest model msg effect
 releaseLeftArrow =
-    KeyboardHelpers.releaseLeftArrow khConfig
+    KeyboardHelpers.releaseLeftArrow
         { targetDetails = [] }
         [ Selector.attribute Role.tab, Selector.attribute (Key.tabbable True) ]
-
-
-khConfig : KeyboardHelpers.Config (ProgramTest model msg effect) Selector.Selector (Query.Single msg)
-khConfig =
-    { programTest_simulateDomEvent = ProgramTest.simulateDomEvent
-    , query_find = Query.find
-    , event_custom = Event.custom
-    }

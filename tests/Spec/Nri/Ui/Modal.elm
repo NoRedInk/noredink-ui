@@ -12,9 +12,7 @@ import Nri.Ui.Modal.V12 as Modal
 import ProgramTest exposing (..)
 import SimulatedEffect.Cmd
 import Test exposing (..)
-import Test.Html.Event as Event
-import Test.Html.Query as Query
-import Test.Html.Selector as Selector exposing (..)
+import Test.Html.Selector exposing (..)
 
 
 spec : Test
@@ -83,12 +81,12 @@ focusTests =
 
 tabBackWithinModal : String -> ProgramTest a b c -> ProgramTest a b c
 tabBackWithinModal onElementId =
-    KeyboardHelpers.pressTabBack khConfig { targetDetails = [ ( "id", Encode.string onElementId ) ] } focusTrapNode
+    KeyboardHelpers.pressTabBack { targetDetails = [ ( "id", Encode.string onElementId ) ] } focusTrapNode
 
 
 tabForwardWithinModal : String -> ProgramTest a b c -> ProgramTest a b c
 tabForwardWithinModal onElementId =
-    KeyboardHelpers.pressTab khConfig { targetDetails = [ ( "id", Encode.string onElementId ) ] } focusTrapNode
+    KeyboardHelpers.pressTab { targetDetails = [ ( "id", Encode.string onElementId ) ] } focusTrapNode
 
 
 focusTrapNode : List Selector
@@ -199,11 +197,3 @@ modalTitle =
 ensureFocused : String -> ProgramTest a b Effect -> ProgramTest a b Effect
 ensureFocused id =
     ensureLastEffect (Expect.equal (FocusOn id))
-
-
-khConfig : KeyboardHelpers.Config (ProgramTest model msg effect) Selector.Selector (Query.Single msg)
-khConfig =
-    { programTest_simulateDomEvent = ProgramTest.simulateDomEvent
-    , query_find = Query.find
-    , event_custom = Event.custom
-    }
