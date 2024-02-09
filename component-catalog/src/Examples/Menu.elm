@@ -575,7 +575,7 @@ view ellieLinkConfig state =
                     , Menu.entry "points" <| viewScoreDisplay "Points" state.scoreDisplay
                     ]
                 , Menu.group "Dropped students"
-                    [ Menu.entry "dropped-students" <| viewDroppedStudentsSwitch
+                    [ Menu.entry "dropped-students" <| viewDroppedStudentsSwitch state.showDroppedStudents
                     ]
                 ]
           }
@@ -612,7 +612,7 @@ viewScoreDisplay value selected attributes =
         , selectedValue = selected
         , valueToString = identity
         }
-        [ -- TODO: when the Menu attributes are attached to the RadioButton
+        [ -- To Fix: when the Menu attributes are attached to the RadioButton
           -- (as is required for the focus trap to work correctly),
           -- the RadioButtons become inoperable.
           -- RadioButton.custom attributes ,
@@ -620,14 +620,19 @@ viewScoreDisplay value selected attributes =
         ]
 
 
-viewDroppedStudentsSwitch : List (Attribute msg) -> Html msg
-viewDroppedStudentsSwitch attributes =
+viewDroppedStudentsSwitch : Bool -> List (Attribute Msg) -> Html Msg
+viewDroppedStudentsSwitch showDroppedStudents attributes =
     Switch.view
         { label = "Show dropped students"
         , id = "show-dropped-students"
         }
-        [ Switch.selected False
-        , Switch.custom attributes
+        [ Switch.onSwitch ShowDroppedStudents
+        , Switch.selected showDroppedStudents
+
+        -- To Fix: when the Menu attributes are attached to the Switch
+        -- (as is required for the focus trap to work correctly),
+        -- the Switch become inoperable.
+        --, Switch.custom attributes
         ]
 
 
@@ -639,6 +644,7 @@ init =
     , openTooltips = Set.empty
     , settings = initSettings
     , scoreDisplay = Nothing
+    , showDroppedStudents = False
     }
 
 
@@ -649,6 +655,7 @@ type alias State =
     , openTooltips : Set String
     , settings : Control Settings
     , scoreDisplay : Maybe String
+    , showDroppedStudents : Bool
     }
 
 
@@ -818,6 +825,7 @@ type Msg
     | FocusAndToggle String { isOpen : Bool, focus : Maybe String }
     | Focused (Result Dom.Error ())
     | SelectScoreDisplay String
+    | ShowDroppedStudents Bool
 
 
 {-| -}
@@ -854,6 +862,9 @@ update msg state =
 
         SelectScoreDisplay name ->
             ( { state | scoreDisplay = Just name }, Cmd.none )
+
+        ShowDroppedStudents showDroppedStudents ->
+            ( { state | showDroppedStudents = showDroppedStudents }, Cmd.none )
 
 
 
