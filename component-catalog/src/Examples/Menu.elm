@@ -28,6 +28,7 @@ import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
 import Nri.Ui.Menu.V4 as Menu
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V7 as Table
@@ -467,48 +468,91 @@ view ellieLinkConfig state =
     , Table.view []
         [ Table.string
             { header = "Content"
-            , value = .menu
+            , value = .name
             , width = Css.pct 30
             , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
             , sort = Nothing
             }
         , Table.custom
             { header = text "Example"
-            , view = .example
+            , view = \{ name, entries } -> forcedOpenExample name entries
             , width = Css.px 300
             , cellStyles =
-                always
+                \{ name } ->
+                    let
+                        buttonId =
+                            forcedOpenExampleButtonId name
+                    in
                     [ Css.padding2 (Css.px 14) (Css.px 7)
                     , Css.verticalAlign Css.middle
-                    , -- when menus are open, we add this overlay to
-                      -- ensure that clicks close the menu.
-                      -- so if the menu is open, nothing else on the page
-                      -- is interactive by mouse.
-                      -- for the purposes of these static examples,
-                      -- this is very unhelpful, so we hide the overlay.
-                      --
-                      -- if changing this code, please ensure the example in the CC is still interactive.
-                      Css.Global.descendants
-                        [ Css.Global.class "Nri-Menu-Overlay"
+                    , Css.Global.descendants
+                        [ -- when menus are open, we add this overlay to
+                          -- ensure that clicks close the menu.
+                          -- so if the menu is open, nothing else on the page
+                          -- is interactive by mouse.
+                          -- for the purposes of these static examples,
+                          -- this is very unhelpful, so we hide the overlay.
+                          --
+                          -- if changing this code, please ensure the example in the CC is still interactive.
+                          Css.Global.class "Nri-Menu-Overlay"
                             [ Css.display Css.none
                             ]
+                        , -- Menus are absolutely positioned, but this is
+                          -- pretty inconvenient for displaying them in a table.
+                          -- This override is so that these Menu will be part of
+                          -- the normal flow of the page, so that their
+                          -- content is always visible.
+                          Css.Global.selector ("#" ++ buttonId ++ " + div")
+                            [ Css.position Css.relative ]
+                        , -- Hide the trigger element
+                          Css.Global.id buttonId
+                            [ Css.display Css.none ]
                         ]
                     ]
             , sort = Nothing
             }
         ]
-        [ { menu = "List of entries"
-          , example =
-                Menu.view (FocusAndToggle "list-of-entries")
-                    [ Menu.clickableSvgWithoutIndicator "List of entries example" UiIcon.starFilled []
-                    , Menu.isOpen True
-                    , Menu.buttonId "list-of-entries"
-                    , Menu.menuId "list-of-entries"
-                    ]
-                    []
+        [ { name = "List of entries"
+          , entries =
+                [ Menu.entry "list-of-entries-clickable-text-entry" <|
+                    \attributes ->
+                        ClickableText.button "ClickableText"
+                            [ ClickableText.small
+                            , ClickableText.custom attributes
+                            ]
+                , Menu.entry "list-of-entries-button-entry" <|
+                    \attributes ->
+                        Button.button "Button"
+                            [ Button.small
+                            , Button.custom attributes
+                            ]
+                , Menu.entry "list-of-entries-clickablesvg-entry" <|
+                    \attributes ->
+                        ClickableSvg.button "ClickableSvg"
+                            UiIcon.arrowPointingRightThick
+                            [ ClickableSvg.small
+                            , ClickableSvg.custom attributes
+                            , ClickableSvg.withBorder
+                            ]
+                ]
           }
         ]
     ]
+
+
+forcedOpenExample : String -> List (Menu.Entry Msg) -> Html Msg
+forcedOpenExample name =
+    Menu.view (FocusAndToggle name)
+        [ Menu.clickableSvgWithoutIndicator (name ++ " example") UiIcon.starFilled []
+        , Menu.isOpen True
+        , Menu.buttonId (forcedOpenExampleButtonId name)
+        , Menu.menuId (safeIdWithPrefix name "menuId")
+        ]
+
+
+forcedOpenExampleButtonId : String -> String
+forcedOpenExampleButtonId name =
+    safeIdWithPrefix name "buttonId"
 
 
 {-| -}
