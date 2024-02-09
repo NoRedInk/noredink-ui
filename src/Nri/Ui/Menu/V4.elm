@@ -468,6 +468,9 @@ viewCustom focusAndToggle config entries =
                         , focus = Nothing
                         }
                     )
+                    -- if changing or removing this class (`.Nri-Menu-Overlay`),
+                    -- please be sure that the Menu example in the Component Catalog
+                    -- continues to work correctly
                     :: class "Nri-Menu-Overlay"
                     :: styleOverlay config
                 )

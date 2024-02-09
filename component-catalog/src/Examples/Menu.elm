@@ -13,6 +13,7 @@ import Category exposing (Category(..))
 import Code
 import CommonControls
 import Css
+import Css.Global
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
@@ -455,6 +456,54 @@ view ellieLinkConfig state =
                     , Menu.isOpen (isOpen "clickableSvgWithoutIndicator")
                     , Menu.buttonId "clickableSvgWithoutIndicator"
                     , Menu.menuId "clickableSvgWithoutIndicator"
+                    ]
+                    []
+          }
+        ]
+    , Heading.h2
+        [ Heading.plaintext "Menu content"
+        , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
+        ]
+    , Table.view []
+        [ Table.string
+            { header = "Content"
+            , value = .menu
+            , width = Css.pct 30
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Example"
+            , view = .example
+            , width = Css.px 300
+            , cellStyles =
+                always
+                    [ Css.padding2 (Css.px 14) (Css.px 7)
+                    , Css.verticalAlign Css.middle
+                    , -- when menus are open, we add this overlay to
+                      -- ensure that clicks close the menu.
+                      -- so if the menu is open, nothing else on the page
+                      -- is interactive by mouse.
+                      -- for the purposes of these static examples,
+                      -- this is very unhelpful, so we hide the overlay.
+                      --
+                      -- if changing this code, please ensure the example in the CC is still interactive.
+                      Css.Global.descendants
+                        [ Css.Global.class "Nri-Menu-Overlay"
+                            [ Css.display Css.none
+                            ]
+                        ]
+                    ]
+            , sort = Nothing
+            }
+        ]
+        [ { menu = "List of entries"
+          , example =
+                Menu.view (FocusAndToggle "list-of-entries")
+                    [ Menu.clickableSvgWithoutIndicator "List of entries example" UiIcon.starFilled []
+                    , Menu.isOpen True
+                    , Menu.buttonId "list-of-entries"
+                    , Menu.menuId "list-of-entries"
                     ]
                     []
           }
