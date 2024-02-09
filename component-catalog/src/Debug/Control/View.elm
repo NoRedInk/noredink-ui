@@ -138,9 +138,9 @@ viewCodeDetails ellieLink example =
             , lastChild [ borderWidth zero, paddingBottom zero ]
             ]
         ]
-        [ summary [ css [ color Colors.yellow ] ]
+        [ summary [ css [ color Colors.mustard ] ]
             [ Heading.h3
-                [ Heading.css [ display inline, color Colors.yellow ]
+                [ Heading.css [ display inline, color Colors.mustard ]
                 , Heading.plaintext example.sectionName
                 ]
             ]
@@ -164,7 +164,7 @@ viewCode code_ =
             [ display block
             , whiteSpace preWrap
             , marginTop (px 8)
-            , color Colors.yellow
+            , color Colors.mustard
             ]
         ]
         [ text code_ ]

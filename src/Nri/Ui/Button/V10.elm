@@ -1067,7 +1067,7 @@ dangerColors =
 
 premiumColors : ColorPalette
 premiumColors =
-    { background = Colors.yellow
+    { background = Colors.mustard
     , hoverBackground = Colors.ochre
     , text = Colors.navy
     , hoverText = Colors.gray20
