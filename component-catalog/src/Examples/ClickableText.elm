@@ -10,7 +10,7 @@ import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
 import Code
 import CommonControls
-import Css exposing (middle, verticalAlign)
+import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
@@ -19,7 +19,6 @@ import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.ClickableText.V4 as ClickableText
-import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V7 as Table
@@ -184,10 +183,27 @@ viewExamples ellieLinkConfig (State control) =
                 ]
         }
     , Heading.h2
-        [ Heading.plaintext "Customizable Examples"
+        [ Heading.plaintext "Customizable Example"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
-    , buttons settings
+    , div
+        [ css
+            [ Css.displayFlex
+            , Css.justifyContent Css.center
+            , Css.alignItems Css.center
+            , Css.minHeight (Css.px 150)
+            ]
+        ]
+        [ ClickableText.button settings.label
+            (ClickableText.onClick (ShowItWorked moduleName "customizable example")
+                :: List.map Tuple.second settings.attributes
+            )
+        ]
+    , Heading.h2
+        [ Heading.plaintext "Set Sizes Examples"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
+    , sizeExamples settings
     , Heading.h2
         [ Heading.plaintext "Inline ClickableText Examples"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
@@ -246,6 +262,8 @@ viewExamples ellieLinkConfig (State control) =
         , ( Text.ugSmallBody, "ugSmallBody" )
         , ( Text.ugMediumBody, "ugMediumBody" )
         ]
+        |> List.singleton
+        |> div [ css [ Css.overflow Css.auto ] ]
     ]
         |> div []
 
@@ -301,46 +319,72 @@ sizes =
     ]
 
 
-buttons : Settings Msg -> Html Msg
-buttons settings =
-    let
-        sizeRow label render =
-            row label (List.map render sizes)
-    in
-    table []
-        [ tr [] (td [] [] :: List.map (\( size, sizeLabel ) -> th [] [ text sizeLabel ]) sizes)
-        , sizeRow ".link"
-            (\( size, sizeLabel ) ->
-                ClickableText.link settings.label
-                    (size :: List.map Tuple.second settings.attributes)
-                    |> exampleCell
-            )
-        , sizeRow ".button"
-            (\( size, sizeLabel ) ->
-                ClickableText.button settings.label
-                    (size
-                        :: ClickableText.onClick (ShowItWorked moduleName sizeLabel)
-                        :: List.map Tuple.second settings.attributes
-                    )
-                    |> exampleCell
-            )
+sizeExamples : Settings Msg -> Html Msg
+sizeExamples settings =
+    Table.view []
+        [ Table.custom
+            { header = text "Size"
+            , view =
+                \{ sizeName } ->
+                    code [ css [ Css.fontSize (Css.px 12) ] ]
+                        [ text (Code.fromModule "ClickableText" sizeName)
+                        ]
+            , width = Css.px 10
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Button"
+            , view = \{ size } -> sizeExamplesFor ClickableText.button [ size ]
+            , width = Css.px 10
+            , cellStyles =
+                always
+                    [ Css.padding2 (Css.px 14) (Css.px 7)
+                    , Css.verticalAlign Css.top
+                    ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Link"
+            , view = \{ size } -> sizeExamplesFor ClickableText.link [ size ]
+            , width = Css.px 10
+            , cellStyles =
+                always
+                    [ Css.padding2 (Css.px 14) (Css.px 7)
+                    , Css.verticalAlign Css.top
+                    ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "External link"
+            , view = \{ size } -> sizeExamplesFor ClickableText.link [ size, ClickableText.linkExternal "google.com" ]
+            , width = Css.px 10
+            , cellStyles =
+                always
+                    [ Css.padding2 (Css.px 14) (Css.px 7)
+                    , Css.verticalAlign Css.top
+                    ]
+            , sort = Nothing
+            }
         ]
+        (List.map (\( size, sizeName ) -> { size = size, sizeName = sizeName }) sizes)
         |> List.singleton
         |> div [ css [ Css.overflow Css.auto ] ]
 
 
-row : String -> List (Html msg) -> Html msg
-row label tds =
-    tr [] (th [] [ td [] [ text label ] ] :: tds)
-
-
-exampleCell : Html msg -> Html msg
-exampleCell view =
-    td
-        [ css
-            [ verticalAlign middle
-            , Css.width (Css.px 200)
-            , Css.borderTop3 (Css.px 1) Css.solid Colors.gray85
+sizeExamplesFor : (String -> List (ClickableText.Attribute msg) -> Html msg) -> List (ClickableText.Attribute msg) -> Html msg
+sizeExamplesFor render attrs =
+    ul [ css [ Css.margin Css.zero ] ]
+        [ li [] [ render "No icons" attrs ]
+        , li [] [ render "Left icon" (attrs ++ [ ClickableText.icon UiIcon.arrowLeft ]) ]
+        , li [] [ render "Right icon" (attrs ++ [ ClickableText.rightIcon UiIcon.arrowRight ]) ]
+        , li []
+            [ render "Disabled w/icons"
+                (attrs
+                    ++ [ ClickableText.icon UiIcon.arrowLeft
+                       , ClickableText.rightIcon UiIcon.arrowRight
+                       , ClickableText.disabled True
+                       ]
+                )
             ]
         ]
-        [ view ]
