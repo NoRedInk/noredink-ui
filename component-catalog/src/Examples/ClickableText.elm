@@ -22,6 +22,7 @@ import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
+import Nri.Ui.Table.V7 as Table
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -191,13 +192,59 @@ viewExamples ellieLinkConfig (State control) =
         [ Heading.plaintext "Inline ClickableText Examples"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
-    , Text.caption (inlineExample "Text.caption")
-    , Text.smallBody (inlineExample "Text.smallBody")
-    , Text.smallBodyGray (inlineExample "Text.smallBodyGray")
-    , Text.mediumBody (inlineExample "Text.mediumBody")
-    , Text.mediumBodyGray (inlineExample "Text.mediumBodyGray")
-    , Text.ugSmallBody (inlineExample "Text.ugSmallBody")
-    , Text.ugMediumBody (inlineExample "Text.ugMediumBody")
+    , Table.view []
+        [ Table.custom
+            { header = text "Displayed"
+            , view = \( view, name ) -> view (inlineExample name)
+            , width = Css.pct 70
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Pattern"
+            , view =
+                \( _, textName ) ->
+                    code []
+                        [ text
+                            (Code.fromModule "Text"
+                                textName
+                                ++ Code.listMultiline
+                                    [ Code.fromModule "Text" "html"
+                                        ++ Code.listMultiline
+                                            [ "…"
+                                            , Code.fromModule moduleName
+                                                "link "
+                                                ++ Code.string "internal links"
+                                                ++ Code.listMultiline
+                                                    [ Code.fromModule moduleName "appearsInline"
+                                                    , Code.fromModule moduleName "href " ++ Code.string "/"
+                                                    ]
+                                                    3
+                                            , "…"
+                                            ]
+                                            2
+                                    ]
+                                    1
+                            )
+                        ]
+            , width = Css.px 10
+            , cellStyles =
+                always
+                    [ Css.padding2 (Css.px 14) (Css.px 7)
+                    , Css.verticalAlign Css.top
+                    , Css.whiteSpace Css.preWrap
+                    ]
+            , sort = Nothing
+            }
+        ]
+        [ ( Text.caption, "caption" )
+        , ( Text.smallBody, "smallBody" )
+        , ( Text.smallBodyGray, "smallBodyGray" )
+        , ( Text.mediumBody, "mediumBody" )
+        , ( Text.mediumBodyGray, "mediumBodyGray" )
+        , ( Text.ugSmallBody, "ugSmallBody" )
+        , ( Text.ugMediumBody, "ugMediumBody" )
+        ]
     ]
         |> div []
 
