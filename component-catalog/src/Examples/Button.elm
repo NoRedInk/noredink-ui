@@ -179,13 +179,7 @@ controlAttributes =
         |> ControlExtra.listItems "Size & Width"
             (Control.list
                 |> ControlExtra.optionalListItem "size"
-                    (CommonControls.choice moduleName
-                        [ ( "small", Button.small )
-                        , ( "medium", Button.medium )
-                        , ( "large", Button.large )
-                        , ( "modal", Button.modal )
-                        ]
-                    )
+                    (CommonControls.choice moduleName sizes)
                 |> ControlExtra.optionalListItem "width"
                     (CommonControls.choice moduleName
                         [ ( "exactWidth 120", Button.exactWidth 120 )
@@ -393,15 +387,18 @@ viewCustomizableExample model =
         (List.map Tuple.second model.attributes)
 
 
+sizes : List ( String, Button.Attribute msg )
+sizes =
+    [ ( "small", Button.small )
+    , ( "medium", Button.medium )
+    , ( "large", Button.large )
+    , ( "modal", Button.modal )
+    ]
+
+
 buttonsTable : Html msg
 buttonsTable =
     let
-        sizes =
-            [ ( Button.small, "small" )
-            , ( Button.medium, "medium" )
-            , ( Button.large, "large" )
-            ]
-
         styles =
             [ ( Button.primary, "primary" )
             , ( Button.secondary, "secondary" )
@@ -439,7 +436,7 @@ buttonsTable =
                 )
             ]
 
-        exampleCell cellStyle ( view, viewName ) ( style, styleName ) ( setSize, sizeName ) =
+        exampleCell cellStyle ( view, viewName ) ( style, styleName ) ( sizeName, setSize ) =
             inCell cellStyle <| view (sizeName ++ " " ++ styleName ++ " " ++ viewName) [ setSize, style ]
 
         inCell style content =
@@ -455,7 +452,7 @@ buttonsTable =
     List.concat
         [ [ sizes
                 |> List.map
-                    (\( _, sizeName ) ->
+                    (\( sizeName, _ ) ->
                         th [ css [ Css.padding2 (Css.px 25) Css.zero ] ]
                             [ code [] [ text (Code.fromModule moduleName sizeName) ]
                             ]
@@ -464,7 +461,9 @@ buttonsTable =
           ]
         , List.concatMap exampleRow styles
         ]
-        |> table [ css [ Css.borderCollapse Css.collapse ] ]
+        |> table [ css [ Css.borderCollapse Css.collapse, Css.width (Css.pct 100) ] ]
+        |> List.singleton
+        |> div [ css [ Css.overflow Css.auto ] ]
 
 
 toggleButtons : Set Int -> Html Msg

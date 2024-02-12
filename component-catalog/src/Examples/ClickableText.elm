@@ -19,6 +19,7 @@ import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.ClickableText.V4 as ClickableText
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Text.V6 as Text
@@ -243,6 +244,7 @@ sizes =
     [ ( ClickableText.small, "small" )
     , ( ClickableText.medium, "medium" )
     , ( ClickableText.large, "large" )
+    , ( ClickableText.modal, "modal" )
     ]
 
 
@@ -270,6 +272,8 @@ buttons settings =
                     |> exampleCell
             )
         ]
+        |> List.singleton
+        |> div [ css [ Css.overflow Css.auto ] ]
 
 
 row : String -> List (Html msg) -> Html msg
@@ -279,4 +283,11 @@ row label tds =
 
 exampleCell : Html msg -> Html msg
 exampleCell view =
-    td [ css [ verticalAlign middle, Css.width (Css.px 200) ] ] [ view ]
+    td
+        [ css
+            [ verticalAlign middle
+            , Css.width (Css.px 200)
+            , Css.borderTop3 (Css.px 1) Css.solid Colors.gray85
+            ]
+        ]
+        [ view ]
