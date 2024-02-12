@@ -101,10 +101,8 @@ init =
                         |> ControlExtra.optionalBoolListItem "disabled"
                             ( "ClickableText.disabled True", ClickableText.disabled True )
                     )
-                |> ControlExtra.listItems "CSS & Extra style options"
+                |> ControlExtra.listItems "CSS"
                     (Control.list
-                        |> ControlExtra.optionalBoolListItem "appearsInline"
-                            ( "ClickableText.appearsInline", ClickableText.appearsInline )
                         |> CommonControls.css
                             { moduleName = moduleName
                             , use = ClickableText.css
@@ -128,6 +126,15 @@ init =
                             ( "ClickableText.hideIconForMobile", ClickableText.hideIconForMobile )
                         |> ControlExtra.optionalBoolListItem "hideTextForMobile"
                             ( "ClickableText.hideTextForMobile", ClickableText.hideTextForMobile )
+                    )
+                |> ControlExtra.optionalListItem "Size and display options"
+                    (CommonControls.choice moduleName
+                        [ ( "appearsInline", ClickableText.appearsInline )
+                        , ( "small", ClickableText.small )
+                        , ( "medium", ClickableText.medium )
+                        , ( "large", ClickableText.large )
+                        , ( "modal", ClickableText.modal )
+                        ]
                     )
             )
         |> State
