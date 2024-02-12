@@ -191,8 +191,13 @@ viewExamples ellieLinkConfig (State control) =
         [ Heading.plaintext "Inline ClickableText Examples"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
+    , Text.caption (inlineExample "Text.caption")
     , Text.smallBody (inlineExample "Text.smallBody")
+    , Text.smallBodyGray (inlineExample "Text.smallBodyGray")
     , Text.mediumBody (inlineExample "Text.mediumBody")
+    , Text.mediumBodyGray (inlineExample "Text.mediumBodyGray")
+    , Text.ugSmallBody (inlineExample "Text.ugSmallBody")
+    , Text.ugMediumBody (inlineExample "Text.ugMediumBody")
     ]
         |> div []
 
