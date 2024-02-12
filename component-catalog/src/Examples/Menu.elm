@@ -487,7 +487,7 @@ You will need to pass in the first and last focusable element in the dialog cont
                         [ ClickableText.href (Routes.exampleHref Examples.Button.example)
                         , ClickableText.appearsInline
                         ]
-                    , text ", so any attribute you use for a Button can also used with this trigger."
+                    , text ", so any attribute you use for a Button can also be used with this trigger."
                     ]
                 ]
           }
@@ -508,7 +508,7 @@ You will need to pass in the first and last focusable element in the dialog cont
                         [ ClickableText.href (Routes.exampleHref Examples.Button.example)
                         , ClickableText.appearsInline
                         ]
-                    , text ", so any attribute you use for a Button can also used with this trigger."
+                    , text ", so any attribute you use for a Button can also be used with this trigger."
                     ]
                 ]
           }
@@ -529,7 +529,7 @@ You will need to pass in the first and last focusable element in the dialog cont
                         [ ClickableText.href (Routes.exampleHref Examples.ClickableText.example)
                         , ClickableText.appearsInline
                         ]
-                    , text ", so any attribute you use for a ClickableText can also used with this trigger."
+                    , text ", so any attribute you use for a ClickableText can also be used with this trigger."
                     ]
                 , Text.markdown " Defaults to using the `ClickableText.medium` size, although this can be overriden."
                 ]
@@ -551,7 +551,7 @@ You will need to pass in the first and last focusable element in the dialog cont
                         [ ClickableText.href (Routes.exampleHref Examples.ClickableSvg.example)
                         , ClickableText.appearsInline
                         ]
-                    , text ", so any attribute you use for a ClickableSvg can also used with this trigger."
+                    , text ", so any attribute you use for a ClickableSvg can also be used with this trigger."
                     ]
                 ]
           }
@@ -572,7 +572,7 @@ You will need to pass in the first and last focusable element in the dialog cont
                         [ ClickableText.href (Routes.exampleHref Examples.ClickableSvg.example)
                         , ClickableText.appearsInline
                         ]
-                    , text ", so any attribute you use for a ClickableSvg can also used with this trigger."
+                    , text ", so any attribute you use for a ClickableSvg can also be used with this trigger."
                     ]
                 ]
           }
