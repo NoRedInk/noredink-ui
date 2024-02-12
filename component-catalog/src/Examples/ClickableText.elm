@@ -91,8 +91,6 @@ init =
                     (Control.list
                         |> CommonControls.iconNotCheckedByDefault moduleName ClickableText.icon
                         |> CommonControls.rightIcon moduleName ClickableText.rightIcon
-                        |> ControlExtra.optionalBoolListItem "hideIconForMobile"
-                            ( "ClickableText.hideIconForMobile", ClickableText.hideIconForMobile )
                     )
                 |> ControlExtra.listItems "State & Type"
                     (Control.list
@@ -107,8 +105,6 @@ init =
                     (Control.list
                         |> ControlExtra.optionalBoolListItem "appearsInline"
                             ( "ClickableText.appearsInline", ClickableText.appearsInline )
-                        |> ControlExtra.optionalBoolListItem "hideTextForMobile"
-                            ( "ClickableText.hideTextForMobile", ClickableText.hideTextForMobile )
                         |> CommonControls.css
                             { moduleName = moduleName
                             , use = ClickableText.css
@@ -125,6 +121,13 @@ init =
                             { moduleName = moduleName
                             , use = ClickableText.notMobileCss
                             }
+                    )
+                |> ControlExtra.listItems "Compact mobile options"
+                    (Control.list
+                        |> ControlExtra.optionalBoolListItem "hideIconForMobile"
+                            ( "ClickableText.hideIconForMobile", ClickableText.hideIconForMobile )
+                        |> ControlExtra.optionalBoolListItem "hideTextForMobile"
+                            ( "ClickableText.hideTextForMobile", ClickableText.hideTextForMobile )
                     )
             )
         |> State
