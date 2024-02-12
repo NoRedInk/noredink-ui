@@ -8,24 +8,9 @@ import Nri.Ui.Text.V6 as Text
 import Routes
 
 
-useATACGuide : String -> List (Html msg)
-useATACGuide moduleName =
-    [ Text.mediumBody
-        [ Text.html
-            [ text ("To ensure your use of " ++ moduleName ++ " is accessible to assistive technology, please review the ")
-            , ClickableText.link "Assistive technology notification design & development guide"
-                [ ClickableText.linkExternal "https://noredinkaccessibility.screenstepslive.com/a/1651037-assistive-technology-notification-design-development-guide"
-                , ClickableText.appearsInline
-                ]
-            , text (" to see if your use case fits any listed in the guide. If it does, please follow the guide to learn how to properly implement " ++ moduleName ++ ".")
-            ]
-        ]
-    ]
-
-
 communicateState : String -> List (Html msg)
 communicateState moduleName =
-    [ Text.mediumBody
+    [ Text.smallBody
         [ Text.html
             [ text "As long as this component’s semantics follow accessibility guidelines and best practices, this component’s state and other meaningful attributes should be communicated automatically to screen readers & similar assistive technology without the need to send special announcements to the "
             , ClickableText.link "ATAC"
@@ -33,7 +18,7 @@ communicateState moduleName =
                 , ClickableText.appearsInline
                 ]
             , text ". "
-            , ClickableText.link "Learn more about how certain attributes are communicated automatically"
+            , ClickableText.link "Learn more about how state is communicated automatically"
                 [ ClickableText.linkExternal "https://noredinkaccessibility.screenstepslive.com/a/1692512-communicating-state"
                 , ClickableText.appearsInline
                 ]
@@ -41,20 +26,6 @@ communicateState moduleName =
             ]
         ]
     ]
-
-
-useRadioButtonDotless : Html msg
-useRadioButtonDotless =
-    Message.view
-        [ Message.html
-            [ text "Looking for a group of buttons where only one button is selectable at a time? Check out "
-            , ClickableText.link "RadioButtonDotless"
-                [ ClickableText.href (Routes.exampleHref RadioButtonDotlessExample.example)
-                , ClickableText.appearsInline
-                ]
-            , text "."
-            ]
-        ]
 
 
 helpfullyDisabled : String -> Html msg
@@ -72,5 +43,34 @@ helpfullyDisabled moduleName =
                 , ClickableText.appearsInline
                 ]
             , text " on the Helpfully Disabled pattern."
+            ]
+        ]
+
+
+useATACGuide : String -> List (Html msg)
+useATACGuide moduleName =
+    [ Text.mediumBody
+        [ Text.html
+            [ text ("To ensure your use of " ++ moduleName ++ " is accessible to assistive technology, please review the ")
+            , ClickableText.link "Assistive technology notification design & development guide"
+                [ ClickableText.linkExternal "https://noredinkaccessibility.screenstepslive.com/a/1651037-assistive-technology-notification-design-development-guide"
+                , ClickableText.appearsInline
+                ]
+            , text (" to see if your use case fits any listed in the guide. If it does, please follow the guide to learn how to properly implement " ++ moduleName ++ ".")
+            ]
+        ]
+    ]
+
+
+useRadioButtonDotless : Html msg
+useRadioButtonDotless =
+    Message.view
+        [ Message.html
+            [ text "Looking for a group of buttons where only one button is selectable at a time? Check out "
+            , ClickableText.link "RadioButtonDotless"
+                [ ClickableText.href (Routes.exampleHref RadioButtonDotlessExample.example)
+                , ClickableText.appearsInline
+                ]
+            , text "."
             ]
         ]
