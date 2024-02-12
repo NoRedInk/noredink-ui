@@ -42,6 +42,7 @@ Please link to any relevant context and stories.
 - [ ] I've gone through the relevant sections of the [Development Accessibility guide](https://paper.dropbox.com/doc/Accessibility-guide-4-Development--BiIVdijSaoijjOuhz3iTCJJ1Ag-rGoHpC91pFg3zTrYpvOCQ) with this component in mind
 - [ ] Component has clear documentation
 - [ ] Component is in the Component Catalog
+  - [ ] I've used [the script to add the component to the Component Catalog](https://github.com/NoRedInk/noredink-ui?tab=readme-ov-file#%F0%9F%92%AB-adding-a-component-to-the-component-catalog).
   - [ ] Component is categorized reasonably (see [Category](https://github.com/NoRedInk/noredink-ui/blob/master/component-catalog-app/Category.elm) for all the currently available categories). The component can be in multiple categories, if appropriate.
   - [ ] Component has a representative preview for the Component Catalog cards (bonus points for making it delightful!)
   - [ ] Component has a customizable example. Aim for having _every_ possible supported version of the component displayable through the configuration on this page. (Protip: This is handy for testing expected behavior!)
