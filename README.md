@@ -38,14 +38,7 @@ The new owner of the component library should update this section and may wish t
 
 Some suggestions for contributing include the following:
 
-1. As soon as you have a rough idea of the modification you need (from the product/design perspective), please ping A11ybats in the [#ask-accessibilibats](https://noredink.slack.com/archives/C02NVG4M45U) Slack channel with details about the modification you’re planning to make.
-   - We may either give you the okay in the Slack thread, or we may request a brief **kickoff sync** to discuss implementation details. You may also request a sync rather than providing details in Slack.
-   - Once A11ybats give you the go-ahead to begin work…
-2. Review the [PR template](/.github/pull_request_template.md) in advance so that you understand contribution requirements in advance, or go ahead and open a draft PR so you can use the [PR template](/.github/pull_request_template.md) as you work.
-3. If you are releasing a new major version of a component, be prepared for your team to upgrade all instances of the component anywhere it is used. We recommend creating stories now for this work - we will be asking for links to these stories in your PR!
-4. Feel free to [reach out to A11ybats](https://noredink.slack.com/archives/C02NVG4M45U) with any questions as you work - it might save you headaches or code rewrites later!
-5. Request a PR review from your team as usual. There is no need to add A11ybats as a reviewer unless this was mentioned as a requirement in your kickoff sync.
-6. A11ybats keep an eye on all noredink-ui updates and may request modifications to your work if it does not adhere to the [Component Library Foundations](#component-library-foundations).
+### 🔧 Modifying an existing component
 
 1. Before beginning actual development work, ensure your proposed changes do not cause accessibility regressions or introduce new accessibility issues. Ensure your proposed changes follow accessibility guidelines & best practices.
 1. Review the [PR template](/.github/pull_request_template.md) in advance so that you understand contribution requirements in advance, or go ahead and open a draft PR so you can use the [PR template](/.github/pull_request_template.md) as you work.
@@ -68,7 +61,7 @@ Some suggestions for contributing include the following:
 1. When you're ready to publish your component, please refer to [the noredink-ui versioning policy](#versioning-policy), which includes guidance on permitted API changes per release.
 1. The owner of the component library should keep an eye on all noredink-ui updates and may request modifications to your work if it does not adhere to the [Component Library Foundations](#component-library-foundations).
 
-**💫 Adding a component to the Component Catalog**
+#### 💫 Adding a component to the Component Catalog
 
 There is a script to help you add your components to the Component Catalog quickly & easily!
 
