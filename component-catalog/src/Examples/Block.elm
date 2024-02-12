@@ -87,18 +87,22 @@ example =
                     [ li []
                         [ ClickableText.link "Display Elements and Scaffolding Container: additional things to know"
                             [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Display-Elements-and-Scaffolding-Container-additional-things-to-know--BwRhBMKyXFFSWz~1mljN29bcAg-6vszpNDLoYIiMyg7Wv66s"
+                            , ClickableText.appearsInline
                             ]
                         , text ", which identifies a number of interesting edge cases and known trade-offs."
                         ]
                     , li []
                         [ ClickableText.link "Tessa's blog post"
                             [ ClickableText.linkExternal "https://blog.noredink.com/post/710448547697426432/word-labels]"
+                            , ClickableText.appearsInline
                             ]
                         , text " explaining the initial constraints and approach."
                         ]
                     , li []
                         [ ClickableText.link "Tessa's demo on early versions of Block and Question Block"
-                            [ ClickableText.linkExternal "https://www.dropbox.com/preview/NRI%20Engineering/Demos/2022-12-22%20-%20Tessa%20-%20QuestionBox%20and%20Block.mp4?role=work" ]
+                            [ ClickableText.linkExternal "https://www.dropbox.com/preview/NRI%20Engineering/Demos/2022-12-22%20-%20Tessa%20-%20QuestionBox%20and%20Block.mp4?role=work"
+                            , ClickableText.appearsInline
+                            ]
                         ]
                     ]
                 ]
