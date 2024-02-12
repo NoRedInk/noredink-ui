@@ -14,7 +14,9 @@ module Nri.Ui.ClickableText.V4 exposing
     , css, notMobileCss, mobileCss, quizEngineMobileCss, rightIconCss
     )
 
-{-|
+{-| Patch changes
+
+  - switchs `Medium` size to the default
 
 
 # Changes from V3
@@ -117,7 +119,8 @@ small =
     set (\attributes -> { attributes | size = Small })
 
 
-{-| -}
+{-| `Medium` is the default size.
+-}
 medium : Attribute msg
 medium =
     set (\attributes -> { attributes | size = Medium })
@@ -695,7 +698,7 @@ type alias ClickableTextAttributes msg =
 defaults : ClickableTextAttributes msg
 defaults =
     { clickableAttributes = ClickableAttributes.init
-    , size = Inherited
+    , size = Medium
     , label = ""
     , icon = Nothing
     , iconStyles = []
