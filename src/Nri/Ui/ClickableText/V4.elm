@@ -390,15 +390,22 @@ disabled value =
 -}
 appearsInline : Attribute msg
 appearsInline =
-    css
-        [ Css.borderBottom3 (Css.px 1) Css.solid Colors.azure
-        , Css.Global.withAttribute "aria-disabled=true" [ Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45 ]
-        , Css.disabled [ Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45 ]
-        , Css.display Css.inline
-        , Css.fontFamily Css.inherit
-        , Css.fontWeight Css.inherit
-        , Css.fontSize Css.inherit
-        ]
+    set
+        (\config ->
+            { config
+                | customStyles =
+                    List.append config.customStyles
+                        [ Css.borderBottom3 (Css.px 1) Css.solid Colors.azure
+                        , Css.Global.withAttribute "aria-disabled=true" [ Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45 ]
+                        , Css.disabled [ Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45 ]
+                        , Css.display Css.inline
+                        , Css.fontFamily Css.inherit
+                        , Css.fontWeight Css.inherit
+                        , Css.fontSize Css.inherit
+                        ]
+                , size = Inherited
+            }
+        )
 
 
 {-| Specifies custom styles for the rightIcon
