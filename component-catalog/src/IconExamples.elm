@@ -18,6 +18,8 @@ import Category exposing (Category(..))
 import Code
 import Css
 import Css.Global
+import Debug.Control.View exposing (viewWithCustomControls)
+import EllieLink
 import Example exposing (Example)
 import ExampleSection
 import Examples.Colors
@@ -63,7 +65,7 @@ example config =
     , subscriptions = \_ -> Sub.none
     , preview = config.preview
     , about = []
-    , view = \ellieLinkConfig settings -> view settings config.all
+    , view = \ellieLinkConfig settings -> view config ellieLinkConfig settings config.all
     }
 
 
@@ -200,25 +202,43 @@ type alias Group =
 
 
 {-| -}
-view : Settings -> List Group -> List (Html Msg)
-view settings groups =
+view : { config | moduleName : String, version : Int } -> EllieLink.Config -> Settings -> List Group -> List (Html Msg)
+view config ellieLinkConfig settings groups =
     let
         viewExampleSection ( group, values ) =
             viewWithCustomStyles settings group values
+
+        ( code, renderedExample ) =
+            toCustomizableExampleResults settings
     in
     ExampleSection.sectionWithCss "About" [ Css.flex (Css.int 1) ] Text.smallBody [ aboutMsg ]
-        :: Heading.h2 [ Heading.plaintext "Grouped Icons", Heading.css [ Css.marginTop (Css.px 10) ] ]
+        :: Html.section []
+            [ viewWithCustomControls
+                { ellieLinkConfig = ellieLinkConfig
+                , name = config.moduleName
+                , version = config.version
+                , controls = viewCustomizableExample groups settings
+                , mainType = Just "RootHtml.Html msg"
+                , extraCode = []
+                , renderExample = \renderedSvgDefinition -> "toUnstyled renderedSvg" ++ Code.newlines ++ renderedSvgDefinition
+                , exampleCode =
+                    [ { sectionName = config.moduleName
+                      , code = code
+                      }
+                    ]
+                }
+            ]
+        :: Heading.h2
+            [ Heading.plaintext "Customizable Example"
+            , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+            ]
+        :: renderedExample
+        :: Heading.h2
+            [ Heading.plaintext "Icons in This Collection"
+            , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+            ]
         :: viewSettings settings
         :: List.map viewExampleSection groups
-        ++ [ Html.section []
-                [ Heading.h2
-                    [ Heading.plaintext "Example Usage"
-                    , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
-                    ]
-                , viewSingularExampleSettings groups settings
-                , viewResults settings
-                ]
-           ]
 
 
 aboutMsg : Text.Attribute msg
@@ -310,8 +330,8 @@ viewIcon showIconName ( name, icon, style ) =
         ]
 
 
-viewSingularExampleSettings : List Group -> Settings -> Html.Html Msg
-viewSingularExampleSettings groups state =
+viewCustomizableExample : List Group -> Settings -> Html.Html Msg
+viewCustomizableExample groups state =
     let
         svgGroupedChoices ( groupName, items ) =
             let
@@ -420,8 +440,8 @@ viewSingularExampleSettings groups state =
         ]
 
 
-viewResults : Settings -> Html.Html Msg
-viewResults state =
+toCustomizableExampleResults : Settings -> ( String, Html msg )
+toCustomizableExampleResults state =
     let
         ( red, green, blue ) =
             SolidColor.toRGB state.color
@@ -439,85 +459,73 @@ viewResults state =
                     )
                 |> List.head
     in
-    Html.div
-        [ Attributes.css
-            [ Css.displayFlex
-            , Css.property "gap" "20px"
-            , Css.marginTop Spacing.verticalSpacerPx
-            , Css.maxWidth (Css.px 700)
-            , Css.flexWrap Css.wrap
+    ( (case selectedNriUiColor of
+        Just color ->
+            ""
+
+        Nothing ->
+            [ Code.varWithTypeAnnotation "color" "Css.Color" <|
+                "Css.rgb "
+                    ++ String.fromFloat red
+                    ++ " "
+                    ++ String.fromFloat green
+                    ++ " "
+                    ++ String.fromFloat blue
+            , Code.newlines
             ]
-        ]
-        [ Html.pre [ Attributes.css [ Css.maxWidth (Css.px 400) ] ]
-            [ (case selectedNriUiColor of
-                Just color ->
-                    []
-
-                Nothing ->
-                    [ Code.varWithTypeAnnotation "color" "Css.Color" <|
-                        "Css.rgb "
-                            ++ String.fromFloat red
-                            ++ " "
-                            ++ String.fromFloat green
-                            ++ " "
-                            ++ String.fromFloat blue
-                    , Code.newlines
-                    ]
-              )
-                ++ [ Code.varWithTypeAnnotation "renderedSvg" "Svg" <|
-                        Code.pipelineMultiline
-                            ([ Just <| state.renderSvgCode (Tuple.first state.icon)
-                             , case selectedNriUiColor of
-                                Just color ->
-                                    Just ("Svg.withColor Colors." ++ color)
-
-                                Nothing ->
-                                    Just "Svg.withColor color"
-                             , Just <| "Svg.withWidth (Css.px " ++ String.fromFloat state.width ++ ")"
-                             , Just <| "Svg.withHeight (Css.px " ++ String.fromFloat state.height ++ ")"
-                             , if state.showBorder then
-                                Just
-                                    ("Svg.withCss"
-                                        ++ Code.newlineWithIndent 3
-                                        ++ "[ Css.border3 (Css.px 1) Css.solid Colors.gray20 ]"
-                                    )
-
-                               else
-                                Nothing
-                             , if String.isEmpty state.label then
-                                Nothing
-
-                               else
-                                Just ("Svg.withLabel " ++ Code.string state.label)
-                             , Just "Svg.toHtml"
-                             ]
-                                |> List.filterMap identity
-                            )
-                            1
-                   ]
                 |> String.join ""
-                |> Html.text
-            ]
-        , Tuple.second state.icon
-            |> Svg.withColor (toCssColor state.color)
-            |> Svg.withWidth (Css.px state.width)
-            |> Svg.withHeight (Css.px state.height)
-            |> (\svg ->
-                    if state.showBorder then
-                        Svg.withCss [ Css.border3 (Css.px 1) Css.solid Colors.gray20 ] svg
+      )
+        ++ (Code.varWithTypeAnnotation "renderedSvg" "Html msg" <|
+                Code.pipelineMultiline
+                    ([ Just <| state.renderSvgCode (Tuple.first state.icon)
+                     , case selectedNriUiColor of
+                        Just color ->
+                            Just ("Svg.withColor Colors." ++ color)
 
-                    else
-                        svg
-               )
-            |> (\svg ->
-                    if String.isEmpty state.label then
-                        svg
+                        Nothing ->
+                            Just "Svg.withColor color"
+                     , Just <| "Svg.withWidth (Css.px " ++ String.fromFloat state.width ++ ")"
+                     , Just <| "Svg.withHeight (Css.px " ++ String.fromFloat state.height ++ ")"
+                     , if state.showBorder then
+                        Just
+                            ("Svg.withCss"
+                                ++ Code.newlineWithIndent 3
+                                ++ "[ Css.border3 (Css.px 1) Css.solid Colors.gray20 ]"
+                            )
 
-                    else
-                        Svg.withLabel state.label svg
-               )
-            |> Svg.toHtml
-        ]
+                       else
+                        Nothing
+                     , if String.isEmpty state.label then
+                        Nothing
+
+                       else
+                        Just ("Svg.withLabel " ++ Code.string state.label)
+                     , Just "Svg.toHtml"
+                     ]
+                        |> List.filterMap identity
+                    )
+                    1
+           )
+    , Tuple.second state.icon
+        |> Svg.withColor (toCssColor state.color)
+        |> Svg.withWidth (Css.px state.width)
+        |> Svg.withHeight (Css.px state.height)
+        |> (\svg ->
+                if state.showBorder then
+                    Svg.withCss [ Css.border3 (Css.px 1) Css.solid Colors.gray20 ] svg
+
+                else
+                    svg
+           )
+        |> (\svg ->
+                if String.isEmpty state.label then
+                    svg
+
+                else
+                    Svg.withLabel state.label svg
+           )
+        |> Svg.toHtml
+    )
 
 
 urlUtf8 : String -> String
