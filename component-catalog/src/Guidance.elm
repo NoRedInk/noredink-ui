@@ -10,7 +10,7 @@ import Routes
 
 useATACGuide : String -> List (Html msg)
 useATACGuide moduleName =
-    [ Text.mediumBody
+    [ Text.smallBody
         [ Text.html
             [ text ("To ensure your use of " ++ moduleName ++ " is accessible to assistive technology, please review the ")
             , ClickableText.link "Assistive technology notification design & development guide"
