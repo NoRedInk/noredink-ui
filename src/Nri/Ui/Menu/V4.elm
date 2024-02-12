@@ -16,6 +16,8 @@ module Nri.Ui.Menu.V4 exposing
   - improve interoperability with Tooltip (Note that tooltip keyboard events are not fully supported!)
   - Use Nri.Ui.WhenFocusLeaves.V2
   - Adjust disabled styles
+  - when the Menu is a dialog or disclosure, _don't_ add role menuitem to the entries
+  - Use ClickableText.medium as the default size when the trigger is `Menu.clickableText`
 
 Changes from V3:
 
@@ -468,6 +470,9 @@ viewCustom focusAndToggle config entries =
                         , focus = Nothing
                         }
                     )
+                    -- if changing or removing this class (`.Nri-Menu-Overlay`),
+                    -- please be sure that the Menu example in the Component Catalog
+                    -- continues to work correctly
                     :: class "Nri-Menu-Overlay"
                     :: styleOverlay config
                 )
@@ -722,7 +727,18 @@ viewEntry config focusAndToggle { upId, downId, entry_ } =
                     ]
                 ]
                 [ view_
-                    [ Role.menuItem
+                    [ case config.purpose of
+                        NavMenu ->
+                            Role.menuItem
+
+                        NavMenuList ->
+                            Role.menuItem
+
+                        Disclosure _ ->
+                            AttributesExtra.none
+
+                        Dialog _ ->
+                            AttributesExtra.none
                     , Attributes.id id
                     , Key.tabbable False
                     , Key.onKeyDownPreventDefault
@@ -953,6 +969,7 @@ viewClickableText : String -> MenuConfig msg -> List (ClickableText.Attribute ms
 viewClickableText title menuConfig clickableTextAttributes attributes =
     ClickableText.button title
         ([ ClickableText.custom attributes
+         , ClickableText.medium
          , ClickableText.disabled menuConfig.isDisabled
          , ClickableText.rightIcon (AnimatedIcon.arrowDownUp menuConfig.isOpen)
          , ClickableText.rightIconCss
