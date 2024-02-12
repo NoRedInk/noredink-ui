@@ -77,6 +77,12 @@ type State
 init : State
 init =
     Control.record Settings
+        |> Control.field "type"
+            (Control.choice
+                [ ( "button", Control.value Button )
+                , ( "link", Control.value Link )
+                ]
+            )
         |> Control.field "label" (Control.string "Clickable Text")
         |> Control.field ""
             (Control.list
@@ -89,12 +95,12 @@ init =
                     )
                 |> ControlExtra.listItems "State & Type"
                     (Control.list
-                        |> ControlExtra.optionalBoolListItem "disabled"
-                            ( "ClickableText.disabled True", ClickableText.disabled True )
                         |> ControlExtra.optionalBoolListItem "submit (button only)"
                             ( "ClickableText.submit", ClickableText.submit )
                         |> ControlExtra.optionalBoolListItem "opensModal (button only)"
                             ( "ClickableText.opensModal", ClickableText.opensModal )
+                        |> ControlExtra.optionalBoolListItem "disabled"
+                            ( "ClickableText.disabled True", ClickableText.disabled True )
                     )
                 |> ControlExtra.listItems "CSS & Extra style options"
                     (Control.list
@@ -124,9 +130,15 @@ init =
 
 
 type alias Settings msg =
-    { label : String
+    { type_ : Type
+    , label : String
     , attributes : List ( String, ClickableText.Attribute msg )
     }
+
+
+type Type
+    = Button
+    | Link
 
 
 {-| -}
@@ -162,25 +174,43 @@ viewExamples ellieLinkConfig (State control) =
         , version = version
         , update = SetState
         , settings = control
-        , mainType = Just "RootHtml.Html msg"
-        , extraCode = []
+        , mainType = Just "RootHtml.Html Msg"
+        , extraCode =
+            [ Code.newlines
+            , Code.unionType "Msg" [ "DoAThing" ]
+            ]
         , renderExample = Code.unstyledView
         , toExampleCode =
             \{ label, attributes } ->
                 let
-                    toCode fName =
+                    toCode fName extraAttrs =
                         Code.fromModule moduleName fName
                             ++ " "
                             ++ Code.string label
-                            ++ Code.listMultiline (List.map Tuple.first attributes) 1
+                            ++ Code.listMultiline
+                                (extraAttrs ++ List.map Tuple.first attributes)
+                                1
                 in
-                [ { sectionName = "Button"
-                  , code = toCode "button"
-                  }
-                , { sectionName = "Link"
-                  , code = toCode "link"
-                  }
-                ]
+                case settings.type_ of
+                    Button ->
+                        [ { sectionName = "Button"
+                          , code =
+                                toCode "button"
+                                    [ Code.fromModule moduleName "onClick "
+                                        ++ "DoAThing"
+                                    ]
+                          }
+                        ]
+
+                    Link ->
+                        [ { sectionName = "Link"
+                          , code =
+                                toCode "link"
+                                    [ Code.fromModule moduleName "href "
+                                        ++ Code.string "/"
+                                    ]
+                          }
+                        ]
         }
     , Heading.h2
         [ Heading.plaintext "Customizable Example"
@@ -194,10 +224,18 @@ viewExamples ellieLinkConfig (State control) =
             , Css.minHeight (Css.px 150)
             ]
         ]
-        [ ClickableText.button settings.label
-            (ClickableText.onClick (ShowItWorked moduleName "customizable example")
-                :: List.map Tuple.second settings.attributes
-            )
+        [ case settings.type_ of
+            Button ->
+                ClickableText.button settings.label
+                    (ClickableText.onClick (ShowItWorked moduleName "customizable example")
+                        :: List.map Tuple.second settings.attributes
+                    )
+
+            Link ->
+                ClickableText.link settings.label
+                    (ClickableText.href "/"
+                        :: List.map Tuple.second settings.attributes
+                    )
         ]
     , Heading.h2
         [ Heading.plaintext "Set Sizes Examples"
