@@ -21,6 +21,7 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
+import Guidance
 import Html.Styled.Attributes as Attributes exposing (css, src)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Accordion.V4 as Accordion exposing (AccordionEntry(..))
@@ -71,35 +72,23 @@ example =
             ]
         ]
     , about =
-        [ Text.smallBody
-            [ Text.html
-                [ ul [ css [ paddingLeft (px 16), margin zero ] ]
-                    [ li [] [ text "The Accordion component is designed to be used when you have either a list or a tree of expandables. It may also be used when there's only one expandable. " ]
-                    , li []
-                        [ text "Devs should watch the entirety of "
-                        , ClickableText.link "Tessa's Accordion demo"
-                            [ ClickableText.linkExternal "https://noredink.zoom.us/rec/play/kLjOvS0PX5y-YYas6VmtUf5eEb1ViqNKKB-01gCELXG5tMjINEdop6dXrmfCyfC1A3Xj9kTUK8eIDe0.LO5NQR0X3udwz13x?canPlayFromShare=true&from=share_recording_detail&startTime=1681398154000&componentName=rec-play&originRequestUrl=https%3A%2F%2Fnoredink.zoom.us%2Frec%2Fshare%2F6R2Tk0FkzAYJ-44Q4Qs2Dx2RPR1GCXOCcaQsEai6vbtkO8oo9Ke8-_goIVwPDn9I.VVXdtb2PlpuTEqGs%3FstartTime%3D1681398154000"
-                            , ClickableText.appearsInline
+        Guidance.communicateState moduleName
+            ++ [ Text.smallBody
+                    [ Text.html
+                        [ ul [ css [ paddingLeft (px 16), margin zero ] ]
+                            [ li [] [ text "The Accordion component is designed to be used when you have either a list or a tree of expandables. It may also be used when there's only one expandable. " ]
+                            , li []
+                                [ text "Devs should watch the entirety of "
+                                , ClickableText.link "Tessa's Accordion demo"
+                                    [ ClickableText.linkExternal "https://noredink.zoom.us/rec/play/kLjOvS0PX5y-YYas6VmtUf5eEb1ViqNKKB-01gCELXG5tMjINEdop6dXrmfCyfC1A3Xj9kTUK8eIDe0.LO5NQR0X3udwz13x?canPlayFromShare=true&from=share_recording_detail&startTime=1681398154000&componentName=rec-play&originRequestUrl=https%3A%2F%2Fnoredink.zoom.us%2Frec%2Fshare%2F6R2Tk0FkzAYJ-44Q4Qs2Dx2RPR1GCXOCcaQsEai6vbtkO8oo9Ke8-_goIVwPDn9I.VVXdtb2PlpuTEqGs%3FstartTime%3D1681398154000"
+                                    , ClickableText.appearsInline
+                                    ]
+                                , text " before using. Discussion of how to attach styles correctly begins at 5:10."
+                                ]
                             ]
-                        , text " before using. Discussion of how to attach styles correctly begins at 5:10."
-                        ]
-                    , li []
-                        [ text "As long as this component’s semantics follow accessibility guidelines and best practices, this component’s state and other meaningful attributes should be communicated automatically to screen readers & similar assistive technology without the need to send special announcements to the "
-                        , ClickableText.link "ATAC"
-                            [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Assistive-Technology-Announcement-Center-ATAC-bOnmcnzOj631NRls1IBe3"
-                            , ClickableText.appearsInline
-                            ]
-                        , text ". "
-                        , ClickableText.link "Learn more about how certain attributes are communicated automatically"
-                            [ ClickableText.linkExternal "https://noredinkaccessibility.screenstepslive.com/a/1692512-communicating-state"
-                            , ClickableText.appearsInline
-                            ]
-                        , text ". "
                         ]
                     ]
-                ]
-            ]
-        ]
+               ]
     , view = view
     , categories = [ Layout ]
     , keyboardSupport =

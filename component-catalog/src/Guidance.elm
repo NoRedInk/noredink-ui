@@ -23,6 +23,26 @@ useATACGuide moduleName =
     ]
 
 
+communicateState : String -> List (Html msg)
+communicateState moduleName =
+    [ Text.mediumBody
+        [ Text.html
+            [ text "As long as this component’s semantics follow accessibility guidelines and best practices, this component’s state and other meaningful attributes should be communicated automatically to screen readers & similar assistive technology without the need to send special announcements to the "
+            , ClickableText.link "ATAC"
+                [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Assistive-Technology-Announcement-Center-ATAC-bOnmcnzOj631NRls1IBe3"
+                , ClickableText.appearsInline
+                ]
+            , text ". "
+            , ClickableText.link "Learn more about how certain attributes are communicated automatically"
+                [ ClickableText.linkExternal "https://noredinkaccessibility.screenstepslive.com/a/1692512-communicating-state"
+                , ClickableText.appearsInline
+                ]
+            , text ". "
+            ]
+        ]
+    ]
+
+
 useRadioButtonDotless : Html msg
 useRadioButtonDotless =
     Message.view
