@@ -1,9 +1,10 @@
 # Ownership, policies, & key concepts
 
-NoRedInk’s accessibility team, the Accessibilibats, own the `noredink-ui` package and the Component Catalog app showcasing its components.
-While others may contribute to `noredink-ui` and are encouraged to do so, the Accessibilibats (a.k.a. A11ybats) are responsible for oversight of the foundational aspects of the component library, a.k.a. “**[Component Library Foundations](#component-library-foundations)**.”
+The `noredink-ui` package and the Component Catalog app showcasing its components are currently unowned.
 
-Given this ownership and responsibility, A11ybats will provide guidance and support to developers and designers who are building new components or working with existing components.
+No party is currently responsible for oversight of the foundational aspects of the component library, a.k.a. “**[Component Library Foundations](#component-library-foundations)**.”
+
+Typically, the owner of the component library & catalog would provide guidance and support to developers and designers who are building new components or working with existing components.
 
 [The Component Catalog application can be found here](https://noredink-ui.netlify.app/).
 
@@ -21,9 +22,9 @@ Given this ownership and responsibility, A11ybats will provide guidance and supp
 ## Accessibility policy
 
 - No new components will be added to the component library if they do not conform to [WCAG 2.1 AA accessibility guidelines](https://www.w3.org/WAI/standards-guidelines/wcag/). Similarly, no existing components will be modified such that the component falls out of conformance with these guidelines.
-- For new components, UX designers & stakeholders are responsible for making their best faith effort to follow the [Accessibility Guidelines for Product Development](https://paper.dropbox.com/doc/PlcoE22OpOhB6eWCF4rFj?noDesktopRedirect=1) to include accessibility details in their spec and code. A11ybats will help fill in any gaps, but your team is responsible for the first pass.
-- Existing components that do not conform to [WCAG 2.1 AA accessibility guidelines](https://www.w3.org/WAI/standards-guidelines/wcag/) are being updated by A11ybats to be conformant. (We believe we have a comprehensive backlog of updates to make, but feel free to ask us if you think you spot an accessibility issue. 🙏 )
-- Components in the NoRedInk app which are NOT in the component library but which are shared or could be shared across multiple interfaces may be added to the component library over time by A11ybats or by any team, ideally with any necessary accessibility improvements, in accordance with the [`noredink-ui` versioning policy](#versioning-policy).
+- For new components, UX designers & stakeholders are responsible for making their best faith effort to follow the [Accessibility Guidelines for Product Development](https://paper.dropbox.com/doc/PlcoE22OpOhB6eWCF4rFj?noDesktopRedirect=1) and outside accessibility resources to include accessibility details in their spec and code.
+- Existing components that do not conform to [WCAG 2.1 AA accessibility guidelines](https://www.w3.org/WAI/standards-guidelines/wcag/) should be updated to be conformant. (There is [a project of accessibility issues](https://linear.app/noredink/project/[components]-a11y-updates-4405910cf0c9) in the disbanded accessibility team's backlog. Note that after 19 February, 2024, there may be new accessibility problems not captured in that project due to the lack of an accessibility team reviewing component changes.)
+- Components in the NoRedInk app which are NOT in the component library but which are shared or could be shared across multiple interfaces may be added to the component library over time by any team, ideally with any necessary accessibility improvements, in accordance with the [`noredink-ui` versioning policy](#versioning-policy).
 
 # Contribution guidelines
 
@@ -33,9 +34,9 @@ Assume anything that seems like it should be a shared component should probably 
 
 ## How to contribute
 
-Contributing to the component library is characterized by close consultation with A11ybats, who will make every effort to be available as needed. All contributions require at least a quick check-in with A11ybats, ideally before you begin work and at minimum before you merge any PRs. To that end, A11ybats request that you follow the relevant process outlined below to ensure a streamlined workflow for everyone involved:
+The new owner of the component library should update this section and may wish to refer to git history to understand the prior process.
 
-**🔧 Modifying an existing component**
+Some suggestions for contributing include the following:
 
 1. As soon as you have a rough idea of the modification you need (from the product/design perspective), please ping A11ybats in the [#ask-accessibilibats](https://noredink.slack.com/archives/C02NVG4M45U) Slack channel with details about the modification you’re planning to make.
    - We may either give you the okay in the Slack thread, or we may request a brief **kickoff sync** to discuss implementation details. You may also request a sync rather than providing details in Slack.
@@ -46,27 +47,26 @@ Contributing to the component library is characterized by close consultation wit
 5. Request a PR review from your team as usual. There is no need to add A11ybats as a reviewer unless this was mentioned as a requirement in your kickoff sync.
 6. A11ybats keep an eye on all noredink-ui updates and may request modifications to your work if it does not adhere to the [Component Library Foundations](#component-library-foundations).
 
-**🌟 Creating a new component**
+1. Before beginning actual development work, ensure your proposed changes do not cause accessibility regressions or introduce new accessibility issues. Ensure your proposed changes follow accessibility guidelines & best practices.
+1. Review the [PR template](/.github/pull_request_template.md) in advance so that you understand contribution requirements in advance, or go ahead and open a draft PR so you can use the [PR template](/.github/pull_request_template.md) as you work.
+1. If you are releasing a new major version of a component, be prepared for your team to upgrade all instances of the component anywhere it is used. We recommend creating stories now for this work and linking to them in your PR.
+1. The owner of the component library should keep an eye on all noredink-ui updates and may request modifications to your work if it does not adhere to the [Component Library Foundations](#component-library-foundations).
 
-1. As soon as you have a rough idea of the new component you need (from the product/design perspective), please ping A11ybats in the [#ask-accessibilibats](https://noredink.slack.com/archives/C02NVG4M45U) Slack channel to request a brief **kickoff sync**.
-   - A11ybats should be able to sync with you anywhere from immediately following your request to ~48 hours from your request. We want to unblock you asap!
-   - In the kickoff sync, you can expect to start by sharing your concept with A11ybats. Next, A11ybats will ensure you are aware of our contribution guidelines and will provide high-level guidance about anything important to know before you build your component. For example, in some cases, we may already have existing code that meets your needs or that we prefer you base your new component on. (Hooray! Less work for you!) We may also give you some accessibility pointers.
-   - If necessary for more complex work, we’ll schedule followup syncs/pairing with you.
-   - Once A11ybats give you the go-ahead to begin work…
-2. Feel free to [reach out to A11ybats](https://noredink.slack.com/archives/C02NVG4M45U) with any questions as you work - it might save you headaches or code rewrites later!
-3. Review the [PR template](/.github/pull_request_template.md) in advance so that you understand contribution requirements in advance, or go ahead and open a draft PR so you can use the [PR template](/.github/pull_request_template.md) as you work.
-4. Before beginning dev work, we strongly recommend working closely with a UX designer to produce a **clear, comprehensive** component spec. Here are some tips for developing a good spec before starting component work:
-   - UX designers & stakeholders are responsible for making their best faith effort at following the [Accessibility Guidelines for Product Development](https://paper.dropbox.com/doc/PlcoE22OpOhB6eWCF4rFj?noDesktopRedirect=1) to include accessibility details in their spec and code. A11ybats will help fill in any gaps, but your team is responsible for the first pass.
+### 🌟 Creating a new component
+
+1. Before beginning actual development work, carefully review existing components and helpers to be sure that there does not already exist something that meets your needs.
+1. Before beginning actual development work, ensure your proposed changes do not cause accessibility regressions or introduce new accessibility issues. Ensure your proposed changes follow accessibility guidelines & best practices.
+1. Review the [PR template](/.github/pull_request_template.md) in advance so that you understand contribution requirements in advance, or go ahead and open a draft PR so you can use the [PR template](/.github/pull_request_template.md) as you work.
+1. Before beginning dev work, we strongly recommend working closely with a UX designer to produce a **clear, comprehensive** component spec. Here are some tips for developing a good spec before starting component work:
+   - UX designers & stakeholders are responsible for making their best faith effort at following the [Accessibility Guidelines for Product Development](https://paper.dropbox.com/doc/PlcoE22OpOhB6eWCF4rFj?noDesktopRedirect=1) and outside accessibility resources to include accessibility details in their spec and code.
    - In the spec, include details about which properties need to be configurable and which configuration options are necessary for each property. For example, if your component allows color configurations, you might want developers to specify any hex code as the color, or you may wish to limit them to a particular subset of [NoRedInk's colors](https://noredink-ui.netlify.app/#/doodad/Colors), etc.
-5. If you'd like to have multiple small PRs as you build out the functionality of the component, we recommend branching the small PRs off an omnibus-style component-specific branch instead of branching each small PR off of master.
-6. For your initial PR, please request a PR review from your team as usual, but also add A11ybats as an additional PR reviewer.
-   - A11ybats will review your PR solely for the purposes of ensuring that your new component adheres to the [Component Library Foundations](#component-library-foundations). We may point out bugs if we happen to find them, but that’s not what we’ll be looking for — **your team is ultimately responsible for testing/coordinating testing of your new component**.
-   - For minor iterations on your new component, there’s no need to request A11ybat PR review again. We’ll keep an eye on smaller changes as you make them. If you aren’t sure if your changes are big enough for another A11ybat PR review, just ask!
-7. Once your component is in a state that’s ready for production, please request an accessibility review from A11ybats by dropping a note in [#ask-accessibilibats](https://noredink.slack.com/archives/C02NVG4M45U). Our turnaround time should be relatively quick, but in the meantime…
-8. Start creating a [QA Flightplan](https://paper.dropbox.com/doc/QA-landing-page-FAQ--BNKlATfTHdgnJa48lcR5NrVSAg-wLYVa0lEmkaiJB09CXHRn) as if this were a new feature. We recommend requesting that the QA team _at least_ tests your new component within the Component Catalog netlify branch preview. (You can always request additional QA of your component as implemented in the NoRedInk app later.) Simple components may have a simple flightplan, and that’s okay!
-9. Once A11ybats have completed their accessibility review, make updates to your QA Flightplan if needed and submit your QA Flightplan to QA according to [QA’s processes](https://paper.dropbox.com/doc/QA-landing-page-FAQ--BNKlATfTHdgnJa48lcR5NrVSAg-wLYVa0lEmkaiJB09CXHRn).
-10. When you're ready to publish your component, please refer to [the noredink-ui versioning policy](#versioning-policy), which includes guidance on permitted API changes per release.
-11. A11ybats keep an eye on all noredink-ui updates and may request modifications to your work if it does not adhere to the [Component Library Foundations](#component-library-foundations).
+1. If you'd like to have multiple small PRs as you build out the functionality of the component, we recommend branching the small PRs off an omnibus-style component-specific branch instead of branching each small PR off of master.
+1. For your initial PR, please request a PR review from your team as usual, but also add the owner of the component library as an additional PR reviewer.
+   - The owner of the component library will review your PR solely for the purposes of ensuring that your new component adheres to the [Component Library Foundations](#component-library-foundations). The owner of the component library may point out bugs if they happen to find them, but that’s not what they’ll be looking for — **your team is ultimately responsible for testing/coordinating testing of your new component**.
+1. It is strongly recommended that you use [the script to add a new component to the Component Catalog](#💫-adding-a-component-to-the-component-catalog).
+1. Start creating a [QA Flightplan](https://paper.dropbox.com/doc/QA-landing-page-FAQ--BNKlATfTHdgnJa48lcR5NrVSAg-wLYVa0lEmkaiJB09CXHRn) as if this were a new feature. We recommend requesting that the QA team _at least_ tests your new component within the Component Catalog netlify branch preview. (You can always request additional QA of your component as implemented in the NoRedInk app later.) Simple components may have a simple flightplan, and that’s okay!
+1. When you're ready to publish your component, please refer to [the noredink-ui versioning policy](#versioning-policy), which includes guidance on permitted API changes per release.
+1. The owner of the component library should keep an eye on all noredink-ui updates and may request modifications to your work if it does not adhere to the [Component Library Foundations](#component-library-foundations).
 
 **💫 Adding a component to the Component Catalog**
 
