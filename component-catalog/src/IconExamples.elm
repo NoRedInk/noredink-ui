@@ -33,6 +33,7 @@ import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
 import Nri.Ui.InputStyles.V4 as InputStyles
 import Nri.Ui.Select.V9 as Select
 import Nri.Ui.Spacing.V1 as Spacing
@@ -211,7 +212,7 @@ view config ellieLinkConfig settings groups =
         ( code, renderedExample ) =
             toCustomizableExampleResults settings
     in
-    ExampleSection.sectionWithCss "About" [ Css.flex (Css.int 1) ] Text.smallBody [ aboutMsg ]
+    ExampleSection.aboutSection aboutBullets
         :: Html.section []
             [ viewWithCustomControls
                 { ellieLinkConfig = ellieLinkConfig
@@ -241,16 +242,16 @@ view config ellieLinkConfig settings groups =
         :: List.map viewExampleSection groups
 
 
-aboutMsg : Text.Attribute msg
-aboutMsg =
-    Text.markdown
-        """
-- Our icons are Elm SVGs, not separate files or sprites. We use an opaque type to represent them, which enables nice type-safe composability across our components.
-- For decorative SVGs (which is the default), we add `aria-hidden=true` to the SVG node.
-- For non-decorative SVGs, we use Pattern #5 `<svg>` + `role='img'` + `<title>` from [Accessible SVGs: Perfect Patterns For Screen Reader Users](https://www.smashingmagazine.com/2021/05/accessible-svg-patterns-comparison/).
-- Instructions for adding new SVG icons can be found in the [monolith README](https://github.com/NoRedInk/NoRedInk/blob/master/monolith/README.md#adding-new-svg-icons).
-
-"""
+aboutBullets : List (Html msg)
+aboutBullets =
+    [ Html.ul
+        []
+        [ Html.li [] [ Text.smallBody [ Text.plaintext "Our icons are Elm SVGs, not separate files or sprites. We use an opaque type to represent them, which enables nice type-safe composability across our components." ] ]
+        , Html.li [] [ Text.smallBody [ Text.markdown "An icon is **decorative** if the user does not need to see the icon at all or know it exists to still use the functionality related to the icon. Decorative icons do not need a `Title`. For decorative SVGs (which is the default), we add `aria-hidden=true` to the SVG node." ] ]
+        , Html.li [] [ Text.smallBody [ Text.markdown "A **non-decorative (or \"meaningful\") icon** requires a `Title` so that all users understand its function. For non-decorative SVGs, we use Pattern #5 `<svg> + role='img' + <title>` from [Accessible SVGs: Perfect Patterns For Screen Reader Users](https://www.smashingmagazine.com/2021/05/accessible-svg-patterns-comparison/)." ] ]
+        , Html.li [] [ Text.smallBody [ Text.markdown "Instructions for adding new SVG icons can be found in the [monolith README](https://github.com/NoRedInk/NoRedInk/blob/master/monolith/README.md#adding-new-svg-icons)." ] ]
+        ]
+    ]
 
 
 viewWithCustomStyles : Settings -> String -> List ( String, Svg.Svg, List Css.Style ) -> Html msg
@@ -343,21 +344,30 @@ viewCustomizableExample groups state =
     Html.div
         [ Attributes.css
             [ Css.displayFlex
-            , Css.justifyContent Css.spaceBetween
-            , Css.alignItems Css.center
-            , Css.flexWrap Css.wrap
+            , Css.flexDirection Css.column
+            , Css.property "gap" "10px"
             ]
         ]
-        [ TextInput.view "Title"
-            [ TextInput.value state.label
-            , TextInput.text SetLabel
+        [ inputGroup
+            [ Select.view "Icon"
+                [ Select.groupedChoices Tuple.first
+                    (List.map svgGroupedChoices groups)
+                , Select.value (Just state.icon)
+                ]
+                |> Html.map SetIcon
+            , TextInput.view "Title"
+                [ TextInput.value state.label
+                , TextInput.text SetLabel
+                , TextInput.guidance "Title is required for non-decorative/meaningful icons"
+                ]
             ]
-        , Select.view "Icon"
-            [ Select.groupedChoices Tuple.first
-                (List.map svgGroupedChoices groups)
-            , Select.value (Just state.icon)
+        , inputGroup
+            [ colorPicker state.color
+            , sizeSlider "Width" state.width
+                |> Html.map SetWidth
+            , sizeSlider "Height" state.height
+                |> Html.map SetHeight
             ]
-            |> Html.map SetIcon
         , Checkbox.view
             { label = "Show border"
             , selected = Checkbox.selectedFromBool state.showBorder
@@ -365,78 +375,112 @@ viewCustomizableExample groups state =
             [ Checkbox.id "show-border"
             , Checkbox.onCheck SetBorder
             ]
-        , Html.div [ css [ Css.position Css.relative, Css.paddingTop (Css.px InputStyles.defaultMarginTop) ] ]
-            [ InputLabelInternal.view
-                { for = "color-picker"
-                , label = "Color"
-                , theme = InputStyles.Standard
-                }
-                { error = InputErrorAndGuidanceInternal.noError
-                , noMarginTop = False
-                , hideLabel = False
-                , disabled = False
-                }
-            , Html.input
-                [ Attributes.id "color-picker"
-                , Attributes.type_ "color"
-                , Attributes.value (SolidColor.toHex state.color)
-                , Events.onInput (SetColor << SolidColor.fromHex)
-                , Attributes.list "noredink-ui-colors"
-                , css
-                    [ Css.border3 (Css.px 1) Css.solid Colors.gray75
-                    , Css.borderBottomWidth (Css.px 3)
-                    , Css.borderRadius (Css.px 8)
-                    , Css.focus
-                        [ Css.borderColor Colors.azure
-                        , Css.borderRadius (Css.px 8) |> Css.important
-                        ]
-                    , Css.color Colors.gray20
-                    , Css.backgroundColor Colors.white
-                    , Css.minWidth (Css.px 94)
-                    , Css.height (Css.px 45)
-                    , Css.padding4 (Css.px 7) (Css.px 30) (Css.px 5) (Css.px 7)
+        ]
 
-                    -- Dropdown Arrow
-                    --
-                    -- "appearance: none" removes the default dropdown arrows
-                    , VendorPrefixed.property "appearance" "none"
-                    , """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16px" height="16px" viewBox="0 0 25 15"><g fill=" """
-                        ++ SolidColor.toRGBString (fromCssColor Colors.azure)
-                        ++ """ "><path transform="rotate(270) translate(-20)" d="M19.2677026,20.7322696 C20.2443584,21.7070736 20.2443584,23.2915005 19.2677026,24.2677859 C18.7788191,24.7555583 18.139567,25 17.4999444,25 C16.8603219,25 16.2210698,24.7555583 15.7321863,24.2677859 L5.73229742,14.267897 C4.7556416,13.293093 4.7556416,11.7086662 5.73229742,10.7323808 L15.7321863,0.732491861 C16.7084718,-0.244163954 18.2914171,-0.244163954 19.2677026,0.732491861 C20.2443584,1.70729584 20.2443584,3.29172268 19.2677026,4.26800813 L11.0359422,12.5001389 L19.2677026,20.7322696 Z" ></path></g></svg> """
-                        |> urlUtf8
-                        |> Css.property "background"
-                    , Css.backgroundRepeat Css.noRepeat
-                    , Css.property "background-position" "center right -20px"
-                    , Css.backgroundOrigin Css.contentBox
+
+inputGroup : List (Html msg) -> Html msg
+inputGroup =
+    Html.div
+        [ css
+            [ Css.displayFlex
+            , Css.justifyContent Css.spaceBetween
+            , Css.flexWrap Css.wrap
+            ]
+        ]
+
+
+sizeSlider : String -> Float -> Html (Maybe Float)
+sizeSlider name value =
+    let
+        id =
+            safeIdWithPrefix "size-slider" name
+    in
+    Html.div
+        [ css
+            [ Css.position Css.relative
+            , Css.paddingTop (Css.px 18)
+            , Css.display Css.inlineBlock
+            ]
+        ]
+        [ InputLabelInternal.view
+            { for = id
+            , label = name
+            , theme = InputStyles.Standard
+            }
+            { error = InputErrorAndGuidanceInternal.noError
+            , noMarginTop = False
+            , hideLabel = False
+            , disabled = False
+            }
+        , Html.input
+            [ Attributes.type_ "range"
+            , Attributes.min "0"
+            , Attributes.max "200"
+            , Attributes.id id
+            , Attributes.value (String.fromFloat value)
+            , Events.onInput String.toFloat
+            ]
+            []
+        ]
+
+
+colorPicker : SolidColor -> Html Msg
+colorPicker selectedColor =
+    Html.div
+        [ css
+            [ Css.position Css.relative
+            , Css.paddingTop (Css.px InputStyles.defaultMarginTop)
+            , Css.display Css.inlineBlock
+            ]
+        ]
+        [ InputLabelInternal.view
+            { for = "color-picker"
+            , label = "Color"
+            , theme = InputStyles.Standard
+            }
+            { error = InputErrorAndGuidanceInternal.noError
+            , noMarginTop = False
+            , hideLabel = False
+            , disabled = False
+            }
+        , Html.input
+            [ Attributes.id "color-picker"
+            , Attributes.type_ "color"
+            , Attributes.value (SolidColor.toHex selectedColor)
+            , Events.onInput (SetColor << SolidColor.fromHex)
+            , Attributes.list "noredink-ui-colors"
+            , css
+                [ Css.border3 (Css.px 1) Css.solid Colors.gray75
+                , Css.borderBottomWidth (Css.px 3)
+                , Css.borderRadius (Css.px 8)
+                , Css.focus
+                    [ Css.borderColor Colors.azure
+                    , Css.borderRadius (Css.px 8) |> Css.important
                     ]
+                , Css.color Colors.gray20
+                , Css.backgroundColor Colors.white
+                , Css.minWidth (Css.px 94)
+                , Css.height (Css.px 45)
+                , Css.padding4 (Css.px 7) (Css.px 30) (Css.px 5) (Css.px 7)
+
+                -- Dropdown Arrow
+                --
+                -- "appearance: none" removes the default dropdown arrows
+                , VendorPrefixed.property "appearance" "none"
+                , """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16px" height="16px" viewBox="0 0 25 15"><g fill=" """
+                    ++ SolidColor.toRGBString (fromCssColor Colors.azure)
+                    ++ """ "><path transform="rotate(270) translate(-20)" d="M19.2677026,20.7322696 C20.2443584,21.7070736 20.2443584,23.2915005 19.2677026,24.2677859 C18.7788191,24.7555583 18.139567,25 17.4999444,25 C16.8603219,25 16.2210698,24.7555583 15.7321863,24.2677859 L5.73229742,14.267897 C4.7556416,13.293093 4.7556416,11.7086662 5.73229742,10.7323808 L15.7321863,0.732491861 C16.7084718,-0.244163954 18.2914171,-0.244163954 19.2677026,0.732491861 C20.2443584,1.70729584 20.2443584,3.29172268 19.2677026,4.26800813 L11.0359422,12.5001389 L19.2677026,20.7322696 Z" ></path></g></svg> """
+                    |> urlUtf8
+                    |> Css.property "background"
+                , Css.backgroundRepeat Css.noRepeat
+                , Css.property "background-position" "center right -20px"
+                , Css.backgroundOrigin Css.contentBox
                 ]
-                []
-            , Examples.Colors.all
-                |> List.map (\( name, color ) -> Html.option [ Attributes.value color.value ] [])
-                |> Html.datalist [ Attributes.id "noredink-ui-colors" ]
             ]
-        , Html.label []
-            [ Html.text "Width: "
-            , Html.input
-                [ Attributes.type_ "range"
-                , Attributes.min "0"
-                , Attributes.max "200"
-                , Attributes.value (String.fromFloat state.width)
-                , Events.onInput (SetWidth << String.toFloat)
-                ]
-                []
-            ]
-        , Html.label []
-            [ Html.text "Height: "
-            , Html.input
-                [ Attributes.type_ "range"
-                , Attributes.min "0"
-                , Attributes.max "200"
-                , Attributes.value (String.fromFloat state.height)
-                , Events.onInput (SetHeight << String.toFloat)
-                ]
-                []
-            ]
+            []
+        , Examples.Colors.all
+            |> List.map (\( name, color ) -> Html.option [ Attributes.value color.value ] [])
+            |> Html.datalist [ Attributes.id "noredink-ui-colors" ]
         ]
 
 
@@ -478,6 +522,11 @@ toCustomizableExampleResults state =
         ++ (Code.varWithTypeAnnotation "renderedSvg" "Html msg" <|
                 Code.pipelineMultiline
                     ([ Just <| state.renderSvgCode (Tuple.first state.icon)
+                     , if String.isEmpty state.label then
+                        Nothing
+
+                       else
+                        Just ("Svg.withLabel " ++ Code.string state.label)
                      , case selectedNriUiColor of
                         Just color ->
                             Just ("Svg.withColor Colors." ++ color)
@@ -495,11 +544,6 @@ toCustomizableExampleResults state =
 
                        else
                         Nothing
-                     , if String.isEmpty state.label then
-                        Nothing
-
-                       else
-                        Just ("Svg.withLabel " ++ Code.string state.label)
                      , Just "Svg.toHtml"
                      ]
                         |> List.filterMap identity

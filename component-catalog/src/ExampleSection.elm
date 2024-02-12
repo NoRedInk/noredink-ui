@@ -1,20 +1,43 @@
 module ExampleSection exposing
-    ( asideWithCss
-    , sectionWithCss
+    ( aboutSection
+    , asideWithCss, sectionWithCss
     )
 
 {-|
 
-@docs asideWithCss
-@docs sectionWithCss
+@docs aboutSection
+@docs asideWithCssm sectionWithCss
 
 -}
 
 import Css exposing (Style)
+import Css.Global
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Heading.V3 as Heading
+
+
+aboutSection : List (Html Never) -> Html msg
+aboutSection =
+    sectionWithCss "About"
+        [ Css.flex (Css.int 1) ]
+        viewAbout
+
+
+viewAbout : List (Html Never) -> Html msg
+viewAbout about =
+    div
+        [ css
+            [ Css.margin2 (Css.px 10) Css.zero
+            , Css.Global.descendants
+                [ Css.Global.code
+                    [ Css.fontSize (Css.px 13.5) ]
+                ]
+            ]
+        ]
+        about
+        |> map never
 
 
 {-| -}
