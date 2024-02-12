@@ -289,20 +289,21 @@ contentTypes :
         }
 contentTypes =
     [ { contentType = "paragraph"
-      , content = Message.paragraph "*Hello, there!* Hope you're doing well. Use the following link to go to [a fake destination](google.com)."
+      , content = Message.paragraph "*Hello, there!* Hope you're doing well. Use the following link to go to [a fake destination](https://www.google.com)."
       }
     , { contentType = "plaintext"
-      , content = Message.plaintext "*Hello, there!* Hope you're doing well. Use the following link to go to [a fake destination](google.com)."
+      , content = Message.plaintext "*Hello, there!* Hope you're doing well. Use the following link to go to [a fake destination](https://www.google.com)."
       }
     , { contentType = "markdown"
-      , content = Message.markdown "Hello, there! Hope you're doing well. Use the following link to go to [a fake destination](google.com)."
+      , content = Message.markdown "Hello, there! Hope you're doing well. Use the following link to go to [a fake destination](https://www.google.com)."
       }
     , { contentType = "html"
       , content =
             Message.html
                 [ text "Hello, there! Hope you're doing well. Use the following link to go to "
                 , ClickableText.link "a fake destination"
-                    [ ClickableText.href "google.com"
+                    [ ClickableText.href "https://www.google.com"
+                    , ClickableText.appearsInline
                     ]
                 , text "."
                 ]
