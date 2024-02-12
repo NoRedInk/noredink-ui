@@ -81,6 +81,7 @@ init =
             (Control.choice
                 [ ( "button", Control.value Button )
                 , ( "link", Control.value Link )
+                , ( "linkExternal", Control.value LinkExternal )
                 ]
             )
         |> Control.field "label" (Control.string "Clickable Text")
@@ -139,6 +140,7 @@ type alias Settings msg =
 type Type
     = Button
     | Link
+    | LinkExternal
 
 
 {-| -}
@@ -211,6 +213,16 @@ viewExamples ellieLinkConfig (State control) =
                                     ]
                           }
                         ]
+
+                    LinkExternal ->
+                        [ { sectionName = "Link"
+                          , code =
+                                toCode "link"
+                                    [ Code.fromModule moduleName "linkExternal "
+                                        ++ Code.string "https://www.google.com"
+                                    ]
+                          }
+                        ]
         }
     , Heading.h2
         [ Heading.plaintext "Customizable Example"
@@ -234,6 +246,12 @@ viewExamples ellieLinkConfig (State control) =
             Link ->
                 ClickableText.link settings.label
                     (ClickableText.href "/"
+                        :: List.map Tuple.second settings.attributes
+                    )
+
+            LinkExternal ->
+                ClickableText.link settings.label
+                    (ClickableText.linkExternal "https://www.google.com"
                         :: List.map Tuple.second settings.attributes
                     )
         ]
@@ -395,7 +413,7 @@ sizeExamples settings =
             }
         , Table.custom
             { header = text "External link"
-            , view = \{ size } -> sizeExamplesFor ClickableText.link [ size, ClickableText.linkExternal "google.com" ]
+            , view = \{ size } -> sizeExamplesFor ClickableText.link [ size, ClickableText.linkExternal "https://www.google.com" ]
             , width = Css.px 10
             , cellStyles =
                 always
