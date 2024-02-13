@@ -47,6 +47,21 @@ helpfullyDisabled moduleName =
         ]
 
 
+message : String -> List (Html msg)
+message moduleName =
+    [ Text.smallBody
+        [ Text.html
+            [ text "Watch "
+            , ClickableText.link "Tessa’s demo"
+                [ ClickableText.linkExternal "https://noredink.zoom.us/rec/play/04Yg5m66aiM4gzzeOUFxWDkCin0Z6_zXwb5Jq3R7xqSgSIqWZTL_xNCDmnUpromV4bupQrx92JMjlKTi.ubiUciVbg1C4Y5eN?canPlayFromShare=true&from=share_recording_detail&startTime=1686841407000&componentName=rec-play&originRequestUrl=https%3A%2F%2Fnoredink.zoom.us%2Frec%2Fshare%2FBN88Pbq50Maz2A3oZgSC0cSzKPwFFPBxzCKJs3rxi_MlcuWYCyUNLIEIMybujrIN.qjwOXXxEAyVdoED4%3FstartTime%3D1686841407000%26_x_zm_rtaid%3DexJoa-qAQhSpO_3ZAnlvOg.1686929322690.d6880919fcdc54dce47ba87f206842e0%26_x_zm_rhtaid%3D822"
+                , ClickableText.appearsInline
+                ]
+            , text " to learn more about the Message component and message helpers like errorMessage and guidance on form elements."
+            ]
+        ]
+    ]
+
+
 useATACGuide : String -> List (Html msg)
 useATACGuide moduleName =
     [ Text.mediumBody
