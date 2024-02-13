@@ -16,6 +16,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EventExtras
 import Example exposing (Example)
+import Guidance
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
@@ -59,7 +60,7 @@ example =
             , ClickableSvg.custom [ Key.tabbable False ]
             ]
         ]
-    , about = []
+    , about = [ Guidance.helpfullyDisabled moduleName ]
     , view =
         \ellieLinkConfig state ->
             [ ControlView.view
