@@ -136,17 +136,35 @@ builtInThemes =
 
 controlCustomTheme : Control ( String, Balloon.Attribute msg )
 controlCustomTheme =
+    Control.record
+        (\( backgroundName, backgroundColor ) ( colorName, color ) ->
+            ( "Balloon.customTheme { backgroundColor = Colors." ++ backgroundName ++ ", color = " ++ colorName ++ " }"
+            , Balloon.customTheme { backgroundColor = backgroundColor, color = color }
+            )
+        )
+        |> Control.field "backgroundColor" controlBackgroundColor
+        |> Control.field "color" controlColor
+
+
+controlBackgroundColor : Control ( String, Css.Color )
+controlBackgroundColor =
     Examples.Colors.backgroundHighlightColors
         |> List.map
             (\( name, value, _ ) ->
                 ( name
-                , Control.value
-                    ( "Balloon.customTheme { backgroundColor = Colors." ++ name ++ ", color = Colors.gray20 }"
-                    , Balloon.customTheme { backgroundColor = value, color = Colors.gray20 }
-                    )
+                , Control.value ( name, value )
                 )
             )
         |> ControlExtra.rotatedChoice 0
+
+
+controlColor : Control ( String, Css.Color )
+controlColor =
+    CommonControls.choice "Colors"
+        [ ( "gray20", Colors.gray20 )
+        , ( "navy", Colors.navy )
+        , ( "white", Colors.white )
+        ]
 
 
 positionOptions : Control ( String, Balloon.Attribute msg )
