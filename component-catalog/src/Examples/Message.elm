@@ -162,7 +162,7 @@ example =
         , Message.view [ Message.success, Message.plaintext "Tiny success" ]
         , Message.view [ Message.error, Message.plaintext "Tiny error" ]
         ]
-    , about = Guidance.useATACGuide moduleName
+    , about = Guidance.useATACGuide moduleName ++ Guidance.message moduleName
     , view =
         \ellieLinkConfig state ->
             let
