@@ -20,6 +20,7 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Guidance
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.ClickableText.V4 as ClickableText
@@ -68,6 +69,7 @@ example =
                 ]
             ]
         ]
+            ++ Guidance.communicateState moduleName
     , view =
         \ellieLinkConfig state ->
             let
