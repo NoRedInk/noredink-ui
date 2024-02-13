@@ -11,11 +11,11 @@ module Examples.Colors exposing
 -}
 
 import Category exposing (Category(..))
-import Nri.Ui.ClickableText.V4 as ClickableText
 import Css
 import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.Extra exposing (fromCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
@@ -53,12 +53,14 @@ example =
         , ( "mustard", Colors.mustard )
         ]
             |> List.map viewPreviewSwatch
-    , about = [ Text.smallBody
+    , about =
+        [ Text.smallBody
             [ Text.html
                 [ Html.text "Please refer to "
-                ,ClickableText.link "the guides for designing with sufficient contrast and high contrast mode in mind"
-                [ClickableText.linkExternal "https://paper.dropbox.com/doc/Accessibility-testing-Color-contrast--CJat4EsY~XD~lUuIBYIXpbKNAg-sDEDETuS9rqQbdEs7nybl",
-                ClickableText.appearsInline]
+                , ClickableText.link "the guides for designing with sufficient contrast and high contrast mode in mind"
+                    [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Accessibility-testing-Color-contrast--CJat4EsY~XD~lUuIBYIXpbKNAg-sDEDETuS9rqQbdEs7nybl"
+                    , ClickableText.appearsInline
+                    ]
                 , Html.text "."
                 ]
             ]

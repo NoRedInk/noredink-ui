@@ -86,17 +86,18 @@ example =
                             ]
                         ]
                     ]
-               ] ++
-               [Message.view
-        [ Message.html
-            [ text "Looking for a way to loop keyboard focus through a list of elements? Check out "
-            , ClickableText.link "Focus Loop"
-                [ ClickableText.href ("#/usage_example/Focus-Loop")
-                , ClickableText.appearsInline
-                ]
-            , text "."
-            ]
-        ]]
+               ]
+            ++ [ Message.view
+                    [ Message.html
+                        [ text "Looking for a way to loop keyboard focus through a list of elements? Check out "
+                        , ClickableText.link "Focus Loop"
+                            [ ClickableText.href "#/usage_example/Focus-Loop"
+                            , ClickableText.appearsInline
+                            ]
+                        , text "."
+                        ]
+                    ]
+               ]
     , view =
         \_ state ->
             [ Heading.h2

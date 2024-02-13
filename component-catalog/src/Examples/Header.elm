@@ -50,13 +50,15 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview = [ viewPreview ]
-    , about = [ Text.smallBody
+    , about =
+        [ Text.smallBody
             [ Text.html
                 [ text "Learn more about this component in "
-                ,ClickableText.link "Tessa's demo"
-                [ ClickableText.linkExternal "https://noredink.slack.com/archives/CDMGJ8PFA/p1684424409046369"
-                ,ClickableText.appearsInline]
-                ,text "."
+                , ClickableText.link "Tessa's demo"
+                    [ ClickableText.linkExternal "https://noredink.slack.com/archives/CDMGJ8PFA/p1684424409046369"
+                    , ClickableText.appearsInline
+                    ]
+                , text "."
                 ]
             ]
         ]
