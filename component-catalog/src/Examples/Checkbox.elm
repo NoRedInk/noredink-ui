@@ -53,7 +53,7 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview = preview
-    , about = [ Guidance.helpfullyDisabled moduleName ]
+    , about = Guidance.communicateState moduleName ++ [ Guidance.helpfullyDisabled moduleName ]
     , view =
         \ellieLinkConfig state ->
             let
