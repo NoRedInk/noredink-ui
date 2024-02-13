@@ -194,7 +194,7 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , categories = [ Navigation ]
+    , categories = [ Layout ]
     , keyboardSupport =
         [ { keys = [ KeyboardSupport.Tab ]
           , result = "Move focus to the currently-selected Tab's tab panel"
