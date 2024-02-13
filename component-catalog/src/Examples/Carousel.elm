@@ -308,7 +308,15 @@ example =
                 [ Heading.plaintext "Customizable example"
                 , Heading.css [ Css.marginTop (Css.px 30) ]
                 ]
-            , view
+            , div
+                [ css
+                    [ Css.minHeight (Css.px 200)
+                    , Css.displayFlex
+                    , Css.justifyContent Css.center
+                    , Css.alignItems Css.center
+                    ]
+                ]
+                [ view ]
             , Heading.h2
                 [ Heading.plaintext "Usage examples"
                 , Heading.css [ Css.marginTop (Css.px 30) ]
