@@ -17,7 +17,8 @@ import EllieLink
 import Example exposing (Example)
 import Examples.Colors
 import Guidance
-import Html.Styled exposing (Html)
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
@@ -198,5 +199,13 @@ view ellieLinkConfig state =
         [ Heading.plaintext "Customizable Example"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
-    , Balloon.view (List.map Tuple.second attributes)
+    , div
+        [ css
+            [ Css.minHeight (Css.px 200)
+            , Css.displayFlex
+            , Css.justifyContent Css.center
+            , Css.alignItems Css.center
+            ]
+        ]
+        [ Balloon.view (List.map Tuple.second attributes) ]
     ]
