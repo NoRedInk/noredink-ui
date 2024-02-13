@@ -16,6 +16,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
+import Guidance
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.ClickableText.V4 as ClickableText
@@ -56,7 +57,7 @@ example =
             , ClickableText.custom [ Key.tabbable False ]
             ]
         ]
-    , about = []
+    , about = [ Guidance.helpfullyDisabled moduleName ]
     , view = \ellieLinkConfig state -> [ viewExamples ellieLinkConfig state ]
     , categories = [ Buttons ]
     , keyboardSupport = []
