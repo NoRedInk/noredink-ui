@@ -197,8 +197,7 @@ view ellieLinkConfig state =
                                         (Code.newlineWithIndent 2
                                             ++ (Code.fromModule "ClickableText" "button " ++ Code.string "Button")
                                             ++ Code.listMultiline
-                                                [ Code.fromModule "ClickableText" "medium"
-                                                , Code.fromModule "ClickableText" "custom" ++ " attributes"
+                                                [ Code.fromModule "ClickableText" "custom" ++ " attributes"
                                                 ]
                                                 3
                                         )
@@ -234,8 +233,7 @@ view ellieLinkConfig state =
             [ Menu.entry "customizable-example" <|
                 \attrs ->
                     ClickableText.button "Button"
-                        [ ClickableText.medium
-                        , ClickableText.onClick (ConsoleLog "Interactive example")
+                        [ ClickableText.onClick (ConsoleLog "Interactive example")
                         , ClickableText.custom attrs
                         ]
             ]
@@ -281,7 +279,6 @@ view ellieLinkConfig state =
                         \attrs ->
                             ClickableText.button "Hello"
                                 [ ClickableText.onClick (ConsoleLog "Hello")
-                                , ClickableText.medium
                                 , ClickableText.custom attrs
                                 ]
                     , Menu.group "Menu group"
@@ -289,7 +286,6 @@ view ellieLinkConfig state =
                             \attrs ->
                                 ClickableText.button "Gift"
                                     [ ClickableText.onClick (ConsoleLog "Gift")
-                                    , ClickableText.medium
                                     , ClickableText.custom attrs
                                     , ClickableText.icon UiIcon.gift
                                     ]
@@ -297,7 +293,6 @@ view ellieLinkConfig state =
                             \attrs ->
                                 ClickableText.button "Nope!"
                                     [ ClickableText.onClick (ConsoleLog "Nope!")
-                                    , ClickableText.medium
                                     , ClickableText.custom attrs
                                     , ClickableText.icon UiIcon.null
                                     ]
@@ -305,7 +300,6 @@ view ellieLinkConfig state =
                             \attrs ->
                                 ClickableText.button "Skip"
                                     [ ClickableText.onClick (ConsoleLog "Skip")
-                                    , ClickableText.medium
                                     , ClickableText.custom attrs
                                     ]
                         ]
@@ -313,7 +307,6 @@ view ellieLinkConfig state =
                         \attrs ->
                             ClickableText.button "Performance"
                                 [ ClickableText.onClick (ConsoleLog "Performance")
-                                , ClickableText.medium
                                 , ClickableText.custom attrs
                                 ]
                     ]

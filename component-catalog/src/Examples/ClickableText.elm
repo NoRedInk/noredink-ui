@@ -10,7 +10,7 @@ import Accessibility.Styled.Key as Key
 import Category exposing (Category(..))
 import Code
 import CommonControls
-import Css exposing (middle, verticalAlign)
+import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
@@ -20,9 +20,9 @@ import Guidance
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.ClickableText.V4 as ClickableText
-import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
+import Nri.Ui.Table.V7 as Table
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -78,31 +78,32 @@ type State
 init : State
 init =
     Control.record Settings
+        |> Control.field "type"
+            (Control.choice
+                [ ( "button", Control.value Button )
+                , ( "link", Control.value Link )
+                , ( "linkExternal", Control.value LinkExternal )
+                ]
+            )
         |> Control.field "label" (Control.string "Clickable Text")
         |> Control.field ""
             (Control.list
                 |> ControlExtra.listItems "Icons"
                     (Control.list
-                        |> CommonControls.icon moduleName ClickableText.icon
+                        |> CommonControls.iconNotCheckedByDefault moduleName ClickableText.icon
                         |> CommonControls.rightIcon moduleName ClickableText.rightIcon
-                        |> ControlExtra.optionalBoolListItem "hideIconForMobile"
-                            ( "ClickableText.hideIconForMobile", ClickableText.hideIconForMobile )
                     )
                 |> ControlExtra.listItems "State & Type"
                     (Control.list
-                        |> ControlExtra.optionalBoolListItem "disabled"
-                            ( "ClickableText.disabled True", ClickableText.disabled True )
                         |> ControlExtra.optionalBoolListItem "submit (button only)"
                             ( "ClickableText.submit", ClickableText.submit )
                         |> ControlExtra.optionalBoolListItem "opensModal (button only)"
                             ( "ClickableText.opensModal", ClickableText.opensModal )
+                        |> ControlExtra.optionalBoolListItem "disabled"
+                            ( "ClickableText.disabled True", ClickableText.disabled True )
                     )
-                |> ControlExtra.listItems "CSS & Extra style options"
+                |> ControlExtra.listItems "CSS"
                     (Control.list
-                        |> ControlExtra.optionalBoolListItem "appearsInline"
-                            ( "ClickableText.appearsInline", ClickableText.appearsInline )
-                        |> ControlExtra.optionalBoolListItem "hideTextForMobile"
-                            ( "ClickableText.hideTextForMobile", ClickableText.hideTextForMobile )
                         |> CommonControls.css
                             { moduleName = moduleName
                             , use = ClickableText.css
@@ -120,14 +121,37 @@ init =
                             , use = ClickableText.notMobileCss
                             }
                     )
+                |> ControlExtra.listItems "Compact mobile options"
+                    (Control.list
+                        |> ControlExtra.optionalBoolListItem "hideIconForMobile"
+                            ( "ClickableText.hideIconForMobile", ClickableText.hideIconForMobile )
+                        |> ControlExtra.optionalBoolListItem "hideTextForMobile"
+                            ( "ClickableText.hideTextForMobile", ClickableText.hideTextForMobile )
+                    )
+                |> ControlExtra.optionalListItem "Size and display options"
+                    (CommonControls.choice moduleName
+                        [ ( "appearsInline", ClickableText.appearsInline )
+                        , ( "small", ClickableText.small )
+                        , ( "medium", ClickableText.medium )
+                        , ( "large", ClickableText.large )
+                        , ( "modal", ClickableText.modal )
+                        ]
+                    )
             )
         |> State
 
 
 type alias Settings msg =
-    { label : String
+    { type_ : Type
+    , label : String
     , attributes : List ( String, ClickableText.Attribute msg )
     }
+
+
+type Type
+    = Button
+    | Link
+    | LinkExternal
 
 
 {-| -}
@@ -163,37 +187,150 @@ viewExamples ellieLinkConfig (State control) =
         , version = version
         , update = SetState
         , settings = control
-        , mainType = Just "RootHtml.Html msg"
-        , extraCode = []
+        , mainType = Just "RootHtml.Html Msg"
+        , extraCode =
+            [ Code.newlines
+            , Code.unionType "Msg" [ "DoAThing" ]
+            ]
         , renderExample = Code.unstyledView
         , toExampleCode =
             \{ label, attributes } ->
                 let
-                    toCode fName =
+                    toCode fName extraAttrs =
                         Code.fromModule moduleName fName
                             ++ " "
                             ++ Code.string label
-                            ++ Code.listMultiline (List.map Tuple.first attributes) 1
+                            ++ Code.listMultiline
+                                (extraAttrs ++ List.map Tuple.first attributes)
+                                1
                 in
-                [ { sectionName = "Button"
-                  , code = toCode "button"
-                  }
-                , { sectionName = "Link"
-                  , code = toCode "link"
-                  }
-                ]
+                case settings.type_ of
+                    Button ->
+                        [ { sectionName = "Button"
+                          , code =
+                                toCode "button"
+                                    [ Code.fromModule moduleName "onClick "
+                                        ++ "DoAThing"
+                                    ]
+                          }
+                        ]
+
+                    Link ->
+                        [ { sectionName = "Link"
+                          , code =
+                                toCode "link"
+                                    [ Code.fromModule moduleName "href "
+                                        ++ Code.string "/"
+                                    ]
+                          }
+                        ]
+
+                    LinkExternal ->
+                        [ { sectionName = "Link"
+                          , code =
+                                toCode "link"
+                                    [ Code.fromModule moduleName "linkExternal "
+                                        ++ Code.string "https://www.google.com"
+                                    ]
+                          }
+                        ]
         }
     , Heading.h2
-        [ Heading.plaintext "Customizable Examples"
+        [ Heading.plaintext "Customizable Example"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
-    , buttons settings
+    , div
+        [ css
+            [ Css.displayFlex
+            , Css.justifyContent Css.center
+            , Css.alignItems Css.center
+            , Css.minHeight (Css.px 150)
+            ]
+        ]
+        [ case settings.type_ of
+            Button ->
+                ClickableText.button settings.label
+                    (ClickableText.onClick (ShowItWorked moduleName "customizable example")
+                        :: List.map Tuple.second settings.attributes
+                    )
+
+            Link ->
+                ClickableText.link settings.label
+                    (ClickableText.href "/"
+                        :: List.map Tuple.second settings.attributes
+                    )
+
+            LinkExternal ->
+                ClickableText.link settings.label
+                    (ClickableText.linkExternal "https://www.google.com"
+                        :: List.map Tuple.second settings.attributes
+                    )
+        ]
+    , Heading.h2
+        [ Heading.plaintext "Set Sizes Examples"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
+    , sizeExamples settings
     , Heading.h2
         [ Heading.plaintext "Inline ClickableText Examples"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
-    , Text.smallBody (inlineExample "Text.smallBody")
-    , Text.mediumBody (inlineExample "Text.mediumBody")
+    , Text.caption [ Text.markdown "Be sure to add the `appearsInline` property if the `ClickableText` appears inline. Otherwise, your styles will not match up nicely. You should not add an explicit size." ]
+    , Table.view []
+        [ Table.custom
+            { header = text "Displayed"
+            , view = \( view, name ) -> view (inlineExample name)
+            , width = Css.pct 70
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Pattern"
+            , view =
+                \( _, textName ) ->
+                    code [ css [ Css.fontSize (Css.px 12) ] ]
+                        [ text
+                            (Code.fromModule "Text"
+                                textName
+                                ++ Code.listMultiline
+                                    [ Code.fromModule "Text" "html"
+                                        ++ Code.listMultiline
+                                            [ "…"
+                                            , Code.fromModule moduleName
+                                                "link "
+                                                ++ Code.string "internal links"
+                                                ++ Code.listMultiline
+                                                    [ Code.fromModule moduleName "appearsInline"
+                                                    , Code.fromModule moduleName "href " ++ Code.string "/"
+                                                    ]
+                                                    3
+                                            , "…"
+                                            ]
+                                            2
+                                    ]
+                                    1
+                            )
+                        ]
+            , width = Css.px 10
+            , cellStyles =
+                always
+                    [ Css.padding2 (Css.px 14) (Css.px 7)
+                    , Css.verticalAlign Css.top
+                    , Css.whiteSpace Css.preWrap
+                    ]
+            , sort = Nothing
+            }
+        ]
+        [ ( Text.caption, "caption" )
+        , ( Text.smallBody, "smallBody" )
+        , ( Text.smallBodyGray, "smallBodyGray" )
+        , ( Text.mediumBody, "mediumBody" )
+        , ( Text.mediumBodyGray, "mediumBodyGray" )
+        , ( Text.ugSmallBody, "ugSmallBody" )
+        , ( Text.ugMediumBody, "ugMediumBody" )
+        ]
+        |> List.singleton
+        |> div [ css [ Css.overflow Css.auto ] ]
     ]
         |> div []
 
@@ -249,46 +386,72 @@ sizes =
     ]
 
 
-buttons : Settings Msg -> Html Msg
-buttons settings =
-    let
-        sizeRow label render =
-            row label (List.map render sizes)
-    in
-    table []
-        [ tr [] (td [] [] :: List.map (\( size, sizeLabel ) -> th [] [ text sizeLabel ]) sizes)
-        , sizeRow ".link"
-            (\( size, sizeLabel ) ->
-                ClickableText.link settings.label
-                    (size :: List.map Tuple.second settings.attributes)
-                    |> exampleCell
-            )
-        , sizeRow ".button"
-            (\( size, sizeLabel ) ->
-                ClickableText.button settings.label
-                    (size
-                        :: ClickableText.onClick (ShowItWorked moduleName sizeLabel)
-                        :: List.map Tuple.second settings.attributes
-                    )
-                    |> exampleCell
-            )
+sizeExamples : Settings Msg -> Html Msg
+sizeExamples settings =
+    Table.view []
+        [ Table.custom
+            { header = text "Size"
+            , view =
+                \{ sizeName } ->
+                    code [ css [ Css.fontSize (Css.px 12) ] ]
+                        [ text (Code.fromModule "ClickableText" sizeName)
+                        ]
+            , width = Css.px 10
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Button"
+            , view = \{ size } -> sizeExamplesFor ClickableText.button [ size ]
+            , width = Css.px 10
+            , cellStyles =
+                always
+                    [ Css.padding2 (Css.px 14) (Css.px 7)
+                    , Css.verticalAlign Css.top
+                    ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Link"
+            , view = \{ size } -> sizeExamplesFor ClickableText.link [ size ]
+            , width = Css.px 10
+            , cellStyles =
+                always
+                    [ Css.padding2 (Css.px 14) (Css.px 7)
+                    , Css.verticalAlign Css.top
+                    ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "External link"
+            , view = \{ size } -> sizeExamplesFor ClickableText.link [ size, ClickableText.linkExternal "https://www.google.com" ]
+            , width = Css.px 10
+            , cellStyles =
+                always
+                    [ Css.padding2 (Css.px 14) (Css.px 7)
+                    , Css.verticalAlign Css.top
+                    ]
+            , sort = Nothing
+            }
         ]
+        (List.map (\( size, sizeName ) -> { size = size, sizeName = sizeName }) sizes)
         |> List.singleton
         |> div [ css [ Css.overflow Css.auto ] ]
 
 
-row : String -> List (Html msg) -> Html msg
-row label tds =
-    tr [] (th [] [ td [] [ text label ] ] :: tds)
-
-
-exampleCell : Html msg -> Html msg
-exampleCell view =
-    td
-        [ css
-            [ verticalAlign middle
-            , Css.width (Css.px 200)
-            , Css.borderTop3 (Css.px 1) Css.solid Colors.gray85
+sizeExamplesFor : (String -> List (ClickableText.Attribute msg) -> Html msg) -> List (ClickableText.Attribute msg) -> Html msg
+sizeExamplesFor render attrs =
+    ul [ css [ Css.margin Css.zero ] ]
+        [ li [] [ render "No icons" attrs ]
+        , li [] [ render "Left icon" (attrs ++ [ ClickableText.icon UiIcon.arrowLeft ]) ]
+        , li [] [ render "Right icon" (attrs ++ [ ClickableText.rightIcon UiIcon.arrowRight ]) ]
+        , li []
+            [ render "Disabled w/icons"
+                (attrs
+                    ++ [ ClickableText.icon UiIcon.arrowLeft
+                       , ClickableText.rightIcon UiIcon.arrowRight
+                       , ClickableText.disabled True
+                       ]
+                )
             ]
         ]
-        [ view ]
