@@ -54,8 +54,8 @@ example =
         ]
     , about =
         Guidance.useATACGuide moduleName
-            ++ Guidance.message moduleName
-            ++ [ Guidance.helpfullyDisabled moduleName
+            ++ [ Guidance.message moduleName
+               , Guidance.helpfullyDisabled moduleName
                ]
     , view =
         \ellieLinkConfig state ->

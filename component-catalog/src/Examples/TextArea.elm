@@ -67,7 +67,9 @@ example =
                 [ Html.text "Label" ]
             ]
         ]
-    , about = Guidance.useATACGuide moduleName ++ Guidance.message moduleName
+    , about =
+        Guidance.useATACGuide moduleName
+            ++ [ Guidance.message moduleName ]
     , view =
         \ellieLinkConfig state ->
             let

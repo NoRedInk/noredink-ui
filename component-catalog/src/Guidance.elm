@@ -47,9 +47,9 @@ helpfullyDisabled moduleName =
         ]
 
 
-message : String -> List (Html msg)
+message : String -> Html msg
 message moduleName =
-    [ Text.smallBody
+    Text.smallBody
         [ Text.html
             [ text "Watch "
             , ClickableText.link "Tessa’s demo"
@@ -63,7 +63,6 @@ message moduleName =
             , text " on form elements."
             ]
         ]
-    ]
 
 
 useATACGuide : String -> List (Html msg)
