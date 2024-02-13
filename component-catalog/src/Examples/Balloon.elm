@@ -8,7 +8,7 @@ module Examples.Balloon exposing (example, State, Msg)
 
 import Category exposing (Category(..))
 import Code
-import CommonControls
+import CommonControls exposing (quickBrownFox)
 import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
@@ -172,12 +172,16 @@ controlColor =
 
 positionOptions : Control ( String, Balloon.Attribute msg )
 positionOptions =
-    Control.choice
-        [ ( "onTop", Control.value ( "Balloon.onTop", Balloon.onTop ) )
-        , ( "onRight", Control.value ( "Balloon.onRight", Balloon.onRight ) )
-        , ( "onBottom", Control.value ( "Balloon.onBottom", Balloon.onBottom ) )
-        , ( "onLeft", Control.value ( "Balloon.onLeft", Balloon.onLeft ) )
-        ]
+    CommonControls.choice moduleName positions
+
+
+positions : List ( String, Balloon.Attribute msg )
+positions =
+    [ ( "onTop", Balloon.onTop )
+    , ( "onRight", Balloon.onRight )
+    , ( "onBottom", Balloon.onBottom )
+    , ( "onLeft", Balloon.onLeft )
+    ]
 
 
 arrowAlignmentOptions : Control ( String, Balloon.Attribute msg )
@@ -240,6 +244,61 @@ view ellieLinkConfig state =
             ]
         ]
         [ Balloon.view (List.map Tuple.second attributes) ]
+    , Heading.h2
+        [ Heading.plaintext "Position & Alignment Examples"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
+    , Table.view []
+        [ Table.custom
+            { header = text "Position"
+            , view = Tuple.first >> text
+            , width = Css.pct 10
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "alignArrowStart"
+            , view =
+                \( _, position ) ->
+                    Balloon.view
+                        [ Balloon.plaintext quickBrownFox
+                        , position
+                        , Balloon.alignArrowStart
+                        ]
+            , width = Css.pct 10
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "alignArrowMiddle (default)"
+            , view =
+                \( _, position ) ->
+                    Balloon.view
+                        [ Balloon.plaintext quickBrownFox
+                        , position
+                        , Balloon.alignArrowMiddle
+                        ]
+            , width = Css.pct 10
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "alignArrowEnd"
+            , view =
+                \( _, position ) ->
+                    Balloon.view
+                        [ Balloon.plaintext quickBrownFox
+                        , position
+                        , Balloon.alignArrowEnd
+                        ]
+            , width = Css.pct 10
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        ]
+        positions
+        |> List.singleton
+        |> div [ css [ Css.overflow Css.auto ] ]
     , Heading.h2
         [ Heading.plaintext "Theme Examples"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]

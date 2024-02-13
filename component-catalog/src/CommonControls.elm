@@ -9,6 +9,7 @@ module CommonControls exposing
     , content
     , httpError, badBodyString
     , guidanceAndErrorMessage
+    , quickBrownFox
     , disabledListItem, premiumDisplay
     )
 
@@ -28,6 +29,7 @@ module CommonControls exposing
 @docs content
 @docs httpError, badBodyString
 @docs guidanceAndErrorMessage
+@docs quickBrownFox
 
 -}
 
