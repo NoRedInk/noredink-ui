@@ -8,7 +8,7 @@ module Code exposing
     , pipelineMultiline
     , record, recordMultiline
     , listOfRecordsMultiline
-    , newlineWithIndent, newlines
+    , newlineWithIndent, newline, newlines
     , withParens, withParensMultiline
     , anonymousFunction, always
     , caseExpression
@@ -32,7 +32,7 @@ module Code exposing
 @docs pipelineMultiline
 @docs record, recordMultiline
 @docs listOfRecordsMultiline
-@docs newlineWithIndent, newlines
+@docs newlineWithIndent, newline, newlines
 @docs withParens, withParensMultiline
 @docs anonymousFunction, always
 @docs caseExpression
@@ -206,11 +206,19 @@ pipelineMultiline pipedWith indent =
     String.join (indents ++ "|> ") pipedWith
 
 
+{-| -}
 newlines : String
 newlines =
-    newlineWithIndent 0 ++ newlineWithIndent 0
+    newline ++ newline
 
 
+{-| -}
+newline : String
+newline =
+    newlineWithIndent 0
+
+
+{-| -}
 newlineWithIndent : Int -> String
 newlineWithIndent indent =
     "\n" ++ String.repeat indent tab

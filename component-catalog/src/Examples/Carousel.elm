@@ -262,16 +262,39 @@ example =
                 , version = version
                 , update = SetSettings
                 , settings = model.settings
-                , mainType = Nothing
+                , mainType = Just "Program () Model Msg"
                 , extraCode =
-                    [ Code.newlines
+                    [ "import Browser"
+                    , Code.newline
+                    , "type alias Model = {}"
+                    , Code.varWithTypeAnnotation "init" "Model" "{}"
                     , Code.unionType "Msg"
                         [ "AnnounceAndSelect { select : Int, announce : String }"
                         , "FocusAndSelect { select : Int, focus : Maybe String }"
                         , "FocusSelectAndAnnounce { select : Int, focus : Maybe String, announce : Maybe String }"
                         ]
+                    , Code.funcWithType "update"
+                        "Msg -> Model -> ( Model, Cmd Msg )"
+                        "msg model"
+                        (Code.caseExpression "msg"
+                            [ ( "_", Code.tuple "model" "Cmd.none" )
+                            ]
+                            1
+                        )
                     ]
-                , renderExample = Code.unstyledView
+                , renderExample =
+                    \viewCode ->
+                        Code.browserElement
+                            { init = Code.always (Code.tuple "init" "Cmd.none")
+                            , view = "view >> toUnstyled"
+                            , update = "update"
+                            , subscriptions = Code.always "Sub.none"
+                            }
+                            ++ Code.newlines
+                            ++ Code.funcWithType "view"
+                                "Model -> Html Msg"
+                                "model"
+                                viewCode
                 , toExampleCode =
                     \_ ->
                         [ { sectionName = "Example"
