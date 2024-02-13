@@ -54,6 +54,7 @@ example =
         ]
     , about =
         Guidance.useATACGuide moduleName
+            ++ Guidance.message moduleName
             ++ [ Guidance.helpfullyDisabled moduleName
                ]
     , view =
