@@ -143,7 +143,7 @@ example =
                 , positioning = Tuple.second options.positioning
                 }
             ]
-    , categories = [ Layout, Inputs ]
+    , categories = [ Layout, Inputs, Tabs ]
     , keyboardSupport =
         [ { keys = [ KeyboardSupport.Tab ]
           , result = "Move focus to the currently-selected Control's content"
