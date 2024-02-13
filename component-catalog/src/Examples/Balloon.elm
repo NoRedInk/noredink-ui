@@ -51,7 +51,7 @@ example =
             , Balloon.plaintext "This is a balloon."
             ]
         ]
-    , about = Guidance.useATACGuide moduleName
+    , about = [ Guidance.useATACGuide moduleName ]
     , view = view
     }
 

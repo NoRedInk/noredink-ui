@@ -68,8 +68,9 @@ example =
             ]
         ]
     , about =
-        Guidance.useATACGuide moduleName
-            ++ [ Guidance.message moduleName ]
+        [ Guidance.useATACGuide moduleName
+        , Guidance.message moduleName
+        ]
     , view =
         \ellieLinkConfig state ->
             let

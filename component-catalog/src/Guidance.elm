@@ -65,9 +65,9 @@ message moduleName =
         ]
 
 
-useATACGuide : String -> List (Html msg)
+useATACGuide : String -> Html msg
 useATACGuide moduleName =
-    [ Text.mediumBody
+    Text.mediumBody
         [ Text.html
             [ text ("To ensure your use of " ++ moduleName ++ " is accessible to assistive technology, please review the ")
             , ClickableText.link "Assistive technology notification design & development guide"
@@ -77,7 +77,6 @@ useATACGuide moduleName =
             , text (" to see if your use case fits any listed in the guide. If it does, please follow the guide to learn how to properly implement " ++ moduleName ++ ".")
             ]
         ]
-    ]
 
 
 useRadioButtonDotless : Html msg

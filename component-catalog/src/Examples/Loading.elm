@@ -101,7 +101,7 @@ example =
                 ]
             |> Svg.toHtml
         ]
-    , about = Guidance.useATACGuide moduleName
+    , about = [ Guidance.useATACGuide moduleName ]
     , view =
         \ellieLinkConfig { showLoadingFadeIn, showLoading, showSpinners } ->
             [ Heading.h2

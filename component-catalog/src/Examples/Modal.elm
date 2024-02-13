@@ -184,7 +184,7 @@ example =
                 ]
             ]
         ]
-    , about = Guidance.useATACGuide moduleName
+    , about = [ Guidance.useATACGuide moduleName ]
     , view =
         \ellieLinkConfig state ->
             let
