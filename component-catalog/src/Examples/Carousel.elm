@@ -20,6 +20,7 @@ import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Examples.ClickableSvg
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (class, css)
 import KeyboardSupport exposing (Key(..))
@@ -35,6 +36,7 @@ import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.Table.V7 as Table
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Routes
 import Task
 
 
@@ -328,7 +330,7 @@ example =
                 , Table.custom
                     { header = text "Example with added styles"
                     , view = .example
-                    , width = Css.pct 60
+                    , width = Css.pct 40
                     , cellStyles =
                         always
                             [ Css.padding2 (Css.px 14) (Css.px 7)
@@ -337,15 +339,54 @@ example =
                             ]
                     , sort = Nothing
                     }
+                , Table.custom
+                    { header = text "Usage"
+                    , view = .about >> div []
+                    , width = Css.px 200
+                    , cellStyles =
+                        always
+                            [ Css.padding2 (Css.px 14) (Css.px 7)
+                            , Css.verticalAlign Css.middle
+                            ]
+                    , sort = Nothing
+                    }
                 ]
                 [ { viewName = "viewWithPreviousAndNextControls"
                   , example = viewTips model.tip
+                  , about =
+                        [ Text.smallBody
+                            [ Text.html [ text "Use this view when you want to control slides with \"next\" and \"previous\" buttons." ]
+                            ]
+                        , Text.smallBody [ Text.html [ text "You can style the slides however you want." ] ]
+                        , Text.smallBody
+                            [ Text.html
+                                [ text "The buttons are "
+                                , ClickableText.link "ClickableSvg"
+                                    [ ClickableText.href (Routes.exampleHref Examples.ClickableSvg.example)
+                                    , ClickableText.appearsInline
+                                    ]
+                                , text "s, and can be styled/modified using ClickableSvg Attributes."
+                                ]
+                            ]
+                        ]
                   }
                 , { viewName = "viewWithTabControls"
                   , example = viewTestimonials model.testimonial
+                  , about =
+                        [ Text.smallBody
+                            [ Text.html [ text "Use this view when you want to control the slides with direct jump-to-slide-style controls." ]
+                            ]
+                        , Text.smallBody [ Text.html [ text "You can style the slides however you want." ] ]
+                        , Text.smallBody [ Text.html [ text "The controls require custom styling, as unfortunately they don't currently compose with any other noredink-ui component." ] ]
+                        ]
                   }
                 , { viewName = "viewWithCombinedControls"
                   , example = viewPackages model.package
+                  , about =
+                        [ Text.smallBody
+                            [ Text.html [ text "Use this view when you want to control the slides with \"next\" and \"previous\" buttons AND direct jump-to-slide-style controls." ]
+                            ]
+                        ]
                   }
                 ]
             , Heading.h2
