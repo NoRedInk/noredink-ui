@@ -21,6 +21,7 @@ import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Message.V4 as Message
 import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.SegmentedControl.V14 as SegmentedControl
 import Nri.Ui.Spacing.V1 as Spacing
@@ -85,7 +86,17 @@ example =
                             ]
                         ]
                     ]
-               ]
+               ] ++
+               [Message.view
+        [ Message.html
+            [ text "Looking for a way to loop keyboard focus through a list of elements? Check out "
+            , ClickableText.link "Focus Loop"
+                [ ClickableText.href ("#/usage_example/Focus-Loop")
+                , ClickableText.appearsInline
+                ]
+            , text "."
+            ]
+        ]]
     , view =
         \_ state ->
             [ Heading.h2
