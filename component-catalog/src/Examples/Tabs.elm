@@ -104,7 +104,7 @@ example =
                 [ Text.caption [ Text.plaintext "Tab 1 content" ] ]
             ]
         ]
-    , about = Guidance.communicateState moduleName
+    , about = [ Guidance.communicateState moduleName ]
     , view =
         \ellieLinkConfig model ->
             let

@@ -58,7 +58,7 @@ example =
             , previewFakeLink "Next" []
             ]
         ]
-    , about = Guidance.communicateState moduleName
+    , about = [ Guidance.communicateState moduleName ]
     , view =
         \ellieLinkConfig model ->
             let

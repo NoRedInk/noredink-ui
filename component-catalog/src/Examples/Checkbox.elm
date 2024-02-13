@@ -54,10 +54,10 @@ example =
     , subscriptions = \_ -> Sub.none
     , preview = preview
     , about =
-        Guidance.communicateState moduleName
-            ++ [ Guidance.helpfullyDisabled moduleName
-               , Guidance.message moduleName
-               ]
+        [ Guidance.communicateState moduleName
+        , Guidance.helpfullyDisabled moduleName
+        , Guidance.message moduleName
+        ]
     , view =
         \ellieLinkConfig state ->
             let

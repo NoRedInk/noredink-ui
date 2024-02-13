@@ -82,7 +82,7 @@ example =
         , { keys = [ Esc ], result = "Closes the menu" }
         ]
     , preview = [ preview ]
-    , about = Guidance.communicateState moduleName
+    , about = [ Guidance.communicateState moduleName ]
     , view = view
     }
 

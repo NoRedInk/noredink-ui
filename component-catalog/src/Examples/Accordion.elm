@@ -86,7 +86,7 @@ example =
                         ]
                     ]
                 ]
-            , li [] (Guidance.communicateState moduleName)
+            , li [] [ Guidance.communicateState moduleName ]
             ]
         ]
     , view = view

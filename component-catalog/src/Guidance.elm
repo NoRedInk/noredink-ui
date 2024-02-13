@@ -8,9 +8,9 @@ import Nri.Ui.Text.V6 as Text
 import Routes
 
 
-communicateState : String -> List (Html msg)
+communicateState : String -> Html msg
 communicateState moduleName =
-    [ Text.smallBody
+    Text.smallBody
         [ Text.html
             [ text "As long as this component’s semantics follow accessibility guidelines and best practices, this component’s state and other meaningful attributes should be communicated automatically to screen readers & similar assistive technology without the need to send special announcements to the "
             , ClickableText.link "ATAC"
@@ -25,7 +25,6 @@ communicateState moduleName =
             , text ". "
             ]
         ]
-    ]
 
 
 helpfullyDisabled : String -> Html msg
