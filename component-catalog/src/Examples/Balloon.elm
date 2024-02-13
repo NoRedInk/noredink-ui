@@ -23,6 +23,7 @@ import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
+import Nri.Ui.Table.V7 as Table
 
 
 moduleName : String
@@ -114,13 +115,23 @@ controlSettings =
 themeOptions : Control ( String, Balloon.Attribute msg )
 themeOptions =
     Control.choice
-        [ ( "green", Control.value ( "Balloon.green", Balloon.green ) )
-        , ( "purple", Control.value ( "Balloon.purple", Balloon.purple ) )
-        , ( "orange", Control.value ( "Balloon.orange", Balloon.orange ) )
-        , ( "white", Control.value ( "Balloon.white", Balloon.white ) )
-        , ( "navy", Control.value ( "Balloon.navy", Balloon.navy ) )
-        , ( "customTheme", controlCustomTheme )
-        ]
+        (( "customTheme", controlCustomTheme )
+            :: List.map
+                (\( name, prop ) ->
+                    ( name, Control.value ( Code.fromModule moduleName name, prop ) )
+                )
+                builtInThemes
+        )
+
+
+builtInThemes : List ( String, Balloon.Attribute msg )
+builtInThemes =
+    [ ( "green", Balloon.green )
+    , ( "purple", Balloon.purple )
+    , ( "orange", Balloon.orange )
+    , ( "white", Balloon.white )
+    , ( "navy", Balloon.navy )
+    ]
 
 
 controlCustomTheme : Control ( String, Balloon.Attribute msg )
@@ -208,4 +219,25 @@ view ellieLinkConfig state =
             ]
         ]
         [ Balloon.view (List.map Tuple.second attributes) ]
+    , Heading.h2
+        [ Heading.plaintext "Theme Examples"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
+    , Table.view []
+        [ Table.custom
+            { header = text "Theme"
+            , view = Tuple.first >> text
+            , width = Css.pct 10
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Example"
+            , view = \( _, theme ) -> Balloon.view [ theme, Balloon.plaintext "A b c…" ]
+            , width = Css.pct 50
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        ]
+        builtInThemes
     ]
