@@ -99,9 +99,12 @@ controlSettings =
                         (Control.float 20)
                     )
             )
-        |> ControlExtra.listItems "Theme & Custom CSS"
+        |> ControlExtra.listItems "Theme"
             (Control.list
                 |> ControlExtra.optionalListItem "theme" themeOptions
+            )
+        |> ControlExtra.listItems "CSS"
+            (Control.list
                 |> CommonControls.css_ "containerCss"
                     ( "[ Css.backgroundColor Colors.magenta ]", [ Css.backgroundColor Colors.magenta ] )
                     { moduleName = moduleName, use = Balloon.containerCss }
