@@ -58,7 +58,7 @@ example =
     , subscriptions = \_ -> Sub.none
     , preview = [ viewPreview ]
     , about =
-        [ Text.smallBody
+        Text.smallBody
             [ Text.html
                 [ Html.text "Check out "
                 , ClickableText.link "Tessa's demo"
@@ -68,8 +68,7 @@ example =
                 , Html.text " to get a better sense of whether to use the tabs or radio buttons pattern under the hood."
                 ]
             ]
-        ]
-            ++ Guidance.communicateState moduleName
+            :: Guidance.communicateState moduleName
     , view =
         \ellieLinkConfig state ->
             let

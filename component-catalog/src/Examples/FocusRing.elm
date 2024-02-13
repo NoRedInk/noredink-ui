@@ -53,51 +53,49 @@ example =
                 [ text "Custom high-contrast focus ring styles"
                 ]
             ]
-        ]
-            ++ [ Text.smallBody
-                    [ Text.html
-                        [ ul []
-                            [ li []
-                                [ text "Learn more about this component in "
-                                , ClickableText.link "Custom Focus Rings on the NoRedInk blog"
-                                    [ ClickableText.linkExternal "https://blog.noredink.com/post/703458632758689792/custom-focus-rings"
-                                    , ClickableText.appearsInline
-                                    ]
-                                , text " and in "
-                                , ClickableText.link "Tessa's focus ring demo"
-                                    [ ClickableText.linkExternal "https://www.dropbox.com/scl/fi/e5o8zqbx65iri706661u8/video1232435053.mp4?rlkey=e3rfqz5cgtvmqh1ydotacf51z&dl=0"
-                                    , ClickableText.appearsInline
-                                    ]
-                                , text "."
-                                ]
-                            , li []
-                                [ text "Learn more about keyboard expectations by reviewing each component's \"Keyboard support\" section, "
-                                , ClickableText.link "our keyboard testing guide"
-                                    [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Accessibility-testing-Keyboard-visible-focus--CJenBQ8zDWXPPTmGglbqHNUVAg-aVALEVzmwDAdwB1um7A57"
-                                    , ClickableText.appearsInline
-                                    ]
-                                , text " and "
-                                , ClickableText.link "the keyboard accessibility section of the Help Center"
-                                    [ ClickableText.linkExternal "https://noredink.zendesk.com/hc/en-us/sections/7976713221915-Keyboard-accessibility"
-                                    , ClickableText.appearsInline
-                                    ]
-                                , text "."
-                                ]
+        , Text.smallBody
+            [ Text.html
+                [ ul []
+                    [ li []
+                        [ text "Learn more about this component in "
+                        , ClickableText.link "Custom Focus Rings on the NoRedInk blog"
+                            [ ClickableText.linkExternal "https://blog.noredink.com/post/703458632758689792/custom-focus-rings"
+                            , ClickableText.appearsInline
                             ]
+                        , text " and in "
+                        , ClickableText.link "Tessa's focus ring demo"
+                            [ ClickableText.linkExternal "https://www.dropbox.com/scl/fi/e5o8zqbx65iri706661u8/video1232435053.mp4?rlkey=e3rfqz5cgtvmqh1ydotacf51z&dl=0"
+                            , ClickableText.appearsInline
+                            ]
+                        , text "."
                         ]
-                    ]
-               ]
-            ++ [ Message.view
-                    [ Message.html
-                        [ text "Looking for a way to loop keyboard focus through a list of elements? Check out "
-                        , ClickableText.link "Focus Loop"
-                            [ ClickableText.href "#/usage_example/Focus-Loop"
+                    , li []
+                        [ text "Learn more about keyboard expectations by reviewing each component's \"Keyboard support\" section, "
+                        , ClickableText.link "our keyboard testing guide"
+                            [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Accessibility-testing-Keyboard-visible-focus--CJenBQ8zDWXPPTmGglbqHNUVAg-aVALEVzmwDAdwB1um7A57"
+                            , ClickableText.appearsInline
+                            ]
+                        , text " and "
+                        , ClickableText.link "the keyboard accessibility section of the Help Center"
+                            [ ClickableText.linkExternal "https://noredink.zendesk.com/hc/en-us/sections/7976713221915-Keyboard-accessibility"
                             , ClickableText.appearsInline
                             ]
                         , text "."
                         ]
                     ]
-               ]
+                ]
+            ]
+        , Message.view
+            [ Message.html
+                [ text "Looking for a way to loop keyboard focus through a list of elements? Check out "
+                , ClickableText.link "Focus Loop"
+                    [ ClickableText.href "#/usage_example/Focus-Loop"
+                    , ClickableText.appearsInline
+                    ]
+                , text "."
+                ]
+            ]
+        ]
     , view =
         \_ state ->
             [ Heading.h2
