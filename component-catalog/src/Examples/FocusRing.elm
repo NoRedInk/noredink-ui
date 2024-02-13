@@ -30,7 +30,9 @@ import Nri.Ui.Switch.V3 as Switch
 import Nri.Ui.Table.V7 as Table
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Routes
 import Task
+import UsageExamples.FocusLoop
 
 
 {-| -}
@@ -89,7 +91,7 @@ example =
             [ Message.html
                 [ text "Looking for a way to loop keyboard focus through a list of elements? Check out "
                 , ClickableText.link "Focus Loop"
-                    [ ClickableText.href "#/usage_example/Focus-Loop"
+                    [ ClickableText.href (Routes.usageExampleHref UsageExamples.FocusLoop.example)
                     , ClickableText.appearsInline
                     ]
                 , text "."
