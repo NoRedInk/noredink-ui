@@ -18,6 +18,7 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra exposing (values)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Guidance
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
@@ -103,7 +104,7 @@ example =
                 [ Text.caption [ Text.plaintext "Tab 1 content" ] ]
             ]
         ]
-    , about = []
+    , about = [ Guidance.communicateState moduleName ]
     , view =
         \ellieLinkConfig model ->
             let

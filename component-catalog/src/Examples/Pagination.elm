@@ -12,6 +12,7 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Guidance
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
@@ -57,7 +58,7 @@ example =
             , previewFakeLink "Next" []
             ]
         ]
-    , about = []
+    , about = [ Guidance.communicateState moduleName ]
     , view =
         \ellieLinkConfig model ->
             let

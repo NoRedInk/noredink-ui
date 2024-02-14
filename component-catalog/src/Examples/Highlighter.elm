@@ -20,6 +20,7 @@ import Html.Styled.Attributes exposing (css)
 import List.Extra
 import Maybe.Extra
 import Nri.Ui.Button.V10 as Button
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
@@ -68,7 +69,23 @@ example =
                 }
             ]
         ]
-    , about = []
+    , about =
+        [ Text.smallBody
+            [ Text.html
+                [ text "Learn more about this component from "
+                , ClickableText.link "Tessa's demo"
+                    [ ClickableText.linkExternal "https://www.dropbox.com/s/tchb0t9lgdyzw01/2022-11-10%20-%20Tessa%20Kelly%20-%20Nri.Ui.Highlighter.V1.mp4?dl=0&unfurl=slack_gen"
+                    , ClickableText.appearsInline
+                    ]
+                , text " and "
+                , ClickableText.link "the highlighter doc"
+                    [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Highlighter-component-documentation-mmPuvnWVKcxpb7r3FjkZn"
+                    , ClickableText.appearsInline
+                    ]
+                , text ", which covers use of the component throughout the NoRedInk app."
+                ]
+            ]
+        ]
     , view =
         \ellieLinkConfig state ->
             [ ControlView.view

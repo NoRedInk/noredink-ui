@@ -22,6 +22,7 @@ import Example exposing (Example)
 import Examples.Button
 import Examples.ClickableSvg
 import Examples.ClickableText
+import Guidance
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Button.V10 as Button
@@ -81,7 +82,7 @@ example =
         , { keys = [ Esc ], result = "Closes the menu" }
         ]
     , preview = [ preview ]
-    , about = []
+    , about = [ Guidance.communicateState moduleName ]
     , view = view
     }
 

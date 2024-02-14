@@ -184,10 +184,10 @@ example =
             ]
         ]
     , about =
-        Guidance.useATACGuide moduleName
-            ++ [ Text.smallBody
-                    [ Text.markdown "Use `Button.modal` and/or `ClickableText.modal` within the `Modal` footer." ]
-               ]
+        [ Guidance.useATACGuide moduleName
+        , Text.smallBody
+            [ Text.markdown "Use `Button.modal` and/or `ClickableText.modal` within the `Modal` footer." ]
+        ]
     , view =
         \ellieLinkConfig state ->
             let
