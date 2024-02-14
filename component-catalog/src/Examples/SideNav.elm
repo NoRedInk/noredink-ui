@@ -17,6 +17,7 @@ import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
 import Nri.Ui.Heading.V3 as Heading
@@ -42,7 +43,18 @@ example =
     , categories = [ Layout, Navigation ]
     , keyboardSupport = []
     , preview = [ viewPreview ]
-    , about = []
+    , about =
+        [ Text.smallBody
+            [ Text.html
+                [ text "Ensure you manage the user's focus properly when using SideNav in a SPA by reviewing the "
+                , ClickableText.link "Assistive technology notification design & development guide"
+                    [ ClickableText.linkExternal "https://noredinkaccessibility.screenstepslive.com/a/1651037-assistive-technology-notification-design-development-guide"
+                    , ClickableText.appearsInline
+                    ]
+                , text "."
+                ]
+            ]
+        ]
     , view = view
     }
 
