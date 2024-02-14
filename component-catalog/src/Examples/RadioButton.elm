@@ -67,10 +67,10 @@ example =
     , subscriptions = subscriptions
     , preview = preview
     , about =
-        Guidance.helpfullyDisabled moduleName
-            :: [ Guidance.message moduleName
-               , Guidance.useRadioButtonDotless
-               ]
+        [ Guidance.helpfullyDisabled moduleName
+        , Guidance.message moduleName
+        , Guidance.useRadioButtonDotless
+        ]
     , view = view
     , categories = [ Inputs ]
     , keyboardSupport =
