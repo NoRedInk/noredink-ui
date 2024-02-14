@@ -50,7 +50,7 @@ example =
         , example_ FocusRing.tightStyles
         ]
     , about =
-        [ Text.mediumBody
+        [ Text.smallBody
             [ Text.html
                 [ text "Custom high-contrast focus ring styles"
                 ]

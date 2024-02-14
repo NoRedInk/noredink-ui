@@ -22,14 +22,12 @@ import Markdown
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.CharacterIcon.V2 as CharacterIcon
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
-import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.QuestionBox.V6 as QuestionBox
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V7 as Table
-import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -59,18 +57,7 @@ example =
             , QuestionBox.correct
             ]
         ]
-    , about =
-        [ Text.smallBody
-            [ Text.html
-                [ text "Learn more about this component from "
-                , ClickableText.link "Tessa's demo"
-                    [ ClickableText.linkExternal "https://www.dropbox.com/preview/NRI%20Engineering/Demos/2022-12-22%20-%20Tessa%20-%20QuestionBox%20and%20Block.mp4?role=work"
-                    , ClickableText.appearsInline
-                    ]
-                , text "."
-                ]
-            ]
-        ]
+    , about = []
     , view = view
     }
 
