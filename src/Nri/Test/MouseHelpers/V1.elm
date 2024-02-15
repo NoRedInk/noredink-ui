@@ -1,7 +1,6 @@
 module Nri.Test.MouseHelpers.V1 exposing
     ( click, mouseDown, mouseUp, mouseOver
     , cancelableMouseDown, cancelableMouseUp, cancelableMouseOver
-    , Config
     )
 
 {-| `MouseHelpers` provides a set of functions to simulate mouse events for testing Elm programs.
@@ -16,72 +15,58 @@ module Nri.Test.MouseHelpers.V1 exposing
 
 @docs cancelableMouseDown, cancelableMouseUp, cancelableMouseOver
 
-
-# Config
-
-@docs Config
-
 -}
 
 import Json.Encode as Encode
-
-
-{-| A `Config` allow us to not depend strictly on elm-explorations/test and avh4/elm-program-test packages.
--}
-type alias Config programTest selector querySingle =
-    { programTest_simulateDomEvent : (querySingle -> querySingle) -> ( String, Encode.Value ) -> programTest -> programTest
-    , query_find : List selector -> querySingle -> querySingle
-    , event_click : ( String, Encode.Value )
-    , event_mouseDown : ( String, Encode.Value )
-    , event_mouseUp : ( String, Encode.Value )
-    , event_mouseOver : ( String, Encode.Value )
-    , event_custom : String -> Encode.Value -> ( String, Encode.Value )
-    }
+import ProgramTest exposing (ProgramTest)
+import Test.Html.Event as Event
+import Test.Html.Query as Query
+import Test.Html.Selector exposing (..)
 
 
 {-| Simulate a click event on elements that match the given selectors.
 -}
-click : Config programTest selector querySingle -> List selector -> programTest -> programTest
-click config selectors =
-    config.programTest_simulateDomEvent
-        (config.query_find selectors)
-        config.event_click
+click : List Selector -> ProgramTest a b c -> ProgramTest a b c
+click selectors =
+    ProgramTest.simulateDomEvent
+        (Query.find selectors)
+        Event.click
 
 
 {-| Simulate a mouse down event on elements that match the given selectors.
 -}
-mouseDown : Config programTest selector querySingle -> List selector -> programTest -> programTest
-mouseDown config selectors =
-    config.programTest_simulateDomEvent
-        (config.query_find selectors)
-        config.event_mouseDown
+mouseDown : List Selector -> ProgramTest a b c -> ProgramTest a b c
+mouseDown selectors =
+    ProgramTest.simulateDomEvent
+        (Query.find selectors)
+        Event.mouseDown
 
 
 {-| Simulate a mouse up event on elements that match the given selectors.
 -}
-mouseUp : Config programTest selector querySingle -> List selector -> programTest -> programTest
-mouseUp config selectors =
-    config.programTest_simulateDomEvent
-        (config.query_find selectors)
-        config.event_mouseUp
+mouseUp : List Selector -> ProgramTest a b c -> ProgramTest a b c
+mouseUp selectors =
+    ProgramTest.simulateDomEvent
+        (Query.find selectors)
+        Event.mouseUp
 
 
 {-| Simulate a mouse over event on elements that match the given selectors.
 -}
-mouseOver : Config programTest selector querySingle -> List selector -> programTest -> programTest
-mouseOver config selectors =
-    config.programTest_simulateDomEvent
-        (config.query_find selectors)
-        config.event_mouseOver
+mouseOver : List Selector -> ProgramTest a b c -> ProgramTest a b c
+mouseOver selectors =
+    ProgramTest.simulateDomEvent
+        (Query.find selectors)
+        Event.mouseOver
 
 
 {-| Simulate a cancelable mouse down event on elements that match the given selectors.
 -}
-cancelableMouseDown : Config programTest selector querySingle -> List selector -> programTest -> programTest
-cancelableMouseDown config selectors =
-    config.programTest_simulateDomEvent
-        (config.query_find selectors)
-        (config.event_custom
+cancelableMouseDown : List Selector -> ProgramTest a b c -> ProgramTest a b c
+cancelableMouseDown selectors =
+    ProgramTest.simulateDomEvent
+        (Query.find selectors)
+        (Event.custom
             "mousedown"
             (Encode.object [ ( "cancelable", Encode.bool True ) ])
         )
@@ -89,11 +74,11 @@ cancelableMouseDown config selectors =
 
 {-| Simulate a cancelable mouse up event on elements that match the given selectors.
 -}
-cancelableMouseUp : Config programTest selector querySingle -> List selector -> programTest -> programTest
-cancelableMouseUp config selectors =
-    config.programTest_simulateDomEvent
-        (config.query_find selectors)
-        (config.event_custom
+cancelableMouseUp : List Selector -> ProgramTest a b c -> ProgramTest a b c
+cancelableMouseUp selectors =
+    ProgramTest.simulateDomEvent
+        (Query.find selectors)
+        (Event.custom
             "mouseup"
             (Encode.object [ ( "cancelable", Encode.bool True ) ])
         )
@@ -101,11 +86,11 @@ cancelableMouseUp config selectors =
 
 {-| Simulate a cancelable mouse over event on elements that match the given selectors.
 -}
-cancelableMouseOver : Config programTest selector querySingle -> List selector -> programTest -> programTest
-cancelableMouseOver config selectors =
-    config.programTest_simulateDomEvent
-        (config.query_find selectors)
-        (config.event_custom
+cancelableMouseOver : List Selector -> ProgramTest a b c -> ProgramTest a b c
+cancelableMouseOver selectors =
+    ProgramTest.simulateDomEvent
+        (Query.find selectors)
+        (Event.custom
             "mouseover"
             (Encode.object [ ( "cancelable", Encode.bool True ) ])
         )

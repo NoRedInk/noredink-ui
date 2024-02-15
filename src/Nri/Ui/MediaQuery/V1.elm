@@ -7,10 +7,14 @@ module Nri.Ui.MediaQuery.V1 exposing
     , quizEngineMobile, notQuizEngineMobile
     , quizEngineBreakpoint
     , narrowMobile, notNarrowMobile
-    , narrowMobileBreakpoint, narrowMobileBreakPoint
+    , narrowMobileBreakpoint
     )
 
-{-| Patch changes:
+{-| Major version changes:
+
+  - remove narrowMobileBreakPoint
+
+Patch changes:
 
   - remove min-width:1 from media queries in order to support better composibility
   - adds narrowMobileBreakpoint and deprecates narrowMobileBreakPoint
@@ -51,7 +55,7 @@ Standard media queries for responsive pages.
 ### 500px breakpoint
 
 @docs narrowMobile, notNarrowMobile
-@docs narrowMobileBreakpoint, narrowMobileBreakPoint
+@docs narrowMobileBreakpoint
 
 -}
 
@@ -162,11 +166,4 @@ notNarrowMobile =
 -}
 narrowMobileBreakpoint : Css.Px
 narrowMobileBreakpoint =
-    px 500
-
-
-{-| DEPRECATED: prefer narrowMobileBreakpoint, which follows other casing conventions.
--}
-narrowMobileBreakPoint : Css.Px
-narrowMobileBreakPoint =
     px 500

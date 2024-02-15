@@ -15,7 +15,7 @@ import Test.Html.Selector as Selector
 
 spec : Test
 spec =
-    describe "Nri.Ui.Block.V4"
+    describe "Nri.Ui.Block"
         [ describe "content" contentSpec
         , describe "labelId" labelIdSpec
         , describe "labelMarkdown" labelMarkdownSpec
