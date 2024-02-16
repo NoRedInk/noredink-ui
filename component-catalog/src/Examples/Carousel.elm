@@ -20,6 +20,7 @@ import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Examples.ClickableSvg
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (class, css)
 import KeyboardSupport exposing (Key(..))
@@ -35,6 +36,7 @@ import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.Table.V7 as Table
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Routes
 import Task
 
 
@@ -194,7 +196,7 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , categories = [ Navigation ]
+    , categories = [ Layout, Category.Tabs ]
     , keyboardSupport =
         [ { keys = [ KeyboardSupport.Tab ]
           , result = "Move focus to the currently-selected Tab's tab panel"
@@ -262,16 +264,39 @@ example =
                 , version = version
                 , update = SetSettings
                 , settings = model.settings
-                , mainType = Nothing
+                , mainType = Just "Program () Model Msg"
                 , extraCode =
-                    [ Code.newlines
+                    [ "import Browser"
+                    , Code.newline
+                    , "type alias Model = {}"
+                    , Code.varWithTypeAnnotation "init" "Model" "{}"
                     , Code.unionType "Msg"
                         [ "AnnounceAndSelect { select : Int, announce : String }"
                         , "FocusAndSelect { select : Int, focus : Maybe String }"
                         , "FocusSelectAndAnnounce { select : Int, focus : Maybe String, announce : Maybe String }"
                         ]
+                    , Code.funcWithType "update"
+                        "Msg -> Model -> ( Model, Cmd Msg )"
+                        "msg model"
+                        (Code.caseExpression "msg"
+                            [ ( "_", Code.tuple "model" "Cmd.none" )
+                            ]
+                            1
+                        )
                     ]
-                , renderExample = Code.unstyledView
+                , renderExample =
+                    \viewCode ->
+                        Code.browserElement
+                            { init = Code.always (Code.tuple "init" "Cmd.none")
+                            , view = "view >> toUnstyled"
+                            , update = "update"
+                            , subscriptions = Code.always "Sub.none"
+                            }
+                            ++ Code.newlines
+                            ++ Code.funcWithType "view"
+                                "Model -> Html Msg"
+                                "model"
+                                viewCode
                 , toExampleCode =
                     \_ ->
                         [ { sectionName = "Example"
@@ -283,7 +308,15 @@ example =
                 [ Heading.plaintext "Customizable example"
                 , Heading.css [ Css.marginTop (Css.px 30) ]
                 ]
-            , view
+            , div
+                [ css
+                    [ Css.minHeight (Css.px 200)
+                    , Css.displayFlex
+                    , Css.justifyContent Css.center
+                    , Css.alignItems Css.center
+                    ]
+                ]
+                [ view ]
             , Heading.h2
                 [ Heading.plaintext "Usage examples"
                 , Heading.css [ Css.marginTop (Css.px 30) ]
@@ -305,7 +338,7 @@ example =
                 , Table.custom
                     { header = text "Example with added styles"
                     , view = .example
-                    , width = Css.pct 60
+                    , width = Css.pct 40
                     , cellStyles =
                         always
                             [ Css.padding2 (Css.px 14) (Css.px 7)
@@ -314,15 +347,54 @@ example =
                             ]
                     , sort = Nothing
                     }
+                , Table.custom
+                    { header = text "Usage"
+                    , view = .about >> div []
+                    , width = Css.px 200
+                    , cellStyles =
+                        always
+                            [ Css.padding2 (Css.px 14) (Css.px 7)
+                            , Css.verticalAlign Css.middle
+                            ]
+                    , sort = Nothing
+                    }
                 ]
                 [ { viewName = "viewWithPreviousAndNextControls"
                   , example = viewTips model.tip
+                  , about =
+                        [ Text.smallBody
+                            [ Text.html [ text "Use this view when you want to control slides with \"next\" and \"previous\" buttons." ]
+                            ]
+                        , Text.smallBody [ Text.html [ text "You can style the slides however you want." ] ]
+                        , Text.smallBody
+                            [ Text.html
+                                [ text "The buttons are "
+                                , ClickableText.link "ClickableSvg"
+                                    [ ClickableText.href (Routes.exampleHref Examples.ClickableSvg.example)
+                                    , ClickableText.appearsInline
+                                    ]
+                                , text "s, and can be styled/modified using ClickableSvg Attributes."
+                                ]
+                            ]
+                        ]
                   }
                 , { viewName = "viewWithTabControls"
                   , example = viewTestimonials model.testimonial
+                  , about =
+                        [ Text.smallBody
+                            [ Text.html [ text "Use this view when you want to control the slides with direct jump-to-slide-style controls." ]
+                            ]
+                        , Text.smallBody [ Text.html [ text "You can style the slides however you want." ] ]
+                        , Text.smallBody [ Text.html [ text "The controls require custom styling, as unfortunately they don't currently compose with any other noredink-ui component." ] ]
+                        ]
                   }
                 , { viewName = "viewWithCombinedControls"
                   , example = viewPackages model.package
+                  , about =
+                        [ Text.smallBody
+                            [ Text.html [ text "Use this view when you want to control the slides with \"next\" and \"previous\" buttons AND direct jump-to-slide-style controls." ]
+                            ]
+                        ]
                   }
                 ]
             , Heading.h2

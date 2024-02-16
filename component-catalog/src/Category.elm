@@ -32,6 +32,7 @@ type Category
     | Animations
     | Progress
     | Navigation
+    | Tabs
 
 
 {-| -}
@@ -47,6 +48,7 @@ all =
     , Layout
     , Navigation
     , Progress
+    , Tabs
     , Text
     ]
 
@@ -89,6 +91,9 @@ fromString string =
         "Navigation" ->
             Ok Navigation
 
+        "Tabs" ->
+            Ok Tabs
+
         _ ->
             Err "Invalid String"
 
@@ -129,6 +134,9 @@ forDisplay category =
 
         Navigation ->
             "Navigation"
+
+        Tabs ->
+            "Tabs"
 
 
 {-| -}
@@ -179,3 +187,6 @@ forId category =
 
         Navigation ->
             "navigation"
+
+        Tabs ->
+            "tabs"
