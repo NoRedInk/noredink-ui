@@ -240,7 +240,18 @@ example =
                 ]
             ]
         ]
-    , about = []
+    , about =
+        [ Text.smallBody
+            [ Text.html
+                [ text "Watch "
+                , ClickableText.link "Tessa's Carousel demo"
+                    [ ClickableText.linkExternal "https://www.dropbox.com/scl/fi/ilb105gyk6adcpt72f5vf/Carousel-demo.mov?rlkey=if2o9dqgfq1ucjkp9tput1rez&dl=0"
+                    , ClickableText.appearsInline
+                    ]
+                , text " for a brief intro on the Carousel component and its usage."
+                ]
+            ]
+        ]
     , view =
         \ellieLinkConfig model ->
             let
