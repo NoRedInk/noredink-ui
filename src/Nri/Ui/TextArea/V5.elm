@@ -31,6 +31,7 @@ module Nri.Ui.TextArea.V5 exposing
   - Adds guidance and errorMessage support
   - Adds id, custom, nriDescription, testId, css, and noMargin
   - Adds disabled support
+  - Adds onFocus
 
 
 ## The next version of TextArea should:
