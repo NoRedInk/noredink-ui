@@ -14,8 +14,11 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Html.Styled exposing (..)
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
+import Nri.Ui.Text.V6 as Text
 import ViewHelpers exposing (viewExamples)
 
 
@@ -45,7 +48,18 @@ example =
         , Heading.h3 [ Heading.plaintext "h3" ]
         , Heading.h4 [ Heading.plaintext "h4" ]
         ]
-    , about = []
+    , about =
+        [ Text.smallBody
+            [ Text.html
+                [ text "Please refer to the "
+                , ClickableText.link "headings testing guide"
+                    [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Accessibility-testing-Headings--CJezbs8vSmyIxcqChSGyEj7CAg-6l0cMj4e1kArUIb7fgNsH"
+                    , ClickableText.appearsInline
+                    ]
+                , text " to understand expectations and user impact of proper heading structure."
+                ]
+            ]
+        ]
     , view =
         \ellieLinkConfig state ->
             let

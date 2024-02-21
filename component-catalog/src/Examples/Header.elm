@@ -25,6 +25,7 @@ import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Select.V9 as Select
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -49,7 +50,18 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview = [ viewPreview ]
-    , about = []
+    , about =
+        [ Text.smallBody
+            [ Text.html
+                [ text "Learn more about this component in "
+                , ClickableText.link "Tessa's demo"
+                    [ ClickableText.linkExternal "https://noredink.slack.com/archives/CDMGJ8PFA/p1684424409046369"
+                    , ClickableText.appearsInline
+                    ]
+                , text "."
+                ]
+            ]
+        ]
     , view =
         \ellieLinkConfig state ->
             let

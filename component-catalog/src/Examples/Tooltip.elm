@@ -238,7 +238,9 @@ Use when all of the following are true:
 """
           , description =
                 """
-Tooltip.helpfullyDisabled provides information about ***why*** the tooltip trigger is disabled.
+Tooltip.helpfullyDisabled provides information about ***why*** the tooltip trigger is disabled. Learn more about the [helpfully disabled pattern in the docs](https://paper.dropbox.com/doc/Helpfully-disabled-components--CI8Ma_KHKL1CcCWpWG~p_RTwAg-2RUPgKnBsBNI7ScGDHS73) and watch [Charbel's demo on the Helpfully Disabled pattern](https://noredink.zoom.us/rec/play/fwV3mqsxjvF_95N2au0vAN2PmnH2IHZx2yCoAQ76gvZ0fLlrkNcFIuVL6i7ze7y1ivSxq0f6e2EXE-RJ.kHMKX9CBHI1kFM50?canPlayFromShare=true&from=share_recording_detail&continueMode=true&componentName=rec-play&originRequestUrl=https://noredink.zoom.us/rec/share/YvgK0427ADw42fY2edJ_tmkwwvPxz505Kpfhkz5DqF1_eh8sgj7wVfwBQ5FmieM8.P9YlMkM_XY_Kamm6&autoplay=true&startTime=1696520905000&_x_zm_rtaid=VeLjvOzDToKMf1R0XllC7A.1707171050117.67806369f8182aa5b282c10165d75544&_x_zm_rhtaid=323).
+
+
 
 Example:
 - A tooltip might appear on a disabled button to inform the user that the button will become enabled once they've filled out a required form.

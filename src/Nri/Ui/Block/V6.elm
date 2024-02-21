@@ -11,7 +11,7 @@ module Nri.Ui.Block.V6 exposing
     , labelCss
     , yellow, cyan, magenta, green, blue, purple, brown
     , insertLineBreakOpportunities
-    , dashed, underline
+    , dashed, underline, skipLabelAnimation
     )
 
 {-| Changes from V5:
@@ -27,6 +27,7 @@ module Nri.Ui.Block.V6 exposing
     - Add renderReadAloud
     - Add border styles `dashed` and`underline`
     - Correctly display a transparent background for underline blanks
+    - Add `skipLabelAnimation`, so balloon animation can be skipped
 
 @docs view, renderReadAloud, Attribute
 
@@ -59,7 +60,7 @@ You will need these helpers if you want to prevent label overlaps. (Which is to 
 
 @docs yellow, cyan, magenta, green, blue, purple, brown
 @docs insertLineBreakOpportunities
-@docs dashed, underline
+@docs dashed, underline, skipLabelAnimation
 
 -}
 
@@ -71,7 +72,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import List.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
-import Nri.Ui.Mark.V5 as Mark exposing (Mark)
+import Nri.Ui.Mark.V6 as Mark exposing (Mark)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Position exposing (xOffsetPx)
 
@@ -629,6 +630,12 @@ labelId id_ =
     Attribute (\config -> { config | labelId = Just id_ })
 
 
+{-| -}
+skipLabelAnimation : Attribute msg
+skipLabelAnimation =
+    Attribute (\config -> { config | skipLabelAnimation = True })
+
+
 
 -- Internals
 
@@ -650,6 +657,7 @@ defaultConfig =
     , emphasize = False
     , insertWbrAfterSpace = False
     , blankStyle = Dashed
+    , skipLabelAnimation = False
     }
 
 
@@ -664,6 +672,7 @@ type alias Config msg =
     , emphasize : Bool
     , insertWbrAfterSpace : Bool
     , blankStyle : BlankStyle
+    , skipLabelAnimation : Bool
     }
 
 
@@ -691,6 +700,7 @@ render config =
             , labelCss = config.labelCss
             , labelId = config.labelId
             , labelContentId = Maybe.map labelContentId config.labelId
+            , skipTagAnimation = config.skipLabelAnimation
             }
             config.content
         )

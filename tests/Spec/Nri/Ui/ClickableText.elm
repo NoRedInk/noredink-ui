@@ -10,8 +10,6 @@ import Nri.Ui.UiIcon.V1 as UiIcon
 import ProgramTest exposing (..)
 import Spec.Helpers exposing (expectFailure)
 import Test exposing (..)
-import Test.Html.Event as Event
-import Test.Html.Query as Query
 import Test.Html.Selector as Selector exposing (..)
 
 
@@ -238,7 +236,7 @@ type alias TestContext =
 
 clickOnButton : TestContext -> TestContext
 clickOnButton =
-    MouseHelpers.click mouseHelperConfig buttonSelectors
+    MouseHelpers.click buttonSelectors
 
 
 type alias Model =
@@ -293,15 +291,3 @@ programButton attributes =
         , view = viewButton attributes >> toUnstyled
         }
         |> ProgramTest.start ()
-
-
-mouseHelperConfig : MouseHelpers.Config (ProgramTest model msg effect) Selector.Selector (Query.Single msg)
-mouseHelperConfig =
-    { programTest_simulateDomEvent = ProgramTest.simulateDomEvent
-    , query_find = Query.find
-    , event_click = Event.click
-    , event_mouseDown = Event.mouseDown
-    , event_mouseUp = Event.mouseUp
-    , event_mouseOver = Event.mouseOver
-    , event_custom = Event.custom
-    }

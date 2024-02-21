@@ -17,6 +17,7 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Guidance
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
@@ -42,7 +43,7 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , categories = [ Layout ]
+    , categories = [ Layout, Tabs ]
     , keyboardSupport =
         [ { keys = [ KeyboardSupport.Tab ]
           , result = "Move focus to the currently-selected Tab's tab panel"
@@ -84,7 +85,7 @@ example =
                 [ Text.caption [ Text.plaintext "Tab 1 content" ] ]
             ]
         ]
-    , about = []
+    , about = [ Guidance.communicateState moduleName ]
     , view =
         \ellieLinkConfig model ->
             let

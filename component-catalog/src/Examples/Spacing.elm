@@ -15,12 +15,14 @@ import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V7 as Table
+import Nri.Ui.Text.V6 as Text
 import Svg.Styled
 import Svg.Styled.Attributes
 
@@ -46,7 +48,18 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview = preview
-    , about = []
+    , about =
+        [ Text.smallBody
+            [ Text.html
+                [ text "Learn more about this component from "
+                , ClickableText.link "Tessa's demo"
+                    [ ClickableText.linkExternal "https://www.dropbox.com/s/l1ihppb2tjohcxr/2023-03-09%20-%20Tessa%20Kelly%20-%20Spacing.mp4?dl=0"
+                    , ClickableText.appearsInline
+                    ]
+                , text "."
+                ]
+            ]
+        ]
     , view = view
     }
 

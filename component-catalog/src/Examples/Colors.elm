@@ -15,10 +15,12 @@ import Css
 import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.Extra exposing (fromCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Text.V6 as Text
 import SolidColor exposing (luminance)
 
@@ -52,10 +54,24 @@ example =
         , ( "mustard", Colors.mustard )
         ]
             |> List.map viewPreviewSwatch
-    , about = []
+    , about =
+        [ Text.smallBody
+            [ Text.html
+                [ Html.text "Please refer to "
+                , ClickableText.link "the guides for designing with sufficient contrast and high contrast mode in mind"
+                    [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Accessibility-testing-Color-contrast--CJat4EsY~XD~lUuIBYIXpbKNAg-sDEDETuS9rqQbdEs7nybl"
+                    , ClickableText.appearsInline
+                    ]
+                , Html.text "."
+                ]
+            ]
+        ]
     , view =
         \ellieLinkConfig _ ->
-            [ Heading.h2 [ Heading.plaintext "General Colors" ]
+            [ Heading.h2
+                [ Heading.plaintext "General Colors"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , viewGroupedColors colorGroupings
             , Heading.h2 [ Heading.plaintext "Background Highlight Colors" ]
             , Text.mediumBody [ Text.plaintext "Background highlights should be used as the default highlight style because they are more noticeable and readable. The dark colors should be used in the case where headings need to harmonize with highlighted containers, such as in Guided Drafts." ]

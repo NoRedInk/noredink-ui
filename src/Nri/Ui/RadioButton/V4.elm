@@ -7,6 +7,7 @@ module Nri.Ui.RadioButton.V4 exposing
     , hiddenLabel, visibleLabel
     , containerCss, labelCss, custom, nriDescription, id, testId
     , disabled, enabled, errorIf, errorMessage, guidance, guidanceHtml
+    , rightIcon
     )
 
 {-|
@@ -22,6 +23,7 @@ module Nri.Ui.RadioButton.V4 exposing
     and removes onClick event handler. These changes prevent the element from
     being selected but keep it in the tab order and ensure that tooltips can
     still be displayed when the element is focused.
+  - add `rightIcon` property
 
 
 ### Changes from V3:
@@ -50,6 +52,7 @@ module Nri.Ui.RadioButton.V4 exposing
 @docs hiddenLabel, visibleLabel
 @docs containerCss, labelCss, custom, nriDescription, id, testId
 @docs disabled, enabled, errorIf, errorMessage, guidance, guidanceHtml
+@docs rightIcon
 
 -}
 
@@ -67,6 +70,7 @@ import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
+import Nri.Ui.Html.V3 exposing (viewIf, viewJust)
 import Nri.Ui.Pennant.V3 as Pennant
 import Nri.Ui.Svg.V1 exposing (Svg)
 import Svg.Styled as Svg
@@ -114,6 +118,13 @@ guidance =
 guidanceHtml : List (Html msg) -> Attribute value msg
 guidanceHtml =
     Attribute << InputErrorAndGuidanceInternal.setGuidanceHtml
+
+
+{-| Adds an icon to the right of the label
+-}
+rightIcon : Svg -> Attribute value msg
+rightIcon icon =
+    Attribute <| \config -> { config | rightIcon = Just icon }
 
 
 {-| Fire a message parameterized by the value type when selecting a radio option
@@ -236,6 +247,7 @@ type alias Config value msg =
     , onSelect : Maybe (value -> msg)
     , onLockedMsg : Maybe msg
     , disclosedContent : List (Html msg)
+    , rightIcon : Maybe Svg
     }
 
 
@@ -254,6 +266,7 @@ emptyConfig =
     , onSelect = Nothing
     , onLockedMsg = Nothing
     , disclosedContent = []
+    , rightIcon = Nothing
     }
 
 
@@ -433,11 +446,8 @@ view { label, name, value, valueToString, selectedValue } attributes =
                             [ css config.labelCss ]
                         )
                         [ Html.text label ]
-                    , if isPremium then
-                        premiumPennant
-
-                      else
-                        text ""
+                    , viewJust viewIcon config.rightIcon
+                    , viewIf (\_ -> premiumPennant) isPremium
                     ]
                 ]
              ]
@@ -449,6 +459,18 @@ view { label, name, value, valueToString, selectedValue } attributes =
                         []
                    )
             )
+
+
+viewIcon : Svg -> Html msg
+viewIcon icon =
+    icon
+        |> Nri.Ui.Svg.V1.withWidth (px 20)
+        |> Nri.Ui.Svg.V1.withHeight (px 20)
+        |> Nri.Ui.Svg.V1.withCss
+            [ marginLeft (px 4)
+            , verticalAlign middle
+            ]
+        |> Nri.Ui.Svg.V1.toHtml
 
 
 viewLockedButton : { idValue : String, label : String } -> Config value msg -> Html msg
@@ -516,6 +538,7 @@ viewLockedButton { idValue, label } config =
                             config.labelCss
                     ]
                     [ Html.text label ]
+                , viewJust viewIcon config.rightIcon
                 , premiumPennant
                 ]
             ]

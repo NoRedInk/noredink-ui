@@ -21,6 +21,7 @@ import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Message.V4 as Message
 import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.SegmentedControl.V14 as SegmentedControl
 import Nri.Ui.Spacing.V1 as Spacing
@@ -29,7 +30,9 @@ import Nri.Ui.Switch.V3 as Switch
 import Nri.Ui.Table.V7 as Table
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Routes
 import Task
+import UsageExamples.FocusLoop
 
 
 {-| -}
@@ -47,11 +50,48 @@ example =
         , example_ FocusRing.tightStyles
         ]
     , about =
-        [ Text.mediumBody
+        [ Text.smallBody
             [ Text.html
-                [ text "Custom high-contrast focus ring styles. Learn more about this component in "
-                , ClickableText.link "Custom Focus Rings on the NoRedInk blog"
-                    [ ClickableText.linkExternal "https://blog.noredink.com/post/703458632758689792/custom-focus-rings"
+                [ text "Custom high-contrast focus ring styles"
+                ]
+            ]
+        , Text.smallBody
+            [ Text.html
+                [ ul []
+                    [ li []
+                        [ text "Learn more about this component in "
+                        , ClickableText.link "Custom Focus Rings on the NoRedInk blog"
+                            [ ClickableText.linkExternal "https://blog.noredink.com/post/703458632758689792/custom-focus-rings"
+                            , ClickableText.appearsInline
+                            ]
+                        , text " and in "
+                        , ClickableText.link "Tessa's focus ring demo"
+                            [ ClickableText.linkExternal "https://www.dropbox.com/scl/fi/e5o8zqbx65iri706661u8/video1232435053.mp4?rlkey=e3rfqz5cgtvmqh1ydotacf51z&dl=0"
+                            , ClickableText.appearsInline
+                            ]
+                        , text "."
+                        ]
+                    , li []
+                        [ text "Learn more about keyboard expectations by reviewing each component's \"Keyboard support\" section, "
+                        , ClickableText.link "our keyboard testing guide"
+                            [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Accessibility-testing-Keyboard-visible-focus--CJenBQ8zDWXPPTmGglbqHNUVAg-aVALEVzmwDAdwB1um7A57"
+                            , ClickableText.appearsInline
+                            ]
+                        , text " and "
+                        , ClickableText.link "the keyboard accessibility section of the Help Center"
+                            [ ClickableText.linkExternal "https://noredink.zendesk.com/hc/en-us/sections/7976713221915-Keyboard-accessibility"
+                            , ClickableText.appearsInline
+                            ]
+                        , text "."
+                        ]
+                    ]
+                ]
+            ]
+        , Message.view
+            [ Message.html
+                [ text "Looking for a way to loop keyboard focus through a list of elements? Check out "
+                , ClickableText.link "Focus Loop"
+                    [ ClickableText.href (Routes.usageExampleHref UsageExamples.FocusLoop.example)
                     , ClickableText.appearsInline
                     ]
                 , text "."

@@ -7,7 +7,7 @@ module Examples.AssignmentIcon exposing (example, State, Msg)
 -}
 
 import Example exposing (Example)
-import Examples.IconExamples as IconExamples exposing (Group)
+import IconExamples exposing (Group)
 import Nri.Ui.AssignmentIcon.V2 as AssignmentIcon
 
 

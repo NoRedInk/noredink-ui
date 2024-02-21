@@ -13,11 +13,16 @@ import Category exposing (Category(..))
 import Code
 import CommonControls
 import Css
+import Css.Global
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
+import Examples.Button
+import Examples.ClickableSvg
+import Examples.ClickableText
+import Guidance
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Button.V10 as Button
@@ -27,12 +32,17 @@ import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
 import Nri.Ui.Menu.V4 as Menu
+import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.Spacing.V1 as Spacing
+import Nri.Ui.Switch.V3 as Switch
 import Nri.Ui.Table.V7 as Table
+import Nri.Ui.Text.V6 as Text
 import Nri.Ui.TextInput.V8 as TextInput
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
+import Routes
 import Set exposing (Set)
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttrs
@@ -72,7 +82,7 @@ example =
         , { keys = [ Esc ], result = "Closes the menu" }
         ]
     , preview = [ preview ]
-    , about = []
+    , about = [ Guidance.communicateState moduleName ]
     , view = view
     }
 
@@ -187,8 +197,7 @@ view ellieLinkConfig state =
                                         (Code.newlineWithIndent 2
                                             ++ (Code.fromModule "ClickableText" "button " ++ Code.string "Button")
                                             ++ Code.listMultiline
-                                                [ Code.fromModule "ClickableText" "small"
-                                                , Code.fromModule "ClickableText" "custom" ++ " attributes"
+                                                [ Code.fromModule "ClickableText" "custom" ++ " attributes"
                                                 ]
                                                 3
                                         )
@@ -224,8 +233,7 @@ view ellieLinkConfig state =
             [ Menu.entry "customizable-example" <|
                 \attrs ->
                     ClickableText.button "Button"
-                        [ ClickableText.small
-                        , ClickableText.onClick (ConsoleLog "Interactive example")
+                        [ ClickableText.onClick (ConsoleLog "Interactive example")
                         , ClickableText.custom attrs
                         ]
             ]
@@ -238,7 +246,7 @@ view ellieLinkConfig state =
         [ Table.string
             { header = "Menu type"
             , value = .menu
-            , width = Css.pct 30
+            , width = Css.pct 15
             , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
             , sort = Nothing
             }
@@ -247,6 +255,13 @@ view ellieLinkConfig state =
             , view = .example
             , width = Css.px 300
             , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Description"
+            , view = \{ description } -> Text.smallBody [ Text.markdown description ]
+            , width = Css.pct 60
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.top ]
             , sort = Nothing
             }
         ]
@@ -264,7 +279,6 @@ view ellieLinkConfig state =
                         \attrs ->
                             ClickableText.button "Hello"
                                 [ ClickableText.onClick (ConsoleLog "Hello")
-                                , ClickableText.small
                                 , ClickableText.custom attrs
                                 ]
                     , Menu.group "Menu group"
@@ -272,7 +286,6 @@ view ellieLinkConfig state =
                             \attrs ->
                                 ClickableText.button "Gift"
                                     [ ClickableText.onClick (ConsoleLog "Gift")
-                                    , ClickableText.small
                                     , ClickableText.custom attrs
                                     , ClickableText.icon UiIcon.gift
                                     ]
@@ -280,7 +293,6 @@ view ellieLinkConfig state =
                             \attrs ->
                                 ClickableText.button "Nope!"
                                     [ ClickableText.onClick (ConsoleLog "Nope!")
-                                    , ClickableText.small
                                     , ClickableText.custom attrs
                                     , ClickableText.icon UiIcon.null
                                     ]
@@ -288,7 +300,6 @@ view ellieLinkConfig state =
                             \attrs ->
                                 ClickableText.button "Skip"
                                     [ ClickableText.onClick (ConsoleLog "Skip")
-                                    , ClickableText.small
                                     , ClickableText.custom attrs
                                     ]
                         ]
@@ -296,10 +307,10 @@ view ellieLinkConfig state =
                         \attrs ->
                             ClickableText.button "Performance"
                                 [ ClickableText.onClick (ConsoleLog "Performance")
-                                , ClickableText.small
                                 , ClickableText.custom attrs
                                 ]
                     ]
+          , description = "Makes the menu follow the [Navigation Menu pattern](https://www.w3.org/WAI/ARIA/apg/example-index/menu-button/menu-button-links.html), but without the ul/li structure."
           }
         , { menu = "Menu.navMenuList"
           , example =
@@ -313,25 +324,28 @@ view ellieLinkConfig state =
                     [ Menu.entry "dropdown_list__first" <|
                         \attrs ->
                             ClickableText.button "First"
-                                [ ClickableText.small
+                                [ ClickableText.medium
                                 , ClickableText.onClick (ConsoleLog "First")
                                 , ClickableText.custom attrs
                                 ]
                     , Menu.entry "dropdown_list__second" <|
                         \attrs ->
                             ClickableText.button "Second"
-                                [ ClickableText.small
+                                [ ClickableText.medium
                                 , ClickableText.onClick (ConsoleLog "Second")
                                 , ClickableText.custom attrs
                                 ]
                     , Menu.entry "dropdown_list__third" <|
                         \attrs ->
                             ClickableText.button "Third"
-                                [ ClickableText.small
+                                [ ClickableText.medium
                                 , ClickableText.onClick (ConsoleLog "Third")
                                 , ClickableText.custom attrs
                                 ]
                     ]
+          , description = """
+Same as navMenu, except that a ul/li structure will be added as a fall-through.
+    """
           }
         , { menu = "Menu.disclosure"
           , example =
@@ -359,6 +373,17 @@ view ellieLinkConfig state =
                                     ]
                                 ]
                     ]
+          , description =
+                """
+ Makes the menu behave as a disclosure.
+
+For more information, please read [Disclosure (Show/Hide) pattern](https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/).
+
+You will need to pass in the last focusable element in the disclosed content in order for:
+
+  - any focusable elements in the disclosed content to be keyboard accessible
+  - the disclosure to close appropriately when the user tabs past all of the disclosed content
+"""
           }
         , { menu = "Menu.dialog"
           , example =
@@ -386,6 +411,18 @@ view ellieLinkConfig state =
                                     ]
                                 ]
                     ]
+          , description =
+                """
+ Makes the menu behave as a dialog.
+
+For more information, please read [Dialog pattern](https://w3c.github.io/aria-practices/examples/dialog-modal/dialog.html/).
+
+You will need to pass in the first and last focusable element in the dialog content in order for:
+
+  - any focusable elements in the dialog content to be keyboard accessible
+  - the tab to wrap around appropriately when the user tabs past all of the dialog content
+
+"""
           }
         ]
     , Heading.h2
@@ -396,19 +433,39 @@ view ellieLinkConfig state =
         [ Table.string
             { header = "Trigger type"
             , value = .menu
-            , width = Css.pct 30
+            , width = Css.px 0
             , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Type Signature"
+            , view = \{ typeAnnotation } -> code [] [ text typeAnnotation ]
+            , width = Css.pct 30
+            , cellStyles =
+                always
+                    [ Css.padding2 (Css.px 14) (Css.px 7)
+                    , Css.verticalAlign Css.middle
+                    , Css.fontSize (Css.px 12)
+                    ]
             , sort = Nothing
             }
         , Table.custom
             { header = text "Example"
             , view = .example
-            , width = Css.px 300
+            , width = Css.pct 20
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Pattern Notes"
+            , view = .patternNotes >> List.map (List.singleton >> Text.smallBody) >> div []
+            , width = Css.pct 30
             , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
             , sort = Nothing
             }
         ]
         [ { menu = "Menu.defaultTrigger"
+          , typeAnnotation = "String -> List (Button.Attribute msg) -> Attribute msg"
           , example =
                 Menu.view (FocusAndToggle "defaultTrigger")
                     [ Menu.defaultTrigger "Log in" []
@@ -417,8 +474,19 @@ view ellieLinkConfig state =
                     , Menu.menuId "defaultTrigger"
                     ]
                     []
+          , patternNotes =
+                [ Text.html
+                    [ text "Composes with "
+                    , ClickableText.link "Button"
+                        [ ClickableText.href (Routes.exampleHref Examples.Button.example)
+                        , ClickableText.appearsInline
+                        ]
+                    , text ", so any attribute you use for a Button can also be used with this trigger."
+                    ]
+                ]
           }
         , { menu = "Menu.button"
+          , typeAnnotation = "String -> List (Button.Attribute msg) -> Menu.Attribute msg"
           , example =
                 Menu.view (FocusAndToggle "button")
                     [ Menu.button "Log in" []
@@ -427,8 +495,19 @@ view ellieLinkConfig state =
                     , Menu.menuId "button"
                     ]
                     []
+          , patternNotes =
+                [ Text.html
+                    [ text "Composes with "
+                    , ClickableText.link "Button"
+                        [ ClickableText.href (Routes.exampleHref Examples.Button.example)
+                        , ClickableText.appearsInline
+                        ]
+                    , text ", so any attribute you use for a Button can also be used with this trigger."
+                    ]
+                ]
           }
         , { menu = "Menu.clickableText"
+          , typeAnnotation = "String -> List (ClickableText.Attribute msg) -> Menu.Attribute msg"
           , example =
                 Menu.view (FocusAndToggle "clickableText")
                     [ Menu.clickableText "Log in" []
@@ -437,8 +516,20 @@ view ellieLinkConfig state =
                     , Menu.menuId "clickableText"
                     ]
                     []
+          , patternNotes =
+                [ Text.html
+                    [ text "Composes with "
+                    , ClickableText.link "ClickableText"
+                        [ ClickableText.href (Routes.exampleHref Examples.ClickableText.example)
+                        , ClickableText.appearsInline
+                        ]
+                    , text ", so any attribute you use for a ClickableText can also be used with this trigger."
+                    ]
+                , Text.markdown " Defaults to using the `ClickableText.medium` size, although this can be overriden."
+                ]
           }
         , { menu = "Menu.clickableSvg with UiIcon.gear"
+          , typeAnnotation = "String -> Svg.Svg -> List (ClickableSvg.Attribute msg) -> Menu.Attribute msg"
           , example =
                 Menu.view (FocusAndToggle "clickableSvg")
                     [ Menu.clickableSvg "Log in" UiIcon.gear []
@@ -447,8 +538,19 @@ view ellieLinkConfig state =
                     , Menu.menuId "clickableSvg"
                     ]
                     []
+          , patternNotes =
+                [ Text.html
+                    [ text "Composes with "
+                    , ClickableText.link "ClickableSvg"
+                        [ ClickableText.href (Routes.exampleHref Examples.ClickableSvg.example)
+                        , ClickableText.appearsInline
+                        ]
+                    , text ", so any attribute you use for a ClickableSvg can also be used with this trigger."
+                    ]
+                ]
           }
         , { menu = "Menu.clickableSvgWithoutIndicator with UiIcon.gear"
+          , typeAnnotation = "String -> Svg.Svg -> List (ClickableSvg.Attribute msg) -> Menu.Attribute msg"
           , example =
                 Menu.view (FocusAndToggle "clickableSvgWithoutIndicator")
                     [ Menu.clickableSvgWithoutIndicator "Log in" UiIcon.gear []
@@ -457,9 +559,232 @@ view ellieLinkConfig state =
                     , Menu.menuId "clickableSvgWithoutIndicator"
                     ]
                     []
+          , patternNotes =
+                [ Text.html
+                    [ text "Composes with "
+                    , ClickableText.link "ClickableSvg"
+                        [ ClickableText.href (Routes.exampleHref Examples.ClickableSvg.example)
+                        , ClickableText.appearsInline
+                        ]
+                    , text ", so any attribute you use for a ClickableSvg can also be used with this trigger."
+                    ]
+                ]
+          }
+        ]
+    , Heading.h2
+        [ Heading.plaintext "Menu content"
+        , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
+        ]
+    , Table.view []
+        [ Table.string
+            { header = "Content"
+            , value = .name
+            , width = Css.pct 20
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Example"
+            , view = \{ name, menuType, entries } -> forcedOpenExample name menuType entries
+            , width = Css.pct 20
+            , cellStyles =
+                \{ name } ->
+                    let
+                        buttonId =
+                            forcedOpenExampleButtonId name
+                    in
+                    [ Css.padding2 (Css.px 14) (Css.px 7)
+                    , Css.verticalAlign Css.middle
+                    , Css.Global.descendants
+                        [ -- when menus are open, we add this overlay to
+                          -- ensure that clicks close the menu.
+                          -- so if the menu is open, nothing else on the page
+                          -- is interactive by mouse.
+                          -- for the purposes of these static examples,
+                          -- this is very unhelpful, so we hide the overlay.
+                          --
+                          -- if changing this code, please ensure the example in the CC is still interactive.
+                          Css.Global.class "Nri-Menu-Overlay"
+                            [ Css.display Css.none
+                            ]
+                        , -- Menus are absolutely positioned, but this is
+                          -- pretty inconvenient for displaying them in a table.
+                          -- This override is so that these Menu will be part of
+                          -- the normal flow of the page, so that their
+                          -- content is always visible.
+                          Css.Global.selector ("#" ++ buttonId ++ " + div")
+                            [ Css.position Css.relative ]
+                        ]
+                    ]
+            , sort = Nothing
+            }
+        , Table.custom
+            { header = text "Pattern Notes"
+            , view = \{ about } -> Text.smallBody [ Text.markdown about ]
+            , width = Css.pct 60
+            , cellStyles =
+                always
+                    [ Css.padding2 (Css.px 14) (Css.px 7)
+                    , Css.verticalAlign Css.top
+                    , Css.Global.descendants
+                        [ Css.Global.pre [ Css.whiteSpace Css.preWrap ]
+                        ]
+                    ]
+            , sort = Nothing
+            }
+        ]
+        [ { name = "List of entries"
+          , menuType = Menu.navMenuList
+          , entries =
+                [ Menu.entry "list-of-entries-clickable-text-entry" <|
+                    \attributes ->
+                        ClickableText.button "ClickableText"
+                            [ ClickableText.medium
+                            , ClickableText.custom attributes
+                            ]
+                , Menu.entry "list-of-entries-button-entry" <|
+                    \attributes ->
+                        Button.button "Button"
+                            [ Button.small
+                            , Button.custom attributes
+                            ]
+                , Menu.entry "list-of-entries-clickablesvg-entry" <|
+                    \attributes ->
+                        ClickableSvg.button "ClickableSvg"
+                            UiIcon.arrowPointingRightThick
+                            [ ClickableSvg.small
+                            , ClickableSvg.custom attributes
+                            , ClickableSvg.withBorder
+                            ]
+                ]
+          , about = "Pass any interactive elements in using `Menu.entry`."
+          }
+        , { name = "Grouped entries"
+          , menuType = Menu.navMenuList
+          , entries =
+                [ List.range 1 2
+                    |> List.map
+                        (\i ->
+                            Menu.entry ("group-clickable-text-entry-" ++ String.fromInt i) <|
+                                \attributes ->
+                                    ClickableText.button ("Thing " ++ String.fromInt i)
+                                        [ ClickableText.medium
+                                        , ClickableText.custom attributes
+                                        ]
+                        )
+                    |> Menu.group "Group of ClickableTexts"
+                , List.range 1 3
+                    |> List.map
+                        (\i ->
+                            Menu.entry ("group-button-entry-" ++ String.fromInt i) <|
+                                \attributes ->
+                                    Button.button ("Thing " ++ String.fromInt i)
+                                        [ Button.small
+                                        , Button.custom attributes
+                                        ]
+                        )
+                    |> Menu.group "Group of Buttons"
+                ]
+          , about =
+                """Use `Menu.group` to create named groups of entries.
+
+
+The structures are recursive and flexible:
+
+    group : String -> List (Entry msg) -> Entry msg
+
+    entry : String -> (List (Html.Attribute msg) -> Html msg) -> Entry msg
+
+"""
+          }
+        , { name = "Mix of singular entries and grouped entries"
+          , menuType = Menu.disclosure { lastId = droppedStudentsId }
+          , entries =
+                [ Menu.entry "grades-and-perf" <|
+                    \attributes ->
+                        ClickableText.link "Grades and Performance Help"
+                            [ ClickableText.linkExternal "https://noredink.zendesk.com/hc/en-us/sections/115001041146-Grades-Performance"
+                            , ClickableText.custom attributes
+                            , ClickableText.icon UiIcon.help
+                            ]
+                , Menu.group "Display scores as"
+                    [ Menu.entry "percentages" <| viewScoreDisplay "Percentage" state.scoreDisplay
+                    , Menu.entry "points" <| viewScoreDisplay "Points" state.scoreDisplay
+                    ]
+                , Menu.group "Dropped students"
+                    [ Menu.entry "dropped-students" <| viewDroppedStudentsSwitch state.showDroppedStudents
+                    ]
+                ]
+          , about =
+                """
+Because `group` and `entry` both result in the same type, individual entries and grouped entries can be displayed together.
+
+Please note that depending on the interactive component you select, our composability may not work correctly yet.
+
+In this realistic example, we can't actually pass the correct attributes to RadioButton or Switch because it will cause the events for those components to be swallowed, rendering them inoperable.
+"""
           }
         ]
     ]
+
+
+forcedOpenExample : String -> Menu.Attribute Msg -> List (Menu.Entry Msg) -> Html Msg
+forcedOpenExample name type_ =
+    Menu.view (FocusAndToggle name)
+        [ Menu.clickableSvgWithoutIndicator (name ++ " example")
+            UiIcon.arrowDown
+            [ ClickableSvg.exactSize 15
+            , ClickableSvg.css [ Css.marginLeft (Css.px 17) ]
+            ]
+        , Menu.isOpen True
+        , Menu.buttonId (forcedOpenExampleButtonId name)
+        , Menu.menuId (safeIdWithPrefix name "menuId")
+        , Menu.alignLeft
+        , type_
+        ]
+
+
+forcedOpenExampleButtonId : String -> String
+forcedOpenExampleButtonId name =
+    safeIdWithPrefix name "buttonId"
+
+
+viewScoreDisplay : String -> Maybe String -> List (Attribute Msg) -> Html Msg
+viewScoreDisplay value selected attributes =
+    RadioButton.view
+        { label = value
+        , value = value
+        , name = "score-display"
+        , selectedValue = selected
+        , valueToString = identity
+        }
+        [ -- To Fix: when the Menu attributes are attached to the RadioButton
+          -- (as is required for the focus trap to work correctly),
+          -- the RadioButtons become inoperable.
+          -- RadioButton.custom attributes ,
+          RadioButton.onSelect SelectScoreDisplay
+        ]
+
+
+viewDroppedStudentsSwitch : Bool -> List (Attribute Msg) -> Html Msg
+viewDroppedStudentsSwitch showDroppedStudents attributes =
+    Switch.view
+        { label = "Show dropped students"
+        , id = droppedStudentsId
+        }
+        [ Switch.onSwitch ShowDroppedStudents
+        , Switch.selected showDroppedStudents
+
+        -- To Fix: when the Menu attributes are attached to the Switch
+        -- (as is required for the focus trap to work correctly),
+        -- the Switch become inoperable.
+        --, Switch.custom attributes
+        ]
+
+
+droppedStudentsId : String
+droppedStudentsId =
+    "show-dropped-students"
 
 
 {-| -}
@@ -469,6 +794,8 @@ init =
     , checkboxChecked = False
     , openTooltips = Set.empty
     , settings = initSettings
+    , scoreDisplay = Nothing
+    , showDroppedStudents = False
     }
 
 
@@ -478,6 +805,8 @@ type alias State =
     , checkboxChecked : Bool
     , openTooltips : Set String
     , settings : Control Settings
+    , scoreDisplay : Maybe String
+    , showDroppedStudents : Bool
     }
 
 
@@ -646,6 +975,8 @@ type Msg
     | ToggleTooltip String Bool
     | FocusAndToggle String { isOpen : Bool, focus : Maybe String }
     | Focused (Result Dom.Error ())
+    | SelectScoreDisplay String
+    | ShowDroppedStudents Bool
 
 
 {-| -}
@@ -679,6 +1010,12 @@ update msg state =
 
         Focused _ ->
             ( state, Cmd.none )
+
+        SelectScoreDisplay name ->
+            ( { state | scoreDisplay = Just name }, Cmd.none )
+
+        ShowDroppedStudents showDroppedStudents ->
+            ( { state | showDroppedStudents = showDroppedStudents }, Cmd.none )
 
 
 

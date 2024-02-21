@@ -52,7 +52,11 @@ example =
             , Select.custom [ Key.tabbable False ]
             ]
         ]
-    , about = Guidance.useATACGuide moduleName
+    , about =
+        [ Guidance.useATACGuide moduleName
+        , Guidance.message moduleName
+        , Guidance.helpfullyDisabled moduleName
+        ]
     , view =
         \ellieLinkConfig state ->
             let

@@ -15,7 +15,6 @@ import ProgramTest exposing (..)
 import Sort
 import Spec.PseudoElements exposing (..)
 import Test exposing (..)
-import Test.Html.Event as Event
 import Test.Html.Query as Query
 import Test.Html.Selector as Selector exposing (Selector)
 
@@ -520,61 +519,61 @@ highlightable index selector =
 
 space : TestContext -> TestContext
 space =
-    KeyboardHelpers.pressSpace khConfig
+    KeyboardHelpers.pressSpace
         { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
 rightArrow : TestContext -> TestContext
 rightArrow =
-    KeyboardHelpers.pressRightArrow khConfig
+    KeyboardHelpers.pressRightArrow
         { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
 leftArrow : TestContext -> TestContext
 leftArrow =
-    KeyboardHelpers.pressLeftArrow khConfig
+    KeyboardHelpers.pressLeftArrow
         { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
 shiftRight : TestContext -> TestContext
 shiftRight =
-    KeyboardHelpers.pressShiftRight khConfig
+    KeyboardHelpers.pressShiftRight
         { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
 shiftLeft : TestContext -> TestContext
 shiftLeft =
-    KeyboardHelpers.pressShiftLeft khConfig
+    KeyboardHelpers.pressShiftLeft
         { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
 releaseShiftRight : TestContext -> TestContext
 releaseShiftRight =
-    KeyboardHelpers.releaseShiftRight khConfig
+    KeyboardHelpers.releaseShiftRight
         { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
 releaseShiftLeft : TestContext -> TestContext
 releaseShiftLeft =
-    KeyboardHelpers.releaseShiftLeft khConfig
+    KeyboardHelpers.releaseShiftLeft
         { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
 
 mouseDown : String -> TestContext -> TestContext
 mouseDown word =
-    MouseHelpers.cancelableMouseDown mhConfig [ Selector.tag "span", Selector.containing [ Selector.text word ] ]
+    MouseHelpers.cancelableMouseDown [ Selector.tag "span", Selector.containing [ Selector.text word ] ]
 
 
 mouseUp : String -> TestContext -> TestContext
 mouseUp word =
-    MouseHelpers.cancelableMouseUp mhConfig [ Selector.tag "span", Selector.containing [ Selector.text word ] ]
+    MouseHelpers.cancelableMouseUp [ Selector.tag "span", Selector.containing [ Selector.text word ] ]
 
 
 click : String -> TestContext -> TestContext
@@ -584,7 +583,7 @@ click word =
 
 mouseOver : String -> TestContext -> TestContext
 mouseOver word =
-    MouseHelpers.cancelableMouseOver mhConfig [ Selector.tag "span", Selector.containing [ Selector.text word ] ]
+    MouseHelpers.cancelableMouseOver [ Selector.tag "span", Selector.containing [ Selector.text word ] ]
 
 
 markerModel : Maybe String -> Tool String
@@ -938,23 +937,3 @@ overlappingHighlightTests =
     in
     [ describe "viewWithOverlappingHighlights" (staticAssertions Highlighter.viewWithOverlappingHighlights)
     ]
-
-
-khConfig : KeyboardHelpers.Config (ProgramTest model msg effect) Selector.Selector (Query.Single msg)
-khConfig =
-    { programTest_simulateDomEvent = ProgramTest.simulateDomEvent
-    , query_find = Query.find
-    , event_custom = Event.custom
-    }
-
-
-mhConfig : MouseHelpers.Config (ProgramTest model msg effect) Selector.Selector (Query.Single msg)
-mhConfig =
-    { programTest_simulateDomEvent = ProgramTest.simulateDomEvent
-    , query_find = Query.find
-    , event_click = Event.click
-    , event_mouseDown = Event.mouseDown
-    , event_mouseUp = Event.mouseUp
-    , event_mouseOver = Event.mouseOver
-    , event_custom = Event.custom
-    }

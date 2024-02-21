@@ -16,18 +16,15 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
-import Examples.RadioButtonDotless as RadioButtonDotlessExample
+import Guidance
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Button.V10 as Button
-import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Message.V4 as Message
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
-import Routes
 import Set exposing (Set)
 
 
@@ -77,15 +74,8 @@ example =
             ]
         ]
     , about =
-        [ Message.view
-            [ Message.html
-                [ text "Looking for a group of buttons where only one button is selectable at a time? Check out "
-                , ClickableText.link "RadioButtonDotless"
-                    [ ClickableText.href (Routes.exampleHref RadioButtonDotlessExample.example)
-                    , ClickableText.appearsInline
-                    ]
-                ]
-            ]
+        [ Guidance.helpfullyDisabled moduleName
+        , Guidance.useRadioButtonDotless
         ]
     , view = \ellieLinkConfig state -> [ viewButtonExamples ellieLinkConfig state ]
     , categories = [ Buttons ]
@@ -189,13 +179,7 @@ controlAttributes =
         |> ControlExtra.listItems "Size & Width"
             (Control.list
                 |> ControlExtra.optionalListItem "size"
-                    (CommonControls.choice moduleName
-                        [ ( "small", Button.small )
-                        , ( "medium", Button.medium )
-                        , ( "large", Button.large )
-                        , ( "modal", Button.modal )
-                        ]
-                    )
+                    (CommonControls.choice moduleName sizes)
                 |> ControlExtra.optionalListItem "width"
                     (CommonControls.choice moduleName
                         [ ( "exactWidth 120", Button.exactWidth 120 )
@@ -403,15 +387,18 @@ viewCustomizableExample model =
         (List.map Tuple.second model.attributes)
 
 
+sizes : List ( String, Button.Attribute msg )
+sizes =
+    [ ( "small", Button.small )
+    , ( "medium", Button.medium )
+    , ( "large", Button.large )
+    , ( "modal", Button.modal )
+    ]
+
+
 buttonsTable : Html msg
 buttonsTable =
     let
-        sizes =
-            [ ( Button.small, "small" )
-            , ( Button.medium, "medium" )
-            , ( Button.large, "large" )
-            ]
-
         styles =
             [ ( Button.primary, "primary" )
             , ( Button.secondary, "secondary" )
@@ -449,7 +436,7 @@ buttonsTable =
                 )
             ]
 
-        exampleCell cellStyle ( view, viewName ) ( style, styleName ) ( setSize, sizeName ) =
+        exampleCell cellStyle ( view, viewName ) ( style, styleName ) ( sizeName, setSize ) =
             inCell cellStyle <| view (sizeName ++ " " ++ styleName ++ " " ++ viewName) [ setSize, style ]
 
         inCell style content =
@@ -465,7 +452,7 @@ buttonsTable =
     List.concat
         [ [ sizes
                 |> List.map
-                    (\( _, sizeName ) ->
+                    (\( sizeName, _ ) ->
                         th [ css [ Css.padding2 (Css.px 25) Css.zero ] ]
                             [ code [] [ text (Code.fromModule moduleName sizeName) ]
                             ]
@@ -474,7 +461,9 @@ buttonsTable =
           ]
         , List.concatMap exampleRow styles
         ]
-        |> table [ css [ Css.borderCollapse Css.collapse ] ]
+        |> table [ css [ Css.borderCollapse Css.collapse, Css.width (Css.pct 100) ] ]
+        |> List.singleton
+        |> div [ css [ Css.overflow Css.auto ] ]
 
 
 toggleButtons : Set Int -> Html Msg

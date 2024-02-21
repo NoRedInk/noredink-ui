@@ -1,24 +1,27 @@
-module Nri.Ui.Mark.V3 exposing
+module Nri.Ui.Mark.V6 exposing
     ( Mark
     , view, viewWithInlineTags, viewWithBalloonTags
     , viewWithOverlaps
-    , LabelState(..)
     )
 
 {-|
 
+
+### Changes from V5
+
+    -  Add `skipTagAnimation` for skipping balloon animations
+
 @docs Mark
 @docs view, viewWithInlineTags, viewWithBalloonTags
 @docs viewWithOverlaps
-@docs LabelState
 
 -}
 
 import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Style exposing (invisibleStyle)
 import Content
 import Css exposing (Color, Style)
-import Css.Animations
 import Css.Global
 import Css.Media
 import Html.Styled as Html exposing (Html, span)
@@ -44,17 +47,6 @@ type alias Mark =
     , styles : List Css.Style
     , endStyles : List Css.Style
     }
-
-
-{-| Controls label animations.
-
-Visible will fade in when first displayed.
-FadeOut will start visible and then fade out.
-
--}
-type LabelState
-    = Visible
-    | FadeOut
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
@@ -176,9 +168,10 @@ viewWithBalloonTags :
     , backgroundColor : Color
     , maybeMarker : Maybe Mark
     , labelPosition : Maybe LabelPosition
-    , labelState : LabelState
+    , labelCss : List Css.Style
     , labelId : Maybe String
     , labelContentId : Maybe String
+    , skipTagAnimation : Bool
     }
     -> List c
     -> List (Html msg)
@@ -273,19 +266,20 @@ view_ tagStyle viewSegment highlightables =
 viewMarkedByBalloon :
     { config
         | backgroundColor : Color
-        , labelState : LabelState
         , labelPosition : Maybe LabelPosition
+        , labelCss : List Css.Style
         , labelId : Maybe String
         , labelContentId : Maybe String
+        , skipTagAnimation : Bool
     }
     -> Mark
     -> List (Html msg)
     -> Html msg
 viewMarkedByBalloon config markedWith segments =
     Html.mark
-        [ markedWith.name
-            |> Maybe.map (\name -> Aria.roleDescription (stripMarkdownSyntax name ++ " highlight"))
-            |> Maybe.withDefault AttributesExtra.none
+        [ -- Drop the `mark` role as various screen readers interpret it differently.
+          -- Instead we offer additional invisible and accessible content to denote the highlight.
+          Role.presentation
         , css [ Css.backgroundColor Css.transparent, Css.position Css.relative ]
         ]
         -- the balloon should never end up on a line by itself, so we put it in the DOM
@@ -305,9 +299,9 @@ viewMarkedByBalloon config markedWith segments =
 viewMarked : TagStyle -> Mark -> List (Html msg) -> Html msg
 viewMarked tagStyle markedWith segments =
     Html.mark
-        [ markedWith.name
-            |> Maybe.map (\name -> Aria.roleDescription (stripMarkdownSyntax name ++ " highlight"))
-            |> Maybe.withDefault AttributesExtra.none
+        [ -- Drop the `mark` role as various screen readers interpret it differently.
+          -- Instead we offer additional invisible and accessible content to denote the highlight.
+          Role.presentation
         , css
             [ Css.backgroundColor Css.transparent
             , Css.Global.children
@@ -489,8 +483,8 @@ viewInlineTag customizations name =
 viewBalloon :
     { config
         | backgroundColor : Color
-        , labelState : LabelState
         , labelPosition : Maybe LabelPosition
+        , labelCss : List Css.Style
         , labelId : Maybe String
         , labelContentId : Maybe String
     }
@@ -514,35 +508,7 @@ viewBalloon config label =
 
                 Nothing ->
                     Css.batch []
-            , case config.labelState of
-                FadeOut ->
-                    Css.batch
-                        [ Css.property "animation-delay" "0.4s"
-                        , Css.property "animation-duration" "0.3s"
-                        , Css.property "animation-fill-mode" "forwards"
-                        , Css.animationName
-                            (Css.Animations.keyframes
-                                [ ( 0, [ Css.Animations.opacity (Css.num 1) ] )
-                                , ( 100, [ Css.Animations.opacity Css.zero ] )
-                                ]
-                            )
-                        , Css.property "animation-timing-function" "linear"
-                        ]
-
-                Visible ->
-                    Css.batch
-                        [ Css.property "animation-delay" "0.4s"
-                        , Css.property "animation-duration" "0.3s"
-                        , Css.property "animation-fill-mode" "forwards"
-                        , Css.animationName
-                            (Css.Animations.keyframes
-                                [ ( 0, [ Css.Animations.opacity Css.zero ] )
-                                , ( 100, [ Css.Animations.opacity (Css.num 1) ] )
-                                ]
-                            )
-                        , Css.property "animation-timing-function" "linear"
-                        , Css.opacity Css.zero
-                        ]
+            , Css.batch config.labelCss
             ]
         , Balloon.css
             [ Css.padding3 Css.zero (Css.px 6) (Css.px 1)
@@ -602,14 +568,18 @@ viewBalloon config label =
         ]
 
 
-viewBalloonSpacer : { config | labelPosition : Maybe { b | totalHeight : Float } } -> Html msg
+viewBalloonSpacer : { config | labelPosition : Maybe { b | totalHeight : Float }, skipTagAnimation : Bool } -> Html msg
 viewBalloonSpacer config =
     span
         [ css
             [ Css.display Css.inlineBlock
-            , Css.Media.withMediaQuery
-                [ "(prefers-reduced-motion: no-preference)" ]
-                [ Css.property "transition" "padding 0.8s ease" ]
+            , if config.skipTagAnimation then
+                Css.batch []
+
+              else
+                Css.Media.withMediaQuery
+                    [ "(prefers-reduced-motion: no-preference)" ]
+                    [ Css.property "transition" "padding 0.8s ease" ]
             , config.labelPosition
                 |> Maybe.map
                     (\{ totalHeight } ->
@@ -635,7 +605,7 @@ viewBalloonSpacer config =
                             Css.lineHeight (Css.num 0)
 
                         Just _ ->
-                            Css.lineHeight Css.unset
+                            Css.lineHeight Css.initial
                     ]
                 ]
             ]

@@ -42,6 +42,7 @@ Please link to any relevant context and stories.
 - [ ] I've gone through the relevant sections of the [Development Accessibility guide](https://paper.dropbox.com/doc/Accessibility-guide-4-Development--BiIVdijSaoijjOuhz3iTCJJ1Ag-rGoHpC91pFg3zTrYpvOCQ) with this component in mind
 - [ ] Component has clear documentation
 - [ ] Component is in the Component Catalog
+  - [ ] I've used [the script to add the component to the Component Catalog](https://github.com/NoRedInk/noredink-ui?tab=readme-ov-file#-adding-a-component-to-the-component-catalog).
   - [ ] Component is categorized reasonably (see [Category](https://github.com/NoRedInk/noredink-ui/blob/master/component-catalog-app/Category.elm) for all the currently available categories). The component can be in multiple categories, if appropriate.
   - [ ] Component has a representative preview for the Component Catalog cards (bonus points for making it delightful!)
   - [ ] Component has a customizable example. Aim for having _every_ possible supported version of the component displayable through the configuration on this page. (Protip: This is handy for testing expected behavior!)
@@ -57,9 +58,9 @@ Please link to any relevant context and stories.
   - e.g., as a dev, I can conveniently add an `nriDescription`
   - and adding a new feature to the component will _not_ require major API changes to the component
 - [ ] Please assign the following reviewers:
-  - [ ]  Someone from your team who can review your PR in full and review requirements from your team's perspective.
-  - [ ]  [team-accessibilibats-a11ybats](https://github.com/orgs/NoRedInk/teams/team-accessibilibats-a11ybats) - Someone from this group will review your PR for accessibility and adherence to component library foundations.
-  - [ ]  If there are user-facing changes, a designer. (You may want to direct your designer to the [deploy preview](https://github.com/NoRedInk/noredink-ui#reviews--preview-environments) for easy review):
+  - [ ] Someone from your team who can review your PR in full and review requirements from your team's perspective.
+  - [ ] Component library owner - Someone from this group will review your PR for accessibility and adherence to component library foundations.
+  - [ ] If there are user-facing changes, a designer. (You may want to direct your designer to the [deploy preview](https://github.com/NoRedInk/noredink-ui#reviews--preview-environments) for easy review):
     - For writing-related component changes, add Stacey (staceyadams)
     - For quiz engine-related components, add Ravi (ravi-morbia)
     - For a11y-related changes to general components, add Ben (bendansby)
@@ -100,9 +101,9 @@ Please link to any relevant context and stories.
 - [ ] If this is a new major version of the component, our team has stories created to upgrade all instances of the old component. Here are links to the stories:
   - add your story links here OR just write this is not a new major version
 - [ ] Please assign the following reviewers:
-  - [ ]  Someone from your team who can review your PR in full and review requirements from your team's perspective.
-  - [ ]  [team-accessibilibats-a11ybats](https://github.com/orgs/NoRedInk/teams/team-accessibilibats-a11ybats) - Someone from this group will review your PR for accessibility and adherence to component library foundations.
-  - [ ]  If there are user-facing changes, a designer. (You may want to direct your designer to the [deploy preview](https://github.com/NoRedInk/noredink-ui#reviews--preview-environments) for easy review):
+  - [ ] Someone from your team who can review your PR in full and review requirements from your team's perspective.
+  - [ ] Component library owner - Someone from this group will review your PR for accessibility and adherence to component library foundations.
+  - [ ] If there are user-facing changes, a designer. (You may want to direct your designer to the [deploy preview](https://github.com/NoRedInk/noredink-ui#reviews--preview-environments) for easy review):
     - For writing-related component changes, add Stacey (staceyadams)
     - For quiz engine-related components, add Ravi (ravi-morbia)
     - For a11y-related changes to general components, add Ben (bendansby)

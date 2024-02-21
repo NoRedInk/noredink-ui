@@ -20,8 +20,10 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Guidance
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
@@ -29,6 +31,7 @@ import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.SegmentedControl.V14 as SegmentedControl
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import String exposing (toLower)
@@ -54,7 +57,19 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview = [ viewPreview ]
-    , about = []
+    , about =
+        [ Text.smallBody
+            [ Text.html
+                [ Html.text "Check out "
+                , ClickableText.link "Tessa's demo"
+                    [ ClickableText.linkExternal "https://github.com/NoRedInk/NoRedInk/pull/43411"
+                    , ClickableText.appearsInline
+                    ]
+                , Html.text " to get a better sense of whether to use the tabs or radio buttons pattern under the hood."
+                ]
+            ]
+        , Guidance.communicateState moduleName
+        ]
     , view =
         \ellieLinkConfig state ->
             let
@@ -143,7 +158,7 @@ example =
                 , positioning = Tuple.second options.positioning
                 }
             ]
-    , categories = [ Layout, Inputs ]
+    , categories = [ Layout, Inputs, Tabs ]
     , keyboardSupport =
         [ { keys = [ KeyboardSupport.Tab ]
           , result = "Move focus to the currently-selected Control's content"

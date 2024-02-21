@@ -1,5 +1,8 @@
 module Example exposing (Example, extraLinks, fromRouteName, fullName, preview, routeName, view, wrapMsg, wrapState)
 
+{-| 🚨 If you update this module, please be sure that `script/add-example.sh` keeps working too.
+-}
+
 import Accessibility.Styled.Aria as Aria
 import Category exposing (Category)
 import Css
@@ -177,21 +180,12 @@ view_ ellieLinkConfig example state =
             , withMedia [ mobile ] [ Css.flexDirection Css.column, Css.alignItems Css.stretch ]
             ]
         ]
-        [ ExampleSection.sectionWithCss "About"
-            [ Css.flex (Css.int 1) ]
-            viewAbout
-            example.about
+        [ ExampleSection.aboutSection example.about
         , KeyboardSupport.view example.keyboardSupport
         ]
     , Html.div [ Attributes.css [ Css.marginBottom (Css.px 200) ] ]
         (example.view ellieLinkConfig state)
     ]
-
-
-viewAbout : List (Html Never) -> Html msg
-viewAbout about =
-    Html.div [] about
-        |> Html.map never
 
 
 extraLinks : (msg -> msg2) -> Example state msg -> Header.Attribute route msg2

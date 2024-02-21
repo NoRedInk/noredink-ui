@@ -14,7 +14,9 @@ module Nri.Ui.ClickableText.V4 exposing
     , css, notMobileCss, mobileCss, quizEngineMobileCss, rightIconCss
     )
 
-{-|
+{-| Patch changes
+
+  - switchs `Medium` size to the default
 
 
 # Changes from V3
@@ -117,7 +119,8 @@ small =
     set (\attributes -> { attributes | size = Small })
 
 
-{-| -}
+{-| `Medium` is the default size.
+-}
 medium : Attribute msg
 medium =
     set (\attributes -> { attributes | size = Medium })
@@ -387,15 +390,22 @@ disabled value =
 -}
 appearsInline : Attribute msg
 appearsInline =
-    css
-        [ Css.borderBottom3 (Css.px 1) Css.solid Colors.azure
-        , Css.Global.withAttribute "aria-disabled=true" [ Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45 ]
-        , Css.disabled [ Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45 ]
-        , Css.display Css.inline
-        , Css.fontFamily Css.inherit
-        , Css.fontWeight Css.inherit
-        , Css.fontSize Css.inherit
-        ]
+    set
+        (\config ->
+            { config
+                | customStyles =
+                    List.append config.customStyles
+                        [ Css.borderBottom3 (Css.px 1) Css.solid Colors.azure
+                        , Css.Global.withAttribute "aria-disabled=true" [ Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45 ]
+                        , Css.disabled [ Css.borderBottom3 (Css.px 1) Css.solid Colors.gray45 ]
+                        , Css.display Css.inline
+                        , Css.fontFamily Css.inherit
+                        , Css.fontWeight Css.inherit
+                        , Css.fontSize Css.inherit
+                        ]
+                , size = Inherited
+            }
+        )
 
 
 {-| Specifies custom styles for the rightIcon
@@ -695,7 +705,7 @@ type alias ClickableTextAttributes msg =
 defaults : ClickableTextAttributes msg
 defaults =
     { clickableAttributes = ClickableAttributes.init
-    , size = Inherited
+    , size = Medium
     , label = ""
     , icon = Nothing
     , iconStyles = []

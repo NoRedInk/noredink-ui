@@ -146,15 +146,18 @@ hint = 'upgrade to V2'
 usages = ['component-catalog/../src/Nri/Ui/Block/V1.elm']
 
 [forbidden."Nri.Ui.Mark.V2"]
-hint = 'upgrade to V5'
+hint = 'upgrade to V6'
 usages = ['component-catalog/../src/Nri/Ui/Block/V4.elm']
 
 [forbidden."Nri.Ui.Mark.V3"]
-hint = 'upgrade to V5'
+hint = 'upgrade to V6'
 
 [forbidden."Nri.Ui.Mark.V4"]
-hint = 'upgrade to V5'
+hint = 'upgrade to V6'
 usages = ['component-catalog/../src/Nri/Ui/Block/V5.elm']
+
+[forbidden."Nri.Ui.Mark.V5"]
+hint = 'upgrade to V6'
 
 [forbidden."Nri.Ui.Menu.V1"]
 hint = 'upgrade to V3'

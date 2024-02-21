@@ -1,26 +1,23 @@
-module Debug.Control.View exposing (view)
+module Debug.Control.View exposing (view, viewWithCustomControls)
 
 {-|
 
-@docs view
+@docs view, viewWithCustomControls
 
 -}
 
 import Css exposing (..)
-import Css.Global
 import Css.Media exposing (withMedia)
 import Debug.Control as Control exposing (Control)
 import EllieLink
 import Example
-import ExampleSection
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
-import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Html.V3 exposing (viewIf)
-import Nri.Ui.MediaQuery.V1 exposing (mobile)
+import Nri.Ui.MediaQuery.V1 exposing (mobile, notMobile)
 import Nri.Ui.Spacing.V1 as Spacing
-import Nri.Ui.Text.V6 as Text
 
 
 {-| -}
@@ -37,92 +34,155 @@ view :
     }
     -> Html msg
 view config =
+    viewWithCustomControls
+        { ellieLinkConfig = config.ellieLinkConfig
+        , name = config.name
+        , version = config.version
+        , controls = Control.view config.update config.settings
+        , mainType = config.mainType
+        , extraCode = config.extraCode
+        , renderExample = config.renderExample
+        , exampleCode = config.toExampleCode (Control.currentValue config.settings)
+        }
+
+
+viewWithCustomControls :
+    { ellieLinkConfig : EllieLink.Config
+    , name : String
+    , version : Int
+    , controls : Html msg
+    , mainType : Maybe String
+    , extraCode : List String
+    , renderExample : String -> String
+    , exampleCode : List { sectionName : String, code : String }
+    }
+    -> Html msg
+viewWithCustomControls config =
     let
-        value =
-            Control.currentValue config.settings
-
-        ellieLink =
+        ellieLink example =
             EllieLink.view config.ellieLinkConfig
-
-        exampleCodes =
-            config.toExampleCode value
+                { fullModuleName = Example.fullName config
+                , name = config.name
+                , sectionName = example.sectionName
+                , mainType = config.mainType
+                , extraCode = config.extraCode
+                , renderExample = config.renderExample
+                , code = example.code
+                }
     in
     div
         [ css
-            [ displayFlex
-            , alignItems stretch
-            , Css.flexWrap Css.wrap
-            , Css.property "gap" "10px"
-            , withMedia [ mobile ] [ flexDirection column, alignItems stretch ]
-            , Spacing.pageTopWhitespace
+            [ marginTop Spacing.verticalSpacerPx
+            , displayFlex
+            , withMedia [ mobile ] [ flexDirection column ]
             ]
         ]
-        [ viewSection "Settings"
-            [ div
-                [ css
-                    [ Css.Global.descendants
-                        [ Css.Global.everything [ Fonts.baseFont ]
-                        ]
+        [ Container.view
+            [ Container.html
+                [ Heading.h2 [ Heading.plaintext "Settings" ]
+                , config.controls
+                ]
+            , Container.css
+                [ withMedia [ mobile ]
+                    [ borderBottomLeftRadius zero
+                    , borderBottomRightRadius zero
+                    ]
+                , withMedia [ notMobile ]
+                    [ flexBasis (pct 50)
+                    , flexGrow zero
+                    , flexShrink zero
+                    , paddingRight (px 30)
+                    , borderTopRightRadius zero
+                    , borderBottomRightRadius zero
                     ]
                 ]
-                [ Control.view config.update config.settings ]
             ]
-        , viewIf
-            (\_ -> viewExampleCode ellieLink config exampleCodes)
-            (not (List.isEmpty exampleCodes))
+        , Container.view
+            [ Container.html
+                (case config.exampleCode of
+                    singular :: [] ->
+                        [ div
+                            [ css
+                                [ displayFlex
+                                , flexWrap wrap
+                                , property "gap" "5px"
+                                , justifyContent spaceBetween
+                                ]
+                            ]
+                            [ codeSampleHeading
+                            , ellieLink singular
+                            ]
+                        , viewCode singular.code
+                        ]
+
+                    _ ->
+                        codeSampleHeading
+                            :: List.map (\example -> viewCodeDetails (ellieLink example) example)
+                                config.exampleCode
+                )
+            , Container.css
+                [ padding (px 20)
+                , flexGrow (num 1)
+                , backgroundColor Colors.gray20
+                , withMedia [ mobile ]
+                    [ borderTopLeftRadius zero
+                    , borderTopRightRadius zero
+                    ]
+                , withMedia [ notMobile ]
+                    [ borderTopLeftRadius zero
+                    , borderBottomLeftRadius zero
+                    ]
+                ]
+            ]
         ]
 
 
-viewExampleCode :
-    (EllieLink.SectionExample -> Html msg)
-    ->
-        { component
-            | name : String
-            , version : Int
-            , mainType : Maybe String
-            , extraCode : List String
-            , renderExample : String -> String
-        }
-    -> List { sectionName : String, code : String }
-    -> Html msg
-viewExampleCode ellieLink component values =
-    viewSection "Code Sample" <|
-        Text.smallBodyGray
-            [ Text.plaintext "😎 Configure the \"Settings\" on this page to update the code sample, then paste it into your editor!"
+codeSampleHeading : Html msg
+codeSampleHeading =
+    Heading.h2
+        [ Heading.plaintext "Code Sample"
+        , Heading.css [ color Colors.white ]
+        ]
+
+
+viewCodeDetails : Html msg -> { sectionName : String, code : String } -> Html msg
+viewCodeDetails ellieLink example =
+    details
+        [ css
+            [ paddingTop (px 5)
+            , paddingBottom (px 5)
+            , borderBottom3 (px 1) solid Colors.gray45
+            , firstOfType [ marginTop (px 10) ]
+            , lastChild [ borderWidth zero, paddingBottom zero ]
             ]
-            :: List.concatMap
-                (\example ->
-                    [ details
-                        []
-                        [ summary []
-                            [ Heading.h3
-                                [ Heading.css [ Css.display Css.inline ]
-                                , Heading.plaintext example.sectionName
-                                ]
-                            ]
-                        , ellieLink
-                            { fullModuleName = Example.fullName component
-                            , name = component.name
-                            , sectionName = example.sectionName
-                            , mainType = component.mainType
-                            , extraCode = component.extraCode
-                            , renderExample = component.renderExample
-                            , code = example.code
-                            }
-                        , code
-                            [ css
-                                [ display block
-                                , whiteSpace preWrap
-                                , Css.marginTop (px 8)
-                                ]
-                            ]
-                            [ text example.code ]
-                        ]
-                    ]
-                )
-                values
+        ]
+        [ summary [ css [ color Colors.mustard ] ]
+            [ Heading.h3
+                [ Heading.css [ display inline, color Colors.mustard ]
+                , Heading.plaintext example.sectionName
+                ]
+            ]
+        , div
+            [ css
+                [ displayFlex
+                , flexWrap wrap
+                , property "gap" "5px"
+                , alignItems flexStart
+                , justifyContent spaceBetween
+                ]
+            ]
+            [ viewCode example.code, ellieLink ]
+        ]
 
 
-viewSection : String -> List (Html msg) -> Html msg
-viewSection name =
-    ExampleSection.sectionWithCss name [ flex (int 1) ] (div [])
+viewCode : String -> Html msg
+viewCode code_ =
+    code
+        [ css
+            [ display block
+            , whiteSpace preWrap
+            , marginTop (px 8)
+            , color Colors.mustard
+            ]
+        ]
+        [ text code_ ]
