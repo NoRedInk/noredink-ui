@@ -171,6 +171,10 @@ controlAttributes =
                     ( "TextArea.onBlur " ++ Code.string "Neener neener Blur happened"
                     , TextArea.onBlur (UpdateValue "Neener neener Blur happened")
                     )
+                |> ControlExtra.optionalBoolListItem "onFocus"
+                    ( "TextArea.onFocus " ++ Code.string "Wow, you focused me"
+                    , TextArea.onFocus (UpdateValue "Wow, you focused me")
+                    )
             )
         |> ControlExtra.listItems "Content"
             (Control.list

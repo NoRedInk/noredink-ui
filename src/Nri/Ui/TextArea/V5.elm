@@ -2,7 +2,7 @@ module Nri.Ui.TextArea.V5 exposing
     ( view, generateId
     , Attribute
     , value
-    , onInput, onBlur
+    , onInput, onBlur, onFocus
     , hiddenLabel, visibleLabel
     , css, noMargin
     , standard, writing
@@ -31,6 +31,7 @@ module Nri.Ui.TextArea.V5 exposing
   - Adds guidance and errorMessage support
   - Adds id, custom, nriDescription, testId, css, and noMargin
   - Adds disabled support
+  - Adds onFocus
 
 
 ## The next version of TextArea should:
@@ -64,7 +65,7 @@ custom element, or else autosizing will break! This means doing the following:
 
 ### Event handlers
 
-@docs onInput, onBlur
+@docs onInput, onBlur, onFocus
 
 
 ### Visual behavior
@@ -106,6 +107,7 @@ type alias Config msg =
     , autofocus : Bool
     , onInput : Maybe (String -> msg)
     , onBlur : Maybe msg
+    , onFocus : Maybe msg
     , placeholder : Maybe String
     , noMarginTop : Bool
     , containerCss : List Css.Style
@@ -126,6 +128,7 @@ defaultConfig =
     , autofocus = False
     , onInput = Nothing
     , onBlur = Nothing
+    , onFocus = Nothing
     , placeholder = Nothing
     , noMarginTop = False
     , containerCss = []
@@ -235,7 +238,7 @@ visibleLabel =
     Attribute (\soFar -> { soFar | hideLabel = False })
 
 
-{-| Produce the given `msg` when the field is focused.
+{-| Produce the given `msg` when the input is changed.
 -}
 onInput : (String -> msg) -> Attribute msg
 onInput msg =
@@ -247,6 +250,13 @@ onInput msg =
 onBlur : msg -> Attribute msg
 onBlur msg =
     Attribute (\soFar -> { soFar | onBlur = Just msg })
+
+
+{-| Produce the given `msg` when the field is focused.
+-}
+onFocus : msg -> Attribute msg
+onFocus msg =
+    Attribute (\soFar -> { soFar | onFocus = Just msg })
 
 
 {-| Sets the `autofocus` attribute of the textarea to true.
@@ -385,6 +395,8 @@ view_ label config =
             ([ Maybe.map Events.onInput config.onInput
                 |> Maybe.withDefault Extra.none
              , Maybe.map Events.onBlur config.onBlur
+                |> Maybe.withDefault Extra.none
+             , Maybe.map Events.onFocus config.onFocus
                 |> Maybe.withDefault Extra.none
              , Attributes.value config.value
              , Attributes.disabled config.disabled
