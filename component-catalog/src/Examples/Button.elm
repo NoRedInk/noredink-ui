@@ -86,7 +86,8 @@ example =
             [ li []
                 [ Text.smallBody
                     [ Text.html
-                        [ text "Link type: When the button takes the user to a URL, whether this results in a new page load or whether the URL is a SPA route. (This allows users to do things like copy the URL, open the link in a new tab, etc.  Please use the "
+                        [ strong [] [ text "Link type:" ]
+                        , text " When the button takes the user to a URL, whether this results in a new page load or whether the URL is a SPA route. (This allows users to do things like copy the URL, open the link in a new tab, etc.  Please use the "
                         , ClickableText.link "Assistive technology notification design & development guide"
                             [ ClickableText.linkExternal "https://noredinkaccessibility.screenstepslive.com/a/1651037-assistive-technology-notification-design-development-guide"
                             , ClickableText.appearsInline
