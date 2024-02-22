@@ -20,9 +20,11 @@ import Guidance
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Button.V10 as Button
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
+import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Set exposing (Set)
@@ -75,6 +77,27 @@ example =
         ]
     , about =
         [ Guidance.helpfullyDisabled moduleName
+        , Text.smallBody
+            [ Text.html
+                [ text "Which Button type should you use?"
+                ]
+            ]
+        , ul [ css [ Css.paddingLeft (Css.px 42), Css.margin Css.zero ] ]
+            [ li []
+                [ Text.smallBody
+                    [ Text.html
+                        [ strong [] [ text "Link type:" ]
+                        , text " When the button takes the user to a URL, whether this results in a new page load or whether the URL is a SPA route. (This allows users to do things like copy the URL, open the link in a new tab, etc.  Please use the "
+                        , ClickableText.link "Assistive technology notification design & development guide"
+                            [ ClickableText.linkExternal "https://noredinkaccessibility.screenstepslive.com/a/1651037-assistive-technology-notification-design-development-guide"
+                            , ClickableText.appearsInline
+                            ]
+                        , text " to ensure you're managing the user's focus properly within a SPA.)"
+                        ]
+                    ]
+                ]
+            , li [] [ Text.smallBody [ Text.markdown "**Button type:** When the button performs an action on the same page, or when the button submits a form, even if the form submission ultimately directs the user to a new URL." ] ]
+            ]
         , Guidance.useRadioButtonDotless
         ]
     , view = \ellieLinkConfig state -> [ viewButtonExamples ellieLinkConfig state ]
