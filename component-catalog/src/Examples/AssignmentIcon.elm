@@ -87,6 +87,7 @@ all =
         , ( "gradingAssistantCircled", AssignmentIcon.gradingAssistantCircled, [] )
         , ( "dailyWritingCircled", AssignmentIcon.dailyWritingCircled, [] )
         , ( "novelsCircled", AssignmentIcon.novelsCircled, [] )
+        , ( "textsCircled", AssignmentIcon.textsCircled, [] )
         ]
       )
     , ( "Stages"

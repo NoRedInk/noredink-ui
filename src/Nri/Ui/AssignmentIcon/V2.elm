@@ -3,7 +3,7 @@ module Nri.Ui.AssignmentIcon.V2 exposing
     , practice, practiceCircled
     , quiz, quizCircled, passageQuizCircled
     , quickWrite, guidedDraft, peerReview, selfReview, dailyWriting, novels, texts
-    , quickWriteCircled, guidedDraftCircled, peerReviewCircled, selfReviewCircled, dailyWritingCircled, novelsCircled, gradingAssistantCircled
+    , quickWriteCircled, guidedDraftCircled, peerReviewCircled, selfReviewCircled, dailyWritingCircled, novelsCircled, gradingAssistantCircled, textsCircled
     , submitting, rating, revising
     , startPrimary, startSecondary
     , assessment, standards, writing, modules
@@ -255,6 +255,7 @@ novels =
         ]
 
 
+{-| -}
 texts : Nri.Ui.Svg.V1.Svg
 texts =
     Nri.Ui.Svg.V1.init "0 0 20 20"
@@ -687,3 +688,26 @@ novelsCircled =
             ]
     in
     encircle 60 toIcon
+
+
+{-| -}
+textsCircled : Nri.Ui.Svg.V1.Svg
+textsCircled =
+    let
+        toIcon circle =
+            [ circle
+            , Svg.path
+                [ Attributes.d "M10 2.4997C14.1252 2.4997 17.5003 5.87484 17.5003 10C17.5003 14.1252 14.1252 17.5003 10 17.5003C5.87484 17.5003 2.4997 14.1252 2.4997 10C2.4997 5.87484 5.87484 2.4997 10 2.4997ZM10 0C4.50018 0 0 4.50018 0 10C0 15.4998 4.50018 20 10 20C15.4998 20 20 15.4998 20 10C20 4.50018 15.4998 0 10 0Z"
+                , Attributes.fill "#FFF"
+                , Attributes.transform "translate(2 2)"
+                ]
+                []
+            , Svg.path
+                [ Attributes.d "M8.12495 8.12492L6.24988 13.7501L11.8751 11.8751L13.7502 6.24985L8.12495 8.12492Z"
+                , Attributes.fill "#FFF"
+                , Attributes.transform "translate(2 2)"
+                ]
+                []
+            ]
+    in
+    encircle 24 toIcon
