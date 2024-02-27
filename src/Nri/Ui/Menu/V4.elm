@@ -8,6 +8,7 @@ module Nri.Ui.Menu.V4 exposing
     , navMenuList, disclosure, dialog
     , menuWidth, menuId, menuZIndex
     , alignLeft, alignRight
+    , containerCss
     , Entry, group, entry
     )
 
@@ -51,6 +52,7 @@ A togglable menu view and related buttons.
 @docs navMenuList, disclosure, dialog
 @docs menuWidth, menuId, menuZIndex
 @docs alignLeft, alignRight
+@docs containerCss
 
 
 ## Menu content
@@ -97,6 +99,7 @@ type alias MenuConfig msg =
     , opensOnHover : Bool
     , purpose : Purpose
     , tooltipAttributes : List (Tooltip.Attribute msg)
+    , containerCss : List Style
     }
 
 
@@ -113,6 +116,7 @@ defaultConfig =
     , opensOnHover = False
     , purpose = NavMenu
     , tooltipAttributes = []
+    , containerCss = []
     }
 
 
@@ -152,6 +156,13 @@ Right (this property) is the default behavior.
 alignRight : Attribute msg
 alignRight =
     Attribute <| \config -> { config | alignment = Right }
+
+
+{-| Adds CSS to the element containing the menu.
+-}
+containerCss : List Css.Style -> Attribute msg
+containerCss styles =
+    Attribute <| \config -> { config | containerCss = config.containerCss ++ styles }
 
 
 {-| Whether the menu is open
@@ -460,7 +471,7 @@ viewCustom focusAndToggle config entries =
                                     }
                             }
                )
-            :: styleContainer
+            :: styleContainer config.containerCss
         )
         [ if config.isOpen then
             div
@@ -895,14 +906,14 @@ styleContent contentVisible config =
         ]
 
 
-styleContainer : List (Html.Attribute msg)
-styleContainer =
+styleContainer : List Style -> List (Html.Attribute msg)
+styleContainer styles =
     [ class "Container"
     , AttributesExtra.nriDescription "Nri-Ui-Menu-V4"
-    , css
-        [ position relative
-        , display inlineBlock
-        ]
+    , css <|
+        position relative
+            :: display inlineBlock
+            :: styles
     ]
 
 
