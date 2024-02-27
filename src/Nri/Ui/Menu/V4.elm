@@ -8,7 +8,7 @@ module Nri.Ui.Menu.V4 exposing
     , navMenuList, disclosure, dialog
     , menuWidth, menuId, menuZIndex
     , alignLeft, alignRight
-    , containerCss
+    , containerCss, groupContainerCss, entryContainerCss
     , Entry, group, entry
     )
 
@@ -19,7 +19,7 @@ module Nri.Ui.Menu.V4 exposing
   - Adjust disabled styles
   - when the Menu is a dialog or disclosure, _don't_ add role menuitem to the entries
   - Use ClickableText.medium as the default size when the trigger is `Menu.clickableText`
-  - Adds containerCss to customize the style of the menu container
+  - Adds containerCss, groupContainerCss, and entryContainerCss to customize the style of the respective containers
 
 Changes from V3:
 
@@ -53,7 +53,7 @@ A togglable menu view and related buttons.
 @docs navMenuList, disclosure, dialog
 @docs menuWidth, menuId, menuZIndex
 @docs alignLeft, alignRight
-@docs containerCss
+@docs containerCss, groupContainerCss, entryContainerCss
 
 
 ## Menu content
@@ -101,6 +101,8 @@ type alias MenuConfig msg =
     , purpose : Purpose
     , tooltipAttributes : List (Tooltip.Attribute msg)
     , containerCss : List Style
+    , groupContainerCss : List Style
+    , entryContainerCss : List Style
     }
 
 
@@ -118,6 +120,8 @@ defaultConfig =
     , purpose = NavMenu
     , tooltipAttributes = []
     , containerCss = []
+    , groupContainerCss = []
+    , entryContainerCss = []
     }
 
 
@@ -164,6 +168,21 @@ alignRight =
 containerCss : List Css.Style -> Attribute msg
 containerCss styles =
     Attribute <| \config -> { config | containerCss = config.containerCss ++ styles }
+
+
+{-| Adds CSS to the element containing the group.
+-}
+groupContainerCss : List Css.Style -> Attribute msg
+groupContainerCss styles =
+    Attribute <| \config -> { config | groupContainerCss = config.groupContainerCss ++ styles }
+
+
+{-| Adds CSS to the element containing the entry.
+I think this is Single in the Entry type.
+-}
+entryContainerCss : List Css.Style -> Attribute msg
+entryContainerCss styles =
+    Attribute <| \config -> { config | entryContainerCss = config.entryContainerCss ++ styles }
 
 
 {-| Whether the menu is open
@@ -730,13 +749,15 @@ viewEntry config focusAndToggle { upId, downId, entry_ } =
             entryContainer
                 [ class "MenuEntryContainer"
                 , css
-                    [ padding2 (px 5) zero
-                    , position relative
-                    , firstChild
+                    ([ padding2 (px 5) zero
+                     , position relative
+                     , firstChild
                         [ paddingTop zero ]
-                    , lastChild
+                     , lastChild
                         [ paddingBottom zero ]
-                    ]
+                     ]
+                        ++ config.entryContainerCss
+                    )
                 ]
                 [ view_
                     [ case config.purpose of
@@ -776,7 +797,7 @@ viewEntry config focusAndToggle { upId, downId, entry_ } =
                     Html.text ""
 
                 _ ->
-                    fieldset styleGroupContainer <|
+                    fieldset (styleGroupContainer config.groupContainerCss) <|
                         legend styleGroupTitle
                             [ span (styleGroupTitleText config) [ Html.text title ] ]
                             :: viewEntries config
@@ -833,17 +854,19 @@ styleGroupTitleText config =
     ]
 
 
-styleGroupContainer : List (Html.Attribute msg)
-styleGroupContainer =
+styleGroupContainer : List Style -> List (Html.Attribute msg)
+styleGroupContainer styles =
     [ class "GroupContainer"
     , css
-        [ margin zero
-        , padding zero
-        , paddingBottom (px 15)
-        , border zero
-        , lastChild
+        ([ margin zero
+         , padding zero
+         , paddingBottom (px 15)
+         , border zero
+         , lastChild
             [ paddingBottom zero ]
-        ]
+         ]
+            ++ styles
+        )
     ]
 
 
