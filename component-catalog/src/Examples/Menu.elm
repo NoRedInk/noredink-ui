@@ -830,6 +830,54 @@ initSettingAttributes =
             (Control.list
                 |> ControlExtra.optionalListItem "alignment" controlAlignment
                 |> ControlExtra.optionalListItem "menuWidth" controlMenuWidth
+                |> ControlExtra.optionalListItem "containerCss"
+                    (Control.choice
+                        [ ( "max-width with border"
+                        , Control.value
+                                ( "Menu.containerCss [ maxWidth (px 200), border3 (px 1) solid red ]"
+                                , Menu.containerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]
+                                )
+                        )
+                        , ( "10px right margin"
+                        , Control.value
+                                ( "Menu.containerCss [ marginRight (px 10) ]"
+                                , Menu.containerCss [ Css.marginRight (Css.px 10) ]
+                                )
+                        )
+                        ]
+                    )
+                |> ControlExtra.optionalListItem "groupContainerCss"
+                    (Control.choice
+                        [ ( "max-width with border"
+                        , Control.value
+                                ( "Menu.groupContainerCss [ maxWidth (px 200), border3 (px 1) solid red ]"
+                                , Menu.groupContainerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]
+                                )
+                        )
+                        , ( "10px right margin"
+                        , Control.value
+                                ( "Menu.groupContainerCss [ marginRight (px 10) ]"
+                                , Menu.groupContainerCss [ Css.marginRight (Css.px 10) ]
+                                )
+                        )
+                        ]
+                    )
+                |> ControlExtra.optionalListItem "entryContainerCss"
+                    (Control.choice
+                        [ ( "max-width with border"
+                        , Control.value
+                                ( "Menu.entryContainerCss [ maxWidth (px 200), border3 (px 1) solid red ]"
+                                , Menu.entryContainerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]
+                                )
+                        )
+                        , ( "10px right margin"
+                        , Control.value
+                                ( "Menu.entryContainerCss [ marginRight (px 10) ]"
+                                , Menu.entryContainerCss [ Css.marginRight (Css.px 10) ]
+                                )
+                        )
+                        ]
+                    )
             )
         |> ControlExtra.listItems "triggering element"
             (Control.list
