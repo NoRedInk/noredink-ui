@@ -170,15 +170,14 @@ containerCss styles =
     Attribute <| \config -> { config | containerCss = config.containerCss ++ styles }
 
 
-{-| Adds CSS to the element containing the group.
+{-| Adds CSS to the element containing the group. This will style items created via Menu.group
 -}
 groupContainerCss : List Css.Style -> Attribute msg
 groupContainerCss styles =
     Attribute <| \config -> { config | groupContainerCss = config.groupContainerCss ++ styles }
 
 
-{-| Adds CSS to the element containing the entry.
-I think this is Single in the Entry type.
+{-| Adds CSS to the element containing the entry. This will style items created via Menu.entry
 -}
 entryContainerCss : List Css.Style -> Attribute msg
 entryContainerCss styles =
