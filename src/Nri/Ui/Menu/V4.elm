@@ -19,6 +19,7 @@ module Nri.Ui.Menu.V4 exposing
   - Adjust disabled styles
   - when the Menu is a dialog or disclosure, _don't_ add role menuitem to the entries
   - Use ClickableText.medium as the default size when the trigger is `Menu.clickableText`
+  - Adds containerCss to customize the style of the menu container
 
 Changes from V3:
 
