@@ -141,6 +141,35 @@ view ellieLinkConfig state =
         (List.map Tuple.second settings.navAttributes)
         (List.map Tuple.second settings.entries)
     , Heading.h2
+        [ Heading.plaintext "Basic example"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
+    , SideNav.view
+        { isCurrentRoute = \route -> route == "nested-example__grandchild-2"
+        , routeToString = identity
+        , onSkipNav = SkipToContent
+        }
+        [ SideNav.navLabel "Nested example"
+        , SideNav.navId "nested-example-sidenav"
+        ]
+        [
+            SideNav.entryWithChildren "Entry with Children"
+                [ ]
+                [ SideNav.entry "Child 1"
+                    [ SideNav.href "nested-example__child-1"
+                    ]
+                , SideNav.entryWithChildren "Child 2"
+                    [ ]
+                    [ SideNav.entry "Grandchild 1"
+                        [ SideNav.href "nested-example__grandchild-1"
+                        ]
+                    , SideNav.entry "Grandchild 2"
+                        [ SideNav.href "nested-example__grandchild-2"
+                        ]
+                    ]
+                ]
+        ]
+    , Heading.h2
         [ Heading.plaintext "Complex example"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
