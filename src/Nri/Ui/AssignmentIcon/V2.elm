@@ -2,8 +2,8 @@ module Nri.Ui.AssignmentIcon.V2 exposing
     ( diagnostic, planningDiagnosticCircled, unitDiagnosticCircled
     , practice, practiceCircled
     , quiz, quizCircled, passageQuizCircled
-    , quickWrite, guidedDraft, peerReview, selfReview, dailyWriting, novels
-    , quickWriteCircled, guidedDraftCircled, peerReviewCircled, selfReviewCircled, dailyWritingCircled, novelsCircled, gradingAssistantCircled
+    , quickWrite, guidedDraft, peerReview, selfReview, dailyWriting, novels, texts
+    , quickWriteCircled, guidedDraftCircled, peerReviewCircled, selfReviewCircled, dailyWritingCircled, novelsCircled, gradingAssistantCircled, textsCircled
     , submitting, rating, revising
     , startPrimary, startSecondary
     , assessment, standards, writing, modules
@@ -26,8 +26,8 @@ module Nri.Ui.AssignmentIcon.V2 exposing
 
 # Writing
 
-@docs quickWrite, guidedDraft, peerReview, selfReview, dailyWriting, novels
-@docs quickWriteCircled, guidedDraftCircled, peerReviewCircled, selfReviewCircled, dailyWritingCircled, novelsCircled, gradingAssistantCircled
+@docs quickWrite, guidedDraft, peerReview, selfReview, dailyWriting, novels, texts
+@docs quickWriteCircled, guidedDraftCircled, peerReviewCircled, selfReviewCircled, dailyWritingCircled, novelsCircled, gradingAssistantCircled, textsCircled
 
 
 # Stages
@@ -252,6 +252,29 @@ novels =
             , Attributes.d "M3.21249 33.6C3.59687 34.1719 4.37029 34.325 4.94373 33.9438C7.13125 32.4813 9.70293 31.7 12.3345 31.7C14.9658 31.7 17.5377 32.4812 19.7253 33.9438C19.93 34.0813 20.1722 34.1563 20.4191 34.1563H20.5691C20.8191 34.1594 21.066 34.0875 21.2753 33.95C23.4613 32.4828 26.0333 31.7 28.6661 31.7C31.2989 31.7 33.8709 32.4828 36.0569 33.95C36.2632 34.0844 36.5038 34.1563 36.7507 34.1563C37.1194 34.1609 37.4695 34.0031 37.7101 33.725C37.9522 33.4469 38.0585 33.0766 38.0007 32.7125V32.5188V9.37518C38.0007 8.95954 37.7944 8.5705 37.4507 8.33766C34.9554 6.66578 32.0367 5.74078 29.0351 5.6689C26.0335 5.59702 23.0727 6.38138 20.5007 7.93138C17.9272 6.3923 14.9695 5.61574 11.9711 5.69386C8.9742 5.77042 6.06027 6.69854 3.56947 8.36886C3.21791 8.59698 3.00383 8.98762 3.00071 9.40638V32.5V32.7C2.95384 33.0156 3.0304 33.3375 3.21321 33.6L3.21249 33.6ZM35.5001 10.0752V30.7376C31.1517 28.647 26.0845 28.6626 21.7501 30.7814V10.075C23.8267 8.82807 26.2033 8.16871 28.6253 8.16871C31.0473 8.16871 33.4237 8.82807 35.5005 10.075L35.5001 10.0752ZM12.3753 8.2002C14.7956 8.1877 17.1721 8.83612 19.2505 10.0752V30.8C14.9161 28.6812 9.84889 28.6656 5.50049 30.7562V10.0938C7.57549 8.84385 9.95369 8.18449 12.3757 8.18761L12.3753 8.2002Z"
             ]
             []
+        ]
+
+
+{-| -}
+texts : Nri.Ui.Svg.V1.Svg
+texts =
+    Nri.Ui.Svg.V1.init "0 0 24 30"
+        [ Svg.g
+            [ Attributes.stroke "none"
+            , Attributes.strokeWidth "1"
+            , Attributes.fill "none"
+            , Attributes.fillRule "evenodd"
+            ]
+            [ Svg.g
+                [ Attributes.fill "currentcolor"
+                , Attributes.fillRule "nonzero"
+                ]
+                [ Svg.path
+                    [ Attributes.d "M3.33333333,30 L3.33333333,29 L22.3333333,29 L22.3333333,3.33333333 L23.3333333,3.33333333 L23.3333333,30 L3.33333333,30 Z M1.66666667,27.3333333 L20.6666667,27.3333333 L20.6666667,1.66666667 L21.6666667,1.66666667 L21.6666667,28.3333333 L1.66666667,28.3333333 L1.66666667,27.3333333 Z M-3.73034936e-14,0 L20,0 L20,26.6666667 L-3.73034936e-14,26.6666667 L-3.73034936e-14,0 Z M2,22.6666667 L10.6666667,22.6666667 L10.6666667,21.3333333 L2,21.3333333 L2,22.6666667 Z M2,19.3333333 L18,19.3333333 L18,18 L2,18 L2,19.3333333 Z M2,16 L18,16 L18,14.6666667 L2,14.6666667 L2,16 Z M2,12.6666667 L18,12.6666667 L18,11.3333333 L2,11.3333333 L2,12.6666667 Z M2,9.33333333 L18,9.33333333 L18,8 L2,8 L2,9.33333333 Z M2,6 L18,6 L18,4.66666667 L2,4.66666667 L2,6 Z"
+                    ]
+                    []
+                ]
+            ]
         ]
 
 
@@ -671,3 +694,31 @@ novelsCircled =
             ]
     in
     encircle 60 toIcon
+
+
+{-| -}
+textsCircled : Nri.Ui.Svg.V1.Svg
+textsCircled =
+    let
+        toIcon circle =
+            [ circle
+            , Svg.g
+                [ Attributes.stroke "none"
+                , Attributes.strokeWidth "1"
+                , Attributes.fill "none"
+                , Attributes.fillRule "evenodd"
+                , Attributes.transform "translate(11 8)"
+                ]
+                [ Svg.g
+                    [ Attributes.fill "#FFF"
+                    , Attributes.fillRule "nonzero"
+                    ]
+                    [ Svg.path
+                        [ Attributes.d "M3.33333333,30 L3.33333333,29 L22.3333333,29 L22.3333333,3.33333333 L23.3333333,3.33333333 L23.3333333,30 L3.33333333,30 Z M1.66666667,27.3333333 L20.6666667,27.3333333 L20.6666667,1.66666667 L21.6666667,1.66666667 L21.6666667,28.3333333 L1.66666667,28.3333333 L1.66666667,27.3333333 Z M-3.73034936e-14,0 L20,0 L20,26.6666667 L-3.73034936e-14,26.6666667 L-3.73034936e-14,0 Z M2,22.6666667 L10.6666667,22.6666667 L10.6666667,21.3333333 L2,21.3333333 L2,22.6666667 Z M2,19.3333333 L18,19.3333333 L18,18 L2,18 L2,19.3333333 Z M2,16 L18,16 L18,14.6666667 L2,14.6666667 L2,16 Z M2,12.6666667 L18,12.6666667 L18,11.3333333 L2,11.3333333 L2,12.6666667 Z M2,9.33333333 L18,9.33333333 L18,8 L2,8 L2,9.33333333 Z M2,6 L18,6 L18,4.66666667 L2,4.66666667 L2,6 Z"
+                        ]
+                        []
+                    ]
+                ]
+            ]
+    in
+    encircle 46 toIcon
