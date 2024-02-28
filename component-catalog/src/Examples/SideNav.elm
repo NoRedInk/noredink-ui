@@ -145,7 +145,7 @@ view ellieLinkConfig state =
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
     , SideNav.view
-        { isCurrentRoute = \route -> route == "complex-example__child-2"
+        { isCurrentRoute = \route -> route == "complex-example__grandchild-2"
         , routeToString = identity
         , onSkipNav = SkipToContent
         }
@@ -166,6 +166,15 @@ view ellieLinkConfig state =
                 ]
             , SideNav.entry "Child 2"
                 [ SideNav.href "complex-example__child-2"
+                ]
+            , SideNav.entryWithChildren "Child with Children"
+                []
+                [ SideNav.entry "Grandchild 1"
+                    [ SideNav.href "complex-example__grandchild-1"
+                    ]
+                , SideNav.entry "Grandchild 2"
+                    [ SideNav.href "complex-example__grandchild-2"
+                    ]
                 ]
             ]
         , SideNav.compactGroup "Compact Group"
