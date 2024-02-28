@@ -476,7 +476,7 @@ viewSidebarEntry config extraStyles entry_ =
                         [ Attributes.css
                             ([ listStyle none
                              , padding zero
-                             , margin zero
+                             , marginLeft zero |> Css.important
                              ]
                                 ++ extraStyles
                             )
