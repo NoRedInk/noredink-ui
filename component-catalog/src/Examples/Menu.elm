@@ -162,6 +162,7 @@ view ellieLinkConfig state =
             , Code.unionType "Msg"
                 [ "ToggleMenu { focus : Maybe String, isOpen : Bool }"
                 , "ToggleTooltip Bool"
+                , "ConsoleLog String"
                 ]
             ]
         , renderExample = Code.unstyledView
@@ -191,16 +192,62 @@ view ellieLinkConfig state =
                                 )
                                 1
                             ++ Code.listMultiline
-                                [ (Code.fromModule moduleName "entry " ++ Code.string "unique-button-id" ++ " <|")
-                                    ++ Code.newlineWithIndent 2
-                                    ++ Code.anonymousFunction "attributes"
-                                        (Code.newlineWithIndent 2
-                                            ++ (Code.fromModule "ClickableText" "button " ++ Code.string "Button")
+                                [ case (Control.currentValue state.settings).entriesKind of
+                                    Single ->
+                                        (Code.fromModule moduleName "entry " ++ Code.string "unique-button-id" ++ " <|")
+                                            ++ Code.newlineWithIndent 2
+                                            ++ Code.anonymousFunction "attributes"
+                                                (Code.newlineWithIndent 3
+                                                    ++ (Code.fromModule "ClickableText" "button " ++ Code.string "Button")
+                                                    ++ Code.listMultiline
+                                                        [ Code.fromModule "ClickableText" "custom" ++ " attributes"
+                                                        ]
+                                                        4
+                                                )
+
+                                    Group ->
+                                        (Code.fromModule moduleName "group " ++ Code.string "customizable-example")
                                             ++ Code.listMultiline
-                                                [ Code.fromModule "ClickableText" "custom" ++ " attributes"
+                                                [ (Code.fromModule moduleName "entry " ++ Code.string "gift-button" ++ " <|")
+                                                    ++ Code.newlineWithIndent 3
+                                                    ++ Code.anonymousFunction "attrs"
+                                                        (Code.newlineWithIndent 4
+                                                            ++ Code.fromModule "ClickableText" "button "
+                                                            ++ Code.string "gift-button"
+                                                            ++ Code.listMultiline
+                                                                [ Code.fromModule "ClickableText" "onClick" ++ " (ConsoleLog " ++ Code.string "Gift" ++ ")"
+                                                                , Code.fromModule "ClickableText" "custom" ++ " attrs"
+                                                                , Code.fromModule "ClickableText" "icon" ++ " UiIcon.gift"
+                                                                ]
+                                                                5
+                                                        )
+                                                , (Code.fromModule moduleName "entry " ++ Code.string "null-button" ++ " <|")
+                                                    ++ Code.newlineWithIndent 3
+                                                    ++ Code.anonymousFunction "attrs"
+                                                        (Code.newlineWithIndent 4
+                                                            ++ Code.fromModule "ClickableText" "button "
+                                                            ++ Code.string "Nope!"
+                                                            ++ Code.listMultiline
+                                                                [ Code.fromModule "ClickableText" "onClick" ++ " (ConsoleLog " ++ Code.string "Nope!" ++ ")"
+                                                                , Code.fromModule "ClickableText" "custom" ++ " attrs"
+                                                                , Code.fromModule "ClickableText" "icon" ++ " UiIcon.null"
+                                                                ]
+                                                                5
+                                                        )
+                                                , (Code.fromModule moduleName "entry " ++ Code.string "no-icon-button" ++ " <|")
+                                                    ++ Code.newlineWithIndent 3
+                                                    ++ Code.anonymousFunction "attrs"
+                                                        (Code.newlineWithIndent 4
+                                                            ++ Code.fromModule "ClickableText" "button "
+                                                            ++ Code.string "Skip"
+                                                            ++ Code.listMultiline
+                                                                [ Code.fromModule "ClickableText" "onClick" ++ " (ConsoleLog " ++ Code.string "Skip" ++ ")"
+                                                                , Code.fromModule "ClickableText" "custom" ++ " attrs"
+                                                                ]
+                                                                5
+                                                        )
                                                 ]
-                                                3
-                                        )
+                                                2
                                 ]
                                 1
                 in
@@ -230,11 +277,37 @@ view ellieLinkConfig state =
                 ++ Menu.isOpen (isOpen "interactiveExample")
                 :: menuAttributes
             )
-            [ Menu.entry "customizable-example" <|
-                \attrs ->
-                    ClickableText.button "Button"
-                        [ ClickableText.onClick (ConsoleLog "Interactive example")
-                        , ClickableText.custom attrs
+            [ case (Control.currentValue state.settings).entriesKind of
+                Single ->
+                    Menu.entry "customizable-example" <|
+                        \attrs ->
+                            ClickableText.button "Button"
+                                [ ClickableText.onClick (ConsoleLog "Interactive example")
+                                , ClickableText.custom attrs
+                                ]
+
+                Group ->
+                    Menu.group "customizable-example"
+                        [ Menu.entry "gift-button" <|
+                            \attrs ->
+                                ClickableText.button "Gift"
+                                    [ ClickableText.onClick (ConsoleLog "Gift")
+                                    , ClickableText.custom attrs
+                                    , ClickableText.icon UiIcon.gift
+                                    ]
+                        , Menu.entry "null-buttonn" <|
+                            \attrs ->
+                                ClickableText.button "Nope!"
+                                    [ ClickableText.onClick (ConsoleLog "Nope!")
+                                    , ClickableText.custom attrs
+                                    , ClickableText.icon UiIcon.null
+                                    ]
+                        , Menu.entry "no-icon-button" <|
+                            \attrs ->
+                                ClickableText.button "Skip"
+                                    [ ClickableText.onClick (ConsoleLog "Skip")
+                                    , ClickableText.custom attrs
+                                    ]
                         ]
             ]
         ]
@@ -810,9 +883,15 @@ type alias State =
     }
 
 
+type EntriesKind
+    = Single
+    | Group
+
+
 type alias Settings =
     { attributes : List ( String, Menu.Attribute Msg )
     , withTooltip : Bool
+    , entriesKind : EntriesKind
     }
 
 
@@ -821,6 +900,12 @@ initSettings =
     Control.record Settings
         |> Control.field "" initSettingAttributes
         |> Control.field "withTooltip" (Control.bool False)
+        |> Control.field "entriesKind"
+            (Control.choice
+                [ ( "Single", Control.value Single )
+                , ( "Group", Control.value Group )
+                ]
+            )
 
 
 initSettingAttributes : Control (List ( String, Menu.Attribute Msg ))
@@ -830,6 +915,54 @@ initSettingAttributes =
             (Control.list
                 |> ControlExtra.optionalListItem "alignment" controlAlignment
                 |> ControlExtra.optionalListItem "menuWidth" controlMenuWidth
+                |> ControlExtra.optionalListItem "containerCss"
+                    (Control.choice
+                        [ ( "max-width with border"
+                          , Control.value
+                                ( "Menu.containerCss [ maxWidth (px 200), border3 (px 1) solid red ]"
+                                , Menu.containerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]
+                                )
+                          )
+                        , ( "10px right margin"
+                          , Control.value
+                                ( "Menu.containerCss [ marginRight (px 10) ]"
+                                , Menu.containerCss [ Css.marginRight (Css.px 10) ]
+                                )
+                          )
+                        ]
+                    )
+                |> ControlExtra.optionalListItem "groupContainerCss"
+                    (Control.choice
+                        [ ( "max-width with border"
+                          , Control.value
+                                ( "Menu.groupContainerCss [ maxWidth (px 200), border3 (px 1) solid red ]"
+                                , Menu.groupContainerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]
+                                )
+                          )
+                        , ( "10px right margin"
+                          , Control.value
+                                ( "Menu.groupContainerCss [ marginRight (px 10) ]"
+                                , Menu.groupContainerCss [ Css.marginRight (Css.px 10) ]
+                                )
+                          )
+                        ]
+                    )
+                |> ControlExtra.optionalListItem "entryContainerCss"
+                    (Control.choice
+                        [ ( "max-width with border"
+                          , Control.value
+                                ( "Menu.entryContainerCss [ maxWidth (px 200), border3 (px 1) solid red ]"
+                                , Menu.entryContainerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]
+                                )
+                          )
+                        , ( "10px right margin"
+                          , Control.value
+                                ( "Menu.entryContainerCss [ marginRight (px 10) ]"
+                                , Menu.entryContainerCss [ Css.marginRight (Css.px 10) ]
+                                )
+                          )
+                        ]
+                    )
             )
         |> ControlExtra.listItems "triggering element"
             (Control.list

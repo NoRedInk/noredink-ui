@@ -30,7 +30,6 @@
             pkgs.elmPackages.elm
             pkgs.elmPackages.elm-format
             pkgs.elmPackages.elm-test
-            pkgs.elmPackages.elm-language-server
             pkgs.elmPackages.elm-verify-examples
             pkgs.elmPackages.elm-review
             pkgs.elmPackages.elm-json
