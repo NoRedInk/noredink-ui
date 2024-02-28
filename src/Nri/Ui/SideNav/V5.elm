@@ -474,12 +474,9 @@ viewSidebarEntry config extraStyles entry_ =
                         ]
                     , ul
                         [ Attributes.css
-                            ([ listStyle none
-                             , padding zero
-                             , marginLeft zero |> Css.important
-                             ]
-                                ++ extraStyles
-                            )
+                            [ listStyle none
+                            , padding zero
+                            ]
                         , Aria.labelledBy id_
                         ]
                         (List.map
