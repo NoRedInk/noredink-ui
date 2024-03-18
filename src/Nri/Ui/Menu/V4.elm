@@ -850,8 +850,7 @@ viewEntry config focusAndToggle { upId, downId, entry_ } =
                                     Text.caption
                                         [ Text.plaintext c
                                         , Text.id captionId
-                                        , Text.css
-                                            [ paddingTop (px 2) ]
+                                        , Text.css <| styleGroupCaption config
                                         ]
                                 )
                                 caption
@@ -909,6 +908,11 @@ styleGroupTitleText config =
         ]
             ++ config.groupTitleCss
     ]
+
+
+styleGroupCaption : MenuConfig msg -> List Style
+styleGroupCaption config =
+    paddingTop (px 2) :: config.groupCaptionCss
 
 
 styleGroupContainer : List Style -> List (Html.Attribute msg)
