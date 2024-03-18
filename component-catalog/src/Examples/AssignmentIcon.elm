@@ -77,6 +77,8 @@ all =
         , ( "dailyWriting", AssignmentIcon.dailyWriting, [] )
         , ( "novels", AssignmentIcon.novels, [] )
         , ( "texts", AssignmentIcon.texts, [] )
+        , ( "genres", AssignmentIcon.genres, [] )
+        , ( "genresCircled", AssignmentIcon.genresCircled, [] )
         ]
       )
     , ( "Writing II"
