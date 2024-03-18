@@ -8,8 +8,8 @@ module Nri.Ui.Menu.V4 exposing
     , navMenuList, disclosure, dialog
     , menuWidth, menuId, menuZIndex
     , alignLeft, alignRight
-    , containerCss, groupContainerCss, entryContainerCss
-    , Entry, group, entry
+    , containerCss, menuCss, groupContainerCss, entryContainerCss, groupTitleCss, groupCaptionCss
+    , Entry, group, captionedGroup, entry
     )
 
 {-| Patch changes:
@@ -19,7 +19,9 @@ module Nri.Ui.Menu.V4 exposing
   - Adjust disabled styles
   - when the Menu is a dialog or disclosure, _don't_ add role menuitem to the entries
   - Use ClickableText.medium as the default size when the trigger is `Menu.clickableText`
-  - Adds containerCss, groupContainerCss, and entryContainerCss to customize the style of the respective containers
+  - Adds containerCss, menuCss, groupContainerCss, and entryContainerCss to customize the style of the respective containers
+  - Adds captionedGroup to create a group with a caption
+  - Adds groupTitleCss and groupCaptionCss to customize the style of the group title and caption
 
 Changes from V3:
 
@@ -53,12 +55,12 @@ A togglable menu view and related buttons.
 @docs navMenuList, disclosure, dialog
 @docs menuWidth, menuId, menuZIndex
 @docs alignLeft, alignRight
-@docs containerCss, groupContainerCss, entryContainerCss
+@docs containerCss, menuCss, groupContainerCss, entryContainerCss, groupTitleCss, groupCaptionCss
 
 
 ## Menu content
 
-@docs Entry, group, entry
+@docs Entry, group, captionedGroup, entry
 
 -}
 
@@ -76,9 +78,11 @@ import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1
-import Nri.Ui.Html.Attributes.V2 as AttributesExtra
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (safeId)
+import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.WhenFocusLeaves.V2 as WhenFocusLeaves
 
@@ -101,8 +105,11 @@ type alias MenuConfig msg =
     , purpose : Purpose
     , tooltipAttributes : List (Tooltip.Attribute msg)
     , containerCss : List Style
+    , menuCss : List Style
     , groupContainerCss : List Style
     , entryContainerCss : List Style
+    , groupTitleCss : List Style
+    , groupCaptionCss : List Style
     }
 
 
@@ -120,8 +127,11 @@ defaultConfig =
     , purpose = NavMenu
     , tooltipAttributes = []
     , containerCss = []
+    , menuCss = []
     , groupContainerCss = []
     , entryContainerCss = []
+    , groupTitleCss = []
+    , groupCaptionCss = []
     }
 
 
@@ -170,6 +180,13 @@ containerCss styles =
     Attribute <| \config -> { config | containerCss = config.containerCss ++ styles }
 
 
+{-| Adds CSS to the content of the menu. This will style the menu itself.
+-}
+menuCss : List Css.Style -> Attribute msg
+menuCss styles =
+    Attribute <| \config -> { config | menuCss = config.menuCss ++ styles }
+
+
 {-| Adds CSS to the element containing the group. This will style items created via Menu.group
 -}
 groupContainerCss : List Css.Style -> Attribute msg
@@ -182,6 +199,20 @@ groupContainerCss styles =
 entryContainerCss : List Css.Style -> Attribute msg
 entryContainerCss styles =
     Attribute <| \config -> { config | entryContainerCss = config.entryContainerCss ++ styles }
+
+
+{-| Adds CSS to the element containing the group title. This will style the title of items created via Menu.group
+-}
+groupTitleCss : List Css.Style -> Attribute msg
+groupTitleCss styles =
+    Attribute <| \config -> { config | groupTitleCss = config.groupTitleCss ++ styles }
+
+
+{-| Adds CSS to the element containing the group caption. This will style the caption of items created via Menu.captionedGroup
+-}
+groupCaptionCss : List Css.Style -> Attribute msg
+groupCaptionCss styles =
+    Attribute <| \config -> { config | groupCaptionCss = config.groupCaptionCss ++ styles }
 
 
 {-| Whether the menu is open
@@ -299,14 +330,21 @@ view focusAndToggle attributes entries =
 -}
 type Entry msg
     = Single String (List (Html.Attribute msg) -> Html msg)
-    | Batch String (List (Entry msg))
+    | Batch String (Maybe String) (List (Entry msg))
 
 
 {-| Represents a group of entries with a named legend.
 -}
 group : String -> List (Entry msg) -> Entry msg
 group legendName entries =
-    Batch legendName entries
+    Batch legendName Nothing entries
+
+
+{-| Represents a group of entries with a named legend and text caption.
+-}
+captionedGroup : String -> String -> List (Entry msg) -> Entry msg
+captionedGroup legendName caption entries =
+    Batch legendName (Just caption) entries
 
 
 {-| Represents a single **focusable** entry.
@@ -678,7 +716,7 @@ getFirstIds entries =
                 Single idString _ ->
                     Just idString
 
-                Batch _ es ->
+                Batch _ _ es ->
                     Maybe.andThen getIdString (List.head es)
     in
     List.filterMap getIdString entries
@@ -692,7 +730,7 @@ getLastIds entries =
                 Single idString _ ->
                     Just idString
 
-                Batch _ es ->
+                Batch _ _ es ->
                     Maybe.andThen getIdString (List.head (List.reverse es))
     in
     List.filterMap getIdString (List.reverse entries)
@@ -790,15 +828,34 @@ viewEntry config focusAndToggle { upId, downId, entry_ } =
                     ]
                 ]
 
-        Batch title childList ->
+        Batch title caption childList ->
+            let
+                captionId =
+                    safeId (title ++ "--caption")
+            in
             case childList of
                 [] ->
                     Html.text ""
 
                 _ ->
                     fieldset (styleGroupContainer config.groupContainerCss) <|
-                        legend styleGroupTitle
-                            [ span (styleGroupTitleText config) [ Html.text title ] ]
+                        div [ css [ flexGrow (int 1) ] ]
+                            [ legend styleGroupTitle
+                                [ span
+                                    (Aria.describedBy [ captionId ] :: styleGroupTitleText config)
+                                    [ Html.text title ]
+                                ]
+                            , viewJust
+                                (\c ->
+                                    Text.caption
+                                        [ Text.plaintext c
+                                        , Text.id captionId
+                                        , Text.css
+                                            [ paddingTop (px 2) ]
+                                        ]
+                                )
+                                caption
+                            ]
                             :: viewEntries config
                                 { focusAndToggle = focusAndToggle
                                 , previousId = upId
@@ -845,11 +902,12 @@ styleGroupTitle =
 styleGroupTitleText : MenuConfig msg -> List (Html.Attribute msg)
 styleGroupTitleText config =
     [ class "GroupTitleText"
-    , css
+    , css <|
         [ backgroundColor Colors.white
         , zIndex (int <| config.zIndex + 1)
         , position relative
         ]
+            ++ config.groupTitleCss
     ]
 
 
@@ -885,7 +943,7 @@ styleOuterContent _ config =
 
 styleContent : Bool -> MenuConfig msg -> Html.Attribute msg
 styleContent contentVisible config =
-    css
+    css <|
         [ padding (px 25)
         , margin zero
         , border3 (px 1) solid Colors.gray85
@@ -927,6 +985,7 @@ styleContent contentVisible config =
           else
             display Css.none
         ]
+            ++ config.menuCss
 
 
 styleContainer : List Style -> List (Html.Attribute msg)
