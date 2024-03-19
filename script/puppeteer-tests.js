@@ -321,7 +321,7 @@ describe("UI tests", function () {
 
     page.close();
   });
-  
+
   it("MediaQuery.builder", async function () {
     page = await browser.newPage();
 
@@ -330,11 +330,15 @@ describe("UI tests", function () {
     ]);
 
     handlePageErrors(page);
-    await page.goto(`http://localhost:${PORT}/#/usage_example/MediaQueryBuilder`);
+    await page.goto(
+      `http://localhost:${PORT}/#/usage_example/MediaQueryBuilder`
+    );
 
     await page.$("#maincontent");
-    await percySnapshot(page, this.test.fullTitle(), { widths: [500, 750, 1000, 1024] });
+    await percySnapshot(page, this.test.fullTitle(), {
+      widths: [500, 750, 1000, 1024],
+    });
 
     page.close();
-  })
+  });
 });
