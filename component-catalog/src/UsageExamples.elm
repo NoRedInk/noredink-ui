@@ -4,6 +4,7 @@ import UsageExample exposing (UsageExample)
 import UsageExamples.ClickableCardWithTooltip as ClickableCardWithTooltip
 import UsageExamples.FocusLoop as FocusLoop
 import UsageExamples.Form as Form
+import UsageExamples.MediaQueryBuilder as MediaQueryBuilder
 
 
 all : List (UsageExample State Msg)
@@ -65,6 +66,9 @@ all =
                     _ ->
                         Nothing
             )
+    , MediaQueryBuilder.example
+        |> UsageExample.noop NoOp
+        |> UsageExample.stateless Stateless
     ]
 
 
@@ -72,9 +76,11 @@ type State
     = ClickableCardWithTooltipState ClickableCardWithTooltip.State
     | FormState Form.State
     | FocusLoopState FocusLoop.State
+    | Stateless
 
 
 type Msg
     = ClickableCardWithTooltipMsg ClickableCardWithTooltip.Msg
     | FormMsg Form.Msg
     | FocusLoopMsg FocusLoop.Msg
+    | NoOp

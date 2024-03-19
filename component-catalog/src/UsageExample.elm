@@ -1,4 +1,4 @@
-module UsageExample exposing (UsageExample, fromRouteName, fullName, preview, routeName, view, wrapMsg, wrapState)
+module UsageExample exposing (UsageExample, fromRouteName, fullName, noop, preview, routeName, stateless, view, wrapMsg, wrapState)
 
 import Category exposing (Category)
 import Css
@@ -42,6 +42,11 @@ fromRouteName name =
     String.replace "-" " " name
 
 
+noop : noop -> UsageExample state msg -> UsageExample state noop
+noop msg =
+    wrapMsg (always msg) (always Nothing)
+
+
 wrapMsg :
     (msg -> msg2)
     -> (msg2 -> Maybe msg)
@@ -67,6 +72,11 @@ wrapMsg wrapMsg_ unwrapMsg example =
     , about = example.about
     , categories = example.categories
     }
+
+
+stateless : stateless -> UsageExample () msg -> UsageExample stateless msg
+stateless state =
+    wrapState (always state) (always (Just ()))
 
 
 wrapState :
