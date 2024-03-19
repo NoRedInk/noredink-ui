@@ -321,4 +321,20 @@ describe("UI tests", function () {
 
     page.close();
   });
+  
+  it("MediaQuery.builder", async function () {
+    page = await browser.newPage();
+
+    await page.emulateMediaFeatures([
+      { name: "prefers-reduced-motion", value: "reduce" },
+    ]);
+
+    handlePageErrors(page);
+    await page.goto(`http://localhost:${PORT}/#/usage_example/MediaQueryBuilder`);
+
+    await page.$("#maincontent");
+    await percySnapshot(page, this.test.fullTitle(), { widths: [500, 750, 1000, 1024] });
+
+    page.close();
+  })
 });
