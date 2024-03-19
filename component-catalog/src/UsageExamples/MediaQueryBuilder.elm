@@ -7,7 +7,7 @@ module UsageExamples.MediaQueryBuilder exposing (example)
 -}
 
 import Category
-import Css exposing (backgroundColor, before, color, fontFamily, fontSize, property, px, sansSerif)
+import Css exposing (before, property)
 import Html.Styled exposing (..)
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.MediaQuery.V1 as MediaQuery
@@ -37,9 +37,7 @@ view =
         [ Container.buttony
         , Container.css
             (MediaQuery.builder
-                [ content "I am the base style, visible to all devices"
-                , fontFamily sansSerif
-                ]
+                [ content "I am the base style, visible to all devices" ]
                 |> MediaQuery.onNarrowMobile
                     [ content "I am the narrow mobile style, visible only to screens" ]
                 |> MediaQuery.onQuizEngineMobile
