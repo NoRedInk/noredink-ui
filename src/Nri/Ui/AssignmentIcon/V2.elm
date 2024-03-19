@@ -2,7 +2,7 @@ module Nri.Ui.AssignmentIcon.V2 exposing
     ( diagnostic, planningDiagnosticCircled, unitDiagnosticCircled
     , practice, practiceCircled
     , quiz, quizCircled, passageQuizCircled
-    , quickWrite, guidedDraft, peerReview, selfReview, dailyWriting, novels, texts
+    , quickWrite, guidedDraft, peerReview, selfReview, dailyWriting, novels, texts, genres, genresCircled
     , quickWriteCircled, guidedDraftCircled, peerReviewCircled, selfReviewCircled, dailyWritingCircled, novelsCircled, gradingAssistantCircled, textsCircled
     , submitting, rating, revising
     , startPrimary, startSecondary
@@ -26,7 +26,7 @@ module Nri.Ui.AssignmentIcon.V2 exposing
 
 # Writing
 
-@docs quickWrite, guidedDraft, peerReview, selfReview, dailyWriting, novels, texts
+@docs quickWrite, guidedDraft, peerReview, selfReview, dailyWriting, novels, texts, genres, genresCircled
 @docs quickWriteCircled, guidedDraftCircled, peerReviewCircled, selfReviewCircled, dailyWritingCircled, novelsCircled, gradingAssistantCircled, textsCircled
 
 
@@ -276,6 +276,52 @@ texts =
                 ]
             ]
         ]
+
+
+{-| -}
+genres : Nri.Ui.Svg.V1.Svg
+genres =
+    Nri.Ui.Svg.V1.init "0 0 17 16"
+        [ Svg.path
+            [ Attributes.fillRule "evenodd"
+            , Attributes.clipRule "evenodd"
+            , Attributes.d "M2.99572 0C1.69416 0 0.638611 1.05555 0.638611 2.35711V13.3574C0.638611 14.659 1.69416 15.7145 2.99572 15.7145H11.6389C12.9405 15.7145 13.9961 14.659 13.9961 13.3574V10.6586L12.626 12.0287C12.5346 12.1193 12.433 12.1989 12.3232 12.2652L10.8758 13.1336C10.2578 13.5041 9.46598 13.4069 8.9562 12.8972C8.44648 12.3874 8.3485 11.5956 8.71975 10.9775L9.58821 9.53012C9.6545 9.41963 9.73405 9.31798 9.82465 9.22738L13.8774 5.17466C13.9149 5.13636 13.9547 5.101 13.996 5.06712V2.3572C13.996 1.05564 12.9404 9.24342e-05 11.6389 9.24342e-05L2.99572 0ZM3.78167 7.07132C3.78167 6.63746 4.13377 6.2861 4.56762 6.2861H6.92473C7.35859 6.2861 7.70995 6.63746 7.70995 7.07132C7.70995 7.50518 7.35859 7.85727 6.92473 7.85727H4.56762C4.13377 7.85727 3.78167 7.50518 3.78167 7.07132ZM4.56762 5.50017C4.13377 5.50017 3.78167 5.14807 3.78167 4.71421C3.78167 4.28036 4.13377 3.929 4.56762 3.929H10.067C10.5009 3.929 10.853 4.28036 10.853 4.71421C10.853 5.14807 10.5009 5.50017 10.067 5.50017H4.56762Z"
+            , Attributes.fill "currentcolor"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M14.4328 5.73003C14.7392 5.42361 15.2371 5.42361 15.5436 5.73003L16.1225 6.30899C16.2698 6.45631 16.3531 6.65668 16.3531 6.86512C16.3531 7.07356 16.2699 7.2732 16.1225 7.42051L12.0698 11.4732C12.0249 11.5182 11.9741 11.5579 11.9188 11.5911L10.4714 12.4595C10.162 12.6452 9.76647 12.5965 9.51162 12.3417C9.25675 12.0861 9.20814 11.6905 9.39376 11.3819L10.2622 9.93449C10.2954 9.87924 10.3344 9.82842 10.3801 9.78275L14.4328 5.73003Z"
+            , Attributes.fill "currentcolor"
+            ]
+            []
+        ]
+
+
+{-| -}
+genresCircled : Nri.Ui.Svg.V1.Svg
+genresCircled =
+    let
+        toIcon circle =
+            [ circle
+            , Svg.g
+                [ Attributes.transform "translate(7.5 7)"
+                ]
+                [ Svg.path
+                    [ Attributes.fillRule "evenodd"
+                    , Attributes.clipRule "evenodd"
+                    , Attributes.d "M2.99572 0C1.69416 0 0.638611 1.05555 0.638611 2.35711V13.3574C0.638611 14.659 1.69416 15.7145 2.99572 15.7145H11.6389C12.9405 15.7145 13.9961 14.659 13.9961 13.3574V10.6586L12.626 12.0287C12.5346 12.1193 12.433 12.1989 12.3232 12.2652L10.8758 13.1336C10.2578 13.5041 9.46598 13.4069 8.9562 12.8972C8.44648 12.3874 8.3485 11.5956 8.71975 10.9775L9.58821 9.53012C9.6545 9.41963 9.73405 9.31798 9.82465 9.22738L13.8774 5.17466C13.9149 5.13636 13.9547 5.101 13.996 5.06712V2.3572C13.996 1.05564 12.9404 9.24342e-05 11.6389 9.24342e-05L2.99572 0ZM3.78167 7.07132C3.78167 6.63746 4.13377 6.2861 4.56762 6.2861H6.92473C7.35859 6.2861 7.70995 6.63746 7.70995 7.07132C7.70995 7.50518 7.35859 7.85727 6.92473 7.85727H4.56762C4.13377 7.85727 3.78167 7.50518 3.78167 7.07132ZM4.56762 5.50017C4.13377 5.50017 3.78167 5.14807 3.78167 4.71421C3.78167 4.28036 4.13377 3.929 4.56762 3.929H10.067C10.5009 3.929 10.853 4.28036 10.853 4.71421C10.853 5.14807 10.5009 5.50017 10.067 5.50017H4.56762Z"
+                    , Attributes.fill "white"
+                    ]
+                    []
+                , Svg.path
+                    [ Attributes.d "M14.4328 5.73003C14.7392 5.42361 15.2371 5.42361 15.5436 5.73003L16.1225 6.30899C16.2698 6.45631 16.3531 6.65668 16.3531 6.86512C16.3531 7.07356 16.2699 7.2732 16.1225 7.42051L12.0698 11.4732C12.0249 11.5182 11.9741 11.5579 11.9188 11.5911L10.4714 12.4595C10.162 12.6452 9.76647 12.5965 9.51162 12.3417C9.25675 12.0861 9.20814 11.6905 9.39376 11.3819L10.2622 9.93449C10.2954 9.87924 10.3344 9.82842 10.3801 9.78275L14.4328 5.73003Z"
+                    , Attributes.fill "white"
+                    ]
+                    []
+                ]
+            ]
+    in
+    encircle 30 toIcon
 
 
 {-| -}

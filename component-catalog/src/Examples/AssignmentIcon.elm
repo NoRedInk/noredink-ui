@@ -77,9 +77,10 @@ all =
         , ( "dailyWriting", AssignmentIcon.dailyWriting, [] )
         , ( "novels", AssignmentIcon.novels, [] )
         , ( "texts", AssignmentIcon.texts, [] )
+        , ( "genres", AssignmentIcon.genres, [] )
         ]
       )
-    , ( "Writing II"
+    , ( "Writing (Circled)"
       , [ ( "quickWriteCircled", AssignmentIcon.quickWriteCircled, [] )
         , ( "guidedDraftCircled", AssignmentIcon.guidedDraftCircled, [] )
         , ( "peerReviewCircled", AssignmentIcon.peerReviewCircled, [] )
@@ -88,6 +89,7 @@ all =
         , ( "dailyWritingCircled", AssignmentIcon.dailyWritingCircled, [] )
         , ( "novelsCircled", AssignmentIcon.novelsCircled, [] )
         , ( "textsCircled", AssignmentIcon.textsCircled, [] )
+        , ( "genresCircled", AssignmentIcon.genresCircled, [] )
         ]
       )
     , ( "Stages"
