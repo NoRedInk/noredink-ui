@@ -72,6 +72,7 @@ import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (class, classList, css)
 import Html.Styled.Events as Events
 import Json.Decode
+import Maybe.Extra as Maybe
 import Nri.Ui.AnimatedIcon.V1 as AnimatedIcon
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
@@ -842,7 +843,9 @@ viewEntry config focusAndToggle { upId, downId, entry_ } =
                         div [ css [ flexGrow (int 1) ] ]
                             [ legend styleGroupTitle
                                 [ span
-                                    (Aria.describedBy [ captionId ] :: styleGroupTitleText config)
+                                    (styleGroupTitleText config
+                                        |> Maybe.cons (Maybe.map (always (Aria.describedBy [ captionId ])) caption)
+                                    )
                                     [ Html.text title ]
                                 ]
                             , viewJust
