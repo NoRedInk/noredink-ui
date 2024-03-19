@@ -3,14 +3,13 @@ module Nri.Ui.MediaQuery.V1 exposing
     , highContrastMode, notHighContrastMode
     , withViewport
     , Builder, builder, toStyles
-    , onMobile, onNarrowMobile, onDesktop
+    , onMobile, onQuizEngineMobile, onNarrowMobile, onDesktop
     , mobile, notMobile
     , mobileBreakpoint
     , quizEngineMobile, notQuizEngineMobile
     , quizEngineBreakpoint
     , narrowMobile, notNarrowMobile
     , narrowMobileBreakpoint
-    , onQuizEngineMobile
     )
 
 {-| Major version changes:
@@ -47,7 +46,7 @@ Standard media queries for responsive pages.
 ### Builder
 
 @docs Builder, builder, toStyles
-@docs onMobile, onQuizEngine, onNarrowMobile, onDesktop
+@docs onMobile, onQuizEngineMobile, onNarrowMobile, onDesktop
 
 
 ### 1000px breakpoint
