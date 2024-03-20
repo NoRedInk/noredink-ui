@@ -95,7 +95,6 @@ import Html.Styled as Root
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Json.Decode
-import List.Extra as List
 import Maybe.Extra as Maybe
 import Nri.Ui
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
