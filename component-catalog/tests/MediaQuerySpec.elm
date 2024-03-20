@@ -1,11 +1,13 @@
 module MediaQuerySpec exposing (suite)
 
 import Css exposing (borderWidth, fontSize, int, order, px)
+import Fuzz exposing (Fuzzer)
 import Html.Styled exposing (div, toUnstyled)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.MediaQuery.V2 as MediaQuery
     exposing
-        ( highContrastMode
+        ( MediaQuery
+        , highContrastMode
         , mobile
         , narrowMobile
         , prefersReducedMotion
@@ -16,27 +18,28 @@ import Test.Html.Query as Query
 import Test.Html.Selector as Selector
 
 
+allQueriesRandomOrderFuzzer : Fuzzer (List MediaQuery)
+allQueriesRandomOrderFuzzer =
+    Fuzz.shuffledList
+        [ MediaQuery.not narrowMobile [ order (int 1) ]
+        , MediaQuery.not quizEngineMobile [ order (int 2) ]
+        , MediaQuery.not mobile [ order (int 3) ]
+        , mobile [ order (int 4) ]
+        , quizEngineMobile [ order (int 5) ]
+        , narrowMobile [ order (int 6) ]
+        , highContrastMode [ order (int -1) ]
+        , MediaQuery.not highContrastMode [ order (int -11) ]
+        , prefersReducedMotion [ order (int -2) ]
+        , MediaQuery.not prefersReducedMotion [ order (int -22) ]
+        ]
+
+
 suite : Test
 suite =
     describe "MediaQuery.builder"
-        [ test "it puts queries in the correct order" <|
-            \() ->
-                div
-                    [ css <|
-                        MediaQuery.toStyles
-                            [ narrowMobile [ order (int 6) ]
-                            , quizEngineMobile [ order (int 5) ]
-                            , mobile [ order (int 4) ]
-                            , MediaQuery.not narrowMobile [ order (int 1) ]
-                            , MediaQuery.not quizEngineMobile [ order (int 2) ]
-                            , MediaQuery.not mobile [ order (int 3) ]
-                            , highContrastMode [ order (int -1) ]
-                            , prefersReducedMotion [ order (int -2) ]
-                            , MediaQuery.not highContrastMode [ order (int -11) ]
-                            , MediaQuery.not prefersReducedMotion [ order (int -22) ]
-                            ]
-                    ]
-                    []
+        [ fuzz allQueriesRandomOrderFuzzer "it puts queries in the correct order" <|
+            \queries ->
+                div [ css <| MediaQuery.toStyles queries ] []
                     |> toUnstyled
                     |> Query.fromHtml
                     |> Query.find [ Selector.tag "style" ]
