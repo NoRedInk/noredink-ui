@@ -658,7 +658,7 @@ You will need to pass in the first and last focusable element in the dialog cont
             }
         , Table.custom
             { header = text "Example"
-            , view = \{ name, menuType, entries } -> forcedOpenExample name menuType entries
+            , view = \{ name, attributes, entries } -> forcedOpenExample name attributes entries
             , width = Css.pct 20
             , cellStyles =
                 \{ name } ->
@@ -707,7 +707,7 @@ You will need to pass in the first and last focusable element in the dialog cont
             }
         ]
         [ { name = "List of entries"
-          , menuType = Menu.navMenuList
+          , attributes = [ Menu.navMenuList ]
           , entries =
                 [ Menu.entry "list-of-entries-clickable-text-entry" <|
                     \attributes ->
@@ -733,7 +733,7 @@ You will need to pass in the first and last focusable element in the dialog cont
           , about = "Pass any interactive elements in using `Menu.entry`."
           }
         , { name = "Grouped entries"
-          , menuType = Menu.navMenuList
+          , attributes = [ Menu.navMenuList ]
           , entries =
                 [ List.range 1 2
                     |> List.map
@@ -771,7 +771,7 @@ The structures are recursive and flexible:
 """
           }
         , { name = "Mix of singular entries and grouped entries"
-          , menuType = Menu.disclosure { lastId = droppedStudentsId }
+          , attributes = [ Menu.disclosure { lastId = droppedStudentsId } ]
           , entries =
                 [ Menu.entry "grades-and-perf" <|
                     \attributes ->
@@ -797,24 +797,102 @@ Please note that depending on the interactive component you select, our composab
 In this realistic example, we can't actually pass the correct attributes to RadioButton or Switch because it will cause the events for those components to be swallowed, rendering them inoperable.
 """
           }
+        , { name = "Custom CSS"
+          , attributes =
+                [ Menu.disclosure { lastId = "which-should-i-choose" }
+                , Menu.menuWidth 350
+                , Menu.menuCss
+                    [ Css.padding (Css.px 20)
+                    ]
+                , Menu.groupContainerCss
+                    [ Css.displayFlex
+                    , Css.property "gap" "10px"
+                    ]
+                , Menu.groupTitleCss
+                    [ Css.fontSize (Css.px 16)
+                    , Css.fontWeight (Css.int 700)
+                    , Css.color Colors.gray20
+                    ]
+                , Menu.groupCaptionCss
+                    [ Css.fontSize (Css.px 13)
+                    ]
+                ]
+          , entries =
+                [ Menu.captionedGroup "Quick Write"
+                    "Students write independently, without lessons or tips."
+                    [ Menu.entry "preview-quick-write" <|
+                        \attributes ->
+                            ClickableSvg.link "Preview"
+                                UiIcon.preview
+                                [ ClickableSvg.linkExternal "about:blank"
+                                , ClickableSvg.secondary
+                                , ClickableSvg.withBorder
+                                , ClickableSvg.custom attributes
+                                ]
+                    , Menu.entry "assign-quick-write" <|
+                        \attributes ->
+                            ClickableSvg.link "Assign"
+                                UiIcon.arrowPointingRightThick
+                                [ ClickableSvg.linkExternal "about:blank"
+                                , ClickableSvg.primary
+                                , ClickableSvg.withBorder
+                                , ClickableSvg.custom attributes
+                                ]
+                    ]
+                , Menu.captionedGroup "Guided Draft"
+                    "Students draft with the support of tutorials, models, and targeted tips."
+                    [ Menu.entry "preview-guided-draft" <|
+                        \attributes ->
+                            ClickableSvg.link "Preview"
+                                UiIcon.preview
+                                [ ClickableSvg.linkExternal "about:blank"
+                                , ClickableSvg.secondary
+                                , ClickableSvg.withBorder
+                                , ClickableSvg.custom attributes
+                                ]
+                    , Menu.entry "assign-guided-draft" <|
+                        \attributes ->
+                            ClickableSvg.link "Assign"
+                                UiIcon.arrowPointingRightThick
+                                [ ClickableSvg.linkExternal "about:blank"
+                                , ClickableSvg.primary
+                                , ClickableSvg.withBorder
+                                , ClickableSvg.custom attributes
+                                ]
+                    ]
+                , Menu.entry "which-should-i-choose" <|
+                    \attributes ->
+                        ClickableText.link "Which should I choose?"
+                            [ ClickableText.linkExternal "about:blank"
+                            , ClickableText.icon UiIcon.help
+                            , ClickableText.custom attributes
+                            ]
+                ]
+          , about = """
+Each container can be styled with CSS to achieve the desired layout.
+
+In this example, we use `Menu.menuCss` to reduce the menu padding, `Menu.groupContainerCss` to layout horizontally, and `Menu.groupTitleCss` and `Menu.groupCaptionCss` to style typography.
+"""
+          }
         ]
     ]
 
 
-forcedOpenExample : String -> Menu.Attribute Msg -> List (Menu.Entry Msg) -> Html Msg
-forcedOpenExample name type_ =
+forcedOpenExample : String -> List (Menu.Attribute Msg) -> List (Menu.Entry Msg) -> Html Msg
+forcedOpenExample name attributes =
     Menu.view (FocusAndToggle name)
-        [ Menu.clickableSvgWithoutIndicator (name ++ " example")
+        ([ Menu.clickableSvgWithoutIndicator (name ++ " example")
             UiIcon.arrowDown
             [ ClickableSvg.exactSize 15
             , ClickableSvg.css [ Css.marginLeft (Css.px 17) ]
             ]
-        , Menu.isOpen True
-        , Menu.buttonId (forcedOpenExampleButtonId name)
-        , Menu.menuId (safeIdWithPrefix name "menuId")
-        , Menu.alignLeft
-        , type_
-        ]
+         , Menu.isOpen True
+         , Menu.buttonId (forcedOpenExampleButtonId name)
+         , Menu.menuId (safeIdWithPrefix name "menuId")
+         , Menu.alignLeft
+         ]
+            ++ attributes
+        )
 
 
 forcedOpenExampleButtonId : String -> String
