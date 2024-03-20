@@ -7,10 +7,10 @@ module UsageExamples.MediaQueryBuilder exposing (example)
 -}
 
 import Category
-import Css exposing (before, property)
+import Css
 import Html.Styled exposing (..)
 import Nri.Ui.Container.V2 as Container
-import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.MediaQuery.V2 as MediaQuery
 import UsageExample exposing (UsageExample)
 
 
@@ -30,23 +30,31 @@ view : List (Html msg)
 view =
     let
         content str =
-            before [ property "content" ("'" ++ str ++ "'") ]
+            Css.property "content" ("'" ++ str ++ "'")
+
+        before str =
+            Css.before [ content str ]
+
+        after str =
+            Css.after [ content str ]
     in
     [ h2 [] [ text "MediaQueryBuilder" ]
     , Container.view
         [ Container.buttony
         , Container.css
-            (MediaQuery.builder
-                [ content "I am the base style, visible to all devices" ]
-                |> MediaQuery.onNarrowMobile
-                    [ content "I am the narrow mobile style, visible only to screens" ]
-                |> MediaQuery.onQuizEngineMobile
-                    [ content "I am the quiz engine mobile style, visible only to screens" ]
-                |> MediaQuery.onMobile
-                    [ content "I am the mobile style, visible only to screens" ]
-                |> MediaQuery.onDesktop
-                    [ content "I am the desktop style, visible only to screens" ]
-                |> MediaQuery.toStyles
+            (Css.displayFlex
+                :: Css.property "justify-content" "space-evenly"
+                :: before "Default"
+                :: after "Default"
+                :: MediaQuery.styles
+                    [ MediaQuery.narrowMobile [ before "Narrow Mobile" ]
+                    , MediaQuery.quizEngineMobile [ before "Quiz Engine Mobile" ]
+                    , MediaQuery.mobile [ before "Mobile" ]
+                    , MediaQuery.notNarrowMobile [ after "Not Narrow Mobile" ]
+                    , MediaQuery.notQuizEngineMobile [ after "Not Quiz Engine Mobile" ]
+                    , MediaQuery.notMobile [ after "Not Mobile" ]
+                    ]
             )
+        , Container.plaintext " | "
         ]
     ]
