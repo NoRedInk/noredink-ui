@@ -106,22 +106,17 @@ not query s =
 
     Will apply the `font-size: 20px` rule at the breakpoint 1020px.
 
-    If used with a non-breakpoint media query or the resulting breakpoing is < 0,
-    `Nothing` will be returned.
+    No effect if used with a non-breakpoint media query.
 
 -}
-offset : Float -> (List Style -> MediaQuery) -> List Style -> Maybe MediaQuery
+offset : Float -> (List Style -> MediaQuery) -> List Style -> MediaQuery
 offset px query s =
     case query s of
         MediaQuery (Breakpoint orig) _ _ ->
-            if orig + px < 0 then
-                Nothing
+            MediaQuery (Breakpoint (max 0 (orig + px))) (Just s) Nothing
 
-            else
-                Just <| MediaQuery (Breakpoint (orig + px)) (Just s) Nothing
-
-        _ ->
-            Nothing
+        other ->
+            other
 
 
 breakpoint : Float -> List Style -> MediaQuery
