@@ -39,15 +39,15 @@ module Nri.Ui.Tabs.V8 exposing
 
 import Css exposing (..)
 import Css.Global
-import Css.Media
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
+import Maybe.Extra as Maybe
 import Nri.Ui
 import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.MediaQuery.V2 as MediaQuery
 import Nri.Ui.Tooltip.V3 as Tooltip
 import TabsInternal.V2 as TabsInternal
 
@@ -282,28 +282,32 @@ view { focusAndSelect, selected } attrs tabs =
             , Css.borderBottomStyle Css.solid
             , Css.borderBottomColor Colors.navy
             , Fonts.baseFont
-            , Css.Media.withMedia
-                [ MediaQuery.narrowMobile ]
-                [ Css.backgroundColor Colors.gray96
-                , Css.padding (Css.px 20)
-                , Css.borderRadius (Css.px 8)
-                , Css.borderBottom Css.zero
-                , Css.flexDirection Css.column
-                , Css.alignItems flexStart
-                , Css.Global.children [ Css.Global.div [ Css.width (Css.pct 100) ] ]
-                ]
-            , maybeStyle
-                (\{ topOffset, topPadding, zIndex } ->
-                    Css.Media.withMedia
-                        [ MediaQuery.notMobile ]
-                        [ Css.position Css.sticky
-                        , Css.top (Css.px topOffset)
-                        , Css.paddingTop (Css.px topPadding)
-                        , Css.zIndex (Css.int zIndex)
-                        ]
+            , MediaQuery.toStyle
+                (Maybe.values
+                    [ Just
+                        (MediaQuery.narrowMobile
+                            [ Css.backgroundColor Colors.gray96
+                            , Css.padding (Css.px 20)
+                            , Css.borderRadius (Css.px 8)
+                            , Css.borderBottom Css.zero
+                            , Css.flexDirection Css.column
+                            , Css.alignItems flexStart
+                            , Css.Global.children [ Css.Global.div [ Css.width (Css.pct 100) ] ]
+                            ]
+                        )
+                    , config.tabListStickyConfig
+                        |> Maybe.map
+                            (\{ topOffset, topPadding, zIndex } ->
+                                MediaQuery.mobile
+                                    [ Css.position Css.sticky
+                                    , Css.top (Css.px topOffset)
+                                    , Css.paddingTop (Css.px topPadding)
+                                    , Css.zIndex (Css.int zIndex)
+                                    ]
+                            )
+                    ]
                 )
-                config.tabListStickyConfig
-            , maybeStyle Css.backgroundColor config.pageBackgroundColor
+            , Maybe.unwrap (Css.batch []) Css.backgroundColor config.pageBackgroundColor
             ]
             []
             [ config.title
@@ -363,67 +367,52 @@ stylesTabsAligned config =
     , Css.displayFlex
     , Css.flexGrow (Css.int 1)
     , Css.padding Css.zero
-    , Css.Media.withMedia
-        [ MediaQuery.narrowMobile ]
-        [ Css.flexDirection Css.column
-        ]
+    , MediaQuery.toStyle [ MediaQuery.narrowMobile [ Css.flexDirection Css.column ] ]
     ]
-
-
-maybeStyle : (a -> Style) -> Maybe a -> Style
-maybeStyle styler maybeValue =
-    case maybeValue of
-        Just value ->
-            styler value
-
-        Nothing ->
-            Css.batch []
 
 
 tabStyles : Maybe Float -> Css.Color -> Int -> Bool -> List Style
 tabStyles customSpacing pageBackgroundColor_ index isSelected =
     let
-        stylesDynamic =
+        ( stylesDynamic, narrowMobileStylesDynamic ) =
             if isSelected then
-                [ Css.borderBottom (Css.px 1)
-                , Css.borderBottomStyle Css.solid
-                , Css.backgroundColor Colors.white
-                , Css.borderBottomColor pageBackgroundColor_
-                , Css.backgroundImage <|
-                    Css.linearGradient2 Css.toTop
-                        (Css.stop2 (withAlpha 1 pageBackgroundColor_) (Css.pct 0))
-                        (Css.stop2 (withAlpha 0 pageBackgroundColor_) (Css.pct 100))
-                        []
-                , Css.Media.withMedia
-                    [ MediaQuery.narrowMobile ]
-                    [ Css.border Css.zero
-                    , Css.backgroundImage Css.none
-                    , Css.backgroundColor Colors.glacier
-                    , Css.borderRadius (Css.px 8)
-                    , Css.fontSize (Css.px 15)
-                    , Css.fontWeight (Css.int 700)
-                    , Css.width (Css.pct 100)
-                    ]
-                ]
+                ( [ Css.borderBottom (Css.px 1)
+                  , Css.borderBottomStyle Css.solid
+                  , Css.backgroundColor Colors.white
+                  , Css.borderBottomColor pageBackgroundColor_
+                  , Css.backgroundImage <|
+                        Css.linearGradient2 Css.toTop
+                            (Css.stop2 (withAlpha 1 pageBackgroundColor_) (Css.pct 0))
+                            (Css.stop2 (withAlpha 0 pageBackgroundColor_) (Css.pct 100))
+                            []
+                  ]
+                , [ Css.border Css.zero
+                  , Css.backgroundImage Css.none
+                  , Css.backgroundColor Colors.glacier
+                  , Css.borderRadius (Css.px 8)
+                  , Css.fontSize (Css.px 15)
+                  , Css.fontWeight (Css.int 700)
+                  , Css.width (Css.pct 100)
+                  ]
+                )
 
             else
-                [ Css.backgroundColor Colors.frost
-                , Css.backgroundImage <|
-                    Css.linearGradient2 Css.toTop
-                        (Css.stop2 (withAlpha 0.25 Colors.azure) (Css.pct 0))
-                        (Css.stop2 (withAlpha 0 Colors.azure) (Css.pct 25))
-                        [ Css.stop2 (withAlpha 0 Colors.azure) (Css.pct 100) ]
-                , Css.Media.withMedia
-                    [ MediaQuery.narrowMobile ]
-                    [ Css.backgroundImage Css.none
-                    , Css.backgroundColor Colors.gray96
-                    , Css.border Css.zero
-                    , Css.borderRadius (Css.px 8)
-                    , Css.fontSize (Css.px 15)
-                    , Css.width (Css.pct 100)
-                    , Css.fontWeight (Css.int 600)
-                    ]
-                ]
+                ( [ Css.backgroundColor Colors.frost
+                  , Css.backgroundImage <|
+                        Css.linearGradient2 Css.toTop
+                            (Css.stop2 (withAlpha 0.25 Colors.azure) (Css.pct 0))
+                            (Css.stop2 (withAlpha 0 Colors.azure) (Css.pct 25))
+                            [ Css.stop2 (withAlpha 0 Colors.azure) (Css.pct 100) ]
+                  ]
+                , [ Css.backgroundImage Css.none
+                  , Css.backgroundColor Colors.gray96
+                  , Css.border Css.zero
+                  , Css.borderRadius (Css.px 8)
+                  , Css.fontSize (Css.px 15)
+                  , Css.width (Css.pct 100)
+                  , Css.fontWeight (Css.int 600)
+                  ]
+                )
 
         baseStyles =
             [ Css.color Colors.navy
@@ -439,52 +428,53 @@ tabStyles customSpacing pageBackgroundColor_ index isSelected =
             , Css.height (Css.pct 100)
             ]
 
-        stylesTab =
-            [ Css.display Css.inlineBlock
-            , Css.borderTopLeftRadius (Css.px 10)
-            , Css.borderTopRightRadius (Css.px 10)
-            , Css.border3 (Css.px 1) Css.solid Colors.navy
-            , Css.marginTop Css.zero
-            , Css.marginLeft
-                (if index == 0 then
-                    Css.px 0
+        ( stylesTab, narrowMobileStylesTab ) =
+            ( [ Css.display Css.inlineBlock
+              , Css.borderTopLeftRadius (Css.px 10)
+              , Css.borderTopRightRadius (Css.px 10)
+              , Css.border3 (Css.px 1) Css.solid Colors.navy
+              , Css.marginTop Css.zero
+              , Css.marginLeft
+                    (if index == 0 then
+                        Css.px 0
 
-                 else
-                    Css.px margin
-                )
-            , Css.marginRight (Css.px margin)
-            , Css.padding2 (Css.px 1) (Css.px 6)
-            , Css.marginBottom (Css.px -1)
-            , Css.cursor Css.pointer
-            , property "transition" "background-color 0.2s"
-            , property "transition" "border-color 0.2s"
-            , Css.Media.withMedia
-                [ MediaQuery.narrowMobile ]
-                [ Css.marginLeft Css.zero
-                , Css.marginRight Css.zero
-                , Css.textAlign Css.left
-                , Css.padding Css.zero
-                ]
-            , hover
-                [ backgroundColor Colors.white
-                , borderTopColor Colors.azure
-                , borderRightColor Colors.azure
-                , borderLeftColor Colors.azure
-                , Css.Media.withMedia
-                    [ MediaQuery.narrowMobile ]
+                     else
+                        Css.px margin
+                    )
+              , Css.marginRight (Css.px margin)
+              , Css.padding2 (Css.px 1) (Css.px 6)
+              , Css.marginBottom (Css.px -1)
+              , Css.cursor Css.pointer
+              , property "transition" "background-color 0.2s"
+              , property "transition" "border-color 0.2s"
+              , pseudoClass "focus-visible"
+                    [ FocusRing.outerBoxShadow
+                    , Css.outline3 (Css.px 2) Css.solid Css.transparent
+                    ]
+              , hover
+                    [ backgroundColor Colors.white
+                    , borderTopColor Colors.azure
+                    , borderRightColor Colors.azure
+                    , borderLeftColor Colors.azure
+                    ]
+              ]
+            , [ Css.marginLeft Css.zero
+              , Css.marginRight Css.zero
+              , Css.textAlign Css.left
+              , Css.padding Css.zero
+              , hover
                     [ backgroundColor Colors.frost
                     , borderTopColor Css.unset
                     , borderRightColor Css.unset
                     , borderLeftColor Css.unset
                     ]
-                ]
-            , pseudoClass "focus-visible"
-                [ FocusRing.outerBoxShadow
-                , Css.outline3 (Css.px 2) Css.solid Css.transparent
-                ]
-            ]
+              ]
+            )
 
         margin =
             Maybe.withDefault 10 customSpacing / 2
     in
-    baseStyles ++ stylesTab ++ stylesDynamic
+    baseStyles
+        ++ stylesTab
+        ++ stylesDynamic
+        ++ MediaQuery.toStyles [ MediaQuery.narrowMobile <| narrowMobileStylesTab ++ narrowMobileStylesDynamic ]
