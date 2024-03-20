@@ -1,6 +1,6 @@
 module MediaQuerySpec exposing (suite)
 
-import Css exposing (int, order)
+import Css exposing (borderWidth, fontSize, int, order, px)
 import Html.Styled exposing (div, toUnstyled)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.MediaQuery.V2 as MediaQuery
@@ -53,5 +53,22 @@ suite =
 @media only screen and (max-width: 750px){._28601c77{order:5;}}
 @media only screen and (max-width: 500px){._28601c77{order:6;}}
                     """)
+                        ]
+        , test "it works with duplicated queries" <|
+            \() ->
+                div
+                    [ css <|
+                        MediaQuery.toStyles
+                            [ mobile [ borderWidth (px 1) ]
+                            , mobile [ fontSize (px 1) ]
+                            ]
+                    ]
+                    []
+                    |> toUnstyled
+                    |> Query.fromHtml
+                    |> Query.find [ Selector.tag "style" ]
+                    |> Query.has
+                        [ Selector.text "border-width:1px;"
+                        , Selector.text "font-size:1px;"
                         ]
         ]

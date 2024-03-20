@@ -160,10 +160,13 @@ toStyles queries =
 
                                 HighContrast ->
                                     ( .highContrast, \r v -> { r | highContrast = v } )
+
+                        ( maybeExistingSatisfies, maybeExistingDoesNotSatisfy ) =
+                            get acc
                     in
                     set acc
-                        ( Maybe.or (Tuple.first (get acc)) satisfiesTargetStyles
-                        , Maybe.or (Tuple.second (get acc)) doesNotSatisfyTargetStyles
+                        ( merge maybeExistingSatisfies satisfiesTargetStyles
+                        , merge maybeExistingDoesNotSatisfy doesNotSatisfyTargetStyles
                         )
                 )
                 { mobile = ( Nothing, Nothing )
@@ -174,20 +177,23 @@ toStyles queries =
                 }
                 queries
 
+        merge a b =
+            Maybe.map ((++) (Maybe.withDefault [] a)) b |> Maybe.orElse a
+
         prepend =
             Maybe.cons
 
         append maybeItem list =
             Maybe.map (List.singleton >> List.append list) maybeItem |> Maybe.withDefault list
 
-        mkViewportQuery rule px =
-            Maybe.map <| withMedia [ only screen [ rule <| Css.px px ] ]
-
         mkBooleanQuery onQuery offQuery ( onStyles, offStyles ) =
             Maybe.values
                 [ Maybe.map (withMediaQuery [ onQuery ]) onStyles
                 , Maybe.map (withMediaQuery [ offQuery ]) offStyles
                 ]
+
+        mkViewportQuery rule px =
+            Maybe.map <| withMedia [ only screen [ rule <| Css.px px ] ]
 
         addViewportQuery ( px, getStyles ) =
             let
