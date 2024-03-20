@@ -1,7 +1,10 @@
 module Nri.Ui.MediaQuery.V2 exposing
-    ( Attribute, styles
-    , mobile, quizEngineMobile, narrowMobile
-    , notMobile, notQuizEngineMobile, notNarrowMobile
+    ( MediaQuery
+    , mobile
+    , narrowMobile
+    , not
+    , quizEngineMobile
+    , toStyles
     )
 
 {-| Patch changes:
@@ -24,96 +27,97 @@ Build media queries for responsive design.
     MediaQuery.styles
         [ MediaQuery.mobile [ Css.paddingTop (Css.px 10) ]
         , MediaQuery.narrowMobile [ Css.paddingTop (Css.px 20) ]
+        , MediaQuery.not MediaQuery.mobile [ Css.fontSize (Css.px 30) ]
         ]
-
-@docs Attribute, styles
-
-@docs mobile, quizEngineMobile, narrowMobile
-@docs notMobile, notQuizEngineMobile, notNarrowMobile
 
 -}
 
-import Css exposing (Style)
+import Css exposing (Style, target)
 import Css.Media exposing (MediaQuery, maxWidth, minWidth, only, screen, withMedia)
 import Maybe.Extra as Maybe
 
 
-{-| Media query attribute, contains CSS styles for a given media query.
+{-| Type representing a pair of styles for a given target.
 -}
-type Attribute
-    = Attribute (MediaQuery -> MediaQuery)
+type MediaQuery
+    = MediaQuery Target (Maybe (List Style)) (Maybe (List Style))
 
 
-{-| Represents a pair of styles for a given breakpoint, where the first
-element is the styles to apply when the viewport is less than or equal to
-the breakpoint, and the second element is the styles to apply when the
-viewport is greater than the breakpoint.
+type Target
+    = Mobile
+    | QuizEngineMobile
+    | NarrowMobile
+
+
+{-| Negate a MediaQuery
+
+    Note: This is not a true "not" media query. Rather, this module will use whatever
+    the logical inverse of the media query target is. For example, `not mobile` will
+    not do `not screen and (max-width: 1000px)`, but rather `screen and (min-width: 1001px)`.
+    This is because the `not` keyword in media queries causes some hard-to-track-down
+    unexpected behavior with screen readers and printers.
+
 -}
-type alias BreakpointStyles =
-    ( Maybe (List Style), Maybe (List Style) )
-
-
-type alias MediaQuery =
-    { mobile : BreakpointStyles
-    , quizEngineMobile : BreakpointStyles
-    , narrowMobile : BreakpointStyles
-    }
+not : (List Style -> MediaQuery) -> List Style -> MediaQuery
+not query s =
+    let
+        (MediaQuery target _ _) =
+            query s
+    in
+    MediaQuery target Nothing (Just s)
 
 
 {-| Set styles for mobile and smaller devices (<= 1000px)
 -}
-mobile : List Style -> Attribute
+mobile : List Style -> MediaQuery
 mobile s =
-    Attribute (\q -> { q | mobile = ( Just s, Tuple.second q.mobile ) })
-
-
-{-| Set styles for larger-than-mobile devices (> 1000px)
--}
-notMobile : List Style -> Attribute
-notMobile s =
-    Attribute (\q -> { q | mobile = ( Tuple.first q.mobile, Just s ) })
+    MediaQuery Mobile (Just s) Nothing
 
 
 {-| Set styles for quiz engine mobile and smaller devices (<= 750px)
 -}
-quizEngineMobile : List Style -> Attribute
+quizEngineMobile : List Style -> MediaQuery
 quizEngineMobile s =
-    Attribute (\q -> { q | quizEngineMobile = ( Just s, Tuple.second q.quizEngineMobile ) })
-
-
-{-| Set styles for larger-than-quiz-engine-mobile devices (> 750px)
--}
-notQuizEngineMobile : List Style -> Attribute
-notQuizEngineMobile s =
-    Attribute (\b -> { b | quizEngineMobile = ( Tuple.first b.quizEngineMobile, Just s ) })
+    MediaQuery QuizEngineMobile (Just s) Nothing
 
 
 {-| Set styles for narrow mobile and smaller devices (<= 500px)
 -}
-narrowMobile : List Style -> Attribute
+narrowMobile : List Style -> MediaQuery
 narrowMobile s =
-    Attribute (\b -> { b | narrowMobile = ( Just s, Tuple.second b.narrowMobile ) })
-
-
-{-| Set styles for larger-than-narrow-mobile devices (> 500px)
--}
-notNarrowMobile : List Style -> Attribute
-notNarrowMobile s =
-    Attribute (\b -> { b | narrowMobile = ( Tuple.first b.narrowMobile, Just s ) })
+    MediaQuery NarrowMobile (Just s) Nothing
 
 
 {-| Build a `Css.Style` from a list of breakpoints
 -}
-styles : List Attribute -> Style
-styles attributes =
+toStyles : List MediaQuery -> List Style
+toStyles queries =
     let
         config =
-            List.foldl (\(Attribute f) -> f)
+            List.foldl
+                (\(MediaQuery target satisfiesTargetStyles doesNotSatisfyTargetStyles) acc ->
+                    let
+                        ( get, set ) =
+                            case target of
+                                Mobile ->
+                                    ( .mobile, \r v -> { r | mobile = v } )
+
+                                QuizEngineMobile ->
+                                    ( .quizEngineMobile, \r v -> { r | quizEngineMobile = v } )
+
+                                NarrowMobile ->
+                                    ( .narrowMobile, \r v -> { r | narrowMobile = v } )
+                    in
+                    set acc
+                        ( Maybe.or (Tuple.first (get acc)) satisfiesTargetStyles
+                        , Maybe.or (Tuple.second (get acc)) doesNotSatisfyTargetStyles
+                        )
+                )
                 { mobile = ( Nothing, Nothing )
                 , quizEngineMobile = ( Nothing, Nothing )
                 , narrowMobile = ( Nothing, Nothing )
                 }
-                attributes
+                queries
 
         mkStyle rule px =
             Maybe.map <| withMedia [ only screen [ rule <| Css.px px ] ]
@@ -135,4 +139,3 @@ styles attributes =
         |> addBreakpointStyles ( 1000, .mobile )
         |> addBreakpointStyles ( 750, .quizEngineMobile )
         |> addBreakpointStyles ( 500, .narrowMobile )
-        |> Css.batch
