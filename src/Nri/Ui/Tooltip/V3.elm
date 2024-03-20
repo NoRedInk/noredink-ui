@@ -90,18 +90,19 @@ import Accessibility.Styled.Role as Role
 import Content
 import Css exposing (Color, Px, Style)
 import Css.Global as Global
-import Css.Media
 import EventExtras as Events
 import Html.Styled as Root
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Json.Decode
+import List.Extra as List
+import Maybe.Extra as Maybe
 import Nri.Ui
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
-import Nri.Ui.MediaQuery.V1 as MediaQuery exposing (mobileBreakpoint, narrowMobileBreakpoint, quizEngineBreakpoint)
+import Nri.Ui.MediaQuery.V2 as MediaQuery exposing (MediaQuery)
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.WhenFocusLeaves.V2 as WhenFocusLeaves
@@ -126,6 +127,7 @@ type alias Tooltip msg =
     , attributes : List (Html.Attribute Never)
     , containerStyles : List Style
     , tooltipStyleOverrides : List Style
+    , responsiveTooltipStyleOverrides : List MediaQuery
     , width : Width
     , padding : Padding
     , trigger : Maybe (Trigger msg)
@@ -160,6 +162,7 @@ buildAttributes =
                 , Css.position Css.relative
                 ]
             , tooltipStyleOverrides = []
+            , responsiveTooltipStyleOverrides = []
             , width = Exactly 320
             , padding = NormalPadding
             , trigger = Nothing
@@ -641,56 +644,61 @@ css tooltipStyleOverrides =
     Attribute (\config -> { config | tooltipStyleOverrides = config.tooltipStyleOverrides ++ tooltipStyleOverrides })
 
 
+{-| Set some conditional custom styles on the tooltip according to a media query.
+-}
+responsiveCss : List MediaQuery -> Attribute msg
+responsiveCss styles =
+    -- Don't do the `MediaQuery.toStyles` here, because we want calls to multiple
+    -- `responsiveCss` to be additive and processed by MediaQuery together.
+    Attribute (\config -> { config | responsiveTooltipStyleOverrides = config.responsiveTooltipStyleOverrides ++ styles })
+
+
 {-| Set styles that will only apply if the viewport is wider than NRI's mobile breakpoint.
 
 Equivalent to:
 
-    Tooltip.css
-        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.notMobile ] styles ]
+    Tooltip.responsiveCss [ Nri.Ui.MediaQuery.V2.not Nri.Ui.MediaQuery.V2.mobile styles ]
 
 -}
 notMobileCss : List Style -> Attribute msg
 notMobileCss styles =
-    css [ Css.Media.withMedia [ MediaQuery.notMobile ] styles ]
+    responsiveCss [ MediaQuery.not MediaQuery.mobile styles ]
 
 
 {-| Set styles that will only apply if the viewport is narrower than NRI's mobile breakpoint.
 
 Equivalent to:
 
-    Tooltip.css
-        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.mobile ] styles ]
+    Tooltip.responsiveCss [ Nri.Ui.MediaQuery.V2.mobile styles ]
 
 -}
 mobileCss : List Style -> Attribute msg
 mobileCss styles =
-    css [ Css.Media.withMedia [ MediaQuery.mobile ] styles ]
+    responsiveCss [ MediaQuery.mobile styles ]
 
 
 {-| Set styles that will only apply if the viewport is narrower than NRI's quiz-engine-specific mobile breakpoint.
 
 Equivalent to:
 
-    Tooltip.css
-        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.quizEngineMobile ] styles ]
+    Tooltip.responsiveCss [ Nri.Ui.MediaQuery.V2.quizEngineMobile styles ]
 
 -}
 quizEngineMobileCss : List Style -> Attribute msg
 quizEngineMobileCss styles =
-    css [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
+    responsiveCss [ MediaQuery.quizEngineMobile styles ]
 
 
 {-| Set styles that will only apply if the viewport is narrower than NRI's narrow mobile breakpoint.
 
 Equivalent to:
 
-    Tooltip.css
-        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.narrowMobile ] styles ]
+    Tooltip.responsiveCss [ Nri.Ui.MediaQuery.V2.narrowMobile styles ]
 
 -}
 narrowMobileCss : List Style -> Attribute msg
 narrowMobileCss styles =
-    css [ Css.Media.withMedia [ MediaQuery.narrowMobile ] styles ]
+    responsiveCss [ MediaQuery.narrowMobile styles ]
 
 
 {-| Use this helper to add custom attributes.
@@ -1043,23 +1051,39 @@ viewTooltip_ { trigger, id } tooltip =
 viewTooltip : String -> Tooltip msg -> Html msg
 viewTooltip tooltipId config =
     let
-        mobileDirection =
-            Maybe.withDefault config.direction config.mobileDirection
+        ( _, _, mediaQueries ) =
+            List.foldl
+                (\( mediaQuery, maybeNextDirection, maybeNextAlignment ) ( prevDirection, prevAlignment, acc ) ->
+                    if Maybe.isJust maybeNextDirection || Maybe.isJust maybeNextAlignment then
+                        let
+                            ( direction, alignment ) =
+                                ( Maybe.withDefault prevDirection maybeNextDirection, Maybe.withDefault prevAlignment maybeNextAlignment )
+                        in
+                        ( direction
+                        , alignment
+                        , { acc
+                            | positionTooltip = mediaQuery (positionTooltip direction alignment) :: acc.positionTooltip
+                            , hoverAreaForDirection = mediaQuery (hoverAreaForDirection direction) :: acc.hoverAreaForDirection
+                            , positioning = mediaQuery (positioning direction alignment) :: acc.positioning
+                            , applyTail = mediaQuery (applyTail direction) :: acc.applyTail
+                          }
+                        )
 
-        quizEngineMobileDirection =
-            Maybe.withDefault mobileDirection config.quizEngineMobileDirection
-
-        narrowMobileDirection =
-            Maybe.withDefault quizEngineMobileDirection config.narrowMobileDirection
-
-        mobileAlignment =
-            Maybe.withDefault config.alignment config.mobileAlignment
-
-        quizEngineMobileAlignment =
-            Maybe.withDefault mobileAlignment config.quizEngineMobileAlignment
-
-        narrowMobileAlignment =
-            Maybe.withDefault quizEngineMobileAlignment config.narrowMobileAlignment
+                    else
+                        ( prevDirection, prevAlignment, acc )
+                )
+                ( config.direction
+                , config.alignment
+                , { positionTooltip = []
+                  , hoverAreaForDirection = []
+                  , positioning = []
+                  , applyTail = []
+                  }
+                )
+                [ ( MediaQuery.mobile, config.mobileDirection, config.mobileAlignment )
+                , ( MediaQuery.quizEngineMobile, config.quizEngineMobileDirection, config.quizEngineMobileAlignment )
+                , ( MediaQuery.narrowMobile, config.narrowMobileDirection, config.narrowMobileAlignment )
+                ]
 
         applyTail direction =
             case config.tail of
@@ -1067,19 +1091,11 @@ viewTooltip tooltipId config =
                     tailForDirection direction
 
                 WithoutTail ->
-                    Css.batch []
+                    []
     in
     Html.div
-        [ Attributes.css
+        [ Attributes.css <|
             [ Css.position Css.absolute
-            , MediaQuery.withViewport (Just mobileBreakpoint) Nothing <|
-                positionTooltip config.direction config.alignment
-            , MediaQuery.withViewport (Just quizEngineBreakpoint) (Just mobileBreakpoint) <|
-                positionTooltip mobileDirection mobileAlignment
-            , MediaQuery.withViewport (Just narrowMobileBreakpoint) (Just quizEngineBreakpoint) <|
-                positionTooltip quizEngineMobileDirection quizEngineMobileAlignment
-            , MediaQuery.withViewport Nothing (Just narrowMobileBreakpoint) <|
-                positionTooltip narrowMobileDirection narrowMobileAlignment
             , Css.boxSizing Css.borderBox
             , if config.isOpen then
                 Css.batch []
@@ -1087,6 +1103,8 @@ viewTooltip tooltipId config =
               else
                 Css.display Css.none
             ]
+                ++ positionTooltip config.direction config.alignment
+                ++ MediaQuery.toStyles mediaQueries.positionTooltip
         , -- Used for tests, since the visibility is controlled via CSS, which elm-program-test cannot account for
           Attributes.attribute "data-tooltip-visible" <|
             if config.isOpen then
@@ -1114,22 +1132,6 @@ viewTooltip tooltipId config =
                  , Css.zIndex (Css.int 100)
                  , Css.backgroundColor Colors.navy
                  , Css.border3 (Css.px 1) Css.solid outlineColor
-                 , MediaQuery.withViewport (Just mobileBreakpoint) Nothing <|
-                    [ positioning config.direction config.alignment
-                    , applyTail config.direction
-                    ]
-                 , MediaQuery.withViewport (Just quizEngineBreakpoint) (Just mobileBreakpoint) <|
-                    [ positioning mobileDirection mobileAlignment
-                    , applyTail mobileDirection
-                    ]
-                 , MediaQuery.withViewport (Just narrowMobileBreakpoint) (Just quizEngineBreakpoint) <|
-                    [ positioning quizEngineMobileDirection quizEngineMobileAlignment
-                    , applyTail quizEngineMobileDirection
-                    ]
-                 , MediaQuery.withViewport Nothing (Just narrowMobileBreakpoint) <|
-                    [ positioning narrowMobileDirection narrowMobileAlignment
-                    , applyTail narrowMobileDirection
-                    ]
                  , Fonts.baseFont
                  , Css.fontSize (Css.px 15)
                  , Css.fontWeight (Css.int 600)
@@ -1150,6 +1152,9 @@ viewTooltip tooltipId config =
                         ]
                     ]
                  ]
+                    ++ positioning config.direction config.alignment
+                    ++ applyTail config.direction
+                    ++ MediaQuery.toStyles (mediaQueries.positioning ++ mediaQueries.applyTail)
                     ++ config.tooltipStyleOverrides
                 )
 
@@ -1178,16 +1183,10 @@ viewTooltip tooltipId config =
                 ++ [ Html.div
                         [ ExtraAttributes.nriDescription "tooltip-hover-bridge"
                         , Attributes.css
-                            [ Css.position Css.absolute
-                            , MediaQuery.withViewport (Just mobileBreakpoint) Nothing <|
-                                hoverAreaForDirection config.direction
-                            , MediaQuery.withViewport (Just quizEngineBreakpoint) (Just mobileBreakpoint) <|
-                                hoverAreaForDirection mobileDirection
-                            , MediaQuery.withViewport (Just narrowMobileBreakpoint) (Just quizEngineBreakpoint) <|
-                                hoverAreaForDirection quizEngineMobileDirection
-                            , MediaQuery.withViewport Nothing (Just narrowMobileBreakpoint) <|
-                                hoverAreaForDirection narrowMobileDirection
-                            ]
+                            (Css.position Css.absolute
+                                :: hoverAreaForDirection config.direction
+                                ++ MediaQuery.toStyles mediaQueries.hoverAreaForDirection
+                            )
                         ]
                         []
                    ]
@@ -1223,115 +1222,103 @@ positionTooltip direction alignment =
         ltrPosition =
             case alignment of
                 Start customOffset ->
-                    Css.left customOffset
+                    [ Css.left customOffset, Css.right Css.unset ]
 
                 Middle ->
-                    Css.left (Css.pct 50)
+                    [ Css.left (Css.pct 50), Css.right Css.unset ]
 
                 End customOffset ->
-                    Css.right customOffset
+                    [ Css.left Css.unset, Css.right customOffset ]
 
         topToBottomPosition =
             case alignment of
                 Start customOffset ->
-                    Css.top customOffset
+                    [ Css.top customOffset, Css.bottom Css.unset ]
 
                 Middle ->
-                    Css.top (Css.pct 50)
+                    [ Css.top (Css.pct 50), Css.bottom Css.unset ]
 
                 End customOffset ->
-                    Css.bottom customOffset
+                    [ Css.top Css.unset, Css.bottom customOffset ]
     in
     case direction of
         OnTop ->
-            [ ltrPosition
-            , Css.top (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-            ]
+            Css.top (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2)) :: Css.bottom Css.unset :: ltrPosition
 
         OnBottom ->
-            [ ltrPosition
-            , Css.bottom (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-            ]
+            Css.top Css.unset :: Css.bottom (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2)) :: ltrPosition
 
         OnLeft ->
-            [ topToBottomPosition
-            , Css.left (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-            ]
+            Css.left (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2)) :: Css.right Css.unset :: topToBottomPosition
 
         OnRight ->
-            [ topToBottomPosition
-            , Css.right (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2))
-            ]
+            Css.left Css.unset :: Css.right (Css.calc (Css.px (negate tailSize)) Css.minus (Css.px 2)) :: topToBottomPosition
 
 
 
 -- TAILS
 
 
-positioning : Direction -> Alignment -> Style
+positioning : Direction -> Alignment -> List Style
 positioning direction alignment =
     let
         topBottomAlignment =
             case alignment of
                 Start _ ->
-                    Css.left (Css.px offCenterOffset)
+                    [ Css.left (Css.px offCenterOffset), Css.right Css.unset ]
 
                 Middle ->
-                    Css.left (Css.pct 50)
+                    [ Css.left (Css.pct 50), Css.right Css.unset ]
 
                 End _ ->
-                    Css.right (Css.px offCenterOffset)
+                    [ Css.left Css.unset, Css.right (Css.px offCenterOffset) ]
 
         rightLeftAlignment =
             case alignment of
                 Start _ ->
-                    Css.property "top" ("calc(-" ++ String.fromFloat tailSize ++ "px + " ++ String.fromFloat offCenterOffset ++ "px)")
+                    [ Css.top (Css.calc (Css.px offCenterOffset) Css.minus (Css.px tailSize)), Css.bottom Css.unset ]
 
                 Middle ->
-                    Css.property "top" ("calc(-" ++ String.fromFloat tailSize ++ "px + 50%)")
+                    [ Css.top (Css.calc (Css.pct 50) Css.minus (Css.px tailSize)), Css.bottom Css.unset ]
 
                 End _ ->
-                    Css.property "bottom" ("calc(-" ++ String.fromFloat tailSize ++ "px + " ++ String.fromFloat offCenterOffset ++ "px)")
+                    [ Css.top Css.unset, Css.bottom (Css.calc (Css.px offCenterOffset) Css.minus (Css.px tailSize)) ]
     in
     case direction of
         OnTop ->
-            Css.batch
-                [ Css.property "transform" "translate(-50%, -100%)"
-                , getTailPositioning
-                    { xAlignment = topBottomAlignment
-                    , yAlignment = Css.top (Css.pct 100)
-                    }
-                ]
+            [ Css.property "transform" "translate(-50%, -100%)"
+            , getTailPositioning
+                { xAlignment = topBottomAlignment
+                , yAlignment = [ Css.top (Css.pct 100), Css.bottom Css.unset ]
+                }
+            ]
 
         OnBottom ->
-            Css.batch
-                [ Css.property "transform" "translate(-50%, 0)"
-                , getTailPositioning
-                    { xAlignment = topBottomAlignment
-                    , yAlignment = Css.bottom (Css.pct 100)
-                    }
-                ]
+            [ Css.property "transform" "translate(-50%, 0)"
+            , getTailPositioning
+                { xAlignment = topBottomAlignment
+                , yAlignment = [ Css.top Css.unset, Css.bottom (Css.pct 100) ]
+                }
+            ]
 
         OnRight ->
-            Css.batch
-                [ Css.property "transform" "translate(0, -50%)"
-                , getTailPositioning
-                    { xAlignment = Css.right (Css.pct 100)
-                    , yAlignment = rightLeftAlignment
-                    }
-                ]
+            [ Css.property "transform" "translate(0, -50%)"
+            , getTailPositioning
+                { xAlignment = [ Css.left Css.unset, Css.right (Css.pct 100) ]
+                , yAlignment = rightLeftAlignment
+                }
+            ]
 
         OnLeft ->
-            Css.batch
-                [ Css.property "transform" "translate(-100%, -50%)"
-                , getTailPositioning
-                    { xAlignment = Css.left (Css.pct 100)
-                    , yAlignment = rightLeftAlignment
-                    }
-                ]
+            [ Css.property "transform" "translate(-100%, -50%)"
+            , getTailPositioning
+                { xAlignment = [ Css.left (Css.pct 100), Css.right Css.unset ]
+                , yAlignment = rightLeftAlignment
+                }
+            ]
 
 
-tailForDirection : Direction -> Style
+tailForDirection : Direction -> List Style
 tailForDirection direction =
     case direction of
         OnTop ->
@@ -1368,6 +1355,7 @@ topHoverArea =
     [ Css.bottom (Css.pct 100)
     , Css.left Css.zero
     , Css.right Css.zero
+    , Css.top Css.unset
     , Css.height (Css.px (tailSize + 3))
     ]
 
@@ -1377,6 +1365,7 @@ bottomHoverArea =
     [ Css.top (Css.pct 100)
     , Css.left Css.zero
     , Css.right Css.zero
+    , Css.bottom Css.unset
     , Css.height (Css.px (tailSize + 3))
     ]
 
@@ -1386,6 +1375,7 @@ leftHoverArea =
     [ Css.right (Css.pct 100)
     , Css.top Css.zero
     , Css.bottom Css.zero
+    , Css.left Css.unset
     , Css.width (Css.px (tailSize + 3))
     ]
 
@@ -1395,75 +1385,72 @@ rightHoverArea =
     [ Css.left (Css.pct 100)
     , Css.top Css.zero
     , Css.bottom Css.zero
+    , Css.right Css.unset
     , Css.width (Css.px (tailSize + 3))
     ]
 
 
-bottomTail : Style
+bottomTail : List Style
 bottomTail =
-    Css.batch
-        [ Css.before
-            [ Css.borderTopColor outlineColor
-            , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
-            , Css.marginLeft (Css.px (-tailSize - 1))
-            ]
-        , Css.after
-            [ Css.borderTopColor tooltipColor
-            , Css.property "border-width" (String.fromFloat tailSize ++ "px")
-            , Css.marginLeft (Css.px -tailSize)
-            ]
+    [ Css.before
+        [ Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
+        , Css.borderColor4 outlineColor Css.transparent Css.transparent Css.transparent
+        , Css.marginLeft (Css.px (-tailSize - 1))
         ]
+    , Css.after
+        [ Css.property "border-width" (String.fromFloat tailSize ++ "px")
+        , Css.borderColor4 tooltipColor Css.transparent Css.transparent Css.transparent
+        , Css.margin4 Css.zero Css.zero Css.zero (Css.px -tailSize)
+        ]
+    ]
 
 
-topTail : Style
+topTail : List Style
 topTail =
-    Css.batch
-        [ Css.before
-            [ Css.borderBottomColor outlineColor
-            , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
-            , Css.marginLeft (Css.px (-tailSize - 1))
-            ]
-        , Css.after
-            [ Css.borderBottomColor tooltipColor
-            , Css.property "border-width" (String.fromFloat tailSize ++ "px")
-            , Css.marginLeft (Css.px -tailSize)
-            ]
+    [ Css.before
+        [ Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
+        , Css.borderColor4 Css.transparent Css.transparent outlineColor Css.transparent
+        , Css.marginLeft (Css.px (-tailSize - 1))
         ]
+    , Css.after
+        [ Css.property "border-width" (String.fromFloat tailSize ++ "px")
+        , Css.borderColor4 Css.transparent Css.transparent tooltipColor Css.transparent
+        , Css.margin4 Css.zero Css.zero Css.zero (Css.px -tailSize)
+        ]
+    ]
 
 
-rightTail : Style
+rightTail : List Style
 rightTail =
-    Css.batch
-        [ Css.before
-            [ Css.borderLeftColor outlineColor
-            , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
-            ]
-        , Css.after
-            [ Css.borderLeftColor tooltipColor
-            , Css.property "border-width" (String.fromFloat tailSize ++ "px")
-            , Css.marginTop (Css.px 1)
-            , Css.marginRight (Css.px 2)
-            ]
+    [ Css.before
+        [ Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
+        , Css.borderColor4 Css.transparent Css.transparent Css.transparent outlineColor
+        , Css.marginLeft Css.zero
         ]
+    , Css.after
+        [ Css.property "border-width" (String.fromFloat tailSize ++ "px")
+        , Css.borderColor4 Css.transparent Css.transparent Css.transparent tooltipColor
+        , Css.margin4 (Css.px 1) (Css.px 2) Css.zero Css.zero
+        ]
+    ]
 
 
-leftTail : Style
+leftTail : List Style
 leftTail =
-    Css.batch
-        [ Css.before
-            [ Css.borderRightColor outlineColor
-            , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
-            ]
-        , Css.after
-            [ Css.borderRightColor tooltipColor
-            , Css.property "border-width" (String.fromFloat tailSize ++ "px")
-            , Css.marginTop (Css.px 1)
-            , Css.marginLeft (Css.px 2)
-            ]
+    [ Css.before
+        [ Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
+        , Css.borderColor4 Css.transparent outlineColor Css.transparent Css.transparent
+        , Css.marginLeft Css.zero
         ]
+    , Css.after
+        [ Css.property "border-width" (String.fromFloat tailSize ++ "px")
+        , Css.borderColor4 Css.transparent tooltipColor Css.transparent Css.transparent
+        , Css.margin4 (Css.px 1) Css.zero Css.zero (Css.px 2)
+        ]
+    ]
 
 
-getTailPositioning : { xAlignment : Style, yAlignment : Style } -> Style
+getTailPositioning : { xAlignment : List Style, yAlignment : List Style } -> Style
 getTailPositioning config =
     Css.batch
         [ Css.before (positionTail config)
@@ -1471,14 +1458,14 @@ getTailPositioning config =
         ]
 
 
-positionTail : { xAlignment : Style, yAlignment : Style } -> List Style
+positionTail : { xAlignment : List Style, yAlignment : List Style } -> List Style
 positionTail { xAlignment, yAlignment } =
-    [ xAlignment
-    , yAlignment
-    , Css.property "border" "solid transparent"
+    [ Css.property "border" "solid transparent"
     , Css.property "content" "\" \""
     , Css.height Css.zero
     , Css.width Css.zero
     , Css.position Css.absolute
     , Css.pointerEvents Css.none
     ]
+        ++ xAlignment
+        ++ yAlignment
