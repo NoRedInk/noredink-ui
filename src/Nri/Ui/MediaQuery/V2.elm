@@ -1,5 +1,5 @@
 module Nri.Ui.MediaQuery.V2 exposing
-    ( MediaQuery, toStyles
+    ( MediaQuery, toStyles, toStyle
     , not
     , mobile, narrowMobile, quizEngineMobile
     , prefersReducedMotion, highContrastMode
@@ -25,13 +25,15 @@ Build media queries for responsive design.
     MediaQuery.styles
         [ MediaQuery.mobile [ Css.paddingTop (Css.px 10) ]
         , MediaQuery.narrowMobile [ Css.paddingTop (Css.px 20) ]
+
+        -- negate a media query with `not`
         , MediaQuery.not MediaQuery.mobile [ Css.fontSize (Css.px 30) ]
         ]
 
 
 ### Basics
 
-@docs MediaQuery, toStyles
+@docs MediaQuery, toStyles, toStyle
 
 
 ### Utilities
@@ -55,7 +57,18 @@ import Css.Media exposing (MediaQuery, maxWidth, minWidth, only, screen, withMed
 import Maybe.Extra as Maybe
 
 
-{-| Type representing a pair of styles for a given target.
+{-| Type representing a Media Query in the format
+
+    `(Target, SatisfiesTargetStyles, DoesNotSatisfyTargetStyles)`, where:
+
+    - `Target` is the media this query is targeting (e.g. Mobile, NarrowMobile, etc.)
+    - `SatisfiesTargetStyles` is the style to apply when the media query is satisfied
+    - `DoesNotSatisfyTargetStyles` is the style to apply when the media query is NOT satisfied
+
+    Example:
+
+    MediaQuery Mobile (Just [ Css.paddingTop (Css.px 10) ]) (Just [ Css.paddingTop (Css.px 20) ]
+
 -}
 type MediaQuery
     = MediaQuery Target (Maybe (List Style)) (Maybe (List Style))
@@ -122,7 +135,7 @@ highContrastMode s =
     MediaQuery HighContrast (Just s) Nothing
 
 
-{-| Build a `Css.Style` from a list of media queries.
+{-| Build a list of `Css.Style` from a list of media queries.
 -}
 toStyles : List MediaQuery -> List Style
 toStyles queries =
@@ -190,3 +203,13 @@ toStyles queries =
         |> addViewportQuery ( 1000, .mobile )
         |> addViewportQuery ( 750, .quizEngineMobile )
         |> addViewportQuery ( 500, .narrowMobile )
+
+
+{-| Build a single `Css.Style` from a list of media queries.
+
+    This is a convenience function for `Css.batch (toStyles queries)`.
+
+-}
+toStyle : List MediaQuery -> Style
+toStyle =
+    toStyles >> Css.batch
