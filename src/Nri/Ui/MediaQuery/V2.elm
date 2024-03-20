@@ -1,10 +1,8 @@
 module Nri.Ui.MediaQuery.V2 exposing
-    ( MediaQuery
-    , mobile
-    , narrowMobile
+    ( MediaQuery, toStyles
     , not
-    , quizEngineMobile
-    , toStyles
+    , mobile, narrowMobile, quizEngineMobile
+    , prefersReducedMotion, highContrastMode
     )
 
 {-| Patch changes:
@@ -30,10 +28,30 @@ Build media queries for responsive design.
         , MediaQuery.not MediaQuery.mobile [ Css.fontSize (Css.px 30) ]
         ]
 
+
+### Basics
+
+@docs MediaQuery, toStyles
+
+
+### Utilities
+
+@docs not
+
+
+### Viewport Media Queries
+
+@docs mobile, narrowMobile, quizEngineMobile
+
+
+### Accessibility Media Queries
+
+@docs prefersReducedMotion, highContrastMode
+
 -}
 
 import Css exposing (Style, target)
-import Css.Media exposing (MediaQuery, maxWidth, minWidth, only, screen, withMedia)
+import Css.Media exposing (MediaQuery, maxWidth, minWidth, only, screen, withMedia, withMediaQuery)
 import Maybe.Extra as Maybe
 
 
@@ -47,6 +65,8 @@ type Target
     = Mobile
     | QuizEngineMobile
     | NarrowMobile
+    | ReducedMotion
+    | HighContrast
 
 
 {-| Negate a MediaQuery
@@ -88,7 +108,21 @@ narrowMobile s =
     MediaQuery NarrowMobile (Just s) Nothing
 
 
-{-| Build a `Css.Style` from a list of breakpoints
+{-| Set styles for reduced motion
+-}
+prefersReducedMotion : List Style -> MediaQuery
+prefersReducedMotion s =
+    MediaQuery ReducedMotion (Just s) Nothing
+
+
+{-| Set styles for high contrast mode
+-}
+highContrastMode : List Style -> MediaQuery
+highContrastMode s =
+    MediaQuery HighContrast (Just s) Nothing
+
+
+{-| Build a `Css.Style` from a list of media queries.
 -}
 toStyles : List MediaQuery -> List Style
 toStyles queries =
@@ -107,6 +141,12 @@ toStyles queries =
 
                                 NarrowMobile ->
                                     ( .narrowMobile, \r v -> { r | narrowMobile = v } )
+
+                                ReducedMotion ->
+                                    ( .reducedMotion, \r v -> { r | reducedMotion = v } )
+
+                                HighContrast ->
+                                    ( .highContrast, \r v -> { r | highContrast = v } )
                     in
                     set acc
                         ( Maybe.or (Tuple.first (get acc)) satisfiesTargetStyles
@@ -116,11 +156,10 @@ toStyles queries =
                 { mobile = ( Nothing, Nothing )
                 , quizEngineMobile = ( Nothing, Nothing )
                 , narrowMobile = ( Nothing, Nothing )
+                , reducedMotion = ( Nothing, Nothing )
+                , highContrast = ( Nothing, Nothing )
                 }
                 queries
-
-        mkStyle rule px =
-            Maybe.map <| withMedia [ only screen [ rule <| Css.px px ] ]
 
         prepend =
             Maybe.cons
@@ -128,14 +167,26 @@ toStyles queries =
         append maybeItem list =
             Maybe.map (List.singleton >> List.append list) maybeItem |> Maybe.withDefault list
 
-        addBreakpointStyles ( px, getStyles ) =
+        mkViewportQuery rule px =
+            Maybe.map <| withMedia [ only screen [ rule <| Css.px px ] ]
+
+        mkBooleanQuery onQuery offQuery ( onStyles, offStyles ) =
+            Maybe.values
+                [ Maybe.map (withMediaQuery [ onQuery ]) onStyles
+                , Maybe.map (withMediaQuery [ offQuery ]) offStyles
+                ]
+
+        addViewportQuery ( px, getStyles ) =
             let
                 ( desktopFirst, mobileFirst ) =
                     getStyles config
             in
-            prepend (mkStyle maxWidth px desktopFirst) >> append (mkStyle minWidth (px + 1) mobileFirst)
+            prepend (mkViewportQuery maxWidth px desktopFirst) >> append (mkViewportQuery minWidth (px + 1) mobileFirst)
     in
-    []
-        |> addBreakpointStyles ( 1000, .mobile )
-        |> addBreakpointStyles ( 750, .quizEngineMobile )
-        |> addBreakpointStyles ( 500, .narrowMobile )
+    List.concat
+        [ mkBooleanQuery "(prefers-reduced-motion)" "(prefers-reduced-motion: no-preference)" config.reducedMotion
+        , mkBooleanQuery "(forced-colors: active)" "(forced-colors: none)" config.highContrast
+        ]
+        |> addViewportQuery ( 1000, .mobile )
+        |> addViewportQuery ( 750, .quizEngineMobile )
+        |> addViewportQuery ( 500, .narrowMobile )
