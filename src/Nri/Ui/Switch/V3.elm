@@ -39,7 +39,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
-import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.MediaQuery.V2 as MediaQuery
 import Nri.Ui.Svg.V1 exposing (Svg)
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as SvgAttributes
@@ -395,4 +395,7 @@ stroke color =
 
 transition : String -> Css.Style
 transition transitionRules =
-    MediaQuery.anyMotion [ Css.property "transition" transitionRules ]
+    MediaQuery.toStyle
+        [ MediaQuery.not MediaQuery.prefersReducedMotion
+            [ Css.property "transition" transitionRules ]
+        ]
