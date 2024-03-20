@@ -27,17 +27,13 @@ allQueriesRandomOrderFuzzer =
         , mobile [ order (int 4) ]
         , quizEngineMobile [ order (int 5) ]
         , narrowMobile [ order (int 6) ]
-        , highContrastMode [ order (int -1) ]
-        , MediaQuery.not highContrastMode [ order (int -11) ]
-        , prefersReducedMotion [ order (int -2) ]
-        , MediaQuery.not prefersReducedMotion [ order (int -22) ]
         ]
 
 
 suite : Test
 suite =
-    describe "MediaQuery.builder"
-        [ fuzz allQueriesRandomOrderFuzzer "it puts queries in the correct order" <|
+    describe "MediaQuery.V2"
+        [ fuzz allQueriesRandomOrderFuzzer "it puts breakpoint queries in the correct order" <|
             \queries ->
                 div [ css <| MediaQuery.toStyles queries ] []
                     |> toUnstyled
@@ -45,25 +41,38 @@ suite =
                     |> Query.find [ Selector.tag "style" ]
                     |> Query.has
                         [ Selector.text (String.trim """
-@media only screen and (min-width: 501px){._28601c77{order:1;}}
-@media only screen and (min-width: 751px){._28601c77{order:2;}}
-@media only screen and (min-width: 1001px){._28601c77{order:3;}}
-@media (forced-colors: none){._28601c77{order:-11;}}
-@media (forced-colors: active){._28601c77{order:-1;}}
-@media (prefers-reduced-motion: no-preference){._28601c77{order:-22;}}
-@media (prefers-reduced-motion){._28601c77{order:-2;}}
-@media only screen and (max-width: 1000px){._28601c77{order:4;}}
-@media only screen and (max-width: 750px){._28601c77{order:5;}}
-@media only screen and (max-width: 500px){._28601c77{order:6;}}
+@media only screen and (min-width: 501px){._543c77e6{order:1;}}
+@media only screen and (min-width: 751px){._543c77e6{order:2;}}
+@media only screen and (min-width: 1001px){._543c77e6{order:3;}}
+@media only screen and (max-width: 1000px){._543c77e6{order:4;}}
+@media only screen and (max-width: 750px){._543c77e6{order:5;}}
+@media only screen and (max-width: 500px){._543c77e6{order:6;}}
                     """)
+                        ]
+        , test "it works with user preference queries" <|
+            \() ->
+                div
+                    [ css <|
+                        MediaQuery.toStyles
+                            [ highContrastMode [ borderWidth (px 1) ]
+                            , MediaQuery.not highContrastMode [ borderWidth (px 2) ]
+                            ]
+                    ]
+                    []
+                    |> toUnstyled
+                    |> Query.fromHtml
+                    |> Query.find [ Selector.tag "style" ]
+                    |> Query.has
+                        [ Selector.text "border-width:1px;"
+                        , Selector.text "border-width:2px;"
                         ]
         , test "it works with duplicated queries" <|
             \() ->
                 div
                     [ css <|
                         MediaQuery.toStyles
-                            [ mobile [ borderWidth (px 1) ]
-                            , mobile [ fontSize (px 1) ]
+                            [ prefersReducedMotion [ borderWidth (px 1) ]
+                            , prefersReducedMotion [ fontSize (px 1) ]
                             ]
                     ]
                     []

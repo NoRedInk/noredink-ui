@@ -1,6 +1,6 @@
 module Nri.Ui.MediaQuery.V2 exposing
     ( MediaQuery, toStyles, toStyle
-    , not
+    , not, offset
     , mobile, narrowMobile, quizEngineMobile
     , prefersReducedMotion, highContrastMode
     )
@@ -38,15 +38,15 @@ Build media queries for responsive design.
 
 ### Utilities
 
-@docs not
+@docs not, offset
 
 
-### Viewport Media Queries
+### Breakpoint
 
 @docs mobile, narrowMobile, quizEngineMobile
 
 
-### Accessibility Media Queries
+### User Preferences
 
 @docs prefersReducedMotion, highContrastMode
 
@@ -54,6 +54,7 @@ Build media queries for responsive design.
 
 import Css exposing (Style, target)
 import Css.Media exposing (MediaQuery, maxWidth, minWidth, only, screen, withMedia, withMediaQuery)
+import Dict
 import Maybe.Extra as Maybe
 
 
@@ -75,11 +76,8 @@ type MediaQuery
 
 
 type Target
-    = Mobile
-    | QuizEngineMobile
-    | NarrowMobile
-    | ReducedMotion
-    | HighContrast
+    = Breakpoint Float
+    | UserPreference String String
 
 
 {-| Negate a MediaQuery
@@ -100,39 +98,75 @@ not query s =
     MediaQuery target Nothing (Just s)
 
 
+{-| Offset a viewport breakpoint
+
+    For example,
+
+    `offset 20 mobile [ fontSize (px 20) ]`
+
+    Will apply the `font-size: 20px` rule at the breakpoint 1020px.
+
+    If used with a non-breakpoint media query or the resulting breakpoing is < 0,
+    `Nothing` will be returned.
+
+-}
+offset : Float -> (List Style -> MediaQuery) -> List Style -> Maybe MediaQuery
+offset px query s =
+    case query s of
+        MediaQuery (Breakpoint orig) _ _ ->
+            if orig + px < 0 then
+                Nothing
+
+            else
+                Just <| MediaQuery (Breakpoint (orig + px)) (Just s) Nothing
+
+        _ ->
+            Nothing
+
+
+breakpoint : Float -> List Style -> MediaQuery
+breakpoint px s =
+    MediaQuery (Breakpoint px) (Just s) Nothing
+
+
+userPreference : String -> String -> List Style -> MediaQuery
+userPreference on off s =
+    MediaQuery (UserPreference on off) (Just s) Nothing
+
+
 {-| Set styles for mobile and smaller devices (<= 1000px)
 -}
 mobile : List Style -> MediaQuery
-mobile s =
-    MediaQuery Mobile (Just s) Nothing
+mobile =
+    breakpoint 1000
 
 
 {-| Set styles for quiz engine mobile and smaller devices (<= 750px)
 -}
 quizEngineMobile : List Style -> MediaQuery
-quizEngineMobile s =
-    MediaQuery QuizEngineMobile (Just s) Nothing
+quizEngineMobile =
+    breakpoint 750
 
 
 {-| Set styles for narrow mobile and smaller devices (<= 500px)
 -}
 narrowMobile : List Style -> MediaQuery
-narrowMobile s =
-    MediaQuery NarrowMobile (Just s) Nothing
+narrowMobile =
+    breakpoint 500
 
 
 {-| Set styles for reduced motion
 -}
 prefersReducedMotion : List Style -> MediaQuery
-prefersReducedMotion s =
-    MediaQuery ReducedMotion (Just s) Nothing
+prefersReducedMotion =
+    userPreference "(prefers-reduced-motion)" "(prefers-reduced-motion: no-preference)"
 
 
 {-| Set styles for high contrast mode
 -}
 highContrastMode : List Style -> MediaQuery
-highContrastMode s =
-    MediaQuery HighContrast (Just s) Nothing
+highContrastMode =
+    userPreference "(forced-colors: active)" "(forced-colors: none)"
 
 
 {-| Build a list of `Css.Style` from a list of media queries.
@@ -143,37 +177,30 @@ toStyles queries =
         config =
             List.foldl
                 (\(MediaQuery target satisfiesTargetStyles doesNotSatisfyTargetStyles) acc ->
-                    let
-                        ( get, set ) =
-                            case target of
-                                Mobile ->
-                                    ( .mobile, \r v -> { r | mobile = v } )
+                    case target of
+                        Breakpoint px ->
+                            { acc
+                                | breakpoints =
+                                    Dict.update px
+                                        (Maybe.withDefault ( Nothing, Nothing )
+                                            >> Tuple.mapBoth
+                                                (merge satisfiesTargetStyles)
+                                                (merge doesNotSatisfyTargetStyles)
+                                            >> Just
+                                        )
+                                        acc.breakpoints
+                            }
 
-                                QuizEngineMobile ->
-                                    ( .quizEngineMobile, \r v -> { r | quizEngineMobile = v } )
-
-                                NarrowMobile ->
-                                    ( .narrowMobile, \r v -> { r | narrowMobile = v } )
-
-                                ReducedMotion ->
-                                    ( .reducedMotion, \r v -> { r | reducedMotion = v } )
-
-                                HighContrast ->
-                                    ( .highContrast, \r v -> { r | highContrast = v } )
-
-                        ( maybeExistingSatisfies, maybeExistingDoesNotSatisfy ) =
-                            get acc
-                    in
-                    set acc
-                        ( merge maybeExistingSatisfies satisfiesTargetStyles
-                        , merge maybeExistingDoesNotSatisfy doesNotSatisfyTargetStyles
-                        )
+                        UserPreference onQuery offQuery ->
+                            { acc
+                                | userPreferences =
+                                    acc.userPreferences
+                                        |> Dict.update onQuery (merge satisfiesTargetStyles)
+                                        |> Dict.update offQuery (merge doesNotSatisfyTargetStyles)
+                            }
                 )
-                { mobile = ( Nothing, Nothing )
-                , quizEngineMobile = ( Nothing, Nothing )
-                , narrowMobile = ( Nothing, Nothing )
-                , reducedMotion = ( Nothing, Nothing )
-                , highContrast = ( Nothing, Nothing )
+                { breakpoints = Dict.empty
+                , userPreferences = Dict.empty
                 }
                 queries
 
@@ -186,29 +213,17 @@ toStyles queries =
         append maybeItem list =
             Maybe.map (List.singleton >> List.append list) maybeItem |> Maybe.withDefault list
 
-        mkBooleanQuery onQuery offQuery ( onStyles, offStyles ) =
-            Maybe.values
-                [ Maybe.map (withMediaQuery [ onQuery ]) onStyles
-                , Maybe.map (withMediaQuery [ offQuery ]) offStyles
-                ]
+        mkUserPreferenceQuery ( query, styles ) =
+            withMediaQuery [ query ] styles
 
         mkViewportQuery rule px =
             Maybe.map <| withMedia [ only screen [ rule <| Css.px px ] ]
 
-        addViewportQuery ( px, getStyles ) =
-            let
-                ( desktopFirst, mobileFirst ) =
-                    getStyles config
-            in
+        addViewportQuery ( px, ( desktopFirst, mobileFirst ) ) =
             prepend (mkViewportQuery maxWidth px desktopFirst) >> append (mkViewportQuery minWidth (px + 1) mobileFirst)
     in
-    List.concat
-        [ mkBooleanQuery "(prefers-reduced-motion)" "(prefers-reduced-motion: no-preference)" config.reducedMotion
-        , mkBooleanQuery "(forced-colors: active)" "(forced-colors: none)" config.highContrast
-        ]
-        |> addViewportQuery ( 1000, .mobile )
-        |> addViewportQuery ( 750, .quizEngineMobile )
-        |> addViewportQuery ( 500, .narrowMobile )
+    List.map mkUserPreferenceQuery (Dict.toList config.userPreferences)
+        ++ List.foldr addViewportQuery [] (Dict.toList config.breakpoints |> List.sortBy Tuple.first)
 
 
 {-| Build a single `Css.Style` from a list of media queries.
