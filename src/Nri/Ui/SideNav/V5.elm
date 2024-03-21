@@ -65,7 +65,6 @@ import Accessibility.Styled.Style as Style
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (..)
 import Css.Global
-import Css.Media
 import Html.Styled
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -434,17 +433,16 @@ viewNav sidenavId config appliedNavAttributes entries showNav =
          ]
             |> List.filterMap identity
         )
-        (viewJust (viewOpenCloseButton sidenavId appliedNavAttributes.navLabel currentEntry) appliedNavAttributes.collapsible
-            :: [ ul
-                    [ Attributes.css
-                        [ listStyle none
-                        , padding zero
-                        , margin zero
-                        ]
-                    ]
-                    (List.map (viewSidebarEntry config entryStyles) entries)
-               ]
-        )
+        [ viewJust (viewOpenCloseButton sidenavId appliedNavAttributes.navLabel currentEntry) appliedNavAttributes.collapsible
+        , ul
+            [ Attributes.css
+                [ listStyle none
+                , padding zero
+                , margin zero
+                ]
+            ]
+            (List.map (viewSidebarEntry config entryStyles) entries)
+        ]
 
 
 viewSkipLink : msg -> Html msg
@@ -581,7 +579,7 @@ anyLinkDescendants f children =
                 Html _ ->
                     False
 
-                CompactGroup children_ groupConfig ->
+                CompactGroup children_ _ ->
                     anyLinkDescendants f children_
         )
         children
