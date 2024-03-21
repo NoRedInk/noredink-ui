@@ -19,7 +19,7 @@ import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Markdown
-import Nri.Ui.Button.V10 as Button
+import Nri.Ui.Button.V11 as Button
 import Nri.Ui.CharacterIcon.V2 as CharacterIcon
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
@@ -83,7 +83,7 @@ view ellieLinkConfig state =
         , mainType = Nothing
         , extraCode =
             [ "import Nri.Ui.CharacterIcon.V2 as CharacterIcon"
-            , "import Nri.Ui.Button.V10 as Button"
+            , "import Nri.Ui.Button.V11 as Button"
             , Code.newlines
             , Code.unionType "Msg" [ "NoOp" ]
             ]

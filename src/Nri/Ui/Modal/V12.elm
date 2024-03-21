@@ -165,7 +165,6 @@ import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Style as Style
 import Browser.Events.Extra
 import Css exposing (..)
-import Css.Media
 import Css.Transitions
 import Html.Styled as Root
 import Html.Styled.Attributes as Attrs exposing (id)
@@ -176,7 +175,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Html.V3 exposing (viewJust)
-import Nri.Ui.MediaQuery.V1 exposing (mobile)
+import Nri.Ui.MediaQuery.V2 as MediaQuery exposing (mobile)
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Nri.Ui.WhenFocusLeaves.V2 as WhenFocusLeaves
@@ -436,8 +435,10 @@ modalStyles =
     -- Border
     , borderRadius (px 20)
     , Shadows.high
-    , Css.Media.withMedia [ mobile ]
-        [ borderRadius zero
+    , MediaQuery.fromList
+        [ mobile
+            [ borderRadius zero
+            ]
         ]
 
     -- Spacing
@@ -468,8 +469,10 @@ titleStyles config =
             (Css.px 40)
             titleSidePadding
             (Css.px 20)
-        , Css.Media.withMedia [ mobile ]
-            [ Css.padding3 (Css.px 20) titleSidePadding Css.zero
+        , MediaQuery.fromList
+            [ mobile
+                [ Css.padding3 (Css.px 20) titleSidePadding Css.zero
+                ]
             ]
         , Css.margin Css.zero
         , Css.fontSize (Css.px 20)
@@ -695,13 +698,15 @@ viewInnerContent ({ visibleTitle } as config) =
                 , Css.boxSizing Css.borderBox
                 , Css.paddingLeft (Css.px 40)
                 , Css.paddingRight (Css.px 40)
-                , Css.Media.withMedia [ mobile ]
-                    [ Css.padding (Css.px 20)
-                    , Css.maxHeight
-                        (Css.calc (Css.vh 100)
-                            Css.minus
-                            (Css.px (footerMobileHeight + titleMobileHeight + 80))
-                        )
+                , MediaQuery.fromList
+                    [ mobile
+                        [ Css.padding (Css.px 20)
+                        , Css.maxHeight
+                            (Css.calc (Css.vh 100)
+                                Css.minus
+                                (Css.px (footerMobileHeight + titleMobileHeight + 80))
+                            )
+                        ]
                     ]
                 , if visibleTitle then
                     Css.paddingTop Css.zero
@@ -737,8 +742,10 @@ viewFooter children =
                 , Css.backgroundColor Colors.gray96
                 , Css.borderTop3 (Css.px 1) Css.solid Colors.gray92
                 , Css.borderRadius4 Css.zero Css.zero (Css.px 20) (Css.px 20)
-                , Css.Media.withMedia [ mobile ]
-                    [ Css.padding (Css.px 20)
+                , MediaQuery.fromList
+                    [ mobile
+                        [ Css.padding (Css.px 20)
+                        ]
                     ]
                 ]
             , ExtraAttributes.nriDescription "modal-footer"

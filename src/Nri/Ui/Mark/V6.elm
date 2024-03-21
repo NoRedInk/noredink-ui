@@ -34,7 +34,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Html.V3 exposing (viewJust)
-import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.MediaQuery.V2 as MediaQuery
 import Sort exposing (Sorter)
 import Sort.Set as Set exposing (Set)
 import String.Extra
@@ -110,10 +110,12 @@ viewWithOverlaps viewSegment segments =
                                 [ span [ css startStyles ]
                                     [ viewInlineTag
                                         [ Css.display Css.none
-                                        , MediaQuery.highContrastMode
-                                            [ Css.property "forced-color-adjust" "none"
-                                            , Css.display Css.inline |> Css.important
-                                            , Css.property "color" "initial" |> Css.important
+                                        , MediaQuery.fromList
+                                            [ MediaQuery.highContrastMode
+                                                [ Css.property "forced-color-adjust" "none"
+                                                , Css.display Css.inline |> Css.important
+                                                , Css.property "color" "initial" |> Css.important
+                                                ]
                                             ]
                                         ]
                                         (String.Extra.toSentenceOxford names)
@@ -337,7 +339,7 @@ viewStartHighlightTag tagStyle marked name =
                                 []
 
                             else
-                                [ MediaQuery.highContrastMode marked.startStyles ]
+                                [ MediaQuery.fromList [ MediaQuery.highContrastMode marked.startStyles ] ]
 
                         InlineTags ->
                             if marked.name == Nothing then
@@ -369,15 +371,25 @@ markStyles tagStyle index marked =
                                 markedWith.startStyles
 
                             else
-                                [ MediaQuery.notHighContrastMode
-                                    (markedWith.startStyles
-                                        ++ [ -- override for the left border that's typically
-                                             -- added in Nri.Ui.HighlighterTool
-                                             MediaQuery.highContrastMode
-                                                [ Css.important (Css.borderLeftWidth Css.zero)
-                                                ]
-                                           ]
-                                    )
+                                [ MediaQuery.fromList
+                                    [ MediaQuery.not MediaQuery.highContrastMode
+                                        (markedWith.startStyles
+                                            ++ [ -- override for the left border that's typically
+                                                 -- added in Nri.Ui.HighlighterTool
+                                                 --
+                                                 -- Q: should this be nested like this?
+                                                 -- it seems like it might never apply
+                                                 -- since the parent media query is contradictory.
+                                                 -- Leaving it like this for now since this is
+                                                 -- the way I found it, but it seems wrong.
+                                                 MediaQuery.fromList
+                                                    [ MediaQuery.highContrastMode
+                                                        [ Css.important (Css.borderLeftWidth Css.zero)
+                                                        ]
+                                                    ]
+                                               ]
+                                        )
+                                    ]
                                 ]
 
                         InlineTags ->
@@ -443,19 +455,23 @@ viewTag tagStyle =
     case tagStyle of
         InlineTags ->
             viewInlineTag
-                [ MediaQuery.highContrastMode
-                    [ Css.property "forced-color-adjust" "none"
-                    , Css.property "color" "initial" |> Css.important
+                [ MediaQuery.fromList
+                    [ MediaQuery.highContrastMode
+                        [ Css.property "forced-color-adjust" "none"
+                        , Css.property "color" "initial" |> Css.important
+                        ]
                     ]
                 ]
 
         HiddenTags ->
             viewInlineTag
                 [ Css.display Css.none
-                , MediaQuery.highContrastMode
-                    [ Css.property "forced-color-adjust" "none"
-                    , Css.display Css.inline |> Css.important
-                    , Css.property "color" "initial" |> Css.important
+                , MediaQuery.fromList
+                    [ MediaQuery.highContrastMode
+                        [ Css.property "forced-color-adjust" "none"
+                        , Css.display Css.inline |> Css.important
+                        , Css.property "color" "initial" |> Css.important
+                        ]
                     ]
                 ]
 

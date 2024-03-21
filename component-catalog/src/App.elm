@@ -8,7 +8,6 @@ import Browser.Navigation exposing (Key)
 import Category exposing (Category)
 import Css exposing (..)
 import Css.Global
-import Css.Media exposing (withMedia)
 import Dict exposing (Dict)
 import Example exposing (Example)
 import Examples
@@ -21,7 +20,7 @@ import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Header.V1 as Header
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Html.V3 exposing (viewIf)
-import Nri.Ui.MediaQuery.V1 exposing (mobile)
+import Nri.Ui.MediaQuery.V2 as MediaQuery exposing (mobile)
 import Nri.Ui.Page.V3 as Page
 import Nri.Ui.SideNav.V5 as SideNav
 import Nri.Ui.Spacing.V1 as Spacing
@@ -458,7 +457,7 @@ viewLayout model headerExtras content =
         , Html.div
             [ css
                 [ displayFlex
-                , withMedia [ mobile ] [ flexDirection column, alignItems stretch ]
+                , MediaQuery.fromList [ mobile [ flexDirection column, alignItems stretch ] ]
                 , alignItems flexStart
                 , Spacing.centeredContentWithSidePaddingAndCustomWidth (Css.px 1400)
                 , Spacing.pageTopWhitespace

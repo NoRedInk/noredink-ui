@@ -37,7 +37,7 @@ module Nri.Ui.Spacing.V1 exposing
 
 import Css exposing (Style)
 import Css.Media as Media
-import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.MediaQuery.Internal exposing (mobileBreakpoint, narrowMobileBreakpoint, quizEngineMobileBreakpoint)
 
 
 {-| Advanced use only: center content up to a custom page width, with side padding when narrower.
@@ -85,7 +85,7 @@ If you have a container that should snap flush to the edges on mobile, this isn'
 -}
 centeredContentWithSidePadding : Style
 centeredContentWithSidePadding =
-    centeredContentWithSidePaddingAndCustomWidth MediaQuery.mobileBreakpoint
+    centeredContentWithSidePaddingAndCustomWidth <| Css.px mobileBreakpoint
 
 
 {-| Center content with a max width of the mobile breakpoint.
@@ -95,7 +95,7 @@ This style does not add side padding on mobile, which means that this can be use
 -}
 centeredContent : Style
 centeredContent =
-    centeredContentWithCustomWidth MediaQuery.mobileBreakpoint
+    centeredContentWithCustomWidth <| Css.px mobileBreakpoint
 
 
 {-| Use this style on Quiz Engine pages.
@@ -107,7 +107,7 @@ If you have a container that should snap flush to the edges on mobile, this isn'
 -}
 centeredQuizEngineContentWithSidePadding : Style
 centeredQuizEngineContentWithSidePadding =
-    centeredContentWithSidePaddingAndCustomWidth MediaQuery.quizEngineBreakpoint
+    centeredContentWithSidePaddingAndCustomWidth <| Css.px quizEngineMobileBreakpoint
 
 
 {-| Use this style on Quiz Engine pages.
@@ -119,7 +119,7 @@ This style does not add side padding on mobile, which means that this can be use
 -}
 quizEngineCenteredContent : Style
 quizEngineCenteredContent =
-    centeredContentWithCustomWidth MediaQuery.quizEngineBreakpoint
+    centeredContentWithCustomWidth <| Css.px quizEngineMobileBreakpoint
 
 
 {-| Use this style on pages with a narrow (500px) breakpoint.
@@ -131,7 +131,7 @@ If you have a container that should snap flush to the edges on mobile, this isn'
 -}
 centeredNarrowContentWithSidePadding : Style
 centeredNarrowContentWithSidePadding =
-    centeredContentWithSidePaddingAndCustomWidth MediaQuery.narrowMobileBreakpoint
+    centeredContentWithSidePaddingAndCustomWidth <| Css.px narrowMobileBreakpoint
 
 
 {-| Use this style on pages with a narrow (500px) breakpoint.
@@ -143,7 +143,7 @@ This style does not add side padding on mobile, which means that this can be use
 -}
 narrowCenteredContent : Style
 narrowCenteredContent =
-    centeredContentWithCustomWidth MediaQuery.narrowMobileBreakpoint
+    centeredContentWithCustomWidth <| Css.px narrowMobileBreakpoint
 
 
 {-| Convenience for adding the appriopriate amount of whitespace on the sides of a full-width container on the page or on the page with side padding.

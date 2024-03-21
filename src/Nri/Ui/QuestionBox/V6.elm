@@ -37,7 +37,7 @@ import Css
 import Css.Global
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
-import Nri.Ui.Button.V10 as Button
+import Nri.Ui.Button.V11 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra

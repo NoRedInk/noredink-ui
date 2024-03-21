@@ -18,7 +18,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import List.Extra
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.MediaQuery.V2 as MediaQuery
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Svg.Styled
@@ -74,13 +74,13 @@ spinning size color =
     Html.div
         []
         [ spinningDots
-            |> Svg.withCss [ MediaQuery.anyMotion [ Css.display Css.none ] ]
+            |> Svg.withCss [ MediaQuery.fromList [ MediaQuery.not MediaQuery.prefersReducedMotion [ Css.display Css.none ] ] ]
             |> Svg.withWidth size
             |> Svg.withHeight size
             |> Svg.toHtml
         , spinningPencil
             |> Svg.withColor color
-            |> Svg.withCss [ MediaQuery.prefersReducedMotion [ Css.display Css.none ] ]
+            |> Svg.withCss [ MediaQuery.fromList [ MediaQuery.prefersReducedMotion [ Css.display Css.none ] ] ]
             |> Svg.withWidth size
             |> Svg.withHeight size
             |> Svg.toHtml
@@ -152,11 +152,13 @@ spinningDots =
 
 circlingCss : List Css.Style
 circlingCss =
-    [ MediaQuery.anyMotion
-        [ Css.property "animation-duration" "1s"
-        , Css.property "animation-iteration-count" "infinite"
-        , Css.animationName rotateKeyframes
-        , Css.property "animation-timing-function" "linear"
+    [ MediaQuery.fromList
+        [ MediaQuery.not MediaQuery.prefersReducedMotion
+            [ Css.property "animation-duration" "1s"
+            , Css.property "animation-iteration-count" "infinite"
+            , Css.animationName rotateKeyframes
+            , Css.property "animation-timing-function" "linear"
+            ]
         ]
     ]
 

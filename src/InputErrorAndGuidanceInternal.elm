@@ -21,7 +21,7 @@ import Accessibility.Styled.Live as Live
 import Css
 import Html.Styled as Html exposing (Html)
 import Nri.Ui.Html.Attributes.V2
-import Nri.Ui.Message.V4 as Message
+import Nri.Ui.Message.V5 as Message
 import Nri.Ui.Text.V6 as Text
 
 

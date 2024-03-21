@@ -2,8 +2,8 @@ module Guidance exposing (..)
 
 import Examples.RadioButtonDotless as RadioButtonDotlessExample
 import Html.Styled exposing (..)
-import Nri.Ui.ClickableText.V4 as ClickableText
-import Nri.Ui.Message.V4 as Message
+import Nri.Ui.ClickableText.V5 as ClickableText
+import Nri.Ui.Message.V5 as Message
 import Nri.Ui.Text.V6 as Text
 import Routes
 

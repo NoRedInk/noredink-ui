@@ -62,6 +62,9 @@ hint = 'upgrade to V6'
 [forbidden."Nri.Ui.BreadCrumbs.V1"]
 hint = 'upgrade to V2'
 
+[forbidden."Nri.Ui.Button.V10"]
+hint = 'upgrade to V11'
+
 [forbidden."Nri.Ui.Button.V8"]
 hint = 'upgrade to V10'
 usages = ['component-catalog-app/../src/Nri/Ui/SlideModal/V2.elm']
@@ -89,7 +92,10 @@ hint = 'upgrade to V2'
 usages = ['component-catalog-app/Examples/Tooltip.elm']
 
 [forbidden."Nri.Ui.ClickableText.V3"]
-hint = 'upgrade to V4'
+hint = 'upgrade to V5'
+
+[forbidden."Nri.Ui.ClickableText.V4"]
+hint = 'upgrade to V5'
 
 [forbidden."Nri.Ui.Container.V1"]
 hint = 'upgrade to V2'
@@ -159,6 +165,16 @@ usages = ['component-catalog/../src/Nri/Ui/Block/V5.elm']
 [forbidden."Nri.Ui.Mark.V5"]
 hint = 'upgrade to V6'
 
+[forbidden."Nri.Ui.MediaQuery.V1"]
+hint = 'upgrade to V2'
+usages = [
+    'component-catalog/../src/Nri/Ui/Button/V10.elm',
+    'component-catalog/../src/Nri/Ui/ClickableText/V3.elm',
+    'component-catalog/../src/Nri/Ui/ClickableText/V4.elm',
+    'component-catalog/../src/Nri/Ui/Mark/V2.elm',
+    'component-catalog/../src/Nri/Ui/Message/V4.elm',
+]
+
 [forbidden."Nri.Ui.Menu.V1"]
 hint = 'upgrade to V3'
 
@@ -176,6 +192,9 @@ hint = 'upgrade to V3'
 
 [forbidden."Nri.Ui.Message.V3"]
 hint = 'upgrade to V4'
+
+[forbidden."Nri.Ui.Message.V4"]
+hint = 'upgrade to V5'
 
 [forbidden."Nri.Ui.Modal.V10"]
 hint = 'upgrade to V11'
