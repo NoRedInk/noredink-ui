@@ -322,7 +322,7 @@ describe("UI tests", function () {
     page.close();
   });
 
-  it("MediaQuery.builder", async function () {
+  it("MediaQuery.V2", async function () {
     page = await browser.newPage();
 
     await page.emulateMediaFeatures([
