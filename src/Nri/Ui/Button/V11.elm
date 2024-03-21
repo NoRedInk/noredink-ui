@@ -18,11 +18,17 @@ module Nri.Ui.Button.V11 exposing
     , css, notMobileCss, mobileCss, quizEngineMobileCss
     )
 
-{-| Notes for V11:
+{-| Patch changes:
 
-The next version of `Button` should add a `hideTextForMobile` helper.
-This will require adding a selector for the text. We are not making this change in V10, as
-adding a span around the text could potentially lead to regressions.
+  - added `hideTextForMobile` and `hideTextFor`
+
+
+# As part of major release:
+
+  - changed signature of `hideIconForMobile` and `hideIconFor` to accept an Nri.Ui.MediaQuery constructor
+
+
+# Changes from V10
 
 
 # As part of major release:

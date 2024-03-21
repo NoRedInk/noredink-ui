@@ -57,7 +57,7 @@ import InputLabelInternal
 import Iso8601
 import Keyboard.Event
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
-import Nri.Ui.ClickableText.V4 as ClickableText
+import Nri.Ui.ClickableText.V5 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as Extra
 import Nri.Ui.InputStyles.V4 as InputStyles exposing (defaultMarginTop)

@@ -9,7 +9,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Html.Styled.Lazy as Lazy
-import Nri.Ui.ClickableText.V4 as ClickableText
+import Nri.Ui.ClickableText.V5 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.MediaQuery.V1 exposing (mobile)

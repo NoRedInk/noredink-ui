@@ -15,7 +15,7 @@ import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Html.Styled.Lazy as Lazy
 import KeyboardSupport exposing (KeyboardSupport)
-import Nri.Ui.ClickableText.V4 as ClickableText
+import Nri.Ui.ClickableText.V5 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Header.V1 as Header

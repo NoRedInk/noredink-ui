@@ -4,7 +4,7 @@ import Accessibility.Styled.Aria as Aria
 import Dict exposing (Dict)
 import Html.Styled exposing (..)
 import Http
-import Nri.Ui.Button.V10 as Button
+import Nri.Ui.Button.V11 as Button
 import Url.Builder
 
 

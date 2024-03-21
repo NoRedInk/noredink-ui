@@ -15,7 +15,7 @@ import Css
 import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
-import Nri.Ui.ClickableText.V4 as ClickableText
+import Nri.Ui.ClickableText.V5 as ClickableText
 import Nri.Ui.Colors.Extra exposing (fromCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts

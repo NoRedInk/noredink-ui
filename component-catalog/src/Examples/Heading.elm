@@ -15,7 +15,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (..)
-import Nri.Ui.ClickableText.V4 as ClickableText
+import Nri.Ui.ClickableText.V5 as ClickableText
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Text.V6 as Text

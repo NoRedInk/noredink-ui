@@ -19,8 +19,8 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import List.Extra
 import Maybe.Extra
-import Nri.Ui.Button.V10 as Button
-import Nri.Ui.ClickableText.V4 as ClickableText
+import Nri.Ui.Button.V11 as Button
+import Nri.Ui.ClickableText.V5 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading

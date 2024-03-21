@@ -16,7 +16,7 @@ import Html.Styled.Events as Events
 import Html.Styled.Keyed as Keyed
 import Html.Styled.Lazy as Lazy
 import List.Extra as List
-import Nri.Ui.Button.V10 as Button
+import Nri.Ui.Button.V11 as Button
 import Nri.Ui.FocusLoop.Lazy.V1 as FocusLoop
 import Nri.Ui.FocusLoop.V1 as FocusLoop
 import Nri.Ui.Html.V3 exposing (viewIf)

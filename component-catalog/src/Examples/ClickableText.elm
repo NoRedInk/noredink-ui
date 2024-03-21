@@ -19,7 +19,7 @@ import Example exposing (Example)
 import Guidance
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
-import Nri.Ui.ClickableText.V4 as ClickableText
+import Nri.Ui.ClickableText.V5 as ClickableText
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V7 as Table

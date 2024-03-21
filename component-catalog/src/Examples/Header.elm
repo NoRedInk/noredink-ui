@@ -17,7 +17,7 @@ import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs
-import Nri.Ui.ClickableText.V4 as ClickableText
+import Nri.Ui.ClickableText.V5 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Header.V1 as Header
@@ -77,7 +77,7 @@ example =
                 , mainType = Just "RootHtml.Html msg"
                 , extraCode =
                     [ "import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs"
-                    , "import Nri.Ui.ClickableText.V4 as ClickableText"
+                    , "import Nri.Ui.ClickableText.V5 as ClickableText"
                     ]
                 , renderExample = Code.unstyledView
                 , toExampleCode =

@@ -19,8 +19,8 @@ import Example exposing (Example)
 import Guidance
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
-import Nri.Ui.Button.V10 as Button
-import Nri.Ui.ClickableText.V4 as ClickableText
+import Nri.Ui.Button.V11 as Button
+import Nri.Ui.ClickableText.V5 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing

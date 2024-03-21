@@ -13,7 +13,7 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Nri.Ui.Button.V10 as Button
+import Nri.Ui.Button.V11 as Button
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V7 as Table exposing (Column)
@@ -86,7 +86,7 @@ example =
                 , update = UpdateControl
                 , settings = state
                 , mainType = Just "RootHtml.Html msg"
-                , extraCode = [ "import Nri.Ui.Button.V10 as Button" ]
+                , extraCode = [ "import Nri.Ui.Button.V11 as Button" ]
                 , renderExample = Code.unstyledView
                 , toExampleCode =
                     \settings ->
