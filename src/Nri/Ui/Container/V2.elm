@@ -145,7 +145,7 @@ responsiveCss mq =
 Equivalent to:
 
     Container.css
-        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.notMobile ] styles ]
+        [ MediaQuery.fromList [ MediaQuery.not MediaQuery.mobile styles ] ]
 
 -}
 notMobileCss : List Style -> Attribute msg
@@ -158,7 +158,7 @@ notMobileCss =
 Equivalent to:
 
     Container.css
-        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.mobile ] styles ]
+        [ MediaQuery.fromList [ MediaQuery.mobile styles ] ]
 
 -}
 mobileCss : List Style -> Attribute msg
@@ -171,7 +171,7 @@ mobileCss =
 Equivalent to:
 
     Container.css
-        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.quizEngineMobile ] styles ]
+        [ MediaQuery.fromList [ MediaQuery.quizEngineMobile styles ] ]
 
 -}
 quizEngineMobileCss : List Style -> Attribute msg
