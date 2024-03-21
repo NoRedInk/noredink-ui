@@ -65,14 +65,13 @@ module Nri.Ui.Container.V2 exposing
 
 import Content
 import Css exposing (..)
-import Css.Media exposing (withMedia)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes
 import MarkdownStyles
 import Nri.Ui
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
-import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.MediaQuery.V2 as MediaQuery exposing (MediaQuery)
 import Nri.Ui.Shadows.V1 as Shadows
 
 
@@ -87,6 +86,7 @@ type alias Settings msg =
     { containerType : String
     , padding : Float
     , css : List Css.Style
+    , responsiveCss : MediaQuery.ResponsiveStyles
     , content : List (Html msg)
     , attributes : List (Html.Attribute msg)
     }
@@ -134,6 +134,12 @@ css css_ =
     Attribute <| \config -> { config | css = config.css ++ css_ }
 
 
+{-| -}
+responsiveCss : MediaQuery properties -> Attribute msg
+responsiveCss mq =
+    Attribute <| \config -> { config | responsiveCss = MediaQuery.on mq config.responsiveCss }
+
+
 {-| Set styles that will only apply if the viewport is wider than NRI's mobile breakpoint.
 
 Equivalent to:
@@ -143,8 +149,8 @@ Equivalent to:
 
 -}
 notMobileCss : List Style -> Attribute msg
-notMobileCss styles =
-    css [ Css.Media.withMedia [ MediaQuery.notMobile ] styles ]
+notMobileCss =
+    responsiveCss << MediaQuery.not MediaQuery.mobile
 
 
 {-| Set styles that will only apply if the viewport is narrower than NRI's mobile breakpoint.
@@ -156,8 +162,8 @@ Equivalent to:
 
 -}
 mobileCss : List Style -> Attribute msg
-mobileCss styles =
-    css [ Css.Media.withMedia [ MediaQuery.mobile ] styles ]
+mobileCss =
+    responsiveCss << MediaQuery.mobile
 
 
 {-| Set styles that will only apply if the viewport is narrower than NRI's quiz-engine-specific mobile breakpoint.
@@ -169,8 +175,8 @@ Equivalent to:
 
 -}
 quizEngineMobileCss : List Style -> Attribute msg
-quizEngineMobileCss styles =
-    css [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
+quizEngineMobileCss =
+    responsiveCss << MediaQuery.quizEngineMobile
 
 
 {-| -}
@@ -185,7 +191,7 @@ view attributes =
     in
     Nri.Ui.styled div
         settings.containerType
-        (padding (px settings.padding) :: settings.css)
+        (padding (px settings.padding) :: settings.css ++ MediaQuery.toStyles settings.responsiveCss)
         settings.attributes
         settings.content
 
@@ -202,6 +208,7 @@ defaultSettings =
     { containerType = "default-container"
     , padding = 20
     , css = defaultStyles
+    , responsiveCss = MediaQuery.init
     , content = []
     , attributes = []
     }
@@ -298,9 +305,11 @@ pillowStyles =
     , border3 (px 1) solid Colors.gray92
     , Shadows.medium
     , backgroundColor Colors.white
-    , withMedia [ MediaQuery.mobile ]
-        [ borderRadius (px 8)
-        , padding (px 20)
+    , MediaQuery.fromList
+        [ MediaQuery.mobile
+            [ borderRadius (px 8)
+            , padding (px 20)
+            ]
         ]
     ]
 
@@ -323,8 +332,10 @@ buttonyStyles =
     , border3 (px 1) solid Colors.gray85
     , borderBottom3 (px 4) solid Colors.gray85
     , backgroundColor Colors.white
-    , withMedia [ MediaQuery.mobile ]
-        [ borderRadius (px 8)
+    , MediaQuery.fromList
+        [ MediaQuery.mobile
+            [ borderRadius (px 8)
+            ]
         ]
     ]
 
@@ -362,5 +373,5 @@ markdown content =
         \config ->
             { config
                 | content = Content.markdownContent content
-                , css = MarkdownStyles.anchorAndButton ++ config.css
+                , css = MarkdownStyles.anchorAndButton ++ config.css ++ MediaQuery.toStyles config.responsiveCss
             }
