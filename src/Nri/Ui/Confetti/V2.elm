@@ -24,7 +24,7 @@ import Css exposing (Color)
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.MediaQuery.V2 as MediaQuery
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Particle exposing (Particle)
@@ -80,7 +80,7 @@ view (System system _) =
                     , Css.width (Css.pct 100)
                     , Css.height (Css.vh 100)
                     , Css.pointerEvents Css.none
-                    , MediaQuery.prefersReducedMotion [ Css.display Css.none ]
+                    , MediaQuery.fromList [ MediaQuery.prefersReducedMotion [ Css.display Css.none ] ]
                     ]
                 ]
             )
