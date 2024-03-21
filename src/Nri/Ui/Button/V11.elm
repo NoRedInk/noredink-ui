@@ -112,11 +112,6 @@ module Nri.Ui.Button.V11 exposing
 
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss
 
-
-# Commonly-used buttons
-
-@docs delete
-
 -}
 
 import Accessibility.Styled as Html exposing (Html)
