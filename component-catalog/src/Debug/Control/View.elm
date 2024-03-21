@@ -7,7 +7,6 @@ module Debug.Control.View exposing (view, viewWithCustomControls)
 -}
 
 import Css exposing (..)
-import Css.Media exposing (withMedia)
 import Debug.Control as Control exposing (Control)
 import EllieLink
 import Example

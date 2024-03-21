@@ -56,7 +56,7 @@ Build media queries for responsive design.
 
 -}
 
-import Css exposing (Style, target)
+import Css exposing (Style)
 import Css.Media exposing (MediaQuery, maxWidth, minWidth, only, screen, withMedia, withMediaQuery)
 import Dict exposing (Dict)
 import Maybe.Extra as Maybe

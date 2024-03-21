@@ -23,7 +23,6 @@ module Nri.Ui.SortableTable.V4 exposing
 import Accessibility.Styled.Aria as Aria
 import Css exposing (..)
 import Css.Global
-import Css.Media
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events
