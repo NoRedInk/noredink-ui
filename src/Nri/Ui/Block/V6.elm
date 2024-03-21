@@ -73,7 +73,7 @@ import List.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription)
 import Nri.Ui.Mark.V6 as Mark exposing (Mark)
-import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.MediaQuery.V2 as MediaQuery
 import Position exposing (xOffsetPx)
 
 
@@ -547,10 +547,12 @@ toMark config { backgroundColor, borderColor } =
                 , Css.backgroundColor backgroundColor
                 , Css.borderTop3 borderWidth Css.dashed borderColor
                 , Css.borderBottom3 borderWidth Css.dashed borderColor
-                , MediaQuery.highContrastMode
-                    [ Css.property "background-color" "Mark"
-                    , Css.property "color" "MarkText"
-                    , Css.property "forced-color-adjust" "none"
+                , MediaQuery.fromList
+                    [ MediaQuery.highContrastMode
+                        [ Css.property "background-color" "Mark"
+                        , Css.property "color" "MarkText"
+                        , Css.property "forced-color-adjust" "none"
+                        ]
                     ]
                 ]
             , endStyles =
@@ -738,16 +740,18 @@ viewBlank blankStyle blankHeight (CharacterWidth width) =
 
                 Underline ->
                     Css.borderBottom2 (Css.rem 0.1) Css.solid
-            , MediaQuery.highContrastMode
-                [ Css.property "border-color" "CanvasText"
-                , Css.batch
-                    (case blankStyle of
-                        Dashed ->
-                            [ Css.property "background-color" "Canvas" ]
+            , MediaQuery.fromList
+                [ MediaQuery.highContrastMode
+                    [ Css.property "border-color" "CanvasText"
+                    , Css.batch
+                        (case blankStyle of
+                            Dashed ->
+                                [ Css.property "background-color" "Canvas" ]
 
-                        Underline ->
-                            []
-                    )
+                            Underline ->
+                                []
+                        )
+                    ]
                 ]
             , Css.backgroundColor
                 (case blankStyle of
