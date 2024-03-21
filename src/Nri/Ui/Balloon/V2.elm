@@ -67,14 +67,13 @@ Changes from V1:
 
 import Content
 import Css exposing (..)
-import Css.Media
 import Html.Styled as Html exposing (Html, div, styled)
 import Html.Styled.Attributes as Attributes
 import MarkdownStyles
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
-import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.MediaQuery.V2 as MediaQuery exposing (MediaQuery)
 import Nri.Ui.Shadows.V1 as Shadows
 
 
@@ -282,37 +281,41 @@ css styles =
     Attribute (\config -> { config | css = List.append config.css styles })
 
 
+{-| -}
+responsiveCss : MediaQuery property -> Attribute msg
+responsiveCss styles =
+    Attribute (\config -> { config | responsiveCss = MediaQuery.on styles config.responsiveCss })
+
+
 {-| Equivalent to:
 
     ClickableText.css
-        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.notMobile ] styles ]
+        [ MediaQuery.fromList [ MediaQuery.mobile styles ] ]
 
 -}
 notMobileCss : List Style -> Attribute msg
-notMobileCss styles =
-    css [ Css.Media.withMedia [ MediaQuery.notMobile ] styles ]
+notMobileCss =
+    responsiveCss << MediaQuery.not MediaQuery.mobile
 
 
 {-| Equivalent to:
 
     ClickableText.css
-        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.mobile ] styles ]
 
 -}
 mobileCss : List Style -> Attribute msg
-mobileCss styles =
-    css [ Css.Media.withMedia [ MediaQuery.mobile ] styles ]
+mobileCss =
+    responsiveCss << MediaQuery.mobile
 
 
 {-| Equivalent to:
 
     ClickableText.css
-        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.quizEngineMobile ] styles ]
 
 -}
 quizEngineMobileCss : List Style -> Attribute msg
-quizEngineMobileCss styles =
-    css [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
+quizEngineMobileCss =
+    responsiveCss << MediaQuery.quizEngineMobile
 
 
 {-| Use this helper to add custom attributes.
@@ -401,6 +404,7 @@ type alias Config msg =
     , containerCss : List Css.Style
     , contentId : Maybe String
     , css : List Css.Style
+    , responsiveCss : MediaQuery.ResponsiveStyles
     , customAttributes : List (Html.Attribute msg)
     , content : List (Html msg)
     }
@@ -418,6 +422,7 @@ defaultConfig =
     , containerCss = []
     , contentId = Nothing
     , css = [ Css.padding (Css.px 20) ]
+    , responsiveCss = MediaQuery.init
     , customAttributes = []
     , content = []
     }
@@ -456,11 +461,13 @@ applyHighContrastModeTheme : Maybe HighContrastModeTheme -> Css.Style
 applyHighContrastModeTheme maybeHighContrastModeTheme =
     case maybeHighContrastModeTheme of
         Just highContrastPalette ->
-            MediaQuery.highContrastMode
-                [ Css.property "background-color" highContrastPalette.backgroundColor
-                , Css.property "color" highContrastPalette.color
-                , Css.property "border-color" highContrastPalette.backgroundColor
-                , Css.property "forced-color-adjust" "none"
+            MediaQuery.fromList
+                [ MediaQuery.highContrastMode
+                    [ Css.property "background-color" highContrastPalette.backgroundColor
+                    , Css.property "color" highContrastPalette.color
+                    , Css.property "border-color" highContrastPalette.backgroundColor
+                    , Css.property "forced-color-adjust" "none"
+                    ]
                 ]
 
         Nothing ->
@@ -521,6 +528,7 @@ viewBalloon :
         , highContrastModeTheme : Maybe HighContrastModeTheme
         , contentId : Maybe String
         , css : List Css.Style
+        , responsiveCss : MediaQuery.ResponsiveStyles
         , content : List (Html msg)
     }
     -> Html msg
@@ -539,6 +547,7 @@ viewBalloon config =
         , fontSize (px 15)
         , applyHighContrastModeTheme config.highContrastModeTheme
         , Css.batch config.css
+        , MediaQuery.toStyle config.responsiveCss
         ]
         (case config.contentId of
             Nothing ->
@@ -621,12 +630,14 @@ arrowPosition ({ position, arrowAlignment, theme } as config) =
                 , Css.borderRightColor transparent
                 , Css.borderBottomColor transparent
                 , Css.borderLeftColor transparent
-                , MediaQuery.highContrastMode
-                    [ Css.property "forced-color-adjust" "none"
-                    , Css.property "border-top-color" highContrastColor
-                    , Css.property "border-right-color" "Canvas"
-                    , Css.property "border-bottom-color" "Canvas"
-                    , Css.property "border-left-color" "Canvas"
+                , MediaQuery.fromList
+                    [ MediaQuery.highContrastMode
+                        [ Css.property "forced-color-adjust" "none"
+                        , Css.property "border-top-color" highContrastColor
+                        , Css.property "border-right-color" "Canvas"
+                        , Css.property "border-bottom-color" "Canvas"
+                        , Css.property "border-left-color" "Canvas"
+                        ]
                     ]
                 ]
 
@@ -644,12 +655,14 @@ arrowPosition ({ position, arrowAlignment, theme } as config) =
                 , Css.borderRightColor transparent
                 , Css.borderBottomColor color
                 , Css.borderLeftColor transparent
-                , MediaQuery.highContrastMode
-                    [ Css.property "forced-color-adjust" "none"
-                    , Css.property "border-top-color" "Canvas"
-                    , Css.property "border-right-color" "Canvas"
-                    , Css.property "border-bottom-color" highContrastColor
-                    , Css.property "border-left-color" "Canvas"
+                , MediaQuery.fromList
+                    [ MediaQuery.highContrastMode
+                        [ Css.property "forced-color-adjust" "none"
+                        , Css.property "border-top-color" "Canvas"
+                        , Css.property "border-right-color" "Canvas"
+                        , Css.property "border-bottom-color" highContrastColor
+                        , Css.property "border-left-color" "Canvas"
+                        ]
                     ]
                 ]
 
@@ -667,12 +680,14 @@ arrowPosition ({ position, arrowAlignment, theme } as config) =
                 , Css.borderRightColor transparent
                 , Css.borderBottomColor transparent
                 , Css.borderLeftColor color
-                , MediaQuery.highContrastMode
-                    [ Css.property "forced-color-adjust" "none"
-                    , Css.property "border-top-color" "Canvas"
-                    , Css.property "border-right-color" "Canvas"
-                    , Css.property "border-bottom-color" "Canvas"
-                    , Css.property "border-left-color" highContrastColor
+                , MediaQuery.fromList
+                    [ MediaQuery.highContrastMode
+                        [ Css.property "forced-color-adjust" "none"
+                        , Css.property "border-top-color" "Canvas"
+                        , Css.property "border-right-color" "Canvas"
+                        , Css.property "border-bottom-color" "Canvas"
+                        , Css.property "border-left-color" highContrastColor
+                        ]
                     ]
                 ]
 
@@ -690,12 +705,14 @@ arrowPosition ({ position, arrowAlignment, theme } as config) =
                 , Css.borderRightColor color
                 , Css.borderBottomColor transparent
                 , Css.borderLeftColor transparent
-                , MediaQuery.highContrastMode
-                    [ Css.property "forced-color-adjust" "none"
-                    , Css.property "border-top-color" "Canvas"
-                    , Css.property "border-right-color" highContrastColor
-                    , Css.property "border-bottom-color" "Canvas"
-                    , Css.property "border-left-color" "Canvas"
+                , MediaQuery.fromList
+                    [ MediaQuery.highContrastMode
+                        [ Css.property "forced-color-adjust" "none"
+                        , Css.property "border-top-color" "Canvas"
+                        , Css.property "border-right-color" highContrastColor
+                        , Css.property "border-bottom-color" "Canvas"
+                        , Css.property "border-left-color" "Canvas"
+                        ]
                     ]
                 ]
 
