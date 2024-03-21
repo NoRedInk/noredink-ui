@@ -14,7 +14,11 @@ module Nri.Ui.ClickableText.V5 exposing
     , css, notMobileCss, mobileCss, quizEngineMobileCss, rightIconCss
     )
 
-{-| Patch changes
+{-| # Changes from V4
+
+  - changes signature of `hideIconFor` and `hideTextFor` to take a Nri.Ui.MediaQuery constructor
+
+Patch changes
 
   - switchs `Medium` size to the default
 
