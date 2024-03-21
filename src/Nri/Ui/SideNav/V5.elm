@@ -80,7 +80,7 @@ import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Html.V3 exposing (viewJust)
-import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.MediaQuery.V2 as MediaQuery
 import Nri.Ui.Pennant.V3 as Pennant
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Tooltip.V3 as Tooltip
@@ -151,6 +151,7 @@ type alias NavAttributeConfig msg =
     { navLabel : Maybe String
     , navId : Maybe String
     , css : List Style
+    , responsiveCss : MediaQuery.ResponsiveStyles
     , collapsible : Maybe (CollapsibleConfig msg)
     }
 
@@ -160,6 +161,7 @@ defaultNavAttributeConfig =
     { navLabel = Nothing
     , navId = Nothing
     , css = []
+    , responsiveCss = MediaQuery.init
     , collapsible = Nothing
     }
 
@@ -196,22 +198,27 @@ navCss styles =
     NavAttribute (\config -> { config | css = List.append config.css styles })
 
 
+responsiveNavCss : MediaQuery.MediaQuery properties -> NavAttribute msg
+responsiveNavCss mq =
+    NavAttribute (\config -> { config | responsiveCss = MediaQuery.on mq config.responsiveCss })
+
+
 {-| -}
 navNotMobileCss : List Style -> NavAttribute msg
-navNotMobileCss styles =
-    navCss [ Css.Media.withMedia [ MediaQuery.notMobile ] styles ]
+navNotMobileCss =
+    responsiveNavCss << MediaQuery.not MediaQuery.mobile
 
 
 {-| -}
 navMobileCss : List Style -> NavAttribute msg
-navMobileCss styles =
-    navCss [ Css.Media.withMedia [ MediaQuery.mobile ] styles ]
+navMobileCss =
+    responsiveNavCss << MediaQuery.mobile
 
 
 {-| -}
 navQuizEngineMobileCss : List Style -> NavAttribute msg
-navQuizEngineMobileCss styles =
-    navCss [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
+navQuizEngineMobileCss =
+    responsiveNavCss << MediaQuery.quizEngineMobile
 
 
 {-| -}
@@ -267,21 +274,31 @@ view config navAttributes entries =
             , backgroundColor Colors.gray96
             , alignSelf flexStart
             , width (px 300)
-            , Css.Media.withMedia [ MediaQuery.mobile ]
-                [ Css.property "flex-basis" "unset"
-                , marginRight Css.zero
-                , marginBottom (Css.px 20)
-                , width (pct 100)
-                , case Maybe.map .isOpen appliedNavAttributes.collapsible of
-                    Just _ ->
-                        Css.padding (Css.px 10)
+            , MediaQuery.fromList
+                [ MediaQuery.mobile
+                    [ Css.property "flex-basis" "unset"
+                    , marginRight Css.zero
+                    , marginBottom (Css.px 20)
+                    , width (pct 100)
+                    , case Maybe.map .isOpen appliedNavAttributes.collapsible of
+                        Just _ ->
+                            Css.padding (Css.px 10)
 
-                    Nothing ->
-                        Css.batch []
+                        Nothing ->
+                            Css.batch []
+                    ]
                 ]
             ]
     in
-    div [ Attributes.css (defaultCss ++ appliedNavAttributes.css) ]
+    div
+        [ Attributes.css
+            (List.concat
+                [ defaultCss
+                , appliedNavAttributes.css
+                , MediaQuery.toStyles appliedNavAttributes.responsiveCss
+                ]
+            )
+        ]
         [ viewSkipLink config.onSkipNav
         , case entries of
             [] ->
@@ -347,15 +364,19 @@ viewOpenCloseButton sidenavId navLabel_ currentEntry { isOpen, toggle, isTooltip
                     Tooltip.onRight
                 , Tooltip.containerCss
                     [ -- Hide the tooltip for mobile. We'll display static text instead
-                      Css.Media.withMedia [ MediaQuery.mobile ]
-                        [ Css.display Css.none ]
+                      MediaQuery.fromList
+                        [ MediaQuery.mobile
+                            [ Css.display Css.none ]
+                        ]
                     ]
                 , Tooltip.containerCss
                     (if isOpen then
-                        [ Css.Media.withMedia [ MediaQuery.notMobile ]
-                            [ Css.position Css.absolute
-                            , Css.top (Css.px 10)
-                            , Css.right (Css.px 10)
+                        [ MediaQuery.fromList
+                            [ MediaQuery.not MediaQuery.mobile
+                                [ Css.position Css.absolute
+                                , Css.top (Css.px 10)
+                                , Css.right (Css.px 10)
+                                ]
                             ]
                         ]
 
@@ -369,8 +390,10 @@ viewOpenCloseButton sidenavId navLabel_ currentEntry { isOpen, toggle, isTooltip
                 [ Attributes.css
                     [ -- Hide the plain button/static text if not on the mobile view
                       Css.display Css.none
-                    , Css.Media.withMedia [ MediaQuery.mobile ]
-                        [ Css.displayFlex ]
+                    , MediaQuery.fromList
+                        [ MediaQuery.mobile
+                            [ Css.displayFlex ]
+                        ]
                     ]
                 ]
                 [ trigger []
