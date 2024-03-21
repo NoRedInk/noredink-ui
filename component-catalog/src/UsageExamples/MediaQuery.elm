@@ -16,7 +16,7 @@ import UsageExample exposing (UsageExample)
 
 example : UsageExample () ()
 example =
-    { name = "MediaQueryBuilder"
+    { name = "MediaQuery.V2"
     , categories = [ Category.Layout ]
     , init = ()
     , update = \_ _ -> ( (), Cmd.none )
