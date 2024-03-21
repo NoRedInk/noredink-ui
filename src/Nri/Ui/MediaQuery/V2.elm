@@ -59,6 +59,7 @@ import Css exposing (Style, target)
 import Css.Media exposing (MediaQuery, maxWidth, minWidth, only, screen, withMedia, withMediaQuery)
 import Dict exposing (Dict)
 import Maybe.Extra as Maybe
+import Nri.Ui.MediaQuery.Internal exposing (..)
 
 
 {-| Type representing a media query.
@@ -158,21 +159,21 @@ userPreference on_ off s =
 -}
 mobile : List Style -> MediaQuery BreakpointProperties
 mobile =
-    breakpoint 1000
+    breakpoint mobileBreakpoint
 
 
 {-| Set styles for quiz engine mobile and smaller devices (<= 750px)
 -}
 quizEngineMobile : List Style -> MediaQuery BreakpointProperties
 quizEngineMobile =
-    breakpoint 750
+    breakpoint quizEngineMobileBreakpoint
 
 
 {-| Set styles for narrow mobile and smaller devices (<= 500px)
 -}
 narrowMobile : List Style -> MediaQuery BreakpointProperties
 narrowMobile =
-    breakpoint 500
+    breakpoint narrowMobileBreakpoint
 
 
 {-| Set styles for users who prefer reduced motion

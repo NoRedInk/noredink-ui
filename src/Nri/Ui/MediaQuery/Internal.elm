@@ -1,5 +1,16 @@
 module Nri.Ui.MediaQuery.Internal exposing (..)
 
 
-mobile =
+mobileBreakpoint : Float
+mobileBreakpoint =
     1000
+
+
+quizEngineMobileBreakpoint : Float
+quizEngineMobileBreakpoint =
+    750
+
+
+narrowMobileBreakpoint : Float
+narrowMobileBreakpoint =
+    500
