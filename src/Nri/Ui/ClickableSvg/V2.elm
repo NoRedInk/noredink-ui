@@ -79,13 +79,13 @@ In practice, we don't use these sizes. Remove them!
 import Accessibility.Styled.Aria as Aria
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (Color, Style)
-import Css.Media
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
+import Maybe.Extra as Maybe
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
-import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.MediaQuery.V2 as MediaQuery exposing (MediaQuery)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 
 
@@ -458,37 +458,48 @@ css styles =
         )
 
 
+{-| -}
+responsiveCss : MediaQuery properties -> Attribute msg
+responsiveCss mq =
+    set
+        (\config ->
+            { config
+                | customResponsiveStyles = MediaQuery.on mq config.customResponsiveStyles
+            }
+        )
+
+
 {-| Equivalent to:
 
     ClickableSvg.css
-        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.notMobile ] styles ]
+        [ MediaQuery.not MediaQuery.mobile styles ]
 
 -}
 notMobileCss : List Style -> Attribute msg
-notMobileCss styles =
-    css [ Css.Media.withMedia [ MediaQuery.notMobile ] styles ]
+notMobileCss =
+    responsiveCss << MediaQuery.not MediaQuery.mobile
 
 
 {-| Equivalent to:
 
     ClickableSvg.css
-        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.mobile ] styles ]
+        [ MediaQuery.mobile styles ]
 
 -}
 mobileCss : List Style -> Attribute msg
-mobileCss styles =
-    css [ Css.Media.withMedia [ MediaQuery.mobile ] styles ]
+mobileCss =
+    responsiveCss << MediaQuery.mobile
 
 
 {-| Equivalent to:
 
     ClickableSvg.css
-        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.quizEngineMobile ] styles ]
+        [ MediaQuery.withMedia [ MediaQuery.quizEngineMobile styles ] ]
 
 -}
 quizEngineMobileCss : List Style -> Attribute msg
-quizEngineMobileCss styles =
-    css [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
+quizEngineMobileCss =
+    responsiveCss << MediaQuery.quizEngineMobile
 
 
 {-| -}
@@ -542,6 +553,7 @@ build label icon =
         , height = Nothing
         , customAttributes = []
         , customStyles = []
+        , customResponsiveStyles = MediaQuery.init
         , hasBorder = False
         , theme = Secondary
         }
@@ -565,13 +577,14 @@ type alias ButtonOrLinkAttributes msg =
     , height : Maybe Float
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
+    , customResponsiveStyles : MediaQuery.ResponsiveStyles
     , hasBorder : Bool
     , theme : Theme
     }
 
 
 renderButton : ButtonOrLink msg -> Html msg
-renderButton ((ButtonOrLink config) as button_) =
+renderButton (ButtonOrLink config) =
     let
         theme =
             if config.disabled then
@@ -583,7 +596,7 @@ renderButton ((ButtonOrLink config) as button_) =
     Html.button
         ([ Attributes.class "Nri-Ui-Clickable-Svg-V1__button"
          , Attributes.class FocusRing.customClass
-         , Attributes.css (buttonOrLinkStyles config theme ++ config.customStyles)
+         , Attributes.css (buttonOrLinkStyles config theme ++ config.customStyles ++ MediaQuery.toStyles config.customResponsiveStyles)
          , Aria.label config.label
          ]
             ++ ClickableAttributes.toButtonAttributes config.clickableAttributes
@@ -594,7 +607,7 @@ renderButton ((ButtonOrLink config) as button_) =
 
 
 renderLink : ButtonOrLink msg -> Html msg
-renderLink ((ButtonOrLink config) as link_) =
+renderLink (ButtonOrLink config) =
     let
         ( linkFunctionName, extraAttrs ) =
             ClickableAttributes.toLinkAttributes
@@ -613,7 +626,7 @@ renderLink ((ButtonOrLink config) as link_) =
     Html.a
         ([ Attributes.class ("Nri-Ui-Clickable-Svg-" ++ linkFunctionName)
          , Attributes.class FocusRing.customClass
-         , Attributes.css (buttonOrLinkStyles config theme ++ config.customStyles)
+         , Attributes.css (buttonOrLinkStyles config theme ++ config.customStyles ++ MediaQuery.toStyles config.customResponsiveStyles)
          , Aria.label config.label
          ]
             ++ extraAttrs
@@ -672,9 +685,7 @@ renderIcons config includeBorder =
         renderUnless breakpoints =
             Svg.withCss
                 [ Css.batch iconStyles
-                , Css.Media.withMedia breakpoints
-                    [ Css.display Css.none
-                    ]
+                , MediaQuery.fromList (List.map (\b -> b [ Css.display Css.none ]) breakpoints)
                 ]
                 >> Svg.toHtml
                 >> Just
@@ -689,73 +700,86 @@ renderIcons config includeBorder =
     in
     case ( config.iconForNarrowMobile, config.iconForQuizEngineMobile, config.iconForMobile ) of
         ( Just iconForNarrowMobile_, Just iconForQuizEngineMobile_, Nothing ) ->
-            [ renderUnless [ MediaQuery.quizEngineMobile ] config.icon
-            , renderUnless [ MediaQuery.narrowMobile, MediaQuery.notQuizEngineMobile ]
-                iconForQuizEngineMobile_
-            , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
-            , Maybe.map renderRightIcon config.rightIcon
-            ]
-                |> List.filterMap identity
+            Maybe.values
+                [ renderUnless [ MediaQuery.quizEngineMobile ]
+                    config.icon
+                , renderUnless [ MediaQuery.narrowMobile, MediaQuery.not MediaQuery.quizEngineMobile ]
+                    iconForQuizEngineMobile_
+                , renderUnless [ MediaQuery.not MediaQuery.narrowMobile ]
+                    iconForNarrowMobile_
+                , Maybe.map renderRightIcon config.rightIcon
+                ]
 
         ( Just iconForNarrowMobile_, Just iconForQuizEngineMobile_, Just iconForMobile_ ) ->
-            [ renderUnless [ MediaQuery.mobile ] config.icon
-            , renderUnless [ MediaQuery.quizEngineMobile, MediaQuery.notMobile ]
-                iconForMobile_
-            , renderUnless [ MediaQuery.narrowMobile, MediaQuery.notQuizEngineMobile ]
-                iconForQuizEngineMobile_
-            , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
-            , Maybe.map renderRightIcon config.rightIcon
-            ]
-                |> List.filterMap identity
+            Maybe.values
+                [ renderUnless [ MediaQuery.mobile ]
+                    config.icon
+                , renderUnless [ MediaQuery.quizEngineMobile, MediaQuery.not MediaQuery.mobile ]
+                    iconForMobile_
+                , renderUnless [ MediaQuery.narrowMobile, MediaQuery.not MediaQuery.quizEngineMobile ]
+                    iconForQuizEngineMobile_
+                , renderUnless [ MediaQuery.not MediaQuery.narrowMobile ]
+                    iconForNarrowMobile_
+                , Maybe.map renderRightIcon config.rightIcon
+                ]
 
         ( Just iconForNarrowMobile_, Nothing, Just iconForMobile_ ) ->
-            [ renderUnless [ MediaQuery.mobile ] config.icon
-            , renderUnless [ MediaQuery.narrowMobile, MediaQuery.notMobile ] iconForMobile_
-            , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
-            , Maybe.map renderRightIcon config.rightIcon
-            ]
-                |> List.filterMap identity
+            Maybe.values
+                [ renderUnless [ MediaQuery.mobile ]
+                    config.icon
+                , renderUnless [ MediaQuery.narrowMobile, MediaQuery.not MediaQuery.mobile ]
+                    iconForMobile_
+                , renderUnless [ MediaQuery.not MediaQuery.narrowMobile ]
+                    iconForNarrowMobile_
+                , Maybe.map renderRightIcon config.rightIcon
+                ]
 
         ( Just iconForNarrowMobile_, Nothing, Nothing ) ->
-            [ renderUnless [ MediaQuery.narrowMobile ] config.icon
-            , renderUnless [ MediaQuery.notNarrowMobile ] iconForNarrowMobile_
-            , Maybe.map renderRightIcon config.rightIcon
-            ]
-                |> List.filterMap identity
+            Maybe.values
+                [ renderUnless [ MediaQuery.narrowMobile ]
+                    config.icon
+                , renderUnless [ MediaQuery.not MediaQuery.narrowMobile ]
+                    iconForNarrowMobile_
+                , Maybe.map renderRightIcon config.rightIcon
+                ]
 
         ( Nothing, Just iconForQuizEngineMobile_, Nothing ) ->
-            [ renderUnless [ MediaQuery.quizEngineMobile ] config.icon
-            , renderUnless [ MediaQuery.notQuizEngineMobile ]
-                iconForQuizEngineMobile_
-            , Maybe.map renderRightIcon config.rightIcon
-            ]
-                |> List.filterMap identity
+            Maybe.values
+                [ renderUnless [ MediaQuery.quizEngineMobile ]
+                    config.icon
+                , renderUnless [ MediaQuery.not MediaQuery.quizEngineMobile ]
+                    iconForQuizEngineMobile_
+                , Maybe.map renderRightIcon config.rightIcon
+                ]
 
         ( Nothing, Just iconForQuizEngineMobile_, Just iconForMobile_ ) ->
-            [ renderUnless [ MediaQuery.mobile ] config.icon
-            , renderUnless [ MediaQuery.quizEngineMobile, MediaQuery.notMobile ]
-                iconForMobile_
-            , renderUnless [ MediaQuery.notQuizEngineMobile ]
-                iconForQuizEngineMobile_
-            , Maybe.map renderRightIcon config.rightIcon
-            ]
-                |> List.filterMap identity
+            Maybe.values
+                [ renderUnless [ MediaQuery.mobile ]
+                    config.icon
+                , renderUnless [ MediaQuery.quizEngineMobile, MediaQuery.not MediaQuery.mobile ]
+                    iconForMobile_
+                , renderUnless [ MediaQuery.not MediaQuery.quizEngineMobile ]
+                    iconForQuizEngineMobile_
+                , Maybe.map renderRightIcon config.rightIcon
+                ]
 
         ( Nothing, Nothing, Just iconForMobile_ ) ->
-            [ renderUnless [ MediaQuery.mobile ] config.icon
-            , renderUnless [ MediaQuery.notMobile ] iconForMobile_
-            , Maybe.map renderRightIcon config.rightIcon
-            ]
-                |> List.filterMap identity
+            Maybe.values
+                [ renderUnless [ MediaQuery.mobile ]
+                    config.icon
+                , renderUnless [ MediaQuery.not MediaQuery.mobile ]
+                    iconForMobile_
+                , Maybe.map renderRightIcon config.rightIcon
+                ]
 
         ( Nothing, Nothing, Nothing ) ->
-            [ config.icon
-                |> Svg.withCss iconStyles
-                |> Svg.toHtml
-                |> Just
-            , Maybe.map renderRightIcon config.rightIcon
-            ]
-                |> List.filterMap identity
+            Maybe.values
+                [ config.icon
+                    |> Svg.withCss iconStyles
+                    |> Svg.toHtml
+                    |> Just
+                , Maybe.map renderRightIcon config.rightIcon
+                ]
 
 
 buttonOrLinkStyles : ButtonOrLinkAttributes msg -> AppliedTheme -> List Style
