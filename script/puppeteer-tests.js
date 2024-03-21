@@ -330,9 +330,7 @@ describe("UI tests", function () {
     ]);
 
     handlePageErrors(page);
-    await page.goto(
-      `http://localhost:${PORT}/#/usage_example/MediaQuery.V2`
-    );
+    await page.goto(`http://localhost:${PORT}/#/usage_example/MediaQuery.V2`);
 
     await page.$("#maincontent");
     await percySnapshot(page, this.test.fullTitle(), {
