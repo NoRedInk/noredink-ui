@@ -11,6 +11,7 @@ module Nri.Ui.Button.V11 exposing
     , exactWidthForNarrowMobile, boundedWidthForNarrowMobile, unboundedWidthForNarrowMobile, fillContainerWidthForNarrowMobile
     , primary, secondary, tertiary, danger, dangerSecondary, premium
     , enabled, unfulfilled, disabled, error, loading, success
+    , hideTextForMobile, hideTextFor
     , icon, rightIcon
     , hideIconForMobile, hideIconFor
     , custom, nriDescription, testId, id
@@ -83,6 +84,11 @@ adding a span around the text could potentially lead to regressions.
 ## Change the state (buttons only)
 
 @docs enabled, unfulfilled, disabled, error, loading, success
+
+
+## Text
+
+@docs hideTextForMobile, hideTextFor
 
 
 ## Icons
@@ -216,6 +222,28 @@ testId id_ =
 id : String -> Attribute msg
 id id_ =
     custom [ Attributes.id id_ ]
+
+
+{-| Hide the text for the mobile breakpoint.
+-}
+hideTextForMobile : Attribute msg
+hideTextForMobile =
+    hideTextFor MediaQuery.mobile
+
+
+{-| Hide the text for an arbitrary media query.
+-}
+hideTextFor : (List Style -> MediaQuery properties) -> Attribute msg
+hideTextFor mediaQuery =
+    set
+        (\config ->
+            { config
+                | labelResponsiveStyles = MediaQuery.on (mediaQuery [ Css.display Css.none ]) config.labelResponsiveStyles
+            }
+        )
+
+
+{-| -}
 
 
 {-| Hide the left-side icon for the mobile breakpoint.
@@ -734,6 +762,7 @@ build =
         , label = ""
         , state = Enabled
         , pressed = Nothing
+        , labelResponsiveStyles = MediaQuery.init
         , icon = Nothing
         , iconStyles = []
         , rightIcon = Nothing
@@ -756,6 +785,7 @@ type alias ButtonOrLinkAttributes msg =
     , quizEngineMobileWidth : Maybe ButtonWidth
     , narrowMobileWidth : Maybe ButtonWidth
     , label : String
+    , labelResponsiveStyles : MediaQuery.ResponsiveStyles
     , state : ButtonState
     , pressed : Maybe Bool
     , icon : Maybe Svg
@@ -874,6 +904,7 @@ viewLabel :
         , icon : Maybe Svg
         , iconStyles : List Style
         , label : String
+        , labelResponsiveStyles : MediaQuery.ResponsiveStyles
     }
     -> Html msg
 viewLabel config =
@@ -884,6 +915,9 @@ viewLabel config =
                 , Css.marginRight (Css.px 5)
                 , Css.batch config.iconStyles
                 ]
+
+        renderLabel =
+            renderMarkdown [ Attributes.css <| MediaQuery.toStyles config.labelResponsiveStyles ]
     in
     Nri.Ui.styled Html.span
         "button-label-span"
@@ -896,10 +930,10 @@ viewLabel config =
         []
         (case config.icon of
             Nothing ->
-                [ renderMarkdown config.label ]
+                [ renderLabel config.label ]
 
             Just svg ->
-                [ viewLeftIcon svg, renderMarkdown config.label ]
+                [ viewLeftIcon svg, renderLabel config.label ]
         )
 
 
@@ -916,8 +950,8 @@ viewIcon size iconStyles svg =
         |> NriSvg.toHtml
 
 
-renderMarkdown : String -> Html msg
-renderMarkdown markdown =
+renderMarkdown : List (Styled.Attribute msg) -> String -> Html msg
+renderMarkdown attributes markdown =
     let
         removeParagraphTags block =
             case block of
@@ -930,7 +964,7 @@ renderMarkdown markdown =
     Markdown.Block.parse Nothing markdown
         |> List.concatMap removeParagraphTags
         |> List.map Styled.fromUnstyled
-        |> Styled.span []
+        |> Styled.span attributes
 
 
 
