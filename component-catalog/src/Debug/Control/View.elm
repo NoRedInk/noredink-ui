@@ -16,7 +16,7 @@ import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.MediaQuery.V1 exposing (mobile, notMobile)
+import Nri.Ui.MediaQuery.V2 as MediaQuery exposing (mobile)
 import Nri.Ui.Spacing.V1 as Spacing
 
 
@@ -74,7 +74,7 @@ viewWithCustomControls config =
         [ css
             [ marginTop Spacing.verticalSpacerPx
             , displayFlex
-            , withMedia [ mobile ] [ flexDirection column ]
+            , MediaQuery.fromList [ mobile [ flexDirection column ] ]
             ]
         ]
         [ Container.view
@@ -83,17 +83,19 @@ viewWithCustomControls config =
                 , config.controls
                 ]
             , Container.css
-                [ withMedia [ mobile ]
-                    [ borderBottomLeftRadius zero
-                    , borderBottomRightRadius zero
-                    ]
-                , withMedia [ notMobile ]
-                    [ flexBasis (pct 50)
-                    , flexGrow zero
-                    , flexShrink zero
-                    , paddingRight (px 30)
-                    , borderTopRightRadius zero
-                    , borderBottomRightRadius zero
+                [ MediaQuery.fromList
+                    [ mobile
+                        [ borderBottomLeftRadius zero
+                        , borderBottomRightRadius zero
+                        ]
+                    , MediaQuery.not mobile
+                        [ flexBasis (pct 50)
+                        , flexGrow zero
+                        , flexShrink zero
+                        , paddingRight (px 30)
+                        , borderTopRightRadius zero
+                        , borderBottomRightRadius zero
+                        ]
                     ]
                 ]
             ]
@@ -124,13 +126,15 @@ viewWithCustomControls config =
                 [ padding (px 20)
                 , flexGrow (num 1)
                 , backgroundColor Colors.gray20
-                , withMedia [ mobile ]
-                    [ borderTopLeftRadius zero
-                    , borderTopRightRadius zero
-                    ]
-                , withMedia [ notMobile ]
-                    [ borderTopLeftRadius zero
-                    , borderBottomLeftRadius zero
+                , MediaQuery.fromList
+                    [ mobile
+                        [ borderTopLeftRadius zero
+                        , borderTopRightRadius zero
+                        ]
+                    , MediaQuery.not mobile
+                        [ borderTopLeftRadius zero
+                        , borderBottomLeftRadius zero
+                        ]
                     ]
                 ]
             ]

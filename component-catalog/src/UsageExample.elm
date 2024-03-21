@@ -2,7 +2,6 @@ module UsageExample exposing (UsageExample, fromRouteName, fullName, noop, previ
 
 import Category exposing (Category)
 import Css
-import Css.Media exposing (withMedia)
 import EventExtras
 import ExampleSection
 import Html.Styled as Html exposing (Html)
@@ -12,7 +11,7 @@ import Html.Styled.Lazy as Lazy
 import Nri.Ui.ClickableText.V5 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
-import Nri.Ui.MediaQuery.V1 exposing (mobile)
+import Nri.Ui.MediaQuery.V2 as MediaQuery exposing (mobile)
 import Nri.Ui.Text.V6 as Text
 
 
@@ -164,7 +163,7 @@ view_ example state =
             , Css.alignItems Css.stretch
             , Css.flexWrap Css.wrap
             , Css.property "gap" "10px"
-            , withMedia [ mobile ] [ Css.flexDirection Css.column, Css.alignItems Css.stretch ]
+            , MediaQuery.fromList [ mobile [ Css.flexDirection Css.column, Css.alignItems Css.stretch ] ]
             ]
         ]
         [ ExampleSection.sectionWithCss "About"

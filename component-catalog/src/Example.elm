@@ -6,7 +6,6 @@ module Example exposing (Example, extraLinks, fromRouteName, fullName, preview, 
 import Accessibility.Styled.Aria as Aria
 import Category exposing (Category)
 import Css
-import Css.Media exposing (withMedia)
 import EllieLink
 import EventExtras
 import ExampleSection
@@ -19,7 +18,7 @@ import Nri.Ui.ClickableText.V5 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Header.V1 as Header
-import Nri.Ui.MediaQuery.V1 exposing (mobile)
+import Nri.Ui.MediaQuery.V2 as MediaQuery exposing (mobile)
 
 
 type alias Example state msg =
@@ -143,23 +142,22 @@ preview_ { swallowEvent, navigate, exampleHref } example =
             ]
         , Container.custom [ Events.onClick (navigate example) ]
         , Container.html
-            (Html.span [ EventExtras.onClickStopPropagation swallowEvent ]
+            [ Html.span [ EventExtras.onClickStopPropagation swallowEvent ]
                 [ ClickableText.link example.name
                     [ ClickableText.href (exampleHref example)
                     , ClickableText.css [ Css.marginBottom (Css.px 10) ]
                     , ClickableText.nriDescription "doodad-link"
                     ]
                 ]
-                :: [ Html.div
-                        [ Attributes.css
-                            [ Css.displayFlex
-                            , Css.flexDirection Css.column
-                            ]
-                        , Aria.hidden True
-                        ]
-                        (List.map (Html.map never) example.preview)
-                   ]
-            )
+            , Html.div
+                [ Attributes.css
+                    [ Css.displayFlex
+                    , Css.flexDirection Css.column
+                    ]
+                , Aria.hidden True
+                ]
+                (List.map (Html.map never) example.preview)
+            ]
         ]
 
 
@@ -177,7 +175,7 @@ view_ ellieLinkConfig example state =
             , Css.alignItems Css.stretch
             , Css.flexWrap Css.wrap
             , Css.property "gap" "10px"
-            , withMedia [ mobile ] [ Css.flexDirection Css.column, Css.alignItems Css.stretch ]
+            , MediaQuery.fromList [ mobile [ Css.flexDirection Css.column, Css.alignItems Css.stretch ] ]
             ]
         ]
         [ ExampleSection.aboutSection example.about

@@ -10,7 +10,6 @@ import Category exposing (Category(..))
 import Code
 import CommonControls
 import Css exposing (Color)
-import Css.Media exposing (withMedia)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
@@ -18,7 +17,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.MediaQuery.V1 exposing (mobile)
+import Nri.Ui.MediaQuery.V2 as MediaQuery exposing (mobile)
 import Nri.Ui.Outline.V1 as Outline exposing (KeyedOutline, Outline, RowTheme)
 import Nri.Ui.Spacing.V1 as Spacing
 import Svg.Styled as Svg
@@ -161,7 +160,7 @@ example =
                 [ css
                     [ Css.displayFlex
                     , Css.property "gap" "20px"
-                    , withMedia [ mobile ] [ Css.flexWrap Css.wrap ]
+                    , MediaQuery.fromList [ mobile [ Css.flexWrap Css.wrap ] ]
                     ]
                 ]
                 [ Outline.view
