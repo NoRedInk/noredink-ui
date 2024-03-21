@@ -57,13 +57,12 @@ import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style as Style
 import Css exposing (..)
-import Css.Media as Media
 import Html.Styled
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
-import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.MediaQuery.V2 as MediaQuery
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
 
@@ -221,7 +220,7 @@ fontCss heading =
     case heading of
         H1 ->
             [ fontSize (px 30)
-            , Media.withMedia [ MediaQuery.mobile ] [ fontSize (px 25) ]
+            , MediaQuery.fromList [ MediaQuery.mobile [ fontSize (px 25) ] ]
             , color Colors.navy
             ]
 
@@ -327,7 +326,7 @@ navContainerStyles : List Css.Style
 navContainerStyles =
     [ alignItems center
     , displayFlex
-    , Media.withMedia [ MediaQuery.mobile ] [ marginBottom (px 10), flexWrap wrap ]
+    , MediaQuery.fromList [ MediaQuery.mobile [ marginBottom (px 10), flexWrap wrap ] ]
     ]
 
 
@@ -413,8 +412,10 @@ viewHeadingWithIcon { isIconOnly, isLast } title =
          else
             [ css
                 [ marginLeft horizontalSpacing
-                , Media.withMedia [ MediaQuery.mobile ]
-                    [ Style.invisibleStyle
+                , MediaQuery.fromList
+                    [ MediaQuery.mobile
+                        [ Style.invisibleStyle
+                        ]
                     ]
                 ]
             ]
