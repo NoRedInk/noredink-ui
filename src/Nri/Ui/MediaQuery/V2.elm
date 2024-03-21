@@ -1,10 +1,10 @@
 module Nri.Ui.MediaQuery.V2 exposing
-    ( MediaQuery, fromList, init, on, toStyles, toStyle
+    ( MediaQuery, ResponsiveStyles
+    , fromList, init, on, toStyles, toStyle
     , not, offset
     , breakpoint
     , mobile, narrowMobile, quizEngineMobile
     , prefersReducedMotion, highContrastMode
-    , ResponsiveStyles
     )
 
 {-| Patch changes:
@@ -35,7 +35,8 @@ Build media queries for responsive design.
 
 ### Basics
 
-@docs MediaQuery, fromList, init, on, toStyles, toStyle
+@docs MediaQuery, ResponsiveStyles
+@docs fromList, init, on, toStyles, toStyle
 
 
 ### Utilities

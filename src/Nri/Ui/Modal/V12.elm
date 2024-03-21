@@ -165,7 +165,6 @@ import Accessibility.Styled.Role as Role
 import Accessibility.Styled.Style as Style
 import Browser.Events.Extra
 import Css exposing (..)
-import Css.Media
 import Css.Transitions
 import Html.Styled as Root
 import Html.Styled.Attributes as Attrs exposing (id)
@@ -699,13 +698,15 @@ viewInnerContent ({ visibleTitle } as config) =
                 , Css.boxSizing Css.borderBox
                 , Css.paddingLeft (Css.px 40)
                 , Css.paddingRight (Css.px 40)
-                , Css.Media.withMedia [ mobile ]
-                    [ Css.padding (Css.px 20)
-                    , Css.maxHeight
-                        (Css.calc (Css.vh 100)
-                            Css.minus
-                            (Css.px (footerMobileHeight + titleMobileHeight + 80))
-                        )
+                , MediaQuery.fromList
+                    [ mobile
+                        [ Css.padding (Css.px 20)
+                        , Css.maxHeight
+                            (Css.calc (Css.vh 100)
+                                Css.minus
+                                (Css.px (footerMobileHeight + titleMobileHeight + 80))
+                            )
+                        ]
                     ]
                 , if visibleTitle then
                     Css.paddingTop Css.zero
@@ -741,8 +742,10 @@ viewFooter children =
                 , Css.backgroundColor Colors.gray96
                 , Css.borderTop3 (Css.px 1) Css.solid Colors.gray92
                 , Css.borderRadius4 Css.zero Css.zero (Css.px 20) (Css.px 20)
-                , Css.Media.withMedia [ mobile ]
-                    [ Css.padding (Css.px 20)
+                , MediaQuery.fromList
+                    [ mobile
+                        [ Css.padding (Css.px 20)
+                        ]
                     ]
                 ]
             , ExtraAttributes.nriDescription "modal-footer"
