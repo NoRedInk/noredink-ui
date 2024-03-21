@@ -1,4 +1,4 @@
-module Nri.Ui.Message.V4%20copy exposing (..)module Nri.Ui.Message.V5 exposing
+module Nri.Ui.Message.V5 exposing
     ( somethingWentWrong
     , view, Attribute
     , icon, custom, testId, id
@@ -11,7 +11,11 @@ module Nri.Ui.Message.V4%20copy exposing (..)module Nri.Ui.Message.V5 exposing
     , onDismiss
     )
 
-{-| Changes from V3:
+{-| Changes from V4:
+
+    - changes signature of `hideIconFor` to accept an `Nri.Ui.MediaQuery` constructor instead of `Css.Media.MediaQuery`
+
+Changes from V3:
 
   - adds `statusRole`
   - removes `alertDialogRole`
@@ -77,7 +81,6 @@ import Accessibility.Styled.Style exposing (invisibleStyle)
 import Content
 import Css exposing (..)
 import Css.Global
-import Css.Media exposing (MediaQuery)
 import Html.Styled.Attributes as Attributes
 import Http
 import MarkdownStyles
@@ -86,7 +89,7 @@ import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
-import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.MediaQuery.V2 as MediaQuery exposing (MediaQuery)
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -207,9 +210,10 @@ view attributes_ =
                         , fontWeight (int 600)
                         , lineHeight (px 21)
                         , padding (px 20)
-                        , Css.Media.withMedia
-                            [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
-                            [ padding (px 15)
+                        , MediaQuery.fromList
+                            [ MediaQuery.mobile
+                                [ padding (px 15)
+                                ]
                             ]
                         ]
                     ]
@@ -272,11 +276,12 @@ view attributes_ =
                         , fontWeight (int 700)
                         , lineHeight (num 1.4)
                         , padding (px 20)
-                        , Css.Media.withMedia
-                            [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
-                            [ fontSize (px 15)
-                            , fontWeight (int 600)
-                            , padding (px 15)
+                        , MediaQuery.fromList
+                            [ MediaQuery.mobile
+                                [ fontSize (px 15)
+                                , fontWeight (int 600)
+                                , padding (px 15)
+                                ]
                             ]
                         ]
                     ]
@@ -308,10 +313,11 @@ view attributes_ =
                                 , minWidth (px 100)
                                 , flexShrink (int 1)
                                 , Fonts.baseFont
-                                , Css.Media.withMedia
-                                    [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
-                                    [ fontSize (px 15)
-                                    , fontWeight (int 600)
+                                , MediaQuery.fromList
+                                    [ MediaQuery.mobile
+                                        [ fontSize (px 15)
+                                        , fontWeight (int 600)
+                                        ]
                                     ]
                                 ]
                                 []
@@ -579,17 +585,17 @@ hideIconForMobile =
 
 
 {-| -}
-hideIconFor : MediaQuery -> Attribute msg
-hideIconFor mediaQuery =
-    css
-        [ Css.Media.withMedia [ mediaQuery ]
+hideIconFor : (List Style -> MediaQuery properties) -> Attribute msg
+hideIconFor mq =
+    responsiveCss
+        (mq
             [ Css.Global.descendants
                 [ ExtraAttributes.nriDescriptionSelector messageIconDescription
                     [ invisibleStyle
                     ]
                 ]
             ]
-        ]
+        )
 
 
 {-| -}
@@ -602,37 +608,56 @@ css styles =
             }
 
 
+{-| -}
+responsiveCss : MediaQuery properties -> Attribute msg
+responsiveCss mq =
+    Attribute <|
+        \config ->
+            { config
+                | customResponsiveStyles = MediaQuery.on mq config.customResponsiveStyles
+            }
+
+
 {-| Equivalent to:
 
     Message.css
-        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.notMobile ] styles ]
+        [ MediaQuery.fromList
+            [ MediaQuery.not MediaQuery.mobile [ styles ]
+            ]
+        ]
 
 -}
 notMobileCss : List Style -> Attribute msg
-notMobileCss styles =
-    css [ Css.Media.withMedia [ MediaQuery.notMobile ] styles ]
+notMobileCss =
+    responsiveCss << MediaQuery.not MediaQuery.mobile
 
 
 {-| Equivalent to:
 
     Message.css
-        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.mobile ] styles ]
+        [ MediaQuery.fromList
+            [ MediaQuery.mobile [ styles ]
+            ]
+        ]
 
 -}
 mobileCss : List Style -> Attribute msg
-mobileCss styles =
-    css [ Css.Media.withMedia [ MediaQuery.mobile ] styles ]
+mobileCss =
+    responsiveCss << MediaQuery.mobile
 
 
 {-| Equivalent to:
 
     Message.css
-        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.quizEngineMobile ] styles ]
+        [ MediaQuery.fromList
+            [ MediaQuery.quizEngineMobile [ styles ]
+            ]
+        ]
 
 -}
 quizEngineMobileCss : List Style -> Attribute msg
-quizEngineMobileCss styles =
-    css [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
+quizEngineMobileCss =
+    responsiveCss << MediaQuery.quizEngineMobile
 
 
 {-| Adds a dismiss ("X" icon) to a message which will produce the given `msg` when clicked.
@@ -692,6 +717,7 @@ type alias BannerConfig msg =
     , icon : Maybe Svg
     , customAttributes : List (Html.Attribute Never)
     , customStyles : List Style
+    , customResponsiveStyles : MediaQuery.ResponsiveStyles
     }
 
 
@@ -709,6 +735,7 @@ configFromAttributes attr =
         , icon = Nothing
         , customAttributes = []
         , customStyles = []
+        , customResponsiveStyles = MediaQuery.init
         }
         attr
 
@@ -891,10 +918,11 @@ getIcon customIcon size theme =
                             , Css.flexShrink Css.zero
                             , alignItems center
                             , justifyContent center
-                            , Css.Media.withMedia
-                                [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
-                                [ height (px 35)
-                                , width (px 35)
+                            , MediaQuery.fromList
+                                [ MediaQuery.mobile
+                                    [ height (px 35)
+                                    , width (px 35)
+                                    ]
                                 ]
                             ]
                         , ExtraAttributes.nriDescription messageIconDescription
@@ -982,9 +1010,10 @@ largeDismissButton msg =
         "dismiss-button-container"
         [ padding2 zero (px 20)
         , displayFlex
-        , Css.Media.withMedia
-            [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
-            [ padding4 (px 10) zero (px 10) (px 15)
+        , MediaQuery.fromList
+            [ MediaQuery.mobile
+                [ padding4 (px 10) zero (px 10) (px 15)
+                ]
             ]
         ]
         []
@@ -1003,9 +1032,10 @@ bannerDismissButton msg =
         "dismiss-button-container"
         [ padding2 zero (px 20)
         , displayFlex
-        , Css.Media.withMedia
-            [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
-            [ padding4 (px 10) zero (px 10) (px 15)
+        , MediaQuery.fromList
+            [ MediaQuery.mobile
+                [ padding4 (px 10) zero (px 10) (px 15)
+                ]
             ]
         ]
         []
