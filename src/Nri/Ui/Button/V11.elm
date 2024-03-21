@@ -243,9 +243,6 @@ hideTextFor mediaQuery =
         )
 
 
-{-| -}
-
-
 {-| Hide the left-side icon for the mobile breakpoint.
 -}
 hideIconForMobile : Attribute msg
