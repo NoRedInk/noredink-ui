@@ -331,7 +331,7 @@ describe("UI tests", function () {
 
     handlePageErrors(page);
     await page.goto(
-      `http://localhost:${PORT}/#/usage_example/MediaQueryBuilder`
+      `http://localhost:${PORT}/#/usage_example/MediaQuery.V2`
     );
 
     await page.$("#maincontent");
