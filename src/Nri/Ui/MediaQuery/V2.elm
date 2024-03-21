@@ -1,6 +1,7 @@
 module Nri.Ui.MediaQuery.V2 exposing
     ( MediaQuery, fromList, toStyles, toStyle
     , not, offset
+    , breakpoint
     , mobile, narrowMobile, quizEngineMobile
     , prefersReducedMotion, highContrastMode
     )
@@ -43,6 +44,7 @@ Build media queries for responsive design.
 
 ### Breakpoint
 
+@docs breakpoint
 @docs mobile, narrowMobile, quizEngineMobile
 
 
@@ -58,17 +60,11 @@ import Dict exposing (Dict)
 import Maybe.Extra as Maybe
 
 
-{-| Type representing a Media Query in the format
+{-| Type representing a media query.
 
-    `(Target, SatisfiesTargetStyles, DoesNotSatisfyTargetStyles)`, where:
+    There is a lone constructor `MediaQuery` that takes 3 arguments:
 
-    - `Target` is the media this query is targeting (e.g. Mobile, NarrowMobile, etc.)
-    - `SatisfiesTargetStyles` is the style to apply when the media query is satisfied
-    - `DoesNotSatisfyTargetStyles` is the style to apply when the media query is NOT satisfied
-
-    Example:
-
-    MediaQuery Mobile (Just [ Css.paddingTop (Css.px 10) ]) (Just [ Css.paddingTop (Css.px 20) ]
+    (Target, SatisfiesTargetStyles, DoesNotSatisfyTargetStyles)`
 
 -}
 type MediaQuery properties
@@ -117,11 +113,29 @@ offset px mq s =
             other
 
 
+{-| Construct a media query for a viewport breakpoint
+
+    For example,
+
+    `breakpoint 1000 [ fontSize (px 20) ]`
+
+    Will apply the `font-size: 20px` rule at the breakpoint 1000px.
+
+-}
 breakpoint : Float -> List Style -> MediaQuery { properties | offsettable : () }
 breakpoint px s =
     MediaQuery (Breakpoint px) (Just s) Nothing
 
 
+{-| Construct a media query for a user preference
+
+    For example,
+
+    `userPreference "(prefers-reduced-motion)" "(prefers-reduced-motion: no-preference)" [ fontSize (px 20) ]`
+
+    Will apply the `font-size: 20px` rule when the user prefers reduced motion.
+
+-}
 userPreference : String -> String -> List Style -> MediaQuery properties
 userPreference on_ off s =
     MediaQuery (UserPreference on_ off) (Just s) Nothing
@@ -148,7 +162,12 @@ narrowMobile =
     breakpoint 500
 
 
-{-| Set styles for reduced motion
+{-| Set styles for users who prefer reduced motion
+
+    Generally, you will want to wrap any use of animations/transitions with
+
+    `not (prefersReducedMotion [ ... ])`
+
 -}
 prefersReducedMotion : List Style -> MediaQuery {}
 prefersReducedMotion =
@@ -156,23 +175,73 @@ prefersReducedMotion =
 
 
 {-| Set styles for high contrast mode
+
+    This media query indicates that the user has FORCED high contrast mode on.
+
+    It is NOT the same as `prefers-color-scheme: high-contrast`.
+
+    The practical difference is that this query targets users who are using high contrast
+    or inverted colors at the system/browser level (e.g. Windows High Contrast mode,
+    Mac OS Invert Colors), while `prefers-color-scheme: high-contrast` targets users who
+    have expressed a preference for high contrast mode, but are otherwise seeing the same
+    experience as everyone else.
+
+    `prefers-color-scheme: high-contrast` is similar to `prefers-reduced-motion` and
+    `prefers-color-scheme: dark` in that it is up to us to respect it and provide a
+    high-contrast experience, while `forced-colors: active` is a signal that the user
+    is using high contrast mode and intended to be used when there is a need to make
+    more significant changes or compensate for a suboptimal experience for those users.
+
 -}
 highContrastMode : List Style -> MediaQuery {}
 highContrastMode =
     userPreference "(forced-colors: active)" "(forced-colors: none)"
 
 
+{-| A record representing the styles to apply at various breakpoints and user preferences.
+
+    This is the internal representation of media queries. It is not recommended to use it directly.
+
+    Instead, use `MediaQuery.fromList` or `MediaQuery.init |> MediaQuery.on ...`.
+
+    `breakpoints` - Dict of breakpoints where the key is the pixel value and the value is a tuple
+    of (Maybe (List Style), Maybe (List Style)) where the first item is the styles to apply when the
+    media query is satisfied and the second item is the styles to apply when the media query is NOT
+    satisfied.
+
+    `userPreferences` - Dict of user preferences where the key is the media expression
+    (e.g. "(prefers-reduced-motion)") and the value is a list of styles to apply when the
+    media query is satisfied.
+
+    This is the internal representation of media queries. It is not recommended to use it directly.
+
+-}
 type alias ResponsiveStyles =
     { breakpoints : Dict Float ( Maybe (List Style), Maybe (List Style) )
     , userPreferences : Dict String (List Style)
     }
 
 
+{-| Initialize a ResponsiveStyles record that can be used to compose media queries.
+-}
 init : ResponsiveStyles
 init =
     { breakpoints = Dict.empty, userPreferences = Dict.empty }
 
 
+{-| Add a MediaQuery to a ResponsiveStyles record.
+
+    This is the primary way to build a ResponsiveStyles record.
+
+    For example,
+
+    ```
+    MediaQuery.init
+        |> MediaQuery.on (MediaQuery.mobile [ Css.paddingTop (Css.px 10) ])
+        |> MediaQuery.on (MediaQuery.narrowMobile [ Css.paddingTop (Css.px 20) ])
+    ```
+
+-}
 on : MediaQuery properties -> ResponsiveStyles -> ResponsiveStyles
 on mq internal =
     let
@@ -202,7 +271,18 @@ on mq internal =
             }
 
 
-{-| Build a list of `Css.Style` from a list of media queries.
+{-| Build a list of `Css.Style` from a ResponsiveStyles record.
+
+    Styles are output in the following order:
+
+    1. User preferences
+    2. Mobile-first breakpoints (min-width, ascending)
+    3. Desktop-first breakpoints (max-width, descending)
+
+    This ordering (at least for the breakpoints) is important to ensure the correct styles are applied.
+
+    CASCADES, BABY!
+
 -}
 toStyles : ResponsiveStyles -> List Style
 toStyles { breakpoints, userPreferences } =
@@ -226,7 +306,15 @@ toStyles { breakpoints, userPreferences } =
         ++ List.foldr addViewportQuery [] (Dict.toList breakpoints |> List.sortBy Tuple.first)
 
 
-{-| Build a single `Css.Style` from a list of media queries.
+{-| Build a single `Css.Style` from a ResponsiveStyles record.
+
+    Styles are output in the following order:
+
+    1. User preferences
+    2. Mobile-first breakpoints (min-width, ascending)
+    3. Desktop-first breakpoints (max-width, descending)
+
+    This ordering (at least for the breakpoints) is important to ensure the correct styles are applied.
 
     This is a convenience function for `Css.batch (toStyles queries)`.
 
@@ -238,35 +326,37 @@ toStyle =
 
 {-| Build a single `Css.Style` from a list of media queries.
 
-    This is a convenience function for `List.foldl MediaQuery.on MediaQuery.query >> MediaQuery.toStyle`
+    !!!  ARE YOU TRYING TO USE THIS FUNCTION AND GETTING A TYPE ERROR ON YOUR LIST OF MEDIA QUERIES? READ THIS! !!!
 
-    In other words,
+    This module is designed with a pipeline-style API in mind, and uses phantom types to enforce certain restrictions.
 
-    ```
-    MediaQuery.fromList
-        [ MediaQuery.mobile [ Css.paddingTop (Css.px 10) ]
-        , MediaQuery.narrowMobile [ Css.paddingTop (Css.px 20) ]
-        ]
-    ```
+    These phantom types prevent using modifiers like `not` and `offset` with media queries that are not designed to accept them.
 
-    is the same as
+    This function is an alias for `List.foldl on init >> toStyle` provided for convenience and the common case.
 
-    ```
-    MediaQuery.query
-        |> MediaQuery.on (MediaQuery.mobile [ Css.paddingTop (Css.px 10) ])
-        |> MediaQuery.on (MediaQuery.narrowMobile [ Css.paddingTop (Css.px 20) ])
-        |> MediaQuery.toStyle
-    ```
+    If you're stuck, you have 2 options:
 
-    Why do both of these exist?
+    1. Use 2 independent calls to `MediaQuery.fromList`, one with your breakpoints and one with your user preferences.
 
-    `fromList` is convenient, but restricts the use of phantom types. That is, you can't
-    create a media query that contains both a breakpoint and a user preference. You can only
-    create a media query that contains one or the other.
+    2. Use the pipeline-style API directly.
 
-    This usually isn't a concern, but to enforce certain restrictions internally it
-    makes more sense to design the API around pipeline-style usage and expose this
-    convenience function for the common case.
+        For example,
+
+        ```
+        MediaQuery.fromList
+            [ MediaQuery.mobile [ Css.paddingTop (Css.px 10) ]
+            , MediaQuery.narrowMobile [ Css.paddingTop (Css.px 20) ]
+            ]
+        ```
+
+        translates to
+
+        ```
+        MediaQuery.query
+            |> MediaQuery.on (MediaQuery.mobile [ Css.paddingTop (Css.px 10) ])
+            |> MediaQuery.on (MediaQuery.narrowMobile [ Css.paddingTop (Css.px 20) ])
+            |> MediaQuery.toStyle
+        ```
 
 -}
 fromList : List (MediaQuery properties) -> Style
