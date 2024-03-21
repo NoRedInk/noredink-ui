@@ -112,7 +112,6 @@ import Accessibility.Styled.Aria as Aria
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (Style)
 import Css.Global
-import Css.Media exposing (MediaQuery)
 import Html.Styled as Styled
 import Html.Styled.Attributes as Attributes
 import Markdown.Block
@@ -123,7 +122,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
-import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.MediaQuery.V2 as MediaQuery exposing (MediaQuery)
 import Nri.Ui.Svg.V1 as NriSvg exposing (Svg)
 
 
@@ -228,15 +227,17 @@ hideIconForMobile =
 
 {-| Hide the left-side icon for an arbitrary media query.
 -}
-hideIconFor : MediaQuery -> Attribute msg
+hideIconFor : (List Style -> MediaQuery properties) -> Attribute msg
 hideIconFor mediaQuery =
     set
         (\config ->
             { config
                 | iconStyles =
                     List.append config.iconStyles
-                        [ Css.Media.withMedia [ mediaQuery ]
-                            [ Css.display Css.none
+                        [ MediaQuery.fromList
+                            [ mediaQuery
+                                [ Css.display Css.none
+                                ]
                             ]
                         ]
             }
@@ -254,37 +255,48 @@ css styles =
         )
 
 
+{-| -}
+responsiveCss : MediaQuery properties -> Attribute msg
+responsiveCss mq =
+    set
+        (\config ->
+            { config
+                | customResponsiveStyles = MediaQuery.on mq config.customResponsiveStyles
+            }
+        )
+
+
 {-| Equivalent to:
 
     Button.css
-        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.notMobile ] styles ]
+        [ MediaQuery.not MediaQuery.mobile styles ]
 
 -}
 notMobileCss : List Style -> Attribute msg
-notMobileCss styles =
-    css [ Css.Media.withMedia [ MediaQuery.notMobile ] styles ]
+notMobileCss =
+    responsiveCss << MediaQuery.not MediaQuery.mobile
 
 
 {-| Equivalent to:
 
     Button.css
-        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.mobile ] styles ]
+        [ MediaQuery.mobile styles ]
 
 -}
 mobileCss : List Style -> Attribute msg
-mobileCss styles =
-    css [ Css.Media.withMedia [ MediaQuery.mobile ] styles ]
+mobileCss =
+    responsiveCss << MediaQuery.mobile
 
 
 {-| Equivalent to:
 
     Button.css
-        [ Css.Media.withMedia [ Nri.Ui.MediaQuery.V1.quizEngineMobile ] styles ]
+        [ MediaQuery.fromList [ MediaQuery.quizEngineMobile styles ] ]
 
 -}
 quizEngineMobileCss : List Style -> Attribute msg
-quizEngineMobileCss styles =
-    css [ Css.Media.withMedia [ MediaQuery.quizEngineMobile ] styles ]
+quizEngineMobileCss =
+    responsiveCss << MediaQuery.quizEngineMobile
 
 
 
@@ -727,6 +739,7 @@ build =
         , rightIcon = Nothing
         , customAttributes = []
         , customStyles = []
+        , customResponsiveStyles = MediaQuery.init
         }
 
 
@@ -750,6 +763,7 @@ type alias ButtonOrLinkAttributes msg =
     , rightIcon : Maybe Svg
     , customAttributes : List (Html.Attribute msg)
     , customStyles : List Style
+    , customResponsiveStyles : MediaQuery.ResponsiveStyles
     }
 
 
@@ -805,10 +819,11 @@ buttonStyles :
         , narrowMobileWidth : Maybe ButtonWidth
         , state : ButtonState
         , customStyles : List Style
+        , customResponsiveStyles : MediaQuery.ResponsiveStyles
         , pressed : Maybe Bool
     }
     -> List Style
-buttonStyles ({ state, customStyles } as config) =
+buttonStyles ({ state, customStyles, customResponsiveStyles } as config) =
     let
         ( stringBoxShadow, pressedStyles, style ) =
             case config.pressed of
@@ -840,6 +855,7 @@ buttonStyles ({ state, customStyles } as config) =
     , colorStyle style state
     , pressedStyles
     , Css.batch customStyles
+    , MediaQuery.toStyle customResponsiveStyles
     , Css.pseudoClass "focus-visible"
         [ Css.outline3 (Css.px 2) Css.solid Css.transparent
         , FocusRing.boxShadows stringBoxShadow
@@ -1201,10 +1217,9 @@ sizeStyle ({ size, width } as settings) =
         ]
 
 
-maybeViewportSpecificStyles : MediaQuery -> Maybe (List Style) -> Style
+maybeViewportSpecificStyles : (List Style -> MediaQuery property) -> Maybe (List Style) -> Style
 maybeViewportSpecificStyles mediaQuery =
-    Maybe.map (Css.Media.withMedia [ mediaQuery ])
-        >> Maybe.withDefault (Css.batch [])
+    Maybe.map (mediaQuery >> List.singleton >> MediaQuery.fromList) >> Maybe.withDefault (Css.batch [])
 
 
 buttonWidthToStyle : { a | minWidth : Float } -> ButtonWidth -> List Style
