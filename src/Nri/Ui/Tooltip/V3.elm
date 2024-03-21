@@ -1154,6 +1154,7 @@ viewTooltip tooltipId config =
                     ++ MediaQuery.toStyles mediaQueries.positioning
                     ++ MediaQuery.toStyles mediaQueries.applyTail
                     ++ config.tooltipStyleOverrides
+                    ++ MediaQuery.toStyles config.responsiveTooltipStyleOverrides
                 )
 
              -- We need to keep this animation in tests to make it pass: check out

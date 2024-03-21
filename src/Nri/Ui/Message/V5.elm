@@ -127,6 +127,7 @@ view attributes_ =
             , color color_
             , boxSizing borderBox
             , Css.batch attributes.customStyles
+            , MediaQuery.toStyle attributes.customResponsiveStyles
             , Css.Global.descendants
                 [ Css.Global.a
                     [ color Colors.azure
@@ -447,7 +448,7 @@ markdown content =
         \config ->
             { config
                 | content = Content.markdownContent content
-                , customStyles = MarkdownStyles.anchorAndButton ++ config.customStyles
+                , customStyles = MarkdownStyles.anchorAndButton ++ config.customStyles ++ MediaQuery.toStyles config.customResponsiveStyles
             }
 
 
