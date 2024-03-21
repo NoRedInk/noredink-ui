@@ -46,19 +46,19 @@ viewCascade =
     Container.view
         [ Container.buttony
         , Container.css
-            (Css.displayFlex
-                :: Css.property "justify-content" "space-evenly"
-                :: before "Default"
-                :: after "Default"
-                :: MediaQuery.toStyles
-                    [ MediaQuery.narrowMobile [ before "Narrow Mobile" ]
-                    , MediaQuery.quizEngineMobile [ before "Quiz Engine Mobile" ]
-                    , MediaQuery.mobile [ before "Mobile" ]
-                    , MediaQuery.not MediaQuery.narrowMobile [ after "Not Narrow Mobile" ]
-                    , MediaQuery.not MediaQuery.quizEngineMobile [ after "Not Quiz Engine Mobile" ]
-                    , MediaQuery.not MediaQuery.mobile [ after "Not Mobile" ]
-                    ]
-            )
+            [ Css.displayFlex
+            , Css.property "justify-content" "space-evenly"
+            , before "Default"
+            , after "Default"
+            , MediaQuery.fromList
+                [ MediaQuery.narrowMobile [ before "Narrow Mobile" ]
+                , MediaQuery.quizEngineMobile [ before "Quiz Engine Mobile" ]
+                , MediaQuery.mobile [ before "Mobile" ]
+                , MediaQuery.not MediaQuery.narrowMobile [ after "Not Narrow Mobile" ]
+                , MediaQuery.not MediaQuery.quizEngineMobile [ after "Not Quiz Engine Mobile" ]
+                , MediaQuery.not MediaQuery.mobile [ after "Not Mobile" ]
+                ]
+            ]
         , Container.plaintext " | "
         ]
 
@@ -75,7 +75,7 @@ viewIndividually =
         viewBreakpoint name breakpoint =
             Container.view
                 [ Container.buttony
-                , Container.css <| hidden :: MediaQuery.toStyles [ breakpoint [ visible ] ]
+                , Container.css [ hidden, MediaQuery.fromList [ breakpoint [ visible ] ] ]
                 , Container.plaintext name
                 ]
     in

@@ -1,9 +1,10 @@
 module Nri.Ui.MediaQuery.V2 exposing
-    ( MediaQuery, fromList, toStyles, toStyle
+    ( MediaQuery, fromList, init, on, toStyles, toStyle
     , not, offset
     , breakpoint
     , mobile, narrowMobile, quizEngineMobile
     , prefersReducedMotion, highContrastMode
+    , ResponsiveStyles
     )
 
 {-| Patch changes:
@@ -76,6 +77,18 @@ type Target
     | UserPreference String String
 
 
+type alias Properties =
+    {}
+
+
+type alias Offsettable properties =
+    { properties | offsettable : () }
+
+
+type alias BreakpointProperties =
+    Offsettable Properties
+
+
 {-| Negate a MediaQuery
 
     Note: This is not a true "not" media query. Rather, this module will use whatever
@@ -103,7 +116,7 @@ not mq s =
     No effect if used with a non-breakpoint media query.
 
 -}
-offset : Float -> (List Style -> MediaQuery { properties | offsettable : () }) -> List Style -> MediaQuery { properties | offsettable : () }
+offset : Float -> (List Style -> MediaQuery (Offsettable properties)) -> List Style -> MediaQuery (Offsettable properties)
 offset px mq s =
     case mq s of
         MediaQuery (Breakpoint orig) _ _ ->
@@ -122,7 +135,7 @@ offset px mq s =
     Will apply the `font-size: 20px` rule at the breakpoint 1000px.
 
 -}
-breakpoint : Float -> List Style -> MediaQuery { properties | offsettable : () }
+breakpoint : Float -> List Style -> MediaQuery BreakpointProperties
 breakpoint px s =
     MediaQuery (Breakpoint px) (Just s) Nothing
 
@@ -143,21 +156,21 @@ userPreference on_ off s =
 
 {-| Set styles for mobile and smaller devices (<= 1000px)
 -}
-mobile : List Style -> MediaQuery { properties | offsettable : () }
+mobile : List Style -> MediaQuery BreakpointProperties
 mobile =
     breakpoint 1000
 
 
 {-| Set styles for quiz engine mobile and smaller devices (<= 750px)
 -}
-quizEngineMobile : List Style -> MediaQuery { properties | offsettable : () }
+quizEngineMobile : List Style -> MediaQuery BreakpointProperties
 quizEngineMobile =
     breakpoint 750
 
 
 {-| Set styles for narrow mobile and smaller devices (<= 500px)
 -}
-narrowMobile : List Style -> MediaQuery { properties | offsettable : () }
+narrowMobile : List Style -> MediaQuery BreakpointProperties
 narrowMobile =
     breakpoint 500
 

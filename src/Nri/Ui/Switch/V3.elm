@@ -395,7 +395,7 @@ stroke color =
 
 transition : String -> Css.Style
 transition transitionRules =
-    MediaQuery.toStyle
+    MediaQuery.fromList
         [ MediaQuery.not MediaQuery.prefersReducedMotion
             [ Css.property "transition" transitionRules ]
         ]

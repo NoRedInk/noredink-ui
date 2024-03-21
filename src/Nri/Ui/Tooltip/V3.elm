@@ -126,7 +126,7 @@ type alias Tooltip msg =
     , attributes : List (Html.Attribute Never)
     , containerStyles : List Style
     , tooltipStyleOverrides : List Style
-    , responsiveTooltipStyleOverrides : List MediaQuery
+    , responsiveTooltipStyleOverrides : MediaQuery.ResponsiveStyles
     , width : Width
     , padding : Padding
     , trigger : Maybe (Trigger msg)
@@ -161,7 +161,7 @@ buildAttributes =
                 , Css.position Css.relative
                 ]
             , tooltipStyleOverrides = []
-            , responsiveTooltipStyleOverrides = []
+            , responsiveTooltipStyleOverrides = MediaQuery.init
             , width = Exactly 320
             , padding = NormalPadding
             , trigger = Nothing
@@ -645,11 +645,9 @@ css tooltipStyleOverrides =
 
 {-| Set some conditional custom styles on the tooltip according to a media query.
 -}
-responsiveCss : List MediaQuery -> Attribute msg
-responsiveCss styles =
-    -- Don't do the `MediaQuery.toStyles` here, because we want calls to multiple
-    -- `responsiveCss` to be additive and processed by MediaQuery together.
-    Attribute (\config -> { config | responsiveTooltipStyleOverrides = config.responsiveTooltipStyleOverrides ++ styles })
+responsiveCss : MediaQuery properties -> Attribute msg
+responsiveCss mq =
+    Attribute (\config -> { config | responsiveTooltipStyleOverrides = MediaQuery.on mq config.responsiveTooltipStyleOverrides })
 
 
 {-| Set styles that will only apply if the viewport is wider than NRI's mobile breakpoint.
@@ -660,8 +658,8 @@ Equivalent to:
 
 -}
 notMobileCss : List Style -> Attribute msg
-notMobileCss styles =
-    responsiveCss [ MediaQuery.not MediaQuery.mobile styles ]
+notMobileCss =
+    responsiveCss << MediaQuery.not MediaQuery.mobile
 
 
 {-| Set styles that will only apply if the viewport is narrower than NRI's mobile breakpoint.
@@ -672,8 +670,8 @@ Equivalent to:
 
 -}
 mobileCss : List Style -> Attribute msg
-mobileCss styles =
-    responsiveCss [ MediaQuery.mobile styles ]
+mobileCss =
+    responsiveCss << MediaQuery.mobile
 
 
 {-| Set styles that will only apply if the viewport is narrower than NRI's quiz-engine-specific mobile breakpoint.
@@ -684,8 +682,8 @@ Equivalent to:
 
 -}
 quizEngineMobileCss : List Style -> Attribute msg
-quizEngineMobileCss styles =
-    responsiveCss [ MediaQuery.quizEngineMobile styles ]
+quizEngineMobileCss =
+    responsiveCss << MediaQuery.quizEngineMobile
 
 
 {-| Set styles that will only apply if the viewport is narrower than NRI's narrow mobile breakpoint.
@@ -696,8 +694,8 @@ Equivalent to:
 
 -}
 narrowMobileCss : List Style -> Attribute msg
-narrowMobileCss styles =
-    responsiveCss [ MediaQuery.narrowMobile styles ]
+narrowMobileCss =
+    responsiveCss << MediaQuery.narrowMobile
 
 
 {-| Use this helper to add custom attributes.
@@ -1061,10 +1059,10 @@ viewTooltip tooltipId config =
                         ( direction
                         , alignment
                         , { acc
-                            | positionTooltip = mediaQuery (positionTooltip direction alignment) :: acc.positionTooltip
-                            , hoverAreaForDirection = mediaQuery (hoverAreaForDirection direction) :: acc.hoverAreaForDirection
-                            , positioning = mediaQuery (positioning direction alignment) :: acc.positioning
-                            , applyTail = mediaQuery (applyTail direction) :: acc.applyTail
+                            | positionTooltip = MediaQuery.on (mediaQuery (positionTooltip direction alignment)) acc.positionTooltip
+                            , hoverAreaForDirection = MediaQuery.on (mediaQuery (hoverAreaForDirection direction)) acc.hoverAreaForDirection
+                            , positioning = MediaQuery.on (mediaQuery (positioning direction alignment)) acc.positioning
+                            , applyTail = MediaQuery.on (mediaQuery (applyTail direction)) acc.applyTail
                           }
                         )
 
@@ -1073,10 +1071,10 @@ viewTooltip tooltipId config =
                 )
                 ( config.direction
                 , config.alignment
-                , { positionTooltip = []
-                  , hoverAreaForDirection = []
-                  , positioning = []
-                  , applyTail = []
+                , { positionTooltip = MediaQuery.init
+                  , hoverAreaForDirection = MediaQuery.init
+                  , positioning = MediaQuery.init
+                  , applyTail = MediaQuery.init
                   }
                 )
                 [ ( MediaQuery.mobile, config.mobileDirection, config.mobileAlignment )
@@ -1153,7 +1151,8 @@ viewTooltip tooltipId config =
                  ]
                     ++ positioning config.direction config.alignment
                     ++ applyTail config.direction
-                    ++ MediaQuery.toStyles (mediaQueries.positioning ++ mediaQueries.applyTail)
+                    ++ MediaQuery.toStyles mediaQueries.positioning
+                    ++ MediaQuery.toStyles mediaQueries.applyTail
                     ++ config.tooltipStyleOverrides
                 )
 

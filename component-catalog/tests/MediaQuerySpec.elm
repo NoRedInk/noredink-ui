@@ -19,7 +19,7 @@ import Test.Html.Query as Query
 import Test.Html.Selector as Selector
 
 
-allQueriesRandomOrderFuzzer : Fuzzer (List MediaQuery)
+allQueriesRandomOrderFuzzer : Fuzzer (List (MediaQuery { offsettable : () }))
 allQueriesRandomOrderFuzzer =
     Fuzz.shuffledList
         [ MediaQuery.not narrowMobile [ order (int 1) ]
@@ -38,7 +38,7 @@ suite =
     describe "MediaQuery.V2"
         [ fuzz allQueriesRandomOrderFuzzer "it puts breakpoint queries in the correct order" <|
             \queries ->
-                div [ css <| MediaQuery.toStyles queries ] []
+                div [ css [ MediaQuery.fromList queries ] ] []
                     |> toUnstyled
                     |> Query.fromHtml
                     |> Query.find [ Selector.tag "style" ]
@@ -57,11 +57,12 @@ suite =
         , test "it works with user preference queries" <|
             \() ->
                 div
-                    [ css <|
-                        MediaQuery.toStyles
+                    [ css
+                        [ MediaQuery.fromList
                             [ highContrastMode [ borderWidth (px 1) ]
                             , MediaQuery.not highContrastMode [ borderWidth (px 2) ]
                             ]
+                        ]
                     ]
                     []
                     |> toUnstyled
@@ -74,11 +75,12 @@ suite =
         , test "it works with duplicated queries" <|
             \() ->
                 div
-                    [ css <|
-                        MediaQuery.toStyles
+                    [ css
+                        [ MediaQuery.fromList
                             [ prefersReducedMotion [ borderWidth (px 1) ]
                             , prefersReducedMotion [ fontSize (px 1) ]
                             ]
+                        ]
                     ]
                     []
                     |> toUnstyled

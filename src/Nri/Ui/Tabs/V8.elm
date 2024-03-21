@@ -282,7 +282,7 @@ view { focusAndSelect, selected } attrs tabs =
             , Css.borderBottomStyle Css.solid
             , Css.borderBottomColor Colors.navy
             , Fonts.baseFont
-            , MediaQuery.toStyle
+            , MediaQuery.fromList
                 (Maybe.values
                     [ Just
                         (MediaQuery.narrowMobile
@@ -367,7 +367,7 @@ stylesTabsAligned config =
     , Css.displayFlex
     , Css.flexGrow (Css.int 1)
     , Css.padding Css.zero
-    , MediaQuery.toStyle [ MediaQuery.narrowMobile [ Css.flexDirection Css.column ] ]
+    , MediaQuery.fromList [ MediaQuery.narrowMobile [ Css.flexDirection Css.column ] ]
     ]
 
 
@@ -474,7 +474,7 @@ tabStyles customSpacing pageBackgroundColor_ index isSelected =
         margin =
             Maybe.withDefault 10 customSpacing / 2
     in
-    baseStyles
+    MediaQuery.fromList [ MediaQuery.narrowMobile <| narrowMobileStylesTab ++ narrowMobileStylesDynamic ]
+        :: baseStyles
         ++ stylesTab
         ++ stylesDynamic
-        ++ MediaQuery.toStyles [ MediaQuery.narrowMobile <| narrowMobileStylesTab ++ narrowMobileStylesDynamic ]
