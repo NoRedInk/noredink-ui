@@ -21,7 +21,7 @@ module Nri.Ui.HighlighterTool.V1 exposing
 
 import Css
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.MediaQuery.V2 as MediaQuery
 
 
 {-| Tool that can be used on a highlighter
@@ -96,8 +96,10 @@ buildMarker { highlightColor, hoverColor, hoverHighlightColor, kind, name } =
 
 startGroupStyles : List Css.Style
 startGroupStyles =
-    [ MediaQuery.highContrastMode
-        [ Css.property "border-left" "2px solid Mark"
+    [ MediaQuery.fromList
+        [ MediaQuery.highContrastMode
+            [ Css.property "border-left" "2px solid Mark"
+            ]
         ]
     , Css.paddingLeft (Css.px paddingSize)
     , Css.marginLeft (Css.px -paddingSize)
@@ -108,8 +110,10 @@ startGroupStyles =
 
 endGroupStyles : List Css.Style
 endGroupStyles =
-    [ MediaQuery.highContrastMode
-        [ Css.property "border-right" "2px solid Mark"
+    [ MediaQuery.fromList
+        [ MediaQuery.highContrastMode
+            [ Css.property "border-right" "2px solid Mark"
+            ]
         ]
     , Css.paddingRight (Css.px paddingSize)
     , Css.marginRight (Css.px -paddingSize)
@@ -137,10 +141,12 @@ sharedStyles =
     [ Css.paddingTop (Css.px 4)
     , Css.paddingBottom (Css.px 3)
     , Css.property "transition" "background-color 0.4s, box-shadow 0.4s"
-    , MediaQuery.highContrastMode
-        [ Css.property "color" "CanvasText"
-        , Css.property "border-top" "2px solid Mark"
-        , Css.property "border-bottom" "2px solid Mark"
+    , MediaQuery.fromList
+        [ MediaQuery.highContrastMode
+            [ Css.property "color" "CanvasText"
+            , Css.property "border-top" "2px solid Mark"
+            , Css.property "border-bottom" "2px solid Mark"
+            ]
         ]
     ]
 
@@ -151,8 +157,10 @@ hoverStyles color =
         sharedStyles
         [ Css.boxShadow5 Css.zero Css.zero (Css.px 10) (Css.px 2) color
         , Css.important (Css.backgroundColor color)
-        , MediaQuery.highContrastMode
-            [ Css.property "border-color" "Highlight" |> Css.important
+        , MediaQuery.fromList
+            [ MediaQuery.highContrastMode
+                [ Css.property "border-color" "Highlight" |> Css.important
+                ]
             ]
         ]
 
@@ -171,10 +179,12 @@ buildMarkerWithBorder { highlightColor, kind, name } =
             Css.batch
                 [ Css.padding2 (Css.px 6) Css.zero
                 , Css.lineHeight (Css.em 2.5)
-                , MediaQuery.highContrastMode
-                    [ Css.property "border-color" "Mark"
-                    , Css.property "color" "CanvasText"
-                    , Css.borderWidth (Css.px 2)
+                , MediaQuery.fromList
+                    [ MediaQuery.highContrastMode
+                        [ Css.property "border-color" "Mark"
+                        , Css.property "color" "CanvasText"
+                        , Css.borderWidth (Css.px 2)
+                        ]
                     ]
                 ]
     in
@@ -222,13 +232,17 @@ buildMarkerWithoutRounding { highlightColor, hoverColor, hoverHighlightColor, ki
     { hoverClass = squareHoverStyles hoverColor
     , hintClass = squareHoverStyles hoverColor
     , startGroupClass =
-        [ MediaQuery.highContrastMode
-            [ Css.property "border-left" "2px solid Mark"
+        [ MediaQuery.fromList
+            [ MediaQuery.highContrastMode
+                [ Css.property "border-left" "2px solid Mark"
+                ]
             ]
         ]
     , endGroupClass =
-        [ MediaQuery.highContrastMode
-            [ Css.property "border-right" "2px solid Mark"
+        [ MediaQuery.fromList
+            [ MediaQuery.highContrastMode
+                [ Css.property "border-right" "2px solid Mark"
+                ]
             ]
         ]
     , highlightClass = squareHighlightStyles highlightColor
@@ -251,10 +265,12 @@ squareSharedStyles : List Css.Style
 squareSharedStyles =
     [ Css.paddingTop (Css.px 4)
     , Css.paddingBottom (Css.px 3)
-    , MediaQuery.highContrastMode
-        [ Css.property "color" "CanvasText"
-        , Css.property "border-top" "2px solid Mark"
-        , Css.property "border-bottom" "2px solid Mark"
+    , MediaQuery.fromList
+        [ MediaQuery.highContrastMode
+            [ Css.property "color" "CanvasText"
+            , Css.property "border-top" "2px solid Mark"
+            , Css.property "border-bottom" "2px solid Mark"
+            ]
         ]
     ]
 
