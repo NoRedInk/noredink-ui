@@ -244,3 +244,5 @@ documentation.json
 /log
 /buck-out
 /result
+
+.vscode/
