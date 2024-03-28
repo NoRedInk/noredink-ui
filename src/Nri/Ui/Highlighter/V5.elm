@@ -832,7 +832,6 @@ selectShortest getHighlightable state =
             )
 
 
-
 highlightLengths : { model | highlightables : List (Highlightable marker), sorter : Sorter marker } -> List { marker : marker, length : Int }
 highlightLengths model =
     model.highlightables
