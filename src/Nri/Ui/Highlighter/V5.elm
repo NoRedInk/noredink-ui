@@ -20,6 +20,11 @@ module Nri.Ui.Highlighter.V5 exposing
 Highlighter provides a view/model/update to display a view to highlight text and show marks.
 
 
+# Patch changes:
+
+  - Optimized `selectShortest` for the normal case of 0 or 1 highlight.
+
+
 # Types
 
 @docs Model, Msg, PointerMsg
