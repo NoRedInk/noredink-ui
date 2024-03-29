@@ -23,6 +23,7 @@ Highlighter provides a view/model/update to display a view to highlight text and
 # Patch changes:
 
   - Made all highlighter views lazy
+  - Optimized `selectShortest` for the normal case of 0 or 1 highlight.
 
 
 # Types
@@ -815,18 +816,27 @@ selectShortest :
     -> { model | highlightables : List (Highlightable marker), sorter : Sorter marker }
     -> Maybe marker
 selectShortest getHighlightable state =
-    let
-        candidateIds : Sort.Set.Set marker
-        candidateIds =
-            getHighlightable state
-                |> Maybe.map (.marked >> List.map .kind)
-                |> Maybe.withDefault []
-                |> Sort.Set.fromList state.sorter
-    in
-    highlightLengths state
-        |> List.filter (\{ marker } -> Sort.Set.memberOf candidateIds marker)
-        |> List.Extra.minimumBy .length
-        |> Maybe.map .marker
+    getHighlightable state
+        |> Maybe.andThen
+            (\highlightable ->
+                case List.map .kind highlightable.marked of
+                    [] ->
+                        Nothing
+
+                    -- If there is only highlight, we know it to the be shortest
+                    [ highlightableKind ] ->
+                        Just highlightableKind
+
+                    manyKinds ->
+                        let
+                            candidateIds =
+                                Sort.Set.fromList state.sorter manyKinds
+                        in
+                        highlightLengths state
+                            |> List.filter (\{ marker } -> Sort.Set.memberOf candidateIds marker)
+                            |> List.Extra.minimumBy .length
+                            |> Maybe.map .marker
+            )
 
 
 highlightLengths : { model | highlightables : List (Highlightable marker), sorter : Sorter marker } -> List { marker : marker, length : Int }
