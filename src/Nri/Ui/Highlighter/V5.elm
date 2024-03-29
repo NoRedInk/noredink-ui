@@ -57,6 +57,7 @@ import Css
 import Html.Styled as Html exposing (Attribute, Html, p, span)
 import Html.Styled.Attributes exposing (attribute, class, css)
 import Html.Styled.Events as Events
+import Html.Styled.Lazy exposing (lazy)
 import Json.Decode
 import List.Extra
 import Markdown.Block
@@ -875,19 +876,22 @@ view model =
 
 {-| -}
 viewWithOverlappingHighlights : Model marker -> Html (Msg marker)
-viewWithOverlappingHighlights model =
-    view_
-        { showTagsInline = False
-        , maybeTool = Just model.marker
-        , mouseOverIndex = model.mouseOverIndex
-        , mouseDownIndex = model.mouseDownIndex
-        , hintingIndices = model.hintingIndices
-        , overlaps = True
-        , viewSegment = viewHighlightable { renderMarkdown = False, overlaps = True } model
-        , id = model.id
-        , highlightables = model.highlightables
-        , sorter = Just model.sorter
-        }
+viewWithOverlappingHighlights =
+    lazy
+        (\model ->
+            view_
+                { showTagsInline = False
+                , maybeTool = Just model.marker
+                , mouseOverIndex = model.mouseOverIndex
+                , mouseDownIndex = model.mouseDownIndex
+                , hintingIndices = model.hintingIndices
+                , overlaps = True
+                , viewSegment = viewHighlightable { renderMarkdown = False, overlaps = True } model
+                , id = model.id
+                , highlightables = model.highlightables
+                , sorter = Just model.sorter
+                }
+        )
 
 
 {-| Same as `view`, but will render strings like "_blah_" inside of emphasis tags.
