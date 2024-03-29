@@ -75,7 +75,6 @@ import Nri.Ui.Mark.V6 as Mark exposing (Mark)
 import Set exposing (Set)
 import Sort exposing (Sorter)
 import Sort.Dict as Dict
-import Sort.Set
 import Task
 
 
@@ -716,10 +715,11 @@ isHovered_ :
         , maybeTool : Maybe tool
     }
     -> List (List (Highlightable ma))
+    -> List { marker : marker, length : Int }
     -> List marker
     -> Highlightable marker
     -> Bool
-isHovered_ config groups hoveredMarkers highlightable =
+isHovered_ config groups highlightLengths_ hoveredMarkers highlightable =
     case config.maybeTool of
         Nothing ->
             False
@@ -729,7 +729,7 @@ isHovered_ config groups hoveredMarkers highlightable =
                 || (if config.overlaps then
                         case config.sorter of
                             Just sorter ->
-                                inHoveredGroupForOverlaps config sorter hoveredMarkers highlightable
+                                inHoveredGroupForOverlaps config highlightLengths_ hoveredMarkers highlightable
 
                             _ ->
                                 False
@@ -779,11 +779,11 @@ inHoveredGroupForOverlaps :
         , mouseDownIndex : Maybe Int
         , highlightables : List (Highlightable marker)
     }
-    -> Sorter marker
+    -> List { marker : marker, length : Int }
     -> List marker
     -> Highlightable marker
     -> Bool
-inHoveredGroupForOverlaps config sorter hoveredMarkers highlightable =
+inHoveredGroupForOverlaps config highlightLengths_ hoveredMarkers highlightable =
     case config.mouseDownIndex of
         Just _ ->
             -- If the user is actively highlighting, don't show the entire highlighted region as hovered
@@ -792,7 +792,9 @@ inHoveredGroupForOverlaps config sorter hoveredMarkers highlightable =
             False
 
         Nothing ->
-            case selectMarkerWithShortestHighlight { highlightables = config.highlightables, sorter = sorter } hoveredMarkers of
+            case
+                selectMarkerWithShortestHighlight highlightLengths_ hoveredMarkers
+            of
                 Just marker ->
                     List.member marker (List.map .kind highlightable.marked)
 
@@ -813,21 +815,33 @@ selectShortest :
     -> { model | highlightables : List (Highlightable marker), sorter : Sorter marker }
     -> Maybe marker
 selectShortest getHighlightable state =
-    state
-        |> getHighlightable
-        |> Maybe.map (\highlightable -> List.map .kind highlightable.marked)
-        |> Maybe.withDefault []
-        |> selectMarkerWithShortestHighlight state
+    let
+        candidateIds =
+            state
+                |> getHighlightable
+                |> Maybe.map (\highlightable -> List.map .kind highlightable.marked)
+                |> Maybe.withDefault []
+    in
+    selectMarkerWithShortestHighlight
+        (case candidateIds of
+            _ :: _ :: _ ->
+                highlightLengths state
+
+            _ ->
+                -- no need to compute lengths if there are no multiple candidates
+                []
+        )
+        candidateIds
 
 
 {-| Given the list of markers in a given position, returns the marker with the
 shortest highlight.
 -}
 selectMarkerWithShortestHighlight :
-    { model | highlightables : List (Highlightable marker), sorter : Sorter marker }
+    List { marker : marker, length : Int }
     -> List marker
     -> Maybe marker
-selectMarkerWithShortestHighlight state candidateIds =
+selectMarkerWithShortestHighlight highlightLengths_ candidateIds =
     case candidateIds of
         [] ->
             Nothing
@@ -837,7 +851,7 @@ selectMarkerWithShortestHighlight state candidateIds =
             Just highlightableKind
 
         manyKinds ->
-            highlightLengths state
+            highlightLengths_
                 |> List.filter (\{ marker } -> List.member marker candidateIds)
                 |> List.Extra.minimumBy .length
                 |> Maybe.map .marker
@@ -1167,13 +1181,24 @@ view_ config =
                 |> Maybe.map (.marked >> List.map .kind)
                 |> Maybe.withDefault []
 
+        highlightLengths_ : List { marker : marker, length : Int }
+        highlightLengths_ =
+            -- TODO: this is an intermediate step. we shouldnt compute this
+            -- every time if we won't need it.
+            case config.sorter of
+                Nothing ->
+                    []
+
+                Just sorter ->
+                    highlightLengths { highlightables = config.highlightables, sorter = sorter }
+
         toMark : Highlightable marker -> Tool.MarkerModel marker -> Mark.Mark
         toMark highlightable marker =
             { name = marker.name
             , startStyles = marker.startGroupClass
             , styles =
                 markedHighlightableStyles config
-                    (isHovered_ config highlightableGroups hoveredMarkers)
+                    (isHovered_ config highlightableGroups highlightLengths_ hoveredMarkers)
                     highlightable
             , endStyles = marker.endGroupClass
             }
