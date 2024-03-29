@@ -22,6 +22,7 @@ Highlighter provides a view/model/update to display a view to highlight text and
 
 # Patch changes:
 
+  - Made all highlighter views lazy
   - Optimized `selectShortest` for the normal case of 0 or 1 highlight.
 
 
@@ -62,6 +63,7 @@ import Css
 import Html.Styled as Html exposing (Attribute, Html, p, span)
 import Html.Styled.Attributes exposing (attribute, class, css)
 import Html.Styled.Events as Events
+import Html.Styled.Lazy exposing (lazy)
 import Json.Decode
 import List.Extra
 import Markdown.Block
@@ -872,36 +874,42 @@ highlightLengths model =
 
 {-| -}
 view : Model marker -> Html (Msg marker)
-view model =
-    view_
-        { showTagsInline = False
-        , maybeTool = Just model.marker
-        , mouseOverIndex = model.mouseOverIndex
-        , mouseDownIndex = model.mouseDownIndex
-        , hintingIndices = model.hintingIndices
-        , overlaps = False
-        , viewSegment = viewHighlightable { renderMarkdown = False, overlaps = False } model
-        , id = model.id
-        , highlightables = model.highlightables
-        , sorter = Just model.sorter
-        }
+view =
+    lazy
+        (\model ->
+            view_
+                { showTagsInline = False
+                , maybeTool = Just model.marker
+                , mouseOverIndex = model.mouseOverIndex
+                , mouseDownIndex = model.mouseDownIndex
+                , hintingIndices = model.hintingIndices
+                , overlaps = False
+                , viewSegment = viewHighlightable { renderMarkdown = False, overlaps = False } model
+                , id = model.id
+                , highlightables = model.highlightables
+                , sorter = Just model.sorter
+                }
+        )
 
 
 {-| -}
 viewWithOverlappingHighlights : Model marker -> Html (Msg marker)
-viewWithOverlappingHighlights model =
-    view_
-        { showTagsInline = False
-        , maybeTool = Just model.marker
-        , mouseOverIndex = model.mouseOverIndex
-        , mouseDownIndex = model.mouseDownIndex
-        , hintingIndices = model.hintingIndices
-        , overlaps = True
-        , viewSegment = viewHighlightable { renderMarkdown = False, overlaps = True } model
-        , id = model.id
-        , highlightables = model.highlightables
-        , sorter = Just model.sorter
-        }
+viewWithOverlappingHighlights =
+    lazy
+        (\model ->
+            view_
+                { showTagsInline = False
+                , maybeTool = Just model.marker
+                , mouseOverIndex = model.mouseOverIndex
+                , mouseDownIndex = model.mouseDownIndex
+                , hintingIndices = model.hintingIndices
+                , overlaps = True
+                , viewSegment = viewHighlightable { renderMarkdown = False, overlaps = True } model
+                , id = model.id
+                , highlightables = model.highlightables
+                , sorter = Just model.sorter
+                }
+        )
 
 
 {-| Same as `view`, but will render strings like "_blah_" inside of emphasis tags.
@@ -912,48 +920,54 @@ WARNING: markdown is rendered highlightable by highlightable, so be sure to prov
 
 -}
 viewMarkdown : Model marker -> Html (Msg marker)
-viewMarkdown model =
-    view_
-        { showTagsInline = False
-        , maybeTool = Just model.marker
-        , mouseOverIndex = model.mouseOverIndex
-        , mouseDownIndex = model.mouseDownIndex
-        , hintingIndices = model.hintingIndices
-        , overlaps = False
-        , viewSegment = viewHighlightable { renderMarkdown = True, overlaps = False } model
-        , id = model.id
-        , highlightables = model.highlightables
-        , sorter = Just model.sorter
-        }
+viewMarkdown =
+    lazy
+        (\model ->
+            view_
+                { showTagsInline = False
+                , maybeTool = Just model.marker
+                , mouseOverIndex = model.mouseOverIndex
+                , mouseDownIndex = model.mouseDownIndex
+                , hintingIndices = model.hintingIndices
+                , overlaps = False
+                , viewSegment = viewHighlightable { renderMarkdown = True, overlaps = False } model
+                , id = model.id
+                , highlightables = model.highlightables
+                , sorter = Just model.sorter
+                }
+        )
 
 
 {-| -}
 static : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
-static config =
-    view_
-        { showTagsInline = False
-        , maybeTool = Nothing
-        , mouseOverIndex = Nothing
-        , mouseDownIndex = Nothing
-        , hintingIndices = Nothing
-        , overlaps = False
-        , viewSegment =
-            viewHighlightableSegment
-                { interactiveHighlighterId = Nothing
-                , focusIndex = Nothing
-                , eventListeners = []
+static =
+    lazy
+        (\config ->
+            view_
+                { showTagsInline = False
                 , maybeTool = Nothing
                 , mouseOverIndex = Nothing
                 , mouseDownIndex = Nothing
                 , hintingIndices = Nothing
-                , renderMarkdown = False
-                , sorter = Nothing
                 , overlaps = False
+                , viewSegment =
+                    viewHighlightableSegment
+                        { interactiveHighlighterId = Nothing
+                        , focusIndex = Nothing
+                        , eventListeners = []
+                        , maybeTool = Nothing
+                        , mouseOverIndex = Nothing
+                        , mouseDownIndex = Nothing
+                        , hintingIndices = Nothing
+                        , renderMarkdown = False
+                        , sorter = Nothing
+                        , overlaps = False
+                        }
+                , id = config.id
+                , highlightables = config.highlightables
+                , sorter = Nothing
                 }
-        , id = config.id
-        , highlightables = config.highlightables
-        , sorter = Nothing
-        }
+        )
 
 
 {-| Same as `static`, but will render strings like "_blah_" inside of emphasis tags.
@@ -964,64 +978,70 @@ WARNING: markdown is rendered highlightable by highlightable, so be sure to prov
 
 -}
 staticMarkdown : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
-staticMarkdown config =
-    view_
-        { showTagsInline = False
-        , maybeTool = Nothing
-        , mouseOverIndex = Nothing
-        , mouseDownIndex = Nothing
-        , hintingIndices = Nothing
-        , overlaps = False
-        , viewSegment =
-            viewHighlightableSegment
-                { interactiveHighlighterId = Nothing
-                , focusIndex = Nothing
-                , eventListeners = []
+staticMarkdown =
+    lazy
+        (\config ->
+            view_
+                { showTagsInline = False
                 , maybeTool = Nothing
                 , mouseOverIndex = Nothing
                 , mouseDownIndex = Nothing
                 , hintingIndices = Nothing
-                , renderMarkdown = True
-                , sorter = Nothing
                 , overlaps = False
+                , viewSegment =
+                    viewHighlightableSegment
+                        { interactiveHighlighterId = Nothing
+                        , focusIndex = Nothing
+                        , eventListeners = []
+                        , maybeTool = Nothing
+                        , mouseOverIndex = Nothing
+                        , mouseDownIndex = Nothing
+                        , hintingIndices = Nothing
+                        , renderMarkdown = True
+                        , sorter = Nothing
+                        , overlaps = False
+                        }
+                , id = config.id
+                , highlightables = config.highlightables
+                , sorter = Nothing
                 }
-        , id = config.id
-        , highlightables = config.highlightables
-        , sorter = Nothing
-        }
+        )
 
 
 {-| -}
 staticWithTags : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
-staticWithTags config =
-    let
-        viewStaticHighlightableWithTags : Highlightable marker -> List Css.Style -> Html msg
-        viewStaticHighlightableWithTags =
-            viewHighlightableSegment
-                { interactiveHighlighterId = Nothing
-                , focusIndex = Nothing
-                , eventListeners = []
+staticWithTags =
+    lazy
+        (\config ->
+            let
+                viewStaticHighlightableWithTags : Highlightable marker -> List Css.Style -> Html msg
+                viewStaticHighlightableWithTags =
+                    viewHighlightableSegment
+                        { interactiveHighlighterId = Nothing
+                        , focusIndex = Nothing
+                        , eventListeners = []
+                        , maybeTool = Nothing
+                        , mouseOverIndex = Nothing
+                        , mouseDownIndex = Nothing
+                        , hintingIndices = Nothing
+                        , renderMarkdown = False
+                        , sorter = Nothing
+                        , overlaps = False
+                        }
+            in
+            view_
+                { showTagsInline = True
                 , maybeTool = Nothing
                 , mouseOverIndex = Nothing
                 , mouseDownIndex = Nothing
                 , hintingIndices = Nothing
-                , renderMarkdown = False
-                , sorter = Nothing
                 , overlaps = False
+                , viewSegment = viewStaticHighlightableWithTags
+                , id = config.id
+                , highlightables = config.highlightables
+                , sorter = Nothing
                 }
-    in
-    view_
-        { showTagsInline = True
-        , maybeTool = Nothing
-        , mouseOverIndex = Nothing
-        , mouseDownIndex = Nothing
-        , hintingIndices = Nothing
-        , overlaps = False
-        , viewSegment = viewStaticHighlightableWithTags
-        , id = config.id
-        , highlightables = config.highlightables
-        , sorter = Nothing
-        }
+        )
 
 
 {-| Same as `staticWithTags`, but will render strings like "_blah_" inside of emphasis tags.
@@ -1032,35 +1052,38 @@ WARNING: markdown is rendered highlightable by highlightable, so be sure to prov
 
 -}
 staticMarkdownWithTags : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
-staticMarkdownWithTags config =
-    let
-        viewStaticHighlightableWithTags : Highlightable marker -> List Css.Style -> Html msg
-        viewStaticHighlightableWithTags =
-            viewHighlightableSegment
-                { interactiveHighlighterId = Nothing
-                , focusIndex = Nothing
-                , eventListeners = []
+staticMarkdownWithTags =
+    lazy
+        (\config ->
+            let
+                viewStaticHighlightableWithTags : Highlightable marker -> List Css.Style -> Html msg
+                viewStaticHighlightableWithTags =
+                    viewHighlightableSegment
+                        { interactiveHighlighterId = Nothing
+                        , focusIndex = Nothing
+                        , eventListeners = []
+                        , maybeTool = Nothing
+                        , mouseOverIndex = Nothing
+                        , mouseDownIndex = Nothing
+                        , hintingIndices = Nothing
+                        , renderMarkdown = True
+                        , sorter = Nothing
+                        , overlaps = False
+                        }
+            in
+            view_
+                { showTagsInline = True
                 , maybeTool = Nothing
                 , mouseOverIndex = Nothing
                 , mouseDownIndex = Nothing
                 , hintingIndices = Nothing
-                , renderMarkdown = True
-                , sorter = Nothing
                 , overlaps = False
+                , viewSegment = viewStaticHighlightableWithTags
+                , id = config.id
+                , highlightables = config.highlightables
+                , sorter = Nothing
                 }
-    in
-    view_
-        { showTagsInline = True
-        , maybeTool = Nothing
-        , mouseOverIndex = Nothing
-        , mouseDownIndex = Nothing
-        , hintingIndices = Nothing
-        , overlaps = False
-        , viewSegment = viewStaticHighlightableWithTags
-        , id = config.id
-        , highlightables = config.highlightables
-        , sorter = Nothing
-        }
+        )
 
 
 {-| Groups highlightables with the same state together.
