@@ -823,14 +823,7 @@ selectShortest getHighlightable state =
                 |> Maybe.withDefault []
     in
     selectMarkerWithShortestHighlight
-        (case candidateIds of
-            _ :: _ :: _ ->
-                highlightLengths state
-
-            _ ->
-                -- no need to compute lengths if there are no multiple candidates
-                []
-        )
+        (highlightLengths candidateIds state)
         candidateIds
 
 
@@ -857,33 +850,42 @@ selectMarkerWithShortestHighlight highlightLengths_ candidateIds =
                 |> Maybe.map .marker
 
 
-highlightLengths : { model | highlightables : List (Highlightable marker), sorter : Sorter marker } -> List { marker : marker, length : Int }
-highlightLengths model =
-    model.highlightables
-        |> List.concatMap
-            (\highlightable ->
-                List.map
-                    (\{ kind } ->
-                        ( kind
-                        , String.length highlightable.text
-                        )
+highlightLengths :
+    List marker
+    -> { model | highlightables : List (Highlightable marker), sorter : Sorter marker }
+    -> List { marker : marker, length : Int }
+highlightLengths candidatesToConsider model =
+    case candidatesToConsider of
+        _ :: _ :: _ ->
+            model.highlightables
+                |> List.concatMap
+                    (\highlightable ->
+                        List.map
+                            (\{ kind } ->
+                                ( kind
+                                , String.length highlightable.text
+                                )
+                            )
+                            highlightable.marked
                     )
-                    highlightable.marked
-            )
-        |> List.foldl
-            (\( marker, textLength ) lengths ->
-                Dict.update marker
-                    (\value ->
-                        value
-                            |> Maybe.map (\length -> length + textLength)
-                            |> Maybe.withDefault textLength
-                            |> Just
+                |> List.foldl
+                    (\( marker, textLength ) lengths ->
+                        Dict.update marker
+                            (\value ->
+                                value
+                                    |> Maybe.map (\length -> length + textLength)
+                                    |> Maybe.withDefault textLength
+                                    |> Just
+                            )
+                            lengths
                     )
-                    lengths
-            )
-            (Dict.empty model.sorter)
-        |> Dict.toList
-        |> List.map (\( marker, length ) -> { marker = marker, length = length })
+                    (Dict.empty model.sorter)
+                |> Dict.toList
+                |> List.map (\( marker, length ) -> { marker = marker, length = length })
+
+        _ ->
+            -- No need to do the expensive computation if there's a single candidate.
+            []
 
 
 
@@ -1190,7 +1192,7 @@ view_ config =
                     []
 
                 Just sorter ->
-                    highlightLengths { highlightables = config.highlightables, sorter = sorter }
+                    highlightLengths hoveredMarkers { highlightables = config.highlightables, sorter = sorter }
 
         toMark : Highlightable marker -> Tool.MarkerModel marker -> Mark.Mark
         toMark highlightable marker =
