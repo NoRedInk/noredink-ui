@@ -716,9 +716,10 @@ isHovered_ :
         , maybeTool : Maybe tool
     }
     -> List (List (Highlightable ma))
+    -> List marker
     -> Highlightable marker
     -> Bool
-isHovered_ config groups highlightable =
+isHovered_ config groups hoveredMarkers highlightable =
     case config.maybeTool of
         Nothing ->
             False
@@ -728,7 +729,7 @@ isHovered_ config groups highlightable =
                 || (if config.overlaps then
                         case config.sorter of
                             Just sorter ->
-                                inHoveredGroupForOverlaps config sorter highlightable
+                                inHoveredGroupForOverlaps config sorter hoveredMarkers highlightable
 
                             _ ->
                                 False
@@ -779,14 +780,10 @@ inHoveredGroupForOverlaps :
         , highlightables : List (Highlightable marker)
     }
     -> Sorter marker
+    -> List marker
     -> Highlightable marker
     -> Bool
-inHoveredGroupForOverlaps config sorter highlightable =
-    let
-        byIndex =
-            .highlightables
-                >> List.Extra.find (\h -> Just h.index == config.mouseOverIndex)
-    in
+inHoveredGroupForOverlaps config sorter hoveredMarkers highlightable =
     case config.mouseDownIndex of
         Just _ ->
             -- If the user is actively highlighting, don't show the entire highlighted region as hovered
@@ -795,7 +792,7 @@ inHoveredGroupForOverlaps config sorter highlightable =
             False
 
         Nothing ->
-            case selectShortest byIndex { highlightables = config.highlightables, sorter = sorter } of
+            case selectMarkerWithShortestHighlight hoveredMarkers { highlightables = config.highlightables, sorter = sorter } of
                 Just marker ->
                     List.member marker (List.map .kind highlightable.marked)
 
@@ -816,27 +813,36 @@ selectShortest :
     -> { model | highlightables : List (Highlightable marker), sorter : Sorter marker }
     -> Maybe marker
 selectShortest getHighlightable state =
-    getHighlightable state
-        |> Maybe.andThen
-            (\highlightable ->
-                case List.map .kind highlightable.marked of
-                    [] ->
-                        Nothing
+    selectMarkerWithShortestHighlight
+        (state
+            |> getHighlightable
+            |> Maybe.map (\highlightable -> List.map .kind highlightable.marked)
+            |> Maybe.withDefault []
+        )
+        state
 
-                    -- If there is only highlight, we know it to the be shortest
-                    [ highlightableKind ] ->
-                        Just highlightableKind
 
-                    manyKinds ->
-                        let
-                            candidateIds =
-                                Sort.Set.fromList state.sorter manyKinds
-                        in
-                        highlightLengths state
-                            |> List.filter (\{ marker } -> Sort.Set.memberOf candidateIds marker)
-                            |> List.Extra.minimumBy .length
-                            |> Maybe.map .marker
-            )
+{-| Given the list of markers in a given position, returns the marker with the
+shortest highlight.
+-}
+selectMarkerWithShortestHighlight :
+    List marker
+    -> { model | highlightables : List (Highlightable marker), sorter : Sorter marker }
+    -> Maybe marker
+selectMarkerWithShortestHighlight candidateIds state =
+    case candidateIds of
+        [] ->
+            Nothing
+
+        -- If there is only highlight, we know it to the be shortest
+        [ highlightableKind ] ->
+            Just highlightableKind
+
+        manyKinds ->
+            highlightLengths state
+                |> List.filter (\{ marker } -> List.member marker candidateIds)
+                |> List.Extra.minimumBy .length
+                |> Maybe.map .marker
 
 
 highlightLengths : { model | highlightables : List (Highlightable marker), sorter : Sorter marker } -> List { marker : marker, length : Int }
@@ -1156,13 +1162,20 @@ view_ :
     -> Html msg
 view_ config =
     let
+        hoveredMarkers : List marker
+        hoveredMarkers =
+            config.highlightables
+                |> List.Extra.find (\h -> Just h.index == config.mouseOverIndex)
+                |> Maybe.map (.marked >> List.map .kind)
+                |> Maybe.withDefault []
+
         toMark : Highlightable marker -> Tool.MarkerModel marker -> Mark.Mark
         toMark highlightable marker =
             { name = marker.name
             , startStyles = marker.startGroupClass
             , styles =
                 markedHighlightableStyles config
-                    (isHovered_ config highlightableGroups)
+                    (isHovered_ config highlightableGroups hoveredMarkers)
                     highlightable
             , endStyles = marker.endGroupClass
             }
