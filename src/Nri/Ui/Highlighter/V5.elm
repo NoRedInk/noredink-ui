@@ -792,7 +792,7 @@ inHoveredGroupForOverlaps config sorter hoveredMarkers highlightable =
             False
 
         Nothing ->
-            case selectMarkerWithShortestHighlight hoveredMarkers { highlightables = config.highlightables, sorter = sorter } of
+            case selectMarkerWithShortestHighlight { highlightables = config.highlightables, sorter = sorter } hoveredMarkers of
                 Just marker ->
                     List.member marker (List.map .kind highlightable.marked)
 
@@ -813,23 +813,21 @@ selectShortest :
     -> { model | highlightables : List (Highlightable marker), sorter : Sorter marker }
     -> Maybe marker
 selectShortest getHighlightable state =
-    selectMarkerWithShortestHighlight
-        (state
-            |> getHighlightable
-            |> Maybe.map (\highlightable -> List.map .kind highlightable.marked)
-            |> Maybe.withDefault []
-        )
-        state
+    state
+        |> getHighlightable
+        |> Maybe.map (\highlightable -> List.map .kind highlightable.marked)
+        |> Maybe.withDefault []
+        |> selectMarkerWithShortestHighlight state
 
 
 {-| Given the list of markers in a given position, returns the marker with the
 shortest highlight.
 -}
 selectMarkerWithShortestHighlight :
-    List marker
-    -> { model | highlightables : List (Highlightable marker), sorter : Sorter marker }
+    { model | highlightables : List (Highlightable marker), sorter : Sorter marker }
+    -> List marker
     -> Maybe marker
-selectMarkerWithShortestHighlight candidateIds state =
+selectMarkerWithShortestHighlight state candidateIds =
     case candidateIds of
         [] ->
             Nothing
