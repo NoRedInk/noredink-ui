@@ -711,7 +711,6 @@ isHovered_ :
         , hintingIndices : Maybe ( Int, Int )
         , highlightables : List (Highlightable marker)
         , overlaps : OverlapsSupport marker
-        , sorter : Maybe (Sorter marker)
         , maybeTool : Maybe tool
     }
     -> List (List (Highlightable ma))
@@ -726,12 +725,7 @@ isHovered_ config groups highlightable =
             directlyHoveringInteractiveSegment config highlightable
                 || (case config.overlaps of
                         WithOverlaps overlaps ->
-                            case config.sorter of
-                                Just sorter ->
-                                    inHoveredGroupForOverlaps config overlaps.highlightLengths overlaps.hoveredMarkers highlightable
-
-                                _ ->
-                                    False
+                            inHoveredGroupForOverlaps config overlaps.highlightLengths overlaps.hoveredMarkers highlightable
 
                         NoOverlaps ->
                             inHoveredGroupWithoutOverlaps config groups highlightable
@@ -791,9 +785,7 @@ inHoveredGroupForOverlaps config highlightLengths_ hoveredMarkers highlightable 
             False
 
         Nothing ->
-            case
-                selectMarkerWithShortestHighlight highlightLengths_ hoveredMarkers
-            of
+            case selectMarkerWithShortestHighlight highlightLengths_ hoveredMarkers of
                 Just marker ->
                     List.member marker (List.map .kind highlightable.marked)
 
@@ -822,7 +814,7 @@ selectShortest getHighlightable state =
                 |> Maybe.withDefault []
     in
     selectMarkerWithShortestHighlight
-        (highlightLengths candidateIds state)
+        (highlightLengths state.sorter candidateIds state.highlightables)
         candidateIds
 
 
@@ -850,13 +842,14 @@ selectMarkerWithShortestHighlight highlightLengths_ candidateIds =
 
 
 highlightLengths :
-    List marker
-    -> { model | highlightables : List (Highlightable marker), sorter : Sorter marker }
+    Sorter marker
+    -> List marker
+    -> List (Highlightable marker)
     -> List { marker : marker, length : Int }
-highlightLengths candidatesToConsider model =
+highlightLengths sorter candidatesToConsider highlightables =
     case candidatesToConsider of
         _ :: _ :: _ ->
-            model.highlightables
+            highlightables
                 |> List.concatMap
                     (\highlightable ->
                         List.map
@@ -878,7 +871,7 @@ highlightLengths candidatesToConsider model =
                             )
                             lengths
                     )
-                    (Dict.empty model.sorter)
+                    (Dict.empty sorter)
                 |> Dict.toList
                 |> List.map (\( marker, length ) -> { marker = marker, length = length })
 
@@ -906,7 +899,6 @@ view =
                 , viewSegment = viewHighlightable { renderMarkdown = False, overlaps = NoOverlaps } model
                 , id = model.id
                 , highlightables = model.highlightables
-                , sorter = Just model.sorter
                 }
         )
 
@@ -926,7 +918,7 @@ viewWithOverlappingHighlights =
                 overlaps =
                     WithOverlaps
                         { hoveredMarkers = hoveredMarkers
-                        , highlightLengths = highlightLengths hoveredMarkers model
+                        , highlightLengths = highlightLengths model.sorter hoveredMarkers model.highlightables
                         }
             in
             view_
@@ -939,7 +931,6 @@ viewWithOverlappingHighlights =
                 , viewSegment = viewHighlightable { renderMarkdown = False, overlaps = overlaps } model
                 , id = model.id
                 , highlightables = model.highlightables
-                , sorter = Just model.sorter
                 }
         )
 
@@ -965,7 +956,6 @@ viewMarkdown =
                 , viewSegment = viewHighlightable { renderMarkdown = True, overlaps = NoOverlaps } model
                 , id = model.id
                 , highlightables = model.highlightables
-                , sorter = Just model.sorter
                 }
         )
 
@@ -997,7 +987,6 @@ static =
                         }
                 , id = config.id
                 , highlightables = config.highlightables
-                , sorter = Nothing
                 }
         )
 
@@ -1035,7 +1024,6 @@ staticMarkdown =
                         }
                 , id = config.id
                 , highlightables = config.highlightables
-                , sorter = Nothing
                 }
         )
 
@@ -1071,7 +1059,6 @@ staticWithTags =
                 , viewSegment = viewStaticHighlightableWithTags
                 , id = config.id
                 , highlightables = config.highlightables
-                , sorter = Nothing
                 }
         )
 
@@ -1113,7 +1100,6 @@ staticMarkdownWithTags =
                 , viewSegment = viewStaticHighlightableWithTags
                 , id = config.id
                 , highlightables = config.highlightables
-                , sorter = Nothing
                 }
         )
 
@@ -1187,7 +1173,6 @@ view_ :
     , mouseOverIndex : Maybe Int
     , mouseDownIndex : Maybe Int
     , hintingIndices : Maybe ( Int, Int )
-    , sorter : Maybe (Sorter marker)
     , overlaps : OverlapsSupport marker
     , viewSegment : Highlightable marker -> List Css.Style -> Html msg
     , highlightables : List (Highlightable marker)
@@ -1541,7 +1526,6 @@ markedHighlightableStyles :
         | maybeTool : Maybe (Tool.Tool marker)
         , mouseOverIndex : Maybe Int
         , hintingIndices : Maybe ( Int, Int )
-        , sorter : Maybe (Sorter marker)
         , overlaps : OverlapsSupport marker
     }
     -> (Highlightable marker -> Bool)
