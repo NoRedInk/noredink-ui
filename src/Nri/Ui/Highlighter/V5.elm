@@ -834,14 +834,20 @@ markerWithShortestHighlight :
     -> ( marker, marker, List marker )
     -> marker
 markerWithShortestHighlight sorter highlightables ( first, second, rest ) =
+    let
+        isMarkerRelevant someMarker =
+            someMarker == first || someMarker == second || List.member someMarker rest
+    in
     highlightables
         |> List.concatMap
             (\highlightable ->
-                List.map
+                List.filterMap
                     (\{ kind } ->
-                        ( kind
-                        , String.length highlightable.text
-                        )
+                        if isMarkerRelevant kind then
+                            Just ( kind, String.length highlightable.text )
+
+                        else
+                            Nothing
                     )
                     highlightable.marked
             )
@@ -859,7 +865,6 @@ markerWithShortestHighlight sorter highlightables ( first, second, rest ) =
             (Dict.empty sorter)
         |> Dict.toList
         |> List.map (\( marker, length ) -> { marker = marker, length = length })
-        |> List.filter (\{ marker } -> List.member marker (first :: second :: rest))
         |> List.Extra.minimumBy .length
         |> Maybe.map .marker
         |> Maybe.withDefault first
