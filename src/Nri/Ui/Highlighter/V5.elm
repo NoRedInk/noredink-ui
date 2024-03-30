@@ -864,9 +864,8 @@ markerWithShortestHighlight sorter highlightables ( first, second, rest ) =
             )
             (Dict.empty sorter)
         |> Dict.toList
-        |> List.map (\( marker, length ) -> { marker = marker, length = length })
-        |> List.Extra.minimumBy .length
-        |> Maybe.map .marker
+        |> List.Extra.minimumBy Tuple.second
+        |> Maybe.map Tuple.first
         |> Maybe.withDefault first
 
 
