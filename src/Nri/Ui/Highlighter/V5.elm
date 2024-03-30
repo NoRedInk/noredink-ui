@@ -835,20 +835,6 @@ markerWithShortestHighlight :
     -> marker
 markerWithShortestHighlight sorter highlightables ( first, second, rest ) =
     highlightables
-        |> highlightLengths ( first, second, rest ) sorter
-        |> List.filter (\{ marker } -> List.member marker (first :: second :: rest))
-        |> List.Extra.minimumBy .length
-        |> Maybe.map .marker
-        |> Maybe.withDefault first
-
-
-highlightLengths :
-    ( marker, marker, List marker ) -- unused. required as proof that there is at least two markers so no one calls this unnecesarily
-    -> Sorter marker
-    -> List (Highlightable marker)
-    -> List { marker : marker, length : Int }
-highlightLengths _ sorter highlightables =
-    highlightables
         |> List.concatMap
             (\highlightable ->
                 List.map
@@ -873,6 +859,10 @@ highlightLengths _ sorter highlightables =
             (Dict.empty sorter)
         |> Dict.toList
         |> List.map (\( marker, length ) -> { marker = marker, length = length })
+        |> List.filter (\{ marker } -> List.member marker (first :: second :: rest))
+        |> List.Extra.minimumBy .length
+        |> Maybe.map .marker
+        |> Maybe.withDefault first
 
 
 
