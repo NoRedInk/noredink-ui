@@ -865,11 +865,23 @@ markerWithShortestHighlight sorter highlightables ( first, second, rest ) =
 
             else
                 soFar
+
+        keepMarkerWithShortestLength : marker -> Int -> Maybe ( marker, Int ) -> Maybe ( marker, Int )
+        keepMarkerWithShortestLength marker length soFar =
+            case soFar of
+                Nothing ->
+                    Just ( marker, length )
+
+                Just (( _, currentMin ) as previousResult) ->
+                    if length < currentMin then
+                        Just ( marker, length )
+
+                    else
+                        Just previousResult
     in
     highlightables
         |> List.foldl updateMarkerLengthsForHighlightable (Dict.empty sorter)
-        |> Dict.toList
-        |> List.Extra.minimumBy Tuple.second
+        |> Dict.foldl keepMarkerWithShortestLength Nothing
         |> Maybe.map Tuple.first
         |> Maybe.withDefault first
 
