@@ -724,8 +724,8 @@ isHovered_ config groups highlightable =
         Just _ ->
             directlyHoveringInteractiveSegment config highlightable
                 || (case config.overlaps of
-                        OverlapsSupported overlaps ->
-                            inHoveredGroupForOverlaps config overlaps.highlightLengths overlaps.hoveredMarkers highlightable
+                        OverlapsSupported hoveredMarkers ->
+                            inHoveredGroupForOverlaps config hoveredMarkers highlightable
 
                         OverlapsNotSupported ->
                             inHoveredGroupWithoutOverlaps config groups highlightable
@@ -772,11 +772,10 @@ inHoveredGroupForOverlaps :
         , mouseDownIndex : Maybe Int
         , highlightables : List (Highlightable marker)
     }
-    -> List { marker : marker, length : Int }
-    -> List marker
+    -> HoveredMarkers marker
     -> Highlightable marker
     -> Bool
-inHoveredGroupForOverlaps config highlightLengths_ hoveredMarkers highlightable =
+inHoveredGroupForOverlaps config hoveredMarkers highlightable =
     case config.mouseDownIndex of
         Just _ ->
             -- If the user is actively highlighting, don't show the entire highlighted region as hovered
@@ -785,12 +784,17 @@ inHoveredGroupForOverlaps config highlightLengths_ hoveredMarkers highlightable 
             False
 
         Nothing ->
-            case selectMarkerWithShortestHighlight highlightLengths_ hoveredMarkers of
-                Just marker ->
+            case hoveredMarkers of
+                NoHoveredMarkers ->
+                    False
+
+                SingleHoveredMarker marker ->
                     List.member marker (List.map .kind highlightable.marked)
 
-                Nothing ->
-                    False
+                MultipleHoveredMarkers m ->
+                    List.member
+                        (selectMarkerWithShortestHighlight m.highlightLengths m.markers)
+                        (List.map .kind highlightable.marked)
 
 
 {-| Highlights can overlap. Sometimes, we want to apply a certain behavior (e.g., hover color change) on just the shortest
@@ -813,9 +817,19 @@ selectShortest getHighlightable state =
                 |> Maybe.map (\highlightable -> List.map .kind highlightable.marked)
                 |> Maybe.withDefault []
     in
-    selectMarkerWithShortestHighlight
-        (highlightLengths state.sorter candidateIds state.highlightables)
-        candidateIds
+    case candidateIds of
+        [] ->
+            Nothing
+
+        marker :: [] ->
+            Just marker
+
+        first :: second :: rest ->
+            Just
+                (selectMarkerWithShortestHighlight
+                    (highlightLengths ( first, second, rest ) state.sorter state.highlightables)
+                    ( first, second, rest )
+                )
 
 
 {-| Given the list of markers in a given position, returns the marker with the
@@ -823,61 +837,49 @@ shortest highlight.
 -}
 selectMarkerWithShortestHighlight :
     List { marker : marker, length : Int }
-    -> List marker
-    -> Maybe marker
+    -> ( marker, marker, List marker )
+    -> marker
 selectMarkerWithShortestHighlight highlightLengths_ candidateIds =
     case candidateIds of
-        [] ->
-            Nothing
-
-        -- If there is only highlight, we know it to the be shortest
-        [ highlightableKind ] ->
-            Just highlightableKind
-
-        manyKinds ->
+        ( first, second, rest ) ->
             highlightLengths_
-                |> List.filter (\{ marker } -> List.member marker candidateIds)
+                |> List.filter (\{ marker } -> List.member marker (first :: second :: rest))
                 |> List.Extra.minimumBy .length
                 |> Maybe.map .marker
+                |> Maybe.withDefault first
 
 
 highlightLengths :
-    Sorter marker
-    -> List marker
+    ( marker, marker, List marker ) -- unused. required as proof that there is at least two markers so no one calls this unnecesarily
+    -> Sorter marker
     -> List (Highlightable marker)
     -> List { marker : marker, length : Int }
-highlightLengths sorter candidatesToConsider highlightables =
-    case candidatesToConsider of
-        _ :: _ :: _ ->
-            highlightables
-                |> List.concatMap
-                    (\highlightable ->
-                        List.map
-                            (\{ kind } ->
-                                ( kind
-                                , String.length highlightable.text
-                                )
-                            )
-                            highlightable.marked
+highlightLengths _ sorter highlightables =
+    highlightables
+        |> List.concatMap
+            (\highlightable ->
+                List.map
+                    (\{ kind } ->
+                        ( kind
+                        , String.length highlightable.text
+                        )
                     )
-                |> List.foldl
-                    (\( marker, textLength ) lengths ->
-                        Dict.update marker
-                            (\value ->
-                                value
-                                    |> Maybe.map (\length -> length + textLength)
-                                    |> Maybe.withDefault textLength
-                                    |> Just
-                            )
-                            lengths
+                    highlightable.marked
+            )
+        |> List.foldl
+            (\( marker, textLength ) lengths ->
+                Dict.update marker
+                    (\value ->
+                        value
+                            |> Maybe.map (\length -> length + textLength)
+                            |> Maybe.withDefault textLength
+                            |> Just
                     )
-                    (Dict.empty sorter)
-                |> Dict.toList
-                |> List.map (\( marker, length ) -> { marker = marker, length = length })
-
-        _ ->
-            -- No need to do the expensive computation if there's a single candidate.
-            []
+                    lengths
+            )
+            (Dict.empty sorter)
+        |> Dict.toList
+        |> List.map (\( marker, length ) -> { marker = marker, length = length })
 
 
 
@@ -917,9 +919,19 @@ viewWithOverlappingHighlights =
 
                 overlaps =
                     OverlapsSupported
-                        { hoveredMarkers = hoveredMarkers
-                        , highlightLengths = highlightLengths model.sorter hoveredMarkers model.highlightables
-                        }
+                        (case hoveredMarkers of
+                            [] ->
+                                NoHoveredMarkers
+
+                            marker :: [] ->
+                                SingleHoveredMarker marker
+
+                            first :: second :: rest ->
+                                MultipleHoveredMarkers
+                                    { markers = ( first, second, rest )
+                                    , highlightLengths = highlightLengths ( first, second, rest ) model.sorter model.highlightables
+                                    }
+                        )
             in
             view_
                 { showTagsInline = False
@@ -1159,8 +1171,14 @@ groupHighlightables { hintingIndices, mouseOverIndex } x y =
 
 type OverlapsSupport marker
     = OverlapsNotSupported
-    | OverlapsSupported
-        { hoveredMarkers : List marker
+    | OverlapsSupported (HoveredMarkers marker)
+
+
+type HoveredMarkers marker
+    = NoHoveredMarkers
+    | SingleHoveredMarker marker
+    | MultipleHoveredMarkers
+        { markers : ( marker, marker, List marker )
         , highlightLengths : List { marker : marker, length : Int }
         }
 
