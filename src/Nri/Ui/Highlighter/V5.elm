@@ -724,10 +724,10 @@ isHovered_ config groups highlightable =
         Just _ ->
             directlyHoveringInteractiveSegment config highlightable
                 || (case config.overlaps of
-                        WithOverlaps overlaps ->
+                        OverlapsSupported overlaps ->
                             inHoveredGroupForOverlaps config overlaps.highlightLengths overlaps.hoveredMarkers highlightable
 
-                        NoOverlaps ->
+                        OverlapsNotSupported ->
                             inHoveredGroupWithoutOverlaps config groups highlightable
                    )
 
@@ -895,8 +895,8 @@ view =
                 , mouseOverIndex = model.mouseOverIndex
                 , mouseDownIndex = model.mouseDownIndex
                 , hintingIndices = model.hintingIndices
-                , overlaps = NoOverlaps
-                , viewSegment = viewHighlightable { renderMarkdown = False, overlaps = NoOverlaps } model
+                , overlaps = OverlapsNotSupported
+                , viewSegment = viewHighlightable { renderMarkdown = False, overlaps = OverlapsNotSupported } model
                 , id = model.id
                 , highlightables = model.highlightables
                 }
@@ -916,7 +916,7 @@ viewWithOverlappingHighlights =
                         |> Maybe.withDefault []
 
                 overlaps =
-                    WithOverlaps
+                    OverlapsSupported
                         { hoveredMarkers = hoveredMarkers
                         , highlightLengths = highlightLengths model.sorter hoveredMarkers model.highlightables
                         }
@@ -952,8 +952,8 @@ viewMarkdown =
                 , mouseOverIndex = model.mouseOverIndex
                 , mouseDownIndex = model.mouseDownIndex
                 , hintingIndices = model.hintingIndices
-                , overlaps = NoOverlaps
-                , viewSegment = viewHighlightable { renderMarkdown = True, overlaps = NoOverlaps } model
+                , overlaps = OverlapsNotSupported
+                , viewSegment = viewHighlightable { renderMarkdown = True, overlaps = OverlapsNotSupported } model
                 , id = model.id
                 , highlightables = model.highlightables
                 }
@@ -971,7 +971,7 @@ static =
                 , mouseOverIndex = Nothing
                 , mouseDownIndex = Nothing
                 , hintingIndices = Nothing
-                , overlaps = NoOverlaps
+                , overlaps = OverlapsNotSupported
                 , viewSegment =
                     viewHighlightableSegment
                         { interactiveHighlighterId = Nothing
@@ -983,7 +983,7 @@ static =
                         , hintingIndices = Nothing
                         , renderMarkdown = False
                         , sorter = Nothing
-                        , overlaps = NoOverlaps
+                        , overlaps = OverlapsNotSupported
                         }
                 , id = config.id
                 , highlightables = config.highlightables
@@ -1008,7 +1008,7 @@ staticMarkdown =
                 , mouseOverIndex = Nothing
                 , mouseDownIndex = Nothing
                 , hintingIndices = Nothing
-                , overlaps = NoOverlaps
+                , overlaps = OverlapsNotSupported
                 , viewSegment =
                     viewHighlightableSegment
                         { interactiveHighlighterId = Nothing
@@ -1020,7 +1020,7 @@ staticMarkdown =
                         , hintingIndices = Nothing
                         , renderMarkdown = True
                         , sorter = Nothing
-                        , overlaps = NoOverlaps
+                        , overlaps = OverlapsNotSupported
                         }
                 , id = config.id
                 , highlightables = config.highlightables
@@ -1046,7 +1046,7 @@ staticWithTags =
                         , hintingIndices = Nothing
                         , renderMarkdown = False
                         , sorter = Nothing
-                        , overlaps = NoOverlaps
+                        , overlaps = OverlapsNotSupported
                         }
             in
             view_
@@ -1055,7 +1055,7 @@ staticWithTags =
                 , mouseOverIndex = Nothing
                 , mouseDownIndex = Nothing
                 , hintingIndices = Nothing
-                , overlaps = NoOverlaps
+                , overlaps = OverlapsNotSupported
                 , viewSegment = viewStaticHighlightableWithTags
                 , id = config.id
                 , highlightables = config.highlightables
@@ -1087,7 +1087,7 @@ staticMarkdownWithTags =
                         , hintingIndices = Nothing
                         , renderMarkdown = True
                         , sorter = Nothing
-                        , overlaps = NoOverlaps
+                        , overlaps = OverlapsNotSupported
                         }
             in
             view_
@@ -1096,7 +1096,7 @@ staticMarkdownWithTags =
                 , mouseOverIndex = Nothing
                 , mouseDownIndex = Nothing
                 , hintingIndices = Nothing
-                , overlaps = NoOverlaps
+                , overlaps = OverlapsNotSupported
                 , viewSegment = viewStaticHighlightableWithTags
                 , id = config.id
                 , highlightables = config.highlightables
@@ -1158,8 +1158,8 @@ groupHighlightables { hintingIndices, mouseOverIndex } x y =
 
 
 type OverlapsSupport marker
-    = NoOverlaps
-    | WithOverlaps
+    = OverlapsNotSupported
+    | OverlapsSupported
         { hoveredMarkers : List marker
         , highlightLengths : List { marker : marker, length : Int }
         }
@@ -1225,10 +1225,10 @@ view_ config =
 
         else
             case config.overlaps of
-                WithOverlaps _ ->
+                OverlapsSupported _ ->
                     Mark.viewWithOverlaps config.viewSegment withOverlaps
 
-                NoOverlaps ->
+                OverlapsNotSupported ->
                     List.concatMap (Mark.view config.viewSegment) withoutOverlaps
 
 
