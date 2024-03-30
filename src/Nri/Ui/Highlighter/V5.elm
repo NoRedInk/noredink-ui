@@ -835,34 +835,39 @@ markerWithShortestHighlight :
     -> marker
 markerWithShortestHighlight sorter highlightables ( first, second, rest ) =
     let
+        isMarkerRelevant : marker -> Bool
         isMarkerRelevant someMarker =
             someMarker == first || someMarker == second || List.member someMarker rest
-    in
-    highlightables
-        |> List.concatMap
-            (\highlightable ->
-                List.filterMap
-                    (\{ kind } ->
-                        if isMarkerRelevant kind then
-                            Just ( kind, String.length highlightable.text )
 
-                        else
-                            Nothing
-                    )
-                    highlightable.marked
-            )
-        |> List.foldl
-            (\( marker, textLength ) lengths ->
-                Dict.update marker
-                    (\value ->
-                        value
+        updateMarkerLengthsForHighlightable : Highlightable marker -> Dict.Dict marker Int -> Dict.Dict marker Int
+        updateMarkerLengthsForHighlightable highlightable soFar =
+            let
+                textLength =
+                    String.length highlightable.text
+            in
+            List.foldl
+                (\{ kind } -> updateLengthForMarker kind textLength)
+                soFar
+                highlightable.marked
+
+        updateLengthForMarker : marker -> Int -> Dict.Dict marker Int -> Dict.Dict marker Int
+        updateLengthForMarker someMarker textLength soFar =
+            if isMarkerRelevant someMarker then
+                Dict.update
+                    someMarker
+                    (\currentValue ->
+                        currentValue
                             |> Maybe.map (\length -> length + textLength)
                             |> Maybe.withDefault textLength
                             |> Just
                     )
-                    lengths
-            )
-            (Dict.empty sorter)
+                    soFar
+
+            else
+                soFar
+    in
+    highlightables
+        |> List.foldl updateMarkerLengthsForHighlightable (Dict.empty sorter)
         |> Dict.toList
         |> List.Extra.minimumBy Tuple.second
         |> Maybe.map Tuple.first
