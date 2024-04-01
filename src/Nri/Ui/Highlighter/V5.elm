@@ -75,7 +75,6 @@ import Nri.Ui.Mark.V6 as Mark exposing (Mark)
 import Set exposing (Set)
 import Sort exposing (Sorter)
 import Sort.Dict as Dict
-import Sort.Set
 import Task
 
 
@@ -711,8 +710,7 @@ isHovered_ :
         , mouseDownIndex : Maybe Int
         , hintingIndices : Maybe ( Int, Int )
         , highlightables : List (Highlightable marker)
-        , overlaps : Bool
-        , sorter : Maybe (Sorter marker)
+        , overlaps : OverlapsSupport marker
         , maybeTool : Maybe tool
     }
     -> List (List (Highlightable ma))
@@ -725,16 +723,12 @@ isHovered_ config groups highlightable =
 
         Just _ ->
             directlyHoveringInteractiveSegment config highlightable
-                || (if config.overlaps then
-                        case config.sorter of
-                            Just sorter ->
-                                inHoveredGroupForOverlaps config sorter highlightable
+                || (case config.overlaps of
+                        OverlapsSupported { hoveredMarkerWithShortestHighlight } ->
+                            inHoveredGroupForOverlaps config hoveredMarkerWithShortestHighlight highlightable
 
-                            _ ->
-                                False
-
-                    else
-                        inHoveredGroupWithoutOverlaps config groups highlightable
+                        OverlapsNotSupported ->
+                            inHoveredGroupWithoutOverlaps config groups highlightable
                    )
 
 
@@ -778,15 +772,10 @@ inHoveredGroupForOverlaps :
         , mouseDownIndex : Maybe Int
         , highlightables : List (Highlightable marker)
     }
-    -> Sorter marker
+    -> Maybe marker
     -> Highlightable marker
     -> Bool
-inHoveredGroupForOverlaps config sorter highlightable =
-    let
-        byIndex =
-            .highlightables
-                >> List.Extra.find (\h -> Just h.index == config.mouseOverIndex)
-    in
+inHoveredGroupForOverlaps config hoveredMarkerWithShortestHighlight highlightable =
     case config.mouseDownIndex of
         Just _ ->
             -- If the user is actively highlighting, don't show the entire highlighted region as hovered
@@ -795,12 +784,12 @@ inHoveredGroupForOverlaps config sorter highlightable =
             False
 
         Nothing ->
-            case selectShortest byIndex { highlightables = config.highlightables, sorter = sorter } of
-                Just marker ->
-                    List.member marker (List.map .kind highlightable.marked)
-
+            case hoveredMarkerWithShortestHighlight of
                 Nothing ->
                     False
+
+                Just marker ->
+                    List.member marker (List.map .kind highlightable.marked)
 
 
 {-| Highlights can overlap. Sometimes, we want to apply a certain behavior (e.g., hover color change) on just the shortest
@@ -816,56 +805,85 @@ selectShortest :
     -> { model | highlightables : List (Highlightable marker), sorter : Sorter marker }
     -> Maybe marker
 selectShortest getHighlightable state =
-    getHighlightable state
-        |> Maybe.andThen
-            (\highlightable ->
-                case List.map .kind highlightable.marked of
-                    [] ->
-                        Nothing
+    let
+        candidateIds =
+            state
+                |> getHighlightable
+                |> Maybe.map (\highlightable -> List.map .kind highlightable.marked)
+                |> Maybe.withDefault []
+    in
+    case candidateIds of
+        [] ->
+            Nothing
 
-                    -- If there is only highlight, we know it to the be shortest
-                    [ highlightableKind ] ->
-                        Just highlightableKind
+        marker :: [] ->
+            Just marker
 
-                    manyKinds ->
-                        let
-                            candidateIds =
-                                Sort.Set.fromList state.sorter manyKinds
-                        in
-                        highlightLengths state
-                            |> List.filter (\{ marker } -> Sort.Set.memberOf candidateIds marker)
-                            |> List.Extra.minimumBy .length
-                            |> Maybe.map .marker
-            )
+        first :: second :: rest ->
+            Just
+                (markerWithShortestHighlight
+                    state.sorter
+                    state.highlightables
+                    ( first, second, rest )
+                )
 
 
-highlightLengths : { model | highlightables : List (Highlightable marker), sorter : Sorter marker } -> List { marker : marker, length : Int }
-highlightLengths model =
-    model.highlightables
-        |> List.concatMap
-            (\highlightable ->
-                List.map
-                    (\{ kind } ->
-                        ( kind
-                        , String.length highlightable.text
-                        )
-                    )
-                    highlightable.marked
-            )
-        |> List.foldl
-            (\( marker, textLength ) lengths ->
-                Dict.update marker
-                    (\value ->
-                        value
+markerWithShortestHighlight :
+    Sorter marker
+    -> List (Highlightable marker)
+    -> ( marker, marker, List marker )
+    -> marker
+markerWithShortestHighlight sorter highlightables ( first, second, rest ) =
+    let
+        isMarkerRelevant : marker -> Bool
+        isMarkerRelevant someMarker =
+            someMarker == first || someMarker == second || List.member someMarker rest
+
+        updateMarkerLengthsForHighlightable : Highlightable marker -> Dict.Dict marker Int -> Dict.Dict marker Int
+        updateMarkerLengthsForHighlightable highlightable soFar =
+            let
+                textLength =
+                    String.length highlightable.text
+            in
+            List.foldl
+                (\{ kind } -> updateLengthForMarker kind textLength)
+                soFar
+                highlightable.marked
+
+        updateLengthForMarker : marker -> Int -> Dict.Dict marker Int -> Dict.Dict marker Int
+        updateLengthForMarker someMarker textLength soFar =
+            if isMarkerRelevant someMarker then
+                Dict.update
+                    someMarker
+                    (\currentValue ->
+                        currentValue
                             |> Maybe.map (\length -> length + textLength)
                             |> Maybe.withDefault textLength
                             |> Just
                     )
-                    lengths
-            )
-            (Dict.empty model.sorter)
-        |> Dict.toList
-        |> List.map (\( marker, length ) -> { marker = marker, length = length })
+                    soFar
+
+            else
+                soFar
+
+        keepMarkerWithShortestLength : marker -> Int -> Maybe ( marker, Int ) -> Maybe ( marker, Int )
+        keepMarkerWithShortestLength marker length soFar =
+            case soFar of
+                Nothing ->
+                    Just ( marker, length )
+
+                Just (( _, currentMin ) as previousResult) ->
+                    if length < currentMin then
+                        Just ( marker, length )
+
+                    else
+                        Just previousResult
+    in
+    highlightables
+        |> List.foldl updateMarkerLengthsForHighlightable (Dict.empty sorter)
+        |> Dict.foldl keepMarkerWithShortestLength Nothing
+        |> Maybe.map Tuple.first
+        |> Maybe.withDefault first
 
 
 
@@ -883,11 +901,10 @@ view =
                 , mouseOverIndex = model.mouseOverIndex
                 , mouseDownIndex = model.mouseDownIndex
                 , hintingIndices = model.hintingIndices
-                , overlaps = False
-                , viewSegment = viewHighlightable { renderMarkdown = False, overlaps = False } model
+                , overlaps = OverlapsNotSupported
+                , viewSegment = viewHighlightable { renderMarkdown = False, overlaps = OverlapsNotSupported } model
                 , id = model.id
                 , highlightables = model.highlightables
-                , sorter = Just model.sorter
                 }
         )
 
@@ -897,17 +914,42 @@ viewWithOverlappingHighlights : Model marker -> Html (Msg marker)
 viewWithOverlappingHighlights =
     lazy
         (\model ->
+            let
+                hoveredMarkers =
+                    model.highlightables
+                        |> List.Extra.find (\h -> Just h.index == model.mouseOverIndex)
+                        |> Maybe.map (.marked >> List.map .kind)
+                        |> Maybe.withDefault []
+
+                overlaps =
+                    OverlapsSupported
+                        { hoveredMarkerWithShortestHighlight =
+                            case hoveredMarkers of
+                                [] ->
+                                    Nothing
+
+                                marker :: [] ->
+                                    Just marker
+
+                                first :: second :: rest ->
+                                    Just
+                                        (markerWithShortestHighlight
+                                            model.sorter
+                                            model.highlightables
+                                            ( first, second, rest )
+                                        )
+                        }
+            in
             view_
                 { showTagsInline = False
                 , maybeTool = Just model.marker
                 , mouseOverIndex = model.mouseOverIndex
                 , mouseDownIndex = model.mouseDownIndex
                 , hintingIndices = model.hintingIndices
-                , overlaps = True
-                , viewSegment = viewHighlightable { renderMarkdown = False, overlaps = True } model
+                , overlaps = overlaps
+                , viewSegment = viewHighlightable { renderMarkdown = False, overlaps = overlaps } model
                 , id = model.id
                 , highlightables = model.highlightables
-                , sorter = Just model.sorter
                 }
         )
 
@@ -929,11 +971,10 @@ viewMarkdown =
                 , mouseOverIndex = model.mouseOverIndex
                 , mouseDownIndex = model.mouseDownIndex
                 , hintingIndices = model.hintingIndices
-                , overlaps = False
-                , viewSegment = viewHighlightable { renderMarkdown = True, overlaps = False } model
+                , overlaps = OverlapsNotSupported
+                , viewSegment = viewHighlightable { renderMarkdown = True, overlaps = OverlapsNotSupported } model
                 , id = model.id
                 , highlightables = model.highlightables
-                , sorter = Just model.sorter
                 }
         )
 
@@ -949,7 +990,7 @@ static =
                 , mouseOverIndex = Nothing
                 , mouseDownIndex = Nothing
                 , hintingIndices = Nothing
-                , overlaps = False
+                , overlaps = OverlapsNotSupported
                 , viewSegment =
                     viewHighlightableSegment
                         { interactiveHighlighterId = Nothing
@@ -961,11 +1002,10 @@ static =
                         , hintingIndices = Nothing
                         , renderMarkdown = False
                         , sorter = Nothing
-                        , overlaps = False
+                        , overlaps = OverlapsNotSupported
                         }
                 , id = config.id
                 , highlightables = config.highlightables
-                , sorter = Nothing
                 }
         )
 
@@ -987,7 +1027,7 @@ staticMarkdown =
                 , mouseOverIndex = Nothing
                 , mouseDownIndex = Nothing
                 , hintingIndices = Nothing
-                , overlaps = False
+                , overlaps = OverlapsNotSupported
                 , viewSegment =
                     viewHighlightableSegment
                         { interactiveHighlighterId = Nothing
@@ -999,11 +1039,10 @@ staticMarkdown =
                         , hintingIndices = Nothing
                         , renderMarkdown = True
                         , sorter = Nothing
-                        , overlaps = False
+                        , overlaps = OverlapsNotSupported
                         }
                 , id = config.id
                 , highlightables = config.highlightables
-                , sorter = Nothing
                 }
         )
 
@@ -1026,7 +1065,7 @@ staticWithTags =
                         , hintingIndices = Nothing
                         , renderMarkdown = False
                         , sorter = Nothing
-                        , overlaps = False
+                        , overlaps = OverlapsNotSupported
                         }
             in
             view_
@@ -1035,11 +1074,10 @@ staticWithTags =
                 , mouseOverIndex = Nothing
                 , mouseDownIndex = Nothing
                 , hintingIndices = Nothing
-                , overlaps = False
+                , overlaps = OverlapsNotSupported
                 , viewSegment = viewStaticHighlightableWithTags
                 , id = config.id
                 , highlightables = config.highlightables
-                , sorter = Nothing
                 }
         )
 
@@ -1068,7 +1106,7 @@ staticMarkdownWithTags =
                         , hintingIndices = Nothing
                         , renderMarkdown = True
                         , sorter = Nothing
-                        , overlaps = False
+                        , overlaps = OverlapsNotSupported
                         }
             in
             view_
@@ -1077,11 +1115,10 @@ staticMarkdownWithTags =
                 , mouseOverIndex = Nothing
                 , mouseDownIndex = Nothing
                 , hintingIndices = Nothing
-                , overlaps = False
+                , overlaps = OverlapsNotSupported
                 , viewSegment = viewStaticHighlightableWithTags
                 , id = config.id
                 , highlightables = config.highlightables
-                , sorter = Nothing
                 }
         )
 
@@ -1139,6 +1176,11 @@ groupHighlightables { hintingIndices, mouseOverIndex } x y =
         || ((List.head y.marked /= Nothing) && xIsHinted)
 
 
+type OverlapsSupport marker
+    = OverlapsNotSupported
+    | OverlapsSupported { hoveredMarkerWithShortestHighlight : Maybe marker }
+
+
 {-| When elements are marked and the view doesn't support overlaps, wrap the marked elements in a single `mark` html node.
 -}
 view_ :
@@ -1147,8 +1189,7 @@ view_ :
     , mouseOverIndex : Maybe Int
     , mouseDownIndex : Maybe Int
     , hintingIndices : Maybe ( Int, Int )
-    , sorter : Maybe (Sorter marker)
-    , overlaps : Bool
+    , overlaps : OverlapsSupport marker
     , viewSegment : Highlightable marker -> List Css.Style -> Html msg
     , highlightables : List (Highlightable marker)
     , id : String
@@ -1198,15 +1239,17 @@ view_ config =
         if config.showTagsInline then
             List.concatMap (Mark.viewWithInlineTags config.viewSegment) withoutOverlaps
 
-        else if config.overlaps then
-            Mark.viewWithOverlaps config.viewSegment withOverlaps
-
         else
-            List.concatMap (Mark.view config.viewSegment) withoutOverlaps
+            case config.overlaps of
+                OverlapsSupported _ ->
+                    Mark.viewWithOverlaps config.viewSegment withOverlaps
+
+                OverlapsNotSupported ->
+                    List.concatMap (Mark.view config.viewSegment) withoutOverlaps
 
 
 viewHighlightable :
-    { renderMarkdown : Bool, overlaps : Bool }
+    { renderMarkdown : Bool, overlaps : OverlapsSupport marker }
     ->
         { config
             | id : String
@@ -1294,7 +1337,7 @@ viewHighlightableSegment :
     , hintingIndices : Maybe ( Int, Int )
     , renderMarkdown : Bool
     , sorter : Maybe (Sorter marker)
-    , overlaps : Bool
+    , overlaps : OverlapsSupport marker
     }
     -> Highlightable marker
     -> List Css.Style
@@ -1499,8 +1542,7 @@ markedHighlightableStyles :
         | maybeTool : Maybe (Tool.Tool marker)
         , mouseOverIndex : Maybe Int
         , hintingIndices : Maybe ( Int, Int )
-        , sorter : Maybe (Sorter marker)
-        , overlaps : Bool
+        , overlaps : OverlapsSupport marker
     }
     -> (Highlightable marker -> Bool)
     -> Highlightable marker
