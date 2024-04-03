@@ -21,6 +21,55 @@ spec =
                     |> marker "   ***"
                     |> cursor "   ^  "
                     |> expect "*"
+        , test "shortest at start" <|
+            \_ ->
+                init2
+                    |> marker "#  "
+                    |> marker "***"
+                    |> cursor "^  "
+                    |> expect "#"
+        , test "shortest in the middle" <|
+            \_ ->
+                init2
+                    |> marker " # "
+                    |> marker "***"
+                    |> cursor " ^ "
+                    |> expect "#"
+        , test "shortest at the end" <|
+            \_ ->
+                init2
+                    |> marker "  #"
+                    |> marker "***"
+                    |> cursor "  ^"
+                    |> expect "#"
+        , test "shortest intersects from left" <|
+            \_ ->
+                init2
+                    |> marker "####  "
+                    |> marker "   ***"
+                    |> cursor "   ^  "
+                    |> expect "*"
+        , test "shortest intersects from right" <|
+            \_ ->
+                init2
+                    |> marker "  ####"
+                    |> marker "***   "
+                    |> cursor "  ^   "
+                    |> expect "*"
+        , test "shortest is non-contiguous" <|
+            \_ ->
+                init2
+                    |> marker "  ####  "
+                    |> marker "*  *   *"
+                    |> cursor "   ^    "
+                    |> expect "*"
+        , test "longest is non-contiguous" <|
+            \_ ->
+                init2
+                    |> marker "      ####      "
+                    |> marker "*****  *   *****"
+                    |> cursor "       ^        "
+                    |> expect "#"
         ]
 
 
