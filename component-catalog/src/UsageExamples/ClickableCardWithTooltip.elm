@@ -10,7 +10,7 @@ import Category exposing (Category(..))
 import Css
 import Html.Styled exposing (Html)
 import Html.Styled.Events as Events
-import Nri.Ui.ClickableText.V4 as ClickableText
+import Nri.Ui.ClickableText.V5 as ClickableText
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip

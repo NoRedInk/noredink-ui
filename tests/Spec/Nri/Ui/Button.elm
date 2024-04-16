@@ -2,7 +2,7 @@ module Spec.Nri.Ui.Button exposing (spec)
 
 import Accessibility.Aria as Aria
 import Html.Styled exposing (Html, toUnstyled)
-import Nri.Ui.Button.V10 as Button
+import Nri.Ui.Button.V11 as Button
 import ProgramTest exposing (..)
 import Spec.Helpers exposing (expectFailure)
 import Test exposing (..)
@@ -11,7 +11,7 @@ import Test.Html.Selector exposing (..)
 
 spec : Test
 spec =
-    describe "Nri.Ui.Button.V10"
+    describe "Nri.Ui.Button.V11"
         [ describe "toggleButtonPressed" toggleButtonPressed
         , describe "helpfullyDisabledButton" helpfullyDisabledButton
         ]

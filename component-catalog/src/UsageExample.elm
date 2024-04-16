@@ -1,18 +1,17 @@
-module UsageExample exposing (UsageExample, fromRouteName, fullName, preview, routeName, view, wrapMsg, wrapState)
+module UsageExample exposing (UsageExample, fromRouteName, fullName, noop, preview, routeName, stateless, view, wrapMsg, wrapState)
 
 import Category exposing (Category)
 import Css
-import Css.Media exposing (withMedia)
 import EventExtras
 import ExampleSection
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Html.Styled.Lazy as Lazy
-import Nri.Ui.ClickableText.V4 as ClickableText
+import Nri.Ui.ClickableText.V5 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
-import Nri.Ui.MediaQuery.V1 exposing (mobile)
+import Nri.Ui.MediaQuery.V2 as MediaQuery exposing (mobile)
 import Nri.Ui.Text.V6 as Text
 
 
@@ -42,6 +41,11 @@ fromRouteName name =
     String.replace "-" " " name
 
 
+noop : noop -> UsageExample state msg -> UsageExample state noop
+noop msg =
+    wrapMsg (always msg) (always Nothing)
+
+
 wrapMsg :
     (msg -> msg2)
     -> (msg2 -> Maybe msg)
@@ -67,6 +71,11 @@ wrapMsg wrapMsg_ unwrapMsg example =
     , about = example.about
     , categories = example.categories
     }
+
+
+stateless : stateless -> UsageExample () msg -> UsageExample stateless msg
+stateless state =
+    wrapState (always state) (always (Just ()))
 
 
 wrapState :
@@ -154,7 +163,7 @@ view_ example state =
             , Css.alignItems Css.stretch
             , Css.flexWrap Css.wrap
             , Css.property "gap" "10px"
-            , withMedia [ mobile ] [ Css.flexDirection Css.column, Css.alignItems Css.stretch ]
+            , MediaQuery.fromList [ mobile [ Css.flexDirection Css.column, Css.alignItems Css.stretch ] ]
             ]
         ]
         [ ExampleSection.sectionWithCss "About"

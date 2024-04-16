@@ -36,13 +36,13 @@ module Nri.Ui.Header.V1 exposing
 import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Aria as Aria
 import Css
-import Css.Media as Media
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs exposing (BreadCrumbs)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Html.V3 exposing (viewJust)
-import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.MediaQuery.Internal exposing (mobileBreakpoint)
+import Nri.Ui.MediaQuery.V2 as MediaQuery
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Text.V6 as Text
 
@@ -121,7 +121,7 @@ customize =
         , containerAttributes = []
         , extraContent = []
         , description = Nothing
-        , pageWidth = MediaQuery.mobileBreakpoint
+        , pageWidth = Css.px <| mobileBreakpoint
         , breadCrumbsLabel = "breadcrumbs"
         , extraNav = Nothing
         }
@@ -165,8 +165,10 @@ view attrs { breadCrumbs, isCurrentRoute } =
             , Css.borderBottom3 (Css.px 1) Css.solid Colors.gray92
             , Css.paddingTop (Css.px 30)
             , Css.paddingBottom (Css.px 20)
-            , Media.withMedia [ MediaQuery.mobile ]
-                [ Css.important (Css.padding2 (Css.px 20) (Css.px 15))
+            , MediaQuery.fromList
+                [ MediaQuery.mobile
+                    [ Css.important (Css.padding2 (Css.px 20) (Css.px 15))
+                    ]
                 ]
             ]
         , AttributesExtra.nriDescription "Nri-Header"
@@ -176,7 +178,7 @@ view attrs { breadCrumbs, isCurrentRoute } =
                 [ Spacing.centeredContentWithCustomWidth config.pageWidth
                 , Css.alignItems Css.center
                 , Css.displayFlex
-                , Media.withMedia [ MediaQuery.mobile ] [ Css.flexDirection Css.column ]
+                , MediaQuery.fromList [ MediaQuery.mobile [ Css.flexDirection Css.column ] ]
                 ]
                 :: config.containerAttributes
             )

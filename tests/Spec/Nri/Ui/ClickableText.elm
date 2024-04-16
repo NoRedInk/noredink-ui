@@ -5,7 +5,7 @@ import Accessibility.Role as Role
 import Html.Attributes as Attributes
 import Html.Styled exposing (..)
 import Nri.Test.MouseHelpers.V1 as MouseHelpers
-import Nri.Ui.ClickableText.V4 as ClickableText
+import Nri.Ui.ClickableText.V5 as ClickableText
 import Nri.Ui.UiIcon.V1 as UiIcon
 import ProgramTest exposing (..)
 import Spec.Helpers exposing (expectFailure)
@@ -15,7 +15,7 @@ import Test.Html.Selector as Selector exposing (..)
 
 spec : Test
 spec =
-    describe "Nri.Ui.ClickableText.V4"
+    describe "Nri.Ui.ClickableText.V5"
         [ describe "elements" elementTests
         , describe "attributes" attributeTests
         , describe "icon accessibility" iconAccessibilityTests

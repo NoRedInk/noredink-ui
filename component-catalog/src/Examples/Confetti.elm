@@ -14,7 +14,7 @@ import Css exposing (Color)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Nri.Ui.Button.V10 as Button
+import Nri.Ui.Button.V11 as Button
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Confetti.V2 as Confetti
