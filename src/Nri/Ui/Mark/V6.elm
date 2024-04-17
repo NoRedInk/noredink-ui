@@ -1,7 +1,7 @@
 module Nri.Ui.Mark.V6 exposing
     ( Mark
     , view, viewWithInlineTags, viewWithBalloonTags
-    , viewWithOverlaps
+    , viewWithOverlaps, overlappingStyles
     )
 
 {-|
@@ -13,7 +13,7 @@ module Nri.Ui.Mark.V6 exposing
 
 @docs Mark
 @docs view, viewWithInlineTags, viewWithBalloonTags
-@docs viewWithOverlaps
+@docs viewWithOverlaps, overlappingStyles
 
 -}
 
@@ -24,6 +24,8 @@ import Content
 import Css exposing (Color, Style)
 import Css.Global
 import Css.Media
+import Dict
+import Dict.Extra
 import Html.Styled as Html exposing (Html, span)
 import Html.Styled.Attributes exposing (class, css)
 import Markdown.Block
@@ -125,6 +127,71 @@ viewWithOverlaps viewSegment segments =
             )
             ( Set.empty maybeStringSorter, [] )
         |> Tuple.second
+
+
+overlappingStyles : List ( content, List Mark ) -> List ( content, Maybe (Html msg), List Style )
+overlappingStyles segments =
+    List.foldl
+        (\( content, marks ) state ->
+            let
+                currentMarks =
+                    Dict.Extra.fromListBy (\m -> Maybe.withDefault "" m.name) marks
+
+                ( endedMarks_, newMarks_ ) =
+                    Dict.merge
+                        (\_ endedMark ( endedMarks, newMarks ) -> ( endedMark :: endedMarks, newMarks ))
+                        (\_ _ _ result -> result)
+                        (\_ newMark ( endedMarks, newMarks ) -> ( endedMarks, newMark :: newMarks ))
+                        state.priorMarks
+                        currentMarks
+                        ( [], [] )
+
+                startStyles =
+                    List.concatMap .startStyles newMarks_
+
+                currentStyles =
+                    List.concatMap .styles marks
+
+                -- We can't detect the end of a span of marks until after we are past it!
+                -- So we need to go back to the last set of styles and add the ended styles there
+                newRevStyles =
+                    case ( state.revStyles, List.concatMap .endStyles endedMarks_ ) of
+                        ( [], _ ) ->
+                            state.revStyles
+
+                        ( _, [] ) ->
+                            state.revStyles
+
+                        ( ( prevContent, prevLabel, prevStyles ) :: otherPrevStyles, endedStyles ) ->
+                            ( prevContent, prevLabel, prevStyles ++ endedStyles ) :: otherPrevStyles
+
+                ( maybeStartLabels, styles ) =
+                    case List.filterMap .name newMarks_ of
+                        [] ->
+                            ( Nothing, startStyles ++ currentStyles )
+
+                        names ->
+                            ( Just <|
+                                span [ css startStyles ]
+                                    [ viewInlineTag
+                                        [ Css.display Css.none
+                                        , MediaQuery.highContrastMode
+                                            [ Css.property "forced-color-adjust" "none"
+                                            , Css.display Css.inline |> Css.important
+                                            , Css.property "color" "initial" |> Css.important
+                                            ]
+                                        ]
+                                        (String.Extra.toSentenceOxford names)
+                                    ]
+                            , currentStyles
+                            )
+            in
+            { priorMarks = currentMarks, revStyles = ( content, maybeStartLabels, styles ) :: newRevStyles }
+        )
+        { priorMarks = Dict.empty, revStyles = [] }
+        segments
+        |> .revStyles
+        |> List.reverse
 
 
 ignoreRepeats : Set (Maybe String) -> List Mark -> List Mark
