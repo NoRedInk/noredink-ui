@@ -4,6 +4,7 @@ module Nri.Ui.Highlighter.V5 exposing
     , view, static, staticWithTags
     , viewMarkdown, staticMarkdown, staticMarkdownWithTags
     , viewWithOverlappingHighlights
+    , FoldState, initFoldState, viewFoldHighlighter, viewFoldStatic
     , Intent(..), hasChanged, HasChanged(..)
     , removeHighlights
     , clickedHighlightable, hoveredHighlightable
@@ -24,6 +25,7 @@ Highlighter provides a view/model/update to display a view to highlight text and
 
   - Made all highlighter views lazy
   - Optimized `selectShortest` for the normal case of 0 or 1 highlight.
+  - Added `FoldState`, `initFoldState`, `viewFoldHighlighter`, and `viewFoldStatic`
 
 
 # Types
@@ -38,6 +40,15 @@ Highlighter provides a view/model/update to display a view to highlight text and
 @docs view, static, staticWithTags
 @docs viewMarkdown, staticMarkdown, staticMarkdownWithTags
 @docs viewWithOverlappingHighlights
+
+
+# Foldable Views
+
+If you want more control over the rendering of the highlightables, you can use these functions inside of a fold to
+render the highlightables one by one. Use `initFoldState` to set up the initial state and then each call to `viewFoldHighlighter`
+or `viewFoldStatic` will render a single highlightable along with an update to the state.
+
+@docs FoldState, initFoldState, viewFoldHighlighter, viewFoldStatic
 
 
 ## Intents
@@ -1179,7 +1190,38 @@ initFoldState model =
 
 
 viewFoldHighlighter : FoldState marker -> List Css.Style -> ( List (Html (Msg marker)), FoldState marker )
-viewFoldHighlighter (FoldState ({ model, overlapsSupport, state } as foldState)) extraStyles =
+viewFoldHighlighter (FoldState ({ model, overlapsSupport } as foldState)) extraStyles =
+    viewFoldHelper
+        (viewHighlightable
+            { renderMarkdown = False
+            , overlaps = overlapsSupport
+            }
+            model
+        )
+        (FoldState foldState)
+        extraStyles
+
+
+viewFoldStatic : FoldState marker -> List Css.Style -> ( List (Html msg), FoldState marker )
+viewFoldStatic =
+    viewFoldHelper
+        (viewHighlightableSegment
+            { interactiveHighlighterId = Nothing
+            , focusIndex = Nothing
+            , eventListeners = []
+            , maybeTool = Nothing
+            , mouseOverIndex = Nothing
+            , mouseDownIndex = Nothing
+            , hintingIndices = Nothing
+            , renderMarkdown = False
+            , sorter = Nothing
+            , overlaps = OverlapsNotSupported
+            }
+        )
+
+
+viewFoldHelper : (Highlightable marker -> List Css.Style -> Html msg) -> FoldState marker -> List Css.Style -> ( List (Html msg), FoldState marker )
+viewFoldHelper viewSegment (FoldState ({ state } as foldState)) extraStyles =
     case state of
         [] ->
             -- If we are in this position then the caller has called the step function too many times.
@@ -1188,23 +1230,19 @@ viewFoldHighlighter (FoldState ({ model, overlapsSupport, state } as foldState))
 
         ( highlightable, maybeLabelElement, markStyles ) :: todoState ->
             let
-                highlightableElement =
-                    viewHighlightable
-                        { renderMarkdown = False
-                        , overlaps = overlapsSupport
-                        }
-                        model
+                segmentHtml =
+                    viewSegment
                         highlightable
                         (markStyles ++ extraStyles)
             in
             case maybeLabelElement of
                 Nothing ->
-                    ( [ highlightableElement ]
+                    ( [ segmentHtml ]
                     , FoldState { foldState | state = todoState }
                     )
 
                 Just labelElement ->
-                    ( [ Html.map never labelElement, highlightableElement ]
+                    ( [ Html.map never labelElement, segmentHtml ]
                     , FoldState { foldState | state = todoState }
                     )
 
