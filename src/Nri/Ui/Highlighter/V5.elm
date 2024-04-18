@@ -1128,6 +1128,87 @@ findOverlapsSupport model =
                         )
         }
 
+
+type FoldState marker
+    = FoldState
+        { model : Model marker
+        , overlapsSupport : OverlapsSupport marker
+        , state : List ( Highlightable marker, Maybe (Html Never), List Css.Style )
+        }
+
+
+initFoldState : Model marker -> FoldState marker
+initFoldState model =
+    let
+        overlapsSupport =
+            findOverlapsSupport model
+
+        config =
+            { hintingIndices = model.hintingIndices
+            , mouseOverIndex = model.mouseOverIndex
+            , mouseDownIndex = model.mouseDownIndex
+            , maybeTool = Just model.marker
+            , overlaps = overlapsSupport
+            , highlightables = model.highlightables
+            }
+
+        highlightableGroups =
+            buildGroups config model.highlightables
+
+        toMark : Highlightable marker -> Tool.MarkerModel marker -> Mark.Mark
+        toMark highlightable marker =
+            { name = marker.name
+            , startStyles = marker.startGroupClass
+            , styles =
+                markedHighlightableStyles config
+                    (isHovered_ config highlightableGroups)
+                    highlightable
+            , endStyles = marker.endGroupClass
+            }
+
+        markStyles =
+            model.highlightables
+                |> List.map (\highlightable -> ( highlightable, List.map (toMark highlightable) highlightable.marked ))
+                |> Mark.overlappingStyles
+    in
+    FoldState
+        { model = model
+        , overlapsSupport = overlapsSupport
+        , state = markStyles
+        }
+
+
+viewFoldHighlighter : FoldState marker -> List Css.Style -> ( List (Html (Msg marker)), FoldState marker )
+viewFoldHighlighter (FoldState ({ model, overlapsSupport, state } as foldState)) extraStyles =
+    case state of
+        [] ->
+            -- If we are in this position then the caller has called the step function too many times.
+            -- We return empty output and the same fold state.
+            ( [], FoldState foldState )
+
+        ( highlightable, maybeLabelElement, markStyles ) :: todoState ->
+            let
+                highlightableElement =
+                    viewHighlightable
+                        { renderMarkdown = False
+                        , overlaps = overlapsSupport
+                        }
+                        model
+                        highlightable
+                        (markStyles ++ extraStyles)
+            in
+            case maybeLabelElement of
+                Nothing ->
+                    ( [ highlightableElement ]
+                    , FoldState { foldState | state = todoState }
+                    )
+
+                Just labelElement ->
+                    ( [ Html.map never labelElement, highlightableElement ]
+                    , FoldState { foldState | state = todoState }
+                    )
+
+
 {-| Groups highlightables with the same state together.
 -}
 buildGroups :
