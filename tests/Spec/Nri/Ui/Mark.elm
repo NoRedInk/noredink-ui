@@ -1,11 +1,14 @@
 module Spec.Nri.Ui.Mark exposing (..)
 
 import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Style exposing (invisibleStyle)
 import Content
 import Css
 import Expect
 import Html.Styled as Html exposing (Html, span)
 import Html.Styled.Attributes exposing (class, css)
+import Markdown.Block
+import Markdown.Inline
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Mark.V6 as Mark
@@ -44,34 +47,70 @@ end2Styles =
     [ Css.position Css.fixed ]
 
 
-{-| Cloned from Mark.V6 for testing
+{-| Cloned from Mark for testing
 -}
-viewLabels : List String -> List Css.Style -> Html msg
-viewLabels names startStyles_ =
-    span [ css startStyles_ ]
-        [ span
-            [ css
-                [ Fonts.baseFont
-                , Css.backgroundColor Colors.white
-                , Css.color Colors.navy
-                , Css.padding2 (Css.px 2) (Css.px 4)
-                , Css.borderRadius (Css.px 3)
-                , Css.margin2 Css.zero (Css.px 5)
-                , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 1) Css.zero Colors.gray75
-                , Css.batch
-                    [ Css.display Css.none
-                    , MediaQuery.highContrastMode
-                        [ Css.property "forced-color-adjust" "none"
-                        , Css.display Css.inline |> Css.important
-                        , Css.property "color" "initial" |> Css.important
-                        ]
-                    ]
-                ]
-            , -- we use the :before element to convey details about the start of the
-              -- highlighter to screenreaders, so the visual label is redundant
-              Aria.hidden True
+highlightDescription : String -> List Mark.Mark -> String
+highlightDescription prefix marks =
+    let
+        names =
+            String.Extra.toSentenceOxford (List.filterMap (.name >> Maybe.map stripMarkdownSyntax) marks)
+    in
+    if names == "" then
+        prefix ++ " highlight"
+
+    else if List.length marks == 1 then
+        prefix ++ " " ++ names ++ " highlight"
+
+    else
+        prefix ++ " " ++ names ++ " highlights"
+
+
+{-| Cloned from Mark for testing
+-}
+stripMarkdownSyntax : String -> String
+stripMarkdownSyntax markdown =
+    case Markdown.Block.parse Nothing markdown of
+        [ Markdown.Block.Paragraph _ inlines ] ->
+            Markdown.Inline.extractText inlines
+
+        _ ->
+            markdown
+
+
+{-| Cloned from Mark for testing
+-}
+cssContent : String -> Css.Style
+cssContent content =
+    Css.property "content" ("\" " ++ content ++ " \"")
+
+
+{-| Cloned from Mark for testing
+-}
+tagBeforeContent : List Mark.Mark -> List Css.Style
+tagBeforeContent marks =
+    if List.isEmpty marks then
+        []
+
+    else
+        [ Css.before
+            [ cssContent (highlightDescription "start" marks)
+            , invisibleStyle
             ]
-            (Content.markdownInline (String.Extra.toSentenceOxford names))
+        ]
+
+
+{-| Cloned from Mark for testing
+-}
+tagAfterContent : List Mark.Mark -> List Css.Style
+tagAfterContent marks =
+    if List.isEmpty marks then
+        []
+
+    else
+        [ Css.after
+            [ cssContent (highlightDescription "end" marks)
+            , invisibleStyle
+            ]
         ]
 
 
@@ -102,13 +141,17 @@ tests =
                             ]
             , test "mark on single segment" <|
                 \_ ->
+                    let
+                        mark =
+                            { name = Nothing
+                            , startStyles = startStyles
+                            , styles = markStyles
+                            , endStyles = endStyles
+                            }
+                    in
                     [ ( 1, [] )
                     , ( 2
-                      , [ { name = Nothing
-                          , startStyles = startStyles
-                          , styles = markStyles
-                          , endStyles = endStyles
-                          }
+                      , [ mark
                         ]
                       )
                     , ( 3, [] )
@@ -116,7 +159,13 @@ tests =
                         |> testOverlappingStyles
                         |> Expect.equalLists
                             [ ( 1, [] )
-                            , ( 2, startStyles ++ markStyles ++ endStyles )
+                            , ( 2
+                              , tagBeforeContent [ mark ]
+                                    ++ startStyles
+                                    ++ markStyles
+                                    ++ tagAfterContent [ mark ]
+                                    ++ endStyles
+                              )
                             , ( 3, [] )
                             ]
             , test "mark spanning multiple segments" <|
@@ -137,8 +186,16 @@ tests =
                         |> testOverlappingStyles
                         |> Expect.equalLists
                             [ ( 1, [] )
-                            , ( 2, startStyles ++ markStyles )
-                            , ( 3, markStyles ++ endStyles )
+                            , ( 2
+                              , tagBeforeContent [ mark ]
+                                    ++ startStyles
+                                    ++ markStyles
+                              )
+                            , ( 3
+                              , markStyles
+                                    ++ tagAfterContent [ mark ]
+                                    ++ endStyles
+                              )
                             , ( 4, [] )
                             ]
             , test "named mark one segment" <|
@@ -158,8 +215,26 @@ tests =
                         |> testOverlappingStyles
                         |> Expect.equalLists
                             [ ( 1, [] )
-                            , ( 2, markStyles ++ endStyles )
+                            , ( 2, markStyles ++ tagAfterContent [ mark ] ++ endStyles )
                             , ( 3, [] )
+                            ]
+            , test "named mark end segment" <|
+                \_ ->
+                    let
+                        mark =
+                            { name = Just "mark"
+                            , startStyles = startStyles
+                            , styles = markStyles
+                            , endStyles = endStyles
+                            }
+                    in
+                    [ ( 1, [] )
+                    , ( 2, [ mark ] )
+                    ]
+                        |> testOverlappingStyles
+                        |> Expect.equalLists
+                            [ ( 1, [] )
+                            , ( 2, markStyles ++ tagAfterContent [ mark ] ++ endStyles )
                             ]
             , test "named mark two segments" <|
                 \_ ->
@@ -180,7 +255,7 @@ tests =
                         |> Expect.equalLists
                             [ ( 1, [] )
                             , ( 2, markStyles )
-                            , ( 3, markStyles ++ endStyles )
+                            , ( 3, markStyles ++ tagAfterContent [ mark ] ++ endStyles )
                             , ( 4, [] )
                             ]
             , test "two marks" <|
@@ -208,8 +283,8 @@ tests =
                         |> testOverlappingStyles
                         |> Expect.equalLists
                             [ ( 1, [] )
-                            , ( 2, markStyles ++ endStyles )
-                            , ( 3, mark2Styles ++ end2Styles )
+                            , ( 2, markStyles ++ tagAfterContent [ mark1 ] ++ endStyles )
+                            , ( 3, mark2Styles ++ tagAfterContent [ mark2 ] ++ end2Styles )
                             , ( 4, [] )
                             ]
             , test "two marks full overlap" <|
@@ -236,7 +311,13 @@ tests =
                         |> testOverlappingStyles
                         |> Expect.equalLists
                             [ ( 1, [] )
-                            , ( 2, markStyles ++ mark2Styles ++ end2Styles ++ endStyles )
+                            , ( 2
+                              , markStyles
+                                    ++ mark2Styles
+                                    ++ tagAfterContent [ mark1, mark2 ]
+                                    ++ endStyles
+                                    ++ end2Styles
+                              )
                             , ( 3, [] )
                             ]
             , test "two marks partial overlap" <|
@@ -264,8 +345,8 @@ tests =
                         |> testOverlappingStyles
                         |> Expect.equalLists
                             [ ( 1, [] )
-                            , ( 2, markStyles ++ mark2Styles ++ endStyles )
-                            , ( 3, mark2Styles ++ end2Styles )
+                            , ( 2, markStyles ++ mark2Styles ++ tagAfterContent [ mark1 ] ++ endStyles )
+                            , ( 3, mark2Styles ++ tagAfterContent [ mark2 ] ++ end2Styles )
                             , ( 4, [] )
                             ]
             , test "two marks containment" <|
@@ -295,8 +376,8 @@ tests =
                         |> Expect.equalLists
                             [ ( 1, [] )
                             , ( 2, markStyles )
-                            , ( 3, markStyles ++ mark2Styles ++ end2Styles )
-                            , ( 4, markStyles ++ endStyles )
+                            , ( 3, markStyles ++ mark2Styles ++ tagAfterContent [ mark2 ] ++ end2Styles )
+                            , ( 4, markStyles ++ tagAfterContent [ mark1 ] ++ endStyles )
                             , ( 5, [] )
                             ]
             ]
