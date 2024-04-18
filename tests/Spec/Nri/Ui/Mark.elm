@@ -1,18 +1,11 @@
 module Spec.Nri.Ui.Mark exposing (..)
 
-import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style exposing (invisibleStyle)
-import Content
 import Css
 import Expect
-import Html.Styled as Html exposing (Html, span)
-import Html.Styled.Attributes exposing (class, css)
 import Markdown.Block
 import Markdown.Inline
-import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Mark.V6 as Mark
-import Nri.Ui.MediaQuery.V1 as MediaQuery
 import String.Extra
 import Test exposing (..)
 

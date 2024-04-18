@@ -24,8 +24,6 @@ import Content
 import Css exposing (Color, Style)
 import Css.Global
 import Css.Media
-import Dict
-import Dict.Extra
 import Html.Styled as Html exposing (Html, span)
 import Html.Styled.Attributes exposing (class, css)
 import Markdown.Block
@@ -38,7 +36,7 @@ import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Sort exposing (Sorter)
-import Sort.Set as Set exposing (Set)
+import Sort.Set as Set
 import String.Extra
 
 
