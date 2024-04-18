@@ -11,6 +11,11 @@ module Nri.Ui.Mark.V6 exposing
 
     -  Add `skipTagAnimation` for skipping balloon animations
 
+
+### Patch changes
+
+    - Factor `overlappingStyles` out of `viewWithOverlaps` to allow consumers finer grained control of rendering mark elements.
+
 @docs Mark
 @docs view, viewWithInlineTags, viewWithBalloonTags
 @docs viewWithOverlaps, overlappingStyles
@@ -81,6 +86,13 @@ viewWithOverlaps viewSegment segments =
             )
 
 
+{-| Compute the styles required to mark the segments.
+
+You can use this if you require more control over the structure of how marked elements are laid out than `viewWithOverlaps` provides.
+
+The `Maybe (Html msg)` result is a label element that should be rendered before the current segment.
+
+-}
 overlappingStyles : List ( content, List Mark ) -> List ( content, Maybe (Html msg), List Style )
 overlappingStyles segments =
     let
