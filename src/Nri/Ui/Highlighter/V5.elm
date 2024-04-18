@@ -915,30 +915,8 @@ viewWithOverlappingHighlights =
     lazy
         (\model ->
             let
-                hoveredMarkers =
-                    model.highlightables
-                        |> List.Extra.find (\h -> Just h.index == model.mouseOverIndex)
-                        |> Maybe.map (.marked >> List.map .kind)
-                        |> Maybe.withDefault []
-
                 overlaps =
-                    OverlapsSupported
-                        { hoveredMarkerWithShortestHighlight =
-                            case hoveredMarkers of
-                                [] ->
-                                    Nothing
-
-                                marker :: [] ->
-                                    Just marker
-
-                                first :: second :: rest ->
-                                    Just
-                                        (markerWithShortestHighlight
-                                            model.sorter
-                                            model.highlightables
-                                            ( first, second, rest )
-                                        )
-                        }
+                    findOverlapsSupport model
             in
             view_
                 { showTagsInline = False
@@ -1122,6 +1100,33 @@ staticMarkdownWithTags =
                 }
         )
 
+
+findOverlapsSupport : Model marker -> OverlapsSupport marker
+findOverlapsSupport model =
+    let
+        hoveredMarkers =
+            model.highlightables
+                |> List.Extra.find (\h -> Just h.index == model.mouseOverIndex)
+                |> Maybe.map (.marked >> List.map .kind)
+                |> Maybe.withDefault []
+    in
+    OverlapsSupported
+        { hoveredMarkerWithShortestHighlight =
+            case hoveredMarkers of
+                [] ->
+                    Nothing
+
+                marker :: [] ->
+                    Just marker
+
+                first :: second :: rest ->
+                    Just
+                        (markerWithShortestHighlight
+                            model.sorter
+                            model.highlightables
+                            ( first, second, rest )
+                        )
+        }
 
 {-| Groups highlightables with the same state together.
 -}
