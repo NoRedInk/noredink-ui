@@ -1140,6 +1140,8 @@ findOverlapsSupport model =
         }
 
 
+{-| A type that contains information needed to render individual `Highlightable`s one at a time
+-}
 type FoldState marker
     = FoldState
         { model : Model marker
@@ -1148,6 +1150,8 @@ type FoldState marker
         }
 
 
+{-| Computes all the mark styles necessary to perform a fold over the `Highlightable` elements
+-}
 initFoldState : Model marker -> FoldState marker
 initFoldState model =
     let
@@ -1189,6 +1193,11 @@ initFoldState model =
         }
 
 
+{-| Render a single `Highlightable` while also returning an updated state.
+
+A list of extraStyles is also accepted if, for example, you want to apply bold / italic / underline formatting to the generated span.
+
+-}
 viewFoldHighlighter : FoldState marker -> List Css.Style -> ( List (Html (Msg marker)), FoldState marker )
 viewFoldHighlighter (FoldState ({ model, overlapsSupport } as foldState)) extraStyles =
     viewFoldHelper
@@ -1202,6 +1211,11 @@ viewFoldHighlighter (FoldState ({ model, overlapsSupport } as foldState)) extraS
         extraStyles
 
 
+{-| Render a single `Highlightable` that is NOT interactive while also returning an updated state.
+
+A list of extraStyles is also accepted if, for example, you want to apply bold / italic / underline formatting to the generated span.
+
+-}
 viewFoldStatic : FoldState marker -> List Css.Style -> ( List (Html msg), FoldState marker )
 viewFoldStatic =
     viewFoldHelper
