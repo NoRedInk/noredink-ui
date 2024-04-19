@@ -107,7 +107,7 @@ overlappingStyles segments =
                     patchRevStyles
 
                 ( ( prevContent, prevLabel, prevStyles ) :: otherPrevStyles, _ ) ->
-                    ( prevContent, prevLabel, prevStyles ++ (tagAfterContent endedMarks :: List.concatMap .endStyles endedMarks) ) :: otherPrevStyles
+                    ( prevContent, prevLabel, prevStyles ++ (tagAfterContent endedMarks ++ List.concatMap .endStyles endedMarks) ) :: otherPrevStyles
 
         { priorMarks, revStyles } =
             List.foldl
@@ -125,12 +125,7 @@ overlappingStyles segments =
                                 |> Set.toList
 
                         startStyles =
-                            case startedMarks of
-                                [] ->
-                                    []
-
-                                _ ->
-                                    tagBeforeContent startedMarks :: List.concatMap .startStyles startedMarks
+                            tagBeforeContent startedMarks ++ List.concatMap .startStyles startedMarks
 
                         currentStyles =
                             List.concatMap .styles marks
@@ -233,7 +228,7 @@ markedWithBalloonStyles marked lastIndex index =
         [ if index == 0 then
             -- if we're on the first highlighted element, we add
             -- a `before` content saying what kind of highlight we're starting
-            tagBeforeContent [ marked ] :: marked.startStyles
+            tagBeforeContent [ marked ] ++ marked.startStyles
 
           else
             []
@@ -392,7 +387,7 @@ markStyles tagStyle index marked =
             -- if we're on the first highlighted element, we add
             -- a `before` content saying what kind of highlight we're starting
             tagBeforeContent [ markedWith ]
-                :: markedWith.styles
+                ++ markedWith.styles
                 ++ -- if we're on the first element, and the mark has a name,
                    -- there's an inline tag that we might need to show.
                    -- if we're not showing a visual tag, we can attach the start styles to the first segment
@@ -426,28 +421,30 @@ markStyles tagStyle index marked =
                 |> Maybe.withDefault []
 
 
-tagBeforeContent : List Mark -> Css.Style
+tagBeforeContent : List Mark -> List Css.Style
 tagBeforeContent marks =
     if List.isEmpty marks then
-        Css.batch []
+        []
 
     else
-        Css.before
+        [ Css.before
             [ cssContent (highlightDescription "start" marks)
             , invisibleStyle
             ]
+        ]
 
 
-tagAfterContent : List Mark -> Css.Style
+tagAfterContent : List Mark -> List Css.Style
 tagAfterContent marks =
     if List.isEmpty marks then
-        Css.batch []
+        []
 
     else
-        Css.after
+        [ Css.after
             [ cssContent (highlightDescription "end" marks)
             , invisibleStyle
             ]
+        ]
 
 
 highlightDescription : String -> List Mark -> String
