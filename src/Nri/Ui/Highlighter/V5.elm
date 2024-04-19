@@ -1198,8 +1198,8 @@ initFoldState model =
 A list of extraStyles is also accepted if, for example, you want to apply bold / italic / underline formatting to the generated span.
 
 -}
-viewFoldHighlighter : FoldState marker -> List Css.Style -> ( List (Html (Msg marker)), FoldState marker )
-viewFoldHighlighter (FoldState ({ model, overlapsSupport } as foldState)) extraStyles =
+viewFoldHighlighter : List Css.Style -> FoldState marker -> ( FoldState marker, List (Html (Msg marker)) )
+viewFoldHighlighter extraStyles (FoldState ({ model, overlapsSupport } as foldState)) =
     viewFoldHelper
         (viewHighlightable
             { renderMarkdown = False
@@ -1207,8 +1207,8 @@ viewFoldHighlighter (FoldState ({ model, overlapsSupport } as foldState)) extraS
             }
             model
         )
-        (FoldState foldState)
         extraStyles
+        (FoldState foldState)
 
 
 {-| Render a single `Highlightable` that is NOT interactive while also returning an updated state.
@@ -1216,7 +1216,7 @@ viewFoldHighlighter (FoldState ({ model, overlapsSupport } as foldState)) extraS
 A list of extraStyles is also accepted if, for example, you want to apply bold / italic / underline formatting to the generated span.
 
 -}
-viewFoldStatic : FoldState marker -> List Css.Style -> ( List (Html msg), FoldState marker )
+viewFoldStatic : List Css.Style -> FoldState marker -> ( FoldState marker, List (Html msg) )
 viewFoldStatic =
     viewFoldHelper
         (viewHighlightableSegment
@@ -1234,13 +1234,13 @@ viewFoldStatic =
         )
 
 
-viewFoldHelper : (Highlightable marker -> List Css.Style -> Html msg) -> FoldState marker -> List Css.Style -> ( List (Html msg), FoldState marker )
-viewFoldHelper viewSegment (FoldState ({ state } as foldState)) extraStyles =
+viewFoldHelper : (Highlightable marker -> List Css.Style -> Html msg) -> List Css.Style -> FoldState marker -> ( FoldState marker, List (Html msg) )
+viewFoldHelper viewSegment extraStyles (FoldState ({ state } as foldState)) =
     case state of
         [] ->
             -- If we are in this position then the caller has called the step function too many times.
             -- We return empty output and the same fold state.
-            ( [], FoldState foldState )
+            ( FoldState foldState, [] )
 
         ( highlightable, maybeLabelElement, markStyles ) :: todoState ->
             let
@@ -1251,13 +1251,13 @@ viewFoldHelper viewSegment (FoldState ({ state } as foldState)) extraStyles =
             in
             case maybeLabelElement of
                 Nothing ->
-                    ( [ segmentHtml ]
-                    , FoldState { foldState | state = todoState }
+                    ( FoldState { foldState | state = todoState }
+                    , [ segmentHtml ]
                     )
 
                 Just labelElement ->
-                    ( [ Html.map never labelElement, segmentHtml ]
-                    , FoldState { foldState | state = todoState }
+                    ( FoldState { foldState | state = todoState }
+                    , [ Html.map never labelElement, segmentHtml ]
                     )
 
 

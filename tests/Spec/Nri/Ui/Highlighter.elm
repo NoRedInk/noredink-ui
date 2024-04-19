@@ -732,13 +732,7 @@ joinAdjacentInteractiveHighlightsTests =
 renderWithFoldHighlight : Highlighter.Model marker -> Html (Highlighter.Msg marker)
 renderWithFoldHighlight model =
     List.Extra.mapAccuml
-        (\state _ ->
-            let
-                ( output, newState ) =
-                    Highlighter.viewFoldHighlighter state []
-            in
-            ( newState, output )
-        )
+        (\state _ -> Highlighter.viewFoldHighlighter [] state)
         (Highlighter.initFoldState model)
         model.highlightables
         |> Tuple.second
@@ -749,13 +743,7 @@ renderWithFoldHighlight model =
 renderWithFoldStatic : Highlighter.Model marker -> Html (Highlighter.Msg marker)
 renderWithFoldStatic model =
     List.Extra.mapAccuml
-        (\state _ ->
-            let
-                ( output, newState ) =
-                    Highlighter.viewFoldStatic state []
-            in
-            ( newState, output )
-        )
+        (\state _ -> Highlighter.viewFoldStatic [] state)
         (Highlighter.initFoldState model)
         model.highlightables
         |> Tuple.second

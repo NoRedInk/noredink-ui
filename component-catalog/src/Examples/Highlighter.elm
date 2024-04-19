@@ -511,17 +511,11 @@ foldHighlightsSource =
     , [ "Finally", " ", "one", " ", "more" ]
     ]
 
-
-swap : ( a, b ) -> ( b, a )
-swap ( a, b ) =
-    ( b, a )
-
-
 viewFoldHighlights : Highlighter.Model String -> Html (Highlighter.Msg String)
 viewFoldHighlights model =
     List.Extra.mapAccuml
         (\state sourceRow ->
-            List.Extra.mapAccuml (\innerState _ -> Highlighter.viewFoldHighlighter innerState [] |> swap) state sourceRow
+            List.Extra.mapAccuml (\innerState _ -> Highlighter.viewFoldHighlighter [] innerState) state sourceRow
                 |> Tuple.mapSecond (List.concat >> li [])
         )
         (Highlighter.initFoldState model)
