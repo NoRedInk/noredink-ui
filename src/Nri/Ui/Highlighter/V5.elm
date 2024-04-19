@@ -1181,7 +1181,7 @@ initFoldState model =
             , endStyles = marker.endGroupClass
             }
 
-        markStyles =
+        precomputedSegments =
             model.highlightables
                 |> List.map (\highlightable -> ( highlightable, List.map (toMark highlightable) highlightable.marked ))
                 |> Mark.overlappingStyles
@@ -1189,7 +1189,7 @@ initFoldState model =
     FoldState
         { model = model
         , overlapsSupport = overlapsSupport
-        , state = markStyles
+        , state = precomputedSegments
         }
 
 
