@@ -511,6 +511,7 @@ foldHighlightsSource =
     , [ "Finally", " ", "one", " ", "more" ]
     ]
 
+
 viewFoldHighlights : Highlighter.Model String -> Html (Highlighter.Msg String)
 viewFoldHighlights model =
     List.Extra.mapAccuml
