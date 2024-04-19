@@ -111,10 +111,10 @@ overlappingStyles segments =
 
         { priorMarks, revStyles } =
             List.foldl
-                (\( content, marks ) state ->
+                (\( segmentContent, segmentMarks ) state ->
                     let
                         currentMarks =
-                            Set.fromList markSorter marks
+                            Set.fromList markSorter segmentMarks
 
                         startedMarks =
                             Set.dropIf (Set.memberOf state.priorMarks) currentMarks
@@ -128,7 +128,7 @@ overlappingStyles segments =
                             tagBeforeContent startedMarks ++ List.concatMap .startStyles startedMarks
 
                         currentStyles =
-                            List.concatMap .styles marks
+                            List.concatMap .styles segmentMarks
 
                         ( maybeStartLabels, styles ) =
                             case List.filterMap .name startedMarks of
@@ -151,7 +151,7 @@ overlappingStyles segments =
                                     , currentStyles
                                     )
                     in
-                    { priorMarks = currentMarks, revStyles = ( content, maybeStartLabels, styles ) :: updateEndRevStyles state.revStyles endedMarks }
+                    { priorMarks = currentMarks, revStyles = ( segmentContent, maybeStartLabels, styles ) :: updateEndRevStyles state.revStyles endedMarks }
                 )
                 { priorMarks = Set.empty markSorter, revStyles = [] }
                 segments
