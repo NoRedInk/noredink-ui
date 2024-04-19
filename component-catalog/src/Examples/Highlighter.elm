@@ -186,6 +186,21 @@ example =
                     |> map OverlappingHighlighterMsg
                 ]
             , Heading.h2
+                [ Heading.plaintext "Structured Highlighter example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
+            , Text.mediumBody [ Text.plaintext "If you have text that is structured in such a way that a simple paragraph won't work, you can use the Highlighter folding functions to render highlightables one by one inside of your HTML structure." ]
+            , div
+                [ css
+                    [ Css.fontSize (Css.px 24)
+                    , Css.lineHeight (Css.num 1.75)
+                    , Fonts.ugFont
+                    ]
+                ]
+                [ viewFoldHighlights state.foldHighlightsState
+                    |> map FoldHighlighterMsg
+                ]
+            , Heading.h2
                 [ Heading.plaintext "Non-interactive examples"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
@@ -485,7 +500,34 @@ type alias State =
     , highlighter : Highlighter.Model ()
     , overlappingHighlightsState : Highlighter.Model String
     , overlappingHighlightsIndex : Int
+    , foldHighlightsState : Highlighter.Model String
     }
+
+
+foldHighlightsSource : List (List String)
+foldHighlightsSource =
+    [ [ "This", " ", "is", " ", "a", " ", "list", " ", "item" ]
+    , [ "Here", " ", "is", " ", "another" ]
+    , [ "Finally", " ", "one", " ", "more" ]
+    ]
+
+
+swap : ( a, b ) -> ( b, a )
+swap ( a, b ) =
+    ( b, a )
+
+
+viewFoldHighlights : Highlighter.Model String -> Html (Highlighter.Msg String)
+viewFoldHighlights model =
+    List.Extra.mapAccuml
+        (\state sourceRow ->
+            List.Extra.mapAccuml (\innerState _ -> Highlighter.viewFoldHighlighter innerState [] |> swap) state sourceRow
+                |> Tuple.mapSecond (List.concat >> li [])
+        )
+        (Highlighter.initFoldState model)
+        foldHighlightsSource
+        |> Tuple.second
+        |> ul []
 
 
 {-| -}
@@ -501,6 +543,16 @@ init =
         Highlighter.init
             { id = "student-writing"
             , highlightables = Highlightable.initFragments "Letter grades have a variety of effects on students. Alfie Kohn, an American author who specializes in education issues, explains that students who are graded “tend to lose interest in the learning itself [and] avoid challenging tasks whenever possible.” Kohn’s argument illustrates how letter grades can become a source of stress for students and distract them from the joys of learning."
+            , marker = Tool.Marker (inlineCommentMarker "Comment 1")
+            , sorter = Sort.alphabetical
+            , joinAdjacentInteractiveHighlights = True
+            }
+    , foldHighlightsState =
+        Highlighter.init
+            { id = "student-writing-fold"
+            , highlightables =
+                List.concat foldHighlightsSource
+                    |> List.indexedMap (Highlightable.initInteractive [])
             , marker = Tool.Marker (inlineCommentMarker "Comment 1")
             , sorter = Sort.alphabetical
             , joinAdjacentInteractiveHighlights = True
@@ -653,6 +705,7 @@ type Msg
     = UpdateControls (Control Settings)
     | HighlighterMsg (Highlighter.Msg ())
     | OverlappingHighlighterMsg (Highlighter.Msg String)
+    | FoldHighlighterMsg (Highlighter.Msg String)
     | ClearHighlights
 
 
@@ -755,6 +808,13 @@ update msg state =
                                         , perform intent
                                         ]
                                     )
+
+        FoldHighlighterMsg highlighterMsg ->
+            let
+                ( highlighterModel, highlighterCmd, _ ) =
+                    Highlighter.update highlighterMsg state.foldHighlightsState
+            in
+            ( { state | foldHighlightsState = highlighterModel }, Cmd.map FoldHighlighterMsg highlighterCmd )
 
 
 perform : Highlighter.Intent -> Cmd msg
