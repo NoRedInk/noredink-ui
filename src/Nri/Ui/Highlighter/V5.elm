@@ -4,6 +4,7 @@ module Nri.Ui.Highlighter.V5 exposing
     , view, static, staticWithTags
     , viewMarkdown, staticMarkdown, staticMarkdownWithTags
     , viewWithOverlappingHighlights
+    , FoldState, initFoldState, viewFoldHighlighter, viewFoldStatic
     , Intent(..), hasChanged, HasChanged(..)
     , removeHighlights
     , clickedHighlightable, hoveredHighlightable
@@ -24,6 +25,7 @@ Highlighter provides a view/model/update to display a view to highlight text and
 
   - Made all highlighter views lazy
   - Optimized `selectShortest` for the normal case of 0 or 1 highlight.
+  - Added `FoldState`, `initFoldState`, `viewFoldHighlighter`, and `viewFoldStatic`
 
 
 # Types
@@ -38,6 +40,15 @@ Highlighter provides a view/model/update to display a view to highlight text and
 @docs view, static, staticWithTags
 @docs viewMarkdown, staticMarkdown, staticMarkdownWithTags
 @docs viewWithOverlappingHighlights
+
+
+# Foldable Views
+
+If you want more control over the rendering of the highlightables, you can use these functions inside of a fold to
+render the highlightables one by one. Use `initFoldState` to set up the initial state and then each call to `viewFoldHighlighter`
+or `viewFoldStatic` will render a single highlightable along with an update to the state.
+
+@docs FoldState, initFoldState, viewFoldHighlighter, viewFoldStatic
 
 
 ## Intents
@@ -915,30 +926,8 @@ viewWithOverlappingHighlights =
     lazy
         (\model ->
             let
-                hoveredMarkers =
-                    model.highlightables
-                        |> List.Extra.find (\h -> Just h.index == model.mouseOverIndex)
-                        |> Maybe.map (.marked >> List.map .kind)
-                        |> Maybe.withDefault []
-
                 overlaps =
-                    OverlapsSupported
-                        { hoveredMarkerWithShortestHighlight =
-                            case hoveredMarkers of
-                                [] ->
-                                    Nothing
-
-                                marker :: [] ->
-                                    Just marker
-
-                                first :: second :: rest ->
-                                    Just
-                                        (markerWithShortestHighlight
-                                            model.sorter
-                                            model.highlightables
-                                            ( first, second, rest )
-                                        )
-                        }
+                    findOverlapsSupport model
             in
             view_
                 { showTagsInline = False
@@ -1121,6 +1110,155 @@ staticMarkdownWithTags =
                 , highlightables = config.highlightables
                 }
         )
+
+
+findOverlapsSupport : Model marker -> OverlapsSupport marker
+findOverlapsSupport model =
+    let
+        hoveredMarkers =
+            model.highlightables
+                |> List.Extra.find (\h -> Just h.index == model.mouseOverIndex)
+                |> Maybe.map (.marked >> List.map .kind)
+                |> Maybe.withDefault []
+    in
+    OverlapsSupported
+        { hoveredMarkerWithShortestHighlight =
+            case hoveredMarkers of
+                [] ->
+                    Nothing
+
+                marker :: [] ->
+                    Just marker
+
+                first :: second :: rest ->
+                    Just
+                        (markerWithShortestHighlight
+                            model.sorter
+                            model.highlightables
+                            ( first, second, rest )
+                        )
+        }
+
+
+{-| A type that contains information needed to render individual `Highlightable`s one at a time
+-}
+type FoldState marker
+    = FoldState
+        { model : Model marker
+        , overlapsSupport : OverlapsSupport marker
+        , state : List ( Highlightable marker, Maybe (Html Never), List Css.Style )
+        }
+
+
+{-| Computes all the mark styles necessary to perform a fold over the `Highlightable` elements
+-}
+initFoldState : Model marker -> FoldState marker
+initFoldState model =
+    let
+        overlapsSupport =
+            findOverlapsSupport model
+
+        config =
+            { hintingIndices = model.hintingIndices
+            , mouseOverIndex = model.mouseOverIndex
+            , mouseDownIndex = model.mouseDownIndex
+            , maybeTool = Just model.marker
+            , overlaps = overlapsSupport
+            , highlightables = model.highlightables
+            }
+
+        highlightableGroups =
+            buildGroups config model.highlightables
+
+        toMark : Highlightable marker -> Tool.MarkerModel marker -> Mark.Mark
+        toMark highlightable marker =
+            { name = marker.name
+            , startStyles = marker.startGroupClass
+            , styles =
+                markedHighlightableStyles config
+                    (isHovered_ config highlightableGroups)
+                    highlightable
+            , endStyles = marker.endGroupClass
+            }
+
+        precomputedSegments =
+            model.highlightables
+                |> List.map (\highlightable -> ( highlightable, List.map (toMark highlightable) highlightable.marked ))
+                |> Mark.overlappingStyles
+    in
+    FoldState
+        { model = model
+        , overlapsSupport = overlapsSupport
+        , state = precomputedSegments
+        }
+
+
+{-| Render a single `Highlightable` while also returning an updated state.
+
+A list of extraStyles is also accepted if, for example, you want to apply bold / italic / underline formatting to the generated span.
+
+-}
+viewFoldHighlighter : List Css.Style -> FoldState marker -> ( FoldState marker, List (Html (Msg marker)) )
+viewFoldHighlighter extraStyles (FoldState ({ model, overlapsSupport } as foldState)) =
+    viewFoldHelper
+        (viewHighlightable
+            { renderMarkdown = False
+            , overlaps = overlapsSupport
+            }
+            model
+        )
+        extraStyles
+        (FoldState foldState)
+
+
+{-| Render a single `Highlightable` that is NOT interactive while also returning an updated state.
+
+A list of extraStyles is also accepted if, for example, you want to apply bold / italic / underline formatting to the generated span.
+
+-}
+viewFoldStatic : List Css.Style -> FoldState marker -> ( FoldState marker, List (Html msg) )
+viewFoldStatic =
+    viewFoldHelper
+        (viewHighlightableSegment
+            { interactiveHighlighterId = Nothing
+            , focusIndex = Nothing
+            , eventListeners = []
+            , maybeTool = Nothing
+            , mouseOverIndex = Nothing
+            , mouseDownIndex = Nothing
+            , hintingIndices = Nothing
+            , renderMarkdown = False
+            , sorter = Nothing
+            , overlaps = OverlapsNotSupported
+            }
+        )
+
+
+viewFoldHelper : (Highlightable marker -> List Css.Style -> Html msg) -> List Css.Style -> FoldState marker -> ( FoldState marker, List (Html msg) )
+viewFoldHelper viewSegment extraStyles (FoldState ({ state } as foldState)) =
+    case state of
+        [] ->
+            -- If we are in this position then the caller has called the step function too many times.
+            -- We return empty output and the same fold state.
+            ( FoldState foldState, [] )
+
+        ( highlightable, maybeLabelElement, markStyles ) :: todoState ->
+            let
+                segmentHtml =
+                    viewSegment
+                        highlightable
+                        (markStyles ++ extraStyles)
+            in
+            case maybeLabelElement of
+                Nothing ->
+                    ( FoldState { foldState | state = todoState }
+                    , [ segmentHtml ]
+                    )
+
+                Just labelElement ->
+                    ( FoldState { foldState | state = todoState }
+                    , [ Html.map never labelElement, segmentHtml ]
+                    )
 
 
 {-| Groups highlightables with the same state together.

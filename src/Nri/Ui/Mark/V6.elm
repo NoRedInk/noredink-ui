@@ -1,7 +1,7 @@
 module Nri.Ui.Mark.V6 exposing
     ( Mark
     , view, viewWithInlineTags, viewWithBalloonTags
-    , viewWithOverlaps
+    , viewWithOverlaps, overlappingStyles
     )
 
 {-|
@@ -11,9 +11,14 @@ module Nri.Ui.Mark.V6 exposing
 
     -  Add `skipTagAnimation` for skipping balloon animations
 
+
+### Patch changes
+
+    - Factor `overlappingStyles` out of `viewWithOverlaps` to allow consumers finer grained control of rendering mark elements.
+
 @docs Mark
 @docs view, viewWithInlineTags, viewWithBalloonTags
-@docs viewWithOverlaps
+@docs viewWithOverlaps, overlappingStyles
 
 -}
 
@@ -36,7 +41,7 @@ import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Sort exposing (Sorter)
-import Sort.Set as Set exposing (Set)
+import Sort.Set as Set
 import String.Extra
 
 
@@ -69,72 +74,95 @@ viewWithOverlaps :
     -> List ( content, List Mark )
     -> List (Html msg)
 viewWithOverlaps viewSegment segments =
-    segments
-        |> List.foldr
-            (\( content, marks ) ( lastMarks, acc ) ->
-                ( Set.fromList maybeStringSorter (List.map .name marks)
-                , { content = content
-                  , marks = marks
-                  , after = ignoreRepeats lastMarks marks
-                  }
-                    :: acc
-                )
+    overlappingStyles segments
+        |> List.concatMap
+            (\( content, maybeLabel, styles ) ->
+                case maybeLabel of
+                    Nothing ->
+                        [ viewSegment content styles ]
+
+                    Just label ->
+                        [ label, viewSegment content styles ]
             )
-            ( Set.empty maybeStringSorter, [] )
-        |> Tuple.second
-        |> List.foldl
-            (\{ content, marks, after } ( lastMarks, acc ) ->
-                let
-                    segment startingStyles =
-                        viewSegment content
-                            [ tagBeforeContent before
-                            , tagAfterContent after
-                            , Css.batch startingStyles
-                            , Css.batch (List.concatMap .styles marks)
-                            , Css.batch (List.concatMap .endStyles after)
-                            ]
 
-                    startStyles =
-                        List.concatMap (\markedWith -> markedWith.styles ++ markedWith.startStyles) before
 
-                    before =
-                        ignoreRepeats lastMarks marks
-                in
-                ( Set.fromList maybeStringSorter (List.map .name marks)
-                , acc
-                    ++ (case List.filterMap .name before of
-                            [] ->
-                                [ segment startStyles ]
+{-| Compute the styles required to mark the segments.
 
-                            names ->
-                                [ span [ css startStyles ]
-                                    [ viewInlineTag
-                                        [ Css.display Css.none
-                                        , MediaQuery.highContrastMode
-                                            [ Css.property "forced-color-adjust" "none"
-                                            , Css.display Css.inline |> Css.important
-                                            , Css.property "color" "initial" |> Css.important
+You can use this if you require more control over the structure of how marked elements are laid out than `viewWithOverlaps` provides.
+
+The `Maybe (Html msg)` result is a label element that should be rendered before the current segment.
+
+-}
+overlappingStyles : List ( content, List Mark ) -> List ( content, Maybe (Html msg), List Style )
+overlappingStyles segments =
+    let
+        -- We can't detect the end of a span of marks until after we are past it!
+        -- So we need to go back to the last set of styles and add the ended styles there
+        updateEndRevStyles patchRevStyles endedMarks =
+            case ( patchRevStyles, endedMarks ) of
+                ( [], _ ) ->
+                    patchRevStyles
+
+                ( _, [] ) ->
+                    patchRevStyles
+
+                ( ( prevContent, prevLabel, prevStyles ) :: otherPrevStyles, _ ) ->
+                    ( prevContent, prevLabel, prevStyles ++ (tagAfterContent endedMarks ++ List.concatMap .endStyles endedMarks) ) :: otherPrevStyles
+
+        { priorMarks, revStyles } =
+            List.foldl
+                (\( segmentContent, segmentMarks ) state ->
+                    let
+                        currentMarks =
+                            Set.fromList markSorter segmentMarks
+
+                        startedMarks =
+                            Set.dropIf (Set.memberOf state.priorMarks) currentMarks
+                                |> Set.toList
+
+                        endedMarks =
+                            Set.dropIf (Set.memberOf currentMarks) state.priorMarks
+                                |> Set.toList
+
+                        startStyles =
+                            tagBeforeContent startedMarks ++ List.concatMap .startStyles startedMarks
+
+                        currentStyles =
+                            List.concatMap .styles segmentMarks
+
+                        ( maybeStartLabels, styles ) =
+                            case List.filterMap .name startedMarks of
+                                [] ->
+                                    ( Nothing, startStyles ++ currentStyles )
+
+                                names ->
+                                    ( Just <|
+                                        span [ css startStyles ]
+                                            [ viewInlineTag
+                                                [ Css.display Css.none
+                                                , MediaQuery.highContrastMode
+                                                    [ Css.property "forced-color-adjust" "none"
+                                                    , Css.display Css.inline |> Css.important
+                                                    , Css.property "color" "initial" |> Css.important
+                                                    ]
+                                                ]
+                                                (String.Extra.toSentenceOxford names)
                                             ]
-                                        ]
-                                        (String.Extra.toSentenceOxford names)
-                                    ]
-                                , segment []
-                                ]
-                       )
+                                    , currentStyles
+                                    )
+                    in
+                    { priorMarks = currentMarks, revStyles = ( segmentContent, maybeStartLabels, styles ) :: updateEndRevStyles state.revStyles endedMarks }
                 )
-            )
-            ( Set.empty maybeStringSorter, [] )
-        |> Tuple.second
+                { priorMarks = Set.empty markSorter, revStyles = [] }
+                segments
+    in
+    updateEndRevStyles revStyles (Set.toList priorMarks)
+        |> List.reverse
 
 
-ignoreRepeats : Set (Maybe String) -> List Mark -> List Mark
-ignoreRepeats lastMarks list =
-    List.filter (\x -> not (Set.memberOf lastMarks x.name)) list
-
-
-maybeStringSorter : Sorter (Maybe String)
-maybeStringSorter =
-    Sort.by (Maybe.withDefault "") Sort.alphabetical
+markSorter : Sorter Mark
+markSorter =
+    Sort.by (.name >> Maybe.withDefault "") Sort.alphabetical
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
@@ -200,7 +228,7 @@ markedWithBalloonStyles marked lastIndex index =
         [ if index == 0 then
             -- if we're on the first highlighted element, we add
             -- a `before` content saying what kind of highlight we're starting
-            tagBeforeContent [ marked ] :: marked.startStyles
+            tagBeforeContent [ marked ] ++ marked.startStyles
 
           else
             []
@@ -359,7 +387,7 @@ markStyles tagStyle index marked =
             -- if we're on the first highlighted element, we add
             -- a `before` content saying what kind of highlight we're starting
             tagBeforeContent [ markedWith ]
-                :: markedWith.styles
+                ++ markedWith.styles
                 ++ -- if we're on the first element, and the mark has a name,
                    -- there's an inline tag that we might need to show.
                    -- if we're not showing a visual tag, we can attach the start styles to the first segment
@@ -393,28 +421,30 @@ markStyles tagStyle index marked =
                 |> Maybe.withDefault []
 
 
-tagBeforeContent : List Mark -> Css.Style
+tagBeforeContent : List Mark -> List Css.Style
 tagBeforeContent marks =
     if List.isEmpty marks then
-        Css.batch []
+        []
 
     else
-        Css.before
+        [ Css.before
             [ cssContent (highlightDescription "start" marks)
             , invisibleStyle
             ]
+        ]
 
 
-tagAfterContent : List Mark -> Css.Style
+tagAfterContent : List Mark -> List Css.Style
 tagAfterContent marks =
     if List.isEmpty marks then
-        Css.batch []
+        []
 
     else
-        Css.after
+        [ Css.after
             [ cssContent (highlightDescription "end" marks)
             , invisibleStyle
             ]
+        ]
 
 
 highlightDescription : String -> List Mark -> String

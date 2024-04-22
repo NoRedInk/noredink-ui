@@ -4,6 +4,7 @@ import Accessibility.Aria as Aria
 import Accessibility.Key as Key
 import Expect exposing (Expectation)
 import Html.Styled exposing (Html, toUnstyled)
+import Html.Styled.Attributes
 import List.Extra
 import Nri.Test.KeyboardHelpers.V1 as KeyboardHelpers
 import Nri.Test.MouseHelpers.V1 as MouseHelpers
@@ -426,6 +427,8 @@ markdownHighlightNameTests =
     , testIt "staticWithTags" Highlighter.staticWithTags
     , testIt "staticMarkdownWithTags" Highlighter.staticMarkdownWithTags
     , testIt "viewWithOverlappingHighlights" Highlighter.viewWithOverlappingHighlights
+    , testIt "viewFoldHighlight" renderWithFoldHighlight
+    , testIt "viewFoldStatic" renderWithFoldStatic
     ]
 
 
@@ -726,6 +729,28 @@ joinAdjacentInteractiveHighlightsTests =
     ]
 
 
+renderWithFoldHighlight : Highlighter.Model marker -> Html (Highlighter.Msg marker)
+renderWithFoldHighlight model =
+    List.Extra.mapAccuml
+        (\state _ -> Highlighter.viewFoldHighlighter [] state)
+        (Highlighter.initFoldState model)
+        model.highlightables
+        |> Tuple.second
+        |> List.concat
+        |> Html.Styled.p [ Html.Styled.Attributes.id "test-id", Html.Styled.Attributes.class "highlighter-container" ]
+
+
+renderWithFoldStatic : Highlighter.Model marker -> Html (Highlighter.Msg marker)
+renderWithFoldStatic model =
+    List.Extra.mapAccuml
+        (\state _ -> Highlighter.viewFoldStatic [] state)
+        (Highlighter.initFoldState model)
+        model.highlightables
+        |> Tuple.second
+        |> List.concat
+        |> Html.Styled.p [ Html.Styled.Attributes.id "test-id", Html.Styled.Attributes.class "highlighter-container" ]
+
+
 overlappingHighlightTests : List Test
 overlappingHighlightTests =
     let
@@ -825,4 +850,6 @@ overlappingHighlightTests =
             ]
     in
     [ describe "viewWithOverlappingHighlights" (staticAssertions Highlighter.viewWithOverlappingHighlights)
+    , describe "viewFoldHighlight" (staticAssertions renderWithFoldHighlight)
+    , describe "viewFoldStatic" (staticAssertions renderWithFoldStatic)
     ]
