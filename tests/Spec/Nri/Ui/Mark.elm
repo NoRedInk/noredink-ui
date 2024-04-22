@@ -107,8 +107,12 @@ tagAfterContent marks =
         ]
 
 
-{-| Mark.overlappingStyles gives us a (Maybe (Html msg)) for the label outputs,
-but we can't test equality on HTML elements very well so we need to drop it.
+{-| Mark.overlappingStyles gives us an optional `Maybe (Html msg)` element for the start of
+marks that have names. We can't test equality on HTML elements reliably so we drop it.
+
+Note that start styles are applied **directly on** this element if it exists, so we see start
+styles drop out of the tested output - which can be a bit confusing.
+
 -}
 testOverlappingStyles : List ( content, List Mark.Mark ) -> List ( content, List Css.Style )
 testOverlappingStyles inputs =
