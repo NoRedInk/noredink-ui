@@ -8,6 +8,7 @@ module Nri.Ui.SegmentedControl.V14 exposing
 
   - use Tooltip.V3 instead of Tooltip.V2
   - when tooltips aren't used, avoid using aria-owns and rendering tooltip-related code
+  - Option's attributes field gets passed into every radio element in `viewRadioGroup`
 
 Changes from V13:
 
