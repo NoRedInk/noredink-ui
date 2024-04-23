@@ -110,6 +110,7 @@ viewRadioGroup config =
                                         "false"
                                     )
                                 :: Style.invisible
+                                ++ option.attributes
                             )
                         , div [] [ viewIcon option.icon, option.label ]
                         ]
