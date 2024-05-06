@@ -9,15 +9,9 @@ module Nri.Ui.QuestionBox.V7 exposing
     , guidanceId
     )
 
-{-| Patch Changes
+{-| Changes from V6:
 
-  - Background color in Tip theme changed from white to sunshine yellow
-  - added html function
-  - Increase `minHeight` for tip question box so character fits
-
-Changes from V5:
-
-  - ???
+  - add an optional id to action
 
 @docs view, Attribute
 
@@ -37,6 +31,7 @@ import Css
 import Css.Global
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
+import Maybe.Extra
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
@@ -70,7 +65,11 @@ type alias CharacterPosition =
 
 
 type alias Action msg =
-    { label : String, theme : Button.Attribute msg, onClick : msg }
+    { label : String
+    , theme : Button.Attribute msg
+    , onClick : msg
+    , id : Maybe String
+    }
 
 
 type ActionOrientation
@@ -502,15 +501,20 @@ viewActions actions_ actionOrientation =
         [] ->
             Nothing
 
-        { label, theme, onClick } :: [] ->
+        ({ label, theme, onClick } as action) :: [] ->
             div [ css (Css.alignItems Css.center :: containerStyles) ]
                 [ Button.button label
-                    [ Button.onClick onClick
-                    , Button.fillContainerWidth
-                    , buttonSize
-                    , Button.css buttonAlignment
-                    , theme
-                    ]
+                    ((action.id
+                        |> Maybe.map Button.id
+                        |> Maybe.Extra.toList
+                     )
+                        ++ [ Button.onClick onClick
+                           , Button.fillContainerWidth
+                           , buttonSize
+                           , Button.css buttonAlignment
+                           , theme
+                           ]
+                    )
                 ]
                 |> Just
 
@@ -533,3 +537,4 @@ viewActions actions_ actionOrientation =
                     actions_
                 )
                 |> Just
+
