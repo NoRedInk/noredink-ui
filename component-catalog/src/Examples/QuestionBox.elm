@@ -271,12 +271,12 @@ tableExampleCode questionBoxAttributes =
 
 primaryButtonCode : String -> String
 primaryButtonCode label =
-    Code.recordMultiline [ ( "label", Code.string label ), ( "theme", Code.fromModule "Button" "primary" ), ( "onClick", "NoOp" ) ] 3
+    Code.recordMultiline [ ( "label", Code.string label ), ( "theme", Code.fromModule "Button" "primary" ), ( "onClick", "NoOp" ), ( "id", "Nothing" ) ] 3
 
 
 secondaryButtonCode : String -> String
 secondaryButtonCode label =
-    Code.recordMultiline [ ( "label", Code.string label ), ( "theme", Code.fromModule "Button" "secondary" ), ( "onClick", "NoOp" ) ] 3
+    Code.recordMultiline [ ( "label", Code.string label ), ( "theme", Code.fromModule "Button" "secondary" ), ( "onClick", "NoOp" ), ( "id", "Nothing" ) ] 3
 
 
 leftActionIconsCode : List ( String, String ) -> String
@@ -436,6 +436,7 @@ initAttributes =
                                                             Code.fromModule "Button" "secondary"
                                                       )
                                                     , ( "onClick", "NoOp" )
+                                                    , ( "id", "Nothing" )
                                                     ]
                                                 , { label = "Button " ++ String.fromInt i_
                                                   , theme =
