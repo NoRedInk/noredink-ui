@@ -24,7 +24,7 @@ import Nri.Ui.CharacterIcon.V2 as CharacterIcon
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.QuestionBox.V6 as QuestionBox
+import Nri.Ui.QuestionBox.V7 as QuestionBox
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V7 as Table
@@ -162,9 +162,9 @@ view ellieLinkConfig state =
                 tableExample
                     [ QuestionBox.markdown "**Adjectives describe nouns.** <br/><br/>Which word describes the noun **lollipop**?"
                     , QuestionBox.actions
-                        [ { label = "won", theme = Button.secondary, onClick = NoOp }
-                        , { label = "huge", theme = Button.secondary, onClick = NoOp }
-                        , { label = "T’Challa", theme = Button.secondary, onClick = NoOp }
+                        [ { label = "won", theme = Button.secondary, onClick = NoOp, id = Nothing }
+                        , { label = "huge", theme = Button.secondary, onClick = NoOp, id = Nothing }
+                        , { label = "T’Challa", theme = Button.secondary, onClick = NoOp, id = Nothing }
                         ]
                     ]
           , pattern =
@@ -185,7 +185,7 @@ view ellieLinkConfig state =
                     [ QuestionBox.markdown "**That's right!** 🎉 <br/><br/> **Scary** tells us **what kind** of painting. <br/> That means **scary** is an **adjective**."
                     , QuestionBox.correct
                     , QuestionBox.actions
-                        [ { label = "try this question again", theme = Button.primary, onClick = NoOp }
+                        [ { label = "try this question again", theme = Button.primary, onClick = NoOp, id = Nothing }
                         ]
                     ]
           , pattern =
@@ -205,7 +205,7 @@ view ellieLinkConfig state =
                     [ QuestionBox.markdown "**Not quite.** <br/><br /> **Past** doesn't tell us **what kind** of painting it is. <br/><br/> Look for word like these: \n- funny \n- pretty"
                     , QuestionBox.incorrect
                     , QuestionBox.actions
-                        [ { label = "Try again", theme = Button.secondary, onClick = NoOp }
+                        [ { label = "Try again", theme = Button.secondary, onClick = NoOp, id = Nothing }
                         ]
                     ]
           , pattern =
@@ -238,8 +238,8 @@ view ellieLinkConfig state =
                     , QuestionBox.incorrect
                     , QuestionBox.actionsHorizontal
                     , QuestionBox.actions
-                        [ { label = "Next question", theme = Button.primary, onClick = NoOp }
-                        , { label = "Review tutorial", theme = Button.secondary, onClick = NoOp }
+                        [ { label = "Next question", theme = Button.primary, onClick = NoOp, id = Nothing }
+                        , { label = "Review tutorial", theme = Button.secondary, onClick = NoOp, id = Nothing }
                         ]
                     ]
           , pattern =
@@ -271,12 +271,12 @@ tableExampleCode questionBoxAttributes =
 
 primaryButtonCode : String -> String
 primaryButtonCode label =
-    Code.recordMultiline [ ( "label", Code.string label ), ( "theme", Code.fromModule "Button" "primary" ), ( "onClick", "NoOp" ) ] 3
+    Code.recordMultiline [ ( "label", Code.string label ), ( "theme", Code.fromModule "Button" "primary" ), ( "onClick", "NoOp" ), ( "id", "Nothing" ) ] 3
 
 
 secondaryButtonCode : String -> String
 secondaryButtonCode label =
-    Code.recordMultiline [ ( "label", Code.string label ), ( "theme", Code.fromModule "Button" "secondary" ), ( "onClick", "NoOp" ) ] 3
+    Code.recordMultiline [ ( "label", Code.string label ), ( "theme", Code.fromModule "Button" "secondary" ), ( "onClick", "NoOp" ), ( "id", "Nothing" ) ] 3
 
 
 leftActionIconsCode : List ( String, String ) -> String
@@ -436,6 +436,7 @@ initAttributes =
                                                             Code.fromModule "Button" "secondary"
                                                       )
                                                     , ( "onClick", "NoOp" )
+                                                    , ( "id", "Nothing" )
                                                     ]
                                                 , { label = "Button " ++ String.fromInt i_
                                                   , theme =
@@ -445,6 +446,7 @@ initAttributes =
                                                         else
                                                             Button.secondary
                                                   , onClick = NoOp
+                                                  , id = Nothing
                                                   }
                                                 )
                                             )
