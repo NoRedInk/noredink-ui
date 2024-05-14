@@ -17,6 +17,7 @@ module Nri.Ui.Tabs.V8 exposing
   - Adds background color in the tab list (for use with sticky positioning)
   - Adds the ability to make the background of the active tab fade into the background of the panel below it
   - Adds an `data-nri-description='Nri-Ui__tabs'` attribute to the tabs container
+  - Adds the ability to explicitly set the label of the tab (rather than using its inner text)
 
 
 ### Attributes
