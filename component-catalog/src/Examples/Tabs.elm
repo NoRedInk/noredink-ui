@@ -255,6 +255,9 @@ buildTab config id =
 
         labelledById =
             idString ++ "-label"
+
+        fixedLabelOverride =
+            tabName ++ " custom label"
     in
     ( String.join ""
         [ "Tabs.build { id = " ++ String.fromInt id ++ ", idString = " ++ Code.string tabIdString ++ " }"
@@ -280,7 +283,7 @@ buildTab config id =
                 "\n\t    , Tabs.labelledBy " ++ Code.string labelledById
 
             FixedLabel ->
-                "\n\t    , Tabs.label " ++ Code.string tabName
+                "\n\t    , Tabs.label " ++ Code.string fixedLabelOverride
         , "\n\t    ]"
         ]
     , Tabs.build { id = id, idString = tabIdString }
@@ -306,7 +309,7 @@ buildTab config id =
                     [ Tabs.labelledBy labelledById ]
 
                 FixedLabel ->
-                    [ Tabs.label tabName ]
+                    [ Tabs.label fixedLabelOverride ]
             ]
         )
     )
