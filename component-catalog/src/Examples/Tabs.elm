@@ -252,6 +252,9 @@ buildTab config id =
 
         panelName =
             "Panel " ++ idString
+
+        labelledById =
+            idString ++ "-label"
     in
     ( String.join ""
         [ "Tabs.build { id = " ++ String.fromInt id ++ ", idString = " ++ Code.string tabIdString ++ " }"
@@ -269,6 +272,15 @@ buildTab config id =
 
           else
             ""
+        , case config.labelSource of
+            FromInnerText ->
+                ""
+
+            LabelledBy ->
+                "\n\t    , Tabs.labelledBy " ++ Code.string labelledById
+
+            FixedLabel ->
+                "\n\t    , Tabs.label " ++ Code.string tabName
         , "\n\t    ]"
         ]
     , Tabs.build { id = id, idString = tabIdString }
@@ -291,7 +303,7 @@ buildTab config id =
                     []
 
                 LabelledBy ->
-                    [ Tabs.labelledBy (idString ++ "-label") ]
+                    [ Tabs.labelledBy labelledById ]
 
                 FixedLabel ->
                     [ Tabs.label tabName ]
