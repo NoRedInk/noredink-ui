@@ -1,7 +1,7 @@
 module TabsInternal.V2 exposing
     ( Config, views
     , Tab, fromList
-    , Label(..)
+    , LabelSource(..)
     )
 
 {-|
@@ -46,7 +46,7 @@ type alias Tab id msg =
     , tabView : List (Html msg)
     , panelView : Html msg
     , spaHref : Maybe String
-    , label : Label
+    , label : LabelSource
     , describedBy : List String
     }
 
@@ -63,7 +63,7 @@ set up, you could end up with no accessible labels, or native OS tooltips
 showing in addition to our own. See QUO-630.
 
 -}
-type Label
+type LabelSource
     = FromInnerText
     | FixedLabel String
     | LabelledBy String
