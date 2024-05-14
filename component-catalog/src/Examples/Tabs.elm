@@ -115,6 +115,7 @@ example =
                     allTabs
                         { openTooltipId = model.openTooltip
                         , withTooltips = settings.withTooltips
+                        , labelSource = settings.labelSource
                         , pageBackgroundColor = settings.pageBackgroundColor
                         }
             in
@@ -221,6 +222,7 @@ example =
 allTabs :
     { openTooltipId : Maybe Int
     , withTooltips : Bool
+    , labelSource : LabelSource
     , pageBackgroundColor : Maybe Color
     }
     -> List ( String, Tab Int Msg )
@@ -232,6 +234,7 @@ allTabs config =
 buildTab :
     { openTooltipId : Maybe Int
     , withTooltips : Bool
+    , labelSource : LabelSource
     , pageBackgroundColor : Maybe Color
     }
     -> Int
@@ -269,20 +272,30 @@ buildTab config id =
         , "\n\t    ]"
         ]
     , Tabs.build { id = id, idString = tabIdString }
-        ([ Tabs.tabString tabName
-         , Tabs.panelHtml (panelContent config.pageBackgroundColor id panelName)
-         ]
-            ++ (if config.withTooltips then
-                    [ Tabs.withTooltip
-                        [ Tooltip.plaintext tabName
-                        , Tooltip.onToggle (ToggleTooltip id)
-                        , Tooltip.open (config.openTooltipId == Just id)
-                        ]
+        (List.concat
+            [ [ Tabs.tabString tabName
+              , Tabs.panelHtml (panelContent config.pageBackgroundColor id panelName)
+              ]
+            , if config.withTooltips then
+                [ Tabs.withTooltip
+                    [ Tooltip.plaintext tabName
+                    , Tooltip.onToggle (ToggleTooltip id)
+                    , Tooltip.open (config.openTooltipId == Just id)
                     ]
+                ]
 
-                else
+              else
+                []
+            , case config.labelSource of
+                FromInnerText ->
                     []
-               )
+
+                LabelledBy ->
+                    [ Tabs.labelledBy (idString ++ "-label") ]
+
+                FixedLabel ->
+                    [ Tabs.label tabName ]
+            ]
         )
     )
 
@@ -346,7 +359,14 @@ type alias Settings =
     , withTooltips : Bool
     , pageBackgroundColor : Maybe Color
     , stickiness : Maybe Stickiness
+    , labelSource : LabelSource
     }
+
+
+type LabelSource
+    = FromInnerText
+    | LabelledBy
+    | FixedLabel
 
 
 type Color
@@ -414,6 +434,13 @@ initSettings =
                     ]
                 )
                 |> Control.revealed "Tablist Sticky"
+            )
+        |> Control.field "accessible label"
+            (Control.choice
+                [ ( "From inner text (default)", Control.value FromInnerText )
+                , ( "Labelled by another element", Control.value LabelledBy )
+                , ( "Fixed", Control.value FixedLabel )
+                ]
             )
 
 
