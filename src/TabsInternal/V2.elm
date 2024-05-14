@@ -1,12 +1,14 @@
 module TabsInternal.V2 exposing
     ( Config, views
     , Tab, fromList
+    , Label(..)
     )
 
 {-|
 
 @docs Config, views
 @docs Tab, fromList
+@docs Label
 
 -}
 
@@ -44,9 +46,27 @@ type alias Tab id msg =
     , tabView : List (Html msg)
     , panelView : Html msg
     , spaHref : Maybe String
-    , labelledBy : Maybe String
+    , label : Label
     , describedBy : List String
     }
+
+
+{-| Determines what the accessible label for the tab will be.
+
+Default behavior is to use the inner text of the tab, but we let users of the
+API override this via aria-label or aria-describedby attributes.
+
+You probably want to do this if you are controlling tooltips externally, to
+ensure the accessible label matches your tooltip. In particular, this will be
+useful if you are using icon-only tabs. Otherwise, depending on how the SVG is
+set up, you could end up with no accessible labels, or native OS tooltips
+showing in addition to our own. See QUO-630.
+
+-}
+type Label
+    = FromInnerText
+    | FixedLabel String
+    | LabelledBy String
 
 
 {-| -}
@@ -61,7 +81,7 @@ fromList { id, idString } attributes =
             , tabView = []
             , panelView = Html.text ""
             , spaHref = Nothing
-            , labelledBy = Nothing
+            , label = FromInnerText
             , describedBy = []
             }
     in
@@ -186,11 +206,14 @@ viewTab_ config index ( tab, keyEvents ) =
                        , Attributes.id (safeId tab.idString)
                        , Key.onKeyUpPreventDefault keyEvents
                        ]
-                    ++ (case tab.labelledBy of
-                            Nothing ->
+                    ++ (case tab.label of
+                            FromInnerText ->
                                 []
 
-                            Just labelledById ->
+                            FixedLabel label ->
+                                [ Aria.label label ]
+
+                            LabelledBy labelledById ->
                                 [ Aria.labelledBy labelledById ]
                        )
                     ++ (case tab.describedBy of
@@ -203,17 +226,23 @@ viewTab_ config index ( tab, keyEvents ) =
                 )
                 tab.tabView
     in
-    -- If the labelledByAttribute gets passed in, we're using an external
-    -- tooltip, so we override any existing internal tooltip to not create
-    -- accessibility problems.
-    case ( tab.labelledBy, tab.tabTooltip ) of
-        ( Just _, _ ) ->
+    -- Tooltips should be consistent wit the tab's label.
+    --
+    -- By default, we use the inner text of the tab as the label and manage
+    -- tooltips ourselves. If the user chooses to override the inner-text label
+    -- by means of aria-label or aria-labelledby we expect them to manage any
+    -- tooltips externally.
+    case ( tab.label, tab.tabTooltip ) of
+        ( LabelledBy _, _ ) ->
+            buttonOrLink []
+
+        ( FixedLabel _, _ ) ->
             buttonOrLink []
 
         ( _, [] ) ->
             buttonOrLink []
 
-        ( Nothing, tooltipAttributes ) ->
+        ( FromInnerText, tooltipAttributes ) ->
             Tooltip.view
                 { id = safeIdWithPrefix "tab-tooltip" tab.idString
                 , trigger = \eventHandlers -> buttonOrLink eventHandlers

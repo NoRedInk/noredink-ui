@@ -5,7 +5,7 @@ module Nri.Ui.Tabs.V8 exposing
     , tabListSticky, TabListStickyConfig, tabListStickyCustom
     , view
     , Tab, TabAttribute, build
-    , tabString, tabHtml, withTooltip, labelledBy, describedBy
+    , tabString, tabHtml, withTooltip, label, labelledBy, describedBy
     , panelHtml
     , spaHref
     )
@@ -31,7 +31,7 @@ module Nri.Ui.Tabs.V8 exposing
 ### Tabs
 
 @docs Tab, TabAttribute, build
-@docs tabString, tabHtml, withTooltip, labelledBy, describedBy
+@docs tabString, tabHtml, withTooltip, label, labelledBy, describedBy
 @docs panelHtml
 @docs spaHref
 
@@ -81,12 +81,20 @@ withTooltip attributes =
     TabAttribute (\tab -> { tab | tabTooltip = attributes })
 
 
-{-| Sets an overriding labelledBy on the tab for an external tooltip.
+{-| Sets an overriding label attribute on the tab for an external tooltip.
+This assumes an external tooltip is set and disables any internal tooltip configured.
+-}
+label : String -> TabAttribute id msg
+label label_ =
+    TabAttribute (\tab -> { tab | label = TabsInternal.FixedLabel label_ })
+
+
+{-| Sets an overriding labelled-by attribute on the tab for an external tooltip.
 This assumes an external tooltip is set and disables any internal tooltip configured.
 -}
 labelledBy : String -> TabAttribute id msg
 labelledBy labelledById =
-    TabAttribute (\tab -> { tab | labelledBy = Just labelledById })
+    TabAttribute (\tab -> { tab | label = TabsInternal.LabelledBy labelledById })
 
 
 {-| Like [`labelledBy`](#labelledBy), but it describes the given element
