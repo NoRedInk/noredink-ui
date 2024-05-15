@@ -190,6 +190,15 @@ hint = 'upgrade to V11'
 [forbidden."Nri.Ui.Pennant.V2"]
 hint = 'upgrade to V3'
 
+[forbidden."Nri.Ui.Pennant.V3"]
+hint = 'upgrade to V4'
+usages = [
+    'component-catalog/../src/Nri/Ui/PremiumCheckbox/V8.elm',
+    'component-catalog/../src/Nri/Ui/RadioButton/V4.elm',
+    'component-catalog/../src/Nri/Ui/SideNav/V5.elm',
+    'component-catalog/src/Examples/PremiumCheckbox.elm',
+]
+
 [forbidden."Nri.Ui.PremiumCheckbox.V6"]
 hint = 'upgrade to V8'
 
@@ -208,6 +217,9 @@ hint = 'upgrade to V5'
 
 [forbidden."Nri.Ui.QuestionBox.V4"]
 hint = 'upgrade to V5'
+
+[forbidden."Nri.Ui.QuestionBox.V6"]
+hint = 'upgrade to V7'
 
 [forbidden."Nri.Ui.RadioButton.V1"]
 hint = 'upgrade to V2'
