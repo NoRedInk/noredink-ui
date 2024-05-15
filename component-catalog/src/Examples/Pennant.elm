@@ -9,7 +9,7 @@ module Examples.Pennant exposing (example, State, Msg)
 import Css
 import Example exposing (Example)
 import IconExamples exposing (Group)
-import Nri.Ui.Pennant.V3 as Pennant
+import Nri.Ui.Pennant.V4 as Pennant
 
 
 {-| -}
@@ -26,7 +26,7 @@ type alias Msg =
 example : Example State Msg
 example =
     { moduleName = "Pennant"
-    , version = 3
+    , version = 4
     , label = "Premium"
     , name = "premiumFlag"
     , icon = Pennant.contentPremiumFlag
