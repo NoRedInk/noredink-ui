@@ -12,7 +12,7 @@ module Nri.Ui.Tabs.V9 exposing
 
 {-| Changes from V8:
 
-  - TO-DO
+  - Tabs.label and Tabs.labelledBy don't interfere with Tooltips behavior anymore.
 
 
 ### Attributes
