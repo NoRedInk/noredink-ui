@@ -26,7 +26,7 @@ import Nri.Ui.Page.V3 as Page
 import Nri.Ui.SideNav.V5 as SideNav
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Sprite.V1 as Sprite
-import Nri.Ui.Tabs.V8 as Tabs exposing (Tab)
+import Nri.Ui.Tabs.V9 as Tabs exposing (Tab)
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Routes exposing (Route)
 import Sort.Set as Set
