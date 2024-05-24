@@ -77,16 +77,16 @@ withTooltip attributes =
     TabAttribute (\tab -> { tab | tabTooltip = attributes })
 
 
-{-| Sets an overriding label attribute on the tab for an external tooltip.
-This assumes an external tooltip is set and disables any internal tooltip configured.
+{-| Sets the label to be used by a tab, overriding the one determined by its
+inner text content.
 -}
 label : String -> TabAttribute id msg
 label label_ =
     TabAttribute (\tab -> { tab | label = TabsInternal.FixedLabel label_ })
 
 
-{-| Sets an overriding labelled-by attribute on the tab for an external tooltip.
-This assumes an external tooltip is set and disables any internal tooltip configured.
+{-| Sets the label to be used by a tab by means of an aria-labelled by
+attribute, overriding the one determined by its inner text content.
 -}
 labelledBy : String -> TabAttribute id msg
 labelledBy labelledById =
