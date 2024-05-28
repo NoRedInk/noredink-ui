@@ -39,7 +39,7 @@ moduleName =
 
 version : Int
 version =
-    8
+    9
 
 
 example : Example State Msg
