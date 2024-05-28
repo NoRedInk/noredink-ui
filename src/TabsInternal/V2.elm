@@ -54,10 +54,7 @@ type alias Tab id msg =
 {-| Determines what the accessible label for the tab will be.
 
 Default behavior is to use the inner text of the tab, but we let users of the
-API override this via aria-label or aria-describedby attributes.
-
-You probably want to do this if you are controlling tooltips externally, to
-ensure the accessible label matches your tooltip. In particular, this will be
+API override this via aria-label or aria-describedby attributes. This might be
 useful if you are using icon-only tabs. Otherwise, depending on how the SVG is
 set up, you could end up with no accessible labels, or native OS tooltips
 showing in addition to our own. See QUO-630.
@@ -226,23 +223,11 @@ viewTab_ config index ( tab, keyEvents ) =
                 )
                 tab.tabView
     in
-    -- Tooltips should be consistent wit the tab's label.
-    --
-    -- By default, we use the inner text of the tab as the label and manage
-    -- tooltips ourselves. If the user chooses to override the inner-text label
-    -- by means of aria-label or aria-labelledby we expect them to manage any
-    -- tooltips externally.
-    case ( tab.label, tab.tabTooltip ) of
-        ( LabelledBy _, _ ) ->
+    case tab.tabTooltip of
+        [] ->
             buttonOrLink []
 
-        ( FixedLabel _, _ ) ->
-            buttonOrLink []
-
-        ( _, [] ) ->
-            buttonOrLink []
-
-        ( FromInnerText, tooltipAttributes ) ->
+        tooltipAttributes ->
             Tooltip.view
                 { id = safeIdWithPrefix "tab-tooltip" tab.idString
                 , trigger = \eventHandlers -> buttonOrLink eventHandlers

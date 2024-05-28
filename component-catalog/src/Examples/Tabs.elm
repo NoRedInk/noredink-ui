@@ -26,7 +26,7 @@ import List.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Message.V4 as Message
 import Nri.Ui.Panel.V1 as Panel
-import Nri.Ui.Tabs.V8 as Tabs exposing (Alignment(..), Tab)
+import Nri.Ui.Tabs.V9 as Tabs exposing (Alignment(..), Tab)
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Task
