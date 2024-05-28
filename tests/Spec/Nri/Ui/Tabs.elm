@@ -2,7 +2,7 @@ module Spec.Nri.Ui.Tabs exposing (spec)
 
 import Browser.Dom as Dom
 import Html.Styled as Html exposing (..)
-import Nri.Ui.Tabs.V8 as Tabs
+import Nri.Ui.Tabs.V9 as Tabs
 import Nri.Ui.Tooltip.V3 as Tooltip
 import ProgramTest exposing (..)
 import Spec.Helpers exposing (nriDescription)
@@ -14,7 +14,7 @@ import Test.Html.Selector as Selector exposing (Selector, all, containing)
 
 spec : Test
 spec =
-    describe "Nri.Ui.Tabs.V8"
+    describe "Nri.Ui.Tabs.V9"
         [ describe "panel rendering" panelRenderingTests
         , describe "keyboard behavior" keyboardTests
         ]
