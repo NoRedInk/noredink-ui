@@ -25,7 +25,14 @@ module Nri.Ui.Colors.V1 exposing
     , mustard
     )
 
-{-| Comprehensive list of named colors.
+{-|
+
+
+### Patch
+
+    - Added "Light" and "DarkLight" highlight colors
+
+Comprehensive list of named colors.
 
 For helpers & conversions, see Nri.Ui.Colors.Extra, or
 consider [elm-color-extra](http://package.elm-lang.org/packages/eskimoblood/elm-color-extra/5.0.0/).
