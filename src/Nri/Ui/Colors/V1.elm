@@ -6,13 +6,13 @@ module Nri.Ui.Colors.V1 exposing
     , gray20, gray45, gray75, gray85, gray92, gray96
     , glacier, grassland, green, greenDark, greenDarkest, greenLight, greenLightest
     , highlightLightBlue, highlightLightMagenta, highlightLightYellow
-    , highlightBlue, highlightBlueLightest, highlightBlueDark
-    , highlightCyan, highlightCyanLightest, highlightCyanDark
-    , highlightGreen, highlightGreenLightest, highlightGreenDark
-    , highlightMagenta, highlightMagentaLightest, highlightMagentaDark
-    , highlightPurple, highlightPurpleLightest, highlightPurpleDark
-    , highlightYellow, highlightYellowLightest, highlightYellowDark
-    , highlightBrown, highlightBrownLightest, highlightBrownDark
+    , highlightBlue, highlightBlueLight, highlightBlueLightest, highlightBlueDark, highlightBlueDarkLight
+    , highlightCyan, highlightCyanLight, highlightCyanLightest, highlightCyanDark, highlightCyanDarkLight
+    , highlightGreen, highlightGreenLight, highlightGreenLightest, highlightGreenDark, highlightGreenDarkLight
+    , highlightMagenta, highlightMagentaLight, highlightMagentaLightest, highlightMagentaDark, highlightMagentaDarkLight
+    , highlightPurple, highlightPurpleLight, highlightPurpleLightest, highlightPurpleDark, highlightPurpleDarkLight
+    , highlightYellow, highlightYellowLight, highlightYellowLightest, highlightYellowDark, highlightYellowDarkLight
+    , highlightBrown, highlightBrownLight, highlightBrownLightest, highlightBrownDark, highlightBrownDarkLight
     , textHighlightYellow, textHighlightCyan, textHighlightMagenta, textHighlightGreen, textHighlightBlue, textHighlightPurple, textHighlightBrown
     , lichen
     , magenta
@@ -37,13 +37,13 @@ consider [elm-color-extra](http://package.elm-lang.org/packages/eskimoblood/elm-
 @docs gray20, gray45, gray75, gray85, gray92, gray96
 @docs glacier, grassland, green, greenDark, greenDarkest, greenLight, greenLightest
 @docs highlightLightBlue, highlightLightMagenta, highlightLightYellow
-@docs highlightBlue, highlightBlueLightest, highlightBlueDark
-@docs highlightCyan, highlightCyanLightest, highlightCyanDark
-@docs highlightGreen, highlightGreenLightest, highlightGreenDark
-@docs highlightMagenta, highlightMagentaLightest, highlightMagentaDark
-@docs highlightPurple, highlightPurpleLightest, highlightPurpleDark
-@docs highlightYellow, highlightYellowLightest, highlightYellowDark
-@docs highlightBrown, highlightBrownLightest, highlightBrownDark
+@docs highlightBlue, highlightBlueLight, highlightBlueLightest, highlightBlueDark, highlightBlueDarkLight
+@docs highlightCyan, highlightCyanLight, highlightCyanLightest, highlightCyanDark, highlightCyanDarkLight
+@docs highlightGreen, highlightGreenLight, highlightGreenLightest, highlightGreenDark, highlightGreenDarkLight
+@docs highlightMagenta, highlightMagentaLight, highlightMagentaLightest, highlightMagentaDark, highlightMagentaDarkLight
+@docs highlightPurple, highlightPurpleLight, highlightPurpleLightest, highlightPurpleDark, highlightPurpleDarkLight
+@docs highlightYellow, highlightYellowLight, highlightYellowLightest, highlightYellowDark, highlightYellowDarkLight
+@docs highlightBrown, highlightBrownLight, highlightBrownLightest, highlightBrownDark, highlightBrownDarkLight
 @docs textHighlightYellow, textHighlightCyan, textHighlightMagenta, textHighlightGreen, textHighlightBlue, textHighlightPurple, textHighlightBrown
 @docs lichen
 @docs magenta
@@ -252,6 +252,13 @@ highlightYellow =
 
 {-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
 -}
+highlightYellowLight : Css.Color
+highlightYellowLight =
+    hex "#FFF3CB"
+
+
+{-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
+-}
 highlightYellowLightest : Css.Color
 highlightYellowLightest =
     hex "#fffdf5"
@@ -262,6 +269,13 @@ highlightYellowLightest =
 highlightYellowDark : Css.Color
 highlightYellowDark =
     hex "#795d01"
+
+
+{-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
+-}
+highlightYellowDarkLight : Css.Color
+highlightYellowDarkLight =
+    hex "#A18E4D"
 
 
 {-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
@@ -280,6 +294,13 @@ highlightCyan =
 
 {-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
 -}
+highlightCyanLight : Css.Color
+highlightCyanLight =
+    hex "#CDFFF5"
+
+
+{-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
+-}
 highlightCyanLightest : Css.Color
 highlightCyanLightest =
     hex "#f5fffe"
@@ -290,6 +311,13 @@ highlightCyanLightest =
 highlightCyanDark : Css.Color
 highlightCyanDark =
     hex "#006156"
+
+
+{-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
+-}
+highlightCyanDarkLight : Css.Color
+highlightCyanDarkLight =
+    hex "#4D9089"
 
 
 {-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
@@ -308,6 +336,13 @@ highlightMagenta =
 
 {-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
 -}
+highlightMagentaLight : Css.Color
+highlightMagentaLight =
+    hex "#FFDBF9"
+
+
+{-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
+-}
 highlightMagentaLightest : Css.Color
 highlightMagentaLightest =
     hex "#fff8fe"
@@ -318,6 +353,13 @@ highlightMagentaLightest =
 highlightMagentaDark : Css.Color
 highlightMagentaDark =
     hex "#a30088"
+
+
+{-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
+-}
+highlightMagentaDarkLight : Css.Color
+highlightMagentaDarkLight =
+    hex "#BF4DAC"
 
 
 {-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
@@ -336,6 +378,13 @@ highlightGreen =
 
 {-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
 -}
+highlightGreenLight : Css.Color
+highlightGreenLight =
+    hex "#C7FFD9"
+
+
+{-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
+-}
 highlightGreenLightest : Css.Color
 highlightGreenLightest =
     hex "#f4fff7"
@@ -346,6 +395,13 @@ highlightGreenLightest =
 highlightGreenDark : Css.Color
 highlightGreenDark =
     hex "#007025"
+
+
+{-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
+-}
+highlightGreenDarkLight : Css.Color
+highlightGreenDarkLight =
+    hex "#4D9B66"
 
 
 {-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
@@ -364,6 +420,13 @@ highlightBlue =
 
 {-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
 -}
+highlightBlueLight : Css.Color
+highlightBlueLight =
+    hex "#EDF4FF"
+
+
+{-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
+-}
 highlightBlueLightest : Css.Color
 highlightBlueLightest =
     hex "#fafcff"
@@ -374,6 +437,13 @@ highlightBlueLightest =
 highlightBlueDark : Css.Color
 highlightBlueDark =
     hex "#002e85"
+
+
+{-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
+-}
+highlightBlueDarkLight : Css.Color
+highlightBlueDarkLight =
+    hex "#B2C7DC"
 
 
 {-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
@@ -392,6 +462,13 @@ highlightPurple =
 
 {-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
 -}
+highlightPurpleLight : Css.Color
+highlightPurpleLight =
+    hex "#F5F1FF"
+
+
+{-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
+-}
 highlightPurpleLightest : Css.Color
 highlightPurpleLightest =
     hex "#fcfbff"
@@ -402,6 +479,13 @@ highlightPurpleLightest =
 highlightPurpleDark : Css.Color
 highlightPurpleDark =
     hex "#3c00bd"
+
+
+{-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
+-}
+highlightPurpleDarkLight : Css.Color
+highlightPurpleDarkLight =
+    hex "#C2B2E8"
 
 
 {-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
@@ -420,6 +504,13 @@ highlightBrown =
 
 {-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
 -}
+highlightBrownLight : Css.Color
+highlightBrownLight =
+    hex "#FFEBE0"
+
+
+{-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
+-}
 highlightBrownLightest : Css.Color
 highlightBrownLightest =
     hex "#fff9f6"
@@ -430,6 +521,13 @@ highlightBrownLightest =
 highlightBrownDark : Css.Color
 highlightBrownDark =
     hex "#943b00"
+
+
+{-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
+-}
+highlightBrownDarkLight : Css.Color
+highlightBrownDarkLight =
+    hex "#DDC1B5"
 
 
 {-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
