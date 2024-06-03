@@ -75,7 +75,7 @@ example =
             , viewGroupedColors colorGroupings
             , Heading.h2 [ Heading.plaintext "Background Highlight Colors" ]
             , Text.mediumBody [ Text.plaintext "Background highlights should be used as the default highlight style because they are more noticeable and readable. The dark colors should be used in the case where headings need to harmonize with highlighted containers, such as in Guided Drafts." ]
-            , viewColors backgroundHighlightColors
+            , viewBackgroundHighlightTable backgroundHighlights
             , Heading.h2 [ Heading.plaintext "Text Highlight Colors" ]
             , Text.mediumBody [ Text.plaintext "Colors for highlighting text on a white background.  These colors are readable at 14px bold and bigger." ]
             , viewColors textHighlightColors
@@ -182,44 +182,104 @@ uncategorizedColors =
     List.concatMap Tuple.second colorGroupings
 
 
+type alias BackgroundHighlight =
+    { name : String
+    , base : Css.Color
+    , light : Css.Color
+    , lightest : Css.Color
+    , dark : Css.Color
+    , darkLight : Css.Color
+    }
+
+
+backgroundHighlights : List BackgroundHighlight
+backgroundHighlights =
+    [ { name = "Yellow"
+      , base = Colors.highlightYellow
+      , light = Colors.highlightYellowLight
+      , lightest = Colors.highlightYellowLightest
+      , dark = Colors.highlightYellowDark
+      , darkLight = Colors.highlightYellowDarkLight
+      }
+    , { name = "Cyan"
+      , base = Colors.highlightCyan
+      , light = Colors.highlightCyanLight
+      , lightest = Colors.highlightCyanLightest
+      , dark = Colors.highlightCyanDark
+      , darkLight = Colors.highlightCyanDarkLight
+      }
+    , { name = "Magenta"
+      , base = Colors.highlightMagenta
+      , light = Colors.highlightMagentaLight
+      , lightest = Colors.highlightMagentaLightest
+      , dark = Colors.highlightMagentaDark
+      , darkLight = Colors.highlightMagentaDarkLight
+      }
+    , { name = "Green"
+      , base = Colors.highlightGreen
+      , light = Colors.highlightGreenLight
+      , lightest = Colors.highlightGreenLightest
+      , dark = Colors.highlightGreenDark
+      , darkLight = Colors.highlightGreenDarkLight
+      }
+    , { name = "Blue"
+      , base = Colors.highlightBlue
+      , light = Colors.highlightBlueLight
+      , lightest = Colors.highlightBlueLightest
+      , dark = Colors.highlightBlueDark
+      , darkLight = Colors.highlightBlueDarkLight
+      }
+    , { name = "Purple"
+      , base = Colors.highlightPurple
+      , light = Colors.highlightPurpleLight
+      , lightest = Colors.highlightPurpleLightest
+      , dark = Colors.highlightPurpleDark
+      , darkLight = Colors.highlightPurpleDarkLight
+      }
+    , { name = "Brown"
+      , base = Colors.highlightBrown
+      , light = Colors.highlightBrownLight
+      , lightest = Colors.highlightBrownLightest
+      , dark = Colors.highlightBrownDark
+      , darkLight = Colors.highlightBrownDarkLight
+      }
+    ]
+
+
 backgroundHighlightColors : List ColorExample
 backgroundHighlightColors =
-    [ ( "highlightYellow", Colors.highlightYellow, "Yellow background highlights" )
-    , ( "highlightYellowLight", Colors.highlightYellowLight, "Light yellow background highlights")
-    , ( "highlightYellowLightest", Colors.highlightYellowLightest, "Lightest yellow background highlights" )
-    , ( "highlightYellowDark", Colors.highlightYellowDark, "Dark yellow background highlights" )
-    , ( "highlightYellowDarkLight", Colors.highlightYellowDarkLight, "Dark light yellow background highlights ")
-    , ( "highlightCyan", Colors.highlightCyan, "Cyan background highlights" )
-    , ( "highlightCyanLight", Colors.highlightCyanLight, "Light cyan background highlights" )
-    , ( "highlightCyanLightest", Colors.highlightCyanLightest, "Lightest cyan background highlights" )
-    , ( "highlightCyanDark", Colors.highlightCyanDark, "Dark cyan background highlights" )
-    , ( "highlightCyanDarkLight", Colors.highlightCyanDarkLight, "Dark light cyan background highlights" )
-    , ( "highlightMagenta", Colors.highlightMagenta, "Magenta background highlights" )
-    , ( "highlightMagentaLight", Colors.highlightMagentaLight, "Light magenta background highlights" )
-    , ( "highlightMagentaLightest", Colors.highlightMagentaLightest, "Lightest magenta background highlights" )
-    , ( "highlightMagentaDark", Colors.highlightMagentaDark, "Dark magenta background highlights" )
-    , ( "highlightMagentaDarkLight", Colors.highlightMagentaDarkLight, "Dark light magenta background highlights" )
-    , ( "highlightGreen", Colors.highlightGreen, "Green background highlights" )
-    , ( "highlightGreenLight", Colors.highlightGreenLight, "Light green background highlights" )
-    , ( "highlightGreenLightest", Colors.highlightGreenLightest, "Lightest green background highlights" )
-    , ( "highlightGreenDark", Colors.highlightGreenDark, "Dark green background highlights" )
-    , ( "highlightGreenDarkLight", Colors.highlightGreenDarkLight, "Dark light green background highlights" )
-    , ( "highlightBlue", Colors.highlightBlue, "Blue background highlights" )
-    , ( "highlightBlueLight", Colors.highlightBlueLight, "Light blue background highlights" )
-    , ( "highlightBlueLightest", Colors.highlightBlueLightest, "Lightest blue background highlights" )
-    , ( "highlightBlueDark", Colors.highlightBlueDark, "Dark blue background highlights" )
-    , ( "highlightBlueDarkLight", Colors.highlightBlueDarkLight, "Dark light blue background highlights" )
-    , ( "highlightPurple", Colors.highlightPurple, "Purple background highlights" )
-    , ( "highlightPurpleLight", Colors.highlightPurpleLight, "Light purple background highlights" )
-    , ( "highlightPurpleLightest", Colors.highlightPurpleLightest, "Lightest purple background highlights" )
-    , ( "highlightPurpleDark", Colors.highlightPurpleDark, "Dark purple background highlights" )
-    , ( "highlightPurpleDarkLight", Colors.highlightPurpleDarkLight, "Dark light purple background highlights" )
-    , ( "highlightBrown", Colors.highlightBrown, "Brown background highlights" )
-    , ( "highlightBrownLight", Colors.highlightBrownLight, "Light brown background highlights" )
-    , ( "highlightBrownLightest", Colors.highlightBrownLightest, "Lightest brown background highlights" )
-    , ( "highlightBrownDark", Colors.highlightBrownDark, "Dark brown background highlights" )
-    , ( "highlightBrownDarkLight", Colors.highlightBrownDarkLight, "Dark light brown background highlights" )
-    ]
+    backgroundHighlights
+        |> List.concatMap
+            (\{ name, base, light, lightest, dark, darkLight } ->
+                [ ( "highlight" ++ name, base, name ++ " background highlights" )
+                , ( "highlight" ++ name ++ "Light", light, "Light " ++ name ++ " background highlights" )
+                , ( "highlight" ++ name ++ "Lightest", lightest, "Lightest " ++ name ++ " background highlights" )
+                , ( "highlight" ++ name ++ "Dark", dark, "Dark " ++ name ++ " background highlights" )
+                , ( "highlight" ++ name ++ "DarkLight", darkLight, "Dark light " ++ name ++ " background highlights" )
+                ]
+            )
+
+
+viewBackgroundHighlightTable : List BackgroundHighlight -> Html.Html msg
+viewBackgroundHighlightTable highlightColors =
+    Html.table
+        [ Attributes.css
+            [ Css.width (Css.pct 100)
+            ]
+        ]
+        (List.map
+            (\c ->
+                Html.tr
+                    []
+                    [ Html.td [] [ viewColor ( "highlight" ++ c.name, c.base, "" ) ]
+                    , Html.td [] [ viewColor ( "highlight" ++ c.name ++ "Light", c.light, "" ) ]
+                    , Html.td [] [ viewColor ( "highlight" ++ c.name ++ "Lightest", c.lightest, "" ) ]
+                    , Html.td [] [ viewColor ( "highlight" ++ c.name ++ "Dark", c.dark, "" ) ]
+                    , Html.td [] [ viewColor ( "highlight" ++ c.name ++ "DarkLight", c.darkLight, "" ) ]
+                    ]
+            )
+            highlightColors
+        )
 
 
 textHighlightColors : List ColorExample
