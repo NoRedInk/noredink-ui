@@ -429,7 +429,7 @@ highlightBlue =
 -}
 highlightBlueLight : Css.Color
 highlightBlueLight =
-    hex "#EDF4FF"
+    hex "#E1ECFF"
 
 
 {-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
@@ -450,7 +450,7 @@ highlightBlueDark =
 -}
 highlightBlueDarkLight : Css.Color
 highlightBlueDarkLight =
-    hex "#B2C7DC"
+    hex "#4D7CAD"
 
 
 {-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
@@ -471,7 +471,7 @@ highlightPurple =
 -}
 highlightPurpleLight : Css.Color
 highlightPurpleLight =
-    hex "#F5F1FF"
+    hex "#EFE7FF"
 
 
 {-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
@@ -492,7 +492,7 @@ highlightPurpleDark =
 -}
 highlightPurpleDarkLight : Css.Color
 highlightPurpleDarkLight =
-    hex "#C2B2E8"
+    hex "#704DCB"
 
 
 {-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
@@ -513,7 +513,7 @@ highlightBrown =
 -}
 highlightBrownLight : Css.Color
 highlightBrownLight =
-    hex "#FFEBE0"
+    hex "#FFDECB"
 
 
 {-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
@@ -534,7 +534,7 @@ highlightBrownDark =
 -}
 highlightBrownDarkLight : Css.Color
 highlightBrownDarkLight =
-    hex "#DDC1B5"
+    hex "#AF6F51"
 
 
 {-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
