@@ -14,6 +14,7 @@ import Examples.Button as Button
 import Examples.Carousel as Carousel
 import Examples.CharacterIcon as CharacterIcon
 import Examples.Checkbox as Checkbox
+import Examples.StickerIcon as StickerIcon
 import Examples.ClickableSvg as ClickableSvg
 import Examples.ClickableText as ClickableText
 import Examples.Colors as Colors
@@ -897,6 +898,25 @@ all =
                     _ ->
                         Nothing
             )
+    , StickerIcon.example
+        |> Example.wrapMsg StickerIconMsg
+            (\msg ->
+                case msg of
+                    StickerIconMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState StickerIconState
+            (\msg ->
+                case msg of
+                    StickerIconState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , Switch.example
         |> Example.wrapMsg SwitchMsg
             (\msg ->
@@ -1116,6 +1136,7 @@ type State
     | SortableTableState SortableTable.State
     | SpacingState Spacing.State
     | SpriteState Sprite.State
+    | StickerIconState StickerIcon.State
     | SwitchState Switch.State
     | TableState Table.State
     | TabsState Tabs.State
@@ -1172,6 +1193,7 @@ type Msg
     | SortableTableMsg SortableTable.Msg
     | SpacingMsg Spacing.Msg
     | SpriteMsg Sprite.Msg
+    | StickerIconMsg StickerIcon.Msg
     | SwitchMsg Switch.Msg
     | TableMsg Table.Msg
     | TabsMsg Tabs.Msg
