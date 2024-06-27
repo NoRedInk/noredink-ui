@@ -1,4 +1,4 @@
-module Examples.StickerIcon exposing (example, State, Msg)
+module Examples.StickerIcon exposing (Msg, State, example)
 
 import Code
 import Css
@@ -6,6 +6,7 @@ import Example exposing (Example)
 import IconExamples exposing (Group)
 import Nri.Ui.StickerIcon.V1 as StickerIcon
 import Nri.Ui.Svg.V1
+
 
 {-| -}
 type alias State =
@@ -20,6 +21,7 @@ type alias Msg =
 moduleName : String
 moduleName =
     "StickerIcon"
+
 
 {-| -}
 example : Example State Msg
@@ -40,9 +42,10 @@ example =
     }
         |> IconExamples.example
 
+
 all : List Group
 all =
-    [( "Detailed Icons"
+    [ ( "Detailed Icons"
       , [ ( "exclamation.detailed"
           , StickerIcon.exclamation.detailed
           , [ Css.width (Css.px 100) ]
@@ -53,7 +56,7 @@ all =
           )
         ]
       )
-    ,  ( "Simple icons"
+    , ( "Simple icons"
       , [ ( "exclamation.simple"
           , StickerIcon.exclamation.simple
           , [ Css.width (Css.px 100) ]

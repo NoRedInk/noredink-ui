@@ -14,7 +14,6 @@ import Examples.Button as Button
 import Examples.Carousel as Carousel
 import Examples.CharacterIcon as CharacterIcon
 import Examples.Checkbox as Checkbox
-import Examples.StickerIcon as StickerIcon
 import Examples.ClickableSvg as ClickableSvg
 import Examples.ClickableText as ClickableText
 import Examples.Colors as Colors
@@ -49,6 +48,7 @@ import Examples.SideNav as SideNav
 import Examples.SortableTable as SortableTable
 import Examples.Spacing as Spacing
 import Examples.Sprite as Sprite
+import Examples.StickerIcon as StickerIcon
 import Examples.Switch as Switch
 import Examples.Table as Table
 import Examples.Tabs as Tabs
