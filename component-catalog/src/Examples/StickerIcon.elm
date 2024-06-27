@@ -45,13 +45,21 @@ all =
     [( "Detailed Icons"
       , [ ( "exclamation.detailed"
           , StickerIcon.exclamation.detailed
-          , [ Css.width (Css.px 96) ]
+          , [ Css.width (Css.px 100) ]
+          )
+        , ( "lightBulb.detailed"
+          , StickerIcon.lightBulb.detailed
+          , [ Css.width (Css.px 100) ]
           )
         ]
       )
     ,  ( "Simple icons"
       , [ ( "exclamation.simple"
           , StickerIcon.exclamation.simple
+          , [ Css.width (Css.px 100) ]
+          )
+        , ( "lightBulb.simple"
+          , StickerIcon.lightBulb.simple
           , [ Css.width (Css.px 100) ]
           )
         ]
