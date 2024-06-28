@@ -43,6 +43,7 @@ strokePath path x y =
         []
 
 
+{-| -}
 exclamation : StickerIcon
 exclamation =
     let
@@ -126,6 +127,7 @@ exclamation =
     }
 
 
+{-| -}
 lightBulb : StickerIcon
 lightBulb =
     let
@@ -198,6 +200,7 @@ lightBulb =
     }
 
 
+{-| -}
 questionMark : StickerIcon
 questionMark =
     let
@@ -281,6 +284,7 @@ questionMark =
     }
 
 
+{-| -}
 heart : StickerIcon
 heart =
     let
@@ -357,6 +361,7 @@ heart =
     }
 
 
+{-| -}
 star : StickerIcon
 star =
     let
