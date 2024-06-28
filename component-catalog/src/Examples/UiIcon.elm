@@ -89,6 +89,9 @@ all =
         , ( "gift", UiIcon.gift, [] )
         , ( "openInNewTab", UiIcon.openInNewTab, [] )
         , ( "sync", UiIcon.sync, [] )
+        , ( "delete", UiIcon.delete, [])
+        , ( "addSticker", UiIcon.addSticker, [])
+        , ( "circle", UiIcon.circle, [])
         ]
       )
     , ( "Guidance"
