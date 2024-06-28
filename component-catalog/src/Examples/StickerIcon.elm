@@ -27,7 +27,7 @@ moduleName =
 example : Example State Msg
 example =
     { moduleName = moduleName
-    , version = 2
+    , version = 1
     , label = "Exclamation Detailed"
     , name = "exclamation.detailed"
 
