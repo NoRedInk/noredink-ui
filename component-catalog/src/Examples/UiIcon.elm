@@ -90,6 +90,7 @@ all =
         , ( "openInNewTab", UiIcon.openInNewTab, [] )
         , ( "sync", UiIcon.sync, [] )
         , ( "delete", UiIcon.delete, [])
+        , ( "addSticker", UiIcon.addSticker, [])
         ]
       )
     , ( "Guidance"
