@@ -2,6 +2,9 @@ module Nri.Ui.StickerIcon.V1 exposing (exclamation, lightBulb, questionMark, hea
 
 {-| }
 
+Sticker Icon's were designed to be used for annotating passages. Each icon has a
+"simple" and a "detailed" variant. The "simple" variant should look better when scaled down.
+
 @docs exclamation, lightBulb, questionMark, heart, star
 
 -}
