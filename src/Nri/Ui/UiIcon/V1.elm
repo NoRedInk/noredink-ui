@@ -1866,7 +1866,7 @@ sync =
             ]
         ]
 
-
+{-| -}
 delete : Nri.Ui.Svg.V1.Svg
 delete =
     Nri.Ui.Svg.V1.init "0 0 14 16"
@@ -1882,7 +1882,7 @@ delete =
             []
         ]
 
-
+{-| -}
 addSticker : Nri.Ui.Svg.V1.Svg
 addSticker =
     Nri.Ui.Svg.V1.init "0 0 16 16"
@@ -1897,7 +1897,7 @@ addSticker =
             ]
         ]
 
-
+{-| -}
 circle : Nri.Ui.Svg.V1.Svg
 circle =
     Nri.Ui.Svg.V1.init "0 0 16 16"
