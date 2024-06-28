@@ -91,7 +91,7 @@ all =
         , ( "sync", UiIcon.sync, [] )
         , ( "delete", UiIcon.delete, [])
         , ( "addSticker", UiIcon.addSticker, [])
-        , ( "chooseColor", UiIcon.chooseColor, [])
+        , ( "circle", UiIcon.circle, [])
         ]
       )
     , ( "Guidance"

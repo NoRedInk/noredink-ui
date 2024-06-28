@@ -26,7 +26,7 @@ module Nri.Ui.UiIcon.V1 exposing
     , search, searchInCicle
     , openQuotationMark, closeQuotationMark
     , microscope, scale
-    , openInNewTab, sync, delete, addSticker, chooseColor
+    , openInNewTab, sync, delete, addSticker, circle
     , apple, appleOutline, briefcase
     , school, highSchool, company, homeSchool, graduateCap
     , flagUs, globe
@@ -65,7 +65,7 @@ module Nri.Ui.UiIcon.V1 exposing
 @docs search, searchInCicle
 @docs openQuotationMark, closeQuotationMark
 @docs microscope, scale
-@docs openInNewTab, sync, delete, addSticker, chooseColor
+@docs openInNewTab, sync, delete, addSticker, circle
 @docs apple, appleOutline, briefcase
 @docs school, highSchool, company, homeSchool, graduateCap
 @docs flagUs, globe
@@ -1898,8 +1898,8 @@ addSticker =
         ]
 
 
-chooseColor : Nri.Ui.Svg.V1.Svg
-chooseColor =
+circle : Nri.Ui.Svg.V1.Svg
+circle =
     Nri.Ui.Svg.V1.init "0 0 16 16"
         [ Svg.circle
             [ Attributes.fill "currentcolor"
