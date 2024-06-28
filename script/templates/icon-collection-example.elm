@@ -8,7 +8,7 @@ module Examples.COLLECTION_NAME exposing (example, State, Msg)
 
 import Code
 import Example exposing (Example)
-import IconExamples as IconExamples exposing (Group)
+import IconExamples exposing (Group)
 import Nri.Ui.COLLECTION_NAME.V1 as COLLECTION_NAME
 
 
