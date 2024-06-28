@@ -13,11 +13,11 @@
         "rev": "3aea7d3e453575aa85bc19c8387825d0e7c42ce8",
         "revCount": 147,
         "type": "git",
-        "url": "https://git.bytes.zone/brian/elm-forbid-import.git"
+        "url": "https://git.bytes.zone/BrianHicks/elm-forbid-import.git"
       },
       "original": {
         "type": "git",
-        "url": "https://git.bytes.zone/brian/elm-forbid-import.git"
+        "url": "https://git.bytes.zone/BrianHicks/elm-forbid-import.git"
       }
     },
     "flake-utils": {
