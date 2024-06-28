@@ -37,6 +37,8 @@ example =
     , preview =
         IconExamples.previewCustomSize ( Just 50, Just 50 )
             [ StickerIcon.exclamation.detailed
+            , StickerIcon.lightBulb.detailed
+            , StickerIcon.questionMark.detailed
             ]
     , all = all
     }
@@ -54,6 +56,10 @@ all =
           , StickerIcon.lightBulb.detailed
           , [ Css.width (Css.px 100) ]
           )
+        , ( "questionMark.detailed"
+          , StickerIcon.questionMark.detailed
+          , [ Css.width (Css.px 100) ]
+          )
         ]
       )
     , ( "Simple icons"
@@ -63,6 +69,10 @@ all =
           )
         , ( "lightBulb.simple"
           , StickerIcon.lightBulb.simple
+          , [ Css.width (Css.px 100) ]
+          )
+        , ( "questionMark.simple"
+          , StickerIcon.questionMark.simple
           , [ Css.width (Css.px 100) ]
           )
         ]
