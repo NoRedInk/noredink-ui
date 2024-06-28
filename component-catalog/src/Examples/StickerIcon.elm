@@ -40,6 +40,7 @@ example =
             , StickerIcon.lightBulb.detailed
             , StickerIcon.questionMark.detailed
             , StickerIcon.heart.detailed
+            , StickerIcon.star.detailed
             ]
     , all = all
     }
@@ -65,6 +66,10 @@ all =
           , StickerIcon.heart.detailed
           , [ Css.width (Css.px 100) ]
           )
+        , ( "star.detailed"
+          , StickerIcon.star.detailed
+          , [ Css.width (Css.px 100) ]
+          )
         ]
       )
     , ( "Simple icons"
@@ -82,6 +87,10 @@ all =
           )
         , ( "heart.simple"
           , StickerIcon.heart.simple
+          , [ Css.width (Css.px 100) ]
+          )
+        , ( "star.simple"
+          , StickerIcon.star.simple
           , [ Css.width (Css.px 100) ]
           )
         ]
