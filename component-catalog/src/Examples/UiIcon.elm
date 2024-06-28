@@ -89,6 +89,7 @@ all =
         , ( "gift", UiIcon.gift, [] )
         , ( "openInNewTab", UiIcon.openInNewTab, [] )
         , ( "sync", UiIcon.sync, [] )
+        , ( "delete", UiIcon.delete, [])
         ]
       )
     , ( "Guidance"
