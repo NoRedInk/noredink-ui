@@ -36,11 +36,11 @@ example =
     , renderSvgCode = \name -> Code.fromModule moduleName name
     , preview =
         IconExamples.previewCustomSize ( Just 50, Just 50 )
-            [ StickerIcon.exclamation.detailed
-            , StickerIcon.lightBulb.detailed
-            , StickerIcon.questionMark.detailed
-            , StickerIcon.heart.detailed
-            , StickerIcon.star.detailed
+            [ StickerIcon.exclamation.expressive
+            , StickerIcon.lightBulb.expressive
+            , StickerIcon.questionMark.expressive
+            , StickerIcon.heart.expressive
+            , StickerIcon.star.expressive
             ]
     , all = all
     }
@@ -49,7 +49,30 @@ example =
 
 all : List Group
 all =
-    [ ( "Detailed Icons"
+    [( "Simple icons"
+      , [ ( "exclamation.simple"
+          , StickerIcon.exclamation.simple
+          , [ Css.width (Css.px 100) ]
+          )
+        , ( "lightBulb.simple"
+          , StickerIcon.lightBulb.simple
+          , [ Css.width (Css.px 100) ]
+          )
+        , ( "questionMark.simple"
+          , StickerIcon.questionMark.simple
+          , [ Css.width (Css.px 100) ]
+          )
+        , ( "heart.simple"
+          , StickerIcon.heart.simple
+          , [ Css.width (Css.px 100) ]
+          )
+        , ( "star.simple"
+          , StickerIcon.star.simple
+          , [ Css.width (Css.px 100) ]
+          )
+        ]
+      )
+    , ( "Detailed Icons"
       , [ ( "exclamation.detailed"
           , StickerIcon.exclamation.detailed
           , [ Css.width (Css.px 100) ]
@@ -72,25 +95,25 @@ all =
           )
         ]
       )
-    , ( "Simple icons"
-      , [ ( "exclamation.simple"
-          , StickerIcon.exclamation.simple
+    , ( "Expressive Icons"
+      , [ ( "exclamation.expressive"
+          , StickerIcon.exclamation.expressive
           , [ Css.width (Css.px 100) ]
           )
-        , ( "lightBulb.simple"
-          , StickerIcon.lightBulb.simple
+        , ( "lightBulb.expressive"
+          , StickerIcon.lightBulb.expressive
           , [ Css.width (Css.px 100) ]
           )
-        , ( "questionMark.simple"
-          , StickerIcon.questionMark.simple
+        , ( "questionMark.expressive"
+          , StickerIcon.questionMark.expressive
           , [ Css.width (Css.px 100) ]
           )
-        , ( "heart.simple"
-          , StickerIcon.heart.simple
+        , ( "heart.expressive"
+          , StickerIcon.heart.expressive
           , [ Css.width (Css.px 100) ]
           )
-        , ( "star.simple"
-          , StickerIcon.star.simple
+        , ( "star.expressive"
+          , StickerIcon.star.expressive
           , [ Css.width (Css.px 100) ]
           )
         ]

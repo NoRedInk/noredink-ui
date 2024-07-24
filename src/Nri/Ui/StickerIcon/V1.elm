@@ -18,6 +18,7 @@ import Svg.Styled.Attributes exposing (..)
 type alias StickerIcon =
     { simple : Svg
     , detailed : Svg
+    , expressive : Svg
     }
 
 
@@ -109,6 +110,9 @@ exclamation =
             ]
     , detailed =
         init "0 0 800 800"
+            []
+    , expressive =
+        init "0 0 800 800"
             [ -- Background
               Svg.path
                 [ backgroundFill
@@ -183,6 +187,9 @@ lightBulb =
             , thread2 298.84 652.31
             ]
     , detailed =
+        init "0 0 800 800"
+            []
+    , expressive =
         init "0 0 800 800"
             [ -- Background
               Svg.path
@@ -272,6 +279,9 @@ questionMark =
             ]
     , detailed =
         init "0 0 800 800"
+            []
+    , expressive =
+        init "0 0 800 800"
             [ -- Background
               Svg.path
                 [ backgroundFill
@@ -349,6 +359,9 @@ heart =
             ]
     , detailed =
         init "0 0 800 800"
+            []
+    , expressive =
+        init "0 0 800 800"
             [ -- Background
               Svg.path
                 [ backgroundFill
@@ -424,7 +437,7 @@ star =
                 ]
                 []
 
-        backgroundFill = 
+        backgroundFill =
             fill "#97E7FF"
     in
     { simple =
@@ -447,6 +460,9 @@ star =
             , rightShadow 521.92 310.29
             ]
     , detailed =
+        init "0 0 800 800"
+            []
+    , expressive =
         init "0 0 800 800"
             [ -- Background
               Svg.path
