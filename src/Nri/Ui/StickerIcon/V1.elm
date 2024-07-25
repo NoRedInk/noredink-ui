@@ -759,14 +759,17 @@ star =
         backgroundFill =
             fill "#97E7FF"
 
-        details =
-            [ -- Background
-              Svg.path
+        detailedBackground x y =
+            -- Background
+            Svg.path
                 [ backgroundFill
-                , css [ position 0.96 49.96 ]
+                , css [ position x y ]
                 , d "M222.001 9.99989C163.058 42.6335 158.501 92.4999 168.001 114.5C139.835 92.9999 63.8643 65.2815 19.0004 130.5C-35 209 45.8349 271.333 83.5015 317.5C70.0016 319.5 42.2017 338.4 39.0017 398C35.0017 472.5 363.002 673 437.002 681C496.202 687.4 515.335 666.333 517.502 655C553.668 671.167 626.002 703.5 684.502 643C731.302 594.6 665.002 507.5 626.002 470C678.335 486.833 778.502 492.7 760.502 381.5C738.002 242.5 338.501 -54.5001 222.001 9.99989Z"
                 ]
                 []
+
+        details =
+            [ detailedBackground 0.96 49.96
             , core 97 64.5
             , topStroke 294.73 59.31
             , leftStroke 94.52 237.56
@@ -817,5 +820,58 @@ star =
             )
     , animated =
         init "0 0 800 800"
-            []
+            [ let
+                backgroundTranslate =
+                    translate2 0.96 49.96
+              in
+              Svg.g
+                [ css
+                    [ Css.transform backgroundTranslate
+                    , Css.property "transform-origin" "center"
+                    , withAnimation
+                        { delayMS = 710
+                        , durationMS = 250
+                        , keyframes =
+                            [ ( 0, [ Css.Animations.transform [ Css.scale 0, backgroundTranslate ] ] )
+                            , ( 100, [ Css.Animations.transform [ Css.scale 1, backgroundTranslate ] ] )
+                            ]
+                        }
+                    ]
+                ]
+                [ detailedBackground 0 0
+                ]
+            , let
+                ( coreX, coreY ) =
+                    ( 97, 64.5 )
+
+                translateStar =
+                    translate2 coreX coreY
+              in
+              Svg.g
+                [ css
+                    [ Css.transform translateStar
+                    , Css.property "transform-origin" "center"
+                    , withAnimation
+                        { delayMS = 0
+                        , durationMS = 790
+                        , keyframes =
+                            [ ( 0, [ Css.Animations.transform [ Css.scale 0, Css.rotate (Css.turn -3), translateStar ] ] )
+                            , ( 80, [ Css.Animations.transform [ Css.scale 1.1, Css.rotate (Css.turn 0), translateStar ] ] )
+                            , ( 90, [ Css.Animations.transform [ Css.scale 1.2, translateStar ] ] )
+                            , ( 100, [ Css.Animations.transform [ Css.scale 1, translateStar ] ] )
+                            ]
+                        }
+                    ]
+                ]
+                [ core 0 0
+                , topStroke (294.73 - coreX) (59.31 - coreY)
+                , leftStroke (94.52 - coreX) (237.56 - coreY)
+                , bottomLeftStroke (181.65 - coreX) (411 - coreY)
+                , bottomRightStroke (370.02 - coreX) (437.5 - coreY)
+                , rightStroke (468.18 - coreX) (259.07 - coreY)
+                , topShadow (390 - coreX) (49.79 - coreY)
+                , bottomLeftShadow (174.23 - coreX) (515.5 - coreY)
+                , rightShadow (515 - coreX) (252 - coreY)
+                ]
+            ]
     }
