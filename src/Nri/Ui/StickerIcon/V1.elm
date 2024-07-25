@@ -370,7 +370,10 @@ lightBulb =
                 ]
             , -- Filament animation
               filament
-                [ Css.property "stroke-dasharray" "690" -- The whole lenght of the stroke (measured via getTotalLength)
+                [ -- This is a fun trick to animate the filament line being drawn
+                  -- First we set the stroke-dasharray to the length of the entire segment
+                  -- Then we can aniamtion the stroke-dashoffset to progressively show more and more of it
+                  Css.property "stroke-dasharray" "690"
                 , withAnimation
                     { delayMS = 630
                     , durationMS = 550
