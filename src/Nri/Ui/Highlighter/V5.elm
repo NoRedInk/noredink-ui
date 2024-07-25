@@ -9,6 +9,7 @@ module Nri.Ui.Highlighter.V5 exposing
     , removeHighlights
     , clickedHighlightable, hoveredHighlightable
     , selectShortest
+    , KeyboardMsg(..)
     )
 
 {-| Changes from V4:
@@ -26,6 +27,7 @@ Highlighter provides a view/model/update to display a view to highlight text and
   - Made all highlighter views lazy
   - Optimized `selectShortest` for the normal case of 0 or 1 highlight.
   - Added `FoldState`, `initFoldState`, `viewFoldHighlighter`, and `viewFoldStatic`
+  - Exposed KeyboardMsg(..) to allow for fine-tuning keyboard interactions
 
 
 # Types
