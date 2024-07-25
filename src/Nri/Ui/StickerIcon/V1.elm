@@ -5,15 +5,23 @@ module Nri.Ui.StickerIcon.V1 exposing (exclamation, lightBulb, questionMark, hea
 Sticker Icon's were designed to be used for annotating passages. Each icon has a
 "simple" and a "detailed" variant. The "simple" variant should look better when scaled down.
 
+
+# Changelog
+
+
+## Patch changes
+
+  - Lighten the background colors across all stickers for better contrast
+  - Move detailed -> expressive. Add new detailed stickers
+  - Add animated stickers
+
 @docs exclamation, lightBulb, questionMark, heart, star
 
 -}
 
-import Browser.Navigation exposing (back)
 import Css
 import Css.Animations
 import Css.Media
-import Css.Transitions exposing (background)
 import Nri.Ui.Svg.V1 exposing (Svg, init)
 import Svg.Styled as Svg
 import Svg.Styled.Attributes exposing (..)
