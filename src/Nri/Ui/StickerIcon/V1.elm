@@ -9,9 +9,11 @@ Sticker Icon's were designed to be used for annotating passages. Each icon has a
 
 -}
 
+import Browser.Navigation exposing (back)
 import Css
 import Css.Animations
 import Css.Media
+import Css.Transitions exposing (background)
 import Nri.Ui.Svg.V1 exposing (Svg, init)
 import Svg.Styled as Svg
 import Svg.Styled.Attributes exposing (..)
@@ -580,14 +582,17 @@ heart =
         backgroundFill =
             fill "#FFB4A5"
 
-        details =
-            [ -- Background
-              Svg.path
+        detailedBackground x y =
+            -- Background
+            Svg.path
                 [ backgroundFill
-                , css [ position 48 70 ]
+                , css [ position x y ]
                 , d "M721.5 267C721.5 193.809 648.333 174.333 635.5 176.5C644.833 154.5 664.5 96.5 600.5 54.5C536.5 12.5 459.167 51.1667 437 74C459.667 44.6667 444 0 382.5 0C259.202 0 0.000166476 272 0 367C-0.000101558 424.954 47.5001 457.333 73.5002 459.5C53.5002 483.667 28.8005 562.565 112.5 636C165.499 682.5 265.833 654.667 302.5 620C350 681 453.862 653.5 566 526.5C690.5 385.5 721.5 357 721.5 267Z"
                 ]
                 []
+
+        details =
+            [ detailedBackground 48 70
             , core 135.2 188.54
             , leftStroke 131.83 190.48
             , rightStroke 375.5 197.42
@@ -640,7 +645,63 @@ heart =
             ]
     , animated =
         init "0 0 800 800"
-            []
+            [ let
+                backgroundTranslate =
+                    translate2 48 70
+              in
+              Svg.g
+                [ css
+                    [ Css.transform backgroundTranslate
+                    , Css.property "transform-origin" "center"
+                    , withAnimation
+                        { delayMS = 1490
+                        , durationMS = 350
+                        , keyframes =
+                            [ ( 0, [ Css.Animations.transform [ Css.scale 0, backgroundTranslate ] ] )
+                            , ( 89, [ Css.Animations.transform [ Css.scale 1.1, backgroundTranslate ] ] )
+                            , ( 100, [ Css.Animations.transform [ Css.scale 1, backgroundTranslate ] ] )
+                            ]
+                        }
+                    ]
+                ]
+                [ detailedBackground 0 0
+                ]
+            , -- Heart animation
+              let
+                ( coreX, coreY ) =
+                    ( 135.2, 188.54 )
+
+                coreTranslate =
+                    translate2 coreX coreY
+              in
+              Svg.g
+                [ css
+                    [ Css.transform coreTranslate
+                    , Css.property "transform-origin" "center"
+                    , withAnimation
+                        { delayMS = 0
+                        , durationMS = 1340
+                        , keyframes =
+                            [ ( 0, [ Css.Animations.transform [ Css.scale 0, coreTranslate ] ] )
+                            , ( 32, [ Css.Animations.transform [ Css.scale 1.4, coreTranslate ] ] )
+                            , ( 38, [ Css.Animations.transform [ Css.scale 0.9, coreTranslate ] ] )
+                            , ( 44, [ Css.Animations.transform [ Css.scale 1, coreTranslate ] ] )
+                            , ( 67, [ Css.Animations.transform [ Css.scale 1, coreTranslate ] ] )
+                            , ( 73, [ Css.Animations.transform [ Css.scale 0.8, coreTranslate ] ] )
+                            , ( 88, [ Css.Animations.transform [ Css.scale 1.4, coreTranslate ] ] )
+                            , ( 94, [ Css.Animations.transform [ Css.scale 0.9, coreTranslate ] ] )
+                            , ( 100, [ Css.Animations.transform [ Css.scale 1, coreTranslate ] ] )
+                            ]
+                        }
+                    ]
+                ]
+                [ core 0 0
+                , leftStroke (131.83 - coreX) (190.48 - coreY)
+                , rightStroke (375.5 - coreX) (197.42 - coreY)
+                , topShadow (250 - coreX) (183.08 - coreY)
+                , rightShadow (361 - coreX) (193.35 - coreY)
+                ]
+            ]
     }
 
 
