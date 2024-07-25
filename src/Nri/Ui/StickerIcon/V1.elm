@@ -10,6 +10,8 @@ Sticker Icon's were designed to be used for annotating passages. Each icon has a
 -}
 
 import Css
+import Css.Animations
+import Css.Media
 import Nri.Ui.Svg.V1 exposing (Svg, init)
 import Svg.Styled as Svg
 import Svg.Styled.Attributes exposing (..)
@@ -19,12 +21,18 @@ type alias StickerIcon =
     { simple : Svg
     , detailed : Svg
     , expressive : Svg
+    , animated : Svg
     }
 
 
 position : Float -> Float -> Css.Style
 position x y =
-    Css.transform (Css.translate2 (Css.px x) (Css.px y))
+    Css.transform (translate2 x y)
+
+
+translate2 : Float -> Float -> Css.Transform {}
+translate2 x y =
+    Css.translate2 (Css.px x) (Css.px y)
 
 
 strokePath : String -> Float -> Float -> Svg.Svg msg
@@ -42,6 +50,24 @@ strokePath path x y =
         , d path
         ]
         []
+
+
+{-| A helper for building animations.
+
+NOTE: Animations are ONLY applied if prefers-reduced-motion is set to "no-preference". To use this properly
+you should set the final keyframe style on the object. That combined with `animation-fill-mode: backwards` will make
+the styles work both with and without prefers-reduced-motion
+
+-}
+withAnimation : { delayMS : Float, durationMS : Float, keyframes : List ( Int, List Css.Animations.Property ) } -> Css.Style
+withAnimation { delayMS, durationMS, keyframes } =
+    Css.Media.withMediaQuery [ "(prefers-reduced-motion: no-preference)" ]
+        [ Css.property "animation-fill-mode" "backwards"
+        , Css.property "animation-timing-function" "ease-in-out"
+        , Css.animationDelay (Css.ms delayMS)
+        , Css.animationDuration (Css.ms durationMS)
+        , Css.animationName (Css.Animations.keyframes keyframes)
+        ]
 
 
 {-| -}
@@ -92,14 +118,16 @@ exclamation =
         backgroundFill =
             fill "#7ECD9A"
 
-        detailed =
-            [ -- Background
-              Svg.path
+        detailedBackground x y =
+            Svg.path
                 [ backgroundFill
-                , css [ position 65.41 33.97 ]
+                , css [ position x y ]
                 , d "M14.0002 399.5C39.4438 436.728 84.0002 432.5 107 423.5C63.0002 459.333 -28.341 619.869 66.5 691C130.5 739 261.5 691 261.5 691C261.5 691 333.336 810 484 657C737.569 399.5 713.5 294.5 662 255.5C607.602 214.305 532 243.5 532 243.5C532 243.5 654.5 118.5 597.5 52.4999C513.296 -45.0001 369.5 8.99991 214.5 105.5C45.9324 210.447 -33.5 330 14.0002 399.5Z"
                 ]
                 []
+
+        detailed =
+            [ detailedBackground 65.41 33.97
             , core 320.81 45.47
             , coreStroke 322.31 48.64
             , coreShadow 392.5 58.5
@@ -110,7 +138,7 @@ exclamation =
     in
     { simple =
         init "0 0 800 800"
-            [ -- Backgroud
+            [ -- Background
               Svg.path
                 [ backgroundFill
                 , css [ position 180 0 ]
@@ -135,6 +163,78 @@ exclamation =
                    , strokePath "M62 10V92.5L142 74.5L156 164.5H183.5" 87 45
                    ]
             )
+    , animated =
+        init "0 0 800 800"
+            [ let
+                backgroundTranslate =
+                    translate2 65.41 33.97
+              in
+              Svg.g
+                [ css
+                    [ Css.transform backgroundTranslate
+                    , Css.property "transform-origin" "center"
+                    , withAnimation
+                        { delayMS = 700
+                        , durationMS = 350
+                        , keyframes =
+                            [ ( 0, [ Css.Animations.transform [ Css.scale 0, backgroundTranslate ] ] )
+                            , ( 100, [ Css.Animations.transform [ Css.scale 1, backgroundTranslate ] ] )
+                            ]
+                        }
+                    ]
+                ]
+                [ detailedBackground 0 0
+                ]
+            , let
+                ( pointX, pointY ) =
+                    ( 290, 607.24 )
+              in
+              Svg.g
+                [ css
+                    [ Css.transform (translate2 pointX pointY)
+                    , withAnimation
+                        { delayMS = 0
+                        , durationMS = 1000
+                        , keyframes =
+                            [ ( 0, [ Css.Animations.transform [ translate2 pointX pointY, Css.scaleY 0.5 ] ] )
+                            , ( 36, [ Css.Animations.transform [ translate2 pointX 0, Css.scaleY 1 ] ] )
+                            , ( 60, [ Css.Animations.transform [ translate2 pointX pointY, Css.scaleY 0.5 ] ] )
+                            , ( 68, [ Css.Animations.transform [ translate2 pointX pointY, Css.scaleY 0.5 ] ] )
+                            , ( 80, [ Css.Animations.transform [ translate2 pointX (pointY * 0.75) ] ] )
+                            , ( 100, [ Css.Animations.transform [ translate2 pointX pointY ] ] )
+                            ]
+                        }
+                    ]
+                ]
+                [ point 0 0
+                , pointStroke 0 0
+                , pointShadow (324 - pointX) (598.61 - pointY)
+                ]
+            , let
+                ( coreLeft, coreTop ) =
+                    ( 273.81, 82.74 )
+              in
+              Svg.g
+                [ css
+                    [ Css.transforms [ Css.translate2 (Css.px coreLeft) (Css.px coreTop) ]
+                    , Css.property "transform-origin" "top center"
+                    , withAnimation
+                        { delayMS = 350
+                        , durationMS = 620
+                        , keyframes =
+                            [ ( 0, [ Css.Animations.transform [ Css.translate2 (Css.px coreLeft) (Css.px -800), Css.scaleY 1.3 ] ] )
+                            , ( 56, [ Css.Animations.transform [ Css.translate2 (Css.px coreLeft) (Css.px coreTop) ] ] )
+                            , ( 68, [ Css.Animations.transform [ Css.translate2 (Css.px coreLeft) (Css.px coreTop), Css.scaleY 0.7 ] ] )
+                            , ( 100, [ Css.Animations.transform [ Css.translate2 (Css.px coreLeft) (Css.px coreTop) ] ] )
+                            ]
+                        }
+                    ]
+                ]
+                [ core (273.81 - coreLeft) (82.74 - coreTop)
+                , coreStroke (275.31 - coreLeft) (85.84 - coreTop)
+                , coreShadow (345.5 - coreLeft) (95.5 - coreTop)
+                ]
+            ]
     }
 
 
@@ -217,6 +317,9 @@ lightBulb =
                    , strokePath "M10.1481 111.617L21 10" 315.87 19
                    ]
             )
+    , animated =
+        init "0 0 800 800"
+            []
     }
 
 
@@ -312,6 +415,9 @@ questionMark =
                         16.5
                    ]
             )
+    , animated =
+        init "0 0 800 800"
+            []
     }
 
 
@@ -410,6 +516,9 @@ heart =
                 71.77
                 141.27
             ]
+    , animated =
+        init "0 0 800 800"
+            []
     }
 
 
@@ -521,4 +630,7 @@ star =
                         483
                    ]
             )
+    , animated =
+        init "0 0 800 800"
+            []
     }

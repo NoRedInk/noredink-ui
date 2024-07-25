@@ -118,4 +118,27 @@ all =
           )
         ]
       )
+    , ( "Animated Icons"
+      , [ ( "exclamation.animated"
+          , StickerIcon.exclamation.animated
+          , [ Css.width (Css.px 100) ]
+          )
+        , ( "lightBulb.animated"
+          , StickerIcon.lightBulb.animated
+          , [ Css.width (Css.px 100) ]
+          )
+        , ( "questionMark.animated"
+          , StickerIcon.questionMark.animated
+          , [ Css.width (Css.px 100) ]
+          )
+        , ( "heart.animated"
+          , StickerIcon.heart.animated
+          , [ Css.width (Css.px 100) ]
+          )
+        , ( "star.animated"
+          , StickerIcon.star.animated
+          , [ Css.width (Css.px 100) ]
+          )
+        ]
+      )
     ]
