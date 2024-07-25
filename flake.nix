@@ -7,7 +7,11 @@
 
   outputs = inputs:
     inputs.flake-utils.lib.eachDefaultSystem (system:
-      let pkgs = import inputs.nixpkgs { inherit system; };
+      let
+        pkgs = import inputs.nixpkgs {
+          inherit system;
+          overlays = [ (import ./nix/overlays/elm-review) ];
+        };
       in {
         formatter = pkgs.nixpkgs-fmt;
 
@@ -31,7 +35,7 @@
             pkgs.elmPackages.elm-format
             pkgs.elmPackages.elm-test
             pkgs.elmPackages.elm-verify-examples
-            pkgs.elmPackages.elm-review
+            pkgs.elm-review
             pkgs.elmPackages.elm-json
             inputs.elm-forbid-import.defaultPackage.${system}
 
