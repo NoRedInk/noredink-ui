@@ -49,7 +49,7 @@ example =
 
 all : List Group
 all =
-    [( "Simple icons"
+    [ ( "Simple icons"
       , [ ( "exclamation.simple"
           , StickerIcon.exclamation.simple
           , [ Css.width (Css.px 100) ]
