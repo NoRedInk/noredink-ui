@@ -1,5 +1,5 @@
 module Nri.Ui.Highlighter.V5 exposing
-    ( Model, Msg(..), PointerMsg(..)
+    ( Model, Msg(..), PointerMsg(..), KeyboardMsg(..)
     , init, update
     , view, static, staticWithTags
     , viewMarkdown, staticMarkdown, staticMarkdownWithTags
@@ -9,7 +9,6 @@ module Nri.Ui.Highlighter.V5 exposing
     , removeHighlights
     , clickedHighlightable, hoveredHighlightable
     , selectShortest
-    , KeyboardMsg(..)
     )
 
 {-| Changes from V4:
@@ -32,7 +31,7 @@ Highlighter provides a view/model/update to display a view to highlight text and
 
 # Types
 
-@docs Model, Msg, PointerMsg
+@docs Model, Msg, PointerMsg, KeyboardMsg
 
 
 # Init/View/Update
