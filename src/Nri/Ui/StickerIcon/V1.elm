@@ -263,7 +263,7 @@ lightBulb =
                 []
 
         filament =
-            strokePath "M64.0914 357.5C49.0914 338.5 38.8997 317.346 31.7392 298.933C27.3707 287.699 24.1316 276.317 20.6315 264.816C17.1452 253.361 12.3253 240.399 11.9922 228.408C11.2938 203.266 7.47998 177.935 14.3724 153.122C22.0657 125.426 40.0609 92.9998 70.7043 92.9998C96.3848 92.9998 123.773 101.079 138.091 120C147.929 133 154.272 158.122 143.091 173.5C126.591 189.594 115.004 186.363 101.735 184.594C72.0358 180.634 49.904 150.062 38.968 124.736C31.3348 107.059 27.8603 90.5908 27.8603 71.3133C27.8603 50.157 35.4865 30.4062 40.5548 10.1328" []
+            strokePath "M64.0914 357.5C49.0914 338.5 38.8997 317.346 31.7392 298.933C27.3707 287.699 24.1316 276.317 20.6315 264.816C17.1452 253.361 12.3253 240.399 11.9922 228.408C11.2938 203.266 7.47998 177.935 14.3724 153.122C22.0657 125.426 40.0609 92.9998 70.7043 92.9998C96.3848 92.9998 123.773 101.079 138.091 120C147.929 133 154.272 158.122 143.091 173.5C126.591 189.594 115.004 186.363 101.735 184.594C72.0358 180.634 49.904 150.062 38.968 124.736C31.3348 107.059 27.8603 90.5908 27.8603 71.3133C27.8603 50.157 35.4865 30.4062 40.5548 10.1328"
 
         thread1 =
             strokePath "M10.6646 10.6001C37.4086 10.6001 63.9923 15.3605 91.2394 15.3605C104.65 15.3605 117.093 12.1869 130.204 12.1869C142.734 12.1869 180.288 10.6001 167.759 10.6001" []
@@ -274,18 +274,20 @@ lightBulb =
         backgroundFill =
             fill "#FDB157"
 
-        detailed =
-            [ -- Background
-              Svg.path
+        detailedBackground x y =
+            Svg.path
                 [ backgroundFill
                 , d "M99.9995 597C157.5 676 374.5 644.667 471 606.5C513.166 599.167 644.599 540.722 664 481C689.5 402.5 612.499 410.5 612.499 410.5C612.499 410.5 714.999 315 698.999 242C682.999 169 597.997 173.5 597.997 173.5C597.997 173.5 667.497 14.0002 520.999 1.00022C380.324 -11.483 379.795 124.973 162.5 163C-17.4972 194.5 -21.0108 328.5 25.9983 388C56.416 426.5 112.497 443 112.497 443C112.497 443 42.4995 518 99.9995 597Z"
-                , css [ position 49.49 93.2 ]
+                , css [ position x y ]
                 ]
                 []
+
+        detailed =
+            [ detailedBackground 49.49 93.2
             , core 185.99 150.34
             , coreStroke 191.35 156.12
             , shadow 304 149.5
-            , filament 336.72 306.63
+            , filament [] 336.72 306.63
             , thread1 306.66 657.6
             , thread2 308.25 702.81
             ]
@@ -302,7 +304,7 @@ lightBulb =
             , core 176.58 99.84
             , coreStroke 181.94 105.62
             , shadow 294.59 105.62
-            , filament 327.31 256.13
+            , filament [] 327.31 256.13
             , thread1 297.26 607.1
             , thread2 298.84 652.31
             ]
@@ -319,7 +321,68 @@ lightBulb =
             )
     , animated =
         init "0 0 800 800"
-            []
+            [ -- Background animation
+              let
+                backgroundTranslate =
+                    translate2 49.49 93.2
+              in
+              Svg.g
+                [ css
+                    [ Css.transform backgroundTranslate
+                    , Css.property "transform-origin" "center"
+                    , withAnimation
+                        { delayMS = 630
+                        , durationMS = 550
+                        , keyframes =
+                            [ ( 0, [ Css.Animations.transform [ Css.scale 0, backgroundTranslate ] ] )
+                            , ( 100, [ Css.Animations.transform [ Css.scale 1, backgroundTranslate ] ] )
+                            ]
+                        }
+                    ]
+                ]
+                [ detailedBackground 0 0
+                ]
+            , -- Bulb animation
+              let
+                ( coreX, coreY ) =
+                    ( 185.99, 150.34 )
+              in
+              Svg.g
+                [ css
+                    [ Css.transform (translate2 coreX coreY)
+                    , Css.property "transform-origin" "bottom center"
+                    , withAnimation
+                        { delayMS = 0
+                        , durationMS = 670
+                        , keyframes =
+                            [ ( 0, [ Css.Animations.transform [ translate2 coreX coreY, Css.scaleY 0.1 ] ] )
+                            , ( 82, [ Css.Animations.transform [ translate2 coreX coreY, Css.scaleY 1.15 ] ] )
+                            , ( 100, [ Css.Animations.transform [ translate2 coreX coreY, Css.scaleY 1 ] ] )
+                            ]
+                        }
+                    ]
+                ]
+                [ core 0 0
+                , coreStroke (191.35 - coreX) (156.12 - coreY)
+                , shadow (304 - coreX) (149.5 - coreY)
+                , thread1 (306.66 - coreX) (657.6 - coreY)
+                , thread2 (308.25 - coreX) (702.81 - coreY)
+                ]
+            , -- Filament animation
+              filament
+                [ Css.property "stroke-dasharray" "690" -- The whole lenght of the stroke (measured via getTotalLength)
+                , withAnimation
+                    { delayMS = 630
+                    , durationMS = 550
+                    , keyframes =
+                        [ ( 0, [ Css.Animations.custom "stroke-dashoffset" "690" ] )
+                        , ( 100, [ Css.Animations.custom "stroke-dashoffset" "0" ] )
+                        ]
+                    }
+                ]
+                327.31
+                256.13
+            ]
     }
 
 
