@@ -199,6 +199,8 @@ type PointerMsg
     | Ignored
 
 
+{-| Messages used by highlighter when interaction with the keyboard.
+-}
 type KeyboardMsg
     = MoveLeft Int
     | MoveRight Int
