@@ -2,7 +2,8 @@
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    elm-forbid-import.url = "git+https://git.bytes.zone/BrianHicks/elm-forbid-import.git";
+    elm-forbid-import.url =
+      "git+https://git.bytes.zone/BrianHicks/elm-forbid-import.git";
   };
 
   outputs = inputs:
@@ -51,8 +52,11 @@
             # Buck dependencies
             pkgs.black
             pkgs.buildifier
-          ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [ pkgs.fsatrace pkgs.strace pkgs.cacert ];
+          ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [
+            pkgs.fsatrace
+            pkgs.strace
+            pkgs.cacert
+          ];
         };
-      }
-    );
+      });
 }
