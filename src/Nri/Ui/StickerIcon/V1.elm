@@ -437,14 +437,16 @@ questionMark =
         backgroundFill =
             fill "#EED1FF"
 
-        details =
-            [ -- Background
-              Svg.path
+        detailedBackground x y =
+            Svg.path
                 [ backgroundFill
-                , css [ position 81.68 45.98 ]
+                , css [ position x y ]
                 , d "M399.501 689.5C468.301 700.7 480.501 637.833 478.001 605C520.501 623 611.001 627 631.001 538.5C651.001 450 576.668 428.167 554.501 418C563.834 412.667 616.002 400 631.001 349.5C646 299 638 256 604 220C570 184 441 182.5 364 87C290.098 -4.65719 196.5 -30.5 142.501 46C102.499 102.67 131.834 156.5 158.501 182.5C114 182.5 21.5001 184.5 3.50016 273C-14.4998 361.5 57.8344 396.333 100.001 418C73.8344 428.667 24.801 465.3 38.001 526.5C54.501 603 313.501 675.5 399.501 689.5Z"
                 ]
                 []
+
+        details =
+            [ detailedBackground 81.68 45.98
             , core 201.62 124.1
             , coreStroke 202.68 124.1
             , coreShadow 404.5 125.92
@@ -484,7 +486,58 @@ questionMark =
             )
     , animated =
         init "0 0 800 800"
-            []
+            [ let
+                backgroundTranslate =
+                    translate2 81.68 45.98
+              in
+              Svg.g
+                [ css
+                    [ Css.transform backgroundTranslate
+                    , Css.property "transform-origin" "center"
+                    , withAnimation
+                        { delayMS = 310
+                        , durationMS = 470
+                        , keyframes =
+                            [ ( 0, [ Css.Animations.transform [ Css.scale 0, backgroundTranslate ] ] )
+                            , ( 100, [ Css.Animations.transform [ Css.scale 1, backgroundTranslate ] ] )
+                            ]
+                        }
+                    ]
+                ]
+                [ detailedBackground 0 0
+                ]
+            , let
+                ( markX, markY ) =
+                    ( 201.62, 124.1 )
+
+                markTranslate =
+                    translate2 markX markY
+              in
+              Svg.g
+                [ css
+                    [ Css.transform markTranslate
+                    , Css.property "transform-origin" "center center"
+                    , withAnimation
+                        { delayMS = 0
+                        , durationMS = 470
+                        , keyframes =
+                            [ ( 0, [ Css.Animations.transform [ Css.scale 0, Css.rotate (Css.deg -135), markTranslate ] ] )
+                            , ( 33, [ Css.Animations.transform [ Css.scale 0.9, markTranslate ] ] )
+                            , ( 50, [ Css.Animations.transform [ Css.scale 1, Css.rotate (Css.deg 35), markTranslate ] ] )
+                            , ( 75, [ Css.Animations.transform [ Css.scale 0.9, Css.rotate (Css.deg -20), markTranslate ] ] )
+                            , ( 100, [ Css.Animations.transform [ Css.scale 1, markTranslate ] ] )
+                            ]
+                        }
+                    ]
+                ]
+                [ core 0 0
+                , coreStroke (202.68 - markX) (124.1 - markY)
+                , coreShadow (404.5 - markX) (125.92 - markY)
+                , point (338.46 - markX) (649.28 - markY)
+                , pointStroke (338.46 - markX) (649.28 - markY)
+                , pointShadow (366 - markX) (641 - markY)
+                ]
+            ]
     }
 
 
