@@ -1,5 +1,5 @@
 module Nri.Ui.Highlighter.V5 exposing
-    ( Model, Msg(..), PointerMsg(..)
+    ( Model, Msg(..), PointerMsg(..), KeyboardMsg(..)
     , init, update
     , view, static, staticWithTags
     , viewMarkdown, staticMarkdown, staticMarkdownWithTags
@@ -26,11 +26,12 @@ Highlighter provides a view/model/update to display a view to highlight text and
   - Made all highlighter views lazy
   - Optimized `selectShortest` for the normal case of 0 or 1 highlight.
   - Added `FoldState`, `initFoldState`, `viewFoldHighlighter`, and `viewFoldStatic`
+  - Exposed KeyboardMsg(..) to allow for fine-tuning keyboard interactions
 
 
 # Types
 
-@docs Model, Msg, PointerMsg
+@docs Model, Msg, PointerMsg, KeyboardMsg
 
 
 # Init/View/Update
@@ -197,6 +198,8 @@ type PointerMsg
     | Ignored
 
 
+{-| Messages used by highlighter when interaction with the keyboard.
+-}
 type KeyboardMsg
     = MoveLeft Int
     | MoveRight Int
