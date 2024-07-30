@@ -70,6 +70,7 @@ or `viewFoldStatic` will render a single highlightable along with an update to t
 -}
 
 import Accessibility.Styled.Key as Key
+import Accessibility.Styled.Style exposing (invisibleStyle)
 import Browser.Dom as Dom
 import Css
 import Html.Styled as Html exposing (Attribute, Html, p, span)
@@ -564,6 +565,16 @@ performAction action ( model, cmds ) =
 
         ResetSelection ->
             ( { model | selectionStartIndex = Nothing, selectionEndIndex = Nothing }, cmds )
+
+
+isFirstLastHinted : Maybe ( Int, Int ) -> Highlightable marker -> Bool
+isFirstLastHinted hintingIndices { index } =
+    case hintingIndices of
+        Just ( start, end ) ->
+            start == index || end == index
+
+        Nothing ->
+            False
 
 
 isHinted : Maybe ( Int, Int ) -> Highlightable marker -> Bool
@@ -1651,7 +1662,15 @@ unmarkedHighlightableStyles config highlightable =
                     :: (case tool of
                             Tool.Marker marker ->
                                 if isHinted_ then
-                                    marker.hintClass
+                                    [ Css.batch marker.hintClass
+                                    , if isFirstLastHinted config.hintingIndices highlightable then
+                                        -- only announce first or last hinted bc that's where
+                                        -- keyboard focus will be
+                                        hintStartEndAnnouncer marker
+
+                                      else
+                                        Css.batch []
+                                    ]
 
                                 else if isHovered then
                                     -- When hovered, but not marked
@@ -1674,6 +1693,35 @@ unmarkedHighlightableStyles config highlightable =
                                 else
                                     []
                        )
+
+
+{-| Announce for screenreaders that we are at the last hinting index
+-}
+hintStartEndAnnouncer : Tool.MarkerModel marker -> Css.Style
+hintStartEndAnnouncer marker =
+    Css.after
+        [ Css.property
+            "content"
+            ("\" (selecting "
+                ++ (Maybe.map
+                        (\name -> stripMarkdownSyntax name)
+                        marker.name
+                        |> Maybe.withDefault "highlight"
+                   )
+                ++ ") \""
+            )
+        , invisibleStyle
+        ]
+
+
+stripMarkdownSyntax : String -> String
+stripMarkdownSyntax markdown =
+    case Markdown.Block.parse Nothing markdown of
+        [ Markdown.Block.Paragraph _ inlines ] ->
+            Markdown.Inline.extractText inlines
+
+        _ ->
+            markdown
 
 
 markedHighlightableStyles :
