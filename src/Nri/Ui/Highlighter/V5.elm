@@ -1552,6 +1552,11 @@ viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners
 
                     _ ->
                         AttributesExtra.none
+               , if isHinted config.hintingIndices highlightable then
+                    class "highlighter-hinted"
+
+                 else
+                    AttributesExtra.none
                , if isInteractive then
                     Key.tabbable
                         (case focusIndex of

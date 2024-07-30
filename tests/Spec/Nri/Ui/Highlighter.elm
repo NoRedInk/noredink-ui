@@ -14,6 +14,7 @@ import Nri.Ui.Highlighter.V5 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool exposing (Tool)
 import ProgramTest exposing (..)
 import Sort
+import Spec.Helpers exposing (nriDescription)
 import Spec.PseudoElements exposing (..)
 import Test exposing (..)
 import Test.Html.Query as Query
@@ -177,6 +178,43 @@ keyboardTests =
                 |> shiftLeft
                 |> releaseShift
                 |> ensureMarked [ "Pothos", " ", "indirect", " ", "light" ]
+                |> done
+    , test "supports hinting multiple segments at a time (right)" <|
+        \() ->
+            Highlightable.initFragments "Pothos indirect light"
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> shiftRight
+                |> ensureHinted [ "Pothos", " ", "indirect" ]
+                |> shiftRight
+                |> ensureHinted [ "Pothos", " ", "indirect", " ", "light" ]
+                |> shiftRight
+                |> ensureHinted [ "Pothos", " ", "indirect", " ", "light" ]
+                |> releaseShift
+                |> ensureMarked [ "Pothos", " ", "indirect", " ", "light" ]
+                |> done
+    , test "support hinting multiple elements at a time (left)" <|
+        \() ->
+            Highlightable.initFragments "Pothos indirect light"
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> rightArrow
+                |> rightArrow
+                |> shiftLeft
+                |> ensureHinted [ "indirect", " ", "light" ]
+                |> shiftLeft
+                |> ensureHinted [ "Pothos", " ", "indirect", " ", "light" ]
+                |> shiftLeft
+                |> ensureHinted [ "Pothos", " ", "indirect", " ", "light" ]
+                |> releaseShift
+                |> ensureMarked [ "Pothos", " ", "indirect", " ", "light" ]
+                |> done
+    , test "supports cancelling while hinting" <|
+        \() ->
+            Highlightable.initFragments "Pothos indirect light"
+                |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
+                |> shiftRight
+                |> ensureHinted [ "Pothos", " ", "indirect" ]
+                |> releaseShiftEsc
+                |> ensureNothingHinted
                 |> done
     , test "merges highlights" <|
         \() ->
@@ -502,6 +540,19 @@ ensureMarkIndex markI words testContext =
             )
 
 
+ensureHinted : List String -> TestContext -> TestContext
+ensureHinted words =
+    ensureView
+        (Query.findAll [ Selector.class "highlighter-hinted" ]
+            >> Expect.all (List.indexedMap (\i w -> Query.index i >> Query.has [ Selector.text w ]) words)
+        )
+
+
+ensureNothingHinted : TestContext -> TestContext
+ensureNothingHinted =
+    ensureViewHasNot [ Selector.class "highlighter-hinted" ]
+
+
 noneMarked : TestContext -> TestContext
 noneMarked =
     ensureView (Query.hasNot [ mark ])
@@ -558,6 +609,15 @@ releaseShift : TestContext -> TestContext
 releaseShift =
     KeyboardHelpers.releaseShift
         { targetDetails = [] }
+        [ Selector.attribute (Key.tabbable True) ]
+
+
+{-| Simulate an escape key release while shift is pressed
+-}
+releaseShiftEsc : TestContext -> TestContext
+releaseShiftEsc =
+    KeyboardHelpers.releaseKey
+        { targetDetails = [], keyCode = 27, shiftKey = True }
         [ Selector.attribute (Key.tabbable True) ]
 
 
