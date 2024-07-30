@@ -219,6 +219,8 @@ releaseShiftLeft { targetDetails } =
     releaseKey { targetDetails = targetDetails, keyCode = 37, shiftKey = True }
 
 
+{-| Simulat shift key being released while focusing on the given element.
+-}
 releaseShift :
     { targetDetails : List ( String, Encode.Value ) }
     -> List Selector
