@@ -572,8 +572,8 @@ performAction action ( model, cmds ) =
             ( { model | selectionStartIndex = Nothing, selectionEndIndex = Nothing }, cmds )
 
 
-isFirstLastHinted : Maybe ( Int, Int ) -> Highlightable marker -> Bool
-isFirstLastHinted hintingIndices { index } =
+isFirstOrLastHinted : Maybe ( Int, Int ) -> Highlightable marker -> Bool
+isFirstOrLastHinted hintingIndices { index } =
     case hintingIndices of
         Just ( start, end ) ->
             start == index || end == index
@@ -1678,7 +1678,7 @@ unmarkedHighlightableStyles config highlightable =
                             Tool.Marker marker ->
                                 if isHinted_ then
                                     [ Css.batch marker.hintClass
-                                    , if isFirstLastHinted config.hintingIndices highlightable then
+                                    , if isFirstOrLastHinted config.hintingIndices highlightable then
                                         -- only announce first or last hinted bc that's where
                                         -- keyboard focus will be
                                         hintStartEndAnnouncer marker
