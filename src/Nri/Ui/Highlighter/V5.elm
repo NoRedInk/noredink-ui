@@ -1438,16 +1438,13 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                         , Key.shiftLeft (Keyboard <| SelectionExpandLeft highlightable.index)
                         ]
                     , Key.onKeyUpPreventDefault
-                        [ -- Key.shift doesn't work on keyUp, bc `shiftKey` is False on keyUp
-                          { keyCode = 16
-                          , shiftKey = False
-                          , msg = Keyboard <| SelectionApplyTool highlightable.index
-                          }
+                        [ Key.shift (Keyboard <| SelectionApplyTool highlightable.index)
+                            -- Key.shift has `shiftKey` set to True, but the keyUp event
+                            -- for releasing the shift key has `shiftKey` set to False.
+                            |> (\k -> { k | shiftKey = False })
                         , -- Escape while shift is down cancels selection
-                          { keyCode = 27
-                          , shiftKey = True
-                          , msg = Keyboard <| SelectionReset highlightable.index
-                          }
+                          Key.escape (Keyboard <| SelectionReset highlightable.index)
+                            |> (\k -> { k | shiftKey = True })
                         ]
                     ]
                 , renderMarkdown = renderMarkdown
