@@ -1717,7 +1717,7 @@ hintStartEndAnnouncer marker =
     Css.after
         [ Css.property
             "content"
-            ("\" (selecting "
+            ("\" (selecting text for "
                 ++ (Maybe.map
                         (\name -> stripMarkdownSyntax name)
                         marker.name

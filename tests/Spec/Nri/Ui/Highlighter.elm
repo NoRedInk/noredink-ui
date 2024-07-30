@@ -295,8 +295,8 @@ keyboardTests =
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> shiftRight
                 |> ensureHinted [ "Pothos", " ", "indirect" ]
-                |> ensureView (hasAfter "\\(selecting highlight\\)" "Pothos")
-                |> ensureView (hasAfter "\\(selecting highlight\\)" "indirect")
+                |> ensureView (hasAfter "\\(selecting text for highlight\\)" "Pothos")
+                |> ensureView (hasAfter "\\(selecting text for highlight\\)" "indirect")
                 |> done
     , describe "Regression tests for A11-1767"
         [ test "generic start announcement is made when mark does not include first element" <|
