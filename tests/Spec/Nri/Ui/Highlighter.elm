@@ -14,7 +14,6 @@ import Nri.Ui.Highlighter.V5 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool exposing (Tool)
 import ProgramTest exposing (..)
 import Sort
-import Spec.Helpers exposing (nriDescription)
 import Spec.PseudoElements exposing (..)
 import Test exposing (..)
 import Test.Html.Query as Query
