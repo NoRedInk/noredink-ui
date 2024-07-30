@@ -1,6 +1,6 @@
 module Nri.Test.KeyboardHelpers.V1 exposing
     ( pressKey, releaseKey
-    , pressTab, pressTabBack, pressEsc, pressSpace, pressDownArrow, pressRightArrow, pressLeftArrow, pressShiftRight, pressShiftLeft, releaseRightArrow, releaseLeftArrow, releaseShiftRight, releaseShiftLeft
+    , pressTab, pressTabBack, pressEsc, pressSpace, pressDownArrow, pressRightArrow, pressLeftArrow, pressShiftRight, pressShiftLeft, releaseRightArrow, releaseLeftArrow, releaseShiftRight, releaseShiftLeft, releaseShift
     )
 
 {-| `KeyboardHelpers` provides a set of functions to simulate keyboard events for testing Elm programs.
@@ -13,7 +13,7 @@ module Nri.Test.KeyboardHelpers.V1 exposing
 
 # Common helpers
 
-@docs pressTab, pressTabBack, pressEsc, pressSpace, pressDownArrow, pressRightArrow, pressLeftArrow, pressShiftRight, pressShiftLeft, releaseRightArrow, releaseLeftArrow, releaseShiftRight, releaseShiftLeft
+@docs pressTab, pressTabBack, pressEsc, pressSpace, pressDownArrow, pressRightArrow, pressLeftArrow, pressShiftRight, pressShiftLeft, releaseRightArrow, releaseLeftArrow, releaseShiftRight, releaseShiftLeft, releaseShift
 
 -}
 
@@ -217,3 +217,12 @@ releaseShiftLeft :
     -> ProgramTest.ProgramTest model msg effect
 releaseShiftLeft { targetDetails } =
     releaseKey { targetDetails = targetDetails, keyCode = 37, shiftKey = True }
+
+
+releaseShift :
+    { targetDetails : List ( String, Encode.Value ) }
+    -> List Selector
+    -> ProgramTest.ProgramTest model msg effect
+    -> ProgramTest.ProgramTest model msg effect
+releaseShift { targetDetails } =
+    releaseKey { targetDetails = targetDetails, keyCode = 16, shiftKey = False }

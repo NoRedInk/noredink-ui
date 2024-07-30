@@ -153,13 +153,13 @@ keyboardTests =
             Highlightable.initFragments "Pothos indirect light"
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> shiftRight
-                |> releaseShiftRight
+                |> releaseShift
                 |> ensureMarked [ "Pothos", " ", "indirect" ]
                 |> shiftRight
-                |> releaseShiftRight
+                |> releaseShift
                 |> ensureMarked [ "Pothos", " ", "indirect", " ", "light" ]
                 |> shiftRight
-                |> releaseShiftRight
+                |> releaseShift
                 |> ensureMarked [ "Pothos", " ", "indirect", " ", "light" ]
                 |> done
     , test "expands selection one element to the left on shift + left arrow and highlight selected elements" <|
@@ -169,13 +169,13 @@ keyboardTests =
                 |> rightArrow
                 |> rightArrow
                 |> shiftLeft
-                |> releaseShiftLeft
+                |> releaseShift
                 |> ensureMarked [ "indirect", " ", "light" ]
                 |> shiftLeft
-                |> releaseShiftLeft
+                |> releaseShift
                 |> ensureMarked [ "Pothos", " ", "indirect", " ", "light" ]
                 |> shiftLeft
-                |> releaseShiftLeft
+                |> releaseShift
                 |> ensureMarked [ "Pothos", " ", "indirect", " ", "light" ]
                 |> done
     , test "merges highlights" <|
@@ -184,13 +184,13 @@ keyboardTests =
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> shiftRight
-                |> releaseShiftRight
+                |> releaseShift
                 |> ensureMarked [ "Pothos", " ", "indirect" ]
                 |> ensureTabbable "indirect"
                 |> rightArrow
                 |> ensureTabbable "light"
                 |> shiftLeft
-                |> releaseShiftLeft
+                |> releaseShift
                 |> ensureMarked [ "Pothos", " ", "indirect", " ", "light" ]
                 |> done
     , test "selects element on MouseDown and highlights selected element on MouseUp" <|
@@ -237,7 +237,7 @@ keyboardTests =
                 |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                 |> ensureTabbable "Pothos"
                 |> shiftRight
-                |> releaseShiftRight
+                |> releaseShift
                 |> ensureMarked [ "Pothos", " ", "indirect" ]
                 |> mouseDown "indirect"
                 |> mouseUp "indirect"
@@ -259,7 +259,7 @@ keyboardTests =
                     |> program { markerName = Nothing, joinAdjacentInteractiveHighlights = False }
                     |> rightArrow
                     |> shiftRight
-                    |> releaseShiftRight
+                    |> releaseShift
                     |> ensureMarked [ "indirect" ]
                     |> expectView (hasBefore "start highlight" "indirect")
         , test "specific start announcement is made when mark does not include first element" <|
@@ -269,7 +269,7 @@ keyboardTests =
                     |> rightArrow
                     |> ensureTabbable "indirect"
                     |> shiftRight
-                    |> releaseShiftRight
+                    |> releaseShift
                     |> ensureMarked [ "indirect" ]
                     |> expectView (hasBefore "start banana highlight" "indirect")
         ]
@@ -281,7 +281,7 @@ keyboardTests =
                 Highlightable.initFragments "Sir Walter Elliot, of Kellynch Hall, in Somersetshire..."
                     |> program { markerName = Just "Claim", joinAdjacentInteractiveHighlights = False }
                     |> shiftRight
-                    |> releaseShiftRight
+                    |> releaseShift
                     |> ensureMarked [ "Sir", " ", "Walter" ]
                     |> ensureTabbable "Walter"
                     |> rightArrow
@@ -554,16 +554,9 @@ shiftLeft =
         [ Selector.attribute (Key.tabbable True) ]
 
 
-releaseShiftRight : TestContext -> TestContext
-releaseShiftRight =
-    KeyboardHelpers.releaseShiftRight
-        { targetDetails = [] }
-        [ Selector.attribute (Key.tabbable True) ]
-
-
-releaseShiftLeft : TestContext -> TestContext
-releaseShiftLeft =
-    KeyboardHelpers.releaseShiftLeft
+releaseShift : TestContext -> TestContext
+releaseShift =
+    KeyboardHelpers.releaseShift
         { targetDetails = [] }
         [ Selector.attribute (Key.tabbable True) ]
 
