@@ -206,7 +206,6 @@ type KeyboardMsg
     | SelectionExpandLeft Int
     | SelectionExpandRight Int
     | SelectionApplyTool Int
-    | SelectionReset Int
     | ToggleHighlight Int
 
 
@@ -400,9 +399,6 @@ keyboardEventToActions msg model =
 
                 Tool.Eraser _ ->
                     [ RemoveHint, ResetSelection, Focus index ]
-
-        SelectionReset index ->
-            [ ResetSelection, RemoveHint, Focus index ]
 
         ToggleHighlight index ->
             case model.marker of
