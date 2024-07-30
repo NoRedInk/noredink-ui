@@ -1426,9 +1426,11 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                         , Key.shiftLeft (Keyboard <| SelectionExpandLeft highlightable.index)
                         ]
                     , Key.onKeyUpPreventDefault
-                        [ Key.shiftRight (Keyboard <| SelectionApplyTool highlightable.index)
-                        , Key.shiftLeft (Keyboard <| SelectionApplyTool highlightable.index)
-                        , Key.shift (Keyboard <| SelectionReset highlightable.index)
+                        [ -- Key.shift doesn't work on keyUp, bc `shiftKey` is False on keyUp
+                          { keyCode = 16
+                          , shiftKey = False
+                          , msg = Keyboard <| SelectionApplyTool highlightable.index
+                          }
                         ]
                     ]
                 , renderMarkdown = renderMarkdown
