@@ -27,6 +27,7 @@ Highlighter provides a view/model/update to display a view to highlight text and
   - Optimized `selectShortest` for the normal case of 0 or 1 highlight.
   - Added `FoldState`, `initFoldState`, `viewFoldHighlighter`, and `viewFoldStatic`
   - Exposed KeyboardMsg(..) to allow for fine-tuning keyboard interactions
+  - Made keyboard selection use hinting state too
 
 
 # Types
@@ -70,6 +71,7 @@ or `viewFoldStatic` will render a single highlightable along with an update to t
 -}
 
 import Accessibility.Styled.Key as Key
+import Accessibility.Styled.Style exposing (invisibleStyle)
 import Browser.Dom as Dom
 import Css
 import Html.Styled as Html exposing (Attribute, Html, p, span)
@@ -568,6 +570,16 @@ performAction action ( model, cmds ) =
 
         ResetSelection ->
             ( { model | selectionStartIndex = Nothing, selectionEndIndex = Nothing }, cmds )
+
+
+isFirstOrLastHinted : Maybe ( Int, Int ) -> Highlightable marker -> Bool
+isFirstOrLastHinted hintingIndices { index } =
+    case hintingIndices of
+        Just ( start, end ) ->
+            start == index || end == index
+
+        Nothing ->
+            False
 
 
 isHinted : Maybe ( Int, Int ) -> Highlightable marker -> Bool
@@ -1426,9 +1438,13 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                         , Key.shiftLeft (Keyboard <| SelectionExpandLeft highlightable.index)
                         ]
                     , Key.onKeyUpPreventDefault
-                        [ Key.shiftRight (Keyboard <| SelectionApplyTool highlightable.index)
-                        , Key.shiftLeft (Keyboard <| SelectionApplyTool highlightable.index)
-                        , Key.shift (Keyboard <| SelectionReset highlightable.index)
+                        [ Key.shift (Keyboard <| SelectionApplyTool highlightable.index)
+                            -- Key.shift has `shiftKey` set to True, but the keyUp event
+                            -- for releasing the shift key has `shiftKey` set to False.
+                            |> (\k -> { k | shiftKey = False })
+                        , -- Escape while shift is down cancels selection
+                          Key.escape (Keyboard <| SelectionReset highlightable.index)
+                            |> (\k -> { k | shiftKey = True })
                         ]
                     ]
                 , renderMarkdown = renderMarkdown
@@ -1533,6 +1549,11 @@ viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners
 
                     _ ->
                         AttributesExtra.none
+               , if isHinted config.hintingIndices highlightable then
+                    class "highlighter-hinted"
+
+                 else
+                    AttributesExtra.none
                , if isInteractive then
                     Key.tabbable
                         (case focusIndex of
@@ -1653,7 +1674,15 @@ unmarkedHighlightableStyles config highlightable =
                     :: (case tool of
                             Tool.Marker marker ->
                                 if isHinted_ then
-                                    marker.hintClass
+                                    [ Css.batch marker.hintClass
+                                    , if isFirstOrLastHinted config.hintingIndices highlightable then
+                                        -- only announce first or last hinted bc that's where
+                                        -- keyboard focus will be
+                                        hintStartEndAnnouncer marker
+
+                                      else
+                                        Css.batch []
+                                    ]
 
                                 else if isHovered then
                                     -- When hovered, but not marked
@@ -1676,6 +1705,35 @@ unmarkedHighlightableStyles config highlightable =
                                 else
                                     []
                        )
+
+
+{-| Announce for screenreaders that we are at the last hinting index
+-}
+hintStartEndAnnouncer : Tool.MarkerModel marker -> Css.Style
+hintStartEndAnnouncer marker =
+    Css.after
+        [ Css.property
+            "content"
+            ("\" (selecting text for "
+                ++ (Maybe.map
+                        (\name -> stripMarkdownSyntax name)
+                        marker.name
+                        |> Maybe.withDefault "highlight"
+                   )
+                ++ ") \""
+            )
+        , invisibleStyle
+        ]
+
+
+stripMarkdownSyntax : String -> String
+stripMarkdownSyntax markdown =
+    case Markdown.Block.parse Nothing markdown of
+        [ Markdown.Block.Paragraph _ inlines ] ->
+            Markdown.Inline.extractText inlines
+
+        _ ->
+            markdown
 
 
 markedHighlightableStyles :
