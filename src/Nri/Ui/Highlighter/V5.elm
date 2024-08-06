@@ -430,19 +430,23 @@ pointerEventToActions msg model =
         Ignored ->
             []
 
-        Move _ eventIndex ->
-            case model.mouseDownIndex of
-                Just downIndex ->
-                    [ MouseOver eventIndex
-                    , Hint downIndex eventIndex
-                    ]
+        Move targetId eventIndex ->
+            if Just model.id == targetId then
+                case model.mouseDownIndex of
+                    Just downIndex ->
+                        [ MouseOver eventIndex
+                        , Hint downIndex eventIndex
+                        ]
 
-                Nothing ->
-                    -- We're dealing with a touch move that hasn't been where
-                    -- the initial touch down was not over a highlightable
-                    -- region. We need to pretend like the first move into the
-                    -- highlightable region was actually a touch down.
-                    pointerEventToActions (Down eventIndex) model
+                    Nothing ->
+                        -- We're dealing with a touch move that hasn't been where
+                        -- the initial touch down was not over a highlightable
+                        -- region. We need to pretend like the first move into the
+                        -- highlightable region was actually a touch down.
+                        pointerEventToActions (Down eventIndex) model
+
+            else
+                []
 
         Over eventIndex ->
             case model.mouseDownIndex of
@@ -467,29 +471,33 @@ pointerEventToActions msg model =
             , Hint eventIndex eventIndex
             ]
 
-        Up _ ->
-            let
-                save marker =
-                    case ( model.mouseOverIndex, model.mouseDownIndex ) of
-                        ( Just overIndex, Just downIndex ) ->
-                            if overIndex == downIndex then
-                                [ Toggle downIndex marker ]
+        Up targetId ->
+            if Just model.id == targetId then
+                let
+                    save marker =
+                        case ( model.mouseOverIndex, model.mouseDownIndex ) of
+                            ( Just overIndex, Just downIndex ) ->
+                                if overIndex == downIndex then
+                                    [ Toggle downIndex marker ]
 
-                            else
+                                else
+                                    [ Save marker ]
+
+                            ( Nothing, Just downIndex ) ->
                                 [ Save marker ]
 
-                        ( Nothing, Just downIndex ) ->
-                            [ Save marker ]
+                            _ ->
+                                []
+                in
+                case model.marker of
+                    Tool.Marker marker ->
+                        MouseUp :: save marker
 
-                        _ ->
-                            []
-            in
-            case model.marker of
-                Tool.Marker marker ->
-                    MouseUp :: save marker
+                    Tool.Eraser _ ->
+                        [ MouseUp, RemoveHint ]
 
-                Tool.Eraser _ ->
-                    [ MouseUp, RemoveHint ]
+            else
+                []
 
 
 {-| We fold over actions using (Model marker) as the accumulator.
