@@ -51,7 +51,8 @@
           var data;
 
           if (realTarget) {
-            data = realTarget.getAttribute("data-highlighter-item-index"); // each word has a data attribute with its index.
+            // each word has a data attribute with its index.
+            data = realTarget.getAttribute("data-highlighter-item-index");
           }
 
           // we only want to be informed for touchmove-events in the current highlighter.
