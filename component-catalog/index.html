@@ -24,6 +24,7 @@
           var highlighter = document.getElementById(id);
           if (!id || !highlighter) {
             // in a real application, report an error at this point.
+            console.log("highlighter not found", id);
             return;
           }
 
@@ -50,11 +51,12 @@
           var data;
 
           if (realTarget) {
-            data = realTarget.getAttribute("data-highlighter-item-index"); // each word has a data attribute with its index.
+            // each word has a data attribute with its index.
+            data = realTarget.getAttribute("data-highlighter-item-index");
           }
 
-          // we only want to be informed for touchmove-events in the current highlighter.
-          if (data && id === realTarget.parentNode.id) {
+          // we only want to be informed for touchmove-events in highlightables
+          if (data) {
             app.ports.highlighterOnTouch.send([type, id, parseInt(data, 10)]);
           }
         };
