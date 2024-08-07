@@ -192,6 +192,7 @@ type PointerMsg
     = Down Int
     | Out
     | Over Int
+    | Click { index : Int, clickCount : Int }
       -- the `Maybe String`s here are for detecting touchend events via
       -- subscription--we listen at the document level but get the id associated
       -- with the subscription when it fires messages. Mouse-triggered events
@@ -469,8 +470,29 @@ pointerEventToActions msg model =
         Down eventIndex ->
             [ MouseOver eventIndex
             , MouseDown eventIndex
-            , Hint eventIndex eventIndex
             ]
+
+        Click { index, clickCount } ->
+            if clickCount > 1 then
+                case model.marker of
+                    Tool.Marker marker ->
+                        [ MouseOver index
+                        , MouseDown index
+                        , Hint index index
+                        , Save marker
+                        , MouseUp
+                        ]
+
+                    Tool.Eraser _ ->
+                        [ MouseOver index
+                        , MouseDown index
+                        , Hint index index
+                        , RemoveHint
+                        , MouseUp
+                        ]
+
+            else
+                []
 
         Up targetId ->
             if Just model.id == targetId then
@@ -479,12 +501,14 @@ pointerEventToActions msg model =
                         case ( model.mouseOverIndex, model.mouseDownIndex ) of
                             ( Just overIndex, Just downIndex ) ->
                                 if overIndex == downIndex then
-                                    [ Toggle downIndex marker ]
+                                    []
 
                                 else
+                                    -- Finished sentence highlighting over a highlightable
                                     [ Save marker ]
 
-                            ( Nothing, Just downIndex ) ->
+                            ( Nothing, Just _ ) ->
+                                -- Finished sentence highlighting outside of a highlightable
                                 [ Save marker ]
 
                             _ ->
@@ -495,7 +519,7 @@ pointerEventToActions msg model =
                         MouseUp :: save marker
 
                     Tool.Eraser _ ->
-                        [ MouseUp, RemoveHint ]
+                        [ MouseUp ]
 
             else
                 []
@@ -1437,6 +1461,11 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                     , onPreventDefault "mouseleave" (Pointer <| Out)
                     , onPreventDefault "mouseup" (Pointer <| Up <| Just config.id)
                     , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
+                    , onClickPreventDefault
+                        (\count ->
+                            Pointer <|
+                                Click { index = highlightable.index, clickCount = count }
+                        )
                     , onPreventDefault "touchstart" (Pointer <| Down highlightable.index)
                     , attribute "data-interactive" ""
                     , Key.onKeyDownPreventDefault
@@ -1478,6 +1507,11 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                     [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
                     , onPreventDefault "mouseleave" (Pointer <| Out)
                     , onPreventDefault "mouseup" (Pointer <| Up <| Just config.id)
+                    , onClickPreventDefault
+                        (\count ->
+                            Pointer <|
+                                Click { index = highlightable.index, clickCount = count }
+                        )
                     , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
                     , onPreventDefault "touchstart" (Pointer <| Down highlightable.index)
                     , attribute "data-static" ""
@@ -1845,4 +1879,26 @@ onPreventDefault name msg =
                 |> Json.Decode.map (\result -> ( msg, result ))
     in
     Events.preventDefaultOn name
+        checkIfCancelable
+
+
+{-| Helper for `on` to preventDefault and capture `detail` from click event
+-}
+onClickPreventDefault : (Int -> msg) -> Attribute msg
+onClickPreventDefault msg =
+    let
+        -- If we attempt to preventDefault on an event which is not cancelable
+        -- Chrome will blow up and complain that:
+        --
+        -- Ignored attempt to cancel a touchmove event with cancelable=false,
+        -- for example because scrolling is in progress and cannot be interrupted.
+        --
+        -- So instead we only preventDefault when it is safe to do so.
+        checkIfCancelable =
+            Json.Decode.map2
+                (\detail result -> ( msg detail, result ))
+                (Json.Decode.field "detail" Json.Decode.int)
+                (Json.Decode.field "cancelable" Json.Decode.bool)
+    in
+    Events.preventDefaultOn "click"
         checkIfCancelable
