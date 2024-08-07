@@ -812,10 +812,15 @@ update msg state =
 
         FoldHighlighterMsg highlighterMsg ->
             let
-                ( highlighterModel, highlighterCmd, _ ) =
+                ( highlighterModel, highlighterCmd, intent ) =
                     Highlighter.update highlighterMsg state.foldHighlightsState
             in
-            ( { state | foldHighlightsState = highlighterModel }, Cmd.map FoldHighlighterMsg highlighterCmd )
+            ( { state | foldHighlightsState = highlighterModel }
+            , Cmd.batch
+                [ Cmd.map FoldHighlighterMsg highlighterCmd
+                , perform intent
+                ]
+            )
 
 
 perform : Highlighter.Intent -> Cmd msg
