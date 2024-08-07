@@ -28,6 +28,7 @@ Highlighter provides a view/model/update to display a view to highlight text and
   - Added `FoldState`, `initFoldState`, `viewFoldHighlighter`, and `viewFoldStatic`
   - Exposed KeyboardMsg(..) to allow for fine-tuning keyboard interactions
   - Made keyboard selection use hinting state too
+  - Fixed mobile interaction bugs (see #1694)
 
 
 # Types
