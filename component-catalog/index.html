@@ -24,6 +24,7 @@
           var highlighter = document.getElementById(id);
           if (!id || !highlighter) {
             // in a real application, report an error at this point.
+            console.log("highlighter not found", id);
             return;
           }
 
