@@ -55,8 +55,8 @@
             data = realTarget.getAttribute("data-highlighter-item-index");
           }
 
-          // we only want to be informed for touchmove-events in the current highlighter.
-          if (data && id === realTarget.parentNode.id) {
+          // we only want to be informed for touchmove-events in highlightables
+          if (data) {
             app.ports.highlighterOnTouch.send([type, id, parseInt(data, 10)]);
           }
         };
