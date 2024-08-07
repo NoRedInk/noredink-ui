@@ -202,6 +202,8 @@ example =
                     , Css.lineHeight (Css.num 1.75)
                     , Fonts.ugFont
                     ]
+                , Html.Styled.Attributes.id state.foldHighlightsState.id
+                , Html.Styled.Attributes.class "highlighter-container"
                 ]
                 [ viewFoldHighlights state.foldHighlightsState
                     |> map FoldHighlighterMsg
