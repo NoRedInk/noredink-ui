@@ -1434,7 +1434,7 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                 , eventListeners =
                     [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
                     , onPreventDefault "mouseleave" (Pointer <| Out)
-                    , onPreventDefault "mouseup" (Pointer <| Up Nothing)
+                    , onPreventDefault "mouseup" (Pointer <| Up <| Just config.id)
                     , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
                     , onPreventDefault "touchstart" (Pointer <| Down highlightable.index)
                     , attribute "data-interactive" ""
@@ -1476,7 +1476,7 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                     -- should see the entire highlight change to hover styles.
                     [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
                     , onPreventDefault "mouseleave" (Pointer <| Out)
-                    , onPreventDefault "mouseup" (Pointer <| Up Nothing)
+                    , onPreventDefault "mouseup" (Pointer <| Up <| Just config.id)
                     , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
                     , onPreventDefault "touchstart" (Pointer <| Down highlightable.index)
                     , attribute "data-static" ""
