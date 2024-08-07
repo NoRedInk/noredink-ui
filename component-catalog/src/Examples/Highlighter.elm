@@ -50,7 +50,13 @@ example =
     , version = version
     , init = init
     , update = update
-    , subscriptions = \_ -> Sub.map HighlighterMsg subscriptions
+    , subscriptions =
+        \_ ->
+            Sub.batch
+                [ Sub.map HighlighterMsg subscriptions
+                , Sub.map OverlappingHighlighterMsg subscriptions
+                , Sub.map FoldHighlighterMsg subscriptions
+                ]
     , preview =
         [ div [ css [ Fonts.baseFont, Css.lineHeight (Css.num 2), Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ] ] ]
             [ Highlighter.static
