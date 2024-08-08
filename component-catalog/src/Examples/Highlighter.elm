@@ -749,7 +749,7 @@ update msg state =
                 [ Cmd.map HighlighterMsg effect
                 , case intent.listenTo of
                     Just listenTo ->
-                        highlighterListen listenTo
+                        highlighterListen ( listenTo, state.highlighter.scrollFriendly )
 
                     Nothing ->
                         Cmd.none
@@ -799,7 +799,7 @@ update msg state =
                             ( newComment
                             , Cmd.batch
                                 [ Cmd.map OverlappingHighlighterMsg effect
-                                , perform intent
+                                , perform intent state.highlighter.scrollFriendly
                                 ]
                             )
 
@@ -812,7 +812,7 @@ update msg state =
                                     ( { state | overlappingHighlightsState = withAllCommentIds }
                                     , Cmd.batch
                                         [ Cmd.map OverlappingHighlighterMsg effect
-                                        , perform intent
+                                        , perform intent state.overlappingHighlightsState.scrollFriendly
                                         ]
                                     )
 
@@ -821,7 +821,7 @@ update msg state =
                                     ( { state | overlappingHighlightsState = withAllCommentIds }
                                     , Cmd.batch
                                         [ Cmd.map OverlappingHighlighterMsg effect
-                                        , perform intent
+                                        , perform intent state.overlappingHighlightsState.scrollFriendly
                                         ]
                                     )
 
@@ -833,16 +833,16 @@ update msg state =
             ( { state | foldHighlightsState = highlighterModel }
             , Cmd.batch
                 [ Cmd.map FoldHighlighterMsg highlighterCmd
-                , perform intent
+                , perform intent state.foldHighlightsState.scrollFriendly
                 ]
             )
 
 
-perform : Highlighter.Intent -> Cmd msg
-perform (Highlighter.Intent intent) =
+perform : Highlighter.Intent -> Bool -> Cmd msg
+perform (Highlighter.Intent intent) scrollFriendly =
     case intent.listenTo of
         Just listenTo ->
-            highlighterListen listenTo
+            highlighterListen ( listenTo, scrollFriendly )
 
         Nothing ->
             Cmd.none
@@ -893,13 +893,16 @@ onTouch =
                     "end" ->
                         Highlighter.TouchEnd (Just targetId)
 
+                    "longpress" ->
+                        Highlighter.LongPress (Just targetId) index
+
                     _ ->
                         Highlighter.TouchIgnored
 
 
 {-| Start listening to events on a highlighter
 -}
-port highlighterListen : String -> Cmd msg
+port highlighterListen : ( String, Bool ) -> Cmd msg
 
 
 {-| Listen to documentup events, to stop highlighting.

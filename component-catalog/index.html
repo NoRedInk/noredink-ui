@@ -19,7 +19,9 @@
       // HIGHLIGHTER
 
       // start listening to events when the user starts dragging/clickingdown
-      app.ports.highlighterListen.subscribe(function (id) {
+      app.ports.highlighterListen.subscribe(([id, scrollFriendly]) => {
+        const touchEventListener = handleTouchEvents("move", id);
+
         window.requestAnimationFrame(() => {
           var highlighter = document.getElementById(id);
           if (!id || !highlighter) {
@@ -28,13 +30,42 @@
             return;
           }
 
-          document.addEventListener("mouseup", onDocumentUp(id, "mouse"));
-          document.addEventListener("touchend", onDocumentUp(id, "touch"));
+          document.addEventListener("mouseup", onDocumentUp(id, "mouse", touchEventListener));
+          document.addEventListener("touchend", onDocumentUp(id, "touch", touchEventListener));
+          if (!scrollFriendly) {
+            // scroll-friendly mode only registers a touchmove listener after a longpress
+            highlighter.addEventListener("touchmove", touchEventListener);
+          }
           highlighter.addEventListener(
-            "touchmove",
-            handleTouchEvents("move", id)
+            "touchstart",
+            handleTouchStartScrollFriendly(id)
           );
         });
+
+        function handleTouchStartScrollFriendly(id) {
+          return function (e) {
+            const idx = getTouchEventIndex(e);
+
+            if (!idx) return;
+
+            const longpressTimeout = setTimeout(() => {
+              document.getElementById(id).addEventListener("touchmove", touchEventListener);
+              document.removeEventListener("touchmove", cancelLongpress);
+              document.removeEventListener("touchend", cancelLongpress);
+              app.ports.highlighterOnTouch.send(["longpress", id, idx]);
+            }, 500);
+
+            // on touchmove or touchend, cancel the longpress timeout
+            function cancelLongpress() {
+              clearTimeout(longpressTimeout);
+              document.removeEventListener("touchmove", cancelLongpress);
+              document.removeEventListener("touchend", cancelLongpress);
+            }
+
+            document.addEventListener("touchmove", cancelLongpress);
+            document.addEventListener("touchend", cancelLongpress);
+          };
+        }
       });
 
       /*
@@ -65,10 +96,30 @@
       /*
        * inform elm when we receive a mouseup/touchend event.
        */
-      function onDocumentUp(id, device) {
+      function onDocumentUp(id, device, touchEventListener) {
         return function () {
           app.ports.highlighterOnDocumentUp.send([id, device]);
+          if (device === "touch") {
+            document.getElementById(id)?.removeEventListener(
+              "touchmove",
+              touchEventListener
+            );
+          }
         };
+      }
+
+      function getTouchEventIndex(e) {
+        if (e.touches.length > 1) return; // we don't care about multitouch
+          var loc = e.changedTouches[0];
+          var realTarget = document.elementFromPoint(loc.clientX, loc.clientY); // get the element under the finger
+
+          if (realTarget) {
+            // each word has a data attribute with its index.
+            const data = realTarget.getAttribute("data-highlighter-item-index");
+            if (data) {
+              return parseInt(data, 10);
+            }
+          }
       }
     </script>
     <script src="bundle.js"></script>

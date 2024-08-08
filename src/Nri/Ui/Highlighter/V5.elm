@@ -217,6 +217,7 @@ type PointerMsg
 -}
 type TouchMsg
     = TouchStart Int
+    | LongPress (Maybe String) Int
     | TouchMove (Maybe String) Int
     | TouchEnd (Maybe String)
     | TouchIgnored
@@ -624,6 +625,17 @@ touchEventToActions msg model =
                           else
                             RemoveHint
                         ]
+
+            else
+                []
+
+
+        LongPress targetId eventIndex ->
+            if Just model.id == targetId then
+                [ MouseOver eventIndex
+                , MouseDown eventIndex
+                , Hint eventIndex eventIndex
+                ]
 
             else
                 []
@@ -1547,7 +1559,21 @@ viewHighlightable :
     -> Highlightable marker
     -> List Css.Style
     -> Html (Msg marker)
-viewHighlightable { renderMarkdown, overlaps } model highlightable =
+viewHighlightable { renderMarkdown, overlaps } model highlightable css =
+    let
+        newCss =
+            [ Css.batch css
+            , if model.scrollFriendly then
+                Css.batch
+                    -- block ios safari from selecting text
+                    [ Css.property "-webkit-user-select" "none"
+                    , Css.property "-webkit-touch-callout" "none"
+                    ]
+
+              else
+                Css.batch []
+            ]
+    in
     case highlightable.type_ of
         Highlightable.Interactive ->
             viewHighlightableSegment
@@ -1558,8 +1584,10 @@ viewHighlightable { renderMarkdown, overlaps } model highlightable =
                     , onPreventDefault "mouseleave" (Pointer <| Out)
                     , onPreventDefault "mouseup" (Pointer <| Up <| Just model.id)
                     , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
+                    , onPreventDefault "contextmenu" (Touch <| TouchIgnored)
                     , if model.scrollFriendly then
-                        onPreventDefault "contextmenu" (Touch <| TouchStart highlightable.index)
+                        -- Events.on "touchstart" (Json.Decode.succeed (Touch <| TouchStart highlightable.index))
+                        AttributesExtra.none
 
                       else
                         onPreventDefault "touchstart" (Touch <| TouchStart highlightable.index)
@@ -1597,6 +1625,7 @@ viewHighlightable { renderMarkdown, overlaps } model highlightable =
                 , overlaps = overlaps
                 }
                 highlightable
+                newCss
 
         Highlightable.Static ->
             viewHighlightableSegment
@@ -1609,11 +1638,9 @@ viewHighlightable { renderMarkdown, overlaps } model highlightable =
                     -- should see the entire highlight change to hover styles.
                     [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
                     , onPreventDefault "mouseleave" (Pointer <| Out)
-                    , if model.scrollFriendly then
-                        onPreventDefault "contextmenu" (Touch <| TouchStart highlightable.index)
-
-                      else
-                        onPreventDefault "touchstart" (Touch <| TouchStart highlightable.index)
+                    , onPreventDefault "contextmenu" (Touch <| TouchIgnored)
+                    , AttributesExtra.includeIf (not model.scrollFriendly)
+                        (onPreventDefault "touchstart" (Touch <| TouchStart highlightable.index))
                     , AttributesExtra.includeIf model.scrollFriendly
                         (onClickPreventDefault
                             (\count ->
@@ -1622,7 +1649,6 @@ viewHighlightable { renderMarkdown, overlaps } model highlightable =
                             )
                         )
                     , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
-                    , onPreventDefault "touchstart" (Pointer <| Down highlightable.index)
                     , attribute "data-static" ""
                     ]
                 , renderMarkdown = renderMarkdown
@@ -1634,6 +1660,7 @@ viewHighlightable { renderMarkdown, overlaps } model highlightable =
                 , overlaps = overlaps
                 }
                 highlightable
+                newCss
 
 
 viewHighlightableSegment :
