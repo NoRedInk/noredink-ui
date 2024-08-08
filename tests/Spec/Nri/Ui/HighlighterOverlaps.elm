@@ -97,6 +97,7 @@ init2 marker1 marker2 cursor_ =
         , marker = Tool.Marker (mkMarker "unused")
         , joinAdjacentInteractiveHighlights = False
         , sorter = Sort.alphabetical
+        , scrollFriendly = False
         }
         |> Highlighter.update (Highlighter.Pointer (Highlighter.Over cursorIndex))
         |> (\( model, _, _ ) -> model)

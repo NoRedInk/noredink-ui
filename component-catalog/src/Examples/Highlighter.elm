@@ -50,7 +50,13 @@ example =
     , version = version
     , init = init
     , update = update
-    , subscriptions = \_ -> Sub.map HighlighterMsg subscriptions
+    , subscriptions =
+        \_ ->
+            Sub.batch
+                [ Sub.map HighlighterMsg subscriptions
+                , Sub.map OverlappingHighlighterMsg subscriptions
+                , Sub.map FoldHighlighterMsg subscriptions
+                ]
     , preview =
         [ div [ css [ Fonts.baseFont, Css.lineHeight (Css.num 2), Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ] ] ]
             [ Highlighter.static
@@ -196,6 +202,8 @@ example =
                     , Css.lineHeight (Css.num 1.75)
                     , Fonts.ugFont
                     ]
+                , Html.Styled.Attributes.id state.foldHighlightsState.id
+                , Html.Styled.Attributes.class "highlighter-container"
                 ]
                 [ viewFoldHighlights state.foldHighlightsState
                     |> map FoldHighlighterMsg
@@ -541,6 +549,7 @@ init =
             , marker = Tool.Marker (inlineCommentMarker "Comment 1")
             , sorter = Sort.alphabetical
             , joinAdjacentInteractiveHighlights = True
+            , scrollFriendly = False
             }
     , foldHighlightsState =
         Highlighter.init
@@ -551,6 +560,7 @@ init =
             , marker = Tool.Marker (inlineCommentMarker "Comment 1")
             , sorter = Sort.alphabetical
             , joinAdjacentInteractiveHighlights = True
+            , scrollFriendly = False
             }
     , overlappingHighlightsIndex = 1
     }
@@ -594,6 +604,7 @@ initHighlighter settings previousHighlightables =
                 , ( "highlightables", Tuple.first highlightables )
                 , ( "marker", Code.newlineWithIndent 3 ++ Tuple.first settings.tool.tool )
                 , ( "joinAdjacentInteractiveHighlights", Code.bool settings.textSettings.joinAdjacentInteractiveHighlights )
+                , ( "scrollFriendly", Code.bool settings.textSettings.scrollFriendly )
                 , ( "sorter", "Sort.custom (\\() () -> EQ)" )
                 ]
                 2
@@ -608,6 +619,7 @@ initHighlighter settings previousHighlightables =
         , marker = Tuple.second settings.tool.tool
         , sorter = sorter
         , joinAdjacentInteractiveHighlights = settings.textSettings.joinAdjacentInteractiveHighlights
+        , scrollFriendly = settings.textSettings.scrollFriendly
         }
     )
 
@@ -624,6 +636,7 @@ type alias Settings =
     { textSettings :
         { splitOnSentences : Bool
         , joinAdjacentInteractiveHighlights : Bool
+        , scrollFriendly : Bool
         , highlighterType : HighlighterType
         }
     , tool : { tool : ( String, Tool.Tool () ) }
@@ -639,9 +652,17 @@ controlSettings : Control Settings
 controlSettings =
     Control.record Settings
         |> Control.field "Text settings"
-            (Control.record (\a b c -> { splitOnSentences = a, joinAdjacentInteractiveHighlights = b, highlighterType = c })
-                |> Control.field "splitOnSentences" (Control.bool True)
+            (Control.record
+                (\a b c d ->
+                    { splitOnSentences = a
+                    , joinAdjacentInteractiveHighlights = b
+                    , scrollFriendly = c
+                    , highlighterType = d
+                    }
+                )
+                |> Control.field "splitOnSentences" (Control.bool False)
                 |> Control.field "joinAdjacentInteractiveHighlights" (Control.bool False)
+                |> Control.field "scrollFriendly" (Control.bool True)
                 |> Control.field "type"
                     (Control.choice
                         [ ( "Markdown", Control.value Markdown )
@@ -728,7 +749,7 @@ update msg state =
                 [ Cmd.map HighlighterMsg effect
                 , case intent.listenTo of
                     Just listenTo ->
-                        highlighterListen listenTo
+                        highlighterListen ( listenTo, state.highlighter.scrollFriendly )
 
                     Nothing ->
                         Cmd.none
@@ -778,7 +799,7 @@ update msg state =
                             ( newComment
                             , Cmd.batch
                                 [ Cmd.map OverlappingHighlighterMsg effect
-                                , perform intent
+                                , perform intent state.highlighter.scrollFriendly
                                 ]
                             )
 
@@ -791,7 +812,7 @@ update msg state =
                                     ( { state | overlappingHighlightsState = withAllCommentIds }
                                     , Cmd.batch
                                         [ Cmd.map OverlappingHighlighterMsg effect
-                                        , perform intent
+                                        , perform intent state.overlappingHighlightsState.scrollFriendly
                                         ]
                                     )
 
@@ -800,23 +821,28 @@ update msg state =
                                     ( { state | overlappingHighlightsState = withAllCommentIds }
                                     , Cmd.batch
                                         [ Cmd.map OverlappingHighlighterMsg effect
-                                        , perform intent
+                                        , perform intent state.overlappingHighlightsState.scrollFriendly
                                         ]
                                     )
 
         FoldHighlighterMsg highlighterMsg ->
             let
-                ( highlighterModel, highlighterCmd, _ ) =
+                ( highlighterModel, highlighterCmd, intent ) =
                     Highlighter.update highlighterMsg state.foldHighlightsState
             in
-            ( { state | foldHighlightsState = highlighterModel }, Cmd.map FoldHighlighterMsg highlighterCmd )
+            ( { state | foldHighlightsState = highlighterModel }
+            , Cmd.batch
+                [ Cmd.map FoldHighlighterMsg highlighterCmd
+                , perform intent state.foldHighlightsState.scrollFriendly
+                ]
+            )
 
 
-perform : Highlighter.Intent -> Cmd msg
-perform (Highlighter.Intent intent) =
+perform : Highlighter.Intent -> Bool -> Cmd msg
+perform (Highlighter.Intent intent) scrollFriendly =
     case intent.listenTo of
         Just listenTo ->
-            highlighterListen listenTo
+            highlighterListen ( listenTo, scrollFriendly )
 
         Nothing ->
             Cmd.none
@@ -840,7 +866,17 @@ subscriptions =
 -}
 onDocumentUp : Sub (Highlighter.Msg marker)
 onDocumentUp =
-    highlighterOnDocumentUp (Highlighter.Pointer << Highlighter.Up << Just)
+    highlighterOnDocumentUp <|
+        \( id, device ) ->
+            case device of
+                "mouse" ->
+                    Highlighter.Pointer <| Highlighter.Up <| Just id
+
+                "touch" ->
+                    Highlighter.Touch <| Highlighter.TouchEnd <| Just id
+
+                _ ->
+                    Highlighter.Pointer Highlighter.Ignored
 
 
 {-| Subscribe to touch events
@@ -849,26 +885,29 @@ onTouch : Sub (Highlighter.Msg marker)
 onTouch =
     highlighterOnTouch <|
         \( type_, targetId, index ) ->
-            Highlighter.Pointer <|
+            Highlighter.Touch <|
                 case type_ of
                     "move" ->
-                        Highlighter.Move (Just targetId) index
+                        Highlighter.TouchMove (Just targetId) index
 
                     "end" ->
-                        Highlighter.Up (Just targetId)
+                        Highlighter.TouchEnd (Just targetId)
+
+                    "longpress" ->
+                        Highlighter.LongPress (Just targetId) index
 
                     _ ->
-                        Highlighter.Ignored
+                        Highlighter.TouchIgnored
 
 
 {-| Start listening to events on a highlighter
 -}
-port highlighterListen : String -> Cmd msg
+port highlighterListen : ( String, Bool ) -> Cmd msg
 
 
 {-| Listen to documentup events, to stop highlighting.
 -}
-port highlighterOnDocumentUp : (String -> msg) -> Sub msg
+port highlighterOnDocumentUp : (( String, String ) -> msg) -> Sub msg
 
 
 {-| Listen to touch events, and get the element under the finger.

@@ -1,5 +1,5 @@
 module Nri.Ui.Highlighter.V5 exposing
-    ( Model, Msg(..), PointerMsg(..), KeyboardMsg(..)
+    ( Model, Msg(..), PointerMsg(..), TouchMsg(..), KeyboardMsg(..)
     , init, update
     , view, static, staticWithTags
     , viewMarkdown, staticMarkdown, staticMarkdownWithTags
@@ -28,11 +28,12 @@ Highlighter provides a view/model/update to display a view to highlight text and
   - Added `FoldState`, `initFoldState`, `viewFoldHighlighter`, and `viewFoldStatic`
   - Exposed KeyboardMsg(..) to allow for fine-tuning keyboard interactions
   - Made keyboard selection use hinting state too
+  - Fixed mobile interaction bugs (see #1694)
 
 
 # Types
 
-@docs Model, Msg, PointerMsg, KeyboardMsg
+@docs Model, Msg, PointerMsg, TouchMsg, KeyboardMsg
 
 
 # Init/View/Update
@@ -106,6 +107,14 @@ type alias Model marker =
     , highlightables : List (Highlightable marker) -- The actual highlightable elements
     , marker : Tool.Tool marker -- Currently used marker
     , joinAdjacentInteractiveHighlights : Bool
+
+    -- Scroll-friendly mode is used for highlighters in longform text, where we
+    -- want to prevent accidental highlighting when scrolling, or when just plain
+    -- reading the text.
+    --
+    -- In scroll-friendly mode, we highlight on double-click for desktop, and
+    -- on long press for mobile.
+    , scrollFriendly : Bool
     , sorter : Sorter marker
 
     -- Internal state to track user's interactions
@@ -146,6 +155,7 @@ init :
     , marker : Tool.Tool marker
     , joinAdjacentInteractiveHighlights : Bool
     , sorter : Sorter marker
+    , scrollFriendly : Bool
     }
     -> Model marker
 init config =
@@ -158,6 +168,7 @@ init config =
             config.highlightables
     , marker = config.marker
     , joinAdjacentInteractiveHighlights = config.joinAdjacentInteractiveHighlights
+    , scrollFriendly = config.scrollFriendly
     , sorter = config.sorter
 
     -- Internal state to track user's interactions
@@ -181,6 +192,7 @@ init config =
 {-| -}
 type Msg marker
     = Pointer PointerMsg
+    | Touch TouchMsg
     | Keyboard KeyboardMsg
     | Focused (Result Dom.Error ())
 
@@ -191,6 +203,7 @@ type PointerMsg
     = Down Int
     | Out
     | Over Int
+    | Click { index : Int, clickCount : Int }
       -- the `Maybe String`s here are for detecting touchend events via
       -- subscription--we listen at the document level but get the id associated
       -- with the subscription when it fires messages. Mouse-triggered events
@@ -198,6 +211,16 @@ type PointerMsg
     | Move (Maybe String) Int
     | Up (Maybe String)
     | Ignored
+
+
+{-| Messages used by highlighter when interacting with a touch screen.
+-}
+type TouchMsg
+    = TouchStart Int
+    | LongPress (Maybe String) Int
+    | TouchMove (Maybe String) Int
+    | TouchEnd (Maybe String)
+    | TouchIgnored
 
 
 {-| Messages used by highlighter when interaction with the keyboard.
@@ -271,6 +294,7 @@ type Action marker
     | StartSelection Int
     | ExpandSelection Int
     | ResetSelection
+    | None
 
 
 {-| Update for highlighter returning additional info about whether there was a change
@@ -281,6 +305,11 @@ update msg model =
         case msg of
             Pointer pointerMsg ->
                 pointerEventToActions pointerMsg model
+                    |> performActions model
+                    |> Tuple.mapFirst maybeJoinAdjacentInteractiveHighlights
+
+            Touch touchMsg ->
+                touchEventToActions touchMsg model
                     |> performActions model
                     |> Tuple.mapFirst maybeJoinAdjacentInteractiveHighlights
 
@@ -430,19 +459,19 @@ pointerEventToActions msg model =
         Ignored ->
             []
 
-        Move _ eventIndex ->
-            case model.mouseDownIndex of
-                Just downIndex ->
-                    [ MouseOver eventIndex
-                    , Hint downIndex eventIndex
-                    ]
+        Move targetId eventIndex ->
+            if Just model.id == targetId then
+                case model.mouseDownIndex of
+                    Just downIndex ->
+                        [ MouseOver eventIndex
+                        , Hint downIndex eventIndex
+                        ]
 
-                Nothing ->
-                    -- We're dealing with a touch move that hasn't been where
-                    -- the initial touch down was not over a highlightable
-                    -- region. We need to pretend like the first move into the
-                    -- highlightable region was actually a touch down.
-                    pointerEventToActions (Down eventIndex) model
+                    Nothing ->
+                        []
+
+            else
+                []
 
         Over eventIndex ->
             case model.mouseDownIndex of
@@ -464,32 +493,152 @@ pointerEventToActions msg model =
         Down eventIndex ->
             [ MouseOver eventIndex
             , MouseDown eventIndex
+            , if model.scrollFriendly then
+                -- scroll-friendly mode only hints on double-click or drag
+                None
+
+              else
+                Hint eventIndex eventIndex
+            ]
+
+        Click { index, clickCount } ->
+            if clickCount > 1 then
+                case model.marker of
+                    Tool.Marker marker ->
+                        [ MouseOver index
+                        , MouseDown index
+                        , Hint index index
+                        , Save marker
+                        , MouseUp
+                        ]
+
+                    Tool.Eraser _ ->
+                        [ MouseOver index
+                        , MouseDown index
+                        , Hint index index
+                        , RemoveHint
+                        , MouseUp
+                        ]
+
+            else
+                []
+
+        Up targetId ->
+            if Just model.id == targetId then
+                let
+                    save marker =
+                        case ( model.mouseOverIndex, model.mouseDownIndex ) of
+                            ( Just overIndex, Just downIndex ) ->
+                                if overIndex == downIndex then
+                                    if model.scrollFriendly then
+                                        -- scroll-friendly mode only hints on double-click or drag
+                                        []
+
+                                    else
+                                        [ Toggle downIndex marker ]
+
+                                else
+                                    -- Finished sentence highlighting over a highlightable
+                                    [ Save marker ]
+
+                            ( Nothing, Just _ ) ->
+                                -- Finished sentence highlighting outside of a highlightable
+                                [ Save marker ]
+
+                            _ ->
+                                []
+                in
+                case model.marker of
+                    Tool.Marker marker ->
+                        MouseUp :: save marker
+
+                    Tool.Eraser _ ->
+                        [ MouseUp
+                        , if model.scrollFriendly then
+                            -- scroll-friendly mode only erases on double-click or drag
+                            None
+
+                          else
+                            RemoveHint
+                        ]
+
+            else
+                []
+
+
+touchEventToActions : TouchMsg -> Model marker -> List (Action marker)
+touchEventToActions msg model =
+    case msg of
+        TouchIgnored ->
+            []
+
+        TouchStart eventIndex ->
+            [ MouseOver eventIndex
+            , MouseDown eventIndex
             , Hint eventIndex eventIndex
             ]
 
-        Up _ ->
-            let
-                save marker =
-                    case ( model.mouseOverIndex, model.mouseDownIndex ) of
-                        ( Just overIndex, Just downIndex ) ->
-                            if overIndex == downIndex then
-                                [ Toggle downIndex marker ]
+        TouchMove targetId eventIndex ->
+            if Just model.id == targetId then
+                case model.mouseDownIndex of
+                    Just downIndex ->
+                        [ MouseOver eventIndex
+                        , Hint downIndex eventIndex
+                        ]
 
-                            else
+                    Nothing ->
+                        []
+
+            else
+                []
+
+        TouchEnd targetId ->
+            if Just model.id == targetId then
+                let
+                    save marker =
+                        case ( model.mouseOverIndex, model.mouseDownIndex ) of
+                            ( Just overIndex, Just downIndex ) ->
+                                if overIndex == downIndex then
+                                    [ Toggle downIndex marker ]
+
+                                else
+                                    -- Finished sentence highlighting over a highlightable
+                                    [ Save marker ]
+
+                            ( Nothing, Just _ ) ->
+                                -- Finished sentence highlighting outside of a highlightable
                                 [ Save marker ]
 
-                        ( Nothing, Just downIndex ) ->
-                            [ Save marker ]
+                            _ ->
+                                []
+                in
+                case model.marker of
+                    Tool.Marker marker ->
+                        MouseUp :: save marker
 
-                        _ ->
-                            []
-            in
-            case model.marker of
-                Tool.Marker marker ->
-                    MouseUp :: save marker
+                    Tool.Eraser _ ->
+                        [ MouseUp
+                        , if model.scrollFriendly then
+                            -- scroll-friendly mode only erases on double-click or drag
+                            None
 
-                Tool.Eraser _ ->
-                    [ MouseUp, RemoveHint ]
+                          else
+                            RemoveHint
+                        ]
+
+            else
+                []
+
+
+        LongPress targetId eventIndex ->
+            if Just model.id == targetId then
+                [ MouseOver eventIndex
+                , MouseDown eventIndex
+                , Hint eventIndex eventIndex
+                ]
+
+            else
+                []
 
 
 {-| We fold over actions using (Model marker) as the accumulator.
@@ -505,6 +654,9 @@ performActions model actions =
 performAction : Action marker -> ( Model marker, List (Cmd (Msg m)) ) -> ( Model marker, List (Cmd (Msg m)) )
 performAction action ( model, cmds ) =
     case action of
+        None ->
+            ( model, cmds )
+
         Focus index ->
             ( { model | focusIndex = Just index }
             , Task.attempt Focused (Dom.focus (highlightableId model.id index)) :: cmds
@@ -1403,32 +1555,49 @@ view_ config =
 
 viewHighlightable :
     { renderMarkdown : Bool, overlaps : OverlapsSupport marker }
-    ->
-        { config
-            | id : String
-            , focusIndex : Maybe Int
-            , marker : Tool.Tool marker
-            , mouseOverIndex : Maybe Int
-            , mouseDownIndex : Maybe Int
-            , hintingIndices : Maybe ( Int, Int )
-            , sorter : Sorter marker
-            , highlightables : List (Highlightable marker)
-        }
+    -> Model marker
     -> Highlightable marker
     -> List Css.Style
     -> Html (Msg marker)
-viewHighlightable { renderMarkdown, overlaps } config highlightable =
+viewHighlightable { renderMarkdown, overlaps } model highlightable css =
+    let
+        newCss =
+            [ Css.batch css
+            , if model.scrollFriendly then
+                Css.batch
+                    -- block ios safari from selecting text
+                    [ Css.property "-webkit-user-select" "none"
+                    , Css.property "-webkit-touch-callout" "none"
+                    ]
+
+              else
+                Css.batch []
+            ]
+    in
     case highlightable.type_ of
         Highlightable.Interactive ->
             viewHighlightableSegment
-                { interactiveHighlighterId = Just config.id
-                , focusIndex = config.focusIndex
+                { interactiveHighlighterId = Just model.id
+                , focusIndex = model.focusIndex
                 , eventListeners =
                     [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
                     , onPreventDefault "mouseleave" (Pointer <| Out)
-                    , onPreventDefault "mouseup" (Pointer <| Up Nothing)
+                    , onPreventDefault "mouseup" (Pointer <| Up <| Just model.id)
                     , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
-                    , onPreventDefault "touchstart" (Pointer <| Down highlightable.index)
+                    , onPreventDefault "contextmenu" (Touch <| TouchIgnored)
+                    , if model.scrollFriendly then
+                        -- Events.on "touchstart" (Json.Decode.succeed (Touch <| TouchStart highlightable.index))
+                        AttributesExtra.none
+
+                      else
+                        onPreventDefault "touchstart" (Touch <| TouchStart highlightable.index)
+                    , AttributesExtra.includeIf model.scrollFriendly
+                        (onClickPreventDefault
+                            (\count ->
+                                Pointer <|
+                                    Click { index = highlightable.index, clickCount = count }
+                            )
+                        )
                     , attribute "data-interactive" ""
                     , Key.onKeyDownPreventDefault
                         [ Key.space (Keyboard <| ToggleHighlight highlightable.index)
@@ -1448,19 +1617,20 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                         ]
                     ]
                 , renderMarkdown = renderMarkdown
-                , maybeTool = Just config.marker
-                , mouseOverIndex = config.mouseOverIndex
-                , mouseDownIndex = config.mouseDownIndex
-                , hintingIndices = config.hintingIndices
-                , sorter = Just config.sorter
+                , maybeTool = Just model.marker
+                , mouseOverIndex = model.mouseOverIndex
+                , mouseDownIndex = model.mouseDownIndex
+                , hintingIndices = model.hintingIndices
+                , sorter = Just model.sorter
                 , overlaps = overlaps
                 }
                 highlightable
+                newCss
 
         Highlightable.Static ->
             viewHighlightableSegment
                 { interactiveHighlighterId = Nothing
-                , focusIndex = config.focusIndex
+                , focusIndex = model.focusIndex
                 , eventListeners =
                     -- Static highlightables need listeners as well.
                     -- because otherwise we miss mouse events.
@@ -1468,20 +1638,29 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                     -- should see the entire highlight change to hover styles.
                     [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
                     , onPreventDefault "mouseleave" (Pointer <| Out)
-                    , onPreventDefault "mouseup" (Pointer <| Up Nothing)
+                    , onPreventDefault "contextmenu" (Touch <| TouchIgnored)
+                    , AttributesExtra.includeIf (not model.scrollFriendly)
+                        (onPreventDefault "touchstart" (Touch <| TouchStart highlightable.index))
+                    , AttributesExtra.includeIf model.scrollFriendly
+                        (onClickPreventDefault
+                            (\count ->
+                                Pointer <|
+                                    Click { index = highlightable.index, clickCount = count }
+                            )
+                        )
                     , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
-                    , onPreventDefault "touchstart" (Pointer <| Down highlightable.index)
                     , attribute "data-static" ""
                     ]
                 , renderMarkdown = renderMarkdown
-                , maybeTool = Just config.marker
-                , mouseOverIndex = config.mouseOverIndex
-                , mouseDownIndex = config.mouseDownIndex
-                , hintingIndices = config.hintingIndices
-                , sorter = Just config.sorter
+                , maybeTool = Just model.marker
+                , mouseOverIndex = model.mouseOverIndex
+                , mouseDownIndex = model.mouseDownIndex
+                , hintingIndices = model.hintingIndices
+                , sorter = Just model.sorter
                 , overlaps = overlaps
                 }
                 highlightable
+                newCss
 
 
 viewHighlightableSegment :
@@ -1836,4 +2015,26 @@ onPreventDefault name msg =
                 |> Json.Decode.map (\result -> ( msg, result ))
     in
     Events.preventDefaultOn name
+        checkIfCancelable
+
+
+{-| Helper for `on` to preventDefault and capture `detail` from click event
+-}
+onClickPreventDefault : (Int -> msg) -> Attribute msg
+onClickPreventDefault msg =
+    let
+        -- If we attempt to preventDefault on an event which is not cancelable
+        -- Chrome will blow up and complain that:
+        --
+        -- Ignored attempt to cancel a touchmove event with cancelable=false,
+        -- for example because scrolling is in progress and cannot be interrupted.
+        --
+        -- So instead we only preventDefault when it is safe to do so.
+        checkIfCancelable =
+            Json.Decode.map2
+                (\detail result -> ( msg detail, result ))
+                (Json.Decode.field "detail" Json.Decode.int)
+                (Json.Decode.field "cancelable" Json.Decode.bool)
+    in
+    Events.preventDefaultOn "click"
         checkIfCancelable
