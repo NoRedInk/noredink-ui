@@ -866,7 +866,17 @@ subscriptions =
 -}
 onDocumentUp : Sub (Highlighter.Msg marker)
 onDocumentUp =
-    highlighterOnDocumentUp (Highlighter.Pointer << Highlighter.Up << Just)
+    highlighterOnDocumentUp <|
+        \( id, device ) ->
+            case device of
+                "mouse" ->
+                    Highlighter.Pointer <| Highlighter.Up <| Just id
+
+                "touch" ->
+                    Highlighter.Touch <| Highlighter.TouchEnd <| Just id
+
+                _ ->
+                    Highlighter.Pointer Highlighter.Ignored
 
 
 {-| Subscribe to touch events
@@ -875,16 +885,16 @@ onTouch : Sub (Highlighter.Msg marker)
 onTouch =
     highlighterOnTouch <|
         \( type_, targetId, index ) ->
-            Highlighter.Pointer <|
+            Highlighter.Touch <|
                 case type_ of
                     "move" ->
-                        Highlighter.Move (Just targetId) index
+                        Highlighter.TouchMove (Just targetId) index
 
                     "end" ->
-                        Highlighter.Up (Just targetId)
+                        Highlighter.TouchEnd (Just targetId)
 
                     _ ->
-                        Highlighter.Ignored
+                        Highlighter.TouchIgnored
 
 
 {-| Start listening to events on a highlighter
@@ -894,7 +904,7 @@ port highlighterListen : String -> Cmd msg
 
 {-| Listen to documentup events, to stop highlighting.
 -}
-port highlighterOnDocumentUp : (String -> msg) -> Sub msg
+port highlighterOnDocumentUp : (( String, String ) -> msg) -> Sub msg
 
 
 {-| Listen to touch events, and get the element under the finger.

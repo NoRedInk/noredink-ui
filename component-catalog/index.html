@@ -28,8 +28,8 @@
             return;
           }
 
-          document.addEventListener("mouseup", onDocumentUp(id));
-          document.addEventListener("touchend", onDocumentUp(id));
+          document.addEventListener("mouseup", onDocumentUp(id, "mouse"));
+          document.addEventListener("touchend", onDocumentUp(id, "touch"));
           highlighter.addEventListener(
             "touchmove",
             handleTouchEvents("move", id)
@@ -65,9 +65,9 @@
       /*
        * inform elm when we receive a mouseup/touchend event.
        */
-      function onDocumentUp(id) {
+      function onDocumentUp(id, device) {
         return function () {
-          app.ports.highlighterOnDocumentUp.send(id);
+          app.ports.highlighterOnDocumentUp.send([id, device]);
         };
       }
     </script>

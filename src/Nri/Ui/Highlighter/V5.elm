@@ -1,5 +1,5 @@
 module Nri.Ui.Highlighter.V5 exposing
-    ( Model, Msg(..), PointerMsg(..), KeyboardMsg(..)
+    ( Model, Msg(..), PointerMsg(..), TouchMsg(..), KeyboardMsg(..)
     , init, update
     , view, static, staticWithTags
     , viewMarkdown, staticMarkdown, staticMarkdownWithTags
@@ -33,7 +33,7 @@ Highlighter provides a view/model/update to display a view to highlight text and
 
 # Types
 
-@docs Model, Msg, PointerMsg, KeyboardMsg
+@docs Model, Msg, PointerMsg, TouchMsg, KeyboardMsg
 
 
 # Init/View/Update
@@ -192,6 +192,7 @@ init config =
 {-| -}
 type Msg marker
     = Pointer PointerMsg
+    | Touch TouchMsg
     | Keyboard KeyboardMsg
     | Focused (Result Dom.Error ())
 
@@ -210,6 +211,15 @@ type PointerMsg
     | Move (Maybe String) Int
     | Up (Maybe String)
     | Ignored
+
+
+{-| Messages used by highlighter when interacting with a touch screen.
+-}
+type TouchMsg
+    = TouchStart Int
+    | TouchMove (Maybe String) Int
+    | TouchEnd (Maybe String)
+    | TouchIgnored
 
 
 {-| Messages used by highlighter when interaction with the keyboard.
@@ -294,6 +304,11 @@ update msg model =
         case msg of
             Pointer pointerMsg ->
                 pointerEventToActions pointerMsg model
+                    |> performActions model
+                    |> Tuple.mapFirst maybeJoinAdjacentInteractiveHighlights
+
+            Touch touchMsg ->
+                touchEventToActions touchMsg model
                     |> performActions model
                     |> Tuple.mapFirst maybeJoinAdjacentInteractiveHighlights
 
@@ -520,6 +535,70 @@ pointerEventToActions msg model =
 
                                     else
                                         [ Toggle downIndex marker ]
+
+                                else
+                                    -- Finished sentence highlighting over a highlightable
+                                    [ Save marker ]
+
+                            ( Nothing, Just _ ) ->
+                                -- Finished sentence highlighting outside of a highlightable
+                                [ Save marker ]
+
+                            _ ->
+                                []
+                in
+                case model.marker of
+                    Tool.Marker marker ->
+                        MouseUp :: save marker
+
+                    Tool.Eraser _ ->
+                        [ MouseUp
+                        , if model.scrollFriendly then
+                            -- scroll-friendly mode only erases on double-click or drag
+                            None
+
+                          else
+                            RemoveHint
+                        ]
+
+            else
+                []
+
+
+touchEventToActions : TouchMsg -> Model marker -> List (Action marker)
+touchEventToActions msg model =
+    case msg of
+        TouchIgnored ->
+            []
+
+        TouchStart eventIndex ->
+            [ MouseOver eventIndex
+            , MouseDown eventIndex
+            , Hint eventIndex eventIndex
+            ]
+
+        TouchMove targetId eventIndex ->
+            if Just model.id == targetId then
+                case model.mouseDownIndex of
+                    Just downIndex ->
+                        [ MouseOver eventIndex
+                        , Hint downIndex eventIndex
+                        ]
+
+                    Nothing ->
+                        []
+
+            else
+                []
+
+        TouchEnd targetId ->
+            if Just model.id == targetId then
+                let
+                    save marker =
+                        case ( model.mouseOverIndex, model.mouseDownIndex ) of
+                            ( Just overIndex, Just downIndex ) ->
+                                if overIndex == downIndex then
+                                    [ Toggle downIndex marker ]
 
                                 else
                                     -- Finished sentence highlighting over a highlightable
@@ -1479,6 +1558,11 @@ viewHighlightable { renderMarkdown, overlaps } model highlightable =
                     , onPreventDefault "mouseleave" (Pointer <| Out)
                     , onPreventDefault "mouseup" (Pointer <| Up <| Just model.id)
                     , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
+                    , if model.scrollFriendly then
+                        onPreventDefault "contextmenu" (Touch <| TouchStart highlightable.index)
+
+                      else
+                        onPreventDefault "touchstart" (Touch <| TouchStart highlightable.index)
                     , AttributesExtra.includeIf model.scrollFriendly
                         (onClickPreventDefault
                             (\count ->
@@ -1486,7 +1570,6 @@ viewHighlightable { renderMarkdown, overlaps } model highlightable =
                                     Click { index = highlightable.index, clickCount = count }
                             )
                         )
-                    , onPreventDefault "touchstart" (Pointer <| Down highlightable.index)
                     , attribute "data-interactive" ""
                     , Key.onKeyDownPreventDefault
                         [ Key.space (Keyboard <| ToggleHighlight highlightable.index)
@@ -1526,7 +1609,11 @@ viewHighlightable { renderMarkdown, overlaps } model highlightable =
                     -- should see the entire highlight change to hover styles.
                     [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
                     , onPreventDefault "mouseleave" (Pointer <| Out)
-                    , onPreventDefault "mouseup" (Pointer <| Up <| Just model.id)
+                    , if model.scrollFriendly then
+                        onPreventDefault "contextmenu" (Touch <| TouchStart highlightable.index)
+
+                      else
+                        onPreventDefault "touchstart" (Touch <| TouchStart highlightable.index)
                     , AttributesExtra.includeIf model.scrollFriendly
                         (onClickPreventDefault
                             (\count ->
