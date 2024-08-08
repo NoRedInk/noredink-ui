@@ -1436,30 +1436,20 @@ view_ config =
 
 viewHighlightable :
     { renderMarkdown : Bool, overlaps : OverlapsSupport marker }
-    ->
-        { config
-            | id : String
-            , focusIndex : Maybe Int
-            , marker : Tool.Tool marker
-            , mouseOverIndex : Maybe Int
-            , mouseDownIndex : Maybe Int
-            , hintingIndices : Maybe ( Int, Int )
-            , sorter : Sorter marker
-            , highlightables : List (Highlightable marker)
-        }
+    -> Model marker
     -> Highlightable marker
     -> List Css.Style
     -> Html (Msg marker)
-viewHighlightable { renderMarkdown, overlaps } config highlightable =
+viewHighlightable { renderMarkdown, overlaps } model highlightable =
     case highlightable.type_ of
         Highlightable.Interactive ->
             viewHighlightableSegment
-                { interactiveHighlighterId = Just config.id
-                , focusIndex = config.focusIndex
+                { interactiveHighlighterId = Just model.id
+                , focusIndex = model.focusIndex
                 , eventListeners =
                     [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
                     , onPreventDefault "mouseleave" (Pointer <| Out)
-                    , onPreventDefault "mouseup" (Pointer <| Up <| Just config.id)
+                    , onPreventDefault "mouseup" (Pointer <| Up <| Just model.id)
                     , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
                     , onClickPreventDefault
                         (\count ->
@@ -1486,11 +1476,11 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                         ]
                     ]
                 , renderMarkdown = renderMarkdown
-                , maybeTool = Just config.marker
-                , mouseOverIndex = config.mouseOverIndex
-                , mouseDownIndex = config.mouseDownIndex
-                , hintingIndices = config.hintingIndices
-                , sorter = Just config.sorter
+                , maybeTool = Just model.marker
+                , mouseOverIndex = model.mouseOverIndex
+                , mouseDownIndex = model.mouseDownIndex
+                , hintingIndices = model.hintingIndices
+                , sorter = Just model.sorter
                 , overlaps = overlaps
                 }
                 highlightable
@@ -1498,7 +1488,7 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
         Highlightable.Static ->
             viewHighlightableSegment
                 { interactiveHighlighterId = Nothing
-                , focusIndex = config.focusIndex
+                , focusIndex = model.focusIndex
                 , eventListeners =
                     -- Static highlightables need listeners as well.
                     -- because otherwise we miss mouse events.
@@ -1506,7 +1496,7 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                     -- should see the entire highlight change to hover styles.
                     [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
                     , onPreventDefault "mouseleave" (Pointer <| Out)
-                    , onPreventDefault "mouseup" (Pointer <| Up <| Just config.id)
+                    , onPreventDefault "mouseup" (Pointer <| Up <| Just model.id)
                     , onClickPreventDefault
                         (\count ->
                             Pointer <|
@@ -1517,11 +1507,11 @@ viewHighlightable { renderMarkdown, overlaps } config highlightable =
                     , attribute "data-static" ""
                     ]
                 , renderMarkdown = renderMarkdown
-                , maybeTool = Just config.marker
-                , mouseOverIndex = config.mouseOverIndex
-                , mouseDownIndex = config.mouseDownIndex
-                , hintingIndices = config.hintingIndices
-                , sorter = Just config.sorter
+                , maybeTool = Just model.marker
+                , mouseOverIndex = model.mouseOverIndex
+                , mouseDownIndex = model.mouseDownIndex
+                , hintingIndices = model.hintingIndices
+                , sorter = Just model.sorter
                 , overlaps = overlaps
                 }
                 highlightable
