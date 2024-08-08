@@ -107,6 +107,14 @@ type alias Model marker =
     , highlightables : List (Highlightable marker) -- The actual highlightable elements
     , marker : Tool.Tool marker -- Currently used marker
     , joinAdjacentInteractiveHighlights : Bool
+
+    -- Scroll-friendly mode is used for highlighters in longform text, where we
+    -- want to prevent accidental highlighting when scrolling, or when just plain
+    -- reading the text.
+    --
+    -- In scroll-friendly mode, we highlight on double-click for desktop, and
+    -- on long press for mobile.
+    , scrollFriendly : Bool
     , sorter : Sorter marker
 
     -- Internal state to track user's interactions
@@ -147,6 +155,7 @@ init :
     , marker : Tool.Tool marker
     , joinAdjacentInteractiveHighlights : Bool
     , sorter : Sorter marker
+    , scrollFriendly : Bool
     }
     -> Model marker
 init config =
@@ -159,6 +168,7 @@ init config =
             config.highlightables
     , marker = config.marker
     , joinAdjacentInteractiveHighlights = config.joinAdjacentInteractiveHighlights
+    , scrollFriendly = config.scrollFriendly
     , sorter = config.sorter
 
     -- Internal state to track user's interactions
@@ -273,6 +283,7 @@ type Action marker
     | StartSelection Int
     | ExpandSelection Int
     | ResetSelection
+    | None
 
 
 {-| Update for highlighter returning additional info about whether there was a change
@@ -470,6 +481,12 @@ pointerEventToActions msg model =
         Down eventIndex ->
             [ MouseOver eventIndex
             , MouseDown eventIndex
+            , if model.scrollFriendly then
+                -- scroll-friendly mode only hints on double-click or drag
+                None
+
+              else
+                Hint eventIndex eventIndex
             ]
 
         Click { index, clickCount } ->
@@ -501,7 +518,12 @@ pointerEventToActions msg model =
                         case ( model.mouseOverIndex, model.mouseDownIndex ) of
                             ( Just overIndex, Just downIndex ) ->
                                 if overIndex == downIndex then
-                                    []
+                                    if model.scrollFriendly then
+                                        -- scroll-friendly mode only hints on double-click or drag
+                                        []
+
+                                    else
+                                        [ Toggle downIndex marker ]
 
                                 else
                                     -- Finished sentence highlighting over a highlightable
@@ -519,7 +541,14 @@ pointerEventToActions msg model =
                         MouseUp :: save marker
 
                     Tool.Eraser _ ->
-                        [ MouseUp ]
+                        [ MouseUp
+                        , if model.scrollFriendly then
+                            -- scroll-friendly mode only erases on double-click or drag
+                            None
+
+                          else
+                            RemoveHint
+                        ]
 
             else
                 []
@@ -538,6 +567,9 @@ performActions model actions =
 performAction : Action marker -> ( Model marker, List (Cmd (Msg m)) ) -> ( Model marker, List (Cmd (Msg m)) )
 performAction action ( model, cmds ) =
     case action of
+        None ->
+            ( model, cmds )
+
         Focus index ->
             ( { model | focusIndex = Just index }
             , Task.attempt Focused (Dom.focus (highlightableId model.id index)) :: cmds
@@ -1451,10 +1483,12 @@ viewHighlightable { renderMarkdown, overlaps } model highlightable =
                     , onPreventDefault "mouseleave" (Pointer <| Out)
                     , onPreventDefault "mouseup" (Pointer <| Up <| Just model.id)
                     , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
-                    , onClickPreventDefault
-                        (\count ->
-                            Pointer <|
-                                Click { index = highlightable.index, clickCount = count }
+                    , AttributesExtra.includeIf model.scrollFriendly
+                        (onClickPreventDefault
+                            (\count ->
+                                Pointer <|
+                                    Click { index = highlightable.index, clickCount = count }
+                            )
                         )
                     , onPreventDefault "touchstart" (Pointer <| Down highlightable.index)
                     , attribute "data-interactive" ""
@@ -1497,10 +1531,12 @@ viewHighlightable { renderMarkdown, overlaps } model highlightable =
                     [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
                     , onPreventDefault "mouseleave" (Pointer <| Out)
                     , onPreventDefault "mouseup" (Pointer <| Up <| Just model.id)
-                    , onClickPreventDefault
-                        (\count ->
-                            Pointer <|
-                                Click { index = highlightable.index, clickCount = count }
+                    , AttributesExtra.includeIf model.scrollFriendly
+                        (onClickPreventDefault
+                            (\count ->
+                                Pointer <|
+                                    Click { index = highlightable.index, clickCount = count }
+                            )
                         )
                     , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
                     , onPreventDefault "touchstart" (Pointer <| Down highlightable.index)
