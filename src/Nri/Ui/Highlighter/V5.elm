@@ -452,11 +452,7 @@ pointerEventToActions msg model =
                         ]
 
                     Nothing ->
-                        -- We're dealing with a touch move that hasn't been where
-                        -- the initial touch down was not over a highlightable
-                        -- region. We need to pretend like the first move into the
-                        -- highlightable region was actually a touch down.
-                        pointerEventToActions (Down eventIndex) model
+                        []
 
             else
                 []
