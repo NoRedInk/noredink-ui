@@ -443,6 +443,7 @@ markdownHighlightNameTests =
                 , marker = markerModel Nothing
                 , joinAdjacentInteractiveHighlights = False
                 , sorter = Sort.alphabetical
+                , scrollFriendly = False
                 }
 
         testIt viewName view =
@@ -488,6 +489,7 @@ startWithoutMarker view highlightables =
                 , marker = Tool.Eraser Tool.buildEraser
                 , joinAdjacentInteractiveHighlights = False
                 , sorter = Sort.custom (\() () -> EQ)
+                , scrollFriendly = False
                 }
         , update = \_ m -> m
         , view = view >> toUnstyled
@@ -684,6 +686,7 @@ program config highlightables =
                 , marker = markerModel config.markerName
                 , joinAdjacentInteractiveHighlights = config.joinAdjacentInteractiveHighlights
                 , sorter = Sort.alphabetical
+                , scrollFriendly = False
                 }
         , update =
             \msg model ->
@@ -831,6 +834,7 @@ overlappingHighlightTests =
                         , marker = markerModel (Just "Comment")
                         , joinAdjacentInteractiveHighlights = False
                         , sorter = Sort.alphabetical
+                        , scrollFriendly = False
                         }
                 , update =
                     \msg model ->

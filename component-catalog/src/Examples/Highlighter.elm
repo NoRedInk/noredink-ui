@@ -549,6 +549,7 @@ init =
             , marker = Tool.Marker (inlineCommentMarker "Comment 1")
             , sorter = Sort.alphabetical
             , joinAdjacentInteractiveHighlights = True
+            , scrollFriendly = False
             }
     , foldHighlightsState =
         Highlighter.init
@@ -559,6 +560,7 @@ init =
             , marker = Tool.Marker (inlineCommentMarker "Comment 1")
             , sorter = Sort.alphabetical
             , joinAdjacentInteractiveHighlights = True
+            , scrollFriendly = False
             }
     , overlappingHighlightsIndex = 1
     }
@@ -616,6 +618,7 @@ initHighlighter settings previousHighlightables =
         , marker = Tuple.second settings.tool.tool
         , sorter = sorter
         , joinAdjacentInteractiveHighlights = settings.textSettings.joinAdjacentInteractiveHighlights
+        , scrollFriendly = False
         }
     )
 
