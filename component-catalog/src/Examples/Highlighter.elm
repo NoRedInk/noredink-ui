@@ -660,9 +660,9 @@ controlSettings =
                     , highlighterType = d
                     }
                 )
-                |> Control.field "splitOnSentences" (Control.bool True)
+                |> Control.field "splitOnSentences" (Control.bool False)
                 |> Control.field "joinAdjacentInteractiveHighlights" (Control.bool False)
-                |> Control.field "scrollFriendly" (Control.bool False)
+                |> Control.field "scrollFriendly" (Control.bool True)
                 |> Control.field "type"
                     (Control.choice
                         [ ( "Markdown", Control.value Markdown )
