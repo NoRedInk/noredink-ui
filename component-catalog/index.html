@@ -48,7 +48,7 @@
               console.log("touchstart", id);
             }
 
-            const idx = getTouchEventIndex(e);
+            const idx = getTouchEventHighlightableIndex(e);
 
             if (!idx) return;
 
@@ -92,20 +92,9 @@
           }
           e.preventDefault();
           e.stopPropagation();
-          if (e.touches.length > 1) return; // we don't care about multitouch
-          var loc = e.changedTouches[0];
-          var realTarget = document.elementFromPoint(loc.clientX, loc.clientY); // get the element under the finger
-          var data;
-
-          if (realTarget) {
-            // each word has a data attribute with its index.
-            data = realTarget.getAttribute("data-highlighter-item-index");
-          }
-
-          // we only want to be informed for touchmove-events in highlightables
-          if (data) {
-            app.ports.highlighterOnTouch.send([type, id, parseInt(data, 10)]);
-          }
+          
+          let highlightableIndex = getTouchEventHighlightableIndex(e);
+          app.ports.highlighterOnTouch.send([type, id, highlightableIndex]);
         };
       }
 
@@ -124,7 +113,7 @@
         };
       }
 
-      function getTouchEventIndex(e) {
+      function getTouchEventHighlightableIndex(e) {
         if (e.touches.length > 1) return; // we don't care about multitouch
           var loc = e.changedTouches[0];
           var realTarget = document.elementFromPoint(loc.clientX, loc.clientY); // get the element under the finger
