@@ -114,17 +114,21 @@
       }
 
       function getTouchEventHighlightableIndex(e) {
-        if (e.touches.length > 1) return; // we don't care about multitouch
-          var loc = e.changedTouches[0];
-          var realTarget = document.elementFromPoint(loc.clientX, loc.clientY); // get the element under the finger
+         // we don't care about multitouch
+        if (e.touches.length > 1) return;
 
-          if (realTarget) {
-            // each word has a data attribute with its index.
-            const data = realTarget.getAttribute("data-highlighter-item-index");
-            if (data) {
-              return parseInt(data, 10);
-            }
+        var loc = e.changedTouches[0];
+
+        // get the element under the finger
+        var realTarget = document.elementFromPoint(loc.clientX, loc.clientY);
+
+        if (realTarget) {
+          // each word has a data attribute with its index.
+          const data = realTarget.getAttribute("data-highlighter-item-index");
+          if (data) {
+            return parseInt(data, 10);
           }
+        }
       }
     </script>
     <script src="bundle.js"></script>
