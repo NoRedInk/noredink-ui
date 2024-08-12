@@ -530,7 +530,7 @@ pointerEventToActions msg model =
                         case ( model.mouseOverIndex, model.mouseDownIndex ) of
                             ( Just overIndex, Just downIndex ) ->
                                 if overIndex == downIndex then
-                                    if model.scrollFriendly then
+                                    if model.scrollFriendly && model.hintingIndices == Nothing then
                                         -- scroll-friendly mode only hints on double-click or drag
                                         []
 
@@ -628,7 +628,6 @@ touchEventToActions msg model =
 
             else
                 []
-
 
         LongPress targetId eventIndex ->
             if Just model.id == targetId then
