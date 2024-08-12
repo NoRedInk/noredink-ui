@@ -20,7 +20,7 @@
 
       // start listening to events when the user starts dragging/clickingdown
       app.ports.highlighterListen.subscribe(([id, scrollFriendly]) => {
-        const touchEventListener = handleTouchEvents("move", id);
+        const touchMoveListener = handleTouchEvents("move", id);
 
         window.requestAnimationFrame(() => {
           var highlighter = document.getElementById(id);
@@ -30,11 +30,11 @@
             return;
           }
 
-          document.addEventListener("mouseup", onDocumentUp(id, "mouse", touchEventListener));
-          document.addEventListener("touchend", onDocumentUp(id, "touch", touchEventListener));
+          document.addEventListener("mouseup", onDocumentUp(id, "mouse", touchMoveListener));
+          document.addEventListener("touchend", onDocumentUp(id, "touch", touchMoveListener));
           if (!scrollFriendly) {
             // scroll-friendly mode only registers a touchmove listener after a longpress
-            highlighter.addEventListener("touchmove", touchEventListener);
+            highlighter.addEventListener("touchmove", touchMoveListener);
           }
           highlighter.addEventListener(
             "touchstart",
@@ -56,7 +56,7 @@
               if (window.debugHighlighter) {
                 console.log("longpress", id, idx);
               }
-              document.getElementById(id).addEventListener("touchmove", touchEventListener);
+              document.getElementById(id).addEventListener("touchmove", touchMoveListener);
               document.removeEventListener("touchmove", cancelLongpress);
               document.removeEventListener("touchend", cancelLongpress);
               app.ports.highlighterOnTouch.send(["longpress", id, idx]);
@@ -101,13 +101,13 @@
       /*
        * inform elm when we receive a mouseup/touchend event.
        */
-      function onDocumentUp(id, device, touchEventListener) {
+      function onDocumentUp(id, device, touchMoveListener) {
         return function () {
           app.ports.highlighterOnDocumentUp.send([id, device]);
           if (device === "touch") {
             document.getElementById(id)?.removeEventListener(
               "touchmove",
-              touchEventListener
+              touchMoveListener
             );
           }
         };
