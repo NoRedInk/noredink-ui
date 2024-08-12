@@ -44,11 +44,18 @@
 
         function handleTouchStartScrollFriendly(id) {
           return function (e) {
+            if (window.debugHighlighter) {
+              console.log("touchstart", id);
+            }
+
             const idx = getTouchEventIndex(e);
 
             if (!idx) return;
 
             const longpressTimeout = setTimeout(() => {
+              if (window.debugHighlighter) {
+                console.log("longpress", id, idx);
+              }
               document.getElementById(id).addEventListener("touchmove", touchEventListener);
               document.removeEventListener("touchmove", cancelLongpress);
               document.removeEventListener("touchend", cancelLongpress);
@@ -57,6 +64,9 @@
 
             // on touchmove or touchend, cancel the longpress timeout
             function cancelLongpress() {
+              if (window.debugHighlighter) {
+                console.log("cancel longpress", id, idx);
+              }
               clearTimeout(longpressTimeout);
               document.removeEventListener("touchmove", cancelLongpress);
               document.removeEventListener("touchend", cancelLongpress);
@@ -73,7 +83,13 @@
        * We need the element under the finger to highlight a section though.
        */
       function handleTouchEvents(type, id) {
+        if (window.debugHighlighter) {
+          console.log("handleTouchEvents", type, id);
+        }
         return function (e) {
+          if (window.debugHighlighter) {
+            console.log("touch event:", type, id);
+          }
           e.preventDefault();
           e.stopPropagation();
           if (e.touches.length > 1) return; // we don't care about multitouch
