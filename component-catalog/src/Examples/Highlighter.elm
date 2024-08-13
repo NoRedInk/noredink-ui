@@ -795,7 +795,7 @@ update msg state =
                     -- The Changed action will be triggered on the Highlighter Up event and
                     -- when there is an actual change in the highlightable elements.
                     case Highlighter.hasChanged intent of
-                        Highlighter.Changed ->
+                        Highlighter.Changed _ ->
                             ( newComment
                             , Cmd.batch
                                 [ Cmd.map OverlappingHighlighterMsg effect
@@ -838,7 +838,7 @@ update msg state =
             )
 
 
-perform : Highlighter.Intent -> Bool -> Cmd msg
+perform : Highlighter.Intent marker -> Bool -> Cmd msg
 perform (Highlighter.Intent intent) scrollFriendly =
     case intent.listenTo of
         Just listenTo ->

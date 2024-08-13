@@ -5,7 +5,7 @@ module Nri.Ui.Highlighter.V5 exposing
     , viewMarkdown, staticMarkdown, staticMarkdownWithTags
     , viewWithOverlappingHighlights
     , FoldState, initFoldState, viewFoldHighlighter, viewFoldStatic
-    , Intent(..), hasChanged, HasChanged(..)
+    , Intent(..), hasChanged, HasChanged(..), Change(..)
     , removeHighlights
     , clickedHighlightable, hoveredHighlightable
     , selectShortest
@@ -56,7 +56,7 @@ or `viewFoldStatic` will render a single highlightable along with an update to t
 
 ## Intents
 
-@docs Intent, hasChanged, HasChanged
+@docs Intent, hasChanged, HasChanged, Change
 
 
 ## Setters
@@ -122,7 +122,7 @@ type alias Model marker =
     , mouseDownIndex : Maybe Int
     , mouseOverIndex : Maybe Int
     , isInitialized : Initialized
-    , hasChanged : HasChanged
+    , hasChanged : HasChanged marker
     , selectionStartIndex : Maybe Int
     , selectionEndIndex : Maybe Int
     , focusIndex : Maybe Int
@@ -134,9 +134,14 @@ type alias Model marker =
 
 
 {-| -}
-type HasChanged
-    = Changed
+type HasChanged marker
+    = Changed (Change marker)
     | NotChanged
+
+
+type Change marker
+    = HighlightCreated ( Int, Int ) marker
+    | HighlightRemoved ( Int, Int ) marker
 
 
 type Initialized
@@ -237,10 +242,10 @@ type KeyboardMsg
 
 {-| Possible intents or "external effects" that the Highlighter can request (see `perform`).
 -}
-type Intent
+type Intent marker
     = Intent
         { listenTo : ListenTo
-        , changed : HasChanged
+        , changed : HasChanged marker
         }
 
 
@@ -255,7 +260,7 @@ type alias ListenTo =
     determine whether they want to execute follow up actions.
 
 -}
-withIntent : ( Model m, Cmd (Msg m) ) -> ( Model m, Cmd (Msg m), Intent )
+withIntent : ( Model m, Cmd (Msg m) ) -> ( Model m, Cmd (Msg m), Intent m )
 withIntent ( new, cmd ) =
     ( { new | isInitialized = Initialized, hasChanged = NotChanged }
     , cmd
@@ -274,7 +279,7 @@ withIntent ( new, cmd ) =
 
 {-| Check if the highlighter has changed.
 -}
-hasChanged : Intent -> HasChanged
+hasChanged : Intent marker -> HasChanged marker
 hasChanged (Intent { changed }) =
     changed
 
@@ -299,7 +304,7 @@ type Action marker
 
 {-| Update for highlighter returning additional info about whether there was a change
 -}
-update : Msg marker -> Model marker -> ( Model marker, Cmd (Msg marker), Intent )
+update : Msg marker -> Model marker -> ( Model marker, Cmd (Msg marker), Intent marker )
 update msg model =
     withIntent <|
         case msg of
@@ -508,7 +513,7 @@ pointerEventToActions msg model =
                         [ MouseOver index
                         , MouseDown index
                         , Hint index index
-                        , Save marker
+                        , Toggle index marker
                         , MouseUp
                         ]
 
@@ -669,7 +674,7 @@ performAction action ( model, cmds ) =
                 Just hinting ->
                     ( { model
                         | highlightables = saveHinted marker hinting model.highlightables
-                        , hasChanged = Changed
+                        , hasChanged = Changed (HighlightCreated hinting marker.kind)
                         , hintingIndices = Nothing
                       }
                     , cmds
@@ -679,9 +684,13 @@ performAction action ( model, cmds ) =
                     ( model, cmds )
 
         Toggle index marker ->
+            let
+                ( highlightables, changed ) =
+                    toggleHinted index marker model.highlightables
+            in
             ( { model
-                | highlightables = toggleHinted index marker model.highlightables
-                , hasChanged = Changed
+                | highlightables = highlightables
+                , hasChanged = changed
                 , hintingIndices = Nothing
               }
             , cmds
@@ -692,7 +701,11 @@ performAction action ( model, cmds ) =
                 Just hinting ->
                     ( { model
                         | highlightables = removeHinted hinting model.highlightables
-                        , hasChanged = Changed
+                        , hasChanged =
+                            Highlightable.byId (Tuple.first hinting) model.highlightables
+                                |> Maybe.andThen (\highligtable -> highligtable.marked |> List.head |> Maybe.map .kind)
+                                |> Maybe.map (\marker -> Changed (HighlightRemoved hinting marker))
+                                |> Maybe.withDefault NotChanged
                         , hintingIndices = Nothing
                       }
                     , cmds
@@ -765,27 +778,30 @@ saveHinted marker ( hintBeginning, hintEnd ) =
         >> trimHighlightableGroups
 
 
-toggleHinted : Int -> Tool.MarkerModel marker -> List (Highlightable marker) -> List (Highlightable marker)
+toggleHinted : Int -> Tool.MarkerModel marker -> List (Highlightable marker) -> ( List (Highlightable marker), HasChanged marker )
 toggleHinted index marker highlightables =
     let
         hintedRange =
-            inSameRange index highlightables
+            selectShortestRange index highlightables
 
         inClickedRange highlightable =
-            Set.member highlightable.index hintedRange
+            (highlightable.index >= Tuple.first hintedRange)
+                && (highlightable.index <= Tuple.second hintedRange)
 
-        toggle highlightable =
+        toggle acc highlightable =
             if inClickedRange highlightable && Just marker == List.head highlightable.marked then
-                Highlightable.set Nothing highlightable
+                ( Changed (HighlightRemoved hintedRange marker.kind), Highlightable.set Nothing highlightable )
 
             else if highlightable.index == index then
-                Highlightable.set (Just marker) highlightable
+                ( Changed (HighlightCreated hintedRange marker.kind), Highlightable.set (Just marker) highlightable )
 
             else
-                highlightable
+                ( acc, highlightable )
+
+        ( changed, toggled ) =
+            List.Extra.mapAccuml toggle NotChanged highlightables
     in
-    List.map toggle highlightables
-        |> trimHighlightableGroups
+    ( trimHighlightableGroups toggled, changed )
 
 
 {-| This removes all-static highlights. We need to track events on static elements,
@@ -832,16 +848,15 @@ trimHighlightableGroups highlightables =
         |> List.reverse
 
 
-{-| Finds the group indexes of the groups which are in the same highlighting as the group index
-passed in the first argument.
+{-| Finds the range of the shortest possibly-overlapping highlight covering the index provided.
 -}
-inSameRange : Int -> List (Highlightable marker) -> Set Int
-inSameRange index highlightables =
-    List.Extra.groupWhile (\a b -> a.marked == b.marked) highlightables
+selectShortestRange : Int -> List (Highlightable marker) -> ( Int, Int )
+selectShortestRange index highlightables =
+    List.Extra.groupWhile (\a b -> a.marked == b.marked && a.marked /= []) highlightables
         |> List.map (\( first, rest ) -> first.index :: List.map .index rest)
         |> List.Extra.find (List.member index)
-        |> Maybe.withDefault []
-        |> Set.fromList
+        |> Maybe.andThen (\list -> Maybe.map2 Tuple.pair (List.head list) (List.Extra.last list))
+        |> Maybe.withDefault ( index, index )
 
 
 removeHinted : ( Int, Int ) -> List (Highlightable marker) -> List (Highlightable marker)
