@@ -21,8 +21,6 @@
       // start listening to events when the user starts dragging/clickingdown
       app.ports.highlighterListen.subscribe(([id, scrollFriendly]) => {
         const touchMoveListener = handleTouchEvents("move", id);
-        const mouseUpHandler = onDocumentUp(id, "mouse");
-        const touchEndHandler = onDocumentUp(id, "touch");
 
         window.requestAnimationFrame(() => {
           var highlighter = document.getElementById(id);
@@ -38,11 +36,11 @@
           // Register global listeners for when we release the mouse/touchpad outside a highlighter
           highlighter.addEventListener("mousedown", (_) => {
             console.log("registering mouseup handler");
-            document.addEventListener("mouseup", mouseUpHandler);
+            document.addEventListener("mouseup", onDocumentUp(id, "mouse"), {once: true});
           });
           highlighter.addEventListener("touchstart", (_) => {
             console.log("registering touchend handler");
-            document.addEventListener("touchend", touchEndHandler);
+            document.addEventListener("touchend", onDocumentUp(id, "touch"), {once: true});
           });
           if (!scrollFriendly) {
             // scroll-friendly mode only registers a touchmove listener after a longpress
@@ -141,14 +139,6 @@
               // This helps us not report touchmove when touch starts on one highlighter and moves
               // into another
               document.getElementById(id)?.removeEventListener("touchmove", touchMoveListener);
-              // Deregister onDocumentUp listeners, so we avoid sending unnecessary messages to elm
-              document.removeEventListener("touchend", touchEndHandler);
-            } else if (device === "mouse") {
-              if (window.debugHighlighter) {
-                console.log("deregistering mouse listeners");
-              }
-              // Deregister onDocumentUp listeners, so we avoid sending unnecessary messages to elm
-              document.removeEventListener("mouseup", mouseUpHandler);
             }
           };
         }
