@@ -21,6 +21,8 @@
       // start listening to events when the user starts dragging/clickingdown
       app.ports.highlighterListen.subscribe(([id, scrollFriendly]) => {
         const touchMoveListener = handleTouchEvents("move", id);
+        const mouseUpHandler = onDocumentUp(id, "mouse");
+        const touchEndHandler = onDocumentUp(id, "touch");
 
         window.requestAnimationFrame(() => {
           var highlighter = document.getElementById(id);
@@ -30,16 +32,23 @@
             return;
           }
 
-          document.addEventListener("mouseup", onDocumentUp(id, "mouse", touchMoveListener));
-          document.addEventListener("touchend", onDocumentUp(id, "touch", touchMoveListener));
+          // TODO: At some point we do not need those event listeners. It would be nice to remove them.
+          // Example: when we send a Guided Draft back for revisions: no highlighters needed anymore!
+          //
+          // Register global listeners for when we release the mouse/touchpad outside a highlighter
+          highlighter.addEventListener("mousedown", (_) => {
+            console.log("registering mouseup handler");
+            document.addEventListener("mouseup", mouseUpHandler);
+          });
+          highlighter.addEventListener("touchstart", (_) => {
+            console.log("registering touchend handler");
+            document.addEventListener("touchend", touchEndHandler);
+          });
           if (!scrollFriendly) {
             // scroll-friendly mode only registers a touchmove listener after a longpress
             highlighter.addEventListener("touchmove", touchMoveListener);
           }
-          highlighter.addEventListener(
-            "touchstart",
-            handleTouchStartScrollFriendly(id)
-          );
+          highlighter.addEventListener("touchstart", handleTouchStartScrollFriendly(id));
         });
 
         /*
@@ -61,7 +70,7 @@
          * the longpress, so simple swipes up and down are not affected.
          */
         function handleTouchStartScrollFriendly(id) {
-          return function (e) {
+          return (e) => {
             if (window.debugHighlighter) {
               console.log("touchstart", id);
             }
@@ -94,60 +103,76 @@
             document.addEventListener("touchend", cancelLongpress);
           };
         }
-      });
 
-      /*
-       * Touchmove event always fire on the element that got the initial touchstart event.
-       * We need the element under the finger to highlight a section though.
-       */
-      function handleTouchEvents(type, id) {
-        if (window.debugHighlighter) {
-          console.log("handleTouchEvents", type, id);
-        }
-        return function (e) {
+
+        /*
+        * Touchmove event always fire on the element that got the initial touchstart event.
+        * We need the element under the finger to highlight a section though.
+        */
+        function handleTouchEvents(type, id) {
           if (window.debugHighlighter) {
-            console.log("touch event:", type, id);
+            console.log("handleTouchEvents", type, id);
           }
-          e.preventDefault();
-          e.stopPropagation();
-          
-          let highlightableIndex = getTouchEventHighlightableIndex(e);
-          app.ports.highlighterOnTouch.send([type, id, highlightableIndex]);
-        };
-      }
+          return function (e) {
+            if (window.debugHighlighter) {
+              console.log("touch event:", type, id);
+            }
+            e.preventDefault();
+            e.stopPropagation();
+            
+            let highlightableIndex = getTouchEventHighlightableIndex(e);
+            if (highlightableIndex) {
+              app.ports.highlighterOnTouch.send([type, id, highlightableIndex]);
+            }
+          };
+        }
 
-      /*
-       * inform elm when we receive a mouseup/touchend event.
-       */
-      function onDocumentUp(id, device, touchMoveListener) {
-        return function () {
-          app.ports.highlighterOnDocumentUp.send([id, device]);
-          if (device === "touch") {
-            document.getElementById(id)?.removeEventListener(
-              "touchmove",
-              touchMoveListener
-            );
-          }
-        };
-      }
+        /*
+        * inform elm when we receive a mouseup/touchend event.
+        */
+        function onDocumentUp(id, device) {
+          return function () {
+            app.ports.highlighterOnDocumentUp.send([id, device]);
+            if (device === "touch") {
+              if (window.debugHighlighter) {
+                console.log("deregistering touch listeners");
+              }
+              // Stop listening to touchmove after touchend
+              // This helps us not report touchmove when touch starts on one highlighter and moves
+              // into another
+              document.getElementById(id)?.removeEventListener("touchmove", touchMoveListener);
+              // Deregister onDocumentUp listeners, so we avoid sending unnecessary messages to elm
+              document.removeEventListener("touchend", touchEndHandler);
+            } else if (device === "mouse") {
+              if (window.debugHighlighter) {
+                console.log("deregistering mouse listeners");
+              }
+              // Deregister onDocumentUp listeners, so we avoid sending unnecessary messages to elm
+              document.removeEventListener("mouseup", mouseUpHandler);
+            }
+          };
+        }
 
-      function getTouchEventHighlightableIndex(e) {
-         // we don't care about multitouch
-        if (e.touches.length > 1) return;
+        function getTouchEventHighlightableIndex(e) {
+          // we don't care about multitouch
+          if (e.touches.length > 1) return;
 
-        var loc = e.changedTouches[0];
+          var loc = e.changedTouches[0];
 
-        // get the element under the finger
-        var realTarget = document.elementFromPoint(loc.clientX, loc.clientY);
+          if (!loc) throw "touch event unexpectedly didn't have any touches!";
 
-        if (realTarget) {
-          // each word has a data attribute with its index.
-          const data = realTarget.getAttribute("data-highlighter-item-index");
-          if (data) {
-            return parseInt(data, 10);
+          // get the element under the finger
+          var realTarget = document.elementFromPoint(loc.clientX, loc.clientY);
+
+          if (realTarget) {
+            // each word has a data attribute with its index.
+            const data = realTarget.getAttribute("data-highlighter-item-index");
+            if (data) {
+              return parseInt(data, 10);
+            }
           }
         }
-      }
+      });
     </script>
     <script src="bundle.js"></script>
   </body>
