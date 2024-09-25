@@ -9,6 +9,11 @@ module Nri.Ui.Switch.V3 exposing
 {-|
 
 
+### Patch changes:
+
+  - add `rightIcon` property
+
+
 ### Changes from V2:
 
     - Replace underlying checkbox input with a custom implementation
