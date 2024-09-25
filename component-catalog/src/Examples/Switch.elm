@@ -19,6 +19,7 @@ import Html.Styled exposing (..)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
+import Nri.Ui.Svg.V1 exposing (Svg)
 import Nri.Ui.Switch.V3 as Switch
 import Nri.Ui.Table.V7 as Table
 import Nri.Ui.Tooltip.V3 as Tooltip
@@ -234,6 +235,7 @@ initAttributes : Control (List ( String, Switch.Attribute msg ))
 initAttributes =
     Control.list
         |> CommonControls.disabledListItem moduleName Switch.disabled
+        |> CommonControls.icon "rightIcon" (Nri.Ui.Svg.V1.withHeight (Css.px 18) >> Nri.Ui.Svg.V1.withWidth (Css.px 18) >> Switch.rightIcon)
 
 
 {-| -}

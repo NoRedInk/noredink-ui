@@ -2,7 +2,7 @@ module Nri.Ui.Switch.V3 exposing
     ( view
     , Attribute
     , selected
-    , containerCss, labelCss, custom, nriDescription, testId
+    , containerCss, labelCss, custom, nriDescription, testId, rightIcon
     , onSwitch, disabled
     )
 
@@ -21,7 +21,7 @@ module Nri.Ui.Switch.V3 exposing
 
 @docs Attribute
 @docs selected
-@docs containerCss, labelCss, custom, nriDescription, testId
+@docs containerCss, labelCss, custom, nriDescription, testId, rightIcon
 @docs onSwitch, disabled
 
 -}
@@ -39,6 +39,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
+import Nri.Ui.Html.V3 as Html
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 exposing (Svg)
 import Svg.Styled as Svg
@@ -114,12 +115,20 @@ labelCss styles =
     Attribute <| \config -> { config | labelCss = config.labelCss ++ styles }
 
 
+{-| Adds an icon to the right of the switch.
+-}
+rightIcon : Svg -> Attribute msg
+rightIcon icon =
+    Attribute <| \config -> { config | rightIcon = Just icon }
+
+
 type alias Config msg =
     { onSwitch : Maybe (Bool -> msg)
     , containerCss : List Style
     , labelCss : List Style
     , isDisabled : Bool
     , isSelected : Bool
+    , rightIcon : Maybe Svg
     , custom : List (Html.Attribute msg)
     }
 
@@ -131,6 +140,7 @@ defaultConfig =
     , labelCss = []
     , isDisabled = False
     , isSelected = False
+    , rightIcon = Nothing
     , custom = []
     }
 
@@ -198,6 +208,7 @@ view { label, id } attrs =
                 ]
             ]
             [ Html.text label ]
+        , Html.viewJust (Nri.Ui.Svg.V1.withCss [ Css.marginLeft (Css.px 5) ] >> Nri.Ui.Svg.V1.toHtml) config.rightIcon
         ]
 
 
