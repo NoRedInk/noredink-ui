@@ -123,12 +123,15 @@ type alias Model marker =
     }
 
 
-{-| -}
+{-| Communicates whether a change to a highlightable has been performed
+-}
 type HasChanged marker
     = Changed (Change marker)
     | NotChanged
 
 
+{-| Describes the change being performed by the Highlighter component, alongside the index bounds of the change
+-}
 type Change marker
     = HighlightCreated ( Int, Int ) marker
     | HighlightRemoved ( Int, Int ) marker
