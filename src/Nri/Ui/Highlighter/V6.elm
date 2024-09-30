@@ -1,38 +1,28 @@
-module Nri.Ui.Highlighter.V5 exposing
-    ( Model, Msg(..), PointerMsg(..), KeyboardMsg(..)
+module Nri.Ui.Highlighter.V6 exposing
+    ( Model, Msg(..), PointerMsg(..), TouchMsg(..), KeyboardMsg(..)
     , init, update
     , view, static, staticWithTags
     , viewMarkdown, staticMarkdown, staticMarkdownWithTags
     , viewWithOverlappingHighlights
     , FoldState, initFoldState, viewFoldHighlighter, viewFoldStatic
-    , Intent(..), hasChanged, HasChanged(..)
+    , Intent(..), hasChanged, HasChanged(..), Change(..)
     , removeHighlights
     , clickedHighlightable, hoveredHighlightable
-    , selectShortest
+    , selectShortest, selectShortestMarkerRange
     )
 
-{-| Changes from V4:
+{-| Changes from V5:
 
-  - adds `isHovering` to track whether the user is already hovering over a group,
-    so that we don't reapply hover styles when the user toggles a highlight.
-  - renames `Blur` to `MouseOut` to be more consistent with `MouseOver` and because it's
-    not really a blur event.
-
-Highlighter provides a view/model/update to display a view to highlight text and show marks.
-
-
-# Patch changes:
-
-  - Made all highlighter views lazy
-  - Optimized `selectShortest` for the normal case of 0 or 1 highlight.
-  - Added `FoldState`, `initFoldState`, `viewFoldHighlighter`, and `viewFoldStatic`
-  - Exposed KeyboardMsg(..) to allow for fine-tuning keyboard interactions
-  - Made keyboard selection use hinting state too
-
+  - Added `scrollFriendly` flag to `init`, which enables a mode where:
+    - Mobile highlighting requires long-press instead of tap to highlight
+    - Desktop highlighting requires double-click instead of single-click to highlight
+  - Made Intent return whether a highlight was created or removed, and what are its bounds
+    - Makes it easier to change highlighter behavior from the outside
+  - Segregated Touch events from Pointer events, so we can give them distinct behavior
 
 # Types
 
-@docs Model, Msg, PointerMsg, KeyboardMsg
+@docs Model, Msg, PointerMsg, TouchMsg, KeyboardMsg
 
 
 # Init/View/Update
@@ -55,7 +45,7 @@ or `viewFoldStatic` will render a single highlightable along with an update to t
 
 ## Intents
 
-@docs Intent, hasChanged, HasChanged
+@docs Intent, hasChanged, HasChanged, Change
 
 
 ## Setters
@@ -66,7 +56,7 @@ or `viewFoldStatic` will render a single highlightable along with an update to t
 ## Getters
 
 @docs clickedHighlightable, hoveredHighlightable
-@docs selectShortest
+@docs selectShortest, selectShortestMarkerRange
 
 -}
 
@@ -82,11 +72,11 @@ import Json.Decode
 import List.Extra
 import Markdown.Block
 import Markdown.Inline
+import Maybe.Extra
 import Nri.Ui.Highlightable.V3 as Highlightable exposing (Highlightable)
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Mark.V6 as Mark exposing (Mark)
-import Set exposing (Set)
 import Sort exposing (Sorter)
 import Sort.Dict as Dict
 import Task
@@ -106,6 +96,14 @@ type alias Model marker =
     , highlightables : List (Highlightable marker) -- The actual highlightable elements
     , marker : Tool.Tool marker -- Currently used marker
     , joinAdjacentInteractiveHighlights : Bool
+
+    -- Scroll-friendly mode is used for highlighters in longform text, where we
+    -- want to prevent accidental highlighting when scrolling, or when just plain
+    -- reading the text.
+    --
+    -- In scroll-friendly mode, we highlight on double-click for desktop, and
+    -- on long press for mobile.
+    , scrollFriendly : Bool
     , sorter : Sorter marker
 
     -- Internal state to track user's interactions
@@ -113,7 +111,7 @@ type alias Model marker =
     , mouseDownIndex : Maybe Int
     , mouseOverIndex : Maybe Int
     , isInitialized : Initialized
-    , hasChanged : HasChanged
+    , hasChanged : HasChanged marker
     , selectionStartIndex : Maybe Int
     , selectionEndIndex : Maybe Int
     , focusIndex : Maybe Int
@@ -125,9 +123,14 @@ type alias Model marker =
 
 
 {-| -}
-type HasChanged
-    = Changed
+type HasChanged marker
+    = Changed (Change marker)
     | NotChanged
+
+
+type Change marker
+    = HighlightCreated ( Int, Int ) marker
+    | HighlightRemoved ( Int, Int ) marker
 
 
 type Initialized
@@ -146,6 +149,7 @@ init :
     , marker : Tool.Tool marker
     , joinAdjacentInteractiveHighlights : Bool
     , sorter : Sorter marker
+    , scrollFriendly : Bool
     }
     -> Model marker
 init config =
@@ -158,6 +162,7 @@ init config =
             config.highlightables
     , marker = config.marker
     , joinAdjacentInteractiveHighlights = config.joinAdjacentInteractiveHighlights
+    , scrollFriendly = config.scrollFriendly
     , sorter = config.sorter
 
     -- Internal state to track user's interactions
@@ -181,6 +186,7 @@ init config =
 {-| -}
 type Msg marker
     = Pointer PointerMsg
+    | Touch TouchMsg
     | Keyboard KeyboardMsg
     | Focused (Result Dom.Error ())
 
@@ -191,13 +197,19 @@ type PointerMsg
     = Down Int
     | Out
     | Over Int
-      -- the `Maybe String`s here are for detecting touchend events via
-      -- subscription--we listen at the document level but get the id associated
-      -- with the subscription when it fires messages. Mouse-triggered events
-      -- will not have this info!
-    | Move (Maybe String) Int
+    | Click { index : Int, clickCount : Int }
     | Up (Maybe String)
     | Ignored
+
+
+{-| Messages used by highlighter when interacting with a touch screen.
+-}
+type TouchMsg
+    = TouchStart Int
+    | LongPress (Maybe String) Int
+    | TouchMove (Maybe String) Int
+    | TouchEnd (Maybe String)
+    | TouchIgnored
 
 
 {-| Messages used by highlighter when interaction with the keyboard.
@@ -214,10 +226,10 @@ type KeyboardMsg
 
 {-| Possible intents or "external effects" that the Highlighter can request (see `perform`).
 -}
-type Intent
+type Intent marker
     = Intent
         { listenTo : ListenTo
-        , changed : HasChanged
+        , changed : HasChanged marker
         }
 
 
@@ -232,7 +244,7 @@ type alias ListenTo =
     determine whether they want to execute follow up actions.
 
 -}
-withIntent : ( Model m, Cmd (Msg m) ) -> ( Model m, Cmd (Msg m), Intent )
+withIntent : ( Model m, Cmd (Msg m) ) -> ( Model m, Cmd (Msg m), Intent m )
 withIntent ( new, cmd ) =
     ( { new | isInitialized = Initialized, hasChanged = NotChanged }
     , cmd
@@ -251,7 +263,7 @@ withIntent ( new, cmd ) =
 
 {-| Check if the highlighter has changed.
 -}
-hasChanged : Intent -> HasChanged
+hasChanged : Intent marker -> HasChanged marker
 hasChanged (Intent { changed }) =
     changed
 
@@ -271,16 +283,22 @@ type Action marker
     | StartSelection Int
     | ExpandSelection Int
     | ResetSelection
+    | None
 
 
 {-| Update for highlighter returning additional info about whether there was a change
 -}
-update : Msg marker -> Model marker -> ( Model marker, Cmd (Msg marker), Intent )
+update : Msg marker -> Model marker -> ( Model marker, Cmd (Msg marker), Intent marker )
 update msg model =
     withIntent <|
         case msg of
             Pointer pointerMsg ->
                 pointerEventToActions pointerMsg model
+                    |> performActions model
+                    |> Tuple.mapFirst maybeJoinAdjacentInteractiveHighlights
+
+            Touch touchMsg ->
+                touchEventToActions touchMsg model
                     |> performActions model
                     |> Tuple.mapFirst maybeJoinAdjacentInteractiveHighlights
 
@@ -430,24 +448,6 @@ pointerEventToActions msg model =
         Ignored ->
             []
 
-        Move targetId eventIndex ->
-            if Just model.id == targetId then
-                case model.mouseDownIndex of
-                    Just downIndex ->
-                        [ MouseOver eventIndex
-                        , Hint downIndex eventIndex
-                        ]
-
-                    Nothing ->
-                        -- We're dealing with a touch move that hasn't been where
-                        -- the initial touch down was not over a highlightable
-                        -- region. We need to pretend like the first move into the
-                        -- highlightable region was actually a touch down.
-                        pointerEventToActions (Down eventIndex) model
-
-            else
-                []
-
         Over eventIndex ->
             case model.mouseDownIndex of
                 Just downIndex ->
@@ -468,33 +468,156 @@ pointerEventToActions msg model =
         Down eventIndex ->
             [ MouseOver eventIndex
             , MouseDown eventIndex
+            , if model.scrollFriendly then
+                -- scroll-friendly mode only hints on double-click or drag
+                None
+
+              else
+                Hint eventIndex eventIndex
+            ]
+
+        Click { index, clickCount } ->
+            let
+                scrollFriendlyDoubleClick =
+                    -- In scroll-friendly mode, a double-click is necessary to create a highlightable
+                    model.scrollFriendly && clickCount > 1
+
+                scrollFriendlyFocusClick =
+                    -- In scroll-friendly mode, a single click on a highlightable focuses on it
+                    model.scrollFriendly
+                        && (clickCount == 1)
+                        && (Nothing /= markerAtIndex index model.highlightables)
+            in
+            if scrollFriendlyDoubleClick || scrollFriendlyFocusClick then
+                case model.marker of
+                    Tool.Marker marker ->
+                        [ MouseOver index
+                        , MouseDown index
+                        , Hint index index
+                        , Toggle index marker
+                        , MouseUp
+                        ]
+
+                    Tool.Eraser _ ->
+                        [ MouseOver index
+                        , MouseDown index
+                        , Hint index index
+                        , RemoveHint
+                        , MouseUp
+                        ]
+
+            else
+                []
+
+        Up _ ->
+            let
+                save marker =
+                    case ( model.mouseOverIndex, model.mouseDownIndex ) of
+                        ( Just overIndex, Just downIndex ) ->
+                            if overIndex == downIndex then
+                                if model.scrollFriendly && model.hintingIndices == Nothing then
+                                    -- scroll-friendly mode only hints on double-click or drag
+                                    []
+
+                                else
+                                    [ Toggle downIndex marker ]
+
+                            else
+                                -- Finished sentence highlighting over a highlightable
+                                [ Save marker ]
+
+                        ( Nothing, Just _ ) ->
+                            -- Finished sentence highlighting outside of a highlightable
+                            [ Save marker ]
+
+                        _ ->
+                            []
+            in
+            case model.marker of
+                Tool.Marker marker ->
+                    MouseUp :: save marker
+
+                Tool.Eraser _ ->
+                    [ MouseUp
+                    , if model.scrollFriendly then
+                        -- scroll-friendly mode only erases on double-click or drag
+                        None
+
+                      else
+                        RemoveHint
+                    ]
+
+
+touchEventToActions : TouchMsg -> Model marker -> List (Action marker)
+touchEventToActions msg model =
+    case msg of
+        TouchIgnored ->
+            []
+
+        TouchStart eventIndex ->
+            [ MouseOver eventIndex
+            , MouseDown eventIndex
             , Hint eventIndex eventIndex
             ]
 
-        Up targetId ->
+        TouchMove targetId eventIndex ->
             if Just model.id == targetId then
-                let
-                    save marker =
-                        case ( model.mouseOverIndex, model.mouseDownIndex ) of
-                            ( Just overIndex, Just downIndex ) ->
-                                if overIndex == downIndex then
-                                    [ Toggle downIndex marker ]
+                case model.mouseDownIndex of
+                    Just downIndex ->
+                        [ MouseOver eventIndex
+                        , Hint downIndex eventIndex
+                        ]
+
+                    Nothing ->
+                        []
+
+            else
+                []
+
+        TouchEnd _ ->
+            let
+                save marker =
+                    case ( model.mouseOverIndex, model.mouseDownIndex ) of
+                        ( Just overIndex, Just downIndex ) ->
+                            if overIndex == downIndex then
+                                if model.scrollFriendly && model.hintingIndices == Nothing then
+                                    -- scroll-friendly mode only hints on long-press
+                                    []
 
                                 else
-                                    [ Save marker ]
+                                    [ Toggle downIndex marker ]
 
-                            ( Nothing, Just downIndex ) ->
+                            else
+                                -- Finished sentence highlighting over a highlightable
                                 [ Save marker ]
 
-                            _ ->
-                                []
-                in
-                case model.marker of
-                    Tool.Marker marker ->
-                        MouseUp :: save marker
+                        ( Nothing, Just _ ) ->
+                            -- Finished sentence highlighting outside of a highlightable
+                            [ Save marker ]
 
-                    Tool.Eraser _ ->
-                        [ MouseUp, RemoveHint ]
+                        _ ->
+                            []
+            in
+            case model.marker of
+                Tool.Marker marker ->
+                    MouseUp :: save marker
+
+                Tool.Eraser _ ->
+                    [ MouseUp
+                    , if model.scrollFriendly then
+                        -- scroll-friendly mode only erases on double-click or drag
+                        None
+
+                      else
+                        RemoveHint
+                    ]
+
+        LongPress targetId eventIndex ->
+            if Just model.id == targetId then
+                [ MouseOver eventIndex
+                , MouseDown eventIndex
+                , Hint eventIndex eventIndex
+                ]
 
             else
                 []
@@ -513,6 +636,9 @@ performActions model actions =
 performAction : Action marker -> ( Model marker, List (Cmd (Msg m)) ) -> ( Model marker, List (Cmd (Msg m)) )
 performAction action ( model, cmds ) =
     case action of
+        None ->
+            ( model, cmds )
+
         Focus index ->
             ( { model | focusIndex = Just index }
             , Task.attempt Focused (Dom.focus (highlightableId model.id index)) :: cmds
@@ -524,9 +650,13 @@ performAction action ( model, cmds ) =
         Save marker ->
             case model.hintingIndices of
                 Just hinting ->
+                    let
+                        ( indexesToSave, highlightables ) =
+                            saveHinted marker hinting model.highlightables
+                    in
                     ( { model
-                        | highlightables = saveHinted marker hinting model.highlightables
-                        , hasChanged = Changed
+                        | highlightables = highlightables
+                        , hasChanged = Changed (HighlightCreated indexesToSave marker.kind)
                         , hintingIndices = Nothing
                       }
                     , cmds
@@ -536,9 +666,13 @@ performAction action ( model, cmds ) =
                     ( model, cmds )
 
         Toggle index marker ->
+            let
+                ( highlightables, changed ) =
+                    toggleHinted index marker model
+            in
             ( { model
-                | highlightables = toggleHinted index marker model.highlightables
-                , hasChanged = Changed
+                | highlightables = highlightables
+                , hasChanged = changed
                 , hintingIndices = Nothing
               }
             , cmds
@@ -549,7 +683,10 @@ performAction action ( model, cmds ) =
                 Just hinting ->
                     ( { model
                         | highlightables = removeHinted hinting model.highlightables
-                        , hasChanged = Changed
+                        , hasChanged =
+                            markerAtIndex (Tuple.first hinting) model.highlightables
+                                |> Maybe.map (\marker -> Changed (HighlightRemoved hinting marker))
+                                |> Maybe.withDefault NotChanged
                         , hintingIndices = Nothing
                       }
                     , cmds
@@ -578,6 +715,12 @@ performAction action ( model, cmds ) =
 
         ResetSelection ->
             ( { model | selectionStartIndex = Nothing, selectionEndIndex = Nothing }, cmds )
+
+
+markerAtIndex : Int -> List (Highlightable marker) -> Maybe marker
+markerAtIndex index highlightables =
+    Highlightable.byId index highlightables
+        |> Maybe.andThen (\highligtable -> highligtable.marked |> List.head |> Maybe.map .kind)
 
 
 isFirstOrLastHinted : Maybe ( Int, Int ) -> Highlightable marker -> Bool
@@ -609,40 +752,87 @@ between from to { index } =
         to <= index && index <= from
 
 
-saveHinted : Tool.MarkerModel marker -> ( Int, Int ) -> List (Highlightable marker) -> List (Highlightable marker)
+saveHinted : Tool.MarkerModel marker -> ( Int, Int ) -> List (Highlightable marker) -> ( ( Int, Int ), List (Highlightable marker) )
 saveHinted marker ( hintBeginning, hintEnd ) =
-    List.map
-        (\highlightable ->
+    List.Extra.mapAccuml
+        (\acc highlightable ->
             if between hintBeginning hintEnd highlightable then
-                Highlightable.set (Just marker) highlightable
+                ( highlightable :: acc, Highlightable.set (Just marker) highlightable )
 
             else
-                highlightable
+                ( acc, highlightable )
         )
-        >> trimHighlightableGroups
+        []
+        >> Tuple.mapBoth
+            -- Report back what indexes we're actually going to save.
+            -- Static highlightables at the edges are not saved
+            firstLastIndexInteractive
+            trimHighlightableGroups
 
 
-toggleHinted : Int -> Tool.MarkerModel marker -> List (Highlightable marker) -> List (Highlightable marker)
-toggleHinted index marker highlightables =
+{-| Get the first and last indexes, only counting interactive highlightables.
+-}
+firstLastIndexInteractive : List (Highlightable marker) -> ( Int, Int )
+firstLastIndexInteractive list =
     let
-        hintedRange =
-            inSameRange index highlightables
+        indexes =
+            List.filterMap
+                (\{ type_, index } ->
+                    if type_ == Highlightable.Interactive then
+                        Just index
+
+                    else
+                        Nothing
+                )
+                list
+    in
+    ( List.minimum indexes |> Maybe.withDefault 0
+    , List.maximum indexes |> Maybe.withDefault 0
+    )
+
+
+{-| Toggle highlights
+
+If we're allowing overlapping highlights:
+
+  - on a click over an existing highlight
+      - If we're using the same marker, remove the highlight
+      - If we're using a different marker, add a new overlapping highlight
+  - on a click over a non-highlighted segment
+      - Add a new highlight
+
+If we're not allowing overlapping highlights:
+
+  - on a click over an existing highlight
+      - Remove the existing highlight
+  - on a click over a non-highlighted segment
+      - Add a new highlight
+
+-}
+toggleHinted : Int -> Tool.MarkerModel marker -> Model marker -> ( List (Highlightable marker), HasChanged marker )
+toggleHinted index marker model =
+    let
+        ( shortestMarker, hintedRange ) =
+            selectShortestMarkerRange index model
 
         inClickedRange highlightable =
-            Set.member highlightable.index hintedRange
+            (highlightable.index >= Tuple.first hintedRange)
+                && (highlightable.index <= Tuple.second hintedRange)
 
-        toggle highlightable =
-            if inClickedRange highlightable && Just marker == List.head highlightable.marked then
-                Highlightable.set Nothing highlightable
+        toggle acc highlightable =
+            if inClickedRange highlightable && Just marker.kind == shortestMarker then
+                ( Changed (HighlightRemoved hintedRange marker.kind), Highlightable.set Nothing highlightable )
 
-            else if highlightable.index == index then
-                Highlightable.set (Just marker) highlightable
+            else if highlightable.index == index && highlightable.type_ == Highlightable.Interactive then
+                ( Changed (HighlightCreated ( index, index ) marker.kind), Highlightable.set (Just marker) highlightable )
 
             else
-                highlightable
+                ( acc, highlightable )
+
+        ( changed, toggled ) =
+            List.Extra.mapAccuml toggle NotChanged model.highlightables
     in
-    List.map toggle highlightables
-        |> trimHighlightableGroups
+    ( trimHighlightableGroups toggled, changed )
 
 
 {-| This removes all-static highlights. We need to track events on static elements,
@@ -689,16 +879,122 @@ trimHighlightableGroups highlightables =
         |> List.reverse
 
 
-{-| Finds the group indexes of the groups which are in the same highlighting as the group index
-passed in the first argument.
+{-| Select the shortest possibly-overlapping marker covering the index provided, return its range.
 -}
-inSameRange : Int -> List (Highlightable marker) -> Set Int
-inSameRange index highlightables =
-    List.Extra.groupWhile (\a b -> a.marked == b.marked) highlightables
-        |> List.map (\( first, rest ) -> first.index :: List.map .index rest)
-        |> List.Extra.find (List.member index)
-        |> Maybe.withDefault []
-        |> Set.fromList
+selectShortestMarkerRange : Int -> Model marker -> ( Maybe marker, ( Int, Int ) )
+selectShortestMarkerRange index { sorter, highlightables } =
+    let
+        lists =
+            List.Extra.splitWhen (\hl -> hl.index == index) highlightables
+                |> Maybe.map (\( before, rest ) -> ( before, List.Extra.splitAt 1 rest ))
+                |> Maybe.andThen
+                    (\( before, ( at, after ) ) ->
+                        List.head at |> Maybe.map (\at_ -> ( before, at_, after ))
+                    )
+    in
+    case lists of
+        Just ( before, at, after ) ->
+            let
+                markers =
+                    at.marked |> List.map .kind
+
+                leftLengths =
+                    findLimits (List.reverse before)
+                        { curLength = 0
+                        , curIndex = index
+                        , needles = markers
+                        , lengths = Dict.empty sorter
+                        }
+
+                rightLengths =
+                    findLimits after
+                        { curLength = 0
+                        , curIndex = index
+                        , needles = markers
+                        , lengths = Dict.empty sorter
+                        }
+            in
+            .marker <|
+                Dict.merge
+                    sorter
+                    (\_ _ -> identity)
+                    (\marker ( lenLeft, idxLeft ) ( lenRight, idxRight ) acc ->
+                        let
+                            length =
+                                lenLeft + lenRight + 1
+                        in
+                        if length < acc.minLength then
+                            { minLength = length
+                            , marker =
+                                ( Just marker
+                                , ( idxLeft, idxRight )
+                                )
+                            }
+
+                        else
+                            acc
+                    )
+                    (\_ _ -> identity)
+                    leftLengths
+                    rightLengths
+                    { minLength = 999999, marker = ( Nothing, ( index, index ) ) }
+
+        Nothing ->
+            ( Nothing, ( index, index ) )
+
+
+saveLengths : Int -> Int -> Dict.Dict marker ( Int, Int ) -> List marker -> Dict.Dict marker ( Int, Int )
+saveLengths curLength curIndex lengths finishedMarkers =
+    List.foldl
+        (\v lengths_ ->
+            Dict.update v
+                (\curVal -> Maybe.Extra.or curVal (Just ( curLength, curIndex )))
+                lengths_
+        )
+        lengths
+        finishedMarkers
+
+
+{-| Returns (The intersection of a and b, the elements from a not found in b)
+-}
+intersectSplit : List marker -> List marker -> ( List marker, List marker )
+intersectSplit a b =
+    ( List.filter (\x -> List.member x b) a
+    , List.filter (\x -> not (List.member x b)) a
+    )
+
+
+{-| Finds the length and index of where requested markers end
+-}
+findLimits :
+    List (Highlightable marker)
+    -> { curLength : Int, curIndex : Int, needles : List marker, lengths : Dict.Dict marker ( Int, Int ) }
+    -> Dict.Dict marker ( Int, Int )
+findLimits list { curLength, curIndex, needles, lengths } =
+    case list of
+        [] ->
+            saveLengths curLength curIndex lengths needles
+
+        next :: rest ->
+            let
+                ( newNeedles, ended ) =
+                    intersectSplit needles (List.map .kind next.marked)
+
+                newLengths =
+                    saveLengths curLength curIndex lengths ended
+            in
+            case newNeedles of
+                [] ->
+                    -- stop early if we found limits of all markers
+                    newLengths
+
+                _ ->
+                    findLimits rest
+                        { curLength = curLength + String.length next.text
+                        , curIndex = next.index
+                        , needles = newNeedles
+                        , lengths = saveLengths curLength curIndex lengths ended
+                        }
 
 
 removeHinted : ( Int, Int ) -> List (Highlightable marker) -> List (Highlightable marker)
@@ -1411,85 +1707,121 @@ view_ config =
 
 viewHighlightable :
     { renderMarkdown : Bool, overlaps : OverlapsSupport marker }
-    ->
-        { config
-            | id : String
-            , focusIndex : Maybe Int
-            , marker : Tool.Tool marker
-            , mouseOverIndex : Maybe Int
-            , mouseDownIndex : Maybe Int
-            , hintingIndices : Maybe ( Int, Int )
-            , sorter : Sorter marker
-            , highlightables : List (Highlightable marker)
-        }
+    -> Model marker
     -> Highlightable marker
     -> List Css.Style
     -> Html (Msg marker)
-viewHighlightable { renderMarkdown, overlaps } config highlightable =
+viewHighlightable { renderMarkdown, overlaps } model highlightable css =
+    let
+        newCss =
+            [ Css.batch css
+            , if model.scrollFriendly then
+                Css.batch
+                    -- block ios safari from selecting text
+                    [ Css.property "-webkit-user-select" "none"
+                    , Css.property "-webkit-touch-callout" "none"
+                    ]
+
+              else
+                Css.batch []
+            ]
+    in
     case highlightable.type_ of
         Highlightable.Interactive ->
             viewHighlightableSegment
-                { interactiveHighlighterId = Just config.id
-                , focusIndex = config.focusIndex
-                , eventListeners =
-                    [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
-                    , onPreventDefault "mouseleave" (Pointer <| Out)
-                    , onPreventDefault "mouseup" (Pointer <| Up Nothing)
-                    , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
-                    , onPreventDefault "touchstart" (Pointer <| Down highlightable.index)
-                    , attribute "data-interactive" ""
-                    , Key.onKeyDownPreventDefault
-                        [ Key.space (Keyboard <| ToggleHighlight highlightable.index)
-                        , Key.right (Keyboard <| MoveRight highlightable.index)
-                        , Key.left (Keyboard <| MoveLeft highlightable.index)
-                        , Key.shiftRight (Keyboard <| SelectionExpandRight highlightable.index)
-                        , Key.shiftLeft (Keyboard <| SelectionExpandLeft highlightable.index)
-                        ]
-                    , Key.onKeyUpPreventDefault
-                        [ Key.shift (Keyboard <| SelectionApplyTool highlightable.index)
-                            -- Key.shift has `shiftKey` set to True, but the keyUp event
-                            -- for releasing the shift key has `shiftKey` set to False.
-                            |> (\k -> { k | shiftKey = False })
-                        , -- Escape while shift is down cancels selection
-                          Key.escape (Keyboard <| SelectionReset highlightable.index)
-                            |> (\k -> { k | shiftKey = True })
-                        ]
-                    ]
+                { interactiveHighlighterId = Just model.id
+                , focusIndex = model.focusIndex
+                , eventListeners = highlightableEventListeners highlightable model
                 , renderMarkdown = renderMarkdown
-                , maybeTool = Just config.marker
-                , mouseOverIndex = config.mouseOverIndex
-                , mouseDownIndex = config.mouseDownIndex
-                , hintingIndices = config.hintingIndices
-                , sorter = Just config.sorter
+                , maybeTool = Just model.marker
+                , mouseOverIndex = model.mouseOverIndex
+                , mouseDownIndex = model.mouseDownIndex
+                , hintingIndices = model.hintingIndices
+                , sorter = Just model.sorter
                 , overlaps = overlaps
                 }
                 highlightable
+                newCss
 
         Highlightable.Static ->
             viewHighlightableSegment
                 { interactiveHighlighterId = Nothing
-                , focusIndex = config.focusIndex
-                , eventListeners =
-                    -- Static highlightables need listeners as well.
-                    -- because otherwise we miss mouse events.
-                    -- For example, a user hovering over a static space in a highlight
-                    -- should see the entire highlight change to hover styles.
-                    [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
-                    , onPreventDefault "mouseleave" (Pointer <| Out)
-                    , onPreventDefault "mouseup" (Pointer <| Up Nothing)
-                    , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
-                    , onPreventDefault "touchstart" (Pointer <| Down highlightable.index)
-                    , attribute "data-static" ""
-                    ]
+                , focusIndex = model.focusIndex
+                , eventListeners = highlightableEventListeners highlightable model
                 , renderMarkdown = renderMarkdown
-                , maybeTool = Just config.marker
-                , mouseOverIndex = config.mouseOverIndex
-                , mouseDownIndex = config.mouseDownIndex
-                , hintingIndices = config.hintingIndices
-                , sorter = Just config.sorter
+                , maybeTool = Just model.marker
+                , mouseOverIndex = model.mouseOverIndex
+                , mouseDownIndex = model.mouseDownIndex
+                , hintingIndices = model.hintingIndices
+                , sorter = Just model.sorter
                 , overlaps = overlaps
                 }
                 highlightable
+                newCss
+
+
+highlightableEventListeners : Highlightable marker -> Model marker -> List (Attribute (Msg marker))
+highlightableEventListeners highlightable model =
+    case highlightable.type_ of
+        Highlightable.Interactive ->
+            [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
+            , onPreventDefault "mouseleave" (Pointer <| Out)
+            , onPreventDefault "mouseup" (Pointer <| Up <| Just model.id)
+            , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
+            , onPreventDefault "contextmenu" (Touch <| TouchIgnored)
+            , AttributesExtra.includeIf (not model.scrollFriendly)
+                (onPreventDefault "touchstart" (Touch <| TouchStart highlightable.index))
+            , AttributesExtra.includeIf (not model.scrollFriendly)
+                (onPreventDefault "touchend" (Touch <| TouchEnd <| Just model.id))
+            , AttributesExtra.includeIf model.scrollFriendly
+                (onClickPreventDefault
+                    (\count ->
+                        Pointer <|
+                            Click { index = highlightable.index, clickCount = count }
+                    )
+                )
+            , attribute "data-interactive" ""
+            , Key.onKeyDownPreventDefault
+                [ Key.space (Keyboard <| ToggleHighlight highlightable.index)
+                , Key.right (Keyboard <| MoveRight highlightable.index)
+                , Key.left (Keyboard <| MoveLeft highlightable.index)
+                , Key.shiftRight (Keyboard <| SelectionExpandRight highlightable.index)
+                , Key.shiftLeft (Keyboard <| SelectionExpandLeft highlightable.index)
+                ]
+            , Key.onKeyUpPreventDefault
+                [ Key.shift (Keyboard <| SelectionApplyTool highlightable.index)
+                    -- Key.shift has `shiftKey` set to True, but the keyUp event
+                    -- for releasing the shift key has `shiftKey` set to False.
+                    |> (\k -> { k | shiftKey = False })
+                , -- Escape while shift is down cancels selection
+                  Key.escape (Keyboard <| SelectionReset highlightable.index)
+                    |> (\k -> { k | shiftKey = True })
+                ]
+            ]
+
+        Highlightable.Static ->
+            -- Static highlightables need listeners as well.
+            -- because otherwise we miss mouse events.
+            -- For example, a user hovering over a static space in a highlight
+            -- should see the entire highlight change to hover styles.
+            [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
+            , onPreventDefault "mouseleave" (Pointer <| Out)
+            , onPreventDefault "contextmenu" (Touch <| TouchIgnored)
+            , AttributesExtra.includeIf (not model.scrollFriendly)
+                (onPreventDefault "touchstart" (Touch <| TouchStart highlightable.index))
+            , AttributesExtra.includeIf (not model.scrollFriendly)
+                (onPreventDefault "touchend" (Touch <| TouchEnd <| Just model.id))
+            , AttributesExtra.includeIf model.scrollFriendly
+                (onClickPreventDefault
+                    (\count ->
+                        Pointer <|
+                            Click { index = highlightable.index, clickCount = count }
+                    )
+                )
+            , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
+            , onPreventDefault "mouseup" (Pointer <| Up <| Just model.id)
+            , attribute "data-static" ""
+            ]
 
 
 viewHighlightableSegment :
@@ -1844,4 +2176,26 @@ onPreventDefault name msg =
                 |> Json.Decode.map (\result -> ( msg, result ))
     in
     Events.preventDefaultOn name
+        checkIfCancelable
+
+
+{-| Helper for `on` to preventDefault and capture `detail` from click event
+-}
+onClickPreventDefault : (Int -> msg) -> Attribute msg
+onClickPreventDefault msg =
+    let
+        -- If we attempt to preventDefault on an event which is not cancelable
+        -- Chrome will blow up and complain that:
+        --
+        -- Ignored attempt to cancel a touchmove event with cancelable=false,
+        -- for example because scrolling is in progress and cannot be interrupted.
+        --
+        -- So instead we only preventDefault when it is safe to do so.
+        checkIfCancelable =
+            Json.Decode.map2
+                (\detail result -> ( msg detail, result ))
+                (Json.Decode.field "detail" Json.Decode.int)
+                (Json.Decode.field "cancelable" Json.Decode.bool)
+    in
+    Events.preventDefaultOn "click"
         checkIfCancelable

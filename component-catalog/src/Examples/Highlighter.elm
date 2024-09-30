@@ -25,7 +25,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Highlightable.V3 as Highlightable exposing (Highlightable)
-import Nri.Ui.Highlighter.V5 as Highlighter
+import Nri.Ui.Highlighter.V6 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V7 as Table
@@ -41,6 +41,25 @@ moduleName =
 version : Int
 version =
     5
+
+
+type ReadOnly
+    = ReadOnly
+    | Interactive
+
+
+type ScrollFriendly
+    = ScrollFriendly
+    | NotScrollFriendly
+
+
+isScrollFriendly : Highlighter.Model marker -> ScrollFriendly
+isScrollFriendly model =
+    if model.scrollFriendly then
+        ScrollFriendly
+
+    else
+        NotScrollFriendly
 
 
 {-| -}
@@ -534,34 +553,56 @@ viewFoldHighlights model =
 
 
 {-| -}
+
+
+
+-- init : ( State, Cmd msg )
+
+
 init : State
 init =
     let
         settings =
             controlSettings
+
+        highlighterState =
+            initHighlighter (Control.currentValue settings) [] |> Tuple.second
+
+        overlappingHighlightsState =
+            Highlighter.init
+                { id = "student-writing"
+                , highlightables = Highlightable.initFragments "Letter grades have a variety of effects on students. Alfie Kohn, an American author who specializes in education issues, explains that students who are graded “tend to lose interest in the learning itself [and] avoid challenging tasks whenever possible.” Kohn’s argument illustrates how letter grades can become a source of stress for students and distract them from the joys of learning."
+                , marker = Tool.Marker (inlineCommentMarker "Comment 1")
+                , sorter = Sort.alphabetical
+                , joinAdjacentInteractiveHighlights = True
+                , scrollFriendly = False
+                }
+
+        foldHighlightsState =
+            Highlighter.init
+                { id = "student-writing-fold"
+                , highlightables =
+                    List.concat foldHighlightsSource
+                        |> List.indexedMap (Highlightable.initInteractive [])
+                , marker = Tool.Marker (inlineCommentMarker "Comment 1")
+                , sorter = Sort.alphabetical
+                , joinAdjacentInteractiveHighlights = True
+                , scrollFriendly = False
+                }
     in
-    { settings = settings
-    , highlighter = initHighlighter (Control.currentValue settings) [] |> Tuple.second
-    , overlappingHighlightsState =
-        Highlighter.init
-            { id = "student-writing"
-            , highlightables = Highlightable.initFragments "Letter grades have a variety of effects on students. Alfie Kohn, an American author who specializes in education issues, explains that students who are graded “tend to lose interest in the learning itself [and] avoid challenging tasks whenever possible.” Kohn’s argument illustrates how letter grades can become a source of stress for students and distract them from the joys of learning."
-            , marker = Tool.Marker (inlineCommentMarker "Comment 1")
-            , sorter = Sort.alphabetical
-            , joinAdjacentInteractiveHighlights = True
-            }
-    , foldHighlightsState =
-        Highlighter.init
-            { id = "student-writing-fold"
-            , highlightables =
-                List.concat foldHighlightsSource
-                    |> List.indexedMap (Highlightable.initInteractive [])
-            , marker = Tool.Marker (inlineCommentMarker "Comment 1")
-            , sorter = Sort.alphabetical
-            , joinAdjacentInteractiveHighlights = True
-            }
-    , overlappingHighlightsIndex = 1
-    }
+    ({ settings = settings
+     , highlighter = highlighterState
+     , overlappingHighlightsState = overlappingHighlightsState
+     , foldHighlightsState = foldHighlightsState
+     , overlappingHighlightsIndex = 1
+     }
+     -- TODO: add support for commands on init in component catalog
+     -- , Cmd.batch
+     --     [ initHighlighterPort highlighterState Interactive
+     --     , initHighlighterPort overlappingHighlightsState Interactive
+     --     , initHighlighterPort foldHighlightsState Interactive
+     --     ]
+    )
 
 
 initHighlighter : Settings -> List (Highlightable ()) -> ( String, Highlighter.Model () )
@@ -616,6 +657,9 @@ initHighlighter settings previousHighlightables =
         , marker = Tuple.second settings.tool.tool
         , sorter = sorter
         , joinAdjacentInteractiveHighlights = settings.textSettings.joinAdjacentInteractiveHighlights
+
+        -- TODO: make configurable
+        , scrollFriendly = False
         }
     )
 
@@ -728,18 +772,13 @@ update msg state =
 
         HighlighterMsg highlighterMsg ->
             let
-                ( newHighlighter, effect, Highlighter.Intent intent ) =
+                ( newHighlighter, effect, intent ) =
                     Highlighter.update highlighterMsg state.highlighter
             in
             ( { state | highlighter = newHighlighter }
             , Cmd.batch
                 [ Cmd.map HighlighterMsg effect
-                , case intent.listenTo of
-                    Just listenTo ->
-                        highlighterListen listenTo
-
-                    Nothing ->
-                        Cmd.none
+                , perform intent (isScrollFriendly state.highlighter) Interactive
                 ]
             )
 
@@ -782,11 +821,11 @@ update msg state =
                     -- The Changed action will be triggered on the Highlighter Up event and
                     -- when there is an actual change in the highlightable elements.
                     case Highlighter.hasChanged intent of
-                        Highlighter.Changed ->
+                        Highlighter.Changed _ ->
                             ( newComment
                             , Cmd.batch
                                 [ Cmd.map OverlappingHighlighterMsg effect
-                                , perform intent
+                                , perform intent (isScrollFriendly state.overlappingHighlightsState) Interactive
                                 ]
                             )
 
@@ -799,7 +838,7 @@ update msg state =
                                     ( { state | overlappingHighlightsState = withAllCommentIds }
                                     , Cmd.batch
                                         [ Cmd.map OverlappingHighlighterMsg effect
-                                        , perform intent
+                                        , perform intent (isScrollFriendly state.overlappingHighlightsState) Interactive
                                         ]
                                     )
 
@@ -808,7 +847,7 @@ update msg state =
                                     ( { state | overlappingHighlightsState = withAllCommentIds }
                                     , Cmd.batch
                                         [ Cmd.map OverlappingHighlighterMsg effect
-                                        , perform intent
+                                        , perform intent (isScrollFriendly state.overlappingHighlightsState) Interactive
                                         ]
                                     )
 
@@ -820,24 +859,33 @@ update msg state =
             ( { state | foldHighlightsState = highlighterModel }
             , Cmd.batch
                 [ Cmd.map FoldHighlighterMsg highlighterCmd
-                , perform intent
+                , perform intent (isScrollFriendly state.foldHighlightsState) Interactive
                 ]
             )
-
-
-perform : Highlighter.Intent -> Cmd msg
-perform (Highlighter.Intent intent) =
-    case intent.listenTo of
-        Just listenTo ->
-            highlighterListen listenTo
-
-        Nothing ->
-            Cmd.none
 
 
 sorter : Sorter ()
 sorter =
     Sort.custom (\() () -> EQ)
+
+
+
+-- PORT SETUP
+
+
+initHighlighterPort : Highlighter.Model marker -> ReadOnly -> Cmd msg
+initHighlighterPort model readonly =
+    highlighterInit ( model.id, model.scrollFriendly, readonly == ReadOnly )
+
+
+perform : Highlighter.Intent marker -> ScrollFriendly -> ReadOnly -> Cmd msg
+perform (Highlighter.Intent intent) scrollFriendly readonly =
+    case intent.listenTo of
+        Just listenTo ->
+            highlighterInit ( listenTo, scrollFriendly == ScrollFriendly, readonly == ReadOnly )
+
+        Nothing ->
+            Cmd.none
 
 
 
@@ -853,37 +901,50 @@ subscriptions =
 -}
 onDocumentUp : Sub (Highlighter.Msg marker)
 onDocumentUp =
-    highlighterOnDocumentUp (Highlighter.Pointer << Highlighter.Up << Just)
+    highlighterTouchPointerRelease <|
+        \( id, device ) ->
+            case device of
+                "mouse" ->
+                    Highlighter.Pointer <| Highlighter.Up <| Just id
+
+                "touch" ->
+                    Highlighter.Touch <| Highlighter.TouchEnd <| Just id
+
+                _ ->
+                    Highlighter.Pointer Highlighter.Ignored
 
 
 {-| Subscribe to touch events
 -}
 onTouch : Sub (Highlighter.Msg marker)
 onTouch =
-    highlighterOnTouch <|
+    highlighterOnTouchEvent <|
         \( type_, targetId, index ) ->
-            Highlighter.Pointer <|
+            Highlighter.Touch <|
                 case type_ of
                     "move" ->
-                        Highlighter.Move (Just targetId) index
+                        Highlighter.TouchMove (Just targetId) index
 
                     "end" ->
-                        Highlighter.Up (Just targetId)
+                        Highlighter.TouchEnd (Just targetId)
+
+                    "longpress" ->
+                        Highlighter.LongPress (Just targetId) index
 
                     _ ->
-                        Highlighter.Ignored
+                        Highlighter.TouchIgnored
 
 
 {-| Start listening to events on a highlighter
 -}
-port highlighterListen : String -> Cmd msg
+port highlighterInit : ( String, Bool, Bool ) -> Cmd msg
 
 
-{-| Listen to documentup events, to stop highlighting.
+{-| Listen to mouseup/touchend events on the whole document, to stop highlighting.
 -}
-port highlighterOnDocumentUp : (String -> msg) -> Sub msg
+port highlighterTouchPointerRelease : (( String, String ) -> msg) -> Sub msg
 
 
 {-| Listen to touch events, and get the element under the finger.
 -}
-port highlighterOnTouch : (( String, String, Int ) -> msg) -> Sub msg
+port highlighterOnTouchEvent : (( String, String, Int ) -> msg) -> Sub msg

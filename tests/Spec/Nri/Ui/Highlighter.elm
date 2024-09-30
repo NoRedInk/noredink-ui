@@ -10,7 +10,7 @@ import Nri.Test.KeyboardHelpers.V1 as KeyboardHelpers
 import Nri.Test.MouseHelpers.V1 as MouseHelpers
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Highlightable.V3 as Highlightable exposing (Highlightable)
-import Nri.Ui.Highlighter.V5 as Highlighter
+import Nri.Ui.Highlighter.V6 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool exposing (Tool)
 import ProgramTest exposing (..)
 import Sort
@@ -29,6 +29,7 @@ spec =
         , describe "markdown highlight name behavior" markdownHighlightNameTests
         , describe "joinAdjacentInteractiveHighlights" joinAdjacentInteractiveHighlightsTests
         , describe "overlapping highlights" overlappingHighlightTests
+        , describe "selectShortestMarkerRange" selectShortestMarkerRangeTests
         ]
 
 
@@ -443,6 +444,7 @@ markdownHighlightNameTests =
                 , marker = markerModel Nothing
                 , joinAdjacentInteractiveHighlights = False
                 , sorter = Sort.alphabetical
+                , scrollFriendly = False
                 }
 
         testIt viewName view =
@@ -488,6 +490,7 @@ startWithoutMarker view highlightables =
                 , marker = Tool.Eraser Tool.buildEraser
                 , joinAdjacentInteractiveHighlights = False
                 , sorter = Sort.custom (\() () -> EQ)
+                , scrollFriendly = False
                 }
         , update = \_ m -> m
         , view = view >> toUnstyled
@@ -684,6 +687,7 @@ program config highlightables =
                 , marker = markerModel config.markerName
                 , joinAdjacentInteractiveHighlights = config.joinAdjacentInteractiveHighlights
                 , sorter = Sort.alphabetical
+                , scrollFriendly = False
                 }
         , update =
             \msg model ->
@@ -812,16 +816,17 @@ renderWithFoldStatic model =
         |> Html.Styled.p [ Html.Styled.Attributes.id "test-id", Html.Styled.Attributes.class "highlighter-container" ]
 
 
+initHighlightables : List ( String, List String ) -> List (Highlightable String)
+initHighlightables =
+    List.indexedMap
+        (\i ( text, marks ) ->
+            Highlightable.initInteractive (List.map (Just >> marker) marks) i text
+        )
+
+
 overlappingHighlightTests : List Test
 overlappingHighlightTests =
     let
-        initHighlightables : List ( String, List String ) -> List (Highlightable String)
-        initHighlightables =
-            List.indexedMap
-                (\i ( text, marks ) ->
-                    Highlightable.initInteractive (List.map (Just >> marker) marks) i text
-                )
-
         start renderer highlightables =
             ProgramTest.createSandbox
                 { init =
@@ -831,6 +836,7 @@ overlappingHighlightTests =
                         , marker = markerModel (Just "Comment")
                         , joinAdjacentInteractiveHighlights = False
                         , sorter = Sort.alphabetical
+                        , scrollFriendly = False
                         }
                 , update =
                     \msg model ->
@@ -913,4 +919,77 @@ overlappingHighlightTests =
     [ describe "viewWithOverlappingHighlights" (staticAssertions Highlighter.viewWithOverlappingHighlights)
     , describe "viewFoldHighlight" (staticAssertions renderWithFoldHighlight)
     , describe "viewFoldStatic" (staticAssertions renderWithFoldStatic)
+    ]
+
+
+selectShortestMarkerRangeTests : List Test
+selectShortestMarkerRangeTests =
+    let
+        init highlightables =
+            Highlighter.init
+                { id = "test-highlighter-container"
+                , highlightables =
+                    initHighlightables
+                        highlightables
+                , marker = markerModel (Just "Comment")
+                , joinAdjacentInteractiveHighlights = False
+                , sorter = Sort.alphabetical
+                , scrollFriendly = False
+                }
+    in
+    [ test "No marker" <|
+        \_ ->
+            init [ ( "Hello", [] ), ( "World", [] ) ]
+                |> Highlighter.selectShortestMarkerRange 1
+                |> Expect.equal ( Nothing, ( 1, 1 ) )
+    , test "Single marker" <|
+        \_ ->
+            init [ ( "Hello", [] ), ( "World", [ "a" ] ) ]
+                |> Highlighter.selectShortestMarkerRange 1
+                |> Expect.equal ( Just "a", ( 1, 1 ) )
+    , test "Multiple markers" <|
+        \_ ->
+            init [ ( "Hello", [] ), ( "World", [ "a", "b" ] ) ]
+                |> Highlighter.selectShortestMarkerRange 1
+                |> Expect.equal ( Just "a", ( 1, 1 ) )
+    , test "Longer to the left" <|
+        \_ ->
+            init [ ( "Hello", [ "a" ] ), ( "World", [ "a", "b" ] ) ]
+                |> Highlighter.selectShortestMarkerRange 1
+                |> Expect.equal ( Just "b", ( 1, 1 ) )
+    , test "Longer to the right" <|
+        \_ ->
+            init [ ( "Hello", [] ), ( "World", [ "a", "b" ] ), ( "olleH", [ "a" ] ) ]
+                |> Highlighter.selectShortestMarkerRange 1
+                |> Expect.equal ( Just "b", ( 1, 1 ) )
+    , test "Same size different sides" <|
+        \_ ->
+            init [ ( "Hello", [ "a" ] ), ( "World", [ "a", "b" ] ), ( "olleH", [ "b" ] ) ]
+                |> Highlighter.selectShortestMarkerRange 1
+                |> Expect.equal ( Just "a", ( 0, 1 ) )
+    , test "Non-contiguous" <|
+        \_ ->
+            init
+                [ ( "0", [ "b" ] )
+                , ( "1", [ "b" ] )
+                , ( "2", [ "a", "b" ] )
+                , ( "3", [ "a", "b" ] ) -- index
+                , ( "4", [ "a", "b" ] )
+                , ( "5", [ "a" ] )
+                , ( "6", [ "a", "b" ] )
+                , ( "7", [ "a", "b" ] )
+                ]
+                |> Highlighter.selectShortestMarkerRange 3
+                |> Expect.equal ( Just "b", ( 0, 4 ) )
+    , test "Word size matters" <|
+        \_ ->
+            init
+                [ ( "1234", [ "a" ] )
+                , ( "5|1", [ "a", "b" ] )
+                , ( "2", [ "b" ] )
+                , ( "3", [ "b" ] )
+                , ( "4", [ "b" ] )
+                ]
+                |> Highlighter.selectShortestMarkerRange 1
+                |> Expect.equal ( Just "b", ( 1, 4 ) )
     ]
