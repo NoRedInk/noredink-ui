@@ -643,6 +643,7 @@ initHighlighter settings previousHighlightables =
                 , ( "highlightables", Tuple.first highlightables )
                 , ( "marker", Code.newlineWithIndent 3 ++ Tuple.first settings.tool.tool )
                 , ( "joinAdjacentInteractiveHighlights", Code.bool settings.textSettings.joinAdjacentInteractiveHighlights )
+                , ( "scrollFriendly", Code.bool settings.textSettings.scrollFriendly )
                 , ( "sorter", "Sort.custom (\\() () -> EQ)" )
                 ]
                 2
@@ -657,9 +658,7 @@ initHighlighter settings previousHighlightables =
         , marker = Tuple.second settings.tool.tool
         , sorter = sorter
         , joinAdjacentInteractiveHighlights = settings.textSettings.joinAdjacentInteractiveHighlights
-
-        -- TODO: make configurable
-        , scrollFriendly = False
+        , scrollFriendly = settings.textSettings.scrollFriendly
         }
     )
 
@@ -676,6 +675,7 @@ type alias Settings =
     { textSettings :
         { splitOnSentences : Bool
         , joinAdjacentInteractiveHighlights : Bool
+        , scrollFriendly : Bool
         , highlighterType : HighlighterType
         }
     , tool : { tool : ( String, Tool.Tool () ) }
@@ -691,9 +691,17 @@ controlSettings : Control Settings
 controlSettings =
     Control.record Settings
         |> Control.field "Text settings"
-            (Control.record (\a b c -> { splitOnSentences = a, joinAdjacentInteractiveHighlights = b, highlighterType = c })
+            (Control.record
+                (\a b c d ->
+                    { splitOnSentences = a
+                    , joinAdjacentInteractiveHighlights = b
+                    , scrollFriendly = c
+                    , highlighterType = d
+                    }
+                )
                 |> Control.field "splitOnSentences" (Control.bool True)
                 |> Control.field "joinAdjacentInteractiveHighlights" (Control.bool False)
+                |> Control.field "scrollFriendly" (Control.bool False)
                 |> Control.field "type"
                     (Control.choice
                         [ ( "Markdown", Control.value Markdown )
