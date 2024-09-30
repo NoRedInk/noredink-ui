@@ -14,11 +14,12 @@ module Nri.Ui.Highlighter.V6 exposing
 {-| Changes from V5:
 
   - Added `scrollFriendly` flag to `init`, which enables a mode where:
-    - Mobile highlighting requires long-press instead of tap to highlight
-    - Desktop highlighting requires double-click instead of single-click to highlight
+      - Mobile highlighting requires long-press instead of tap to highlight
+      - Desktop highlighting requires double-click instead of single-click to highlight
   - Made Intent return whether a highlight was created or removed, and what are its bounds
-    - Makes it easier to change highlighter behavior from the outside
+      - Makes it easier to change highlighter behavior from the outside
   - Segregated Touch events from Pointer events, so we can give them distinct behavior
+
 
 # Types
 
@@ -141,6 +142,8 @@ type Initialized
 {-| Setup initial model
 
 joinAdjacentInteractiveHighlights - When true, and static highlightables are sandwiched by highlighted interactive highlightables of the same type, apply the highlight to the static highlightable as well.
+
+scrollFriendly - When true, enables a mode where mobile highlighting requires long-press instead of tap to highlight, and desktop highlighting requires double-click instead of single-click to highlight a single word.
 
 -}
 init :
