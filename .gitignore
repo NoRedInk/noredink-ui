@@ -235,6 +235,9 @@ documentation.json
 # direnv config file
 .envrc
 
+# direnv cache
+.direnv/
+
 /public
 /tests/axe-report.json
 /tests/deprecated-imports-report.txt
