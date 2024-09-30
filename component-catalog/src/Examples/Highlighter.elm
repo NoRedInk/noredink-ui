@@ -553,13 +553,7 @@ viewFoldHighlights model =
 
 
 {-| -}
-
-
-
--- init : ( State, Cmd msg )
-
-
-init : State
+init : ( State, Cmd msg )
 init =
     let
         settings =
@@ -590,18 +584,17 @@ init =
                 , scrollFriendly = False
                 }
     in
-    ({ settings = settings
-     , highlighter = highlighterState
-     , overlappingHighlightsState = overlappingHighlightsState
-     , foldHighlightsState = foldHighlightsState
-     , overlappingHighlightsIndex = 1
-     }
-     -- TODO: add support for commands on init in component catalog
-     -- , Cmd.batch
-     --     [ initHighlighterPort highlighterState Interactive
-     --     , initHighlighterPort overlappingHighlightsState Interactive
-     --     , initHighlighterPort foldHighlightsState Interactive
-     --     ]
+    ( { settings = settings
+      , highlighter = highlighterState
+      , overlappingHighlightsState = overlappingHighlightsState
+      , foldHighlightsState = foldHighlightsState
+      , overlappingHighlightsIndex = 1
+      }
+    , Cmd.batch
+        [ initHighlighterPort highlighterState Interactive
+        , initHighlighterPort overlappingHighlightsState Interactive
+        , initHighlighterPort foldHighlightsState Interactive
+        ]
     )
 
 
@@ -769,13 +762,16 @@ update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
         UpdateControls settings ->
-            ( { state
-                | settings = settings
-                , highlighter =
+            let
+                highlighterState =
                     initHighlighter (Control.currentValue settings) state.highlighter.highlightables
                         |> Tuple.second
+            in
+            ( { state
+                | settings = settings
+                , highlighter = highlighterState
               }
-            , Cmd.none
+            , initHighlighterPort highlighterState Interactive
             )
 
         HighlighterMsg highlighterMsg ->

@@ -62,7 +62,7 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , init = init
+    , init = ( init, Cmd.none )
     , update = update
     , subscriptions = subscriptions
     , preview = preview

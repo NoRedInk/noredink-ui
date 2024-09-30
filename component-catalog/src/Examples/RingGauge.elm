@@ -40,7 +40,7 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , init = controlSettings
+    , init = ( controlSettings, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , categories = [ Progress, Icons ]

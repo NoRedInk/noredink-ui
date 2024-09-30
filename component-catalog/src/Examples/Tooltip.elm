@@ -59,7 +59,7 @@ example =
           , result = "While focusing a tooltip trigger, opens/closes the tooltip. May trigger the underlying action too."
           }
         ]
-    , init = init
+    , init = ( init, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =

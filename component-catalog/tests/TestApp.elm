@@ -43,3 +43,6 @@ simulateEffect effect =
         Command cmd ->
             -- TODO: mock an implementation
             SimulatedEffect.Cmd.none
+
+        Batch effects ->
+            SimulatedEffect.Cmd.batch (List.map simulateEffect effects)

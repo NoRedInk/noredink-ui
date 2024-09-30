@@ -25,7 +25,7 @@ import Nri.Ui.MediaQuery.V1 exposing (mobile)
 type alias Example state msg =
     { name : String
     , version : Int
-    , init : state
+    , init : ( state, Cmd msg )
     , update : msg -> state -> ( state, Cmd msg )
     , subscriptions : state -> Sub msg
     , preview : List (Html Never)
@@ -59,7 +59,7 @@ wrapMsg :
 wrapMsg wrapMsg_ unwrapMsg example =
     { name = example.name
     , version = example.version
-    , init = example.init
+    , init = Tuple.mapSecond (Cmd.map wrapMsg_) example.init
     , update =
         \msg2 state ->
             case unwrapMsg msg2 of
@@ -89,7 +89,7 @@ wrapState :
 wrapState wrapState_ unwrapState example =
     { name = example.name
     , version = example.version
-    , init = wrapState_ example.init
+    , init = Tuple.mapFirst wrapState_ example.init
     , update =
         \msg state2 ->
             case unwrapState state2 of
