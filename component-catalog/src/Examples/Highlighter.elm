@@ -44,8 +44,8 @@ version =
 
 
 type ReadOnly
-    = ReadOnly
-    | Interactive
+    = -- a `ReadOnly` value isn't used here, but we keep a custom type for clarity
+      Interactive
 
 
 type ScrollFriendly
@@ -879,14 +879,14 @@ sorter =
 
 initHighlighterPort : Highlighter.Model marker -> ReadOnly -> Cmd msg
 initHighlighterPort model readonly =
-    highlighterInit ( model.id, model.scrollFriendly, readonly == ReadOnly )
+    highlighterInit ( model.id, model.scrollFriendly, readonly /= Interactive )
 
 
 perform : Highlighter.Intent marker -> ScrollFriendly -> ReadOnly -> Cmd msg
 perform (Highlighter.Intent intent) scrollFriendly readonly =
     case intent.listenTo of
         Just listenTo ->
-            highlighterInit ( listenTo, scrollFriendly == ScrollFriendly, readonly == ReadOnly )
+            highlighterInit ( listenTo, scrollFriendly == ScrollFriendly, readonly /= Interactive )
 
         Nothing ->
             Cmd.none
