@@ -30,8 +30,6 @@
       app.ports.highlighterInit.subscribe(([id, scrollFriendly, readonly]) => {
         console.log("highlighterInit", id, scrollFriendly, readonly);
 
-        // TODO: do we need to prevent multiple initializations?
-
         // save the touchmove handler for this highlighter, so we can remove it when not in need
         const touchMoveListener = handleTouchEvents("move", id);
         window.requestAnimationFrame(() => {
