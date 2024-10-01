@@ -18,11 +18,21 @@
 
       // HIGHLIGHTER
 
+      // This port is JS copy of the port we wrote in the Monolith, without error reporting
+      //
+      // Highlighter needs a port to perform a few different things that can't be done in pure Elm:
+      //
+      //   1. Detect mouse release outside the highlighter area, to end highlighting
+      //   2. Detect touch release outside the highlighter area, to end highlighting
+      //   3. Detect long-press to highlight on touch devices when in scroll-friendly mode
+      //   4. Handle drag-to-select on touch devices
+      //
       app.ports.highlighterInit.subscribe(([id, scrollFriendly, readonly]) => {
         console.log("highlighterInit", id, scrollFriendly, readonly);
 
         // TODO: do we need to prevent multiple initializations?
 
+        // save the touchmove handler for this highlighter, so we can remove it when not in need
         const touchMoveListener = handleTouchEvents("move", id);
         window.requestAnimationFrame(() => {
           const highlighter = document.getElementById(id);
@@ -31,11 +41,13 @@
             return;
           }
 
+          // 1. Detect mouse release outside the highlighter area, to end highlighting
           highlighter.addEventListener("mousedown", (_) => {
             document.addEventListener("mouseup", onDocumentUp(id, "mouse"), {
               once: true,
             });
           });
+          // 2. Detect touch release outside the highlighter area, to end highlighting
           highlighter.addEventListener("touchstart", (_) => {
             console.log("touchstart", id);
             document.addEventListener("touchend", onDocumentUp(id, "touch"), {
@@ -44,9 +56,17 @@
           });
 
           if (!scrollFriendly && !readonly) {
-            // scroll-friendly mode only registers a touchmove listener after a longpress
+            // 4. Handle drag-to-select on touch devices
+            // This is only for the vanilla non-scroll-friendly mode, when the highlighter is
+            // not read-only (bc read-only means we don't need to handle drag-to-select).
+            //
+            // The new scroll-friendly mode only registers a touchmove listener after a longpress
+            // and is handled below.
             highlighter.addEventListener("touchmove", touchMoveListener);
           }
+
+          // 3. Detect long-press to highlight on touch devices when in scroll-friendly mode
+          // Also 4. Handle drag-to-select on touch devices, when in scroll-friendly mode
           highlighter.addEventListener(
             "touchstart",
             handleTouchStartScrollFriendly(id),
@@ -128,7 +148,9 @@
             app.ports.highlighterTouchPointerRelease.send([id, device]);
             if (device === "touch") {
               console.log("touchend", id);
-              // Stop listening to touchmove after touchend
+              // Stop the listener that powers 4. Handle drag-to-select on touch devices.
+              // A touchend means we can't be dragging to select anymore.
+              //
               // This helps us not report touchmove when touch starts on one highlighter and moves
               // into another
               document
