@@ -42,7 +42,7 @@ example =
     , version = 1
     , categories = [ Atoms ]
     , keyboardSupport = []
-    , init = { isAccordionOpen = False }
+    , init = ( { isAccordionOpen = False }, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =

@@ -17,17 +17,13 @@ import Http
 import InputMethod exposing (InputMethod)
 import Json.Decode as Decode
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
-import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Header.V1 as Header
-import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Html.V3 exposing (viewIf)
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Page.V3 as Page
 import Nri.Ui.SideNav.V5 as SideNav
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Sprite.V1 as Sprite
-import Nri.Ui.Tabs.V9 as Tabs exposing (Tab)
-import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.Tabs.V9 as Tabs
 import Routes exposing (Route)
 import Sort.Set as Set
 import Task
@@ -40,7 +36,7 @@ type alias Model key =
     { -- Global UI
       route : Route
     , previousRoute : Maybe Route
-    , moduleStates : Dict String Examples.State
+    , moduleStates : Dict String ( Examples.State, Cmd Examples.Msg )
     , usageExampleStates : Dict String UsageExamples.State
     , isSideNavOpen : Bool
     , openTooltip : Maybe TooltipId
@@ -101,13 +97,13 @@ examplesDict =
         )
 
 
-findExample : Model k -> String -> Maybe ( Example Examples.State Examples.Msg, Examples.State )
+findExample : Model k -> String -> Maybe ( Example Examples.State Examples.Msg, Examples.State, Cmd Examples.Msg )
 findExample model key =
     Dict.get key model.moduleStates
         |> Maybe.andThen
-            (\state ->
+            (\( state, initCmd ) ->
                 Dict.get key examplesDict
-                    |> Maybe.map (\example -> ( example, state ))
+                    |> Maybe.map (\example -> ( example, state, initCmd ))
             )
 
 
@@ -134,12 +130,12 @@ update action model =
     case action of
         UpdateModuleStates key exampleMsg ->
             case findExample model key of
-                Just ( example, exampleState ) ->
+                Just ( example, exampleState, initCmd ) ->
                     example.update exampleMsg exampleState
                         |> Tuple.mapFirst
                             (\newState ->
                                 { model
-                                    | moduleStates = Dict.insert key newState model.moduleStates
+                                    | moduleStates = Dict.insert key ( newState, initCmd ) model.moduleStates
                                 }
                             )
                         |> Tuple.mapSecond (Cmd.map (UpdateModuleStates key) >> Command)
@@ -180,8 +176,25 @@ update action model =
                 , previousRoute = Just model.route
                 , isSideNavOpen = False
               }
-            , Maybe.map FocusOn (Routes.headerId route examplesDict usageExamplesDict)
-                |> Maybe.withDefault None
+            , Batch
+                [ Maybe.map FocusOn (Routes.headerId route examplesDict usageExamplesDict)
+                    |> Maybe.withDefault None
+                , case route of
+                    Routes.Doodad exampleName ->
+                        case findExample model exampleName of
+                            Just ( _, _, initCmd ) ->
+                                let
+                                    _ =
+                                        Debug.log "initing" exampleName
+                                in
+                                Command (Cmd.map (UpdateModuleStates exampleName) initCmd)
+
+                            Nothing ->
+                                None
+
+                    _ ->
+                        None
+                ]
             )
 
         ChangeRoute route ->
@@ -259,6 +272,7 @@ type Effect
     | FocusOn String
     | None
     | Command (Cmd Msg)
+    | Batch (List Effect)
 
 
 perform : Key -> Effect -> Cmd Msg
@@ -282,13 +296,16 @@ perform navigationKey effect =
         Command cmd ->
             cmd
 
+        Batch effects ->
+            Cmd.batch (List.map (perform navigationKey) effects)
+
 
 subscriptions : Model key -> Sub Msg
 subscriptions model =
     let
         exampleSubs exampleName =
             case findExample model exampleName of
-                Just ( example, exampleState ) ->
+                Just ( example, exampleState, _ ) ->
                     Sub.map (UpdateModuleStates exampleName)
                         (example.subscriptions exampleState)
 
@@ -334,7 +351,7 @@ view model =
 
         exampleDocument exampleName =
             case findExample model exampleName of
-                Just ( example, exampleState ) ->
+                Just ( example, exampleState, _ ) ->
                     { title = example.name ++ " in the NoRedInk Component Catalog"
                     , body = viewExample model example exampleState |> toBody
                     }
@@ -547,7 +564,7 @@ examplesContainer extraStyles =
 
 
 navigation : Model key -> Html Msg
-navigation { moduleStates, route, isSideNavOpen, openTooltip } =
+navigation { route, isSideNavOpen, openTooltip } =
     let
         examples =
             Examples.all

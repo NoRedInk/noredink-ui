@@ -208,7 +208,7 @@ example =
           , result = "Select the tab to the right of the currently-selected Tab"
           }
         ]
-    , init = init
+    , init = ( init, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =

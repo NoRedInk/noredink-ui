@@ -25,7 +25,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Highlightable.V3 as Highlightable exposing (Highlightable)
-import Nri.Ui.Highlighter.V5 as Highlighter
+import Nri.Ui.Highlighter.V6 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V7 as Table
@@ -40,7 +40,26 @@ moduleName =
 
 version : Int
 version =
-    5
+    6
+
+
+type ReadOnly
+    = -- a `ReadOnly` value isn't used here, but we keep a custom type for clarity
+      Interactive
+
+
+type ScrollFriendly
+    = ScrollFriendly
+    | NotScrollFriendly
+
+
+isScrollFriendly : Highlighter.Model marker -> ScrollFriendly
+isScrollFriendly model =
+    if model.scrollFriendly then
+        ScrollFriendly
+
+    else
+        NotScrollFriendly
 
 
 {-| -}
@@ -50,7 +69,13 @@ example =
     , version = version
     , init = init
     , update = update
-    , subscriptions = \_ -> Sub.map HighlighterMsg subscriptions
+    , subscriptions =
+        \_ ->
+            Sub.batch
+                [ Sub.map HighlighterMsg subscriptions
+                , Sub.map OverlappingHighlighterMsg subscriptions
+                , Sub.map FoldHighlighterMsg subscriptions
+                ]
     , preview =
         [ div [ css [ Fonts.baseFont, Css.lineHeight (Css.num 2), Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ] ] ]
             [ Highlighter.static
@@ -196,6 +221,8 @@ example =
                     , Css.lineHeight (Css.num 1.75)
                     , Fonts.ugFont
                     ]
+                , Html.Styled.Attributes.id state.foldHighlightsState.id
+                , Html.Styled.Attributes.class "highlighter-container"
                 ]
                 [ viewFoldHighlights state.foldHighlightsState
                     |> map FoldHighlighterMsg
@@ -526,34 +553,49 @@ viewFoldHighlights model =
 
 
 {-| -}
-init : State
+init : ( State, Cmd msg )
 init =
     let
         settings =
             controlSettings
+
+        highlighterState =
+            initHighlighter (Control.currentValue settings) [] |> Tuple.second
+
+        overlappingHighlightsState =
+            Highlighter.init
+                { id = "student-writing"
+                , highlightables = Highlightable.initFragments "Letter grades have a variety of effects on students. Alfie Kohn, an American author who specializes in education issues, explains that students who are graded “tend to lose interest in the learning itself [and] avoid challenging tasks whenever possible.” Kohn’s argument illustrates how letter grades can become a source of stress for students and distract them from the joys of learning."
+                , marker = Tool.Marker (inlineCommentMarker "Comment 1")
+                , sorter = Sort.alphabetical
+                , joinAdjacentInteractiveHighlights = True
+                , scrollFriendly = False
+                }
+
+        foldHighlightsState =
+            Highlighter.init
+                { id = "student-writing-fold"
+                , highlightables =
+                    List.concat foldHighlightsSource
+                        |> List.indexedMap (Highlightable.initInteractive [])
+                , marker = Tool.Marker (inlineCommentMarker "Comment 1")
+                , sorter = Sort.alphabetical
+                , joinAdjacentInteractiveHighlights = True
+                , scrollFriendly = False
+                }
     in
-    { settings = settings
-    , highlighter = initHighlighter (Control.currentValue settings) [] |> Tuple.second
-    , overlappingHighlightsState =
-        Highlighter.init
-            { id = "student-writing"
-            , highlightables = Highlightable.initFragments "Letter grades have a variety of effects on students. Alfie Kohn, an American author who specializes in education issues, explains that students who are graded “tend to lose interest in the learning itself [and] avoid challenging tasks whenever possible.” Kohn’s argument illustrates how letter grades can become a source of stress for students and distract them from the joys of learning."
-            , marker = Tool.Marker (inlineCommentMarker "Comment 1")
-            , sorter = Sort.alphabetical
-            , joinAdjacentInteractiveHighlights = True
-            }
-    , foldHighlightsState =
-        Highlighter.init
-            { id = "student-writing-fold"
-            , highlightables =
-                List.concat foldHighlightsSource
-                    |> List.indexedMap (Highlightable.initInteractive [])
-            , marker = Tool.Marker (inlineCommentMarker "Comment 1")
-            , sorter = Sort.alphabetical
-            , joinAdjacentInteractiveHighlights = True
-            }
-    , overlappingHighlightsIndex = 1
-    }
+    ( { settings = settings
+      , highlighter = highlighterState
+      , overlappingHighlightsState = overlappingHighlightsState
+      , foldHighlightsState = foldHighlightsState
+      , overlappingHighlightsIndex = 1
+      }
+    , Cmd.batch
+        [ initHighlighterPort highlighterState Interactive
+        , initHighlighterPort overlappingHighlightsState Interactive
+        , initHighlighterPort foldHighlightsState Interactive
+        ]
+    )
 
 
 initHighlighter : Settings -> List (Highlightable ()) -> ( String, Highlighter.Model () )
@@ -594,6 +636,7 @@ initHighlighter settings previousHighlightables =
                 , ( "highlightables", Tuple.first highlightables )
                 , ( "marker", Code.newlineWithIndent 3 ++ Tuple.first settings.tool.tool )
                 , ( "joinAdjacentInteractiveHighlights", Code.bool settings.textSettings.joinAdjacentInteractiveHighlights )
+                , ( "scrollFriendly", Code.bool settings.textSettings.scrollFriendly )
                 , ( "sorter", "Sort.custom (\\() () -> EQ)" )
                 ]
                 2
@@ -608,6 +651,7 @@ initHighlighter settings previousHighlightables =
         , marker = Tuple.second settings.tool.tool
         , sorter = sorter
         , joinAdjacentInteractiveHighlights = settings.textSettings.joinAdjacentInteractiveHighlights
+        , scrollFriendly = settings.textSettings.scrollFriendly
         }
     )
 
@@ -624,6 +668,7 @@ type alias Settings =
     { textSettings :
         { splitOnSentences : Bool
         , joinAdjacentInteractiveHighlights : Bool
+        , scrollFriendly : Bool
         , highlighterType : HighlighterType
         }
     , tool : { tool : ( String, Tool.Tool () ) }
@@ -639,9 +684,17 @@ controlSettings : Control Settings
 controlSettings =
     Control.record Settings
         |> Control.field "Text settings"
-            (Control.record (\a b c -> { splitOnSentences = a, joinAdjacentInteractiveHighlights = b, highlighterType = c })
+            (Control.record
+                (\a b c d ->
+                    { splitOnSentences = a
+                    , joinAdjacentInteractiveHighlights = b
+                    , scrollFriendly = c
+                    , highlighterType = d
+                    }
+                )
                 |> Control.field "splitOnSentences" (Control.bool True)
                 |> Control.field "joinAdjacentInteractiveHighlights" (Control.bool False)
+                |> Control.field "scrollFriendly" (Control.bool False)
                 |> Control.field "type"
                     (Control.choice
                         [ ( "Markdown", Control.value Markdown )
@@ -709,29 +762,27 @@ update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
         UpdateControls settings ->
-            ( { state
-                | settings = settings
-                , highlighter =
+            let
+                highlighterState =
                     initHighlighter (Control.currentValue settings) state.highlighter.highlightables
                         |> Tuple.second
+            in
+            ( { state
+                | settings = settings
+                , highlighter = highlighterState
               }
-            , Cmd.none
+            , initHighlighterPort highlighterState Interactive
             )
 
         HighlighterMsg highlighterMsg ->
             let
-                ( newHighlighter, effect, Highlighter.Intent intent ) =
+                ( newHighlighter, effect, intent ) =
                     Highlighter.update highlighterMsg state.highlighter
             in
             ( { state | highlighter = newHighlighter }
             , Cmd.batch
                 [ Cmd.map HighlighterMsg effect
-                , case intent.listenTo of
-                    Just listenTo ->
-                        highlighterListen listenTo
-
-                    Nothing ->
-                        Cmd.none
+                , perform intent (isScrollFriendly state.highlighter) Interactive
                 ]
             )
 
@@ -774,11 +825,11 @@ update msg state =
                     -- The Changed action will be triggered on the Highlighter Up event and
                     -- when there is an actual change in the highlightable elements.
                     case Highlighter.hasChanged intent of
-                        Highlighter.Changed ->
+                        Highlighter.Changed _ ->
                             ( newComment
                             , Cmd.batch
                                 [ Cmd.map OverlappingHighlighterMsg effect
-                                , perform intent
+                                , perform intent (isScrollFriendly state.overlappingHighlightsState) Interactive
                                 ]
                             )
 
@@ -791,7 +842,7 @@ update msg state =
                                     ( { state | overlappingHighlightsState = withAllCommentIds }
                                     , Cmd.batch
                                         [ Cmd.map OverlappingHighlighterMsg effect
-                                        , perform intent
+                                        , perform intent (isScrollFriendly state.overlappingHighlightsState) Interactive
                                         ]
                                     )
 
@@ -800,31 +851,45 @@ update msg state =
                                     ( { state | overlappingHighlightsState = withAllCommentIds }
                                     , Cmd.batch
                                         [ Cmd.map OverlappingHighlighterMsg effect
-                                        , perform intent
+                                        , perform intent (isScrollFriendly state.overlappingHighlightsState) Interactive
                                         ]
                                     )
 
         FoldHighlighterMsg highlighterMsg ->
             let
-                ( highlighterModel, highlighterCmd, _ ) =
+                ( highlighterModel, highlighterCmd, intent ) =
                     Highlighter.update highlighterMsg state.foldHighlightsState
             in
-            ( { state | foldHighlightsState = highlighterModel }, Cmd.map FoldHighlighterMsg highlighterCmd )
-
-
-perform : Highlighter.Intent -> Cmd msg
-perform (Highlighter.Intent intent) =
-    case intent.listenTo of
-        Just listenTo ->
-            highlighterListen listenTo
-
-        Nothing ->
-            Cmd.none
+            ( { state | foldHighlightsState = highlighterModel }
+            , Cmd.batch
+                [ Cmd.map FoldHighlighterMsg highlighterCmd
+                , perform intent (isScrollFriendly state.foldHighlightsState) Interactive
+                ]
+            )
 
 
 sorter : Sorter ()
 sorter =
     Sort.custom (\() () -> EQ)
+
+
+
+-- PORT SETUP
+
+
+initHighlighterPort : Highlighter.Model marker -> ReadOnly -> Cmd msg
+initHighlighterPort model readonly =
+    highlighterInit ( model.id, model.scrollFriendly, readonly /= Interactive )
+
+
+perform : Highlighter.Intent marker -> ScrollFriendly -> ReadOnly -> Cmd msg
+perform (Highlighter.Intent intent) scrollFriendly readonly =
+    case intent.listenTo of
+        Just listenTo ->
+            highlighterInit ( listenTo, scrollFriendly == ScrollFriendly, readonly /= Interactive )
+
+        Nothing ->
+            Cmd.none
 
 
 
@@ -840,37 +905,50 @@ subscriptions =
 -}
 onDocumentUp : Sub (Highlighter.Msg marker)
 onDocumentUp =
-    highlighterOnDocumentUp (Highlighter.Pointer << Highlighter.Up << Just)
+    highlighterTouchPointerRelease <|
+        \( id, device ) ->
+            case device of
+                "mouse" ->
+                    Highlighter.Pointer <| Highlighter.Up <| Just id
+
+                "touch" ->
+                    Highlighter.Touch <| Highlighter.TouchEnd <| Just id
+
+                _ ->
+                    Highlighter.Pointer Highlighter.Ignored
 
 
 {-| Subscribe to touch events
 -}
 onTouch : Sub (Highlighter.Msg marker)
 onTouch =
-    highlighterOnTouch <|
+    highlighterOnTouchEvent <|
         \( type_, targetId, index ) ->
-            Highlighter.Pointer <|
+            Highlighter.Touch <|
                 case type_ of
                     "move" ->
-                        Highlighter.Move (Just targetId) index
+                        Highlighter.TouchMove (Just targetId) index
 
                     "end" ->
-                        Highlighter.Up (Just targetId)
+                        Highlighter.TouchEnd (Just targetId)
+
+                    "longpress" ->
+                        Highlighter.LongPress (Just targetId) index
 
                     _ ->
-                        Highlighter.Ignored
+                        Highlighter.TouchIgnored
 
 
 {-| Start listening to events on a highlighter
 -}
-port highlighterListen : String -> Cmd msg
+port highlighterInit : ( String, Bool, Bool ) -> Cmd msg
 
 
-{-| Listen to documentup events, to stop highlighting.
+{-| Listen to mouseup/touchend events on the whole document, to stop highlighting.
 -}
-port highlighterOnDocumentUp : (String -> msg) -> Sub msg
+port highlighterTouchPointerRelease : (( String, String ) -> msg) -> Sub msg
 
 
 {-| Listen to touch events, and get the element under the finger.
 -}
-port highlighterOnTouch : (( String, String, Int ) -> msg) -> Sub msg
+port highlighterOnTouchEvent : (( String, String, Int ) -> msg) -> Sub msg
