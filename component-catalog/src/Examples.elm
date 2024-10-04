@@ -58,6 +58,7 @@ import Examples.TextArea as TextArea
 import Examples.TextInput as TextInput
 import Examples.Tooltip as Tooltip
 import Examples.UiIcon as UiIcon
+import Examples.LoadingShimmer as LoadingShimmer
 
 
 all : List (Example State Msg)
@@ -1088,6 +1089,24 @@ all =
                     _ ->
                         Nothing
             )
+    , LoadingShimmer.example
+        |> Example.wrapMsg LoadingShimmerMsg
+            (\msg ->
+                case msg of
+                    LoadingShimmerMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState LoadingShimmerState
+            (\msg ->
+                case msg of
+                    LoadingShimmerState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing)
     ]
 
 
@@ -1146,6 +1165,7 @@ type State
     | TextInputState TextInput.State
     | TooltipState Tooltip.State
     | UiIconState UiIcon.State
+    | LoadingShimmerState LoadingShimmer.State
 
 
 type Msg
@@ -1203,3 +1223,4 @@ type Msg
     | TextInputMsg TextInput.Msg
     | TooltipMsg Tooltip.Msg
     | UiIconMsg UiIcon.Msg
+    | LoadingShimmerMsg LoadingShimmer.Msg
