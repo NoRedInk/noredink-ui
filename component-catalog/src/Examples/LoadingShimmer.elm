@@ -100,15 +100,17 @@ init =
 
 {-| -}
 type Msg
-    = NoOp
+    = UpdateControl (Control (List ( String, LoadingShimmer.Attribute Msg )))
+
 
 
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        NoOp ->
-            ( state, Cmd.none )
+        UpdateControl newControl ->
+            ( { state | control = newControl }, Cmd.none )
+
 
 
 
@@ -164,7 +166,7 @@ controlAttributes =
         --     )
         |> ControlExtra.listItems "Type"
             (Control.list
-                |> ControlExtra.optionalListItem "type"
+                |> ControlExtra.listItem "kind"
                     (CommonControls.choice moduleName
                         [ ( "line", LoadingShimmer.line )
                         ]
@@ -201,7 +203,7 @@ viewLoadingShimmerExamples ellieLinkConfig state =
         { ellieLinkConfig = ellieLinkConfig
         , name = moduleName
         , version = version
-        , update = always NoOp
+        , update = UpdateControl
         , settings = state.control
         , mainType = Just "RootHtml.Html msg"
         , extraCode = []
@@ -220,7 +222,7 @@ viewLoadingShimmerExamples ellieLinkConfig state =
                                 ++ "\n    ]"
                         }
                 in
-                [ toExampleCode "line"
+                [ toExampleCode "view"
                 ]
         }
     , Heading.h2
