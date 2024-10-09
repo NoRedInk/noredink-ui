@@ -2,7 +2,7 @@ module Nri.Ui.Highlighter.LongForm exposing
     ( Model, Msg(..), PointerMsg(..), TouchMsg(..), KeyboardMsg(..)
     , init, update
     , view, static, staticWithTags
-    , viewMarkdown, staticMarkdown, staticMarkdownWithTags
+    , staticMarkdown
     , viewWithOverlappingHighlights
     , FoldState, initFoldState, viewFoldHighlighter, viewFoldStatic
     , Intent(..), hasChanged, HasChanged(..), Change(..)
@@ -31,7 +31,7 @@ module Nri.Ui.Highlighter.LongForm exposing
 @docs init, update
 
 @docs view, static, staticWithTags
-@docs viewMarkdown, staticMarkdown, staticMarkdownWithTags
+@docs staticMarkdown
 @docs viewWithOverlappingHighlights
 
 
@@ -1268,31 +1268,6 @@ viewWithOverlappingHighlights =
         )
 
 
-{-| Same as `view`, but will render strings like "_blah_" inside of emphasis tags.
-
-WARNING: the version of markdown used here is extremely limited, as the highlighter content needs to be entirely in-line content. Lists & other block-level elements will _not_ render as they usually would!
-
-WARNING: markdown is rendered highlightable by highlightable, so be sure to provide highlightables like ["_New York Times_"]["*New York Times*"], NOT like ["_New ", "York ", "Times_"]["*New ", "York ", "Times*"]
-
--}
-viewMarkdown : Model marker -> Html (Msg marker)
-viewMarkdown =
-    lazy
-        (\model ->
-            view_
-                { showTagsInline = False
-                , maybeTool = Just model.marker
-                , mouseOverIndex = model.mouseOverIndex
-                , mouseDownIndex = model.mouseDownIndex
-                , hintingIndices = model.hintingIndices
-                , overlaps = OverlapsNotSupported
-                , viewSegment = viewHighlightable { renderMarkdown = True, overlaps = OverlapsNotSupported } model
-                , id = model.id
-                , highlightables = model.highlightables
-                }
-        )
-
-
 {-| -}
 static : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
 static =
@@ -1378,47 +1353,6 @@ staticWithTags =
                         , mouseDownIndex = Nothing
                         , hintingIndices = Nothing
                         , renderMarkdown = False
-                        , sorter = Nothing
-                        , overlaps = OverlapsNotSupported
-                        }
-            in
-            view_
-                { showTagsInline = True
-                , maybeTool = Nothing
-                , mouseOverIndex = Nothing
-                , mouseDownIndex = Nothing
-                , hintingIndices = Nothing
-                , overlaps = OverlapsNotSupported
-                , viewSegment = viewStaticHighlightableWithTags
-                , id = config.id
-                , highlightables = config.highlightables
-                }
-        )
-
-
-{-| Same as `staticWithTags`, but will render strings like "_blah_" inside of emphasis tags.
-
-WARNING: the version of markdown used here is extremely limited, as the highlighter content needs to be entirely in-line content. Lists & other block-level elements will _not_ render as they usually would!
-
-WARNING: markdown is rendered highlightable by highlightable, so be sure to provide highlightables like ["_New York Times_"]["*New York Times*"], NOT like ["_New ", "York ", "Times_"]["*New ", "York ", "Times*"]
-
--}
-staticMarkdownWithTags : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
-staticMarkdownWithTags =
-    lazy
-        (\config ->
-            let
-                viewStaticHighlightableWithTags : Highlightable marker -> List Css.Style -> Html msg
-                viewStaticHighlightableWithTags =
-                    viewHighlightableSegment
-                        { interactiveHighlighterId = Nothing
-                        , focusIndex = Nothing
-                        , eventListeners = []
-                        , maybeTool = Nothing
-                        , mouseOverIndex = Nothing
-                        , mouseDownIndex = Nothing
-                        , hintingIndices = Nothing
-                        , renderMarkdown = True
                         , sorter = Nothing
                         , overlaps = OverlapsNotSupported
                         }
