@@ -1240,7 +1240,14 @@ view =
                 , mouseDownIndex = model.mouseDownIndex
                 , hintingIndices = model.hintingIndices
                 , overlaps = OverlapsNotSupported
-                , viewSegment = viewHighlightable { renderMarkdown = False, overlaps = OverlapsNotSupported } model
+                , viewSegment =
+                    \highlightable css ->
+                        Html.fromUnstyled <|
+                            viewHighlightable
+                                { renderMarkdown = False, overlaps = OverlapsNotSupported }
+                                model
+                                highlightable
+                                css
                 , id = model.id
                 , highlightables = model.highlightables
                 }
@@ -1263,7 +1270,13 @@ viewWithOverlappingHighlights =
                 , mouseDownIndex = model.mouseDownIndex
                 , hintingIndices = model.hintingIndices
                 , overlaps = overlaps
-                , viewSegment = viewHighlightable { renderMarkdown = False, overlaps = overlaps } model
+                , viewSegment =
+                    \highlightable css ->
+                        Html.fromUnstyled <|
+                            viewHighlightable { renderMarkdown = False, overlaps = overlaps }
+                                model
+                                highlightable
+                                css
                 , id = model.id
                 , highlightables = model.highlightables
                 }
@@ -1481,22 +1494,26 @@ A list of extraStyles is also accepted if, for example, you want to apply bold /
 viewFoldStatic : List Css.Style -> FoldState marker -> ( FoldState marker, List (Unstyled.Html msg) )
 viewFoldStatic =
     viewFoldHelper
-        (viewHighlightableSegment
-            { interactiveHighlighterId = Nothing
-            , focusIndex = Nothing
-            , eventListeners = []
-            , maybeTool = Nothing
-            , mouseOverIndex = Nothing
-            , mouseDownIndex = Nothing
-            , hintingIndices = Nothing
-            , renderMarkdown = False
-            , sorter = Nothing
-            , overlaps = OverlapsNotSupported
-            }
+        (\highlightable css ->
+            viewHighlightableSegment
+                { interactiveHighlighterId = Nothing
+                , focusIndex = Nothing
+                , eventListeners = []
+                , maybeTool = Nothing
+                , mouseOverIndex = Nothing
+                , mouseDownIndex = Nothing
+                , hintingIndices = Nothing
+                , renderMarkdown = False
+                , sorter = Nothing
+                , overlaps = OverlapsNotSupported
+                }
+                highlightable
+                css
+                |> Html.toUnstyled
         )
 
 
-viewFoldHelper : (Highlightable marker -> List Css.Style -> Html msg) -> List Css.Style -> FoldState marker -> ( FoldState marker, List (Unstyled.Html msg) )
+viewFoldHelper : (Highlightable marker -> List Css.Style -> Unstyled.Html msg) -> List Css.Style -> FoldState marker -> ( FoldState marker, List (Unstyled.Html msg) )
 viewFoldHelper viewSegment extraStyles (FoldState ({ state } as foldState)) =
     case state of
         [] ->
@@ -1514,12 +1531,12 @@ viewFoldHelper viewSegment extraStyles (FoldState ({ state } as foldState)) =
             case maybeLabelElement of
                 Nothing ->
                     ( FoldState { foldState | state = todoState }
-                    , [ Html.toUnstyled segmentHtml ]
+                    , [ segmentHtml ]
                     )
 
                 Just labelElement ->
                     ( FoldState { foldState | state = todoState }
-                    , [ Unstyled.map never labelElement, Html.toUnstyled segmentHtml ]
+                    , [ Unstyled.map never labelElement, segmentHtml ]
                     )
 
 
@@ -1653,7 +1670,7 @@ viewHighlightable :
     -> Model marker
     -> Highlightable marker
     -> List Css.Style
-    -> Html (Msg marker)
+    -> Unstyled.Html (Msg marker)
 viewHighlightable { renderMarkdown, overlaps } model highlightable css =
     let
         newCss =
@@ -1671,36 +1688,38 @@ viewHighlightable { renderMarkdown, overlaps } model highlightable css =
     in
     case highlightable.type_ of
         Highlightable.Interactive ->
-            viewHighlightableSegment
-                { interactiveHighlighterId = Just model.id
-                , focusIndex = model.focusIndex
-                , eventListeners = highlightableEventListeners highlightable model
-                , renderMarkdown = renderMarkdown
-                , maybeTool = Just model.marker
-                , mouseOverIndex = model.mouseOverIndex
-                , mouseDownIndex = model.mouseDownIndex
-                , hintingIndices = model.hintingIndices
-                , sorter = Just model.sorter
-                , overlaps = overlaps
-                }
-                highlightable
-                newCss
+            Html.toUnstyled <|
+                viewHighlightableSegment
+                    { interactiveHighlighterId = Just model.id
+                    , focusIndex = model.focusIndex
+                    , eventListeners = highlightableEventListeners highlightable model
+                    , renderMarkdown = renderMarkdown
+                    , maybeTool = Just model.marker
+                    , mouseOverIndex = model.mouseOverIndex
+                    , mouseDownIndex = model.mouseDownIndex
+                    , hintingIndices = model.hintingIndices
+                    , sorter = Just model.sorter
+                    , overlaps = overlaps
+                    }
+                    highlightable
+                    newCss
 
         Highlightable.Static ->
-            viewHighlightableSegment
-                { interactiveHighlighterId = Nothing
-                , focusIndex = model.focusIndex
-                , eventListeners = highlightableEventListeners highlightable model
-                , renderMarkdown = renderMarkdown
-                , maybeTool = Just model.marker
-                , mouseOverIndex = model.mouseOverIndex
-                , mouseDownIndex = model.mouseDownIndex
-                , hintingIndices = model.hintingIndices
-                , sorter = Just model.sorter
-                , overlaps = overlaps
-                }
-                highlightable
-                newCss
+            Html.toUnstyled <|
+                viewHighlightableSegment
+                    { interactiveHighlighterId = Nothing
+                    , focusIndex = model.focusIndex
+                    , eventListeners = highlightableEventListeners highlightable model
+                    , renderMarkdown = renderMarkdown
+                    , maybeTool = Just model.marker
+                    , mouseOverIndex = model.mouseOverIndex
+                    , mouseDownIndex = model.mouseDownIndex
+                    , hintingIndices = model.hintingIndices
+                    , sorter = Just model.sorter
+                    , overlaps = overlaps
+                    }
+                    highlightable
+                    newCss
 
 
 highlightableEventListeners : Highlightable marker -> Model marker -> List (Attribute (Msg marker))
