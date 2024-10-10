@@ -1407,7 +1407,7 @@ type FoldState marker
     = FoldState
         { model : Model marker
         , overlapsSupport : OverlapsSupport marker
-        , state : List ( Highlightable marker, Maybe (Html Never), List Css.Style )
+        , state : List ( Highlightable marker, Maybe (Unstyled.Html Never), List Css.Style )
         }
 
 
@@ -1446,6 +1446,7 @@ initFoldState model =
             model.highlightables
                 |> List.map (\highlightable -> ( highlightable, List.map (toMark highlightable) highlightable.marked ))
                 |> Mark.overlappingStyles
+                |> List.map (\( a, label, c ) -> ( a, Maybe.map Html.toUnstyled label, c ))
     in
     FoldState
         { model = model
@@ -1461,17 +1462,15 @@ A list of extraStyles is also accepted if, for example, you want to apply bold /
 -}
 viewFoldHighlighter : List Css.Style -> FoldState marker -> ( FoldState marker, List (Unstyled.Html (Msg marker)) )
 viewFoldHighlighter extraStyles (FoldState ({ model, overlapsSupport } as foldState)) =
-    Tuple.mapSecond (List.map Html.toUnstyled)
-        (viewFoldHelper
-            (viewHighlightable
-                { renderMarkdown = False
-                , overlaps = overlapsSupport
-                }
-                model
-            )
-            extraStyles
-            (FoldState foldState)
+    viewFoldHelper
+        (viewHighlightable
+            { renderMarkdown = False
+            , overlaps = overlapsSupport
+            }
+            model
         )
+        extraStyles
+        (FoldState foldState)
 
 
 {-| Render a single `Highlightable` that is NOT interactive while also returning an updated state.
@@ -1479,7 +1478,7 @@ viewFoldHighlighter extraStyles (FoldState ({ model, overlapsSupport } as foldSt
 A list of extraStyles is also accepted if, for example, you want to apply bold / italic / underline formatting to the generated span.
 
 -}
-viewFoldStatic : List Css.Style -> FoldState marker -> ( FoldState marker, List (Html msg) )
+viewFoldStatic : List Css.Style -> FoldState marker -> ( FoldState marker, List (Unstyled.Html msg) )
 viewFoldStatic =
     viewFoldHelper
         (viewHighlightableSegment
@@ -1497,7 +1496,7 @@ viewFoldStatic =
         )
 
 
-viewFoldHelper : (Highlightable marker -> List Css.Style -> Html msg) -> List Css.Style -> FoldState marker -> ( FoldState marker, List (Html msg) )
+viewFoldHelper : (Highlightable marker -> List Css.Style -> Html msg) -> List Css.Style -> FoldState marker -> ( FoldState marker, List (Unstyled.Html msg) )
 viewFoldHelper viewSegment extraStyles (FoldState ({ state } as foldState)) =
     case state of
         [] ->
@@ -1515,12 +1514,12 @@ viewFoldHelper viewSegment extraStyles (FoldState ({ state } as foldState)) =
             case maybeLabelElement of
                 Nothing ->
                     ( FoldState { foldState | state = todoState }
-                    , [ segmentHtml ]
+                    , [ Html.toUnstyled segmentHtml ]
                     )
 
                 Just labelElement ->
                     ( FoldState { foldState | state = todoState }
-                    , [ Html.map never labelElement, segmentHtml ]
+                    , [ Unstyled.map never labelElement, Html.toUnstyled segmentHtml ]
                     )
 
 
