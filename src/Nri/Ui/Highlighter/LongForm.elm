@@ -2019,14 +2019,12 @@ stripMarkdownSyntax markdown =
 markedHighlightableStyles :
     { config
         | maybeTool : Maybe (Tool.Tool marker)
-        , mouseOverIndex : Maybe Int
         , hintingIndices : Maybe ( Int, Int )
-        , overlaps : OverlapsSupport marker
     }
     -> (Highlightable marker -> Bool)
     -> Highlightable marker
     -> List Css.Style
-markedHighlightableStyles ({ maybeTool, mouseOverIndex, hintingIndices } as config) getIsHovered ({ marked } as highlightable) =
+markedHighlightableStyles { maybeTool, hintingIndices } getIsHovered ({ marked } as highlightable) =
     case maybeTool of
         Nothing ->
             [ case List.head marked of
