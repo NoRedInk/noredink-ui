@@ -65,6 +65,8 @@ import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Style exposing (invisibleStyle)
 import Browser.Dom as Dom
 import Css
+import Html as Unstyled
+import Html.Attributes as UnstyledAttrs
 import Html.Styled as Html exposing (Attribute, Html, p, span)
 import Html.Styled.Attributes exposing (attribute, class, css)
 import Html.Styled.Events as Events
@@ -1457,17 +1459,19 @@ initFoldState model =
 A list of extraStyles is also accepted if, for example, you want to apply bold / italic / underline formatting to the generated span.
 
 -}
-viewFoldHighlighter : List Css.Style -> FoldState marker -> ( FoldState marker, List (Html (Msg marker)) )
+viewFoldHighlighter : List Css.Style -> FoldState marker -> ( FoldState marker, List (Unstyled.Html (Msg marker)) )
 viewFoldHighlighter extraStyles (FoldState ({ model, overlapsSupport } as foldState)) =
-    viewFoldHelper
-        (viewHighlightable
-            { renderMarkdown = False
-            , overlaps = overlapsSupport
-            }
-            model
+    Tuple.mapSecond (List.map Html.toUnstyled)
+        (viewFoldHelper
+            (viewHighlightable
+                { renderMarkdown = False
+                , overlaps = overlapsSupport
+                }
+                model
+            )
+            extraStyles
+            (FoldState foldState)
         )
-        extraStyles
-        (FoldState foldState)
 
 
 {-| Render a single `Highlightable` that is NOT interactive while also returning an updated state.
