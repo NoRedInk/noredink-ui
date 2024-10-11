@@ -246,8 +246,9 @@ widths : List ( String, LoadingShimmer.Attribute Msg )
 widths =
     [ --      ( "exactWidth 120", LoadingShimmer.exactWidth 120 )
       -- , ( "exactWidth 70", LoadingShimmer.exactWidth 70 )
-      -- , ( "boundedWidth 100 180", LoadingShimmer.boundedWidth { min = 100, max = 180 } )
       ( "fillContainerWidth", LoadingShimmer.fillContainerWidth )
+    , ( "exactWidth 70", LoadingShimmer.exactWidth 70 )
+    , ( "boundedWidth 100 180", LoadingShimmer.boundedWidth { min = 100, max = 180 } )
     ]
 
 
