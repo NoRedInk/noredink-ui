@@ -147,6 +147,22 @@ view attributes =
         )
 
 
+backgroundImageGradient : BackgroundImage (ListStyle {})
+backgroundImageGradient =
+    let
+        transparentMixableStop =
+            stop (rgba 0 0 0 0)
+
+        darkMixableStop =
+            stop <| rgba 0 0 0 0.1
+    in
+    linearGradient2
+        toRight
+        transparentMixableStop
+        darkMixableStop
+        [ transparentMixableStop ]
+
+
 viewLine : Settings msg -> Html msg
 viewLine settings =
     Html.Styled.div [ Attributes.css [ displayFlex, property "gap" "8px", height (Css.px 16) ] ]
