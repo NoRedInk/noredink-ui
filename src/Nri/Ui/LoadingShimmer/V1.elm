@@ -201,42 +201,61 @@ viewLine settings =
         []
 
 
+viewParagraph : Settings msg -> Html msg
+viewParagraph settings =
+    let
+        textSkeletonColor =
+            gray85
+    in
+    Html.Styled.div
+        [ Attributes.css
+            [ property "display" "grid"
+            , property "gap" "8px"
+            , property "grid-template-columns" "repeat(12, 1fr)"
+            , height (Css.px 24)
+            , padding (px 4)
+            , position relative
+            , overflow hidden
+            , before
+                [ position absolute
+                , top zero
+                , bottom zero
+                , left zero
+                , right zero
+                , backgroundImage backgroundImageGradient
+                , shimmerAnimation
+                , Css.property "content" "\" \""
+                ]
+            ]
+        ]
         [ Html.Styled.div
             [ Attributes.css
-                [ flex (Css.num 1)
-                , minWidth (Css.ch 1)
-                , backgroundColor gray92
+                [ minWidth (Css.ch 1)
                 , borderRadius (px 4)
-                , pulseAnimation "0s"
+                , property "grid-column" "span 2"
+                , backgroundColor textSkeletonColor
                 ]
             ]
             []
         , Html.Styled.div
             [ Attributes.css
-                [ flex (Css.num 3)
-                , minWidth (Css.ch 12)
-                , backgroundColor gray92
+                [ minWidth (Css.ch 12)
                 , borderRadius (px 4)
-                , pulseAnimation "0.5s"
+                , property "grid-column" "span 6"
+                , backgroundColor textSkeletonColor
                 ]
             ]
             []
         , Html.Styled.div
             [ Attributes.css
-                [ flex (Css.num 2)
-                , minWidth (Css.ch 6)
-                , backgroundColor gray92
+                [ minWidth (Css.ch 6)
                 , borderRadius (px 4)
-                , pulseAnimation "1s"
+                , property "grid-column" "span 4"
+                , backgroundColor textSkeletonColor
                 ]
             ]
             []
         ]
-
-
-viewParagraph : Settings msg -> List (Html msg)
-viewParagraph settings =
-    [ viewLine settings ]
 
 
 line : Attribute msg
