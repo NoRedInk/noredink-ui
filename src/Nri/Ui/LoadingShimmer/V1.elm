@@ -284,6 +284,7 @@ pulseAnimation delay =
         , property "animation-delay" delay
         , property "animation-fill-mode" "forwards"
         , opacity (Css.num 0)
+        , backgroundColor gray85
         ]
 
 
