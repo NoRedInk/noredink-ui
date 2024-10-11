@@ -1,7 +1,9 @@
 module Nri.Ui.LoadingShimmer.V1 exposing
     ( Attribute
+    , boundedWidth
     , css
     , custom
+    , exactWidth
     , fillContainerWidth
     , id
     , line
@@ -117,11 +119,25 @@ setWidth w =
     set (\attributes -> { attributes | width = w })
 
 
-{-| Leave the maxiumum width unbounded (there is a minimum width).
+{-| Leave the maximum width unbounded (there is a minimum width).
 -}
 fillContainerWidth : Attribute msg
 fillContainerWidth =
     setWidth WidthFillContainer
+
+
+{-| set an exact width.
+-}
+exactWidth : Int -> Attribute msg
+exactWidth =
+    setWidth << WidthExact
+
+
+{-| Set a minimum and maximum width.
+-}
+boundedWidth : { min : Int, max : Int } -> Attribute msg
+boundedWidth =
+    setWidth << WidthBounded
 
 
 {-| -}
