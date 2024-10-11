@@ -274,9 +274,6 @@ loadingShimmerTable =
                             kindTuple
                         )
                         widths
-                    ++ [ td [ css [ verticalAlign middle, Css.borderTop3 (Css.px 1) Css.solid Colors.gray85 ] ]
-                            [ code [] [ text "LoadingShimmer.line" ] ]
-                       ]
                 )
             ]
 
