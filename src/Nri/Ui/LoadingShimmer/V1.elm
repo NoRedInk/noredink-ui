@@ -240,3 +240,23 @@ pulse =
         , ( 60, [ Css.Animations.opacity (Css.num 0.75) ] )
         , ( 100, [ Css.Animations.opacity (Css.num 0) ] )
         ]
+
+
+shimmerAnimation : Style
+shimmerAnimation =
+    batch
+        [ property "animation-duration" "2s"
+        , property "animation-iteration-count" "infinite"
+        , property "animation-fill-mode" "forwards"
+        , property "animation-timing-function" "cubic-bezier(0.65, 0, 0.35, 1)"
+        , animationName shimmer
+        , property "transform-origin" "left"
+        ]
+
+
+shimmer : Css.Animations.Keyframes {}
+shimmer =
+    Css.Animations.keyframes
+        [ ( 0, [ Css.Animations.transform [ translateX (pct -100) ] ] )
+        , ( 100, [ Css.Animations.transform [ translateX (pct 100) ] ] )
+        ]
