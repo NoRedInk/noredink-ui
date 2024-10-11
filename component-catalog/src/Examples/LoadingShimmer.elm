@@ -263,14 +263,15 @@ loadingShimmerTable =
         exampleRow kindTuple =
             [ tr []
                 (td
-                    [ css [ verticalAlign middle, Css.borderTop3 (Css.px 1) Css.solid Colors.gray85 ]
-                    , Attributes.rowspan 2
+                    [ css
+                        [ verticalAlign middle
+                        , Css.borderTop3 (Css.px 1) Css.solid Colors.gray85
+                        ]
                     ]
                     [ code [] [ text (Code.fromModule moduleName (Tuple.second kindTuple)) ] ]
                     :: List.map
                         (exampleCell
                             [ Css.borderTop3 (Css.px 1) Css.solid Colors.gray85
-                            , Css.paddingBottom Css.zero |> Css.important
                             ]
                             kindTuple
                         )
@@ -291,7 +292,23 @@ loadingShimmerTable =
                 ]
                 [ content ]
     in
-    List.concatMap exampleRow kinds
+    List.concat
+        [ [ widths
+                |> List.map
+                    (\( sizeName, _ ) ->
+                        th
+                            [ css
+                                [ Css.padding2 (Css.px 15) (Css.px 10)
+                                , Css.textAlign Css.start
+                                ]
+                            ]
+                            [ code [] [ text (Code.fromModule moduleName sizeName) ]
+                            ]
+                    )
+                |> (\cells -> tr [] (td [] [] :: cells))
+          ]
+        , List.concatMap exampleRow kinds
+        ]
         |> table [ css [ Css.borderCollapse Css.collapse, Css.width (Css.pct 100) ] ]
         |> List.singleton
         |> div [ css [ Css.overflow Css.auto ] ]
