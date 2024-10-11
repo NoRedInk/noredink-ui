@@ -165,7 +165,42 @@ backgroundImageGradient =
 
 viewLine : Settings msg -> Html msg
 viewLine settings =
-    Html.Styled.div [ Attributes.css [ displayFlex, property "gap" "8px", height (Css.px 16) ] ]
+    let
+        textSkeletonColor =
+            gray85
+    in
+    Html.Styled.div
+        [ Attributes.css
+            [ height (Css.px 16)
+            , position relative
+            , overflow hidden
+            , minWidth (Css.ch 1)
+            , case settings.width of
+                WidthExact w ->
+                    batch [ width (Css.px <| toFloat w) ]
+
+                WidthFillContainer ->
+                    batch [ width (pct 100) ]
+
+                WidthBounded { min, max } ->
+                    batch [ minWidth (px <| toFloat min), maxWidth (px <| toFloat max) ]
+            , borderRadius (px 4)
+            , backgroundColor textSkeletonColor
+            , before
+                [ position absolute
+                , top zero
+                , bottom zero
+                , left zero
+                , right zero
+                , backgroundImage backgroundImageGradient
+                , shimmerAnimation
+                , Css.property "content" "\" \""
+                ]
+            ]
+        ]
+        []
+
+
         [ Html.Styled.div
             [ Attributes.css
                 [ flex (Css.num 1)
