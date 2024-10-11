@@ -236,8 +236,8 @@ pulseAnimation delay =
 pulse : Css.Animations.Keyframes {}
 pulse =
     Css.Animations.keyframes
-        [ ( 40, [ Css.Animations.opacity (Css.num 0.75) ] )
-        , ( 60, [ Css.Animations.opacity (Css.num 0.75) ] )
+        [ ( 40, [ Css.Animations.opacity (Css.num 1) ] )
+        , ( 60, [ Css.Animations.opacity (Css.num 1) ] )
         , ( 100, [ Css.Animations.opacity (Css.num 0) ] )
         ]
 
