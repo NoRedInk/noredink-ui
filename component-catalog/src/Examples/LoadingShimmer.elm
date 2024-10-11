@@ -103,14 +103,12 @@ type Msg
     = UpdateControl (Control (List ( String, LoadingShimmer.Attribute Msg )))
 
 
-
 {-| -}
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
         UpdateControl newControl ->
             ( { state | control = newControl }, Cmd.none )
-
 
 
 
@@ -258,6 +256,7 @@ loadingShimmerTable =
     let
         kinds =
             [ ( LoadingShimmer.line, "line" )
+            , ( LoadingShimmer.paragraph, "paragraph" )
             ]
 
         exampleRow kindTuple =
