@@ -138,13 +138,13 @@ view attributes =
             ]
             :: settings.customAttributes
         )
-        (case settings.kind of
+        [ case settings.kind of
             Line ->
-                [ viewLine settings ]
+                viewLine settings
 
             Paragraph ->
                 viewParagraph settings
-        )
+        ]
 
 
 backgroundImageGradient : BackgroundImage (ListStyle {})
