@@ -2,6 +2,7 @@ module Nri.Ui.Mark.LongForm exposing
     ( Mark
     , view, viewWithInlineTags, viewWithBalloonTags
     , viewWithOverlaps, overlappingStyles
+    , renderStyles
     )
 
 {-|
@@ -31,7 +32,7 @@ import Css.Global
 import Css.Media
 import Html as Unstyled
 import Html.Styled as Html exposing (Html, span)
-import Html.Styled.Attributes exposing (class, css)
+import Html.Styled.Attributes exposing (class, css, style)
 import Markdown.Block
 import Markdown.Inline
 import Nri.Ui.Balloon.V2 as Balloon
@@ -53,6 +54,16 @@ type alias Mark =
     , styles : List Css.Style
     , endStyles : List Css.Style
     }
+
+
+renderStyles : List Mark -> List Css.Global.Snippet
+renderStyles marks =
+    List.map
+        (\mark ->
+            MarkedMark mark
+                |> styleClassStyle
+        )
+        marks
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
@@ -327,24 +338,42 @@ viewMarkedByBalloon config markedWith segments =
         )
 
 
+styleClassStyle : StyleClass -> Css.Global.Snippet
+styleClassStyle styleClass =
+    case styleClass of
+        MarkedMark markedWith ->
+            Css.Global.selector ("mark." ++ styleClassName styleClass)
+                [ Css.backgroundColor Css.transparent
+                , Css.Global.children
+                    [ Css.Global.selector ":last-child"
+                        (Css.after
+                            [ Css.property "content" ("\" end " ++ (Maybe.map (\name -> stripMarkdownSyntax name) markedWith.name |> Maybe.withDefault "highlight") ++ " \"")
+                            , invisibleStyle
+                            ]
+                            :: markedWith.endStyles
+                        )
+                    ]
+                ]
+
+
+type StyleClass
+    = MarkedMark Mark
+
+
+styleClassName : StyleClass -> String
+styleClassName styleClass =
+    case styleClass of
+        MarkedMark markedWith ->
+            "mark-" ++ (markedWith.name |> Maybe.withDefault "highlight")
+
+
 viewMarked : TagStyle -> Mark -> List (Html msg) -> Html msg
 viewMarked tagStyle markedWith segments =
     Html.mark
-        [ -- Drop the `mark` role as various screen readers interpret it differently.
+        [ class (styleClassName (MarkedMark markedWith))
+        , -- Drop the `mark` role as various screen readers interpret it differently.
           -- Instead we offer additional invisible and accessible content to denote the highlight.
           Role.presentation
-        , css
-            [ Css.backgroundColor Css.transparent
-            , Css.Global.children
-                [ Css.Global.selector ":last-child"
-                    (Css.after
-                        [ Css.property "content" ("\" end " ++ (Maybe.map (\name -> stripMarkdownSyntax name) markedWith.name |> Maybe.withDefault "highlight") ++ " \"")
-                        , invisibleStyle
-                        ]
-                        :: markedWith.endStyles
-                    )
-                ]
-            ]
         ]
         (case markedWith.name of
             Just name ->
