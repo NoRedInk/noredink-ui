@@ -165,6 +165,7 @@ overlappingStyles segments =
                                             [ viewInlineTag
                                                 HiddenTags
                                                 (String.Extra.toSentenceOxford names)
+                                                |> Html.fromUnstyled
                                             ]
                                     , currentStyles
                                     )
@@ -461,7 +462,7 @@ viewStartHighlightTag : TagStyle -> Mark -> String -> Unstyled.Html msg
 viewStartHighlightTag tagStyle marked name =
     Unstyled.span
         [ Html.Attributes.class (styleClassName (InlineTag tagStyle marked)) ]
-        [ viewInlineTag tagStyle name |> Html.toUnstyled ]
+        [ viewInlineTag tagStyle name ]
 
 
 markStyles : TagStyle -> Int -> Maybe Mark -> List Css.Style
@@ -552,15 +553,15 @@ cssContent content =
     Css.property "content" ("\" " ++ content ++ " \"")
 
 
-viewInlineTag : TagStyle -> String -> Html msg
+viewInlineTag : TagStyle -> String -> Unstyled.Html msg
 viewInlineTag tagStyle name =
-    span
+    Unstyled.span
         [ -- we use the :before element to convey details about the start of the
           -- highlighter to screenreaders, so the visual label is redundant
-          Aria.hidden True
-        , class (styleClassName (InlineTagContent tagStyle))
+          Html.Attributes.attribute "aria-hidden" "true"
+        , Html.Attributes.class (styleClassName (InlineTagContent tagStyle))
         ]
-        (Content.markdownInline name)
+        (Content.markdownInlineUnstyled name)
 
 
 viewBalloon :
