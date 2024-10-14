@@ -26,7 +26,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Highlightable.V3 as Highlightable exposing (Highlightable)
-import Nri.Ui.Highlighter.V6 as Highlighter
+import Nri.Ui.Highlighter.LongForm as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V7 as Table
@@ -358,12 +358,6 @@ example =
                   , description = "Multiple kinds of highlights without overlaps"
                   , example = Highlighter.staticWithTags { id = "example-4a", highlightables = multipleHighlightsHighlightablesWithBorder }
                   }
-                , { viewName = "staticMarkdownWithTags"
-                  , tool = "buildMarkerWithBorder"
-                  , highlightable = "init"
-                  , description = "Multiple kinds of highlights without overlaps and with interpreted Markdown"
-                  , example = Highlighter.staticMarkdownWithTags { id = "example-4b", highlightables = multipleHighlightsHighlightablesWithBorder }
-                  }
                 , { viewName = "staticMarkdown"
                   , tool = "buildMarker"
                   , highlightable = "fromMarkdown"
@@ -510,16 +504,9 @@ view state =
         viewStr =
             Code.var "view" 1
     in
-    case (Control.currentValue state.settings).textSettings.highlighterType of
-        Markdown ->
-            ( viewStr "Highlighter.viewMarkdown"
-            , Highlighter.viewMarkdown state.highlighter
-            )
-
-        Standard ->
-            ( viewStr "Highlighter.view"
-            , Highlighter.view state.highlighter
-            )
+    ( viewStr "Highlighter.view"
+    , Highlighter.view state.highlighter
+    )
 
 
 {-| -}
