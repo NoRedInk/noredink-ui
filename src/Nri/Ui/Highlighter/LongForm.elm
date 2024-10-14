@@ -1657,17 +1657,14 @@ view_ config =
         (Html.toUnstyled <| Css.Global.global [])
             :: (if config.showTagsInline then
                     List.concatMap (Mark.viewWithInlineTags config.viewSegment) withoutOverlaps
-                        |> List.map Html.toUnstyled
 
                 else
                     case config.overlaps of
                         OverlapsSupported _ ->
                             Mark.viewWithOverlaps config.viewSegment withOverlaps
-                                |> List.map Html.toUnstyled
 
                         OverlapsNotSupported ->
                             List.concatMap (Mark.view config.viewSegment) withoutOverlaps
-                                |> List.map Html.toUnstyled
                )
 
 

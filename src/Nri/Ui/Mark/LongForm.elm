@@ -29,6 +29,7 @@ import Content
 import Css exposing (Color, Style)
 import Css.Global
 import Css.Media
+import Html as Unstyled
 import Html.Styled as Html exposing (Html, span)
 import Html.Styled.Attributes exposing (class, css)
 import Markdown.Block
@@ -59,9 +60,10 @@ type alias Mark =
 view :
     (content -> List Style -> Html msg)
     -> List ( content, Maybe Mark )
-    -> List (Html msg)
-view =
-    view_ HiddenTags
+    -> List (Unstyled.Html msg)
+view viewSegment segments =
+    view_ HiddenTags viewSegment segments
+        |> List.map Html.toUnstyled
 
 
 {-| When elements are marked, add ::before and ::after elements indicating the start and end of the highlight.
@@ -72,7 +74,7 @@ view =
 viewWithOverlaps :
     (content -> List Style -> Html msg)
     -> List ( content, List Mark )
-    -> List (Html msg)
+    -> List (Unstyled.Html msg)
 viewWithOverlaps viewSegment segments =
     overlappingStyles segments
         |> List.concatMap
@@ -84,6 +86,7 @@ viewWithOverlaps viewSegment segments =
                     Just label ->
                         [ label, viewSegment content styles ]
             )
+        |> List.map Html.toUnstyled
 
 
 {-| Compute the styles required to mark the segments.
@@ -173,9 +176,10 @@ Show the label for the mark, if present, in-line with the emphasized content.
 viewWithInlineTags :
     (content -> List Style -> Html msg)
     -> List ( content, Maybe Mark )
-    -> List (Html msg)
-viewWithInlineTags =
-    view_ InlineTags
+    -> List (Unstyled.Html msg)
+viewWithInlineTags viewSegment segments =
+    view_ InlineTags viewSegment segments
+        |> List.map Html.toUnstyled
 
 
 type alias LabelPosition =
