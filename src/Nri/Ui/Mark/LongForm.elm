@@ -363,55 +363,54 @@ styleClassStyle styleClass =
 
         InlineTag tagStyle marked ->
             Css.Global.selector ("span." ++ styleClassName styleClass)
-                (marked.styles
-                    ++ (-- start styles are attached to the first segment, unless there's
-                        -- an inline tag to show, in which case we'll attach the styles to the start tag.
-                        case tagStyle of
-                            HiddenTags ->
-                                if marked.name == Nothing then
-                                    []
+                [ Css.batch marked.styles
+                , -- start styles are attached to the first segment, unless there's
+                  -- an inline tag to show, in which case we'll attach the styles to the start tag.
+                  case tagStyle of
+                    HiddenTags ->
+                        if marked.name == Nothing then
+                            Css.batch []
 
-                                else
-                                    [ MediaQuery.highContrastMode marked.startStyles ]
+                        else
+                            MediaQuery.highContrastMode marked.startStyles
 
+                    InlineTags ->
+                        if marked.name == Nothing then
+                            Css.batch []
+
+                        else
+                            Css.batch marked.startStyles
+                , -- actual tag content
+                  Css.Global.children
+                    [ Css.Global.selector "span"
+                        [ Fonts.baseFont
+                        , Css.backgroundColor Colors.white
+                        , Css.color Colors.navy
+                        , Css.padding2 (Css.px 2) (Css.px 4)
+                        , Css.borderRadius (Css.px 3)
+                        , Css.margin2 Css.zero (Css.px 5)
+                        , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 1) Css.zero Colors.gray75
+                        , case tagStyle of
                             InlineTags ->
-                                if marked.name == Nothing then
-                                    []
+                                Css.batch
+                                    [ MediaQuery.highContrastMode
+                                        [ Css.property "forced-color-adjust" "none"
+                                        , Css.property "color" "initial" |> Css.important
+                                        ]
+                                    ]
 
-                                else
-                                    marked.startStyles
-                       )
-                    ++ [ Css.Global.children
-                            [ Css.Global.selector "span"
-                                [ Fonts.baseFont
-                                , Css.backgroundColor Colors.white
-                                , Css.color Colors.navy
-                                , Css.padding2 (Css.px 2) (Css.px 4)
-                                , Css.borderRadius (Css.px 3)
-                                , Css.margin2 Css.zero (Css.px 5)
-                                , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 1) Css.zero Colors.gray75
-                                , case tagStyle of
-                                    InlineTags ->
-                                        Css.batch
-                                            [ MediaQuery.highContrastMode
-                                                [ Css.property "forced-color-adjust" "none"
-                                                , Css.property "color" "initial" |> Css.important
-                                                ]
-                                            ]
-
-                                    HiddenTags ->
-                                        Css.batch
-                                            [ Css.display Css.none
-                                            , MediaQuery.highContrastMode
-                                                [ Css.property "forced-color-adjust" "none"
-                                                , Css.display Css.inline |> Css.important
-                                                , Css.property "color" "initial" |> Css.important
-                                                ]
-                                            ]
-                                ]
-                            ]
-                       ]
-                )
+                            HiddenTags ->
+                                Css.batch
+                                    [ Css.display Css.none
+                                    , MediaQuery.highContrastMode
+                                        [ Css.property "forced-color-adjust" "none"
+                                        , Css.display Css.inline |> Css.important
+                                        , Css.property "color" "initial" |> Css.important
+                                        ]
+                                    ]
+                        ]
+                    ]
+                ]
 
 
 type StyleClass
