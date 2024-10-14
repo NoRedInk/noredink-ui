@@ -1,4 +1,4 @@
-port module Examples.LongFormHighlighter exposing (Msg, State, example)
+module Examples.LongFormHighlighter exposing (Msg, State, example)
 
 {-|
 
@@ -15,6 +15,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Examples.Colors
+import Examples.HighlighterPort exposing (highlighterInit, highlighterOnTouchEvent, highlighterTouchPointerRelease)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import List.Extra
@@ -35,7 +36,7 @@ import Sort exposing (Sorter)
 
 moduleName : String
 moduleName =
-    "Highlighter"
+    "HighlighterLongForm"
 
 
 version : Int
@@ -937,18 +938,3 @@ onTouch =
 
                     _ ->
                         Highlighter.TouchIgnored
-
-
-{-| Start listening to events on a highlighter
--}
-port highlighterInit : ( String, Bool, Bool ) -> Cmd msg
-
-
-{-| Listen to mouseup/touchend events on the whole document, to stop highlighting.
--}
-port highlighterTouchPointerRelease : (( String, String ) -> msg) -> Sub msg
-
-
-{-| Listen to touch events, and get the element under the finger.
--}
-port highlighterOnTouchEvent : (( String, String, Int ) -> msg) -> Sub msg
