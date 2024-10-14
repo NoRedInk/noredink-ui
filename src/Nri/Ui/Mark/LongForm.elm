@@ -57,12 +57,23 @@ type alias Mark =
     }
 
 
-renderStyles : List Mark -> List Css.Global.Snippet
-renderStyles marks =
-    List.map
+renderStyles : Bool -> List Mark -> List Css.Global.Snippet
+renderStyles showTagsInline marks =
+    let
+        tagStyle =
+            if showTagsInline then
+                InlineTags
+
+            else
+                HiddenTags
+    in
+    List.concatMap
         (\mark ->
-            MarkedMark mark
+            [ MarkedMark mark
                 |> styleClassStyle
+            , InlineTag tagStyle mark
+                |> styleClassStyle
+            ]
         )
         marks
 
@@ -356,9 +367,32 @@ styleClassStyle styleClass =
                     ]
                 ]
 
+        InlineTag tagStyle marked ->
+            Css.Global.selector ("span." ++ styleClassName styleClass)
+                (marked.styles
+                    ++ (-- start styles are attached to the first segment, unless there's
+                        -- an inline tag to show, in which case we'll attach the styles to the start tag.
+                        case tagStyle of
+                            HiddenTags ->
+                                if marked.name == Nothing then
+                                    []
+
+                                else
+                                    [ MediaQuery.highContrastMode marked.startStyles ]
+
+                            InlineTags ->
+                                if marked.name == Nothing then
+                                    []
+
+                                else
+                                    marked.startStyles
+                       )
+                )
+
 
 type StyleClass
     = MarkedMark Mark
+    | InlineTag TagStyle Mark
 
 
 styleClassName : StyleClass -> String
@@ -366,6 +400,18 @@ styleClassName styleClass =
     case styleClass of
         MarkedMark markedWith ->
             "mark-" ++ (markedWith.name |> Maybe.withDefault "highlight")
+
+        InlineTag tagStyle markedWith ->
+            let
+                tagStyleName =
+                    case tagStyle of
+                        HiddenTags ->
+                            "hidden"
+
+                        InlineTags ->
+                            "inline"
+            in
+            "highlighter-" ++ tagStyleName ++ "-tag-" ++ Maybe.withDefault "highlighted" markedWith.name
 
 
 viewMarked : TagStyle -> Mark -> List (Html msg) -> Unstyled.Html msg
@@ -391,28 +437,7 @@ viewMarked tagStyle markedWith segments =
 viewStartHighlightTag : TagStyle -> Mark -> String -> Html msg
 viewStartHighlightTag tagStyle marked name =
     span
-        [ css
-            (marked.styles
-                ++ (-- start styles are attached to the first segment, unless there's
-                    -- an inline tag to show, in which case we'll attach the styles to the start tag.
-                    case tagStyle of
-                        HiddenTags ->
-                            if marked.name == Nothing then
-                                []
-
-                            else
-                                [ MediaQuery.highContrastMode marked.startStyles ]
-
-                        InlineTags ->
-                            if marked.name == Nothing then
-                                []
-
-                            else
-                                marked.startStyles
-                   )
-            )
-        , class "highlighter-inline-tag highlighter-inline-tag-highlighted"
-        ]
+        [ class (styleClassName (InlineTag tagStyle marked)) ]
         [ viewTag tagStyle name ]
 
 

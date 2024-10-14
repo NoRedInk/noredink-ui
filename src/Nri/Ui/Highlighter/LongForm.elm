@@ -1658,6 +1658,7 @@ view_ config =
             [ Css.Global.id config.id
                 [ Css.Global.descendants
                     (Mark.renderStyles
+                        config.showTagsInline
                         (withOverlaps
                             |> List.map Tuple.second
                             |> List.concat
