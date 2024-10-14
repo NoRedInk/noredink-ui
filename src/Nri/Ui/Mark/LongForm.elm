@@ -164,13 +164,7 @@ overlappingStyles segments =
                                     ( Just <|
                                         span [ css startStyles ]
                                             [ viewInlineTag
-                                                [ Css.display Css.none
-                                                , MediaQuery.highContrastMode
-                                                    [ Css.property "forced-color-adjust" "none"
-                                                    , Css.display Css.inline |> Css.important
-                                                    , Css.property "color" "initial" |> Css.important
-                                                    ]
-                                                ]
+                                                HiddenTags
                                                 (String.Extra.toSentenceOxford names)
                                             ]
                                     , currentStyles
@@ -425,8 +419,9 @@ viewMarked tagStyle markedWith segments =
         (case markedWith.name of
             Just name ->
                 viewStartHighlightTag tagStyle markedWith name
-                    :: segments
-                    |> List.map Html.toUnstyled
+                    :: (segments
+                            |> List.map Html.toUnstyled
+                       )
 
             Nothing ->
                 segments
@@ -434,11 +429,11 @@ viewMarked tagStyle markedWith segments =
         )
 
 
-viewStartHighlightTag : TagStyle -> Mark -> String -> Html msg
+viewStartHighlightTag : TagStyle -> Mark -> String -> Unstyled.Html msg
 viewStartHighlightTag tagStyle marked name =
-    span
-        [ class (styleClassName (InlineTag tagStyle marked)) ]
-        [ viewTag tagStyle name ]
+    Unstyled.span
+        [ Html.Attributes.class (styleClassName (InlineTag tagStyle marked)) ]
+        [ viewInlineTag tagStyle name |> Html.toUnstyled ]
 
 
 markStyles : TagStyle -> Int -> Maybe Mark -> List Css.Style
@@ -529,30 +524,8 @@ cssContent content =
     Css.property "content" ("\" " ++ content ++ " \"")
 
 
-viewTag : TagStyle -> String -> Html msg
-viewTag tagStyle =
-    case tagStyle of
-        InlineTags ->
-            viewInlineTag
-                [ MediaQuery.highContrastMode
-                    [ Css.property "forced-color-adjust" "none"
-                    , Css.property "color" "initial" |> Css.important
-                    ]
-                ]
-
-        HiddenTags ->
-            viewInlineTag
-                [ Css.display Css.none
-                , MediaQuery.highContrastMode
-                    [ Css.property "forced-color-adjust" "none"
-                    , Css.display Css.inline |> Css.important
-                    , Css.property "color" "initial" |> Css.important
-                    ]
-                ]
-
-
-viewInlineTag : List Css.Style -> String -> Html msg
-viewInlineTag customizations name =
+viewInlineTag : TagStyle -> String -> Html msg
+viewInlineTag tagStyle name =
     span
         [ css
             [ Fonts.baseFont
@@ -562,7 +535,24 @@ viewInlineTag customizations name =
             , Css.borderRadius (Css.px 3)
             , Css.margin2 Css.zero (Css.px 5)
             , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 1) Css.zero Colors.gray75
-            , Css.batch customizations
+            , case tagStyle of
+                InlineTags ->
+                    Css.batch
+                        [ MediaQuery.highContrastMode
+                            [ Css.property "forced-color-adjust" "none"
+                            , Css.property "color" "initial" |> Css.important
+                            ]
+                        ]
+
+                HiddenTags ->
+                    Css.batch
+                        [ Css.display Css.none
+                        , MediaQuery.highContrastMode
+                            [ Css.property "forced-color-adjust" "none"
+                            , Css.display Css.inline |> Css.important
+                            , Css.property "color" "initial" |> Css.important
+                            ]
+                        ]
             ]
         , -- we use the :before element to convey details about the start of the
           -- highlighter to screenreaders, so the visual label is redundant
