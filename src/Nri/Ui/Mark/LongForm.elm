@@ -31,6 +31,7 @@ import Css exposing (Color, Style)
 import Css.Global
 import Css.Media
 import Html as Unstyled
+import Html.Attributes
 import Html.Styled as Html exposing (Html, span)
 import Html.Styled.Attributes exposing (class, css, style)
 import Markdown.Block
@@ -298,7 +299,7 @@ view_ tagStyle viewSegment highlightables =
             in
             case marked of
                 Just markedWith ->
-                    [ Html.toUnstyled <| viewMarked tagStyle markedWith segments ]
+                    [ viewMarked tagStyle markedWith segments ]
 
                 Nothing ->
                     segments
@@ -367,20 +368,23 @@ styleClassName styleClass =
             "mark-" ++ (markedWith.name |> Maybe.withDefault "highlight")
 
 
-viewMarked : TagStyle -> Mark -> List (Html msg) -> Html msg
+viewMarked : TagStyle -> Mark -> List (Html msg) -> Unstyled.Html msg
 viewMarked tagStyle markedWith segments =
-    Html.mark
-        [ class (styleClassName (MarkedMark markedWith))
+    Unstyled.mark
+        [ Html.Attributes.class (styleClassName (MarkedMark markedWith))
         , -- Drop the `mark` role as various screen readers interpret it differently.
           -- Instead we offer additional invisible and accessible content to denote the highlight.
-          Role.presentation
+          Html.Attributes.attribute "role" "presentation"
         ]
         (case markedWith.name of
             Just name ->
-                viewStartHighlightTag tagStyle markedWith name :: segments
+                viewStartHighlightTag tagStyle markedWith name
+                    :: segments
+                    |> List.map Html.toUnstyled
 
             Nothing ->
                 segments
+                    |> List.map Html.toUnstyled
         )
 
 
