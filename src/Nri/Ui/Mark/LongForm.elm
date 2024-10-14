@@ -381,6 +381,36 @@ styleClassStyle styleClass =
                                 else
                                     marked.startStyles
                        )
+                    ++ [ Css.Global.children
+                            [ Css.Global.selector "span"
+                                [ Fonts.baseFont
+                                , Css.backgroundColor Colors.white
+                                , Css.color Colors.navy
+                                , Css.padding2 (Css.px 2) (Css.px 4)
+                                , Css.borderRadius (Css.px 3)
+                                , Css.margin2 Css.zero (Css.px 5)
+                                , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 1) Css.zero Colors.gray75
+                                , case tagStyle of
+                                    InlineTags ->
+                                        Css.batch
+                                            [ MediaQuery.highContrastMode
+                                                [ Css.property "forced-color-adjust" "none"
+                                                , Css.property "color" "initial" |> Css.important
+                                                ]
+                                            ]
+
+                                    HiddenTags ->
+                                        Css.batch
+                                            [ Css.display Css.none
+                                            , MediaQuery.highContrastMode
+                                                [ Css.property "forced-color-adjust" "none"
+                                                , Css.display Css.inline |> Css.important
+                                                , Css.property "color" "initial" |> Css.important
+                                                ]
+                                            ]
+                                ]
+                            ]
+                       ]
                 )
 
 
@@ -527,34 +557,7 @@ cssContent content =
 viewInlineTag : TagStyle -> String -> Html msg
 viewInlineTag tagStyle name =
     span
-        [ css
-            [ Fonts.baseFont
-            , Css.backgroundColor Colors.white
-            , Css.color Colors.navy
-            , Css.padding2 (Css.px 2) (Css.px 4)
-            , Css.borderRadius (Css.px 3)
-            , Css.margin2 Css.zero (Css.px 5)
-            , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 1) Css.zero Colors.gray75
-            , case tagStyle of
-                InlineTags ->
-                    Css.batch
-                        [ MediaQuery.highContrastMode
-                            [ Css.property "forced-color-adjust" "none"
-                            , Css.property "color" "initial" |> Css.important
-                            ]
-                        ]
-
-                HiddenTags ->
-                    Css.batch
-                        [ Css.display Css.none
-                        , MediaQuery.highContrastMode
-                            [ Css.property "forced-color-adjust" "none"
-                            , Css.display Css.inline |> Css.important
-                            , Css.property "color" "initial" |> Css.important
-                            ]
-                        ]
-            ]
-        , -- we use the :before element to convey details about the start of the
+        [ -- we use the :before element to convey details about the start of the
           -- highlighter to screenreaders, so the visual label is redundant
           Aria.hidden True
         ]
