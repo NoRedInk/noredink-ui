@@ -67,15 +67,14 @@ renderStyles showTagsInline marks =
             else
                 HiddenTags
     in
-    List.concatMap
-        (\mark ->
-            [ MarkedMark mark
-                |> styleClassStyle
-            , InlineTag tagStyle mark
-                |> styleClassStyle
-            ]
-        )
-        marks
+    styleClassStyle (InlineTagContent tagStyle)
+        :: List.concatMap
+            (\mark ->
+                [ styleClassStyle (MarkedMark mark)
+                , styleClassStyle (InlineTag tagStyle mark)
+                ]
+            )
+            marks
 
 
 {-| When elements are marked, wrap them in a single `mark` html node.
@@ -380,61 +379,61 @@ styleClassStyle styleClass =
 
                         else
                             Css.batch marked.startStyles
-                , -- actual tag content
-                  Css.Global.children
-                    [ Css.Global.selector "span"
-                        [ Fonts.baseFont
-                        , Css.backgroundColor Colors.white
-                        , Css.color Colors.navy
-                        , Css.padding2 (Css.px 2) (Css.px 4)
-                        , Css.borderRadius (Css.px 3)
-                        , Css.margin2 Css.zero (Css.px 5)
-                        , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 1) Css.zero Colors.gray75
-                        , case tagStyle of
-                            InlineTags ->
-                                Css.batch
-                                    [ MediaQuery.highContrastMode
-                                        [ Css.property "forced-color-adjust" "none"
-                                        , Css.property "color" "initial" |> Css.important
-                                        ]
-                                    ]
+                ]
 
-                            HiddenTags ->
-                                Css.batch
-                                    [ Css.display Css.none
-                                    , MediaQuery.highContrastMode
-                                        [ Css.property "forced-color-adjust" "none"
-                                        , Css.display Css.inline |> Css.important
-                                        , Css.property "color" "initial" |> Css.important
-                                        ]
-                                    ]
-                        ]
-                    ]
+        InlineTagContent tagStyle ->
+            Css.Global.class (styleClassName styleClass)
+                [ Fonts.baseFont
+                , Css.backgroundColor Colors.white
+                , Css.color Colors.navy
+                , Css.padding2 (Css.px 2) (Css.px 4)
+                , Css.borderRadius (Css.px 3)
+                , Css.margin2 Css.zero (Css.px 5)
+                , Css.boxShadow5 Css.zero (Css.px 1) (Css.px 1) Css.zero Colors.gray75
+                , case tagStyle of
+                    InlineTags ->
+                        Css.batch
+                            [ MediaQuery.highContrastMode
+                                [ Css.property "forced-color-adjust" "none"
+                                , Css.property "color" "initial" |> Css.important
+                                ]
+                            ]
+
+                    HiddenTags ->
+                        Css.batch
+                            [ Css.display Css.none
+                            , MediaQuery.highContrastMode
+                                [ Css.property "forced-color-adjust" "none"
+                                , Css.display Css.inline |> Css.important
+                                , Css.property "color" "initial" |> Css.important
+                                ]
+                            ]
                 ]
 
 
 type StyleClass
     = MarkedMark Mark
     | InlineTag TagStyle Mark
+    | InlineTagContent TagStyle
 
 
 styleClassName : StyleClass -> String
 styleClassName styleClass =
     case styleClass of
-        MarkedMark markedWith ->
-            "mark-" ++ (markedWith.name |> Maybe.withDefault "highlight")
+        MarkedMark { name } ->
+            "mark-" ++ Maybe.withDefault "highlight" name
 
-        InlineTag tagStyle markedWith ->
-            let
-                tagStyleName =
-                    case tagStyle of
-                        HiddenTags ->
-                            "hidden"
+        InlineTag HiddenTags { name } ->
+            "highlighter-hidden-tag-wrapper-" ++ Maybe.withDefault "highlighted" name
 
-                        InlineTags ->
-                            "inline"
-            in
-            "highlighter-" ++ tagStyleName ++ "-tag-" ++ Maybe.withDefault "highlighted" markedWith.name
+        InlineTag InlineTags { name } ->
+            "highlighter-inline-tag-wrapper-" ++ Maybe.withDefault "highlighted" name
+
+        InlineTagContent HiddenTags ->
+            "highlighter-hidden-tag-content"
+
+        InlineTagContent InlineTags ->
+            "highlighter-inline-tag-content"
 
 
 viewMarked : TagStyle -> Mark -> List (Html msg) -> Unstyled.Html msg
@@ -559,6 +558,7 @@ viewInlineTag tagStyle name =
         [ -- we use the :before element to convey details about the start of the
           -- highlighter to screenreaders, so the visual label is redundant
           Aria.hidden True
+        , class (styleClassName (InlineTagContent tagStyle))
         ]
         (Content.markdownInline name)
 
