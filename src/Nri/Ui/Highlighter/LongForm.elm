@@ -65,12 +65,13 @@ import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Style exposing (invisibleStyle)
 import Browser.Dom as Dom
 import Css
+import Css.Global
 import Html as Unstyled
 import Html.Attributes as UnstyledAttrs
-import Html.Styled as Html exposing (Attribute, Html, p, span)
+import Html.Lazy as UnstyledLazy
+import Html.Styled as Html exposing (Attribute, Html, span)
 import Html.Styled.Attributes exposing (attribute, class, css)
 import Html.Styled.Events as Events
-import Html.Styled.Lazy exposing (lazy)
 import Json.Decode
 import List.Extra
 import Markdown.Block
@@ -1229,9 +1230,9 @@ markerWithShortestHighlight sorter highlightables ( first, second, rest ) =
 
 
 {-| -}
-view : Model marker -> Html (Msg marker)
+view : Model marker -> Unstyled.Html (Msg marker)
 view =
-    lazy
+    UnstyledLazy.lazy
         (\model ->
             view_
                 { showTagsInline = False
@@ -1255,9 +1256,9 @@ view =
 
 
 {-| -}
-viewWithOverlappingHighlights : Model marker -> Html (Msg marker)
+viewWithOverlappingHighlights : Model marker -> Unstyled.Html (Msg marker)
 viewWithOverlappingHighlights =
-    lazy
+    UnstyledLazy.lazy
         (\model ->
             let
                 overlaps =
@@ -1284,9 +1285,9 @@ viewWithOverlappingHighlights =
 
 
 {-| -}
-static : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
+static : { config | id : String, highlightables : List (Highlightable marker) } -> Unstyled.Html msg
 static =
-    lazy
+    UnstyledLazy.lazy
         (\config ->
             view_
                 { showTagsInline = False
@@ -1321,9 +1322,9 @@ WARNING: the version of markdown used here is extremely limited, as the highligh
 WARNING: markdown is rendered highlightable by highlightable, so be sure to provide highlightables like ["_New York Times_"]["*New York Times*"], NOT like ["_New ", "York ", "Times_"]["*New ", "York ", "Times*"]
 
 -}
-staticMarkdown : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
+staticMarkdown : { config | id : String, highlightables : List (Highlightable marker) } -> Unstyled.Html msg
 staticMarkdown =
-    lazy
+    UnstyledLazy.lazy
         (\config ->
             view_
                 { showTagsInline = False
@@ -1352,9 +1353,9 @@ staticMarkdown =
 
 
 {-| -}
-staticWithTags : { config | id : String, highlightables : List (Highlightable marker) } -> Html msg
+staticWithTags : { config | id : String, highlightables : List (Highlightable marker) } -> Unstyled.Html msg
 staticWithTags =
-    lazy
+    UnstyledLazy.lazy
         (\config ->
             let
                 viewStaticHighlightableWithTags : Highlightable marker -> List Css.Style -> Html msg
@@ -1611,7 +1612,7 @@ view_ :
     , highlightables : List (Highlightable marker)
     , id : String
     }
-    -> Html msg
+    -> Unstyled.Html msg
 view_ config =
     let
         toMark : Highlightable marker -> Tool.MarkerModel marker -> Mark.Mark
@@ -1652,17 +1653,22 @@ view_ config =
                 )
                 config.highlightables
     in
-    p [ Html.Styled.Attributes.id config.id, class "highlighter-container" ] <|
-        if config.showTagsInline then
-            List.concatMap (Mark.viewWithInlineTags config.viewSegment) withoutOverlaps
+    Unstyled.p [ UnstyledAttrs.id config.id, UnstyledAttrs.class "highlighter-container" ] <|
+        (Html.toUnstyled <| Css.Global.global [])
+            :: (if config.showTagsInline then
+                    List.concatMap (Mark.viewWithInlineTags config.viewSegment) withoutOverlaps
+                        |> List.map Html.toUnstyled
 
-        else
-            case config.overlaps of
-                OverlapsSupported _ ->
-                    Mark.viewWithOverlaps config.viewSegment withOverlaps
+                else
+                    case config.overlaps of
+                        OverlapsSupported _ ->
+                            Mark.viewWithOverlaps config.viewSegment withOverlaps
+                                |> List.map Html.toUnstyled
 
-                OverlapsNotSupported ->
-                    List.concatMap (Mark.view config.viewSegment) withoutOverlaps
+                        OverlapsNotSupported ->
+                            List.concatMap (Mark.view config.viewSegment) withoutOverlaps
+                                |> List.map Html.toUnstyled
+               )
 
 
 viewHighlightable :
@@ -1938,7 +1944,7 @@ inlinifyMarkdownBlock block =
         Markdown.Block.PlainInlines inlines ->
             inlines
 
-        Markdown.Block.Custom b blocks ->
+        Markdown.Block.Custom _ blocks ->
             List.concatMap inlinifyMarkdownBlock blocks
 
 
