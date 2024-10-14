@@ -93,6 +93,7 @@ example =
                         |> List.intersperse ( " ", Nothing )
                         |> List.indexedMap (\i ( word, marker ) -> Highlightable.initStatic (Maybe.Extra.toList marker) i word)
                 }
+                |> Html.Styled.fromUnstyled
             ]
         ]
     , about =
@@ -209,6 +210,7 @@ example =
                     ]
                 ]
                 [ Highlighter.viewWithOverlappingHighlights state.overlappingHighlightsState
+                    |> Html.Styled.fromUnstyled
                     |> map OverlappingHighlighterMsg
                 ]
             , Heading.h2
@@ -300,6 +302,7 @@ example =
                                     |> List.intersperse ( " ", Nothing )
                                     |> List.indexedMap (\i ( word, marker ) -> Highlightable.initStatic (Maybe.Extra.toList marker) i word)
                             }
+                            |> Html.Styled.fromUnstyled
                   }
                 , { viewName = "static"
                   , tool = "buildMarker"
@@ -320,6 +323,7 @@ example =
                                     |> List.intersperse ( " ", Nothing )
                                     |> List.indexedMap (\i ( word, marker ) -> Highlightable.initStatic (Maybe.Extra.toList marker) i word)
                             }
+                            |> Html.Styled.fromUnstyled
                   }
                 , { viewName = "static"
                   , tool = "buildMarker"
@@ -339,24 +343,31 @@ example =
                                     |> List.intersperse ( " ", Nothing )
                                     |> List.indexedMap (\i ( word, marker ) -> Highlightable.initStatic (Maybe.Extra.toList marker) i word)
                             }
+                            |> Html.Styled.fromUnstyled
                   }
                 , { viewName = "static"
                   , tool = "buildMarker"
                   , highlightable = "init"
                   , description = "Multiple kinds of highlights without overlaps"
-                  , example = Highlighter.static { id = "example-3a", highlightables = multipleHighlightsHighlightables }
+                  , example =
+                        Highlighter.static { id = "example-3a", highlightables = multipleHighlightsHighlightables }
+                            |> Html.Styled.fromUnstyled
                   }
                 , { viewName = "staticMarkdown"
                   , tool = "buildMarker"
                   , highlightable = "init"
                   , description = "Multiple kinds of highlights without overlaps and with interpreted Markdown"
-                  , example = Highlighter.staticMarkdown { id = "example-3b", highlightables = multipleHighlightsHighlightables }
+                  , example =
+                        Highlighter.staticMarkdown { id = "example-3b", highlightables = multipleHighlightsHighlightables }
+                            |> Html.Styled.fromUnstyled
                   }
                 , { viewName = "staticWithTags"
                   , tool = "buildMarkerWithBorder"
                   , highlightable = "init"
                   , description = "Multiple kinds of highlights without overlaps"
-                  , example = Highlighter.staticWithTags { id = "example-4a", highlightables = multipleHighlightsHighlightablesWithBorder }
+                  , example =
+                        Highlighter.staticWithTags { id = "example-4a", highlightables = multipleHighlightsHighlightablesWithBorder }
+                            |> Html.Styled.fromUnstyled
                   }
                 , { viewName = "staticMarkdown"
                   , tool = "buildMarker"
@@ -367,6 +378,7 @@ example =
                             { id = "example-5"
                             , highlightables = Highlightable.fromMarkdown "Select your [favorite phrase]() in **your** writing."
                             }
+                            |> Html.Styled.fromUnstyled
                   }
                 , { viewName = "staticMarkdown"
                   , tool = "buildMarker"
@@ -377,6 +389,7 @@ example =
                             { id = "example-6"
                             , highlightables = Highlightable.fromMarkdown "Select your <nri-highlight color=\"cyan\">favorite phrase with favorite color</nri-highlight> in **your** writing."
                             }
+                            |> Html.Styled.fromUnstyled
                   }
                 ]
             ]
@@ -506,6 +519,7 @@ view state =
     in
     ( viewStr "Highlighter.view"
     , Highlighter.view state.highlighter
+        |> Html.Styled.fromUnstyled
     )
 
 
@@ -532,7 +546,7 @@ viewFoldHighlights model =
     List.Extra.mapAccuml
         (\state sourceRow ->
             List.Extra.mapAccuml (\innerState _ -> Highlighter.viewFoldHighlighter [] innerState) state sourceRow
-                |> Tuple.mapSecond (List.concat >> li [])
+                |> Tuple.mapSecond (List.concat >> List.map Html.Styled.fromUnstyled >> li [])
         )
         (Highlighter.initFoldState model)
         foldHighlightsSource
