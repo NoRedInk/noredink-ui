@@ -63,7 +63,6 @@ view :
     -> List (Unstyled.Html msg)
 view viewSegment segments =
     view_ HiddenTags viewSegment segments
-        |> List.map Html.toUnstyled
 
 
 {-| When elements are marked, add ::before and ::after elements indicating the start and end of the highlight.
@@ -179,7 +178,6 @@ viewWithInlineTags :
     -> List (Unstyled.Html msg)
 viewWithInlineTags viewSegment segments =
     view_ InlineTags viewSegment segments
-        |> List.map Html.toUnstyled
 
 
 type alias LabelPosition =
@@ -274,7 +272,7 @@ view_ :
     TagStyle
     -> (content -> List Style -> Html msg)
     -> List ( content, Maybe Mark )
-    -> List (Html msg)
+    -> List (Unstyled.Html msg)
 view_ tagStyle viewSegment highlightables =
     case highlightables of
         [] ->
@@ -289,10 +287,11 @@ view_ tagStyle viewSegment highlightables =
             in
             case marked of
                 Just markedWith ->
-                    [ viewMarked tagStyle markedWith segments ]
+                    [ Html.toUnstyled <| viewMarked tagStyle markedWith segments ]
 
                 Nothing ->
                     segments
+                        |> List.map Html.toUnstyled
 
 
 viewMarkedByBalloon :
