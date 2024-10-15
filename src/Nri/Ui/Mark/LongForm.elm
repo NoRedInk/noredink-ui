@@ -33,7 +33,7 @@ import Css.Media
 import Html as Unstyled
 import Html.Attributes
 import Html.Styled as Html exposing (Html, span)
-import Html.Styled.Attributes exposing (class, css, style)
+import Html.Styled.Attributes exposing (css)
 import Markdown.Block
 import Markdown.Inline
 import Nri.Ui.Balloon.V2 as Balloon
@@ -80,7 +80,7 @@ renderStyles showTagsInline marks =
 {-| When elements are marked, wrap them in a single `mark` html node.
 -}
 view :
-    (content -> List Style -> Html msg)
+    (content -> List Style -> Unstyled.Html msg)
     -> List ( content, Maybe Mark )
     -> List (Unstyled.Html msg)
 view viewSegment segments =
@@ -93,7 +93,7 @@ view viewSegment segments =
 
 -}
 viewWithOverlaps :
-    (content -> List Style -> Html msg)
+    (content -> List Style -> Unstyled.Html msg)
     -> List ( content, List Mark )
     -> List (Unstyled.Html msg)
 viewWithOverlaps viewSegment segments =
@@ -105,9 +105,8 @@ viewWithOverlaps viewSegment segments =
                         [ viewSegment content styles ]
 
                     Just label ->
-                        [ label, viewSegment content styles ]
+                        [ Html.toUnstyled label, viewSegment content styles ]
             )
-        |> List.map Html.toUnstyled
 
 
 {-| Compute the styles required to mark the segments.
@@ -190,7 +189,7 @@ Show the label for the mark, if present, in-line with the emphasized content.
 
 -}
 viewWithInlineTags :
-    (content -> List Style -> Html msg)
+    (content -> List Style -> Unstyled.Html msg)
     -> List ( content, Maybe Mark )
     -> List (Unstyled.Html msg)
 viewWithInlineTags viewSegment segments =
@@ -287,7 +286,7 @@ Show the label for the mark, if present, in-line with the emphasized content whe
 -}
 view_ :
     TagStyle
-    -> (content -> List Style -> Html msg)
+    -> (content -> List Style -> Unstyled.Html msg)
     -> List ( content, Maybe Mark )
     -> List (Unstyled.Html msg)
 view_ tagStyle viewSegment highlightables =
@@ -308,7 +307,6 @@ view_ tagStyle viewSegment highlightables =
 
                 Nothing ->
                     segments
-                        |> List.map Html.toUnstyled
 
 
 viewMarkedByBalloon :
@@ -437,7 +435,7 @@ styleClassName styleClass =
             "highlighter-inline-tag-content"
 
 
-viewMarked : TagStyle -> Mark -> List (Html msg) -> Unstyled.Html msg
+viewMarked : TagStyle -> Mark -> List (Unstyled.Html msg) -> Unstyled.Html msg
 viewMarked tagStyle markedWith segments =
     Unstyled.mark
         [ Html.Attributes.class (styleClassName (MarkedMark markedWith))
@@ -448,13 +446,10 @@ viewMarked tagStyle markedWith segments =
         (case markedWith.name of
             Just name ->
                 viewStartHighlightTag tagStyle markedWith name
-                    :: (segments
-                            |> List.map Html.toUnstyled
-                       )
+                    :: segments
 
             Nothing ->
                 segments
-                    |> List.map Html.toUnstyled
         )
 
 

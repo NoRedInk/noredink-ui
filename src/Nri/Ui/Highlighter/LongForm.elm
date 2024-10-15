@@ -1243,12 +1243,11 @@ view =
                 , overlaps = OverlapsNotSupported
                 , viewSegment =
                     \highlightable css ->
-                        Html.fromUnstyled <|
-                            viewHighlightable
-                                { renderMarkdown = False, overlaps = OverlapsNotSupported }
-                                model
-                                highlightable
-                                css
+                        viewHighlightable
+                            { renderMarkdown = False, overlaps = OverlapsNotSupported }
+                            model
+                            highlightable
+                            css
                 , id = model.id
                 , highlightables = model.highlightables
                 }
@@ -1272,12 +1271,7 @@ viewWithOverlappingHighlights =
                 , hintingIndices = model.hintingIndices
                 , overlaps = overlaps
                 , viewSegment =
-                    \highlightable css ->
-                        Html.fromUnstyled <|
-                            viewHighlightable { renderMarkdown = False, overlaps = overlaps }
-                                model
-                                highlightable
-                                css
+                    viewHighlightable { renderMarkdown = False, overlaps = overlaps } model
                 , id = model.id
                 , highlightables = model.highlightables
                 }
@@ -1358,7 +1352,7 @@ staticWithTags =
     UnstyledLazy.lazy
         (\config ->
             let
-                viewStaticHighlightableWithTags : Highlightable marker -> List Css.Style -> Html msg
+                viewStaticHighlightableWithTags : Highlightable marker -> List Css.Style -> Unstyled.Html msg
                 viewStaticHighlightableWithTags =
                     viewHighlightableSegment
                         { interactiveHighlighterId = Nothing
@@ -1530,22 +1524,18 @@ A list of extraStyles is also accepted if, for example, you want to apply bold /
 viewFoldStatic : List Css.Style -> FoldState marker -> ( FoldState marker, List (Unstyled.Html msg) )
 viewFoldStatic =
     viewFoldHelper
-        (\highlightable css ->
-            viewHighlightableSegment
-                { interactiveHighlighterId = Nothing
-                , focusIndex = Nothing
-                , eventListeners = []
-                , maybeTool = Nothing
-                , mouseOverIndex = Nothing
-                , mouseDownIndex = Nothing
-                , hintingIndices = Nothing
-                , renderMarkdown = False
-                , sorter = Nothing
-                , overlaps = OverlapsNotSupported
-                }
-                highlightable
-                css
-                |> Html.toUnstyled
+        (viewHighlightableSegment
+            { interactiveHighlighterId = Nothing
+            , focusIndex = Nothing
+            , eventListeners = []
+            , maybeTool = Nothing
+            , mouseOverIndex = Nothing
+            , mouseDownIndex = Nothing
+            , hintingIndices = Nothing
+            , renderMarkdown = False
+            , sorter = Nothing
+            , overlaps = OverlapsNotSupported
+            }
         )
 
 
@@ -1651,7 +1641,7 @@ view_ :
     , mouseDownIndex : Maybe Int
     , hintingIndices : Maybe ( Int, Int )
     , overlaps : OverlapsSupport marker
-    , viewSegment : Highlightable marker -> List Css.Style -> Html msg
+    , viewSegment : Highlightable marker -> List Css.Style -> Unstyled.Html msg
     , highlightables : List (Highlightable marker)
     , id : String
     }
@@ -1743,38 +1733,36 @@ viewHighlightable { renderMarkdown, overlaps } model highlightable css =
     in
     case highlightable.type_ of
         Highlightable.Interactive ->
-            Html.toUnstyled <|
-                viewHighlightableSegment
-                    { interactiveHighlighterId = Just model.id
-                    , focusIndex = model.focusIndex
-                    , eventListeners = highlightableEventListeners highlightable model
-                    , renderMarkdown = renderMarkdown
-                    , maybeTool = Just model.marker
-                    , mouseOverIndex = model.mouseOverIndex
-                    , mouseDownIndex = model.mouseDownIndex
-                    , hintingIndices = model.hintingIndices
-                    , sorter = Just model.sorter
-                    , overlaps = overlaps
-                    }
-                    highlightable
-                    newCss
+            viewHighlightableSegment
+                { interactiveHighlighterId = Just model.id
+                , focusIndex = model.focusIndex
+                , eventListeners = highlightableEventListeners highlightable model
+                , renderMarkdown = renderMarkdown
+                , maybeTool = Just model.marker
+                , mouseOverIndex = model.mouseOverIndex
+                , mouseDownIndex = model.mouseDownIndex
+                , hintingIndices = model.hintingIndices
+                , sorter = Just model.sorter
+                , overlaps = overlaps
+                }
+                highlightable
+                newCss
 
         Highlightable.Static ->
-            Html.toUnstyled <|
-                viewHighlightableSegment
-                    { interactiveHighlighterId = Nothing
-                    , focusIndex = model.focusIndex
-                    , eventListeners = highlightableEventListeners highlightable model
-                    , renderMarkdown = renderMarkdown
-                    , maybeTool = Just model.marker
-                    , mouseOverIndex = model.mouseOverIndex
-                    , mouseDownIndex = model.mouseDownIndex
-                    , hintingIndices = model.hintingIndices
-                    , sorter = Just model.sorter
-                    , overlaps = overlaps
-                    }
-                    highlightable
-                    newCss
+            viewHighlightableSegment
+                { interactiveHighlighterId = Nothing
+                , focusIndex = model.focusIndex
+                , eventListeners = highlightableEventListeners highlightable model
+                , renderMarkdown = renderMarkdown
+                , maybeTool = Just model.marker
+                , mouseOverIndex = model.mouseOverIndex
+                , mouseDownIndex = model.mouseDownIndex
+                , hintingIndices = model.hintingIndices
+                , sorter = Just model.sorter
+                , overlaps = overlaps
+                }
+                highlightable
+                newCss
 
 
 highlightableEventListeners : Highlightable marker -> Model marker -> List (Unstyled.Attribute (Msg marker))
@@ -1855,7 +1843,7 @@ viewHighlightableSegment :
     }
     -> Highlightable marker
     -> List Css.Style
-    -> Html msg
+    -> Unstyled.Html msg
 viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners, renderMarkdown } as config) highlightable markStyles =
     let
         whitespaceClass txt =
@@ -1869,13 +1857,13 @@ viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners
             -- and essay writing.
             case txt of
                 "\t" ->
-                    [ class "highlighter-whitespace-tab" ]
+                    [ UnstyledAttrs.class "highlighter-whitespace-tab" ]
 
                 " " ->
-                    [ class "highlighter-whitespace-single-space" ]
+                    [ UnstyledAttrs.class "highlighter-whitespace-single-space" ]
 
                 "\n" ->
-                    [ class "highlighter-whitespace-newline" ]
+                    [ UnstyledAttrs.class "highlighter-whitespace-newline" ]
 
                 _ ->
                     []
@@ -1883,53 +1871,57 @@ viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners
         isInteractive =
             interactiveHighlighterId /= Nothing
     in
-    span
-        (List.map Html.Styled.Attributes.fromUnstyled eventListeners
-            ++ List.map (UnstyledAttrs.map never >> Html.Styled.Attributes.fromUnstyled) highlightable.customAttributes
+    Unstyled.span
+        (eventListeners
+            ++ List.map (UnstyledAttrs.map never) highlightable.customAttributes
             ++ whitespaceClass highlightable.text
-            ++ [ attribute "data-highlighter-item-index" <| String.fromInt highlightable.index
+            ++ [ UnstyledAttrs.attribute "data-highlighter-item-index" <| String.fromInt highlightable.index
                , case interactiveHighlighterId of
                     Just highlighterId ->
-                        Html.Styled.Attributes.id (highlightableId highlighterId highlightable.index)
+                        UnstyledAttrs.id (highlightableId highlighterId highlightable.index)
 
                     Nothing ->
-                        AttributesExtra.none
-               , css
-                    (Css.focus [ Css.zIndex (Css.int 1), Css.position Css.relative ]
-                        :: unmarkedHighlightableStyles config highlightable
-                        ++ markStyles
-                    )
-               , class "highlighter-highlightable"
+                        AttributesExtra.unstyledNone
+
+               --  , css
+               --       (Css.focus [ Css.zIndex (Css.int 1), Css.position Css.relative ]
+               --           :: unmarkedHighlightableStyles config highlightable
+               --           ++ markStyles
+               --       )
+               , UnstyledAttrs.class "highlighter-highlightable"
                , case List.head highlightable.marked of
                     Just _ ->
-                        class "highlighter-highlighted"
+                        UnstyledAttrs.class "highlighter-highlighted"
 
                     _ ->
-                        AttributesExtra.none
+                        AttributesExtra.unstyledNone
                , if isHinted config.hintingIndices highlightable then
-                    class "highlighter-hinted"
+                    UnstyledAttrs.class "highlighter-hinted"
 
                  else
-                    AttributesExtra.none
+                    AttributesExtra.unstyledNone
                , if isInteractive then
-                    Key.tabbable
-                        (case focusIndex of
-                            Nothing ->
-                                False
+                    case focusIndex of
+                        Nothing ->
+                            UnstyledAttrs.tabindex -1
 
-                            Just i ->
-                                highlightable.index == i
-                        )
+                        Just i ->
+                            if highlightable.index == i then
+                                UnstyledAttrs.tabindex 0
+
+                            else
+                                UnstyledAttrs.tabindex -1
 
                  else
-                    AttributesExtra.none
+                    AttributesExtra.unstyledNone
                ]
         )
         (if renderMarkdown then
             renderInlineMarkdown highlightable.text
+                |> List.map Html.toUnstyled
 
          else
-            [ Html.text highlightable.text ]
+            [ Unstyled.text highlightable.text ]
         )
 
 
