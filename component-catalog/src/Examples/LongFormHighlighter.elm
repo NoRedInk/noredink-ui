@@ -25,7 +25,7 @@ import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Highlightable.V3 as Highlightable exposing (Highlightable)
+import Nri.Ui.Highlightable.LongForm as Highlightable exposing (Highlightable)
 import Nri.Ui.Highlighter.LongForm as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Spacing.V1 as Spacing

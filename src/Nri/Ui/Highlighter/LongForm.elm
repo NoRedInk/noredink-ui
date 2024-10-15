@@ -77,7 +77,7 @@ import List.Extra
 import Markdown.Block
 import Markdown.Inline
 import Maybe.Extra
-import Nri.Ui.Highlightable.V3 as Highlightable exposing (Highlightable)
+import Nri.Ui.Highlightable.LongForm as Highlightable exposing (Highlightable)
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Mark.LongForm as Mark exposing (Mark)
