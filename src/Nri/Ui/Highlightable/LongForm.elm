@@ -53,7 +53,7 @@ just a single whitespace.
 
 -}
 
-import Html.Styled exposing (Attribute)
+import Html exposing (Attribute)
 import List.Extra
 import Markdown.Block
 import Markdown.Config exposing (defaultOptions, defaultSanitizeOptions)

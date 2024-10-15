@@ -1885,7 +1885,7 @@ viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners
     in
     span
         (List.map Html.Styled.Attributes.fromUnstyled eventListeners
-            ++ List.map (Html.Styled.Attributes.map never) highlightable.customAttributes
+            ++ List.map (UnstyledAttrs.map never >> Html.Styled.Attributes.fromUnstyled) highlightable.customAttributes
             ++ whitespaceClass highlightable.text
             ++ [ attribute "data-highlighter-item-index" <| String.fromInt highlightable.index
                , case interactiveHighlighterId of
