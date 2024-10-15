@@ -1471,6 +1471,27 @@ initFoldState model =
         }
 
 
+{-| Function to render the <style> tag for styling a highlighter.
+-}
+renderStyles :
+    { showTagsInline : Bool
+    , id : String
+    , marks : List Mark.Mark
+    }
+    -> Unstyled.Html msg
+renderStyles { showTagsInline, id, marks } =
+    Css.Global.global
+        [ Css.Global.id id
+            [ Css.Global.descendants
+                (Mark.renderStyles
+                    showTagsInline
+                    (List.Extra.uniqueBy .name marks)
+                )
+            ]
+        ]
+        |> Html.toUnstyled
+
+
 {-| Render a single `Highlightable` while also returning an updated state.
 
 A list of extraStyles is also accepted if, for example, you want to apply bold / italic / underline formatting to the generated span.
