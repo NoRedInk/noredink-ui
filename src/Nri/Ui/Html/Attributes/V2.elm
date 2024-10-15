@@ -1,5 +1,5 @@
 module Nri.Ui.Html.Attributes.V2 exposing
-    ( none, includeIf, maybe
+    ( none, unstyledNone, includeIf, unstyledIncludeIf, maybe
     , targetBlank
     , nriDescription, nriDescriptionSelector
     , testId
@@ -18,7 +18,7 @@ Extras for working with Html.Attributes.
 
 This is the new version of Nri.Ui.Html.Attributes.Extra.
 
-@docs none, includeIf, maybe
+@docs none, unstyledNone, includeIf, unstyledIncludeIf, maybe
 @docs targetBlank
 @docs nriDescription, nriDescriptionSelector
 @docs testId
@@ -28,8 +28,12 @@ This is the new version of Nri.Ui.Html.Attributes.Extra.
 
 import Css
 import Css.Global
+import Html
+import Html.Attributes
+import Html.Events
 import Html.Styled exposing (Attribute)
 import Html.Styled.Attributes as Attributes
+import Json.Decode exposing (Decoder)
 import Json.Encode as Encode
 import Regex exposing (Regex)
 
@@ -50,6 +54,22 @@ none =
     Attributes.property "Html.Attributes.Extra.none" Encode.null
 
 
+{-| Represents an attribute with no semantic meaning, useful for conditionals.
+
+This is implemented such that whenever Html.Attributes.Extra.none is encountered
+by VirtualDom it will set a meaningless property on the element object itself to
+null:
+
+    domNode['Html.Attributes.Extra.none'] = null
+
+It's totally safe and lets us clean up conditional and maybe attributes
+
+-}
+unstyledNone : Html.Attribute msg
+unstyledNone =
+    Html.Attributes.property "Html.Attributes.Extra.none" Encode.null
+
+
 {-| Transform a maybe value to an attribute or attach `none`
 -}
 maybe : (v -> Attribute msg) -> Maybe v -> Attribute msg
@@ -67,6 +87,18 @@ includeIf cond attr =
 
     else
         none
+
+
+{-| conditionally include an attribute. Useful for CSS classes generated with
+`UniqueClass`!
+-}
+unstyledIncludeIf : Bool -> Html.Attribute msg -> Html.Attribute msg
+unstyledIncludeIf cond attr =
+    if cond then
+        attr
+
+    else
+        unstyledNone
 
 
 {-| Use this list of attributes instead of applying `Attributes.target "_blank"`

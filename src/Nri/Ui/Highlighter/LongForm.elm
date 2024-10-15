@@ -61,17 +61,17 @@ or `viewFoldStatic` will render a single highlightable along with an update to t
 
 -}
 
-import Accessibility.Styled.Key as Key
+import Accessibility.Styled.Key as Key exposing (Event)
 import Accessibility.Styled.Style exposing (invisibleStyle)
 import Browser.Dom as Dom
 import Css
 import Css.Global
 import Html as Unstyled
 import Html.Attributes as UnstyledAttrs
+import Html.Events as UnstyledEvents
 import Html.Lazy as UnstyledLazy
 import Html.Styled as Html exposing (Attribute, Html, span)
 import Html.Styled.Attributes exposing (attribute, class, css)
-import Html.Styled.Events as Events
 import Json.Decode
 import List.Extra
 import Markdown.Block
@@ -1777,7 +1777,7 @@ viewHighlightable { renderMarkdown, overlaps } model highlightable css =
                     newCss
 
 
-highlightableEventListeners : Highlightable marker -> Model marker -> List (Attribute (Msg marker))
+highlightableEventListeners : Highlightable marker -> Model marker -> List (Unstyled.Attribute (Msg marker))
 highlightableEventListeners highlightable model =
     case highlightable.type_ of
         Highlightable.Interactive ->
@@ -1786,26 +1786,26 @@ highlightableEventListeners highlightable model =
             , onPreventDefault "mouseup" (Pointer <| Up <| Just model.id)
             , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
             , onPreventDefault "contextmenu" (Touch <| TouchIgnored)
-            , AttributesExtra.includeIf (not model.scrollFriendly)
+            , AttributesExtra.unstyledIncludeIf (not model.scrollFriendly)
                 (onPreventDefault "touchstart" (Touch <| TouchStart highlightable.index))
-            , AttributesExtra.includeIf (not model.scrollFriendly)
+            , AttributesExtra.unstyledIncludeIf (not model.scrollFriendly)
                 (onPreventDefault "touchend" (Touch <| TouchEnd <| Just model.id))
-            , AttributesExtra.includeIf model.scrollFriendly
+            , AttributesExtra.unstyledIncludeIf model.scrollFriendly
                 (onClickPreventDefault
                     (\count ->
                         Pointer <|
                             Click { index = highlightable.index, clickCount = count }
                     )
                 )
-            , attribute "data-interactive" ""
-            , Key.onKeyDownPreventDefault
+            , UnstyledAttrs.attribute "data-interactive" ""
+            , onKeyDownPreventDefault
                 [ Key.space (Keyboard <| ToggleHighlight highlightable.index)
                 , Key.right (Keyboard <| MoveRight highlightable.index)
                 , Key.left (Keyboard <| MoveLeft highlightable.index)
                 , Key.shiftRight (Keyboard <| SelectionExpandRight highlightable.index)
                 , Key.shiftLeft (Keyboard <| SelectionExpandLeft highlightable.index)
                 ]
-            , Key.onKeyUpPreventDefault
+            , onKeyUpPreventDefault
                 [ Key.shift (Keyboard <| SelectionApplyTool highlightable.index)
                     -- Key.shift has `shiftKey` set to True, but the keyUp event
                     -- for releasing the shift key has `shiftKey` set to False.
@@ -1824,11 +1824,11 @@ highlightableEventListeners highlightable model =
             [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
             , onPreventDefault "mouseleave" (Pointer <| Out)
             , onPreventDefault "contextmenu" (Touch <| TouchIgnored)
-            , AttributesExtra.includeIf (not model.scrollFriendly)
+            , AttributesExtra.unstyledIncludeIf (not model.scrollFriendly)
                 (onPreventDefault "touchstart" (Touch <| TouchStart highlightable.index))
-            , AttributesExtra.includeIf (not model.scrollFriendly)
+            , AttributesExtra.unstyledIncludeIf (not model.scrollFriendly)
                 (onPreventDefault "touchend" (Touch <| TouchEnd <| Just model.id))
-            , AttributesExtra.includeIf model.scrollFriendly
+            , AttributesExtra.unstyledIncludeIf model.scrollFriendly
                 (onClickPreventDefault
                     (\count ->
                         Pointer <|
@@ -1837,14 +1837,14 @@ highlightableEventListeners highlightable model =
                 )
             , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
             , onPreventDefault "mouseup" (Pointer <| Up <| Just model.id)
-            , attribute "data-static" ""
+            , UnstyledAttrs.attribute "data-static" ""
             ]
 
 
 viewHighlightableSegment :
     { interactiveHighlighterId : Maybe String
     , focusIndex : Maybe Int
-    , eventListeners : List (Attribute msg)
+    , eventListeners : List (Unstyled.Attribute msg)
     , maybeTool : Maybe (Tool.Tool marker)
     , mouseOverIndex : Maybe Int
     , mouseDownIndex : Maybe Int
@@ -1884,7 +1884,7 @@ viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners
             interactiveHighlighterId /= Nothing
     in
     span
-        (eventListeners
+        (List.map Html.Styled.Attributes.fromUnstyled eventListeners
             ++ List.map (Html.Styled.Attributes.map never) highlightable.customAttributes
             ++ whitespaceClass highlightable.text
             ++ [ attribute "data-highlighter-item-index" <| String.fromInt highlightable.index
@@ -2174,7 +2174,7 @@ markedHighlightableStyles maybeTool hintingIndices getIsHovered ({ marked } as h
 
 {-| Helper for `on` to preventDefault.
 -}
-onPreventDefault : String -> msg -> Attribute msg
+onPreventDefault : String -> msg -> Unstyled.Attribute msg
 onPreventDefault name msg =
     let
         -- If we attempt to preventDefault on an event which is not cancelable
@@ -2188,13 +2188,13 @@ onPreventDefault name msg =
             Json.Decode.field "cancelable" Json.Decode.bool
                 |> Json.Decode.map (\result -> ( msg, result ))
     in
-    Events.preventDefaultOn name
+    UnstyledEvents.preventDefaultOn name
         checkIfCancelable
 
 
 {-| Helper for `on` to preventDefault and capture `detail` from click event
 -}
-onClickPreventDefault : (Int -> msg) -> Attribute msg
+onClickPreventDefault : (Int -> msg) -> Unstyled.Attribute msg
 onClickPreventDefault msg =
     let
         -- If we attempt to preventDefault on an event which is not cancelable
@@ -2210,5 +2210,23 @@ onClickPreventDefault msg =
                 (Json.Decode.field "detail" Json.Decode.int)
                 (Json.Decode.field "cancelable" Json.Decode.bool)
     in
-    Events.preventDefaultOn "click"
+    UnstyledEvents.preventDefaultOn "click"
         checkIfCancelable
+
+
+onKeyDownPreventDefault : List (Event msg) -> Unstyled.Attribute msg
+onKeyDownPreventDefault decoders =
+    alwaysPreventDefault "keydown" decoders
+
+
+onKeyUpPreventDefault : List (Event msg) -> Unstyled.Attribute msg
+onKeyUpPreventDefault decoders =
+    alwaysPreventDefault "keyup" decoders
+
+
+alwaysPreventDefault : String -> List (Event msg) -> Unstyled.Attribute msg
+alwaysPreventDefault event decoders =
+    decoders
+        |> Key.customOneOf
+        |> Json.Decode.map (\decoder -> ( decoder, True ))
+        |> UnstyledEvents.preventDefaultOn event
