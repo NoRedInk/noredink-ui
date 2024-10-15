@@ -1679,21 +1679,14 @@ view_ config =
                 config.highlightables
     in
     Unstyled.p [ UnstyledAttrs.id config.id, UnstyledAttrs.class "highlighter-container" ] <|
-        (Css.Global.global
-            [ Css.Global.id config.id
-                [ Css.Global.descendants
-                    (Mark.renderStyles
-                        config.showTagsInline
-                        (withOverlaps
-                            |> List.map Tuple.second
-                            |> List.concat
-                            |> List.Extra.uniqueBy .name
-                        )
-                    )
-                ]
-            ]
-            |> Html.toUnstyled
-        )
+        renderStyles
+            { id = config.id
+            , showTagsInline = config.showTagsInline
+            , marks =
+                withOverlaps
+                    |> List.map Tuple.second
+                    |> List.concat
+            }
             :: (if config.showTagsInline then
                     List.concatMap (Mark.viewWithInlineTags config.viewSegment) withoutOverlaps
 
