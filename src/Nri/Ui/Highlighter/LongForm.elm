@@ -1450,7 +1450,9 @@ initFoldState model =
             { name = marker.name
             , startStyles = marker.startGroupClass
             , styles =
-                markedHighlightableStyles config
+                markedHighlightableStyles
+                    config.maybeTool
+                    config.hintingIndices
                     (isHovered_ config highlightableGroups)
                     highlightable
             , endStyles = marker.endGroupClass
@@ -1620,7 +1622,9 @@ view_ config =
             { name = marker.name
             , startStyles = marker.startGroupClass
             , styles =
-                markedHighlightableStyles config
+                markedHighlightableStyles
+                    config.maybeTool
+                    config.hintingIndices
                     (isHovered_ config highlightableGroups)
                     highlightable
             , endStyles = marker.endGroupClass
@@ -2056,14 +2060,12 @@ stripMarkdownSyntax markdown =
 
 
 markedHighlightableStyles :
-    { config
-        | maybeTool : Maybe (Tool.Tool marker)
-        , hintingIndices : Maybe ( Int, Int )
-    }
+    Maybe (Tool.Tool marker)
+    -> Maybe ( Int, Int )
     -> (Highlightable marker -> Bool)
     -> Highlightable marker
     -> List Css.Style
-markedHighlightableStyles { maybeTool, hintingIndices } getIsHovered ({ marked } as highlightable) =
+markedHighlightableStyles maybeTool hintingIndices getIsHovered ({ marked } as highlightable) =
     case maybeTool of
         Nothing ->
             [ case List.head marked of
