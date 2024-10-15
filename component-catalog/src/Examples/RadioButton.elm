@@ -359,7 +359,10 @@ view ellieLinkConfig state =
                     , valueToString = \_ -> ""
                     }
                     [ RadioButton.rightIcon
-                        (Svg.withLabel "Grade with Grading Assistant" UiIcon.gradingAssistant)
+                        (UiIcon.gradingAssistant
+                            |> Svg.withLabel "Grade with Grading Assistant"
+                            |> Svg.withColor (Css.hex "#00A39B")
+                        )
                     ]
           , description = ""
           }
