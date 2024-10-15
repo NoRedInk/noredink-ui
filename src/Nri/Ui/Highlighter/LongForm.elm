@@ -1422,6 +1422,7 @@ type FoldState marker
         { model : Model marker
         , overlapsSupport : OverlapsSupport marker
         , state : List ( Highlightable marker, Maybe (Unstyled.Html Never), List Css.Style )
+        , styles : Maybe (Unstyled.Html Never)
         }
 
 
@@ -1458,9 +1459,12 @@ initFoldState model =
             , endStyles = marker.endGroupClass
             }
 
-        precomputedSegments =
+        markedSegments =
             model.highlightables
                 |> List.map (\highlightable -> ( highlightable, List.map (toMark highlightable) highlightable.marked ))
+
+        precomputedSegments =
+            markedSegments
                 |> Mark.overlappingStyles
                 |> List.map (\( a, label, c ) -> ( a, Maybe.map Html.toUnstyled label, c ))
     in
@@ -1468,6 +1472,14 @@ initFoldState model =
         { model = model
         , overlapsSupport = overlapsSupport
         , state = precomputedSegments
+        , styles =
+            Just
+                (renderStyles
+                    { showTagsInline = False
+                    , id = model.id
+                    , marks = List.concatMap Tuple.second markedSegments
+                    }
+                )
         }
 
 
@@ -1552,16 +1564,24 @@ viewFoldHelper viewSegment extraStyles (FoldState ({ state } as foldState)) =
                         highlightable
                         (markStyles ++ extraStyles)
             in
-            case maybeLabelElement of
-                Nothing ->
-                    ( FoldState { foldState | state = todoState }
-                    , [ segmentHtml ]
-                    )
+            ( FoldState
+                { foldState
+                    | state = todoState
+                    , styles = Nothing
+                }
+            , case ( foldState.styles, maybeLabelElement ) of
+                ( Nothing, Nothing ) ->
+                    [ segmentHtml ]
 
-                Just labelElement ->
-                    ( FoldState { foldState | state = todoState }
-                    , [ Unstyled.map never labelElement, segmentHtml ]
-                    )
+                ( Just styles, Nothing ) ->
+                    [ Unstyled.map never styles, segmentHtml ]
+
+                ( Nothing, Just labelElement ) ->
+                    [ Unstyled.map never labelElement, segmentHtml ]
+
+                ( Just styles, Just labelElement ) ->
+                    [ Unstyled.map never styles, Unstyled.map never labelElement, segmentHtml ]
+            )
 
 
 {-| Groups highlightables with the same state together.
