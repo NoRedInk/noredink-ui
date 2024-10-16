@@ -43,6 +43,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Regex
 import Sort exposing (Sorter)
 import Sort.Set as Set
 import String.Extra
@@ -70,7 +71,7 @@ renderStyles showTagsInline marks =
     styleClassStyle (InlineTagContent tagStyle)
         :: List.concatMap
             (\mark ->
-                [ styleClassStyle (MarkedMark mark)
+                [ styleClassStyle (MarkedMark tagStyle mark)
                 , styleClassStyle (InlineTag tagStyle mark)
                 ]
             )
@@ -80,7 +81,7 @@ renderStyles showTagsInline marks =
 {-| When elements are marked, wrap them in a single `mark` html node.
 -}
 view :
-    (content -> List Style -> Unstyled.Html msg)
+    (content -> List (Unstyled.Attribute Never) -> Unstyled.Html msg)
     -> List ( content, Maybe Mark )
     -> List (Unstyled.Html msg)
 view viewSegment segments =
@@ -93,7 +94,7 @@ view viewSegment segments =
 
 -}
 viewWithOverlaps :
-    (content -> List Style -> Unstyled.Html msg)
+    (content -> List (Unstyled.Attribute Never) -> Unstyled.Html msg)
     -> List ( content, List Mark )
     -> List (Unstyled.Html msg)
 viewWithOverlaps viewSegment segments =
@@ -105,7 +106,7 @@ viewWithOverlaps viewSegment segments =
                         [ viewSegment content styles ]
 
                     Just label ->
-                        [ Html.toUnstyled label, viewSegment content styles ]
+                        [ label, viewSegment content styles ]
             )
 
 
@@ -116,7 +117,7 @@ You can use this if you require more control over the structure of how marked el
 The `Maybe (Html msg)` result is a label element that should be rendered before the current segment.
 
 -}
-overlappingStyles : List ( content, List Mark ) -> List ( content, Maybe (Html msg), List Style )
+overlappingStyles : List ( content, List Mark ) -> List ( content, Maybe (Unstyled.Html msg), List (Unstyled.Attribute Never) )
 overlappingStyles segments =
     let
         -- We can't detect the end of a span of marks until after we are past it!
@@ -130,7 +131,7 @@ overlappingStyles segments =
                     patchRevStyles
 
                 ( ( prevContent, prevLabel, prevStyles ) :: otherPrevStyles, _ ) ->
-                    ( prevContent, prevLabel, prevStyles ++ (tagAfterContent endedMarks ++ List.concatMap .endStyles endedMarks) ) :: otherPrevStyles
+                    ( prevContent, prevLabel, prevStyles ++ List.map (MarkedSegmentLast >> styleClassName >> Html.Attributes.class) endedMarks ) :: otherPrevStyles
 
         { priorMarks, revStyles } =
             List.foldl
@@ -148,10 +149,10 @@ overlappingStyles segments =
                                 |> Set.toList
 
                         startStyles =
-                            tagBeforeContent startedMarks ++ List.concatMap .startStyles startedMarks
+                            List.map (MarkedSegmentFirst >> styleClassName >> Html.Attributes.class) startedMarks
 
                         currentStyles =
-                            List.concatMap .styles segmentMarks
+                            List.map (MarkedSegment >> styleClassName >> Html.Attributes.class) segmentMarks
 
                         ( maybeStartLabels, styles ) =
                             case List.filterMap .name startedMarks of
@@ -160,11 +161,10 @@ overlappingStyles segments =
 
                                 names ->
                                     ( Just <|
-                                        span [ css startStyles ]
+                                        Unstyled.span startStyles
                                             [ viewInlineTag
                                                 HiddenTags
                                                 (String.Extra.toSentenceOxford names)
-                                                |> Html.fromUnstyled
                                             ]
                                     , currentStyles
                                     )
@@ -189,7 +189,7 @@ Show the label for the mark, if present, in-line with the emphasized content.
 
 -}
 viewWithInlineTags :
-    (content -> List Style -> Unstyled.Html msg)
+    (content -> List (Unstyled.Attribute Never) -> Unstyled.Html msg)
     -> List ( content, Maybe Mark )
     -> List (Unstyled.Html msg)
 viewWithInlineTags viewSegment segments =
@@ -286,7 +286,7 @@ Show the label for the mark, if present, in-line with the emphasized content whe
 -}
 view_ :
     TagStyle
-    -> (content -> List Style -> Unstyled.Html msg)
+    -> (content -> List (Unstyled.Attribute Never) -> Unstyled.Html msg)
     -> List ( content, Maybe Mark )
     -> List (Unstyled.Html msg)
 view_ tagStyle viewSegment highlightables =
@@ -297,8 +297,8 @@ view_ tagStyle viewSegment highlightables =
         ( _, marked ) :: _ ->
             let
                 segments =
-                    List.indexedMap
-                        (\index ( content, mark ) -> viewSegment content (markStyles tagStyle index mark))
+                    List.map
+                        (\( content, _ ) -> viewSegment content [])
                         highlightables
             in
             case marked of
@@ -345,11 +345,31 @@ viewMarkedByBalloon config markedWith segments =
 styleClassStyle : StyleClass -> Css.Global.Snippet
 styleClassStyle styleClass =
     case styleClass of
-        MarkedMark markedWith ->
+        MarkedMark tagStyle markedWith ->
             Css.Global.selector ("mark." ++ styleClassName styleClass)
                 [ Css.backgroundColor Css.transparent
                 , Css.Global.children
-                    [ Css.Global.selector ":last-child"
+                    [ Css.Global.selector ":first-child"
+                        [ -- TODO: check that this doesn't bork overlapping highlights
+                          -- bc we might add tagBeforeContent twice
+                          Css.batch (tagBeforeContent [ markedWith ])
+                        , if tagStyle == InlineTags && markedWith.name == Nothing then
+                            Css.batch []
+
+                          else
+                            Css.batch markedWith.startStyles
+                        , if tagStyle == HiddenTags && markedWith.name /= Nothing then
+                            -- TODO: check whether we should remove startStyles when in high contrast mode
+                            MediaQuery.highContrastMode
+                                [ -- override for the left border that's typically
+                                  -- added in Nri.Ui.HighlighterTool
+                                  Css.important (Css.borderLeftWidth Css.zero)
+                                ]
+
+                          else
+                            Css.batch []
+                        ]
+                    , Css.Global.selector ":last-child"
                         (Css.after
                             [ Css.property "content" ("\" end " ++ (Maybe.map (\name -> stripMarkdownSyntax name) markedWith.name |> Maybe.withDefault "highlight") ++ " \"")
                             , invisibleStyle
@@ -358,6 +378,21 @@ styleClassStyle styleClass =
                         )
                     ]
                 ]
+
+        MarkedSegmentFirst markedWith ->
+            Css.Global.class (styleClassName styleClass)
+                [ Css.batch (tagBeforeContent [ markedWith ])
+                , Css.batch markedWith.startStyles
+                ]
+
+        MarkedSegmentLast markedWith ->
+            Css.Global.class (styleClassName styleClass)
+                [ Css.batch (tagAfterContent [ markedWith ])
+                , Css.batch markedWith.endStyles
+                ]
+
+        MarkedSegment markedWith ->
+            Css.Global.class (styleClassName styleClass) [ Css.batch markedWith.styles ]
 
         InlineTag tagStyle marked ->
             Css.Global.selector ("span." ++ styleClassName styleClass)
@@ -411,34 +446,60 @@ styleClassStyle styleClass =
 
 
 type StyleClass
-    = MarkedMark Mark
+    = MarkedMark TagStyle Mark
     | InlineTag TagStyle Mark
     | InlineTagContent TagStyle
+    | MarkedSegmentFirst Mark
+    | MarkedSegmentLast Mark
+    | MarkedSegment Mark
 
 
 styleClassName : StyleClass -> String
 styleClassName styleClass =
-    case styleClass of
-        MarkedMark { name } ->
-            "mark-" ++ Maybe.withDefault "highlight" name
+    sanitizeCssClassName <|
+        case styleClass of
+            MarkedMark HiddenTags { name } ->
+                "mark-hidden-" ++ Maybe.withDefault "highlight" name
 
-        InlineTag HiddenTags { name } ->
-            "highlighter-hidden-tag-wrapper-" ++ Maybe.withDefault "highlighted" name
+            MarkedMark InlineTags { name } ->
+                "mark-inline-" ++ Maybe.withDefault "highlight" name
 
-        InlineTag InlineTags { name } ->
-            "highlighter-inline-tag-wrapper-" ++ Maybe.withDefault "highlighted" name
+            InlineTag HiddenTags { name } ->
+                "highlighter-hidden-tag-wrapper-" ++ Maybe.withDefault "highlighted" name
 
-        InlineTagContent HiddenTags ->
-            "highlighter-hidden-tag-content"
+            InlineTag InlineTags { name } ->
+                "highlighter-inline-tag-wrapper-" ++ Maybe.withDefault "highlighted" name
 
-        InlineTagContent InlineTags ->
-            "highlighter-inline-tag-content"
+            InlineTagContent HiddenTags ->
+                "highlighter-hidden-tag-content"
+
+            InlineTagContent InlineTags ->
+                "highlighter-inline-tag-content"
+
+            MarkedSegmentFirst { name } ->
+                "marked-start-" ++ Maybe.withDefault "highlight" name
+
+            MarkedSegmentLast { name } ->
+                "marked-end-" ++ Maybe.withDefault "highlight" name
+
+            MarkedSegment { name } ->
+                "marked-" ++ Maybe.withDefault "highlight" name
+
+
+sanitizeCssClassName : String -> String
+sanitizeCssClassName =
+    case Regex.fromString "[ \\(\\)\\[\\]]" of
+        Nothing ->
+            identity
+
+        Just regex ->
+            Regex.replace regex (\_ -> "_")
 
 
 viewMarked : TagStyle -> Mark -> List (Unstyled.Html msg) -> Unstyled.Html msg
 viewMarked tagStyle markedWith segments =
     Unstyled.mark
-        [ Html.Attributes.class (styleClassName (MarkedMark markedWith))
+        [ Html.Attributes.class (styleClassName (MarkedMark tagStyle markedWith))
         , -- Drop the `mark` role as various screen readers interpret it differently.
           -- Instead we offer additional invisible and accessible content to denote the highlight.
           Html.Attributes.attribute "role" "presentation"
@@ -458,47 +519,6 @@ viewStartHighlightTag tagStyle marked name =
     Unstyled.span
         [ Html.Attributes.class (styleClassName (InlineTag tagStyle marked)) ]
         [ viewInlineTag tagStyle name ]
-
-
-markStyles : TagStyle -> Int -> Maybe Mark -> List Css.Style
-markStyles tagStyle index marked =
-    case ( index == 0, marked ) of
-        ( True, Just markedWith ) ->
-            -- if we're on the first highlighted element, we add
-            -- a `before` content saying what kind of highlight we're starting
-            tagBeforeContent [ markedWith ]
-                ++ markedWith.styles
-                ++ -- if we're on the first element, and the mark has a name,
-                   -- there's an inline tag that we might need to show.
-                   -- if we're not showing a visual tag, we can attach the start styles to the first segment
-                   (case tagStyle of
-                        HiddenTags ->
-                            if markedWith.name == Nothing then
-                                markedWith.startStyles
-
-                            else
-                                [ MediaQuery.notHighContrastMode
-                                    (markedWith.startStyles
-                                        ++ [ -- override for the left border that's typically
-                                             -- added in Nri.Ui.HighlighterTool
-                                             MediaQuery.highContrastMode
-                                                [ Css.important (Css.borderLeftWidth Css.zero)
-                                                ]
-                                           ]
-                                    )
-                                ]
-
-                        InlineTags ->
-                            if markedWith.name == Nothing then
-                                markedWith.startStyles
-
-                            else
-                                []
-                   )
-
-        _ ->
-            Maybe.map .styles marked
-                |> Maybe.withDefault []
 
 
 tagBeforeContent : List Mark -> List Css.Style

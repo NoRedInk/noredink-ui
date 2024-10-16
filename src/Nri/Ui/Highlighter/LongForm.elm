@@ -70,8 +70,7 @@ import Html as Unstyled
 import Html.Attributes as UnstyledAttrs
 import Html.Events as UnstyledEvents
 import Html.Lazy as UnstyledLazy
-import Html.Styled as Html exposing (Attribute, Html, span)
-import Html.Styled.Attributes exposing (attribute, class, css)
+import Html.Styled as Html exposing (Html)
 import Json.Decode
 import List.Extra
 import Markdown.Block
@@ -81,6 +80,7 @@ import Nri.Ui.Highlightable.LongForm as Highlightable exposing (Highlightable)
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Mark.LongForm as Mark exposing (Mark)
+import Regex
 import Sort exposing (Sorter)
 import Sort.Dict as Dict
 import Task
@@ -1242,12 +1242,9 @@ view =
                 , hintingIndices = model.hintingIndices
                 , overlaps = OverlapsNotSupported
                 , viewSegment =
-                    \highlightable css ->
-                        viewHighlightable
-                            { renderMarkdown = False, overlaps = OverlapsNotSupported }
-                            model
-                            highlightable
-                            css
+                    viewHighlightable
+                        { renderMarkdown = False, overlaps = OverlapsNotSupported }
+                        model
                 , id = model.id
                 , highlightables = model.highlightables
                 }
@@ -1352,7 +1349,7 @@ staticWithTags =
     UnstyledLazy.lazy
         (\config ->
             let
-                viewStaticHighlightableWithTags : Highlightable marker -> List Css.Style -> Unstyled.Html msg
+                viewStaticHighlightableWithTags : Highlightable marker -> List (Unstyled.Attribute Never) -> Unstyled.Html msg
                 viewStaticHighlightableWithTags =
                     viewHighlightableSegment
                         { interactiveHighlighterId = Nothing
@@ -1415,7 +1412,7 @@ type FoldState marker
     = FoldState
         { model : Model marker
         , overlapsSupport : OverlapsSupport marker
-        , state : List ( Highlightable marker, Maybe (Unstyled.Html Never), List Css.Style )
+        , state : List ( Highlightable marker, Maybe (Unstyled.Html Never), List (Unstyled.Attribute Never) )
         , styles : Maybe (Unstyled.Html Never)
         }
 
@@ -1460,7 +1457,7 @@ initFoldState model =
         precomputedSegments =
             markedSegments
                 |> Mark.overlappingStyles
-                |> List.map (\( a, label, c ) -> ( a, Maybe.map Html.toUnstyled label, c ))
+                |> List.map (\( a, label, c ) -> ( a, label, c ))
     in
     FoldState
         { model = model
@@ -1472,9 +1469,54 @@ initFoldState model =
                     { showTagsInline = False
                     , id = model.id
                     , marks = List.concatMap Tuple.second markedSegments
+                    , scrollFriendly = model.scrollFriendly
+                    , maybeTool = Just model.marker
                     }
                 )
         }
+
+
+type StyleClass
+    = Highlightable
+    | HintedMark (Tool.MarkerModel ())
+    | HintedMarkBoundary (Tool.MarkerModel ())
+    | HintedEraser Tool.EraserModel
+    | HoveredNotHinted (Tool.Tool ())
+
+
+styleClassName : StyleClass -> String
+styleClassName styleClass =
+    sanitizeCssClassName <|
+        case styleClass of
+            Highlightable ->
+                "highlighter-highlightable"
+
+            HintedMark marker ->
+                "highlighter_hinted_mark-" ++ Maybe.withDefault "highlight" marker.name
+
+            HintedMarkBoundary marker ->
+                "highlighter_hinted_mark_boundary-" ++ Maybe.withDefault "highlight" marker.name
+
+            HintedEraser _ ->
+                "highlighter-hinted-eraser"
+
+            HoveredNotHinted tool ->
+                case tool of
+                    Tool.Marker marker ->
+                        "highlighter-hovered-marker-" ++ Maybe.withDefault "highlight" marker.name
+
+                    Tool.Eraser _ ->
+                        "highlighter-hovered-eraser"
+
+
+sanitizeCssClassName : String -> String
+sanitizeCssClassName =
+    case Regex.fromString "[ \\(\\)\\[\\]]" of
+        Nothing ->
+            identity
+
+        Just regex ->
+            Regex.replace regex (\_ -> "_")
 
 
 {-| Function to render the <style> tag for styling a highlighter.
@@ -1483,15 +1525,61 @@ renderStyles :
     { showTagsInline : Bool
     , id : String
     , marks : List Mark.Mark
+    , scrollFriendly : Bool
+    , maybeTool : Maybe (Tool.Tool marker)
     }
     -> Unstyled.Html msg
-renderStyles { showTagsInline, id, marks } =
+renderStyles { showTagsInline, id, marks, scrollFriendly, maybeTool } =
     Css.Global.global
         [ Css.Global.id id
             [ Css.Global.descendants
                 (Mark.renderStyles
                     showTagsInline
                     (List.Extra.uniqueBy .name marks)
+                )
+            , Css.Global.descendants
+                [ Css.Global.class (styleClassName Highlightable)
+                    [ Css.focus [ Css.zIndex (Css.int 1), Css.position Css.relative ]
+                    , if scrollFriendly && maybeTool /= Nothing then
+                        Css.batch
+                            [ -- block ios safari from selecting text
+                              Css.property "-webkit-user-select" "none"
+                            , Css.property "-webkit-touch-callout" "none"
+                            , Css.property "user-select" "none"
+                            ]
+
+                      else if maybeTool /= Nothing then
+                        Css.batch [ Css.property "user-select" "none" ]
+
+                      else
+                        Css.batch []
+                    ]
+                ]
+            , Css.Global.descendants
+                (case maybeTool of
+                    Nothing ->
+                        []
+
+                    Just (Tool.Marker marker_) ->
+                        let
+                            marker =
+                                Tool.mapMarker (\_ -> ()) marker_
+                        in
+                        [ Css.Global.class (styleClassName (HintedMark marker)) marker.hintClass
+                        , Css.Global.class (styleClassName (HintedMarkBoundary marker)) [ hintStartEndAnnouncer marker ]
+                        , Css.Global.class (styleClassName (HoveredNotHinted (Tool.Marker marker)))
+                            (List.concat
+                                [ marker.hoverClass
+                                , marker.startGroupClass
+                                , marker.endGroupClass
+                                ]
+                            )
+                        ]
+
+                    Just (Tool.Eraser eraser) ->
+                        [ Css.Global.class (styleClassName (HintedEraser eraser)) eraser.hintClass
+                        , Css.Global.class (styleClassName (HoveredNotHinted (Tool.Eraser eraser))) eraser.hoverClass
+                        ]
                 )
             ]
         ]
@@ -1503,7 +1591,7 @@ renderStyles { showTagsInline, id, marks } =
 A list of extraStyles is also accepted if, for example, you want to apply bold / italic / underline formatting to the generated span.
 
 -}
-viewFoldHighlighter : List Css.Style -> FoldState marker -> ( FoldState marker, List (Unstyled.Html (Msg marker)) )
+viewFoldHighlighter : List (Unstyled.Attribute Never) -> FoldState marker -> ( FoldState marker, List (Unstyled.Html (Msg marker)) )
 viewFoldHighlighter extraStyles (FoldState ({ model, overlapsSupport } as foldState)) =
     viewFoldHelper
         (viewHighlightable
@@ -1521,7 +1609,7 @@ viewFoldHighlighter extraStyles (FoldState ({ model, overlapsSupport } as foldSt
 A list of extraStyles is also accepted if, for example, you want to apply bold / italic / underline formatting to the generated span.
 
 -}
-viewFoldStatic : List Css.Style -> FoldState marker -> ( FoldState marker, List (Unstyled.Html msg) )
+viewFoldStatic : List (Unstyled.Attribute Never) -> FoldState marker -> ( FoldState marker, List (Unstyled.Html msg) )
 viewFoldStatic =
     viewFoldHelper
         (viewHighlightableSegment
@@ -1539,7 +1627,7 @@ viewFoldStatic =
         )
 
 
-viewFoldHelper : (Highlightable marker -> List Css.Style -> Unstyled.Html msg) -> List Css.Style -> FoldState marker -> ( FoldState marker, List (Unstyled.Html msg) )
+viewFoldHelper : (Highlightable marker -> List (Unstyled.Attribute Never) -> Unstyled.Html msg) -> List (Unstyled.Attribute Never) -> FoldState marker -> ( FoldState marker, List (Unstyled.Html msg) )
 viewFoldHelper viewSegment extraStyles (FoldState ({ state } as foldState)) =
     case state of
         [] ->
@@ -1641,7 +1729,7 @@ view_ :
     , mouseDownIndex : Maybe Int
     , hintingIndices : Maybe ( Int, Int )
     , overlaps : OverlapsSupport marker
-    , viewSegment : Highlightable marker -> List Css.Style -> Unstyled.Html msg
+    , viewSegment : Highlightable marker -> List (Unstyled.Attribute Never) -> Unstyled.Html msg
     , highlightables : List (Highlightable marker)
     , id : String
     }
@@ -1696,6 +1784,11 @@ view_ config =
                 withOverlaps
                     |> List.map Tuple.second
                     |> List.concat
+
+            -- TODO: possibly add a scrollFriendly flag to the view_ function
+            -- make it so static is always False, and interactive takes it from Model
+            , scrollFriendly = False
+            , maybeTool = config.maybeTool
             }
             :: (if config.showTagsInline then
                     List.concatMap (Mark.viewWithInlineTags config.viewSegment) withoutOverlaps
@@ -1714,23 +1807,9 @@ viewHighlightable :
     { renderMarkdown : Bool, overlaps : OverlapsSupport marker }
     -> Model marker
     -> Highlightable marker
-    -> List Css.Style
+    -> List (Unstyled.Attribute Never)
     -> Unstyled.Html (Msg marker)
-viewHighlightable { renderMarkdown, overlaps } model highlightable css =
-    let
-        newCss =
-            [ Css.batch css
-            , if model.scrollFriendly then
-                Css.batch
-                    -- block ios safari from selecting text
-                    [ Css.property "-webkit-user-select" "none"
-                    , Css.property "-webkit-touch-callout" "none"
-                    ]
-
-              else
-                Css.batch []
-            ]
-    in
+viewHighlightable { renderMarkdown, overlaps } model highlightable customAttributes =
     case highlightable.type_ of
         Highlightable.Interactive ->
             viewHighlightableSegment
@@ -1746,7 +1825,7 @@ viewHighlightable { renderMarkdown, overlaps } model highlightable css =
                 , overlaps = overlaps
                 }
                 highlightable
-                newCss
+                customAttributes
 
         Highlightable.Static ->
             viewHighlightableSegment
@@ -1762,7 +1841,7 @@ viewHighlightable { renderMarkdown, overlaps } model highlightable css =
                 , overlaps = overlaps
                 }
                 highlightable
-                newCss
+                customAttributes
 
 
 highlightableEventListeners : Highlightable marker -> Model marker -> List (Unstyled.Attribute (Msg marker))
@@ -1842,9 +1921,9 @@ viewHighlightableSegment :
     , overlaps : OverlapsSupport marker
     }
     -> Highlightable marker
-    -> List Css.Style
+    -> List (Unstyled.Attribute Never)
     -> Unstyled.Html msg
-viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners, renderMarkdown } as config) highlightable markStyles =
+viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners, renderMarkdown } as config) highlightable customAttributes =
     let
         whitespaceClass txt =
             -- we need to override whitespace styles in order to support
@@ -1874,6 +1953,8 @@ viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners
     Unstyled.span
         (eventListeners
             ++ List.map (UnstyledAttrs.map never) highlightable.customAttributes
+            ++ List.map (UnstyledAttrs.map never) customAttributes
+            ++ unmarkedHighlightableStyles config highlightable
             ++ whitespaceClass highlightable.text
             ++ [ UnstyledAttrs.attribute "data-highlighter-item-index" <| String.fromInt highlightable.index
                , case interactiveHighlighterId of
@@ -1882,13 +1963,7 @@ viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners
 
                     Nothing ->
                         AttributesExtra.unstyledNone
-
-               --  , css
-               --       (Css.focus [ Css.zIndex (Css.int 1), Css.position Css.relative ]
-               --           :: unmarkedHighlightableStyles config highlightable
-               --           ++ markStyles
-               --       )
-               , UnstyledAttrs.class "highlighter-highlightable"
+               , UnstyledAttrs.class (styleClassName Highlightable)
                , case List.head highlightable.marked of
                     Just _ ->
                         UnstyledAttrs.class "highlighter-highlighted"
@@ -2001,7 +2076,7 @@ unmarkedHighlightableStyles :
         , mouseOverIndex : Maybe Int
     }
     -> Highlightable marker
-    -> List Css.Style
+    -> List (Unstyled.Attribute msg)
 unmarkedHighlightableStyles config highlightable =
     if highlightable.marked /= [] then
         []
@@ -2019,41 +2094,48 @@ unmarkedHighlightableStyles config highlightable =
                     isHovered =
                         directlyHoveringInteractiveSegment config highlightable
                 in
-                Css.property "user-select" "none"
-                    :: (case tool of
-                            Tool.Marker marker ->
-                                if isHinted_ then
-                                    [ Css.batch marker.hintClass
-                                    , if isFirstOrLastHinted config.hintingIndices highlightable then
-                                        -- only announce first or last hinted bc that's where
-                                        -- keyboard focus will be
-                                        hintStartEndAnnouncer marker
+                case tool of
+                    Tool.Marker marker ->
+                        if isHinted_ then
+                            [ [ -- Css.batch marker.hintClass
+                                UnstyledAttrs.class (styleClassName (HintedMark (Tool.mapMarker (\_ -> ()) marker)))
+                              ]
+                            , if isFirstOrLastHinted config.hintingIndices highlightable then
+                                -- only announce first or last hinted bc that's where
+                                -- keyboard focus will be
+                                -- hintStartEndAnnouncer marker
+                                [ UnstyledAttrs.class
+                                    (styleClassName (HintedMarkBoundary (Tool.mapMarker (\_ -> ()) marker)))
+                                ]
 
-                                      else
-                                        Css.batch []
-                                    ]
+                              else
+                                []
+                            ]
+                                |> List.concat
 
-                                else if isHovered then
-                                    -- When hovered, but not marked
-                                    List.concat
-                                        [ marker.hoverClass
-                                        , marker.startGroupClass
-                                        , marker.endGroupClass
-                                        ]
+                        else if isHovered then
+                            -- When hovered, but not marked
+                            -- List.concat
+                            --     [ marker.hoverClass
+                            --     , marker.startGroupClass
+                            --     , marker.endGroupClass
+                            --     ]
+                            [ UnstyledAttrs.class (styleClassName (HoveredNotHinted (Tool.map (\_ -> ()) tool))) ]
 
-                                else
-                                    []
+                        else
+                            []
 
-                            Tool.Eraser eraser_ ->
-                                if isHinted_ then
-                                    eraser_.hintClass
+                    Tool.Eraser eraser_ ->
+                        if isHinted_ then
+                            -- eraser_.hintClass
+                            [ UnstyledAttrs.class (styleClassName (HintedEraser eraser_)) ]
 
-                                else if isHovered then
-                                    eraser_.hoverClass
+                        else if isHovered then
+                            -- eraser_.hoverClass
+                            [ UnstyledAttrs.class (styleClassName (HoveredNotHinted (Tool.Eraser eraser_))) ]
 
-                                else
-                                    []
-                       )
+                        else
+                            []
 
 
 {-| Announce for screenreaders that we are at the last hinting index
