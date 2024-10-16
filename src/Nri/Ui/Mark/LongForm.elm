@@ -73,6 +73,9 @@ renderStyles showTagsInline marks =
             (\mark ->
                 [ styleClassStyle (MarkedMark tagStyle mark)
                 , styleClassStyle (InlineTag tagStyle mark)
+                , styleClassStyle (MarkedSegmentFirst mark)
+                , styleClassStyle (MarkedSegmentLast mark)
+                , styleClassStyle (MarkedSegment mark)
                 ]
             )
             marks
