@@ -349,14 +349,13 @@ styleClassStyle : StyleClass -> Css.Global.Snippet
 styleClassStyle styleClass =
     case styleClass of
         MarkedMark tagStyle markedWith ->
+            -- <mark> is not used in overlapping or foldable highlights
+            -- it's safe to duplicate styles here that are also only created in the overlapping case
             Css.Global.selector ("mark." ++ styleClassName styleClass)
                 [ Css.backgroundColor Css.transparent
                 , Css.Global.children
                     [ Css.Global.selector ":first-child"
-                        [ -- TODO: check that this doesn't bork overlapping highlights
-                          -- bc we might add tagBeforeContent twice
-                          Css.batch (tagBeforeContent [ markedWith ])
-                        , if tagStyle == InlineTags && markedWith.name == Nothing then
+                        [ if tagStyle == InlineTags && markedWith.name == Nothing then
                             Css.batch []
 
                           else
@@ -372,12 +371,15 @@ styleClassStyle styleClass =
                           else
                             Css.batch []
                         ]
+                    , Css.Global.selector ":nth-child(2)"
+                        [ -- if we're on the first highlighted element, inline/hidden tag wrapper
+                          -- we add a `before` content saying what kind of highlight we're starting
+                          Css.batch (tagBeforeContent [ markedWith ])
+                        ]
+                    , Css.Global.typeSelector "span" markedWith.styles
                     , Css.Global.selector ":last-child"
-                        (Css.after
-                            [ Css.property "content" ("\" end " ++ (Maybe.map (\name -> stripMarkdownSyntax name) markedWith.name |> Maybe.withDefault "highlight") ++ " \"")
-                            , invisibleStyle
-                            ]
-                            :: markedWith.endStyles
+                        (tagAfterContent [ markedWith ]
+                            ++ markedWith.endStyles
                         )
                     ]
                 ]
