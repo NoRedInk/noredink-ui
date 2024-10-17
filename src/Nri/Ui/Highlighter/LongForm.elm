@@ -159,6 +159,10 @@ init :
     }
     -> Model marker
 init config =
+    let
+        focusIndex =
+            List.Extra.findIndex (\highlightable -> .type_ highlightable == Highlightable.Interactive) config.highlightables
+    in
     { id = config.id
     , highlightables =
         (if config.joinAdjacentInteractiveHighlights then
@@ -170,6 +174,7 @@ init config =
             -- Enforce highlightable index to match index in list
             -- so we can use List.Extra.getAt, updateAt, etc
             |> List.indexedMap (\index highlightable -> { highlightable | index = index })
+            |> List.Extra.updateAt (Maybe.withDefault 0 focusIndex) (\highlightable -> { highlightable | isFocused = True })
     , marker = config.marker
     , joinAdjacentInteractiveHighlights = config.joinAdjacentInteractiveHighlights
     , scrollFriendly = config.scrollFriendly
@@ -183,8 +188,7 @@ init config =
     , hasChanged = NotChanged
     , selectionStartIndex = Nothing
     , selectionEndIndex = Nothing
-    , focusIndex =
-        List.Extra.findIndex (\highlightable -> .type_ highlightable == Highlightable.Interactive) config.highlightables
+    , focusIndex = focusIndex
     }
 
 
@@ -645,7 +649,10 @@ performAction action ( model, cmds ) =
             ( model, cmds )
 
         Focus index ->
-            ( { model | focusIndex = Just index }
+            ( { model
+                | focusIndex = Just index
+                , highlightables = updateFocused model.focusIndex index model.highlightables
+              }
             , Task.attempt Focused (Dom.focus (highlightableId model.id index)) :: cmds
             )
 
@@ -720,6 +727,18 @@ performAction action ( model, cmds ) =
 
         ResetSelection ->
             ( { model | selectionStartIndex = Nothing, selectionEndIndex = Nothing }, cmds )
+
+
+updateFocused : Maybe Int -> Int -> List (Highlightable marker) -> List (Highlightable marker)
+updateFocused maybeOldFocused newFocused highlightables =
+    case maybeOldFocused of
+        Nothing ->
+            highlightables
+                |> List.Extra.updateAt newFocused (\highlightable -> { highlightable | isFocused = True })
+
+        Just oldFocused ->
+            List.Extra.updateAt oldFocused (\highlightable -> { highlightable | isFocused = False }) highlightables
+                |> List.Extra.updateAt newFocused (\highlightable -> { highlightable | isFocused = True })
 
 
 markerAtIndex : Int -> List (Highlightable marker) -> Maybe marker
@@ -1970,16 +1989,11 @@ viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners
                  else
                     AttributesExtra.unstyledNone
                , if isInteractive then
-                    case focusIndex of
-                        Nothing ->
-                            UnstyledAttrs.tabindex -1
+                    if highlightable.isFocused then
+                        UnstyledAttrs.tabindex 0
 
-                        Just i ->
-                            if highlightable.index == i then
-                                UnstyledAttrs.tabindex 0
-
-                            else
-                                UnstyledAttrs.tabindex -1
+                    else
+                        UnstyledAttrs.tabindex -1
 
                  else
                     AttributesExtra.unstyledNone
