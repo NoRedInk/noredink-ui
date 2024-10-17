@@ -90,6 +90,10 @@ type alias Highlightable marker =
     , marked : List (Tool.MarkerModel marker)
     , index : Int
     , type_ : Type
+    , isHinted : Bool
+    , isHovered : Bool
+    , isFocused : Bool
+    , isClicked : Bool
     }
 
 
@@ -107,6 +111,10 @@ initStatic marked index text_ =
     , marked = marked
     , index = index
     , type_ = Static
+    , isHinted = False
+    , isHovered = False
+    , isFocused = False
+    , isClicked = False
     }
 
 
@@ -118,6 +126,10 @@ initInteractive marked index text_ =
     , marked = marked
     , index = index
     , type_ = Interactive
+    , isHinted = False
+    , isHovered = False
+    , isFocused = False
+    , isClicked = False
     }
 
 
