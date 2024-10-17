@@ -161,11 +161,15 @@ init :
 init config =
     { id = config.id
     , highlightables =
-        if config.joinAdjacentInteractiveHighlights then
+        (if config.joinAdjacentInteractiveHighlights then
             Highlightable.joinAdjacentInteractiveHighlights config.sorter config.highlightables
 
-        else
+         else
             config.highlightables
+        )
+            -- Enforce highlightable index to match index in list
+            -- so we can use List.Extra.getAt, updateAt, etc
+            |> List.indexedMap (\index highlightable -> { highlightable | index = index })
     , marker = config.marker
     , joinAdjacentInteractiveHighlights = config.joinAdjacentInteractiveHighlights
     , scrollFriendly = config.scrollFriendly
@@ -720,7 +724,7 @@ performAction action ( model, cmds ) =
 
 markerAtIndex : Int -> List (Highlightable marker) -> Maybe marker
 markerAtIndex index highlightables =
-    Highlightable.byId index highlightables
+    List.Extra.getAt index highlightables
         |> Maybe.andThen (\highligtable -> highligtable.marked |> List.head |> Maybe.map .kind)
 
 
@@ -1025,14 +1029,14 @@ removeHighlights_ =
 -}
 clickedHighlightable : Model marker -> Maybe (Highlightable.Highlightable marker)
 clickedHighlightable model =
-    Maybe.andThen (\i -> Highlightable.byId i model.highlightables) model.mouseDownIndex
+    Maybe.andThen (\i -> List.Extra.getAt i model.highlightables) model.mouseDownIndex
 
 
 {-| You are not likely to need this helper unless you're working with inline commenting.
 -}
 hoveredHighlightable : Model marker -> Maybe (Highlightable.Highlightable marker)
 hoveredHighlightable model =
-    Maybe.andThen (\i -> Highlightable.byId i model.highlightables) model.mouseOverIndex
+    Maybe.andThen (\i -> List.Extra.getAt i model.highlightables) model.mouseOverIndex
 
 
 isHovered_ :

@@ -4,7 +4,7 @@ module Nri.Ui.Highlightable.LongForm exposing
     , fromMarkdown, fromMarkdownInlines
     , set
     , joinAdjacentInteractiveHighlights
-    , asFragmentTuples, usedMarkers, text, byId
+    , asFragmentTuples, usedMarkers, text
     )
 
 {-| A Highlightable represents a span of text, typically a word, and its state.
@@ -421,13 +421,6 @@ joinAdjacentInteractiveHighlights sorter highlightables =
             )
             ( Set.empty markerSorter, [], [] )
         |> (\( _, static_, acc ) -> static_ ++ acc)
-
-
-{-| Get the highlightable matching the passed-in ID, if any.
--}
-byId : Int -> List (Highlightable kind) -> Maybe (Highlightable kind)
-byId index =
-    List.filter (\h -> h.index == index) >> List.head
 
 
 {-| Get unique markers that have been used. Note: ignores marks on whitespace.
