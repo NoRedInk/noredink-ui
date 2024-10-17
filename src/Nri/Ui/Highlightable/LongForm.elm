@@ -53,13 +53,13 @@ just a single whitespace.
 
 -}
 
-import Html exposing (Attribute)
 import List.Extra
 import Markdown.Block
 import Markdown.Config exposing (defaultOptions, defaultSanitizeOptions)
 import Markdown.Inline
 import Maybe.Extra
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Highlighter.Attribute exposing (Attribute(..))
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Regex exposing (Regex)
 import Sort exposing (Sorter)
@@ -86,7 +86,7 @@ import String.Extra
 -}
 type alias Highlightable marker =
     { text : String
-    , customAttributes : List (Attribute Never)
+    , customAttributes : List Attribute
     , marked : List (Tool.MarkerModel marker)
     , index : Int
     , type_ : Type

@@ -77,6 +77,7 @@ import Markdown.Block
 import Markdown.Inline
 import Maybe.Extra
 import Nri.Ui.Highlightable.LongForm as Highlightable exposing (Highlightable)
+import Nri.Ui.Highlighter.Attribute exposing (Attribute(..), toHtmlAttribute)
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Mark.LongForm as Mark exposing (Mark)
@@ -1340,7 +1341,7 @@ staticWithTags =
     UnstyledLazy.lazy
         (\config ->
             let
-                viewStaticHighlightableWithTags : Highlightable marker -> List (Unstyled.Attribute Never) -> Unstyled.Html msg
+                viewStaticHighlightableWithTags : Highlightable marker -> List Attribute -> Unstyled.Html msg
                 viewStaticHighlightableWithTags =
                     viewHighlightableSegment
                         { interactiveHighlighterId = Nothing
@@ -1403,7 +1404,7 @@ type FoldState marker
     = FoldState
         { model : Model marker
         , overlapsSupport : OverlapsSupport marker
-        , state : List ( Highlightable marker, Maybe (Unstyled.Html Never), List (Unstyled.Attribute Never) )
+        , state : List ( Highlightable marker, Maybe (Unstyled.Html Never), List Attribute )
         , styles : Maybe (Unstyled.Html Never)
         }
 
@@ -1582,7 +1583,7 @@ renderStyles { showTagsInline, id, marks, scrollFriendly, maybeTool } =
 A list of extraStyles is also accepted if, for example, you want to apply bold / italic / underline formatting to the generated span.
 
 -}
-viewFoldHighlighter : List (Unstyled.Attribute Never) -> FoldState marker -> ( FoldState marker, List (Unstyled.Html (Msg marker)) )
+viewFoldHighlighter : List Attribute -> FoldState marker -> ( FoldState marker, List (Unstyled.Html (Msg marker)) )
 viewFoldHighlighter extraStyles (FoldState ({ model, overlapsSupport } as foldState)) =
     viewFoldHelper
         (viewHighlightable False overlapsSupport model)
@@ -1595,7 +1596,7 @@ viewFoldHighlighter extraStyles (FoldState ({ model, overlapsSupport } as foldSt
 A list of extraStyles is also accepted if, for example, you want to apply bold / italic / underline formatting to the generated span.
 
 -}
-viewFoldStatic : List (Unstyled.Attribute Never) -> FoldState marker -> ( FoldState marker, List (Unstyled.Html msg) )
+viewFoldStatic : List Attribute -> FoldState marker -> ( FoldState marker, List (Unstyled.Html msg) )
 viewFoldStatic =
     viewFoldHelper
         (viewHighlightableSegment
@@ -1613,7 +1614,7 @@ viewFoldStatic =
         )
 
 
-viewFoldHelper : (Highlightable marker -> List (Unstyled.Attribute Never) -> Unstyled.Html msg) -> List (Unstyled.Attribute Never) -> FoldState marker -> ( FoldState marker, List (Unstyled.Html msg) )
+viewFoldHelper : (Highlightable marker -> List Attribute -> Unstyled.Html msg) -> List Attribute -> FoldState marker -> ( FoldState marker, List (Unstyled.Html msg) )
 viewFoldHelper viewSegment extraStyles (FoldState ({ state } as foldState)) =
     case state of
         [] ->
@@ -1715,7 +1716,7 @@ view_ :
     , mouseDownIndex : Maybe Int
     , hintingIndices : Maybe ( Int, Int )
     , overlaps : OverlapsSupport marker
-    , viewSegment : Highlightable marker -> List (Unstyled.Attribute Never) -> Unstyled.Html msg
+    , viewSegment : Highlightable marker -> List Attribute -> Unstyled.Html msg
     , highlightables : List (Highlightable marker)
     , id : String
     }
@@ -1794,7 +1795,7 @@ viewHighlightable :
     -> OverlapsSupport marker
     -> Model marker
     -> Highlightable marker
-    -> List (Unstyled.Attribute Never)
+    -> List Attribute
     -> Unstyled.Html (Msg marker)
 viewHighlightable =
     UnstyledLazy.lazy5 <|
@@ -1910,7 +1911,7 @@ viewHighlightableSegment :
     , overlaps : OverlapsSupport marker
     }
     -> Highlightable marker
-    -> List (Unstyled.Attribute Never)
+    -> List Attribute
     -> Unstyled.Html msg
 viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners, renderMarkdown } as config) highlightable customAttributes =
     let
@@ -1941,8 +1942,8 @@ viewHighlightableSegment ({ interactiveHighlighterId, focusIndex, eventListeners
     in
     Unstyled.span
         (eventListeners
-            ++ List.map (UnstyledAttrs.map never) highlightable.customAttributes
-            ++ List.map (UnstyledAttrs.map never) customAttributes
+            ++ List.map toHtmlAttribute highlightable.customAttributes
+            ++ List.map toHtmlAttribute customAttributes
             ++ unmarkedHighlightableStyles config highlightable
             ++ whitespaceClass highlightable.text
             ++ [ UnstyledAttrs.attribute "data-highlighter-item-index" <| String.fromInt highlightable.index

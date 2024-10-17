@@ -40,6 +40,7 @@ import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
+import Nri.Ui.Highlighter.Attribute exposing (Attribute(..), toHtmlAttribute)
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
@@ -84,7 +85,7 @@ renderStyles showTagsInline marks =
 {-| When elements are marked, wrap them in a single `mark` html node.
 -}
 view :
-    (content -> List (Unstyled.Attribute Never) -> Unstyled.Html msg)
+    (content -> List Attribute -> Unstyled.Html msg)
     -> List ( content, Maybe Mark )
     -> List (Unstyled.Html msg)
 view viewSegment segments =
@@ -97,7 +98,7 @@ view viewSegment segments =
 
 -}
 viewWithOverlaps :
-    (content -> List (Unstyled.Attribute Never) -> Unstyled.Html msg)
+    (content -> List Attribute -> Unstyled.Html msg)
     -> List ( content, List Mark )
     -> List (Unstyled.Html msg)
 viewWithOverlaps viewSegment segments =
@@ -120,7 +121,7 @@ You can use this if you require more control over the structure of how marked el
 The `Maybe (Html msg)` result is a label element that should be rendered before the current segment.
 
 -}
-overlappingStyles : List ( content, List Mark ) -> List ( content, Maybe (Unstyled.Html msg), List (Unstyled.Attribute Never) )
+overlappingStyles : List ( content, List Mark ) -> List ( content, Maybe (Unstyled.Html msg), List Attribute )
 overlappingStyles segments =
     let
         -- We can't detect the end of a span of marks until after we are past it!
@@ -134,7 +135,7 @@ overlappingStyles segments =
                     patchRevStyles
 
                 ( ( prevContent, prevLabel, prevStyles ) :: otherPrevStyles, _ ) ->
-                    ( prevContent, prevLabel, prevStyles ++ List.map (MarkedSegmentLast >> styleClassName >> Html.Attributes.class) endedMarks ) :: otherPrevStyles
+                    ( prevContent, prevLabel, prevStyles ++ List.map (MarkedSegmentLast >> styleClassName >> Class) endedMarks ) :: otherPrevStyles
 
         { priorMarks, revStyles } =
             List.foldl
@@ -152,10 +153,10 @@ overlappingStyles segments =
                                 |> Set.toList
 
                         startStyles =
-                            List.map (MarkedSegmentFirst >> styleClassName >> Html.Attributes.class) startedMarks
+                            List.map (MarkedSegmentFirst >> styleClassName >> Class) startedMarks
 
                         currentStyles =
-                            List.map (MarkedSegment >> styleClassName >> Html.Attributes.class) segmentMarks
+                            List.map (MarkedSegment >> styleClassName >> Class) segmentMarks
 
                         ( maybeStartLabels, styles ) =
                             case List.filterMap .name startedMarks of
@@ -164,7 +165,7 @@ overlappingStyles segments =
 
                                 names ->
                                     ( Just <|
-                                        Unstyled.span startStyles
+                                        Unstyled.span (List.map toHtmlAttribute startStyles)
                                             [ viewInlineTag
                                                 HiddenTags
                                                 (String.Extra.toSentenceOxford names)
@@ -192,7 +193,7 @@ Show the label for the mark, if present, in-line with the emphasized content.
 
 -}
 viewWithInlineTags :
-    (content -> List (Unstyled.Attribute Never) -> Unstyled.Html msg)
+    (content -> List Attribute -> Unstyled.Html msg)
     -> List ( content, Maybe Mark )
     -> List (Unstyled.Html msg)
 viewWithInlineTags viewSegment segments =
@@ -289,7 +290,7 @@ Show the label for the mark, if present, in-line with the emphasized content whe
 -}
 view_ :
     TagStyle
-    -> (content -> List (Unstyled.Attribute Never) -> Unstyled.Html msg)
+    -> (content -> List Attribute -> Unstyled.Html msg)
     -> List ( content, Maybe Mark )
     -> List (Unstyled.Html msg)
 view_ tagStyle viewSegment highlightables =
