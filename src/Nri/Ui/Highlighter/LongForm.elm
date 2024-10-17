@@ -119,10 +119,6 @@ type alias Model marker =
     , selectionStartIndex : Maybe Int
     , selectionEndIndex : Maybe Int
     , focusIndex : Maybe Int
-
-    -- We want to track whether the user is already hovering over a group,
-    -- so that we don't reapply hover styles when the user toggles a highlight.
-    , isHovering : Bool
     }
 
 
@@ -184,7 +180,6 @@ init config =
     , selectionEndIndex = Nothing
     , focusIndex =
         List.Extra.findIndex (\highlightable -> .type_ highlightable == Highlightable.Interactive) config.highlightables
-    , isHovering = False
     }
 
 
@@ -465,11 +460,7 @@ pointerEventToActions msg model =
                     ]
 
                 Nothing ->
-                    if not model.isHovering then
-                        [ MouseOver eventIndex ]
-
-                    else
-                        []
+                    [ MouseOver eventIndex ]
 
         Out ->
             [ MouseOut ]
@@ -711,10 +702,10 @@ performAction action ( model, cmds ) =
             ( { model | mouseDownIndex = Nothing, mouseOverIndex = Nothing }, cmds )
 
         MouseOver index ->
-            ( { model | mouseOverIndex = Just index, isHovering = True }, cmds )
+            ( { model | mouseOverIndex = Just index }, cmds )
 
         MouseOut ->
-            ( { model | mouseOverIndex = Nothing, isHovering = False }, cmds )
+            ( { model | mouseOverIndex = Nothing }, cmds )
 
         StartSelection index ->
             ( { model | selectionStartIndex = Just index }, cmds )
