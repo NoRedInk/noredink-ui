@@ -2,6 +2,7 @@ module Nri.Ui.HighlighterTool.V1 exposing
     ( Tool(..)
     , EraserModel, buildEraser
     , MarkerModel, buildMarker, buildMarkerWithBorder, buildMarkerWithoutRounding
+    , map, mapMarker
     )
 
 {-|
@@ -16,6 +17,7 @@ module Nri.Ui.HighlighterTool.V1 exposing
 @docs Tool
 @docs EraserModel, buildEraser
 @docs MarkerModel, buildMarker, buildMarkerWithBorder, buildMarkerWithoutRounding
+@docs map, mapMarker
 
 -}
 
@@ -262,3 +264,30 @@ squareSharedStyles =
 squareHoverStyles : Css.Color -> List Css.Style
 squareHoverStyles color =
     List.append squareSharedStyles [ Css.important (Css.backgroundColor color) ]
+
+
+{-| Changes the `kind` type parameter on a Tool
+-}
+map : (a -> b) -> Tool a -> Tool b
+map f tool =
+    case tool of
+        Marker marker ->
+            Marker (mapMarker f marker)
+
+        Eraser eraser ->
+            Eraser eraser
+
+
+{-| Changes the `kind` type parameter on a MarkerModel
+-}
+mapMarker : (a -> b) -> MarkerModel a -> MarkerModel b
+mapMarker f marker =
+    { hoverClass = marker.hoverClass
+    , hintClass = marker.hintClass
+    , startGroupClass = marker.startGroupClass
+    , endGroupClass = marker.endGroupClass
+    , highlightClass = marker.highlightClass
+    , hoverHighlightClass = marker.hoverHighlightClass
+    , kind = f marker.kind
+    , name = marker.name
+    }

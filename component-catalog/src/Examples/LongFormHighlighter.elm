@@ -1,4 +1,4 @@
-module Examples.Highlighter exposing (Msg, State, example)
+module Examples.LongFormHighlighter exposing (Msg, State, example)
 
 {-|
 
@@ -25,8 +25,8 @@ import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Highlightable.V3 as Highlightable exposing (Highlightable)
-import Nri.Ui.Highlighter.V6 as Highlighter
+import Nri.Ui.Highlightable.LongForm as Highlightable exposing (Highlightable)
+import Nri.Ui.Highlighter.LongForm as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V7 as Table
@@ -36,7 +36,7 @@ import Sort exposing (Sorter)
 
 moduleName : String
 moduleName =
-    "Highlighter"
+    "HighlighterLongForm"
 
 
 version : Int
@@ -93,6 +93,7 @@ example =
                         |> List.intersperse ( " ", Nothing )
                         |> List.indexedMap (\i ( word, marker ) -> Highlightable.initStatic (Maybe.Extra.toList marker) i word)
                 }
+                |> Html.Styled.fromUnstyled
             ]
         ]
     , about =
@@ -209,6 +210,7 @@ example =
                     ]
                 ]
                 [ Highlighter.viewWithOverlappingHighlights state.overlappingHighlightsState
+                    |> Html.Styled.fromUnstyled
                     |> map OverlappingHighlighterMsg
                 ]
             , Heading.h2
@@ -300,6 +302,7 @@ example =
                                     |> List.intersperse ( " ", Nothing )
                                     |> List.indexedMap (\i ( word, marker ) -> Highlightable.initStatic (Maybe.Extra.toList marker) i word)
                             }
+                            |> Html.Styled.fromUnstyled
                   }
                 , { viewName = "static"
                   , tool = "buildMarker"
@@ -320,6 +323,7 @@ example =
                                     |> List.intersperse ( " ", Nothing )
                                     |> List.indexedMap (\i ( word, marker ) -> Highlightable.initStatic (Maybe.Extra.toList marker) i word)
                             }
+                            |> Html.Styled.fromUnstyled
                   }
                 , { viewName = "static"
                   , tool = "buildMarker"
@@ -339,30 +343,31 @@ example =
                                     |> List.intersperse ( " ", Nothing )
                                     |> List.indexedMap (\i ( word, marker ) -> Highlightable.initStatic (Maybe.Extra.toList marker) i word)
                             }
+                            |> Html.Styled.fromUnstyled
                   }
                 , { viewName = "static"
                   , tool = "buildMarker"
                   , highlightable = "init"
                   , description = "Multiple kinds of highlights without overlaps"
-                  , example = Highlighter.static { id = "example-3a", highlightables = multipleHighlightsHighlightables }
+                  , example =
+                        Highlighter.static { id = "example-3a", highlightables = multipleHighlightsHighlightables }
+                            |> Html.Styled.fromUnstyled
                   }
                 , { viewName = "staticMarkdown"
                   , tool = "buildMarker"
                   , highlightable = "init"
                   , description = "Multiple kinds of highlights without overlaps and with interpreted Markdown"
-                  , example = Highlighter.staticMarkdown { id = "example-3b", highlightables = multipleHighlightsHighlightables }
+                  , example =
+                        Highlighter.staticMarkdown { id = "example-3b", highlightables = multipleHighlightsHighlightables }
+                            |> Html.Styled.fromUnstyled
                   }
                 , { viewName = "staticWithTags"
                   , tool = "buildMarkerWithBorder"
                   , highlightable = "init"
                   , description = "Multiple kinds of highlights without overlaps"
-                  , example = Highlighter.staticWithTags { id = "example-4a", highlightables = multipleHighlightsHighlightablesWithBorder }
-                  }
-                , { viewName = "staticMarkdownWithTags"
-                  , tool = "buildMarkerWithBorder"
-                  , highlightable = "init"
-                  , description = "Multiple kinds of highlights without overlaps and with interpreted Markdown"
-                  , example = Highlighter.staticMarkdownWithTags { id = "example-4b", highlightables = multipleHighlightsHighlightablesWithBorder }
+                  , example =
+                        Highlighter.staticWithTags { id = "example-4a", highlightables = multipleHighlightsHighlightablesWithBorder }
+                            |> Html.Styled.fromUnstyled
                   }
                 , { viewName = "staticMarkdown"
                   , tool = "buildMarker"
@@ -373,6 +378,7 @@ example =
                             { id = "example-5"
                             , highlightables = Highlightable.fromMarkdown "Select your [favorite phrase]() in **your** writing."
                             }
+                            |> Html.Styled.fromUnstyled
                   }
                 , { viewName = "staticMarkdown"
                   , tool = "buildMarker"
@@ -383,6 +389,7 @@ example =
                             { id = "example-6"
                             , highlightables = Highlightable.fromMarkdown "Select your <nri-highlight color=\"cyan\">favorite phrase with favorite color</nri-highlight> in **your** writing."
                             }
+                            |> Html.Styled.fromUnstyled
                   }
                 ]
             ]
@@ -510,16 +517,10 @@ view state =
         viewStr =
             Code.var "view" 1
     in
-    case (Control.currentValue state.settings).textSettings.highlighterType of
-        Markdown ->
-            ( viewStr "Highlighter.viewMarkdown"
-            , Highlighter.viewMarkdown state.highlighter
-            )
-
-        Standard ->
-            ( viewStr "Highlighter.view"
-            , Highlighter.view state.highlighter
-            )
+    ( viewStr "Highlighter.view"
+    , Highlighter.view state.highlighter
+        |> Html.Styled.fromUnstyled
+    )
 
 
 {-| -}
@@ -3360,7 +3361,7 @@ viewFoldHighlights model =
     List.Extra.mapAccuml
         (\state sourceRow ->
             List.Extra.mapAccuml (\innerState _ -> Highlighter.viewFoldHighlighter [] innerState) state sourceRow
-                |> Tuple.mapSecond (List.concat >> li [])
+                |> Tuple.mapSecond (List.concat >> List.map Html.Styled.fromUnstyled >> li [])
         )
         (Highlighter.initFoldState model)
         foldHighlightsSource
