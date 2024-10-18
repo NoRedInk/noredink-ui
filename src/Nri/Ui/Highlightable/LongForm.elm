@@ -91,6 +91,7 @@ type alias Highlightable marker =
     , index : Int
     , type_ : Type
     , isHinted : Bool
+    , isFirstOrLastHinted : Bool
     , isHovered : Bool
     , isFocused : Bool
     , isClicked : Bool
@@ -112,6 +113,7 @@ initStatic marked index text_ =
     , index = index
     , type_ = Static
     , isHinted = False
+    , isFirstOrLastHinted = False
     , isHovered = False
     , isFocused = False
     , isClicked = False
@@ -127,6 +129,7 @@ initInteractive marked index text_ =
     , index = index
     , type_ = Interactive
     , isHinted = False
+    , isFirstOrLastHinted = False
     , isHovered = False
     , isFocused = False
     , isClicked = False
