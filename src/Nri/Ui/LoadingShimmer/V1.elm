@@ -9,6 +9,7 @@ module Nri.Ui.LoadingShimmer.V1 exposing
     , line
     , nriDescription
     , paragraph
+    , paragraphLines
     , testId
     , view
     )
@@ -44,6 +45,7 @@ type alias Settings msg =
     , customAttributes : List (Html.Styled.Attribute msg)
     , width : LoadingShimmerWidth
     , kind : LoadingShimmerKind
+    , paragraphLines : Int
     }
 
 
@@ -53,6 +55,7 @@ defaultSettings =
     , customAttributes = []
     , width = WidthFillContainer
     , kind = Line
+    , paragraphLines = 3
     }
 
 
@@ -140,6 +143,11 @@ boundedWidth =
     setWidth << WidthBounded
 
 
+paragraphLines : Int -> Attribute msg
+paragraphLines lineCount =
+    set (\attributes -> { attributes | paragraphLines = lineCount })
+
+
 {-| -}
 view : List (Attribute msg) -> Html msg
 view attributes =
@@ -222,6 +230,17 @@ viewParagraph settings =
     let
         textSkeletonColor =
             gray85
+
+        lineHtml =
+            Html.Styled.div
+                [ Attributes.css
+                    [ minWidth (Css.ch 12)
+                    , borderRadius (px 4)
+                    , property "grid-column" "span 6"
+                    , backgroundColor textSkeletonColor
+                    ]
+                ]
+                []
     in
     Html.Styled.div
         [ Attributes.css
@@ -244,34 +263,9 @@ viewParagraph settings =
                 ]
             ]
         ]
-        [ Html.Styled.div
-            [ Attributes.css
-                [ minWidth (Css.ch 1)
-                , borderRadius (px 4)
-                , property "grid-column" "span 2"
-                , backgroundColor textSkeletonColor
-                ]
-            ]
-            []
-        , Html.Styled.div
-            [ Attributes.css
-                [ minWidth (Css.ch 12)
-                , borderRadius (px 4)
-                , property "grid-column" "span 6"
-                , backgroundColor textSkeletonColor
-                ]
-            ]
-            []
-        , Html.Styled.div
-            [ Attributes.css
-                [ minWidth (Css.ch 6)
-                , borderRadius (px 4)
-                , property "grid-column" "span 4"
-                , backgroundColor textSkeletonColor
-                ]
-            ]
-            []
-        ]
+        (List.range 1 settings.paragraphLines
+            |> List.map (always lineHtml)
+        )
 
 
 line : Attribute msg
