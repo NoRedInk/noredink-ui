@@ -10,6 +10,7 @@ module Nri.Ui.LoadingShimmer.V1 exposing
     , nriDescription
     , paragraph
     , paragraphLines
+    , rectangleSvg
     , testId
     , view
     )
@@ -17,11 +18,15 @@ module Nri.Ui.LoadingShimmer.V1 exposing
 import Accessibility.Styled as Html exposing (Attribute, Html)
 import Css exposing (..)
 import Css.Animations
-import Html.Styled
+import Html.Styled exposing (wbr)
 import Html.Styled.Attributes as Attributes
 import Nri.Ui
+import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
+import Nri.Ui.Svg.V1 as Svg
+import Svg.Styled
+import Svg.Styled.Attributes as SvgAttr
 
 
 type LoadingShimmerKind
@@ -231,41 +236,86 @@ viewParagraph settings =
         textSkeletonColor =
             gray85
 
-        lineHtml =
+        lineHtml rowIndex colspan =
             Html.Styled.div
                 [ Attributes.css
                     [ minWidth (Css.ch 12)
                     , borderRadius (px 4)
-                    , property "grid-column" "span 6"
+                    , property "grid-column" ("span " ++ String.fromInt colspan)
                     , backgroundColor textSkeletonColor
+                    , height (Css.px 16)
+                    , property "grid-row" (String.fromInt (rowIndex + 1))
                     ]
                 ]
                 []
+
+        gridRowString =
+            "repeat(" ++ String.fromInt settings.paragraphLines ++ ", 1fr)"
     in
     Html.Styled.div
         [ Attributes.css
             [ property "display" "grid"
             , property "gap" "8px"
             , property "grid-template-columns" "repeat(12, 1fr)"
-            , height (Css.px 24)
+            , property "grid-template-rows" gridRowString
             , padding (px 4)
             , position relative
             , overflow hidden
-            , before
-                [ position absolute
-                , top zero
-                , bottom zero
-                , left zero
-                , right zero
-                , backgroundImage backgroundImageGradient
-                , shimmerAnimation
-                , Css.property "content" "\" \""
-                ]
+
+            -- , before
+            --     [ position absolute
+            --     , top zero
+            --     , bottom zero
+            --     , left zero
+            --     , right zero
+            --     , backgroundImage backgroundImageGradient
+            --     , shimmerAnimation
+            --     , Css.property "content" "\" \""
+            --     ]
             ]
         ]
-        (List.range 1 settings.paragraphLines
-            |> List.map (always lineHtml)
-        )
+        [ Html.Styled.div
+            [ Attributes.css
+                [ position absolute
+                , property "inset" "0"
+                ]
+            ]
+            (paragraphPattern settings.paragraphLines
+                |> List.indexedMap lineHtml
+            )
+        ]
+
+
+rectangleSvg : Svg.Styled.Svg msg
+rectangleSvg =
+    Svg.init "0 0 200 200"
+        [ Svg.Styled.svg
+            [ SvgAttr.x "50"
+            , SvgAttr.y "50"
+            , SvgAttr.width "100"
+            , SvgAttr.height "100"
+            , SvgAttr.fill (ColorsExtra.toCssString gray92)
+            , SvgAttr.stroke (ColorsExtra.toCssString gray85)
+            , SvgAttr.strokeWidth "2"
+            ]
+            []
+        ]
+        |> Svg.withWidth (Css.px 200)
+        |> Svg.withHeight (Css.px 200)
+        |> Svg.withLabel "Blue square"
+        |> Svg.toHtml
+
+
+paragraphPattern : Int -> List Int
+paragraphPattern count =
+    let
+        list =
+            [ 10, 11, 9, 11, 12 ]
+
+        infiniteList =
+            List.concat (List.repeat (count // List.length list + 1) list)
+    in
+    List.take count infiniteList
 
 
 line : Attribute msg
