@@ -37,6 +37,7 @@ module Nri.Ui.Tooltip.V3 exposing
   - adds `helpfullyDisabled` option
   - adds `onTriggerKeyDown` option
   - add `stopTooltipMousePropagation` option
+  - use `Content.markdownInline` instead of `Content.markdown`
 
 Changes from V2:
 
