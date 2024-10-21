@@ -132,7 +132,7 @@ viewRow columns data =
 viewColumn : data -> Column data msg -> Html msg
 viewColumn data (Column _ renderer width cellStyles _ cellType) =
     cell cellType
-        [ css ([ width, verticalAlign middle ] ++ cellStyles data)
+        [ css ([ width, verticalAlign middle, padding4 (px 11) (px 12) (px 14) (px 12), textAlign left ] ++ cellStyles data)
         ]
         [ renderer data ]
 
