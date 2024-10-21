@@ -1104,8 +1104,6 @@ isHovered_ :
     { config
         | mouseOverIndex : Maybe Int
         , mouseDownIndex : Maybe Int
-        , hintingIndices : Maybe ( Int, Int )
-        , highlightables : List (Highlightable marker)
         , overlaps : OverlapsSupport marker
         , maybeTool : Maybe tool
     }
@@ -1137,8 +1135,6 @@ directlyHoveringInteractiveSegment { mouseOverIndex } highlightable =
 inHoveredGroupWithoutOverlaps :
     { config
         | mouseOverIndex : Maybe Int
-        , hintingIndices : Maybe ( Int, Int )
-        , highlightables : List (Highlightable marker)
     }
     -> List (List (Highlightable ma))
     -> Highlightable m
@@ -1164,9 +1160,7 @@ inHoveredGroupWithoutOverlaps config groups highlightable =
 
 inHoveredGroupForOverlaps :
     { config
-        | mouseOverIndex : Maybe Int
-        , mouseDownIndex : Maybe Int
-        , highlightables : List (Highlightable marker)
+        | mouseDownIndex : Maybe Int
     }
     -> Maybe marker
     -> Highlightable marker
