@@ -101,6 +101,7 @@ type alias Model marker =
     , highlightables : List (Highlightable marker) -- The actual highlightable elements
     , marker : Tool.Tool marker -- Currently used marker
     , joinAdjacentInteractiveHighlights : Bool
+    , overlapsSupport : OverlapsSupport marker
 
     -- Scroll-friendly mode is used for highlighters in longform text, where we
     -- want to prevent accidental highlighting when scrolling, or when just plain
@@ -156,6 +157,7 @@ init :
     , joinAdjacentInteractiveHighlights : Bool
     , sorter : Sorter marker
     , scrollFriendly : Bool
+    , overlapsSupport : Bool
     }
     -> Model marker
 init config =
@@ -177,6 +179,12 @@ init config =
             |> List.Extra.updateAt (Maybe.withDefault 0 focusIndex) (\highlightable -> { highlightable | isFocused = True })
     , marker = config.marker
     , joinAdjacentInteractiveHighlights = config.joinAdjacentInteractiveHighlights
+    , overlapsSupport =
+        if config.overlapsSupport then
+            OverlapsSupported { hoveredMarkerWithShortestHighlight = Nothing }
+
+        else
+            OverlapsNotSupported
     , scrollFriendly = config.scrollFriendly
     , sorter = config.sorter
 
@@ -1423,30 +1431,35 @@ staticWithTags =
 
 findOverlapsSupport : Model marker -> OverlapsSupport marker
 findOverlapsSupport model =
-    let
-        hoveredMarkers =
-            model.highlightables
-                |> List.Extra.find (\h -> Just h.index == model.mouseOverIndex)
-                |> Maybe.map (.marked >> List.map .kind)
-                |> Maybe.withDefault []
-    in
-    OverlapsSupported
-        { hoveredMarkerWithShortestHighlight =
-            case hoveredMarkers of
-                [] ->
-                    Nothing
+    case model.overlapsSupport of
+        OverlapsNotSupported ->
+            OverlapsNotSupported
 
-                marker :: [] ->
-                    Just marker
+        OverlapsSupported _ ->
+            let
+                hoveredMarkers =
+                    model.highlightables
+                        |> List.Extra.find (\h -> Just h.index == model.mouseOverIndex)
+                        |> Maybe.map (.marked >> List.map .kind)
+                        |> Maybe.withDefault []
+            in
+            OverlapsSupported
+                { hoveredMarkerWithShortestHighlight =
+                    case hoveredMarkers of
+                        [] ->
+                            Nothing
 
-                first :: second :: rest ->
-                    Just
-                        (markerWithShortestHighlight
-                            model.sorter
-                            model.highlightables
-                            ( first, second, rest )
-                        )
-        }
+                        marker :: [] ->
+                            Just marker
+
+                        first :: second :: rest ->
+                            Just
+                                (markerWithShortestHighlight
+                                    model.sorter
+                                    model.highlightables
+                                    ( first, second, rest )
+                                )
+                }
 
 
 {-| A type that contains information needed to render individual `Highlightable`s one at a time

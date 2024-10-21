@@ -3387,6 +3387,7 @@ init =
                 , sorter = Sort.alphabetical
                 , joinAdjacentInteractiveHighlights = True
                 , scrollFriendly = False
+                , overlapsSupport = True
                 }
 
         foldHighlightsState =
@@ -3399,6 +3400,7 @@ init =
                 , sorter = Sort.alphabetical
                 , joinAdjacentInteractiveHighlights = True
                 , scrollFriendly = False
+                , overlapsSupport = False
                 }
     in
     ( { settings = settings
@@ -3469,6 +3471,7 @@ initHighlighter settings previousHighlightables =
         , sorter = sorter
         , joinAdjacentInteractiveHighlights = settings.textSettings.joinAdjacentInteractiveHighlights
         , scrollFriendly = settings.textSettings.scrollFriendly
+        , overlapsSupport = False
         }
     )
 
