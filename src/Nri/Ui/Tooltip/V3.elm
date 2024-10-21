@@ -190,8 +190,8 @@ paragraph =
 {-| Provide a string that will be rendered as markdown.
 -}
 markdown : String -> Attribute msg
-markdown =
-    Attribute << Content.markdown
+markdown string =
+    Attribute (\tooltipConfig -> { tooltipConfig | content = Content.markdownInline string })
 
 
 {-| Provide a list of custom HTML.
