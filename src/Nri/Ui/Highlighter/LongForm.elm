@@ -1701,8 +1701,7 @@ viewFoldHelper viewSegment extraStyles (FoldState ({ state } as foldState)) =
 -}
 buildGroups :
     { model
-        | hintingIndices : Maybe ( Int, Int )
-        , mouseOverIndex : Maybe Int
+        | mouseOverIndex : Maybe Int
     }
     -> List (Highlightable marker)
     -> List (List (Highlightable marker))
