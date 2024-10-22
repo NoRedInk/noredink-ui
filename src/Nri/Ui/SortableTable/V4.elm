@@ -412,7 +412,7 @@ viewSortHeader isSortable header maybeUpdateMsg state_ id =
             [ css
                 [ Css.displayFlex
                 , Css.alignItems Css.center
-                , Css.justifyContent Css.spaceBetween
+                , Css.property "gap" "8px"
                 , CssVendorPrefix.property "user-select" "none"
                 , if state_.column == id then
                     fontWeight bold
