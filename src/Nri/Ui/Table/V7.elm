@@ -110,22 +110,22 @@ rowHeader options =
 
 {-| Displays a table of data without a header row
 -}
-viewWithoutHeader : List Style -> List (Column data msg) -> List data -> Html msg
-viewWithoutHeader additionalStyles columns =
-    tableWithoutHeader additionalStyles columns (viewRow columns)
+viewWithoutHeader : { additionalStyles : List Style, alternatingRowColors : Bool } -> List (Column data msg) -> List data -> Html msg
+viewWithoutHeader { additionalStyles, alternatingRowColors } columns =
+    tableWithoutHeader additionalStyles columns (viewRow columns alternatingRowColors)
 
 
 {-| Displays a table of data based on the provided column definitions
 -}
-view : List Style -> List (Column data msg) -> List data -> Html msg
-view additionalStyles columns =
-    tableWithHeader additionalStyles columns (viewRow columns)
+view : { additionalStyles : List Style, alternatingRowColors : Bool } -> List (Column data msg) -> List data -> Html msg
+view { additionalStyles, alternatingRowColors } columns =
+    tableWithHeader additionalStyles columns (viewRow columns alternatingRowColors)
 
 
-viewRow : List (Column data msg) -> data -> Html msg
-viewRow columns data =
+viewRow : List (Column data msg) -> Bool -> data -> Html msg
+viewRow columns alternatingRowColors data =
     tr
-        [ css rowStyles ]
+        [ css (rowStyles alternatingRowColors) ]
         (List.map (viewColumn data) columns)
 
 
@@ -145,22 +145,22 @@ viewColumn data (Column _ renderer width cellStyles _ cellType) =
 out text with an interesting animation. This view lets the user know that
 data is on its way and what it will look like when it arrives.
 -}
-viewLoading : List Style -> List (Column data msg) -> Html msg
-viewLoading additionalStyles columns =
-    tableWithHeader (loadingTableStyles ++ additionalStyles) columns (viewLoadingRow columns) (List.range 0 8)
+viewLoading : { additionalStyles : List Style, alternatingRowColors : Bool } -> List (Column data msg) -> Html msg
+viewLoading { additionalStyles, alternatingRowColors } columns =
+    tableWithHeader (loadingTableStyles ++ additionalStyles) columns (viewLoadingRow columns alternatingRowColors) (List.range 0 8)
 
 
 {-| Display the loading table without a header row
 -}
-viewLoadingWithoutHeader : List Style -> List (Column data msg) -> Html msg
-viewLoadingWithoutHeader additionalStyles columns =
-    tableWithoutHeader (loadingTableStyles ++ additionalStyles) columns (viewLoadingRow columns) (List.range 0 8)
+viewLoadingWithoutHeader : { additionalStyles : List Style, alternatingRowColors : Bool } -> List (Column data msg) -> Html msg
+viewLoadingWithoutHeader { additionalStyles, alternatingRowColors } columns =
+    tableWithoutHeader (loadingTableStyles ++ additionalStyles) columns (viewLoadingRow columns alternatingRowColors) (List.range 0 8)
 
 
-viewLoadingRow : List (Column data msg) -> Int -> Html msg
-viewLoadingRow columns index =
+viewLoadingRow : List (Column data msg) -> Bool -> Int -> Html msg
+viewLoadingRow columns alternatingRowColors index =
     tr
-        [ css rowStyles ]
+        [ css (rowStyles alternatingRowColors) ]
         (List.indexedMap (viewLoadingColumn index) columns)
 
 
@@ -265,13 +265,17 @@ headerStyles =
     ]
 
 
-rowStyles : List Style
-rowStyles =
+rowStyles : Bool -> List Style
+rowStyles alternatingRowColors =
     [ height (px 45)
     , fontSize (px 14)
     , color gray20
-    , pseudoClass "nth-child(odd)"
-        [ backgroundColor gray96 ]
+    , if alternatingRowColors then
+        pseudoClass "nth-child(odd)"
+            [ backgroundColor gray96 ]
+
+      else
+        Css.batch []
     ]
 
 

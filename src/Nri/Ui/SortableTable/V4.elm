@@ -311,12 +311,12 @@ view attributes columns entries =
                 sorter =
                     findSorter columns state_.column
             in
-            Table.view stickyStyles
+            Table.view { additionalStyles = stickyStyles, alternatingRowColors = True }
                 tableColumns
                 (List.sortWith (sorter state_.sortDirection) entries)
 
         Nothing ->
-            Table.view stickyStyles tableColumns entries
+            Table.view { additionalStyles = stickyStyles, alternatingRowColors = True } tableColumns entries
 
 
 {-| -}
@@ -333,7 +333,7 @@ viewLoading attributes columns =
         tableColumns =
             List.map (buildTableColumn config.updateMsg config.state) columns
     in
-    Table.viewLoading stickyStyles tableColumns
+    Table.viewLoading { additionalStyles = stickyStyles, alternatingRowColors = True } tableColumns
 
 
 findSorter : List (Column id entry msg) -> id -> Sorter entry
