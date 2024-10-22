@@ -2,7 +2,7 @@ module Nri.Ui.SortableTable.V4 exposing
     ( Column, Sorter, State
     , init, initDescending
     , custom, string
-    , Attribute, updateMsg, state, stickyHeader, stickyHeaderCustom, StickyConfig, view, viewLoading
+    , Attribute, updateMsg, state, stickyHeader, disableAlternatingRowColors, stickyHeaderCustom, StickyConfig, view, viewLoading
     , invariantSort, simpleSort, combineSorters
     )
 
@@ -15,7 +15,7 @@ module Nri.Ui.SortableTable.V4 exposing
 @docs Column, Sorter, State
 @docs init, initDescending
 @docs custom, string
-@docs Attribute, updateMsg, state, stickyHeader, stickyHeaderCustom, StickyConfig, view, viewLoading
+@docs Attribute, updateMsg, state, stickyHeader, disableAlternatingRowColors, stickyHeaderCustom, StickyConfig, view, viewLoading
 @docs invariantSort, simpleSort, combineSorters
 
 -}
@@ -67,6 +67,7 @@ type alias Config id msg =
     { updateMsg : Maybe (State id -> msg)
     , state : Maybe (State id)
     , stickyHeader : Maybe StickyConfig
+    , alternatingRowColors : Bool
     }
 
 
@@ -75,6 +76,7 @@ defaultConfig =
     { updateMsg = Nothing
     , state = Nothing
     , stickyHeader = Nothing
+    , alternatingRowColors = True
     }
 
 
@@ -166,6 +168,13 @@ background color on the header as well.
 stickyHeader : Attribute id msg
 stickyHeader =
     Attribute (\config -> { config | stickyHeader = Just defaultStickyConfig })
+
+
+{-| Disable alternatingRowColors
+-}
+disableAlternatingRowColors : Attribute id msg
+disableAlternatingRowColors =
+    Attribute (\config -> { config | alternatingRowColors = False })
 
 
 {-| Does the same thing as `stickyHeader`, but with adaptations for your
@@ -311,12 +320,12 @@ view attributes columns entries =
                 sorter =
                     findSorter columns state_.column
             in
-            Table.view { additionalStyles = stickyStyles, alternatingRowColors = True }
+            Table.view { additionalStyles = stickyStyles, alternatingRowColors = config.alternatingRowColors }
                 tableColumns
                 (List.sortWith (sorter state_.sortDirection) entries)
 
         Nothing ->
-            Table.view { additionalStyles = stickyStyles, alternatingRowColors = True } tableColumns entries
+            Table.view { additionalStyles = stickyStyles, alternatingRowColors = config.alternatingRowColors } tableColumns entries
 
 
 {-| -}
@@ -333,7 +342,7 @@ viewLoading attributes columns =
         tableColumns =
             List.map (buildTableColumn config.updateMsg config.state) columns
     in
-    Table.viewLoading { additionalStyles = stickyStyles, alternatingRowColors = True } tableColumns
+    Table.viewLoading { additionalStyles = stickyStyles, alternatingRowColors = config.alternatingRowColors } tableColumns
 
 
 findSorter : List (Column id entry msg) -> id -> Sorter entry
