@@ -86,7 +86,7 @@ example =
                 [ Heading.plaintext "Premium Examples"
                 , Heading.css [ Css.marginTop (Css.px 30) ]
                 ]
-            , Table.view []
+            , Table.view { additionalStyles = [], alternatingRowColors = True }
                 [ Table.string
                     { header = "Premium Display"
                     , value = \( _, premiumDisplay ) -> Debug.toString premiumDisplay

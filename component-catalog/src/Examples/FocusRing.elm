@@ -141,7 +141,7 @@ exampleWithBorderAndBG styles =
 
 viewTable : State -> Html Msg
 viewTable model =
-    Table.view []
+    Table.view { additionalStyles = [], alternatingRowColors = True }
         [ Table.rowHeader
             { header = Html.text "Name"
             , view = \{ name } -> code [] [ text name ]

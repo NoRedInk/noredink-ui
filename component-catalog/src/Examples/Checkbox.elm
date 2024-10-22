@@ -87,7 +87,7 @@ example =
                 [ Heading.plaintext "State Examples"
                 , Heading.css [ Css.marginTop (Css.px 30) ]
                 ]
-            , Table.view []
+            , Table.view { additionalStyles = [], alternatingRowColors = True }
                 [ Table.string
                     { header = "State"
                     , value = .state
@@ -120,7 +120,7 @@ example =
                 [ Heading.plaintext "Guidance Examples"
                 , Heading.css [ Css.marginTop (Css.px 30) ]
                 ]
-            , Table.view []
+            , Table.view { additionalStyles = [], alternatingRowColors = True }
                 [ Table.custom
                     { header = text "Attribute"
                     , view = .name >> text

@@ -300,7 +300,7 @@ view ellieLinkConfig state =
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
     , Table.view
-        []
+        { additionalStyles = [], alternatingRowColors = True }
         [ Table.custom
             { header = text "Description"
             , view = .description >> text

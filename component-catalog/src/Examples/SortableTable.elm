@@ -75,7 +75,7 @@ example =
                     |> Svg.withHeight (Css.px 12)
                     |> Svg.toHtml
         in
-        [ Table.view []
+        [ Table.view { additionalStyles = [], alternatingRowColors = True }
             [ Table.custom
                 { header = header "X"
                 , view = .x >> Html.text

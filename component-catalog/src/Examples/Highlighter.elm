@@ -232,7 +232,7 @@ example =
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
             , Text.mediumBody [ Text.plaintext "These are examples of some different ways the highlighter can appear to users." ]
-            , Table.view []
+            , Table.view { additionalStyles = [], alternatingRowColors = True }
                 [ Table.rowHeader
                     { header = text "Highlighter."
                     , view = .viewName >> text

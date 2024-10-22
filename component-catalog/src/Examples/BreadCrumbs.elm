@@ -200,7 +200,7 @@ example =
                 [ Heading.plaintext "Other Helpers"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
-            , Table.view []
+            , Table.view { additionalStyles = [], alternatingRowColors = True }
                 [ Table.string
                     { header = "Name"
                     , value = .name
