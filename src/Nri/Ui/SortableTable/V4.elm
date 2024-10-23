@@ -1,7 +1,7 @@
 module Nri.Ui.SortableTable.V4 exposing
     ( Column, Sorter, State
     , init, initDescending
-    , custom, string
+    , custom, string, placeholderColumn
     , Attribute, updateMsg, state, stickyHeader, disableAlternatingRowColors, stickyHeaderCustom, StickyConfig, view, viewLoading
     , invariantSort, simpleSort, combineSorters
     )
@@ -14,7 +14,7 @@ module Nri.Ui.SortableTable.V4 exposing
 
 @docs Column, Sorter, State
 @docs init, initDescending
-@docs custom, string
+@docs custom, string, placeholderColumn
 @docs Attribute, updateMsg, state, stickyHeader, disableAlternatingRowColors, stickyHeaderCustom, StickyConfig, view, viewLoading
 @docs invariantSort, simpleSort, combineSorters
 
@@ -52,6 +52,7 @@ type Column id entry msg
         , sorter : Maybe (Sorter entry)
         , width : Int
         , cellStyles : entry -> List Style
+        , hidden : Bool
         }
 
 
@@ -218,6 +219,7 @@ string { id, header, value, width, cellStyles } =
         , sorter = Just (simpleSort value)
         , width = width
         , cellStyles = cellStyles
+        , hidden = False
         }
 
 
@@ -239,6 +241,24 @@ custom config =
         , sorter = config.sorter
         , width = config.width
         , cellStyles = config.cellStyles
+        , hidden = False
+        }
+
+
+{-| Creates a placeholder column which will reserve the space for the column,
+this can be used when multiple tables have similar data and we want to keep
+the size consistent.
+-}
+placeholderColumn : { id : id, width : Int } -> Column id entry msg
+placeholderColumn config =
+    Column
+        { id = config.id
+        , header = Html.text ""
+        , view = always (Html.text "")
+        , sorter = Nothing
+        , width = config.width
+        , cellStyles = always []
+        , hidden = True
         }
 
 
