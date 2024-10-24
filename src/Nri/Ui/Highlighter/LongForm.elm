@@ -1433,7 +1433,7 @@ findOverlapsSupport model =
             let
                 hoveredMarkers =
                     model.highlightables
-                        |> List.Extra.find (\h -> Just h.index == model.mouseOverIndex)
+                        |> List.Extra.getAt (Maybe.withDefault -1 model.mouseOverIndex)
                         |> Maybe.map (.marked >> List.map .kind)
                         |> Maybe.withDefault []
             in
