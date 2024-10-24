@@ -3,6 +3,7 @@ module Content exposing (..)
 {-| -}
 
 import Css
+import Html as Unstyled
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Markdown
@@ -57,14 +58,21 @@ markdownContent content =
 -}
 markdownInline : String -> List (Html msg)
 markdownInline content =
+    markdownInlineUnstyled content
+        |> List.map fromUnstyled
+
+
+{-| Provide a string that will be rendered as inline markdown, with the default wrapping paragraph removed.
+-}
+markdownInlineUnstyled : String -> List (Unstyled.Html msg)
+markdownInlineUnstyled content =
     case Markdown.Block.parse Nothing content of
         [ Markdown.Block.Paragraph _ inlines ] ->
             -- The library always parses into a paragraph and never into `PlainInline`
-            List.map (Markdown.Inline.toHtml >> fromUnstyled) inlines
+            List.map Markdown.Inline.toHtml inlines
 
         _ ->
             Markdown.toHtml Nothing content
-                |> List.map fromUnstyled
 
 
 {-| Provide a list of custom HTML.
