@@ -110,15 +110,15 @@ rowHeader options =
 
 {-| Displays a table of data without a header row
 -}
-viewWithoutHeader : { additionalStyles : List Style, alternatingRowColors : Bool } -> List (Column data msg) -> List data -> Html msg
-viewWithoutHeader { additionalStyles, alternatingRowColors } columns =
+viewWithoutHeader : { additionalStyles : List Style, alternatingRowColors : Bool, hasHiddenColumns : Bool } -> List (Column data msg) -> List data -> Html msg
+viewWithoutHeader { additionalStyles, alternatingRowColors, hasHiddenColumns } columns =
     tableWithoutHeader additionalStyles columns (viewRow columns alternatingRowColors)
 
 
 {-| Displays a table of data based on the provided column definitions
 -}
-view : { additionalStyles : List Style, alternatingRowColors : Bool } -> List (Column data msg) -> List data -> Html msg
-view { additionalStyles, alternatingRowColors } columns =
+view : { additionalStyles : List Style, alternatingRowColors : Bool, hasHiddenColumns : Bool } -> List (Column data msg) -> List data -> Html msg
+view { additionalStyles, alternatingRowColors, hasHiddenColumns } columns =
     tableWithHeader additionalStyles columns (viewRow columns alternatingRowColors)
 
 
@@ -145,8 +145,8 @@ viewColumn data (Column _ renderer width cellStyles _ cellType) =
 out text with an interesting animation. This view lets the user know that
 data is on its way and what it will look like when it arrives.
 -}
-viewLoading : { additionalStyles : List Style, alternatingRowColors : Bool } -> List (Column data msg) -> Html msg
-viewLoading { additionalStyles, alternatingRowColors } columns =
+viewLoading : { additionalStyles : List Style, alternatingRowColors : Bool, hasHiddenColumns : Bool } -> List (Column data msg) -> Html msg
+viewLoading { additionalStyles, alternatingRowColors, hasHiddenColumns } columns =
     tableWithHeader (loadingTableStyles ++ additionalStyles) columns (viewLoadingRow columns alternatingRowColors) (List.range 0 8)
 
 

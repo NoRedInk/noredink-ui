@@ -333,6 +333,9 @@ view attributes columns entries =
 
         tableColumns =
             List.map (buildTableColumn config.updateMsg config.state) columns
+
+        hasHiddenColumns =
+            List.any (\(Column column) -> column.hidden) columns
     in
     case config.state of
         Just state_ ->
@@ -340,12 +343,12 @@ view attributes columns entries =
                 sorter =
                     findSorter columns state_.column
             in
-            Table.view { additionalStyles = stickyStyles, alternatingRowColors = config.alternatingRowColors }
+            Table.view { additionalStyles = stickyStyles, alternatingRowColors = config.alternatingRowColors, hasHiddenColumns = hasHiddenColumns }
                 tableColumns
                 (List.sortWith (sorter state_.sortDirection) entries)
 
         Nothing ->
-            Table.view { additionalStyles = stickyStyles, alternatingRowColors = config.alternatingRowColors } tableColumns entries
+            Table.view { additionalStyles = stickyStyles, alternatingRowColors = config.alternatingRowColors, hasHiddenColumns = hasHiddenColumns } tableColumns entries
 
 
 {-| -}
@@ -361,8 +364,11 @@ viewLoading attributes columns =
 
         tableColumns =
             List.map (buildTableColumn config.updateMsg config.state) columns
+
+        hasHiddenColumns =
+            List.any (\(Column column) -> column.hidden) columns
     in
-    Table.viewLoading { additionalStyles = stickyStyles, alternatingRowColors = config.alternatingRowColors } tableColumns
+    Table.viewLoading { additionalStyles = stickyStyles, alternatingRowColors = config.alternatingRowColors, hasHiddenColumns = hasHiddenColumns } tableColumns
 
 
 findSorter : List (Column id entry msg) -> id -> Sorter entry
