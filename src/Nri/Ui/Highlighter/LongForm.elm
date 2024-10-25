@@ -1,8 +1,7 @@
 module Nri.Ui.Highlighter.LongForm exposing
     ( Model, Msg(..), PointerMsg(..), TouchMsg(..), KeyboardMsg(..)
     , init, update
-    , view, static, staticWithTags
-    , staticMarkdown
+    , view
     , viewWithOverlappingHighlights
     , FoldState, initFoldState, viewFoldHighlighter, viewFoldStatic
     , Intent(..), hasChanged, HasChanged(..), Change(..)
@@ -30,8 +29,7 @@ module Nri.Ui.Highlighter.LongForm exposing
 
 @docs init, update
 
-@docs view, static, staticWithTags
-@docs staticMarkdown
+@docs view
 @docs viewWithOverlappingHighlights
 
 
@@ -1322,103 +1320,6 @@ viewWithOverlappingHighlights =
                 , viewSegment = viewHighlightable False overlaps model
                 , id = model.id
                 , highlightables = model.highlightables
-                }
-        )
-
-
-{-| -}
-static : { config | id : String, highlightables : List (Highlightable marker) } -> Unstyled.Html msg
-static =
-    UnstyledLazy.lazy
-        (\config ->
-            view_
-                { showTagsInline = False
-                , maybeTool = Nothing
-                , mouseOverIndex = Nothing
-                , mouseDownIndex = Nothing
-                , hintingIndices = Nothing
-                , overlaps = OverlapsNotSupported
-                , viewSegment =
-                    viewHighlightableSegment
-                        { interactiveHighlighterId = Nothing
-                        , eventListeners = []
-                        , maybeTool = Nothing
-                        , mouseOverIndex = Nothing
-                        , mouseDownIndex = Nothing
-                        , renderMarkdown = False
-                        , sorter = Nothing
-                        , overlaps = OverlapsNotSupported
-                        }
-                , id = config.id
-                , highlightables = config.highlightables
-                }
-        )
-
-
-{-| Same as `static`, but will render strings like "_blah_" inside of emphasis tags.
-
-WARNING: the version of markdown used here is extremely limited, as the highlighter content needs to be entirely in-line content. Lists & other block-level elements will _not_ render as they usually would!
-
-WARNING: markdown is rendered highlightable by highlightable, so be sure to provide highlightables like ["_New York Times_"]["*New York Times*"], NOT like ["_New ", "York ", "Times_"]["*New ", "York ", "Times*"]
-
--}
-staticMarkdown : { config | id : String, highlightables : List (Highlightable marker) } -> Unstyled.Html msg
-staticMarkdown =
-    UnstyledLazy.lazy
-        (\config ->
-            view_
-                { showTagsInline = False
-                , maybeTool = Nothing
-                , mouseOverIndex = Nothing
-                , mouseDownIndex = Nothing
-                , hintingIndices = Nothing
-                , overlaps = OverlapsNotSupported
-                , viewSegment =
-                    viewHighlightableSegment
-                        { interactiveHighlighterId = Nothing
-                        , eventListeners = []
-                        , maybeTool = Nothing
-                        , mouseOverIndex = Nothing
-                        , mouseDownIndex = Nothing
-                        , renderMarkdown = True
-                        , sorter = Nothing
-                        , overlaps = OverlapsNotSupported
-                        }
-                , id = config.id
-                , highlightables = config.highlightables
-                }
-        )
-
-
-{-| -}
-staticWithTags : { config | id : String, highlightables : List (Highlightable marker) } -> Unstyled.Html msg
-staticWithTags =
-    UnstyledLazy.lazy
-        (\config ->
-            let
-                viewStaticHighlightableWithTags : Highlightable marker -> List Attribute -> Unstyled.Html msg
-                viewStaticHighlightableWithTags =
-                    viewHighlightableSegment
-                        { interactiveHighlighterId = Nothing
-                        , eventListeners = []
-                        , maybeTool = Nothing
-                        , mouseOverIndex = Nothing
-                        , mouseDownIndex = Nothing
-                        , renderMarkdown = False
-                        , sorter = Nothing
-                        , overlaps = OverlapsNotSupported
-                        }
-            in
-            view_
-                { showTagsInline = True
-                , maybeTool = Nothing
-                , mouseOverIndex = Nothing
-                , mouseDownIndex = Nothing
-                , hintingIndices = Nothing
-                , overlaps = OverlapsNotSupported
-                , viewSegment = viewStaticHighlightableWithTags
-                , id = config.id
-                , highlightables = config.highlightables
                 }
         )
 
