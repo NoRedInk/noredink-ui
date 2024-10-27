@@ -835,7 +835,7 @@ updateHinted : Model marker -> Model marker -> Highlightable marker -> Highlight
 updateHinted oldModel newModel highlightable =
     case ( oldModel.hintingIndices /= newModel.hintingIndices, newModel.hintingIndices ) of
         ( True, Just ( start, end ) ) ->
-            if start <= highlightable.index && highlightable.index <= end then
+            if between start end highlightable then
                 { highlightable
                     | isHinted = True
                     , isFirstOrLastHinted =
