@@ -420,21 +420,36 @@ joinAdjacentInteractiveHighlights sorter highlightables =
                 case segment.type_ of
                     Interactive ->
                         let
-                            segmentMarkerSet =
-                                Set.fromList markerSorter segment.marked
-
+                            staticMarkers : List (Tool.MarkerModel m)
                             staticMarkers =
-                                Set.keepIf (Set.memberOf segmentMarkerSet) lastInteractiveHighlightMarkers
+                                List.filter (\m -> List.member m segment.marked)
+                                    lastInteractiveHighlightMarkers
 
                             static_ =
-                                List.map (\s -> { s | marked = Set.toList staticMarkers }) staticAcc
+                                List.map
+                                    (\s ->
+                                        if
+                                            -- careful here.. we want something like:
+                                            -- [] [] True
+                                            -- [1] [] False
+                                            -- [] [1] False <- just List.all will return True
+                                            -- [1] [1] True
+                                            (List.length staticMarkers == List.length s.marked)
+                                                && List.all (\m -> List.member m s.marked) staticMarkers
+                                        then
+                                            s
+
+                                        else
+                                            { s | marked = staticMarkers }
+                                    )
+                                    staticAcc
                         in
-                        ( segmentMarkerSet, [], segment :: static_ ++ acc )
+                        ( segment.marked, [], segment :: static_ ++ acc )
 
                     Static ->
                         ( lastInteractiveHighlightMarkers, segment :: staticAcc, acc )
             )
-            ( Set.empty markerSorter, [], [] )
+            ( [], [], [] )
         |> (\( _, static_, acc ) -> static_ ++ acc)
 
 
