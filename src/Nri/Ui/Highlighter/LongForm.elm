@@ -780,7 +780,7 @@ performAction action ( model, highlightableUpdates, cmds ) =
                 , hasChanged = changed
                 , hintingIndices = Nothing
               }
-            , highlightableUpdates
+            , UpdateHinted :: highlightableUpdates
             , cmds
             )
 
