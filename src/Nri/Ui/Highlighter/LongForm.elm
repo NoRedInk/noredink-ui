@@ -339,7 +339,62 @@ update msg model =
 
 updateHighlightables : Model marker -> Model marker -> List HighlightableUpdate -> Model marker
 updateHighlightables oldModel newModel updates =
-    newModel
+    cleanupHighlightables updates oldModel newModel
+        |> updateHighlightableFlags updates oldModel
+
+
+updateHighlightableFlags : List HighlightableUpdate -> Model marker -> Model marker -> Model marker
+updateHighlightableFlags updates oldModel newModel =
+    let
+        updateIf updateKind f highlightable =
+            if List.member updateKind updates then
+                f oldModel newModel highlightable
+
+            else
+                highlightable
+    in
+    if List.isEmpty updates then
+        newModel
+
+    else
+        { newModel
+            | highlightables =
+                List.map (updateIf UpdateFocused updateFocused) newModel.highlightables
+        }
+
+
+cleanupHighlightables : List HighlightableUpdate -> Model marker -> Model marker -> Model marker
+cleanupHighlightables updates oldModel newModel =
+    let
+        cleanIf updateKind f highlightable =
+            if List.member updateKind updates then
+                f oldModel newModel highlightable
+
+            else
+                highlightable
+    in
+    if List.isEmpty updates then
+        newModel
+
+    else
+        { newModel
+            | highlightables =
+                List.map (cleanIf UpdateFocused cleanFocused) newModel.highlightables
+        }
+
+
+cleanFocused : Model marker -> Model marker -> Highlightable marker -> Highlightable marker
+cleanFocused oldModel newModel highlightable =
+    case ( oldModel.focusIndex /= newModel.focusIndex, oldModel.focusIndex ) of
+        ( True, Just oldFocused ) ->
+            if oldFocused == highlightable.index then
+                { highlightable | isFocused = False }
+
+            else
+                highlightable
+
+        _ ->
+            highlightable
 
 
 maybeJoinAdjacentInteractiveHighlights : Model m -> Model m
@@ -674,11 +729,8 @@ performAction action ( model, highlightableUpdates, cmds ) =
             ( model, highlightableUpdates, cmds )
 
         Focus index ->
-            ( { model
-                | focusIndex = Just index
-                , highlightables = updateFocused model.focusIndex index model.highlightables
-              }
-            , highlightableUpdates
+            ( { model | focusIndex = Just index }
+            , UpdateFocused :: highlightableUpdates
             , Task.attempt Focused (Dom.focus (highlightableId model.id index)) :: cmds
             )
 
@@ -809,16 +861,13 @@ updateHinted maybeOldHinted maybeNewHinted highlightables =
                 cleanHighlightables
 
 
-updateFocused : Maybe Int -> Int -> List (Highlightable marker) -> List (Highlightable marker)
-updateFocused maybeOldFocused newFocused highlightables =
-    case maybeOldFocused of
-        Nothing ->
-            highlightables
-                |> List.Extra.updateAt newFocused (\highlightable -> { highlightable | isFocused = True })
+updateFocused : Model marker -> Model marker -> Highlightable marker -> Highlightable marker
+updateFocused oldModel newModel highlightable =
+    if oldModel.focusIndex /= newModel.focusIndex && newModel.focusIndex == Just highlightable.index then
+        { highlightable | isFocused = True }
 
-        Just oldFocused ->
-            List.Extra.updateAt oldFocused (\highlightable -> { highlightable | isFocused = False }) highlightables
-                |> List.Extra.updateAt newFocused (\highlightable -> { highlightable | isFocused = True })
+    else
+        highlightable
 
 
 markerAtIndex : Int -> List (Highlightable marker) -> Maybe marker
