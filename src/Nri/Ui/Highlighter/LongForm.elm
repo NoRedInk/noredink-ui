@@ -1300,7 +1300,6 @@ findOverlapsSupport model =
 type FoldState marker
     = FoldState
         { model : Model marker
-        , overlapsSupport : OverlapsSupport marker
         , state : List ( Highlightable marker, Maybe (Unstyled.Html Never), List Attribute )
         , styles : Maybe (Unstyled.Html Never)
         }
@@ -1311,15 +1310,11 @@ type FoldState marker
 initFoldState : Model marker -> FoldState marker
 initFoldState model =
     let
-        overlapsSupport =
-            findOverlapsSupport model
-
         config =
             { hintingIndices = model.hintingIndices
             , mouseOverIndex = model.mouseOverIndex
             , mouseDownIndex = model.mouseDownIndex
             , maybeTool = Just model.marker
-            , overlaps = overlapsSupport
             , markerRanges = model.markerRanges
             , highlightables = model.highlightables
             }
@@ -1347,7 +1342,6 @@ initFoldState model =
     in
     FoldState
         { model = model
-        , overlapsSupport = overlapsSupport
         , state = precomputedSegments
         , styles =
             Just
