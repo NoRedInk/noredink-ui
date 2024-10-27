@@ -307,6 +307,7 @@ type Action marker
 
 type HighlightableUpdate
     = UpdateFocused
+    | UpdateHinted
 
 
 {-| Update for highlighter returning additional info about whether there was a change
@@ -339,8 +340,12 @@ update msg model =
 
 updateHighlightables : Model marker -> Model marker -> List HighlightableUpdate -> Model marker
 updateHighlightables oldModel newModel updates =
-    cleanupHighlightables updates oldModel newModel
-        |> updateHighlightableFlags updates oldModel
+    let
+        uniqueUpdates =
+            List.Extra.unique updates
+    in
+    cleanupHighlightables uniqueUpdates oldModel newModel
+        |> updateHighlightableFlags uniqueUpdates oldModel
 
 
 updateHighlightableFlags : List HighlightableUpdate -> Model marker -> Model marker -> Model marker
@@ -359,7 +364,11 @@ updateHighlightableFlags updates oldModel newModel =
     else
         { newModel
             | highlightables =
-                List.map (updateIf UpdateFocused updateFocused) newModel.highlightables
+                List.map
+                    (updateIf UpdateFocused updateFocused
+                        >> updateIf UpdateHinted updateHinted
+                    )
+                    newModel.highlightables
         }
 
 
@@ -379,7 +388,11 @@ cleanupHighlightables updates oldModel newModel =
     else
         { newModel
             | highlightables =
-                List.map (cleanIf UpdateFocused cleanFocused) newModel.highlightables
+                List.map
+                    (cleanIf UpdateFocused cleanFocused
+                        >> cleanIf UpdateHinted cleanHinted
+                    )
+                    newModel.highlightables
         }
 
 
@@ -721,11 +734,8 @@ performAction action ( model, highlightableUpdates, cmds ) =
             )
 
         Hint start end ->
-            ( { model
-                | hintingIndices = Just ( start, end )
-                , highlightables = updateHinted model.hintingIndices (Just ( start, end )) model.highlightables
-              }
-            , highlightableUpdates
+            ( { model | hintingIndices = Just ( start, end ) }
+            , UpdateHinted :: highlightableUpdates
             , cmds
             )
 
@@ -735,8 +745,6 @@ performAction action ( model, highlightableUpdates, cmds ) =
                     let
                         ( indexesToSave, highlightables ) =
                             saveHinted marker hinting model.highlightables
-                                -- clear hinting indices
-                                |> Tuple.mapSecond (updateHinted model.hintingIndices Nothing)
                     in
                     ( { model
                         | highlightables = highlightables |> Debug.log "saved highlightables"
@@ -744,7 +752,7 @@ performAction action ( model, highlightableUpdates, cmds ) =
                         , hasChanged = Changed (HighlightCreated indexesToSave marker.kind)
                         , hintingIndices = Nothing
                       }
-                    , highlightableUpdates
+                    , UpdateHinted :: highlightableUpdates
                     , cmds
                     )
 
@@ -809,42 +817,36 @@ performAction action ( model, highlightableUpdates, cmds ) =
             ( { model | selectionStartIndex = Nothing, selectionEndIndex = Nothing }, highlightableUpdates, cmds )
 
 
-updateHinted : Maybe ( Int, Int ) -> Maybe ( Int, Int ) -> List (Highlightable marker) -> List (Highlightable marker)
-updateHinted maybeOldHinted maybeNewHinted highlightables =
+cleanHinted : Model marker -> Model marker -> Highlightable marker -> Highlightable marker
+cleanHinted oldModel newModel highlightable =
     let
-        cleanHighlightables =
-            case maybeOldHinted of
-                Nothing ->
-                    highlightables
-
-                Just ( oldStart, oldEnd ) ->
-                    List.indexedMap
-                        (\index highlightable ->
-                            if oldStart <= index && index <= oldEnd then
-                                { highlightable | isHinted = False, isFirstOrLastHinted = False }
-
-                            else
-                                highlightable
-                        )
-                        highlightables
+        maybeBetween =
+            Maybe.map (\( a, b ) -> between a b highlightable)
+                >> Maybe.withDefault False
     in
-    case maybeNewHinted of
-        Nothing ->
-            cleanHighlightables
+    if maybeBetween oldModel.hintingIndices && not (maybeBetween newModel.hintingIndices) then
+        { highlightable | isHinted = False, isFirstOrLastHinted = False }
 
-        Just ( start, end ) ->
-            List.indexedMap
-                (\index highlightable ->
-                    if start <= index && index <= end then
-                        { highlightable
-                            | isHinted = True
-                            , isFirstOrLastHinted = index == start || index == end
-                        }
+    else
+        highlightable
 
-                    else
-                        highlightable
-                )
-                cleanHighlightables
+
+updateHinted : Model marker -> Model marker -> Highlightable marker -> Highlightable marker
+updateHinted oldModel newModel highlightable =
+    case ( oldModel.hintingIndices /= newModel.hintingIndices, newModel.hintingIndices ) of
+        ( True, Just ( start, end ) ) ->
+            if start <= highlightable.index && highlightable.index <= end then
+                { highlightable
+                    | isHinted = True
+                    , isFirstOrLastHinted =
+                        highlightable.index == start || highlightable.index == end
+                }
+
+            else
+                highlightable
+
+        _ ->
+            highlightable
 
 
 cleanFocused : Model marker -> Model marker -> Highlightable marker -> Highlightable marker
