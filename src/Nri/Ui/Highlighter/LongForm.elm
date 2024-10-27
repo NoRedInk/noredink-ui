@@ -1347,7 +1347,6 @@ initFoldState model =
             , startStyles = marker.startGroupClass
             , styles =
                 markedHighlightableStyles
-                    config.maybeTool
                     highlightable
             , endStyles = marker.endGroupClass
             }
@@ -1623,7 +1622,6 @@ view_ config =
             , startStyles = marker.startGroupClass
             , styles =
                 markedHighlightableStyles
-                    config.maybeTool
                     highlightable
             , endStyles = marker.endGroupClass
             }
@@ -1818,7 +1816,6 @@ viewHighlightableSegment ({ interactiveHighlighterId, eventListeners, renderMark
         (eventListeners
             ++ List.map toHtmlAttribute highlightable.customAttributes
             ++ List.map toHtmlAttribute customAttributes
-            ++ unmarkedHighlightableStyles config highlightable
             ++ whitespaceClass highlightable.text
             ++ [ UnstyledAttrs.attribute "data-highlighter-item-index" <| String.fromInt highlightable.index
                , case interactiveHighlighterId of
@@ -1834,13 +1831,18 @@ viewHighlightableSegment ({ interactiveHighlighterId, eventListeners, renderMark
 
                     _ ->
                         AttributesExtra.unstyledNone
-               , case ( config.maybeTool, highlightable.isHinted ) of
-                    ( Just (Tool.Marker marker), True ) ->
+               , case ( config.maybeTool, highlightable.isHinted, highlightable.isHovered ) of
+                    ( Just (Tool.Marker marker), True, _ ) ->
                         UnstyledAttrs.class
                             (styleClassName (HintedMark (Tool.mapMarker (\_ -> ()) marker)))
 
-                    ( Just (Tool.Eraser eraser), True ) ->
+                    ( Just (Tool.Eraser eraser), True, _ ) ->
                         UnstyledAttrs.class (styleClassName (HintedEraser eraser))
+
+                    ( Just tool, False, True ) ->
+                        -- When hovered, but not marked
+                        UnstyledAttrs.class
+                            (styleClassName (HoveredNotHinted (Tool.map (\_ -> ()) tool)))
 
                     _ ->
                         AttributesExtra.unstyledNone
@@ -1942,44 +1944,6 @@ highlightableId highlighterId index =
     "highlighter-" ++ highlighterId ++ "-highlightable-" ++ String.fromInt index
 
 
-unmarkedHighlightableStyles :
-    { config
-        | maybeTool : Maybe (Tool.Tool marker)
-        , mouseOverIndex : Maybe Int
-    }
-    -> Highlightable marker
-    -> List (Unstyled.Attribute msg)
-unmarkedHighlightableStyles config highlightable =
-    if highlightable.marked /= [] then
-        []
-
-    else
-        case config.maybeTool of
-            Nothing ->
-                []
-
-            Just tool ->
-                let
-                    isHovered =
-                        directlyHoveringInteractiveSegment config highlightable
-                in
-                case tool of
-                    Tool.Marker _ ->
-                        if not highlightable.isHinted && isHovered then
-                            -- When hovered, but not marked
-                            [ UnstyledAttrs.class (styleClassName (HoveredNotHinted (Tool.map (\_ -> ()) tool))) ]
-
-                        else
-                            []
-
-                    Tool.Eraser eraser_ ->
-                        if not highlightable.isHinted && isHovered then
-                            [ UnstyledAttrs.class (styleClassName (HoveredNotHinted (Tool.Eraser eraser_))) ]
-
-                        else
-                            []
-
-
 {-| Announce for screenreaders that we are at the last hinting index
 -}
 hintStartEndAnnouncer : Tool.MarkerModel marker -> Css.Style
@@ -2010,73 +1974,17 @@ stripMarkdownSyntax markdown =
 
 
 markedHighlightableStyles :
-    Maybe (Tool.Tool marker)
-    -> Highlightable marker
+    Highlightable marker
     -> List Css.Style
-markedHighlightableStyles maybeTool ({ marked } as highlightable) =
-    case maybeTool of
+markedHighlightableStyles { marked } =
+    [ Css.property "user-select" "none"
+    , case List.head marked of
+        Just markedWith ->
+            Css.batch markedWith.highlightClass
+
         Nothing ->
-            [ case List.head marked of
-                Just markedWith ->
-                    Css.batch markedWith.highlightClass
-
-                Nothing ->
-                    Css.backgroundColor Css.transparent
-            ]
-
-        Just tool ->
-            case tool of
-                Tool.Marker marker ->
-                    [ Css.property "user-select" "none"
-                    , case List.head marked of
-                        Just markedWith ->
-                            if highlightable.isHinted then
-                                Css.batch marker.hintClass
-
-                            else if highlightable.isHovered then
-                                -- Override marking with selected tool
-                                Css.batch marker.hoverHighlightClass
-
-                            else
-                                -- otherwise, show the standard mark styles
-                                Css.batch markedWith.highlightClass
-
-                        Nothing ->
-                            if highlightable.isHinted then
-                                Css.batch marker.hintClass
-
-                            else if highlightable.isHovered then
-                                -- When Hovered but not marked
-                                [ marker.hoverClass
-                                , marker.startGroupClass
-                                , marker.endGroupClass
-                                ]
-                                    |> List.concat
-                                    |> Css.batch
-
-                            else
-                                Css.backgroundColor Css.transparent
-                    ]
-
-                Tool.Eraser eraser_ ->
-                    case List.head marked of
-                        Just markedWith ->
-                            [ Css.property "user-select" "none"
-                            , Css.batch markedWith.highlightClass
-                            , Css.batch
-                                (if highlightable.isHinted then
-                                    eraser_.hintClass
-
-                                 else if highlightable.isHovered then
-                                    eraser_.hoverClass
-
-                                 else
-                                    []
-                                )
-                            ]
-
-                        Nothing ->
-                            [ Css.property "user-select" "none", Css.backgroundColor Css.transparent ]
+            Css.backgroundColor Css.transparent
+    ]
 
 
 {-| Helper for `on` to preventDefault.
