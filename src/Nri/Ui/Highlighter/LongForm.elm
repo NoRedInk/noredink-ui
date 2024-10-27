@@ -73,7 +73,6 @@ import Json.Decode
 import List.Extra
 import Markdown.Block
 import Markdown.Inline
-import Maybe.Extra
 import Nri.Ui.Highlightable.LongForm as Highlightable exposing (Highlightable)
 import Nri.Ui.Highlighter.Attribute exposing (Attribute(..), toHtmlAttribute)
 import Nri.Ui.HighlighterTool.V1 as Tool
@@ -696,9 +695,13 @@ performAction action ( model, cmds ) =
             let
                 ( highlightables, changed ) =
                     toggleHighlighted index marker model
+
+                _ =
+                    Debug.log "toggled highlightables" (List.map (\h -> ( h.index, h.marked |> List.map .kind )) highlightables)
             in
             ( { model
-                | highlightables = highlightables |> Debug.log "toggled highlightables"
+                | highlightables =
+                    highlightables
                 , hasChanged = changed
                 , hintingIndices = Nothing
               }
@@ -853,7 +856,7 @@ firstLastIndexInteractive list =
 If we're allowing overlapping highlights:
 
   - on a click over an existing highlight
-      - If we're using the same marker, remove the highlight
+      - If we're using the same marker as the shortest marker in range, remove the highlight
       - If we're using a different marker, add a new overlapping highlight
   - on a click over a non-highlighted segment
       - Add a new highlight
@@ -869,28 +872,34 @@ If we're not allowing overlapping highlights:
 toggleHighlighted : Int -> Tool.MarkerModel marker -> Model marker -> ( List (Highlightable marker), HasChanged marker )
 toggleHighlighted index marker model =
     let
-        ( shortestMarker, hintedRange ) =
-            selectShortestMarkerRange index model
-
-        inClickedRange highlightable =
-            (highlightable.index >= Tuple.first hintedRange)
-                && (highlightable.index <= Tuple.second hintedRange)
+        maybeShortestMarker =
+            selectShortestMarkerRange index model.highlightables
 
         toggle acc highlightable =
-            if inClickedRange highlightable && Just marker.kind == shortestMarker then
-                ( Changed (HighlightRemoved hintedRange marker.kind)
-                , { highlightable | isHinted = False, isFirstOrLastHinted = False }
-                    |> Highlightable.set Nothing
-                )
+            let
+                maybeCreateHighlight _ =
+                    if highlightable.index == index && highlightable.type_ == Highlightable.Interactive then
+                        ( Changed (HighlightCreated ( index, index ) marker.kind)
+                        , { highlightable | isHinted = False, isFirstOrLastHinted = False }
+                            |> Highlightable.set (Just marker)
+                        )
 
-            else if highlightable.index == index && highlightable.type_ == Highlightable.Interactive then
-                ( Changed (HighlightCreated ( index, index ) marker.kind)
-                , { highlightable | isHinted = False, isFirstOrLastHinted = False }
-                    |> Highlightable.set (Just marker)
-                )
+                    else
+                        ( acc, highlightable )
+            in
+            case maybeShortestMarker of
+                Just shortestMarker ->
+                    if marker.kind == shortestMarker.marker then
+                        ( Changed (HighlightRemoved ( shortestMarker.start, shortestMarker.end ) marker.kind)
+                        , { highlightable | isHinted = False, isFirstOrLastHinted = False }
+                            |> Highlightable.set Nothing
+                        )
 
-            else
-                ( acc, highlightable )
+                    else
+                        maybeCreateHighlight ()
+
+                Nothing ->
+                    maybeCreateHighlight ()
 
         ( changed, toggled ) =
             List.Extra.mapAccuml toggle NotChanged model.highlightables
@@ -942,122 +951,97 @@ trimHighlightableGroups highlightables =
         |> List.reverse
 
 
+type alias MarkerRange marker =
+    { marker : marker, start : Int, end : Int, size : Int }
+
+
 {-| Select the shortest possibly-overlapping marker covering the index provided, return its range.
 -}
-selectShortestMarkerRange : Int -> Model marker -> ( Maybe marker, ( Int, Int ) )
-selectShortestMarkerRange index { sorter, highlightables } =
-    let
-        lists =
-            List.Extra.splitWhen (\hl -> hl.index == index) highlightables
-                |> Maybe.map (\( before, rest ) -> ( before, List.Extra.splitAt 1 rest ))
-                |> Maybe.andThen
-                    (\( before, ( at, after ) ) ->
-                        List.head at |> Maybe.map (\at_ -> ( before, at_, after ))
-                    )
-    in
-    case lists of
-        Just ( before, at, after ) ->
-            let
-                markers =
-                    at.marked |> List.map .kind
-
-                leftLengths =
-                    findLimits (List.reverse before)
-                        { curLength = 0
-                        , curIndex = index
-                        , needles = markers
-                        , lengths = Dict.empty sorter
-                        }
-
-                rightLengths =
-                    findLimits after
-                        { curLength = 0
-                        , curIndex = index
-                        , needles = markers
-                        , lengths = Dict.empty sorter
-                        }
-            in
-            .marker <|
-                Dict.merge
-                    sorter
-                    (\_ _ -> identity)
-                    (\marker ( lenLeft, idxLeft ) ( lenRight, idxRight ) acc ->
-                        let
-                            length =
-                                lenLeft + lenRight + 1
-                        in
-                        if length < acc.minLength then
-                            { minLength = length
-                            , marker =
-                                ( Just marker
-                                , ( idxLeft, idxRight )
-                                )
-                            }
-
-                        else
-                            acc
-                    )
-                    (\_ _ -> identity)
-                    leftLengths
-                    rightLengths
-                    { minLength = 999999, marker = ( Nothing, ( index, index ) ) }
-
-        Nothing ->
-            ( Nothing, ( index, index ) )
+selectShortestMarkerRange : Int -> List (Highlightable marker) -> Maybe (MarkerRange marker)
+selectShortestMarkerRange index highlightables =
+    findMarkerRanges highlightables
+        |> List.filter (\{ start, end } -> start <= index && index <= end)
+        |> List.Extra.minimumBy (\{ size } -> size)
 
 
-saveLengths : Int -> Int -> Dict.Dict marker ( Int, Int ) -> List marker -> Dict.Dict marker ( Int, Int )
-saveLengths curLength curIndex lengths finishedMarkers =
+{-| Find all the highlighted ranges in the format: {marker, start, end, size}
+-}
+findMarkerRanges : List (Highlightable marker) -> List (MarkerRange marker)
+findMarkerRanges highlightables =
     List.foldl
-        (\v lengths_ ->
-            Dict.update v
-                (\curVal -> Maybe.Extra.or curVal (Just ( curLength, curIndex )))
-                lengths_
-        )
-        lengths
-        finishedMarkers
-
-
-{-| Returns (The intersection of a and b, the elements from a not found in b)
--}
-intersectSplit : List marker -> List marker -> ( List marker, List marker )
-intersectSplit a b =
-    ( List.filter (\x -> List.member x b) a
-    , List.filter (\x -> not (List.member x b)) a
-    )
-
-
-{-| Finds the length and index of where requested markers end
--}
-findLimits :
-    List (Highlightable marker)
-    -> { curLength : Int, curIndex : Int, needles : List marker, lengths : Dict.Dict marker ( Int, Int ) }
-    -> Dict.Dict marker ( Int, Int )
-findLimits list { curLength, curIndex, needles, lengths } =
-    case list of
-        [] ->
-            saveLengths curLength curIndex lengths needles
-
-        next :: rest ->
-            let
-                ( newNeedles, ended ) =
-                    intersectSplit needles (List.map .kind next.marked)
-
-                newLengths =
-                    saveLengths curLength curIndex lengths ended
-            in
-            case newNeedles of
+        (\highlightable acc ->
+            case List.map .kind highlightable.marked of
                 [] ->
-                    -- stop early if we found limits of all markers
-                    newLengths
+                    { open = [], closed = acc.open ++ acc.closed }
 
-                _ ->
-                    findLimits rest
-                        { curLength = curLength + String.length next.text
-                        , curIndex = next.index
-                        , needles = newNeedles
-                        , lengths = saveLengths curLength curIndex lengths ended
+                markers ->
+                    -- update all open, insert into open if new, close open if necessary
+                    let
+                        updateResult =
+                            List.foldl
+                                (updateMarkerRangeStep highlightable)
+                                { open = [], toBeClosed = acc.open }
+                                markers
+                    in
+                    { open = updateResult.open, closed = updateResult.toBeClosed ++ acc.closed }
+        )
+        { open = [], closed = [] }
+        highlightables
+        |> (\{ open, closed } -> open ++ closed)
+
+
+{-| Fold step for finding marker ranges.
+
+    At every fold step, we take all currently open markers and pre-tag them as "to be closed".
+
+    This function then tries to find if they really should be closed or not.
+
+    If they shouldn't, we put them back into the open list.
+
+    If we don't find our marker in the toBeClosed list, we add a new record to the open list.
+
+    If a "to be closed" record is not touched by this function, that means it really should have been closed.
+
+-}
+updateMarkerRangeStep :
+    Highlightable marker
+    -> marker
+    -> { open : List (MarkerRange marker), toBeClosed : List (MarkerRange marker) }
+    -> { open : List (MarkerRange marker), toBeClosed : List (MarkerRange marker) }
+updateMarkerRangeStep highlightable marker acc =
+    -- try to remove from toBeClosed if still open
+    -- add new record to new if not in toBeClosed
+    let
+        ( keepOpen, toBeClosed ) =
+            -- if current marker is in toBeClosed, it's not meant to be closed after all
+            List.partition (\x -> x.marker == marker) acc.toBeClosed
+    in
+    if List.isEmpty keepOpen then
+        -- if current marker was not in toBeClosed, it's a new marker
+        { open =
+            { marker = marker
+            , start = highlightable.index
+            , end = highlightable.index
+            , size = String.length highlightable.text
+            }
+                :: acc.open
+        , toBeClosed = toBeClosed
+        }
+
+    else
+        { open =
+            acc.open
+                ++ List.map
+                    (\openMarker ->
+                        { marker = openMarker.marker
+                        , start = openMarker.start
+                        , end = highlightable.index
+                        , size = openMarker.size + String.length highlightable.text
                         }
+                    )
+                    keepOpen
+        , toBeClosed = toBeClosed
+        }
 
 
 removeHinted : ( Int, Int ) -> List (Highlightable marker) -> List (Highlightable marker)
@@ -1331,29 +1315,14 @@ findOverlapsSupport model =
             OverlapsNotSupported
 
         OverlapsSupported _ ->
-            let
-                hoveredMarkers =
-                    model.highlightables
-                        |> List.Extra.getAt (Maybe.withDefault -1 model.mouseOverIndex)
-                        |> Maybe.map (.marked >> List.map .kind)
-                        |> Maybe.withDefault []
-            in
             OverlapsSupported
                 { hoveredMarkerWithShortestHighlight =
-                    case hoveredMarkers of
-                        [] ->
-                            Nothing
-
-                        marker :: [] ->
-                            Just marker
-
-                        first :: second :: rest ->
-                            Just
-                                (markerWithShortestHighlight
-                                    model.sorter
-                                    model.highlightables
-                                    ( first, second, rest )
-                                )
+                    model.mouseOverIndex
+                        |> Maybe.andThen
+                            (\index ->
+                                selectShortestMarkerRange index model.highlightables
+                                    |> Maybe.map .marker
+                            )
                 }
 
 
