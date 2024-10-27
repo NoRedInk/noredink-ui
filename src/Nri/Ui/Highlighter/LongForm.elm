@@ -7,7 +7,7 @@ module Nri.Ui.Highlighter.LongForm exposing
     , Intent(..), hasChanged, HasChanged(..), Change(..)
     , removeHighlights
     , clickedHighlightable, hoveredHighlightable
-    , selectShortest, selectShortestMarkerRange
+    , selectShortestMarkerRange
     )
 
 {-| Changes from V5:
@@ -55,7 +55,7 @@ or `viewFoldStatic` will render a single highlightable along with an update to t
 ## Getters
 
 @docs clickedHighlightable, hoveredHighlightable
-@docs selectShortest, selectShortestMarkerRange
+@docs selectShortestMarkerRange
 
 -}
 
@@ -1167,100 +1167,6 @@ inHoveredGroupForOverlaps config hoveredMarkerWithShortestHighlight highlightabl
 
                 Just marker ->
                     List.member marker (List.map .kind highlightable.marked)
-
-
-{-| Highlights can overlap. Sometimes, we want to apply a certain behavior (e.g., hover color change) on just the shortest
-highlight. Use this function to find out which marker applies to the least amount of text.
-
-Note that this is shortest by text length, not shortest by number of highlightables.
-
-You are not likely to need this helper unless you're working with inline commenting.
-
--}
-selectShortest :
-    ({ model | highlightables : List (Highlightable marker), sorter : Sorter marker } -> Maybe (Highlightable marker))
-    -> { model | highlightables : List (Highlightable marker), sorter : Sorter marker }
-    -> Maybe marker
-selectShortest getHighlightable state =
-    let
-        candidateIds =
-            state
-                |> getHighlightable
-                |> Maybe.map (\highlightable -> List.map .kind highlightable.marked)
-                |> Maybe.withDefault []
-    in
-    case candidateIds of
-        [] ->
-            Nothing
-
-        marker :: [] ->
-            Just marker
-
-        first :: second :: rest ->
-            Just
-                (markerWithShortestHighlight
-                    state.sorter
-                    state.highlightables
-                    ( first, second, rest )
-                )
-
-
-markerWithShortestHighlight :
-    Sorter marker
-    -> List (Highlightable marker)
-    -> ( marker, marker, List marker )
-    -> marker
-markerWithShortestHighlight sorter highlightables ( first, second, rest ) =
-    let
-        isMarkerRelevant : marker -> Bool
-        isMarkerRelevant someMarker =
-            someMarker == first || someMarker == second || List.member someMarker rest
-
-        updateMarkerLengthsForHighlightable : Highlightable marker -> Dict.Dict marker Int -> Dict.Dict marker Int
-        updateMarkerLengthsForHighlightable highlightable soFar =
-            let
-                textLength =
-                    String.length highlightable.text
-            in
-            List.foldl
-                (\{ kind } -> updateLengthForMarker kind textLength)
-                soFar
-                highlightable.marked
-
-        updateLengthForMarker : marker -> Int -> Dict.Dict marker Int -> Dict.Dict marker Int
-        updateLengthForMarker someMarker textLength soFar =
-            if isMarkerRelevant someMarker then
-                Dict.update
-                    someMarker
-                    (\currentValue ->
-                        currentValue
-                            |> Maybe.map (\length -> length + textLength)
-                            |> Maybe.withDefault textLength
-                            |> Just
-                    )
-                    soFar
-
-            else
-                soFar
-
-        keepMarkerWithShortestLength : marker -> Int -> Maybe ( marker, Int ) -> Maybe ( marker, Int )
-        keepMarkerWithShortestLength marker length soFar =
-            case soFar of
-                Nothing ->
-                    Just ( marker, length )
-
-                Just (( _, currentMin ) as previousResult) ->
-                    if length < currentMin then
-                        Just ( marker, length )
-
-                    else
-                        Just previousResult
-    in
-    highlightables
-        |> List.foldl updateMarkerLengthsForHighlightable (Dict.empty sorter)
-        |> Dict.foldl keepMarkerWithShortestLength Nothing
-        |> Maybe.map Tuple.first
-        |> Maybe.withDefault first
 
 
 
