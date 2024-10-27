@@ -98,7 +98,7 @@ type alias Model marker =
     , marker : Tool.Tool marker -- Currently used marker
     , markerRanges : List (MarkerRange marker)
     , joinAdjacentInteractiveHighlights : Bool
-    , overlapsSupport : OverlapsSupport marker
+    , overlapsSupport : OverlapsSupport
 
     -- Scroll-friendly mode is used for highlighters in longform text, where we
     -- want to prevent accidental highlighting when scrolling, or when just plain
@@ -179,7 +179,7 @@ init config =
     , joinAdjacentInteractiveHighlights = config.joinAdjacentInteractiveHighlights
     , overlapsSupport =
         if config.overlapsSupport then
-            OverlapsSupported { hoveredMarkerWithShortestHighlight = Nothing }
+            OverlapsSupported
 
         else
             OverlapsNotSupported
@@ -1261,38 +1261,19 @@ viewWithOverlappingHighlights : Model marker -> Unstyled.Html (Msg marker)
 viewWithOverlappingHighlights =
     UnstyledLazy.lazy
         (\model ->
-            let
-                overlaps =
-                    findOverlapsSupport model
-            in
             view_
                 { showTagsInline = False
                 , maybeTool = Just model.marker
                 , mouseOverIndex = model.mouseOverIndex
                 , mouseDownIndex = model.mouseDownIndex
                 , hintingIndices = model.hintingIndices
-                , overlaps = overlaps
+                , overlaps = OverlapsSupported
                 , markerRanges = model.markerRanges
                 , viewSegment = viewHighlightable False model
                 , id = model.id
                 , highlightables = model.highlightables
                 }
         )
-
-
-findOverlapsSupport : Model marker -> OverlapsSupport marker
-findOverlapsSupport model =
-    case model.overlapsSupport of
-        OverlapsNotSupported ->
-            OverlapsNotSupported
-
-        OverlapsSupported _ ->
-            OverlapsSupported
-                { hoveredMarkerWithShortestHighlight =
-                    model.mouseOverIndex
-                        |> Maybe.andThen (selectShortestMarkerRange model.markerRanges)
-                        |> Maybe.map .marker
-                }
 
 
 {-| A type that contains information needed to render individual `Highlightable`s one at a time
@@ -1578,9 +1559,9 @@ groupHighlightables { mouseOverIndex } x y =
         || ((List.head y.marked /= Nothing) && x.isHinted)
 
 
-type OverlapsSupport marker
+type OverlapsSupport
     = OverlapsNotSupported
-    | OverlapsSupported { hoveredMarkerWithShortestHighlight : Maybe marker }
+    | OverlapsSupported
 
 
 {-| When elements are marked and the view doesn't support overlaps, wrap the marked elements in a single `mark` html node.
@@ -1591,7 +1572,7 @@ view_ :
     , mouseOverIndex : Maybe Int
     , mouseDownIndex : Maybe Int
     , hintingIndices : Maybe ( Int, Int )
-    , overlaps : OverlapsSupport marker
+    , overlaps : OverlapsSupport
     , markerRanges : List (MarkerRange marker)
     , viewSegment : Highlightable marker -> List Attribute -> Unstyled.Html msg
     , highlightables : List (Highlightable marker)
@@ -1658,7 +1639,7 @@ view_ config =
 
                 else
                     case config.overlaps of
-                        OverlapsSupported _ ->
+                        OverlapsSupported ->
                             Mark.viewWithOverlaps config.viewSegment withOverlaps
 
                         OverlapsNotSupported ->
