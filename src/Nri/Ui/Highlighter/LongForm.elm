@@ -1332,15 +1332,6 @@ type FoldState marker
 initFoldState : Model marker -> FoldState marker
 initFoldState model =
     let
-        config =
-            { hintingIndices = model.hintingIndices
-            , mouseOverIndex = model.mouseOverIndex
-            , mouseDownIndex = model.mouseDownIndex
-            , maybeTool = Just model.marker
-            , markerRanges = model.markerRanges
-            , highlightables = model.highlightables
-            }
-
         toMark : Highlightable marker -> Tool.MarkerModel marker -> Mark.Mark
         toMark highlightable marker =
             { name = marker.name
@@ -1508,9 +1499,7 @@ viewFoldStatic =
             { interactiveHighlighterId = Nothing
             , eventListeners = []
             , maybeTool = Nothing
-            , mouseOverIndex = Nothing
             , renderMarkdown = False
-            , sorter = Nothing
             }
         )
 
@@ -1691,8 +1680,6 @@ viewHighlightable =
                         , eventListeners = highlightableEventListeners model.id model.scrollFriendly highlightable
                         , renderMarkdown = renderMarkdown
                         , maybeTool = Just model.marker
-                        , mouseOverIndex = model.mouseOverIndex
-                        , sorter = Just model.sorter
                         }
                         highlightable
                         customAttributes
@@ -1703,8 +1690,6 @@ viewHighlightable =
                         , eventListeners = highlightableEventListeners model.id model.scrollFriendly highlightable
                         , renderMarkdown = renderMarkdown
                         , maybeTool = Just model.marker
-                        , mouseOverIndex = model.mouseOverIndex
-                        , sorter = Just model.sorter
                         }
                         highlightable
                         customAttributes
@@ -1778,9 +1763,7 @@ viewHighlightableSegment :
     { interactiveHighlighterId : Maybe String
     , eventListeners : List (Unstyled.Attribute msg)
     , maybeTool : Maybe (Tool.Tool marker)
-    , mouseOverIndex : Maybe Int
     , renderMarkdown : Bool
-    , sorter : Maybe (Sorter marker)
     }
     -> Highlightable marker
     -> List Attribute
