@@ -68,7 +68,7 @@ import Html as Unstyled
 import Html.Attributes as UnstyledAttrs
 import Html.Events as UnstyledEvents
 import Html.Lazy as UnstyledLazy
-import Html.Styled as Html exposing (Html)
+import Html.Styled as Html
 import Json.Decode
 import List.Extra
 import Markdown.Block
@@ -1299,7 +1299,6 @@ view =
                 , viewSegment =
                     viewHighlightable
                         model.id
-                        False
                         model
                 , id = model.id
                 , highlightables = model.highlightables
@@ -1319,7 +1318,7 @@ viewWithOverlappingHighlights =
                 , hintingIndices = model.hintingIndices
                 , overlaps = OverlapsSupported
                 , markerRanges = model.markerRanges
-                , viewSegment = viewHighlightable model.id False model
+                , viewSegment = viewHighlightable model.id model
                 , id = model.id
                 , highlightables = model.highlightables
                 }
@@ -1491,7 +1490,7 @@ A list of extraStyles is also accepted if, for example, you want to apply bold /
 viewFoldHighlighter : List Attribute -> FoldState marker -> ( FoldState marker, List (Unstyled.Html (Msg marker)) )
 viewFoldHighlighter extraStyles (FoldState ({ model } as foldState)) =
     viewFoldHelper
-        (viewHighlightable model.id False model)
+        (viewHighlightable model.id model)
         extraStyles
         (FoldState foldState)
 
@@ -1507,7 +1506,6 @@ viewFoldStatic =
         (viewHighlightableSegment
             { interactiveHighlighterId = Nothing
             , eventListeners = []
-            , renderMarkdown = False
             }
         )
 
@@ -1674,20 +1672,18 @@ view_ config =
 
 viewHighlightable :
     HighlighterId
-    -> Bool
     -> Model marker
     -> Highlightable marker
     -> List Attribute
     -> Unstyled.Html (Msg marker)
 viewHighlightable =
-    UnstyledLazy.lazy5 <|
-        \highlighterId renderMarkdown model highlightable customAttributes ->
+    UnstyledLazy.lazy4 <|
+        \highlighterId model highlightable customAttributes ->
             case highlightable.type_ of
                 Highlightable.Interactive ->
                     viewHighlightableSegment
                         { interactiveHighlighterId = Just highlighterId
                         , eventListeners = highlightableEventListeners highlighterId model.scrollFriendly highlightable
-                        , renderMarkdown = renderMarkdown
                         }
                         highlightable
                         customAttributes
@@ -1696,7 +1692,6 @@ viewHighlightable =
                     viewHighlightableSegment
                         { interactiveHighlighterId = Nothing
                         , eventListeners = highlightableEventListeners highlighterId model.scrollFriendly highlightable
-                        , renderMarkdown = renderMarkdown
                         }
                         highlightable
                         customAttributes
@@ -1769,12 +1764,11 @@ highlightableEventListeners highlighterId scrollFriendly highlightable =
 viewHighlightableSegment :
     { interactiveHighlighterId : Maybe HighlighterId
     , eventListeners : List (Unstyled.Attribute msg)
-    , renderMarkdown : Bool
     }
     -> Highlightable marker
     -> List Attribute
     -> Unstyled.Html msg
-viewHighlightableSegment { interactiveHighlighterId, eventListeners, renderMarkdown } highlightable customAttributes =
+viewHighlightableSegment { interactiveHighlighterId, eventListeners } highlightable customAttributes =
     let
         whitespaceClass txt =
             -- we need to override whitespace styles in order to support
@@ -1855,77 +1849,7 @@ viewHighlightableSegment { interactiveHighlighterId, eventListeners, renderMarkd
                     AttributesExtra.unstyledNone
                ]
         )
-        (if renderMarkdown then
-            renderInlineMarkdown highlightable.text
-                |> List.map Html.toUnstyled
-
-         else
-            [ Unstyled.text highlightable.text ]
-        )
-
-
-renderInlineMarkdown : String -> List (Html msg)
-renderInlineMarkdown text_ =
-    let
-        ( leftWhitespace, inner, rightWhitespace ) =
-            String.foldr
-                (\char ( l, i, r ) ->
-                    if char == ' ' then
-                        if i == "" then
-                            ( l, i, String.cons char r )
-
-                        else
-                            ( String.cons char l, i, r )
-
-                    else
-                        ( "", String.cons char l ++ i, r )
-                )
-                ( "", "", "" )
-                text_
-
-        innerMarkdown =
-            Markdown.Block.parse Nothing inner
-                |> List.map
-                    (Markdown.Block.walk
-                        (inlinifyMarkdownBlock
-                            >> Markdown.Block.PlainInlines
-                        )
-                    )
-                |> List.concatMap Markdown.Block.toHtml
-                |> List.map Html.fromUnstyled
-    in
-    Html.text leftWhitespace :: innerMarkdown ++ [ Html.text rightWhitespace ]
-
-
-inlinifyMarkdownBlock : Markdown.Block.Block a b -> List (Markdown.Inline.Inline b)
-inlinifyMarkdownBlock block =
-    case block of
-        Markdown.Block.BlankLine str ->
-            [ Markdown.Inline.Text str ]
-
-        Markdown.Block.ThematicBreak ->
-            []
-
-        Markdown.Block.Heading _ _ inlines ->
-            inlines
-
-        Markdown.Block.CodeBlock _ str ->
-            [ Markdown.Inline.Text str ]
-
-        Markdown.Block.Paragraph _ inlines ->
-            inlines
-
-        Markdown.Block.BlockQuote blocks ->
-            List.concatMap inlinifyMarkdownBlock blocks
-
-        Markdown.Block.List _ blocks ->
-            List.concatMap inlinifyMarkdownBlock (List.concat blocks)
-
-        Markdown.Block.PlainInlines inlines ->
-            inlines
-
-        Markdown.Block.Custom _ blocks ->
-            List.concatMap inlinifyMarkdownBlock blocks
+        [ Unstyled.text highlightable.text ]
 
 
 highlightableId : HighlighterId -> Int -> String
