@@ -744,7 +744,7 @@ performAction action ( model, highlightableUpdates, cmds ) =
                 Just hinting ->
                     let
                         ( indexesToSave, highlightables ) =
-                            saveHinted marker hinting model.highlightables
+                            saveHinted model.overlapsSupport marker hinting model.highlightables
                     in
                     ( { model
                         | highlightables = highlightables |> Debug.log "saved highlightables"
@@ -887,12 +887,19 @@ between from to { index } =
         to <= index && index <= from
 
 
-saveHinted : Tool.MarkerModel marker -> ( Int, Int ) -> List (Highlightable marker) -> ( ( Int, Int ), List (Highlightable marker) )
-saveHinted marker ( hintBeginning, hintEnd ) =
+saveHinted : OverlapsSupport -> Tool.MarkerModel marker -> ( Int, Int ) -> List (Highlightable marker) -> ( ( Int, Int ), List (Highlightable marker) )
+saveHinted overlapsSupport marker ( hintBeginning, hintEnd ) =
     List.Extra.mapAccuml
         (\acc highlightable ->
             if between hintBeginning hintEnd highlightable then
-                ( highlightable :: acc, Highlightable.set (Just marker) highlightable )
+                ( highlightable :: acc
+                , case overlapsSupport of
+                    OverlapsSupported ->
+                        { highlightable | marked = marker :: highlightable.marked }
+
+                    OverlapsNotSupported ->
+                        { highlightable | marked = [ marker ] }
+                )
 
             else
                 ( acc, highlightable )
