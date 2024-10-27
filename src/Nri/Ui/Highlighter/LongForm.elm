@@ -1171,7 +1171,14 @@ removeHighlights model =
 
 removeHighlights_ : List (Highlightable m) -> List (Highlightable m)
 removeHighlights_ =
-    List.map (Highlightable.set Nothing)
+    List.map
+        (\highlightable ->
+            if highlightable.marked /= [] then
+                Highlightable.set Nothing highlightable
+
+            else
+                highlightable
+        )
 
 
 {-| You are not likely to need this helper unless you're working with inline commenting.
