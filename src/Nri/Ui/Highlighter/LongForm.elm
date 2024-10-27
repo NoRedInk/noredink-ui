@@ -80,7 +80,6 @@ import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Mark.LongForm as Mark exposing (Mark)
 import Regex
 import Sort exposing (Sorter)
-import Sort.Dict as Dict
 import Task
 
 
@@ -1441,7 +1440,6 @@ viewFoldStatic =
             , eventListeners = []
             , maybeTool = Nothing
             , mouseOverIndex = Nothing
-            , mouseDownIndex = Nothing
             , renderMarkdown = False
             , sorter = Nothing
             }
@@ -1632,7 +1630,6 @@ viewHighlightable =
                         , renderMarkdown = renderMarkdown
                         , maybeTool = Just model.marker
                         , mouseOverIndex = model.mouseOverIndex
-                        , mouseDownIndex = model.mouseDownIndex
                         , sorter = Just model.sorter
                         }
                         highlightable
@@ -1645,7 +1642,6 @@ viewHighlightable =
                         , renderMarkdown = renderMarkdown
                         , maybeTool = Just model.marker
                         , mouseOverIndex = model.mouseOverIndex
-                        , mouseDownIndex = model.mouseDownIndex
                         , sorter = Just model.sorter
                         }
                         highlightable
@@ -1721,7 +1717,6 @@ viewHighlightableSegment :
     , eventListeners : List (Unstyled.Attribute msg)
     , maybeTool : Maybe (Tool.Tool marker)
     , mouseOverIndex : Maybe Int
-    , mouseDownIndex : Maybe Int
     , renderMarkdown : Bool
     , sorter : Maybe (Sorter marker)
     }
