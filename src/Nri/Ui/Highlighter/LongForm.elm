@@ -955,8 +955,16 @@ toggleHighlighted index marker model =
                 maybeCreateHighlight _ =
                     if highlightable.index == index && highlightable.type_ == Highlightable.Interactive then
                         ( Changed (HighlightCreated ( index, index ) marker.kind)
-                        , { highlightable | isHinted = False, isFirstOrLastHinted = False }
-                            |> Highlightable.set (Just marker)
+                        , { highlightable
+                            | isHinted = False
+                            , isFirstOrLastHinted = False
+                            , marked =
+                                if model.overlapsSupport == OverlapsNotSupported then
+                                    [ marker ]
+
+                                else
+                                    marker :: highlightable.marked
+                          }
                         )
 
                     else
@@ -966,8 +974,16 @@ toggleHighlighted index marker model =
                 Just shortestMarker ->
                     if marker.kind == shortestMarker.marker && between shortestMarker.start shortestMarker.end highlightable then
                         ( Changed (HighlightRemoved ( shortestMarker.start, shortestMarker.end ) marker.kind)
-                        , { highlightable | isHinted = False, isFirstOrLastHinted = False }
-                            |> Highlightable.set Nothing
+                        , { highlightable
+                            | isHinted = False
+                            , isFirstOrLastHinted = False
+                            , marked =
+                                if model.overlapsSupport == OverlapsNotSupported then
+                                    []
+
+                                else
+                                    List.Extra.remove marker highlightable.marked
+                          }
                         )
 
                     else
@@ -1045,11 +1061,14 @@ findMarkerRanges : List (Highlightable marker) -> List (MarkerRange marker)
 findMarkerRanges highlightables =
     List.foldl
         (\highlightable acc ->
-            case List.map .kind highlightable.marked of
-                [] ->
+            case ( highlightable.type_, List.map .kind highlightable.marked ) of
+                ( Highlightable.Static, _ ) ->
+                    acc
+
+                ( Highlightable.Interactive, [] ) ->
                     { open = [], closed = acc.open ++ acc.closed }
 
-                markers ->
+                ( Highlightable.Interactive, markers ) ->
                     -- update all open, insert into open if new, close open if necessary
                     let
                         updateResult =
