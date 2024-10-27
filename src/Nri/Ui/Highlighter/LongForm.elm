@@ -308,6 +308,7 @@ type Action marker
 type HighlightableUpdate
     = UpdateFocused
     | UpdateHinted
+    | UpdateHovered
 
 
 {-| Update for highlighter returning additional info about whether there was a change
@@ -367,6 +368,7 @@ updateHighlightableFlags updates oldModel newModel =
                 List.map
                     (updateIf UpdateFocused updateFocused
                         >> updateIf UpdateHinted updateHinted
+                        >> updateIf UpdateHovered updateHovered
                     )
                     newModel.highlightables
         }
@@ -391,6 +393,7 @@ cleanupHighlightables updates oldModel newModel =
                 List.map
                     (cleanIf UpdateFocused cleanFocused
                         >> cleanIf UpdateHinted cleanHinted
+                        >> cleanIf UpdateHovered cleanHovered
                     )
                     newModel.highlightables
         }
@@ -802,10 +805,10 @@ performAction action ( model, highlightableUpdates, cmds ) =
             ( { model | mouseDownIndex = Nothing, mouseOverIndex = Nothing }, highlightableUpdates, cmds )
 
         MouseOver index ->
-            ( { model | mouseOverIndex = Just index }, highlightableUpdates, cmds )
+            ( { model | mouseOverIndex = Just index }, UpdateHovered :: highlightableUpdates, cmds )
 
         MouseOut ->
-            ( { model | mouseOverIndex = Nothing }, highlightableUpdates, cmds )
+            ( { model | mouseOverIndex = Nothing }, UpdateHovered :: highlightableUpdates, cmds )
 
         StartSelection index ->
             ( { model | selectionStartIndex = Just index }, highlightableUpdates, cmds )
@@ -815,6 +818,45 @@ performAction action ( model, highlightableUpdates, cmds ) =
 
         ResetSelection ->
             ( { model | selectionStartIndex = Nothing, selectionEndIndex = Nothing }, highlightableUpdates, cmds )
+
+
+cleanHovered : Model marker -> Model marker -> Highlightable marker -> Highlightable marker
+cleanHovered _ newModel highlightable =
+    let
+        shouldBeHovered =
+            isHovered_
+                { mouseOverIndex = newModel.mouseOverIndex
+                , mouseDownIndex = newModel.mouseDownIndex
+                , maybeTool = Just newModel.marker
+                }
+                (Maybe.andThen (selectShortestMarkerRange newModel.markerRanges) newModel.mouseOverIndex)
+    in
+    if (newModel.hintingIndices /= Nothing || newModel.mouseDownIndex /= Nothing) && highlightable.isHovered then
+        { highlightable | isHovered = False }
+
+    else if highlightable.isHovered && not (shouldBeHovered highlightable) then
+        { highlightable | isHovered = False }
+
+    else
+        highlightable
+
+
+updateHovered : Model marker -> Model marker -> Highlightable marker -> Highlightable marker
+updateHovered _ newModel highlightable =
+    let
+        shouldBeHovered =
+            isHovered_
+                { mouseOverIndex = newModel.mouseOverIndex
+                , mouseDownIndex = newModel.mouseDownIndex
+                , maybeTool = Just newModel.marker
+                }
+                (Maybe.andThen (selectShortestMarkerRange newModel.markerRanges) newModel.mouseOverIndex)
+    in
+    if shouldBeHovered highlightable then
+        { highlightable | isHovered = True }
+
+    else
+        highlightable
 
 
 cleanHinted : Model marker -> Model marker -> Highlightable marker -> Highlightable marker
@@ -1187,25 +1229,19 @@ isHovered_ :
     { config
         | mouseOverIndex : Maybe Int
         , mouseDownIndex : Maybe Int
-        , markerRanges : List (MarkerRange marker)
         , maybeTool : Maybe tool
     }
+    -> Maybe (MarkerRange marker)
     -> Highlightable marker
     -> Bool
-isHovered_ config highlightable =
+isHovered_ config shortestMarker highlightable =
     case config.maybeTool of
         Nothing ->
             False
 
         Just _ ->
-            let
-                shortestMarker =
-                    config.mouseOverIndex
-                        |> Maybe.andThen (selectShortestMarkerRange config.markerRanges)
-                        |> Maybe.map .marker
-            in
             directlyHoveringInteractiveSegment config highlightable
-                || inHoveredMarker config shortestMarker highlightable
+                || inHoveredMarker config (Maybe.map .marker shortestMarker) highlightable
 
 
 directlyHoveringInteractiveSegment : { config | mouseOverIndex : Maybe Int } -> Highlightable m -> Bool
@@ -1312,7 +1348,6 @@ initFoldState model =
             , styles =
                 markedHighlightableStyles
                     config.maybeTool
-                    (isHovered_ config)
                     highlightable
             , endStyles = marker.endGroupClass
             }
@@ -1589,7 +1624,6 @@ view_ config =
             , styles =
                 markedHighlightableStyles
                     config.maybeTool
-                    (isHovered_ config)
                     highlightable
             , endStyles = marker.endGroupClass
             }
@@ -1977,10 +2011,9 @@ stripMarkdownSyntax markdown =
 
 markedHighlightableStyles :
     Maybe (Tool.Tool marker)
-    -> (Highlightable marker -> Bool)
     -> Highlightable marker
     -> List Css.Style
-markedHighlightableStyles maybeTool getIsHovered ({ marked } as highlightable) =
+markedHighlightableStyles maybeTool ({ marked } as highlightable) =
     case maybeTool of
         Nothing ->
             [ case List.head marked of
@@ -1992,10 +2025,6 @@ markedHighlightableStyles maybeTool getIsHovered ({ marked } as highlightable) =
             ]
 
         Just tool ->
-            let
-                isHovered =
-                    getIsHovered highlightable
-            in
             case tool of
                 Tool.Marker marker ->
                     [ Css.property "user-select" "none"
@@ -2004,7 +2033,7 @@ markedHighlightableStyles maybeTool getIsHovered ({ marked } as highlightable) =
                             if highlightable.isHinted then
                                 Css.batch marker.hintClass
 
-                            else if isHovered then
+                            else if highlightable.isHovered then
                                 -- Override marking with selected tool
                                 Css.batch marker.hoverHighlightClass
 
@@ -2016,7 +2045,7 @@ markedHighlightableStyles maybeTool getIsHovered ({ marked } as highlightable) =
                             if highlightable.isHinted then
                                 Css.batch marker.hintClass
 
-                            else if isHovered then
+                            else if highlightable.isHovered then
                                 -- When Hovered but not marked
                                 [ marker.hoverClass
                                 , marker.startGroupClass
@@ -2038,7 +2067,7 @@ markedHighlightableStyles maybeTool getIsHovered ({ marked } as highlightable) =
                                 (if highlightable.isHinted then
                                     eraser_.hintClass
 
-                                 else if isHovered then
+                                 else if highlightable.isHovered then
                                     eraser_.hoverClass
 
                                  else
