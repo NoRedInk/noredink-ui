@@ -305,6 +305,10 @@ type Action marker
     | None
 
 
+type HighlightableUpdate
+    = UpdateFocused
+
+
 {-| Update for highlighter returning additional info about whether there was a change
 -}
 update : Msg marker -> Model marker -> ( Model marker, Cmd (Msg marker), Intent marker )
@@ -314,20 +318,28 @@ update msg model =
             Pointer pointerMsg ->
                 pointerEventToActions pointerMsg model
                     |> performActions model
+                    |> (\( newModel, updates, cmds ) -> ( updateHighlightables model newModel updates, cmds ))
                     |> Tuple.mapFirst maybeJoinAdjacentInteractiveHighlights
 
             Touch touchMsg ->
                 touchEventToActions touchMsg model
                     |> performActions model
+                    |> (\( newModel, updates, cmds ) -> ( updateHighlightables model newModel updates, cmds ))
                     |> Tuple.mapFirst maybeJoinAdjacentInteractiveHighlights
 
             Keyboard keyboardMsg ->
                 keyboardEventToActions keyboardMsg model
                     |> performActions model
+                    |> (\( newModel, updates, cmds ) -> ( updateHighlightables model newModel updates, cmds ))
                     |> Tuple.mapFirst maybeJoinAdjacentInteractiveHighlights
 
             Focused _ ->
                 ( model, Cmd.none )
+
+
+updateHighlightables : Model marker -> Model marker -> List HighlightableUpdate -> Model marker
+updateHighlightables oldModel newModel updates =
+    newModel
 
 
 maybeJoinAdjacentInteractiveHighlights : Model m -> Model m
@@ -640,29 +652,33 @@ touchEventToActions msg model =
 
 {-| We fold over actions using (Model marker) as the accumulator.
 -}
-performActions : Model marker -> List (Action marker) -> ( Model marker, Cmd (Msg m) )
+performActions : Model marker -> List (Action marker) -> ( Model marker, List HighlightableUpdate, Cmd (Msg m) )
 performActions model actions =
     let
         _ =
             Debug.log "actions" actions
     in
-    List.foldl performAction ( model, [] ) actions
-        |> Tuple.mapSecond Cmd.batch
+    List.foldl performAction ( model, [], [] ) actions
+        |> (\( newModel, highlightableUpdates, cmds ) -> ( newModel, highlightableUpdates, Cmd.batch cmds ))
 
 
 {-| Performs actual changes to the model, or emit a command.
 -}
-performAction : Action marker -> ( Model marker, List (Cmd (Msg m)) ) -> ( Model marker, List (Cmd (Msg m)) )
-performAction action ( model, cmds ) =
+performAction :
+    Action marker
+    -> ( Model marker, List HighlightableUpdate, List (Cmd (Msg m)) )
+    -> ( Model marker, List HighlightableUpdate, List (Cmd (Msg m)) )
+performAction action ( model, highlightableUpdates, cmds ) =
     case action of
         None ->
-            ( model, cmds )
+            ( model, highlightableUpdates, cmds )
 
         Focus index ->
             ( { model
                 | focusIndex = Just index
                 , highlightables = updateFocused model.focusIndex index model.highlightables
               }
+            , highlightableUpdates
             , Task.attempt Focused (Dom.focus (highlightableId model.id index)) :: cmds
             )
 
@@ -671,6 +687,7 @@ performAction action ( model, cmds ) =
                 | hintingIndices = Just ( start, end )
                 , highlightables = updateHinted model.hintingIndices (Just ( start, end )) model.highlightables
               }
+            , highlightableUpdates
             , cmds
             )
 
@@ -689,11 +706,12 @@ performAction action ( model, cmds ) =
                         , hasChanged = Changed (HighlightCreated indexesToSave marker.kind)
                         , hintingIndices = Nothing
                       }
+                    , highlightableUpdates
                     , cmds
                     )
 
                 Nothing ->
-                    ( model, cmds )
+                    ( model, highlightableUpdates, cmds )
 
         Toggle index marker ->
             let
@@ -709,6 +727,7 @@ performAction action ( model, cmds ) =
                 , hasChanged = changed
                 , hintingIndices = Nothing
               }
+            , highlightableUpdates
             , cmds
             )
 
@@ -723,32 +742,33 @@ performAction action ( model, cmds ) =
                                 |> Maybe.withDefault NotChanged
                         , hintingIndices = Nothing
                       }
+                    , highlightableUpdates
                     , cmds
                     )
 
                 Nothing ->
-                    ( model, cmds )
+                    ( model, highlightableUpdates, cmds )
 
         MouseDown index ->
-            ( { model | mouseDownIndex = Just index }, cmds )
+            ( { model | mouseDownIndex = Just index }, highlightableUpdates, cmds )
 
         MouseUp ->
-            ( { model | mouseDownIndex = Nothing, mouseOverIndex = Nothing }, cmds )
+            ( { model | mouseDownIndex = Nothing, mouseOverIndex = Nothing }, highlightableUpdates, cmds )
 
         MouseOver index ->
-            ( { model | mouseOverIndex = Just index }, cmds )
+            ( { model | mouseOverIndex = Just index }, highlightableUpdates, cmds )
 
         MouseOut ->
-            ( { model | mouseOverIndex = Nothing }, cmds )
+            ( { model | mouseOverIndex = Nothing }, highlightableUpdates, cmds )
 
         StartSelection index ->
-            ( { model | selectionStartIndex = Just index }, cmds )
+            ( { model | selectionStartIndex = Just index }, highlightableUpdates, cmds )
 
         ExpandSelection index ->
-            ( { model | selectionEndIndex = Just index }, cmds )
+            ( { model | selectionEndIndex = Just index }, highlightableUpdates, cmds )
 
         ResetSelection ->
-            ( { model | selectionStartIndex = Nothing, selectionEndIndex = Nothing }, cmds )
+            ( { model | selectionStartIndex = Nothing, selectionEndIndex = Nothing }, highlightableUpdates, cmds )
 
 
 updateHinted : Maybe ( Int, Int ) -> Maybe ( Int, Int ) -> List (Highlightable marker) -> List (Highlightable marker)
