@@ -1282,7 +1282,6 @@ view =
                 , viewSegment =
                     viewHighlightable
                         False
-                        OverlapsNotSupported
                         model
                 , id = model.id
                 , highlightables = model.highlightables
@@ -1306,7 +1305,7 @@ viewWithOverlappingHighlights =
                 , mouseDownIndex = model.mouseDownIndex
                 , hintingIndices = model.hintingIndices
                 , overlaps = overlaps
-                , viewSegment = viewHighlightable False overlaps model
+                , viewSegment = viewHighlightable False model
                 , id = model.id
                 , highlightables = model.highlightables
                 }
@@ -1516,9 +1515,9 @@ A list of extraStyles is also accepted if, for example, you want to apply bold /
 
 -}
 viewFoldHighlighter : List Attribute -> FoldState marker -> ( FoldState marker, List (Unstyled.Html (Msg marker)) )
-viewFoldHighlighter extraStyles (FoldState ({ model, overlapsSupport } as foldState)) =
+viewFoldHighlighter extraStyles (FoldState ({ model } as foldState)) =
     viewFoldHelper
-        (viewHighlightable False overlapsSupport model)
+        (viewHighlightable False model)
         extraStyles
         (FoldState foldState)
 
@@ -1539,7 +1538,6 @@ viewFoldStatic =
             , mouseDownIndex = Nothing
             , renderMarkdown = False
             , sorter = Nothing
-            , overlaps = OverlapsNotSupported
             }
         )
 
@@ -1713,14 +1711,13 @@ view_ config =
 
 viewHighlightable :
     Bool
-    -> OverlapsSupport marker
     -> Model marker
     -> Highlightable marker
     -> List Attribute
     -> Unstyled.Html (Msg marker)
 viewHighlightable =
-    UnstyledLazy.lazy5 <|
-        \renderMarkdown overlaps model highlightable customAttributes ->
+    UnstyledLazy.lazy4 <|
+        \renderMarkdown model highlightable customAttributes ->
             case highlightable.type_ of
                 Highlightable.Interactive ->
                     viewHighlightableSegment
@@ -1731,7 +1728,6 @@ viewHighlightable =
                         , mouseOverIndex = model.mouseOverIndex
                         , mouseDownIndex = model.mouseDownIndex
                         , sorter = Just model.sorter
-                        , overlaps = overlaps
                         }
                         highlightable
                         customAttributes
@@ -1745,7 +1741,6 @@ viewHighlightable =
                         , mouseOverIndex = model.mouseOverIndex
                         , mouseDownIndex = model.mouseDownIndex
                         , sorter = Just model.sorter
-                        , overlaps = overlaps
                         }
                         highlightable
                         customAttributes
@@ -1823,7 +1818,6 @@ viewHighlightableSegment :
     , mouseDownIndex : Maybe Int
     , renderMarkdown : Bool
     , sorter : Maybe (Sorter marker)
-    , overlaps : OverlapsSupport marker
     }
     -> Highlightable marker
     -> List Attribute
