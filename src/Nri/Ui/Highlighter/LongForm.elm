@@ -1793,11 +1793,25 @@ viewHighlightableSegment ({ interactiveHighlighterId, eventListeners, renderMark
 
                     _ ->
                         AttributesExtra.unstyledNone
-               , if highlightable.isHinted then
-                    UnstyledAttrs.class "highlighter-hinted"
+               , case ( config.maybeTool, highlightable.isHinted ) of
+                    ( Just (Tool.Marker marker), True ) ->
+                        UnstyledAttrs.class
+                            (styleClassName (HintedMark (Tool.mapMarker (\_ -> ()) marker)))
 
-                 else
-                    AttributesExtra.unstyledNone
+                    ( Just (Tool.Eraser eraser), True ) ->
+                        UnstyledAttrs.class (styleClassName (HintedEraser eraser))
+
+                    _ ->
+                        AttributesExtra.unstyledNone
+               , case ( config.maybeTool, highlightable.isFirstOrLastHinted ) of
+                    ( Just (Tool.Marker marker), True ) ->
+                        -- only announce first or last hinted bc that's where
+                        -- keyboard focus will be
+                        UnstyledAttrs.class
+                            (styleClassName (HintedMarkBoundary (Tool.mapMarker (\_ -> ()) marker)))
+
+                    _ ->
+                        AttributesExtra.unstyledNone
                , if isInteractive then
                     if highlightable.isFocused then
                         UnstyledAttrs.tabindex 0
@@ -1909,23 +1923,8 @@ unmarkedHighlightableStyles config highlightable =
                         directlyHoveringInteractiveSegment config highlightable
                 in
                 case tool of
-                    Tool.Marker marker ->
-                        if highlightable.isHinted then
-                            [ [ UnstyledAttrs.class (styleClassName (HintedMark (Tool.mapMarker (\_ -> ()) marker)))
-                              ]
-                            , if highlightable.isFirstOrLastHinted then
-                                -- only announce first or last hinted bc that's where
-                                -- keyboard focus will be
-                                [ UnstyledAttrs.class
-                                    (styleClassName (HintedMarkBoundary (Tool.mapMarker (\_ -> ()) marker)))
-                                ]
-
-                              else
-                                []
-                            ]
-                                |> List.concat
-
-                        else if isHovered then
+                    Tool.Marker _ ->
+                        if not highlightable.isHinted && isHovered then
                             -- When hovered, but not marked
                             [ UnstyledAttrs.class (styleClassName (HoveredNotHinted (Tool.map (\_ -> ()) tool))) ]
 
@@ -1933,10 +1932,7 @@ unmarkedHighlightableStyles config highlightable =
                             []
 
                     Tool.Eraser eraser_ ->
-                        if highlightable.isHinted then
-                            [ UnstyledAttrs.class (styleClassName (HintedEraser eraser_)) ]
-
-                        else if isHovered then
+                        if not highlightable.isHinted && isHovered then
                             [ UnstyledAttrs.class (styleClassName (HoveredNotHinted (Tool.Eraser eraser_))) ]
 
                         else
