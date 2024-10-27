@@ -894,7 +894,7 @@ toggleHighlighted index marker model =
             in
             case maybeShortestMarker of
                 Just shortestMarker ->
-                    if marker.kind == shortestMarker.marker then
+                    if marker.kind == shortestMarker.marker && between shortestMarker.start shortestMarker.end highlightable then
                         ( Changed (HighlightRemoved ( shortestMarker.start, shortestMarker.end ) marker.kind)
                         , { highlightable | isHinted = False, isFirstOrLastHinted = False }
                             |> Highlightable.set Nothing
