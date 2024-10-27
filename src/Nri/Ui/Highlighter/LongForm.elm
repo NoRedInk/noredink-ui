@@ -1239,8 +1239,7 @@ view =
     UnstyledLazy.lazy
         (\model ->
             view_
-                { showTagsInline = False
-                , maybeTool = Just model.marker
+                { maybeTool = Just model.marker
                 , mouseOverIndex = model.mouseOverIndex
                 , mouseDownIndex = model.mouseDownIndex
                 , hintingIndices = model.hintingIndices
@@ -1262,8 +1261,7 @@ viewWithOverlappingHighlights =
     UnstyledLazy.lazy
         (\model ->
             view_
-                { showTagsInline = False
-                , maybeTool = Just model.marker
+                { maybeTool = Just model.marker
                 , mouseOverIndex = model.mouseOverIndex
                 , mouseDownIndex = model.mouseDownIndex
                 , hintingIndices = model.hintingIndices
@@ -1327,8 +1325,7 @@ initFoldState model =
         , styles =
             Just
                 (renderStyles
-                    { showTagsInline = False
-                    , id = model.id
+                    { id = model.id
                     , marks = List.concatMap Tuple.second markedSegments
                     , scrollFriendly = model.scrollFriendly
                     , maybeTool = Just model.marker
@@ -1383,19 +1380,17 @@ sanitizeCssClassName =
 {-| Function to render the <style> tag for styling a highlighter.
 -}
 renderStyles :
-    { showTagsInline : Bool
-    , id : String
+    { id : String
     , marks : List Mark.Mark
     , scrollFriendly : Bool
     , maybeTool : Maybe (Tool.Tool marker)
     }
     -> Unstyled.Html msg
-renderStyles { showTagsInline, id, marks, scrollFriendly, maybeTool } =
+renderStyles { id, marks, scrollFriendly, maybeTool } =
     Css.Global.global
         [ Css.Global.id id
             [ Css.Global.descendants
-                (Mark.renderStyles
-                    showTagsInline
+                (Mark.renderStyles False
                     (List.Extra.uniqueBy .name marks)
                 )
             , Css.Global.descendants
@@ -1567,8 +1562,7 @@ type OverlapsSupport
 {-| When elements are marked and the view doesn't support overlaps, wrap the marked elements in a single `mark` html node.
 -}
 view_ :
-    { showTagsInline : Bool
-    , maybeTool : Maybe (Tool.Tool marker)
+    { maybeTool : Maybe (Tool.Tool marker)
     , mouseOverIndex : Maybe Int
     , mouseDownIndex : Maybe Int
     , hintingIndices : Maybe ( Int, Int )
@@ -1623,7 +1617,6 @@ view_ config =
     Unstyled.p [ UnstyledAttrs.id config.id, UnstyledAttrs.class "highlighter-container" ] <|
         renderStyles
             { id = config.id
-            , showTagsInline = config.showTagsInline
             , marks =
                 withOverlaps
                     |> List.map Tuple.second
@@ -1634,16 +1627,12 @@ view_ config =
             , scrollFriendly = False
             , maybeTool = config.maybeTool
             }
-            :: (if config.showTagsInline then
-                    List.concatMap (Mark.viewWithInlineTags config.viewSegment) withoutOverlaps
+            :: (case config.overlaps of
+                    OverlapsSupported ->
+                        Mark.viewWithOverlaps config.viewSegment withOverlaps
 
-                else
-                    case config.overlaps of
-                        OverlapsSupported ->
-                            Mark.viewWithOverlaps config.viewSegment withOverlaps
-
-                        OverlapsNotSupported ->
-                            List.concatMap (Mark.view config.viewSegment) withoutOverlaps
+                    OverlapsNotSupported ->
+                        List.concatMap (Mark.view config.viewSegment) withoutOverlaps
                )
 
 
