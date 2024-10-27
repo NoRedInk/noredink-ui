@@ -1626,7 +1626,7 @@ viewHighlightable =
                 Highlightable.Interactive ->
                     viewHighlightableSegment
                         { interactiveHighlighterId = Just model.id
-                        , eventListeners = highlightableEventListeners highlightable model
+                        , eventListeners = highlightableEventListeners model.id model.scrollFriendly highlightable
                         , renderMarkdown = renderMarkdown
                         , maybeTool = Just model.marker
                         , mouseOverIndex = model.mouseOverIndex
@@ -1638,7 +1638,7 @@ viewHighlightable =
                 Highlightable.Static ->
                     viewHighlightableSegment
                         { interactiveHighlighterId = Nothing
-                        , eventListeners = highlightableEventListeners highlightable model
+                        , eventListeners = highlightableEventListeners model.id model.scrollFriendly highlightable
                         , renderMarkdown = renderMarkdown
                         , maybeTool = Just model.marker
                         , mouseOverIndex = model.mouseOverIndex
@@ -1648,20 +1648,20 @@ viewHighlightable =
                         customAttributes
 
 
-highlightableEventListeners : Highlightable marker -> Model marker -> List (Unstyled.Attribute (Msg marker))
-highlightableEventListeners highlightable model =
+highlightableEventListeners : String -> Bool -> Highlightable marker -> List (Unstyled.Attribute (Msg marker))
+highlightableEventListeners highlighterId scrollFriendly highlightable =
     case highlightable.type_ of
         Highlightable.Interactive ->
             [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
             , onPreventDefault "mouseleave" (Pointer <| Out)
-            , onPreventDefault "mouseup" (Pointer <| Up <| Just model.id)
+            , onPreventDefault "mouseup" (Pointer <| Up <| Just highlighterId)
             , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
             , onPreventDefault "contextmenu" (Touch <| TouchIgnored)
-            , AttributesExtra.unstyledIncludeIf (not model.scrollFriendly)
+            , AttributesExtra.unstyledIncludeIf (not scrollFriendly)
                 (onPreventDefault "touchstart" (Touch <| TouchStart highlightable.index))
-            , AttributesExtra.unstyledIncludeIf (not model.scrollFriendly)
-                (onPreventDefault "touchend" (Touch <| TouchEnd <| Just model.id))
-            , AttributesExtra.unstyledIncludeIf model.scrollFriendly
+            , AttributesExtra.unstyledIncludeIf (not scrollFriendly)
+                (onPreventDefault "touchend" (Touch <| TouchEnd <| Just highlighterId))
+            , AttributesExtra.unstyledIncludeIf scrollFriendly
                 (onClickPreventDefault
                     (\count ->
                         Pointer <|
@@ -1695,11 +1695,11 @@ highlightableEventListeners highlightable model =
             [ onPreventDefault "mouseover" (Pointer <| Over highlightable.index)
             , onPreventDefault "mouseleave" (Pointer <| Out)
             , onPreventDefault "contextmenu" (Touch <| TouchIgnored)
-            , AttributesExtra.unstyledIncludeIf (not model.scrollFriendly)
+            , AttributesExtra.unstyledIncludeIf (not scrollFriendly)
                 (onPreventDefault "touchstart" (Touch <| TouchStart highlightable.index))
-            , AttributesExtra.unstyledIncludeIf (not model.scrollFriendly)
-                (onPreventDefault "touchend" (Touch <| TouchEnd <| Just model.id))
-            , AttributesExtra.unstyledIncludeIf model.scrollFriendly
+            , AttributesExtra.unstyledIncludeIf (not scrollFriendly)
+                (onPreventDefault "touchend" (Touch <| TouchEnd <| Just highlighterId))
+            , AttributesExtra.unstyledIncludeIf scrollFriendly
                 (onClickPreventDefault
                     (\count ->
                         Pointer <|
@@ -1707,7 +1707,7 @@ highlightableEventListeners highlightable model =
                     )
                 )
             , onPreventDefault "mousedown" (Pointer <| Down highlightable.index)
-            , onPreventDefault "mouseup" (Pointer <| Up <| Just model.id)
+            , onPreventDefault "mouseup" (Pointer <| Up <| Just highlighterId)
             , UnstyledAttrs.attribute "data-static" ""
             ]
 
