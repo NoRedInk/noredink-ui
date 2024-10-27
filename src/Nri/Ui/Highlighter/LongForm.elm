@@ -383,20 +383,6 @@ cleanupHighlightables updates oldModel newModel =
         }
 
 
-cleanFocused : Model marker -> Model marker -> Highlightable marker -> Highlightable marker
-cleanFocused oldModel newModel highlightable =
-    case ( oldModel.focusIndex /= newModel.focusIndex, oldModel.focusIndex ) of
-        ( True, Just oldFocused ) ->
-            if oldFocused == highlightable.index then
-                { highlightable | isFocused = False }
-
-            else
-                highlightable
-
-        _ ->
-            highlightable
-
-
 maybeJoinAdjacentInteractiveHighlights : Model m -> Model m
 maybeJoinAdjacentInteractiveHighlights model =
     if model.joinAdjacentInteractiveHighlights then
@@ -859,6 +845,20 @@ updateHinted maybeOldHinted maybeNewHinted highlightables =
                         highlightable
                 )
                 cleanHighlightables
+
+
+cleanFocused : Model marker -> Model marker -> Highlightable marker -> Highlightable marker
+cleanFocused oldModel newModel highlightable =
+    case ( oldModel.focusIndex /= newModel.focusIndex, oldModel.focusIndex ) of
+        ( True, Just oldFocused ) ->
+            if oldFocused == highlightable.index then
+                { highlightable | isFocused = False }
+
+            else
+                highlightable
+
+        _ ->
+            highlightable
 
 
 updateFocused : Model marker -> Model marker -> Highlightable marker -> Highlightable marker
