@@ -93,7 +93,7 @@ type alias Model marker =
     { -- Used to identify a highlighter. This is necessary when there are
       -- multiple highlighters on the same page because we add listeners
       -- in javascript (see ./highlighter.js) and because we move focus by id for keyboard users.
-      id : String
+      id : HighlighterId
     , highlightables : List (Highlightable marker) -- The actual highlightable elements
     , marker : Tool.Tool marker -- Currently used marker
     , markerRanges : List (MarkerRange marker)
@@ -126,6 +126,10 @@ type alias Model marker =
 type HasChanged marker
     = Changed (Change marker)
     | NotChanged
+
+
+type alias HighlighterId =
+    String
 
 
 {-| Describes the change being performed by the Highlighter component, alongside the index bounds of the change
@@ -1294,6 +1298,7 @@ view =
                 , markerRanges = model.markerRanges
                 , viewSegment =
                     viewHighlightable
+                        model.id
                         False
                         model
                 , id = model.id
@@ -1314,7 +1319,7 @@ viewWithOverlappingHighlights =
                 , hintingIndices = model.hintingIndices
                 , overlaps = OverlapsSupported
                 , markerRanges = model.markerRanges
-                , viewSegment = viewHighlightable False model
+                , viewSegment = viewHighlightable model.id False model
                 , id = model.id
                 , highlightables = model.highlightables
                 }
@@ -1416,7 +1421,7 @@ sanitizeCssClassName =
 {-| Function to render the <style> tag for styling a highlighter.
 -}
 renderStyles :
-    { id : String
+    { id : HighlighterId
     , marks : List Mark.Mark
     , scrollFriendly : Bool
     , maybeTool : Maybe (Tool.Tool marker)
@@ -1486,7 +1491,7 @@ A list of extraStyles is also accepted if, for example, you want to apply bold /
 viewFoldHighlighter : List Attribute -> FoldState marker -> ( FoldState marker, List (Unstyled.Html (Msg marker)) )
 viewFoldHighlighter extraStyles (FoldState ({ model } as foldState)) =
     viewFoldHelper
-        (viewHighlightable False model)
+        (viewHighlightable model.id False model)
         extraStyles
         (FoldState foldState)
 
@@ -1603,7 +1608,7 @@ view_ :
     , markerRanges : List (MarkerRange marker)
     , viewSegment : Highlightable marker -> List Attribute -> Unstyled.Html msg
     , highlightables : List (Highlightable marker)
-    , id : String
+    , id : HighlighterId
     }
     -> Unstyled.Html msg
 view_ config =
@@ -1668,19 +1673,20 @@ view_ config =
 
 
 viewHighlightable :
-    Bool
+    HighlighterId
+    -> Bool
     -> Model marker
     -> Highlightable marker
     -> List Attribute
     -> Unstyled.Html (Msg marker)
 viewHighlightable =
-    UnstyledLazy.lazy4 <|
-        \renderMarkdown model highlightable customAttributes ->
+    UnstyledLazy.lazy5 <|
+        \highlighterId renderMarkdown model highlightable customAttributes ->
             case highlightable.type_ of
                 Highlightable.Interactive ->
                     viewHighlightableSegment
-                        { interactiveHighlighterId = Just model.id
-                        , eventListeners = highlightableEventListeners model.id model.scrollFriendly highlightable
+                        { interactiveHighlighterId = Just highlighterId
+                        , eventListeners = highlightableEventListeners highlighterId model.scrollFriendly highlightable
                         , renderMarkdown = renderMarkdown
                         }
                         highlightable
@@ -1689,14 +1695,14 @@ viewHighlightable =
                 Highlightable.Static ->
                     viewHighlightableSegment
                         { interactiveHighlighterId = Nothing
-                        , eventListeners = highlightableEventListeners model.id model.scrollFriendly highlightable
+                        , eventListeners = highlightableEventListeners highlighterId model.scrollFriendly highlightable
                         , renderMarkdown = renderMarkdown
                         }
                         highlightable
                         customAttributes
 
 
-highlightableEventListeners : String -> Bool -> Highlightable marker -> List (Unstyled.Attribute (Msg marker))
+highlightableEventListeners : HighlighterId -> Bool -> Highlightable marker -> List (Unstyled.Attribute (Msg marker))
 highlightableEventListeners highlighterId scrollFriendly highlightable =
     case highlightable.type_ of
         Highlightable.Interactive ->
@@ -1761,7 +1767,7 @@ highlightableEventListeners highlighterId scrollFriendly highlightable =
 
 
 viewHighlightableSegment :
-    { interactiveHighlighterId : Maybe String
+    { interactiveHighlighterId : Maybe HighlighterId
     , eventListeners : List (Unstyled.Attribute msg)
     , renderMarkdown : Bool
     }
@@ -1922,7 +1928,7 @@ inlinifyMarkdownBlock block =
             List.concatMap inlinifyMarkdownBlock blocks
 
 
-highlightableId : String -> Int -> String
+highlightableId : HighlighterId -> Int -> String
 highlightableId highlighterId index =
     "highlighter-" ++ highlighterId ++ "-highlightable-" ++ String.fromInt index
 
