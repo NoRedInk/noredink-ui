@@ -955,11 +955,10 @@ saveHinted overlapsSupport marker ( hintBeginning, hintEnd ) =
                 ( acc, highlightable )
         )
         []
-        >> Tuple.mapBoth
+        >> Tuple.mapFirst
             -- Report back what indexes we're actually going to save.
             -- Static highlightables at the edges are not saved
             firstLastIndexInteractive
-            trimHighlightableGroups
 
 
 {-| Get the first and last indexes, only counting interactive highlightables.
@@ -1052,51 +1051,7 @@ toggleHighlighted index marker model =
         ( changed, toggled ) =
             List.Extra.mapAccuml toggle NotChanged model.highlightables
     in
-    ( trimHighlightableGroups toggled, changed )
-
-
-{-| This removes all-static highlights. We need to track events on static elements,
-so that we don't miss mouse events if a user starts or ends a highlight on a space, say,
-but we should only persist changes to interactive segments.
-It is meant to be called as a clean up after the highlightings have been changed.
--}
-trimHighlightableGroups : List (Highlightable marker) -> List (Highlightable marker)
-trimHighlightableGroups highlightables =
-    let
-        apply segment ( lastInteractiveHighlighterMarkers, staticAcc, acc ) =
-            -- logic largely borrowed from joinAdjacentInteractiveHighlights.
-            -- TODO in the next version: clean up the implementation!
-            case segment.type_ of
-                Highlightable.Interactive ->
-                    let
-                        bracketingHighlightTypes =
-                            List.filterMap (\x -> List.Extra.find ((==) x) lastInteractiveHighlighterMarkers)
-                                segment.marked
-
-                        static_ =
-                            -- for every static tag, ensure that if it's not between interactive segments
-                            -- that share a mark in common, marks are removed.
-                            List.map
-                                (\s ->
-                                    { s
-                                        | marked =
-                                            List.filterMap (\x -> List.Extra.find ((==) x) bracketingHighlightTypes)
-                                                s.marked
-                                    }
-                                )
-                                staticAcc
-                    in
-                    ( segment.marked, [], segment :: static_ ++ acc )
-
-                Highlightable.Static ->
-                    ( lastInteractiveHighlighterMarkers, segment :: staticAcc, acc )
-    in
-    highlightables
-        |> List.foldr apply ( [], [], [] )
-        |> (\( _, static_, acc ) -> removeHighlights_ static_ ++ acc)
-        |> List.foldl apply ( [], [], [] )
-        |> (\( _, static_, acc ) -> removeHighlights_ static_ ++ acc)
-        |> List.reverse
+    ( toggled, changed )
 
 
 type alias MarkerRange marker =
