@@ -948,7 +948,7 @@ toggleHighlighted : Int -> Tool.MarkerModel marker -> Model marker -> ( List (Hi
 toggleHighlighted index marker model =
     let
         maybeShortestMarker =
-            selectShortestMarkerRange index model.markerRanges
+            selectShortestMarkerRange model.markerRanges index
 
         toggle acc highlightable =
             let
@@ -1048,8 +1048,8 @@ type alias MarkerRange marker =
 
 {-| Select the shortest possibly-overlapping marker covering the index provided, return its range.
 -}
-selectShortestMarkerRange : Int -> List (MarkerRange marker) -> Maybe (MarkerRange marker)
-selectShortestMarkerRange index markerRanges =
+selectShortestMarkerRange : List (MarkerRange marker) -> Int -> Maybe (MarkerRange marker)
+selectShortestMarkerRange markerRanges index =
     markerRanges
         |> List.filter (\{ start, end } -> start <= index && index <= end)
         |> List.Extra.minimumBy (\{ size } -> size)
@@ -1180,26 +1180,25 @@ isHovered_ :
     { config
         | mouseOverIndex : Maybe Int
         , mouseDownIndex : Maybe Int
-        , overlaps : OverlapsSupport marker
+        , markerRanges : List (MarkerRange marker)
         , maybeTool : Maybe tool
     }
-    -> List (List (Highlightable ma))
     -> Highlightable marker
     -> Bool
-isHovered_ config groups highlightable =
+isHovered_ config highlightable =
     case config.maybeTool of
         Nothing ->
             False
 
         Just _ ->
+            let
+                shortestMarker =
+                    config.mouseOverIndex
+                        |> Maybe.andThen (selectShortestMarkerRange config.markerRanges)
+                        |> Maybe.map .marker
+            in
             directlyHoveringInteractiveSegment config highlightable
-                || (case config.overlaps of
-                        OverlapsSupported { hoveredMarkerWithShortestHighlight } ->
-                            inHoveredGroupForOverlaps config hoveredMarkerWithShortestHighlight highlightable
-
-                        OverlapsNotSupported ->
-                            inHoveredGroupWithoutOverlaps config groups highlightable
-                   )
+                || inHoveredMarker config shortestMarker highlightable
 
 
 directlyHoveringInteractiveSegment : { config | mouseOverIndex : Maybe Int } -> Highlightable m -> Bool
@@ -1208,40 +1207,12 @@ directlyHoveringInteractiveSegment { mouseOverIndex } highlightable =
         && (highlightable.type_ == Highlightable.Interactive)
 
 
-inHoveredGroupWithoutOverlaps :
-    { config
-        | mouseOverIndex : Maybe Int
-    }
-    -> List (List (Highlightable ma))
-    -> Highlightable m
-    -> Bool
-inHoveredGroupWithoutOverlaps config groups highlightable =
-    case highlightable.marked of
-        [] ->
-            -- if the highlightable is not marked, then it shouldn't
-            -- take on group hover styles
-            -- if the mouse is over it, it's hovered.
-            -- otherwise, it's not!
-            Just highlightable.index == config.mouseOverIndex
-
-        _ ->
-            -- if the highlightable is in a group that's hovered,
-            -- apply hovered styles
-            groups
-                |> List.filter (List.any (.index >> (==) highlightable.index))
-                |> List.head
-                |> Maybe.withDefault []
-                |> List.any (.index >> Just >> (==) config.mouseOverIndex)
-
-
-inHoveredGroupForOverlaps :
-    { config
-        | mouseDownIndex : Maybe Int
-    }
+inHoveredMarker :
+    { config | mouseDownIndex : Maybe Int }
     -> Maybe marker
     -> Highlightable marker
     -> Bool
-inHoveredGroupForOverlaps config hoveredMarkerWithShortestHighlight highlightable =
+inHoveredMarker config hoveredMarkerWithShortestHighlight highlightable =
     case config.mouseDownIndex of
         Just _ ->
             -- If the user is actively highlighting, don't show the entire highlighted region as hovered
@@ -1274,6 +1245,7 @@ view =
                 , mouseDownIndex = model.mouseDownIndex
                 , hintingIndices = model.hintingIndices
                 , overlaps = OverlapsNotSupported
+                , markerRanges = model.markerRanges
                 , viewSegment =
                     viewHighlightable
                         False
@@ -1300,6 +1272,7 @@ viewWithOverlappingHighlights =
                 , mouseDownIndex = model.mouseDownIndex
                 , hintingIndices = model.hintingIndices
                 , overlaps = overlaps
+                , markerRanges = model.markerRanges
                 , viewSegment = viewHighlightable False model
                 , id = model.id
                 , highlightables = model.highlightables
@@ -1317,11 +1290,8 @@ findOverlapsSupport model =
             OverlapsSupported
                 { hoveredMarkerWithShortestHighlight =
                     model.mouseOverIndex
-                        |> Maybe.andThen
-                            (\index ->
-                                selectShortestMarkerRange index model.markerRanges
-                                    |> Maybe.map .marker
-                            )
+                        |> Maybe.andThen (selectShortestMarkerRange model.markerRanges)
+                        |> Maybe.map .marker
                 }
 
 
@@ -1350,11 +1320,9 @@ initFoldState model =
             , mouseDownIndex = model.mouseDownIndex
             , maybeTool = Just model.marker
             , overlaps = overlapsSupport
+            , markerRanges = model.markerRanges
             , highlightables = model.highlightables
             }
-
-        highlightableGroups =
-            buildGroups config model.highlightables
 
         toMark : Highlightable marker -> Tool.MarkerModel marker -> Mark.Mark
         toMark highlightable marker =
@@ -1363,7 +1331,7 @@ initFoldState model =
             , styles =
                 markedHighlightableStyles
                     config.maybeTool
-                    (isHovered_ config highlightableGroups)
+                    (isHovered_ config)
                     highlightable
             , endStyles = marker.endGroupClass
             }
@@ -1630,6 +1598,7 @@ view_ :
     , mouseDownIndex : Maybe Int
     , hintingIndices : Maybe ( Int, Int )
     , overlaps : OverlapsSupport marker
+    , markerRanges : List (MarkerRange marker)
     , viewSegment : Highlightable marker -> List Attribute -> Unstyled.Html msg
     , highlightables : List (Highlightable marker)
     , id : String
@@ -1644,7 +1613,7 @@ view_ config =
             , styles =
                 markedHighlightableStyles
                     config.maybeTool
-                    (isHovered_ config highlightableGroups)
+                    (isHovered_ config)
                     highlightable
             , endStyles = marker.endGroupClass
             }
