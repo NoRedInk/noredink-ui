@@ -788,7 +788,7 @@ performAction action ( model, highlightableUpdates, cmds ) =
                                 |> Maybe.withDefault NotChanged
                         , hintingIndices = Nothing
                       }
-                    , highlightableUpdates
+                    , UpdateHinted :: highlightableUpdates
                     , cmds
                     )
 
