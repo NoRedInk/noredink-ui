@@ -97,6 +97,7 @@ type alias Model marker =
       id : String
     , highlightables : List (Highlightable marker) -- The actual highlightable elements
     , marker : Tool.Tool marker -- Currently used marker
+    , markerRanges : List (MarkerRange marker)
     , joinAdjacentInteractiveHighlights : Bool
     , overlapsSupport : OverlapsSupport marker
 
@@ -175,6 +176,7 @@ init config =
             |> List.indexedMap (\index highlightable -> { highlightable | index = index })
             |> List.Extra.updateAt (Maybe.withDefault 0 focusIndex) (\highlightable -> { highlightable | isFocused = True })
     , marker = config.marker
+    , markerRanges = []
     , joinAdjacentInteractiveHighlights = config.joinAdjacentInteractiveHighlights
     , overlapsSupport =
         if config.overlapsSupport then
@@ -679,9 +681,12 @@ performAction action ( model, cmds ) =
                     let
                         ( indexesToSave, highlightables ) =
                             saveHinted marker hinting model.highlightables
+                                -- clear hinting indices
+                                |> Tuple.mapSecond (updateHinted model.hintingIndices Nothing)
                     in
                     ( { model
-                        | highlightables = updateHinted model.hintingIndices Nothing highlightables |> Debug.log "saved highlightables"
+                        | highlightables = highlightables |> Debug.log "saved highlightables"
+                        , markerRanges = findMarkerRanges highlightables
                         , hasChanged = Changed (HighlightCreated indexesToSave marker.kind)
                         , hintingIndices = Nothing
                       }
@@ -700,8 +705,8 @@ performAction action ( model, cmds ) =
                     Debug.log "toggled highlightables" (List.map (\h -> ( h.index, h.marked |> List.map .kind )) highlightables)
             in
             ( { model
-                | highlightables =
-                    highlightables
+                | highlightables = highlightables
+                , markerRanges = findMarkerRanges highlightables
                 , hasChanged = changed
                 , hintingIndices = Nothing
               }
@@ -873,7 +878,7 @@ toggleHighlighted : Int -> Tool.MarkerModel marker -> Model marker -> ( List (Hi
 toggleHighlighted index marker model =
     let
         maybeShortestMarker =
-            selectShortestMarkerRange index model.highlightables
+            selectShortestMarkerRange index model.markerRanges
 
         toggle acc highlightable =
             let
@@ -957,9 +962,9 @@ type alias MarkerRange marker =
 
 {-| Select the shortest possibly-overlapping marker covering the index provided, return its range.
 -}
-selectShortestMarkerRange : Int -> List (Highlightable marker) -> Maybe (MarkerRange marker)
-selectShortestMarkerRange index highlightables =
-    findMarkerRanges highlightables
+selectShortestMarkerRange : Int -> List (MarkerRange marker) -> Maybe (MarkerRange marker)
+selectShortestMarkerRange index markerRanges =
+    markerRanges
         |> List.filter (\{ start, end } -> start <= index && index <= end)
         |> List.Extra.minimumBy (\{ size } -> size)
 
@@ -1320,7 +1325,7 @@ findOverlapsSupport model =
                     model.mouseOverIndex
                         |> Maybe.andThen
                             (\index ->
-                                selectShortestMarkerRange index model.highlightables
+                                selectShortestMarkerRange index model.markerRanges
                                     |> Maybe.map .marker
                             )
                 }
