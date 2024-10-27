@@ -90,9 +90,9 @@ type alias Highlightable marker =
     , marked : List (Tool.MarkerModel marker)
     , index : Int
     , type_ : Type
-    , isHinted : Bool
-    , isFirstOrLastHinted : Bool
-    , isHovered : Bool
+    , hintedWith : Maybe (Tool.Tool marker)
+    , firstOrLastHintedWith : Maybe (Tool.Tool marker)
+    , hoveredBy : Maybe (Tool.Tool marker)
     , isFocused : Bool
     , isClicked : Bool
     }
@@ -112,9 +112,9 @@ initStatic marked index text_ =
     , marked = marked
     , index = index
     , type_ = Static
-    , isHinted = False
-    , isFirstOrLastHinted = False
-    , isHovered = False
+    , hintedWith = Nothing
+    , firstOrLastHintedWith = Nothing
+    , hoveredBy = Nothing
     , isFocused = False
     , isClicked = False
     }
@@ -128,9 +128,9 @@ initInteractive marked index text_ =
     , marked = marked
     , index = index
     , type_ = Interactive
-    , isHinted = False
-    , isFirstOrLastHinted = False
-    , isHovered = False
+    , hintedWith = Nothing
+    , firstOrLastHintedWith = Nothing
+    , hoveredBy = Nothing
     , isFocused = False
     , isClicked = False
     }

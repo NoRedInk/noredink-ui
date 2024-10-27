@@ -831,11 +831,11 @@ cleanHovered _ newModel highlightable =
                 }
                 (Maybe.andThen (selectShortestMarkerRange newModel.markerRanges) newModel.mouseOverIndex)
     in
-    if (newModel.hintingIndices /= Nothing || newModel.mouseDownIndex /= Nothing) && highlightable.isHovered then
-        { highlightable | isHovered = False }
+    if (newModel.hintingIndices /= Nothing || newModel.mouseDownIndex /= Nothing) && highlightable.hoveredBy /= Nothing then
+        { highlightable | hoveredBy = Nothing }
 
-    else if highlightable.isHovered && not (shouldBeHovered highlightable) then
-        { highlightable | isHovered = False }
+    else if highlightable.hoveredBy /= Nothing && not (shouldBeHovered highlightable) then
+        { highlightable | hoveredBy = Nothing }
 
     else
         highlightable
@@ -853,7 +853,7 @@ updateHovered _ newModel highlightable =
                 (Maybe.andThen (selectShortestMarkerRange newModel.markerRanges) newModel.mouseOverIndex)
     in
     if shouldBeHovered highlightable then
-        { highlightable | isHovered = True }
+        { highlightable | hoveredBy = Just newModel.marker }
 
     else
         highlightable
@@ -867,7 +867,7 @@ cleanHinted oldModel newModel highlightable =
                 >> Maybe.withDefault False
     in
     if maybeBetween oldModel.hintingIndices && not (maybeBetween newModel.hintingIndices) then
-        { highlightable | isHinted = False, isFirstOrLastHinted = False }
+        { highlightable | hintedWith = Nothing, firstOrLastHintedWith = Nothing }
 
     else
         highlightable
@@ -879,9 +879,13 @@ updateHinted oldModel newModel highlightable =
         ( True, Just ( start, end ) ) ->
             if between start end highlightable then
                 { highlightable
-                    | isHinted = True
-                    , isFirstOrLastHinted =
-                        highlightable.index == start || highlightable.index == end
+                    | hintedWith = Just newModel.marker
+                    , firstOrLastHintedWith =
+                        if highlightable.index == start || highlightable.index == end then
+                            Just newModel.marker
+
+                        else
+                            Nothing
                 }
 
             else
@@ -1005,8 +1009,8 @@ toggleHighlighted index marker model =
                     if highlightable.index == index && highlightable.type_ == Highlightable.Interactive then
                         ( Changed (HighlightCreated ( index, index ) marker.kind)
                         , { highlightable
-                            | isHinted = False
-                            , isFirstOrLastHinted = False
+                            | hintedWith = Nothing
+                            , firstOrLastHintedWith = Nothing
                             , marked =
                                 if model.overlapsSupport == OverlapsNotSupported then
                                     [ marker ]
@@ -1024,8 +1028,8 @@ toggleHighlighted index marker model =
                     if marker.kind == shortestMarker.marker && between shortestMarker.start shortestMarker.end highlightable then
                         ( Changed (HighlightRemoved ( shortestMarker.start, shortestMarker.end ) marker.kind)
                         , { highlightable
-                            | isHinted = False
-                            , isFirstOrLastHinted = False
+                            | hintedWith = Nothing
+                            , firstOrLastHintedWith = Nothing
                             , marked =
                                 if model.overlapsSupport == OverlapsNotSupported then
                                     []
@@ -1192,7 +1196,7 @@ removeHinted ( hintBeginning, hintEnd ) =
     List.map
         (\highlightable ->
             if between hintBeginning hintEnd highlightable then
-                { highlightable | isHinted = False, isFirstOrLastHinted = False }
+                { highlightable | hintedWith = Nothing, firstOrLastHintedWith = Nothing }
                     |> Highlightable.set Nothing
 
             else
@@ -1498,7 +1502,6 @@ viewFoldStatic =
         (viewHighlightableSegment
             { interactiveHighlighterId = Nothing
             , eventListeners = []
-            , maybeTool = Nothing
             , renderMarkdown = False
             }
         )
@@ -1569,9 +1572,9 @@ groupHighlightables { mouseOverIndex } x y =
 
         xAndYHaveTheSameState =
             -- Both are hinted
-            (x.isHinted && y.isHinted)
+            (x.hintedWith /= Nothing && y.hintedWith /= Nothing)
                 || -- Neither is hinted
-                   (not x.isHinted && not y.isHinted)
+                   (not (x.hintedWith /= Nothing) && not (y.hintedWith /= Nothing))
                 || -- Neither is hovered
                    (not xIsHovered && not yIsHovered)
     in
@@ -1580,8 +1583,8 @@ groupHighlightables { mouseOverIndex } x y =
         && (List.head y.marked == Nothing)
     )
         || (List.head x.marked == List.head y.marked && List.head x.marked /= Nothing)
-        || ((List.head x.marked /= Nothing) && y.isHinted)
-        || ((List.head y.marked /= Nothing) && x.isHinted)
+        || ((List.head x.marked /= Nothing) && y.hintedWith /= Nothing)
+        || ((List.head y.marked /= Nothing) && x.hintedWith /= Nothing)
 
 
 type OverlapsSupport
@@ -1679,7 +1682,6 @@ viewHighlightable =
                         { interactiveHighlighterId = Just model.id
                         , eventListeners = highlightableEventListeners model.id model.scrollFriendly highlightable
                         , renderMarkdown = renderMarkdown
-                        , maybeTool = Just model.marker
                         }
                         highlightable
                         customAttributes
@@ -1689,7 +1691,6 @@ viewHighlightable =
                         { interactiveHighlighterId = Nothing
                         , eventListeners = highlightableEventListeners model.id model.scrollFriendly highlightable
                         , renderMarkdown = renderMarkdown
-                        , maybeTool = Just model.marker
                         }
                         highlightable
                         customAttributes
@@ -1762,13 +1763,12 @@ highlightableEventListeners highlighterId scrollFriendly highlightable =
 viewHighlightableSegment :
     { interactiveHighlighterId : Maybe String
     , eventListeners : List (Unstyled.Attribute msg)
-    , maybeTool : Maybe (Tool.Tool marker)
     , renderMarkdown : Bool
     }
     -> Highlightable marker
     -> List Attribute
     -> Unstyled.Html msg
-viewHighlightableSegment ({ interactiveHighlighterId, eventListeners, renderMarkdown } as config) highlightable customAttributes =
+viewHighlightableSegment { interactiveHighlighterId, eventListeners, renderMarkdown } highlightable customAttributes =
     let
         whitespaceClass txt =
             -- we need to override whitespace styles in order to support
@@ -1814,23 +1814,23 @@ viewHighlightableSegment ({ interactiveHighlighterId, eventListeners, renderMark
 
                     _ ->
                         AttributesExtra.unstyledNone
-               , case ( config.maybeTool, highlightable.isHinted, highlightable.isHovered ) of
-                    ( Just (Tool.Marker marker), True, _ ) ->
+               , case ( highlightable.hintedWith, highlightable.hoveredBy ) of
+                    ( Just (Tool.Marker marker), _ ) ->
                         UnstyledAttrs.class
                             (styleClassName (HintedMark (Tool.mapMarker (\_ -> ()) marker)))
 
-                    ( Just (Tool.Eraser eraser), True, _ ) ->
+                    ( Just (Tool.Eraser eraser), _ ) ->
                         UnstyledAttrs.class (styleClassName (HintedEraser eraser))
 
-                    ( Just tool, False, True ) ->
+                    ( Nothing, Just tool ) ->
                         -- When hovered, but not marked
                         UnstyledAttrs.class
                             (styleClassName (HoveredNotHinted (Tool.map (\_ -> ()) tool)))
 
                     _ ->
                         AttributesExtra.unstyledNone
-               , case ( config.maybeTool, highlightable.isFirstOrLastHinted ) of
-                    ( Just (Tool.Marker marker), True ) ->
+               , case highlightable.firstOrLastHintedWith of
+                    Just (Tool.Marker marker) ->
                         -- only announce first or last hinted bc that's where
                         -- keyboard focus will be
                         UnstyledAttrs.class
