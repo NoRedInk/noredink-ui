@@ -1888,13 +1888,11 @@ unmarkedHighlightableStyles config highlightable =
                 case tool of
                     Tool.Marker marker ->
                         if highlightable.isHinted then
-                            [ [ -- Css.batch marker.hintClass
-                                UnstyledAttrs.class (styleClassName (HintedMark (Tool.mapMarker (\_ -> ()) marker)))
+                            [ [ UnstyledAttrs.class (styleClassName (HintedMark (Tool.mapMarker (\_ -> ()) marker)))
                               ]
                             , if highlightable.isFirstOrLastHinted then
                                 -- only announce first or last hinted bc that's where
                                 -- keyboard focus will be
-                                -- hintStartEndAnnouncer marker
                                 [ UnstyledAttrs.class
                                     (styleClassName (HintedMarkBoundary (Tool.mapMarker (\_ -> ()) marker)))
                                 ]
@@ -1906,11 +1904,6 @@ unmarkedHighlightableStyles config highlightable =
 
                         else if isHovered then
                             -- When hovered, but not marked
-                            -- List.concat
-                            --     [ marker.hoverClass
-                            --     , marker.startGroupClass
-                            --     , marker.endGroupClass
-                            --     ]
                             [ UnstyledAttrs.class (styleClassName (HoveredNotHinted (Tool.map (\_ -> ()) tool))) ]
 
                         else
@@ -1918,11 +1911,9 @@ unmarkedHighlightableStyles config highlightable =
 
                     Tool.Eraser eraser_ ->
                         if highlightable.isHinted then
-                            -- eraser_.hintClass
                             [ UnstyledAttrs.class (styleClassName (HintedEraser eraser_)) ]
 
                         else if isHovered then
-                            -- eraser_.hoverClass
                             [ UnstyledAttrs.class (styleClassName (HoveredNotHinted (Tool.Eraser eraser_))) ]
 
                         else
