@@ -1296,10 +1296,7 @@ view =
                 , hintingIndices = model.hintingIndices
                 , overlaps = OverlapsNotSupported
                 , markerRanges = model.markerRanges
-                , viewSegment =
-                    viewHighlightable
-                        model.id
-                        model
+                , viewSegment = viewHighlightable model.id model.scrollFriendly
                 , id = model.id
                 , highlightables = model.highlightables
                 }
@@ -1318,7 +1315,7 @@ viewWithOverlappingHighlights =
                 , hintingIndices = model.hintingIndices
                 , overlaps = OverlapsSupported
                 , markerRanges = model.markerRanges
-                , viewSegment = viewHighlightable model.id model
+                , viewSegment = viewHighlightable model.id model.scrollFriendly
                 , id = model.id
                 , highlightables = model.highlightables
                 }
@@ -1490,7 +1487,7 @@ A list of extraStyles is also accepted if, for example, you want to apply bold /
 viewFoldHighlighter : List Attribute -> FoldState marker -> ( FoldState marker, List (Unstyled.Html (Msg marker)) )
 viewFoldHighlighter extraStyles (FoldState ({ model } as foldState)) =
     viewFoldHelper
-        (viewHighlightable model.id model)
+        (viewHighlightable model.id model.scrollFriendly)
         extraStyles
         (FoldState foldState)
 
@@ -1672,18 +1669,18 @@ view_ config =
 
 viewHighlightable :
     HighlighterId
-    -> Model marker
+    -> Bool
     -> Highlightable marker
     -> List Attribute
     -> Unstyled.Html (Msg marker)
 viewHighlightable =
     UnstyledLazy.lazy4 <|
-        \highlighterId model highlightable customAttributes ->
+        \highlighterId scrollFriendly highlightable customAttributes ->
             case highlightable.type_ of
                 Highlightable.Interactive ->
                     viewHighlightableSegment
                         { interactiveHighlighterId = Just highlighterId
-                        , eventListeners = highlightableEventListeners highlighterId model.scrollFriendly highlightable
+                        , eventListeners = highlightableEventListeners highlighterId scrollFriendly highlightable
                         }
                         highlightable
                         customAttributes
@@ -1691,7 +1688,7 @@ viewHighlightable =
                 Highlightable.Static ->
                     viewHighlightableSegment
                         { interactiveHighlighterId = Nothing
-                        , eventListeners = highlightableEventListeners highlighterId model.scrollFriendly highlightable
+                        , eventListeners = highlightableEventListeners highlighterId scrollFriendly highlightable
                         }
                         highlightable
                         customAttributes
