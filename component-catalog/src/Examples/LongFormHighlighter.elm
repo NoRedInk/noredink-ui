@@ -78,24 +78,7 @@ example =
                 , Sub.map FoldHighlighterMsg subscriptions
                 ]
     , preview =
-        [ div [ css [ Fonts.baseFont, Css.lineHeight (Css.num 2), Css.Global.children [ Css.Global.p [ Css.margin Css.zero ] ] ] ]
-            [ Highlighter.static
-                { id = "highlight-preview"
-                , highlightables =
-                    [ ( "Sphinx", Nothing )
-                    , ( "of", Nothing )
-                    , ( "black", Just exampleMarker )
-                    , ( "quartz,", Nothing )
-                    , ( "judge", Nothing )
-                    , ( "my", Nothing )
-                    , ( "vow.", Nothing )
-                    ]
-                        |> List.intersperse ( " ", Nothing )
-                        |> List.indexedMap (\i ( word, marker ) -> Highlightable.initStatic (Maybe.Extra.toList marker) i word)
-                }
-                |> Html.Styled.fromUnstyled
-            ]
-        ]
+        []
     , about =
         [ Text.smallBody
             [ Text.html
@@ -115,88 +98,7 @@ example =
         ]
     , view =
         \ellieLinkConfig state ->
-            [ ControlView.view
-                { ellieLinkConfig = ellieLinkConfig
-                , name = moduleName
-                , version = version
-                , update = UpdateControls
-                , settings = state.settings
-                , mainType = Just "Program () (Highlighter.Model ()) (Highlighter.Msg ())"
-                , extraCode =
-                    [ "import Browser"
-                    , "import Nri.Ui.Highlightable.V3 as Highlightable"
-                    , "import Nri.Ui.HighlighterTool.V1 as Tool"
-                    , "import Sort"
-                    ]
-                , renderExample = identity
-                , toExampleCode =
-                    \_ ->
-                        [ { sectionName = "Code"
-                          , code =
-                                Code.browserElement
-                                    { init =
-                                        Code.always
-                                            (Code.tuple
-                                                "init"
-                                                "Cmd.none"
-                                            )
-                                    , update =
-                                        Code.newlineWithIndent 2
-                                            ++ Code.anonymousFunction
-                                                "msg model"
-                                                (Code.pipelineMultiline
-                                                    [ Code.fromModule moduleName "update msg model"
-                                                    , Code.anonymousFunction "(newModel, cmd, intent)" <|
-                                                        Code.tuple "newModel" "cmd"
-                                                    ]
-                                                    3
-                                                )
-                                    , view = "view >> toUnstyled"
-                                    , subscriptions =
-                                        Code.newlineWithIndent 2
-                                            ++ Code.anonymousFunction "model"
-                                                (Code.newlineWithIndent 3
-                                                    ++ " -- for the highlighter to work correctly for touch users,"
-                                                    ++ Code.newlineWithIndent 3
-                                                    ++ "-- you will need to wire up subscriptions."
-                                                    ++ Code.newlineWithIndent 3
-                                                    ++ "-- See the Highlighter example source code."
-                                                    ++ Code.newlineWithIndent 3
-                                                    ++ "Sub.none "
-                                                )
-                                    }
-                                    ++ Code.newlines
-                                    ++ -- view
-                                       Tuple.first (view state)
-                                    ++ Code.newlines
-                                    ++ -- init
-                                       (initHighlighter (Control.currentValue state.settings) state.highlighter.highlightables
-                                            |> Tuple.first
-                                       )
-                          }
-                        ]
-                }
-            , Heading.h2
-                [ Heading.plaintext "Customizable example"
-                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
-                ]
-            , Text.mediumBody [ Text.plaintext "This example updates based on the settings you configure on this page." ]
-            , Button.button "Clear all highlights"
-                [ Button.onClick ClearHighlights
-                , Button.secondary
-                , Button.small
-                ]
-            , div
-                [ css
-                    [ Css.fontSize (Css.px 24)
-                    , Css.lineHeight (Css.num 1.75)
-                    , Fonts.quizFont
-                    ]
-                ]
-                [ Tuple.second (view state)
-                    |> map HighlighterMsg
-                ]
-            , Heading.h2
+            [ Heading.h2
                 [ Heading.plaintext "Overlapping highlights example"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
@@ -229,168 +131,6 @@ example =
                 ]
                 [ viewFoldHighlights state.foldHighlightsState
                     |> map FoldHighlighterMsg
-                ]
-            , Heading.h2
-                [ Heading.plaintext "Non-interactive examples"
-                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
-                ]
-            , Text.mediumBody [ Text.plaintext "These are examples of some different ways the highlighter can appear to users." ]
-            , Table.view []
-                [ Table.rowHeader
-                    { header = text "Highlighter."
-                    , view = .viewName >> text
-                    , width = Css.zero
-                    , cellStyles =
-                        always
-                            [ Css.padding2 (Css.px 14) (Css.px 7)
-                            , Css.verticalAlign Css.middle
-                            , Css.textAlign Css.left
-                            , Css.fontWeight Css.normal
-                            ]
-                    , sort = Nothing
-                    }
-                , Table.string
-                    { header = "HighlighterTool."
-                    , value = .tool
-                    , width = Css.pct 10
-                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
-                    , sort = Nothing
-                    }
-                , Table.string
-                    { header = "Highlightable."
-                    , value = .highlightable
-                    , width = Css.pct 10
-                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
-                    , sort = Nothing
-                    }
-                , Table.string
-                    { header = "Description"
-                    , value = .description
-                    , width = Css.pct 30
-                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
-                    , sort = Nothing
-                    }
-                , Table.custom
-                    { header = text "Example"
-                    , view = .example
-                    , width = Css.pct 60
-                    , cellStyles =
-                        always
-                            [ Css.padding2 (Css.px 14) (Css.px 7)
-                            , Css.verticalAlign Css.middle
-                            , Css.lineHeight (Css.num 2)
-                            ]
-                    , sort = Nothing
-                    }
-                ]
-                [ { viewName = "static"
-                  , tool = "buildMarker"
-                  , highlightable = "init"
-                  , description = "One word highlighted"
-                  , example =
-                        Highlighter.static
-                            { id = "example-0"
-                            , highlightables =
-                                [ ( "Sphinx", Nothing )
-                                , ( "of", Nothing )
-                                , ( "black", Just exampleMarker )
-                                , ( "quartz,", Nothing )
-                                , ( "judge", Nothing )
-                                , ( "my", Nothing )
-                                , ( "vow.", Nothing )
-                                ]
-                                    |> List.intersperse ( " ", Nothing )
-                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.initStatic (Maybe.Extra.toList marker) i word)
-                            }
-                            |> Html.Styled.fromUnstyled
-                  }
-                , { viewName = "static"
-                  , tool = "buildMarker"
-                  , highlightable = "init"
-                  , description = "Multiple words highlighted separately"
-                  , example =
-                        Highlighter.static
-                            { id = "example-1"
-                            , highlightables =
-                                [ ( "Sphinx", Nothing )
-                                , ( "of", Nothing )
-                                , ( "black", Just exampleMarker )
-                                , ( "quartz,", Just exampleMarker )
-                                , ( "judge", Nothing )
-                                , ( "my", Nothing )
-                                , ( "vow.", Nothing )
-                                ]
-                                    |> List.intersperse ( " ", Nothing )
-                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.initStatic (Maybe.Extra.toList marker) i word)
-                            }
-                            |> Html.Styled.fromUnstyled
-                  }
-                , { viewName = "static"
-                  , tool = "buildMarker"
-                  , highlightable = "init"
-                  , description = "Multiple words highlighted & joined"
-                  , example =
-                        Highlighter.static
-                            { id = "example-2"
-                            , highlightables =
-                                [ ( "Sphinx", Nothing )
-                                , ( "of", Nothing )
-                                , ( "black quartz,", Just exampleMarker )
-                                , ( "judge", Nothing )
-                                , ( "my", Nothing )
-                                , ( "vow.", Nothing )
-                                ]
-                                    |> List.intersperse ( " ", Nothing )
-                                    |> List.indexedMap (\i ( word, marker ) -> Highlightable.initStatic (Maybe.Extra.toList marker) i word)
-                            }
-                            |> Html.Styled.fromUnstyled
-                  }
-                , { viewName = "static"
-                  , tool = "buildMarker"
-                  , highlightable = "init"
-                  , description = "Multiple kinds of highlights without overlaps"
-                  , example =
-                        Highlighter.static { id = "example-3a", highlightables = multipleHighlightsHighlightables }
-                            |> Html.Styled.fromUnstyled
-                  }
-                , { viewName = "staticMarkdown"
-                  , tool = "buildMarker"
-                  , highlightable = "init"
-                  , description = "Multiple kinds of highlights without overlaps and with interpreted Markdown"
-                  , example =
-                        Highlighter.staticMarkdown { id = "example-3b", highlightables = multipleHighlightsHighlightables }
-                            |> Html.Styled.fromUnstyled
-                  }
-                , { viewName = "staticWithTags"
-                  , tool = "buildMarkerWithBorder"
-                  , highlightable = "init"
-                  , description = "Multiple kinds of highlights without overlaps"
-                  , example =
-                        Highlighter.staticWithTags { id = "example-4a", highlightables = multipleHighlightsHighlightablesWithBorder }
-                            |> Html.Styled.fromUnstyled
-                  }
-                , { viewName = "staticMarkdown"
-                  , tool = "buildMarker"
-                  , highlightable = "fromMarkdown"
-                  , description = "Interpreting empty markdown anchor tags as highlights."
-                  , example =
-                        Highlighter.staticMarkdown
-                            { id = "example-5"
-                            , highlightables = Highlightable.fromMarkdown "Select your [favorite phrase]() in **your** writing."
-                            }
-                            |> Html.Styled.fromUnstyled
-                  }
-                , { viewName = "staticMarkdown"
-                  , tool = "buildMarker"
-                  , highlightable = "fromMarkdown"
-                  , description = "Interpreting <nri-highlight> tags with a custom color."
-                  , example =
-                        Highlighter.staticMarkdown
-                            { id = "example-6"
-                            , highlightables = Highlightable.fromMarkdown "Select your <nri-highlight color=\"cyan\">favorite phrase with favorite color</nri-highlight> in **your** writing."
-                            }
-                            |> Html.Styled.fromUnstyled
-                  }
                 ]
             ]
     , categories = [ Instructional ]
@@ -3395,12 +3135,19 @@ init =
                 { id = "student-writing-fold"
                 , highlightables =
                     List.concat foldHighlightsSource
-                        |> List.indexedMap (Highlightable.initInteractive [])
+                        |> List.indexedMap
+                            (\idx txt ->
+                                if txt == " " then
+                                    Highlightable.initStatic [] idx txt
+
+                                else
+                                    Highlightable.initInteractive [] idx txt
+                            )
                 , marker = Tool.Marker (inlineCommentMarker "Comment 1")
                 , sorter = Sort.alphabetical
                 , joinAdjacentInteractiveHighlights = True
                 , scrollFriendly = False
-                , overlapsSupport = False
+                , overlapsSupport = True
                 }
     in
     ( { settings = settings
@@ -3686,6 +3433,30 @@ update msg state =
                 , perform intent (isScrollFriendly state.foldHighlightsState) Interactive
                 ]
             )
+
+
+
+-- bumpMarkerId : Highlighter.Model String -> Highlighter.Model String
+-- bumpMarkerId highlighter =
+--     let
+--         oldId =
+--             case highlighter.marker of
+--                 Tool.Eraser _ ->
+--                     0
+--                 Tool.Marker marker ->
+--                     marker.kind
+--                         |> String.split " "
+--                         |> List.drop 1
+--                         |> List.head
+--                         |> Maybe.withDefault "1"
+--                         |> String.toInt
+--                         |> Maybe.withDefault 1
+--         newId =
+--             oldId + 1
+--     in
+--     { highlighter
+--         | marker = Tool.Marker (inlineCommentMarker ("Comment " ++ String.fromInt newId))
+--     }
 
 
 sorter : Sorter ()
