@@ -1,4 +1,4 @@
-module Examples.Highlighter exposing (Msg, State, example)
+module Examples.LongFormHighlighter exposing (Msg, State, example)
 
 {-|
 
@@ -25,8 +25,8 @@ import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Highlightable.V3 as Highlightable exposing (Highlightable)
-import Nri.Ui.Highlighter.V6 as Highlighter
+import Nri.Ui.Highlightable.LongForm as Highlightable exposing (Highlightable)
+import Nri.Ui.Highlighter.LongForm as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V7 as Table
@@ -36,7 +36,7 @@ import Sort exposing (Sorter)
 
 moduleName : String
 moduleName =
-    "Highlighter"
+    "HighlighterLongForm"
 
 
 version : Int
@@ -112,6 +112,7 @@ example =
                     ]
                 ]
                 [ Highlighter.viewWithOverlappingHighlights state.overlappingHighlightsState
+                    |> Html.Styled.fromUnstyled
                     |> map OverlappingHighlighterMsg
                 ]
             , Heading.h2
@@ -256,16 +257,10 @@ view state =
         viewStr =
             Code.var "view" 1
     in
-    case (Control.currentValue state.settings).textSettings.highlighterType of
-        Markdown ->
-            ( viewStr "Highlighter.viewMarkdown"
-            , Highlighter.viewMarkdown state.highlighter
-            )
-
-        Standard ->
-            ( viewStr "Highlighter.view"
-            , Highlighter.view state.highlighter
-            )
+    ( viewStr "Highlighter.view"
+    , Highlighter.view state.highlighter
+        |> Html.Styled.fromUnstyled
+    )
 
 
 {-| -}
@@ -3106,7 +3101,7 @@ viewFoldHighlights model =
     List.Extra.mapAccuml
         (\state sourceRow ->
             List.Extra.mapAccuml (\innerState _ -> Highlighter.viewFoldHighlighter [] innerState) state sourceRow
-                |> Tuple.mapSecond (List.concat >> li [])
+                |> Tuple.mapSecond (List.concat >> List.map Html.Styled.fromUnstyled >> li [])
         )
         (Highlighter.initFoldState model)
         foldHighlightsSource
@@ -3132,6 +3127,7 @@ init =
                 , sorter = Sort.alphabetical
                 , joinAdjacentInteractiveHighlights = True
                 , scrollFriendly = False
+                , overlapsSupport = True
                 }
 
         foldHighlightsState =
@@ -3139,11 +3135,19 @@ init =
                 { id = "student-writing-fold"
                 , highlightables =
                     List.concat foldHighlightsSource
-                        |> List.indexedMap (Highlightable.initInteractive [])
+                        |> List.indexedMap
+                            (\idx txt ->
+                                if txt == " " then
+                                    Highlightable.initStatic [] idx txt
+
+                                else
+                                    Highlightable.initInteractive [] idx txt
+                            )
                 , marker = Tool.Marker (inlineCommentMarker "Comment 1")
                 , sorter = Sort.alphabetical
                 , joinAdjacentInteractiveHighlights = True
                 , scrollFriendly = False
+                , overlapsSupport = True
                 }
     in
     ( { settings = settings
@@ -3214,6 +3218,7 @@ initHighlighter settings previousHighlightables =
         , sorter = sorter
         , joinAdjacentInteractiveHighlights = settings.textSettings.joinAdjacentInteractiveHighlights
         , scrollFriendly = settings.textSettings.scrollFriendly
+        , overlapsSupport = False
         }
     )
 
@@ -3428,6 +3433,30 @@ update msg state =
                 , perform intent (isScrollFriendly state.foldHighlightsState) Interactive
                 ]
             )
+
+
+
+-- bumpMarkerId : Highlighter.Model String -> Highlighter.Model String
+-- bumpMarkerId highlighter =
+--     let
+--         oldId =
+--             case highlighter.marker of
+--                 Tool.Eraser _ ->
+--                     0
+--                 Tool.Marker marker ->
+--                     marker.kind
+--                         |> String.split " "
+--                         |> List.drop 1
+--                         |> List.head
+--                         |> Maybe.withDefault "1"
+--                         |> String.toInt
+--                         |> Maybe.withDefault 1
+--         newId =
+--             oldId + 1
+--     in
+--     { highlighter
+--         | marker = Tool.Marker (inlineCommentMarker ("Comment " ++ String.fromInt newId))
+--     }
 
 
 sorter : Sorter ()
