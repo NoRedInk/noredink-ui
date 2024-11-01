@@ -36,7 +36,7 @@ import Nri.Ui.Modal.V12 as Modal
 import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Table.V7 as Table
+import Nri.Ui.Table.V8 as Table
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon

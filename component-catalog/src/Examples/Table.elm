@@ -17,7 +17,7 @@ import Html.Attributes exposing (alt)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
-import Nri.Ui.Table.V7 as Table exposing (Column)
+import Nri.Ui.Table.V8 as Table exposing (Column)
 
 
 {-| -}
@@ -32,7 +32,7 @@ moduleName =
 
 version : Int
 version =
-    7
+    8
 
 
 {-| -}
