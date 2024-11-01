@@ -2,6 +2,7 @@ module Nri.Ui.Table.V7 exposing
     ( Column, SortDirection(..), custom, string, rowHeader
     , view, viewWithoutHeader
     , viewLoading, viewLoadingWithoutHeader
+    , placeholderColumn
     )
 
 {-| Upgrading from V6:
@@ -34,7 +35,7 @@ import Nri.Ui.Fonts.V1 exposing (baseFont)
 in the table
 -}
 type Column data msg
-    = Column (Html msg) (data -> Html msg) Style (data -> List Style) (Maybe SortDirection) CellType
+    = Column (Html msg) (data -> Html msg) Style (data -> List Style) (Maybe SortDirection) CellType Bool
 
 
 {-| Which direction is a table column sorted? Only set these on columns that
@@ -73,7 +74,19 @@ string :
     }
     -> Column data msg
 string { header, value, width, cellStyles, sort } =
-    Column (Html.text header) (value >> Html.text) (Css.width width) cellStyles sort DataCell
+    Column (Html.text header) (value >> Html.text) (Css.width width) cellStyles sort DataCell False
+
+
+{-| Creates a placeholder column which will reserve the space for the column,
+this can be used when multiple tables have similar data and we want to keep
+the size consistent.
+-}
+placeholderColumn :
+    { width : LengthOrAuto compatible
+    }
+    -> Column data msg
+placeholderColumn options =
+    Column (Html.text "") (always (Html.text "")) (Css.width options.width) (always []) Nothing DataCell False
 
 
 {-| A column that renders however you want it to
@@ -87,7 +100,7 @@ custom :
     }
     -> Column data msg
 custom options =
-    Column options.header options.view (Css.width options.width) options.cellStyles options.sort DataCell
+    Column options.header options.view (Css.width options.width) options.cellStyles options.sort DataCell True
 
 
 {-| A column whose cells are row headers
@@ -101,7 +114,7 @@ rowHeader :
     }
     -> Column data msg
 rowHeader options =
-    Column options.header options.view (Css.width options.width) options.cellStyles options.sort RowHeaderCell
+    Column options.header options.view (Css.width options.width) options.cellStyles options.sort RowHeaderCell False
 
 
 
@@ -110,15 +123,15 @@ rowHeader options =
 
 {-| Displays a table of data without a header row
 -}
-viewWithoutHeader : { additionalStyles : List Style, alternatingRowColors : Bool, hasHiddenColumns : Bool } -> List (Column data msg) -> List data -> Html msg
-viewWithoutHeader { additionalStyles, alternatingRowColors, hasHiddenColumns } columns =
+viewWithoutHeader : { additionalStyles : List Style, alternatingRowColors : Bool } -> List (Column data msg) -> List data -> Html msg
+viewWithoutHeader { additionalStyles, alternatingRowColors } columns =
     tableWithoutHeader additionalStyles columns (viewRow columns alternatingRowColors)
 
 
 {-| Displays a table of data based on the provided column definitions
 -}
-view : { additionalStyles : List Style, alternatingRowColors : Bool, hasHiddenColumns : Bool } -> List (Column data msg) -> List data -> Html msg
-view { additionalStyles, alternatingRowColors, hasHiddenColumns } columns =
+view : { additionalStyles : List Style, alternatingRowColors : Bool } -> List (Column data msg) -> List data -> Html msg
+view { additionalStyles, alternatingRowColors } columns =
     tableWithHeader additionalStyles columns (viewRow columns alternatingRowColors)
 
 
@@ -130,7 +143,7 @@ viewRow columns alternatingRowColors data =
 
 
 viewColumn : data -> Column data msg -> Html msg
-viewColumn data (Column _ renderer width cellStyles _ cellType) =
+viewColumn data (Column _ renderer width cellStyles _ cellType _) =
     cell cellType
         [ css ([ width, verticalAlign middle, padding4 (px 11) (px 12) (px 14) (px 12), textAlign left ] ++ cellStyles data)
         ]
@@ -145,8 +158,8 @@ viewColumn data (Column _ renderer width cellStyles _ cellType) =
 out text with an interesting animation. This view lets the user know that
 data is on its way and what it will look like when it arrives.
 -}
-viewLoading : { additionalStyles : List Style, alternatingRowColors : Bool, hasHiddenColumns : Bool } -> List (Column data msg) -> Html msg
-viewLoading { additionalStyles, alternatingRowColors, hasHiddenColumns } columns =
+viewLoading : { additionalStyles : List Style, alternatingRowColors : Bool } -> List (Column data msg) -> Html msg
+viewLoading { additionalStyles, alternatingRowColors } columns =
     tableWithHeader (loadingTableStyles ++ additionalStyles) columns (viewLoadingRow columns alternatingRowColors) (List.range 0 8)
 
 
@@ -165,7 +178,7 @@ viewLoadingRow columns alternatingRowColors index =
 
 
 viewLoadingColumn : Int -> Int -> Column data msg -> Html msg
-viewLoadingColumn rowIndex colIndex (Column _ _ width _ _ cellType) =
+viewLoadingColumn rowIndex colIndex (Column _ _ width _ _ cellType _) =
     cell cellType
         [ css (stylesLoadingColumn rowIndex colIndex width ++ [ verticalAlign middle ] ++ loadingCellStyles)
         ]
@@ -185,7 +198,7 @@ stylesLoadingColumn rowIndex colIndex width =
 
 tableWithoutHeader : List Style -> List (Column data msg) -> (a -> Html msg) -> List a -> Html msg
 tableWithoutHeader styles columns toRow data =
-    table styles
+    table styles columns
         [ thead [] [ tr Style.invisible (List.map tableColHeader columns) ]
         , tableBody toRow data
         ]
@@ -193,15 +206,15 @@ tableWithoutHeader styles columns toRow data =
 
 tableWithHeader : List Style -> List (Column data msg) -> (a -> Html msg) -> List a -> Html msg
 tableWithHeader styles columns toRow data =
-    table styles
+    table styles columns
         [ tableHeader columns
         , tableBody toRow data
         ]
 
 
-table : List Style -> List (Html msg) -> Html msg
-table styles =
-    Html.table [ css (styles ++ tableStyles) ]
+table : List Style -> List (Column data msg) -> List (Html msg) -> Html msg
+table styles columns =
+    Html.table [ css (styles ++ tableStyles columns) ]
 
 
 tableHeader : List (Column data msg) -> Html msg
@@ -213,7 +226,7 @@ tableHeader columns =
 
 
 tableColHeader : Column data msg -> Html msg
-tableColHeader (Column header _ width _ sort _) =
+tableColHeader (Column header _ width _ sort _ _) =
     th
         [ Attributes.scope "col"
         , css (width :: headerStyles)
@@ -301,11 +314,20 @@ loadingTableStyles =
     fadeInAnimation
 
 
-tableStyles : List Style
-tableStyles =
+tableStyles : List (Column data msg) -> List Style
+tableStyles columns =
+    let
+        hasPlaceholderColumns =
+            List.any (\(Column _ _ _ _ _ _ h) -> h) columns
+    in
     [ borderCollapse collapse
     , baseFont
     , Css.width (Css.pct 100)
+    , if hasPlaceholderColumns then
+        Css.tableLayout Css.fixed
+
+      else
+        Css.batch []
     ]
 
 

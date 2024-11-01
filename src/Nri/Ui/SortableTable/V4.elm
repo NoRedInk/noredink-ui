@@ -333,9 +333,6 @@ view attributes columns entries =
 
         tableColumns =
             List.map (buildTableColumn config.updateMsg config.state) columns
-
-        hasHiddenColumns =
-            List.any (\(Column column) -> column.hidden) columns
     in
     case config.state of
         Just state_ ->
@@ -343,12 +340,12 @@ view attributes columns entries =
                 sorter =
                     findSorter columns state_.column
             in
-            Table.view { additionalStyles = stickyStyles, alternatingRowColors = config.alternatingRowColors, hasHiddenColumns = hasHiddenColumns }
+            Table.view { additionalStyles = stickyStyles, alternatingRowColors = config.alternatingRowColors }
                 tableColumns
                 (List.sortWith (sorter state_.sortDirection) entries)
 
         Nothing ->
-            Table.view { additionalStyles = stickyStyles, alternatingRowColors = config.alternatingRowColors, hasHiddenColumns = hasHiddenColumns } tableColumns entries
+            Table.view { additionalStyles = stickyStyles, alternatingRowColors = config.alternatingRowColors } tableColumns entries
 
 
 {-| -}
@@ -364,11 +361,8 @@ viewLoading attributes columns =
 
         tableColumns =
             List.map (buildTableColumn config.updateMsg config.state) columns
-
-        hasHiddenColumns =
-            List.any (\(Column column) -> column.hidden) columns
     in
-    Table.viewLoading { additionalStyles = stickyStyles, alternatingRowColors = config.alternatingRowColors, hasHiddenColumns = hasHiddenColumns } tableColumns
+    Table.viewLoading { additionalStyles = stickyStyles, alternatingRowColors = config.alternatingRowColors } tableColumns
 
 
 findSorter : List (Column id entry msg) -> id -> Sorter entry
@@ -403,28 +397,32 @@ identitySorter =
 
 buildTableColumn : Maybe (State id -> msg) -> Maybe (State id) -> Column id entry msg -> Table.Column entry msg
 buildTableColumn maybeUpdateMsg maybeState (Column column) =
-    Table.custom
-        { header =
-            case maybeState of
-                Just state_ ->
-                    viewSortHeader (column.sorter /= Nothing) column.header maybeUpdateMsg state_ column.id
+    if column.hidden then
+        Table.placeholderColumn { width = Css.px (toFloat column.width) }
 
-                Nothing ->
-                    column.header
-        , view = column.view
-        , width = Css.px (toFloat column.width)
-        , cellStyles = column.cellStyles
-        , sort =
-            Maybe.andThen
-                (\state_ ->
-                    if state_.column == column.id then
-                        Just state_.sortDirection
+    else
+        Table.custom
+            { header =
+                case maybeState of
+                    Just state_ ->
+                        viewSortHeader (column.sorter /= Nothing) column.header maybeUpdateMsg state_ column.id
 
-                    else
-                        Nothing
-                )
-                maybeState
-        }
+                    Nothing ->
+                        column.header
+            , view = column.view
+            , width = Css.px (toFloat column.width)
+            , cellStyles = column.cellStyles
+            , sort =
+                Maybe.andThen
+                    (\state_ ->
+                        if state_.column == column.id then
+                            Just state_.sortDirection
+
+                        else
+                            Nothing
+                    )
+                    maybeState
+            }
 
 
 viewSortHeader : Bool -> Html msg -> Maybe (State id -> msg) -> State id -> id -> Html msg
