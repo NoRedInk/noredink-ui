@@ -13,6 +13,7 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Html.Attributes exposing (alt)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
@@ -73,7 +74,7 @@ example =
     , view =
         \ellieLinkConfig state ->
             let
-                { showHeader, isLoading } =
+                { showHeader, isLoading, alternatingRowColors } =
                     Control.currentValue state
 
                 ( columnsCode, columns ) =
@@ -89,7 +90,7 @@ example =
                 , extraCode = [ "import Nri.Ui.Button.V10 as Button" ]
                 , renderExample = Code.unstyledView
                 , toExampleCode =
-                    \settings ->
+                    \_ ->
                         let
                             codeWithData viewName =
                                 List.map datumToString data
@@ -100,7 +101,14 @@ example =
                                 { sectionName = moduleName ++ "." ++ viewName
                                 , code =
                                     (moduleName ++ "." ++ viewName)
-                                        ++ " [] "
+                                        ++ " "
+                                        ++ Code.list
+                                            (if alternatingRowColors then
+                                                []
+
+                                             else
+                                                [ "Table.disableAlternatingRowColors" ]
+                                            )
                                         ++ Code.list columnsCode
                                         ++ dataStr
                                 }
@@ -117,16 +125,16 @@ example =
                 ]
             , case ( showHeader, isLoading ) of
                 ( True, False ) ->
-                    Table.view { additionalStyles = [], alternatingRowColors = True } columns data
+                    Table.view { additionalStyles = [], alternatingRowColors = alternatingRowColors } columns data
 
                 ( False, False ) ->
-                    Table.viewWithoutHeader { additionalStyles = [], alternatingRowColors = True } columns data
+                    Table.viewWithoutHeader { additionalStyles = [], alternatingRowColors = alternatingRowColors } columns data
 
                 ( True, True ) ->
-                    Table.viewLoading { additionalStyles = [], alternatingRowColors = True } columns
+                    Table.viewLoading { additionalStyles = [], alternatingRowColors = alternatingRowColors } columns
 
                 ( False, True ) ->
-                    Table.viewLoadingWithoutHeader { additionalStyles = [], alternatingRowColors = True } columns
+                    Table.viewLoadingWithoutHeader { additionalStyles = [], alternatingRowColors = alternatingRowColors } columns
             ]
     }
 
@@ -150,6 +158,7 @@ update msg state =
 type alias Settings =
     { showHeader : Bool
     , isLoading : Bool
+    , alternatingRowColors : Bool
     }
 
 
@@ -158,6 +167,7 @@ controlSettings =
     Control.record Settings
         |> Control.field "visible header" (Control.bool True)
         |> Control.field "is loading" (Control.bool False)
+        |> Control.field "alternatingRowColors" (Control.bool True)
 
 
 type alias Datum =
