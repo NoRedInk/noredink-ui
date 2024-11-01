@@ -120,6 +120,11 @@ example =
                                         SortableTable.stickyHeaderCustom customConfig
                             )
                             settings.stickyHeader
+                        , if settings.alternatingRowColors then
+                            Nothing
+
+                          else
+                            Just SortableTable.disableAlternatingRowColors
                         ]
 
                 isStickyAtAll =
@@ -168,6 +173,11 @@ example =
                                                         2
                                     )
                                     settings.stickyHeader
+                                , if settings.alternatingRowColors then
+                                    Nothing
+
+                                  else
+                                    Just "SortableTable.disableAlternatingRowColors"
                                 ]
                             )
                             1
@@ -331,6 +341,7 @@ type alias Settings =
     , customizableColumnCellStyles : ( String, List Style )
     , loading : Bool
     , stickyHeader : Maybe StickyHeader
+    , alternatingRowColors : Bool
     }
 
 
@@ -378,6 +389,7 @@ controlSettings =
                 )
                 |> Control.revealed "Sticky Header"
             )
+        |> Control.field "Alternating row colors" (Control.bool True)
 
 
 type ColumnId
