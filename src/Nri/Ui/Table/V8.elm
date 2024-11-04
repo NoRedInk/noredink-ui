@@ -33,7 +33,8 @@ import Nri.Ui.Fonts.V1 exposing (baseFont)
 in the table
 -}
 type Column data msg
-    = Column (Html msg) (data -> Html msg) Style (data -> List Style) (Maybe SortDirection) CellType Bool
+    = Column (Html msg) (data -> Html msg) Style (data -> List Style) (Maybe SortDirection) CellType
+    | PlaceholderColumn Style
 
 
 {-| Which direction is a table column sorted? Only set these on columns that
@@ -72,7 +73,7 @@ string :
     }
     -> Column data msg
 string { header, value, width, cellStyles, sort } =
-    Column (Html.text header) (value >> Html.text) (Css.width width) cellStyles sort DataCell False
+    Column (Html.text header) (value >> Html.text) (Css.width width) cellStyles sort DataCell
 
 
 {-| Creates a placeholder column which will reserve the space for the column,
@@ -84,7 +85,7 @@ placeholderColumn :
     }
     -> Column data msg
 placeholderColumn options =
-    Column (Html.text "") (always (Html.text "")) (Css.width options.width) (always []) Nothing DataCell False
+    PlaceholderColumn (Css.width options.width)
 
 
 {-| A column that renders however you want it to
@@ -98,7 +99,7 @@ custom :
     }
     -> Column data msg
 custom options =
-    Column options.header options.view (Css.width options.width) options.cellStyles options.sort DataCell True
+    Column options.header options.view (Css.width options.width) options.cellStyles options.sort DataCell
 
 
 {-| A column whose cells are row headers
@@ -112,7 +113,7 @@ rowHeader :
     }
     -> Column data msg
 rowHeader options =
-    Column options.header options.view (Css.width options.width) options.cellStyles options.sort RowHeaderCell False
+    Column options.header options.view (Css.width options.width) options.cellStyles options.sort RowHeaderCell
 
 
 
@@ -141,11 +142,18 @@ viewRow columns alternatingRowColors data =
 
 
 viewColumn : data -> Column data msg -> Html msg
-viewColumn data (Column _ renderer width cellStyles _ cellType _) =
-    cell cellType
-        [ css ([ width, verticalAlign middle, padding4 (px 11) (px 12) (px 14) (px 12), textAlign left ] ++ cellStyles data)
-        ]
-        [ renderer data ]
+viewColumn data column =
+    case column of
+        Column _ renderer width cellStyles _ cellType ->
+            cell cellType
+                [ css ([ width, verticalAlign middle, padding4 (px 11) (px 12) (px 14) (px 12), textAlign left ] ++ cellStyles data)
+                ]
+                [ renderer data ]
+
+        PlaceholderColumn width ->
+            cell DataCell
+                [ css [ width, verticalAlign middle ] ]
+                []
 
 
 
@@ -176,11 +184,18 @@ viewLoadingRow columns alternatingRowColors index =
 
 
 viewLoadingColumn : Int -> Int -> Column data msg -> Html msg
-viewLoadingColumn rowIndex colIndex (Column _ _ width _ _ cellType _) =
-    cell cellType
-        [ css (stylesLoadingColumn rowIndex colIndex width ++ [ verticalAlign middle ] ++ loadingCellStyles)
-        ]
-        [ span [ css loadingContentStyles ] [] ]
+viewLoadingColumn rowIndex colIndex column =
+    case column of
+        Column _ _ width _ _ cellType ->
+            cell cellType
+                [ css (stylesLoadingColumn rowIndex colIndex width ++ [ verticalAlign middle ] ++ loadingCellStyles)
+                ]
+                [ span [ css loadingContentStyles ] [] ]
+
+        PlaceholderColumn width ->
+            cell DataCell
+                [ css (stylesLoadingColumn rowIndex colIndex width ++ [ verticalAlign middle ] ++ loadingCellStyles) ]
+                [ span [ css loadingContentStyles ] [] ]
 
 
 stylesLoadingColumn : Int -> Int -> Style -> List Style
@@ -226,22 +241,27 @@ tableHeader columns =
 
 
 tableColHeader : Column data msg -> Html msg
-tableColHeader (Column header _ width _ sort _ _) =
-    th
-        [ Attributes.scope "col"
-        , css (width :: headerStyles)
-        , Attributes.attribute "aria-sort" <|
-            case sort of
-                Nothing ->
-                    "none"
+tableColHeader column =
+    case column of
+        Column header _ width _ sort _ ->
+            th
+                [ Attributes.scope "col"
+                , css (width :: headerStyles)
+                , Attributes.attribute "aria-sort" <|
+                    case sort of
+                        Nothing ->
+                            "none"
 
-                Just Ascending ->
-                    "ascending"
+                        Just Ascending ->
+                            "ascending"
 
-                Just Descending ->
-                    "descending"
-        ]
-        [ header ]
+                        Just Descending ->
+                            "descending"
+                ]
+                [ header ]
+
+        PlaceholderColumn width ->
+            th [ css [ width ] ] []
 
 
 tableBody : (a -> Html msg) -> List a -> Html msg
@@ -318,7 +338,16 @@ tableStyles : List (Column data msg) -> List Style
 tableStyles columns =
     let
         hasPlaceholderColumns =
-            List.any (\(Column _ _ _ _ _ _ h) -> h) columns
+            List.any
+                (\column ->
+                    case column of
+                        Column _ _ _ _ _ _ ->
+                            False
+
+                        PlaceholderColumn _ ->
+                            True
+                )
+                columns
     in
     [ borderCollapse collapse
     , baseFont
