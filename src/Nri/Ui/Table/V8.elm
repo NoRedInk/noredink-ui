@@ -21,6 +21,7 @@ module Nri.Ui.Table.V8 exposing
 
 -}
 
+import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Style as Style
 import Css exposing (..)
 import Css.Animations
@@ -213,7 +214,7 @@ viewColumn data column =
 
         PlaceholderColumn width ->
             cell DataCell
-                [ Attributes.css [ width, verticalAlign middle ] ]
+                [ Attributes.css [ width, verticalAlign middle ], Aria.hidden True ]
                 []
 
 
