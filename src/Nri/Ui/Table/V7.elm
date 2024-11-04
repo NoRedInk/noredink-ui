@@ -1,4 +1,4 @@
-module Nri.Ui.Table.V8 exposing
+module Nri.Ui.Table.V7 exposing
     ( Column, SortDirection(..), custom, string, rowHeader
     , view, viewWithoutHeader
     , viewLoading, viewLoadingWithoutHeader

@@ -1,8 +1,7 @@
 module Nri.Ui.Table.V8 exposing
-    ( Column, SortDirection(..), custom, string, rowHeader
+    ( Column, SortDirection(..), custom, string, rowHeader, placeholderColumn
     , view, viewWithoutHeader
     , viewLoading, viewLoadingWithoutHeader
-    , placeholderColumn
     )
 
 {-| Upgrading from V7:
@@ -12,7 +11,7 @@ module Nri.Ui.Table.V8 exposing
     just the same but has additional flexibility in the API and will make future
     upgrades easier.
 
-@docs Column, SortDirection, custom, string, rowHeader
+@docs Column, SortDirection, custom, string, rowHeader, placeholderColumn
 
 @docs view, viewWithoutHeader
 
