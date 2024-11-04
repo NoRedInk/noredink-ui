@@ -340,12 +340,32 @@ view attributes columns entries =
                 sorter =
                     findSorter columns state_.column
             in
-            Table.view { additionalStyles = stickyStyles, alternatingRowColors = config.alternatingRowColors }
+            Table.view
+                (List.filterMap identity
+                    [ Just (Table.css stickyStyles)
+                    , if config.alternatingRowColors then
+                        Nothing
+
+                      else
+                        Just Table.disableAlternatingRowColors
+                    ]
+                )
                 tableColumns
                 (List.sortWith (sorter state_.sortDirection) entries)
 
         Nothing ->
-            Table.view { additionalStyles = stickyStyles, alternatingRowColors = config.alternatingRowColors } tableColumns entries
+            Table.view
+                (List.filterMap identity
+                    [ Just (Table.css stickyStyles)
+                    , if config.alternatingRowColors then
+                        Nothing
+
+                      else
+                        Just Table.disableAlternatingRowColors
+                    ]
+                )
+                tableColumns
+                entries
 
 
 {-| -}
@@ -362,7 +382,17 @@ viewLoading attributes columns =
         tableColumns =
             List.map (buildTableColumn config.updateMsg config.state) columns
     in
-    Table.viewLoading { additionalStyles = stickyStyles, alternatingRowColors = config.alternatingRowColors } tableColumns
+    Table.viewLoading
+        (List.filterMap identity
+            [ Just (Table.css stickyStyles)
+            , if config.alternatingRowColors then
+                Nothing
+
+              else
+                Just Table.disableAlternatingRowColors
+            ]
+        )
+        tableColumns
 
 
 findSorter : List (Column id entry msg) -> id -> Sorter entry

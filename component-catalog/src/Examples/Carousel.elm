@@ -332,7 +332,7 @@ example =
                 [ Heading.plaintext "Usage examples"
                 , Heading.css [ Css.marginTop (Css.px 30) ]
                 ]
-            , Table.view { additionalStyles = [], alternatingRowColors = True }
+            , Table.view []
                 [ Table.rowHeader
                     { header = text (moduleName ++ " view name")
                     , view = \{ viewName } -> code [] [ text viewName ]

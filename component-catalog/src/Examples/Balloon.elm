@@ -248,7 +248,7 @@ view ellieLinkConfig state =
         [ Heading.plaintext "Position & Alignment Examples"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
-    , Table.view { additionalStyles = [], alternatingRowColors = True }
+    , Table.view []
         [ Table.custom
             { header = text "Position"
             , view = Tuple.first >> text
@@ -303,7 +303,7 @@ view ellieLinkConfig state =
         [ Heading.plaintext "Theme Examples"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
-    , Table.view { additionalStyles = [], alternatingRowColors = True }
+    , Table.view []
         [ Table.custom
             { header = text "Theme"
             , view = Tuple.first >> text

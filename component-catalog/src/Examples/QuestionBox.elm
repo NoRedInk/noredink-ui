@@ -128,7 +128,7 @@ view ellieLinkConfig state =
         [ Heading.plaintext "Non-customizable examples"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
-    , Table.view { additionalStyles = [], alternatingRowColors = True }
+    , Table.view []
         [ Table.custom
             { header = text "Pattern name & description"
             , view = .description >> Markdown.toHtml Nothing >> List.map fromUnstyled >> div []

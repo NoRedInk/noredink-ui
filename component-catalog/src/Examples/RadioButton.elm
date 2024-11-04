@@ -172,7 +172,7 @@ view ellieLinkConfig state =
         [ Heading.plaintext "State & Premium Display Examples"
         , Heading.css [ Css.marginTop (Css.px 30) ]
         ]
-    , Table.view { additionalStyles = [], alternatingRowColors = True }
+    , Table.view []
         [ Table.string
             { header = "State"
             , value = .name
@@ -257,7 +257,7 @@ view ellieLinkConfig state =
         [ Heading.plaintext "Extra Content Examples"
         , Heading.css [ Css.marginTop (Css.px 30) ]
         ]
-    , Table.view { additionalStyles = [], alternatingRowColors = True }
+    , Table.view []
         [ Table.custom
             { header = text "Attribute"
             , view = .name >> text

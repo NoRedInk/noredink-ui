@@ -46,7 +46,7 @@ example =
     , categories = [ Layout ]
     , keyboardSupport = []
     , preview =
-        [ Table.view { additionalStyles = [], alternatingRowColors = True }
+        [ Table.view []
             [ Table.string
                 { header = "A"
                 , value = .a
@@ -125,16 +125,16 @@ example =
                 ]
             , case ( showHeader, isLoading ) of
                 ( True, False ) ->
-                    Table.view { additionalStyles = [], alternatingRowColors = alternatingRowColors } columns data
+                    Table.view [] columns data
 
                 ( False, False ) ->
-                    Table.viewWithoutHeader { additionalStyles = [], alternatingRowColors = alternatingRowColors } columns data
+                    Table.viewWithoutHeader [] columns data
 
                 ( True, True ) ->
-                    Table.viewLoading { additionalStyles = [], alternatingRowColors = alternatingRowColors } columns
+                    Table.viewLoading [] columns
 
                 ( False, True ) ->
-                    Table.viewLoadingWithoutHeader { additionalStyles = [], alternatingRowColors = alternatingRowColors } columns
+                    Table.viewLoadingWithoutHeader [] columns
             ]
     }
 

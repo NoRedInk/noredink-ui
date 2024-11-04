@@ -248,7 +248,7 @@ viewContentTable name size =
             [ Heading.plaintext name
             , Heading.css [ Css.marginTop (Css.px 30) ]
             ]
-        , Table.view { additionalStyles = [], alternatingRowColors = True }
+        , Table.view []
             [ Table.rowHeader
                 { header = text "Content type"
                 , view = \{ contentType } -> code [] [ text contentType ]

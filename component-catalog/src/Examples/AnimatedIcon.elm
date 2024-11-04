@@ -94,7 +94,7 @@ example =
                 [ Heading.plaintext "Examples"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
-            , Table.view { additionalStyles = [], alternatingRowColors = True }
+            , Table.view []
                 [ Table.custom
                     { header = text "Rendered"
                     , view =

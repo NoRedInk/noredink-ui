@@ -106,7 +106,7 @@ example =
                 |> Svg.withWidth (Css.px 200)
                 |> Svg.withHeight (Css.px 200)
                 |> Svg.toHtml
-            , Table.view { additionalStyles = [], alternatingRowColors = True }
+            , Table.view []
                 [ Table.string
                     { header = "Color contrast against"
                     , value = .name

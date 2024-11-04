@@ -276,7 +276,7 @@ viewExamples ellieLinkConfig (State control) =
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
     , Text.caption [ Text.markdown "Be sure to add the `appearsInline` property if the `ClickableText` appears inline. Otherwise, your styles will not match up nicely. You should not add an explicit size." ]
-    , Table.view { additionalStyles = [], alternatingRowColors = True }
+    , Table.view []
         [ Table.custom
             { header = text "Displayed"
             , view = \( view, name ) -> view (inlineExample name)
@@ -388,7 +388,7 @@ sizes =
 
 sizeExamples : Settings Msg -> Html Msg
 sizeExamples settings =
-    Table.view { additionalStyles = [], alternatingRowColors = True }
+    Table.view []
         [ Table.custom
             { header = text "Size"
             , view =

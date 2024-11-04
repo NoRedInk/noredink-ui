@@ -101,7 +101,7 @@ viewFontFailurePatterns =
             , Css.textAlign Css.center
             ]
     in
-    Table.view { additionalStyles = [], alternatingRowColors = True }
+    Table.view []
         [ Table.rowHeader
             { header = Html.text "Example"
             , view = Html.text << .example

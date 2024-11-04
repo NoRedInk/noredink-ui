@@ -315,7 +315,7 @@ view ellieLinkConfig state =
         [ Heading.plaintext "Menu types"
         , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
         ]
-    , Table.view { additionalStyles = [], alternatingRowColors = True }
+    , Table.view []
         [ Table.string
             { header = "Menu type"
             , value = .menu
@@ -502,7 +502,7 @@ You will need to pass in the first and last focusable element in the dialog cont
         [ Heading.plaintext "Menu trigger base styles"
         , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
         ]
-    , Table.view { additionalStyles = [], alternatingRowColors = True }
+    , Table.view []
         [ Table.string
             { header = "Trigger type"
             , value = .menu
@@ -648,7 +648,7 @@ You will need to pass in the first and last focusable element in the dialog cont
         [ Heading.plaintext "Menu content"
         , Heading.css [ Css.margin2 Spacing.verticalSpacerPx Css.zero ]
         ]
-    , Table.view { additionalStyles = [], alternatingRowColors = True }
+    , Table.view []
         [ Table.string
             { header = "Content"
             , value = .name

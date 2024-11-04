@@ -302,7 +302,7 @@ example =
                     , Block.labelPosition (Dict.get dontBreakId offsets)
                     ]
                 ]
-            , Table.view { additionalStyles = [], alternatingRowColors = True }
+            , Table.view []
                 [ Table.custom
                     { header = text "Pattern name & description"
                     , view = .description >> Markdown.toHtml Nothing >> List.map fromUnstyled >> div []
@@ -549,7 +549,7 @@ A labelled blank in the sentence.
             , Text.smallBody [ Text.markdown "If we're looking for a specific length of content to put in the blank, that _must_ be communicated elsewhere on the page to provide an equitable experience." ]
             , Text.smallBody [ Text.markdown "The `widthInChars` parameter uses the number of characters expected in the blank to calculate a rough monospace-based width that visually looks like it _could_ match." ]
             , Table.view
-                { additionalStyles = [], alternatingRowColors = True }
+                []
                 [ Table.custom
                     { header = text "Pattern"
                     , view =
