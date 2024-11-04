@@ -1,5 +1,6 @@
 module Nri.Ui.Table.V8 exposing
     ( Column, SortDirection(..), custom, string, rowHeader, placeholderColumn
+    , disableAlternatingRowColors, css, Attr
     , view, viewWithoutHeader
     , viewLoading, viewLoadingWithoutHeader
     )
@@ -12,6 +13,7 @@ module Nri.Ui.Table.V8 exposing
     upgrades easier.
 
 @docs Column, SortDirection, custom, string, rowHeader, placeholderColumn
+@docs disableAlternatingRowColors, css, Attr
 
 @docs view, viewWithoutHeader
 
@@ -24,7 +26,7 @@ import Css exposing (..)
 import Css.Animations
 import Css.Global
 import Html.Styled as Html exposing (..)
-import Html.Styled.Attributes as Attributes exposing (css)
+import Html.Styled.Attributes as Attributes
 import Nri.Ui.Colors.V1 exposing (..)
 import Nri.Ui.Fonts.V1 exposing (baseFont)
 
@@ -52,7 +54,7 @@ type CellType
     | DataCell
 
 
-cell : CellType -> List (Attribute msg) -> List (Html msg) -> Html msg
+cell : CellType -> List (Html.Attribute msg) -> List (Html msg) -> Html msg
 cell cellType attrs =
     case cellType of
         RowHeaderCell ->
@@ -117,27 +119,86 @@ rowHeader options =
 
 
 
+-- Model
+
+
+type alias Config =
+    { css : List Style, alternatingRowColors : Bool }
+
+
+{-| Attribute to configure the table
+-}
+type Attr
+    = Attr (Config -> Config)
+
+
+defaultConfig : Config
+defaultConfig =
+    { css = [], alternatingRowColors = True }
+
+
+{-| Add a CSS style to the table
+-}
+css : List Style -> Attr
+css styles =
+    Attr <|
+        \config ->
+            { config | css = styles ++ config.css }
+
+
+{-| disable alternating row colors, default behavior alternates row colors
+-}
+disableAlternatingRowColors : Attr
+disableAlternatingRowColors =
+    Attr <|
+        \config ->
+            { config | alternatingRowColors = False }
+
+
+
 -- VIEW
 
 
 {-| Displays a table of data without a header row
 -}
-viewWithoutHeader : { additionalStyles : List Style, alternatingRowColors : Bool } -> List (Column data msg) -> List data -> Html msg
-viewWithoutHeader { additionalStyles, alternatingRowColors } columns =
-    tableWithoutHeader additionalStyles columns (viewRow columns alternatingRowColors)
+viewWithoutHeader : List Attr -> List (Column data msg) -> List data -> Html msg
+viewWithoutHeader attrs columns =
+    let
+        config =
+            List.foldl
+                (\attr soFar ->
+                    case attr of
+                        Attr f ->
+                            f soFar
+                )
+                defaultConfig
+                attrs
+    in
+    tableWithoutHeader config.css columns (viewRow columns config.alternatingRowColors)
 
 
 {-| Displays a table of data based on the provided column definitions
 -}
-view : { additionalStyles : List Style, alternatingRowColors : Bool } -> List (Column data msg) -> List data -> Html msg
-view { additionalStyles, alternatingRowColors } columns =
-    tableWithHeader additionalStyles columns (viewRow columns alternatingRowColors)
+view : List Attr -> List (Column data msg) -> List data -> Html msg
+view attrs columns =
+    let
+        config =
+            List.foldl
+                (\attr soFar ->
+                    case attr of
+                        Attr f ->
+                            f soFar
+                )
+                defaultConfig
+                attrs
+    in
+    tableWithHeader config.css columns (viewRow columns config.alternatingRowColors)
 
 
 viewRow : List (Column data msg) -> Bool -> data -> Html msg
 viewRow columns alternatingRowColors data =
     tr
-        [ css (rowStyles alternatingRowColors) ]
+        [ Attributes.css (rowStyles alternatingRowColors) ]
         (List.map (viewColumn data) columns)
 
 
@@ -146,13 +207,13 @@ viewColumn data column =
     case column of
         Column _ renderer width cellStyles _ cellType ->
             cell cellType
-                [ css ([ width, verticalAlign middle, Css.paddingLeft (Css.px 12), Css.paddingRight (Css.px 12), textAlign left ] ++ cellStyles data)
+                [ Attributes.css ([ width, verticalAlign middle, Css.paddingLeft (Css.px 12), Css.paddingRight (Css.px 12), textAlign left ] ++ cellStyles data)
                 ]
                 [ renderer data ]
 
         PlaceholderColumn width ->
             cell DataCell
-                [ css [ width, verticalAlign middle ] ]
+                [ Attributes.css [ width, verticalAlign middle ] ]
                 []
 
 
@@ -164,22 +225,44 @@ viewColumn data column =
 out text with an interesting animation. This view lets the user know that
 data is on its way and what it will look like when it arrives.
 -}
-viewLoading : { additionalStyles : List Style, alternatingRowColors : Bool } -> List (Column data msg) -> Html msg
-viewLoading { additionalStyles, alternatingRowColors } columns =
-    tableWithHeader (loadingTableStyles ++ additionalStyles) columns (viewLoadingRow columns alternatingRowColors) (List.range 0 8)
+viewLoading : List Attr -> List (Column data msg) -> Html msg
+viewLoading attrs columns =
+    let
+        config =
+            List.foldl
+                (\attr soFar ->
+                    case attr of
+                        Attr f ->
+                            f soFar
+                )
+                defaultConfig
+                attrs
+    in
+    tableWithHeader (loadingTableStyles ++ config.css) columns (viewLoadingRow columns config.alternatingRowColors) (List.range 0 8)
 
 
 {-| Display the loading table without a header row
 -}
-viewLoadingWithoutHeader : { additionalStyles : List Style, alternatingRowColors : Bool } -> List (Column data msg) -> Html msg
-viewLoadingWithoutHeader { additionalStyles, alternatingRowColors } columns =
-    tableWithoutHeader (loadingTableStyles ++ additionalStyles) columns (viewLoadingRow columns alternatingRowColors) (List.range 0 8)
+viewLoadingWithoutHeader : List Attr -> List (Column data msg) -> Html msg
+viewLoadingWithoutHeader attrs columns =
+    let
+        config =
+            List.foldl
+                (\attr soFar ->
+                    case attr of
+                        Attr f ->
+                            f soFar
+                )
+                defaultConfig
+                attrs
+    in
+    tableWithoutHeader (loadingTableStyles ++ config.css) columns (viewLoadingRow columns config.alternatingRowColors) (List.range 0 8)
 
 
 viewLoadingRow : List (Column data msg) -> Bool -> Int -> Html msg
 viewLoadingRow columns alternatingRowColors index =
     tr
-        [ css (rowStyles alternatingRowColors) ]
+        [ Attributes.css (rowStyles alternatingRowColors) ]
         (List.indexedMap (viewLoadingColumn index) columns)
 
 
@@ -188,14 +271,14 @@ viewLoadingColumn rowIndex colIndex column =
     case column of
         Column _ _ width _ _ cellType ->
             cell cellType
-                [ css (stylesLoadingColumn rowIndex colIndex width ++ [ verticalAlign middle ] ++ loadingCellStyles)
+                [ Attributes.css (stylesLoadingColumn rowIndex colIndex width ++ [ verticalAlign middle ] ++ loadingCellStyles)
                 ]
-                [ span [ css loadingContentStyles ] [] ]
+                [ span [ Attributes.css loadingContentStyles ] [] ]
 
         PlaceholderColumn width ->
             cell DataCell
-                [ css (stylesLoadingColumn rowIndex colIndex width ++ [ verticalAlign middle ] ++ loadingCellStyles) ]
-                [ span [ css loadingContentStyles ] [] ]
+                [ Attributes.css (stylesLoadingColumn rowIndex colIndex width ++ [ verticalAlign middle ] ++ loadingCellStyles) ]
+                [ span [ Attributes.css loadingContentStyles ] [] ]
 
 
 stylesLoadingColumn : Int -> Int -> Style -> List Style
@@ -229,13 +312,13 @@ tableWithHeader styles columns toRow data =
 
 table : List Style -> List (Column data msg) -> List (Html msg) -> Html msg
 table styles columns =
-    Html.table [ css (styles ++ tableStyles columns) ]
+    Html.table [ Attributes.css (styles ++ tableStyles columns) ]
 
 
 tableHeader : List (Column data msg) -> Html msg
 tableHeader columns =
     thead []
-        [ tr [ css headersStyles ]
+        [ tr [ Attributes.css headersStyles ]
             (List.map tableColHeader columns)
         ]
 
@@ -246,7 +329,7 @@ tableColHeader column =
         Column header _ width _ sort _ ->
             th
                 [ Attributes.scope "col"
-                , css (width :: headerStyles)
+                , Attributes.css (width :: headerStyles)
                 , Attributes.attribute "aria-sort" <|
                     case sort of
                         Nothing ->
@@ -261,7 +344,7 @@ tableColHeader column =
                 [ header ]
 
         PlaceholderColumn width ->
-            th [ css [ width ] ] []
+            th [ Attributes.css [ width ] ] []
 
 
 tableBody : (a -> Html msg) -> List a -> Html msg
