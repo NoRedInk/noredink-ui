@@ -391,7 +391,7 @@ rowStyles alternatingRowColors =
             [ backgroundColor gray96 ]
 
       else
-        Css.batch []
+        Css.batch [ Css.borderBottom3 (Css.px 1) Css.solid gray92 ]
     ]
 
 
