@@ -146,7 +146,7 @@ viewColumn data column =
     case column of
         Column _ renderer width cellStyles _ cellType ->
             cell cellType
-                [ css ([ width, verticalAlign middle, padding4 (px 11) (px 12) (px 14) (px 12), textAlign left ] ++ cellStyles data)
+                [ css ([ width, verticalAlign middle, Css.paddingLeft (Css.px 12), Css.paddingRight (Css.px 12), textAlign left ] ++ cellStyles data)
                 ]
                 [ renderer data ]
 
