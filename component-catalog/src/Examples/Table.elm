@@ -13,7 +13,6 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Html.Attributes exposing (alt)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
@@ -135,6 +134,80 @@ example =
 
                 ( False, True ) ->
                     Table.viewLoadingWithoutHeader [] columns
+            , Heading.h2
+                [ Heading.plaintext "Using placeholderColumn for consistent widths tables"
+                , Heading.css [ Css.marginTop (Css.px 30) ]
+                ]
+            , Heading.h3 [ Heading.plaintext "With placeholderColumn", Heading.css [ Css.marginTop (Css.px 30) ] ]
+            , Table.view []
+                [ Table.rowHeader
+                    { header = text "User ID"
+                    , view = text << String.fromInt << .userId
+                    , width = Css.px 80
+                    , cellStyles = always []
+                    , sort = Nothing
+                    }
+                , Table.string
+                    { header = "First Name"
+                    , value = .firstName
+                    , width = Css.calc (Css.pct 50) Css.minus (Css.px 250)
+                    , cellStyles = always []
+                    , sort = Nothing
+                    }
+                , Table.string
+                    { header = "Last Name"
+                    , value = .lastName
+                    , width = Css.calc (Css.pct 50) Css.minus (Css.px 250)
+                    , cellStyles = always []
+                    , sort = Nothing
+                    }
+                , Table.placeholderColumn
+                    { width = Css.px 125
+                    }
+                , Table.placeholderColumn
+                    { width = Css.px 250
+                    }
+                ]
+                data
+            , Heading.h3 [ Heading.plaintext "Without placeholderColumn", Heading.css [ Css.marginTop (Css.px 30) ] ]
+            , Table.view []
+                [ Table.rowHeader
+                    { header = text "User ID"
+                    , view = text << String.fromInt << .userId
+                    , width = Css.px 80
+                    , cellStyles = always []
+                    , sort = Nothing
+                    }
+                , Table.string
+                    { header = "First Name"
+                    , value = .firstName
+                    , width = Css.calc (Css.pct 50) Css.minus (Css.px 250)
+                    , cellStyles = always []
+                    , sort = Nothing
+                    }
+                , Table.string
+                    { header = "Last Name"
+                    , value = .lastName
+                    , width = Css.calc (Css.pct 50) Css.minus (Css.px 250)
+                    , cellStyles = always []
+                    , sort = Nothing
+                    }
+                , Table.string
+                    { header = "Submitted"
+                    , value = .submitted >> String.fromInt
+                    , width = Css.px 125
+                    , cellStyles = always [ Css.textAlign Css.center ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "Actions"
+                    , width = Css.px 250
+                    , view = \_ -> Button.button "Action" [ Button.small ]
+                    , cellStyles = always []
+                    , sort = Nothing
+                    }
+                ]
+                data
             ]
     }
 
