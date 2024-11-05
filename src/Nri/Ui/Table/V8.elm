@@ -345,7 +345,7 @@ tableColHeader column =
                 [ header ]
 
         PlaceholderColumn width ->
-            th [ Attributes.css [ width ] ] []
+            th [ Attributes.css [ width ], Aria.hidden True ] []
 
 
 tableBody : (a -> Html msg) -> List a -> Html msg
