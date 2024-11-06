@@ -17,6 +17,7 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V8 as Table exposing (Column)
+import Nri.Ui.Text.V6 as Text
 
 
 {-| -}
@@ -135,10 +136,14 @@ example =
                 ( False, True ) ->
                     Table.viewLoadingWithoutHeader [] columns
             , Heading.h2
-                [ Heading.plaintext "Using placeholderColumn for consistent widths tables"
+                [ Heading.plaintext "Using placeholderColumn for consistent column alignment"
                 , Heading.css [ Css.marginTop (Css.px 30) ]
                 ]
             , Heading.h3 [ Heading.plaintext "With placeholderColumn", Heading.css [ Css.marginTop (Css.px 30) ] ]
+            , Text.smallBody
+                [ Text.plaintext
+                    "By default tables will distribute any remaining space across columns. You can change this behavior to have fixed column widths and leave any remaining blank space to the right by using empty placeholder columns with placeholderColumn. This is particularly useful when you need to align similar columns across multiple tables."
+                ]
             , Table.view []
                 [ Table.rowHeader
                     { header = text "User ID"
