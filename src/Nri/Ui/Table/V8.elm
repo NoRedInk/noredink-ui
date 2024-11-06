@@ -8,7 +8,7 @@ module Nri.Ui.Table.V8 exposing
 
 {-| Upgrading from V7:
 
-  - New attribute added to define `alternatingRowColors`, set it to true to get default behavior.
+  - New API using list of attributes. If you don't set any custom css just use an empty list, otherwise use the css attribute to set the custom css.
   - Consider moving to `SortableTable`, as in V4 a non-interactive table renders
     just the same but has additional flexibility in the API and will make future
     upgrades easier.
