@@ -1,8 +1,9 @@
 module Nri.Ui.Table.V8 exposing
     ( Column, SortDirection(..), custom, string, rowHeader, placeholderColumn
-    , disableAlternatingRowColors, css, Attribute
+    , disableAlternatingRowColors, css
     , view, viewWithoutHeader
     , viewLoading, viewLoadingWithoutHeader
+    , Attribute
     )
 
 {-| Upgrading from V7:
@@ -144,7 +145,7 @@ css : List Style -> Attribute
 css styles =
     Attribute <|
         \config ->
-            { config | css = styles ++ config.css }
+            { config | css = config.css ++ styles }
 
 
 {-| disable alternating row colors, default behavior alternates row colors
@@ -279,7 +280,7 @@ viewLoadingColumn rowIndex colIndex column =
         PlaceholderColumn width ->
             cell DataCell
                 [ Attributes.css (stylesLoadingColumn rowIndex colIndex width ++ [ verticalAlign middle ] ++ loadingCellStyles) ]
-                [ span [ Attributes.css loadingContentStyles ] [] ]
+                []
 
 
 stylesLoadingColumn : Int -> Int -> Style -> List Style
