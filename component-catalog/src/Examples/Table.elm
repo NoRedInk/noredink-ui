@@ -169,45 +169,6 @@ example =
                     }
                 ]
                 data
-            , Heading.h3 [ Heading.plaintext "Without placeholderColumn", Heading.css [ Css.marginTop (Css.px 30) ] ]
-            , Table.view []
-                [ Table.rowHeader
-                    { header = text "User ID"
-                    , view = text << String.fromInt << .userId
-                    , width = Css.px 80
-                    , cellStyles = always []
-                    , sort = Nothing
-                    }
-                , Table.string
-                    { header = "First Name"
-                    , value = .firstName
-                    , width = Css.calc (Css.pct 50) Css.minus (Css.px 250)
-                    , cellStyles = always []
-                    , sort = Nothing
-                    }
-                , Table.string
-                    { header = "Last Name"
-                    , value = .lastName
-                    , width = Css.calc (Css.pct 50) Css.minus (Css.px 250)
-                    , cellStyles = always []
-                    , sort = Nothing
-                    }
-                , Table.string
-                    { header = "Submitted"
-                    , value = .submitted >> String.fromInt
-                    , width = Css.px 125
-                    , cellStyles = always [ Css.textAlign Css.center ]
-                    , sort = Nothing
-                    }
-                , Table.custom
-                    { header = text "Actions"
-                    , width = Css.px 250
-                    , view = \_ -> Button.button "Action" [ Button.small ]
-                    , cellStyles = always []
-                    , sort = Nothing
-                    }
-                ]
-                data
             ]
     }
 
