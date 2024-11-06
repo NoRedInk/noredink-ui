@@ -14,7 +14,7 @@ module Nri.Ui.Table.V8 exposing
     upgrades easier.
 
 @docs Column, SortDirection, custom, string, rowHeader, placeholderColumn
-@docs disableAlternatingRowColors, css, Attr
+@docs disableAlternatingRowColors, css, Attribute
 
 @docs view, viewWithoutHeader
 
