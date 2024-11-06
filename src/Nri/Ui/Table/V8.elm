@@ -1,6 +1,6 @@
 module Nri.Ui.Table.V8 exposing
     ( Column, SortDirection(..), custom, string, rowHeader, placeholderColumn
-    , disableAlternatingRowColors, css, Attr
+    , disableAlternatingRowColors, css, Attribute
     , view, viewWithoutHeader
     , viewLoading, viewLoadingWithoutHeader
     )
@@ -129,8 +129,8 @@ type alias Config =
 
 {-| Attribute to configure the table
 -}
-type Attr
-    = Attr (Config -> Config)
+type Attribute
+    = Attribute (Config -> Config)
 
 
 defaultConfig : Config
@@ -140,18 +140,18 @@ defaultConfig =
 
 {-| Add a CSS style to the table
 -}
-css : List Style -> Attr
+css : List Style -> Attribute
 css styles =
-    Attr <|
+    Attribute <|
         \config ->
             { config | css = styles ++ config.css }
 
 
 {-| disable alternating row colors, default behavior alternates row colors
 -}
-disableAlternatingRowColors : Attr
+disableAlternatingRowColors : Attribute
 disableAlternatingRowColors =
-    Attr <|
+    Attribute <|
         \config ->
             { config | alternatingRowColors = False }
 
@@ -162,14 +162,14 @@ disableAlternatingRowColors =
 
 {-| Displays a table of data without a header row
 -}
-viewWithoutHeader : List Attr -> List (Column data msg) -> List data -> Html msg
+viewWithoutHeader : List Attribute -> List (Column data msg) -> List data -> Html msg
 viewWithoutHeader attrs columns =
     let
         config =
             List.foldl
                 (\attr soFar ->
                     case attr of
-                        Attr f ->
+                        Attribute f ->
                             f soFar
                 )
                 defaultConfig
@@ -180,14 +180,14 @@ viewWithoutHeader attrs columns =
 
 {-| Displays a table of data based on the provided column definitions
 -}
-view : List Attr -> List (Column data msg) -> List data -> Html msg
+view : List Attribute -> List (Column data msg) -> List data -> Html msg
 view attrs columns =
     let
         config =
             List.foldl
                 (\attr soFar ->
                     case attr of
-                        Attr f ->
+                        Attribute f ->
                             f soFar
                 )
                 defaultConfig
@@ -226,14 +226,14 @@ viewColumn data column =
 out text with an interesting animation. This view lets the user know that
 data is on its way and what it will look like when it arrives.
 -}
-viewLoading : List Attr -> List (Column data msg) -> Html msg
+viewLoading : List Attribute -> List (Column data msg) -> Html msg
 viewLoading attrs columns =
     let
         config =
             List.foldl
                 (\attr soFar ->
                     case attr of
-                        Attr f ->
+                        Attribute f ->
                             f soFar
                 )
                 defaultConfig
@@ -244,14 +244,14 @@ viewLoading attrs columns =
 
 {-| Display the loading table without a header row
 -}
-viewLoadingWithoutHeader : List Attr -> List (Column data msg) -> Html msg
+viewLoadingWithoutHeader : List Attribute -> List (Column data msg) -> Html msg
 viewLoadingWithoutHeader attrs columns =
     let
         config =
             List.foldl
                 (\attr soFar ->
                     case attr of
-                        Attr f ->
+                        Attribute f ->
                             f soFar
                 )
                 defaultConfig
