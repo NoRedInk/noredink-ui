@@ -1,9 +1,8 @@
 module Nri.Ui.Table.V8 exposing
     ( Column, SortDirection(..), custom, string, rowHeader, placeholderColumn
-    , disableAlternatingRowColors, css
+    , disableAlternatingRowColors, css, Attribute
     , view, viewWithoutHeader
     , viewLoading, viewLoadingWithoutHeader
-    , Attribute
     )
 
 {-| Upgrading from V7:
