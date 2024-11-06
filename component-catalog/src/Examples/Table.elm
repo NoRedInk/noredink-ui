@@ -125,16 +125,46 @@ example =
                 ]
             , case ( showHeader, isLoading ) of
                 ( True, False ) ->
-                    Table.view [] columns data
+                    Table.view
+                        (if alternatingRowColors then
+                            []
+
+                         else
+                            [ Table.disableAlternatingRowColors ]
+                        )
+                        columns
+                        data
 
                 ( False, False ) ->
-                    Table.viewWithoutHeader [] columns data
+                    Table.viewWithoutHeader
+                        (if alternatingRowColors then
+                            []
+
+                         else
+                            [ Table.disableAlternatingRowColors ]
+                        )
+                        columns
+                        data
 
                 ( True, True ) ->
-                    Table.viewLoading [] columns
+                    Table.viewLoading
+                        (if alternatingRowColors then
+                            []
+
+                         else
+                            [ Table.disableAlternatingRowColors ]
+                        )
+                        columns
 
                 ( False, True ) ->
-                    Table.viewLoadingWithoutHeader [] columns
+                    Table.viewLoadingWithoutHeader
+                        (if alternatingRowColors then
+                            []
+
+                         else
+                            [ Table.disableAlternatingRowColors ]
+                        )
+                        columns
             , Heading.h2
                 [ Heading.plaintext "Using placeholderColumn for consistent column alignment"
                 , Heading.css [ Css.marginTop (Css.px 30) ]
