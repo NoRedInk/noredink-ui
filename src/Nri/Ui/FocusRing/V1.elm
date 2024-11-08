@@ -8,6 +8,11 @@ module Nri.Ui.FocusRing.V1 exposing
 
 {-|
 
+
+### Patch changes
+
+    - Made the :not(.custom-focus-ring) style !important to fix marked highlightables, whose borders are applied through a selector with greater CSS specificity
+
 @docs forKeyboardUsers, forMouseUsers
 @docs styles, tightStyles
 @docs boxShadows, insetBoxShadows, outerBoxShadow, insetBoxShadow
@@ -92,9 +97,9 @@ NOTE: use `boxShadows` instead if your focusable element:
 -}
 styles : List Css.Style
 styles =
-    [ boxShadows []
-    , Css.outline3 (Css.px 2) Css.solid Css.transparent
-    , Css.borderRadius (Css.px 4)
+    [ Css.important <| boxShadows []
+    , Css.important <| Css.outline3 (Css.px 2) Css.solid Css.transparent
+    , Css.important <| Css.borderRadius (Css.px 4)
     ]
 
 

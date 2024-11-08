@@ -37,7 +37,7 @@ import Nri.Ui.Menu.V4 as Menu
 import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Switch.V3 as Switch
-import Nri.Ui.Table.V7 as Table
+import Nri.Ui.Table.V8 as Table
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.TextInput.V8 as TextInput
 import Nri.Ui.Tooltip.V3 as Tooltip

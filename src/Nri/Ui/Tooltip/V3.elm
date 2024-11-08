@@ -37,6 +37,7 @@ module Nri.Ui.Tooltip.V3 exposing
   - adds `helpfullyDisabled` option
   - adds `onTriggerKeyDown` option
   - add `stopTooltipMousePropagation` option
+  - use `Content.markdownInline` instead of `Content.markdown`
 
 Changes from V2:
 
@@ -190,8 +191,8 @@ paragraph =
 {-| Provide a string that will be rendered as markdown.
 -}
 markdown : String -> Attribute msg
-markdown =
-    Attribute << Content.markdown
+markdown string =
+    Attribute (\tooltipConfig -> { tooltipConfig | content = Content.markdownInline string })
 
 
 {-| Provide a list of custom HTML.

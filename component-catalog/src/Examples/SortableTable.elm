@@ -20,7 +20,7 @@ import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.SortableTable.V4 as SortableTable exposing (Column)
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Table.V7 as Table
+import Nri.Ui.Table.V8 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -120,6 +120,11 @@ example =
                                         SortableTable.stickyHeaderCustom customConfig
                             )
                             settings.stickyHeader
+                        , if settings.alternatingRowColors then
+                            Nothing
+
+                          else
+                            Just SortableTable.disableAlternatingRowColors
                         ]
 
                 isStickyAtAll =
@@ -168,6 +173,11 @@ example =
                                                         2
                                     )
                                     settings.stickyHeader
+                                , if settings.alternatingRowColors then
+                                    Nothing
+
+                                  else
+                                    Just "SortableTable.disableAlternatingRowColors"
                                 ]
                             )
                             1
@@ -331,6 +341,7 @@ type alias Settings =
     , customizableColumnCellStyles : ( String, List Style )
     , loading : Bool
     , stickyHeader : Maybe StickyHeader
+    , alternatingRowColors : Bool
     }
 
 
@@ -378,6 +389,7 @@ controlSettings =
                 )
                 |> Control.revealed "Sticky Header"
             )
+        |> Control.field "Alternating row colors" (Control.bool True)
 
 
 type ColumnId

@@ -1,8 +1,8 @@
 module Nri.Ui.SortableTable.V4 exposing
     ( Column, Sorter, State
     , init, initDescending
-    , custom, string
-    , Attribute, updateMsg, state, stickyHeader, stickyHeaderCustom, StickyConfig, view, viewLoading
+    , custom, string, placeholderColumn
+    , Attribute, updateMsg, state, stickyHeader, disableAlternatingRowColors, stickyHeaderCustom, StickyConfig, view, viewLoading
     , invariantSort, simpleSort, combineSorters
     )
 
@@ -14,8 +14,8 @@ module Nri.Ui.SortableTable.V4 exposing
 
 @docs Column, Sorter, State
 @docs init, initDescending
-@docs custom, string
-@docs Attribute, updateMsg, state, stickyHeader, stickyHeaderCustom, StickyConfig, view, viewLoading
+@docs custom, string, placeholderColumn
+@docs Attribute, updateMsg, state, stickyHeader, disableAlternatingRowColors, stickyHeaderCustom, StickyConfig, view, viewLoading
 @docs invariantSort, simpleSort, combineSorters
 
 -}
@@ -34,7 +34,7 @@ import Nri.Ui.Html.Attributes.V2 exposing (maybe)
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1
-import Nri.Ui.Table.V7 as Table exposing (SortDirection(..))
+import Nri.Ui.Table.V8 as Table exposing (SortDirection(..))
 import Nri.Ui.UiIcon.V1
 
 
@@ -52,6 +52,7 @@ type Column id entry msg
         , sorter : Maybe (Sorter entry)
         , width : Int
         , cellStyles : entry -> List Style
+        , hidden : Bool
         }
 
 
@@ -67,6 +68,7 @@ type alias Config id msg =
     { updateMsg : Maybe (State id -> msg)
     , state : Maybe (State id)
     , stickyHeader : Maybe StickyConfig
+    , alternatingRowColors : Bool
     }
 
 
@@ -75,6 +77,7 @@ defaultConfig =
     { updateMsg = Nothing
     , state = Nothing
     , stickyHeader = Nothing
+    , alternatingRowColors = True
     }
 
 
@@ -168,6 +171,13 @@ stickyHeader =
     Attribute (\config -> { config | stickyHeader = Just defaultStickyConfig })
 
 
+{-| Disable alternatingRowColors
+-}
+disableAlternatingRowColors : Attribute id msg
+disableAlternatingRowColors =
+    Attribute (\config -> { config | alternatingRowColors = False })
+
+
 {-| Does the same thing as `stickyHeader`, but with adaptations for your
 specific use.
 -}
@@ -209,6 +219,7 @@ string { id, header, value, width, cellStyles } =
         , sorter = Just (simpleSort value)
         , width = width
         , cellStyles = cellStyles
+        , hidden = False
         }
 
 
@@ -230,6 +241,24 @@ custom config =
         , sorter = config.sorter
         , width = config.width
         , cellStyles = config.cellStyles
+        , hidden = False
+        }
+
+
+{-| Creates a placeholder column which will reserve the space for the column,
+this can be used when multiple tables have similar data and we want to keep
+the size consistent.
+-}
+placeholderColumn : { id : id, width : Int } -> Column id entry msg
+placeholderColumn config =
+    Column
+        { id = config.id
+        , header = Html.text ""
+        , view = always (Html.text "")
+        , sorter = Nothing
+        , width = config.width
+        , cellStyles = always []
+        , hidden = True
         }
 
 
@@ -311,12 +340,32 @@ view attributes columns entries =
                 sorter =
                     findSorter columns state_.column
             in
-            Table.view stickyStyles
+            Table.view
+                (List.filterMap identity
+                    [ Just (Table.css stickyStyles)
+                    , if config.alternatingRowColors then
+                        Nothing
+
+                      else
+                        Just Table.disableAlternatingRowColors
+                    ]
+                )
                 tableColumns
                 (List.sortWith (sorter state_.sortDirection) entries)
 
         Nothing ->
-            Table.view stickyStyles tableColumns entries
+            Table.view
+                (List.filterMap identity
+                    [ Just (Table.css stickyStyles)
+                    , if config.alternatingRowColors then
+                        Nothing
+
+                      else
+                        Just Table.disableAlternatingRowColors
+                    ]
+                )
+                tableColumns
+                entries
 
 
 {-| -}
@@ -333,7 +382,17 @@ viewLoading attributes columns =
         tableColumns =
             List.map (buildTableColumn config.updateMsg config.state) columns
     in
-    Table.viewLoading stickyStyles tableColumns
+    Table.viewLoading
+        (List.filterMap identity
+            [ Just (Table.css stickyStyles)
+            , if config.alternatingRowColors then
+                Nothing
+
+              else
+                Just Table.disableAlternatingRowColors
+            ]
+        )
+        tableColumns
 
 
 findSorter : List (Column id entry msg) -> id -> Sorter entry
@@ -368,28 +427,32 @@ identitySorter =
 
 buildTableColumn : Maybe (State id -> msg) -> Maybe (State id) -> Column id entry msg -> Table.Column entry msg
 buildTableColumn maybeUpdateMsg maybeState (Column column) =
-    Table.custom
-        { header =
-            case maybeState of
-                Just state_ ->
-                    viewSortHeader (column.sorter /= Nothing) column.header maybeUpdateMsg state_ column.id
+    if column.hidden then
+        Table.placeholderColumn { width = Css.px (toFloat column.width) }
 
-                Nothing ->
-                    column.header
-        , view = column.view
-        , width = Css.px (toFloat column.width)
-        , cellStyles = column.cellStyles
-        , sort =
-            Maybe.andThen
-                (\state_ ->
-                    if state_.column == column.id then
-                        Just state_.sortDirection
+    else
+        Table.custom
+            { header =
+                case maybeState of
+                    Just state_ ->
+                        viewSortHeader (column.sorter /= Nothing) column.header maybeUpdateMsg state_ column.id
 
-                    else
-                        Nothing
-                )
-                maybeState
-        }
+                    Nothing ->
+                        column.header
+            , view = column.view
+            , width = Css.px (toFloat column.width)
+            , cellStyles = column.cellStyles
+            , sort =
+                Maybe.andThen
+                    (\state_ ->
+                        if state_.column == column.id then
+                            Just state_.sortDirection
+
+                        else
+                            Nothing
+                    )
+                    maybeState
+            }
 
 
 viewSortHeader : Bool -> Html msg -> Maybe (State id -> msg) -> State id -> id -> Html msg
@@ -403,7 +466,7 @@ viewSortHeader isSortable header maybeUpdateMsg state_ id =
             [ css
                 [ Css.displayFlex
                 , Css.alignItems Css.center
-                , Css.justifyContent Css.spaceBetween
+                , Css.property "gap" "8px"
                 , CssVendorPrefix.property "user-select" "none"
                 , if state_.column == id then
                     fontWeight bold

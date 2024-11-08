@@ -3,7 +3,7 @@
     "name": "NoRedInk/noredink-ui",
     "summary": "UI Widgets we use at NRI",
     "license": "BSD-3-Clause",
-    "version": "30.0.0",
+    "version": "30.0.2",
     "exposed-modules": [
         "Browser.Events.Extra",
         "Nri.Test.KeyboardHelpers.V1",
@@ -80,6 +80,7 @@
         "Nri.Ui.Svg.V1",
         "Nri.Ui.Switch.V3",
         "Nri.Ui.Table.V7",
+        "Nri.Ui.Table.V8",
         "Nri.Ui.Tabs.V6",
         "Nri.Ui.Tabs.V9",
         "Nri.Ui.TabsMinimal.V1",
