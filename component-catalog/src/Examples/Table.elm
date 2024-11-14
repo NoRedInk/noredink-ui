@@ -74,7 +74,7 @@ example =
     , view =
         \ellieLinkConfig state ->
             let
-                { showHeader, isLoading, alternatingRowColors, backgroundChangeOnRowHover } =
+                { showHeader, isLoading, disableAlternatingRowColors, backgroundChangeOnRowHover } =
                     Control.currentValue state
 
                 ( columnsCode, columns ) =
@@ -82,11 +82,11 @@ example =
 
                 tableAttributes =
                     List.concat
-                        [ if alternatingRowColors then
-                            []
+                        [ if disableAlternatingRowColors then
+                            [ Table.disableAlternatingRowColors ]
 
                           else
-                            [ Table.disableAlternatingRowColors ]
+                            []
                         , if backgroundChangeOnRowHover then
                             [ Table.backgroundChangeOnRowHover ]
 
@@ -118,11 +118,11 @@ example =
                                         ++ " "
                                         ++ Code.list
                                             (List.concat
-                                                [ if alternatingRowColors then
-                                                    []
+                                                [ if disableAlternatingRowColors then
+                                                    [ "Table.disableAlternatingRowColors" ]
 
                                                   else
-                                                    [ "Table.disableAlternatingRowColors" ]
+                                                    []
                                                 , if backgroundChangeOnRowHover then
                                                     [ "Table.backgroundChangeOnRowHover" ]
 
@@ -227,7 +227,7 @@ update msg state =
 type alias Settings =
     { showHeader : Bool
     , isLoading : Bool
-    , alternatingRowColors : Bool
+    , disableAlternatingRowColors : Bool
     , backgroundChangeOnRowHover : Bool
     }
 
@@ -237,7 +237,7 @@ controlSettings =
     Control.record Settings
         |> Control.field "visible header" (Control.bool True)
         |> Control.field "is loading" (Control.bool False)
-        |> Control.field "alternatingRowColors" (Control.bool True)
+        |> Control.field "disableAlternatingRowColors" (Control.bool False)
         |> Control.field "backgroundChangeOnRowHover" (Control.bool False)
 
 
