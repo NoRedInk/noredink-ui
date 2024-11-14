@@ -2,7 +2,8 @@ module Nri.Ui.SortableTable.V5 exposing
     ( Column, Sorter, State
     , init, initDescending
     , custom, string, placeholderColumn
-    , Attribute, updateMsg, state, stickyHeader, disableAlternatingRowColors, stickyHeaderCustom, StickyConfig, view, viewLoading
+    , Attribute, updateMsg, tableAttribute, state, stickyHeader, stickyHeaderCustom, StickyConfig
+    , view, viewLoading
     , invariantSort, simpleSort, combineSorters
     )
 
@@ -13,7 +14,8 @@ module Nri.Ui.SortableTable.V5 exposing
 @docs Column, Sorter, State
 @docs init, initDescending
 @docs custom, string, placeholderColumn
-@docs Attribute, updateMsg, state, stickyHeader, disableAlternatingRowColors, stickyHeaderCustom, StickyConfig, view, viewLoading
+@docs Attribute, updateMsg, tableAttribute, state, stickyHeader, stickyHeaderCustom, StickyConfig
+@docs view, viewLoading
 @docs invariantSort, simpleSort, combineSorters
 
 -}
@@ -66,7 +68,7 @@ type alias Config id msg =
     { updateMsg : Maybe (State id -> msg)
     , state : Maybe (State id)
     , stickyHeader : Maybe StickyConfig
-    , alternatingRowColors : Bool
+    , tableAttributes : List Table.Attribute
     }
 
 
@@ -75,7 +77,7 @@ defaultConfig =
     { updateMsg = Nothing
     , state = Nothing
     , stickyHeader = Nothing
-    , alternatingRowColors = True
+    , tableAttributes = []
     }
 
 
@@ -169,11 +171,11 @@ stickyHeader =
     Attribute (\config -> { config | stickyHeader = Just defaultStickyConfig })
 
 
-{-| Disable alternatingRowColors
+{-| Attributes forwarded to the underlying Nri.Ui.Table
 -}
-disableAlternatingRowColors : Attribute id msg
-disableAlternatingRowColors =
-    Attribute (\config -> { config | alternatingRowColors = False })
+tableAttribute : Table.Attribute -> Attribute id msg
+tableAttribute attr =
+    Attribute (\config -> { config | tableAttributes = attr :: config.tableAttributes })
 
 
 {-| Does the same thing as `stickyHeader`, but with adaptations for your
@@ -325,10 +327,6 @@ view attributes columns entries =
         config =
             List.foldl (\(Attribute fn) soFar -> fn soFar) defaultConfig attributes
 
-        stickyStyles =
-            Maybe.map stickyConfigStyles config.stickyHeader
-                |> Maybe.withDefault []
-
         tableColumns =
             List.map (buildTableColumn config.updateMsg config.state) columns
     in
@@ -339,29 +337,13 @@ view attributes columns entries =
                     findSorter columns state_.column
             in
             Table.view
-                (List.filterMap identity
-                    [ Just (Table.css stickyStyles)
-                    , if config.alternatingRowColors then
-                        Nothing
-
-                      else
-                        Just Table.disableAlternatingRowColors
-                    ]
-                )
+                (buildTableAttributes config)
                 tableColumns
                 (List.sortWith (sorter state_.sortDirection) entries)
 
         Nothing ->
             Table.view
-                (List.filterMap identity
-                    [ Just (Table.css stickyStyles)
-                    , if config.alternatingRowColors then
-                        Nothing
-
-                      else
-                        Just Table.disableAlternatingRowColors
-                    ]
-                )
+                (buildTableAttributes config)
                 tableColumns
                 entries
 
@@ -373,24 +355,25 @@ viewLoading attributes columns =
         config =
             List.foldl (\(Attribute fn) soFar -> fn soFar) defaultConfig attributes
 
-        stickyStyles =
-            Maybe.map stickyConfigStyles config.stickyHeader
-                |> Maybe.withDefault []
-
         tableColumns =
             List.map (buildTableColumn config.updateMsg config.state) columns
     in
     Table.viewLoading
-        (List.filterMap identity
-            [ Just (Table.css stickyStyles)
-            , if config.alternatingRowColors then
-                Nothing
-
-              else
-                Just Table.disableAlternatingRowColors
-            ]
-        )
+        (buildTableAttributes config)
         tableColumns
+
+
+buildTableAttributes : Config id msg -> List Table.Attribute
+buildTableAttributes config =
+    let
+        stickyStyles =
+            Maybe.map stickyConfigStyles config.stickyHeader
+                |> Maybe.withDefault []
+    in
+    List.concat
+        [ [ Table.css stickyStyles ]
+        , List.reverse config.tableAttributes
+        ]
 
 
 findSorter : List (Column id entry msg) -> id -> Sorter entry
