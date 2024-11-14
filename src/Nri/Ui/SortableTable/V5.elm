@@ -330,22 +330,18 @@ view attributes columns entries =
         tableColumns =
             List.map (buildTableColumn config.updateMsg config.state) columns
     in
-    case config.state of
-        Just state_ ->
-            let
-                sorter =
-                    findSorter columns state_.column
-            in
-            Table.view
-                (buildTableAttributes config)
-                tableColumns
-                (List.sortWith (sorter state_.sortDirection) entries)
+    Table.view
+        (buildTableAttributes config)
+        tableColumns
+        (case config.state of
+            Just state_ ->
+                List.sortWith
+                    (findSorter columns state_.column state_.sortDirection)
+                    entries
 
-        Nothing ->
-            Table.view
-                (buildTableAttributes config)
-                tableColumns
+            Nothing ->
                 entries
+        )
 
 
 {-| -}
