@@ -9,7 +9,8 @@ module Nri.Ui.SortableTable.V5 exposing
 
 {-| Changes from V4:
 
-  - ...
+  - Drops `disableAlternatingRowColors`
+  - Adds `tableAttribute`, which lets us add any attributes for the underlying `Nri.Ui.Table`
 
 @docs Column, Sorter, State
 @docs init, initDescending

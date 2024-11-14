@@ -7,10 +7,9 @@ module Nri.Ui.Table.V8 exposing
 
 {-| Upgrading from V7:
 
-  - New API using list of attributes. If you don't set any custom css just use an empty list, otherwise use the css attribute to set the custom css.
-  - Consider moving to `SortableTable`, as in V4 a non-interactive table renders
-    just the same but has additional flexibility in the API and will make future
-    upgrades easier.
+  - New API using list of attributes.
+  - Adds option to disable alternating row colors (disableAlternatingRowColors)
+  - Adds option to enable background color changes on the hovered row (backgroundChangeOnRowHover)
 
 @docs Column, SortDirection, custom, string, rowHeader, placeholderColumn
 @docs Attribute, css, disableAlternatingRowColors, backgroundChangeOnRowHover
