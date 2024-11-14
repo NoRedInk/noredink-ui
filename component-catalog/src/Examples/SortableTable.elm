@@ -17,7 +17,7 @@ import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.SortableTable.V4 as SortableTable exposing (Column)
+import Nri.Ui.SortableTable.V5 as SortableTable exposing (Column)
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Table.V8 as Table
@@ -120,11 +120,16 @@ example =
                                         SortableTable.stickyHeaderCustom customConfig
                             )
                             settings.stickyHeader
-                        , if settings.alternatingRowColors then
-                            Nothing
+                        , if settings.forwardingAttributesToTable then
+                            Just (SortableTable.tableAttribute Table.disableAlternatingRowColors)
 
                           else
-                            Just SortableTable.disableAlternatingRowColors
+                            Nothing
+                        , if settings.forwardingAttributesToTable then
+                            Just (SortableTable.tableAttribute (Table.css [ Css.border3 (Css.px 4) Css.solid Colors.red ]))
+
+                          else
+                            Nothing
                         ]
 
                 isStickyAtAll =
@@ -173,11 +178,16 @@ example =
                                                         2
                                     )
                                     settings.stickyHeader
-                                , if settings.alternatingRowColors then
-                                    Nothing
+                                , if settings.forwardingAttributesToTable then
+                                    Just "SortableTable.tableAttribute (Table.disableAlternatingRowColors)"
 
                                   else
-                                    Just "SortableTable.disableAlternatingRowColors"
+                                    Nothing
+                                , if settings.forwardingAttributesToTable then
+                                    Just "SortableTable.tableAttribute (Table.css [ Css.border3 (Css.px 1) Css.solid Colors.red ])"
+
+                                  else
+                                    Nothing
                                 ]
                             )
                             1
@@ -341,7 +351,7 @@ type alias Settings =
     , customizableColumnCellStyles : ( String, List Style )
     , loading : Bool
     , stickyHeader : Maybe StickyHeader
-    , alternatingRowColors : Bool
+    , forwardingAttributesToTable : Bool
     }
 
 
@@ -389,7 +399,7 @@ controlSettings =
                 )
                 |> Control.revealed "Sticky Header"
             )
-        |> Control.field "Alternating row colors" (Control.bool True)
+        |> Control.field "Using Nri.Ui.Table attributes" (Control.bool True)
 
 
 type ColumnId
