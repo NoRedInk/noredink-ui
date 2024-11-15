@@ -1,19 +1,18 @@
 module Nri.Ui.Table.V8 exposing
     ( Column, SortDirection(..), custom, string, rowHeader, placeholderColumn
-    , disableAlternatingRowColors, css, Attribute
+    , Attribute, css, disableAlternatingRowColors, backgroundChangeOnRowHover
     , view, viewWithoutHeader
     , viewLoading, viewLoadingWithoutHeader
     )
 
 {-| Upgrading from V7:
 
-  - New API using list of attributes. If you don't set any custom css just use an empty list, otherwise use the css attribute to set the custom css.
-  - Consider moving to `SortableTable`, as in V4 a non-interactive table renders
-    just the same but has additional flexibility in the API and will make future
-    upgrades easier.
+  - New API using list of attributes.
+  - Adds option to disable alternating row colors (disableAlternatingRowColors)
+  - Adds option to enable background color changes on the hovered row (backgroundChangeOnRowHover)
 
 @docs Column, SortDirection, custom, string, rowHeader, placeholderColumn
-@docs disableAlternatingRowColors, css, Attribute
+@docs Attribute, css, disableAlternatingRowColors, backgroundChangeOnRowHover
 
 @docs view, viewWithoutHeader
 
@@ -124,7 +123,10 @@ rowHeader options =
 
 
 type alias Config =
-    { css : List Style, alternatingRowColors : Bool }
+    { css : List Style
+    , alternatingRowColors : Bool
+    , backgroundChangeOnRowHover : Bool
+    }
 
 
 {-| Attribute to configure the table
@@ -135,7 +137,10 @@ type Attribute
 
 defaultConfig : Config
 defaultConfig =
-    { css = [], alternatingRowColors = True }
+    { css = []
+    , alternatingRowColors = True
+    , backgroundChangeOnRowHover = False
+    }
 
 
 {-| Add a CSS style to the table
@@ -154,6 +159,15 @@ disableAlternatingRowColors =
     Attribute <|
         \config ->
             { config | alternatingRowColors = False }
+
+
+{-| Makes it so that rows are highlighted with a different background color when hovering over them
+-}
+backgroundChangeOnRowHover : Attribute
+backgroundChangeOnRowHover =
+    Attribute <|
+        \config ->
+            { config | backgroundChangeOnRowHover = True }
 
 
 
@@ -175,7 +189,14 @@ viewWithoutHeader attrs columns =
                 defaultConfig
                 attrs
     in
-    tableWithoutHeader config.css columns (viewRow columns config.alternatingRowColors)
+    tableWithoutHeader config.css
+        columns
+        (viewRow
+            { alternatingColors = config.alternatingRowColors
+            , backgroundChangeOnHover = config.backgroundChangeOnRowHover
+            }
+            columns
+        )
 
 
 {-| Displays a table of data based on the provided column definitions
@@ -193,13 +214,26 @@ view attrs columns =
                 defaultConfig
                 attrs
     in
-    tableWithHeader config.css columns (viewRow columns config.alternatingRowColors)
+    tableWithHeader config.css
+        columns
+        (viewRow
+            { alternatingColors = config.alternatingRowColors
+            , backgroundChangeOnHover = config.backgroundChangeOnRowHover
+            }
+            columns
+        )
 
 
-viewRow : List (Column data msg) -> Bool -> data -> Html msg
-viewRow columns alternatingRowColors data =
+viewRow :
+    { alternatingColors : Bool
+    , backgroundChangeOnHover : Bool
+    }
+    -> List (Column data msg)
+    -> data
+    -> Html msg
+viewRow rowConfig columns data =
     tr
-        [ Attributes.css (rowStyles alternatingRowColors) ]
+        [ Attributes.css (rowStyles rowConfig) ]
         (List.map (viewColumn data) columns)
 
 
@@ -263,7 +297,13 @@ viewLoadingWithoutHeader attrs columns =
 viewLoadingRow : List (Column data msg) -> Bool -> Int -> Html msg
 viewLoadingRow columns alternatingRowColors index =
     tr
-        [ Attributes.css (rowStyles alternatingRowColors) ]
+        [ Attributes.css
+            (rowStyles
+                { alternatingColors = alternatingRowColors
+                , backgroundChangeOnHover = False
+                }
+            )
+        ]
         (List.indexedMap (viewLoadingColumn index) columns)
 
 
@@ -382,17 +422,26 @@ headerStyles =
     ]
 
 
-rowStyles : Bool -> List Style
-rowStyles alternatingRowColors =
+rowStyles :
+    { alternatingColors : Bool
+    , backgroundChangeOnHover : Bool
+    }
+    -> List Style
+rowStyles rowConfig =
     [ height (px 45)
     , fontSize (px 14)
     , color gray20
-    , if alternatingRowColors then
+    , if rowConfig.alternatingColors then
         pseudoClass "nth-child(odd)"
             [ backgroundColor gray96 ]
 
       else
         Css.batch [ Css.borderBottom3 (Css.px 1) Css.solid gray92 ]
+    , if rowConfig.backgroundChangeOnHover then
+        Css.hover [ Css.backgroundColor frost ]
+
+      else
+        Css.batch []
     ]
 
 

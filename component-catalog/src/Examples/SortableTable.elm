@@ -17,7 +17,7 @@ import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.SortableTable.V4 as SortableTable exposing (Column)
+import Nri.Ui.SortableTable.V5 as SortableTable exposing (Column)
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Table.V8 as Table
@@ -107,24 +107,26 @@ example =
                     Control.currentValue model.settings
 
                 attrs =
-                    List.filterMap identity
-                        [ Just (SortableTable.updateMsg SetSortState)
-                        , Just (SortableTable.state sortState)
-                        , Maybe.map
-                            (\stickiness ->
-                                case stickiness of
-                                    Default ->
-                                        SortableTable.stickyHeader
+                    List.concat
+                        [ [ SortableTable.updateMsg SetSortState
+                          , SortableTable.state sortState
+                          ]
+                        , case settings.stickyHeader of
+                            Nothing ->
+                                []
 
-                                    Custom customConfig ->
-                                        SortableTable.stickyHeaderCustom customConfig
-                            )
-                            settings.stickyHeader
-                        , if settings.alternatingRowColors then
-                            Nothing
+                            Just Default ->
+                                [ SortableTable.stickyHeader ]
+
+                            Just (Custom customConfig) ->
+                                [ SortableTable.stickyHeaderCustom customConfig ]
+                        , if settings.forwardingAttributesToTable then
+                            [ SortableTable.tableAttribute Table.disableAlternatingRowColors
+                            , SortableTable.tableAttribute (Table.css [ Css.border3 (Css.px 4) Css.solid Colors.red ])
+                            ]
 
                           else
-                            Just SortableTable.disableAlternatingRowColors
+                            []
                         ]
 
                 isStickyAtAll =
@@ -141,43 +143,46 @@ example =
                     , code =
                         [ moduleName ++ "." ++ viewName
                         , Code.listMultiline
-                            (List.filterMap identity
-                                [ Just "SortableTable.updateMsg SetSortState"
-                                , "-- The SortableTable's state should be stored on the model, rather than initialized in the view"
-                                    ++ "\n      "
-                                    ++ "SortableTable.state (SortableTable.init "
-                                    ++ Debug.toString model.sortState.column
-                                    ++ ")"
-                                    |> Just
-                                , Maybe.map
-                                    (\stickiness ->
-                                        case stickiness of
-                                            Default ->
-                                                "SortableTable.stickyHeader"
+                            (List.concat
+                                [ [ "SortableTable.updateMsg SetSortState"
+                                  , "-- The SortableTable's state should be stored on the model, rather than initialized in the view"
+                                        ++ "\n      "
+                                        ++ "SortableTable.state (SortableTable.init "
+                                        ++ Debug.toString model.sortState.column
+                                        ++ ")"
+                                  ]
+                                , case settings.stickyHeader of
+                                    Nothing ->
+                                        []
 
-                                            Custom stickyConfig ->
-                                                "SortableTable.stickyHeaderCustom "
-                                                    ++ Code.recordMultiline
-                                                        [ ( "topOffset", String.fromFloat stickyConfig.topOffset )
-                                                        , ( "zIndex", String.fromInt stickyConfig.zIndex )
-                                                        , ( "pageBackgroundColor", "Css.hex \"" ++ stickyConfig.pageBackgroundColor.value ++ "\"" )
-                                                        , ( "customZIndex"
-                                                          , case stickyConfig.hoverZIndex of
-                                                                Nothing ->
-                                                                    "Nothing"
+                                    Just Default ->
+                                        [ "SortableTable.stickyHeader"
+                                        ]
 
-                                                                Just zIndex ->
-                                                                    "Just " ++ String.fromInt zIndex
-                                                          )
-                                                        ]
-                                                        2
-                                    )
-                                    settings.stickyHeader
-                                , if settings.alternatingRowColors then
-                                    Nothing
+                                    Just (Custom stickyConfig) ->
+                                        [ "SortableTable.stickyHeaderCustom "
+                                            ++ Code.recordMultiline
+                                                [ ( "topOffset", String.fromFloat stickyConfig.topOffset )
+                                                , ( "zIndex", String.fromInt stickyConfig.zIndex )
+                                                , ( "pageBackgroundColor", "Css.hex \"" ++ stickyConfig.pageBackgroundColor.value ++ "\"" )
+                                                , ( "customZIndex"
+                                                  , case stickyConfig.hoverZIndex of
+                                                        Nothing ->
+                                                            "Nothing"
+
+                                                        Just zIndex ->
+                                                            "Just " ++ String.fromInt zIndex
+                                                  )
+                                                ]
+                                                2
+                                        ]
+                                , if settings.forwardingAttributesToTable then
+                                    [ "SortableTable.tableAttribute (Table.disableAlternatingRowColors)"
+                                    , "SortableTable.tableAttribute (Table.css [ Css.border3 (Css.px 1) Css.solid Colors.red ])"
+                                    ]
 
                                   else
-                                    Just "SortableTable.disableAlternatingRowColors"
+                                    []
                                 ]
                             )
                             1
@@ -341,7 +346,7 @@ type alias Settings =
     , customizableColumnCellStyles : ( String, List Style )
     , loading : Bool
     , stickyHeader : Maybe StickyHeader
-    , alternatingRowColors : Bool
+    , forwardingAttributesToTable : Bool
     }
 
 
@@ -389,7 +394,7 @@ controlSettings =
                 )
                 |> Control.revealed "Sticky Header"
             )
-        |> Control.field "Alternating row colors" (Control.bool True)
+        |> Control.field "Using Nri.Ui.Table attributes" (Control.bool False)
 
 
 type ColumnId

@@ -74,11 +74,25 @@ example =
     , view =
         \ellieLinkConfig state ->
             let
-                { showHeader, isLoading, alternatingRowColors } =
+                { showHeader, isLoading, disableAlternatingRowColors, backgroundChangeOnRowHover } =
                     Control.currentValue state
 
                 ( columnsCode, columns ) =
                     List.unzip columnsWithCode
+
+                tableAttributes =
+                    List.concat
+                        [ if disableAlternatingRowColors then
+                            [ Table.disableAlternatingRowColors ]
+
+                          else
+                            []
+                        , if backgroundChangeOnRowHover then
+                            [ Table.backgroundChangeOnRowHover ]
+
+                          else
+                            []
+                        ]
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -103,11 +117,18 @@ example =
                                     (moduleName ++ "." ++ viewName)
                                         ++ " "
                                         ++ Code.list
-                                            (if alternatingRowColors then
-                                                []
+                                            (List.concat
+                                                [ if disableAlternatingRowColors then
+                                                    [ "Table.disableAlternatingRowColors" ]
 
-                                             else
-                                                [ "Table.disableAlternatingRowColors" ]
+                                                  else
+                                                    []
+                                                , if backgroundChangeOnRowHover then
+                                                    [ "Table.backgroundChangeOnRowHover" ]
+
+                                                  else
+                                                    []
+                                                ]
                                             )
                                         ++ Code.list columnsCode
                                         ++ dataStr
@@ -126,44 +147,24 @@ example =
             , case ( showHeader, isLoading ) of
                 ( True, False ) ->
                     Table.view
-                        (if alternatingRowColors then
-                            []
-
-                         else
-                            [ Table.disableAlternatingRowColors ]
-                        )
+                        tableAttributes
                         columns
                         data
 
                 ( False, False ) ->
                     Table.viewWithoutHeader
-                        (if alternatingRowColors then
-                            []
-
-                         else
-                            [ Table.disableAlternatingRowColors ]
-                        )
+                        tableAttributes
                         columns
                         data
 
                 ( True, True ) ->
                     Table.viewLoading
-                        (if alternatingRowColors then
-                            []
-
-                         else
-                            [ Table.disableAlternatingRowColors ]
-                        )
+                        tableAttributes
                         columns
 
                 ( False, True ) ->
                     Table.viewLoadingWithoutHeader
-                        (if alternatingRowColors then
-                            []
-
-                         else
-                            [ Table.disableAlternatingRowColors ]
-                        )
+                        tableAttributes
                         columns
             , Heading.h2
                 [ Heading.plaintext "Using placeholder columns for consistent column alignment"
@@ -226,7 +227,8 @@ update msg state =
 type alias Settings =
     { showHeader : Bool
     , isLoading : Bool
-    , alternatingRowColors : Bool
+    , disableAlternatingRowColors : Bool
+    , backgroundChangeOnRowHover : Bool
     }
 
 
@@ -235,7 +237,8 @@ controlSettings =
     Control.record Settings
         |> Control.field "visible header" (Control.bool True)
         |> Control.field "is loading" (Control.bool False)
-        |> Control.field "alternatingRowColors" (Control.bool True)
+        |> Control.field "disableAlternatingRowColors" (Control.bool False)
+        |> Control.field "backgroundChangeOnRowHover" (Control.bool False)
 
 
 type alias Datum =
