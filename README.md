@@ -89,7 +89,7 @@ To get started, install nix from [nixos.org/nix](https://nixos.org/nix/).
 After that's set up in your shell (just follow the instructions at the end of the installation script) you can run `nix-shell` to get a development environment with everything you need.
 
 If you find that inconvenient, try using [`direnv`](https://direnv.net/).
-Once that's set up, `echo use nix > .envrc` and then `direnv allow`.
+Once that's set up, `ln -s .envrc.nix .envrc` and then `direnv allow`.
 Anytime you enter the project your shell will automatically pick up the right dependencies.
 
 If you find that `direnv` loads too slow, [there are faster loading strategies than the default in their wiki](https://github.com/direnv/direnv/wiki/Nix).
