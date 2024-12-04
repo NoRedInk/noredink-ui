@@ -2,8 +2,8 @@ module Nri.Ui.AssignmentIcon.V2 exposing
     ( diagnostic, planningDiagnosticCircled, unitDiagnosticCircled
     , practice, practiceCircled
     , quiz, quizCircled, passageQuizCircled
-    , quickWrite, guidedDraft, guidedEssay, peerReview, selfReview, dailyWriting, novels, texts, genres, genresCircled
-    , quickWriteCircled, guidedDraftCircled, guidedEssayCircled, peerReviewCircled, selfReviewCircled, dailyWritingCircled, novelsCircled, gradingAssistantCircled, textsCircled
+    , quickWrite, guidedDraft, guidedEssay, guidedShortResponse, peerReview, selfReview, dailyWriting, novels, texts, genres, genresCircled
+    , quickWriteCircled, guidedDraftCircled, guidedEssayCircled, guidedShortResponseCircled, peerReviewCircled, selfReviewCircled, dailyWritingCircled, novelsCircled, gradingAssistantCircled, textsCircled
     , submitting, rating, revising
     , startPrimary, startSecondary
     , assessment, standards, writing, modules
@@ -26,8 +26,8 @@ module Nri.Ui.AssignmentIcon.V2 exposing
 
 # Writing
 
-@docs quickWrite, guidedDraft, guidedEssay, peerReview, selfReview, dailyWriting, novels, texts, genres, genresCircled
-@docs quickWriteCircled, guidedDraftCircled, guidedEssayCircled, peerReviewCircled, selfReviewCircled, dailyWritingCircled, novelsCircled, gradingAssistantCircled, textsCircled
+@docs quickWrite, guidedDraft, guidedEssay, guidedShortResponse, peerReview, selfReview, dailyWriting, novels, texts, genres, genresCircled
+@docs quickWriteCircled, guidedDraftCircled, guidedEssayCircled, guidedShortResponseCircled, peerReviewCircled, selfReviewCircled, dailyWritingCircled, novelsCircled, gradingAssistantCircled, textsCircled
 
 
 # Stages
@@ -181,6 +181,54 @@ guidedEssay =
                 ]
                 []
             ]
+        ]
+
+
+{-| -}
+guidedShortResponse : Nri.Ui.Svg.V1.Svg
+guidedShortResponse =
+    Nri.Ui.Svg.V1.init "0 0 49 51"
+        [ Svg.path
+            [ Attributes.d "M11 0C6.56436 0 3 3.52134 3 7.90655C3 12.2904 11 23 11 23C11 23 19 12.2904 19 7.90655C19 3.52134 15.4356 0 11 0ZM11 11.4993C8.96422 11.4993 7.36338 9.91855 7.36338 7.90517C7.36338 5.89317 8.96282 4.31103 11 4.31103C13.0358 4.31103 14.6366 5.89179 14.6366 7.90517C14.6366 9.91852 13.0358 11.4993 11 11.4993Z"
+            ]
+            []
+        , Svg.rect
+            [ Attributes.x "23.4111"
+            , Attributes.y "3.6333"
+            , Attributes.width "25.5889"
+            , Attributes.height "5.44445"
+            , Attributes.rx "2.17778"
+            ]
+            []
+        , Svg.rect
+            [ Attributes.x "23.4111"
+            , Attributes.y "13.9777"
+            , Attributes.width "25.5889"
+            , Attributes.height "5.44445"
+            , Attributes.rx "2.17778"
+            ]
+            []
+        , Svg.rect
+            [ Attributes.y "24.3222"
+            , Attributes.width "49"
+            , Attributes.height "5.44445"
+            , Attributes.rx "2.17778"
+            ]
+            []
+        , Svg.rect
+            [ Attributes.y "34.6666"
+            , Attributes.width "49"
+            , Attributes.height "5.44445"
+            , Attributes.rx "2.17778"
+            ]
+            []
+        , Svg.rect
+            [ Attributes.y "45.0111"
+            , Attributes.width "39.7444"
+            , Attributes.height "5.44445"
+            , Attributes.rx "2.17778"
+            ]
+            []
         ]
 
 
@@ -644,6 +692,69 @@ guidedEssayCircled =
                         ]
                         []
                     ]
+                ]
+            ]
+    in
+    encircle 90 toIcon
+
+
+{-| -}
+guidedShortResponseCircled : Nri.Ui.Svg.V1.Svg
+guidedShortResponseCircled =
+    let
+        toIcon circle =
+            [ Svg.g []
+                [ circle
+                , Svg.path
+                    [ Attributes.d "M32 19C27.5644 19 24 22.5213 24 26.9066C24 31.2904 32 42 32 42C32 42 40 31.2904 40 26.9066C40 22.5213 36.4356 19 32 19ZM32 30.4993C29.9642 30.4993 28.3634 28.9186 28.3634 26.9052C28.3634 24.8932 29.9628 23.311 32 23.311C34.0358 23.311 35.6366 24.8918 35.6366 26.9052C35.6366 28.9185 34.0358 30.4993 32 30.4993Z"
+                    , Attributes.fill "white"
+                    ]
+                    []
+                , Svg.rect
+                    [ Attributes.x "44.4111"
+                    , Attributes.y "22.6333"
+                    , Attributes.width "25.5889"
+                    , Attributes.height "5.44445"
+                    , Attributes.rx "2.17778"
+                    , Attributes.fill "white"
+                    ]
+                    []
+                , Svg.rect
+                    [ Attributes.x "44.4111"
+                    , Attributes.y "32.9777"
+                    , Attributes.width "25.5889"
+                    , Attributes.height "5.44445"
+                    , Attributes.rx "2.17778"
+                    , Attributes.fill "white"
+                    ]
+                    []
+                , Svg.rect
+                    [ Attributes.x "21"
+                    , Attributes.y "43.3222"
+                    , Attributes.width "49"
+                    , Attributes.height "5.44445"
+                    , Attributes.rx "2.17778"
+                    , Attributes.fill "white"
+                    ]
+                    []
+                , Svg.rect
+                    [ Attributes.x "21"
+                    , Attributes.y "53.6666"
+                    , Attributes.width "49"
+                    , Attributes.height "5.44445"
+                    , Attributes.rx "2.17778"
+                    , Attributes.fill "white"
+                    ]
+                    []
+                , Svg.rect
+                    [ Attributes.x "21"
+                    , Attributes.y "64.0111"
+                    , Attributes.width "39.7444"
+                    , Attributes.height "5.44445"
+                    , Attributes.rx "2.17778"
+                    , Attributes.fill "white"
+                    ]
+                    []
                 ]
             ]
     in
