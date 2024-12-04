@@ -38,6 +38,8 @@ example =
             , AssignmentIcon.quizCircled
             , AssignmentIcon.quickWriteCircled
             , AssignmentIcon.guidedDraftCircled
+            , AssignmentIcon.guidedEssayCircled
+            , AssignmentIcon.guidedShortResponseCircled
             , AssignmentIcon.peerReviewCircled
             , AssignmentIcon.selfReviewCircled
             , AssignmentIcon.startPrimary
@@ -72,6 +74,8 @@ all =
     , ( "Writing"
       , [ ( "quickWrite", AssignmentIcon.quickWrite, [] )
         , ( "guidedDraft", AssignmentIcon.guidedDraft, [] )
+        , ( "guidedEssay", AssignmentIcon.guidedEssay, [] )
+        , ( "guidedShortResponse", AssignmentIcon.guidedShortResponse, [] )
         , ( "peerReview", AssignmentIcon.peerReview, [] )
         , ( "selfReview", AssignmentIcon.selfReview, [] )
         , ( "dailyWriting", AssignmentIcon.dailyWriting, [] )
@@ -83,6 +87,8 @@ all =
     , ( "Writing (Circled)"
       , [ ( "quickWriteCircled", AssignmentIcon.quickWriteCircled, [] )
         , ( "guidedDraftCircled", AssignmentIcon.guidedDraftCircled, [] )
+        , ( "guidedEssayCircled", AssignmentIcon.guidedEssayCircled, [] )
+        , ( "guidedShortResponseCircled", AssignmentIcon.guidedShortResponseCircled, [] )
         , ( "peerReviewCircled", AssignmentIcon.peerReviewCircled, [] )
         , ( "selfReviewCircled", AssignmentIcon.selfReviewCircled, [] )
         , ( "gradingAssistantCircled", AssignmentIcon.gradingAssistantCircled, [] )
