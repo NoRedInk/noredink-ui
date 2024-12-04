@@ -331,21 +331,21 @@ view focusAndToggle attributes entries =
 -}
 type Entry msg
     = Single String (List (Html.Attribute msg) -> Html msg)
-    | Batch String (Maybe String) (List (Entry msg))
+    | Batch String (Maybe String) (List (Html msg)) (List (Entry msg))
 
 
 {-| Represents a group of entries with a named legend.
 -}
 group : String -> List (Entry msg) -> Entry msg
 group legendName entries =
-    Batch legendName Nothing entries
+    Batch legendName Nothing [] entries
 
 
 {-| Represents a group of entries with a named legend and text caption.
 -}
-captionedGroup : String -> String -> List (Entry msg) -> Entry msg
-captionedGroup legendName caption entries =
-    Batch legendName (Just caption) entries
+captionedGroup : String -> String -> List (Html msg) -> List (Entry msg) -> Entry msg
+captionedGroup legendName caption icons entries =
+    Batch legendName (Just caption) icons entries
 
 
 {-| Represents a single **focusable** entry.
@@ -717,7 +717,7 @@ getFirstIds entries =
                 Single idString _ ->
                     Just idString
 
-                Batch _ _ es ->
+                Batch _ _ _ es ->
                     Maybe.andThen getIdString (List.head es)
     in
     List.filterMap getIdString entries
@@ -731,7 +731,7 @@ getLastIds entries =
                 Single idString _ ->
                     Just idString
 
-                Batch _ _ es ->
+                Batch _ _ _ es ->
                     Maybe.andThen getIdString (List.head (List.reverse es))
     in
     List.filterMap getIdString (List.reverse entries)
@@ -829,7 +829,7 @@ viewEntry config focusAndToggle { upId, downId, entry_ } =
                     ]
                 ]
 
-        Batch title caption childList ->
+        Batch title caption icons childList ->
             let
                 captionId =
                     safeId (title ++ "--caption")
@@ -846,7 +846,7 @@ viewEntry config focusAndToggle { upId, downId, entry_ } =
                                     (styleGroupTitleText config
                                         |> Maybe.cons (Maybe.map (always (Aria.describedBy [ captionId ])) caption)
                                     )
-                                    [ Html.text title ]
+                                    [ Html.text title, span [ css [ marginLeft (Css.px 5), display inlineFlex, Css.property "gap" "5px" ] ] icons ]
                                 ]
                             , viewJust
                                 (\c ->

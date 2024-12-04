@@ -820,6 +820,7 @@ In this realistic example, we can't actually pass the correct attributes to Radi
           , entries =
                 [ Menu.captionedGroup "Quick Write"
                     "Students write independently, without lessons or tips."
+                    []
                     [ Menu.entry "preview-quick-write" <|
                         \attributes ->
                             ClickableSvg.link "Preview"
@@ -841,6 +842,7 @@ In this realistic example, we can't actually pass the correct attributes to Radi
                     ]
                 , Menu.captionedGroup "Guided Draft"
                     "Students draft with the support of tutorials, models, and targeted tips."
+                    [ span [] [text "icon"], span [] [text "icon"] ]
                     [ Menu.entry "preview-guided-draft" <|
                         \attributes ->
                             ClickableSvg.link "Preview"
