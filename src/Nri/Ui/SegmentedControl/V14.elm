@@ -8,6 +8,7 @@ module Nri.Ui.SegmentedControl.V14 exposing
 
   - use Tooltip.V3 instead of Tooltip.V2
   - when tooltips aren't used, avoid using aria-owns and rendering tooltip-related code
+  - Option's attributes field gets passed into every radio element in `viewRadioGroup`
 
 Changes from V13:
 
@@ -110,6 +111,7 @@ viewRadioGroup config =
                                         "false"
                                     )
                                 :: Style.invisible
+                                ++ option.attributes
                             )
                         , div [] [ viewIcon option.icon, option.label ]
                         ]
@@ -203,8 +205,7 @@ view config =
             , tabView = [ viewIcon option.icon, option.label ]
             , panelView = option.content
             , spaHref = Maybe.map (\toUrl -> toUrl option.value) config.toUrl
-            , disabled = False
-            , labelledBy = Nothing
+            , label = TabsInternal.FromInnerText
             , describedBy = []
             }
 

@@ -17,13 +17,15 @@ import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs
-import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Header.V1 as Header
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Select.V9 as Select
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -44,10 +46,22 @@ example =
     , version = version
     , categories = [ Layout ]
     , keyboardSupport = []
-    , state = init Nothing
+    , init = ( init Nothing, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview = [ viewPreview ]
+    , about =
+        [ Text.smallBody
+            [ Text.html
+                [ text "Learn more about this component in "
+                , ClickableText.link "Tessa's demo"
+                    [ ClickableText.linkExternal "https://noredink.slack.com/archives/CDMGJ8PFA/p1684424409046369"
+                    , ClickableText.appearsInline
+                    ]
+                , text "."
+                ]
+            ]
+        ]
     , view =
         \ellieLinkConfig state ->
             let
@@ -61,7 +75,10 @@ example =
                 , update = UpdateControl
                 , settings = state.control
                 , mainType = Just "RootHtml.Html msg"
-                , extraCode = []
+                , extraCode =
+                    [ "import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs"
+                    , "import Nri.Ui.ClickableText.V4 as ClickableText"
+                    ]
                 , renderExample = Code.unstyledView
                 , toExampleCode =
                     \settings ->
@@ -88,7 +105,10 @@ example =
                           }
                         ]
                 }
-            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Heading.h2
+                [ Heading.plaintext "Customizable Example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , Header.view
                 (Header.breadCrumbsLabel "header example breadcrumbs" :: attributes)
                 { breadCrumbs =
@@ -151,10 +171,10 @@ type alias State =
 init : Maybe String -> State
 init selection =
     { control =
-        ControlExtra.list
+        Control.list
             |> ControlExtra.optionalListItem "extraContent"
                 (Control.value
-                    ( "Header.extraContent [ Html.text \"…\" ]"
+                    ( "Header.extraContent [ text \"…\" ]"
                     , Header.extraContent
                         [ Select.view "Tortilla Selector"
                             [ Select.choices identity
@@ -197,11 +217,11 @@ init selection =
             |> ControlExtra.optionalListItem "customPageWidth"
                 (Control.map
                     (\width ->
-                        ( "Header.customPageWidth (Css.px" ++ String.fromFloat width ++ ")"
+                        ( "Header.customPageWidth (Css.px " ++ String.fromFloat width ++ ")"
                         , Header.customPageWidth (Css.px width)
                         )
                     )
-                    (ControlExtra.float 750)
+                    (Control.float 750)
                 )
     , selection = Nothing
     }

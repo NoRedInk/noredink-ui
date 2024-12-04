@@ -18,14 +18,15 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra exposing (values)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Guidance
 import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import List.Extra
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.Message.V3 as Message
+import Nri.Ui.Message.V4 as Message
 import Nri.Ui.Panel.V1 as Panel
-import Nri.Ui.Tabs.V8 as Tabs exposing (Alignment(..), Tab)
+import Nri.Ui.Tabs.V9 as Tabs exposing (Alignment(..), Tab)
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Task
@@ -38,14 +39,14 @@ moduleName =
 
 version : Int
 version =
-    8
+    9
 
 
 example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , categories = [ Layout ]
+    , categories = [ Layout, Tabs ]
     , keyboardSupport =
         [ { keys = [ KeyboardSupport.Tab ]
           , result = "Move focus to the currently-selected Tab's tab panel"
@@ -57,7 +58,7 @@ example =
           , result = "Select the tab to the right of the currently-selected Tab"
           }
         ]
-    , state = init
+    , init = ( init, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -103,6 +104,7 @@ example =
                 [ Text.caption [ Text.plaintext "Tab 1 content" ] ]
             ]
         ]
+    , about = [ Guidance.communicateState moduleName ]
     , view =
         \ellieLinkConfig model ->
             let
@@ -113,6 +115,7 @@ example =
                     allTabs
                         { openTooltipId = model.openTooltip
                         , withTooltips = settings.withTooltips
+                        , labelSource = settings.labelSource
                         , pageBackgroundColor = settings.pageBackgroundColor
                         }
             in
@@ -219,6 +222,7 @@ example =
 allTabs :
     { openTooltipId : Maybe Int
     , withTooltips : Bool
+    , labelSource : LabelSource
     , pageBackgroundColor : Maybe Color
     }
     -> List ( String, Tab Int Msg )
@@ -230,6 +234,7 @@ allTabs config =
 buildTab :
     { openTooltipId : Maybe Int
     , withTooltips : Bool
+    , labelSource : LabelSource
     , pageBackgroundColor : Maybe Color
     }
     -> Int
@@ -247,6 +252,12 @@ buildTab config id =
 
         panelName =
             "Panel " ++ idString
+
+        labelledById =
+            idString ++ "-label"
+
+        fixedLabelOverride =
+            tabName ++ " custom label"
     in
     ( String.join ""
         [ "Tabs.build { id = " ++ String.fromInt id ++ ", idString = " ++ Code.string tabIdString ++ " }"
@@ -264,23 +275,42 @@ buildTab config id =
 
           else
             ""
+        , case config.labelSource of
+            FromInnerText ->
+                ""
+
+            LabelledBy ->
+                "\n\t    , Tabs.labelledBy " ++ Code.string labelledById
+
+            FixedLabel ->
+                "\n\t    , Tabs.label " ++ Code.string fixedLabelOverride
         , "\n\t    ]"
         ]
     , Tabs.build { id = id, idString = tabIdString }
-        ([ Tabs.tabString tabName
-         , Tabs.panelHtml (panelContent config.pageBackgroundColor id panelName)
-         ]
-            ++ (if config.withTooltips then
-                    [ Tabs.withTooltip
-                        [ Tooltip.plaintext tabName
-                        , Tooltip.onToggle (ToggleTooltip id)
-                        , Tooltip.open (config.openTooltipId == Just id)
-                        ]
+        (List.concat
+            [ [ Tabs.tabString tabName
+              , Tabs.panelHtml (panelContent config.pageBackgroundColor id panelName)
+              ]
+            , if config.withTooltips then
+                [ Tabs.withTooltip
+                    [ Tooltip.plaintext tabName
+                    , Tooltip.onToggle (ToggleTooltip id)
+                    , Tooltip.open (config.openTooltipId == Just id)
                     ]
+                ]
 
-                else
+              else
+                []
+            , case config.labelSource of
+                FromInnerText ->
                     []
-               )
+
+                LabelledBy ->
+                    [ Tabs.labelledBy labelledById ]
+
+                FixedLabel ->
+                    [ Tabs.label fixedLabelOverride ]
+            ]
         )
     )
 
@@ -344,7 +374,14 @@ type alias Settings =
     , withTooltips : Bool
     , pageBackgroundColor : Maybe Color
     , stickiness : Maybe Stickiness
+    , labelSource : LabelSource
     }
+
+
+type LabelSource
+    = FromInnerText
+    | LabelledBy
+    | FixedLabel
 
 
 type Color
@@ -411,6 +448,14 @@ initSettings =
                       )
                     ]
                 )
+                |> Control.revealed "Tablist Sticky"
+            )
+        |> Control.field "accessible label"
+            (Control.choice
+                [ ( "From inner text (default)", Control.value FromInnerText )
+                , ( "Labelled by another element", Control.value LabelledBy )
+                , ( "Fixed", Control.value FixedLabel )
+                ]
             )
 
 

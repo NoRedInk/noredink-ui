@@ -1,6 +1,6 @@
 module InputErrorAndGuidanceInternal exposing
     ( ErrorState, noError, setErrorIf, setErrorMessage
-    , Guidance, noGuidance, setGuidance
+    , Guidance, noGuidance, setGuidance, setGuidanceHtml
     , getIsInError, getErrorMessage
     , describedBy, view, smallMargin
     , guidanceId, errorId
@@ -9,7 +9,7 @@ module InputErrorAndGuidanceInternal exposing
 {-|
 
 @docs ErrorState, noError, setErrorIf, setErrorMessage
-@docs Guidance, noGuidance, setGuidance
+@docs Guidance, noGuidance, setGuidance, setGuidanceHtml
 @docs getIsInError, getErrorMessage
 @docs describedBy, view, smallMargin
 @docs guidanceId, errorId
@@ -21,7 +21,7 @@ import Accessibility.Styled.Live as Live
 import Css
 import Html.Styled as Html exposing (Html)
 import Nri.Ui.Html.Attributes.V2
-import Nri.Ui.Message.V3 as Message
+import Nri.Ui.Message.V4 as Message
 import Nri.Ui.Text.V6 as Text
 
 
@@ -66,20 +66,30 @@ setErrorMessage maybeMessage config =
 
 
 {-| -}
-type alias Guidance =
-    Maybe String
+type alias Guidance msg =
+    Maybe (GuidanceContent msg)
+
+
+type GuidanceContent msg
+    = TextGuidance String
+    | HtmlGuidance (List (Html msg))
 
 
 {-| -}
-noGuidance : Guidance
+noGuidance : Guidance msg
 noGuidance =
     Nothing
 
 
 {-| -}
-setGuidance : String -> { config | guidance : Guidance } -> { config | guidance : Guidance }
+setGuidance : String -> { config | guidance : Guidance msg } -> { config | guidance : Guidance msg }
 setGuidance guidance config =
-    { config | guidance = Just guidance }
+    { config | guidance = Just (TextGuidance guidance) }
+
+
+setGuidanceHtml : List (Html msg) -> { config | guidance : Guidance msg } -> { config | guidance : Guidance msg }
+setGuidanceHtml html config =
+    { config | guidance = Just (HtmlGuidance html) }
 
 
 {-| -}
@@ -110,7 +120,7 @@ getErrorMessage error =
             Just message
 
 
-describedBy : String -> { config | guidance : Guidance, error : ErrorState } -> Html.Attribute msg
+describedBy : String -> { config | guidance : Guidance msg, error : ErrorState } -> Html.Attribute msg
 describedBy idValue config =
     let
         relevantIds =
@@ -128,7 +138,7 @@ describedBy idValue config =
             Aria.describedBy relevantIds
 
 
-view : String -> Css.Style -> { config | guidance : Guidance, error : ErrorState } -> List (Html msg)
+view : String -> Css.Style -> { config | guidance : Guidance msg, error : ErrorState } -> List (Html msg)
 view idValue marginTop =
     apply
         { ifError = renderErrorMessage idValue marginTop
@@ -137,8 +147,8 @@ view idValue marginTop =
 
 
 apply :
-    { ifError : String -> a, ifGuidance : String -> a }
-    -> { config | guidance : Guidance, error : ErrorState }
+    { ifError : String -> a, ifGuidance : GuidanceContent msg -> a }
+    -> { config | guidance : Guidance msg, error : ErrorState }
     -> List a
 apply { ifError, ifGuidance } config =
     let
@@ -146,10 +156,10 @@ apply { ifError, ifGuidance } config =
             getErrorMessage config.error
     in
     case ( maybeError, config.guidance ) of
-        ( Just errorMessage, Just guidanceMessage ) ->
-            if errorMessage /= guidanceMessage then
+        ( Just errorMessage, Just guidanceContent ) ->
+            if guidanceContent /= TextGuidance errorMessage then
                 [ ifError errorMessage
-                , ifGuidance guidanceMessage
+                , ifGuidance guidanceContent
                 ]
 
             else
@@ -158,8 +168,8 @@ apply { ifError, ifGuidance } config =
         ( Just errorMessage, Nothing ) ->
             [ ifError errorMessage ]
 
-        ( Nothing, Just guidanceMessage ) ->
-            [ ifGuidance guidanceMessage ]
+        ( Nothing, Just guidanceContent ) ->
+            [ ifGuidance guidanceContent ]
 
         ( Nothing, Nothing ) ->
             []
@@ -182,16 +192,20 @@ renderErrorMessage idValue marginTop m =
         ]
 
 
-renderGuidance : String -> Css.Style -> String -> Html msg
-renderGuidance idValue marginTop guidanceMessage =
+renderGuidance : String -> Css.Style -> GuidanceContent msg -> Html msg
+renderGuidance idValue marginTop guidanceContent =
     Text.caption
         [ Text.id (guidanceId idValue)
-        , Text.plaintext guidanceMessage
+        , case guidanceContent of
+            TextGuidance guidanceMessage ->
+                Text.plaintext guidanceMessage
+
+            HtmlGuidance html ->
+                Text.html html
         , Text.css
             [ Css.important (Css.paddingTop Css.zero)
             , Css.important (Css.paddingBottom Css.zero)
             , Css.important marginTop
-            , Css.lineHeight (Css.num 1)
             ]
         ]
 

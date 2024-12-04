@@ -5,11 +5,26 @@ module Nri.Ui.Checkbox.V7 exposing
     , hiddenLabel, visibleLabel
     , selectedFromBool
     , containerCss, labelCss, custom, nriDescription, id, testId
-    , disabled, enabled, guidance
+    , disabled, enabled, guidance, guidanceHtml
+    , noMargin
     , viewIcon
     )
 
 {-|
+
+
+## Patch changes:
+
+  - reposition the guidance to be right below the label text
+  - fix the hiddenLabel checkbox behavior
+  - fix the disabled styles
+  - fix "checkboxes can’t be clicked in the lower half when there’s guidance" issue
+  - fix duplicative focus ring issue
+  - apply custom attributes to the element with the `"checkbox"` role
+  - set cursor to not-allowed when disabled
+  - update color styling
+  - update unselected enabled label color
+  - adds noMargin
 
 
 ## Changes from V6:
@@ -39,7 +54,8 @@ module Nri.Ui.Checkbox.V7 exposing
 @docs hiddenLabel, visibleLabel
 @docs selectedFromBool
 @docs containerCss, labelCss, custom, nriDescription, id, testId
-@docs disabled, enabled, guidance
+@docs disabled, enabled, guidance, guidanceHtml
+@docs noMargin
 
 
 ### Internal
@@ -48,7 +64,6 @@ module Nri.Ui.Checkbox.V7 exposing
 
 -}
 
-import Accessibility.Styled exposing (..)
 import Accessibility.Styled.Aria as Aria
 import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
@@ -56,7 +71,8 @@ import Accessibility.Styled.Style
 import CheckboxIcons
 import Css exposing (..)
 import Css.Global
-import Html.Styled as Html
+import EventExtras
+import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import InputErrorAndGuidanceInternal exposing (Guidance)
@@ -86,6 +102,13 @@ enabled =
 guidance : String -> Attribute msg
 guidance =
     Attribute << InputErrorAndGuidanceInternal.setGuidance
+
+
+{-| A guidance message (HTML) shows below the input, unless an error message is showing instead.
+-}
+guidanceHtml : List (Html msg) -> Attribute msg
+guidanceHtml =
+    Attribute << InputErrorAndGuidanceInternal.setGuidanceHtml
 
 
 {-| Fire a message when toggling the checkbox.
@@ -143,7 +166,7 @@ you want/expect if underlying styles change.
 Instead, please use the `css` helper.
 
 -}
-custom : List (Html.Attribute Never) -> Attribute msg
+custom : List (Html.Attribute msg) -> Attribute msg
 custom attributes =
     Attribute <| \config -> { config | custom = config.custom ++ attributes }
 
@@ -160,6 +183,13 @@ testId id_ =
     custom [ Extra.testId id_ ]
 
 
+{-| Remove default spacing from the top and bottom of the checkbox.
+-}
+noMargin : Bool -> Attribute value
+noMargin removeMargin =
+    Attribute <| \config -> { config | removeMargin = removeMargin }
+
+
 {-| Customizations for the Checkbox.
 -}
 type Attribute msg
@@ -173,10 +203,11 @@ type alias Config msg =
     , hideLabel : Bool
     , onCheck : Maybe (Bool -> msg)
     , isDisabled : Bool
-    , guidance : Guidance
-    , custom : List (Html.Attribute Never)
+    , guidance : Guidance msg
+    , custom : List (Html.Attribute msg)
     , containerCss : List Css.Style
     , labelCss : List Css.Style
+    , removeMargin : Bool
     }
 
 
@@ -203,6 +234,7 @@ emptyConfig =
     , custom = []
     , containerCss = []
     , labelCss = []
+    , removeMargin = False
     }
 
 
@@ -244,6 +276,7 @@ view { label, selected } attributes =
             , selected = selected
             , disabled = config.isDisabled
             , guidance = config.guidance
+            , custom = config.custom
             , error = InputErrorAndGuidanceInternal.noError
             }
 
@@ -265,16 +298,45 @@ view { label, selected } attributes =
                     )
     in
     checkboxContainer config_
-        ([ viewCheckbox config_
-            (if config.isDisabled then
-                ( disabledLabelCss, disabledIcon )
+        config
+        [ if config.isDisabled then
+            div [ css [ cursor notAllowed ] ]
+                [ viewIcon [] disabledIcon ]
 
-             else
-                ( enabledLabelCss, icon )
+          else
+            -- ensure the entire checkbox icon is always clickable
+            div
+                (config.onCheck
+                    |> Maybe.map (onCheckMsg config_.selected)
+                    |> Maybe.map
+                        (\msg ->
+                            [ EventExtras.onClickStopPropagation msg
+                            , css [ cursor pointer, zIndex (int 1) ]
+                            ]
+                        )
+                    |> Maybe.withDefault []
+                )
+                [ viewIcon [] icon ]
+        , span
+            [ css
+                [ displayFlex
+                , flexDirection column
+                , property "gap" "2px"
+                ]
+            ]
+            (viewCheckboxLabel config_
+                (if config.isDisabled then
+                    disabledLabelCss
+
+                 else if selected == NotSelected then
+                    enabledLabelCss
+
+                 else
+                    selectedLabelCss
+                )
+                :: inputGuidance config_
             )
-         ]
-            ++ [ div [ css [ paddingLeft (px 40) ] ] (InputErrorAndGuidanceInternal.view config_.identifier (Css.marginTop Css.zero) config_) ]
-        )
+        ]
 
 
 {-| If your selectedness is always selected or not selected,
@@ -304,14 +366,27 @@ selectedToMaybe selected =
             Nothing
 
 
-checkboxContainer : { a | identifier : String, containerCss : List Style } -> List (Html msg) -> Html msg
-checkboxContainer model =
+checkboxContainer :
+    { a
+        | identifier : String
+        , containerCss : List Style
+    }
+    -> { b | removeMargin : Bool }
+    -> List (Html msg)
+    -> Html msg
+checkboxContainer model { removeMargin } =
     Html.span
         [ css
-            [ display block
-            , marginLeft (px -4)
-            , paddingTop (px 5)
-            , paddingBottom (px 5)
+            [ displayFlex
+            , alignItems center
+            , batch <|
+                if removeMargin then
+                    []
+
+                else
+                    [ paddingTop (px 9)
+                    , paddingBottom (px 9)
+                    ]
             , height inherit
             , pseudoClass "focus-within"
                 [ Css.Global.descendants
@@ -332,27 +407,29 @@ onCheckMsg selected msg =
         |> msg
 
 
+selectedLabelCss : List Style
+selectedLabelCss =
+    [ textStyle
+    , cursor pointer
+    ]
+
+
 enabledLabelCss : List Style
 enabledLabelCss =
-    [ displayFlex
-    , Css.alignItems Css.center
-    , textStyle
+    [ textStyle
     , cursor pointer
     ]
 
 
 disabledLabelCss : List Style
 disabledLabelCss =
-    [ displayFlex
-    , Css.alignItems Css.center
-    , textStyle
-    , Css.outline3 (Css.px 2) Css.solid Css.transparent
-    , cursor auto
+    [ textStyle
+    , cursor notAllowed
     , color Colors.gray45
     ]
 
 
-viewCheckbox :
+viewCheckboxLabel :
     { a
         | identifier : String
         , selected : IsSelected
@@ -361,23 +438,37 @@ viewCheckbox :
         , label : String
         , hideLabel : Bool
         , labelCss : List Style
+        , error : InputErrorAndGuidanceInternal.ErrorState
+        , guidance : Guidance msg
+        , custom : List (Html.Attribute msg)
     }
-    ->
-        ( List Style
-        , Svg
-        )
+    -> List Style
     -> Html.Html msg
-viewCheckbox config ( styles, icon ) =
+viewCheckboxLabel config styles =
     let
         attributes =
             List.concat
-                [ [ css (styles ++ config.labelCss)
+                [ [ css
+                        (paddingLeft (Css.px checkboxIconWidth)
+                            :: marginLeft (Css.px -checkboxIconWidth)
+                            :: (if config.hideLabel then
+                                    minHeight (Css.px checkboxIconHeight)
+
+                                else
+                                    Css.batch []
+                               )
+                            :: outline none
+                            :: styles
+                            ++ config.labelCss
+                        )
                   , Attributes.class FocusRing.customClass
                   , Role.checkBox
                   , Key.tabbable True
                   , Attributes.id config.identifier
+                  , InputErrorAndGuidanceInternal.describedBy config.identifier config
                   , Aria.checked (selectedToMaybe config.selected)
                   ]
+                    ++ config.custom
                 , if config.disabled then
                     [ Aria.disabled True ]
 
@@ -392,11 +483,39 @@ viewCheckbox config ( styles, icon ) =
                             )
                         |> Maybe.withDefault []
                 ]
+
+        viewLabel =
+            if config.hideLabel then
+                Html.span Accessibility.Styled.Style.invisible
+                    [ Html.text config.label ]
+
+            else
+                Html.text config.label
     in
-    Html.div attributes
-        [ viewIcon [] icon
-        , labelView config
-        ]
+    Html.div attributes [ viewLabel ]
+
+
+checkboxIconWidth : Float
+checkboxIconWidth =
+    40
+
+
+checkboxIconHeight : Float
+checkboxIconHeight =
+    27
+
+
+inputGuidance :
+    { a
+        | identifier : String
+        , error : InputErrorAndGuidanceInternal.ErrorState
+        , guidance : Guidance msg
+    }
+    -> List (Html msg)
+inputGuidance config =
+    InputErrorAndGuidanceInternal.view config.identifier
+        (Css.marginTop Css.zero)
+        config
 
 
 textStyle : Style
@@ -414,12 +533,9 @@ viewIcon : List Style -> Svg -> Html msg
 viewIcon styles icon =
     Html.div
         [ css
-            [ border3 (px 2) solid transparent
-            , borderRadius (px 3)
-            , height (Css.px 27)
-            , boxSizing contentBox
-            , margin (px 2)
-            , marginRight (px 7)
+            [ borderRadius (px 3)
+            , height (Css.px checkboxIconHeight)
+            , marginRight (px 9)
             ]
         , Attributes.class "checkbox-icon-container"
         ]
@@ -427,20 +543,12 @@ viewIcon styles icon =
             [ css
                 [ display inlineBlock
                 , backgroundColor Colors.white
-                , height (Css.px 27)
+                , height (Css.px checkboxIconHeight)
                 , borderRadius (px 4)
+                , zIndex (int 2)
+                , position relative -- for z index to work
                 ]
             ]
             [ Nri.Ui.Svg.V1.toHtml (Nri.Ui.Svg.V1.withCss styles icon)
             ]
         ]
-
-
-labelView : { a | hideLabel : Bool, label : String } -> Html msg
-labelView config =
-    if config.hideLabel then
-        Html.span Accessibility.Styled.Style.invisible
-            [ Html.text config.label ]
-
-    else
-        Html.span [] [ Html.text config.label ]

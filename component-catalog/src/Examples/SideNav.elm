@@ -17,13 +17,19 @@ import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
-import Nri.Ui.SideNav.V4 as SideNav
+import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
+import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.SideNav.V5 as SideNav
+import Nri.Ui.Spacing.V1 as Spacing
+import Nri.Ui.Text.V6 as Text
+import Nri.Ui.UiIcon.V1 as UiIcon
 
 
 version : Int
 version =
-    4
+    5
 
 
 {-| -}
@@ -31,12 +37,24 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , state = init
+    , init = ( init, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
-    , categories = [ Layout ]
+    , categories = [ Layout, Navigation ]
     , keyboardSupport = []
     , preview = [ viewPreview ]
+    , about =
+        [ Text.smallBody
+            [ Text.html
+                [ text "Ensure you manage the user's focus properly when using SideNav in a SPA by reviewing the "
+                , ClickableText.link "Assistive technology notification design & development guide"
+                    [ ClickableText.linkExternal "https://noredinkaccessibility.screenstepslive.com/a/1651037-assistive-technology-notification-design-development-guide"
+                    , ClickableText.appearsInline
+                    ]
+                , text "."
+                ]
+            ]
+        ]
     , view = view
     }
 
@@ -89,25 +107,32 @@ view ellieLinkConfig state =
         , version = version
         , update = SetControls
         , settings = state.settings
-        , mainType = Just "RootHtml.Html msg"
-        , extraCode = []
+        , mainType = Just "RootHtml.Html Msg"
+        , extraCode =
+            [ Code.newlines
+            , Code.unionType "Msg" [ "SkipToContent" ]
+            ]
         , renderExample = Code.unstyledView
         , toExampleCode =
             \{ navAttributes, entries } ->
                 [ { sectionName = "View"
                   , code =
-                        String.join ""
-                            [ moduleName ++ ".view"
-                            , "\n\t{ isCurrentRoute = (==) \"" ++ settings.currentRoute ++ "\""
-                            , "\n\t, routeToString = identity"
-                            , "\n\t, onSkipNav = SkipToContent"
-                            , "\n\t}"
-                            , Code.list (List.map Tuple.first navAttributes)
-                            , Code.list (List.map Tuple.first entries)
-                            ]
+                        Code.fromModule moduleName "view"
+                            ++ Code.recordMultiline
+                                [ ( "isCurrentRoute", "(==) \"" ++ settings.currentRoute ++ "\"" )
+                                , ( "routeToString", "identity" )
+                                , ( "onSkipNav", "SkipToContent" )
+                                ]
+                                1
+                            ++ Code.listMultiline (List.map Tuple.first navAttributes) 1
+                            ++ Code.listMultiline (List.map Tuple.first entries) 1
                   }
                 ]
         }
+    , Heading.h2
+        [ Heading.plaintext "Interactive example"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
     , SideNav.view
         { isCurrentRoute = (==) settings.currentRoute
         , routeToString = identity
@@ -115,6 +140,159 @@ view ellieLinkConfig state =
         }
         (List.map Tuple.second settings.navAttributes)
         (List.map Tuple.second settings.entries)
+    , Heading.h2
+        [ Heading.plaintext "Basic example"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
+    , SideNav.view
+        { isCurrentRoute = \route -> route == "nested-example__grandchild-2"
+        , routeToString = identity
+        , onSkipNav = SkipToContent
+        }
+        [ SideNav.navLabel "Nested example"
+        , SideNav.navId "nested-example-sidenav"
+        ]
+        [ SideNav.entryWithChildren "Entry with Children"
+            []
+            [ SideNav.entry "Child 1"
+                [ SideNav.href "nested-example__child-1"
+                ]
+            , SideNav.entryWithChildren "Child 2"
+                []
+                [ SideNav.entry "Grandchild 1"
+                    [ SideNav.href "nested-example__grandchild-1"
+                    ]
+                , SideNav.entry "Grandchild 2"
+                    [ SideNav.href "nested-example__grandchild-2"
+                    ]
+                ]
+            ]
+        ]
+    , Heading.h2
+        [ Heading.plaintext "Complex example"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
+    , SideNav.view
+        { isCurrentRoute = \route -> route == "complex-example__child-2"
+        , routeToString = identity
+        , onSkipNav = SkipToContent
+        }
+        [ SideNav.navLabel "Complex example"
+        , SideNav.navId "complex-example-sidenav"
+        ]
+        [ SideNav.html
+            [ Text.smallBody
+                [ Text.plaintext "(Arbitrary HTML content)"
+                , Text.css [ Css.paddingBottom (Css.px 10) ]
+                ]
+            ]
+        , SideNav.entry "Entry" [ SideNav.icon UiIcon.person ]
+        , SideNav.entryWithChildren "Entry with Children"
+            [ SideNav.icon UiIcon.bulb ]
+            [ SideNav.entry "Child 1"
+                [ SideNav.href "complex-example__child-1"
+                ]
+            , SideNav.entry "Child 2"
+                [ SideNav.href "complex-example__child-2"
+                ]
+            ]
+        , SideNav.compactGroup "Compact Group"
+            []
+            [ SideNav.entry "Child 1"
+                [ SideNav.href "compact-group__child-1"
+                ]
+            , SideNav.entry "Child 2"
+                [ SideNav.href "compact-group__child-2"
+                ]
+            ]
+        ]
+    , Heading.h2
+        [ Heading.plaintext "Compact Groups example"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
+    , SideNav.view
+        { isCurrentRoute = \route -> route == "complex-example__child-2"
+        , routeToString = identity
+        , onSkipNav = SkipToContent
+        }
+        [ SideNav.navLabel "Compact groups example"
+        , SideNav.navId "compact-groups-example-sidenav"
+        ]
+        [ SideNav.compactGroup "Support"
+            []
+            [ SideNav.entry "Announcements" []
+            , SideNav.entry "Schools" []
+            , SideNav.entry "Users" []
+            , SideNav.entry "Assignments" []
+            , SideNav.entry "Blueprints" []
+            , SideNav.entry "Compliance" []
+            , SideNav.entry "Back to School" []
+            , SideNav.entry "Essay recovery" []
+            ]
+        , SideNav.compactGroup "Curriculum"
+            []
+            [ SideNav.entry "Legacy Content Creation" []
+            , SideNav.entry "Guided Tutorial Editor" []
+            , SideNav.entry "Questions" []
+            ]
+        , SideNav.compactGroup "Engineering"
+            []
+            [ SideNav.entry "Configurable" []
+            , SideNav.entry "Quiz Engine Feature Flags" []
+            , SideNav.html [ Text.smallBody [ Text.plaintext "Demo Accounts disabled on staging" ] ]
+            , SideNav.entry "Sham Assignment" []
+            ]
+        ]
+    , Heading.h2
+        [ Heading.plaintext "Premium Display"
+        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+        ]
+    , SideNav.view
+        { isCurrentRoute = \route -> route == "/subchildren-unlocked"
+        , routeToString = identity
+        , onSkipNav = SkipToContent
+        }
+        [ SideNav.navLabel "Premium Display"
+        , SideNav.navId "premium-display-sidenav"
+        ]
+        (premiumDisplayEntries "/"
+            ++ [ SideNav.entryWithChildren "As subchildren"
+                    []
+                    (premiumDisplayEntries "/subchildren")
+               , SideNav.compactGroup "In a compact group"
+                    []
+                    (premiumDisplayEntries "/compact")
+               ]
+        )
+    ]
+
+
+premiumDisplayEntries : String -> List (SideNav.Entry String Msg)
+premiumDisplayEntries hrefPrefix =
+    [ SideNav.entry "Free"
+        [ SideNav.premiumDisplay
+            PremiumDisplay.Free
+            (ConsoleLog "Clicked Free SideNav Entry")
+        , SideNav.href (hrefPrefix ++ "-free")
+        ]
+    , SideNav.entry "Unlocked"
+        [ SideNav.premiumDisplay
+            PremiumDisplay.PremiumUnlocked
+            (ConsoleLog "Clicked PremiumUnlocked SideNav Entry")
+        , SideNav.href (hrefPrefix ++ "-unlocked")
+        ]
+    , SideNav.entry "Locked"
+        [ SideNav.premiumDisplay
+            PremiumDisplay.PremiumLocked
+            (ConsoleLog "Clicked PremiumLocked SideNav Entry")
+        , SideNav.href (hrefPrefix ++ "-locked")
+        ]
+    , SideNav.entry "Vouchered"
+        [ SideNav.premiumDisplay
+            PremiumDisplay.PremiumVouchered
+            (ConsoleLog "Clicked PremiumVouchered SideNav Entry")
+        , SideNav.href (hrefPrefix ++ "-vouchered")
+        ]
     ]
 
 
@@ -138,13 +316,16 @@ init =
         Control.record Settings
             |> Control.field "currentRoute" (Control.string "#some-route")
             |> Control.field "navAttributes" controlNavAttributes
-            |> Control.field "entries" (Control.map List.singleton (controlEntryType "#some-route"))
+            |> Control.field "Level 1"
+                (Control.map List.singleton (controlEntryType 2 "#some-route")
+                    |> Control.revealed "entry type"
+                )
     }
 
 
 controlNavAttributes : Control (List ( String, SideNav.NavAttribute Msg ))
 controlNavAttributes =
-    ControlExtra.list
+    Control.list
         |> ControlExtra.optionalListItemDefaultChecked "navLabel"
             (Control.map
                 (\val ->
@@ -154,7 +335,7 @@ controlNavAttributes =
                 )
                 (Control.string "Example")
             )
-        |> ControlExtra.optionalListItem "navNotMobileCss"
+        |> ControlExtra.optionalListItemDefaultChecked "navNotMobileCss"
             (Control.choice
                 [ ( "maxWidth"
                   , Control.value
@@ -178,66 +359,59 @@ controlNavAttributes =
             )
 
 
-controlEntryType : String -> Control ( String, SideNav.Entry String Msg )
-controlEntryType href =
+controlEntryType : Int -> String -> Control ( String, SideNav.Entry String Msg )
+controlEntryType level href =
     Control.choice
-        [ ( "entry", controlEntry href )
-        , ( "entryWithChildren", controlEntryWithChildren href )
-        , ( "html", controlHtml )
+        [ ( "entry", controlEntry level href )
+        , ( "entryWithChildren", controlEntryWithChildren level href )
+        , ( "html", controlHtml level )
+        , ( "compactGroup", controlCompactGroup level href )
         ]
 
 
-controlEntry : String -> Control ( String, SideNav.Entry String Msg )
-controlEntry href =
+controlEntry : Int -> String -> Control ( String, SideNav.Entry String Msg )
+controlEntry level href =
     Control.record
         (\title attributes ->
-            ( "SideNav.entry \""
-                ++ title
-                ++ "\"\n\t\t[ "
-                ++ String.join "\n\t\t, " (List.map Tuple.first attributes)
-                ++ "\n\t\t]"
+            ( Code.fromModule moduleName "entry "
+                ++ Code.string title
+                ++ Code.listMultiline (List.map Tuple.first attributes) level
             , SideNav.entry title (List.map Tuple.second attributes)
             )
         )
         |> Control.field "title" (Control.string "Entry Category")
-        |> Control.field "attributes" (controlEntryAttributes href)
+        |> Control.field "" (controlEntryAttributes href)
 
 
-controlEntryWithChildren : String -> Control ( String, SideNav.Entry String Msg )
-controlEntryWithChildren href =
+controlEntryWithChildren : Int -> String -> Control ( String, SideNav.Entry String Msg )
+controlEntryWithChildren level href =
     Control.record
         (\title attributes children ->
-            ( "SideNav.entryWithChildren "
-                ++ title
-                ++ " [\n\t"
-                ++ String.join "\n\t," (List.map Tuple.first attributes)
-                ++ "\n\t]"
-                ++ " [\n\t"
-                ++ String.join "\n\t," (List.map Tuple.first children)
-                ++ "\n\t]"
+            ( Code.fromModule moduleName "entryWithChildren "
+                ++ Code.string title
+                ++ Code.listMultiline (List.map Tuple.first attributes) level
+                ++ Code.listMultiline (List.map Tuple.first children) level
             , SideNav.entryWithChildren title
                 (List.map Tuple.second attributes)
                 (List.map Tuple.second children)
             )
         )
         |> Control.field "title" (Control.string "Entry Category")
-        |> Control.field "attributes" (controlEntryAttributes href)
-        |> Control.field "children"
+        |> Control.field "" (controlEntryAttributes href)
+        |> Control.field ("Level " ++ String.fromInt level)
             (Control.lazy
                 (\() ->
-                    Control.map List.singleton (controlEntryType (href ++ "-child"))
+                    Control.map List.singleton (controlEntryType (level + 1) (href ++ "-child"))
+                        |> Control.revealed "entry type"
                 )
             )
 
 
-controlHtml : Control ( String, SideNav.Entry String Msg )
-controlHtml =
+controlHtml : Int -> Control ( String, SideNav.Entry String Msg )
+controlHtml level =
     Control.map
         (\html ->
-            ( "SideNav.html "
-                ++ " [\n\t"
-                ++ String.join "\n\t," (List.map Tuple.first html)
-                ++ "\n\t]"
+            ( Code.fromModule moduleName "html " ++ Code.list (List.map Tuple.first html)
             , SideNav.html (List.map Tuple.second html)
             )
         )
@@ -245,26 +419,65 @@ controlHtml =
         (Control.value [])
 
 
-controlEntryAttributes : String -> Control (List ( String, SideNav.Attribute String Msg ))
-controlEntryAttributes href =
-    ControlExtra.list
-        |> ControlExtra.listItem "href"
-            (Control.map (\v -> ( "SideNav.href \"" ++ v ++ "\"", SideNav.href v ))
-                (Control.string href)
+controlCompactGroup : Int -> String -> Control ( String, SideNav.Entry String Msg )
+controlCompactGroup level href =
+    Control.record
+        (\title attributes children ->
+            ( Code.fromModule moduleName "compactGroup "
+                ++ Code.string title
+                ++ Code.listMultiline (List.map Tuple.first attributes) level
+                ++ Code.listMultiline (List.map Tuple.first children) level
+            , SideNav.compactGroup title
+                (List.map Tuple.second attributes)
+                (List.map Tuple.second children)
             )
-        |> CommonControls.css { moduleName = "SideNav", use = SideNav.css }
-        |> CommonControls.iconNotCheckedByDefault "SideNav" SideNav.icon
-        |> CommonControls.rightIcon "SideNav" SideNav.rightIcon
-        |> ControlExtra.optionalBoolListItem "secondary" ( "SideNav.secondary", SideNav.secondary )
-        |> ControlExtra.optionalListItem "premiumDisplay"
-            (Control.map
-                (\( displayStr, display ) ->
-                    ( "SideNav.premiumDisplay " ++ displayStr
-                    , SideNav.premiumDisplay display (ConsoleLog "Premium pennant clicked")
-                    )
+        )
+        |> Control.field "title" (Control.string "Entry Category")
+        |> Control.field "attributes" controlGroupAttributes
+        |> Control.field "children"
+            (Control.lazy
+                (\() ->
+                    Control.map List.singleton (controlEntryType (level + 1) (href ++ "-child"))
                 )
-                CommonControls.premiumDisplay
             )
+
+
+controlGroupOrEntryAttributes :
+    List
+        (Control (List ( String, SideNav.Attribute entryOrGroup msg ))
+         -> Control (List ( String, SideNav.Attribute entryOrGroup msg ))
+        )
+controlGroupOrEntryAttributes =
+    [ CommonControls.css { moduleName = moduleName, use = SideNav.css }
+    , CommonControls.iconNotCheckedByDefault moduleName SideNav.icon
+    , CommonControls.rightIcon moduleName SideNav.rightIcon
+    ]
+
+
+controlGroupAttributes : Control (List ( String, SideNav.GroupAttribute ))
+controlGroupAttributes =
+    List.foldl (\f acc -> f acc) Control.list controlGroupOrEntryAttributes
+
+
+controlEntryAttributes : String -> Control (List ( String, SideNav.EntryAttribute String Msg ))
+controlEntryAttributes href =
+    ([ ControlExtra.listItem "href"
+        (Control.map (\v -> ( Code.fromModule moduleName "href \"" ++ v ++ "\"", SideNav.href v ))
+            (Control.string href)
+        )
+     , ControlExtra.optionalListItem "premiumDisplay"
+        (Control.map
+            (\( displayStr, display ) ->
+                ( Code.fromModule moduleName "premiumDisplay " ++ displayStr
+                , SideNav.premiumDisplay display (ConsoleLog "Premium pennant clicked")
+                )
+            )
+            CommonControls.premiumDisplay
+        )
+     ]
+        ++ controlGroupOrEntryAttributes
+    )
+        |> List.foldl (\f acc -> f acc) Control.list
 
 
 {-| -}
@@ -285,4 +498,4 @@ update msg state =
             ( state, Cmd.none )
 
         ConsoleLog message ->
-            ( Debug.log "SideNav" message |> always state, Cmd.none )
+            ( Debug.log moduleName message |> always state, Cmd.none )

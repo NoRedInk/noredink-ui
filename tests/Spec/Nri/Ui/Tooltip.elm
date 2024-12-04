@@ -1,10 +1,16 @@
 module Spec.Nri.Ui.Tooltip exposing (spec)
 
 import Accessibility.Aria as Aria
-import Html.Attributes as Attributes
+import Accessibility.Styled.Key as Key
+import Expect
+import Html.Attributes
 import Html.Styled as HtmlStyled
+import Html.Styled.Attributes as Attrs
+import Nri.Test.KeyboardHelpers.V1 as KeyboardHelpers
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Tooltip.V3 as Tooltip
 import ProgramTest exposing (ProgramTest, ensureViewHas, ensureViewHasNot)
+import Spec.Helpers exposing (nriDescription)
 import Test exposing (..)
 import Test.Html.Event as Event
 import Test.Html.Query as Query
@@ -25,7 +31,7 @@ spec =
                 in
                 program (Tooltip.viewToggleTip { label = label, lastId = Nothing })
                     [ Tooltip.plaintext tooltipContent
-                    , Tooltip.onToggle identity
+                    , Tooltip.onToggle Toggle
                     ]
                     -- Tooltip opens on mouse enter
                     |> mouseEnter [ nriDescription "Nri-Ui-Tooltip-V2" ]
@@ -60,7 +66,7 @@ spec =
                     )
                     [ Tooltip.plaintext tooltipContent
                     , Tooltip.primaryLabel
-                    , Tooltip.onToggle identity
+                    , Tooltip.onToggle Toggle
                     ]
                     -- Tooltip opens on mouse enter
                     |> mouseEnter [ nriDescription "Nri-Ui-Tooltip-V2" ]
@@ -81,16 +87,114 @@ spec =
                         ]
                     |> ProgramTest.ensureViewHasNot (id tooltipId :: tooltipContentSelector tooltipContent)
                     |> ProgramTest.done
+        , test "Prevents default on disclosures" <|
+            \() ->
+                let
+                    tooltipContent =
+                        "This will be the primary label"
+
+                    triggerContent =
+                        "label-less icon"
+
+                    tooltipId =
+                        "primary-label"
+
+                    triggerId =
+                        "trigger"
+
+                    view model =
+                        Tooltip.view
+                            { trigger =
+                                \attributes ->
+                                    ClickableText.button triggerContent
+                                        [ ClickableText.custom attributes
+                                        , ClickableText.id triggerId
+                                        ]
+                            , id = tooltipId
+                            }
+                            [ Tooltip.open model.isOpen
+                            , Tooltip.plaintext tooltipContent
+                            , Tooltip.primaryLabel
+                            , Tooltip.onToggle (\_ -> ())
+                            , Tooltip.disclosure
+                                { triggerId = triggerId
+                                , lastId = Nothing
+                                }
+                            ]
+                            |> HtmlStyled.toUnstyled
+                in
+                view { isOpen = False }
+                    |> Query.fromHtml
+                    |> Query.find [ Selector.id triggerId ]
+                    |> Event.simulate Event.click
+                    |> Expect.all [ Event.expectStopPropagation, Event.expectPreventDefault ]
+        , test "Adds additional keyDown event handlers with Tooltip.onTriggerKeyDown" <|
+            \() ->
+                let
+                    tooltipContent =
+                        "This will be the primary label"
+
+                    triggerContent =
+                        "label-less icon"
+
+                    tooltipId =
+                        "primary-label"
+
+                    triggerId =
+                        "trigger"
+                in
+                program
+                    (Tooltip.view
+                        { trigger = \events -> HtmlStyled.button (Attrs.id triggerId :: events) [ HtmlStyled.text triggerContent ]
+                        , id = tooltipId
+                        }
+                    )
+                    [ Tooltip.plaintext tooltipContent
+                    , Tooltip.primaryLabel
+                    , Tooltip.onToggle Toggle
+                    , Tooltip.onTriggerKeyDown
+                        [ Key.space SpaceKeyPressed ]
+                    ]
+                    |> KeyboardHelpers.pressSpace
+                        { targetDetails = [] }
+                        [ Selector.id triggerId
+                        ]
+                    |> ProgramTest.expectModel (\model -> Expect.equal (Just SpaceKeyPressed) model.lastMsg)
         ]
 
 
-program : (List (Tooltip.Attribute Bool) -> HtmlStyled.Html Bool) -> List (Tooltip.Attribute Bool) -> ProgramTest Bool Bool ()
+type alias Model =
+    { isOpen : Bool
+    , lastMsg : Maybe Msg
+    }
+
+
+type Msg
+    = Toggle Bool
+    | SpaceKeyPressed
+
+
+program : (List (Tooltip.Attribute Msg) -> HtmlStyled.Html Msg) -> List (Tooltip.Attribute Msg) -> ProgramTest Model Msg ()
 program view attributes =
     ProgramTest.createSandbox
-        { init = False
-        , update = \msg model -> msg
+        { init =
+            { isOpen = False
+            , lastMsg = Nothing
+            }
+        , update =
+            \msg model ->
+                let
+                    updatedModel =
+                        case msg of
+                            Toggle isOpen ->
+                                { model | isOpen = isOpen }
+
+                            _ ->
+                                model
+                in
+                { updatedModel | lastMsg = Just msg }
         , view =
-            \isOpen ->
+            \{ isOpen } ->
                 HtmlStyled.div []
                     [ view (Tooltip.open isOpen :: attributes)
                     ]
@@ -101,14 +205,9 @@ program view attributes =
 
 tooltipContentSelector : String -> List Selector.Selector
 tooltipContentSelector tooltipContent =
-    [ Selector.attribute (Attributes.attribute "data-tooltip-visible" "true")
+    [ Selector.attribute (Html.Attributes.attribute "data-tooltip-visible" "true")
     , Selector.containing [ text tooltipContent ]
     ]
-
-
-nriDescription : String -> Selector.Selector
-nriDescription desc =
-    Selector.attribute (Attributes.attribute "data-nri-description" desc)
 
 
 mouseEnter : List Selector.Selector -> ProgramTest model msg effect -> ProgramTest model msg effect

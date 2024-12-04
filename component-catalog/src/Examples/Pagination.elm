@@ -10,15 +10,16 @@ import Category exposing (Category(..))
 import Code
 import Css
 import Debug.Control as Control exposing (Control)
-import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Guidance
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Pagination.V1 as Pagination
+import Nri.Ui.Spacing.V1 as Spacing
 
 
 moduleName : String
@@ -38,7 +39,7 @@ example =
     , version = version
     , categories = [ Navigation ]
     , keyboardSupport = []
-    , state = init
+    , init = ( init, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -57,6 +58,7 @@ example =
             , previewFakeLink "Next" []
             ]
         ]
+    , about = [ Guidance.communicateState moduleName ]
     , view =
         \ellieLinkConfig model ->
             let
@@ -84,8 +86,8 @@ example =
                 , version = version
                 , update = UpdateControls
                 , settings = model.settings
-                , mainType = Nothing
-                , extraCode = []
+                , mainType = Just "RootHtml.Html Msg"
+                , extraCode = [ Code.unionType "Msg" [ "SelectPage Int" ] ]
                 , renderExample = Code.unstyledView
                 , toExampleCode =
                     \_ ->
@@ -99,7 +101,10 @@ example =
                           }
                         ]
                 }
-            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Heading.h2
+                [ Heading.plaintext "Customizable Example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , Pagination.view (Tuple.second pages) model.currentPage
             ]
     }
@@ -142,7 +147,7 @@ type alias Settings =
 controlSettings : Control Settings
 controlSettings =
     Control.record Settings
-        |> Control.field "Page count" (ControlExtra.int 6)
+        |> Control.field "Page count" (Control.int 6)
 
 
 {-| -}

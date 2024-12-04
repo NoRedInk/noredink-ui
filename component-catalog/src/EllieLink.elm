@@ -1,9 +1,10 @@
 module EllieLink exposing (Config, SectionExample, view)
 
+import Accessibility.Styled.Aria as Aria
 import Dict exposing (Dict)
 import Html.Styled exposing (..)
 import Http
-import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.Button.V10 as Button
 import Url.Builder
 
 
@@ -25,9 +26,15 @@ type alias SectionExample =
 
 view : Config -> SectionExample -> Html msg
 view config example =
-    ClickableText.link ("View " ++ example.sectionName ++ " example on Ellie")
-        [ ClickableText.linkExternal (generateEllieLink config example)
-        , ClickableText.small
+    let
+        linkName =
+            "Open in Ellie"
+    in
+    Button.link linkName
+        [ Button.linkExternal (generateEllieLink config example)
+        , Button.tertiary
+        , Button.small
+        , Button.custom [ Aria.label (example.sectionName ++ " " ++ linkName) ]
         ]
 
 

@@ -9,7 +9,6 @@
         "direct": {
             "BrianHicks/elm-particle": "1.5.0",
             "Gizra/elm-keyboard-event": "1.0.1",
-            "avh4/elm-debug-controls": "2.2.3",
             "elm/browser": "1.0.2",
             "elm/core": "1.0.5",
             "elm/html": "1.0.0",
@@ -40,8 +39,6 @@
             "elm/bytes": "1.0.8",
             "elm/file": "1.0.5",
             "elm/virtual-dom": "1.0.3",
-            "justinmimbs/date": "4.0.1",
-            "justinmimbs/time-extra": "1.1.1",
             "robinheghan/murmur3": "1.0.0",
             "rtfeldman/elm-hex": "1.0.0"
         }

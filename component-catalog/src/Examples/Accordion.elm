@@ -10,7 +10,7 @@ module Examples.Accordion exposing
 
 -}
 
-import Accessibility.Styled as Html exposing (Html)
+import Accessibility.Styled as Html exposing (..)
 import Browser.Dom as Dom
 import Category exposing (Category(..))
 import Code
@@ -21,12 +21,16 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
+import Guidance
 import Html.Styled.Attributes as Attributes exposing (css, src)
 import KeyboardSupport exposing (Key(..))
-import Nri.Ui.Accordion.V3 as Accordion exposing (AccordionEntry(..))
+import Nri.Ui.Accordion.V4 as Accordion exposing (AccordionEntry(..))
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
+import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -41,7 +45,7 @@ moduleName =
 
 version : Int
 version =
-    3
+    4
 
 
 {-| -}
@@ -49,7 +53,7 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , state = init
+    , init = ( init, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -65,6 +69,24 @@ example =
                 , Text.smallBody [ Text.plaintext "Open" ]
                 ]
             , Text.caption [ Text.plaintext "Accordion content." ]
+            ]
+        ]
+    , about =
+        [ ul [ css [ paddingLeft (px 16), margin zero ] ]
+            [ li [] [ Text.smallBody [ Text.plaintext "The Accordion component is designed to be used when you have either a list or a tree of expandables. It may also be used when there's only one expandable. " ] ]
+            , li []
+                [ Text.smallBody
+                    [ Text.html
+                        [ text "Devs should watch the entirety of "
+                        , ClickableText.link "Tessa's Accordion demo"
+                            [ ClickableText.linkExternal "https://noredink.zoom.us/rec/play/kLjOvS0PX5y-YYas6VmtUf5eEb1ViqNKKB-01gCELXG5tMjINEdop6dXrmfCyfC1A3Xj9kTUK8eIDe0.LO5NQR0X3udwz13x?canPlayFromShare=true&from=share_recording_detail&startTime=1681398154000&componentName=rec-play&originRequestUrl=https%3A%2F%2Fnoredink.zoom.us%2Frec%2Fshare%2F6R2Tk0FkzAYJ-44Q4Qs2Dx2RPR1GCXOCcaQsEai6vbtkO8oo9Ke8-_goIVwPDn9I.VVXdtb2PlpuTEqGs%3FstartTime%3D1681398154000"
+                            , ClickableText.appearsInline
+                            ]
+                        , text " before using. Discussion of how to attach styles correctly begins at 5:10."
+                        ]
+                    ]
+                ]
+            , li [] [ Guidance.communicateState moduleName ]
             ]
         ]
     , view = view
@@ -106,48 +128,65 @@ view ellieLinkConfig model =
             \settings ->
                 [ { sectionName = "Partial example"
                   , code =
-                        String.join "\n"
-                            [ "  div [] ["
-                            , "    Accordion.view"
-                            , "      { entries ="
-                            , "          [ Accordion.AccordionEntry"
-                            , "              { caret = " ++ Tuple.first settings.icon
-                            , "              , content = \\() -> " ++ Tuple.first settings.content
-                            , "              , entryClass = \"customizable-example\""
-                            , "              , headerContent = " ++ Tuple.first settings.headerContent
-                            , "              , headerId = \"customizable-example-header\""
-                            , "              , headerLevel = Accordion.H4"
-                            , "              , isExpanded = True"
-                            , "              , toggle = Nothing"
-                            , "              }"
-                            , "              []"
-                            , "          ]"
-                            , "      , -- When using Accordion, be sure to wire up Focus management correctly!"
-                            , "        focus = identity"
-                            , "      }"
-                            , "    , Accordion.styleAccordion"
-                            , "      { entryStyles = []"
-                            , "      , entryExpandedStyles = []"
-                            , "      , entryClosedStyles = []"
-                            , "      , headerStyles = []"
-                            , "      , headerExpandedStyles = []"
-                            , "      , headerClosedStyles = []"
-                            , "      , contentStyles = []"
-                            , "      }"
-                            , "  ]"
-                            ]
+                        "div []"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "view"
+                                    ++ Code.recordMultiline
+                                        [ ( "entries"
+                                          , Code.listMultiline
+                                                [ Code.fromModule moduleName "AccordionEntry"
+                                                    ++ Code.recordMultiline
+                                                        [ ( "caret", Tuple.first settings.icon )
+                                                        , ( "content", Code.anonymousFunction "()" (Tuple.first settings.content) )
+                                                        , ( "entryClass", Code.string "customizable-example" )
+                                                        , ( "expansionDirection", Tuple.first settings.expansionDirection )
+                                                        , ( "headerContent", Tuple.first settings.headerContent )
+                                                        , ( "headerId", Code.string "customizable-example-header" )
+                                                        , ( "headerLevel", Code.fromModule moduleName "H3" )
+                                                        , ( "isExpanded", "True" )
+                                                        , ( "toggle", "Nothing" )
+                                                        ]
+                                                        4
+                                                    ++ Code.listMultiline [] 4
+                                                ]
+                                                3
+                                          )
+                                        , ( "focus", "identity -- When using Accordion, be sure to wire up Focus management correctly!" )
+                                        ]
+                                        2
+                                , Code.fromModule moduleName "styleAccordion"
+                                    ++ Code.recordMultiline
+                                        [ ( "entryStyles", Code.list [] )
+                                        , ( "entryExpandedStyles", Code.list [] )
+                                        , ( "entryClosedStyles", Code.list [] )
+                                        , ( "headerStyles", Code.list [] )
+                                        , ( "headerExpandedStyles", Code.list [] )
+                                        , ( "headerClosedStyles", Code.list [] )
+                                        , ( "contentStyles", Code.list [] )
+                                        ]
+                                        2
+                                ]
+                                1
                   }
                 ]
         }
+    , Heading.h2
+        [ Heading.plaintext "Examples"
+        , Heading.css
+            [ Css.marginTop Spacing.verticalSpacerPx
+            , Css.marginBottom (Css.px 20)
+            ]
+        ]
     , Accordion.view
         { entries =
             [ AccordionEntry
                 { caret = Tuple.second settings_.icon
                 , content = \() -> Tuple.second settings_.content
                 , entryClass = "customizable-example"
+                , expansionDirection = Tuple.second settings_.expansionDirection
                 , headerContent = Tuple.second settings_.headerContent
                 , headerId = "customizable-example-header"
-                , headerLevel = Accordion.H4
+                , headerLevel = Accordion.H3
                 , isExpanded = Set.member 4 model.expanded
                 , toggle = Just (Toggle 4)
                 }
@@ -156,9 +195,10 @@ view ellieLinkConfig model =
                 { caret = Accordion.defaultCaret
                 , content = \_ -> Html.text "🍎 There are many kinds of apples! Apples are more genetically diverse than humans. The genetic diversity of apples means that to preserve delicious apple varieties, growers must use grafting rather than seeds. In the apple market, clones have already taken over! 🍏"
                 , entryClass = "accordion-example"
+                , expansionDirection = Accordion.Downwards
                 , headerContent = Html.text "Apples (has children)"
                 , headerId = "accordion-entry__1"
-                , headerLevel = Accordion.H4
+                , headerLevel = Accordion.H3
                 , isExpanded = Set.member 1 model.expanded
                 , toggle = Just (Toggle 1)
                 }
@@ -175,9 +215,10 @@ view ellieLinkConfig model =
                                     [ Html.text "Wikipedia article on Gala Apples" ]
                                 ]
                     , entryClass = "accordion-example-child"
+                    , expansionDirection = Accordion.Downwards
                     , headerContent = Html.text "Gala"
                     , headerId = "accordion-entry__11"
-                    , headerLevel = Accordion.H5
+                    , headerLevel = Accordion.H4
                     , isExpanded = Set.member 11 model.expanded
                     , toggle = Just (Toggle 11)
                     }
@@ -195,9 +236,10 @@ view ellieLinkConfig model =
                                     [ Html.text "Wikipedia article on Granny Smith Apples" ]
                                 ]
                     , entryClass = "accordion-example-child"
+                    , expansionDirection = Accordion.Downwards
                     , headerContent = Html.text "Granny Smith"
                     , headerId = "accordion-entry__12"
-                    , headerLevel = Accordion.H5
+                    , headerLevel = Accordion.H4
                     , isExpanded = Set.member 12 model.expanded
                     , toggle = Just (Toggle 12)
                     }
@@ -215,21 +257,23 @@ view ellieLinkConfig model =
                                     [ Html.text "Wikipedia article on Fuji Apples" ]
                                 ]
                     , entryClass = "accordion-example-child"
+                    , expansionDirection = Accordion.Downwards
                     , headerContent = Html.text "Fuji"
                     , headerId = "accordion-entry__13"
-                    , headerLevel = Accordion.H5
+                    , headerLevel = Accordion.H4
                     , isExpanded = Set.member 13 model.expanded
                     , toggle = Just (Toggle 13)
                     }
                     []
                 ]
             , AccordionEntry
-                { caret = Accordion.defaultCaret
+                { caret = Accordion.upwardCaret
                 , content = \_ -> Html.text "🍊 I don't know anything about oranges! Except: YUM! 🍊"
                 , entryClass = "accordion-example"
-                , headerContent = Html.text "Oranges"
+                , expansionDirection = Accordion.Upwards
+                , headerContent = Html.text "Oranges (upward accordion)"
                 , headerId = "accordion-entry__2"
-                , headerLevel = Accordion.H4
+                , headerLevel = Accordion.H3
                 , isExpanded = Set.member 2 model.expanded
                 , toggle = Just (Toggle 2)
                 }
@@ -259,9 +303,10 @@ view ellieLinkConfig model =
                                 [ Html.img "Wild Apple" [ src "https://upload.wikimedia.org/wikipedia/commons/9/92/95apple.jpeg" ] ]
                             ]
                 , entryClass = "fixed-positioning-accordion-example"
+                , expansionDirection = Accordion.Downwards
                 , headerContent = Html.text "Advanced Example: Expand & Scroll!"
                 , headerId = "accordion-entry__6"
-                , headerLevel = Accordion.H4
+                , headerLevel = Accordion.H3
                 , isExpanded = Set.member 6 model.expanded
                 , toggle = Just (Toggle 6)
                 }
@@ -330,6 +375,7 @@ type alias State =
 
 type alias Settings =
     { icon : ( String, Bool -> Html Msg )
+    , expansionDirection : ( String, Accordion.ExpansionDirection )
     , headerContent : ( String, Html Msg )
     , content : ( String, Html Msg )
     }
@@ -339,6 +385,7 @@ initSettings : Control Settings
 initSettings =
     Control.record Settings
         |> Control.field "icon" controlIcon
+        |> Control.field "expansionDirection" controlExpansionDirection
         |> Control.field "headerContent" controlHeaderContent
         |> Control.field "content" controlContent
 
@@ -349,15 +396,34 @@ controlIcon =
         [ ( "defaultCaret"
           , Control.value ( "Accordion.defaultCaret", Accordion.defaultCaret )
           )
+        , ( "upwardCaret"
+          , Control.value ( "Accordion.upwardCaret", Accordion.upwardCaret )
+          )
         , ( "none", Control.value ( "\\_ -> text \"\"", \_ -> Html.text "" ) )
         , ( "UiIcon"
           , Control.map
                 (\( code, icon ) ->
-                    ( "\\_ -> Svg.toHtml " ++ code
-                    , \_ -> Svg.toHtml icon
+                    ( Code.newlineWithIndent 5
+                        ++ Code.anonymousFunction "_"
+                            (Code.newlineWithIndent 6
+                                ++ Code.pipelineMultiline
+                                    [ code
+                                    , "Svg.withWidth (Css.px 20)"
+                                    , "Svg.withHeight (Css.px 20)"
+                                    , "Svg.withCss [ Css.marginRight (Css.px 8) ]"
+                                    , "Svg.toHtml"
+                                    ]
+                                    6
+                            )
+                    , \_ ->
+                        icon
+                            |> Svg.withWidth (Css.px 20)
+                            |> Svg.withHeight (Css.px 20)
+                            |> Svg.withCss [ Css.marginRight (Css.px 8) ]
+                            |> Svg.toHtml
                     )
                 )
-                CommonControls.uiIcon
+                (CommonControls.rotatedUiIcon 1)
           )
         ]
 
@@ -367,6 +433,18 @@ controlHeaderContent =
     Control.map
         (\v -> ( quoteF "text" v, Html.text v ))
         (Control.string "Berries")
+
+
+controlExpansionDirection : Control ( String, Accordion.ExpansionDirection )
+controlExpansionDirection =
+    Control.choice
+        [ ( "Downwards"
+          , Control.value ( "Accordion.Downwards", Accordion.Downwards )
+          )
+        , ( "Upwards"
+          , Control.value ( "Accordion.Upwards", Accordion.Upwards )
+          )
+        ]
 
 
 controlContent : Control ( String, Html Msg )

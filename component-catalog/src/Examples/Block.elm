@@ -20,15 +20,14 @@ import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Markdown
-import Nri.Ui.Block.V4 as Block
+import Nri.Ui.Block.V6 as Block
 import Nri.Ui.Button.V10 as Button
-import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
-import Nri.Ui.Table.V7 as Table
+import Nri.Ui.Table.V8 as Table
 import Nri.Ui.Text.V6 as Text
-import Nri.Ui.UiIcon.V1 as UiIcon
 import Task
 
 
@@ -39,7 +38,7 @@ moduleName =
 
 version : Int
 version =
-    4
+    6
 
 
 {-| -}
@@ -49,7 +48,7 @@ example =
     , version = version
     , categories = [ Instructional ]
     , keyboardSupport = []
-    , state = init
+    , init = ( init, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -80,6 +79,35 @@ example =
           ]
             |> p [ css [ Fonts.baseFont, Css.fontSize (Css.px 12), Css.margin Css.zero ] ]
         ]
+    , about =
+        [ Text.smallBody
+            [ Text.html
+                [ text "You might also know the Block element as a “Display Element”. Learn more about this component in: "
+                , ul []
+                    [ li []
+                        [ ClickableText.link "Display Elements and Scaffolding Container: additional things to know"
+                            [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Display-Elements-and-Scaffolding-Container-additional-things-to-know--BwRhBMKyXFFSWz~1mljN29bcAg-6vszpNDLoYIiMyg7Wv66s"
+                            , ClickableText.appearsInline
+                            ]
+                        , text ", which identifies a number of interesting edge cases and known trade-offs."
+                        ]
+                    , li []
+                        [ ClickableText.link "Tessa's blog post"
+                            [ ClickableText.linkExternal "https://blog.noredink.com/post/710448547697426432/word-labels]"
+                            , ClickableText.appearsInline
+                            ]
+                        , text " explaining the initial constraints and approach."
+                        ]
+                    , li []
+                        [ ClickableText.link "Tessa's demo on early versions of Block and Question Block"
+                            [ ClickableText.linkExternal "https://www.dropbox.com/preview/NRI%20Engineering/Demos/2022-12-22%20-%20Tessa%20-%20QuestionBox%20and%20Block.mp4?role=work"
+                            , ClickableText.appearsInline
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
     , view =
         \ellieLinkConfig state ->
             let
@@ -98,20 +126,7 @@ example =
                 offsets =
                     Block.getLabelPositions state.labelMeasurementsById
             in
-            [ Heading.h2 [ Heading.plaintext "About" ]
-            , Text.mediumBody
-                [ Text.html
-                    [ p []
-                        [ text "You might also know the Block element as a “Display Element”. Learn more in "
-                        , ClickableText.link "Display Elements and Scaffolding Container: additional things to know"
-                            [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Display-Elements-and-Scaffolding-Container-additional-things-to-know--BwRhBMKyXFFSWz~1mljN29bcAg-6vszpNDLoYIiMyg7Wv66s"
-                            , ClickableText.rightIcon UiIcon.openInNewTab
-                            , ClickableText.css [ Css.verticalAlign Css.baseline ]
-                            ]
-                        ]
-                    ]
-                ]
-            , -- absolutely positioned elements that overflow in the x direction
+            [ -- absolutely positioned elements that overflow in the x direction
               -- cause a horizontal scrollbar unless you explicitly hide overflowing x content
               Css.Global.global [ Css.Global.selector "body" [ Css.overflowX Css.hidden ] ]
             , ControlView.view
@@ -133,11 +148,14 @@ example =
                         ]
                 }
             , Heading.h2
-                [ Heading.plaintext "Interactive example"
+                [ Heading.plaintext "Customizable example"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
             , [ Block.view [ Block.plaintext "I like " ]
-              , Block.view (List.map Tuple.second attributes)
+              , Block.view
+                    (Block.labelPosition (Dict.get fruitId offsets)
+                        :: List.map Tuple.second attributes
+                    )
               , Block.view [ Block.plaintext " a lot!" ]
               ]
                 |> p
@@ -191,8 +209,18 @@ example =
                     , Block.cyan
                     , Block.labelId prepositionId
                     , Block.labelPosition (Dict.get prepositionId offsets)
+                    , Block.emphasize
                     ]
-                , Block.view <|
+                , Block.view [ Block.plaintext " " ]
+                , Block.view
+                    [ Block.label "adjective"
+                    , Block.underline
+                    , Block.purple
+                    , Block.labelId adjectiveId
+                    , Block.labelPosition (Dict.get adjectiveId offsets)
+                    , Block.emphasize
+                    ]
+                , Block.view
                     [ Block.content
                         [ Block.bold (List.concat [ Block.phrase " comic ", [ Block.italic (Block.phrase "book") ], Block.phrase " pages. " ])
                         ]
@@ -202,7 +230,7 @@ example =
                         [ Block.phrase "This is "
                         , [ Block.italic (Block.phrase "heroically") ]
                         , [ Block.bold (Block.phrase " generous ") ]
-                        , [ Block.blank ]
+                        , [ Block.blank { widthInChars = 8 } ]
                         , Block.phrase " each comic book costs about $5."
                         ]
                     , Block.label "Editor's note (can *also* include **markdown**!)"
@@ -357,15 +385,6 @@ example =
                                 ]
                             ]
                   }
-                , { pattern = Code.fromModule moduleName "view"
-                  , description = "**Blank block**\n\nRepresents a blank in the sentence. Used in Cycling interface scaffolding."
-                  , example =
-                        inParagraph
-                            [ Block.view [ Block.plaintext "I am a seed with " ]
-                            , Block.view []
-                            , Block.view [ Block.plaintext " being used." ]
-                            ]
-                  }
                 , { pattern =
                         Code.fromModule moduleName "view "
                             ++ Code.listMultiline
@@ -373,7 +392,15 @@ example =
                                 , Code.fromModule moduleName "purple"
                                 ]
                                 1
-                  , description = "**Labeled blank block**\n\nA labelled blank in the sentence"
+                  , description =
+                        """**Labeled dashed blank block**
+
+A labelled blank in the sentence.
+
+"""
+                            ++ "Please see the \""
+                            ++ blankWidthGuidanceSectionName
+                            ++ "\" table to learn more about using Blanks."
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "If a volcano is extinct, " ]
@@ -389,12 +416,48 @@ example =
                 , { pattern =
                         Code.fromModule moduleName "view "
                             ++ Code.listMultiline
-                                [ Code.fromModule moduleName "emphasize"
-                                , Code.fromModule moduleName "content "
-                                    ++ Code.list [ "…" ]
+                                [ Code.fromModule moduleName "label " ++ Code.string "[label text]"
+                                , Code.fromModule moduleName "purple"
+                                , Code.fromModule moduleName "underline"
                                 ]
                                 1
-                  , description = "**Blanks with emphasis block**\n\nHelp students focus in on a phrase that includes a blank"
+                  , description =
+                        """**Labeled underline blank block**
+
+A labelled blank in the sentence.
+
+"""
+                            ++ "Please see the \""
+                            ++ blankWidthGuidanceSectionName
+                            ++ "\" table to learn more about using Blanks."
+                  , example =
+                        inParagraph
+                            [ Block.view [ Block.plaintext "If a volcano is extinct, " ]
+                            , Block.view
+                                [ Block.label "pronoun"
+                                , Block.purple
+                                , Block.underline
+                                , Block.labelId pronoun2Id
+                                , Block.labelPosition (Dict.get pronoun2Id offsets)
+                                ]
+                            , Block.view [ Block.plaintext " will never erupt again." ]
+                            ]
+                  }
+                , { pattern =
+                        Code.fromModule moduleName "view "
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "emphasize"
+                                , Code.fromModule moduleName "content "
+                                    ++ Code.listMultiline
+                                        [ "…"
+                                        , Code.fromModule moduleName "blank "
+                                            ++ Code.record [ ( "widthInChars", "8" ) ]
+                                        , "…"
+                                        ]
+                                        2
+                                ]
+                                1
+                  , description = "**Dashed Blanks in emphasis block**\n\nHelp students focus in on a phrase that includes a blank"
                   , example =
                         inParagraph
                             [ Block.view [ Block.plaintext "This is an " ]
@@ -402,7 +465,7 @@ example =
                                 [ Block.emphasize
                                 , (List.concat >> Block.content)
                                     [ Block.phrase "emphasized subsegement "
-                                    , [ Block.blank ]
+                                    , [ Block.blank { widthInChars = 8 } ]
                                     , Block.phrase " emphasized"
                                     ]
                                 ]
@@ -411,9 +474,188 @@ example =
                                 ]
                             ]
                   }
+                , { pattern =
+                        Code.fromModule moduleName "view "
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "emphasize"
+                                , Code.fromModule moduleName "underline"
+                                , Code.fromModule moduleName "content "
+                                    ++ Code.listMultiline
+                                        [ "…"
+                                        , Code.fromModule moduleName "blank "
+                                            ++ Code.record [ ( "widthInChars", "8" ) ]
+                                        , "…"
+                                        ]
+                                        2
+                                ]
+                                1
+                  , description = "**Underline Blanks in emphasis block**\n\nHelp students focus in on a phrase that includes a blank"
+                  , example =
+                        inParagraph
+                            [ Block.view [ Block.plaintext "This is an " ]
+                            , Block.view
+                                [ Block.emphasize
+                                , Block.underline
+                                , (List.concat >> Block.content)
+                                    [ Block.phrase "emphasized subsegement "
+                                    , [ Block.blank { widthInChars = 8 } ]
+                                    , Block.phrase " emphasized"
+                                    ]
+                                ]
+                            , Block.view
+                                [ Block.plaintext " in a seed."
+                                ]
+                            ]
+                  }
+                , { pattern =
+                        Code.fromModule moduleName "view "
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "emphasize"
+                                , Code.fromModule moduleName "content "
+                                    ++ Code.listMultiline
+                                        [ "…"
+                                        , Code.fromModule moduleName "bold ("
+                                            ++ (Code.fromModule moduleName "phrase " ++ "\"[bold text]\"")
+                                            ++ ")"
+                                        , Code.fromModule moduleName "italic ("
+                                            ++ (Code.fromModule moduleName "phrase " ++ "\"[italic text]\"")
+                                            ++ ")"
+                                        , "…"
+                                        ]
+                                        2
+                                ]
+                                1
+                  , description = "**Bold & Italic markdown**\n\nItalicize titles and highlight specific words inside of an emphasis block."
+                  , example =
+                        inParagraph
+                            [ Block.view [ Block.plaintext "The " ]
+                            , Block.view
+                                [ Block.emphasize
+                                , (List.concat >> Block.content)
+                                    [ [ Block.bold (Block.phrase "quick ") ]
+                                    , [ Block.italic (Block.phrase "brown ") ]
+                                    , Block.phrase "fox"
+                                    ]
+                                ]
+                            , Block.view [ Block.plaintext " jumped over the lazy dog." ]
+                            ]
+                  }
+                ]
+            , Heading.h2
+                [ Heading.plaintext blankWidthGuidanceSectionName
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
+            , Text.smallBody [ Text.markdown "The accessible name of all blanks, regardless of character width used, is \"blank.\"" ]
+            , Text.smallBody [ Text.markdown "If we're looking for a specific length of content to put in the blank, that _must_ be communicated elsewhere on the page to provide an equitable experience." ]
+            , Text.smallBody [ Text.markdown "The `widthInChars` parameter uses the number of characters expected in the blank to calculate a rough monospace-based width that visually looks like it _could_ match." ]
+            , Table.view
+                []
+                [ Table.custom
+                    { header = text "Pattern"
+                    , view =
+                        \{ code } ->
+                            Html.Styled.code [] [ text code ]
+                    , width = Css.px 400
+                    , cellStyles =
+                        always
+                            [ Css.padding2 (Css.px 14) (Css.px 7)
+                            , Css.verticalAlign Css.top
+                            , Css.fontSize (Css.px 12)
+                            , Css.whiteSpace Css.preWrap
+                            ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "Description"
+                    , view =
+                        .description
+                            >> Markdown.toHtml Nothing
+                            >> List.map fromUnstyled
+                            >> div []
+                    , width = Css.px 300
+                    , cellStyles = always [ Css.padding2 Css.zero (Css.px 7), Css.verticalAlign Css.top ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "Dashed Example"
+                    , view =
+                        \{ textExample, blankExample } ->
+                            div []
+                                [ div [] [ Block.view (Block.emphasize :: textExample) ]
+                                , div [] [ Block.view blankExample ]
+                                ]
+                    , width = Css.px 300
+                    , cellStyles = always [ Css.padding2 (Css.px 4) (Css.px 7), Css.verticalAlign Css.top ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "Underline Example"
+                    , view =
+                        \{ textExample, blankExample } ->
+                            div []
+                                [ div [] [ Block.view (Block.emphasize :: Block.underline :: textExample) ]
+                                , div [] [ Block.view (Block.underline :: blankExample) ]
+                                ]
+                    , width = Css.px 300
+                    , cellStyles = always [ Css.padding2 (Css.px 4) (Css.px 7), Css.verticalAlign Css.top ]
+                    , sort = Nothing
+                    }
+                ]
+                [ { code = Code.fromModule moduleName "view []"
+                  , description = "Default view of a blank, without customization."
+                  , textExample = [ Block.plaintext "" ]
+                  , blankExample = []
+                  }
+                , { code =
+                        Code.fromModule moduleName "view"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "contents"
+                                    ++ Code.listMultiline
+                                        [ Code.fromModule moduleName "blank " ++ Code.record [ ( "widthInChars", "1" ) ]
+                                        ]
+                                        2
+                                ]
+                                1
+                  , description = "A single character.  Typically used to represent punctuation."
+                  , textExample = [ Block.plaintext "," ]
+                  , blankExample = [ Block.content [ Block.blank { widthInChars = 1 } ] ]
+                  }
+                , { code =
+                        Code.fromModule moduleName "view"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "contents"
+                                    ++ Code.listMultiline
+                                        [ Code.fromModule moduleName "blank " ++ Code.record [ ( "widthInChars", "8" ) ]
+                                        ]
+                                        2
+                                ]
+                                1
+                  , description = "A short word or phrase.  "
+                  , textExample = [ Block.plaintext "a phrase" ]
+                  , blankExample = [ Block.content [ Block.blank { widthInChars = 8 } ] ]
+                  }
+                , { code =
+                        Code.fromModule moduleName "view"
+                            ++ Code.listMultiline
+                                [ Code.fromModule moduleName "contents"
+                                    ++ Code.listMultiline
+                                        [ Code.fromModule moduleName "blank " ++ Code.record [ ( "widthInChars", "16" ) ]
+                                        ]
+                                        2
+                                ]
+                                1
+                  , description = "A long word or phrase."
+                  , textExample = [ Block.plaintext "multifariousness" ]
+                  , blankExample = [ Block.content [ Block.blank { widthInChars = 16 } ] ]
+                  }
                 ]
             ]
     }
+
+
+blankWidthGuidanceSectionName : String
+blankWidthGuidanceSectionName =
+    "Blank width guidance"
 
 
 {-| -}
@@ -442,50 +684,58 @@ type alias Settings =
 
 initControl : Control Settings
 initControl =
-    ControlExtra.list
-        |> ControlExtra.optionalListItem "content" controlContent
-        |> ControlExtra.optionalBoolListItem "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )
-        |> ControlExtra.optionalListItem "label"
-            (CommonControls.string ( Code.fromModule moduleName "label", Block.label ) "Fruit")
-        |> ControlExtra.optionalListItem "labelPosition"
-            (Control.map
-                (\( code, v ) ->
-                    ( Code.fromModule moduleName "labelPosition (Just" ++ code ++ ")"
-                    , Block.labelPosition (Just v)
+    Control.list
+        |> ControlExtra.listItems "Text or Blank"
+            (Control.list
+                |> ControlExtra.listItems "content" controlContent
+            )
+        |> ControlExtra.listItems "Label & Emphasis"
+            (Control.list
+                |> ControlExtra.optionalBoolListItemDefaultChecked "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )
+                |> ControlExtra.optionalListItem "theme"
+                    (CommonControls.choice moduleName
+                        [ ( "yellow", Block.yellow )
+                        , ( "cyan", Block.cyan )
+                        , ( "magenta", Block.magenta )
+                        , ( "green", Block.green )
+                        , ( "blue", Block.blue )
+                        , ( "purple", Block.purple )
+                        , ( "brown", Block.brown )
+                        ]
                     )
-                )
-                (Control.record
-                    (\a b c ->
-                        ( Code.record
-                            [ ( "arrowHeight", String.fromFloat a )
-                            , ( "totalHeight", String.fromFloat b )
-                            , ( "zIndex", "0" )
-                            , ( "xOffset", String.fromFloat c )
-                            ]
-                        , { arrowHeight = a, totalHeight = b, zIndex = 0, xOffset = c }
+                |> ControlExtra.optionalListItem "label"
+                    (CommonControls.string ( Code.fromModule moduleName "label", Block.label ) "Fruit")
+                |> ControlExtra.optionalBoolListItem "skipLabelAnimation"
+                    ( Code.fromModule moduleName "skipLabelAnimation", Block.skipLabelAnimation )
+                |> ControlExtra.optionalListItem "labelPosition"
+                    (Control.map
+                        (\( code, v ) ->
+                            ( Code.fromModule moduleName "labelPosition (Just" ++ code ++ ")"
+                            , Block.labelPosition (Just v)
+                            )
+                        )
+                        (Control.record
+                            (\a b c ->
+                                ( Code.record
+                                    [ ( "arrowHeight", String.fromFloat a )
+                                    , ( "totalHeight", String.fromFloat b )
+                                    , ( "zIndex", "0" )
+                                    , ( "xOffset", String.fromFloat c )
+                                    ]
+                                , { arrowHeight = a, totalHeight = b, zIndex = 0, xOffset = c }
+                                )
+                            )
+                            |> Control.field "arrowHeight" (Control.float 40)
+                            |> Control.field "totalHeight" (Control.float 80)
+                            |> Control.field "xOffset" (Control.float 0)
                         )
                     )
-                    |> Control.field "arrowHeight" (ControlExtra.float 40)
-                    |> Control.field "totalHeight" (ControlExtra.float 80)
-                    |> Control.field "xOffset" (ControlExtra.float 0)
-                )
+                |> ControlExtra.optionalListItem "labelId"
+                    (CommonControls.string ( Code.fromModule moduleName "labelId", Block.labelId ) fruitId)
             )
-        |> ControlExtra.optionalListItem "theme"
-            (CommonControls.choice moduleName
-                [ ( "yellow", Block.yellow )
-                , ( "cyan", Block.cyan )
-                , ( "magenta", Block.magenta )
-                , ( "green", Block.green )
-                , ( "blue", Block.blue )
-                , ( "purple", Block.purple )
-                , ( "brown", Block.brown )
-                ]
-            )
-        |> ControlExtra.optionalListItem "labelId"
-            (CommonControls.string ( Code.fromModule moduleName "labelId", Block.labelId ) "fruit-block")
 
 
-controlContent : Control ( String, Block.Attribute msg )
+controlContent : Control (List ( String, Block.Attribute msg ))
 controlContent =
     Control.choice
         [ ( "plaintext"
@@ -494,21 +744,61 @@ controlContent =
                 , Block.plaintext
                 )
                 "bananas"
+                |> Control.revealed "plaintext"
+                |> Control.map List.singleton
           )
         , ( "with mixed content"
-          , Control.value
-                ( Code.fromModule moduleName "content "
-                    ++ Code.withParens
-                        ((Code.fromModule moduleName "string " ++ Code.string "to think about ")
-                            ++ (" ++ " ++ Code.fromModule moduleName "blank")
-                            ++ (" :: " ++ Code.fromModule moduleName "string " ++ Code.string " and so forth")
+          , Control.list
+                |> ControlExtra.listItem ""
+                    (Control.value
+                        ( Code.fromModule moduleName "content "
+                            ++ Code.withParens
+                                ((Code.fromModule moduleName "italic (" ++ Code.fromModule moduleName "phrase " ++ Code.string "to think about" ++ ")")
+                                    ++ (" :: " ++ Code.fromModule moduleName "blank")
+                                    ++ (" :: " ++ Code.fromModule moduleName "phrase " ++ Code.string " and so forth")
+                                )
+                        , Block.content
+                            (Block.italic (Block.phrase "to think about ")
+                                :: Block.blank { widthInChars = 8 }
+                                :: Block.phrase " and so forth"
+                            )
                         )
-                , Block.content
-                    (Block.phrase "to think about "
-                        ++ Block.blank
-                        :: Block.phrase " and so forth"
                     )
-                )
+                |> ControlExtra.optionalListItem "blankStyle" blankStyleContent
+          )
+        , ( "blank"
+          , Control.list
+                |> ControlExtra.listItem "widthInChars"
+                    (Control.map
+                        (\widthInChars ->
+                            ( Code.fromModule moduleName "content "
+                                ++ Code.withParens
+                                    (Code.fromModule moduleName "blank"
+                                        ++ " "
+                                        ++ Code.record [ ( "widthInChars", String.fromInt widthInChars ) ]
+                                    )
+                            , Block.content [ Block.blank { widthInChars = widthInChars } ]
+                            )
+                        )
+                        (Control.int 8)
+                    )
+                |> ControlExtra.optionalListItem "blankStyle" blankStyleContent
+          )
+        , ( "(none)"
+          , Control.revealed "blankStyle" blankStyleContent
+                |> Control.map List.singleton
+          )
+        ]
+
+
+blankStyleContent : Control ( String, Block.Attribute msg )
+blankStyleContent =
+    Control.choice
+        [ ( "Underline"
+          , Control.value ( "Block.underline", Block.underline )
+          )
+        , ( "Dashed"
+          , Control.value ( "Block.dashed", Block.dashed )
           )
         ]
 
@@ -521,6 +811,11 @@ ageId =
 colorId : String
 colorId =
     "color-label-id"
+
+
+fruitId : String
+fruitId =
+    "fruit-block"
 
 
 purposeId : String
@@ -543,6 +838,11 @@ prepositionId =
     "preposition-label-id"
 
 
+adjectiveId : String
+adjectiveId =
+    "adjective-label-id"
+
+
 editorsNoteId : String
 editorsNoteId =
     "editors-note-label-id"
@@ -551,6 +851,11 @@ editorsNoteId =
 pronounId : String
 pronounId =
     "pronoun-label-id"
+
+
+pronoun2Id : String
+pronoun2Id =
+    "pronoun-label-id-2"
 
 
 articleId : String
@@ -591,8 +896,10 @@ blocksWithLabelsIds =
     , subjectId
     , directObjectId
     , prepositionId
+    , adjectiveId
     , editorsNoteId
     , pronounId
+    , pronoun2Id
     , articleId
     , trickyId
     , goalId
@@ -622,7 +929,7 @@ update msg state =
     case msg of
         UpdateSettings newControl ->
             ( { state | settings = newControl }
-            , Cmd.none
+            , measure fruitId
             )
 
         GetBlockLabelMeasurements ->

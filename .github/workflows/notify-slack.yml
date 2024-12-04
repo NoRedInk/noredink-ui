@@ -1,0 +1,20 @@
+name: Notify Slack on PR Review Request
+
+on:
+  pull_request_target:
+    types: [review_requested]
+
+jobs:
+  notify_slack:
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.requested_teams.*.slug, 'volunteer-a11y-reviewers')
+    steps:
+      - name: Notify Slack
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            { "pr_url": "${{ github.event.pull_request.html_url }}",
+              "pr_title": "${{ github.event.pull_request.title }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

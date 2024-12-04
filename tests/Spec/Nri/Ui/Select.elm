@@ -1,5 +1,8 @@
 module Spec.Nri.Ui.Select exposing (spec)
 
+import Accessibility.Aria as Aria
+import Accessibility.Key as Key
+import Accessibility.Role as Role
 import Html.Attributes as Attributes
 import Html.Styled
 import Nri.Ui.Select.V9 as Select
@@ -61,6 +64,23 @@ spec =
                         , attribute (Attributes.value "My favorite animal is something else")
                         ]
                     |> done
+        , test "has the correct attributes when disabled" <|
+            \() ->
+                disabled
+                    |> ensureViewHas
+                        [ attribute (Aria.disabled True)
+                        , attribute Role.listBox
+                        , attribute (Key.tabbable True)
+                        ]
+                    |> done
+
+        {- Attempted to simulate click and keydown events on the enabled select element,
+           similar to the approach in tests/Spec/Nri/Ui/Switch.elm
+           Got the following error:
+
+           simulateDomEvent "keydown":
+           Event.expectEvent: I found a node, but it does not listen for "keydown" events like I expected it would.
+        -}
         ]
 
 
@@ -112,6 +132,33 @@ grouped =
                         ]
                     , Select.value model.favoriteAnimal
                     , Select.id selectId
+                    ]
+                    |> Html.Styled.map SelectFavorite
+                    |> Html.Styled.toUnstyled
+        }
+        |> ProgramTest.start ()
+
+
+disabled : ProgramTest Model Msg ()
+disabled =
+    ProgramTest.createSandbox
+        { init = { favoriteAnimal = Nothing }
+        , update = update
+        , view =
+            \model ->
+                Select.view "Favorite type of animal"
+                    [ Select.choices toString
+                        (List.map
+                            (\animal ->
+                                { label = toString animal
+                                , value = animal
+                                }
+                            )
+                            (mammals ++ amphibians ++ [ Other ])
+                        )
+                    , Select.value model.favoriteAnimal
+                    , Select.id selectId
+                    , Select.disabled
                     ]
                     |> Html.Styled.map SelectFavorite
                     |> Html.Styled.toUnstyled

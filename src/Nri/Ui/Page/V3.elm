@@ -2,16 +2,24 @@ module Nri.Ui.Page.V3 exposing
     ( httpError
     , DefaultPage, broken, blockedV4, blocked, notFound, noPermission, loggedOut, timeOut, networkError
     , RecoveryText(..)
+    , headingId
     )
 
-{-| A styled NRI page!
+{-| Patch changes:
+
+  - added `headingId` as the `id` of the `h1` produced by `Page`
+  - made the `h1` produced by `Page` programmatically focusable
+
+A styled NRI error page.
 
 @docs httpError
 @docs DefaultPage, broken, blockedV4, blocked, notFound, noPermission, loggedOut, timeOut, networkError
 @docs RecoveryText
+@docs headingId
 
 -}
 
+import Accessibility.Styled.Key as Key
 import Css exposing (..)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
@@ -185,6 +193,14 @@ httpError error defaultPage =
             blockedV4 body defaultPage
 
 
+{-| This ID is attached to the `h1` produced by Page.
+This can be useful when you need to move focus to the heading to communicate to AT users that there's been an error.
+-}
+headingId : String
+headingId =
+    "nri-ui-page-heading-h1"
+
+
 
 -- INTERNAL
 
@@ -206,6 +222,8 @@ view config =
         , Heading.h1
             [ Heading.plaintext config.title
             , Heading.css [ Css.textAlign Css.center ]
+            , Heading.id headingId
+            , Heading.custom [ Key.tabbable False ]
             ]
         , Text.mediumBody
             [ Text.plaintext config.subtitle

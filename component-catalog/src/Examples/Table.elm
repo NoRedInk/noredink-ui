@@ -15,7 +15,9 @@ import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Table.V7 as Table exposing (Column)
+import Nri.Ui.Spacing.V1 as Spacing
+import Nri.Ui.Table.V8 as Table exposing (Column)
+import Nri.Ui.Text.V6 as Text
 
 
 {-| -}
@@ -30,7 +32,7 @@ moduleName =
 
 version : Int
 version =
-    7
+    8
 
 
 {-| -}
@@ -38,7 +40,7 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , state = controlSettings
+    , init = ( controlSettings, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , categories = [ Layout ]
@@ -68,14 +70,29 @@ example =
               }
             ]
         ]
+    , about = []
     , view =
         \ellieLinkConfig state ->
             let
-                { showHeader, isLoading } =
+                { showHeader, isLoading, disableAlternatingRowColors, backgroundChangeOnRowHover } =
                     Control.currentValue state
 
                 ( columnsCode, columns ) =
                     List.unzip columnsWithCode
+
+                tableAttributes =
+                    List.concat
+                        [ if disableAlternatingRowColors then
+                            [ Table.disableAlternatingRowColors ]
+
+                          else
+                            []
+                        , if backgroundChangeOnRowHover then
+                            [ Table.backgroundChangeOnRowHover ]
+
+                          else
+                            []
+                        ]
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -87,7 +104,7 @@ example =
                 , extraCode = [ "import Nri.Ui.Button.V10 as Button" ]
                 , renderExample = Code.unstyledView
                 , toExampleCode =
-                    \settings ->
+                    \_ ->
                         let
                             codeWithData viewName =
                                 List.map datumToString data
@@ -98,7 +115,21 @@ example =
                                 { sectionName = moduleName ++ "." ++ viewName
                                 , code =
                                     (moduleName ++ "." ++ viewName)
-                                        ++ " [] "
+                                        ++ " "
+                                        ++ Code.list
+                                            (List.concat
+                                                [ if disableAlternatingRowColors then
+                                                    [ "Table.disableAlternatingRowColors" ]
+
+                                                  else
+                                                    []
+                                                , if backgroundChangeOnRowHover then
+                                                    [ "Table.backgroundChangeOnRowHover" ]
+
+                                                  else
+                                                    []
+                                                ]
+                                            )
                                         ++ Code.list columnsCode
                                         ++ dataStr
                                 }
@@ -109,19 +140,70 @@ example =
                         , toExampleCode "viewLoadingWithoutHeader" ""
                         ]
                 }
-            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Heading.h2
+                [ Heading.plaintext "Example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , case ( showHeader, isLoading ) of
                 ( True, False ) ->
-                    Table.view [] columns data
+                    Table.view
+                        tableAttributes
+                        columns
+                        data
 
                 ( False, False ) ->
-                    Table.viewWithoutHeader [] columns data
+                    Table.viewWithoutHeader
+                        tableAttributes
+                        columns
+                        data
 
                 ( True, True ) ->
-                    Table.viewLoading [] columns
+                    Table.viewLoading
+                        tableAttributes
+                        columns
 
                 ( False, True ) ->
-                    Table.viewLoadingWithoutHeader [] columns
+                    Table.viewLoadingWithoutHeader
+                        tableAttributes
+                        columns
+            , Heading.h2
+                [ Heading.plaintext "Using placeholder columns for consistent column alignment"
+                , Heading.css [ Css.marginTop (Css.px 30) ]
+                ]
+            , Text.smallBody
+                [ Text.plaintext
+                    "By default tables will distribute any remaining space across columns. You can change this behavior to have fixed column widths and leave any remaining blank space to the right by using empty placeholder columns with placeholderColumn. This is particularly useful when you need to align similar columns across multiple tables."
+                ]
+            , Table.view []
+                [ Table.rowHeader
+                    { header = text "User ID"
+                    , view = text << String.fromInt << .userId
+                    , width = Css.px 80
+                    , cellStyles = always []
+                    , sort = Nothing
+                    }
+                , Table.string
+                    { header = "First Name"
+                    , value = .firstName
+                    , width = Css.calc (Css.pct 50) Css.minus (Css.px 250)
+                    , cellStyles = always []
+                    , sort = Nothing
+                    }
+                , Table.string
+                    { header = "Last Name"
+                    , value = .lastName
+                    , width = Css.calc (Css.pct 50) Css.minus (Css.px 250)
+                    , cellStyles = always []
+                    , sort = Nothing
+                    }
+                , Table.placeholderColumn
+                    { width = Css.px 125
+                    }
+                , Table.placeholderColumn
+                    { width = Css.px 250
+                    }
+                ]
+                data
             ]
     }
 
@@ -145,6 +227,8 @@ update msg state =
 type alias Settings =
     { showHeader : Bool
     , isLoading : Bool
+    , disableAlternatingRowColors : Bool
+    , backgroundChangeOnRowHover : Bool
     }
 
 
@@ -153,6 +237,8 @@ controlSettings =
     Control.record Settings
         |> Control.field "visible header" (Control.bool True)
         |> Control.field "is loading" (Control.bool False)
+        |> Control.field "disableAlternatingRowColors" (Control.bool False)
+        |> Control.field "backgroundChangeOnRowHover" (Control.bool False)
 
 
 type alias Datum =

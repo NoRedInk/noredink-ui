@@ -19,11 +19,14 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Pennant.V2 as Pennant
+import Nri.Ui.Pennant.V3 as Pennant
 import Nri.Ui.PremiumCheckbox.V8 as PremiumCheckbox
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Table.V8 as Table
 import Set exposing (Set)
 
 
@@ -42,10 +45,11 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , state = init
+    , init = ( init, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview = preview
+    , about = []
     , view =
         \ellieLinkConfig state ->
             let
@@ -64,14 +68,55 @@ example =
                 , mainType = Just "RootHtml.Html Msg"
                 , extraCode =
                     [ "import Nri.Ui.Data.PremiumDisplay as PremiumDisplay"
-                    , "\n\n"
-                    , "type Msg = ToggleCheck Bool | ClickedPremiumLock"
+                    , Code.newlines
+                    , Code.unionType "Msg"
+                        [ "ToggleCheck Bool"
+                        , "ClickedPremiumLock"
+                        ]
                     ]
                 , renderExample = Code.unstyledView
                 , toExampleCode = \_ -> [ { sectionName = "view", code = exampleCode } ]
                 }
-            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Heading.h2
+                [ Heading.plaintext "Customizable Example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , exampleView
+            , Heading.h2
+                [ Heading.plaintext "Premium Examples"
+                , Heading.css [ Css.marginTop (Css.px 30) ]
+                ]
+            , Table.view []
+                [ Table.string
+                    { header = "Premium Display"
+                    , value = \( _, premiumDisplay ) -> Debug.toString premiumDisplay
+                    , width = Css.pct 30
+                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle, Css.fontWeight Css.bold ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "View"
+                    , view =
+                        \( index, premiumDisplay ) ->
+                            PremiumCheckbox.view
+                                { label = "Thesis statement is interesting " ++ String.fromInt index
+                                , onChange = ToggleCheck (Debug.toString premiumDisplay)
+                                }
+                                [ PremiumCheckbox.selected (Set.member (Debug.toString premiumDisplay) state.isChecked)
+                                , PremiumCheckbox.premium premiumDisplay
+                                ]
+                    , width = Css.px 150
+                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+                    , sort = Nothing
+                    }
+                ]
+                (List.indexedMap (\a b -> ( a, b ))
+                    [ PremiumDisplay.Free
+                    , PremiumDisplay.PremiumLocked
+                    , PremiumDisplay.PremiumUnlocked
+                    , PremiumDisplay.PremiumVouchered
+                    ]
+                )
             ]
     , categories = [ Inputs ]
     , keyboardSupport =
@@ -85,7 +130,7 @@ example =
 preview : List (Html Never)
 preview =
     let
-        renderPreview ( icon, label_ ) =
+        renderPreview ( icon, label_, labelCss ) =
             span
                 [ css
                     [ Css.color Colors.navy
@@ -96,18 +141,18 @@ preview =
                     , Css.alignItems Css.center
                     ]
                 ]
-                [ Pennant.premiumFlag
+                [ Pennant.contentPremiumFlag
                     |> Svg.withCss [ Css.marginRight (Css.px 8) ]
                     |> Svg.withWidth (Css.px 25)
                     |> Svg.withHeight (Css.px 30)
                     |> Svg.toHtml
                 , Svg.toHtml (Svg.withCss [ Css.marginRight (Css.px 8) ] icon)
-                , text label_
+                , span [ css labelCss ] [ text label_ ]
                 ]
     in
-    [ ( CheckboxIcons.lockOnInside "lockOnInside-preview-lockOnInside", "Locked" )
-    , ( CheckboxIcons.unchecked "unchecked-preview-unchecked", "Unchecked" )
-    , ( CheckboxIcons.checked "checkbox-preview-checked", "Checked" )
+    [ ( CheckboxIcons.uncheckedDisabled, "Locked", [ Css.color Colors.gray45 ] )
+    , ( CheckboxIcons.unchecked "unchecked-preview-unchecked", "Unchecked", [ Css.color Colors.gray20 ] )
+    , ( CheckboxIcons.checked "checkbox-preview-checked", "Checked", [] )
     ]
         |> List.map renderPreview
 
@@ -137,45 +182,52 @@ controlSettings : Control Settings
 controlSettings =
     Control.record Settings
         |> Control.field "label" (Control.string "Identify Adjectives 1")
-        |> Control.field "attributes" controlAttributes
+        |> Control.field "" controlAttributes
 
 
 controlAttributes : Control (List ( String, PremiumCheckbox.Attribute Msg ))
 controlAttributes =
-    ControlExtra.list
-        |> ControlExtra.optionalListItem "premiumDisplay"
-            (Control.map
-                (\( str, val ) -> ( "PremiumCheckbox.premium " ++ str, PremiumCheckbox.premium val ))
-                CommonControls.premiumDisplay
+    Control.list
+        |> ControlExtra.optionalBoolListItem "disabled" ( "PremiumCheckbox.disabled", PremiumCheckbox.disabled )
+        |> ControlExtra.listItems "Premium"
+            (Control.list
+                |> ControlExtra.optionalListItem "premiumDisplay"
+                    (Control.map
+                        (\( str, val ) -> ( "PremiumCheckbox.premium " ++ str, PremiumCheckbox.premium val ))
+                        CommonControls.premiumDisplay
+                    )
+                |> ControlExtra.optionalListItem "onLockedClick"
+                    (Control.value
+                        ( "PremiumCheckbox.onLockedClick ClickedPremiumLock"
+                        , PremiumCheckbox.onLockedClick ClickedPremiumLock
+                        )
+                    )
             )
-        |> ControlExtra.optionalListItem "onLockedClick"
-            (Control.value
-                ( "PremiumCheckbox.onLockedClick ClickedPremiumLock"
-                , PremiumCheckbox.onLockedClick ClickedPremiumLock
-                )
+        |> ControlExtra.listItems "CSS & Extra Styles"
+            (Control.list
+                |> CommonControls.css_ "setCheckboxContainerCss"
+                    ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
+                    , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
+                    )
+                    { moduleName = moduleName
+                    , use = PremiumCheckbox.setCheckboxContainerCss
+                    }
+                |> CommonControls.css_ "setCheckboxEnabledLabelCss"
+                    ( "[ Css.border3 (Css.px 4) Css.dotted Colors.orange ]"
+                    , [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]
+                    )
+                    { moduleName = moduleName
+                    , use = PremiumCheckbox.setCheckboxEnabledLabelCss
+                    }
+                |> CommonControls.css_ "setCheckboxDisabledLabelCss"
+                    ( "[ Css.textDecoration Css.lineThrough ]"
+                    , [ Css.textDecoration Css.lineThrough ]
+                    )
+                    { moduleName = moduleName
+                    , use = PremiumCheckbox.setCheckboxDisabledLabelCss
+                    }
+                |> ControlExtra.optionalBoolListItem "noMargin" ( "noMargin True", PremiumCheckbox.noMargin True )
             )
-        |> ControlExtra.optionalBoolListItem "PremiumCheckbox.disabled" ( "PremiumCheckbox.disabled", PremiumCheckbox.disabled )
-        |> CommonControls.css_ "setCheckboxContainerCss"
-            ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
-            , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
-            )
-            { moduleName = moduleName
-            , use = PremiumCheckbox.setCheckboxContainerCss
-            }
-        |> CommonControls.css_ "setCheckboxEnabledLabelCss"
-            ( "[ Css.border3 (Css.px 4) Css.dotted Colors.orange ]"
-            , [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]
-            )
-            { moduleName = moduleName
-            , use = PremiumCheckbox.setCheckboxEnabledLabelCss
-            }
-        |> CommonControls.css_ "setCheckboxDisabledLabelCss"
-            ( "[ Css.textDecoration Css.lineThrough ]"
-            , [ Css.textDecoration Css.lineThrough ]
-            )
-            { moduleName = moduleName
-            , use = PremiumCheckbox.setCheckboxDisabledLabelCss
-            }
 
 
 viewExampleWithCode : State -> Settings -> ( String, Html Msg )
@@ -212,7 +264,7 @@ viewExampleWithCode state settings =
 
 {-| -}
 type Msg
-    = ToggleCheck Id Bool
+    = ToggleCheck String Bool
     | UpdateControls (Control Settings)
     | ClickedPremiumLock
 
@@ -237,7 +289,3 @@ update msg state =
 
         ClickedPremiumLock ->
             ( Debug.log moduleName "clicked a premium lock" |> always state, Cmd.none )
-
-
-type alias Id =
-    String

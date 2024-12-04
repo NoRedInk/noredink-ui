@@ -15,10 +15,12 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Guidance
 import Html.Styled
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Select.V9 as Select
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Text.V6 as Text
 
 
@@ -37,7 +39,7 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , state = init
+    , init = ( init, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , categories = [ Inputs ]
@@ -49,6 +51,11 @@ example =
             , Select.defaultDisplayText "Hidden label"
             , Select.custom [ Key.tabbable False ]
             ]
+        ]
+    , about =
+        [ Guidance.useATACGuide moduleName
+        , Guidance.message moduleName
+        , Guidance.helpfullyDisabled moduleName
         ]
     , view =
         \ellieLinkConfig state ->
@@ -65,23 +72,38 @@ example =
                 , version = version
                 , update = UpdateSettings
                 , settings = state.control
-                , mainType = Just "RootHtml.Html String"
-                , extraCode = []
+                , mainType = Just "RootHtml.Html Choosable"
+                , extraCode =
+                    [ Code.newlines
+                    , Code.unionType "Choosable"
+                        [ "Tacos"
+                        , "Burritos"
+                        , "Enchiladas"
+                        , "NixtamalizedCorn"
+                        , "LüXiaojun"
+                        , "ZacaríasBonnat"
+                        , "AntoninoPizzolato"
+                        , "HarrisonMaurus"
+                        , "TragicSingleton"
+                        ]
+                    , Code.newlines
+                    , choosableToValueCode
+                    ]
                 , renderExample = Code.unstyledView
                 , toExampleCode =
                     \_ ->
                         [ { sectionName = "Example"
                           , code =
-                                "Select.view \""
-                                    ++ label
-                                    ++ "\""
-                                    ++ "\n    [ "
-                                    ++ String.join "\n    , " attributesCode
-                                    ++ "\n    ] "
+                                Code.fromModule moduleName "view "
+                                    ++ Code.string label
+                                    ++ Code.listMultiline attributesCode 1
                           }
                         ]
                 }
-            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Heading.h2
+                [ Heading.plaintext "Customizable Example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , Select.view label (Select.value state.selectedValue :: attributes)
                 |> Html.Styled.map ChangedTheSelectorValue
             , Text.smallBody
@@ -89,7 +111,7 @@ example =
                     Note that if the value is bound (and why would you ever make a `Select` where it isn't?)
                     then changing the list of options will not change its value.
                     Furthermore, `Select` will only fire an event when a new value is selected.
-                    This means that if the starting value is `Nothing` and there is no `defaultDisplayText` 
+                    This means that if the starting value is `Nothing` and there is no `defaultDisplayText`
                     then you cannot select the first item in the list without first selecting another one.
                     Use the "choices" selector above to get a feel for what that means.
                 """
@@ -128,7 +150,7 @@ init =
     { control =
         Control.record Settings
             |> Control.field "label" (Control.string "Thematically Incoherent Selector")
-            |> Control.field "attributes" initControls
+            |> Control.field "" initControls
     , selectedValue = Nothing
     }
 
@@ -141,55 +163,58 @@ type alias Settings =
 
 initControls : Control (List ( String, Select.Attribute Choosable ))
 initControls =
-    ControlExtra.list
-        |> ControlExtra.listItem "choices" initChoices
-        |> ControlExtra.optionalListItem "hiddenLabel"
-            (Control.value ( "Select.hiddenLabel", Select.hiddenLabel ))
-        |> ControlExtra.optionalListItem "defaultDisplayText"
-            (Control.map
-                (\str ->
-                    ( "Select.defaultDisplayText \"" ++ str ++ "\""
-                    , Select.defaultDisplayText str
-                    )
-                )
-                (Control.string "Select a tortilla-based treat, a 2020 81kg Olympic Weightlifter, or nothing at all")
-            )
-        |> ControlExtra.optionalListItem "containerCss"
-            (Control.choice
-                [ ( "max-width: 300px"
-                  , Control.value
-                        ( "Select.containerCss [ Css.maxWidth (Css.px 300) ]"
-                        , Select.containerCss [ Css.maxWidth (Css.px 300) ]
+    Control.list
+        |> ControlExtra.listItems "Content"
+            (Control.list
+                |> ControlExtra.listItem "choices" initChoices
+                |> ControlExtra.optionalListItem "defaultDisplayText"
+                    (Control.map
+                        (\str ->
+                            ( "Select.defaultDisplayText \"" ++ str ++ "\""
+                            , Select.defaultDisplayText str
+                            )
                         )
-                  )
-                , ( "background-color: lichen"
-                  , Control.value
-                        ( "Select.containerCss [ Css.backgroundColor Colors.lichen ]"
-                        , Select.containerCss [ Css.backgroundColor Colors.lichen ]
-                        )
-                  )
-                ]
-            )
-        |> ControlExtra.optionalListItem "noMargin"
-            (Control.map
-                (\bool ->
-                    ( "Select.noMargin " ++ Debug.toString bool
-                    , Select.noMargin bool
+                        (Control.string "Select a tortilla-based treat, a 2020 81kg Olympic Weightlifter, or nothing at all")
                     )
-                )
-                (Control.bool True)
+                |> CommonControls.guidanceAndErrorMessage
+                    { moduleName = moduleName
+                    , guidance = Select.guidance
+                    , guidanceHtml = Select.guidanceHtml
+                    , errorMessage = Just Select.errorMessage
+                    , message = "The right item must be selected."
+                    }
+                |> CommonControls.icon moduleName Select.icon
             )
-        |> CommonControls.guidanceAndErrorMessage
-            { moduleName = moduleName
-            , guidance = Select.guidance
-            , errorMessage = Select.errorMessage
-            , message = "The right item must be selected."
-            }
-        |> ControlExtra.optionalListItem "disabled"
-            (Control.value ( "Select.disabled", Select.disabled ))
-        |> ControlExtra.optionalListItem "loading"
-            (Control.value ( "Select.loading", Select.loading ))
-        |> CommonControls.icon moduleName Select.icon
+        |> ControlExtra.listItems "CSS & Extra Styles"
+            (Control.list
+                |> ControlExtra.optionalListItem "hiddenLabel"
+                    (Control.value ( "Select.hiddenLabel", Select.hiddenLabel ))
+                |> ControlExtra.optionalListItem "containerCss"
+                    (Control.choice
+                        [ ( "max-width: 300px"
+                          , Control.value
+                                ( "Select.containerCss [ Css.maxWidth (Css.px 300) ]"
+                                , Select.containerCss [ Css.maxWidth (Css.px 300) ]
+                                )
+                          )
+                        , ( "background-color: lichen"
+                          , Control.value
+                                ( "Select.containerCss [ Css.backgroundColor Colors.lichen ]"
+                                , Select.containerCss [ Css.backgroundColor Colors.lichen ]
+                                )
+                          )
+                        ]
+                    )
+                |> ControlExtra.optionalBoolListItem "noMargin"
+                    ( "Select.noMargin True", Select.noMargin True )
+            )
+        |> ControlExtra.listItems "State"
+            (Control.list
+                |> ControlExtra.optionalListItem "disabled"
+                    (Control.value ( "Select.disabled", Select.disabled ))
+                |> ControlExtra.optionalListItem "loading"
+                    (Control.value ( "Select.loading", Select.loading ))
+            )
 
 
 type Choosable
@@ -282,8 +307,8 @@ all81kg2020OlympicWeightlifters =
     help []
 
 
-choosableToLabel : Choosable -> String
-choosableToLabel tm =
+choosableToValue : Choosable -> String
+choosableToValue tm =
     case tm of
         Tacos ->
             "Tacos"
@@ -298,12 +323,7 @@ choosableToLabel tm =
             """
                 The nixtamalization process was very important in the early Mesoamerican diet,
                 as most of the niacin content in unprocessed maize is bound to hemicellulose,
-                drastically reducing its bioavailability.
-                A population that depends on untreated maize as a staple food risks malnourishment
-                and is more likely to develop deficiency diseases such as pellagra, niacin deficiency,
-                or kwashiorkor, the absence of certain amino acids that maize is deficient in.
-                Maize cooked with lime or other alkali provided bioavailable niacin to Mesoamericans.
-                Beans provided the otherwise missing amino acids required to balance maize for complete protein.
+                drastically reducing its bioavailability…
             """ |> String.trim |> String.lines |> List.map String.trim |> String.join " "
 
         LüXiaojun ->
@@ -320,6 +340,30 @@ choosableToLabel tm =
 
         TragicSingleton ->
             "Tragic Singleton"
+
+
+choosableToValueCode : String
+choosableToValueCode =
+    Code.funcWithType "choosableToValue" "Choosable -> String" "tm" <|
+        Code.caseExpression "tm"
+            (List.map
+                (\choosable ->
+                    ( choosableToCodeString choosable
+                    , Code.string (choosableToValue choosable)
+                    )
+                )
+                [ Tacos
+                , Burritos
+                , Enchiladas
+                , NixtamalizedCorn
+                , LüXiaojun
+                , ZacaríasBonnat
+                , AntoninoPizzolato
+                , HarrisonMaurus
+                , TragicSingleton
+                ]
+            )
+            1
 
 
 choosableToCodeString : Choosable -> String
@@ -365,73 +409,71 @@ weightLifterLabel =
 
 toOption : Choosable -> Select.Choice Choosable
 toOption c =
-    { label = choosableToLabel c, value = c }
+    { label = choosableToValue c, value = c }
 
 
 initChoices : Control ( String, Select.Attribute Choosable )
 initChoices =
     let
-        toOptionString : Choosable -> String
+        toOptionString : Choosable -> List ( String, String )
         toOptionString c =
-            "{ value = " ++ choosableToCodeString c ++ ", label = \"" ++ choosableToLabel c ++ "\" } "
+            [ ( "value", choosableToCodeString c )
+            , ( "label", Code.string (choosableToValue c) )
+            ]
 
         toChoice : List Choosable -> ( String, List (Select.Choice Choosable) )
         toChoice choosables =
-            ( """Select.choices
-        choosableToLabel
-        [ """
-                ++ String.join "\n        , " (List.map toOptionString choosables)
-                ++ "\n        ]"
+            ( Code.fromModule moduleName "choices choosableToValue"
+                ++ Code.listOfRecordsMultiline (List.map toOptionString choosables) 2
             , List.map toOption choosables
             )
 
         toValue : List Choosable -> Control ( String, Select.Attribute Choosable )
         toValue =
-            toChoice >> Tuple.mapSecond (Select.choices choosableToLabel) >> Control.value
-
-        toOptionsString : List Choosable -> String
-        toOptionsString choosables =
-            "[ "
-                ++ (List.map toOptionString choosables |> String.join "\n              , ")
-                ++ "\n              ]"
+            toChoice >> Tuple.mapSecond (Select.choices choosableToValue) >> Control.value
     in
-    List.map identity
+    Control.choice
         [ ( texMexLabel, toValue allTexMex )
         , ( "81 Kg 2020 Olympic Weightlifters", toValue all81kg2020OlympicWeightlifters )
         , ( "Grouped Things"
           , Control.value <|
-                ( """Select.groupedChoices
-        choosableToLabel
-        [ { label = \""""
-                    ++ texMexLabel
-                    ++ "\"\n          , choices = \n              "
-                    ++ toOptionsString allTexMex
-                    ++ """
-          }
-        , { label = \""""
-                    ++ weightLifterLabel
-                    ++ "\"\n          , choices = \n              "
-                    ++ toOptionsString all81kg2020OlympicWeightlifters
-                    ++ """
-          }
-        ]
-        , Select.choices
-            choosableToLabel
-            [ """
-                    ++ toOptionString TragicSingleton
-                    ++ """ ]"""
+                ( Code.fromModule moduleName "batch"
+                    ++ Code.listMultiline
+                        [ Code.fromModule moduleName "groupedChoices choosableToValue"
+                            ++ Code.listOfRecordsMultiline
+                                [ [ ( "label", Code.string texMexLabel )
+                                  , ( "choices"
+                                    , Code.listOfRecordsMultiline
+                                        (List.map toOptionString allTexMex)
+                                        5
+                                    )
+                                  ]
+                                , [ ( "label", Code.string weightLifterLabel )
+                                  , ( "choices"
+                                    , Code.listOfRecordsMultiline
+                                        (List.map toOptionString all81kg2020OlympicWeightlifters)
+                                        5
+                                    )
+                                  ]
+                                ]
+                                3
+                        , Code.fromModule moduleName "choices choosableToValue"
+                            ++ Code.listOfRecordsMultiline
+                                [ toOptionString TragicSingleton ]
+                                4
+                        ]
+                        2
                 , Select.batch
-                    [ Select.groupedChoices choosableToLabel
+                    [ Select.groupedChoices choosableToValue
                         [ { label = texMexLabel, choices = List.map toOption allTexMex }
                         , { label = weightLifterLabel, choices = List.map toOption all81kg2020OlympicWeightlifters }
                         ]
-                    , Select.choices choosableToLabel [ toOption TragicSingleton ]
+                    , Select.choices choosableToValue [ toOption TragicSingleton ]
                     ]
                 )
           )
         , ( "Unselectable list with only one item", toValue [ TragicSingleton ] )
         ]
-        |> Control.choice
 
 
 {-| -}

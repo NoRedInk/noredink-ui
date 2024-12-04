@@ -17,6 +17,7 @@ import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Text.V6 as Text
 
 
@@ -37,7 +38,7 @@ example =
     , version = version
     , categories = [ Text ]
     , keyboardSupport = []
-    , state = init
+    , init = ( init, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -46,6 +47,7 @@ example =
         , Text.mediumBody [ Text.plaintext "mediumBody" ]
         , Text.ugMediumBody [ Text.plaintext "ugMediumBody" ]
         ]
+    , about = []
     , view =
         \ellieLinkConfig state ->
             let
@@ -84,7 +86,10 @@ example =
                         , toExampleCode "ugSmallBody"
                         ]
                 }
-            , Heading.h2 [ Heading.plaintext "Examples" ]
+            , Heading.h2
+                [ Heading.plaintext "Examples"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , Text.caption [ Text.plaintext "NOTE: When using these styles, please read the documentation in the Elm module about \"Understanding spacing\"" ]
             , Heading.h3 [ Heading.plaintext "Paragraph styles" ]
             , viewExamples
@@ -95,7 +100,10 @@ example =
                 , ( "footnote", Text.footnote )
                 ]
                 attributes
-            , Heading.h3 [ Heading.plaintext "Paragraph styles for user-authored content" ]
+            , Heading.h3
+                [ Heading.plaintext "Paragraph styles for user-authored content"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , viewExamples
                 [ ( "ugMediumBody", Text.ugMediumBody )
                 , ( "ugSmallBody", Text.ugSmallBody )
@@ -130,7 +138,7 @@ type alias State =
 init : State
 init =
     { control =
-        ControlExtra.list
+        Control.list
             |> ControlExtra.listItem "content" controlContent
             |> ControlExtra.optionalBoolListItem "noBreak"
                 ( "Text.noBreak True", Text.noBreak True )

@@ -2,8 +2,8 @@ module Spec.Nri.Ui.SortableTable exposing (spec)
 
 import Expect
 import Html.Styled
-import Nri.Ui.SortableTable.V4 as SortableTable
-import Nri.Ui.Table.V7 exposing (SortDirection)
+import Nri.Ui.SortableTable.V5 as SortableTable
+import Nri.Ui.Table.V8 exposing (SortDirection)
 import Test exposing (..)
 import Test.Html.Query as Query
 import Test.Html.Selector as Selector

@@ -1,16 +1,15 @@
 module Debug.Control.Extra exposing
-    ( float, int
-    , values, list, listItem, optionalListItem, optionalListItemDefaultChecked
-    , optionalBoolListItem
+    ( values, listItem, optionalListItem, optionalListItemDefaultChecked
+    , optionalBoolListItem, optionalBoolListItemDefaultChecked
     , bool
     , rotatedChoice, specificChoice
+    , listItems
     )
 
 {-|
 
-@docs float, int
-@docs values, list, listItem, optionalListItem, optionalListItemDefaultChecked
-@docs optionalBoolListItem
+@docs values, listItem, optionalListItem, optionalListItemDefaultChecked
+@docs optionalBoolListItem, optionalBoolListItemDefaultChecked
 @docs bool
 @docs rotatedChoice, specificChoice
 
@@ -22,37 +21,11 @@ import List.Extra
 
 
 {-| -}
-float : Float -> Control Float
-float default =
-    Control.map (String.toFloat >> Maybe.withDefault default)
-        (Control.string (String.fromFloat default))
-
-
-{-| -}
-int : Int -> Control Int
-int default =
-    Control.map (String.toInt >> Maybe.withDefault default)
-        (Control.string (String.fromInt default))
-
-
-{-| -}
 values : (a -> String) -> List a -> Control a
 values toString nums =
     nums
         |> List.map (\n -> ( toString n, Control.value n ))
         |> Control.choice
-
-
-{-| Use with `listItem` and `optionalListItem`
-
-    list
-        |> listItem "first name" string
-        |> listItem "last name" string
-
--}
-list : Control (List a)
-list =
-    Control.record []
 
 
 {-| -}
@@ -90,6 +63,18 @@ optionalListItem_ default name accessor accumulator =
 {-| -}
 optionalBoolListItem : String -> a -> Control (List a) -> Control (List a)
 optionalBoolListItem name f accumulator =
+    optionalBoolListItem_ False name f accumulator
+
+
+{-| -}
+optionalBoolListItemDefaultChecked : String -> a -> Control (List a) -> Control (List a)
+optionalBoolListItemDefaultChecked name f accumulator =
+    optionalBoolListItem_ True name f accumulator
+
+
+{-| -}
+optionalBoolListItem_ : Bool -> String -> a -> Control (List a) -> Control (List a)
+optionalBoolListItem_ startingValue name f accumulator =
     Control.field name
         (Control.map
             (\value ->
@@ -99,7 +84,7 @@ optionalBoolListItem name f accumulator =
                 else
                     []
             )
-            (Control.bool False)
+            (Control.bool startingValue)
         )
         (Control.map (++) accumulator)
 

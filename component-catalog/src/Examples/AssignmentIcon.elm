@@ -7,7 +7,7 @@ module Examples.AssignmentIcon exposing (example, State, Msg)
 -}
 
 import Example exposing (Example)
-import Examples.IconExamples as IconExamples exposing (Group)
+import IconExamples exposing (Group)
 import Nri.Ui.AssignmentIcon.V2 as AssignmentIcon
 
 
@@ -74,13 +74,22 @@ all =
         , ( "guidedDraft", AssignmentIcon.guidedDraft, [] )
         , ( "peerReview", AssignmentIcon.peerReview, [] )
         , ( "selfReview", AssignmentIcon.selfReview, [] )
+        , ( "dailyWriting", AssignmentIcon.dailyWriting, [] )
+        , ( "novels", AssignmentIcon.novels, [] )
+        , ( "texts", AssignmentIcon.texts, [] )
+        , ( "genres", AssignmentIcon.genres, [] )
         ]
       )
-    , ( "Writing II"
+    , ( "Writing (Circled)"
       , [ ( "quickWriteCircled", AssignmentIcon.quickWriteCircled, [] )
         , ( "guidedDraftCircled", AssignmentIcon.guidedDraftCircled, [] )
         , ( "peerReviewCircled", AssignmentIcon.peerReviewCircled, [] )
         , ( "selfReviewCircled", AssignmentIcon.selfReviewCircled, [] )
+        , ( "gradingAssistantCircled", AssignmentIcon.gradingAssistantCircled, [] )
+        , ( "dailyWritingCircled", AssignmentIcon.dailyWritingCircled, [] )
+        , ( "novelsCircled", AssignmentIcon.novelsCircled, [] )
+        , ( "textsCircled", AssignmentIcon.textsCircled, [] )
+        , ( "genresCircled", AssignmentIcon.genresCircled, [] )
         ]
       )
     , ( "Stages"

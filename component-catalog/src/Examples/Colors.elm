@@ -15,10 +15,12 @@ import Css
 import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.Extra exposing (fromCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Text.V6 as Text
 import SolidColor exposing (luminance)
 
@@ -43,7 +45,7 @@ example =
     , version = 1
     , categories = [ Atoms ]
     , keyboardSupport = []
-    , state = ()
+    , init = ( (), Cmd.none )
     , update = \_ state -> ( state, Cmd.none )
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -52,13 +54,28 @@ example =
         , ( "mustard", Colors.mustard )
         ]
             |> List.map viewPreviewSwatch
+    , about =
+        [ Text.smallBody
+            [ Text.html
+                [ Html.text "Please refer to "
+                , ClickableText.link "the guides for designing with sufficient contrast and high contrast mode in mind"
+                    [ ClickableText.linkExternal "https://paper.dropbox.com/doc/Accessibility-testing-Color-contrast--CJat4EsY~XD~lUuIBYIXpbKNAg-sDEDETuS9rqQbdEs7nybl"
+                    , ClickableText.appearsInline
+                    ]
+                , Html.text "."
+                ]
+            ]
+        ]
     , view =
         \ellieLinkConfig _ ->
-            [ Heading.h2 [ Heading.plaintext "General Colors" ]
+            [ Heading.h2
+                [ Heading.plaintext "General Colors"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , viewGroupedColors colorGroupings
             , Heading.h2 [ Heading.plaintext "Background Highlight Colors" ]
             , Text.mediumBody [ Text.plaintext "Background highlights should be used as the default highlight style because they are more noticeable and readable. The dark colors should be used in the case where headings need to harmonize with highlighted containers, such as in Guided Drafts." ]
-            , viewColors backgroundHighlightColors
+            , viewBackgroundHighlightTable backgroundHighlights
             , Heading.h2 [ Heading.plaintext "Text Highlight Colors" ]
             , Text.mediumBody [ Text.plaintext "Colors for highlighting text on a white background.  These colors are readable at 14px bold and bigger." ]
             , viewColors textHighlightColors
@@ -165,23 +182,104 @@ uncategorizedColors =
     List.concatMap Tuple.second colorGroupings
 
 
+type alias BackgroundHighlight =
+    { name : String
+    , base : Css.Color
+    , light : Css.Color
+    , lightest : Css.Color
+    , dark : Css.Color
+    , darkLight : Css.Color
+    }
+
+
+backgroundHighlights : List BackgroundHighlight
+backgroundHighlights =
+    [ { name = "Yellow"
+      , base = Colors.highlightYellow
+      , light = Colors.highlightYellowLight
+      , lightest = Colors.highlightYellowLightest
+      , dark = Colors.highlightYellowDark
+      , darkLight = Colors.highlightYellowDarkLight
+      }
+    , { name = "Cyan"
+      , base = Colors.highlightCyan
+      , light = Colors.highlightCyanLight
+      , lightest = Colors.highlightCyanLightest
+      , dark = Colors.highlightCyanDark
+      , darkLight = Colors.highlightCyanDarkLight
+      }
+    , { name = "Magenta"
+      , base = Colors.highlightMagenta
+      , light = Colors.highlightMagentaLight
+      , lightest = Colors.highlightMagentaLightest
+      , dark = Colors.highlightMagentaDark
+      , darkLight = Colors.highlightMagentaDarkLight
+      }
+    , { name = "Green"
+      , base = Colors.highlightGreen
+      , light = Colors.highlightGreenLight
+      , lightest = Colors.highlightGreenLightest
+      , dark = Colors.highlightGreenDark
+      , darkLight = Colors.highlightGreenDarkLight
+      }
+    , { name = "Blue"
+      , base = Colors.highlightBlue
+      , light = Colors.highlightBlueLight
+      , lightest = Colors.highlightBlueLightest
+      , dark = Colors.highlightBlueDark
+      , darkLight = Colors.highlightBlueDarkLight
+      }
+    , { name = "Purple"
+      , base = Colors.highlightPurple
+      , light = Colors.highlightPurpleLight
+      , lightest = Colors.highlightPurpleLightest
+      , dark = Colors.highlightPurpleDark
+      , darkLight = Colors.highlightPurpleDarkLight
+      }
+    , { name = "Brown"
+      , base = Colors.highlightBrown
+      , light = Colors.highlightBrownLight
+      , lightest = Colors.highlightBrownLightest
+      , dark = Colors.highlightBrownDark
+      , darkLight = Colors.highlightBrownDarkLight
+      }
+    ]
+
+
 backgroundHighlightColors : List ColorExample
 backgroundHighlightColors =
-    [ ( "highlightYellow", Colors.highlightYellow, "Yellow background highlights" )
-    , ( "highlightYellowDark", Colors.highlightYellowDark, "Dark yellow background highlights" )
-    , ( "highlightCyan", Colors.highlightCyan, "Cyan background highlights" )
-    , ( "highlightCyanDark", Colors.highlightCyanDark, "Dark cyan background highlights" )
-    , ( "highlightMagenta", Colors.highlightMagenta, "Magenta background highlights" )
-    , ( "highlightMagentaDark", Colors.highlightMagentaDark, "Dark magenta background highlights" )
-    , ( "highlightGreen", Colors.highlightGreen, "Green background highlights" )
-    , ( "highlightGreenDark", Colors.highlightGreenDark, "Dark green background highlights" )
-    , ( "highlightBlue", Colors.highlightBlue, "Blue background highlights" )
-    , ( "highlightBlueDark", Colors.highlightBlueDark, "Dark blue background highlights" )
-    , ( "highlightPurple", Colors.highlightPurple, "Purple background highlights" )
-    , ( "highlightPurpleDark", Colors.highlightPurpleDark, "Dark purple background highlights" )
-    , ( "highlightBrown", Colors.highlightBrown, "Brown background highlights" )
-    , ( "highlightBrownDark", Colors.highlightBrownDark, "Dark brown background highlights" )
-    ]
+    backgroundHighlights
+        |> List.concatMap
+            (\{ name, base, light, lightest, dark, darkLight } ->
+                [ ( "highlight" ++ name, base, name ++ " background highlights" )
+                , ( "highlight" ++ name ++ "Light", light, "Light " ++ name ++ " background highlights" )
+                , ( "highlight" ++ name ++ "Lightest", lightest, "Lightest " ++ name ++ " background highlights" )
+                , ( "highlight" ++ name ++ "Dark", dark, "Dark " ++ name ++ " background highlights" )
+                , ( "highlight" ++ name ++ "DarkLight", darkLight, "Dark light " ++ name ++ " background highlights" )
+                ]
+            )
+
+
+viewBackgroundHighlightTable : List BackgroundHighlight -> Html.Html msg
+viewBackgroundHighlightTable highlightColors =
+    Html.table
+        [ Attributes.css
+            [ Css.width (Css.pct 100)
+            ]
+        ]
+        (List.map
+            (\c ->
+                Html.tr
+                    []
+                    [ Html.td [] [ viewColor ( "highlight" ++ c.name, c.base, "" ) ]
+                    , Html.td [] [ viewColor ( "highlight" ++ c.name ++ "Light", c.light, "" ) ]
+                    , Html.td [] [ viewColor ( "highlight" ++ c.name ++ "Lightest", c.lightest, "" ) ]
+                    , Html.td [] [ viewColor ( "highlight" ++ c.name ++ "Dark", c.dark, "" ) ]
+                    , Html.td [] [ viewColor ( "highlight" ++ c.name ++ "DarkLight", c.darkLight, "" ) ]
+                    ]
+            )
+            highlightColors
+        )
 
 
 textHighlightColors : List ColorExample

@@ -2,12 +2,17 @@
   inputs = {
     flake-utils.url = "github:numtide/flake-utils";
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    elm-forbid-import.url = "git+https://git.bytes.zone/brian/elm-forbid-import.git";
+    elm-forbid-import.url =
+      "git+https://git.bytes.zone/BrianHicks/elm-forbid-import.git";
   };
 
   outputs = inputs:
     inputs.flake-utils.lib.eachDefaultSystem (system:
-      let pkgs = import inputs.nixpkgs { inherit system; };
+      let
+        pkgs = import inputs.nixpkgs {
+          inherit system;
+          overlays = [ (import ./nix/overlays/elm-review) ];
+        };
       in {
         formatter = pkgs.nixpkgs-fmt;
 
@@ -30,15 +35,15 @@
             pkgs.elmPackages.elm
             pkgs.elmPackages.elm-format
             pkgs.elmPackages.elm-test
-            pkgs.elmPackages.elm-language-server
             pkgs.elmPackages.elm-verify-examples
-            pkgs.elmPackages.elm-review
+            pkgs.elm-review
             pkgs.elmPackages.elm-json
             inputs.elm-forbid-import.defaultPackage.${system}
 
             # preview dependencies
             pkgs.python3
             pkgs.watchexec
+            pkgs.elmPackages.elm-live
 
             # stuff we need for running builds in a `nix-shell --pure` environment.
             pkgs.which
@@ -47,8 +52,11 @@
             # Buck dependencies
             pkgs.black
             pkgs.buildifier
-          ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [ pkgs.fsatrace pkgs.strace pkgs.cacert ];
+          ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [
+            pkgs.fsatrace
+            pkgs.strace
+            pkgs.cacert
+          ];
         };
-      }
-    );
+      });
 }

@@ -173,7 +173,7 @@ view attrs { breadCrumbs, isCurrentRoute } =
         ]
         [ Html.div
             (css
-                [ Spacing.centeredContentWithSidePaddingAndCustomWidth config.pageWidth
+                [ Spacing.centeredContentWithCustomWidth config.pageWidth
                 , Css.alignItems Css.center
                 , Css.displayFlex
                 , Media.withMedia [ MediaQuery.mobile ] [ Css.flexDirection Css.column ]

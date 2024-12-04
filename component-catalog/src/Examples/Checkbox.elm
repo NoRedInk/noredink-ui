@@ -9,19 +9,25 @@ module Examples.Checkbox exposing (Msg, State, example)
 import Category exposing (Category(..))
 import CheckboxIcons
 import Code
-import Css exposing (Style)
+import CommonControls
+import Css
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Guidance
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Checkbox.V7 as Checkbox
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Table.V7 as Table
+import Nri.Ui.Table.V8 as Table
+import Nri.Ui.Tooltip.V3 as Tooltip
 
 
 moduleName : String
@@ -34,15 +40,24 @@ version =
     7
 
 
+type TooltipType
+    = HelpfullyDisabled
+
+
 {-| -}
 example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , state = init
+    , init = ( init, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview = preview
+    , about =
+        [ Guidance.communicateState moduleName
+        , Guidance.helpfullyDisabled moduleName
+        , Guidance.message moduleName
+        ]
     , view =
         \ellieLinkConfig state ->
             let
@@ -63,9 +78,15 @@ example =
                 , renderExample = Code.unstyledView
                 , toExampleCode = \_ -> [ { sectionName = "Example", code = exampleCode } ]
                 }
-            , Heading.h2 [ Heading.plaintext "Customizable example" ]
+            , Heading.h2
+                [ Heading.plaintext "Customizable example"
+                , Heading.css [ Css.marginTop (Css.px 30) ]
+                ]
             , exampleView
-            , Heading.h2 [ Heading.plaintext "Examples" ]
+            , Heading.h2
+                [ Heading.plaintext "State Examples"
+                , Heading.css [ Css.marginTop (Css.px 30) ]
+                ]
             , Table.view []
                 [ Table.string
                     { header = "State"
@@ -95,11 +116,79 @@ example =
                     , ( "Selected", Checkbox.Selected )
                     ]
                 )
+            , Heading.h2
+                [ Heading.plaintext "Guidance Examples"
+                , Heading.css [ Css.marginTop (Css.px 30) ]
+                ]
+            , Table.view []
+                [ Table.custom
+                    { header = text "Attribute"
+                    , view = .name >> text
+                    , width = Css.pct 10
+                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "Example"
+                    , view =
+                        \{ name, attribute } ->
+                            Checkbox.view
+                                { label = "I agree to the terms and conditions"
+                                , selected = Checkbox.NotSelected
+                                }
+                                [ Checkbox.id (safeIdWithPrefix "guidance-and-error-example" name)
+                                , attribute
+                                ]
+                    , width = Css.pct 50
+                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+                    , sort = Nothing
+                    }
+                ]
+                [ { name = "guidance"
+                  , attribute = Checkbox.guidance "Be sure to read the terms and conditions before agreeing to follow them."
+                  }
+                , { name = "guidanceHtml"
+                  , attribute =
+                        Checkbox.guidanceHtml
+                            [ text "Be sure to read "
+                            , ClickableText.link "the terms and conditions"
+                                [ ClickableText.linkExternal "https://en.wikipedia.org/wiki/Terms_of_service"
+                                , ClickableText.small
+                                , ClickableText.appearsInline
+                                ]
+                            , text " before agreeing to follow them."
+                            ]
+                  }
+                ]
+            , Heading.h2
+                [ Heading.plaintext "Helpfully Disabled Example"
+                , Heading.css [ Css.marginTop (Css.px 30) ]
+                ]
+            , Tooltip.view
+                { trigger =
+                    \attrs ->
+                        Checkbox.view
+                            { label = "Enable Text-to-Speech"
+                            , selected = Checkbox.NotSelected
+                            }
+                            [ Checkbox.id "tooltip-example"
+                            , Checkbox.disabled
+                            , Checkbox.custom attrs
+                            ]
+                , id = "tooltip"
+                }
+                [ Tooltip.helpfullyDisabled
+                , Tooltip.open (state.openTooltip == Just HelpfullyDisabled)
+                , Tooltip.onToggle (ToggleTooltip HelpfullyDisabled)
+                , Tooltip.paragraph "Reasons why you can't enable Text-to-Speech"
+                , Tooltip.onRight
+                , Tooltip.fitToContent
+                ]
             ]
     , categories = [ Inputs ]
     , keyboardSupport =
         [ { keys = [ Space ]
-          , result = "Select or deselect the checkbox (may cause page scroll)"
+          , result = "Select or deselect the checkbox"
           }
         ]
     }
@@ -164,6 +253,7 @@ preview =
 type alias State =
     { isChecked : Checkbox.IsSelected
     , settings : Control Settings
+    , openTooltip : Maybe TooltipType
     }
 
 
@@ -172,16 +262,13 @@ init : State
 init =
     { isChecked = Checkbox.PartiallySelected
     , settings = controlSettings
+    , openTooltip = Nothing
     }
 
 
 type alias Settings =
     { label : String
-    , disabled : Bool
-    , hiddenLabel : Bool
-    , containerCss : ( String, List Style )
-    , labelCss : ( String, List Style )
-    , guidance : Maybe String
+    , attributes : List ( String, Checkbox.Attribute Msg )
     }
 
 
@@ -189,32 +276,48 @@ controlSettings : Control Settings
 controlSettings =
     Control.record Settings
         |> Control.field "label" (Control.string "Enable Text-to-Speech")
-        |> Control.field "disabled" (Control.bool False)
-        |> Control.field "hiddenLabel" (Control.bool False)
-        |> Control.field "containerCss"
-            (Control.choice
-                [ ( "[]", Control.value ( "[]", [] ) )
-                , ( "Red dashed border"
-                  , Control.value
-                        ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
-                        , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
-                        )
-                  )
-                ]
+        |> Control.field "" initAttributes
+
+
+initAttributes : Control (List ( String, Checkbox.Attribute Msg ))
+initAttributes =
+    Control.list
+        |> ControlExtra.optionalBoolListItem "disabled" ( "disabled", Checkbox.disabled )
+        |> ControlExtra.listItems "Guidance"
+            (Control.list
+                |> CommonControls.guidanceAndErrorMessage
+                    { moduleName = moduleName
+                    , guidance = Checkbox.guidance
+                    , guidanceHtml = Checkbox.guidanceHtml
+                    , errorMessage = Nothing
+                    , message = "There is something you need to be aware of."
+                    }
             )
-        |> Control.field "labelCss"
-            (Control.choice
-                [ ( "[]", Control.value ( "[]", [] ) )
-                , ( "Orange dotted border"
-                  , Control.value
-                        ( "[ Css.border3 (Css.px 4) Css.dotted Colors.orange ]"
-                        , [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]
-                        )
-                  )
-                ]
+        |> ControlExtra.listItems "CSS & Extra Styles"
+            (Control.list
+                |> ControlExtra.optionalListItem "containerCss"
+                    (Control.choice
+                        [ ( "Red dashed border"
+                          , Control.value
+                                ( "Checkbox.containerCss [ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
+                                , Checkbox.containerCss [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
+                                )
+                          )
+                        ]
+                    )
+                |> ControlExtra.optionalListItem "labelCss"
+                    (Control.choice
+                        [ ( "Orange dotted border"
+                          , Control.value
+                                ( "Checkbox.labelCss [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]"
+                                , Checkbox.labelCss [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]
+                                )
+                          )
+                        ]
+                    )
+                |> ControlExtra.optionalBoolListItem "noMargin" ( "noMargin True", Checkbox.noMargin True )
+                |> ControlExtra.optionalBoolListItem "hiddenLabel" ( "hiddenLabel", Checkbox.hiddenLabel )
             )
-        |> Control.field "guidance"
-            (Control.maybe False (Control.string "There is something you need to be aware of."))
 
 
 viewExampleWithCode : State -> Settings -> ( String, Html Msg )
@@ -223,53 +326,29 @@ viewExampleWithCode state settings =
         id =
             "unique-example-id"
     in
-    ( [ "Checkbox.view"
+    ( [ Code.fromModule moduleName "view"
       , Code.recordMultiline
             [ ( "label", Code.string settings.label )
-            , ( "selected", "Checkbox." ++ Debug.toString state.isChecked )
+            , ( "selected", Code.fromModule "Checkbox" (Debug.toString state.isChecked) )
             ]
             1
-      , Code.list
-            (List.filterMap identity
-                [ Just <| "Checkbox.onCheck identity"
-                , if settings.disabled then
-                    Just <| "Checkbox.disabled"
-
-                  else
-                    Just <| "Checkbox.enabled"
-                , if settings.hiddenLabel then
-                    Just <| "Checkbox.hiddenLabel"
-
-                  else
-                    Just <| "Checkbox.visibleLabel"
-                , Just <| "Checkbox.containerCss " ++ Tuple.first settings.containerCss
-                , Just <| "Checkbox.labelCss " ++ Tuple.first settings.labelCss
-                , settings.guidance |> Maybe.map (\v -> "Checkbox.guidance " ++ Code.string v)
-                ]
+      , Code.listMultiline
+            ([ Code.fromModule moduleName "id " ++ Code.string id
+             , Code.fromModule moduleName "onCheck " ++ "identity"
+             ]
+                ++ List.map Tuple.first settings.attributes
             )
+            1
       ]
         |> String.join ""
     , Checkbox.view
         { label = settings.label
         , selected = state.isChecked
         }
-        (List.filterMap identity
-            [ Just <| Checkbox.id id
-            , Just <| Checkbox.onCheck (ToggleCheck id)
-            , if settings.hiddenLabel then
-                Just <| Checkbox.hiddenLabel
-
-              else
-                Just <| Checkbox.visibleLabel
-            , if settings.disabled then
-                Just <| Checkbox.disabled
-
-              else
-                Just <| Checkbox.enabled
-            , Just <| Checkbox.containerCss (Tuple.second settings.containerCss)
-            , Just <| Checkbox.labelCss (Tuple.second settings.labelCss)
-            , settings.guidance |> Maybe.map Checkbox.guidance
-            ]
+        ([ Checkbox.id id
+         , Checkbox.onCheck (ToggleCheck id)
+         ]
+            ++ List.map Tuple.second settings.attributes
         )
     )
 
@@ -279,6 +358,7 @@ type Msg
     = ToggleCheck Id Bool
     | UpdateControls (Control Settings)
     | Swallow
+    | ToggleTooltip TooltipType Bool
 
 
 {-| -}
@@ -301,6 +381,13 @@ update msg state =
 
         Swallow ->
             ( state, Cmd.none )
+
+        ToggleTooltip type_ isOpen ->
+            if isOpen then
+                ( { state | openTooltip = Just type_ }, Cmd.none )
+
+            else
+                ( { state | openTooltip = Nothing }, Cmd.none )
 
 
 type alias Id =

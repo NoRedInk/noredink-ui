@@ -1,7 +1,7 @@
 module Nri.Ui.Highlightable.V3 exposing
     ( Highlightable, Type(..)
     , initStatic, initInteractive, initFragments
-    , fromMarkdown
+    , fromMarkdown, fromMarkdownInlines
     , set
     , joinAdjacentInteractiveHighlights
     , asFragmentTuples, usedMarkers, text, byId
@@ -12,6 +12,12 @@ module Nri.Ui.Highlightable.V3 exposing
 Highlightable is the unit by which text-wrapping happens. Depending on how the
 Highlighter is initialized, it's very possible for a Highlightable to consist of
 just a single whitespace.
+
+
+## Patch
+
+  - add new syntax for highlight on markdown parse, which supports custom colors
+  - add new initializer for markdown that receives the parsed markdown inlines instead of just the string
 
 
 ## Changes from V2
@@ -32,7 +38,7 @@ just a single whitespace.
 ## Initializers
 
 @docs initStatic, initInteractive, initFragments
-@docs fromMarkdown
+@docs fromMarkdown, fromMarkdownInlines
 
 
 ## UIState and marker
@@ -48,7 +54,9 @@ just a single whitespace.
 -}
 
 import Html.Styled exposing (Attribute)
+import List.Extra
 import Markdown.Block
+import Markdown.Config exposing (defaultOptions, defaultSanitizeOptions)
 import Markdown.Inline
 import Maybe.Extra
 import Nri.Ui.Colors.V1 as Colors
@@ -142,9 +150,30 @@ initFragments text_ =
         |> List.indexedMap spaceOrInit
 
 
-{-| How do we know which elements should be marked, if all we have is a markdown string?
+{-| Initialize highlightables from a markdown string.
+This will get all `nri-highlight` tags into markded elements, you can add a specific color
+using the `color` attribute. The default color is yellow.
 
-We do some funky parsing to interpret empty anchor tags and tagged spans as highlighted!
+    fromMarkdown "for example, <nri-highlight>this phrase</nri-highlight> will show as highlighted"
+
+will result in a list of highlightables where "this phrase" is marked with the default marker.
+
+    fromMarkdown "for example, <nri-highlight color=" cyan ">this phrase</nri-highlight> will show as highlighted"
+
+will result in a list of highlightables where "this phrase" is marked with the cyan marker.
+
+The available highlight colors are listed in the [Nri.Colors docs](https://noredink-ui.netlify.app/#/doodad/Colors),
+which are the following:
+
+  - `magenta` -> `Colors.highlightMagenta`
+  - `brown` -> `Colors.highlightBrown`
+  - `purple` -> `Colors.highlightPurple`
+  - `blue` -> `Colors.highlightBlue`
+  - `yellow` -> `Colors.highlightYellow`
+  - `green` -> `Colors.highlightGreen`
+  - `cyan` -> `Colors.highlightCyan`
+
+There is also the empty url syntax, which is currently being deprecated:
 
     fromMarkdown "for example, [this phrase]() will show as highlighted"
 
@@ -156,79 +185,6 @@ fromMarkdown markdownString =
     let
         static maybeMark mapStrings c =
             initStatic (Maybe.Extra.toList maybeMark) -1 (mapStrings c)
-
-        defaultMark =
-            Tool.buildMarker
-                { highlightColor = Colors.highlightYellow
-                , hoverColor = Colors.highlightYellow
-                , hoverHighlightColor = Colors.highlightYellow
-                , kind = ()
-                , name = Nothing
-                }
-
-        highlightableFromInline : Maybe (Tool.MarkerModel ()) -> (String -> String) -> Markdown.Inline.Inline i -> List (Highlightable ())
-        highlightableFromInline maybeMark mapStrings inline =
-            case inline of
-                Markdown.Inline.Text text_ ->
-                    [ static maybeMark mapStrings text_ ]
-
-                Markdown.Inline.HardLineBreak ->
-                    [ static maybeMark mapStrings "\n" ]
-
-                Markdown.Inline.CodeInline text_ ->
-                    [ static maybeMark mapStrings text_ ]
-
-                Markdown.Inline.Link "" maybeTitle inlines ->
-                    -- empty links should be interpreted as content that's supposed to be highlighted!
-                    List.concatMap (highlightableFromInline (Just defaultMark) mapStrings) inlines
-
-                Markdown.Inline.Link url maybeTitle inlines ->
-                    let
-                        lastIndex =
-                            List.length inlines - 1
-
-                        addLinkOpening i str =
-                            if i == 0 then
-                                "[" ++ str
-
-                            else
-                                str
-
-                        addLinkClosing i str =
-                            if i == lastIndex then
-                                str ++ "](" ++ url ++ ")"
-
-                            else
-                                str
-                    in
-                    List.indexedMap
-                        (\i ->
-                            highlightableFromInline maybeMark
-                                (mapStrings >> addLinkOpening i >> addLinkClosing i)
-                        )
-                        inlines
-                        |> List.concat
-
-                Markdown.Inline.Image _ _ inlines ->
-                    List.concatMap (highlightableFromInline maybeMark mapStrings) inlines
-
-                Markdown.Inline.HtmlInline _ _ inlines ->
-                    List.concatMap (highlightableFromInline maybeMark mapStrings) inlines
-
-                Markdown.Inline.Emphasis level inlines ->
-                    let
-                        marker =
-                            String.repeat level "*"
-
-                        addMarkers str =
-                            marker ++ str ++ marker
-                    in
-                    List.concatMap
-                        (highlightableFromInline maybeMark (mapStrings >> addMarkers))
-                        inlines
-
-                Markdown.Inline.Custom _ inlines ->
-                    List.concatMap (highlightableFromInline maybeMark mapStrings) inlines
 
         highlightableFromBlock : Markdown.Block.Block b i -> List (Highlightable ())
         highlightableFromBlock block =
@@ -264,7 +220,18 @@ fromMarkdown markdownString =
         []
 
     else
-        Markdown.Block.parse Nothing markdownString
+        let
+            parseOptions =
+                { defaultOptions
+                    | rawHtml =
+                        Markdown.Config.Sanitize
+                            { allowedHtmlElements = "nri-highlight" :: defaultSanitizeOptions.allowedHtmlElements
+                            , allowedHtmlAttributes = "color" :: defaultSanitizeOptions.allowedHtmlElements
+                            }
+                }
+        in
+        Markdown.Block.parse (Just parseOptions)
+            markdownString
             |> List.concatMap highlightableFromBlock
             |> List.foldr
                 -- ensure that adjacent highlights are in a single mark element
@@ -289,6 +256,134 @@ fromMarkdown markdownString =
                 ( [], [] )
             |> Tuple.second
             |> List.indexedMap (\i highlightable -> { highlightable | index = i })
+
+
+{-| Same as [`fromMarkdown`](#fromMarkdown), but receives a list of inlines parsed markdown instead of a string.
+
+You might want to use this if you are parsing highlightables out of lists or in other block contexts that [`fromMarkdown`](#fromMarkdown) does not support.
+
+-}
+fromMarkdownInlines : List (Markdown.Inline.Inline i) -> List (Highlightable ())
+fromMarkdownInlines inlines =
+    List.concatMap (highlightableFromInline Nothing identity) inlines
+
+
+highlightableFromInline : Maybe (Tool.MarkerModel ()) -> (String -> String) -> Markdown.Inline.Inline i -> List (Highlightable ())
+highlightableFromInline maybeMark mapStrings inline =
+    let
+        static curMaybeMark curMaybeString c =
+            initStatic (Maybe.Extra.toList curMaybeMark) -1 (curMaybeString c)
+
+        markFromColor color =
+            Tool.buildMarker
+                { highlightColor = color
+                , hoverColor = color
+                , hoverHighlightColor = color
+                , kind = ()
+                , name = Nothing
+                }
+
+        defaultMark =
+            markFromColor Colors.highlightYellow
+    in
+    case inline of
+        Markdown.Inline.Text text_ ->
+            [ static maybeMark mapStrings text_ ]
+
+        Markdown.Inline.HardLineBreak ->
+            [ static maybeMark mapStrings "\n" ]
+
+        Markdown.Inline.CodeInline text_ ->
+            [ static maybeMark mapStrings text_ ]
+
+        Markdown.Inline.Link "" _ inlines ->
+            -- empty links should be interpreted as content that's supposed to be highlighted!
+            List.concatMap (highlightableFromInline (Just defaultMark) mapStrings) inlines
+
+        Markdown.Inline.Link url _ inlines ->
+            let
+                lastIndex =
+                    List.length inlines - 1
+
+                addLinkOpening i str =
+                    if i == 0 then
+                        "[" ++ str
+
+                    else
+                        str
+
+                addLinkClosing i str =
+                    if i == lastIndex then
+                        str ++ "](" ++ url ++ ")"
+
+                    else
+                        str
+            in
+            List.indexedMap
+                (\i ->
+                    highlightableFromInline maybeMark
+                        (mapStrings >> addLinkOpening i >> addLinkClosing i)
+                )
+                inlines
+                |> List.concat
+
+        Markdown.Inline.Image _ _ inlines ->
+            List.concatMap (highlightableFromInline maybeMark mapStrings) inlines
+
+        Markdown.Inline.HtmlInline "nri-highlight" attrs inlines ->
+            let
+                color =
+                    case
+                        List.Extra.find (\( attrName, _ ) -> attrName == "color") attrs
+                            |> Maybe.andThen Tuple.second
+                    of
+                        Just "magenta" ->
+                            Colors.highlightMagenta
+
+                        Just "brown" ->
+                            Colors.highlightBrown
+
+                        Just "purple" ->
+                            Colors.highlightPurple
+
+                        Just "blue" ->
+                            Colors.highlightBlue
+
+                        Just "yellow" ->
+                            Colors.highlightYellow
+
+                        Just "green" ->
+                            Colors.highlightGreen
+
+                        Just "cyan" ->
+                            Colors.highlightCyan
+
+                        -- Default color
+                        Just _ ->
+                            Colors.highlightYellow
+
+                        Nothing ->
+                            Colors.highlightYellow
+            in
+            List.concatMap (highlightableFromInline (Just (markFromColor color)) mapStrings) inlines
+
+        Markdown.Inline.HtmlInline _ _ inlines ->
+            List.concatMap (highlightableFromInline maybeMark mapStrings) inlines
+
+        Markdown.Inline.Emphasis level inlines ->
+            let
+                marker =
+                    String.repeat level "*"
+
+                addMarkers str =
+                    marker ++ str ++ marker
+            in
+            List.concatMap
+                (highlightableFromInline maybeMark (mapStrings >> addMarkers))
+                inlines
+
+        Markdown.Inline.Custom _ inlines ->
+            List.concatMap (highlightableFromInline maybeMark mapStrings) inlines
 
 
 {-| -}

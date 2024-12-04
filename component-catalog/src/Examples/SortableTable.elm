@@ -10,16 +10,17 @@ import Category exposing (Category(..))
 import Code
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
-import Debug.Control.Extra as ControlExtra exposing (values)
+import Debug.Control.Extra exposing (values)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.SortableTable.V4 as SortableTable exposing (Column)
+import Nri.Ui.SortableTable.V5 as SortableTable exposing (Column)
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Table.V7 as Table
+import Nri.Ui.Table.V8 as Table
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -40,7 +41,7 @@ example =
     , version = version
     , categories = [ Layout ]
     , keyboardSupport = []
-    , state = init
+    , init = ( init, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -98,6 +99,7 @@ example =
               }
             ]
         ]
+    , about = []
     , view =
         \ellieLinkConfig ({ sortState } as model) ->
             let
@@ -105,19 +107,26 @@ example =
                     Control.currentValue model.settings
 
                 attrs =
-                    List.filterMap identity
-                        [ Just (SortableTable.updateMsg SetSortState)
-                        , Just (SortableTable.state sortState)
-                        , Maybe.map
-                            (\stickiness ->
-                                case stickiness of
-                                    Default ->
-                                        SortableTable.stickyHeader
+                    List.concat
+                        [ [ SortableTable.updateMsg SetSortState
+                          , SortableTable.state sortState
+                          ]
+                        , case settings.stickyHeader of
+                            Nothing ->
+                                []
 
-                                    Custom customConfig ->
-                                        SortableTable.stickyHeaderCustom customConfig
-                            )
-                            settings.stickyHeader
+                            Just Default ->
+                                [ SortableTable.stickyHeader ]
+
+                            Just (Custom customConfig) ->
+                                [ SortableTable.stickyHeaderCustom customConfig ]
+                        , if settings.forwardingAttributesToTable then
+                            [ SortableTable.tableAttribute Table.disableAlternatingRowColors
+                            , SortableTable.tableAttribute (Table.css [ Css.border3 (Css.px 4) Css.solid Colors.red ])
+                            ]
+
+                          else
+                            []
                         ]
 
                 isStickyAtAll =
@@ -134,38 +143,46 @@ example =
                     , code =
                         [ moduleName ++ "." ++ viewName
                         , Code.listMultiline
-                            (List.filterMap identity
-                                [ Just "SortableTable.updateMsg SetSortState"
-                                , "-- The SortableTable's state should be stored on the model, rather than initialized in the view"
-                                    ++ "\n      "
-                                    ++ "SortableTable.state (SortableTable.init "
-                                    ++ Debug.toString model.sortState.column
-                                    ++ ")"
-                                    |> Just
-                                , Maybe.map
-                                    (\stickiness ->
-                                        case stickiness of
-                                            Default ->
-                                                "SortableTable.stickyHeader"
+                            (List.concat
+                                [ [ "SortableTable.updateMsg SetSortState"
+                                  , "-- The SortableTable's state should be stored on the model, rather than initialized in the view"
+                                        ++ "\n      "
+                                        ++ "SortableTable.state (SortableTable.init "
+                                        ++ Debug.toString model.sortState.column
+                                        ++ ")"
+                                  ]
+                                , case settings.stickyHeader of
+                                    Nothing ->
+                                        []
 
-                                            Custom stickyConfig ->
-                                                "SortableTable.stickyHeaderCustom "
-                                                    ++ Code.recordMultiline
-                                                        [ ( "topOffset", String.fromFloat stickyConfig.topOffset )
-                                                        , ( "zIndex", String.fromInt stickyConfig.zIndex )
-                                                        , ( "pageBackgroundColor", "Css.hex \"" ++ stickyConfig.pageBackgroundColor.value ++ "\"" )
-                                                        , ( "customZIndex"
-                                                          , case stickyConfig.hoverZIndex of
-                                                                Nothing ->
-                                                                    "Nothing"
+                                    Just Default ->
+                                        [ "SortableTable.stickyHeader"
+                                        ]
 
-                                                                Just zIndex ->
-                                                                    "Just " ++ String.fromInt zIndex
-                                                          )
-                                                        ]
-                                                        2
-                                    )
-                                    settings.stickyHeader
+                                    Just (Custom stickyConfig) ->
+                                        [ "SortableTable.stickyHeaderCustom "
+                                            ++ Code.recordMultiline
+                                                [ ( "topOffset", String.fromFloat stickyConfig.topOffset )
+                                                , ( "zIndex", String.fromInt stickyConfig.zIndex )
+                                                , ( "pageBackgroundColor", "Css.hex \"" ++ stickyConfig.pageBackgroundColor.value ++ "\"" )
+                                                , ( "customZIndex"
+                                                  , case stickyConfig.hoverZIndex of
+                                                        Nothing ->
+                                                            "Nothing"
+
+                                                        Just zIndex ->
+                                                            "Just " ++ String.fromInt zIndex
+                                                  )
+                                                ]
+                                                2
+                                        ]
+                                , if settings.forwardingAttributesToTable then
+                                    [ "SortableTable.tableAttribute (Table.disableAlternatingRowColors)"
+                                    , "SortableTable.tableAttribute (Table.css [ Css.border3 (Css.px 1) Css.solid Colors.red ])"
+                                    ]
+
+                                  else
+                                    []
                                 ]
                             )
                             1
@@ -189,7 +206,10 @@ example =
                 , renderExample = Code.unstyledView
                 , toExampleCode = \_ -> [ toExampleCode "view" (Code.list dataCode), toExampleCode "viewLoading" "" ]
                 }
-            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Heading.h2
+                [ Heading.plaintext "Customizable Example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , if settings.loading then
                 SortableTable.viewLoading attrs columns
 
@@ -326,6 +346,7 @@ type alias Settings =
     , customizableColumnCellStyles : ( String, List Style )
     , loading : Bool
     , stickyHeader : Maybe StickyHeader
+    , forwardingAttributesToTable : Bool
     }
 
 
@@ -339,7 +360,7 @@ controlSettings =
     Control.record Settings
         |> Control.field "Customizable column name" (Control.string "Grade")
         |> Control.field "Customizable column sorter" (Control.bool True)
-        |> Control.field "Customizable column width" (ControlExtra.int 10)
+        |> Control.field "Customizable column width" (Control.int 10)
         |> Control.field "Customizable column cell styles"
             (Control.choice
                 [ ( "[]", Control.value ( "[]", [] ) )
@@ -352,7 +373,7 @@ controlSettings =
                 ]
             )
         |> Control.field "Is loading" (Control.bool False)
-        |> Control.field "Sticky header"
+        |> Control.field "Header"
             (Control.maybe False
                 (Control.choice
                     [ ( "Default", Control.value Default )
@@ -371,7 +392,9 @@ controlSettings =
                       )
                     ]
                 )
+                |> Control.revealed "Sticky Header"
             )
+        |> Control.field "Using Nri.Ui.Table attributes" (Control.bool False)
 
 
 type ColumnId

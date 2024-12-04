@@ -16,7 +16,6 @@ module Nri.Ui.Button.V10 exposing
     , custom, nriDescription, testId, id
     , css, notMobileCss, mobileCss, quizEngineMobileCss
     , delete
-    , toggleButton
     )
 
 {-| Notes for V11:
@@ -24,7 +23,12 @@ module Nri.Ui.Button.V10 exposing
 The next version of `Button` should add a `hideTextForMobile` helper.
 This will require adding a selector for the text. We are not making this change in V10, as
 adding a span around the text could potentially lead to regressions.
-The next version of `Button` should also remove `delete` and `toggleButton`
+The next version of `Button` should also remove `delete`
+
+
+# As part of major release:
+
+  - removed toggleButton
 
 
 # Patch changes:
@@ -39,7 +43,10 @@ The next version of `Button` should also remove `delete` and `toggleButton`
   - adds `tertiary` style
   - adds `submit` and `opensModal`
   - adds `secondaryDanger` style
-  - marked toggleButton as deprecated and added toggleButtonPressed attribute
+  - marks toggleButton as deprecated and adds toggleButtonPressed attribute
+  - replaces the `disabled` attribute with `aria-disabled="true"`
+  - removes click handler from disabled buttons
+  - prevents default behavior for disabled submit buttons by setting `type="button"`
 
 
 # Changes from V9:
@@ -99,13 +106,11 @@ The next version of `Button` should also remove `delete` and `toggleButton`
 # Commonly-used buttons
 
 @docs delete
-@docs toggleButton
 
 -}
 
 import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Aria as Aria
-import Accessibility.Styled.Role as Role
 import ClickableAttributes exposing (ClickableAttributes)
 import Css exposing (Style)
 import Css.Global
@@ -835,93 +840,6 @@ delete config =
         ]
 
 
-
--- TOGGLE BUTTON
-
-
-{-| DEPRECATED - this helper will be removed in Button.V11. Use `toggleButtonPressed` attribute instead.
-
-A button that can be toggled into a pressed state and back again.
-
--}
-toggleButton :
-    { label : String
-    , onSelect : msg
-    , onDeselect : msg
-    , pressed : Bool
-    }
-    -> Html msg
-toggleButton config =
-    let
-        toggledStyles =
-            if config.pressed then
-                Css.batch
-                    [ Css.color Colors.navy
-                    , Css.backgroundColor Colors.glacier
-                    , Css.boxShadow5 Css.inset Css.zero (Css.px 3) Css.zero pressedShadowColor
-                    , Css.pseudoClass "focus-visible"
-                        [ Css.outline3 (Css.px 2) Css.solid Css.transparent
-                        , FocusRing.boxShadows
-                            [ "inset 0 3px 0 " ++ ColorsExtra.toCssString pressedShadowColor
-                            ]
-                        ]
-                    , Css.border3 (Css.px 1) Css.solid Colors.azure
-                    , Css.fontWeight Css.bold
-                    ]
-
-            else
-                Css.batch
-                    [ Css.pseudoClass "focus-visible"
-                        [ Css.outline3 (Css.px 2) Css.solid Css.transparent
-                        , FocusRing.boxShadows []
-                        ]
-                    ]
-    in
-    Nri.Ui.styled Html.button
-        (styledName "toggleButton")
-        [ buttonStyles
-            { size = Medium
-            , width = WidthUnbounded
-            , mobileWidth = Nothing
-            , quizEngineMobileWidth = Nothing
-            , narrowMobileWidth = Nothing
-            , style = secondaryColors
-            , state = Enabled
-            , customStyles = [ Css.hover [ Css.color Colors.navy ] ]
-            , pressed = Just config.pressed
-            }
-            |> Css.batch
-        , toggledStyles
-        , Css.verticalAlign Css.middle
-        ]
-        [ Events.onClick
-            (if config.pressed then
-                config.onDeselect
-
-             else
-                config.onSelect
-            )
-        , Aria.pressed <| Just config.pressed
-
-        -- reference: https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_button_role#Labeling_buttons
-        , Role.button
-
-        -- Note: setting type: 'button' removes the default behavior of submit
-        -- equivalent to preventDefaultBehavior = false
-        -- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#attr-name
-        , Attributes.type_ "button"
-        , Attributes.class FocusRing.customClass
-        ]
-        [ viewLabel
-            { size = Medium
-            , icon = Nothing
-            , iconStyles = []
-            , label = config.label
-            , rightIcon = Nothing
-            }
-        ]
-
-
 buttonStyles :
     { config
         | size : ButtonSize
@@ -1081,6 +999,7 @@ type alias ColorPalette =
     , hoverBackground : Css.Color
     , text : Css.Color
     , hoverText : Css.Color
+    , visitedHoverText : Css.Color
     , border : Maybe Css.Color
     , shadow : Css.Color
     }
@@ -1092,6 +1011,7 @@ primaryColors =
     , hoverBackground = Colors.azureDark
     , text = Colors.white
     , hoverText = Colors.white
+    , visitedHoverText = Colors.white
     , border = Nothing
     , shadow = Colors.azureDark
     }
@@ -1103,6 +1023,7 @@ secondaryColors =
     , hoverBackground = Colors.glacier
     , text = Colors.azure
     , hoverText = Colors.azureDark
+    , visitedHoverText = Colors.azure
     , border = Just <| Colors.azure
     , shadow = Colors.azure
     }
@@ -1114,6 +1035,7 @@ tertiaryColors =
     , hoverBackground = Colors.frost
     , text = Colors.navy
     , hoverText = Colors.navy
+    , visitedHoverText = Colors.navy
     , border = Just <| Colors.gray75
     , shadow = Colors.gray75
     }
@@ -1125,6 +1047,7 @@ dangerSecondaryColors =
     , hoverBackground = Colors.redLight
     , text = Colors.red
     , hoverText = Colors.redDark
+    , visitedHoverText = Colors.red
     , border = Just <| Colors.red
     , shadow = Colors.red
     }
@@ -1136,6 +1059,7 @@ dangerColors =
     , hoverBackground = Colors.redDark
     , text = Colors.white
     , hoverText = Colors.white
+    , visitedHoverText = Colors.white
     , border = Nothing
     , shadow = Colors.redDark
     }
@@ -1143,10 +1067,11 @@ dangerColors =
 
 premiumColors : ColorPalette
 premiumColors =
-    { background = Colors.yellow
+    { background = Colors.mustard
     , hoverBackground = Colors.ochre
     , text = Colors.navy
-    , hoverText = Colors.navy
+    , hoverText = Colors.gray20
+    , visitedHoverText = Colors.gray20
     , border = Nothing
     , shadow = Colors.ochre
     }
@@ -1163,6 +1088,7 @@ colorStyle defaultStyle state =
             , hoverBackground = Colors.gray92
             , text = Colors.gray45
             , hoverText = Colors.gray45
+            , visitedHoverText = Colors.gray45
             , border = Just <| Colors.gray75
             , shadow = Colors.gray75
             }
@@ -1172,6 +1098,7 @@ colorStyle defaultStyle state =
             , hoverBackground = Colors.purple
             , text = Colors.white
             , hoverText = Colors.white
+            , visitedHoverText = Colors.white
             , border = Nothing
             , shadow = Colors.purple
             }
@@ -1181,6 +1108,7 @@ colorStyle defaultStyle state =
             , hoverBackground = Colors.glacier
             , text = Colors.azure
             , hoverText = Colors.azureDark
+            , visitedHoverText = Colors.azure
             , border = Just <| Colors.gray75
             , shadow = Colors.gray75
             }
@@ -1190,6 +1118,7 @@ colorStyle defaultStyle state =
             , hoverBackground = Colors.glacier
             , text = Colors.navy
             , hoverText = Colors.navy
+            , visitedHoverText = Colors.navy
             , border = Nothing
             , shadow = Colors.glacier
             }
@@ -1199,6 +1128,7 @@ colorStyle defaultStyle state =
             , hoverBackground = Colors.greenDarkest
             , text = Colors.white
             , hoverText = Colors.white
+            , visitedHoverText = Colors.white
             , border = Nothing
             , shadow = Colors.greenDarkest
             }
@@ -1229,8 +1159,12 @@ applyColorStyle colorPalette =
             [ Css.color colorPalette.hoverText
             , Css.backgroundColor colorPalette.hoverBackground
             , Css.disabled [ Css.backgroundColor colorPalette.background ]
+            , Css.Global.withAttribute "aria-disabled=true" [ Css.backgroundColor colorPalette.background ]
             ]
-        , Css.visited [ Css.color colorPalette.text ]
+        , Css.visited
+            [ Css.color colorPalette.text
+            , Css.hover [ Css.color colorPalette.visitedHoverText ]
+            ]
         ]
 
 

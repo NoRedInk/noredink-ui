@@ -13,12 +13,16 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Guidance
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Page.V3 as Page exposing (DefaultPage, RecoveryText(..))
+import Nri.Ui.Spacing.V1 as Spacing
+import Nri.Ui.Text.V6 as Text
 
 
 {-| -}
@@ -59,7 +63,7 @@ example =
     , version = version
     , categories = [ Messaging ]
     , keyboardSupport = []
-    , state = controlSettings
+    , init = ( controlSettings, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -88,6 +92,19 @@ example =
                 [ Html.text "There was a problem!" ]
             ]
         ]
+    , about =
+        [ Guidance.useATACGuide moduleName
+        , Text.smallBody
+            [ Text.html
+                [ Html.text "Learn more about this component from "
+                , ClickableText.link "Tessa's demo"
+                    [ ClickableText.linkExternal "https://noredink.zoom.us/rec/play/kcM9T-aBbiqQXM2dTKMHES0mq0_mvWqjhzR4LGxpqYp4VNTThZgieu1n2GGzpPtDnVXVBh2KWMQXCfkC.zoJcGlH62xvazLoE?canPlayFromShare=true&from=share_recording_detail&continueMode=true&componentName=rec-play&originRequestUrl=https%3A%2F%2Fnoredink.zoom.us%2Frec%2Fshare%2FKmNvId1mTxpKy42H4lwh5YF5AbSeFNAkpxHW4mVWT8QDKtWOuZoJWTCgHj5MIF2R.Tk4mPcps3J5apO3t%3F_x_zm_rtaid%3DXNTISNTGTUOGUBnkd9Mz4g.1689865208330.e2d5810537a2878e50e4a85b887b8e00%26_x_zm_rhtaid%3D39"
+                    , ClickableText.appearsInline
+                    ]
+                , Html.text "."
+                ]
+            ]
+        ]
     , view =
         \ellieLinkConfig model ->
             let
@@ -108,13 +125,18 @@ example =
                         [ { sectionName = "Example"
                           , code =
                                 Tuple.first page
-                                    ++ "\n\t{ link = ()\n\t, recoveryText = "
-                                    ++ Debug.toString recoveryText
-                                    ++ "\n\t}"
+                                    ++ Code.recordMultiline
+                                        [ ( "link", "()" )
+                                        , ( "recoveryText", Debug.toString recoveryText )
+                                        ]
+                                        1
                           }
                         ]
                 }
-            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Heading.h2
+                [ Heading.plaintext "Customizable Example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , Tuple.second settings.page
                 { link = ShowItWorked
                 , recoveryText = settings.recoveryText

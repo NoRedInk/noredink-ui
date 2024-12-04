@@ -176,6 +176,9 @@ mediumBody attributes =
     view
         (css
             (paragraphStyles
+                -- Caution: avoid changing font styles
+                -- unless you are also changing the font styles in
+                -- ClickableText
                 { font = Fonts.baseFont
                 , color = gray20
                 , size = 18
@@ -202,6 +205,9 @@ smallBody attributes =
     view
         (css
             (paragraphStyles
+                -- Caution: avoid changing font styles
+                -- unless you are also changing the font styles in
+                -- ClickableText
                 { font = Fonts.baseFont
                 , color = gray20
                 , size = 15
@@ -221,6 +227,9 @@ smallBodyGray attributes =
     view
         (css
             (paragraphStyles
+                -- Caution: avoid changing font styles
+                -- unless you are also changing the font styles in
+                -- ClickableText
                 { font = Fonts.baseFont
                 , color = gray45
                 , size = 15
@@ -264,6 +273,9 @@ caption attributes =
     view
         (css
             (paragraphStyles
+                -- Caution: avoid changing font styles
+                -- unless you are also changing the font styles in
+                -- ClickableText
                 { font = Fonts.baseFont
                 , color = gray45
                 , size = 13

@@ -8,9 +8,21 @@ module Nri.Ui.PremiumCheckbox.V8 exposing
     , setCheckboxContainerCss
     , setCheckboxEnabledLabelCss
     , setCheckboxDisabledLabelCss
+    , noMargin
     )
 
-{-| Changes from V7:
+{-|
+
+
+## Patch changes:
+
+  - Added vouchered state for premium vouchers with gift pennant
+  - Replaced lock icon with disabled checkbox for locked state
+  - Adjust height of locked Premium button to match other checkbox states
+  - Support no-margin option
+
+
+## Changes from V7:
 
   - Use PremiumDisplay instead of PremiumLevel
   - Rename showPennant to onLockedClick
@@ -39,6 +51,7 @@ module Nri.Ui.PremiumCheckbox.V8 exposing
 @docs setCheckboxContainerCss
 @docs setCheckboxEnabledLabelCss
 @docs setCheckboxDisabledLabelCss
+@docs noMargin
 
 -}
 
@@ -48,10 +61,11 @@ import Css exposing (..)
 import Html.Styled.Attributes as Attributes exposing (class, css)
 import Html.Styled.Events as Events
 import Nri.Ui.Checkbox.V7 as Checkbox
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
-import Nri.Ui.Pennant.V2 exposing (premiumFlag)
+import Nri.Ui.Pennant.V3 exposing (contentPremiumFlag, giftPremiumFlag)
 import Nri.Ui.Svg.V1 as Svg
 
 
@@ -122,6 +136,13 @@ setCheckboxDisabledLabelCss checkboxDisabledLabelCss =
     Attribute <| \config -> { config | checkboxDisabledLabelCss = checkboxDisabledLabelCss }
 
 
+{-| Remove default spacing from the top and bottom of the checkbox.
+-}
+noMargin : Bool -> Attribute value
+noMargin removeMargin =
+    Attribute <| \config -> { config | removeMargin = removeMargin }
+
+
 {-| -}
 selected : Bool -> Attribute msg
 selected isSelected =
@@ -157,6 +178,7 @@ type alias Config msg =
     , checkboxContainerCss : List Css.Style
     , checkboxEnabledLabelCss : List Css.Style
     , checkboxDisabledLabelCss : List Css.Style
+    , removeMargin : Bool
     }
 
 
@@ -174,6 +196,7 @@ emptyConfig =
     , checkboxContainerCss = []
     , checkboxEnabledLabelCss = []
     , checkboxDisabledLabelCss = []
+    , removeMargin = False
     }
 
 
@@ -209,6 +232,9 @@ view { label, onChange } attributes =
 
         isLocked =
             config.premiumDisplay == PremiumDisplay.PremiumLocked
+
+        isVouchered =
+            config.premiumDisplay == PremiumDisplay.PremiumVouchered
     in
     if isLocked then
         viewLockedButton
@@ -216,12 +242,16 @@ view { label, onChange } attributes =
             , label = label
             , containerCss = config.containerCss
             , onLockedMsg = config.onLockedMsg
+            , removeMargin = config.removeMargin
             }
 
     else
         Html.div [ css config.containerCss ]
-            [ if isPremium then
-                viewPremiumFlag
+            [ if isVouchered then
+                viewPremiumFlag giftPremiumFlag
+
+              else if isPremium then
+                viewPremiumFlag contentPremiumFlag
 
               else
                 -- left-align the checkbox with checkboxes that _do_ have the premium pennant
@@ -243,12 +273,21 @@ view { label, onChange } attributes =
 
                   else
                     Checkbox.labelCss config.checkboxEnabledLabelCss
+                , Checkbox.noMargin config.removeMargin
                 ]
             ]
 
 
-viewLockedButton : { a | idValue : String, label : String, containerCss : List Style, onLockedMsg : Maybe msg } -> Html msg
-viewLockedButton { idValue, label, containerCss, onLockedMsg } =
+viewLockedButton :
+    { a
+        | idValue : String
+        , label : String
+        , containerCss : List Style
+        , onLockedMsg : Maybe msg
+        , removeMargin : Bool
+    }
+    -> Html msg
+viewLockedButton { idValue, label, containerCss, onLockedMsg, removeMargin } =
     Html.button
         [ css
             [ height inherit
@@ -256,7 +295,11 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
             , position relative
             , backgroundColor Css.transparent
             , border Css.zero
-            , padding zero
+            , if removeMargin then
+                padding zero
+
+              else
+                padding2 (px 9) zero
             , cursor pointer
             , Css.batch containerCss
             , textAlign left
@@ -269,14 +312,11 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
             Nothing ->
                 Extra.none
         ]
-        [ viewPremiumFlag
+        [ viewPremiumFlag contentPremiumFlag
         , Html.span
             [ css
                 [ outline Css.none
                 , Fonts.baseFont
-                , margin zero
-                , marginLeft (px -4)
-                , padding zero
                 , fontSize (px 15)
                 , display inlineBlock
                 , Css.property "transition" "all 0.4s ease"
@@ -288,25 +328,30 @@ viewLockedButton { idValue, label, containerCss, onLockedMsg } =
                 , css
                     [ displayFlex
                     , alignItems center
+                    , cursor notAllowed
                     , position relative
                     , Fonts.baseFont
                     , fontSize (px 15)
-                    , Css.outline3 (Css.px 2) Css.solid Css.transparent
                     ]
                 ]
-                [ Checkbox.viewIcon [] (CheckboxIcons.lockOnInside idValue)
-                , Html.span [] [ Html.text label ]
+                [ Checkbox.viewIcon [] CheckboxIcons.uncheckedDisabled
+                , Html.span
+                    [ css [ color Colors.gray45 ]
+                    ]
+                    [ Html.text label ]
                 ]
             ]
         ]
 
 
-viewPremiumFlag : Html msg
-viewPremiumFlag =
-    premiumFlag
+viewPremiumFlag : Svg.Svg -> Html msg
+viewPremiumFlag icon =
+    icon
         |> Svg.withLabel "Premium"
         |> Svg.withWidth (Css.px iconWidth)
-        |> Svg.withHeight (Css.px 30)
+        |> Svg.withHeight
+            -- The checkbox is 27px by 27px, which we should match
+            (Css.px 27)
         |> Svg.withCss [ Css.marginRight (Css.px iconRightMargin), Css.flexShrink Css.zero ]
         |> Svg.toHtml
 

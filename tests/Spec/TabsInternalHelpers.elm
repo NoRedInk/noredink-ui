@@ -5,8 +5,8 @@ import Accessibility.Role as Role
 import Browser.Dom as Dom
 import Expect
 import Html.Styled exposing (..)
+import Nri.Test.KeyboardHelpers.V1 as KeyboardHelpers
 import ProgramTest exposing (..)
-import Spec.KeyboardHelpers as KeyboardHelpers
 import Test.Html.Query as Query
 import Test.Html.Selector as Selector
 
@@ -31,7 +31,7 @@ type alias TestContext =
     ProgramTest State Msg ()
 
 
-ensureTabbable : String -> TestContext -> TestContext
+ensureTabbable : String -> ProgramTest model msg effect -> ProgramTest model msg effect
 ensureTabbable word testContext =
     testContext
         |> ensureView
@@ -40,7 +40,7 @@ ensureTabbable word testContext =
             )
 
 
-ensurePanelsFocusable : List String -> TestContext -> TestContext
+ensurePanelsFocusable : List String -> ProgramTest model msg effect -> ProgramTest model msg effect
 ensurePanelsFocusable words testContext =
     testContext
         |> ensureView
@@ -49,7 +49,7 @@ ensurePanelsFocusable words testContext =
             )
 
 
-ensurePanelDisplayed : String -> TestContext -> TestContext
+ensurePanelDisplayed : String -> ProgramTest model msg effect -> ProgramTest model msg effect
 ensurePanelDisplayed word testContext =
     testContext
         |> ensureView
@@ -58,7 +58,7 @@ ensurePanelDisplayed word testContext =
             )
 
 
-ensureOnlyOnePanelDisplayed : List String -> TestContext -> TestContext
+ensureOnlyOnePanelDisplayed : List String -> ProgramTest model msg effect -> ProgramTest model msg effect
 ensureOnlyOnePanelDisplayed panels testContext =
     testContext
         |> ensureView
@@ -71,7 +71,7 @@ ensureOnlyOnePanelDisplayed panels testContext =
             )
 
 
-ensureOnlyOneTabInSequence : List String -> TestContext -> TestContext
+ensureOnlyOneTabInSequence : List String -> ProgramTest model msg effect -> ProgramTest model msg effect
 ensureOnlyOneTabInSequence tabs testContext =
     testContext
         |> ensureView
@@ -84,13 +84,15 @@ ensureOnlyOneTabInSequence tabs testContext =
             )
 
 
-releaseRightArrow : TestContext -> TestContext
+releaseRightArrow : ProgramTest model msg effect -> ProgramTest model msg effect
 releaseRightArrow =
-    KeyboardHelpers.releaseRightArrow { targetDetails = [] }
+    KeyboardHelpers.releaseRightArrow
+        { targetDetails = [] }
         [ Selector.attribute Role.tab, Selector.attribute (Key.tabbable True) ]
 
 
-releaseLeftArrow : TestContext -> TestContext
+releaseLeftArrow : ProgramTest model msg effect -> ProgramTest model msg effect
 releaseLeftArrow =
-    KeyboardHelpers.releaseLeftArrow { targetDetails = [] }
+    KeyboardHelpers.releaseLeftArrow
+        { targetDetails = [] }
         [ Selector.attribute Role.tab, Selector.attribute (Key.tabbable True) ]

@@ -9,15 +9,20 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import Guidance
+import Http
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Message.V3 as Message
+import Nri.Ui.Message.V4 as Message
+import Nri.Ui.Spacing.V1 as Spacing
+import Nri.Ui.Table.V8 as Table
 import ViewHelpers exposing (viewExamples)
 
 
 version : Int
 version =
-    3
+    4
 
 
 type alias State =
@@ -30,44 +35,53 @@ init : State
 init =
     { show = True
     , control =
-        ControlExtra.list
-            |> ControlExtra.optionalListItem "theme" controlTheme
-            |> ControlExtra.listItem "content"
-                (CommonControls.content
-                    { moduleName = moduleName
-                    , paragraph = Just Message.paragraph
-                    , plaintext = Message.plaintext
-                    , markdown = Just Message.markdown
-                    , html = Message.html
-                    , httpError = Just Message.httpError
-                    }
+        Control.list
+            |> ControlExtra.listItems "Content & Behavior"
+                (Control.list
+                    |> ControlExtra.listItem "content"
+                        (CommonControls.content
+                            { moduleName = moduleName
+                            , paragraph = Just Message.paragraph
+                            , plaintext = Message.plaintext
+                            , markdown = Just Message.markdown
+                            , html = Message.html
+                            , httpError = Just Message.httpError
+                            }
+                        )
+                    |> ControlExtra.optionalListItem "codeDetails"
+                        (Control.map (\str -> ( "Message.codeDetails " ++ Code.stringMultiline str, Message.codeDetails str ))
+                            (Control.stringTextarea CommonControls.badBodyString)
+                        )
+                    |> ControlExtra.optionalBoolListItem "dismissable"
+                        ( "Message.onDismiss Dismiss", Message.onDismiss Dismiss )
                 )
-            |> ControlExtra.optionalListItem "role" controlRole
-            |> ControlExtra.optionalListItem "codeDetails"
-                (Control.map (\str -> ( "Message.codeDetails " ++ Code.stringMultiline str, Message.codeDetails str ))
-                    (Control.stringTextarea CommonControls.badBodyString)
+            |> ControlExtra.listItems "Theme & Semantics"
+                (Control.list
+                    |> ControlExtra.optionalListItem "theme" controlTheme
+                    |> ControlExtra.optionalListItem "role" controlRole
+                    |> CommonControls.iconNotCheckedByDefault "Message" Message.icon
+                    |> ControlExtra.optionalBoolListItem "hideIconForMobile"
+                        ( "Message.hideIconForMobile", Message.hideIconForMobile )
                 )
-            |> ControlExtra.optionalBoolListItem "dismissable"
-                ( "Message.onDismiss Dismiss", Message.onDismiss Dismiss )
-            |> CommonControls.iconNotCheckedByDefault "Message" Message.icon
-            |> ControlExtra.optionalBoolListItem "hideIconForMobile"
-                ( "Message.hideIconForMobile", Message.hideIconForMobile )
-            |> CommonControls.css
-                { moduleName = moduleName
-                , use = Message.css
-                }
-            |> CommonControls.mobileCss
-                { moduleName = moduleName
-                , use = Message.mobileCss
-                }
-            |> CommonControls.quizEngineMobileCss
-                { moduleName = moduleName
-                , use = Message.quizEngineMobileCss
-                }
-            |> CommonControls.notMobileCss
-                { moduleName = moduleName
-                , use = Message.notMobileCss
-                }
+            |> ControlExtra.listItems "CSS"
+                (Control.list
+                    |> CommonControls.css
+                        { moduleName = moduleName
+                        , use = Message.css
+                        }
+                    |> CommonControls.mobileCss
+                        { moduleName = moduleName
+                        , use = Message.mobileCss
+                        }
+                    |> CommonControls.quizEngineMobileCss
+                        { moduleName = moduleName
+                        , use = Message.quizEngineMobileCss
+                        }
+                    |> CommonControls.notMobileCss
+                        { moduleName = moduleName
+                        , use = Message.notMobileCss
+                        }
+                )
     }
 
 
@@ -111,13 +125,14 @@ controlRole : Control ( String, Message.Attribute msg )
 controlRole =
     CommonControls.choice "Message"
         [ ( "alertRole", Message.alertRole )
-        , ( "alertDialogRole", Message.alertDialogRole )
+        , ( "statusRole", Message.statusRole )
         ]
 
 
 type Msg
     = Dismiss
     | UpdateControl (Control (List ( String, Message.Attribute Msg )))
+    | Ignore
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -129,6 +144,9 @@ update msg state =
         UpdateControl newControl ->
             ( { state | control = newControl }, Cmd.none )
 
+        Ignore ->
+            ( state, Cmd.none )
+
 
 example : Example State Msg
 example =
@@ -136,13 +154,17 @@ example =
     , version = version
     , categories = [ Messaging ]
     , keyboardSupport = []
-    , state = init
+    , init = ( init, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
         [ Message.view [ Message.plaintext "Tiny tip" ]
         , Message.view [ Message.success, Message.plaintext "Tiny success" ]
         , Message.view [ Message.error, Message.plaintext "Tiny error" ]
+        ]
+    , about =
+        [ Guidance.useATACGuide moduleName
+        , Guidance.message moduleName
         ]
     , view =
         \ellieLinkConfig state ->
@@ -170,13 +192,13 @@ example =
                     \settings ->
                         let
                             toCode maybeSize =
-                                "Message.view\n\t[ "
-                                    ++ (maybeSize
+                                Code.fromModule moduleName "view"
+                                    ++ Code.listMultiline
+                                        (maybeSize
                                             :: List.map (Tuple.first >> Just) settings
                                             |> List.filterMap identity
-                                            |> String.join "\n\t, "
-                                       )
-                                    ++ "\n\t]"
+                                        )
+                                        1
                         in
                         [ { sectionName = "Tiny"
                           , code = toCode Nothing
@@ -189,23 +211,110 @@ example =
                           }
                         ]
                 }
+            , Heading.h2
+                [ Heading.plaintext "Customizable Examples"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , orDismiss <|
                 viewExamples
                     [ ( "tiny", Message.view attributes )
                     , ( "large", Message.view (Message.large :: attributes) )
                     , ( "banner", Message.view (Message.banner :: attributes) )
                     ]
-            , Heading.h3
+            , Heading.h2
                 [ Heading.css
-                    [ Css.marginTop (Css.px 20)
+                    [ Css.marginTop Spacing.verticalSpacerPx
                     , Css.borderTop3 (Css.px 2) Css.solid Colors.gray96
                     , Css.paddingTop (Css.px 20)
                     ]
                 , Heading.plaintext "Message.somethingWentWrong"
                 ]
             , Message.somethingWentWrong exampleRailsError
+            , Heading.h2
+                [ Heading.plaintext "Content Type Variations"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
+            , viewContentTable "Message.tiny" Message.tiny
+            , viewContentTable "Message.large" Message.large
+            , viewContentTable "Message.banner" Message.banner
             ]
     }
+
+
+viewContentTable : String -> Message.Attribute Msg -> Html Msg
+viewContentTable name size =
+    div []
+        [ Heading.h3
+            [ Heading.plaintext name
+            , Heading.css [ Css.marginTop (Css.px 30) ]
+            ]
+        , Table.view []
+            [ Table.rowHeader
+                { header = text "Content type"
+                , view = \{ contentType } -> code [] [ text contentType ]
+                , width = Css.pct 10
+                , cellStyles =
+                    always
+                        [ Css.textAlign Css.left
+                        , Css.padding2 (Css.px 8) (Css.px 16)
+                        ]
+                , sort = Nothing
+                }
+            , Table.custom
+                { header = text "Non-dismissible view"
+                , view = \{ content } -> Message.view [ size, content ]
+                , width = Css.pct 45
+                , cellStyles = always []
+                , sort = Nothing
+                }
+            , Table.custom
+                { header = text "Dismissible view"
+                , view =
+                    \{ content } ->
+                        Message.view
+                            [ size
+                            , content
+                            , Message.onDismiss Ignore
+                            ]
+                , width = Css.pct 45
+                , cellStyles = always []
+                , sort = Nothing
+                }
+            ]
+            contentTypes
+        ]
+
+
+contentTypes :
+    List
+        { contentType : String
+        , content : Message.Attribute msg
+        }
+contentTypes =
+    [ { contentType = "paragraph"
+      , content = Message.paragraph "*Hello, there!* Hope you're doing well. Use the following link to go to [a fake destination](https://www.google.com)."
+      }
+    , { contentType = "plaintext"
+      , content = Message.plaintext "*Hello, there!* Hope you're doing well. Use the following link to go to [a fake destination](https://www.google.com)."
+      }
+    , { contentType = "markdown"
+      , content = Message.markdown "Hello, there! Hope you're doing well. Use the following link to go to [a fake destination](https://www.google.com)."
+      }
+    , { contentType = "html"
+      , content =
+            Message.html
+                [ text "Hello, there! Hope you're doing well. Use the following link to go to "
+                , ClickableText.link "a fake destination"
+                    [ ClickableText.href "https://www.google.com"
+                    , ClickableText.appearsInline
+                    ]
+                , text "."
+                ]
+      }
+    , { contentType = "httpError (Bad Body)"
+      , content = Message.httpError (Http.BadBody CommonControls.badBodyString)
+      }
+    ]
 
 
 exampleRailsError : String

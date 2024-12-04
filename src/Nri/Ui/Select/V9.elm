@@ -5,7 +5,7 @@ module Nri.Ui.Select.V9 exposing
     , value
     , Attribute, defaultDisplayText
     , hiddenLabel, visibleLabel
-    , disabled, loading, errorIf, errorMessage, guidance
+    , disabled, loading, errorIf, errorMessage, guidance, guidanceHtml
     , custom, nriDescription, id, testId
     , icon
     , containerCss, noMargin
@@ -14,13 +14,20 @@ module Nri.Ui.Select.V9 exposing
 
 {-| Build a select input with a label, optional guidance, and error messaging.
 
+Patch changes:
 
-# Changes from V8
+  - Adjust disabled styles
+
+Changes from V8
 
     - The option `value` attribute is no longer prefixed with `nri-select-`;
       This is not a breaking change to the API, but affects automated tests
       that are looking for this prefix.
     - adds `icon` support
+    - when disabled, the select element is now replaced by a div element with
+      `aria-disabled="true"` and `tabindex="0"`. This change prevents user
+      interactions while maintaining the element in the tab order.
+    - sets cursor to `not-allowed` when disabled`
 
 @docs view, generateId
 
@@ -40,7 +47,7 @@ module Nri.Ui.Select.V9 exposing
 
 @docs Attribute, defaultDisplayText
 @docs hiddenLabel, visibleLabel
-@docs disabled, loading, errorIf, errorMessage, guidance
+@docs disabled, loading, errorIf, errorMessage, guidance, guidanceHtml
 @docs custom, nriDescription, id, testId
 @docs icon
 @docs containerCss, noMargin
@@ -50,6 +57,8 @@ module Nri.Ui.Select.V9 exposing
 
 import Accessibility.Styled as Html exposing (Html)
 import Accessibility.Styled.Aria as Aria
+import Accessibility.Styled.Key as Key
+import Accessibility.Styled.Role as Role
 import Css
 import Dict
 import Html.Styled.Attributes as Attributes exposing (css)
@@ -125,6 +134,13 @@ batch attrs =
 guidance : String -> Attribute value
 guidance =
     Attribute << InputErrorAndGuidanceInternal.setGuidance
+
+
+{-| A guidance message (HTML) shows below the input, unless an error message is showing instead.
+-}
+guidanceHtml : List (Html Never) -> Attribute value
+guidanceHtml =
+    Attribute << InputErrorAndGuidanceInternal.setGuidanceHtml
 
 
 {-| Hides the visible label. (There will still be an invisible label for screen readers.)
@@ -258,7 +274,7 @@ type alias Config value =
     , error : ErrorState
     , disabled : Bool
     , loading : Bool
-    , guidance : Guidance
+    , guidance : Guidance Never
     , hideLabel : Bool
     , icon : Maybe Svg
     , noMarginTop : Bool
@@ -317,7 +333,6 @@ view label attributes =
 
                else
                 Css.paddingTop (Css.px InputStyles.defaultMarginTop)
-             , Css.color Colors.gray20
              ]
                 ++ config.containerCss
             )
@@ -335,7 +350,9 @@ view label attributes =
             }
             config
          ]
-            ++ InputErrorAndGuidanceInternal.view id_ InputErrorAndGuidanceInternal.smallMargin config
+            ++ (InputErrorAndGuidanceInternal.view id_ InputErrorAndGuidanceInternal.smallMargin config
+                    |> List.map (Html.map never)
+               )
         )
 
 
@@ -447,18 +464,16 @@ viewSelect config_ config =
 
         isInError =
             InputErrorAndGuidanceInternal.getIsInError config.error
-    in
-    (defaultOption
-        ++ List.map (viewChoice currentVal) optionStringChoices
-        ++ List.map viewGroupedChoices config.optgroups
-    )
-        |> Nri.Ui.styled Html.select
-            "nri-select-menu"
+
+        selectStyles =
             [ -- border
               Css.border3 (Css.px 1)
                 Css.solid
                 (if isInError then
                     Colors.purple
+
+                 else if config.disabled then
+                    Colors.gray85
 
                  else
                     Colors.gray75
@@ -481,11 +496,12 @@ viewSelect config_ config =
             , Css.textOverflow Css.ellipsis
             , Css.overflow Css.hidden
             , Css.whiteSpace Css.noWrap
+            , Css.color Colors.gray20
 
             -- Interaction
             , Css.cursor
                 (if config.disabled then
-                    Css.default
+                    Css.notAllowed
 
                  else
                     Css.pointer
@@ -505,13 +521,56 @@ viewSelect config_ config =
             -- Icons
             , selectArrowsCss config
             ]
-            (onSelectHandler
-                :: Aria.invalid isInError
-                :: InputErrorAndGuidanceInternal.describedBy config_.id config
-                :: Attributes.id config_.id
-                :: Attributes.disabled config_.disabled
-                :: List.map (Attributes.map never) config.custom
+
+        selectAttributes =
+            [ Aria.invalid isInError
+            , InputErrorAndGuidanceInternal.describedBy config_.id config |> Attributes.map never
+            , Attributes.id config_.id
+            ]
+                ++ List.map (Attributes.map never) config.custom
+
+        enabledSelectAttributes =
+            [ onSelectHandler
+            ]
+
+        disabledSelectAttributes =
+            [ Aria.disabled True
+            , Key.tabbable True
+            , Role.listBox
+            ]
+    in
+    if config_.disabled then
+        Nri.Ui.styled Html.div
+            "nri-select-menu"
+            selectStyles
+            (selectAttributes ++ disabledSelectAttributes)
+            (case config.valueToString of
+                Just valueToString ->
+                    [ Html.div [ Attributes.css [ Css.paddingTop (Css.px 12) ] ]
+                        [ Html.text
+                            (case currentVal of
+                                Just val ->
+                                    valueToString val
+
+                                Nothing ->
+                                    ""
+                            )
+                        ]
+                    ]
+
+                Nothing ->
+                    []
             )
+
+    else
+        (defaultOption
+            ++ List.map (viewChoice currentVal) optionStringChoices
+            ++ List.map viewGroupedChoices config.optgroups
+        )
+            |> Nri.Ui.styled Html.select
+                "nri-select-menu"
+                selectStyles
+                (selectAttributes ++ enabledSelectAttributes)
 
 
 viewDefaultChoice : Maybe a -> String -> Html a
@@ -551,7 +610,7 @@ selectArrowsCss config =
     let
         color =
             (if config.disabled then
-                Colors.gray20
+                Colors.gray45
 
              else
                 Colors.azure

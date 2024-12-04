@@ -12,3 +12,4 @@ type PremiumDisplay
     = Free
     | PremiumLocked
     | PremiumUnlocked
+    | PremiumVouchered

@@ -9,6 +9,7 @@ module CommonControls exposing
     , content
     , httpError, badBodyString
     , guidanceAndErrorMessage
+    , quickBrownFox
     , disabledListItem, premiumDisplay
     )
 
@@ -28,6 +29,7 @@ module CommonControls exposing
 @docs content
 @docs httpError, badBodyString
 @docs guidanceAndErrorMessage
+@docs quickBrownFox
 
 -}
 
@@ -37,8 +39,9 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Examples.Colors
 import Html.Styled as Html exposing (Html)
+import Html.Styled.Attributes as Attributes
 import Http
-import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.Svg.V1 exposing (Svg)
@@ -58,9 +61,10 @@ specificColor match =
 premiumDisplay : Control ( String, PremiumDisplay )
 premiumDisplay =
     Control.choice
-        [ ( "Free", Control.value ( "PremiumDisplay.Free", PremiumDisplay.Free ) )
-        , ( "Premium Locked", Control.value ( "PremiumDisplay.PremiumLocked", PremiumDisplay.PremiumLocked ) )
+        [ ( "Premium Locked", Control.value ( "PremiumDisplay.PremiumLocked", PremiumDisplay.PremiumLocked ) )
         , ( "Premium Unlocked", Control.value ( "PremiumDisplay.PremiumUnlocked", PremiumDisplay.PremiumUnlocked ) )
+        , ( "Premium Vouchered", Control.value ( "PremiumDisplay.PremiumVouchered", PremiumDisplay.PremiumVouchered ) )
+        , ( "Free", Control.value ( "PremiumDisplay.Free", PremiumDisplay.Free ) )
         ]
 
 
@@ -77,6 +81,7 @@ httpError =
           , Control.value (Http.BadBody badBodyString)
           )
         ]
+        |> Control.revealed "HTTP error"
 
 
 badBodyString : String
@@ -129,6 +134,7 @@ content ({ moduleName } as config) =
                 Just
                     ( "paragraph"
                     , string ( Code.fromModule moduleName "paragraph", f ) quickBrownFox
+                        |> Control.revealed "paragraph"
                     )
 
             Nothing ->
@@ -136,6 +142,7 @@ content ({ moduleName } as config) =
          , Just
             ( "plain text (short)"
             , string ( Code.fromModule moduleName "plaintext", config.plaintext ) quickBrownFox
+                |> Control.revealed "plain text"
             )
          , Just
             ( "plain text (long, no newlines)"
@@ -146,6 +153,7 @@ content ({ moduleName } as config) =
                         , config.plaintext str
                         )
                     )
+                |> Control.revealed "plain text"
             )
          , Just
             ( "plain text (long, with newlines)"
@@ -156,6 +164,7 @@ content ({ moduleName } as config) =
                         , config.plaintext str
                         )
                     )
+                |> Control.revealed "plain text"
             )
          , case config.markdown of
             Just markdown_ ->
@@ -168,6 +177,7 @@ content ({ moduleName } as config) =
                                 , markdown_ str
                                 )
                             )
+                        |> Control.revealed "markdown"
                     )
 
             Nothing ->
@@ -231,7 +241,11 @@ romeoAndJulietQuotation =
 
 markdown : String
 markdown =
-    "_Katie's dad suggests:_ Don't tip too much, or your waitress will **fall over**!"
+    """
+_Katie's dad suggests:_ Don't tip too much, or your waitress will **fall over**!
+
+A new paragraph and [last but not link](#)
+"""
 
 
 exampleHtml : List (Html msg)
@@ -240,12 +254,15 @@ exampleHtml =
     , Html.strong [] [ Html.text "bolded phrase" ]
     , Html.text ". "
     , ClickableText.link quickBrownFox
-        [ ClickableText.small
-        , ClickableText.icon UiIcon.starFilled
+        [ ClickableText.icon UiIcon.starFilled
         , ClickableText.href "http://www.noredink.com"
         , ClickableText.appearsInline
         ]
-    , Html.text " When I stepped out, into the bright sunlight from the darkness of the movie house, I had only two things on my mind: Paul Newman, and a ride home."
+    , Html.text " When I stepped out, into the bright sunlight from the "
+    , Html.a
+        [ Attributes.href "https://example.com" ]
+        [ Html.text "darkness of the movie house " ]
+    , Html.text "I had only two things on my mind: Paul Newman, and a ride home."
     ]
 
 
@@ -320,6 +337,7 @@ rightIcon moduleName f =
               , "(Svg.withLabel \"Opens in new tab\" UiIcon.openInNewTab)"
               , UiIcon.openInNewTab
               )
+            , ( "gradingAssistant", "UiIcon.gradingAssistant", UiIcon.gradingAssistant )
             ]
             |> Control.choice
         )
@@ -450,27 +468,46 @@ css_ helperName ( styles, default ) { moduleName, use } =
 guidanceAndErrorMessage :
     { moduleName : String
     , guidance : String -> b
-    , errorMessage : Maybe String -> b
+    , guidanceHtml : List (Html msg) -> b
     , message : String
+    , errorMessage : Maybe (Maybe String -> b)
     }
     -> Control (List ( String, b ))
     -> Control (List ( String, b ))
-guidanceAndErrorMessage { moduleName, guidance, errorMessage, message } =
-    ControlExtra.optionalListItem "guidance"
-        (Control.string message
-            |> Control.map
-                (\str ->
-                    ( Code.fromModule moduleName "guidance " ++ Code.string str
-                    , guidance str
+guidanceAndErrorMessage ({ moduleName } as config) controls =
+    [ Control.choice
+        [ ( "string"
+          , Control.string config.message
+                |> Control.map
+                    (\str ->
+                        ( Code.fromModule moduleName "guidance " ++ Code.string str
+                        , config.guidance str
+                        )
                     )
+                |> Control.revealed "Guidance string"
+          )
+        , ( "html"
+          , Control.value
+                ( Code.fromModule moduleName "guidanceHtml [ text \"There is \", b [] [ text \"something\" ], text \" you need to be aware of.\" ]"
+                , config.guidanceHtml [ Html.text "There is ", Html.b [] [ Html.text "something" ], Html.text " you need to be aware of." ]
+                )
+          )
+        ]
+        |> ControlExtra.optionalListItem "guidance"
+        |> Just
+    , Maybe.map
+        (\errorMessage ->
+            ControlExtra.optionalListItem "errorMessage"
+                (Control.map
+                    (\str ->
+                        ( Code.fromModule moduleName "errorMessage " ++ Code.withParens (Code.maybeString (Just str))
+                        , errorMessage (Just str)
+                        )
+                    )
+                    (Control.string config.message)
                 )
         )
-        >> ControlExtra.optionalListItem "errorMessage"
-            (Control.map
-                (\str ->
-                    ( Code.fromModule moduleName "errorMessage " ++ Code.withParens (Code.maybeString (Just str))
-                    , errorMessage (Just str)
-                    )
-                )
-                (Control.string message)
-            )
+        config.errorMessage
+    ]
+        |> List.filterMap identity
+        |> List.foldl (\f a -> f a) controls

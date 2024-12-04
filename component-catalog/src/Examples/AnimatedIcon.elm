@@ -13,13 +13,14 @@ import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Examples.IconExamples as IconExamples
 import Html.Styled exposing (..)
+import IconExamples
 import Nri.Ui.AnimatedIcon.V1 as AnimatedIcon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Table.V7 as Table
+import Nri.Ui.Table.V8 as Table
 
 
 moduleName : String
@@ -39,7 +40,7 @@ example =
     , version = version
     , categories = [ Animations, Icons ]
     , keyboardSupport = []
-    , state = init
+    , init = ( init, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -49,6 +50,7 @@ example =
             , AnimatedIcon.arrowRightDown False
             , AnimatedIcon.arrowRightDown True
             ]
+    , about = []
     , view =
         \ellieLinkConfig state ->
             let
@@ -68,13 +70,14 @@ example =
                     \settings ->
                         let
                             toCode viewName =
-                                moduleName
-                                    ++ "."
-                                    ++ viewName
-                                    ++ " "
-                                    ++ Tuple.first settings.isOpen
-                                    ++ "\n  |> Svg.withCss [ Css.maxWidth (Css.px 30) ]"
-                                    ++ "\n  |> Svg.toHtml"
+                                Code.pipelineMultiline
+                                    [ Code.fromModule moduleName viewName
+                                        ++ " "
+                                        ++ Tuple.first settings.isOpen
+                                    , "Svg.withCss [ Css.maxWidth (Css.px 30) ]"
+                                    , "Svg.toHtml"
+                                    ]
+                                    0
                         in
                         [ { sectionName = "mobileOpenClose"
                           , code = toCode "mobileOpenClose"
@@ -87,7 +90,10 @@ example =
                           }
                         ]
                 }
-            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Heading.h2
+                [ Heading.plaintext "Examples"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , Table.view []
                 [ Table.custom
                     { header = text "Rendered"

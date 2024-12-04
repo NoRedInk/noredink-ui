@@ -6,7 +6,6 @@ module Examples.Modal exposing (Msg, State, example)
 
 -}
 
-import Accessibility.Styled exposing (Html, div, text)
 import Accessibility.Styled.Key as Key
 import Browser.Dom as Dom
 import Category exposing (Category(..))
@@ -15,16 +14,21 @@ import CommonControls
 import Css exposing (..)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
+import EventExtras exposing (onClickStopPropagation)
 import Example exposing (Example)
+import Guidance
+import Html.Styled as Html exposing (Html, div, text)
 import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
-import Nri.Ui.ClickableText.V3 as ClickableText
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Modal.V11 as Modal
+import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Modal.V12 as Modal
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 import Task
@@ -51,10 +55,11 @@ type alias ViewSettings =
     , theme : Maybe ( String, Modal.Attribute )
     , customCss : Maybe ( String, Modal.Attribute )
     , showX : Bool
-    , showContinue : Bool
+    , showFocusOnTitle : Bool
     , showSecondary : Bool
     , dismissOnEscAndOverlayClick : Bool
     , content : String
+    , atac : Bool
     }
 
 
@@ -66,17 +71,17 @@ initViewSettings =
         |> Control.field "Theme" (Control.maybe False controlTheme)
         |> Control.field "Custom css" (Control.maybe False controlCss)
         |> Control.field "X button" (Control.bool True)
-        |> Control.field "Continue button" (Control.bool True)
+        |> Control.field "Focus on title button" (Control.bool True)
         |> Control.field "Close button" (Control.bool True)
         |> Control.field "dismissOnEscAndOverlayClick" (Control.bool True)
         |> Control.field "Content"
             (Control.stringTextarea <|
                 String.join "\n\n"
-                    [ "Generally, you'll want to pair the Modal.warning theme with the Button.danger theme and the Modal.info theme with the Button.primary theme."
-                    , "Muffin liquorice powder liquorice jujubes biscuit cookie candy canes lemon drops. Liquorice powder carrot cake dragée icing tootsie roll apple pie lemon drops lemon drops. Jujubes danish bear claw cotton candy. Dragée apple pie tiramisu. Sugar plum dessert pastry marzipan chocolate cake dragée sesame snaps. Marshmallow gingerbread lemon drops. Brownie chocolate fruitcake pastry. Powder jelly beans jujubes. Croissant macaroon dessert cookie candy canes jelly jujubes. Muffin liquorice ice cream wafer donut danish soufflé dragée chocolate bar. Candy croissant candy wafer toffee lemon drops croissant danish sugar plum. Cookie cake candy canes. Pastry powder muffin soufflé tootsie roll sweet cookie tiramisu."
+                    [ "Muffin liquorice powder liquorice jujubes biscuit cookie candy canes lemon drops. Liquorice powder carrot cake dragée icing tootsie roll apple pie lemon drops lemon drops. Jujubes danish bear claw cotton candy. Dragée apple pie tiramisu. Sugar plum dessert pastry marzipan chocolate cake dragée sesame snaps. Marshmallow gingerbread lemon drops. Brownie chocolate fruitcake pastry. Powder jelly beans jujubes. Croissant macaroon dessert cookie candy canes jelly jujubes. Muffin liquorice ice cream wafer donut danish soufflé dragée chocolate bar. Candy croissant candy wafer toffee lemon drops croissant danish sugar plum. Cookie cake candy canes. Pastry powder muffin soufflé tootsie roll sweet cookie tiramisu."
                     , "Candy cake danish gingerbread. Caramels toffee cupcake toffee sweet. Gummi bears candy cheesecake sweet. Pie gingerbread sugar plum halvah muffin icing marzipan wafer icing. Candy fruitcake gummies icing marzipan. Halvah jelly beans candy candy canes biscuit bonbon sesame snaps. Biscuit carrot cake croissant cake chocolate lollipop candy biscuit croissant. Topping jujubes apple pie croissant chocolate cake. Liquorice cookie dragée gummies cotton candy fruitcake lemon drops candy canes. Apple pie lemon drops gummies cake chocolate bar cake jelly-o tiramisu. Chocolate bar icing pudding marshmallow cake soufflé soufflé muffin. Powder lemon drops biscuit sugar plum cupcake carrot cake powder cake dragée. Bear claw gummi bears liquorice sweet roll."
                     ]
             )
+        |> Control.field "Show ATAC" (Control.bool False)
 
 
 controlTitleVisibility : Control ( String, Modal.Attribute )
@@ -110,7 +115,7 @@ moduleName =
 
 version : Int
 version =
-    11
+    12
 
 
 {-| -}
@@ -130,7 +135,7 @@ example =
           , result = "If 'dismissOnEscAndOverlayClick' is set to true, closes the modal. Else, does nothing."
           }
         ]
-    , state = init
+    , init = ( init, Cmd.none )
     , update = update
     , subscriptions = subscriptions
     , preview =
@@ -178,6 +183,11 @@ example =
                 ]
             ]
         ]
+    , about =
+        [ Guidance.useATACGuide moduleName
+        , Text.smallBody
+            [ Text.markdown "Use `Button.modal` and/or `ClickableText.modal` within the `Modal` footer." ]
+        ]
     , view =
         \ellieLinkConfig state ->
             let
@@ -197,55 +207,73 @@ example =
                     \_ ->
                         let
                             code =
-                                [ "Modal.view"
-                                , "\n\t{ title = " ++ Code.string settings.title
-                                , "\n\t, wrapMsg = ModalMsg"
-                                , "\n\t, content = [] -- The body of the modal goes in here"
-                                , "\n\t-- Use elements with Button.modal and ClickableText.modal for standardized footer elements"
-                                , "\n\t-- Remember to add an id to the first and final focusable element!"
-                                , "\n\t, footer = [] "
-                                , "\n\t, focusTrap ="
-                                , "\n\t\t{ focus = Focus"
-                                , "\n\t\t, firstId = "
-                                    ++ (if settings.showX then
-                                            Code.string Modal.closeButtonId
+                                [ Code.fromModule moduleName "view"
+                                    ++ Code.record
+                                        [ ( "title", Code.string settings.title )
+                                        , ( "wrapMsg", "ModalMsg" )
+                                        , ( "content", "[] -- The body of the modal goes in here" )
+                                        , ( "footer", "[] -- Use Button.modal and ClickableText.modal for standard styles" )
+                                        , ( "focus", "Focus" )
+                                        , ( "firstId"
+                                          , Code.string
+                                                (if settings.showX then
+                                                    Modal.closeButtonId
 
-                                        else if settings.showContinue then
-                                            Code.string continueButtonId
+                                                 else if settings.showFocusOnTitle then
+                                                    continueButtonId
 
-                                        else
-                                            Code.string closeClickableTextId
-                                       )
-                                , "\n\t\t, lastId ="
-                                    ++ (if settings.showSecondary then
-                                            Code.string closeClickableTextId
+                                                 else
+                                                    closeClickableTextId
+                                                )
+                                          )
+                                        , ( "lastId"
+                                          , Code.string
+                                                (if settings.showSecondary then
+                                                    closeClickableTextId
 
-                                        else if settings.showContinue then
-                                            Code.string continueButtonId
+                                                 else if settings.showFocusOnTitle then
+                                                    continueButtonId
 
-                                        else
-                                            Code.string Modal.closeButtonId
-                                       )
-                                , "\n\t\t}"
-                                , "\n\t}"
-                                , [ if settings.showX then
+                                                 else
+                                                    Modal.closeButtonId
+                                                )
+                                          )
+                                        ]
+                                , Code.listMultiline
+                                    ([ if settings.showX then
                                         Just "Modal.closeButton"
 
-                                    else
+                                       else
                                         Nothing
-                                  , Maybe.map Tuple.first settings.titleVisibility
-                                  , Maybe.map Tuple.first settings.theme
-                                  , Maybe.map Tuple.first settings.customCss
-                                  ]
-                                    |> List.filterMap identity
-                                    |> Code.list
-                                , "\n\t-- you should use the actual state, NEVER hardcode it open like this:"
-                                , "\n\t(Modal.open { startFocusOn = \"\", returnFocusTo = \"\"} |> Tuple.first)"
+                                     , Maybe.map Tuple.first settings.titleVisibility
+                                     , Maybe.map Tuple.first settings.theme
+                                     , Maybe.map Tuple.first settings.customCss
+                                     , if settings.atac then
+                                        (Code.fromModule moduleName "atac"
+                                            ++ Code.withParens
+                                                ("text "
+                                                    ++ Code.string "Fake ATAC -- use the real one in real code!"
+                                                )
+                                        )
+                                            |> Just
+
+                                       else
+                                        Nothing
+                                     ]
+                                        |> List.filterMap identity
+                                    )
+                                    1
+                                , Code.newlineWithIndent 1
+                                , "modalState"
                                 ]
                                     |> String.join ""
                         in
                         [ { sectionName = "Example", code = code } ]
                 }
+            , Heading.h2
+                [ Heading.plaintext "Customizable Example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , launchModalButton settings
             , Modal.view
                 { title = settings.title
@@ -253,8 +281,8 @@ example =
                 , content = [ viewModalContent settings.content ]
                 , footer =
                     List.filterMap identity
-                        [ if settings.showContinue then
-                            Just continueButton
+                        [ if settings.showFocusOnTitle then
+                            Just focusOnModalTitle
 
                           else
                             Nothing
@@ -264,27 +292,25 @@ example =
                           else
                             Nothing
                         ]
-                , focusTrap =
-                    { focus = Focus
-                    , firstId =
-                        if settings.showX then
-                            Modal.closeButtonId
+                , focus = Focus
+                , firstId =
+                    if settings.showX then
+                        Modal.closeButtonId
 
-                        else if settings.showContinue then
-                            continueButtonId
+                    else if settings.showFocusOnTitle then
+                        continueButtonId
 
-                        else
-                            closeClickableTextId
-                    , lastId =
-                        if settings.showSecondary then
-                            closeClickableTextId
+                    else
+                        closeClickableTextId
+                , lastId =
+                    if settings.showSecondary then
+                        closeClickableTextId
 
-                        else if settings.showContinue then
-                            continueButtonId
+                    else if settings.showFocusOnTitle then
+                        continueButtonId
 
-                        else
-                            Modal.closeButtonId
-                    }
+                    else
+                        Modal.closeButtonId
                 }
                 ([ if settings.showX then
                     Just Modal.closeButton
@@ -294,12 +320,51 @@ example =
                  , Maybe.map Tuple.second settings.titleVisibility
                  , Maybe.map Tuple.second settings.theme
                  , Maybe.map Tuple.second settings.customCss
+                 , if settings.atac then
+                    Just (Modal.atac fakeATAC)
+
+                   else
+                    Nothing
                  ]
                     |> List.filterMap identity
                 )
                 state.state
+                |> List.singleton
+                |> div [ onClickStopPropagation SwallowEvent ]
             ]
     }
+
+
+fakeATAC : Html msg
+fakeATAC =
+    Html.aside
+        [ Attributes.css
+            [ Css.position Css.fixed
+            , Css.bottom Css.zero
+            , Css.left Css.zero
+            , Css.maxWidth (Css.px 480)
+            , Css.backgroundColor Colors.gray96
+            , Css.borderTop3 (Css.px 1) Css.solid Colors.gray75
+            , Css.borderRight3 (Css.px 1) Css.solid Colors.gray75
+            , Css.minHeight (Css.px 80)
+            , Css.padding (Css.px 8)
+            , Fonts.baseFont
+            , Css.zIndex (Css.int 1)
+            ]
+        ]
+        [ Heading.h2
+            [ Heading.plaintext "(Fake) Announcement history"
+            ]
+        , Text.smallBody
+            [ Text.html
+                [ text "NRI employees can learn more about the real ATAC in "
+                , ClickableText.link "Assistive Technology Announcement Center (“ATAC”)"
+                    [ ClickableText.appearsInline
+                    , ClickableText.linkExternal "https://paper.dropbox.com/doc/Assistive-Technology-Announcement-Center-ATAC--B_GuqwWltzU432ueq7p6Z42mAg-bOnmcnzOj631NRls1IBe3"
+                    ]
+                ]
+            ]
+        ]
 
 
 launchModalButton : ViewSettings -> Html Msg
@@ -309,7 +374,7 @@ launchModalButton settings =
             "launch-modal"
 
         startFocusId =
-            if settings.showContinue then
+            if settings.showFocusOnTitle then
                 Just continueButtonId
 
             else if settings.showX then
@@ -351,10 +416,10 @@ continueButtonId =
     "continue-button-id"
 
 
-continueButton : Html Msg
-continueButton =
-    Button.button "Continue"
-        [ Button.onClick CloseModal
+focusOnModalTitle : Html Msg
+focusOnModalTitle =
+    Button.button "Focus on modal title"
+        [ Button.onClick (Focus Modal.titleId)
         , Button.id continueButtonId
         , Button.modal
         ]
@@ -382,6 +447,7 @@ type Msg
     | UpdateSettings (Control ViewSettings)
     | Focus String
     | Focused (Result Dom.Error ())
+    | SwallowEvent
 
 
 {-| -}
@@ -399,27 +465,29 @@ update msg state =
     case msg of
         OpenModal config ->
             let
-                ( newState, cmd ) =
+                ( newState, startFocusOn ) =
                     Modal.open config
             in
             ( { state | state = newState }
-            , Cmd.map ModalMsg cmd
+            , Task.attempt Focused (Dom.focus startFocusOn)
             )
 
         ModalMsg modalMsg ->
             case Modal.update updateConfig modalMsg state.state of
-                ( newState, cmd ) ->
+                ( newState, maybeFocus ) ->
                     ( { state | state = newState }
-                    , Cmd.map ModalMsg cmd
+                    , Maybe.map (Task.attempt Focused << Dom.focus) maybeFocus
+                        |> Maybe.withDefault Cmd.none
                     )
 
         CloseModal ->
             let
-                ( newState, cmd ) =
+                ( newState, maybeFocus ) =
                     Modal.close state.state
             in
             ( { state | state = newState }
-            , Cmd.map ModalMsg cmd
+            , Maybe.map (Task.attempt Focused << Dom.focus) maybeFocus
+                |> Maybe.withDefault Cmd.none
             )
 
         UpdateSettings value ->
@@ -429,6 +497,9 @@ update msg state =
             ( state, Task.attempt Focused (Dom.focus id) )
 
         Focused _ ->
+            ( state, Cmd.none )
+
+        SwallowEvent ->
             ( state, Cmd.none )
 
 

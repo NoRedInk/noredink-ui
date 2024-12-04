@@ -1,12 +1,14 @@
 module TabsInternal.V2 exposing
     ( Config, views
     , Tab, fromList
+    , LabelSource(..)
     )
 
 {-|
 
 @docs Config, views
 @docs Tab, fromList
+@docs Label
 
 -}
 
@@ -19,8 +21,9 @@ import Html.Styled as Html exposing (Attribute, Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
 import Html.Styled.Keyed as Keyed
+import Nri.Ui.FocusLoop.V1 as FocusLoop
 import Nri.Ui.FocusRing.V1 as FocusRing
-import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (safeId, safeIdWithPrefix)
+import Nri.Ui.Html.Attributes.V2 as AttributesExtra exposing (nriDescription, safeId, safeIdWithPrefix)
 import Nri.Ui.Tooltip.V3 as Tooltip
 
 
@@ -43,10 +46,24 @@ type alias Tab id msg =
     , tabView : List (Html msg)
     , panelView : Html msg
     , spaHref : Maybe String
-    , disabled : Bool
-    , labelledBy : Maybe String
+    , label : LabelSource
     , describedBy : List String
     }
+
+
+{-| Determines what the accessible label for the tab will be.
+
+Default behavior is to use the inner text of the tab, but we let users of the
+API override this via aria-label or aria-describedby attributes. This might be
+useful if you are using icon-only tabs. Otherwise, depending on how the SVG is
+set up, you could end up with no accessible labels, or native OS tooltips
+showing in addition to our own. See QUO-630.
+
+-}
+type LabelSource
+    = FromInnerText
+    | FixedLabel String
+    | LabelledBy String
 
 
 {-| -}
@@ -61,8 +78,7 @@ fromList { id, idString } attributes =
             , tabView = []
             , panelView = Html.text ""
             , spaHref = Nothing
-            , disabled = False
-            , labelledBy = Nothing
+            , label = FromInnerText
             , describedBy = []
             }
     in
@@ -82,6 +98,27 @@ viewTabs config =
     let
         anyTooltips =
             List.any (.tabTooltip >> List.isEmpty >> not) config.tabs
+
+        onFocus : Tab id msg -> msg
+        onFocus tab =
+            config.focusAndSelect { select = tab.id, focus = Just (safeId tab.idString) }
+
+        tabs : List (Html msg)
+        tabs =
+            config.tabs
+                |> FocusLoop.addEvents
+                    { focus = onFocus
+                    , leftRight = True
+                    , upDown = False
+                    }
+                |> List.indexedMap (viewTab_ config)
+
+        tabsAttribute =
+            -- used to identify the actual container of the tabs. we should
+            -- ideally be able to target `[role=tablist]` when needed but that
+            -- won't work because the markup changes slightly in the presence of
+            -- tooltips (see comment below!).
+            nriDescription "Nri-Ui__tabs"
     in
     if anyTooltips then
         -- if any tooltip setup is present, we use aria-owns to associate the
@@ -95,21 +132,25 @@ viewTabs config =
                 , Aria.owns (List.map (safeId << .idString) config.tabs)
                 ]
                 []
-            , Html.div [ Attributes.css config.tabListStyles ]
-                (List.indexedMap (viewTab_ config) config.tabs)
+            , Html.div
+                [ tabsAttribute
+                , Attributes.css config.tabListStyles
+                ]
+                tabs
             ]
 
     else
         -- if no tooltips are present, we can rely on the DOM structure to set up the relationships correctly.
         Html.div
             [ Role.tabList
+            , tabsAttribute
             , Attributes.css config.tabListStyles
             ]
-            (List.indexedMap (viewTab_ config) config.tabs)
+            tabs
 
 
-viewTab_ : Config id msg -> Int -> Tab id msg -> Html msg
-viewTab_ config index tab =
+viewTab_ : Config id msg -> Int -> ( Tab id msg, List (Key.Event msg) ) -> Html msg
+viewTab_ config index ( tab, keyEvents ) =
     let
         isSelected =
             config.selected == tab.id
@@ -156,18 +197,20 @@ viewTab_ config index tab =
                        , -- check for isSelected because otherwise users won't
                          -- be able to focus on the current tab with the
                          -- keyboard.
-                         Attributes.disabled (not isSelected && tab.disabled)
-                       , Aria.selected isSelected
+                         Aria.selected isSelected
                        , Role.tab
                        , Aria.controls [ tabToBodyId tab.idString ]
                        , Attributes.id (safeId tab.idString)
-                       , Key.onKeyUpPreventDefault (keyEvents config tab)
+                       , Key.onKeyUpPreventDefault keyEvents
                        ]
-                    ++ (case tab.labelledBy of
-                            Nothing ->
+                    ++ (case tab.label of
+                            FromInnerText ->
                                 []
 
-                            Just labelledById ->
+                            FixedLabel label ->
+                                [ Aria.label label ]
+
+                            LabelledBy labelledById ->
                                 [ Aria.labelledBy labelledById ]
                        )
                     ++ (case tab.describedBy of
@@ -180,17 +223,11 @@ viewTab_ config index tab =
                 )
                 tab.tabView
     in
-    -- If the labelledByAttribute gets passed in, we're using an external
-    -- tooltip, so we override any existing internal tooltip to not create
-    -- accessibility problems.
-    case ( tab.labelledBy, tab.tabTooltip ) of
-        ( Just _, _ ) ->
+    case tab.tabTooltip of
+        [] ->
             buttonOrLink []
 
-        ( _, [] ) ->
-            buttonOrLink []
-
-        ( Nothing, tooltipAttributes ) ->
+        tooltipAttributes ->
             Tooltip.view
                 { id = safeIdWithPrefix "tab-tooltip" tab.idString
                 , trigger = \eventHandlers -> buttonOrLink eventHandlers
@@ -201,51 +238,6 @@ viewTab_ config index tab =
                  ]
                     ++ tooltipAttributes
                 )
-
-
-keyEvents : Config id msg -> Tab id msg -> List (Key.Event msg)
-keyEvents { focusAndSelect, tabs } thisTab =
-    let
-        onFocus : Tab id msg -> msg
-        onFocus tab =
-            focusAndSelect { select = tab.id, focus = Just (safeId tab.idString) }
-
-        findAdjacentTab : Tab id msg -> ( Bool, Maybe msg ) -> ( Bool, Maybe msg )
-        findAdjacentTab tab ( isAdjacentTab, acc ) =
-            if isAdjacentTab then
-                ( False, Just (onFocus tab) )
-
-            else
-                ( tab.id == thisTab.id, acc )
-
-        activeTabs : List (Tab id msg)
-        activeTabs =
-            List.filter (not << .disabled) tabs
-
-        goToNextTab : Maybe msg
-        goToNextTab =
-            List.foldl findAdjacentTab
-                ( False
-                , -- if there is no adjacent tab, default to the first tab
-                  Maybe.map onFocus (List.head activeTabs)
-                )
-                activeTabs
-                |> Tuple.second
-
-        goToPreviousTab : Maybe msg
-        goToPreviousTab =
-            List.foldr findAdjacentTab
-                ( False
-                , -- if there is no adjacent tab, default to the last tab
-                  Maybe.map onFocus (List.head (List.reverse activeTabs))
-                )
-                activeTabs
-                |> Tuple.second
-    in
-    List.filterMap identity
-        [ Maybe.map Key.right goToNextTab
-        , Maybe.map Key.left goToPreviousTab
-        ]
 
 
 viewTabPanels : Config id msg -> Html msg

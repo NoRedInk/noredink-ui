@@ -13,12 +13,12 @@ module Nri.Ui.Tooltip.V3 exposing
     , alignStartForMobile, alignMiddleForMobile, alignEndForMobile
     , exactWidth, fitToContent
     , smallPadding, normalPadding, customPadding
-    , onToggle
+    , onToggle, onTriggerKeyDown, stopTooltipMousePropagation
     , open
     , css, notMobileCss, mobileCss, quizEngineMobileCss, narrowMobileCss, containerCss
     , custom
     , nriDescription, testId
-    , primaryLabel, auxiliaryDescription, disclosure
+    , primaryLabel, auxiliaryDescription, helpfullyDisabled, disclosure
     )
 
 {-| Patch changes:
@@ -31,6 +31,13 @@ module Nri.Ui.Tooltip.V3 exposing
   - adds narrowMobileCss
   - use internal `Content` module
   - adds `paragraph` and `markdown` support
+  - add partially-transparent white border around tooltips
+  - Use Nri.Ui.WhenFocusLeaves.V2
+  - prevent default and stop propagation on click for disclosure tooltips
+  - adds `helpfullyDisabled` option
+  - adds `onTriggerKeyDown` option
+  - add `stopTooltipMousePropagation` option
+  - use `Content.markdownInline` instead of `Content.markdown`
 
 Changes from V2:
 
@@ -68,12 +75,12 @@ These tooltips aim to follow the accessibility recommendations from:
 
 @docs exactWidth, fitToContent
 @docs smallPadding, normalPadding, customPadding
-@docs onToggle
+@docs onToggle, onTriggerKeyDown, stopTooltipMousePropagation
 @docs open
 @docs css, notMobileCss, mobileCss, quizEngineMobileCss, narrowMobileCss, containerCss
 @docs custom
 @docs nriDescription, testId
-@docs primaryLabel, auxiliaryDescription, disclosure
+@docs primaryLabel, auxiliaryDescription, helpfullyDisabled, disclosure
 
 -}
 
@@ -85,9 +92,11 @@ import Content
 import Css exposing (Color, Px, Style)
 import Css.Global as Global
 import Css.Media
+import EventExtras as Events
 import Html.Styled as Root
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
+import Json.Decode
 import Nri.Ui
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.Colors.V1 as Colors
@@ -96,7 +105,7 @@ import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 as MediaQuery exposing (mobileBreakpoint, narrowMobileBreakpoint, quizEngineBreakpoint)
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.UiIcon.V1 as UiIcon
-import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
+import Nri.Ui.WhenFocusLeaves.V2 as WhenFocusLeaves
 
 
 {-| -}
@@ -122,6 +131,8 @@ type alias Tooltip msg =
     , padding : Padding
     , trigger : Maybe (Trigger msg)
     , triggerAttributes : List (Html.Attribute msg)
+    , triggerKeyDownEvents : List (Key.Event msg)
+    , stopTooltipMousePropagation : Maybe msg
     , purpose : Purpose
     , isOpen : Bool
     }
@@ -154,6 +165,8 @@ buildAttributes =
             , padding = NormalPadding
             , trigger = Nothing
             , triggerAttributes = []
+            , triggerKeyDownEvents = []
+            , stopTooltipMousePropagation = Nothing
             , purpose = PrimaryLabel
             , isOpen = False
             }
@@ -178,8 +191,8 @@ paragraph =
 {-| Provide a string that will be rendered as markdown.
 -}
 markdown : String -> Attribute msg
-markdown =
-    Attribute << Content.markdown
+markdown string =
+    Attribute (\tooltipConfig -> { tooltipConfig | content = Content.markdownInline string })
 
 
 {-| Provide a list of custom HTML.
@@ -802,6 +815,30 @@ onToggle msg =
     Attribute (\config -> { config | trigger = Just (OnHover msg) })
 
 
+{-| Add additional keydown handlers to the trigger element.
+
+This is required rather than applying them directly to the trigger element because the attributes
+passed into the trigger view function (to be applied to the trigger) include an onKeyDown event
+handler that is used to close the tooltip when the escape key is pressed, and Elm requires that
+only one onKeyDown event handler be applied to an element (otherwise, the last one wins).
+
+-}
+onTriggerKeyDown : List (Key.Event msg) -> Attribute msg
+onTriggerKeyDown keyEvents =
+    Attribute (\config -> { config | triggerKeyDownEvents = keyEvents })
+
+
+{-| Stops propagation of mouseup / mousedown / click on the tooltip bubble.
+
+Use this if your tooltip is contained withing a clickable/draggable element and you do not
+want clicking on the tooltip bubble to act like a click on the parent.
+
+-}
+stopTooltipMousePropagation : msg -> Attribute msg
+stopTooltipMousePropagation noopMsg =
+    Attribute (\config -> { config | stopTooltipMousePropagation = Just noopMsg })
+
+
 type Purpose
     = PrimaryLabel
     | AuxillaryDescription
@@ -828,6 +865,16 @@ An auxiliary description is used when the tooltip content provides supplementary
 -}
 auxiliaryDescription : Attribute msg
 auxiliaryDescription =
+    Attribute (\config -> { config | purpose = AuxillaryDescription })
+
+
+{-| Used when the tooltip trigger is disabled.
+
+Provides information about why the tooltip trigger is disabled.
+
+-}
+helpfullyDisabled : Attribute msg
+helpfullyDisabled =
     Attribute (\config -> { config | purpose = AuxillaryDescription })
 
 
@@ -932,14 +979,14 @@ viewTooltip_ { trigger, id } tooltip =
                             ( [ Events.onMouseEnter (msg True)
                               , Events.onMouseLeave (msg False)
                               , WhenFocusLeaves.onKeyDown []
-                                    { firstId = triggerId
-                                    , lastId = Maybe.withDefault triggerId lastId
+                                    { firstIds = [ triggerId ]
+                                    , lastIds = [ Maybe.withDefault triggerId lastId ]
                                     , tabBackAction = msg False
                                     , tabForwardAction = msg False
                                     }
                               ]
-                            , [ Events.onClick (msg (not tooltip.isOpen))
-                              , Key.onKeyDown [ Key.escape (msg False) ]
+                            , [ Events.onClickPreventDefaultAndStopPropagation (msg (not tooltip.isOpen))
+                              , Key.onKeyDown (Key.escape (msg False) :: tooltip.triggerKeyDownEvents)
                               ]
                             )
 
@@ -949,12 +996,12 @@ viewTooltip_ { trigger, id } tooltip =
                               ]
                             , [ Events.onFocus (msg True)
                               , Events.onBlur (msg False)
-                              , Key.onKeyDown [ Key.escape (msg False) ]
+                              , Key.onKeyDown (Key.escape (msg False) :: tooltip.triggerKeyDownEvents)
                               ]
                             )
 
                 Nothing ->
-                    ( [], [] )
+                    ( [], [ Key.onKeyDown tooltip.triggerKeyDownEvents ] )
     in
     Nri.Ui.styled Root.div
         "Nri-Ui-Tooltip-V2"
@@ -1053,7 +1100,7 @@ viewTooltip tooltipId config =
           -- *already have* an accessible name. It is not helpful to have the "Print" read out twice.
           Aria.hidden (config.purpose == PrimaryLabel)
         ]
-        [ Html.div
+        [ Root.div
             ([ Attributes.css
                 ([ Css.boxSizing Css.borderBox
                  , Css.borderRadius (Css.px 8)
@@ -1067,7 +1114,7 @@ viewTooltip tooltipId config =
                  , Css.position Css.absolute
                  , Css.zIndex (Css.int 100)
                  , Css.backgroundColor Colors.navy
-                 , Css.border3 (Css.px 1) Css.solid Colors.navy
+                 , Css.border3 (Css.px 1) Css.solid outlineColor
                  , MediaQuery.withViewport (Just mobileBreakpoint) Nothing <|
                     [ positioning config.direction config.alignment
                     , applyTail config.direction
@@ -1085,14 +1132,16 @@ viewTooltip tooltipId config =
                     , applyTail narrowMobileDirection
                     ]
                  , Fonts.baseFont
-                 , Css.fontSize (Css.px 16)
+                 , Css.fontSize (Css.px 15)
                  , Css.fontWeight (Css.int 600)
                  , Css.color Colors.white
                  , Shadows.high
                  , Global.descendants
                     [ Global.a
-                        [ Css.textDecoration Css.underline
-                        , Css.color Colors.white
+                        [ Css.color Colors.white
+                        , Css.borderColor Colors.white
+                        , Css.textDecoration Css.none
+                        , Css.borderBottom3 (Css.px 1) Css.solid Colors.white
                         , Css.visited [ Css.color Colors.white ]
                         , Css.hover [ Css.color Colors.white ]
                         , Css.pseudoClass "focus-visible"
@@ -1111,7 +1160,19 @@ viewTooltip tooltipId config =
              , Attributes.class "dont-disable-animation"
              , Role.toolTip
              ]
-                ++ config.attributes
+                ++ List.map (Attributes.map never) config.attributes
+                ++ (case config.stopTooltipMousePropagation of
+                        Nothing ->
+                            []
+
+                        Just msg ->
+                            -- Adding events to a div is generally "bad" which is why `Accessibility.Styled` does not allow it.
+                            -- But in this case we only need to add events to stop them from propagating, so that feels fine in spirit.
+                            [ Events.stopPropagationOn "mousedown" (Json.Decode.succeed ( msg, True ))
+                            , Events.stopPropagationOn "mouseup" (Json.Decode.succeed ( msg, True ))
+                            , Events.stopPropagationOn "click" (Json.Decode.succeed ( msg, True ))
+                            ]
+                   )
                 ++ [ Attributes.id tooltipId ]
             )
             (config.content
@@ -1143,6 +1204,11 @@ tailSize =
 tooltipColor : Color
 tooltipColor =
     Colors.navy
+
+
+outlineColor : Color
+outlineColor =
+    Css.rgba 255 255 255 0.5
 
 
 offCenterOffset : Float
@@ -1338,7 +1404,7 @@ bottomTail : Style
 bottomTail =
     Css.batch
         [ Css.before
-            [ Css.borderTopColor tooltipColor
+            [ Css.borderTopColor outlineColor
             , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
             , Css.marginLeft (Css.px (-tailSize - 1))
             ]
@@ -1354,7 +1420,7 @@ topTail : Style
 topTail =
     Css.batch
         [ Css.before
-            [ Css.borderBottomColor tooltipColor
+            [ Css.borderBottomColor outlineColor
             , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
             , Css.marginLeft (Css.px (-tailSize - 1))
             ]
@@ -1370,7 +1436,7 @@ rightTail : Style
 rightTail =
     Css.batch
         [ Css.before
-            [ Css.borderLeftColor tooltipColor
+            [ Css.borderLeftColor outlineColor
             , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
             ]
         , Css.after
@@ -1386,7 +1452,7 @@ leftTail : Style
 leftTail =
     Css.batch
         [ Css.before
-            [ Css.borderRightColor tooltipColor
+            [ Css.borderRightColor outlineColor
             , Css.property "border-width" (String.fromFloat (tailSize + 1) ++ "px")
             ]
         , Css.after

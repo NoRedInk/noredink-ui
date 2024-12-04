@@ -2,7 +2,7 @@ module Nri.Ui.ClickableText.V3 exposing
     ( button
     , link
     , Attribute
-    , small, medium, large, modal
+    , caption, small, medium, large, modal
     , appearsInline
     , onClick, submit, opensModal
     , href, linkSpa, linkExternal, linkWithMethod, linkWithTracking, linkExternalWithTracking
@@ -33,6 +33,10 @@ module Nri.Ui.ClickableText.V3 exposing
   - adds `hideTextForMobile` and `hideTextAt`
   - adds `submit` and `opensModal`
   - adds `disabled`
+  - adds `caption` size that matches up with Text.caption's font size
+  - replaces the `disabled` attribute with `aria-disabled="true"`
+  - removes click handler from disabled buttons
+  - prevents default behavior for disabled submit buttons by setting `type="button"`
 
 
 # Changes from V2
@@ -68,7 +72,7 @@ HTML `<a>` elements and are created here with `*Link` functions.
 
 ## Sizing
 
-@docs small, medium, large, modal
+@docs caption, small, medium, large, modal
 
 
 ## Appearance
@@ -122,6 +126,13 @@ label label_ =
     set (\attributes -> { attributes | label = label_ })
 
 
+{-| This size setting corresponds to Text.caption's font size.
+-}
+caption : Attribute msg
+caption =
+    set (\attributes -> { attributes | size = Caption })
+
+
 {-| -}
 small : Attribute msg
 small =
@@ -154,7 +165,8 @@ modal =
 
 
 type Size
-    = Small
+    = Caption
+    | Small
     | Medium
     | Large
 
@@ -479,6 +491,9 @@ viewContent config =
 
         iconSize =
             case config.size of
+                Caption ->
+                    Css.px 3
+
                 Small ->
                     Css.px 3
 
@@ -493,7 +508,6 @@ viewContent config =
                 [ Attributes.css
                     [ Css.display Css.inlineFlex
                     , Css.alignItems Css.center
-                    , Css.property "line-height" "normal"
                     , Css.fontSize fontSize
                     ]
                 ]
@@ -565,6 +579,9 @@ clickableTextButtonStyles =
 sizeToPx : Size -> Css.Px
 sizeToPx size =
     case size of
+        Caption ->
+            Css.px 13
+
         Small ->
             Css.px 15
 

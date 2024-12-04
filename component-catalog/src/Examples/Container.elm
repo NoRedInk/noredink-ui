@@ -18,6 +18,7 @@ import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Spacing.V1 as Spacing
 
 
 moduleName : String
@@ -37,7 +38,7 @@ example =
     , version = version
     , categories = [ Layout ]
     , keyboardSupport = []
-    , state = init
+    , init = ( init, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -47,6 +48,7 @@ example =
             , Container.css [ Css.marginTop (Css.px 8) ]
             ]
         ]
+    , about = []
     , view =
         \ellieLinkConfig state ->
             let
@@ -85,6 +87,10 @@ example =
                           }
                         ]
                 }
+            , Heading.h2
+                [ Heading.plaintext "Customizable Examples"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , viewExample
                 { name = "Default Container"
                 , description = "Your go-to container."
@@ -129,10 +135,8 @@ viewExample { name, description } attributes =
 
 viewExampleCode : List String -> String
 viewExampleCode attributes =
-    moduleName
-        ++ ".view\n    [ "
-        ++ String.join "\n    , " attributes
-        ++ "\n    ]"
+    Code.fromModule moduleName "view"
+        ++ Code.listMultiline attributes 1
 
 
 {-| -}
@@ -145,13 +149,19 @@ type alias State =
 init : State
 init =
     { control =
-        ControlExtra.list
-            |> ControlExtra.optionalListItem "paddingPx" controlPaddingPx
-            |> CommonControls.css { moduleName = moduleName, use = Container.css }
-            |> CommonControls.mobileCss { moduleName = moduleName, use = Container.mobileCss }
-            |> CommonControls.quizEngineMobileCss { moduleName = moduleName, use = Container.quizEngineMobileCss }
-            |> CommonControls.notMobileCss { moduleName = moduleName, use = Container.notMobileCss }
-            |> ControlExtra.listItem "content" controlContent
+        Control.list
+            |> ControlExtra.listItems "Content"
+                (Control.list
+                    |> ControlExtra.listItem "content" controlContent
+                )
+            |> ControlExtra.listItems "CSS & Style options"
+                (Control.list
+                    |> ControlExtra.optionalListItem "paddingPx" controlPaddingPx
+                    |> CommonControls.css { moduleName = moduleName, use = Container.css }
+                    |> CommonControls.mobileCss { moduleName = moduleName, use = Container.mobileCss }
+                    |> CommonControls.quizEngineMobileCss { moduleName = moduleName, use = Container.quizEngineMobileCss }
+                    |> CommonControls.notMobileCss { moduleName = moduleName, use = Container.notMobileCss }
+                )
     }
 
 
@@ -163,7 +173,7 @@ controlPaddingPx =
             , Container.paddingPx val
             )
         )
-        (ControlExtra.float 20)
+        (Control.float 20)
 
 
 controlContent : Control ( String, Container.Attribute msg )

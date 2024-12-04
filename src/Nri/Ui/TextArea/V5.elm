@@ -2,14 +2,14 @@ module Nri.Ui.TextArea.V5 exposing
     ( view, generateId
     , Attribute
     , value
-    , onInput, onBlur
+    , onInput, onBlur, onFocus
     , hiddenLabel, visibleLabel
     , css, noMargin
     , standard, writing
     , autoResize, autoResizeSingleLine
     , custom, nriDescription, id, testId
     , placeholder, autofocus
-    , disabled, errorIf, errorMessage, guidance
+    , disabled, errorIf, errorMessage, guidance, guidanceHtml
     )
 
 {-|
@@ -20,7 +20,9 @@ module Nri.Ui.TextArea.V5 exposing
 
 ### Patch changes
 
-  - no longer defaults the placeholder value to the label text
+  - No longer defaults the placeholder value to the label text
+  - Adjust disabled styles
+  - Fix initial autoresize not working in Firefox
 
 
 ### Changes from V4
@@ -30,6 +32,7 @@ module Nri.Ui.TextArea.V5 exposing
   - Adds guidance and errorMessage support
   - Adds id, custom, nriDescription, testId, css, and noMargin
   - Adds disabled support
+  - Adds onFocus
 
 
 ## The next version of TextArea should:
@@ -63,7 +66,7 @@ custom element, or else autosizing will break! This means doing the following:
 
 ### Event handlers
 
-@docs onInput, onBlur
+@docs onInput, onBlur, onFocus
 
 
 ### Visual behavior
@@ -78,7 +81,7 @@ custom element, or else autosizing will break! This means doing the following:
 
 @docs custom, nriDescription, id, testId
 @docs placeholder, autofocus
-@docs disabled, errorIf, errorMessage, guidance
+@docs disabled, errorIf, errorMessage, guidance, guidanceHtml
 
 -}
 
@@ -98,13 +101,14 @@ import Nri.Ui.InputStyles.V4 as InputStyles exposing (Theme(..))
 -}
 type alias Config msg =
     { theme : Theme
-    , guidance : Guidance
+    , guidance : Guidance msg
     , error : ErrorState
     , hideLabel : Bool
     , value : String
     , autofocus : Bool
     , onInput : Maybe (String -> msg)
     , onBlur : Maybe msg
+    , onFocus : Maybe msg
     , placeholder : Maybe String
     , noMarginTop : Bool
     , containerCss : List Css.Style
@@ -125,6 +129,7 @@ defaultConfig =
     , autofocus = False
     , onInput = Nothing
     , onBlur = Nothing
+    , onFocus = Nothing
     , placeholder = Nothing
     , noMarginTop = False
     , containerCss = []
@@ -213,6 +218,13 @@ guidance =
     Attribute << InputErrorAndGuidanceInternal.setGuidance
 
 
+{-| A guidance message (HTML) shows below the input, unless an error message is showing instead.
+-}
+guidanceHtml : List (Html msg) -> Attribute msg
+guidanceHtml =
+    Attribute << InputErrorAndGuidanceInternal.setGuidanceHtml
+
+
 {-| Hides the visible label. (There will still be an invisible label for screen readers.)
 -}
 hiddenLabel : Attribute msg
@@ -227,7 +239,7 @@ visibleLabel =
     Attribute (\soFar -> { soFar | hideLabel = False })
 
 
-{-| Produce the given `msg` when the field is focused.
+{-| Produce the given `msg` when the input is changed.
 -}
 onInput : (String -> msg) -> Attribute msg
 onInput msg =
@@ -239,6 +251,13 @@ onInput msg =
 onBlur : msg -> Attribute msg
 onBlur msg =
     Attribute (\soFar -> { soFar | onBlur = Just msg })
+
+
+{-| Produce the given `msg` when the field is focused.
+-}
+onFocus : msg -> Attribute msg
+onFocus msg =
+    Attribute (\soFar -> { soFar | onFocus = Just msg })
 
 
 {-| Sets the `autofocus` attribute of the textarea to true.
@@ -366,6 +385,7 @@ view_ label config =
             , Css.batch
                 (if config.disabled then
                     [ Css.boxShadow Css.none |> Css.important
+                    , Css.borderColor Colors.gray85 |> Css.important
                     , Css.backgroundColor Colors.gray85
                     ]
 
@@ -376,6 +396,8 @@ view_ label config =
             ([ Maybe.map Events.onInput config.onInput
                 |> Maybe.withDefault Extra.none
              , Maybe.map Events.onBlur config.onBlur
+                |> Maybe.withDefault Extra.none
+             , Maybe.map Events.onFocus config.onFocus
                 |> Maybe.withDefault Extra.none
              , Attributes.value config.value
              , Attributes.disabled config.disabled

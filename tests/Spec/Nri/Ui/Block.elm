@@ -6,7 +6,7 @@ import Dict
 import Expect
 import Html.Attributes as Attributes
 import Html.Styled
-import Nri.Ui.Block.V4 as Block
+import Nri.Ui.Block.V6 as Block
 import Spec.PseudoElements exposing (hasAfter, hasBefore)
 import Test exposing (..)
 import Test.Html.Query as Query
@@ -15,11 +15,12 @@ import Test.Html.Selector as Selector
 
 spec : Test
 spec =
-    describe "Nri.Ui.Block.V4"
+    describe "Nri.Ui.Block"
         [ describe "content" contentSpec
         , describe "labelId" labelIdSpec
         , describe "labelMarkdown" labelMarkdownSpec
         , describe "getLabelPositions" getLabelPositionsSpec
+        , describe "renderReadAloud" renderReadAloudTests
         ]
 
 
@@ -40,27 +41,25 @@ contentSpec =
                     ]
     , test "content with phrase and blank" <|
         \() ->
-            [ Block.content (Block.phrase "Yo hello" ++ [ Block.blank ]) ]
+            [ Block.content (Block.phrase "Yo hello" ++ [ Block.blank { widthInChars = 8 } ]) ]
                 |> toQuery
                 |> Query.has [ Selector.text "Yo", Selector.text "blank" ]
     , test "content with blankWithQuestionBox" <|
         \() ->
-            [ Block.content [ Block.blankWithId "block-id" ] ]
+            [ Block.content [ Block.blank { widthInChars = 8 } ] ]
                 |> toQuery
                 |> Query.has
                     [ Selector.all
-                        [ Selector.attribute (Attributes.id "block-id")
-                        , Selector.containing [ Selector.text "blank" ]
+                        [ Selector.containing [ Selector.text "blank" ]
                         ]
                     ]
     , test "content with wordWithId" <|
         \() ->
-            [ Block.content [ Block.wordWithId { word = "word", id = "block-id" } ] ]
+            [ Block.content (Block.phrase "word") ]
                 |> toQuery
                 |> Query.has
                     [ Selector.all
-                        [ Selector.attribute (Attributes.id "block-id")
-                        , Selector.containing [ Selector.text "word" ]
+                        [ Selector.containing [ Selector.text "word" ]
                         ]
                     ]
     ]
@@ -129,9 +128,6 @@ labelMarkdownSpec =
                     -- should not include markdown (e.g., no asterisks)
                     , hasBefore "start This is markdown" "Hello"
                     , hasAfter "end This is markdown" "there"
-
-                    -- The roledescription should also not include markdown special characters
-                    , Query.has [ Selector.attribute (Aria.roleDescription "This is markdown highlight") ]
                     ]
     ]
 
@@ -638,6 +634,67 @@ getLabelPositionsSpec =
                      ]
                         |> Dict.fromList
                     )
+    ]
+
+
+renderReadAloudTests : List Test
+renderReadAloudTests =
+    [ test "Simple Text" <|
+        \_ ->
+            Block.renderReadAloud [ Block.plaintext "Simple Text" ]
+                |> Expect.equal "Simple Text"
+    , test "Simple emphasize block" <|
+        \_ ->
+            Block.renderReadAloud [ Block.emphasize, Block.content (Block.phrase "Simple Text") ]
+                |> Expect.equal "Simple Text"
+    , test "Simple blank" <|
+        \_ ->
+            Block.renderReadAloud []
+                |> Expect.equal "blank"
+    , test "Bold markup is ignored" <|
+        \_ ->
+            Block.renderReadAloud
+                [ Block.content
+                    (List.concat
+                        [ Block.phrase "Hello there "
+                        , [ Block.bold (Block.phrase "Mr.") ]
+                        , Block.phrase " President"
+                        ]
+                    )
+                ]
+                |> Expect.equal "Hello there Mr. President"
+    , test "Italic markup is ignored" <|
+        \_ ->
+            Block.renderReadAloud
+                [ Block.content
+                    (List.concat
+                        [ Block.phrase "Hello there "
+                        , [ Block.italic (Block.phrase "Mr.") ]
+                        , Block.phrase " President"
+                        ]
+                    )
+                ]
+                |> Expect.equal "Hello there Mr. President"
+    , test "Blanks in content are read" <|
+        \_ ->
+            Block.renderReadAloud
+                [ Block.content
+                    (List.concat
+                        [ Block.phrase "Hello there "
+                        , [ Block.blank { widthInChars = 5 } ]
+                        , Block.phrase " President"
+                        ]
+                    )
+                ]
+                |> Expect.equal "Hello there blank President"
+    , test "Label text is ignored" <|
+        \_ ->
+            Block.renderReadAloud
+                [ Block.emphasize
+                , Block.plaintext "Hello there Mr. President"
+                , Block.label "Read this"
+                ]
+                |> Expect.equal "Hello there Mr. President"
     ]
 
 

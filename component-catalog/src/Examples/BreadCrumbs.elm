@@ -18,12 +18,15 @@ import Example exposing (Example)
 import Html.Styled.Attributes exposing (css, href)
 import Nri.Ui.AssignmentIcon.V2 as AssignmentIcon
 import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs exposing (BreadCrumbAttribute, BreadCrumbs)
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Html.V3 exposing (viewJust)
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Table.V7 as Table
+import Nri.Ui.Table.V8 as Table
+import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -49,7 +52,7 @@ example =
     , version = version
     , categories = [ Navigation ]
     , keyboardSupport = []
-    , state = init
+    , init = ( init, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -68,6 +71,21 @@ example =
             , previewArrowRight
             , previewIcon (Svg.withColor Colors.ochre AssignmentIcon.quickWriteCircled)
             , previewText "Sub-Category "
+            ]
+        ]
+    , about =
+        [ Text.smallBody [ Text.markdown "`BreadCrumbs` orient users and provide convenient links to go \"up\" to parent pages." ]
+        , Text.smallBody [ Text.markdown "Typically, you'll use `Header.view` (rather than `BreadCrumbs.view`) to render primary/`h1`-level `BreadCrumbs`. You may use `BreadCrumbs.viewSecondary` to render `h2`-level `BreadCrumbs`." ]
+        , Text.smallBody [ Text.markdown "You should use `BreadCrumbs.headerId` to move focus to the current `h1` or `h2` and `BreadCrumbs.toPageTitle` to dynamically change the title when the page context changes." ]
+        , Text.smallBody
+            [ Text.html
+                [ text "This and more is explained in depth in Tessa's "
+                , ClickableText.link "BreadCrumbs component demo"
+                    [ ClickableText.linkExternal "https://noredink.zoom.us/rec/play/x1x2Vz0fpj-qz0qf5gi5cpTy9Is1sIWGfwCoZ1_iOELkmkBtGUpdKyD6TydBM9vvFgJdD0jP3DUmZp4K.BU8uDgAVoRddWSd2?canPlayFromShare=true&from=share_recording_detail&startTime=1682608412000&componentName=rec-play&originRequestUrl=https%3A%2F%2Fnoredink.zoom.us%2Frec%2Fshare%2FtmIuIbuqWmFU20191vHs15QJv1ikMYQrcSKLXOMOOXlDQTHOg2-23ehZbZyG9f8L.c05C6jZecqKyPjub%3FstartTime%3D1682608412000"
+                    , ClickableText.appearsInline
+                    ]
+                , text "."
+                ]
             ]
         ]
     , view =
@@ -164,13 +182,23 @@ example =
                           }
                         ]
                 }
-            , section [ css [ Css.margin2 (Css.px 20) Css.zero ] ]
-                [ Heading.h2 [ Heading.plaintext "view Example" ]
+            , section []
+                [ Heading.h2
+                    [ Heading.plaintext "Customizable view Example"
+                    , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                    ]
                 , viewJust (Tuple.second >> viewExample settings.currentRoute) breadCrumbs
                 ]
-            , section [ css [ Css.margin2 (Css.px 20) Css.zero ] ]
-                [ Heading.h2 [ Heading.plaintext "viewSecondary Example" ]
+            , section []
+                [ Heading.h2
+                    [ Heading.plaintext "Customizable viewSecondary Example"
+                    , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                    ]
                 , viewJust (Tuple.second >> viewSecondaryExample settings.currentRoute) breadCrumbs
+                ]
+            , Heading.h2
+                [ Heading.plaintext "Other Helpers"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
             , Table.view []
                 [ Table.string
@@ -355,7 +383,7 @@ controlBreadCrumbs_ name index =
         |> Control.field "text" (Control.string (name ++ " " ++ String.fromInt index))
         |> Control.field "optional attributes"
             (Control.maybe False
-                (ControlExtra.list
+                (Control.list
                     |> CommonControls.customIcon
                         (CommonControls.choice "UiIcon"
                             [ ( "homeInCircle", UiIcon.homeInCircle )
@@ -371,7 +399,7 @@ controlBreadCrumbs_ name index =
                                 , BreadCrumbs.iconSize (Css.px v)
                                 )
                             )
-                            (ControlExtra.float 40)
+                            (Control.float 40)
                         )
                 )
             )

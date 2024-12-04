@@ -9,6 +9,7 @@ module CheckboxIcons exposing
     )
 
 import Css
+import Css.Global
 import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Svg.V1 exposing (Svg)
@@ -52,7 +53,7 @@ unchecked idSuffix =
                     ]
                     []
                 , Svg.feColorMatrix
-                    [ SvgAttributes.values "0 0 0 0 0.2 0 0 0 0 0.2 0 0 0 0 0.2 0 0 0 0.1 0"
+                    [ SvgAttributes.values "0 0 0 0 0.1 0 0 0 0 0.1 0 0 0 0 0.1 0 0 0 0.1 0"
                     , SvgAttributes.in_ "shadowInnerInner1"
                     ]
                     []
@@ -63,11 +64,21 @@ unchecked idSuffix =
             , SvgAttributes.strokeWidth "1"
             , SvgAttributes.fill "none"
             , SvgAttributes.fillRule "evenodd"
+            , SvgAttributes.css
+                [ Css.hover
+                    [ Css.Global.descendants
+                        [ Css.Global.rect
+                            [ Css.fill Colors.frost
+                            , Css.property "stroke" (toCssString Colors.azure)
+                            ]
+                        ]
+                    ]
+                ]
             ]
             [ Svg.g
                 []
                 [ checkboxBackground
-                    [ SvgAttributes.fill "#EBEBEB"
+                    [ SvgAttributes.fill "#F5F5F5"
                     , SvgAttributes.fillRule "evenodd"
                     , SvgAttributes.stroke (toCssString Colors.gray75)
                     ]
@@ -89,9 +100,9 @@ uncheckedDisabled =
         [ Svg.g
             []
             [ checkboxBackground
-                [ SvgAttributes.fill (toCssString Colors.gray75)
+                [ SvgAttributes.fill (toCssString Colors.gray85)
                 , SvgAttributes.fillRule "evenodd"
-                , SvgAttributes.stroke (toCssString Colors.gray75)
+                , SvgAttributes.stroke (toCssString Colors.gray85)
                 ]
             ]
         ]
@@ -149,7 +160,7 @@ checked idSuffix =
             ]
             [ -- Blue background
               checkboxBackground
-                [ SvgAttributes.fill "#D4F0FF"
+                [ SvgAttributes.fill (toCssString Colors.frost)
                 , SvgAttributes.fillRule "evenodd"
                 , SvgAttributes.stroke (toCssString Colors.azure)
                 ]
@@ -169,12 +180,12 @@ checked idSuffix =
 checkedDisabled : Svg
 checkedDisabled =
     Nri.Ui.Svg.V1.init viewBox
-        [ -- Dark gray background
+        [ -- Light gray background
           checkboxBackground
-            [ SvgAttributes.fill (toCssString Colors.gray45)
-            , SvgAttributes.stroke (toCssString Colors.gray45)
+            [ SvgAttributes.fill (toCssString Colors.gray85)
+            , SvgAttributes.stroke (toCssString Colors.gray85)
             ]
-        , checkmark Colors.white
+        , checkmark Colors.gray45
         ]
         |> Nri.Ui.Svg.V1.withWidth (Css.px 27)
         |> Nri.Ui.Svg.V1.withHeight (Css.px 27)
@@ -246,7 +257,7 @@ checkedPartially idSuffix =
                 [ Svg.g
                     []
                     [ checkboxBackground
-                        [ SvgAttributes.fill "#EBEBEB"
+                        [ SvgAttributes.fill (toCssString Colors.frost)
                         , SvgAttributes.fillRule "evenodd"
                         , SvgAttributes.stroke (toCssString Colors.azure)
                         ]
@@ -269,10 +280,10 @@ checkedPartiallyDisabled =
     Nri.Ui.Svg.V1.init viewBox
         [ -- Dark gray background
           checkboxBackground
-            [ SvgAttributes.fill (toCssString Colors.gray45)
-            , SvgAttributes.stroke (toCssString Colors.gray45)
+            [ SvgAttributes.fill (toCssString Colors.gray85)
+            , SvgAttributes.stroke (toCssString Colors.gray85)
             ]
-        , tilde Colors.white
+        , tilde Colors.gray45
         ]
         |> Nri.Ui.Svg.V1.withWidth (Css.px 27)
         |> Nri.Ui.Svg.V1.withHeight (Css.px 27)

@@ -18,6 +18,7 @@ import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.HighlighterToolbar.V3 as HighlighterToolbar
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -38,7 +39,7 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , state = init
+    , init = ( init, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
@@ -47,6 +48,7 @@ example =
         , highlighterPreview Colors.cyan "Reasoning"
         , toolPreview Colors.white Colors.gray75 UiIcon.eraser "Remove highlight"
         ]
+    , about = []
     , view =
         \ellieLinkConfig state ->
             [ ControlView.view
@@ -77,7 +79,10 @@ example =
                           }
                         ]
                 }
-            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Heading.h2
+                [ Heading.plaintext "Example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , HighlighterToolbar.view
                 { onSelect = SelectTag
                 , getNameAndColor = identity

@@ -12,14 +12,15 @@ import Category exposing (Category(..))
 import Code
 import Css exposing (Color)
 import Debug.Control as Control exposing (Control)
-import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Colors.Extra as ColorsExtra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Confetti.V2 as Confetti
+import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Html.V3 exposing (viewJust)
+import Nri.Ui.Spacing.V1 as Spacing
 import Svg.Styled as Svg exposing (Svg)
 import Svg.Styled.Attributes as SvgAttrs
 
@@ -41,7 +42,7 @@ example =
     , version = version
     , categories = [ Animations ]
     , keyboardSupport = []
-    , state = init
+    , init = ( init, Cmd.none )
     , update = update
     , subscriptions =
         \state ->
@@ -55,6 +56,7 @@ example =
                 Nothing ->
                     Sub.none
     , preview = preview
+    , about = []
     , view =
         \ellieLinkConfig state ->
             [ viewJust Confetti.view state.model
@@ -68,7 +70,11 @@ example =
                 , extraCode =
                     [ "import Browser"
                     , "import Browser.Events"
-                    , "\ntype Msg = ConfettiMsg Confetti.Msg | WindowResized Int Int"
+                    , Code.newlines
+                    , Code.unionType "Msg"
+                        [ "ConfettiMsg Confetti.Msg"
+                        , "WindowResized Int Int"
+                        ]
                     ]
                 , renderExample = identity
                 , toExampleCode =
@@ -83,31 +89,35 @@ example =
                                                 "Cmd.none"
                                             )
                                     , update =
-                                        Code.newlineWithIndent 3
+                                        Code.newlineWithIndent 2
                                             ++ Code.anonymousFunction
                                                 "msg model"
                                                 (Code.caseExpression "msg"
                                                     [ ( "ConfettiMsg confettiMsg", Code.tuple "Confetti.update confettiMsg model" "Cmd.none" )
                                                     , ( "WindowResized width _", Code.tuple "Confetti.updatePageWidth width model" "Cmd.none" )
                                                     ]
-                                                    4
+                                                    3
                                                 )
                                     , view = moduleName ++ ".view >> toUnstyled"
                                     , subscriptions =
-                                        Code.newlineWithIndent 3
+                                        Code.newlineWithIndent 2
                                             ++ Code.anonymousFunction "model"
-                                                (Code.newlineWithIndent 4
+                                                (Code.newlineWithIndent 3
                                                     ++ "Sub.batch "
                                                     ++ Code.listMultiline
                                                         [ "Browser.Events.onResize WindowResized"
                                                         , "Confetti.subscriptions ConfettiMsg model"
                                                         ]
-                                                        5
+                                                        4
                                                 )
                                     }
                           }
                         ]
                 }
+            , Heading.h2
+                [ Heading.plaintext "Example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , Button.button "Launch confetti!"
                 [ Button.onClick LaunchConfetti
                 , Button.small
@@ -222,7 +232,7 @@ type alias Settings =
 initSettings : Control Settings
 initSettings =
     Control.record Settings
-        |> Control.field "center" (ControlExtra.float 700)
+        |> Control.field "center" (Control.float 700)
 
 
 {-| -}

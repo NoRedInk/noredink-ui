@@ -10,6 +10,10 @@ module Nri.Ui.Confetti.V2 exposing
 @docs view
 @docs Msg, burst, update, updatePageWidth, subscriptions
 
+Patch changes:
+
+  - adds stars to the confetti
+
 Changes from V1:
 
   - removes custom words from confetti
@@ -21,9 +25,12 @@ import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.UiIcon.V1 as UiIcon
 import Particle exposing (Particle)
 import Particle.System as ParticleSystem
 import Random exposing (Generator)
+import Random.Extra
 import Random.Float exposing (normal)
 
 
@@ -37,11 +44,16 @@ type Model
 
 
 type Confetti
-    = Square
-        { color : Color
-        , rotations : Float
-        , rotationOffset : Float
-        }
+    = Square ConfettiSettings
+    | StarOutline ConfettiSettings
+    | StarFilled ConfettiSettings
+
+
+type alias ConfettiSettings =
+    { color : Color
+    , rotations : Float
+    , rotationOffset : Float
+    }
 
 
 {-| `center` An argument to Particle.withLocation that determines the horizontal center of viewport where you would like confetti to rain.
@@ -76,12 +88,12 @@ view (System system _) =
 
 viewConfetti : Particle Confetti -> Html.Html msg
 viewConfetti particle =
-    let
-        lifetime =
-            Particle.lifetimePercent particle
-    in
     case Particle.data particle of
         Square { color, rotationOffset, rotations } ->
+            let
+                lifetime =
+                    Particle.lifetimePercent particle
+            in
             Html.div
                 [ css
                     [ Css.backgroundColor color
@@ -104,6 +116,40 @@ viewConfetti particle =
                 ]
                 []
 
+        StarFilled settings ->
+            viewSvg particle settings UiIcon.starFilled
+
+        StarOutline settings ->
+            viewSvg particle settings UiIcon.starOutline
+
+
+viewSvg : Particle Confetti -> ConfettiSettings -> Svg.Svg -> Html.Html msg
+viewSvg particle { color, rotationOffset, rotations } svg =
+    let
+        lifetime =
+            Particle.lifetimePercent particle
+    in
+    svg
+        |> Svg.withWidth (Css.px 20)
+        |> Svg.withHeight (Css.px 20)
+        |> Svg.withColor color
+        |> Svg.withCss
+            [ Css.position Css.absolute
+            , Css.left Css.zero
+            , Css.top Css.zero
+            , Css.property "transform-origin" "center"
+            , Css.property "will-change" "transform"
+            , Css.property "transform" <|
+                "translateX("
+                    ++ String.fromFloat (Particle.leftPixels particle)
+                    ++ "px) translateY("
+                    ++ String.fromFloat (Particle.topPixels particle)
+                    ++ "px) rotate("
+                    ++ String.fromFloat ((rotations * lifetime + rotationOffset) * 360)
+                    ++ "deg)"
+            ]
+        |> Svg.toHtml
+
 
 
 -- UPDATE
@@ -120,14 +166,21 @@ burst (System system center) =
 
 particlesGenerator : Float -> Generator (List (Particle Confetti))
 particlesGenerator center =
-    Random.list 200 <| particleGenerator center squareGenerator
+    Random.list 200 <|
+        particleGenerator center
+            (Random.Extra.frequency
+                ( 3 / 5, shapeGenerator Square )
+                [ ( 1 / 5, shapeGenerator StarOutline )
+                , ( 1 / 5, shapeGenerator StarFilled )
+                ]
+            )
 
 
-squareGenerator : Generator Confetti
-squareGenerator =
+shapeGenerator : (ConfettiSettings -> Confetti) -> Generator Confetti
+shapeGenerator generator =
     Random.map3
         (\color rotations rotationOffset ->
-            Square
+            generator
                 { color = color
                 , rotations = rotations
                 , rotationOffset = rotationOffset

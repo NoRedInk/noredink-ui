@@ -1,13 +1,17 @@
 module Nri.Ui.FocusTrap.V1 exposing (FocusTrap, toAttribute)
 
-{-| Create a focus trap.
+{-| Patch changes:
+
+  - Use Nri.Ui.WhenFocusLeaves.V2
+
+Create a focus trap.
 
 @docs FocusTrap, toAttribute
 
 -}
 
 import Accessibility.Styled as Html
-import Nri.Ui.WhenFocusLeaves.V1 as WhenFocusLeaves
+import Nri.Ui.WhenFocusLeaves.V2 as WhenFocusLeaves
 
 
 {-| Defines how focus will wrap in reponse to tab keypresses in a part of the UI.
@@ -28,8 +32,8 @@ type alias FocusTrap msg =
 toAttribute : FocusTrap msg -> Html.Attribute msg
 toAttribute { firstId, lastId, focus } =
     WhenFocusLeaves.onKeyDownPreventDefault []
-        { firstId = firstId
-        , lastId = lastId
+        { firstIds = [ firstId ]
+        , lastIds = [ lastId ]
         , -- if the user tabs back while on the first id,
           -- we want to wrap around to the last id.
           tabBackAction = focus lastId

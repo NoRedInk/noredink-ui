@@ -1,5 +1,8 @@
 module Examples exposing (Msg, State, all)
 
+{-| Use `script/regenerate-examples.sh` to regenerate this module.
+-}
+
 import Example exposing (Example)
 import Examples.Accordion as Accordion
 import Examples.AnimatedIcon as AnimatedIcon
@@ -17,6 +20,7 @@ import Examples.Colors as Colors
 import Examples.Confetti as Confetti
 import Examples.Container as Container
 import Examples.Divider as Divider
+import Examples.FocusRing as FocusRing
 import Examples.Fonts as Fonts
 import Examples.Header as Header
 import Examples.Heading as Heading
@@ -27,6 +31,7 @@ import Examples.Logo as Logo
 import Examples.Menu as Menu
 import Examples.Message as Message
 import Examples.Modal as Modal
+import Examples.Outline as Outline
 import Examples.Page as Page
 import Examples.Pagination as Pagination
 import Examples.Panel as Panel
@@ -34,6 +39,7 @@ import Examples.Pennant as Pennant
 import Examples.PremiumCheckbox as PremiumCheckbox
 import Examples.QuestionBox as QuestionBox
 import Examples.RadioButton as RadioButton
+import Examples.RadioButtonDotless as RadioButtonDotless
 import Examples.RingGauge as RingGauge
 import Examples.SegmentedControl as SegmentedControl
 import Examples.Select as Select
@@ -42,9 +48,11 @@ import Examples.SideNav as SideNav
 import Examples.SortableTable as SortableTable
 import Examples.Spacing as Spacing
 import Examples.Sprite as Sprite
+import Examples.StickerIcon as StickerIcon
 import Examples.Switch as Switch
 import Examples.Table as Table
 import Examples.Tabs as Tabs
+import Examples.TabsMinimal as TabsMinimal
 import Examples.Text as Text
 import Examples.TextArea as TextArea
 import Examples.TextInput as TextInput
@@ -358,6 +366,25 @@ all =
                     _ ->
                         Nothing
             )
+    , FocusRing.example
+        |> Example.wrapMsg FocusRingMsg
+            (\msg ->
+                case msg of
+                    FocusRingMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState FocusRingState
+            (\msg ->
+                case msg of
+                    FocusRingState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , Fonts.example
         |> Example.wrapMsg FontsMsg
             (\msg ->
@@ -548,6 +575,25 @@ all =
                     _ ->
                         Nothing
             )
+    , Outline.example
+        |> Example.wrapMsg OutlineMsg
+            (\msg ->
+                case msg of
+                    OutlineMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState OutlineState
+            (\msg ->
+                case msg of
+                    OutlineState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , Page.example
         |> Example.wrapMsg PageMsg
             (\msg ->
@@ -676,6 +722,25 @@ all =
             (\msg ->
                 case msg of
                     RadioButtonState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , RadioButtonDotless.example
+        |> Example.wrapMsg RadioButtonDotlessMsg
+            (\msg ->
+                case msg of
+                    RadioButtonDotlessMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState RadioButtonDotlessState
+            (\msg ->
+                case msg of
+                    RadioButtonDotlessState childState ->
                         Just childState
 
                     _ ->
@@ -833,6 +898,25 @@ all =
                     _ ->
                         Nothing
             )
+    , StickerIcon.example
+        |> Example.wrapMsg StickerIconMsg
+            (\msg ->
+                case msg of
+                    StickerIconMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState StickerIconState
+            (\msg ->
+                case msg of
+                    StickerIconState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , Switch.example
         |> Example.wrapMsg SwitchMsg
             (\msg ->
@@ -885,6 +969,25 @@ all =
             (\msg ->
                 case msg of
                     TabsState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , TabsMinimal.example
+        |> Example.wrapMsg TabsMinimalMsg
+            (\msg ->
+                case msg of
+                    TabsMinimalMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState TabsMinimalState
+            (\msg ->
+                case msg of
+                    TabsMinimalState childState ->
                         Just childState
 
                     _ ->
@@ -1005,6 +1108,7 @@ type State
     | ConfettiState Confetti.State
     | ContainerState Container.State
     | DividerState Divider.State
+    | FocusRingState FocusRing.State
     | FontsState Fonts.State
     | HeaderState Header.State
     | HeadingState Heading.State
@@ -1015,6 +1119,7 @@ type State
     | MenuState Menu.State
     | MessageState Message.State
     | ModalState Modal.State
+    | OutlineState Outline.State
     | PageState Page.State
     | PaginationState Pagination.State
     | PanelState Panel.State
@@ -1022,6 +1127,7 @@ type State
     | PremiumCheckboxState PremiumCheckbox.State
     | QuestionBoxState QuestionBox.State
     | RadioButtonState RadioButton.State
+    | RadioButtonDotlessState RadioButtonDotless.State
     | RingGaugeState RingGauge.State
     | SegmentedControlState SegmentedControl.State
     | SelectState Select.State
@@ -1030,9 +1136,11 @@ type State
     | SortableTableState SortableTable.State
     | SpacingState Spacing.State
     | SpriteState Sprite.State
+    | StickerIconState StickerIcon.State
     | SwitchState Switch.State
     | TableState Table.State
     | TabsState Tabs.State
+    | TabsMinimalState TabsMinimal.State
     | TextState Text.State
     | TextAreaState TextArea.State
     | TextInputState TextInput.State
@@ -1057,6 +1165,7 @@ type Msg
     | ConfettiMsg Confetti.Msg
     | ContainerMsg Container.Msg
     | DividerMsg Divider.Msg
+    | FocusRingMsg FocusRing.Msg
     | FontsMsg Fonts.Msg
     | HeaderMsg Header.Msg
     | HeadingMsg Heading.Msg
@@ -1067,6 +1176,7 @@ type Msg
     | MenuMsg Menu.Msg
     | MessageMsg Message.Msg
     | ModalMsg Modal.Msg
+    | OutlineMsg Outline.Msg
     | PageMsg Page.Msg
     | PaginationMsg Pagination.Msg
     | PanelMsg Panel.Msg
@@ -1074,6 +1184,7 @@ type Msg
     | PremiumCheckboxMsg PremiumCheckbox.Msg
     | QuestionBoxMsg QuestionBox.Msg
     | RadioButtonMsg RadioButton.Msg
+    | RadioButtonDotlessMsg RadioButtonDotless.Msg
     | RingGaugeMsg RingGauge.Msg
     | SegmentedControlMsg SegmentedControl.Msg
     | SelectMsg Select.Msg
@@ -1082,9 +1193,11 @@ type Msg
     | SortableTableMsg SortableTable.Msg
     | SpacingMsg Spacing.Msg
     | SpriteMsg Sprite.Msg
+    | StickerIconMsg StickerIcon.Msg
     | SwitchMsg Switch.Msg
     | TableMsg Table.Msg
     | TabsMsg Tabs.Msg
+    | TabsMinimalMsg TabsMinimal.Msg
     | TextMsg Text.Msg
     | TextAreaMsg TextArea.Msg
     | TextInputMsg TextInput.Msg

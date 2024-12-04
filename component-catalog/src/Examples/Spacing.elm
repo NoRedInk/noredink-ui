@@ -10,18 +10,19 @@ import Category exposing (Category(..))
 import Code
 import Css exposing (Style)
 import Debug.Control as Control exposing (Control)
-import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
-import Nri.Ui.Table.V7 as Table
+import Nri.Ui.Table.V8 as Table
+import Nri.Ui.Text.V6 as Text
 import Svg.Styled
 import Svg.Styled.Attributes
 
@@ -43,10 +44,22 @@ example =
     , version = version
     , categories = [ Layout ]
     , keyboardSupport = []
-    , state = init
+    , init = ( init, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview = preview
+    , about =
+        [ Text.smallBody
+            [ Text.html
+                [ text "Learn more about this component from "
+                , ClickableText.link "Tessa's demo"
+                    [ ClickableText.linkExternal "https://www.dropbox.com/s/l1ihppb2tjohcxr/2023-03-09%20-%20Tessa%20Kelly%20-%20Spacing.mp4?dl=0"
+                    , ClickableText.appearsInline
+                    ]
+                , text "."
+                ]
+            ]
+        ]
     , view = view
     }
 
@@ -226,7 +239,10 @@ view ellieLinkConfig state =
         , settings = state.settings
         , renderExample = Code.unstyledView
         , mainType = Just "RootHtml.Html msg"
-        , extraCode = []
+        , extraCode =
+            [ "import Nri.Ui.Container.V2 as Container"
+            , "import Html.Styled.Attributes exposing (css)"
+            ]
         , toExampleCode =
             \_ ->
                 [ { sectionName = "Example"
@@ -246,13 +262,6 @@ view ellieLinkConfig state =
             , sort = Nothing
             }
         , Table.string
-            { header = "Content alignment"
-            , value = .alignment
-            , width = Css.pct 10
-            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
-            , sort = Nothing
-            }
-        , Table.string
             { header = "Content max-width"
             , value = .maxWidth
             , width = Css.pct 10
@@ -266,13 +275,54 @@ view ellieLinkConfig state =
             , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
             , sort = Nothing
             }
+        , Table.string
+            { header = "Relevant breakpoint"
+            , value = .breakpoint
+            , width = Css.pct 10
+            , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+            , sort = Nothing
+            }
         ]
-        [ { name = "centeredContentWithSidePadding", alignment = "Centered", maxWidth = "1000px", sidePadding = "when viewport <= 970px" }
-        , { name = "centeredContent", alignment = "Centered", maxWidth = "1000px", sidePadding = "0px" }
-        , { name = "centeredQuizEngineContentWithSidePadding", alignment = "Centered", maxWidth = "750px", sidePadding = "when viewport <= 720px" }
-        , { name = "centeredQuizEngineContent", alignment = "Centered", maxWidth = "750px", sidePadding = "0px" }
-        , { name = "centeredContentWithSidePaddingAndCustomWidth", alignment = "Centered", maxWidth = "(customizable)", sidePadding = "when viewport <= (custom breakpoint value - 30)" }
-        , { name = "centeredContentWithCustomWidth", alignment = "Centered", maxWidth = "(customizable)", sidePadding = "0px" }
+        [ { name = "centeredContentWithSidePadding"
+          , maxWidth = "1000px"
+          , sidePadding = "when viewport <= 970px"
+          , breakpoint = "MediaQuery.mobileBreakpoint"
+          }
+        , { name = "centeredContent"
+          , maxWidth = "1000px"
+          , sidePadding = "0px"
+          , breakpoint = "MediaQuery.mobileBreakpoint"
+          }
+        , { name = "centeredQuizEngineContentWithSidePadding"
+          , maxWidth = "750px"
+          , sidePadding = "when viewport <= 720px"
+          , breakpoint = "MediaQuery.quizEngineMobileBreakpoint"
+          }
+        , { name = "centeredQuizEngineContent"
+          , maxWidth = "750px"
+          , sidePadding = "0px"
+          , breakpoint = "MediaQuery.quizEngineMobileBreakpoint"
+          }
+        , { name = "centeredNarrowContentWithSidePadding"
+          , maxWidth = "500px"
+          , sidePadding = "when viewport <= 470px"
+          , breakpoint = "MediaQuery.narrowMobileBreakpoint"
+          }
+        , { name = "centeredNarrowContent"
+          , maxWidth = "500px"
+          , sidePadding = "0px"
+          , breakpoint = "MediaQuery.narrowMobileBreakpoint"
+          }
+        , { name = "centeredContentWithSidePaddingAndCustomWidth"
+          , maxWidth = "(customizable)"
+          , sidePadding = "when viewport <= (custom breakpoint value - 30)"
+          , breakpoint = "(customizable)"
+          }
+        , { name = "centeredContentWithCustomWidth"
+          , maxWidth = "(customizable)"
+          , sidePadding = "0px"
+          , breakpoint = "(customizable)"
+          }
         ]
     , Heading.h2 [ Heading.plaintext "Constants", Heading.css [ Css.marginTop Spacing.verticalSpacerPx ] ]
     , Table.view []
@@ -312,7 +362,7 @@ container : List ( String, Css.Style ) -> ( String, Html msg )
 container styles =
     ( [ "div [ css " ++ Code.listMultiline (List.map Tuple.first styles) 2
       , "]"
-      , "[ Container.view [ Container.paragraph \"Content...\" ]"
+      , "[ Container.view [ Container.paragraph \"Content...\" ] ]"
       ]
         |> String.join (Code.newlineWithIndent 1)
     , div [ css (List.map Tuple.second styles) ]
@@ -359,6 +409,10 @@ controlSettings =
                     |> asChoice
                  , ( "quizEngineCenteredContent", Spacing.quizEngineCenteredContent )
                     |> asChoice
+                 , ( "centeredNarrowContentWithSidePadding", Spacing.centeredNarrowContentWithSidePadding )
+                    |> asChoice
+                 , ( "narrowCenteredContent", Spacing.narrowCenteredContent )
+                    |> asChoice
                  , ( "centeredContentWithSidePaddingAndCustomWidth"
                    , Control.map
                         (\value ->
@@ -369,7 +423,7 @@ controlSettings =
                             , Spacing.centeredContentWithSidePaddingAndCustomWidth (Css.px value)
                             )
                         )
-                        (ControlExtra.float 400)
+                        (Control.float 400)
                    )
                  , ( "centeredContentWithCustomWidth"
                    , Control.map
@@ -381,7 +435,7 @@ controlSettings =
                             , Spacing.centeredContentWithCustomWidth (Css.px value)
                             )
                         )
-                        (ControlExtra.float 400)
+                        (Control.float 400)
                    )
                  ]
                     |> Control.choice

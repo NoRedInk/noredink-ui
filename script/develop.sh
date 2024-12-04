@@ -23,13 +23,4 @@ To quit, hit ctrl-c.
 
 EOF
 
-# start a web server in the background and tear it down when exiting
-./script/serve.sh public &
-SERVER_PID=$!
-cleanup() {
-    kill "$SERVER_PID"
-}
-trap cleanup EXIT INT
-
-# start a watcher. This loops forever, so we don't need to loop ourselves.
-watchexec --clear --postpone -- shake --compact "$SHAKE_TARGET"
+(cd ./component-catalog; elm-live ./src/Main.elm --pushstate --hot --dir=../$SHAKE_TARGET -- --output=../$SHAKE_TARGET/elm.js)

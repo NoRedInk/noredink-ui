@@ -7,7 +7,7 @@ module Examples.UiIcon exposing (example, State, Msg)
 -}
 
 import Example exposing (Example)
-import Examples.IconExamples as IconExamples exposing (Group)
+import IconExamples exposing (Group)
 import Nri.Ui.UiIcon.V1 as UiIcon
 
 
@@ -89,10 +89,14 @@ all =
         , ( "gift", UiIcon.gift, [] )
         , ( "openInNewTab", UiIcon.openInNewTab, [] )
         , ( "sync", UiIcon.sync, [] )
+        , ( "delete", UiIcon.delete, [] )
+        , ( "addSticker", UiIcon.addSticker, [] )
+        , ( "circle", UiIcon.circle, [] )
         ]
       )
     , ( "Guidance"
       , [ ( "footsteps", UiIcon.footsteps, [] )
+        , ( "footstepsVideo", UiIcon.footstepsVideo, [] )
         , ( "help", UiIcon.help, [] )
         , ( "info", UiIcon.info, [] )
         , ( "checklist", UiIcon.checklist, [] )
@@ -123,6 +127,10 @@ all =
         , ( "apple", UiIcon.apple, [] )
         , ( "appleOutline", UiIcon.appleOutline, [] )
         , ( "briefcase", UiIcon.briefcase, [] )
+        , ( "heapOfBoxes", UiIcon.heapOfBoxes, [] )
+        , ( "climbingStairs", UiIcon.climbingStairs, [] )
+        , ( "twoHandsHoldingBox", UiIcon.twoHandsHoldingBox, [] )
+        , ( "atlas", UiIcon.atlas, [] )
         ]
       )
     , ( "Time"
@@ -192,6 +200,7 @@ all =
         , ( "star", UiIcon.star, [] )
         , ( "starFilled", UiIcon.starFilled, [] )
         , ( "starOutline", UiIcon.starOutline, [] )
+        , ( "no", UiIcon.no, [] )
         ]
       )
     , ( "Badges & Celebration"
@@ -253,6 +262,11 @@ all =
     , ( "Location"
       , [ ( "flagUs", UiIcon.flagUs, [] )
         , ( "globe", UiIcon.globe, [] )
+        ]
+      )
+    , ( "Grading Assistant"
+      , [ ( "gradingAssistant", UiIcon.gradingAssistant, [] )
+        , ( "manuallyGraded", UiIcon.manuallyGraded, [] )
         ]
       )
     ]

@@ -13,11 +13,11 @@
         "rev": "3aea7d3e453575aa85bc19c8387825d0e7c42ce8",
         "revCount": 147,
         "type": "git",
-        "url": "https://git.bytes.zone/brian/elm-forbid-import.git"
+        "url": "https://git.bytes.zone/BrianHicks/elm-forbid-import.git"
       },
       "original": {
         "type": "git",
-        "url": "https://git.bytes.zone/brian/elm-forbid-import.git"
+        "url": "https://git.bytes.zone/BrianHicks/elm-forbid-import.git"
       }
     },
     "flake-utils": {
@@ -43,11 +43,11 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1685518550,
-        "narHash": "sha256-o2d0KcvaXzTrPRIo0kOLV0/QXHhDQ5DTi+OxcjO8xqY=",
+        "lastModified": 1710146030,
+        "narHash": "sha256-SZ5L6eA7HJ/nmkzGG7/ISclqe6oZdOZTNoesiInkXPQ=",
         "owner": "numtide",
         "repo": "flake-utils",
-        "rev": "a1720a10a6cfe8234c0e93907ffe81be440f4cef",
+        "rev": "b1d9ab70662946ef0850d488da1c9019f3a9752a",
         "type": "github"
       },
       "original": {
@@ -106,11 +106,11 @@
     },
     "nixpkgs_3": {
       "locked": {
-        "lastModified": 1686519857,
-        "narHash": "sha256-VkBhuq67aXXiCoEmicziuDLUPPjeOTLQoj6OeVai5zM=",
+        "lastModified": 1719468428,
+        "narHash": "sha256-vN5xJAZ4UGREEglh3lfbbkIj+MPEYMuqewMn4atZFaQ=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "6b1b72c0f887a478a5aac355674ff6df0fc44f44",
+        "rev": "1e3deb3d8a86a870d925760db1a5adecc64d329d",
         "type": "github"
       },
       "original": {

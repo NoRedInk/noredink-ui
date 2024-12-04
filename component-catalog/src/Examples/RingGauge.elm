@@ -11,16 +11,16 @@ import Code
 import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
-import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
-import Examples.IconExamples as IconExamples
+import IconExamples
 import Nri.Ui.Colors.Extra exposing (fromCssColor)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.RingGauge.V1 as RingGauge
+import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Table.V7 as Table
+import Nri.Ui.Table.V8 as Table
 import Round
 import SolidColor.Accessibility
 
@@ -40,7 +40,7 @@ example : Example State Msg
 example =
     { name = moduleName
     , version = version
-    , state = controlSettings
+    , init = ( controlSettings, Cmd.none )
     , update = update
     , subscriptions = \_ -> Sub.none
     , categories = [ Progress, Icons ]
@@ -57,6 +57,7 @@ example =
                         }
                 )
             |> IconExamples.preview
+    , about = []
     , view =
         \ellieLinkConfig state ->
             let
@@ -76,24 +77,26 @@ example =
                     \_ ->
                         [ { sectionName = "Example"
                           , code =
-                                "RingGauge.view"
-                                    ++ Code.record
-                                        [ ( "backgroundColor", Tuple.first settings.backgroundColor )
-                                        , ( "emptyColor", Tuple.first settings.emptyColor )
-                                        , ( "filledColor", Tuple.first settings.filledColor )
-                                        , ( "percentage", String.fromFloat settings.percentage )
-                                        ]
-                                    ++ ([ Code.newlineWithIndent 1
-                                        , "|> Svg.withWidth (Css.px 200)"
-                                        , "|> Svg.withHeight (Css.px 200)"
-                                        , "|> Svg.toHtml"
-                                        ]
-                                            |> String.join (Code.newlineWithIndent 1)
-                                       )
+                                Code.pipelineMultiline
+                                    [ "RingGauge.view"
+                                        ++ Code.record
+                                            [ ( "backgroundColor", Tuple.first settings.backgroundColor )
+                                            , ( "emptyColor", Tuple.first settings.emptyColor )
+                                            , ( "filledColor", Tuple.first settings.filledColor )
+                                            , ( "percentage", String.fromFloat settings.percentage )
+                                            ]
+                                    , "Svg.withWidth (Css.px 200)"
+                                    , "Svg.withHeight (Css.px 200)"
+                                    , "Svg.toHtml"
+                                    ]
+                                    0
                           }
                         ]
                 }
-            , Heading.h2 [ Heading.plaintext "Example" ]
+            , Heading.h2
+                [ Heading.plaintext "Customizable example"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
             , RingGauge.view
                 { backgroundColor = Tuple.second settings.backgroundColor
                 , emptyColor = Tuple.second settings.emptyColor
@@ -177,4 +180,4 @@ controlSettings =
         |> Control.field "backgroundColor" (CommonControls.specificColor "white")
         |> Control.field "emptyColor" (CommonControls.specificColor "gray92")
         |> Control.field "filledColor" (CommonControls.specificColor "cornflower")
-        |> Control.field "percentage" (ControlExtra.float 15)
+        |> Control.field "percentage" (Control.float 15)

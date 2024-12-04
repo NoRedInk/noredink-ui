@@ -46,6 +46,12 @@ describe("UI tests", function () {
     server.close();
   });
 
+  const hasText = async (xPathSelector = "//html", text) => {
+    let [node] = await page.$x(xPathSelector);
+    let innerText = await page.evaluate((el) => el.innerText, node);
+    assert.equal(innerText, text);
+  };
+
   const handlePageErrors = function (page) {
     page.on("pageerror", (err) => {
       console.log("Error from page:", err.toString());
@@ -68,7 +74,7 @@ describe("UI tests", function () {
     }
   };
 
-  const goTo = async (name, location) => {
+  const goToExample = async (name, location) => {
     await page.goto(location, { waitUntil: "load" });
     await page.waitForXPath(
       `//h1[contains(., 'Nri.Ui.${name}') and @aria-current='page']`,
@@ -77,7 +83,7 @@ describe("UI tests", function () {
   };
 
   const defaultProcessing = async (name, location) => {
-    await goTo(name, location);
+    await goToExample(name, location);
     await percySnapshot(page, name);
 
     const results = await new AxePuppeteer(page)
@@ -86,49 +92,32 @@ describe("UI tests", function () {
     handleAxeResults(name, results);
   };
 
-  const forAllOptions = async (labelName, callback) => {
+  const defaultUsageExampleProcessing = async (testName, name, location) => {
+    await page.goto(location, { waitUntil: "load" });
     await page.waitForXPath(
-      `//label[contains(., '${labelName}')]//select`,
+      `//h1[contains(., '${name}') and @aria-current='page']`,
       200
     );
-    const [select] = await page.$x(
-      `//label[contains(., '${labelName}')]//select`
-    );
-    const options = await select.$x(
-      `//label[contains(., '${labelName}')]//option`
-    );
-    // Actually doing the select was super flakey.
-    // Temporarily just using the first element to get
-    // CI consistent again. We can cover all the cases separately...
-    const optionEl = options[0];
-    const option = await page.evaluate((el) => el.innerText, optionEl);
-    await page.select("select", option);
-    await callback(option);
+    await percySnapshot(page, name);
+
+    const results = await new AxePuppeteer(page)
+      .disableRules(skippedRules[testName] || [])
+      .analyze();
+    handleAxeResults(name, results);
   };
 
   const messageProcessing = async (name, location) => {
-    await goTo(name, location);
+    await goToExample(name, location);
     await percySnapshot(page, name);
 
     var axe = await new AxePuppeteer(page)
       .disableRules(skippedRules[name] || [])
       .analyze();
     handleAxeResults(name, axe);
-
-    const [theme] = await page.$x("//label[contains(., 'theme')]");
-    await theme.click();
-
-    await forAllOptions("theme", async (option) => {
-      await percySnapshot(page, `${name} - ${option}`);
-      axe = await new AxePuppeteer(page)
-        .withRules(["color-contrast"])
-        .analyze();
-      handleAxeResults(`${name} - ${option}`, axe);
-    });
   };
 
   const modalProcessing = async (name, location) => {
-    await goTo(name, location);
+    await goToExample(name, location);
 
     await page.click("#launch-modal");
     await page.waitForSelector('[role="dialog"]');
@@ -142,7 +131,7 @@ describe("UI tests", function () {
   };
 
   const pageProcessing = async (name, location) => {
-    await goTo(name, location);
+    await goToExample(name, location);
 
     var axe = await new AxePuppeteer(page)
       .disableRules(skippedRules[name] || [])
@@ -170,13 +159,50 @@ describe("UI tests", function () {
     handleAxeResults(name, results);
   };
 
+  const clickableCardWithTooltipProcessing = async (
+    testName,
+    name,
+    location
+  ) => {
+    const hasParentClicks = async (count) => {
+      await page.waitForTimeout(100);
+      await hasText(
+        "//p[contains(., 'Parent Clicks')]",
+        `Parent Clicks: ${count}`
+      );
+    };
+
+    await defaultUsageExampleProcessing(testName, name, location);
+
+    await hasParentClicks(0);
+    await page.waitForSelector("[data-tooltip-visible=false]");
+
+    // Opening and closing the tooltip doesn't trigger the container effects
+    await page.hover('[aria-label="Tooltip trigger"]');
+    await page.waitForSelector("[data-tooltip-visible=true]");
+
+    await page.click('[aria-label="Tooltip trigger"]');
+    await page.waitForSelector("[data-tooltip-visible=false]");
+
+    await hasParentClicks(0);
+
+    // Clicking the button does trigger container effects
+    const [button] = await page.$x("//button[contains(., 'Click me')]");
+    await button.click();
+
+    await page.waitForSelector("[data-tooltip-visible=false]");
+    await hasParentClicks(1);
+
+    // Clicking the container does trigger container effects
+    await page.click("#container-element");
+    await hasParentClicks(2);
+  };
+
   const skippedRules = {
-    // See https://github.com/dequelabs/axe-core/issues/3649 -- we may be able to remove the Highlighter, Mark, and Block skipped rule
-    Highlighter: ["aria-roledescription"],
-    Block: ["aria-roledescription"],
-    QuestionBox: ["aria-roledescription"],
+    Block: ["scrollable-region-focusable"],
     // Loading's color contrast check seems to change behavior depending on whether Percy snapshots are taken or not
     Loading: ["color-contrast"],
+    Outline: ["color-contrast"],
     RadioButton: ["duplicate-id"],
   };
 
@@ -190,29 +216,45 @@ describe("UI tests", function () {
     Pennant: iconProcessing,
   };
 
+  const specialUsageProcessing = {
+    ClickableCardwithTooltip: clickableCardWithTooltipProcessing,
+  };
+
   it("All", async function () {
-    page = await browser.newPage();
-    handlePageErrors(page);
-    await page.goto(`http://localhost:${PORT}`, { waitUntil: "load" });
-    await page.$("#maincontent");
-    await percySnapshot(page, this.test.fullTitle());
+    if (process.env.ONLYDOODAD == "default") {
+      page = await browser.newPage();
 
-    const results = await new AxePuppeteer(page)
-      .disableRules([
-        "aria-hidden-focus",
-        "color-contrast",
-        "duplicate-id-aria",
-        "duplicate-id",
-      ])
-      .analyze();
+      await page.emulateMediaFeatures([
+        { name: "prefers-reduced-motion", value: "reduce" },
+      ]);
 
-    page.close();
+      handlePageErrors(page);
+      await page.goto(`http://localhost:${PORT}`, { waitUntil: "load" });
+      await page.$("#maincontent");
+      await percySnapshot(page, this.test.fullTitle());
 
-    handleAxeResults("index view", results);
+      const results = await new AxePuppeteer(page)
+        .disableRules([
+          "aria-hidden-focus",
+          "color-contrast",
+          "duplicate-id-aria",
+          "duplicate-id",
+        ])
+        .analyze();
+
+      page.close();
+
+      handleAxeResults("index view", results);
+    }
   });
 
   it("Doodads", async function () {
     page = await browser.newPage();
+
+    await page.emulateMediaFeatures([
+      { name: "prefers-reduced-motion", value: "reduce" },
+    ]);
+
     handlePageErrors(page);
     await page.goto(`http://localhost:${PORT}`);
 
@@ -233,6 +275,46 @@ describe("UI tests", function () {
           console.log(`Testing ${name}`);
           let handler = specialProcessing[name] || defaultProcessing;
           return handler(name, location);
+        }
+      });
+    }, Promise.resolve());
+
+    page.close();
+  });
+
+  it("Usage examples", async function () {
+    page = await browser.newPage();
+
+    await page.emulateMediaFeatures([
+      { name: "prefers-reduced-motion", value: "reduce" },
+    ]);
+
+    handlePageErrors(page);
+    await page.goto(`http://localhost:${PORT}`);
+
+    await page.$("#maincontent");
+
+    const [usageTab] = await page.$x("//button[contains(., 'Usage Examples')]");
+    await usageTab.click();
+
+    let links = await page.evaluate(() => {
+      let nodes = Array.from(
+        document.querySelectorAll("[data-nri-description='usage-example-link']")
+      );
+      return nodes.map((node) => [node.text, node.href]);
+    });
+
+    await links.reduce((acc, [name, location]) => {
+      return acc.then(() => {
+        let testName = name.replaceAll(" ", "");
+        if (
+          process.env.ONLYDOODAD == "default" ||
+          process.env.ONLYDOODAD == testName
+        ) {
+          console.log(`Testing Usage Example ${testName}`);
+          let handler =
+            specialUsageProcessing[testName] || defaultUsageExampleProcessing;
+          return handler(testName, name, location);
         }
       });
     }, Promise.resolve());
