@@ -5,7 +5,7 @@ import Html.Styled as HtmlStyled
 import Json.Encode as Encode
 import Nri.Test.KeyboardHelpers.V1 as KeyboardHelpers
 import Nri.Ui.ClickableText.V4 as ClickableText
-import Nri.Ui.Menu.V4 as Menu
+import Nri.Ui.Menu.V5 as Menu
 import Nri.Ui.Tooltip.V3 as Tooltip
 import ProgramTest exposing (ProgramTest, ensureViewHas, ensureViewHasNot)
 import Spec.Helpers exposing (nriDescription)
@@ -17,7 +17,7 @@ import Test.Html.Selector as Selector exposing (text)
 
 spec : Test
 spec =
-    describe "Nri.Ui.Menu.V4"
+    describe "Nri.Ui.Menu.V5"
         [ test "Opens when mouse enters" <|
             \() ->
                 program [ Menu.opensOnHover True ]
