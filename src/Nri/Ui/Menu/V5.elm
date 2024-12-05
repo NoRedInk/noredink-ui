@@ -1,4 +1,4 @@
-module Nri.Ui.Menu.V4 exposing
+module Nri.Ui.Menu.V5 exposing
     ( view, Attribute
     , isOpen, isDisabled
     , opensOnHover
@@ -12,24 +12,9 @@ module Nri.Ui.Menu.V4 exposing
     , Entry, group, captionedGroup, entry
     )
 
-{-| Patch changes:
+{-| Changes from V4:
 
-  - improve interoperability with Tooltip (Note that tooltip keyboard events are not fully supported!)
-  - Use Nri.Ui.WhenFocusLeaves.V2
-  - Adjust disabled styles
-  - when the Menu is a dialog or disclosure, _don't_ add role menuitem to the entries
-  - Use ClickableText.medium as the default size when the trigger is `Menu.clickableText`
-  - Adds containerCss, menuCss, groupContainerCss, and entryContainerCss to customize the style of the respective containers
-  - Adds captionedGroup to create a group with a caption
-  - Adds groupTitleCss and groupCaptionCss to customize the style of the group title and caption
-
-Changes from V3:
-
-  - improve composability with Button, ClickableText, and ClickableSvg
-
-A togglable menu view and related buttons.
-
-<https://zpl.io/a75OrE2>
+  - add the icons parameter to the menu captionedGroup function
 
 
 ## Menu rendering
@@ -846,7 +831,7 @@ viewEntry config focusAndToggle { upId, downId, entry_ } =
                                     (styleGroupTitleText config
                                         |> Maybe.cons (Maybe.map (always (Aria.describedBy [ captionId ])) caption)
                                     )
-                                    [ Html.text title, span [ css [ marginLeft (Css.px 5), display inlineFlex, Css.property "gap" "5px" ] ] icons ]
+                                    [ Html.text title, span [ css [ marginLeft (Css.px 5), display inlineFlex, Css.property "gap" "5px", verticalAlign bottom ] ] icons ]
                                 ]
                             , viewJust
                                 (\c ->
