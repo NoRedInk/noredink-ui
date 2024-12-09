@@ -33,9 +33,10 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
-import Nri.Ui.Menu.V4 as Menu
+import Nri.Ui.Menu.V5 as Menu
 import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.Spacing.V1 as Spacing
+import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Switch.V3 as Switch
 import Nri.Ui.Table.V8 as Table
 import Nri.Ui.Text.V6 as Text
@@ -820,6 +821,7 @@ In this realistic example, we can't actually pass the correct attributes to Radi
           , entries =
                 [ Menu.captionedGroup "Quick Write"
                     "Students write independently, without lessons or tips."
+                    []
                     [ Menu.entry "preview-quick-write" <|
                         \attributes ->
                             ClickableSvg.link "Preview"
@@ -841,6 +843,7 @@ In this realistic example, we can't actually pass the correct attributes to Radi
                     ]
                 , Menu.captionedGroup "Guided Draft"
                     "Students draft with the support of tutorials, models, and targeted tips."
+                    [ UiIcon.home |> Svg.withWidth (Css.px 24) |> Svg.toHtml ]
                     [ Menu.entry "preview-guided-draft" <|
                         \attributes ->
                             ClickableSvg.link "Preview"
