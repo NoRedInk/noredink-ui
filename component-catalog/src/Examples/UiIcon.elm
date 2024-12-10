@@ -101,6 +101,7 @@ all =
         , ( "info", UiIcon.info, [] )
         , ( "checklist", UiIcon.checklist, [] )
         , ( "checklistComplete", UiIcon.checklistComplete, [] )
+        , ( "review", UiIcon.review, [] )
         ]
       )
     , ( "Bulbs"
