@@ -80,7 +80,7 @@ example =
                           , code =
                                 Code.fromModule moduleName "view"
                                     ++ Code.recordMultiline
-                                        [ ( "label", Code.string label )
+                                        [ ( "label", Code.apply [ Code.fromModule "Html" "text", Code.string label ] )
                                         , ( "id", Code.string "view-switch-example" )
                                         ]
                                         1
