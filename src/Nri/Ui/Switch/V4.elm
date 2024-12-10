@@ -1,4 +1,4 @@
-module Nri.Ui.Switch.V3 exposing
+module Nri.Ui.Switch.V4 exposing
     ( view
     , Attribute
     , selected
@@ -9,10 +9,9 @@ module Nri.Ui.Switch.V3 exposing
 {-|
 
 
-### Changes from V2:
+### Changes from V3:
 
-    - Replace underlying checkbox input with a custom implementation
-    - Allow attributes that produce msgs to be passed through
+    - `view` accepts arbitrary html for the label
 
 @docs view
 
@@ -138,7 +137,7 @@ defaultConfig =
 {-| Render a switch. The boolean here indicates whether the switch is on
 or not.
 -}
-view : { label : String, id : String } -> List (Attribute msg) -> Html msg
+view : { label : Html msg, id : String } -> List (Attribute msg) -> Html msg
 view { label, id } attrs =
     let
         config =
@@ -197,7 +196,7 @@ view { label, id } attrs =
                 , Css.batch config.labelCss
                 ]
             ]
-            [ Html.text label ]
+            [ label ]
         ]
 
 
