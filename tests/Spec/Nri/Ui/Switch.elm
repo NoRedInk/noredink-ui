@@ -5,7 +5,7 @@ import Accessibility.Role as Role
 import Html.Styled exposing (..)
 import Nri.Test.KeyboardHelpers.V1 as KeyboardHelpers
 import Nri.Test.MouseHelpers.V1 as MouseHelpers
-import Nri.Ui.Switch.V3 as Switch
+import Nri.Ui.Switch.V4 as Switch
 import ProgramTest exposing (..)
 import Spec.Helpers exposing (expectFailure)
 import Test exposing (..)
@@ -14,7 +14,7 @@ import Test.Html.Selector exposing (..)
 
 spec : Test
 spec =
-    describe "Nri.Ui.Switch.V2"
+    describe "Nri.Ui.Switch.V4"
         [ describe "'switch' role" hasCorrectRole
         , describe "helpfully disabled switch" helpfullyDisabledSwitch
         ]
@@ -114,7 +114,7 @@ view attributes state =
     div []
         [ Switch.view
             { id = "switch"
-            , label = "Switch"
+            , label = Html.Styled.text "Switch"
             }
             (Switch.selected state.selected :: Switch.onSwitch Toggle :: attributes)
         ]

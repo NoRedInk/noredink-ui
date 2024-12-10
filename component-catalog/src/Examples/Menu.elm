@@ -37,7 +37,7 @@ import Nri.Ui.Menu.V5 as Menu
 import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Switch.V3 as Switch
+import Nri.Ui.Switch.V4 as Switch
 import Nri.Ui.Table.V8 as Table
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.TextInput.V8 as TextInput
@@ -923,7 +923,7 @@ viewScoreDisplay value selected attributes =
 viewDroppedStudentsSwitch : Bool -> List (Attribute Msg) -> Html Msg
 viewDroppedStudentsSwitch showDroppedStudents attributes =
     Switch.view
-        { label = "Show dropped students"
+        { label = text "Show dropped students"
         , id = droppedStudentsId
         }
         [ Switch.onSwitch ShowDroppedStudents

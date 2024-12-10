@@ -19,7 +19,7 @@ import Html.Styled exposing (..)
 import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
-import Nri.Ui.Switch.V3 as Switch
+import Nri.Ui.Switch.V4 as Switch
 import Nri.Ui.Table.V8 as Table
 import Nri.Ui.Tooltip.V3 as Tooltip
 
@@ -46,11 +46,11 @@ example =
     , update = update
     , subscriptions = \_ -> Sub.none
     , preview =
-        [ Switch.view { label = "Toggle Off", id = "preview-switch-a" }
+        [ Switch.view { label = text "Toggle Off", id = "preview-switch-a" }
             [ Switch.selected False
             , Switch.custom [ Key.tabbable False ]
             ]
-        , Switch.view { label = "Toggle On", id = "preview-switch-b" }
+        , Switch.view { label = text "Toggle On", id = "preview-switch-b" }
             [ Switch.selected True
             , Switch.custom [ Key.tabbable False ]
             ]
@@ -99,7 +99,7 @@ example =
                 [ Heading.plaintext "Customizable example"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
-            , Switch.view { label = currentValue.label, id = "view-switch-example" }
+            , Switch.view { label = text currentValue.label, id = "view-switch-example" }
                 (Switch.selected state.selected
                     :: Switch.onSwitch Switch
                     :: List.map Tuple.second currentValue.attributes
@@ -134,7 +134,7 @@ example =
                 [ { state = "Off"
                   , enabled =
                         Switch.view
-                            { label = "Show dropped students"
+                            { label = text "Show dropped students"
                             , id = "show-dropped-students-off-enabled"
                             }
                             [ Switch.selected False
@@ -142,7 +142,7 @@ example =
                             ]
                   , disabled =
                         Switch.view
-                            { label = "Show dropped students"
+                            { label = text "Show dropped students"
                             , id = "show-dropped-students-off-disabled"
                             }
                             [ Switch.selected False
@@ -152,7 +152,7 @@ example =
                 , { state = "On"
                   , enabled =
                         Switch.view
-                            { label = "Show dropped students"
+                            { label = text "Show dropped students"
                             , id = "show-dropped-students-on-enabled"
                             }
                             [ Switch.selected True
@@ -160,7 +160,7 @@ example =
                             ]
                   , disabled =
                         Switch.view
-                            { label = "Show dropped students"
+                            { label = text "Show dropped students"
                             , id = "show-dropped-students-on-disabled"
                             }
                             [ Switch.selected True
@@ -178,7 +178,7 @@ example =
             , Tooltip.view
                 { trigger =
                     \attrs ->
-                        Switch.view { id = "tooltip-example", label = "Show pandas in results" }
+                        Switch.view { id = "tooltip-example", label = text "Show pandas in results" }
                             [ Switch.disabled True
                             , Switch.custom attrs
                             ]

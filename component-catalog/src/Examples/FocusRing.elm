@@ -26,7 +26,7 @@ import Nri.Ui.RadioButton.V4 as RadioButton
 import Nri.Ui.SegmentedControl.V14 as SegmentedControl
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Switch.V3 as Switch
+import Nri.Ui.Switch.V4 as Switch
 import Nri.Ui.Table.V8 as Table
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -262,7 +262,7 @@ NOTE: use `boxShadows` instead if your focusable element:
           , view = exampleWithBorderAndBG [ FocusRing.boxShadows [] ]
           , twoToned = Just True
           , examples =
-                [ Switch.view { label = "Switch", id = "switch" } []
+                [ Switch.view { label = text "Switch", id = "switch" } []
                 , ClickableSvg.button "ClickableSvg button" UiIcon.playInCircle []
                 , SegmentedControl.viewRadioGroup
                     { legend = "SegmentedControls.viewRadioGroup"
