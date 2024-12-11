@@ -20,7 +20,7 @@ import Nri.Ui.Button.V10 as Button
 import Nri.Ui.FocusLoop.Lazy.V1 as FocusLoop
 import Nri.Ui.FocusLoop.V1 as FocusLoop
 import Nri.Ui.Html.V3 exposing (viewIf)
-import Nri.Ui.Switch.V3 as Switch
+import Nri.Ui.Switch.V4 as Switch
 import Nri.Ui.TextInput.V8 as TextInput
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Task
@@ -259,7 +259,7 @@ viewLazyToggle =
         \useLazy tooltipOpen ->
             Html.div [ Attrs.css [ Css.displayFlex, Css.alignItems Css.center, Css.property "gap" "10px" ] ]
                 [ Switch.view
-                    { label = "Use Lazy"
+                    { label = Html.text "Use Lazy"
                     , id = "lazy-switch"
                     }
                     [ Switch.selected useLazy
@@ -279,7 +279,7 @@ viewSimulateExpensiveComputationToggle =
         \settings tooltipOpen ->
             Html.div [ Attrs.css [ Css.displayFlex, Css.alignItems Css.center, Css.property "gap" "10px" ] ]
                 [ Switch.view
-                    { label = "Simulate Expensive Computation"
+                    { label = Html.text "Simulate Expensive Computation"
                     , id = "simulate-expensive-computation-switch"
                     }
                     [ Switch.selected settings.simulateExpensiveComputation
