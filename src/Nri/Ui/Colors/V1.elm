@@ -282,7 +282,7 @@ highlightYellowDark =
 -}
 highlightYellowDarkLight : Css.Color
 highlightYellowDarkLight =
-    hex "#A18E4D"
+    hex "#9A884A"
 
 
 {-| See <https://noredink-ui.netlify.com/#/doodad/Colors>
