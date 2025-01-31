@@ -9,8 +9,8 @@ module CommonControls exposing
     , content
     , httpError, badBodyString
     , guidanceAndErrorMessage
-    , quickBrownFox, exampleHtmlString
-    , disabledListItem, premiumDisplay
+    , quickBrownFox
+    , disabledListItem, exampleHtmlString, premiumDisplay
     )
 
 {-|

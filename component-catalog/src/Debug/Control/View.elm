@@ -1,4 +1,7 @@
-module Debug.Control.View exposing (view, viewCode, viewWithCustomControls)
+module Debug.Control.View exposing
+    ( view, viewWithCustomControls
+    , viewCode
+    )
 
 {-|
 
