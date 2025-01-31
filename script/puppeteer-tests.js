@@ -5,8 +5,12 @@ const httpServer = require("http-server");
 const percySnapshot = require("@percy/puppeteer");
 
 const platform = require("os").platform();
-// We need to change the args passed to puppeteer based on the platform they're using
-const puppeteerArgs = /^win/.test(platform) ? [] : ["--single-process"];
+const puppeteerArgs = (
+  /^win/.test(platform) ? [] : ["--single-process"]
+).concat(
+  // https://stackoverflow.com/questions/50662388/running-headless-chrome-puppeteer-with-no-sandbox
+  /^linux/.test(platform) ? ["--no-sandbox"] : []
+);
 const PORT = process.env.PORT_NUMBER || 8000;
 
 const { AxePuppeteer } = require("@axe-core/puppeteer");
