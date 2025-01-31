@@ -8,7 +8,7 @@ const puppeteerArgs = (
   /^win/.test(platform) ? [] : ["--single-process"]
 ).concat(
   // https://stackoverflow.com/questions/50662388/running-headless-chrome-puppeteer-with-no-sandbox
-  /^linux/.test(platform) ? ["--no-sandbox"] : []
+  /^linux/.test(platform) ? ["--no-sandbox"] : [],
 );
 const PORT = process.env.PORT_NUMBER || 8000;
 
