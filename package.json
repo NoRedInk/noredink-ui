@@ -14,7 +14,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublish": "npm run build-lib",
     "build-lib": "npx browserify --entry lib/index.js --outfile dist.js",
-    "puppeteer": "script/puppeteer-tests.sh"
+    "puppeteer": "script/puppeteer-tests.sh",
+    "upgrade": "npx npm-check-updates --upgrade && npm run force-reinstall",
+    "force-reinstall": "rm -rf package-lock.json && rm -rf node_modules && npm install"
   },
   "repository": {
     "type": "git",
@@ -27,17 +29,18 @@
   },
   "homepage": "https://github.com/NoRedInk/NoRedInk-ui#readme",
   "devDependencies": {
-    "@axe-core/puppeteer": "^4.4.3",
-    "@percy/cli": "^1.4.0",
+    "@axe-core/puppeteer": "^4.10.1",
+    "@percy/cli": "^1.30.7",
     "@percy/puppeteer": "^2.0.2",
-    "axe-core": "^4.8.3",
-    "browserify": "^17.0.0",
+    "axe-core": "^4.10.2",
+    "browserify": "^17.0.1",
     "elm-test": "0.19.1-revision12",
-    "expect": "29.5.0",
-    "mocha": "^10.2.0",
-    "prettier": "^2.7.1",
-    "puppeteer": "^13.0.1",
-    "request": "^2.88.2"
+    "expect": "29.7.0",
+    "mocha": "^11.1.0",
+    "prettier": "^3.4.2",
+    "puppeteer": "^24.1.1",
+    "request": "^2.88.2",
+    "npm-check-updates": "17.1.14"
   },
   "dependencies": {
     "http-server": "^14.1.1"
