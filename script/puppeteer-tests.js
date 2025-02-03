@@ -1,12 +1,15 @@
-const expect = require("expect");
 const fs = require("fs");
 const puppeteer = require("puppeteer");
 const httpServer = require("http-server");
 const percySnapshot = require("@percy/puppeteer");
 
 const platform = require("os").platform();
-// We need to change the args passed to puppeteer based on the platform they're using
-const puppeteerArgs = /^win/.test(platform) ? [] : ["--single-process"];
+const puppeteerArgs = (
+  /^win/.test(platform) ? [] : ["--single-process"]
+).concat(
+  // https://stackoverflow.com/questions/50662388/running-headless-chrome-puppeteer-with-no-sandbox
+  /^linux/.test(platform) ? ["--no-sandbox"] : [],
+);
 const PORT = process.env.PORT_NUMBER || 8000;
 
 const { AxePuppeteer } = require("@axe-core/puppeteer");
@@ -22,13 +25,13 @@ describe("UI tests", function () {
 
     if (!fs.existsSync(root)) {
       assert.fail(
-        `Root was specified as ${root}, but that path does not exist.`
+        `Root was specified as ${root}, but that path does not exist.`,
       );
     }
 
     if (!fs.existsSync(`${root}/index.html`)) {
       assert.fail(
-        `Root was specified as ${root}, but does not contain an index.html.`
+        `Root was specified as ${root}, but does not contain an index.html.`,
       );
     }
 
@@ -47,7 +50,7 @@ describe("UI tests", function () {
   });
 
   const hasText = async (xPathSelector = "//html", text) => {
-    let [node] = await page.$x(xPathSelector);
+    let [node] = await page.$$(`xpath/.${xPathSelector}`);
     let innerText = await page.evaluate((el) => el.innerText, node);
     assert.equal(innerText, text);
   };
@@ -69,16 +72,15 @@ describe("UI tests", function () {
         console.table(violation["nodes"], ["html"]);
       });
       assert.fail(
-        `Expected no axe violations in ${name} but got ${violations.length} violations`
+        `Expected no axe violations in ${name} but got ${violations.length} violations`,
       );
     }
   };
 
   const goToExample = async (name, location) => {
     await page.goto(location, { waitUntil: "load" });
-    await page.waitForXPath(
-      `//h1[contains(., 'Nri.Ui.${name}') and @aria-current='page']`,
-      200
+    await page.waitForSelector(
+      `xpath/.//h1[contains(., 'Nri.Ui.${name}') and @aria-current='page']`,
     );
   };
 
@@ -94,9 +96,8 @@ describe("UI tests", function () {
 
   const defaultUsageExampleProcessing = async (testName, name, location) => {
     await page.goto(location, { waitUntil: "load" });
-    await page.waitForXPath(
-      `//h1[contains(., '${name}') and @aria-current='page']`,
-      200
+    await page.waitForSelector(
+      `xpath/.//h1[contains(., '${name}') and @aria-current='page']`,
     );
     await percySnapshot(page, name);
 
@@ -162,14 +163,12 @@ describe("UI tests", function () {
   const clickableCardWithTooltipProcessing = async (
     testName,
     name,
-    location
+    location,
   ) => {
     const hasParentClicks = async (count) => {
-      await page.waitForTimeout(100);
-      await hasText(
-        "//p[contains(., 'Parent Clicks')]",
-        `Parent Clicks: ${count}`
-      );
+      await page.waitForSelector(`text/Parent Clicks: ${count}`, {
+        timeout: 5000,
+      });
     };
 
     await defaultUsageExampleProcessing(testName, name, location);
@@ -187,7 +186,8 @@ describe("UI tests", function () {
     await hasParentClicks(0);
 
     // Clicking the button does trigger container effects
-    const [button] = await page.$x("//button[contains(., 'Click me')]");
+    const [button] = await page.$$("xpath/.//button[contains(., 'Click me')]");
+    await button.click();
     await button.click();
 
     await page.waitForSelector("[data-tooltip-visible=false]");
@@ -261,7 +261,7 @@ describe("UI tests", function () {
     await page.$("#maincontent");
     let links = await page.evaluate(() => {
       let nodes = Array.from(
-        document.querySelectorAll("[data-nri-description='doodad-link']")
+        document.querySelectorAll("[data-nri-description='doodad-link']"),
       );
       return nodes.map((node) => [node.text, node.href]);
     });
@@ -294,12 +294,16 @@ describe("UI tests", function () {
 
     await page.$("#maincontent");
 
-    const [usageTab] = await page.$x("//button[contains(., 'Usage Examples')]");
+    const [usageTab] = await page.$$(
+      "xpath/.//button[contains(., 'Usage Examples')]",
+    );
     await usageTab.click();
 
     let links = await page.evaluate(() => {
       let nodes = Array.from(
-        document.querySelectorAll("[data-nri-description='usage-example-link']")
+        document.querySelectorAll(
+          "[data-nri-description='usage-example-link']",
+        ),
       );
       return nodes.map((node) => [node.text, node.href]);
     });
