@@ -10,13 +10,17 @@ import Category exposing (Category(..))
 import Code
 import CommonControls
 import Css
+import Css.Media exposing (withMedia)
 import Debug.Control as Control exposing (Control)
 import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
+import Nri.Ui.Colors.V1 as Colors
+import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.MediaQuery.V1 exposing (mobile, notMobile)
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Text.V6 as Text
 
@@ -53,6 +57,9 @@ example =
             let
                 attributes =
                     List.map Tuple.second (Control.currentValue state.control)
+
+                contentString =
+                    String.concat <| List.map Tuple.first (Control.currentValue state.control)
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -109,8 +116,42 @@ example =
                 , ( "ugSmallBody", Text.ugSmallBody )
                 ]
                 attributes
+            , if String.startsWith "Text.html" contentString then
+                Html.div
+                    []
+                    [ Heading.h3
+                        [ Heading.plaintext "Html Code"
+                        , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                        ]
+                    , viewCodeContainer <| CommonControls.exampleHtmlString
+                    ]
+
+              else
+                Html.text ""
             ]
     }
+
+
+viewCodeContainer : String -> Html msg
+viewCodeContainer code =
+    Container.view
+        [ Container.html
+            [ ControlView.viewCode code
+            ]
+        , Container.css
+            [ Css.padding (Css.px 20)
+            , Css.flexGrow (Css.num 1)
+            , Css.backgroundColor Colors.gray20
+            , withMedia [ mobile ]
+                [ Css.borderTopLeftRadius Css.zero
+                , Css.borderTopRightRadius Css.zero
+                ]
+            , withMedia [ notMobile ]
+                [ Css.borderTopLeftRadius Css.zero
+                , Css.borderBottomLeftRadius Css.zero
+                ]
+            ]
+        ]
 
 
 viewExamples : List ( String, List (Text.Attribute msg) -> Html msg ) -> List (Text.Attribute msg) -> Html msg

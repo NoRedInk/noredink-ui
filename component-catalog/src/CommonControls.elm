@@ -10,7 +10,7 @@ module CommonControls exposing
     , httpError, badBodyString
     , guidanceAndErrorMessage
     , quickBrownFox
-    , disabledListItem, premiumDisplay
+    , disabledListItem, exampleHtmlString, premiumDisplay
     )
 
 {-|
@@ -264,6 +264,26 @@ exampleHtml =
         [ Html.text "darkness of the movie house " ]
     , Html.text "I had only two things on my mind: Paul Newman, and a ride home."
     ]
+
+
+exampleHtmlString : String
+exampleHtmlString =
+    """
+    [ Html.text "This is a "
+    , Html.strong [] [ Html.text "bolded phrase" ]
+    , Html.text ". "
+    , ClickableText.link quickBrownFox
+        [ ClickableText.icon UiIcon.starFilled
+        , ClickableText.href "http://www.noredink.com"
+        , ClickableText.appearsInline
+        ]
+    , Html.text " When I stepped out, into the bright sunlight from the "
+    , Html.a
+        [ Attributes.href "https://example.com" ]
+        [ Html.text "darkness of the movie house " ]
+    , Html.text "I had only two things on my mind: Paul Newman, and a ride home."
+    ]
+    """
 
 
 icon :
