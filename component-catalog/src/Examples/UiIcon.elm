@@ -92,6 +92,11 @@ all =
         , ( "delete", UiIcon.delete, [] )
         , ( "addSticker", UiIcon.addSticker, [] )
         , ( "circle", UiIcon.circle, [] )
+        , ( "retire", UiIcon.retire, [] )
+        , ( "unretire", UiIcon.unretire, [] )
+        , ( "publish", UiIcon.publish, [] )
+        , ( "unpublish", UiIcon.unpublish, [] )
+        , ( "duplicate", UiIcon.duplicate, [] )
         ]
       )
     , ( "Guidance"
