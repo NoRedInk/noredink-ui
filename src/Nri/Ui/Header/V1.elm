@@ -166,7 +166,7 @@ view attrs { breadCrumbs, isCurrentRoute } =
             , Css.paddingTop (Css.px 30)
             , Css.paddingBottom (Css.px 20)
             , Media.withMedia [ MediaQuery.mobile ]
-                [ Css.important (Css.padding2 (Css.px 20) (Css.px 15))
+                [ Css.important (Css.padding2 (Css.px 20) Css.zero)
                 ]
             ]
         , AttributesExtra.nriDescription "Nri-Header"
