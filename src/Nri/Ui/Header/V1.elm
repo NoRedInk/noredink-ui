@@ -199,7 +199,7 @@ viewDescription : Css.Px -> String -> Html msg
 viewDescription pageWidth description_ =
     Text.mediumBody
         [ Text.css
-            [ Spacing.centeredContentWithSidePaddingAndCustomWidth pageWidth
+            [ Spacing.centeredContentWithCustomWidth pageWidth
             , Css.color Colors.gray45
             , Css.important (Css.margin Css.auto)
             , Css.important (Css.paddingTop (Css.px 5))
