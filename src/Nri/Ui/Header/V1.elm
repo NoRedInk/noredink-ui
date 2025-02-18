@@ -166,7 +166,7 @@ view attrs { breadCrumbs, isCurrentRoute } =
             , Css.paddingTop (Css.px 30)
             , Css.paddingBottom (Css.px 20)
             , Media.withMedia [ MediaQuery.mobile ]
-                [ Css.important (Css.padding2 (Css.px 20) Css.zero)
+                [ Css.important (Css.padding2 (Css.px 20) (Css.px 15))
                 ]
             ]
         , AttributesExtra.nriDescription "Nri-Header"
@@ -199,7 +199,7 @@ viewDescription : Css.Px -> String -> Html msg
 viewDescription pageWidth description_ =
     Text.mediumBody
         [ Text.css
-            [ Spacing.centeredContentWithSidePaddingAndCustomWidth pageWidth
+            [ Spacing.centeredContentWithCustomWidth pageWidth
             , Css.color Colors.gray45
             , Css.important (Css.margin Css.auto)
             , Css.important (Css.paddingTop (Css.px 5))
