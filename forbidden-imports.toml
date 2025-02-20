@@ -52,7 +52,6 @@ hint = 'upgrade to V4'
 usages = [
     'component-catalog/../src/Nri/Ui/PremiumCheckbox/V8.elm',
     'component-catalog/../src/Nri/Ui/RadioButton/V4.elm',
-    'component-catalog/../src/Nri/Ui/SideNav/V5.elm',
     'component-catalog/src/Examples/PremiumCheckbox.elm',
 ]
 

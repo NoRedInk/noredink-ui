@@ -81,7 +81,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
-import Nri.Ui.Pennant.V3 as Pennant
+import Nri.Ui.Pennant.V4 as Pennant
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Tooltip.V3 as Tooltip
 import Nri.Ui.UiIcon.V1 as UiIcon
@@ -680,9 +680,9 @@ viewLockedEntry extraStyles entryConfig =
                 entryConfig.customAttributes
         )
         [ Pennant.contentPremiumFlag
-            |> Svg.withWidth (px 17)
-            |> Svg.withHeight (px 25)
-            |> Svg.withCss [ marginRight (px 10), minWidth (px 17) ]
+            |> Svg.withWidth (px 15)
+            |> Svg.withHeight (px 15)
+            |> Svg.withCss [ marginRight (px 5), minWidth (px 15) ]
             |> Svg.toHtml
         , text entryConfig.title
         ]
