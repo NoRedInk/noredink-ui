@@ -242,7 +242,14 @@ viewColumn data column =
     case column of
         Column _ renderer width cellStyles _ cellType ->
             cell cellType
-                [ Attributes.css ([ width, verticalAlign middle, Css.paddingLeft (Css.px 12), Css.paddingRight (Css.px 12), textAlign left ] ++ cellStyles data)
+                [ Attributes.css
+                    ([ width
+                     , verticalAlign middle
+                     , Css.padding2 (Css.px 5) (Css.px 10)
+                     , textAlign left
+                     ]
+                        ++ cellStyles data
+                    )
                 ]
                 [ renderer data ]
 
@@ -415,7 +422,7 @@ headersStyles =
 
 headerStyles : List Style
 headerStyles =
-    [ padding4 (px 11) (px 12) (px 14) (px 12)
+    [ padding2 (px 20) (px 10)
     , textAlign left
     , fontWeight bold
     , color gray20
@@ -458,7 +465,7 @@ loadingContentStyles =
 loadingCellStyles : List Style
 loadingCellStyles =
     [ batch flashAnimation
-    , padding2 (px 14) (px 10)
+    , padding (px 10)
     ]
 
 
