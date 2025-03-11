@@ -94,6 +94,16 @@ Anytime you enter the project your shell will automatically pick up the right de
 
 If you find that `direnv` loads too slow, [there are faster loading strategies than the default in their wiki](https://github.com/direnv/direnv/wiki/Nix).
 
+If you get an error like this:
+```
+error: experimental Nix feature 'flakes' is disabled; use '--extra-experimental-features flakes' to override
+```
+
+Then you can fix it by enabling flakes as mentioned in the error message. Like so:
+```bash
+echo "experimental-features = nix-command flakes" | sudo tee -a /etc/nix/nix.conf > /dev/null
+```
+
 ### Working with upstream dependencies
 
 We use `nix flake` to manage Nix dependencies.
