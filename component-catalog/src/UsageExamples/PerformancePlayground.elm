@@ -1,4 +1,4 @@
-module Examples.PerformancePlayground exposing (Msg, State, example)
+module UsageExamples.PerformancePlayground exposing (Msg, State, example)
 
 {-|
 
@@ -6,67 +6,37 @@ module Examples.PerformancePlayground exposing (Msg, State, example)
 
 -}
 
-import Code
 import Css
 import Debug.Control as Control exposing (Control)
-import Debug.Control.View as ControlView
-import EllieLink
-import Example exposing (Example)
 import Html.Styled exposing (..)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Text.V6 as Text
+import UsageExample exposing (UsageExample)
 
 
-moduleName : String
-moduleName =
-    "PerformancePlayground"
-
-
-version : Int
-version =
-    1
-
-
-example : Example State Msg
+example : UsageExample State Msg
 example =
-    { name = moduleName
-    , version = version
-    , init = ( init, Cmd.none )
+    { name = "Performance Playground"
+    , init = init
     , update = update
     , subscriptions = \_ -> Sub.none
-    , preview =
-        [ Text.mediumBody [ Text.plaintext "Performance playground" ]
-        ]
+    , view = view
     , about =
         [ Text.mediumBody [ Text.plaintext "Page to check performance when rendering inline css" ]
         ]
-    , view = view
-    , categories =
-        []
-    , keyboardSupport =
-        []
+    , categories = []
     }
 
 
-view : EllieLink.Config -> State -> List (Html Msg)
-view ellieLinkConfig state =
+view : State -> List (Html Msg)
+view state =
     let
         currentValue =
             Control.currentValue state
     in
-    [ ControlView.view
-        { ellieLinkConfig = ellieLinkConfig
-        , name = moduleName
-        , version = version
-        , update = UpdateSettings
-        , settings = state
-        , mainType = Nothing
-        , extraCode = []
-        , renderExample = Code.unstyledView
-        , toExampleCode = \_ -> []
-        }
+    [ Control.view UpdateSettings state
     , Heading.h2
         [ Heading.plaintext "Playground"
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]

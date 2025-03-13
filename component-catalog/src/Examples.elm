@@ -36,7 +36,6 @@ import Examples.Page as Page
 import Examples.Pagination as Pagination
 import Examples.Panel as Panel
 import Examples.Pennant as Pennant
-import Examples.PerformancePlayground as PerformancePlayground
 import Examples.PremiumCheckbox as PremiumCheckbox
 import Examples.QuestionBox as QuestionBox
 import Examples.RadioButton as RadioButton
@@ -671,25 +670,6 @@ all =
                     _ ->
                         Nothing
             )
-    , PerformancePlayground.example
-        |> Example.wrapMsg PerformancePlaygroundMsg
-            (\msg ->
-                case msg of
-                    PerformancePlaygroundMsg childMsg ->
-                        Just childMsg
-
-                    _ ->
-                        Nothing
-            )
-        |> Example.wrapState PerformancePlaygroundState
-            (\msg ->
-                case msg of
-                    PerformancePlaygroundState childState ->
-                        Just childState
-
-                    _ ->
-                        Nothing
-            )
     , PremiumCheckbox.example
         |> Example.wrapMsg PremiumCheckboxMsg
             (\msg ->
@@ -1144,7 +1124,6 @@ type State
     | PaginationState Pagination.State
     | PanelState Panel.State
     | PennantState Pennant.State
-    | PerformancePlaygroundState PerformancePlayground.State
     | PremiumCheckboxState PremiumCheckbox.State
     | QuestionBoxState QuestionBox.State
     | RadioButtonState RadioButton.State
@@ -1202,7 +1181,6 @@ type Msg
     | PaginationMsg Pagination.Msg
     | PanelMsg Panel.Msg
     | PennantMsg Pennant.Msg
-    | PerformancePlaygroundMsg PerformancePlayground.Msg
     | PremiumCheckboxMsg PremiumCheckbox.Msg
     | QuestionBoxMsg QuestionBox.Msg
     | RadioButtonMsg RadioButton.Msg
