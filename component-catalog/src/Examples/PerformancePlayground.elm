@@ -13,7 +13,6 @@ import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (..)
-import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
