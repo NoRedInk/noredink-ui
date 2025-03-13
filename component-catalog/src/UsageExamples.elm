@@ -4,6 +4,7 @@ import UsageExample exposing (UsageExample)
 import UsageExamples.ClickableCardWithTooltip as ClickableCardWithTooltip
 import UsageExamples.FocusLoop as FocusLoop
 import UsageExamples.Form as Form
+import UsageExamples.PerformancePlayground as PerformancePlayground
 
 
 all : List (UsageExample State Msg)
@@ -65,6 +66,25 @@ all =
                     _ ->
                         Nothing
             )
+    , PerformancePlayground.example
+        |> UsageExample.wrapMsg PerformancePlaygroundMsg
+            (\msg ->
+                case msg of
+                    PerformancePlaygroundMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> UsageExample.wrapState PerformancePlaygroundState
+            (\msg ->
+                case msg of
+                    PerformancePlaygroundState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     ]
 
 
@@ -72,9 +92,11 @@ type State
     = ClickableCardWithTooltipState ClickableCardWithTooltip.State
     | FormState Form.State
     | FocusLoopState FocusLoop.State
+    | PerformancePlaygroundState PerformancePlayground.State
 
 
 type Msg
     = ClickableCardWithTooltipMsg ClickableCardWithTooltip.Msg
     | FormMsg Form.Msg
     | FocusLoopMsg FocusLoop.Msg
+    | PerformancePlaygroundMsg PerformancePlayground.Msg
