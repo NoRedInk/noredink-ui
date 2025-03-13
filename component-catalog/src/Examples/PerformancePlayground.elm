@@ -110,4 +110,3 @@ update msg _ =
             ( newState
             , Cmd.none
             )
-
