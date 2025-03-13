@@ -6,21 +6,17 @@ module Examples.PerformancePlayground exposing (Msg, State, example)
 
 -}
 
-import Accessibility.Styled.Key as Key
-import Category
 import Code
-import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
-import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import KeyboardSupport exposing (Key(..))
+import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
-import Nri.Ui.Table.V8 as Table
 import Nri.Ui.Text.V6 as Text
 
 
@@ -59,14 +55,14 @@ view : EllieLink.Config -> State -> List (Html Msg)
 view ellieLinkConfig state =
     let
         currentValue =
-            Control.currentValue state.count
+            Control.currentValue state
     in
     [ ControlView.view
         { ellieLinkConfig = ellieLinkConfig
         , name = moduleName
         , version = version
         , update = UpdateSettings
-        , settings = state.count
+        , settings = state
         , mainType = Nothing
         , extraCode = []
         , renderExample = Code.unstyledView
@@ -77,33 +73,41 @@ view ellieLinkConfig state =
         , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
         ]
     , div []
-        [ text (String.fromInt currentValue)
-        ]
+        (List.repeat currentValue.buttonCount ()
+            |> List.indexedMap
+                (\i _ ->
+                    Button.button ("A button " ++ String.fromInt i) []
+                )
+        )
     ]
+
+
+type alias Config =
+    { buttonCount : Int
+    }
 
 
 {-| -}
 type alias State =
-    { count : Control Int
-    }
+    Control Config
 
 
 init : State
 init =
-    { count = Control.int 0
-    }
+    Control.record Config
+        |> Control.field "button count" (Control.int 0)
 
 
 {-| -}
 type Msg
-    = UpdateSettings (Control Int)
+    = UpdateSettings State
 
 
 update : Msg -> State -> ( State, Cmd Msg )
-update msg state =
+update msg _ =
     case msg of
-        UpdateSettings count ->
-            ( { state | count = count }
+        UpdateSettings newState ->
+            ( newState
             , Cmd.none
             )
 
