@@ -68,6 +68,7 @@ type alias State id entry =
     { column : id
     , sortDirection : SortDirection
     , entries : List entry
+    , sorter : id -> Sorter entry
     }
 
 
@@ -194,22 +195,30 @@ stickyHeaderCustom stickyConfig =
     Attribute (\config -> { config | stickyHeader = Just stickyConfig })
 
 
-init_ : SortDirection -> id -> List entry -> State id entry
-init_ sortDirection column entries =
+init_ : SortDirection -> id -> List (Column id entry msg) -> List entry -> State id entry
+init_ sortDirection column columns entries =
+    let
+        sorter =
+            findSorter columns
+    in
     { column = column
     , sortDirection = sortDirection
-    , entries = entries
+    , sorter = sorter
+    , entries =
+        List.sortWith
+            (sorter column sortDirection)
+            entries
     }
 
 
 {-| -}
-init : id -> List entry -> State id entry
+init : id -> List (Column id entry msg) -> List entry -> State id entry
 init =
     init_ Ascending
 
 
 {-| -}
-initDescending : id -> List entry -> State id entry
+initDescending : id -> List (Column id entry msg) -> List entry -> State id entry
 initDescending =
     init_ Descending
 
@@ -347,9 +356,7 @@ view attributes columns =
         tableColumns
         (case config.state of
             Just state_ ->
-                List.sortWith
-                    (findSorter columns state_.column state_.sortDirection)
-                    state_.entries
+                state_.entries
 
             Nothing ->
                 []
@@ -575,8 +582,12 @@ sortArrow direction active =
 update : Msg id -> State id entry -> State id entry
 update msg state_ =
     case msg of
-        Sort id direction ->
+        Sort column sortDirection ->
             { state_
-                | column = id
-                , sortDirection = direction
+                | column = column
+                , sortDirection = sortDirection
+                , entries =
+                    List.sortWith
+                        (state_.sorter column sortDirection)
+                        state_.entries
             }

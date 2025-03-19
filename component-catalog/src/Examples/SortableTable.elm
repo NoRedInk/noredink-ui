@@ -212,9 +212,7 @@ example =
                 SortableTable.viewLoading attrs columns
 
               else
-                SortableTable.view attrs
-                    columns
-
+                SortableTable.view attrs columns
             ]
     }
 
@@ -325,8 +323,7 @@ type alias State =
 {-| -}
 init : State
 init =
-    { sortState = SortableTable.init FirstName (Tuple.second (List.unzip dataWithCode))
-
+    { sortState = SortableTable.init FirstName (Tuple.second (List.unzip (columnsWithCode (Control.currentValue controlSettings)))) (Tuple.second (List.unzip dataWithCode))
     , settings = controlSettings
     }
 
