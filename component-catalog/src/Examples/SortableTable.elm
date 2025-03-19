@@ -17,7 +17,7 @@ import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.SortableTable.V5 as SortableTable exposing (Column)
+import Nri.Ui.SortableTable.V6 as SortableTable exposing (Column)
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Table.V8 as Table
@@ -31,7 +31,7 @@ moduleName =
 
 version : Int
 version =
-    5
+    6
 
 
 {-| -}
