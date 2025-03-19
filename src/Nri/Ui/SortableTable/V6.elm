@@ -64,22 +64,23 @@ type Column id entry msg
 
 
 {-| -}
-type alias State id =
+type alias State id entry =
     { column : id
     , sortDirection : SortDirection
+    , entries : List entry
     }
 
 
 {-| -}
-type alias Config id msg =
+type alias Config id entry msg =
     { msgWrapper : Maybe (Msg id -> msg)
-    , state : Maybe (State id)
+    , state : Maybe (State id entry)
     , stickyHeader : Maybe StickyConfig
     , tableAttributes : List Table.Attribute
     }
 
 
-defaultConfig : Config id msg
+defaultConfig : Config id entry msg
 defaultConfig =
     { msgWrapper = Nothing
     , state = Nothing
@@ -148,15 +149,15 @@ stickyConfigStyles { topOffset, zIndex, pageBackgroundColor, hoverZIndex } =
 {-| Customize how the table is rendered, for example by adding sorting or
 stickiness.
 -}
-type Attribute id msg
-    = Attribute (Config id msg -> Config id msg)
+type Attribute id entry msg
+    = Attribute (Config id entry msg -> Config id entry msg)
 
 
 {-| Sort a column. You can get an initial state with `init` or `initDescending`.
 If you make this sorting interactive, you should store the state in your model
 and provide it to this function instead of recreating it on every update.
 -}
-state : State id -> Attribute id msg
+state : State id entry -> Attribute id entry msg
 state state_ =
     Attribute (\config -> { config | state = Just state_ })
 
@@ -164,7 +165,7 @@ state state_ =
 {-| Add interactivity in sorting columns. When this attribute is provided and
 sorting is enabled, columns will be sortable by clicking the headers.
 -}
-msgWrapper : (Msg id -> msg) -> Attribute id msg
+msgWrapper : (Msg id -> msg) -> Attribute id entry msg
 msgWrapper msgWrapper_ =
     Attribute (\config -> { config | msgWrapper = Just msgWrapper_ })
 
@@ -173,14 +174,14 @@ msgWrapper msgWrapper_ =
 when it otherwise would have been scrolled off.) You probably will want to set a
 background color on the header as well.
 -}
-stickyHeader : Attribute id msg
+stickyHeader : Attribute id entry msg
 stickyHeader =
     Attribute (\config -> { config | stickyHeader = Just defaultStickyConfig })
 
 
 {-| Attributes forwarded to the underlying Nri.Ui.Table
 -}
-tableAttribute : Table.Attribute -> Attribute id msg
+tableAttribute : Table.Attribute -> Attribute id entry msg
 tableAttribute attr =
     Attribute (\config -> { config | tableAttributes = attr :: config.tableAttributes })
 
@@ -188,25 +189,29 @@ tableAttribute attr =
 {-| Does the same thing as `stickyHeader`, but with adaptations for your
 specific use.
 -}
-stickyHeaderCustom : StickyConfig -> Attribute id msg
+stickyHeaderCustom : StickyConfig -> Attribute id entry msg
 stickyHeaderCustom stickyConfig =
     Attribute (\config -> { config | stickyHeader = Just stickyConfig })
 
 
-{-| -}
-init : id -> State id
-init initialSort =
-    { column = initialSort
-    , sortDirection = Ascending
+init_ : SortDirection -> id -> List entry -> State id entry
+init_ sortDirection column entries =
+    { column = column
+    , sortDirection = sortDirection
+    , entries = entries
     }
 
 
 {-| -}
-initDescending : id -> State id
-initDescending initialSort =
-    { column = initialSort
-    , sortDirection = Descending
-    }
+init : id -> List entry -> State id entry
+init =
+    init_ Ascending
+
+
+{-| -}
+initDescending : id -> List entry -> State id entry
+initDescending =
+    init_ Descending
 
 
 {-| -}
@@ -328,8 +333,8 @@ combineSorters sorters =
 
 
 {-| -}
-view : List (Attribute id msg) -> List (Column id entry msg) -> List entry -> Html msg
-view attributes columns entries =
+view : List (Attribute id entry msg) -> List (Column id entry msg) -> Html msg
+view attributes columns =
     let
         config =
             List.foldl (\(Attribute fn) soFar -> fn soFar) defaultConfig attributes
@@ -344,15 +349,15 @@ view attributes columns entries =
             Just state_ ->
                 List.sortWith
                     (findSorter columns state_.column state_.sortDirection)
-                    entries
+                    state_.entries
 
             Nothing ->
-                entries
+                []
         )
 
 
 {-| -}
-viewLoading : List (Attribute id msg) -> List (Column id entry msg) -> Html msg
+viewLoading : List (Attribute id entry msg) -> List (Column id entry msg) -> Html msg
 viewLoading attributes columns =
     let
         config =
@@ -366,7 +371,7 @@ viewLoading attributes columns =
         tableColumns
 
 
-buildTableAttributes : Config id msg -> List Table.Attribute
+buildTableAttributes : Config id entry msg -> List Table.Attribute
 buildTableAttributes config =
     let
         stickyStyles =
@@ -409,7 +414,7 @@ identitySorter =
         EQ
 
 
-buildTableColumn : Maybe (Msg id -> msg) -> Maybe (State id) -> Column id entry msg -> Table.Column entry msg
+buildTableColumn : Maybe (Msg id -> msg) -> Maybe (State id entry) -> Column id entry msg -> Table.Column entry msg
 buildTableColumn maybeMsgWrapper maybeState (Column column) =
     if column.hidden then
         Table.placeholderColumn { width = Css.px (toFloat column.width) }
@@ -439,7 +444,7 @@ buildTableColumn maybeMsgWrapper maybeState (Column column) =
             }
 
 
-viewSortHeader : Bool -> Html msg -> Maybe (Msg id -> msg) -> State id -> id -> Html msg
+viewSortHeader : Bool -> Html msg -> Maybe (Msg id -> msg) -> State id entry -> id -> Html msg
 viewSortHeader isSortable header maybeMsgWrapper state_ id =
     if isSortable then
         Html.button
@@ -481,7 +486,7 @@ viewSortHeader isSortable header maybeMsgWrapper state_ id =
             [ header ]
 
 
-viewSortButton : State id -> id -> Html msg
+viewSortButton : State id entry -> id -> Html msg
 viewSortButton state_ id =
     let
         arrows upHighlighted downHighlighted =
@@ -511,7 +516,7 @@ viewSortButton state_ id =
     Html.div [ css [ padding (px 2) ] ] [ buttonContent ]
 
 
-sortMsg : State id -> id -> Msg id
+sortMsg : State id entry -> id -> Msg id
 sortMsg state_ id =
     Sort id
         (if state_.column == id then
@@ -567,7 +572,7 @@ sortArrow direction active =
 
 
 {-| -}
-update : Msg id -> State id -> State id
+update : Msg id -> State id entry -> State id entry
 update msg state_ =
     case msg of
         Sort id direction ->

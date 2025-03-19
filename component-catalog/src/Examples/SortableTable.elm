@@ -129,10 +129,8 @@ example =
                             []
                         ]
 
-                isStickyAtAll =
-                    settings.stickyHeader /= Nothing
 
-                ( dataCode, data ) =
+                ( dataCode, _ ) =
                     List.unzip dataWithCode
 
                 ( columnsCode, columns ) =
@@ -216,14 +214,7 @@ example =
               else
                 SortableTable.view attrs
                     columns
-                    (if isStickyAtAll then
-                        data
-                            |> List.repeat 10
-                            |> List.concat
 
-                     else
-                        data
-                    )
             ]
     }
 
@@ -326,7 +317,7 @@ dataWithCode =
 
 {-| -}
 type alias State =
-    { sortState : SortableTable.State ColumnId
+    { sortState : SortableTable.State ColumnId Datum
     , settings : Control Settings
     }
 
@@ -334,7 +325,8 @@ type alias State =
 {-| -}
 init : State
 init =
-    { sortState = SortableTable.init FirstName
+    { sortState = SortableTable.init FirstName (Tuple.second (List.unzip dataWithCode))
+
     , settings = controlSettings
     }
 
@@ -417,4 +409,25 @@ update msg state =
             ( { state | sortState = SortableTable.update sortableTableMsg state.sortState }, Cmd.none )
 
         UpdateControls controls ->
-            ( { state | settings = controls }, Cmd.none )
+            let
+                sortState = state.sortState
+
+                ( _, data ) =
+                    List.unzip dataWithCode
+            in
+
+              ( { state |
+                  settings = controls,
+                  sortState = { sortState |
+                    entries = (if (Control.currentValue controls).stickyHeader /= Nothing then
+                                  data
+                                      |> List.repeat 10
+                                      |> List.concat
+
+                               else
+                                    data
+                              )
+                  }
+                }
+              , Cmd.none
+              )
