@@ -2,9 +2,10 @@ module Nri.Ui.SortableTable.V6 exposing
     ( Column, Sorter, State
     , init, initDescending
     , custom, string, placeholderColumn
-    , Attribute, updateMsg, tableAttribute, state, stickyHeader, stickyHeaderCustom, StickyConfig
+    , Attribute, tableAttribute, state, stickyHeader, stickyHeaderCustom, StickyConfig
     , view, viewLoading
     , invariantSort, simpleSort, combineSorters
+    , Msg, msgWrapper, update
     )
 
 {-| Changes from V4:
@@ -15,7 +16,7 @@ module Nri.Ui.SortableTable.V6 exposing
 @docs Column, Sorter, State
 @docs init, initDescending
 @docs custom, string, placeholderColumn
-@docs Attribute, updateMsg, tableAttribute, state, stickyHeader, stickyHeaderCustom, StickyConfig
+@docs Attribute, tableAttribute, state, stickyHeader, stickyHeaderCustom, StickyConfig
 @docs view, viewLoading
 @docs invariantSort, simpleSort, combineSorters
 
@@ -37,6 +38,11 @@ import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1
 import Nri.Ui.Table.V8 as Table exposing (SortDirection(..))
 import Nri.Ui.UiIcon.V1
+
+
+{-| -}
+type Msg id
+    = Sort id SortDirection
 
 
 {-| -}
@@ -66,7 +72,7 @@ type alias State id =
 
 {-| -}
 type alias Config id msg =
-    { updateMsg : Maybe (State id -> msg)
+    { msgWrapper : Maybe (Msg id -> msg)
     , state : Maybe (State id)
     , stickyHeader : Maybe StickyConfig
     , tableAttributes : List Table.Attribute
@@ -75,7 +81,7 @@ type alias Config id msg =
 
 defaultConfig : Config id msg
 defaultConfig =
-    { updateMsg = Nothing
+    { msgWrapper = Nothing
     , state = Nothing
     , stickyHeader = Nothing
     , tableAttributes = []
@@ -158,9 +164,9 @@ state state_ =
 {-| Add interactivity in sorting columns. When this attribute is provided and
 sorting is enabled, columns will be sortable by clicking the headers.
 -}
-updateMsg : (State id -> msg) -> Attribute id msg
-updateMsg updateMsg_ =
-    Attribute (\config -> { config | updateMsg = Just updateMsg_ })
+msgWrapper : (Msg id -> msg) -> Attribute id msg
+msgWrapper msgWrapper_ =
+    Attribute (\config -> { config | msgWrapper = Just msgWrapper_ })
 
 
 {-| Make the header sticky (that is, it will stick to the top of the viewport
@@ -329,7 +335,7 @@ view attributes columns entries =
             List.foldl (\(Attribute fn) soFar -> fn soFar) defaultConfig attributes
 
         tableColumns =
-            List.map (buildTableColumn config.updateMsg config.state) columns
+            List.map (buildTableColumn config.msgWrapper config.state) columns
     in
     Table.view
         (buildTableAttributes config)
@@ -353,7 +359,7 @@ viewLoading attributes columns =
             List.foldl (\(Attribute fn) soFar -> fn soFar) defaultConfig attributes
 
         tableColumns =
-            List.map (buildTableColumn config.updateMsg config.state) columns
+            List.map (buildTableColumn config.msgWrapper config.state) columns
     in
     Table.viewLoading
         (buildTableAttributes config)
@@ -403,8 +409,8 @@ identitySorter =
         EQ
 
 
-buildTableColumn : Maybe (State id -> msg) -> Maybe (State id) -> Column id entry msg -> Table.Column entry msg
-buildTableColumn maybeUpdateMsg maybeState (Column column) =
+buildTableColumn : Maybe (Msg id -> msg) -> Maybe (State id) -> Column id entry msg -> Table.Column entry msg
+buildTableColumn maybeMsgWrapper maybeState (Column column) =
     if column.hidden then
         Table.placeholderColumn { width = Css.px (toFloat column.width) }
 
@@ -413,7 +419,7 @@ buildTableColumn maybeUpdateMsg maybeState (Column column) =
             { header =
                 case maybeState of
                     Just state_ ->
-                        viewSortHeader (column.sorter /= Nothing) column.header maybeUpdateMsg state_ column.id
+                        viewSortHeader (column.sorter /= Nothing) column.header maybeMsgWrapper state_ column.id
 
                     Nothing ->
                         column.header
@@ -433,12 +439,8 @@ buildTableColumn maybeUpdateMsg maybeState (Column column) =
             }
 
 
-viewSortHeader : Bool -> Html msg -> Maybe (State id -> msg) -> State id -> id -> Html msg
-viewSortHeader isSortable header maybeUpdateMsg state_ id =
-    let
-        nextState =
-            nextTableState state_ id
-    in
+viewSortHeader : Bool -> Html msg -> Maybe (Msg id -> msg) -> State id -> id -> Html msg
+viewSortHeader isSortable header maybeMsgWrapper state_ id =
     if isSortable then
         Html.button
             [ css
@@ -463,13 +465,13 @@ viewSortHeader isSortable header maybeUpdateMsg state_ id =
                 , Fonts.baseFont
                 , Css.fontSize (Css.em 1)
                 ]
-            , maybe (\updateMsg_ -> Html.Styled.Events.onClick (updateMsg_ nextState)) maybeUpdateMsg
+            , maybe (\msgWrapper_ -> Html.Styled.Events.onClick (msgWrapper_ (sortMsg state_ id))) maybeMsgWrapper
 
             -- screen readers should know what clicking this button will do
             , Aria.roleDescription "sort button"
             ]
             [ Html.div [] [ header ]
-            , viewJust (\_ -> viewSortButton state_ id) maybeUpdateMsg
+            , viewJust (\_ -> viewSortButton state_ id) maybeMsgWrapper
             ]
 
     else
@@ -509,17 +511,15 @@ viewSortButton state_ id =
     Html.div [ css [ padding (px 2) ] ] [ buttonContent ]
 
 
-nextTableState : State id -> id -> State id
-nextTableState state_ id =
-    if state_.column == id then
-        { column = id
-        , sortDirection = flipSortDirection state_.sortDirection
-        }
+sortMsg : State id -> id -> Msg id
+sortMsg state_ id =
+    Sort id
+        (if state_.column == id then
+            flipSortDirection state_.sortDirection
 
-    else
-        { column = id
-        , sortDirection = Ascending
-        }
+         else
+            Ascending
+        )
 
 
 flipSortDirection : SortDirection -> SortDirection
@@ -564,3 +564,14 @@ sortArrow direction active =
             , margin2 (px 1) zero
             ]
         |> Nri.Ui.Svg.V1.toHtml
+
+
+{-| -}
+update : Msg id -> State id -> State id
+update msg state_ =
+    case msg of
+        Sort id direction ->
+            { state_
+                | column = id
+                , sortDirection = direction
+            }

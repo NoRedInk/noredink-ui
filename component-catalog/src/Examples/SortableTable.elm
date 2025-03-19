@@ -108,7 +108,7 @@ example =
 
                 attrs =
                     List.concat
-                        [ [ SortableTable.updateMsg SetSortState
+                        [ [ SortableTable.msgWrapper SortableTableMsg
                           , SortableTable.state sortState
                           ]
                         , case settings.stickyHeader of
@@ -144,7 +144,7 @@ example =
                         [ moduleName ++ "." ++ viewName
                         , Code.listMultiline
                             (List.concat
-                                [ [ "SortableTable.updateMsg SetSortState"
+                                [ [ "SortableTable.msgWrapper SortableTableMsg"
                                   , "-- The SortableTable's state should be stored on the model, rather than initialized in the view"
                                         ++ "\n      "
                                         ++ "SortableTable.state (SortableTable.init "
@@ -201,7 +201,7 @@ example =
                 , mainType = Just "RootHtml.Html Msg"
                 , extraCode =
                     [ "type ColumnId = FirstName | LastName | CustomExample "
-                    , "type Msg = SetSortState (SortableTable.State ColumnId)"
+                    , "type Msg = SortableTableWrapper (SortableTable.Msg ColumnId)"
                     ]
                 , renderExample = Code.unstyledView
                 , toExampleCode = \_ -> [ toExampleCode "view" (Code.list dataCode), toExampleCode "viewLoading" "" ]
@@ -405,7 +405,7 @@ type ColumnId
 
 {-| -}
 type Msg
-    = SetSortState (SortableTable.State ColumnId)
+    = SortableTableMsg (SortableTable.Msg ColumnId)
     | UpdateControls (Control Settings)
 
 
@@ -413,8 +413,8 @@ type Msg
 update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
-        SetSortState sortState ->
-            ( { state | sortState = sortState }, Cmd.none )
+        SortableTableMsg sortableTableMsg ->
+            ( { state | sortState = SortableTable.update sortableTableMsg state.sortState }, Cmd.none )
 
         UpdateControls controls ->
             ( { state | settings = controls }, Cmd.none )
