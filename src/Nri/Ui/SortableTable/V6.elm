@@ -5,7 +5,7 @@ module Nri.Ui.SortableTable.V6 exposing
     , Attribute, tableAttribute, state, stickyHeader, stickyHeaderCustom, StickyConfig
     , view, viewLoading
     , invariantSort, simpleSort, combineSorters
-    , Msg, msgWrapper, update
+    , Msg, msgWrapper, update, updateEntries
     )
 
 {-| Changes from V4:
@@ -29,6 +29,8 @@ import Css.Media
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events
+import List.Extra
+import Maybe.Extra
 import Nri.Ui.Colors.V1
 import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
 import Nri.Ui.Fonts.V1 as Fonts
@@ -38,6 +40,8 @@ import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1
 import Nri.Ui.Table.V8 as Table exposing (SortDirection(..))
 import Nri.Ui.UiIcon.V1
+import Sort
+import Sort.Dict as Dict
 
 
 {-| -}
@@ -67,7 +71,7 @@ type Column id entry msg
 type alias State id entry =
     { column : id
     , sortDirection : SortDirection
-    , entries : List entry
+    , entries : Dict.Dict ( id, SortDirection ) (List entry)
     , sorter : id -> Sorter entry
     }
 
@@ -198,16 +202,58 @@ stickyHeaderCustom stickyConfig =
 init_ : SortDirection -> id -> List (Column id entry msg) -> List entry -> State id entry
 init_ sortDirection column columns entries =
     let
-        sorter =
+        entriesSorter : id -> Sorter entry
+        entriesSorter =
             findSorter columns
+
+        directionOrder : SortDirection -> Int
+        directionOrder direction =
+            case direction of
+                Ascending ->
+                    0
+
+                Descending ->
+                    1
+
+        -- we could pass this ordering in, but not having to makes the API a little nicer,
+        -- and if the column id isn't in one of the columns, it doesn't need to have an ordering anyways
+        columnOrder : id -> Int
+        columnOrder id =
+            List.Extra.findIndex (\(Column c) -> c.id == id) columns
+                |> Maybe.withDefault -1
+
+        columnDirectionSorter : Sort.Sorter ( id, SortDirection )
+        columnDirectionSorter =
+            Sort.by (Tuple.first >> columnOrder) Sort.increasing
+                |> Sort.tiebreaker
+                    (Sort.by (Tuple.second >> directionOrder) Sort.increasing)
     in
     { column = column
     , sortDirection = sortDirection
-    , sorter = sorter
+    , sorter = entriesSorter
     , entries =
-        List.sortWith
-            (sorter column sortDirection)
-            entries
+        Dict.singleton
+            columnDirectionSorter
+            ( column, sortDirection )
+            (List.sortWith
+                (entriesSorter column sortDirection)
+                entries
+            )
+    }
+
+
+updateEntries : State id entry -> List entry -> State id entry
+updateEntries state_ entries =
+    { state_
+        | entries =
+            state_.entries
+                |> Dict.dropIf (\_ _ -> True)
+                |> Dict.insert
+                    ( state_.column, state_.sortDirection )
+                    (List.sortWith
+                        (state_.sorter state_.column state_.sortDirection)
+                        entries
+                    )
     }
 
 
@@ -354,12 +400,9 @@ view attributes columns =
     Table.view
         (buildTableAttributes config)
         tableColumns
-        (case config.state of
-            Just state_ ->
-                state_.entries
-
-            Nothing ->
-                []
+        (config.state
+            |> Maybe.map (\state_ -> currentEntries state_)
+            |> Maybe.withDefault []
         )
 
 
@@ -578,16 +621,34 @@ sortArrow direction active =
         |> Nri.Ui.Svg.V1.toHtml
 
 
+currentEntries : State id entry -> List entry
+currentEntries state_ =
+    Dict.get ( state_.column, state_.sortDirection ) state_.entries
+        |> Maybe.withDefault []
+
+
 {-| -}
 update : Msg id -> State id entry -> State id entry
 update msg state_ =
     case msg of
         Sort column sortDirection ->
+            let
+                entries =
+                    Dict.update
+                        ( column, sortDirection )
+                        (Maybe.Extra.withDefaultLazy
+                            -- we only insert if the sorted data isn't already cached
+                            (\() ->
+                                List.sortWith
+                                    (state_.sorter column sortDirection)
+                                    (currentEntries state_)
+                            )
+                            >> Just
+                        )
+                        state_.entries
+            in
             { state_
                 | column = column
                 , sortDirection = sortDirection
-                , entries =
-                    List.sortWith
-                        (state_.sorter column sortDirection)
-                        state_.entries
+                , entries = entries
             }

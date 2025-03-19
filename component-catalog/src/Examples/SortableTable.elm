@@ -129,7 +129,6 @@ example =
                             []
                         ]
 
-
                 ( dataCode, _ ) =
                     List.unzip dataWithCode
 
@@ -391,7 +390,6 @@ type ColumnId
     | LastName
     | CustomExample
 
-
 {-| -}
 type Msg
     = SortableTableMsg (SortableTable.Msg ColumnId)
@@ -407,24 +405,25 @@ update msg state =
 
         UpdateControls controls ->
             let
-                sortState = state.sortState
+                sortState =
+                    state.sortState
 
                 ( _, data ) =
                     List.unzip dataWithCode
             in
+            ( { state
+                | settings = controls
+                , sortState =
+                    SortableTable.updateEntries
+                        sortState
+                        (if (Control.currentValue controls).stickyHeader /= Nothing then
+                            data
+                                |> List.repeat 10
+                                |> List.concat
 
-              ( { state |
-                  settings = controls,
-                  sortState = { sortState |
-                    entries = (if (Control.currentValue controls).stickyHeader /= Nothing then
-                                  data
-                                      |> List.repeat 10
-                                      |> List.concat
-
-                               else
-                                    data
-                              )
-                  }
-                }
-              , Cmd.none
-              )
+                         else
+                            data
+                        )
+              }
+            , Cmd.none
+            )
