@@ -135,7 +135,7 @@ example =
                 ( columnsCode, columns ) =
                     List.unzip (columnsWithCode settings)
 
-                toExampleCode viewName finalArgs =
+                toExampleCode viewName =
                     { sectionName = viewName
                     , code =
                         [ moduleName ++ "." ++ viewName
@@ -185,7 +185,6 @@ example =
                             )
                             1
                         , Code.listMultiline columnsCode 1
-                        , finalArgs
                         ]
                             |> String.join ""
                     }
@@ -202,17 +201,13 @@ example =
                     , "type Msg = SortableTableWrapper (SortableTable.Msg ColumnId)"
                     ]
                 , renderExample = Code.unstyledView
-                , toExampleCode = \_ -> [ toExampleCode "view" (Code.list dataCode), toExampleCode "viewLoading" "" ]
+                , toExampleCode = \_ -> [ toExampleCode "view" ]
                 }
             , Heading.h2
                 [ Heading.plaintext "Customizable Example"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
-            , if settings.loading then
-                SortableTable.viewLoading attrs columns
-
-              else
-                SortableTable.view attrs columns
+            , SortableTable.view attrs columns
             ]
     }
 

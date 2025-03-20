@@ -5,7 +5,7 @@ module Nri.Ui.SortableTable.V6 exposing
     , encode, decoder
     , Column, custom, string, placeholderColumn
     , Sorter, invariantSort, simpleSort, combineSorters
-    , view, viewLoading
+    , view
     , Attribute, model, msgWrapper, stickyHeader, stickyHeaderCustom, StickyConfig, tableAttribute
     )
 
@@ -37,7 +37,7 @@ module Nri.Ui.SortableTable.V6 exposing
 
 ## Rendering
 
-@docs view, viewLoading
+@docs view
 
 
 ### Attributes
@@ -437,28 +437,17 @@ view attributes columns =
         tableColumns =
             List.map (buildTableColumn config.msgWrapper config.model) columns
     in
-    Table.view
-        (buildTableAttributes config)
-        tableColumns
-        (config.model
-            |> Maybe.map (\model_ -> currentEntries model_)
-            |> Maybe.withDefault []
-        )
+    case config.model of
+        Just model_ ->
+            Table.view
+                (buildTableAttributes config)
+                tableColumns
+                (currentEntries model_)
 
-
-{-| -}
-viewLoading : List (Attribute id entry msg) -> List (Column id entry msg) -> Html msg
-viewLoading attributes columns =
-    let
-        config =
-            List.foldl (\(Attribute fn) soFar -> fn soFar) defaultConfig attributes
-
-        tableColumns =
-            List.map (buildTableColumn config.msgWrapper config.model) columns
-    in
-    Table.viewLoading
-        (buildTableAttributes config)
-        tableColumns
+        Nothing ->
+            Table.viewLoading
+                (buildTableAttributes config)
+                tableColumns
 
 
 buildTableAttributes : Config id entry msg -> List Table.Attribute
