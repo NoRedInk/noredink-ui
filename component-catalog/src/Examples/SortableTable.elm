@@ -101,7 +101,7 @@ example =
         ]
     , about = []
     , view =
-        \ellieLinkConfig ({ sortState } as model) ->
+        \ellieLinkConfig ({ sortModel } as model) ->
             let
                 settings =
                     Control.currentValue model.settings
@@ -109,7 +109,7 @@ example =
                 attrs =
                     List.concat
                         [ [ SortableTable.msgWrapper SortableTableMsg
-                          , SortableTable.state sortState
+                          , SortableTable.model sortModel
                           ]
                         , case settings.stickyHeader of
                             Nothing ->
@@ -144,8 +144,8 @@ example =
                                 [ [ "SortableTable.msgWrapper SortableTableMsg"
                                   , "-- The SortableTable's state should be stored on the model, rather than initialized in the view"
                                         ++ "\n      "
-                                        ++ "SortableTable.state (SortableTable.init "
-                                        ++ Debug.toString model.sortState -- TODO fix this!
+                                        ++ "SortableTable.model (SortableTable.init "
+                                        ++ Debug.toString model.sortModel -- TODO fix this!
                                         ++ ")"
                                   ]
                                 , case settings.stickyHeader of
@@ -314,7 +314,7 @@ dataWithCode =
 
 {-| -}
 type alias State =
-    { sortState : SortableTable.State ColumnId Datum
+    { sortModel : SortableTable.Model ColumnId Datum
     , settings : Control Settings
     }
 
@@ -322,7 +322,7 @@ type alias State =
 {-| -}
 init : State
 init =
-    { sortState = SortableTable.init FirstName (Tuple.second (List.unzip (columnsWithCode (Control.currentValue controlSettings)))) (Tuple.second (List.unzip dataWithCode))
+    { sortModel = SortableTable.init FirstName (Tuple.second (List.unzip (columnsWithCode (Control.currentValue controlSettings)))) (Tuple.second (List.unzip dataWithCode))
     , settings = controlSettings
     }
 
@@ -401,21 +401,21 @@ update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
         SortableTableMsg sortableTableMsg ->
-            ( { state | sortState = SortableTable.update sortableTableMsg state.sortState }, Cmd.none )
+            ( { state | sortModel = SortableTable.update sortableTableMsg state.sortModel }, Cmd.none )
 
         UpdateControls controls ->
             let
-                sortState =
-                    state.sortState
+                sortModel =
+                    state.sortModel
 
                 ( _, data ) =
                     List.unzip dataWithCode
             in
             ( { state
                 | settings = controls
-                , sortState =
+                , sortModel =
                     SortableTable.updateEntries
-                        sortState
+                        sortModel
                         (if (Control.currentValue controls).stickyHeader /= Nothing then
                             data
                                 |> List.repeat 10

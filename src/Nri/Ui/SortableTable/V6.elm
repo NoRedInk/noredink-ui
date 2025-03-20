@@ -1,8 +1,8 @@
 module Nri.Ui.SortableTable.V6 exposing
-    ( Column, Sorter, State
+    ( Column, Sorter, Model
     , init, initDescending
     , custom, string, placeholderColumn
-    , Attribute, tableAttribute, state, stickyHeader, stickyHeaderCustom, StickyConfig
+    , Attribute, tableAttribute, model, stickyHeader, stickyHeaderCustom, StickyConfig
     , view, viewLoading
     , invariantSort, simpleSort, combineSorters
     , encode, decoder
@@ -14,10 +14,10 @@ module Nri.Ui.SortableTable.V6 exposing
   - Drops `disableAlternatingRowColors`
   - Adds `tableAttribute`, which lets us add any attributes for the underlying `Nri.Ui.Table`
 
-@docs Column, Sorter, State
+@docs Column, Sorter, Model
 @docs init, initDescending
 @docs custom, string, placeholderColumn
-@docs Attribute, tableAttribute, state, stickyHeader, stickyHeaderCustom, StickyConfig
+@docs Attribute, tableAttribute, model, stickyHeader, stickyHeaderCustom, StickyConfig
 @docs view, viewLoading
 @docs invariantSort, simpleSort, combineSorters
 @docs encode, decoder
@@ -72,8 +72,8 @@ type Column id entry msg
 
 
 {-| -}
-type State id entry
-    = State
+type Model id entry
+    = Model
         { column : id
         , sortDirection : SortDirection
         , entries : Dict.Dict ( id, SortDirection ) (List entry)
@@ -84,7 +84,7 @@ type State id entry
 {-| -}
 type alias Config id entry msg =
     { msgWrapper : Maybe (Msg id -> msg)
-    , state : Maybe (State id entry)
+    , model : Maybe (Model id entry)
     , stickyHeader : Maybe StickyConfig
     , tableAttributes : List Table.Attribute
     }
@@ -93,7 +93,7 @@ type alias Config id entry msg =
 defaultConfig : Config id entry msg
 defaultConfig =
     { msgWrapper = Nothing
-    , state = Nothing
+    , model = Nothing
     , stickyHeader = Nothing
     , tableAttributes = []
     }
@@ -163,13 +163,13 @@ type Attribute id entry msg
     = Attribute (Config id entry msg -> Config id entry msg)
 
 
-{-| Sort a column. You can get an initial state with `init` or `initDescending`.
-If you make this sorting interactive, you should store the state in your model
+{-| Sort a column. You can get an initial model with `init` or `initDescending`.
+If you make this sorting interactive, you should store the model in your model
 and provide it to this function instead of recreating it on every update.
 -}
-state : State id entry -> Attribute id entry msg
-state state_ =
-    Attribute (\config -> { config | state = Just state_ })
+model : Model id entry -> Attribute id entry msg
+model model_ =
+    Attribute (\config -> { config | model = Just model_ })
 
 
 {-| Add interactivity in sorting columns. When this attribute is provided and
@@ -204,7 +204,7 @@ stickyHeaderCustom stickyConfig =
     Attribute (\config -> { config | stickyHeader = Just stickyConfig })
 
 
-init_ : SortDirection -> id -> List (Column id entry msg) -> List entry -> State id entry
+init_ : SortDirection -> id -> List (Column id entry msg) -> List entry -> Model id entry
 init_ sortDirection column columns entries =
     let
         entriesSorter : id -> Sorter entry
@@ -233,7 +233,7 @@ init_ sortDirection column columns entries =
                 |> Sort.tiebreaker
                     (Sort.by (Tuple.second >> directionOrder) Sort.increasing)
     in
-    State
+    Model
         { column = column
         , sortDirection = sortDirection
         , sorter = entriesSorter
@@ -248,30 +248,30 @@ init_ sortDirection column columns entries =
         }
 
 
-updateEntries : State id entry -> List entry -> State id entry
-updateEntries (State state_) entries =
-    State
-        { state_
+updateEntries : Model id entry -> List entry -> Model id entry
+updateEntries (Model model_) entries =
+    Model
+        { model_
             | entries =
-                state_.entries
+                model_.entries
                     |> Dict.dropIf (\_ _ -> True)
                     |> Dict.insert
-                        ( state_.column, state_.sortDirection )
+                        ( model_.column, model_.sortDirection )
                         (List.sortWith
-                            (state_.sorter state_.column state_.sortDirection)
+                            (model_.sorter model_.column model_.sortDirection)
                             entries
                         )
         }
 
 
 {-| -}
-init : id -> List (Column id entry msg) -> List entry -> State id entry
+init : id -> List (Column id entry msg) -> List entry -> Model id entry
 init =
     init_ Ascending
 
 
 {-| -}
-initDescending : id -> List (Column id entry msg) -> List entry -> State id entry
+initDescending : id -> List (Column id entry msg) -> List entry -> Model id entry
 initDescending =
     init_ Descending
 
@@ -402,13 +402,13 @@ view attributes columns =
             List.foldl (\(Attribute fn) soFar -> fn soFar) defaultConfig attributes
 
         tableColumns =
-            List.map (buildTableColumn config.msgWrapper config.state) columns
+            List.map (buildTableColumn config.msgWrapper config.model) columns
     in
     Table.view
         (buildTableAttributes config)
         tableColumns
-        (config.state
-            |> Maybe.map (\state_ -> currentEntries state_)
+        (config.model
+            |> Maybe.map (\model_ -> currentEntries model_)
             |> Maybe.withDefault []
         )
 
@@ -421,7 +421,7 @@ viewLoading attributes columns =
             List.foldl (\(Attribute fn) soFar -> fn soFar) defaultConfig attributes
 
         tableColumns =
-            List.map (buildTableColumn config.msgWrapper config.state) columns
+            List.map (buildTableColumn config.msgWrapper config.model) columns
     in
     Table.viewLoading
         (buildTableAttributes config)
@@ -471,17 +471,17 @@ identitySorter =
         EQ
 
 
-buildTableColumn : Maybe (Msg id -> msg) -> Maybe (State id entry) -> Column id entry msg -> Table.Column entry msg
-buildTableColumn maybeMsgWrapper maybeState (Column column) =
+buildTableColumn : Maybe (Msg id -> msg) -> Maybe (Model id entry) -> Column id entry msg -> Table.Column entry msg
+buildTableColumn maybeMsgWrapper maybeModel (Column column) =
     if column.hidden then
         Table.placeholderColumn { width = Css.px (toFloat column.width) }
 
     else
         Table.custom
             { header =
-                case maybeState of
-                    Just state_ ->
-                        viewSortHeader (column.sorter /= Nothing) column.header maybeMsgWrapper state_ column.id
+                case maybeModel of
+                    Just model_ ->
+                        viewSortHeader (column.sorter /= Nothing) column.header maybeMsgWrapper model_ column.id
 
                     Nothing ->
                         column.header
@@ -490,19 +490,19 @@ buildTableColumn maybeMsgWrapper maybeState (Column column) =
             , cellStyles = column.cellStyles
             , sort =
                 Maybe.andThen
-                    (\(State state_) ->
-                        if state_.column == column.id then
-                            Just state_.sortDirection
+                    (\(Model model_) ->
+                        if model_.column == column.id then
+                            Just model_.sortDirection
 
                         else
                             Nothing
                     )
-                    maybeState
+                    maybeModel
             }
 
 
-viewSortHeader : Bool -> Html msg -> Maybe (Msg id -> msg) -> State id entry -> id -> Html msg
-viewSortHeader isSortable header maybeMsgWrapper (State state_) id =
+viewSortHeader : Bool -> Html msg -> Maybe (Msg id -> msg) -> Model id entry -> id -> Html msg
+viewSortHeader isSortable header maybeMsgWrapper (Model model_) id =
     if isSortable then
         Html.button
             [ css
@@ -510,7 +510,7 @@ viewSortHeader isSortable header maybeMsgWrapper (State state_) id =
                 , Css.alignItems Css.center
                 , Css.property "gap" "8px"
                 , CssVendorPrefix.property "user-select" "none"
-                , if state_.column == id then
+                , if model_.column == id then
                     fontWeight bold
 
                   else
@@ -527,13 +527,13 @@ viewSortHeader isSortable header maybeMsgWrapper (State state_) id =
                 , Fonts.baseFont
                 , Css.fontSize (Css.em 1)
                 ]
-            , maybe (\msgWrapper_ -> Html.Styled.Events.onClick (msgWrapper_ (sortMsg (State state_) id))) maybeMsgWrapper
+            , maybe (\msgWrapper_ -> Html.Styled.Events.onClick (msgWrapper_ (sortMsg (Model model_) id))) maybeMsgWrapper
 
             -- screen readers should know what clicking this button will do
             , Aria.roleDescription "sort button"
             ]
             [ Html.div [] [ header ]
-            , viewJust (\_ -> viewSortButton (State state_) id) maybeMsgWrapper
+            , viewJust (\_ -> viewSortButton (Model model_) id) maybeMsgWrapper
             ]
 
     else
@@ -543,8 +543,8 @@ viewSortHeader isSortable header maybeMsgWrapper (State state_) id =
             [ header ]
 
 
-viewSortButton : State id entry -> id -> Html msg
-viewSortButton (State state_) id =
+viewSortButton : Model id entry -> id -> Html msg
+viewSortButton (Model model_) id =
     let
         arrows upHighlighted downHighlighted =
             Html.div
@@ -560,7 +560,7 @@ viewSortButton (State state_) id =
                 ]
 
         buttonContent =
-            case ( state_.column == id, state_.sortDirection ) of
+            case ( model_.column == id, model_.sortDirection ) of
                 ( True, Ascending ) ->
                     arrows True False
 
@@ -573,11 +573,11 @@ viewSortButton (State state_) id =
     Html.div [ css [ padding (px 2) ] ] [ buttonContent ]
 
 
-sortMsg : State id entry -> id -> Msg id
-sortMsg (State state_) id =
+sortMsg : Model id entry -> id -> Msg id
+sortMsg (Model model_) id =
     Sort id
-        (if state_.column == id then
-            flipSortDirection state_.sortDirection
+        (if model_.column == id then
+            flipSortDirection model_.sortDirection
 
          else
             Ascending
@@ -628,15 +628,15 @@ sortArrow direction active =
         |> Nri.Ui.Svg.V1.toHtml
 
 
-currentEntries : State id entry -> List entry
-currentEntries (State state_) =
-    Dict.get ( state_.column, state_.sortDirection ) state_.entries
+currentEntries : Model id entry -> List entry
+currentEntries (Model model_) =
+    Dict.get ( model_.column, model_.sortDirection ) model_.entries
         |> Maybe.withDefault []
 
 
 {-| -}
-update : Msg id -> State id entry -> State id entry
-update msg (State state_) =
+update : Msg id -> Model id entry -> Model id entry
+update msg (Model model_) =
     case msg of
         Sort column sortDirection ->
             let
@@ -647,34 +647,34 @@ update msg (State state_) =
                             -- we only insert if the sorted data isn't already cached
                             (\() ->
                                 List.sortWith
-                                    (state_.sorter column sortDirection)
-                                    (currentEntries (State state_))
+                                    (model_.sorter column sortDirection)
+                                    (currentEntries (Model model_))
                             )
                             >> Just
                         )
-                        state_.entries
+                        model_.entries
             in
-            State
-                { state_
+            Model
+                { model_
                     | column = column
                     , sortDirection = sortDirection
                     , entries = entries
                 }
 
 
-{-| encode state to Json
+{-| encode model to Json
 -}
-encode : (id -> Encode.Value) -> State id entry -> Encode.Value
-encode columnIdEncoder (State state_) =
+encode : (id -> Encode.Value) -> Model id entry -> Encode.Value
+encode columnIdEncoder (Model model_) =
     Encode.object
-        [ ( "column", columnIdEncoder state_.column )
-        , ( "sortDirectionAscending", Encode.bool (state_.sortDirection == Ascending) )
+        [ ( "column", columnIdEncoder model_.column )
+        , ( "sortDirectionAscending", Encode.bool (model_.sortDirection == Ascending) )
         ]
 
 
-{-| decode state from Json
+{-| decode model from Json
 -}
-decoder : Decode.Decoder id -> List (Column id entry msg) -> List entry -> Decode.Decoder (State id entry)
+decoder : Decode.Decoder id -> List (Column id entry msg) -> List entry -> Decode.Decoder (Model id entry)
 decoder columnIdDecoder columns entries =
     Decode.map2
         (\column sortDirectionAscending ->
