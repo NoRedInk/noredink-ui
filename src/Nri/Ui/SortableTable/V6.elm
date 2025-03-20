@@ -5,6 +5,7 @@ module Nri.Ui.SortableTable.V6 exposing
     , Attribute, tableAttribute, state, stickyHeader, stickyHeaderCustom, StickyConfig
     , view, viewLoading
     , invariantSort, simpleSort, combineSorters
+    , encode, decoder
     , Msg, msgWrapper, update, updateEntries
     )
 
@@ -19,6 +20,7 @@ module Nri.Ui.SortableTable.V6 exposing
 @docs Attribute, tableAttribute, state, stickyHeader, stickyHeaderCustom, StickyConfig
 @docs view, viewLoading
 @docs invariantSort, simpleSort, combineSorters
+@docs encode, decoder
 
 -}
 
@@ -29,6 +31,8 @@ import Css.Media
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
 import Html.Styled.Events
+import Json.Decode as Decode
+import Json.Encode as Encode
 import List.Extra
 import Maybe.Extra
 import Nri.Ui.Colors.V1
@@ -656,3 +660,34 @@ update msg (State state_) =
                     , sortDirection = sortDirection
                     , entries = entries
                 }
+
+
+{-| encode state to Json
+-}
+encode : (id -> Encode.Value) -> State id entry -> Encode.Value
+encode columnIdEncoder (State state_) =
+    Encode.object
+        [ ( "column", columnIdEncoder state_.column )
+        , ( "sortDirectionAscending", Encode.bool (state_.sortDirection == Ascending) )
+        ]
+
+
+{-| decode state from Json
+-}
+decoder : Decode.Decoder id -> List (Column id entry msg) -> List entry -> Decode.Decoder (State id entry)
+decoder columnIdDecoder columns entries =
+    Decode.map2
+        (\column sortDirectionAscending ->
+            init_
+                (if sortDirectionAscending then
+                    Ascending
+
+                 else
+                    Descending
+                )
+                column
+                columns
+                entries
+        )
+        (Decode.field "column" columnIdDecoder)
+        (Decode.field "sortDirectionAscending" Decode.bool)
