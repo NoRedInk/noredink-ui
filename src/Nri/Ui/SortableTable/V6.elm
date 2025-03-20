@@ -9,10 +9,12 @@ module Nri.Ui.SortableTable.V6 exposing
     , Msg, msgWrapper, update, updateEntries
     )
 
-{-| Changes from V4:
+{-| Changes from V5:
 
-  - Drops `disableAlternatingRowColors`
-  - Adds `tableAttribute`, which lets us add any attributes for the underlying `Nri.Ui.Table`
+  - Moves update function out of onClick handler and into an explicit `update` function
+  - Model is renamed Model
+  - Model is is opaque (and because of this, exposes encoder and decoder) (todo: rename to Model)
+  - performance: caches sorting in Model instead of performing it in the view.
 
 @docs Column, Sorter, Model
 @docs init, initDescending
