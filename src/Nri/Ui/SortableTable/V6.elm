@@ -68,12 +68,13 @@ type Column id entry msg
 
 
 {-| -}
-type alias State id entry =
-    { column : id
-    , sortDirection : SortDirection
-    , entries : Dict.Dict ( id, SortDirection ) (List entry)
-    , sorter : id -> Sorter entry
-    }
+type State id entry
+    = State
+        { column : id
+        , sortDirection : SortDirection
+        , entries : Dict.Dict ( id, SortDirection ) (List entry)
+        , sorter : id -> Sorter entry
+        }
 
 
 {-| -}
@@ -228,33 +229,35 @@ init_ sortDirection column columns entries =
                 |> Sort.tiebreaker
                     (Sort.by (Tuple.second >> directionOrder) Sort.increasing)
     in
-    { column = column
-    , sortDirection = sortDirection
-    , sorter = entriesSorter
-    , entries =
-        Dict.singleton
-            columnDirectionSorter
-            ( column, sortDirection )
-            (List.sortWith
-                (entriesSorter column sortDirection)
-                entries
-            )
-    }
+    State
+        { column = column
+        , sortDirection = sortDirection
+        , sorter = entriesSorter
+        , entries =
+            Dict.singleton
+                columnDirectionSorter
+                ( column, sortDirection )
+                (List.sortWith
+                    (entriesSorter column sortDirection)
+                    entries
+                )
+        }
 
 
 updateEntries : State id entry -> List entry -> State id entry
-updateEntries state_ entries =
-    { state_
-        | entries =
-            state_.entries
-                |> Dict.dropIf (\_ _ -> True)
-                |> Dict.insert
-                    ( state_.column, state_.sortDirection )
-                    (List.sortWith
-                        (state_.sorter state_.column state_.sortDirection)
-                        entries
-                    )
-    }
+updateEntries (State state_) entries =
+    State
+        { state_
+            | entries =
+                state_.entries
+                    |> Dict.dropIf (\_ _ -> True)
+                    |> Dict.insert
+                        ( state_.column, state_.sortDirection )
+                        (List.sortWith
+                            (state_.sorter state_.column state_.sortDirection)
+                            entries
+                        )
+        }
 
 
 {-| -}
@@ -483,7 +486,7 @@ buildTableColumn maybeMsgWrapper maybeState (Column column) =
             , cellStyles = column.cellStyles
             , sort =
                 Maybe.andThen
-                    (\state_ ->
+                    (\(State state_) ->
                         if state_.column == column.id then
                             Just state_.sortDirection
 
@@ -495,7 +498,7 @@ buildTableColumn maybeMsgWrapper maybeState (Column column) =
 
 
 viewSortHeader : Bool -> Html msg -> Maybe (Msg id -> msg) -> State id entry -> id -> Html msg
-viewSortHeader isSortable header maybeMsgWrapper state_ id =
+viewSortHeader isSortable header maybeMsgWrapper (State state_) id =
     if isSortable then
         Html.button
             [ css
@@ -520,13 +523,13 @@ viewSortHeader isSortable header maybeMsgWrapper state_ id =
                 , Fonts.baseFont
                 , Css.fontSize (Css.em 1)
                 ]
-            , maybe (\msgWrapper_ -> Html.Styled.Events.onClick (msgWrapper_ (sortMsg state_ id))) maybeMsgWrapper
+            , maybe (\msgWrapper_ -> Html.Styled.Events.onClick (msgWrapper_ (sortMsg (State state_) id))) maybeMsgWrapper
 
             -- screen readers should know what clicking this button will do
             , Aria.roleDescription "sort button"
             ]
             [ Html.div [] [ header ]
-            , viewJust (\_ -> viewSortButton state_ id) maybeMsgWrapper
+            , viewJust (\_ -> viewSortButton (State state_) id) maybeMsgWrapper
             ]
 
     else
@@ -537,7 +540,7 @@ viewSortHeader isSortable header maybeMsgWrapper state_ id =
 
 
 viewSortButton : State id entry -> id -> Html msg
-viewSortButton state_ id =
+viewSortButton (State state_) id =
     let
         arrows upHighlighted downHighlighted =
             Html.div
@@ -567,7 +570,7 @@ viewSortButton state_ id =
 
 
 sortMsg : State id entry -> id -> Msg id
-sortMsg state_ id =
+sortMsg (State state_) id =
     Sort id
         (if state_.column == id then
             flipSortDirection state_.sortDirection
@@ -622,14 +625,14 @@ sortArrow direction active =
 
 
 currentEntries : State id entry -> List entry
-currentEntries state_ =
+currentEntries (State state_) =
     Dict.get ( state_.column, state_.sortDirection ) state_.entries
         |> Maybe.withDefault []
 
 
 {-| -}
 update : Msg id -> State id entry -> State id entry
-update msg state_ =
+update msg (State state_) =
     case msg of
         Sort column sortDirection ->
             let
@@ -641,14 +644,15 @@ update msg state_ =
                             (\() ->
                                 List.sortWith
                                     (state_.sorter column sortDirection)
-                                    (currentEntries state_)
+                                    (currentEntries (State state_))
                             )
                             >> Just
                         )
                         state_.entries
             in
-            { state_
-                | column = column
-                , sortDirection = sortDirection
-                , entries = entries
-            }
+            State
+                { state_
+                    | column = column
+                    , sortDirection = sortDirection
+                    , entries = entries
+                }

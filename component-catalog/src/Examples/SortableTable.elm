@@ -145,7 +145,7 @@ example =
                                   , "-- The SortableTable's state should be stored on the model, rather than initialized in the view"
                                         ++ "\n      "
                                         ++ "SortableTable.state (SortableTable.init "
-                                        ++ Debug.toString model.sortState.column
+                                        ++ Debug.toString model.sortState -- TODO fix this!
                                         ++ ")"
                                   ]
                                 , case settings.stickyHeader of
