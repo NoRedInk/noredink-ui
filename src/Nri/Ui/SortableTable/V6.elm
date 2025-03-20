@@ -6,7 +6,7 @@ module Nri.Ui.SortableTable.V6 exposing
     , view, viewLoading
     , invariantSort, simpleSort, combineSorters
     , encode, decoder
-    , Msg, msgWrapper, update, updateEntries
+    , Msg, entriesSorter, msgWrapper, update, updateEntries
     )
 
 {-| Changes from V5:
@@ -81,6 +81,11 @@ type Model id entry
         , entries : Dict.Dict ( id, SortDirection ) (List entry)
         , sorter : id -> Sorter entry
         }
+
+
+entriesSorter : Model id entry -> entry -> entry -> Order
+entriesSorter (Model { sortDirection, column, sorter }) =
+    sorter column sortDirection
 
 
 {-| -}
@@ -260,7 +265,7 @@ updateEntries (Model model_) entries =
                     |> Dict.insert
                         ( model_.column, model_.sortDirection )
                         (List.sortWith
-                            (model_.sorter model_.column model_.sortDirection)
+                            (entriesSorter (Model model_))
                             entries
                         )
         }
