@@ -1,12 +1,12 @@
 module Nri.Ui.SortableTable.V6 exposing
-    ( Column, Sorter, Model
-    , init, initDescending
-    , custom, string, placeholderColumn
-    , Attribute, tableAttribute, model, stickyHeader, stickyHeaderCustom, StickyConfig
-    , view, viewLoading
-    , invariantSort, simpleSort, combineSorters
+    ( Model, init, initDescending, rebuild
+    , entriesSorter
+    , Msg, update
     , encode, decoder
-    , Msg, entriesSorter, msgWrapper, update, updateEntries
+    , Column, custom, string, placeholderColumn
+    , Sorter, invariantSort, simpleSort, combineSorters
+    , view, viewLoading
+    , Attribute, model, msgWrapper, stickyHeader, stickyHeaderCustom, StickyConfig, tableAttribute
     )
 
 {-| Changes from V5:
@@ -16,13 +16,33 @@ module Nri.Ui.SortableTable.V6 exposing
   - Model is is opaque (and because of this, exposes encoder and decoder) (todo: rename to Model)
   - performance: caches sorting in Model instead of performing it in the view.
 
-@docs Column, Sorter, Model
-@docs init, initDescending
-@docs custom, string, placeholderColumn
-@docs Attribute, tableAttribute, model, stickyHeader, stickyHeaderCustom, StickyConfig
-@docs view, viewLoading
-@docs invariantSort, simpleSort, combineSorters
+
+## Initializing the model
+
+@docs Model, init, initDescending, rebuild
+@docs entriesSorter
+@docs Msg, update
+
+
+### Encoding and Decoding
+
 @docs encode, decoder
+
+
+## Columns
+
+@docs Column, custom, string, placeholderColumn
+@docs Sorter, invariantSort, simpleSort, combineSorters
+
+
+## Rendering
+
+@docs view, viewLoading
+
+
+### Attributes
+
+@docs Attribute, model, msgWrapper, stickyHeader, stickyHeaderCustom, StickyConfig, tableAttribute
 
 -}
 
@@ -83,12 +103,13 @@ type Model id entry
         }
 
 
+{-| The function that was used to sort the current sort direction & column in the table.
+-}
 entriesSorter : Model id entry -> entry -> entry -> Order
 entriesSorter (Model { sortDirection, column, sorter }) =
     sorter column sortDirection
 
 
-{-| -}
 type alias Config id entry msg =
     { msgWrapper : Maybe (Msg id -> msg)
     , model : Maybe (Model id entry)
@@ -258,8 +279,10 @@ init_ sortDirection columnId columns entries =
         }
 
 
-updateEntries : Model id entry -> List entry -> Model id entry
-updateEntries (Model model_) entries =
+{-| If you want to change the entries, this will rebuild the model while retaining sort information. Otherwise you can call one of the init funtions.
+-}
+rebuild : Model id entry -> List entry -> Model id entry
+rebuild (Model model_) entries =
     Model
         { model_
             | entries =

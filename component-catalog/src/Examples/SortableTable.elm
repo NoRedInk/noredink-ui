@@ -145,7 +145,8 @@ example =
                                   , "-- The SortableTable's state should be stored on the model, rather than initialized in the view"
                                         ++ "\n      "
                                         ++ "SortableTable.model (SortableTable.init "
-                                        ++ Debug.toString model.sortModel -- TODO fix this!
+                                        ++ Debug.toString model.sortModel
+                                        -- TODO fix this!
                                         ++ ")"
                                   ]
                                 , case settings.stickyHeader of
@@ -390,6 +391,7 @@ type ColumnId
     | LastName
     | CustomExample
 
+
 {-| -}
 type Msg
     = SortableTableMsg (SortableTable.Msg ColumnId)
@@ -414,7 +416,7 @@ update msg state =
             ( { state
                 | settings = controls
                 , sortModel =
-                    SortableTable.updateEntries
+                    SortableTable.rebuild
                         sortModel
                         (if (Control.currentValue controls).stickyHeader /= Nothing then
                             data
