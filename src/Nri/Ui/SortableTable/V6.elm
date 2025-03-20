@@ -212,11 +212,14 @@ stickyHeaderCustom stickyConfig =
 
 
 init_ : SortDirection -> id -> List (Column id entry msg) -> List entry -> Model id entry
-init_ sortDirection column columns entries =
+init_ sortDirection columnId columns entries =
     let
-        entriesSorter : id -> Sorter entry
-        entriesSorter =
-            findSorter columns
+        entriesSorter_ : id -> Sorter entry
+        entriesSorter_ columnId_ =
+            columns
+                |> listExtraFind (\(Column column) -> column.id == columnId_)
+                |> Maybe.andThen (\(Column column) -> column.sorter)
+                |> Maybe.withDefault identitySorter
 
         directionOrder : SortDirection -> Int
         directionOrder direction =
@@ -241,15 +244,15 @@ init_ sortDirection column columns entries =
                     (Sort.by (Tuple.second >> directionOrder) Sort.increasing)
     in
     Model
-        { column = column
+        { column = columnId
         , sortDirection = sortDirection
-        , sorter = entriesSorter
+        , sorter = entriesSorter_
         , entries =
             Dict.singleton
                 columnDirectionSorter
-                ( column, sortDirection )
+                ( columnId, sortDirection )
                 (List.sortWith
-                    (entriesSorter column sortDirection)
+                    (entriesSorter_ columnId sortDirection)
                     entries
                 )
         }
@@ -446,14 +449,6 @@ buildTableAttributes config =
         [ [ Table.css stickyStyles ]
         , List.reverse config.tableAttributes
         ]
-
-
-findSorter : List (Column id entry msg) -> id -> Sorter entry
-findSorter columns columnId =
-    columns
-        |> listExtraFind (\(Column column) -> column.id == columnId)
-        |> Maybe.andThen (\(Column column) -> column.sorter)
-        |> Maybe.withDefault identitySorter
 
 
 {-| Taken from <https://github.com/elm-community/list-extra/blob/8.2.0/src/List/Extra.elm#L556>
