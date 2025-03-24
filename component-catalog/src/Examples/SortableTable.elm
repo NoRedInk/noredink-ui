@@ -117,9 +117,7 @@ example =
                 , settings = model.settings
                 , mainType = Just "RootHtml.Html Msg"
                 , extraCode =
-                    [ "type ColumnId = FirstName | LastName | CustomExample "
-                    , "type Msg = SortableTableWrapper (SortableTable.Msg ColumnId)"
-                    ]
+                    [ "type ColumnId = FirstName | LastName | CustomExample " ]
                 , renderExample = identity
                 , toExampleCode =
                     \_ ->
