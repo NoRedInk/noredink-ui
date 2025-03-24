@@ -130,7 +130,7 @@ example =
                                         Code.newlineWithIndent 2
                                             ++ Code.always
                                                 (Code.tupleMultiline
-                                                    (initWithCode settings 4 |> Tuple.first)
+                                                    (initWithCode settings |> codeWithIndent 4)
                                                     "Cmd.none"
                                                     3
                                                 )
@@ -143,11 +143,11 @@ example =
                                                     "Cmd.none"
                                                 )
                                     , view =
-                                        Code.newlineWithIndent 2 ++ Code.anonymousFunction "model" (viewCode 2)
+                                        Code.newlineWithIndent 2 ++ Code.anonymousFunction "model " (viewCode 2)
                                     , subscriptions = Code.always "Sub.none"
                                     }
                                 , Code.var "columns" 1 <|
-                                    Code.listMultilineFlat (List.unzip (columnsWithCode 1 settings) |> Tuple.first) 1
+                                    Code.listMultilineFlat (columnsWithCode settings |> codeWithIndent 1) 1
                                 ]
                                     |> String.join Code.newlines
                           }
@@ -167,9 +167,6 @@ viewWithCode ({ sortModel } as model) =
     let
         settings =
             Control.currentValue model.settings
-
-        ( _, columns ) =
-            List.unzip (columnsWithCode 0 settings)
     in
     ( \indentOffset ->
         ([ Code.fromModule moduleName "view"
@@ -207,9 +204,10 @@ viewWithCode ({ sortModel } as model) =
 
                   else
                     []
-                , ["SortableTable.msgWrapper identity"]
+                , [ "SortableTable.msgWrapper identity" ]
                 , if settings.loading then
                     []
+
                   else
                     [ "SortableTable.model model" ]
                 ]
@@ -247,100 +245,106 @@ viewWithCode ({ sortModel } as model) =
                 []
             ]
         )
-        columns
+        (columnsWithCode settings |> Tuple.second)
     )
 
 
-initWithCode : Settings -> Int -> ( String, SortableTable.Model ColumnId Datum )
-initWithCode settings indentOffset =
+initWithCode : Settings -> ( Int -> String, SortableTable.Model ColumnId Datum )
+initWithCode settings =
     let
-        ( _, columns ) =
-            List.unzip (columnsWithCode 0 settings)
-
         ( dataCode, data ) =
             List.unzip dataWithCode
     in
-    ( [ Code.fromModule moduleName "init"
-      , "FirstName"
-      , "columns"
-      , Code.listMultilineFlat dataCode indentOffset
-      ]
-        |> String.join (Code.newlineWithIndent indentOffset)
-    , SortableTable.init FirstName columns data
+    ( \indentOffset ->
+        [ Code.fromModule moduleName "init"
+        , "FirstName"
+        , "columns"
+        , Code.listMultilineFlat dataCode indentOffset
+        ]
+            |> String.join (Code.newlineWithIndent indentOffset)
+    , SortableTable.init FirstName (columnsWithCode settings |> Tuple.second) data
     )
 
 
-columnsWithCode : Int -> Settings -> List ( String, Column ColumnId Datum Msg )
-columnsWithCode indentOffset settings =
+columnsWithCode : Settings -> ( Int -> List String, List (Column ColumnId Datum Msg) )
+columnsWithCode settings =
     let
-        indent =
-            indentOffset + 1
+        ( indentToCodes, columns ) =
+            [ ( \indent ->
+                    "SortableTable.string"
+                        ++ Code.recordMultiline
+                            [ ( "id", "FirstName" )
+                            , ( "header", Code.string "First name" )
+                            , ( "value", ".firstName" )
+                            , ( "width", "125" )
+                            , ( "cellStyles", Code.always "[]" )
+                            ]
+                            indent
+              , SortableTable.string
+                    { id = FirstName
+                    , header = "First name"
+                    , value = .firstName
+                    , width = 125
+                    , cellStyles = \_ -> []
+                    }
+              )
+            , ( \indent ->
+                    "SortableTable.string"
+                        ++ Code.recordMultiline
+                            [ ( "id", "LastName" )
+                            , ( "header", Code.string "Last name" )
+                            , ( "value", ".lastName" )
+                            , ( "width", "125" )
+                            , ( "cellStyles", Code.always "[]" )
+                            ]
+                            indent
+              , SortableTable.string
+                    { id = LastName
+                    , header = "Last name"
+                    , value = .lastName
+                    , width = 125
+                    , cellStyles = \_ -> []
+                    }
+              )
+            , ( \indent ->
+                    "SortableTable.custom"
+                        ++ Code.recordMultiline
+                            [ ( "id", "CustomExample" )
+                            , ( "header", "text " ++ Code.string settings.customizableColumnName )
+                            , ( "view", ".grade >> String.fromInt >> text" )
+                            , ( "sorter"
+                              , if settings.customizableColumnSorter then
+                                    "Just (SortableTable.simpleSort .grade)"
+
+                                else
+                                    "Nothing"
+                              )
+                            , ( "width", String.fromInt settings.customizableColumnWidth )
+                            , ( "cellStyles", Code.always (Tuple.first settings.customizableColumnCellStyles) )
+                            ]
+                            indent
+              , SortableTable.custom
+                    { id = CustomExample
+                    , header = Html.text settings.customizableColumnName
+                    , view = .grade >> String.fromInt >> Html.text
+                    , sorter =
+                        if settings.customizableColumnSorter then
+                            Just (SortableTable.simpleSort .grade)
+
+                        else
+                            Nothing
+                    , width = settings.customizableColumnWidth
+                    , cellStyles = \_ -> Tuple.second settings.customizableColumnCellStyles
+                    }
+              )
+            ]
+                |> List.unzip
     in
-    [ ( "SortableTable.string"
-            ++ Code.recordMultiline
-                [ ( "id", "FirstName" )
-                , ( "header", Code.string "First name" )
-                , ( "value", ".firstName" )
-                , ( "width", "125" )
-                , ( "cellStyles", Code.always "[]" )
-                ]
-                indent
-      , SortableTable.string
-            { id = FirstName
-            , header = "First name"
-            , value = .firstName
-            , width = 125
-            , cellStyles = \_ -> []
-            }
-      )
-    , ( "SortableTable.string"
-            ++ Code.recordMultiline
-                [ ( "id", "LastName" )
-                , ( "header", Code.string "Last name" )
-                , ( "value", ".lastName" )
-                , ( "width", "125" )
-                , ( "cellStyles", Code.always "[]" )
-                ]
-                indent
-      , SortableTable.string
-            { id = LastName
-            , header = "Last name"
-            , value = .lastName
-            , width = 125
-            , cellStyles = \_ -> []
-            }
-      )
-    , ( "SortableTable.custom"
-            ++ Code.recordMultiline
-                [ ( "id", "CustomExample" )
-                , ( "header", "text" ++ Code.string settings.customizableColumnName )
-                , ( "view", ".grade >> String.fromInt >> text" )
-                , ( "sorter"
-                  , if settings.customizableColumnSorter then
-                        "Just (SortableTable.simpleSort .grade)"
-
-                    else
-                        "Nothing"
-                  )
-                , ( "width", String.fromInt settings.customizableColumnWidth )
-                , ( "cellStyles", Code.always (Tuple.first settings.customizableColumnCellStyles) )
-                ]
-                indent
-      , SortableTable.custom
-            { id = CustomExample
-            , header = Html.text settings.customizableColumnName
-            , view = .grade >> String.fromInt >> Html.text
-            , sorter =
-                if settings.customizableColumnSorter then
-                    Just (SortableTable.simpleSort .grade)
-
-                else
-                    Nothing
-            , width = settings.customizableColumnWidth
-            , cellStyles = \_ -> Tuple.second settings.customizableColumnCellStyles
-            }
-      )
-    ]
+    ( \indentOffset ->
+        indentToCodes
+            |> List.map (\indentToCode -> indentToCode (indentOffset + 1))
+    , columns
+    )
 
 
 type alias Datum =
@@ -380,7 +384,7 @@ type alias State =
 {-| -}
 init : State
 init =
-    { sortModel = initWithCode (Control.currentValue controlSettings) 0 |> Tuple.second
+    { sortModel = initWithCode (Control.currentValue controlSettings) |> Tuple.second
     , settings = controlSettings
     }
 
@@ -486,3 +490,8 @@ update msg state =
               }
             , Cmd.none
             )
+
+
+codeWithIndent : Int -> ( Int -> a, b ) -> a
+codeWithIndent indentOffset ( withIndent, _ ) =
+    withIndent indentOffset
