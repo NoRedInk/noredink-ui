@@ -106,88 +106,8 @@ example =
                 settings =
                     Control.currentValue model.settings
 
-                attrs =
-                    List.concat
-                        [ [ SortableTable.msgWrapper SortableTableMsg
-                          , SortableTable.model sortModel
-                          ]
-                        , case settings.stickyHeader of
-                            Nothing ->
-                                []
-
-                            Just Default ->
-                                [ SortableTable.stickyHeader ]
-
-                            Just (Custom customConfig) ->
-                                [ SortableTable.stickyHeaderCustom customConfig ]
-                        , if settings.forwardingAttributesToTable then
-                            [ SortableTable.tableAttribute Table.disableAlternatingRowColors
-                            , SortableTable.tableAttribute (Table.css [ Css.border3 (Css.px 4) Css.solid Colors.red ])
-                            ]
-
-                          else
-                            []
-                        ]
-
-                ( dataCode, _ ) =
-                    List.unzip dataWithCode
-
-                ( columnsCode, columns ) =
-                    List.unzip (columnsWithCode settings)
-
-                toExampleCode viewName =
-                    { sectionName = viewName
-                    , code =
-                        [ moduleName ++ "." ++ viewName
-                        , Code.listMultiline
-                            (List.concat
-                                [ [ "SortableTable.msgWrapper SortableTableMsg"
-                                  , "-- The SortableTable's state should be stored on the model, rather than initialized in the view"
-                                        ++ "\n      "
-                                        ++ "SortableTable.model (SortableTable.init "
-                                        ++ Debug.toString model.sortModel
-                                        -- TODO fix this!
-                                        ++ ")"
-                                  ]
-                                , case settings.stickyHeader of
-                                    Nothing ->
-                                        []
-
-                                    Just Default ->
-                                        [ "SortableTable.stickyHeader"
-                                        ]
-
-                                    Just (Custom stickyConfig) ->
-                                        [ "SortableTable.stickyHeaderCustom "
-                                            ++ Code.recordMultiline
-                                                [ ( "topOffset", String.fromFloat stickyConfig.topOffset )
-                                                , ( "zIndex", String.fromInt stickyConfig.zIndex )
-                                                , ( "pageBackgroundColor", "Css.hex \"" ++ stickyConfig.pageBackgroundColor.value ++ "\"" )
-                                                , ( "customZIndex"
-                                                  , case stickyConfig.hoverZIndex of
-                                                        Nothing ->
-                                                            "Nothing"
-
-                                                        Just zIndex ->
-                                                            "Just " ++ String.fromInt zIndex
-                                                  )
-                                                ]
-                                                2
-                                        ]
-                                , if settings.forwardingAttributesToTable then
-                                    [ "SortableTable.tableAttribute (Table.disableAlternatingRowColors)"
-                                    , "SortableTable.tableAttribute (Table.css [ Css.border3 (Css.px 1) Css.solid Colors.red ])"
-                                    ]
-
-                                  else
-                                    []
-                                ]
-                            )
-                            1
-                        , Code.listMultiline columnsCode 1
-                        ]
-                            |> String.join ""
-                    }
+                ( viewCode, view ) =
+                    viewWithCode model
             in
             [ ControlView.view
                 { ellieLinkConfig = ellieLinkConfig
@@ -200,20 +120,153 @@ example =
                     [ "type ColumnId = FirstName | LastName | CustomExample "
                     , "type Msg = SortableTableWrapper (SortableTable.Msg ColumnId)"
                     ]
-                , renderExample = Code.unstyledView
-                , toExampleCode = \_ -> [ toExampleCode "view" ]
+                , renderExample = identity
+                , toExampleCode =
+                    \_ ->
+                        [ { sectionName = "view"
+                          , code =
+                                [ Code.browserElement
+                                    { init =
+                                        Code.newlineWithIndent 2
+                                            ++ Code.always
+                                                (Code.tupleMultiline
+                                                    (initWithCode settings 4 |> Tuple.first)
+                                                    "Cmd.none"
+                                                    3
+                                                )
+                                    , update =
+                                        Code.newlineWithIndent 2
+                                            ++ Code.anonymousFunction
+                                                "msg model"
+                                                (Code.tuple
+                                                    (Code.fromModule moduleName "update msg model")
+                                                    "Cmd.none"
+                                                )
+                                    , view =
+                                        Code.newlineWithIndent 2 ++ Code.always (viewCode 2)
+                                    , subscriptions = Code.always "Sub.none"
+                                    }
+                                , Code.var "columns" 1 <|
+                                    Code.listMultilineFlat (List.unzip (columnsWithCode 1 settings) |> Tuple.first) 1
+                                ]
+                                    |> String.join Code.newlines
+                          }
+                        ]
                 }
             , Heading.h2
                 [ Heading.plaintext "Customizable Example"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
-            , SortableTable.view attrs columns
+            , view
             ]
     }
 
 
-columnsWithCode : Settings -> List ( String, Column ColumnId Datum Msg )
-columnsWithCode settings =
+viewWithCode : State -> ( Int -> String, Html Msg )
+viewWithCode ({ sortModel } as model) =
+    let
+        settings =
+            Control.currentValue model.settings
+
+        ( _, columns ) =
+            List.unzip (columnsWithCode 0 settings)
+    in
+    ( \indentOffset ->
+        ([ Code.fromModule moduleName "view"
+         , Code.listMultilineFlat
+            (List.concat
+                [ case settings.stickyHeader of
+                    Nothing ->
+                        []
+
+                    Just Default ->
+                        [ "SortableTable.stickyHeader"
+                        ]
+
+                    Just (Custom stickyConfig) ->
+                        [ "SortableTable.stickyHeaderCustom "
+                            ++ Code.recordMultiline
+                                [ ( "topOffset", String.fromFloat stickyConfig.topOffset )
+                                , ( "zIndex", String.fromInt stickyConfig.zIndex )
+                                , ( "pageBackgroundColor", "Css.hex \"" ++ stickyConfig.pageBackgroundColor.value ++ "\"" )
+                                , ( "customZIndex"
+                                  , case stickyConfig.hoverZIndex of
+                                        Nothing ->
+                                            "Nothing"
+
+                                        Just zIndex ->
+                                            "Just " ++ String.fromInt zIndex
+                                  )
+                                ]
+                                (indentOffset + 3)
+                        ]
+                , if settings.forwardingAttributesToTable then
+                    [ "SortableTable.tableAttribute (Table.disableAlternatingRowColors)"
+                    , "SortableTable.tableAttribute (Table.css [ Css.border3 (Css.px 1) Css.solid Colors.red ])"
+                    ]
+
+                  else
+                    []
+                ]
+            )
+            (indentOffset + 2)
+         , "columns"
+         ]
+            |> String.join (Code.newlineWithIndent (indentOffset + 2))
+        )
+            |> Code.unstyledViewWithIndent (indentOffset + 1)
+    , SortableTable.view
+        (List.concat
+            [ [ SortableTable.msgWrapper SortableTableMsg
+              , SortableTable.model sortModel
+              ]
+            , case settings.stickyHeader of
+                Nothing ->
+                    []
+
+                Just Default ->
+                    [ SortableTable.stickyHeader ]
+
+                Just (Custom customConfig) ->
+                    [ SortableTable.stickyHeaderCustom customConfig ]
+            , if settings.forwardingAttributesToTable then
+                [ SortableTable.tableAttribute Table.disableAlternatingRowColors
+                , SortableTable.tableAttribute (Table.css [ Css.border3 (Css.px 4) Css.solid Colors.red ])
+                ]
+
+              else
+                []
+            ]
+        )
+        columns
+    )
+
+
+initWithCode : Settings -> Int -> ( String, SortableTable.Model ColumnId Datum )
+initWithCode settings indentOffset =
+    let
+        ( _, columns ) =
+            List.unzip (columnsWithCode 0 settings)
+
+        ( dataCode, data ) =
+            List.unzip dataWithCode
+    in
+    ( [ Code.fromModule moduleName "init"
+      , "FirstName"
+      , "columns"
+      , Code.listMultilineFlat dataCode indentOffset
+      ]
+        |> String.join (Code.newlineWithIndent indentOffset)
+    , SortableTable.init FirstName columns data
+    )
+
+
+columnsWithCode : Int -> Settings -> List ( String, Column ColumnId Datum Msg )
+columnsWithCode indentOffset settings =
+    let
+        indent =
+            indentOffset + 1
+    in
     [ ( "SortableTable.string"
             ++ Code.recordMultiline
                 [ ( "id", "FirstName" )
@@ -222,7 +275,7 @@ columnsWithCode settings =
                 , ( "width", "125" )
                 , ( "cellStyles", Code.always "[]" )
                 ]
-                3
+                indent
       , SortableTable.string
             { id = FirstName
             , header = "First name"
@@ -239,7 +292,7 @@ columnsWithCode settings =
                 , ( "width", "125" )
                 , ( "cellStyles", Code.always "[]" )
                 ]
-                3
+                indent
       , SortableTable.string
             { id = LastName
             , header = "Last name"
@@ -263,7 +316,7 @@ columnsWithCode settings =
                 , ( "width", String.fromInt settings.customizableColumnWidth )
                 , ( "cellStyles", Code.always (Tuple.first settings.customizableColumnCellStyles) )
                 ]
-                3
+                indent
       , SortableTable.custom
             { id = CustomExample
             , header = Html.text settings.customizableColumnName
@@ -318,7 +371,7 @@ type alias State =
 {-| -}
 init : State
 init =
-    { sortModel = SortableTable.init FirstName (Tuple.second (List.unzip (columnsWithCode (Control.currentValue controlSettings)))) (Tuple.second (List.unzip dataWithCode))
+    { sortModel = initWithCode (Control.currentValue controlSettings) 0 |> Tuple.second
     , settings = controlSettings
     }
 
