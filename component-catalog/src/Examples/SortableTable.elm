@@ -143,7 +143,7 @@ example =
                                                     "Cmd.none"
                                                 )
                                     , view =
-                                        Code.newlineWithIndent 2 ++ Code.always (viewCode 2)
+                                        Code.newlineWithIndent 2 ++ Code.anonymousFunction "model" (viewCode 2)
                                     , subscriptions = Code.always "Sub.none"
                                     }
                                 , Code.var "columns" 1 <|
@@ -207,6 +207,11 @@ viewWithCode ({ sortModel } as model) =
 
                   else
                     []
+                , ["SortableTable.msgWrapper identity"]
+                , if settings.loading then
+                    []
+                  else
+                    [ "SortableTable.model model" ]
                 ]
             )
             (indentOffset + 2)
@@ -217,9 +222,13 @@ viewWithCode ({ sortModel } as model) =
             |> Code.unstyledViewWithIndent (indentOffset + 1)
     , SortableTable.view
         (List.concat
-            [ [ SortableTable.msgWrapper SortableTableMsg
-              , SortableTable.model sortModel
-              ]
+            [ SortableTable.msgWrapper SortableTableMsg
+                :: (if settings.loading then
+                        []
+
+                    else
+                        [ SortableTable.model sortModel ]
+                   )
             , case settings.stickyHeader of
                 Nothing ->
                     []
