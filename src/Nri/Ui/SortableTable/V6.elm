@@ -12,7 +12,7 @@ module Nri.Ui.SortableTable.V6 exposing
 {-| Changes from V5:
 
   - Moves update function out of onClick handler and into an explicit `update` function
-  - Model is renamed Model
+  - State is renamed Model
   - Model is is opaque (and because of this, exposes encoder, decoder, and entriesSorter)
   - removed loading function. Now if view is not passed the model, it will render as loading
   - performance: caches sorting in Model instead of performing it in the view.
