@@ -13,7 +13,7 @@ module Nri.Ui.SortableTable.V6 exposing
 
   - Moves update function out of onClick handler and into an explicit `update` function
   - Model is renamed Model
-  - Model is is opaque (and because of this, exposes encoder and decoder) (todo: rename to Model)
+  - Model is is opaque (and because of this, exposes encoder, decoder, and entriesSorter)
   - performance: caches sorting in Model instead of performing it in the view.
 
 
