@@ -125,8 +125,8 @@ entriesSorter columns id =
 
 {-| -}
 currentEntriesSorter : TableConfig id entry msg -> Model id entry -> entry -> entry -> Order
-currentEntriesSorter columns (Model { sortDirection, column }) =
-    entriesSorter columns column sortDirection
+currentEntriesSorter tableConfig (Model { sortDirection, column }) =
+    entriesSorter tableConfig column sortDirection
 
 
 {-| -}
@@ -699,7 +699,7 @@ encode columnIdEncoder (Model model) =
 {-| decode model from Json
 -}
 decoder : TableConfig id entry msg -> Decode.Decoder id -> Maybe (List entry) -> Decode.Decoder (Model id entry)
-decoder columns columnIdDecoder maybeEntries =
+decoder tableConfig columnIdDecoder maybeEntries =
     Decode.map2
         (\column sortDirectionAscending ->
             init_
@@ -709,7 +709,7 @@ decoder columns columnIdDecoder maybeEntries =
                  else
                     Descending
                 )
-                columns
+                tableConfig
                 column
                 maybeEntries
         )
