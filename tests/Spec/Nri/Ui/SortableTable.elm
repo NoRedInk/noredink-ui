@@ -2,8 +2,8 @@ module Spec.Nri.Ui.SortableTable exposing (spec)
 
 import Expect
 import Html.Styled
-import Nri.Ui.SortableTable.V5 as SortableTable
-import Nri.Ui.Table.V8 exposing (SortDirection)
+import Nri.Ui.SortableTable.V6 as SortableTable
+import Nri.Ui.Table.V8 exposing (SortDirection(..))
 import Test exposing (..)
 import Test.Html.Query as Query
 import Test.Html.Selector as Selector
@@ -47,31 +47,26 @@ entries =
     ]
 
 
-tableView : SortableTable.State Column -> Query.Single msg
-tableView sortState =
-    SortableTable.view [ SortableTable.state sortState ] columns entries
+table : SortableTable.SortableTable Column Person msg
+table =
+    SortableTable.table columns
+
+
+tableView : SortableTable.Model Column Person -> Query.Single (SortableTable.Msg Column)
+tableView sortModel =
+    table.view { model = sortModel, msgWrapper = identity } []
         |> Html.Styled.toUnstyled
         |> Query.fromHtml
 
 
-sortBy : Column -> SortableTable.State Column
+sortBy : Column -> SortableTable.Model Column Person
 sortBy field =
-    SortableTable.init field
+    table.init field (Just entries)
 
 
-sortByDescending : Column -> SortableTable.State Column
+sortByDescending : Column -> SortableTable.Model Column Person
 sortByDescending field =
-    SortableTable.initDescending field
-
-
-ascending : SortDirection
-ascending =
-    sortBy FirstName |> .sortDirection
-
-
-descending : SortDirection
-descending =
-    sortByDescending FirstName |> .sortDirection
+    table.initDescending field (Just entries)
 
 
 spec : Test
@@ -84,8 +79,8 @@ spec =
                         sorter =
                             SortableTable.invariantSort .firstName
                     in
-                    List.sortWith (sorter ascending) entries
-                        |> Expect.equal (List.sortWith (sorter descending) entries)
+                    List.sortWith (sorter Ascending) entries
+                        |> Expect.equal (List.sortWith (sorter Descending) entries)
             ]
         , describe "simpleSort"
             [ test "sorts ascending" <|
@@ -94,7 +89,7 @@ spec =
                         sorter =
                             SortableTable.simpleSort .firstName
                     in
-                    List.sortWith (sorter ascending) entries
+                    List.sortWith (sorter Ascending) entries
                         |> List.map .firstName
                         |> Expect.equal [ "Alice", "Bob", "Charlie" ]
             , test "sorts descending" <|
@@ -103,7 +98,7 @@ spec =
                         sorter =
                             SortableTable.simpleSort .firstName
                     in
-                    List.sortWith (sorter descending) entries
+                    List.sortWith (sorter Descending) entries
                         |> List.map .firstName
                         |> Expect.equal [ "Charlie", "Bob", "Alice" ]
             ]
@@ -123,7 +118,7 @@ spec =
                         sorter =
                             SortableTable.combineSorters [ sortByFirstName, sortByLastName ]
                     in
-                    List.sortWith (sorter ascending) newEntries
+                    List.sortWith (sorter Ascending) newEntries
                         |> List.map (\elem -> elem.firstName ++ " " ++ elem.lastName)
                         |> Expect.equal
                             [ "Alice InChains"

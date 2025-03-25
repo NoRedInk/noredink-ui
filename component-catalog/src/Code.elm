@@ -3,8 +3,7 @@ module Code exposing
     , maybe
     , bool
     , commentInline
-    , list, listMultiline
-    , tuple
+    , list, listMultiline, listMultilineFlat
     , pipelineMultiline
     , record, recordMultiline
     , listOfRecordsMultiline
@@ -12,13 +11,13 @@ module Code exposing
     , withParens, withParensMultiline
     , anonymousFunction, always
     , caseExpression
-    , browserElement, unstyledView
+    , browserElement, unstyledView, unstyledViewWithIndent
     , fromModule
     , var, varWithTypeAnnotation
     , funcWithType
     , unionType
     , apply
-    , int
+    , int, tuple, tupleMultiline
     )
 
 {-|
@@ -27,8 +26,8 @@ module Code exposing
 @docs maybe
 @docs bool
 @docs commentInline
-@docs list, listMultiline
-@docs tuple
+@docs list, listMultiline, listMultilineFlat
+@docs tuple tupleMultiline
 @docs pipelineMultiline
 @docs record, recordMultiline
 @docs listOfRecordsMultiline
@@ -36,7 +35,7 @@ module Code exposing
 @docs withParens, withParensMultiline
 @docs anonymousFunction, always
 @docs caseExpression
-@docs browserElement, unstyledView
+@docs browserElement, unstyledView, unstyledViewWithIndent
 @docs always
 @docs fromModule
 @docs var, varWithTypeAnnotation
@@ -141,6 +140,12 @@ tuple a b =
 
 
 {-| -}
+tupleMultiline : String -> String -> Int -> String
+tupleMultiline a b =
+    structureMultiline "(" ")" [ a, b ]
+
+
+{-| -}
 list : List String -> String
 list =
     structure "[" "]"
@@ -150,6 +155,12 @@ list =
 listMultiline : List String -> Int -> String
 listMultiline =
     structureMultiline "[" "]"
+
+
+{-| -}
+listMultilineFlat : List String -> Int -> String
+listMultilineFlat =
+    structureMultilineFlat "[" "]"
 
 
 recordValues : List ( String, String ) -> List String
@@ -221,12 +232,19 @@ newline =
 {-| -}
 newlineWithIndent : Int -> String
 newlineWithIndent indent =
-    "\n" ++ String.repeat indent tab
+    "\n" ++ prefixIndent indent
 
 
 tab : String
 tab =
     "    "
+
+
+{-| this is called prefix indent becaue normally you should use newlineWithIndent
+-}
+prefixIndent : Int -> String
+prefixIndent indent =
+    String.repeat indent tab
 
 
 {-| -}
@@ -296,6 +314,12 @@ unstyledView view =
 
 
 {-| -}
+unstyledViewWithIndent : Int -> String -> String
+unstyledViewWithIndent indent view =
+    pipelineMultiline [ newlineWithIndent indent ++ view, "toUnstyled" ] indent
+
+
+{-| -}
 fromModule : String -> String -> String
 fromModule moduleName name =
     moduleName ++ "." ++ name
@@ -310,7 +334,7 @@ varWithTypeAnnotation name typeValue body =
 {-| -}
 varWithTypeMultiline : String -> String -> String -> Int -> String
 varWithTypeMultiline name typeValue body indent =
-    String.repeat indent tab
+    prefixIndent indent
         ++ typeAnnotation name typeValue
         ++ newlineWithIndent indent
         ++ var name (indent + 1) body
@@ -325,7 +349,7 @@ funcWithType name typeValue vars body =
 {-| -}
 funcWithTypeMultiline : String -> String -> String -> String -> Int -> String
 funcWithTypeMultiline name typeValue vars body indent =
-    String.repeat indent tab
+    prefixIndent indent
         ++ typeAnnotation name typeValue
         ++ newlineWithIndent indent
         ++ var (name ++ " " ++ vars) (indent + 1) body
