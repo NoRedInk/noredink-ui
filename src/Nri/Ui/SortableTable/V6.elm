@@ -1,6 +1,5 @@
 module Nri.Ui.SortableTable.V6 exposing
     ( Model
-    , currentEntriesSorter
     , Msg
     , encode
     , Column, custom, string, placeholderColumn
@@ -23,13 +22,14 @@ module Nri.Ui.SortableTable.V6 exposing
 ## Initializing the model
 
 @docs Model
-@docs entriesSorter, currentEntriesSorter
-@docs Msg, update
+@docs Msg
 
 
 ### Encoding and Decoding
 
-@docs encode, decoder
+decoder comes from SortableTable type
+
+@docs encode
 
 
 ## Columns
@@ -40,7 +40,7 @@ module Nri.Ui.SortableTable.V6 exposing
 
 ## Rendering
 
-@docs view, ViewConfig
+@docs ViewConfig
 
 
 ### Attributes
@@ -717,6 +717,7 @@ decoder columns columnIdDecoder maybeEntries =
         (Decode.field "sortDirectionAscending" Decode.bool)
 
 
+{-| -}
 type alias SortableTable id entry msg =
     { update : Msg id -> Model id entry -> Model id entry
     , view : ViewConfig id entry msg -> List (Attribute id entry msg) -> Html msg
@@ -728,6 +729,7 @@ type alias SortableTable id entry msg =
     }
 
 
+{-| -}
 table :
     TableConfig id entry msg
     -> SortableTable id entry msg
