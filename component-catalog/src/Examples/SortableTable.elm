@@ -460,7 +460,11 @@ update : Msg -> State -> ( State, Cmd Msg )
 update msg state =
     case msg of
         SortableTableMsg sortableTableMsg ->
-            ( { state | sortModel = SortableTable.update sortableTableMsg state.sortModel }, Cmd.none )
+            let
+                settings =
+                    Control.currentValue state.settings
+            in
+            ( { state | sortModel = SortableTable.update (columnsWithCode settings |> Tuple.second) sortableTableMsg state.sortModel }, Cmd.none )
 
         UpdateControls controls ->
             let
@@ -477,6 +481,7 @@ update msg state =
                 | settings = controls
                 , sortModel =
                     SortableTable.rebuild
+                        (columnsWithCode settings |> Tuple.second)
                         sortModel
                         (case ( settings.loading, settings.stickyHeader ) of
                             ( True, _ ) ->

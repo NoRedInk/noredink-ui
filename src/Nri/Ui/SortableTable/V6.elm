@@ -1,6 +1,6 @@
 module Nri.Ui.SortableTable.V6 exposing
     ( Model, init, initDescending, rebuild
-    , entriesSorter
+    , entriesSorter, currentEntriesSorter
     , Msg, update
     , encode, decoder
     , Column, custom, string, placeholderColumn
@@ -22,7 +22,7 @@ module Nri.Ui.SortableTable.V6 exposing
 ## Initializing the model
 
 @docs Model, init, initDescending, rebuild
-@docs entriesSorter
+@docs entriesSorter, currentEntriesSorter
 @docs Msg, update
 
 
@@ -108,15 +108,22 @@ type Model id entry
         { column : id
         , sortDirection : SortDirection
         , loadingEntries : LoadingEntries id entry
-        , sorter : id -> Sorter entry
         }
 
 
-{-| The function that was used to sort the current sort direction & column in the table.
--}
-entriesSorter : Model id entry -> entry -> entry -> Order
-entriesSorter (Model { sortDirection, column, sorter }) =
-    sorter column sortDirection
+{-| -}
+entriesSorter : TableConfig id entry msg -> id -> Sorter entry
+entriesSorter columns id =
+    columns
+        |> listExtraFind (\(Column column) -> column.id == id)
+        |> Maybe.andThen (\(Column column) -> column.sorter)
+        |> Maybe.withDefault identitySorter
+
+
+{-| -}
+currentEntriesSorter : TableConfig id entry msg -> Model id entry -> entry -> entry -> Order
+currentEntriesSorter columns (Model { sortDirection, column }) =
+    entriesSorter columns column sortDirection
 
 
 {-| -}
@@ -230,13 +237,6 @@ stickyHeaderCustom stickyConfig =
 init_ : SortDirection -> id -> TableConfig id entry msg -> Maybe (List entry) -> Model id entry
 init_ sortDirection columnId columns maybeEntries =
     let
-        entriesSorter_ : id -> Sorter entry
-        entriesSorter_ columnId_ =
-            columns
-                |> listExtraFind (\(Column column) -> column.id == columnId_)
-                |> Maybe.andThen (\(Column column) -> column.sorter)
-                |> Maybe.withDefault identitySorter
-
         directionOrder : SortDirection -> Int
         directionOrder direction =
             case direction of
@@ -260,10 +260,10 @@ init_ sortDirection columnId columns maybeEntries =
                     (Sort.by (Tuple.second >> directionOrder) Sort.increasing)
     in
     rebuild
+        columns
         (Model
             { column = columnId
             , sortDirection = sortDirection
-            , sorter = entriesSorter_
             , loadingEntries = Loading columnDirectionSorter
             }
         )
@@ -272,10 +272,10 @@ init_ sortDirection columnId columns maybeEntries =
 
 {-| If you want to change the entries, this will rebuild the model while retaining sort information. Otherwise you can call one of the init funtions.
 -}
-rebuild : Model id entry -> Maybe (List entry) -> Model id entry
-rebuild (Model model) maybeEntries =
+rebuild : TableConfig id entry msg -> Model id entry -> Maybe (List entry) -> Model id entry
+rebuild tableConfig (Model model) maybeEntries =
     let
-        sorter =
+        dictSorter =
             case model.loadingEntries of
                 Loaded sorter_ _ ->
                     sorter_
@@ -288,17 +288,17 @@ rebuild (Model model) maybeEntries =
             | loadingEntries =
                 case maybeEntries of
                     Just entries ->
-                        Loaded sorter <|
+                        Loaded dictSorter <|
                             Dict.singleton
-                                sorter
+                                dictSorter
                                 ( model.column, model.sortDirection )
                                 (List.sortWith
-                                    (entriesSorter (Model model))
+                                    (currentEntriesSorter tableConfig (Model model))
                                     entries
                                 )
 
                     Nothing ->
-                        Loading sorter
+                        Loading dictSorter
         }
 
 
@@ -653,8 +653,8 @@ currentEntries (Model model) entries =
 
 
 {-| -}
-update : Msg id -> Model id entry -> Model id entry
-update msg (Model model) =
+update : TableConfig id entry msg -> Msg id -> Model id entry -> Model id entry
+update tableConfig msg (Model model) =
     case msg of
         Sort column sortDirection ->
             Model
@@ -674,7 +674,7 @@ update msg (Model model) =
                                             -- we only insert if the sorted data isn't already cached
                                             (\() ->
                                                 List.sortWith
-                                                    (model.sorter column sortDirection)
+                                                    (entriesSorter tableConfig column sortDirection)
                                                     (currentEntries (Model model) entries)
                                             )
                                             >> Just
