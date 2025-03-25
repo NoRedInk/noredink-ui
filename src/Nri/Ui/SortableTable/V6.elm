@@ -93,12 +93,17 @@ type Column id entry msg
         }
 
 
+type LoadingEntries id entry
+    = Loaded (Sort.Sorter ( id, SortDirection )) (Dict.Dict ( id, SortDirection ) (List entry))
+    | Loading (Sort.Sorter ( id, SortDirection ))
+
+
 {-| -}
 type Model id entry
     = Model
         { column : id
         , sortDirection : SortDirection
-        , entries : Dict.Dict ( id, SortDirection ) (List entry)
+        , loadingEntries : LoadingEntries id entry
         , sorter : id -> Sorter entry
         }
 
@@ -255,7 +260,7 @@ init_ sortDirection columnId columns maybeEntries =
             { column = columnId
             , sortDirection = sortDirection
             , sorter = entriesSorter_
-            , entries = Dict.empty columnDirectionSorter
+            , loadingEntries = Loading columnDirectionSorter
             }
         )
         maybeEntries
@@ -266,17 +271,22 @@ init_ sortDirection columnId columns maybeEntries =
 rebuild : Model id entry -> Maybe (List entry) -> Model id entry
 rebuild (Model model) maybeEntries =
     let
-        emptyDict =
-            model.entries
-                |> Dict.dropIf (\_ _ -> True)
+        sorter =
+            case model.loadingEntries of
+                Loaded sorter_ _ ->
+                    sorter_
+
+                Loading sorter_ ->
+                    sorter_
     in
     Model
         { model
-            | entries =
+            | loadingEntries =
                 case maybeEntries of
                     Just entries ->
-                        emptyDict
-                            |> Dict.insert
+                        Loaded sorter <|
+                            Dict.singleton
+                                sorter
                                 ( model.column, model.sortDirection )
                                 (List.sortWith
                                     (entriesSorter (Model model))
@@ -284,7 +294,7 @@ rebuild (Model model) maybeEntries =
                                 )
 
                     Nothing ->
-                        emptyDict
+                        Loading sorter
         }
 
 
@@ -431,19 +441,22 @@ view { msgWrapper, model } attributes columns =
         tableAttributes =
             buildTableAttributes config
 
-        isEmpty (Model model_) =
-            Dict.isEmpty model_.entries
+        loadingEntries =
+            case model of
+                Model model_ ->
+                    model_.loadingEntries
     in
-    if isEmpty model then
-        Table.viewLoading
-            tableAttributes
-            tableColumns
+    case loadingEntries of
+        Loading _ ->
+            Table.viewLoading
+                tableAttributes
+                tableColumns
 
-    else
-        Table.view
-            tableAttributes
-            tableColumns
-            (currentEntries model)
+        Loaded _ entries ->
+            Table.view
+                tableAttributes
+                tableColumns
+                (currentEntries model entries)
 
 
 buildTableAttributes : Config -> List Table.Attribute
@@ -629,9 +642,9 @@ sortArrow direction active =
         |> Nri.Ui.Svg.V1.toHtml
 
 
-currentEntries : Model id entry -> List entry
-currentEntries (Model model) =
-    Dict.get ( model.column, model.sortDirection ) model.entries
+currentEntries : Model id entry -> Dict.Dict ( id, SortDirection ) (List entry) -> List entry
+currentEntries (Model model) entries =
+    Dict.get ( model.column, model.sortDirection ) entries
         |> Maybe.withDefault []
 
 
@@ -640,31 +653,29 @@ update : Msg id -> Model id entry -> Model id entry
 update msg (Model model) =
     case msg of
         Sort column sortDirection ->
-            let
-                entries =
-                    if Dict.isEmpty model.entries then
-                        -- we don't want to insert empty lists into the empty dictionary
-                        model.entries
-
-                    else
-                        Dict.update
-                            ( column, sortDirection )
-                            (Maybe.Extra.withDefaultLazy
-                                -- we only insert if the sorted data isn't already cached
-                                (\() ->
-                                    List.sortWith
-                                        (model.sorter column sortDirection)
-                                        (currentEntries (Model model))
-                                )
-                                >> Just
-                            )
-                            model.entries
-            in
             Model
                 { model
                     | column = column
                     , sortDirection = sortDirection
-                    , entries = entries
+                    , loadingEntries =
+                        case model.loadingEntries of
+                            Loading sorter ->
+                                Loading sorter
+
+                            Loaded sorter entries ->
+                                Loaded sorter <|
+                                    Dict.update
+                                        ( column, sortDirection )
+                                        (Maybe.Extra.withDefaultLazy
+                                            -- we only insert if the sorted data isn't already cached
+                                            (\() ->
+                                                List.sortWith
+                                                    (model.sorter column sortDirection)
+                                                    (currentEntries (Model model) entries)
+                                            )
+                                            >> Just
+                                        )
+                                        entries
                 }
 
 
