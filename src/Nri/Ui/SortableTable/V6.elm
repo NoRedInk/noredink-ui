@@ -105,10 +105,17 @@ type LoadingEntries id entry
 {-| -}
 type Model id entry msg
     = Model
+        -- user state
         { column : id
         , sortDirection : SortDirection
-        , loadingEntries : LoadingEntries id entry
+        }
+        -- cached sorting computation
+        { loadingEntries : LoadingEntries id entry
+
+        -- cached sorting config
         , sorter : id -> Sorter entry
+
+        -- and stashed view config
         , columns : List (Column id entry msg)
         }
 
@@ -116,7 +123,7 @@ type Model id entry msg
 {-| The function that was used to sort the current sort direction & column in the table.
 -}
 entriesSorter : Model id entry msg -> entry -> entry -> Order
-entriesSorter (Model { sortDirection, column, sorter }) =
+entriesSorter (Model { sortDirection, column } { sorter }) =
     sorter column sortDirection
 
 
@@ -264,7 +271,8 @@ init_ sortDirection columnId columns maybeEntries =
         (Model
             { column = columnId
             , sortDirection = sortDirection
-            , sorter = entriesSorter_
+            }
+            { sorter = entriesSorter_
             , loadingEntries = Loading columnDirectionSorter
             , columns = columns
             }
@@ -275,10 +283,10 @@ init_ sortDirection columnId columns maybeEntries =
 {-| If you want to change the entries, this will rebuild the model while retaining sort information. Otherwise you can call one of the init funtions.
 -}
 rebuild : Model id entry msg -> Maybe (List entry) -> Model id entry msg
-rebuild (Model model) maybeEntries =
+rebuild ((Model model config) as originalModel) maybeEntries =
     let
         sorter =
-            case model.loadingEntries of
+            case config.loadingEntries of
                 Loaded sorter_ _ ->
                     sorter_
 
@@ -286,7 +294,8 @@ rebuild (Model model) maybeEntries =
                     sorter_
     in
     Model
-        { model
+        model
+        { config
             | loadingEntries =
                 case maybeEntries of
                     Just entries ->
@@ -295,7 +304,7 @@ rebuild (Model model) maybeEntries =
                                 sorter
                                 ( model.column, model.sortDirection )
                                 (List.sortWith
-                                    (entriesSorter (Model model))
+                                    (entriesSorter originalModel)
                                     entries
                                 )
 
@@ -438,21 +447,21 @@ combineSorters sorters =
 view : ViewConfig id entry msg -> List (Attribute id entry msg) -> Html msg
 view { msgWrapper, model } attributes =
     let
-        config =
+        attributesConfig =
             List.foldl (\(Attribute fn) soFar -> fn soFar) defaultConfig attributes
 
         tableColumns =
-            List.map (buildTableColumn msgWrapper model) model_.columns
+            List.map (buildTableColumn msgWrapper model) config.columns
 
         tableAttributes =
-            buildTableAttributes config
+            buildTableAttributes attributesConfig
 
-        model_ =
+        config =
             case model of
-                Model model__ ->
-                    model__
+                Model _ config_ ->
+                    config_
     in
-    case model_.loadingEntries of
+    case config.loadingEntries of
         Loading _ ->
             Table.viewLoading
                 tableAttributes
@@ -501,14 +510,14 @@ identitySorter =
 
 
 buildTableColumn : (Msg id -> msg) -> Model id entry msg -> Column id entry msg -> Table.Column entry msg
-buildTableColumn msgWrapper (Model model) (Column column) =
+buildTableColumn msgWrapper ((Model model _) as originalModel) (Column column) =
     if column.hidden then
         Table.placeholderColumn { width = Css.px (toFloat column.width) }
 
     else
         Table.custom
             { header =
-                viewSortHeader (column.sorter /= Nothing) column.header msgWrapper (Model model) column.id
+                viewSortHeader (column.sorter /= Nothing) column.header msgWrapper originalModel column.id
             , view = column.view
             , width = Css.px (toFloat column.width)
             , cellStyles = column.cellStyles
@@ -522,7 +531,7 @@ buildTableColumn msgWrapper (Model model) (Column column) =
 
 
 viewSortHeader : Bool -> Html msg -> (Msg id -> msg) -> Model id entry msg -> id -> Html msg
-viewSortHeader isSortable header msgWrapper (Model model) id =
+viewSortHeader isSortable header msgWrapper ((Model model _) as originalModel) id =
     if isSortable then
         Html.button
             [ css
@@ -547,13 +556,13 @@ viewSortHeader isSortable header msgWrapper (Model model) id =
                 , Fonts.baseFont
                 , Css.fontSize (Css.em 1)
                 ]
-            , Html.Styled.Events.onClick (msgWrapper (sortMsg (Model model) id))
+            , Html.Styled.Events.onClick (msgWrapper (sortMsg originalModel id))
 
             -- screen readers should know what clicking this button will do
             , Aria.roleDescription "sort button"
             ]
             [ Html.div [] [ header ]
-            , viewSortButton (Model model) id
+            , viewSortButton originalModel id
             ]
 
     else
@@ -564,7 +573,7 @@ viewSortHeader isSortable header msgWrapper (Model model) id =
 
 
 viewSortButton : Model id entry msg -> id -> Html msg
-viewSortButton (Model model) id =
+viewSortButton (Model model _) id =
     let
         arrows upHighlighted downHighlighted =
             Html.div
@@ -594,7 +603,7 @@ viewSortButton (Model model) id =
 
 
 sortMsg : Model id entry msg -> id -> Msg id
-sortMsg (Model model) id =
+sortMsg (Model model _) id =
     Sort id
         (if model.column == id then
             flipSortDirection model.sortDirection
@@ -649,22 +658,24 @@ sortArrow direction active =
 
 
 currentEntries : Model id entry msg -> Dict.Dict ( id, SortDirection ) (List entry) -> List entry
-currentEntries (Model model) entries =
+currentEntries (Model model _) entries =
     Dict.get ( model.column, model.sortDirection ) entries
         |> Maybe.withDefault []
 
 
 {-| -}
 update : Msg id -> Model id entry msg -> Model id entry msg
-update msg (Model model) =
+update msg ((Model model config) as originalModel) =
     case msg of
         Sort column sortDirection ->
             Model
                 { model
                     | column = column
                     , sortDirection = sortDirection
-                    , loadingEntries =
-                        case model.loadingEntries of
+                }
+                { config
+                    | loadingEntries =
+                        case config.loadingEntries of
                             Loading sorter ->
                                 Loading sorter
 
@@ -676,8 +687,8 @@ update msg (Model model) =
                                             -- we only insert if the sorted data isn't already cached
                                             (\() ->
                                                 List.sortWith
-                                                    (model.sorter column sortDirection)
-                                                    (currentEntries (Model model) entries)
+                                                    (config.sorter column sortDirection)
+                                                    (currentEntries originalModel entries)
                                             )
                                             >> Just
                                         )
@@ -688,7 +699,7 @@ update msg (Model model) =
 {-| encode model to Json
 -}
 encode : (id -> Encode.Value) -> Model id entry msg -> Encode.Value
-encode columnIdEncoder (Model model) =
+encode columnIdEncoder (Model model _) =
     Encode.object
         [ ( "column", columnIdEncoder model.column )
         , ( "sortDirectionAscending", Encode.bool (model.sortDirection == Ascending) )
