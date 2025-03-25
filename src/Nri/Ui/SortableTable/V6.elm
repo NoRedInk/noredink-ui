@@ -489,11 +489,7 @@ buildTableColumn msgWrapper (Model model) (Column column) =
     else
         Table.custom
             { header =
-                if Dict.isEmpty model.entries then
-                    column.header
-
-                else
-                    viewSortHeader (column.sorter /= Nothing) column.header msgWrapper (Model model) column.id
+                viewSortHeader (column.sorter /= Nothing) column.header msgWrapper (Model model) column.id
             , view = column.view
             , width = Css.px (toFloat column.width)
             , cellStyles = column.cellStyles
