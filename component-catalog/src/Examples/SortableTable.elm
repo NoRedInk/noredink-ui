@@ -202,12 +202,9 @@ viewWithCode ({ sortModel } as model) =
 
                   else
                     []
-                , [ "SortableTable.msgWrapper identity" ]
-                , if settings.loading then
-                    []
-
-                  else
-                    [ "SortableTable.model model" ]
+                , [ "SortableTable.msgWrapper identity"
+                  , "SortableTable.model model"
+                  ]
                 ]
             )
             (indentOffset + 2)
@@ -218,13 +215,9 @@ viewWithCode ({ sortModel } as model) =
             |> Code.unstyledViewWithIndent (indentOffset + 1)
     , SortableTable.view
         (List.concat
-            [ SortableTable.msgWrapper SortableTableMsg
-                :: (if settings.loading then
-                        []
-
-                    else
-                        [ SortableTable.model sortModel ]
-                   )
+            [ [ SortableTable.msgWrapper SortableTableMsg
+              , SortableTable.model sortModel
+              ]
             , case settings.stickyHeader of
                 Nothing ->
                     []
@@ -260,7 +253,14 @@ initWithCode settings =
         , Code.listMultilineFlat dataCode indentOffset
         ]
             |> String.join (Code.newlineWithIndent indentOffset)
-    , SortableTable.init FirstName (columnsWithCode settings |> Tuple.second) data
+    , SortableTable.init FirstName
+        (columnsWithCode settings |> Tuple.second)
+        (if settings.loading then
+            Nothing
+
+         else
+            Just data
+        )
     )
 
 
@@ -466,6 +466,9 @@ update msg state =
 
         UpdateControls controls ->
             let
+                settings =
+                    Control.currentValue controls
+
                 sortModel =
                     state.sortModel
 
@@ -477,13 +480,18 @@ update msg state =
                 , sortModel =
                     SortableTable.rebuild
                         sortModel
-                        (if (Control.currentValue controls).stickyHeader /= Nothing then
-                            data
-                                |> List.repeat 10
-                                |> List.concat
+                        (case ( settings.loading, settings.stickyHeader ) of
+                            ( True, _ ) ->
+                                Nothing
 
-                         else
-                            data
+                            ( False, Just _ ) ->
+                                data
+                                    |> List.repeat 10
+                                    |> List.concat
+                                    |> Just
+
+                            ( False, Nothing ) ->
+                                Just data
                         )
               }
             , Cmd.none

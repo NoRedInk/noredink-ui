@@ -233,8 +233,8 @@ stickyHeaderCustom stickyConfig =
     Attribute (\config -> { config | stickyHeader = Just stickyConfig })
 
 
-init_ : SortDirection -> id -> List (Column id entry msg) -> List entry -> Model id entry
-init_ sortDirection columnId columns entries =
+init_ : SortDirection -> id -> List (Column id entry msg) -> Maybe (List entry) -> Model id entry
+init_ sortDirection columnId columns maybeEntries =
     let
         entriesSorter_ : id -> Sorter entry
         entriesSorter_ columnId_ =
@@ -265,47 +265,52 @@ init_ sortDirection columnId columns entries =
                 |> Sort.tiebreaker
                     (Sort.by (Tuple.second >> directionOrder) Sort.increasing)
     in
-    Model
-        { column = columnId
-        , sortDirection = sortDirection
-        , sorter = entriesSorter_
-        , entries =
-            Dict.singleton
-                columnDirectionSorter
-                ( columnId, sortDirection )
-                (List.sortWith
-                    (entriesSorter_ columnId sortDirection)
-                    entries
-                )
-        }
+    rebuild
+        (Model
+            { column = columnId
+            , sortDirection = sortDirection
+            , sorter = entriesSorter_
+            , entries = Dict.empty columnDirectionSorter
+            }
+        )
+        maybeEntries
 
 
 {-| If you want to change the entries, this will rebuild the model while retaining sort information. Otherwise you can call one of the init funtions.
 -}
-rebuild : Model id entry -> List entry -> Model id entry
-rebuild (Model model_) entries =
+rebuild : Model id entry -> Maybe (List entry) -> Model id entry
+rebuild (Model model_) maybeEntries =
+    let
+        emptyDict =
+            model_.entries
+                |> Dict.dropIf (\_ _ -> True)
+    in
     Model
         { model_
             | entries =
-                model_.entries
-                    |> Dict.dropIf (\_ _ -> True)
-                    |> Dict.insert
-                        ( model_.column, model_.sortDirection )
-                        (List.sortWith
-                            (entriesSorter (Model model_))
-                            entries
-                        )
+                case maybeEntries of
+                    Just entries ->
+                        emptyDict
+                            |> Dict.insert
+                                ( model_.column, model_.sortDirection )
+                                (List.sortWith
+                                    (entriesSorter (Model model_))
+                                    entries
+                                )
+
+                    Nothing ->
+                        emptyDict
         }
 
 
 {-| -}
-init : id -> List (Column id entry msg) -> List entry -> Model id entry
+init : id -> List (Column id entry msg) -> Maybe (List entry) -> Model id entry
 init =
     init_ Ascending
 
 
 {-| -}
-initDescending : id -> List (Column id entry msg) -> List entry -> Model id entry
+initDescending : id -> List (Column id entry msg) -> Maybe (List entry) -> Model id entry
 initDescending =
     init_ Descending
 
@@ -437,18 +442,29 @@ view attributes columns =
 
         tableColumns =
             List.map (buildTableColumn config.msgWrapper config.model) columns
+
+        tableAttributes =
+            buildTableAttributes config
+
+        viewLoading =
+            \() ->
+                Table.viewLoading
+                    tableAttributes
+                    tableColumns
     in
     case config.model of
-        Just model_ ->
-            Table.view
-                (buildTableAttributes config)
-                tableColumns
-                (currentEntries model_)
+        Just (Model model_) ->
+            if Dict.isEmpty model_.entries then
+                viewLoading ()
+
+            else
+                Table.view
+                    tableAttributes
+                    tableColumns
+                    (currentEntries (Model model_))
 
         Nothing ->
-            Table.viewLoading
-                (buildTableAttributes config)
-                tableColumns
+            viewLoading ()
 
 
 buildTableAttributes : Config id entry msg -> List Table.Attribute
@@ -656,18 +672,23 @@ update msg (Model model_) =
         Sort column sortDirection ->
             let
                 entries =
-                    Dict.update
-                        ( column, sortDirection )
-                        (Maybe.Extra.withDefaultLazy
-                            -- we only insert if the sorted data isn't already cached
-                            (\() ->
-                                List.sortWith
-                                    (model_.sorter column sortDirection)
-                                    (currentEntries (Model model_))
-                            )
-                            >> Just
-                        )
+                    if Dict.isEmpty model_.entries then
+                        -- we don't want to insert empty lists into the empty dictionary
                         model_.entries
+
+                    else
+                        Dict.update
+                            ( column, sortDirection )
+                            (Maybe.Extra.withDefaultLazy
+                                -- we only insert if the sorted data isn't already cached
+                                (\() ->
+                                    List.sortWith
+                                        (model_.sorter column sortDirection)
+                                        (currentEntries (Model model_))
+                                )
+                                >> Just
+                            )
+                            model_.entries
             in
             Model
                 { model_
@@ -689,8 +710,8 @@ encode columnIdEncoder (Model model_) =
 
 {-| decode model from Json
 -}
-decoder : Decode.Decoder id -> List (Column id entry msg) -> List entry -> Decode.Decoder (Model id entry)
-decoder columnIdDecoder columns entries =
+decoder : Decode.Decoder id -> List (Column id entry msg) -> Maybe (List entry) -> Decode.Decoder (Model id entry)
+decoder columnIdDecoder columns maybeEntries =
     Decode.map2
         (\column sortDirectionAscending ->
             init_
@@ -702,7 +723,7 @@ decoder columnIdDecoder columns entries =
                 )
                 column
                 columns
-                entries
+                maybeEntries
         )
         (Decode.field "column" columnIdDecoder)
         (Decode.field "sortDirectionAscending" Decode.bool)

@@ -56,12 +56,12 @@ tableView sortState =
 
 sortBy : Column -> SortableTable.Model Column Person
 sortBy field =
-    SortableTable.init field columns entries
+    SortableTable.init field columns (Just entries)
 
 
 sortByDescending : Column -> SortableTable.Model Column Person
 sortByDescending field =
-    SortableTable.initDescending field columns entries
+    SortableTable.initDescending field columns (Just entries)
 
 
 spec : Test
