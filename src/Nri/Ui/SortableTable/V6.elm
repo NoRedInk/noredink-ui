@@ -127,13 +127,13 @@ type alias ViewConfig id entry msg =
     }
 
 
-type alias Config =
+type alias AttributeConfig =
     { stickyHeader : Maybe StickyConfig
     , tableAttributes : List Table.Attribute
     }
 
 
-defaultConfig : Config
+defaultConfig : AttributeConfig
 defaultConfig =
     { stickyHeader = Nothing
     , tableAttributes = []
@@ -201,7 +201,7 @@ stickyConfigStyles { topOffset, zIndex, pageBackgroundColor, hoverZIndex } =
 stickiness.
 -}
 type Attribute id entry msg
-    = Attribute (Config -> Config)
+    = Attribute (AttributeConfig -> AttributeConfig)
 
 
 {-| Make the header sticky (that is, it will stick to the top of the viewport
@@ -465,7 +465,7 @@ view { msgWrapper, model } attributes =
                 (currentEntries model entries)
 
 
-buildTableAttributes : Config -> List Table.Attribute
+buildTableAttributes : AttributeConfig -> List Table.Attribute
 buildTableAttributes config =
     let
         stickyStyles =
