@@ -93,6 +93,10 @@ type Column id entry msg
         }
 
 
+type alias TableConfig id entry msg =
+    List (Column id entry msg)
+
+
 type LoadingEntries id entry
     = Loaded (Sort.Sorter ( id, SortDirection )) (Dict.Dict ( id, SortDirection ) (List entry))
     | Loading (Sort.Sorter ( id, SortDirection ))
@@ -223,7 +227,7 @@ stickyHeaderCustom stickyConfig =
     Attribute (\config -> { config | stickyHeader = Just stickyConfig })
 
 
-init_ : SortDirection -> id -> List (Column id entry msg) -> Maybe (List entry) -> Model id entry
+init_ : SortDirection -> id -> TableConfig id entry msg -> Maybe (List entry) -> Model id entry
 init_ sortDirection columnId columns maybeEntries =
     let
         entriesSorter_ : id -> Sorter entry
@@ -299,13 +303,13 @@ rebuild (Model model) maybeEntries =
 
 
 {-| -}
-init : id -> List (Column id entry msg) -> Maybe (List entry) -> Model id entry
+init : id -> TableConfig id entry msg -> Maybe (List entry) -> Model id entry
 init =
     init_ Ascending
 
 
 {-| -}
-initDescending : id -> List (Column id entry msg) -> Maybe (List entry) -> Model id entry
+initDescending : id -> TableConfig id entry msg -> Maybe (List entry) -> Model id entry
 initDescending =
     init_ Descending
 
@@ -429,7 +433,7 @@ combineSorters sorters =
 
 
 {-| -}
-view : ViewConfig id entry msg -> List (Attribute id entry msg) -> List (Column id entry msg) -> Html msg
+view : ViewConfig id entry msg -> List (Attribute id entry msg) -> TableConfig id entry msg -> Html msg
 view { msgWrapper, model } attributes columns =
     let
         config =
@@ -691,7 +695,7 @@ encode columnIdEncoder (Model model) =
 
 {-| decode model from Json
 -}
-decoder : Decode.Decoder id -> List (Column id entry msg) -> Maybe (List entry) -> Decode.Decoder (Model id entry)
+decoder : Decode.Decoder id -> TableConfig id entry msg -> Maybe (List entry) -> Decode.Decoder (Model id entry)
 decoder columnIdDecoder columns maybeEntries =
     Decode.map2
         (\column sortDirectionAscending ->
