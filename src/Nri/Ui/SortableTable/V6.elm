@@ -1,12 +1,13 @@
 module Nri.Ui.SortableTable.V6 exposing
-    ( Model, init, initDescending, rebuild
-    , entriesSorter, currentEntriesSorter
-    , Msg, update
-    , encode, decoder
+    ( Model
+    , currentEntriesSorter
+    , Msg
+    , encode
     , Column, custom, string, placeholderColumn
     , Sorter, invariantSort, simpleSort, combineSorters
-    , view, ViewConfig
+    , ViewConfig
     , Attribute, stickyHeader, stickyHeaderCustom, StickyConfig, tableAttribute
+    , table, SortableTable
     )
 
 {-| Changes from V5:
@@ -21,7 +22,7 @@ module Nri.Ui.SortableTable.V6 exposing
 
 ## Initializing the model
 
-@docs Model, init, initDescending, rebuild
+@docs Model
 @docs entriesSorter, currentEntriesSorter
 @docs Msg, update
 
@@ -45,6 +46,8 @@ module Nri.Ui.SortableTable.V6 exposing
 ### Attributes
 
 @docs Attribute, stickyHeader, stickyHeaderCustom, StickyConfig, tableAttribute
+
+@docs table, SortableTable
 
 -}
 
@@ -234,8 +237,8 @@ stickyHeaderCustom stickyConfig =
     Attribute (\config -> { config | stickyHeader = Just stickyConfig })
 
 
-init_ : SortDirection -> id -> TableConfig id entry msg -> Maybe (List entry) -> Model id entry
-init_ sortDirection columnId columns maybeEntries =
+init_ : SortDirection -> TableConfig id entry msg -> id -> Maybe (List entry) -> Model id entry
+init_ sortDirection columns columnId maybeEntries =
     let
         directionOrder : SortDirection -> Int
         directionOrder direction =
@@ -303,13 +306,13 @@ rebuild tableConfig (Model model) maybeEntries =
 
 
 {-| -}
-init : id -> TableConfig id entry msg -> Maybe (List entry) -> Model id entry
+init : TableConfig id entry msg -> id -> Maybe (List entry) -> Model id entry
 init =
     init_ Ascending
 
 
 {-| -}
-initDescending : id -> TableConfig id entry msg -> Maybe (List entry) -> Model id entry
+initDescending : TableConfig id entry msg -> id -> Maybe (List entry) -> Model id entry
 initDescending =
     init_ Descending
 
@@ -433,8 +436,8 @@ combineSorters sorters =
 
 
 {-| -}
-view : ViewConfig id entry msg -> List (Attribute id entry msg) -> TableConfig id entry msg -> Html msg
-view { msgWrapper, model } attributes columns =
+view : TableConfig id entry msg -> ViewConfig id entry msg -> List (Attribute id entry msg) -> Html msg
+view columns { msgWrapper, model } attributes =
     let
         config =
             List.foldl (\(Attribute fn) soFar -> fn soFar) defaultConfig attributes
@@ -695,8 +698,8 @@ encode columnIdEncoder (Model model) =
 
 {-| decode model from Json
 -}
-decoder : Decode.Decoder id -> TableConfig id entry msg -> Maybe (List entry) -> Decode.Decoder (Model id entry)
-decoder columnIdDecoder columns maybeEntries =
+decoder : TableConfig id entry msg -> Decode.Decoder id -> Maybe (List entry) -> Decode.Decoder (Model id entry)
+decoder columns columnIdDecoder maybeEntries =
     Decode.map2
         (\column sortDirectionAscending ->
             init_
@@ -706,9 +709,34 @@ decoder columnIdDecoder columns maybeEntries =
                  else
                     Descending
                 )
-                column
                 columns
+                column
                 maybeEntries
         )
         (Decode.field "column" columnIdDecoder)
         (Decode.field "sortDirectionAscending" Decode.bool)
+
+
+type alias SortableTable id entry msg =
+    { update : Msg id -> Model id entry -> Model id entry
+    , view : ViewConfig id entry msg -> List (Attribute id entry msg) -> Html msg
+    , decoder : Decode.Decoder id -> Maybe (List entry) -> Decode.Decoder (Model id entry)
+    , currentEntriesSorter : Model id entry -> entry -> entry -> Order
+    , rebuild : Model id entry -> Maybe (List entry) -> Model id entry
+    , init : id -> Maybe (List entry) -> Model id entry
+    , initDescending : id -> Maybe (List entry) -> Model id entry
+    }
+
+
+table :
+    TableConfig id entry msg
+    -> SortableTable id entry msg
+table tableConfig =
+    { update = update tableConfig
+    , view = view tableConfig
+    , decoder = decoder tableConfig
+    , currentEntriesSorter = currentEntriesSorter tableConfig
+    , rebuild = rebuild tableConfig
+    , init = init tableConfig
+    , initDescending = initDescending tableConfig
+    }

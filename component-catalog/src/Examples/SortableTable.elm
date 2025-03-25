@@ -211,7 +211,7 @@ viewWithCode ({ sortModel } as model) =
             |> String.join (Code.newlineWithIndent (indentOffset + 2))
         )
             |> Code.unstyledViewWithIndent (indentOffset + 1)
-    , SortableTable.view
+    , (table settings).view
         { model = sortModel
         , msgWrapper = SortableTableMsg
         }
@@ -234,9 +234,11 @@ viewWithCode ({ sortModel } as model) =
                 []
             ]
         )
-        (columnsWithCode settings |> Tuple.second)
     )
 
+table : Settings -> SortableTable.SortableTable ColumnId Datum Msg
+table settings =
+    SortableTable.table (columnsWithCode settings |> Tuple.second)
 
 initWithCode : Settings -> ( Int -> String, SortableTable.Model ColumnId Datum )
 initWithCode settings =
@@ -251,8 +253,7 @@ initWithCode settings =
         , Code.listMultilineFlat dataCode indentOffset
         ]
             |> String.join (Code.newlineWithIndent indentOffset)
-    , SortableTable.init FirstName
-        (columnsWithCode settings |> Tuple.second)
+    , (table  settings).init FirstName
         (if settings.loading then
             Nothing
 
@@ -464,7 +465,7 @@ update msg state =
                 settings =
                     Control.currentValue state.settings
             in
-            ( { state | sortModel = SortableTable.update (columnsWithCode settings |> Tuple.second) sortableTableMsg state.sortModel }, Cmd.none )
+            ( { state | sortModel = (table settings).update sortableTableMsg state.sortModel }, Cmd.none )
 
         UpdateControls controls ->
             let
@@ -480,8 +481,7 @@ update msg state =
             ( { state
                 | settings = controls
                 , sortModel =
-                    SortableTable.rebuild
-                        (columnsWithCode settings |> Tuple.second)
+                    (table settings).rebuild
                         sortModel
                         (case ( settings.loading, settings.stickyHeader ) of
                             ( True, _ ) ->
