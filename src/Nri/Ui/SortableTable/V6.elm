@@ -103,18 +103,19 @@ type LoadingEntries id entry
 
 
 {-| -}
-type Model id entry
+type Model id entry msg
     = Model
         { column : id
         , sortDirection : SortDirection
         , loadingEntries : LoadingEntries id entry
         , sorter : id -> Sorter entry
+        , columns : List (Column id entry msg)
         }
 
 
 {-| The function that was used to sort the current sort direction & column in the table.
 -}
-entriesSorter : Model id entry -> entry -> entry -> Order
+entriesSorter : Model id entry msg -> entry -> entry -> Order
 entriesSorter (Model { sortDirection, column, sorter }) =
     sorter column sortDirection
 
@@ -122,7 +123,7 @@ entriesSorter (Model { sortDirection, column, sorter }) =
 {-| -}
 type alias ViewConfig id entry msg =
     { msgWrapper : Msg id -> msg
-    , model : Model id entry
+    , model : Model id entry msg
     }
 
 
@@ -227,7 +228,7 @@ stickyHeaderCustom stickyConfig =
     Attribute (\config -> { config | stickyHeader = Just stickyConfig })
 
 
-init_ : SortDirection -> id -> TableConfig id entry msg -> Maybe (List entry) -> Model id entry
+init_ : SortDirection -> id -> TableConfig id entry msg -> Maybe (List entry) -> Model id entry msg
 init_ sortDirection columnId columns maybeEntries =
     let
         entriesSorter_ : id -> Sorter entry
@@ -265,6 +266,7 @@ init_ sortDirection columnId columns maybeEntries =
             , sortDirection = sortDirection
             , sorter = entriesSorter_
             , loadingEntries = Loading columnDirectionSorter
+            , columns = columns
             }
         )
         maybeEntries
@@ -272,7 +274,7 @@ init_ sortDirection columnId columns maybeEntries =
 
 {-| If you want to change the entries, this will rebuild the model while retaining sort information. Otherwise you can call one of the init funtions.
 -}
-rebuild : Model id entry -> Maybe (List entry) -> Model id entry
+rebuild : Model id entry msg -> Maybe (List entry) -> Model id entry msg
 rebuild (Model model) maybeEntries =
     let
         sorter =
@@ -303,13 +305,13 @@ rebuild (Model model) maybeEntries =
 
 
 {-| -}
-init : id -> TableConfig id entry msg -> Maybe (List entry) -> Model id entry
+init : id -> TableConfig id entry msg -> Maybe (List entry) -> Model id entry msg
 init =
     init_ Ascending
 
 
 {-| -}
-initDescending : id -> TableConfig id entry msg -> Maybe (List entry) -> Model id entry
+initDescending : id -> TableConfig id entry msg -> Maybe (List entry) -> Model id entry msg
 initDescending =
     init_ Descending
 
@@ -433,24 +435,24 @@ combineSorters sorters =
 
 
 {-| -}
-view : ViewConfig id entry msg -> List (Attribute id entry msg) -> TableConfig id entry msg -> Html msg
-view { msgWrapper, model } attributes columns =
+view : ViewConfig id entry msg -> List (Attribute id entry msg) -> Html msg
+view { msgWrapper, model } attributes =
     let
         config =
             List.foldl (\(Attribute fn) soFar -> fn soFar) defaultConfig attributes
 
         tableColumns =
-            List.map (buildTableColumn msgWrapper model) columns
+            List.map (buildTableColumn msgWrapper model) model_.columns
 
         tableAttributes =
             buildTableAttributes config
 
-        loadingEntries =
+        model_ =
             case model of
-                Model model_ ->
-                    model_.loadingEntries
+                Model model__ ->
+                    model__
     in
-    case loadingEntries of
+    case model_.loadingEntries of
         Loading _ ->
             Table.viewLoading
                 tableAttributes
@@ -498,7 +500,7 @@ identitySorter =
         EQ
 
 
-buildTableColumn : (Msg id -> msg) -> Model id entry -> Column id entry msg -> Table.Column entry msg
+buildTableColumn : (Msg id -> msg) -> Model id entry msg -> Column id entry msg -> Table.Column entry msg
 buildTableColumn msgWrapper (Model model) (Column column) =
     if column.hidden then
         Table.placeholderColumn { width = Css.px (toFloat column.width) }
@@ -519,7 +521,7 @@ buildTableColumn msgWrapper (Model model) (Column column) =
             }
 
 
-viewSortHeader : Bool -> Html msg -> (Msg id -> msg) -> Model id entry -> id -> Html msg
+viewSortHeader : Bool -> Html msg -> (Msg id -> msg) -> Model id entry msg -> id -> Html msg
 viewSortHeader isSortable header msgWrapper (Model model) id =
     if isSortable then
         Html.button
@@ -561,7 +563,7 @@ viewSortHeader isSortable header msgWrapper (Model model) id =
             [ header ]
 
 
-viewSortButton : Model id entry -> id -> Html msg
+viewSortButton : Model id entry msg -> id -> Html msg
 viewSortButton (Model model) id =
     let
         arrows upHighlighted downHighlighted =
@@ -591,7 +593,7 @@ viewSortButton (Model model) id =
     Html.div [ css [ padding (px 2) ] ] [ buttonContent ]
 
 
-sortMsg : Model id entry -> id -> Msg id
+sortMsg : Model id entry msg -> id -> Msg id
 sortMsg (Model model) id =
     Sort id
         (if model.column == id then
@@ -646,14 +648,14 @@ sortArrow direction active =
         |> Nri.Ui.Svg.V1.toHtml
 
 
-currentEntries : Model id entry -> Dict.Dict ( id, SortDirection ) (List entry) -> List entry
+currentEntries : Model id entry msg -> Dict.Dict ( id, SortDirection ) (List entry) -> List entry
 currentEntries (Model model) entries =
     Dict.get ( model.column, model.sortDirection ) entries
         |> Maybe.withDefault []
 
 
 {-| -}
-update : Msg id -> Model id entry -> Model id entry
+update : Msg id -> Model id entry msg -> Model id entry msg
 update msg (Model model) =
     case msg of
         Sort column sortDirection ->
@@ -685,7 +687,7 @@ update msg (Model model) =
 
 {-| encode model to Json
 -}
-encode : (id -> Encode.Value) -> Model id entry -> Encode.Value
+encode : (id -> Encode.Value) -> Model id entry msg -> Encode.Value
 encode columnIdEncoder (Model model) =
     Encode.object
         [ ( "column", columnIdEncoder model.column )
@@ -695,7 +697,7 @@ encode columnIdEncoder (Model model) =
 
 {-| decode model from Json
 -}
-decoder : Decode.Decoder id -> TableConfig id entry msg -> Maybe (List entry) -> Decode.Decoder (Model id entry)
+decoder : Decode.Decoder id -> TableConfig id entry msg -> Maybe (List entry) -> Decode.Decoder (Model id entry msg)
 decoder columnIdDecoder columns maybeEntries =
     Decode.map2
         (\column sortDirectionAscending ->

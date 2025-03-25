@@ -47,19 +47,19 @@ entries =
     ]
 
 
-tableView : SortableTable.Model Column Person -> Query.Single (SortableTable.Msg Column)
+tableView : SortableTable.Model Column Person (SortableTable.Msg Column) -> Query.Single (SortableTable.Msg Column)
 tableView sortModel =
-    SortableTable.view { model = sortModel, msgWrapper = identity } [] columns
+    SortableTable.view { model = sortModel, msgWrapper = identity } []
         |> Html.Styled.toUnstyled
         |> Query.fromHtml
 
 
-sortBy : Column -> SortableTable.Model Column Person
+sortBy : Column -> SortableTable.Model Column Person msg
 sortBy field =
     SortableTable.init field columns (Just entries)
 
 
-sortByDescending : Column -> SortableTable.Model Column Person
+sortByDescending : Column -> SortableTable.Model Column Person msg
 sortByDescending field =
     SortableTable.initDescending field columns (Just entries)
 

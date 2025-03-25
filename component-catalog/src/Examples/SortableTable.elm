@@ -234,11 +234,10 @@ viewWithCode ({ sortModel } as model) =
                 []
             ]
         )
-        (columnsWithCode settings |> Tuple.second)
     )
 
 
-initWithCode : Settings -> ( Int -> String, SortableTable.Model ColumnId Datum )
+initWithCode : Settings -> ( Int -> String, SortableTable.Model ColumnId Datum  Msg)
 initWithCode settings =
     let
         ( dataCode, data ) =
@@ -372,7 +371,7 @@ dataWithCode =
 
 {-| -}
 type alias State =
-    { sortModel : SortableTable.Model ColumnId Datum
+    { sortModel : SortableTable.Model ColumnId Datum Msg
     , settings : Control Settings
     }
 
