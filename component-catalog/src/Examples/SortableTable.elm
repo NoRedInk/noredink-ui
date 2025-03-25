@@ -137,15 +137,15 @@ example =
                                             ++ Code.anonymousFunction
                                                 "msg model"
                                                 (Code.tuple
-                                                    (Code.fromModule moduleName "update msg model")
+                                                    "table.update msg model"
                                                     "Cmd.none"
                                                 )
                                     , view =
                                         Code.newlineWithIndent 2 ++ Code.anonymousFunction "model " (viewCode 2)
                                     , subscriptions = Code.always "Sub.none"
                                     }
-                                , Code.var "columns" 1 <|
-                                    Code.listMultilineFlat (columnsWithCode settings |> codeWithIndent 1) 1
+                                , Code.var "table" 1 <|
+                                    (Code.fromModule moduleName "table" ++ Code.listMultiline (columnsWithCode settings |> codeWithIndent 2) 2)
                                 ]
                                     |> String.join Code.newlines
                           }
@@ -167,7 +167,7 @@ viewWithCode ({ sortModel } as model) =
             Control.currentValue model.settings
     in
     ( \indentOffset ->
-        ([ Code.fromModule moduleName "view"
+        ([ "table.view"
          , Code.record [ ( "model", "model" ), ( "msgWrapper", "identity" ) ]
          , Code.listMultilineFlat
             (List.concat
@@ -206,7 +206,6 @@ viewWithCode ({ sortModel } as model) =
                 ]
             )
             (indentOffset + 2)
-         , "columns"
          ]
             |> String.join (Code.newlineWithIndent (indentOffset + 2))
         )
@@ -236,9 +235,11 @@ viewWithCode ({ sortModel } as model) =
         )
     )
 
+
 table : Settings -> SortableTable.SortableTable ColumnId Datum Msg
 table settings =
     SortableTable.table (columnsWithCode settings |> Tuple.second)
+
 
 initWithCode : Settings -> ( Int -> String, SortableTable.Model ColumnId Datum )
 initWithCode settings =
@@ -247,13 +248,12 @@ initWithCode settings =
             List.unzip dataWithCode
     in
     ( \indentOffset ->
-        [ Code.fromModule moduleName "init"
+        [ "table.init"
         , "FirstName"
-        , "columns"
         , Code.listMultilineFlat dataCode indentOffset
         ]
             |> String.join (Code.newlineWithIndent indentOffset)
-    , (table  settings).init FirstName
+    , (table settings).init FirstName
         (if settings.loading then
             Nothing
 
