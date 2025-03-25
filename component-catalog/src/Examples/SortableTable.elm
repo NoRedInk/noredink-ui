@@ -168,6 +168,7 @@ viewWithCode ({ sortModel } as model) =
     in
     ( \indentOffset ->
         ([ Code.fromModule moduleName "view"
+         , Code.record [ ( "model", "model" ), ( "msgWrapper", "identity" ) ]
          , Code.listMultilineFlat
             (List.concat
                 [ case settings.stickyHeader of
@@ -202,9 +203,6 @@ viewWithCode ({ sortModel } as model) =
 
                   else
                     []
-                , [ "SortableTable.msgWrapper identity"
-                  , "SortableTable.model model"
-                  ]
                 ]
             )
             (indentOffset + 2)
@@ -214,11 +212,11 @@ viewWithCode ({ sortModel } as model) =
         )
             |> Code.unstyledViewWithIndent (indentOffset + 1)
     , SortableTable.view
+        { model = sortModel
+        , msgWrapper = SortableTableMsg
+        }
         (List.concat
-            [ [ SortableTable.msgWrapper SortableTableMsg
-              , SortableTable.model sortModel
-              ]
-            , case settings.stickyHeader of
+            [ case settings.stickyHeader of
                 Nothing ->
                     []
 

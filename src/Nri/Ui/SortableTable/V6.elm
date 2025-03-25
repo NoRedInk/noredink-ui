@@ -5,8 +5,8 @@ module Nri.Ui.SortableTable.V6 exposing
     , encode, decoder
     , Column, custom, string, placeholderColumn
     , Sorter, invariantSort, simpleSort, combineSorters
-    , view
-    , Attribute, model, msgWrapper, stickyHeader, stickyHeaderCustom, StickyConfig, tableAttribute
+    , view, ViewConfig
+    , Attribute, stickyHeader, stickyHeaderCustom, StickyConfig, tableAttribute
     )
 
 {-| Changes from V5:
@@ -16,6 +16,7 @@ module Nri.Ui.SortableTable.V6 exposing
   - Model is is opaque (and because of this, exposes encoder, decoder, and entriesSorter)
   - removed loading function. Now if view is not passed the model, it will render as loading
   - performance: caches sorting in Model instead of performing it in the view.
+  - move msgWrapper and model attributes into required param for view
 
 
 ## Initializing the model
@@ -38,12 +39,12 @@ module Nri.Ui.SortableTable.V6 exposing
 
 ## Rendering
 
-@docs view
+@docs view, ViewConfig
 
 
 ### Attributes
 
-@docs Attribute, model, msgWrapper, stickyHeader, stickyHeaderCustom, StickyConfig, tableAttribute
+@docs Attribute, stickyHeader, stickyHeaderCustom, StickyConfig, tableAttribute
 
 -}
 
@@ -61,8 +62,6 @@ import Maybe.Extra
 import Nri.Ui.Colors.V1
 import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
 import Nri.Ui.Fonts.V1 as Fonts
-import Nri.Ui.Html.Attributes.V2 exposing (maybe)
-import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1
 import Nri.Ui.Table.V8 as Table exposing (SortDirection(..))
@@ -111,19 +110,22 @@ entriesSorter (Model { sortDirection, column, sorter }) =
     sorter column sortDirection
 
 
-type alias Config id entry msg =
-    { msgWrapper : Maybe (Msg id -> msg)
-    , model : Maybe (Model id entry)
-    , stickyHeader : Maybe StickyConfig
+{-| -}
+type alias ViewConfig id entry msg =
+    { msgWrapper : Msg id -> msg
+    , model : Model id entry
+    }
+
+
+type alias Config =
+    { stickyHeader : Maybe StickyConfig
     , tableAttributes : List Table.Attribute
     }
 
 
-defaultConfig : Config id entry msg
+defaultConfig : Config
 defaultConfig =
-    { msgWrapper = Nothing
-    , model = Nothing
-    , stickyHeader = Nothing
+    { stickyHeader = Nothing
     , tableAttributes = []
     }
 
@@ -189,24 +191,7 @@ stickyConfigStyles { topOffset, zIndex, pageBackgroundColor, hoverZIndex } =
 stickiness.
 -}
 type Attribute id entry msg
-    = Attribute (Config id entry msg -> Config id entry msg)
-
-
-{-| Sort a column. You can get an initial model with `init` or `initDescending`.
-If you make this sorting interactive, you should store the model in your model
-and provide it to this function instead of recreating it on every update.
--}
-model : Model id entry -> Attribute id entry msg
-model model_ =
-    Attribute (\config -> { config | model = Just model_ })
-
-
-{-| Add interactivity in sorting columns. When this attribute is provided and
-sorting is enabled, columns will be sortable by clicking the headers.
--}
-msgWrapper : (Msg id -> msg) -> Attribute id entry msg
-msgWrapper msgWrapper_ =
-    Attribute (\config -> { config | msgWrapper = Just msgWrapper_ })
+    = Attribute (Config -> Config)
 
 
 {-| Make the header sticky (that is, it will stick to the top of the viewport
@@ -279,22 +264,22 @@ init_ sortDirection columnId columns maybeEntries =
 {-| If you want to change the entries, this will rebuild the model while retaining sort information. Otherwise you can call one of the init funtions.
 -}
 rebuild : Model id entry -> Maybe (List entry) -> Model id entry
-rebuild (Model model_) maybeEntries =
+rebuild (Model model) maybeEntries =
     let
         emptyDict =
-            model_.entries
+            model.entries
                 |> Dict.dropIf (\_ _ -> True)
     in
     Model
-        { model_
+        { model
             | entries =
                 case maybeEntries of
                     Just entries ->
                         emptyDict
                             |> Dict.insert
-                                ( model_.column, model_.sortDirection )
+                                ( model.column, model.sortDirection )
                                 (List.sortWith
-                                    (entriesSorter (Model model_))
+                                    (entriesSorter (Model model))
                                     entries
                                 )
 
@@ -434,40 +419,34 @@ combineSorters sorters =
 
 
 {-| -}
-view : List (Attribute id entry msg) -> List (Column id entry msg) -> Html msg
-view attributes columns =
+view : ViewConfig id entry msg -> List (Attribute id entry msg) -> List (Column id entry msg) -> Html msg
+view { msgWrapper, model } attributes columns =
     let
         config =
             List.foldl (\(Attribute fn) soFar -> fn soFar) defaultConfig attributes
 
         tableColumns =
-            List.map (buildTableColumn config.msgWrapper config.model) columns
+            List.map (buildTableColumn msgWrapper model) columns
 
         tableAttributes =
             buildTableAttributes config
 
-        viewLoading =
-            \() ->
-                Table.viewLoading
-                    tableAttributes
-                    tableColumns
+        isEmpty (Model model_) =
+            Dict.isEmpty model_.entries
     in
-    case config.model of
-        Just (Model model_) ->
-            if Dict.isEmpty model_.entries then
-                viewLoading ()
+    if isEmpty model then
+        Table.viewLoading
+            tableAttributes
+            tableColumns
 
-            else
-                Table.view
-                    tableAttributes
-                    tableColumns
-                    (currentEntries (Model model_))
-
-        Nothing ->
-            viewLoading ()
+    else
+        Table.view
+            tableAttributes
+            tableColumns
+            (currentEntries model)
 
 
-buildTableAttributes : Config id entry msg -> List Table.Attribute
+buildTableAttributes : Config -> List Table.Attribute
 buildTableAttributes config =
     let
         stickyStyles =
@@ -502,38 +481,33 @@ identitySorter =
         EQ
 
 
-buildTableColumn : Maybe (Msg id -> msg) -> Maybe (Model id entry) -> Column id entry msg -> Table.Column entry msg
-buildTableColumn maybeMsgWrapper maybeModel (Column column) =
+buildTableColumn : (Msg id -> msg) -> Model id entry -> Column id entry msg -> Table.Column entry msg
+buildTableColumn msgWrapper (Model model) (Column column) =
     if column.hidden then
         Table.placeholderColumn { width = Css.px (toFloat column.width) }
 
     else
         Table.custom
             { header =
-                case maybeModel of
-                    Just model_ ->
-                        viewSortHeader (column.sorter /= Nothing) column.header maybeMsgWrapper model_ column.id
+                if Dict.isEmpty model.entries then
+                    column.header
 
-                    Nothing ->
-                        column.header
+                else
+                    viewSortHeader (column.sorter /= Nothing) column.header msgWrapper (Model model) column.id
             , view = column.view
             , width = Css.px (toFloat column.width)
             , cellStyles = column.cellStyles
             , sort =
-                Maybe.andThen
-                    (\(Model model_) ->
-                        if model_.column == column.id then
-                            Just model_.sortDirection
+                if model.column == column.id then
+                    Just model.sortDirection
 
-                        else
-                            Nothing
-                    )
-                    maybeModel
+                else
+                    Nothing
             }
 
 
-viewSortHeader : Bool -> Html msg -> Maybe (Msg id -> msg) -> Model id entry -> id -> Html msg
-viewSortHeader isSortable header maybeMsgWrapper (Model model_) id =
+viewSortHeader : Bool -> Html msg -> (Msg id -> msg) -> Model id entry -> id -> Html msg
+viewSortHeader isSortable header msgWrapper (Model model) id =
     if isSortable then
         Html.button
             [ css
@@ -541,7 +515,7 @@ viewSortHeader isSortable header maybeMsgWrapper (Model model_) id =
                 , Css.alignItems Css.center
                 , Css.property "gap" "8px"
                 , CssVendorPrefix.property "user-select" "none"
-                , if model_.column == id then
+                , if model.column == id then
                     fontWeight bold
 
                   else
@@ -558,13 +532,13 @@ viewSortHeader isSortable header maybeMsgWrapper (Model model_) id =
                 , Fonts.baseFont
                 , Css.fontSize (Css.em 1)
                 ]
-            , maybe (\msgWrapper_ -> Html.Styled.Events.onClick (msgWrapper_ (sortMsg (Model model_) id))) maybeMsgWrapper
+            , Html.Styled.Events.onClick (msgWrapper (sortMsg (Model model) id))
 
             -- screen readers should know what clicking this button will do
             , Aria.roleDescription "sort button"
             ]
             [ Html.div [] [ header ]
-            , viewJust (\_ -> viewSortButton (Model model_) id) maybeMsgWrapper
+            , viewSortButton (Model model) id
             ]
 
     else
@@ -575,7 +549,7 @@ viewSortHeader isSortable header maybeMsgWrapper (Model model_) id =
 
 
 viewSortButton : Model id entry -> id -> Html msg
-viewSortButton (Model model_) id =
+viewSortButton (Model model) id =
     let
         arrows upHighlighted downHighlighted =
             Html.div
@@ -591,7 +565,7 @@ viewSortButton (Model model_) id =
                 ]
 
         buttonContent =
-            case ( model_.column == id, model_.sortDirection ) of
+            case ( model.column == id, model.sortDirection ) of
                 ( True, Ascending ) ->
                     arrows True False
 
@@ -605,10 +579,10 @@ viewSortButton (Model model_) id =
 
 
 sortMsg : Model id entry -> id -> Msg id
-sortMsg (Model model_) id =
+sortMsg (Model model) id =
     Sort id
-        (if model_.column == id then
-            flipSortDirection model_.sortDirection
+        (if model.column == id then
+            flipSortDirection model.sortDirection
 
          else
             Ascending
@@ -660,21 +634,21 @@ sortArrow direction active =
 
 
 currentEntries : Model id entry -> List entry
-currentEntries (Model model_) =
-    Dict.get ( model_.column, model_.sortDirection ) model_.entries
+currentEntries (Model model) =
+    Dict.get ( model.column, model.sortDirection ) model.entries
         |> Maybe.withDefault []
 
 
 {-| -}
 update : Msg id -> Model id entry -> Model id entry
-update msg (Model model_) =
+update msg (Model model) =
     case msg of
         Sort column sortDirection ->
             let
                 entries =
-                    if Dict.isEmpty model_.entries then
+                    if Dict.isEmpty model.entries then
                         -- we don't want to insert empty lists into the empty dictionary
-                        model_.entries
+                        model.entries
 
                     else
                         Dict.update
@@ -683,15 +657,15 @@ update msg (Model model_) =
                                 -- we only insert if the sorted data isn't already cached
                                 (\() ->
                                     List.sortWith
-                                        (model_.sorter column sortDirection)
-                                        (currentEntries (Model model_))
+                                        (model.sorter column sortDirection)
+                                        (currentEntries (Model model))
                                 )
                                 >> Just
                             )
-                            model_.entries
+                            model.entries
             in
             Model
-                { model_
+                { model
                     | column = column
                     , sortDirection = sortDirection
                     , entries = entries
@@ -701,10 +675,10 @@ update msg (Model model_) =
 {-| encode model to Json
 -}
 encode : (id -> Encode.Value) -> Model id entry -> Encode.Value
-encode columnIdEncoder (Model model_) =
+encode columnIdEncoder (Model model) =
     Encode.object
-        [ ( "column", columnIdEncoder model_.column )
-        , ( "sortDirectionAscending", Encode.bool (model_.sortDirection == Ascending) )
+        [ ( "column", columnIdEncoder model.column )
+        , ( "sortDirectionAscending", Encode.bool (model.sortDirection == Ascending) )
         ]
 
 

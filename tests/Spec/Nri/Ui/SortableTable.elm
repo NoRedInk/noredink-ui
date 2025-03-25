@@ -47,9 +47,9 @@ entries =
     ]
 
 
-tableView : SortableTable.Model Column Person -> Query.Single msg
-tableView sortState =
-    SortableTable.view [ SortableTable.model sortState ] columns
+tableView : SortableTable.Model Column Person -> Query.Single (SortableTable.Msg Column)
+tableView sortModel =
+    SortableTable.view { model = sortModel, msgWrapper = identity } [] columns
         |> Html.Styled.toUnstyled
         |> Query.fromHtml
 
