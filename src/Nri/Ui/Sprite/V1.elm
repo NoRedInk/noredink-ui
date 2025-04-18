@@ -141,21 +141,21 @@ allSprites =
             [ Svg.path
                 [ Attributes.d "M11 3H18"
                 , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "1.8"
+                , Attributes.strokeWidth "2"
                 , Attributes.strokeLinecap "round"
                 ]
                 []
             , Svg.path
                 [ Attributes.d "M7 19L15 3"
                 , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "1.8"
+                , Attributes.strokeWidth "2"
                 , Attributes.strokeLinecap "round"
                 ]
                 []
             , Svg.path
                 [ Attributes.d "M4 19H11"
                 , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "1.8"
+                , Attributes.strokeWidth "2"
                 , Attributes.strokeLinecap "round"
                 ]
                 []
@@ -170,7 +170,7 @@ allSprites =
             [ Svg.path
                 [ Attributes.d "M4.5 2V10.5C4.5 14.0899 7.41015 17 11 17C14.5899 17 17.5 14.0899 17.5 10.5V2"
                 , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "1.8"
+                , Attributes.strokeWidth "2"
                 , Attributes.strokeLinecap "round"
                 , Attributes.strokeLinejoin "round"
                 , Attributes.fill "none"
@@ -179,7 +179,7 @@ allSprites =
             , Svg.path
                 [ Attributes.d "M2 20H20"
                 , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "1.8"
+                , Attributes.strokeWidth "2"
                 , Attributes.strokeLinecap "round"
                 ]
                 []
@@ -194,7 +194,7 @@ allSprites =
             [ Svg.path
                 [ Attributes.d "M7 4H19"
                 , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "1.8"
+                , Attributes.strokeWidth "2"
                 , Attributes.strokeLinecap "round"
                 ]
                 []
@@ -228,14 +228,14 @@ allSprites =
             , Svg.path
                 [ Attributes.d "M7 11H19"
                 , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "1.8"
+                , Attributes.strokeWidth "2"
                 , Attributes.strokeLinecap "round"
                 ]
                 []
             , Svg.path
                 [ Attributes.d "M7 18H19"
                 , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "1.8"
+                , Attributes.strokeWidth "2"
                 , Attributes.strokeLinecap "round"
                 ]
                 []
@@ -250,7 +250,7 @@ allSprites =
             [ Svg.path
                 [ Attributes.d "M9 12.229C9.1416 12.4609 9.3097 12.6804 9.5042 12.8828C10.7117 14.1395 12.5522 14.336 13.9576 13.4722C14.218 13.3121 14.4634 13.1157 14.6872 12.8828L17.9266 9.5114C19.3578 8.02184 19.3578 5.60676 17.9266 4.11718C16.4953 2.6276 14.1748 2.62761 12.7435 4.11718L12.03 4.85978"
                 , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "1.8"
+                , Attributes.strokeWidth "2"
                 , Attributes.strokeLinecap "round"
                 , Attributes.fill "none"
                 ]
@@ -258,7 +258,7 @@ allSprites =
             , Svg.path
                 [ Attributes.d "M9.9703 17.14L9.2565 17.8828C7.82526 19.3724 5.50471 19.3724 4.07345 17.8828C2.64218 16.3932 2.64218 13.9782 4.07345 12.4886L7.31287 9.1172C8.74413 7.62761 11.0647 7.6276 12.4959 9.1172C12.6904 9.3195 12.8584 9.539 13 9.7708"
                 , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "1.8"
+                , Attributes.strokeWidth "2"
                 , Attributes.strokeLinecap "round"
                 , Attributes.fill "none"
                 ]
@@ -274,7 +274,7 @@ allSprites =
             [ Svg.path
                 [ Attributes.d "M2 7H14C17.3137 7 20 9.6863 20 13C20 16.3137 17.3137 19 14 19H10"
                 , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "1.8"
+                , Attributes.strokeWidth "2"
                 , Attributes.strokeLinecap "round"
                 , Attributes.strokeLinejoin "round"
                 , Attributes.fill "none"
@@ -283,7 +283,7 @@ allSprites =
             , Svg.path
                 [ Attributes.d "M6 3L4.8462 3.87652C2.94873 5.31801 2 6.03875 2 7C2 7.96125 2.94873 8.68199 4.8462 10.1235L6 11"
                 , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "1.8"
+                , Attributes.strokeWidth "2"
                 , Attributes.strokeLinecap "round"
                 , Attributes.strokeLinejoin "round"
                 , Attributes.fill "none"
@@ -300,7 +300,7 @@ allSprites =
             [ Svg.path
                 [ Attributes.d "M20 7H8C4.68629 7 2 9.6863 2 13C2 16.3137 4.68629 19 8 19H12"
                 , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "1.8"
+                , Attributes.strokeWidth "2"
                 , Attributes.strokeLinecap "round"
                 , Attributes.strokeLinejoin "round"
                 , Attributes.fill "none"
@@ -309,7 +309,7 @@ allSprites =
             , Svg.path
                 [ Attributes.d "M16 3L17.1538 3.87652C19.0513 5.31801 20 6.03875 20 7C20 7.96125 19.0513 8.68199 17.1538 10.1235L16 11"
                 , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "1.8"
+                , Attributes.strokeWidth "2"
                 , Attributes.strokeLinecap "round"
                 , Attributes.strokeLinejoin "round"
                 , Attributes.fill "none"
