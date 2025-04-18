@@ -35,7 +35,7 @@ import Nri.Ui.Html.Attributes.V2 as Attributes
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.Table.V8 as Table
 import Nri.Ui.Text.V6 as Text
-import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.UiIcon.V2 as UiIcon
 import Routes
 import Task
 

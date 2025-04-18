@@ -10,7 +10,7 @@ import Expect
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as StyledAttrs
 import Nri.Ui.Carousel.V2 as Carousel
-import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.UiIcon.V2 as UiIcon
 import ProgramTest exposing (..)
 import Spec.TabsInternalHelpers
     exposing

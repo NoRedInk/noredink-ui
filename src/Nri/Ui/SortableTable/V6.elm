@@ -68,7 +68,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1
 import Nri.Ui.Table.V8 as Table exposing (SortDirection(..))
-import Nri.Ui.UiIcon.V1
+import Nri.Ui.UiIcon.V2
 import Sort
 import Sort.Dict as Dict
 
@@ -626,10 +626,10 @@ sortArrow direction active =
         arrow =
             case direction of
                 Up ->
-                    Nri.Ui.UiIcon.V1.sortArrow
+                    Nri.Ui.UiIcon.V2.sortArrow
 
                 Down ->
-                    Nri.Ui.UiIcon.V1.sortArrowDown
+                    Nri.Ui.UiIcon.V2.sortArrowDown
 
         color =
             if active then
