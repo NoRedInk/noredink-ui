@@ -641,8 +641,8 @@ viewLeftIcon config =
     viewJust
         (\icon_ ->
             icon_
-                |> Svg.withWidth (px 20)
-                |> Svg.withHeight (px 20)
+                |> Svg.withWidth (px 17)
+                |> Svg.withHeight (px 17)
                 |> Svg.withCss [ marginRight (px 5) ]
                 |> Svg.toHtml
         )
@@ -654,8 +654,8 @@ viewRightIcon config =
     viewJust
         (\icon_ ->
             icon_
-                |> Svg.withWidth (px 20)
-                |> Svg.withHeight (px 20)
+                |> Svg.withWidth (px 15)
+                |> Svg.withHeight (px 15)
                 |> Svg.withCss [ marginLeft (px 5) ]
                 |> Svg.toHtml
         )
@@ -680,8 +680,8 @@ viewLockedEntry extraStyles entryConfig =
                 entryConfig.customAttributes
         )
         [ Pennant.contentPremiumFlag
-            |> Svg.withWidth (px 15)
-            |> Svg.withHeight (px 15)
+            |> Svg.withWidth (px 17)
+            |> Svg.withHeight (px 17)
             |> Svg.withCss [ marginRight (px 5), minWidth (px 15) ]
             |> Svg.toHtml
         , text entryConfig.title
