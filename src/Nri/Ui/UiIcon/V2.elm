@@ -2882,6 +2882,7 @@ count =
         ]
 
 
+{-| -}
 openInNewTab : Nri.Ui.Svg.V1.Svg
 openInNewTab =
     Nri.Ui.Svg.V1.init "0 0 22 22"
