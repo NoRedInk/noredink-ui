@@ -341,8 +341,17 @@ view_ label config =
     let
         autoresizeAttrs =
             case config.height of
-                AutoResize _ ->
-                    [ Attributes.attribute "data-autoresize" "" ]
+                AutoResize specifiedHeight ->
+                    List.filterMap
+                        identity
+                        [ Just <| Attributes.attribute "data-autoresize" ""
+                        , case specifiedHeight of
+                            DefaultHeight ->
+                                Nothing
+
+                            SingleLine ->
+                                Just <| Attributes.attribute "data-singleline" ""
+                        ]
 
                 Fixed ->
                     []
