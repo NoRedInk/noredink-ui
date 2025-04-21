@@ -6,7 +6,7 @@ import Html.Attributes as Attributes
 import Html.Styled exposing (toUnstyled)
 import Nri.Ui.SideNav.V5 as SideNav exposing (Entry)
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.UiIcon.V2 as UiIcon
 import Spec.Helpers exposing (nriDescription)
 import Test exposing (..)
 import Test.Html.Query as Query

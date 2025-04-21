@@ -6,7 +6,7 @@ import Html.Attributes as Attributes
 import Html.Styled exposing (..)
 import Nri.Test.MouseHelpers.V1 as MouseHelpers
 import Nri.Ui.ClickableText.V4 as ClickableText
-import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.UiIcon.V2 as UiIcon
 import ProgramTest exposing (..)
 import Spec.Helpers exposing (expectFailure)
 import Test exposing (..)

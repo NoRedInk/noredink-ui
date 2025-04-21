@@ -30,7 +30,7 @@ import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Modal.V12 as Modal
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Text.V6 as Text
-import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.UiIcon.V2 as UiIcon
 import Task
 
 

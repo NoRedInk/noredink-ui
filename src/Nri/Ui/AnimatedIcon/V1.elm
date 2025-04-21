@@ -8,7 +8,7 @@ module Nri.Ui.AnimatedIcon.V1 exposing (mobileOpenClose, arrowRightDown, arrowRi
 
 import Css
 import Nri.Ui.Svg.V1
-import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.UiIcon.V2 as UiIcon
 import Svg.Styled as Svg
 import Svg.Styled.Attributes as Attributes
 
