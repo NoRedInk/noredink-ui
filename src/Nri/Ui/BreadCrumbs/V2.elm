@@ -65,7 +65,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.UiIcon.V2 as UiIcon
 
 
 {-| -}

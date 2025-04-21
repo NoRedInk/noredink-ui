@@ -178,7 +178,7 @@ import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Shadows.V1 as Shadows
-import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.UiIcon.V2 as UiIcon
 import Nri.Ui.WhenFocusLeaves.V2 as WhenFocusLeaves
 
 

@@ -43,7 +43,7 @@ import Html.Styled.Events as Events
 import Json.Decode
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes exposing (targetBlank)
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.UiIcon.V2 as UiIcon
 
 
 {-| -}

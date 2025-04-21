@@ -20,7 +20,7 @@ import List.Extra
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.UiIcon.V2 as UiIcon
 import Svg.Styled
 import Svg.Styled.Attributes as SvgAttributes
 

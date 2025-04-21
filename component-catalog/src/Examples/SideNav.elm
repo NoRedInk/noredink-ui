@@ -24,7 +24,7 @@ import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.SideNav.V5 as SideNav
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Text.V6 as Text
-import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.UiIcon.V2 as UiIcon
 
 
 version : Int
@@ -188,7 +188,7 @@ view ellieLinkConfig state =
             ]
         , SideNav.entry "Entry" [ SideNav.icon UiIcon.person ]
         , SideNav.entryWithChildren "Entry with Children"
-            [ SideNav.icon UiIcon.bulb ]
+            [ SideNav.icon UiIcon.baldBulb ]
             [ SideNav.entry "Child 1"
                 [ SideNav.href "complex-example__child-1"
                 ]
