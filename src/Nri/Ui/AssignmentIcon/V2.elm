@@ -789,58 +789,56 @@ startSecondary =
 assessment : Nri.Ui.Svg.V1.Svg
 assessment =
     Nri.Ui.Svg.V1.init "0 0 70 70"
-        [ Svg.path
-            [ Attributes.fillRule "evenodd"
-            , Attributes.clipRule "evenodd"
-            , Attributes.d "M35 69.0141C54.33 69.0141 70 53.5648 70 34.507C70 15.4493 54.33 0 35 0C15.67 0 0 15.4493 0 34.507C0 53.5648 15.67 69.0141 35 69.0141Z"
+        [ Svg.circle
+            [ Attributes.cx "35"
+            , Attributes.cy "35"
+            , Attributes.r "35"
             , Attributes.fill "currentColor"
             ]
             []
-        , Svg.g [ Attributes.clipPath "url(#clip0_1057_146)" ]
-            [ Svg.path
-                [ Attributes.d "M17.2916 36.0417V50.625C17.2916 51.5956 17.2916 52.081 17.4502 52.4639C17.6616 52.9744 18.0672 53.38 18.5777 53.5915C18.9606 53.75 19.4459 53.75 20.4166 53.75C21.3873 53.75 21.8727 53.75 22.2555 53.5915C22.766 53.38 23.1716 52.9744 23.383 52.4639C23.5416 52.081 23.5416 51.5956 23.5416 50.625V36.0417C23.5416 35.071 23.5416 34.5856 23.383 34.2027C23.1716 33.6923 22.766 33.2867 22.2555 33.0752C21.8727 32.9167 21.3873 32.9167 20.4166 32.9167C19.4459 32.9167 18.9606 32.9167 18.5777 33.0752C18.0672 33.2867 17.6616 33.6923 17.4502 34.2027C17.2916 34.5856 17.2916 35.071 17.2916 36.0417Z"
-                , Attributes.fill "white"
-                ]
-                []
-            , Svg.path
-                [ Attributes.d "M31.875 40.2083V50.624C31.875 51.5946 31.875 52.08 32.0335 52.4629C32.245 52.9733 32.6506 53.379 33.161 53.5904C33.544 53.749 34.0294 53.749 35 53.749C35.9706 53.749 36.456 53.749 36.839 53.5904C37.3494 53.379 37.755 52.9733 37.9665 52.4629C38.125 52.08 38.125 51.5946 38.125 50.624V40.2083C38.125 39.2377 38.125 38.7523 37.9665 38.3694C37.755 37.859 37.3494 37.4533 36.839 37.2419C36.456 37.0833 35.9706 37.0833 35 37.0833C34.0294 37.0833 33.544 37.0833 33.161 37.2419C32.6506 37.4533 32.245 37.859 32.0335 38.3694C31.875 38.7523 31.875 39.2377 31.875 40.2083Z"
-                , Attributes.fill "white"
-                ]
-                []
-            , Svg.path
-                [ Attributes.d "M46.4584 31.875V50.625C46.4584 51.5956 46.4584 52.081 46.6169 52.464C46.8284 52.9744 47.234 53.38 47.7444 53.5915C48.1273 53.75 48.6127 53.75 49.5834 53.75C50.554 53.75 51.0394 53.75 51.4223 53.5915C51.9327 53.38 52.3384 52.9744 52.5498 52.464C52.7084 52.081 52.7084 51.5956 52.7084 50.625V31.875C52.7084 30.9044 52.7084 30.4189 52.5498 30.0361C52.3384 29.5256 51.9327 29.12 51.4223 28.9086C51.0394 28.75 50.554 28.75 49.5834 28.75C48.6127 28.75 48.1273 28.75 47.7444 28.9086C47.234 29.12 46.8284 29.5256 46.6169 30.0361C46.4584 30.4189 46.4584 30.9044 46.4584 31.875Z"
-                , Attributes.fill "white"
-                ]
-                []
-            , Svg.path
-                [ Attributes.d "M23.5416 23.5417C23.5416 25.2676 22.1425 26.6667 20.4166 26.6667C18.6907 26.6667 17.2916 25.2676 17.2916 23.5417C17.2916 21.8158 18.6907 20.4167 20.4166 20.4167C22.1425 20.4167 23.5416 21.8158 23.5416 23.5417Z"
-                , Attributes.stroke "white"
-                , Attributes.strokeWidth "3"
-                , Attributes.fill "none"
-                ]
-                []
-            , Svg.path
-                [ Attributes.d "M52.7084 19.375C52.7084 21.1009 51.3092 22.5 49.5834 22.5C47.8575 22.5 46.4584 21.1009 46.4584 19.375C46.4584 17.6491 47.8575 16.25 49.5834 16.25C51.3092 16.25 52.7084 17.6491 52.7084 19.375Z"
-                , Attributes.stroke "white"
-                , Attributes.strokeWidth "3"
-                , Attributes.fill "none"
-                ]
-                []
-            , Svg.path
-                [ Attributes.d "M38.125 27.7083C38.125 29.4342 36.7258 30.8333 35 30.8333C33.2742 30.8333 31.875 29.4342 31.875 27.7083C31.875 25.9824 33.2742 24.5833 35 24.5833C36.7258 24.5833 38.125 25.9824 38.125 27.7083Z"
-                , Attributes.stroke "white"
-                , Attributes.strokeWidth "3"
-                , Attributes.fill "none"
-                ]
-                []
-            , Svg.path
-                [ Attributes.d "M23.4237 24.4L31.9959 26.8492M37.7152 26.1572L46.8711 20.9253"
-                , Attributes.stroke "white"
-                , Attributes.strokeWidth "3"
-                , Attributes.fill "none"
-                ]
-                []
+        , Svg.path
+            [ Attributes.d "M17.2916 36.0417V50.625C17.2916 51.5956 17.2916 52.081 17.4502 52.4639C17.6616 52.9744 18.0672 53.38 18.5777 53.5915C18.9606 53.75 19.4459 53.75 20.4166 53.75C21.3873 53.75 21.8727 53.75 22.2555 53.5915C22.766 53.38 23.1716 52.9744 23.383 52.4639C23.5416 52.081 23.5416 51.5956 23.5416 50.625V36.0417C23.5416 35.071 23.5416 34.5856 23.383 34.2027C23.1716 33.6923 22.766 33.2867 22.2555 33.0752C21.8727 32.9167 21.3873 32.9167 20.4166 32.9167C19.4459 32.9167 18.9606 32.9167 18.5777 33.0752C18.0672 33.2867 17.6616 33.6923 17.4502 34.2027C17.2916 34.5856 17.2916 35.071 17.2916 36.0417Z"
+            , Attributes.fill "white"
             ]
+            []
+        , Svg.path
+            [ Attributes.d "M31.875 40.2083V50.624C31.875 51.5946 31.875 52.08 32.0335 52.4629C32.245 52.9733 32.6506 53.379 33.161 53.5904C33.544 53.749 34.0294 53.749 35 53.749C35.9706 53.749 36.456 53.749 36.839 53.5904C37.3494 53.379 37.755 52.9733 37.9665 52.4629C38.125 52.08 38.125 51.5946 38.125 50.624V40.2083C38.125 39.2377 38.125 38.7523 37.9665 38.3694C37.755 37.859 37.3494 37.4533 36.839 37.2419C36.456 37.0833 35.9706 37.0833 35 37.0833C34.0294 37.0833 33.544 37.0833 33.161 37.2419C32.6506 37.4533 32.245 37.859 32.0335 38.3694C31.875 38.7523 31.875 39.2377 31.875 40.2083Z"
+            , Attributes.fill "white"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M46.4584 31.875V50.625C46.4584 51.5956 46.4584 52.081 46.6169 52.464C46.8284 52.9744 47.234 53.38 47.7444 53.5915C48.1273 53.75 48.6127 53.75 49.5834 53.75C50.554 53.75 51.0394 53.75 51.4223 53.5915C51.9327 53.38 52.3384 52.9744 52.5498 52.464C52.7084 52.081 52.7084 51.5956 52.7084 50.625V31.875C52.7084 30.9044 52.7084 30.4189 52.5498 30.0361C52.3384 29.5256 51.9327 29.12 51.4223 28.9086C51.0394 28.75 50.554 28.75 49.5834 28.75C48.6127 28.75 48.1273 28.75 47.7444 28.9086C47.234 29.12 46.8284 29.5256 46.6169 30.0361C46.4584 30.4189 46.4584 30.9044 46.4584 31.875Z"
+            , Attributes.fill "white"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M23.5416 23.5417C23.5416 25.2676 22.1425 26.6667 20.4166 26.6667C18.6907 26.6667 17.2916 25.2676 17.2916 23.5417C17.2916 21.8158 18.6907 20.4167 20.4166 20.4167C22.1425 20.4167 23.5416 21.8158 23.5416 23.5417Z"
+            , Attributes.stroke "white"
+            , Attributes.strokeWidth "3"
+            , Attributes.fill "none"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M52.7084 19.375C52.7084 21.1009 51.3092 22.5 49.5834 22.5C47.8575 22.5 46.4584 21.1009 46.4584 19.375C46.4584 17.6491 47.8575 16.25 49.5834 16.25C51.3092 16.25 52.7084 17.6491 52.7084 19.375Z"
+            , Attributes.stroke "white"
+            , Attributes.strokeWidth "3"
+            , Attributes.fill "none"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M38.125 27.7083C38.125 29.4342 36.7258 30.8333 35 30.8333C33.2742 30.8333 31.875 29.4342 31.875 27.7083C31.875 25.9824 33.2742 24.5833 35 24.5833C36.7258 24.5833 38.125 25.9824 38.125 27.7083Z"
+            , Attributes.stroke "white"
+            , Attributes.strokeWidth "3"
+            , Attributes.fill "none"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M23.4237 24.4L31.9959 26.8492M37.7152 26.1572L46.8711 20.9253"
+            , Attributes.stroke "white"
+            , Attributes.strokeWidth "3"
+            , Attributes.fill "none"
+            ]
+            []
         ]
 
 
@@ -848,11 +846,11 @@ assessment =
 practiceCircled : Nri.Ui.Svg.V1.Svg
 practiceCircled =
     Nri.Ui.Svg.V1.init "0 0 70 70"
-        [ Svg.path
-            [ Attributes.d "M70 35C70 15.67 54.33 0 35 0C15.67 0 0 15.67 0 35C0 54.33 15.67 70 35 70C54.33 70 70 54.33 70 35Z"
+        [ Svg.circle
+            [ Attributes.cx "35"
+            , Attributes.cy "35"
+            , Attributes.r "35"
             , Attributes.fill "currentColor"
-            , Attributes.fillRule "evenodd"
-            , Attributes.clipRule "evenodd"
             ]
             []
         , Svg.g [ Attributes.clipPath "url(#clip0_10_3121)" ]
@@ -889,10 +887,10 @@ practiceCircled =
 standards : Nri.Ui.Svg.V1.Svg
 standards =
     Nri.Ui.Svg.V1.init "0 0 70 70"
-        [ Svg.path
-            [ Attributes.fillRule "evenodd"
-            , Attributes.clipRule "evenodd"
-            , Attributes.d "M35 0C25.7166 0 16.814 3.68865 10.2515 10.2515C3.689 16.8144 0 25.7173 0 35C0 44.2827 3.68865 53.186 10.2515 59.7485C16.8144 66.311 25.7173 70 35 70C44.2827 70 53.186 66.3113 59.7485 59.7485C66.311 53.1856 70 44.2827 70 35C70 25.7173 66.3113 16.8161 59.7485 10.2515C53.186 3.689 44.2827 0 35 0Z"
+        [ Svg.circle
+            [ Attributes.cx "35"
+            , Attributes.cy "35"
+            , Attributes.r "35"
             , Attributes.fill "currentColor"
             ]
             []
@@ -939,8 +937,10 @@ standards =
 modules : Nri.Ui.Svg.V1.Svg
 modules =
     Nri.Ui.Svg.V1.init "0 0 70 70"
-        [ Svg.path
-            [ Attributes.d "M35 70C54.33 70 70 54.33 70 35C70 15.67 54.33 0 35 0C15.67 0 0 15.67 0 35C0 54.33 15.67 70 35 70Z"
+        [ Svg.circle
+            [ Attributes.cx "35"
+            , Attributes.cy "35"
+            , Attributes.r "35"
             , Attributes.fill "currentColor"
             ]
             []
@@ -973,11 +973,11 @@ modules =
 writing : Nri.Ui.Svg.V1.Svg
 writing =
     Nri.Ui.Svg.V1.init "0 0 70 70"
-        [ Svg.path
-            [ Attributes.d "M35 69.0141C54.33 69.0141 70 53.5648 70 34.507C70 15.4493 54.33 0 35 0C15.67 0 0 15.4493 0 34.507C0 53.5648 15.67 69.0141 35 69.0141Z"
+        [ Svg.circle
+            [ Attributes.cx "35"
+            , Attributes.cy "35"
+            , Attributes.r "35"
             , Attributes.fill "currentColor"
-            , Attributes.fillRule "evenodd"
-            , Attributes.clipRule "evenodd"
             ]
             []
         , Svg.path
@@ -990,7 +990,7 @@ writing =
             ]
             []
         , Svg.path
-            [ Attributes.d "M45.8017 41.27L38.2131 51.5304C36.7576 53.4984 36.0297 54.4824 35 54.4824C33.9703 54.4824 33.2426 53.4984 31.7869 51.5304L24.1984 41.27C22.9815 39.6248 22.3731 38.8021 22.4142 37.9255C22.4554 37.0488 23.2681 36.1306 24.8936 34.2939C26.4603 32.5238 27.0491 30.6907 27.0491 27.5096L42.9509 27.5088C42.9509 30.6899 43.5404 32.5233 45.1067 34.2937C46.7321 36.1308 47.5447 37.0492 47.5857 37.9258C47.6267 38.8023 47.0184 39.6248 45.8017 41.27Z"
+            [ Attributes.d "M45.8016 41.27L38.2131 51.5305C36.7576 53.4985 36.0296 54.4825 34.9999 54.4825C33.9703 54.4825 33.2425 53.4985 31.7868 51.5305L24.1983 41.27C22.9815 39.6248 22.373 38.8021 22.4142 37.9255C22.4553 37.0488 23.2681 36.1306 24.8936 34.2939C26.4602 32.5238 27.0491 30.6907 27.0491 27.5096L42.9509 27.5088C42.9509 30.6899 43.5404 32.5233 45.1066 34.2937C46.7321 36.1308 47.5447 37.0492 47.5857 37.9258C47.6267 38.8023 47.0183 39.6248 45.8016 41.27Z"
             , Attributes.stroke "white"
             , Attributes.strokeWidth "3"
             , Attributes.strokeLinecap "round"
@@ -1013,11 +1013,11 @@ writing =
 passageQuizCircled : Nri.Ui.Svg.V1.Svg
 passageQuizCircled =
     Nri.Ui.Svg.V1.init "0 0 70 70"
-        [ Svg.path
-            [ Attributes.d "M35 70C54.33 70 70 54.33 70 35C70 15.67 54.33 0 35 0C15.67 0 0 15.67 0 35C0 54.33 15.67 70 35 70Z"
+        [ Svg.circle
+            [ Attributes.cx "35"
+            , Attributes.cy "35"
+            , Attributes.r "35"
             , Attributes.fill "currentColor"
-            , Attributes.fillRule "evenodd"
-            , Attributes.clipRule "evenodd"
             ]
             []
         , Svg.path
@@ -1054,10 +1054,10 @@ passageQuizCircled =
 planningDiagnosticCircled : Nri.Ui.Svg.V1.Svg
 planningDiagnosticCircled =
     Nri.Ui.Svg.V1.init "0 0 70 70"
-        [ Svg.path
-            [ Attributes.fillRule "evenodd"
-            , Attributes.clipRule "evenodd"
-            , Attributes.d "M35 70C54.33 70 70 54.33 70 35C70 15.67 54.33 0 35 0C15.67 0 0 15.67 0 35C0 54.33 15.67 70 35 70Z"
+        [ Svg.circle
+            [ Attributes.cx "35"
+            , Attributes.cy "35"
+            , Attributes.r "35"
             , Attributes.fill "currentColor"
             ]
             []
@@ -1091,23 +1091,23 @@ planningDiagnosticCircled =
 {-| -}
 quizCircled : Nri.Ui.Svg.V1.Svg
 quizCircled =
-    Nri.Ui.Svg.V1.init "0 0 70 71"
-        [ Svg.path
-            [ Attributes.d "M35 70.3115C54.33 70.3115 70 54.6415 70 35.3115C70 15.9815 54.33 0.311493 35 0.311493C15.67 0.311493 0 15.9815 0 35.3115C0 54.6415 15.67 70.3115 35 70.3115Z"
+    Nri.Ui.Svg.V1.init "0 0 70 70"
+        [ Svg.circle
+            [ Attributes.cx "35"
+            , Attributes.cy "35"
+            , Attributes.r "35"
             , Attributes.fill "currentColor"
-            , Attributes.fillRule "evenodd"
-            , Attributes.clipRule "evenodd"
             ]
             []
         , Svg.path
-            [ Attributes.d "M26.8478 19.6015C24.0293 19.686 22.3489 19.9997 21.1862 21.1635C19.5944 22.7568 19.5944 25.3212 19.5944 30.4499V42.2362C19.5944 47.365 19.5944 49.9294 21.1862 51.5227C22.778 53.116 25.34 53.116 30.4639 53.116H39.5219C44.6458 53.116 47.2078 53.116 48.7996 51.5227C50.3915 49.9294 50.3915 47.365 50.3915 42.2362V30.4499C50.3915 25.3212 50.3915 22.7568 48.7996 21.1636C47.6369 19.9997 45.9565 19.686 43.138 19.6015"
+            [ Attributes.d "M26.8478 19.6015C24.0293 19.686 22.3489 19.9997 21.1862 21.1635C19.5944 22.7568 19.5944 25.3212 19.5944 30.4499V42.2362C19.5944 47.365 19.5944 49.9294 21.1862 51.5227C22.778 53.116 25.34 53.116 30.4639 53.116H39.5219C44.6458 53.116 47.2078 53.116 48.7996 51.5227C50.3915 49.9294 50.3915 47.365 50.3915 42.2362V30.4499C50.3915 25.3212 50.3915 22.7568 48.7996 21.1636C47.637 19.9997 45.9565 19.686 43.138 19.6015"
             , Attributes.stroke "white"
             , Attributes.strokeWidth "3"
             , Attributes.fill "none"
             ]
             []
         , Svg.path
-            [ Attributes.d "M26.8407 20.0544C26.8407 18.3034 28.2601 16.8841 30.011 16.8841H39.9748C41.7257 16.8841 43.1451 18.3034 43.1451 20.0544C43.1451 21.8053 41.7257 23.2246 39.9748 23.2246H30.011C28.2601 23.2246 26.8407 21.8053 26.8407 20.0544Z"
+            [ Attributes.d "M26.8408 20.0544C26.8408 18.3034 28.2602 16.8841 30.011 16.8841H39.9748C41.7257 16.8841 43.1451 18.3034 43.1451 20.0544C43.1451 21.8053 41.7257 23.2246 39.9748 23.2246H30.011C28.2602 23.2246 26.8408 21.8053 26.8408 20.0544Z"
             , Attributes.stroke "white"
             , Attributes.strokeWidth "3"
             , Attributes.strokeLinejoin "round"
@@ -1115,7 +1115,7 @@ quizCircled =
             ]
             []
         , Svg.path
-            [ Attributes.d "M25.0361 31.3768H32.2825"
+            [ Attributes.d "M25.0363 31.3768H32.2826"
             , Attributes.stroke "white"
             , Attributes.strokeWidth "3"
             , Attributes.strokeLinecap "round"
@@ -1123,7 +1123,7 @@ quizCircled =
             ]
             []
         , Svg.path
-            [ Attributes.d "M37.7173 33.1884C37.7173 33.1884 38.6231 33.1884 39.5289 35C39.5289 35 42.4061 30.471 44.9637 29.5652"
+            [ Attributes.d "M37.7174 33.1884C37.7174 33.1884 38.6232 33.1884 39.529 35C39.529 35 42.4062 30.471 44.9638 29.5652"
             , Attributes.stroke "white"
             , Attributes.strokeWidth "3"
             , Attributes.strokeLinecap "round"
@@ -1132,7 +1132,7 @@ quizCircled =
             ]
             []
         , Svg.path
-            [ Attributes.d "M25.0361 42.2464H32.2825"
+            [ Attributes.d "M25.0363 42.2464H32.2826"
             , Attributes.stroke "white"
             , Attributes.strokeWidth "3"
             , Attributes.strokeLinecap "round"
@@ -1140,7 +1140,7 @@ quizCircled =
             ]
             []
         , Svg.path
-            [ Attributes.d "M37.7173 44.058C37.7173 44.058 38.6231 44.058 39.5289 45.8696C39.5289 45.8696 42.4061 41.3406 44.9637 40.4348"
+            [ Attributes.d "M37.7174 44.058C37.7174 44.058 38.6232 44.058 39.529 45.8696C39.529 45.8696 42.4062 41.3406 44.9638 40.4348"
             , Attributes.stroke "white"
             , Attributes.strokeWidth "3"
             , Attributes.strokeLinecap "round"
@@ -1155,11 +1155,11 @@ quizCircled =
 unitDiagnosticCircled : Nri.Ui.Svg.V1.Svg
 unitDiagnosticCircled =
     Nri.Ui.Svg.V1.init "0 0 70 70"
-        [ Svg.path
-            [ Attributes.d "M35 70C54.33 70 70 54.33 70 35C70 15.67 54.33 0 35 0C15.67 0 0 15.67 0 35C0 54.33 15.67 70 35 70Z"
+        [ Svg.circle
+            [ Attributes.cx "35"
+            , Attributes.cy "35"
+            , Attributes.r "35"
             , Attributes.fill "currentColor"
-            , Attributes.fillRule "evenodd"
-            , Attributes.clipRule "evenodd"
             ]
             []
         , Svg.g [ Attributes.clipPath "url(#clip0_10_3122)" ]
@@ -1178,10 +1178,10 @@ unitDiagnosticCircled =
 quickWriteCircled : Nri.Ui.Svg.V1.Svg
 quickWriteCircled =
     Nri.Ui.Svg.V1.init "0 0 70 70"
-        [ Svg.path
-            [ Attributes.fillRule "evenodd"
-            , Attributes.clipRule "evenodd"
-            , Attributes.d "M35 70C54.33 70 70 54.33 70 35C70 15.67 54.33 0 35 0C15.67 0 0 15.67 0 35C0 54.33 15.67 70 35 70Z"
+        [ Svg.circle
+            [ Attributes.cx "35"
+            , Attributes.cy "35"
+            , Attributes.r "35"
             , Attributes.fill "currentColor"
             ]
             []
@@ -1206,10 +1206,10 @@ quickWriteCircled =
 guidedDraftCircled : Nri.Ui.Svg.V1.Svg
 guidedDraftCircled =
     Nri.Ui.Svg.V1.init "0 0 70 70"
-        [ Svg.path
-            [ Attributes.fillRule "evenodd"
-            , Attributes.clipRule "evenodd"
-            , Attributes.d "M35 70C54.33 70 70 54.33 70 35C70 15.67 54.33 0 35 0C15.67 0 0 15.67 0 35C0 54.33 15.67 70 35 70Z"
+        [ Svg.circle
+            [ Attributes.cx "35"
+            , Attributes.cy "35"
+            , Attributes.r "35"
             , Attributes.fill "currentColor"
             ]
             []
@@ -1254,10 +1254,10 @@ guidedDraftCircled =
 guidedEssayCircled : Nri.Ui.Svg.V1.Svg
 guidedEssayCircled =
     Nri.Ui.Svg.V1.init "0 0 70 70"
-        [ Svg.path
-            [ Attributes.fillRule "evenodd"
-            , Attributes.clipRule "evenodd"
-            , Attributes.d "M70 35C70 15.67 54.33 0 35 0C15.67 0 0 15.67 0 35C0 54.33 15.67 70 35 70C54.33 70 70 54.33 70 35Z"
+        [ Svg.circle
+            [ Attributes.cx "35"
+            , Attributes.cy "35"
+            , Attributes.r "35"
             , Attributes.fill "currentColor"
             ]
             []
@@ -1284,11 +1284,11 @@ guidedEssayCircled =
 guidedShortResponseCircled : Nri.Ui.Svg.V1.Svg
 guidedShortResponseCircled =
     Nri.Ui.Svg.V1.init "0 0 70 70"
-        [ Svg.path
-            [ Attributes.d "M70 35C70 15.67 54.33 0 35 0C15.67 0 0 15.67 0 35C0 54.33 15.67 70 35 70C54.33 70 70 54.33 70 35Z"
+        [ Svg.circle
+            [ Attributes.cx "35"
+            , Attributes.cy "35"
+            , Attributes.r "35"
             , Attributes.fill "currentColor"
-            , Attributes.fillRule "evenodd"
-            , Attributes.clipRule "evenodd"
             ]
             []
         , Svg.path
@@ -1345,10 +1345,10 @@ guidedShortResponseCircled =
 selfReviewCircled : Nri.Ui.Svg.V1.Svg
 selfReviewCircled =
     Nri.Ui.Svg.V1.init "0 0 70 70"
-        [ Svg.path
-            [ Attributes.fillRule "evenodd"
-            , Attributes.clipRule "evenodd"
-            , Attributes.d "M35 70C54.33 70 70 54.33 70 35C70 15.67 54.33 0 35 0C15.67 0 0 15.67 0 35C0 54.33 15.67 70 35 70Z"
+        [ Svg.circle
+            [ Attributes.cx "35"
+            , Attributes.cy "35"
+            , Attributes.r "35"
             , Attributes.fill "currentColor"
             ]
             []
@@ -1413,10 +1413,10 @@ selfReviewCircled =
 peerReviewCircled : Nri.Ui.Svg.V1.Svg
 peerReviewCircled =
     Nri.Ui.Svg.V1.init "0 0 70 70"
-        [ Svg.path
-            [ Attributes.fillRule "evenodd"
-            , Attributes.clipRule "evenodd"
-            , Attributes.d "M35 70C54.33 70 70 54.33 70 35C70 15.67 54.33 0 35 0C15.67 0 0 15.67 0 35C0 54.33 15.67 70 35 70"
+        [ Svg.circle
+            [ Attributes.cx "35"
+            , Attributes.cy "35"
+            , Attributes.r "35"
             , Attributes.fill "currentColor"
             ]
             []
@@ -1499,11 +1499,11 @@ gradingAssistantCircled =
 dailyWritingCircled : Nri.Ui.Svg.V1.Svg
 dailyWritingCircled =
     Nri.Ui.Svg.V1.init "0 0 70 70"
-        [ Svg.path
-            [ Attributes.d "M35 70C54.33 70 70 54.33 70 35C70 15.67 54.33 0 35 0C15.67 0 0 15.67 0 35C0 54.33 15.67 70 35 70Z"
+        [ Svg.circle
+            [ Attributes.cx "35"
+            , Attributes.cy "35"
+            , Attributes.r "35"
             , Attributes.fill "currentColor"
-            , Attributes.fillRule "evenodd"
-            , Attributes.clipRule "evenodd"
             ]
             []
         , Svg.path
@@ -1540,10 +1540,10 @@ dailyWritingCircled =
 novelsCircled : Nri.Ui.Svg.V1.Svg
 novelsCircled =
     Nri.Ui.Svg.V1.init "0 0 70 70"
-        [ Svg.path
-            [ Attributes.fillRule "evenodd"
-            , Attributes.clipRule "evenodd"
-            , Attributes.d "M70 35C70 15.67 54.33 0 35 0C15.67 0 0 15.67 0 35C0 54.33 15.67 70 35 70C54.33 70 70 54.33 70 35Z"
+        [ Svg.circle
+            [ Attributes.cx "35"
+            , Attributes.cy "35"
+            , Attributes.r "35"
             , Attributes.fill "currentColor"
             ]
             []
@@ -1596,10 +1596,10 @@ novelsCircled =
 textsCircled : Nri.Ui.Svg.V1.Svg
 textsCircled =
     Nri.Ui.Svg.V1.init "0 0 70 70"
-        [ Svg.path
-            [ Attributes.fillRule "evenodd"
-            , Attributes.clipRule "evenodd"
-            , Attributes.d "M70 35C70 15.67 54.33 0 35 0C15.67 0 0 15.67 0 35C0 54.33 15.67 70 35 70C54.33 70 70 54.33 70 35Z"
+        [ Svg.circle
+            [ Attributes.cx "35"
+            , Attributes.cy "35"
+            , Attributes.r "35"
             , Attributes.fill "currentColor"
             ]
             []
