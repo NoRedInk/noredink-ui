@@ -42,7 +42,7 @@ import Nri.Ui.Table.V8 as Table
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.TextInput.V8 as TextInput
 import Nri.Ui.Tooltip.V3 as Tooltip
-import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.UiIcon.V2 as UiIcon
 import Routes
 import Set exposing (Set)
 import Svg.Styled as Svg

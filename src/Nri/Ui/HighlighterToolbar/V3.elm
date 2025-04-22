@@ -38,7 +38,7 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 exposing (nriDescription, safeIdWithPrefix)
 import Nri.Ui.Html.V3 exposing (viewIf)
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.UiIcon.V2 as UiIcon
 
 
 {-| View renders each marker and an eraser. This is exclusively used with an interactive Highlighter, whose id you should pass in when initializing the HighlighterToolbar.

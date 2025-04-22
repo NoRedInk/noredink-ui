@@ -24,7 +24,7 @@ import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Table.V8 as Table
 import Nri.Ui.Text.V6 as Text
-import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.UiIcon.V2 as UiIcon
 
 
 version : Int

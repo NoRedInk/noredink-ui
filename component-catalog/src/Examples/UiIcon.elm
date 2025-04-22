@@ -8,7 +8,7 @@ module Examples.UiIcon exposing (example, State, Msg)
 
 import Example exposing (Example)
 import IconExamples exposing (Group)
-import Nri.Ui.UiIcon.V1 as UiIcon
+import Nri.Ui.UiIcon.V2 as UiIcon
 
 
 {-| -}
@@ -25,7 +25,7 @@ type alias Msg =
 example : Example State Msg
 example =
     { moduleName = "UiIcon"
-    , version = 1
+    , version = 2
     , label = "Mastered"
     , name = "starFilled"
     , icon = UiIcon.starFilled
@@ -60,6 +60,7 @@ all =
         , ( "gear", UiIcon.gear, [] )
         , ( "hamburger", UiIcon.hamburger, [] )
         , ( "kebab", UiIcon.kebab, [] )
+        , ( "flipper", UiIcon.flipper, [] )
         ]
       )
     , ( "Archive & Unarchive"
@@ -105,7 +106,6 @@ all =
         , ( "help", UiIcon.help, [] )
         , ( "info", UiIcon.info, [] )
         , ( "checklist", UiIcon.checklist, [] )
-        , ( "checklistComplete", UiIcon.checklistComplete, [] )
         , ( "review", UiIcon.review, [] )
         ]
       )
@@ -116,7 +116,6 @@ all =
       )
     , ( "Science & Measurement"
       , [ ( "compass", UiIcon.compass, [] )
-        , ( "speedometer", UiIcon.speedometer, [] )
         , ( "performance", UiIcon.performance, [] )
         , ( "microscope", UiIcon.microscope, [] )
         , ( "scale", UiIcon.scale, [] )
@@ -133,10 +132,6 @@ all =
         , ( "apple", UiIcon.apple, [] )
         , ( "appleOutline", UiIcon.appleOutline, [] )
         , ( "briefcase", UiIcon.briefcase, [] )
-        , ( "heapOfBoxes", UiIcon.heapOfBoxes, [] )
-        , ( "climbingStairs", UiIcon.climbingStairs, [] )
-        , ( "twoHandsHoldingBox", UiIcon.twoHandsHoldingBox, [] )
-        , ( "atlas", UiIcon.atlas, [] )
         ]
       )
     , ( "Time"
@@ -149,9 +144,8 @@ all =
       , [ ( "missingDocument", UiIcon.missingDocument, [] )
         , ( "document", UiIcon.document, [] )
         , ( "documents", UiIcon.documents, [] )
-        , ( "newspaper", UiIcon.newspaper, [] )
-        , ( "openBook", UiIcon.openBook, [] )
-        , ( "openBooks", UiIcon.openBooks, [] )
+        , ( "text", UiIcon.text, [] )
+        , ( "texts", UiIcon.texts, [] )
         ]
       )
     , ( "Communication"
@@ -162,7 +156,6 @@ all =
       )
     , ( "Writing Implements"
       , [ ( "edit", UiIcon.edit, [] )
-        , ( "pen", UiIcon.pen, [] )
         , ( "highlighter", UiIcon.highlighter, [] )
         , ( "eraser", UiIcon.eraser, [] )
         ]
@@ -242,11 +235,6 @@ all =
         , ( "redo", UiIcon.redo, [] )
         ]
       )
-    , ( "Punctuation"
-      , [ ( "openQuotationMark", UiIcon.openQuotationMark, [] )
-        , ( "closeQuotationMark", UiIcon.closeQuotationMark, [] )
-        ]
-      )
     , ( "Navigation"
       , [ ( "home", UiIcon.home, [] )
         , ( "homeInCircle", UiIcon.homeInCircle, [] )
@@ -260,7 +248,7 @@ all =
       )
     , ( "School Category"
       , [ ( "school", UiIcon.school, [] )
-        , ( "highSchool", UiIcon.highSchool, [] )
+        , ( "college", UiIcon.college, [] )
         , ( "company", UiIcon.company, [] )
         , ( "homeSchool", UiIcon.homeSchool, [] )
         ]
