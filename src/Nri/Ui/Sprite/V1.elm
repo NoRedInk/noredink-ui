@@ -121,20 +121,9 @@ allSprites =
             , Attributes.viewBox "0 0 22 22"
             ]
             [ Svg.path
-                [ Attributes.d "M4 5C4 3.58579 4 2.87868 4.43934 2.43934C4.87868 2 5.58579 2 7 2H11.5789C14.0206 2 16 4.01472 16 6.5C16 8.98528 14.0206 11 11.5789 11H4V5Z"
+                [ Attributes.d "M6 11H11.8299C13.7082 11 15.2308 9.433 15.2308 7.5C15.2308 5.567 13.7082 4 11.8299 4H8.30769C7.21984 4 6.67591 4 6.33795 4.34171C6 4.68342 6 5.23339 6 6.33333V11ZM6 11V15.6667C6 16.7666 6 17.3166 6.33795 17.6583C6.67591 18 7.21984 18 8.30769 18H12.6667C14.5076 18 16 16.433 16 14.5C16 12.567 14.5076 11 12.6667 11H11.7143"
                 , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "4"
-                , Attributes.strokeLinecap "round"
-                , Attributes.strokeLinejoin "round"
-                , Attributes.fillRule "evenodd"
-                , Attributes.clipRule "evenodd"
-                , Attributes.fill "none"
-                ]
-                []
-            , Svg.path
-                [ Attributes.d "M11.4286 11H12.6667C15.0599 11 17 13.0147 17 15.5C17 17.9853 15.0599 20 12.6667 20H7C5.58579 20 4.87868 20 4.43934 19.5607C4 19.1213 4 18.4142 4 17V11"
-                , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "4"
+                , Attributes.strokeWidth "3"
                 , Attributes.strokeLinecap "round"
                 , Attributes.strokeLinejoin "round"
                 , Attributes.fill "none"
@@ -149,24 +138,11 @@ allSprites =
             , Attributes.viewBox "0 0 22 22"
             ]
             [ Svg.path
-                [ Attributes.d "M11 3H18"
+                [ Attributes.d "M11 4H17.4166M7.33331 18.6667L14.6666 4M4.58331 18.6667H11"
                 , Attributes.stroke "currentColor"
                 , Attributes.strokeWidth "2"
                 , Attributes.strokeLinecap "round"
-                ]
-                []
-            , Svg.path
-                [ Attributes.d "M7 19L15 3"
-                , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "2"
-                , Attributes.strokeLinecap "round"
-                ]
-                []
-            , Svg.path
-                [ Attributes.d "M4 19H11"
-                , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "2"
-                , Attributes.strokeLinecap "round"
+                , Attributes.fill "none"
                 ]
                 []
             ]
@@ -178,19 +154,12 @@ allSprites =
             , Attributes.viewBox "0 0 22 22"
             ]
             [ Svg.path
-                [ Attributes.d "M4.5 2V10.5C4.5 14.0899 7.41015 17 11 17C14.5899 17 17.5 14.0899 17.5 10.5V2"
+                [ Attributes.d "M5.22222 3V10.5556C5.22222 13.7466 7.80902 16.3333 11 16.3333C14.191 16.3333 16.7778 13.7466 16.7778 10.5556V3M3 19H19"
                 , Attributes.stroke "currentColor"
                 , Attributes.strokeWidth "2"
                 , Attributes.strokeLinecap "round"
                 , Attributes.strokeLinejoin "round"
                 , Attributes.fill "none"
-                ]
-                []
-            , Svg.path
-                [ Attributes.d "M2 20H20"
-                , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "2"
-                , Attributes.strokeLinecap "round"
                 ]
                 []
             ]
