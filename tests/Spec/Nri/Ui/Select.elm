@@ -73,6 +73,34 @@ spec =
                         , attribute (Key.tabbable True)
                         ]
                     |> done
+        , test "disables options via disableWhen" <|
+            \() ->
+                ungroupedDisabled
+                    |> ensureViewHas
+                        [ id "id-nri-select--Toad"
+                        , attribute (Attributes.disabled True)
+                        ]
+                    |> ensureViewHas
+                        [ id "id-nri-select--Frog"
+                        , attribute (Attributes.disabled True)
+                        ]
+                    |> done
+        , test "disables options in grouped choices via disableWhen" <|
+            \() ->
+                groupedDisabled
+                    |> ensureViewHas
+                        [ id "id-nri-select--Toad"
+                        , attribute (Attributes.disabled True)
+                        ]
+                    |> ensureViewHas
+                        [ id "id-nri-select--Frog"
+                        , attribute (Attributes.disabled True)
+                        ]
+                    |> ensureViewHas
+                        [ id "id-nri-select--Cat"
+                        , attribute (Attributes.disabled False)
+                        ]
+                    |> done
 
         {- Attempted to simulate click and keydown events on the enabled select element,
            similar to the approach in tests/Spec/Nri/Ui/Switch.elm
@@ -159,6 +187,60 @@ disabled =
                     , Select.value model.favoriteAnimal
                     , Select.id selectId
                     , Select.disabled
+                    ]
+                    |> Html.Styled.map SelectFavorite
+                    |> Html.Styled.toUnstyled
+        }
+        |> ProgramTest.start ()
+
+
+ungroupedDisabled : ProgramTest Model Msg ()
+ungroupedDisabled =
+    ProgramTest.createSandbox
+        { init = { favoriteAnimal = Nothing }
+        , update = update
+        , view =
+            \model ->
+                Select.view "Favorite type of animal"
+                    [ Select.choices toString
+                        (List.map
+                            (\animal ->
+                                { label = toString animal
+                                , value = animal
+                                }
+                            )
+                            (mammals ++ amphibians ++ [ Other ])
+                        )
+                    , Select.value model.favoriteAnimal
+                    , Select.id selectId
+                    , Select.disableWhen (\animal -> animal == Toad || animal == Frog)
+                    ]
+                    |> Html.Styled.map SelectFavorite
+                    |> Html.Styled.toUnstyled
+        }
+        |> ProgramTest.start ()
+
+
+groupedDisabled : ProgramTest Model Msg ()
+groupedDisabled =
+    let
+        toOption =
+            \animal -> { label = toString animal, value = animal }
+    in
+    ProgramTest.createSandbox
+        { init = { favoriteAnimal = Nothing }
+        , update = update
+        , view =
+            \model ->
+                Select.view "Favorite type of animal even slimy ones"
+                    [ Select.choices toString [ toOption Other ]
+                    , Select.groupedChoices toString
+                        [ { label = "Mammals", choices = List.map toOption mammals }
+                        , { label = "Amphibians", choices = List.map toOption amphibians }
+                        ]
+                    , Select.value model.favoriteAnimal
+                    , Select.id selectId
+                    , Select.disableWhen (\animal -> animal == Toad || animal == Frog)
                     ]
                     |> Html.Styled.map SelectFavorite
                     |> Html.Styled.toUnstyled
