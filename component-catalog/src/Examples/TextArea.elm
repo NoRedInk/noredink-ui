@@ -17,6 +17,7 @@ import Example exposing (Example)
 import Guidance
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
+import Html.Styled.Keyed
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.InputStyles.V4 as InputStyles exposing (Theme(..))
@@ -108,11 +109,22 @@ example =
                 [ Heading.plaintext "Customizable Example"
                 , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
                 ]
-            , TextArea.view label
-                (TextArea.value state.value
-                    :: TextArea.onInput UpdateValue
-                    :: List.map Tuple.second attributes
-                )
+            , Html.Styled.Keyed.node "div"
+                []
+                [ ( -- any time the config changes we throw away the previous
+                    -- node and render the textarea from scratch to more
+                    -- accurately simulate the initial state of a page using
+                    -- these attributes. otherwise, some of the attributes won't
+                    -- be synchronized to the JS side and we'll see an invalid
+                    -- state.
+                    "textarea" ++ String.fromInt state.keyedNodeCounter
+                  , TextArea.view label
+                        (TextArea.value state.value
+                            :: TextArea.onInput UpdateValue
+                            :: List.map Tuple.second attributes
+                        )
+                  )
+                ]
             ]
     }
 
@@ -120,6 +132,7 @@ example =
 {-| -}
 type alias State =
     { value : String
+    , keyedNodeCounter : Int
     , settings : Control Settings
     }
 
@@ -128,6 +141,7 @@ type alias State =
 init : State
 init =
     { value = ""
+    , keyedNodeCounter = 0
     , settings = initControls
     }
 
@@ -220,4 +234,9 @@ update msg state =
             )
 
         UpdateControl settings ->
-            ( { state | settings = settings }, Cmd.none )
+            ( { state
+                | settings = settings
+                , keyedNodeCounter = state.keyedNodeCounter + 1
+              }
+            , Cmd.none
+            )
