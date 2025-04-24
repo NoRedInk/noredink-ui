@@ -341,17 +341,8 @@ view_ label config =
     let
         autoresizeAttrs =
             case config.height of
-                AutoResize specifiedHeight ->
-                    List.filterMap
-                        identity
-                        [ Just <| Attributes.attribute "data-autoresize" ""
-                        , case specifiedHeight of
-                            DefaultHeight ->
-                                Nothing
-
-                            SingleLine ->
-                                Just <| Attributes.attribute "data-singleline" ""
-                        ]
+                AutoResize _ ->
+                    [ Attributes.attribute "data-autoresize" "" ]
 
                 Fixed ->
                     []
@@ -422,6 +413,16 @@ view_ label config =
                 ]
              , Aria.invalid isInError
              , InputErrorAndGuidanceInternal.describedBy idValue config
+             , case config.height of
+                AutoResize SingleLine ->
+                    -- NOTE: this makes it so that the browser computes the
+                    -- initial height+scrollHeight of the textarea to
+                    -- accommodate 1 line of text. As the user types, the JS
+                    -- side will take care of resizing.
+                    Attributes.attribute "rows" "1"
+
+                _ ->
+                    Extra.none
              ]
                 ++ List.map (Attributes.map never) config.custom
             )
