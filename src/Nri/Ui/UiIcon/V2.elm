@@ -520,9 +520,8 @@ sort =
 emptyCalendar : Nri.Ui.Svg.V1.Svg
 emptyCalendar =
     Nri.Ui.Svg.V1.init "0 0 22 22"
-        [ Svg.g [ Attributes.fill "none" ] []
-        , Svg.path
-            [ Attributes.d "M15.5 1V5M6.5 1V5"
+        [ Svg.path
+            [ Attributes.d "M15 1V5M7 1V5"
             , Attributes.stroke "currentColor"
             , Attributes.strokeWidth "2"
             , Attributes.strokeLinecap "round"
@@ -531,7 +530,7 @@ emptyCalendar =
             ]
             []
         , Svg.path
-            [ Attributes.d "M18 3H4C2.89543 3 2 3.89543 2 5V19C2 20.1046 2.89543 21 4 21H18C19.1046 21 20 20.1046 20 19V5C20 3.89543 19.1046 3 18 3Z"
+            [ Attributes.d "M12 3H10C6.22876 3 4.34315 3 3.17157 4.17157C2 5.34315 2 7.22876 2 11V13C2 16.7712 2 18.6569 3.17157 19.8284C4.34315 21 6.22876 21 10 21H12C15.7712 21 17.6569 21 18.8284 19.8284C20 18.6569 20 16.7712 20 13V11C20 7.22876 20 5.34315 18.8284 4.17157C17.6569 3 15.7712 3 12 3Z"
             , Attributes.stroke "currentColor"
             , Attributes.strokeWidth "2"
             , Attributes.strokeLinecap "round"
@@ -555,9 +554,8 @@ emptyCalendar =
 calendar : Nri.Ui.Svg.V1.Svg
 calendar =
     Nri.Ui.Svg.V1.init "0 0 22 22"
-        [ Svg.g [ Attributes.fill "none" ] []
-        , Svg.path
-            [ Attributes.d "M10.9955 13H11.0045M10.9955 17H11.0045M14.991 13H15M7 13H7.00897M7 17H7.00897"
+        [ Svg.path
+            [ Attributes.d "M15 1V5M7 1V5"
             , Attributes.stroke "currentColor"
             , Attributes.strokeWidth "2"
             , Attributes.strokeLinecap "round"
@@ -566,16 +564,7 @@ calendar =
             ]
             []
         , Svg.path
-            [ Attributes.d "M15.5 1V5M6.5 1V5"
-            , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "2"
-            , Attributes.strokeLinecap "round"
-            , Attributes.strokeLinejoin "round"
-            , Attributes.fill "none"
-            ]
-            []
-        , Svg.path
-            [ Attributes.d "M18 3H4C2.89543 3 2 3.89543 2 5V19C2 20.1046 2.89543 21 4 21H18C19.1046 21 20 20.1046 20 19V5C20 3.89543 19.1046 3 18 3Z"
+            [ Attributes.d "M12 3H10C6.22876 3 4.34315 3 3.17157 4.17157C2 5.34315 2 7.22876 2 11V13C2 16.7712 2 18.6569 3.17157 19.8284C4.34315 21 6.22876 21 10 21H12C15.7712 21 17.6569 21 18.8284 19.8284C20 18.6569 20 16.7712 20 13V11C20 7.22876 20 5.34315 18.8284 4.17157C17.6569 3 15.7712 3 12 3Z"
             , Attributes.stroke "currentColor"
             , Attributes.strokeWidth "2"
             , Attributes.strokeLinecap "round"
@@ -585,6 +574,15 @@ calendar =
             []
         , Svg.path
             [ Attributes.d "M2 9H20"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "2"
+            , Attributes.strokeLinecap "round"
+            , Attributes.strokeLinejoin "round"
+            , Attributes.fill "none"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M10.9955 13H11.0045M10.9955 17H11.0045M14.991 13H15M7 13H7.00897M7 17H7.00897"
             , Attributes.stroke "currentColor"
             , Attributes.strokeWidth "2"
             , Attributes.strokeLinecap "round"
@@ -2322,20 +2320,8 @@ arrowPointingRightThick : Nri.Ui.Svg.V1.Svg
 arrowPointingRightThick =
     Nri.Ui.Svg.V1.init "0 0 22 22"
         [ Svg.path
-            [ Attributes.d "M19.0001 10.9998H3.00012"
-            , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "3"
-            , Attributes.strokeLinecap "round"
-            , Attributes.strokeLinejoin "round"
-            ]
-            []
-        , Svg.path
-            [ Attributes.d "M14.0003 16C14.0003 16 19.0002 12.3176 19.0002 11C19.0002 9.6824 14.0002 6 14.0002 6"
-            , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "3"
-            , Attributes.strokeLinecap "round"
-            , Attributes.strokeLinejoin "round"
-            , Attributes.fill "none"
+            [ Attributes.d "M13.7695 19.5642C12.9054 20.2521 11.647 20.1099 10.959 19.2458C10.2711 18.3817 10.4143 17.1232 11.2783 16.4352L13.7695 19.5642ZM10.959 2.75458C11.6469 1.89038 12.9053 1.74733 13.7695 2.43525L13.7715 2.4372C13.7715 2.4372 13.7745 2.43867 13.7764 2.44013C13.7802 2.4432 13.7861 2.44732 13.793 2.45282C13.8067 2.46383 13.8263 2.48033 13.8516 2.50068C13.9022 2.54144 13.9754 2.60039 14.0674 2.67548C14.2515 2.82582 14.5125 3.04157 14.8252 3.30536C15.4489 3.83144 16.2873 4.55767 17.1309 5.34931C17.9652 6.13229 18.8474 7.01948 19.5361 7.862C19.879 8.28145 20.2124 8.73539 20.4688 9.19501C20.6981 9.60626 21 10.9997 21 10.9997C21 10.9997 20.6981 12.3932 20.4688 12.8044C20.2125 13.2639 19.8799 13.718 19.5371 14.1374C18.8484 14.98 17.9652 15.867 17.1309 16.6501C16.2874 17.4417 15.4488 18.1679 14.8252 18.694C14.5125 18.9579 14.2515 19.1736 14.0674 19.3239C13.9753 19.3991 13.9022 19.458 13.8516 19.4987C13.8265 19.5189 13.8067 19.5346 13.793 19.5456C13.7861 19.5511 13.7802 19.5562 13.7764 19.5593L13.7725 19.5622L13.7695 19.5642L11.2783 16.4352L11.2812 16.4333C11.2836 16.4314 11.2876 16.4278 11.293 16.4235C11.3037 16.4149 11.3199 16.4011 11.3418 16.3835C11.386 16.3479 11.4523 16.2946 11.5371 16.2253C11.7071 16.0865 11.9518 15.8846 12.2461 15.6364C12.8367 15.1382 13.6181 14.4609 14.3936 13.7331C14.6535 13.4892 14.906 13.2419 15.1494 12.9997H3C1.89552 12.9997 1.00015 12.1041 1 10.9997C1 9.89513 1.89543 8.9997 3 8.9997H15.1494C14.906 8.75747 14.6535 8.51022 14.3936 8.2663C13.6181 7.53859 12.8367 6.86112 12.2461 6.36298C11.9518 6.11478 11.7071 5.91288 11.5371 5.77411C11.4523 5.70484 11.386 5.65153 11.3418 5.61591C11.3199 5.59825 11.3037 5.58448 11.293 5.57587C11.2876 5.57159 11.2836 5.56801 11.2812 5.56611L11.2783 5.56415L11.125 5.42939C10.3996 4.72129 10.3143 3.56486 10.959 2.75458Z"
+            , Attributes.fill "currentColor"
             ]
             []
         ]
