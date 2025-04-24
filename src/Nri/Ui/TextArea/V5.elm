@@ -86,7 +86,7 @@ custom element, or else autosizing will break! This means doing the following:
 -}
 
 import Accessibility.Styled.Aria as Aria
-import Css exposing (px)
+import Css
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
@@ -347,17 +347,6 @@ view_ label config =
                 Fixed ->
                     []
 
-        heightForStyle =
-            case config.theme of
-                Standard ->
-                    InputStyles.textAreaHeight
-
-                UserGenerated ->
-                    InputStyles.textAreaHeight
-
-                Writing ->
-                    InputStyles.writingMinHeight
-
         idValue : String
         idValue =
             Maybe.withDefault (generateId label) config.id
@@ -371,12 +360,6 @@ view_ label config =
         ([ Html.styled Html.textarea
             [ InputStyles.input config.theme
             , Css.boxSizing Css.borderBox
-            , case config.height of
-                AutoResize minimumHeight ->
-                    Css.minHeight (calculateMinHeight config.theme minimumHeight)
-
-                Fixed ->
-                    Css.minHeight heightForStyle
             , if config.noMarginTop then
                 Css.important (Css.marginTop Css.zero)
 
@@ -421,8 +404,11 @@ view_ label config =
                     -- side will take care of resizing.
                     Attributes.attribute "rows" "1"
 
-                _ ->
-                    Extra.none
+                AutoResize DefaultHeight ->
+                    Attributes.css [ Css.minHeight (minHeight config.theme) ]
+
+                Fixed ->
+                    Attributes.css [ Css.minHeight (minHeight config.theme) ]
              ]
                 ++ List.map (Attributes.map never) config.custom
             )
@@ -438,53 +424,17 @@ view_ label config =
         )
 
 
-calculateMinHeight : Theme -> Height -> Css.Px
-calculateMinHeight textAreaStyle specifiedHeight =
-    {- On including padding in this calculation:
+minHeight : Theme -> Css.Px
+minHeight theme =
+    case theme of
+        Standard ->
+            InputStyles.textAreaHeight
 
-       When the textarea is autoresized, TextArea.js updates the textarea's
-       height by taking its scrollHeight. Because scrollHeight's calculation
-       includes the element's padding no matter what [1], we need to set the
-       textarea's box-sizing to border-box in order to use the same measurement
-       for its height as scrollHeight.
+        UserGenerated ->
+            InputStyles.textAreaHeight
 
-       So, min-height also needs to be specified in terms of padding + content
-       height.
-
-       [1] https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight
-    -}
-    case specifiedHeight of
-        SingleLine ->
-            case textAreaStyle of
-                Standard ->
-                    singleLineHeight
-
-                UserGenerated ->
-                    singleLineHeight
-
-                Writing ->
-                    writingSingleLineHeight
-
-        DefaultHeight ->
-            case textAreaStyle of
-                Standard ->
-                    InputStyles.textAreaHeight
-
-                UserGenerated ->
-                    InputStyles.textAreaHeight
-
-                Writing ->
-                    InputStyles.writingMinHeight
-
-
-singleLineHeight : Css.Px
-singleLineHeight =
-    px (.numericValue InputStyles.inputPaddingVertical + .numericValue InputStyles.inputLineHeight + .numericValue InputStyles.inputPaddingVertical)
-
-
-writingSingleLineHeight : Css.Px
-writingSingleLineHeight =
-    px (.numericValue InputStyles.writingPaddingTop + .numericValue InputStyles.writingLineHeight + .numericValue InputStyles.writingPadding)
+        Writing ->
+            InputStyles.writingMinHeight
 
 
 {-| -}
