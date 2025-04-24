@@ -30,17 +30,17 @@
   "homepage": "https://github.com/NoRedInk/NoRedInk-ui#readme",
   "devDependencies": {
     "@axe-core/puppeteer": "^4.10.1",
-    "@percy/cli": "^1.30.7",
+    "@percy/cli": "^1.30.10",
     "@percy/puppeteer": "^2.0.2",
-    "axe-core": "^4.10.2",
+    "axe-core": "^4.10.3",
     "browserify": "^17.0.1",
-    "elm-test": "0.19.1-revision12",
+    "elm-test": "0.19.1-revision15",
     "expect": "29.7.0",
     "mocha": "^11.1.0",
-    "prettier": "^3.4.2",
-    "puppeteer": "^24.1.1",
+    "prettier": "^3.5.3",
+    "puppeteer": "^24.6.1",
     "request": "^2.88.2",
-    "npm-check-updates": "17.1.14"
+    "npm-check-updates": "18.0.0"
   },
   "dependencies": {
     "http-server": "^14.1.1"

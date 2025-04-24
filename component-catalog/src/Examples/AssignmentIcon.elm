@@ -34,6 +34,7 @@ example =
         IconExamples.preview
             [ AssignmentIcon.planningDiagnosticCircled
             , AssignmentIcon.unitDiagnosticCircled
+            , AssignmentIcon.diagnosticCircled
             , AssignmentIcon.practiceCircled
             , AssignmentIcon.quizCircled
             , AssignmentIcon.quickWriteCircled
@@ -56,6 +57,7 @@ all : List Group
 all =
     [ ( "Diagnostic"
       , [ ( "diagnostic", AssignmentIcon.diagnostic, [] )
+        , ( "diagnosticCircled", AssignmentIcon.diagnosticCircled, [] )
         , ( "planningDiagnosticCircled", AssignmentIcon.planningDiagnosticCircled, [] )
         , ( "unitDiagnosticCircled", AssignmentIcon.unitDiagnosticCircled, [] )
         ]

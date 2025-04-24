@@ -56,6 +56,7 @@ example =
         [ Guidance.useATACGuide moduleName
         , Guidance.message moduleName
         , Guidance.helpfullyDisabled moduleName
+        , Text.smallBody [ Text.markdown "You can disable specific options with `disableWhen` by providing a predicate function." ]
         ]
     , view =
         \ellieLinkConfig state ->
@@ -214,6 +215,28 @@ initControls =
                     (Control.value ( "Select.disabled", Select.disabled ))
                 |> ControlExtra.optionalListItem "loading"
                     (Control.value ( "Select.loading", Select.loading ))
+                |> ControlExtra.optionalListItem "disableWhen"
+                    (Control.choice
+                        [ ( "Disable Tacos option"
+                          , Control.value
+                                ( "Select.disableWhen (\\c -> c == Tacos)"
+                                , Select.disableWhen (\c -> c == Tacos)
+                                )
+                          )
+                        , ( "Disable weightlifters"
+                          , Control.value
+                                ( "Select.disableWhen (\\c -> List.member c all81kg2020OlympicWeightlifters)"
+                                , Select.disableWhen (\c -> List.member c all81kg2020OlympicWeightlifters)
+                                )
+                          )
+                        , ( "Disable just TragicSingleton"
+                          , Control.value
+                                ( "Select.disableWhen (\\c -> c == TragicSingleton)"
+                                , Select.disableWhen (\c -> c == TragicSingleton)
+                                )
+                          )
+                        ]
+                    )
             )
 
 

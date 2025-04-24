@@ -10,6 +10,7 @@ module Nri.Ui.Select.V9 exposing
     , icon
     , containerCss, noMargin
     , batch
+    , disableWhen
     )
 
 {-| Build a select input with a label, optional guidance, and error messaging.
@@ -17,6 +18,7 @@ module Nri.Ui.Select.V9 exposing
 Patch changes:
 
   - Adjust disabled styles
+  - Add `disableWhen` attribute
 
 Changes from V8
 
@@ -52,6 +54,7 @@ Changes from V8
 @docs icon
 @docs containerCss, noMargin
 @docs batch
+@docs disableWhen
 
 -}
 
@@ -213,6 +216,17 @@ noMargin removeMargin =
     Attribute <| \config -> { config | noMarginTop = removeMargin }
 
 
+{-| Add a `disableWhen` predicate so callers can disable options by value
+-}
+disableWhen : (value -> Bool) -> Attribute value
+disableWhen pred =
+    Attribute <|
+        \config ->
+            { config
+                | disableWhen = \v -> config.disableWhen v || pred v
+            }
+
+
 {-| Groupings of choices (will be added _after_ isolated choices.)
 -}
 type alias ChoicesGroup value =
@@ -280,6 +294,7 @@ type alias Config value =
     , noMarginTop : Bool
     , containerCss : List Css.Style
     , custom : List (Html.Attribute Never)
+    , disableWhen : value -> Bool
     }
 
 
@@ -300,6 +315,7 @@ defaultConfig =
     , noMarginTop = False
     , containerCss = []
     , custom = []
+    , disableWhen = \_ -> False
     }
 
 
@@ -402,6 +418,7 @@ viewSelect config_ config =
             , id = generateId strValue
             , value = choice.value
             , strValue = strValue
+            , disabled = config.disableWhen choice.value
             }
 
         ( optionStringChoices, groupStringChoices ) =
@@ -582,7 +599,7 @@ viewDefaultChoice current displayText =
         [ Html.text displayText ]
 
 
-viewChoice : Maybe a -> { value : a, strValue : String, id : String, label : String } -> Html a
+viewChoice : Maybe a -> { value : a, strValue : String, id : String, label : String, disabled : Bool } -> Html a
 viewChoice current choice =
     let
         isSelected =
@@ -594,6 +611,7 @@ viewChoice current choice =
         [ Attributes.id choice.id
         , Attributes.value choice.strValue
         , Attributes.selected isSelected
+        , Attributes.disabled choice.disabled
         ]
         [ Html.text choice.label ]
 
