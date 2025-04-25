@@ -390,8 +390,8 @@ viewIcon config =
                     0
                   )
     in
-    Svg.withWidth (Css.px 15)
-        >> Svg.withHeight (Css.px 15)
+    Svg.withWidth (Css.px 17)
+        >> Svg.withHeight (Css.px 17)
         >> Svg.withCss
             [ Css.position Css.absolute
             , Css.top (Css.px topPx)
@@ -509,11 +509,12 @@ viewSelect config_ config =
             -- Font and text
             , Fonts.baseFont
             , Css.fontSize (Css.px 15)
-            , Css.fontWeight (Css.int 600)
+            , Css.fontWeight (Css.int 700)
             , Css.textOverflow Css.ellipsis
             , Css.overflow Css.hidden
             , Css.whiteSpace Css.noWrap
-            , Css.color Colors.gray20
+            , Css.color Colors.navy
+            , Css.marginTop (Css.px 2)
 
             -- Interaction
             , Css.cursor
@@ -529,11 +530,11 @@ viewSelect config_ config =
             , Css.width (Css.pct 100)
             , case config.icon of
                 Just _ ->
-                    Css.paddingLeft (Css.px 36)
+                    Css.paddingLeft (Css.px 37)
 
                 Nothing ->
                     Css.paddingLeft (Css.px 15)
-            , Css.paddingRight (Css.px 30)
+            , Css.paddingRight (Css.px 15)
 
             -- Icons
             , selectArrowsCss config
@@ -653,7 +654,7 @@ selectArrowsCss config =
         -- "appearance: none" removes the default dropdown arrows
         , VendorPrefixed.property "appearance" "none"
         , Css.backgroundRepeat Css.noRepeat
-        , Css.property "background-position" "center right -20px"
+        , Css.property "background-position" "center right"
         , Css.backgroundOrigin Css.contentBox
         ]
 

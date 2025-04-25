@@ -334,7 +334,7 @@ viewTitle : String -> Html msg
 viewTitle tabTitle =
     Html.styled Html.h1
         [ Css.flexGrow (Css.int 2)
-        , Css.fontSize (Css.px 20)
+        , Css.fontSize (Css.px 18)
         , Css.fontWeight Css.bold
         , Css.margin4 (Css.px 5) (Css.px 10) (Css.px 10) Css.zero
         , Css.color Colors.navy
@@ -363,7 +363,7 @@ stylesTabsAligned config =
     in
     [ alignmentStyles
     , Css.margin Css.zero
-    , Css.fontSize (Css.px 19)
+    , Css.fontSize (Css.px 18)
     , Css.displayFlex
     , Css.flexGrow (Css.int 1)
     , Css.padding Css.zero
@@ -440,7 +440,7 @@ tabStyles customSpacing pageBackgroundColor_ index isSelected =
             , Css.fontSize Css.inherit
             , Css.cursor Css.pointer
             , Css.border zero
-            , Css.height (Css.pct 100)
+            , Css.height (Css.px 55)
             ]
 
         stylesTab =

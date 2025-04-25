@@ -113,7 +113,8 @@ viewRadioGroup config =
                                 :: Style.invisible
                                 ++ option.attributes
                             )
-                        , div [] [ viewIcon option.icon, option.label ]
+                        , viewIcon option.icon
+                        , option.label
                         ]
             in
             case option.tooltip of
@@ -242,13 +243,13 @@ viewIcon icon =
 
         Just svg ->
             svg
-                |> Svg.withWidth (px 18)
-                |> Svg.withHeight (px 18)
+                |> Svg.withWidth (px 17)
+                |> Svg.withHeight (px 17)
                 |> Svg.withCss
                     [ display inlineBlock
                     , verticalAlign textTop
                     , lineHeight (px 15)
-                    , marginRight (px 8)
+                    , marginRight (px 5)
                     ]
                 |> Svg.toHtml
 
@@ -284,7 +285,7 @@ styles focusSelector positioning numEntries index isSelected =
 
 sharedSegmentStyles : Int -> Int -> Style
 sharedSegmentStyles numEntries index =
-    [ padding2 (px 6) (px 15)
+    [ padding3 (px 3) (px 15) (px 6)
     , height (px 45)
     , Fonts.baseFont
     , fontSize (px 15)
@@ -296,6 +297,8 @@ sharedSegmentStyles numEntries index =
     , cursor pointer
     , property "transition" "background-color 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s, border-width 0s"
     , textDecoration none
+    , displayFlex
+    , alignItems center
     , hover [ textDecoration none ]
     , focus [ textDecoration none ]
     ]
@@ -319,6 +322,7 @@ sharedSegmentStyles numEntries index =
 focusedSegmentStyles : Style
 focusedSegmentStyles =
     [ backgroundColor Colors.glacier
+    , padding3 (px 6) (px 15) (px 6)
     , Css.property "box-shadow" focusedSegmentBoxShadowValue
     , color Colors.navy
     ]

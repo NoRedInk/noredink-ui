@@ -401,7 +401,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                             ]
 
                          else if not isChecked then
-                            [ color Colors.gray20
+                            [ color Colors.navy
                             , cursor pointer
                             ]
 
