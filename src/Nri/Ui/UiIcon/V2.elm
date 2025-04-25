@@ -972,15 +972,9 @@ flipper =
 arrowTop : Nri.Ui.Svg.V1.Svg
 arrowTop =
     Nri.Ui.Svg.V1.init "0 0 22 22"
-        [ Svg.g [ Attributes.fill "none" ] []
-        , Svg.path
-            [ Attributes.d "M17 14L11 8L5 14"
-            , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "3"
-            , Attributes.strokeMiterlimit "16"
-            , Attributes.strokeLinecap "round"
-            , Attributes.strokeLinejoin "round"
-            , Attributes.fill "none"
+        [ Svg.path
+            [ Attributes.d "M4.06043 16.0605C3.47465 16.6463 2.52513 16.6463 1.93934 16.0605C1.35355 15.4747 1.35355 14.5252 1.93934 13.9394L9.93934 5.93943C10.4884 5.39041 11.357 5.35578 11.9462 5.83591L12.0604 5.93943L20.0604 13.9394L20.1639 14.0527C20.6445 14.6419 20.6096 15.5113 20.0604 16.0605C19.5113 16.6096 18.6427 16.6435 18.0536 16.1631L17.9393 16.0605L10.9999 9.12107L4.06043 16.0605Z"
+            , Attributes.fill "currentColor"
             ]
             []
         ]
@@ -990,15 +984,9 @@ arrowTop =
 arrowRight : Nri.Ui.Svg.V1.Svg
 arrowRight =
     Nri.Ui.Svg.V1.init "0 0 22 22"
-        [ Svg.g [ Attributes.fill "none" ] []
-        , Svg.path
-            [ Attributes.d "M8.00005 5L14 11L8 17"
-            , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "3"
-            , Attributes.strokeMiterlimit "16"
-            , Attributes.strokeLinecap "round"
-            , Attributes.strokeLinejoin "round"
-            , Attributes.fill "none"
+        [ Svg.path
+            [ Attributes.d "M5.93934 4.06043C5.35355 3.47465 5.35355 2.52513 5.93934 1.93934C6.52512 1.35355 7.47465 1.35355 8.06043 1.93934L16.0604 9.93934C16.6095 10.4884 16.6441 11.357 16.1639 11.9462L16.0604 12.0604L8.06043 20.0604L7.94715 20.1639C7.35799 20.6445 6.48854 20.6096 5.93934 20.0604C5.39021 19.5113 5.35631 18.6427 5.8368 18.0536L5.93934 17.9393L12.8788 10.9999L5.93934 4.06043Z"
+            , Attributes.fill "currentColor"
             ]
             []
         ]
@@ -1008,15 +996,9 @@ arrowRight =
 arrowDown : Nri.Ui.Svg.V1.Svg
 arrowDown =
     Nri.Ui.Svg.V1.init "0 0 22 22"
-        [ Svg.g [ Attributes.fill "none" ] []
-        , Svg.path
-            [ Attributes.d "M4.99976 8.00005L10.9998 14L16.9998 8"
-            , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "3"
-            , Attributes.strokeMiterlimit "16"
-            , Attributes.strokeLinecap "round"
-            , Attributes.strokeLinejoin "round"
-            , Attributes.fill "none"
+        [ Svg.path
+            [ Attributes.d "M17.9395 5.93946C18.5252 5.35368 19.4748 5.35368 20.0605 5.93946C20.6463 6.52525 20.6463 7.47477 20.0605 8.06055L12.0605 16.0606C11.5115 16.6096 10.6429 16.6442 10.0537 16.1641L9.93945 16.0606L1.93945 8.06055L1.83594 7.94727C1.35536 7.35811 1.39026 6.48866 1.93945 5.93946C2.48862 5.39033 3.35714 5.35643 3.94629 5.83692L4.06055 5.93946L11 12.8789L17.9395 5.93946Z"
+            , Attributes.fill "currentColor"
             ]
             []
         ]
@@ -1027,15 +1009,9 @@ arrowLeft : Nri.Ui.Svg.V1.Svg
 arrowLeft =
     -- If changing the path or viewport, please verify that AnimatedIcon.arrowRightDown and arrowDownUp do not regress.
     Nri.Ui.Svg.V1.init "0 0 22 22"
-        [ Svg.g [ Attributes.fill "none" ] []
-        , Svg.path
-            [ Attributes.d "M14 5L8 11.0001L14 17"
-            , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "3"
-            , Attributes.strokeMiterlimit "16"
-            , Attributes.strokeLinecap "round"
-            , Attributes.strokeLinejoin "round"
-            , Attributes.fill "none"
+        [ Svg.path
+            [ Attributes.d "M16.0605 17.9397C16.6463 18.5255 16.6463 19.475 16.0605 20.0608C15.4747 20.6465 14.5252 20.6465 13.9394 20.0608L5.93943 12.0608C5.39041 11.5117 5.35578 10.6431 5.83591 10.0539L5.93943 9.93967L13.9394 1.93967L14.0527 1.83615C14.6419 1.35557 15.5113 1.39048 16.0605 1.93967C16.6096 2.48883 16.6435 3.35735 16.1631 3.9465L16.0605 4.06076L9.12107 11.0002L16.0605 17.9397Z"
+            , Attributes.fill "currentColor"
             ]
             []
         ]
