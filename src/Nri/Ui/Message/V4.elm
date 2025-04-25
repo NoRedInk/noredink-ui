@@ -852,8 +852,8 @@ getIcon customIcon size theme =
                         ]
                         [ UiIcon.baldBulb
                             |> NriSvg.withColor Colors.mustard
-                            |> NriSvg.withWidth (Css.px 13)
-                            |> NriSvg.withHeight (Css.px 13)
+                            |> NriSvg.withWidth (Css.px 12)
+                            |> NriSvg.withHeight (Css.px 12)
                             |> NriSvg.toHtml
                         ]
 

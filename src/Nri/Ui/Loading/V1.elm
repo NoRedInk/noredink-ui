@@ -95,7 +95,6 @@ spinningPencil =
         |> Svg.withColor Colors.navy
         |> Svg.withWidth (Css.px 140)
         |> Svg.withHeight (Css.px 140)
-        |> Svg.withViewBox "-20 -20 140 140"
         |> Svg.withCss circlingCss
 
 
