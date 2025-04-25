@@ -166,7 +166,7 @@ Any NoRedInk engineer can deploy a new version of `noredink-ui`. Generally, we p
   - Run `elm bump`
     - Getting a "PROBLEM LOADING DOCS" error? See [troubleshooting a release](https://github.com/NoRedInk/noredink-ui/blob/master/README.md#troubleshooting-a-release)
   - Commit the changes to the `elm.json` file
-  - If any changes were made on `lib`, run `npm version patch|minor|major` to update the version in `package.json` and `package-lock.json`. This will also create a new commit with the version bump.
+  - If any changes were made on `lib`, run `npm version <type>` (where `<type>` is one of `patch`, `minor`, or `major` based on semantic versioning rules) to update the version in `package.json` and `package-lock.json`. This will also create a new commit with the version bump.
   - Make a PR and fill out the PR template (this is when you'll paste in the diff you copied earlier!)
 - Get your PR merged
 - Go to latest master
