@@ -181,8 +181,7 @@ Any NoRedInk engineer can deploy a new version of `noredink-ui`. Generally, we p
   - Because of branch protection you will not be able to push a tag like: `git push origin master 22.x.y` (The previous command requires permissions to push directly to master even if you have no changes).
   - Instead, please push your new `22.x.y` tag with the following: `git push origin 22.x.y`
 - If you also bumped the version in `package.json`, run `npm publish` to publish the new version of the package to npm
-  - Note: npm credentials are available on 1password
-
+  - Note: npm credentials are available on 1Password
 Once you've published, you should see the latest version at <https://package.elm-lang.org/packages/NoRedInk/noredink-ui/>. It can take a few minutes to show up.
 
 ### Troubleshooting a release
