@@ -1042,17 +1042,17 @@ viewSearchFloatingContent config =
 searchIcon : { settings | noMarginTop : Bool } -> Html msg
 searchIcon config =
     UiIcon.search
-        |> Svg.withWidth (Css.px 20)
-        |> Svg.withHeight (Css.px 20)
-        |> Svg.withColor Colors.gray75
+        |> Svg.withWidth (Css.px 17)
+        |> Svg.withHeight (Css.px 17)
+        |> Svg.withColor Colors.navy
         |> Svg.withCss
             [ Css.position Css.absolute
-            , Css.right (Css.px 10)
+            , Css.right (Css.px 15)
             , if config.noMarginTop then
-                Css.top (Css.px (22 - defaultMarginTop))
+                Css.top (Css.px (23 - defaultMarginTop))
 
               else
-                Css.top (Css.px 22)
+                Css.top (Css.px 23)
             ]
         |> Svg.toHtml
 
@@ -1062,16 +1062,16 @@ resetButton config =
     ClickableSvg.button ("Reset " ++ config.label)
         UiIcon.x
         [ ClickableSvg.onClick (config.onInput "")
-        , ClickableSvg.exactWidth 14
-        , ClickableSvg.exactHeight 14
+        , ClickableSvg.exactWidth 19
+        , ClickableSvg.exactHeight 19
         , ClickableSvg.css
             [ Css.position Css.absolute
-            , Css.right (Css.px 10)
+            , Css.right (Css.px 15)
             , if config.noMarginTop then
-                Css.top (Css.px (25 - defaultMarginTop))
+                Css.top (Css.px (23 - defaultMarginTop))
 
               else
-                Css.top (Css.px 25)
+                Css.top (Css.px 23)
             ]
         , ClickableSvg.custom [ Attributes.type_ "button" ]
         ]

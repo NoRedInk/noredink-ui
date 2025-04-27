@@ -1001,10 +1001,6 @@ viewDefaultTrigger title menuConfig buttonAttributes attributes =
         ([ Button.tertiary
          , Button.css
             [ Css.justifyContent Css.spaceBetween
-            , Css.paddingLeft (Css.px 15)
-            , Css.paddingRight (Css.px 15)
-            , Css.color Colors.gray20 |> Css.important
-            , Css.fontWeight (Css.int 600)
             , Css.hover [ Css.backgroundColor Colors.white ]
             ]
          , Button.custom attributes
