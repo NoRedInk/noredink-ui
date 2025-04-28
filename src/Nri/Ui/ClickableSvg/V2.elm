@@ -866,7 +866,7 @@ getSize size =
 
 smallSize : Float
 smallSize =
-    36
+    35
 
 
 mediumSize : Float
@@ -876,7 +876,7 @@ mediumSize =
 
 largeSize : Float
 largeSize =
-    56
+    55
 
 
 getBorder :

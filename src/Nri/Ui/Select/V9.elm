@@ -401,7 +401,7 @@ viewIcon config =
                 Css.color Colors.gray45
 
               else
-                Css.color Colors.azure
+                Css.color Colors.navy
             ]
         >> Svg.toHtml
 
@@ -502,7 +502,7 @@ viewSelect config_ config =
                 Css.borderBottomWidth (Css.px 3)
             , Css.borderRadius (Css.px 8)
             , Css.focus
-                [ Css.borderColor Colors.azure
+                [ Css.borderColor Colors.navy
                 , Css.borderRadius (Css.px 8) |> Css.important
                 ]
 
@@ -632,7 +632,7 @@ selectArrowsCss config =
                 Colors.gray45
 
              else
-                Colors.azure
+                Colors.navy
             )
                 |> ColorsExtra.fromCssColor
                 |> SolidColor.toRGBString
