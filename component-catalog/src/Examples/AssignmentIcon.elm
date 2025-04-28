@@ -100,17 +100,6 @@ all =
         , ( "genresCircled", AssignmentIcon.genresCircled, [] )
         ]
       )
-    , ( "Stages"
-      , [ ( "submitting", AssignmentIcon.submitting, [] )
-        , ( "rating", AssignmentIcon.rating, [] )
-        , ( "revising", AssignmentIcon.revising, [] )
-        ]
-      )
-    , ( "Start"
-      , [ ( "startPrimary", AssignmentIcon.startPrimary, [] )
-        , ( "startSecondary", AssignmentIcon.startSecondary, [] )
-        ]
-      )
     , ( "Activities"
       , [ ( "assessment", AssignmentIcon.assessment, [] )
         , ( "standards", AssignmentIcon.standards, [] )

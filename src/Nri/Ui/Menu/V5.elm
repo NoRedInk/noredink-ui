@@ -1023,7 +1023,7 @@ viewDefaultTrigger title menuConfig buttonAttributes attributes =
                         Svg.withColor Colors.gray45
 
                     else
-                        Svg.withColor Colors.azure
+                        Svg.withColor Colors.navy
                    )
             )
          ]
