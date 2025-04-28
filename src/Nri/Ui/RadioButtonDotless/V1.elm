@@ -353,7 +353,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
                 , case config.size of
                     Small ->
                         Css.batch
-                            [ minHeight (px 36)
+                            [ minHeight (px 35)
                             , fontSize (px 15)
                             , lineHeight (px 23)
                             ]
@@ -367,7 +367,7 @@ view { label, name, value, valueToString, selectedValue } attributes =
 
                     Large ->
                         Css.batch
-                            [ minHeight (px 56)
+                            [ minHeight (px 55)
                             , fontSize (px 18)
                             , lineHeight (px 28)
                             ]

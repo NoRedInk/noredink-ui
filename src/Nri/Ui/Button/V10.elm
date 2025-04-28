@@ -935,12 +935,12 @@ viewLabel config =
 viewIcon : ButtonSize -> List Css.Style -> NriSvg.Svg -> Html msg
 viewIcon size iconStyles svg =
     let
-        { fontAndIconSize } =
+        { iconSize } =
             sizeConfig size
     in
     svg
-        |> NriSvg.withWidth fontAndIconSize
-        |> NriSvg.withHeight fontAndIconSize
+        |> NriSvg.withWidth iconSize
+        |> NriSvg.withHeight iconSize
         |> NriSvg.withCss iconStyles
         |> NriSvg.toHtml
 
@@ -1168,25 +1168,31 @@ applyColorStyle colorPalette =
         ]
 
 
-sizeConfig : ButtonSize -> { fontAndIconSize : Css.Px, height : number, shadowHeight : number, minWidth : number }
+sizeConfig : ButtonSize -> { fontSize : Css.Px, iconSize : Css.Px, sidePadding : Css.Px, height : number, shadowHeight : number, minWidth : number }
 sizeConfig size =
     case size of
         Small ->
-            { fontAndIconSize = Css.px 15
+            { fontSize = Css.px 15
+            , iconSize = Css.px 15
+            , sidePadding = Css.px 10
             , height = 36
             , shadowHeight = 2
             , minWidth = 75
             }
 
         Medium ->
-            { fontAndIconSize = Css.px 15
+            { fontSize = Css.px 15
+            , iconSize = Css.px 17
+            , sidePadding = Css.px 15
             , height = 45
             , shadowHeight = 3
             , minWidth = 100
             }
 
         Large ->
-            { fontAndIconSize = Css.px 20
+            { fontSize = Css.px 18
+            , iconSize = Css.px 19
+            , sidePadding = Css.px 20
             , height = 56
             , shadowHeight = 4
             , minWidth = 200
@@ -1232,7 +1238,9 @@ sizeStyle ({ size, width } as settings) =
                     22
     in
     Css.batch
-        [ Css.fontSize config.fontAndIconSize
+        [ Css.fontSize config.fontSize
+        , Css.paddingLeft config.sidePadding
+        , Css.paddingRight config.sidePadding
         , Css.borderRadius (Css.px 8)
         , Css.lineHeight (Css.px lineHeightPx)
         , Css.boxSizing Css.borderBox
@@ -1259,30 +1267,22 @@ buttonWidthToStyle config width =
             [ Css.maxWidth (Css.pct 100)
             , Css.width (Css.px <| toFloat pxWidth)
             , Css.minWidth Css.unset
-            , Css.paddingLeft (Css.px 4)
-            , Css.paddingRight (Css.px 4)
             ]
 
         WidthUnbounded ->
             [ Css.maxWidth Css.unset
             , Css.width Css.unset
             , Css.minWidth (Css.px config.minWidth)
-            , Css.paddingLeft (Css.px 16)
-            , Css.paddingRight (Css.px 16)
             ]
 
         WidthFillContainer ->
             [ Css.maxWidth Css.unset
             , Css.width (Css.pct 100)
             , Css.minWidth (Css.px config.minWidth)
-            , Css.paddingLeft (Css.px 16)
-            , Css.paddingRight (Css.px 16)
             ]
 
         WidthBounded { min, max } ->
             [ Css.maxWidth (Css.px (toFloat max))
             , Css.width Css.unset
             , Css.minWidth (Css.px (toFloat min))
-            , Css.paddingLeft (Css.px 16)
-            , Css.paddingRight (Css.px 16)
             ]

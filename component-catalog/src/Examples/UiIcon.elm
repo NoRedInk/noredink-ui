@@ -150,6 +150,7 @@ all =
       )
     , ( "Communication"
       , [ ( "speechBalloon", UiIcon.speechBalloon, [] )
+        , ( "speechBalloonOutline", UiIcon.speechBalloonOutline, [] )
         , ( "projectorScreen", UiIcon.projectorScreen, [] )
         , ( "mail", UiIcon.mail, [] )
         ]
