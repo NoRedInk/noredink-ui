@@ -507,7 +507,8 @@ viewSidebarEntry config extraStyles entry_ =
                     [ Css.property "word-break" "normal"
                     , Css.property "overflow-wrap" "anywhere"
                     , Fonts.baseFont
-                    , fontSize (px 17)
+                    , fontWeight (int 700)
+                    , fontSize (px 16)
                     , color Colors.gray20
                     , displayFlex
                     , alignItems center
