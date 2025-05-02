@@ -289,7 +289,7 @@ sharedSegmentStyles numEntries index =
     , height (px 45)
     , Fonts.baseFont
     , fontSize (px 15)
-    , fontWeight bold
+    , fontWeight (int 600)
     , lineHeight (px 30)
     , margin zero
     , border3 (px 1) solid Colors.azure

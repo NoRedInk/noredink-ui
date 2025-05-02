@@ -502,14 +502,14 @@ viewSelect config_ config =
                 Css.borderBottomWidth (Css.px 3)
             , Css.borderRadius (Css.px 8)
             , Css.focus
-                [ Css.borderColor Colors.navy
+                [ Css.borderColor Colors.azure
                 , Css.borderRadius (Css.px 8) |> Css.important
                 ]
 
             -- Font and text
             , Fonts.baseFont
             , Css.fontSize (Css.px 15)
-            , Css.fontWeight (Css.int 700)
+            , Css.fontWeight (Css.int 600)
             , Css.textOverflow Css.ellipsis
             , Css.overflow Css.hidden
             , Css.whiteSpace Css.noWrap
