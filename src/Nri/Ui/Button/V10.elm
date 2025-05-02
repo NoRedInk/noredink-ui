@@ -1141,7 +1141,7 @@ applyColorStyle colorPalette =
     Css.batch
         [ Css.color colorPalette.text
         , Css.backgroundColor colorPalette.background
-        , Css.fontWeight (Css.int 700)
+        , Css.fontWeight (Css.int 600)
         , Css.textAlign Css.center
         , case colorPalette.border of
             Nothing ->

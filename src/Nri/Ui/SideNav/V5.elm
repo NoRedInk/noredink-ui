@@ -462,7 +462,6 @@ viewSidebarEntry config extraStyles entry_ =
                         (sharedEntryStyles
                             ++ [ backgroundColor Colors.gray92
                                , color Colors.navy
-                               , fontWeight bold
                                , cursor default
                                , marginBottom (px 10)
                                ]
@@ -508,8 +507,8 @@ viewSidebarEntry config extraStyles entry_ =
                     [ Css.property "word-break" "normal"
                     , Css.property "overflow-wrap" "anywhere"
                     , Fonts.baseFont
-                    , fontSize (px 17)
-                    , fontWeight bold
+                    , fontWeight (int 700)
+                    , fontSize (px 16)
                     , color Colors.gray20
                     , displayFlex
                     , alignItems center
@@ -615,7 +614,6 @@ viewSidebarLeaf config extraStyles entryConfig =
                 ++ (if isCurrent then
                         [ backgroundColor Colors.glacier
                         , color Colors.navy
-                        , fontWeight bold
                         , visited [ color Colors.navy ]
                         ]
 
