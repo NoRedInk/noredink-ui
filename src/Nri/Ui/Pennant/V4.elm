@@ -19,19 +19,14 @@ import Svg.Styled.Attributes as Attributes
 -}
 contentPremiumFlag : Svg
 contentPremiumFlag =
-    Nri.Ui.Svg.V1.init "0 0 25 19"
-        [ Svg.g
-            [ Attributes.stroke "none"
-            , Attributes.strokeWidth "1"
-            , Attributes.fill "none"
+    Nri.Ui.Svg.V1.init "0 0 25 25"
+        [ Svg.path
+            [ Attributes.d "M1.60942 3C0.720563 3 0 3.70888 0 4.58333V20.4167C0 21.2911 0.720562 22 1.60942 22H23.3875C24.752 22 25.4974 20.4343 24.6239 19.403L19.6352 13.5136C19.1378 12.9265 19.1378 12.0735 19.6352 11.4864L24.6239 5.59696C25.4974 4.56569 24.752 3 23.3875 3H1.60942Z"
+            , Attributes.fill "#FEC709"
             , Attributes.fillRule "evenodd"
+            , Attributes.clipRule "evenodd"
             ]
-            [ Svg.path
-                [ Attributes.d "M12.7757 0.708618H0L0 18.7086H7.34268H25L17.5 9.70862L25 0.708618H12.7757Z"
-                , Attributes.fill "#FEC709"
-                ]
-                []
-            ]
+            []
         ]
 
 
@@ -39,24 +34,23 @@ contentPremiumFlag =
 -}
 activePremiumFlag : Svg
 activePremiumFlag =
-    Nri.Ui.Svg.V1.init "0 0 25 19"
-        [ Svg.g
-            [ Attributes.stroke "none"
-            , Attributes.strokeWidth "1"
-            , Attributes.fill "none"
+    Nri.Ui.Svg.V1.init "0 0 25 25"
+        [ Svg.path
+            [ Attributes.d "M1.60942 3C0.720563 3 0 3.70888 0 4.58333V20.4167C0 21.2911 0.720562 22 1.60942 22H23.3875C24.752 22 25.4974 20.4343 24.6239 19.403L19.6352 13.5136C19.1378 12.9265 19.1378 12.0735 19.6352 11.4864L24.6239 5.59696C25.4974 4.56569 24.752 3 23.3875 3H1.60942Z"
+            , Attributes.fill "#FEC709"
             , Attributes.fillRule "evenodd"
+            , Attributes.clipRule "evenodd"
             ]
-            [ Svg.path
-                [ Attributes.d "M12.7757 0.708618H0L0 18.7086H7.34268H25L17.5 9.70862L25 0.708618H12.7757Z"
-                , Attributes.fill "#FEC709"
-                ]
-                []
-            , Svg.path
-                [ Attributes.d "M8.02442 13.6406C7.78665 13.6406 7.55721 13.549 7.38513 13.3839L4.78544 10.8975C4.41584 10.5446 4.40289 9.95895 4.7563 9.58981C5.10832 9.22068 5.69441 9.20726 6.06401 9.56067L7.98325 11.3957L12.8954 6.07468C13.2423 5.6986 13.8275 5.67547 14.2026 6.02195C14.5782 6.36888 14.6018 6.95404 14.2553 7.32919L8.70441 13.3427C8.53556 13.5254 8.3015 13.6323 8.0531 13.6401C8.04384 13.6406 8.03413 13.6406 8.02442 13.6406Z"
-                , Attributes.fill "#004E95"
-                ]
-                []
+            []
+        , Svg.path
+            [ Attributes.d "M6.50806 13.5115L8.14674 15.1501L13.0628 10"
+            , Attributes.stroke "#004E95"
+            , Attributes.strokeWidth "1.5"
+            , Attributes.strokeLinecap "round"
+            , Attributes.strokeLinejoin "round"
+            , Attributes.fill "none"
             ]
+            []
         ]
 
 
@@ -64,37 +58,28 @@ activePremiumFlag =
 -}
 inactivePremiumFlag : Nri.Ui.Svg.V1.Svg
 inactivePremiumFlag =
-    Nri.Ui.Svg.V1.init "0 0 25 19"
-        [ Svg.g
-            [ Attributes.stroke "none"
-            , Attributes.strokeWidth "1"
-            , Attributes.fill "none"
+    Nri.Ui.Svg.V1.init "0 0 25 25"
+        [ Svg.path
+            [ Attributes.d "M1.60942 3C0.720563 3 0 3.70888 0 4.58333V20.4167C0 21.2911 0.720562 22 1.60942 22H23.3875C24.752 22 25.4974 20.4343 24.6239 19.403L19.6352 13.5136C19.1378 12.9265 19.1378 12.0735 19.6352 11.4864L24.6239 5.59696C25.4974 4.56569 24.752 3 23.3875 3H1.60942Z"
+            , Attributes.fill "#707070"
             , Attributes.fillRule "evenodd"
-            , Attributes.transform "translate(0, -3.5)"
+            , Attributes.clipRule "evenodd"
             ]
-            [ Svg.path
-                [ Attributes.d "M12.7757 3.70862H0L0 21.7086H7.34268H25L17.5 12.7086L25 3.70862H12.7757Z"
-                , Attributes.fill "#707070"
-                ]
-                []
-            , Svg.circle
-                [ Attributes.cx "9"
-                , Attributes.cy "12.7086"
-                , Attributes.r "6"
-                , Attributes.fill "white"
-                ]
-                []
-            , Svg.path
-                [ Attributes.d "M9.88176 15.937C9.88176 16.4073 9.49143 16.7886 9.00993 16.7886C8.52843 16.7886 8.1381 16.4073 8.1381 15.937C8.1381 15.4666 8.52843 15.0853 9.00993 15.0853C9.49143 15.0853 9.88176 15.4666 9.88176 15.937Z"
-                , Attributes.fill "#707070"
-                ]
-                []
-            , Svg.path
-                [ Attributes.d "M9.03467 9.10869H8.99009C8.33213 9.10277 7.78832 9.62308 7.7616 10.2841C7.7616 10.563 8.30649 13.8103 8.30649 13.8103C8.36492 14.1481 8.65898 14.3931 9 14.388H9.02972C9.37073 14.3931 9.66479 14.1481 9.72322 13.8103C9.72322 13.8103 10.2384 10.568 10.2384 10.2841C10.2121 9.6327 9.68304 9.11611 9.03467 9.10869Z"
-                , Attributes.fill "#707070"
-                ]
-                []
+            []
+        , Svg.path
+            [ Attributes.d "M9.6564 18.2C12.8886 18.2 15.5088 15.5809 15.5088 12.35C15.5088 9.11913 12.8886 6.5 9.6564 6.5C6.42418 6.5 3.80396 9.11913 3.80396 12.35C3.80396 15.5809 6.42418 18.2 9.6564 18.2Z"
+            , Attributes.fill "white"
             ]
+            []
+        , Svg.path
+            [ Attributes.d "M9.65674 10.5V12.822M9.65674 14.5636H9.66196"
+            , Attributes.stroke "#707070"
+            , Attributes.strokeWidth "1.25"
+            , Attributes.strokeLinecap "round"
+            , Attributes.strokeLinejoin "round"
+            , Attributes.fill "none"
+            ]
+            []
         ]
 
 
@@ -103,28 +88,18 @@ inactivePremiumFlag =
 expiredPremiumFlag : Nri.Ui.Svg.V1.Svg
 expiredPremiumFlag =
     Nri.Ui.Svg.V1.init "0 0 25 25"
-        [ Svg.g
-            [ Attributes.stroke "none"
-            , Attributes.strokeWidth "1"
-            , Attributes.fill "none"
+        [ Svg.path
+            [ Attributes.d "M1.60923 3C0.720477 3 0 3.70888 0 4.58333V20.4167C0 21.2911 0.720477 22 1.60923 22H23.3817C24.7466 22 25.4918 20.4333 24.6173 19.4022L19.6335 13.5259C19.1358 12.9391 19.1352 12.0862 19.6322 11.4987L24.6246 5.59615C25.4971 4.56468 24.7516 3 23.3877 3H1.60923Z"
+            , Attributes.fill "#E70D4F"
             , Attributes.fillRule "evenodd"
+            , Attributes.clipRule "evenodd"
             ]
-            [ Svg.path
-                [ Attributes.d "M12.7757 3.70862H0L0 21.7086H7.34268H25L17.5 12.7208L25 3.70862H12.7757Z"
-                , Attributes.fill "#E70D4F"
-                ]
-                []
-            , Svg.path
-                [ Attributes.d "M9 6.70862C5.68632 6.70862 3 9.39494 3 12.7086C3 16.0223 5.68632 18.7086 9 18.7086C12.3137 18.7086 15 16.0223 15 12.7086C15 9.39494 12.3137 6.70862 9 6.70862ZM9 17.5086C6.34908 17.5086 4.2 15.3597 4.2 12.7086C4.2 10.0577 6.34908 7.90862 9 7.90862C11.651 7.90862 13.8 10.0577 13.8 12.7086C13.8 15.3597 11.651 17.5086 9 17.5086Z"
-                , Attributes.fill "white"
-                ]
-                []
-            , Svg.path
-                [ Attributes.d "M8.89096 9.54054C8.55942 9.54054 8.29066 9.8093 8.29066 10.1408V13.4954C8.2851 13.6024 8.30853 13.7077 8.35634 13.8008C8.35746 13.803 8.3586 13.8052 8.35976 13.8074C8.43156 13.9434 8.55408 14.0485 8.70214 14.0975L10.7876 14.914C11.0963 15.0348 11.4446 14.8826 11.5654 14.5738C11.6863 14.2651 11.534 13.9169 11.2253 13.796L9.49125 13.1172V10.1408C9.49125 9.8093 9.22249 9.54054 8.89096 9.54054Z"
-                , Attributes.fill "white"
-                ]
-                []
+            []
+        , Svg.path
+            [ Attributes.d "M14.5176 12.8495C14.5174 10.1615 12.3377 7.98244 9.64957 7.98244C6.96166 7.98267 4.78272 10.1616 4.78248 12.8495C4.78248 15.5376 6.96151 17.7173 9.64957 17.7176C12.3378 17.7176 14.5176 15.5378 14.5176 12.8495ZM9.15835 10.7062C9.15849 10.4352 9.37856 10.2152 9.64957 10.215C9.92077 10.215 10.1406 10.435 10.1408 10.7062V12.6461L11.0695 13.5748L11.1319 13.6516C11.2577 13.8423 11.2373 14.1016 11.0695 14.2694C10.9017 14.4373 10.6423 14.4577 10.4516 14.3318L10.3749 14.2694L9.30226 13.1968C9.21041 13.1047 9.15835 12.9796 9.15835 12.8495V10.7062ZM15.5 12.8495C15.5 16.0804 12.8804 18.7 9.64957 18.7C6.41893 18.6998 3.80005 16.0802 3.80005 12.8495C3.80028 9.61902 6.41907 7.00024 9.64957 7C12.8803 7 15.4998 9.61888 15.5 12.8495Z"
+            , Attributes.fill "white"
             ]
+            []
         ]
 
 
