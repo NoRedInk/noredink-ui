@@ -272,7 +272,6 @@ view attributes_ =
                         , fontWeight (int 600)
                         , lineHeight (num 1.4)
                         , padding (px 20)
-
                         , Css.Media.withMedia
                             [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
                             [ fontSize (px 15)
@@ -285,7 +284,6 @@ view attributes_ =
                         [ Attributes.css
                             [ displayFlex
                             , alignItems center
-
                             ]
                         ]
                         [ div [ Attributes.css [ flexGrow (int 1) ] ] []
