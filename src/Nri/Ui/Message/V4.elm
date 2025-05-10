@@ -268,8 +268,8 @@ view attributes_ =
                 ]
                 [ div
                     [ Attributes.css
-                        [ fontSize (px 20)
-                        , fontWeight (int 700)
+                        [ fontSize (px 18)
+                        , fontWeight (int 600)
                         , lineHeight (num 1.4)
                         , padding (px 20)
                         , Css.Media.withMedia
@@ -292,6 +292,7 @@ view attributes_ =
                                 [ displayFlex
                                 , alignItems center
                                 , property "width" "fit-content"
+                                , maxWidth (px 1000)
                                 ]
                              , tabbable False
                              ]
@@ -301,17 +302,14 @@ view attributes_ =
                             [ icon_
                             , Nri.Ui.styled div
                                 "banner-alert-notification"
-                                [ fontSize (px 20)
-                                , fontWeight (int 700)
+                                [ fontSize (px 18)
+                                , fontWeight (int 600)
                                 , lineHeight (num 1.4)
-                                , maxWidth (px 600)
-                                , minWidth (px 100)
                                 , flexShrink (int 1)
                                 , Fonts.baseFont
                                 , Css.Media.withMedia
                                     [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
                                     [ fontSize (px 15)
-                                    , fontWeight (int 600)
                                     ]
                                 ]
                                 []
@@ -850,7 +848,7 @@ getIcon customIcon size theme =
                             ]
                         , ExtraAttributes.nriDescription messageIconDescription
                         ]
-                        [ UiIcon.baldBulb
+                        [ UiIcon.sparkleBulb
                             |> NriSvg.withColor Colors.mustard
                             |> NriSvg.withWidth (Css.px 12)
                             |> NriSvg.withHeight (Css.px 12)
