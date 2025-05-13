@@ -2473,65 +2473,67 @@ checklist =
 review : Nri.Ui.Svg.V1.Svg
 review =
     Nri.Ui.Svg.V1.init "0 0 22 22"
-        [ Svg.path
-            [ Attributes.d "M3.91833 8.08337H7.91834"
-            , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "2"
-            , Attributes.strokeLinecap "round"
-            , Attributes.fill "none"
+        [ Svg.g [ Attributes.clipPath "url(#clip0_1382_243)" ]
+            [ Svg.path
+                [ Attributes.d "M4.91833 8.08337H8.91834"
+                , Attributes.stroke "currentColor"
+                , Attributes.strokeWidth "2"
+                , Attributes.strokeLinecap "round"
+                , Attributes.fill "none"
+                ]
+                []
+            , Svg.path
+                [ Attributes.d "M4.91833 12.0834H7.91834"
+                , Attributes.stroke "currentColor"
+                , Attributes.strokeWidth "2"
+                , Attributes.strokeLinecap "round"
+                , Attributes.fill "none"
+                ]
+                []
+            , Svg.path
+                [ Attributes.d "M4.91833 16.0834H9.91834"
+                , Attributes.stroke "currentColor"
+                , Attributes.strokeWidth "2"
+                , Attributes.strokeLinecap "round"
+                , Attributes.fill "none"
+                ]
+                []
+            , Svg.path
+                [ Attributes.d "M5.42176 2.2879C3.84737 2.33513 2.90869 2.51037 2.25918 3.16049C1.37 4.0505 1.37 5.48295 1.37 8.34784V14.9317C1.37 17.7965 1.37 19.229 2.25918 20.119C3.14836 21.009 4.57948 21.009 7.44171 21.009H12.5014C15.3636 21.009 16.7948 21.009 17.684 20.119C17.8431 19.9598 17.9736 19.7833 18.0809 19.5843M18.37 4.49624C18.2408 3.93423 18.0296 3.50639 17.684 3.1605C17.0345 2.51037 16.0959 2.33513 14.5214 2.2879"
+                , Attributes.stroke "currentColor"
+                , Attributes.strokeWidth "2"
+                , Attributes.strokeLinecap "round"
+                , Attributes.strokeLinejoin "round"
+                , Attributes.fill "none"
+                ]
+                []
+            , Svg.path
+                [ Attributes.d "M5.41943 2.77092C5.41943 1.79286 6.21231 1 7.19035 1H12.7561C13.7342 1 14.527 1.79286 14.527 2.77092C14.527 3.74897 13.7342 4.54183 12.7561 4.54183H7.19035C6.21231 4.54183 5.41943 3.74897 5.41943 2.77092Z"
+                , Attributes.stroke "currentColor"
+                , Attributes.strokeWidth "2"
+                , Attributes.strokeLinejoin "round"
+                , Attributes.fill "none"
+                ]
+                []
+            , Svg.path
+                [ Attributes.d "M21 17L18.5845 14.5845M18.5845 14.5845C18.7134 14.4557 18.8331 14.3178 18.9428 14.1717C19.4273 13.5271 19.7142 12.7257 19.7142 11.8572C19.7142 9.72687 17.9874 8 15.8572 8C13.7269 8 12 9.72687 12 11.8572C12 13.9874 13.7269 15.7142 15.8572 15.7142C16.9223 15.7142 17.8866 15.2826 18.5845 14.5845Z"
+                , Attributes.stroke "currentColor"
+                , Attributes.strokeWidth "1.5"
+                , Attributes.strokeLinecap "round"
+                , Attributes.strokeLinejoin "round"
+                , Attributes.fill "none"
+                ]
+                []
+            , Svg.path
+                [ Attributes.d "M14.5 12.1667L15.4375 13L17.5 11"
+                , Attributes.stroke "currentColor"
+                , Attributes.strokeWidth "1.5"
+                , Attributes.strokeLinecap "round"
+                , Attributes.strokeLinejoin "round"
+                , Attributes.fill "none"
+                ]
+                []
             ]
-            []
-        , Svg.path
-            [ Attributes.d "M3.91833 12.0834H6.91834"
-            , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "2"
-            , Attributes.strokeLinecap "round"
-            , Attributes.fill "none"
-            ]
-            []
-        , Svg.path
-            [ Attributes.d "M3.91833 16.0834H8.91834"
-            , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "2"
-            , Attributes.strokeLinecap "round"
-            , Attributes.fill "none"
-            ]
-            []
-        , Svg.path
-            [ Attributes.d "M5.04025 3C3.6141 3.04278 2.76381 3.20152 2.17546 3.79042C1.37 4.59663 1.37 5.8942 1.37 8.48933V14.4532C1.37 17.0483 1.37 18.3459 2.17546 19.1521C2.98091 19.9583 4.27728 19.9583 6.87 19.9583H11.4533C14.046 19.9583 15.3424 19.9583 16.1479 19.1521C16.2919 19.0079 16.4102 18.848 16.5074 18.6678M16.7693 5.0004C16.6523 4.49131 16.4609 4.10376 16.1479 3.79043C15.5595 3.20152 14.7093 3.04278 13.2831 3"
-            , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "2"
-            , Attributes.strokeLinecap "round"
-            , Attributes.strokeLinejoin "round"
-            , Attributes.fill "none"
-            ]
-            []
-        , Svg.path
-            [ Attributes.d "M5.03809 3.43748C5.03809 2.55152 5.7563 1.83331 6.64225 1.83331H11.6839C12.5699 1.83331 13.2881 2.55152 13.2881 3.43748C13.2881 4.32344 12.5699 5.04165 11.6839 5.04165H6.64225C5.7563 5.04165 5.03809 4.32344 5.03809 3.43748Z"
-            , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "2"
-            , Attributes.strokeLinejoin "round"
-            , Attributes.fill "none"
-            ]
-            []
-        , Svg.path
-            [ Attributes.d "M21 18.125L18.0477 15.1727M18.0477 15.1727C18.2053 15.0153 18.3516 14.8467 18.4857 14.6682C19.0778 13.8803 19.4285 12.9008 19.4285 11.8393C19.4285 9.23563 17.3179 7.125 14.7143 7.125C12.1106 7.125 10 9.23563 10 11.8393C10 14.4429 12.1106 16.5535 14.7143 16.5535C16.0161 16.5535 17.1947 16.0259 18.0477 15.1727Z"
-            , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "2"
-            , Attributes.strokeLinecap "round"
-            , Attributes.strokeLinejoin "round"
-            , Attributes.fill "none"
-            ]
-            []
-        , Svg.path
-            [ Attributes.d "M12.7881 12.1042L13.9339 13.25L16.4548 10.5"
-            , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "2"
-            , Attributes.strokeLinecap "round"
-            , Attributes.strokeLinejoin "round"
-            , Attributes.fill "none"
-            ]
-            []
         ]
 
 
@@ -3516,17 +3518,18 @@ projectorScreen : Nri.Ui.Svg.V1.Svg
 projectorScreen =
     Nri.Ui.Svg.V1.init "0 0 22 22"
         [ Svg.line
-            [ Attributes.x1 "0.75"
-            , Attributes.y1 "1.25"
-            , Attributes.x2 "21.25"
-            , Attributes.y2 "1.25"
+            [ Attributes.x1 "1"
+            , Attributes.y1 "1"
+            , Attributes.x2 "21"
+            , Attributes.y2 "1"
             , Attributes.stroke "currentColor"
             , Attributes.strokeWidth "2"
             , Attributes.strokeLinecap "round"
+            , Attributes.fill "none"
             ]
             []
         , Svg.path
-            [ Attributes.d "M2.75 1.75H19.25V12C19.25 12.6904 18.6904 13.25 18 13.25H4C3.30964 13.25 2.75 12.6904 2.75 12V1.75Z"
+            [ Attributes.d "M19 1V12C19 12.5523 18.5523 13 18 13H4C3.44772 13 3 12.5523 3 12V1H19Z"
             , Attributes.stroke "currentColor"
             , Attributes.strokeWidth "2"
             , Attributes.fill "none"
@@ -3540,33 +3543,36 @@ projectorScreen =
             ]
             []
         , Svg.line
-            [ Attributes.x1 "5.75"
-            , Attributes.y1 "4.54999"
-            , Attributes.x2 "16.25"
-            , Attributes.y2 "4.54999"
+            [ Attributes.x1 "6.25"
+            , Attributes.y1 "4"
+            , Attributes.x2 "15.75"
+            , Attributes.y2 "4"
             , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "2"
+            , Attributes.strokeWidth "1.5"
             , Attributes.strokeLinecap "round"
+            , Attributes.fill "none"
             ]
             []
         , Svg.line
-            [ Attributes.x1 "5.75"
-            , Attributes.y1 "7.54999"
-            , Attributes.x2 "16.25"
-            , Attributes.y2 "7.54999"
+            [ Attributes.x1 "6.25"
+            , Attributes.y1 "7"
+            , Attributes.x2 "15.75"
+            , Attributes.y2 "7"
             , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "2"
+            , Attributes.strokeWidth "1.5"
             , Attributes.strokeLinecap "round"
+            , Attributes.fill "none"
             ]
             []
         , Svg.line
-            [ Attributes.x1 "5.75"
-            , Attributes.y1 "10.55"
-            , Attributes.x2 "12.25"
-            , Attributes.y2 "10.55"
+            [ Attributes.x1 "6.25"
+            , Attributes.y1 "10"
+            , Attributes.x2 "12.0833"
+            , Attributes.y2 "10"
             , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "2"
+            , Attributes.strokeWidth "1.5"
             , Attributes.strokeLinecap "round"
+            , Attributes.fill "none"
             ]
             []
         , Svg.circle
