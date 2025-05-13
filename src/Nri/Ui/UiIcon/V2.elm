@@ -26,7 +26,7 @@ module Nri.Ui.UiIcon.V2 exposing
     , search, searchInCicle
     , microscope, scale
     , openInNewTab, sync, delete, addSticker, circle
-    , retire, unretire, publish, unpublish, duplicate
+    , retire, unretire, publish, unpublish, duplicate, practiceIcon
     , apple, appleOutline, briefcase
     , school, college, company, homeSchool, graduateCap
     , flagUs, globe
@@ -64,7 +64,7 @@ module Nri.Ui.UiIcon.V2 exposing
 @docs search, searchInCicle
 @docs microscope, scale
 @docs openInNewTab, sync, delete, addSticker, circle
-@docs retire, unretire, publish, unpublish, duplicate
+@docs retire, unretire, publish, unpublish, duplicate, practiceIcon
 @docs apple, appleOutline, briefcase
 @docs school, college, company, homeSchool, graduateCap
 @docs flagUs, globe
@@ -3834,3 +3834,35 @@ unretire =
 duplicate : Nri.Ui.Svg.V1.Svg
 duplicate =
     copyToClipboard
+
+
+{-| -}
+practiceIcon : Nri.Ui.Svg.V1.Svg
+practiceIcon =
+    Nri.Ui.Svg.V1.init "0 0 22 22"
+        [ Svg.path
+            [ Attributes.d "M14.1199 1.53441C13.1384 1.21114 12.0897 1.03622 11 1.03622C5.49718 1.03622 1.03625 5.49715 1.03625 11C1.03625 16.5028 5.49718 20.9638 11 20.9638C16.5028 20.9638 20.9638 16.5028 20.9638 11C20.9638 9.95858 20.804 8.95447 20.5076 8.01086"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "2"
+            , Attributes.strokeLinecap "round"
+            , Attributes.fill "none"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M15.9819 11C15.9819 13.7514 13.7514 15.9819 11 15.9819C8.2486 15.9819 6.01813 13.7514 6.01813 11C6.01813 8.2486 8.2486 6.01813 11 6.01813"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "2"
+            , Attributes.strokeLinecap "round"
+            , Attributes.strokeLinejoin "round"
+            , Attributes.fill "none"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M18.4728 3.52717L11 11M18.4728 3.52717V1.03622M18.4728 3.52717H20.9638"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "2"
+            , Attributes.strokeLinecap "round"
+            , Attributes.fill "none"
+            ]
+            []
+        ]

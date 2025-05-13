@@ -98,6 +98,7 @@ all =
         , ( "publish", UiIcon.publish, [] )
         , ( "unpublish", UiIcon.unpublish, [] )
         , ( "duplicate", UiIcon.duplicate, [] )
+        , ( "practiceIcon", UiIcon.practiceIcon, [] )
         ]
       )
     , ( "Guidance"
