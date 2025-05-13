@@ -3085,7 +3085,7 @@ circle =
             , Attributes.stroke "currentColor"
             , Attributes.strokeWidth "2"
             , Attributes.strokeLinejoin "round"
-            , Attributes.fill "none"
+            , Attributes.fill "currentColor"
             ]
             []
         ]
