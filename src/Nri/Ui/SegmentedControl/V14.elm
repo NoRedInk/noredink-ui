@@ -299,6 +299,7 @@ sharedSegmentStyles numEntries index =
     , textDecoration none
     , displayFlex
     , alignItems center
+    , justifyContent center
     , hover [ textDecoration none ]
     , focus [ textDecoration none ]
     ]

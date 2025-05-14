@@ -441,7 +441,7 @@ tabStyles customSpacing pageBackgroundColor_ index isSelected =
             , Css.fontWeight (Css.int 600)
             , Css.cursor Css.pointer
             , Css.border zero
-            , Css.height (Css.px 55)
+            , Css.minHeight (Css.px 55)
             ]
 
         stylesTab =
