@@ -654,7 +654,7 @@ selectArrowsCss config =
         -- "appearance: none" removes the default dropdown arrows
         , VendorPrefixed.property "appearance" "none"
         , Css.backgroundRepeat Css.noRepeat
-        , Css.property "background-position" "center right -15px"
+        , Css.property "background-position" "center right -18px"
         , Css.property "background-size" "17px"
         , Css.backgroundOrigin Css.contentBox
         ]
