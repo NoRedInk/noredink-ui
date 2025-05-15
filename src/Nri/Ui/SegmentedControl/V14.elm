@@ -285,7 +285,7 @@ styles focusSelector positioning numEntries index isSelected =
 
 sharedSegmentStyles : Int -> Int -> Style
 sharedSegmentStyles numEntries index =
-    [ padding3 (px 3) (px 15) (px 6)
+    [ padding2 (px 6) (px 15)
     , height (px 45)
     , Fonts.baseFont
     , fontSize (px 15)
@@ -299,6 +299,7 @@ sharedSegmentStyles numEntries index =
     , textDecoration none
     , displayFlex
     , alignItems center
+    , justifyContent center
     , hover [ textDecoration none ]
     , focus [ textDecoration none ]
     ]
