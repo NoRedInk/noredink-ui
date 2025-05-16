@@ -47,14 +47,6 @@ hint = 'upgrade to V6'
 [forbidden."Nri.Ui.Mark.V2"]
 hint = 'upgrade to V6'
 
-[forbidden."Nri.Ui.Pennant.V3"]
-hint = 'upgrade to V4'
-usages = [
-    'component-catalog/../src/Nri/Ui/PremiumCheckbox/V8.elm',
-    'component-catalog/../src/Nri/Ui/RadioButton/V4.elm',
-    'component-catalog/src/Examples/PremiumCheckbox.elm',
-]
-
 [forbidden."Nri.Ui.QuestionBox.V6"]
 hint = 'upgrade to V7'
 

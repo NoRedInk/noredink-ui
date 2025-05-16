@@ -65,7 +65,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as Extra
-import Nri.Ui.Pennant.V3 exposing (contentPremiumFlag, giftPremiumFlag)
+import Nri.Ui.Pennant.V4 exposing (contentPremiumFlag, giftPremiumFlag)
 import Nri.Ui.Svg.V1 as Svg
 
 
@@ -358,9 +358,9 @@ viewPremiumFlag icon =
 
 iconWidth : Float
 iconWidth =
-    25
+    17
 
 
 iconRightMargin : Float
 iconRightMargin =
-    8
+    10
