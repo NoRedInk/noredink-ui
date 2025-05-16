@@ -402,6 +402,11 @@ appearsInline =
                         , Css.fontFamily Css.inherit
                         , Css.fontWeight Css.inherit
                         , Css.fontSize Css.inherit
+                        , Css.Global.descendants
+                            [ Css.Global.selector "svg"
+                                [ Css.top (Css.em 0.08)
+                                ]
+                            ]
                         ]
                 , size = Inherited
             }
@@ -530,7 +535,7 @@ viewContent config kind =
                     ([ Css.width (Css.em 1)
                      , Css.height (Css.em 1)
                      , Css.position Css.relative
-                     , Css.top (Css.em 0.1)
+                     , Css.top (Css.em 0.15)
                      ]
                         ++ (case position of
                                 Left ->
@@ -589,8 +594,8 @@ viewContent config kind =
                         , Attributes.css
                             (case kind of
                                 Button ->
-                                    [ Css.paddingLeft (Css.em 1.2)
-                                    , Css.paddingRight (Css.em 1.2)
+                                    [ Css.paddingLeft (Css.em 1.3)
+                                    , Css.paddingRight (Css.em 1.3)
                                     ]
 
                                 Link ->
@@ -609,7 +614,7 @@ viewContent config kind =
                         , Attributes.css
                             (case kind of
                                 Button ->
-                                    [ Css.paddingLeft (Css.em 1.2)
+                                    [ Css.paddingLeft (Css.em 1.3)
                                     ]
 
                                 Link ->
@@ -626,7 +631,7 @@ viewContent config kind =
                         , Attributes.css
                             (case kind of
                                 Button ->
-                                    [ Css.paddingRight (Css.em 1.2)
+                                    [ Css.paddingRight (Css.em 1.3)
                                     ]
 
                                 Link ->
