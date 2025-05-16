@@ -1086,9 +1086,8 @@ sortArrowDown =
 checkmark : Nri.Ui.Svg.V1.Svg
 checkmark =
     Nri.Ui.Svg.V1.init "0 0 22 22"
-        [ Svg.g [ Attributes.fill "none" ] []
-        , Svg.path
-            [ Attributes.d "M4 13L7.5 16.5L18 5.5"
+        [ Svg.path
+            [ Attributes.d "M2 13.5455L6.5 18L20 4"
             , Attributes.stroke "currentColor"
             , Attributes.strokeWidth "2.5"
             , Attributes.strokeLinecap "round"
@@ -1402,23 +1401,24 @@ compass =
 activity : Nri.Ui.Svg.V1.Svg
 activity =
     Nri.Ui.Svg.V1.init "0 0 22 22"
-        [ Svg.g [ Attributes.fill "none" ]
-            [ Svg.path
-                [ Attributes.d "M5 11H7L9 7L13 15L15 11H17"
-                , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "2"
-                , Attributes.strokeLinecap "round"
-                , Attributes.strokeLinejoin "round"
-                ]
-                []
-            , Svg.path
-                [ Attributes.d "M20.5 3.5V18.5C20.5 19.6046 19.6046 20.5 18.5 20.5H3.5C2.39543 20.5 1.5 19.6046 1.5 18.5V3.5C1.5 2.39543 2.39543 1.5 3.5 1.5H18.5C19.6046 1.5 20.5 2.39543 20.5 3.5Z"
-                , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "2"
-                , Attributes.strokeLinejoin "round"
-                ]
-                []
+        [ Svg.path
+            [ Attributes.d "M3.31802 18.682C2 17.364 2 15.2426 2 11C2 6.75736 2 4.63604 3.31802 3.31802C4.63604 2 6.75736 2 11 2C15.2426 2 17.364 2 18.682 3.31802C20 4.63604 20 6.75736 20 11C20 15.2426 20 17.364 18.682 18.682C17.364 20 15.2426 20 11 20C6.75736 20 4.63604 20 3.31802 18.682Z"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "2"
+            , Attributes.strokeLinecap "round"
+            , Attributes.strokeLinejoin "round"
+            , Attributes.fill "none"
             ]
+            []
+        , Svg.path
+            [ Attributes.d "M5 11H7.5L9.5 7L12.5 15L14.5 11H17"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "2"
+            , Attributes.strokeLinecap "round"
+            , Attributes.strokeLinejoin "round"
+            , Attributes.fill "none"
+            ]
+            []
         ]
 
 
