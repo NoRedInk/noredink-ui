@@ -534,7 +534,7 @@ viewSelect config_ config =
 
                 Nothing ->
                     Css.paddingLeft (Css.px 15)
-            , Css.paddingRight (Css.px 30)
+            , Css.paddingRight (Css.px 35)
 
             -- Icons
             , selectArrowsCss config
@@ -654,7 +654,7 @@ selectArrowsCss config =
         -- "appearance: none" removes the default dropdown arrows
         , VendorPrefixed.property "appearance" "none"
         , Css.backgroundRepeat Css.noRepeat
-        , Css.property "background-position" "center right -18px"
+        , Css.property "background-position" "center right -23px"
         , Css.property "background-size" "17px"
         , Css.backgroundOrigin Css.contentBox
         ]
