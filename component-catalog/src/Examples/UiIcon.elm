@@ -160,6 +160,7 @@ all =
       , [ ( "edit", UiIcon.edit, [] )
         , ( "highlighter", UiIcon.highlighter, [] )
         , ( "eraser", UiIcon.eraser, [] )
+        , ( "clipboard", UiIcon.clipboard, [] )
         ]
       )
     , ( "Arrows"
