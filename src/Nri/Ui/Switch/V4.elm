@@ -362,16 +362,16 @@ viewSwitch config =
                     ]
                     []
                 , Svg.path
-                    [ SvgAttributes.strokeLinecap "round"
-                    , SvgAttributes.strokeLinejoin "round"
-                    , SvgAttributes.strokeWidth "3"
-                    , SvgAttributes.d "M8 15.865L12.323 20 21.554 10"
+                    [ SvgAttributes.fill "none"
+                    , SvgAttributes.strokeWidth "0"
+                    , SvgAttributes.transform "translate(3, 3.5)"
+                    , SvgAttributes.d "M17.2842 5.30178C17.6697 4.9065 18.3028 4.8987 18.6982 5.2842C19.0935 5.66977 19.1013 6.30288 18.7158 6.69826L8.96581 16.6983C8.78045 16.8883 8.52715 16.9969 8.26171 17C8.02945 17.0027 7.80468 16.9242 7.62499 16.7803L7.55077 16.7149L4.30077 13.5332L4.23143 13.458C3.90649 13.0687 3.92277 12.4883 4.28514 12.1182C4.64744 11.7482 5.22691 11.7198 5.62303 12.0362L5.69921 12.1035L8.23339 14.584L17.2842 5.30178Z"
                     , SvgAttributes.css
                         [ if config.isDisabled && config.isSelected then
-                            stroke Colors.white
+                            fill Colors.white
 
                           else if config.isSelected then
-                            stroke Colors.azure
+                            fill Colors.azure
 
                           else
                             Css.display Css.none
@@ -390,6 +390,11 @@ viewSwitch config =
 stroke : Color -> Style
 stroke color =
     Css.property "stroke" (toCssString color)
+
+
+fill : Color -> Style
+fill color =
+    Css.property "fill" (toCssString color)
 
 
 transition : String -> Css.Style
