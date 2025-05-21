@@ -43,6 +43,7 @@ import Examples.RadioButtonDotless as RadioButtonDotless
 import Examples.RingGauge as RingGauge
 import Examples.SegmentedControl as SegmentedControl
 import Examples.Select as Select
+import Examples.SelectElement as SelectElement
 import Examples.Shadows as Shadows
 import Examples.SideNav as SideNav
 import Examples.SortableTable as SortableTable
@@ -803,6 +804,25 @@ all =
                     _ ->
                         Nothing
             )
+    , SelectElement.example
+        |> Example.wrapMsg SelectElementMsg
+            (\msg ->
+                case msg of
+                    SelectElementMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState SelectElementState
+            (\msg ->
+                case msg of
+                    SelectElementState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
     , Shadows.example
         |> Example.wrapMsg ShadowsMsg
             (\msg ->
@@ -1131,6 +1151,7 @@ type State
     | RingGaugeState RingGauge.State
     | SegmentedControlState SegmentedControl.State
     | SelectState Select.State
+    | SelectElementState SelectElement.State
     | ShadowsState Shadows.State
     | SideNavState SideNav.State
     | SortableTableState SortableTable.State
@@ -1188,6 +1209,7 @@ type Msg
     | RingGaugeMsg RingGauge.Msg
     | SegmentedControlMsg SegmentedControl.Msg
     | SelectMsg Select.Msg
+    | SelectElementMsg SelectElement.Msg
     | ShadowsMsg Shadows.Msg
     | SideNavMsg SideNav.Msg
     | SortableTableMsg SortableTable.Msg
