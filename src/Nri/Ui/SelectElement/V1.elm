@@ -56,6 +56,20 @@ import Nri.Ui.Svg.V1 as Svg
 -- MODEL
 
 
+{-| Represents a single selectable option.
+
+  - `content`: The HTML to display in the dropdown.
+  - `triggerLabel`: The plain text label to show in the trigger button when selected.
+  - `value`: The value associated with this option.
+
+Example:
+
+    { content = Html.Styled.text "Earth"
+    , triggerLabel = "Earth"
+    , value = Earth
+    }
+
+-}
 type alias SingleOption value msg =
     { content : Html msg
     , value : value
@@ -63,11 +77,46 @@ type alias SingleOption value msg =
     }
 
 
+{-| Represents an item in the select dropdown.
+
+You can use `Item` for a single option, or `Group` to group related options under a label.
+
+    SelectElement.Item
+        { content = Html.Styled.text "Earth"
+        , triggerLabel = "Earth"
+        , value = Earth
+        }
+
+    SelectElement.Group "Gas Giants"
+        [ { content = Html.Styled.text "Jupiter"
+          , triggerLabel = "Jupiter"
+          , value = Jupiter
+          }
+        , { content = Html.Styled.text "Saturn"
+          , triggerLabel = "Saturn"
+          , value = Saturn
+          }
+        ]
+
+-}
 type OptionItem value msg
     = Item (SingleOption value msg)
     | Group String (List (SingleOption value msg))
 
 
+{-| An attribute for configuring the SelectElement component.
+
+You can use attributes to set options, handle selection, customize appearance, and more.
+
+    SelectElement.view "Choose a planet"
+        [ SelectElement.optionItems myOptions
+        , SelectElement.selectedValue (Just Earth)
+        , SelectElement.onSelect SelectPlanet
+        , SelectElement.label "Planets"
+        , SelectElement.disabled False
+        ]
+
+-}
 type Attribute value msg
     = Attribute (Config value msg -> Config value msg)
 
