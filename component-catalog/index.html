@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -9,6 +9,67 @@
       rel="stylesheet"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      [hidden] {
+        display: none !important;
+      }
+
+      select-element [role="option"]:hover {
+        background-color: #f5f5f5;
+      }
+
+      select-element [role="option"].active-descendant {
+        background-color: #e6f2ff;
+        color: #005a9e;
+      }
+
+      select-element [role="option"][aria-selected="true"] {
+        background-color: #eef0ff;
+        font-weight: bold;
+      }
+
+      select-element {
+        view-transition-name: select-element-popover;
+        backface-visibility: hidden;
+        will-change: opacity, transform;
+      }
+
+      select-element.initial-positioning {
+        view-transition-name: none !important;
+      }
+
+      @keyframes fade-in {
+        from {
+          opacity: 0;
+          transform: translateY(-8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fade-out {
+        from {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateY(-8px);
+        }
+      }
+
+      ::view-transition-old(select-element-popover) {
+        animation: 250ms cubic-bezier(0.42, 0, 0.58, 1) both fade-out;
+        backface-visibility: hidden;
+      }
+
+      ::view-transition-new(select-element-popover) {
+        animation: 250ms cubic-bezier(0.42, 0, 0.58, 1) both fade-in;
+        backface-visibility: hidden;
+      }
+    </style>
   </head>
   <body>
     <div id="svg-target"></div>
@@ -67,27 +128,27 @@
           // Also 4. Handle drag-to-select on touch devices, when in scroll-friendly mode
           highlighter.addEventListener(
             "touchstart",
-            handleTouchStartScrollFriendly(id),
+            handleTouchStartScrollFriendly(id)
           );
         });
         /*
-        * This simulates "long-press to highlight" behavior that's native to mobile devices.
-        *
-        * We can't respect native long-press delays, unfortunately, because iOS does not implement
-        * an event that relies on long-press that we can intercept, like Android's `contextmenu`.
-        *
-        * The trick to make this work and be scroll friendly:
-        * - On touchstart, start a 500ms timer
-        * - If touch moves of ends before timer is done, undo everything (it's not a long-press)
-        * - If 500ms timer succeeds..
-        *   - send a longpress event to Elm so we start hinting
-        *   - add a touchmove listener
-        *     - on touchmove, tell Elm which element is currently under the finger
-        *   - add a touchend listener so we can stop hinting regardless of where we are in the page
-        *
-        * How this makes it scroll friendly: preventDefault on touchmove is only triggered after
-        * the longpress, so simple swipes up and down are not affected.
-        */
+         * This simulates "long-press to highlight" behavior that's native to mobile devices.
+         *
+         * We can't respect native long-press delays, unfortunately, because iOS does not implement
+         * an event that relies on long-press that we can intercept, like Android's `contextmenu`.
+         *
+         * The trick to make this work and be scroll friendly:
+         * - On touchstart, start a 500ms timer
+         * - If touch moves of ends before timer is done, undo everything (it's not a long-press)
+         * - If 500ms timer succeeds..
+         *   - send a longpress event to Elm so we start hinting
+         *   - add a touchmove listener
+         *     - on touchmove, tell Elm which element is currently under the finger
+         *   - add a touchend listener so we can stop hinting regardless of where we are in the page
+         *
+         * How this makes it scroll friendly: preventDefault on touchmove is only triggered after
+         * the longpress, so simple swipes up and down are not affected.
+         */
         function handleTouchStartScrollFriendly(id) {
           return (e) => {
             console.log("longpress start", id);
@@ -119,9 +180,9 @@
         }
 
         /*
-        * Touchmove event always fire on the element that got the initial touchstart event.
-        * We need the element under the finger to highlight a section though.
-        */
+         * Touchmove event always fire on the element that got the initial touchstart event.
+         * We need the element under the finger to highlight a section though.
+         */
         function handleTouchEvents(type, id) {
           return function (e) {
             e.preventDefault();
@@ -139,8 +200,8 @@
         }
 
         /*
-        * inform elm when we receive a mouseup/touchend event.
-        */
+         * inform elm when we receive a mouseup/touchend event.
+         */
         function onDocumentUp(id, device) {
           return function () {
             app.ports.highlighterTouchPointerRelease.send([id, device]);
@@ -167,7 +228,10 @@
           if (!loc) throw "touch event unexpectedly didn't have any touches!";
 
           // get the element under the finger
-          const realTarget = document.elementFromPoint(loc.clientX, loc.clientY);
+          const realTarget = document.elementFromPoint(
+            loc.clientX,
+            loc.clientY
+          );
 
           if (realTarget) {
             // each word has a data attribute with its index.
@@ -181,6 +245,658 @@
           return null;
         }
       });
+
+      class SelectElement extends HTMLElement {
+        static observedAttributes = ["data-trigger-id", "value"];
+
+        constructor() {
+          super();
+          this.activeIndex = -1;
+          this._activeOptionId = null;
+          const shadow = this.attachShadow({ mode: "open" });
+
+          const internalContainer = document.createElement("div");
+          internalContainer.part = "listbox-shell";
+          internalContainer.appendChild(document.createElement("slot"));
+          shadow.appendChild(internalContainer);
+
+          this._repositionFrameId = null;
+          this._handleWindowResizeOrScroll =
+            this._handleWindowResizeOrScroll.bind(this);
+
+          this.searchString = "";
+          this.searchClearTimer = null;
+          this._initialPositioningComplete = false;
+
+          this.getAllOptions = () => [];
+          this.getEnabledOptions = () => [];
+
+          this.options = () => [];
+          this._triggerIdToAttach = null;
+        }
+
+        connectedCallback() {
+          this.role = "listbox";
+          this.tabIndex = -1;
+          this.removeAttribute("aria-activedescendant");
+
+          if (!this.hasAttribute("popover")) {
+            this.popover = "auto";
+          }
+
+          this.getAllOptions = () =>
+            Array.from(this.querySelectorAll('[role="option"]'));
+          this.getEnabledOptions = () =>
+            Array.from(
+              this.querySelectorAll(
+                '[role="option"]:not([aria-disabled="true"])'
+              )
+            );
+
+          if (!this.trigger && this._triggerIdToAttach) {
+            const triggerElement = document.getElementById(
+              this._triggerIdToAttach
+            );
+            if (triggerElement) {
+              this.trigger = triggerElement;
+              this.attachTrigger();
+            } else {
+              console.warn(
+                `SelectElement: Trigger with ID "${this._triggerIdToAttach}" still not found in connectedCallback for popover "${this.id}".`
+              );
+            }
+          }
+
+          this.addEventListener("click", (e) => {
+            const option = e.target.closest("[role=option]");
+            if (option) {
+              this.selectOption(option);
+              e.stopPropagation();
+            }
+          });
+
+          this.addEventListener("keydown", (e) => {
+            switch (e.key) {
+              case "ArrowDown":
+                e.preventDefault();
+                e.stopPropagation();
+                this.clearSearchString();
+                this.moveFocus(1);
+                break;
+              case "ArrowUp":
+                e.preventDefault();
+                e.stopPropagation();
+                this.clearSearchString();
+                this.moveFocus(-1);
+                break;
+              case "Home":
+                e.preventDefault();
+                e.stopPropagation();
+                this.clearSearchString();
+                this.moveFocus("start");
+                break;
+              case "End":
+                e.preventDefault();
+                e.stopPropagation();
+                this.clearSearchString();
+                this.moveFocus("end");
+                break;
+              case "Enter":
+              case " ":
+                if (this.searchString === "" && e.key === " ") {
+                  e.preventDefault();
+                  const activeOpt = this.getAllOptions()[this.activeIndex];
+                  if (
+                    activeOpt &&
+                    activeOpt.getAttribute("aria-disabled") !== "true"
+                  ) {
+                    this.selectOption(activeOpt);
+                  }
+                } else if (e.key === "Enter") {
+                  e.preventDefault();
+                  const activeOpt = this.getAllOptions()[this.activeIndex];
+                  if (
+                    activeOpt &&
+                    activeOpt.getAttribute("aria-disabled") !== "true"
+                  ) {
+                    this.selectOption(activeOpt);
+                  }
+                }
+                break;
+              case "Backspace":
+                e.preventDefault();
+                this.searchString = this.searchString.slice(0, -1);
+                this.handleTypeaheadSearch();
+                this.resetSearchClearTimer();
+                return;
+            }
+
+            if (e.key.length === 1 && !e.metaKey && !e.ctrlKey && !e.altKey) {
+              if (e.key === " " && this.searchString === "") {
+              }
+
+              e.preventDefault();
+              this.searchString += e.key.toLowerCase();
+              this.handleTypeaheadSearch();
+              this.resetSearchClearTimer();
+            }
+          });
+
+          this.addEventListener("toggle", (event) => {
+            if (event.newState === "open") {
+              if (!this.trigger) {
+                const triggerId =
+                  this.dataset.triggerId || this._triggerIdToAttach;
+                if (triggerId) {
+                  this.trigger = document.getElementById(triggerId);
+                  if (this.trigger) {
+                    this.attachTrigger();
+                  } else {
+                    console.warn(
+                      `SelectElement: Trigger with ID "${triggerId}" not found for popover "${this.id}" during toggle event (final attempt).`
+                    );
+                  }
+                }
+              }
+
+              if (this.trigger) {
+                this.trigger.setAttribute("aria-expanded", "true");
+              } else {
+                console.warn(
+                  `SelectElement: Cannot set aria-expanded on trigger for popover "${this.id}" as trigger is not found.`
+                );
+              }
+
+              this.classList.add("initial-positioning");
+              this._initialPositioningComplete = false;
+
+              window.addEventListener(
+                "resize",
+                this._handleWindowResizeOrScroll
+              );
+              document.addEventListener(
+                "scroll",
+                this._handleWindowResizeOrScroll,
+                true
+              );
+
+              requestAnimationFrame(() => {
+                if (this.trigger) {
+                  this.positionUnderTrigger();
+                }
+                this.style.visibility = "visible";
+
+                this.focus();
+
+                const currentValue = this.getAttribute("value");
+                let initialFocusIndex = -1;
+                if (currentValue) {
+                  initialFocusIndex = this.getAllOptions().findIndex(
+                    (o) => o.dataset.value === currentValue
+                  );
+                }
+
+                if (
+                  initialFocusIndex < 0 ||
+                  (this.getAllOptions()[initialFocusIndex] &&
+                    this.getAllOptions()[initialFocusIndex].getAttribute(
+                      "aria-disabled"
+                    ) === "true")
+                ) {
+                  initialFocusIndex = this.getAllOptions().findIndex(
+                    (o) => o.getAttribute("aria-disabled") !== "true"
+                  );
+                }
+
+                if (this.getAllOptions().length > 0 && initialFocusIndex > -1) {
+                  this.setActiveOptionByIndex(initialFocusIndex, false);
+                } else {
+                  this.clearActiveOption();
+                }
+
+                requestAnimationFrame(() => {
+                  this._initialPositioningComplete = true;
+                  this.classList.remove("initial-positioning");
+                });
+              });
+            } else {
+              if (
+                document.startViewTransition &&
+                this._initialPositioningComplete
+              ) {
+                const transition = document.startViewTransition(() => {
+                  this._hidePopoverInternal();
+                });
+              } else {
+                this._hidePopoverInternal();
+              }
+            }
+          });
+        }
+
+        disconnectedCallback() {
+          window.removeEventListener(
+            "resize",
+            this._handleWindowResizeOrScroll
+          );
+          document.removeEventListener(
+            "scroll",
+            this._handleWindowResizeOrScroll,
+            true
+          );
+          if (this._repositionFrameId) {
+            cancelAnimationFrame(this._repositionFrameId);
+            this._repositionFrameId = null;
+          }
+        }
+
+        _hidePopoverInternal() {
+          if (this.trigger) {
+            this.trigger.setAttribute("aria-expanded", "false");
+          }
+          this.style.visibility = "";
+          this.clearSearchString();
+          this.clearActiveOption();
+
+          window.removeEventListener(
+            "resize",
+            this._handleWindowResizeOrScroll
+          );
+          document.removeEventListener(
+            "scroll",
+            this._handleWindowResizeOrScroll,
+            true
+          );
+          if (this._repositionFrameId) {
+            cancelAnimationFrame(this._repositionFrameId);
+            this._repositionFrameId = null;
+          }
+        }
+
+        _handleWindowResizeOrScroll() {
+          if (!this.matches(":popover-open") || !this.trigger) {
+            return;
+          }
+
+          if (this._repositionFrameId) {
+            cancelAnimationFrame(this._repositionFrameId);
+          }
+
+          this._repositionFrameId = requestAnimationFrame(() => {
+            this.positionUnderTrigger();
+            this._repositionFrameId = null;
+          });
+        }
+
+        attributeChangedCallback(name, oldVal, newVal) {
+          if (name === "data-trigger-id" && newVal) {
+            const triggerElement = document.getElementById(newVal);
+            if (triggerElement) {
+              this.trigger = triggerElement;
+              this.attachTrigger();
+              this._triggerIdToAttach = null;
+            } else {
+              this._triggerIdToAttach = newVal;
+            }
+          }
+          if (name === "value" && newVal !== oldVal) {
+            for (const opt of this.getAllOptions()) {
+              opt.setAttribute("aria-selected", opt.dataset.value === newVal);
+            }
+          }
+        }
+
+        attachTrigger() {
+          if (!this.trigger || this.trigger._arrowKeyListenerAttached) return;
+
+          if (!this.id) {
+            console.warn(
+              "select-element (popover) should have an ID for popovertarget to work reliably from Elm."
+            );
+          }
+          if (!this.getAttribute("aria-labelledby") && this.trigger.id) {
+            this.setAttribute("aria-labelledby", this.trigger.id);
+          }
+
+          this.trigger.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+              e.preventDefault();
+              e.stopPropagation();
+              if (!this.matches(":popover-open")) {
+                if (document.startViewTransition) {
+                  document.startViewTransition(() => {
+                    this.showPopover();
+                  });
+                } else {
+                  this.showPopover();
+                }
+              }
+            }
+          });
+
+          const originalClickEvent = this.trigger.onclick;
+          this.trigger.onclick = (e) => {
+            if (!this.matches(":popover-open")) {
+              if (document.startViewTransition) {
+                e.preventDefault();
+                document.startViewTransition(() => {
+                  this.showPopover();
+                });
+              }
+            }
+            if (originalClickEvent) originalClickEvent(e);
+          };
+
+          this.trigger._arrowKeyListenerAttached = true;
+        }
+
+        positionUnderTrigger() {
+          if (!this.trigger) return;
+
+          const triggerRect = this.trigger.getBoundingClientRect();
+          const wasHidden = this.style.display === "none";
+          if (wasHidden) {
+            this.style.display = "";
+          }
+          const popoverRect = this.getBoundingClientRect();
+          if (wasHidden) {
+            this.style.display = "none";
+          }
+
+          const viewportWidth = window.innerWidth;
+          const viewportHeight = window.innerHeight;
+          const scrollX = window.scrollX;
+          const scrollY = window.scrollY;
+
+          this.style.position = "absolute";
+          this.style.inset = "auto";
+          this.style.transform = "none";
+          this.style.minWidth = triggerRect.width + "px";
+
+          const shellPart = this.shadowRoot.querySelector(
+            '[part="listbox-shell"]'
+          );
+          let cssGap = 0;
+          if (shellPart) {
+            const computedShellStyle = getComputedStyle(shellPart);
+            cssGap = parseFloat(computedShellStyle.marginTop) || 0;
+          }
+
+          this.style.marginTop = "0px";
+          this.style.marginBottom = "0px";
+
+          let newTop;
+          let newLeft;
+
+          const popoverHeightForFitting = popoverRect.height;
+          const spaceBelow = viewportHeight - triggerRect.bottom;
+          const spaceAbove = triggerRect.top;
+
+          if (popoverHeightForFitting + cssGap <= spaceBelow) {
+            newTop = triggerRect.bottom + scrollY + cssGap;
+          } else if (popoverHeightForFitting + cssGap <= spaceAbove) {
+            newTop =
+              triggerRect.top + scrollY - popoverHeightForFitting - cssGap;
+          } else {
+            if (spaceBelow >= spaceAbove) {
+              newTop = triggerRect.bottom + scrollY + cssGap;
+            } else {
+              newTop =
+                triggerRect.top + scrollY - popoverHeightForFitting - cssGap;
+            }
+          }
+
+          newLeft = triggerRect.left + scrollX;
+
+          if (newLeft + popoverRect.width > viewportWidth + scrollX) {
+            let rightAlignedLeft =
+              triggerRect.right + scrollX - popoverRect.width;
+
+            if (rightAlignedLeft >= scrollX) {
+              newLeft = rightAlignedLeft;
+            } else {
+              newLeft = scrollX;
+            }
+          }
+
+          if (newLeft < scrollX) {
+            newLeft = scrollX;
+          }
+
+          this.style.top = Math.round(newTop) + "px";
+          this.style.left = Math.round(newLeft) + "px";
+        }
+
+        selectOption(option) {
+          if (!option || option.getAttribute("aria-disabled") === "true") {
+            return;
+          }
+          const value = option.dataset.value;
+          this.setAttribute("value", value);
+
+          const optionIndex = this.getAllOptions().indexOf(option);
+          if (optionIndex > -1) {
+            this.activeIndex = optionIndex;
+            this.getAllOptions().forEach((opt) => {
+              opt.setAttribute("aria-selected", opt.dataset.value === value);
+            });
+          }
+
+          this.dispatchEvent(
+            new CustomEvent("select-change", {
+              detail: { value },
+              bubbles: true,
+            })
+          );
+
+          if (
+            document.startViewTransition &&
+            this._initialPositioningComplete
+          ) {
+            document.startViewTransition(() => {
+              this.hidePopover();
+              if (this.trigger) {
+                this.trigger.focus();
+              }
+            });
+          } else {
+            this.hidePopover();
+            if (this.trigger) {
+              this.trigger.focus();
+            }
+          }
+        }
+
+        moveFocus(step, absolute = false) {
+          const allOpts = this.getAllOptions();
+          if (!allOpts.length) return;
+
+          const enabledOpts = this.getEnabledOptions();
+          if (!enabledOpts.length) return;
+
+          let currentEnabledIndex = -1;
+          if (
+            this.activeIndex > -1 &&
+            allOpts[this.activeIndex] &&
+            allOpts[this.activeIndex].getAttribute("aria-disabled") !== "true"
+          ) {
+            currentEnabledIndex = enabledOpts.indexOf(
+              allOpts[this.activeIndex]
+            );
+          }
+
+          let newEnabledIndex;
+
+          if (absolute) {
+            const targetOpt = allOpts[step];
+            if (
+              targetOpt &&
+              targetOpt.getAttribute("aria-disabled") !== "true"
+            ) {
+              this.setActiveOptionByIndex(step);
+            }
+            return;
+          }
+
+          if (step === "start") {
+            newEnabledIndex = 0;
+          } else if (step === "end") {
+            newEnabledIndex = enabledOpts.length - 1;
+          } else {
+            if (currentEnabledIndex === -1) {
+              newEnabledIndex = step === 1 ? 0 : enabledOpts.length - 1;
+            } else {
+              newEnabledIndex =
+                (currentEnabledIndex + step + enabledOpts.length) %
+                enabledOpts.length;
+            }
+          }
+
+          if (newEnabledIndex >= 0 && newEnabledIndex < enabledOpts.length) {
+            const newFocusOption = enabledOpts[newEnabledIndex];
+            const newFocusOptionIndexInAll = allOpts.indexOf(newFocusOption);
+            if (newFocusOptionIndexInAll > -1) {
+              this.setActiveOptionByIndex(newFocusOptionIndexInAll);
+            }
+          }
+        }
+
+        clearSearchString() {
+          this.searchString = "";
+          if (this.searchClearTimer) {
+            clearTimeout(this.searchClearTimer);
+            this.searchClearTimer = null;
+          }
+        }
+
+        resetSearchClearTimer() {
+          if (this.searchClearTimer) {
+            clearTimeout(this.searchClearTimer);
+          }
+          this.searchClearTimer = setTimeout(() => {
+            this.searchString = "";
+          }, 750);
+        }
+
+        handleTypeaheadSearch() {
+          if (!this.searchString) return;
+
+          const opts = this.getAllOptions();
+          const enabledOpts = this.getEnabledOptions();
+          const currentSearch = this.searchString;
+
+          let searchStartIndex = (this.activeIndex + 1) % opts.length;
+          if (
+            this.activeIndex === -1 ||
+            (opts[this.activeIndex] &&
+              opts[this.activeIndex].getAttribute("aria-disabled") === "true")
+          ) {
+            const firstEnabledMatch = enabledOpts.find((opt) =>
+              (opt.textContent || "")
+                .trim()
+                .toLowerCase()
+                .startsWith(currentSearch)
+            );
+            if (firstEnabledMatch) {
+              this.setActiveOptionByIndex(opts.indexOf(firstEnabledMatch));
+              return;
+            }
+          } else {
+            for (let i = 0; i < opts.length; i++) {
+              const optIdx = (searchStartIndex + i) % opts.length;
+              const option = opts[optIdx];
+              if (option.getAttribute("aria-disabled") === "true") continue;
+
+              const optionText = (option.textContent || "")
+                .trim()
+                .toLowerCase();
+              if (optionText.startsWith(currentSearch)) {
+                this.setActiveOptionByIndex(optIdx);
+                return;
+              }
+            }
+          }
+          const firstEnabledMatchOverall = enabledOpts.find((opt) =>
+            (opt.textContent || "")
+              .trim()
+              .toLowerCase()
+              .startsWith(currentSearch)
+          );
+          if (firstEnabledMatchOverall) {
+            this.setActiveOptionByIndex(opts.indexOf(firstEnabledMatchOverall));
+            return;
+          }
+        }
+
+        clearActiveOption() {
+          if (this._activeOptionId) {
+            const previouslyActive = this.querySelector(
+              `#${this._activeOptionId}`
+            );
+            if (previouslyActive) {
+              previouslyActive.classList.remove("active-descendant");
+            }
+          }
+          this.removeAttribute("aria-activedescendant");
+          this._activeOptionId = null;
+        }
+
+        setActiveOptionByIndex(index, shouldScroll = true) {
+          const opts = this.getAllOptions();
+          if (index < 0 || index >= opts.length) {
+            this.clearActiveOption();
+            this.activeIndex = -1;
+            return;
+          }
+
+          this.clearActiveOption();
+
+          const newActiveOption = opts[index];
+
+          if (!newActiveOption.id) {
+            console.warn(
+              "SelectElement: Option is missing an ID, cannot set aria-activedescendant.",
+              newActiveOption
+            );
+            return;
+          }
+
+          newActiveOption.classList.add("active-descendant");
+          this.setAttribute("aria-activedescendant", newActiveOption.id);
+          this._activeOptionId = newActiveOption.id;
+          this.activeIndex = index;
+
+          if (shouldScroll) {
+            const optgroup = newActiveOption.closest('[role="group"]');
+            if (optgroup) {
+              const groupOptions = Array.from(
+                optgroup.querySelectorAll('[role="option"]')
+              );
+
+              if (
+                groupOptions.length > 0 &&
+                groupOptions[0] === newActiveOption
+              ) {
+                const groupLabel = optgroup.querySelector(".optgroup-label");
+                if (groupLabel) {
+                  groupLabel.scrollIntoView({
+                    block: "nearest",
+                    scrollMode: "if-needed",
+                  });
+                  return;
+                }
+              }
+            }
+
+            newActiveOption.scrollIntoView({
+              block: "nearest",
+              scrollMode: "if-needed",
+            });
+          }
+        }
+      }
+
+      customElements.define("select-element", SelectElement);
     </script>
     <script src="bundle.js"></script>
   </body>
