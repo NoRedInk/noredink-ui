@@ -271,7 +271,11 @@ view attributes_ =
                         [ fontSize (px 18)
                         , fontWeight (int 600)
                         , lineHeight (num 1.4)
-                        , padding (px 20)
+                        , padding2 (px 20) zero
+                        , position relative
+                        , displayFlex
+                        , alignItems center
+                        , justifyContent center
                         , Css.Media.withMedia
                             [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
                             [ fontSize (px 15)
@@ -284,10 +288,10 @@ view attributes_ =
                         [ Attributes.css
                             [ displayFlex
                             , alignItems center
+                            , justifyContent center
                             ]
                         ]
-                        [ div [ Attributes.css [ flexGrow (int 1) ] ] []
-                        , div
+                        [ div
                             ([ Attributes.css
                                 [ displayFlex
                                 , alignItems center
@@ -315,7 +319,6 @@ view attributes_ =
                                 []
                                 attributes.content
                             ]
-                        , div [ Attributes.css [ flexGrow (int 1) ] ] []
                         , case attributes.onDismiss of
                             Nothing ->
                                 text ""
@@ -989,8 +992,8 @@ largeDismissButton msg =
         [ ClickableSvg.button "Dismiss message"
             UiIcon.x
             [ ClickableSvg.onClick msg
-            , ClickableSvg.exactWidth 16
-            , ClickableSvg.exactHeight 16
+            , ClickableSvg.exactWidth 20
+            , ClickableSvg.exactHeight 20
             ]
         ]
 
@@ -999,18 +1002,20 @@ bannerDismissButton : msg -> Html msg
 bannerDismissButton msg =
     Nri.Ui.styled div
         "dismiss-button-container"
-        [ padding2 zero (px 20)
-        , displayFlex
+        [ displayFlex
+        , position absolute
+        , right (px 20)
         , Css.Media.withMedia
             [ Css.Media.all [ Css.Media.maxWidth (px 1000) ] ]
-            [ padding4 (px 10) zero (px 10) (px 15)
+            [ position static
+            , marginLeft (px 20)
             ]
         ]
         []
         [ ClickableSvg.button "Dismiss banner"
             UiIcon.x
             [ ClickableSvg.onClick msg
-            , ClickableSvg.exactWidth 16
-            , ClickableSvg.exactHeight 16
+            , ClickableSvg.exactWidth 20
+            , ClickableSvg.exactHeight 20
             ]
         ]
