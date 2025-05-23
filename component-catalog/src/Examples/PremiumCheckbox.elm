@@ -22,7 +22,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.Pennant.V3 as Pennant
+import Nri.Ui.Pennant.V4 as Pennant
 import Nri.Ui.PremiumCheckbox.V8 as PremiumCheckbox
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
@@ -143,8 +143,7 @@ preview =
                 ]
                 [ Pennant.contentPremiumFlag
                     |> Svg.withCss [ Css.marginRight (Css.px 8) ]
-                    |> Svg.withWidth (Css.px 25)
-                    |> Svg.withHeight (Css.px 30)
+                    |> Svg.withWidth (Css.px 17)
                     |> Svg.toHtml
                 , Svg.toHtml (Svg.withCss [ Css.marginRight (Css.px 8) ] icon)
                 , span [ css labelCss ] [ text label_ ]
