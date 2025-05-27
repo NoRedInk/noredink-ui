@@ -924,7 +924,7 @@ getBorder size width height includeBorder =
                 { topBorder = 1
                 , topPadding = 10
                 , bottomBorder = 3
-                , bottomPadding = 8
+                , bottomPadding = 10
                 }
 
             else
@@ -932,7 +932,7 @@ getBorder size width height includeBorder =
                 { topBorder = 1
                 , topPadding = 13
                 , bottomBorder = 4
-                , bottomPadding = 11
+                , bottomPadding = 13
                 }
 
         horizontalSettings =

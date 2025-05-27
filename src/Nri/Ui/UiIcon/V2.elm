@@ -31,7 +31,7 @@ module Nri.Ui.UiIcon.V2 exposing
     , school, college, company, homeSchool, graduateCap
     , flagUs, globe
     , info
-    , brain, projectorScreen, stretch
+    , brain, projectorScreen, stretch, clipboard
     , gradingAssistant, manuallyGraded
     )
 
@@ -69,7 +69,7 @@ module Nri.Ui.UiIcon.V2 exposing
 @docs school, college, company, homeSchool, graduateCap
 @docs flagUs, globe
 @docs info
-@docs brain, projectorScreen, stretch
+@docs brain, projectorScreen, stretch, clipboard
 @docs gradingAssistant, manuallyGraded
 
     import Html.Styled exposing (..)
@@ -1086,9 +1086,8 @@ sortArrowDown =
 checkmark : Nri.Ui.Svg.V1.Svg
 checkmark =
     Nri.Ui.Svg.V1.init "0 0 22 22"
-        [ Svg.g [ Attributes.fill "none" ] []
-        , Svg.path
-            [ Attributes.d "M4 13L7.5 16.5L18 5.5"
+        [ Svg.path
+            [ Attributes.d "M2 13.5455L6.5 18L20 4"
             , Attributes.stroke "currentColor"
             , Attributes.strokeWidth "2.5"
             , Attributes.strokeLinecap "round"
@@ -1402,23 +1401,24 @@ compass =
 activity : Nri.Ui.Svg.V1.Svg
 activity =
     Nri.Ui.Svg.V1.init "0 0 22 22"
-        [ Svg.g [ Attributes.fill "none" ]
-            [ Svg.path
-                [ Attributes.d "M5 11H7L9 7L13 15L15 11H17"
-                , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "2"
-                , Attributes.strokeLinecap "round"
-                , Attributes.strokeLinejoin "round"
-                ]
-                []
-            , Svg.path
-                [ Attributes.d "M20.5 3.5V18.5C20.5 19.6046 19.6046 20.5 18.5 20.5H3.5C2.39543 20.5 1.5 19.6046 1.5 18.5V3.5C1.5 2.39543 2.39543 1.5 3.5 1.5H18.5C19.6046 1.5 20.5 2.39543 20.5 3.5Z"
-                , Attributes.stroke "currentColor"
-                , Attributes.strokeWidth "2"
-                , Attributes.strokeLinejoin "round"
-                ]
-                []
+        [ Svg.path
+            [ Attributes.d "M3.31802 18.682C2 17.364 2 15.2426 2 11C2 6.75736 2 4.63604 3.31802 3.31802C4.63604 2 6.75736 2 11 2C15.2426 2 17.364 2 18.682 3.31802C20 4.63604 20 6.75736 20 11C20 15.2426 20 17.364 18.682 18.682C17.364 20 15.2426 20 11 20C6.75736 20 4.63604 20 3.31802 18.682Z"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "2"
+            , Attributes.strokeLinecap "round"
+            , Attributes.strokeLinejoin "round"
+            , Attributes.fill "none"
             ]
+            []
+        , Svg.path
+            [ Attributes.d "M5 11H7.5L9.5 7L12.5 15L14.5 11H17"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "2"
+            , Attributes.strokeLinecap "round"
+            , Attributes.strokeLinejoin "round"
+            , Attributes.fill "none"
+            ]
+            []
         ]
 
 
@@ -3064,11 +3064,20 @@ delete =
 {-| -}
 addSticker : Nri.Ui.Svg.V1.Svg
 addSticker =
-    Nri.Ui.Svg.V1.init "0 0 22 23"
+    Nri.Ui.Svg.V1.init "0 0 22 22"
         [ Svg.path
-            [ Attributes.d "M18 15V21M15 18H21M7 14C7.79811 15.2144 9.06876 16 10.5 16C11.9312 16 13.2019 15.2144 14 14M7.00785 8H7M14 8H13.9921M13.5 20.5166C12.557 20.8302 11.5483 21 10.5 21C5.25329 21 1 16.7467 1 11.5C1 6.25329 5.25329 2 10.5 2C15.7467 2 20 6.25329 20 11.5C20 11.8377 19.9824 12.1714 19.948 12.5"
+            [ Attributes.d "M18 14.5V20.5M15 17.5H21M7 13.5C7.79811 14.7144 9.06876 15.5 10.5 15.5C11.9312 15.5 13.2019 14.7144 14 13.5M13.5 20.0166C12.557 20.3302 11.5483 20.5 10.5 20.5C5.25329 20.5 1 16.2467 1 11C1 5.75329 5.25329 1.5 10.5 1.5C15.7467 1.5 20 5.75329 20 11C20 11.3377 19.9824 11.6714 19.948 12"
             , Attributes.stroke "currentColor"
             , Attributes.strokeWidth "2"
+            , Attributes.strokeLinecap "round"
+            , Attributes.strokeLinejoin "round"
+            , Attributes.fill "none"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M7.00785 7.5H7M14 7.5H13.9921"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "2.5"
             , Attributes.strokeLinecap "round"
             , Attributes.strokeLinejoin "round"
             , Attributes.fill "none"
@@ -3868,6 +3877,36 @@ practiceIcon =
             , Attributes.stroke "currentColor"
             , Attributes.strokeWidth "2"
             , Attributes.strokeLinecap "round"
+            , Attributes.fill "none"
+            ]
+            []
+        ]
+
+
+{-| -}
+clipboard : Nri.Ui.Svg.V1.Svg
+clipboard =
+    Nri.Ui.Svg.V1.init "0 0 22 22"
+        [ Svg.path
+            [ Attributes.d "M6.99805 15H10.998M6.99805 10H14.998"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "2"
+            , Attributes.strokeLinecap "round"
+            , Attributes.fill "none"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M6.5 2.5C4.9442 2.54667 4.01661 2.71984 3.37477 3.36227C2.49609 4.24177 2.49609 5.6573 2.49609 8.48836V14.9944C2.49609 17.8255 2.49609 19.241 3.37477 20.1205C4.25345 21 5.66767 21 8.49609 21H13.4961C16.3245 21 17.7387 21 18.6174 20.1205C19.4961 19.241 19.4961 17.8255 19.4961 14.9944V8.48836C19.4961 5.6573 19.4961 4.24177 18.6174 3.36228C17.9756 2.71984 17.048 2.54667 15.4922 2.5"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "2"
+            , Attributes.fill "none"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M6.49609 2.75C6.49609 1.7835 7.2796 1 8.24609 1H13.7461C14.7126 1 15.4961 1.7835 15.4961 2.75C15.4961 3.7165 14.7126 4.5 13.7461 4.5H8.24609C7.2796 4.5 6.49609 3.7165 6.49609 2.75Z"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "2"
+            , Attributes.strokeLinejoin "round"
             , Attributes.fill "none"
             ]
             []
