@@ -683,12 +683,21 @@ view defaultTriggerText attributes =
                 [ Fonts.baseFont
                 , Css.fontSize (Css.px 12)
                 , Css.fontWeight (Css.int 600)
-                , Css.color Colors.navy
+                , if isEffectivelyDisabled then
+                    Css.color Colors.gray45
+
+                  else
+                    Css.color Colors.navy
                 , Css.marginLeft (Css.px 10)
                 , Css.padding2 (Css.px 2) (Css.px 5)
-                , Css.backgroundColor Colors.white
+                , if isEffectivelyDisabled then
+                    backgroundColor Colors.gray92
+
+                  else
+                    backgroundColor Colors.white
                 , Css.position Css.relative
                 , Css.zIndex (Css.int 1)
+                , Css.borderRadius (Css.px 4)
                 ]
 
         labelNodeAttributes labelId config_ =
