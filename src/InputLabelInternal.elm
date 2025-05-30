@@ -42,7 +42,7 @@ view { for, label, theme } config =
             , Css.batch <|
                 if config.disabled then
                     [ Css.backgroundColor Colors.gray92
-                    , Css.color Colors.gray20
+                    , Css.color Colors.gray45
                     ]
 
                 else

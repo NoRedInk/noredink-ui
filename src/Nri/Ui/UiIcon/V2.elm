@@ -14,7 +14,7 @@ module Nri.Ui.UiIcon.V2 exposing
     , missingDocument, document, documents, text, texts
     , edit, highlighter, eraser
     , speechBalloon, speechBalloonOutline, mail
-    , arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick, sortArrow, sortArrowDown
+    , arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick, sortArrow, sortArrowDown, doubleArrow
     , checkmark, checkmarkInCircle, checkmarkInCircleInverse, emptyCircle, x, xInCircle
     , attention, exclamation
     , flag, star, starFilled, starOutline, no
@@ -52,7 +52,7 @@ module Nri.Ui.UiIcon.V2 exposing
 @docs missingDocument, document, documents, text, texts
 @docs edit, highlighter, eraser
 @docs speechBalloon, speechBalloonOutline, mail
-@docs arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick, sortArrow, sortArrowDown
+@docs arrowTop, arrowRight, arrowDown, arrowLeft, arrowPointingRight, arrowPointingRightThick, sortArrow, sortArrowDown, doubleArrow
 @docs checkmark, checkmarkInCircle, checkmarkInCircleInverse, emptyCircle, x, xInCircle
 @docs attention, exclamation
 @docs flag, star, starFilled, starOutline, no
@@ -1076,6 +1076,18 @@ sortArrowDown =
     Nri.Ui.Svg.V1.init "0 0 16 14"
         [ Svg.path
             [ Attributes.d "M14.0612 0.5C15.6071 0.5 16.5292 2.22796 15.6716 3.51797L9.61048 12.6356C8.84433 13.7881 7.15567 13.7881 6.38952 12.6356L0.328354 3.51797C-0.529211 2.22796 0.392881 0.5 1.93884 0.5H14.0612Z"
+            , Attributes.fill "currentColor"
+            ]
+            []
+        ]
+
+
+{-| -}
+doubleArrow : Nri.Ui.Svg.V1.Svg
+doubleArrow =
+    Nri.Ui.Svg.V1.init "0 0 22 22"
+        [ Svg.path
+            [ Attributes.d "M16.1162 12.6162C16.6043 12.1281 17.3956 12.1281 17.8838 12.6162C18.3719 13.1044 18.3719 13.8956 17.8838 14.3838L11.8838 20.3838C11.3956 20.8719 10.6043 20.8719 10.1162 20.3838L4.1162 14.3838L4.03026 14.2891C3.6298 13.7981 3.65855 13.0739 4.1162 12.6162C4.57385 12.1586 5.29809 12.1298 5.78905 12.5303L5.88377 12.6162L11 17.7324L16.1162 12.6162ZM10.2109 1.53027C10.7019 1.12978 11.4261 1.15855 11.8838 1.61621L17.8838 7.61621L17.9697 7.71094C18.3702 8.20191 18.3414 8.92613 17.8838 9.38379C17.4261 9.84145 16.7019 9.87021 16.2109 9.46973L16.1162 9.38379L11 4.26758L5.88377 9.38379C5.39562 9.87191 4.60434 9.87191 4.1162 9.38379C3.62805 8.89564 3.62807 8.10437 4.1162 7.61621L10.1162 1.61621L10.2109 1.53027Z"
             , Attributes.fill "currentColor"
             ]
             []
