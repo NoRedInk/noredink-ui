@@ -540,7 +540,7 @@ triggerStyles config =
     , Css.fontWeight (Css.int 600)
     , Css.color
         (if isEffectivelyDisabled then
-            Colors.gray45
+            Colors.gray20
 
          else
             Colors.navy
