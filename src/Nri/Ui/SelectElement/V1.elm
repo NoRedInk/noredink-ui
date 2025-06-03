@@ -50,6 +50,8 @@ import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.Text.V6 as Text
+import Nri.Ui.UiIcon.V2 as UiIcon
 
 
 
@@ -538,7 +540,7 @@ triggerStyles config =
     , Css.fontWeight (Css.int 600)
     , Css.color
         (if isEffectivelyDisabled then
-            Colors.gray45
+            Colors.gray20
 
          else
             Colors.navy
@@ -552,18 +554,14 @@ triggerStyles config =
         )
     , Css.height (Css.px 45)
     , Css.width (Css.pct 100)
-    , Css.paddingLeft
-        (if config.icon /= Nothing then
-            Css.px 35
-
-         else
-            Css.px 15
-        )
-    , Css.paddingRight (Css.px 15)
+    , Css.paddingLeft (Css.px 15)
+    , Css.paddingRight (Css.px 12)
     , Css.position Css.relative
     , Css.displayFlex
     , Css.alignItems Css.center
     , Css.justifyContent Css.spaceBetween
+    , Css.marginTop (px -7)
+    , Css.position Css.relative
     , selectElementVisualResets
     , if isEffectivelyDisabled then
         backgroundColor Colors.gray85
@@ -685,9 +683,21 @@ view defaultTriggerText attributes =
                 [ Fonts.baseFont
                 , Css.fontSize (Css.px 12)
                 , Css.fontWeight (Css.int 600)
-                , Css.color Colors.navy
-                , Css.marginBottom (Css.px 4)
-                , Css.display block
+                , if isEffectivelyDisabled then
+                    Css.color Colors.gray45
+
+                  else
+                    Css.color Colors.navy
+                , Css.marginLeft (Css.px 10)
+                , Css.padding2 (Css.px 2) (Css.px 5)
+                , if isEffectivelyDisabled then
+                    backgroundColor Colors.gray92
+
+                  else
+                    backgroundColor Colors.white
+                , Css.position Css.relative
+                , Css.zIndex (Css.int 1)
+                , Css.borderRadius (Css.px 4)
                 ]
 
         labelNodeAttributes labelId config_ =
@@ -704,8 +714,8 @@ view defaultTriggerText attributes =
                     let
                         iconHtml =
                             i
-                                |> Svg.withWidth (Css.px 20)
-                                |> Svg.withHeight (Css.px 20)
+                                |> Svg.withWidth (Css.px 17)
+                                |> Svg.withHeight (Css.px 17)
                                 |> Svg.toHtml
                                 |> Html.Styled.map never
                     in
@@ -722,10 +732,20 @@ view defaultTriggerText attributes =
         renderErrorOrGuidance =
             case ( config.error, config.guidance ) of
                 ( Just errMsg, _ ) ->
-                    div [ Attributes.css [ color Colors.red, fontSize (px 12), paddingTop (px 4) ] ] [ text errMsg ]
+                    div [ Attributes.css [ Css.marginTop (Css.px 4) ] ]
+                        [ Text.caption
+                            [ Text.css [ Css.color Colors.purple, Css.marginTop (Css.px 5) ]
+                            , Text.plaintext errMsg
+                            ]
+                        ]
 
                 ( Nothing, Just guidMsg ) ->
-                    div [ Attributes.css [ color Colors.gray20, fontSize (px 12), paddingTop (px 4) ] ] [ text guidMsg ]
+                    div [ Attributes.css [ Css.marginTop (Css.px 4) ] ]
+                        [ Text.caption
+                            [ Text.css []
+                            , Text.plaintext guidMsg
+                            ]
+                        ]
 
                 _ ->
                     Html.Styled.text ""
@@ -735,7 +755,8 @@ view defaultTriggerText attributes =
                 []
 
              else
-                [ Css.marginTop (Css.px 16) ]
+                [ Css.marginTop (Css.px 16)
+                ]
             )
                 ++ config.containerCss
     in
@@ -768,7 +789,12 @@ view defaultTriggerText attributes =
                     finalTriggerAttributes
                     (renderIcon
                         ++ [ span [ Attributes.css [ Css.flexGrow (Css.int 1), Css.textAlign Css.left ] ] [ text buttonLabelText ]
-                           , span [ class "arrow", Attributes.css [ Css.marginLeft (Css.px 5) ] ] [ text "▾" ]
+                           , div [ Attributes.css [ Css.displayFlex ] ]
+                                [ UiIcon.doubleArrow
+                                    |> Svg.withWidth (Css.px 17)
+                                    |> Svg.withHeight (Css.px 17)
+                                    |> Svg.toHtml
+                                ]
                            ]
                     )
                , node "select-element"

@@ -172,6 +172,7 @@ all =
         , ( "arrowPointingRightThick", UiIcon.arrowPointingRightThick, [] )
         , ( "sortArrow", UiIcon.sortArrow, [] )
         , ( "sortArrowDown", UiIcon.sortArrowDown, [] )
+        , ( "doubleArrow", UiIcon.doubleArrow, [] )
         ]
       )
     , ( "Checks"

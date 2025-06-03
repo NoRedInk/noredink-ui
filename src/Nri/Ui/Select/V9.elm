@@ -513,7 +513,11 @@ viewSelect config_ config =
             , Css.textOverflow Css.ellipsis
             , Css.overflow Css.hidden
             , Css.whiteSpace Css.noWrap
-            , Css.color Colors.navy
+            , if config.disabled then
+                Css.color Colors.gray45
+
+              else
+                Css.color Colors.navy
             , Css.marginTop (Css.px 2)
 
             -- Interaction
