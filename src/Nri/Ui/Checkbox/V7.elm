@@ -311,7 +311,7 @@ view { label, selected } attributes =
                     |> Maybe.map
                         (\msg ->
                             [ EventExtras.onClickStopPropagation msg
-                            , css [ cursor pointer, zIndex (int 1) ]
+                            , css [ cursor pointer ]
                             ]
                         )
                     |> Maybe.withDefault []
