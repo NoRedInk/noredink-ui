@@ -3907,6 +3907,7 @@ clipboard =
         ]
 
 
+{-| -}
 bookSearch : Nri.Ui.Svg.V1.Svg
 bookSearch =
     Nri.Ui.Svg.V1.init "0 0 17 16"
