@@ -108,6 +108,7 @@ all =
         , ( "info", UiIcon.info, [] )
         , ( "checklist", UiIcon.checklist, [] )
         , ( "review", UiIcon.review, [] )
+        , ( "bookSearch", UiIcon.bookSearch, [] )
         ]
       )
     , ( "Bulbs"
