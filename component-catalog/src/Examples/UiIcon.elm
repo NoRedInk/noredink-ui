@@ -268,4 +268,11 @@ all =
         , ( "manuallyGraded", UiIcon.manuallyGraded, [] )
         ]
       )
+    , ( "Language support"
+      , [ ( "translationForPracticeDirectionDisabled", UiIcon.translationForPracticeDirectionDisabled, [] )
+        , ( "translationForPracticeDirectionEnabled", UiIcon.translationForPracticeDirectionEnabled, [] )
+        , ( "wordLookTranslationDisabled", UiIcon.wordLookTranslationDisabled, [] )
+        , ( "wordLookTranslationEnabled", UiIcon.wordLookTranslationEnabled, [] )
+        ]
+      )
     ]

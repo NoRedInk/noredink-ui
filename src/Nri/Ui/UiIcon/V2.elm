@@ -33,6 +33,7 @@ module Nri.Ui.UiIcon.V2 exposing
     , info
     , brain, projectorScreen, stretch, clipboard
     , gradingAssistant, manuallyGraded
+    , translationForPracticeDirectionDisabled, translationForPracticeDirectionEnabled, wordLookTranslationDisabled, wordLookTranslationEnabled
     )
 
 {-| How to add new icons: <https://paper.dropbox.com/doc/How-to-create-a-new-SVG-icon-for-use-in-Elm--Ay9uhSLfGUAix0ERIiJ0Dm8dAg-8WNqtARdr4EgjmYEHPeYD>
@@ -71,6 +72,7 @@ module Nri.Ui.UiIcon.V2 exposing
 @docs info
 @docs brain, projectorScreen, stretch, clipboard
 @docs gradingAssistant, manuallyGraded
+@docs translationForPracticeDirectionDisabled, translationForPracticeDirectionEnabled, wordLookTranslationDisabled, wordLookTranslationEnabled
 
     import Html.Styled exposing (..)
     import Nri.Ui.Colors.V1 as Colors
@@ -3957,6 +3959,128 @@ bookSearch =
             , Attributes.strokeLinecap "round"
             , Attributes.strokeLinejoin "round"
             , Attributes.fill "none"
+            ]
+            []
+        ]
+
+
+{-| -}
+translationForPracticeDirectionDisabled : Nri.Ui.Svg.V1.Svg
+translationForPracticeDirectionDisabled =
+    Nri.Ui.Svg.V1.init "0 0 24 24"
+        [ Svg.g [ Attributes.fill "none" ] []
+        , Svg.path
+            [ Attributes.d "M6.52454 17.4755C6.58441 19.3676 6.79037 20.5282 7.49876 21.3914C7.6816 21.6141 7.88588 21.8184 8.10867 22.0012C9.32566 23 11.1338 23 14.75 23C18.3663 23 20.1743 23 21.3914 22.0012C21.6141 21.8184 21.8184 21.6141 22.0012 21.3914C23 20.1743 23 18.3663 23 14.75C23 11.1338 23 9.32566 22.0012 8.10867C21.8184 7.88588 21.6141 7.6816 21.3914 7.49876C20.5319 6.79344 19.3777 6.58621 17.5 6.52533M6.52454 17.4755C4.63239 17.4156 3.47184 17.2096 2.60867 16.5012C2.38588 16.3184 2.1816 16.1141 1.99876 15.8914C1 14.6743 1 12.8663 1 9.25C1 5.63377 1 3.82566 1.99876 2.60867C2.1816 2.38588 2.38588 2.1816 2.60867 1.99876C3.82566 1 5.63377 1 9.25 1C12.8663 1 14.6743 1 15.8914 1.99876C16.1141 2.1816 16.3184 2.38588 16.5012 2.60867C17.2096 3.47184 17.4156 4.63239 17.4755 6.52454C17.4755 6.52454 17.4755 6.52454 17.5 6.52533M6.52454 17.4755L17.5 6.52533"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "1.5"
+            , Attributes.fill "none"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M4.5 10.5L5.3333 8.5M5.3333 8.5L7 4.5L8.6667 8.5M5.3333 8.5H8.6667M9.5 10.5L8.6667 8.5"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "1.5"
+            , Attributes.strokeLinecap "round"
+            , Attributes.strokeLinejoin "round"
+            ]
+            []
+        ]
+
+
+{-| -}
+translationForPracticeDirectionEnabled : Nri.Ui.Svg.V1.Svg
+translationForPracticeDirectionEnabled =
+    Nri.Ui.Svg.V1.init
+        "0 0 24 24"
+        [ Svg.g [ Attributes.fill "none" ] []
+        , Svg.path
+            [ Attributes.d "M13.25 14.4655H16.4M16.4 14.4655H18.5M16.4 14.4655V13.5M20.25 14.4655H18.5M18.5 14.4655C18.1308 15.7859 17.3575 17.0341 16.475 18.131M16.475 18.131C15.7442 19.0394 14.9384 19.844 14.225 20.5M16.475 18.131C16.025 17.6035 15.395 16.7498 15.215 16.3636M16.475 18.131L17.825 19.5345"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "1.5"
+            , Attributes.strokeLinecap "round"
+            , Attributes.strokeLinejoin "round"
+            , Attributes.fill "none"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M6.52454 17.4755C6.58441 19.3676 6.79037 20.5282 7.49876 21.3914C7.6816 21.6141 7.88588 21.8184 8.10867 22.0012C9.32566 23 11.1338 23 14.75 23C18.3663 23 20.1743 23 21.3914 22.0012C21.6141 21.8184 21.8184 21.6141 22.0012 21.3914C23 20.1743 23 18.3663 23 14.75C23 11.1338 23 9.32566 22.0012 8.10867C21.8184 7.88588 21.6141 7.6816 21.3914 7.49876C20.5319 6.79344 19.3777 6.58621 17.5 6.52533M6.52454 17.4755C4.63239 17.4156 3.47184 17.2096 2.60867 16.5012C2.38588 16.3184 2.1816 16.1141 1.99876 15.8914C1 14.6743 1 12.8663 1 9.25C1 5.63377 1 3.82566 1.99876 2.60867C2.1816 2.38588 2.38588 2.1816 2.60867 1.99876C3.82566 1 5.63377 1 9.25 1C12.8663 1 14.6743 1 15.8914 1.99876C16.1141 2.1816 16.3184 2.38588 16.5012 2.60867C17.2096 3.47184 17.4156 4.63239 17.4755 6.52454C17.4755 6.52454 17.4755 6.52454 17.5 6.52533M6.52454 17.4755L17.5 6.52533"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "1.5"
+            , Attributes.fill "none"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M4.5 10.5L5.3333 8.5M5.3333 8.5L7 4.5L8.6667 8.5M5.3333 8.5H8.6667M9.5 10.5L8.6667 8.5"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "1.5"
+            , Attributes.strokeLinecap "round"
+            , Attributes.strokeLinejoin "round"
+            ]
+            []
+        ]
+
+
+{-| -}
+wordLookTranslationDisabled : Nri.Ui.Svg.V1.Svg
+wordLookTranslationDisabled =
+    Nri.Ui.Svg.V1.init "0 0 24 24"
+        [ Svg.g [ Attributes.fill "none" ] []
+        , Svg.path
+            [ Attributes.d "M21 23H5.25C4.00736 23 3 22.0151 3 20.8M3 20.8C3 19.5849 4.00736 18.6 5.25 18.6H21V5.4C21 3.32582 21 2.28873 20.341 1.64437C19.6819 1 18.6213 1 16.5 1H9.75C6.56802 1 4.97703 1 3.98852 1.96655C3 2.9331 3 4.48873 3 7.6V20.8Z"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "1.5"
+            , Attributes.strokeLinecap "round"
+            , Attributes.strokeLinejoin "round"
+            , Attributes.fill "none"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M20 19C20 19 19 19.7628 19 21C19 22.2372 20 23 20 23"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "1.5"
+            , Attributes.strokeLinecap "round"
+            , Attributes.strokeLinejoin "round"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M9.45471 7.4541L14.5456 12.545M14.5456 7.4541L9.45471 12.545"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "1.5"
+            , Attributes.strokeLinecap "round"
+            , Attributes.strokeLinejoin "round"
+            ]
+            []
+        ]
+
+
+{-| -}
+wordLookTranslationEnabled : Nri.Ui.Svg.V1.Svg
+wordLookTranslationEnabled =
+    Nri.Ui.Svg.V1.init "0 0 24 24"
+        [ Svg.g [ Attributes.fill "none" ] []
+        , Svg.path
+            [ Attributes.d "M21 23H5.25C4.00736 23 3 22.0151 3 20.8M3 20.8C3 19.5849 4.00736 18.6 5.25 18.6H21V5.4C21 3.32582 21 2.28873 20.341 1.64437C19.6819 1 18.6213 1 16.5 1H9.75C6.56802 1 4.97703 1 3.98852 1.96655C3 2.9331 3 4.48873 3 7.6V20.8Z"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "1.5"
+            , Attributes.strokeLinecap "round"
+            , Attributes.strokeLinejoin "round"
+            , Attributes.fill "none"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M20 19C20 19 19 19.7628 19 21C19 22.2372 20 23 20 23"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "1.5"
+            , Attributes.strokeLinecap "round"
+            , Attributes.strokeLinejoin "round"
+            ]
+            []
+        , Svg.path
+            [ Attributes.d "M8 6.24138H12.05M12.05 6.24138H14.75M12.05 6.24138V5M17 6.24138H14.75M14.75 6.24138C14.2753 7.93906 13.2811 9.54384 12.1464 10.9542M12.1464 10.9542C11.2068 12.122 10.1708 13.1565 9.25357 14M12.1464 10.9542C11.5679 10.2759 10.7579 9.17837 10.5264 8.68182M12.1464 10.9542L13.8821 12.7586"
+            , Attributes.stroke "currentColor"
+            , Attributes.strokeWidth "1.5"
+            , Attributes.strokeLinecap "round"
+            , Attributes.strokeLinejoin "round"
             ]
             []
         ]
