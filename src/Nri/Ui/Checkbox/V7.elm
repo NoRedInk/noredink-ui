@@ -545,7 +545,6 @@ viewIcon styles icon =
                 , backgroundColor Colors.white
                 , height (Css.px checkboxIconHeight)
                 , borderRadius (px 4)
-                , zIndex (int 2)
                 , position relative -- for z index to work
                 ]
             ]
