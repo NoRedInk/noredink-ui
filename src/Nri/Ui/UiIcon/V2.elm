@@ -1529,7 +1529,7 @@ playInCircle =
             [ Attributes.d "M11 21C16.5228 21 21 16.5228 21 11C21 5.47715 16.5228 1 11 1C5.47715 1 1 5.47715 1 11C1 16.5228 5.47715 21 11 21Z"
             , Attributes.stroke "currentColor"
             , Attributes.strokeWidth "2"
-            , Attributes.fill "none"
+            , Attributes.fill "var(--circle-fill-color, none)"
             ]
             []
         , Svg.path
@@ -1565,7 +1565,7 @@ stopInCircle =
             [ Attributes.d "M11 21C16.5228 21 21 16.5228 21 11C21 5.47715 16.5228 1 11 1C5.47715 1 1 5.47715 1 11C1 16.5228 5.47715 21 11 21Z"
             , Attributes.stroke "currentColor"
             , Attributes.strokeWidth "2"
-            , Attributes.fill "none"
+            , Attributes.fill "var(--circle-fill-color, none)"
             ]
             []
         , Svg.path
@@ -1585,7 +1585,7 @@ pauseInCircle =
             [ Attributes.d "M11 21C16.5228 21 21 16.5228 21 11C21 5.47715 16.5228 1 11 1C5.47715 1 1 5.47715 1 11C1 16.5228 5.47715 21 11 21Z"
             , Attributes.stroke "currentColor"
             , Attributes.strokeWidth "2"
-            , Attributes.fill "none"
+            , Attributes.fill "var(--circle-fill-color, none)"
             ]
             []
         , Svg.path
