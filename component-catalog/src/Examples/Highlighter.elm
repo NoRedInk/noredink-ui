@@ -28,7 +28,7 @@ import Nri.Ui.Highlightable.V3 as Highlightable exposing (Highlightable)
 import Nri.Ui.Highlighter.V6 as Highlighter
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Spacing.V1 as Spacing
-import Nri.Ui.Table.V8 as Table
+import Nri.Ui.Table.V9 as Table
 import Nri.Ui.Text.V6 as Text
 import Sort exposing (Sorter)
 

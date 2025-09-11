@@ -21,7 +21,7 @@ import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
-import Nri.Ui.Table.V8 as Table
+import Nri.Ui.Table.V9 as Table
 import Nri.Ui.Text.V6 as Text
 import Svg.Styled
 import Svg.Styled.Attributes

@@ -33,7 +33,7 @@ import Nri.Ui.FocusRing.V1 as FocusRing
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Html.Attributes.V2 as Attributes
 import Nri.Ui.Html.V3 exposing (viewJust)
-import Nri.Ui.Table.V8 as Table
+import Nri.Ui.Table.V9 as Table
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V2 as UiIcon
 import Routes

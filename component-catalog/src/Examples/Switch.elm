@@ -20,7 +20,7 @@ import KeyboardSupport exposing (Key(..))
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Switch.V4 as Switch
-import Nri.Ui.Table.V8 as Table
+import Nri.Ui.Table.V9 as Table
 import Nri.Ui.Tooltip.V3 as Tooltip
 
 

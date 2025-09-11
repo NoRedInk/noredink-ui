@@ -16,7 +16,7 @@ import Example exposing (Example)
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
-import Nri.Ui.Table.V8 as Table exposing (Column)
+import Nri.Ui.Table.V9 as Table exposing (AlternatingRowColors, Column)
 import Nri.Ui.Text.V6 as Text
 
 
@@ -32,7 +32,7 @@ moduleName =
 
 version : Int
 version =
-    8
+    9
 
 
 {-| -}
@@ -74,7 +74,7 @@ example =
     , view =
         \ellieLinkConfig state ->
             let
-                { showHeader, isLoading, disableAlternatingRowColors, backgroundChangeOnRowHover } =
+                { showHeader, isLoading, alternatingRowColors, backgroundChangeOnRowHover } =
                     Control.currentValue state
 
                 ( columnsCode, columns ) =
@@ -82,11 +82,15 @@ example =
 
                 tableAttributes =
                     List.concat
-                        [ if disableAlternatingRowColors then
-                            [ Table.disableAlternatingRowColors ]
+                        [ case alternatingRowColors of
+                            Table.None ->
+                                [ Table.alternatingRowColors Table.None ]
 
-                          else
-                            []
+                            Table.Odd ->
+                                []
+
+                            Table.Even ->
+                                [ Table.alternatingRowColors Table.Even ]
                         , if backgroundChangeOnRowHover then
                             [ Table.backgroundChangeOnRowHover ]
 
@@ -118,11 +122,15 @@ example =
                                         ++ " "
                                         ++ Code.list
                                             (List.concat
-                                                [ if disableAlternatingRowColors then
-                                                    [ "Table.disableAlternatingRowColors" ]
+                                                [ case alternatingRowColors of
+                                                    Table.None ->
+                                                        [ "Table.alternatingRowColors None" ]
 
-                                                  else
-                                                    []
+                                                    Table.Even ->
+                                                        [ "Table.alternatingRowColors Even" ]
+
+                                                    Table.Odd ->
+                                                        []
                                                 , if backgroundChangeOnRowHover then
                                                     [ "Table.backgroundChangeOnRowHover" ]
 
@@ -227,8 +235,8 @@ update msg state =
 type alias Settings =
     { showHeader : Bool
     , isLoading : Bool
-    , disableAlternatingRowColors : Bool
     , backgroundChangeOnRowHover : Bool
+    , alternatingRowColors : AlternatingRowColors
     }
 
 
@@ -237,8 +245,14 @@ controlSettings =
     Control.record Settings
         |> Control.field "visible header" (Control.bool True)
         |> Control.field "is loading" (Control.bool False)
-        |> Control.field "disableAlternatingRowColors" (Control.bool False)
         |> Control.field "backgroundChangeOnRowHover" (Control.bool False)
+        |> Control.field "alternatingRowColors"
+            (Control.choice
+                [ ( "Odd", Control.value Table.Odd )
+                , ( "Even", Control.value Table.Even )
+                , ( "None", Control.value Table.None )
+                ]
+            )
 
 
 type alias Datum =

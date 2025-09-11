@@ -20,7 +20,7 @@ import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.RingGauge.V1 as RingGauge
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Table.V8 as Table
+import Nri.Ui.Table.V9 as Table
 import Round
 import SolidColor.Accessibility
 

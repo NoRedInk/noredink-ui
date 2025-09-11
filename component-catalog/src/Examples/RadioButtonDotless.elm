@@ -19,7 +19,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.RadioButtonDotless.V1 as RadioButtonDotless
 import Nri.Ui.Spacing.V1 as Spacing
-import Nri.Ui.Table.V8 as Table
+import Nri.Ui.Table.V9 as Table
 import Nri.Ui.Text.V6 as Text
 import Platform.Sub as Sub
 

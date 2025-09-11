@@ -67,7 +67,7 @@ import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1
-import Nri.Ui.Table.V8 as Table exposing (SortDirection(..))
+import Nri.Ui.Table.V9 as Table exposing (SortDirection(..))
 import Nri.Ui.UiIcon.V2
 import Sort
 import Sort.Dict as Dict
