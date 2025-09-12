@@ -28,6 +28,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Events as Events
 import InputErrorAndGuidanceInternal
 import InputLabelInternal
+import List.Nonempty
 import Nri.Ui.Checkbox.V7 as Checkbox
 import Nri.Ui.Colors.Extra exposing (fromCssColor, toCssColor)
 import Nri.Ui.Colors.V1 as Colors
@@ -479,6 +480,7 @@ colorPicker selectedColor =
             ]
             []
         , Examples.Colors.all
+            |> List.Nonempty.toList
             |> List.map (\( name, color ) -> Html.option [ Attributes.value color.value ] [])
             |> Html.datalist [ Attributes.id "noredink-ui-colors" ]
         ]
@@ -493,6 +495,7 @@ toCustomizableExampleResults state =
         selectedNriUiColor : Maybe String
         selectedNriUiColor =
             Examples.Colors.all
+                |> List.Nonempty.toList
                 |> List.filterMap
                     (\( name, color ) ->
                         if fromCssColor color == state.color then

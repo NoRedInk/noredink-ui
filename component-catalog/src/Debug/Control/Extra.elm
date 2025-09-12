@@ -3,7 +3,7 @@ module Debug.Control.Extra exposing
     , optionalBoolListItem, optionalBoolListItemDefaultChecked
     , bool
     , rotatedChoice, specificChoice
-    , listItems
+    , listItems, rotate, rotateN
     )
 
 {-|
@@ -18,13 +18,13 @@ module Debug.Control.Extra exposing
 import Code
 import Debug.Control as Control exposing (Control)
 import List.Extra
+import List.Nonempty exposing (Nonempty(..))
 
 
 {-| -}
-values : (a -> String) -> List a -> Control a
+values : (a -> String) -> Nonempty a -> Control a
 values toString nums =
-    nums
-        |> List.map (\n -> ( toString n, Control.value n ))
+    List.Nonempty.map (\n -> ( toString n, Control.value n )) nums
         |> Control.choice
 
 
@@ -96,20 +96,40 @@ bool default =
 
 
 {-| -}
-rotatedChoice : Int -> List ( String, Control a ) -> Control a
-rotatedChoice rotateWith options =
-    let
-        ( before, after ) =
-            List.Extra.splitAt rotateWith options
-    in
-    Control.choice (after ++ before)
+rotatedChoice : Int -> Nonempty ( String, Control a ) -> Control a
+rotatedChoice rotateWith list =
+    rotateN rotateWith list |> Control.choice
 
 
 {-| -}
-specificChoice : String -> List ( String, Control a ) -> Control a
-specificChoice match options =
+specificChoice : String -> Nonempty ( String, Control a ) -> Control a
+specificChoice match (Nonempty first rest) =
     let
         ( before, after ) =
-            List.Extra.break (Tuple.first >> (==) match) options
+            List.Extra.break (Tuple.first >> (==) match) (first :: rest)
     in
-    Control.choice (after ++ before)
+    case after ++ before of
+        [] ->
+            Control.choice (Nonempty first rest)
+
+        x :: xs ->
+            Control.choice (Nonempty x xs)
+
+
+rotate : Nonempty a -> Nonempty a
+rotate (Nonempty e es) =
+    case es of
+        [] ->
+            Nonempty e []
+
+        x :: xs ->
+            Nonempty x (xs ++ [ e ])
+
+
+rotateN : Int -> Nonempty a -> Nonempty a
+rotateN n list =
+    if n == 0 then
+        list
+
+    else
+        rotateN (n - 1) (rotate list)

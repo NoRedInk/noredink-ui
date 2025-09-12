@@ -16,6 +16,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css, href)
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.AssignmentIcon.V2 as AssignmentIcon
 import Nri.Ui.BreadCrumbs.V2 as BreadCrumbs exposing (BreadCrumbAttribute, BreadCrumbs)
 import Nri.Ui.ClickableText.V4 as ClickableText
@@ -386,9 +387,10 @@ controlBreadCrumbs_ name index =
                 (Control.list
                     |> CommonControls.customIcon
                         (CommonControls.choice "UiIcon"
-                            [ ( "homeInCircle", UiIcon.homeInCircle )
-                            , ( "home", UiIcon.home )
-                            ]
+                            (Nonempty ( "homeInCircle", UiIcon.homeInCircle )
+                                [ ( "home", UiIcon.home )
+                                ]
+                            )
                         )
                         moduleName
                         BreadCrumbs.icon

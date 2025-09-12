@@ -9,6 +9,7 @@ module UsageExamples.PerformancePlayground exposing (Msg, State, example)
 import Css
 import Debug.Control as Control exposing (Control)
 import Html.Styled exposing (..)
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V4 as ClickableText
@@ -115,13 +116,14 @@ init =
         Control.record Config
             |> Control.field "Control"
                 (Control.choice
-                    [ ( "Plain button", Control.value PlainButton )
-                    , ( "Plain text", Control.value PlainText )
-                    , ( "Nri.Ui.Button", Control.value Button )
-                    , ( "Nri.Ui.ClickableText", Control.value ClickableText )
-                    , ( "Nri.Ui.ClickableSvg", Control.value ClickableSvg )
-                    , ( "Nri.Ui.Tooltip", Control.value Tooltip )
-                    ]
+                    (Nonempty ( "Plain button", Control.value PlainButton )
+                        [ ( "Plain text", Control.value PlainText )
+                        , ( "Nri.Ui.Button", Control.value Button )
+                        , ( "Nri.Ui.ClickableText", Control.value ClickableText )
+                        , ( "Nri.Ui.ClickableSvg", Control.value ClickableSvg )
+                        , ( "Nri.Ui.Tooltip", Control.value Tooltip )
+                        ]
+                    )
                 )
             |> Control.field "Count" (Control.int 1)
     , openTooltip = Nothing

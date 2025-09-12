@@ -16,6 +16,7 @@ import Example exposing (Example)
 import Guidance
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
@@ -164,35 +165,37 @@ controlPageType =
         choiceWithModuleName name value =
             ( name, Control.value ( moduleName ++ "." ++ name, value ) )
     in
-    [ ( "httpError"
-      , Control.map
+    Nonempty
+        ( "httpError"
+        , Control.map
             (\err ->
                 ( moduleName ++ ".httpError httpError"
                 , Page.httpError err
                 )
             )
             CommonControls.httpError
-      )
-    , choiceWithModuleName "broken" Page.broken
-    , ( "blockedV4"
-      , Control.value
-            ( "Page.blockedV4 " ++ Code.string "Error message details"
-            , Page.blockedV4 "Error message details"
-            )
-      )
-    , choiceWithModuleName "notFound" Page.notFound
-    , choiceWithModuleName "noPermission" Page.noPermission
-    , choiceWithModuleName "loggedOut" Page.loggedOut
-    , choiceWithModuleName "timeOut" Page.timeOut
-    , choiceWithModuleName "networkError" Page.networkError
-    ]
+        )
+        [ choiceWithModuleName "broken" Page.broken
+        , ( "blockedV4"
+          , Control.value
+                ( "Page.blockedV4 " ++ Code.string "Error message details"
+                , Page.blockedV4 "Error message details"
+                )
+          )
+        , choiceWithModuleName "notFound" Page.notFound
+        , choiceWithModuleName "noPermission" Page.noPermission
+        , choiceWithModuleName "loggedOut" Page.loggedOut
+        , choiceWithModuleName "timeOut" Page.timeOut
+        , choiceWithModuleName "networkError" Page.networkError
+        ]
         |> Control.choice
 
 
 initRecoveryText : Control RecoveryText
 initRecoveryText =
     Control.choice
-        [ ( "Page.Reload", Control.value Page.Reload )
-        , ( "Page.ReturnTo", Control.map Page.ReturnTo (Control.string "Home") )
-        , ( "Page.Custom", Control.map Custom (Control.string "Hit the road, Jack") )
-        ]
+        (Nonempty ( "Page.Reload", Control.value Page.Reload )
+            [ ( "Page.ReturnTo", Control.map Page.ReturnTo (Control.string "Home") )
+            , ( "Page.Custom", Control.map Custom (Control.string "Hit the road, Jack") )
+            ]
+        )

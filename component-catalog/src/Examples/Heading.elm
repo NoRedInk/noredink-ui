@@ -15,6 +15,7 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (..)
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
@@ -141,10 +142,11 @@ controlContent =
 controlStyle : Control ( String, Heading.Attribute msg )
 controlStyle =
     CommonControls.choice moduleName
-        [ ( "top", Heading.top )
-        , ( "subhead", Heading.subhead )
-        , ( "small", Heading.small )
-        ]
+        (Nonempty ( "top", Heading.top )
+            [ ( "subhead", Heading.subhead )
+            , ( "small", Heading.small )
+            ]
+        )
 
 
 type alias Settings =

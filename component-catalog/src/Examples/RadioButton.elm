@@ -25,6 +25,7 @@ import Guidance
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
+import List.Nonempty exposing (Nonempty(..))
 import Markdown
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableText.V4 as ClickableText
@@ -603,41 +604,45 @@ controlAttributes =
             (Control.list
                 |> ControlExtra.optionalListItem "containerCss"
                     (Control.choice
-                        [ ( "max-width with border"
-                          , Control.value
+                        (Nonempty
+                            ( "max-width with border"
+                            , Control.value
                                 ( "RadioButton.containerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]"
                                 , RadioButton.containerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]
                                 )
-                          )
-                        , ( "backgroundColor aquaLight"
-                          , Control.value
-                                ( "RadioButton.containerCss [ Css.backgroundColor Colors.aquaLight ]"
-                                , RadioButton.containerCss [ Css.backgroundColor Colors.aquaLight ]
-                                )
-                          )
-                        , ( "10px left margin"
-                          , Control.value
-                                ( "RadioButton.containerCss [ Css.marginLeft (Css.px 10) ]"
-                                , RadioButton.containerCss [ Css.marginLeft (Css.px 10) ]
-                                )
-                          )
-                        ]
+                            )
+                            [ ( "backgroundColor aquaLight"
+                              , Control.value
+                                    ( "RadioButton.containerCss [ Css.backgroundColor Colors.aquaLight ]"
+                                    , RadioButton.containerCss [ Css.backgroundColor Colors.aquaLight ]
+                                    )
+                              )
+                            , ( "10px left margin"
+                              , Control.value
+                                    ( "RadioButton.containerCss [ Css.marginLeft (Css.px 10) ]"
+                                    , RadioButton.containerCss [ Css.marginLeft (Css.px 10) ]
+                                    )
+                              )
+                            ]
+                        )
                     )
                 |> ControlExtra.optionalListItem "labelCss"
                     (Control.choice
-                        [ ( "backgroundColor highlightMagenta"
-                          , Control.value
+                        (Nonempty
+                            ( "backgroundColor highlightMagenta"
+                            , Control.value
                                 ( "RadioButton.labelCss [ Css.backgroundColor Colors.highlightMagenta ]"
                                 , RadioButton.labelCss [ Css.backgroundColor Colors.highlightMagenta ]
                                 )
-                          )
-                        , ( "1px ochreDark border"
-                          , Control.value
-                                ( "RadioButton.labelCss [ Css.border3 (Css.px 1) Css.solid Colors.ochreDark ]"
-                                , RadioButton.labelCss [ Css.border3 (Css.px 1) Css.solid Colors.ochreDark ]
-                                )
-                          )
-                        ]
+                            )
+                            [ ( "1px ochreDark border"
+                              , Control.value
+                                    ( "RadioButton.labelCss [ Css.border3 (Css.px 1) Css.solid Colors.ochreDark ]"
+                                    , RadioButton.labelCss [ Css.border3 (Css.px 1) Css.solid Colors.ochreDark ]
+                                    )
+                              )
+                            ]
+                        )
                     )
                 |> ControlExtra.optionalListItem "label visibility" labelVisibility
             )
@@ -646,17 +651,19 @@ controlAttributes =
 labelVisibility : Control ( String, RadioButton.Attribute Selection Msg )
 labelVisibility =
     Control.choice
-        [ ( "hiddenLabel", Control.value ( "RadioButton.hiddenLabel", RadioButton.hiddenLabel ) )
-        , ( "visibleLabel", Control.value ( "RadioButton.visibleLabel", RadioButton.visibleLabel ) )
-        ]
+        (Nonempty ( "hiddenLabel", Control.value ( "RadioButton.hiddenLabel", RadioButton.hiddenLabel ) )
+            [ ( "visibleLabel", Control.value ( "RadioButton.visibleLabel", RadioButton.visibleLabel ) )
+            ]
+        )
 
 
 disabledOrEnabled : Control ( String, RadioButton.Attribute Selection Msg )
 disabledOrEnabled =
     Control.choice
-        [ ( "disabled", Control.value ( "RadioButton.disabled", RadioButton.disabled ) )
-        , ( "enabled", Control.value ( "RadioButton.enabled", RadioButton.enabled ) )
-        ]
+        (Nonempty ( "disabled", Control.value ( "RadioButton.disabled", RadioButton.disabled ) )
+            [ ( "enabled", Control.value ( "RadioButton.enabled", RadioButton.enabled ) )
+            ]
+        )
 
 
 onLockedClick : Control ( String, RadioButton.Attribute Selection Msg )
