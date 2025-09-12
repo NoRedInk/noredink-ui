@@ -77,6 +77,7 @@
         "Nri.Ui.Svg.V1",
         "Nri.Ui.Switch.V4",
         "Nri.Ui.Table.V8",
+        "Nri.Ui.Table.V9",
         "Nri.Ui.Tabs.V6",
         "Nri.Ui.Tabs.V9",
         "Nri.Ui.TabsMinimal.V1",
@@ -85,6 +86,7 @@
         "Nri.Ui.TextArea.V5",
         "Nri.Ui.TextInput.V8",
         "Nri.Ui.Tooltip.V3",
+        "Nri.Ui.UiIcon.V1",
         "Nri.Ui.UiIcon.V2"
     ]
 }

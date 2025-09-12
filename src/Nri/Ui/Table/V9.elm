@@ -7,9 +7,7 @@ module Nri.Ui.Table.V9 exposing
 
 {-| Upgrading from V8:
 
-  - New API using list of attributes.
   - Adds option to set alternating row colors (alternatingRowColors)
-  - Adds option to enable background color changes on the hovered row (backgroundChangeOnRowHover)
 
 @docs Column, SortDirection, custom, string, rowHeader, placeholderColumn
 @docs Attribute, css, AlternatingRowColors, alternatingRowColors, backgroundChangeOnRowHover
@@ -152,13 +150,15 @@ css styles =
             { config | css = config.css ++ styles }
 
 
+{-| Row color alternating options
+-}
 type AlternatingRowColors
     = None
     | Odd
     | Even
 
 
-{-| disable alternating row colors, default behavior alternates row colors
+{-| Customize alternating row colors, default behavior alternates row colors by graying odd rows.
 -}
 alternatingRowColors : AlternatingRowColors -> Attribute
 alternatingRowColors alternatingColors =
