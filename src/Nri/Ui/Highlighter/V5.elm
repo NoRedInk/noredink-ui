@@ -82,6 +82,7 @@ import Json.Decode
 import List.Extra
 import Markdown.Block
 import Markdown.Inline
+import Nri.Ui.CssVendorPrefix.V1 as CssVendorPrefix
 import Nri.Ui.Highlightable.V3 as Highlightable exposing (Highlightable)
 import Nri.Ui.HighlighterTool.V1 as Tool
 import Nri.Ui.Html.Attributes.V2 as AttributesExtra
@@ -1670,7 +1671,7 @@ unmarkedHighlightableStyles config highlightable =
                     isHovered =
                         directlyHoveringInteractiveSegment config highlightable
                 in
-                Css.property "user-select" "none"
+                CssVendorPrefix.property "user-select" "none"
                     :: (case tool of
                             Tool.Marker marker ->
                                 if isHinted_ then
@@ -1767,7 +1768,7 @@ markedHighlightableStyles ({ maybeTool, mouseOverIndex, hintingIndices } as conf
             in
             case tool of
                 Tool.Marker marker ->
-                    [ Css.property "user-select" "none"
+                    [ CssVendorPrefix.property "user-select" "none"
                     , case List.head marked of
                         Just markedWith ->
                             if isHinted_ then
@@ -1801,7 +1802,7 @@ markedHighlightableStyles ({ maybeTool, mouseOverIndex, hintingIndices } as conf
                 Tool.Eraser eraser_ ->
                     case List.head marked of
                         Just markedWith ->
-                            [ Css.property "user-select" "none"
+                            [ CssVendorPrefix.property "user-select" "none"
                             , Css.batch markedWith.highlightClass
                             , Css.batch
                                 (if isHinted_ then
@@ -1816,7 +1817,7 @@ markedHighlightableStyles ({ maybeTool, mouseOverIndex, hintingIndices } as conf
                             ]
 
                         Nothing ->
-                            [ Css.property "user-select" "none", Css.backgroundColor Css.transparent ]
+                            [ CssVendorPrefix.property "user-select" "none", Css.backgroundColor Css.transparent ]
 
 
 {-| Helper for `on` to preventDefault.
