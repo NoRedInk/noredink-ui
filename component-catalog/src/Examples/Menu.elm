@@ -25,6 +25,7 @@ import Examples.ClickableText
 import Guidance
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V4 as ClickableText
@@ -983,9 +984,10 @@ initSettings =
         |> Control.field "withTooltip" (Control.bool False)
         |> Control.field "entriesKind"
             (Control.choice
-                [ ( "Single", Control.value Single )
-                , ( "Group", Control.value Group )
-                ]
+                (Nonempty ( "Single", Control.value Single )
+                    [ ( "Group", Control.value Group )
+                    ]
+                )
             )
 
 
@@ -998,51 +1000,57 @@ initSettingAttributes =
                 |> ControlExtra.optionalListItem "menuWidth" controlMenuWidth
                 |> ControlExtra.optionalListItem "containerCss"
                     (Control.choice
-                        [ ( "max-width with border"
-                          , Control.value
+                        (Nonempty
+                            ( "max-width with border"
+                            , Control.value
                                 ( "Menu.containerCss [ maxWidth (px 200), border3 (px 1) solid red ]"
                                 , Menu.containerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]
                                 )
-                          )
-                        , ( "10px right margin"
-                          , Control.value
-                                ( "Menu.containerCss [ marginRight (px 10) ]"
-                                , Menu.containerCss [ Css.marginRight (Css.px 10) ]
-                                )
-                          )
-                        ]
+                            )
+                            [ ( "10px right margin"
+                              , Control.value
+                                    ( "Menu.containerCss [ marginRight (px 10) ]"
+                                    , Menu.containerCss [ Css.marginRight (Css.px 10) ]
+                                    )
+                              )
+                            ]
+                        )
                     )
                 |> ControlExtra.optionalListItem "groupContainerCss"
                     (Control.choice
-                        [ ( "max-width with border"
-                          , Control.value
+                        (Nonempty
+                            ( "max-width with border"
+                            , Control.value
                                 ( "Menu.groupContainerCss [ maxWidth (px 200), border3 (px 1) solid red ]"
                                 , Menu.groupContainerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]
                                 )
-                          )
-                        , ( "10px right margin"
-                          , Control.value
-                                ( "Menu.groupContainerCss [ marginRight (px 10) ]"
-                                , Menu.groupContainerCss [ Css.marginRight (Css.px 10) ]
-                                )
-                          )
-                        ]
+                            )
+                            [ ( "10px right margin"
+                              , Control.value
+                                    ( "Menu.groupContainerCss [ marginRight (px 10) ]"
+                                    , Menu.groupContainerCss [ Css.marginRight (Css.px 10) ]
+                                    )
+                              )
+                            ]
+                        )
                     )
                 |> ControlExtra.optionalListItem "entryContainerCss"
                     (Control.choice
-                        [ ( "max-width with border"
-                          , Control.value
+                        (Nonempty
+                            ( "max-width with border"
+                            , Control.value
                                 ( "Menu.entryContainerCss [ maxWidth (px 200), border3 (px 1) solid red ]"
                                 , Menu.entryContainerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]
                                 )
-                          )
-                        , ( "10px right margin"
-                          , Control.value
-                                ( "Menu.entryContainerCss [ marginRight (px 10) ]"
-                                , Menu.entryContainerCss [ Css.marginRight (Css.px 10) ]
-                                )
-                          )
-                        ]
+                            )
+                            [ ( "10px right margin"
+                              , Control.value
+                                    ( "Menu.entryContainerCss [ marginRight (px 10) ]"
+                                    , Menu.entryContainerCss [ Css.marginRight (Css.px 10) ]
+                                    )
+                              )
+                            ]
+                        )
                     )
             )
         |> ControlExtra.listItems "triggering element"
@@ -1056,100 +1064,104 @@ initSettingAttributes =
 controlAlignment : Control ( String, Menu.Attribute msg )
 controlAlignment =
     CommonControls.choice moduleName
-        [ ( "alignLeft", Menu.alignLeft ), ( "alignRight", Menu.alignRight ) ]
+        (Nonempty ( "alignLeft", Menu.alignLeft )
+            [ ( "alignRight", Menu.alignRight ) ]
+        )
 
 
 controlTrigger : Control ( String, Menu.Attribute msg )
 controlTrigger =
     Control.choice
-        [ ( "defaultTrigger"
-          , Control.map
+        (Nonempty
+            ( "defaultTrigger"
+            , Control.map
                 (\( c, a ) ->
                     ( "Menu.defaultTrigger " ++ Code.string "Menu" ++ " " ++ Code.list c
                     , Menu.defaultTrigger "Menu" a
                     )
                 )
                 controlButtonAttributes
-          )
-        , ( "button"
-          , Control.map
-                (\( c, a ) ->
-                    ( "Menu.button " ++ Code.string "Menu" ++ " " ++ Code.list c
-                    , Menu.button "Menu" a
+            )
+            [ ( "button"
+              , Control.map
+                    (\( c, a ) ->
+                        ( "Menu.button " ++ Code.string "Menu" ++ " " ++ Code.list c
+                        , Menu.button "Menu" a
+                        )
                     )
-                )
-                controlButtonAttributes
-          )
-        , ( "clickableText"
-          , Control.map
-                (\( c, a ) ->
-                    ( "Menu.clickableText " ++ Code.string "Menu" ++ " " ++ Code.list c
-                    , Menu.clickableText "Menu" a
+                    controlButtonAttributes
+              )
+            , ( "clickableText"
+              , Control.map
+                    (\( c, a ) ->
+                        ( "Menu.clickableText " ++ Code.string "Menu" ++ " " ++ Code.list c
+                        , Menu.clickableText "Menu" a
+                        )
                     )
-                )
-                controlClickableTextAttributes
-          )
-        , ( "clickableSvg"
-          , Control.map
-                (\( ( iconStr, icon ), ( withBorderStr, withBorder ) ) ->
-                    ( "Menu.clickableSvg "
-                        ++ Code.string "Menu"
-                        ++ " "
-                        ++ iconStr
-                        ++ " "
-                        ++ Code.list
+                    controlClickableTextAttributes
+              )
+            , ( "clickableSvg"
+              , Control.map
+                    (\( ( iconStr, icon ), ( withBorderStr, withBorder ) ) ->
+                        ( "Menu.clickableSvg "
+                            ++ Code.string "Menu"
+                            ++ " "
+                            ++ iconStr
+                            ++ " "
+                            ++ Code.list
+                                (if withBorder then
+                                    [ "ClickableSvg.withBorder", "ClickableSvg.exactWidth 55" ]
+
+                                 else
+                                    []
+                                )
+                        , Menu.clickableSvg "Menu"
+                            icon
                             (if withBorder then
-                                [ "ClickableSvg.withBorder", "ClickableSvg.exactWidth 55" ]
+                                [ ClickableSvg.withBorder, ClickableSvg.exactWidth 55 ]
 
                              else
                                 []
                             )
-                    , Menu.clickableSvg "Menu"
-                        icon
-                        (if withBorder then
-                            [ ClickableSvg.withBorder, ClickableSvg.exactWidth 55 ]
-
-                         else
-                            []
                         )
                     )
-                )
-                (Control.record (\a b -> ( a, b ))
-                    |> Control.field "icon" (CommonControls.rotatedUiIcon 1)
-                    |> Control.field "withBorder" (ControlExtra.bool True)
-                )
-          )
-        , ( "clickableSvgWithoutIndicator"
-          , Control.map
-                (\( ( iconStr, icon ), ( withBorderStr, withBorder ) ) ->
-                    ( "Menu.clickableSvgWithoutIndicator "
-                        ++ Code.string "Menu"
-                        ++ " "
-                        ++ iconStr
-                        ++ " "
-                        ++ Code.list
+                    (Control.record (\a b -> ( a, b ))
+                        |> Control.field "icon" (CommonControls.rotatedUiIcon 1)
+                        |> Control.field "withBorder" (ControlExtra.bool True)
+                    )
+              )
+            , ( "clickableSvgWithoutIndicator"
+              , Control.map
+                    (\( ( iconStr, icon ), ( withBorderStr, withBorder ) ) ->
+                        ( "Menu.clickableSvgWithoutIndicator "
+                            ++ Code.string "Menu"
+                            ++ " "
+                            ++ iconStr
+                            ++ " "
+                            ++ Code.list
+                                (if withBorder then
+                                    [ "ClickableSvg.withBorder", "ClickableSvg.exactWidth 55" ]
+
+                                 else
+                                    []
+                                )
+                        , Menu.clickableSvgWithoutIndicator "Menu"
+                            icon
                             (if withBorder then
-                                [ "ClickableSvg.withBorder", "ClickableSvg.exactWidth 55" ]
+                                [ ClickableSvg.withBorder, ClickableSvg.exactWidth 55 ]
 
                              else
                                 []
                             )
-                    , Menu.clickableSvgWithoutIndicator "Menu"
-                        icon
-                        (if withBorder then
-                            [ ClickableSvg.withBorder, ClickableSvg.exactWidth 55 ]
-
-                         else
-                            []
                         )
                     )
-                )
-                (Control.record (\a b -> ( a, b ))
-                    |> Control.field "icon" (CommonControls.rotatedUiIcon 1)
-                    |> Control.field "withBorder" (ControlExtra.bool True)
-                )
-          )
-        ]
+                    (Control.record (\a b -> ( a, b ))
+                        |> Control.field "icon" (CommonControls.rotatedUiIcon 1)
+                        |> Control.field "withBorder" (ControlExtra.bool True)
+                    )
+              )
+            ]
+        )
 
 
 controlButtonAttributes : Control ( List String, List (Button.Attribute msg) )

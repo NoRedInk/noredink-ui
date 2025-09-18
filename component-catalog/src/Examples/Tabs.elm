@@ -23,6 +23,7 @@ import Html.Styled as Html
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
 import List.Extra
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Message.V4 as Message
 import Nri.Ui.Panel.V1 as Panel
@@ -419,43 +420,47 @@ initSettings =
     let
         colorChoices =
             Control.choice
-                [ ( "Gray", Control.value Gray )
-                , ( "White", Control.value White )
-                ]
+                (Nonempty ( "Gray", Control.value Gray )
+                    [ ( "White", Control.value White )
+                    ]
+                )
     in
     Control.record Settings
         |> Control.field "title" (Control.maybe False (Control.string "Title"))
         |> Control.field "alignment"
             (Control.choice
-                [ ( "Left", Control.value Left )
-                , ( "Center", Control.value Center )
-                , ( "Right", Control.value Right )
-                ]
+                (Nonempty ( "Left", Control.value Left )
+                    [ ( "Center", Control.value Center )
+                    , ( "Right", Control.value Right )
+                    ]
+                )
             )
-        |> Control.field "customSpacing" (Control.maybe False (values String.fromFloat [ 2, 3, 4, 8, 16 ]))
+        |> Control.field "customSpacing" (Control.maybe False (values String.fromFloat (Nonempty 2 [ 3, 4, 8, 16 ])))
         |> Control.field "withTooltips" (Control.bool True)
         |> Control.field "pageBackgroundColor" (Control.maybe False colorChoices)
         |> Control.field "tabListSticky"
             (Control.maybe False
                 (Control.choice
-                    [ ( "Default", Control.value Default )
-                    , ( "Custom"
-                      , Control.record Tabs.TabListStickyConfig
-                            |> Control.field "topOffset" (values String.fromFloat [ 0, 10, 50 ])
-                            |> Control.field "topPadding" (values String.fromFloat [ 0, 10, 50 ])
-                            |> Control.field "zIndex" (values String.fromInt [ 0, 1, 5, 10 ])
-                            |> Control.map Custom
-                      )
-                    ]
+                    (Nonempty ( "Default", Control.value Default )
+                        [ ( "Custom"
+                          , Control.record Tabs.TabListStickyConfig
+                                |> Control.field "topOffset" (values String.fromFloat (Nonempty 0 [ 10, 50 ]))
+                                |> Control.field "topPadding" (values String.fromFloat (Nonempty 0 [ 10, 50 ]))
+                                |> Control.field "zIndex" (values String.fromInt (Nonempty 0 [ 1, 5, 10 ]))
+                                |> Control.map Custom
+                          )
+                        ]
+                    )
                 )
                 |> Control.revealed "Tablist Sticky"
             )
         |> Control.field "accessible label"
             (Control.choice
-                [ ( "From inner text (default)", Control.value FromInnerText )
-                , ( "Labelled by another element", Control.value LabelledBy )
-                , ( "Fixed", Control.value FixedLabel )
-                ]
+                (Nonempty ( "From inner text (default)", Control.value FromInnerText )
+                    [ ( "Labelled by another element", Control.value LabelledBy )
+                    , ( "Fixed", Control.value FixedLabel )
+                    ]
+                )
             )
 
 

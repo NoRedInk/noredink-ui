@@ -16,6 +16,7 @@ import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Heading.V3 as Heading
@@ -157,9 +158,10 @@ init =
                 (Control.list
                     |> ControlExtra.optionalListItem "theme"
                         (CommonControls.choice moduleName
-                            [ ( "secondary", Panel.secondary )
-                            , ( "primary", Panel.primary )
-                            ]
+                            (Nonempty ( "secondary", Panel.secondary )
+                                [ ( "primary", Panel.primary )
+                                ]
+                            )
                         )
                     |> controlStyles "containerCss"
                         Panel.containerCss

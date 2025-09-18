@@ -19,6 +19,7 @@ import Dict exposing (Dict)
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
+import List.Nonempty exposing (Nonempty(..))
 import Markdown
 import Nri.Ui.Block.V6 as Block
 import Nri.Ui.Button.V10 as Button
@@ -694,14 +695,16 @@ initControl =
                 |> ControlExtra.optionalBoolListItemDefaultChecked "emphasize" ( Code.fromModule moduleName "emphasize", Block.emphasize )
                 |> ControlExtra.optionalListItem "theme"
                     (CommonControls.choice moduleName
-                        [ ( "yellow", Block.yellow )
-                        , ( "cyan", Block.cyan )
-                        , ( "magenta", Block.magenta )
-                        , ( "green", Block.green )
-                        , ( "blue", Block.blue )
-                        , ( "purple", Block.purple )
-                        , ( "brown", Block.brown )
-                        ]
+                        (Nonempty
+                            ( "yellow", Block.yellow )
+                            [ ( "cyan", Block.cyan )
+                            , ( "magenta", Block.magenta )
+                            , ( "green", Block.green )
+                            , ( "blue", Block.blue )
+                            , ( "purple", Block.purple )
+                            , ( "brown", Block.brown )
+                            ]
+                        )
                     )
                 |> ControlExtra.optionalListItem "label"
                     (CommonControls.string ( Code.fromModule moduleName "label", Block.label ) "Fruit")
@@ -738,69 +741,73 @@ initControl =
 controlContent : Control (List ( String, Block.Attribute msg ))
 controlContent =
     Control.choice
-        [ ( "plaintext"
-          , CommonControls.string
+        (Nonempty
+            ( "plaintext"
+            , CommonControls.string
                 ( Code.fromModule moduleName "plaintext"
                 , Block.plaintext
                 )
                 "bananas"
                 |> Control.revealed "plaintext"
                 |> Control.map List.singleton
-          )
-        , ( "with mixed content"
-          , Control.list
-                |> ControlExtra.listItem ""
-                    (Control.value
-                        ( Code.fromModule moduleName "content "
-                            ++ Code.withParens
-                                ((Code.fromModule moduleName "italic (" ++ Code.fromModule moduleName "phrase " ++ Code.string "to think about" ++ ")")
-                                    ++ (" :: " ++ Code.fromModule moduleName "blank")
-                                    ++ (" :: " ++ Code.fromModule moduleName "phrase " ++ Code.string " and so forth")
-                                )
-                        , Block.content
-                            (Block.italic (Block.phrase "to think about ")
-                                :: Block.blank { widthInChars = 8 }
-                                :: Block.phrase " and so forth"
-                            )
-                        )
-                    )
-                |> ControlExtra.optionalListItem "blankStyle" blankStyleContent
-          )
-        , ( "blank"
-          , Control.list
-                |> ControlExtra.listItem "widthInChars"
-                    (Control.map
-                        (\widthInChars ->
+            )
+            [ ( "with mixed content"
+              , Control.list
+                    |> ControlExtra.listItem ""
+                        (Control.value
                             ( Code.fromModule moduleName "content "
                                 ++ Code.withParens
-                                    (Code.fromModule moduleName "blank"
-                                        ++ " "
-                                        ++ Code.record [ ( "widthInChars", String.fromInt widthInChars ) ]
+                                    ((Code.fromModule moduleName "italic (" ++ Code.fromModule moduleName "phrase " ++ Code.string "to think about" ++ ")")
+                                        ++ (" :: " ++ Code.fromModule moduleName "blank")
+                                        ++ (" :: " ++ Code.fromModule moduleName "phrase " ++ Code.string " and so forth")
                                     )
-                            , Block.content [ Block.blank { widthInChars = widthInChars } ]
+                            , Block.content
+                                (Block.italic (Block.phrase "to think about ")
+                                    :: Block.blank { widthInChars = 8 }
+                                    :: Block.phrase " and so forth"
+                                )
                             )
                         )
-                        (Control.int 8)
-                    )
-                |> ControlExtra.optionalListItem "blankStyle" blankStyleContent
-          )
-        , ( "(none)"
-          , Control.revealed "blankStyle" blankStyleContent
-                |> Control.map List.singleton
-          )
-        ]
+                    |> ControlExtra.optionalListItem "blankStyle" blankStyleContent
+              )
+            , ( "blank"
+              , Control.list
+                    |> ControlExtra.listItem "widthInChars"
+                        (Control.map
+                            (\widthInChars ->
+                                ( Code.fromModule moduleName "content "
+                                    ++ Code.withParens
+                                        (Code.fromModule moduleName "blank"
+                                            ++ " "
+                                            ++ Code.record [ ( "widthInChars", String.fromInt widthInChars ) ]
+                                        )
+                                , Block.content [ Block.blank { widthInChars = widthInChars } ]
+                                )
+                            )
+                            (Control.int 8)
+                        )
+                    |> ControlExtra.optionalListItem "blankStyle" blankStyleContent
+              )
+            , ( "(none)"
+              , Control.revealed "blankStyle" blankStyleContent
+                    |> Control.map List.singleton
+              )
+            ]
+        )
 
 
 blankStyleContent : Control ( String, Block.Attribute msg )
 blankStyleContent =
     Control.choice
-        [ ( "Underline"
-          , Control.value ( "Block.underline", Block.underline )
-          )
-        , ( "Dashed"
-          , Control.value ( "Block.dashed", Block.dashed )
-          )
-        ]
+        (Nonempty
+            ( "Underline"
+            , Control.value ( "Block.underline", Block.underline )
+            )
+            [ ( "Dashed"
+              , Control.value ( "Block.dashed", Block.dashed )
+              )
+            ]
+        )
 
 
 ageId : String

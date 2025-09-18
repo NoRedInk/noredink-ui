@@ -17,6 +17,7 @@ import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Guidance
 import Html.Styled
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Select.V9 as Select
@@ -192,19 +193,21 @@ initControls =
                     (Control.value ( "Select.hiddenLabel", Select.hiddenLabel ))
                 |> ControlExtra.optionalListItem "containerCss"
                     (Control.choice
-                        [ ( "max-width: 300px"
-                          , Control.value
+                        (Nonempty
+                            ( "max-width: 300px"
+                            , Control.value
                                 ( "Select.containerCss [ Css.maxWidth (Css.px 300) ]"
                                 , Select.containerCss [ Css.maxWidth (Css.px 300) ]
                                 )
-                          )
-                        , ( "background-color: lichen"
-                          , Control.value
-                                ( "Select.containerCss [ Css.backgroundColor Colors.lichen ]"
-                                , Select.containerCss [ Css.backgroundColor Colors.lichen ]
-                                )
-                          )
-                        ]
+                            )
+                            [ ( "background-color: lichen"
+                              , Control.value
+                                    ( "Select.containerCss [ Css.backgroundColor Colors.lichen ]"
+                                    , Select.containerCss [ Css.backgroundColor Colors.lichen ]
+                                    )
+                              )
+                            ]
+                        )
                     )
                 |> ControlExtra.optionalBoolListItem "noMargin"
                     ( "Select.noMargin True", Select.noMargin True )
@@ -217,25 +220,27 @@ initControls =
                     (Control.value ( "Select.loading", Select.loading ))
                 |> ControlExtra.optionalListItem "disableWhen"
                     (Control.choice
-                        [ ( "Disable Tacos option"
-                          , Control.value
+                        (Nonempty
+                            ( "Disable Tacos option"
+                            , Control.value
                                 ( "Select.disableWhen (\\c -> c == Tacos)"
                                 , Select.disableWhen (\c -> c == Tacos)
                                 )
-                          )
-                        , ( "Disable weightlifters"
-                          , Control.value
-                                ( "Select.disableWhen (\\c -> List.member c all81kg2020OlympicWeightlifters)"
-                                , Select.disableWhen (\c -> List.member c all81kg2020OlympicWeightlifters)
-                                )
-                          )
-                        , ( "Disable just TragicSingleton"
-                          , Control.value
-                                ( "Select.disableWhen (\\c -> c == TragicSingleton)"
-                                , Select.disableWhen (\c -> c == TragicSingleton)
-                                )
-                          )
-                        ]
+                            )
+                            [ ( "Disable weightlifters"
+                              , Control.value
+                                    ( "Select.disableWhen (\\c -> List.member c all81kg2020OlympicWeightlifters)"
+                                    , Select.disableWhen (\c -> List.member c all81kg2020OlympicWeightlifters)
+                                    )
+                              )
+                            , ( "Disable just TragicSingleton"
+                              , Control.value
+                                    ( "Select.disableWhen (\\c -> c == TragicSingleton)"
+                                    , Select.disableWhen (\c -> c == TragicSingleton)
+                                    )
+                              )
+                            ]
+                        )
                     )
             )
 
@@ -456,47 +461,48 @@ initChoices =
             toChoice >> Tuple.mapSecond (Select.choices choosableToValue) >> Control.value
     in
     Control.choice
-        [ ( texMexLabel, toValue allTexMex )
-        , ( "81 Kg 2020 Olympic Weightlifters", toValue all81kg2020OlympicWeightlifters )
-        , ( "Grouped Things"
-          , Control.value <|
-                ( Code.fromModule moduleName "batch"
-                    ++ Code.listMultiline
-                        [ Code.fromModule moduleName "groupedChoices choosableToValue"
-                            ++ Code.listOfRecordsMultiline
-                                [ [ ( "label", Code.string texMexLabel )
-                                  , ( "choices"
-                                    , Code.listOfRecordsMultiline
-                                        (List.map toOptionString allTexMex)
-                                        5
-                                    )
-                                  ]
-                                , [ ( "label", Code.string weightLifterLabel )
-                                  , ( "choices"
-                                    , Code.listOfRecordsMultiline
-                                        (List.map toOptionString all81kg2020OlympicWeightlifters)
-                                        5
-                                    )
-                                  ]
-                                ]
-                                3
-                        , Code.fromModule moduleName "choices choosableToValue"
-                            ++ Code.listOfRecordsMultiline
-                                [ toOptionString TragicSingleton ]
-                                4
+        (Nonempty ( texMexLabel, toValue allTexMex )
+            [ ( "81 Kg 2020 Olympic Weightlifters", toValue all81kg2020OlympicWeightlifters )
+            , ( "Grouped Things"
+              , Control.value <|
+                    ( Code.fromModule moduleName "batch"
+                        ++ Code.listMultiline
+                            [ Code.fromModule moduleName "groupedChoices choosableToValue"
+                                ++ Code.listOfRecordsMultiline
+                                    [ [ ( "label", Code.string texMexLabel )
+                                      , ( "choices"
+                                        , Code.listOfRecordsMultiline
+                                            (List.map toOptionString allTexMex)
+                                            5
+                                        )
+                                      ]
+                                    , [ ( "label", Code.string weightLifterLabel )
+                                      , ( "choices"
+                                        , Code.listOfRecordsMultiline
+                                            (List.map toOptionString all81kg2020OlympicWeightlifters)
+                                            5
+                                        )
+                                      ]
+                                    ]
+                                    3
+                            , Code.fromModule moduleName "choices choosableToValue"
+                                ++ Code.listOfRecordsMultiline
+                                    [ toOptionString TragicSingleton ]
+                                    4
+                            ]
+                            2
+                    , Select.batch
+                        [ Select.groupedChoices choosableToValue
+                            [ { label = texMexLabel, choices = List.map toOption allTexMex }
+                            , { label = weightLifterLabel, choices = List.map toOption all81kg2020OlympicWeightlifters }
+                            ]
+                        , Select.choices choosableToValue [ toOption TragicSingleton ]
                         ]
-                        2
-                , Select.batch
-                    [ Select.groupedChoices choosableToValue
-                        [ { label = texMexLabel, choices = List.map toOption allTexMex }
-                        , { label = weightLifterLabel, choices = List.map toOption all81kg2020OlympicWeightlifters }
-                        ]
-                    , Select.choices choosableToValue [ toOption TragicSingleton ]
-                    ]
-                )
-          )
-        , ( "Unselectable list with only one item", toValue [ TragicSingleton ] )
-        ]
+                    )
+              )
+            , ( "Unselectable list with only one item", toValue [ TragicSingleton ] )
+            ]
+        )
 
 
 {-| -}

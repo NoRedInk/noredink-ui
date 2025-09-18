@@ -20,6 +20,7 @@ import Guidance
 import Html.Styled as Html exposing (Html, div, text)
 import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V4 as ClickableText
@@ -87,25 +88,28 @@ initViewSettings =
 controlTitleVisibility : Control ( String, Modal.Attribute )
 controlTitleVisibility =
     CommonControls.choice moduleName
-        [ ( "hideTitle", Modal.hideTitle )
-        , ( "showTitle", Modal.showTitle )
-        ]
+        (Nonempty ( "hideTitle", Modal.hideTitle )
+            [ ( "showTitle", Modal.showTitle )
+            ]
+        )
 
 
 controlTheme : Control ( String, Modal.Attribute )
 controlTheme =
     CommonControls.choice moduleName
-        [ ( "warning", Modal.warning )
-        , ( "info", Modal.info )
-        ]
+        (Nonempty ( "warning", Modal.warning )
+            [ ( "info", Modal.info )
+            ]
+        )
 
 
 controlCss : Control ( String, Modal.Attribute )
 controlCss =
     CommonControls.choice moduleName
-        [ ( "css [ Css.borderRadius Css.zero ]", Modal.css [ Css.borderRadius Css.zero ] )
-        , ( "css [ Css.width (Css.px 900) ]", Modal.css [ Css.width (Css.px 900) ] )
-        ]
+        (Nonempty ( "css [ Css.borderRadius Css.zero ]", Modal.css [ Css.borderRadius Css.zero ] )
+            [ ( "css [ Css.width (Css.px 900) ]", Modal.css [ Css.width (Css.px 900) ] )
+            ]
+        )
 
 
 moduleName : String

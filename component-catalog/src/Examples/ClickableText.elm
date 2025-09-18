@@ -19,6 +19,7 @@ import Example exposing (Example)
 import Guidance
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
@@ -80,10 +81,11 @@ init =
     Control.record Settings
         |> Control.field "type"
             (Control.choice
-                [ ( "button", Control.value Button )
-                , ( "link", Control.value Link )
-                , ( "linkExternal", Control.value LinkExternal )
-                ]
+                (Nonempty ( "button", Control.value Button )
+                    [ ( "link", Control.value Link )
+                    , ( "linkExternal", Control.value LinkExternal )
+                    ]
+                )
             )
         |> Control.field "label" (Control.string "Clickable Text")
         |> Control.field ""
@@ -130,12 +132,14 @@ init =
                     )
                 |> ControlExtra.optionalListItem "Size and display options"
                     (CommonControls.choice moduleName
-                        [ ( "appearsInline", ClickableText.appearsInline )
-                        , ( "small", ClickableText.small )
-                        , ( "medium", ClickableText.medium )
-                        , ( "large", ClickableText.large )
-                        , ( "modal", ClickableText.modal )
-                        ]
+                        (Nonempty
+                            ( "appearsInline", ClickableText.appearsInline )
+                            [ ( "small", ClickableText.small )
+                            , ( "medium", ClickableText.medium )
+                            , ( "large", ClickableText.large )
+                            , ( "modal", ClickableText.modal )
+                            ]
+                        )
                     )
             )
         |> State

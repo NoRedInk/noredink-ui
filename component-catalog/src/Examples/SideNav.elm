@@ -17,6 +17,7 @@ import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css)
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay
@@ -337,19 +338,21 @@ controlNavAttributes =
             )
         |> ControlExtra.optionalListItemDefaultChecked "navNotMobileCss"
             (Control.choice
-                [ ( "maxWidth"
-                  , Control.value
+                (Nonempty
+                    ( "maxWidth"
+                    , Control.value
                         ( "SideNav.navNotMobileCss [ Css.maxWidth (Css.px 300) ]"
                         , SideNav.navNotMobileCss [ Css.maxWidth (Css.px 300) ]
                         )
-                  )
-                , ( "purple border"
-                  , Control.value
-                        ( "SideNav.navNotMobileCss [ Css.border3 (Css.px 3) Css.dotted Colors.purple ]"
-                        , SideNav.navNotMobileCss [ Css.border3 (Css.px 3) Css.dotted Colors.purple ]
-                        )
-                  )
-                ]
+                    )
+                    [ ( "purple border"
+                      , Control.value
+                            ( "SideNav.navNotMobileCss [ Css.border3 (Css.px 3) Css.dotted Colors.purple ]"
+                            , SideNav.navNotMobileCss [ Css.border3 (Css.px 3) Css.dotted Colors.purple ]
+                            )
+                      )
+                    ]
+                )
             )
         |> ControlExtra.optionalListItem "navMobileCss"
             (Control.value
@@ -362,11 +365,12 @@ controlNavAttributes =
 controlEntryType : Int -> String -> Control ( String, SideNav.Entry String Msg )
 controlEntryType level href =
     Control.choice
-        [ ( "entry", controlEntry level href )
-        , ( "entryWithChildren", controlEntryWithChildren level href )
-        , ( "html", controlHtml level )
-        , ( "compactGroup", controlCompactGroup level href )
-        ]
+        (Nonempty ( "entry", controlEntry level href )
+            [ ( "entryWithChildren", controlEntryWithChildren level href )
+            , ( "html", controlHtml level )
+            , ( "compactGroup", controlCompactGroup level href )
+            ]
+        )
 
 
 controlEntry : Int -> String -> Control ( String, SideNav.Entry String Msg )

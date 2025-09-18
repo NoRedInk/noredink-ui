@@ -24,6 +24,7 @@ import Examples.ClickableSvg
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes as Attributes exposing (class, css)
 import KeyboardSupport exposing (Key(..))
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.Carousel.V2 as Carousel exposing (Role(..))
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
 import Nri.Ui.ClickableText.V4 as ClickableText
@@ -85,16 +86,19 @@ type CarouselType
 controlCarouselType : Control CarouselType
 controlCarouselType =
     Control.choice
-        [ ( "viewWithPreviousAndNextControls", Control.value PrevNext )
-        , ( "viewWithTabControls", Control.value Tabs )
-        , ( "viewWithCombinedControls", Control.value Combined )
-        ]
+        (Nonempty ( "viewWithPreviousAndNextControls", Control.value PrevNext )
+            [ ( "viewWithTabControls", Control.value Tabs )
+            , ( "viewWithCombinedControls", Control.value Combined )
+            ]
+        )
 
 
 controlRole : Control ( String, Role )
 controlRole =
     CommonControls.choice moduleName
-        [ ( "Group", Group ), ( "Region", Region ) ]
+        (Nonempty ( "Group", Group )
+            [ ( "Region", Region ) ]
+        )
 
 
 controlStyles : Bool -> List Css.Style

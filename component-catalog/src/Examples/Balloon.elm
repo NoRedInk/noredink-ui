@@ -19,6 +19,7 @@ import Examples.Colors
 import Guidance
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.Balloon.V2 as Balloon
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
@@ -118,12 +119,13 @@ controlSettings =
 themeOptions : Control ( String, Balloon.Attribute msg )
 themeOptions =
     Control.choice
-        (( "customTheme", controlCustomTheme )
-            :: List.map
+        (Nonempty ( "customTheme", controlCustomTheme )
+            (List.map
                 (\( name, prop ) ->
                     ( name, Control.value ( Code.fromModule moduleName name, prop ) )
                 )
                 builtInThemes
+            )
         )
 
 
@@ -152,7 +154,7 @@ controlCustomTheme =
 controlBackgroundColor : Control ( String, Css.Color )
 controlBackgroundColor =
     Examples.Colors.backgroundHighlightColors
-        |> List.map
+        |> List.Nonempty.map
             (\( name, value, _ ) ->
                 ( name
                 , Control.value ( name, value )
@@ -164,10 +166,11 @@ controlBackgroundColor =
 controlColor : Control ( String, Css.Color )
 controlColor =
     CommonControls.choice "Colors"
-        [ ( "gray20", Colors.gray20 )
-        , ( "navy", Colors.navy )
-        , ( "white", Colors.white )
-        ]
+        (Nonempty ( "gray20", Colors.gray20 )
+            [ ( "navy", Colors.navy )
+            , ( "white", Colors.white )
+            ]
+        )
 
 
 positionOptions : Control ( String, Balloon.Attribute msg )
@@ -175,22 +178,23 @@ positionOptions =
     CommonControls.choice moduleName positions
 
 
-positions : List ( String, Balloon.Attribute msg )
+positions : Nonempty ( String, Balloon.Attribute msg )
 positions =
-    [ ( "onTop", Balloon.onTop )
-    , ( "onRight", Balloon.onRight )
-    , ( "onBottom", Balloon.onBottom )
-    , ( "onLeft", Balloon.onLeft )
-    ]
+    Nonempty ( "onTop", Balloon.onTop )
+        [ ( "onRight", Balloon.onRight )
+        , ( "onBottom", Balloon.onBottom )
+        , ( "onLeft", Balloon.onLeft )
+        ]
 
 
 arrowAlignmentOptions : Control ( String, Balloon.Attribute msg )
 arrowAlignmentOptions =
     Control.choice
-        [ ( "alignArrowStart", Control.value ( "Balloon.alignArrowStart", Balloon.alignArrowStart ) )
-        , ( "alignArrowMiddle", Control.value ( "Balloon.alignArrowMiddle", Balloon.alignArrowMiddle ) )
-        , ( "alignArrowEnd", Control.value ( "Balloon.alignArrowEnd", Balloon.alignArrowEnd ) )
-        ]
+        (Nonempty ( "alignArrowStart", Control.value ( "Balloon.alignArrowStart", Balloon.alignArrowStart ) )
+            [ ( "alignArrowMiddle", Control.value ( "Balloon.alignArrowMiddle", Balloon.alignArrowMiddle ) )
+            , ( "alignArrowEnd", Control.value ( "Balloon.alignArrowEnd", Balloon.alignArrowEnd ) )
+            ]
+        )
 
 
 {-| -}
@@ -296,7 +300,7 @@ view ellieLinkConfig state =
             , sort = Nothing
             }
         ]
-        positions
+        (List.Nonempty.toList positions)
         |> List.singleton
         |> div [ css [ Css.overflow Css.auto ] ]
     , Heading.h2

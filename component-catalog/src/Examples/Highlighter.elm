@@ -18,6 +18,7 @@ import Examples.Colors
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import List.Extra
+import List.Nonempty exposing (Nonempty(..))
 import Maybe.Extra
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableText.V4 as ClickableText
@@ -697,18 +698,19 @@ controlSettings =
                 |> Control.field "scrollFriendly" (Control.bool False)
                 |> Control.field "type"
                     (Control.choice
-                        [ ( "Markdown", Control.value Markdown )
-                        , ( "Standard", Control.value Standard )
-                        ]
+                        (Nonempty ( "Markdown", Control.value Markdown )
+                            [ ( "Standard", Control.value Standard ) ]
+                        )
                     )
             )
         |> Control.field "Highlighter or Eraser tool settings"
             (Control.record (\tool -> { tool = tool })
                 |> Control.field "tool"
                     (Control.choice
-                        [ ( "Marker", Control.map (\( c, v ) -> ( "Tool.Marker" ++ Code.withParensMultiline c 4, Tool.Marker v )) controlMarker )
-                        , ( "Eraser", Control.value ( "Tool.Eraser Tool.buildEraser", Tool.Eraser Tool.buildEraser ) )
-                        ]
+                        (Nonempty ( "Marker", Control.map (\( c, v ) -> ( "Tool.Marker" ++ Code.withParensMultiline c 4, Tool.Marker v )) controlMarker )
+                            [ ( "Eraser", Control.value ( "Tool.Eraser Tool.buildEraser", Tool.Eraser Tool.buildEraser ) )
+                            ]
+                        )
                     )
             )
 
@@ -744,7 +746,7 @@ controlMarker =
 backgroundHighlightColors : Int -> Control ( String, Color )
 backgroundHighlightColors rotateWith =
     Examples.Colors.backgroundHighlightColors
-        |> List.map (\( name, value, _ ) -> ( name, Control.value ( Code.fromModule "Colors" name, value ) ))
+        |> List.Nonempty.map (\( name, value, _ ) -> ( name, Control.value ( Code.fromModule "Colors" name, value ) ))
         |> ControlExtra.rotatedChoice rotateWith
 
 

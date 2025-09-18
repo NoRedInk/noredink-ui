@@ -15,6 +15,7 @@ import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled as Html exposing (..)
 import Html.Styled.Attributes exposing (css)
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.SortableTable.V6 as SortableTable exposing (Column)
@@ -410,34 +411,37 @@ controlSettings =
         |> Control.field "Customizable column width" (Control.int 10)
         |> Control.field "Customizable column cell styles"
             (Control.choice
-                [ ( "[]", Control.value ( "[]", [] ) )
-                , ( "red dashed border"
-                  , Control.value
-                        ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
-                        , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
-                        )
-                  )
-                ]
+                (Nonempty ( "[]", Control.value ( "[]", [] ) )
+                    [ ( "red dashed border"
+                      , Control.value
+                            ( "[ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
+                            , [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
+                            )
+                      )
+                    ]
+                )
             )
         |> Control.field "Is loading" (Control.bool False)
         |> Control.field "Header"
             (Control.maybe False
                 (Control.choice
-                    [ ( "Default", Control.value Default )
-                    , ( "Custom"
-                      , Control.record SortableTable.StickyConfig
-                            |> Control.field "topOffset" (values String.fromFloat [ 0, 10, 50 ])
-                            |> Control.field "zIndex" (values String.fromInt [ 0, 1, 5, 10 ])
-                            |> Control.field "pageBackgroundColor"
-                                (Control.choice
-                                    [ ( "white", Control.value Colors.white )
-                                    , ( "gray", Control.value Colors.gray92 )
-                                    ]
-                                )
-                            |> Control.field "hoverZIndex" (Control.maybe False (values String.fromInt [ 0, 1, 5, 10 ]))
-                            |> Control.map Custom
-                      )
-                    ]
+                    (Nonempty ( "Default", Control.value Default )
+                        [ ( "Custom"
+                          , Control.record SortableTable.StickyConfig
+                                |> Control.field "topOffset" (values String.fromFloat (Nonempty 0 [ 10, 50 ]))
+                                |> Control.field "zIndex" (values String.fromInt (Nonempty 0 [ 1, 5, 10 ]))
+                                |> Control.field "pageBackgroundColor"
+                                    (Control.choice
+                                        (Nonempty ( "white", Control.value Colors.white )
+                                            [ ( "gray", Control.value Colors.gray92 )
+                                            ]
+                                        )
+                                    )
+                                |> Control.field "hoverZIndex" (Control.maybe False (values String.fromInt (Nonempty 0 [ 1, 5, 10 ])))
+                                |> Control.map Custom
+                          )
+                        ]
+                    )
                 )
                 |> Control.revealed "Sticky Header"
             )

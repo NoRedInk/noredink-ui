@@ -15,6 +15,7 @@ import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport exposing (Direction(..), Key(..))
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.RadioButtonDotless.V1 as RadioButtonDotless
@@ -74,29 +75,33 @@ controlAttributes =
         |> ControlExtra.optionalListItem "enablement" enablementControl
         |> ControlExtra.optionalListItem "containerCss"
             (Control.choice
-                [ ( "max-width with border"
-                  , Control.value
+                (Nonempty
+                    ( "max-width with border"
+                    , Control.value
                         ( "RadioButtonDotless.containerCss [ maxWidth (px 200), border3 (px 1) solid red ]"
                         , RadioButtonDotless.containerCss [ Css.maxWidth (Css.px 200), Css.border3 (Css.px 1) Css.solid Colors.red ]
                         )
-                  )
-                , ( "10px right margin"
-                  , Control.value
-                        ( "RadioButtonDotless.containerCss [ marginRight (px 10) ]"
-                        , RadioButtonDotless.containerCss [ Css.marginRight (Css.px 10) ]
-                        )
-                  )
-                ]
+                    )
+                    [ ( "10px right margin"
+                      , Control.value
+                            ( "RadioButtonDotless.containerCss [ marginRight (px 10) ]"
+                            , RadioButtonDotless.containerCss [ Css.marginRight (Css.px 10) ]
+                            )
+                      )
+                    ]
+                )
             )
         |> ControlExtra.optionalListItem "labelCss"
             (Control.choice
-                [ ( "backgroundColor highlightMagenta"
-                  , Control.value
+                (Nonempty
+                    ( "backgroundColor highlightMagenta"
+                    , Control.value
                         ( "RadioButtonDotless.labelCss [ backgroundColor Colors.highlightMagenta ]"
                         , RadioButtonDotless.labelCss [ Css.backgroundColor Colors.highlightMagenta ]
                         )
-                  )
-                ]
+                    )
+                    []
+                )
             )
 
 
@@ -112,34 +117,38 @@ initSelectionSettings =
 textAlignControl : Control ( String, RadioButtonDotless.Attribute ControlSelection Msg )
 textAlignControl =
     Control.choice
-        [ ( "textAlignCenter", Control.value ( "RadioButtonDotless.textAlignCenter", RadioButtonDotless.textAlignCenter ) )
-        , ( "textAlignLeft", Control.value ( "RadioButtonDotless.textAlignLeft", RadioButtonDotless.textAlignLeft ) )
-        ]
+        (Nonempty ( "textAlignCenter", Control.value ( "RadioButtonDotless.textAlignCenter", RadioButtonDotless.textAlignCenter ) )
+            [ ( "textAlignLeft", Control.value ( "RadioButtonDotless.textAlignLeft", RadioButtonDotless.textAlignLeft ) )
+            ]
+        )
 
 
 widthControl : Control ( String, RadioButtonDotless.Attribute ControlSelection Msg )
 widthControl =
     Control.choice
-        [ ( "unboundedWidth", Control.value ( "RadioButtonDotless.unboundedWidth", RadioButtonDotless.unboundedWidth ) )
-        , ( "fillContainerWidth", Control.value ( "RadioButtonDotless.fillContainerWidth", RadioButtonDotless.fillContainerWidth ) )
-        ]
+        (Nonempty ( "unboundedWidth", Control.value ( "RadioButtonDotless.unboundedWidth", RadioButtonDotless.unboundedWidth ) )
+            [ ( "fillContainerWidth", Control.value ( "RadioButtonDotless.fillContainerWidth", RadioButtonDotless.fillContainerWidth ) )
+            ]
+        )
 
 
 sizeControl : Control ( String, RadioButtonDotless.Attribute ControlSelection Msg )
 sizeControl =
     Control.choice
-        [ ( "small", Control.value ( "RadioButtonDotless.small", RadioButtonDotless.small ) )
-        , ( "medium", Control.value ( "RadioButtonDotless.medium", RadioButtonDotless.medium ) )
-        , ( "large", Control.value ( "RadioButtonDotless.large", RadioButtonDotless.large ) )
-        ]
+        (Nonempty ( "small", Control.value ( "RadioButtonDotless.small", RadioButtonDotless.small ) )
+            [ ( "medium", Control.value ( "RadioButtonDotless.medium", RadioButtonDotless.medium ) )
+            , ( "large", Control.value ( "RadioButtonDotless.large", RadioButtonDotless.large ) )
+            ]
+        )
 
 
 enablementControl : Control ( String, RadioButtonDotless.Attribute ControlSelection Msg )
 enablementControl =
     Control.choice
-        [ ( "enabled", Control.value ( "RadioButtonDotless.enabled", RadioButtonDotless.enabled ) )
-        , ( "disabled", Control.value ( "RadioButtonDotless.disabled NoOp", RadioButtonDotless.disabled NoOp ) )
-        ]
+        (Nonempty ( "enabled", Control.value ( "RadioButtonDotless.enabled", RadioButtonDotless.enabled ) )
+            [ ( "disabled", Control.value ( "RadioButtonDotless.disabled NoOp", RadioButtonDotless.disabled NoOp ) )
+            ]
+        )
 
 
 moduleName : String

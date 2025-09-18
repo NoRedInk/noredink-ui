@@ -16,6 +16,7 @@ import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
@@ -174,16 +175,17 @@ example =
                             , background = Colors.gray96
                             }
                         , rows =
-                            List.map
-                                (\( themeName, theme ) ->
-                                    Outline.row
-                                        { title = Just themeName
-                                        , content = text ""
-                                        , palette = theme
-                                        , rows = []
-                                        }
-                                )
-                                allRowThemes
+                            allRowThemes
+                                |> List.Nonempty.toList
+                                |> List.map
+                                    (\( themeName, theme ) ->
+                                        Outline.row
+                                            { title = Just themeName
+                                            , content = text ""
+                                            , palette = theme
+                                            , rows = []
+                                            }
+                                    )
                         }
                     ]
                 , Outline.viewKeyed
@@ -196,16 +198,17 @@ example =
                             , background = Colors.gray96
                             }
                         , rows =
-                            List.map
-                                (\( themeName, theme ) ->
-                                    Outline.keyedRow ("row-" ++ themeName)
-                                        { title = Just themeName
-                                        , content = text ""
-                                        , palette = theme
-                                        , rows = []
-                                        }
-                                )
-                                allRowThemes
+                            allRowThemes
+                                |> List.Nonempty.toList
+                                |> List.map
+                                    (\( themeName, theme ) ->
+                                        Outline.keyedRow ("row-" ++ themeName)
+                                            { title = Just themeName
+                                            , content = text ""
+                                            , palette = theme
+                                            , rows = []
+                                            }
+                                    )
                         }
                     ]
                 ]
@@ -342,51 +345,53 @@ preview =
         ]
 
 
-allRowThemes : List ( String, RowTheme )
+allRowThemes : Nonempty ( String, RowTheme )
 allRowThemes =
-    [ ( "purpleBordered", Outline.purpleBordered )
-    , ( "greenBordered", Outline.greenBordered )
-    , ( "blueDashBordered", Outline.blueDashBordered )
-    , ( "red", Outline.red )
-    , ( "green", Outline.green )
-    , ( "aqua", Outline.aqua )
-    , ( "turquoise", Outline.turquoise )
-    , ( "cornflower", Outline.cornflower )
-    , ( "blue", Outline.blue )
-    , ( "darkBlue", Outline.darkBlue )
-    , ( "purple", Outline.purple )
-    , ( "darkGray", Outline.darkGray )
-    , ( "gray", Outline.gray )
-    , ( "white", Outline.white )
-    ]
+    Nonempty ( "purpleBordered", Outline.purpleBordered )
+        [ ( "greenBordered", Outline.greenBordered )
+        , ( "blueDashBordered", Outline.blueDashBordered )
+        , ( "red", Outline.red )
+        , ( "green", Outline.green )
+        , ( "aqua", Outline.aqua )
+        , ( "turquoise", Outline.turquoise )
+        , ( "cornflower", Outline.cornflower )
+        , ( "blue", Outline.blue )
+        , ( "darkBlue", Outline.darkBlue )
+        , ( "purple", Outline.purple )
+        , ( "darkGray", Outline.darkGray )
+        , ( "gray", Outline.gray )
+        , ( "white", Outline.white )
+        ]
 
 
-borderColorList : List ( String, Color )
+borderColorList : Nonempty ( String, Color )
 borderColorList =
-    [ ( "azure", Colors.azure )
-    , ( "cornflower", Colors.cornflower )
-    , ( "gray45", Colors.gray45 )
-    , ( "gray75", Colors.gray75 )
-    , ( "green", Colors.green )
-    , ( "navy", Colors.navy )
-    , ( "purple", Colors.purple )
-    , ( "red", Colors.red )
-    , ( "turquoise", Colors.turquoise )
-    ]
+    Nonempty
+        ( "azure", Colors.azure )
+        [ ( "cornflower", Colors.cornflower )
+        , ( "gray45", Colors.gray45 )
+        , ( "gray75", Colors.gray75 )
+        , ( "green", Colors.green )
+        , ( "navy", Colors.navy )
+        , ( "purple", Colors.purple )
+        , ( "red", Colors.red )
+        , ( "turquoise", Colors.turquoise )
+        ]
 
 
-backgroundColorList : List ( String, Color )
+backgroundColorList : Nonempty ( String, Color )
 backgroundColorList =
-    [ ( "gray96", Colors.gray96 )
-    , ( "aquaLight", Colors.aquaLight )
-    , ( "cornflowerLight", Colors.cornflowerLight )
-    , ( "frost", Colors.frost )
-    , ( "greenLightest", Colors.greenLightest )
-    , ( "purpleLight", Colors.purpleLight )
-    , ( "redLight", Colors.redLight )
-    , ( "turquoiseLight", Colors.turquoiseLight )
-    , ( "white", Colors.white )
-    ]
+    Nonempty
+        ( "gray96", Colors.gray96 )
+        [ ( "aquaLight", Colors.aquaLight )
+        , ( "cornflowerLight", Colors.cornflowerLight )
+        , ( "frost", Colors.frost )
+        , ( "greenLightest", Colors.greenLightest )
+        , ( "purpleLight", Colors.purpleLight )
+        , ( "redLight", Colors.redLight )
+        , ( "turquoiseLight", Colors.turquoiseLight )
+        , ( "white", Colors.white )
+        ]
 
 
 {-| -}
@@ -411,29 +416,27 @@ init =
             |> Control.field "content" (Control.string "")
             |> Control.field "palette"
                 (Control.choice
-                    (List.map
-                        (\( name, value ) ->
-                            ( name, Control.value ( Code.fromModule moduleName "." ++ name, value ) )
-                        )
-                        allRowThemes
-                        ++ [ ( "custom", customRowTheme ) ]
+                    (allRowThemes
+                        |> List.Nonempty.map (\( name, value ) -> ( name, Control.value ( Code.fromModule moduleName "." ++ name, value ) ))
+                        |> List.Nonempty.append (Nonempty ( "custom", customRowTheme ) [])
                     )
                 )
             |> Control.field "type"
                 (Control.choice
-                    [ ( "plain", Control.value Plain )
-                    , ( "keyed", Control.value Keyed )
-                    , ( "keyed with extra content"
-                      , [ "Extra content!"
-                        , "This content requires the height of the connecting arrow to increase. Do NOT use vertical margin on this element."
-                        , "Extra content is used for selecting which drafts to compare on the results views for Topic Sentence Peer Review results."
-                        , "Check it out!"
+                    (Nonempty ( "plain", Control.value Plain )
+                        [ ( "keyed", Control.value Keyed )
+                        , ( "keyed with extra content"
+                          , [ "Extra content!"
+                            , "This content requires the height of the connecting arrow to increase. Do NOT use vertical margin on this element."
+                            , "Extra content is used for selecting which drafts to compare on the results views for Topic Sentence Peer Review results."
+                            , "Check it out!"
+                            ]
+                                |> String.join "\n\n"
+                                |> Control.stringTextarea
+                                |> Control.map KeyedWithExtraContent
+                          )
                         ]
-                            |> String.join "\n\n"
-                            |> Control.stringTextarea
-                            |> Control.map KeyedWithExtraContent
-                      )
-                    ]
+                    )
                 )
     }
 
@@ -460,20 +463,21 @@ customRowTheme =
         |> Control.field "border" (CommonControls.choice "Colors" borderColorList)
         |> Control.field "borderStyle"
             (Control.choice
-                [ ( "none", Control.value ( "Css.batch []", Css.batch [] ) )
-                , ( "1px solid"
-                  , Control.value
-                        ( "Css.batch [ Css.borderWidth (Css.px 1), Css.borderStyle Css.solid ]"
-                        , Css.batch [ Css.borderWidth (Css.px 1), Css.borderStyle Css.solid ]
-                        )
-                  )
-                , ( "1px dashed"
-                  , Control.value
-                        ( "Css.batch [ Css.borderWidth (Css.px 1), Css.borderStyle Css.dashed ]"
-                        , Css.batch [ Css.borderWidth (Css.px 1), Css.borderStyle Css.dashed ]
-                        )
-                  )
-                ]
+                (Nonempty ( "none", Control.value ( "Css.batch []", Css.batch [] ) )
+                    [ ( "1px solid"
+                      , Control.value
+                            ( "Css.batch [ Css.borderWidth (Css.px 1), Css.borderStyle Css.solid ]"
+                            , Css.batch [ Css.borderWidth (Css.px 1), Css.borderStyle Css.solid ]
+                            )
+                      )
+                    , ( "1px dashed"
+                      , Control.value
+                            ( "Css.batch [ Css.borderWidth (Css.px 1), Css.borderStyle Css.dashed ]"
+                            , Css.batch [ Css.borderWidth (Css.px 1), Css.borderStyle Css.dashed ]
+                            )
+                      )
+                    ]
+                )
             )
         |> Control.field "background" (CommonControls.choice "Colors" backgroundColorList)
 

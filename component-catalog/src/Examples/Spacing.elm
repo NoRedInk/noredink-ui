@@ -15,6 +15,7 @@ import EllieLink
 import Example exposing (Example)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
@@ -401,44 +402,44 @@ controlSettings =
             )
         |> Control.field "Horizontal container styling"
             (Control.maybe True
-                ([ ( "centeredContentWithSidePadding", Spacing.centeredContentWithSidePadding )
-                    |> asChoice
-                 , ( "centeredContent", Spacing.centeredContent )
-                    |> asChoice
-                 , ( "centeredQuizEngineContentWithSidePadding", Spacing.centeredQuizEngineContentWithSidePadding )
-                    |> asChoice
-                 , ( "quizEngineCenteredContent", Spacing.quizEngineCenteredContent )
-                    |> asChoice
-                 , ( "centeredNarrowContentWithSidePadding", Spacing.centeredNarrowContentWithSidePadding )
-                    |> asChoice
-                 , ( "narrowCenteredContent", Spacing.narrowCenteredContent )
-                    |> asChoice
-                 , ( "centeredContentWithSidePaddingAndCustomWidth"
-                   , Control.map
-                        (\value ->
-                            ( Code.fromModule moduleName "centeredContentWithSidePaddingAndCustomWidth"
-                                ++ " (Css.px "
-                                ++ String.fromFloat value
-                                ++ ")"
-                            , Spacing.centeredContentWithSidePaddingAndCustomWidth (Css.px value)
-                            )
-                        )
-                        (Control.float 400)
-                   )
-                 , ( "centeredContentWithCustomWidth"
-                   , Control.map
-                        (\value ->
-                            ( Code.fromModule moduleName "centeredContentWithCustomWidth"
-                                ++ " (Css.px "
-                                ++ String.fromFloat value
-                                ++ ")"
-                            , Spacing.centeredContentWithCustomWidth (Css.px value)
-                            )
-                        )
-                        (Control.float 400)
-                   )
-                 ]
-                    |> Control.choice
+                (Control.choice
+                    (Nonempty (( "centeredContentWithSidePadding", Spacing.centeredContentWithSidePadding ) |> asChoice)
+                        [ ( "centeredContent", Spacing.centeredContent )
+                            |> asChoice
+                        , ( "centeredQuizEngineContentWithSidePadding", Spacing.centeredQuizEngineContentWithSidePadding )
+                            |> asChoice
+                        , ( "quizEngineCenteredContent", Spacing.quizEngineCenteredContent )
+                            |> asChoice
+                        , ( "centeredNarrowContentWithSidePadding", Spacing.centeredNarrowContentWithSidePadding )
+                            |> asChoice
+                        , ( "narrowCenteredContent", Spacing.narrowCenteredContent )
+                            |> asChoice
+                        , ( "centeredContentWithSidePaddingAndCustomWidth"
+                          , Control.map
+                                (\value ->
+                                    ( Code.fromModule moduleName "centeredContentWithSidePaddingAndCustomWidth"
+                                        ++ " (Css.px "
+                                        ++ String.fromFloat value
+                                        ++ ")"
+                                    , Spacing.centeredContentWithSidePaddingAndCustomWidth (Css.px value)
+                                    )
+                                )
+                                (Control.float 400)
+                          )
+                        , ( "centeredContentWithCustomWidth"
+                          , Control.map
+                                (\value ->
+                                    ( Code.fromModule moduleName "centeredContentWithCustomWidth"
+                                        ++ " (Css.px "
+                                        ++ String.fromFloat value
+                                        ++ ")"
+                                    , Spacing.centeredContentWithCustomWidth (Css.px value)
+                                    )
+                                )
+                                (Control.float 400)
+                          )
+                        ]
+                    )
                 )
             )
         |> Control.field "pageBottomWhitespace"

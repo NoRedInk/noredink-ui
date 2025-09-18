@@ -11,6 +11,7 @@ import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Guidance
 import Http
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
@@ -93,12 +94,13 @@ moduleName =
 controlTheme : Control ( String, Message.Attribute msg )
 controlTheme =
     Control.choice
-        [ ( "tip", Control.value ( "Message.tip", Message.tip ) )
-        , ( "error", Control.value ( "Message.error", Message.error ) )
-        , ( "alert", Control.value ( "Message.alert", Message.alert ) )
-        , ( "success", Control.value ( "Message.success", Message.success ) )
-        , ( "customTheme", controlCustomTheme )
-        ]
+        (Nonempty ( "tip", Control.value ( "Message.tip", Message.tip ) )
+            [ ( "error", Control.value ( "Message.error", Message.error ) )
+            , ( "alert", Control.value ( "Message.alert", Message.alert ) )
+            , ( "success", Control.value ( "Message.success", Message.success ) )
+            , ( "customTheme", controlCustomTheme )
+            ]
+        )
 
 
 controlCustomTheme : Control ( String, Message.Attribute msg )
@@ -111,22 +113,21 @@ controlCustomTheme =
         )
         |> Control.field "color"
             (CommonControls.choice "Colors"
-                [ ( "purpleDark", Colors.purpleDark )
-                ]
+                (Nonempty ( "purpleDark", Colors.purpleDark ) [])
             )
         |> Control.field "backgroundColor"
             (CommonControls.choice "Colors"
-                [ ( "gray96", Colors.gray96 )
-                ]
+                (Nonempty ( "gray96", Colors.gray96 ) [])
             )
 
 
 controlRole : Control ( String, Message.Attribute msg )
 controlRole =
     CommonControls.choice "Message"
-        [ ( "alertRole", Message.alertRole )
-        , ( "statusRole", Message.statusRole )
-        ]
+        (Nonempty ( "alertRole", Message.alertRole )
+            [ ( "statusRole", Message.statusRole )
+            ]
+        )
 
 
 type Msg

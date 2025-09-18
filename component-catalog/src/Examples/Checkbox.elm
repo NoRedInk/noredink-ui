@@ -19,6 +19,7 @@ import Guidance
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.Checkbox.V7 as Checkbox
 import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
@@ -297,23 +298,27 @@ initAttributes =
             (Control.list
                 |> ControlExtra.optionalListItem "containerCss"
                     (Control.choice
-                        [ ( "Red dashed border"
-                          , Control.value
+                        (Nonempty
+                            ( "Red dashed border"
+                            , Control.value
                                 ( "Checkbox.containerCss [ Css.border3 (Css.px 4) Css.dashed Colors.red ]"
                                 , Checkbox.containerCss [ Css.border3 (Css.px 4) Css.dashed Colors.red ]
                                 )
-                          )
-                        ]
+                            )
+                            []
+                        )
                     )
                 |> ControlExtra.optionalListItem "labelCss"
                     (Control.choice
-                        [ ( "Orange dotted border"
-                          , Control.value
+                        (Nonempty
+                            ( "Orange dotted border"
+                            , Control.value
                                 ( "Checkbox.labelCss [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]"
                                 , Checkbox.labelCss [ Css.border3 (Css.px 4) Css.dotted Colors.orange ]
                                 )
-                          )
-                        ]
+                            )
+                            []
+                        )
                     )
                 |> ControlExtra.optionalBoolListItem "noMargin" ( "noMargin True", Checkbox.noMargin True )
                 |> ControlExtra.optionalBoolListItem "hiddenLabel" ( "hiddenLabel", Checkbox.hiddenLabel )

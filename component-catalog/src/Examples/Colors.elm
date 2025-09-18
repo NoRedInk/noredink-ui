@@ -15,6 +15,7 @@ import Css
 import Example exposing (Example)
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.Extra exposing (fromCssColor)
 import Nri.Ui.Colors.V1 as Colors
@@ -75,111 +76,112 @@ example =
             , viewGroupedColors colorGroupings
             , Heading.h2 [ Heading.plaintext "Background Highlight Colors" ]
             , Text.mediumBody [ Text.plaintext "Background highlights should be used as the default highlight style because they are more noticeable and readable. The dark colors should be used in the case where headings need to harmonize with highlighted containers, such as in Guided Drafts." ]
-            , viewBackgroundHighlightTable backgroundHighlights
+            , viewBackgroundHighlightTable (List.Nonempty.toList backgroundHighlights)
             , Heading.h2 [ Heading.plaintext "Text Highlight Colors" ]
             , Text.mediumBody [ Text.plaintext "Colors for highlighting text on a white background.  These colors are readable at 14px bold and bigger." ]
             , viewColors textHighlightColors
             , Heading.h2 [ Heading.plaintext "Deprecated colors" ]
             , viewColors
-                [ ( "magenta", Colors.magenta, "Pink highlighter" )
-                , ( "cyan", Colors.cyan, "Blue Highlighter" )
-                ]
+                (Nonempty ( "magenta", Colors.magenta, "Pink highlighter" )
+                    [ ( "cyan", Colors.cyan, "Blue Highlighter" )
+                    ]
+                )
             ]
     }
 
 
-all : List ( String, Css.Color )
+all : Nonempty ( String, Css.Color )
 all =
-    [ uncategorizedColors
-    , backgroundHighlightColors
-    , textHighlightColors
-    ]
-        |> List.concat
-        |> List.map (\( name, val, _ ) -> ( name, val ))
+    Nonempty uncategorizedColors
+        [ backgroundHighlightColors
+        , textHighlightColors
+        ]
+        |> List.Nonempty.concat
+        |> List.Nonempty.map (\( name, val, _ ) -> ( name, val ))
 
 
-grayscaleColors : List ColorExample
+grayscaleColors : Nonempty ColorExample
 grayscaleColors =
-    [ ( "gray20", Colors.gray20, "Main text" )
-    , ( "gray45", Colors.gray45, "Secondary text, 0-69 score" )
-    , ( "gray75", Colors.gray75, "Border of form elements and tabs" )
-    , ( "gray85", Colors.gray85, "Alternate for divider lines and container borders" )
-    , ( "gray92", Colors.gray92, "Dvdrs/rules, incomplete assmt, inactive tabs/dsbld buttons" )
-    , ( "gray96", Colors.gray96, "backgrounds/alternating rows" )
-    , ( "white", Colors.white, "backgrounds, text on dark backgrounds" )
-    ]
+    Nonempty ( "gray20", Colors.gray20, "Main text" )
+        [ ( "gray45", Colors.gray45, "Secondary text, 0-69 score" )
+        , ( "gray75", Colors.gray75, "Border of form elements and tabs" )
+        , ( "gray85", Colors.gray85, "Alternate for divider lines and container borders" )
+        , ( "gray92", Colors.gray92, "Dvdrs/rules, incomplete assmt, inactive tabs/dsbld buttons" )
+        , ( "gray96", Colors.gray96, "backgrounds/alternating rows" )
+        , ( "white", Colors.white, "backgrounds, text on dark backgrounds" )
+        ]
 
 
-blueColors : List ColorExample
+blueColors : Nonempty ColorExample
 blueColors =
-    [ ( "navy", Colors.navy, "Headings, indented compts, labels, tooltip bckgrnds" )
-    , ( "azure", Colors.azure, "Buttons, other clickable stuff, links" )
-    , ( "azureDark", Colors.azureDark, "Azure button shadow" )
-    , ( "frost", Colors.frost, "Blue backgrounds pairing with Navy and Azure" )
-    , ( "glacier", Colors.glacier, "Blue highlights/selected elements" )
-    , ( "cornflower", Colors.cornflower, "Mastery level 1" )
-    , ( "cornflowerDark", Colors.cornflowerDark, "Mastery level 1 text" )
-    , ( "cornflowerLight", Colors.cornflowerLight, "Background to pair with Cornflower elements" )
-    , ( "aqua", Colors.aqua, "Master level 2" )
-    , ( "aquaDark", Colors.aquaDark, "Text to pair with Aqua elements" )
-    , ( "aquaLight", Colors.aquaLight, "Background to pair with Aqua elements" )
-    , ( "turquoise", Colors.turquoise, "Master level 3, writing cycles" )
-    , ( "turquoiseDark", Colors.turquoiseDark, "Text to pair with turquoise elements" )
-    , ( "turquoiseLight", Colors.turquoiseLight, "Background to pair with turquoise elements" )
-    ]
+    Nonempty ( "navy", Colors.navy, "Headings, indented compts, labels, tooltip bckgrnds" )
+        [ ( "azure", Colors.azure, "Buttons, other clickable stuff, links" )
+        , ( "azureDark", Colors.azureDark, "Azure button shadow" )
+        , ( "frost", Colors.frost, "Blue backgrounds pairing with Navy and Azure" )
+        , ( "glacier", Colors.glacier, "Blue highlights/selected elements" )
+        , ( "cornflower", Colors.cornflower, "Mastery level 1" )
+        , ( "cornflowerDark", Colors.cornflowerDark, "Mastery level 1 text" )
+        , ( "cornflowerLight", Colors.cornflowerLight, "Background to pair with Cornflower elements" )
+        , ( "aqua", Colors.aqua, "Master level 2" )
+        , ( "aquaDark", Colors.aquaDark, "Text to pair with Aqua elements" )
+        , ( "aquaLight", Colors.aquaLight, "Background to pair with Aqua elements" )
+        , ( "turquoise", Colors.turquoise, "Master level 3, writing cycles" )
+        , ( "turquoiseDark", Colors.turquoiseDark, "Text to pair with turquoise elements" )
+        , ( "turquoiseLight", Colors.turquoiseLight, "Background to pair with turquoise elements" )
+        ]
 
 
-greenColors : List ColorExample
+greenColors : Nonempty ColorExample
 greenColors =
-    [ ( "lichen", Colors.lichen, "70-79 score" )
-    , ( "grassland", Colors.grassland, "80-89 score" )
-    , ( "green", Colors.green, "90-100 score" )
-    , ( "greenDark", Colors.greenDark, "Green button, swathes of green" )
-    , ( "greenDarkest", Colors.greenDarkest, "Green text, green button shadow" )
-    , ( "greenLight", Colors.greenLight, "Green backgrounds" )
-    , ( "greenLightest", Colors.greenLightest, "Green backgrounds" )
-    ]
+    Nonempty ( "lichen", Colors.lichen, "70-79 score" )
+        [ ( "grassland", Colors.grassland, "80-89 score" )
+        , ( "green", Colors.green, "90-100 score" )
+        , ( "greenDark", Colors.greenDark, "Green button, swathes of green" )
+        , ( "greenDarkest", Colors.greenDarkest, "Green text, green button shadow" )
+        , ( "greenLight", Colors.greenLight, "Green backgrounds" )
+        , ( "greenLightest", Colors.greenLightest, "Green backgrounds" )
+        ]
 
 
-purpleColors : List ColorExample
+purpleColors : Nonempty ColorExample
 purpleColors =
-    [ ( "purple", Colors.purple, "Wrong, form errors, diagnostics, purple button" )
-    , ( "purpleDark", Colors.purpleDark, "Purple text, purple button shadow" )
-    , ( "purpleLight", Colors.purpleLight, "Purple backgrounds" )
-    ]
+    Nonempty ( "purple", Colors.purple, "Wrong, form errors, diagnostics, purple button" )
+        [ ( "purpleDark", Colors.purpleDark, "Purple text, purple button shadow" )
+        , ( "purpleLight", Colors.purpleLight, "Purple backgrounds" )
+        ]
 
 
-redColors : List ColorExample
+redColors : Nonempty ColorExample
 redColors =
-    [ ( "red", Colors.red, "NoRedInk red, form warnings, practice" )
-    , ( "redDark", Colors.redDark, "Red links/text, red button shadow" )
-    , ( "redLight", Colors.redLight, "Red backgrounds" )
-    ]
+    Nonempty ( "red", Colors.red, "NoRedInk red, form warnings, practice" )
+        [ ( "redDark", Colors.redDark, "Red links/text, red button shadow" )
+        , ( "redLight", Colors.redLight, "Red backgrounds" )
+        ]
 
 
-yellowColors : List ColorExample
+yellowColors : Nonempty ColorExample
 yellowColors =
-    [ ( "mustard", Colors.mustard, "Diagnostic assignments, some Premium elements" )
-    , ( "ochre", Colors.ochre, "Practice assignments background color, some Premium elements" )
-    , ( "ochreDark", Colors.ochreDark, "Practice assignments text color" )
-    , ( "sunshine", Colors.sunshine, "Yellow highlights, tips" )
-    ]
+    Nonempty ( "mustard", Colors.mustard, "Diagnostic assignments, some Premium elements" )
+        [ ( "ochre", Colors.ochre, "Practice assignments background color, some Premium elements" )
+        , ( "ochreDark", Colors.ochreDark, "Practice assignments text color" )
+        , ( "sunshine", Colors.sunshine, "Yellow highlights, tips" )
+        ]
 
 
-colorGroupings : List ( String, List ColorExample )
+colorGroupings : Nonempty ( String, Nonempty ColorExample )
 colorGroupings =
-    [ ( "Grays", grayscaleColors )
-    , ( "Blues", blueColors )
-    , ( "Greens", greenColors )
-    , ( "Purples", purpleColors )
-    , ( "Reds", redColors )
-    , ( "Yellows", yellowColors )
-    ]
+    Nonempty ( "Grays", grayscaleColors )
+        [ ( "Blues", blueColors )
+        , ( "Greens", greenColors )
+        , ( "Purples", purpleColors )
+        , ( "Reds", redColors )
+        , ( "Yellows", yellowColors )
+        ]
 
 
-uncategorizedColors : List ColorExample
+uncategorizedColors : Nonempty ColorExample
 uncategorizedColors =
-    List.concatMap Tuple.second colorGroupings
+    List.Nonempty.concatMap Tuple.second colorGroupings
 
 
 type alias BackgroundHighlight =
@@ -192,71 +194,72 @@ type alias BackgroundHighlight =
     }
 
 
-backgroundHighlights : List BackgroundHighlight
+backgroundHighlights : Nonempty BackgroundHighlight
 backgroundHighlights =
-    [ { name = "Yellow"
-      , base = Colors.highlightYellow
-      , light = Colors.highlightYellowLight
-      , lightest = Colors.highlightYellowLightest
-      , dark = Colors.highlightYellowDark
-      , darkLight = Colors.highlightYellowDarkLight
-      }
-    , { name = "Cyan"
-      , base = Colors.highlightCyan
-      , light = Colors.highlightCyanLight
-      , lightest = Colors.highlightCyanLightest
-      , dark = Colors.highlightCyanDark
-      , darkLight = Colors.highlightCyanDarkLight
-      }
-    , { name = "Magenta"
-      , base = Colors.highlightMagenta
-      , light = Colors.highlightMagentaLight
-      , lightest = Colors.highlightMagentaLightest
-      , dark = Colors.highlightMagentaDark
-      , darkLight = Colors.highlightMagentaDarkLight
-      }
-    , { name = "Green"
-      , base = Colors.highlightGreen
-      , light = Colors.highlightGreenLight
-      , lightest = Colors.highlightGreenLightest
-      , dark = Colors.highlightGreenDark
-      , darkLight = Colors.highlightGreenDarkLight
-      }
-    , { name = "Blue"
-      , base = Colors.highlightBlue
-      , light = Colors.highlightBlueLight
-      , lightest = Colors.highlightBlueLightest
-      , dark = Colors.highlightBlueDark
-      , darkLight = Colors.highlightBlueDarkLight
-      }
-    , { name = "Purple"
-      , base = Colors.highlightPurple
-      , light = Colors.highlightPurpleLight
-      , lightest = Colors.highlightPurpleLightest
-      , dark = Colors.highlightPurpleDark
-      , darkLight = Colors.highlightPurpleDarkLight
-      }
-    , { name = "Brown"
-      , base = Colors.highlightBrown
-      , light = Colors.highlightBrownLight
-      , lightest = Colors.highlightBrownLightest
-      , dark = Colors.highlightBrownDark
-      , darkLight = Colors.highlightBrownDarkLight
-      }
-    ]
+    Nonempty
+        { name = "Yellow"
+        , base = Colors.highlightYellow
+        , light = Colors.highlightYellowLight
+        , lightest = Colors.highlightYellowLightest
+        , dark = Colors.highlightYellowDark
+        , darkLight = Colors.highlightYellowDarkLight
+        }
+        [ { name = "Cyan"
+          , base = Colors.highlightCyan
+          , light = Colors.highlightCyanLight
+          , lightest = Colors.highlightCyanLightest
+          , dark = Colors.highlightCyanDark
+          , darkLight = Colors.highlightCyanDarkLight
+          }
+        , { name = "Magenta"
+          , base = Colors.highlightMagenta
+          , light = Colors.highlightMagentaLight
+          , lightest = Colors.highlightMagentaLightest
+          , dark = Colors.highlightMagentaDark
+          , darkLight = Colors.highlightMagentaDarkLight
+          }
+        , { name = "Green"
+          , base = Colors.highlightGreen
+          , light = Colors.highlightGreenLight
+          , lightest = Colors.highlightGreenLightest
+          , dark = Colors.highlightGreenDark
+          , darkLight = Colors.highlightGreenDarkLight
+          }
+        , { name = "Blue"
+          , base = Colors.highlightBlue
+          , light = Colors.highlightBlueLight
+          , lightest = Colors.highlightBlueLightest
+          , dark = Colors.highlightBlueDark
+          , darkLight = Colors.highlightBlueDarkLight
+          }
+        , { name = "Purple"
+          , base = Colors.highlightPurple
+          , light = Colors.highlightPurpleLight
+          , lightest = Colors.highlightPurpleLightest
+          , dark = Colors.highlightPurpleDark
+          , darkLight = Colors.highlightPurpleDarkLight
+          }
+        , { name = "Brown"
+          , base = Colors.highlightBrown
+          , light = Colors.highlightBrownLight
+          , lightest = Colors.highlightBrownLightest
+          , dark = Colors.highlightBrownDark
+          , darkLight = Colors.highlightBrownDarkLight
+          }
+        ]
 
 
-backgroundHighlightColors : List ColorExample
+backgroundHighlightColors : Nonempty ColorExample
 backgroundHighlightColors =
     backgroundHighlights
-        |> List.concatMap
+        |> List.Nonempty.concatMap
             (\{ name, base, light, lightest, dark, darkLight } ->
-                [ ( "highlight" ++ name, base, name ++ " background highlights" )
-                , ( "highlight" ++ name ++ "Light", light, "Light " ++ name ++ " background highlights" )
-                , ( "highlight" ++ name ++ "Lightest", lightest, "Lightest " ++ name ++ " background highlights" )
-                , ( "highlight" ++ name ++ "Dark", dark, "Dark " ++ name ++ " background highlights" )
-                , ( "highlight" ++ name ++ "DarkLight", darkLight, "Dark light " ++ name ++ " background highlights" )
-                ]
+                Nonempty ( "highlight" ++ name, base, name ++ " background highlights" )
+                    [ ( "highlight" ++ name ++ "Light", light, "Light " ++ name ++ " background highlights" )
+                    , ( "highlight" ++ name ++ "Lightest", lightest, "Lightest " ++ name ++ " background highlights" )
+                    , ( "highlight" ++ name ++ "Dark", dark, "Dark " ++ name ++ " background highlights" )
+                    , ( "highlight" ++ name ++ "DarkLight", darkLight, "Dark light " ++ name ++ " background highlights" )
+                    ]
             )
 
 
@@ -282,16 +285,16 @@ viewBackgroundHighlightTable highlightColors =
         )
 
 
-textHighlightColors : List ColorExample
+textHighlightColors : Nonempty ColorExample
 textHighlightColors =
-    [ ( "textHighlightYellow", Colors.textHighlightYellow, "Neutral text highlight #1" )
-    , ( "textHighlightCyan", Colors.textHighlightCyan, "Neutral text highlight #2" )
-    , ( "textHighlightMagenta", Colors.textHighlightMagenta, "Neutral text highlight #3" )
-    , ( "textHighlightGreen", Colors.textHighlightGreen, "Neutral text highlight #4, Positive text highlight #1" )
-    , ( "textHighlightBlue", Colors.textHighlightBlue, "Neutral text highlight #5, Positive text highlight #2" )
-    , ( "textHighlightPurple", Colors.textHighlightPurple, "Negative text highlight #1" )
-    , ( "textHighlightBrown", Colors.textHighlightBrown, "Negative text highlight #2" )
-    ]
+    Nonempty ( "textHighlightYellow", Colors.textHighlightYellow, "Neutral text highlight #1" )
+        [ ( "textHighlightCyan", Colors.textHighlightCyan, "Neutral text highlight #2" )
+        , ( "textHighlightMagenta", Colors.textHighlightMagenta, "Neutral text highlight #3" )
+        , ( "textHighlightGreen", Colors.textHighlightGreen, "Neutral text highlight #4, Positive text highlight #1" )
+        , ( "textHighlightBlue", Colors.textHighlightBlue, "Neutral text highlight #5, Positive text highlight #2" )
+        , ( "textHighlightPurple", Colors.textHighlightPurple, "Negative text highlight #1" )
+        , ( "textHighlightBrown", Colors.textHighlightBrown, "Negative text highlight #2" )
+        ]
 
 
 viewPreviewSwatch : ( String, Css.Color ) -> Html.Html msg
@@ -310,7 +313,7 @@ viewPreviewSwatch ( name, color ) =
         [ Html.text name ]
 
 
-viewGroupedColors : List ( String, List ColorExample ) -> Html.Html msg
+viewGroupedColors : Nonempty ( String, Nonempty ColorExample ) -> Html.Html msg
 viewGroupedColors groups =
     let
         viewGroup ( groupName, group ) =
@@ -327,21 +330,24 @@ viewGroupedColors groups =
                     , Heading.css [ Css.width (Css.pct 100) ]
                     ]
                     :: (group
-                            |> List.sortBy (\( _, color, _ ) -> luminance (fromCssColor color))
-                            |> List.map viewColor
+                            |> List.Nonempty.sortBy (\( _, color, _ ) -> luminance (fromCssColor color))
+                            |> List.Nonempty.map viewColor
+                            |> List.Nonempty.toList
                        )
                 )
     in
     groups
-        |> List.map viewGroup
+        |> List.Nonempty.map viewGroup
+        |> List.Nonempty.toList
         |> Html.div [ css [ Css.margin3 (Css.px 10) Css.zero (Css.px 30) ] ]
 
 
-viewColors : List ColorExample -> Html.Html msg
+viewColors : Nonempty ColorExample -> Html.Html msg
 viewColors colors =
     colors
-        |> List.sortBy (\( _, color, _ ) -> luminance (fromCssColor color))
-        |> List.map viewColor
+        |> List.Nonempty.sortBy (\( _, color, _ ) -> luminance (fromCssColor color))
+        |> List.Nonempty.map viewColor
+        |> List.Nonempty.toList
         |> Html.div
             [ css
                 [ Css.maxWidth (Css.px 12000)

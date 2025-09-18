@@ -13,6 +13,7 @@ import Css
 import Debug.Control as Control exposing (Control)
 import Debug.Control.View as ControlView
 import Example exposing (Example)
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
@@ -248,10 +249,11 @@ controlSettings =
         |> Control.field "backgroundChangeOnRowHover" (Control.bool False)
         |> Control.field "alternatingRowColors"
             (Control.choice
-                [ ( "Odd", Control.value Table.Odd )
-                , ( "Even", Control.value Table.Even )
-                , ( "None", Control.value Table.None )
-                ]
+                (Nonempty ( "Odd", Control.value Table.Odd )
+                    [ ( "Even", Control.value Table.Even )
+                    , ( "None", Control.value Table.None )
+                    ]
+                )
             )
 
 

@@ -19,6 +19,7 @@ import Example exposing (Example)
 import Guidance
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attributes exposing (css)
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
@@ -181,9 +182,10 @@ initDebugControls =
     Control.record Model
         |> Control.field "type"
             (Control.choice
-                [ ( "button", Control.value Button )
-                , ( "link", Control.value Link )
-                ]
+                (Nonempty ( "button", Control.value Button )
+                    [ ( "link", Control.value Link )
+                    ]
+                )
             )
         |> Control.field "label" (Control.string "Label **bold**   *emphasis*")
         |> Control.field "" controlAttributes
@@ -205,39 +207,43 @@ controlAttributes =
                     (CommonControls.choice moduleName sizes)
                 |> ControlExtra.optionalListItem "width"
                     (CommonControls.choice moduleName
-                        [ ( "exactWidth 120", Button.exactWidth 120 )
-                        , ( "exactWidth 70", Button.exactWidth 70 )
-                        , ( "boundedWidth 100 180", Button.boundedWidth { min = 100, max = 180 } )
-                        , ( "unboundedWidth", Button.unboundedWidth )
-                        , ( "fillContainerWidth", Button.fillContainerWidth )
-                        ]
+                        (Nonempty ( "exactWidth 120", Button.exactWidth 120 )
+                            [ ( "exactWidth 70", Button.exactWidth 70 )
+                            , ( "boundedWidth 100 180", Button.boundedWidth { min = 100, max = 180 } )
+                            , ( "unboundedWidth", Button.unboundedWidth )
+                            , ( "fillContainerWidth", Button.fillContainerWidth )
+                            ]
+                        )
                     )
                 |> ControlExtra.optionalListItem "mobile width"
                     (CommonControls.choice moduleName
-                        [ ( "exactWidthForMobile 120", Button.exactWidthForMobile 120 )
-                        , ( "exactWidthForMobile 70", Button.exactWidthForMobile 70 )
-                        , ( "boundedWidthForMobile 100 180", Button.boundedWidthForMobile { min = 100, max = 180 } )
-                        , ( "unboundedWidthForMobile", Button.unboundedWidthForMobile )
-                        , ( "fillContainerWidthForMobile", Button.fillContainerWidthForMobile )
-                        ]
+                        (Nonempty ( "exactWidthForMobile 120", Button.exactWidthForMobile 120 )
+                            [ ( "exactWidthForMobile 70", Button.exactWidthForMobile 70 )
+                            , ( "boundedWidthForMobile 100 180", Button.boundedWidthForMobile { min = 100, max = 180 } )
+                            , ( "unboundedWidthForMobile", Button.unboundedWidthForMobile )
+                            , ( "fillContainerWidthForMobile", Button.fillContainerWidthForMobile )
+                            ]
+                        )
                     )
                 |> ControlExtra.optionalListItem "quiz engine mobile width"
                     (CommonControls.choice moduleName
-                        [ ( "exactWidthForQuizEngineMobile 120", Button.exactWidthForQuizEngineMobile 120 )
-                        , ( "exactWidthForQuizEngineMobile 70", Button.exactWidthForQuizEngineMobile 70 )
-                        , ( "boundedWidthForQuizEngineMobile 100 180", Button.boundedWidthForQuizEngineMobile { min = 100, max = 180 } )
-                        , ( "unboundedWidthForQuizEngineMobile", Button.unboundedWidthForQuizEngineMobile )
-                        , ( "fillContainerWidthForQuizEngineMobile", Button.fillContainerWidthForQuizEngineMobile )
-                        ]
+                        (Nonempty ( "exactWidthForQuizEngineMobile 120", Button.exactWidthForQuizEngineMobile 120 )
+                            [ ( "exactWidthForQuizEngineMobile 70", Button.exactWidthForQuizEngineMobile 70 )
+                            , ( "boundedWidthForQuizEngineMobile 100 180", Button.boundedWidthForQuizEngineMobile { min = 100, max = 180 } )
+                            , ( "unboundedWidthForQuizEngineMobile", Button.unboundedWidthForQuizEngineMobile )
+                            , ( "fillContainerWidthForQuizEngineMobile", Button.fillContainerWidthForQuizEngineMobile )
+                            ]
+                        )
                     )
                 |> ControlExtra.optionalListItem "narrow mobile width"
                     (CommonControls.choice moduleName
-                        [ ( "exactWidthForNarrowMobile 120", Button.exactWidthForNarrowMobile 120 )
-                        , ( "exactWidthForNarrowMobile 70", Button.exactWidthForNarrowMobile 70 )
-                        , ( "boundedWidthForNarrowMobile 100 180", Button.boundedWidthForNarrowMobile { min = 100, max = 180 } )
-                        , ( "unboundedWidthForNarrowMobile", Button.unboundedWidthForNarrowMobile )
-                        , ( "fillContainerWidthForNarrowMobile", Button.fillContainerWidthForNarrowMobile )
-                        ]
+                        (Nonempty ( "exactWidthForNarrowMobile 120", Button.exactWidthForNarrowMobile 120 )
+                            [ ( "exactWidthForNarrowMobile 70", Button.exactWidthForNarrowMobile 70 )
+                            , ( "boundedWidthForNarrowMobile 100 180", Button.boundedWidthForNarrowMobile { min = 100, max = 180 } )
+                            , ( "unboundedWidthForNarrowMobile", Button.unboundedWidthForNarrowMobile )
+                            , ( "fillContainerWidthForNarrowMobile", Button.fillContainerWidthForNarrowMobile )
+                            ]
+                        )
                     )
             )
         |> ControlExtra.listItems "State & Type"
@@ -245,11 +251,12 @@ controlAttributes =
                 |> ControlExtra.optionalBoolListItem "disabled" ( "disabled", Button.disabled )
                 |> ControlExtra.optionalListItem "state (button only)"
                     (CommonControls.choice moduleName
-                        [ ( "error", Button.error )
-                        , ( "unfulfilled", Button.unfulfilled )
-                        , ( "loading", Button.loading )
-                        , ( "success", Button.success )
-                        ]
+                        (Nonempty ( "error", Button.error )
+                            [ ( "unfulfilled", Button.unfulfilled )
+                            , ( "loading", Button.loading )
+                            , ( "success", Button.success )
+                            ]
+                        )
                     )
                 |> ControlExtra.optionalBoolListItem "toggleButtonPressed"
                     ( "toggleButtonPressed True"
@@ -264,13 +271,14 @@ controlAttributes =
             (Control.list
                 |> ControlExtra.optionalListItem "theme"
                     (CommonControls.choice moduleName
-                        [ ( "primary", Button.primary )
-                        , ( "secondary", Button.secondary )
-                        , ( "tertiary", Button.tertiary )
-                        , ( "danger", Button.danger )
-                        , ( "dangerSecondary", Button.dangerSecondary )
-                        , ( "premium", Button.premium )
-                        ]
+                        (Nonempty ( "primary", Button.primary )
+                            [ ( "secondary", Button.secondary )
+                            , ( "tertiary", Button.tertiary )
+                            , ( "danger", Button.danger )
+                            , ( "dangerSecondary", Button.dangerSecondary )
+                            , ( "premium", Button.premium )
+                            ]
+                        )
                     )
                 |> CommonControls.css
                     { moduleName = moduleName
@@ -410,13 +418,13 @@ viewCustomizableExample model =
         (List.map Tuple.second model.attributes)
 
 
-sizes : List ( String, Button.Attribute msg )
+sizes : Nonempty ( String, Button.Attribute msg )
 sizes =
-    [ ( "small", Button.small )
-    , ( "medium", Button.medium )
-    , ( "large", Button.large )
-    , ( "modal", Button.modal )
-    ]
+    Nonempty ( "small", Button.small )
+        [ ( "medium", Button.medium )
+        , ( "large", Button.large )
+        , ( "modal", Button.modal )
+        ]
 
 
 buttonsTable : Html msg
@@ -446,13 +454,13 @@ buttonsTable =
                             ( Button.button, "button" )
                             styleTuple
                         )
-                        sizes
+                        (sizes |> List.Nonempty.toList)
                     ++ [ td [ css [ verticalAlign middle, Css.borderTop3 (Css.px 1) Css.solid Colors.gray85 ] ]
                             [ code [] [ text "Button.button" ] ]
                        ]
                 )
             , tr []
-                (List.map (exampleCell [] ( Button.link, "link" ) styleTuple) sizes
+                (List.map (exampleCell [] ( Button.link, "link" ) styleTuple) (List.Nonempty.toList sizes)
                     ++ [ td [ css [ verticalAlign middle ] ]
                             [ code [] [ text "Button.link" ] ]
                        ]
@@ -474,6 +482,7 @@ buttonsTable =
     in
     List.concat
         [ [ sizes
+                |> List.Nonempty.toList
                 |> List.map
                     (\( sizeName, _ ) ->
                         th [ css [ Css.padding2 (Css.px 25) Css.zero ] ]
