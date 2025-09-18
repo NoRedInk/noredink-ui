@@ -22,7 +22,7 @@ import Html.Styled.Attributes exposing (css)
 import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Spacing.V1 as Spacing
-import Nri.Ui.Table.V8 as Table
+import Nri.Ui.Table.V9 as Table
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V2 as UiIcon
 

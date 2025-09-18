@@ -35,7 +35,7 @@ import Nri.Ui.Html.Attributes.V2 exposing (maybe)
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 import Nri.Ui.Svg.V1
-import Nri.Ui.Table.V8 as Table exposing (SortDirection(..))
+import Nri.Ui.Table.V9 as Table exposing (SortDirection(..))
 import Nri.Ui.UiIcon.V2
 
 

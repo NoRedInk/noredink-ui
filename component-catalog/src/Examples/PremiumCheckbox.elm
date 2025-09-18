@@ -26,7 +26,7 @@ import Nri.Ui.Pennant.V4 as Pennant
 import Nri.Ui.PremiumCheckbox.V8 as PremiumCheckbox
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Table.V8 as Table
+import Nri.Ui.Table.V9 as Table
 import Set exposing (Set)
 
 

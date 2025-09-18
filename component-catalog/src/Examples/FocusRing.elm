@@ -27,7 +27,7 @@ import Nri.Ui.SegmentedControl.V14 as SegmentedControl
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Switch.V4 as Switch
-import Nri.Ui.Table.V8 as Table
+import Nri.Ui.Table.V9 as Table
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V2 as UiIcon
 import Routes

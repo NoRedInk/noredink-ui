@@ -25,7 +25,7 @@ import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Html.V3 exposing (viewJust)
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
-import Nri.Ui.Table.V8 as Table
+import Nri.Ui.Table.V9 as Table
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V2 as UiIcon
 
