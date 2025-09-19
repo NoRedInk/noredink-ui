@@ -90,6 +90,7 @@ import Accessibility.Styled.Key as Key
 import Accessibility.Styled.Role as Role
 import Content
 import Css exposing (Color, Px, Style)
+import Css.Animations
 import Css.Global as Global
 import Css.Media
 import EventExtras as Events
@@ -1099,6 +1100,19 @@ viewTooltip tooltipId config =
           -- in the tooltip is redundant. For example, if we have a ClickableSvg "Print" button, the button will
           -- *already have* an accessible name. It is not helpful to have the "Print" read out twice.
           Aria.hidden (config.purpose == PrimaryLabel)
+        , -- Delay the appearance of the tooltip slightly to avoid it
+          -- flashing on screen when the user is just moving their mouse around.
+          Attributes.css <|
+            if config.isOpen then
+                [ Css.animationName <| Css.Animations.keyframes [ ( 100, [ Css.Animations.custom "visibility" "visible" ] ) ]
+                , Css.animationDelay (Css.ms 250)
+                , Css.animationDuration (Css.ms 0)
+                , Css.property "animation-fill-mode" "forwards"
+                , Css.visibility Css.hidden
+                ]
+
+            else
+                []
         ]
         [ Root.div
             ([ Attributes.css
