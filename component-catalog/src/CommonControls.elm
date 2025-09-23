@@ -131,86 +131,90 @@ content :
     }
     -> Control ( String, attribute )
 content ({ moduleName } as config) =
-    Control.choice
-        (Nonempty
+    let
+        rest =
+            List.filterMap identity
+                [ Just
+                    ( "plain text (long, no newlines)"
+                    , Control.string longPangrams
+                        |> Control.map
+                            (\str ->
+                                ( moduleName ++ ".plaintext \"" ++ str ++ "\""
+                                , config.plaintext str
+                                )
+                            )
+                        |> Control.revealed "plain text"
+                    )
+                , Just
+                    ( "plain text (long, with newlines)"
+                    , Control.stringTextarea romeoAndJulietQuotation
+                        |> Control.map
+                            (\str ->
+                                ( moduleName ++ ".plaintext\n\t\t\"\"\"" ++ str ++ "\t\t\"\"\""
+                                , config.plaintext str
+                                )
+                            )
+                        |> Control.revealed "plain text"
+                    )
+                , case config.markdown of
+                    Just markdown_ ->
+                        Just
+                            ( "markdown"
+                            , Control.string markdown
+                                |> Control.map
+                                    (\str ->
+                                        ( moduleName ++ ".markdown \"" ++ str ++ "\""
+                                        , markdown_ str
+                                        )
+                                    )
+                                |> Control.revealed "markdown"
+                            )
+
+                    Nothing ->
+                        Nothing
+                , Just
+                    ( "HTML"
+                    , Control.value
+                        ( moduleName ++ ".html [ ... ]"
+                        , config.html exampleHtml
+                        )
+                    )
+                , case config.httpError of
+                    Just httpError_ ->
+                        Just
+                            ( "httpError"
+                            , Control.map
+                                (\error ->
+                                    ( moduleName ++ ".httpError error"
+                                    , httpError_ error
+                                    )
+                                )
+                                httpError
+                            )
+
+                    Nothing ->
+                        Nothing
+                ]
+
+        plainText =
             ( "plain text (short)"
             , string ( Code.fromModule moduleName "plaintext", config.plaintext ) quickBrownFox
                 |> Control.revealed "plain text"
             )
-            ([ case config.paragraph of
-                Just f ->
-                    Just
-                        ( "paragraph"
-                        , string ( Code.fromModule moduleName "paragraph", f ) quickBrownFox
-                            |> Control.revealed "paragraph"
-                        )
-
-                Nothing ->
-                    Nothing
-             , Just
-                ( "plain text (long, no newlines)"
-                , Control.string longPangrams
-                    |> Control.map
-                        (\str ->
-                            ( moduleName ++ ".plaintext \"" ++ str ++ "\""
-                            , config.plaintext str
-                            )
-                        )
-                    |> Control.revealed "plain text"
-                )
-             , Just
-                ( "plain text (long, with newlines)"
-                , Control.stringTextarea romeoAndJulietQuotation
-                    |> Control.map
-                        (\str ->
-                            ( moduleName ++ ".plaintext\n\t\t\"\"\"" ++ str ++ "\t\t\"\"\""
-                            , config.plaintext str
-                            )
-                        )
-                    |> Control.revealed "plain text"
-                )
-             , case config.markdown of
-                Just markdown_ ->
-                    Just
-                        ( "markdown"
-                        , Control.string markdown
-                            |> Control.map
-                                (\str ->
-                                    ( moduleName ++ ".markdown \"" ++ str ++ "\""
-                                    , markdown_ str
-                                    )
-                                )
-                            |> Control.revealed "markdown"
-                        )
-
-                Nothing ->
-                    Nothing
-             , Just
-                ( "HTML"
-                , Control.value
-                    ( moduleName ++ ".html [ ... ]"
-                    , config.html exampleHtml
+    in
+    case config.paragraph of
+        Just f ->
+            Control.choice
+                (Nonempty
+                    ( "paragraph"
+                    , string ( Code.fromModule moduleName "paragraph", f ) quickBrownFox
+                        |> Control.revealed "paragraph"
                     )
+                    (plainText :: rest)
                 )
-             , case config.httpError of
-                Just httpError_ ->
-                    Just
-                        ( "httpError"
-                        , Control.map
-                            (\error ->
-                                ( moduleName ++ ".httpError error"
-                                , httpError_ error
-                                )
-                            )
-                            httpError
-                        )
 
-                Nothing ->
-                    Nothing
-             ]
-                |> List.filterMap identity
-            )
-        )
+        Nothing ->
+            Control.choice (Nonempty plainText rest)
 
 
 quickBrownFox : String
