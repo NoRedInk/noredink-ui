@@ -418,7 +418,7 @@ init =
                 (Control.choice
                     (allRowThemes
                         |> List.Nonempty.map (\( name, value ) -> ( name, Control.value ( Code.fromModule moduleName "." ++ name, value ) ))
-                        |> \list -> List.Nonempty.append list (Nonempty ( "custom", customRowTheme ) [])
+                        |> (\list -> List.Nonempty.append list (Nonempty ( "custom", customRowTheme ) []))
                     )
                 )
             |> Control.field "type"
