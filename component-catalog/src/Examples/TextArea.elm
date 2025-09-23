@@ -18,6 +18,7 @@ import Guidance
 import Html.Styled as Html
 import Html.Styled.Attributes as Attributes exposing (css)
 import Html.Styled.Keyed
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.InputStyles.V4 as InputStyles exposing (Theme(..))
@@ -160,15 +161,17 @@ controlAttributes =
                 |> ControlExtra.optionalListItem
                     "theme"
                     (CommonControls.choice moduleName
-                        [ ( "standard", TextArea.standard )
-                        , ( "writing", TextArea.writing )
-                        ]
+                        (Nonempty ( "standard", TextArea.standard )
+                            [ ( "writing", TextArea.writing )
+                            ]
+                        )
                     )
                 |> ControlExtra.optionalListItem "height"
                     (CommonControls.choice moduleName
-                        [ ( "autoResize", TextArea.autoResize )
-                        , ( "autoResizeSingleLine", TextArea.autoResizeSingleLine )
-                        ]
+                        (Nonempty ( "autoResize", TextArea.autoResize )
+                            [ ( "autoResizeSingleLine", TextArea.autoResizeSingleLine )
+                            ]
+                        )
                     )
                 |> ControlExtra.optionalBoolListItem "noMargin"
                     ( "TextArea.noMargin True", TextArea.noMargin True )

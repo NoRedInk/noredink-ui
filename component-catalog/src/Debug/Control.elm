@@ -30,6 +30,7 @@ Create interactive controls for arbitrary data structures.
 import Css exposing (..)
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes exposing (css)
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.Checkbox.V7 as Checkbox
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
@@ -203,22 +204,14 @@ stringTextarea initialValue =
 
 {-| A `Control` that chooses between a list of nested controls.
 
-This will crash if you provide an empty list.
-
 The first entry will be the initial value.
 
 Often used along with `revealed` to ensure that every control has a label.
 
 -}
-choice : List ( String, Control a ) -> Control a
-choice choices =
-    case choices of
-        [] ->
-            -- Debug.crash "No choices given"
-            choice choices
-
-        first :: rest ->
-            choice_ [] first rest
+choice : Nonempty ( String, Control a ) -> Control a
+choice (Nonempty first rest) =
+    choice_ [] first rest
 
 
 choice_ :

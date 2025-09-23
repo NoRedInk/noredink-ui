@@ -41,6 +41,7 @@ import Examples.Colors
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Http
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Data.PremiumDisplay as PremiumDisplay exposing (PremiumDisplay)
@@ -51,7 +52,7 @@ import Nri.Ui.UiIcon.V2 as UiIcon
 specificColor : String -> Control ( String, Css.Color )
 specificColor match =
     Examples.Colors.all
-        |> List.map
+        |> List.Nonempty.map
             (\( name, value ) ->
                 ( name, Control.value ( "Colors." ++ name, value ) )
             )
@@ -61,26 +62,28 @@ specificColor match =
 premiumDisplay : Control ( String, PremiumDisplay )
 premiumDisplay =
     Control.choice
-        [ ( "Premium Locked", Control.value ( "PremiumDisplay.PremiumLocked", PremiumDisplay.PremiumLocked ) )
-        , ( "Premium Unlocked", Control.value ( "PremiumDisplay.PremiumUnlocked", PremiumDisplay.PremiumUnlocked ) )
-        , ( "Premium Vouchered", Control.value ( "PremiumDisplay.PremiumVouchered", PremiumDisplay.PremiumVouchered ) )
-        , ( "Free", Control.value ( "PremiumDisplay.Free", PremiumDisplay.Free ) )
-        ]
+        (Nonempty ( "Premium Locked", Control.value ( "PremiumDisplay.PremiumLocked", PremiumDisplay.PremiumLocked ) )
+            [ ( "Premium Unlocked", Control.value ( "PremiumDisplay.PremiumUnlocked", PremiumDisplay.PremiumUnlocked ) )
+            , ( "Premium Vouchered", Control.value ( "PremiumDisplay.PremiumVouchered", PremiumDisplay.PremiumVouchered ) )
+            , ( "Free", Control.value ( "PremiumDisplay.Free", PremiumDisplay.Free ) )
+            ]
+        )
 
 
 httpError : Control Http.Error
 httpError =
     Control.choice
-        [ ( "Bad Url", Control.value (Http.BadUrl "/request-url") )
-        , ( "Timeout", Control.value Http.Timeout )
-        , ( "Network Error", Control.value Http.NetworkError )
-        , ( "Bad Status: 401", Control.value (Http.BadStatus 401) )
-        , ( "Bad Status: 404", Control.value (Http.BadStatus 404) )
-        , ( "Bad Status: ???", Control.value (Http.BadStatus 500) )
-        , ( "Bad Body (often, a JSON decoding problem)"
-          , Control.value (Http.BadBody badBodyString)
-          )
-        ]
+        (Nonempty ( "Bad Url", Control.value (Http.BadUrl "/request-url") )
+            [ ( "Timeout", Control.value Http.Timeout )
+            , ( "Network Error", Control.value Http.NetworkError )
+            , ( "Bad Status: 401", Control.value (Http.BadStatus 401) )
+            , ( "Bad Status: 404", Control.value (Http.BadStatus 404) )
+            , ( "Bad Status: ???", Control.value (Http.BadStatus 500) )
+            , ( "Bad Body (often, a JSON decoding problem)"
+              , Control.value (Http.BadBody badBodyString)
+              )
+            ]
+        )
         |> Control.revealed "HTTP error"
 
 
@@ -128,85 +131,90 @@ content :
     }
     -> Control ( String, attribute )
 content ({ moduleName } as config) =
-    Control.choice
-        ([ case config.paragraph of
-            Just f ->
-                Just
-                    ( "paragraph"
-                    , string ( Code.fromModule moduleName "paragraph", f ) quickBrownFox
-                        |> Control.revealed "paragraph"
+    let
+        rest =
+            List.filterMap identity
+                [ Just
+                    ( "plain text (long, no newlines)"
+                    , Control.string longPangrams
+                        |> Control.map
+                            (\str ->
+                                ( moduleName ++ ".plaintext \"" ++ str ++ "\""
+                                , config.plaintext str
+                                )
+                            )
+                        |> Control.revealed "plain text"
                     )
+                , Just
+                    ( "plain text (long, with newlines)"
+                    , Control.stringTextarea romeoAndJulietQuotation
+                        |> Control.map
+                            (\str ->
+                                ( moduleName ++ ".plaintext\n\t\t\"\"\"" ++ str ++ "\t\t\"\"\""
+                                , config.plaintext str
+                                )
+                            )
+                        |> Control.revealed "plain text"
+                    )
+                , case config.markdown of
+                    Just markdown_ ->
+                        Just
+                            ( "markdown"
+                            , Control.string markdown
+                                |> Control.map
+                                    (\str ->
+                                        ( moduleName ++ ".markdown \"" ++ str ++ "\""
+                                        , markdown_ str
+                                        )
+                                    )
+                                |> Control.revealed "markdown"
+                            )
 
-            Nothing ->
-                Nothing
-         , Just
+                    Nothing ->
+                        Nothing
+                , Just
+                    ( "HTML"
+                    , Control.value
+                        ( moduleName ++ ".html [ ... ]"
+                        , config.html exampleHtml
+                        )
+                    )
+                , case config.httpError of
+                    Just httpError_ ->
+                        Just
+                            ( "httpError"
+                            , Control.map
+                                (\error ->
+                                    ( moduleName ++ ".httpError error"
+                                    , httpError_ error
+                                    )
+                                )
+                                httpError
+                            )
+
+                    Nothing ->
+                        Nothing
+                ]
+
+        plainText =
             ( "plain text (short)"
             , string ( Code.fromModule moduleName "plaintext", config.plaintext ) quickBrownFox
                 |> Control.revealed "plain text"
             )
-         , Just
-            ( "plain text (long, no newlines)"
-            , Control.string longPangrams
-                |> Control.map
-                    (\str ->
-                        ( moduleName ++ ".plaintext \"" ++ str ++ "\""
-                        , config.plaintext str
-                        )
+    in
+    case config.paragraph of
+        Just f ->
+            Control.choice
+                (Nonempty
+                    ( "paragraph"
+                    , string ( Code.fromModule moduleName "paragraph", f ) quickBrownFox
+                        |> Control.revealed "paragraph"
                     )
-                |> Control.revealed "plain text"
-            )
-         , Just
-            ( "plain text (long, with newlines)"
-            , Control.stringTextarea romeoAndJulietQuotation
-                |> Control.map
-                    (\str ->
-                        ( moduleName ++ ".plaintext\n\t\t\"\"\"" ++ str ++ "\t\t\"\"\""
-                        , config.plaintext str
-                        )
-                    )
-                |> Control.revealed "plain text"
-            )
-         , case config.markdown of
-            Just markdown_ ->
-                Just
-                    ( "markdown"
-                    , Control.string markdown
-                        |> Control.map
-                            (\str ->
-                                ( moduleName ++ ".markdown \"" ++ str ++ "\""
-                                , markdown_ str
-                                )
-                            )
-                        |> Control.revealed "markdown"
-                    )
-
-            Nothing ->
-                Nothing
-         , Just
-            ( "HTML"
-            , Control.value
-                ( moduleName ++ ".html [ ... ]"
-                , config.html exampleHtml
+                    (plainText :: rest)
                 )
-            )
-         , case config.httpError of
-            Just httpError_ ->
-                Just
-                    ( "httpError"
-                    , Control.map
-                        (\error ->
-                            ( moduleName ++ ".httpError error"
-                            , httpError_ error
-                            )
-                        )
-                        httpError
-                    )
 
-            Nothing ->
-                Nothing
-         ]
-            |> List.filterMap identity
-        )
+        Nothing ->
+            Control.choice (Nonempty plainText rest)
 
 
 quickBrownFox : String
@@ -343,7 +351,7 @@ rightIcon :
     -> Control (List ( String, value ))
 rightIcon moduleName f =
     ControlExtra.optionalListItem "rightIcon"
-        (List.map
+        (List.Nonempty.map
             (\( displayName, code, iconValue ) ->
                 ( displayName
                 , Control.value
@@ -352,31 +360,32 @@ rightIcon moduleName f =
                     )
                 )
             )
-            [ ( "arrowDown", "UiIcon.arrowDown", UiIcon.arrowDown )
-            , ( "openInNewTab"
-              , "(Svg.withLabel \"Opens in new tab\" UiIcon.openInNewTab)"
-              , UiIcon.openInNewTab
-              )
-            , ( "gradingAssistant", "UiIcon.gradingAssistant", UiIcon.gradingAssistant )
-            ]
+            (Nonempty ( "arrowDown", "UiIcon.arrowDown", UiIcon.arrowDown )
+                [ ( "openInNewTab"
+                  , "(Svg.withLabel \"Opens in new tab\" UiIcon.openInNewTab)"
+                  , UiIcon.openInNewTab
+                  )
+                , ( "gradingAssistant", "UiIcon.gradingAssistant", UiIcon.gradingAssistant )
+                ]
+            )
             |> Control.choice
         )
 
 
-uiIcons : List ( String, Svg )
+uiIcons : Nonempty ( String, Svg )
 uiIcons =
-    [ ( "arrowLeft", UiIcon.arrowLeft )
-    , ( "gear", UiIcon.gear )
-    , ( "unarchive", UiIcon.unarchive )
-    , ( "share", UiIcon.share )
-    , ( "preview", UiIcon.preview )
-    , ( "skip", UiIcon.skip )
-    , ( "copyToClipboard", UiIcon.copyToClipboard )
-    , ( "gift", UiIcon.gift )
-    , ( "home", UiIcon.home )
-    , ( "library", UiIcon.library )
-    , ( "searchInCicle", UiIcon.searchInCicle )
-    ]
+    Nonempty ( "arrowLeft", UiIcon.arrowLeft )
+        [ ( "gear", UiIcon.gear )
+        , ( "unarchive", UiIcon.unarchive )
+        , ( "share", UiIcon.share )
+        , ( "preview", UiIcon.preview )
+        , ( "skip", UiIcon.skip )
+        , ( "copyToClipboard", UiIcon.copyToClipboard )
+        , ( "gift", UiIcon.gift )
+        , ( "home", UiIcon.home )
+        , ( "library", UiIcon.library )
+        , ( "searchInCicle", UiIcon.searchInCicle )
+        ]
 
 
 uiIcon : Control ( String, Svg )
@@ -387,17 +396,17 @@ uiIcon =
 rotatedUiIcon : Int -> Control ( String, Svg )
 rotatedUiIcon by =
     uiIcons
-        |> List.map
+        |> List.Nonempty.map
             (\( name, value ) ->
                 ( name, Control.value ( "UiIcon." ++ name, value ) )
             )
         |> ControlExtra.rotatedChoice by
 
 
-choice : String -> List ( String, value ) -> Control ( String, value )
+choice : String -> Nonempty ( String, value ) -> Control ( String, value )
 choice moduleName options =
     options
-        |> List.map
+        |> List.Nonempty.map
             (\( name, value ) ->
                 ( name, Control.value ( moduleName ++ "." ++ name, value ) )
             )
@@ -496,8 +505,9 @@ guidanceAndErrorMessage :
     -> Control (List ( String, b ))
 guidanceAndErrorMessage ({ moduleName } as config) controls =
     [ Control.choice
-        [ ( "string"
-          , Control.string config.message
+        (Nonempty
+            ( "string"
+            , Control.string config.message
                 |> Control.map
                     (\str ->
                         ( Code.fromModule moduleName "guidance " ++ Code.string str
@@ -505,14 +515,15 @@ guidanceAndErrorMessage ({ moduleName } as config) controls =
                         )
                     )
                 |> Control.revealed "Guidance string"
-          )
-        , ( "html"
-          , Control.value
-                ( Code.fromModule moduleName "guidanceHtml [ text \"There is \", b [] [ text \"something\" ], text \" you need to be aware of.\" ]"
-                , config.guidanceHtml [ Html.text "There is ", Html.b [] [ Html.text "something" ], Html.text " you need to be aware of." ]
-                )
-          )
-        ]
+            )
+            [ ( "html"
+              , Control.value
+                    ( Code.fromModule moduleName "guidanceHtml [ text \"There is \", b [] [ text \"something\" ], text \" you need to be aware of.\" ]"
+                    , config.guidanceHtml [ Html.text "There is ", Html.b [] [ Html.text "something" ], Html.text " you need to be aware of." ]
+                    )
+              )
+            ]
+        )
         |> ControlExtra.optionalListItem "guidance"
         |> Just
     , Maybe.map

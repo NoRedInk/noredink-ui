@@ -24,6 +24,7 @@ import Example exposing (Example)
 import Guidance
 import Html.Styled.Attributes as Attributes exposing (css, src)
 import KeyboardSupport exposing (Key(..))
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.Accordion.V4 as Accordion exposing (AccordionEntry(..))
 import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.Extra as ColorsExtra
@@ -393,39 +394,41 @@ initSettings =
 controlIcon : Control ( String, Bool -> Html Msg )
 controlIcon =
     Control.choice
-        [ ( "defaultCaret"
-          , Control.value ( "Accordion.defaultCaret", Accordion.defaultCaret )
-          )
-        , ( "upwardCaret"
-          , Control.value ( "Accordion.upwardCaret", Accordion.upwardCaret )
-          )
-        , ( "none", Control.value ( "\\_ -> text \"\"", \_ -> Html.text "" ) )
-        , ( "UiIcon"
-          , Control.map
-                (\( code, icon ) ->
-                    ( Code.newlineWithIndent 5
-                        ++ Code.anonymousFunction "_"
-                            (Code.newlineWithIndent 6
-                                ++ Code.pipelineMultiline
-                                    [ code
-                                    , "Svg.withWidth (Css.px 20)"
-                                    , "Svg.withHeight (Css.px 20)"
-                                    , "Svg.withCss [ Css.marginRight (Css.px 8) ]"
-                                    , "Svg.toHtml"
-                                    ]
-                                    6
-                            )
-                    , \_ ->
-                        icon
-                            |> Svg.withWidth (Css.px 20)
-                            |> Svg.withHeight (Css.px 20)
-                            |> Svg.withCss [ Css.marginRight (Css.px 8) ]
-                            |> Svg.toHtml
+        (Nonempty
+            ( "defaultCaret"
+            , Control.value ( "Accordion.defaultCaret", Accordion.defaultCaret )
+            )
+            [ ( "upwardCaret"
+              , Control.value ( "Accordion.upwardCaret", Accordion.upwardCaret )
+              )
+            , ( "none", Control.value ( "\\_ -> text \"\"", \_ -> Html.text "" ) )
+            , ( "UiIcon"
+              , Control.map
+                    (\( code, icon ) ->
+                        ( Code.newlineWithIndent 5
+                            ++ Code.anonymousFunction "_"
+                                (Code.newlineWithIndent 6
+                                    ++ Code.pipelineMultiline
+                                        [ code
+                                        , "Svg.withWidth (Css.px 20)"
+                                        , "Svg.withHeight (Css.px 20)"
+                                        , "Svg.withCss [ Css.marginRight (Css.px 8) ]"
+                                        , "Svg.toHtml"
+                                        ]
+                                        6
+                                )
+                        , \_ ->
+                            icon
+                                |> Svg.withWidth (Css.px 20)
+                                |> Svg.withHeight (Css.px 20)
+                                |> Svg.withCss [ Css.marginRight (Css.px 8) ]
+                                |> Svg.toHtml
+                        )
                     )
-                )
-                (CommonControls.rotatedUiIcon 1)
-          )
-        ]
+                    (CommonControls.rotatedUiIcon 1)
+              )
+            ]
+        )
 
 
 controlHeaderContent : Control ( String, Html Msg )
@@ -438,13 +441,15 @@ controlHeaderContent =
 controlExpansionDirection : Control ( String, Accordion.ExpansionDirection )
 controlExpansionDirection =
     Control.choice
-        [ ( "Downwards"
-          , Control.value ( "Accordion.Downwards", Accordion.Downwards )
-          )
-        , ( "Upwards"
-          , Control.value ( "Accordion.Upwards", Accordion.Upwards )
-          )
-        ]
+        (Nonempty
+            ( "Downwards"
+            , Control.value ( "Accordion.Downwards", Accordion.Downwards )
+            )
+            [ ( "Upwards"
+              , Control.value ( "Accordion.Upwards", Accordion.Upwards )
+              )
+            ]
+        )
 
 
 controlContent : Control ( String, Html Msg )

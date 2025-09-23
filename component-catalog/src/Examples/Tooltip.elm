@@ -19,6 +19,7 @@ import EllieLink
 import Example exposing (Example)
 import Html.Styled.Attributes exposing (css, href, id)
 import KeyboardSupport exposing (Key(..))
+import List.Nonempty exposing (Nonempty(..))
 import Markdown
 import Nri.Ui.Button.V10 as Button
 import Nri.Ui.ClickableSvg.V2 as ClickableSvg
@@ -108,9 +109,10 @@ init =
         Control.record PageSettings
             |> Control.field "backgroundColor"
                 (Control.choice
-                    [ ( "white", Control.value Colors.white )
-                    , ( "azure", Control.value Colors.azure )
-                    ]
+                    (Nonempty ( "white", Control.value Colors.white )
+                        [ ( "azure", Control.value Colors.azure )
+                        ]
+                    )
                 )
     }
 
@@ -450,41 +452,45 @@ controlContent =
 controlDirection : Control ( String, Tooltip.Attribute Never )
 controlDirection =
     CommonControls.choice "Tooltip"
-        [ ( "onTop", Tooltip.onTop )
-        , ( "onBottom", Tooltip.onBottom )
-        , ( "onLeft", Tooltip.onLeft )
-        , ( "onRight", Tooltip.onRight )
-        ]
+        (Nonempty ( "onTop", Tooltip.onTop )
+            [ ( "onBottom", Tooltip.onBottom )
+            , ( "onLeft", Tooltip.onLeft )
+            , ( "onRight", Tooltip.onRight )
+            ]
+        )
 
 
 controlDirectionForMobile : Control ( String, Tooltip.Attribute Never )
 controlDirectionForMobile =
     CommonControls.choice "Tooltip"
-        [ ( "onTopForMobile", Tooltip.onTopForMobile )
-        , ( "onBottomForMobile", Tooltip.onBottomForMobile )
-        , ( "onLeftForMobile", Tooltip.onLeftForMobile )
-        , ( "onRightForMobile", Tooltip.onRightForMobile )
-        ]
+        (Nonempty ( "onTopForMobile", Tooltip.onTopForMobile )
+            [ ( "onBottomForMobile", Tooltip.onBottomForMobile )
+            , ( "onLeftForMobile", Tooltip.onLeftForMobile )
+            , ( "onRightForMobile", Tooltip.onRightForMobile )
+            ]
+        )
 
 
 controlDirectionForQuizEngineMobile : Control ( String, Tooltip.Attribute Never )
 controlDirectionForQuizEngineMobile =
     CommonControls.choice "Tooltip"
-        [ ( "onTopForQuizEngineMobile", Tooltip.onTopForQuizEngineMobile )
-        , ( "onBottomForQuizEngineMobile", Tooltip.onBottomForQuizEngineMobile )
-        , ( "onLeftForQuizEngineMobile", Tooltip.onLeftForQuizEngineMobile )
-        , ( "onRightForQuizEngineMobile", Tooltip.onRightForQuizEngineMobile )
-        ]
+        (Nonempty ( "onTopForQuizEngineMobile", Tooltip.onTopForQuizEngineMobile )
+            [ ( "onBottomForQuizEngineMobile", Tooltip.onBottomForQuizEngineMobile )
+            , ( "onLeftForQuizEngineMobile", Tooltip.onLeftForQuizEngineMobile )
+            , ( "onRightForQuizEngineMobile", Tooltip.onRightForQuizEngineMobile )
+            ]
+        )
 
 
 controlDirectionForNarrowMobile : Control ( String, Tooltip.Attribute Never )
 controlDirectionForNarrowMobile =
     CommonControls.choice "Tooltip"
-        [ ( "onTopForNarrowMobile", Tooltip.onTopForNarrowMobile )
-        , ( "onBottomForNarrowMobile", Tooltip.onBottomForNarrowMobile )
-        , ( "onLeftForNarrowMobile", Tooltip.onLeftForNarrowMobile )
-        , ( "onRightForNarrowMobile", Tooltip.onRightForNarrowMobile )
-        ]
+        (Nonempty ( "onTopForNarrowMobile", Tooltip.onTopForNarrowMobile )
+            [ ( "onBottomForNarrowMobile", Tooltip.onBottomForNarrowMobile )
+            , ( "onLeftForNarrowMobile", Tooltip.onLeftForNarrowMobile )
+            , ( "onRightForNarrowMobile", Tooltip.onRightForNarrowMobile )
+            ]
+        )
 
 
 controlAlignment_ :
@@ -493,8 +499,8 @@ controlAlignment_ :
     -> Control ( String, Tooltip.Attribute Never )
 controlAlignment_ ( middleName, middleValue ) others =
     Control.choice
-        (( middleName, Control.value ( "Tooltip." ++ middleName, middleValue ) )
-            :: List.map
+        (Nonempty ( middleName, Control.value ( "Tooltip." ++ middleName, middleValue ) )
+            (List.map
                 (\( name, val ) ->
                     ( name
                     , Control.map
@@ -507,6 +513,7 @@ controlAlignment_ ( middleName, middleValue ) others =
                     )
                 )
                 others
+            )
         )
 
 
@@ -549,32 +556,35 @@ controlAlignmentForNarrowMobile =
 controlWidth : Control ( String, Tooltip.Attribute Never )
 controlWidth =
     Control.choice
-        [ ( "exactWidth (default is 320)"
-          , Control.map
+        (Nonempty
+            ( "exactWidth (default is 320)"
+            , Control.map
                 (\int ->
                     ( "Tooltip.exactWidth " ++ String.fromInt int, Tooltip.exactWidth int )
                 )
                 (Control.int 320)
-          )
-        , ( "fitToContent", Control.value ( "Tooltip.fitToContent", Tooltip.fitToContent ) )
-        ]
+            )
+            [ ( "fitToContent", Control.value ( "Tooltip.fitToContent", Tooltip.fitToContent ) )
+            ]
+        )
 
 
 controlPadding : Control ( String, Tooltip.Attribute Never )
 controlPadding =
     Control.choice
-        [ ( "normalPadding (default)", Control.value ( "Tooltip.normalPadding", Tooltip.normalPadding ) )
-        , ( "smallPadding", Control.value ( "Tooltip.smallPadding", Tooltip.smallPadding ) )
-        , ( "customPadding"
-          , Control.map
-                (\float ->
-                    ( "Tooltip.customPadding " ++ String.fromFloat float
-                    , Tooltip.customPadding float
+        (Nonempty ( "normalPadding (default)", Control.value ( "Tooltip.normalPadding", Tooltip.normalPadding ) )
+            [ ( "smallPadding", Control.value ( "Tooltip.smallPadding", Tooltip.smallPadding ) )
+            , ( "customPadding"
+              , Control.map
+                    (\float ->
+                        ( "Tooltip.customPadding " ++ String.fromFloat float
+                        , Tooltip.customPadding float
+                        )
                     )
-                )
-                (Control.float 0)
-          )
-        ]
+                    (Control.float 0)
+              )
+            ]
+        )
 
 
 viewCustomizableExample : EllieLink.Config -> State -> Html Msg

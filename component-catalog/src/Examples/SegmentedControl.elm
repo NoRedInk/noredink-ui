@@ -23,6 +23,7 @@ import Example exposing (Example)
 import Guidance
 import Html.Styled.Attributes exposing (css)
 import KeyboardSupport exposing (Key(..))
+import List.Nonempty exposing (Nonempty(..))
 import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Colors.Extra exposing (withAlpha)
 import Nri.Ui.Colors.V1 as Colors
@@ -400,30 +401,32 @@ optionsControl =
     Control.record Options
         |> Control.field "positioning"
             (Control.choice
-                [ ( "Left (FitContent)"
-                  , Control.value
+                (Nonempty
+                    ( "Left (FitContent)"
+                    , Control.value
                         ( "SegmentedControl.Left SegmentedControl.FitContent"
                         , SegmentedControl.Left SegmentedControl.FitContent
                         )
-                  )
-                , ( "Left (FillContainer)"
-                  , Control.value
-                        ( "SegmentedControl.Left SegmentedControl.FillContainer"
-                        , SegmentedControl.Left SegmentedControl.FillContainer
-                        )
-                  )
-                , ( "Center"
-                  , Control.value
-                        ( "SegmentedControl.Center"
-                        , SegmentedControl.Center
-                        )
-                  )
-                ]
+                    )
+                    [ ( "Left (FillContainer)"
+                      , Control.value
+                            ( "SegmentedControl.Left SegmentedControl.FillContainer"
+                            , SegmentedControl.Left SegmentedControl.FillContainer
+                            )
+                      )
+                    , ( "Center"
+                      , Control.value
+                            ( "SegmentedControl.Center"
+                            , SegmentedControl.Center
+                            )
+                      )
+                    ]
+                )
             )
         |> Control.field "content" controlContent
         |> Control.field "count"
             (Control.choice
-                (List.map (\i -> ( String.fromInt i, Control.value i )) (List.range 2 8))
+                (List.Nonempty.map (\i -> ( String.fromInt i, Control.value i )) (Nonempty 2 (List.range 3 8)))
             )
         |> Control.field "long content" (Control.bool False)
         |> Control.field "tooltips" (Control.bool True)
@@ -438,10 +441,11 @@ type Content
 controlContent : Control Content
 controlContent =
     Control.choice
-        [ ( "Text and icon", Control.value TextAndIcon )
-        , ( "Text", Control.value Text )
-        , ( "Icon", Control.value Icon )
-        ]
+        (Nonempty ( "Text and icon", Control.value TextAndIcon )
+            [ ( "Text", Control.value Text )
+            , ( "Icon", Control.value Icon )
+            ]
+        )
 
 
 getIconAndLabel : Content -> icon -> String -> ( Maybe icon, String )
