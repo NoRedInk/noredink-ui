@@ -61,6 +61,20 @@ describe("UI tests", function () {
     });
   };
 
+  const injectReducedMotion = async (page) => {
+    await page.addStyleTag({
+      content: `
+        @media (prefers-reduced-motion: reduce) {
+          *, *::before, *::after {
+            animation: none !important;
+            transition: none !important;
+            scroll-behavior: auto !important;
+          }
+        }
+      `,
+    });
+  };
+
   const handleAxeResults = function (name, results) {
     const violations = results["violations"];
     if (violations.length > 0) {
@@ -79,6 +93,7 @@ describe("UI tests", function () {
 
   const goToExample = async (name, location) => {
     await page.goto(location, { waitUntil: "load" });
+    await injectReducedMotion(page);
     await page.waitForSelector(
       `xpath/.//h1[contains(., 'Nri.Ui.${name}') and @aria-current='page']`,
     );
@@ -96,6 +111,7 @@ describe("UI tests", function () {
 
   const defaultUsageExampleProcessing = async (testName, name, location) => {
     await page.goto(location, { waitUntil: "load" });
+    await injectReducedMotion(page);
     await page.waitForSelector(
       `xpath/.//h1[contains(., '${name}') and @aria-current='page']`,
     );
@@ -146,6 +162,7 @@ describe("UI tests", function () {
 
   const iconProcessing = async (name, location) => {
     await page.goto(location);
+    await injectReducedMotion(page);
     await page.waitForSelector(`#${name}`);
     await percySnapshot(page, name);
 
@@ -230,6 +247,7 @@ describe("UI tests", function () {
 
       handlePageErrors(page);
       await page.goto(`http://localhost:${PORT}`, { waitUntil: "load" });
+      await injectReducedMotion(page);
       await page.$("#maincontent");
       await percySnapshot(page, this.test.fullTitle());
 
@@ -257,6 +275,7 @@ describe("UI tests", function () {
 
     handlePageErrors(page);
     await page.goto(`http://localhost:${PORT}`);
+    await injectReducedMotion(page);
 
     await page.$("#maincontent");
     let links = await page.evaluate(() => {
@@ -291,6 +310,7 @@ describe("UI tests", function () {
 
     handlePageErrors(page);
     await page.goto(`http://localhost:${PORT}`);
+    await injectReducedMotion(page);
 
     await page.$("#maincontent");
 
