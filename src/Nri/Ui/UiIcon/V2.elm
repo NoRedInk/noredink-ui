@@ -3967,21 +3967,21 @@ bookSearch =
 {-| -}
 translationForPracticeDirectionDisabled : Nri.Ui.Svg.V1.Svg
 translationForPracticeDirectionDisabled =
-    Nri.Ui.Svg.V1.init "0 0 24 24"
-        [ Svg.g [ Attributes.fill "none" ] []
-        , Svg.path
+    Nri.Ui.Svg.V1.init
+        "0 0 24 24"
+        [ Svg.path
             [ Attributes.d "M6.52454 17.4755C6.58441 19.3676 6.79037 20.5282 7.49876 21.3914C7.6816 21.6141 7.88588 21.8184 8.10867 22.0012C9.32566 23 11.1338 23 14.75 23C18.3663 23 20.1743 23 21.3914 22.0012C21.6141 21.8184 21.8184 21.6141 22.0012 21.3914C23 20.1743 23 18.3663 23 14.75C23 11.1338 23 9.32566 22.0012 8.10867C21.8184 7.88588 21.6141 7.6816 21.3914 7.49876C20.5319 6.79344 19.3777 6.58621 17.5 6.52533M6.52454 17.4755C4.63239 17.4156 3.47184 17.2096 2.60867 16.5012C2.38588 16.3184 2.1816 16.1141 1.99876 15.8914C1 14.6743 1 12.8663 1 9.25C1 5.63377 1 3.82566 1.99876 2.60867C2.1816 2.38588 2.38588 2.1816 2.60867 1.99876C3.82566 1 5.63377 1 9.25 1C12.8663 1 14.6743 1 15.8914 1.99876C16.1141 2.1816 16.3184 2.38588 16.5012 2.60867C17.2096 3.47184 17.4156 4.63239 17.4755 6.52454C17.4755 6.52454 17.4755 6.52454 17.5 6.52533M6.52454 17.4755L17.5 6.52533"
             , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "1.5"
+            , Attributes.strokeWidth "2"
             , Attributes.fill "none"
             ]
             []
         , Svg.path
             [ Attributes.d "M4.5 10.5L5.3333 8.5M5.3333 8.5L7 4.5L8.6667 8.5M5.3333 8.5H8.6667M9.5 10.5L8.6667 8.5"
             , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "1.5"
             , Attributes.strokeLinecap "round"
             , Attributes.strokeLinejoin "round"
+            , Attributes.fill "none"
             ]
             []
         ]
@@ -3992,11 +3992,9 @@ translationForPracticeDirectionEnabled : Nri.Ui.Svg.V1.Svg
 translationForPracticeDirectionEnabled =
     Nri.Ui.Svg.V1.init
         "0 0 24 24"
-        [ Svg.g [ Attributes.fill "none" ] []
-        , Svg.path
+        [ Svg.path
             [ Attributes.d "M13.25 14.4655H16.4M16.4 14.4655H18.5M16.4 14.4655V13.5M20.25 14.4655H18.5M18.5 14.4655C18.1308 15.7859 17.3575 17.0341 16.475 18.131M16.475 18.131C15.7442 19.0394 14.9384 19.844 14.225 20.5M16.475 18.131C16.025 17.6035 15.395 16.7498 15.215 16.3636M16.475 18.131L17.825 19.5345"
             , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "1.5"
             , Attributes.strokeLinecap "round"
             , Attributes.strokeLinejoin "round"
             , Attributes.fill "none"
@@ -4005,16 +4003,16 @@ translationForPracticeDirectionEnabled =
         , Svg.path
             [ Attributes.d "M6.52454 17.4755C6.58441 19.3676 6.79037 20.5282 7.49876 21.3914C7.6816 21.6141 7.88588 21.8184 8.10867 22.0012C9.32566 23 11.1338 23 14.75 23C18.3663 23 20.1743 23 21.3914 22.0012C21.6141 21.8184 21.8184 21.6141 22.0012 21.3914C23 20.1743 23 18.3663 23 14.75C23 11.1338 23 9.32566 22.0012 8.10867C21.8184 7.88588 21.6141 7.6816 21.3914 7.49876C20.5319 6.79344 19.3777 6.58621 17.5 6.52533M6.52454 17.4755C4.63239 17.4156 3.47184 17.2096 2.60867 16.5012C2.38588 16.3184 2.1816 16.1141 1.99876 15.8914C1 14.6743 1 12.8663 1 9.25C1 5.63377 1 3.82566 1.99876 2.60867C2.1816 2.38588 2.38588 2.1816 2.60867 1.99876C3.82566 1 5.63377 1 9.25 1C12.8663 1 14.6743 1 15.8914 1.99876C16.1141 2.1816 16.3184 2.38588 16.5012 2.60867C17.2096 3.47184 17.4156 4.63239 17.4755 6.52454C17.4755 6.52454 17.4755 6.52454 17.5 6.52533M6.52454 17.4755L17.5 6.52533"
             , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "1.5"
+            , Attributes.strokeWidth "2"
             , Attributes.fill "none"
             ]
             []
         , Svg.path
             [ Attributes.d "M4.5 10.5L5.3333 8.5M5.3333 8.5L7 4.5L8.6667 8.5M5.3333 8.5H8.6667M9.5 10.5L8.6667 8.5"
             , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "1.5"
             , Attributes.strokeLinecap "round"
             , Attributes.strokeLinejoin "round"
+            , Attributes.fill "none"
             ]
             []
         ]
@@ -4023,12 +4021,12 @@ translationForPracticeDirectionEnabled =
 {-| -}
 wordLookTranslationDisabled : Nri.Ui.Svg.V1.Svg
 wordLookTranslationDisabled =
-    Nri.Ui.Svg.V1.init "0 0 24 24"
-        [ Svg.g [ Attributes.fill "none" ] []
-        , Svg.path
+    Nri.Ui.Svg.V1.init
+        "0 0 24 24"
+        [ Svg.path
             [ Attributes.d "M21 23H5.25C4.00736 23 3 22.0151 3 20.8M3 20.8C3 19.5849 4.00736 18.6 5.25 18.6H21V5.4C21 3.32582 21 2.28873 20.341 1.64437C19.6819 1 18.6213 1 16.5 1H9.75C6.56802 1 4.97703 1 3.98852 1.96655C3 2.9331 3 4.48873 3 7.6V20.8Z"
             , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "1.5"
+            , Attributes.strokeWidth "2"
             , Attributes.strokeLinecap "round"
             , Attributes.strokeLinejoin "round"
             , Attributes.fill "none"
@@ -4040,14 +4038,16 @@ wordLookTranslationDisabled =
             , Attributes.strokeWidth "1.5"
             , Attributes.strokeLinecap "round"
             , Attributes.strokeLinejoin "round"
+            , Attributes.fill "none"
             ]
             []
         , Svg.path
-            [ Attributes.d "M9.45471 7.4541L14.5456 12.545M14.5456 7.4541L9.45471 12.545"
+            [ Attributes.d "M9.45473 7.45459L14.5456 12.5455M14.5456 7.45459L9.45473 12.5455"
             , Attributes.stroke "currentColor"
             , Attributes.strokeWidth "1.5"
             , Attributes.strokeLinecap "round"
             , Attributes.strokeLinejoin "round"
+            , Attributes.fill "none"
             ]
             []
         ]
@@ -4056,12 +4056,12 @@ wordLookTranslationDisabled =
 {-| -}
 wordLookTranslationEnabled : Nri.Ui.Svg.V1.Svg
 wordLookTranslationEnabled =
-    Nri.Ui.Svg.V1.init "0 0 24 24"
-        [ Svg.g [ Attributes.fill "none" ] []
-        , Svg.path
+    Nri.Ui.Svg.V1.init
+        "0 0 24 24"
+        [ Svg.path
             [ Attributes.d "M21 23H5.25C4.00736 23 3 22.0151 3 20.8M3 20.8C3 19.5849 4.00736 18.6 5.25 18.6H21V5.4C21 3.32582 21 2.28873 20.341 1.64437C19.6819 1 18.6213 1 16.5 1H9.75C6.56802 1 4.97703 1 3.98852 1.96655C3 2.9331 3 4.48873 3 7.6V20.8Z"
             , Attributes.stroke "currentColor"
-            , Attributes.strokeWidth "1.5"
+            , Attributes.strokeWidth "2"
             , Attributes.strokeLinecap "round"
             , Attributes.strokeLinejoin "round"
             , Attributes.fill "none"
@@ -4073,6 +4073,7 @@ wordLookTranslationEnabled =
             , Attributes.strokeWidth "1.5"
             , Attributes.strokeLinecap "round"
             , Attributes.strokeLinejoin "round"
+            , Attributes.fill "none"
             ]
             []
         , Svg.path
@@ -4081,6 +4082,7 @@ wordLookTranslationEnabled =
             , Attributes.strokeWidth "1.5"
             , Attributes.strokeLinecap "round"
             , Attributes.strokeLinejoin "round"
+            , Attributes.fill "none"
             ]
             []
         ]
