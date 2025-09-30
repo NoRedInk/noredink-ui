@@ -356,8 +356,9 @@ popoverHostStyles =
     , borderRadius (px 8)
     , maxHeight (px 300)
     , overflowY auto
-    , padding2 (px 10) zero
+    , padding zero
     , Shadows.high
+    , top (px 4)
     ]
 
 
@@ -379,22 +380,19 @@ optionBaseStyles =
 
 optgroupContainerStyles : List Style
 optgroupContainerStyles =
-    [ paddingTop (px 8)
-    , marginBottom (px 8)
-    , borderBottom3 (px 1) solid Colors.gray92
-    , paddingBottom (px 8)
+    [ marginBottom (px 8)
     ]
 
 
 optgroupLabelStyles : List Style
 optgroupLabelStyles =
-    [ padding2 (px 4) (px 16)
+    [ padding2 (px 8) (px 16)
     , Css.fontFamilies [ "Muli", "sans-serif" ]
-    , fontSize (px 13)
+    , fontSize (px 14)
     , fontWeight (int 600)
     , color Colors.gray20
     , display block
-    , marginBottom (px 4)
+    , marginBottom (px 8)
     , backgroundColor Colors.gray96
     , borderBottom3 (px 1) solid Colors.gray92
     ]
