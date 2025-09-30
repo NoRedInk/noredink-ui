@@ -358,7 +358,6 @@ popoverHostStyles =
     , overflowY auto
     , padding zero
     , Shadows.high
-    , top (px 4)
     ]
 
 
