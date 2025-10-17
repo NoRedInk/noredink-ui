@@ -47,6 +47,7 @@ The next version of `Button` should also remove `delete`
   - replaces the `disabled` attribute with `aria-disabled="true"`
   - removes click handler from disabled buttons
   - prevents default behavior for disabled submit buttons by setting `type="button"`
+  - added new `gradingAssistant` and `gradingAssistantSecondary` styles
 
 
 # Changes from V9:
