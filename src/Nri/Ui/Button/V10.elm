@@ -9,7 +9,7 @@ module Nri.Ui.Button.V10 exposing
     , exactWidthForMobile, boundedWidthForMobile, unboundedWidthForMobile, fillContainerWidthForMobile
     , exactWidthForQuizEngineMobile, boundedWidthForQuizEngineMobile, unboundedWidthForQuizEngineMobile, fillContainerWidthForQuizEngineMobile
     , exactWidthForNarrowMobile, boundedWidthForNarrowMobile, unboundedWidthForNarrowMobile, fillContainerWidthForNarrowMobile
-    , primary, secondary, tertiary, danger, dangerSecondary, premium
+    , primary, secondary, tertiary, danger, dangerSecondary, premium, gradingAssistant, gradingAssistantSecondary
     , enabled, unfulfilled, disabled, error, loading, success
     , icon, rightIcon
     , hideIconForMobile, hideIconFor
@@ -47,6 +47,7 @@ The next version of `Button` should also remove `delete`
   - replaces the `disabled` attribute with `aria-disabled="true"`
   - removes click handler from disabled buttons
   - prevents default behavior for disabled submit buttons by setting `type="button"`
+  - added new `gradingAssistant` and `gradingAssistantSecondary` styles
 
 
 # Changes from V9:
@@ -79,7 +80,7 @@ The next version of `Button` should also remove `delete`
 
 ## Change the color scheme
 
-@docs primary, secondary, tertiary, danger, dangerSecondary, premium
+@docs primary, secondary, tertiary, danger, dangerSecondary, premium, gradingAssistant, gradingAssistantSecondary
 
 
 ## Change the state (buttons only)
@@ -603,6 +604,24 @@ premium =
         )
 
 
+{-| -}
+gradingAssistant : Attribute msg
+gradingAssistant =
+    set
+        (\attributes ->
+            { attributes | style = gradingAssistantColors }
+        )
+
+
+{-| -}
+gradingAssistantSecondary : Attribute msg
+gradingAssistantSecondary =
+    set
+        (\attributes ->
+            { attributes | style = gradingAssistantSecondaryColors }
+        )
+
+
 
 -- BUTTON STATE
 
@@ -1074,6 +1093,35 @@ premiumColors =
     , visitedHoverText = Colors.gray20
     , border = Nothing
     , shadow = Colors.ochre
+    }
+
+
+highConstrastTurquoiseDark : Css.Color
+highConstrastTurquoiseDark =
+    Css.hex "00857D"
+
+
+gradingAssistantColors : ColorPalette
+gradingAssistantColors =
+    { background = highConstrastTurquoiseDark
+    , hoverBackground = Colors.highlightCyanDark
+    , text = Colors.white
+    , hoverText = Colors.white
+    , visitedHoverText = Colors.white
+    , border = Nothing
+    , shadow = Colors.highlightCyanDark
+    }
+
+
+gradingAssistantSecondaryColors : ColorPalette
+gradingAssistantSecondaryColors =
+    { background = Colors.white
+    , hoverBackground = Colors.turquoiseLight
+    , text = highConstrastTurquoiseDark
+    , hoverText = highConstrastTurquoiseDark
+    , visitedHoverText = highConstrastTurquoiseDark
+    , border = Just <| highConstrastTurquoiseDark
+    , shadow = highConstrastTurquoiseDark
     }
 
 
