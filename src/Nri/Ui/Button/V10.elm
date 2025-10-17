@@ -1097,7 +1097,9 @@ premiumColors =
 
 
 highConstrastTurquoiseDark : Css.Color
-highConstrastTurquoiseDark = Css.hex "00857D"
+highConstrastTurquoiseDark =
+    Css.hex "00857D"
+
 
 gradingAssistantColors : ColorPalette
 gradingAssistantColors =
