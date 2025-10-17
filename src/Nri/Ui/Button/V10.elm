@@ -9,7 +9,7 @@ module Nri.Ui.Button.V10 exposing
     , exactWidthForMobile, boundedWidthForMobile, unboundedWidthForMobile, fillContainerWidthForMobile
     , exactWidthForQuizEngineMobile, boundedWidthForQuizEngineMobile, unboundedWidthForQuizEngineMobile, fillContainerWidthForQuizEngineMobile
     , exactWidthForNarrowMobile, boundedWidthForNarrowMobile, unboundedWidthForNarrowMobile, fillContainerWidthForNarrowMobile
-    , primary, secondary, tertiary, danger, dangerSecondary, premium
+    , primary, secondary, tertiary, danger, dangerSecondary, premium, gradingAssistant, gradingAssistantSecondary
     , enabled, unfulfilled, disabled, error, loading, success
     , icon, rightIcon
     , hideIconForMobile, hideIconFor
@@ -79,7 +79,7 @@ The next version of `Button` should also remove `delete`
 
 ## Change the color scheme
 
-@docs primary, secondary, tertiary, danger, dangerSecondary, premium
+@docs primary, secondary, tertiary, danger, dangerSecondary, premium, gradingAssistant, gradingAssistantSecondary
 
 
 ## Change the state (buttons only)
@@ -603,6 +603,24 @@ premium =
         )
 
 
+{-| -}
+gradingAssistant : Attribute msg
+gradingAssistant =
+    set
+        (\attributes ->
+            { attributes | style = gradingAssistantColors }
+        )
+
+
+{-| -}
+gradingAssistantSecondary : Attribute msg
+gradingAssistantSecondary =
+    set
+        (\attributes ->
+            { attributes | style = gradingAssistantSecondaryColors }
+        )
+
+
 
 -- BUTTON STATE
 
@@ -1074,6 +1092,30 @@ premiumColors =
     , visitedHoverText = Colors.gray20
     , border = Nothing
     , shadow = Colors.ochre
+    }
+
+
+gradingAssistantColors : ColorPalette
+gradingAssistantColors =
+    { background = Colors.turquoiseDark
+    , hoverBackground = Colors.highlightCyanDark
+    , text = Colors.white
+    , hoverText = Colors.white
+    , visitedHoverText = Colors.white
+    , border = Nothing
+    , shadow = Colors.highlightCyanDark
+    }
+
+
+gradingAssistantSecondaryColors : ColorPalette
+gradingAssistantSecondaryColors =
+    { background = Colors.white
+    , hoverBackground = Colors.turquoiseLight
+    , text = Colors.turquoiseDark
+    , hoverText = Colors.turquoiseDark
+    , visitedHoverText = Colors.turquoiseDark
+    , border = Just <| Colors.turquoiseDark
+    , shadow = Colors.turquoiseDark
     }
 
 

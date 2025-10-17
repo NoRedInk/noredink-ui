@@ -277,6 +277,8 @@ controlAttributes =
                             , ( "danger", Button.danger )
                             , ( "dangerSecondary", Button.dangerSecondary )
                             , ( "premium", Button.premium )
+                            , ( "gradingAssistant", Button.gradingAssistant )
+                            , ( "gradingAssistantSecondary", Button.gradingAssistantSecondary )
                             ]
                         )
                     )
@@ -437,6 +439,8 @@ buttonsTable =
             , ( Button.danger, "danger" )
             , ( Button.dangerSecondary, "dangerSecondary" )
             , ( Button.premium, "premium" )
+            , ( Button.gradingAssistant, "gradingAssistant" )
+            , ( Button.gradingAssistantSecondary, "gradingAssistantSecondary" )
             ]
 
         exampleRow styleTuple =
