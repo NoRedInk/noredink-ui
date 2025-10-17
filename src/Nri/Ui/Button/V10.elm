@@ -1096,9 +1096,12 @@ premiumColors =
     }
 
 
+highConstrastTurquoiseDark : Css.Color
+highConstrastTurquoiseDark = Css.hex "00857D"
+
 gradingAssistantColors : ColorPalette
 gradingAssistantColors =
-    { background = Colors.turquoiseDark
+    { background = highConstrastTurquoiseDark
     , hoverBackground = Colors.highlightCyanDark
     , text = Colors.white
     , hoverText = Colors.white
@@ -1112,11 +1115,11 @@ gradingAssistantSecondaryColors : ColorPalette
 gradingAssistantSecondaryColors =
     { background = Colors.white
     , hoverBackground = Colors.turquoiseLight
-    , text = Colors.turquoiseDark
-    , hoverText = Colors.turquoiseDark
-    , visitedHoverText = Colors.turquoiseDark
-    , border = Just <| Colors.turquoiseDark
-    , shadow = Colors.turquoiseDark
+    , text = highConstrastTurquoiseDark
+    , hoverText = highConstrastTurquoiseDark
+    , visitedHoverText = highConstrastTurquoiseDark
+    , border = Just <| highConstrastTurquoiseDark
+    , shadow = highConstrastTurquoiseDark
     }
 
 
