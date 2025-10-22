@@ -175,6 +175,8 @@ controlAttributes =
                     )
                 |> ControlExtra.optionalBoolListItem "noMargin"
                     ( "TextArea.noMargin True", TextArea.noMargin True )
+                |> ControlExtra.optionalBoolListItem "noResize"
+                    ( "TextArea.noResize True", TextArea.noResize True )
                 |> ControlExtra.optionalBoolListItem "css"
                     ( "TextArea.css [ Css.backgroundColor Colors.azure ]"
                     , TextArea.css [ Css.backgroundColor Colors.azure ]

@@ -4,7 +4,7 @@ module Nri.Ui.TextArea.V5 exposing
     , value
     , onInput, onBlur, onFocus
     , hiddenLabel, visibleLabel
-    , css, noMargin
+    , css, noMargin, noResize
     , standard, writing
     , autoResize, autoResizeSingleLine
     , custom, nriDescription, id, testId
@@ -72,7 +72,7 @@ custom element, or else autosizing will break! This means doing the following:
 ### Visual behavior
 
 @docs hiddenLabel, visibleLabel
-@docs css, noMargin
+@docs css, noMargin, noResize
 @docs standard, writing
 @docs autoResize, autoResizeSingleLine
 
@@ -116,6 +116,7 @@ type alias Config msg =
     , id : Maybe String
     , height : HeightBehavior
     , disabled : Bool
+    , noResize : Bool
     }
 
 
@@ -137,6 +138,7 @@ defaultConfig =
     , id = Nothing
     , height = Fixed
     , disabled = False
+    , noResize = False
     }
 
 
@@ -281,6 +283,13 @@ noMargin removeMargin =
     Attribute (\soFar -> { soFar | noMarginTop = removeMargin })
 
 
+{-| Prevent the user from being able to resize the text area.
+-}
+noResize : Bool -> Attribute msg
+noResize preventResize =
+    Attribute (\soFar -> { soFar | noResize = preventResize })
+
+
 {-| Use this helper to add custom attributes.
 
 Do NOT use this helper to add css styles, as they may not be applied the way
@@ -362,6 +371,11 @@ view_ label config =
             , Css.boxSizing Css.borderBox
             , if config.noMarginTop then
                 Css.important (Css.marginTop Css.zero)
+
+              else
+                Css.batch []
+            , if config.noResize then
+                Css.resize Css.none
 
               else
                 Css.batch []
