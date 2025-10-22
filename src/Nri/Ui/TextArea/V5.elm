@@ -23,6 +23,7 @@ module Nri.Ui.TextArea.V5 exposing
   - No longer defaults the placeholder value to the label text
   - Adjust disabled styles
   - Fix initial autoresize not working in Firefox
+  - Add `noResize` option
 
 
 ### Changes from V4
