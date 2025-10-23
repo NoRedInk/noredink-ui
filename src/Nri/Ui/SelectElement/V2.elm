@@ -62,7 +62,15 @@ import Nri.Ui.UiIcon.V2 as UiIcon
 -- MODEL
 
 
-{-| Represents a single selectable option.
+{-| Changes from V1:
+
+    - Implemented Elm-first styling
+    - Removed global CSS dependencies
+    - Used InputLabelInternal for label rendering
+    - Used InputErrorAndGuidanceInternal for error and guidance rendering
+    - Added scroll indicators
+
+Represents a single selectable option.
 
   - `content`: The HTML to display in the dropdown.
   - `triggerLabel`: The plain text label to show in the trigger button when selected.
