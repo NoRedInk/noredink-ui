@@ -6,7 +6,7 @@ import Html.Attributes as UnstyledAttributes
 import Html.Styled
 import Html.Styled.Attributes as Attributes
 import Json.Encode
-import Nri.Ui.SelectElement.V1 as SelectElement
+import Nri.Ui.SelectElement.V2 as SelectElement
 import Nri.Ui.UiIcon.V2 as UiIcon
 import ProgramTest exposing (..)
 import Test exposing (..)
@@ -130,7 +130,7 @@ update msg model =
 
 spec : Test
 spec =
-    describe "Nri.Ui.SelectElement.V1"
+    describe "Nri.Ui.SelectElement.V2"
         [ test "renders with default trigger text and options" <|
             \() ->
                 ProgramTest.createSandbox

@@ -9,67 +9,6 @@
       rel="stylesheet"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-      [hidden] {
-        display: none !important;
-      }
-
-      select-element [role="option"]:hover {
-        background-color: #f5f5f5;
-      }
-
-      select-element [role="option"].active-descendant {
-        background-color: #e6f2ff;
-        color: #005a9e;
-      }
-
-      select-element [role="option"][aria-selected="true"] {
-        background-color: #eef0ff;
-        font-weight: bold;
-      }
-
-      select-element {
-        view-transition-name: select-element-popover;
-        backface-visibility: hidden;
-        will-change: opacity, transform;
-      }
-
-      select-element.initial-positioning {
-        view-transition-name: none !important;
-      }
-
-      @keyframes fade-in {
-        from {
-          opacity: 0;
-          transform: translateY(-8px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      @keyframes fade-out {
-        from {
-          opacity: 1;
-          transform: translateY(0);
-        }
-        to {
-          opacity: 0;
-          transform: translateY(-8px);
-        }
-      }
-
-      ::view-transition-old(select-element-popover) {
-        animation: 250ms cubic-bezier(0.42, 0, 0.58, 1) both fade-out;
-        backface-visibility: hidden;
-      }
-
-      ::view-transition-new(select-element-popover) {
-        animation: 250ms cubic-bezier(0.42, 0, 0.58, 1) both fade-in;
-        backface-visibility: hidden;
-      }
-    </style>
   </head>
   <body>
     <div id="svg-target"></div>
@@ -255,6 +194,14 @@
           this._activeOptionId = null;
           const shadow = this.attachShadow({ mode: "open" });
 
+          const hostStyle = document.createElement("style");
+          hostStyle.textContent = `
+            :host {
+              will-change: opacity, transform;
+            }
+          `;
+          shadow.appendChild(hostStyle);
+
           const internalContainer = document.createElement("div");
           internalContainer.part = "listbox-shell";
           internalContainer.appendChild(document.createElement("slot"));
@@ -407,7 +354,6 @@
                 );
               }
 
-              this.classList.add("initial-positioning");
               this._initialPositioningComplete = false;
 
               window.addEventListener(
@@ -456,20 +402,10 @@
 
                 requestAnimationFrame(() => {
                   this._initialPositioningComplete = true;
-                  this.classList.remove("initial-positioning");
                 });
               });
             } else {
-              if (
-                document.startViewTransition &&
-                this._initialPositioningComplete
-              ) {
-                const transition = document.startViewTransition(() => {
-                  this._hidePopoverInternal();
-                });
-              } else {
-                this._hidePopoverInternal();
-              }
+              this._hidePopoverInternal();
             }
           });
         }
@@ -835,6 +771,8 @@
             );
             if (previouslyActive) {
               previouslyActive.classList.remove("active-descendant");
+              previouslyActive.style.removeProperty("--sel-opt-bg-which");
+              previouslyActive.style.removeProperty("--sel-opt-fg-which");
             }
           }
           this.removeAttribute("aria-activedescendant");
@@ -862,6 +800,14 @@
           }
 
           newActiveOption.classList.add("active-descendant");
+          newActiveOption.style.setProperty(
+            "--sel-opt-bg-which",
+            "var(--sel-opt-bg-active)"
+          );
+          newActiveOption.style.setProperty(
+            "--sel-opt-fg-which",
+            "var(--sel-opt-fg-active)"
+          );
           this.setAttribute("aria-activedescendant", newActiveOption.id);
           this._activeOptionId = newActiveOption.id;
           this.activeIndex = index;
