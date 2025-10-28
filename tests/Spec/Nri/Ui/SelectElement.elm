@@ -6,7 +6,7 @@ import Html.Attributes as UnstyledAttributes
 import Html.Styled
 import Html.Styled.Attributes as Attributes
 import Json.Encode
-import Nri.Ui.SelectElement.V1 as SelectElement
+import Nri.Ui.SelectElement.V2 as SelectElement
 import Nri.Ui.UiIcon.V2 as UiIcon
 import ProgramTest exposing (..)
 import Test exposing (..)
@@ -130,7 +130,7 @@ update msg model =
 
 spec : Test
 spec =
-    describe "Nri.Ui.SelectElement.V1"
+    describe "Nri.Ui.SelectElement.V2"
         [ test "renders with default trigger text and options" <|
             \() ->
                 ProgramTest.createSandbox
@@ -429,7 +429,7 @@ spec =
                     }
                     |> ProgramTest.start ()
                     |> ensureViewHas
-                        [ tag "div"
+                        [ id "trigger-err_error-message"
                         , containing [ text "This is an error!" ]
                         ]
                     |> done
@@ -452,7 +452,7 @@ spec =
                     }
                     |> ProgramTest.start ()
                     |> ensureViewHas
-                        [ tag "div"
+                        [ id "trigger-guide_guidance"
                         , containing [ text "This is helpful guidance." ]
                         ]
                     |> done
@@ -476,7 +476,7 @@ spec =
                     }
                     |> ProgramTest.start ()
                     |> ensureViewHas
-                        [ tag "div"
+                        [ id "trigger-override_error-message"
                         , containing [ text "This error should show." ]
                         ]
                     |> ensureViewHasNot

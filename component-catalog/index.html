@@ -9,67 +9,6 @@
       rel="stylesheet"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-      [hidden] {
-        display: none !important;
-      }
-
-      select-element [role="option"]:hover {
-        background-color: #f5f5f5;
-      }
-
-      select-element [role="option"].active-descendant {
-        background-color: #e6f2ff;
-        color: #005a9e;
-      }
-
-      select-element [role="option"][aria-selected="true"] {
-        background-color: #eef0ff;
-        font-weight: bold;
-      }
-
-      select-element {
-        view-transition-name: select-element-popover;
-        backface-visibility: hidden;
-        will-change: opacity, transform;
-      }
-
-      select-element.initial-positioning {
-        view-transition-name: none !important;
-      }
-
-      @keyframes fade-in {
-        from {
-          opacity: 0;
-          transform: translateY(-8px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      @keyframes fade-out {
-        from {
-          opacity: 1;
-          transform: translateY(0);
-        }
-        to {
-          opacity: 0;
-          transform: translateY(-8px);
-        }
-      }
-
-      ::view-transition-old(select-element-popover) {
-        animation: 250ms cubic-bezier(0.42, 0, 0.58, 1) both fade-out;
-        backface-visibility: hidden;
-      }
-
-      ::view-transition-new(select-element-popover) {
-        animation: 250ms cubic-bezier(0.42, 0, 0.58, 1) both fade-in;
-        backface-visibility: hidden;
-      }
-    </style>
   </head>
   <body>
     <div id="svg-target"></div>
@@ -253,7 +192,19 @@
           super();
           this.activeIndex = -1;
           this._activeOptionId = null;
+          this._cssGapPx = null;
           const shadow = this.attachShadow({ mode: "open" });
+
+          const hostStyle = document.createElement("style");
+          hostStyle.textContent = `
+            :host {
+              will-change: opacity, transform;
+            }
+            [part="listbox-shell"] {
+              margin-top: var(--select-popover-gap, 6px);
+            }
+          `;
+          shadow.appendChild(hostStyle);
 
           const internalContainer = document.createElement("div");
           internalContainer.part = "listbox-shell";
@@ -268,10 +219,6 @@
           this.searchClearTimer = null;
           this._initialPositioningComplete = false;
 
-          this.getAllOptions = () => [];
-          this.getEnabledOptions = () => [];
-
-          this.options = () => [];
           this._triggerIdToAttach = null;
         }
 
@@ -283,15 +230,6 @@
           if (!this.hasAttribute("popover")) {
             this.popover = "auto";
           }
-
-          this.getAllOptions = () =>
-            Array.from(this.querySelectorAll('[role="option"]'));
-          this.getEnabledOptions = () =>
-            Array.from(
-              this.querySelectorAll(
-                '[role="option"]:not([aria-disabled="true"])'
-              )
-            );
 
           if (!this.trigger && this._triggerIdToAttach) {
             const triggerElement = document.getElementById(
@@ -343,24 +281,16 @@
                 break;
               case "Enter":
               case " ":
-                if (this.searchString === "" && e.key === " ") {
-                  e.preventDefault();
-                  const activeOpt = this.getAllOptions()[this.activeIndex];
-                  if (
-                    activeOpt &&
-                    activeOpt.getAttribute("aria-disabled") !== "true"
-                  ) {
-                    this.selectOption(activeOpt);
-                  }
-                } else if (e.key === "Enter") {
-                  e.preventDefault();
-                  const activeOpt = this.getAllOptions()[this.activeIndex];
-                  if (
-                    activeOpt &&
-                    activeOpt.getAttribute("aria-disabled") !== "true"
-                  ) {
-                    this.selectOption(activeOpt);
-                  }
+                if (e.key === " " && this.searchString !== "") {
+                  break;
+                }
+                e.preventDefault();
+                const activeOpt = this.getActiveOption();
+                if (
+                  activeOpt &&
+                  activeOpt.getAttribute("aria-disabled") !== "true"
+                ) {
+                  this.selectOption(activeOpt);
                 }
                 break;
               case "Backspace":
@@ -407,7 +337,6 @@
                 );
               }
 
-              this.classList.add("initial-positioning");
               this._initialPositioningComplete = false;
 
               window.addEventListener(
@@ -456,20 +385,10 @@
 
                 requestAnimationFrame(() => {
                   this._initialPositioningComplete = true;
-                  this.classList.remove("initial-positioning");
                 });
               });
             } else {
-              if (
-                document.startViewTransition &&
-                this._initialPositioningComplete
-              ) {
-                const transition = document.startViewTransition(() => {
-                  this._hidePopoverInternal();
-                });
-              } else {
-                this._hidePopoverInternal();
-              }
+              this._hidePopoverInternal();
             }
           });
         }
@@ -528,6 +447,39 @@
           });
         }
 
+        getAllOptions() {
+          return Array.from(this.querySelectorAll('[role="option"]'));
+        }
+
+        getEnabledOptions() {
+          return this.getAllOptions().filter(
+            (opt) => opt.getAttribute("aria-disabled") !== "true"
+          );
+        }
+
+        getActiveOption() {
+          const options = this.getAllOptions();
+          if (this.activeIndex < 0 || this.activeIndex >= options.length) {
+            return null;
+          }
+          return options[this.activeIndex];
+        }
+
+        updateSelectionState(value) {
+          const options = this.getAllOptions();
+          let nextActiveIndex = -1;
+          options.forEach((opt, index) => {
+            const isSelected = opt.dataset.value === value;
+            opt.setAttribute("aria-selected", isSelected);
+            if (isSelected) {
+              nextActiveIndex = index;
+            }
+          });
+          if (nextActiveIndex > -1) {
+            this.activeIndex = nextActiveIndex;
+          }
+        }
+
         attributeChangedCallback(name, oldVal, newVal) {
           if (name === "data-trigger-id" && newVal) {
             const triggerElement = document.getElementById(newVal);
@@ -540,9 +492,7 @@
             }
           }
           if (name === "value" && newVal !== oldVal) {
-            for (const opt of this.getAllOptions()) {
-              opt.setAttribute("aria-selected", opt.dataset.value === newVal);
-            }
+            this.updateSelectionState(newVal);
           }
         }
 
@@ -618,8 +568,13 @@
           );
           let cssGap = 0;
           if (shellPart) {
-            const computedShellStyle = getComputedStyle(shellPart);
-            cssGap = parseFloat(computedShellStyle.marginTop) || 0;
+            if (this._cssGapPx == null) {
+              const computedShellStyle = getComputedStyle(shellPart);
+              this._cssGapPx = parseFloat(computedShellStyle.marginTop) || 0;
+              shellPart.style.marginTop = "0px";
+              shellPart.style.marginBottom = "0px";
+            }
+            cssGap = this._cssGapPx || 0;
           }
 
           this.style.marginTop = "0px";
@@ -673,14 +628,7 @@
           }
           const value = option.dataset.value;
           this.setAttribute("value", value);
-
-          const optionIndex = this.getAllOptions().indexOf(option);
-          if (optionIndex > -1) {
-            this.activeIndex = optionIndex;
-            this.getAllOptions().forEach((opt) => {
-              opt.setAttribute("aria-selected", opt.dataset.value === value);
-            });
-          }
+          this.updateSelectionState(value);
 
           this.dispatchEvent(
             new CustomEvent("select-change", {
@@ -835,6 +783,8 @@
             );
             if (previouslyActive) {
               previouslyActive.classList.remove("active-descendant");
+              previouslyActive.style.removeProperty("--sel-opt-bg-which");
+              previouslyActive.style.removeProperty("--sel-opt-fg-which");
             }
           }
           this.removeAttribute("aria-activedescendant");
@@ -862,6 +812,14 @@
           }
 
           newActiveOption.classList.add("active-descendant");
+          newActiveOption.style.setProperty(
+            "--sel-opt-bg-which",
+            "var(--sel-opt-bg-active)"
+          );
+          newActiveOption.style.setProperty(
+            "--sel-opt-fg-which",
+            "var(--sel-opt-fg-active)"
+          );
           this.setAttribute("aria-activedescendant", newActiveOption.id);
           this._activeOptionId = newActiveOption.id;
           this.activeIndex = index;

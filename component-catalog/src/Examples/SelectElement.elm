@@ -19,7 +19,7 @@ import Html.Styled.Attributes as Attributes exposing (css)
 import KeyboardSupport
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
-import Nri.Ui.SelectElement.V1 as SelectElement
+import Nri.Ui.SelectElement.V2 as SelectElement
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Text.V6 as Text
@@ -34,7 +34,7 @@ moduleName =
 
 version : Int
 version =
-    1
+    2
 
 
 type SampleItem
@@ -326,6 +326,7 @@ example =
             , SelectElement.label "Preview Select"
             , SelectElement.customHtmlAttributesForTrigger [ Attributes.tabindex -1 ]
             , SelectElement.disabled True
+            , SelectElement.containerCss [ Css.marginBottom (Css.px 100) ]
             ]
         ]
     , about =
@@ -372,11 +373,13 @@ viewExamplePage ellieLinkConfig state =
               else
                 SelectElement.guidance settings.guidance
             , SelectElement.containerCss
-                (if settings.containerCss then
-                    [ Css.backgroundColor (Css.hex "FFFACD") ]
+                ([ Css.marginBottom (Css.px 100) ]
+                    ++ (if settings.containerCss then
+                            [ Css.backgroundColor (Css.hex "FFFACD") ]
 
-                 else
-                    []
+                        else
+                            []
+                       )
                 )
             , SelectElement.noMargin settings.noMargin
             ]
