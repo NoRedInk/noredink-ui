@@ -388,12 +388,12 @@ popoverHostStyles =
                 , ", "
                 , white
                 , " 70%) 0 100%,"
-                , "radial-gradient(farthest-side at 50% 0, "
+                , "linear-gradient(to bottom, "
                 , shadow
                 , ", "
                 , transparent
                 , "),"
-                , "radial-gradient(farthest-side at 50% 100%, "
+                , "linear-gradient(to top, "
                 , shadow
                 , ", "
                 , transparent
@@ -409,7 +409,7 @@ popoverHostStyles =
     , position relative
     , Css.property "background" scrollIndicatorsBackground
     , Css.property "background-repeat" "no-repeat"
-    , Css.property "background-size" "100% 35px, 100% 35px, 100% 18px, 100% 18px"
+    , Css.property "background-size" "100% 35px, 100% 35px, 100% 24px, 100% 24px"
     , Css.property "background-attachment" "local, local, scroll, scroll"
     , backgroundColor Colors.white
     , Css.opacity (Css.num 0)
