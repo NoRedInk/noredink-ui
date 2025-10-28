@@ -369,27 +369,11 @@ popoverHostStyles : List Style
 popoverHostStyles =
     let
         scrollIndicatorsBackground =
-            String.join ""
-                [ "linear-gradient("
-                , "rgb(255, 255, 255)"
-                , " 30%, "
-                , "rgba(255, 255, 255, 0)"
-                , "),"
-                , "linear-gradient("
-                , "rgba(255, 255, 255, 0)"
-                , ", "
-                , "rgb(255, 255, 255)"
-                , " 70%) 0 100%,"
-                , "linear-gradient(to bottom, "
-                , "rgba(0, 0, 0, 0.25)"
-                , ", "
-                , "rgba(0, 0, 0, 0)"
-                , "),"
-                , "linear-gradient(to top, "
-                , "rgba(0, 0, 0, 0.25)"
-                , ", "
-                , "rgba(0, 0, 0, 0)"
-                , ") 0 100%"
+            String.join ", "
+                [ "linear-gradient(rgb(255, 255, 255) 30%, rgba(255, 255, 255, 0))"
+                , "linear-gradient(rgba(255, 255, 255, 0), rgb(255, 255, 255) 70%) 0 100%"
+                , "linear-gradient(to bottom, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0))"
+                , "linear-gradient(to top, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0)) 0 100%"
                 ]
     in
     [ Css.border3 (px 1) solid Colors.gray85
