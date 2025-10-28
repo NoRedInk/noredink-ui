@@ -192,12 +192,16 @@
           super();
           this.activeIndex = -1;
           this._activeOptionId = null;
+          this._cssGapPx = null;
           const shadow = this.attachShadow({ mode: "open" });
 
           const hostStyle = document.createElement("style");
           hostStyle.textContent = `
             :host {
               will-change: opacity, transform;
+            }
+            [part="listbox-shell"] {
+              margin-top: var(--select-popover-gap, 8px);
             }
           `;
           shadow.appendChild(hostStyle);
@@ -554,8 +558,13 @@
           );
           let cssGap = 0;
           if (shellPart) {
-            const computedShellStyle = getComputedStyle(shellPart);
-            cssGap = parseFloat(computedShellStyle.marginTop) || 0;
+            if (this._cssGapPx == null) {
+              const computedShellStyle = getComputedStyle(shellPart);
+              this._cssGapPx = parseFloat(computedShellStyle.marginTop) || 0;
+              shellPart.style.marginTop = "0px";
+              shellPart.style.marginBottom = "0px";
+            }
+            cssGap = this._cssGapPx || 0;
           }
 
           this.style.marginTop = "0px";
