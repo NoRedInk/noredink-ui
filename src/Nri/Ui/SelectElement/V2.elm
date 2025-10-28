@@ -41,6 +41,7 @@ and accessibility.
 -}
 
 import Css exposing (..)
+import Css.Transitions as Transitions
 import Html.Styled exposing (Attribute, Html, button, div, h3, node, span, text)
 import Html.Styled.Attributes as Attributes exposing (attribute, class, id, tabindex)
 import Html.Styled.Events as Events
@@ -416,11 +417,14 @@ popoverHostStyles =
     , Css.property "background-attachment" "local, local, scroll, scroll"
     , backgroundColor Colors.white
     , Css.opacity (Css.num 0)
-    , Css.property "transform" "translateY(-8px)"
-    , Css.property "transition" "opacity 200ms ease, transform 200ms ease"
+    , Css.transforms [ Css.translateY (Css.px -8) ]
+    , Transitions.transition
+        [ Transitions.opacity 200
+        , Transitions.transform 200
+        ]
     , Css.pseudoClass "popover-open"
         [ Css.opacity (Css.num 1)
-        , Css.property "transform" "translateY(0)"
+        , Css.transforms [ Css.translateY Css.zero ]
         ]
     ]
 
