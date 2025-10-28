@@ -201,7 +201,7 @@
               will-change: opacity, transform;
             }
             [part="listbox-shell"] {
-              margin-top: var(--select-popover-gap, 8px);
+              margin-top: var(--select-popover-gap, 6px);
             }
           `;
           shadow.appendChild(hostStyle);
@@ -219,10 +219,6 @@
           this.searchClearTimer = null;
           this._initialPositioningComplete = false;
 
-          this.getAllOptions = () => [];
-          this.getEnabledOptions = () => [];
-
-          this.options = () => [];
           this._triggerIdToAttach = null;
         }
 
@@ -234,15 +230,6 @@
           if (!this.hasAttribute("popover")) {
             this.popover = "auto";
           }
-
-          this.getAllOptions = () =>
-            Array.from(this.querySelectorAll('[role="option"]'));
-          this.getEnabledOptions = () =>
-            Array.from(
-              this.querySelectorAll(
-                '[role="option"]:not([aria-disabled="true"])'
-              )
-            );
 
           if (!this.trigger && this._triggerIdToAttach) {
             const triggerElement = document.getElementById(
@@ -294,24 +281,16 @@
                 break;
               case "Enter":
               case " ":
-                if (this.searchString === "" && e.key === " ") {
-                  e.preventDefault();
-                  const activeOpt = this.getAllOptions()[this.activeIndex];
-                  if (
-                    activeOpt &&
-                    activeOpt.getAttribute("aria-disabled") !== "true"
-                  ) {
-                    this.selectOption(activeOpt);
-                  }
-                } else if (e.key === "Enter") {
-                  e.preventDefault();
-                  const activeOpt = this.getAllOptions()[this.activeIndex];
-                  if (
-                    activeOpt &&
-                    activeOpt.getAttribute("aria-disabled") !== "true"
-                  ) {
-                    this.selectOption(activeOpt);
-                  }
+                if (e.key === " " && this.searchString !== "") {
+                  break;
+                }
+                e.preventDefault();
+                const activeOpt = this.getActiveOption();
+                if (
+                  activeOpt &&
+                  activeOpt.getAttribute("aria-disabled") !== "true"
+                ) {
+                  this.selectOption(activeOpt);
                 }
                 break;
               case "Backspace":
@@ -468,6 +447,39 @@
           });
         }
 
+        getAllOptions() {
+          return Array.from(this.querySelectorAll('[role="option"]'));
+        }
+
+        getEnabledOptions() {
+          return this.getAllOptions().filter(
+            (opt) => opt.getAttribute("aria-disabled") !== "true"
+          );
+        }
+
+        getActiveOption() {
+          const options = this.getAllOptions();
+          if (this.activeIndex < 0 || this.activeIndex >= options.length) {
+            return null;
+          }
+          return options[this.activeIndex];
+        }
+
+        updateSelectionState(value) {
+          const options = this.getAllOptions();
+          let nextActiveIndex = -1;
+          options.forEach((opt, index) => {
+            const isSelected = opt.dataset.value === value;
+            opt.setAttribute("aria-selected", isSelected);
+            if (isSelected) {
+              nextActiveIndex = index;
+            }
+          });
+          if (nextActiveIndex > -1) {
+            this.activeIndex = nextActiveIndex;
+          }
+        }
+
         attributeChangedCallback(name, oldVal, newVal) {
           if (name === "data-trigger-id" && newVal) {
             const triggerElement = document.getElementById(newVal);
@@ -480,9 +492,7 @@
             }
           }
           if (name === "value" && newVal !== oldVal) {
-            for (const opt of this.getAllOptions()) {
-              opt.setAttribute("aria-selected", opt.dataset.value === newVal);
-            }
+            this.updateSelectionState(newVal);
           }
         }
 
@@ -618,14 +628,7 @@
           }
           const value = option.dataset.value;
           this.setAttribute("value", value);
-
-          const optionIndex = this.getAllOptions().indexOf(option);
-          if (optionIndex > -1) {
-            this.activeIndex = optionIndex;
-            this.getAllOptions().forEach((opt) => {
-              opt.setAttribute("aria-selected", opt.dataset.value === value);
-            });
-          }
+          this.updateSelectionState(value);
 
           this.dispatchEvent(
             new CustomEvent("select-change", {

@@ -54,7 +54,6 @@ import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.InputStyles.V4 as InputStyles
 import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.Svg.V1 as Svg
-import Nri.Ui.Text.V6 as Text
 import Nri.Ui.UiIcon.V2 as UiIcon
 
 
@@ -148,8 +147,8 @@ type alias Config value msg =
     , loading : Bool
     , icon : Maybe Svg.Svg
     , disableWhen : value -> Bool
-    , error : Maybe String
-    , guidance : Maybe String
+    , error : InputErrorAndGuidanceInternal.ErrorState
+    , guidance : InputErrorAndGuidanceInternal.Guidance msg
     , containerCss : List Style
     , noMargin : Bool
     , valueToString : value -> String
@@ -173,8 +172,8 @@ defaultConfig =
     , loading = False
     , icon = Nothing
     , disableWhen = \_ -> False
-    , error = Nothing
-    , guidance = Nothing
+    , error = InputErrorAndGuidanceInternal.noError
+    , guidance = InputErrorAndGuidanceInternal.noGuidance
     , containerCss = []
     , noMargin = False
     , valueToString = \_ -> ""
@@ -322,7 +321,14 @@ If set, it overrides any guidance message.
 -}
 error : String -> Attribute value msg
 error errMsg =
-    Attribute (\config -> { config | error = Just errMsg, guidance = Nothing })
+    Attribute
+        (\config ->
+            let
+                configWithError =
+                    InputErrorAndGuidanceInternal.setErrorMessage (Just errMsg) config
+            in
+            { configWithError | guidance = InputErrorAndGuidanceInternal.noGuidance }
+        )
 
 
 {-| Sets a guidance message to be displayed below the component.
@@ -332,14 +338,11 @@ guidance : String -> Attribute value msg
 guidance guidMsg =
     Attribute
         (\config ->
-            { config
-                | guidance =
-                    if config.error == Nothing then
-                        Just guidMsg
+            if InputErrorAndGuidanceInternal.getIsInError config.error then
+                config
 
-                    else
-                        config.guidance
-            }
+            else
+                InputErrorAndGuidanceInternal.setGuidance guidMsg config
         )
 
 
@@ -606,7 +609,7 @@ triggerStyles config =
             if isEffectivelyDisabled then
                 Colors.gray85
 
-            else if config.error /= Nothing then
+            else if InputErrorAndGuidanceInternal.getIsInError config.error then
                 Colors.purple
 
             else
@@ -767,7 +770,7 @@ view defaultTriggerText attributes =
             triggerBaseAttributes ++ triggerDisabledAttributes
 
         labelErrorState =
-            InputErrorAndGuidanceInternal.setErrorIf (config.error /= Nothing)
+            InputErrorAndGuidanceInternal.setErrorIf (InputErrorAndGuidanceInternal.getIsInError config.error)
                 { error = InputErrorAndGuidanceInternal.noError }
                 |> .error
 
@@ -795,26 +798,11 @@ view defaultTriggerText attributes =
                         [ iconHtml ]
                     ]
 
-        renderErrorOrGuidance =
-            case ( config.error, config.guidance ) of
-                ( Just errMsg, _ ) ->
-                    div [ Attributes.css [ Css.marginTop (Css.px 4) ] ]
-                        [ Text.caption
-                            [ Text.css [ Css.color Colors.purple, Css.marginTop (Css.px 5) ]
-                            , Text.plaintext errMsg
-                            ]
-                        ]
-
-                ( Nothing, Just guidMsg ) ->
-                    div [ Attributes.css [ Css.marginTop (Css.px 4) ] ]
-                        [ Text.caption
-                            [ Text.css []
-                            , Text.plaintext guidMsg
-                            ]
-                        ]
-
-                _ ->
-                    Html.Styled.text ""
+        errorAndGuidanceNodes =
+            InputErrorAndGuidanceInternal.view
+                config.triggerId
+                (Css.marginTop (Css.px 4))
+                config
 
         containerStyles =
             (if config.noMargin then
@@ -852,7 +840,7 @@ view defaultTriggerText attributes =
             |> Maybe.map List.singleton
             |> Maybe.withDefault []
          )
-            ++ [ div [ Attributes.css inputContainerStyles ]
+            ++ ([ div [ Attributes.css inputContainerStyles ]
                     (button
                         finalTriggerAttributes
                         (renderIcon
@@ -883,9 +871,10 @@ view defaultTriggerText attributes =
                                     []
                            )
                     )
-               , node "select-element"
+                , node "select-element"
                     popoverAttributes
                     (renderOptionItems config config.popoverId config.valueToString config.optionItems)
-               , renderErrorOrGuidance
-               ]
+                ]
+                    ++ errorAndGuidanceNodes
+               )
         )

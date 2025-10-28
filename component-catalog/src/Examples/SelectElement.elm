@@ -326,6 +326,7 @@ example =
             , SelectElement.label "Preview Select"
             , SelectElement.customHtmlAttributesForTrigger [ Attributes.tabindex -1 ]
             , SelectElement.disabled True
+            , SelectElement.containerCss [ Css.marginBottom (Css.px 100) ]
             ]
         ]
     , about =
@@ -372,11 +373,13 @@ viewExamplePage ellieLinkConfig state =
               else
                 SelectElement.guidance settings.guidance
             , SelectElement.containerCss
-                (if settings.containerCss then
-                    [ Css.backgroundColor (Css.hex "FFFACD") ]
+                ([ Css.marginBottom (Css.px 100) ]
+                    ++ (if settings.containerCss then
+                            [ Css.backgroundColor (Css.hex "FFFACD") ]
 
-                 else
-                    []
+                        else
+                            []
+                       )
                 )
             , SelectElement.noMargin settings.noMargin
             ]

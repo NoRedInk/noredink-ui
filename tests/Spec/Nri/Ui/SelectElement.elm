@@ -429,7 +429,7 @@ spec =
                     }
                     |> ProgramTest.start ()
                     |> ensureViewHas
-                        [ tag "div"
+                        [ id "trigger-err_error-message"
                         , containing [ text "This is an error!" ]
                         ]
                     |> done
@@ -452,7 +452,7 @@ spec =
                     }
                     |> ProgramTest.start ()
                     |> ensureViewHas
-                        [ tag "div"
+                        [ id "trigger-guide_guidance"
                         , containing [ text "This is helpful guidance." ]
                         ]
                     |> done
@@ -476,7 +476,7 @@ spec =
                     }
                     |> ProgramTest.start ()
                     |> ensureViewHas
-                        [ tag "div"
+                        [ id "trigger-override_error-message"
                         , containing [ text "This error should show." ]
                         ]
                     |> ensureViewHasNot
