@@ -368,39 +368,27 @@ noMargin noMrg =
 popoverHostStyles : List Style
 popoverHostStyles =
     let
-        white =
-            ColorsExtra.toCssString Colors.white
-
-        transparentWhite =
-            ColorsExtra.toCssString (Css.rgba 255 255 255 0)
-
-        shadow =
-            ColorsExtra.toCssString (Css.rgba 0 0 0 0.25)
-
-        transparent =
-            ColorsExtra.toCssString (Css.rgba 0 0 0 0)
-
         scrollIndicatorsBackground =
             String.join ""
                 [ "linear-gradient("
-                , white
+                , "rgb(255, 255, 255)"
                 , " 30%, "
-                , transparentWhite
+                , "rgba(255, 255, 255, 0)"
                 , "),"
                 , "linear-gradient("
-                , transparentWhite
+                , "rgba(255, 255, 255, 0)"
                 , ", "
-                , white
+                , "rgb(255, 255, 255)"
                 , " 70%) 0 100%,"
                 , "linear-gradient(to bottom, "
-                , shadow
+                , "rgba(0, 0, 0, 0.25)"
                 , ", "
-                , transparent
+                , "rgba(0, 0, 0, 0)"
                 , "),"
                 , "linear-gradient(to top, "
-                , shadow
+                , "rgba(0, 0, 0, 0.25)"
                 , ", "
-                , transparent
+                , "rgba(0, 0, 0, 0)"
                 , ") 0 100%"
                 ]
     in
