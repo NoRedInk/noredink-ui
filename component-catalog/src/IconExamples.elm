@@ -41,6 +41,7 @@ import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Svg.V1 as Svg exposing (Svg)
 import Nri.Ui.Text.V6 as Text
 import Nri.Ui.TextInput.V8 as TextInput
+import Nri.Ui.Tooltip.V3 as Tooltip
 import SolidColor exposing (SolidColor)
 
 
@@ -115,6 +116,7 @@ type alias Settings =
     , label : String
     , showBorder : Bool
     , renderSvgCode : String -> String
+    , openedTooltip : Maybe String
     }
 
 
@@ -130,6 +132,7 @@ init { label, name, icon, renderSvgCode } =
     , label = label
     , showBorder = True
     , renderSvgCode = renderSvgCode
+    , openedTooltip = Nothing
     }
 
 
@@ -142,6 +145,7 @@ type Msg
     | SetHeight (Maybe Float)
     | SetLabel String
     | SetBorder Bool
+    | ToggleTooltip String Bool
 
 
 {-| -}
@@ -183,6 +187,12 @@ update msg state =
 
         SetBorder showBorder ->
             ( { state | showBorder = showBorder }, Cmd.none )
+
+        ToggleTooltip name True ->
+            ( { state | openedTooltip = Just name }, Cmd.none )
+
+        ToggleTooltip _ False ->
+            ( { state | openedTooltip = Nothing }, Cmd.none )
 
 
 {-| -}
@@ -255,8 +265,8 @@ aboutBullets =
     ]
 
 
-viewWithCustomStyles : Settings -> String -> List ( String, Svg.Svg, List Css.Style ) -> Html msg
-viewWithCustomStyles { showIconName } headerText icons =
+viewWithCustomStyles : Settings -> String -> List ( String, Svg.Svg, List Css.Style ) -> Html Msg
+viewWithCustomStyles { showIconName, openedTooltip } headerText icons =
     Html.section
         [ css
             [ Css.displayFlex
@@ -281,12 +291,12 @@ viewWithCustomStyles { showIconName } headerText icons =
                 , Css.property "gap" "10px"
                 ]
             ]
-            (List.map (viewIcon showIconName) icons)
+            (List.map (viewIcon { openedTooltip = openedTooltip } showIconName) icons)
         ]
 
 
-viewIcon : Bool -> ( String, Svg.Svg, List Css.Style ) -> Html msg
-viewIcon showIconName ( name, icon, style ) =
+viewIcon : { openedTooltip : Maybe String } -> Bool -> ( String, Svg.Svg, List Css.Style ) -> Html Msg
+viewIcon { openedTooltip } showIconName ( name, icon, style ) =
     let
         iconCss =
             if List.isEmpty style then
@@ -299,37 +309,65 @@ viewIcon showIconName ( name, icon, style ) =
             else
                 style
     in
-    Html.div
-        [ css
-            [ Css.displayFlex
-            , Css.alignItems Css.center
-            , Css.backgroundColor Colors.gray96
-            , Css.borderRadius (Css.px 8)
-            , Css.padding2 (Css.px 5) (Css.px 10)
-            , Css.hover
-                [ Css.backgroundColor Colors.glacier
-                , Css.color Colors.azure
-                , Css.Global.descendants
-                    [ Css.Global.selector "svg"
-                        [ Css.color Colors.azure
+    if showIconName then
+        Html.div
+            [ css
+                [ Css.displayFlex
+                , Css.alignItems Css.center
+                , Css.backgroundColor Colors.gray96
+                , Css.borderRadius (Css.px 8)
+                , Css.padding2 (Css.px 5) (Css.px 10)
+                , Css.hover
+                    [ Css.backgroundColor Colors.glacier
+                    , Css.color Colors.azure
+                    , Css.Global.descendants
+                        [ Css.Global.selector "svg"
+                            [ Css.color Colors.azure
+                            ]
                         ]
                     ]
                 ]
             ]
-        ]
-        [ icon
-            |> Svg.withCss iconCss
-            |> Svg.toHtml
-        , Text.smallBody
-            [ Text.plaintext name
-            , Text.css <|
-                if showIconName then
-                    []
-
-                else
-                    [ Css.display Css.none ]
+            [ icon
+                |> Svg.withCss iconCss
+                |> Svg.toHtml
+            , Text.smallBody [ Text.plaintext name ]
             ]
-        ]
+
+    else
+        Tooltip.view
+            { trigger =
+                \_ ->
+                    Html.div
+                        [ css
+                            [ Css.displayFlex
+                            , Css.alignItems Css.center
+                            , Css.backgroundColor Colors.gray96
+                            , Css.borderRadius (Css.px 8)
+                            , Css.padding2 (Css.px 5) (Css.px 10)
+                            , Css.hover
+                                [ Css.backgroundColor Colors.glacier
+                                , Css.color Colors.azure
+                                , Css.Global.descendants
+                                    [ Css.Global.selector "svg"
+                                        [ Css.color Colors.azure
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                        [ icon
+                            |> Svg.withCss iconCss
+                            |> Svg.toHtml
+                        ]
+            , id = ""
+            }
+            [ Tooltip.open (openedTooltip == Just name)
+            , Tooltip.onToggle (ToggleTooltip name)
+            , Tooltip.fitToContent
+            , Tooltip.smallPadding
+            , Tooltip.plaintext name
+            ]
 
 
 viewCustomizableExample : List Group -> Settings -> Html.Html Msg
