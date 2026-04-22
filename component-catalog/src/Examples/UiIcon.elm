@@ -271,6 +271,7 @@ all =
     , ( "Language support"
       , [ ( "translationForPracticeDirectionDisabled", UiIcon.translationForPracticeDirectionDisabled, [] )
         , ( "translationForPracticeDirectionEnabled", UiIcon.translationForPracticeDirectionEnabled, [] )
+        , ( "dictionary", UiIcon.dictionary, [] )
         , ( "wordLookTranslationDisabled", UiIcon.wordLookTranslationDisabled, [] )
         , ( "wordLookTranslationEnabled", UiIcon.wordLookTranslationEnabled, [] )
         ]
