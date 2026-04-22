@@ -313,32 +313,35 @@ viewIcon { openedTooltip } showIconName ( name, icon, style ) =
                     )
                 |> Svg.toHtml
 
-        styles =
-            [ Css.displayFlex
-            , Css.alignItems Css.center
-            , Css.backgroundColor Colors.gray96
-            , Css.borderRadius (Css.px 8)
-            , Css.padding2 (Css.px 5) (Css.px 10)
-            , Css.hover
-                [ Css.backgroundColor Colors.glacier
-                , Css.color Colors.azure
-                , Css.Global.descendants
-                    [ Css.Global.selector "svg"
-                        [ Css.color Colors.azure
+        container =
+            Html.div
+                [ css
+                    [ Css.displayFlex
+                    , Css.alignItems Css.center
+                    , Css.backgroundColor Colors.gray96
+                    , Css.borderRadius (Css.px 8)
+                    , Css.padding2 (Css.px 5) (Css.px 10)
+                    , Css.hover
+                        [ Css.backgroundColor Colors.glacier
+                        , Css.color Colors.azure
+                        , Css.Global.descendants
+                            [ Css.Global.selector "svg"
+                                [ Css.color Colors.azure
+                                ]
+                            ]
                         ]
                     ]
                 ]
-            ]
     in
     if showIconName then
-        Html.div [ css styles ]
+        container
             [ iconHtml
             , Text.smallBody [ Text.plaintext name ]
             ]
 
     else
         Tooltip.view
-            { trigger = \_ -> Html.div [ css styles ] [ iconHtml ]
+            { trigger = \_ -> container [ iconHtml ]
             , id = safeIdWithPrefix "icon-tooltip" name
             }
             [ Tooltip.open (openedTooltip == Just name)
