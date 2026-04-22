@@ -298,69 +298,51 @@ viewWithCustomStyles { showIconName, openedTooltip } headerText icons =
 viewIcon : { openedTooltip : Maybe String } -> Bool -> ( String, Svg.Svg, List Css.Style ) -> Html Msg
 viewIcon { openedTooltip } showIconName ( name, icon, style ) =
     let
-        iconCss =
-            if List.isEmpty style then
-                [ Css.height (Css.px 25)
-                , Css.width (Css.px 25)
-                , Css.margin (Css.px 4)
-                , Css.color Colors.gray45
-                ]
+        iconHtml =
+            icon
+                |> Svg.withCss
+                    (if List.isEmpty style then
+                        [ Css.height (Css.px 25)
+                        , Css.width (Css.px 25)
+                        , Css.margin (Css.px 4)
+                        , Css.color Colors.gray45
+                        ]
 
-            else
-                style
-    in
-    if showIconName then
-        Html.div
-            [ css
-                [ Css.displayFlex
-                , Css.alignItems Css.center
-                , Css.backgroundColor Colors.gray96
-                , Css.borderRadius (Css.px 8)
-                , Css.padding2 (Css.px 5) (Css.px 10)
-                , Css.hover
-                    [ Css.backgroundColor Colors.glacier
-                    , Css.color Colors.azure
-                    , Css.Global.descendants
-                        [ Css.Global.selector "svg"
-                            [ Css.color Colors.azure
+                     else
+                        style
+                    )
+                |> Svg.toHtml
+
+        container =
+            Html.div
+                [ css
+                    [ Css.displayFlex
+                    , Css.alignItems Css.center
+                    , Css.backgroundColor Colors.gray96
+                    , Css.borderRadius (Css.px 8)
+                    , Css.padding2 (Css.px 5) (Css.px 10)
+                    , Css.hover
+                        [ Css.backgroundColor Colors.glacier
+                        , Css.color Colors.azure
+                        , Css.Global.descendants
+                            [ Css.Global.selector "svg"
+                                [ Css.color Colors.azure
+                                ]
                             ]
                         ]
                     ]
                 ]
-            ]
-            [ icon
-                |> Svg.withCss iconCss
-                |> Svg.toHtml
+    in
+    if showIconName then
+        container
+            [ iconHtml
             , Text.smallBody [ Text.plaintext name ]
             ]
 
     else
         Tooltip.view
-            { trigger =
-                \_ ->
-                    Html.div
-                        [ css
-                            [ Css.displayFlex
-                            , Css.alignItems Css.center
-                            , Css.backgroundColor Colors.gray96
-                            , Css.borderRadius (Css.px 8)
-                            , Css.padding2 (Css.px 5) (Css.px 10)
-                            , Css.hover
-                                [ Css.backgroundColor Colors.glacier
-                                , Css.color Colors.azure
-                                , Css.Global.descendants
-                                    [ Css.Global.selector "svg"
-                                        [ Css.color Colors.azure
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                        [ icon
-                            |> Svg.withCss iconCss
-                            |> Svg.toHtml
-                        ]
-            , id = ""
+            { trigger = \_ -> container [ iconHtml ]
+            , id = safeIdWithPrefix "icon-tooltip" name
             }
             [ Tooltip.open (openedTooltip == Just name)
             , Tooltip.onToggle (ToggleTooltip name)
