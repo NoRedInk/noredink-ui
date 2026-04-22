@@ -339,7 +339,7 @@ viewIcon { openedTooltip } showIconName ( name, icon, style ) =
     else
         Tooltip.view
             { trigger = \_ -> Html.div [ css styles ] [ iconHtml ]
-            , id = "icon-tooltip__" ++ name
+            , id = safeIdWithPrefix "icon-tooltip" name
             }
             [ Tooltip.open (openedTooltip == Just name)
             , Tooltip.onToggle (ToggleTooltip name)
