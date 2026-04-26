@@ -10,17 +10,19 @@ module Debug.Control.View exposing
 -}
 
 import Css exposing (..)
+import Css.Global
 import Css.Media exposing (withMedia)
 import Debug.Control as Control exposing (Control)
 import EllieLink
 import Example
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Html.Styled.Attributes exposing (class, css)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.MediaQuery.V1 exposing (mobile, notMobile)
-import Nri.Ui.Spacing.V1 as Spacing
+import Nri.Ui.Svg.V1 as Svg
+import Nri.Ui.UiIcon.V2 as UiIcon
 
 
 {-| -}
@@ -75,14 +77,16 @@ viewWithCustomControls config =
     in
     div
         [ css
-            [ marginTop Spacing.verticalSpacerPx
-            , displayFlex
+            [ displayFlex
             , withMedia [ mobile ] [ flexDirection column ]
             ]
         ]
         [ Container.view
             [ Container.html
-                [ Heading.h2 [ Heading.plaintext "Settings" ]
+                [ Heading.h2
+                    [ Heading.plaintext "Settings"
+                    , Heading.css [ marginBottom (px 16) ]
+                    ]
                 , config.controls
                 ]
             , Container.css
@@ -120,6 +124,7 @@ viewWithCustomControls config =
 
                     _ ->
                         codeSampleHeading
+                            :: codeSampleStyles
                             :: List.map (\example -> viewCodeDetails (ellieLink example) example)
                                 config.exampleCode
                 )
@@ -151,7 +156,8 @@ codeSampleHeading =
 viewCodeDetails : Html msg -> { sectionName : String, code : String } -> Html msg
 viewCodeDetails ellieLink example =
     details
-        [ css
+        [ class detailsClass
+        , css
             [ paddingTop (px 5)
             , paddingBottom (px 5)
             , borderBottom3 (px 1) solid Colors.gray45
@@ -159,8 +165,30 @@ viewCodeDetails ellieLink example =
             , lastChild [ borderWidth zero, paddingBottom zero ]
             ]
         ]
-        [ summary [ css [ color Colors.mustard ] ]
-            [ Heading.h3
+        [ summary
+            [ css
+                [ color Colors.mustard
+                , cursor pointer
+                , displayFlex
+                , alignItems center
+                , property "gap" "8px"
+                ]
+            ]
+            [ span
+                [ class chevronClass
+                , css
+                    [ displayFlex
+                    , alignItems center
+                    , property "transition" "transform 150ms ease"
+                    ]
+                ]
+                [ UiIcon.arrowRight
+                    |> Svg.withColor Colors.mustard
+                    |> Svg.withWidth (px 12)
+                    |> Svg.withHeight (px 12)
+                    |> Svg.toHtml
+                ]
+            , Heading.h3
                 [ Heading.css [ display inline, color Colors.mustard ]
                 , Heading.plaintext example.sectionName
                 ]
@@ -175,6 +203,28 @@ viewCodeDetails ellieLink example =
                 ]
             ]
             [ viewCode example.code, ellieLink ]
+        ]
+
+
+detailsClass : String
+detailsClass =
+    "code-sample-details"
+
+
+chevronClass : String
+chevronClass =
+    "code-sample-chevron"
+
+
+codeSampleStyles : Html msg
+codeSampleStyles =
+    Css.Global.global
+        [ Css.Global.selector ("." ++ detailsClass ++ " > summary::-webkit-details-marker")
+            [ display none ]
+        , Css.Global.selector ("." ++ detailsClass ++ " > summary")
+            [ property "list-style" "none" ]
+        , Css.Global.selector ("." ++ detailsClass ++ "[open] > summary ." ++ chevronClass)
+            [ transforms [ rotate (deg 90) ] ]
         ]
 
 
