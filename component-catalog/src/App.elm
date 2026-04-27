@@ -16,7 +16,9 @@ import Html.Styled.Attributes exposing (..)
 import Http
 import InputMethod exposing (InputMethod)
 import Json.Decode as Decode
+import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.CssVendorPrefix.V1 as VendorPrefixed
+import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Header.V1 as Header
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
 import Nri.Ui.Page.V3 as Page
@@ -345,7 +347,12 @@ view model =
                 , Css.Global.global (InputMethod.styles model.inputMethod)
                 , Css.Global.global
                     [ Css.Global.everything [ Css.boxSizing Css.borderBox ]
-                    , Css.Global.body [ Css.margin Css.zero ]
+                    , Css.Global.body
+                        [ Css.margin Css.zero
+                        , Fonts.baseFont
+                        , Css.color Colors.gray20
+                        , Css.lineHeight (Css.num 1.5)
+                        ]
                     ]
                 ]
 

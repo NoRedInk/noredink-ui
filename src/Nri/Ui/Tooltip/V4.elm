@@ -94,6 +94,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Fonts.V1 as Fonts
 import Nri.Ui.Html.Attributes.V2 as ExtraAttributes
 import Nri.Ui.MediaQuery.V1 as MediaQuery
+import Nri.Ui.Shadows.V1 as Shadows
 import Nri.Ui.WhenFocusLeaves.V2 as WhenFocusLeaves
 
 
@@ -259,7 +260,7 @@ buildAttributes =
             { position = Top
             , align = AlignMiddle
             , flipEnabled = True
-            , offsetPx = 8
+            , offsetPx = 12
             , withTail = True
             , content = []
             , extraStyles = []
@@ -621,7 +622,7 @@ wrapInAuto tooltip ids inner =
                 (alignToString tooltip.align)
             , Attributes.attribute "data-offset"
                 (String.fromFloat tooltip.offsetPx)
-            , Attributes.css [ Css.display Css.contents ]
+            , Attributes.css [ Css.property "display" "contents" ]
             ]
             [ inner ]
 
@@ -690,8 +691,16 @@ viewTooltip : String -> String -> Tooltip msg -> Html msg
 viewTooltip tooltipId triggerId config =
     Root.div
         ([ Attributes.id tooltipId
+         , Attributes.attribute "data-nri-tooltip" "v4"
          , Attributes.attribute "data-position" (positionToString config.position)
          , Attributes.attribute "data-align" (alignToString config.align)
+         , Attributes.attribute "data-tail"
+            (if config.withTail then
+                "shown"
+
+             else
+                "hidden"
+            )
          , Attributes.attribute "data-tooltip-visible"
             (if config.isOpen then
                 "true"
@@ -710,7 +719,9 @@ viewTooltip tooltipId triggerId config =
         )
         [ Css.Global.global tooltipScopedStyles
         , Root.div
-            [ Attributes.css (innerStyles config) ]
+            [ Attributes.class bubbleClass
+            , Attributes.css (innerStyles config)
+            ]
             config.content
         ]
 
@@ -781,36 +792,44 @@ positionStyles : Position -> List Style
 positionStyles p =
     case p of
         Top ->
-            [ Css.property "bottom" "calc(100% + var(--nri-tooltip-offset, 8px))" ]
+            [ Css.property "bottom" "calc(100% + var(--nri-tooltip-offset, 12px))" ]
 
         Bottom ->
-            [ Css.property "top" "calc(100% + var(--nri-tooltip-offset, 8px))" ]
+            [ Css.property "top" "calc(100% + var(--nri-tooltip-offset, 12px))" ]
 
         Left ->
-            [ Css.property "right" "calc(100% + var(--nri-tooltip-offset, 8px))" ]
+            [ Css.property "right" "calc(100% + var(--nri-tooltip-offset, 12px))" ]
 
         Right ->
-            [ Css.property "left" "calc(100% + var(--nri-tooltip-offset, 8px))" ]
+            [ Css.property "left" "calc(100% + var(--nri-tooltip-offset, 12px))" ]
 
 
 alignStyles : Align -> List Style
 alignStyles a =
     case a of
         AlignStart ->
-            [ Css.left Css.zero ]
+            [ Css.property "left" "0"
+            , Css.property "right" "auto"
+            , Css.property "transform" "none"
+            ]
 
         AlignMiddle ->
-            [ Css.left (Css.pct 50)
+            [ Css.property "left" "50%"
+            , Css.property "right" "auto"
             , Css.property "transform" "translateX(-50%)"
             ]
 
         AlignEnd ->
-            [ Css.right Css.zero ]
+            [ Css.property "right" "0"
+            , Css.property "left" "auto"
+            , Css.property "transform" "none"
+            ]
 
 
 innerStyles : Tooltip msg -> List Style
 innerStyles config =
     [ Css.boxSizing Css.borderBox
+    , Css.position Css.relative
     , Css.borderRadius (Css.px 8)
     , case config.width of
         Exactly w ->
@@ -822,8 +841,9 @@ innerStyles config =
     , Css.backgroundColor tooltipColor
     , Css.color Colors.white
     , Css.border3 (Css.px 1) Css.solid outlineColor
+    , Shadows.high
     , Fonts.baseFont
-    , Css.fontSize (Css.px 14)
+    , Css.fontSize (Css.px 15)
     , Css.lineHeight (Css.num 1.4)
     , Css.batch config.extraStyles
     ]
@@ -833,10 +853,10 @@ paddingToStyle : Padding -> Style
 paddingToStyle p =
     case p of
         SmallPadding ->
-            Css.padding2 (Css.px 4) (Css.px 8)
+            Css.padding2 (Css.px 8) (Css.px 12)
 
         NormalPadding ->
-            Css.padding2 (Css.px 8) (Css.px 16)
+            Css.padding (Css.px 16)
 
         CustomPadding px ->
             Css.padding (Css.px px)
@@ -853,14 +873,17 @@ paddingToStyle p =
 tooltipScopedStyles : List Css.Global.Snippet
 tooltipScopedStyles =
     let
+        scope =
+            "[data-nri-tooltip=\"v4\"]"
+
         positionRule pos =
             Css.Global.selector
-                ("[data-position=\"" ++ positionToString pos ++ "\"]")
+                (scope ++ "[data-position=\"" ++ positionToString pos ++ "\"]")
                 (positionStyles pos)
 
         alignRule a =
             Css.Global.selector
-                ("[data-align=\"" ++ alignToString a ++ "\"]")
+                (scope ++ "[data-align=\"" ++ alignToString a ++ "\"]")
                 (alignStyles a)
     in
     [ positionRule Top
@@ -871,6 +894,162 @@ tooltipScopedStyles =
     , alignRule AlignMiddle
     , alignRule AlignEnd
     ]
+        ++ tailScopedStyles
+
+
+bubbleClass : String
+bubbleClass =
+    "nri-tooltip-v4-bubble"
+
+
+tailSize : Float
+tailSize =
+    8
+
+
+{-| Tail pseudo-element styles, scoped by `[data-position]` and
+`[data-align]` so the JS auto-flip can move the tail with the tooltip
+without an Elm re-render.
+
+Each tail uses two pseudo-elements:
+
+  - `::before` is the outer outline (border alpha)
+  - `::after` is the inner fill (tooltip background)
+
+Both are pure CSS triangles via the classic border-trick.
+
+-}
+tailScopedStyles : List Css.Global.Snippet
+tailScopedStyles =
+    let
+        scope =
+            "[data-nri-tooltip=\"v4\"]"
+
+        bubble pos =
+            scope ++ "[data-position=\"" ++ positionToString pos ++ "\"] > ." ++ bubbleClass
+
+        tailBase =
+            [ Css.property "content" "\" \""
+            , Css.position Css.absolute
+            , Css.height Css.zero
+            , Css.width Css.zero
+            , Css.pointerEvents Css.none
+            , Css.property "border" "solid transparent"
+            ]
+
+        tailHidden =
+            Css.Global.selector
+                (scope ++ "[data-tail=\"hidden\"] > ." ++ bubbleClass ++ "::before, "
+                    ++ scope
+                    ++ "[data-tail=\"hidden\"] > ."
+                    ++ bubbleClass
+                    ++ "::after"
+                )
+                [ Css.property "content" "none" ]
+
+        -- Outline ("::before") and fill ("::after") rules, per side.
+        --
+        -- The tail is a 0×0 pseudo-element with all-transparent borders
+        -- except the one that points TOWARD the bubble — that's the
+        -- visible triangle. We anchor the pseudo-element to the bubble
+        -- edge nearest the trigger (e.g. for a `top` tooltip, anchor to
+        -- the bubble's bottom edge → tail visible below).
+        sideRules pos =
+            let
+                ( visibleBorderProp, anchorProp ) =
+                    case pos of
+                        Top ->
+                            ( "border-top-color", "top" )
+
+                        Bottom ->
+                            ( "border-bottom-color", "bottom" )
+
+                        Left ->
+                            ( "border-left-color", "left" )
+
+                        Right ->
+                            ( "border-right-color", "right" )
+
+                outlineSelector =
+                    bubble pos ++ "::before"
+
+                fillSelector =
+                    bubble pos ++ "::after"
+            in
+            [ Css.Global.selector outlineSelector
+                (tailBase
+                    ++ [ Css.property visibleBorderProp (cssColor outlineColor)
+                       , Css.property "border-width"
+                            (String.fromFloat (tailSize + 1) ++ "px")
+                       , Css.property anchorProp "100%"
+                       ]
+                )
+            , Css.Global.selector fillSelector
+                (tailBase
+                    ++ [ Css.property visibleBorderProp (cssColor tooltipColor)
+                       , Css.property "border-width"
+                            (String.fromFloat tailSize ++ "px")
+                       , Css.property anchorProp "100%"
+                       ]
+                )
+            ]
+
+        -- Cross-axis position: where along the tooltip edge the tail sits.
+        -- For top/bottom tooltips the cross axis is X; for left/right it's Y.
+        crossAxisRule pos a =
+            let
+                isHorizontal =
+                    pos == Top || pos == Bottom
+
+                ( startProp, endProp, transformProp ) =
+                    if isHorizontal then
+                        ( "left", "right", "translateX(-50%)" )
+
+                    else
+                        ( "top", "bottom", "translateY(-50%)" )
+
+                styles =
+                    case a of
+                        AlignStart ->
+                            [ Css.property startProp (String.fromFloat (tailSize + 8) ++ "px")
+                            , Css.property endProp "auto"
+                            , Css.property "transform" "none"
+                            ]
+
+                        AlignMiddle ->
+                            [ Css.property startProp "50%"
+                            , Css.property endProp "auto"
+                            , Css.property "transform" transformProp
+                            ]
+
+                        AlignEnd ->
+                            [ Css.property startProp "auto"
+                            , Css.property endProp (String.fromFloat (tailSize + 8) ++ "px")
+                            , Css.property "transform" "none"
+                            ]
+
+                positionAlignSelector =
+                    scope
+                        ++ "[data-position=\""
+                        ++ positionToString pos
+                        ++ "\"][data-align=\""
+                        ++ alignToString a
+                        ++ "\"] > ."
+                        ++ bubbleClass
+            in
+            [ Css.Global.selector (positionAlignSelector ++ "::before") styles
+            , Css.Global.selector (positionAlignSelector ++ "::after") styles
+            ]
+    in
+    List.concatMap sideRules [ Top, Bottom, Left, Right ]
+        ++ List.concatMap (\pos -> List.concatMap (crossAxisRule pos) [ AlignStart, AlignMiddle, AlignEnd ])
+            [ Top, Bottom, Left, Right ]
+        ++ [ tailHidden ]
+
+
+cssColor : Color -> String
+cssColor c =
+    Nri.Ui.Colors.Extra.toCssString c
 
 
 
