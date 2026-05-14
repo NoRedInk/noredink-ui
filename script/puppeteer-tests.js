@@ -248,7 +248,7 @@ describe("UI tests", function () {
       handlePageErrors(page);
       await page.goto(`http://localhost:${PORT}`, { waitUntil: "load" });
       await injectReducedMotion(page);
-      await page.$("#maincontent");
+      await page.waitForSelector("#maincontent");
       await percySnapshot(page, this.test.fullTitle());
 
       const results = await new AxePuppeteer(page)
@@ -277,7 +277,8 @@ describe("UI tests", function () {
     await page.goto(`http://localhost:${PORT}`);
     await injectReducedMotion(page);
 
-    await page.$("#maincontent");
+    await page.waitForSelector("#maincontent");
+    await page.waitForSelector("[data-nri-description='doodad-link']");
     let links = await page.evaluate(() => {
       let nodes = Array.from(
         document.querySelectorAll("[data-nri-description='doodad-link']"),
@@ -312,7 +313,10 @@ describe("UI tests", function () {
     await page.goto(`http://localhost:${PORT}`);
     await injectReducedMotion(page);
 
-    await page.$("#maincontent");
+    await page.waitForSelector("#maincontent");
+    await page.waitForSelector(
+      "xpath/.//button[contains(., 'Usage Examples')]",
+    );
 
     const [usageTab] = await page.$$(
       "xpath/.//button[contains(., 'Usage Examples')]",
