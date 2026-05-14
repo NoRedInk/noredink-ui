@@ -442,16 +442,24 @@ view_ msg (Control c) currentLabel =
             if currentLabel /= "" then
                 [ Html.fieldset
                     [ css
-                        [ border3 (px 1) solid Colors.gray75
-                        , borderRadius (px 3)
+                        [ border3 (px 1) solid Colors.gray85
+                        , borderRadius (px 8)
                         , minWidth (pct 45)
+                        , padding3 (px 8) (px 16) (px 16)
+                        , margin zero
+                        , alignSelf flexStart
+                        , backgroundColor Colors.white
                         ]
                     ]
                     (Html.legend
                         [ css
-                            [ fontSize (rem 1)
-                            , color Colors.navy
+                            [ fontSize (px 13)
+                            , fontWeight bold
+                            , letterSpacing (px 0.4)
+                            , textTransform uppercase
+                            , color Colors.gray45
                             , Fonts.baseFont
+                            , padding2 zero (px 6)
                             ]
                         ]
                         [ Html.text currentLabel ]
