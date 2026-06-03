@@ -107,4 +107,9 @@ all =
         , ( "modules", AssignmentIcon.modules, [] )
         ]
       )
+    , ( "Read-Write-Reason"
+      , [ ( "readWriteReason", AssignmentIcon.readWriteReason, [] )
+        , ( "readWriteReasonCircled", AssignmentIcon.readWriteReasonCircled, [] )
+        ]
+      )
     ]
