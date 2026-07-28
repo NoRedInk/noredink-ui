@@ -164,6 +164,7 @@ yellowColors =
     Nonempty ( "mustard", Colors.mustard, "Diagnostic assignments, some Premium elements" )
         [ ( "ochre", Colors.ochre, "Practice assignments background color, some Premium elements" )
         , ( "ochreDark", Colors.ochreDark, "Practice assignments text color" )
+        , ( "ochreLight", Colors.ochreLight, "Light ochre backgrounds, e.g. proficiency pills" )
         , ( "sunshine", Colors.sunshine, "Yellow highlights, tips" )
         ]
 
