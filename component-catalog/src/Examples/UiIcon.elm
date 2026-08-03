@@ -217,6 +217,7 @@ all =
       , [ ( "key", UiIcon.key, [] )
         , ( "lock", UiIcon.lock, [] )
         , ( "premiumLock", UiIcon.premiumLock, [] )
+        , ( "premiumFlag", UiIcon.premiumFlag, [] )
         ]
       )
     , ( "Tips & Tricks"

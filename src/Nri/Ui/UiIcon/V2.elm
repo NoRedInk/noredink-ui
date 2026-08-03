@@ -19,7 +19,7 @@ module Nri.Ui.UiIcon.V2 exposing
     , attention, exclamation
     , flag, star, starFilled, starOutline, no
     , equals, plus, null
-    , key, lock, premiumLock
+    , key, lock, premiumLock, premiumFlag
     , badge, tada, count
     , bold, italic, underline, list, link, undo, redo
     , home, homeInCircle, library
@@ -58,7 +58,7 @@ module Nri.Ui.UiIcon.V2 exposing
 @docs attention, exclamation
 @docs flag, star, starFilled, starOutline, no
 @docs equals, plus, null
-@docs key, lock, premiumLock
+@docs key, lock, premiumLock, premiumFlag
 @docs badge, tada, count
 @docs bold, italic, underline, list, link, undo, redo
 @docs home, homeInCircle, library
@@ -4118,6 +4118,21 @@ dictionary =
             , Attributes.strokeLinecap "round"
             , Attributes.strokeLinejoin "round"
             , Attributes.fill "none"
+            ]
+            []
+        ]
+
+
+{-| Pennant-style flag to indicate premium content. Supports color overrides via `Nri.Ui.Svg.V1.withColor`.
+-}
+premiumFlag : Nri.Ui.Svg.V1.Svg
+premiumFlag =
+    Nri.Ui.Svg.V1.init "0 0 25 25"
+        [ Svg.path
+            [ Attributes.d "M1.60942 3C0.720563 3 0 3.70888 0 4.58333V20.4167C0 21.2911 0.720562 22 1.60942 22H23.3875C24.752 22 25.4974 20.4343 24.6239 19.403L19.6352 13.5136C19.1378 12.9265 19.1378 12.0735 19.6352 11.4864L24.6239 5.59696C25.4974 4.56569 24.752 3 23.3875 3H1.60942Z"
+            , Attributes.fill "currentColor"
+            , Attributes.fillRule "evenodd"
+            , Attributes.clipRule "evenodd"
             ]
             []
         ]
