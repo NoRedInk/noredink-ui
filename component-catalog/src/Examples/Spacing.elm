@@ -286,7 +286,7 @@ view ellieLinkConfig state =
         ]
         [ { name = "centeredContentWithSidePadding"
           , maxWidth = "1000px"
-          , sidePadding = "when viewport <= 970px"
+          , sidePadding = "15px, at every width"
           , breakpoint = "MediaQuery.mobileBreakpoint"
           }
         , { name = "centeredContent"
@@ -296,7 +296,7 @@ view ellieLinkConfig state =
           }
         , { name = "centeredQuizEngineContentWithSidePadding"
           , maxWidth = "750px"
-          , sidePadding = "when viewport <= 720px"
+          , sidePadding = "15px, at every width"
           , breakpoint = "MediaQuery.quizEngineMobileBreakpoint"
           }
         , { name = "centeredQuizEngineContent"
@@ -306,7 +306,7 @@ view ellieLinkConfig state =
           }
         , { name = "centeredNarrowContentWithSidePadding"
           , maxWidth = "500px"
-          , sidePadding = "when viewport <= 470px"
+          , sidePadding = "15px, at every width"
           , breakpoint = "MediaQuery.narrowMobileBreakpoint"
           }
         , { name = "centeredNarrowContent"
@@ -316,7 +316,7 @@ view ellieLinkConfig state =
           }
         , { name = "centeredContentWithSidePaddingAndCustomWidth"
           , maxWidth = "(customizable)"
-          , sidePadding = "when viewport <= (custom breakpoint value - 30)"
+          , sidePadding = "15px, at every width"
           , breakpoint = "(customizable)"
           }
         , { name = "centeredContentWithCustomWidth"

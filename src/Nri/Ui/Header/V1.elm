@@ -13,6 +13,7 @@ module Nri.Ui.Header.V1 exposing
 ### Patch
 
   - reduced the top-padding on the description from 20 to 5px
+  - keeps side padding between the header and the viewport edges at every width
 
 
 ### Major release adjustments
@@ -153,7 +154,7 @@ view attrs { breadCrumbs, isCurrentRoute } =
                     ( config.extraContent
                     , viewJust
                         (viewExtraNav
-                            [ Spacing.centeredContentWithSidePaddingAndCustomWidth config.pageWidth
+                            [ Spacing.centeredContentWithCustomWidth config.pageWidth
                             ]
                         )
                         config.extraNav
@@ -163,10 +164,9 @@ view attrs { breadCrumbs, isCurrentRoute } =
         [ css
             [ Css.backgroundColor Colors.gray96
             , Css.borderBottom3 (Css.px 1) Css.solid Colors.gray92
-            , Css.paddingTop (Css.px 30)
-            , Css.paddingBottom (Css.px 20)
+            , Css.padding4 (Css.px 30) Spacing.pageSideWhitespacePx (Css.px 20) Spacing.pageSideWhitespacePx
             , Media.withMedia [ MediaQuery.mobile ]
-                [ Css.important (Css.padding2 (Css.px 20) (Css.px 15))
+                [ Css.important (Css.padding2 (Css.px 20) Spacing.pageSideWhitespacePx)
                 ]
             ]
         , AttributesExtra.nriDescription "Nri-Header"
