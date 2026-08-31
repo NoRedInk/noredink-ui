@@ -12,6 +12,8 @@ module Nri.Ui.Spacing.V1 exposing
 {-| Patch changes:
 
   - added centeredNarrowContentWithSidePadding, narrowCenteredContent
+  - `centeredContentWithSidePadding` and friends now keep their side padding at
+    every viewport width, rather than only below a breakpoint
 
 
 ## Center a container on the page:
@@ -36,29 +38,25 @@ module Nri.Ui.Spacing.V1 exposing
 -}
 
 import Css exposing (Style)
-import Css.Media as Media
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 
 
-{-| Advanced use only: center content up to a custom page width, with side padding when narrower.
+{-| Advanced use only: center content up to a custom page width, keeping side
+padding between the content and the viewport edges at every width.
 -}
 centeredContentWithSidePaddingAndCustomWidth : Css.Px -> Style
 centeredContentWithSidePaddingAndCustomWidth breakpoint =
     Css.batch
-        [ centeredContentWithCustomWidth breakpoint
-        , -- this media query is narrower to prevent the page from "snapping" into the
-          -- narrow viewport when resizing. Visual shifts should be as minimal as possible
-          -- when resizing.
-          Media.withMediaQuery
-            [ "screen and (max-width: "
-                ++ .value
-                    (Css.calc breakpoint
-                        Css.minus
-                        (Css.calc pageSideWhitespacePx Css.plus pageSideWhitespacePx)
-                    )
-                ++ ")"
-            ]
-            [ pageSideWhitespace ]
+        [ -- The gutters live outside the content's max width, so the content is
+          -- still `breakpoint` wide on a roomy viewport while the gutters never
+          -- shrink below `pageSideWhitespacePx` on a tight one. Reserving them
+          -- with a media query instead leaves the content flush against the
+          -- viewport edges for the range of widths where the auto margins have
+          -- run out but the query has not fired yet.
+          centeredContentWithCustomWidth
+            (Css.px (breakpoint.numericValue + (2 * pageSideWhitespacePx.numericValue)))
+        , Css.boxSizing Css.borderBox
+        , pageSideWhitespace
         ]
 
 
@@ -78,7 +76,7 @@ centeredContentWithCustomWidth maxWidth =
 
   - should be centered
   - on wide viewports, should fill the width of the screen up to a max width of the mobile breakpoint
-  - on narrow viewports, should have standard side padding
+  - should always keep standard side padding between itself and the viewport edges
 
 If you have a container that should snap flush to the edges on mobile, this isn't the right style to use.
 
