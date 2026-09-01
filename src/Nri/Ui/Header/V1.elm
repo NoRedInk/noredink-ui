@@ -13,6 +13,8 @@ module Nri.Ui.Header.V1 exposing
 ### Patch
 
   - reduced the top-padding on the description from 20 to 5px
+  - the breadcrumb row and description keep a side gutter in the zone just
+    above the mobile breakpoint instead of going flush
 
 
 ### Major release adjustments
@@ -173,7 +175,7 @@ view attrs { breadCrumbs, isCurrentRoute } =
         ]
         [ Html.div
             (css
-                [ Spacing.centeredContentWithCustomWidth config.pageWidth
+                [ centeredWithMinimumGutters config.pageWidth
                 , Css.alignItems Css.center
                 , Css.displayFlex
                 , Media.withMedia [ MediaQuery.mobile ] [ Css.flexDirection Css.column ]
@@ -195,11 +197,38 @@ view attrs { breadCrumbs, isCurrentRoute } =
         ]
 
 
+{-| The band's `!important` padding provides the row's gutters at mobile widths
+and below, but just above the mobile breakpoint the row's auto margins are
+thinner than a gutter, so the row pads itself through that zone to stay aligned
+with page bodies using `Spacing.centeredContentWithSidePadding`. Headers wider
+than the mobile breakpoint are left alone: they are paired with page bodies
+that are not breakpoint-aware, so their gutters have to change together.
+-}
+centeredWithMinimumGutters : Css.Px -> Css.Style
+centeredWithMinimumGutters pageWidth =
+    Css.batch
+        [ Spacing.centeredContentWithCustomWidth pageWidth
+        , if pageWidth.numericValue <= MediaQuery.mobileBreakpoint.numericValue then
+            Media.withMedia
+                [ Media.only Media.screen
+                    [ -- Starts just past the band's max-width so the two
+                      -- gutter sources never stack.
+                      Media.minWidth (Css.px (MediaQuery.mobileBreakpoint.numericValue + 0.02))
+                    , Media.maxWidth (Css.px (MediaQuery.mobileBreakpoint.numericValue + (2 * Spacing.pageSideWhitespacePx.numericValue)))
+                    ]
+                ]
+                [ Css.maxWidth Css.none, Spacing.pageSideWhitespace ]
+
+          else
+            Css.batch []
+        ]
+
+
 viewDescription : Css.Px -> String -> Html msg
 viewDescription pageWidth description_ =
     Text.mediumBody
         [ Text.css
-            [ Spacing.centeredContentWithCustomWidth pageWidth
+            [ centeredWithMinimumGutters pageWidth
             , Css.color Colors.gray45
             , Css.important (Css.margin Css.auto)
             , Css.important (Css.paddingTop (Css.px 5))
