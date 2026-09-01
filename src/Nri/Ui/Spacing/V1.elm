@@ -12,6 +12,9 @@ module Nri.Ui.Spacing.V1 exposing
 {-| Patch changes:
 
   - added centeredNarrowContentWithSidePadding, narrowCenteredContent
+  - `centeredContentWithSidePadding`, the quiz-engine and narrow variants keep
+    a gutter between the content and the viewport edges at every viewport
+    width (custom widths above the mobile breakpoint are unchanged)
 
 
 ## Center a container on the page:
@@ -40,26 +43,52 @@ import Css.Media as Media
 import Nri.Ui.MediaQuery.V1 as MediaQuery
 
 
-{-| Advanced use only: center content up to a custom page width, with side padding when narrower.
+{-| Advanced use only: center content up to a custom page width, with side
+padding when narrower. For widths up to the mobile breakpoint the padding stays
+on at every viewport width at or below `breakpoint + 2 * pageSideWhitespacePx`;
+above the mobile breakpoint it keeps the historical narrower activation window.
 -}
 centeredContentWithSidePaddingAndCustomWidth : Css.Px -> Style
 centeredContentWithSidePaddingAndCustomWidth breakpoint =
-    Css.batch
-        [ centeredContentWithCustomWidth breakpoint
-        , -- this media query is narrower to prevent the page from "snapping" into the
-          -- narrow viewport when resizing. Visual shifts should be as minimal as possible
-          -- when resizing.
-          Media.withMediaQuery
-            [ "screen and (max-width: "
-                ++ .value
-                    (Css.calc breakpoint
-                        Css.minus
-                        (Css.calc pageSideWhitespacePx Css.plus pageSideWhitespacePx)
-                    )
-                ++ ")"
+    let
+        bothGuttersPx =
+            2 * pageSideWhitespacePx.numericValue
+    in
+    if breakpoint.numericValue <= MediaQuery.mobileBreakpoint.numericValue then
+        Css.batch
+            [ centeredContentWithCustomWidth breakpoint
+            , -- The auto margins that center the content shrink to zero as the
+              -- viewport approaches the breakpoint, so the padding has to stay
+              -- on through the zone just above it where those margins are
+              -- thinner than a gutter; activating it any lower leaves a band of
+              -- viewport widths where the content sits flush against the
+              -- viewport edges.
+              Media.withMedia
+                [ Media.only Media.screen
+                    [ Media.maxWidth (Css.px (breakpoint.numericValue + bothGuttersPx)) ]
+                ]
+                [ -- Inside that zone the box goes full-bleed so the padding is
+                  -- the only gutter; keeping the max width would stack the
+                  -- centering margins on top of the padding and make the
+                  -- gutter jump at the zone's outer edge.
+                  Css.maxWidth Css.none
+                , pageSideWhitespace
+                ]
             ]
-            [ pageSideWhitespace ]
-        ]
+
+    else
+        Css.batch
+            [ centeredContentWithCustomWidth breakpoint
+            , -- Custom page widths keep the historical narrower activation:
+              -- pages that pass one pair this style with headers and sidebars
+              -- that are not breakpoint-aware, so their gutters have to change
+              -- together, page by page.
+              Media.withMedia
+                [ Media.only Media.screen
+                    [ Media.maxWidth (Css.px (breakpoint.numericValue - bothGuttersPx)) ]
+                ]
+                [ pageSideWhitespace ]
+            ]
 
 
 {-| Advanced use only: center content up to a custom page width.

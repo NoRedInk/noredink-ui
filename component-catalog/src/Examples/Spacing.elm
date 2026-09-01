@@ -286,7 +286,7 @@ view ellieLinkConfig state =
         ]
         [ { name = "centeredContentWithSidePadding"
           , maxWidth = "1000px"
-          , sidePadding = "when viewport <= 970px"
+          , sidePadding = "when viewport <= 1030px"
           , breakpoint = "MediaQuery.mobileBreakpoint"
           }
         , { name = "centeredContent"
@@ -296,7 +296,7 @@ view ellieLinkConfig state =
           }
         , { name = "centeredQuizEngineContentWithSidePadding"
           , maxWidth = "750px"
-          , sidePadding = "when viewport <= 720px"
+          , sidePadding = "when viewport <= 780px"
           , breakpoint = "MediaQuery.quizEngineMobileBreakpoint"
           }
         , { name = "centeredQuizEngineContent"
@@ -306,7 +306,7 @@ view ellieLinkConfig state =
           }
         , { name = "centeredNarrowContentWithSidePadding"
           , maxWidth = "500px"
-          , sidePadding = "when viewport <= 470px"
+          , sidePadding = "when viewport <= 530px"
           , breakpoint = "MediaQuery.narrowMobileBreakpoint"
           }
         , { name = "centeredNarrowContent"
