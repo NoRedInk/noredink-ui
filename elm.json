@@ -34,6 +34,8 @@
         "Nri.Ui.WhenFocusLeaves.V2",
         "Nri.Ui.FocusLoop.V1",
         "Nri.Ui.FocusLoop.Lazy.V1",
+        "Nri.Ui.FocusLoop.V2",
+        "Nri.Ui.FocusLoop.Lazy.V2",
         "Nri.Ui.FocusRing.V1",
         "Nri.Ui.FocusTrap.V1",
         "Nri.Ui.Fonts.V1",
