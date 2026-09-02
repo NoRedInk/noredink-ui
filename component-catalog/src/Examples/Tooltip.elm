@@ -17,7 +17,10 @@ import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import EllieLink
 import Example exposing (Example)
+import Html.Styled as RootHtml
 import Html.Styled.Attributes exposing (css, href, id)
+import Html.Styled.Events as Events
+import Json.Decode as Decode
 import KeyboardSupport exposing (Key(..))
 import List.Nonempty exposing (Nonempty(..))
 import Markdown
@@ -28,7 +31,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Heading.V3 as Heading
 import Nri.Ui.Svg.V1 as Svg
 import Nri.Ui.Table.V9 as Table
-import Nri.Ui.Tooltip.V3 as Tooltip
+import Nri.Ui.Tooltip.V4 as Tooltip
 import Nri.Ui.UiIcon.V2 as UiIcon
 import Routes
 import UsageExamples.ClickableCardWithTooltip
@@ -36,7 +39,7 @@ import UsageExamples.ClickableCardWithTooltip
 
 version : Int
 version =
-    3
+    4
 
 
 moduleName : String
@@ -83,7 +86,7 @@ example =
                 }
                 [ Tooltip.plaintext "This is a tooltip."
                 , Tooltip.open True
-                , Tooltip.onTop
+                , Tooltip.above
                 , Tooltip.smallPadding
                 , Tooltip.fitToContent
                 ]
@@ -98,7 +101,23 @@ type alias State =
     { openTooltip : Maybe TooltipId
     , staticExampleSettings : Control (List ( String, Tooltip.Attribute Never ))
     , pageSettings : Control PageSettings
+    , playground : PlaygroundState
     }
+
+
+type alias PlaygroundState =
+    { isOpen : Bool
+    , position : ( Float, Float )
+    , dragOffset : Maybe ( Float, Float )
+    , preferredSide : PreferredSide
+    }
+
+
+type PreferredSide
+    = PreferAbove
+    | PreferBelow
+    | PreferBefore
+    | PreferAfter
 
 
 init : State
@@ -107,13 +126,19 @@ init =
     , staticExampleSettings = initStaticExampleSettings
     , pageSettings =
         Control.record PageSettings
-            |> Control.field "backgroundColor"
+            |> Control.field "Background color"
                 (Control.choice
                     (Nonempty ( "white", Control.value Colors.white )
                         [ ( "azure", Control.value Colors.azure )
                         ]
                     )
                 )
+    , playground =
+        { isOpen = False
+        , position = ( 400, 300 )
+        , dragOffset = Nothing
+        , preferredSide = PreferAbove
+        }
     }
 
 
@@ -126,7 +151,6 @@ type TooltipId
     = PrimaryLabel
     | AuxillaryDescription
     | HelpfullyDisabled
-    | LearnMore
     | Disclosure
 
 
@@ -135,6 +159,12 @@ type Msg
     | SetControl (Control (List ( String, Tooltip.Attribute Never )))
     | UpdatePageSettings (Control PageSettings)
     | Log String
+    | OpenPlayground
+    | ClosePlayground
+    | StartDrag { mouseX : Float, mouseY : Float }
+    | DragMove { mouseX : Float, mouseY : Float }
+    | EndDrag
+    | SetPreferredSide PreferredSide
 
 
 update : Msg -> State -> ( State, Cmd Msg )
@@ -153,13 +183,76 @@ update msg model =
         UpdatePageSettings settings ->
             ( { model | pageSettings = settings }, Cmd.none )
 
-        Log message ->
-            ( Debug.log "Tooltip Log:" |> always model, Cmd.none )
+        Log _ ->
+            ( model, Cmd.none )
+
+        OpenPlayground ->
+            ( { model | playground = setPlaygroundOpen True model.playground }, Cmd.none )
+
+        ClosePlayground ->
+            ( { model | playground = setPlaygroundOpen False model.playground }, Cmd.none )
+
+        StartDrag { mouseX, mouseY } ->
+            let
+                ( px, py ) =
+                    model.playground.position
+
+                playground =
+                    model.playground
+            in
+            ( { model
+                | playground =
+                    { playground
+                        | dragOffset = Just ( mouseX - px, mouseY - py )
+                    }
+              }
+            , Cmd.none
+            )
+
+        DragMove { mouseX, mouseY } ->
+            case model.playground.dragOffset of
+                Just ( ox, oy ) ->
+                    let
+                        playground =
+                            model.playground
+                    in
+                    ( { model
+                        | playground =
+                            { playground
+                                | position = ( mouseX - ox, mouseY - oy )
+                            }
+                      }
+                    , Cmd.none
+                    )
+
+                Nothing ->
+                    ( model, Cmd.none )
+
+        EndDrag ->
+            let
+                playground =
+                    model.playground
+            in
+            ( { model | playground = { playground | dragOffset = Nothing } }, Cmd.none )
+
+        SetPreferredSide side ->
+            let
+                playground =
+                    model.playground
+            in
+            ( { model | playground = { playground | preferredSide = side } }, Cmd.none )
+
+
+setPlaygroundOpen : Bool -> PlaygroundState -> PlaygroundState
+setPlaygroundOpen isOpen playground =
+    { playground | isOpen = isOpen, dragOffset = Nothing }
 
 
 view : EllieLink.Config -> State -> List (Html Msg)
 view ellieLinkConfig model =
     [ viewCustomizableExample ellieLinkConfig model
+    , viewAutoFlipPlaygroundLauncher
+    , viewAutoFlipPlayground model.staticExampleSettings model.playground
     , Heading.h2 [ Heading.plaintext "What type of tooltip should I use?" ]
     , Table.view []
         [ Table.string
@@ -240,9 +333,7 @@ Use when all of the following are true:
 """
           , description =
                 """
-Tooltip.helpfullyDisabled provides information about ***why*** the tooltip trigger is disabled. Learn more about the [helpfully disabled pattern in the docs](https://paper.dropbox.com/doc/Helpfully-disabled-components--CI8Ma_KHKL1CcCWpWG~p_RTwAg-2RUPgKnBsBNI7ScGDHS73) and watch [Charbel's demo on the Helpfully Disabled pattern](https://noredink.zoom.us/rec/play/fwV3mqsxjvF_95N2au0vAN2PmnH2IHZx2yCoAQ76gvZ0fLlrkNcFIuVL6i7ze7y1ivSxq0f6e2EXE-RJ.kHMKX9CBHI1kFM50?canPlayFromShare=true&from=share_recording_detail&continueMode=true&componentName=rec-play&originRequestUrl=https://noredink.zoom.us/rec/share/YvgK0427ADw42fY2edJ_tmkwwvPxz505Kpfhkz5DqF1_eh8sgj7wVfwBQ5FmieM8.P9YlMkM_XY_Kamm6&autoplay=true&startTime=1696520905000&_x_zm_rtaid=VeLjvOzDToKMf1R0XllC7A.1707171050117.67806369f8182aa5b282c10165d75544&_x_zm_rhtaid=323).
-
-
+Tooltip.helpfullyDisabled provides information about ***why*** the tooltip trigger is disabled.
 
 Example:
 - A tooltip might appear on a disabled button to inform the user that the button will become enabled once they've filled out a required form.
@@ -254,7 +345,6 @@ Example:
           , usage = """
 Use when all of the following are true:
 - the tooltip trigger only opens the tooltip without doing anything else
-- the tooltip trigger ***isn't*** a "?" icon (Use Tooltip.viewToggleTip for this case.)
 
 This type may contain interactive elements such as links.
         """
@@ -268,25 +358,6 @@ This type may contain interactive elements such as links.
                     |> String.join ""
           , example = viewDisclosureTooltip model.openTooltip
           , tooltipId = Disclosure
-          }
-        , { name = "Tooltip.viewToggleTip"
-          , usage = """
-Use when all of the following are true:
-- the tooltip trigger only opens the tooltip without doing anything else
-- the tooltip trigger ***is*** a "?" icon
-
-This type may contain interactive elements such as links.
-
-        """
-          , description =
-                [ "This is a helper for using Tooltip.disclosure with a \"?\" icon because it is a commonly used UI pattern. We use this helper when we want to show more information about an element but we don't want the element itself to have its own tooltip. The \"?\" icon typically appears visually adjacent to the element it reveals information about.\n\n"
-                , "Are you trying to use this tooltip type inside a clickable card? Check out [the Clickable Card with Tooltip example]("
-                , Routes.usageExampleHref UsageExamples.ClickableCardWithTooltip.example
-                , ")."
-                ]
-                    |> String.join ""
-          , example = viewToggleTip model.openTooltip
-          , tooltipId = LearnMore
           }
         ]
     ]
@@ -331,7 +402,7 @@ viewAuxillaryDescriptionTooltip openTooltip =
         , Tooltip.open (openTooltip == Just AuxillaryDescription)
         , Tooltip.smallPadding
         , Tooltip.fitToContent
-        , Tooltip.onLeftForMobile
+        , Tooltip.forBreakpoint Tooltip.mobile [ Tooltip.before ]
         ]
 
 
@@ -351,7 +422,7 @@ viewHelpfullyDisabledTooltip openTooltip =
         , Tooltip.helpfullyDisabled
         , Tooltip.onToggle (ToggleTooltip HelpfullyDisabled)
         , Tooltip.open (openTooltip == Just HelpfullyDisabled)
-        , Tooltip.onLeftForMobile
+        , Tooltip.forBreakpoint Tooltip.mobile [ Tooltip.before ]
         ]
 
 
@@ -386,20 +457,7 @@ viewDisclosureTooltip openTooltip =
         , Tooltip.onToggle (ToggleTooltip Disclosure)
         , Tooltip.open (openTooltip == Just Disclosure)
         , Tooltip.smallPadding
-        , Tooltip.alignEndForMobile (Css.px 148)
-        ]
-
-
-viewToggleTip : Maybe TooltipId -> Html Msg
-viewToggleTip openTooltip =
-    Html.span [ css [ Css.displayFlex, Css.alignItems Css.center, Css.justifyContent Css.center ] ]
-        [ Html.text "Mastery"
-        , Tooltip.viewToggleTip { label = "What is mastery?", lastId = Nothing }
-            [ Tooltip.plaintext "Students master topics by correctly answering a series of questions of varying difficulty and scope."
-            , Tooltip.onToggle (ToggleTooltip LearnMore)
-            , Tooltip.open (openTooltip == Just LearnMore)
-            , Tooltip.alignEndForMobile (Css.px 144)
-            ]
+        , Tooltip.forBreakpoint Tooltip.mobile [ Tooltip.alignEnd ]
         ]
 
 
@@ -408,19 +466,11 @@ initStaticExampleSettings =
     Control.list
         |> ControlExtra.listItem "content" controlContent
         |> ControlExtra.optionalBoolListItem "withoutTail" ( "Tooltip.withoutTail", Tooltip.withoutTail )
-        |> ControlExtra.listItems "direction"
+        |> ControlExtra.optionalBoolListItem "noFlip" ( "Tooltip.noFlip", Tooltip.noFlip )
+        |> ControlExtra.listItems "Position"
             (Control.list
-                |> ControlExtra.optionalListItem "direction" controlDirection
-                |> ControlExtra.optionalListItem "direction (viewport <= 1000px)" controlDirectionForMobile
-                |> ControlExtra.optionalListItem "direction (viewport <= 750px)" controlDirectionForQuizEngineMobile
-                |> ControlExtra.optionalListItem "direction (viewport <= 500px)" controlDirectionForNarrowMobile
-            )
-        |> ControlExtra.listItems "alignment"
-            (Control.list
+                |> ControlExtra.optionalListItem "position" controlPosition
                 |> ControlExtra.optionalListItem "alignment" controlAlignment
-                |> ControlExtra.optionalListItem "alignment (viewport <= 1000px)" controlAlignmentForMobile
-                |> ControlExtra.optionalListItem "alignment (viewport <= 750px)" controlAlignmentForQuizEngineMobile
-                |> ControlExtra.optionalListItem "alignment (viewport <= 500px)" controlAlignmentForNarrowMobile
             )
         |> ControlExtra.listItems "Size & Padding"
             (Control.list
@@ -430,10 +480,6 @@ initStaticExampleSettings =
         |> ControlExtra.listItems "CSS"
             (Control.list
                 |> CommonControls.css { moduleName = moduleName, use = Tooltip.css }
-                |> CommonControls.mobileCss { moduleName = moduleName, use = Tooltip.mobileCss }
-                |> CommonControls.quizEngineMobileCss { moduleName = moduleName, use = Tooltip.quizEngineMobileCss }
-                |> CommonControls.narrowMobileCss { moduleName = moduleName, use = Tooltip.narrowMobileCss }
-                |> CommonControls.notMobileCss { moduleName = moduleName, use = Tooltip.notMobileCss }
             )
 
 
@@ -449,108 +495,25 @@ controlContent =
         }
 
 
-controlDirection : Control ( String, Tooltip.Attribute Never )
-controlDirection =
+controlPosition : Control ( String, Tooltip.Attribute Never )
+controlPosition =
     CommonControls.choice "Tooltip"
-        (Nonempty ( "onTop", Tooltip.onTop )
-            [ ( "onBottom", Tooltip.onBottom )
-            , ( "onLeft", Tooltip.onLeft )
-            , ( "onRight", Tooltip.onRight )
+        (Nonempty ( "above", Tooltip.above )
+            [ ( "below", Tooltip.below )
+            , ( "before", Tooltip.before )
+            , ( "after", Tooltip.after )
             ]
-        )
-
-
-controlDirectionForMobile : Control ( String, Tooltip.Attribute Never )
-controlDirectionForMobile =
-    CommonControls.choice "Tooltip"
-        (Nonempty ( "onTopForMobile", Tooltip.onTopForMobile )
-            [ ( "onBottomForMobile", Tooltip.onBottomForMobile )
-            , ( "onLeftForMobile", Tooltip.onLeftForMobile )
-            , ( "onRightForMobile", Tooltip.onRightForMobile )
-            ]
-        )
-
-
-controlDirectionForQuizEngineMobile : Control ( String, Tooltip.Attribute Never )
-controlDirectionForQuizEngineMobile =
-    CommonControls.choice "Tooltip"
-        (Nonempty ( "onTopForQuizEngineMobile", Tooltip.onTopForQuizEngineMobile )
-            [ ( "onBottomForQuizEngineMobile", Tooltip.onBottomForQuizEngineMobile )
-            , ( "onLeftForQuizEngineMobile", Tooltip.onLeftForQuizEngineMobile )
-            , ( "onRightForQuizEngineMobile", Tooltip.onRightForQuizEngineMobile )
-            ]
-        )
-
-
-controlDirectionForNarrowMobile : Control ( String, Tooltip.Attribute Never )
-controlDirectionForNarrowMobile =
-    CommonControls.choice "Tooltip"
-        (Nonempty ( "onTopForNarrowMobile", Tooltip.onTopForNarrowMobile )
-            [ ( "onBottomForNarrowMobile", Tooltip.onBottomForNarrowMobile )
-            , ( "onLeftForNarrowMobile", Tooltip.onLeftForNarrowMobile )
-            , ( "onRightForNarrowMobile", Tooltip.onRightForNarrowMobile )
-            ]
-        )
-
-
-controlAlignment_ :
-    ( String, Tooltip.Attribute Never )
-    -> List ( String, Css.Px -> Tooltip.Attribute Never )
-    -> Control ( String, Tooltip.Attribute Never )
-controlAlignment_ ( middleName, middleValue ) others =
-    Control.choice
-        (Nonempty ( middleName, Control.value ( "Tooltip." ++ middleName, middleValue ) )
-            (List.map
-                (\( name, val ) ->
-                    ( name
-                    , Control.map
-                        (\float ->
-                            ( "Tooltip." ++ name ++ " (Css.px " ++ String.fromFloat float ++ ")"
-                            , val (Css.px float)
-                            )
-                        )
-                        (Control.float 0)
-                    )
-                )
-                others
-            )
         )
 
 
 controlAlignment : Control ( String, Tooltip.Attribute Never )
 controlAlignment =
-    controlAlignment_
-        ( "alignMiddle", Tooltip.alignMiddle )
-        [ ( "alignStart", Tooltip.alignStart )
-        , ( "alignEnd", Tooltip.alignEnd )
-        ]
-
-
-controlAlignmentForMobile : Control ( String, Tooltip.Attribute Never )
-controlAlignmentForMobile =
-    controlAlignment_
-        ( "alignMiddleForMobile", Tooltip.alignMiddleForMobile )
-        [ ( "alignStartForMobile", Tooltip.alignStartForMobile )
-        , ( "alignEndForMobile", Tooltip.alignEndForMobile )
-        ]
-
-
-controlAlignmentForQuizEngineMobile : Control ( String, Tooltip.Attribute Never )
-controlAlignmentForQuizEngineMobile =
-    controlAlignment_
-        ( "alignMiddleForQuizEngineMobile", Tooltip.alignMiddleForQuizEngineMobile )
-        [ ( "alignStartForQuizEngineMobile", Tooltip.alignStartForQuizEngineMobile )
-        , ( "alignEndForQuizEngineMobile", Tooltip.alignEndForQuizEngineMobile )
-        ]
-
-
-controlAlignmentForNarrowMobile : Control ( String, Tooltip.Attribute Never )
-controlAlignmentForNarrowMobile =
-    controlAlignment_
-        ( "alignMiddleForNarrowMobile", Tooltip.alignMiddleForNarrowMobile )
-        [ ( "alignStartForNarrowMobile", Tooltip.alignStartForNarrowMobile )
-        , ( "alignEndForNarrowMobile", Tooltip.alignEndForNarrowMobile )
-        ]
+    CommonControls.choice "Tooltip"
+        (Nonempty ( "alignMiddle", Tooltip.alignMiddle )
+            [ ( "alignStart", Tooltip.alignStart )
+            , ( "alignEnd", Tooltip.alignEnd )
+            ]
+        )
 
 
 controlWidth : Control ( String, Tooltip.Attribute Never )
@@ -625,29 +588,292 @@ viewCustomizableExample ellieLinkConfig ({ staticExampleSettings } as state) =
                       }
                     ]
             }
-        , Control.view UpdatePageSettings state.pageSettings
         , Html.div
             [ css
-                [ Css.displayFlex
-                , Css.justifyContent Css.center
-                , Css.alignItems Css.center
-                , Css.height (Css.px 300)
-                , Css.backgroundColor pageSettings.backgroundColor
+                [ Css.marginTop (Css.px 16)
+                , Css.borderRadius (Css.px 12)
+                , Css.border3 (Css.px 1) Css.solid Colors.gray85
+                , Css.overflow Css.hidden
+                , Css.backgroundColor Colors.white
                 ]
             ]
-            [ Tooltip.view
-                { trigger =
-                    \eventHandlers ->
-                        ClickableSvg.button "Up"
-                            UiIcon.arrowTop
-                            [ ClickableSvg.custom eventHandlers
-                            , ClickableSvg.withBorder
-                            ]
-                , id = "an-id-for-the-tooltip"
-                }
-                (Tooltip.open True
-                    :: List.map Tuple.second (Control.currentValue staticExampleSettings)
-                )
-                |> Html.map never
+            [ Html.div
+                [ css
+                    [ Css.padding2 (Css.px 8) (Css.px 12)
+                    , Css.borderBottom3 (Css.px 1) Css.solid Colors.gray92
+                    , Css.displayFlex
+                    , Css.alignItems Css.center
+                    , Css.justifyContent Css.spaceBetween
+                    ]
+                ]
+                [ Html.span
+                    [ css
+                        [ Css.fontSize (Css.px 12)
+                        , Css.color Colors.gray45
+                        , Css.property "text-transform" "uppercase"
+                        , Css.property "letter-spacing" "0.5px"
+                        , Css.fontWeight Css.bold
+                        ]
+                    ]
+                    [ Html.text "Preview" ]
+                , Control.view UpdatePageSettings state.pageSettings
+                ]
+            , Html.div
+                [ css
+                    [ Css.displayFlex
+                    , Css.justifyContent Css.center
+                    , Css.alignItems Css.center
+                    , Css.minHeight (Css.px 220)
+                    , Css.padding (Css.px 24)
+                    , Css.backgroundColor pageSettings.backgroundColor
+                    ]
+                ]
+                [ Tooltip.view
+                    { trigger =
+                        \eventHandlers ->
+                            ClickableSvg.button "Up"
+                                UiIcon.arrowTop
+                                [ ClickableSvg.custom eventHandlers
+                                , ClickableSvg.withBorder
+                                ]
+                    , id = "an-id-for-the-tooltip"
+                    }
+                    (Tooltip.open True
+                        :: List.map Tuple.second (Control.currentValue staticExampleSettings)
+                    )
+                    |> Html.map never
+                ]
             ]
         ]
+
+
+
+-- AUTO-FLIP PLAYGROUND
+
+
+viewAutoFlipPlaygroundLauncher : Html Msg
+viewAutoFlipPlaygroundLauncher =
+    Html.div
+        [ css
+            [ Css.marginTop (Css.px 32)
+            , Css.marginBottom (Css.px 32)
+            , Css.padding (Css.px 24)
+            , Css.borderRadius (Css.px 12)
+            , Css.border3 (Css.px 1) Css.solid Colors.gray85
+            , Css.backgroundColor Colors.frost
+            , Css.displayFlex
+            , Css.alignItems Css.center
+            , Css.justifyContent Css.spaceBetween
+            , Css.property "gap" "24px"
+            ]
+        ]
+        [ Html.div []
+            [ Heading.h2
+                [ Heading.plaintext "Auto-flip playground"
+                , Heading.css [ Css.margin Css.zero, Css.fontSize (Css.px 18) ]
+                ]
+            , Html.p
+                [ css
+                    [ Css.marginTop (Css.px 6)
+                    , Css.marginBottom Css.zero
+                    , Css.color Colors.gray20
+                    , Css.maxWidth (Css.px 560)
+                    ]
+                ]
+                [ Html.text "Drag a trigger anywhere on the page to watch the tooltip flip sides and re-anchor its tail when it would otherwise clip the viewport." ]
+            ]
+        , Button.button "Open playground"
+            [ Button.onClick OpenPlayground
+            , Button.medium
+            , Button.secondary
+            ]
+        ]
+
+
+viewAutoFlipPlayground :
+    Control (List ( String, Tooltip.Attribute Never ))
+    -> PlaygroundState
+    -> Html Msg
+viewAutoFlipPlayground exampleSettings state =
+    if not state.isOpen then
+        Html.text ""
+
+    else
+        let
+            ( px, py ) =
+                state.position
+
+            preferredAttr =
+                case state.preferredSide of
+                    PreferAbove ->
+                        Tooltip.above
+
+                    PreferBelow ->
+                        Tooltip.below
+
+                    PreferBefore ->
+                        Tooltip.before
+
+                    PreferAfter ->
+                        Tooltip.after
+
+            inheritedAttrs =
+                Control.currentValue exampleSettings
+                    |> List.map Tuple.second
+
+            overlayMouseEvents =
+                case state.dragOffset of
+                    Just _ ->
+                        [ onMouseMovePosition DragMove
+                        , Events.onMouseUp EndDrag
+                        ]
+
+                    Nothing ->
+                        []
+        in
+        RootHtml.div
+            ([ css
+                [ Css.position Css.fixed
+                , Css.top Css.zero
+                , Css.left Css.zero
+                , Css.right Css.zero
+                , Css.bottom Css.zero
+                , Css.backgroundColor (Css.rgba 250 250 250 0.98)
+                , Css.zIndex (Css.int 9999)
+                , Css.property "user-select" "none"
+                ]
+             ]
+                ++ overlayMouseEvents
+            )
+            [ RootHtml.div
+                [ css
+                    [ Css.position Css.absolute
+                    , Css.top (Css.px 16)
+                    , Css.left (Css.px 16)
+                    , Css.padding2 (Css.px 12) (Css.px 16)
+                    , Css.backgroundColor Colors.white
+                    , Css.borderRadius (Css.px 8)
+                    , Css.boxShadow5 Css.zero (Css.px 4) (Css.px 16) Css.zero (Css.rgba 0 0 0 0.2)
+                    , Css.displayFlex
+                    , Css.alignItems Css.center
+                    , Css.property "gap" "12px"
+                    ]
+                ]
+                [ RootHtml.text "Preferred side:"
+                , viewSideButton state.preferredSide PreferAbove "above"
+                , viewSideButton state.preferredSide PreferBelow "below"
+                , viewSideButton state.preferredSide PreferBefore "before"
+                , viewSideButton state.preferredSide PreferAfter "after"
+                , RootHtml.div [ css [ Css.width (Css.px 16) ] ] []
+                , Button.button "Close playground"
+                    [ Button.onClick ClosePlayground
+                    , Button.small
+                    , Button.tertiary
+                    ]
+                ]
+            , RootHtml.div
+                [ css
+                    [ Css.position Css.absolute
+                    , Css.left (Css.px px)
+                    , Css.top (Css.px py)
+                    ]
+                , onMouseDownPosition StartDrag
+                ]
+                [ Tooltip.view
+                    { id = "auto-flip-playground-tooltip"
+                    , trigger =
+                        \attrs ->
+                            RootHtml.div
+                                (attrs
+                                    ++ [ Html.Styled.Attributes.css
+                                            [ Css.width (Css.px 96)
+                                            , Css.height (Css.px 96)
+                                            , Css.borderRadius (Css.pct 50)
+                                            , Css.backgroundColor Colors.azure
+                                            , Css.color Colors.white
+                                            , Css.displayFlex
+                                            , Css.alignItems Css.center
+                                            , Css.justifyContent Css.center
+                                            , Css.fontWeight Css.bold
+                                            , Css.cursor Css.move
+                                            , Css.boxShadow5 Css.zero (Css.px 2) (Css.px 8) Css.zero (Css.rgba 0 0 0 0.3)
+                                            ]
+                                       ]
+                                )
+                                [ RootHtml.text "Drag" ]
+                    }
+                    (inheritedAttrs
+                        ++ [ Tooltip.plaintext
+                                ("I prefer to be \""
+                                    ++ sideLabel state.preferredSide
+                                    ++ "\", but I will flip if I would clip the viewport."
+                                )
+                           , preferredAttr
+                           , Tooltip.open True
+                           ]
+                    )
+                    |> Html.map never
+                ]
+            ]
+
+
+viewSideButton : PreferredSide -> PreferredSide -> String -> RootHtml.Html Msg
+viewSideButton current target label =
+    RootHtml.button
+        [ Events.onClick (SetPreferredSide target)
+        , css
+            [ Css.padding2 (Css.px 4) (Css.px 10)
+            , Css.borderRadius (Css.px 4)
+            , Css.border3 (Css.px 1)
+                Css.solid
+                (if current == target then
+                    Colors.azure
+
+                 else
+                    Colors.gray85
+                )
+            , Css.backgroundColor
+                (if current == target then
+                    Colors.frost
+
+                 else
+                    Colors.white
+                )
+            , Css.cursor Css.pointer
+            , Css.fontSize (Css.px 13)
+            ]
+        ]
+        [ RootHtml.text label ]
+
+
+sideLabel : PreferredSide -> String
+sideLabel side =
+    case side of
+        PreferAbove ->
+            "above"
+
+        PreferBelow ->
+            "below"
+
+        PreferBefore ->
+            "before"
+
+        PreferAfter ->
+            "after"
+
+
+onMouseDownPosition : ({ mouseX : Float, mouseY : Float } -> msg) -> RootHtml.Attribute msg
+onMouseDownPosition toMsg =
+    Events.on "mousedown" (mousePositionDecoder |> Decode.map toMsg)
+
+
+onMouseMovePosition : ({ mouseX : Float, mouseY : Float } -> msg) -> RootHtml.Attribute msg
+onMouseMovePosition toMsg =
+    Events.on "mousemove" (mousePositionDecoder |> Decode.map toMsg)
+
+
+mousePositionDecoder : Decode.Decoder { mouseX : Float, mouseY : Float }
+mousePositionDecoder =
+    Decode.map2 (\x y -> { mouseX = x, mouseY = y })
+        (Decode.field "clientX" Decode.float)
+        (Decode.field "clientY" Decode.float)
