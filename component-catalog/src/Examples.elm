@@ -26,6 +26,8 @@ import Examples.Header as Header
 import Examples.Heading as Heading
 import Examples.Highlighter as Highlighter
 import Examples.HighlighterToolbar as HighlighterToolbar
+import Examples.HintTooltip as HintTooltip
+import Examples.InfoPopover as InfoPopover
 import Examples.Loading as Loading
 import Examples.Logo as Logo
 import Examples.Menu as Menu
@@ -476,6 +478,44 @@ all =
             (\msg ->
                 case msg of
                     HighlighterToolbarState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , HintTooltip.example
+        |> Example.wrapMsg HintTooltipMsg
+            (\msg ->
+                case msg of
+                    HintTooltipMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState HintTooltipState
+            (\msg ->
+                case msg of
+                    HintTooltipState childState ->
+                        Just childState
+
+                    _ ->
+                        Nothing
+            )
+    , InfoPopover.example
+        |> Example.wrapMsg InfoPopoverMsg
+            (\msg ->
+                case msg of
+                    InfoPopoverMsg childMsg ->
+                        Just childMsg
+
+                    _ ->
+                        Nothing
+            )
+        |> Example.wrapState InfoPopoverState
+            (\msg ->
+                case msg of
+                    InfoPopoverState childState ->
                         Just childState
 
                     _ ->
@@ -1134,6 +1174,8 @@ type State
     | HeadingState Heading.State
     | HighlighterState Highlighter.State
     | HighlighterToolbarState HighlighterToolbar.State
+    | HintTooltipState HintTooltip.State
+    | InfoPopoverState InfoPopover.State
     | LoadingState Loading.State
     | LogoState Logo.State
     | MenuState Menu.State
@@ -1192,6 +1234,8 @@ type Msg
     | HeadingMsg Heading.Msg
     | HighlighterMsg Highlighter.Msg
     | HighlighterToolbarMsg HighlighterToolbar.Msg
+    | HintTooltipMsg HintTooltip.Msg
+    | InfoPopoverMsg InfoPopover.Msg
     | LoadingMsg Loading.Msg
     | LogoMsg Logo.Msg
     | MenuMsg Menu.Msg
