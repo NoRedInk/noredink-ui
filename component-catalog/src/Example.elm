@@ -20,6 +20,7 @@ import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.Container.V2 as Container
 import Nri.Ui.Header.V1 as Header
 import Nri.Ui.MediaQuery.V1 exposing (mobile)
+import Nri.Ui.Spacing.V1 as Spacing
 
 
 type alias Example state msg =
@@ -171,18 +172,28 @@ view ellieLinkConfig example state =
 
 view_ : EllieLink.Config -> Example state msg -> state -> List (Html msg)
 view_ ellieLinkConfig example state =
-    [ Html.div
-        [ Attributes.css
-            [ Css.displayFlex
-            , Css.alignItems Css.stretch
-            , Css.flexWrap Css.wrap
-            , Css.property "gap" "10px"
-            , withMedia [ mobile ] [ Css.flexDirection Css.column, Css.alignItems Css.stretch ]
-            ]
-        ]
-        [ ExampleSection.aboutSection example.about
-        , KeyboardSupport.view example.keyboardSupport
-        ]
+    let
+        topSection =
+            case ( example.about, example.keyboardSupport ) of
+                ( [], [] ) ->
+                    Html.text ""
+
+                _ ->
+                    Html.div
+                        [ Attributes.css
+                            [ Css.displayFlex
+                            , Css.alignItems Css.stretch
+                            , Css.flexWrap Css.wrap
+                            , Css.property "gap" "10px"
+                            , Css.marginBottom Spacing.verticalSpacerPx
+                            , withMedia [ mobile ] [ Css.flexDirection Css.column, Css.alignItems Css.stretch ]
+                            ]
+                        ]
+                        [ ExampleSection.aboutSection example.about
+                        , KeyboardSupport.view example.keyboardSupport
+                        ]
+    in
+    [ topSection
     , Html.div [ Attributes.css [ Css.marginBottom (Css.px 200) ] ]
         (example.view ellieLinkConfig state)
     ]

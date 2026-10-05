@@ -3,7 +3,7 @@
     flake-utils.url = "github:numtide/flake-utils";
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     elm-forbid-import.url =
-      "git+https://git.bytes.zone/BrianHicks/elm-forbid-import.git";
+      "git+https://github.com/BrianHicks/elm-forbid-import.git";
   };
 
   outputs = inputs:

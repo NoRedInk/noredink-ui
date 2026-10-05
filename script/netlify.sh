@@ -8,7 +8,9 @@ set -xeuo pipefail
 
 # get our dependencies (--ignore-scripts=false is needed for puppeteer)
 npm install --ignore-scripts=false
-npm install elm
+# pin to Elm 0.19.1: unpinned `npm install elm` resolves to 0.19.2+, which
+# refuses to build our elm.json ("elm-version": "0.19.1")
+npm install elm@latest-0.19.1
 
 # make sure we're building into a clean folder
 if test -d public; then rm -rf public; fi

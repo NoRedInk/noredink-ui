@@ -15,6 +15,7 @@ module Nri.Ui.Modal.V12 exposing
 {-| Patch changes:
 
   - adjust the padding of the heading when the close X is present for viewports less than 1000px wide
+  - add top/bottom fade indicators on the scrollable content area when content is out of view
 
 Changes from V11:
 
@@ -713,6 +714,24 @@ viewInnerContent ({ visibleTitle } as config) =
 
                   else
                     Css.paddingBottom (Css.px 40)
+
+                -- Scroll-shadow fade: top and bottom fade in only when there
+                -- is content scrolled out of view. The first two gradients
+                -- ("local") scroll with the content and cover the fixed
+                -- shadow gradients while at the top/bottom edges; when you
+                -- scroll, they move out of view, revealing the fade.
+                , Css.property "background-image"
+                    (String.join ", "
+                        [ "linear-gradient(white 50%, rgba(255, 255, 255, 0))"
+                        , "linear-gradient(rgba(255, 255, 255, 0), white 50%)"
+                        , "linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0))"
+                        , "linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.25))"
+                        ]
+                    )
+                , Css.property "background-position" "top, bottom, top, bottom"
+                , Css.property "background-size" "100% 48px, 100% 48px, 100% 32px, 100% 32px"
+                , Css.property "background-repeat" "no-repeat"
+                , Css.property "background-attachment" "local, local, scroll, scroll"
                 ]
             ]
             children
