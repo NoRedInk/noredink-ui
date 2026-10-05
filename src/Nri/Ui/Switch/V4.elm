@@ -181,40 +181,49 @@ view { label, id } attrs =
         guidanceViews =
             InputErrorAndGuidanceInternal.view id (Css.marginTop Css.zero) config
 
-        viewSwitchAndLabel =
-            viewSwitchWithLabel { label = label, id = id } config isDisabled_
+        viewSwitchAndLabel hasGuidance =
+            viewSwitchWithLabel { label = label, id = id } config isDisabled_ hasGuidance
     in
     case guidanceViews of
         [] ->
-            viewSwitchAndLabel
+            viewSwitchAndLabel False
 
         _ ->
+            -- Like RadioButton, the label and guidance stack in a column, and the
+            -- switch track is vertically centered alongside them.
             -- The guidance can't live inside the `role="switch"` element, since
             -- that would make it part of the switch's accessible name.
             Html.div
                 [ Attributes.css
-                    [ Css.display Css.inlineFlex
-                    , Css.flexDirection Css.column
-                    , Css.property "gap" "2px"
+                    [ Css.position Css.relative
+                    , Css.display Css.inlineBlock
+                    , Css.paddingLeft (Css.px switchWidth)
+                    , Css.minHeight (Css.px switchHeight)
                     ]
                 ]
-                (viewSwitchAndLabel
+                (viewSwitchAndLabel True
                     :: List.map
                         (\guidanceView ->
                             Html.div
-                                [ Attributes.css [ Css.paddingLeft (Css.px (switchWidth + labelPaddingLeft)) ] ]
+                                [ Attributes.css [ Css.paddingLeft (Css.px labelPaddingLeft) ] ]
                                 [ guidanceView ]
                         )
                         guidanceViews
                 )
 
 
-viewSwitchWithLabel : { label : Html msg, id : String } -> Config msg -> Bool -> Html msg
-viewSwitchWithLabel { label, id } config isDisabled_ =
+viewSwitchWithLabel : { label : Html msg, id : String } -> Config msg -> Bool -> Bool -> Html msg
+viewSwitchWithLabel { label, id } config isDisabled_ hasGuidance =
     Html.div
         ([ Attributes.css
-            [ Css.display Css.inlineFlex
-            , Css.alignItems Css.center
+            [ if hasGuidance then
+                Css.display Css.block
+
+              else
+                Css.batch
+                    [ Css.display Css.inlineFlex
+                    , Css.alignItems Css.center
+                    ]
             , Css.fontSize (Css.px 15)
             , Css.outline Css.none
             , Css.pseudoClass "focus-within"
@@ -239,13 +248,23 @@ viewSwitchWithLabel { label, id } config isDisabled_ =
             ++ switchAttributes id config
             ++ config.custom
         )
-        [ Nri.Ui.Svg.V1.toHtml
-            (viewSwitch
-                { id = id
-                , isSelected = config.isSelected
-                , isDisabled = isDisabled_
-                }
-            )
+        [ viewSwitch
+            { id = id
+            , isSelected = config.isSelected
+            , isDisabled = isDisabled_
+            }
+            |> Nri.Ui.Svg.V1.withCss
+                (if hasGuidance then
+                    [ Css.position Css.absolute
+                    , Css.left Css.zero
+                    , Css.top (Css.pct 50)
+                    , Css.transform (Css.translateY (Css.pct -50))
+                    ]
+
+                 else
+                    []
+                )
+            |> Nri.Ui.Svg.V1.toHtml
         , Html.span
             [ Attributes.css
                 [ Css.fontWeight (Css.int 600)
@@ -292,6 +311,11 @@ switchAttributes id config =
 switchWidth : Float
 switchWidth =
     43
+
+
+switchHeight : Float
+switchHeight =
+    32
 
 
 labelPaddingLeft : Float
@@ -459,7 +483,7 @@ viewSwitch config =
             ]
         ]
         |> Nri.Ui.Svg.V1.withWidth (Css.px switchWidth)
-        |> Nri.Ui.Svg.V1.withHeight (Css.px 32)
+        |> Nri.Ui.Svg.V1.withHeight (Css.px switchHeight)
         |> Nri.Ui.Svg.V1.withCustom [ SvgAttributes.class "switch-track" ]
 
 
