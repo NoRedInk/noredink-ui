@@ -4,9 +4,15 @@ module Nri.Ui.Switch.V4 exposing
     , selected
     , containerCss, labelCss, custom, nriDescription, testId
     , onSwitch, disabled
+    , guidance, guidanceHtml
     )
 
 {-|
+
+
+### Patch changes:
+
+    - adds `guidance` and `guidanceHtml`
 
 
 ### Changes from V3:
@@ -22,6 +28,7 @@ module Nri.Ui.Switch.V4 exposing
 @docs selected
 @docs containerCss, labelCss, custom, nriDescription, testId
 @docs onSwitch, disabled
+@docs guidance, guidanceHtml
 
 -}
 
@@ -33,6 +40,7 @@ import Css.Global as Global
 import Html.Styled as Html exposing (Html)
 import Html.Styled.Attributes as Attributes
 import Html.Styled.Events as Events
+import InputErrorAndGuidanceInternal exposing (Guidance)
 import Nri.Ui.Colors.Extra exposing (toCssString)
 import Nri.Ui.Colors.V1 as Colors
 import Nri.Ui.FocusRing.V1 as FocusRing
@@ -113,6 +121,26 @@ labelCss styles =
     Attribute <| \config -> { config | labelCss = config.labelCss ++ styles }
 
 
+{-| A guidance message shows below the switch, aligned with the label text.
+
+The switch element will be described by the guidance (via `aria-describedby`).
+
+-}
+guidance : String -> Attribute msg
+guidance =
+    Attribute << InputErrorAndGuidanceInternal.setGuidance
+
+
+{-| A guidance message (HTML) shows below the switch, aligned with the label text.
+
+The switch element will be described by the guidance (via `aria-describedby`).
+
+-}
+guidanceHtml : List (Html msg) -> Attribute msg
+guidanceHtml =
+    Attribute << InputErrorAndGuidanceInternal.setGuidanceHtml
+
+
 type alias Config msg =
     { onSwitch : Maybe (Bool -> msg)
     , containerCss : List Style
@@ -120,6 +148,8 @@ type alias Config msg =
     , isDisabled : Bool
     , isSelected : Bool
     , custom : List (Html.Attribute msg)
+    , guidance : Guidance msg
+    , error : InputErrorAndGuidanceInternal.ErrorState
     }
 
 
@@ -131,6 +161,8 @@ defaultConfig =
     , isDisabled = False
     , isSelected = False
     , custom = []
+    , guidance = InputErrorAndGuidanceInternal.noGuidance
+    , error = InputErrorAndGuidanceInternal.noError
     }
 
 
@@ -145,7 +177,40 @@ view { label, id } attrs =
 
         isDisabled_ =
             notOperable config
+
+        guidanceViews =
+            InputErrorAndGuidanceInternal.view id (Css.marginTop Css.zero) config
+
+        viewSwitchAndLabel =
+            viewSwitchWithLabel { label = label, id = id } config isDisabled_
     in
+    case guidanceViews of
+        [] ->
+            viewSwitchAndLabel
+
+        _ ->
+            -- The guidance can't live inside the `role="switch"` element, since
+            -- that would make it part of the switch's accessible name.
+            Html.div
+                [ Attributes.css
+                    [ Css.display Css.inlineFlex
+                    , Css.flexDirection Css.column
+                    , Css.property "gap" "2px"
+                    ]
+                ]
+                (viewSwitchAndLabel
+                    :: List.map
+                        (\guidanceView ->
+                            Html.div
+                                [ Attributes.css [ Css.paddingLeft (Css.px (switchWidth + labelPaddingLeft)) ] ]
+                                [ guidanceView ]
+                        )
+                        guidanceViews
+                )
+
+
+viewSwitchWithLabel : { label : Html msg, id : String } -> Config msg -> Bool -> Html msg
+viewSwitchWithLabel { label, id } config isDisabled_ =
     Html.div
         ([ Attributes.css
             [ Css.display Css.inlineFlex
@@ -191,7 +256,7 @@ view { label, id } attrs =
                      else
                         Colors.navy
                     )
-                , Css.paddingLeft (Css.px 5)
+                , Css.paddingLeft (Css.px labelPaddingLeft)
                 , Fonts.baseFont
                 , Css.batch config.labelCss
                 ]
@@ -219,8 +284,19 @@ switchAttributes id config =
     , Role.switch
     , Aria.checked (Just config.isSelected)
     , Key.tabbable True
+    , InputErrorAndGuidanceInternal.describedBy id config
     ]
         ++ eventsOrDisabled
+
+
+switchWidth : Float
+switchWidth =
+    43
+
+
+labelPaddingLeft : Float
+labelPaddingLeft =
+    5
 
 
 notOperable : Config msg -> Bool
@@ -382,7 +458,7 @@ viewSwitch config =
                 ]
             ]
         ]
-        |> Nri.Ui.Svg.V1.withWidth (Css.px 43)
+        |> Nri.Ui.Svg.V1.withWidth (Css.px switchWidth)
         |> Nri.Ui.Svg.V1.withHeight (Css.px 32)
         |> Nri.Ui.Svg.V1.withCustom [ SvgAttributes.class "switch-track" ]
 
