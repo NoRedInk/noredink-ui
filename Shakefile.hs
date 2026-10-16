@@ -2,6 +2,7 @@ import Development.Shake
 import Development.Shake.Command
 import Development.Shake.FilePath
 import Development.Shake.Util
+import System.Directory (createDirectory, getTemporaryDirectory, removeFile)
 import qualified GHC.IO.Encoding
 import qualified System.IO
 
@@ -82,13 +83,19 @@ main = do
         elmFiles <- getDirectoryFiles "." ["tests/**/*.elm"]
         -- I'm not sure why elm-test needs package.json, but fsatracing it
         -- reveals the dep, so in it goes!
+        -- Run each elm-test invocation with its own cache directory so parallel
+        -- Shake rules do not race on shared Elm package state in CI.
         need (["package.json", "elm.json"] ++ elmFiles)
-        cmd (WithStdout True) (FileStdout out) "elm-test"
+        elmHome <- freshElmHome
+        cmd (AddEnv "ELM_HOME" elmHome) (AddPath ["./node_modules/.bin"] []) (WithStdout True) (FileStdout out) "elm-test"
 
       "log/elm-test-component-catalog.txt" %> \out -> do
         elmFiles <- getDirectoryFiles "." ["component-catalog/tests/**/*.elm"]
+        -- Run each elm-test invocation with its own cache directory so parallel
+        -- Shake rules do not race on shared Elm package state in CI.
         need (["package.json", "component-catalog/elm.json"] ++ elmFiles)
-        cmd (Cwd "component-catalog") (WithStdout True) (FileStdout out) "elm-test"
+        elmHome <- freshElmHome
+        cmd (Cwd "component-catalog") (AddEnv "ELM_HOME" elmHome) (AddPath ["../node_modules/.bin"] []) (WithStdout True) (FileStdout out) "elm-test"
 
       "log/elm-review.txt" %> \out -> do
         elmFiles <- getDirectoryFiles "." ["src/**/*.elm", "tests/**/*.elm"]
@@ -180,3 +187,14 @@ main = do
         -- now that we've satisfied the linter, let's build.
         need ["package.json", "package-lock.json"]
         cmd (WithStdout True) (FileStdout out) (FileStderr out) "npm" "install"
+
+freshElmHome :: Action FilePath
+freshElmHome = liftIO $ do
+  -- Elm writes cache files under ELM_HOME, so give each invocation a unique
+  -- scratch directory instead of sharing the user's default cache.
+  tmpDir <- getTemporaryDirectory
+  (tempFile, handle) <- System.IO.openTempFile tmpDir "noredink-elm-home-"
+  System.IO.hClose handle
+  removeFile tempFile
+  createDirectory tempFile
+  pure tempFile
