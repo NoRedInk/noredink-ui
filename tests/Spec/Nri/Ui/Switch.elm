@@ -3,12 +3,14 @@ module Spec.Nri.Ui.Switch exposing (..)
 import Accessibility.Aria as Aria
 import Accessibility.Role as Role
 import Html.Styled exposing (..)
+import InputErrorAndGuidanceInternal exposing (guidanceId)
 import Nri.Test.KeyboardHelpers.V1 as KeyboardHelpers
 import Nri.Test.MouseHelpers.V1 as MouseHelpers
 import Nri.Ui.Switch.V4 as Switch
 import ProgramTest exposing (..)
 import Spec.Helpers exposing (expectFailure)
 import Test exposing (..)
+import Test.Html.Query as Query
 import Test.Html.Selector exposing (..)
 
 
@@ -17,7 +19,52 @@ spec =
     describe "Nri.Ui.Switch.V4"
         [ describe "'switch' role" hasCorrectRole
         , describe "helpfully disabled switch" helpfullyDisabledSwitch
+        , describe "guidance" guidanceSpec
         ]
+
+
+guidanceSpec : List Test
+guidanceSpec =
+    [ test "does not render guidance or aria-describedby when there's no guidance" <|
+        \() ->
+            program []
+                |> ensureViewHasNot [ id (guidanceId switchId) ]
+                |> ensureViewHasNot [ attribute (Aria.describedBy [ guidanceId switchId ]) ]
+                |> done
+    , test "renders guidance and describes the switch with it" <|
+        \() ->
+            program [ Switch.guidance "Some guidance" ]
+                |> ensureViewHas
+                    [ id (guidanceId switchId)
+                    , containing [ Test.Html.Selector.text "Some guidance" ]
+                    ]
+                |> ensureViewHas
+                    [ id switchId
+                    , attribute Role.switch
+                    , attribute (Aria.describedBy [ guidanceId switchId ])
+                    ]
+                |> done
+    , test "renders html guidance and describes the switch with it" <|
+        \() ->
+            program [ Switch.guidanceHtml [ b [] [ Html.Styled.text "Bold guidance" ] ] ]
+                |> ensureViewHas
+                    [ id (guidanceId switchId)
+                    , containing [ tag "b", containing [ Test.Html.Selector.text "Bold guidance" ] ]
+                    ]
+                |> ensureViewHas
+                    [ id switchId
+                    , attribute (Aria.describedBy [ guidanceId switchId ])
+                    ]
+                |> done
+    , test "does not render guidance inside the switch, so it is not part of the accessible name" <|
+        \() ->
+            program [ Switch.guidance "Some guidance" ]
+                |> ensureView
+                    (Query.find [ attribute Role.switch ]
+                        >> Query.hasNot [ id (guidanceId switchId) ]
+                    )
+                |> done
+    ]
 
 
 hasCorrectRole : List Test
@@ -87,6 +134,11 @@ switch =
     [ attribute Role.switch ]
 
 
+switchId : String
+switchId =
+    "switch"
+
+
 type alias Model =
     { selected : Bool
     }
@@ -113,7 +165,7 @@ view : List (Switch.Attribute Msg) -> Model -> Html Msg
 view attributes state =
     div []
         [ Switch.view
-            { id = "switch"
+            { id = switchId
             , label = Html.Styled.text "Switch"
             }
             (Switch.selected state.selected :: Switch.onSwitch Toggle :: attributes)

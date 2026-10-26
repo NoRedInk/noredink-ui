@@ -12,12 +12,15 @@ import Code
 import CommonControls
 import Css
 import Debug.Control as Control exposing (Control)
+import Debug.Control.Extra as ControlExtra
 import Debug.Control.View as ControlView
 import Example exposing (Example)
 import Guidance
 import Html.Styled exposing (..)
 import KeyboardSupport exposing (Key(..))
+import Nri.Ui.ClickableText.V4 as ClickableText
 import Nri.Ui.Heading.V3 as Heading
+import Nri.Ui.Html.Attributes.V2 exposing (safeIdWithPrefix)
 import Nri.Ui.Spacing.V1 as Spacing
 import Nri.Ui.Switch.V4 as Switch
 import Nri.Ui.Table.V9 as Table
@@ -55,7 +58,10 @@ example =
             , Switch.custom [ Key.tabbable False ]
             ]
         ]
-    , about = [ Guidance.helpfullyDisabled moduleName ]
+    , about =
+        [ Guidance.helpfullyDisabled moduleName
+        , Guidance.message moduleName
+        ]
     , view =
         \ellieLinkConfig state ->
             let
@@ -169,6 +175,50 @@ example =
                   }
                 ]
             , Heading.h2
+                [ Heading.plaintext "Guidance Examples"
+                , Heading.css [ Css.marginTop Spacing.verticalSpacerPx ]
+                ]
+            , Table.view []
+                [ Table.custom
+                    { header = text "Attribute"
+                    , view = .name >> text
+                    , width = Css.pct 10
+                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+                    , sort = Nothing
+                    }
+                , Table.custom
+                    { header = text "Example"
+                    , view =
+                        \{ name, attribute } ->
+                            Switch.view
+                                { label = text "Show dropped students"
+                                , id = safeIdWithPrefix "guidance-example" name
+                                }
+                                [ Switch.selected False
+                                , Switch.onSwitch (\_ -> Swallow)
+                                , attribute
+                                ]
+                    , width = Css.pct 50
+                    , cellStyles = always [ Css.padding2 (Css.px 14) (Css.px 7), Css.verticalAlign Css.middle ]
+                    , sort = Nothing
+                    }
+                ]
+                [ { name = "guidance"
+                  , attribute = Switch.guidance "Dropped students will appear at the bottom of the list."
+                  }
+                , { name = "guidanceHtml"
+                  , attribute =
+                        Switch.guidanceHtml
+                            [ text "Dropped students will appear at the bottom of the list. "
+                            , ClickableText.link "Learn more"
+                                [ ClickableText.linkExternal "https://en.wikipedia.org/wiki/Student"
+                                , ClickableText.small
+                                , ClickableText.appearsInline
+                                ]
+                            ]
+                  }
+                ]
+            , Heading.h2
                 [ Heading.plaintext "Helpfully Disabled Example"
                 , Heading.css
                     [ Css.marginTop Spacing.verticalSpacerPx
@@ -234,6 +284,16 @@ initAttributes : Control (List ( String, Switch.Attribute msg ))
 initAttributes =
     Control.list
         |> CommonControls.disabledListItem moduleName Switch.disabled
+        |> ControlExtra.listItems "Guidance"
+            (Control.list
+                |> CommonControls.guidanceAndErrorMessage
+                    { moduleName = moduleName
+                    , guidance = Switch.guidance
+                    , guidanceHtml = Switch.guidanceHtml
+                    , errorMessage = Nothing
+                    , message = "There is something you need to be aware of."
+                    }
+            )
 
 
 {-| -}
