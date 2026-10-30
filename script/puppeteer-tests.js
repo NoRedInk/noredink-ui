@@ -215,6 +215,199 @@ describe("UI tests", function () {
     await hasParentClicks(2);
   };
 
+  const hintTooltipProcessing = async (name, location) => {
+    await goToExample(name, location);
+
+    await page.hover("#hint-tooltip-trigger");
+    await page.waitForSelector("#hint-tooltip-demo[open]");
+
+    const clippingDemo = await page.evaluate(() => {
+      const clip = document
+        .querySelector("#hint-tooltip-clipping-demo")
+        .getBoundingClientRect();
+      const overlay = document
+        .querySelector("#hint-tooltip-demo")
+        .getBoundingClientRect();
+
+      return {
+        overlayVisible: overlay.width > 0 && overlay.height > 0,
+        escapesClip: overlay.top < clip.top,
+      };
+    });
+
+    assert.equal(clippingDemo.overlayVisible, true);
+    assert.equal(clippingDemo.escapesClip, true);
+
+    await page.hover("#hint-tooltip-scroll-trigger");
+    await page.waitForSelector("#hint-tooltip-scroll[open]");
+
+    const scrollDemo = await page.evaluate(() => {
+      const clip = document
+        .querySelector("#hint-tooltip-scroll-demo")
+        .getBoundingClientRect();
+      const overlay = document
+        .querySelector("#hint-tooltip-scroll")
+        .getBoundingClientRect();
+
+      return {
+        overlayVisible: overlay.width > 0 && overlay.height > 0,
+        escapesClip: overlay.top < clip.top,
+      };
+    });
+
+    assert.equal(scrollDemo.overlayVisible, true);
+    assert.equal(scrollDemo.escapesClip, true);
+
+    await page.focus("#hint-tooltip-trigger");
+    await page.keyboard.press("Escape");
+    await page.waitForSelector("#hint-tooltip-demo:not([open])");
+
+    await page.$eval("#hint-tooltip-flip-trigger", (node) =>
+      node.scrollIntoView({ block: "start" }),
+    );
+    await page.focus("#hint-tooltip-flip-trigger");
+    await page.waitForSelector("#hint-tooltip-flip[open]");
+    await page.waitForFunction(
+      () =>
+        document
+          .querySelector("#hint-tooltip-flip")
+          .getAttribute("data-resolved-placement") === "bottom",
+    );
+
+    await page.$eval("#hint-tooltip-edge-trigger", (node) =>
+      node.scrollIntoView({ block: "end" }),
+    );
+    await page.focus("#hint-tooltip-edge-trigger");
+    await page.waitForSelector("#hint-tooltip-edge[open]");
+
+    const edgePlacement = await page.evaluate(() => {
+      const overlay = document
+        .querySelector("#hint-tooltip-edge")
+        .getBoundingClientRect();
+
+      return {
+        top: overlay.top,
+        bottom: overlay.bottom,
+        left: overlay.left,
+        right: overlay.right,
+        viewportHeight: window.innerHeight,
+        viewportWidth: window.innerWidth,
+      };
+    });
+
+    assert.ok(edgePlacement.top >= 0);
+    assert.ok(edgePlacement.bottom <= edgePlacement.viewportHeight);
+    assert.ok(edgePlacement.left >= 0);
+    assert.ok(edgePlacement.right <= edgePlacement.viewportWidth);
+
+    await percySnapshot(page, name);
+
+    const results = await new AxePuppeteer(page)
+      .disableRules(skippedRules[name] || [])
+      .analyze();
+    handleAxeResults(name, results);
+  };
+
+  const infoPopoverProcessing = async (name, location) => {
+    await goToExample(name, location);
+
+    await page.click("#info-popover-trigger");
+    await page.waitForSelector("#info-popover-demo[open]");
+
+    const clippingDemo = await page.evaluate(() => {
+      const clip = document
+        .querySelector("#info-popover-clipping-demo")
+        .getBoundingClientRect();
+      const overlay = document
+        .querySelector("#info-popover-demo")
+        .getBoundingClientRect();
+
+      return {
+        overlayVisible: overlay.width > 0 && overlay.height > 0,
+        escapesClip: overlay.top < clip.top,
+      };
+    });
+
+    assert.equal(clippingDemo.overlayVisible, true);
+    assert.equal(clippingDemo.escapesClip, true);
+
+    await page.click("#info-popover-scroll-trigger");
+    await page.waitForSelector("#info-popover-scroll[open]");
+
+    const scrollDemo = await page.evaluate(() => {
+      const clip = document
+        .querySelector("#info-popover-scroll-demo")
+        .getBoundingClientRect();
+      const overlay = document
+        .querySelector("#info-popover-scroll")
+        .getBoundingClientRect();
+
+      return {
+        overlayVisible: overlay.width > 0 && overlay.height > 0,
+        escapesClip: overlay.top < clip.top,
+      };
+    });
+
+    assert.equal(scrollDemo.overlayVisible, true);
+    assert.equal(scrollDemo.escapesClip, true);
+
+    await page.click("body", { offset: { x: 8, y: 8 } });
+    await page.waitForSelector("#info-popover-demo:not([open])");
+
+    await page.click("#info-popover-trigger");
+    await page.waitForSelector("#info-popover-demo[open]");
+    await page.keyboard.press("Escape");
+    await page.waitForSelector("#info-popover-demo:not([open])");
+
+    const activeId = await page.evaluate(() => document.activeElement.id);
+    assert.equal(activeId, "info-popover-trigger");
+
+    await page.$eval("#info-popover-flip-trigger", (node) =>
+      node.scrollIntoView({ block: "start" }),
+    );
+    await page.click("#info-popover-flip-trigger");
+    await page.waitForSelector("#info-popover-flip[open]");
+    await page.waitForFunction(
+      () =>
+        document
+          .querySelector("#info-popover-flip")
+          .getAttribute("data-resolved-placement") === "bottom",
+    );
+
+    await page.$eval("#info-popover-edge-trigger", (node) =>
+      node.scrollIntoView({ block: "end" }),
+    );
+    await page.click("#info-popover-edge-trigger");
+    await page.waitForSelector("#info-popover-edge[open]");
+
+    const edgePlacement = await page.evaluate(() => {
+      const overlay = document
+        .querySelector("#info-popover-edge")
+        .getBoundingClientRect();
+
+      return {
+        top: overlay.top,
+        bottom: overlay.bottom,
+        left: overlay.left,
+        right: overlay.right,
+        viewportHeight: window.innerHeight,
+        viewportWidth: window.innerWidth,
+      };
+    });
+
+    assert.ok(edgePlacement.top >= 0);
+    assert.ok(edgePlacement.bottom <= edgePlacement.viewportHeight);
+    assert.ok(edgePlacement.left >= 0);
+    assert.ok(edgePlacement.right <= edgePlacement.viewportWidth);
+
+    await percySnapshot(page, name);
+
+    const results = await new AxePuppeteer(page)
+      .disableRules(skippedRules[name] || [])
+      .analyze();
+    handleAxeResults(name, results);
+  };
+
   const skippedRules = {
     Block: ["scrollable-region-focusable"],
     // Loading's color contrast check seems to change behavior depending on whether Percy snapshots are taken or not
@@ -224,6 +417,8 @@ describe("UI tests", function () {
   };
 
   const specialProcessing = {
+    HintTooltip: hintTooltipProcessing,
+    InfoPopover: infoPopoverProcessing,
     Message: messageProcessing,
     Modal: modalProcessing,
     Page: pageProcessing,
